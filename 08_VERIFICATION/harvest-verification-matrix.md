@@ -11081,3 +11081,7 @@
 | `CYCLE-20261118-SN9L` | `2026-11-18T19:34:30.345Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9275` | Yes (`3d36fd76...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T19:35:04.131Z` | `hf-openai-whisper-large-v3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-30CF6F55` [Domain D] | Yes (`c42b74e4...`) |
 | `CYCLE-20261118-5A93` | `2026-11-18T19:44:20.007Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md` | Yes (`5e9dd4c0...`) |
+| `CYCLE-20261118-F298` | `2026-11-18T19:51:56.204Z` | `MiniMaxAI/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-minimaxai-minimax-h3-learnings.md` | Yes (`af129810...`) |
+| `CYCLE-20261118-F3YL` | `2026-11-18T19:51:58.413Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9276` | Yes (`92b72d53...`) |
+| `CYCLE-20261118-FELJ` | `2026-11-18T19:52:12.199Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9277` | Yes (`b1c12794...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T19:52:45.524Z` | `trailbaseio-trailbase` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-26FD692A` [Domain H] | Yes (`0b4ce922...`) |

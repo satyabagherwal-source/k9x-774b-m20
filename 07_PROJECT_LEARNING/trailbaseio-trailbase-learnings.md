@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source**: github ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
-> **Source Version**: `f7a68cdf`  
+> **Source Version**: `e0a2df25`  
 > **License**: OSL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T04:29:19.242Z  
+> **Timestamp**: 2026-11-18T19:52:11.217Z  
 > **Learning ID**: `learn-github-trailbaseio-trailbase`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T04:29:19.236Z  
+> **Harvest Timestamp**: 2026-11-18T19:52:11.212Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An open, sub-millisecond, single-executable Firebase alternative with type-safe APIs, built-in WebAssembly runtime, realtime subscriptions, auth, MCP and admin UI built on Rust, SQLite (PG) & Wasmtime.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5771 stars
+- **Stars / Engagement**: 5773 stars
 
 ---
 
@@ -927,11 +927,14 @@ pub async fn test_email_handler(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #313** (2026-11-18): **Feature Request: Admin UI Schema ERD - Layout Persistence**
+  *Symptoms*: Anyone working on this? I can try and draft an implementation of this feature request but maybe someone's already planning this or would rather have some ideas from the OGs instead of starting (vibing) from scratch.
+  **Post-Mortem & Fix Analysis**:
+  > Hi @chardskarth , thanks for the request and thanks for reaching out. In the next release node positions will be persisted locally in the browser. Would that address your request?
+  > v0.36.1 has been released. I'll tentatively consider this closed. Let me know, if you re looking for something else 🙏 
+
 - **Issue #311** (2026-11-08): **Record subscriptions emit `Insert` events for rows of a rolled-back transaction**
   *Symptoms*: ## Summary  When a `POST /api/transaction/v1/execute` request with `"transaction": true` fails after an earlier operation already inserted a row, the transaction rolls back and the row is never stored. Table subscriptions (`/api/records/v1/{api}/subscribe/*`) still receive an `Insert` event for that row. Clients that apply subscription events to a local cache end up showing a row that does not exist, and no later event removes it.  ## Version  `trail v0.35.8-0-g05238c02 (2026-10-30)`, macOS arm64. From reading the source, `main` behaves the same (see Cause).  ## Reproduction  Needs only `trail` and `curl`:  ```bash #!/usr/bin/env bash set -euo pipefail  port="${PORT:-4011}" base="http://127.0.0.1:${port}" dir="$(mktemp -d)" trap 'kill "${sse_pid:-}" "${trail_pid:-}" 2>/dev/null || true; wait 2>/dev/null || true; rm -rf "$dir"' EXIT  mkdir -p "$dir/depot/migrations/main" cat > "$dir/depot/migrations/main/U1700000000__probe.sql" <<'SQL' CREATE TABLE probe (   id INTEGER PRIMARY KEY,   note TEXT NOT NULL UNIQUE ) STRICT; SQL cat > "$dir/depot/config.textproto" <<'PROTO' server { application_name: "repro" enable_record_transactions: true } record_apis: [{   name: "probe"   table_name: "probe"   acl_world: [CREATE, READ]   enable_subscriptions: true }] PROTO  trail --version | head -1 trail --depot "$dir/depot" run --address "127.0.0.1:${port}" >"$dir/trail.log" 2>&1 & trail_pid=$! until curl -fsS "$base/api/healthcheck" >/dev/null 2>&1; do   kill -0 "$trail_pid" 2>/dev/null || { 
-
-- **Issue #310** (2026-11-03): **v0.35.8: provide authenticated nonredirect acknowledgement for global logout**
-  *Symptoms*: ### Summary / environment  Could TrailBase expose a documented machine-readable global-logout outcome that confirms authenticated owner-wide refresh-session deletion, rather than requiring an application to interpret a browser redirect?  Reproduced against the **official Linux x64 v0.35.8** distribution, commit `05238c02b54aabb483e9f6224b5e014d40e88a5d`, SQLite/password auth, installed `trailbase@0.14.3`, disposable local SMTP-confirmed accounts. No server patch is required. This is an API capability request, not a claim of foreign-user access or a severity/CVE report.  ### Reproduction / actual behavior  Use a new disposable local depot with email confirmation and a protected record API. Sign in twice as one confirmed owner and once as an unrelated control owner. Retain only the generated credentials locally; do not paste them in an issue.  1. Issue `GET /api/auth/v1/logout?redirect_uri=<same-origin-health-URL>` with **no cookies**, redirects disabled and **no Authorization header**. Observe **303** to that target; both owner refresh sessions and the control remain unchanged. 2. Repeat with an invalid Bearer JWT. Observe the **same 303 target**, with sessions/account/data unchanged. 3. Repeat with the genuinely valid owner Bearer JWT. Observe the **same 303 target**, but this time all that owner's refresh sessions are deleted. Their refresh requests subsequently return **401**; the unrelated control and account/data remain unchanged. 4. A followed health/root **200** cannot 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -948,679 +951,500 @@ pub async fn test_email_handler(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ae955fe8` (2026-11-16)
-**Commit Message**: Update JavaScript dependencies. Addresses security advisories.
+### Incident Patch 1: `efb40fa7` (2026-11-18)
+**Commit Message**: Update JavaScript dependencies and address security advisories.
 
-**File**: `client/testfixture/guests/typescript/package.json` (modified, +5/-5)
+**File**: `client/testfixture/guests/typescript/package.json` (modified, +1/-1)
 ```diff
-@@ -16,13 +16,13 @@
-     "trailbase-wasm": "workspace:*"
-   },
-   "devDependencies": {
--    "@bytecodealliance/jco": "^1.40.0",
-+    "@bytecodealliance/jco": "^1.42.0",
-     "@eslint/js": "^10.0.1",
-     "@types/node": "^26.6.6",
--    "eslint": "^10.14.0",
--    "prettier": "^3.9.10",
-+    "eslint": "^10.15.0",
-+    "prettier": "^3.10.1",
+@@ -22,7 +22,7 @@
+     "eslint": "^10.15.0",
+     "prettier": "^3.10.1",
      "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.1",
--    "vite": "^8.3.5"
-+    "typescript-eslint": "^8.72.2",
-+    "vite": "^8.3.8"
+-    "typescript-eslint": "^8.72.2",
++    "typescript-eslint": "^8.73.0",
+     "vite": "^8.3.8"
    }
  }
 ```
 
-**File**: `crates/assets/js/admin/package.json` (modified, +18/-18)
+**File**: `crates/assets/js/admin/package.json` (modified, +4/-4)
 ```diff
-@@ -15,7 +15,7 @@
-   },
-   "dependencies": {
-     "@antv/x6": "^3.1.8",
--    "@bufbuild/protobuf": "^2.16.0",
-+    "@bufbuild/protobuf": "^2.17.0",
-     "@codemirror/autocomplete": "^6.20.4",
-     "@codemirror/lang-sql": "^6.10.0",
-     "@codemirror/language": "^6.13.1",
-@@ -30,9 +30,9 @@
-     "@nanostores/solid": "^1.1.1",
-     "@panzoom/panzoom": "^4.6.2",
+@@ -32,7 +32,7 @@
      "@solid-primitives/memo": "^1.5.1",
--    "@solidjs/router": "^1.0.1",
-+    "@solidjs/router": "^1.0.3",
+     "@solidjs/router": "^1.0.3",
      "@tanstack/solid-form": "^1.33.5",
--    "@tanstack/solid-query": "^5.105.0",
-+    "@tanstack/solid-query": "^5.107.1",
+-    "@tanstack/solid-query": "^5.107.1",
++    "@tanstack/solid-query": "^5.107.2",
      "@tanstack/solid-table": "^9.3.1",
      "@tanstack/table-core": "^9.3.1",
      "@tiledb-inc/wkx": "github:TileDB-Inc/wkx",
-@@ -43,43 +43,43 @@
-     "geojson": "^0.5.0",
-     "i18n-iso-countries": "^7.14.0",
-     "long": "^5.3.2",
--    "maplibre-gl": "^6.16.0",
-+    "maplibre-gl": "^6.18.0",
-     "nanostores": "^1.5.5",
--    "rapidoc": "^12.0.0",
-+    "rapidoc": "^12.3.0",
-     "solid-icons": "^1.2.0",
--    "solid-js": "^1.9.18",
-+    "solid-js": "^1.9.19",
-     "tailwind-merge": "^3.7.0",
-     "trailbase": "file:../client",
-     "uuid": "^14.0.3"
-   },
-   "devDependencies": {
-     "@eslint/js": "^10.0.1",
--    "@iconify-json/tabler": "^1.2.43",
-+    "@iconify-json/tabler": "^1.2.46",
-     "@solidjs/testing-library": "^0.8.10",
+@@ -59,7 +59,7 @@
      "@tailwindcss/typography": "^0.5.20",
--    "@tailwindcss/vite": "^4.3.3",
-+    "@tailwindcss/vite": "^4.3.5",
+     "@tailwindcss/vite": "^4.3.5",
      "@testing-library/jest-dom": "^7.0.1",
--    "@testing-library/user-event": "^14.6.8",
-+    "@testing-library/user-event": "^14.6.10",
+-    "@testing-library/user-event": "^14.6.10",
++    "@testing-library/user-event": "^14.6.12",
      "@types/geojson": "^7946.0.16",
      "@types/wicg-file-system-access": "^2023.10.7",
      "autoprefixer": "^10.6.2",
--    "eslint": "^10.14.0",
--    "eslint-plugin-better-tailwindcss": "^4.10.0",
-+    "eslint": "^10.15.0",
-+    "eslint-plugin-better-tailwindcss": "^4.11.0",
-     "eslint-plugin-solid": "^0.18.1",
--    "globals": "^17.13.0",
-+    "globals": "^17.14.0",
-     "jsdom": "^30.1.3",
--    "prettier": "^3.9.10",
-+    "prettier": "^3.10.1",
-     "prettier-plugin-tailwindcss": "^0.8.1",
--    "tailwindcss": "^4.3.3",
-+    "tailwindcss": "^4.3.5",
+@@ -73,10 +73,10 @@
+     "tailwindcss": "^4.3.5",
      "tailwindcss-animate": "^1.0.7",
      "trailbase-bindings": "file:../bindings",
--    "ts-proto": "^2.18.3",
-+    "ts-proto": "^2.21.1",
+-    "ts-proto": "^2.21.1",
++    "ts-proto": "^2.22.0",
      "tw-animate-css": "^1.4.0",
      "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.1",
--    "vite": "^8.3.5",
-+    "typescript-eslint": "^8.72.2",
-+    "vite": "^8.3.8",
+-    "typescript-eslint": "^8.72.2",
++    "typescript-eslint": "^8.73.0",
+     "vite": "^8.3.8",
      "vite-plugin-csp-guard": "^4.0.1",
--    "vite-plugin-solid": "^2.11.15",
-+    "vite-plugin-solid": "^2.11.16",
-     "vite-tsconfig-paths": "6.1.1",
-     "vitest": "^4.1.12"
-   }
+     "vite-plugin-solid": "^2.11.16",
 ```
 
-**File**: `crates/assets/js/admin/src/components/editor/EditorPage.tsx` (modified, +4/-4)
+**File**: `crates/assets/js/client/package.json` (modified, +1/-1)
 ```diff
-@@ -12,7 +12,7 @@ import {
- } from "solid-js";
- import type { Accessor, Signal } from "solid-js";
- import { useQuery } from "@tanstack/solid-query";
--import type { DefinedUseQueryResult } from "@tanstack/solid-query";
-+import type { UseQueryResult } from "@tanstack/solid-query";
- import { createWritableMemo } from "@solid-primitives/memo";
- import type {
-   ColumnDef,
-@@ -134,15 +134,15 @@ function buildSchema(schemas: ListSchemasResponse): SQLNamespace {
- }
- 
- function isCached(
--  query: DefinedUseQueryResult<ExecutionResult | null | undefined, Error>,
-+  query: UseQueryResult<ExecutionResult | null | undefined, Error>,
- ): boolean {
-   // We currently have two caching systems. Tanstack query and we store results with the scripts :/.
-   return !query.isFetchedAfterMount || query.data === undefined;
- }
- 
- function ResultsHeader(props: {
-   script: Script;
--  query: DefinedUseQueryResult<ExecutionResult | null | undefined, Error>;
-+  query: UseQueryResult<ExecutionResult | null | undefined, Error>;
-   encoding: BlobEncoding;
-   setEncoding: (v: BlobEncoding) => void;
- }) {
-@@ -189,7 +189,7 @@ function ResultsHeader(props: {
- 
- function ResultComponent(props: {
-   script: Script;
--  query: DefinedUseQueryResult<ExecutionResult | null | undefined, Error>;
-+  query: UseQueryResult<ExecutionResult | null | undefined, Error>;
- }) {
-   // NOTE: We have two layers of caching :/. From Tanstack and from the scripts.
-   const response = () => props.query?.data ?? props.script.result;
-```
-
-**File**: `crates/assets/js/bindings/package.json` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@
-     "@microsoft/api-extractor": "^7.60.1",
-     "barrelize": "^1.11.0",
-     "typescript": "=6.0.3",
--    "vite": "^8.3.5",
-+    "vite": "^8.3.8",
-     "vite-plugin-dts": "^5.1.2"
-   }
- }
-```
-
-**File**: `crates/assets/js/client/package.json` (modified, +6/-6)
-```diff
-@@ -44,19 +44,19 @@
-     "@eslint/js": "^10.0.1",
-     "@microsoft/api-extractor": "^7.60.1",
-     "@types/geojson": "^7946.0.16",
--    "eslint": "^10.14.0",
--    "globals": "^17.13.0",
-+    "eslint": "^10.15.0",
-+    "globals": "^17.14.0",
-     "http-status": "^2.1.0",
-     "jsdom": "^30.1.3",
-     "nano-spawn": "^2.1.0",
-     "oauth2-mock-server": "^8.2.3",
-     "otplib": "^13.6.0",
--    "prettier": "^3.9.10",
--    "tinybench": "^6.2.2",
-+    "prettier": "^3.10.1",
-+    "tinybench": "^6.2.3",
+@@ -55,7 +55,7 @@
+     "tinybench": "^6.2.3",
      "trailbase-bindings": "file:../bindings",
      "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.1",
--    "vite": "^8.3.5",
-+    "typescript-eslint": "^8.72.2",
-+    "vite": "^8.3.8",
+-    "typescript-eslint": "^8.72.2",
++    "typescript-eslint": "^8.73.0",
+     "vite": "^8.3.8",
      "vite-node": "^6.0.0",
      "vite-plugin-dts": "^5.1.2",
-     "vitest": "^4.1.12"
 ```
 
-**File**: `crates/assets/js/client/tests/integration/wasm_integration.test.ts` (modified, +37/-33)
+**File**: `crates/auth-ui/ui/package.json` (modified, +1/-1)
 ```diff
-@@ -170,39 +170,43 @@ describe.concurrent.for(GUESTS)("WASM DB: $runtime", ({ runtime, base }) => {
-     await execute_batch(`${createTableSql};${createTableSql};${countSql}`);
-   });
- 
--  test("attaching/detaching multi DB", async ({ expect }) => {
--    // Attach db with invalid name fails
--    await expect(async () => await attach("session")).rejects.toThrow();
--
--    const dbName = `db${runtime}`;
--    const tableName = `'${dbName}'.'test'`;
--
--    await attach(dbName);
--    await execute(`DROP TABLE IF EXISTS ${tableName};`);
--    await execute(`CREATE TABLE ${tableName} (id INTEGER PRIMARY KEY)`);
--
--    for (let i = 0; i < 100; ++i) {
--      await execute(
--        `INSERT INTO ${tableName} (id) VALUES (${i * 3 + 0}), (${i * 3 + 1}), (${i * 3 + 2});`,
--      );
--    }
--
--    await detach(dbName);
--    // Repeat detach fails:
--    await expect(async () => await detach(dbName)).rejects.toThrow();
--
--    // COUNT fails after detach
--    await expect(
--      async () => await query(`SELECT COUNT(*) FROM ${tableName};`),
--    ).rejects.toThrow();
--
--    // And succeeds after re-attach.
--    await attach(dbName);
--    expect(await query(`SELECT COUNT(*) FROM ${tableName};`)).toEqual("300");
--
--    // Finally detach to not clobber multiple executions.
--    await detach(dbName);
--  }, /* timeout= */ 15000);
-+  test(
-+    "attaching/detaching multi DB",
-+    async ({ expect }) => {
-+      // Attach db with invalid name fails
-+      await expect(async () => await attach("session")).rejects.toThrow();
-+
-+      const dbName = `db${runtime}`;
-+      const tableName = `'${dbName}'.'test'`;
-+
-+      await attach(dbName);
-+      await execute(`DROP TABLE IF EXISTS ${tableName};`);
-+      await execute(`CREATE TABLE ${tableName} (id INTEGER PRIMARY KEY)`);
-+
-+      for (let i = 0; i < 100; ++i) {
-+        await execute(
-+          `INSERT INTO ${tableName} (id) VALUES (${i * 3 + 0}), (${i * 3 + 1}), (${i * 3 + 2});`,
-+        );
-+      }
-+
-+      await detach(dbName);
-+      // Repeat detach fails:
-+      await expect(async () => await detach(dbName)).rejects.toThrow();
-+
-+      // COUNT fails after detach
-+      await expect(
-+        async () => await query(`SELECT COUNT(*) FROM ${tableName};`),
-+      ).rejects.toThrow();
-+
-+      // And succeeds after re-attach.
-+      await attach(dbName);
-+      expect(await query(`SELECT COUNT(*) FROM ${tableName};`)).toEqual("300");
-+
-+      // Finally detach to not clobber multiple executions.
-+      await detach(dbName);
-+    },
-+    /* timeout= */ 15000,
-+  );
- 
-   test("concurrent query & execute", async ({ expect }) => {
-     const responses = await Promise.all(
-```
-
-**File**: `crates/auth-ui/ui/package.json` (modified, +11/-11)
-```diff
-@@ -14,39 +14,39 @@
-   },
-   "dependencies": {
-     "@astrojs/check": "^0.9.12",
--    "@astrojs/solid-js": "^7.1.2",
-+    "@astrojs/solid-js": "^7.1.6",
-     "@kobalte/core": "^0.13.14",
-     "@nanostores/persistent": "^1.3.5",
-     "@nanostores/solid": "^1.1.1",
--    "astro": "^7.4.4",
-+    "astro": "^7.4.12",
-     "astro-icon": "^1.2.0",
-     "class-variance-authority": "^0.7.1",
-     "clsx": "^2.1.1",
-     "nanostores": "^1.5.5",
-     "solid-icons": "^1.2.0",
--    "solid-js": "^1.9.18",
-+    "solid-js": "^1.9.19",
-     "tailwind-merge": "^3.7.0",
-     "tailwindcss-animate": "^1.0.7",
-     "trailbase": "file:../../assets/js/client"
-   },
-   "devDependencies": {
-     "@eslint/js": "^10.0.1",
--    "@iconify-json/tabler": "^1.2.43",
-+    "@iconify-json/tabler": "^1.2.46",
-     "@kobalte/tailwindcss": "^0.9.0",
-     "@tailwindcss/typography": "^0.5.20",
--    "@tailwindcss/vite": "^4.3.3",
--    "eslint": "^10.14.0",
-+    "@tailwindcss/vite": "^4.3.5",
-+    "eslint": "^10.15.0",
-     "eslint-plugin-astro": "^3.2.1",
--    "eslint-plugin-better-tailwindcss": "^4.10.0",
-+    "eslint-plugin-better-tailwindcss": "^4.11.0",
-     "eslint-plugin-solid": "^0.18.1",
--    "globals": "^17.13.0",
--    "prettier": "^3.9.10",
-+    "globals": "^17.14.0",
-+    "prettier": "^3.10.1",
-     "prettier-plugin-astro": "^1.1.2",
-     "prettier-plugin-tailwindcss": "^0.8.1",
-     "sharp": "^0.35.5",
--    "tailwindcss": "^4.3.3",
-+    "tailwindcss": "^4.3.5",
+@@ -47,6 +47,6 @@
+     "tailwindcss": "^4.3.5",
      "tw-animate-css": "^1.4.0",
      "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.1"
-+    "typescript-eslint": "^8.72.2"
+-    "typescript-eslint": "^8.72.2"
++    "typescript-eslint": "^8.73.0"
    }
  }
 ```
 
-**File**: `docs/examples/record_api_ts/package.json` (modified, +3/-3)
+**File**: `docs/examples/record_api_ts/package.json` (modified, +1/-1)
 ```diff
-@@ -10,10 +10,10 @@
-   "devDependencies": {
-     "@eslint/js": "^10.0.1",
-     "@types/node": "^26.6.6",
--    "eslint": "^10.14.0",
--    "prettier": "^3.9.10",
-+    "eslint": "^10.15.0",
-+    "prettier": "^3.10.1",
+@@ -13,7 +13,7 @@
+     "eslint": "^10.15.0",
+     "prettier": "^3.10.1",
      "typescript": "^6.0.3",
--    "typescript-eslint": "^8.72.1",
-+    "typescript-eslint": "^8.72.2",
+-    "typescript-eslint": "^8.72.2",
++    "typescript-eslint": "^8.73.0",
      "vitest": "^4.1.12"
    },
    "dependencies": {
+```
+
+**File**: `docs/examples/wasm-guest-ts/package.json` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@
+     "nano-spawn": "^2.1.0",
+     "prettier": "^3.10.1",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.72.2",
++    "typescript-eslint": "^8.73.0",
+     "vite": "^8.3.8"
+   }
+ }
+```
+
+**File**: `docs/package.json` (modified, +1/-1)
+```diff
+@@ -46,6 +46,6 @@
+     "prettier-plugin-astro": "^1.1.2",
+     "prettier-plugin-tailwindcss": "^0.8.1",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.72.2"
++    "typescript-eslint": "^8.73.0"
+   }
+ }
+```
+
+**File**: `examples/blog/web/package.json` (modified, +1/-1)
+```diff
+@@ -40,6 +40,6 @@
+     "quicktype": "^23.3.25",
+     "sharp": "^0.35.5",
+     "tailwindcss": "^4.3.5",
+-    "typescript-eslint": "^8.72.2"
++    "typescript-eslint": "^8.73.0"
+   }
+ }
 ```
 
 ---
 
-### Incident Patch 2: `5141b1bc` (2026-11-16)
-**Commit Message**: Fix file write error propagation.
+### Incident Patch 2: `6119f18d` (2026-11-17)
+**Commit Message**: Update Rust dependencies to address security advisories.
 
-**File**: `crates/core/src/records/error.rs` (modified, +10/-3)
+**File**: `Cargo.lock` (modified, +111/-108)
 ```diff
-@@ -79,9 +79,16 @@ impl From<trailbase_sqlite::from_sql::FromSqlError> for RecordError {
-   }
- }
+@@ -996,9 +996,9 @@ checksum = "8f1fe948ff07f4bd06c30984e69f5b4899c516a3ef74f34df92a2df2ab535495"
  
--impl From<Vec<crate::records::files::FileWriteError>> for RecordError {
--  fn from(err: Vec<crate::records::files::FileWriteError>) -> Self {
--    return RecordError::Internal(format!("{err:?}").into());
-+impl From<crate::records::files::FileWriteError> for RecordError {
-+  fn from(err: crate::records::files::FileWriteError) -> Self {
-+    return match err {
-+      crate::records::files::FileWriteError::StaleToken => {
-+        RecordError::BadRequest("stale file token")
-+      }
-+      crate::records::files::FileWriteError::Storage(_uuid, err) => {
-+        RecordError::Internal(format!("{err:?}").into())
-+      }
-+    };
-   }
- }
+ [[package]]
+ name = "bytes"
+-version = "1.12.1"
++version = "1.12.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
++checksum = "776dfebd015e2d8732c684a2c71003674ccb49457b539b9e82151ba38e96dd7c"
+ dependencies = [
+  "serde",
+ ]
+@@ -1193,9 +1193,9 @@ dependencies = [
  
+ [[package]]
+ name = "clap"
+-version = "4.6.7"
++version = "4.6.8"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "aa8876b300ab35ba921adea3dfd70157a46249b33f95c9084ae5709785478946"
++checksum = "ac230478587d0269d8d6998b82ae69ea51509d55df66d9e92edd1f986904cd4a"
+ dependencies = [
+  "clap_builder",
+  "clap_derive",
+@@ -1215,9 +1215,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "clap_complete"
+-version = "4.6.11"
++version = "4.6.12"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "037e2a1a92236d0aff7e845093f64661d6df4c02c9fcc61a60e9e1d736fa392f"
++checksum = "6a35200383f20018d41c14d1ab19c1727c697f544492143f7d93aa39f0187848"
+ dependencies = [
+  "clap",
+  "clap_lex",
+@@ -1227,9 +1227,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "clap_derive"
+-version = "4.6.7"
++version = "4.6.8"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f9c751b79415d4e559e3d1fcf128e09e720eb673a06d26cf6f392d37d75b66e0"
++checksum = "895c9d8d2ac2dd8b8a29f3724a14e72aaaa6debcf8c38c82f97305c6a172767a"
+ dependencies = [
+  "heck",
+  "proc-macro2",
+@@ -1239,9 +1239,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "clap_lex"
+-version = "1.1.1"
++version = "1.1.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1c133bc6a41be0d194c306b5506d15e6feeea7b1d6604bd3f8310dfb2ca96486"
++checksum = "e0921b3876b3a1df8a1c9f912e7f94342458022c2e84288015893d83c4d62a79"
+ 
+ [[package]]
+ name = "client-ip"
+@@ -1463,37 +1463,37 @@ dependencies = [
+ 
+ [[package]]
+ name = "cranelift-assembler-x64"
+-version = "0.135.8"
++version = "0.135.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "10c7459262c93a3c408bda96acaaa3d92868f166b33d445b20921f8378325038"
++checksum = "f4c0cfdaf0fa6d94af39357be9b0c6137b99e57832d68b1ba1110524f4c67138"
+ dependencies = [
+  "cranelift-assembler-x64-meta",
+ ]
+ 
+ [[package]]
+ name = "cranelift-assembler-x64-meta"
+-version = "0.135.8"
++version = "0.135.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "97a25bfba0da265ef1f98728358e9bb3ab7489913e7bd759c743108892288934"
++checksum = "c829e4494e4ee099395ebbc10a49343e8d582c3fdb894527967bb256bf937612"
+ dependencies = [
+  "cranelift-srcgen",
+ ]
+ 
+ [[package]]
+ name = "cranelift-bforest"
+-version = "0.135.8"
++version = "0.135.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "32a9ad33269057337a70db66950f426fbdce436a66fe8071f55851a13a2e40cd"
++checksum = "4955ac604c69b279138b2bd1b46c5f21748910d96e96eca5df23c79ee2a5edcc"
+ dependencies = [
+  "cranelift-entity",
+  "wasmtime-internal-core",
+ ]
+ 
+ [[package]]
+ name = "cranelift-bitset"
+-version = "0.135.8"
++version = "0.135.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d322e6584efe3b229b1164b49edf55aec561553426f7fe3e228a45e80a15a190"
++checksum = "d4be0efebaf985207ba2330083d86c5dd50a03357435e5bdffc97598393b5a19"
+ dependencies = [
+  "serde",
+  "serde_derive",
+@@ -1502,9 +1502,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "cranelift-codegen"
+-version = "0.135.8"
++version = "0.135.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6a7b9f73f97da69d6edc9adbfeec068cdb2649f0221be41abd3909267cb1cd53"
++checksum = "4f463af533c6fad6aa1d54c454569baebd38a11374deee0c4d104a1e4e4da207"
+ dependencies = [
+  "bumpalo",
+  "cranelift-assembler-x64",
+@@ -1533,9 +1533,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "cranelift-codegen-meta"
+-version = "0.135.8"
++version = "0.135.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e7015ef10993d7129e0bce933874b60dab8187239aca4ceca352987d9907d528"
++checksum = "b5614f7c37ee06c404c1556b2d54859fb74149774f08594625dbe764963b2f7f"
+ dependencies = [
+  "cranelift-assembler-x64-meta",
+  "cranelift-codegen-shared",
+@@ -1546,24 +1546,24 @@ dependencies = [
+ 
+ [[package]]
+ name = "cranelift-codegen-shared"
+-version = "0.135.8"
++version = "0.135.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "37916b08a7b17e063bae743cb746da542df7df283ced961aae213620dc11e27a"
++checksum = "061a4c3049f6b16df98e2a7feca329541da41eabb37b9e42cf8c7671fc17cf56"
+ 
+ [[package]]
+ name = "cranelift-control"
+-version = "0.135.8"
++version = "0.135.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8154d189f2cc2a84a95a8129773799ddcf2f4609f667047db30715db4be6aa0a"
++checksum = "9b267c615bd7d04c5bd7970b35019483824f33a43eb5c26f384246fd53c8b257"
+ dependencies = [
+  "arbitrary",
+ ]
+
 ```
 
-**File**: `crates/core/src/records/files.rs` (modified, +49/-36)
+**File**: `Cargo.toml` (modified, +7/-7)
 ```diff
-@@ -7,23 +7,22 @@ use log::*;
- use object_store::{ObjectStore, ObjectStoreExt};
- use std::collections::HashSet;
- use std::sync::Arc;
--use thiserror::Error;
- use trailbase_schema::db::{QualifiedName, QualifiedNameEscaped};
- use trailbase_schema::json_schema::{FileUpload, Payload};
- use trailbase_sqlite::{ConnectionType, params};
+@@ -57,12 +57,12 @@ askama = { version = "0.16.1", default-features = false, features = ["derive", "
+ axum = { version = "^0.8.9", default-features = false, features = ["multipart", "tokio", "http2"] }
+ axum-extra = { version = "^0.12.6", default-features = false, features = ["typed-header"] }
+ base64 = { version = "0.23.1", default-features = false, features = ["alloc", "std"] }
+-bytes = { version = "1.12.1", features = ["serde"] }
++bytes = { version = "1.12.2", features = ["serde"] }
+ chrono = { version = "0.4.45", default-features = false }
+ compact_str = { version = "0.10.0", default-features = false, features = ["serde"] }
+-clap = { version = "^4.6.7", features=["derive", "env"] }
++clap = { version = "^4.6.8", features=["derive", "env"] }
+ cron = "0.17.0"
+-crossfire = { version = "3.1.22", default-features = false, features = ["tokio"] }
++crossfire = { version = "3.1.23", default-features = false, features = ["tokio"] }
+ env_logger = { version = "^0.11.11", default-features = false, features = ["auto-color", "humantime"] }
+ flume = { version = "0.12.0", default-features = false, features = ["select", "async"] }
+ futures-util = { version = "0.3.34", default-features = false, features = ["alloc", "spin"] }
+@@ -117,10 +117,10 @@ ts-rs = { version = "12", features = ["uuid-impl", "serde-json-impl", "indexmap-
+ utoipa = { version = "6.0.0", default-features = false, features = ["axum_extras", "debug", "indexmap", "uuid", "macros"] }
+ utoipa-axum = { version = "0.3.0" }
+ uuid = { version = "1", default-features = false, features = ["std", "v4", "v7", "serde"] }
+-wasmtime = { version = "48.0.8", features = ["winch"] }
+-wasmtime-wasi = { version = "48.0.8", default-features = false, features = [] }
+-wasmtime-wasi-http = { version = "48.0.8", features = ["p2"] }
+-wasmtime-wasi-io = { version = "48.0.8", features = [] }
++wasmtime = { version = "48.0.9", features = ["winch"] }
++wasmtime-wasi = { version = "48.0.9", default-features = false, features = [] }
++wasmtime-wasi-http = { version = "48.0.9", features = ["p2"] }
++wasmtime-wasi-io = { version = "48.0.9", features = [] }
  
- use crate::app_state::AppState;
- use crate::records::params::FileMetadataAndPayload;
+ # When building TrailBase as a standalone workspace, use local submodule paths.
+ # These [patch] sections are ignored when TrailBase is consumed as a dependency
+```
+
+**File**: `crates/build/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -13,4 +13,4 @@ env_logger = { workspace = true }
+ log = { workspace = true }
+ prost-build = "^0.14.6"
+ prost-reflect-build = "0.16.1"
+-regex = "1.13.1"
++regex = "1.13.2"
+```
+
+**File**: `crates/cli/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -24,14 +24,14 @@ base64 = { workspace = true }
+ chrono = { workspace = true }
+ compact_str = { workspace = true }
+ clap = { workspace = true }
+-clap_complete = { version = "4.6.11", features = ["unstable-dynamic"] }
++clap_complete = { version = "4.6.12", features = ["unstable-dynamic"] }
+ env_logger = { workspace = true }
+ itertools = { workspace = true }
+ jsonwebtoken = { workspace = true }
+ log = { workspace = true }
+ mimalloc = { workspace = true }
+ reqwest = { workspace = true }
+-rmcp = { version = "^3.10.0", default-features = false, features = ["server", "transport-io"], optional = true }
++rmcp = { version = "^3.11.0", default-features = false, features = ["server", "transport-io"], optional = true }
+ rmcp-openapi = { workspace = true, optional = true }
+ rusqlite = { workspace = true }
+ serde = { workspace = true }
+```
+
+**File**: `crates/core/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -72,7 +72,7 @@ itertools = { workspace = true }
+ jsonschema = { version = "0.61.2", default-features = false }
+ jsonwebtoken = { workspace = true }
+ lazy_static = "1.5.1"
+-lettre = { version = "^0.11.23", default-features = false, features = ["tokio1-rustls-tls", "sendmail-transport", "smtp-transport", "builder"] }
++lettre = { version = "^0.11.24", default-features = false, features = ["tokio1-rustls-tls", "sendmail-transport", "smtp-transport", "builder"] }
+ litegis = { workspace = true, optional = true }
+ log = { workspace = true }
+ mime = "0.3.18"
+@@ -87,7 +87,7 @@ prost = { version = "^0.14.6", default-features = false }
+ prost-reflect = { version = "^0.16.5", default-features = false, features = ["derive", "text-format"] }
+ quick_cache = "0.7.0"
+ rand = { workspace = true }
+-regex = "1.13.1"
++regex = "1.13.2"
+ reqwest = { workspace = true }
+ rusqlite = { workspace = true }
+ rust-embed = { workspace = true }
+```
+
+**File**: `crates/extension/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -19,7 +19,7 @@ bcrypt = "0.19.3"
+ jsonschema = { version = "0.61.2", default-features = false }
+ maxminddb = "0.33.0"
+ quick_cache = { version = "0.7.0", default-features = false }
+-regex = "1.13.1"
++regex = "1.13.2"
+ # NOTE: rusqlite must not enable "bundled" for the .so built to work.
+ rusqlite = { version = "0.43.0", default-features = false, features = ["functions", "cache"] }
+ serde = { workspace = true }
+```
+
+**File**: `crates/qs/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@ serde = { workspace = true }
+ serde-value = "0.7.0"
+ serde_qs = { workspace = true }
+ uuid = { workspace = true }
+-wkt = { version = "0.14.0", default-features = false }
++wkt = { version = "0.15.0", default-features = false }
  
--#[derive(Debug, Error)]
-+#[derive(Debug, thiserror::Error)]
- pub enum FileError {
--  #[error("Storage error: {0}")]
-+  #[error("Storage: {0}")]
-   Storage(#[from] object_store::Error),
--  #[error("IO error: {0}")]
-+  #[error("IO: {0}")]
-   IO(#[from] std::io::Error),
--  #[error("Json serialization error: {0}")]
--  JsonSerialization(#[from] serde_json::Error),
--  #[error("SQL error: {0}")]
-+  #[error("Json: {0}")]
-+  Json(#[from] serde_json::Error),
-+  #[error("SQL: {0}")]
-   Sql(#[from] trailbase_sqlite::Error),
- }
+ [dev-dependencies]
+ rusqlite = { workspace = true }
+```
+
+**File**: `crates/schema/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@ lazy_static = "1.5.1"
+ log = { workspace = true }
+ parking_lot = { workspace = true }
+ rand = { workspace = true }
+-regex = "1.13.1"
++regex = "1.13.2"
+ schemars = { workspace = true }
+ serde = { workspace = true }
+ serde_json = { workspace = true }
+```
+
+---
+
+### Incident Patch 3: `afa872ca` (2026-11-17)
+**Commit Message**: Admin UI: persist erd node positions. #313
+
+**File**: `crates/assets/js/admin/src/components/erd/ErdGraph.tsx` (modified, +37/-7)
+```diff
+@@ -1,4 +1,5 @@
+ import { createEffect, onCleanup } from "solid-js";
++import { persistentJSON } from "@nanostores/persistent";
  
-@@ -280,7 +279,13 @@ pub(crate) async fn delete_pending_files_impl(
-   return Ok(());
- }
+ import {
+   Graph,
+@@ -68,13 +69,19 @@ function layoutErdNodes(nodes: NodeMetadata[], aspect: number): NodeMetadata[] {
+     Math.ceil(Math.sqrt((safeAspect * nodes.length * height) / width)),
+   );
  
--pub type FileWriteError = (String, object_store::Error);
-+#[derive(Debug, thiserror::Error)]
-+pub enum FileWriteError {
-+  #[error("Storage: {0}")]
-+  Storage(uuid::Uuid, object_store::Error),
-+  #[error("StaleToken")]
-+  StaleToken,
-+}
- 
- pub(crate) struct FileManager {
-   store: Arc<dyn ObjectStore>,
-@@ -291,23 +296,23 @@ impl FileManager {
-   pub(crate) async fn write(
-     store: &Arc<dyn ObjectStore>,
-     files: FileMetadataAndPayload,
--  ) -> Result<Self, Vec<FileWriteError>> {
-+  ) -> Result<Self, FileWriteError> {
-     let results = join_all(files.into_iter().map(|(metadata, payload)| {
-       return write_or_check_file(store.clone(), metadata, payload);
-     }))
-     .await;
- 
--    let (written_files, errs): (Vec<FileUpload>, Vec<FileWriteError>) =
-+    let (written_files, mut errs): (Vec<Option<FileUpload>>, Vec<FileWriteError>) =
-       results.into_iter().partition_map(|r| match r {
-         Ok(v) => Either::Left(v),
-         Err(e) => Either::Right(e),
-       });
- 
--    // NOTE: we don't do any clean-up for write failures, i.e. the DB may reference files that
--    // cannot be found later. This may just be ok resulting in subsequent NOT_FOUND :shrug:.
--    // We could retry or eventually unwind the DB write.
--    if written_files.is_empty() && !errs.is_empty() {
--      return Err(errs);
-+    let written_files = written_files.into_iter().flatten().collect();
+-  return nodes.map((node, index) => ({
+-    ...node,
+-    position: node.position ?? {
+-      x: (index % columns) * width,
+-      y: Math.floor(index / columns) * height,
+-    },
+-  }));
++  return nodes.map((node, index) => {
++    const id = node.id;
++    const storedProps = id ? $layout.get().get(id) : undefined;
 +
-+    if !errs.is_empty() {
-+      clean_up_written_files_async(store, written_files);
-+      return Err(errs.swap_remove(0));
-     }
- 
-     return Ok(Self {
-@@ -324,51 +329,59 @@ impl FileManager {
- 
- impl Drop for FileManager {
-   fn drop(&mut self) {
--    let written_files = std::mem::take(&mut self.written_files);
-+    // Unless files were explicitly released, clean up all written files.
-+    clean_up_written_files_async(&self.store, std::mem::take(&mut self.written_files));
-+  }
-+}
- 
--    if !written_files.is_empty() {
--      let store = self.store.clone();
-+fn clean_up_written_files_async(store: &Arc<dyn ObjectStore>, written_files: Vec<FileUpload>) {
-+  if written_files.is_empty() {
-+    return;
-+  }
- 
--      tokio::spawn(async move {
--        for file in written_files {
--          let path = object_store::path::Path::from(file.objectstore_id().to_string());
--          if let Err(err) = store.delete(&path).await {
--            warn!("Failed to cleanup just written file: {err}");
--          }
-+  tokio::spawn({
-+    let store = store.clone();
-+
-+    async move {
-+      for file in written_files {
-+        let path = object_store::path::Path::from(file.objectstore_id().to_string());
-+        if let Err(err) = store.delete(&path).await {
-+          warn!("Failed to cleanup just written file: {err}");
-         }
--      });
-+      }
-     }
--  }
++    return {
++      ...node,
++      position: node.position ??
++        storedProps?.position ?? {
++          x: (index % columns) * width,
++          y: Math.floor(index / columns) * height,
++        },
++    } satisfies NodeMetadata;
 +  });
  }
  
- async fn write_or_check_file(
-   store: Arc<dyn object_store::ObjectStore>,
-   metadata: FileUpload,
-   payload: Payload,
--) -> Result<FileUpload, FileWriteError> {
-+) -> Result<Option<FileUpload>, FileWriteError> {
-   let path = object_store::path::Path::from(metadata.objectstore_id().to_string());
--  let err = |err: object_store::Error| -> FileWriteError {
--    return (path.to_string(), err);
--  };
+ export function edgeProperties(opts?: {
+@@ -233,6 +240,15 @@ export function ErdGraph(props: {
+     g.on("node:click", ({ node }) => onSelect(node.id));
+     g.on("blank:click", () => onSelect(undefined));
  
--  match payload {
-+  return match payload {
-     Payload::Id | Payload::Token { .. } => {
-       // Existing, already written files are referenced. While we have nothing to write, we gotta
-       // make sure the file exists. The token (or id) may be stale, , e.g. if someone read, dropped
-       // the file and then still used the token.
--      //
--      // FIXME: We don't currently propagate the error to the user.
-       store
-         .head(&path)
-         .await
--        .map_err(|err| (path.to_string(), err))?;
-+        .map_err(|_| FileWriteError::StaleToken)?;
++    g.on("node:moved", ({ node }) => {
++      const id = node.id;
++      if (id) {
++        $layout.get().set(id, {
++          position: node.getPosition(),
++        });
++      }
++    });
 +
-+      Ok(None)
+     if (g.getCells().length) {
+       g.zoomToFit({ padding: 20 });
      }
-     Payload::Bytes(contents) => {
-+      let err = |err: object_store::Error| -> FileWriteError {
-+        return FileWriteError::Storage(*metadata.objectstore_id(), err);
-+      };
-
-```
-
-**File**: `crates/core/src/records/read_record.rs` (modified, +40/-6)
-```diff
-@@ -316,8 +316,11 @@ pub fn test_only_validate_api_json_schema(
- 
- #[cfg(test)]
- mod tests {
-+  use std::assert_matches;
+@@ -267,6 +283,8 @@ export function ErdGraph(props: {
+       zoomOut: () => g.zoomTo(g.zoom() / 2),
+       fit: () => g.zoomToFit({ padding: 20 }),
+       reset: () => {
++        $layout.set(new Map());
 +
-   use axum::extract::{Path, Query, State};
-   use base64::prelude::*;
-+  use itertools::Itertools;
-   use object_store::ObjectStoreExt;
-   use serde::Serialize;
-   use serde_json::json;
-@@ -1102,8 +1105,14 @@ mod tests {
- 
-     let read_resp0: PartialResponseSchema = serde_json::from_str(read_resp0.get()).unwrap();
-     assert!(read_resp0.file.token.is_some());
--    assert!(read_resp0.files[0].token.is_some());
--    assert!(read_resp0.files[1].token.is_some());
-+    let Some((Some(file1_token), Some(file2_token))) = read_resp0
-+      .files
-+      .into_iter()
-+      .map(|f| f.token)
-+      .collect_tuple()
-+    else {
-+      panic!("expected two tokens");
-+    };
- 
-     // Update the first record, which will also trigger deletions.
-     let _ = update_record_handler(
-@@ -1113,11 +1122,11 @@ mod tests {
-       Either::Json(
-         json_row_from_value(
-           serde_json::to_value(&PartialRequestSchema {
--            // NOTE: We're overriding file1 with the same but fresh data, skipping file1 and
-+            // NOTE: We're overriding file0 with the same but fresh data, skipping file1 and
-             // round-tripping file2's token.
--            file: FileUploadRequest::Data(file1.clone()),
-+            file: FileUploadRequest::Data(file0.clone()),
-             files: vec![FileUploadRequest::Token {
--              token: read_resp0.files[1].token.clone().unwrap(),
-+              token: file2_token.clone(),
-             }],
-           })
-           .unwrap(),
-@@ -1153,6 +1162,31 @@ mod tests {
-     // Ok, all pending deletions have been processed:
-     assert_eq!(0, pending_deletions.len(), "{pending_deletions:?}");
- 
-+    // Try to use the stale file token for file1.
-+    let stale_result = update_record_handler(
-+      State(state.clone()),
-+      Path((API_NAME.to_string(), resp0.ids[0].clone())),
-+      None,
-+      Either::Json(
-+        json_row_from_value(json!({
-+          "files": vec![
-+              // Stale token.
-+              FileUploadRequest::Token { token: file1_token },
-+              // Valid token.
-+              FileUploadRequest::Token { token: file2_token }
-+          ],
-+        }))
-+        .unwrap()
-+        .into(),
-+      ),
-+    )
-+    .await;
+         layoutErdNodes(props.nodes, graphAspect(ref)).forEach((node, index) => {
+           const position = node.position;
+           if (position) {
+@@ -396,3 +414,15 @@ function graphAspect(el: HTMLElement | undefined) {
+     );
+   }
+ })();
 +
-+    assert_matches!(
-+      stale_result.err(),
-+      Some(RecordError::BadRequest("stale file token"))
-+    );
++type StoredNodeMetadata = {
++  position?: {
++    x: number;
++    y: number;
++  };
++};
 +
-     // Check that the deleted files are actually gone, both in the store and on the fs.
-     assert!(!check_file_with_id_exists(&state, &record0_file_ids[0]).await);
-     assert!(!check_file_with_id_exists(&state, &record0_file_ids[1]).await);
-@@ -1172,7 +1206,7 @@ mod tests {
-       Ok(_) => true,
-       Err(object_store::Error::NotFound { .. }) => false,
-       Err(err) => {
--        panic!("unexpedted objectore error: {err}");
-+        panic!("unexpected object-store error: {err}");
-       }
-     };
- 
-```
-
-**File**: `crates/core/src/records/transaction.rs` (modified, +7/-2)
-```diff
-@@ -315,8 +315,13 @@ const INVALID_PARAMS_ERR: RecordError = RecordError::BadRequest("Invalid Paramet
- /// operation, which would not work in transaction mode w/o locking the entire DB for extended
- /// periods. In Batch mode we could break up execution into checking ACLs first, then writing files,
- /// and then committing the DB operations, however ACL checks can depend on prior operations, which
--/// makes this impossible. In either case, one would probably be better off to just submit N
--/// independent operations.
-+/// makes this impossible.
-+///
-+/// We could also be more optimistic, e.g. disallow only tokens and "hope" content writes will go
-+/// through (e.g. no disk space or permission issues), however this may lead to invalid file
-+/// references and hard-to-debug issues.
-+///
-+/// In the end, one is probably be better off to just submit N independent operations.
- pub(crate) const FILES_IN_BATCH_MODE_ERR: RecordError =
-   RecordError::BadRequest("Files are not supported in batch-mode/transactions");
- 
-```
-
----
-
-### Incident Patch 3: `fe42dc0d` (2026-11-13)
-**Commit Message**: Fix test+release builds, e.g. benchmark builds.
-
-**File**: `crates/schema/src/json_schema/file.rs` (modified, +3/-6)
-```diff
-@@ -47,8 +47,7 @@ pub type FileTokenDecoder<'a> = dyn Fn(&str) -> Result<FileToken, Error> + 'a;
- 
- /// Wire representation of upload requests, which may either contain data or use a token to
- /// represent round-tripped data for update operations.
--#[derive(Debug, Clone, PartialEq, Deserialize, JsonSchema)]
--#[cfg_attr(debug_assertions, derive(Serialize))]
-+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, JsonSchema)]
- #[serde(untagged)]
- #[schemars(description = "")]
- pub enum FileUploadRequest {
-@@ -97,8 +96,7 @@ impl FileUploadRequest {
- /// File input schema used both for multipart-form uploads (in which case the name is mapped to
- /// column names) and JSON where the column name is extracted from the corresponding key of the
- /// parent object.
--#[derive(Debug, Clone, PartialEq, Deserialize, JsonSchema)]
--#[cfg_attr(debug_assertions, derive(Serialize))]
-+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, JsonSchema)]
- #[cfg_attr(debug_assertions, serde(deny_unknown_fields))]
- #[schemars(description = "")]
- pub struct FileUploadData {
-@@ -145,8 +143,7 @@ impl FileUploadData {
- }
- 
- /// Wire-representation of FileUpload responses, e.g. read_file.
--#[derive(Debug, Clone, PartialEq, Serialize, JsonSchema)]
--#[cfg_attr(debug_assertions, derive(Deserialize))]
-+#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, JsonSchema)]
- #[schemars(description = "")]
- pub struct FileUploadResponse {
-   /// An opaque token to reference this file in update-operations.
++const $layout = persistentJSON<Map<string, StoredNodeMetadata>>(
++  "erd:layout",
++  new Map(),
++);
 ```
 
 #### Recent Merged Pull Requests:
@@ -1649,13 +1473,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update JavaScript dependencies. Addresses security advisories.
+## X. Update JavaScript dependencies and address security advisories.
 
 **RULE**:
 When implementing operations in `client/testfixture/guests/typescript/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ae955fe8`: Update JavaScript dependencies. Addresses security advisories.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `efb40fa7`: Update JavaScript dependencies and address security advisories.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `client/testfixture/guests/typescript/package.json`.
@@ -1663,22 +1487,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    "@bytecodealliance/jco": "^1.42.0",
-    "eslint": "^10.15.0",
-    "prettier": "^3.10.1",
-    "typescript-eslint": "^8.72.2",
-    "vite": "^8.3.8"
+    "typescript-eslint": "^8.73.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    "@bytecodealliance/jco": "^1.40.0",
-    "eslint": "^10.14.0",
-    "prettier": "^3.9.10",
-    "typescript-eslint": "^8.72.1",
-    "vite": "^8.3.5"
+    "typescript-eslint": "^8.72.2",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ae955fe8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `efb40fa7` are properly handled with clean fallback behavior.

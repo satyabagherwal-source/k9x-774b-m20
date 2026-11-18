@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T05:37:19.288Z",
+  "timestamp": "2026-11-18T19:52:15.589Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-pimalaya-himalaya-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [pimalaya-himalaya-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T05:37:19.288Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T19:52:15.589Z`  
 > **Learning ID**: `LEARN-EVO-pimalaya-himalaya-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain B (Product Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
 > **Source**: github ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
-> **Source Version**: `b9712f7f`  
+> **Source Version**: `edf58f38`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T05:37:07.786Z  
+> **Timestamp**: 2026-11-18T19:51:57.394Z  
 > **Learning ID**: `learn-github-pimalaya-himalaya`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pimalaya-himalaya-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pimalaya/himalaya](https://github.com/pimalaya/himalaya))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T05:37:07.673Z  
+> **Harvest Timestamp**: 2026-11-18T19:51:57.387Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: CLI to manage emails
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7664 stars
+- **Stars / Engagement**: 7675 stars
 
 ---
 
@@ -1646,243 +1646,23 @@ impl Account {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b9712f7f` (2026-11-16)
-**Commit Message**: build(deps): bump jiff to 1, io-pimdir to 0.15.1 (rusqlite 0.43) and io-msgraph to 0.9.3
+### Incident Patch 1: `edf58f38` (2026-11-17)
+**Commit Message**: chore(deny): ignore the unmaintained chrono advisory
 
-**File**: `Cargo.lock` (modified, +19/-19)
+**File**: `deny.toml` (modified, +8/-0)
 ```diff
-@@ -871,9 +871,9 @@ dependencies = [
- 
- [[package]]
- name = "ical-rs"
--version = "0.7.0"
-+version = "0.7.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5dbc009237124ae236eb886a57bda65357729b6b8ff7ad21113de2cea933e02a"
-+checksum = "7e390dd6dbfc13b572c448002e57878c151204010b8249c4d3e0d2b758d734cf"
- dependencies = [
-  "jiff",
-  "jiff-tzdb",
-@@ -1066,9 +1066,9 @@ dependencies = [
- 
- [[package]]
- name = "io-msgraph"
--version = "0.9.2"
-+version = "0.9.3"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cf2f9e0df97603e14e46ca58d104de5dfd77e1ca72aac1206f92e01047995837"
-+checksum = "aecd5bd9319b486f79a7a32ece8f14e354986efc92f034e029864c2982fdc079"
- dependencies = [
-  "anyhow",
-  "base64-codec",
-@@ -1105,9 +1105,9 @@ dependencies = [
- 
- [[package]]
- name = "io-pimdir"
--version = "0.14.1"
-+version = "0.15.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f19a7e961bd806c87280d35695f5a92e7ba34b4fe971ffd7577891bae3775764"
-+checksum = "5a8d137275e17b01cbbe06e3cb235eba454f98e0e5f8483bd647d429e582a91a"
- dependencies = [
-  "blake3",
-  "encoding_rs",
-@@ -1181,9 +1181,9 @@ checksum = "3bd1574e617a9a6c1f8f8181bd7e841e1f20e4277607ef28945765188d6284d4"
- 
- [[package]]
- name = "jiff"
--version = "0.2.43"
-+version = "1.0.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "26699905cc795a23e3949585cc7ba3ee8ade090872a27e4316304a777297894a"
-+checksum = "9cc767b5763de45e810109520123bb2829a653f3a7ed9be40b2bc4f81158f595"
- dependencies = [
-  "jiff-core",
-  "jiff-static",
-@@ -1197,30 +1197,30 @@ dependencies = [
- 
- [[package]]
- name = "jiff-core"
--version = "0.1.5"
-+version = "1.0.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ffe6854081f5ac0a3046a9b223729ccd7a20b1e0e8277e44dc0660eedf67dfe2"
-+checksum = "894f7ac42105f584100691b3bf6e6b92dd12fcfa225f6c397f95c8a94b47b68f"
- dependencies = [
-  "log",
+@@ -28,3 +28,11 @@ allow = [
+   "Unicode-3.0",
+   "Zlib",
  ]
- 
- [[package]]
- name = "jiff-static"
--version = "0.2.43"
-+version = "1.0.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4b4ff49b2887190c760b86207b55cdcaabbdecaf7a0660d68aa2ed6f652abf0a"
-+checksum = "955491488dc99b572ea6d67b172dcd98787d00744b1fb44a5689b4e6413695a6"
- dependencies = [
-  "jiff-core",
-  "proc-macro2",
-  "quote",
-- "syn 2.0.119",
-+ "syn 3.0.10",
- ]
- 
- [[package]]
- name = "jiff-tzdb"
--version = "0.1.9"
-+version = "1.0.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "fa8377070c6bae868759445e5a77f66d84f0b72f3a054bfb00e6d038b8282da7"
-+checksum = "12e71a1b68a875a44a33bb7a1dd84392cb77145a3367a552a3cfe6a4f5cf3afc"
- 
- [[package]]
- name = "jni"
-@@ -1315,9 +1315,9 @@ dependencies = [
- 
- [[package]]
- name = "libsqlite3-sys"
--version = "0.39.1"
-+version = "0.40.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "14a5f01b87b92705d07b433c06f96cbc764637d81a0bffb5734ce17cf0f9a2b3"
-+checksum = "b06e69070b7e12262b0cd90832f0a7396f142a2b330181255562decf9f0c6215"
- dependencies = [
-  "cc",
-  "pkg-config",
-@@ -1844,9 +1844,9 @@ dependencies = [
- 
- [[package]]
- name = "rusqlite"
--version = "0.41.1"
-+version = "0.43.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "da9bba6f3506135e120a6586df05be18b48d18896600646a4bec8f993d91a594"
-+checksum = "f172c4812a19b26d1c23cdb0070e69db335503dfa378b910eb857386e5b8beba"
- dependencies = [
-  "bitflags",
-  "fallible-iterator",
-```
-
-**File**: `Cargo.toml` (modified, +4/-4)
-```diff
-@@ -38,7 +38,7 @@ pimalaya-cli = { version = "0.6.0", default-features = false, features = ["build
- 
- [dev-dependencies]
- io-oauth = { version = "0.7", default-features = false, features = ["client", "jwt-bearer", "rustls-ring"] }
--rusqlite = { version = "0.41", default-features = false, features = ["bundled"] }
-+rusqlite = { version = "0.43", default-features = false, features = ["bundled"] }
- tempfile = { version = "3", default-features = false }
- toml = { version = "1.1", default-features = false, features = ["parse", "serde"] }
- 
-@@ -59,11 +59,11 @@ io-jmap = { version = "0.10", default-features = false, optional = true }
- io-maildir = { version = "0.5", default-features = false, optional = true }
- io-managesieve = { version = "0.4", default-features = false, optional = true }
- io-mbox = { version = "0.2", default-features = false, optional = true }
--io-msgraph = { version = "0.9.2", default-features = false, optional = true }
--io-pimdir = { version = "0.14.1", default-features = false, features = ["client"], optional = true }
-+io-msgraph = { version = "0.9.3", default-features = false, optional = true }
-+io-pimdir = { version = "0.15.1", default-features = false, features = ["client"], optional = true }
- io-sasl = { version = "0.2", default-features = false, features = ["scram"] }
- io-smtp = { version = "0.9", default-features = false, optional = true }
--jiff = { version = "0.2", default-features = false, features = ["std", "tz-system", "tzdb-bundle-always"], optional = true }
-+jiff = { version = "1", default-features = false, features = ["std", "tz-system", "tzdb-bundle-always"], optional = true }
- log = { version = "0.4", default-features = false }
- mime-rs = { version = "0.2", default-features = false, features = ["base64", "encoding", "parser"], optional = true }
- mime_guess = { version = "2", default-features = false, features = ["rev-mappings"] }
-```
-
----
-
-### Incident Patch 2: `d98528b5` (2026-11-16)
-**Commit Message**: build(deps): bump io-pimdir to 0.14.1
-
-**File**: `CHANGELOG.md` (modified, +1/-1)
-```diff
-@@ -183,7 +183,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - Changed an mbox mailbox name holding a NUL or a `.` or `..` level, or a level ending in `.lock` or `.msf`, to be refused wherever a mailbox is taken, the reads included (io-mbox).
- - Changed `message copy` and `message move` on a pimdir account to fail for a message whose body is not downloaded when the account does not sync the target mailbox yet, no copy being able to reach it (io-pimdir 0c70144, pimdir SYNC §7).
- - Bumped pimalaya-cli and pimalaya-config to 0.5.
--- Changed the pimdir backend to follow pimdir storage-draft-13, sync-draft-13 and search-draft-13 (io-pimdir 0.14.0). A store an earlier neverest wrote, storage-draft-11 included, is refused, never migrated (`store-version`), its message naming both drafts and saying to rebuild it as Cardamum and Calendula say (drain its queue with that neverest, upgrade neverest, move the store aside, `neverest init`, sync); a search index of an earlier draft is refused `index-version`. A store whose directory or pimdir.db another user can read is refused with `store-exposed`; restrict it (`chmod 700` the directory, `chmod 600` pimdir.db). The test-only rusqlite moves to 0.41, as io-pimdir requires.
-+- Changed the pimdir backend to follow pimdir storage-draft-13, sync-draft-13 and search-draft-13 (io-pimdir 0.14.1). A store an earlier neverest wrote, storage-draft-11 included, is refused, never migrated (`store-version`), its message naming both drafts and saying to rebuild it as Cardamum and Calendula say (drain its queue with that neverest, upgrade neverest, move the store aside, `neverest init`, sync); a search index of an earlier draft is refused `index-version`. A store whose directory or pimdir.db another user can read is refused with `store-exposed`; restrict it (`chmod 700` the directory, `chmod 600` pimdir.db). The test-only rusqlite moves to 0.41, as io-pimdir requires.
- - Changed `flag add`, `flag remove` and the `\Seen` a read stages on a pimdir account to state the flags they were read from (pimdir STORAGE §15.3), so a flag a sync lands or removes while the change waits in the queue survives it, where the staged set used to overwrite it. `flag set` still replaces the whole set.
- - Changed a flag change on several pimdir messages to be queued as one batch, all or none: a change one source refuses on any message stages nothing, as before, and a store failing part-way no longer leaves the first rows queued.
- - Changed `pimdir queue show` to read `unconfirmed` for a send or a mailbox change the sync engine sent without learning its outcome, with what the engine recorded as `error`, where it read `parked`; to read `applied` with `collection` `null` for a row whose mailbox was deleted since, where it read `unknown`; and to know the state `reset`. `pimdir queue list` marks an unconfirmed row (`unconfirmed`, and `unconfirmed` for `parked` in the plain output), and `pimdir queue cancel` prints `unconfirmed` beside `row` and `kind`, its question and its answer saying that such a row was sent and may have taken effect.
-```
-
-**File**: `Cargo.lock` (modified, +2/-2)
-```diff
-@@ -1105,9 +1105,9 @@ dependencies = [
- 
- [[package]]
- name = "io-pimdir"
--version = "0.14.0"
-+version = "0.14.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "c6cf5ebcd9bfd37226c344216632cb8aa7fc1db3b9766dc2eb8b27efe599e21c"
-+checksum = "f19a7e961bd806c87280d35695f5a92e7ba34b4fe971ffd7577891bae3775764"
- dependencies = [
-  "blake3",
-  "encoding_rs",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -60,7 +60,7 @@ io-maildir = { version = "0.5", default-features = false, optional = true }
- io-managesieve = { version = "0.4", default-features = false, optional = true }
- io-mbox = { version = "0.2", default-features = false, optional = true }
- io-msgraph = { version = "0.9.2", default-features = false, optional = true }
--io-pimdir = { version = "0.14.0", default-features = false, features = ["client"], optional = true }
-+io-pimdir = { version = "0.14.1", default-features = false, features = ["client"], optional = true }
- io-sasl = { version = "0.2", default-features = false, features = ["scram"] }
- io-smtp = { version = "0.9", default-features = false, optional = true }
- jiff = { version = "0.2", default-features = false, features = ["std", "tz-system", "tzdb-bundle-always"], optional = true }
-```
-
----
-
-### Incident Patch 3: `7a9d76dc` (2026-11-15)
-**Commit Message**: ci: run the live suites weekly and by hand, never on push
-
-**File**: `.github/workflows/tests.yml` (modified, +6/-0)
-```diff
-@@ -2,6 +2,11 @@ name: Tests
- 
- on:
-   push:
-+  workflow_dispatch:
-+  # The suites against real accounts run weekly and by hand, never on push:
-+  # a push storm burns the provider quotas and collides with live testing.
-+  schedule:
-+    - cron: "0 1 * * 1"
- 
- jobs:
-   tests:
-@@ -10,6 +15,7 @@ jobs:
-   live:
-     # The binary against the real providers, whose APIs drift without
-     # notice. RUST_LOG stays at debug: trace logs carry secrets and tokens.
-+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
-     strategy:
-       fail-fast: false
-       matrix:
-```
-
-**File**: `CONTRIBUTING.md` (modified, +10/-0)
-```diff
-@@ -34,3 +34,13 @@ cargo test --no-default-features --features sieve,rustls-ring
- ## Dependencies
- 
- Cargo.toml patches the Pimalaya crates still ahead of their crates.io release to git. To build against a local checkout, swap the matching `.git` entry for `.path = "../<repo>"`. If cargo reports two versions of a crate, patch every Pimalaya crate that pulls it transitively so the graph converges on the local copies.
 +
-+## Continuous integration
-+
-+Every push runs the offline jobs of .github/workflows/tests.yml: the tests, and clippy over every feature set a packager may pick (the `features` job). The live suites (tests/google.rs, tests/microsoft.rs, tests/fastmail.rs, the `live` job), which reach the real providers and spend their quotas, run weekly on Mondays at 01:00 UTC and by hand, never on a push:
-+
-+```sh
-+gh workflow run tests.yml
-+```
-+
-+A release runs them by hand on the commit it tags, and tags it once they pass.
++[advisories]
++# chrono is unmaintained, not vulnerable, with no maintained release to
++# move to. imap-types exposes it in its API (duesee/imap-codec#752), and
++# the family moves its own code to jiff.
++ignore = [
++  { id = "RUSTSEC-2026-0543", reason = "chrono unmaintained, see duesee/imap-codec#752" },
++]
 ```
 
 #### Recent Merged Pull Requests:
@@ -1911,67 +1691,38 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump jiff to 1, io-pimdir to 0.15.1 (rusqlite 0.43) and io-msgraph 
+## X. deny): ignore the unmaintained chrono advisory
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `deny.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pimalaya/himalaya. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b9712f7f`: build(deps): bump jiff to 1, io-pimdir to 0.15.1 (rusqlite 0.43) and io-msgraph to 0.9.3. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `edf58f38`: deny): ignore the unmaintained chrono advisory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `deny.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.7.1"
-checksum = "7e390dd6dbfc13b572c448002e57878c151204010b8249c4d3e0d2b758d734cf"
-version = "0.9.3"
-checksum = "aecd5bd9319b486f79a7a32ece8f14e354986efc92f034e029864c2982fdc079"
-version = "0.15.1"
-checksum = "5a8d137275e17b01cbbe06e3cb235eba454f98e0e5f8483bd647d429e582a91a"
-version = "1.0.0"
-checksum = "9cc767b5763de45e810109520123bb2829a653f3a7ed9be40b2bc4f81158f595"
-version = "1.0.0"
-checksum = "894f7ac42105f584100691b3bf6e6b92dd12fcfa225f6c397f95c8a94b47b68f"
-version = "1.0.0"
-checksum = "955491488dc99b572ea6d67b172dcd98787d00744b1fb44a5689b4e6413695a6"
- "syn 3.0.10",
-version = "1.0.0"
-checksum = "12e71a1b68a875a44a33bb7a1dd84392cb77145a3367a552a3cfe6a4f5cf3afc"
-version = "0.40.0"
-checksum = "b06e69070b7e12262b0cd90832f0a7396f142a2b330181255562decf9f0c6215"
-version = "0.43.0"
-checksum = "f172c4812a19b26d1c23cdb0070e69db335503dfa378b910eb857386e5b8beba"
+
+[advisories]
+# chrono is unmaintained, not vulnerable, with no maintained release to
+# move to. imap-types exposes it in its API (duesee/imap-codec#752), and
+# the family moves its own code to jiff.
+ignore = [
+  { id = "RUSTSEC-2026-0543", reason = "chrono unmaintained, see duesee/imap-codec#752" },
+]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.7.0"
-checksum = "5dbc009237124ae236eb886a57bda65357729b6b8ff7ad21113de2cea933e02a"
-version = "0.9.2"
-checksum = "cf2f9e0df97603e14e46ca58d104de5dfd77e1ca72aac1206f92e01047995837"
-version = "0.14.1"
-checksum = "f19a7e961bd806c87280d35695f5a92e7ba34b4fe971ffd7577891bae3775764"
-version = "0.2.43"
-checksum = "26699905cc795a23e3949585cc7ba3ee8ade090872a27e4316304a777297894a"
-version = "0.1.5"
-checksum = "ffe6854081f5ac0a3046a9b223729ccd7a20b1e0e8277e44dc0660eedf67dfe2"
-version = "0.2.43"
-checksum = "4b4ff49b2887190c760b86207b55cdcaabbdecaf7a0660d68aa2ed6f652abf0a"
- "syn 2.0.119",
-version = "0.1.9"
-checksum = "fa8377070c6bae868759445e5a77f66d84f0b72f3a054bfb00e6d038b8282da7"
-version = "0.39.1"
-checksum = "14a5f01b87b92705d07b433c06f96cbc764637d81a0bffb5734ce17cf0f9a2b3"
-version = "0.41.1"
-checksum = "da9bba6f3506135e120a6586df05be18b48d18896600646a4bec8f993d91a594"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b9712f7f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `edf58f38` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-VRZ8",
-    "timestamp": "2026-11-17T11:25:22.916Z",
-    "repository": "nex-agi/Nex-N2.6",
-    "learningId": "learn-huggingface-nex-agi-nex-n2-6",
-    "contentHash": "73d0fb5b69299908bc64d9118435bb3e30f7c2099bf994976f82d97b6d2bce64",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-VTXK",
-    "timestamp": "2026-11-17T11:25:25.448Z",
-    "repository": "maxwell-model/Maxwell-V1-Flash",
-    "learningId": "learn-huggingface-maxwell-model-maxwell-v1-flash",
-    "contentHash": "20114d4e199021e13656054101acf9bb26d5ecc5f579c7d7fee39ea906cb92f3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-VZYW",
-    "timestamp": "2026-11-17T11:25:33.272Z",
-    "repository": "gocd/gocd",
-    "learningId": "learn-github-gocd-gocd",
-    "contentHash": "6f200f5ef41ea32d2b618b8a14e49ecb317d6b23a3e9810eee5105ad667f1116",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-W4XS",
     "timestamp": "2026-11-17T11:25:39.712Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7447,51 @@
     "contentHash": "5e9dd4c0025948ef72fed27d0ba78f815421f8cf59a3c6356ce061ce23bbb77c",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-F298",
+    "timestamp": "2026-11-18T19:51:56.204Z",
+    "repository": "MiniMaxAI/MiniMax-H3",
+    "learningId": "learn-huggingface-minimaxai-minimax-h3",
+    "contentHash": "af129810d409b5afcbd8653331daae0de6c15160da73202007ee5c669bb7ddc7",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-F3YL",
+    "timestamp": "2026-11-18T19:51:58.413Z",
+    "repository": "pimalaya/himalaya",
+    "learningId": "learn-github-pimalaya-himalaya",
+    "contentHash": "92b72d53a46a740e63f9d25bb14694e350495026489d335aca639178d5d90626",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-FELJ",
+    "timestamp": "2026-11-18T19:52:12.199Z",
+    "repository": "trailbaseio/trailbase",
+    "learningId": "learn-github-trailbaseio-trailbase",
+    "contentHash": "b1c12794513aa0906f620b69b3bb52b0da428d3176bfe2894e528b02169a71eb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

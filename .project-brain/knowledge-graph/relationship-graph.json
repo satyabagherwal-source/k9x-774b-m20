@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-18T19:35:04.129Z",
+  "updated_at": "2026-11-18T19:52:45.522Z",
   "statistics": {
-    "total_nodes": 362,
+    "total_nodes": 363,
     "total_edges": 167,
     "domain_distribution": {
       "D": 247,
       "M": 1,
-      "H": 50,
+      "H": 51,
       "J": 13,
       "K": 20,
       "L": 6,
@@ -8092,6 +8092,28 @@
       ],
       "created_at": "2026-11-18T19:35:04.129Z",
       "updated_at": "2026-11-18T19:35:04.129Z"
+    },
+    "DOM-H-26FD692A": {
+      "id": "DOM-H-26FD692A",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Update JavaScript dependencies and address security advisories.",
+      "summary": "Prevents defects observed in production commit `efb40fa7`: Update JavaScript dependencies and address security advisories.. Unvalidated exec -> When implementing operations in `client/testfixture/guests/typescript/package.json`, engineers MUST enforce rigorous boundary validation, sa",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://trailbaseio-trailbase/trailbaseio-trailbase-learnings.md",
+        "source_version": "e0a2df25",
+        "observed_at": "2026-11-18T19:52:11.217Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (trailbaseio-trailbase)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-18T19:52:45.522Z",
+      "updated_at": "2026-11-18T19:52:45.522Z"
     }
   },
   "edges": [

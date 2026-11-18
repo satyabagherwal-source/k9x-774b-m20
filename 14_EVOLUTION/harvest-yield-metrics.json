@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T19:44:20.014Z",
-  "total_cycles_completed": 10595,
-  "total_learnings_persisted": 10595,
-  "total_rules_promoted": 10037,
+  "last_updated": "2026-11-18T19:52:12.208Z",
+  "total_cycles_completed": 10598,
+  "total_learnings_persisted": 10598,
+  "total_rules_promoted": 10039,
   "history": [
-    {
-      "timestamp": "2026-11-18T07:05:41.726Z",
-      "repository": "arkivanov/Decompose",
-      "learningId": "learn-github-arkivanov-decompose",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T07:05:45.807Z",
-      "repository": "aws/aws-cdk",
-      "learningId": "learn-github-aws-aws-cdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T07:13:56.980Z",
-      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-      "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T07:14:03.479Z",
       "repository": "tw93/Mole",
@@ -1403,6 +1382,27 @@
       "repository": "black-forest-labs/FLUX.1-schnell",
       "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T19:51:56.214Z",
+      "repository": "MiniMaxAI/MiniMax-H3",
+      "learningId": "learn-huggingface-minimaxai-minimax-h3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T19:51:58.422Z",
+      "repository": "pimalaya/himalaya",
+      "learningId": "learn-github-pimalaya-himalaya",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T19:52:12.208Z",
+      "repository": "trailbaseio/trailbase",
+      "learningId": "learn-github-trailbaseio-trailbase",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

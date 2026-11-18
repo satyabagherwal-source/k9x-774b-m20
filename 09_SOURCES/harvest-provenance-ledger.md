@@ -11114,3 +11114,7 @@ Every entry in this ledger must capture:
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `fdc9d4be` | Multi-dimensional audit evidence | 2026-11-18T19:34:30.350Z |
 | `learn-dom-d-30cf6f55` | `project://hf-openai-whisper-large-v3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | 2026-11-18T19:35:04.131Z |
 | `learn-huggingface-black-forest-labs-flux-1-schnell` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-18T19:44:20.010Z |
+| `learn-huggingface-minimaxai-minimax-h3` | `https://huggingface.co/MiniMaxAI/MiniMax-H3` | `hf-minimax` | Multi-dimensional audit evidence | 2026-11-18T19:51:56.208Z |
+| `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `edf58f38` | Multi-dimensional audit evidence | 2026-11-18T19:51:58.417Z |
+| `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `e0a2df25` | Multi-dimensional audit evidence | 2026-11-18T19:52:12.203Z |
+| `learn-dom-h-26fd692a` | `project://trailbaseio-trailbase` | `e0a2df25` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md` | 2026-11-18T19:52:45.524Z |

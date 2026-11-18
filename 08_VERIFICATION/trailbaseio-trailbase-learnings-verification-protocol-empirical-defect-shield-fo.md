@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:45:55.811Z",
+  "timestamp": "2026-11-18T19:52:45.753Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-trailbaseio-trailbase-learnings",
+  "learning_id": "LEARN-EVO-trailbaseio-trailbase-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [trailbaseio-trailbase-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:45:55.811Z`  
-> **Learning ID**: `LEARN-REEXTRACT-trailbaseio-trailbase-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-18T19:52:45.753Z`  
+> **Learning ID**: `LEARN-EVO-trailbaseio-trailbase-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source**: github ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
-> **Source Version**: `9e4c4967`  
+> **Source Version**: `e0a2df25`  
 > **License**: OSL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T19:15:18.226Z  
+> **Timestamp**: 2026-11-18T19:52:11.217Z  
 > **Learning ID**: `learn-github-trailbaseio-trailbase`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T19:15:18.220Z  
+> **Harvest Timestamp**: 2026-11-18T19:52:11.212Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: An open, sub-millisecond, single-executable Firebase alternative with type-safe APIs, built-in WebAssembly runtime, realtime subscriptions, auth, MCP and admin UI built on Rust, SQLite (PG) & Wasmtime.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5755 stars
+- **Stars / Engagement**: 5773 stars
 
 ---
 
@@ -952,11 +952,14 @@ pub async fn test_email_handler(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #313** (2026-11-18): **Feature Request: Admin UI Schema ERD - Layout Persistence**
+  *Symptoms*: Anyone working on this? I can try and draft an implementation of this feature request but maybe someone's already planning this or would rather have some ideas from the OGs instead of starting (vibing) from scratch.
+  **Post-Mortem & Fix Analysis**:
+  > Hi @chardskarth , thanks for the request and thanks for reaching out. In the next release node positions will be persisted locally in the browser. Would that address your request?
+  > v0.36.1 has been released. I'll tentatively consider this closed. Let me know, if you re looking for something else 🙏 
+
 - **Issue #311** (2026-11-08): **Record subscriptions emit `Insert` events for rows of a rolled-back transaction**
   *Symptoms*: ## Summary  When a `POST /api/transaction/v1/execute` request with `"transaction": true` fails after an earlier operation already inserted a row, the transaction rolls back and the row is never stored. Table subscriptions (`/api/records/v1/{api}/subscribe/*`) still receive an `Insert` event for that row. Clients that apply subscription events to a local cache end up showing a row that does not exist, and no later event removes it.  ## Version  `trail v0.35.8-0-g05238c02 (2026-10-30)`, macOS arm64. From reading the source, `main` behaves the same (see Cause).  ## Reproduction  Needs only `trail` and `curl`:  ```bash #!/usr/bin/env bash set -euo pipefail  port="${PORT:-4011}" base="http://127.0.0.1:${port}" dir="$(mktemp -d)" trap 'kill "${sse_pid:-}" "${trail_pid:-}" 2>/dev/null || true; wait 2>/dev/null || true; rm -rf "$dir"' EXIT  mkdir -p "$dir/depot/migrations/main" cat > "$dir/depot/migrations/main/U1700000000__probe.sql" <<'SQL' CREATE TABLE probe (   id INTEGER PRIMARY KEY,   note TEXT NOT NULL UNIQUE ) STRICT; SQL cat > "$dir/depot/config.textproto" <<'PROTO' server { application_name: "repro" enable_record_transactions: true } record_apis: [{   name: "probe"   table_name: "probe"   acl_world: [CREATE, READ]   enable_subscriptions: true }] PROTO  trail --version | head -1 trail --depot "$dir/depot" run --address "127.0.0.1:${port}" >"$dir/trail.log" 2>&1 & trail_pid=$! until curl -fsS "$base/api/healthcheck" >/dev/null 2>&1; do   kill -0 "$trail_pid" 2>/dev/null || { 
-
-- **Issue #310** (2026-11-03): **v0.35.8: provide authenticated nonredirect acknowledgement for global logout**
-  *Symptoms*: ### Summary / environment  Could TrailBase expose a documented machine-readable global-logout outcome that confirms authenticated owner-wide refresh-session deletion, rather than requiring an application to interpret a browser redirect?  Reproduced against the **official Linux x64 v0.35.8** distribution, commit `05238c02b54aabb483e9f6224b5e014d40e88a5d`, SQLite/password auth, installed `trailbase@0.14.3`, disposable local SMTP-confirmed accounts. No server patch is required. This is an API capability request, not a claim of foreign-user access or a severity/CVE report.  ### Reproduction / actual behavior  Use a new disposable local depot with email confirmation and a protected record API. Sign in twice as one confirmed owner and once as an unrelated control owner. Retain only the generated credentials locally; do not paste them in an issue.  1. Issue `GET /api/auth/v1/logout?redirect_uri=<same-origin-health-URL>` with **no cookies**, redirects disabled and **no Authorization header**. Observe **303** to that target; both owner refresh sessions and the control remain unchanged. 2. Repeat with an invalid Bearer JWT. Observe the **same 303 target**, with sessions/account/data unchanged. 3. Repeat with the genuinely valid owner Bearer JWT. Observe the **same 303 target**, but this time all that owner's refresh sessions are deleted. Their refresh requests subsequently return **401**; the unrelated control and account/data remain unchanged. 4. A followed health/root **200** cannot 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -973,365 +976,500 @@ pub async fn test_email_handler(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6433cee2` (2026-11-09)
-**Commit Message**: Further simplify subscription state management. Avoid race between record-level subscriptions and record deletions, which may keep hooks unnecessarily alive.
+### Incident Patch 1: `efb40fa7` (2026-11-18)
+**Commit Message**: Update JavaScript dependencies and address security advisories.
 
-**File**: `crates/core/src/records/subscribe/handler.rs` (modified, +2/-2)
+**File**: `client/testfixture/guests/typescript/package.json` (modified, +1/-1)
 ```diff
-@@ -455,7 +455,7 @@ pub async fn subscribe_ws(
-           return;
-         };
- 
--        let receiver = AutoCleanupEventStream::new(receiver, conn_state, subscription.id.clone());
-+        let receiver = AutoCleanupEventStream::new(receiver, &conn_state, subscription.id.clone());
- 
-         broker(state, subscription, receiver, &mut ws_sender, false).await
-       }))
-@@ -512,7 +512,7 @@ pub async fn subscribe_ws(
-           return;
-         };
- 
--        let receiver = AutoCleanupEventStream::new(receiver, conn_state, subscription.id.clone());
-+        let receiver = AutoCleanupEventStream::new(receiver, &conn_state, subscription.id.clone());
- 
-         broker(state, subscription, receiver, &mut ws_sender, true).await;
-       }))
+@@ -22,7 +22,7 @@
+     "eslint": "^10.15.0",
+     "prettier": "^3.10.1",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.72.2",
++    "typescript-eslint": "^8.73.0",
+     "vite": "^8.3.8"
+   }
+ }
 ```
 
-**File**: `crates/core/src/records/subscribe/hook.rs` (modified, +45/-40)
+**File**: `crates/assets/js/admin/package.json` (modified, +4/-4)
 ```diff
-@@ -297,57 +297,62 @@ mod tests {
+@@ -32,7 +32,7 @@
+     "@solid-primitives/memo": "^1.5.1",
+     "@solidjs/router": "^1.0.3",
+     "@tanstack/solid-form": "^1.33.5",
+-    "@tanstack/solid-query": "^5.107.1",
++    "@tanstack/solid-query": "^5.107.2",
+     "@tanstack/solid-table": "^9.3.1",
+     "@tanstack/table-core": "^9.3.1",
+     "@tiledb-inc/wkx": "github:TileDB-Inc/wkx",
+@@ -59,7 +59,7 @@
+     "@tailwindcss/typography": "^0.5.20",
+     "@tailwindcss/vite": "^4.3.5",
+     "@testing-library/jest-dom": "^7.0.1",
+-    "@testing-library/user-event": "^14.6.10",
++    "@testing-library/user-event": "^14.6.12",
+     "@types/geojson": "^7946.0.16",
+     "@types/wicg-file-system-access": "^2023.10.7",
+     "autoprefixer": "^10.6.2",
+@@ -73,10 +73,10 @@
+     "tailwindcss": "^4.3.5",
+     "tailwindcss-animate": "^1.0.7",
+     "trailbase-bindings": "file:../bindings",
+-    "ts-proto": "^2.21.1",
++    "ts-proto": "^2.22.0",
+     "tw-animate-css": "^1.4.0",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.72.2",
++    "typescript-eslint": "^8.73.0",
+     "vite": "^8.3.8",
+     "vite-plugin-csp-guard": "^4.0.1",
+     "vite-plugin-solid": "^2.11.16",
+```
+
+**File**: `crates/assets/js/client/package.json` (modified, +1/-1)
+```diff
+@@ -55,7 +55,7 @@
+     "tinybench": "^6.2.3",
+     "trailbase-bindings": "file:../bindings",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.72.2",
++    "typescript-eslint": "^8.73.0",
+     "vite": "^8.3.8",
+     "vite-node": "^6.0.0",
+     "vite-plugin-dts": "^5.1.2",
+```
+
+**File**: `crates/auth-ui/ui/package.json` (modified, +1/-1)
+```diff
+@@ -47,6 +47,6 @@
+     "tailwindcss": "^4.3.5",
+     "tw-animate-css": "^1.4.0",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.72.2"
++    "typescript-eslint": "^8.73.0"
+   }
+ }
+```
+
+**File**: `docs/examples/record_api_ts/package.json` (modified, +1/-1)
+```diff
+@@ -13,7 +13,7 @@
+     "eslint": "^10.15.0",
+     "prettier": "^3.10.1",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.72.2",
++    "typescript-eslint": "^8.73.0",
+     "vitest": "^4.1.12"
+   },
+   "dependencies": {
+```
+
+**File**: `docs/examples/wasm-guest-ts/package.json` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@
+     "nano-spawn": "^2.1.0",
+     "prettier": "^3.10.1",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.72.2",
++    "typescript-eslint": "^8.73.0",
+     "vite": "^8.3.8"
+   }
+ }
+```
+
+**File**: `docs/package.json` (modified, +1/-1)
+```diff
+@@ -46,6 +46,6 @@
+     "prettier-plugin-astro": "^1.1.2",
+     "prettier-plugin-tailwindcss": "^0.8.1",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.72.2"
++    "typescript-eslint": "^8.73.0"
+   }
+ }
+```
+
+**File**: `examples/blog/web/package.json` (modified, +1/-1)
+```diff
+@@ -40,6 +40,6 @@
+     "quicktype": "^23.3.25",
+     "sharp": "^0.35.5",
+     "tailwindcss": "^4.3.5",
+-    "typescript-eslint": "^8.72.2"
++    "typescript-eslint": "^8.73.0"
+   }
+ }
+```
+
+---
+
+### Incident Patch 2: `6119f18d` (2026-11-17)
+**Commit Message**: Update Rust dependencies to address security advisories.
+
+**File**: `Cargo.lock` (modified, +111/-108)
+```diff
+@@ -996,9 +996,9 @@ checksum = "8f1fe948ff07f4bd06c30984e69f5b4899c516a3ef74f34df92a2df2ab535495"
  
-   #[tokio::test]
-   async fn hook_lifecycle() {
--    let conn = Connection::open_in_memory().unwrap();
--    conn
--      .execute_batch("CREATE TABLE test (id INTEGER PRIMARY KEY) STRICT;")
--      .await
--      .unwrap();
-+    for _ in 0..20 {
-+      let conn = Connection::open_in_memory().unwrap();
-+      conn
-+        .execute_batch("CREATE TABLE test (id INTEGER PRIMARY KEY) STRICT;")
-+        .await
-+        .unwrap();
+ [[package]]
+ name = "bytes"
+-version = "1.12.1"
++version = "1.12.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
++checksum = "776dfebd015e2d8732c684a2c71003674ccb49457b539b9e82151ba38e96dd7c"
+ dependencies = [
+  "serde",
+ ]
+@@ -1193,9 +1193,9 @@ dependencies = [
  
--    conn
--      .execute_batch("INSERT INTO test (id) VALUES (1), (2);")
--      .await
--      .unwrap();
-+      conn
-+        .execute_batch("INSERT INTO test (id) VALUES (1), (2);")
-+        .await
-+        .unwrap();
+ [[package]]
+ name = "clap"
+-version = "4.6.7"
++version = "4.6.8"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "aa8876b300ab35ba921adea3dfd70157a46249b33f95c9084ae5709785478946"
++checksum = "ac230478587d0269d8d6998b82ae69ea51509d55df66d9e92edd1f986904cd4a"
+ dependencies = [
+  "clap_builder",
+  "clap_derive",
+@@ -1215,9 +1215,9 @@ dependencies = [
  
--    let (sender, receiver) = flume::bounded(CAPACITY);
--    let weak = WeakHookHandle::new(conn.clone(), move |event| {
--      sender.send(event).unwrap();
--    });
-+      let (sender, receiver) = flume::bounded(CAPACITY);
-+      let weak = WeakHookHandle::new(conn.clone(), move |event| {
-+        sender.send(event).unwrap();
-+      });
+ [[package]]
+ name = "clap_complete"
+-version = "4.6.11"
++version = "4.6.12"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "037e2a1a92236d0aff7e845093f64661d6df4c02c9fcc61a60e9e1d736fa392f"
++checksum = "6a35200383f20018d41c14d1ab19c1727c697f544492143f7d93aa39f0187848"
+ dependencies = [
+  "clap",
+  "clap_lex",
+@@ -1227,9 +1227,9 @@ dependencies = [
  
--    assert_eq!(0, weak.state.read().strong_count());
-+      assert_eq!(0, weak.state.read().strong_count());
+ [[package]]
+ name = "clap_derive"
+-version = "4.6.7"
++version = "4.6.8"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f9c751b79415d4e559e3d1fcf128e09e720eb673a06d26cf6f392d37d75b66e0"
++checksum = "895c9d8d2ac2dd8b8a29f3724a14e72aaaa6debcf8c38c82f97305c6a172767a"
+ dependencies = [
+  "heck",
+  "proc-macro2",
+@@ -1239,9 +1239,9 @@ dependencies = [
  
--    {
--      let strong = weak.handle().unwrap();
-+      {
-+        let strong = weak.handle().unwrap();
+ [[package]]
+ name = "clap_lex"
+-version = "1.1.1"
++version = "1.1.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1c133bc6a41be0d194c306b5506d15e6feeea7b1d6604bd3f8310dfb2ca96486"
++checksum = "e0921b3876b3a1df8a1c9f912e7f94342458022c2e84288015893d83c4d62a79"
  
--      conn
--        .execute_batch("INSERT INTO test (id) VALUES (3);")
--        .await
--        .unwrap();
-+        conn
-+          .execute_batch("INSERT INTO test (id) VALUES (3);")
-+          .await
-+          .unwrap();
+ [[package]]
+ name = "client-ip"
+@@ -1463,37 +1463,37 @@ dependencies = [
  
--      drop(strong);
--    }
-+        drop(strong);
-+      }
+ [[package]]
+ name = "cranelift-assembler-x64"
+-version = "0.135.8"
++version = "0.135.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "10c7459262c93a3c408bda96acaaa3d92868f166b33d445b20921f8378325038"
++checksum = "f4c0cfdaf0fa6d94af39357be9b0c6137b99e57832d68b1ba1110524f4c67138"
+ dependencies = [
+  "cranelift-assembler-x64-meta",
+ ]
  
--    assert_eq!(0, weak.state.read().strong_count());
-+      assert_eq!(0, weak.state.read().strong_count());
+ [[package]]
+ name = "cranelift-assembler-x64-meta"
+-version = "0.135.8"
++version = "0.135.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "97a25bfba0da265ef1f98728358e9bb3ab7489913e7bd759c743108892288934"
++checksum = "c829e4494e4ee099395ebbc10a49343e8d582c3fdb894527967bb256bf937612"
+ dependencies = [
+  "cranelift-srcgen",
+ ]
  
--    conn
--      .execute_batch("INSERT INTO test (id) VALUES (4);")
--      .await
--      .unwrap();
-+      conn
-+        .execute_batch("INSERT INTO test (id) VALUES (4);")
-+        .await
-+        .unwrap();
+ [[package]]
+ name = "cranelift-bforest"
+-version = "0.135.8"
++version = "0.135.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "32a9ad33269057337a70db66950f426fbdce436a66fe8071f55851a13a2e40cd"
++checksum = "4955ac604c69b279138b2bd1b46c5f21748910d96e96eca5df23c79ee2a5edcc"
+ dependencies = [
+  "cranelift-entity",
+  "wasmtime-internal-core",
+ ]
  
--    let received: Vec<_> = receiver.drain().collect();
-+      // Wait for the broker thread to start brokering.
-+      let mut received = vec![receiver.recv_async().await.unwrap()];
-+      // Make sure there are on other pending events.
-+      received.extend(receiver.drain());
+ [[package]]
+ name = "cranelift-bitset"
+-version = "0.135.8"
++version = "0.135.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d322e6584efe3b229b1164b49edf55aec561553426f7fe3e228a45e80a15a190"
++checksum = "d4be0efebaf985207ba2330083d86c5dd50a03357435e5bdffc97598393b5a19"
+ dependencies = [
+  "serde",
+  "serde_derive",
+@@ -1502,9 +1502,9 @@ dependencies = [
  
--    assert_eq!(1, received.len());
-+      assert_eq!(1, received.len());
+ [[package]]
+ name = "cranelift-codegen"
+-version = "0.135.8"
++version = "0.135.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "6a7b9f73f97da69d6edc9adbfeec068cdb2649f0221be41abd3909267cb1cd53"
++checksum = "4f463af533c6fad6aa1d54c454569baebd38a11374deee0c4d104a1e4e4da207"
+ dependencies = [
+  "bumpalo",
+  "cranelift-assembler-x64",
+@@ -1533,9 +1533,9 @@ dependencies = [
  
--    let BrokerEvent::Event(ref event) = received[0] else {
--      panic!("expected event");
--    };
-+      let BrokerEvent::Event(ref event) = received[0] else {
-+        panic!("expected event");
-+      };
+ [[package]]
+ name = "cranelift-codegen-meta"
+-version = "0.135.8"
++version = "0.135.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e7015ef10993d7129e0bce933874b60dab8187239aca4ceca352987d9907d528"
++checksum = "b5614f7c37ee06c404c1556b2d54859fb74149774f08594625dbe764963b2f7f"
+ dependencies = [
+  "cranelift-assembler-x64-meta",
+  "cranelift-codegen-shared",
+@@ -1546,24 +1546,24 @@ dependencies = [
  
--    assert_eq!(
--      QualifiedName {
--        name: "test".to_string(),
--        database_schema: None
--      },
--      event.table_name
--    );
--    assert_eq!(Value::Integer(3), event.record[0]);
-+      assert_eq!(
-+        QualifiedName {
-+          name: "test".to_string(),
-+          database_schema: None
+ [[package]]
+ name = "cranelift-codegen-shared"
+-version = "0.135.8"
++version = "0.135.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "37916b08a7b17e063bae743cb746da542df7df283ced961aae213620dc11e27a"
++checksum = "061a4c3049f6b16df98e2a7feca329541da41eabb37b9e42cf8c7671fc17cf56"
+ 
+ [[package]]
+ name = "cranelift-control"
+-version = "0.135.8"
++version = "0.135.9"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "8154d189f2cc2a84a95a8129773799ddcf2f4609f667047db30715db4be6aa0a"
++checksum = "9b267c615bd7d04c5bd7970b35019483824f33a43eb5c26f384246fd53c8b257"
+ dependencies = [
+  "arbitrary",
+ ]
+
+```
+
+**File**: `Cargo.toml` (modified, +7/-7)
+```diff
+@@ -57,12 +57,12 @@ askama = { version = "0.16.1", default-features = false, features = ["derive", "
+ axum = { version = "^0.8.9", default-features = false, features = ["multipart", "tokio", "http2"] }
+ axum-extra = { version = "^0.12.6", default-features = false, features = ["typed-header"] }
+ base64 = { version = "0.23.1", default-features = false, features = ["alloc", "std"] }
+-bytes = { version = "1.12.1", features = ["serde"] }
++bytes = { version = "1.12.2", features = ["serde"] }
+ chrono = { version = "0.4.45", default-features = false }
+ compact_str = { version = "0.10.0", default-features = false, features = ["serde"] }
+-clap = { version = "^4.6.7", features=["derive", "env"] }
++clap = { version = "^4.6.8", features=["derive", "env"] }
+ cron = "0.17.0"
+-crossfire = { version = "3.1.22", default-features = false, features = ["tokio"] }
++crossfire = { version = "3.1.23", default-features = false, features = ["tokio"] }
+ env_logger = { version = "^0.11.11", default-features = false, features = ["auto-color", "humantime"] }
+ flume = { version = "0.12.0", default-features = false, features = ["select", "async"] }
+ futures-util = { version = "0.3.34", default-features = false, features = ["alloc", "spin"] }
+@@ -117,10 +117,10 @@ ts-rs = { version = "12", features = ["uuid-impl", "serde-json-impl", "indexmap-
+ utoipa = { version = "6.0.0", default-features = false, features = ["axum_extras", "debug", "indexmap", "uuid", "macros"] }
+ utoipa-axum = { version = "0.3.0" }
+ uuid = { version = "1", default-features = false, features = ["std", "v4", "v7", "serde"] }
+-wasmtime = { version = "48.0.8", features = ["winch"] }
+-wasmtime-wasi = { version = "48.0.8", default-features = false, features = [] }
+-wasmtime-wasi-http = { version = "48.0.8", features = ["p2"] }
+-wasmtime-wasi-io = { version = "48.0.8", features = [] }
++wasmtime = { version = "48.0.9", features = ["winch"] }
++wasmtime-wasi = { version = "48.0.9", default-features = false, features = [] }
++wasmtime-wasi-http = { version = "48.0.9", features = ["p2"] }
++wasmtime-wasi-io = { version = "48.0.9", features = [] }
+ 
+ # When building TrailBase as a standalone workspace, use local submodule paths.
+ # These [patch] sections are ignored when TrailBase is consumed as a dependency
+```
+
+**File**: `crates/build/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -13,4 +13,4 @@ env_logger = { workspace = true }
+ log = { workspace = true }
+ prost-build = "^0.14.6"
+ prost-reflect-build = "0.16.1"
+-regex = "1.13.1"
++regex = "1.13.2"
+```
+
+**File**: `crates/cli/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -24,14 +24,14 @@ base64 = { workspace = true }
+ chrono = { workspace = true }
+ compact_str = { workspace = true }
+ clap = { workspace = true }
+-clap_complete = { version = "4.6.11", features = ["unstable-dynamic"] }
++clap_complete = { version = "4.6.12", features = ["unstable-dynamic"] }
+ env_logger = { workspace = true }
+ itertools = { workspace = true }
+ jsonwebtoken = { workspace = true }
+ log = { workspace = true }
+ mimalloc = { workspace = true }
+ reqwest = { workspace = true }
+-rmcp = { version = "^3.10.0", default-features = false, features = ["server", "transport-io"], optional = true }
++rmcp = { version = "^3.11.0", default-features = false, features = ["server", "transport-io"], optional = true }
+ rmcp-openapi = { workspace = true, optional = true }
+ rusqlite = { workspace = true }
+ serde = { workspace = true }
+```
+
+**File**: `crates/core/Cargo.toml` (modified, +2/-2)
+```diff
+@@ -72,7 +72,7 @@ itertools = { workspace = true }
+ jsonschema = { version = "0.61.2", default-features = false }
+ jsonwebtoken = { workspace = true }
+ lazy_static = "1.5.1"
+-lettre = { version = "^0.11.23", default-features = false, features = ["tokio1-rustls-tls", "sendmail-transport", "smtp-transport", "builder"] }
++lettre = { version = "^0.11.24", default-features = false, features = ["tokio1-rustls-tls", "sendmail-transport", "smtp-transport", "builder"] }
+ litegis = { workspace = true, optional = true }
+ log = { workspace = true }
+ mime = "0.3.18"
+@@ -87,7 +87,7 @@ prost = { version = "^0.14.6", default-features = false }
+ prost-reflect = { version = "^0.16.5", default-features = false, features = ["derive", "text-format"] }
+ quick_cache = "0.7.0"
+ rand = { workspace = true }
+-regex = "1.13.1"
++regex = "1.13.2"
+ reqwest = { workspace = true }
+ rusqlite = { workspace = true }
+ rust-embed = { workspace = true }
+```
+
+**File**: `crates/extension/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -19,7 +19,7 @@ bcrypt = "0.19.3"
+ jsonschema = { version = "0.61.2", default-features = false }
+ maxminddb = "0.33.0"
+ quick_cache = { version = "0.7.0", default-features = false }
+-regex = "1.13.1"
++regex = "1.13.2"
+ # NOTE: rusqlite must not enable "bundled" for the .so built to work.
+ rusqlite = { version = "0.43.0", default-features = false, features = ["functions", "cache"] }
+ serde = { workspace = true }
+```
+
+**File**: `crates/qs/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@ serde = { workspace = true }
+ serde-value = "0.7.0"
+ serde_qs = { workspace = true }
+ uuid = { workspace = true }
+-wkt = { version = "0.14.0", default-features = false }
++wkt = { version = "0.15.0", default-features = false }
+ 
+ [dev-dependencies]
+ rusqlite = { workspace = true }
+```
+
+**File**: `crates/schema/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -24,7 +24,7 @@ lazy_static = "1.5.1"
+ log = { workspace = true }
+ parking_lot = { workspace = true }
+ rand = { workspace = true }
+-regex = "1.13.1"
++regex = "1.13.2"
+ schemars = { workspace = true }
+ serde = { workspace = true }
+ serde_json = { workspace = true }
+```
+
+---
+
+### Incident Patch 3: `afa872ca` (2026-11-17)
+**Commit Message**: Admin UI: persist erd node positions. #313
+
+**File**: `crates/assets/js/admin/src/components/erd/ErdGraph.tsx` (modified, +37/-7)
+```diff
+@@ -1,4 +1,5 @@
+ import { createEffect, onCleanup } from "solid-js";
++import { persistentJSON } from "@nanostores/persistent";
+ 
+ import {
+   Graph,
+@@ -68,13 +69,19 @@ function layoutErdNodes(nodes: NodeMetadata[], aspect: number): NodeMetadata[] {
+     Math.ceil(Math.sqrt((safeAspect * nodes.length * height) / width)),
+   );
+ 
+-  return nodes.map((node, index) => ({
+-    ...node,
+-    position: node.position ?? {
+-      x: (index % columns) * width,
+-      y: Math.floor(index / columns) * height,
+-    },
+-  }));
++  return nodes.map((node, index) => {
++    const id = node.id;
++    const storedProps = id ? $layout.get().get(id) : undefined;
++
++    return {
++      ...node,
++      position: node.position ??
++        storedProps?.position ?? {
++          x: (index % columns) * width,
++          y: Math.floor(index / columns) * height,
 +        },
-+        event.table_name
-+      );
-+      assert_eq!(Value::Integer(3), event.record[0]);
-+    }
-   }
- }
-```
-
-**File**: `crates/core/src/records/subscribe/manager.rs` (modified, +6/-6)
-```diff
-@@ -19,7 +19,7 @@ pub struct SubscriptionManager {
-   record_apis: AsyncReactive<HashSet<RecordApiByName>>,
- 
-   /// Manages subscriptions for different connections based on `conn.id()`.
--  connections: Arc<RwLock<HashMap</* conn id= */ usize, Arc<PerConnectionState>>>>,
-+  connections: Arc<RwLock<HashMap</* conn id= */ usize, PerConnectionState>>>,
++    } satisfies NodeMetadata;
++  });
  }
  
- impl SubscriptionManager {
-@@ -36,7 +36,7 @@ impl SubscriptionManager {
+ export function edgeProperties(opts?: {
+@@ -233,6 +240,15 @@ export function ErdGraph(props: {
+     g.on("node:click", ({ node }) => onSelect(node.id));
+     g.on("blank:click", () => onSelect(undefined));
  
-         let mut lock = connections.write();
- 
--        let mut old: HashMap<usize, Arc<PerConnectionState>> = std::mem::take(&mut lock);
-+        let mut old: HashMap<usize, PerConnectionState> = std::mem::take(&mut lock);
-         for api in record_apis.iter() {
-           if !api.enable_subscriptions() {
-             continue;
-@@ -84,7 +84,6 @@ impl SubscriptionManager {
-     let state = self.get_per_connection_state(&api).await;
- 
-     let subscription = state
--      .clone()
-       .add_table_subscription(api, user, filter, sender.clone())
-       .await?;
- 
-@@ -101,7 +100,7 @@ impl SubscriptionManager {
-     }
- 
-     return Ok((
--      AutoCleanupEventStream::new(receiver, state, subscription.id.clone()),
-+      AutoCleanupEventStream::new(receiver, &state, subscription.id.clone()),
-       subscription,
-     ));
-   }
-@@ -133,12 +132,12 @@ impl SubscriptionManager {
-     }
- 
-     return Ok((
--      AutoCleanupEventStream::new(receiver, state, subscription.id.clone()),
-+      AutoCleanupEventStream::new(receiver, &state, subscription.id.clone()),
-       subscription,
-     ));
-   }
- 
--  pub async fn get_per_connection_state(&self, api: &RecordApi) -> Arc<PerConnectionState> {
-+  pub async fn get_per_connection_state(&self, api: &RecordApi) -> PerConnectionState {
-     let conn_id: usize = api.conn().id();
- 
-     let mut lock = self.connections.upgradable_read();
-@@ -157,6 +156,7 @@ impl SubscriptionManager {
-             api.connection_metadata().clone(),
-             filter_record_apis(conn_id, &record_apis),
-           );
++    g.on("node:moved", ({ node }) => {
++      const id = node.id;
++      if (id) {
++        $layout.get().set(id, {
++          position: node.getPosition(),
++        });
++      }
++    });
 +
-           v.insert(state).clone()
-         }
-       };
-```
-
-**File**: `crates/core/src/records/subscribe/state.rs` (modified, +120/-99)
-```diff
-@@ -1,7 +1,6 @@
- use async_channel::WeakReceiver;
- use futures_util::Stream;
- use log::*;
--use once_cell::sync::Lazy;
- use parking_lot::Mutex;
- use pin_project_lite::pin_project;
- use std::collections::{HashMap, HashSet};
-@@ -36,7 +35,7 @@ pub struct SubscriptionId {
- /// e.g. client disconnects.
- struct AutoCleanupEventStreamState {
-   receiver: WeakReceiver<EventCandidate>,
--  state: Weak<PerConnectionState>,
-+  state: Weak<Mutex<PerConnectionStateInternal>>,
-   id: SubscriptionId,
- }
- 
-@@ -52,7 +51,7 @@ impl Drop for AutoCleanupEventStreamState {
-         return;
-       };
- 
--      state.state.lock().remove_subscription(id);
-+      state.lock().remove_subscription(&id);
-     } else {
-       debug!("Subscription cleaned up already by the sender side.");
+     if (g.getCells().length) {
+       g.zoomToFit({ padding: 20 });
      }
-@@ -72,13 +71,13 @@ pin_project! {
- impl AutoCleanupEventStream {
-   pub fn new(
-     receiver: async_channel::Receiver<EventCandidate>,
--    state: Arc<PerConnectionState>,
-+    state: &PerConnectionState,
-     id: SubscriptionId,
-   ) -> Self {
-     return Self {
-       state: AutoCleanupEventStreamState {
-         receiver: receiver.downgrade(),
--        state: Arc::downgrade(&state),
-+        state: Arc::downgrade(&state.state),
-         id,
-       },
-       receiver,
-@@ -169,12 +168,12 @@ struct PerConnectionStateInternal {
-   /// exclusively lock the entire map.
-   subscriptions: HashMap</* table_name= */ QualifiedName, Subscriptions>,
- 
--  /// Manages the installed hooks for the associated connection. Kept alive by subscriptions above.
--  weak_hook_handle: WeakHookHandle,
-+  /// Just a dead-subscriptions buffer to reduce allocations.
-+  buffer: Vec<usize>,
- }
- 
- impl PerConnectionStateInternal {
--  fn remove_subscription(&mut self, id: SubscriptionId) {
-+  fn remove_subscription(&mut self, id: &SubscriptionId) {
-     let Some(subscriptions) = self.subscriptions.get_mut(&id.table_name) else {
-       return;
-     };
-@@ -201,38 +200,43 @@ impl PerConnectionStateInternal {
-   }
- }
- 
-+#[derive(Clone)]
- pub struct PerConnectionState {
--  state: Mutex<PerConnectionStateInternal>,
-+  state: Arc<Mutex<PerConnectionStateInternal>>,
-+  /// Manages the installed hooks for the associated connection. Kept alive by subscriptions above.
-+  weak_hook_handle: Arc<WeakHookHandle>,
- }
- 
- impl PerConnectionState {
-   pub fn new(
-     conn: trailbase_sqlite::Connection,
-     connection_metadata: Arc<ConnectionMetadata>,
-     record_apis: HashSet<RecordApiByName>,
--  ) -> Arc<Self> {
--    let state = Arc::new(Self {
--      state: Mutex::new(PerConnectionStateInternal {
--        connection_metadata,
--        record_apis,
--        subscriptions: Default::default(),
--        // temporary dummy:
--        weak_hook_handle: WeakHookHandle::new(conn.clone(), |_ev| {}),
--      }),
--    });
--
--    state.state.lock().weak_hook_handle = WeakHookHandle::new(conn, {
-+  ) -> Self {
-+    let state = Arc::new(Mutex::new(PerConnectionStateInternal {
-+      connection_metadata,
-+      record_apis,
-+      subscriptions: Default::default(),
-+      buffer: Default::default(),
-+    }));
+@@ -267,6 +283,8 @@ export function ErdGraph(props: {
+       zoomOut: () => g.zoomTo(g.zoom() / 2),
+       fit: () => g.zoomToFit({ padding: 20 }),
+       reset: () => {
++        $layout.set(new Map());
 +
-+    let weak_hook_handle = Arc::new(WeakHookHandle::new(conn, {
-       let state = state.clone();
- 
-       move |event| match event {
-         BrokerEvent::EventLoss => {
--          state.state.lock().subscriptions.clear();
-+          state.lock().subscriptions.clear();
-+        }
-+        BrokerEvent::Event(event) => {
-+          broker(&mut state.lock(), event);
-         }
--        BrokerEvent::Event(event) => broker(&state, event),
-       }
--    });
-+    }));
- 
--    return state;
-+    return Self {
-+      state,
-+      weak_hook_handle,
-+    };
+         layoutErdNodes(props.nodes, graphAspect(ref)).forEach((node, index) => {
+           const position = node.position;
+           if (position) {
+@@ -396,3 +414,15 @@ function graphAspect(el: HTMLElement | undefined) {
+     );
    }
- 
-   pub fn update(
-@@ -254,58 +258,77 @@ impl PerConnectionState {
-   }
- 
-   pub async fn add_record_subscription(
--    self: Arc<Self>,
-+    &self,
-     api: RecordApi,
-     record: trailbase_sqlite::Value,
-     user: Option<User>,
-     sender: async_channel::Sender<EventCandidate>,
-   ) -> Result<Arc<Subscription>, RecordError> {
--    let table_name = api.table_name();
--    let pk_column = &api.record_pk_column().column.name;
--
--    let Some(row_id): Option<i64> = api
--      .conn()
--      .read_query_row_get(
--        format!(r#"SELECT _rowid_ FROM {table_name} WHERE "{pk_column}" = $1"#),
--        [record],
--        0,
--      )
--      .await?
--    else {
--      return Err(RecordError::RecordNotFound);
--    };
-+    async fn get_row_id(
-+      api: &RecordApi,
-+      record: trailbase_sqlite::Value,
-+    ) -> Result<i64, RecordError> {
-+      // NOTE: It's important that the handler already did ACL checking to not allow unprivileged
-+      // record enumerations.
-+      return api
-+        .conn()
-+        .read_query_row_get(
-+          format!(
-+            "SELECT _rowid_ FROM {table_name} WHERE \"{pk_column}\" = $1",
-+            table_name = api.table_name(),
-+            pk_column = api.record_pk_column().column.name,
-+          ),
-+          (record,),
-+          0,
-+        )
-+        .await
-+        .map_err(|err| RecordError::Internal(err.i
+ })();
++
++type StoredNodeMetadata = {
++  position?: {
++    x: number;
++    y: number;
++  };
++};
++
++const $layout = persistentJSON<Map<string, StoredNodeMetadata>>(
++  "erd:layout",
++  new Map(),
++);
 ```
 
 #### Recent Merged Pull Requests:
@@ -1360,33 +1498,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Further simplify subscription state management. Avoid race between record-level 
+## X. Update JavaScript dependencies and address security advisories.
 
 **RULE**:
-When implementing operations in `crates/core/src/records/subscribe/handler.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `client/testfixture/guests/typescript/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6433cee2`: Further simplify subscription state management. Avoid race between record-level subscriptions and record deletions, which may keep hooks unnecessarily alive.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `efb40fa7`: Update JavaScript dependencies and address security advisories.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/records/subscribe/handler.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `client/testfixture/guests/typescript/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let receiver = AutoCleanupEventStream::new(receiver, &conn_state, subscription.id.clone());
-        let receiver = AutoCleanupEventStream::new(receiver, &conn_state, subscription.id.clone());
+    "typescript-eslint": "^8.73.0",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-        let receiver = AutoCleanupEventStream::new(receiver, conn_state, subscription.id.clone());
-        let receiver = AutoCleanupEventStream::new(receiver, conn_state, subscription.id.clone());
+// Induced defect failure mode:
+    "typescript-eslint": "^8.72.2",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6433cee2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `efb40fa7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

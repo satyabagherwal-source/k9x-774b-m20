@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T19:44:33.095Z",
-  "total_records": 1896,
+  "last_updated": "2026-11-18T19:52:46.034Z",
+  "total_records": 1899,
   "domains": {
     "A": {
       "total": 13,
@@ -927,7 +927,7 @@
       ]
     },
     "G": {
-      "total": 331,
+      "total": 333,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1259,11 +1259,13 @@
         "domain_intelligence-architecture-intelligence-rustcrypto-hashes-core-invariants",
         "domain_intelligence-architecture-intelligence-rustcrypto-hashes-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-agent-field-agentfield-core-invariants",
-        "domain_intelligence-architecture-intelligence-agent-field-agentfield-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-agent-field-agentfield-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-trailbaseio-trailbase-core-invariants",
+        "domain_intelligence-architecture-intelligence-trailbaseio-trailbase-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 442,
+      "total": 443,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1706,7 +1708,8 @@
         "domain_intelligence-technical-construction-intelligence-smallstep-cli-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-xerj-org-xerj-core-invariants",
         "domain_intelligence-technical-construction-intelligence-tailscale-tailscale-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-tailscale-tailscale-learnings-core-invariant"
+        "domain_intelligence-technical-construction-intelligence-tailscale-tailscale-learnings-core-invariant",
+        "DOM-H-26FD692A"
       ]
     },
     "I": {
@@ -8743,8 +8746,8 @@
       "title": "Product Intelligence: pimalaya/himalaya Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-pimalaya-himalaya-product-intelligence-pimalaya-himalaya-core-invariants.md",
       "repository": "pimalaya/himalaya",
-      "content_hash": "c3607597f6572e4cd8e0236df0e33b27bde820b5e4251df794f9c76f78ee65b5",
-      "created_at": "2026-11-17T05:37:08.947Z"
+      "content_hash": "58b147dc4e38ff1fe3a92422e188bf760a856977fa42d642f76db7ad6142a6e5",
+      "created_at": "2026-11-18T19:51:58.779Z"
     },
     "domain_intelligence-technical-construction-intelligence-kirillzyusko-react-native-keyboard-controlle": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kirillzyusko-react-native-keyboard-controlle",
@@ -8761,8 +8764,8 @@
       "title": "Product Intelligence: pimalaya-himalaya-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-pimalaya-himalaya-learnings-product-intelligence-pimalaya-himalaya-learnings-cor.md",
       "repository": "pimalaya-himalaya-learnings",
-      "content_hash": "d9d81a9af262031397388bf5df74657d2319eda0061b08078832e17a4212c483",
-      "created_at": "2026-11-17T05:37:19.504Z"
+      "content_hash": "20a72aabb40e1a51babab6774d48b4840d932ac6b0e129b8e2795bff935a3831",
+      "created_at": "2026-11-18T19:52:15.849Z"
     },
     "DOM-F-456EB881": {
       "record_id": "DOM-F-456EB881",
@@ -11935,8 +11938,8 @@
       "title": "Research & Knowledge Intelligence: MiniMaxAI/MiniMax-H3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-h3-research-knowledge-intelligence-minimaxai-minimax-h3-cor.md",
       "repository": "MiniMaxAI/MiniMax-H3",
-      "content_hash": "fe2e5807d50240f1923b7769c438f90e43b4b1095e7b18895a0dc2e69b725959",
-      "created_at": "2026-11-14T01:26:20.278Z"
+      "content_hash": "51e35de722e43b509f80f10cd5fe54633132a4aefe11abfdb31ea699bfce2ff0",
+      "created_at": "2026-11-18T19:51:56.401Z"
     },
     "domain_intelligence-content-information-intelligence-pingcap-tidb-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-pingcap-tidb-core-invariants",
@@ -12004,8 +12007,8 @@
       "title": "Research & Knowledge Intelligence: hf-minimaxai-minimax-h3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-minimaxai-minimax-h3-learnings-research-knowledge-intelligence-hf-minimaxai-m.md",
       "repository": "hf-minimaxai-minimax-h3-learnings",
-      "content_hash": "e72b610b454838c0f562684b588219fa916d6bc3a1ea3cb3c6986369d0038830",
-      "created_at": "2026-11-14T01:26:58.293Z"
+      "content_hash": "6c70564c5f049aad069d660cb450493db05ec416a3c36b54c0f3d32411bc412b",
+      "created_at": "2026-11-18T19:52:16.324Z"
     },
     "domain_intelligence-content-information-intelligence-pingcap-tidb-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-pingcap-tidb-learnings-core-invariants",
@@ -31747,6 +31750,66 @@
       "repository": "hf-openai-whisper-large-v3-learnings",
       "content_hash": "63bc96b2f60b6eb30156345c308c089b287f0f758d7a15538f1ac9ef7e621ecb",
       "created_at": "2026-11-18T19:35:04.359Z"
+    },
+    "domain_intelligence-architecture-intelligence-trailbaseio-trailbase-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-trailbaseio-trailbase-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: trailbaseio/trailbase Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trailbaseio-trailbase-architecture-intelligence-trailbaseio-trailbase-core-invar.md",
+      "repository": "trailbaseio/trailbase",
+      "content_hash": "244a7cb09b205d9cc65038f6ee80a7cff31d2e70ec7ab8b8e9919e29ea242dd3",
+      "created_at": "2026-11-18T19:52:12.526Z"
+    },
+    "DOM-H-26FD692A": {
+      "record_id": "DOM-H-26FD692A",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "Update JavaScript dependencies and address security advisories.",
+      "content": "When implementing operations in `client/testfixture/guests/typescript/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "0b4ce92288aff38e76bad6d2a0ed56cf29d493bdcd9a66451f5b7e093bf98c07",
+      "summary": "Prevents defects observed in production commit `efb40fa7`: Update JavaScript dependencies and address security advisories.. Unvalidated exec -> When implementing operations in `client/testfixture/guests/typescript/package.json`, engineers MUST enforce rigorous boundary validation, sa",
+      "provenance": {
+        "source_uri": "project://trailbaseio-trailbase/trailbaseio-trailbase-learnings.md",
+        "source_version": "e0a2df25",
+        "observed_at": "2026-11-18T19:52:11.217Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (trailbaseio-trailbase)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of trailbaseio-trailbase"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T19:52:45.502Z"
+    },
+    "domain_intelligence-architecture-intelligence-trailbaseio-trailbase-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-trailbaseio-trailbase-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: trailbaseio-trailbase-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trailbaseio-trailbase-learnings-architecture-intelligence-trailbaseio-trailbase-.md",
+      "repository": "trailbaseio-trailbase-learnings",
+      "content_hash": "7b104aef216e9eb3fece2688e5d2f9ab45cae2b89097070b19ce62be447b0ed7",
+      "created_at": "2026-11-18T19:52:46.034Z"
     }
   }
 }

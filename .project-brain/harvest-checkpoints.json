@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T19:44:20.018Z",
+  "last_updated": "2026-11-18T19:52:12.211Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1115,14 +1115,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-minimaxai-minimax-h3",
-      "content_hash": "167b9d284c69a23e916cb6ead2dcbae5a24fa480b106c7ef89e5aca047a5b874",
-      "verified_at": "2026-11-14T01:26:20.115Z",
+      "content_hash": "af129810d409b5afcbd8653331daae0de6c15160da73202007ee5c669bb7ddc7",
+      "verified_at": "2026-11-18T19:51:56.217Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T01:26:20.115Z"
+      "last_updated": "2026-11-18T19:51:56.217Z"
     },
     "Qwen/Qwen3.8-Flash-Next": {
       "repository": "Qwen/Qwen3.8-Flash-Next",
@@ -6156,14 +6156,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trailbaseio-trailbase",
-      "content_hash": "f88498558ac6860893948a09335a1a0a0c8508317219daf0a577c207f2cfb204",
-      "verified_at": "2026-11-18T04:29:19.927Z",
+      "content_hash": "b1c12794513aa0906f620b69b3bb52b0da428d3176bfe2894e528b02169a71eb",
+      "verified_at": "2026-11-18T19:52:12.211Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T04:29:19.927Z"
+      "last_updated": "2026-11-18T19:52:12.211Z"
     },
     "tremorlabs/tremor-npm": {
       "repository": "tremorlabs/tremor-npm",
@@ -7236,14 +7236,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pimalaya-himalaya",
-      "content_hash": "2d931f626ca5fe7defdd2162a8f9a5ca1170260d5617776ffc4b1884872c05e9",
-      "verified_at": "2026-11-17T05:37:08.630Z",
+      "content_hash": "92b72d53a46a740e63f9d25bb14694e350495026489d335aca639178d5d90626",
+      "verified_at": "2026-11-18T19:51:58.425Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T05:37:08.630Z"
+      "last_updated": "2026-11-18T19:51:58.425Z"
     },
     "wcandillon/react-native-skia": {
       "repository": "wcandillon/react-native-skia",
