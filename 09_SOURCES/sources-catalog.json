@@ -305,8 +305,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/TeleOCR",
     "sourceVersion": "hf-xingchen-agi-teleocr",
     "license": "Open-Source",
-    "contentHash": "e80710b4dbdb9f76cd1d866971c00a59f4bb366c546424250280fdc9d4786529",
-    "lastHarvestedAt": "2026-11-18T00:07:46.264Z",
+    "contentHash": "37627c9579d7107501dcca0806e021fa28db6a00ac70f12c40f17ec08e7d5d84",
+    "lastHarvestedAt": "2026-11-18T11:54:52.817Z",
     "learningId": "learn-huggingface-xingchen-agi-teleocr"
   },
   "hf-qwen-qwen-image-2.1": {
@@ -7033,10 +7033,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/turso",
-    "sourceVersion": "d2ecfa2f",
+    "sourceVersion": "ff78457b",
     "license": "MIT",
-    "contentHash": "f1201ca15d8279eee2877af8a8d260f3bd0a8553403bffc6324790563b0f3d50",
-    "lastHarvestedAt": "2026-11-17T18:05:40.930Z",
+    "contentHash": "4e4cbb0f77f326be72fe1cd20e5538b5499cebe93628892cc8dca2aeccd83904",
+    "lastHarvestedAt": "2026-11-18T11:55:08.321Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "flux-iac-tofu-controller": {
@@ -7083,10 +7083,10 @@
     "repository": "emberstack/kubernetes-reflector",
     "platform": "github",
     "sourceUrl": "https://github.com/emberstack/kubernetes-reflector",
-    "sourceVersion": "0bc3222d",
+    "sourceVersion": "dd9d0499",
     "license": "MIT",
-    "contentHash": "7a86d4f2821270934d8e71bb60fc59fea6faae28dbf166409125e0132db357fe",
-    "lastHarvestedAt": "2026-11-17T18:42:43.200Z",
+    "contentHash": "31371024d31402ce00c21311a8600f6e74587088d70b44cd58fb109795a847b1",
+    "lastHarvestedAt": "2026-11-18T11:55:00.687Z",
     "learningId": "learn-github-emberstack-kubernetes-reflector"
   },
   "arxanas-git-branchless": {
@@ -12868,5 +12868,15 @@
     "contentHash": "ca7f2236837f812c33d8ccb3f4d99031e473730ef44c3e2ab5acef865578c8f9",
     "lastHarvestedAt": "2026-11-18T11:33:09.785Z",
     "learningId": "learn-github-eclipse-theia-theia"
+  },
+  "hf-kormo-vl-kormo-web-11b": {
+    "repository": "KORMo-VL/KORMo-Web-11B",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/KORMo-VL/KORMo-Web-11B",
+    "sourceVersion": "hf-kormo-vl-kormo-web-11b",
+    "license": "Open-Source",
+    "contentHash": "746c30cf258690d2188ce80395fb273a6209bf56a5d42df6d2e6a69acb7f4698",
+    "lastHarvestedAt": "2026-11-18T11:54:50.302Z",
+    "learningId": "learn-huggingface-kormo-vl-kormo-web-11b"
   }
 }

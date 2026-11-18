@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/XingChen-AGI/TeleOCR",
   "source_version": "hf-xingchen-agi-teleocr",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T00:07:46.443Z",
+  "timestamp": "2026-11-18T11:54:52.997Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-xingchen-agi-teleocr",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [XingChen-AGI/TeleOCR](https://huggingface.co/XingChen-AGI/TeleOCR) (Revision: `hf-xingche`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T00:07:46.443Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T11:54:52.997Z`  
 > **Learning ID**: `learn-huggingface-xingchen-agi-teleocr`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/XingChen-AGI/TeleOCR](https://huggingface.co/XingChen-AGI/TeleOCR))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T00:07:45.719Z  
+> **Harvest Timestamp**: 2026-11-18T11:54:52.384Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 19349 downloads | 1319 likes
+- **Stars / Engagement**: 18961 downloads | 1319 likes
 
 ---
 

@@ -10946,3 +10946,8 @@
 | `CYCLE-20261118-0VBD` | `2026-11-18T11:45:00.553Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md` | Yes (`09adff2d...`) |
 | `CYCLE-20261118-127K` | `2026-11-18T11:45:09.488Z` | `NervJS/taro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9211` | Yes (`c892a62c...`) |
 | `CYCLE-20261118-174F` | `2026-11-18T11:45:15.855Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9212` | Yes (`0b7d29fa...`) |
+| `CYCLE-20261118-DID6` | `2026-11-18T11:54:50.298Z` | `KORMo-VL/KORMo-Web-11B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-kormo-vl-kormo-web-11b-learnings.md` | Yes (`746c30cf...`) |
+| `CYCLE-20261118-DKB1` | `2026-11-18T11:54:52.813Z` | `XingChen-AGI/TeleOCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md` | Yes (`37627c95...`) |
+| `CYCLE-20261118-DQDN` | `2026-11-18T11:55:00.683Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6820` | Yes (`31371024...`) |
+| `CYCLE-20261118-DW9P` | `2026-11-18T11:55:08.317Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9213` | Yes (`4e4cbb0f...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T11:55:41.797Z` | `hf-kormo-vl-kormo-web-11b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E01F5E82` [Domain D] | Yes (`013b190c...`) |

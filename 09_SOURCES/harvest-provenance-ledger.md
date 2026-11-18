@@ -10979,3 +10979,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-18T11:45:00.558Z |
 | `learn-github-nervjs-taro` | `https://github.com/NervJS/taro` | `a48d43e3` | Multi-dimensional audit evidence | 2026-11-18T11:45:09.493Z |
 | `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `ab502c61` | Multi-dimensional audit evidence | 2026-11-18T11:45:15.860Z |
+| `learn-huggingface-kormo-vl-kormo-web-11b` | `https://huggingface.co/KORMo-VL/KORMo-Web-11B` | `hf-kormo-v` | Multi-dimensional audit evidence | 2026-11-18T11:54:50.302Z |
+| `learn-huggingface-xingchen-agi-teleocr` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-11-18T11:54:52.817Z |
+| `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `dd9d0499` | Multi-dimensional audit evidence | 2026-11-18T11:55:00.687Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `ff78457b` | Multi-dimensional audit evidence | 2026-11-18T11:55:08.321Z |
+| `learn-dom-d-e01f5e82` | `project://hf-kormo-vl-kormo-web-11b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-kormo-vl-kormo-web-11b-learnings.md` | 2026-11-18T11:55:41.797Z |

@@ -21517,5 +21517,17 @@
     "qualityScore": 12218,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-18T11:29:34.913Z"
+  },
+  {
+    "name": "KORMo-VL/KORMo-Web-11B",
+    "fullName": "KORMo-VL/KORMo-Web-11B",
+    "url": "https://huggingface.co/KORMo-VL/KORMo-Web-11B",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: KORMo-VL/KORMo-Web-11B (98 likes, 277 downloads)",
+    "likes": 98,
+    "downloads": 277,
+    "qualityScore": 1257,
+    "discoveredAt": "2026-11-18T11:52:35.860Z"
   }
 ]

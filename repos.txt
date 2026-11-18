@@ -5186,3 +5186,7 @@ https://huggingface.co/tencent/Hy4-flash
 # --- Automatically Discovered by AI Scout Engine [2026-11-18T11:33:04.126Z] ---
 # [AI-AGENTS] eclipse-theia/theia (12218 score) - Eclipse Theia is an open-source platform for building custom IDEs and tools for 
 https://github.com/eclipse-theia/theia
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-18T11:54:44.256Z] ---
+# [HUGGINGFACE-AI-MODELS] KORMo-VL/KORMo-Web-11B (1257 score) - Verified Hugging Face Model: KORMo-VL/KORMo-Web-11B (98 likes, 277 downloads)
+https://huggingface.co/KORMo-VL/KORMo-Web-11B

@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-18T10:22:55.654Z",
+  "updated_at": "2026-11-18T11:55:41.795Z",
   "statistics": {
-    "total_nodes": 351,
-    "total_edges": 162,
+    "total_nodes": 352,
+    "total_edges": 163,
     "domain_distribution": {
-      "D": 240,
+      "D": 241,
       "M": 1,
       "H": 48,
       "J": 13,
@@ -20,7 +20,7 @@
       "I": 4
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 161,
+      "CONSTRAINED_BY_ARCHITECTURE": 162,
       "VERIFIED_BY_TEST": 1
     }
   },
@@ -7845,6 +7845,29 @@
       ],
       "created_at": "2026-11-18T10:22:55.654Z",
       "updated_at": "2026-11-18T10:22:55.654Z"
+    },
+    "DOM-D-E01F5E82": {
+      "id": "DOM-D-E01F5E82",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): KORMo-VL/KORMo-Web-11B",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-kormo-vl-kormo-web-11b-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-kormo-vl-kormo-web-11b-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-kormo-vl-kormo-web-11b/hf-kormo-vl-kormo-web-11b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T11:55:11.551Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-kormo-vl-kormo-web-11b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-18T11:55:41.795Z",
+      "updated_at": "2026-11-18T11:55:41.795Z"
     }
   },
   "edges": [
@@ -9467,6 +9490,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-H-CC987E5F [H] with Domain G",
       "created_at": "2026-11-18T09:29:18.927Z"
+    },
+    {
+      "id": "EDGE-CDDB675EFA4F",
+      "sourceId": "DOM-D-E01F5E82",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-E01F5E82 [D] with Domain M",
+      "created_at": "2026-11-18T11:55:41.795Z"
     }
   ]
 }

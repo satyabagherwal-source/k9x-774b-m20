@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T11:45:20.719Z",
+  "updated_at": "2026-11-18T11:55:41.818Z",
   "stats": {
-    "total_discovered": 5475,
-    "approved_pending_harvest": 5170,
+    "total_discovered": 5476,
+    "approved_pending_harvest": 5171,
     "harvested_count": 0,
     "rejected_count": 305,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5154,
+      "COMMUNITY_AND_EXPERT": 5155,
       "OFFICIAL_DOCUMENTATION": 176,
       "STANDARDS_AND_SPECIFICATIONS": 109,
       "ENGINEERING_BLOGS": 4,
@@ -118336,6 +118336,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
         "fileName": "nervjs-taro-learnings.md"
+      }
+    },
+    "SRC-9DE1BBE70D1B": {
+      "id": "SRC-9DE1BBE70D1B",
+      "url": "https://huggingface.co/KORMo-VL/KORMo-Web-11B",
+      "title": "https://huggingface.co/KORMo-VL/KORMo-Web-11B",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:55:41.818Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-kormo-vl-kormo-web-11b-learnings.md",
+        "fileName": "hf-kormo-vl-kormo-web-11b-learnings.md"
       }
     }
   }

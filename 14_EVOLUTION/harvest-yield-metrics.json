@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T11:45:15.867Z",
-  "total_cycles_completed": 10471,
-  "total_learnings_persisted": 10471,
-  "total_rules_promoted": 9968,
+  "last_updated": "2026-11-18T11:55:08.326Z",
+  "total_cycles_completed": 10475,
+  "total_learnings_persisted": 10475,
+  "total_rules_promoted": 9970,
   "history": [
-    {
-      "timestamp": "2026-11-17T21:22:23.149Z",
-      "repository": "react/metro",
-      "learningId": "learn-github-react-metro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T21:22:30.978Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T21:40:59.691Z",
-      "repository": "Qwen/Qwen3.8-27B",
-      "learningId": "learn-huggingface-qwen-qwen3-8-27b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T21:41:02.852Z",
-      "repository": "pola-rs/polars",
-      "learningId": "learn-github-pola-rs-polars",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T21:41:10.055Z",
       "repository": "nats-io/nats.go",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-18T11:45:15.867Z",
       "repository": "clockworklabs/SpacetimeDB",
       "learningId": "learn-github-clockworklabs-spacetimedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T11:54:50.307Z",
+      "repository": "KORMo-VL/KORMo-Web-11B",
+      "learningId": "learn-huggingface-kormo-vl-kormo-web-11b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T11:54:52.822Z",
+      "repository": "XingChen-AGI/TeleOCR",
+      "learningId": "learn-huggingface-xingchen-agi-teleocr",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T11:55:00.691Z",
+      "repository": "emberstack/kubernetes-reflector",
+      "learningId": "learn-github-emberstack-kubernetes-reflector",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T11:55:08.326Z",
+      "repository": "tursodatabase/turso",
+      "learningId": "learn-github-tursodatabase-turso",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

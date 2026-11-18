@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T11:45:15.874Z",
+  "last_updated": "2026-11-18T11:55:08.329Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -350,14 +350,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xingchen-agi-teleocr",
-      "content_hash": "e80710b4dbdb9f76cd1d866971c00a59f4bb366c546424250280fdc9d4786529",
-      "verified_at": "2026-11-18T00:07:46.272Z",
+      "content_hash": "37627c9579d7107501dcca0806e021fa28db6a00ac70f12c40f17ec08e7d5d84",
+      "verified_at": "2026-11-18T11:54:52.825Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T00:07:46.272Z"
+      "last_updated": "2026-11-18T11:54:52.825Z"
     },
     "Qwen/Qwen-Image-2.1": {
       "repository": "Qwen/Qwen-Image-2.1",
@@ -9516,14 +9516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tursodatabase-turso",
-      "content_hash": "f1201ca15d8279eee2877af8a8d260f3bd0a8553403bffc6324790563b0f3d50",
-      "verified_at": "2026-11-17T18:05:40.938Z",
+      "content_hash": "4e4cbb0f77f326be72fe1cd20e5538b5499cebe93628892cc8dca2aeccd83904",
+      "verified_at": "2026-11-18T11:55:08.328Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T18:05:40.938Z"
+      "last_updated": "2026-11-18T11:55:08.328Z"
     },
     "carbon-design-system/carbon": {
       "repository": "carbon-design-system/carbon",
@@ -10671,14 +10671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-emberstack-kubernetes-reflector",
-      "content_hash": "7a86d4f2821270934d8e71bb60fc59fea6faae28dbf166409125e0132db357fe",
-      "verified_at": "2026-11-17T18:42:43.208Z",
+      "content_hash": "31371024d31402ce00c21311a8600f6e74587088d70b44cd58fb109795a847b1",
+      "verified_at": "2026-11-18T11:55:00.694Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T18:42:43.208Z"
+      "last_updated": "2026-11-18T11:55:00.694Z"
     },
     "arxanas/git-branchless": {
       "repository": "arxanas/git-branchless",
@@ -19394,6 +19394,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-18T11:33:09.796Z"
+    },
+    "KORMo-VL/KORMo-Web-11B": {
+      "repository": "KORMo-VL/KORMo-Web-11B",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-kormo-vl-kormo-web-11b",
+      "content_hash": "746c30cf258690d2188ce80395fb273a6209bf56a5d42df6d2e6a69acb7f4698",
+      "verified_at": "2026-11-18T11:54:50.310Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-18T11:54:50.310Z"
     }
   },
   "repos": {

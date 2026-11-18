@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T11:45:22.100Z",
-  "total_records": 1838,
+  "last_updated": "2026-11-18T11:55:43.006Z",
+  "total_records": 1841,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 781,
+      "total": 784,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -830,7 +830,10 @@
         "domain_intelligence-research-knowledge-intelligence-automattic-harper-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-learnings-core-in",
         "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-xl-base-1-0-core-in",
-        "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-xl-base-1-0-lear"
+        "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-xl-base-1-0-lear",
+        "domain_intelligence-research-knowledge-intelligence-kormo-vl-kormo-web-11b-core-invariants",
+        "DOM-D-E01F5E82",
+        "domain_intelligence-research-knowledge-intelligence-hf-kormo-vl-kormo-web-11b-learnings-core-invaria"
       ]
     },
     "E": {
@@ -8049,8 +8052,8 @@
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "repository": "tursodatabase/turso",
-      "content_hash": "e7a31d1ccbfbf55ad4f937f56b2b81d7f02a508acbdf2f79e6beff64521aa706",
-      "created_at": "2026-11-17T18:05:41.254Z"
+      "content_hash": "baf5b53feedcbdba63948ea2d0ab45172d8ede0beb62648f9d9a41cf7861155c",
+      "created_at": "2026-11-18T11:55:08.647Z"
     },
     "DOM-D-991F9C3C": {
       "record_id": "DOM-D-991F9C3C",
@@ -28238,8 +28241,8 @@
       "title": "Architecture Intelligence: emberstack/kubernetes-reflector Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-emberstack-kubernetes-reflector-architecture-intelligence-emberstack-kubernetes-.md",
       "repository": "emberstack/kubernetes-reflector",
-      "content_hash": "b670f691bd368cc76e8ee7c99905bb69ecd4511d244b9ca7cf22422602a7e515",
-      "created_at": "2026-11-17T18:42:43.555Z"
+      "content_hash": "e54d36783a8f3f672c75cb8b4f61d672a8b0e07a94e7b133c75746c842e7754e",
+      "created_at": "2026-11-18T11:55:00.998Z"
     },
     "domain_intelligence-design-intelligence-nanbeige-nanbeige4-3-33b-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-nanbeige-nanbeige4-3-33b-core-invariants",
@@ -28299,8 +28302,8 @@
       "title": "Architecture Intelligence: emberstack-kubernetes-reflector-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-emberstack-kubernetes-reflector-learnings-architecture-intelligence-emberstack-k.md",
       "repository": "emberstack-kubernetes-reflector-learnings",
-      "content_hash": "f505728a567c22c37ddcacd07e60c8fb08fd77feb78b98700c338342c9a2065c",
-      "created_at": "2026-11-17T18:44:46.014Z"
+      "content_hash": "6951df99defcbb266747ee4794a890d001e647824d769507813f98751e69302b",
+      "created_at": "2026-11-18T11:55:43.006Z"
     },
     "domain_intelligence-research-knowledge-intelligence-briaai-fibo-2-0-dev-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-briaai-fibo-2-0-dev-core-invariants",
@@ -29009,8 +29012,8 @@
       "title": "Research & Knowledge Intelligence: XingChen-AGI/TeleOCR Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xingchen-agi-teleocr-research-knowledge-intelligence-xingchen-agi-teleocr-cor.md",
       "repository": "XingChen-AGI/TeleOCR",
-      "content_hash": "85683e49c7c409f4577cdb043504c5aaf636574719b26ec4e5c8a845a4e19aef",
-      "created_at": "2026-11-18T00:07:46.444Z"
+      "content_hash": "46211f6943a96f67c9edfb1b2a09f1730120ed24435e647e0be4dbd5fa8613d0",
+      "created_at": "2026-11-18T11:54:52.998Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-teleocr-learnings-core-invariant": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-teleocr-learnings-core-invariant",
@@ -29018,8 +29021,8 @@
       "title": "Research & Knowledge Intelligence: hf-xingchen-agi-teleocr-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xingchen-agi-teleocr-learnings-research-knowledge-intelligence-hf-xingchen-ag.md",
       "repository": "hf-xingchen-agi-teleocr-learnings",
-      "content_hash": "acedf32634e439f75f35498af5f1c50cedebf89c65bd4f572ae86b464d88140e",
-      "created_at": "2026-11-18T00:08:01.807Z"
+      "content_hash": "24a0e50922d7b01760af6f43b3452a843eb09ffca202287e29af1d9dd0f2b750",
+      "created_at": "2026-11-18T11:55:42.430Z"
     },
     "domain_intelligence-design-intelligence-qwen-qwen-image-2-1-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-qwen-qwen-image-2-1-core-invariants",
@@ -30804,6 +30807,66 @@
       "repository": "nervjs-taro-learnings",
       "content_hash": "21c710eee487cb1dc553199968885dab5f7a867ce437648d5b78313aec19f798",
       "created_at": "2026-11-18T11:45:21.173Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-kormo-vl-kormo-web-11b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-kormo-vl-kormo-web-11b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: KORMo-VL/KORMo-Web-11B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-kormo-vl-kormo-web-11b-research-knowledge-intelligence-kormo-vl-kormo-web-11b.md",
+      "repository": "KORMo-VL/KORMo-Web-11B",
+      "content_hash": "25c66399f67e9d6810b560646332137889cd384ea3639904f5cd8ae982b16d58",
+      "created_at": "2026-11-18T11:54:50.477Z"
+    },
+    "DOM-D-E01F5E82": {
+      "record_id": "DOM-D-E01F5E82",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): KORMo-VL/KORMo-Web-11B",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-kormo-vl-kormo-web-11b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/KORMo-VL/KORMo-Web-11B](https://huggingface.co/KORMo-VL/KORMo-Web-11B))  \n> **Source Version**: `hf-kormo-vl-`  \n> **License**: Open-Source  \n> **Synth",
+      "content_hash": "013b190cc2f038c1d78448b65ba3e9953b96d83479deed4a9f1a4d5a6daacb0f",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-kormo-vl-kormo-web-11b-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-kormo-vl-kormo-web-11b-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "provenance": {
+        "source_uri": "project://hf-kormo-vl-kormo-web-11b/hf-kormo-vl-kormo-web-11b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T11:55:11.551Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-kormo-vl-kormo-web-11b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-kormo-vl-kormo-web-11b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T11:55:41.776Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-kormo-vl-kormo-web-11b-learnings-core-invaria": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-kormo-vl-kormo-web-11b-learnings-core-invaria",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-kormo-vl-kormo-web-11b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-kormo-vl-kormo-web-11b-learnings-research-knowledge-intelligence-hf-kormo-vl-.md",
+      "repository": "hf-kormo-vl-kormo-web-11b-learnings",
+      "content_hash": "4542bd98485cb55314dde150c57de87a6bd15bc78c88cbb2e637ebdbd156b996",
+      "created_at": "2026-11-18T11:55:42.041Z"
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T11:45:21.870Z",
+  "last_updated": "2026-11-18T11:55:42.839Z",
   "directives": [
     {
       "id": "CD-001",
@@ -29061,6 +29061,37 @@
       "source_repo": "clockworklabs-spacetimedb",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0A9B3F-ts-sdk-cache-build-indexes-on-first-look.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-EMWM",
+      "directive_title": "Bump the all-dependencies group with 5 updates",
+      "source_repo": "emberstack-kubernetes-reflector-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-EMWM-bump-the-all-dependencies-group-with-5-updates.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-DWEW",
+      "directive_title": "Merge 'parser: reject NULL as a pragma value' from sath000007",
+      "source_repo": "tursodatabase/turso",
+      "source_commit": "ff78457b",
+      "staged_file": "11_INBOX/candidate-directives/CD-DWEW-merge-parser-reject-null-as-a-pragma-value-from-sath000007.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-0345D8",
+      "directive_title": "Bump the all-dependencies group with 5 updates",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "emberstack-kubernetes-reflector",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0345D8-bump-the-all-dependencies-group-with-5-u.md",
       "staged_date": "2026-11-18"
     }
   ]

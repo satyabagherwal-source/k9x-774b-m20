@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T11:45:22.300Z",
-  "total_verified_learnings": 8999,
+  "last_updated": "2026-11-18T11:55:43.163Z",
+  "total_verified_learnings": 9000,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21201,
+  "total_items": 21207,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -105632,15 +105632,15 @@
       "learning_id": "rule-6820",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 6820,
-      "title": "Bump the all-dependencies group with 5 updates (#725)",
+      "title": "Bump the all-dependencies group with 5 updates",
       "source_url": "https://github.com/emberstack/kubernetes-reflector",
-      "source_version": "84367eb5",
+      "source_version": "dd9d0499",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-04T10:45:26.205Z"
+      "verified_at": "2026-11-18T11:55:00.509Z"
     },
     "rule-6821": {
       "learning_id": "rule-6821",
@@ -112993,10 +112993,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "repository": "tursodatabase/turso",
-      "source_version": "d2ecfa2f",
-      "content_hash": "e7a31d1ccbfbf55ad4f937f56b2b81d7f02a508acbdf2f79e6beff64521aa706",
+      "source_version": "ff78457b",
+      "content_hash": "baf5b53feedcbdba63948ea2d0ab45172d8ede0beb62648f9d9a41cf7861155c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T18:05:41.254Z"
+      "persisted_at": "2026-11-18T11:55:08.647Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso",
@@ -113005,10 +113005,10 @@
       "relative_path": "08_VERIFICATION/tursodatabase-turso-verification-protocol-empirical-defect-shield-for-tursodatab.md",
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "source_version": "d2ecfa2f",
-      "content_hash": "fd15c76d971ae75a48b80767b1a55db518a0e9e8b15ccd11790deb17a818148d",
+      "source_version": "ff78457b",
+      "content_hash": "dda0d4066fa109367903430392a87a2217f6a2e86f0cab1b8eed322dadf0aa8a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T18:05:41.396Z"
+      "persisted_at": "2026-11-18T11:55:08.786Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian",
@@ -213449,8 +213449,8 @@
       "slug": "tursodatabase-turso",
       "platform": "github",
       "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "d2ecfa2f",
-      "content_hash": "f1201ca15d8279eee2877af8a8d260f3bd0a8553403bffc6324790563b0f3d50",
+      "source_version": "ff78457b",
+      "content_hash": "4e4cbb0f77f326be72fe1cd20e5538b5499cebe93628892cc8dca2aeccd83904",
       "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
       "promoted_rules": [
@@ -213478,6 +213478,11 @@
           "number": 8985,
           "title": "list row-level security policies in pg_policy",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 9213,
+          "title": "Merge 'parser: reject NULL as a pragma value' from sath000007",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213485,7 +213490,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T18:05:40.760Z",
+      "verified_at": "2026-11-18T11:55:08.138Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -275711,11 +275716,16 @@
       "slug": "emberstack-kubernetes-reflector",
       "platform": "github",
       "source_url": "https://github.com/emberstack/kubernetes-reflector",
-      "source_version": "0bc3222d",
-      "content_hash": "7a86d4f2821270934d8e71bb60fc59fea6faae28dbf166409125e0132db357fe",
+      "source_version": "dd9d0499",
+      "content_hash": "31371024d31402ce00c21311a8600f6e74587088d70b44cd58fb109795a847b1",
       "dossier_path": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/emberstack-kubernetes-reflector-learnings.md",
       "promoted_rules": [
+        {
+          "number": 6820,
+          "title": "Bump the all-dependencies group with 5 updates",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 9030,
           "title": "Bump the all-dependencies group with 7 updates",
@@ -275727,7 +275737,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T18:42:42.914Z",
+      "verified_at": "2026-11-18T11:55:00.509Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -275769,10 +275779,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-emberstack-kubernetes-reflector-architecture-intelligence-emberstack-kubernetes-.md",
       "title": "Architecture Intelligence: emberstack/kubernetes-reflector Core Invariants",
       "repository": "emberstack/kubernetes-reflector",
-      "source_version": "0bc3222d",
-      "content_hash": "b670f691bd368cc76e8ee7c99905bb69ecd4511d244b9ca7cf22422602a7e515",
+      "source_version": "dd9d0499",
+      "content_hash": "e54d36783a8f3f672c75cb8b4f61d672a8b0e07a94e7b133c75746c842e7754e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T18:42:43.555Z"
+      "persisted_at": "2026-11-18T11:55:00.998Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-emberstack-kubernetes-reflecto": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-emberstack-kubernetes-reflecto",
@@ -275782,9 +275792,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for emberstack-kubernetes-reflector-learnings",
       "repository": "emberstack-kubernetes-reflector-learnings",
       "source_version": "HEAD",
-      "content_hash": "8fb3ab70b82e713e7bce17bf64e6c51cbbee93d46b81a1dc4003cb68c88a5d20",
+      "content_hash": "5f1754dd3011d15e0aacdb52507bd9769b6c9e90dabc5bf5c70ebfb8013e63a9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T18:44:46.152Z"
+      "persisted_at": "2026-11-18T11:55:43.163Z"
     },
     "rule-9031": {
       "learning_id": "rule-9031",
@@ -275987,9 +275997,9 @@
       "title": "Architecture Intelligence: emberstack-kubernetes-reflector-learnings Core Invariants",
       "repository": "emberstack-kubernetes-reflector-learnings",
       "source_version": "HEAD",
-      "content_hash": "f505728a567c22c37ddcacd07e60c8fb08fd77feb78b98700c338342c9a2065c",
+      "content_hash": "6951df99defcbb266747ee4794a890d001e647824d769507813f98751e69302b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T18:44:46.014Z"
+      "persisted_at": "2026-11-18T11:55:43.006Z"
     },
     "learn-huggingface-briaai-fibo-2-0-dev": {
       "learning_id": "learn-huggingface-briaai-fibo-2-0-dev",
@@ -278994,7 +279004,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/TeleOCR",
       "source_version": "hf-xingchen-agi-teleocr",
-      "content_hash": "e80710b4dbdb9f76cd1d866971c00a59f4bb366c546424250280fdc9d4786529",
+      "content_hash": "37627c9579d7107501dcca0806e021fa28db6a00ac70f12c40f17ec08e7d5d84",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
       "promoted_rules": [],
@@ -279003,7 +279013,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T00:07:46.056Z",
+      "verified_at": "2026-11-18T11:54:52.613Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -279020,9 +279030,9 @@
       "title": "Research & Knowledge Intelligence: XingChen-AGI/TeleOCR Core Invariants",
       "repository": "XingChen-AGI/TeleOCR",
       "source_version": "hf-xingchen-agi-teleocr",
-      "content_hash": "85683e49c7c409f4577cdb043504c5aaf636574719b26ec4e5c8a845a4e19aef",
+      "content_hash": "46211f6943a96f67c9edfb1b2a09f1730120ed24435e647e0be4dbd5fa8613d0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T00:07:46.444Z"
+      "persisted_at": "2026-11-18T11:54:52.998Z"
     },
     "rule-9085": {
       "learning_id": "rule-9085",
@@ -279110,9 +279120,9 @@
       "title": "Research & Knowledge Intelligence: hf-xingchen-agi-teleocr-learnings Core Invariants",
       "repository": "hf-xingchen-agi-teleocr-learnings",
       "source_version": "HEAD",
-      "content_hash": "acedf32634e439f75f35498af5f1c50cedebf89c65bd4f572ae86b464d88140e",
+      "content_hash": "24a0e50922d7b01760af6f43b3452a843eb09ffca202287e29af1d9dd0f2b750",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T00:08:01.807Z"
+      "persisted_at": "2026-11-18T11:55:42.430Z"
     },
     "candidate_directive-cli-clean-up-full-uninstall-and-verify-installer-release-identity": {
       "item_id": "candidate_directive-cli-clean-up-full-uninstall-and-verify-installer-release-identity",
@@ -285962,6 +285972,95 @@
       "content_hash": "21c710eee487cb1dc553199968885dab5f7a867ce437648d5b78313aec19f798",
       "domain_letter": "G",
       "persisted_at": "2026-11-18T11:45:21.173Z"
+    },
+    "learn-huggingface-kormo-vl-kormo-web-11b": {
+      "learning_id": "learn-huggingface-kormo-vl-kormo-web-11b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "KORMo-VL/KORMo-Web-11B",
+      "repository": "KORMo-VL/KORMo-Web-11B",
+      "slug": "hf-kormo-vl-kormo-web-11b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/KORMo-VL/KORMo-Web-11B",
+      "source_version": "hf-kormo-vl-kormo-web-11b",
+      "content_hash": "746c30cf258690d2188ce80395fb273a6209bf56a5d42df6d2e6a69acb7f4698",
+      "dossier_path": "07_PROJECT_LEARNING/hf-kormo-vl-kormo-web-11b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-kormo-vl-kormo-web-11b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T11:54:50.104Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-kormo-vl-kormo-web-11b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-kormo-vl-kormo-web-11b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-kormo-vl-kormo-web-11b-research-knowledge-intelligence-kormo-vl-kormo-web-11b.md",
+      "title": "Research & Knowledge Intelligence: KORMo-VL/KORMo-Web-11B Core Invariants",
+      "repository": "KORMo-VL/KORMo-Web-11B",
+      "source_version": "hf-kormo-vl-kormo-web-11b",
+      "content_hash": "25c66399f67e9d6810b560646332137889cd384ea3639904f5cd8ae982b16d58",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T11:54:50.477Z"
+    },
+    "candidate_directive-bump-the-all-dependencies-group-with-5-updates": {
+      "item_id": "candidate_directive-bump-the-all-dependencies-group-with-5-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EMWM-bump-the-all-dependencies-group-with-5-updates.md",
+      "title": "Bump the all-dependencies group with 5 updates",
+      "repository": "emberstack-kubernetes-reflector-learnings",
+      "source_version": "HEAD",
+      "content_hash": "20a3e8b89fe8b2f5032acee562c17bd7c2b14d411735c9de2babe1a710b7b428",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T11:55:42.839Z"
+    },
+    "rule-9213": {
+      "learning_id": "rule-9213",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9213,
+      "title": "Merge 'parser: reject NULL as a pragma value' from sath000007",
+      "source_url": "https://github.com/tursodatabase/turso",
+      "source_version": "ff78457b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T11:55:08.138Z"
+    },
+    "candidate_directive-merge-parser-reject-null-as-a-pragma-value-from-sath000007": {
+      "item_id": "candidate_directive-merge-parser-reject-null-as-a-pragma-value-from-sath000007",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DWEW-merge-parser-reject-null-as-a-pragma-value-from-sath000007.md",
+      "title": "Merge 'parser: reject NULL as a pragma value' from sath000007",
+      "repository": "tursodatabase/turso",
+      "source_version": "ff78457b",
+      "content_hash": "a6dfb11434b0e301412f623d4a181383be8b38b17e2613e9b226a2d7afa67c49",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T11:55:08.507Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-kormo-vl-kormo-web-11b-learnings-core-invaria": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-kormo-vl-kormo-web-11b-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-kormo-vl-kormo-web-11b-learnings-research-knowledge-intelligence-hf-kormo-vl-.md",
+      "title": "Research & Knowledge Intelligence: hf-kormo-vl-kormo-web-11b-learnings Core Invariants",
+      "repository": "hf-kormo-vl-kormo-web-11b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4542bd98485cb55314dde150c57de87a6bd15bc78c88cbb2e637ebdbd156b996",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T11:55:42.041Z"
     }
   },
   "ai-builder-brain": {
