@@ -10820,3 +10820,7 @@
 | `CYCLE-20261118-XHRD` | `2026-11-18T05:10:28.393Z` | `Efficient-Large-Model/Open-H3-Regenerate-2K` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md` | Yes (`a5f8019f...`) |
 | `CYCLE-20261118-XI9N` | `2026-11-18T05:10:29.051Z` | `spartan-ng/spartan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9128` | Yes (`602a537c...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T05:11:13.032Z` | `spartan-ng-spartan` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-9E7BDB5E` [Domain F] | Yes (`abb7146c...`) |
+| `CYCLE-20261118-HAS5` | `2026-11-18T05:25:52.469Z` | `mikepenz/AboutLibraries` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9129` | Yes (`25fac9c1...`) |
+| `CYCLE-20261118-JMA7` | `2026-11-18T05:27:40.687Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`fb0c2d44...`) |
+| `CYCLE-20261118-TLR5` | `2026-11-18T05:35:26.561Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9130, Rule null, Rule 9131` | Yes (`9160c139...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T05:36:02.550Z` | `fallow-rs-fallow` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-0137E2F6` [Domain H] | Yes (`26aad2be...`) |

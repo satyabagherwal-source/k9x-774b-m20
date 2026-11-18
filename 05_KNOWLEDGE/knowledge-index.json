@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T05:11:15.542Z",
-  "total_verified_learnings": 8982,
+  "last_updated": "2026-11-18T05:36:04.888Z",
+  "total_verified_learnings": 8983,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20903,
+  "total_items": 20914,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114218,9 +114218,9 @@
       "title": "Research & Knowledge Intelligence: akatz-ai/MiniMax-H3-Character-Swap-LoRA Core Invariants",
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "61a5cc735fd7ed6c1f9a153b035cf3e5ef39c268516ba04b14ce94abe2ab6725",
+      "content_hash": "49ee40619ccc77066a0ad35f9121c26a7db07e929d7adb3b7be7e83ef393f4a2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T18:05:50.612Z"
+      "persisted_at": "2026-11-18T05:27:40.887Z"
     },
     "candidate_directive-ecosystem-qa-redact-the-run-result-in-a-step-of-its-own-also-after-a-crash": {
       "item_id": "candidate_directive-ecosystem-qa-redact-the-run-result-in-a-step-of-its-own-also-after-a-crash",
@@ -114278,9 +114278,9 @@
       "title": "Research & Knowledge Intelligence: hf-akatz-ai-minimax-h3-character-swap-lora-learnings Core Invariants",
       "repository": "hf-akatz-ai-minimax-h3-character-swap-lora-learnings",
       "source_version": "HEAD",
-      "content_hash": "0085f20e90cd40085fe1898561c027e3a64c719666cf9890f72b9a4d83de8f7f",
+      "content_hash": "d8becec47734b472681199f8a7ac31dc41a8e91e74c7357d4178aab9bd9c5361",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T18:06:48.355Z"
+      "persisted_at": "2026-11-18T05:36:04.055Z"
     },
     "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-learnings-core-invaria",
@@ -237289,14 +237289,19 @@
       "slug": "mikepenz-aboutlibraries",
       "platform": "github",
       "source_url": "https://github.com/mikepenz/AboutLibraries",
-      "source_version": "42e86795",
-      "content_hash": "9b6cf103461b78f4aaad447926ad555e0bcb59c4123340a01fdb9e39b0add687",
+      "source_version": "07abb3e7",
+      "content_hash": "25fac9c16fd678849c78fb399d424688f18138eaf052bc8d79bc1aa09948840f",
       "dossier_path": "07_PROJECT_LEARNING/mikepenz-aboutlibraries-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mikepenz-aboutlibraries-learnings.md",
       "promoted_rules": [
         {
           "number": 8546,
           "title": "update Gradle wrapper to 9.9.1",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9129,
+          "title": "update github actions updates",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -237305,7 +237310,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T22:39:23.586Z",
+      "verified_at": "2026-11-18T05:25:52.266Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237347,10 +237352,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mikepenz-aboutlibraries-architecture-intelligence-mikepenz-aboutlibraries-core-i.md",
       "title": "Architecture Intelligence: mikepenz/AboutLibraries Core Invariants",
       "repository": "mikepenz/AboutLibraries",
-      "source_version": "42e86795",
-      "content_hash": "2e96e86bf5c5534e4511cd34c3bec4481f6eec17c48f5a17743313dad107828e",
+      "source_version": "07abb3e7",
+      "content_hash": "d457fe0af8297a9b0e3e8c75ca25513645662dc6624bea5d693881d2c5cbc3d6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T22:39:24.042Z"
+      "persisted_at": "2026-11-18T05:25:52.866Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mikepenz-aboutlibraries": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mikepenz-aboutlibraries",
@@ -237359,10 +237364,10 @@
       "relative_path": "08_VERIFICATION/mikepenz-aboutlibraries-verification-protocol-empirical-defect-shield-for-mikepe.md",
       "title": "Verification Protocol: Empirical Defect Shield for mikepenz/AboutLibraries",
       "repository": "mikepenz/AboutLibraries",
-      "source_version": "42e86795",
-      "content_hash": "39dce731334b33b3e5f161a7dfbb96dc8be4c85cfac59ec23caaa4de96d215e7",
+      "source_version": "07abb3e7",
+      "content_hash": "8894aa831726451de15b9f97447626d8d701857c600e762ff749aef69e87ece2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T22:39:24.153Z"
+      "persisted_at": "2026-11-18T05:25:53.017Z"
     },
     "rule-8547": {
       "learning_id": "rule-8547",
@@ -237458,9 +237463,9 @@
       "title": "Architecture Intelligence: mikepenz-aboutlibraries-learnings Core Invariants",
       "repository": "mikepenz-aboutlibraries-learnings",
       "source_version": "HEAD",
-      "content_hash": "b1a467ea2151f2e71d5ee37ce354e502bb3acfb832dc40f3e2977b37609f9732",
+      "content_hash": "cf68f23b47b3d6706a3c1a4a9ad6885726be69071a7584d6a24f3b65d98ee749",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T22:39:38.712Z"
+      "persisted_at": "2026-11-18T05:36:04.725Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mikepenz-aboutlibraries-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mikepenz-aboutlibraries-learni",
@@ -237470,9 +237475,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for mikepenz-aboutlibraries-learnings",
       "repository": "mikepenz-aboutlibraries-learnings",
       "source_version": "HEAD",
-      "content_hash": "c85177930e39e198a9e36d2cb8dd7c9a546bf614172b04b6aee75c8b6084cfa9",
+      "content_hash": "502edc239323242162067520614c85b29bde879e17d00d072a2bbd1dbcfd5793",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T22:39:38.827Z"
+      "persisted_at": "2026-11-18T05:36:04.888Z"
     },
     "learn-huggingface-speridlabs-iris-3b": {
       "learning_id": "learn-huggingface-speridlabs-iris-3b",
@@ -239702,17 +239707,33 @@
       "slug": "fallow-rs-fallow",
       "platform": "github",
       "source_url": "https://github.com/fallow-rs/fallow",
-      "source_version": "22c832f6",
-      "content_hash": "05d48b2cbf0d44cf4347b32122c9e4d83e4ab569fa8a3768a49dd824061cfd48",
+      "source_version": "548aba6d",
+      "content_hash": "9160c1394a741411f47d59c6b0083fbc0b678df9c48c684a7ef012fa86118f8e",
       "dossier_path": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": null,
+          "title": "Multi-Context SFC Scope Unification with Directional Reference Propagation",
+          "status": "WITHHELD_REJECT"
+        },
+        {
+          "number": 9130,
+          "title": "Invariant Atomic Preservation of Shared Compound Declarations",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9131,
+          "title": "Recursive Transitive Config Boundary and Diff-Risk Preservation",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T23:03:38.397Z",
+      "verified_at": "2026-11-18T05:35:26.332Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239740,10 +239761,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fallow-rs-fallow-technical-construction-intelligence-fallow-rs-fallow-core-invar.md",
       "title": "Technical Construction Intelligence: fallow-rs/fallow Core Invariants",
       "repository": "fallow-rs/fallow",
-      "source_version": "b5123420",
-      "content_hash": "1b3d7f3ebba97a2b9f97b9c021fe882996e16b543fcf85a51ae676c40946996c",
+      "source_version": "548aba6d",
+      "content_hash": "903fcaa6bc7fe1554869d12f6836304497f885bbf152450824ef08e7a62a6025",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T02:55:37.098Z"
+      "persisted_at": "2026-11-18T05:35:27.248Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fallow-rs-fallow": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fallow-rs-fallow",
@@ -239752,10 +239773,10 @@
       "relative_path": "08_VERIFICATION/fallow-rs-fallow-verification-protocol-empirical-defect-shield-for-fallow-rs-fal.md",
       "title": "Verification Protocol: Empirical Defect Shield for fallow-rs/fallow",
       "repository": "fallow-rs/fallow",
-      "source_version": "22c832f6",
-      "content_hash": "08f7bf4e09da5ec87c32876d3e3d7f5fa09f3c598f61c62fad36991caa22f344",
+      "source_version": "548aba6d",
+      "content_hash": "a515917af9d766e5d5cab420f34bd7cbc14f4dec072d71c320d5360f9eb7e0d7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T23:03:39.194Z"
+      "persisted_at": "2026-11-18T05:35:27.521Z"
     },
     "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf": {
       "learning_id": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
@@ -239867,9 +239888,9 @@
       "title": "Technical Construction Intelligence: fallow-rs-fallow-learnings Core Invariants",
       "repository": "fallow-rs-fallow-learnings",
       "source_version": "HEAD",
-      "content_hash": "35e65309d1e16182317f8554ed36f24ceeeb40529e2b8857ddcad0ff90051bf6",
+      "content_hash": "45ccf1f3cc0f2589929e16c1dba82d0f0e606ab18afb4cdbc4b65dc84a16f7d9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T02:58:58.620Z"
+      "persisted_at": "2026-11-18T05:36:03.351Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-fallow-rs-fallow-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-fallow-rs-fallow-learnings",
@@ -239879,9 +239900,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for fallow-rs-fallow-learnings",
       "repository": "fallow-rs-fallow-learnings",
       "source_version": "HEAD",
-      "content_hash": "88f09dadf55a5f6f26ec30e2f59c58f4e97f3ed5f65ba4cfd7e93c9fb247b833",
+      "content_hash": "93b78a71d978b1c0dd6df0b0726c5eb1cbb2e4e4d7852f0bf33896f71c31d187",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T23:03:51.325Z"
+      "persisted_at": "2026-11-18T05:36:03.663Z"
     },
     "candidate_directive-embedded-metadata-parameter-authority-gguf-sampling-self-containment": {
       "item_id": "candidate_directive-embedded-metadata-parameter-authority-gguf-sampling-self-containment",
@@ -281503,6 +281524,159 @@
       "content_hash": "1ab0151f5866c7d0cfc45809a625eacfcf23f2832b5a45d32b443a5eb0889dbc",
       "domain_letter": "K",
       "persisted_at": "2026-11-18T05:11:14.007Z"
+    },
+    "rule-9129": {
+      "learning_id": "rule-9129",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9129,
+      "title": "update github actions updates",
+      "source_url": "https://github.com/mikepenz/AboutLibraries",
+      "source_version": "07abb3e7",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T05:25:52.266Z"
+    },
+    "candidate_directive-update-github-actions-updates": {
+      "item_id": "candidate_directive-update-github-actions-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HAXH-update-github-actions-updates.md",
+      "title": "update github actions updates",
+      "repository": "mikepenz/AboutLibraries",
+      "source_version": "07abb3e7",
+      "content_hash": "26177ddc1984302a6acdfc0a628a439e1984fbf0a86a6c0b0e8332c334e3bf1e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T05:25:52.662Z"
+    },
+    "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora": {
+      "learning_id": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "slug": "hf-akatz-ai-minimax-h3-character-swap-lora",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
+      "content_hash": "fb0c2d4485bcce354ea07941c54b5a2841a70fdd61b0291fb754b8c4afd39a42",
+      "dossier_path": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T05:27:40.462Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9130": {
+      "learning_id": "rule-9130",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9130,
+      "title": "Invariant Atomic Preservation of Shared Compound Declarations",
+      "source_url": "https://github.com/fallow-rs/fallow",
+      "source_version": "548aba6d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T05:35:26.332Z"
+    },
+    "rule-9131": {
+      "learning_id": "rule-9131",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9131,
+      "title": "Recursive Transitive Config Boundary and Diff-Risk Preservation",
+      "source_url": "https://github.com/fallow-rs/fallow",
+      "source_version": "548aba6d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T05:35:26.332Z"
+    },
+    "candidate_directive-invariant-atomic-preservation-of-shared-compound-declarations": {
+      "item_id": "candidate_directive-invariant-atomic-preservation-of-shared-compound-declarations",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UDPL-invariant-atomic-preservation-of-shared-compound-declarations.md",
+      "title": "Invariant Atomic Preservation of Shared Compound Declarations",
+      "repository": "fallow-rs-fallow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3bd50d59760667801bb0407afaa0a82b8dd86f0b748455ef7119e60dba8918eb",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T05:36:02.795Z"
+    },
+    "candidate_directive-multi-context-sfc-scope-unification-with-directional-reference-propagation": {
+      "item_id": "candidate_directive-multi-context-sfc-scope-unification-with-directional-reference-propagation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UDPL-multi-context-sfc-scope-unification-with-directional-reference-propagation.md",
+      "title": "Multi-Context SFC Scope Unification with Directional Reference Propagation",
+      "repository": "fallow-rs-fallow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "27f43b6cf3c73b8dd81f2fc5853fbc86f67ba5629e77b78459b55e6a2c92f3d7",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-18T05:36:03.018Z"
+    },
+    "candidate_directive-recursive-transitive-config-boundary-and-diff-risk-preservation": {
+      "item_id": "candidate_directive-recursive-transitive-config-boundary-and-diff-risk-preservation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UDPM-recursive-transitive-config-boundary-and-diff-risk-preservation.md",
+      "title": "Recursive Transitive Config Boundary and Diff-Risk Preservation",
+      "repository": "fallow-rs-fallow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "76e0556d1737519d3f0aae092d444f6eb6c7c62b7d69e47d118ea71cb656a219",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T05:36:03.177Z"
+    },
+    "agent_contract-agent-contract-fallow-rs-fallow-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-fallow-rs-fallow-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/fallow-rs-fallow-agent-contract-fallow-rs-fallow-autonomous-specialist-persona.md",
+      "title": "Agent Contract: fallow-rs/fallow Autonomous Specialist Persona",
+      "repository": "fallow-rs/fallow",
+      "source_version": "548aba6d",
+      "content_hash": "81b10368d103259c702d3bfe34de722edd5acd1eb574b0274b0ee53e8a1aace6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T05:35:27.391Z"
+    },
+    "agent_contract-agent-contract-fallow-rs-fallow-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-fallow-rs-fallow-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/fallow-rs-fallow-learnings-agent-contract-fallow-rs-fallow-learnings-autonomous-.md",
+      "title": "Agent Contract: fallow-rs-fallow-learnings Autonomous Specialist Persona",
+      "repository": "fallow-rs-fallow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a3cd372e85fff3b112340c4e7bb1dc557fa178e9ae5a74780cc4c035baef39af",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T05:36:03.516Z"
+    },
+    "candidate_directive-deps-update-github-actions-updates": {
+      "item_id": "candidate_directive-deps-update-github-actions-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UF2C-deps-update-github-actions-updates.md",
+      "title": "deps): update github actions updates",
+      "repository": "mikepenz-aboutlibraries-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3608764b9e0f5e3ba13f931ea16f8af86a87e9a8b481813c5aad9d40d0f044b8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T05:36:04.549Z"
     }
   },
   "ai-builder-brain": {

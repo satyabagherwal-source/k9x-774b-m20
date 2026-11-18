@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T05:11:15.710Z",
+  "last_updated": "2026-11-18T05:36:05.037Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T04:11:36.483Z",
@@ -258,7 +258,7 @@
       "staged_for_review": 1
     },
     "mikepenz-aboutlibraries-learnings.md": {
-      "processed_at": "2026-11-14T22:39:38.321Z",
+      "processed_at": "2026-11-18T05:36:04.231Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -448,9 +448,9 @@
       "staged_for_review": 0
     },
     "fallow-rs-fallow-learnings.md": {
-      "processed_at": "2026-11-16T23:03:50.665Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-18T05:36:02.551Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "crosspaste-crosspaste-desktop-learnings.md": {
       "processed_at": "2026-11-15T04:53:52.614Z",
@@ -2028,8 +2028,8 @@
       "staged_for_review": 0
     },
     "hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md": {
-      "processed_at": "2026-11-13T18:06:48.151Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T05:36:03.822Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "storybookjs-storybook-learnings.md": {
@@ -3388,7 +3388,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1809,
-  "total_canonical_promoted": 335,
-  "total_staged_for_review": 1397
+  "total_dossiers_evaluated": 1812,
+  "total_canonical_promoted": 336,
+  "total_staged_for_review": 1398
 }

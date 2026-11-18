@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T05:11:15.184Z",
-  "total_records": 1762,
+  "last_updated": "2026-11-18T05:36:04.725Z",
+  "total_records": 1763,
   "domains": {
     "A": {
       "total": 11,
@@ -1188,7 +1188,7 @@
       ]
     },
     "H": {
-      "total": 412,
+      "total": 413,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1601,7 +1601,8 @@
         "domain_intelligence-technical-construction-intelligence-shoutem-ui-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-trailbaseio-trailbase-core-invariants",
         "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-learnings-core-invariants",
+        "DOM-H-0137E2F6"
       ]
     },
     "I": {
@@ -8858,8 +8859,8 @@
       "title": "Research & Knowledge Intelligence: akatz-ai/MiniMax-H3-Character-Swap-LoRA Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akatz-ai-minimax-h3-character-swap-lora-research-knowledge-intelligence-akatz.md",
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-      "content_hash": "61a5cc735fd7ed6c1f9a153b035cf3e5ef39c268516ba04b14ce94abe2ab6725",
-      "created_at": "2026-11-13T18:05:50.612Z"
+      "content_hash": "49ee40619ccc77066a0ad35f9121c26a7db07e929d7adb3b7be7e83ef393f4a2",
+      "created_at": "2026-11-18T05:27:40.887Z"
     },
     "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-core-invariants",
@@ -8918,8 +8919,8 @@
       "title": "Research & Knowledge Intelligence: hf-akatz-ai-minimax-h3-character-swap-lora-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akatz-ai-minimax-h3-character-swap-lora-learnings-research-knowledge-intellig.md",
       "repository": "hf-akatz-ai-minimax-h3-character-swap-lora-learnings",
-      "content_hash": "0085f20e90cd40085fe1898561c027e3a64c719666cf9890f72b9a4d83de8f7f",
-      "created_at": "2026-11-13T18:06:48.355Z"
+      "content_hash": "d8becec47734b472681199f8a7ac31dc41a8e91e74c7357d4178aab9bd9c5361",
+      "created_at": "2026-11-18T05:36:04.055Z"
     },
     "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-learnings-core-invaria",
@@ -18031,8 +18032,8 @@
       "title": "Architecture Intelligence: mikepenz/AboutLibraries Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mikepenz-aboutlibraries-architecture-intelligence-mikepenz-aboutlibraries-core-i.md",
       "repository": "mikepenz/AboutLibraries",
-      "content_hash": "2e96e86bf5c5534e4511cd34c3bec4481f6eec17c48f5a17743313dad107828e",
-      "created_at": "2026-11-14T22:39:24.042Z"
+      "content_hash": "d457fe0af8297a9b0e3e8c75ca25513645662dc6624bea5d693881d2c5cbc3d6",
+      "created_at": "2026-11-18T05:25:52.866Z"
     },
     "domain_intelligence-architecture-intelligence-bitterbot-ai-bitterbot-desktop-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-bitterbot-ai-bitterbot-desktop-core-invariants",
@@ -18067,8 +18068,8 @@
       "title": "Architecture Intelligence: mikepenz-aboutlibraries-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mikepenz-aboutlibraries-learnings-architecture-intelligence-mikepenz-aboutlibrar.md",
       "repository": "mikepenz-aboutlibraries-learnings",
-      "content_hash": "b1a467ea2151f2e71d5ee37ce354e502bb3acfb832dc40f3e2977b37609f9732",
-      "created_at": "2026-11-14T22:39:38.712Z"
+      "content_hash": "cf68f23b47b3d6706a3c1a4a9ad6885726be69071a7584d6a24f3b65d98ee749",
+      "created_at": "2026-11-18T05:36:04.725Z"
     },
     "domain_intelligence-research-knowledge-intelligence-speridlabs-iris-3b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-speridlabs-iris-3b-core-invariants",
@@ -18898,8 +18899,8 @@
       "title": "Technical Construction Intelligence: fallow-rs/fallow Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fallow-rs-fallow-technical-construction-intelligence-fallow-rs-fallow-core-invar.md",
       "repository": "fallow-rs/fallow",
-      "content_hash": "1b3d7f3ebba97a2b9f97b9c021fe882996e16b543fcf85a51ae676c40946996c",
-      "created_at": "2026-11-15T02:55:37.098Z"
+      "content_hash": "903fcaa6bc7fe1554869d12f6836304497f885bbf152450824ef08e7a62a6025",
+      "created_at": "2026-11-18T05:35:27.248Z"
     },
     "domain_intelligence-technical-construction-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants",
@@ -18916,8 +18917,8 @@
       "title": "Technical Construction Intelligence: fallow-rs-fallow-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-fallow-rs-fallow-learnings-technical-construction-intelligence-fallow-rs-fallow-.md",
       "repository": "fallow-rs-fallow-learnings",
-      "content_hash": "35e65309d1e16182317f8554ed36f24ceeeb40529e2b8857ddcad0ff90051bf6",
-      "created_at": "2026-11-15T02:58:58.620Z"
+      "content_hash": "45ccf1f3cc0f2589929e16c1dba82d0f0e606ab18afb4cdbc4b65dc84a16f7d9",
+      "created_at": "2026-11-18T05:36:03.351Z"
     },
     "domain_intelligence-technical-construction-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-co": {
       "record_id": "domain_intelligence-technical-construction-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-co",
@@ -29530,6 +29531,40 @@
       "repository": "spartan-ng-spartan-learnings",
       "content_hash": "c5cdfb195fa9de7f6e2581fbb7815dda3c35ebe8daea40117be13adb3119344f",
       "created_at": "2026-11-18T05:11:13.822Z"
+    },
+    "DOM-H-0137E2F6": {
+      "record_id": "DOM-H-0137E2F6",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "False-Positive Dead Code Extraction in Vue/Svelte Single-File Components (BUG-EXTRACT-SFC-02)",
+      "content": "When compilers synthesize multi-block source representations into a unified module, the static analyzer must emulate the compiler's synthetic scope links and propagate unresolved tokens from the inner scopes to the outer module imports.",
+      "content_hash": "26aad2bec582648de2817b704dd62e7fe0c3da617e33e8b512bcb070f9426653",
+      "summary": "The SFC parser analyzed each `<script>` block in complete AST isolation. Because the plain `<script>` AST contained the import but no local  -> When compilers synthesize multi-block source representations into a unified module, the static analyzer must emulate the compiler's syntheti",
+      "provenance": {
+        "source_uri": "project://fallow-rs-fallow/fallow-rs-fallow-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T05:35:30.342Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (fallow-rs-fallow)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `33d0d10a`, issue #4672. Cache version bumped from 452 to 453 in `crates/extract/src/cache/types.rs`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T05:36:02.527Z"
     }
   }
 }

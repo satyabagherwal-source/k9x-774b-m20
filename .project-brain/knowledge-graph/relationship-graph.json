@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-18T05:11:13.030Z",
+  "updated_at": "2026-11-18T05:36:02.548Z",
   "statistics": {
-    "total_nodes": 332,
+    "total_nodes": 333,
     "total_edges": 158,
     "domain_distribution": {
       "D": 234,
       "M": 1,
-      "H": 42,
+      "H": 43,
       "J": 12,
       "K": 17,
       "L": 5,
@@ -7432,6 +7432,28 @@
       ],
       "created_at": "2026-11-18T05:11:13.029Z",
       "updated_at": "2026-11-18T05:11:13.029Z"
+    },
+    "DOM-H-0137E2F6": {
+      "id": "DOM-H-0137E2F6",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "False-Positive Dead Code Extraction in Vue/Svelte Single-File Components (BUG-EXTRACT-SFC-02)",
+      "summary": "The SFC parser analyzed each `<script>` block in complete AST isolation. Because the plain `<script>` AST contained the import but no local  -> When compilers synthesize multi-block source representations into a unified module, the static analyzer must emulate the compiler's syntheti",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://fallow-rs-fallow/fallow-rs-fallow-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T05:35:30.342Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (fallow-rs-fallow)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-18T05:36:02.548Z",
+      "updated_at": "2026-11-18T05:36:02.548Z"
     }
   },
   "edges": [

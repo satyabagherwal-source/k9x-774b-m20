@@ -10853,3 +10853,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-efficient-large-model-open-h3-regenerate-2k` | `https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K` | `hf-efficie` | Multi-dimensional audit evidence | 2026-11-18T05:10:28.397Z |
 | `learn-github-spartan-ng-spartan` | `https://github.com/spartan-ng/spartan` | `9ae9e339` | Multi-dimensional audit evidence | 2026-11-18T05:10:29.055Z |
 | `learn-dom-f-9e7bdb5e` | `project://spartan-ng-spartan` | `9ae9e339` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/spartan-ng-spartan-learnings.md` | 2026-11-18T05:11:13.032Z |
+| `learn-github-mikepenz-aboutlibraries` | `https://github.com/mikepenz/AboutLibraries` | `07abb3e7` | Multi-dimensional audit evidence | 2026-11-18T05:25:52.473Z |
+| `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-11-18T05:27:40.691Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `548aba6d` | Multi-dimensional audit evidence | 2026-11-18T05:35:26.565Z |
+| `learn-dom-h-0137e2f6` | `project://fallow-rs-fallow` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md` | 2026-11-18T05:36:02.550Z |

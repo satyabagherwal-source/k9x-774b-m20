@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T05:10:29.067Z",
+  "last_updated": "2026-11-18T05:35:26.597Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -650,14 +650,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "438a6eaebe65c570248510c548e8db05b0e15f9949a58ff4041fa7d0a78ee99e",
-      "verified_at": "2026-11-13T18:05:50.427Z",
+      "content_hash": "fb0c2d4485bcce354ea07941c54b5a2841a70fdd61b0291fb754b8c4afd39a42",
+      "verified_at": "2026-11-18T05:27:40.700Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T18:05:50.427Z"
+      "last_updated": "2026-11-18T05:27:40.700Z"
     },
     "unsloth/Qwen-Image-2.1-GGUF": {
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -4896,14 +4896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-fallow-rs-fallow",
-      "content_hash": "05d48b2cbf0d44cf4347b32122c9e4d83e4ab569fa8a3768a49dd824061cfd48",
-      "verified_at": "2026-11-16T23:03:38.628Z",
+      "content_hash": "9160c1394a741411f47d59c6b0083fbc0b678df9c48c684a7ef012fa86118f8e",
+      "verified_at": "2026-11-18T05:35:26.596Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T23:03:38.628Z"
+      "last_updated": "2026-11-18T05:35:26.596Z"
     },
     "expo/create-react-native-app": {
       "repository": "expo/create-react-native-app",
@@ -10596,14 +10596,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mikepenz-aboutlibraries",
-      "content_hash": "9b6cf103461b78f4aaad447926ad555e0bcb59c4123340a01fdb9e39b0add687",
-      "verified_at": "2026-11-14T22:39:23.752Z",
+      "content_hash": "25fac9c16fd678849c78fb399d424688f18138eaf052bc8d79bc1aa09948840f",
+      "verified_at": "2026-11-18T05:25:52.482Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T22:39:23.752Z"
+      "last_updated": "2026-11-18T05:25:52.482Z"
     },
     "flux-iac/tofu-controller": {
       "repository": "flux-iac/tofu-controller",

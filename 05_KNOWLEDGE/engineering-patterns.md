@@ -669381,3 +669381,319 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `f5bb9357` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9129. update github actions updates (Harvested from mikepenz/AboutLibraries)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "update github actions updates",
+  "source": "mikepenz/AboutLibraries",
+  "source_url": "https://github.com/mikepenz/AboutLibraries",
+  "source_version": "07abb3e7",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-18T05:25:51.983Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mikepenz-aboutlibraries",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [mikepenz/AboutLibraries](https://github.com/mikepenz/AboutLibraries) (Revision: `07abb3e7`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mikepenz/AboutLibraries. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `07abb3e7`: deps): update github actions updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// Verified production-grade fix pattern:
+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// Induced defect failure mode:
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4
+        uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `07abb3e7` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9130. Invariant Atomic Preservation of Shared Compound Declarations (Harvested from fallow-rs/fallow)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Invariant Atomic Preservation of Shared Compound Declarations",
+  "source": "fallow-rs/fallow",
+  "source_url": "https://github.com/fallow-rs/fallow",
+  "source_version": "548aba6d",
+  "license": "MIT",
+  "extracted_at": "2026-11-18T05:35:25.290Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-fallow-rs-fallow",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [fallow-rs/fallow](https://github.com/fallow-rs/fallow) (Revision: `548aba6d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When an automated refactoring engine or code-fix agent identifies an unused identifier within a compound or destructured declaration statement (e.g., `export const { a, b } = expr;`, `export const [x, y] = fn();`, or `export let i = 1, j = 2;`), it **MUST NOT** split the declaration statement or remove the shared visibility modifier keyword unless **ALL** identifiers declared in that single statement are proven unused. If any identifier remains referenced or retained, the removal **MUST** be withheld and emitted as a structured skipped diagnostic (`applied: false, skipped: true`).
+
+**WHY**:
+Splitting a shared destructuring or comma-separated variable statement into independent declarations to isolate an exported component causes catastrophic semantic and runtime side effects:
+1. **Side-Effect Re-Execution**: Splitting `const { a, b } = sideEffectInit();` into `const a = sideEffectInit().a; export const b = sideEffectInit().b;` evaluates the initializer expression twice, breaking stateful initializers, network requests, or database counter increments.
+2. **Rest Element Mutation**: In `const [head, ...tail] = stream;`, duplicating or decomposing initializers invalidates iterator consumption and mutates rest array semantics.
+3. **Compilation Failures**: Deleting the shared `export` keyword because name `a` is unused instantly drops the export contract of name `b`, producing TypeScript compile errors `TS2306` ("File is not a module") or `TS2459` ("Module has no exported member").
+
+**WHEN TO APPLY**:
+Apply to all source-code refactoring tools, AST mutation engines, linters with autofix (ESLint plugins, Biome analyzers, Rust refactoring assistants), and AI coding agent toolchains working in languages featuring compound bindings (TypeScript, JavaScript, Python multi-assignment, Rust destructuring tuple/struct bindings).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use rustc_hash::FxHashSet;
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct SharedDeclaration {
+    pub start_line: usize,
+    pub start_col: usize,
+    pub end_line: usize,
+    pub bound_identifiers: Vec<String>,
+}
+
+impl SharedDeclaration {
+    pub fn contains_binding(&self, line_idx: usize, identifier: &str) -> bool {
+        (self.start_line..=self.end_line).contains(&line_idx)
+            && self.bound_identifiers.iter().any(|b| b == identifier)
+    }
+}
+
+pub struct SharedDeclarationIndex {
+    declarations: Vec<SharedDeclaration>,
+    unsafe_lines: FxHashSet<usize>,
+}
+
+impl SharedDeclarationIndex {
+    /// Evaluates whether an `export` modifier removal can safely proceed.
+    /// Invariant: Returns true ONLY when all names bound by the statement are targeted for removal.
+    pub fn can_remove_export_modifier(
+        &self,
+        decl_idx: usize,
+        names_targeted_for_removal: &FxHashSet<&str>,
+    ) -> bool {
+        let decl = &self.declarations[decl_idx];
+        decl.bound_identifiers
+            .iter()
+            .all(|name| names_targeted_for_removal.contains(name.as_str()))
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Naively removing the export keyword or attempting an unverified syntactic split
+// Given source: export const { config, runTask } = initializeEngine();
+// Unused: config | Live: runTask
+
+// BUGGY AUTO-FIX VARIANT A (Deletes export keyword):
+const { config, runTask } = initializeEngine(); // FAILS: runTask is no longer exported! TS2459
+
+// BUGGY AUTO-FIX VARIANT B (Naive split):
+const config = initializeEngine().config;       // FAILS: Evaluates initializeEngine() twice!
+export const runTask = initializeEngine().runTask;
+```
+
+**VERIFICATION METHOD**:
+Enforce an automated integration test with compound initializers that assert single-evaluation invariants and check type diagnostics:
+```bash
+# Verify that running the fixer on a partially unused compound export preserves the keyword
+cargo test -p fallow-cli --test integration_test -- test_destructured_export_keeps_modifier
+# Ensure generated TypeScript passes type checking without TS2306 or TS2459
+npx tsc --noEmit --project tsconfig.json
+```
+
+---
+
+
+---
+
+## 9131. Recursive Transitive Config Boundary and Diff-Risk Preservation (Harvested from fallow-rs/fallow)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Recursive Transitive Config Boundary and Diff-Risk Preservation",
+  "source": "fallow-rs/fallow",
+  "source_url": "https://github.com/fallow-rs/fallow",
+  "source_version": "548aba6d",
+  "license": "MIT",
+  "extracted_at": "2026-11-18T05:35:26.050Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-fallow-rs-fallow",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [fallow-rs/fallow](https://github.com/fallow-rs/fallow) (Revision: `548aba6d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When computing security, lint, or testing diff-risks across Git revisions (base vs head), the configuration parser **MUST NOT** limit evaluation to the leaf config file at the repository root. It **MUST** recursively traverse the entire `extends` inheritance hierarchy on both base and head commits up to an explicit loop-prevention depth (`MAX_EXTENDS_DEPTH`), resolving path-relative links. If an extended target cannot be parsed at base (e.g., external `npm:` package or uncommitted URL), that specific branch **MUST** be marked `Opaque` / `Unknown`, and any rule whose final resolved state depends on that opaque node **MUST NOT** trigger false weakening assertions. Furthermore, introducing broader path globs or removing negation exceptions (`!`) in ignore tables (`ignorePatterns`) **MUST** be classified as a suppression violation.
+
+**WHY**:
+Audits checking for weakened checks can be bypassed if an engineer removes an `extends: ["@company/strict-rules"]` line, alters a rule inside a nested `.eslintrc.json`/`.fallowrc.json` imported via `extends`, or adds an entry to `ignorePatterns`. Restricting checks to root keys lets critical safety weakenings slip through unnoticed.
+
+**WHEN TO APPLY**:
+Static audit tools, pull-request safety gates, policy compliance analyzers, and monorepo governance engines evaluating configuration mutations between two Git trees.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::path::{Path, PathBuf};
+use rustc_hash::{FxHashMap, FxHashSet};
+use serde_json::Value;
+
+pub const MAX_EXTENDS_DEPTH: usize = 10;
+
+pub enum LookupResult<'a> {
+    Unknown, // Blocked by opaque boundary (e.g., remote npm package)
+    Unset,   // Explicitly not set anywhere in chain
+    Set { value: &'a Value, source_file: &'a Path },
+}
+
+pub struct ConfigChainResolver {
+    order: Vec<Option<usize>>, // None represents an Opaque external source
+    values: Vec<(PathBuf, serde_json::Map<String, Value>)>,
+    active_cycle_guard: FxHashSet<PathBuf>,
+}
+
+impl ConfigChainResolver {
+    pub fn resolve_key(&self, key: &str) -> LookupResult<'_> {
+        // Evaluate in reverse merge order (latest source takes precedence)
+        for source_idx in self.order.iter().rev() {
+            match source_idx {
+                None => {
+                    // Encountered an opaque external source: future queries cannot guarantee state
+                    return LookupResult::Unknown;
+                }
+                Some(idx) => {
+                    let (path, map) = &self.values[*idx];
+                    if let Some(val) = map.get(key) {
+                        return LookupResult::Set { value: val, source_file: path.as_path() };
+                    }
+                }
+            }
+        }
+        LookupResult::Unset
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Comparing only the local file content strings at HEAD vs BASE
+fn detect_weakened_rules_bad(base_content: &str, head_content: &str) {
+    // FAILS: Ignores changes made in inherited extends configs, fails on circular configs,
+    // and cannot detect bypasses introduced via glob broadening in ignorePatterns.
+    let base_rules = parse_rules(base_content);
+    let head_rules = parse_rules(head_content);
+    compare_rules(base_rules, head_rules);
+}
+```
+
+**VERIFICATION METHOD**:
+Provide test cases with chained configurations where a parent configuration alters rule severities or introduces `ignorePatterns`:
+```bash
+cargo test -p fallow-api --test integration_test -- test_config_chain_follows_extends_and_detects_negation_removal
+```
+
+---

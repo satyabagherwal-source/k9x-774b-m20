@@ -525,8 +525,8 @@
     "sourceUrl": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
     "sourceVersion": "hf-akatz-ai-minimax-h3-character-swap-lora",
     "license": "Open-Source",
-    "contentHash": "438a6eaebe65c570248510c548e8db05b0e15f9949a58ff4041fa7d0a78ee99e",
-    "lastHarvestedAt": "2026-11-13T18:05:50.417Z",
+    "contentHash": "fb0c2d4485bcce354ea07941c54b5a2841a70fdd61b0291fb754b8c4afd39a42",
+    "lastHarvestedAt": "2026-11-18T05:27:40.691Z",
     "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora"
   },
   "hf-unsloth-qwen-image-2.1-gguf": {
@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "22c832f6",
+    "sourceVersion": "548aba6d",
     "license": "MIT",
-    "contentHash": "05d48b2cbf0d44cf4347b32122c9e4d83e4ab569fa8a3768a49dd824061cfd48",
-    "lastHarvestedAt": "2026-11-16T23:03:38.602Z",
+    "contentHash": "9160c1394a741411f47d59c6b0083fbc0b678df9c48c684a7ef012fa86118f8e",
+    "lastHarvestedAt": "2026-11-18T05:35:26.565Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {
@@ -7023,10 +7023,10 @@
     "repository": "mikepenz/AboutLibraries",
     "platform": "github",
     "sourceUrl": "https://github.com/mikepenz/AboutLibraries",
-    "sourceVersion": "42e86795",
+    "sourceVersion": "07abb3e7",
     "license": "Apache-2.0",
-    "contentHash": "9b6cf103461b78f4aaad447926ad555e0bcb59c4123340a01fdb9e39b0add687",
-    "lastHarvestedAt": "2026-11-14T22:39:23.744Z",
+    "contentHash": "25fac9c16fd678849c78fb399d424688f18138eaf052bc8d79bc1aa09948840f",
+    "lastHarvestedAt": "2026-11-18T05:25:52.473Z",
     "learningId": "learn-github-mikepenz-aboutlibraries"
   },
   "tursodatabase-turso": {

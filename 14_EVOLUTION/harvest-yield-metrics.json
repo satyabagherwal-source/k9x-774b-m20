@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T05:10:29.062Z",
-  "total_cycles_completed": 10363,
-  "total_learnings_persisted": 10363,
-  "total_rules_promoted": 9878,
+  "last_updated": "2026-11-18T05:35:26.585Z",
+  "total_cycles_completed": 10366,
+  "total_learnings_persisted": 10366,
+  "total_rules_promoted": 9882,
   "history": [
-    {
-      "timestamp": "2026-11-17T16:14:17.034Z",
-      "repository": "SynaLinks/synalinks-skills",
-      "learningId": "learn-github-synalinks-synalinks-skills",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T16:21:48.516Z",
-      "repository": "orcarouter/OrcaCyber-Nano-1.0",
-      "learningId": "learn-huggingface-orcarouter-orcacyber-nano-1-0",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T16:21:51.450Z",
-      "repository": "topgrade-rs/topgrade",
-      "learningId": "learn-github-topgrade-rs-topgrade",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T16:21:59.884Z",
       "repository": "envoyproxy/envoy",
@@ -1403,6 +1382,27 @@
       "repository": "spartan-ng/spartan",
       "learningId": "learn-github-spartan-ng-spartan",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T05:25:52.479Z",
+      "repository": "mikepenz/AboutLibraries",
+      "learningId": "learn-github-mikepenz-aboutlibraries",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T05:27:40.697Z",
+      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T05:35:26.585Z",
+      "repository": "fallow-rs/fallow",
+      "learningId": "learn-github-fallow-rs-fallow",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]
