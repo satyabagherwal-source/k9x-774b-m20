@@ -10897,3 +10897,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-cloudflare-clef` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-18T07:22:56.265Z |
 | `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `6e1c1385` | Multi-dimensional audit evidence | 2026-11-18T07:22:57.824Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `338a824d` | Multi-dimensional audit evidence | 2026-11-18T07:23:11.404Z |
+| `learn-huggingface-cloudflare-clef-flash` | `https://huggingface.co/Cloudflare/clef-flash` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-18T07:30:40.396Z |
+| `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `ba22c621` | Multi-dimensional audit evidence | 2026-11-18T07:30:50.183Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `74fdd7b1` | Multi-dimensional audit evidence | 2026-11-18T07:30:51.880Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `33871e2f` | Multi-dimensional audit evidence | 2026-11-18T07:30:54.058Z |

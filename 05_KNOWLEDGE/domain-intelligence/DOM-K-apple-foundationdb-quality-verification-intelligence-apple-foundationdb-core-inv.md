@@ -4,24 +4,24 @@
 {
   "source_repository": "apple/foundationdb",
   "source_url": "https://github.com/apple/foundationdb",
-  "source_version": "04c62ec9",
+  "source_version": "33871e2f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T00:36:52.480Z",
+  "timestamp": "2026-11-18T07:30:54.235Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-apple-foundationdb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apple/foundationdb](https://github.com/apple/foundationdb) (Revision: `04c62ec9`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T00:36:52.480Z`  
+> **Provenance**: Harvested from [apple/foundationdb](https://github.com/apple/foundationdb) (Revision: `33871e2f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T07:30:54.235Z`  
 > **Learning ID**: `learn-github-apple-foundationdb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 71%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 75%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from apple/foundationdb:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T00:36:51.452Z  
+> **Harvest Timestamp**: 2026-11-18T07:30:53.157Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: FoundationDB - the open source, distributed, transactional key-value store
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 16863 stars
+- **Stars / Engagement**: 16866 stars
 
 ---
 
@@ -1971,138 +1971,283 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `04c62ec9` (2026-11-15)
-**Commit Message**: Merge pull request #14543 from tclinkenbeard-oai/dev/tclinkenbeard/gist-versionstamp-conflicts
+### Incident Patch 1: `dc406d9f` (2026-11-17)
+**Commit Message**: Preserve sampled V6 trace IDs and reject zero tracing IDs
 
-Include flushed write conflicts in versionstamped transaction reports
-
-**File**: `fdbclient/ReadYourWrites.cpp` (modified, +26/-2)
+**File**: `bindings/c/test/unit/unit_tests.cpp` (modified, +43/-15)
 ```diff
-@@ -1392,6 +1392,14 @@ class RYWImpl {
- 				co_return;
- 			}
- 
-+			auto& flushedRanges = ryw->nativeWriteRanges;
-+			if (!flushedRanges.empty()) {
-+				// Commit appends the remaining conflicts and sorts the native array in place. Keep the flushed
-+				// descriptors in a separate array; their key bytes already belong to the retained arena.
-+				VectorRef<KeyRangeRef> saved;
-+				saved.append(flushedRanges.arena(), flushedRanges.begin(), flushedRanges.size());
-+				flushedRanges.contents() = saved;
-+			}
- 			ryw->writeRangeToNativeTransaction(KeyRangeRef(StringRef(), allKeys.end));
- 
- 			auto conflictRanges = ryw->readConflicts.ranges();
-@@ -2107,9 +2115,9 @@ RangeResult ReadYourWritesTransaction::getWriteConflictRangeIntersecting(KeyRang
- 	} else {
- 		for (const auto& range : tr.writeConflictRanges())
- 			writeConflicts.insert(range.withPrefix(writeConflictRangeKeysRange.begin, result.arena()), "1"_sr);
--		for (const auto& range : nativeWriteRanges)
--			writeConflicts.insert(range.withPrefix(writeConflictRangeKeysRange.begin, result.arena()), "1"_sr);
+@@ -2583,7 +2583,14 @@ TEST_CASE("special-key-space set transaction ID after write") {
  	}
-+	for (const auto& range : nativeWriteRanges)
-+		writeConflicts.insert(range.withPrefix(writeConflictRangeKeysRange.begin, result.arena()), "1"_sr);
- 
- 	for (const auto& k : versionStampKeys) {
- 		KeyRange range;
-@@ -2193,6 +2201,7 @@ void ReadYourWritesTransaction::atomicOp(const KeyRef& key, const ValueRef& oper
- 		addWriteConflict = AddConflictRange::False;
- 		if (!options.readYourWritesDisabled) {
- 			writeRangeToNativeTransaction(range);
-+			nativeWriteRanges = tr.writeConflictRanges();
- 			rywState->writes.addUnmodifiedAndUnreadableRange(range);
- 		}
- 		// k is the unversionstamped key provided by the user.  If we've filled in a minimum bound
-@@ -2754,6 +2763,21 @@ void ReadYourWritesTransaction::debugPrint(std::string const& message) {
- 	debugMessages.push_back(message);
  }
  
-+TEST_CASE("/fdbclient/ReadYourWrites/writeConflictRangesAfterVersionstampedKey") {
-+	auto db = DatabaseContext::create(
-+	    makeReference<AsyncVar<ClientDBInfo>>(), Never(), LocalityData(), EnableLocalityLoadBalance::False);
-+	ReadYourWritesTransaction tr(db);
-+	tr.clear(KeyRangeRef("a"_sr, "c"_sr));
-+	tr.atomicOp("b0123456789\x01\x00\x00\x00"_sr, "v"_sr, MutationRef::SetVersionstampedKey);
-+	tr.setVersion(100);
++static void wait_for_client_connection() {
++	// The external client may still be connecting. Keep the retrying read in a separate
++	// transaction so tracing options can be set before any reads in the test transaction.
++	get_value(key(""), /* snapshot */ true, {});
++}
 +
-+	auto ranges = tr.getWriteConflictRangeIntersecting(writeConflictRangeKeysRange);
-+	ASSERT_EQ(ranges.size(), 2);
-+	ASSERT_EQ(ranges[0], KeyValueRef(writeConflictRangeKeysRange.begin.withSuffix("a"_sr), "1"_sr));
-+	ASSERT_EQ(ranges[1], KeyValueRef(writeConflictRangeKeysRange.begin.withSuffix("c"_sr), "0"_sr));
+ TEST_CASE("special-key-space decimal transaction ID") {
++	wait_for_client_connection();
+ 	fdb::Transaction tr(db);
+ 	fdb_check(tr.set_option(FDB_TR_OPTION_SPECIAL_KEY_SPACE_ENABLE_WRITES, nullptr, 0));
+ 	constexpr std::string_view idKey = "\xff\xff/tracing/transaction_id";
+@@ -2601,22 +2608,38 @@ TEST_CASE("special-key-space decimal transaction ID") {
+ }
+ 
+ TEST_CASE("special-key-space invalid tracing and maintenance values") {
++	wait_for_client_connection();
+ 	fdb::Transaction tr(db);
+ 	fdb_check(tr.set_option(FDB_TR_OPTION_SPECIAL_KEY_SPACE_ENABLE_WRITES, nullptr, 0));
+-	SUBCASE("out-of-range decimal transaction ID") {
+-		tr.set("\xff\xff/tracing/transaction_id", "18446744073709551616");
+-	}
+-	SUBCASE("non-hexadecimal digit in transaction ID") {
+-		tr.set("\xff\xff/tracing/transaction_id", "0000000000000001000000000000000g");
+-	}
+-	SUBCASE("non-numeric maintenance duration") {
+-		tr.set("\xff\xff/management/maintenance/zone1", "abc");
+-	}
+-	SUBCASE("non-finite maintenance duration") {
+-		tr.set("\xff\xff/management/maintenance/zone1", "nan");
++	std::string_view expectedDetail;
++	SUBCASE("invalid tracing ID") {
++		constexpr std::string_view idKey = "\xff\xff/tracing/transaction_id";
++		expectedDetail = "transaction_id";
++		SUBCASE("out-of-range decimal transaction ID") {
++			tr.set(idKey, "18446744073709551616");
++		}
++		SUBCASE("non-hexadecimal digit in transaction ID") {
++			tr.set(idKey, "0000000000000001000000000000000g");
++		}
++		SUBCASE("zero decimal transaction ID") {
++			tr.set(idKey, "0");
++		}
++		SUBCASE("zero hexadecimal transaction ID") {
++			tr.set(idKey, "00000000000000000000000000000000");
++		}
+ 	}
+-	SUBCASE("maintenance duration exceeds the version range") {
+-		tr.set("\xff\xff/management/maintenance/zone1", "1e30");
++	SUBCASE("invalid maintenance duration") {
++		constexpr std::string_view zoneKey = "\xff\xff/management/maintenance/zone1";
++		expectedDetail = "duration";
++		SUBCASE("non-numeric maintenance duration") {
++			tr.set(zoneKey, "abc");
++		}
++		SUBCASE("non-finite maintenance duration") {
++			tr.set(zoneKey, "nan");
++		}
++		SUBCASE("maintenance duration exceeds the version range") {
++			tr.set(zoneKey, "1e30");
++		}
+ 	}
+ 	auto commit = tr.commit();
+ 	REQUIRE(wait_future(commit) == error_code_special_keys_api_failure);
+@@ -2626,8 +2649,13 @@ TEST_CASE("special-key-space invalid tracing and maintenance values") {
+ 	const uint8_t* value;
+ 	int length;
+ 	fdb_check(message.get(&present, &value, &length));
+-	CHECK(present);
+-	CHECK(length > 0);
++	REQUIRE(present);
++	rapidjson::Document diagnostic;
++	diagnostic.Parse(reinterpret_cast<const char*>(value), length);
++	REQUIRE(diagnostic.IsObject());
++	REQUIRE(diagnostic.HasMember("message"));
++	REQUIRE(diagnostic["message"].IsString());
++	CHECK(std::string_view(diagnostic["message"].GetString()).find(expectedDetail) != std::string_view::npos);
+ }
+ 
+ TEST_CASE("special-key-space disable tracing") {
+```
+
+**File**: `documentation/sphinx/source/special-keys.rst` (modified, +1/-1)
+```diff
+@@ -273,7 +273,7 @@ data. Every transaction contains a unique identifier which follows the
+ transaction through the system. By providing access to set this identifier,
+ clients can connect FoundationDB transactions to outside events.
+ 
+-#. ``\xff\xff/tracing/transaction_id := <transaction_id>`` Read/write. A 128-bit trace ID which follows the transaction as it moves through FoundationDB. A new transaction receives a random ID. Reading this key returns the ID as 32 hexadecimal digits. To set a custom ID, provide 32 hexadecimal digits or an unsigned 64-bit decimal integer. A decimal ID occupies the low 64 bits of the trace ID.
++#. ``\xff\xff/tracing/transaction_id := <transaction_id>`` Read/write. A 128-bit trace ID which follows the transaction as it moves through FoundationDB. A new transaction receives a random ID. Reading this key returns the ID as 32 hexadecimal digits. To set a custom ID, provide a nonzero value as 32 hexadecimal digits or as an unsigned 64-bit decimal integer. An input of exactly 32 digits is interpreted as hexadecimal. A decimal ID occupies the low 64 bits of the trace ID.
+ #. ``\xff\xff/tracing/token := <tracing_enabled>`` Read/write. Set to true/false to enable or disable tracing for the transaction, respectively. If read, returns a 64-bit integer set to 0 if tracing has been disabled, or a random 64-bit integer otherwise (this integers value has no meaning to the client other than to determine whether the transaction will be traced).
+ 
+ .. _special-key-space-deprecation:
+```
+
+**File**: `fdbclient/SpecialKeySpace.cpp` (modified, +27/-8)
+```diff
+@@ -1765,11 +1765,11 @@ void TracingOptionsImpl::set(ReadYourWritesTransaction* ryw, const KeyRef& key,
+ 
+ 	if (key.endsWith(kTracingTransactionIdKey)) {
+ 		auto id = parseTracingTransactionId(value.toStringView());
+-		if (!id.present()) {
++		if (!id.present() || !id.get().isValid()) {
+ 			ryw->setSpecialKeySpaceErrorMsg(ManagementAPIError::toJsonString(
+ 			    false,
+ 			    "configure trace",
+-			    "transaction_id must be an unsigned decimal 64-bit integer or 32 hex digits"));
++			    "transaction_id must be nonzero and specified as an unsigned 64-bit decimal integer or 32 hex digits"));
+ 			ryw->getSpecialKeySpaceWriteMap().insert(key, std::make_pair(true, Optional<Value>()));
+ 			return;
+ 		}
+@@ -2566,6 +2566,28 @@ Future<RangeResult> MaintenanceImpl::getRange(ReadYourWritesTransaction* ryw,
+ 	return MaintenanceGetRangeActor(ryw, getKeyRange().begin, kr);
+ }
+ 
++static Optional<Version> maintenanceEndVersion(Version readVersion, double seconds) {
++	constexpr Version maxVersion = std::numeric_limits<Version>::max();
++	const double duration = seconds * CLIENT_KNOBS->CORE_VERSIONSPERSECOND;
++	if (!(duration >= 0 && duration < static_cast<double>(maxVersion))) {
++		return {};
++	}
++	const Version delta = static_cast<Version>(duration);
++	if (readVersion > maxVersion - delta) {
++		return {};
++	}
++	return readVersion + delta;
++}
++
++TEST_CASE("/fdbclient/SpecialKeySpace/MaintenanceEndVersion") {
++	constexpr Version maxVersion = std::numeric_limits<Version>::max();
++	const Version lastStart = maxVersion - CLIENT_KNOBS->CORE_VERSIONSPERSECOND;
++	auto end = maintenanceEndVersion(lastStart, 1.0);
++	ASSERT(end.present() && end.get() == maxVersion);
++	ASSERT(!maintenanceEndVersion(lastStart + 1, 1.0).present());
 +	return Void();
 +}
 +
- TEST_CASE("/fdbclient/ReadYourWrites/resolveKeySelectorSkipsClearedKey") {
- 	Arena arena;
- 	SnapshotCache cache(&arena);
-```
-
-**File**: `fdbclient/include/fdbclient/ReadYourWrites.h` (modified, +2/-2)
-```diff
-@@ -237,8 +237,8 @@ class ReadYourWritesTransaction final : NonCopyable,
- 	Future<Standalone<StringRef>> versionStampFuture;
- 	Standalone<VectorRef<KeyRangeRef>>
- 	    nativeReadRanges; // Used to read conflict ranges after committing an ryw disabled transaction
--	Standalone<VectorRef<KeyRangeRef>>
--	    nativeWriteRanges; // Used to read conflict ranges after committing an ryw disabled transaction
-+	// Write conflicts flushed out of the write map by versionstamped keys, or saved before a RYW-disabled commit.
-+	Standalone<VectorRef<KeyRangeRef>> nativeWriteRanges;
- 
- 	Reference<TransactionDebugInfo> transactionDebugInfo;
- 
-```
-
-**File**: `fdbserver/workloads/SpecialKeySpaceCorrectness.cpp` (modified, +31/-1)
-```diff
-@@ -124,8 +124,38 @@ struct SpecialKeySpaceCorrectnessWorkload : TestWorkload {
- 		                 testDuration,
- 		                 Void());
- 		// Only use one client to avoid potential conflicts on changing cluster configuration
--		if (clientId == 0)
-+		if (clientId == 0) {
-+			co_await testVersionstampedWriteConflicts(cx->clone());
- 			co_await managementApiCorrectnessActor(cx, this);
-+		}
-+	}
-+
-+	static Future<Void> testVersionstampedWriteConflicts(Database cx) {
-+		const KeyRef flushedKeys[] = { "b1"_sr, "b2"_sr, "b3"_sr };
-+		while (true) {
-+			ReadYourWritesTransaction tr(cx);
-+			Error err;
-+			try {
-+				tr.addReadConflictRange(singleKeyRange("a"_sr));
-+				for (KeyRef key : flushedKeys) {
-+					tr.set(key, "v"_sr);
-+				}
-+				// The stamp flushes three ranges. Commit sorts the later "a" range ahead of all three.
-+				tr.atomicOp("b0123456789\x01\x00\x00\x00"_sr, "v"_sr, MutationRef::SetVersionstampedKey);
-+				tr.set("a"_sr, "v"_sr);
-+				co_await tr.commit();
-+				for (KeyRef key : flushedKeys) {
-+					auto boundary = co_await tr.get(writeConflictRangeKeysRange.begin.withSuffix(key));
-+					ASSERT(boundary.present() && boundary.get() == "1"_sr);
-+				}
-+				co_return;
-+			} catch (Error& e) {
-+				if (e.code() == error_code_actor_cancelled)
-+					throw;
-+				err = e;
-+			}
-+			co_await tr.onError(err);
-+		}
+ // Commit the change to healthZoneKey
+ // We do not allow more than one zone to be set in maintenance in one transaction
+ // In addition, if the zoneId now is 'ignoreSSFailuresZoneString',
+@@ -2618,16 +2640,13 @@ static Future<Optional<std::string>> maintenanceCommitActor(ReadYourWritesTransa
+ 			    "The specified maintenance time " + boost::lexical_cast<std::string>(seconds) + " is a negative value";
+ 			co_return Optional<std::string>(ManagementAPIError::toJsonString(false, "maintenance", msg));
+ 		} else {
+-			const Version readVersion = ryw->getTransaction().getReadVersion().get();
+-			const double duration = seconds * CLIENT_KNOBS->CORE_VERSIONSPERSECOND;
+-			if (!(duration < static_cast<double>(std::numeric_limits<Version>::max())) ||
+-			    static_cast<Version>(duration) > std::numeric_limits<Version>::max() - readVersion) {
++			auto endVersion = maintenanceEndVersion(ryw->getTransaction().getReadVersion().get(), seconds);
++			if (!endVersion.present()) {
+ 				co_return Optional<std::string>(ManagementAPIError::toJsonString(
+ 				    false, "maintenance", "Maintenance duration must give a representable end version"));
+ 			}
+ 			TraceEvent(SevDebug, "SKSMaintenanceSet").detail("ZoneId", zoneId.toString());
+-			ryw->getTransaction().set(healthyZoneKey,
+-			                          healthyZoneValue(zoneId, readVersion + static_cast<Version>(duration)));
++			ryw->getTransaction().set(healthyZoneKey, healthyZoneValue(zoneId, endVersion.get()));
+ 		}
  	}
+ 	co_return Optional<std::string>();
+```
+
+**File**: `fdbserver/storageserver/storageserver.cpp` (modified, +30/-7)
+```diff
+@@ -10364,6 +10364,35 @@ Future<Void> tssDelayForever() {
+ 	}
+ }
  
- 	// This would be a unit test except we need a Database to create an ryw transaction
++SpanContext readV6SpanContext(ArenaReader& reader) {
++	SpanContextMessage message;
++	reader >> message;
++	// Pre-OTEL writers used the second word as a sampling token. OTEL writers put the entire
++	// trace ID in the V6 record and reserve the all-zero ID for unsampled transactions.
++	const UID id = message.spanContext;
++	const bool sampled = reader.protocolVersion().hasOTELSpanContext() ? id.isValid() : id.second() != 0;
++	return SpanContext(id, 0, sampled ? TraceFlags::sampled : TraceFlags::unsampled);
++}
++
++TEST_CASE("/fdbserver/storageserver/readV6SpanContext") {
++	auto check = [](ProtocolVersion version, UID id, bool sampled) {
++		auto record = BinaryWriter::toValue(SpanContextMessage(id), AssumeVersion(version));
++		ArenaReader reader(record.arena(), record, AssumeVersion(version));
++		const SpanContext context = readV6SpanContext(reader);
++		ASSERT(context.traceID == id);
++		ASSERT(context.spanID == 0);
++		ASSERT(context.isSampled() == sampled);
++	};
++	const auto otel = ProtocolVersion::withOTELSpanContext();
++	check(otel, UID(0, 12345), true);
++	check(otel, UID(12345, 0), true);
++	check(otel, UID(), false);
++	const auto legacy = ProtocolVersion::withSpanContext();
++	check(legacy, UID(12345, 0), false);
++	check(legacy, UID(12345, 1), true);
++	return Void();
++}
++
+ Future<Void> update(StorageServer* data, bool* pReceivedUpdate) {
+ 	double updateStart = g_network->timer();
+ 	double start{ 0 };
+@@ -10637,14 +10666,8 @@ Future<Void> update(StorageServer* data, bool* pReceivedUpdate) {
+ 					cloneCursor2->setProtocolVersion(rd.protocolVersion());
+ 					spanContext.traceID = UID();
+ 				} else if (rd.protocolVersion().hasSpanContext() && SpanContextMessage::isNextIn(rd)) {
+-					SpanContextMessage scm;
+-					rd >> scm;
+ 					CODE_PROBE(true, "storageserveractor converting SpanContextMessage into OTEL SpanContext");
+-					spanContext = SpanContext(UID(scm.spanContext.first(), scm.spanContext.second()),
+-					                          0,
+-					                          scm.spanContext.first() != 0 && scm.spanContext.second() != 0
+-					                              ? TraceFlags::sampled
+-					                              : TraceFlags::unsampled);
++					spanContext = readV6SpanContext(rd);
+ 				} else if (rd.protocolVersion().hasOTELSpanContext() && OTELSpanContextMessage::isNextIn(rd)) {
+ 					CODE_PROBE(true, "storageserveractor reading OTELSpanContextMessage");
+ 					OTELSpanContextMessage scm;
+```
+
+---
+
+### Incident Patch 2: `6be9783e` (2026-11-17)
+**Commit Message**: bindings/go: fix go-1.27 vet check for wrapped error pointer (#14567)
+
+Most error types do not support pointers in the Is() method,
+but our error type does, so just trick "go vet" to allow this.
+
+**File**: `bindings/go/src/fdb/errors_test.go` (modified, +8/-5)
+```diff
+@@ -34,14 +34,16 @@ func TestErrorWrapping(t *testing.T) {
+ 	MustAPIVersion(API_VERSION)
+ 	db := MustOpenDefault()
+ 
++	// Static type error keeps vet's printf check from rejecting %w of *Error;
++	// wrapping *Error is deliberately covered since Error.Is handles it.
++	var ptrErr error = &Error{Code: 2007}
++
+ 	testCases := []error{
+ 		nil,
+ 		&Error{
+ 			Code: 2007,
+ 		},
+-		fmt.Errorf("wrapped error: %w", &Error{
+-			Code: 2007,
+-		}),
++		fmt.Errorf("wrapped error: %w", ptrErr),
+ 		Error{
+ 			Code: 2007,
+ 		},
+@@ -74,8 +76,9 @@ func TestErrorIs(t *testing.T) {
+ 	if !errors.Is(fmt.Errorf("wrap: %w", Error{Code: 1007}), ErrTransactionTooOld) {
+ 		t.Error("expected match through wrapping")
+ 	}
+-	// wrapped pointer
+-	if !errors.Is(fmt.Errorf("wrap: %w", &Error{Code: 1007}), ErrTransactionTooOld) {
++	// wrapped pointer (static type error, see TestErrorWrapping)
++	var ptrErr error = &Error{Code: 1007}
++	if !errors.Is(fmt.Errorf("wrap: %w", ptrErr), ErrTransactionTooOld) {
+ 		t.Error("expected match through wrapped *Error")
+ 	}
+ 	// no false positive: wrong code
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14543** (2026-11-15): Include flushed write conflicts in versionstamped transaction reports (@tclinkenbeard-oai)
-- **PR #14534** (2026-11-13): [release-8.0] Don't set off ASSERT(skip) in test deliveredToNotAssigned (@saintstack)
-- **PR #14532** (2026-11-13): [release-8.0] Let fdbrestore -v/--version take the restore version again (@saintstack)
-- **PR #14531** (2026-11-13): Use one size bound for bulkdump manifests in expire and restore (@kumarnitin15)
-- **PR #14528** (2026-11-12): Pass blob store endpoint settings in BlobStoreEndpointParams (@shreechaturvedi)
-- **PR #14525** (2026-11-12): [release-8.0] Skip the range-restore clear when the span has no keys (@nos-a)
+- **PR #14568** (2026-11-18): [release-8.0] bindings/go: fix go-1.27 vet check for wrapped error pointer (@ploxiln)
+- **PR #14567** (2026-11-17): bindings/go: fix go-1.27 vet check for wrapped error pointer (@ploxiln)
+- **PR #14562** (2026-11-17): Drop --system-metadata from fdbrestore help and docs (@saintstack)
+- **PR #14561** (2026-11-18): [main] Release notes 8.0.1, forward port 7.4.9 and 7.4.10 release notes (@spraza)
+- **PR #14560** (2026-11-17): [release-8.0] Release notes 8.0.1, forward port 7.4.9 and 7.4.10 release notes (@spraza)
+- **PR #14558** (2026-11-17): [release-8.0] tests: throttling test timer fix (@ploxiln)
 
 ---
 
@@ -2122,53 +2267,78 @@ Include flushed write conflicts in versionstamped transaction reports
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in ReadYourWrites.cpp
+## X. Preserve sampled V6 trace IDs and reject zero tracing IDs
 
 **RULE**:
-When implementing operations in `fdbclient/ReadYourWrites.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bindings/c/test/unit/unit_tests.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `04c62ec9`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dc406d9f`: Preserve sampled V6 trace IDs and reject zero tracing IDs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbclient/ReadYourWrites.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `bindings/c/test/unit/unit_tests.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-			auto& flushedRanges = ryw->nativeWriteRanges;
-			if (!flushedRanges.empty()) {
-				// Commit appends the remaining conflicts and sorts the native array in place. Keep the flushed
-				// descriptors in a separate array; their key bytes already belong to the retained arena.
-				VectorRef<KeyRangeRef> saved;
-				saved.append(flushedRanges.arena(), flushedRanges.begin(), flushedRanges.size());
-				flushedRanges.contents() = saved;
-			}
-	for (const auto& range : nativeWriteRanges)
-		writeConflicts.insert(range.withPrefix(writeConflictRangeKeysRange.begin, result.arena()), "1"_sr);
-			nativeWriteRanges = tr.writeConflictRanges();
-TEST_CASE("/fdbclient/ReadYourWrites/writeConflictRangesAfterVersionstampedKey") {
-	auto db = DatabaseContext::create(
-	    makeReference<AsyncVar<ClientDBInfo>>(), Never(), LocalityData(), EnableLocalityLoadBalance::False);
-	ReadYourWritesTransaction tr(db);
-	tr.clear(KeyRangeRef("a"_sr, "c"_sr));
-	tr.atomicOp("b0123456789\x01\x00\x00\x00"_sr, "v"_sr, MutationRef::SetVersionstampedKey);
-	tr.setVersion(100);
+static void wait_for_client_connection() {
+	// The external client may still be connecting. Keep the retrying read in a separate
+	// transaction so tracing options can be set before any reads in the test transaction.
+	get_value(key(""), /* snapshot */ true, {});
+}
 
-	auto ranges = tr.getWriteConflictRangeIntersecting(writeConflictRangeKeysRange);
-	ASSERT_EQ(ranges.size(), 2);
-	ASSERT_EQ(ranges[0], KeyValueRef(writeC
+	wait_for_client_connection();
+	wait_for_client_connection();
+	std::string_view expectedDetail;
+	SUBCASE("invalid tracing ID") {
+		constexpr std::string_view idKey = "\xff\xff/tracing/transaction_id";
+		expectedDetail = "transaction_id";
+		SUBCASE("out-of-range decimal transaction ID") {
+			tr.set(idKey, "18446744073709551616");
+		}
+		SUBCASE("non-hexadecimal digit in transaction ID") {
+			tr.set(idKey, "0000000000000001000000000000000g");
+		}
+		SUBCASE("zero decimal transaction ID") {
+			tr.set(idKey, "0");
+		}
+		SUBCASE("zero hexadecimal transaction ID") {
+			tr.set(idKey, "00000000000000000000000000000000");
+		}
+	SUBCASE("invalid maintenance duration") {
+		constexpr std::string_view zoneKey = "\xff\xff/management/maintenance/zone1";
+		expectedDetail = "duration";
+		SUBCASE("non-numeric maintenance duration") {
+			tr.set(zoneKey, "abc");
+		}
+		SUBCASE("non-finite maintenance duration") {
+			tr.set(zoneKey, "nan");
+		}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-		for (const auto& range : nativeWriteRanges)
-			writeConflicts.insert(range.withPrefix(writeConflictRangeKeysRange.begin, result.arena()), "1"_sr);
+	SUBCASE("out-of-range decimal transaction ID") {
+		tr.set("\xff\xff/tracing/transaction_id", "18446744073709551616");
+	}
+	SUBCASE("non-hexadecimal digit in transaction ID") {
+		tr.set("\xff\xff/tracing/transaction_id", "0000000000000001000000000000000g");
+	}
+	SUBCASE("non-numeric maintenance duration") {
+		tr.set("\xff\xff/management/maintenance/zone1", "abc");
+	}
+	SUBCASE("non-finite maintenance duration") {
+		tr.set("\xff\xff/management/maintenance/zone1", "nan");
+	SUBCASE("maintenance duration exceeds the version range") {
+		tr.set("\xff\xff/management/maintenance/zone1", "1e30");
+	CHECK(present);
+	CHECK(length > 0);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `04c62ec9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dc406d9f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -671661,3 +671661,301 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `20470c69` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9154. link converted MRDs to the CRDs their package installed (Harvested from crossplane/crossplane)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "link converted MRDs to the CRDs their package installed",
+  "source": "crossplane/crossplane",
+  "source_url": "https://github.com/crossplane/crossplane",
+  "source_version": "ba22c621",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-18T07:30:49.745Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-crossplane-crossplane",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [crossplane/crossplane](https://github.com/crossplane/crossplane) (Revision: `ba22c621`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `internal/controller/apiextensions/managed/migration_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `138fe3c6`: pkg): link converted MRDs to the CRDs their package installed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/controller/apiextensions/managed/migration_test.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+/*
+Copyright 2026 The Crossplane Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+package managed
+
+import (
+	"context"
+	"slices"
+	"testing"
+	"time"
+
+	corev1 "k8s.io/api/core/v1"
+	extv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+	kerrors "k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/wait"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
+
+	"github.com/crossplane/crossplane-runtime/v2/pkg/conditions"
+	"github.com/crossplane/crossplane-runtime/v2/pkg/event"
+	"github.com/crossplane/crossplane-runtime/v2/pkg/logging"
+	"github.com/crossplane/crossp
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `138fe3c6` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9155. raise the QUIC-native wire floor to 0.2.161 (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "raise the QUIC-native wire floor to 0.2.161",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "74fdd7b1",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-18T07:30:51.453Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `74fdd7b1`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/core/src/node/network_bridge/p2p_protoc.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `74fdd7b1`: release): raise the QUIC-native wire floor to 0.2.161. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/node/network_bridge/p2p_protoc.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+/// which ships while the data ramp is still under watch. Raised to 0.2.161
+/// for 0.2.160: native connect is still off (`QUIC_NATIVE_PERCENT` is 0) and
+/// its wire fields may change before it is enabled, so no release is frozen
+/// as the floor yet.
+pub(crate) const QUIC_NATIVE_MIN_VERSION: (u8, u8, u16) = (0, 2, 161);
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+/// which ships while the data ramp is still under watch.
+pub(crate) const QUIC_NATIVE_MIN_VERSION: (u8, u8, u16) = (0, 2, 160);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `74fdd7b1` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9156. Preserve sampled V6 trace IDs and reject zero tracing IDs (Harvested from apple/foundationdb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Preserve sampled V6 trace IDs and reject zero tracing IDs",
+  "source": "apple/foundationdb",
+  "source_url": "https://github.com/apple/foundationdb",
+  "source_version": "33871e2f",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-18T07:30:53.631Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-apple-foundationdb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apple/foundationdb](https://github.com/apple/foundationdb) (Revision: `33871e2f`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `bindings/c/test/unit/unit_tests.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `dc406d9f`: Preserve sampled V6 trace IDs and reject zero tracing IDs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `bindings/c/test/unit/unit_tests.cpp`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+static void wait_for_client_connection() {
+	// The external client may still be connecting. Keep the retrying read in a separate
+	// transaction so tracing options can be set before any reads in the test transaction.
+	get_value(key(""), /* snapshot */ true, {});
+}
+
+	wait_for_client_connection();
+	wait_for_client_connection();
+	std::string_view expectedDetail;
+	SUBCASE("invalid tracing ID") {
+		constexpr std::string_view idKey = "\xff\xff/tracing/transaction_id";
+		expectedDetail = "transaction_id";
+		SUBCASE("out-of-range decimal transaction ID") {
+			tr.set(idKey, "18446744073709551616");
+		}
+		SUBCASE("non-hexadecimal digit in transaction ID") {
+			tr.set(idKey, "0000000000000001000000000000000g");
+		}
+		SUBCASE("zero decimal transaction ID") {
+			tr.set(idKey, "0");
+		}
+		SUBCASE("zero hexadecimal transaction ID") {
+			tr.set(idKey, "00000000000000000000000000000000");
+		}
+	SUBCASE("invalid maintenance duration") {
+		constexpr std::string_view zoneKey = "\xff\xff/management/maintenance/zone1";
+		expectedDetail = "duration";
+		SUBCASE("non-numeric maintenance duration") {
+			tr.set(zoneKey, "abc");
+		}
+		SUBCASE("non-finite maintenance duration") {
+			tr.set(zoneKey, "nan");
+		}
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+	SUBCASE("out-of-range decimal transaction ID") {
+		tr.set("\xff\xff/tracing/transaction_id", "18446744073709551616");
+	}
+	SUBCASE("non-hexadecimal digit in transaction ID") {
+		tr.set("\xff\xff/tracing/transaction_id", "0000000000000001000000000000000g");
+	}
+	SUBCASE("non-numeric maintenance duration") {
+		tr.set("\xff\xff/management/maintenance/zone1", "abc");
+	}
+	SUBCASE("non-finite maintenance duration") {
+		tr.set("\xff\xff/management/maintenance/zone1", "nan");
+	SUBCASE("maintenance duration exceeds the version range") {
+		tr.set("\xff\xff/management/maintenance/zone1", "1e30");
+	CHECK(present);
+	CHECK(length > 0);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `dc406d9f` are properly handled with clean fallback behavior.

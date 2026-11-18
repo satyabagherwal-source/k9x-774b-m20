@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T07:23:11.408Z",
-  "total_cycles_completed": 10403,
-  "total_learnings_persisted": 10403,
-  "total_rules_promoted": 9906,
+  "last_updated": "2026-11-18T07:30:54.063Z",
+  "total_cycles_completed": 10407,
+  "total_learnings_persisted": 10407,
+  "total_rules_promoted": 9909,
   "history": [
-    {
-      "timestamp": "2026-11-17T17:57:39.834Z",
-      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T17:57:48.459Z",
-      "repository": "founded-labs/react-native-reusables",
-      "learningId": "learn-github-founded-labs-react-native-reusables",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T17:57:56.090Z",
-      "repository": "clockworklabs/SpacetimeDB",
-      "learningId": "learn-github-clockworklabs-spacetimedb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T18:05:26.242Z",
-      "repository": "ornith-ai/Ornith-1.5-122B",
-      "learningId": "learn-huggingface-ornith-ai-ornith-1-5-122b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T18:05:36.187Z",
       "repository": "gardener/gardener",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-18T07:23:11.408Z",
       "repository": "rqlite/rqlite",
       "learningId": "learn-github-rqlite-rqlite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T07:30:40.400Z",
+      "repository": "Cloudflare/clef-flash",
+      "learningId": "learn-huggingface-cloudflare-clef-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T07:30:50.189Z",
+      "repository": "crossplane/crossplane",
+      "learningId": "learn-github-crossplane-crossplane",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T07:30:51.885Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T07:30:54.063Z",
+      "repository": "apple/foundationdb",
+      "learningId": "learn-github-apple-foundationdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T07:23:11.411Z",
+  "last_updated": "2026-11-18T07:30:54.066Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -875,14 +875,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cloudflare-clef-flash",
-      "content_hash": "9a898aed6e616833ad642d03ed68925c82612d60c63403c8a7b0501d1b7a6fb2",
-      "verified_at": "2026-11-13T20:36:44.032Z",
+      "content_hash": "774a386e1a62f5d715df26ececb12325aa4a901dac566e8dbd8a6db2dd950d40",
+      "verified_at": "2026-11-18T07:30:40.403Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T20:36:44.032Z"
+      "last_updated": "2026-11-18T07:30:40.403Z"
     },
     "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "e86717841c864daf12d2385ff22f41ebe445981ec34519dc8f3a88c452b63cbe",
-      "verified_at": "2026-11-18T02:51:27.617Z",
+      "content_hash": "5c025fc175c344d8e5599b053c3ae7c40b4b7f52414e0271c7b47343e5bd45c9",
+      "verified_at": "2026-11-18T07:30:51.887Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T02:51:27.617Z"
+      "last_updated": "2026-11-18T07:30:51.887Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -7566,14 +7566,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crossplane-crossplane",
-      "content_hash": "1471699563cae90446ad648665c5cf64a38cdb463f5c9d433cf8da12c1b1efa2",
-      "verified_at": "2026-11-16T03:23:22.624Z",
+      "content_hash": "c22bad2d629ea5d51ecb7c1dfc32c5bd158e27ccbe8ab741ff32f9071e7a61ab",
+      "verified_at": "2026-11-18T07:30:50.193Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T03:23:22.624Z"
+      "last_updated": "2026-11-18T07:30:50.193Z"
     },
     "apple/foundationdb": {
       "repository": "apple/foundationdb",
@@ -7581,14 +7581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apple-foundationdb",
-      "content_hash": "cef38dbbc335ec876e4ab232d44ea04b4a71966136101b9b047758ec8472540d",
-      "verified_at": "2026-11-17T08:18:41.627Z",
+      "content_hash": "c249dbd439d0bf86e0c59e1b94794ea1f1b774cdc47bd75dc7883d319ef88b2f",
+      "verified_at": "2026-11-18T07:30:54.065Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T08:18:41.627Z"
+      "last_updated": "2026-11-18T07:30:54.065Z"
     },
     "kucherenko/jscpd": {
       "repository": "kucherenko/jscpd",

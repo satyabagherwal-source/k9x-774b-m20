@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T07:23:15.974Z",
+  "last_updated": "2026-11-18T07:30:58.516Z",
   "total_records": 1787,
   "domains": {
     "A": {
@@ -7770,8 +7770,8 @@
       "title": "Content & Information Intelligence: crossplane/crossplane Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-crossplane-crossplane-content-information-intelligence-crossplane-crossplane-cor.md",
       "repository": "crossplane/crossplane",
-      "content_hash": "fd0fa7eac4034281754d2be315fe5288fd41e7c086019c48bf05d94c87412240",
-      "created_at": "2026-11-16T03:23:22.910Z"
+      "content_hash": "e91d6ae9256e399c3439a53f47a4115939cec8cda177addbcd72f6c31b847df7",
+      "created_at": "2026-11-18T07:30:50.494Z"
     },
     "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-core-invariants",
@@ -7848,8 +7848,8 @@
       "title": "Content & Information Intelligence: crossplane-crossplane-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-crossplane-crossplane-learnings-content-information-intelligence-crossplane-cros.md",
       "repository": "crossplane-crossplane-learnings",
-      "content_hash": "e1d7a031a77cb1e8787ae83198a422426a574fbf1f4792aa3161e1745f6c09ce",
-      "created_at": "2026-11-16T03:23:27.328Z"
+      "content_hash": "7a9af1d588f6e08f519fb46dbafb5cc1e480a2971b26b731b22e0fcc0d7c861b",
+      "created_at": "2026-11-18T07:30:57.953Z"
     },
     "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants",
@@ -9153,8 +9153,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "ffd33a0cc40f4086502b1431e78c273620848e1831f5eadcd29a8407208c2467",
-      "created_at": "2026-11-18T02:51:27.974Z"
+      "content_hash": "f1a8daeb46f1be457079b6a3f581579d1308d63af9dc24ab3ff1bacd168f56e6",
+      "created_at": "2026-11-18T07:30:52.208Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -9231,8 +9231,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "3ae7ebadaec372eaa501ec9f9d195ba1a51d35170ebdaafe3db2f721643bc48d",
-      "created_at": "2026-11-18T02:51:32.374Z"
+      "content_hash": "a197f4013fb31a820b665fd053de000f3d131fae4fb61e6a5e81dc4918d1565b",
+      "created_at": "2026-11-18T07:30:58.516Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -10071,8 +10071,8 @@
       "title": "Research & Knowledge Intelligence: Cloudflare/clef-flash Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cloudflare-clef-flash-research-knowledge-intelligence-cloudflare-clef-flash-c.md",
       "repository": "Cloudflare/clef-flash",
-      "content_hash": "86d7aea8bb65af76703a251d2445bc1076e5ee8040f46acb1c5113ab19b92e6d",
-      "created_at": "2026-11-13T20:36:44.189Z"
+      "content_hash": "00c62734dc94a38fdf76cbcb47a61e89ff8c787dbba46ab623fcd8510c44b671",
+      "created_at": "2026-11-18T07:30:40.567Z"
     },
     "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-core-invariants",
@@ -10158,8 +10158,8 @@
       "title": "Research & Knowledge Intelligence: hf-cloudflare-clef-flash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cloudflare-clef-flash-learnings-research-knowledge-intelligence-hf-cloudflare.md",
       "repository": "hf-cloudflare-clef-flash-learnings",
-      "content_hash": "f3245a3c4f35be26364830e9011774f9732ad5ecbd8d1ed33a5c745a46186dfe",
-      "created_at": "2026-11-13T20:37:26.841Z"
+      "content_hash": "d1de4aa74f4e247b71d5b88cd1098250efcd4f4c552a853c53a0537ad5213f3e",
+      "created_at": "2026-11-18T07:30:57.402Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mi": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mi",
@@ -15811,8 +15811,8 @@
       "title": "Quality & Verification Intelligence: apple/foundationdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-apple-foundationdb-quality-verification-intelligence-apple-foundationdb-core-inv.md",
       "repository": "apple/foundationdb",
-      "content_hash": "b151e32c6bb0da1564755fa2e713de5afcf903c05310d08c6a65e6f25e2cabda",
-      "created_at": "2026-11-16T00:36:52.592Z"
+      "content_hash": "b020e4fa9610990bf3413d2395fcf857c40f3a560a5cd047dc6feac38ca03bad",
+      "created_at": "2026-11-18T07:30:54.367Z"
     },
     "DOM-F-0C4992D6": {
       "record_id": "DOM-F-0C4992D6",

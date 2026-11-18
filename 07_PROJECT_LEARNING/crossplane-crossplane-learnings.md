@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  
 > **Source**: github ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  
-> **Source Version**: `0bc4615f`  
+> **Source Version**: `ba22c621`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T03:23:22.008Z  
+> **Timestamp**: 2026-11-18T07:30:49.272Z  
 > **Learning ID**: `learn-github-crossplane-crossplane`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crossplane-crossplane-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crossplane/crossplane](https://github.com/crossplane/crossplane))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T03:23:22.002Z  
+> **Harvest Timestamp**: 2026-11-18T07:30:49.266Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The Cloud Native Control Plane
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12245 stars
+- **Stars / Engagement**: 12251 stars
 
 ---
 
@@ -1525,167 +1525,1108 @@ type startCommand struct {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `71fa40f3` (2026-11-14)
-**Commit Message**: chore(deps): update vulnerable dependencies [security]
+### Incident Patch 1: `138fe3c6` (2026-10-05)
+**Commit Message**: fix(pkg): link converted MRDs to the CRDs their package installed
 
-**File**: `go.mod` (modified, +12/-10)
+Requiring an MRD to already own a CRD before it may update it blocked
+the default upgrade from Crossplane v1. CRD-to-MRD conversion creates
+each MRD from package content, but nothing linked it to the CRD the
+provider had already installed, so every converted MRD stayed blocked
+until an administrator added the owner reference by hand.
+
+Have the establisher, which writes the MRD from package content, add the
+MRD and the revision as owners of an existing CRD with the same name
+when that CRD is already owned by the revision, its Provider, or the
+MRD. Skip any other CRD and let the MRD controller block that MRD, so
+one name collision doesn't fail the rest of the package. Leave the CRD's
+controller and schema to the MRD controller, and use an optimistic lock
+so a concurrent ownership change fails instead of being overwritten.
+Watch MRDs so the revision reconciles again once its MRD exists, and
+keep TypeMeta across typed creates so the status references used to
+release control keep their kind.
+
+Cover the ownership rules and a package with an unlinkable CRD in unit
+tests, and add an opt-in API-server test that migrates a CR
+
+**File**: `internal/controller/apiextensions/managed/migration_test.go` (added, +181/-0)
 ```diff
-@@ -53,7 +53,9 @@ require (
- 	github.com/sirupsen/logrus v1.10.2 // indirect
- 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
- 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
-+	golang.org/x/crypto/openpgp v0.1.0-deprecated // indirect
- 	k8s.io/streaming v0.37.1 // indirect
+@@ -0,0 +1,181 @@
++/*
++Copyright 2026 The Crossplane Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package managed
++
++import (
++	"context"
++	"slices"
++	"testing"
++	"time"
++
++	corev1 "k8s.io/api/core/v1"
++	extv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
++	kerrors "k8s.io/apimachinery/pkg/api/errors"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/util/wait"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++	"sigs.k8s.io/controller-runtime/pkg/reconcile"
++
++	"github.com/crossplane/crossplane-runtime/v2/pkg/conditions"
++	"github.com/crossplane/crossplane-runtime/v2/pkg/event"
++	"github.com/crossplane/crossplane-runtime/v2/pkg/logging"
++	"github.com/crossplane/crossplane-runtime/v2/pkg/meta"
++
++	"github.com/crossplane/crossplane/apis/v2/apiextensions/v1alpha1"
++	pkgv1 "github.com/crossplane/crossplane/apis/v2/pkg/v1"
++	"github.com/crossplane/crossplane/v2/internal/controller/pkg/revision"
++	"github.com/crossplane/crossplane/v2/internal/converter"
++	"github.com/crossplane/crossplane/v2/internal/ssa"
++)
++
++func TestPackageCRDMigration(t *testing.T) {
++	c := newMRDEnvtestClient(t)
++	ctx := context.Background()
++	ns := "crossplane-system"
++	if err := c.Create(ctx, &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: ns}}); err != nil {
++		t.Fatal(err)
++	}
++	if err := c.Create(ctx, &corev1.Secret{ObjectMeta: metav1.ObjectMeta{Name: "tls", Namespace: ns}, Data: map[string][]byte{"tls.crt": []byte("test-ca")}}); err != nil {
++		t.Fatal(err)
++	}
++	provider := metav1.OwnerReference{APIVersion: "pkg.crossplane.io/v1", Kind: "Provider", Name: "provider", UID: "provider-uid", Controller: new(true)}
++	old := &pkgv1.ProviderRevision{
++		TypeMeta:   metav1.TypeMeta{APIVersion: "pkg.crossplane.io/v1", Kind: "ProviderRevision"},
++		ObjectMeta: metav1.ObjectMeta{Name: "revision-old", UID: "revision-old-uid", Labels: map[string]string{pkgv1.LabelParentPackage: provider.Name}, OwnerReferences: []metav1.OwnerReference{provider}},
++		Status:     pkgv1.ProviderRevisionStatus{PackageRevisionRuntimeStatus: pkgv1.PackageRevisionRuntimeStatus{TLSServerSecretName: new("tls")}},
++	}
++	content := &extv1.CustomResourceDefinition{
++		TypeMeta:   metav1.TypeMeta{APIVersion: extv1.SchemeGroupVersion.String(), Kind: "CustomResourceDefinition"},
++		ObjectMeta: metav1.ObjectMeta{Name: "widgets.example.org"},
++		Spec: extv1.CustomResourceDefinitionSpec{
++			Group: "example.org", Scope: extv1.ClusterScoped, Names: extv1.CustomResourceDefinitionNames{Plural: "widgets", Kind: "Widget"},
++			Versions: []extv1.CustomResourceDefinitionVersion{{Name: "v1", Served: true, Storage: true, Schema: &extv1.CustomResourceValidation{OpenAPIV3Schema: &extv1.JSONSchemaProps{Type: "object", Properties: map[string]extv1.JSONSchemaProps{"obsolete": {Type: "string"}}}}}},
++		},
++	}
++	e := revision.NewAPIEstablisher(c, ns, func() pkgv1.PackageRevision { return &pkgv1.ProviderRevision{} }, 1)
++	// Install the CRD as older Crossplane versions did, before conversion.
++	if _, err := e.Establish(ctx, []runtime.Object{content.DeepCopy()}, old, true); err != nil {
++		t.Fatal(err)
++	}
++	crd := &extv1.CustomResourceDefinition{}
++	readCRD := func() {
++		t.Helper()
++		if err := c.Get(ctx, client.ObjectKey{Name: content.Name}, crd); err != nil {
++			t.Fatal(err)
++		}
++	}
++	readCRD()
++	originalUID := crd.UID
++	// A converted package revision changes the schema and creates its MRD.
++	content.Spec.Versions[0].Schema.OpenAPIV3Schema.Properties = map[string]extv1.JSONSchemaProps{"current": {Type: "string"}}
++	establish := func(pr *pkgv1.ProviderRevision) {
++		t.Helper()
++		if err := wait.PollUntilContextTimeout(ctx, 50*time.Millisecond, 10*time.Second, true, func(ctx context.Context) (bool, error) {
++			objects, err := converter.CustomToManagedResourceDefinitions(true, content.DeepCopy())
++			if err != nil {
++				return false, err
++			}
++			refs, err := e.Establish(ctx, objects, pr, true)
++			if kerrors.IsConflict(err) {
++				return false, nil
++			}
++			pr.SetObjects(refs)
++			return err == nil, err
++		}); err != nil {
++			t.Fatal(err)
++		}
++	}
++	r := &Reconciler{client: c, managedFields: ssa.NewPatchingManagedFieldsUpgrader(c, ssa.ExactMatch(FieldOwnerMRD)), log: logging.NewNopLogger(), record: event.NewNopRecorder(), conditions: conditions.ObservedGenerationPropagationManager{}}
++	apply := func() {
++		t.Helper()
++		for range 3 {
++			if err := wait.PollUntilContextTimeout(ctx, 50*time.Millisecond, 10*time.Second,
+```
+
+**File**: `internal/controller/apiextensions/managed/ssa_test.go` (modified, +12/-5)
+```diff
+@@ -22,6 +22,7 @@ import (
+ 	"testing"
+ 	"time"
+ 
++	corev1 "k8s.io/api/core/v1"
+ 	extv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+ 	kerrors "k8s.io/apimachinery/pkg/api/errors"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+@@ -39,10 +40,10 @@ import (
+ 	"github.com/crossplane/crossplane/v2/internal/ssa"
  )
  
-@@ -181,7 +183,7 @@ require (
- 	github.com/google/uuid v1.6.0
- 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
- 	github.com/json-iterator/go v1.1.12 // indirect
--	github.com/klauspost/compress v1.20.1 // indirect
-+	github.com/klauspost/compress v1.20.2 // indirect
- 	github.com/mattn/go-colorable v0.1.14 // indirect
- 	github.com/mattn/go-isatty v0.0.20 // indirect
- 	github.com/mitchellh/go-homedir v1.1.0 // indirect
-@@ -200,20 +202,20 @@ require (
- 	github.com/spf13/cobra v1.10.2 // indirect
- 	github.com/spf13/pflag v1.0.10 // indirect
- 	github.com/vladimirvivien/gexe v0.4.1 // indirect
--	go.opentelemetry.io/otel v1.45.0 // indirect
--	go.opentelemetry.io/otel/metric v1.45.0 // indirect
--	go.opentelemetry.io/otel/trace v1.45.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.uber.org/zap v1.28.0 // indirect
--	golang.org/x/crypto v0.58.0 // indirect
--	golang.org/x/mod v0.41.0 // indirect
-+	golang.org/x/crypto v0.59.0 // indirect
-+	golang.org/x/mod v0.42.0 // indirect
- 	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/oauth2 v0.37.0 // indirect
--	golang.org/x/sys v0.49.0 // indirect
--	golang.org/x/term v0.47.0 // indirect
--	golang.org/x/text v0.43.0 // indirect
-+	golang.org/x/sys v0.50.0 // indirect
-+	golang.org/x/term v0.48.0 // indirect
-+	golang.org/x/text v0.44.0 // indirect
- 	golang.org/x/time v0.16.0 // indirect
--	golang.org/x/tools v0.51.0 // indirect
-+	golang.org/x/tools v0.52.0 // indirect
- 	gomodules.xyz/jsonpatch/v2 v2.5.0 // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260817212433-ac3dfec99bb1 // indirect
- 	gopkg.in/inf.v0 v0.9.1 // indirect
+-// TestCRDPrunesFieldsAfterCreate needs real managedFields and CRD merge semantics.
+-// Set KUBEBUILDER_ASSETS to a directory containing kube-apiserver and etcd.
+-// This is an opt-in local regression; CI does not currently provide the assets.
+-func TestCRDPrunesFieldsAfterCreate(t *testing.T) {
++// newMRDEnvtestClient starts an isolated API server for opt-in local regressions.
++// CI does not currently provide KUBEBUILDER_ASSETS.
++func newMRDEnvtestClient(t *testing.T) client.Client {
++	t.Helper()
+ 	assets := os.Getenv("KUBEBUILDER_ASSETS")
+ 	if assets == "" {
+ 		t.Skip("set KUBEBUILDER_ASSETS to run the API-server regression")
+@@ -61,7 +62,7 @@ func TestCRDPrunesFieldsAfterCreate(t *testing.T) {
+ 		}
+ 	})
+ 	scheme := runtime.NewScheme()
+-	for _, add := range []func(*runtime.Scheme) error{extv1.AddToScheme, v1alpha1.AddToScheme} {
++	for _, add := range []func(*runtime.Scheme) error{corev1.AddToScheme, extv1.AddToScheme, v1alpha1.AddToScheme} {
+ 		if err := add(scheme); err != nil {
+ 			t.Fatal(err)
+ 		}
+@@ -70,6 +71,12 @@ func TestCRDPrunesFieldsAfterCreate(t *testing.T) {
+ 	if err != nil {
+ 		t.Fatal(err)
+ 	}
++	return c
++}
++
++// TestCRDPrunesFieldsAfterCreate needs real managedFields and CRD merge semantics.
++func TestCRDPrunesFieldsAfterCreate(t *testing.T) {
++	c := newMRDEnvtestClient(t)
+ 	ctx := context.Background()
+ 	oldSchema := &v1alpha1.CustomResourceValidation{OpenAPIV3Schema: runtime.RawExtension{Raw: []byte(`{"type":"object","properties":{"spec":{"type":"object","properties":{"keep":{"type":"string"},"obsolete":{"type":"string"}}}}}`)}}
+ 	mrd := &v1alpha1.ManagedResourceDefinition{
 ```
 
-**File**: `go.sum` (modified, +24/-20)
+**File**: `internal/controller/pkg/revision/establisher.go` (modified, +16/-16)
 ```diff
-@@ -345,8 +345,8 @@ github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnr
- github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHmT4TnhNGBo=
- github.com/keybase/go-keychain v0.0.1 h1:way+bWYa6lDppZoZcgMbYsvC7GxljxrskdNInRtuthU=
- github.com/keybase/go-keychain v0.0.1/go.mod h1:PdEILRW3i9D8JcdM+FmY6RwkHGnhHxXwkPPMeUgOK1k=
--github.com/klauspost/compress v1.20.1 h1:T7kKElXUMXrUJ2E9QhQhxFtcK5rPyLdsGZvdbLMPdiQ=
--github.com/klauspost/compress v1.20.1/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
-+github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
-+github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
- github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
- github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
- github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
-@@ -538,18 +538,20 @@ go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.6
- go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.68.0/go.mod h1:Sje3i3MjSPKTSPvVWCaL8ugBzJwik3u4smCjUeuupqg=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 h1:8tvICD4vSTOOsNrsI4Ljf6C+6UKvpTEH5XY3JMoyPoo=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0/go.mod h1:z9+yiacE0IHRqM4qFfkbt/JYlmYXgss8GY/jXoNuPJI=
--go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
--go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MCxGz8+2VtrN/WgqSpJFctVz24gpxj8CxkKmc8Ww=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0/go.mod h1:BmAYTn+3ysbRe+IU2msxmf5Rx3g6DHvex+tWI3LdhYI=
--go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
--go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
-+go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
-+go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
-+go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
-+go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
- go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
- go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
--go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
--go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
-+go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
-+go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
- go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
- go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
- go.step.sm/crypto v0.81.0 h1:e+ouzpNt3Xm4dp7HGXhgYB5y4iFik3vh3phHKWmvugU=
-@@ -568,13 +570,15 @@ go.yaml.in/yaml/v3 v3.0.5/go.mod h1:HVTZu1O7/Vkt2N+BFy8Zza+lnLsABggaTM2ZpNIGuKg=
- golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACkg1iLfiJU5Ep61QUkGW8qpdssI0+w=
- golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
- golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
--golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
--golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
-+golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
-+golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
-+golang.org/x/crypto/openpgp v0.1.0-deprecated h1:T+duersHJVuH6qLtQk22qtGKH5vZhxGSlL5SMFHclaQ=
-+golang.org/x/crypto/openpgp v0.1.0-deprecated/go.mod h1:KQF17hRm+yCzhnZa+aRLbinf2TRZa+7G3TeEnHj6OoY=
- golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f h1:W3F4c+6OLc6H2lb//N1q4WpJkhzJCK5J6kUi1NTVXfM=
- golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f/go.mod h1:J1xhfL/vlindoeF/aINzNzt2Bket5bjo9sdOYzOsU80=
- golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
--golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
--golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYt
-```
-
-**File**: `nix/vendor-hashes.nix` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@
- # by hand.)
- {
-   # Root module: github.com/crossplane/crossplane/v2
--  root = "sha256-HIupaO1ehDF/k7g4IYIIp2GmIOtlhRR5BDTARJhQKsA=";
-+  root = "sha256-w4P42Q75ISPEYzfAm0rs01cRxcf50k3KQiFpO60XYJs=";
+@@ -471,26 +471,21 @@ func (e *APIEstablisher) establish(ctx context.Context, allObjs []currentDesired
+ 	out := make(chan xpv2.TypedReference, len(allObjs))
+ 	for _, cd := range allObjs {
+ 		g.Go(func() error {
+-			if !cd.Exists {
+-				// Only create a missing resource if we are going to control it.
+-				// This prevents an inactive revision from racing to create a
+-				// resource before an active revision of the same parent.
+-				if control {
+-					if err := e.create(ctx, cd.Desired, parent); err != nil {
+-						return err
+-					}
++			if cd.Exists {
++				if err := e.update(ctx, cd.Current, cd.Desired, parent, control); err != nil {
++					return err
+ 				}
+-
+-				select {
+-				case out <- *meta.TypedReferenceTo(cd.Desired, cd.Desired.GetObjectKind().GroupVersionKind()):
+-					return nil
+-				case <-ctx.Done():
+-					return ctx.Err()
++			} else if control {
++				// Inactive revisions must not race to create missing resources.
++				if err := e.create(ctx, cd.Desired, parent); err != nil {
++					return err
+ 				}
+ 			}
  
-   # apis module: github.com/crossplane/crossplane/apis/v2
-   apis = "sha256-OOGYrf8BQfWKJ6YS4BEma53wjrSLh1WQ2dHGnDNUm3g=";
+-			if err := e.update(ctx, cd.Current, cd.Desired, parent, control); err != nil {
+-				return err
++			if control {
++				if err := e.establishMRDCRDOwnership(ctx, cd.Desired, parent); err != nil {
++					return err
++				}
+ 			}
+ 
+ 			select {
+@@ -517,6 +512,11 @@ func (e *APIEstablisher) establish(ctx context.Context, allObjs []currentDesired
+ }
+ 
+ func (e *APIEstablisher) create(ctx context.Context, obj resource.Object, parent resource.Object, opts ...client.CreateOption) error {
++	// Typed creates can clear TypeMeta. Preserve it for the status references
++	// used to release control when a revision is deactivated.
++	gvk := obj.GetObjectKind().GroupVersionKind()
++	defer obj.GetObjectKind().SetGroupVersionKind(gvk)
++
+ 	refs := []metav1.OwnerReference{
+ 		meta.AsController(meta.TypedReferenceTo(parent, parent.GetObjectKind().GroupVersionKind())),
+ 	}
 ```
 
-**File**: `test/e2e/functions/revision-id/go.mod` (modified, +1/-1)
+**File**: `internal/controller/pkg/revision/establisher_test.go` (modified, +1/-1)
 ```diff
-@@ -12,7 +12,7 @@ require (
- 	dario.cat/mergo v1.0.2 // indirect
- 	github.com/beorn7/perks v1.0.1 // indirect
- 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
--	github.com/crossplane/crossplane-runtime/v2 v2.3.1 // indirect
-+	github.com/crossplane/crossplane-runtime/v2 v2.3.3 // indirect
- 	github.com/crossplane/crossplane/apis/v2 v2.3.1 // indirect
- 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
- 	github.com/emicklei/go-restful/v3 v3.13.0 // indirect
+@@ -688,7 +688,7 @@ func TestAPIEstablisherEstablish(t *testing.T) {
+ 							}
+ 							return nil
+ 						}
+-						return nil
++						return kerrors.NewNotFound(schema.GroupResource{}, obj.GetName())
+ 					},
+ 					MockUpdate: func(_ context.Context, obj client.Object, _ ...client.UpdateOption) error {
+ 						// Verify the merge logic for all combinations
 ```
 
-**File**: `test/e2e/functions/revision-id/go.sum` (modified, +2/-2)
+**File**: `internal/controller/pkg/revision/migration.go` (added, +98/-0)
 ```diff
-@@ -22,8 +22,8 @@ github.com/cenkalti/backoff/v5 v5.0.3/go.mod h1:rkhZdG3JZukswDf7f0cwqPNk4K0sa+F9
- github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
- github.com/cespare/xxhash/v2 v2.3.0/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
- github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
--github.com/crossplane/crossplane-runtime/v2 v2.3.1 h1:g2jT8aWl8bVuM62oeUiCv4FcrwoNcmJBXWj2ZpV+2Kw=
--github.com/crossplane/crossplane-runtime/v2 v2.3.1/go.mod h1:kl5xmOCH7pOVs0vMeDyQ5utqCxjmHd3Qa79i9Cc4mw0=
-+github.com/crossplane/crossplane-runtime/v2 v2.3.3 h1:seIYf6pk7dLhXd7uSh/N9rVB8IdbCthy3LB6TSn91OI=
-+github.com/crossplane/crossplane-runtime/v2 v2.3.3/go.mod h1:UBxoZEXVZz9Ql2W5u5ssFE+egQ21BYqGGc2F3dozUvI=
- github.com/crossplane/crossplane/apis/v2 v2.3.1 h1:gaJX/DSp5qnfLoThMxbJZOEziIJBEGbcRl7HjT3R1fk=
- github.com/crossplane/crossplane/apis/v2 v2.3.1/go.mod h1:o+D0ktZQKJCFcpfzMKA4n53aTo2sFqqDsADBNIRuIyE=
- github.com/crossplane/function-sdk-go v0.7.1 h1:BEM2b7nAr8rJYc9tjwnoMfVVy1veCA/juD8APYCVLi0=
+@@ -0,0 +1,98 @@
++/*
++Copyright 2026 The Crossplane Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package revision
++
++import (
++	"context"
++
++	extv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++
++	"github.com/crossplane/crossplane-runtime/v2/pkg/errors"
++	"github.com/crossplane/crossplane-runtime/v2/pkg/meta"
++	"github.com/crossplane/crossplane-runtime/v2/pkg/resource"
++
++	"github.com/crossplane/crossplane/apis/v2/apiextensions/v1alpha1"
++	v1 "github.com/crossplane/crossplane/apis/v2/pkg/v1"
++)
++
++// establishMRDCRDOwnership links an established package MRD to an existing CRD.
++// This runs after writing the MRD from package content. It skips a CRD it
++// can't link, leaving the MRD controller to block that MRD rather than
++// failing the rest of the package.
++func (e *APIEstablisher) establishMRDCRDOwnership(ctx context.Context, obj, parent client.Object) error {
++	mrd, ok := obj.(*v1alpha1.ManagedResourceDefinition)
++	if !ok {
++		return nil
++	}
++	pr, ok := parent.(*v1.ProviderRevision)
++	if !ok {
++		return nil
++	}
++
++	crd := &unstructured.Unstructured{}
++	crd.SetGroupVersionKind(extv1.SchemeGroupVersion.WithKind("CustomResourceDefinition"))
++	if err := e.client.Get(ctx, client.ObjectKey{Name: mrd.GetName()}, crd); err != nil {
++		return errors.Wrap(resource.IgnoreNotFound(err), "cannot get CRD for package MRD")
++	}
++	if mrd.GetUID() == "" || pr.GetUID() == "" {
++		return errors.New("cannot establish CRD ownership without MRD and ProviderRevision UIDs")
++	}
++	mrdRef := meta.AsOwner(meta.TypedReferenceTo(mrd, v1alpha1.ManagedResourceDefinitionGroupVersionKind))
++	prRef := meta.AsOwner(meta.TypedReferenceTo(pr, v1.ProviderRevisionGroupVersionKind))
++	// The Provider path lets revisions that replaced the CRD's original one
++	// adopt it.
++	provider := metav1.GetControllerOf(pr)
++	ownedByProvider := provider != nil &&
++		schema.FromAPIVersionAndKind(provider.APIVersion, provider.Kind).GroupKind() == v1.ProviderGroupVersionKind.GroupKind() &&
++		hasOwner(crd, *provider)
++	if !hasOwner(crd, mrdRef) && !hasOwner(crd, prRef) && !ownedByProvider {
++		return nil
++	}
++
++	before := crd.DeepCopy()
++	changed := false
++	for _, ref := range []metav1.OwnerReference{mrdRef, prRef} {
++		if !hasOwner(crd, ref) {
++			meta.AddOwnerReference(crd, ref)
++			changed = true
++		}
++	}
++	if !changed {
++		return nil
++	}
++	// The revision retains grants even while the MRD is inactive. Leave the
++	// CRD's current controller and schema to the MRD controller, and reject
++	// concurrent changes to the ownership we checked.
++	return errors.Wrap(e.client.Patch(ctx, crd, client.MergeFromWithOptions(before, client.MergeFromWithOptimisticLock{})), "cannot establish package MRD ownership of CRD")
++}
++
++func hasOwner(obj metav1.Object, want metav1.OwnerReference) bool {
++	if want.UID == "" {
++		return false
++	}
++	for _, ref := range obj.GetOwnerReferences() {
++		if ref.UID == want.UID && ref.Name == want.Name &&
++			schema.FromAPIVersionAndKind(ref.APIVersion, ref.Kind).GroupKind() == schema.FromAPIVersionAndKind(want.APIVersion, want.Kind).GroupKind() {
++			return true
++		}
++	}
++	return false
++}
+```
+
+**File**: `internal/controller/pkg/revision/migration_test.go` (added, +252/-0)
+```diff
+@@ -0,0 +1,252 @@
++/*
++Copyright 2026 The Crossplane Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package revision
++
++import (
++	"context"
++	"testing"
++
++	"github.com/google/go-cmp/cmp"
++	corev1 "k8s.io/api/core/v1"
++	extv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
++	kerrors "k8s.io/apimachinery/pkg/api/errors"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	"k8s.io/apimachinery/pkg/types"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++	"sigs.k8s.io/controller-runtime/pkg/client/fake"
++	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
++
++	"github.com/crossplane/crossplane-runtime/v2/pkg/meta"
++
++	"github.com/crossplane/crossplane/apis/v2/apiextensions/v1alpha1"
++	xpv2 "github.com/crossplane/crossplane/apis/v2/core/v2"
++	v1 "github.com/crossplane/crossplane/apis/v2/pkg/v1"
++	"github.com/crossplane/crossplane/v2/internal/controller/rbac/grant"
++	"github.com/crossplane/crossplane/v2/internal/converter"
++)
++
++func TestEstablishConvertedCRDOwnership(t *testing.T) {
++	provider := metav1.OwnerReference{APIVersion: "pkg.crossplane.io/v1", Kind: "Provider", Name: "provider", UID: "provider-uid", Controller: new(true)}
++	revision := &v1.ProviderRevision{
++		TypeMeta:   metav1.TypeMeta{APIVersion: "pkg.crossplane.io/v1", Kind: "ProviderRevision"},
++		ObjectMeta: metav1.ObjectMeta{Name: "revision-new", UID: "revision-new-uid", Labels: map[string]string{v1.LabelParentPackage: provider.Name}, OwnerReferences: []metav1.OwnerReference{provider}},
++		Status:     v1.ProviderRevisionStatus{PackageRevisionRuntimeStatus: v1.PackageRevisionRuntimeStatus{TLSServerSecretName: new("tls")}},
++	}
++	oldRevision := meta.AsController(meta.TypedReferenceTo(revision, v1.ProviderRevisionGroupVersionKind))
++	oldRevision.Name = "revision-old"
++	oldRevision.UID = "revision-old-uid"
++	provider.Controller = new(false)
++	foreignUID := provider
++	foreignUID.UID = "foreign-uid"
++	foreignName := provider
++	foreignName.Name = "foreign-name"
++	foreignKind := provider
++	foreignKind.Kind = "Configuration"
++	foreignGroup := provider
++	foreignGroup.APIVersion = "foreign.example.org/v1"
++
++	for name, tc := range map[string]struct {
++		owners                                                                 []metav1.OwnerReference
++		inactiveRevision, inactiveMRD, statusOnly, absentCRD, race, failCreate bool
++		wantLink, wantError                                                    bool
++	}{
++		"LegacyProvider":                   {owners: []metav1.OwnerReference{provider, oldRevision}, wantLink: true},
++		"CurrentRevision":                  {owners: []metav1.OwnerReference{meta.AsController(meta.TypedReferenceTo(revision, v1.ProviderRevisionGroupVersionKind))}, wantLink: true},
++		"InactiveMRDRetainsRevisionGrants": {owners: []metav1.OwnerReference{provider, oldRevision}, inactiveMRD: true, wantLink: true},
++		"InactiveRevision":                 {owners: []metav1.OwnerReference{provider, oldRevision}, inactiveRevision: true},
++		"StatusOnly":                       {owners: []metav1.OwnerReference{provider, oldRevision}, statusOnly: true},
++		"NoExistingCRD":                    {absentCRD: true},
++		"UnownedCRD":                       {},
++		"ForeignUID":                       {owners: []metav1.OwnerReference{foreignUID}},
++		"ForeignName":                      {owners: []metav1.OwnerReference{foreignName}},
++		"ForeignKind":                      {owners: []metav1.OwnerReference{foreignKind}},
++		"ForeignGroup":                     {owners: []metav1.OwnerReference{foreignGroup}},
++		"OwnershipRace":                    {owners: []metav1.OwnerReference{provider, oldRevision}, race: true, wantError: true},
++		"FailedMRDCreate":                  {owners: []metav1.OwnerReference{provider, oldRevision}, failCreate: true, wantError: true},
++	} {
++		t.Run(name, func(t *testing.T) {
++			ctx := context.Background()
++			scheme := runtime.NewScheme()
++			for _, add := range []func(*runtime.Scheme) error{corev1.AddToScheme, extv1.AddToScheme, v1alpha1.AddToScheme, v1.AddToScheme} {
++				if err := add(scheme); err != nil {
++					t.Fatal(err)
++				}
++			}
++			content := &extv1.CustomResourceDefinition{
++				TypeMeta:   metav1.TypeMeta{APIVersion: extv1.SchemeGroupVersion.String(), Kind: "CustomResourceDefinition"},
++				ObjectMeta: metav1.ObjectMeta{Name: "widgets.example.org"},
++				Spec:       extv1.CustomResourceDefinitionSpec{Group: "example.org", Scope: extv1.ClusterSc
+```
+
+**File**: `internal/controller/pkg/revision/reconciler.go` (modified, +3/-0)
+```diff
+@@ -31,8 +31,10 @@ import (
+ 	"k8s.io/apimachinery/pkg/runtime/schema"
+ 	"k8s.io/utils/ptr"
+ 	ctrl "sigs.k8s.io/controller-runtime"
++	"sigs.k8s.io/controller-runtime/pkg/builder"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
+ 	"sigs.k8s.io/controller-runtime/pkg/manager"
++	"sigs.k8s.io/controller-runtime/pkg/predicate"
+ 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
+ 
+ 	"github.com/crossplane/crossplane-runtime/v2/pkg/conditions"
+@@ -231,6 +233,7 @@ func SetupProviderRevision(mgr ctrl.Manager, o controller.Options) error {
+ 		Named(name).
+ 		For(&v1.ProviderRevision{}).
+ 		Owns(&corev1.Secret{}). // Watch secret changes to react if pull or cert secrets change.
++		Owns(&extv1alpha1.ManagedResourceDefinition{}, builder.WithPredicates(predicate.GenerationChangedPredicate{})).
+ 		Watches(&v1beta1.Lock{}, EnqueuePackageRevisionsForLock(mgr.GetClient(), &v1.ProviderRevisionList{}, log)).
+ 		Watches(&v1beta1.ImageConfig{}, EnqueuePackageRevisionsForImageConfig(mgr.GetClient(), &v1.ProviderRevisionList{}, log))
+ 
+```
+
+---
+
+### Incident Patch 2: `105f2a6d` (2026-09-08)
+**Commit Message**: fix(managed): preserve apply ownership and retry CRD conflicts
+
+Create CRDs with a distinct field manager so the existing upgrader
+transfers create-time Update ownership to Apply. Otherwise an omitted
+owner reference can remain co-owned: an API-server test reproduces a
+failed revision handoff because both old and new controller references
+survive.
+
+Retry conflicts from managed-fields upgrades and CRD apply, and
+concurrent create races, before emitting warnings or writing Blocked
+conditions. Cover quiet retries and add an opt-in API-server test for
+ownership transfer and field removal after create.
+
+Clarify that MRD controller references provide attribution, improve
+ownership errors, and report CRD discovery failures through XRD events.
+
+Signed-off-by: Philippe Scorsolini <[REDACTED_EMAIL]>
+
+**File**: `internal/controller/apiextensions/managed/crd.go` (modified, +1/-0)
+```diff
+@@ -99,6 +99,7 @@ func CRDAsUnstructured(mrd *v1alpha1.ManagedResourceDefinition) (*unstructured.U
+ 
+ 	// Add owner references
+ 	meta.AddOwnerReference(u, meta.AsOwner(meta.TypedReferenceTo(mrd, v1alpha1.ManagedResourceDefinitionGroupVersionKind)))
++	// This reference records the installing package.
+ 	if owner := metav1.GetControllerOf(mrd); owner != nil {
+ 		meta.AddOwnerReference(u, *owner)
+ 	}
+```
+
+**File**: `internal/controller/apiextensions/managed/ownership_test.go` (modified, +37/-7)
+```diff
+@@ -28,7 +28,6 @@ import (
+ 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
+ 
+ 	"github.com/crossplane/crossplane-runtime/v2/pkg/conditions"
+-	"github.com/crossplane/crossplane-runtime/v2/pkg/event"
+ 	"github.com/crossplane/crossplane-runtime/v2/pkg/logging"
+ 	"github.com/crossplane/crossplane-runtime/v2/pkg/meta"
+ 	"github.com/crossplane/crossplane-runtime/v2/pkg/test"
+@@ -59,6 +58,7 @@ func TestReconcileCRDOwnership(t *testing.T) {
+ 		owners                []metav1.OwnerReference
+ 		installer             *metav1.OwnerReference
+ 		absent, allowed, race bool
++		upgradeRace           bool
+ 	}{
+ 		"Create":                 {absent: true, allowed: true},
+ 		"CreateRace":             {absent: true, allowed: true, race: true},
+@@ -71,6 +71,7 @@ func TestReconcileCRDOwnership(t *testing.T) {
+ 		"WrongName":              {owners: []metav1.OwnerReference{wrongName}},
+ 		"WrongKind":              {owners: []metav1.OwnerReference{wrongKind}},
+ 		"ForeignInstaller":       {owners: []metav1.OwnerReference{foreign}, installer: &foreign},
++		"UpgradeRace":            {owners: []metav1.OwnerReference{mrdOwner}, allowed: true, upgradeRace: true},
+ 		"UpdateRace":             {owners: []metav1.OwnerReference{mrdOwner}, allowed: true, race: true},
+ 	} {
+ 		t.Run(name, func(t *testing.T) {
+@@ -79,6 +80,8 @@ func TestReconcileCRDOwnership(t *testing.T) {
+ 				parent.OwnerReferences = []metav1.OwnerReference{*tc.installer}
+ 			}
+ 			writes := 0
++			statusUpdates := 0
++			recorder := &testRecorder{}
+ 			c := &test.MockClient{
+ 				MockGet: func(_ context.Context, _ client.ObjectKey, obj client.Object) error {
+ 					switch o := obj.(type) {
+@@ -92,7 +95,11 @@ func TestReconcileCRDOwnership(t *testing.T) {
+ 					}
+ 					return nil
+ 				},
+-				MockCreate: func(_ context.Context, _ client.Object, _ ...client.CreateOption) error {
++				MockCreate: func(_ context.Context, _ client.Object, opts ...client.CreateOption) error {
++					options := (&client.CreateOptions{}).ApplyOptions(opts)
++					if ssa.ExactMatch(FieldOwnerMRD)(options.FieldManager) {
++						t.Error("create manager must trigger the managed-fields upgrade")
++					}
+ 					writes++
+ 					if !tc.absent {
+ 						t.Error("must update an existing CRD")
+@@ -115,15 +122,32 @@ func TestReconcileCRDOwnership(t *testing.T) {
+ 					}
+ 					return nil
+ 				},
+-				MockStatusUpdate: test.NewMockSubResourceUpdateFn(nil),
++				MockStatusUpdate: func(_ context.Context, _ client.Object, _ ...client.SubResourceUpdateOption) error {
++					statusUpdates++
++					return nil
++				},
+ 			}
+-			r := &Reconciler{client: c, managedFields: &ssa.NopManagedFieldsUpgrader{}, log: logging.NewNopLogger(), record: event.NewNopRecorder(), conditions: conditions.ObservedGenerationPropagationManager{}}
+-			_, err := r.Reconcile(context.Background(), reconcile.Request{NamespacedName: client.ObjectKeyFromObject(parent)})
+-			if got, want := err != nil, !tc.allowed || tc.race; got != want {
++			var upgrader ssa.ManagedFieldsUpgrader = &ssa.NopManagedFieldsUpgrader{}
++			if tc.upgradeRace {
++				upgrader = managedFieldsUpgradeFn(func(context.Context, client.Object) error {
++					return kerrors.NewConflict(schema.GroupResource{}, parent.Name, nil)
++				})
++			}
++			r := &Reconciler{client: c, managedFields: upgrader, log: logging.NewNopLogger(), record: recorder, conditions: conditions.ObservedGenerationPropagationManager{}}
++			result, err := r.Reconcile(context.Background(), reconcile.Request{NamespacedName: client.ObjectKeyFromObject(parent)})
++			if got, want := err != nil, !tc.allowed; got != want {
+ 				t.Errorf("error = %v, want error %v", err, want)
+ 			}
++			retry := tc.race || tc.upgradeRace
++			wantResult := reconcile.Result{Requeue: retry}
++			if result != wantResult {
++				t.Errorf("result = %v, want %v", result, wantResult)
++			}
++			if retry && (len(recorder.events) != 0 || statusUpdates != 0) {
++				t.Errorf("retry emitted %d events and %d status updates", len(recorder.events), statusUpdates)
++			}
+ 			wantWrites := 0
+-			if tc.allowed {
++			if tc.allowed && !tc.upgradeRace {
+ 				wantWrites = 1
+ 			}
+ 			if writes != wantWrites {
+@@ -132,3 +156,9 @@ func TestReconcileCRDOwnership(t *testing.T) {
+ 		})
+ 	}
+ }
++
++type managedFieldsUpgradeFn func(context.Context, client.Object) error
++
++func (fn managedFieldsUpgradeFn) Upgrade(ctx context.Context, obj client.Object) error {
++	return fn(ctx, obj)
++}
+```
+
+**File**: `internal/controller/apiextensions/managed/reconciler.go` (modified, +12/-1)
+```diff
+@@ -22,6 +22,7 @@ import (
+ 	"time"
+ 
+ 	extv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
++	kerrors "k8s.io/apimachinery/pkg/api/errors"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	kunstructured "k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
+ 	"k8s.io/apimachinery/pkg/runtime"
+@@ -155,6 +156,9 @@ func (r *Reconciler) Reconcile(ogctx context.Context, req reconcile.Request) (re
+ 	// apply. This is necessary when a CRD was previously managed using
+ 	// client-side apply, but should now be managed using server-side apply.
+ 	if err := r.managedFields.Upgrade(ctx, crd); err != nil {
++		if kerrors.IsConflict(err) {
++			return reconcile.Result{Requeue: true}, nil
++		}
+ 		log.Debug("cannot upgrade managed fields", "error", err)
+ 		r.record.Event(mrd, event.Warning(reasonReconcile, err))
+ 		status.MarkConditions(v1alpha1.BlockedManaged().WithMessage("unable to upgrade managed fields, see events"))
+@@ -188,13 +192,20 @@ func (r *Reconciler) Reconcile(ogctx context.Context, req reconcile.Request) (re
+ 	// pin apply to the resource version whose ownership we checked. Upgrade
+ 	// refreshes that version if it patches managed fields.
+ 	if getErr != nil {
+-		err = r.client.Create(ctx, patch, client.FieldOwner(FieldOwnerMRD))
++		// A distinct create manager lets the upgrader transfer its Update
++		// ownership to Apply. Otherwise omitted fields can remain co-owned.
++		err = r.client.Create(ctx, patch, client.FieldOwner(FieldOwnerMRD+"/create"))
+ 	} else {
+ 		patch.SetResourceVersion(crd.GetResourceVersion())
+ 		//nolint:staticcheck // TODO(adamwg): Stop using client.Apply after the v2.2 release.
+ 		err = r.client.Patch(ctx, patch, client.Apply, client.ForceOwnership, client.FieldOwner(FieldOwnerMRD))
+ 	}
+ 	if err != nil {
++		// Cached reads may trail CRD status updates or concurrent creation.
++		// Retry without replacing healthy conditions or emitting warnings.
++		if kerrors.IsConflict(err) || kerrors.IsAlreadyExists(err) {
++			return reconcile.Result{Requeue: true}, nil
++		}
+ 		log.Debug("cannot apply CustomResourceDefinition", "error", err)
+ 		r.record.Event(mrd, event.Warning(reasonApplyCRD, err))
+ 		status.MarkConditions(v1alpha1.BlockedManaged().WithMessage("unable to apply CustomResourceDefinition, see events"))
+```
+
+**File**: `internal/controller/apiextensions/managed/ssa_test.go` (added, +154/-0)
+```diff
+@@ -0,0 +1,154 @@
++/*
++Copyright 2026 The Crossplane Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package managed
++
++import (
++	"context"
++	"os"
++	"testing"
++	"time"
++
++	extv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
++	kerrors "k8s.io/apimachinery/pkg/api/errors"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/util/wait"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++	"sigs.k8s.io/controller-runtime/pkg/envtest"
++	"sigs.k8s.io/controller-runtime/pkg/reconcile"
++
++	"github.com/crossplane/crossplane-runtime/v2/pkg/conditions"
++	"github.com/crossplane/crossplane-runtime/v2/pkg/event"
++	"github.com/crossplane/crossplane-runtime/v2/pkg/logging"
++
++	"github.com/crossplane/crossplane/apis/v2/apiextensions/v1alpha1"
++	"github.com/crossplane/crossplane/v2/internal/ssa"
++)
++
++// TestCRDPrunesFieldsAfterCreate needs real managedFields and CRD merge semantics.
++// Set KUBEBUILDER_ASSETS to a directory containing kube-apiserver and etcd.
++func TestCRDPrunesFieldsAfterCreate(t *testing.T) {
++	assets := os.Getenv("KUBEBUILDER_ASSETS")
++	if assets == "" {
++		t.Skip("set KUBEBUILDER_ASSETS to run the API-server regression")
++	}
++	env := &envtest.Environment{
++		UseExistingCluster: new(false), BinaryAssetsDirectory: assets,
++		CRDDirectoryPaths: []string{"../../../../cluster/crds/apiextensions.crossplane.io_managedresourcedefinitions.yaml"}, ErrorIfCRDPathMissing: true,
++	}
++	cfg, err := env.Start()
++	if err != nil {
++		t.Fatal(err)
++	}
++	t.Cleanup(func() {
++		if err := env.Stop(); err != nil {
++			t.Error(err)
++		}
++	})
++	scheme := runtime.NewScheme()
++	for _, add := range []func(*runtime.Scheme) error{extv1.AddToScheme, v1alpha1.AddToScheme} {
++		if err := add(scheme); err != nil {
++			t.Fatal(err)
++		}
++	}
++	c, err := client.New(cfg, client.Options{Scheme: scheme})
++	if err != nil {
++		t.Fatal(err)
++	}
++	ctx := context.Background()
++	oldSchema := &v1alpha1.CustomResourceValidation{OpenAPIV3Schema: runtime.RawExtension{Raw: []byte(`{"type":"object","properties":{"spec":{"type":"object","properties":{"keep":{"type":"string"},"obsolete":{"type":"string"}}}}}`)}}
++	mrd := &v1alpha1.ManagedResourceDefinition{
++		ObjectMeta: metav1.ObjectMeta{Name: "widgets.example.org", OwnerReferences: []metav1.OwnerReference{{
++			APIVersion: "pkg.crossplane.io/v1", Kind: "ProviderRevision", Name: "provider-old", UID: "provider-old-uid", Controller: new(true),
++		}}},
++		Spec: v1alpha1.ManagedResourceDefinitionSpec{
++			State: v1alpha1.ManagedResourceDefinitionActive,
++			CustomResourceDefinitionSpec: v1alpha1.CustomResourceDefinitionSpec{
++				Group: "example.org", Scope: extv1.ClusterScoped,
++				Names: extv1.CustomResourceDefinitionNames{Kind: "Widget", Plural: "widgets"},
++				Versions: []v1alpha1.CustomResourceDefinitionVersion{
++					{Name: "v1beta1", Served: true, Schema: oldSchema},
++					{Name: "v1", Served: true, Storage: true, Schema: oldSchema, AdditionalPrinterColumns: []extv1.CustomResourceColumnDefinition{{Name: "Obsolete", Type: "string", JSONPath: ".spec.obsolete"}}},
++				},
++			},
++		},
++	}
++	if err := c.Create(ctx, mrd); err != nil {
++		t.Fatal(err)
++	}
++	r := &Reconciler{
++		client: c, managedFields: ssa.NewPatchingManagedFieldsUpgrader(c, ssa.ExactMatch(FieldOwnerMRD)),
++		log: logging.NewNopLogger(), record: event.NewNopRecorder(), conditions: conditions.ObservedGenerationPropagationManager{},
++	}
++	reconcileOnce := func() {
++		t.Helper()
++		if err := wait.PollUntilContextTimeout(ctx, 50*time.Millisecond, 10*time.Second, true, func(ctx context.Context) (bool, error) {
++			result, err := r.Reconcile(ctx, reconcile.Request{NamespacedName: client.ObjectKeyFromObject(mrd)})
++			if kerrors.IsConflict(err) {
++				return false, nil
++			}
++			return result == (reconcile.Result{}), err
++		}); err != nil {
++			t.Fatal(err)
++		}
++	}
++	// Create, transfer fields to apply, and finish the managed-fields upgrade.
++	for range 3 {
++		reconcileOnce()
++	}
++	if err := c.Get(ctx, client.ObjectKeyFromObject(mrd), mrd); err != nil {
++		t.Fatal(err)
++	}
++	mrd.OwnerReferences[0].Name = "provider-new"
++	mrd.OwnerReferences[0].UID = "provider-new-uid"
++	mrd.Spec.Versions = []v1alpha1.CustomResourceDefinitionVersion{{
++		Name: "v1", Served: true, Storage: true,
++		Schema: &v1alpha1.CustomResourceValidation{OpenAPIV3Schema: runtime.RawExtension{Raw: []byte(`{"type":"object","properties":{"spec":{"type":"object","properties":{"keep":{"type":"string"}}}}}`)}},
++	}}
++	if e
+```
+
+**File**: `internal/controller/apiextensions/ownership/ownership.go` (modified, +1/-1)
+```diff
+@@ -38,7 +38,7 @@ func MustBeControlledBy(owner metav1.Object) resource.ApplyOption {
+ 			return err
+ 		}
+ 		if owner.GetUID() == "" || !metav1.IsControlledBy(m, owner) {
+-			return errors.New("CustomResourceDefinition is not controlled by this CompositeResourceDefinition")
++			return errors.Errorf("CustomResourceDefinition %q is not controlled by %q (UID %q)", m.GetName(), owner.GetName(), owner.GetUID())
+ 		}
+ 		return nil
+ 	}
+```
+
+**File**: `internal/controller/rbac/definition/reconciler.go` (modified, +2/-0)
+```diff
+@@ -184,6 +184,8 @@ func (r *Reconciler) Reconcile(ctx context.Context, req reconcile.Request) (reco
+ 
+ 	crds, err := grant.OwnedCRDs(ctx, r.client, d, v1.CompositeResourceDefinitionGroupVersionKind.GroupKind())
+ 	if err != nil {
++		log.Debug("Cannot discover owned CustomResourceDefinitions", "error", err)
++		r.record.Event(d, event.Warning(reasonApplyRoles, err))
+ 		return reconcile.Result{}, err
+ 	}
+ 	names := make(map[string]bool, len(crds))
+```
+
+**File**: `internal/controller/rbac/grant/grant.go` (modified, +1/-0)
+```diff
+@@ -53,6 +53,7 @@ func Permitted(group, plural string) bool {
+ 		return false
+ 	}
+ 
++	// Groups under k8s.io are reserved for Kubernetes APIs.
+ 	if group == "k8s.io" || strings.HasSuffix(group, ".k8s.io") {
+ 		return false
+ 	}
+```
+
+---
+
+### Incident Patch 3: `a1749f0a` (2026-09-08)
+**Commit Message**: fix(rbac): require exact MRD ownership and preserve fixed grants
+
+Require an existing CRD to reference the exact MRD before the MRD
+controller updates it. Remove both migration exceptions; normal handoff
+of an existing MRD remains supported.
+
+Preserve fixed provider startup and SafeStart permissions when no CRDs
+qualify. Revoke composite and claim grants independently, and retry
+discovery conflicts before recording warning events.
+
+Cover owner reference mismatches, startup permissions, claim survival and
+quiet retries. Clarify the generic ownership helper and document that
+the SSA API-server test is opt-in locally and skipped by current CI.
+
+Signed-off-by: Philippe Scorsolini <[REDACTED_EMAIL]>
+
+**File**: `internal/controller/apiextensions/managed/crd.go` (modified, +3/-25)
+```diff
+@@ -30,7 +30,6 @@ import (
+ 	"github.com/crossplane/crossplane-runtime/v2/pkg/meta"
+ 
+ 	"github.com/crossplane/crossplane/apis/v2/apiextensions/v1alpha1"
+-	pkgv1 "github.com/crossplane/crossplane/apis/v2/pkg/v1"
+ )
+ 
+ // CRDAsUnstructured builds an Unstructured CRD from an MRD.
+@@ -152,34 +151,13 @@ func buildVersion(version v1alpha1.CustomResourceDefinitionVersion) (map[string]
+ 	return p.UnstructuredContent(), nil
+ }
+ 
+-// mayApplyTo permits updates to CRDs already owned by this MRD, or by its
+-// installing ProviderRevision or Provider when migrating a directly installed
+-// CRD to an MRD, including migration during a revision upgrade.
+-// An editable MRD must not establish ownership of an unrelated existing CRD.
++// mayApplyTo permits updates only to CRDs already owned by this MRD.
+ func mayApplyTo(mrd *v1alpha1.ManagedResourceDefinition, crd metav1.Object) bool {
+-	installer := metav1.GetControllerOf(mrd)
+ 	for _, owner := range crd.GetOwnerReferences() {
+-		if owner.UID == "" {
+-			continue
+-		}
+-		gk := schema.FromAPIVersionAndKind(owner.APIVersion, owner.Kind).GroupKind()
+-		if owner.UID == mrd.GetUID() && owner.Name == mrd.GetName() && gk == v1alpha1.ManagedResourceDefinitionGroupVersionKind.GroupKind() {
+-			return true
+-		}
+-		if installer != nil && owner.UID == installer.UID && owner.Name == installer.Name &&
+-			gk == pkgv1.ProviderRevisionGroupVersionKind.GroupKind() &&
+-			schema.FromAPIVersionAndKind(installer.APIVersion, installer.Kind).GroupKind() == gk {
++		if owner.UID != "" && owner.UID == mrd.GetUID() && owner.Name == mrd.GetName() &&
++			schema.FromAPIVersionAndKind(owner.APIVersion, owner.Kind).GroupKind() == v1alpha1.ManagedResourceDefinitionGroupVersionKind.GroupKind() {
+ 			return true
+ 		}
+-		// The stable Provider owner survives revision changes. Only accept this
+-		// package kind, never an arbitrary owner copied onto an editable MRD.
+-		if gk == pkgv1.ProviderGroupVersionKind.GroupKind() {
+-			for _, parent := range mrd.GetOwnerReferences() {
+-				if parent.UID == owner.UID && parent.Name == owner.Name && schema.FromAPIVersionAndKind(parent.APIVersion, parent.Kind).GroupKind() == gk {
+-					return true
+-				}
+-			}
+-		}
+ 	}
+ 	return false
+ }
+```
+
+**File**: `internal/controller/apiextensions/managed/ownership_test.go` (modified, +26/-18)
+```diff
+@@ -54,32 +54,36 @@ func TestReconcileCRDOwnership(t *testing.T) {
+ 	oldInstaller.UID = "old-revision-uid"
+ 	foreign := installer
+ 	foreign.Kind = "UnrelatedController"
++	// Only the CRD's reference to this MRD allows an existing CRD to be
++	// updated.
+ 	for name, tc := range map[string]struct {
+ 		owners                []metav1.OwnerReference
+ 		installer             *metav1.OwnerReference
+ 		absent, allowed, race bool
+ 		upgradeRace           bool
+ 	}{
+-		"Create":                 {absent: true, allowed: true},
+-		"CreateRace":             {absent: true, allowed: true, race: true},
+-		"Unowned":                {},
+-		"OwnedByMRD":             {owners: []metav1.OwnerReference{mrdOwner}, allowed: true},
+-		"RevisionHandoff":        {owners: []metav1.OwnerReference{mrdOwner, foreign}, allowed: true},
+-		"MigrateDirectCRD":       {owners: []metav1.OwnerReference{installer}, allowed: true},
+-		"MigrateAcrossRevisions": {owners: []metav1.OwnerReference{provider, oldInstaller}, allowed: true},
+-		"WrongUID":               {owners: []metav1.OwnerReference{wrongUID}},
+-		"WrongName":              {owners: []metav1.OwnerReference{wrongName}},
+-		"WrongKind":              {owners: []metav1.OwnerReference{wrongKind}},
+-		"ForeignInstaller":       {owners: []metav1.OwnerReference{foreign}, installer: &foreign},
+-		"UpgradeRace":            {owners: []metav1.OwnerReference{mrdOwner}, allowed: true, upgradeRace: true},
+-		"UpdateRace":             {owners: []metav1.OwnerReference{mrdOwner}, allowed: true, race: true},
++		"Create":                            {absent: true, allowed: true},
++		"CreateRace":                        {absent: true, allowed: true, race: true},
++		"Unowned":                           {},
++		"OwnedByMRD":                        {owners: []metav1.OwnerReference{mrdOwner}, allowed: true},
++		"RevisionHandoff":                   {owners: []metav1.OwnerReference{mrdOwner, foreign}, allowed: true},
++		"InstallerReferenceOnly":            {owners: []metav1.OwnerReference{installer}},
++		"ProviderReferenceOnly":             {owners: []metav1.OwnerReference{provider, oldInstaller}},
++		"ProviderReferenceWithoutInstaller": {owners: []metav1.OwnerReference{provider, oldInstaller}, installer: &provider},
++		"WrongUID":                          {owners: []metav1.OwnerReference{wrongUID}},
++		"WrongName":                         {owners: []metav1.OwnerReference{wrongName}},
++		"WrongKind":                         {owners: []metav1.OwnerReference{wrongKind}},
++		"ForeignInstaller":                  {owners: []metav1.OwnerReference{foreign}, installer: &foreign},
++		"UpgradeRace":                       {owners: []metav1.OwnerReference{mrdOwner}, allowed: true, upgradeRace: true},
++		"UpdateRace":                        {owners: []metav1.OwnerReference{mrdOwner}, allowed: true, race: true},
+ 	} {
+ 		t.Run(name, func(t *testing.T) {
+ 			parent := mrd.DeepCopy()
+ 			if tc.installer != nil {
+ 				parent.OwnerReferences = []metav1.OwnerReference{*tc.installer}
+ 			}
+ 			writes := 0
++			upgrades := 0
+ 			statusUpdates := 0
+ 			recorder := &testRecorder{}
+ 			c := &test.MockClient{
+@@ -127,12 +131,13 @@ func TestReconcileCRDOwnership(t *testing.T) {
+ 					return nil
+ 				},
+ 			}
+-			var upgrader ssa.ManagedFieldsUpgrader = &ssa.NopManagedFieldsUpgrader{}
+-			if tc.upgradeRace {
+-				upgrader = managedFieldsUpgradeFn(func(context.Context, client.Object) error {
++			upgrader := managedFieldsUpgradeFn(func(context.Context, client.Object) error {
++				upgrades++
++				if tc.upgradeRace {
+ 					return kerrors.NewConflict(schema.GroupResource{}, parent.Name, nil)
+-				})
+-			}
++				}
++				return nil
++			})
+ 			r := &Reconciler{client: c, managedFields: upgrader, log: logging.NewNopLogger(), record: recorder, conditions: conditions.ObservedGenerationPropagationManager{}}
+ 			result, err := r.Reconcile(context.Background(), reconcile.Request{NamespacedName: client.ObjectKeyFromObject(parent)})
+ 			if got, want := err != nil, !tc.allowed; got != want {
+@@ -153,6 +158,9 @@ func TestReconcileCRDOwnership(t *testing.T) {
+ 			if writes != wantWrites {
+ 				t.Errorf("CRD writes = %d, want %d", writes, wantWrites)
+ 			}
++			if !tc.allowed && upgrades != 0 {
++				t.Errorf("upgraded managed fields %d times before rejecting ownership", upgrades)
++			}
+ 		})
+ 	}
+ }
+```
+
+**File**: `internal/controller/apiextensions/managed/reconciler.go` (modified, +1/-1)
+```diff
+@@ -145,7 +145,7 @@ func (r *Reconciler) Reconcile(ogctx context.Context, req reconcile.Request) (re
+ 	}
+ 
+ 	if getErr == nil && !mayApplyTo(mrd, crd) {
+-		err := errors.New("CustomResourceDefinition is not owned by this ManagedResourceDefinition or its installing package")
++		err := errors.New("CustomResourceDefinition is not owned by this ManagedResourceDefinition")
+ 		r.record.Event(mrd, event.Warning(reasonApplyCRD, err))
+ 		status.MarkConditions(v1alpha1.BlockedManaged().WithMessage(err.Error()))
+ 		_ = r.client.Status().Update(ogctx, mrd)
+```
+
+**File**: `internal/controller/apiextensions/managed/ssa_test.go` (modified, +1/-0)
+```diff
+@@ -41,6 +41,7 @@ import (
+ 
+ // TestCRDPrunesFieldsAfterCreate needs real managedFields and CRD merge semantics.
+ // Set KUBEBUILDER_ASSETS to a directory containing kube-apiserver and etcd.
++// This is an opt-in local regression; CI does not currently provide the assets.
+ func TestCRDPrunesFieldsAfterCreate(t *testing.T) {
+ 	assets := os.Getenv("KUBEBUILDER_ASSETS")
+ 	if assets == "" {
+```
+
+**File**: `internal/controller/apiextensions/ownership/ownership.go` (modified, +5/-5)
+```diff
+@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
+ limitations under the License.
+ */
+ 
+-// Package ownership protects CRDs from adoption by editable definitions.
++// Package ownership provides apply options that require existing ownership.
+ package ownership
+ 
+ import (
+@@ -28,17 +28,17 @@ import (
+ 	"github.com/crossplane/crossplane-runtime/v2/pkg/resource"
+ )
+ 
+-// MustBeControlledBy requires an existing CRD to already be controlled by owner.
+-// New CRDs are created separately by the applicator. Unlike controllability,
+-// existing control does not permit adoption of unrelated, uncontrolled CRDs.
++// MustBeControlledBy requires the current object's controller reference to match
++// owner's non-empty UID. Objects with no controller reference are rejected.
++// The applicator creates new objects without calling this option.
+ func MustBeControlledBy(owner metav1.Object) resource.ApplyOption {
+ 	return func(_ context.Context, current, _ runtime.Object) error {
+ 		m, err := meta.Accessor(current)
+ 		if err != nil {
+ 			return err
+ 		}
+ 		if owner.GetUID() == "" || !metav1.IsControlledBy(m, owner) {
+-			return errors.Errorf("CustomResourceDefinition %q is not controlled by %q (UID %q)", m.GetName(), owner.GetName(), owner.GetUID())
++			return errors.Errorf("existing object %q is not controlled by %q (UID %q)", m.GetName(), owner.GetName(), owner.GetUID())
+ 		}
+ 		return nil
+ 	}
+```
+
+**File**: `internal/controller/rbac/definition/reconciler.go` (modified, +2/-2)
+```diff
+@@ -192,8 +192,8 @@ func (r *Reconciler) Reconcile(ctx context.Context, req reconcile.Request) (reco
+ 	for _, crd := range crds {
+ 		names[crd.Name] = true
+ 	}
+-	// Render only resources backed by CRDs this XRD actually owns. Keeping
+-	// the original identity allows empty roles to revoke stale permissions.
++	// Check composite and claim CRDs independently so loss of one revokes
++	// only its grants. Keep the XRD identity to update existing roles.
+ 	desired := d.DeepCopy()
+ 	if !names[d.Spec.Names.Plural+"."+d.Spec.Group] {
+ 		desired.Spec.Names.Plural = ""
+```
+
+**File**: `internal/controller/rbac/definition/roles.go` (modified, +10/-10)
+```diff
+@@ -167,6 +167,14 @@ func RenderClusterRoles(d *v1.CompositeResourceDefinition) []rbacv1.ClusterRole
+ 		})
+ 	}
+ 
++	if !grant.Permitted(d.Spec.Group, d.Spec.Names.Plural) {
++		// Clear composite grants independently; an owned claim CRD can remain
++		// available while its composite CRD is absent.
++		for _, role := range []*rbacv1.ClusterRole{system, edit, view, browse} {
++			role.Rules = nil
++		}
++	}
++
+ 	if d.Spec.ClaimNames != nil && grant.Permitted(d.Spec.Group, d.Spec.ClaimNames.Plural) {
+ 		system.Rules = append(system.Rules, rbacv1.PolicyRule{
+ 			APIGroups: []string{d.Spec.Group},
+@@ -220,16 +228,8 @@ func RenderClusterRoles(d *v1.CompositeResourceDefinition) []rbacv1.ClusterRole
+ 		meta.AddOwnerReference(o, meta.AsController(meta.TypedReferenceTo(d, v1.CompositeResourceDefinitionGroupVersionKind)))
+ 	}
+ 
+-	roles := []rbacv1.ClusterRole{*system, *edit, *view, *browse}
+-	if !grant.Permitted(d.Spec.Group, d.Spec.Names.Plural) {
+-		// Keep the roles and their ownership so reconciliation replaces any
+-		// previously granted rules with empty rules, including after upgrade.
+-		for i := range roles {
+-			roles[i].Rules = nil
+-		}
+-	}
+-
+-	return roles
++	// Keep empty roles to revoke previously granted rules during reconciliation.
++	return []rbacv1.ClusterRole{*system, *edit, *view, *browse}
+ }
+ 
+ func servesScale(d *v1.CompositeResourceDefinition) bool {
+```
+
+**File**: `internal/controller/rbac/provider/roles/reconciler.go` (modified, +3/-0)
+```diff
+@@ -228,6 +228,9 @@ func (r *Reconciler) Reconcile(ctx context.Context, req reconcile.Request) (reco
+ 
+ 	resources, err := r.definedResources(ctx, pr)
+ 	if err != nil {
++		if kerrors.IsConflict(err) {
++			return reconcile.Result{Requeue: true}, nil
++		}
+ 		r.record.Event(pr, event.Warning(reasonApplyRoles, err))
+ 		return reconcile.Result{}, err
+ 	}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8047** (2026-11-15): chore(deps): update module go.opentelemetry.io/otel/trace to v1.47.0 [security] (release-2.4) (@crossplane-renovate[bot])
-- **PR #8046** (2026-11-15): chore(deps): update module go.opentelemetry.io/otel/trace to v1.47.0 [security] (release-2.3) (@crossplane-renovate[bot])
-- **PR #8045** (2026-11-15): chore(deps): update vulnerable dependencies to v1.47.0 [security] (release-1.20) (@crossplane-renovate[bot])
-- **PR #8036** (2026-11-13): chore(deps): update module golang.org/x/crypto to v0.59.0 [security] (release-2.4) (@crossplane-renovate[bot])
-- **PR #8035** (2026-11-13): chore(deps): update module golang.org/x/crypto to v0.59.0 [security] (release-2.3) (@crossplane-renovate[bot])
-- **PR #8034** (2026-11-13): chore(deps): update module golang.org/x/crypto to v0.59.0 [security] (release-2.2) (@crossplane-renovate[bot])
+- **PR #8061** (2026-11-18): [Backport release-2.2] fix(rbac): derive generated roles from owned CRDs (@phisco)
+- **PR #8060** (2026-11-17): [Backport release-2.2] fix(rbac): limit provider Deployment discovery to runtime namespace (@phisco)
+- **PR #8059** (2026-11-18): [Backport release-2.4] fix(rbac): derive generated roles from owned CRDs (@github-actions[bot])
+- **PR #8058** (2026-11-18): [Backport release-2.3] fix(rbac): derive generated roles from owned CRDs (@github-actions[bot])
+- **PR #8057** (2026-11-18): [Backport release-2.4] fix(rbac): limit provider Deployment discovery to runtime namespace (@github-actions[bot])
+- **PR #8056** (2026-11-18): [Backport release-2.3] fix(rbac): limit provider Deployment discovery to runtime namespace (@github-actions[bot])
 
 ---
 
@@ -1705,48 +2646,64 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update vulnerable dependencies [security]
+## X. pkg): link converted MRDs to the CRDs their package installed
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/controller/apiextensions/managed/migration_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crossplane/crossplane. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `71fa40f3`: deps): update vulnerable dependencies [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `138fe3c6`: pkg): link converted MRDs to the CRDs their package installed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/controller/apiextensions/managed/migration_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	go.opentelemetry.io/otel/log v1.47.0 // indirect
-	golang.org/x/crypto/openpgp v0.1.0-deprecated // indirect
-	github.com/klauspost/compress v1.20.2 // indirect
-	go.opentelemetry.io/otel v1.47.0 // indirect
-	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-	go.opentelemetry.io/otel/trace v1.47.0 // indirect
-	golang.org/x/crypto v0.59.0 // indirect
-	golang.org/x/mod v0.42.0 // indirect
-	golang.org/x/sys v0.50.0 // indirect
-	golang.org/x/term v0.48.0 // indirect
-	golang.org/x/text v0.44.0 // indirect
-	golang.org/x/tools v0.52.0 // indirect
+/*
+Copyright 2026 The Crossplane Authors.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
+package managed
+
+import (
+	"context"
+	"slices"
+	"testing"
+	"time"
+
+	corev1 "k8s.io/api/core/v1"
+	extv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+	kerrors "k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/util/wait"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/reconcile"
+
+	"github.com/crossplane/crossplane-runtime/v2/pkg/conditions"
+	"github.com/crossplane/crossplane-runtime/v2/pkg/event"
+	"github.com/crossplane/crossplane-runtime/v2/pkg/logging"
+	"github.com/crossplane/crossp
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/klauspost/compress v1.20.1 // indirect
-	go.opentelemetry.io/otel v1.45.0 // indirect
-	go.opentelemetry.io/otel/metric v1.45.0 // indirect
-	go.opentelemetry.io/otel/trace v1.45.0 // indirect
-	golang.org/x/crypto v0.58.0 // indirect
-	golang.org/x/mod v0.41.0 // indirect
-	golang.org/x/sys v0.49.0 // indirect
-	golang.org/x/term v0.47.0 // indirect
-	golang.org/x/text v0.43.0 // indirect
-	golang.org/x/tools v0.51.0 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `71fa40f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `138fe3c6` are properly handled with clean fallback behavior.

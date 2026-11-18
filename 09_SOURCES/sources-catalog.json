@@ -695,8 +695,8 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef-flash",
     "sourceVersion": "hf-cloudflare-clef-flash",
     "license": "Open-Source",
-    "contentHash": "9a898aed6e616833ad642d03ed68925c82612d60c63403c8a7b0501d1b7a6fb2",
-    "lastHarvestedAt": "2026-11-13T20:36:44.023Z",
+    "contentHash": "774a386e1a62f5d715df26ececb12325aa4a901dac566e8dbd8a6db2dd950d40",
+    "lastHarvestedAt": "2026-11-18T07:30:40.396Z",
     "learningId": "learn-huggingface-cloudflare-clef-flash"
   },
   "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "0515d873",
+    "sourceVersion": "74fdd7b1",
     "license": "NOASSERTION",
-    "contentHash": "e86717841c864daf12d2385ff22f41ebe445981ec34519dc8f3a88c452b63cbe",
-    "lastHarvestedAt": "2026-11-18T02:51:27.609Z",
+    "contentHash": "5c025fc175c344d8e5599b053c3ae7c40b4b7f52414e0271c7b47343e5bd45c9",
+    "lastHarvestedAt": "2026-11-18T07:30:51.880Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -4963,20 +4963,20 @@
     "repository": "crossplane/crossplane",
     "platform": "github",
     "sourceUrl": "https://github.com/crossplane/crossplane",
-    "sourceVersion": "0bc4615f",
+    "sourceVersion": "ba22c621",
     "license": "Apache-2.0",
-    "contentHash": "1471699563cae90446ad648665c5cf64a38cdb463f5c9d433cf8da12c1b1efa2",
-    "lastHarvestedAt": "2026-11-16T03:23:22.615Z",
+    "contentHash": "c22bad2d629ea5d51ecb7c1dfc32c5bd158e27ccbe8ab741ff32f9071e7a61ab",
+    "lastHarvestedAt": "2026-11-18T07:30:50.183Z",
     "learningId": "learn-github-crossplane-crossplane"
   },
   "apple-foundationdb": {
     "repository": "apple/foundationdb",
     "platform": "github",
     "sourceUrl": "https://github.com/apple/foundationdb",
-    "sourceVersion": "17a225f7",
+    "sourceVersion": "33871e2f",
     "license": "Apache-2.0",
-    "contentHash": "cef38dbbc335ec876e4ab232d44ea04b4a71966136101b9b047758ec8472540d",
-    "lastHarvestedAt": "2026-11-17T08:18:41.621Z",
+    "contentHash": "c249dbd439d0bf86e0c59e1b94794ea1f1b774cdc47bd75dc7883d319ef88b2f",
+    "lastHarvestedAt": "2026-11-18T07:30:54.058Z",
     "learningId": "learn-github-apple-foundationdb"
   },
   "kucherenko-jscpd": {

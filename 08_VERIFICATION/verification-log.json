@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-7T2G",
-    "timestamp": "2026-11-16T18:18:58.408Z",
-    "repository": "gravitl/netmaker",
-    "learningId": "learn-github-gravitl-netmaker",
-    "contentHash": "22cd038f42c7c8da2eda25e00ff51b97d577192bff3dbc13a6d1291c27192b42",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-IEFV",
-    "timestamp": "2026-11-16T18:27:12.667Z",
-    "repository": "open-policy-agent/gatekeeper",
-    "learningId": "learn-github-open-policy-agent-gatekeeper",
-    "contentHash": "faed9a5296d5879fccdcac81f1e228545ac7a58e815b41d67451ab14035ec346",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-II8H",
-    "timestamp": "2026-11-16T18:27:17.585Z",
-    "repository": "SeaQL/sea-orm",
-    "learningId": "learn-github-seaql-sea-orm",
-    "contentHash": "c8f114995afe521bdf07bcbd37ebd5a9399a3ef7ff045079b7d014d0530407f8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-IK5V",
-    "timestamp": "2026-11-16T18:27:20.083Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "68f5826399a02beb3c3040f1d1548d1774e3a9e044c4852964c1723b69b7f18e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-WS4C",
     "timestamp": "2026-11-16T18:38:23.580Z",
     "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
@@ -7490,6 +7430,66 @@
     "repository": "rqlite/rqlite",
     "learningId": "learn-github-rqlite-rqlite",
     "contentHash": "b09352c56b2dbec2c1fa5fd4804241750333422cc0cb63f50718b8d83d9acce8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-XSI0",
+    "timestamp": "2026-11-18T07:30:40.392Z",
+    "repository": "Cloudflare/clef-flash",
+    "learningId": "learn-huggingface-cloudflare-clef-flash",
+    "contentHash": "774a386e1a62f5d715df26ececb12325aa4a901dac566e8dbd8a6db2dd950d40",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-Y01V",
+    "timestamp": "2026-11-18T07:30:50.179Z",
+    "repository": "crossplane/crossplane",
+    "learningId": "learn-github-crossplane-crossplane",
+    "contentHash": "c22bad2d629ea5d51ecb7c1dfc32c5bd158e27ccbe8ab741ff32f9071e7a61ab",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-Y1D1",
+    "timestamp": "2026-11-18T07:30:51.877Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "5c025fc175c344d8e5599b053c3ae7c40b4b7f52414e0271c7b47343e5bd45c9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-Y31I",
+    "timestamp": "2026-11-18T07:30:54.054Z",
+    "repository": "apple/foundationdb",
+    "learningId": "learn-github-apple-foundationdb",
+    "contentHash": "c249dbd439d0bf86e0c59e1b94794ea1f1b774cdc47bd75dc7883d319ef88b2f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
