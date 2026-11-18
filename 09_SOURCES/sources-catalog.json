@@ -795,8 +795,8 @@
     "sourceUrl": "https://huggingface.co/amazon/chronos-2",
     "sourceVersion": "hf-amazon-chronos-2",
     "license": "Open-Source",
-    "contentHash": "0c2e170e3099386f6ac70638462bc1a4e1cedbed0e6ec53f7d9538a79f64d067",
-    "lastHarvestedAt": "2026-11-13T21:59:18.743Z",
+    "contentHash": "6db925888333e2b1eeb639b589237c225b09cf9a06db956c03c1314b6e8981f1",
+    "lastHarvestedAt": "2026-11-18T09:02:22.220Z",
     "learningId": "learn-huggingface-amazon-chronos-2"
   },
   "hf-compvis-stable-diffusion-v1-4": {
@@ -5323,10 +5323,10 @@
     "repository": "yugabyte/yugabyte-db",
     "platform": "github",
     "sourceUrl": "https://github.com/yugabyte/yugabyte-db",
-    "sourceVersion": "0f15fa2b",
+    "sourceVersion": "53cd4b34",
     "license": "NOASSERTION",
-    "contentHash": "5150389181f4d9c684975448e7b5c559dff4f2ac67c4361a154b53229fb4fa3f",
-    "lastHarvestedAt": "2026-11-17T10:41:14.208Z",
+    "contentHash": "051c4ed4554cf253e9de118f8d16fa5306f4250d26981d0fb4a3138a3dcd50ef",
+    "lastHarvestedAt": "2026-11-18T09:02:37.630Z",
     "learningId": "learn-github-yugabyte-yugabyte-db"
   },
   "react95-react95": {

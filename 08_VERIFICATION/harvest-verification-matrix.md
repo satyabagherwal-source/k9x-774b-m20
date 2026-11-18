@@ -10899,3 +10899,6 @@
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T08:52:06.587Z` | `hf-google-t5-t5-small` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-590BAEAB` [Domain K] | Yes (`bb60537e...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T08:52:41.146Z` | `msasikanth-twine` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-8389708E` [Domain F] | Yes (`3cb31341...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T08:53:20.094Z` | `msasikanth-twine` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-CA56AD1F` [Domain H] | Yes (`828d8287...`) |
+| `CYCLE-20261118-7PQG` | `2026-11-18T09:02:22.216Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md` | Yes (`6db92588...`) |
+| `CYCLE-20261118-81MI` | `2026-11-18T09:02:37.626Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md` | Yes (`051c4ed4...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T09:03:08.211Z` | `yugabyte-yugabyte-db` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-42C4A146` [Domain D] | Yes (`67e8f77a...`) |

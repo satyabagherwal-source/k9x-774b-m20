@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `0f15fa2b`  
+> **Source Version**: `53cd4b34`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T10:41:13.344Z  
+> **Timestamp**: 2026-11-18T09:02:37.168Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T10:41:13.339Z  
+> **Harvest Timestamp**: 2026-11-18T09:02:37.162Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10665 stars
+- **Stars / Engagement**: 10667 stars
 
 ---
 
@@ -2245,15 +2245,11 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #38167** (2026-11-17): **[BACKPORT 2026.2][PLAT-17570] YBA: Reject pause and resume in the wrong universe state (#38077)**
-  *Symptoms*: ## Summary  Pause and resume did not check the universe state. A pause on a paused universe started a task that then failed. A resume on a running universe started a task with no check at all.  YBA: - The pause API returns 400 if the universe is already paused. - The resume API returns 400 if the universe is not paused. - The checks run before a task is created, so they apply to all clients (UI, CLI, Terraform, operator) and to VM and K8s universes. The operator and the UI pause and resume only in the right state.  yba CLI: - `yba universe pause` and `resume` check the same state before the prompt, and also fail if a task is in progress. This also protects users on an older YBA. - Resume on a running universe now exits with status 1 instead of starting a task.  Original commit: 10afd135834cf9774bd6aea777586bc0457b19e5 / #38077  ## Test plan  - [x] `UniverseActionsControllerTest`: pause on a paused universe and resume on a running universe return 400 and start no task. - [x] Go unit test for the CLI state check. - [x] Live test on local YBA (AWS): - [x] Old CLI (no CLI check): pause on a paused universe and resume on a running universe return 400 from YBA. No task starts. - [x] New CLI: the same calls fail before the prompt. Pause and resume in the right state pass. - [x] On 2026.2 with this backport: `sbt buildDependentArtifacts` and `UniverseActionsControllerTest` (10/10 pass). - [x] On 2026.2: `go build ./...` and `go test ./cmd/universe/` in yba-cli pass. 
-  **Post-Mortem & Fix Analysis**:
-  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/38167) <!-- Reviewable:end --> 
+- **Issue #38333** (2026-11-18): **[BACKPORT 2026.2][PLAT-23927] YBA: Run the support bundle Go tests with sbt test and fail on failure (#38174)**
+  *Symptoms*: ## Summary  The support bundle v2 Go helpers (`managed/devops/supportbundle/{cdcstate,logparse,serverconfredact}`) aren't Maven modules, so the `mvn test` that `sbt test` runs through `testDependentArtifacts` never reached them, and `devops/yb_release` only builds them. Their tests never ran in CI, including the Go half of the HBA redaction parity check (`TestRedactHbaConfMatchesJava`, whose Java counterpart `HbaConfRedactorTest.testOutputMatchesGoPort` does run).  Adding them to `testDependentArtifacts` wouldn't be enough: sbt ignores that task's exit status, and the YBA unit-test job fails only on a non-zero sbt exit. JUnit-only failures leave the build UNSTABLE, which still reports success.  - New `devops/supportbundle/run_go_tests.sh` runs `go test` in each module and writes JUnit XML to `<module>/target/test-reports/`, which the CI report glob collects. - `Test / test` runs it after the Java tests and throws if it fails, so a Go failure fails `sbt test` without skipping any Java test. A Java failure is still reported as before.  `sbt test` now needs `go` and some Go downloads, from the module proxy or the module cache: go-junit-report, logparse's `regexp2` dependency, and the Go 1.27.4 toolchain the modules ask for (node-agent asks for it too). The script downloads them before running any test, and exits 2 if `go` is missing or a download fails; `sbt test` then fails with "could not run ... a tooling failure, not a test failure" instead of skipping, so CI cannot pass wit
 
-- **Issue #38166** (2026-11-17): **[BACKPORT 2026.1][PLAT-17570] YBA: Reject pause and resume in the wrong universe state (#38077)**
-  *Symptoms*: ## Summary  Pause and resume did not check the universe state. A pause on a paused universe started a task that then failed. A resume on a running universe started a task with no check at all.  YBA: - The pause API returns 400 if the universe is already paused. - The resume API returns 400 if the universe is not paused. - The checks run before a task is created, so they apply to all clients (UI, CLI, Terraform, operator) and to VM and K8s universes. The operator and the UI pause and resume only in the right state.  yba CLI: - `yba universe pause` and `resume` check the same state before the prompt, and also fail if a task is in progress. This also protects users on an older YBA. - Resume on a running universe now exits with status 1 instead of starting a task.  Original commit: 10afd135834cf9774bd6aea777586bc0457b19e5 / #38077  ## Test plan  - [x] `UniverseActionsControllerTest`: pause on a paused universe and resume on a running universe return 400 and start no task. - [x] Go unit test for the CLI state check. - [x] Live test on local YBA (AWS): - [x] Old CLI (no CLI check): pause on a paused universe and resume on a running universe return 400 from YBA. No task starts. - [x] New CLI: the same calls fail before the prompt. Pause and resume in the right state pass. - [x] On 2026.1 with this backport: `sbt buildDependentArtifacts` and `UniverseActionsControllerTest` (10/10 pass). - [x] On 2026.1: `go build ./...` and `go test ./cmd/universe/` in yba-cli pass with #38157 applie
-  **Post-Mortem & Fix Analysis**:
-  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/38166) <!-- Reviewable:end --> 
+- **Issue #38332** (2026-11-18): **[BACKPORT 2026.2][PLAT-20207] YBA: Redact sensitive gflags and DB passwords in v2 universe responses (#37848)**
+  *Symptoms*: **2026.2:** Merge after #38330, the 2026.2 backport of #37686, which this relies on as described below. Applies cleanly.  ## Summary  v1 universe responses redact sensitive gflags and the YSQL and YCQL admin passwords in `PlatformResults.withData`. The v2 GET universe and list universes responses now redact the same gflags and leave out the admin passwords, which the v2 schema marks `writeOnly`. The new UI's Edit Universe, Add Read Replica and Add Geo-Partition pages load the universe through v2 GET.  - `UniverseApiControllerImp` overrides `getUniverseHttp` and `pageListUniversesHttp` to pass the response through `RedactingService.filterSecretFields(..., APIS)`. As in v1, the LDAP gflags are redacted while `yb.api.enable_gflags_sensitive_data_redaction` is on. The controller leaves `spec.ysql.password` and `spec.ycql.password` out itself, because v1's rules match only the v1 names, `ysqlPassword` and `ycqlPassword`. - v2 add-cluster: the new UI's Add Read Replica sends the primary's gflags from GET as the read replica's own, so add-cluster now restores `REDACTED` values from the primary's stored gflags with `GFlagsUtil.mergeSensitiveSpecificGFlags`, the merge gflags upgrades use. A `ysql_hba_conf_csv` that holds `REDACTED` but differs from the primary's in other fields gets a 400. - v2 create and add-cluster map an omitted `master` or `tserver` gflags map, at the cluster or AZ level, to an empty map instead of null. Null made `SpecificGFlags.construct` throw, returning a 500,
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2270,289 +2266,954 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4e76682e` (2026-11-16)
-**Commit Message**: [#30797] YSQL: Set index birth_time for indexes built nonconcurrently (#37103)
+### Incident Patch 1: `53cd4b34` (2026-11-18)
+**Commit Message**: [#37678] YSQL: Fix Connection Manager hang on a TLS client pipelining after a Sync (#37687)
 
 ## Summary
 
-A CREATE INDEX run inside a transaction block is built nonconcurrently
-and skips the backfill
-that sets the index birth_time, so birth_time stays 0. The docdb read
-guard then does not throw a
-kSnapshotTooOld error for a snapshot read whose read time precedes the
-index commit, and the index
-rows (written at the commit) are not visible to that read, so it
-silently returns an incomplete
-result. This is the data loss seen in the Jepsen si.append-table test.
+A TLS client that pipelines messages after a Sync can hang in Connection
+Manager. Example: Parse/Bind/Execute/Sync followed by a Query, sent in
+one write. The Sync's results arrive, but the next message never gets a
+reply, until the client sends more data.
 
-On a successful nonconcurrent index create, set the index birth_time to
-the master clock time
-(>= the DDL commit time, see below) and propagate it to the tablets via
-a new
-MarkNonConcurrentIndexDone tserver admin RPC. To reject reads until
-birth_time is final, introduce
-a `birth_time_state` enum in the index metadata (IndexInfoPB), set by
-the master at index creation:
-- BIRTH_TIME_FINAL (default): birth_time, if set, is final.
-- BIRTH_TIME_PENDING_BACKFILL: online (backfilled) index, until the
-backfill completes.
-- BIRTH_TIME_PENDING_DDL_COMMIT: nonconcurrent index created in a DDL
-transaction, until the
-  transaction commits.
+With TLS, `mm_tls_read()` reads only as much as fits in the readahead.
+The rest of the TLS record stays decrypted inside OpenSSL. Those bytes
+are no longer on the socket, so the poller never reports them. They get
+read only if the client's `on_read` condition is signalled.
+`mm_tls_read()` and `mm_read_start()` do that when OpenSSL has pending
+bytes.
 
-The backfill 
+The signal is lost when the readahead is full at the time of a read.
+Example with `ysql_conn_mgr_readahead_buffer_size=64`, where the client
+sends Parse/Bind/Execute/Sync + Query (about 250 bytes) in one write, so
+one TLS record:
 
-**File**: `src/postgres/src/test/regress/expected/yb.orig.ddl_txn_event_triggers.out` (modified, +3/-6)
+| Step | What happens | Readahead | OpenSSL |
+|---|---|---|---|
+| 1 | The first read takes 64 bytes | P/B/E/S + start of Q | rest of Q |
+| 2 | The pipeline forwards P/B/E/S, hits the Sync, returns
+`OD_WAIT_SYNC`, and the relay pauses (`yb_wait_for_rfq_o
+
+**File**: `java/yb-ysql-conn-mgr/src/test/java/org/yb/ysqlconnmgr/TestConnMgrNonSslConnection.java` (modified, +0/-24)
 ```diff
-@@ -99,12 +99,9 @@ BEFORE INSERT ON trigger_unique_test
+@@ -107,30 +107,6 @@ public void testSslConnectionWorksThroughConnMgr() throws Exception {
+     }
+   }
+ 
+-  /**
+-   * Verifies that SSL connections work through conn mgr with a small readahead buffer.
+-   *
+-   * mm_tls_read() used to signal io->on_read even when it was NULL, which crashed Odyssey when a
+-   * TLS record did not fit in the readahead buffer.
+-   */
+-  @Test
+-  public void testSslWithSmallReadahead() throws Exception {
+-    Map<String, String> tserverFlags = new HashMap<>();
+-    tserverFlags.put("ysql_conn_mgr_readahead_buffer_size", "64");
+-    restartClusterWithAdditionalFlags(new HashMap<>(), tserverFlags);
+-
+-    for (int i = 0; i < 5; i++) {
+-      try (Connection conn = getConnectionBuilder()
+-               .withConnectionEndpoint(ConnectionEndpoint.YSQL_CONN_MGR)
+-               .withSslMode("require")
+-               .connect();
+-          Statement stmt = conn.createStatement()) {
+-        ResultSet rs = stmt.executeQuery("SELECT 1");
+-        assertTrue(rs.next());
+-      }
+-    }
+-  }
+-
+   /**
+    * Verifies that when HBA only allows SSL connections (hostssl rule), a non-SSL connection via
+    * YSQL Connection Manager is rejected by PostgreSQL (with "no pg_hba.conf entry"), NOT by conn
+```
+
+**File**: `java/yb-ysql-conn-mgr/src/test/java/org/yb/ysqlconnmgr/TestConnMgrTlsReadahead.java` (added, +97/-0)
+```diff
+@@ -0,0 +1,97 @@
++// Copyright (c) YugabyteDB, Inc.
++//
++// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
++// in compliance with the License. You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software distributed under the License
++// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
++// or implied. See the License for the specific language governing permissions and limitations
++// under the License.
++//
++
++package org.yb.ysqlconnmgr;
++
++import static org.yb.AssertionWrappers.assertTrue;
++
++import java.sql.Connection;
++import java.sql.ResultSet;
++import java.sql.Statement;
++import java.util.Collections;
++import java.util.Map;
++import org.junit.Test;
++import org.junit.runner.RunWith;
++import org.yb.YBTestRunner;
++import org.yb.minicluster.MiniYBClusterBuilder;
++import org.yb.pgsql.ConnectionEndpoint;
++import org.yb.util.RequiresLinux;
++
++/**
++ * Tests YSQL Connection Manager reading from TLS clients when a TLS record does not fit in the
++ * readahead buffer.
++ *
++ * With TLS, OpenSSL decrypts a whole record and keeps whatever does not fit in the readahead.
++ * Those bytes are no longer on the socket, so they do not wake the poller; conn mgr has to notice
++ * them itself. A 64-byte readahead makes almost every record overflow it.
++ */
++@RequiresLinux
++@RunWith(value = YBTestRunner.class)
++public class TestConnMgrTlsReadahead extends BaseYsqlConnMgr {
++
++  public TestConnMgrTlsReadahead() {
++    // Certificates are issued for IP addresses, not hostnames.
++    useIpWithCertificate = true;
++  }
++
++  @Override
++  protected void customizeMiniClusterBuilder(MiniYBClusterBuilder builder) {
++    super.customizeMiniClusterBuilder(builder);
++    builder.replicationFactor(1);
++  }
++
++  @Override
++  protected Map<String, String> getTServerFlags() {
++    Map<String, String> flagMap = super.getTServerFlags();
++    flagMap.put("use_client_to_server_encryption", "true");
++    flagMap.put("certs_for_client_dir", certsDir());
++    flagMap.put("ysql_conn_mgr_readahead_buffer_size", "64");
++    return flagMap;
++  }
++
++  /**
++   * mm_tls_read() used to signal io->on_read even when it was NULL, which crashed Odyssey when a
++   * TLS record did not fit in the readahead buffer.
++   */
++  @Test
++  public void testSslWithSmallReadahead() throws Exception {
++    for (int i = 0; i < 5; i++) {
++      try (Connection conn = getConnectionBuilder()
++               .withConnectionEndpoint(ConnectionEndpoint.YSQL_CONN_MGR)
++               .withSslMode("require")
++               .connect();
++          Statement stmt = conn.createStatement()) {
++        ResultSet rs = stmt.executeQuery("SELECT 1");
++        assertTrue(rs.next());
++      }
++    }
++  }
++
++  /**
++   * A TLS client sends Parse/Bind/Execute/Sync and a Query in one write. Conn mgr pauses the
++   * client after the Sync with the readahead full and the rest of the Query buffered by OpenSSL.
++   * After the Sync's ReadyForQuery, conn mgr must still read the rest of the Query and reply to it.
++   */
++  @Test
++  public void testSslPipelinedQueryAfterSyncWithSmallReadahead() throws Exception {
++    String literal = String.join("", Collections.nCopies(200, "a"));
++    try (WireConn conn = rawConnBuilder().ssl().connect()) {
++      // The pipeline goes out in one write, so the client sends it in a single TLS record.
++      conn.createPipeline()
++          .parse("SELECT 1").bind().execute().row("1")
++          .sync()
++          .query("SELECT '" + literal + "'").row(literal)
++          .run();
++    }
++  }
++}
+```
+
+**File**: `java/yb-ysql-conn-mgr/src/test/java/org/yb/ysqlconnmgr/WireConn.java` (modified, +46/-0)
+```diff
+@@ -20,8 +20,13 @@
+ import java.io.IOException;
+ import java.net.InetSocketAddress;
+ import java.net.Socket;
++import java.security.cert.X509Certificate;
+ import java.util.LinkedHashMap;
+ import java.util.Map;
++import javax.net.ssl.SSLContext;
++import javax.net.ssl.SSLSocket;
++import javax.net.ssl.TrustManager;
++import javax.net.ssl.X509TrustManager;
+ 
+ import org.slf4j.Logger;
+ import org.slf4j.LoggerFactory;
+@@ -35,6 +40,7 @@ public class WireConn implements AutoCloseable {
+   private static final int DEFAULT_SOCKET_TIMEOUT_MS = 30000;
+   private static final String USER = "yugabyte";
+   private static final String DATABASE = "yugabyte";
++  private static final int SSL_REQUEST_CODE = 80877103;
+ 
+   private final Socket socket;
+   private final DataOutputStream out;
+@@ -103,6 +109,7 @@ public static class Builder {
+     private final Map<String, String> startupParams = new LinkedHashMap<>();
+     private int socketTimeoutMs = DEFAULT_SOCKET_TIMEOUT_MS;
+     private ConnectionEndpoint endpoint = ConnectionEndpoint.YSQL_CONN_MGR;
++    private boolean ssl;
+ 
+     Builder(MiniYBCluster cluster) {
+       this.cluster = cluster;
+@@ -124,6 +131,13 @@ public Builder socketTimeoutMs(int socketTimeoutMs) {
+       return this;
+     }
+ 
++    // Sends an SSLRequest and runs the TLS handshake before the startup message.
++    // The server certificate is not verified.
++    public Builder ssl() {
++      this.ssl = true;
++      return this;
++    }
++
+     public WireConn connect() throws Exception {
+       WireConn conn = openAndSendStartup();
+       try {
+@@ -159,6 +173,9 @@ private WireConn openAndSendStartup() throws Exception {
+         socket.setTcpNoDelay(true);
+         socket.setSoTimeout(socketTimeoutMs);
+         socket.connect(target);
++        if (ssl) {
++          socket = startTls(socket, target);
++        }
+         WireConn conn = new WireConn(socket);
+         conn.sendRaw(PgWireProtocol.buildStartupMessage(USER, DATABASE, startupParams));
+         return conn;
+@@ -171,5 +188,34 @@ private WireConn openAndSendStartup() throws Exception {
+         throw e;
+       }
+     }
++
++    private static SSLSocket startTls(Socket plain, InetSocketAddress target) throws Exception {
++      DataOutputStream plainOut = new DataOutputStream(plain.getOutputStream());
++      plainOut.writeInt(8);
++      plainOut.writeInt(SSL_REQUEST_CODE);
++      plainOut.flush();
++      int reply = plain.getInputStream().read();
++      if (reply != 'S') {
++        throw new IOException("Server refused SSL, replied " + reply);
++      }
++
++      SSLContext context = SSLContext.getInstance("TLS");
++      context.init(null, new TrustManager[] {new X509TrustManager() {
++        @Override
++        public void checkClientTrusted(X509Certificate[] chain, String authType) {}
++
++        @Override
++        public void checkServerTrusted(X509Certificate[] chain, String authType) {}
++
++        @Override
++        public X509Certificate[] getAcceptedIssuers() {
++          return new X509Certificate[0];
++        }
++      }}, null);
++      SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket(
++          plain, target.getHostString(), target.getPort(), true);
++      socket.startHandshake();
++      return socket;
++    }
+   }
+ }
+```
+
+**File**: `src/odyssey/sources/relay.h` (modified, +14/-0)
+```diff
+@@ -490,6 +490,20 @@ static inline od_frontend_status_t od_relay_step(od_relay_t *relay)
+ 			machine_cond_signal(relay->dst->on_write);
+ 		} else {
+ 			od_readahead_reuse(&relay->src->readahead);
++			/*
++			 * YB: If the read above found the readahead full, it read
++			 * nothing and the on_read signal is used up. Bytes buffered
++			 * by TLS do not wake the poller, so signal on_read again, or
++			 * they are never read. Signal only when the readahead has
++			 * room, so the next od_relay_read() can read the pending
++			 * bytes.
++			 * Upstream fixed this in 535a27e by signalling from
++			 * od_relay_read() whenever the readahead is full, which here
++			 * would busy-loop while the relay is paused after a Sync.
++			 */
++			if (od_readahead_left(&relay->src->readahead) > 0 &&
++			    yb_machine_tls_read_pending(relay->src->io))
++				machine_cond_signal(relay->src->on_read);
+ 		}
+ 	}
+ 
+```
+
+**File**: `src/odyssey/third_party/machinarium/sources/machinarium.h` (modified, +6/-0)
+```diff
+@@ -283,6 +283,12 @@ MACHINE_API int machine_read_stop(machine_io_t *);
+ 
+ MACHINE_API ssize_t machine_read_raw(machine_io_t *, void *, size_t);
+ 
++/*
++ * YB: Returns 1 if TLS has buffered bytes that are ready to be read. Unlike
++ * unread socket bytes, these do not wake the poller.
++ */
++MACHINE_API int yb_machine_tls_read_pending(machine_io_t *);
++
+ MACHINE_API machine_msg_t *machine_read(machine_io_t *, size_t,
+ 					uint32_t time_ms);
+ 
+```
+
+**File**: `src/odyssey/third_party/machinarium/sources/read.c` (modified, +15/-1)
+```diff
+@@ -15,6 +15,15 @@ static void mm_read_cb(mm_fd_t *handle)
+ 		mm_cond_signal((mm_cond_t *)io->on_read, &mm_self->scheduler);
+ }
+ 
++/*
++ * YB: Bytes already read off the socket and buffered by TLS, which generate
++ * no poller event.
++ */
++static inline int yb_mm_tls_read_pending(mm_io_t *io)
++{
++	return mm_tls_is_active(io) && mm_tls_read_pending(io);
++}
++
+ static inline int mm_read_start(mm_io_t *io, machine_cond_t *on_read)
+ {
+ 	mm_machine_t *machine = mm_self;
+@@ -24,7 +33,7 @@ static inline int mm_read_start(mm_io_t *io, machine_cond_t *on_read)
+ 	   will not generate any poller event we must
+ 	   check it right away.
+ 	*/
+-	if (mm_tls_is_active(io) && mm_tls_read_pending(io))
++	if (yb_mm_tls_read_pending(io))
+ 		mm_cond_signal((mm_cond_t *)io->on_read, &mm_self->scheduler);
+ 
+ 	/* Also check for buffered compressed data, since this also won't
+@@ -82,6 +91,11 @@ MACHINE_API int machine_read_stop(machine_io_t *obj)
+ 	return mm_read_stop(io);
+ }
+ 
++MACHINE_API int yb_machine_tls_read_pending(machine_io_t *obj)
++{
++	return yb_mm_tls_read_pending(mm_cast(mm_io_t *, obj));
++}
++
+ MACHINE_API ssize_t machine_read_raw(machine_io_t *obj, void *buf, size_t size)
+ {
+ 	mm_io_t *io = mm_cast(mm_io_t *, obj);
+```
+
+---
+
+### Incident Patch 2: `2e06e077` (2026-11-17)
+**Commit Message**: [#37241] DocDB: ThinClientService: consistent-prefix reads with a server-computed staleness (#37242)
+
+Fixes #37241
+
+### Summary
+
+Every read through `ThinClientService.Perform` is STRONG, so the tablet
+leader serves it; for a caller spread across zones (amp's pageserver
+reading page rows) that crosses an AZ two thirds of the time. This lets
+a batch ask for a consistent-prefix read instead, at a read time the
+**tserver** derives from its own clock minus a caller-supplied
+staleness, so only the cluster's `max_clock_skew_usec` matters, as for
+YSQL follower reads.
+
+- `thin_client.proto`: `ThinReadTimeOptionsPB` gains `bool
+read_from_followers = 2` and `optional uint32 follower_read_staleness_ms
+= 3`, additively.
+- `thin_client_service.cc`: with `read_from_followers`, every read op of
+the batch runs at `CONSISTENT_PREFIX`. With a staleness and no pinned
+`read_time` the session reads at `now - staleness`, through
+`SetFollowerReadTime`, which moves from `pg_client_session.cc` to
+`pg_client_session_util.{h,cc}` so both follower-read paths share it. A
+pinned `read_time` (a paging continuation) keeps its snapshot and only
+takes the consistency level. `InvalidArgument` for: a staleness on a
+wr
+
+**File**: `src/yb/thin_client/README.md` (modified, +12/-3)
+```diff
+@@ -40,7 +40,9 @@ hot read/write paths without embedding a full client.
+   hash, then range, then value). Also the startup health check.
+ - `ybthin_read_async` -- one page of each of N read ops, in one Perform; delivers
+   each op's decoded rows + opaque `paging_state`, and the batch's
+-  `used_read_time_ht`.
++  `used_read_time_ht`. `ybthin_read_options` pins the snapshot, or asks for a
++  follower read at a read time the tserver computes from a caller-supplied
++  staleness.
+ - `ybthin_upsert_batch_async` -- N `PGSQL_UPSERT` rows as the ops of one Perform.
+ - `ybthin_read_result_free` / `ybthin_string_free` -- free shim-owned buffers.
+ 
+@@ -54,8 +56,15 @@ This library is **upgraded before the tserver**, so a given build must keep
+ working against an **older** tserver than it was compiled against. Keep the wire
+ usage backward-compatible: only send request fields / rely on RPCs and semantics
+ the oldest supported tserver understands, and tolerate responses that lack fields
+-a newer server would set. The C ABI is additive-only (new functions; new struct
+-fields / enum values appended at the end; never renumber, reorder, or remove).
++a newer server would set.
++
++The C ABI carries no such promise while the library has a single caller, and may
++change between shim releases, a signature included. The library and its header
++are released together, and that caller pins a release and ships the library in
++the same image as the binaries built against it. A second caller that cannot move
++in lockstep would need this policy revisited. A caller that declares the functions by hand must update its
++declarations with the header: a stale declaration of a changed signature still
++links.
+ 
+ ## Build
+ 
+```
+
+**File**: `src/yb/thin_client/yb_thin_client-itest.cc` (modified, +752/-47)
+```diff
+@@ -37,14 +37,26 @@
+ 
+ #include "yb/thin_client/yb_thin_client.h"
+ 
++#include "yb/client/client.h"
++
+ #include "yb/consensus/raft_consensus.h"
+ #include "yb/consensus/retryable_requests.h"
+ 
+ #include "yb/integration-tests/mini_cluster.h"
++#include "yb/tablet/tablet.h"
++#include "yb/tablet/tablet_metrics.h"
+ #include "yb/tablet/tablet_peer.h"
+ #include "yb/tserver/mini_tablet_server.h"
++#include "yb/tserver/tablet_server.h"
++#include "yb/tserver/thin_client.pb.h"
++#include "yb/tserver/thin_client.proxy.h"
+ 
++#include "yb/common/entity_ids.h"
+ #include "yb/common/hybrid_time.h"
++#include "yb/common/wire_protocol.h"
++
++#include "yb/rpc/proxy.h"
++#include "yb/rpc/rpc_controller.h"
+ 
+ #include "yb/util/backoff_waiter.h"
+ #include "yb/util/errno.h"
+@@ -57,18 +69,22 @@
+ #include "yb/util/net/sockaddr.h"
+ #include "yb/util/path_util.h"
+ #include "yb/util/result.h"
++#include "yb/util/scope_exit.h"
+ #include "yb/util/slice.h"
+ #include "yb/util/status_format.h"
+ #include "yb/util/test_macros.h"
+ #include "yb/util/test_util.h"
++#include "yb/util/tsan_util.h"
+ 
+ #include "yb/yql/pgwrapper/libpq_utils.h"
+ #include "yb/yql/pgwrapper/pg_mini_test_base.h"
+ #include "yb/yql/pgwrapper/pg_wrapper_test_base.h"
+ 
+ DECLARE_bool(TEST_asyncrpc_finished_set_timedout);
++DECLARE_bool(enable_load_balancing);
+ DECLARE_uint64(TEST_thin_client_perform_delay_ms);
+ DECLARE_bool(TEST_thin_client_omit_session_lost_code);
++DECLARE_uint64(max_clock_skew_usec);
+ DECLARE_uint64(pg_client_heartbeat_interval_ms);
+ DECLARE_uint64(pg_client_session_expiration_ms);
+ DECLARE_bool(use_libunwind_for_stack_trace_collection);
+@@ -80,6 +96,7 @@ DECLARE_string(certs_dir);
+ DECLARE_string(TEST_public_hostname_suffix);
+ DECLARE_int32(TEST_delay_before_added_to_leader_ms);
+ 
++METRIC_DECLARE_histogram(handler_latency_yb_tserver_TabletServerService_Read);
+ METRIC_DECLARE_histogram(handler_latency_yb_tserver_ThinClientService_Perform);
+ 
+ namespace yb::pgwrapper {
+@@ -376,7 +393,7 @@ TEST_F(PgThinClientTest, OpenUpsertReadPaged) {
+     op.spec = spec;
+     op.paging_state_in = paging_state.empty() ? nullptr : paging_state.data();
+     op.paging_state_in_len = paging_state.size();
+-    ybthin_read_async(client, &op, 1, /* read_time_ht= */ 0, &OnReadDone, &promise);
++    ybthin_read_async(client, &op, 1, /* options= */ nullptr, &OnReadDone, &promise);
+     auto out = future.get();
+     ASSERT_EQ(out.code, YBTHIN_OK) << out.message;
+     // The shim decoded the sidecar into typed cells: 2 targets (v INT4, payload BYTEA).
+@@ -460,7 +477,7 @@ TEST_F(PgThinClientTest, OidColumnRoundTrip) {
+     ybthin_read_op op = {};
+     op.table = table;
+     op.spec = spec;
+-    ybthin_read_async(client, &op, 1, /* read_time_ht= */ 0, &OnReadDone, &promise);
++    ybthin_read_async(client, &op, 1, /* options= */ nullptr, &OnReadDone, &promise);
+     return future.get();
+   };
+ 
+@@ -579,7 +596,7 @@ TEST_F(PgThinClientTest, PagedReadHoldsSnapshotAcrossPages) {
+     op.paging_state_in_len = paging_state.size();
+     // Continue the scan with just the paging_state (read_time_ht == 0): the scan must stay on its
+     // original snapshot on its own, not silently jump to a newer one on each page.
+-    ybthin_read_async(client, &op, 1, /* read_time_ht= */ 0, &OnReadDone, &promise);
++    ybthin_read_async(client, &op, 1, /* options= */ nullptr, &OnReadDone, &promise);
+     auto out = future.get();
+     ASSERT_EQ(out.code, YBTHIN_OK) << out.message;
+     for (size_t row_idx = 0; row_idx < out.n_rows; ++row_idx) {
+@@ -695,7 +712,7 @@ TEST_F(PgThinClientTest, RangeShardedTable) {
+     ybthin_read_op op = {};
+     op.table = table;
+     op.spec = spec;
+-    ybthin_read_async(client, &op, 1, /* read_time_ht= */ 0, &OnReadDone, &promise);
++    ybthin_read_async(client, &op, 1, /* options= */ nullptr, &OnReadDone, &promise);
+     auto out = future.get();
+     ASSERT_EQ(out.code, YBTHIN_OK) << out.message;
+     ASSERT_EQ(out.n_rows, 1u);
+@@ -723,7 +740,7 @@ TEST_F(PgThinClientTest, RangeShardedTable) {
+       op.spec = spec;
+       op.paging_state_in = paging_state.empty() ? nullptr : paging_state.data();
+       op.paging_state_in_len = paging_state.size();
+-      ybthin_read_async(client, &op, 1, /* read_time_ht= */ 0, &OnReadDone, &promise);
++      ybthin_read_async(client, &op, 1, /* options= */ nullptr, &OnReadDone, &promise);
+       auto out = future.get();
+       ASSERT_EQ(out.code, YBTHIN_OK) << out.message;
+       for (size_t row_idx = 0; row_idx < out.n_rows; ++row_idx) {
+@@ -766,7 +783,7 @@ TEST_F(PgThinClientTest, RangeShardedTable) {
+       op.spec = spec;
+       op.paging_state_in = paging_state.empty() ? nullptr : paging_state.data();
+       op.paging_state_in_len = paging_state.size();
+-      ybthin_read_async(client, &op, 1, /* read_time_ht= */ 0, &OnReadDone, &promise);
++      ybthin_read_async(client, &op, 1, /* options= */ nullptr, &OnReadDone, &promise);
+       auto out = future.get();
+       ASSERT_EQ(out.code, YBTHIN_OK) << out.message;
+       for (size_t row_idx = 0; row_idx 
+```
+
+**File**: `src/yb/thin_client/yb_thin_client.cc` (modified, +60/-12)
+```diff
+@@ -80,6 +80,7 @@
+ #include "yb/util/slice.h"
+ #include "yb/util/status.h"
+ #include "yb/util/status_format.h"
++#include "yb/util/strongly_typed_bool.h"
+ #include "yb/util/tsan_util.h"
+ 
+ DECLARE_bool(use_libunwind_for_stack_trace_collection);
+@@ -492,19 +493,21 @@ ybthin_session& NextWriteSession(ybthin_client& client) {
+ }
+ 
+ // The shim's own envelope around the server's paging state, handed back to the caller opaquely:
+-//   [magic][version][u32 read-session index][u32 generation][u64 read_ht]
++//   [magic][version][u32 read-session index][u32 generation][u64 read_ht][u8 flags]
+ //   + the server's paging state.
+ // A continuation routes back to the same session (generation-checked) and replays the read time its
+ // scan was served at, so every page reads at one snapshot without the server tracking read points.
+-// Nothing in YugabyteDB defines this format -- pggate keeps the equivalent state in process memory
+-// and never serializes it. Version 3 replaced the read serial with the read time itself; bump the
+-// version for any further layout change.
++// The flags carry the scan's read_from_followers, so every page of a follower scan asks for a
++// follower. Nothing in YugabyteDB defines this format -- pggate keeps the equivalent state in
++// process memory and never serializes it. Version 3 replaced the read serial with the read time
++// itself, version 4 added the flags; bump the version for any further layout change.
+ constexpr uint8_t kPagingMagic = 0xB1;
+-constexpr uint8_t kPagingVersion = 3;
++constexpr uint8_t kPagingVersion = 4;
+ constexpr size_t kPagingPrefixLen = 2;  // magic + version
++constexpr uint8_t kPagingFlagReadFromFollowers = 0x01;
+ // Derived from the layout above so the writer, the reader and the length cannot drift apart.
+ constexpr size_t kPagingHeaderLen =
+-    kPagingPrefixLen + 2 * sizeof(uint32_t) + sizeof(uint64_t);
++    kPagingPrefixLen + 2 * sizeof(uint32_t) + sizeof(uint64_t) + sizeof(uint8_t);
+ 
+ void AppendU32LE(std::string* out, uint32_t value) {
+   char buf[sizeof(value)];
+@@ -530,16 +533,19 @@ uint64_t ReadU64LE(const uint8_t** cursor) {
+   return value;
+ }
+ 
++YB_STRONGLY_TYPED_BOOL(ReadFromFollowers);
++
+ std::string WrapPagingState(
+     uint32_t session_index, uint32_t generation, uint64_t read_ht,
+-    const std::string& server_paging_state) {
++    ReadFromFollowers read_from_followers, const std::string& server_paging_state) {
+   std::string out;
+   out.reserve(kPagingHeaderLen + server_paging_state.size());
+   out.push_back(static_cast<char>(kPagingMagic));
+   out.push_back(static_cast<char>(kPagingVersion));
+   AppendU32LE(&out, session_index);
+   AppendU32LE(&out, generation);
+   AppendU64LE(&out, read_ht);
++  out.push_back(static_cast<char>(read_from_followers ? kPagingFlagReadFromFollowers : 0));
+   out.append(server_paging_state);
+   return out;
+ }
+@@ -549,6 +555,8 @@ struct PinInfo {
+   uint32_t generation;
+   // Replayed by a continuation so the server restores the scan's read point.
+   uint64_t read_ht;
++  // Replayed alongside it, so the continuation is served by a follower like its first page.
++  ReadFromFollowers read_from_followers = ReadFromFollowers::kFalse;
+   Slice server_paging_state;
+ };
+ 
+@@ -561,6 +569,7 @@ Result<PinInfo> UnwrapPagingState(const uint8_t* data, size_t len) {
+   pin.session_index = ReadU32LE(&cursor);
+   pin.generation = ReadU32LE(&cursor);
+   pin.read_ht = ReadU64LE(&cursor);
++  pin.read_from_followers = ReadFromFollowers((*cursor++ & kPagingFlagReadFromFollowers) != 0);
+   pin.server_paging_state = Slice(cursor, data + len);
+   return pin;
+ }
+@@ -665,6 +674,9 @@ struct ReadCall : SessionCall {
+   // The read time this batch was pinned to, either by the caller or, for a continuation, by the
+   // scan. 0 means the server picked one, which FinishRead reads out of the response paging state.
+   uint64_t read_ht;
++  // Whether the batch asks for followers: the caller's choice for a fresh batch, the scan's own
++  // for a continuation. Wrapped into the response paging state so the next page asks again.
++  ReadFromFollowers read_from_followers = ReadFromFollowers::kFalse;
+   tserver::ThinPerformRequestPB req;
+   tserver::ThinPerformResponsePB resp;
+   rpc::RpcController controller;
+@@ -862,7 +874,7 @@ void FinishRead(ReadCall* read_call) {
+       std::string srv;
+       op.paging_state().SerializeToString(&srv);
+       std::string wrapped = WrapPagingState(
+-          call->session_index, call->generation, scan_read_ht, srv);
++          call->session_index, call->generation, scan_read_ht, call->read_from_followers, srv);
+       op_result.paging_state = DupBytes(wrapped.data(), wrapped.size());
+       op_result.paging_state_len = wrapped.size();
+     }
+@@ -1221,23 +1233,30 @@ void ybthin_columns_free(ybthin_column* columns, size_t /* n */) {
+ }
+ 
+ void ybthin_read_async(
+-    ybthin_client* client, const ybthin_read_op* ops, size_t n_ops, uint64_t read_time_ht,
+-    ybthin_read_cb cb, void* ctx) {
++    ybthin_client* client, const ybt
+```
+
+**File**: `src/yb/thin_client/yb_thin_client.h` (modified, +46/-11)
+```diff
+@@ -21,9 +21,15 @@
+ // VERSIONING: this library is built OUTSIDE the YugabyteDB tree and upgraded BEFORE the tserver, so
+ // a given build must keep working against an OLDER one. On the wire, only rely on request fields,
+ // RPCs and semantics the OLDEST supported tserver understands, and tolerate responses missing
+-// fields a newer server would set. The ABI below is likewise stable -- changes must be ADDITIVE
+-// (new functions; fields appended to the END of structs; enum values appended at the END). Never
+-// renumber an enum value, reorder or remove a struct field, or change a signature in place.
++// fields a newer server would set.
++//
++// The ABI below carries no such promise while the library has a single caller: it may change
++// between shim releases, a signature included. The library and its header are released together,
++// and that caller pins a release and ships this library in the same image as the binaries built
++// against it, so the two never differ at run time. A second caller that cannot move in lockstep
++// would need this policy revisited. A caller that declares these functions by hand (an FFI
++// binding) must update its declarations with the header: a stale declaration of a changed
++// signature still links.
+ //
+ // Ownership: every out-pointer the library fills is owned by it and freed with the matching _free
+ // or _destroy call below. Input arrays and strings are borrowed for the duration of the call only.
+@@ -193,7 +199,7 @@ typedef struct {
+ 
+ // One read op in a batch; a batch may mix tables. `paging_state_in`==NULL (len 0) starts this op's
+ // scan, a prior page's paging_state continues it. The read snapshot is a batch property
+-// (ybthin_read_async's read_time_ht), NOT part of the spec.
++// (ybthin_read_options.read_time_ht), NOT part of the spec.
+ typedef struct {
+   ybthin_table* table;
+   ybthin_read_spec spec;
+@@ -247,19 +253,48 @@ typedef void (*ybthin_read_cb)(void* ctx, ybthin_status status,
+                                ybthin_read_result* result);
+ typedef void (*ybthin_write_cb)(void* ctx, ybthin_status status);
+ 
++// Batch-level options for ybthin_read_async. A zeroed struct (or NULL) is a leader read at a
++// snapshot the server picks.
++typedef struct {
++  // Pins the batch snapshot; 0 => the server picks one. Pass a prior batch's `used_read_time_ht`
++  // only to force a NEW batch onto an existing snapshot.
++  uint64_t read_time_ht;
++  // bool. Serve the batch's reads from the closest replica, a follower included, at a snapshot
++  // the tserver computes as its own clock minus `follower_read_staleness_ms` (see below, unless
++  // read_time_ht is set). When the replica the tserver picked is behind that
++  // snapshot, the tserver retries the read on another replica of the tablet, on another tserver,
++  // still as one Perform -- but not for free: the tserver's client marks the first replica
++  // failed in its shared meta cache until its next refresh (--lookup_cache_refresh_secs, 60 s by
++  // default), so every follower read of that tablet through that tserver goes to a remote
++  // replica for up to that long. YSQL follower reads behave the same way. A scan keeps the
++  // choice of its first page (it travels inside paging_state): the pages of a scan started this
++  // way stay on followers at the first page's snapshot, and those of a scan started at the
++  // leader stay at the leader. This field and the staleness are ignored for every op of a batch
++  // that holds a continuation, fresh ops included: one Perform carries one read time and one
++  // replica choice, so a fresh op runs at the continuation's snapshot and on its scan's replica
++  // choice. With NULL options next to a follower scan's continuation, a fresh op is a follower
++  // read at that scan's snapshot.
++  int read_from_followers;
++  // Only read with read_from_followers and read_time_ht == 0; ignored otherwise. It must then be
++  // > 0 (0 is YBTHIN_INVALID) and at least 2 * the cluster's --max_clock_skew_usec (1000 ms by
++  // default), as YSQL requires; the tserver refuses a smaller one as YBTHIN_INVALID. Needs a
++  // tserver that understands it; an older one serves the batch at the leader, unpinned.
++  uint32_t follower_read_staleness_ms;
++} ybthin_read_options;
++
+ // Run a batch of read ops as the ops of ONE Perform: one RPC, one read session, one snapshot.
+-// `read_time_ht` pins the batch snapshot (0 => the server picks one); pass a prior batch's
+-// `used_read_time_ht` only to force a NEW batch onto an existing snapshot. An op with
+-// `paging_state_in` set continues that op's scan and stays on the scan's original snapshot
+-// automatically -- the time the first page was served at travels inside `paging_state`, so the
+-// server keeps no read state -- and paging with `read_time_ht` left 0 throughout is still
+-// consistent: no rows are dropped mid-scan.
++// `options` is batch-level; NULL means all zero. An op with `paging_state_in` set continues that
++// op's scan; the read time it wa
+```
+
+**File**: `src/yb/tserver/pg_client_session.cc` (modified, +0/-7)
+```diff
+@@ -230,13 +230,6 @@ YB_DEFINE_ENUM(PgClientSessionKind,
+     (kPlain)(kAutonomousDdl)(kLegacyCatalog)(kSequence)(kPgSession)(kHistoricalRead));
+ YB_DEFINE_ENUM(GlobalObjectLocksReleaseMode, (kAsync)(kSync));
+ 
+-void SetFollowerReadTime(ConsistentReadPoint& read_point, uint32_t staleness_ms) {
+-  read_point.SetReadTime(
+-      ReadHybridTime::SingleTime(
+-          read_point.Now().AddMilliseconds(-static_cast<int64_t>(staleness_ms))),
+-      {});
+-}
+-
+ constexpr const size_t kPgSequenceLastValueColIdx = 2;
+ constexpr const size_t kPgSequenceIsCalledColIdx = 3;
+ const std::string kTxnLogPrefixTagSource("Session ");
+```
+
+**File**: `src/yb/tserver/pg_client_session_util.cc` (modified, +7/-0)
+```diff
+@@ -239,6 +239,13 @@ Status CombineErrorsToStatus(const client::CollectedErrors& errors, const Status
+   return errors.empty() ? status : CombineNonEmptyErrorsToStatus(errors, status);
+ }
+ 
++void SetFollowerReadTime(ConsistentReadPoint& read_point, uint32_t staleness_ms) {
++  read_point.SetReadTime(
++      ReadHybridTime::SingleTime(
++          read_point.Now().AddMilliseconds(-static_cast<int64_t>(staleness_ms))),
++      {});
++}
++
+ Status HandleOperationResponse(uint64_t session_id,
+                                const client::YBPgsqlOp& op,
+                                PgPerformResponseMsg* resp,
+```
+
+**File**: `src/yb/tserver/pg_client_session_util.h` (modified, +4/-0)
+```diff
+@@ -190,6 +190,10 @@ class ReadPointHistory {
+ 
+ Status CombineErrorsToStatus(const client::CollectedErrors& errors, const Status& status);
+ 
++// A follower read's read time: `staleness_ms` behind the read point's own clock, as one time with
++// no uncertainty window.
++void SetFollowerReadTime(ConsistentReadPoint& read_point, uint32_t staleness_ms);
++
+ Status HandleOperationResponse(uint64_t session_id,
+                                const client::YBPgsqlOp& op,
+                                PgPerformResponseMsg* resp,
+```
+
+**File**: `src/yb/tserver/thin_client.proto` (modified, +12/-0)
+```diff
+@@ -73,6 +73,18 @@ message ThinReadTimeOptionsPB {
+   // page was served at on every continuation, so all pages observe one snapshot without the server
+   // keeping any per-session read state.
+   ReadHybridTimePB read_time = 1;
++  // Serve the batch's reads at CONSISTENT_PREFIX, so the tserver that received the Perform sends
++  // each read to the closest replica of its tablet, a follower included. When that replica cannot
++  // serve the read time, the same tserver retries the read on another replica of the tablet, on
++  // another tserver, within the same Perform. Applies to every page of a scan it starts, so a
++  // continuation must send it again alongside the pinned read_time. Ignored on a write batch.
++  bool read_from_followers = 2;
++  // With read_from_followers and no read_time: the tserver reads at its own clock minus this
++  // staleness, so only the cluster's own clock skew bound applies, as for YSQL follower reads.
++  // Whenever set, it must be at least 2 * max_clock_skew_usec, as YSQL requires, even alongside
++  // a read_time, which it is then ignored for (a continuation keeps the scan's snapshot).
++  // Rejected on a write batch and without read_from_followers.
++  optional uint32 follower_read_staleness_ms = 3;
+ }
+ 
+ message ThinPerformRequestPB {
+```
+
+---
+
+### Incident Patch 3: `fcf9d5d1` (2026-11-17)
+**Commit Message**: [#30797] YSQL: Revert "Set index birth_time for indexes built nonconcurrently" (#38235)
+
+## Summary
+
+Reverts 4e76682e276ae29c20eaee89ca8019811ecad5b7 (#37103).
+
+With that commit, an index created inside a DDL transaction stays
+`BIRTH_TIME_PENDING_DDL_COMMIT` until the transaction commits, and the
+tserver read guard answers reads of it with a retryable
+`LeaderNotReadyToServe` error. A statement that reads the index in the
+same transaction that created it is therefore retried until the RPC
+deadline (about 600s) and fails. This was a known limitation (#37091)
+for which only three `yb.orig.ddl_txn_*` regress reads were disabled,
+but extension scripts and tests do the same thing, so these fail on
+every attempt on master:
+
+- `DocumentDBTest.*` and `BasicDocumentDBTests#testBasicOperations`:
+`CREATE EXTENSION documentdb CASCADE` installs pg_cron, creates an index
+on `cron.job` and reads `cron.job` in the same transaction.
+- `PgPartmanTest.*/FlagOn`: `BEGIN; CREATE TABLE ... UNIQUE; ALTER TABLE
+... ADD FOREIGN KEY; INSERT`, where the foreign key check reads the new
+unique index.
+
+The revert is the exact inverse of the original commit. The change will
+be re-landed together with the fix for 
+
+**File**: `src/postgres/src/test/regress/expected/yb.orig.ddl_txn_event_triggers.out` (modified, +6/-3)
+```diff
+@@ -99,9 +99,12 @@ BEFORE INSERT ON trigger_unique_test
  FOR EACH ROW EXECUTE FUNCTION normalize_code();
  -- Insert 'abc', trigger turns it into 'ABC'
  INSERT INTO trigger_unique_test VALUES (1, 'abc');
--SELECT * FROM trigger_unique_test WHERE code = 'ABC';
-- id | code 
------+------
--  1 | ABC
--(1 row)
--
-+-- TODO(#37091): re-enable once a transaction can read an index it created; this
-+-- read currently hangs until the CREATE INDEX commits.
-+-- SELECT * FROM trigger_unique_test WHERE code = 'ABC';
+--- TODO(#37091): re-enable once a transaction can read an index it created; this
+--- read currently hangs until the CREATE INDEX commits.
+--- SELECT * FROM trigger_unique_test WHERE code = 'ABC';
++SELECT * FROM trigger_unique_test WHERE code = 'ABC';
++ id | code 
++----+------
++  1 | ABC
++(1 row)
++
  -- This should fail because 'abc' was normalized to 'ABC'
  INSERT INTO trigger_unique_test VALUES (2, 'ABC');
  ERROR:  duplicate key value violates unique constraint "idx_code_unique"
 ```
 
-**File**: `src/postgres/src/test/regress/expected/yb.orig.ddl_txn_indices.out` (modified, +3/-6)
+**File**: `src/postgres/src/test/regress/expected/yb.orig.ddl_txn_indices.out` (modified, +6/-3)
 ```diff
-@@ -39,12 +39,9 @@ INSERT INTO idx_vis_test VALUES (1, 10), (2, 20);
+@@ -39,9 +39,12 @@ INSERT INTO idx_vis_test VALUES (1, 10), (2, 20);
  -- Statement 2: Read via Index
  -- Must advance HT to see previous statement's index writes.
  SET enable_seqscan = off;
--SELECT * FROM idx_vis_test WHERE val = 20;
-- id | val 
------+-----
--  2 |  20
--(1 row)
--
-+-- TODO(#37091): re-enable once a transaction can read an index it created; this
-+-- read currently hangs until the CREATE INDEX commits.
-+-- SELECT * FROM idx_vis_test WHERE val = 20;
+--- TODO(#37091): re-enable once a transaction can read an index it created; this
+--- read currently hangs until the CREATE INDEX commits.
+--- SELECT * FROM idx_vis_test WHERE val = 20;
++SELECT * FROM idx_vis_test WHERE val = 20;
++ id | val 
++----+-----
++  2 |  20
++(1 row)
++
  RESET enable_seqscan;
  COMMIT;
  -- -----------------------------------------------------------------------------
 ```
 
-**File**: `src/postgres/src/test/regress/expected/yb.orig.ddl_txn_triggers.out` (modified, +3/-6)
+**File**: `src/postgres/src/test/regress/expected/yb.orig.ddl_txn_triggers.out` (modified, +6/-3)
 ```diff
-@@ -98,12 +98,9 @@ BEFORE INSERT ON trigger_unique_test
+@@ -98,9 +98,12 @@ BEFORE INSERT ON trigger_unique_test
  FOR EACH ROW EXECUTE FUNCTION normalize_code();
  -- Insert 'abc', trigger turns it into 'ABC'
  INSERT INTO trigger_unique_test VALUES (1, 'abc');
--SELECT * FROM trigger_unique_test WHERE code = 'ABC';
-- id | code 
------+------
--  1 | ABC
--(1 row)
--
-+-- TODO(#37091): re-enable once a transaction can read an index it created; this
-+-- read currently hangs until the CREATE INDEX commits.
-+-- SELECT * FROM trigger_unique_test WHERE code = 'ABC';
+--- TODO(#37091): re-enable once a transaction can read an index it created; this
+--- read currently hangs until the CREATE INDEX commits.
+--- SELECT * FROM trigger_unique_test WHERE code = 'ABC';
++SELECT * FROM trigger_unique_test WHERE code = 'ABC';
++ id | code 
++----+------
++  1 | ABC
++(1 row)
++
  -- This should fail because 'abc' was normalized to 'ABC'
  INSERT INTO trigger_unique_test VALUES (2, 'ABC');
  ERROR:  duplicate key value violates unique constraint "idx_code_unique"
 ```
 
-**File**: `src/postgres/src/test/regress/sql/yb.orig.ddl_txn_event_triggers.sql` (modified, +3/-1)
+**File**: `src/postgres/src/test/regress/sql/yb.orig.ddl_txn_event_triggers.sql` (modified, +1/-3)
 ```diff
-@@ -90,7 +90,9 @@ FOR EACH ROW EXECUTE FUNCTION normalize_code();
+@@ -90,9 +90,7 @@ FOR EACH ROW EXECUTE FUNCTION normalize_code();
  
  -- Insert 'abc', trigger turns it into 'ABC'
  INSERT INTO trigger_unique_test VALUES (1, 'abc');
--SELECT * FROM trigger_unique_test WHERE code = 'ABC';
-+-- TODO(#37091): re-enable once a transaction can read an index it created; this
-+-- read currently hangs until the CREATE INDEX commits.
-+-- SELECT * FROM trigger_unique_test WHERE code = 'ABC';
+--- TODO(#37091): re-enable once a transaction can read an index it created; this
+--- read currently hangs until the CREATE INDEX commits.
+--- SELECT * FROM trigger_unique_test WHERE code = 'ABC';
++SELECT * FROM trigger_unique_test WHERE code = 'ABC';
  
  -- This should fail because 'abc' was normalized to 'ABC'
  INSERT INTO trigger_unique_test VALUES (2, 'ABC');
 ```
 
-**File**: `src/postgres/src/test/regress/sql/yb.orig.ddl_txn_indices.sql` (modified, +3/-1)
+**File**: `src/postgres/src/test/regress/sql/yb.orig.ddl_txn_indices.sql` (modified, +1/-3)
 ```diff
-@@ -35,7 +35,9 @@ INSERT INTO idx_vis_test VALUES (1, 10), (2, 20);
+@@ -35,9 +35,7 @@ INSERT INTO idx_vis_test VALUES (1, 10), (2, 20);
  -- Statement 2: Read via Index
  -- Must advance HT to see previous statement's index writes.
  SET enable_seqscan = off;
--SELECT * FROM idx_vis_test WHERE val = 20;
-+-- TODO(#37091): re-enable once a transaction can read an index it created; this
-+-- read currently hangs until the CREATE INDEX commits.
-+-- SELECT * FROM idx_vis_test WHERE val = 20;
+--- TODO(#37091): re-enable once a transaction can read an index it created; this
+--- read currently hangs until the CREATE INDEX commits.
+--- SELECT * FROM idx_vis_test WHERE val = 20;
++SELECT * FROM idx_vis_test WHERE val = 20;
  RESET enable_seqscan;
  
  COMMIT;
 ```
 
-**File**: `src/postgres/src/test/regress/sql/yb.orig.ddl_txn_triggers.sql` (modified, +3/-1)
+**File**: `src/postgres/src/test/regress/sql/yb.orig.ddl_txn_triggers.sql` (modified, +1/-3)
 ```diff
-@@ -90,7 +90,9 @@ FOR EACH ROW EXECUTE FUNCTION normalize_code();
+@@ -90,9 +90,7 @@ FOR EACH ROW EXECUTE FUNCTION normalize_code();
  
  -- Insert 'abc', trigger turns it into 'ABC'
  INSERT INTO trigger_unique_test VALUES (1, 'abc');
--SELECT * FROM trigger_unique_test WHERE code = 'ABC';
-+-- TODO(#37091): re-enable once a transaction can read an index it created; this
-+-- read currently hangs until the CREATE INDEX commits.
-+-- SELECT * FROM trigger_unique_test WHERE code = 'ABC';
+--- TODO(#37091): re-enable once a transaction can read an index it created; this
+--- read currently hangs until the CREATE INDEX commits.
+--- SELECT * FROM trigger_unique_test WHERE code = 'ABC';
++SELECT * FROM trigger_unique_test WHERE code = 'ABC';
  
  -- This should fail because 'abc' was normalized to 'ABC'
  INSERT INTO trigger_unique_test VALUES (2, 'ABC');
 ```
 
-**File**: `src/yb/client/client-internal.cc` (modified, +5/-1)
+**File**: `src/yb/client/client-internal.cc` (modified, +1/-5)
 ```diff
-@@ -3279,12 +3279,16 @@ Result<TableSizeInfo> YBClient::Data::GetTableDiskSize(
+@@ -3279,16 +3279,12 @@ Result<TableSizeInfo> YBClient::Data::GetTableDiskSize(
  }
  
  Status YBClient::Data::ReportYsqlDdlTxnStatus(
--    const TransactionMetadata& txn, bool is_committed, const CoarseTimePoint& deadline) {
-+    const TransactionMetadata& txn, bool is_committed, HybridTime propagated_hybrid_time,
-+    const CoarseTimePoint& deadline) {
+-    const TransactionMetadata& txn, bool is_committed, HybridTime propagated_hybrid_time,
+-    const CoarseTimePoint& deadline) {
++    const TransactionMetadata& txn, bool is_committed, const CoarseTimePoint& deadline) {
    master::ReportYsqlDdlTxnStatusRequestPB req;
    master::ReportYsqlDdlTxnStatusResponsePB resp;
  
    req.set_transaction_id(txn.transaction_id.data(), txn.transaction_id.size());
    req.set_is_committed(is_committed);
-+  if (propagated_hybrid_time.is_valid()) {
-+    req.set_propagated_hybrid_time(propagated_hybrid_time.ToUint64());
-+  }
+-  if (propagated_hybrid_time.is_valid()) {
+-    req.set_propagated_hybrid_time(propagated_hybrid_time.ToUint64());
+-  }
    RETURN_NOT_OK(SyncLeaderMasterRpc(
        deadline, req, &resp, "ReportYsqlDdlTxnStatus",
        &master::MasterDdlProxy::ReportYsqlDdlTxnStatusAsync));
 ```
 
-**File**: `src/yb/client/client-internal.h` (modified, +2/-1)
+**File**: `src/yb/client/client-internal.h` (modified, +1/-2)
 ```diff
-@@ -495,7 +495,8 @@ class YBClient::Data {
+@@ -495,8 +495,7 @@ class YBClient::Data {
  
    // Provide the status of the transaction to YB-Master.
    Status ReportYsqlDdlTxnStatus(
--      const TransactionMetadata& txn, bool is_committed, const CoarseTimePoint& deadline);
-+      const TransactionMetadata& txn, bool is_committed, HybridTime propagated_hybrid_time,
-+      const CoarseTimePoint& deadline);
+-      const TransactionMetadata& txn, bool is_committed, HybridTime propagated_hybrid_time,
+-      const CoarseTimePoint& deadline);
++      const TransactionMetadata& txn, bool is_committed, const CoarseTimePoint& deadline);
  
    Status IsYsqlDdlVerificationInProgress(
      const TransactionMetadata& txn,
 ```
 
----
-
-### Incident Patch 2: `ad5b77ee` (2026-11-17)
-**Commit Message**: [PLAT-23577] YBA: Revert "Increment YBC client server version on YBA to 2.2.0.4-b14"
-
-Summary:
-This reverts commit ded6b58d388 / D60109.
-
-DB tests install the YBC named in `managed/src/main/resources/ybc_version.conf` (`build-support/common-test-env.sh`), so the bump also replaced yb-controller under the C++ backup tests. Since it landed, about 55 backup and xCluster tests fail on every alma8 release, arm release and alma9 asan run on master, e.g. `YBBackupDuringAlterTable.*`, `CqlBackupTest.*`, `PgVectorIndexBackupRestoreTest.*`, `PgVectorIndexTest.Backup/*`, `XClusterDDLReplicationTest.*`, `XClusterAutomaticModeTest.*` and `PgMasterFailoverTest.NonRespondingMaster*`. Every failing backup ends with `Final Status: SNAPSHOT_DIRECTORY_NOT_FOUND`, and the restore after it with `HTTP_BAD_REQUEST`. D60109 landed while Jenkins was running no tests, so its CI did not catch this.
-
-b14 is 35 ybc commits past b13, not only the CVE rebuilds. Among them is the tablet source check from yugabyte/ybc#290 and yugabyte/ybc#291, which is where `SNAPSHOT_DIRECTORY_NOT_FOUND` is raised; it appears to reject uploads in the test minicluster.
-
-NOTE: This also drops the CVE fixes b14 carries in yb-control
-
-**File**: `managed/build.sbt` (modified, +1/-1)
-```diff
-@@ -1097,7 +1097,7 @@ dependencyOverrides += "org.bouncycastle" % "bc-fips" % bouncyCastleFipsVersion
- dependencyOverrides += "org.bouncycastle" % "bcutil-fips" % bouncyCastleUtilFipsVersion
- 
- libraryDependencies += "org.yb" % "yb-client" % "0.8.125-SNAPSHOT"
--libraryDependencies += "org.yb" % "ybc-client" % "2.2.0.4-b14"
-+libraryDependencies += "org.yb" % "ybc-client" % "2.2.0.4-b13"
- libraryDependencies += "org.yb" % "yb-perf-advisor" % "1.0.0-b35"
- libraryDependencies += "com.yugabyte.troubleshoot" % "perf-advisor-client" % "0.2.0"
- 
-```
-
-**File**: `managed/src/main/resources/ybc_version.conf` (modified, +1/-1)
-```diff
-@@ -1,3 +1,3 @@
- {
--  stable_version = "2.2.0.4-b14"
-+  stable_version = "2.2.0.4-b13"
- }
-```
-
----
-
-### Incident Patch 3: `c87fc3dc` (2026-11-17)
-**Commit Message**: [PLAT-21316] YBA: Fix DrConfigControllerTest.testSetTablesWithMatviewRejected (#38146)
-
-## Summary
-
-`DrConfigControllerTest.testSetTablesWithMatviewRejected` fails on
-master. It calls `XClusterConfigController.getSetTablesTaskParams` with
-null `bootstrapParams`. For a DR config, that method checks
-`bootstrapParams` before the materialized view check, so the test gets
-"bootstrapParams in the payload must be passed in" instead of the
-materialized view error.
-
-The test now builds `bootstrapParams` the way
-`DrConfigController.setTables` does:
-`drConfig.getBootstrapBackupParams()` converted with
-`DrConfigHelper.getBootstrapParamsFromRestartBootstrapParams`. Test-only
-change.
-
-## Test plan
-
-- [x] `sbt "testOnly com.yugabyte.yw.controllers.DrConfigControllerTest
--- --tests=testSetTablesWithMatviewRejected"` fails on master with the
-error above
-- [x] `sbt "testOnly
-com.yugabyte.yw.controllers.DrConfigControllerTest"` passes with the fix
-(26/26)
-- [x] `sbt Test/javafmtCheck`
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `managed/src/test/java/com/yugabyte/yw/controllers/DrConfigControllerTest.java` (modified, +9/-1)
-```diff
-@@ -54,6 +54,7 @@
- import com.yugabyte.yw.forms.DrConfigSwitchoverForm;
- import com.yugabyte.yw.forms.DrConfigTaskParams;
- import com.yugabyte.yw.forms.UniverseDefinitionTaskParams.SoftwareUpgradeState;
-+import com.yugabyte.yw.forms.XClusterConfigCreateFormData.BootstrapParams;
- import com.yugabyte.yw.forms.XClusterConfigCreateFormData.BootstrapParams.BootstrapBackupParams;
- import com.yugabyte.yw.forms.XClusterConfigRestartFormData.RestartBootstrapParams;
- import com.yugabyte.yw.forms.XClusterConfigTaskParams;
-@@ -1493,6 +1494,13 @@ public void testSetTablesWithMatviewRejected() throws Exception {
-             Json.toJson(setTablesForm));
-     assertOk(setTablesResult);
- 
-+    // Pass bootstrapParams as DrConfigController.setTables does; without them a DR config fails
-+    // the bootstrapParams check before the materialized view check runs.
-+    BootstrapParams bootstrapParams =
-+        app.injector()
-+            .instanceOf(DrConfigHelper.class)
-+            .getBootstrapParamsFromRestartBootstrapParams(
-+                drConfig.getBootstrapBackupParams(), setTablesForm.tables);
-     PlatformServiceException exception =
-         assertThrows(
-             PlatformServiceException.class,
-@@ -1503,7 +1511,7 @@ public void testSetTablesWithMatviewRejected() throws Exception {
-                     sourceUniverse,
-                     targetUniverse,
-                     setTablesForm.tables,
--                    null /* bootstrapParams */,
-+                    bootstrapParams,
-                     false /* autoIncludeIndexTables */,
-                     true /* dryRun */,
-                     true /* validateRequestedChange */));
-```
-
 #### Recent Merged Pull Requests:
-- **PR #38167** (2026-11-17): [BACKPORT 2026.2][PLAT-17570] YBA: Reject pause and resume in the wrong universe state (#38077) (@Deepti-yb)
-- **PR #38166** (2026-11-17): [BACKPORT 2026.1][PLAT-17570] YBA: Reject pause and resume in the wrong universe state (#38077) (@Deepti-yb)
-- **PR #38161** (2026-11-17): [BACKPORT 2026.2][PLAT-23280] YBA: Let YBA skip the restart for collector-only telemetry changes in the CLI (#38069) (@Deepti-yb)
-- **PR #38160** (2026-11-17): [BACKPORT 2026.1][PLAT-23280] YBA: Let YBA skip the restart for collector-only telemetry changes in the CLI (#38069) (@Deepti-yb)
-- **PR #38157** (2026-11-17): [BACKPORT 2026.1][PLAT-16529] YBA: Fix the 2026.1 yba-cli build with the missing roll batch size helpers (@Deepti-yb)
-- **PR #38148** (2026-11-17): [doc] Pin product switcher (@ddhodge)
+- **PR #38333** (2026-11-18): [BACKPORT 2026.2][PLAT-23927] YBA: Run the support bundle Go tests with sbt test and fail on failure (#38174) (@asc-073-yb)
+- **PR #38332** (2026-11-18): [BACKPORT 2026.2][PLAT-20207] YBA: Redact sensitive gflags and DB passwords in v2 universe responses (#37848) (@asc-073-yb)
+- **PR #38331** (2026-11-18): [BACKPORT 2026.2][PLAT-23843] YBA: Redact ldapbindpasswd in support bundle v2 as YBA does (#37853) (@asc-073-yb)
+- **PR #38330** (2026-11-18): [BACKPORT 2026.2][PLAT-23780] YBA: Reject REDACTED sensitive gflags that have no stored value to restore (#37686) (@asc-073-yb)
+- **PR #38297** (2026-11-18): [pg19][#38251] YSQL: Update the non-object-locking values of PgCatalogVersionTest.InvalMessageSampleDDLs (@kai-franz)
+- **PR #38277** (2026-11-18): [DEVOPS-4053] test-automation: Revert "Spark workers download the test archive from GCS" (@hkimura)
 
 ---
 
@@ -2566,40 +3227,3 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. [#30797] YSQL: Set index birth_time for indexes built nonconcurrently
-
-**RULE**:
-When implementing operations in `src/postgres/src/test/regress/expected/yb.orig.ddl_txn_event_triggers.out`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `4e76682e`: [#30797] YSQL: Set index birth_time for indexes built nonconcurrently. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/postgres/src/test/regress/expected/yb.orig.ddl_txn_event_triggers.out`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```c
-// Verified production-grade fix pattern:
--- TODO(#37091): re-enable once a transaction can read an index it created; this
--- read currently hangs until the CREATE INDEX commits.
--- SELECT * FROM trigger_unique_test WHERE code = 'ABC';
-```
-
-**NEGATIVE CONSTRAINT**:
-```c
-// Induced defect failure mode:
-SELECT * FROM trigger_unique_test WHERE code = 'ABC';
- id | code 
-  1 | ABC
-(1 row)
-
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4e76682e` are properly handled with clean fallback behavior.

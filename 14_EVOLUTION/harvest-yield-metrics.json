@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T08:51:35.973Z",
-  "total_cycles_completed": 10428,
-  "total_learnings_persisted": 10428,
+  "last_updated": "2026-11-18T09:02:37.635Z",
+  "total_cycles_completed": 10430,
+  "total_learnings_persisted": 10430,
   "total_rules_promoted": 9938,
   "history": [
-    {
-      "timestamp": "2026-11-17T19:19:33.146Z",
-      "repository": "FastVideo/FastH3-Omni-Comfy",
-      "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T19:19:50.724Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T19:27:21.094Z",
       "repository": "baidu/Unlimited-OCR-2",
@@ -1403,6 +1389,20 @@
       "repository": "msasikanth/twine",
       "learningId": "learn-github-msasikanth-twine",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T09:02:22.225Z",
+      "repository": "amazon/chronos-2",
+      "learningId": "learn-huggingface-amazon-chronos-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T09:02:37.635Z",
+      "repository": "yugabyte/yugabyte-db",
+      "learningId": "learn-github-yugabyte-yugabyte-db",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

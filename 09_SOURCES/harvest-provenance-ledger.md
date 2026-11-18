@@ -10932,3 +10932,6 @@ Every entry in this ledger must capture:
 | `learn-dom-k-590baeab` | `project://hf-google-t5-t5-small` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | 2026-11-18T08:52:06.587Z |
 | `learn-dom-f-8389708e` | `project://msasikanth-twine` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/msasikanth-twine-learnings.md` | 2026-11-18T08:52:41.146Z |
 | `learn-dom-h-ca56ad1f` | `project://msasikanth-twine` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/msasikanth-twine-learnings.md` | 2026-11-18T08:53:20.094Z |
+| `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-11-18T09:02:22.220Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `53cd4b34` | Multi-dimensional audit evidence | 2026-11-18T09:02:37.630Z |
+| `learn-dom-d-42c4a146` | `project://yugabyte-yugabyte-db` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md` | 2026-11-18T09:03:08.211Z |

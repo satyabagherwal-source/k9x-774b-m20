@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T08:53:21.809Z",
-  "total_records": 1811,
+  "last_updated": "2026-11-18T09:03:09.640Z",
+  "total_records": 1813,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 774,
+      "total": 775,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -823,7 +823,8 @@
         "DOM-D-C631C795",
         "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy4-flash-learnings-core-invariants",
         "DOM-D-E33EA755",
-        "DOM-D-C539E7DA"
+        "DOM-D-C539E7DA",
+        "DOM-D-42C4A146"
       ]
     },
     "E": {
@@ -1768,7 +1769,7 @@
       ]
     },
     "K": {
-      "total": 83,
+      "total": 84,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1852,7 +1853,8 @@
         "domain_intelligence-quality-verification-intelligence-shifthackz-sdai-kmp-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-core-invariants",
         "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants",
-        "DOM-K-590BAEAB"
+        "DOM-K-590BAEAB",
+        "domain_intelligence-quality-verification-intelligence-yugabyte-yugabyte-db-learnings-core-invariants"
       ]
     },
     "L": {
@@ -8544,8 +8546,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "eb6498c712519c162d8e620c5bcb5d741d74d6351064df74c110d7183f2f9e18",
-      "created_at": "2026-11-18T08:41:54.704Z"
+      "content_hash": "722fd7d6c6822e6036bc64db94dc0f718976f952ad038d78a48b4306ee25367b",
+      "created_at": "2026-11-18T09:03:09.640Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10914,8 +10916,8 @@
       "title": "Research & Knowledge Intelligence: amazon/chronos-2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-amazon-chronos-2-research-knowledge-intelligence-amazon-chronos-2-core-invari.md",
       "repository": "amazon/chronos-2",
-      "content_hash": "5023a1fb51de282c625542b181705653611abca2877a78cdb1eb65c38cd6d250",
-      "created_at": "2026-11-13T21:59:18.938Z"
+      "content_hash": "b81c515f27190ef36ba098fe24bccbc68636761975a72fb93c8b77810684ff10",
+      "created_at": "2026-11-18T09:02:22.415Z"
     },
     "domain_intelligence-architecture-intelligence-xudong-huang-may-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-xudong-huang-may-learnings-core-invariants",
@@ -10974,8 +10976,8 @@
       "title": "Research & Knowledge Intelligence: hf-amazon-chronos-2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-amazon-chronos-2-learnings-research-knowledge-intelligence-hf-amazon-chronos-.md",
       "repository": "hf-amazon-chronos-2-learnings",
-      "content_hash": "c8f17da9a146bf5b5670151ac3344a69e8bbb8640e37b889c8e5ca5e3665aa8f",
-      "created_at": "2026-11-13T21:59:57.647Z"
+      "content_hash": "fc9a1014f11401e8fc48f5c6b054196bb28be0e0cae51aafd396968b0556787d",
+      "created_at": "2026-11-18T09:02:40.874Z"
     },
     "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-learnings": {
       "record_id": "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-learnings",
@@ -26762,8 +26764,8 @@
       "title": "Quality & Verification Intelligence: yugabyte/yugabyte-db Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-yugabyte-yugabyte-db-quality-verification-intelligence-yugabyte-yugabyte-db-core.md",
       "repository": "yugabyte/yugabyte-db",
-      "content_hash": "eac3c3bd742929ff7bae88f11ae9659fc3e2323281c43ade6de0ed64c1473a1f",
-      "created_at": "2026-11-17T10:41:14.496Z"
+      "content_hash": "58e43525ad911b77ad4c66ee2927f414401b18669df11c134c874b09eb86b947",
+      "created_at": "2026-11-18T09:02:37.833Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-idol-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-idol-learnings-core-invariants",
@@ -30418,6 +30420,57 @@
       "repository": "msasikanth-twine-learnings",
       "content_hash": "79fc2895bec3e4fbb7d2479913f0f8d920fecb33e3820e8d1a88d4fb9da7524f",
       "created_at": "2026-11-18T08:53:20.868Z"
+    },
+    "DOM-D-42C4A146": {
+      "record_id": "DOM-D-42C4A146",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): yugabyte/yugabyte-db",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  \n> **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  \n> **Source Version**: `53cd4b34`  \n> **License**: NOASSERTION  \n> **Synthesized By**: zero-clone-st",
+      "content_hash": "67e8f77ad0bfbced8e6dd2dddec902b23b8cf7fc103dcc9666220841cbf19fa8",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  \n> **Source**: github ([https://github.com/yugab -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  \n> **Source**: github ([https://github.com/yugab",
+      "provenance": {
+        "source_uri": "project://yugabyte-yugabyte-db/yugabyte-yugabyte-db-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T09:02:41.037Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (yugabyte-yugabyte-db)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of yugabyte-yugabyte-db"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T09:03:08.187Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-yugabyte-yugabyte-db-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-yugabyte-yugabyte-db-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: yugabyte-yugabyte-db-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-yugabyte-yugabyte-db-learnings-quality-verification-intelligence-yugabyte-yugaby.md",
+      "repository": "yugabyte-yugabyte-db-learnings",
+      "content_hash": "adc781fc0cc361d41c20bc4cc30e1992278dbd10ed761dee7c4dde25955a8f21",
+      "created_at": "2026-11-18T09:03:08.657Z"
     }
   }
 }

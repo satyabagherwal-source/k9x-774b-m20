@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T08:51:39.458Z",
-    "lastVerified": "2026-11-18T08:51:39.458Z",
+    "lastChecked": "2026-11-18T09:02:40.510Z",
+    "lastVerified": "2026-11-18T09:02:40.510Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -155,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-18T08:04:50.771Z",
-    "lastVerified": "2026-11-18T08:04:50.771Z",
+    "lastChecked": "2026-11-18T09:02:33.371Z",
+    "lastVerified": "2026-11-18T09:02:33.371Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -2047,12 +2047,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cilium-cilium": {
-    "name": "cilium/cilium",
+    "name": "cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-18T04:29:17.023Z",
-    "lastVerified": "2026-11-18T04:29:17.023Z",
+    "lastChecked": "2026-11-18T09:02:28.542Z",
+    "lastVerified": "2026-11-18T09:02:28.542Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
@@ -2061,7 +2061,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "e3f13487"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j/langchain4j",
@@ -3816,9 +3817,9 @@
   "kuberwastaken-claurst": {
     "name": "claurst",
     "officialUrl": "https://github.com/Kuberwastaken/claurst",
-    "lastChecked": "2026-11-17T03:34:05.150Z",
+    "lastChecked": "2026-11-18T09:02:18.350Z",
     "revisionIdentifier": "e4228cc6",
-    "lastVerified": "2026-11-17T03:34:05.150Z"
+    "lastVerified": "2026-11-18T09:02:18.350Z"
   },
   "hf-cloudflare-clef-flash": {
     "name": "Cloudflare/clef-flash",
@@ -4336,12 +4337,12 @@
     "officialUrl": "https://huggingface.co/amazon/chronos-2",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-13T21:58:32.931Z",
-    "lastVerified": "2026-11-13T21:58:32.931Z",
+    "lastChecked": "2026-11-18T09:02:21.003Z",
+    "lastVerified": "2026-11-18T09:02:21.003Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-amazon-chronos-2",
-    "contentHash": "0c2e170e3099386f6ac70638462bc1a4e1cedbed0e6ec53f7d9538a79f64d067",
+    "contentHash": "6db925888333e2b1eeb639b589237c225b09cf9a06db956c03c1314b6e8981f1",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -6365,9 +6366,9 @@
   "decodingai-magazine-llm-twin-course": {
     "name": "llm-twin-course",
     "officialUrl": "https://github.com/decodingai-magazine/llm-twin-course",
-    "lastChecked": "2026-11-17T12:40:57.224Z",
+    "lastChecked": "2026-11-18T09:02:25.829Z",
     "revisionIdentifier": "04e12f37",
-    "lastVerified": "2026-11-17T12:40:57.224Z"
+    "lastVerified": "2026-11-18T09:02:25.829Z"
   },
   "trinodb-trino": {
     "name": "trinodb/trino",
@@ -6756,14 +6757,14 @@
     "officialUrl": "https://github.com/yugabyte/yugabyte-db",
     "sourceType": "github",
     "technology": "C",
-    "lastChecked": "2026-11-17T10:41:13.339Z",
-    "lastVerified": "2026-11-17T10:41:13.339Z",
+    "lastChecked": "2026-11-18T09:02:37.162Z",
+    "lastVerified": "2026-11-18T09:02:37.162Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "5150389181f4d9c684975448e7b5c559dff4f2ac67c4361a154b53229fb4fa3f",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "contentHash": "051c4ed4554cf253e9de118f8d16fa5306f4250d26981d0fb4a3138a3dcd50ef",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 12,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8895,9 +8896,9 @@
   "kotlin-kmp-production-sample": {
     "name": "kmp-production-sample",
     "officialUrl": "https://github.com/Kotlin/kmp-production-sample",
-    "lastChecked": "2026-11-15T06:36:44.962Z",
+    "lastChecked": "2026-11-18T09:02:23.420Z",
     "revisionIdentifier": "b0bed628",
-    "lastVerified": "2026-11-15T06:36:44.962Z"
+    "lastVerified": "2026-11-18T09:02:23.420Z"
   },
   "astral-sh-ruff": {
     "name": "astral-sh/ruff",
