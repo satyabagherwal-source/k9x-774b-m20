@@ -4,22 +4,22 @@
 {
   "source_repository": "pingcap/tidb",
   "source_url": "https://github.com/pingcap/tidb",
-  "source_version": "8c05d01e",
+  "source_version": "5f929142",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T18:56:24.586Z",
+  "timestamp": "2026-11-18T12:03:29.552Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-pingcap-tidb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [pingcap/tidb](https://github.com/pingcap/tidb) (Revision: `8c05d01e`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T18:56:24.586Z`  
+> **Provenance**: Harvested from [pingcap/tidb](https://github.com/pingcap/tidb) (Revision: `5f929142`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T12:03:29.552Z`  
 > **Learning ID**: `learn-github-pingcap-tidb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `pingcap/tidb` (Commit: `8c05d01e`)
+- **Target Repository**: `pingcap/tidb` (Commit: `5f929142`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pingcap-tidb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pingcap/tidb](https://github.com/pingcap/tidb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T18:56:23.555Z  
+> **Harvest Timestamp**: 2026-11-18T12:03:28.464Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: TiDB is built for agentic workloads that grow unpredictably, with ACID guarantees and native support for transactions, analytics, and vector search. No data silos. No noisy neighbors. No infrastructure ceiling.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 40740 stars
+- **Stars / Engagement**: 40745 stars
 
 ---
 
@@ -1931,11 +1931,11 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #73305** (2026-11-17): **ddl, executor: serialize MLog column additions with MV refresh**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #18023  Problem Summary:  Internal MV refresh sessions do not participate in MDL, so adding columns to an MV's output MLog can race with refresh. A resumed ADD COLUMN also needs to wait without exhausting the DDL error budget, while OUT OF PLACE refresh must avoid a circular wait with its DDL scheduling claim.  ### What changed and how does it work?  Ports #73109 to master.  - Acquire the base MV's refresh advisory lock for MLog ADD COLUMN through schema synchronization and job completion/rollback. New conflicting jobs return error 8182 so an OOP cutover can proceed. - Let already-started ADD COLUMN and multi-schema jobs wait for refresh without incrementing their DDL error count or cancelling persisted intermediate columns. - Reject intermediate output-MLog schemas before OOP refresh submits shadow/cutover DDL. Preserve master's existing COMPLETE IN PLACE restriction and scheduler lock-release lifecycle.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [x] I
+- **Issue #73380** (2026-11-18): **executor: grow adaptive lookup batches after zero-output windows (#73339)**
+  *Symptoms*: This is an automated cherry-pick of #73339  <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #66658  Problem Summary:  An ordered, paged IndexLookUp with a small LIMIT starts with a small table lookup batch. When table-side predicates reject all rows, the worker can spend multiple rounds issuing tiny lookups. In addition, a reservation started before a batch-size change can retain the old caller-side limit after it wakes.  ### What changed and how does it work?  - Preserve the initial probe based on `OFFSET + LIMIT`. When a paged direct IndexLookUp starts below the configured initial chunk size, raise its batch and window floors after the first fully drained window with zero output. - Once that floor has been reached, let each window of completed zero-output work trigger further bounded growth, including while other lookups are in flight. Keep existing reservations charged against the window. - Pass the configured batch ceiling when reserving. The controller applies the current execution batch size after waking the worker.  This brings the adaptiv
 
-- **Issue #73304** (2026-11-17): **ddl, executor: protect materialized views during flashback**
-  *Symptoms*: <!--  Thank you for contributing to TiDB!  PR Title Format: 1. pkg [, pkg2, pkg3]: what's changed 2. *: what's changed  -->  ### What problem does this PR solve? <!--  Please create an issue first to describe the problem.  There MUST be one line starting with "Issue Number:  " and linking the relevant issues via the "close" or "ref".  For more info, check https://pingcap.github.io/tidb-dev-guide/contribute-to-tidb/contribute-code.html#referring-to-an-issue.  -->  Issue Number: ref #18023  Problem Summary:  FLASHBACK TABLE and FLASHBACK CLUSTER can restore materialized view (MV) or materialized view log (MLog) metadata without matching maintenance state. FLASHBACK DATABASE also needs to restore refresh/purge/source baselines and keep saved view definitions valid when the database is renamed.  ### What changed and how does it work?  Ports #72692 and #72808 to master.  - Reject FLASHBACK TABLE for MV, MLog and shadow tables, including dropped objects in history; check both current and target snapshots before FLASHBACK CLUSTER proceeds. - Recover refresh, purge and fast-refresh source records in the same transaction that publishes the recovered database. Use the final DROP DATABASE schema diff commit timestamp to recover the state immediately before removal. - Rewrite schema identifiers in saved view/MV definitions when renaming the recovered database, preserving literals and SQL modes. Adapt the shared timestamp helper to master's `infoschema/issyncer` loader and retain master's
+- **Issue #73375** (2026-11-18): **executor: push down DDL job ID lower bounds**
+  *Symptoms*: ### What problem does this PR solve?  Issue Number: close #73366  Problem Summary:  Queries against `information_schema.ddl_jobs` with a `job_id` lower bound still scan older DDL history before SQL filtering removes it.   ### What changed and how does it work?  - Extract safely supported `job_id >= <integer constant>` predicates and pass the strongest positive lower bound to the history iterator. Keep the original SQL predicates for exact filtering and fall back conservatively for unsupported expressions. - Encode the bound using the existing DDL history key format and pass it to the reverse KV iterator as an inclusive lower bound. Handle iterator exhaustion before accessing its key, and expose the extracted bound in `EXPLAIN`. - Add regression coverage for encoded KV bounds and iterator-visible keys, inclusive and missing boundaries, empty ranges, zero matches, and queries without a bound. Compare complete SQL results with extraction disabled, including permissions, running jobs, expanded subjob rows, and prepared statement parameters. Verify that excluded history with invalid JSON is not parsed.  ### Check List  Tests <!-- At least one of them must be included. -->  - [x] Unit test - [x] Integration test - [ ] Manual test (add detailed scripts or steps below) - [ ] No need to test   > - [ ] I checked and no code files have been changed.   > <!-- Or your custom  "No need to test" reasons -->  Targeted unit tests and lint passed:  ```sh ./tools/check/failpoint-go-test.sh . ./
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1952,156 +1952,583 @@ func SearchPlacementRule(tableID int64, placementRules []pdtypes.Rule, role pdty
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b127b9ab` (2026-11-17)
-**Commit Message**: session: prevent killed memory tracker panics during commit cleanup (#71169)
+### Incident Patch 1: `cfd43662` (2026-11-18)
+**Commit Message**: br: fix cdc changefeed conflicts error message (#73271)
 
-close pingcap/tidb#69304
+close pingcap/tidb#70719
 
-**File**: `pkg/session/test/txn/txn_test.go` (modified, +21/-0)
+**File**: `br/pkg/task/stream.go` (modified, +7/-3)
 ```diff
-@@ -507,6 +507,27 @@ func TestMemBufferCleanupMemoryLeak(t *testing.T) {
+@@ -1356,13 +1356,17 @@ func checkTaskCompat(cfg *RestoreConfig, task streamhelper.Task) error {
+ 	return nil
  }
  
- func TestPanicOnRollbackKilledTxn(t *testing.T) {
-+	t.Run("commit cleanup", func(t *testing.T) {
-+		store := testkit.CreateMockStore(t)
-+		tk := testkit.NewTestKit(t, store)
-+		tk.MustExec("use test")
-+		tk.MustExec("create table t(id int)")
-+		tk.MustExec("begin pessimistic")
-+		tk.MustExec("insert into t values(1)")
-+		for range 6 {
-+			tk.MustExec("insert into t select * from t")
-+		}
-+		tracker := memory.NewTracker(-1, -1)
-+		tracker.IsRootTrackerOfSess = true
-+		tracker.Killer = &sqlkiller.SQLKiller{}
-+		tk.Session().GetSessionVars().MemTracker.AttachTo(tracker)
-+		tracker.Killer.SendKillSignal(sqlkiller.QueryInterrupted)
-+		var err error
-+		require.NotPanics(t, func() { err = tk.Session().CommitTxn(context.Background()) })
-+		require.NoError(t, err)
-+		tracker.Killer.Reset()
-+		tk.MustQuery("select count(*) from t").Check(testkit.Rows("64"))
-+	})
- 	store := testkit.CreateMockStore(t)
- 	tk := testkit.NewTestKit(t, store)
- 	tk.MustExec("use test")
-```
-
-**File**: `pkg/session/txn.go` (modified, +3/-0)
-```diff
-@@ -415,6 +415,9 @@ func ResetMockAutoRandIDRetryCount(failTimes int64) {
- // Commit overrides the Transaction interface.
- func (txn *LazyTxn) Commit(ctx context.Context) error {
- 	defer txn.reset()
-+	// Commit and its deferred cleanup may release MemDB memory after the session
-+	// tracker has been killed. Match Rollback's protection for that terminal phase.
-+	txn.SetMemoryFootprintChangeHook(func(uint64) {})
- 
- 	txn.mu.Lock()
- 	txn.updateState(txninfo.TxnCommitting)
-```
-
----
-
-### Incident Patch 2: `347e8c61` (2026-11-17)
-**Commit Message**: ddl, dumpling: reduce memory use when scanning table metadata (#73234)
-
-close pingcap/tidb#73229
-
-**File**: `dumpling/export/kv.go` (modified, +12/-5)
-```diff
-@@ -161,14 +161,21 @@ func (d *Dumper) loadKVTables(reader tidbmeta.Reader) ([]kvDatabaseTables, error
- 		if database.State != model.StatePublic || !d.conf.TableFilter.MatchSchema(database.Name.O) {
- 			continue
- 		}
--		tables, err := reader.ListTables(d.tctx, database.ID)
-+		tables := make([]*model.TableInfo, 0)
-+		err := reader.IterTables(database.ID, func(table *model.TableInfo) error {
-+			if err := d.tctx.Err(); err != nil {
-+				return err
-+			}
-+			if table.State != model.StatePublic || table.IsView() || table.IsSequence() ||
-+				!d.conf.TableFilter.MatchTable(database.Name.O, table.Name.O) {
-+				return nil
-+			}
-+			tables = append(tables, table)
-+			return nil
-+		})
- 		if err != nil {
- 			return nil, err
- 		}
--		tables = slices.DeleteFunc(tables, func(table *model.TableInfo) bool {
--			return table.State != model.StatePublic || table.IsView() || table.IsSequence() ||
--				!d.conf.TableFilter.MatchTable(database.Name.O, table.Name.O)
--		})
- 		if len(tables) == 0 && !d.conf.DumpEmptyDatabase {
- 			continue
- 		}
-```
-
-**File**: `pkg/ddl/placement_policy.go` (modified, +3/-7)
-```diff
-@@ -458,16 +458,12 @@ func CheckPlacementPolicyNotInUseFromMeta(t *meta.Mutator, policy *model.PolicyI
- 			return dbterror.ErrPlacementPolicyInUse.GenWithStackByArgs(policy.Name)
- 		}
- 
--		tables, err := t.ListTables(context.Background(), dbInfo.ID)
-+		err := t.IterTables(dbInfo.ID, func(tblInfo *model.TableInfo) error {
-+			return checkPlacementPolicyNotUsedByTable(tblInfo, policy)
-+		})
- 		if err != nil {
- 			return err
- 		}
--
--		for _, tblInfo := range tables {
--			if err := checkPlacementPolicyNotUsedByTable(tblInfo, policy); err != nil {
--				return err
--			}
--		}
+-func checkIncompatibleChangefeed(ctx context.Context, backupTS uint64, etcdCLI *clientv3.Client) error {
+-	nameSet, err := cdcutil.GetIncompatibleChangefeedsWithSafeTS(ctx, etcdCLI, backupTS)
++func checkIncompatibleChangefeed(ctx context.Context, restoreTS uint64, etcdCLI *clientv3.Client) error {
++	// The threshold is BackupTS for snapshot restore and the target TS for PITR.
++	nameSet, err := cdcutil.GetIncompatibleChangefeedsWithSafeTS(ctx, etcdCLI, restoreTS)
+ 	if err != nil {
+ 		return errors.Trace(err)
+ 	}
+ 	if !nameSet.Empty() {
+-		return errors.Errorf("%splease remove changefeed(s) before restore", nameSet.MessageToUser())
++		return errors.Errorf("cannot restore: %srestoreTS is BackupTS for snapshot restore or the target timestamp for PITR. "+
++			"The effective checkpointTS is the maximum of the changefeed checkpoint-ts and start-ts. "+
++			"Please advance the changefeed checkpoint to at least restoreTS, or remove the incompatible changefeed(s) before retrying restore; "+
++			"pausing a changefeed alone does not resolve the timestamp conflict", nameSet.MessageToUser())
  	}
  	return nil
  }
 ```
 
-**File**: `pkg/ddl/table.go` (modified, +3/-9)
+**File**: `pkg/util/cdcutil/cdc.go` (modified, +15/-0)
 ```diff
-@@ -1582,22 +1582,16 @@ func checkConstraintNamesNotExists(t *meta.Mutator, schemaID int64, constraints
- 	if len(constraints) == 0 {
- 		return nil
- 	}
--	tbInfos, err := t.ListTables(context.Background(), schemaID)
--	if err != nil {
--		return err
--	}
--
--	for _, tb := range tbInfos {
-+	return t.IterTables(schemaID, func(tb *model.TableInfo) error {
- 		for _, constraint := range constraints {
- 			if constraint.State != model.StateWriteOnly {
- 				if constraintInfo := tb.FindConstraintInfoByName(constraint.Name.L); constraintInfo != nil {
- 					return infoschema.ErrCheckConstraintDupName.GenWithStackByArgs(constraint.Name.L)
- 				}
- 			}
+@@ -205,6 +205,14 @@ func (c checkCDCClient) getIncompatible(ctx context.Context, safeTS uint64) (*CD
+ 		if cts < safeTS {
+ 			log.Info("Found incompatible changefeed.", zap.Any("changefeed", cf), zap.Uint64("checkpoint-ts", cts), zap.Uint64("safe-ts", safeTS))
+ 			nameset.save(cf)
++			if safeTS != invalidTs {
++				namespace := path.Join(cf.Cluster, cf.Namespace)
++				if cf.KeyVersion == legacy {
++					namespace = "<nil>"
++				}
++				nameset.incompatibilities = append(nameset.incompatibilities, fmt.Sprintf(
++					"%s: effective checkpointTS=%d < restoreTS=%d", path.Join(namespace, cf.ID), cts, safeTS))
++			}
  		}
--	}
--
--	return nil
-+		return nil
-+	})
+ 	}
+ 
+@@ -215,6 +223,9 @@ func (c checkCDCClient) getIncompatible(ctx context.Context, safeTS uint64) (*CD
+ // nameSet maps `cluster/namespace` to `changefeed`s
+ type CDCNameSet struct {
+ 	changefeeds map[string][]string
++	// incompatibilities preserves the timestamp comparisons for restore checks.
++	// GetRunningChangefeeds keeps using the generic changefeed listing.
++	incompatibilities []string
  }
  
- func checkTableIDNotExists(t *meta.Mutator, schemaID, tableID int64) error {
+ func (s *CDCNameSet) save(cf changefeed) {
+@@ -238,6 +249,10 @@ func (s *CDCNameSet) Empty() bool {
+ 
+ // MessageToUser convert the map `nameSet` to a readable message to user.
+ func (s *CDCNameSet) MessageToUser() string {
++	if len(s.incompatibilities) > 0 {
++		return "found incompatible TiCDC changefeed(s) with effective checkpointTS < restoreTS: " +
++			strings.Join(s.incompatibilities, "; ") + ". "
++	}
+ 	var changefeedMsgBuf strings.Builder
+ 	changefeedMsgBuf.WriteString("found CDC changefeed(s): ")
+ 	for clusterID, changefeedID := range s.changefeeds {
+```
+
+**File**: `pkg/util/cdcutil/cdc_test.go` (modified, +23/-0)
+```diff
+@@ -69,14 +69,30 @@ func testGetConflictChangefeeds(t *testing.T, cli *clientv3.Client) {
+ 	putChangefeed("not-skipped", "failed", 1, 41)
+ 	putLameChangefeed("nost-ok", "normal", 43)
+ 	putLameChangefeed("nost-fail", "normal", 41)
++	putChangefeed("equal", "normal", 1, 42)
++	putChangefeed("start-ahead", "normal", 43, 1)
++	putChangefeed("paused", "stopped", 1, 41)
+ 
+ 	names, err := cdcutil.GetIncompatibleChangefeedsWithSafeTS(context.Background(), cli, 42)
+ 	require.NoError(t, err)
+ 	require.ElementsMatch(t, names.TESTGetChangefeedNames(), []string{
+ 		"default/default/not-skipped",
+ 		"default/default/nost-fail",
+ 		"default/default/st-fail",
++		"default/default/paused",
+ 	})
++	message := names.MessageToUser()
++	require.Contains(t, message, "effective checkpointTS < restoreTS")
++	for _, name := range []string{"not-skipped", "nost-fail", "st-fail", "paused"} {
++		require.Contains(t, message, "default/default/"+name+": effective checkpointTS=41 < restoreTS=42")
++	}
++	for _, name := range []string{"equal", "start-ahead", "skipped", "st-ok", "nost-ok"} {
++		require.NotContains(t, message, "default/default/"+name+":")
++	}
++	running, err := cdcutil.GetRunningChangefeeds(context.Background(), cli)
++	require.NoError(t, err)
++	require.Contains(t, running.MessageToUser(), "found CDC changefeed(s): ")
++	require.NotContains(t, running.MessageToUser(), "restoreTS")
+ 
+ 	names2, err := cdcutil.GetIncompatibleChangefeedsWithSafeTS(context.Background(), cli, 40)
+ 	require.NoError(t, err)
+@@ -90,7 +106,11 @@ func testGetConflictChangefeeds(t *testing.T, cli *clientv3.Client) {
+ 		"default/default/st-fail",
+ 		"default/default/nost-ok",
+ 		"default/default/st-ok",
++		"default/default/equal",
++		"default/default/start-ahead",
++		"default/default/paused",
+ 	})
++	require.Contains(t, names3.MessageToUser(), "default/default/start-ahead: effective checkpointTS=43 < restoreTS=48")
+ }
+ 
+ func testGetCDCChangefeedNameSet(t *testing.T, cli *clientv3.Client) {
+@@ -147,6 +167,9 @@ func testGetCDCChangefeedNameSet(t *testing.T, cli *clientv3.Client) {
+ 	require.NoError(t, err)
+ 	require.False(t, nameSet.Empty())
+ 	require.ElementsMatch(t, nameSet.TESTGetChangefeedNames(), []string{"<nil>/test"})
++	incompatible, err := cdcutil.GetIncompatibleChangefeedsWithSafeTS(ctx, cli, 42)
++	require.NoError(t, err)
++	require.Contains(t, incompatible.MessageToUser(), "<nil>/test: effective checkpointTS=0 < restoreTS=42")
+ 
+ 	_, err = cli.Delete(ctx, "/tidb/cdc/", clientv3.WithPrefix())
+ 	require.NoError(t, err)
+```
+
+---
+
+### Incident Patch 2: `cc41f850` (2026-11-18)
+**Commit Message**: br: restore mysql.user privilege columns that upgrades added as nullable (#72264)
+
+close pingcap/tidb#67210
+
+**File**: `br/pkg/restore/snap_client/systable_restore.go` (modified, +79/-1)
+```diff
+@@ -62,6 +62,30 @@ var (
+ 	}
+ )
+ 
++// upgradedNullableUserColumns are the mysql.user columns that the upgrade from
++// an old TiDB version adds as nullable, while a newly bootstrapped cluster
++// defines them as NOT NULL.
++var upgradedNullableUserColumns = map[string]struct{}{
++	"create_role_priv":       {},
++	"drop_role_priv":         {},
++	"account_locked":         {},
++	"shutdown_priv":          {},
++	"reload_priv":            {},
++	"file_priv":              {},
++	"config_priv":            {},
++	"create_tablespace_priv": {},
++}
++
++func isUpgradedNullableSystemTableColumn(dbNameL, tableNameL, columnNameL string, backupCol, clusterCol *model.ColumnInfo) bool {
++	if dbNameL != mysql.SystemDB || tableNameL != sysUserTableName {
++		return false
++	}
++	if _, ok := upgradedNullableUserColumns[columnNameL]; !ok {
++		return false
++	}
++	return !mysql.HasNotNullFlag(backupCol.GetFlag()) && mysql.HasNotNullFlag(clusterCol.GetFlag())
++}
++
+ var planPeplayerTables = map[string]map[string]struct{}{
+ 	"mysql": {
+ 		"plan_replayer_status": {},
+@@ -688,6 +712,9 @@ func (rc *SnapClient) replaceTemporaryTableToSystable(ctx context.Context, ti *m
+ 				return err
+ 			}
+ 		}
++		if err := rc.checkNoNullInUpgradedNullableColumns(ctx, db.TemporaryName.L, dbName, tableName, ti, downstreamTable); err != nil {
++			return err
++		}
+ 		// target column order may different with source cluster
+ 		columnNames, columnExpressions, err := buildSystemTableReplaceColumns(dbName, tableName, ti, downstreamTable)
+ 		if err != nil {
+@@ -769,7 +796,18 @@ func CheckSysTableCompatibility(dom *domain.Domain, tables []*metautil.Table, co
+ 					table.Info.Name.O,
+ 					col.Name, col.FieldType.String())
+ 			}
+-			typeEq, collateEq := utils.IsTypeCompatible(backupCol.FieldType, col.FieldType)
++			backupFieldType := backupCol.FieldType
++			if isUpgradedNullableSystemTableColumn(decodedSysDBName.L, backupTi.Name.L, col.Name.L, backupCol, col) {
++				// The logical restore refuses a NULL in such a column before it
++				// copies the rows.
++				log.Warn("nullable column in backup data is NOT NULL in cluster",
++					zap.Stringer("table", table.Info.Name),
++					zap.String("col", fmt.Sprintf("%s %s", col.Name, col.FieldType.String())))
++				backupFieldType = *backupFieldType.Clone()
++				backupFieldType.AddFlag(mysql.NotNullFlag)
++				canLoadSysTablePhysical = false
++			}
++			typeEq, collateEq := utils.IsTypeCompatible(backupFieldType, col.FieldType)
+ 			canLoadSysTablePhysical = canLoadSysTablePhysical && collateEq && typeEq
+ 			collateCompatible := collateEq
+ 			if typeEq && (!collateEq && collationCheck) {
+@@ -828,6 +866,46 @@ func checkSysTableColumnCollateCompatibility(dbNameL, tableNameL, columnNameL, u
+ 	return exists
+ }
+ 
++// checkNoNullInUpgradedNullableColumns fails when the backup holds a NULL in a
++// column that only an upgrade made nullable. The restore session has an empty
++// sql_mode, so REPLACE INTO ... SELECT would store the implicit default instead.
++func (rc *SnapClient) checkNoNullInUpgradedNullableColumns(
++	ctx context.Context,
++	temporaryDBNameL, dbNameL, tableNameL string,
++	upstreamTable, downstreamTable *model.TableInfo,
++) error {
++	columns := make([]string, 0)
++	conditions := make([]string, 0)
++	for _, backupCol := range upstreamTable.Columns {
++		clusterCol := model.FindColumnInfo(downstreamTable.Columns, backupCol.Name.L)
++		if clusterCol == nil ||
++			!isUpgradedNullableSystemTableColumn(dbNameL, tableNameL, backupCol.Name.L, backupCol, clusterCol) {
++			continue
++		}
++		columns = append(columns, backupCol.Name.O)
++		conditions = append(conditions, utils.EncloseName(backupCol.Name.L)+" IS NULL")
++	}
++	if len(conditions) == 0 {
++		return nil
++	}
++	sql := fmt.Sprintf("SELECT COUNT(1) FROM %s WHERE %s",
++		utils.EncloseDBAndTable(temporaryDBNameL, tableNameL), strings.Join(conditions, " OR "))
++	ectx := rc.db.Session().GetSessionCtx().GetRestrictedSQLExecutor()
++	rows, _, err := ectx.ExecRestrictedSQL(kv.WithInternalSourceType(ctx, kv.InternalTxnBR), nil, sql)
++	if err != nil {
++		return errors.Annotatef(err, "failed to count NULL values in %s.%s", dbNameL, tableNameL)
++	}
++	if len(rows) == 0 {
++		return errors.Errorf("failed to count NULL values in %s.%s", dbNameL, tableNameL)
++	}
++	if nullRows := rows[0].GetInt64(0); nullRows > 0 {
++		return errors.Annotatef(berrors.ErrRestoreIncompatibleSys,
++			"%d rows of %s.%s in backup data have NULL in %s, which is NOT NULL in cluster",
++			nullRows, dbNameL, tableNameL, strings.Join(columns, ", "))
++	}
++	return nil
++}
++
+ func (rc *SnapClient) checkPrivilegeTableRowsCollateCompatibility(
+ 	ctx context.Context,
+ 	dbNameL, tableNameL string,
+```
+
+**File**: `br/pkg/restore/snap_client/systable_restore_test.go` (modified, +78/-0)
+```diff
+@@ -18,6 +18,7 @@ import (
+ 	"context"
+ 	"fmt"
+ 	"math"
++	"strings"
+ 	"testing"
+ 
+ 	"github.com/pingcap/errors"
+@@ -104,6 +105,30 @@ func TestCheckSysTableCompatibility(t *testing.T) {
+ 	require.NoError(t, err)
+ 	require.True(t, canLoadSysTablePhysical)
+ 
++	// mysql.user upgraded from an old TiDB has nullable privilege columns, which
++	// are NOT NULL in a new cluster. They can only be restored logically.
++	mockedUserTI = userTI.Clone()
++	tablespacePrivCol := model.FindColumnInfo(mockedUserTI.Columns, "create_tablespace_priv")
++	require.NotNil(t, tablespacePrivCol)
++	require.True(t, mysql.HasNotNullFlag(tablespacePrivCol.GetFlag()))
++	tablespacePrivCol.Name = ast.NewCIStr("Create_tablespace_priv")
++	tablespacePrivCol.DelFlag(mysql.NotNullFlag)
++	canLoadSysTablePhysical, err = snapclient.CheckSysTableCompatibility(cluster.Domain, []*metautil.Table{{
++		DB:   tmpSysDB,
++		Info: mockedUserTI,
++	}}, false)
++	require.NoError(t, err)
++	require.False(t, canLoadSysTablePhysical)
++
++	// other nullable columns are still incompatible with NOT NULL columns.
++	mockedUserTI = userTI.Clone()
++	mockedUserTI.Columns[0].DelFlag(mysql.NotNullFlag) // Columns[0] is `Host` char(255) NOT NULL
++	_, err = snapclient.CheckSysTableCompatibility(cluster.Domain, []*metautil.Table{{
++		DB:   tmpSysDB,
++		Info: mockedUserTI,
++	}}, false)
++	require.True(t, berrors.ErrRestoreIncompatibleSys.Equal(err))
++
+ 	// mysql.user backup from older TiDB may miss Operate_view_priv. It cannot be
+ 	// loaded physically, but logical restore can fill the target default value and
+ 	// execute a fixed compatibility expression while copying rows into mysql.user.
+@@ -642,6 +667,59 @@ func TestRestoreSystemSchemasUpgradeOperateViewPrivilege(t *testing.T) {
+ 		Check(testkit.Rows("1"))
+ }
+ 
++func TestRestoreSystemSchemasRejectsNullInUpgradedNullableColumn(t *testing.T) {
++	cluster := mc
++	ctx := context.Background()
++	g := gluetidb.New()
++	client := snapclient.NewRestoreClient(cluster.PDClient, cluster.PDHTTPCli, nil, split.DefaultTestKeepaliveCfg)
++	require.NoError(t, client.InitConnections(g, cluster.Storage))
++	defer client.Close()
++	client.SetWithSysTable(true)
++
++	tk := testkit.NewTestKit(t, cluster.Storage)
++	const (
++		nullUserName = "br_restore_null_tablespace"
++		userName     = "br_restore_tablespace"
++	)
++	cleanup := func() {
++		tk.MustExec("DROP DATABASE IF EXISTS __TiDB_BR_Temporary_mysql")
++		tk.MustExec(fmt.Sprintf("DELETE FROM mysql.user WHERE User IN ('%s', '%s')", nullUserName, userName))
++	}
++	cleanup()
++	defer cleanup()
++
++	tk.MustExec("CREATE DATABASE __TiDB_BR_Temporary_mysql")
++	tk.MustExec("CREATE TABLE __TiDB_BR_Temporary_mysql.user LIKE mysql.user")
++	tk.MustExec("ALTER TABLE __TiDB_BR_Temporary_mysql.user MODIFY COLUMN Create_tablespace_priv ENUM('N','Y') DEFAULT 'N'")
++	tk.MustExec(fmt.Sprintf("INSERT INTO __TiDB_BR_Temporary_mysql.user (Host, User, authentication_string, plugin, Create_tablespace_priv) VALUES ('%%', '%s', '', 'mysql_native_password', NULL)", nullUserName))
++
++	restoreUserTable := func() error {
++		info, err := cluster.Domain.GetSnapshotInfoSchema(math.MaxUint64)
++		require.NoError(t, err)
++		tmpSysDB, ok := info.SchemaByName(utils.TemporaryDBName(mysql.SystemDB))
++		require.True(t, ok)
++		ti, err := restore.GetTableSchema(cluster.Domain, tmpSysDB.Name, ast.NewCIStr("user"))
++		require.NoError(t, err)
++		client.SetDatabases(map[string]*metautil.Database{
++			tmpSysDB.Name.O: {
++				Info:   tmpSysDB,
++				Tables: []*metautil.Table{{DB: tmpSysDB, Info: ti}},
++			},
++		})
++		return client.RestoreSystemSchemas(ctx, filter.CaseInsensitive(filter.NewSchemasFilter(mysql.SystemDB)), false)
++	}
++
++	err := restoreUserTable()
++	require.True(t, berrors.ErrRestoreIncompatibleSys.Equal(err), "%v", err)
++	require.Contains(t, strings.ToLower(err.Error()), "create_tablespace_priv")
++	tk.MustQuery(fmt.Sprintf("SELECT COUNT(*) FROM mysql.user WHERE User='%s'", nullUserName)).Check(testkit.Rows("0"))
++
++	tk.MustExec(fmt.Sprintf("UPDATE __TiDB_BR_Temporary_mysql.user SET User='%s', Create_tablespace_priv='Y' WHERE User='%s'", userName, nullUserName))
++	require.NoError(t, restoreUserTable())
++	tk.MustQuery(fmt.Sprintf("SELECT Create_tablespace_priv FROM mysql.user WHERE User='%s' AND Host='%%'", userName)).
++		Check(testkit.Rows("Y"))
++}
++
+ // NOTICE: Once there is a new system table, BR needs to ensure that it is correctly classified:
+ //
+ // - IF it is an unrecoverable table, please add the table name into `unRecoverableTable`.
+```
+
+---
+
+### Incident Patch 3: `a1d60548` (2026-11-18)
+**Commit Message**: planner: propagate outer filters through IN subqueries with non-null keys (#73328)
+
+close pingcap/tidb#73283
+
+**File**: `pkg/expression/constant_propagation.go` (modified, +25/-13)
+```diff
+@@ -630,9 +630,9 @@ type propOuterJoinConstSolver struct {
+ 	// TODO: remove this func pointer for performance
+ 	vaildExprFunc VaildConstantPropagationExpressionFuncType
+ 
+-	// nullSensitive indicates if this outer join is null sensitive, if true, we cannot generate
+-	// additional `col is not null` condition from column equal conditions. Specifically, this value
+-	// is true for LeftOuterSemiJoin, AntiLeftOuterSemiJoin and AntiSemiJoin.
++	// nullSensitive indicates if this join's output distinguishes an empty inner side from a NULL
++	// comparison (LeftOuterSemiJoin, AntiLeftOuterSemiJoin, AntiSemiJoin). When true, we cannot
++	// derive `innerCol is not null` or propagate column equalities over nullable / InOperand keys.
+ 	nullSensitive bool
+ }
+ 
+@@ -884,9 +884,6 @@ func (s *propOuterJoinConstSolver) deriveConds(outerCol, innerCol *Column, schem
+ // 'expression(..., outerCol, ...)' does not reference columns outside children schemas of join node.
+ // Derived new expressions must be appended into join condition, not filter condition.
+ func (s *propOuterJoinConstSolver) propagateColumnEQ() {
+-	if s.nullSensitive {
+-		return
+-	}
+ 	visited := make([]bool, 2*len(s.joinConds)+len(s.filterConds))
+ 	if s.unionSet == nil {
+ 		s.unionSet = disjointset.NewIntSet(len(s.columns))
+@@ -899,19 +896,34 @@ func (s *propOuterJoinConstSolver) propagateColumnEQ() {
+ 	for i := range s.joinConds {
+ 		outerCol, innerCol = s.validColEqualCond(s.joinConds[i])
+ 		if outerCol != nil {
++			childCol := s.innerSchema.RetrieveColumn(innerCol)
++			if s.nullSensitive {
++				// For null-sensitive joins (LeftOuterSemiJoin, AntiLeftOuterSemiJoin, AntiSemiJoin),
++				// deriving inner filters from outer predicates is unsafe when NULL can produce UNKNOWN:
++				//   - nullable inner key: for `7 IN (3, NULL)`, pushing `inner = 7` drops NULL and turns NULL into 0;
++				//   - nullable outer key: for `NULL IN (99)`, pushing `inner IS NULL` empties the inner side and turns NULL into 0.
++				// Propagation is only safe when `outerCol = innerCol` is a plain equality (not a null-aware
++				// InOperand) and both keys are NOT NULL, so `=` is strictly two-valued (TRUE or FALSE).
++				// Check `outerSchema`/`innerSchema` instead of `outerCol`/`innerCol` directly, because a lower
++				// outer join can null-extend a column while its Column ref in `joinConds` keeps NotNullFlag.
++				outerInputCol := s.outerSchema.RetrieveColumn(outerCol)
++				if IsEQCondFromIn(s.joinConds[i]) ||
++					!mysql.HasNotNullFlag(outerInputCol.RetType.GetFlag()) ||
++					!mysql.HasNotNullFlag(childCol.RetType.GetFlag()) {
++					continue
++				}
++			}
+ 			outerID := s.getColID(outerCol)
+ 			innerID := s.getColID(innerCol)
+ 			s.unionSet.Union(outerID, innerID)
+ 			visited[i] = true
+ 			// Generate `innerCol is not null` from `outerCol = innerCol`. Note that `outerCol is not null`
+ 			// does not hold since we are in outer join.
+-			// For AntiLeftOuterSemiJoin, this does not work, for example:
+-			// `select *, t1.a not in (select t2.b from t t2) from t t1` does not imply `t2.b is not null`.
+-			// For LeftOuterSemiJoin, this does not work either, for example:
+-			// `select *, t1.a in (select t2.b from t t2) from t t1`
+-			// rows with t2.b is null would impact whether LeftOuterSemiJoin should output 0 or null if there
+-			// is no row satisfying t2.b = t1.a
+-			childCol := s.innerSchema.RetrieveColumn(innerCol)
++			// Note: null-sensitive joins with a nullable inner column are already skipped above, because:
++			// - For AntiLeftOuterSemiJoin, `select *, t1.a not in (select t2.b from t t2) from t t1`
++			//   does not imply `t2.b is not null`.
++			// - For LeftOuterSemiJoin, in `select *, t1.a in (select t2.b from t t2) from t t1`,
++			//   rows with `t2.b is null` determine whether the join outputs 0 or null when no row satisfies `t2.b = t1.a`.
+ 			if !mysql.HasNotNullFlag(childCol.RetType.GetFlag()) {
+ 				notNullExpr := BuildNotNullExpr(s.ctx, childCol)
+ 				s.joinConds = append(s.joinConds, notNullExpr)
+```
+
+**File**: `pkg/planner/core/casetest/enforcempp/testdata/enforce_mpp_suite_out.json` (modified, +7/-5)
+```diff
+@@ -649,11 +649,13 @@
+       {
+         "SQL": "explain format = 'plan_tree' select a from t where t.a not in (select a from s where t.a<1); -- 9. non left join has left conditions",
+         "Plan": [
+-          "MergeJoin root  anti semi join, left side:TableReader, left key:test.t.a, right key:test.s.a, left cond:lt(test.t.a, 1)",
+-          "├─TableReader(Build) root  data:TableFullScan",
+-          "│ └─TableFullScan cop[tikv] table:s keep order:true, stats:pseudo",
+-          "└─TableReader(Probe) root  data:TableFullScan",
+-          "  └─TableFullScan cop[tikv] table:t keep order:true, stats:pseudo"
++          "HashJoin root  anti semi join, left side:TableReader, equal:[eq(test.t.a, test.s.a)], left cond:[lt(test.t.a, 1)]",
++          "├─TableReader(Build) root  MppVersion: 3, data:ExchangeSender",
++          "│ └─ExchangeSender mpp[tiflash]  ExchangeType: PassThrough",
++          "│   └─TableRangeScan mpp[tiflash] table:s range:[-inf,1), keep order:false, stats:pseudo",
++          "└─TableReader(Probe) root  MppVersion: 3, data:ExchangeSender",
++          "  └─ExchangeSender mpp[tiflash]  ExchangeType: PassThrough",
++          "    └─TableFullScan mpp[tiflash] table:t keep order:false, stats:pseudo"
+         ],
+         "Warn": [
+           "MPP mode may be blocked because left conditions are only supported for `left outer join` and `full outer join` now.",
+```
+
+**File**: `pkg/planner/core/casetest/rule/rule_predicate_pushdown_test.go` (modified, +107/-0)
+```diff
+@@ -78,6 +78,113 @@ func runPredicatePushdownTestDataWithResult(t *testing.T, tk *testkit.TestKit, c
+ }
+ 
+ func TestPredicatePushdownSuite(t *testing.T) {
++	t.Run("nested_in_non_null_keys", func(t *testing.T) {
++		store := testkit.CreateMockStore(t)
++		tk := testkit.NewTestKit(t, store)
++		tk.MustExec("use test")
++		tk.MustExec("create table t (id bigint primary key)")
++		tk.MustExec("create table a (id bigint primary key auto_increment, t_id bigint, key(t_id))")
++		tk.MustExec("create table b (id bigint primary key auto_increment, t_id bigint, key(t_id))")
++		tk.MustExec("insert into t values (1),(2),(3),(4),(5),(6),(7),(8),(9),(10),(11),(12),(13),(14),(15),(16),(17),(18),(19),(20)")
++		tk.MustExec("insert into a(t_id) values (1),(3),(3),(5),(7),(null)")
++		tk.MustExec("insert into b(t_id) values (2),(3),(8),(11),(15),(null)")
++		for _, rewrite := range []string{"ON", "OFF"} {
++			for _, tc := range []struct {
++				name   string
++				filter string
++				rows   []string
++			}{
++				{name: "single_value", filter: "o.id in (3)", rows: []string{"3"}},
++				{name: "multiple_values", filter: "o.id in (3,7,11,17)", rows: []string{"3", "7", "11"}},
++				{name: "range", filter: "o.id between 3 and 8", rows: []string{"3", "5", "7", "8"}},
++			} {
++				t.Run(rewrite+"_"+tc.name, func(t *testing.T) {
++					tk := testkit.NewTestKit(t, store)
++					tk.MustExec("use test")
++					tk.MustExec("set tidb_opt_insubq_to_join_and_agg = " + rewrite)
++					sql := "select o.id from t o where " + tc.filter +
++						" and (o.id in (select i.id from t i where i.id in (select t_id from a))" +
++						" or o.id in (select i.id from t i where i.id in (select t_id from b))) order by o.id"
++					tk.MustQuery(sql).Check(testkit.Rows(tc.rows...))
++					plan := strings.Join(testdata.ConvertRowsToStrings(tk.MustQuery("explain format = 'plan_tree' "+sql).Rows()), "\n")
++					require.NotContains(t, plan, "FullScan", "the outer key filter must also restrict the nested IN inputs:\n%s", plan)
++				})
++			}
++		}
++		sql := "select count(*) from t o where o.id between 3 and 8" +
++			" and (o.id in (select i.id from t i where i.id in (select t_id from a))" +
++			" or o.id in (select i.id from t i where i.id in (select t_id from b)))"
++		tk.MustQuery(sql).Check(testkit.Rows("4"))
++		plan := strings.Join(testdata.ConvertRowsToStrings(tk.MustQuery("explain format = 'plan_tree' "+sql).Rows()), "\n")
++		require.NotContains(t, plan, "FullScan", "the COUNT query must also restrict the nested IN inputs:\n%s", plan)
++	})
++	t.Run("scalar_in_null_semantics", func(t *testing.T) {
++		store := testkit.CreateMockStore(t)
++		tk := testkit.NewTestKit(t, store)
++		tk.MustExec("use test")
++		tk.MustExec("create table t (id bigint primary key)")
++		tk.MustExec("create table n (id bigint, key(id))")
++		tk.MustExec("create table p (id bigint)")
++		tk.MustExec("create table pairs_outer (id bigint not null, k bigint)")
++		tk.MustExec("create table pairs_inner (id bigint not null, k bigint, key(id))")
++		tk.MustExec("insert into t values (1),(2),(3),(7),(9)")
++		tk.MustExec("insert into n values (null),(3)")
++		tk.MustExec("insert into p values (null),(3),(7),(8)")
++		tk.MustExec("insert into pairs_outer values (3,1),(7,1)")
++		tk.MustExec("insert into pairs_inner values (3,null),(99,null)")
++		for _, tc := range []struct {
++			name string
++			sql  string
++			rows []string
++		}{
++			{
++				name: "nullable_inner_key",
++				sql:  "select o.id, o.id in (select id from n), o.id not in (select id from n) from t o where o.id in (3,7) order by o.id",
++				rows: []string{"3 1 0", "7 <nil> <nil>"},
++			},
++			{
++				name: "nullable_outer_key",
++				sql:  "select o.id, o.id in (select id from t), o.id not in (select id from t) from p o where o.id is null or o.id in (3,8) order by o.id",
++				rows: []string{"<nil> <nil> <nil>", "3 1 0", "8 0 1"},
++			},
++			{
++				name: "null_extended_primary_key",
++				sql:  "select o.id, i.id in (select id from t), i.id not in (select id from t) from t o left join t i on i.id = o.id + 100 where o.id in (3,7) order by o.id",
++				rows: []string{"3 <nil> <nil>", "7 <nil> <nil>"},
++			},
++			{
++				name: "empty_inner",
++				sql:  "select o.id, o.id in (select id from n where id < 0), o.id not in (select id from n where id < 0) from p o where o.id is null or o.id in (3,7) order by o.id",
++				rows: []string{"<nil> 0 1", "3 0 1", "7 0 1"},
++			},
++			{
++				name: "mixed_nullable_row_keys",
++				sql:  "select o.id, (o.id,o.k) in (select id,k from pairs_inner), (o.id,o.k) not in (select id,k from pairs_inner) from pairs_outer o where o.id in (3,7) and o.k in (1,2) order by o.id",
++				rows: []string{"3 <nil> <nil>", "7 0 1"},
++			},
++			{
++				name: "non_null_scalar_in",
++				sql:  "select o.id, o.id in (select id from t where id < 5), o.id not in (select id from t where id < 5) from t o where o.id in (3,7) order by o.id",
++				rows: []string{"3 1 0", "7 0 1"},
++			},
++			{
++				name: "keep_limit_boundary",
++				sql:  "select o.id, o.id in (select id from t or
+```
+
+**File**: `pkg/planner/core/casetest/tpch/testdata/tpch_suite_out.json` (modified, +31/-31)
+```diff
+@@ -698,37 +698,37 @@
+       {
+         "SQL": "SELECT s_name, COUNT(*) AS numwait FROM supplier, lineitem l1, orders, nation WHERE s_suppkey = l1.l_suppkey AND o_orderkey = l1.l_orderkey AND o_orderstatus = 'F' AND l1.l_receiptdate > l1.l_commitdate AND EXISTS (SELECT * FROM lineitem l2 WHERE l2.l_orderkey = l1.l_orderkey AND l2.l_suppkey <> l1.l_suppkey) AND NOT EXISTS (SELECT * FROM lineitem l3 WHERE l3.l_orderkey = l1.l_orderkey AND l3.l_suppkey <> l1.l_suppkey AND l3.l_receiptdate > l3.l_commitdate) AND s_nationkey = n_nationkey AND n_name = 'EGYPT' GROUP BY s_name ORDER BY numwait DESC, s_name LIMIT 100;",
+         "Result": [
+-          "Projection_30 100.00 67698865045.22 (((((cpu(10*3*tidb_cpu_factor(49.9))) + (((cpu(10*3*tidb_cpu_factor(49.9))) + (((cpu(10*3*tidb_cpu_factor(49.9))) + ((((cpu(10*3*tidb_cpu_factor(49.9))) + ((((((((((((((((cpu(25*filters(1)*tiflash_cpu_factor(2.4))) + (((scan(25*logrowsize(29.07)*tiflash_scan_factor(11.6))) + (scan(10000*logrowsize(29.07)*tiflash_scan_factor(11.6))))*1.00))) + ((net(1*rowsize(29.07)*tiflash_mpp_net_factor(1)))*3.00)) + (((scan(500000*logrowsize(54.75)*tiflash_scan_factor(11.6))) + (scan(10000*logrowsize(54.75)*tiflash_scan_factor(11.6))))*1.00) + ((((hashkey(1*1*tiflash_cpu_factor(2.4))) + (hashmem(1*29.07*tiflash_mem_factor(0.05))) + (hashbuild(1*tiflash_cpu_factor(2.4)))) + (cpu(1*filters(0)*tiflash_cpu_factor(2.4))) + ((hashkey(500000*1*tiflash_cpu_factor(2.4))) + (hashprobe(500000*tiflash_cpu_factor(2.4)))) + (cpu(500000*filters(0)*tiflash_cpu_factor(2.4))))/3.00))*1.00) + ((cpu(19999.440000000002*filters(0.02)*tiflash_cpu_factor(2.4)))/5.00))) + (net(19999.440000000002*rowsize(33)*tiflash_mpp_net_factor(1)))) + ((((cpu(5.999989709e+09*filters(1)*tiflash_cpu_factor(2.4))) + (((scan(5.999989709e+09*logrowsize(64)*tiflash_scan_factor(11.6))) + (scan(10000*logrowsize(64)*tiflash_scan_factor(11.6))))*1.00))) + (net(4.7999917672e+09*rowsize(64)*tiflash_mpp_net_factor(1)))) + ((((hashkey(19999.440000000002*1*tiflash_cpu_factor(2.4))) + (hashmem(19999.440000000002*33*tiflash_mem_factor(0.05))) + (hashbuild(19999.440000000002*tiflash_cpu_factor(2.4)))) + (cpu(19999.440000000002*filters(0)*tiflash_cpu_factor(2.4))) + ((hashkey(4.7999917672e+09*1*tiflash_cpu_factor(2.4))) + (hashprobe(4.7999917672e+09*tiflash_cpu_factor(2.4)))) + (cpu(4.7999917672e+09*filters(0)*tiflash_cpu_factor(2.4))))/3.00))*1.00) + ((cpu(1.2041103345615922e+07*filters(0.03)*tiflash_cpu_factor(2.4)))/5.00))) + (net(1.2041103345615922e+07*rowsize(41)*tidb_flash_net_factor(2.2))))/15.00)*1.00) + (cpu(1.2041103345615922e+07*filters(0)*tidb_cpu_factor(49.9))) + (cpu(1.2041103345615922e+07*10*tidb_cpu_factor(49.9))) + (((((((((cpu(1*filters(1)*tikv_cpu_factor(49.9))) + ((scan(1*logrowsize(158)*tikv_scan_factor(40.7)))*1.00)) + (net(0.4870604509913737*rowsize(9)*tidb_kv_net_factor(3.96))))/15.00)*1.00)*12041103.35)/6.00) + (cpu(5.864745225949429e+06*filters(0)*tidb_cpu_factor(49.9))) + ((hashkey(5.864745225949429e+06*0*tidb_cpu_factor(49.9))) + (hashmem(5.864745225949429e+06*9*tidb_mem_factor(0.2))) + (hashbuild(5.864745225949429e+06*tidb_cpu_factor(49.9)))))/5.00))*1.00) + ((cpu(1.2041103345615922e+07*filters(0.03)*tidb_cpu_factor(49.9)))/5.00)) + (cpu(1.2041103345615922e+07*filters(0)*tidb_cpu_factor(49.9))) + (cpu(1.2041103345615922e+07*10*tidb_cpu_factor(49.9))) + ((((((((((scan(3.9592015804705825*logrowsize(291)*tikv_scan_factor(40.7)))*1.00) + (net(3.9592015804705825*rowsize(16)*tidb_kv_net_factor(3.96))))/15.00)*1.00)*12041103.35)/6.00)*3.96) + (cpu(4.767315539657217e+07*filters(0)*tidb_cpu_factor(49.9))) + ((hashkey(1.2041103345615922e+07*0*tidb_cpu_factor(49.9))) + (hashmem(1.2041103345615922e+07*41*tidb_mem_factor(0.2))) + (hashbuild(1.2041103345615922e+07*tidb_cpu_factor(49.9)))))/5.00))*1.00) + (cpu(9.632882676492738e+06*filters(0)*tidb_cpu_factor(49.9))) + (cpu(9.632882676492738e+06*10*tidb_cpu_factor(49.9))) + ((((((((((cpu(4.949001975588228*filters(1)*tikv_cpu_factor(49.9))) + ((scan(4.949001975588228*logrowsize(291)*tikv_scan_factor(40.7)))*1.00)) + (net(3.9592015804705825*rowsize(32)*tidb_kv_net_factor(3.96))))/15.00)*1.00)*9632882.68)/6.00)*3.96) + (cpu(3.813852431725774e+07*filters(0)*tidb_cpu_factor(49.9))) + ((hashkey(9.632882676492738e+06*0*tidb_cpu_factor(49.9))) + (hashmem(9.632882676492738e+06*41*tidb_mem_factor(0.2))) + (hashbuild(9.632882676492738e+06*tidb_cpu_factor(49.9)))))/5.00))*1.00) + (((agg(7.706306141194191e+06*aggs(2)*tidb_cpu_factor(49.9))) + (group(7.706306141194191e+06*cols(0.01)*tidb_cpu_factor(49.9))) + (hashkey(12799.641600000003*1*tidb_cpu_factor(49.9))+hashbuild(12799.641600000003*tidb_cpu_factor(49.9))) + ((hashkey(7.706306141194191e+06*1*tidb_cpu_factor(49.9))) + (hashprobe(7.706306141194191e+06*tidb_cpu_factor(49.9)))))/5.00))*1.00) + ((exprCPU(12799.641600000003*0*tidb_cpu_factor(49.9))) + (orderCPU(12799.641600000003*log(100)*tidb_cpu_factor(49.9)))) + (topMem(100*33*tidb_mem_factor(0.2))))*1.00) + ((cpu(100*filters(0.02)*tidb_cpu_factor(49.
+```
+
+**File**: `tests/integrationtest/r/tpch.result` (modified, +1/-1)
+```diff
+@@ -1221,7 +1221,7 @@ id	task	access object	operator info
+ Projection	root		tpch50.supplier.s_name, Column
+ └─TopN	root		Column:desc, tpch50.supplier.s_name, offset:0, count:100
+   └─HashAgg	root		group by:tpch50.supplier.s_name, funcs:count(1)->Column, funcs:firstrow(tpch50.supplier.s_name)->tpch50.supplier.s_name
+-    └─IndexHashJoin	root		anti semi join, inner:IndexLookUp, left side:IndexHashJoin, outer key:tpch50.lineitem.l_orderkey, inner key:tpch50.lineitem.l_orderkey, equal cond:eq(tpch50.lineitem.l_orderkey, tpch50.lineitem.l_orderkey), other cond:ne(tpch50.lineitem.l_suppkey, tpch50.lineitem.l_suppkey)
++    └─IndexHashJoin	root		anti semi join, inner:IndexLookUp, left side:IndexHashJoin, outer key:tpch50.lineitem.l_orderkey, inner key:tpch50.lineitem.l_orderkey, equal cond:eq(tpch50.lineitem.l_orderkey, tpch50.lineitem.l_orderkey), eq(tpch50.orders.o_orderkey, tpch50.lineitem.l_orderkey), other cond:ne(tpch50.lineitem.l_suppkey, tpch50.lineitem.l_suppkey)
+       ├─IndexHashJoin(Build)	root		semi join, inner:IndexLookUp, left side:IndexJoin, outer key:tpch50.lineitem.l_orderkey, inner key:tpch50.lineitem.l_orderkey, equal cond:eq(tpch50.lineitem.l_orderkey, tpch50.lineitem.l_orderkey), other cond:ne(tpch50.lineitem.l_suppkey, tpch50.lineitem.l_suppkey)
+       │ ├─IndexJoin(Build)	root		inner join, inner:TableReader, outer key:tpch50.lineitem.l_orderkey, inner key:tpch50.orders.o_orderkey, equal cond:eq(tpch50.lineitem.l_orderkey, tpch50.orders.o_orderkey)
+       │ │ ├─HashJoin(Build)	root		inner join, equal:[eq(tpch50.supplier.s_suppkey, tpch50.lineitem.l_suppkey)]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #73305** (2026-11-17): ddl, executor: serialize MLog column additions with MV refresh (@windtalker)
-- **PR #73304** (2026-11-17): ddl, executor: protect materialized views during flashback (@windtalker)
-- **PR #73288** (2026-11-17): parser: fix MV IF NOT EXISTS with HIGH_NOT_PRECEDENCE (@windtalker)
-- **PR #73285** (2026-11-17): executor: avoid MV refresh schema reloads for unrelated DDL (@windtalker)
-- **PR #73269** (2026-11-17): ddl, parser: improve materialized view DDL safeguards (@windtalker)
-- **PR #73268** (2026-11-17): ddl, executor: add materialized view maintenance error codes (@windtalker)
+- **PR #73380** (closed): executor: grow adaptive lookup batches after zero-output windows (#73339) (@ti-chi-bot)
+- **PR #73375** (2026-11-18): executor: push down DDL job ID lower bounds (@expxiaoli)
+- **PR #73371** (closed): planner: sync rule test shard count (@terry1purcell)
+- **PR #73370** (closed): planner: bind duplicate expression indexes to one hidden generated column (#70715) (@ti-chi-bot)
+- **PR #73339** (2026-11-18): executor: grow adaptive lookup batches after zero-output windows (@solotzg)
+- **PR #73328** (2026-11-18): planner: propagate outer filters through IN subqueries with non-null keys (@windtalker)
 
 ---
 
@@ -2121,51 +2548,39 @@ close pingcap/tidb#73229
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. session: prevent killed memory tracker panics during commit cleanup
+## X. br: fix cdc changefeed conflicts error message
 
 **RULE**:
-When implementing operations in `pkg/session/test/txn/txn_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `br/pkg/task/stream.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pingcap/tidb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b127b9ab`: session: prevent killed memory tracker panics during commit cleanup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cfd43662`: br: fix cdc changefeed conflicts error message. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/session/test/txn/txn_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `br/pkg/task/stream.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	t.Run("commit cleanup", func(t *testing.T) {
-		store := testkit.CreateMockStore(t)
-		tk := testkit.NewTestKit(t, store)
-		tk.MustExec("use test")
-		tk.MustExec("create table t(id int)")
-		tk.MustExec("begin pessimistic")
-		tk.MustExec("insert into t values(1)")
-		for range 6 {
-			tk.MustExec("insert into t select * from t")
-		}
-		tracker := memory.NewTracker(-1, -1)
-		tracker.IsRootTrackerOfSess = true
-		tracker.Killer = &sqlkiller.SQLKiller{}
-		tk.Session().GetSessionVars().MemTracker.AttachTo(tracker)
-		tracker.Killer.SendKillSignal(sqlkiller.QueryInterrupted)
-		var err error
-		require.NotPanics(t, func() { err = tk.Session().CommitTxn(context.Background()) })
-		require.NoError(t, err)
-		tracker.Killer.Reset()
-		tk.MustQuery("select count(*) from t").Check(testkit.Rows("64"))
-	})
+func checkIncompatibleChangefeed(ctx context.Context, restoreTS uint64, etcdCLI *clientv3.Client) error {
+	// The threshold is BackupTS for snapshot restore and the target TS for PITR.
+	nameSet, err := cdcutil.GetIncompatibleChangefeedsWithSafeTS(ctx, etcdCLI, restoreTS)
+		return errors.Errorf("cannot restore: %srestoreTS is BackupTS for snapshot restore or the target timestamp for PITR. "+
+			"The effective checkpointTS is the maximum of the changefeed checkpoint-ts and start-ts. "+
+			"Please advance the changefeed checkpoint to at least restoreTS, or remove the incompatible changefeed(s) before retrying restore; "+
+			"pausing a changefeed alone does not resolve the timestamp conflict", nameSet.MessageToUser())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+func checkIncompatibleChangefeed(ctx context.Context, backupTS uint64, etcdCLI *clientv3.Client) error {
+	nameSet, err := cdcutil.GetIncompatibleChangefeedsWithSafeTS(ctx, etcdCLI, backupTS)
+		return errors.Errorf("%splease remove changefeed(s) before restore", nameSet.MessageToUser())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b127b9ab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cfd43662` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

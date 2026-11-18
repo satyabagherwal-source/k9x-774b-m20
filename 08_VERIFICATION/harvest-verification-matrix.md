@@ -10951,3 +10951,5 @@
 | `CYCLE-20261118-DQDN` | `2026-11-18T11:55:00.683Z` | `emberstack/kubernetes-reflector` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6820` | Yes (`31371024...`) |
 | `CYCLE-20261118-DW9P` | `2026-11-18T11:55:08.317Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9213` | Yes (`4e4cbb0f...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T11:55:41.797Z` | `hf-kormo-vl-kormo-web-11b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E01F5E82` [Domain D] | Yes (`013b190c...`) |
+| `CYCLE-20261118-OEPW` | `2026-11-18T12:03:18.788Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`7edb1bad...`) |
+| `CYCLE-20261118-OMVO` | `2026-11-18T12:03:29.364Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9214` | Yes (`f4372e65...`) |

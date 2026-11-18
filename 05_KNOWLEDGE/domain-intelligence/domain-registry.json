@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T11:55:43.006Z",
-  "total_records": 1841,
+  "last_updated": "2026-11-18T12:03:33.939Z",
+  "total_records": 1843,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 784,
+      "total": 786,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -833,7 +833,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-xl-base-1-0-lear",
         "domain_intelligence-research-knowledge-intelligence-kormo-vl-kormo-web-11b-core-invariants",
         "DOM-D-E01F5E82",
-        "domain_intelligence-research-knowledge-intelligence-hf-kormo-vl-kormo-web-11b-learnings-core-invaria"
+        "domain_intelligence-research-knowledge-intelligence-hf-kormo-vl-kormo-web-11b-learnings-core-invaria",
+        "domain_intelligence-research-knowledge-intelligence-qwen-qwen-image-2-1-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen-image-2-1-learnings-core-invariants"
       ]
     },
     "E": {
@@ -8574,8 +8576,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "722fd7d6c6822e6036bc64db94dc0f718976f952ad038d78a48b4306ee25367b",
-      "created_at": "2026-11-18T09:03:09.640Z"
+      "content_hash": "0befb23566a7a42fa922b2d02a2d0192dedde0d6d74119f36ca7da73b3596cec",
+      "created_at": "2026-11-18T12:03:33.939Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -11889,8 +11891,8 @@
       "title": "Content & Information Intelligence: pingcap/tidb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-content-information-intelligence-pingcap-tidb-core-invariants.md",
       "repository": "pingcap/tidb",
-      "content_hash": "3bba46162b0c364ef8b0ae9909a47c1c1cceadd702ac408eef6907af663e8736",
-      "created_at": "2026-11-17T18:56:24.696Z"
+      "content_hash": "ffaa7280ace95861125dd6e85cfbc5e861f8aeff177169313f63c0105f0a7ae8",
+      "created_at": "2026-11-18T12:03:29.674Z"
     },
     "domain_intelligence-architecture-intelligence-dathere-qsv-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dathere-qsv-core-invariants",
@@ -11958,8 +11960,8 @@
       "title": "Content & Information Intelligence: pingcap-tidb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-learnings-content-information-intelligence-pingcap-tidb-learnings-c.md",
       "repository": "pingcap-tidb-learnings",
-      "content_hash": "15ffaa10d5684e040052fc56dc9889cb0b315708a0a5a34268d79e12c1eed341",
-      "created_at": "2026-11-17T18:56:28.304Z"
+      "content_hash": "08be8240f09957dbb7c5fa48d2691ac7e563a38a6b3171c15f27f47103fbc875",
+      "created_at": "2026-11-18T12:03:33.238Z"
     },
     "domain_intelligence-architecture-intelligence-dathere-qsv-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dathere-qsv-learnings-core-invariants",
@@ -30867,6 +30869,24 @@
       "repository": "hf-kormo-vl-kormo-web-11b-learnings",
       "content_hash": "4542bd98485cb55314dde150c57de87a6bd15bc78c88cbb2e637ebdbd156b996",
       "created_at": "2026-11-18T11:55:42.041Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-qwen-qwen-image-2-1-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen-image-2-1-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Qwen/Qwen-Image-2.1 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen-image-2-1-research-knowledge-intelligence-qwen-qwen-image-2-1-core-.md",
+      "repository": "Qwen/Qwen-Image-2.1",
+      "content_hash": "d3c3554300ad28853ea8fa8e358255a4b659ce14cf3e1a23e696d429c322116c",
+      "created_at": "2026-11-18T12:03:18.965Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen-image-2-1-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen-image-2-1-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-qwen-qwen-image-2.1-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen-image-2-1-learnings-research-knowledge-intelligence-hf-qwen-qwen-im.md",
+      "repository": "hf-qwen-qwen-image-2.1-learnings",
+      "content_hash": "01d761995191910707f0dc8a6cf4f36cc30462eb7f8f1e9119cfa4c36e3128d9",
+      "created_at": "2026-11-18T12:03:32.700Z"
     }
   }
 }

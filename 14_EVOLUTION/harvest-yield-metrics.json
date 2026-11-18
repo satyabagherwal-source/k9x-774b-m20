@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T11:55:08.326Z",
-  "total_cycles_completed": 10475,
-  "total_learnings_persisted": 10475,
-  "total_rules_promoted": 9970,
+  "last_updated": "2026-11-18T12:03:29.373Z",
+  "total_cycles_completed": 10477,
+  "total_learnings_persisted": 10477,
+  "total_rules_promoted": 9971,
   "history": [
-    {
-      "timestamp": "2026-11-17T21:41:10.055Z",
-      "repository": "nats-io/nats.go",
-      "learningId": "learn-github-nats-io-nats-go",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T21:41:17.074Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T21:56:37.307Z",
       "repository": "harness-hub/Qwen3.8-27B-pi-adapted",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-18T11:55:08.326Z",
       "repository": "tursodatabase/turso",
       "learningId": "learn-github-tursodatabase-turso",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T12:03:18.796Z",
+      "repository": "Qwen/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T12:03:29.373Z",
+      "repository": "pingcap/tidb",
+      "learningId": "learn-github-pingcap-tidb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

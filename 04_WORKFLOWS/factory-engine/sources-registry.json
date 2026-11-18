@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T11:55:11.433Z",
-    "lastVerified": "2026-11-18T11:55:11.433Z",
+    "lastChecked": "2026-11-18T12:03:32.422Z",
+    "lastVerified": "2026-11-18T12:03:32.422Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -210,9 +210,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-18T11:22:42.396Z",
+    "lastChecked": "2026-11-18T12:03:30.426Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-18T11:22:42.396Z"
+    "lastVerified": "2026-11-18T12:03:30.426Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1053,5 +1053,67 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sharkdp-bat": {
+    "name": "bat",
+    "officialUrl": "https://github.com/sharkdp/bat",
+    "lastChecked": "2026-11-18T12:03:15.325Z",
+    "revisionIdentifier": "fbd9a416",
+    "lastVerified": "2026-11-18T12:03:15.325Z"
+  },
+  "hf-qwen-qwen-image-2.1": {
+    "name": "Qwen/Qwen-Image-2.1",
+    "officialUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T12:03:18.188Z",
+    "lastVerified": "2026-11-18T12:03:18.188Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+    "contentHash": "7edb1bada23fe9ca3af9355de46152aef6226eb9835af0cc2c57689c51b0a8e5",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "karakeep-app-karakeep": {
+    "name": "karakeep",
+    "officialUrl": "https://github.com/karakeep-app/karakeep",
+    "lastChecked": "2026-11-18T12:03:20.417Z",
+    "revisionIdentifier": "bcc4b90a",
+    "lastVerified": "2026-11-18T12:03:20.417Z"
+  },
+  "pingcap-tidb": {
+    "name": "pingcap/tidb",
+    "officialUrl": "https://github.com/pingcap/tidb",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-18T12:03:28.464Z",
+    "lastVerified": "2026-11-18T12:03:28.464Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-pingcap-tidb",
+    "contentHash": "f4372e656cbf8f58a24b5aa6adf63b1f4f26c551a7712aa5059bc2b2f014ac2f",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 5,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "cryfs-cryfs": {
+    "name": "cryfs",
+    "officialUrl": "https://github.com/cryfs/cryfs",
+    "lastChecked": "2026-11-18T12:03:25.287Z",
+    "revisionIdentifier": "e2da97b1",
+    "lastVerified": "2026-11-18T12:03:25.287Z"
+  },
+  "neondatabase-neon": {
+    "name": "neon",
+    "officialUrl": "https://github.com/neondatabase/neon",
+    "lastChecked": "2026-11-18T12:03:27.888Z",
+    "revisionIdentifier": "fa504217",
+    "lastVerified": "2026-11-18T12:03:27.888Z"
   }
 }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T11:55:43.163Z",
+  "last_updated": "2026-11-18T12:03:34.059Z",
   "total_verified_learnings": 9000,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21207,
+  "total_items": 21212,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-8Q4A-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-OQBC-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "9d6f22ff1952c8e3a112e777eca73d8a8080fea9f8662b1321b90a6d67ffdd71",
+      "content_hash": "ab04509c3b85266f74562719270d4316f452ce433daf7bfb708dfe0ff7a4f223",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T09:03:09.380Z"
+      "persisted_at": "2026-11-18T12:03:33.818Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "722fd7d6c6822e6036bc64db94dc0f718976f952ad038d78a48b4306ee25367b",
+      "content_hash": "0befb23566a7a42fa922b2d02a2d0192dedde0d6d74119f36ca7da73b3596cec",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T09:03:09.640Z"
+      "persisted_at": "2026-11-18T12:03:33.939Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "4b270533a63d30dc7d810284cf49b462a38b7fa32d77176230fe6abf837fbbd9",
+      "content_hash": "f50c00130d3ec309d4df509ee7a59f51561feff60776f359ec77ff1f29e079f2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T09:03:10.693Z"
+      "persisted_at": "2026-11-18T12:03:34.059Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -220129,8 +220129,8 @@
       "slug": "pingcap-tidb",
       "platform": "github",
       "source_url": "https://github.com/pingcap/tidb",
-      "source_version": "8c05d01e",
-      "content_hash": "30bcb05b737061f22294bc237f0b9e7fb429a4ab2799eb8f99b0e7c4173e0b1e",
+      "source_version": "5f929142",
+      "content_hash": "f4372e656cbf8f58a24b5aa6adf63b1f4f26c551a7712aa5059bc2b2f014ac2f",
       "dossier_path": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pingcap-tidb-learnings.md",
       "promoted_rules": [
@@ -220153,6 +220153,11 @@
           "number": 9034,
           "title": "prevent killed memory tracker panics during commit cleanup",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9214,
+          "title": "fix cdc changefeed conflicts error message",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220160,7 +220165,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T18:56:24.256Z",
+      "verified_at": "2026-11-18T12:03:29.198Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220202,10 +220207,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pingcap-tidb-content-information-intelligence-pingcap-tidb-core-invariants.md",
       "title": "Content & Information Intelligence: pingcap/tidb Core Invariants",
       "repository": "pingcap/tidb",
-      "source_version": "8c05d01e",
-      "content_hash": "3bba46162b0c364ef8b0ae9909a47c1c1cceadd702ac408eef6907af663e8736",
+      "source_version": "5f929142",
+      "content_hash": "ffaa7280ace95861125dd6e85cfbc5e861f8aeff177169313f63c0105f0a7ae8",
       "domain_letter": "I",
-      "persisted_at": "2026-11-17T18:56:24.696Z"
+      "persisted_at": "2026-11-18T12:03:29.674Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb",
@@ -220214,10 +220219,10 @@
       "relative_path": "08_VERIFICATION/pingcap-tidb-verification-protocol-empirical-defect-shield-for-pingcap-tidb.md",
       "title": "Verification Protocol: Empirical Defect Shield for pingcap/tidb",
       "repository": "pingcap/tidb",
-      "source_version": "8c05d01e",
-      "content_hash": "b60875acffd0b7d7f17170dc300ef2b860ef244249bc2e42c288cdc83eabb02b",
+      "source_version": "5f929142",
+      "content_hash": "0d0d9875d86728060d443915a20013b75fc34c3df4e7a2ad5a27f0f13b7dad3b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T18:56:24.813Z"
+      "persisted_at": "2026-11-18T12:03:29.792Z"
     },
     "rule-8415": {
       "learning_id": "rule-8415",
@@ -220289,9 +220294,9 @@
       "title": "Content & Information Intelligence: pingcap-tidb-learnings Core Invariants",
       "repository": "pingcap-tidb-learnings",
       "source_version": "HEAD",
-      "content_hash": "15ffaa10d5684e040052fc56dc9889cb0b315708a0a5a34268d79e12c1eed341",
+      "content_hash": "08be8240f09957dbb7c5fa48d2691ac7e563a38a6b3171c15f27f47103fbc875",
       "domain_letter": "I",
-      "persisted_at": "2026-11-17T18:56:28.304Z"
+      "persisted_at": "2026-11-18T12:03:33.238Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pingcap-tidb-learnings",
@@ -220301,9 +220306,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pingcap-tidb-learnings",
       "repository": "pingcap-tidb-learnings",
       "source_version": "HEAD",
-      "content_hash": "3296ca34005c009a381ae05dcc4bf109dfca5cfa1296e0a342a8d50d8d153f49",
+      "content_hash": "17ecdab991beac3e00cb84110bae8f06538ecffb979943eeea2303f96b1eaacb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T18:56:28.437Z"
+      "persisted_at": "2026-11-18T12:03:33.355Z"
     },
     "candidate_directive-deps-bump-lock-file": {
       "item_id": "candidate_directive-deps-bump-lock-file",
@@ -279171,7 +279176,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen-Image-2.1",
       "source_version": "hf-qwen-qwen-image-2.1",
-      "content_hash": "406546fb95766040a32a63191befcdf70845e6b634e3690ae94caa9385e3cbb5",
+      "content_hash": "7edb1bada23fe9ca3af9355de46152aef6226eb9835af0cc2c57689c51b0a8e5",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md",
       "promoted_rules": [
@@ -279196,7 +279201,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T00:27:00.517Z",
+      "verified_at": "2026-11-18T12:03:18.604Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -286061,6 +286066,68 @@
       "content_hash": "4542bd98485cb55314dde150c57de87a6bd15bc78c88cbb2e637ebdbd156b996",
       "domain_letter": "D",
       "persisted_at": "2026-11-18T11:55:42.041Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-qwen-qwen-image-2-1-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen-image-2-1-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen-image-2-1-research-knowledge-intelligence-qwen-qwen-image-2-1-core-.md",
+      "title": "Research & Knowledge Intelligence: Qwen/Qwen-Image-2.1 Core Invariants",
+      "repository": "Qwen/Qwen-Image-2.1",
+      "source_version": "hf-qwen-qwen-image-2.1",
+      "content_hash": "d3c3554300ad28853ea8fa8e358255a4b659ce14cf3e1a23e696d429c322116c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T12:03:18.965Z"
+    },
+    "rule-9214": {
+      "learning_id": "rule-9214",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9214,
+      "title": "fix cdc changefeed conflicts error message",
+      "source_url": "https://github.com/pingcap/tidb",
+      "source_version": "5f929142",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T12:03:29.198Z"
+    },
+    "candidate_directive-fix-cdc-changefeed-conflicts-error-message": {
+      "item_id": "candidate_directive-fix-cdc-changefeed-conflicts-error-message",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ON0U-fix-cdc-changefeed-conflicts-error-message.md",
+      "title": "fix cdc changefeed conflicts error message",
+      "repository": "pingcap/tidb",
+      "source_version": "5f929142",
+      "content_hash": "a3fb8306f4bb2bf7f2960f7485aa09a9fffcf37d70e51606f08404c314a05562",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T12:03:29.553Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen-image-2-1-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen-image-2-1-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen-image-2-1-learnings-research-knowledge-intelligence-hf-qwen-qwen-im.md",
+      "title": "Research & Knowledge Intelligence: hf-qwen-qwen-image-2.1-learnings Core Invariants",
+      "repository": "hf-qwen-qwen-image-2.1-learnings",
+      "source_version": "HEAD",
+      "content_hash": "01d761995191910707f0dc8a6cf4f36cc30462eb7f8f1e9119cfa4c36e3128d9",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T12:03:32.700Z"
+    },
+    "candidate_directive-br-fix-cdc-changefeed-conflicts-error-message": {
+      "item_id": "candidate_directive-br-fix-cdc-changefeed-conflicts-error-message",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OPRU-br-fix-cdc-changefeed-conflicts-error-message.md",
+      "title": "br: fix cdc changefeed conflicts error message",
+      "repository": "pingcap-tidb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b5591cfdfb1a0d4808055286c5748807336cc423a5d1970c3b3cdf69e9c97ae4",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T12:03:33.116Z"
     }
   },
   "ai-builder-brain": {

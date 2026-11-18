@@ -315,8 +315,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1",
     "sourceVersion": "hf-qwen-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "406546fb95766040a32a63191befcdf70845e6b634e3690ae94caa9385e3cbb5",
-    "lastHarvestedAt": "2026-11-18T00:27:00.677Z",
+    "contentHash": "7edb1bada23fe9ca3af9355de46152aef6226eb9835af0cc2c57689c51b0a8e5",
+    "lastHarvestedAt": "2026-11-18T12:03:18.792Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1"
   },
   "hf-contrastive-lm-clm-v0.1-8b": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "8c05d01e",
+    "sourceVersion": "5f929142",
     "license": "Apache-2.0",
-    "contentHash": "30bcb05b737061f22294bc237f0b9e7fb429a4ab2799eb8f99b0e7c4173e0b1e",
-    "lastHarvestedAt": "2026-11-17T18:56:24.419Z",
+    "contentHash": "f4372e656cbf8f58a24b5aa6adf63b1f4f26c551a7712aa5059bc2b2f014ac2f",
+    "lastHarvestedAt": "2026-11-18T12:03:29.368Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {

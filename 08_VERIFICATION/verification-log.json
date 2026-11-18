@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-S4N2",
-    "timestamp": "2026-11-17T00:38:41.534Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "946cdfcdc67c61dbb1dc7e24a1e045eb341f79e92095b6cf93832fee554d6f46",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-EBUQ",
-    "timestamp": "2026-11-17T00:55:57.314Z",
-    "repository": "1jehuang/jcode",
-    "learningId": "learn-github-1jehuang-jcode",
-    "contentHash": "bc60fb0eeab187386347ce17e303dc4127dba6b7d22dbba9d52c3c38d1b9eed3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-EEN5",
     "timestamp": "2026-11-17T00:56:00.929Z",
     "repository": "rdfjs/N3.js",
@@ -7490,6 +7460,36 @@
     "repository": "tursodatabase/turso",
     "learningId": "learn-github-tursodatabase-turso",
     "contentHash": "4e4cbb0f77f326be72fe1cd20e5538b5499cebe93628892cc8dca2aeccd83904",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-OEPW",
+    "timestamp": "2026-11-18T12:03:18.788Z",
+    "repository": "Qwen/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+    "contentHash": "7edb1bada23fe9ca3af9355de46152aef6226eb9835af0cc2c57689c51b0a8e5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-OMVO",
+    "timestamp": "2026-11-18T12:03:29.364Z",
+    "repository": "pingcap/tidb",
+    "learningId": "learn-github-pingcap-tidb",
+    "contentHash": "f4372e656cbf8f58a24b5aa6adf63b1f4f26c551a7712aa5059bc2b2f014ac2f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

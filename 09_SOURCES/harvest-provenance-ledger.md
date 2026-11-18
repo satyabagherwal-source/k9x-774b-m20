@@ -10984,3 +10984,5 @@ Every entry in this ledger must capture:
 | `learn-github-emberstack-kubernetes-reflector` | `https://github.com/emberstack/kubernetes-reflector` | `dd9d0499` | Multi-dimensional audit evidence | 2026-11-18T11:55:00.687Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/turso` | `ff78457b` | Multi-dimensional audit evidence | 2026-11-18T11:55:08.321Z |
 | `learn-dom-d-e01f5e82` | `project://hf-kormo-vl-kormo-web-11b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-kormo-vl-kormo-web-11b-learnings.md` | 2026-11-18T11:55:41.797Z |
+| `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-18T12:03:18.792Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `5f929142` | Multi-dimensional audit evidence | 2026-11-18T12:03:29.368Z |
