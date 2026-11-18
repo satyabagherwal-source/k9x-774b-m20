@@ -4,24 +4,24 @@
 {
   "source_repository": "Mintplex-Labs/anything-llm",
   "source_url": "https://github.com/Mintplex-Labs/anything-llm",
-  "source_version": "eb498cf2",
+  "source_version": "64b599fc",
   "license": "MIT",
-  "timestamp": "2026-11-17T15:59:55.522Z",
+  "timestamp": "2026-11-18T09:14:50.482Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-mintplex-labs-anything-llm",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm) (Revision: `eb498cf2`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T15:59:55.522Z`  
+> **Provenance**: Harvested from [Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm) (Revision: `64b599fc`).  
+> **License**: MIT | **Timestamp**: `2026-11-18T09:14:50.482Z`  
 > **Learning ID**: `learn-github-mintplex-labs-anything-llm`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 77%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 79%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from Mintplex-Labs/anything-llm:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T15:59:54.124Z  
+> **Harvest Timestamp**: 2026-11-18T09:14:49.374Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Stop renting your intelligence. Own it with AnythingLLM. Everything you need for a powerful local-first agent experience 
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 68366 stars
+- **Stars / Engagement**: 68393 stars
 
 ---
 
@@ -1323,329 +1323,187 @@ module.exports = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `24fbd26c` (2026-11-16)
-**Commit Message**: fix: keep counting a numbered list that a code block interrupts in Word exports (#7209)
+### Incident Patch 1: `64b599fc` (2026-11-18)
+**Commit Message**: Fix: misleading Model Router delete confirmation and surface workspac... (#7182)
 
-* fix: keep counting a numbered list that a code block interrupts in Word exports
+* Fix: misleading Model Router delete confirmation and surface workspace impact
 
-* seed continued-list counter from the list's start, drop narrow test
+* fix with transcation wrapped and revert locale changes
 
----------
-
-Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
-
-**File**: `server/utils/agents/aibitat/plugins/create-files/docx/utils.js` (modified, +9/-2)
-```diff
-@@ -481,6 +481,9 @@ async function htmlToDocxElements(html, libs, log, theme = null) {
- 
-   // Each top-level list gets its own numbering instance so ordered lists restart at 1.
-   let listInstance = 0;
-+  // A numbered list that a code block or paragraph interrupted comes back from
-+  // marked as <ol start="N">, so it keeps counting in the previous list's instance.
-+  let lastOrdered = null;
- 
-   for (const child of body.children) {
-     const tagName = child.tagName.toLowerCase();
-@@ -527,15 +530,19 @@ async function htmlToDocxElements(html, libs, log, theme = null) {
-           );
-         }
-       } else if (tagName === "ul" || tagName === "ol") {
--        listInstance++;
-+        const start = Number(child.getAttribute("start")) || 1;
-+        const continues = tagName === "ol" && lastOrdered?.next === start;
-+        const instance = continues ? lastOrdered.instance : ++listInstance;
-+        if (tagName === "ol")
-+          lastOrdered = { instance, next: start + child.children.length };
-         elements.push(
-           ...(await processList(
-             child,
-             docx,
-             tagName === "ol",
-             0,
-             log,
--            listInstance
-+            instance
-           ))
-         );
-       } else if (tagName === "table") {
-```
-
----
-
-### Incident Patch 2: `41e4b95e` (2026-11-17)
-**Commit Message**: fix: offer each Mistral model the reasoning levels it accepts (#7228)
-
-fix: offer each Mistral model the reasoning levels it accepts (#7226)
-
-Mistral reasoning models were all offered an on/off toggle sent as
-"high"/"none", but accepted levels differ per model: Large 4 and GLM 5.3
-reject "none", so turning reasoning off failed, and DeepSeek V4.1 Flash
-could not be set above "high". Mistral's models endpoint only flags
-reasoning support, so levels now come from models.dev, looked up under
-the model id and its aliases, with on/off kept for unlisted models.
-
-**File**: `server/__tests__/utils/helpers/reasoningEffort.test.js` (modified, +17/-4)
-```diff
-@@ -81,6 +81,14 @@ const MODELS_DEV = {
-     ],
-     "deepseek-toggle-only": [{ type: "toggle" }],
-   },
-+  // Accepted values confirmed against the live API.
-+  mistral: {
-+    "mistral-small-2603": [{ type: "effort", values: ["none", "high"] }],
-+    "mistral-large-latest": [
-+      { type: "effort", values: ["low", "medium", "high"] },
-+    ],
-+    "zai-glm-5-3": [{ type: "effort", values: ["low", "high", "max"] }],
-+  },
-   openrouter: {
-     "openai/gpt-5.1": [
-       { type: "effort", values: ["none", "low", "medium", "high"] },
-@@ -106,7 +114,7 @@ function mockModelsDev(table = MODELS_DEV) {
-   jest
-     .spyOn(MODEL_PRICING, "getReasoningOptions")
-     .mockImplementation((provider, model) =>
--      table === null ? null : (table[provider]?.[model] ?? [])
-+      table === null ? null : table[provider]?.[model] ?? []
-     );
- }
- 
-@@ -126,6 +134,9 @@ describe("modelsDevReasoningCapabilities", () => {
-     ["gemini", "gemini-level-and-budget", ["low", "high"]],
-     ["deepseek", "deepseek-flash", ["off", "on", "low", "high", "max"]],
-     ["deepseek", "deepseek-toggle-only", ["off", "on"]],
-+    ["mistral", "mistral-small-2603", ["off", "high"]],
-+    ["mistral", "mistral-large-latest", ["low", "medium", "high"]],
-+    ["mistral", "zai-glm-5-3", ["low", "high", "max"]],
-     ["openrouter", "openai/gpt-5.1", ["off", "low", "medium", "high"]],
-     ["openrouter", "qwen/qwen3-30b-a3b", ["off", "on"]],
-     [
-@@ -171,7 +182,7 @@ describe("modelsDevReasoningCapabilities", () => {
-     });
-   });
- 
--  it("only maps none to off for OpenAI and OpenRouter", () => {
-+  it("only maps none to off for OpenAI, OpenRouter and Mistral", () => {
-     mockModelsDev({
-       deepseek: { x: [{ type: "effort", values: ["none", "low"] }] },
-     });
-@@ -411,8 +422,10 @@ describe("reasoningParams", () => {
-       null,
-       { thinking: { type: "enabled" }, reasoning_effort: "max" },
-     ],
--    ["mistral", "on", "mistral-large-4", { reasoning_effort: "high" }],
--    ["mistral", "off", "mistral-large-4", { reasoning_effort: "none" }],
-+    ["mistral", "on", "mistral-small-2603", { reasoning_effort: "high" }],
-+    ["mistral", "off", "mistral-small-2603", { reasoning_effort: "none" }],
-+    ["mistral", "low", "mistral-large-4", { reasoning_effort: "low" }],
-+    ["mistral", "max", "zai-glm-5-3", { reasoning_effort: "max" }],
-   ])("%s %s (%s) -> %j", (provider, effort, model, expected) => {
-     expect(reasoningParams(provider, effort, model)).toEqual(expected);
-   });
-```
-
-**File**: `server/utils/AiProviders/mistral/index.js` (modified, +37/-8)
-```diff
-@@ -10,7 +10,10 @@ const {
- const {
-   temperatureParam,
- } = require("../../agents/aibitat/providers/helpers/tooled");
--const { reasoningParams } = require("../../helpers/reasoningEffort");
-+const {
-+  reasoningParams,
-+  modelsDevReasoningCapabilities,
-+} = require("../../helpers/reasoningEffort");
- 
- class MistralLLM {
-   constructor(embedder = null, modelPreference = null) {
-@@ -71,18 +74,17 @@ class MistralLLM {
- 
-   /**
-    * Returns the capabilities of the model from Mistral's models endpoint, which
--   * also resolves model aliases. Reasoning models only toggle thinking on/off.
--   * @returns {Promise<{tools: boolean, reasoning: boolean, reasoningOptions: string[], imageGeneration: boolean, vision: boolean}>}
-+   * also resolves model aliases. The endpoint only flags reasoning support, so
-+   * the effort levels come from models.dev - see #reasoningCapabilities.
-+   * @returns {Promise<{tools: boolean, reasoning: 'unknown'|boolean, reasoningOptions: string[], imageGeneration: boolean, vision: boolean}>}
-    */
-   async getModelCapabilities() {
-     try {
--      const { capabilities = {} } = await this.openai.models.retrieve(
--        this.model
--      );
-+      const card = await this.openai.models.retrieve(this.model);
-+      const capabilities = card?.capabilities ?? {};
-       return {
-         tools: capabilities.function_calling === true,
--        reasoning: capabilities.reasoning === true,
--        reasoningOptions: capabilities.reasoning === true ? ["off", "on"] : [],
-+        ...this.#reasoningCapabilities(card),
-         imageGeneration: false,
-         vision: capabilities.vision === true,
-       };
-@@ -98,6 +100,33 @@ class MistralLLM {
-     }
-   }
- 
-+  /**
-+   * The reasoning levels of a Mistral model card. Models differ in which
-+   * `reasoning_effort` values they accept (eg: Large 4 rejects "none"), so the
-+   * levels are read from models.dev under the model's own id or any of its
-+   * aliases. A reasoning model models.dev does not list only gets on/off,
-+   * which most Mistral reasoning models accept.
-+   * @param {{id?: string, aliases?: string[], capabilities?: {reasoning?: boolean}}} card
-+   * @returns {{reasoning: 'unknown'|boolean, reasoningOptions: string[]}}
-+   */
-+  #reasoningCapabilities(card) {
-+    if (card?.capabilities?.reasoning !== true)
-+      return { reasoning: false, reasoningOptions: [] };
-+
-+    const ids = [
-+      ...new Set([
-+        this.model,
-+        card.id,
-+        ...(Array.isArray(card.aliases) ? card.aliases : []),
-+      ]),
-+    ];
-+    for (const id of ids) {
-+      const capabilities = modelsDevReasoningCapabilities("mistral", id);
-+      if (capabilities.reasoning !== false) return capabilities;
-+    }
-+    return { reasoning: true, reasoningOptions: ["off", "on"] };
-+  }
-+
-   /**
-    * Generates appropriate content array for a message + attachments.
-    * @param {{userPrompt:string, attachments: import("../../helpers").Attachment[]}}
-```
-
-**File**: `server/utils/helpers/reasoningEffort.js` (modified, +8/-4)
-```diff
-@@ -70,7 +70,7 @@ function modelsDevOptions(provider, model) {
-  * The reasoning capabilities models.dev lists for a cloud model, as levels
-  * this provider's request format can send. A model models.dev does not list
-  * gets no reasoning controls.
-- * @param {"openai"|"gemini"|"deepseek"|"openrouter"} provider
-+ * @param {"openai"|"gemini"|"deepseek"|"openrouter"|"mistral"} provider
-  * @param {string} model
-  * @returns {{reasoning: 'unknown'|boolean, reasoningOptions: string[]}}
-  */
-@@ -79,7 +79,7 @@ function modelsDevReasoningCapabilities(provider, model) {
-   if (!options) return { reasoning: "unknown", reasoningOptions: [] };
- 
-   const levels = new Set();
--  const noneIsOff = ["openai", "openrouter"].includes(provider);
-+  const noneIsOff = ["openai", "openrouter", "mistral"].includes(provider);
-   for (const value of options.effortValues)
-     levels.add(noneIsOff && value === "none" ? "off" : value);
-   if (["deepseek", "openrouter"].includes(provider) && options.toggle) {
-@@ -182,8 +182,12 @@ function reasoningParams(provider, effort = null, model = null) {
-         reasoning: toggle ? { enabled: effort === "on" } : { effort },
-       };
-     case "mistral":
--      // Reasoning models only accept "none" or "high" - other levels are rejected.
--      return { reasoning_effort: effort === "on" ? "high" : "none" };
-+      // Accepted levels differ per model - see MistralLLM.getModelCapabilities.
-+      // "on"/"off" are offered to reasoning models models.dev does not list.
-+      // https://docs.mistral.ai/capabilities/reasoning/adjustable
-+      return {
-+        reasoning_effort: { off: "none", on: "high" }[effort] ?? effort,
-+      };
-     case "generic-openai":
-       // OpenAI's Chat Completions field - "none" turns reasoning off.
-       // https://developers.openai.com/api/docs/guides/reasoning
-```
-
----
-
-### Incident Patch 3: `e3531ea6` (2026-11-16)
-**Commit Message**: fix: wrap suggested-messages saveAll in a transaction and surface sav… (#7194)
-
-* fix: wrap suggested-messages saveAll in a transaction and surface save failures
-
-* remove mock-only saveAll test
+* test: trim ModelRouter.delete tests to what the mocks can observe
 
 ---------
 
 Co-authored-by: Bensonbenyi <[REDACTED_EMAIL]>
 Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
-**File**: `server/endpoints/workspaces.js` (modified, +7/-1)
+**File**: `server/__tests__/models/modelRouter.test.js` (modified, +53/-1)
 ```diff
-@@ -639,7 +639,13 @@ function workspaceEndpoints(app) {
-           });
-         }
+@@ -2,7 +2,14 @@ process.env.STORAGE_DIR = __dirname;
+ process.env.NODE_ENV = "test";
  
--        await WorkspaceSuggestedMessages.saveAll(messages, slug);
-+        const saved = await WorkspaceSuggestedMessages.saveAll(messages, slug);
-+        if (!saved) {
-+          return response.status(500).json({
-+            success: false,
-+            message: "Error saving the suggested messages.",
-+          });
-+        }
-         return response.status(200).json({
-           success: true,
-           message: "Suggested messages saved successfully.",
+ jest.mock("../../utils/prisma", () => ({
+-  model_routers: { create: jest.fn(async ({ data }) => ({ id: 1, ...data })) },
++  $transaction: jest.fn(async (ops) => Promise.all(ops)),
++  model_routers: {
++    create: jest.fn(async ({ data }) => ({ id: 1, ...data })),
++    delete: jest.fn(async ({ where }) => ({ id: where.id })),
++  },
++  workspaces: {
++    updateMany: jest.fn(async () => ({ count: 1 })),
++  },
+ }));
+ 
+ const prisma = require("../../utils/prisma");
+@@ -59,3 +66,48 @@ describe("ModelRouter.create cooldown_seconds", () => {
+     expect(createdWith().cooldown_seconds).toBe(30);
+   });
+ });
++
++/**
++ * Deleting a router also resets every workspace pointing at it back to the
++ * system LLM, in the same transaction, so no workspace keeps a router_id
++ * that no longer exists. Rollback on failure is Prisma's guarantee and is
++ * not something these mocks can observe.
++ */
++describe("ModelRouter.delete", () => {
++  const ROUTER_ID = 5;
++
++  beforeEach(() => {
++    prisma.$transaction.mockClear();
++    prisma.model_routers.delete.mockClear();
++    prisma.workspaces.updateMany.mockClear();
++  });
++
++  it("resets referencing workspaces to the system LLM and deletes the router in one transaction", async () => {
++    const success = await ModelRouter.delete(ROUTER_ID);
++
++    expect(success).toBe(true);
++    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
++    expect(prisma.$transaction.mock.calls[0][0]).toHaveLength(2);
++    expect(prisma.workspaces.updateMany).toHaveBeenCalledWith({
++      where: { router_id: ROUTER_ID },
++      data: { chatProvider: null, chatModel: null, router_id: null },
++    });
++    expect(prisma.model_routers.delete).toHaveBeenCalledWith({
++      where: { id: ROUTER_ID },
++    });
++  });
++
++  it("returns false when the transaction fails", async () => {
++    const consoleErrorSpy = jest
++      .spyOn(console, "error")
++      .mockImplementation(() => {});
++    prisma.model_routers.delete.mockRejectedValueOnce(
++      new Error("Record to delete does not exist.")
++    );
++
++    const success = await ModelRouter.delete(ROUTER_ID);
++
++    expect(success).toBe(false);
++    consoleErrorSpy.mockRestore();
++  });
++});
 ```
 
-**File**: `server/models/workspacesSuggestedMessages.js` (modified, +20/-16)
+**File**: `server/models/modelRouter.js` (modified, +9/-3)
 ```diff
-@@ -34,25 +34,29 @@ const WorkspaceSuggestedMessages = {
+@@ -233,9 +233,15 @@ const ModelRouter = {
+     if (!id) return false;
  
-       if (!workspace) throw new Error("Workspace not found");
- 
--      // Delete all existing messages for the workspace
--      await prisma.workspace_suggested_messages.deleteMany({
--        where: { workspaceId: workspace.id },
+     try {
+-      await prisma.model_routers.delete({
+-        where: { id: Number(id) },
 -      });
--
--      // Create new messages
--      // We create each message individually because prisma
--      // with sqlite does not support createMany()
--      for (const message of messages) {
--        await prisma.workspace_suggested_messages.create({
--          data: {
--            workspaceId: workspace.id,
--            heading: message.heading,
--            message: message.message,
--          },
-+      await prisma.$transaction(async (tx) => {
-+        // Delete all existing messages for the workspace
-+        await tx.workspace_suggested_messages.deleteMany({
-+          where: { workspaceId: workspace.id },
-         });
--      }
-+
-+        // Create new messages
-+        // We create each message individually because prisma
-+        // with sqlite does not support createMany()
-+        for (const message of messages) {
-+          await tx.workspace_suggested_messages.create({
-+            data: {
-+              workspaceId: workspace.id,
-+              heading: message.heading,
-+              message: message.message,
-+            },
-+          });
-+        }
-+      });
-+      return true;
++      await prisma.$transaction([
++        prisma.workspaces.updateMany({
++          where: { router_id: Number(id) },
++          data: { chatProvider: null, chatModel: null, router_id: null },
++        }),
++        prisma.model_routers.delete({
++          where: { id: Number(id) },
++        }),
++      ]);
+       return true;
      } catch (error) {
-       console.error("Failed to save all messages", error.message);
-+      return false;
+       console.error(error.message);
+```
+
+---
+
+### Incident Patch 2: `b0cfa515` (2026-11-17)
+**Commit Message**: fix: reject fractional keep-alive timeouts in isInteger validator (#7246)
+
+* fix: reject fractional keep-alive timeouts in isInteger validator
+
+Signed-off-by: Raphael Malikian <[REDACTED_EMAIL]>
+
+* remove partial updateENV test
+
+* use guard clause in isInteger
+
+---------
+
+Signed-off-by: Raphael Malikian <[REDACTED_EMAIL]>
+Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
+
+**File**: `server/utils/helpers/updateENV.js` (modified, +2/-1)
+```diff
+@@ -1149,7 +1149,8 @@ function nonNegative(input = "") {
+ 
+ function isInteger(input = "") {
+   if (isNaN(Number(input))) return "Value must be a number";
+-  return Number(input);
++  if (!Number.isInteger(Number(input))) return "Value must be a whole number";
++  return null;
+ }
+ 
+ function validPort(input = "") {
+```
+
+---
+
+### Incident Patch 3: `84457e39` (2026-11-17)
+**Commit Message**: fix: change MobileDevice.get return value to null when errors (#7238)
+
+* fix: change MobileDevice.get return value to null when errors
+
+* remove test
+
+---------
+
+Co-authored-by: Bensonbenyi <[REDACTED_EMAIL]>
+Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
+
+**File**: `server/models/mobileDevice.js` (modified, +2/-2)
+```diff
+@@ -167,7 +167,7 @@ const MobileDevice = {
+   /**
+    * Fetches mobile device by params.
+    * @param {object} clause - Prisma props for search
+-   * @returns {Promise<import("@prisma/client").desktop_mobile_devices[]>}
++   * @returns {Promise<import("@prisma/client").desktop_mobile_devices|null>}
+    */
+   get: async function (clause = {}, include = null) {
+     try {
+@@ -178,7 +178,7 @@ const MobileDevice = {
+       return device;
+     } catch (error) {
+       console.error("FAILED TO GET MOBILE DEVICE.", error);
+-      return [];
++      return null;
      }
    },
  
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7234** (2026-11-17): fix: match either explicitly restricted cron day field (@Max-Reisinger)
-- **PR #7233** (closed): fix: keep the telemetry switch on when opt-out fails (@Max-Reisinger)
-- **PR #7230** (2026-11-17): fix: ignore quoted separators in XLSX delimiter detection (@isnaenihidayat)
-- **PR #7228** (2026-11-17): fix: offer each Mistral model the reasoning levels it accepts (@timothycarambat)
-- **PR #7225** (2026-11-17): docs: clarify document paths for the removal API (@isnaenihidayat)
-- **PR #7218** (closed): security(collector): drop vulnerable decompress by bumping officeparser to ^5.0.0 (@ciberconsulta001)
+- **PR #7255** (closed): feat(tts): add GMI Cloud text-to-speech provider (@Jayanng)
+- **PR #7253** (closed): fix: bound storage filenames for text uploads (@Max-Reisinger)
+- **PR #7251** (closed): fix: preserve sibling articles in website imports (@Max-Reisinger)
+- **PR #7248** (2026-11-17): fix: prefer PDF Author over Creator for document author (@timothycarambat)
+- **PR #7247** (2026-11-17): fix(i18n): correct Turkish translations and refresh README (@alkank)
+- **PR #7246** (2026-11-17): fix: reject fractional keep-alive timeouts in isInteger validator (@rtmalikian)
 
 ---
 
@@ -1665,40 +1523,62 @@ Co-authored-by: Timothy Carambat <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep counting a numbered list that a code block interrupts in Word exports
+## X. misleading Model Router delete confirmation and surface workspac...
 
 **RULE**:
-When implementing operations in `server/utils/agents/aibitat/plugins/create-files/docx/utils.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/__tests__/models/modelRouter.test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `24fbd26c`: keep counting a numbered list that a code block interrupts in Word exports. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `64b599fc`: misleading Model Router delete confirmation and surface workspac.... Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/utils/agents/aibitat/plugins/create-files/docx/utils.js`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/__tests__/models/modelRouter.test.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-  // A numbered list that a code block or paragraph interrupted comes back from
-  // marked as <ol start="N">, so it keeps counting in the previous list's instance.
-  let lastOrdered = null;
-        const start = Number(child.getAttribute("start")) || 1;
-        const continues = tagName === "ol" && lastOrdered?.next === start;
-        const instance = continues ? lastOrdered.instance : ++listInstance;
-        if (tagName === "ol")
-          lastOrdered = { instance, next: start + child.children.length };
-            instance
+  $transaction: jest.fn(async (ops) => Promise.all(ops)),
+  model_routers: {
+    create: jest.fn(async ({ data }) => ({ id: 1, ...data })),
+    delete: jest.fn(async ({ where }) => ({ id: where.id })),
+  },
+  workspaces: {
+    updateMany: jest.fn(async () => ({ count: 1 })),
+  },
+
+/**
+ * Deleting a router also resets every workspace pointing at it back to the
+ * system LLM, in the same transaction, so no workspace keeps a router_id
+ * that no longer exists. Rollback on failure is Prisma's guarantee and is
+ * not something these mocks can observe.
+ */
+describe("ModelRouter.delete", () => {
+  const ROUTER_ID = 5;
+
+  beforeEach(() => {
+    prisma.$transaction.mockClear();
+    prisma.model_routers.delete.mockClear();
+    prisma.workspaces.updateMany.mockClear();
+  });
+
+  it("resets referencing workspaces to the system LLM and deletes the router in one transaction", async () => {
+    const success = await ModelRouter.delete(ROUTER_ID);
+
+    expect(success).toBe(true);
+    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+    expect(prisma.$transaction.mock.calls[0][0]).toHaveLength(2);
+    expect(prisma.workspaces.updateMany).toHaveBeenCalledWith({
+      where: { router_id: ROUTER_I
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-        listInstance++;
-            listInstance
+  model_routers: { create: jest.fn(async ({ data }) => ({ id: 1, ...data })) },
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `24fbd26c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `64b599fc` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

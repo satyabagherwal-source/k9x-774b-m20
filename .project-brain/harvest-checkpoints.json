@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T09:02:37.638Z",
+  "last_updated": "2026-11-18T09:19:39.605Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -995,14 +995,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-minimax-h3",
-      "content_hash": "aa0ce47f5c4b65f0353c678d21805a65a9282700fa5a636b094650b46875f96e",
-      "verified_at": "2026-11-13T22:17:31.431Z",
+      "content_hash": "854536773ccaa81553701dd10e2a055f59ff4fc219451cd86984a40bb985a057",
+      "verified_at": "2026-11-18T09:19:39.605Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T22:17:31.431Z"
+      "last_updated": "2026-11-18T09:19:39.605Z"
     },
     "timm/mobilenetv3_small_100.lamb_in1k": {
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
@@ -6561,14 +6561,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nasiko-labs-nasiko",
-      "content_hash": "608805c866d1de04412752e4804ecc30ebe5ad51882fdc332f1badb8dcfab55b",
-      "verified_at": "2026-11-17T03:41:55.339Z",
+      "content_hash": "b237999d893a00f25cb84836d4464383ea5704a24c2d0da1e64ddcee1570a329",
+      "verified_at": "2026-11-18T09:14:39.102Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T03:41:55.339Z"
+      "last_updated": "2026-11-18T09:14:39.102Z"
     },
     "berty/berty": {
       "repository": "berty/berty",
@@ -8241,14 +8241,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dnscontrol-dnscontrol",
-      "content_hash": "bf12c2d2577a3b15085dda9b313f01c65381d3acad979605d2e8cce74b3a97dc",
-      "verified_at": "2026-11-17T13:05:50.219Z",
+      "content_hash": "5fd719412df2560c71ae0d0c0375f851a8d730e2d31a2faf6780e877ccdcb99a",
+      "verified_at": "2026-11-18T09:14:46.960Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T13:05:50.219Z"
+      "last_updated": "2026-11-18T09:14:46.960Z"
     },
     "ydb-platform/ydb": {
       "repository": "ydb-platform/ydb",
@@ -9801,14 +9801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mintplex-labs-anything-llm",
-      "content_hash": "3a85483b8a2c666d43cb6ba5ed8d1c37c6e3d37357f1f576056ece00e8af587a",
-      "verified_at": "2026-11-17T15:59:55.298Z",
+      "content_hash": "b47312902d433f5226aa0eed4881f5b60748841fc75d7470f922044b2fcd1ba2",
+      "verified_at": "2026-11-18T09:14:50.304Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T15:59:55.298Z"
+      "last_updated": "2026-11-18T09:14:50.304Z"
     },
     "shadcn-ui/taxonomy": {
       "repository": "shadcn-ui/taxonomy",

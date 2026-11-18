@@ -4,22 +4,22 @@
 {
   "source_repository": "DNSControl/dnscontrol",
   "source_url": "https://github.com/DNSControl/dnscontrol",
-  "source_version": "0087e705",
+  "source_version": "1adf8aea",
   "license": "MIT",
-  "timestamp": "2026-11-17T13:05:50.393Z",
+  "timestamp": "2026-11-18T09:14:47.133Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dnscontrol-dnscontrol",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol) (Revision: `0087e705`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T13:05:50.393Z`  
+> **Provenance**: Harvested from [DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol) (Revision: `1adf8aea`).  
+> **License**: MIT | **Timestamp**: `2026-11-18T09:14:47.133Z`  
 > **Learning ID**: `learn-github-dnscontrol-dnscontrol`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `DNSControl/dnscontrol` (Commit: `0087e705`)
+- **Target Repository**: `DNSControl/dnscontrol` (Commit: `1adf8aea`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dnscontrol-dnscontrol-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T13:05:49.291Z  
+> **Harvest Timestamp**: 2026-11-18T09:14:46.033Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Infrastructure as code for DNS!
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4008 stars
+- **Stars / Engagement**: 4010 stars
 
 ---
 
@@ -443,6 +443,8 @@ func ZoneifyString(s string) string {
 	}
 	return ZoneifyStringQuoted(s)
 }
+
+// ZoneifyStringQuoted returns s as a quoted zonefile string.
 func ZoneifyStringQuoted(s string) string {
 	rdtxt := dnsrdatav2.TXT{Txt: []string{s}}
 	return rdtxt.String()
@@ -493,6 +495,7 @@ import (
 	dnsutilv2 "codeberg.org/miekg/dns/dnsutil"
 )
 
+// StripZone returns label relative to zone.
 func StripZone(label, zone string) string {
 	// Special cases.
 	if label == "" || label == "@" {
@@ -519,6 +522,7 @@ func StripZone(label, zone string) string {
 	return label
 }
 
+// Extend returns host as an FQDN within zone.
 func Extend(host, zone string) string {
 	if zone == "" {
 		// TODO(tlim): Issue a warning? This is a "flag" that means
@@ -664,11 +668,15 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5094** (2026-11-17): **fix(spflib): parse SPF mechanism names case-insensitively**
-  *Symptoms*: RFC 7208 says SPF mechanism names are case-insensitive, and the parser already lowercases `ip4:`, `a` and `mx` for that reason. The `all`, `include:`, `redirect=`, `exists:` and `ptr` checks still compared against the original text, so a record like `v=spf1 ip4:192.0.2.1 -ALL` was handled wrongly:  - `-ALL` was not seen as the end of the record. It fell into the `a` prefix branch, so `Lookups()` returned 1 instead of 0 and any terms after it were still parsed. - `Include:` and `Redirect=` failed with "unsupported SPF part", and `PTR` and `EXISTS:` were rejected the same way.  Those checks now use the lowercased name. The domain of an `include:` or `redirect=` keeps its original case.  I added `TestParseCaseInsensitiveMechanisms`. It fails on master and passes now, as do the rest of `pkg/spflib` and `pkg/normalize`. `go vet` and `gofmt` are clean. 
+- **Issue #5117** (2026-11-17): **refactor(p/OPENWRT): fix golint warnings**
+  *Symptoms*: # Issue  golint, which is obsolete but still useful, reports warnings.  # Resolution  Replace `idCounter += 1` with `idCounter++`.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
+  **Post-Mortem & Fix Analysis**:
+  > CC @huskyistaken for visibility
 
-- **Issue #5093** (2026-11-16): **chore: upgrade dependencies**
-  *Symptoms*: 
+- **Issue #5116** (2026-11-17): **refactor(p/CLOUDNS): fix golint warnings**
+  *Symptoms*: # Issue  golint, which is obsolete but still useful, reports warnings.  # Resolution  Rename `ttl_` to `ttl64` (no underscores in Go names).  🤖 Generated with [Claude Code](https://claude.com/claude-code)
+  **Post-Mortem & Fix Analysis**:
+  > CC @pragmaton for visibility.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -685,703 +693,393 @@ func (*gcoreProvider) AuditRecords(records models.Records) []error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `62af2f0e` (2026-11-16)
-**Commit Message**: fix: print-ir and --ir should round-trip (#5085)
+### Incident Patch 1: `c3db94d0` (2026-11-17)
+**Commit Message**: fix(preview): skip delegation check when a zone is pending creation (#5097)
+
+`dnscontrol preview` can still exit with "completed with errors" for a
+zone that `push` would create. #4612 stopped preview from fetching
+records for a not-yet-created zone, but `oneZone` still asks every DNS
+provider for its nameservers first, as part of the delegation check.
+Providers whose `GetNameservers` looks the zone up (e.g. CLOUDFLARE, via
+the zone cache) return an error for a zone that does not exist yet,
+which surfaces as a `DetermineNS` error. Providers that return a static
+list (e.g. LUADNS) were already fine.
+
+When preview finds the zone pending creation at any provider, this
+change:
+
+- gathers nameservers only from the providers where the zone already
+exists, so their record diffs still include the NS records;
+- skips the registrar check, since the full nameserver list is not known
+until the zone is created, and reports "Skipping registrar ... It will
+be checked when you run `dnscontrol push`" instead.
+
+`push` and `preview --populate-on-preview` are unchanged: the zone
+exists by the time the delegation is checked. `--no-populate` is also
+unchanged and still reports an error for a missing zon
+
+**File**: `commands/ppreviewPush.go` (modified, +58/-4)
+```diff
+@@ -588,7 +588,17 @@ func oneZonePopulate(zone *models.DomainConfig, zc *CmdZoneCache) error {
+ func oneZone(zone *models.DomainConfig, args PPreviewArgs, push bool) error {
+ 	var errs []error
+ 	// Fix the parent zone's delegation: (if able/needed)
+-	delegationCorrections, dcCount, err := generateDelegationCorrections(zone, zone.DNSProviderInstances, zone.RegistrarInstance)
++	var delegationCorrections []*models.Correction
++	var dcCount int
++	var err error
++	if existing, pending := splitPendingCreation(zone, push, args.PopulateOnPreview); len(pending) != 0 {
++		// Some providers can't report the nameservers of a zone that does not
++		// exist yet (GetNameservers fails), so the delegation can't be
++		// determined until the zone is created on push.
++		delegationCorrections, err = generatePendingDelegationCorrections(zone, existing, pending)
++	} else {
++		delegationCorrections, dcCount, err = generateDelegationCorrections(zone, zone.DNSProviderInstances, zone.RegistrarInstance)
++	}
+ 	if err != nil {
+ 		errs = append(errs, err)
+ 	}
+@@ -799,6 +809,20 @@ func reportZonePendingCreation(zone *models.DomainConfig, providerName string, p
+ 	return zoneWillBeCreated(zone, providerName)
+ }
+ 
++// splitPendingCreation partitions the zone's DNS providers into those where
++// the zone exists and those where this run will report it as pending creation
++// (see reportZonePendingCreation).
++func splitPendingCreation(zone *models.DomainConfig, push, populateOnPreview bool) (existing, pending []*models.DNSProviderInstance) {
++	for _, provider := range zone.DNSProviderInstances {
++		if reportZonePendingCreation(zone, provider.Name, push, populateOnPreview) {
++			pending = append(pending, provider)
++		} else {
++			existing = append(existing, provider)
++		}
++	}
++	return existing, pending
++}
++
+ func generatePopulateCorrections(provider *models.DNSProviderInstance, dc *models.DomainConfig, zcache *CmdZoneCache) ([]*models.Correction, error) {
+ 	lister, ok := provider.Driver.(providers.ZoneLister)
+ 	if !ok {
+@@ -839,14 +863,44 @@ func generateZoneCorrections(zone *models.DomainConfig, provider *models.DNSProv
+ 	return zoneCorrections, reports, actualChangeCount, nil
+ }
+ 
+-func generateDelegationCorrections(zone *models.DomainConfig, providers []*models.DNSProviderInstance, _ *models.RegistrarInstance) ([]*models.Correction, int, error) {
+-	// fmt.Printf("DEBUG: generateDelegationCorrections start zone=%q nsList = %v\n", zone.Name, zone.Nameservers)
++// determineNameservers sets the zone's nameservers from the given providers and
++// adds the corresponding NS records to the zone.
++func determineNameservers(zone *models.DomainConfig, providers []*models.DNSProviderInstance) ([]*models.Correction, error) {
+ 	nsList, err := nameservers.DetermineNameserversForProviders(zone, providers, true)
+ 	if err != nil {
+-		return msg(fmt.Sprintf("DetermineNS: zone %q; Error: %s", zone.Name, err)), 0, err
++		return msg(fmt.Sprintf("DetermineNS: zone %q; Error: %s", zone.Name, err)), err
+ 	}
+ 	zone.Nameservers = nsList
+ 	nameservers.AddNSRecords(zone)
++	return nil, nil
++}
++
++// generatePendingDelegationCorrections is used instead of
++// generateDelegationCorrections when the zone is pending creation at one or
++// more providers. Nameservers are gathered only from the providers where the
++// zone exists (so their record diffs still include the NS records) and the
++// registrar is not checked, since the full nameserver list is not yet known.
++func generatePendingDelegationCorrections(zone *models.DomainConfig, existing, pending []*models.DNSProviderInstance) ([]*models.Correction, error) {
++	if corrections, err := determineNameservers(zone, existing); err != nil {
++		return corrections, err
++	}
++
++	names := make([]string, len(pending))
++	for i, provider := range pending {
++		names[i] = provider.Name
++	}
++	return msg(fmt.Sprintf("Skipping registrar %q: The delegation of %q can not be checked until the zone is created at %s. It will be checked when you run `dnscontrol push`.",
++		zone.RegistrarName,
++		zone.Name,
++		strings.Join(names, ", "),
++	)), nil
++}
++
++func generateDelegationCorrections(zone *models.DomainConfig, providers []*models.DNSProviderInstance, _ *models.RegistrarInstance) ([]*models.Correction, int, error) {
++	// fmt.Printf("DEBUG: generateDelegationCorrections start zone=%q nsList = %v\n", zone.Name, zone.Nameservers)
++	if corrections, err := determineNameservers(zone, providers); err != nil {
++		return corrections, 0, err
++	}
+ 
+ 	if len(zone.Nameservers) == 0 && zone.Metadata["no_ns"] != "true" {
+ 		return []*models.Correction{{Msg: fmt.Sprintf("Skipping registrar %q: No nameservers declared for domain %q. Add {no_ns: 'true'} to force",
+```
+
+**File**: `commands/ppreviewPush_test.go` (modified, +111/-0)
+```diff
+@@ -1,6 +1,8 @@
+ package commands
+ 
+ import (
++	"errors"
++	"strings"
+ 	"testing"
+ 
+ 	"github.com/DNSControl/dnscontrol/v5/models"
+@@ -248,3 +250,112 @@ func Test_reportZonePendingCreation(t *testing.T) {
+ 		})
+ 	}
+ }
++
++// fakeDNSProvider is a models.DNSProvider whose GetNameservers fails when the
++// zone does not exist, like providers that look the zone up at the API.
++type fakeDNSProvider struct {
++	zoneExists bool
++	nsCalls    int
++}
++
++func (f *fakeDNSProvider) AuditRecords(models.Records) []error { return nil }
++
++func (f *fakeDNSProvider) GetNameservers(string) ([]*models.Nameserver, error) {
++	f.nsCalls++
++	if !f.zoneExists {
++		return nil, errors.New("zone not found")
++	}
++	return models.ToNameservers([]string{"ns1.example.net", "ns2.example.net"})
++}
++
++func (f *fakeDNSProvider) GetZoneRecords(*models.DomainConfig) (models.Records, error) {
++	return nil, errors.New("not implemented")
++}
++
++func (f *fakeDNSProvider) GetZoneRecordsCorrections(*models.DomainConfig, models.Records) ([]*models.Correction, int, error) {
++	return nil, 0, errors.New("not implemented")
++}
++
++type fakeRegistrar struct {
++	calls int
++}
++
++func (f *fakeRegistrar) GetRegistrarCorrections(*models.DomainConfig) ([]*models.Correction, error) {
++	f.calls++
++	return nil, nil
++}
++
++func Test_splitPendingCreation(t *testing.T) {
++	zone := models.MustNewDomainConfig("example.com")
++	zone.DNSProviderInstances = []*models.DNSProviderInstance{
++		{ProviderBase: models.ProviderBase{Name: "new"}},
++		{ProviderBase: models.ProviderBase{Name: "old"}},
++	}
++	zone.StorePopulateCorrections("new", []*models.Correction{{Msg: "Ensuring zone exists", F: func() error { return nil }}})
++
++	tests := []struct {
++		name              string
++		push              bool
++		populateOnPreview bool
++		wantPending       int
++	}{
++		{name: "preview", wantPending: 1},
++		{name: "push", push: true, wantPending: 0},
++		{name: "preview with --populate-on-preview", populateOnPreview: true, wantPending: 0},
++	}
++
++	for _, tc := range tests {
++		t.Run(tc.name, func(t *testing.T) {
++			existing, pending := splitPendingCreation(zone, tc.push, tc.populateOnPreview)
++			if len(pending) != tc.wantPending || len(existing)+len(pending) != 2 {
++				t.Errorf("splitPendingCreation() = %d existing, %d pending; want %d pending", len(existing), len(pending), tc.wantPending)
++			}
++			if tc.wantPending == 1 && pending[0].Name != "new" {
++				t.Errorf("splitPendingCreation() pending = %q, want %q", pending[0].Name, "new")
++			}
++		})
++	}
++}
++
++// Previewing a zone that push will create must not fail just because the
++// provider can't list nameservers for a zone that does not exist yet.
++func Test_oneZone_pendingCreationSkipsDelegation(t *testing.T) {
++	newProv := &fakeDNSProvider{zoneExists: false}
++	oldProv := &fakeDNSProvider{zoneExists: true}
++	reg := &fakeRegistrar{}
++
++	zone := models.MustNewDomainConfig("example.com")
++	zone.RegistrarName = "reg"
++	zone.RegistrarInstance = &models.RegistrarInstance{ProviderBase: models.ProviderBase{Name: "reg"}, Driver: reg}
++	zone.DNSProviderInstances = []*models.DNSProviderInstance{
++		{ProviderBase: models.ProviderBase{Name: "new"}, Driver: newProv, NumberOfNameservers: -1},
++		{ProviderBase: models.ProviderBase{Name: "old"}, Driver: oldProv, NumberOfNameservers: -1},
++	}
++	zone.StorePopulateCorrections("new", []*models.Correction{{Msg: "Ensuring zone exists", F: func() error { return nil }}})
++
++	// Limit record processing to the pending provider; the fake can't diff records.
++	if err := oneZone(zone, PPreviewArgs{FilterArgs: FilterArgs{Providers: "new"}}, false); err != nil {
++		t.Fatalf("oneZone() error = %v, want nil", err)
++	}
++
++	if newProv.nsCalls != 0 {
++		t.Errorf("GetNameservers called %d time(s) on the provider where the zone is pending creation", newProv.nsCalls)
++	}
++	if oldProv.nsCalls != 1 {
++		t.Errorf("GetNameservers called %d time(s) on the provider where the zone exists, want 1", oldProv.nsCalls)
++	}
++	if len(zone.Nameservers) != 2 {
++		t.Errorf("zone has %d nameservers, want 2 from the existing provider", len(zone.Nameservers))
++	}
++	if reg.calls != 0 {
++		t.Errorf("GetRegistrarCorrections called %d time(s), want 0", reg.calls)
++	}
++
++	corrections := zone.GetCorrections("reg")
++	if len(corrections) != 1 || corrections[0].F != nil || !strings.Contains(corrections[0].Msg, "Skipping registrar") {
++		t.Errorf("registrar corrections = %+v, want one informational message", corrections)
++	}
++	if got := zone.GetChangeCount("reg"); got != 0 {
++		t.Errorf("registrar change count = %d, want 0", got)
++	}
++}
+```
+
+---
+
+### Incident Patch 2: `0c7e95df` (2026-11-17)
+**Commit Message**: fix: reject empty and handle absolute labels in D_EXTEND() (#5104)
+
+## Bug
+
+Under `D_EXTEND("sub.example.com", ...)`, `LabelFromDnsconfigjs` joined
+every label to the subdomain without the checks `D()` applies, so it
+built broken names that nothing downstream rejected:
+
+| dnsconfig.js | before (label stored) | after |
+|---|---|---|
+| `A("", ...)` | `.sub` | error: `label "" is invalid. Use "@" ...` |
+| `A("foo.", ...)` | `foo..sub` | error: `label "foo." is not in domain
+"example.com"` |
+| `A("foo.other.com.", ...)` | `foo.other.com..sub` | error: not in
+domain |
+| `A("www.sub.example.com.", ...)` | `www.sub.example.com..sub` |
+`www.sub` |
+
+(`checkLabel` in pkg/normalize has checks for `""` and a trailing `.`,
+but they never saw these, because the label had already been joined to
+the subdomain.)
+
+## Fix
+
+In `labelFromDnsconfigjs`, an empty label or one ending in `.` is
+handled by the same code as in `D()`. Labels ending in `.` are absolute,
+so the subdomain doesn't apply to them.
+
+## Tests
+
+- New `TestDomainConfig_LabelFromDnsconfigjsErrors`.
+- Two new success cases in `TestDomainConfig_LabelFromDnsconfigjs`.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-auth
+
+**File**: `models/record_label.go` (modified, +3/-1)
+```diff
+@@ -171,7 +171,9 @@ func stripReverseZoneSuffix(label, zone string) string {
+ // labelFromDnsconfigjs implements LabelFromDnsconfigjs, except for the
+ // reverse zone suffix stripping.
+ func (dc *DomainConfig) labelFromDnsconfigjs(rawLabel, subdomainASCII string) (string, error) {
+-	if subdomainASCII == "" {
++	// An empty label is rejected, and a label ending in "." is absolute, the
++	// same as without D_EXTEND(); the subdomain does not apply to either.
++	if subdomainASCII == "" || rawLabel == "" || strings.HasSuffix(rawLabel, ".") {
+ 		return dc.labelFromDnsconfigjsHelper(rawLabel)
+ 	}
+ 
+```
+
+**File**: `models/record_label_test.go` (modified, +25/-0)
+```diff
+@@ -31,6 +31,29 @@ func TestDomainConfig_LabelFromFQDNNoDot(t *testing.T) {
+ 	}
+ }
+ 
++func TestDomainConfig_LabelFromDnsconfigjsErrors(t *testing.T) {
++	tests := []struct {
++		tname     string
++		subdomain string
++		label     string
++	}{
++		{"empty", "", ""},
++		{"empty under a subdomain", "sub", ""},
++		{"trailing dot", "", "foo."},
++		{"trailing dot under a subdomain", "sub", "foo."},
++		{"other zone", "", "foo.other.com."},
++		{"other zone under a subdomain", "sub", "foo.other.com."},
++	}
++	for _, tt := range tests {
++		t.Run(tt.tname, func(t *testing.T) {
++			dc := models.MustNewDomainConfig("example.com")
++			if got, err := dc.LabelFromDnsconfigjs(tt.label, tt.subdomain); err == nil {
++				t.Errorf("LabelFromDnsconfigjs(%q, %q) = %q, want error", tt.label, tt.subdomain, got)
++			}
++		})
++	}
++}
++
+ func TestDomainConfig_LabelFromDnsconfigjs(t *testing.T) {
+ 	const ip6Zone = "8.b.d.0.1.0.0.2.ip6.arpa"
+ 	const ip6Sub = "d.c.b.a.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0"
+@@ -57,6 +80,8 @@ func TestDomainConfig_LabelFromDnsconfigjs(t *testing.T) {
+ 		{"ip6 zone suffix is stripped", ip6Zone, "", "1.0." + ip6Zone, "1.0"},
+ 		{"forward zone suffix is not stripped", "example.com", "", "www.example.com", "www.example.com"},
+ 		{"ip6 zone suffix is stripped under subdomain a", ip6Zone, "a", "1.a." + ip6Zone, "1.a"},
++		{"fqdn under a subdomain is absolute", "example.com", "sub", "www.sub.example.com.", "www.sub"},
++		{"zone fqdn under a subdomain is the apex", "example.com", "sub", "example.com.", "@"},
+ 	}
+ 	for _, tt := range tests {
+ 		t.Run(tt.tname, func(t *testing.T) {
+```
+
+---
+
+### Incident Patch 3: `1adf8aea` (2026-11-17)
+**Commit Message**: refactor(p/OPENWRT): fix golint warnings (#5117)
 
 # Issue
 
-`dnscontrol print-ir --out filename` followed by `dnscontrol preview
---ir filename` should round-trip. It doesn't: `rdata` is ignored when
-the IR is read.
-
-Fixes #4854. Supersedes #4859 (same approach, redone on current `main`;
-RFC 8427 is not used).
+golint, which is obsolete but still useful, reports warnings.
 
 # Resolution
 
-Each record's `rdata` is now a **string in zonefile format** (the output
-of `RDATA.String()`) and is parsed on read by `dnsv2.NewData()` (via
-`myNewData`).
+Replace `idCounter += 1` with `idCounter++`.
 
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `providers/openwrt/api.go` (modified, +2/-2)
 ```diff
--"rdata": { "Preference": 10, "Mx": "mx.example.com." },
-+"rdata": "10 mx.example.com.",
-```
-
-* Hostnames in `rdata` must be FQDNs with the trailing dot. There is no
-origin when reading an IR file.
-* A missing `rdata`, an old-style object, or an unparsable string is an
-error that names the record and type.
-
-# Breaking / behavior changes
-
-* **IR format:** `rdata` changes from a JSON object to a string.
-Anything reading structured fields out of `print-ir` output (e.g. with
-`jq`) must be updated.
-* **SOA mailbox:** a mailbox containing a dot now gets a trailing dot
-(`admin.foo.com` / `[REDACTED_EMAIL]` -> `admin.foo.com.`). BIND previously
-wrote it without the dot, which a nameserver reads as relative to
-
-**File**: `commands/provider_syntax_test.go` (modified, +26/-0)
-```diff
-@@ -302,6 +302,32 @@ func TestProviderSyntaxIRLoading(t *testing.T) {
- 	require.Equal(t, "both", roundTrip.Domains[0].DNSProviderInstances[0].Name)
+@@ -20,7 +20,7 @@ type rpcRequest struct {
  }
  
-+func TestIRLoadingRecords(t *testing.T) {
-+	// "print-ir --out file" followed by "--ir file" must preserve the records.
-+	cfg := loadSyntaxConfig(t, `D("example.com", REGISTRAR("both"), SERVICE("both"),
-+		A("@", "192.0.2.1"),
-+		MX("@", 10, "mx"),
-+		TXT("@", "has \"quotes\" and spaces"),
-+		CAA("@", "issue", "letsencrypt.org"),
-+		SRV("_sip._tcp", 10, 20, 5060, "sip.example.com."),
-+		HTTPS("@", 1, ".", "alpn=h3,h2 port=443"),
-+		CF_SINGLE_REDIRECT("name", 301, 'http.host eq "example.com"', 'concat("https://example.net", http.request.uri.path)'),
-+	);`)
-+	want, err := json.Marshal(cfg)
-+	require.NoError(t, err)
-+	irPath := filepath.Join(t.TempDir(), "dnsconfig.json")
-+	require.NoError(t, os.WriteFile(irPath, want, 0o600))
-+	roundTrip, err := GetDNSConfig(GetDNSConfigArgs{JSONFile: irPath})
-+	require.NoError(t, err)
-+	got, err := json.Marshal(roundTrip)
-+	require.NoError(t, err)
-+	require.JSONEq(t, string(want), string(got))
-+	require.Len(t, roundTrip.Domains[0].Records, len(cfg.Domains[0].Records))
-+	for _, rec := range roundTrip.Domains[0].Records {
-+		require.NotNil(t, rec.GetRDATA(), rec.Type)
-+	}
-+}
-+
- func TestServiceSyntaxDomainMetadata(t *testing.T) {
- 	for _, initializer := range syntaxInitializers {
- 		t.Run(initializer.name, func(t *testing.T) {
-```
-
-**File**: `commands/types/dnscontrol.d.ts` (modified, +2/-0)
-```diff
-@@ -857,6 +857,8 @@ declare function CSYNC(name: string, serial: number, flags: number, types: strin
-  *
-  * A domain name without a `!` is assigned a tag that is the empty string. For example, `example.com` and `example.com!` are equivalent. However, we strongly recommend against using the empty tag, as it risks creating confusion.  In other words, if you have `domain.tld` and `domain.tld!external` you now require humans to remember that `domain.tld` is the external one.  I mean... the internal one.  You may have noticed this mistake, but will your coworkers?  Will you in six months? You get the idea.
-  *
-+ * A tag may contain only letters, digits, hyphens (`-`), underscores (`_`), and dots (`.`), and may not start with a dot. For example, `example.com!inside` and `example.com!v1.2` are valid; `example.com!in/side` and `example.com!.hidden` are rejected.
-+ *
-  * DNSControl command line flag `--domains` matches the full name (with the "!").  If you define domains `example.com!john`, `example.com!paul`, and `example.com!george` then:
-  *
-  * - `--domains=example.com` will not match any of the three.
-```
-
-**File**: `documentation/advanced-features/unittests.md` (modified, +4/-0)
-```diff
-@@ -22,6 +22,10 @@ dnscontrol print-ir --out foo.json --pretty
- **NOTE**: The `--pretty` flag is optional.
- {% endhint %}
+ func getAuthorization(username string, password string, host string) (string, error) {
+-	idCounter += 1
++	idCounter++
+ 	reqBody, err := json.Marshal(rpcRequest{
+ 		ID:     idCounter,
+ 		Method: "login",
+@@ -196,7 +196,7 @@ func (c *openwrtProvider) uciGetAll() (map[string]nativeRecord, error) {
+ func (c *openwrtProvider) uciCall(method string, params []any) ([]byte, error) {
+ 	client := &http.Client{}
  
-+{% hint style="info" %}
-+**NOTE**: Each record's `rdata` is a string in zonefile format (for example, `"10 mx.example.com."` for an MX record), not a JSON object.
-+{% endhint %}
-+
- Here is a sample test written in `bash` using the [jq](https://stedolan.github.io/jq/) command.  This fails if the number of MX records in the `stackex.com` domain is not exactly 5:
- 
- ```bash
-```
-
-**File**: `documentation/commands/preview-push.md` (modified, +20/-0)
-```diff
-@@ -70,9 +70,29 @@ OPTIONS:
- * `--cmode value`
-  * Concurrency mode. See below.
- 
-+* `--ir name`
-+ * Read the intermediate representation (IR) from the JSON file `name` and do not process `dnsconfig.js`. The file is typically generated by `dnscontrol print-ir --out name`. See below.
-+
- * `--report name`
-  * Write a machine-parseable report of corrections to the file named `name`. If no name is specified, no report is generated. See [JSON Reports](../advanced-features/json-reports.md)
- 
-+## IR files
-+
-+The output of `dnscontrol print-ir --out file.json` can be read by `preview`/`push` using `--ir file.json`.
-+
-+{% hint style="warning" %}
-+**WARNING**: The IR format is not a stable interface. It will change between releases without notice. It is safer to generate an IR file using `print-ir` and modify it than to generate one from scratch.
-+{% endhint %}
-+
-+Each record's fields are stored in `rdata` as a string in zonefile format, exactly as they would appear to the right of the record type in a zonefile:
-+
-+```json
-+{ "name": "@", "ttl": 300, "type": "MX", "typenum": 15, "rdata": "10 mx.example.com." }
-+```
-+
-+* Hostnames in `rdata` must be FQDNs with the trailing dot (`mx.example.com.`, not `mx` nor `mx.example.com`).
-+* TXT strings should be quoted (`"rdata": "\"v=spf1 -all\""`).
-+
- ## cmode
- 
- The `preview`/`push` commands begin with a data-gathering phase that collects current configuration from providers and zones. This collection can be done sequentially or concurrently. Concurrently is significantly faster. However since concurrent mode is newer, not all providers have been tested and certified as being compatible with this mode. Therefore the `--cmode` flag can be used to control concurrency.
-```
-
-**File**: `models/makers.go` (modified, +4/-1)
-```diff
-@@ -270,7 +270,10 @@ func MakeNAPTR(origin string, _ map[string]string, isEnabled nrc.Flags, args ...
- 	}
- 	// The NAPTR replacement is a domain name; an empty replacement is canonically
- 	// the root, ".". Normalize so it renders consistently in zone files.
--	replacement := mustbe.RawString(args[5])
-+	replacement, err := mustbe.TargetHostSRV(origin, isEnabled, args[5])
-+	if err != nil {
-+		return nil, err
-+	}
- 	if replacement == "" {
- 		replacement = "."
- 	}
-```
-
-**File**: `models/record.go` (modified, +45/-3)
-```diff
-@@ -69,22 +69,64 @@ type RecordConfig struct {
- 	UnknownTypeName string `json:"unknown_type_name,omitempty"`
- }
- 
--// MarshalJSON marshals RecordConfig.
-+// MarshalJSON marshals RecordConfig. .rdata is written as a string in
-+// zonefile (presentation) format, i.e. the output of RDATA.String(). This is
-+// what UnmarshalJSON parses to restore the field.
- func (rc *RecordConfig) MarshalJSON() ([]byte, error) {
- 	recj := &struct {
- 		RecordConfig
--		RDATA dnsv2.RDATA `json:"rdata,omitempty"`
-+		RDATA *string `json:"rdata,omitempty"`
- 	}{
- 		RecordConfig: *rc,
- 	}
--	recj.RDATA = rc.GetRDATA()
-+	if rd := rc.GetRDATA(); rd != nil {
-+		s := rd.String()
-+		recj.RDATA = &s
-+	}
- 	j, err := json.Marshal(*recj)
- 	if err != nil {
- 		return nil, err
- 	}
- 	return j, nil
- }
- 
-+// UnmarshalJSON unmarshals RecordConfig. The "rdata" field is a string in
-+// zonefile (presentation) format, as generated by MarshalJSON. It is parsed
-+// the same way NewRecordConfigParse parses its input, with one exception:
-+// there is no origin, therefore hostnames must be FQDNs (with the trailing dot).
-+func (rc *RecordConfig) UnmarshalJSON(data []byte) error {
-+	type recordConfigAlias RecordConfig // Avoid infinite recursion.
-+	recj := &struct {
-+		*recordConfigAlias
-+		RDATA *string `json:"rdata"`
-+	}{
-+		recordConfigAlias: (*recordConfigAlias)(rc),
-+	}
-+	if err := json.Unmarshal(data, recj); err != nil {
-+		return err
-+	}
-+
-+	if rc.TypeNum == 0 {
-+		rc.TypeNum = dnsv2.StringToType[rc.Type]
-+	}
-+	if rc.TypeNum == 0 {
-+		return fmt.Errorf("record %q has no usable typenum or type (type=%q)", rc.Name, rc.Type)
-+	}
-+	if rc.Type == "" {
-+		rc.Type = dnsv2.TypeToString[rc.TypeNum]
-+	}
-+
-+	if recj.RDATA == nil {
-+		return fmt.Errorf("record %q (type %s) has no rdata", rc.Name, rc.Type)
-+	}
-+	rd, err := myNewData(rc.TypeNum, *recj.RDATA, "")
-+	if err != nil {
-+		return fmt.Errorf("record %q (type %s): %w", rc.Name, rc.Type, err)
-+	}
-+	rc.SetRDATA(rd)
-+	return nil
-+}
-+
- // FixPosition takes the string representation of a position in a file that
- // comes from dnsconfig.js's initial execution, and reduces it down to just the
- // line/position we display to the user. The input is not well-defined, thus if
-```
-
-**File**: `models/record_astype.go` (modified, +12/-0)
-```diff
-@@ -227,6 +227,10 @@ func (rc *RecordConfig) AsMIKROTIKFWD() privatetypesrdata.MIKROTIKFWD {
- 	return rc.GetRDATA().(privatetypesrdata.MIKROTIKFWD)
- }
- 
-+func (rc *RecordConfig) AsMIKROTIKNXDOMAIN() privatetypesrdata.MIKROTIKNXDOMAIN {
-+	return rc.GetRDATA().(privatetypesrdata.MIKROTIKNXDOMAIN)
-+}
-+
- func (rc *RecordConfig) AsMINFO() dnsrdatav2.MINFO {
- 	return rc.GetRDATA().(dnsrdatav2.MINFO)
- }
-@@ -243,6 +247,14 @@ func (rc *RecordConfig) AsNAPTR() dnsrdatav2.NAPTR {
- 	return rc.GetRDATA().(dnsrdatav2.NAPTR)
- }
- 
-+func (rc *RecordConfig) AsNETLIFY() privatetypesrdata.NETLIFY {
-+	return rc.GetRDATA().(privatetypesrdata.NETLIFY)
-+}
-+
-+func (rc *RecordConfig) AsNETLIFYV6() privatetypesrdata.NETLIFYV6 {
-+	return rc.GetRDATA().(privatetypesrdata.NETLIFYV6)
-+}
-+
- func (rc *RecordConfig) AsNID() dnsrdatav2.NID {
- 	return rc.GetRDATA().(dnsrdatav2.NID)
- }
-```
-
-**File**: `models/record_factory.go` (modified, +2/-2)
-```diff
-@@ -120,8 +120,8 @@ func myNewData(typeNum uint16, contents string, origin string) (dnsv2.RDATA, err
- 		return nil, fmt.Errorf("NewData(%d, %q, %q) failed: %w", typeNum, contents, origin+".", err)
- 	}
- 	// We do not need to call normalizeRDATA here because every caller to
--	// myNewData eventually passes the result to newRecordConfigHelper,
--	// which calls SetRDATA, which calls normalizeRDATA.
-+	// myNewData eventually passes the result to SetRDATA (directly, or via
-+	// newRecordConfigHelper), which calls normalizeRDATA.
- 	return rd2, nil
- }
- 
-```
-
----
-
-### Incident Patch 2: `0087e705` (2026-11-17)
-**Commit Message**: fix(spflib): parse SPF mechanism names case-insensitively (#5094)
-
-RFC 7208 says SPF mechanism names are case-insensitive, and the parser
-already lowercases `ip4:`, `a` and `mx` for that reason. The `all`,
-`include:`, `redirect=`, `exists:` and `ptr` checks still compared
-against the original text, so a record like `v=spf1 ip4:192.0.2.1 -ALL`
-was handled wrongly:
-
-- `-ALL` was not seen as the end of the record. It fell into the `a`
-prefix branch, so `Lookups()` returned 1 instead of 0 and any terms
-after it were still parsed.
-- `Include:` and `Redirect=` failed with "unsupported SPF part", and
-`PTR` and `EXISTS:` were rejected the same way.
-
-Those checks now use the lowercased name. The domain of an `include:` or
-`redirect=` keeps its original case.
-
-I added `TestParseCaseInsensitiveMechanisms`. It fails on master and
-passes now, as do the rest of `pkg/spflib` and `pkg/normalize`. `go vet`
-and `gofmt` are clean.
-
-**File**: `pkg/spflib/parse.go` (modified, +6/-6)
-```diff
-@@ -62,29 +62,29 @@ func parse(text string, dnsres Resolver, chain []string) (*SPFRecord, error) {
- 		}
- 		lcpart := strings.ToLower(part) // We have seen "Ip4" instead of "ip4".  Let's be gracious and allow it.
- 		rec.Parts = append(rec.Parts, p)
--		if part == "all" {
-+		if lcpart == "all" {
- 			// all. nothing else matters.
- 			break
- 		} else if strings.HasPrefix(lcpart, "a") || strings.HasPrefix(lcpart, "mx") {
- 			p.IsLookup = true
- 		} else if strings.HasPrefix(lcpart, "ip4:") || strings.HasPrefix(lcpart, "ip6:") {
- 			// ip address, 0 lookups
- 			continue
--		} else if strings.HasPrefix(part, "include:") || strings.HasPrefix(part, "redirect=") {
-+		} else if strings.HasPrefix(lcpart, "include:") || strings.HasPrefix(lcpart, "redirect=") {
- 			// redirect is only partially implemented. redirect is a
- 			// complex and IMHO ambiguously defined feature.  We only
- 			// implement the most simple edge case: when it is the last item
- 			// in the string.  In that situation, it is the equivalent of
- 			// include:.
--			if strings.HasPrefix(part, "redirect=") {
-+			if strings.HasPrefix(lcpart, "redirect=") {
- 				// pi + 2: because pi starts at 0 when it iterates starting on parts[1],
- 				// and because len(parts) is one bigger than the highest index.
- 				if (pi + 2) != len(parts) {
- 					return nil, fmt.Errorf("%s must be last item", part)
- 				}
--				p.IncludeDomain = strings.TrimPrefix(part, "redirect=")
-+				p.IncludeDomain = part[len("redirect="):]
- 			} else {
--				p.IncludeDomain = strings.TrimPrefix(part, "include:")
-+				p.IncludeDomain = part[len("include:"):]
- 			}
- 			p.IsLookup = true
- 			if dnsres != nil {
-@@ -100,7 +100,7 @@ func parse(text string, dnsres Resolver, chain []string) (*SPFRecord, error) {
- 					return nil, fmt.Errorf("in included SPF: %w", err)
- 				}
- 			}
--		} else if strings.HasPrefix(part, "exists:") || part == "ptr" || strings.HasPrefix(part, "ptr:") {
-+		} else if strings.HasPrefix(lcpart, "exists:") || lcpart == "ptr" || strings.HasPrefix(lcpart, "ptr:") {
- 			p.IsLookup = true
- 		} else {
- 			return nil, fmt.Errorf("unsupported SPF part %s", part)
-```
-
-**File**: `pkg/spflib/parse_test.go` (modified, +38/-0)
-```diff
-@@ -276,3 +276,41 @@ func TestParseRedirectLast(t *testing.T) {
- 	}
- 	t.Log(rec.Print())
- }
-+
-+func TestParseCaseInsensitiveMechanisms(t *testing.T) {
-+	// Mechanism names are case-insensitive (RFC 7208 section 4.6.1).
-+	tests := []struct {
-+		input   string
-+		wantErr bool
-+		lookups int
-+		parts   int
-+		domain  string
-+	}{
-+		{"v=spf1 ip4:192.0.2.1 -ALL", false, 0, 2, ""},
-+		{"v=spf1 ip4:192.0.2.1 -All mx", false, 0, 2, ""},
-+		{"v=spf1 PTR -all", false, 1, 2, ""},
-+		{"v=spf1 EXISTS:example.com -all", false, 1, 2, ""},
-+		{"v=spf1 Include:Example.COM -all", false, 1, 2, "Example.COM"},
-+		{"v=spf1 REDIRECT=Example.COM", false, 1, 1, "Example.COM"},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.input, func(t *testing.T) {
-+			rec, err := Parse(tt.input, nil)
-+			if (err != nil) != tt.wantErr {
-+				t.Fatalf("Parse(%q) error = %v, wantErr %v", tt.input, err, tt.wantErr)
-+			}
-+			if err != nil {
-+				return
-+			}
-+			if got := rec.Lookups(); got != tt.lookups {
-+				t.Errorf("Parse(%q) lookups = %d, want %d", tt.input, got, tt.lookups)
-+			}
-+			if got := len(rec.Parts); got != tt.parts {
-+				t.Errorf("Parse(%q) parts = %d, want %d", tt.input, got, tt.parts)
-+			}
-+			if got := rec.Parts[0].IncludeDomain; got != tt.domain {
-+				t.Errorf("Parse(%q) include domain = %q, want %q", tt.input, got, tt.domain)
-+			}
-+		})
-+	}
-+}
-```
-
----
-
-### Incident Patch 3: `d252461b` (2026-11-16)
-**Commit Message**: fix(dnsconfig): reject domain names and tags that escape the zone directory (#5091)
-
-The BIND provider used the D() name verbatim when building the zone file
-path, so a name containing ".." elements could create a .zone file (and
-its parent directories) outside the configured directory.
-(GHSA-rrxr-r9rr-crr4)
-
-Other providers may have similar issues where the API would be confused
-by such names.
-
-* BIND: build the zone file path in one place (zoneFilePath) and reject
-any generated filename that is not local to the zone directory. Names
-containing a slash (RFC 2317 zones) still work.
-* DNSConfig.PostProcess: reject domain names with an empty label (a
-leading dot or consecutive dots), so "dnscontrol check" catches them for
-all providers.
-* DNSConfig.PostProcess: restrict tags ("example.com!tag") to letters,
-digits, hyphens, underscores, and dots, with no leading dot.
-
----------
-
-Co-authored-by: Claude <[REDACTED_EMAIL]>
-
-**File**: `documentation/language-reference/top-level-functions/D.md` (modified, +2/-0)
-```diff
-@@ -115,6 +115,8 @@ D_EXTEND("example.com!inside",
- 
- A domain name without a `!` is assigned a tag that is the empty string. For example, `example.com` and `example.com!` are equivalent. However, we strongly recommend against using the empty tag, as it risks creating confusion.  In other words, if you have `domain.tld` and `domain.tld!external` you now require humans to remember that `domain.tld` is the external one.  I mean... the internal one.  You may have noticed this mistake, but will your coworkers?  Will you in six months? You get the idea.
- 
-+A tag may contain only letters, digits, hyphens (`-`), underscores (`_`), and dots (`.`), and may not start with a dot. For example, `example.com!inside` and `example.com!v1.2` are valid; `example.com!in/side` and `example.com!.hidden` are rejected.
-+
- DNSControl command line flag `--domains` matches the full name (with the "!").  If you define domains `example.com!john`, `example.com!paul`, and `example.com!george` then:
- 
- - `--domains=example.com` will not match any of the three.
-```
-
-**File**: `documentation/provider/bind.md` (modified, +2/-0)
-```diff
-@@ -31,6 +31,8 @@ Example:
- 
- As of v4.2.0 `dnscontrol push` will create subdirectories along the path to the filename. This includes both the portion of the path created by the `directory` setting and the `filenameformat` setting. For security reasons, the automatic creation of subdirectories is disabled if `dnscontrol` is running as root. (Running DNSControl as root is not recommended in general.)
- 
-+Zone files are always written within `directory`. A domain name that contains a slash (for example, the RFC 2317 zone `0/26.2.0.192.in-addr.arpa`) is stored in a subdirectory of `directory`. A domain name or tag that would place the zone file outside of `directory` is rejected. For example these zones would be rejected: `../../example.com`, `exam/../ple.com`, `example.com~tag/../owned`.
-+
- ## Meta configuration
- 
- This provider accepts some optional metadata in the `SERVICE()` call.
-```
-
-**File**: `models/dns.go` (modified, +16/-0)
-```diff
-@@ -4,6 +4,8 @@ import (
- 	"encoding/json"
- 	"errors"
- 	"fmt"
-+	"regexp"
-+	"slices"
- 	"strings"
- )
- 
-@@ -105,6 +107,9 @@ type Correction struct {
- 	Msg string
- }
- 
-+// validTagRe matches the tags permitted in "example.com!tag". The empty tag is permitted.
-+var validTagRe = regexp.MustCompile(`^([A-Za-z0-9_-][A-Za-z0-9_.-]*)?$`)
-+
- // PostProcess performs and post-processing required after running dnsconfig.js and loading the result.
- func (config *DNSConfig) PostProcess() error {
- 	for _, domain := range config.Domains {
-@@ -114,6 +119,17 @@ func (config *DNSConfig) PostProcess() error {
- 		if strings.HasSuffix(domain.Name, ".") {
- 			return fmt.Errorf("domain name %q must not end with a dot", domain.Name)
- 		}
-+		// A domain name with an empty label (a leading dot or consecutive
-+		// dots, as in "../example.com") is not a valid DNS name.  Providers
-+		// use the name to build filenames and URLs, so reject it here.
-+		if slices.Contains(strings.Split(domain.Name, "."), "") {
-+			return fmt.Errorf("domain name %q must not contain an empty label", domain.Name)
-+		}
-+		// The tag (the "tag" in "example.com!tag") is used by providers to
-+		// build filenames, so restrict it to a conservative character set.
-+		if !validTagRe.MatchString(domain.Tag) {
-+			return fmt.Errorf("domain %q: tag %q may only contain letters, digits, hyphens, underscores, and dots, and must not start with a dot", domain.Name, domain.Tag)
-+		}
- 		// dnsconfig.js creates records only via the record constructors
- 		// (A(), TXT(), ...), which arrive as .RawRecords and are imported
- 		// by ImportRawRecords().  RecordConfig.rdata is unexported, so a
-```
-
-**File**: `pkg/js/domain_names_test.go` (added, +48/-0)
-```diff
-@@ -0,0 +1,48 @@
-+package js
-+
-+import (
-+	"fmt"
-+	"testing"
-+)
-+
-+// TestDomainNameValidation verifies that invalid domain names and tags
-+// are rejected as soon as dnsconfig.js is processed. (GHSA-rrxr-r9rr-crr4)
-+func TestDomainNameValidation(t *testing.T) {
-+	tests := []struct {
-+		name    string
-+		wantErr bool
-+	}{
-+		{"example.com", false},
-+		{"example.com!inside", false},
-+		{"example.com!in_side-2", false},
-+		{"example.com!", false},
-+		{"0/26.2.0.192.in-addr.arpa", false},
-+		{"рф.com", false},
-+		{"bücher.example", false},
-+		{"例え.jp", false},
-+		{"münchen.de!inside", false},
-+		{"xn--p1ai.com", false},
-+		{"example.com.", true},
-+		{"../../outside/deep/owned", true},
-+		{"..", true},
-+		{".example.com", true},
-+		{"example..com", true},
-+		{"example.com!../../owned", true},
-+		{"example.com!a/b", true},
-+		{"example.com!v1.2", false},
-+		{"example.com!a..b", false},
-+		{"example.com!.", true},
-+		{"example.com!..", true},
-+		{"example.com!.hidden", true},
-+		{"example.com!a!b", true},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			script := fmt.Sprintf(`D(%q, NewRegistrar("none"), A("@", "1.2.3.4"));`, tt.name)
-+			_, err := ExecuteJavascriptString([]byte(script), true, nil)
-+			if (err != nil) != tt.wantErr {
-+				t.Errorf("D(%q) error = %v, wantErr %v", tt.name, err, tt.wantErr)
-+			}
-+		})
-+	}
-+}
-```
-
-**File**: `providers/bind/bindProvider.go` (modified, +30/-28)
-```diff
-@@ -167,25 +167,13 @@ func (c *bindProvider) ListZones() ([]string, error) {
- 
- // GetZoneRecords gets the records of a zone and returns them in RecordConfig format.
- func (c *bindProvider) GetZoneRecords(dc *models.DomainConfig) (models.Records, error) {
--	domain := dc.Name
--
--	var zonefile string
--
- 	if _, err := os.Stat(c.directory); os.IsNotExist(err) {
- 		printer.Printf("\nWARNING: BIND directory %q does not exist! (will create)\n", c.directory)
- 	}
--	zonefile = filepath.Join(c.directory,
--		makeFileName(
--			c.filenameformat,
--			domaintags.DomainNameVarieties{
--				Tag:         dc.Tag,
--				NameRaw:     dc.NameRaw,
--				NameASCII:   domain,
--				NameUnicode: dc.NameUnicode,
--				UniqueName:  dc.UniqueName,
--			},
--		),
--	)
-+	zonefile, err := c.zoneFilePath(dc)
-+	if err != nil {
-+		return nil, err
-+	}
- 	//fmt.Printf("DEBUG: Reading zonefile %q\n", zonefile)
- 	//fmt.Printf("DEBUG: Meta %+v\n", meta)
- 	//fmt.Printf("DEBUG: Domain Names %+v\n", ff)
-@@ -301,18 +289,10 @@ func (c *bindProvider) GetZoneRecordsCorrections(dc *models.DomainConfig, foundR
- 		comments = append(comments, "Automatic DNSSEC signing requested")
- 	}
- 
--	zonefile = filepath.Join(c.directory,
--		makeFileName(
--			c.filenameformat,
--			domaintags.DomainNameVarieties{
--				Tag:         dc.Tag,
--				NameRaw:     dc.NameRaw,
--				NameASCII:   dc.Name,
--				NameUnicode: dc.NameUnicode,
--				UniqueName:  dc.UniqueName,
--			},
--		),
--	)
-+	zonefile, err = c.zoneFilePath(dc)
-+	if err != nil {
-+		return nil, 0, err
-+	}
- 
- 	// We know there are changes. Update the SOA record's serial number,
- 	// basing it on the serial already published in the existing zone.
-@@ -347,6 +327,28 @@ func (c *bindProvider) GetZoneRecordsCorrections(dc *models.DomainConfig, foundR
- 	return corrections, actualChangeCount, nil
- }
- 
-+// zoneFilePath returns the path of the zonefile for dc. It rejects any
-+// domain name that would place the file outside of c.directory (for
-+// example, a name containing ".." elements).  Names that contain a slash
-+// (RFC2317 zones such as "0/26.2.0.192.in-addr.arpa") are permitted as
-+// long as the result stays within c.directory.
-+func (c *bindProvider) zoneFilePath(dc *models.DomainConfig) (string, error) {
-+	name := makeFileName(
-+		c.filenameformat,
-+		domaintags.DomainNameVarieties{
-+			Tag:         dc.Tag,
-+			NameRaw:     dc.NameRaw,
-+			NameASCII:   dc.Name,
-+			NameUnicode: dc.NameUnicode,
-+			UniqueName:  dc.UniqueName,
-+		},
-+	)
-+	if !filepath.IsLocal(filepath.FromSlash(name)) {
-+		return "", fmt.Errorf("BIND zone %q generates filename %q which is outside of directory %q", dc.Name, name, c.directory)
-+	}
-+	return filepath.Join(c.directory, name), nil
-+}
-+
- // preprocessFilename pre-processes a filename we're about to os.Create()
- // * On Windows systems, it translates the separator.
- // * It attempts to mkdir the directories leading up to the filename.
-```
-
-**File**: `providers/bind/zonefilepath_test.go` (added, +66/-0)
-```diff
-@@ -0,0 +1,66 @@
-+package bind
-+
-+import (
-+	"os"
-+	"path/filepath"
-+	"testing"
-+
-+	"github.com/DNSControl/dnscontrol/v5/models"
-+)
-+
-+func Test_zoneFilePath(t *testing.T) {
-+	tests := []struct {
-+		name    string
-+		format  string
-+		domain  string
-+		want    string
-+		wantErr bool
-+	}{
-+		{"simple", "%c.zone", "example.com", "zones/example.com.zone", false},
-+		{"rfc2317", "%c.zone", "0/26.2.0.192.in-addr.arpa", "zones/0/26.2.0.192.in-addr.arpa.zone", false},
-+		{"dotdot", "%c.zone", "../../outside/deep/owned", "", true},
-+		{"dotdot only", "%c", "..", "", true},
-+		{"dotdot inner", "%c.zone", "a/../../owned", "", true},
-+		{"absolute", "%c.zone", "/etc/owned", "", true},
-+		{"raw verb", "%r.zone", "../owned", "", true},
-+		{"legacy verb", "%D.zone", "../owned", "", true},
-+		{"prefix keeps it local", "db_%D", "../owned", "zones/db_../owned", false},
-+	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			c := &bindProvider{directory: "zones", filenameformat: tt.format}
-+			dc := &models.DomainConfig{
-+				Name:        tt.domain,
-+				NameRaw:     tt.domain,
-+				NameUnicode: tt.domain,
-+				UniqueName:  tt.domain,
-+			}
-+			got, err := c.zoneFilePath(dc)
-+			if (err != nil) != tt.wantErr {
-+				t.Fatalf("zoneFilePath() error = %v, wantErr %v", err, tt.wantErr)
-+			}
-+			if got != filepath.FromSlash(tt.want) {
-+				t.Errorf("zoneFilePath() = %q, want %q", got, tt.want)
-+			}
-+		})
-+	}
-+}
-+
-+// Test_traversalWritesNothing verifies that a zone name containing ".."
-+// is rejected before anything is read or written. (GHSA-rrxr-r9rr-crr4)
-+func Test_traversalWritesNothing(t *testing.T) {
-+	top := t.TempDir()
-+	c := &bindProvider{directory: filepath.Join(top, "zones"), filenameformat: "%c.zone"}
-+	name := "../outside/deep/owned"
-+	dc := &models.DomainConfig{Name: name, NameRaw: name, NameUnicode: name, UniqueName: name}
-+
-+	if _, err := c.GetZoneRecords(dc); err == nil {
-+		t.Error("GetZoneRecords() expected error, got nil")
-+	}
-+	if _, _, err := c.GetZoneRecordsCorrections(dc, nil); err == nil {
-+		t.Error("GetZoneRecordsCorrections() expected error, got nil")
-+	}
-+	if _, err := os.Stat(filepath.Join(top, "outside")); !os.IsNotExist(err) {
-+		t.Errorf("directory outside of the zones dir was created (err=%v)", err)
-+	}
-+}
+-	idCounter += 1
++	idCounter++
+ 	requestBody, err := json.Marshal(rpcRequest{
+ 		ID:     idCounter,
+ 		Method: method,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5094** (2026-11-17): fix(spflib): parse SPF mechanism names case-insensitively (@Kernel-Hunter)
-- **PR #5093** (2026-11-16): chore: upgrade dependencies (@TomOnTime)
-- **PR #5092** (2026-11-16): chore: update dependencies (@TomOnTime)
-- **PR #5091** (2026-11-16): fix(dnsconfig): reject domain names and tags that escape the zone directory (@TomOnTime)
-- **PR #5090** (2026-11-16): refactor(normalize): remove no-op record normalization (@TomOnTime)
-- **PR #5089** (2026-11-15): refactor(normalize): run ValidateAndNormalizeConfig in ordered phases (@TomOnTime)
+- **PR #5117** (2026-11-17): refactor(p/OPENWRT): fix golint warnings (@TomOnTime)
+- **PR #5116** (2026-11-17): refactor(p/CLOUDNS): fix golint warnings (@TomOnTime)
+- **PR #5115** (2026-11-17): refactor: fix golint warnings (@TomOnTime)
+- **PR #5114** (2026-11-17): docs: Note about refactoring preview (@TomOnTime)
+- **PR #5113** (2026-11-17): refactor: remove record type checks from AuditRecords made redundant by SupportedTypes (@TomOnTime)
+- **PR #5112** (2026-11-17): refactor: add missing code comments (@TomOnTime)
 
 ---
 
@@ -1401,56 +1099,59 @@ Co-authored-by: Claude <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. print-ir and --ir should round-trip
+## X. preview): skip delegation check when a zone is pending creation
 
 **RULE**:
-When implementing operations in `commands/provider_syntax_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `commands/ppreviewPush.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `62af2f0e`: print-ir and --ir should round-trip. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c3db94d0`: preview): skip delegation check when a zone is pending creation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `commands/provider_syntax_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `commands/ppreviewPush.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-func TestIRLoadingRecords(t *testing.T) {
-	// "print-ir --out file" followed by "--ir file" must preserve the records.
-	cfg := loadSyntaxConfig(t, `D("example.com", REGISTRAR("both"), SERVICE("both"),
-		A("@", "192.0.2.1"),
-		MX("@", 10, "mx"),
-		TXT("@", "has \"quotes\" and spaces"),
-		CAA("@", "issue", "letsencrypt.org"),
-		SRV("_sip._tcp", 10, 20, 5060, "sip.example.com."),
-		HTTPS("@", 1, ".", "alpn=h3,h2 port=443"),
-		CF_SINGLE_REDIRECT("name", 301, 'http.host eq "example.com"', 'concat("https://example.net", http.request.uri.path)'),
-	);`)
-	want, err := json.Marshal(cfg)
-	require.NoError(t, err)
-	irPath := filepath.Join(t.TempDir(), "dnsconfig.json")
-	require.NoError(t, os.WriteFile(irPath, want, 0o600))
-	roundTrip, err := GetDNSConfig(GetDNSConfigArgs{JSONFile: irPath})
-	require.NoError(t, err)
-	got, err := json.Marshal(roundTrip)
-	require.NoError(t, err)
-	require.JSONEq(t, string(want), string(got))
-	require.Len(t, roundTrip.Domains[0].Records, len(cfg.Domains[0].Records))
-	for _, rec := range roundTrip.Domains[0].Records {
-		require.NotNil(t, rec.GetRDATA(), rec.Type)
+	var delegationCorrections []*models.Correction
+	var dcCount int
+	var err error
+	if existing, pending := splitPendingCreation(zone, push, args.PopulateOnPreview); len(pending) != 0 {
+		// Some providers can't report the nameservers of a zone that does not
+		// exist yet (GetNameservers fails), so the delegation can't be
+		// determined until the zone is created on push.
+		delegationCorrections, err = generatePendingDelegationCorrections(zone, existing, pending)
+	} else {
+		delegationCorrections, dcCount, err = generateDelegationCorrections(zone, zone.DNSProviderInstances, zone.RegistrarInstance)
 	}
+// splitPendingCreation partitions the zone's DNS providers into those where
+// the zone exists and those where this run will report it as pending creation
+// (see reportZonePendingCreation).
+func splitPendingCreation(zone *models.DomainConfig, push, populateOnPreview bool) (existing, pending []*models.DNSProviderInstance) {
+	for _, provider := range zone.DNSProviderInstances {
+		if reportZonePendingCreation(zone, provider.Name, push, populateOnPreview) {
+			pending = append(pending, provider)
+		} else {
+			existing = append(existing, provider)
+		}
+	}
+	return existing, pending
 }
 
+// dete
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	delegationCorrections, dcCount, err := generateDelegationCorrections(zone, zone.DNSProviderInstances, zone.RegistrarInstance)
+func generateDelegationCorrections(zone *models.DomainConfig, providers []*models.DNSProviderInstance, _ *models.RegistrarInstance) ([]*models.Correction, int, error) {
+	// fmt.Printf("DEBUG: generateDelegationCorrections start zone=%q nsList = %v\n", zone.Name, zone.Nameservers)
+		return msg(fmt.Sprintf("DetermineNS: zone %q; Error: %s", zone.Name, err)), 0, err
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `62af2f0e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c3db94d0` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -765,8 +765,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/MiniMax-H3",
     "sourceVersion": "hf-comfy-org-minimax-h3",
     "license": "Open-Source",
-    "contentHash": "aa0ce47f5c4b65f0353c678d21805a65a9282700fa5a636b094650b46875f96e",
-    "lastHarvestedAt": "2026-11-13T22:17:31.420Z",
+    "contentHash": "854536773ccaa81553701dd10e2a055f59ff4fc219451cd86984a40bb985a057",
+    "lastHarvestedAt": "2026-11-18T09:19:39.597Z",
     "learningId": "learn-huggingface-comfy-org-minimax-h3"
   },
   "hf-atomicchat-qwen-image-2.1-turbo-uncensored-gguf": {
@@ -4293,10 +4293,10 @@
     "repository": "Nasiko-Labs/nasiko",
     "platform": "github",
     "sourceUrl": "https://github.com/Nasiko-Labs/nasiko",
-    "sourceVersion": "97cd065e",
+    "sourceVersion": "0ed4b3d9",
     "license": "NOASSERTION",
-    "contentHash": "608805c866d1de04412752e4804ecc30ebe5ad51882fdc332f1badb8dcfab55b",
-    "lastHarvestedAt": "2026-11-17T03:41:55.332Z",
+    "contentHash": "b237999d893a00f25cb84836d4464383ea5704a24c2d0da1e64ddcee1570a329",
+    "lastHarvestedAt": "2026-11-18T09:14:39.092Z",
     "learningId": "learn-github-nasiko-labs-nasiko"
   },
   "berty-berty": {
@@ -5413,10 +5413,10 @@
     "repository": "DNSControl/dnscontrol",
     "platform": "github",
     "sourceUrl": "https://github.com/DNSControl/dnscontrol",
-    "sourceVersion": "0087e705",
+    "sourceVersion": "1adf8aea",
     "license": "MIT",
-    "contentHash": "bf12c2d2577a3b15085dda9b313f01c65381d3acad979605d2e8cce74b3a97dc",
-    "lastHarvestedAt": "2026-11-17T13:05:50.212Z",
+    "contentHash": "5fd719412df2560c71ae0d0c0375f851a8d730e2d31a2faf6780e877ccdcb99a",
+    "lastHarvestedAt": "2026-11-18T09:14:46.953Z",
     "learningId": "learn-github-dnscontrol-dnscontrol"
   },
   "ydb-platform-ydb": {
@@ -6473,10 +6473,10 @@
     "repository": "Mintplex-Labs/anything-llm",
     "platform": "github",
     "sourceUrl": "https://github.com/Mintplex-Labs/anything-llm",
-    "sourceVersion": "eb498cf2",
+    "sourceVersion": "64b599fc",
     "license": "MIT",
-    "contentHash": "3a85483b8a2c666d43cb6ba5ed8d1c37c6e3d37357f1f576056ece00e8af587a",
-    "lastHarvestedAt": "2026-11-17T15:59:55.287Z",
+    "contentHash": "b47312902d433f5226aa0eed4881f5b60748841fc75d7470f922044b2fcd1ba2",
+    "lastHarvestedAt": "2026-11-18T09:14:50.296Z",
     "learningId": "learn-github-mintplex-labs-anything-llm"
   },
   "shadcn-ui-taxonomy": {

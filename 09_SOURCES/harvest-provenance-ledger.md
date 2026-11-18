@@ -10935,3 +10935,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-11-18T09:02:22.220Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `53cd4b34` | Multi-dimensional audit evidence | 2026-11-18T09:02:37.630Z |
 | `learn-dom-d-42c4a146` | `project://yugabyte-yugabyte-db` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md` | 2026-11-18T09:03:08.211Z |
+| `learn-github-nasiko-labs-nasiko` | `https://github.com/Nasiko-Labs/nasiko` | `0ed4b3d9` | Multi-dimensional audit evidence | 2026-11-18T09:14:39.092Z |
+| `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `1adf8aea` | Multi-dimensional audit evidence | 2026-11-18T09:14:46.953Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `64b599fc` | Multi-dimensional audit evidence | 2026-11-18T09:14:50.296Z |
+| `learn-huggingface-comfy-org-minimax-h3` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-18T09:19:39.597Z |

@@ -10902,3 +10902,7 @@
 | `CYCLE-20261118-7PQG` | `2026-11-18T09:02:22.216Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md` | Yes (`6db92588...`) |
 | `CYCLE-20261118-81MI` | `2026-11-18T09:02:37.626Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md` | Yes (`051c4ed4...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T09:03:08.211Z` | `yugabyte-yugabyte-db` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-42C4A146` [Domain D] | Yes (`67e8f77a...`) |
+| `CYCLE-20261118-NIB3` | `2026-11-18T09:14:39.087Z` | `Nasiko-Labs/nasiko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9183` | Yes (`b237999d...`) |
+| `CYCLE-20261118-NODI` | `2026-11-18T09:14:46.950Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9184` | Yes (`5fd71941...`) |
+| `CYCLE-20261118-NQYD` | `2026-11-18T09:14:50.293Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9185` | Yes (`b4731290...`) |
+| `CYCLE-20261118-TY6H` | `2026-11-18T09:19:39.593Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | Yes (`85453677...`) |

@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T09:02:37.635Z",
-  "total_cycles_completed": 10430,
-  "total_learnings_persisted": 10430,
-  "total_rules_promoted": 9938,
+  "last_updated": "2026-11-18T09:19:39.602Z",
+  "total_cycles_completed": 10434,
+  "total_learnings_persisted": 10434,
+  "total_rules_promoted": 9941,
   "history": [
-    {
-      "timestamp": "2026-11-17T19:27:21.094Z",
-      "repository": "baidu/Unlimited-OCR-2",
-      "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T19:27:23.284Z",
-      "repository": "yyjeqhc/webcodex",
-      "learningId": "learn-github-yyjeqhc-webcodex",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T19:27:30.673Z",
-      "repository": "nats-io/nats-server",
-      "learningId": "learn-github-nats-io-nats-server",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T19:27:35.984Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T19:37:04.601Z",
       "repository": "ccore/Qwen3.5-4B-3D-Coder",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-18T09:02:37.635Z",
       "repository": "yugabyte/yugabyte-db",
       "learningId": "learn-github-yugabyte-yugabyte-db",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T09:14:39.098Z",
+      "repository": "Nasiko-Labs/nasiko",
+      "learningId": "learn-github-nasiko-labs-nasiko",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T09:14:46.958Z",
+      "repository": "DNSControl/dnscontrol",
+      "learningId": "learn-github-dnscontrol-dnscontrol",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T09:14:50.301Z",
+      "repository": "Mintplex-Labs/anything-llm",
+      "learningId": "learn-github-mintplex-labs-anything-llm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T09:19:39.602Z",
+      "repository": "Comfy-Org/MiniMax-H3",
+      "learningId": "learn-huggingface-comfy-org-minimax-h3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

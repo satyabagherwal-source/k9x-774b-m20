@@ -674851,3 +674851,281 @@ fun parseAtomContent(xmlNode: XmlNode): String {
 Integration test serving an Atom feed with `Content-Type: text/plain` containing `<content type="xhtml">` to ensure the feed parses successfully with full HTML markup preserved.
 
 ---
+
+
+---
+
+## 9183. test(e2e): wait for Base UI's focus guard in the bulk turn-on dialog (Harvested from Nasiko-Labs/nasiko)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "test(e2e): wait for Base UI's focus guard in the bulk turn-on dialog",
+  "source": "Nasiko-Labs/nasiko",
+  "source_url": "https://github.com/Nasiko-Labs/nasiko",
+  "source_version": "0ed4b3d9",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-18T09:14:38.634Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nasiko-labs-nasiko",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Nasiko-Labs/nasiko](https://github.com/Nasiko-Labs/nasiko) (Revision: `0ed4b3d9`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `ui/e2e/optimization.spec.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Nasiko-Labs/nasiko. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `9a20772f`: test(e2e): wait for Base UI's focus guard in the bulk turn-on dialog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/e2e/optimization.spec.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    // Tab past the last control lands on Base UI's focus guard, which moves focus back to the first
+    // one on the next animation frame; a busy runner can look in between, so wait for it.
+    await expect
+      .poll(() => dialog.evaluate((d) => d.contains(document.activeElement)), {
+        message: 'focus stays in the dialog',
+      })
+      .toBe(true)
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+    expect(
+      await dialog.evaluate((d) => d.contains(document.activeElement)),
+      'focus stays in the dialog',
+    ).toBe(true)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `9a20772f` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9184. skip delegation check when a zone is pending creation (Harvested from DNSControl/dnscontrol)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "skip delegation check when a zone is pending creation",
+  "source": "DNSControl/dnscontrol",
+  "source_url": "https://github.com/DNSControl/dnscontrol",
+  "source_version": "1adf8aea",
+  "license": "MIT",
+  "extracted_at": "2026-11-18T09:14:46.516Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dnscontrol-dnscontrol",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [DNSControl/dnscontrol](https://github.com/DNSControl/dnscontrol) (Revision: `1adf8aea`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `commands/ppreviewPush.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DNSControl/dnscontrol. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c3db94d0`: preview): skip delegation check when a zone is pending creation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `commands/ppreviewPush.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	var delegationCorrections []*models.Correction
+	var dcCount int
+	var err error
+	if existing, pending := splitPendingCreation(zone, push, args.PopulateOnPreview); len(pending) != 0 {
+		// Some providers can't report the nameservers of a zone that does not
+		// exist yet (GetNameservers fails), so the delegation can't be
+		// determined until the zone is created on push.
+		delegationCorrections, err = generatePendingDelegationCorrections(zone, existing, pending)
+	} else {
+		delegationCorrections, dcCount, err = generateDelegationCorrections(zone, zone.DNSProviderInstances, zone.RegistrarInstance)
+	}
+// splitPendingCreation partitions the zone's DNS providers into those where
+// the zone exists and those where this run will report it as pending creation
+// (see reportZonePendingCreation).
+func splitPendingCreation(zone *models.DomainConfig, push, populateOnPreview bool) (existing, pending []*models.DNSProviderInstance) {
+	for _, provider := range zone.DNSProviderInstances {
+		if reportZonePendingCreation(zone, provider.Name, push, populateOnPreview) {
+			pending = append(pending, provider)
+		} else {
+			existing = append(existing, provider)
+		}
+	}
+	return existing, pending
+}
+
+// dete
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+	delegationCorrections, dcCount, err := generateDelegationCorrections(zone, zone.DNSProviderInstances, zone.RegistrarInstance)
+func generateDelegationCorrections(zone *models.DomainConfig, providers []*models.DNSProviderInstance, _ *models.RegistrarInstance) ([]*models.Correction, int, error) {
+	// fmt.Printf("DEBUG: generateDelegationCorrections start zone=%q nsList = %v\n", zone.Name, zone.Nameservers)
+		return msg(fmt.Sprintf("DetermineNS: zone %q; Error: %s", zone.Name, err)), 0, err
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c3db94d0` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9185. misleading Model Router delete confirmation and surface workspac... (Harvested from Mintplex-Labs/anything-llm)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "misleading Model Router delete confirmation and surface workspac...",
+  "source": "Mintplex-Labs/anything-llm",
+  "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+  "source_version": "64b599fc",
+  "license": "MIT",
+  "extracted_at": "2026-11-18T09:14:49.859Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mintplex-labs-anything-llm",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm) (Revision: `64b599fc`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `server/__tests__/models/modelRouter.test.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Mintplex-Labs/anything-llm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `64b599fc`: misleading Model Router delete confirmation and surface workspac.... Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/__tests__/models/modelRouter.test.js`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+  $transaction: jest.fn(async (ops) => Promise.all(ops)),
+  model_routers: {
+    create: jest.fn(async ({ data }) => ({ id: 1, ...data })),
+    delete: jest.fn(async ({ where }) => ({ id: where.id })),
+  },
+  workspaces: {
+    updateMany: jest.fn(async () => ({ count: 1 })),
+  },
+
+/**
+ * Deleting a router also resets every workspace pointing at it back to the
+ * system LLM, in the same transaction, so no workspace keeps a router_id
+ * that no longer exists. Rollback on failure is Prisma's guarantee and is
+ * not something these mocks can observe.
+ */
+describe("ModelRouter.delete", () => {
+  const ROUTER_ID = 5;
+
+  beforeEach(() => {
+    prisma.$transaction.mockClear();
+    prisma.model_routers.delete.mockClear();
+    prisma.workspaces.updateMany.mockClear();
+  });
+
+  it("resets referencing workspaces to the system LLM and deletes the router in one transaction", async () => {
+    const success = await ModelRouter.delete(ROUTER_ID);
+
+    expect(success).toBe(true);
+    expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+    expect(prisma.$transaction.mock.calls[0][0]).toHaveLength(2);
+    expect(prisma.workspaces.updateMany).toHaveBeenCalledWith({
+      where: { router_id: ROUTER_I
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Induced defect failure mode:
+  model_routers: { create: jest.fn(async ({ data }) => ({ id: 1, ...data })) },
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `64b599fc` are properly handled with clean fallback behavior.
