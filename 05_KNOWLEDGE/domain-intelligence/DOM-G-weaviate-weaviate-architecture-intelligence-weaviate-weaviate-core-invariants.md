@@ -4,24 +4,24 @@
 {
   "source_repository": "weaviate/weaviate",
   "source_url": "https://github.com/weaviate/weaviate",
-  "source_version": "a33c0ef1",
+  "source_version": "3507945a",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T17:28:09.286Z",
+  "timestamp": "2026-11-18T11:06:54.376Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-weaviate-weaviate",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [weaviate/weaviate](https://github.com/weaviate/weaviate) (Revision: `a33c0ef1`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T17:28:09.286Z`  
+> **Provenance**: Harvested from [weaviate/weaviate](https://github.com/weaviate/weaviate) (Revision: `3507945a`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-18T11:06:54.376Z`  
 > **Learning ID**: `learn-github-weaviate-weaviate`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 79%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 82%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from weaviate/weaviate:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/weaviate-weaviate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/weaviate/weaviate](https://github.com/weaviate/weaviate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T17:28:08.254Z  
+> **Harvest Timestamp**: 2026-11-18T11:06:53.326Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Weaviate is an open-source vector database that stores both objects and vectors, allowing for the combination of vector search with structured filtering with the fault tolerance and scalability of a cloud-native database​.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 16953 stars
+- **Stars / Engagement**: 16954 stars
 
 ---
 
@@ -766,7 +766,8 @@ type dropVectorIndexEnqueuer struct {
 	logger         logrus.FieldLogger // nil-safe: only used for skip warnings
 	// finalizer removes dropped VectorConfig entries directly — the escape
 	// for MT collections with ZERO tenants, where no cleanup task can ever
-	// exist to drive the finalize. Installed post-construction
+	// exist to drive the finalize. Nothing else may use it: a collection with
+	// shards finalizes through a round, which checks each node is drained. Installed post-construction
 	// (SetVectorConfigFinalizer): the schema manager does not exist yet when the
 	// enqueuer is built. Nil-safe.
 	finalizer dropVectorFinalizer
@@ -912,28 +913,28 @@ func (e *dropVectorIndexEnqueuer) EnqueueDropVectorIndexWithTasks(ctx context.Co
 		return nil
 	}
 
-	epoch, cleaned, finalizeNow := db.EpochAndInheritedCoverage(collection, targets, state, tasks, e.logger)
-	if finalizeNow {
-		// The chain covers every shard that still exists, and what it owed went
-		// away with a deleted tenant. Re-cleaning here would rewrite every
-		// segment of shards that are already stripped, so remove the entries on
-		// the recorded coverage instead. The FSM removal gate accepts the same
-		// proof (ResolvedByShardDeletion), so this cannot propose a removal the
-		// apply would refuse.
-		if e.finalizer == nil {
-			return fmt.Errorf("drop-vector enqueue: collection %q has a complete cleanup chain but no finalizer is wired; cannot remove the dropped vector entries", collection)
-		}
-		if err := e.finalizer.RemoveDroppedVectorConfig(ctx, collection, targets); err != nil {
-			return fmt.Errorf("drop-vector enqueue: finalize collection %q on recorded coverage: %w", collection, err)
-		}
+	epoch, cleaned, verifyOnly := db.EpochAndInheritedCoverage(collection, targets, state, tasks, e.logger)
+	if verifyOnly {
+		// Every current shard is covered and what the chain still owed was
+		// deleted, so nothing is left to strip. A verify-only round lets each
+		// node confirm it is drained, then finalizes like any other round.
+		shardOwnership = oneShardPerNode(shardOwnership)
 		e.logInfo(collection, fmt.Sprintf(
 			"drop-vector enqueue: every remaining shard is covered and the uncleaned ones were deleted; "+
-				"removed dropped vector entries %v without re-cleaning", targets))
-		return nil
-	}
-	shardOwnership = withoutCleanedShards(shardOwnership, cleaned)
-	shardOwnership, deferredShards := capShardOwnership(shardOwnership, maxShardsPerDropRound)
-	if deferre
+				"submitting a verify-only round on %d node(s) to finalize %v without re-cleaning",
+			len(shardOwnership), targets))
+	} else {
+		var deferredShards int
+		shardOwnership = withoutCleanedShards(shardOwnership, cleaned)
+		shardOwnership, deferredShards = capShardOwnership(shardOwnership, maxShardsPerDropRound)
+		if deferredShards > 0 {
+			e.logInfo(collection, fmt.Sprintf(
+				"drop-vector enqueue: round capped at %d shards, %d deferred to follow-up rounds (coverage chains via cleaned shards)",
+				maxShardsPerDropRound, deferredShards))
+		}
+		if len(shardOwnership) == 0 {
+			// Inherited coverage is always incomplete (a complete chain mints a
+			// fresh epoch w
 ```
 
 ### Core Architecture Module: `adapters/handlers/rest/operations/replication/get_collection_sharding_state.go`
@@ -1747,42 +1748,897 @@ func (s *State) SetGraphQLIfCurrent(gql graphql.GraphQL, gen uint64) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba33f5fd` (2026-11-17)
-**Commit Message**: fix: raise automatic rescoreLimit for RQ 1-bit and BQ to 512 (#13927)
+### Incident Patch 1: `362d2908` (2026-11-06)
+**Commit Message**: fix(grpc-web): bound Search and Aggregate requests by the server write timeout
 
-**File**: `entities/vectorindex/hnsw/bq_config.go` (modified, +1/-1)
+**File**: `adapters/handlers/grpc/grpcweb/deadline_test.go` (added, +118/-0)
 ```diff
-@@ -16,7 +16,7 @@ import "github.com/weaviate/weaviate/entities/vectorindex/common"
- const (
- 	DefaultBQEnabled = false
- 	// DefaultBQRescoreLimit is what RescoreLimitAuto resolves to.
--	DefaultBQRescoreLimit = 256
-+	DefaultBQRescoreLimit = 512
- 	// DefaultBQRescoreFactor is what RescoreFactorAuto resolves to. One bit
- 	// per dimension ranks candidates coarsely, so BQ keeps more headroom.
- 	DefaultBQRescoreFactor = 4.0
+@@ -0,0 +1,118 @@
++//                           _       _
++// __      _____  __ ___   ___  __ _| |_ ___
++// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
++//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
++//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
++//
++//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
++//
++//  CONTACT: hello@weaviate.io
++//
++
++package grpcweb
++
++import (
++	"context"
++	"net/http"
++	"net/http/httptest"
++	"strconv"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"google.golang.org/grpc"
++
++	"github.com/weaviate/weaviate/adapters/handlers/rest/state"
++	pb "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
++	"github.com/weaviate/weaviate/usecases/config"
++)
++
++// deadlineRecorder records the deadline of the last call it served.
++type deadlineRecorder struct {
++	pb.UnimplementedWeaviateServer
++	deadline    time.Time
++	hasDeadline bool
++}
++
++func (d *deadlineRecorder) record(ctx context.Context) {
++	d.deadline, d.hasDeadline = ctx.Deadline()
++}
++
++func (d *deadlineRecorder) Search(ctx context.Context, _ *pb.SearchRequest) (*pb.SearchReply, error) {
++	d.record(ctx)
++	return &pb.SearchReply{}, nil
++}
++
++func (d *deadlineRecorder) Aggregate(ctx context.Context, _ *pb.AggregateRequest) (*pb.AggregateReply, error) {
++	d.record(ctx)
++	return &pb.AggregateReply{}, nil
++}
++
++func (d *deadlineRecorder) TenantsGet(ctx context.Context, _ *pb.TenantsGetRequest) (*pb.TenantsGetReply, error) {
++	d.record(ctx)
++	return &pb.TenantsGetReply{}, nil
++}
++
++// TestGrpcWebQueryDeadline pins that a grpc-web Search or Aggregate call
++// reaches the gRPC service with the write timeout of the server that accepted
++// it as its deadline, unless the client asks for a shorter one, and that other
++// calls, and calls to a server without a write timeout, keep the client's.
++func TestGrpcWebQueryDeadline(t *testing.T) {
++	const writeTimeout = time.Hour
++
++	tests := []struct {
++		name          string
++		method        string
++		writeTimeout  time.Duration
++		clientTimeout time.Duration
++		wantTimeout   time.Duration // 0 for no deadline
++	}{
++		{name: "aggregate", method: pb.Weaviate_Aggregate_FullMethodName, writeTimeout: writeTimeout, wantTimeout: writeTimeout},
++		{name: "search", method: pb.Weaviate_Search_FullMethodName, writeTimeout: writeTimeout, wantTimeout: writeTimeout},
++		{
++			name: "aggregate with a shorter client timeout", method: pb.Weaviate_Aggregate_FullMethodName,
++			writeTimeout: writeTimeout, clientTimeout: time.Minute, wantTimeout: time.Minute,
++		},
++		{name: "other call", method: pb.Weaviate_TenantsGet_FullMethodName, writeTimeout: writeTimeout},
++		{name: "aggregate without a write timeout", method: pb.Weaviate_Aggregate_FullMethodName},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			svc := &deadlineRecorder{}
++			grpcServer := grpc.NewServer()
++			pb.RegisterWeaviateServer(grpcServer, svc)
++			handler, err := NewHandler(grpcServer, &state.State{
++				ServerConfig: &config.WeaviateConfig{Config: config.Config{}},
++			}, &Tracker{})
++			require.NoError(t, err)
++
++			srv := httptest.NewUnstartedServer(Mount("/v1/grpc-web", handler, http.NotFoundHandler(), func() bool { return true }))
++			srv.Config.WriteTimeout = tt.writeTimeout
++			srv.Start()
++			t.Cleanup(srv.Close)
++
++			req, err := http.NewRequest(http.MethodPost, srv.URL+"/v1/grpc-web"+tt.method, strings.NewReader("{}"))
++			require.NoError(t, err)
++			req.Header.Set("Content-Type", "application/json")
++			req.Header.Set("Connect-Protocol-Version", "1")
++			if tt.clientTimeout > 0 {
++				req.Header.Set("Connect-Timeout-Ms", strconv.FormatInt(tt.clientTimeout.Milliseconds(), 10))
++			}
++			sent := time.Now()
++			res, err := srv.Client().Do(req)
++			require.NoError(t, err)
++			res.Body.Close()
++			require.Equal(t, http.StatusOK, res.StatusCode)
++
++			if tt.wantTimeout == 0 {
++				require.False(t, svc.hasDeadline)
++				return
++			}
++			require.True(t, svc.hasDeadline)
++			assert.WithinRange(t, svc.deadline, sent.Add(tt.wantTimeout), time.Now().Add(tt.wantTimeout))
++		})
++	}
++}
 ```
 
-**File**: `entities/vectorindex/hnsw/rq_config.go` (modified, +1/-1)
+**File**: `adapters/handlers/grpc/grpcweb/server.go` (modified, +28/-2)
 ```diff
-@@ -24,7 +24,7 @@ const (
- 	// DefaultRQRescoreLimit and DefaultBRQRescoreLimit are what
- 	// RescoreLimitAuto resolves to for 4/8-bit and 1-bit codes.
- 	DefaultRQRescoreLimit  = 20
--	DefaultBRQRescoreLimit = 256
-+	DefaultBRQRescoreLimit = 512
- 	// DefaultRQRescoreFactor and DefaultBRQRescoreFactor are what
- 	// RescoreFactorAuto resolves to for 4/8-bit and 1-bit codes.
- 	DefaultRQRescoreFactor  = 2.0
+@@ -16,6 +16,7 @@
+ package grpcweb
+ 
+ import (
++	"context"
+ 	"fmt"
+ 	"math"
+ 	"net/http"
+@@ -27,22 +28,47 @@ import (
+ 	"google.golang.org/grpc"
+ 
+ 	"github.com/weaviate/weaviate/adapters/handlers/rest/state"
++	pb "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
+ 	"github.com/weaviate/weaviate/usecases/config"
+ )
+ 
+ // NewHandler transcodes grpc-web/Connect requests into calls against the
+ // existing gRPC server. It carries its own CORS layer (grpc-web is routed
+ // outside the REST middleware chain; see Mount) and exposes the gRPC trailer
+ // headers so browsers can read the RPC status. tracker sits under the CORS
+-// layer, so the 503 it returns while draining carries CORS headers.
++// layer, so the 503 it returns while draining carries CORS headers. A query is
++// bounded by the server's write timeout; see withQueryDeadline.
+ func NewHandler(grpcServer *grpc.Server, state *state.State, tracker *Tracker) (http.Handler, error) {
+ 	opts := []vanguard.ServiceOption{}
+ 	opts = append(opts, vanguard.WithMaxMessageBufferBytes(msgBufferLimit(state.ServerConfig.Config.GRPC.MaxMsgSize)))
+ 	transcoder, err := vanguardgrpc.NewTranscoder(grpcServer, vanguard.WithDefaultServiceOptions(opts...))
+ 	if err != nil {
+ 		return nil, fmt.Errorf("build grpc-web transcoder: %w", err)
+ 	}
+-	return cors.New(corsOptions(state.ServerConfig.Config.CORS)).Handler(tracker.wrap(transcoder)), nil
++	return cors.New(corsOptions(state.ServerConfig.Config.CORS)).Handler(tracker.wrap(withQueryDeadline(transcoder))), nil
++}
++
++// withQueryDeadline bounds a Search or Aggregate request by the write timeout
++// of the server that accepted it, as a response that takes longer cannot be
++// written. A browser client often sets no timeout of its own, and a remote
++// aggregation without a deadline is cut off by the cluster's per-request query
++// timeout instead; under a deadline it can use all the time the response has.
++// A client timeout shorter than the write timeout still applies.
++func withQueryDeadline(next http.Handler) http.Handler {
++	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		srv, ok := r.Context().Value(http.ServerContextKey).(*http.Server)
++		if !ok || srv.WriteTimeout <= 0 || !isQueryMethod(r.URL.Path) {
++			next.ServeHTTP(w, r)
++			return
++		}
++		ctx, cancel := context.WithTimeout(r.Context(), srv.WriteTimeout)
++		defer cancel()
++		next.ServeHTTP(w, r.WithContext(ctx))
++	})
++}
++
++func isQueryMethod(urlPath string) bool {
++	return urlPath == pb.Weaviate_Search_FullMethodName || urlPath == pb.Weaviate_Aggregate_FullMethodName
+ }
+ 
+ // corsOptions builds the CORS config for the grpc-web handler: the
+```
+
+---
+
+### Incident Patch 2: `baebb6d7` (2026-11-17)
+**Commit Message**: fix(hfresh): preserve pending task claims across enqueue failures
+
+Signed-off-by: Perfloop Agent <[REDACTED_EMAIL]>
+
+**File**: `adapters/repos/db/vector/hfresh/merge.go` (modified, +1/-2)
+```diff
+@@ -22,8 +22,6 @@ func (h *HFresh) doMerge(ctx context.Context, postingID uint64) error {
+ 	start := time.Now()
+ 	defer h.metrics.MergeDuration(start)
+ 
+-	defer h.taskQueue.MergeDone(postingID)
+-
+ 	h.logger.WithField("postingID", postingID).Debug("merging posting")
+ 
+ 	var markedAsDone bool
+@@ -33,6 +31,7 @@ func (h *HFresh) doMerge(ctx context.Context, postingID uint64) error {
+ 		h.taskQueue.MergeDone(postingID) // remove from the in-progress list
+ 		return h.taskQueue.EnqueueMerge(postingID)
+ 	}
++	defer h.taskQueue.MergeDone(postingID)
+ 	defer func() {
+ 		if !markedAsDone {
+ 			h.postingLocks.Unlock(postingID)
+```
+
+**File**: `adapters/repos/db/vector/hfresh/task_queue.go` (modified, +3/-0)
+```diff
+@@ -246,6 +246,7 @@ func (tq *TaskQueue) EnqueueAnalyze(postingID uint64) error {
+ 	}
+ 
+ 	if err := tq.analyzeQueue.Push(encodeTask(postingID, taskQueueAnalyzeOp)); err != nil {
++		tq.analyzeList.Delete(postingID)
+ 		return errors.Wrap(err, "failed to push analyze operation to queue")
+ 	}
+ 
+@@ -260,6 +261,7 @@ func (tq *TaskQueue) EnqueueSplit(postingID uint64) error {
+ 	}
+ 
+ 	if err := tq.splitQueue.Push(encodeTask(postingID, taskQueueSplitOp)); err != nil {
++		tq.splitList.Delete(postingID)
+ 		return errors.Wrap(err, "failed to push split operation to queue")
+ 	}
+ 
+@@ -275,6 +277,7 @@ func (tq *TaskQueue) EnqueueMerge(postingID uint64) error {
+ 	}
+ 
+ 	if err := tq.mergeQueue.Push(encodeTask(postingID, taskQueueMergeOp)); err != nil {
++		tq.mergeList.Delete(postingID)
+ 		return errors.Wrap(err, "failed to push merge operation to queue")
+ 	}
+ 
+```
+
+---
+
+### Incident Patch 3: `fdd09ee6` (2026-11-05)
+**Commit Message**: fix(aggregator): fail over within the read plan, keep read admission checks, spread shards optimally
+
+**File**: `adapters/repos/db/index.go` (modified, +55/-25)
+```diff
+@@ -3747,13 +3747,17 @@ func (i *Index) aggregate(ctx context.Context, replProps *additional.Replication
+ 	// a different node where the replicas allow: the query then takes as long as
+ 	// its slowest shard, not all of them in turn on one node.
+ 	replicas := readPlan.SpreadReplicas()
++	replicasOf := make(map[string][]routerTypes.Replica, len(replicas))
++	for _, r := range readPlan.Replicas() {
++		replicasOf[r.ShardName] = append(replicasOf[r.ShardName], r)
++	}
+ 	results := make([]*aggregation.Result, len(replicas))
+ 	eg, ctx := enterrors.NewErrorGroupWithContextWrapper(i.logger, ctx)
+ 	// at least 3, so that a single-tenant rf=3 query is not serialized on 1 CPU
+ 	eg.SetLimit(_NUMCPU*2 + 1)
+ 	for j, replica := range replicas {
+ 		eg.Go(func() error {
+-			res, err := i.aggregateShard(ctx, readPlan.LocalHostname, replica, params, modules)
++			res, err := i.aggregateShard(ctx, readPlan.LocalHostname, replica, replicasOf[replica.ShardName], params, modules)
+ 			if err != nil {
+ 				return errors.Wrapf(err, "shard %s", replica.ShardName)
+ 			}
+@@ -3768,36 +3772,62 @@ func (i *Index) aggregate(ctx context.Context, replProps *additional.Replication
+ 	return aggregator.NewShardCombiner().Do(results)
+ }
+ 
+-// aggregateShard aggregates the shard on the given replica: here when it is the
+-// local one, otherwise on its node first and on the shard's other replicas after.
+-func (i *Index) aggregateShard(ctx context.Context, localNode string, replica routerTypes.Replica,
++// aggregateShard aggregates the shard on the picked replica and, if that fails,
++// on the shard's other read replicas in plan order, the local one first.
++func (i *Index) aggregateShard(ctx context.Context, localNode string, picked routerTypes.Replica,
++	replicas []routerTypes.Replica, params aggregation.Params, modules *modules.Provider,
++) (*aggregation.Result, error) {
++	others := slices.DeleteFunc(slices.Clone(replicas), func(r routerTypes.Replica) bool {
++		return r.NodeName == picked.NodeName
++	})
++	var err error
++	for _, replica := range append([]routerTypes.Replica{picked}, others...) {
++		if ctxErr := ctx.Err(); ctxErr != nil {
++			return nil, ctxErr
++		}
++		var res *aggregation.Result
++		if res, err = i.aggregateOnReplica(ctx, localNode, replica, params, modules); err == nil {
++			return res, nil
++		}
++		err = fmt.Errorf("node %s: %w", replica.NodeName, err)
++	}
++	return nil, err
++}
++
++func (i *Index) aggregateOnReplica(ctx context.Context, localNode string, replica routerTypes.Replica,
+ 	params aggregation.Params, modules *modules.Provider,
+ ) (*aggregation.Result, error) {
+-	remote := func(preferredNode string) (*aggregation.Result, error) {
+-		res, err := i.remote.Aggregate(ctx, replica.ShardName, preferredNode, params)
+-		if err != nil || res == nil {
+-			return res, err
++	if replica.NodeName == localNode {
++		shard, release, err := i.getShardForDirectLocalOperation(ctx, params.Tenant, replica.ShardName, localShardOperationRead, 0)
++		defer release()
++		if err != nil {
++			return nil, err
+ 		}
+-		// restore wire state here so a malformed payload error still names the shard
+-		return res, aggregator.NewShardCombiner().RestoreSerializedAggregators(res)
++		if shard == nil {
++			return nil, fmt.Errorf("shard %s is not loaded here", replica.ShardName)
++		}
++		return shard.Aggregate(ctx, params, modules)
++	}
++
++	if err := i.admitRemoteRead(); err != nil {
++		return nil, err
+ 	}
+-	if replica.NodeName != localNode {
+-		return remote(replica.NodeName)
++	res, err := i.remote.Aggregate(ctx, replica.NodeName, replica.ShardName, params)
++	if err != nil || res == nil {
++		return res, err
+ 	}
++	// restore wire state here so a malformed payload error still names the shard
++	return res, aggregator.NewShardCombiner().RestoreSerializedAggregators(res)
++}
+ 
+-	var res *aggregation.Result
+-	err := i.withShardOrRemote(ctx, params.Tenant, replica.ShardName, localShardOperationRead, 0,
+-		func(shard ShardLike) error {
+-			var err error
+-			res, err = shard.Aggregate(ctx, params, modules)
+-			return err
+-		},
+-		func() error {
+-			var err error
+-			res, err = remote("")
+-			return err
+-		})
+-	return res, err
++// admitRemoteRead refuses a read sent to a peer whenever a local shard read would
++// be refused: on a closed index or in a namespace that does not allow reads.
++func (i *Index) admitRemoteRead() error {
++	if err := i.enterRead(); err != nil {
++		return err
++	}
++	defer i.exitRead()
++	return i.requireNamespaceAllowsShardLoad(callerUserRequest)
+ }
+ 
+ // aggregateCount counts every shard in readPlan against that plan's replicas,
+```
+
+**File**: `adapters/repos/db/index_aggregate_test.go` (modified, +165/-5)
+```diff
+@@ -13,6 +13,7 @@ package db
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"sync"
+ 	"sync/atomic"
+ 	"testing"
+@@ -21,9 +22,11 @@ import (
+ 	"github.com/stretchr/testify/mock"
+ 	"github.com/stretchr/testify/require"
+ 
++	"github.com/weaviate/weaviate/cluster/proto/api"
+ 	"github.com/weaviate/weaviate/cluster/router/types"
+ 	"github.com/weaviate/weaviate/entities/aggregation"
+ 	"github.com/weaviate/weaviate/usecases/cluster"
++	"github.com/weaviate/weaviate/usecases/namespaces"
+ 	"github.com/weaviate/weaviate/usecases/sharding"
+ )
+ 
+@@ -84,7 +87,7 @@ func TestIndexAggregate_SpreadsShardsOverReplicas(t *testing.T) {
+ 	nodeResolver := cluster.NewMockNodeResolver(t)
+ 	nodeResolver.EXPECT().NodeHostname("node2").Return("127.0.0.2", true).Maybe()
+ 	nodeResolver.EXPECT().NodeHostname("node3").Return("127.0.0.3", true).Maybe()
+-	client := &recordingAggregateClient{hosts: map[string]string{}}
++	client := newRecordingAggregateClient()
+ 	idx.remote = sharding.NewRemoteIndex(className, remoteShardsOnNode2{}, nodeResolver, client)
+ 
+ 	res, err := idx.aggregate(t.Context(), nil, aggregation.Params{ClassName: className}, nil)
+@@ -94,23 +97,180 @@ func TestIndexAggregate_SpreadsShardsOverReplicas(t *testing.T) {
+ 		[]string{client.hosts["shard-a"], client.hosts["shard-b"]})
+ }
+ 
+-// recordingAggregateClient answers every aggregation and records the host each
+-// shard was sent to.
++// recordingAggregateClient answers every aggregation except those sent to a
++// failing host, and records every host asked and where each shard was answered.
+ type recordingAggregateClient struct {
+ 	FakeRemoteClient
+-	mu    sync.Mutex
+-	hosts map[string]string
++	failing map[string]bool
++	mu      sync.Mutex
++	asked   []string
++	hosts   map[string]string
++}
++
++func newRecordingAggregateClient(failing ...string) *recordingAggregateClient {
++	c := &recordingAggregateClient{failing: map[string]bool{}, hosts: map[string]string{}}
++	for _, host := range failing {
++		c.failing[host] = true
++	}
++	return c
+ }
+ 
+ func (c *recordingAggregateClient) Aggregate(_ context.Context, host, _, shard string,
+ 	_ aggregation.Params,
+ ) (*aggregation.Result, error) {
+ 	c.mu.Lock()
+ 	defer c.mu.Unlock()
++	c.asked = append(c.asked, host)
++	if c.failing[host] {
++		return nil, errors.New("replica unavailable")
++	}
+ 	c.hosts[shard] = host
+ 	return &aggregation.Result{Groups: []aggregation.Group{{Count: 1}}}, nil
+ }
+ 
++// aggregateTestIndex returns an index whose read plan is replicas, with node1 as
++// the local node and every remote call going to client.
++func aggregateTestIndex(t *testing.T, client *recordingAggregateClient, replicas ...types.Replica) *Index {
++	t.Helper()
++	const className = "AggregateReplicas"
++	idx, _ := refCountTestIndex(t, className)
++	// replicated, so a local read never creates a missing shard
++	idx.Config.ReplicationFactor = 2
++
++	router := types.NewMockRouter(t)
++	router.EXPECT().BuildReadRoutingPlan(mock.Anything).Return(types.ReadRoutingPlan{
++		LocalHostname: "node1",
++		ReplicaSet:    types.ReadReplicaSet{Replicas: replicas},
++	}, nil).Maybe()
++	router.EXPECT().GetReadReplicasLocation(className, mock.Anything, mock.Anything).Return(
++		types.ReadReplicaSet{Replicas: replicas}, nil,
++	).Maybe()
++	idx.router = router
++
++	nodeResolver := cluster.NewMockNodeResolver(t)
++	for _, node := range []string{"node2", "node3", "node4"} {
++		nodeResolver.EXPECT().NodeHostname(node).Return(node+"-host", true).Maybe()
++	}
++	// the cluster state lists node4, which the read plan leaves out
++	idx.remote = sharding.NewRemoteIndex(className, shardReplicasOn{"node4"}, nodeResolver, client)
++	return idx
++}
++
++func replicasOf(shard string, nodes ...string) []types.Replica {
++	out := make([]types.Replica, 0, len(nodes))
++	for _, node := range nodes {
++		out = append(out, types.Replica{NodeName: node, ShardName: shard, HostAddr: node + "-host"})
++	}
++	return out
++}
++
++// A shard falls over only to the read plan's other replicas, never to a node the
++// plan leaves out, and asks each at most once.
++func TestIndexAggregate_FailsOverWithinReadPlan(t *testing.T) {
++	tests := []struct {
++		name      string
++		replicas  []types.Replica
++		failing   []string
++		wantErr   bool
++		wantAsked []string
++		answered  string
++	}{
++		{
++			name:      "a failing replica falls over to the other",
++			replicas:  replicasOf("shard-a", "node2", "node3"),
++			failing:   []string{"node2-host"},
++			wantAsked: []string{"node2-host", "node3-host"},
++			answered:  "node3-host",
++		},
++		{
++			name:      "with every read replica failing, the shard fails",
++			replicas:  replicasOf("shard-a", "node2", "node3"),
++			failing:   []string{"node2-host", "node3-host"},
++			wantErr:   true,
++			wantAsked: []string{"node2-host", "node3-host"},
++		},
++		{
++			name:      "a local replica that is not loaded falls over to a remote one",
++			replicas:  replicasOf("shard-a", "node1", "node2"),
++			wantAsked: []string{"node2-host"},
++			answered:  "node2-host",
++		},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, f
+```
+
+**File**: `cluster/router/types/router_plan.go` (modified, +74/-25)
+```diff
+@@ -12,7 +12,6 @@
+ package types
+ 
+ import (
+-	"cmp"
+ 	"fmt"
+ 	"math/rand/v2"
+ 	"slices"
+@@ -191,35 +190,85 @@ func (p ReadRoutingPlan) ShardPlans(cl ConsistencyLevel) []ReadRoutingPlan {
+ 	return plans
+ }
+ 
+-// SpreadReplicas picks one replica of each shard in p, spreading the shards over
+-// as many nodes as their replicas allow: each shard goes to the replica node
+-// with the fewest shards picked so far. Shards with fewer replicas pick first,
+-// as they have fewer nodes to choose from. On a tie the local node wins, as it
+-// needs no network hop; other ties break at random, so concurrent reads do not
+-// all land on the same node. p must hold every read replica of each shard.
++// SpreadReplicas picks one replica of each shard in p so that the busiest node
++// gets as few shards as the replicas allow. The local node is tried first, as it
++// needs no network hop, and the others in random order, so concurrent reads do
++// not all land on the same nodes. p must hold every read replica of each shard.
+ func (p ReadRoutingPlan) SpreadReplicas() []Replica {
+ 	plans := p.ShardPlans(ConsistencyLevelOne)
+-	slices.SortStableFunc(plans, func(a, b ReadRoutingPlan) int {
+-		return cmp.Compare(len(a.ReplicaSet.Replicas), len(b.ReplicaSet.Replicas))
+-	})
+-
+-	picked := make([]Replica, 0, len(plans))
+-	load := make(map[string]int)
+-	for _, plan := range plans {
+-		replicas := plan.ReplicaSet.Replicas
+-		offset := rand.IntN(len(replicas))
+-		best := replicas[offset]
+-		for k := 1; k < len(replicas); k++ {
+-			r := replicas[(offset+k)%len(replicas)]
+-			if load[r.NodeName] < load[best.NodeName] ||
+-				(load[r.NodeName] == load[best.NodeName] && r.NodeName == p.LocalHostname) {
+-				best = r
++	s := replicaSpread{
++		candidates: make([][]Replica, len(plans)),
++		picked:     make([]Replica, len(plans)),
++		onNode:     map[string][]int{},
++	}
++	for i, plan := range plans {
++		s.candidates[i] = p.localFirstThenShuffled(plan.ReplicaSet.Replicas)
++	}
++	// every shard fits once a node may hold all of them
++	for s.capacity = 1; !s.placeAll(); s.capacity++ {
++		clear(s.onNode)
++		clear(s.picked)
++	}
++	return s.picked
++}
++
++func (p ReadRoutingPlan) localFirstThenShuffled(replicas []Replica) []Replica {
++	out := slices.Clone(replicas)
++	rand.Shuffle(len(out), func(i, j int) { out[i], out[j] = out[j], out[i] })
++	if i := slices.IndexFunc(out, func(r Replica) bool { return r.NodeName == p.LocalHostname }); i > 0 {
++		out[0], out[i] = out[i], out[0]
++	}
++	return out
++}
++
++// replicaSpread assigns shards to replica nodes holding at most capacity shards
++// each, moving earlier shards to other replicas when that makes room (bipartite
++// matching with augmenting paths).
++type replicaSpread struct {
++	candidates [][]Replica
++	capacity   int
++	picked     []Replica
++	onNode     map[string][]int
++}
++
++func (s *replicaSpread) placeAll() bool {
++	for shard := range s.candidates {
++		if !s.place(shard, map[string]bool{}) {
++			return false
++		}
++	}
++	return true
++}
++
++// place puts shard on one of its replicas, moving shards already there to their
++// other replicas if needed. visited stops it from trying a node twice.
++func (s *replicaSpread) place(shard int, visited map[string]bool) bool {
++	for _, r := range s.candidates[shard] {
++		if visited[r.NodeName] {
++			continue
++		}
++		visited[r.NodeName] = true
++		if len(s.onNode[r.NodeName]) < s.capacity {
++			s.assign(shard, r)
++			return true
++		}
++		for _, other := range slices.Clone(s.onNode[r.NodeName]) {
++			if s.place(other, visited) {
++				s.assign(shard, r)
++				return true
+ 			}
+ 		}
+-		load[best.NodeName]++
+-		picked = append(picked, best)
+ 	}
+-	return picked
++	return false
++}
++
++// assign moves shard to r, off the node it was on, if any.
++func (s *replicaSpread) assign(shard int, r Replica) {
++	if old := s.picked[shard].NodeName; old != "" {
++		s.onNode[old] = slices.DeleteFunc(s.onNode[old], func(o int) bool { return o == shard })
++	}
++	s.picked[shard] = r
++	s.onNode[r.NodeName] = append(s.onNode[r.NodeName], shard)
+ }
+ 
+ // HostNames returns the hostnames of the primary write Replicas
+```
+
+**File**: `cluster/router/types/router_plan_test.go` (modified, +58/-1)
+```diff
+@@ -12,6 +12,8 @@
+ package types_test
+ 
+ import (
++	"fmt"
++	"math/rand/v2"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/require"
+@@ -186,12 +188,18 @@ func TestReadRoutingPlan_SpreadReplicas(t *testing.T) {
+ 			maxLoad:  1,
+ 		},
+ 		{
+-			name:     "a shard with fewer replicas picks first",
++			name:     "a shard with a single replica keeps its node",
+ 			local:    "n9",
+ 			replicas: [][]types.Replica{replicas("A", "n1", "n2"), replicas("B", "n2")},
+ 			want:     map[string]string{"A": "n1", "B": "n2"},
+ 			maxLoad:  1,
+ 		},
++		{
++			name:     "an earlier pick moves off the local node to make room",
++			local:    "n1",
++			replicas: [][]types.Replica{replicas("A", "n1", "n2"), replicas("B", "n1", "n3"), replicas("C", "n1", "n3")},
++			maxLoad:  1,
++		},
+ 		{
+ 			name:  "four shards at rf 3 on five nodes land on four nodes",
+ 			local: "n1",
+@@ -231,3 +239,52 @@ func TestReadRoutingPlan_SpreadReplicas(t *testing.T) {
+ 		})
+ 	}
+ }
++
++// SpreadReplicas must reach the smallest busiest-node load any assignment can,
++// checked against every assignment of small random layouts.
++func TestReadRoutingPlan_SpreadReplicasIsOptimal(t *testing.T) {
++	r := rand.New(rand.NewPCG(1, 2))
++	for run := range 500 {
++		nodes := 1 + r.IntN(5)
++		var shards [][]string
++		var all []types.Replica
++		for s := range 1 + r.IntN(6) {
++			perm := r.Perm(nodes)[:1+r.IntN(min(3, nodes))]
++			var names []string
++			for _, n := range perm {
++				node := fmt.Sprintf("n%d", n)
++				names = append(names, node)
++				all = append(all, types.Replica{ShardName: fmt.Sprintf("s%d", s), NodeName: node})
++			}
++			shards = append(shards, names)
++		}
++		plan := types.ReadRoutingPlan{LocalHostname: "n0", ReplicaSet: types.ReadReplicaSet{Replicas: all}}
++
++		load := map[string]int{}
++		for _, rep := range plan.SpreadReplicas() {
++			load[rep.NodeName]++
++		}
++		require.Equal(t, bestMaxLoad(shards, map[string]int{}), maxOf(load), "run %d: %v", run, shards)
++	}
++}
++
++func bestMaxLoad(shards [][]string, load map[string]int) int {
++	if len(shards) == 0 {
++		return maxOf(load)
++	}
++	best := len(shards) + maxOf(load)
++	for _, node := range shards[0] {
++		load[node]++
++		best = min(best, bestMaxLoad(shards[1:], load))
++		load[node]--
++	}
++	return best
++}
++
++func maxOf(load map[string]int) int {
++	m := 0
++	for _, n := range load {
++		m = max(m, n)
++	}
++	return m
++}
+```
+
+**File**: `usecases/sharding/remote_index.go` (modified, +25/-41)
+```diff
+@@ -317,33 +317,25 @@ func (ri *RemoteIndex) SearchShard(ctx context.Context, shard string,
+ 		}
+ 		return result{objs, scores, queryProfiles}, err
+ 	}
+-	rr, node, err := ri.queryReplicas(ctx, shard, "", f)
++	rr, node, err := ri.queryReplicas(ctx, shard, f)
+ 	if err != nil {
+ 		return nil, nil, nil, node, err
+ 	}
+ 	r := rr.(result)
+ 	return r.objects, r.scores, r.queryProfiles, node, err
+ }
+ 
+-// Aggregate asks the replica on preferredNode first, when set, and the shard's
+-// other replicas after it.
++// Aggregate aggregates the shard on the given node, without trying any other.
+ func (ri *RemoteIndex) Aggregate(
+ 	ctx context.Context,
+-	shard, preferredNode string,
++	node, shard string,
+ 	params aggregation.Params,
+ ) (*aggregation.Result, error) {
+-	f := func(_, host string) (interface{}, error) {
+-		r, err := ri.client.Aggregate(ctx, host, ri.class, shard, params)
+-		if err != nil {
+-			return nil, err
+-		}
+-		return r, nil
+-	}
+-	rr, _, err := ri.queryReplicas(ctx, shard, preferredNode, f)
+-	if err != nil {
+-		return nil, err
++	host, ok := ri.nodeResolver.NodeHostname(node)
++	if !ok || host == "" {
++		return nil, fmt.Errorf("resolve node name %q to host", node)
+ 	}
+-	return rr.(*aggregation.Result), err
++	return ri.client.Aggregate(ctx, host, ri.class, shard, params)
+ }
+ 
+ func (ri *RemoteIndex) FindUUIDs(ctx context.Context, shardName string,
+@@ -499,11 +491,9 @@ func (ri *RemoteIndex) queryAllReplicas(
+ 	return queryAll(replicas)
+ }
+ 
+-// queryReplicas asks the shard's replicas one by one until one answers: preferred
+-// first, when set, then the others starting from a random one.
+ func (ri *RemoteIndex) queryReplicas(
+ 	ctx context.Context,
+-	shard, preferred string,
++	shard string,
+ 	do func(nodeName, host string) (interface{}, error),
+ ) (resp interface{}, node string, err error) {
+ 	replicas, err := ri.stateGetter.ShardReplicas(ri.class, shard)
+@@ -513,34 +503,28 @@ func (ri *RemoteIndex) queryReplicas(
+ 			fmt.Errorf("class %q has no physical shard %q: %w", ri.class, shard, err)
+ 	}
+ 
+-	for _, node = range ri.replicaOrder(replicas, preferred) {
+-		if errC := ctx.Err(); errC != nil {
+-			return nil, node, errC
+-		}
+-		host, ok := ri.nodeResolver.NodeHostname(node)
++	queryOne := func(replica string) (interface{}, error) {
++		host, ok := ri.nodeResolver.NodeHostname(replica)
+ 		if !ok || host == "" {
+-			err = fmt.Errorf("resolve node name %q to host", node)
+-			continue
+-		}
+-		if resp, err = do(node, host); err == nil {
+-			return resp, node, nil
++			return nil, fmt.Errorf("resolve node name %q to host", replica)
+ 		}
++		return do(replica, host)
+ 	}
+-	return resp, node, err
+-}
+ 
+-// replicaOrder lists replicas from a random one onwards, wrapping around, with
+-// preferred, when set, in front.
+-func (ri *RemoteIndex) replicaOrder(replicas []string, preferred string) []string {
+-	order := make([]string, 0, len(replicas)+1)
+-	if preferred != "" {
+-		order = append(order, preferred)
++	queryUntil := func(replicas []string) (resp interface{}, node string, err error) {
++		for _, node = range replicas {
++			if errC := ctx.Err(); errC != nil {
++				return nil, node, errC
++			}
++			if resp, err = queryOne(node); err == nil {
++				return resp, node, nil
++			}
++		}
++		return resp, node, err
+ 	}
+ 	first := rand.Intn(len(replicas))
+-	for k := range replicas {
+-		if r := replicas[(first+k)%len(replicas)]; r != preferred {
+-			order = append(order, r)
+-		}
++	if resp, node, err = queryUntil(replicas[first:]); err != nil && first != 0 {
++		return queryUntil(replicas[:first])
+ 	}
+-	return order
++	return resp, node, err
+ }
+```
+
+**File**: `usecases/sharding/remote_index_test.go` (modified, +1/-46)
+```diff
+@@ -61,7 +61,7 @@ func TestQueryReplica(t *testing.T) {
+ 
+ 	for _, test := range tests {
+ 		rindex := RemoteIndex{"C", &test.schema, nil, &test.resolver}
+-		got, lastNode, err := rindex.queryReplicas(test.ctx, "S", "", doIf(test.targetNode))
++		got, lastNode, err := rindex.queryReplicas(test.ctx, "S", doIf(test.targetNode))
+ 		if !test.success {
+ 			if got != nil {
+ 				t.Errorf("%s: want: nil, got: %v", test.name, got)
+@@ -76,51 +76,6 @@ func TestQueryReplica(t *testing.T) {
+ 	}
+ }
+ 
+-func TestQueryReplicaPreferred(t *testing.T) {
+-	tests := []struct {
+-		name      string
+-		replicas  fakeSchema
+-		preferred string
+-		answering string
+-		wantFirst string
+-	}{
+-		{name: "preferred replica asked first", replicas: newFakeSchema(0, 9), preferred: "N5", answering: "N5", wantFirst: "N5"},
+-		{name: "preferred node outside the shard's replicas asked first", replicas: newFakeSchema(0, 3), preferred: "N7", answering: "N7", wantFirst: "N7"},
+-		{name: "failing preferred replica falls back to the others", replicas: newFakeSchema(0, 9), preferred: "N5", answering: "N2", wantFirst: "N5"},
+-	}
+-	for _, tt := range tests {
+-		t.Run(tt.name, func(t *testing.T) {
+-			resolver := newFakeResolver(0, 10)
+-			rindex := RemoteIndex{"C", &tt.replicas, nil, &resolver}
+-			var asked []string
+-			got, node, err := rindex.queryReplicas(context.Background(), "S", tt.preferred,
+-				func(node, host string) (interface{}, error) {
+-					asked = append(asked, node)
+-					if node != tt.answering {
+-						return nil, errAny
+-					}
+-					return node, nil
+-				})
+-			if err != nil {
+-				t.Fatalf("unexpected error: %v", err)
+-			}
+-			if got != tt.answering || node != tt.answering {
+-				t.Fatalf("answer want %s, got %v from %s", tt.answering, got, node)
+-			}
+-			if asked[0] != tt.wantFirst {
+-				t.Fatalf("first asked want %s, got %v", tt.wantFirst, asked)
+-			}
+-			seen := map[string]bool{}
+-			for _, n := range asked {
+-				if seen[n] {
+-					t.Fatalf("%s asked twice: %v", n, asked)
+-				}
+-				seen[n] = true
+-			}
+-		})
+-	}
+-}
+-
+ func newFakeResolver(fromNode, toNode int) fakeNodeResolver {
+ 	m := make(map[string]string, toNode-fromNode)
+ 	for i := fromNode; i < toNode; i++ {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #13943** (2026-11-18): dynamic: fix flaky TestUpgrade_InProgressUntilCompressed (@asdine)
+- **PR #13941** (2026-11-18): Speed up the slowest vector integration tests (@trengrj)
+- **PR #13940** (2026-11-18): fix(hfresh): allow retrying rejected maintenance enqueues (@perfloop-agent)
+- **PR #13937** (2026-11-18): Merge stable/v1.40 into main (@antas-marcin)
 - **PR #13935** (2026-11-17): Merge stable/v1.39 into stable/v1.40 (@antas-marcin)
-- **PR #13931** (2026-11-17): Merge stable/v1.38 into stable/v1.39 (@antas-marcin)
-- **PR #13929** (2026-11-17): hnsw: keep compression across a reset of an empty index (@asdine)
-- **PR #13927** (2026-11-17): fix: raise automatic rescoreLimit for RQ 1-bit and BQ to 512 (@trengrj)
-- **PR #13926** (2026-11-17): test: drop the small hnsw cache case from the dynamic upgrade tests (@trengrj)
-- **PR #13923** (2026-11-16): prepare release v1.41.0-rc.0 (@antas-marcin)
+- **PR #13932** (closed): fix(lsmkv): preserve segments on WAL replay retry (@perfloop-agent)
 
 ---
 
@@ -1802,31 +2658,78 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. raise automatic rescoreLimit for RQ 1-bit and BQ to 512
+## X. grpc-web): bound Search and Aggregate requests by the server write timeout
 
 **RULE**:
-When implementing operations in `entities/vectorindex/hnsw/bq_config.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `adapters/handlers/grpc/grpcweb/deadline_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in weaviate/weaviate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba33f5fd`: raise automatic rescoreLimit for RQ 1-bit and BQ to 512. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `362d2908`: grpc-web): bound Search and Aggregate requests by the server write timeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `entities/vectorindex/hnsw/bq_config.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `adapters/handlers/grpc/grpcweb/deadline_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	DefaultBQRescoreLimit = 512
+//                           _       _
+// __      _____  __ ___   ___  __ _| |_ ___
+// \ \ /\ / / _ \/ _` \ \ / / |/ _` | __/ _ \
+//  \ V  V /  __/ (_| |\ V /| | (_| | ||  __/
+//   \_/\_/ \___|\__,_| \_/ |_|\__,_|\__\___|
+//
+//  Copyright © 2016 - 2026 Weaviate B.V. All rights reserved.
+//
+//  CONTACT: hello@weaviate.io
+//
+
+package grpcweb
+
+import (
+	"context"
+	"net/http"
+	"net/http/httptest"
+	"strconv"
+	"strings"
+	"testing"
+	"time"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"google.golang.org/grpc"
+
+	"github.com/weaviate/weaviate/adapters/handlers/rest/state"
+	pb "github.com/weaviate/weaviate/grpc/generated/protocol/v1"
+	"github.com/weaviate/weaviate/usecases/config"
+)
+
+// deadlineRecorder records the deadline of the last call it served.
+type deadlineRecorder struct {
+	pb.UnimplementedWeaviateServer
+	deadline    time.Time
+	hasDeadline bool
+}
+
+func (d *deadlineRecorder) record(ctx context.Context) {
+	d.deadline, d.hasDeadline = ctx.Deadline()
+}
+
+func (d *deadlineRecorder) Search(ctx context.Context, _ *pb.SearchRequest) (*pb.SearchReply, error) {
+	d.record(ctx)
+	return &pb.SearchReply{}, nil
+}
+
+func (d *deadlineRecorder) Aggregate(ctx context.Con
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	DefaultBQRescoreLimit = 256
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba33f5fd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `362d2908` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

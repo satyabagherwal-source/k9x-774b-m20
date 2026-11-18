@@ -10933,3 +10933,8 @@
 | `CYCLE-20261118-8QE6` | `2026-11-18T10:55:08.190Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md` | Yes (`b73a827b...`) |
 | `CYCLE-20261118-8SBO` | `2026-11-18T10:55:10.692Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9202` | Yes (`10b8af0e...`) |
 | `CYCLE-20261118-8WMZ` | `2026-11-18T10:55:16.283Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9203` | Yes (`daa288c6...`) |
+| `CYCLE-20261118-NJLZ` | `2026-11-18T11:06:39.239Z` | `deepseek-ai/DeepSeek-R1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-r1-learnings.md` | Yes (`482de0a7...`) |
+| `CYCLE-20261118-NLC0` | `2026-11-18T11:06:41.472Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9204` | Yes (`c26f2bea...`) |
+| `CYCLE-20261118-NPBV` | `2026-11-18T11:06:46.651Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9205` | Yes (`849d9103...`) |
+| `CYCLE-20261118-NS37` | `2026-11-18T11:06:50.227Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9206` | Yes (`fc85ec67...`) |
+| `CYCLE-20261118-NV5J` | `2026-11-18T11:06:54.199Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9207` | Yes (`30d4a51e...`) |

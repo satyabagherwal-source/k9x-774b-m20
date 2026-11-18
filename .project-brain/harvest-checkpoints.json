@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T10:55:16.294Z",
+  "last_updated": "2026-11-18T11:06:54.210Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -290,14 +290,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-r1",
-      "content_hash": "a7465af694a75736fe92576cc2d7410d674505f102d41c61050e4f25d4deb98c",
-      "verified_at": "2026-11-17T22:39:49.378Z",
+      "content_hash": "482de0a7c8b845b531276c496b7cbd4b76c89a27a09143dac6bcb22cb5b6f69c",
+      "verified_at": "2026-11-18T11:06:39.250Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T22:39:49.378Z"
+      "last_updated": "2026-11-18T11:06:39.250Z"
     },
     "moonshotai/Kimi-K3": {
       "repository": "moonshotai/Kimi-K3",
@@ -3426,14 +3426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-hook-form-react-hook-form",
-      "content_hash": "a48b19b22cb1bc954e53d799739b7b05ab66d1d723a8562d661076bb47766c2c",
-      "verified_at": "2026-11-17T08:31:06.548Z",
+      "content_hash": "849d910361c578a6a85b3c1bec901bf420e3aa1d915c1f849c8428c64c67d885",
+      "verified_at": "2026-11-18T11:06:46.661Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T08:31:06.548Z"
+      "last_updated": "2026-11-18T11:06:46.661Z"
     },
     "higress-group/higress": {
       "repository": "higress-group/higress",
@@ -3621,14 +3621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-max-sixty-worktrunk",
-      "content_hash": "31bfa2e53325b5c473ba6fcc5d3f4c55791d745b9922f448119b149a8f52f69d",
-      "verified_at": "2026-11-18T02:16:10.410Z",
+      "content_hash": "c26f2bea60f19bd103703a8d8210289def4c94e104b3dabbab2033739d021465",
+      "verified_at": "2026-11-18T11:06:41.483Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T02:16:10.410Z"
+      "last_updated": "2026-11-18T11:06:41.483Z"
     },
     "mattermost/mattermost": {
       "repository": "mattermost/mattermost",
@@ -10341,14 +10341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-weaviate-weaviate",
-      "content_hash": "5123e103b25cc6314830213e7ecf0a2be93d38da909a62818d5d49aa78d5ca8c",
-      "verified_at": "2026-11-17T17:28:09.130Z",
+      "content_hash": "30d4a51ef048dd8e2e6ea0eb2741a14bb54636fff2bdada73ee00b3290c7b964",
+      "verified_at": "2026-11-18T11:06:54.209Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T17:28:09.130Z"
+      "last_updated": "2026-11-18T11:06:54.209Z"
     },
     "topgrade-rs/topgrade": {
       "repository": "topgrade-rs/topgrade",
@@ -10401,14 +10401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gardener-gardener",
-      "content_hash": "2018a88fdf8e9e47e10855afb22ff91cf7044aaff22e16b569b43eb227afd095",
-      "verified_at": "2026-11-17T18:05:36.190Z",
+      "content_hash": "fc85ec67bc72126e08aa2b2b7e51a6dcafa50c7d0f54b3b0b7cb9c84cb042cd0",
+      "verified_at": "2026-11-18T11:06:50.237Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T18:05:36.190Z"
+      "last_updated": "2026-11-18T11:06:50.237Z"
     },
     "NirDiamant/RAG_Techniques": {
       "repository": "NirDiamant/RAG_Techniques",

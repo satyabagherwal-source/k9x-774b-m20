@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source**: github ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
-> **Source Version**: `5b4079a6`  
+> **Source Version**: `3593919a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T18:05:35.230Z  
+> **Timestamp**: 2026-11-18T11:06:49.360Z  
 > **Learning ID**: `learn-github-gardener-gardener`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gardener-gardener-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gardener/gardener](https://github.com/gardener/gardener))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T18:05:35.225Z  
+> **Harvest Timestamp**: 2026-11-18T11:06:49.355Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -726,11 +726,17 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #16374** (2026-11-17): **(docs): Use `:443` to access virtualservices in local scenario**
-  *Symptoms*: <!-- Please ensure that you do not include company internal information. -->  **How to categorize this PR?** <!-- Please select area, kind, and priority for this pull request. This helps the community categorizing it. Replace below TODOs or exchange the existing identifiers with those that fit best in your opinion. If multiple identifiers make sense you can also state the commands multiple times, e.g.   /area control-plane   /area auto-scaling   ...  If the PR affects cryptography or security mechanisms (encryption, keys, ciphers, hashes, signatures, etc.), mark it as crypto relevant. /label crypto  "/area" identifiers:     audit-logging|auto-scaling|backup|compliance|control-plane-migration|control-plane|cost|delivery|dev-productivity|disaster-recovery|documentation|high-availability|logging|metering|monitoring|networking|open-source|ops-productivity|os|performance|quality|robustness|scalability|security|storage|testing|usability|user-management "/kind" identifiers:     api-change|bug|cleanup|discussion|enhancement|epic|flake|impediment|poc|post-mortem|question|regression|task|technical-debt|test --> /area documentation /kind bugfix  **What this PR does / why we need it**: The virtualservices from the Seed can be accessed directly via port `443`, as the local setup starts a `bind` server resolving these domains.  **Which issue(s) this PR fixes**: Fixes #  **Special notes for your reviewer**:  **Release note**: <!-- Write your release note: 1. Enter your release note in the b
+- **Issue #16382** (2026-11-18): **Update module golang.org/x/tools to v0.53.0 - autoclosed**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [golang.org/x/tools](https://pkg.go.dev/golang.org/x/tools) | [`v0.52.1-0.20261117052324-6bc5e25e1abb` → `v0.53.0`](https://cs.opensource.google/go/x/tools/+/refs/tags/v0.52.1-0.20261117052324-6bc5e25e1abb...refs/tags/v0.53.0) | ![age](https://developer.mend.io/api/mc/badges/age/go/golang.org%2fx%2ftools/v0.53.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/golang.org%2fx%2ftools/v0.52.1-0.20261117052324-6bc5e25e1abb/v0.53.0?slim=true) |  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yNDkuMSIsInVwZGF0ZWRJblZlciI6IjQ0LjI0OS4xIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
+  **Post-Mortem & Fix Analysis**:
+  > ### ℹ️ Artifact update notice  ##### File name: hack/tools/go.mod  In order to perform the update(s) described in the table above, Renovate ran the `go get` command, which resulted in the following additional change(s):   - 3 additional dependencies were updated   Details:   | **Package**              | **Change**                                                                   | | :----------------------- | :--------------------------------------------------------------------------- | | `golang.org/x/mod`       | `v0.42.0` -> `v0.43.0`                                                       | | `golang.org/x/net`       | `v0.62.0` -> `v0.63.0`                                                       | | `golang.org/x/telemetry` | `v0.0.0-20261009151841-97e8ea77aa2a` -> `v0.0.0-20261116191925-e77a43154acb` |
+  > /label skip-review
 
-- **Issue #16367** (2026-11-17): **Update dependency gardener/autoscaler to v1.33.2**
-  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [gardener/autoscaler](https://redirect.github.com/gardener/autoscaler) | patch | `v1.33.1` → `v1.33.2` |  ---  ### Release Notes  <details> <summary>gardener/autoscaler</summary>  ### [`v1.33.2`](https://redirect.github.com/gardener/autoscaler/releases/tag/v1.33.2)  [Compare Source](https://redirect.github.com/gardener/autoscaler/compare/v1.33.1...v1.33.2)  ### \[github.com/gardener/autoscaler:v1.33.2]  #### 🐛 Bug Fixes  - `[DEVELOPER]` Use namespace scoped `NewSharedInformerFactoryWithOptions` function instead of `NewSharedInformerFactory` to restrict Deployment Lister by [@&#8203;gagan16k](https://redirect.github.com/gagan16k) \[[#&#8203;450](https://redirect.github.com/gardener/autoscaler/pull/450)]  #### application/spdx+json  - cluster-autoscaler-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/autoscaler/cluster-autoscaler@sha256:028c3ad1a2a5e0c29763bf9e03e9111d05d7df73ffc0447f09971128592f8cff` - cluster-autoscaler-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/autoscaler/cluster-autoscaler@sha256:c77116aa93eb574ded5d2cbbf7ec68b90cd1329a9823123a373570cc908b9b95`  #### application/vnd.cyclonedx+json  - cluster-autoscaler-sbom-ref: `europe-docker.pkg.dev/gardener-project/releases/gardener/autoscaler/cluster-autoscaler@sha256:9763a70b88adec6ae6b2ded5ea72e0029d15993202114f3f6c3924efbe057bd1` - cluster-autoscaler-sbom-ref: `europe-docker.pkg.dev/gar
+- **Issue #16381** (2026-11-18): **Update golang.org/x/exp digest to 7a49493**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [golang.org/x/exp](https://pkg.go.dev/golang.org/x/exp) | require | digest | `e397061` → `7a49493` |  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Enabled.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  **Release note**: ```other dependency NONE ``` <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yNDkuMSIsInVwZGF0ZWRJblZlciI6IjQ0LjI0OS4xIiwidGFyZ2V0QnJhbmNoIjoibWFzdGVyIiwibGFiZWxzIjpbImtpbmQvZW5oYW5jZW1lbnQiXX0=--> 
+  **Post-Mortem & Fix Analysis**:
+  > ### ℹ️ Artifact update notice  ##### File name: hack/tools/go.mod  In order to perform the update(s) described in the table above, Renovate ran the `go get` command, which resulted in the following additional change(s):   - 4 additional dependencies were updated   Details:   | **Package**              | **Change**                                                                   | | :----------------------- | :--------------------------------------------------------------------------- | | `golang.org/x/tools`     | `v0.52.1-0.20261117052324-6bc5e25e1abb` -> `v0.53.0`                         | | `golang.org/x/mod`       | `v0.42.0` -> `v0.43.0`                                                       | | `golang.org/x/net`       | `v0.62.0` -> `v0.63.0`                                                       | | `golang.org/x/telemetry` | `v0.0.0-20261009151841-97e8ea77aa2a` -> `v0.0.0-20261116191925-e77a43154acb` |
+  > /label skip-review
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -747,450 +753,388 @@ func (h *DefaultHealthChecker) Check(ctx context.Context, request types.Namespac
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a91c7dc9` (2026-11-17)
-**Commit Message**: Update module go.opentelemetry.io/otel/sdk/log to v1 [SECURITY] (#16335)
+### Incident Patch 1: `3593919a` (2026-11-18)
+**Commit Message**: [GEP-28] Protect etcd quorum during rolling updates of control plane nodes (#16240)
 
-* Update module go.opentelemetry.io/otel/sdk/log to v1 [SECURITY]
+* Documentation
 
-* Run make tidy
+Assisted-by: Claude <[REDACTED_EMAIL]>
 
----------
+Signed-off-by: rfranzke <[REDACTED_EMAIL]>
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+* Label static etcd pods with `is-critical-static-pod=true`
 
-**File**: `go.mod` (modified, +1/-1)
+Co-authored-by: Johannes Scheerer <[REDACTED_EMAIL]>
+Co-authored-by: DobromirPeev <[REDACTED_EMAIL]>
+Signed-off-by: rfranzke <[REDACTED_EMAIL]>
+
+* Add health checker for critical static pods
+
+Co-authored-by: Johannes Scheerer <[REDACTED_EMAIL]>
+Co-authored-by: DobromirPeev <[REDACTED_EMAIL]>
+Signed-off-by: rfranzke <[REDACTED_EMAIL]>
+
+* Enable new health checker in healthcheck controller
+
+only for control plane nodes and only when the Node object exists/the
+node name is known
+
+Co-authored-by: Johannes Scheerer <[REDACTED_EMAIL]>
+Co-authored-by: DobromirPeev <[REDACTED_EMAIL]>
+Signed-off-by: rfranzke <[REDACTED_EMAIL]>
+
+* Don't attempt acquiring Lease if other node has unhealthy etcd pods
+
+to prevent breaking the 2/3-quorum
+
+Co-authored-by: Johannes Scheerer <[REDACTED_EMAIL]>
+Co-authored-by: DobromirPeev <[REDACTED_EMAIL]>
+Signed-off-by: rfranzke <[REDACTED_EMAIL]>
+
+* Augment control plane pool `MachineDeployment` with `CriticalControlPlan
+
+**File**: `cmd/gardener-node-agent/app/app.go` (modified, +1/-1)
 ```diff
-@@ -339,7 +339,7 @@ require (
- 	go.opentelemetry.io/otel/log v1.47.0 // indirect
- 	go.opentelemetry.io/otel/metric v1.47.0 // indirect
- 	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
--	go.opentelemetry.io/otel/sdk/log v0.21.0 // indirect
-+	go.opentelemetry.io/otel/sdk/log v1.47.0 // indirect
- 	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
- 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
+@@ -234,7 +234,7 @@ func run(ctx context.Context, cancel context.CancelFunc, log logr.Logger, cfg *n
+ 		Manager:            mgr,
+ 		BootstrapRunnables: bootstrapRunnables,
+ 		ActualRunnables: []manager.Runnable{manager.RunnableFunc(func(ctx context.Context) error {
+-			return controller.AddToManager(ctx, cancel, mgr, cfg, hostName, machineName, nodeName, cfgDir)
++			return controller.AddToManager(ctx, cancel, mgr, cfg, hostName, machineName, nodeName, cfgDir, isControlPlaneNode)
+ 		})},
+ 	}); err != nil {
+ 		return fmt.Errorf("failed adding runnables to manager: %w", err)
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `dev-setup/skaffold-gardenadm.yaml` (modified, +1/-0)
 ```diff
-@@ -875,8 +875,8 @@ go.opentelemetry.io/otel/metric/x v0.69.0 h1:DjRLr15H83v+hCW7JA9NoJvOkYTtmq5YoDR
- go.opentelemetry.io/otel/metric/x v0.69.0/go.mod h1:uVvsMPMFFyj/HUQfrUnH3JjnOQ1dwFDorgFLRBasM0k=
- go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
- go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
--go.opentelemetry.io/otel/sdk/log v0.21.0 h1:QsE7XSR0ktQdKmRKGnR+f1ObGF32WG+7MER/P9KgmYc=
--go.opentelemetry.io/otel/sdk/log v0.21.0/go.mod h1:m9mApjCoD2/1QuKCAptjv+BrG9WKOvQLVdNx+iBldTo=
-+go.opentelemetry.io/otel/sdk/log v1.47.0 h1:W4N/ZfgpkRRnmARnqYoQ6BrWA0mrj8IzVDNLlpmUJZY=
-+go.opentelemetry.io/otel/sdk/log v1.47.0/go.mod h1:Wu74Z2EmOKXi2FleSNAb0Hyau2G+r5kubSEMJw5aAMs=
- go.opentelemetry.io/otel/sdk/log/logtest v0.21.0 h1:X+JBBgKlswCGYsmgL0CnoUUtlE//VB345c84jYAYkdQ=
- go.opentelemetry.io/otel/sdk/log/logtest v0.21.0/go.mod h1:HD1575K8e6sIFBBDd5tZB3t9DlMytWXq9FuR+Y4rfjE=
- go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
+@@ -1044,6 +1044,7 @@ build:
+             - pkg/apis/authentication/v1alpha1
+             - pkg/apis/config
+             - pkg/apis/config/gardenlet/v1alpha1
++            - pkg/apis/config/nodeagent/v1alpha1
+             - pkg/apis/core
+             - pkg/apis/core/install
+             - pkg/apis/core/v1
 ```
 
----
-
-### Incident Patch 2: `4619d669` (2026-11-17)
-**Commit Message**: Fix `gardener-operator` CA rotation (#16366)
-
-* Fix `gardener-operator` CA rotation
-
-The operator's virtual garden client is instantiated only once. After a
-credentials rotation it kept trusting the pre-rotation CA bundle and failed
-with 'certificate signed by unknown authority'.
-
-Forward the virtual garden's CA bundle via a file on disk (instead of inline
-CA data) so that client-go transparently reloads it from disk after a rotation
-(ClientsAllowCARotation feature gate), keeping the long-lived client working
-without recreating it or restarting the operator.
-
-Signed-off-by: Tim Usner <[REDACTED_EMAIL]>
-
-* Inline virtual garden CA for gardenlet bootstrap
-
-Signed-off-by: Tim Usner <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Tim Usner <[REDACTED_EMAIL]>
-
-**File**: `pkg/operator/controller/gardenlet/add.go` (modified, +26/-1)
+**File**: `dev-setup/skaffold-operator.yaml` (modified, +1/-0)
 ```diff
-@@ -10,6 +10,7 @@ import (
- 	"strings"
+@@ -1054,6 +1054,7 @@ build:
+             - pkg/apis/authentication/v1alpha1
+             - pkg/apis/config
+             - pkg/apis/config/gardenlet/v1alpha1
++            - pkg/apis/config/nodeagent/v1alpha1
+             - pkg/apis/core
+             - pkg/apis/core/install
+             - pkg/apis/core/v1
+```
+
+**File**: `docs/concepts/node-agent.md` (modified, +11/-5)
+```diff
+@@ -107,11 +107,12 @@ Therefore, while serial reconciliation benefits both components, it is the `etcd
+ Serial reconciliation is enabled by setting the `reconciliation.osc.node-agent.gardener.cloud/serial` annotation to `"true"` on the `Secret` containing the `OperatingSystemConfig`.
+ When this annotation is present, the controller uses a leader election mechanism based on Kubernetes `Lease` objects to coordinate reconciliation across multiple `gardener-node-agent` instances:
  
- 	apierrors "k8s.io/apimachinery/pkg/api/errors"
-+	"k8s.io/client-go/rest"
- 	"k8s.io/utils/clock"
- 	"k8s.io/utils/ptr"
- 	"sigs.k8s.io/controller-runtime/pkg/builder"
-@@ -39,7 +40,11 @@ func (r *Reconciler) AddToManager(ctx context.Context, mgr manager.Manager, virt
- 		r.RuntimeCluster = mgr
+-1. **Lease Acquisition**: Before starting reconciliation, each `gardener-node-agent` instance attempts to acquire a `Lease` object with the same name as the `Secret` (in the `kube-system` namespace). The `Lease` is owned by the `Secret` via an `OwnerReference`.
+-2. **Reconciliation with Lock**: Only the instance that successfully acquires the `Lease` proceeds with reconciliation. The `Lease` has a duration of 10 minutes and is renewed in the beginning of the reconciliation process.
+-3. **Lock Release**: After successful reconciliation, the instance releases the `Lease` by clearing its holder identity, making it available for other instances to acquire.
+-4. **Waiting for Lock**: Instances that fail to acquire the `Lease` (because another instance holds it) will requeue their reconciliation and wait. The controller watches the `Lease` object and automatically requeues when it detects the `Lease` has been released.
+-5. **Lease Expiry Handling**: If a `Lease` holder fails to renew the `Lease` before it expires, other instances can detect this and attempt to acquire the `Lease` to proceed with reconciliation.
++1. **Quorum Protection**: Before attempting to acquire the `Lease`, each instance checks the `CriticalControlPlanePodsUnhealthy` condition (see [Health Check Controller](#health-check-controller)) of the other nodes in its worker pool. A sibling is considered at risk when the condition reports `True`, is missing, or is stale (the health check controller refreshes the condition's heartbeat every interval, so a missing or stale condition means the sibling's `gardener-node-agent` stopped reporting and its `etcd` health is unknown). While any sibling is at risk, the instance backs off and requeues (after `1m`) instead of acquiring the `Lease`, so a node is never updated while another control plane node's `etcd` might be unhealthy.
++2. **Lease Acquisition**: Before starting reconciliation, each `gardener-node-agent` instance attempts to acquire a `Lease` object with the same name as the `Secret` (in the `kube-system` namespace). The `Lease` is owned by the `Secret` via an `OwnerReference`.
++3. **Reconciliation with Lock**: Only the instance that successfully acquires the `Lease` proceeds with reconciliation. The `Lease` has a duration of 10 minutes and is renewed in the beginning of the reconciliation process.
++4. **Lock Release**: After successful reconciliation, the instance releases the `Lease` by clearing its holder identity, making it available for other instances to acquire.
++5. **Waiting for Lock**: Instances that fail to acquire the `Lease` (because another instance holds it) will requeue their reconciliation and wait. The controller watches the `Lease` object and automatically requeues when it detects the `Lease` has been released.
++6. **Lease Expiry Handling**: If a `Lease` holder fails to renew the `Lease` before it expires, other instances can detect this and attempt to acquire the `Lease` to proceed with reconciliation.
+ 
+ ##### Behavior Changes
+ 
+@@ -150,6 +151,11 @@ This controller performs periodic health checks on the node's critical component
+ It watches the `Node` object and executes configured health checkers at regular intervals.
+ If a health check fails, the controller can restart the affected systemd service to restore normal operation.
+ 
++On control plane nodes of self-hosted shoot clusters, an additional checker watches the critical static pods running on the node.
++It lists the `Pod`s in the `kube-system` namespace that carry the `shoot.gardener.cloud/is-critical-static-pod=true` label (set on the `etcd` static pods) and reports their readiness and health to the `CriticalControlPlanePodsUnhealthy` condition on the `Node`.
++The condition is used by the [serial reconciliation](#serial-reconciliation) to avoid updating a node while another control plane node's `etcd` is unhealthy, protecting the `etcd` quorum.
++Additionally, the condition is appended to `.spec.template.spec.machineConfiguration.nodeConditions` of the control plane pool's `MachineDeployment` so that `machine-controller-manager` also treats a node reporting it as unhealthy.
++
+ ### [Hostname Check Controller](../../pkg/nodeagent/controller/hostnamecheck)
+ 
+ This controller periodically checks whether the hostname of the machine has changed.
+```
+
+**File**: `extensions/pkg/controller/worker/genericactuator/actuator_reconcile.go` (modified, +32/-4)
+```diff
+@@ -27,6 +27,7 @@ import (
+ 	extensionsworkerhelper "github.com/gardener/gardener/extensions/pkg/controller/worker/helper"
+ 	v1beta1helper "github.com/gardener/gardener/pkg/api/core/v1beta1/helper"
+ 	extensionsv1alpha1helper "github.com/gardener/gardener/pkg/api/extensions/v1alpha1/helper"
++	nodeagentconfigv1alpha1 "github.com/gardener/gardener/pkg/apis/config/nodeagent/v1alpha1"
+ 	v1beta1constants "github.com/gardener/gardener/pkg/apis/core/v1beta1/constants"
+ 	extensionsv1alpha1 "github.com/gardener/gardener/pkg/apis/extensions/v1alpha1"
+ 	"github.com/gardener/gardener/pkg/controllerutils"
+@@ -37,6 +38,12 @@ import (
+ 	retryutils "github.com/gardener/gardener/pkg/utils/retry"
+ )
+ 
++// defaultMachineControllerManagerNodeConditions mirrors the default value of machine-controller-manager's
++// `--node-conditions` flag. We don't set this flag, so machine-controller-manager uses this default for machines
++// without an explicit `.spec.machineConfiguration.nodeConditions`. A unit test guards against drift from the upstream
++// default.
++const defaultMachineControllerManagerNodeConditions = "KernelDeadlock,ReadonlyFilesystem,DiskPressure,NetworkUnavailable"
++
+ func (a *genericActuator) Reconcile(ctx context.Context, log logr.Logger, worker *extensionsv1alpha1.Worker, cluster *extensionscontroller.Cluster) error {
+ 	log = log.WithValues("operation", "reconcile")
+ 
+@@ -216,15 +223,19 @@ func deployMachineDeployments(
+ 		}
  	}
- 	if r.VirtualConfig == nil {
--		r.VirtualConfig = virtualCluster.GetConfig()
-+		virtualConfig, err := gardenClientRestConfigWithInlineCA(virtualCluster.GetConfig())
-+		if err != nil {
-+			return fmt.Errorf("failed preparing virtual garden REST config: %w", err)
+ 
+-	var taskFns = make([]flow.TaskFn, 0, len(wantedMachineDeployments))
++	var (
++		taskFns          = make([]flow.TaskFn, 0, len(wantedMachineDeployments))
++		controlPlanePool = v1beta1helper.ControlPlaneWorkerPoolForShoot(cluster.Shoot.Spec.Provider.Workers)
++	)
+ 	for _, deployment := range wantedMachineDeployments {
+ 		var (
+-			existingMachineDeployment = getExistingMachineDeployment(existingMachineDeployments, deployment.Name)
+-			shootIsAwake              = shootIsAwake(extensionscontroller.IsHibernationEnabled(cluster), existingMachineDeployments)
++			existingMachineDeployment     = getExistingMachineDeployment(existingMachineDeployments, deployment.Name)
++			shootIsAwake                  = shootIsAwake(extensionscontroller.IsHibernationEnabled(cluster), existingMachineDeployments)
++			deploymentForControlPlanePool = controlPlanePool != nil && controlPlanePool.Name == deployment.PoolName
+ 		)
+ 
+ 		taskFns = append(taskFns, func(ctx context.Context) error {
+-			return deployMachineDeployment(ctx, log, cl, worker, deployment, existingMachineDeployment, clusterAutoscalerUsed, isHibernated, shootIsAwake)
++			return deployMachineDeployment(ctx, log, cl, worker, deployment, existingMachineDeployment, clusterAutoscalerUsed, isHibernated, shootIsAwake, deploymentForControlPlanePool)
+ 		})
+ 	}
+ 
+@@ -241,6 +252,7 @@ func deployMachineDeployment(
+ 	clusterAutoscalerUsed bool,
+ 	isHibernationEnabled bool,
+ 	shootIsAwake bool,
++	deploymentForControlPlanePool bool,
+ ) error {
+ 	var labels = map[string]string{extensionsworkercontroller.LabelKeyMachineDeploymentName: deployment.Name}
+ 
+@@ -332,6 +344,22 @@ func deployMachineDeployment(
+ 			}
+ 		}
+ 
++		if deploymentForControlPlanePool {
++			// `MachineConfiguration` is a pointer in `Machine.Spec`, so it must be initialized before setting
++			// `NodeConditions` below (do not remove this nil-guard).
++			if machineDeployment.Spec.Template.Spec.MachineConfiguration == nil {
++				machineDeployment.Spec.Template.Spec.MachineConfiguration = &machinev1alpha1.MachineConfiguration{}
++			}
++			// When no node conditions are configured for this pool, machine-controller-manager falls back to its own
++			// default set. Appending to this default (instead of a nil value) prevents the control plane machines from
++			// losing machine-controller-manager's default node conditions.
++			nodeConditions := defaultMachineControllerManagerNodeConditions
++			if machineDeployment.Spec.Template.Spec.NodeConditions != nil {
++				nodeConditions = *machineDeployment.Spec.Template.Spec.NodeConditions
++			}
++			machineDeployment.Spec.Template.Spec.NodeConditions = new(strings.Join([]string{nodeConditions, string(nodeagentconfigv1alpha1.ConditionTypeCriticalControlPlanePodsUnhealthy)}, ","))
 +		}
-+		r.VirtualConfig = virtualConfig
- 	}
- 	if r.VirtualClient == nil {
- 		r.VirtualClient = virtualCluster.GetClient()
-@@ -79,6 +84,26 @@ func (r *Reconciler) AddToManager(ctx context.Context, mgr manager.Manager, virt
- 		Complete(r)
- }
- 
-+// gardenClientRestConfigWithInlineCA returns a copy of the given REST config with the virtual garden's CA bundle
-+// inlined as CAData. The virtual cluster's REST config references the CA via a file on disk (so that client-go can
-+// reload it after a credentials rotation), but that file only exists in the gardener-operator's filesystem.
-+func gardenClientRestConfigWithInlineCA(config *rest.Config) (*rest.Config, error) {
-+	gardenConfig := rest.CopyConfig(config)
-+	if gardenConfig.CAFile == "" {
-+		return gardenConfig, nil
-+	}
 +
-+	// LoadTLSFiles reads the CAFile (and any cert/key files) into their respective *Data fields.
-+	if err := rest.LoadTLSFiles(gardenConfig); err != nil {
-+		return nil, fmt.Errorf("failed loading CA file %q: %w", gardenConfig.CAFile, err)
-+	}
-+	// Clear the file reference so consumers serializing this config into a kubeconfig use the inline CAData instead of
-+	// the operator-local file path.
-+	gardenConfig.CAFile = ""
-+
-+	return gardenConfig, nil
-+}
-+
- // OperatorResponsiblePredicate is a predicate for checking whether the Seed object has already been created for the
- // Gardenlet resource, and whether the kubeconfig secret ref has been removed. It also returns 'true' if the
- // 'force-redeploy' operation annotation is set, even though the Seed object already exists.
+ 		log.Info("Deploying machine deployment", "machineDeployment", client.ObjectKeyFromObject(machineDeployment), "replicas", machineDeployment.Spec.Replicas)
+ 		return nil
+ 	}); err != nil {
 ```
 
-**File**: `pkg/operator/controller/gardenlet/add_test.go` (modified, +37/-0)
+**File**: `extensions/pkg/controller/worker/genericactuator/actuator_reconcile_test.go` (modified, +51/-0)
 ```diff
-@@ -6,12 +6,15 @@ package gardenlet_test
- 
- import (
+@@ -8,6 +8,7 @@ import (
  	"context"
-+	"os"
-+	"path/filepath"
  
+ 	machinev1alpha1 "github.com/gardener/machine-controller-manager/pkg/apis/machine/v1alpha1"
++	mcmoptions "github.com/gardener/machine-controller-manager/pkg/util/provider/app/options"
+ 	"github.com/go-logr/logr"
  	. "github.com/onsi/ginkgo/v2"
  	. "github.com/onsi/gomega"
- 	gomegatypes "github.com/onsi/gomega/types"
- 	corev1 "k8s.io/api/core/v1"
- 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/client-go/rest"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
- 	fakeclient "sigs.k8s.io/controller-runtime/pkg/client/fake"
- 	"sigs.k8s.io/controller-runtime/pkg/event"
-@@ -80,4 +83,38 @@ var _ = Describe("Add", func() {
- 			})
- 		})
- 	})
-+
-+	Describe("#GardenClientRestConfigWithInlineCA", func() {
-+		var caBundle = []byte("ca-data")
-+
-+		It("should keep the config unchanged when no CA file is referenced", func() {
-+			config := &rest.Config{Host: "https://api.gardener.test", TLSClientConfig: rest.TLSClientConfig{CAData: caBundle}}
-+
-+			result, err := GardenClientRestConfigWithInlineCA(config)
-+			Expect(err).NotTo(HaveOccurred())
-+			Expect(result.CAFile).To(BeEmpty())
-+			Expect(result.CAData).To(Equal(caBundle))
-+		})
-+
-+		It("should inline the CA bundle from the referenced file and clear the file path", func() {
-+			caFile := filepath.Join(GinkgoT().TempDir(), "ca.crt")
-+			Expect(os.WriteFile(caFile, caBundle, 0o600)).To(Succeed())
-+
-+			config := &rest.Config{Host: "https://api.gardener.test", TLSClientConfig: rest.TLSClientConfig{CAFile: caFile}}
-+
-+			result, err := GardenClientRestConfigWithInlineCA(config)
-+			Expect(err).NotTo(HaveOccurred())
-+			Expect(result.CAFile).To(BeEmpty())
-+			Expect(result.CAData).To(Equal(caBundle))
-+			Expect(config.CAFile).To(Equal(caFile))
-+			Expect(config.CAData).To(BeEmpty())
-+		})
-+
-+		It("should return an error when the referenced CA file does not exist", func() {
-+			config := &rest.Config{Host: "https://api.gardener.test", TLSClientConfig: rest.TLSClientConfig{CAFile: "/does/not/exist"}}
-+
-+			_, err := GardenClientRestConfigWithInlineCA(config)
-+			Expect(err).To(HaveOccurred())
+@@ -34,6 +35,12 @@ import (
+ )
+ 
+ var _ = Describe("ActuatorReconcile", func() {
++	Describe("defaultMachineControllerManagerNodeConditions", func() {
++		It("should match machine-controller-manager's default node conditions", func() {
++			Expect(defaultMachineControllerManagerNodeConditions).To(Equal(mcmoptions.NewMCServer().NodeConditions))
 +		})
 +	})
- })
-```
-
-**File**: `pkg/operator/controller/gardenlet/export_test.go` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+// SPDX-FileCopyrightText: Contributors to the Gardener project
-+//
-+// SPDX-License-Identifier: Apache-2.0
 +
-+package gardenlet
-+
-+import "k8s.io/client-go/rest"
-+
-+// GardenClientRestConfigWithInlineCA is exported for testing.
-+func GardenClientRestConfigWithInlineCA(config *rest.Config) (*rest.Config, error) {
-+	return gardenClientRestConfigWithInlineCA(config)
-+}
-```
-
-**File**: `pkg/operator/controller/virtual/access/reconciler.go` (modified, +34/-3)
-```diff
-@@ -44,6 +44,7 @@ type Reconciler struct {
- 	Clock           clock.Clock
- 
- 	tokenFilePath string
-+	caFilePath    string
- }
- 
- // NewVirtualClient builds a client to the virtual cluster from the given REST config. Exposed for testing.
-@@ -53,9 +54,11 @@ var NewVirtualClient = func(restConfig *rest.Config) (client.Client, error) {
- 
- // Reconcile processes the given access secret in the request.
- // It extracts the included Kubeconfig, and prepares a dedicated REST config
--// where the inline bearer token is replaced by a bearer token file.
--// Any subsequent reconciliation run causes the content of the BearerTokenFile to be updated with the token found
--// in the access secret.
-+// where the inline bearer token is replaced by a bearer token file and the inline CA bundle is replaced by a CA file.
-+// Any subsequent reconciliation run causes the content of the BearerTokenFile and the CA file to be updated with the
-+// token and CA bundle found in the access secret. Using a CA file (instead of inline CA data) allows client-go to
-+// transparently reload the virtual garden's CA bundle after a credentials rotation without recreating the client (see
-+// the ClientsAllowCARotation feature gate), which the virtual cluster reconciler relies on.
- func (r *Reconciler) Reconcile(ctx context.Context, request reconcile.Request) (reconcile.Result, error) {
- 	log := logf.FromContext(ctx)
- 
-@@ -116,6 +119,18 @@ func (r *Reconciler) Reconcile(ctx context.Context, request reconcile.Request) (
- 	restConfig.BearerToken = ""
- 	restConfig.BearerTokenFile = r.tokenFilePath
- 
-+	// Replace the inline CA bundle with a CA file so that client-go reloads it from disk on credentials rotation
-+	// instead of pinning it for the lifetime of the virtual cluster client. We only switch to the file if the
-+	// kubeconfig actually carried a CA bundle, to avoid emitting a REST config that trusts no CA at all.
-+	if len(restConfig.CAData) > 0 {
-+		if err := r.writeCABundleToFile(log, restConfig.CAData); err != nil {
-+			return reconcile.Result{}, fmt.Errorf("error writing CA bundle to file: %w", err)
-+		}
-+
-+		restConfig.CAData = nil
-+		restConfig.CAFile = r.caFilePath
-+	}
-+
- 	log.Info("Notifying virtual cluster creation reconciler about new REST config")
- 	r.Channel <- event.TypedGenericEvent[*rest.Config]{Object: restConfig}
- 	return reconcile.Result{}, nil
-@@ -158,6 +173,22 @@ func (r *Reconciler) writeTokenToFile(log logr.Logger, token string) error {
- 	return afero.WriteFile(r.FS, r.tokenFilePath, []byte(token), 0o600)
- }
- 
-+func (r *Reconciler) writeCABundleToFile(log logr.Logger, caBundle []byte) error {
-+	if r.caFilePath == "" {
-+		caFile, err := CreateTemporaryFile(r.FS, "", "garden-access-ca")
-+		if err != nil {
-+			return fmt.Errorf("error creating virtual garden CA bundle file: %w", err)
-+		}
-+		r.caFilePath = caFile.Name()
-+		if err := caFile.Close(); err != nil {
-+			return fmt.Errorf("error closing virtual garden CA bundle file: %w", err)
-+		}
-+	}
-+
-+	log.Info("Writing virtual garden CA bundle to file", "path", r.caFilePath)
-+	return afero.WriteFile(r.FS, r.caFilePath, caBundle, 0o600)
-+}
-+
- // setBootstrapClientCertificate creates a short-lived client certificate signed by the `ca-client` CA
- // and wires it into the given REST config. This bootstraps the virtual cluster client before the token-requestor
- // controller has populated the gardener-internal secret with a ServiceAccount token.
-```
-
-**File**: `pkg/operator/controller/virtual/cluster/reconciler.go` (modified, +3/-0)
-```diff
-@@ -46,6 +46,9 @@ func (r *Reconciler) Reconcile(ctx context.Context, request Request) (reconcile.
- 		restConfig = rest.CopyConfig(request.RESTConfig)
- 	)
- 
-+	// The virtual cluster is instantiated only once. We intentionally do not rebuild it when a new REST config
-+	// arrives on the channel: the access reconciler supplies the virtual garden's CA bundle via a CA file (not inline
-+	// CA data), so client-go transparently reloads the CA from disk after a credentials rotation.
- 	if r.virtualCluster == nil {
- 		log.Info("Instantiating cluster.Cluster object for virtual cluster")
- 		kubernetesclient.ApplyClientConnectionConfigurationToRESTConfig(&r.VirtualClientConnection, restConfig)
-```
-
-**File**: `test/integration/operator/virtual/access/access_suite_test.go` (modified, +9/-1)
-```diff
-@@ -7,6 +7,7 @@ package access_test
- import (
- 	"context"
- 	"fmt"
-+	"strings"
- 	"testing"
- 	"time"
- 
-@@ -62,6 +63,8 @@ var (
- 	testNamespace *corev1.Namespace
- 	testSecret    *corev1.Secret
- 	tokenFilePath string
-+	caFilePath    string
-+	caBundle      []byte
- 
- 	fs      afero.Fs
- 	channel chan event.TypedGenericEvent[*rest.Config]
-@@ -144,6 +147,7 @@ var _ = BeforeSuite(func() {
- 		CertType:   secretsutils.CACert,
- 	}).GenerateCertificate()
- 	Expect(err).NotTo(HaveOccurred())
-+	caBundle = caCert.CertificatePEM
- 
- 	caSecret := &corev1.Secret{
- 		ObjectMeta: metav1.ObjectMeta{
-@@ -196,8 +200,12 @@ var _ = BeforeSuite(func() {
- 
- 	fs = afero.NewMemMapFs()
- 	tokenFilePath = testRunID + ".test"
-+	caFilePath = testRunID + "-ca.test"
- 
--	DeferCleanup(test.WithVar(&access.CreateTemporaryFile, func(fs afero.Fs, _, _ string) (afero.File, error) {
-+	DeferCleanup(test.WithVar(&access.CreateTemporaryFile, func(fs afero.Fs, _, prefix string) (afero.File, error) {
-+		if strings.Contains(prefix, "ca") {
-+			return fs.Create(caFilePath)
-+		}
- 		return fs.Create(tokenFilePath)
- 	}))
- 
-```
-
-**File**: `test/integration/operator/virtual/access/access_test.go` (modified, +14/-6)
-```diff
-@@ -31,7 +31,8 @@ var _ = Describe("Access controller tests", func() {
- 		config.Kind = "Config"
- 		config.APIVersion = "v1"
- 		config.Clusters["garden"] = &clientcmdapi.Cluster{
--			Server: "https://api.gardener.test",
-+			Server:                   "https://api.gardener.test",
-+			CertificateAuthorityData: caBundle,
- 		}
- 		config.Contexts["garden"] = &clientcmdapi.Context{
- 			Cluster:  "garden",
-@@ -107,7 +108,7 @@ var _ = Describe("Access controller tests", func() {
- 				g.Expect(string(token)).To(Equal(issuedToken))
- 				g.Expect(channel).To(Receive(&ev))
- 			}).Should(Succeed())
--			Expect(ev.Object).To(Equal(restConfigWithTokenPath(kubeconfigFromSecret(secret), tokenFilePath)))
-+			Expect(ev.Object).To(Equal(restConfigWithFilePaths(kubeconfigFromSecret(secret), tokenFilePath, caFilePath)))
+ 	Describe("#validateMachineDeploymentPoolNames", func() {
+ 		It("should reject unknown worker pools", func() {
+ 			worker := &extensionsv1alpha1.Worker{
+@@ -306,6 +313,50 @@ var _ = Describe("ActuatorReconcile", func() {
+ 			)
  		})
  
- 		It("should forward an already populated token and update it on changes", func() {
-@@ -125,7 +126,12 @@ var _ = Describe("Access controller tests", func() {
- 				g.Expect(string(token)).To(Equal("Z2FyZGVuZXIK"))
- 				g.Expect(channel).To(Receive(&ev))
- 			}).Should(Succeed())
--			Expect(ev.Object).To(Equal(restConfigWithTokenPath(kubeConfigData, tokenFilePath)))
-+			Expect(ev.Object).To(Equal(restConfigWithFilePaths(kubeConfigData, tokenFilePath, caFilePath)))
++		When("shoot has a control plane worker pool", func() {
++			BeforeEach(func() {
++				cluster.Shoot.Spec.Provider.Workers = []gardencorev1beta1.Worker{{
++					Name:         "pool1",
++					ControlPlane: &gardencorev1beta1.WorkerControlPlane{},
++				}}
++			})
 +
-+			By("Verify the CA bundle has been written to the CA file")
-+			writtenCA, err := afero.ReadFile(fs, caFilePath)
-+			Expect(err).NotTo(HaveOccurred())
-+			Expect(writtenCA).To(Equal(caBundle))
++			It("should append the critical control plane pods node condition to the control plane pool's MachineDeployment", func() {
++				wantedMachineDeployments = append(wantedMachineDeployments,
++					buildWantedMachineDeployment("2", machinev1alpha1.RollingUpdateMachineDeploymentStrategyType, nil),
++				)
++
++				expectedControlPlaneMachineDeployment := buildExpectedMachineDeployment("namespace", 2, "1", wantedMachineDeployments[0])
++				expectedControlPlaneMachineDeployment.Spec.Template.Spec.MachineConfiguration = &machinev1alpha1.MachineConfiguration{
++					NodeConditions: new("KernelDeadlock,ReadonlyFilesystem,DiskPressure,NetworkUnavailable,CriticalControlPlanePodsUnhealthy"),
++				}
++
++				testMachineDeployments(wantedMachineDeployments, []*machinev1alpha1.MachineDeployment{
++					expectedControlPlaneMachineDeployment,
++					buildExpectedMachineDeployment("namespace", 2, "1", wantedMachineDeployments[1]),
++				})
++			})
++
++			It("should append the critical control plane pods node condition to the control plane pool's pre-existing node conditions", func() {
++				wantedMachineDeployments[0].MachineConfiguration = &machinev1alpha1.MachineConfiguration{
++					NodeConditions: new("CustomCondition"),
++				}
++				wantedMachineDeployments = append(wantedMachineDeployments,
++					buildWantedMachineDeployment("2", machinev1alpha1.RollingUpdateMachineDeploymentStrategyType, nil),
++				)
++
++				expectedControlPlaneMachineDeployment := buildExpectedMachineDeployment("namespace", 2, "1", wantedMachineDeployments[0])
++				expectedControlPlaneMachineDeployment.Spec.Template.Spec.MachineConfiguration = &machinev1alpha1.MachineConfiguration{
++					NodeConditions: new("CustomCondition,CriticalControlPlanePodsUnhealthy"),
++				}
++
++				testMachineDeployments(wantedMachineDeployments, []*machinev1alpha1.MachineDeployment{
++					expectedControlPlaneMachineDeployment,
++					buildExpectedMachineDeployment("namespace", 2, "1", wantedMachineDeployments[1]),
++				})
++			})
++		})
++
+ 		When("there are existing MachineDeployments", func() {
+ 			BeforeEach(func() {
+ 				testDeployment = &machinev1alpha1.MachineDeployment{
+```
+
+**File**: `pkg/apis/config/nodeagent/v1alpha1/types.go` (modified, +3/-0)
+```diff
+@@ -57,6 +57,9 @@ const (
  
- 			By("Update token in kubeconfig")
- 			addTokenToConfig(config, "Ym90YW5pc3QK")
-@@ -140,7 +146,7 @@ var _ = Describe("Access controller tests", func() {
- 				g.Expect(string(token)).To(Equal("Ym90YW5pc3QK"))
- 				g.Expect(channel).To(Receive(&ev))
- 			}).Should(Succeed())
--			Expect(ev.Object).To(Equal(restConfigWithTokenPath(kubeConfigData, tokenFilePath)))
-+			Expect(ev.Object).To(Equal(restConfigWithFilePaths(kubeConfigData, tokenFilePath, caFilePath)))
- 		})
+ 	// ConditionTypeSystemdUnitsReady is the node condition type indicating whether all managed systemd units are healthy.
+ 	ConditionTypeSystemdUnitsReady corev1.NodeConditionType = "SystemdUnitsReady"
++
++	// ConditionTypeCriticalControlPlanePodsUnhealthy is the node condition type indicating whether any critical control plane pod is unhealthy.
++	ConditionTypeCriticalControlPlanePodsUnhealthy corev1.NodeConditionType = "CriticalControlPlanePodsUnhealthy"
+ )
  
- 		It("should renew the token via the token-requestor once the renew timestamp has been reached", func() {
-@@ -159,7 +165,7 @@ var _ = Describe("Access controller tests", func() {
- 				g.Expect(string(token)).To(Equal(issuedToken))
- 				g.Expect(channel).To(Receive(&ev))
- 			}).Should(Succeed())
--			Expect(ev.Object).To(Equal(restConfigWithTokenPath(kubeconfigFromSecret(secret), tokenFilePath)))
-+			Expect(ev.Object).To(Equal(restConfigWithFilePaths(kubeconfigFromSecret(secret), tokenFilePath, caFilePath)))
- 		})
- 	})
- })
-@@ -182,10 +188,12 @@ func kubeconfigFromSecret(secret *corev1.Secret) []byte {
- 	return updated.Data["kubeconfig"]
- }
- 
--func restConfigWithTokenPath(kubeConfigRaw []byte, tokenPath string) *rest.Config {
-+func restConfigWithFilePaths(kubeConfigRaw []byte, tokenPath, caPath string) *rest.Config {
- 	restConfig, err := clientcmd.RESTConfigFromKubeConfig(kubeConfigRaw)
- 	ExpectWithOffset(1, err).NotTo(HaveOccurred())
- 	restConfig.BearerToken = ""
- 	restConfig.BearerTokenFile = tokenPath
-+	restConfig.CAData = nil
-+	restConfig.CAFile = caPath
- 	return restConfig
- }
+ // OSVersionRegex is a regular expression to match operating system versions.
+```
+
+**File**: `pkg/apis/core/v1beta1/constants/types_constants.go` (modified, +2/-0)
+```diff
+@@ -1147,6 +1147,8 @@ const (
+ 	TaintNodeCriticalComponentsNotReady = "node.gardener.cloud/critical-components-not-ready"
+ 	// LabelNodeCriticalComponent is the label key for marking node-critical component pods.
+ 	LabelNodeCriticalComponent = "node.gardener.cloud/critical-component"
++	// LabelIsCriticalStaticPod is the label key for critical static pods.
++	LabelIsCriticalStaticPod = "shoot.gardener.cloud/is-critical-static-pod"
+ 	// AnnotationPrefixWaitForCSINode is the annotation key for csi-driver-node pods, indicating they use the driver
+ 	// specified in the value.
+ 	AnnotationPrefixWaitForCSINode = "node.gardener.cloud/wait-for-csi-node-"
 ```
 
 ---
 
-### Incident Patch 3: `639e5305` (2026-11-17)
-**Commit Message**: Fix local DNS forwarding and zone persistence (#16322)
+### Incident Patch 2: `5d67e3a9` (2026-11-18)
+**Commit Message**: [apiserver] Validate `shoot.gardener.cloud/expiration-timestamp` on Shoot creation (#16312)
 
-Signed-off-by: Luca Bernstein <[REDACTED_EMAIL]>
+The `quotavalidator` admission plugin only validated the expiration
+timestamp annotation against the quota's `.spec.clusterLifetimeDays` on
+`UPDATE`, so a value provided already at creation time was admitted
+unchecked. Enable the lifetime check on `CREATE` as well, and reject
+unparsable values with a forbidden error instead of an internal error.
 
-**File**: `dev-setup/infra/bind/named.conf` (modified, +2/-0)
+Assisted-by: Claude <[REDACTED_EMAIL]>
+
+Signed-off-by: rfranzke <[REDACTED_EMAIL]>
+
+**File**: `plugin/pkg/shoot/quotavalidator/admission.go` (modified, +2/-1)
 ```diff
-@@ -9,6 +9,8 @@ options {
-     allow-recursion { any; };
+@@ -183,6 +183,7 @@ func (q *QuotaValidator) Validate(_ context.Context, a admission.Attributes, _ a
  
-     # Use Docker's built-in DNS server as an upstream server for all zones that we don't manage ourselves.
-+    # Don't fall back to direct recursion if the upstream server fails.
-+    forward only;
-     forwarders {
-         127.0.0.11;
-     };
+ 	if a.GetOperation() == admission.Create {
+ 		checkQuota = true
++		checkLifetime = true
+ 	}
+ 
+ 	if a.GetOperation() == admission.Update {
+@@ -252,7 +253,7 @@ func (q *QuotaValidator) Validate(_ context.Context, a admission.Attributes, _ a
+ 
+ 		plannedExpirationTime, err := time.Parse(time.RFC3339, lifetime)
+ 		if err != nil {
+-			return apierrors.NewInternalError(err)
++			return admission.NewForbidden(a, fmt.Errorf("could not parse the value of the %s annotation as RFC3339 time: %w", v1beta1constants.ShootExpirationTimestamp, err))
+ 		}
+ 
+ 		maxPossibleExpirationTime = q.clock.Now().Add(time.Duration(*maxShootLifetime*24) * time.Hour)
 ```
 
-**File**: `dev-setup/infra/docker-compose.yaml` (modified, +8/-6)
+**File**: `plugin/pkg/shoot/quotavalidator/admission_test.go` (modified, +27/-0)
 ```diff
-@@ -13,15 +13,17 @@ services:
-       - ./bind:/etc/bind:ro
-       # Mount the volume storing the zone state (ensure persistence across container restarts).
-       # We don't want bind to update our zone files on the host (resulting in git changes and persistence after stopping
--      # the local setup). Instead, we copy the zone file to the volume on start up and destroy the volume when running
--      # `docker compose down`.
-+      # the local setup). Instead, we initialize the zone file in the volume only when absent and destroy the volume when
-+      # running `docker compose down --volumes`.
-       # This way, we persist the zone state until – and only until – the local setup is stopped.
-       - bind9-zones:/var/lib/bind
-     command: >
--      /bin/sh -c
--      "cp /etc/bind/db.local.gardener.cloud /var/lib/bind/db.local.gardener.cloud &&
--      chown bind:bind /var/lib/bind/db.local.gardener.cloud &&
--      /usr/sbin/named -g -u bind"
-+      /bin/sh -ec
-+      "if [ ! -f /var/lib/bind/db.local.gardener.cloud ]; then
-+        cp /etc/bind/db.local.gardener.cloud /var/lib/bind/db.local.gardener.cloud;
-+      fi;
-+      chown bind:bind /var/lib/bind/db.local.gardener.cloud;
-+      exec /usr/sbin/named -g -u bind"
-     networks:
-       kind:
-   registry:
+@@ -22,6 +22,7 @@ import (
+ 	securityv1alpha1 "github.com/gardener/gardener/pkg/apis/security/v1alpha1"
+ 	gardencoreinformers "github.com/gardener/gardener/pkg/client/core/informers/externalversions"
+ 	securityinformers "github.com/gardener/gardener/pkg/client/security/informers/externalversions"
++	. "github.com/gardener/gardener/pkg/utils/test/matchers"
+ 	. "github.com/gardener/gardener/plugin/pkg/shoot/quotavalidator"
+ )
+ 
+@@ -431,6 +432,32 @@ var _ = Describe("quotavalidator", func() {
+ 			})
+ 		})
+ 
++		Context("tests for the lifetime of a Shoot on creation", func() {
++			It("should pass as the shoot expiration time does not exceed the minimum .spec.clusterLifetimeDays among the quotas", func() {
++				metav1.SetMetaDataAnnotation(&shoot.ObjectMeta, v1beta1constants.ShootExpirationTimestamp, "2018-01-02T00:00:00+00:00") // plus 1 day compared to time.Now()
++				attrs := admission.NewAttributesRecord(&shoot, nil, core.Kind("Shoot").WithVersion("version"), shoot.Namespace, shoot.Name, core.Resource("shoots").WithVersion("version"), "", admission.Create, &metav1.CreateOptions{}, false, nil)
++
++				err := admissionHandler.Validate(context.TODO(), attrs, nil)
++				Expect(err).NotTo(HaveOccurred())
++			})
++
++			It("should fail as the shoot expiration time exceeds the minimum .spec.clusterLifetimeDays among the quotas", func() {
++				metav1.SetMetaDataAnnotation(&shoot.ObjectMeta, v1beta1constants.ShootExpirationTimestamp, "2018-01-05T00:00:00+00:00") // plus 4 days compared to time.Now()
++				attrs := admission.NewAttributesRecord(&shoot, nil, core.Kind("Shoot").WithVersion("version"), shoot.Namespace, shoot.Name, core.Resource("shoots").WithVersion("version"), "", admission.Create, &metav1.CreateOptions{}, false, nil)
++
++				err := admissionHandler.Validate(context.TODO(), attrs, nil)
++				Expect(err).To(HaveOccurred())
++			})
++
++			It("should fail as the shoot expiration time is not a valid RFC3339 timestamp", func() {
++				metav1.SetMetaDataAnnotation(&shoot.ObjectMeta, v1beta1constants.ShootExpirationTimestamp, "not-a-timestamp")
++				attrs := admission.NewAttributesRecord(&shoot, nil, core.Kind("Shoot").WithVersion("version"), shoot.Namespace, shoot.Name, core.Resource("shoots").WithVersion("version"), "", admission.Create, &metav1.CreateOptions{}, false, nil)
++
++				err := admissionHandler.Validate(context.TODO(), attrs, nil)
++				Expect(err).To(BeForbiddenError())
++			})
++		})
++
+ 		Context("tests for extending the lifetime of a Shoot", func() {
+ 			BeforeEach(func() {
+ 				oldShoot = *shoot.DeepCopy()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #16382** (closed): Update module golang.org/x/tools to v0.53.0 - autoclosed (@renovate[bot])
+- **PR #16381** (2026-11-18): Update golang.org/x/exp digest to 7a49493 (@renovate[bot])
+- **PR #16378** (2026-11-18): [release-v1.155] Fix `gardener-operator` CA rotation (@gardener-prow-cherrypicker[bot])
 - **PR #16374** (2026-11-17): (docs): Use `:443` to access virtualservices in local scenario (@voelzmo)
 - **PR #16367** (2026-11-17): Update dependency gardener/autoscaler to v1.33.2 (@renovate[bot])
 - **PR #16366** (2026-11-17): Fix `gardener-operator` CA rotation (@timuthy)
-- **PR #16362** (2026-11-17): Update golang.org/x/tools digest to 6bc5e25 (@renovate[bot])
-- **PR #16361** (2026-11-17): Update golang:1.27.4 Docker digest to 205c763 (@renovate[bot])
-- **PR #16360** (2026-11-17): Update golang.org/x/tools digest to 6fa3965 (@renovate[bot])
 
 ---
 
@@ -1210,28 +1154,28 @@ Signed-off-by: Luca Bernstein <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update module go.opentelemetry.io/otel/sdk/log to v1 [SECURITY]
+## X. [GEP-28] Protect etcd quorum during rolling updates of control plane nodes
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/gardener-node-agent/app/app.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gardener/gardener. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a91c7dc9`: Update module go.opentelemetry.io/otel/sdk/log to v1 [SECURITY]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3593919a`: [GEP-28] Protect etcd quorum during rolling updates of control plane nodes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/gardener-node-agent/app/app.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	go.opentelemetry.io/otel/sdk/log v1.47.0 // indirect
+			return controller.AddToManager(ctx, cancel, mgr, cfg, hostName, machineName, nodeName, cfgDir, isControlPlaneNode)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	go.opentelemetry.io/otel/sdk/log v0.21.0 // indirect
+			return controller.AddToManager(ctx, cancel, mgr, cfg, hostName, machineName, nodeName, cfgDir)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a91c7dc9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3593919a` are properly handled with clean fallback behavior.

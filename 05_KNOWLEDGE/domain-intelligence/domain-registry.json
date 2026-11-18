@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T10:55:22.117Z",
+  "last_updated": "2026-11-18T11:06:58.624Z",
   "total_records": 1830,
   "domains": {
     "A": {
@@ -9364,8 +9364,8 @@
       "title": "Architecture Intelligence: weaviate/weaviate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-weaviate-weaviate-architecture-intelligence-weaviate-weaviate-core-invariants.md",
       "repository": "weaviate/weaviate",
-      "content_hash": "c9c2c83815ecb9b44017fd374e031f31bf003f00afde3677fcf4a2dd24b106c5",
-      "created_at": "2026-11-17T17:28:09.403Z"
+      "content_hash": "d30ff1a4c9b3a44bdd182ca085ea94f98af463a75a32e51bfafb90a426cd590e",
+      "created_at": "2026-11-18T11:06:54.500Z"
     },
     "DOM-K-199063A7": {
       "record_id": "DOM-K-199063A7",
@@ -9433,8 +9433,8 @@
       "title": "Technical Construction Intelligence: react-hook-form/react-hook-form Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-hook-form-react-hook-form-technical-construction-intelligence-react-hook-f.md",
       "repository": "react-hook-form/react-hook-form",
-      "content_hash": "b2a22af92824312b450dc14c513861b6de04bfa3090032b5bd6606aa3860f48b",
-      "created_at": "2026-11-17T08:31:06.944Z"
+      "content_hash": "d243dcdca99ea3f1dcabc8f087ec826a4816a3ec3010f5720c17463eb96cdce9",
+      "created_at": "2026-11-18T11:06:46.944Z"
     },
     "DOM-D-D194A6F7": {
       "record_id": "DOM-D-D194A6F7",
@@ -11419,8 +11419,8 @@
       "title": "Deployment & Operations Intelligence: gardener/gardener Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-gardener-gardener-deployment-operations-intelligence-gardener-gardener-core-inva.md",
       "repository": "gardener/gardener",
-      "content_hash": "ccec46234ffc5d2b6cf8917a21cf6b59b9ce91b1dd5d055bf208c4ceaee3da71",
-      "created_at": "2026-11-17T18:05:36.495Z"
+      "content_hash": "0a540c1c3c1d7de5f90f648505e5832742feb9ec60c5ebdf24505aeb8f8fc1ca",
+      "created_at": "2026-11-18T11:06:50.542Z"
     },
     "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-openai-whisper-large-v3-core-invariants",
@@ -17787,8 +17787,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty/worktrunk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-research-knowledge-intelligence-max-sixty-worktrunk-core-inv.md",
       "repository": "max-sixty/worktrunk",
-      "content_hash": "8371657b0493c80ab081705ac5750aae0cfc3d681becdfd2acc67f204e012576",
-      "created_at": "2026-11-18T02:16:10.753Z"
+      "content_hash": "5b3704b50eeae2fe767598b6177219c4392b566825aeda9fac0ba999e9e6e313",
+      "created_at": "2026-11-18T11:06:41.786Z"
     },
     "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants",
@@ -17796,8 +17796,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty-worktrunk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-learnings-research-knowledge-intelligence-max-sixty-worktrun.md",
       "repository": "max-sixty-worktrunk-learnings",
-      "content_hash": "b263e63103397c119463efa323e74783a1f73b13f07aa8f222d655c9da2cfe3d",
-      "created_at": "2026-11-18T02:16:22.075Z"
+      "content_hash": "6c56af178b106b88776a59a5e92fcce77752a424d5754b332b5afb4b415c2726",
+      "created_at": "2026-11-18T11:06:57.731Z"
     },
     "DOM-D-88E5B240": {
       "record_id": "DOM-D-88E5B240",
@@ -26434,8 +26434,8 @@
       "title": "Technical Construction Intelligence: react-hook-form-react-hook-form-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-hook-form-react-hook-form-learnings-technical-construction-intelligence-re.md",
       "repository": "react-hook-form-react-hook-form-learnings",
-      "content_hash": "f1ed23530cb6f1409482edcf3a1a6c95d8460c4eae412e5b7619d2e73b6cccdd",
-      "created_at": "2026-11-17T08:32:18.557Z"
+      "content_hash": "2f44933bddf63e959e84184044163e56da4a7bd8a9b6659e7171a037753191d0",
+      "created_at": "2026-11-18T11:06:58.624Z"
     },
     "domain_intelligence-technical-construction-intelligence-dubzzz-fast-check-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dubzzz-fast-check-core-invariants",
@@ -28834,8 +28834,8 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-R1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-r1-research-knowledge-intelligence-deepseek-ai-deepseek-.md",
       "repository": "deepseek-ai/DeepSeek-R1",
-      "content_hash": "1b3895ded4c2c81020161c31ab3cd1dfe3faf702fb77a830bc302cddceb66314",
-      "created_at": "2026-11-17T22:39:49.549Z"
+      "content_hash": "381277702eefef993684fea5a135ec0db2aa7c684197e62339e6b57e65fa2701",
+      "created_at": "2026-11-18T11:06:39.418Z"
     },
     "domain_intelligence-quality-verification-intelligence-xerj-org-xerj-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-xerj-org-xerj-core-invariants",
@@ -28852,8 +28852,8 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-r1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-r1-learnings-research-knowledge-intelligence-hf-deepseek.md",
       "repository": "hf-deepseek-ai-deepseek-r1-learnings",
-      "content_hash": "235931a9cd6bd51e7d4baeddf2f8cd5bbfe38441855feb4515efdf059b8847f6",
-      "created_at": "2026-11-17T22:40:07.800Z"
+      "content_hash": "037da1f091ad421289b5051797de4ff5f0daee66b4ecff9c5c557f24e536f051",
+      "created_at": "2026-11-18T11:06:58.137Z"
     },
     "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-core-invariants",

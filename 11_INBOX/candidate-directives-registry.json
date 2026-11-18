@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T10:55:21.977Z",
+  "last_updated": "2026-11-18T11:06:58.499Z",
   "directives": [
     {
       "id": "CD-001",
@@ -28894,6 +28894,61 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-5BE90A-add-termphin.md",
       "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-NLH9",
+      "directive_title": "keep --path and --execute in the leftover-branch hint",
+      "source_repo": "max-sixty/worktrunk",
+      "source_commit": "af889698",
+      "staged_file": "11_INBOX/candidate-directives/CD-NLH9-keep-path-and-execute-in-the-leftover-branch-hint.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-NYGZ",
+      "directive_title": "📖 docs: fix typo in isRadioOrCheckbox test name",
+      "source_repo": "react-hook-form-react-hook-form-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-NYGZ-docs-fix-typo-in-isradioorcheckbox-test-name.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-NS89",
+      "directive_title": "[GEP-28] Protect etcd quorum during rolling updates of control plane nodes",
+      "source_repo": "gardener/gardener",
+      "source_commit": "3593919a",
+      "staged_file": "11_INBOX/candidate-directives/CD-NS89-gep-28-protect-etcd-quorum-during-rolling-updates-of-control-plane-nodes.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-NVAG",
+      "directive_title": "bound Search and Aggregate requests by the server write timeout",
+      "source_repo": "weaviate/weaviate",
+      "source_commit": "3507945a",
+      "staged_file": "11_INBOX/candidate-directives/CD-NVAG-bound-search-and-aggregate-requests-by-the-server-write-timeout.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "J"
+    },
+    {
+      "id": "CD-NXS2",
+      "directive_title": "switch): keep --path and --execute in the leftover-branch hint",
+      "source_repo": "max-sixty-worktrunk-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-NXS2-switch-keep-path-and-execute-in-the-leftover-branch-hint.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "D"
     }
   ]
 }

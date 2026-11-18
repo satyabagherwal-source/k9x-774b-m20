@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source**: github ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
-> **Source Version**: `1bed6f84`  
+> **Source Version**: `af889698`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T02:16:09.363Z  
+> **Timestamp**: 2026-11-18T11:06:40.556Z  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T02:16:09.177Z  
+> **Harvest Timestamp**: 2026-11-18T11:06:40.548Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12600 stars
+- **Stars / Engagement**: 12605 stars
 
 ---
 
@@ -2015,535 +2015,444 @@ fn no_matching_commands_error(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1bed6f84` (2026-11-17)
-**Commit Message**: fix(shell): read --source only as the wrapper's first argument (#4833)
+### Incident Patch 1: `ecf8bcda` (2026-11-18)
+**Commit Message**: fix(switch): keep --path and --execute in the leftover-branch hint (#4841)
 
-The bash, zsh, and fish shell wrappers treated every `--source` on the
-command line as their own dev flag: they dropped it and ran wt through
-`cargo run`. A `--source` meant for a command wt launches was taken too,
-so `wt step tether -- uv run leaf-dev preview --source page.html` failed
-with "could not find `Cargo.toml`" (exit 101). The wrappers now take
-`--source` only as the first argument (`wt --source switch …`) and pass
-everything after it to wt unchanged.
+When `wt switch --create` failed after `git worktree add -b` had already
+written the branch, the leftover-branch hint suggested a bare `wt switch
+<branch>`. Following it created the worktree at the `worktree-path`
+template location instead of the `--path` given, and skipped the
+`--execute` command. `WorktreeCreationFailed` is raised in
+`execute_switch`, whose errors weren't wrapped in `WithSwitchSuggestion`
+the way `plan_switch`'s are, so the hint had no flags to draw on.
 
-Stopping the scan at `--` would fix the reported command but still take
-the flag from custom `wt-<name>` subcommands, which receive their
-arguments verbatim without a `--`. wt itself has no `--source` flag, so
-a fixed leading position is the one place the wrapper can claim it. The
-cost is that `wt list --source` now errors with clap's "unexpected
-argument" instead of running from source. In completion mode the wrapper
-now passes the words unchanged, `--source` included, and the binary's
-completer already handles it (`test_complete_init_shell_all_variations`
-covers `wt --source config shell init <TAB>`). Nushell and PowerShell
-have no `--source` and are 
+`SwitchPipeline::run` now wraps that variant with the switch context,
+and the hint applies it. The hint becomes e.g. `wt switch stranded
+--path=blocked/stranded --execute='echo hi' -- extra`. `--create` is not
+in the context, so it stays out of the suggestion, which is correct now
+that the branch exists. Other `execute_switch` errors pass through
+unchanged, so their context chains and downcasts are untouched.
 
-**File**: `src/shell/snapshots/worktrunk__shell__tests__init_bash.snap` (modified, +7/-7)
+`test_switch_create_leftover_branch_hint_keeps_flags` fails on `main`
+(the hint ends at `wt switch stranded`) and passes with this change. The
+existing leftover-branch test still covers the no-flags form.
+
+#4705 adds a hint for pre-
+
+**File**: `src/commands/worktree/switch.rs` (modified, +25/-9)
 ```diff
-@@ -10,16 +10,16 @@ if command -v wt >/dev/null 2>&1 || [[ -n "${WORKTRUNK_BIN:-}" ]]; then
-     # Override wt command so it can change the parent shell's directory.
-     # WORKTRUNK_BIN can override the binary path (for testing dev builds).
-     wt() {
-+        # `wt --source ...` runs wt through `cargo run` in the current checkout.
-+        # Only a leading --source is this wrapper's flag; every later argument
-+        # belongs to wt or to a command it runs.
-         local use_source=false
--        local args=()
--        for arg in "$@"; do
--            if [[ "$arg" == --source ]]; then use_source=true; else args+=("$arg"); fi
--        done
-+        if [[ "${1-}" == --source ]]; then use_source=true; shift; fi
-         # Completion mode: call binary directly, no directive files needed.
-         # This check MUST be here (not in the binary) because clap's completion
-         # handler runs before argument parsing.
-         if [[ -n "${COMPLETE:-}" ]]; then
--            command "${WORKTRUNK_BIN:-wt}" "${args[@]}"
-+            command "${WORKTRUNK_BIN:-wt}" "$@"
-             return
-         fi
- 
-@@ -86,8 +86,8 @@ if command -v wt >/dev/null 2>&1 || [[ -n "${WORKTRUNK_BIN:-}" ]]; then
-         prompt_flags=${prompt_flags%% *}
- 
-         local exit_code=0
--        local execution=("${WORKTRUNK_BIN:-wt}" "${args[@]}")
--        if [[ "$use_source" == true ]]; then execution=(cargo run --bin wt --quiet -- "${args[@]}"); fi
-+        local execution=("${WORKTRUNK_BIN:-wt}" "$@")
-+        if [[ "$use_source" == true ]]; then execution=(cargo run --bin wt --quiet -- "$@"); fi
-         if [[ "$owns_exit" == true ]]; then
-             local exit_provider="$owner exit \"\$?\""
-             if [[ -n "$exit_trap" ]]; then
-```
-
-**File**: `src/shell/snapshots/worktrunk__shell__tests__init_fish.snap` (modified, +8/-7)
-```diff
-@@ -10,11 +10,13 @@ expression: output
- # Override wt command so it can change the parent shell's directory.
- # WORKTRUNK_BIN can override the binary path (for testing dev builds).
- function wt
-+    # `wt --source ...` runs wt through `cargo run` in the current checkout.
-+    # Only a leading --source is this wrapper's flag; every later argument
-+    # belongs to wt or to a command it runs.
-     set -l use_source false
--    set -l args
--
--    for arg in $argv
--        if test "$arg" = "--source"; set use_source true; else; set -a args $arg; end
-+    if test "$argv[1]" = --source
-+        set use_source true
-+        set -e argv[1]
-     end
- 
-     test -n "$WORKTRUNK_BIN"; or set -l WORKTRUNK_BIN (type -P wt 2>/dev/null)
-@@ -50,13 +52,12 @@ function wt
-         return $cd_exit
-     end
- 
--    # --source: use cargo run (builds from source)
-     if test $use_source = true
-         $run_function env WORKTRUNK_DIRECTIVE_CD_FILE=$cd_file \
--            cargo run --bin wt --quiet -- $args
-+            cargo run --bin wt --quiet -- $argv
-     else
-         $run_function env WORKTRUNK_DIRECTIVE_CD_FILE=$cd_file \
--            $WORKTRUNK_BIN $args
-+            $WORKTRUNK_BIN $argv
-     end
-     set -l exit_code $status
- 
-```
-
-**File**: `src/shell/snapshots/worktrunk__shell__tests__init_zsh.snap` (modified, +7/-8)
-```diff
-@@ -13,27 +13,26 @@ if command -v wt >/dev/null 2>&1 || [[ -n "${WORKTRUNK_BIN:-}" ]]; then
-     # Override wt command so it can change the parent shell's directory.
-     # WORKTRUNK_BIN can override the binary path (for testing dev builds).
-     wt() {
-+        # `wt --source ...` runs wt through `cargo run` in the current checkout.
-+        # Only a leading --source is this wrapper's flag; every later argument
-+        # belongs to wt or to a command it runs.
-         local use_source=false
--        local -a args
--
--        for arg in "$@"; do
--            if [[ "$arg" == "--source" ]]; then use_source=true; else args+=("$arg"); fi
--        done
-+        if [[ "${1-}" == --source ]]; then use_source=true; shift; fi
- 
-         # Completion mode: call binary directly, no directive files needed.
-         # This check MUST be here (not in the binary) because clap's completion
-         # handler runs before argument parsing.
-         if [[ -n "${COMPLETE:-}" ]]; then
--            command "${WORKTRUNK_BIN:-wt}" "${args[@]}"
-+            command "${WORKTRUNK_BIN:-wt}" "$@"
-             return
-         fi
- 
-         local cd_file exit_code=0
-         cd_file="$(mktemp)"
- 
--        local -a execution=("${WORKTRUNK_BIN:-wt}" "${args[@]}")
-+        local -a execution=("${WORKTRUNK_BIN:-wt}" "$@")
-         if [[ "$use_source" == true ]]; then
--            execution=(cargo run --bin wt --quiet -- "${args[@]}")
-+            execution=(cargo run --bin wt --quiet -- "$@")
-         fi
-         {
-             WORKTRUNK_DIRECTIVE_CD_FILE="$cd_file" command "${execution[@]}"
-```
-
-**File**: `src/shell/snapshots/worktrunk__shell__tests__shell_init_with_custom_prefix.snap` (modified, +7/-7)
-```diff
-@@ -10,16 +10,16 @@ if command -v custom >/dev/null 2>&1 || [[ -n "${WORKTRUNK_BIN:-}" ]]; then
-     # Override custom command so it can change the parent shell's directory.
-     # WORKTRUNK_BIN can override the binary path (for testing dev builds).
-     custom() {
-+        # `custom --source ...` runs custom through `cargo run` in the current checkout.
-+        # Only a leading --source is this wrapper's flag; every later argument
-+        # belongs to custom or to a command it runs.
-         local use_source=false
--        local args=()
--        for arg in "$@"; do
--            if [[ "$arg" == --source ]]; then use_source=true; else args+=("$arg"); fi
--        done
-+        if [[ "${1-}" == --source ]]; then use_source=true; shift; fi
-         # Completion mode: call binary directly, no directive files needed.
-         # This check MUST be here (not in the binary) because clap's completion
-         # handler runs before argument parsing.
-         if [[ -n "${COMPLETE:-}" ]]; then
--            command "${WORKTRUNK_BIN:-custom}" "${args[@]}"
-+            command "${WORKTRUNK_BIN:-custom}" "$@"
-             return
-         fi
- 
-@@ -86,8 +86,8 @@ if command -v custom >/dev/null 2>&1 || [[ -n "${WORKTRUNK_BIN:-}" ]]; then
-         prompt_flags=${prompt_flags%% *}
- 
-         local exit_code=0
--        local execution=("${WORKTRUNK_BIN:-custom}" "${args[@]}")
--        if [[ "$use_source" == true ]]; then execution=(cargo run --bin custom --quiet -- "${args[@]}"); fi
-+        local execution=("${WORKTRUNK_BIN:-custom}" "$@")
-+        if [[ "$use_source" == true ]]; then execution=(cargo run --bin custom --quiet -- "$@"); fi
-         if [[ "$owns_exit" == true ]]; then
-             local exit_provider="$owner exit \"\$?\""
-             if [[ -n "$exit_trap" ]]; then
-```
-
-**File**: `templates/bash.sh` (modified, +7/-7)
-```diff
-@@ -6,16 +6,16 @@ if command -v {{ cmd }} >/dev/null 2>&1 || [[ -n "${WORKTRUNK_BIN:-}" ]]; then
-     # Override {{ cmd }} command so it can change the parent shell's directory.
-     # WORKTRUNK_BIN can override the binary path (for testing dev builds).
-     {{ cmd }}() {
-+        # `{{ cmd }} --source ...` runs {{ cmd }} through `cargo run` in the current checkout.
-+        # Only a leading --source is this wrapper's flag; every later argument
-+        # belongs to {{ cmd }} or to a command it runs.
-         local use_source=false
--        local args=()
--        for arg in "$@"; do
--            if [[ "$arg" == --source ]]; then use_source=true; else args+=("$arg"); fi
--        done
-+        if [[ "${1-}" == --source ]]; then use_source=true; shift; fi
-         # Completion mode: call binary directly, no directive files needed.
-         # This check MUST be here (not in the binary) because clap's completion
-         # handler runs before argument parsing.
-         if [[ -n "${COMPLETE:-}" ]]; then
--            command "${WORKTRUNK_BIN:-{{ cmd }}}" "${args[@]}"
-+            command "${WORKTRUNK_BIN:-{{ cmd }}}" "$@"
-             return
-         fi
- 
-@@ -82,8 +82,8 @@ if command -v {{ cmd }} >/dev/null 2>&1 || [[ -n "${WORKTRUNK_BIN:-}" ]]; then
-         prompt_flags=${prompt_flags%% *}
- 
-         local exit_code=0
--        local execution=("${WORKTRUNK_BIN:-{{ cmd }}}" "${args[@]}")
--        if [[ "$use_source" == true ]]; then execution=(cargo run --bin {{ cmd }} --quiet -- "${args[@]}"); fi
-+        local execution=("${WORKTRUNK_BIN:-{{ cmd }}}" "$@")
-+        if [[ "$use_source" == true ]]; then execution=(cargo run --bin {{ cmd }} --quiet -- "$@"); fi
-         if [[ "$owns_exit" == true ]]; then
-             local exit_provider="$owner exit \"\$?\""
-             if [[ -n "$exit_trap" ]]; then
-```
-
-**File**: `templates/fish.fish` (modified, +8/-7)
-```diff
-@@ -6,11 +6,13 @@
- # Override {{ cmd }} command so it can change the parent shell's directory.
- # WORKTRUNK_BIN can override the binary path (for testing dev builds).
- function {{ cmd }}
-+    # `{{ cmd }} --source ...` runs {{ cmd }} through `cargo run` in the current checkout.
-+    # Only a leading --source is this wrapper's flag; every later argument
-+    # belongs to {{ cmd }} or to a command it runs.
-     set -l use_source false
--    set -l args
--
--    for arg in $argv
--        if test "$arg" = "--source"; set use_source true; else; set -a args $arg; end
-+    if test "$argv[1]" = --source
-+        set use_source true
-+        set -e argv[1]
-     end
- 
-     test -n "$WORKTRUNK_BIN"; or set -l WORKTRUNK_BIN (type -P {{ cmd }} 2>/dev/null)
-@@ -46,13 +48,12 @@ function {{ cmd }}
-         return $cd_exit
-     end
- 
--    # --source: use cargo run (builds from source)
-     if test $use_source = true
-         $run_function env WORKTRUNK_DIRECTIVE_CD_FILE=$cd_file \
--            cargo run --bin {{ cmd }} --quiet -- $args
-+            cargo run --bin {{ cmd }} --quiet -- $argv
-     else
-         $run_function env WORKTRUNK_DIRECTIVE_CD_FILE=$cd_file \
--            $WORKTRUNK_BIN $args
-+            $WORKTRUNK_BIN $argv
-     end
-     set -l exit_code $status
- 
-```
-
-**File**: `templates/zsh.zsh` (modified, +7/-8)
-```diff
-@@ -9,27 +9,26 @@ if command -v {{ cmd }} >/dev/null 2>&1 || [[ -n "${WORKTRUNK_BIN:-}" ]]; then
-     # Override {{ cmd }} command so it can change the parent shell's directory.
-     # WORKTRUNK_BIN can override the binary path (for testing dev builds).
-     {{ cmd }}() {
-+        # `{{ cmd }} --source ...` runs {{ cmd }} through `cargo run` in the current checkout.
-+        # Only a leading --source is this wrapper's flag; every later argument
-+        # belongs to {{ cmd }} or to a command it runs.
-         local use_source=false
--        local -a args
--
--        for arg in "$@"; do
--            if [[ "$arg" == "--source" ]]; then use_source=true; else args+=("$arg"); fi
--        done
-+        if [[ "${1-}" == --source ]]; then use_source=true; shift; fi
- 
-         # Completion mode: call binary directly, no directive files needed.
-         # This check MUST be here (not in the binary) because clap's completion
-         # handler runs before argument parsing.
-         if [[ -n "${COMPLETE:-}" ]]; then
--            command "${WORKTRUNK_BIN:-{{ cmd }}}" "${args[@]}"
-+            command "${WORKTRUNK_BIN:-{{ cmd }}}" "$@"
-             return
-         fi
- 
-         local cd_file exit_code=0
-         cd_file="$(mktemp)"
- 
--        local -a execution=("${WORKTRUNK_BIN:-{{ cmd }}}" "${args[@]}")
-+        local -a execution=("${WORKTRUNK_BIN:-{{ cmd }}}" "$@")
-         if [[ "$use_source" == true ]]; then
--            execution=(cargo run --bin {{ cmd }} --quiet -- "${args[@]}")
-+            execution=(cargo run --bin {{ cmd }} --quiet -- "$@")
-         fi
-         {
-             WORKTRUNK_DIRECTIVE_CD_FILE="$cd_file" command "${execution[@]}"
-```
-
-**File**: `tests/integration_tests/shell_wrapper.rs` (modified, +59/-5)
-```diff
-@@ -1895,13 +1895,67 @@ approved-commands = ["echo 'fish background task'"]
-     }
- 
-     // ========================================================================
--    // --source Flag Error Passthrough Tests
-+    // --source Flag Tests
-     // ========================================================================
--    //
--    // These tests verify that actual error messages pass through correctly
--    // when using the --source flag (instead of being hidden with generic
--    // wrapper error messages like "Error: cargo build failed").
- 
-+    /// Only a leading `--source` routes the call through `cargo run`. A later
-+    /// `--source` belongs to wt or to a command wt runs, as in
-+    /// `wt step tether -- preview --source page.html`, and reaches it unchanged.
-+    #[rstest]
-+    #[case("bash", &["--norc", "--noprofile"])]
-+    #[case("zsh", &["-f"])]
-+    #[case("fish", &["--no-config"])]
-+    fn test_source_flag_only_as_first_argument(
-+        #[case] shell: &str,
-+        #[case] isolation: &[&str],
-+        repo: TestRepo,
-+    ) {
-+        use std::os::unix::fs::PermissionsExt;
-+
-+        // Each stub prints its name and the arguments it received.
-+        let stub_dir = repo.root_path().join("stub-bin");
-+        fs::create_dir_all(&stub_dir).unwrap();
-+        let wt_stub = repo.root_path().join("wt-stub");
-+        for (stub, name) in [(stub_dir.join("cargo"), "cargo"), (wt_stub.clone(), "wt")] {
-+            fs::write(
-+                &stub,
-+                format!("#!/bin/sh\nprintf '{name}'\nprintf ' [%s]' \"$@\"\necho\n"),
-+            )
-+            .unwrap();
-+            fs::set_permissions(&stub, fs::Permissions::from_mode(0o755)).unwrap();
-+        }
-+        let path = std::env::join_paths(
-+            std::iter::once(stub_dir)
-+                .chain(std::env::split_paths(&std::env::var_os("PATH").unwrap())),
-+        )
-+        .unwrap();
-+
-+        let script = format!(
-+            "{}\nwt step tether -- preview --source page.html\nwt --source list --source\n",
-+            generate_wrapper(&repo, shell)
-+        );
-+        let mut command = Command::new(shell);
-+        repo.configure_wt_cmd(&mut command);
-+        let output = command
-+            .args(isolation)
-+            .args(["-c", &script])
-+            .env("WORKTRUNK_BIN", &wt_stub)
-+            .env("PATH", path)
-+            .output()
-+            .unwrap();
-+
-+        assert!(output.status.success(), "{shell}: {output:?}");
-+        assert_eq!(
-+            String::from_utf8_lossy(&output.stdout),
-+            "wt [step] [tether] [--] [preview] [--source] [page.html]
-+cargo [run] [--bin] [wt] [--quiet] [--] [list] [--source]
-+",
-+            "{shell}"
-+        );
-+    }
-+
-+    // `--source` forwards wt's own error message rather than hiding it behind a
-+    // generic wrapper message like "Error: cargo build failed".
-     // Note: Nushell not included - this test builds custom scripts with bash syntax
-     #[rstest]
-     #[case("bash")]
-```
-
----
-
-### Incident Patch 2: `cd257cbb` (2026-11-17)
-**Commit Message**: fix(switch): accept Gitea PR source branches named pull/... (#4832)
-
-On a Gitea PR whose source branch name starts with `pull/` or `pulls/`,
-such as `pull/fix-login`, `wt switch pr:N` failed with "has no usable
-source branch … may be in an invalid state". The branch is valid; the
-fix lets wt check it out.
-
-The cause is `is_real_branch_name` in `src/git/remote_ref/gitea.rs`. It
-rejected every candidate with either prefix so it could filter out the
-`pulls/<n>/head` tracking ref Gitea reports for a deleted source branch,
-and that also caught real branches. It now rejects only the tracking-ref
-shape: `pull/` or `pulls/`, then a number, then `/head`. Fully qualified
-`refs/...` values and placeholders with whitespace are still rejected as
-before. The failing path is `remote_ref::fetch_pr_info` →
-`gitea::fetch_pr_info` → `extract_source_branch_from_parts`.
-
-The new unit test `test_extract_source_branch_accepts_branch_named_pull`
-failed before the change and passes after it. The existing tests for
-placeholders and deleted branches still pass. Found by the nightly
-survey.
-
-Co-authored-by: worktrunk-bot <[REDACTED_EMAIL]>
-
-**File**: `src/git/remote_ref/gitea.rs` (modified, +24/-3)
-```diff
-@@ -297,13 +297,21 @@ fn extract_source_branch_from_parts(label: &str, ref_name: &str) -> Option<Strin
- 
- /// A branch name candidate is real when it's non-empty, has no whitespace
- /// (placeholders like `"unknown repository"` carry a space), and isn't a
--/// PR-tracking ref like `refs/pull/<n>/head` or `pulls/<n>/head`.
-+/// fully-qualified ref or a PR-tracking ref like `pulls/<n>/head`. A branch
-+/// merely named `pull/...` (e.g. `pull/fix-login`) is real.
- fn is_real_branch_name(s: &str) -> bool {
-     !s.is_empty()
-         && !s.contains(char::is_whitespace)
-         && !s.starts_with("refs/")
--        && !s.starts_with("pulls/")
--        && !s.starts_with("pull/")
-+        && !is_pr_tracking_ref(s)
-+}
-+
-+/// Whether `s` has the shape `pull/<n>/head` or `pulls/<n>/head`.
-+fn is_pr_tracking_ref(s: &str) -> bool {
-+    s.strip_prefix("pulls/")
-+        .or_else(|| s.strip_prefix("pull/"))
-+        .and_then(|rest| rest.strip_suffix("/head"))
-+        .is_some_and(|n| !n.is_empty() && n.bytes().all(|b| b.is_ascii_digit()))
+@@ -1923,6 +1923,19 @@ pub(crate) struct SwitchPipeline<'a> {
+     pub shell_integration_binary: Option<&'a str>,
  }
  
- /// Whether `tea` has a login configured for `host`.
-@@ -531,6 +539,19 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn test_extract_source_branch_accepts_branch_named_pull() {
-+        // A same-repo PR from a branch whose name starts with `pull/` is a
-+        // real branch, not a tracking ref.
-+        for name in ["pull/fix-login", "pulls/cleanup", "pull/42/head-fix"] {
-+            assert_eq!(
-+                extract_source_branch_from_parts(name, name),
-+                Some(name.to_string()),
-+                "{name}"
-+            );
++/// Wrap a [`GitError`] so its `wt switch` hint carries the invocation's
++/// `--path`, `--execute`, and trailing args. Other errors pass through.
++fn with_switch_suggestion(err: anyhow::Error, ctx: &SwitchSuggestionCtx) -> anyhow::Error {
++    match err.downcast::<GitError>() {
++        Ok(git_err) => GitError::WithSwitchSuggestion {
++            source: Box::new(git_err),
++            ctx: ctx.clone(),
 +        }
++        .into(),
++        Err(err) => err,
 +    }
++}
 +
-     #[test]
-     fn test_extract_source_branch_rejects_placeholders() {
-         // Deleted-source PRs: Gitea returns "unknown repository" as the label
+ impl SwitchPipeline<'_> {
+     /// Plan, approve, execute, and report the switch, then spawn its
+     /// background hooks and run any `--execute` command.
+@@ -1993,14 +2006,7 @@ impl SwitchPipeline<'_> {
+         let plan =
+             plan_switch(repo, target, create, base, path, clobber, config).map_err(|err| {
+                 match suggestion_ctx {
+-                    Some(ref ctx) => match err.downcast::<GitError>() {
+-                        Ok(git_err) => GitError::WithSwitchSuggestion {
+-                            source: Box::new(git_err),
+-                            ctx: ctx.clone(),
+-                        }
+-                        .into(),
+-                        Err(err) => err,
+-                    },
++                    Some(ref ctx) => with_switch_suggestion(err, ctx),
+                     None => err,
+                 }
+             })?;
+@@ -2026,7 +2032,17 @@ impl SwitchPipeline<'_> {
+                     {
+                         print_json(&SwitchJsonOutput::from_result(result, branch_info))?;
+                     }
+-                    return Err(failure.error);
++                    // A leftover branch's hint suggests `wt switch <branch>`;
++                    // it needs the same flags as the `plan_switch` hints, or
++                    // following it drops `--path` and `--execute`.
++                    let leftover_hint = matches!(
++                        failure.error.downcast_ref::<GitError>(),
++                        Some(GitError::WorktreeCreationFailed { .. })
++                    );
++                    return Err(match &suggestion_ctx {
++                        Some(ctx) if leftover_hint => with_switch_suggestion(failure.error, ctx),
++                        _ => failure.error,
++                    });
+                 }
+             };
+ 
+```
+
+**File**: `src/git/error.rs` (modified, +8/-4)
+```diff
+@@ -1082,9 +1082,10 @@ impl GitError {
+     /// Write the styled diagnostic block, with optional switch-suggestion
+     /// context propagated from a [`GitError::WithSwitchSuggestion`] wrapper.
+     ///
+-    /// Most variants ignore `ctx`. The three that render `wt switch` suggestions
+-    /// (`BranchAlreadyExists`, `BranchNotFound`, `WorktreePathExists`) use it
+-    /// to append extra flags and trailing args for a copy-pasteable command.
++    /// Most variants ignore `ctx`. The ones that render `wt switch` suggestions
++    /// (`BranchAlreadyExists`, `BranchNotFound`, `WorktreePathExists`,
++    /// `WorktreeCreationFailed`) use it to append extra flags and trailing args
++    /// for a copy-pasteable command.
+     ///
+     /// Called internally by [`Diagnostic::render`]; not part of the public API.
+     fn write_render_with_ctx<W: std::fmt::Write>(
+@@ -1375,7 +1376,10 @@ impl GitError {
+                 // it here is what keeps the next `--create` run's `Branch …
+                 // already exists` from reading as a fresh name collision.
+                 let escaped = escape(Cow::Borrowed(branch.as_str()));
+-                let switch_cmd = suggest_command("switch", &[branch], &[]);
++                let mut switch_cmd = suggest_command("switch", &[branch], &[]);
++                if let Some(ctx) = ctx {
++                    switch_cmd = ctx.apply(switch_cmd);
++                }
+                 write!(
+                     f,
+                     "\n{}",
+```
+
+**File**: `tests/integration_tests/switch.rs` (modified, +34/-0)
+```diff
+@@ -9657,6 +9657,40 @@ fn test_switch_create_names_branch_left_by_failed_worktree_add(repo: TestRepo, #
+     }
+ }
+ 
++#[rstest]
++fn test_switch_create_leftover_branch_hint_keeps_flags(repo: TestRepo) {
++    // The leftover-branch hint's `wt switch <branch>` must carry `--path`,
++    // `--execute`, and trailing args (minus `--create`), or following it would
++    // create the worktree somewhere else and skip the command (issue #4839).
++    fs::write(repo.root_path().join("blocked"), "not a directory").unwrap();
++
++    let output = repo
++        .wt_command()
++        .args([
++            "switch",
++            "--create",
++            "stranded",
++            "--path",
++            "blocked/stranded",
++            "--execute",
++            "echo hi",
++            "--",
++            "extra",
++        ])
++        .output()
++        .unwrap();
++    assert!(!output.status.success());
++
++    let stderr = String::from_utf8_lossy(&output.stderr);
++    let stderr = stderr.ansi_strip();
++    assert!(
++        stderr.contains(
++            "to use it, run wt switch stranded --path=blocked/stranded --execute='echo hi' -- extra"
++        ),
++        "expected the recovery suggestion to keep the original flags, got: {stderr}"
++    );
++}
++
+ // `--path` tests
+ 
+ #[rstest]
 ```
 
 ---
 
-### Incident Patch 3: `36e611bd` (2026-11-16)
-**Commit Message**: fix(wt-switch-create): drop the Scope sentence reserving commits for user permission (#4828)
+### Incident Patch 2: `af889698` (2026-11-18)
+**Commit Message**: fix: give each detached worktree its own summary cache directory (#4840)
 
-Deletes the sentence ending the `wt-switch-create` skill's Scope
-section, "Commits, pushes, and merges still each require explicit user
-permission." Sessions told elsewhere to commit finished work (a
-background session's system prompt, or the user's own instruction file)
-read it as the user reserving git, handed the work back uncommitted, and
-quoted it as the reason. Scope now states only the command's bounds: one
-worktree and the requested task in it. Whether to commit, push or merge
-falls back to the harness and the user's instructions, and Claude Code's
-default of committing only when asked keeps sessions with no other
-instruction unchanged.
+Every detached worktree wrote its LLM summary to the same cache
+directory, `summary/(detached)/`, because the directory was keyed by the
+branch string and both `wt list --full` and the picker pass `(detached)`
+for a row without a branch. `CachedSummary::write` trims that directory
+to one entry after each write, so two detached worktrees with changes
+evicted each other, and the next run called the LLM for both again. A
+detached row's directory key now includes a hash of its worktree path.
+Named branches keep their existing directories, so no cached summary has
+to be regenerated. The JSON `branch` field still reads `(detached)`, so
+`wt config state get` displays these rows the same way, with one row per
+detached worktree instead of one shared row.
 
-`rationale.md` gains a paragraph recording why Scope stays silent on git
-permissions, beside its existing note on keeping Scope to bounds rather
-than permission. The plugin mirror under `plugins/worktrunk/skills/` is
-regenerated; `test_docs_are_in_sync` passes. The behavioral effect is
-intermittent (about one session in seventeen, per the issue) and runs
-inside a live agent session, so CI can't exercise it.
+`test_detached_worktrees_keep_separate_cached_summaries` creates two
+detached worktrees with different uncommitted changes and summarizes
+each one twice. On the old code, the second summary of the first
+worktree re-ran the LLM command (`left: "regenerated"`, `right: "Summary
+A"`). It passes with the fix.
 
-Closes #4827 — automated triage
+Detached summaries cached by earlier releases sit in the share
 
-Co-auth
-
-**File**: `plugins/worktrunk/skills/wt-switch-create/SKILL.md` (modified, +1/-2)
+**File**: `src/commands/list/collect/tasks.rs` (modified, +1/-2)
 ```diff
-@@ -157,5 +157,4 @@ those is always `wt remove <branch>`.
- ## Scope
+@@ -767,11 +767,10 @@ fn compute_summary_generate(ctx: &TaskContext) -> anyhow::Result<TaskResult> {
+         anyhow::bail!("summary generation requires an LLM command");
+     };
  
- The command's mandate is ONE worktree (in the named repo, if one was given)
--and the requested task inside it. Commits, pushes, and merges still each
--require explicit user permission.
-+and the requested task inside it.
+-    let branch = ctx.branch_ref.short_name().unwrap_or("(detached)");
+     let worktree_path = ctx.branch_ref.worktree_path();
+ 
+     let summary = crate::summary::generate_summary_core(
+-        branch,
++        ctx.branch_ref.short_name(),
+         &ctx.branch_ref.commit_sha,
+         worktree_path,
+         llm_command,
 ```
 
-**File**: `plugins/worktrunk/skills/wt-switch-create/rationale.md` (modified, +6/-0)
+**File**: `src/commands/picker/summary.rs` (modified, +140/-25)
 ```diff
-@@ -77,6 +77,12 @@ the steps don't apply. So the lead makes the invocation the explicit request
- itself, and Scope states bounds rather than permission. Don't reintroduce
- either wording.
+@@ -45,9 +45,8 @@ pub(super) fn generate_summary_for_item(
+     llm_command: &str,
+     repo: &Repository,
+ ) -> String {
+-    let branch = item.branch_name();
+     let worktree_path = item.worktree_path();
+-    crate::summary::generate_summary(branch, item.head(), worktree_path, llm_command, repo)
++    crate::summary::generate_summary(item.branch(), item.head(), worktree_path, llm_command, repo)
+ }
  
-+Scope also stays silent on committing, pushing, and merging. A sentence there
-+reserving them for explicit user permission read as the user's own rule and
-+overrode harness or user instructions to commit finished work, so sessions
-+handed work back uncommitted. Those permissions come from the harness and the
-+user's instructions, as they would without the command.
+ #[cfg(test)]
+@@ -129,7 +128,7 @@ mod tests {
+             branch: branch.to_string(),
+             generated_at: 100,
+         };
+-        first.write(&repo, "deadbeef");
++        first.write(&repo, branch, "deadbeef");
+ 
+         let loaded = CachedSummary::read(&repo, branch, "deadbeef").unwrap();
+         assert_eq!(loaded.summary, first.summary);
+@@ -151,7 +150,7 @@ mod tests {
+             branch: branch.to_string(),
+             generated_at: 200,
+         };
+-        second.write(&repo, "cafebabe");
++        second.write(&repo, branch, "cafebabe");
+ 
+         assert!(CachedSummary::read(&repo, branch, "deadbeef").is_none());
+         assert_eq!(
+@@ -187,7 +186,7 @@ mod tests {
+             generated_at: 0,
+         };
+         // Should not panic — just logs and returns
+-        cached.write(&repo, "deadbeef");
++        cached.write(&repo, "main", "deadbeef");
+         assert!(CachedSummary::read(&repo, "main", "deadbeef").is_none());
+ 
+         // Cleanup: remove the blocker file so TempDir cleanup works
+@@ -213,7 +212,7 @@ mod tests {
+             generated_at: 0,
+         };
+         // Should not panic — just logs and returns
+-        cached.write(&repo, "deadbeef");
++        cached.write(&repo, "main", "deadbeef");
+         assert!(CachedSummary::read(&repo, "main", "deadbeef").is_none());
+ 
+         // Restore permissions so TempDir cleanup works
+@@ -257,13 +256,13 @@ mod tests {
+             branch: "feature-a".to_string(),
+             generated_at: 100,
+         }
+-        .write(&repo, "aaaa");
++        .write(&repo, "feature-a", "aaaa");
+         CachedSummary {
+             summary: "b".to_string(),
+             branch: "feature-b".to_string(),
+             generated_at: 200,
+         }
+-        .write(&repo, "bbbb");
++        .write(&repo, "feature-b", "bbbb");
+ 
+         let entries = CachedSummary::list_all(&repo);
+         assert_eq!(entries.len(), 2);
+@@ -285,13 +284,13 @@ mod tests {
+             branch: "feature-a".to_string(),
+             generated_at: 0,
+         }
+-        .write(&repo, "aaaa");
++        .write(&repo, "feature-a", "aaaa");
+         CachedSummary {
+             summary: "b".to_string(),
+             branch: "feature-b".to_string(),
+             generated_at: 0,
+         }
+-        .write(&repo, "bbbb");
++        .write(&repo, "feature-b", "bbbb");
+ 
+         assert_eq!(CachedSummary::clear_all(&repo).unwrap(), 2);
+         assert!(CachedSummary::read(&repo, "feature-a", "aaaa").is_none());
+@@ -327,7 +326,7 @@ mod tests {
+             branch: "feature".to_string(),
+             generated_at: 0,
+         }
+-        .write(&repo, "aaaa");
++        .write(&repo, "feature", "aaaa");
+ 
+         // Replace the json file with a directory named `bad.json` so
+         // remove_file returns a non-NotFound error (EISDIR / similar).
+@@ -457,7 +456,7 @@ mod tests {
+         use crate::summary::compute_combined_diff;
+         let (t, repo, head) = temp_repo_with_feature();
+ 
+-        let result = compute_combined_diff("feature", &head, Some(t.path()), &repo);
++        let result = compute_combined_diff(Some("feature"), &head, Some(t.path()), &repo);
+         assert!(result.is_some());
+         let combined = result.unwrap();
+         assert!(combined.diff.contains("new.txt"));
+@@ -469,7 +468,7 @@ mod tests {
+         use crate::summary::compute_combined_diff;
+         let (t, repo, head) = temp_repo_configured();
+ 
+-        let result = compute_combined_diff("main", &head, Some(t.path()), &repo);
++        let result = compute_combined_diff(Some("main"), &head, Some(t.path()), &repo);
+         assert!(result.is_none());
+     }
+ 
+@@ -481,7 +480,7 @@ mod tests {
+         fs::write(t.path().join("uncommitted.txt"), "wip\n").unwrap();
+         repo.run_command(&["add", "uncommitted.txt"]).unwrap();
+ 
+-        let result = compute_combined_diff("feature", &head, Some(t.path()), &repo);
++        let result = compute_combined_diff(Some("feature"), &head, Some(t.path()), &repo);
+         assert!(result.is_some());
+         let combined = result.unwrap();
+         // Should contain both the branch diff and the working tree diff
+@@ -494,7 +493,7 @@ mod tests {
+         use crate::summary::compute_combined_diff;
+         let (_t, repo, head) = temp_repo_with_feature();
+         // Branch-only item (no worktree data) — only branch diff included
+-        let result = compute_combined_diff("feature", &head, None, &repo);
++        let result = compute_combined_diff(Some("feature"), &head, None, &repo);
+         assert!(result.is_some());
+         let combined = result.unwrap();
+         assert
+```
+
+**File**: `src/summary.rs` (modified, +81/-29)
+```diff
+@@ -1,7 +1,7 @@
+ //! Shared LLM summary generation for branches.
+ //!
+ //! Generates branch summaries using the configured LLM command, with caching
+-//! in `.git/wt/cache/summary/{sanitized_branch}/{diff_hash}.json`. The
++//! in `.git/wt/cache/summary/{sanitized_key}/{diff_hash}.json`. The
+ //! combined diff (branch diff + working tree diff) is hashed with SHA-256
+ //! and the hex-truncated digest becomes the filename — so a cache hit is
+ //! just "does the file exist?" rather than parsing JSON to compare a field.
+@@ -21,11 +21,25 @@
+ //! diff; it stays open because the value is display-only and rebuilding it
+ //! costs a model call per branch.
+ //!
++//! # Directory key
++//!
++//! The directory is keyed by branch name. A detached worktree has no branch,
++//! so its key adds a hash of the worktree path ([`cache_key`]); without it
++//! every detached row would share one directory and each write would prune
++//! the others' entries.
++//!
++//! Older releases keyed every detached row as plain `(detached)`. That legacy
++//! directory is indistinguishable from the one for a real branch named
++//! `(detached)`, which Git permits, so a detached write removes it only when
++//! no such local branch exists ([`CachedSummary::prune_legacy_detached`]).
++//! Otherwise `wt config state get` would list the stale pre-upgrade summary
++//! next to the current one indefinitely.
++//!
+ //! # Prune on write
+ //!
+-//! After a successful write, the branch directory is trimmed to one entry
++//! After a successful write, the key's directory is trimmed to one entry
+ //! via [`cache::sweep_lru`] with a cap of 1 — same mechanism `sha_cache`
+-//! uses, just at a per-branch directory with a size of one. The newest-mtime
++//! uses, just at a per-key directory with a size of one. The newest-mtime
+ //! file (the one we just wrote) survives; older hashes are dead weight.
+ //!
+ //! Best-effort: two concurrent writers for the same branch can briefly
+@@ -59,12 +73,29 @@ static LLM_SEMAPHORE: LazyLock<Semaphore> = LazyLock::new(|| Semaphore::new(8));
+ /// Subdirectory of `.git/wt/cache/` holding cached summaries.
+ const KIND: &str = "summary";
+ 
+-/// Cached summary stored in `.git/wt/cache/summary/{branch}/{hash}.json`.
++/// Display name for a row without a branch, matching `wt list`.
++const DETACHED: &str = "(detached)";
 +
- ## wt CLI and git behavior (all live-tested)
- 
- - `wt switch --create <branch>` exits 1 with `✗ Branch <branch> already
-```
-
-**File**: `skills/wt-switch-create/SKILL.md` (modified, +1/-2)
-```diff
-@@ -157,5 +157,4 @@ those is always `wt remove <branch>`.
- ## Scope
- 
- The command's mandate is ONE worktree (in the named repo, if one was given)
--and the requested task inside it. Commits, pushes, and merges still each
--require explicit user permission.
-+and the requested task inside it.
-```
-
-**File**: `skills/wt-switch-create/rationale.md` (modified, +6/-0)
-```diff
-@@ -77,6 +77,12 @@ the steps don't apply. So the lead makes the invocation the explicit request
- itself, and Scope states bounds rather than permission. Don't reintroduce
- either wording.
- 
-+Scope also stays silent on committing, pushing, and merging. A sentence there
-+reserving them for explicit user permission read as the user's own rule and
-+overrode harness or user instructions to commit finished work, so sessions
-+handed work back uncommitted. Those permissions come from the harness and the
-+user's instructions, as they would without the command.
++/// Cache directory key for a row (before filename sanitization).
++///
++/// A branch names its own directory. A detached worktree adds a hash of its
++/// path so detached rows don't share — and prune — one directory.
++fn cache_key(branch: Option<&str>, worktree_path: Option<&Path>) -> String {
++    match branch {
++        Some(branch) => branch.to_string(),
++        None => {
++            let path = worktree_path.map(Path::to_string_lossy).unwrap_or_default();
++            format!("{DETACHED}-{}", hash_diff(&path))
++        }
++    }
++}
 +
- ## wt CLI and git behavior (all live-tested)
++/// Cached summary stored in `.git/wt/cache/summary/{key}/{hash}.json`.
+ ///
+-/// The diff hash lives in the filename; the branch lives in the directory
+-/// name. The `branch` field holds the original (un-sanitized) branch name
+-/// so `list_all` can surface it for display without needing to reverse
+-/// `sanitize_for_filename`.
++/// The diff hash lives in the filename; the [`cache_key`] lives in the
++/// directory name. The `branch` field holds the display name (the original
++/// branch name, or `(detached)`) so `list_all` can surface it without
++/// reversing `sanitize_for_filename`.
+ #[derive(Debug, Clone, Serialize, Deserialize)]
+ pub(crate) struct CachedSummary {
+     pub summary: String,
+@@ -109,28 +140,42 @@ impl CachedSummary {
+         cache::cache_dir(repo, KIND)
+     }
  
- - `wt switch --create <branch>` exits 1 with `✗ Branch <branch> already
+-    /// Per-branch directory holding one file per cached diff hash.
+-    fn branch_dir(repo: &Repository, branch: &str) -> PathBuf {
+-        Self::cache_root(repo).join(sanitize_for_filename(branch))
++    /// Per-key directory holding one file per cached diff hash.
++    fn key_dir(repo: &Repository, key: &str) -> PathBuf {
++        Self::cache_root(repo).join(sanitize_for_filename(key))
+     }
+ 
+-    /// Full path for a specific (branch, hash) pair.
+-    pub(crate) fn cache_file(repo: &Repository, branch: &str, hash: &str) -> PathBuf {
+-        Self::branch_dir(repo, branch).join(format!("{hash}.json"))
++    /// Full path for a specific (key, hash) pair.
++    pub(crate) fn cache_file(repo: &Repository, key: &str, hash: &str) -> PathBuf {
++        Self::key_dir(repo, key).join(format!("{hash}.json"))
+     }
+ 
+-    /// Read the cached summary for a branch at a specific diff hash.
++    /// Read the cached summary for a [`cache_key`] at a specific diff hash.
+     /// See [`worktrunk::cache::read_json`] for the miss semantics.
+-    pub(crate) fn read(repo: &Repository, branch: &str, hash: &str) -> Option<Self> {
+-        cache::read_json(&Self::cache_file(repo, branch, hash))
++    pub(crate) fn read(repo: &Repository, key: &str, hash: &str) -> Option<Self> {
++        cache::read_json(&Self::cache_file(repo, key, hash)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4833** (2026-11-17): fix(shell): read --source only as the wrapper's first argument (@max-sixty)
-- **PR #4832** (2026-11-17): fix(switch): accept Gitea PR source branches named pull/... (@worktrunk-bot)
-- **PR #4831** (2026-11-17): chore: correct stale comments and a FAQ claim about wt remove (@worktrunk-bot)
-- **PR #4828** (2026-11-16): fix(wt-switch-create): drop the Scope sentence reserving commits for user permission (@worktrunk-bot)
-- **PR #4826** (2026-11-16): chore: pre-commit autoupdate (@pre-commit-ci[bot])
-- **PR #4821** (2026-11-16): chore: update tend workflows (0.3.25 → 0.3.26) (@worktrunk-bot)
+- **PR #4841** (2026-11-18): fix(switch): keep --path and --execute in the leftover-branch hint (@worktrunk-bot)
+- **PR #4840** (2026-11-18): fix: give each detached worktree its own summary cache directory (@worktrunk-bot)
+- **PR #4837** (2026-11-18): test(approval): make approval PTY assertions able to fail (@worktrunk-bot)
+- **PR #4836** (2026-11-18): chore: correct stale comments in switch, config loading, and two test files (@worktrunk-bot)
+- **PR #4835** (2026-11-18): chore: update tend workflows (0.3.26 → 0.3.27) (@worktrunk-bot)
+- **PR #4834** (2026-11-18): chore: bump taiki-e/install-action from 2.90.3 to 2.90.4 (@dependabot[bot])
 
 ---
 
@@ -2563,40 +2472,60 @@ Co-auth
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. shell): read --source only as the wrapper's first argument
+## X. switch): keep --path and --execute in the leftover-branch hint
 
 **RULE**:
-When implementing operations in `src/shell/snapshots/worktrunk__shell__tests__init_bash.snap`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/commands/worktree/switch.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1bed6f84`: shell): read --source only as the wrapper's first argument. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ecf8bcda`: switch): keep --path and --execute in the leftover-branch hint. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/shell/snapshots/worktrunk__shell__tests__init_bash.snap`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/commands/worktree/switch.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        # `wt --source ...` runs wt through `cargo run` in the current checkout.
-        # Only a leading --source is this wrapper's flag; every later argument
-        # belongs to wt or to a command it runs.
-        if [[ "${1-}" == --source ]]; then use_source=true; shift; fi
-            command "${WORKTRUNK_BIN:-wt}" "$@"
-        local execution=("${WORKTRUNK_BIN:-wt}" "$@")
-        if [[ "$use_source" == true ]]; then execution=(cargo run --bin wt --quiet -- "$@"); fi
+/// Wrap a [`GitError`] so its `wt switch` hint carries the invocation's
+/// `--path`, `--execute`, and trailing args. Other errors pass through.
+fn with_switch_suggestion(err: anyhow::Error, ctx: &SwitchSuggestionCtx) -> anyhow::Error {
+    match err.downcast::<GitError>() {
+        Ok(git_err) => GitError::WithSwitchSuggestion {
+            source: Box::new(git_err),
+            ctx: ctx.clone(),
+        }
+        .into(),
+        Err(err) => err,
+    }
+}
+
+                    Some(ref ctx) => with_switch_suggestion(err, ctx),
+                    // A leftover branch's hint suggests `wt switch <branch>`;
+                    // it needs the same flags as the `plan_switch` hints, or
+                    // following it drops `--path` and `--execute`.
+                    let leftover_hint = matches!(
+                        failure.error.downcast_ref::<GitError>(),
+                        Some(GitError::WorktreeCreationFailed { .. })
+                    );
+                    return Err(match &suggestion_ctx {
+                        Some(ctx) if leftover_hint => with_switch_suggestion(failure.error, ctx),
+                        _ => failure.error,
+                    });
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        local args=()
-        for arg in "$@"; do
-            if [[ "$arg" == --source ]]; then use_source=true; else args+=("$arg"); fi
-        done
-            command "${WORKTRUNK_BIN:-wt}" "${args[@]}"
-        local execution=("${WORKTRUNK_BIN:-wt}" "${args[@]}")
-        if [[ "$use_source" == true ]]; then execution=(cargo run --bin wt --quiet -- "${args[@]}"); fi
+                    Some(ref ctx) => match err.downcast::<GitError>() {
+                        Ok(git_err) => GitError::WithSwitchSuggestion {
+                            source: Box::new(git_err),
+                            ctx: ctx.clone(),
+                        }
+                        .into(),
+                        Err(err) => err,
+                    },
+                    return Err(failure.error);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1bed6f84` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ecf8bcda` are properly handled with clean fallback behavior.

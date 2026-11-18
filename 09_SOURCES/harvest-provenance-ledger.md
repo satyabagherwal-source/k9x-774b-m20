@@ -10966,3 +10966,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-18T10:55:08.194Z |
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `6db1d6fb` | Multi-dimensional audit evidence | 2026-11-18T10:55:10.696Z |
 | `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `bba77685` | Multi-dimensional audit evidence | 2026-11-18T10:55:16.286Z |
+| `learn-huggingface-deepseek-ai-deepseek-r1` | `https://huggingface.co/deepseek-ai/DeepSeek-R1` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-18T11:06:39.243Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `af889698` | Multi-dimensional audit evidence | 2026-11-18T11:06:41.476Z |
+| `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `265ecb97` | Multi-dimensional audit evidence | 2026-11-18T11:06:46.654Z |
+| `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `3593919a` | Multi-dimensional audit evidence | 2026-11-18T11:06:50.230Z |
+| `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `3507945a` | Multi-dimensional audit evidence | 2026-11-18T11:06:54.202Z |

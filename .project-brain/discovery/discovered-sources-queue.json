@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T10:55:21.809Z",
+  "updated_at": "2026-11-18T11:06:58.335Z",
   "stats": {
-    "total_discovered": 5439,
-    "approved_pending_harvest": 5136,
+    "total_discovered": 5441,
+    "approved_pending_harvest": 5138,
     "harvested_count": 0,
     "rejected_count": 303,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5118,
+      "COMMUNITY_AND_EXPERT": 5120,
       "OFFICIAL_DOCUMENTATION": 176,
       "STANDARDS_AND_SPECIFICATIONS": 109,
       "ENGINEERING_BLOGS": 4,
@@ -117558,6 +117558,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
         "fileName": "dkhamsing-open-source-ios-apps-learnings.md"
+      }
+    },
+    "SRC-0F26EFC10C47": {
+      "id": "SRC-0F26EFC10C47",
+      "url": "https://codesandbox.io/p/sandbox/rhf-usefieldarray-bug-fhffjm",
+      "title": "https://codesandbox.io/p/sandbox/rhf-usefieldarray-bug-fhffjm",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:06:58.300Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+        "fileName": "react-hook-form-react-hook-form-learnings.md"
+      }
+    },
+    "SRC-428806FF44A4": {
+      "id": "SRC-428806FF44A4",
+      "url": "https://codesandbox.io/p/devbox/suspicious-joliot-flkj2p",
+      "title": "https://codesandbox.io/p/devbox/suspicious-joliot-flkj2p",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:06:58.335Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
+        "fileName": "react-hook-form-react-hook-form-learnings.md"
       }
     }
   }
