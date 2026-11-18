@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T07:14:46.328Z",
+  "last_updated": "2026-11-18T07:23:15.974Z",
   "total_records": 1787,
   "domains": {
     "A": {
@@ -9933,8 +9933,8 @@
       "title": "Research & Knowledge Intelligence: Cloudflare/clef Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cloudflare-clef-research-knowledge-intelligence-cloudflare-clef-core-invarian.md",
       "repository": "Cloudflare/clef",
-      "content_hash": "1be884e5e5405c4cd80404c8d6d36fe8c5100559906def035eb5e38d0b871d85",
-      "created_at": "2026-11-13T20:26:57.726Z"
+      "content_hash": "9abcbe722149305c775db73d091272bbd115afa23169fc541c4faa2276c41762",
+      "created_at": "2026-11-18T07:22:56.434Z"
     },
     "domain_intelligence-research-knowledge-intelligence-trufflesecurity-trufflehog-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-trufflesecurity-trufflehog-core-invariants",
@@ -10002,8 +10002,8 @@
       "title": "Research & Knowledge Intelligence: hf-cloudflare-clef-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cloudflare-clef-learnings-research-knowledge-intelligence-hf-cloudflare-clef-.md",
       "repository": "hf-cloudflare-clef-learnings",
-      "content_hash": "fca61d07805f641bd461006d1ce3c0d85b6e064a30631e9a310fd90ccdb0e97e",
-      "created_at": "2026-11-13T20:27:43.034Z"
+      "content_hash": "46058bf27e74c2ac1168b22b5007adaeeff8efa5b09c47d8aeacb05c336e6457",
+      "created_at": "2026-11-18T07:23:15.448Z"
     },
     "domain_intelligence-architecture-intelligence-linkerd-linkerd2-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-linkerd-linkerd2-learnings-core-invariants",
@@ -15664,8 +15664,8 @@
       "title": "Architecture Intelligence: rqlite/rqlite Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-architecture-intelligence-rqlite-rqlite-core-invariants.md",
       "repository": "rqlite/rqlite",
-      "content_hash": "3d1496fc77b1540bd0a2b8d9b227b08b96458d8af06d034a80b827c96d7e7154",
-      "created_at": "2026-11-16T00:28:02.546Z"
+      "content_hash": "65e78dac8b08fd4d3a8c41557bd48347c39b70a3966de3dbe7b13a92dda74d79",
+      "created_at": "2026-11-18T07:23:11.707Z"
     },
     "domain_intelligence-research-knowledge-intelligence-higurashi-ai-haru-4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-higurashi-ai-haru-4b-core-invariants",
@@ -19949,8 +19949,8 @@
       "title": "Architecture Intelligence: ClementTsang/bottom Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clementtsang-bottom-architecture-intelligence-clementtsang-bottom-core-invariant.md",
       "repository": "ClementTsang/bottom",
-      "content_hash": "53b1c9d946fb8326336e55a53f84b383496bfa73de3e7d615ca2a2f903524dda",
-      "created_at": "2026-11-17T02:02:12.574Z"
+      "content_hash": "e0c6937f2999e29a7c38cf54e79fd016fd2f82b1ae2b38584a28a184e28130b3",
+      "created_at": "2026-11-18T07:22:58.128Z"
     },
     "domain_intelligence-architecture-intelligence-clementtsang-bottom-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clementtsang-bottom-learnings-core-invariants",
@@ -19958,8 +19958,8 @@
       "title": "Architecture Intelligence: clementtsang-bottom-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clementtsang-bottom-learnings-architecture-intelligence-clementtsang-bottom-lear.md",
       "repository": "clementtsang-bottom-learnings",
-      "content_hash": "78d4f14f754b41ea33ec9fce10707f62619745cc0160051a81973505cc8607c7",
-      "created_at": "2026-11-17T02:02:52.835Z"
+      "content_hash": "9f5b1c8da99f56d4a2c84f91a4b89990777a25afcab07b09541c879e14fc0bb7",
+      "created_at": "2026-11-18T07:23:15.045Z"
     },
     "domain_intelligence-research-knowledge-intelligence-burner22-numbat-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-burner22-numbat-core-invariants",
@@ -22664,8 +22664,8 @@
       "title": "Architecture Intelligence: rqlite-rqlite-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-learnings-architecture-intelligence-rqlite-rqlite-learnings-core-i.md",
       "repository": "rqlite-rqlite-learnings",
-      "content_hash": "65e8e3931810940a4d77b266737f19e043f6a7d860925f528fc8043d5cb20d8e",
-      "created_at": "2026-11-16T00:28:37.165Z"
+      "content_hash": "91ea47f0d8b92a08cce9277f2e065c6def7c2b4de06e6c5568988fa94a0e5f32",
+      "created_at": "2026-11-18T07:23:15.974Z"
     },
     "domain_intelligence-research-knowledge-intelligence-unsloth-qwen3-8-flash-next-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-unsloth-qwen3-8-flash-next-gguf-core-invariants",

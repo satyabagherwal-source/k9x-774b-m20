@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T07:14:46.486Z",
+  "last_updated": "2026-11-18T07:23:16.122Z",
   "total_verified_learnings": 8993,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21002,
+  "total_items": 21007,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -214447,7 +214447,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cloudflare/clef",
       "source_version": "hf-cloudflare-clef",
-      "content_hash": "74ba2b27ead4f630f58d85f39c8e0abd03474e94d61ca53d5ecf0eda4176873c",
+      "content_hash": "99583d057e9bec8320d6cf2045bffed4fba58636ec55fd62e359e27c71abd9c5",
       "dossier_path": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md",
       "promoted_rules": [],
@@ -214456,7 +214456,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T20:26:57.371Z",
+      "verified_at": "2026-11-18T07:22:56.073Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214473,9 +214473,9 @@
       "title": "Research & Knowledge Intelligence: Cloudflare/clef Core Invariants",
       "repository": "Cloudflare/clef",
       "source_version": "hf-cloudflare-clef",
-      "content_hash": "1be884e5e5405c4cd80404c8d6d36fe8c5100559906def035eb5e38d0b871d85",
+      "content_hash": "9abcbe722149305c775db73d091272bbd115afa23169fc541c4faa2276c41762",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T20:26:57.726Z"
+      "persisted_at": "2026-11-18T07:22:56.434Z"
     },
     "learn-github-linkerd-linkerd2": {
       "learning_id": "learn-github-linkerd-linkerd2",
@@ -214568,9 +214568,9 @@
       "title": "Research & Knowledge Intelligence: hf-cloudflare-clef-learnings Core Invariants",
       "repository": "hf-cloudflare-clef-learnings",
       "source_version": "HEAD",
-      "content_hash": "fca61d07805f641bd461006d1ce3c0d85b6e064a30631e9a310fd90ccdb0e97e",
+      "content_hash": "46058bf27e74c2ac1168b22b5007adaeeff8efa5b09c47d8aeacb05c336e6457",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T20:27:43.034Z"
+      "persisted_at": "2026-11-18T07:23:15.448Z"
     },
     "candidate_directive-proxy-v2-374-0": {
       "item_id": "candidate_directive-proxy-v2-374-0",
@@ -230290,8 +230290,8 @@
       "slug": "rqlite-rqlite",
       "platform": "github",
       "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "b9dc726d",
-      "content_hash": "b1fcb25d6c08ac275046d64b81cdd53de024cc518a9ea41b58de1ce87ee4b628",
+      "source_version": "338a824d",
+      "content_hash": "b09352c56b2dbec2c1fa5fd4804241750333422cc0cb63f50718b8d83d9acce8",
       "dossier_path": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "promoted_rules": [
@@ -230319,6 +230319,11 @@
           "number": 8913,
           "title": "Allocation-Zero Timer Draining and GC Slice Re-slicing in Batch Queues",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9153,
+          "title": "flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230326,7 +230331,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T08:09:12.802Z",
+      "verified_at": "2026-11-18T07:23:11.241Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230368,10 +230373,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-architecture-intelligence-rqlite-rqlite-core-invariants.md",
       "title": "Architecture Intelligence: rqlite/rqlite Core Invariants",
       "repository": "rqlite/rqlite",
-      "source_version": "4e9a2e59",
-      "content_hash": "3d1496fc77b1540bd0a2b8d9b227b08b96458d8af06d034a80b827c96d7e7154",
+      "source_version": "338a824d",
+      "content_hash": "65e78dac8b08fd4d3a8c41557bd48347c39b70a3966de3dbe7b13a92dda74d79",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T00:28:02.546Z"
+      "persisted_at": "2026-11-18T07:23:11.707Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite",
@@ -230380,10 +230385,10 @@
       "relative_path": "08_VERIFICATION/rqlite-rqlite-verification-protocol-empirical-defect-shield-for-rqlite-rqlite.md",
       "title": "Verification Protocol: Empirical Defect Shield for rqlite/rqlite",
       "repository": "rqlite/rqlite",
-      "source_version": "b9dc726d",
-      "content_hash": "127f9d6543d93f5f6b6e80528cbae9d44e981b25234a8a0b1e3ca83d6fe1bc13",
+      "source_version": "338a824d",
+      "content_hash": "7ba8797c8b90e5dbf8a1cd85b60bb7179a12940a014dfdff44aef10f69a2ce8a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T08:09:13.653Z"
+      "persisted_at": "2026-11-18T07:23:11.824Z"
     },
     "rule-8495": {
       "learning_id": "rule-8495",
@@ -242325,14 +242330,19 @@
       "slug": "clementtsang-bottom",
       "platform": "github",
       "source_url": "https://github.com/ClementTsang/bottom",
-      "source_version": "cb86dc03",
-      "content_hash": "a641928a34c431e3850a5cd6ad8b76499c9d29533d6eb77468d76cbd87e1afcc",
+      "source_version": "6e1c1385",
+      "content_hash": "fb50796a66131237acca548e640c58c9b840a7ab36d125b936a5001494172364",
       "dossier_path": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
       "promoted_rules": [
         {
           "number": 8586,
           "title": "set `unused_dependencies` lint to deny",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9152,
+          "title": "add hostname template to terminal title option",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -242341,7 +242351,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T02:02:12.250Z",
+      "verified_at": "2026-11-18T07:22:57.660Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242383,10 +242393,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clementtsang-bottom-architecture-intelligence-clementtsang-bottom-core-invariant.md",
       "title": "Architecture Intelligence: ClementTsang/bottom Core Invariants",
       "repository": "ClementTsang/bottom",
-      "source_version": "cb86dc03",
-      "content_hash": "53b1c9d946fb8326336e55a53f84b383496bfa73de3e7d615ca2a2f903524dda",
+      "source_version": "6e1c1385",
+      "content_hash": "e0c6937f2999e29a7c38cf54e79fd016fd2f82b1ae2b38584a28a184e28130b3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T02:02:12.574Z"
+      "persisted_at": "2026-11-18T07:22:58.128Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom",
@@ -242395,10 +242405,10 @@
       "relative_path": "08_VERIFICATION/clementtsang-bottom-verification-protocol-empirical-defect-shield-for-clementtsa.md",
       "title": "Verification Protocol: Empirical Defect Shield for ClementTsang/bottom",
       "repository": "ClementTsang/bottom",
-      "source_version": "a5da65c6",
-      "content_hash": "8326f921ca681676b38733fedb5d721e31d73f1622536d190adfec62242f5c47",
+      "source_version": "6e1c1385",
+      "content_hash": "86728fa908b971aaf456357951d5435899be8c67a485057f9d35b2434f0afb4f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T07:04:02.560Z"
+      "persisted_at": "2026-11-18T07:22:58.248Z"
     },
     "candidate_directive-other-set-unused_dependencies-lint-to-deny": {
       "item_id": "candidate_directive-other-set-unused_dependencies-lint-to-deny",
@@ -242420,9 +242430,9 @@
       "title": "Architecture Intelligence: clementtsang-bottom-learnings Core Invariants",
       "repository": "clementtsang-bottom-learnings",
       "source_version": "HEAD",
-      "content_hash": "78d4f14f754b41ea33ec9fce10707f62619745cc0160051a81973505cc8607c7",
+      "content_hash": "9f5b1c8da99f56d4a2c84f91a4b89990777a25afcab07b09541c879e14fc0bb7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T02:02:52.835Z"
+      "persisted_at": "2026-11-18T07:23:15.045Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clementtsang-bottom-learnings",
@@ -242432,9 +242442,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for clementtsang-bottom-learnings",
       "repository": "clementtsang-bottom-learnings",
       "source_version": "HEAD",
-      "content_hash": "f7ec3913adb69819bfb389d3ef661afde66f139cff3b3b09710da183e96b8a41",
+      "content_hash": "c10009b0e3a6fb77f346e3f92043c8c8ef4ae26b22aaf9df2e172546a5cd0295",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T07:04:13.575Z"
+      "persisted_at": "2026-11-18T07:23:15.178Z"
     },
     "learn-huggingface-burner22-numbat": {
       "learning_id": "learn-huggingface-burner22-numbat",
@@ -250456,9 +250466,9 @@
       "title": "Architecture Intelligence: rqlite-rqlite-learnings Core Invariants",
       "repository": "rqlite-rqlite-learnings",
       "source_version": "HEAD",
-      "content_hash": "65e8e3931810940a4d77b266737f19e043f6a7d860925f528fc8043d5cb20d8e",
+      "content_hash": "91ea47f0d8b92a08cce9277f2e065c6def7c2b4de06e6c5568988fa94a0e5f32",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T00:28:37.165Z"
+      "persisted_at": "2026-11-18T07:23:15.974Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite-learnings",
@@ -250468,9 +250478,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rqlite-rqlite-learnings",
       "repository": "rqlite-rqlite-learnings",
       "source_version": "HEAD",
-      "content_hash": "910cd0d291e2456a28503d7587c9e5fcf13618a0298de5266b44b63a5f3605cd",
+      "content_hash": "ff803974379803d904570d7865f309747240fac11ee66b2cdcbf86e0b138babe",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T08:09:42.661Z"
+      "persisted_at": "2026-11-18T07:23:16.122Z"
     },
     "learn-huggingface-unsloth-qwen3-8-flash-next-gguf": {
       "learning_id": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
@@ -283033,6 +283043,70 @@
       "content_hash": "42f1db97f15f95d4adec4f191aff045b61f833674dfd4d842089cb07fa518ad6",
       "domain_letter": "H",
       "persisted_at": "2026-11-18T07:14:46.328Z"
+    },
+    "rule-9152": {
+      "learning_id": "rule-9152",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9152,
+      "title": "add hostname template to terminal title option",
+      "source_url": "https://github.com/ClementTsang/bottom",
+      "source_version": "6e1c1385",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T07:22:57.660Z"
+    },
+    "candidate_directive-add-hostname-template-to-terminal-title-option": {
+      "item_id": "candidate_directive-add-hostname-template-to-terminal-title-option",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NVPV-add-hostname-template-to-terminal-title-option.md",
+      "title": "add hostname template to terminal title option",
+      "repository": "ClementTsang/bottom",
+      "source_version": "6e1c1385",
+      "content_hash": "0049c4a5519a42b97d030d251bace50366d1f2e47e6fd99ac38b6d8caedbec87",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T07:22:58.006Z"
+    },
+    "rule-9153": {
+      "learning_id": "rule-9153",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9153,
+      "title": "flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout",
+      "source_url": "https://github.com/rqlite/rqlite",
+      "source_version": "338a824d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T07:23:11.241Z"
+    },
+    "candidate_directive-flaky-test_singlenoderequest_writeignoresdbtimeout": {
+      "item_id": "candidate_directive-flaky-test_singlenoderequest_writeignoresdbtimeout",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O9HJ-flaky-test_singlenoderequest_writeignoresdbtimeout.md",
+      "title": "flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout",
+      "repository": "rqlite-rqlite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "08efa3497d3e993b6b6ebdc1677959e0e0a8281182b367470c535cca3e1cca67",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T07:23:15.848Z"
+    },
+    "candidate_directive-feature-add-hostname-template-to-terminal-title-option": {
+      "item_id": "candidate_directive-feature-add-hostname-template-to-terminal-title-option",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-O8RN-feature-add-hostname-template-to-terminal-title-option.md",
+      "title": "feature: add hostname template to terminal title option",
+      "repository": "clementtsang-bottom-learnings",
+      "source_version": "HEAD",
+      "content_hash": "88c943b044f994cd90e87e3aaf75d9ab03046a222ed9ad3159866c55c87ee468",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-18T07:23:14.919Z"
     }
   },
   "ai-builder-brain": {

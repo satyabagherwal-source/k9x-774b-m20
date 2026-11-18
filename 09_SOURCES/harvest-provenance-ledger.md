@@ -10894,3 +10894,6 @@ Every entry in this ledger must capture:
 | `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `a381d561` | Multi-dimensional audit evidence | 2026-11-18T07:14:03.474Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `d5de05ae` | Multi-dimensional audit evidence | 2026-11-18T07:14:12.834Z |
 | `learn-dom-h-75fce7b9` | `project://apache-shardingsphere` | `d5de05ae` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md` | 2026-11-18T07:14:45.755Z |
+| `learn-huggingface-cloudflare-clef` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-18T07:22:56.265Z |
+| `learn-github-clementtsang-bottom` | `https://github.com/ClementTsang/bottom` | `6e1c1385` | Multi-dimensional audit evidence | 2026-11-18T07:22:57.824Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `338a824d` | Multi-dimensional audit evidence | 2026-11-18T07:23:11.404Z |

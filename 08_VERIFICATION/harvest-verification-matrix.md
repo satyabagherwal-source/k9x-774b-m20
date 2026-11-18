@@ -10861,3 +10861,6 @@
 | `CYCLE-20261118-CF9Q` | `2026-11-18T07:14:03.470Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9150` | Yes (`513b09b7...`) |
 | `CYCLE-20261118-CMHP` | `2026-11-18T07:14:12.829Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9151` | Yes (`d4616187...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T07:14:45.755Z` | `apache-shardingsphere` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-75FCE7B9` [Domain H] | Yes (`ca902707...`) |
+| `CYCLE-20261118-NUDI` | `2026-11-18T07:22:56.262Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md` | Yes (`99583d05...`) |
+| `CYCLE-20261118-NVKS` | `2026-11-18T07:22:57.820Z` | `ClementTsang/bottom` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9152` | Yes (`fb50796a...`) |
+| `CYCLE-20261118-O620` | `2026-11-18T07:23:11.400Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9153` | Yes (`b09352c5...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T07:14:12.842Z",
+  "last_updated": "2026-11-18T07:23:11.411Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -860,14 +860,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-cloudflare-clef",
-      "content_hash": "74ba2b27ead4f630f58d85f39c8e0abd03474e94d61ca53d5ecf0eda4176873c",
-      "verified_at": "2026-11-13T20:26:57.538Z",
+      "content_hash": "99583d057e9bec8320d6cf2045bffed4fba58636ec55fd62e359e27c71abd9c5",
+      "verified_at": "2026-11-18T07:22:56.272Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T20:26:57.538Z"
+      "last_updated": "2026-11-18T07:22:56.272Z"
     },
     "Cloudflare/clef-flash": {
       "repository": "Cloudflare/clef-flash",
@@ -5961,14 +5961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clementtsang-bottom",
-      "content_hash": "a641928a34c431e3850a5cd6ad8b76499c9d29533d6eb77468d76cbd87e1afcc",
-      "verified_at": "2026-11-17T02:02:12.406Z",
+      "content_hash": "fb50796a66131237acca548e640c58c9b840a7ab36d125b936a5001494172364",
+      "verified_at": "2026-11-18T07:22:57.831Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T02:02:12.406Z"
+      "last_updated": "2026-11-18T07:22:57.831Z"
     },
     "jhen0409/react-native-debugger": {
       "repository": "jhen0409/react-native-debugger",
@@ -7491,14 +7491,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rqlite-rqlite",
-      "content_hash": "b1fcb25d6c08ac275046d64b81cdd53de024cc518a9ea41b58de1ce87ee4b628",
-      "verified_at": "2026-11-17T08:09:12.963Z",
+      "content_hash": "b09352c56b2dbec2c1fa5fd4804241750333422cc0cb63f50718b8d83d9acce8",
+      "verified_at": "2026-11-18T07:23:11.410Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T08:09:12.963Z"
+      "last_updated": "2026-11-18T07:23:11.410Z"
     },
     "arco-design/arco-design": {
       "repository": "arco-design/arco-design",

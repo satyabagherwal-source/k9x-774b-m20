@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T07:14:45.945Z",
+  "updated_at": "2026-11-18T07:23:14.737Z",
   "stats": {
-    "total_discovered": 5374,
-    "approved_pending_harvest": 5072,
+    "total_discovered": 5376,
+    "approved_pending_harvest": 5074,
     "harvested_count": 0,
     "rejected_count": 302,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5054,
+      "COMMUNITY_AND_EXPERT": 5056,
       "OFFICIAL_DOCUMENTATION": 176,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 4,
@@ -116135,6 +116135,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
         "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-A24785E13711": {
+      "id": "SRC-A24785E13711",
+      "url": "https://github.com/ClementTsang/bottom/pull/2323",
+      "title": "https://github.com/ClementTsang/bottom/pull/2323",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:23:14.703Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
+      }
+    },
+    "SRC-63A67BC8485B": {
+      "id": "SRC-63A67BC8485B",
+      "url": "https://github.com/ClementTsang/bottom/pull/2325",
+      "title": "https://github.com/ClementTsang/bottom/pull/2325",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:23:14.737Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clementtsang-bottom-learnings.md",
+        "fileName": "clementtsang-bottom-learnings.md"
       }
     }
   }

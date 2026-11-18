@@ -4,24 +4,24 @@
 {
   "source_repository": "rqlite/rqlite",
   "source_url": "https://github.com/rqlite/rqlite",
-  "source_version": "4e9a2e59",
+  "source_version": "338a824d",
   "license": "MIT",
-  "timestamp": "2026-11-16T00:28:02.430Z",
+  "timestamp": "2026-11-18T07:23:11.582Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-rqlite-rqlite",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [rqlite/rqlite](https://github.com/rqlite/rqlite) (Revision: `4e9a2e59`).  
-> **License**: MIT | **Timestamp**: `2026-11-16T00:28:02.430Z`  
+> **Provenance**: Harvested from [rqlite/rqlite](https://github.com/rqlite/rqlite) (Revision: `338a824d`).  
+> **License**: MIT | **Timestamp**: `2026-11-18T07:23:11.582Z`  
 > **Learning ID**: `learn-github-rqlite-rqlite`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 69%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 68%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from rqlite/rqlite:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T00:28:01.296Z  
+> **Harvest Timestamp**: 2026-11-18T07:23:10.505Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The lightweight, fault-tolerant database built on SQLite. Designed to keep your data highly available with minimal effort.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17953 stars
+- **Stars / Engagement**: 17959 stars
 
 ---
 
@@ -2083,11 +2083,11 @@ func forbiddenUses(file *ast.File, path string) []violation {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3044** (2026-11-13): **Console reports failed API requests**
-  *Symptoms*: The HTTP API can return 200 with a top-level error, and returns plain text for non-2xx responses. The console's request helper handled neither. A failed query rendered as a blank result, a failed table or index drop was treated as a success, and non-2xx responses surfaced as JSON parse errors.  The helper now rejects for a non-2xx status or a top-level error, so the existing error handlers in the query, schema, and drop code display the server's message.  
+- **Issue #3065** (2026-11-18): **Fix flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout**
+  *Symptoms*: The read-only half of the test relied on a 1ns database timeout expiring before a trivial SELECT completed. On a machine with a coarse clock, such as the AppVeyor Windows workers, the read can finish before the timeout is noticed, so the request succeeds and the test fails.  Stall the read until the timeout expires instead, and assert that the result carries the query timeout error. 
 
-- **Issue #3043** (2026-11-13): **Speed up system testing**
-  *Symptoms*: 
+- **Issue #3064** (2026-11-18): **Shorten e2e test timeouts**
+  *Symptoms*: This testing takes place on localhost. 200 ms should be sufficient for testing.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2104,48 +2104,130 @@ func forbiddenUses(file *ast.File, path string) []violation {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4e9a2e59` (2026-11-15)
-**Commit Message**: Update CONTRIBUTING.md
+### Incident Patch 1: `20470c69` (2026-11-18)
+**Commit Message**: Fix flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout
 
-**File**: `CONTRIBUTING.md` (modified, +1/-1)
+The read-only half of the test relied on a 1ns database timeout expiring
+before a trivial SELECT completed. On a machine with a coarse clock, such
+as the AppVeyor Windows workers, the read can finish before the timeout
+is noticed, so the request succeeds and the test fails.
+
+Stall the read until the timeout expires instead, and assert that the
+result carries the query timeout error.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `store/store_test.go` (modified, +11/-4)
 ```diff
-@@ -15,6 +15,6 @@ Coding Agents are fine to use, but any PR that appears to be "AI slop" or genera
- ### Judgement still required
- Simply pointing an Agent at a feature request or bug report, and having it generate a PR, is unlikely to be an effective working style. Why? For two reasons:
- - The PR is liable to be quite large. Reviewing a large PR for bugs, code style issues, and coherence with the rest of the codebase, is difficult. A large PR may never be reviewed properly, and therefore never merged. This problem predates Agent-enabled coding.
--- Lack of judgement. If you didn't actually write the code, then you may not understand **why** certain coding choices were made. If your response to feedback on the PR is to simply feed it back into your Agent and post its response, then you've become _a passthru for a model_. In that case the maintainers might as well drive the Agent themselves. This problem is a new one.
-+- Lack of judgement. If you didn't actually write the code, then you may not understand **why** certain coding choices were made. If your response to comment on the PR is to simply feed them back into your Agent and post **its** response, then you've become _a passthrough for a model_. In that case the maintainers might as well drive the Agent themselves. This problem is a new one.
+@@ -814,11 +814,18 @@ func Test_SingleNodeRequest_WriteIgnoresDBTimeout(t *testing.T) {
+ 		t.Fatalf("unexpected results for request\nexp: %s\ngot: %s", exp, got)
+ 	}
  
- Breaking changes into smaller pieces will help get your contribution merged quicker. There has never been a large feature in rqlite that was not composed of a small series of changes. So for a large change you should propose what series of changes you will make. But the same requirements apply -- you must show that you can argue from first principles **why** a certain series of changes should take place.
+-	// The timeout does apply to a request which only reads.
++	// The timeout does apply to a request which only reads. The read is
++	// stalled until the timeout expires, so the outcome does not depend on
++	// the timeout expiring before a fast read completes.
+ 	eqr = executeQueryRequestFromString(`SELECT * FROM foo`, proto.ConsistencyLevel_WEAK, false, false, false)
+-	eqr.Request.DbTimeout = 1
+-	if _, _, _, err := s.Request(context.Background(), eqr); err == nil {
+-		t.Fatalf("expected read-only request to time out")
++	eqr.Request.Statements[0].ForceStall = true
++	eqr.Request.DbTimeout = int64(20 * time.Millisecond)
++	r, _, _, err = s.Request(context.Background(), eqr)
++	if err != nil {
++		t.Fatalf("failed to execute read-only request on single node: %s", err.Error())
++	}
++	if len(r) != 1 || r[0].GetQ().GetError() != db.ErrQueryTimeout.Error() {
++		t.Fatalf("expected read-only request to time out, got %s", asJSON(r))
+ 	}
+ }
+ 
 ```
 
 ---
 
-### Incident Patch 2: `714da89c` (2026-11-15)
-**Commit Message**: Update CONTRIBUTING.md
+### Incident Patch 2: `338a824d` (2026-11-18)
+**Commit Message**: Merge pull request #3065 from rqlite/fix-flaky-write-ignores-db-timeout-test
 
-**File**: `CONTRIBUTING.md` (modified, +6/-1)
+Fix flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout
+
+**File**: `store/store_test.go` (modified, +11/-4)
 ```diff
-@@ -12,4 +12,9 @@ Issues are never explicitly assigned to individuals. If you wish to work on issu
- ## Use of Coding Agents
- Coding Agents are fine to use, but any PR that appears to be "AI slop" or generated without any apparent thought by the actual programmer, may be closed without comment. If you open an issue or PR that includes analysis by a Coding Agent please state up front that it is agent-generated.
+@@ -814,11 +814,18 @@ func Test_SingleNodeRequest_WriteIgnoresDBTimeout(t *testing.T) {
+ 		t.Fatalf("unexpected results for request\nexp: %s\ngot: %s", exp, got)
+ 	}
  
--AI Agents make it easier than ever to generate large PRs. Since PRs still must be reviewed by a human, breaking changes into smaller pieces if possible can help get your contribution merged quicker.
-+### Judgement still required
-+Simply pointing an Agent at a feature request or bug report, and having it generate a PR, is unlikely to be an effective working style. Why? For two reasons:
-+- The PR is liable to be quite large. Reviewing a large PR for bugs, code style issues, and coherence with the rest of the codebase, is difficult. A large PR may never be reviewed properly, and therefore never merged. This problem predates Agent-enabled coding.
-+- Lack of judgement. If you didn't actually write the code, then you may not understand **why** certain coding choices were made. If your response to feedback on the PR is to simply feed it back into your Agent and post its response, then you've become _a passthru for a model_. In that case the maintainers might as well drive the Agent themselves. This problem is a new one.
-+
-+Breaking changes into smaller pieces will help get your contribution merged quicker. There has never been a large feature in rqlite that was not composed of a small series of changes. So for a large change you should propose what series of changes you will make. But the same requirements apply -- you must show that you can argue from first principles **why** a certain series of changes should take place.
+-	// The timeout does apply to a request which only reads.
++	// The timeout does apply to a request which only reads. The read is
++	// stalled until the timeout expires, so the outcome does not depend on
++	// the timeout expiring before a fast read completes.
+ 	eqr = executeQueryRequestFromString(`SELECT * FROM foo`, proto.ConsistencyLevel_WEAK, false, false, false)
+-	eqr.Request.DbTimeout = 1
+-	if _, _, _, err := s.Request(context.Background(), eqr); err == nil {
+-		t.Fatalf("expected read-only request to time out")
++	eqr.Request.Statements[0].ForceStall = true
++	eqr.Request.DbTimeout = int64(20 * time.Millisecond)
++	r, _, _, err = s.Request(context.Background(), eqr)
++	if err != nil {
++		t.Fatalf("failed to execute read-only request on single node: %s", err.Error())
++	}
++	if len(r) != 1 || r[0].GetQ().GetError() != db.ErrQueryTimeout.Error() {
++		t.Fatalf("expected read-only request to time out, got %s", asJSON(r))
+ 	}
+ }
+ 
+```
+
+---
+
+### Incident Patch 3: `aedcce1d` (2026-11-18)
+**Commit Message**: Merge pull request #3064 from rqlite/e2e-shorten-timeouts
+
+Shorten e2e test timeouts
+
+**File**: `system_test/e2e/helpers.py` (modified, +10/-1)
+```diff
+@@ -17,6 +17,9 @@
+ import string
+ 
+ TIMEOUT=10
++RAFT_HEARTBEAT_TIMEOUT="200ms"
++RAFT_ELECTION_TIMEOUT="200ms"
++RAFT_LEADER_LEASE_TIMEOUT="200ms"
+ 
+ seqRe = re.compile(r"^{'results': \[\], 'sequence_number': \d+}$")
+ 
+@@ -129,6 +132,9 @@ def __init__(self, exe_path, node_id, extensions_path=None,
+     self.raft_snap_threshold = raft_snap_threshold
+     self.raft_snap_int = raft_snap_int
+     self.raft_cluster_remove_shutdown = raft_cluster_remove_shutdown
++    self.raft_election_timeout = RAFT_ELECTION_TIMEOUT
++    self.raft_heartbeat_timeout = RAFT_HEARTBEAT_TIMEOUT
++    self.raft_leader_lease_timeout = RAFT_LEADER_LEASE_TIMEOUT
+     self.http_cert = http_cert
+     self.http_key = http_key
+     self.http_no_verify = http_no_verify
+@@ -197,7 +203,10 @@ def start(self, join=None, join_attempts=None, join_interval="1s", join_as=None,
+                '-raft-snap', str(self.raft_snap_threshold),
+                '-raft-snap-int', self.raft_snap_int,
+                '-raft-cluster-remove-shutdown=%s' % str(self.raft_cluster_remove_shutdown).lower(),
+-               '-raft-non-voter=%s' % str(not self.raft_voter).lower()]
++               '-raft-non-voter=%s' % str(not self.raft_voter).lower(),
++               '-raft-election-timeout=%s' % self.raft_election_timeout,
++               '-raft-heartbeat-timeout=%s' % self.raft_heartbeat_timeout,
++               '-raft-leader-lease-timeout=%s' % self.raft_leader_lease_timeout]
+     if self.cdc_config is not None:
+       command += ['-cdc-config', self.cdc_config]
+     if self.extensions_path is not None:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3044** (2026-11-13): Console reports failed API requests (@otoolep)
-- **PR #3043** (2026-11-13): Speed up system testing (@otoolep)
-- **PR #3042** (2026-11-13): Shorten Raft timeouts for Stores under test (@otoolep)
-- **PR #3041** (2026-11-13): Fixes for minor bugs in CDC high water mark handling (@otoolep)
-- **PR #3035** (2026-11-10): Inband signaling to close connection client-side (@otoolep)
-- **PR #3034** (2026-11-09): Add README explaining purpose of raft/ directory (@otoolep)
+- **PR #3065** (2026-11-18): Fix flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout (@otoolep)
+- **PR #3064** (2026-11-18): Shorten e2e test timeouts (@otoolep)
+- **PR #3063** (2026-11-18): Normalize timezone for JulianDay calculations (@otoolep)
+- **PR #3062** (2026-11-18): Capture 'now' once per statement when rewriting (@otoolep)
+- **PR #3060** (2026-11-17): Don't enforce timeouts for writes (@otoolep)
+- **PR #3056** (2026-11-17): Fix non-deterministic time rewrite when "now" is missing (@otoolep)
 
 ---
 
@@ -2165,31 +2247,44 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update CONTRIBUTING.md
+## X. flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout
 
 **RULE**:
-When implementing operations in `CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `store/store_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4e9a2e59`: Update CONTRIBUTING.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `20470c69`: flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CONTRIBUTING.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `store/store_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Lack of judgement. If you didn't actually write the code, then you may not understand **why** certain coding choices were made. If your response to comment on the PR is to simply feed them back into your Agent and post **its** response, then you've become _a passthrough for a model_. In that case the maintainers might as well drive the Agent themselves. This problem is a new one.
+	// The timeout does apply to a request which only reads. The read is
+	// stalled until the timeout expires, so the outcome does not depend on
+	// the timeout expiring before a fast read completes.
+	eqr.Request.Statements[0].ForceStall = true
+	eqr.Request.DbTimeout = int64(20 * time.Millisecond)
+	r, _, _, err = s.Request(context.Background(), eqr)
+	if err != nil {
+		t.Fatalf("failed to execute read-only request on single node: %s", err.Error())
+	}
+	if len(r) != 1 || r[0].GetQ().GetError() != db.ErrQueryTimeout.Error() {
+		t.Fatalf("expected read-only request to time out, got %s", asJSON(r))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-- Lack of judgement. If you didn't actually write the code, then you may not understand **why** certain coding choices were made. If your response to feedback on the PR is to simply feed it back into your Agent and post its response, then you've become _a passthru for a model_. In that case the maintainers might as well drive the Agent themselves. This problem is a new one.
+	// The timeout does apply to a request which only reads.
+	eqr.Request.DbTimeout = 1
+	if _, _, _, err := s.Request(context.Background(), eqr); err == nil {
+		t.Fatalf("expected read-only request to time out")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4e9a2e59` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `20470c69` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
