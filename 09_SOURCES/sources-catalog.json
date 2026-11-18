@@ -275,8 +275,8 @@
     "sourceUrl": "https://huggingface.co/moonshotai/Kimi-K3",
     "sourceVersion": "hf-moonshotai-kimi-k3",
     "license": "Open-Source",
-    "contentHash": "ca7e92e6dbf8f52795ef5510f36ae72de3375ddc1302f5815ef2b2f7db69be43",
-    "lastHarvestedAt": "2026-11-17T22:56:48.548Z",
+    "contentHash": "f6916cdbb1f8b0e96435bec96acd0f1f5b7079aa97ce60f085e309ccafaf5c79",
+    "lastHarvestedAt": "2026-11-18T11:22:31.035Z",
     "learningId": "learn-huggingface-moonshotai-kimi-k3"
   },
   "hf-stabilityai-stable-diffusion-xl-base-1.0": {
@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "53db4d13",
+    "sourceVersion": "0d10aa47",
     "license": "NOASSERTION",
-    "contentHash": "caca7c631290b84ac270db9a13ad0866c75b16899110d54ee34d584d7c20c59b",
-    "lastHarvestedAt": "2026-11-16T18:10:52.686Z",
+    "contentHash": "9e6a9b0ce154695fd0fcc6b968ce8683ba4bb1c8ab70c5ce42f3fa22c6672b42",
+    "lastHarvestedAt": "2026-11-18T11:22:44.122Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {

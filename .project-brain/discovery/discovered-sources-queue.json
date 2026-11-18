@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T11:06:58.335Z",
+  "updated_at": "2026-11-18T11:22:48.335Z",
   "stats": {
-    "total_discovered": 5441,
-    "approved_pending_harvest": 5138,
+    "total_discovered": 5447,
+    "approved_pending_harvest": 5144,
     "harvested_count": 0,
     "rejected_count": 303,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5120,
+      "COMMUNITY_AND_EXPERT": 5126,
       "OFFICIAL_DOCUMENTATION": 176,
       "STANDARDS_AND_SPECIFICATIONS": 109,
       "ENGINEERING_BLOGS": 4,
@@ -117602,6 +117602,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md",
         "fileName": "react-hook-form-react-hook-form-learnings.md"
+      }
+    },
+    "SRC-C48D81DDC9F2": {
+      "id": "SRC-C48D81DDC9F2",
+      "url": "https://github.com/rustls/rustls/actions/runs/43744462067/job/132904588856",
+      "title": "https://github.com/rustls/rustls/actions/runs/43744462067/job/132904588856",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:22:48.106Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-9511F9837C2E": {
+      "id": "SRC-9511F9837C2E",
+      "url": "https://app.codecov.io/gh/rustls/rustls/pull/3438?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/rustls/rustls/pull/3438?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:22:48.155Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-BF61E6BC469D": {
+      "id": "SRC-BF61E6BC469D",
+      "url": "https://app.codecov.io/gh/rustls/rustls/commit/53db4d1398f16d5bac98eacf02f0dff4b242fd92?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/rustls/rustls/commit/53db4d1398f16d5bac98eacf02f0dff4b242fd92?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:22:48.199Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-49EF94328E4A": {
+      "id": "SRC-49EF94328E4A",
+      "url": "https://app.codecov.io/gh/rustls/rustls/commit/a7ca5ae38209b6134a65ca482426f3d074eb642b?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/rustls/rustls/commit/a7ca5ae38209b6134a65ca482426f3d074eb642b?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:22:48.243Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-849FBD638948": {
+      "id": "SRC-849FBD638948",
+      "url": "https://bench.rustls.dev/comparisons/53db4d1398f16d5bac98eacf02f0dff4b242fd92:a7ca5ae38209b6134a65ca482426f3d074eb642b/cachegrind-diff/transfer_no_resume_ring_1.3_ecdsap384_aes_client",
+      "title": "https://bench.rustls.dev/comparisons/53db4d1398f16d5bac98eacf02f0dff4b242fd92:a7ca5ae38209b6134a65ca482426f3d074eb642b/cachegrind-diff/transfer_no_resume_ring_1.3_ecdsap384_aes_client",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:22:48.291Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-DB35DE5CC701": {
+      "id": "SRC-DB35DE5CC701",
+      "url": "https://bench.rustls.dev/comparisons/53db4d1398f16d5bac98eacf02f0dff4b242fd92:a7ca5ae38209b6134a65ca482426f3d074eb642b/cachegrind-diff/transfer_no_resume_ring_1.3_ecdsap256_aes_client",
+      "title": "https://bench.rustls.dev/comparisons/53db4d1398f16d5bac98eacf02f0dff4b242fd92:a7ca5ae38209b6134a65ca482426f3d074eb642b/cachegrind-diff/transfer_no_resume_ring_1.3_ecdsap256_aes_client",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:22:48.335Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
       }
     }
   }

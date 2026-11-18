@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T11:06:58.624Z",
+  "last_updated": "2026-11-18T11:22:49.805Z",
   "total_records": 1830,
   "domains": {
     "A": {
@@ -23001,8 +23001,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "f6f50a1d5c9790a8f11bdcd9f92af345a42db30961eece34610c864a6ef43d70",
-      "created_at": "2026-11-18T09:48:18.711Z"
+      "content_hash": "2552c5a6f866a5c48753df233d62e5138307c92ee93dbdf35885381faafd177d",
+      "created_at": "2026-11-18T11:22:49.805Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -24088,8 +24088,8 @@
       "title": "Technical Construction Intelligence: rustls/rustls Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-technical-construction-intelligence-rustls-rustls-core-invariants.md",
       "repository": "rustls/rustls",
-      "content_hash": "f018277042c4a89d02d89aa489249f3f07c631461e86daec33168f32bdf8a125",
-      "created_at": "2026-11-16T18:10:52.990Z"
+      "content_hash": "c4d7e39101755f48bbbbb538911ee2b0ec295297ba75b9acd8b088823ed2294a",
+      "created_at": "2026-11-18T11:22:44.540Z"
     },
     "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants",
@@ -24106,8 +24106,8 @@
       "title": "Technical Construction Intelligence: rustls-rustls-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-learnings-technical-construction-intelligence-rustls-rustls-learni.md",
       "repository": "rustls-rustls-learnings",
-      "content_hash": "d171353cf48be459c5661f972e46b9690ff4591381b4e1fe4464ffc0de5f2e26",
-      "created_at": "2026-11-16T18:11:00.274Z"
+      "content_hash": "b535f65ea1365026cfed934848c8b704ac5b748789ee0a1c2f5b2a8c373736aa",
+      "created_at": "2026-11-18T11:22:48.962Z"
     },
     "domain_intelligence-quality-verification-intelligence-lxml-lxml-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-lxml-lxml-core-invariants",
@@ -28870,8 +28870,8 @@
       "title": "Research & Knowledge Intelligence: moonshotai/Kimi-K3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonshotai-kimi-k3-research-knowledge-intelligence-moonshotai-kimi-k3-core-in.md",
       "repository": "moonshotai/Kimi-K3",
-      "content_hash": "80f23e106eb020a769689d8bbae8f4eae5584162ba6081fcc0dc993286817856",
-      "created_at": "2026-11-17T22:56:48.720Z"
+      "content_hash": "1ecbd108399a14d41074e85540029088fa079f51f17405af76e6f99d55987246",
+      "created_at": "2026-11-18T11:22:31.268Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-learnings-core-invariants",
@@ -28879,8 +28879,8 @@
       "title": "Research & Knowledge Intelligence: hf-moonshotai-kimi-k3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-moonshotai-kimi-k3-learnings-research-knowledge-intelligence-hf-moonshotai-ki.md",
       "repository": "hf-moonshotai-kimi-k3-learnings",
-      "content_hash": "751ad4ad1afef34a60987e4f42cd043941b78d3128c59227329cdf74d736b98e",
-      "created_at": "2026-11-17T22:56:51.675Z"
+      "content_hash": "4f7ba60febc378da1e4f3a52897fb8984401bbe986dd90b6523acff11f5d8786",
+      "created_at": "2026-11-18T11:22:47.814Z"
     },
     "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-learnings-core-invaria",

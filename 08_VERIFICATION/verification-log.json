@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-530H",
-    "timestamp": "2026-11-16T23:52:46.721Z",
-    "repository": "Kuddev/pebrel",
-    "learningId": "learn-github-kuddev-pebrel",
-    "contentHash": "a2a9bb3c804e1105894c7e1f7682ecd534558dea6b5de2a93ab1b7a3e53326e9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-5A2A",
-    "timestamp": "2026-11-16T23:52:55.858Z",
-    "repository": "trufflesecurity/trufflehog",
-    "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "086bdeecb96b71975a99ec59a539a0027c5c43ec4154808b738fa20c1f02aa26",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-S5IT",
     "timestamp": "2026-11-17T00:10:43.061Z",
     "repository": "zeronsh/zeron",
@@ -7490,6 +7460,36 @@
     "repository": "weaviate/weaviate",
     "learningId": "learn-github-weaviate-weaviate",
     "contentHash": "30d4a51ef048dd8e2e6ea0eb2741a14bb54636fff2bdada73ee00b3290c7b964",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-7Y0M",
+    "timestamp": "2026-11-18T11:22:31.030Z",
+    "repository": "moonshotai/Kimi-K3",
+    "learningId": "learn-huggingface-moonshotai-kimi-k3",
+    "contentHash": "f6916cdbb1f8b0e96435bec96acd0f1f5b7079aa97ce60f085e309ccafaf5c79",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-8845",
+    "timestamp": "2026-11-18T11:22:44.117Z",
+    "repository": "rustls/rustls",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "9e6a9b0ce154695fd0fcc6b968ce8683ba4bb1c8ab70c5ce42f3fa22c6672b42",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

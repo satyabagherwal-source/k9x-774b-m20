@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T11:06:54.207Z",
-  "total_cycles_completed": 10463,
-  "total_learnings_persisted": 10463,
-  "total_rules_promoted": 9963,
+  "last_updated": "2026-11-18T11:22:44.128Z",
+  "total_cycles_completed": 10465,
+  "total_learnings_persisted": 10465,
+  "total_rules_promoted": 9964,
   "history": [
-    {
-      "timestamp": "2026-11-17T20:45:38.360Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T20:45:40.346Z",
-      "repository": "crate/crate",
-      "learningId": "learn-github-crate-crate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T21:03:02.636Z",
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-18T11:06:54.207Z",
       "repository": "weaviate/weaviate",
       "learningId": "learn-github-weaviate-weaviate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T11:22:31.041Z",
+      "repository": "moonshotai/Kimi-K3",
+      "learningId": "learn-huggingface-moonshotai-kimi-k3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T11:22:44.128Z",
+      "repository": "rustls/rustls",
+      "learningId": "learn-github-rustls-rustls",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

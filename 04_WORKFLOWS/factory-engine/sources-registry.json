@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T11:06:57.246Z",
-    "lastVerified": "2026-11-18T11:06:57.246Z",
+    "lastChecked": "2026-11-18T11:22:47.415Z",
+    "lastVerified": "2026-11-18T11:22:47.415Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -210,9 +210,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-18T10:32:38.312Z",
+    "lastChecked": "2026-11-18T11:22:42.396Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-18T10:32:38.312Z"
+    "lastVerified": "2026-11-18T11:22:42.396Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -765,5 +765,67 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ducaale-xh": {
+    "name": "xh",
+    "officialUrl": "https://github.com/ducaale/xh",
+    "lastChecked": "2026-11-18T11:22:27.343Z",
+    "revisionIdentifier": "8b21cc07",
+    "lastVerified": "2026-11-18T11:22:27.343Z"
+  },
+  "hf-moonshotai-kimi-k3": {
+    "name": "moonshotai/Kimi-K3",
+    "officialUrl": "https://huggingface.co/moonshotai/Kimi-K3",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T11:22:30.319Z",
+    "lastVerified": "2026-11-18T11:22:30.319Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-moonshotai-kimi-k3",
+    "contentHash": "f6916cdbb1f8b0e96435bec96acd0f1f5b7079aa97ce60f085e309ccafaf5c79",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sudheerj-reactjs-interview-questions": {
+    "name": "reactjs-interview-questions",
+    "officialUrl": "https://github.com/sudheerj/reactjs-interview-questions",
+    "lastChecked": "2026-11-18T11:22:32.420Z",
+    "revisionIdentifier": "55b7d491",
+    "lastVerified": "2026-11-18T11:22:32.420Z"
+  },
+  "devspace-sh-devspace": {
+    "name": "devspace",
+    "officialUrl": "https://github.com/devspace-sh/devspace",
+    "lastChecked": "2026-11-18T11:22:34.835Z",
+    "revisionIdentifier": "8ff62607",
+    "lastVerified": "2026-11-18T11:22:34.835Z"
+  },
+  "rustls-rustls": {
+    "name": "rustls/rustls",
+    "officialUrl": "https://github.com/rustls/rustls",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-18T11:22:42.956Z",
+    "lastVerified": "2026-11-18T11:22:42.956Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "9e6a9b0ce154695fd0fcc6b968ce8683ba4bb1c8ab70c5ce42f3fa22c6672b42",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "influxdata-influxdb": {
+    "name": "influxdb",
+    "officialUrl": "https://github.com/influxdata/influxdb",
+    "lastChecked": "2026-11-18T11:22:39.899Z",
+    "revisionIdentifier": "185688a5",
+    "lastVerified": "2026-11-18T11:22:39.899Z"
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T11:06:54.210Z",
+  "last_updated": "2026-11-18T11:22:44.133Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -305,14 +305,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-moonshotai-kimi-k3",
-      "content_hash": "ca7e92e6dbf8f52795ef5510f36ae72de3375ddc1302f5815ef2b2f7db69be43",
-      "verified_at": "2026-11-17T22:56:48.555Z",
+      "content_hash": "f6916cdbb1f8b0e96435bec96acd0f1f5b7079aa97ce60f085e309ccafaf5c79",
+      "verified_at": "2026-11-18T11:22:31.045Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T22:56:48.555Z"
+      "last_updated": "2026-11-18T11:22:31.045Z"
     },
     "stabilityai/stable-diffusion-xl-base-1.0": {
       "repository": "stabilityai/stable-diffusion-xl-base-1.0",
@@ -4176,14 +4176,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustls-rustls",
-      "content_hash": "caca7c631290b84ac270db9a13ad0866c75b16899110d54ee34d584d7c20c59b",
-      "verified_at": "2026-11-16T18:10:52.694Z",
+      "content_hash": "9e6a9b0ce154695fd0fcc6b968ce8683ba4bb1c8ab70c5ce42f3fa22c6672b42",
+      "verified_at": "2026-11-18T11:22:44.132Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T18:10:52.694Z"
+      "last_updated": "2026-11-18T11:22:44.132Z"
     },
     "liyupi/yu-ai-agent": {
       "repository": "liyupi/yu-ai-agent",

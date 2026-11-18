@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T11:06:58.499Z",
+  "last_updated": "2026-11-18T11:22:49.631Z",
   "directives": [
     {
       "id": "CD-001",
@@ -25122,11 +25122,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-USK3",
+      "id": "CD-8CD6",
       "directive_title": "rust): address the remaining issues in #418",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-USK3-rust-address-the-remaining-issues-in-418.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-8CD6-rust-address-the-remaining-issues-in-418.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-18",
@@ -28949,6 +28949,35 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-18",
       "domain_letter": "D"
+    },
+    {
+      "id": "CD-8BPW",
+      "directive_title": "Update Rust crate crabgrind to 0.6",
+      "source_repo": "rustls-rustls-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8BPW-update-rust-crate-crabgrind-to-0-6.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-5E6452",
+      "directive_title": "Update Rust crate crabgrind to 0.6",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rustls-rustls",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5E6452-update-rust-crate-crabgrind-to-0-6.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-REV-FA1246",
+      "directive_title": "rust): address the remaining issues in #418",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FA1246-rust-address-the-remaining-issues-in-418.md",
+      "staged_date": "2026-11-18"
     }
   ]
 }

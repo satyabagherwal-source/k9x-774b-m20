@@ -10971,3 +10971,5 @@ Every entry in this ledger must capture:
 | `learn-github-react-hook-form-react-hook-form` | `https://github.com/react-hook-form/react-hook-form` | `265ecb97` | Multi-dimensional audit evidence | 2026-11-18T11:06:46.654Z |
 | `learn-github-gardener-gardener` | `https://github.com/gardener/gardener` | `3593919a` | Multi-dimensional audit evidence | 2026-11-18T11:06:50.230Z |
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `3507945a` | Multi-dimensional audit evidence | 2026-11-18T11:06:54.202Z |
+| `learn-huggingface-moonshotai-kimi-k3` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-18T11:22:31.035Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `0d10aa47` | Multi-dimensional audit evidence | 2026-11-18T11:22:44.122Z |

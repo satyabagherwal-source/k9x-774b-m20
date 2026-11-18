@@ -10938,3 +10938,5 @@
 | `CYCLE-20261118-NPBV` | `2026-11-18T11:06:46.651Z` | `react-hook-form/react-hook-form` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9205` | Yes (`849d9103...`) |
 | `CYCLE-20261118-NS37` | `2026-11-18T11:06:50.227Z` | `gardener/gardener` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9206` | Yes (`fc85ec67...`) |
 | `CYCLE-20261118-NV5J` | `2026-11-18T11:06:54.199Z` | `weaviate/weaviate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9207` | Yes (`30d4a51e...`) |
+| `CYCLE-20261118-7Y0M` | `2026-11-18T11:22:31.030Z` | `moonshotai/Kimi-K3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3-learnings.md` | Yes (`f6916cdb...`) |
+| `CYCLE-20261118-8845` | `2026-11-18T11:22:44.117Z` | `rustls/rustls` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9208` | Yes (`9e6a9b0c...`) |
