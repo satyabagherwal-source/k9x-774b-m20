@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T20:38:00.581Z",
+  "updated_at": "2026-11-18T20:46:21.156Z",
   "stats": {
-    "total_discovered": 5667,
-    "approved_pending_harvest": 5358,
+    "total_discovered": 5668,
+    "approved_pending_harvest": 5359,
     "harvested_count": 0,
     "rejected_count": 309,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5340,
+      "COMMUNITY_AND_EXPERT": 5341,
       "OFFICIAL_DOCUMENTATION": 180,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -122532,6 +122532,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
         "fileName": "typedb-typedb-learnings.md"
+      }
+    },
+    "SRC-6E36776A77DB": {
+      "id": "SRC-6E36776A77DB",
+      "url": "https://github.com/clastix/cluster-api-control-plane-provider-kamaji.git",
+      "title": "https://github.com/clastix/cluster-api-control-plane-provider-kamaji.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T20:46:21.155Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clastix-kamaji-learnings.md",
+        "fileName": "clastix-kamaji-learnings.md"
       }
     }
   }

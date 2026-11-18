@@ -79,8 +79,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T20:37:58.064Z",
-    "lastVerified": "2026-11-18T20:37:58.064Z",
+    "lastChecked": "2026-11-18T20:45:51.583Z",
+    "lastVerified": "2026-11-18T20:45:51.583Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -231,9 +231,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-18T19:44:31.791Z",
+    "lastChecked": "2026-11-18T20:45:49.845Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-18T19:44:31.791Z"
+    "lastVerified": "2026-11-18T20:45:49.845Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -696,9 +696,9 @@
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
     "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
-    "lastChecked": "2026-11-18T15:14:20.510Z",
+    "lastChecked": "2026-11-18T20:45:44.747Z",
     "revisionIdentifier": "9c7bed82",
-    "lastVerified": "2026-11-18T15:14:20.510Z"
+    "lastVerified": "2026-11-18T20:45:44.747Z"
   },
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
@@ -4028,5 +4028,60 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sharkdp-pastel": {
+    "name": "pastel",
+    "officialUrl": "https://github.com/sharkdp/pastel",
+    "lastChecked": "2026-11-18T20:45:35.309Z",
+    "revisionIdentifier": "01d4252a",
+    "lastVerified": "2026-11-18T20:45:35.309Z"
+  },
+  "hf-tongyi-mai-z-image-turbo": {
+    "name": "Tongyi-MAI/Z-Image-Turbo",
+    "officialUrl": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T20:45:37.572Z",
+    "lastVerified": "2026-11-18T20:45:37.572Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+    "contentHash": "910f2381e49cb191fc4c8076addb96b246dd8af2b2f86ac1b54149005e553441",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "software-mansion-react-native-gesture-handler": {
+    "name": "react-native-gesture-handler",
+    "officialUrl": "https://github.com/software-mansion/react-native-gesture-handler",
+    "lastChecked": "2026-11-18T20:45:39.905Z",
+    "revisionIdentifier": "c09aaa6a",
+    "lastVerified": "2026-11-18T20:45:39.905Z"
+  },
+  "clastix-kamaji": {
+    "name": "clastix/kamaji",
+    "officialUrl": "https://github.com/clastix/kamaji",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-18T20:45:47.506Z",
+    "lastVerified": "2026-11-18T20:45:47.506Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-clastix-kamaji",
+    "contentHash": "b4f259c2d795ae2c99faa3e53f2a152340d7edb899facee74190aadde4c493cf",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "qovery-replibyte": {
+    "name": "Replibyte",
+    "officialUrl": "https://github.com/Qovery/Replibyte",
+    "lastChecked": "2026-11-18T20:45:47.283Z",
+    "revisionIdentifier": "5504db91",
+    "lastVerified": "2026-11-18T20:45:47.283Z"
   }
 }

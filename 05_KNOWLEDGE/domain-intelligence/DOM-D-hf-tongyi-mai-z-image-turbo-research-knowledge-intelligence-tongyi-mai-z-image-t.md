@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
   "source_version": "hf-tongyi-mai-z-image-turbo",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T02:21:25.125Z",
+  "timestamp": "2026-11-18T20:45:38.338Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-tongyi-mai-z-image-turbo",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Tongyi-MAI/Z-Image-Turbo](https://huggingface.co/Tongyi-MAI/Z-Image-Turbo) (Revision: `hf-tongyi-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T02:21:25.125Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T20:45:38.338Z`  
 > **Learning ID**: `learn-huggingface-tongyi-mai-z-image-turbo`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Tongyi-MAI/Z-Image-Turbo](https://huggingface.co/Tongyi-MAI/Z-Image-Turbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T02:21:23.601Z  
+> **Harvest Timestamp**: 2026-11-18T20:45:37.572Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 773857 downloads | 5599 likes
+- **Stars / Engagement**: 807620 downloads | 5626 likes
 
 ---
 

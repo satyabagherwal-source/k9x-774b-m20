@@ -11091,3 +11091,6 @@
 | `CYCLE-20261118-1RCX` | `2026-11-18T20:37:34.785Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`d99a261f...`) |
 | `CYCLE-20261118-1TRS` | `2026-11-18T20:37:37.912Z` | `aome510/spotify-player` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9279` | Yes (`6bd64b79...`) |
 | `CYCLE-20261118-26RU` | `2026-11-18T20:37:54.762Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9280` | Yes (`7417c405...`) |
+| `CYCLE-20261118-C4BR` | `2026-11-18T20:45:38.151Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md` | Yes (`910f2381...`) |
+| `CYCLE-20261118-CCA7` | `2026-11-18T20:45:48.463Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9281` | Yes (`b4f259c2...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T20:46:21.116Z` | `clastix-kamaji` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-A46CD8EF` [Domain K] | Yes (`635863d1...`) |

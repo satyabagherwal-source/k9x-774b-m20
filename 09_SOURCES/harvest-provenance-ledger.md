@@ -11124,3 +11124,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-deepseek-ai-deepseek-v4-pro` | `https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-18T20:37:34.790Z |
 | `learn-github-aome510-spotify-player` | `https://github.com/aome510/spotify-player` | `8d17edec` | Multi-dimensional audit evidence | 2026-11-18T20:37:37.916Z |
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `d20b8787` | Multi-dimensional audit evidence | 2026-11-18T20:37:54.767Z |
+| `learn-huggingface-tongyi-mai-z-image-turbo` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-11-18T20:45:38.155Z |
+| `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `d25aada2` | Multi-dimensional audit evidence | 2026-11-18T20:45:48.467Z |
+| `learn-dom-k-a46cd8ef` | `project://clastix-kamaji` | `d25aada2` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clastix-kamaji-learnings.md` | 2026-11-18T20:46:21.116Z |

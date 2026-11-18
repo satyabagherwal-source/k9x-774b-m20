@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source**: github ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
-> **Source Version**: `afdb6e7a`  
+> **Source Version**: `d25aada2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T07:28:14.915Z  
+> **Timestamp**: 2026-11-18T20:45:47.511Z  
 > **Learning ID**: `learn-github-clastix-kamaji`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clastix-kamaji-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clastix/kamaji](https://github.com/clastix/kamaji))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T07:28:14.584Z  
+> **Harvest Timestamp**: 2026-11-18T20:45:47.506Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Kamaji is the Hosted Control Plane Manager for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2088 stars
+- **Stars / Engagement**: 2092 stars
 
 ---
 
@@ -746,475 +746,526 @@ func ShouldReconcileErrorBeIgnored(err error) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `afdb6e7a` (2026-11-17)
-**Commit Message**: feat: standard Ready condition on TenantControlPlane (#1419)
+### Incident Patch 1: `d25aada2` (2026-11-18)
+**Commit Message**: test(e2e): cover rolling a new default kine image to live tenants (#1400)
 
-* feat(api): standard Ready condition for tcp
+* test(e2e): cover rolling a new default kine image to live tenants
 
-Add status.conditions to TenantControlPlane and a SetReadyCondition
-helper deriving the standard Ready condition from the Kubernetes
-version status, which stays the source of truth.
+Add a serial e2e spec that changes the controller-manager's --kine-image
+while a kine-backed TenantControlPlane is running. It checks that the
+tenant's kine sidecar adopts the new image, that the TenantControlPlane
+returns to Ready, and that data written before the rollout is still
+readable afterwards.
 
-Ready and WriteLimited map to True, every other status to False with
-the status as reason, and a missing status to Unknown. The condition
-type is intentionally not prefixed, since generic tooling such as
-kubectl wait and kstatus looks for a condition named Ready.
+The image is read from E2E_KINE_IMAGE_UPGRADE, set by the new
+e2e-kine-rollout make target from KINE_IMAGE_UPGRADE
+(ghcr.io/k3s-io/kine:v0.17.3 by default).
 
-Refs: #1418
+* test(e2e): pass the kine upgrade image to the default e2e target
 
-* feat(tcp): keep Ready condition in sync
+make e2e runs the whole suite, and the kine rollout spec requires
+E2E_KINE_IMAGE_UPGRADE. Set it in e2e-test from KINE_IMAGE_UPGRADE so
+the spec runs in CI as well as in e2e-kine-rollout.
 
-Compute the Ready condition on every status write performed by the
-resources, and at the end of a successful reconciliation along with
-the observed generation, so it never drifts from the version status.
+* test(e2e): dump controller-manager and webhook state on failure
 
-Refs: #1418
+When a spec fails, print every controller-manager Pod with its restart
+counts and logs (current and previous), the webhook Service endpoints,
+and the Kamaji events. The logs cover five minutes instead of the failed
+spec's own runtime. A suite-wide recorder logs the con
 
-* test(tcp): cover the Ready condition
-
-Unit tests cover the mapping of every version status and ensure the
-transition time only changes on actual status changes. The e2e ready
-and scale tests assert Ready=True when ready, and Ready=False with
-the Sleeping reason when scaled to zero.
-
-Refs: #1418
-
-* chore: regenerate crds and api reference
-
-Generated with make manife
-
-**File**: `.github/workflows/e2e.yaml` (modified, +1/-0)
+**File**: `Makefile` (modified, +8/-1)
 ```diff
-@@ -49,6 +49,7 @@ jobs:
-           sudo apt-get install -y golang-cfssl
-           sudo swapoff -a
-           sudo modprobe br_netfilter
-+          sudo sysctl -w fs.inotify.max_user_instances=512 fs.inotify.max_user_watches=524288
-       - name: install required Go tools
-         run: make kind ko helm ginkgo
-       - name: cleaning up go mod
+@@ -356,9 +356,16 @@ e2e-setup: build load helm ginkgo cert-manager gateway-api envoy-gateway ## Crea
+ e2e-redeploy: build load
+ 	$(HELM) upgrade --debug --install kamaji ./charts/kamaji --create-namespace --namespace kamaji-system --set "image.tag=$(VERSION)" --set "image.pullPolicy=Never" --set "telemetry.disabled=true" --set "gatewayAPI.enabled=true"
+ 
++# Newest kine release; upstream publishes its images to GHCR (see k3s-io/kine .github/workflows/release.yml).
++KINE_IMAGE_UPGRADE ?= ghcr.io/k3s-io/kine:v0.17.3
++
+ .PHONY: e2e-test
+ e2e-test: build load
+-	$(GINKGO) -v ./e2e
++	E2E_KINE_IMAGE_UPGRADE=$(KINE_IMAGE_UPGRADE) $(GINKGO) -v ./e2e
++
++.PHONY: e2e-kine-rollout
++e2e-kine-rollout: ## Roll KINE_IMAGE_UPGRADE out to a live kine TenantControlPlane. Requires e2e-setup.
++	E2E_KINE_IMAGE_UPGRADE=$(KINE_IMAGE_UPGRADE) $(GINKGO) -v --focus "Rolling a new default --kine-image" ./e2e
+ 
+ CAPI_URL = https://github.com/clastix/cluster-api-control-plane-provider-kamaji.git
+ CAPI_DIR := $(shell mktemp -d)
 ```
 
-**File**: `api/v1alpha1/tenantcontrolplane_conditions.go` (added, +46/-0)
+**File**: `cmd/manager/cmd.go` (modified, +24/-1)
 ```diff
-@@ -0,0 +1,46 @@
-+// Copyright 2022 Clastix Labs
-+// SPDX-License-Identifier: Apache-2.0
+@@ -4,6 +4,7 @@
+ package manager
+ 
+ import (
++	"context"
+ 	"fmt"
+ 	"io"
+ 	"net/http"
+@@ -38,6 +39,28 @@ import (
+ 	"github.com/clastix/kamaji/internal/webhook/routes"
+ )
+ 
++// shutdownDrainPeriod is how long the manager keeps serving after SIGTERM before it stops. Kubernetes
++// removes a terminating Pod from the Service endpoints asynchronously, and kube-proxy takes a moment
++// more to stop routing to it, so webhook calls can still reach this Pod right after the signal.
++const shutdownDrainPeriod = 5 * time.Second
 +
-+package v1alpha1
++// withShutdownDrain returns a context that is cancelled drain after parent is done.
++func withShutdownDrain(parent context.Context, drain time.Duration) context.Context {
++	ctx, cancel := context.WithCancel(context.Background())
 +
-+import (
-+	"fmt"
++	go func() {
++		<-parent.Done()
 +
-+	"k8s.io/apimachinery/pkg/api/meta"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+)
++		timer := time.NewTimer(drain)
++		defer timer.Stop()
 +
-+// SetReadyCondition derives the standard Ready condition from the Kubernetes version status,
-+// which remains the source of truth: the condition is only its translation for generic tooling.
-+//
-+// The condition reports the last fully reconciled generation (Status.ObservedGeneration), not the
-+// current one: status writes performed mid-reconciliation of a new generation must not stamp the
-+// previous readiness as current. Consumers (kubectl wait, kstatus) then see the condition lagging
-+// behind metadata.generation until the reconciliation is complete.
-+func (in *TenantControlPlane) SetReadyCondition() {
-+	condition := metav1.Condition{
-+		Type:               TenantControlPlaneConditionReadyType,
-+		ObservedGeneration: in.Status.ObservedGeneration,
-+	}
++		<-timer.C
++		cancel()
++	}()
 +
-+	switch status := in.Status.Kubernetes.Version.Status; {
-+	case status == nil:
-+		condition.Status = metav1.ConditionUnknown
-+		condition.Reason = string(VersionUnknown)
-+		condition.Message = "the Tenant Control Plane has not been reconciled yet"
-+	case *status == VersionReady:
-+		condition.Status = metav1.ConditionTrue
-+		condition.Reason = string(*status)
-+		condition.Message = "the Tenant Control Plane is ready"
-+	case *status == VersionWriteLimited:
-+		condition.Status = metav1.ConditionTrue
-+		condition.Reason = string(*status)
-+		condition.Message = "the Tenant Control Plane is serving, with limited write permissions"
-+	default:
-+		condition.Status = metav1.ConditionFalse
-+		condition.Reason = string(*status)
-+		condition.Message = fmt.Sprintf("the Tenant Control Plane is in %s status", *status)
-+	}
-+
-+	meta.SetStatusCondition(&in.Status.Conditions, condition)
++	return ctx
 +}
++
+ //nolint:maintidx
+ func NewCmd(scheme *runtime.Scheme) *cobra.Command {
+ 	// CLI flags
+@@ -94,7 +117,7 @@ func NewCmd(scheme *runtime.Scheme) *cobra.Command {
+ 			return nil
+ 		},
+ 		RunE: func(*cobra.Command, []string) error {
+-			ctx := ctrl.SetupSignalHandler()
++			ctx := withShutdownDrain(ctrl.SetupSignalHandler(), shutdownDrainPeriod)
+ 
+ 			setupLog := ctrl.Log.WithName("setup")
+ 
 ```
 
-**File**: `api/v1alpha1/tenantcontrolplane_conditions_test.go` (added, +119/-0)
+**File**: `cmd/manager/cmd_test.go` (added, +37/-0)
 ```diff
-@@ -0,0 +1,119 @@
+@@ -0,0 +1,37 @@
 +// Copyright 2022 Clastix Labs
 +// SPDX-License-Identifier: Apache-2.0
 +
-+package v1alpha1
++package manager
 +
 +import (
++	"context"
 +	"testing"
 +	"time"
-+
-+	"k8s.io/apimachinery/pkg/api/meta"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/utils/ptr"
 +)
 +
-+func TestSetReadyCondition(t *testing.T) {
-+	tests := []struct {
-+		name           string
-+		status         *KubernetesVersionStatus
-+		expectedStatus metav1.ConditionStatus
-+		expectedReason string
-+	}{
-+		{name: "not reconciled yet", status: nil, expectedStatus: metav1.ConditionUnknown, expectedReason: "Unknown"},
-+		{name: "ready", status: ptr.To(VersionReady), expectedStatus: metav1.ConditionTrue, expectedReason: "Ready"},
-+		{name: "write limited", status: ptr.To(VersionWriteLimited), expectedStatus: metav1.ConditionTrue, expectedReason: "WriteLimited"},
-+		{name: "provisioning", status: ptr.To(VersionProvisioning), expectedStatus: metav1.ConditionFalse, expectedReason: "Provisioning"},
-+		{name: "upgrading", status: ptr.To(VersionUpgrading), expectedStatus: metav1.ConditionFalse, expectedReason: "Upgrading"},
-+		{name: "migrating", status: ptr.To(VersionMigrating), expectedStatus: metav1.ConditionFalse, expectedReason: "Migrating"},
-+		{name: "ca rotating", status: ptr.To(VersionCARotating), expectedStatus: metav1.ConditionFalse, expectedReason: "CertificateAuthorityRotating"},
-+		{name: "sleeping", status: ptr.To(VersionSleeping), expectedStatus: metav1.ConditionFalse, expectedReason: "Sleeping"},
-+		{name: "not ready", status: ptr.To(VersionNotReady), expectedStatus: metav1.ConditionFalse, expectedReason: "NotReady"},
-+		{name: "unknown", status: ptr.To(VersionUnknown), expectedStatus: metav1.ConditionFalse, expectedReason: "Unknown"},
++func TestWithShutdownDrain(t *testing.T) {
++	const drain = 300 * time.Millisecond
++
++	parent, stop := context.WithCancel(context.Background())
++	ctx := withShutdownDrain(parent, drain)
++
++	select {
++	case <-ctx.Done():
++		t.Fatal("context is done before the parent is")
++	case <-time.After(50 * time.Millisecond):
 +	}
 +
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			tcp := &TenantControlPlane{ObjectMeta: metav1.ObjectMeta{Generation: 3}}
-+			tcp.Status.ObservedGeneration = 3
-+			tcp.Status.Kubernetes.Version.Status = tt.status
++	stop()
 +
-+			tcp.SetReadyCondition()
++	select {
++	case <-ctx.Done():
++		t.Fatal("context is done before the drain period has elapsed")
++	case <-time.After(100 * time.Millisecond):
++	}
 +
-+			condition := meta.FindStatusCondition(tcp.Status.Conditions, TenantControlPlaneConditionReadyType)
-+			if condition == nil {
-+				t.Fatalf("expected a %s condition, got none", TenantControlPlaneConditionReadyType)
-+			}
-+
-+			if condition.Status != tt.expectedStatus {
-+				t.Errorf("expected status %s, got %s", tt.expectedStatus, condition.Status)
-+			}
-+
-+			if condition.Reason != tt.expectedReason {
-+				t.Errorf("expected reason %s, got %s", tt.expectedReason, condition.Reason)
-+			}
-+
-+			if condition.ObservedGeneration != 3 {
-+				t.Errorf("expected observedGeneration 3, got %d", condition.ObservedGeneration)
-+			}
-+
-+			if condition.Message == "" {
-+				t.Error("expected a non-empty message")
-+			}
-+		})
++	select {
++	case <-ctx.Done():
++	case <-time.After(2 * time.Second):
++		t.Fatal("context is not done after the drain period")
 +	}
 +}
-+
-+func TestSetReadyConditionTransitions(t *testing.T) {
-+	tcp := &TenantControlPlane{}
-+	tcp.Status.Kubernetes.Version.Status = ptr.To(VersionProvisioning)
-+	tcp.SetReadyCondition()
-+
-+	past := metav1.NewTime(time.Now().Add(-time.Hour))
-+	tcp.Status.Conditions[0].LastTransitionTime = past
-+
-+	// Same status: the transition time must not move, otherwise watchers see spurious changes.
-+	tcp.SetReadyCondition()
-+
-+	if got := tcp.Status.Conditions[0].LastTransitionTime; !got.Equal(&past) {
-+		t.Errorf("expected lastTransitionTime to be preserved, got %s", got)
-+	}
-+
-+	// Status flip: the transition time must be updated, and only one Ready condition must exist.
-+	tcp.Status.Kubernetes.Version.Status = ptr.To(VersionReady)
-+	tcp.SetReadyCondition()
-+
-+	if len(tcp.Status.Conditions) != 1 {
-+		t.Fatalf("expected exactly one condition, got %d", len(tcp.Status.Conditions))
-+	}
-+
-+	if got := tcp.Status.Conditions[0]; got.Status != metav1.ConditionTrue || got.LastTransitionTime.Equal(&past) {
-+		t.Errorf("expected a True condition with a new lastTransitionTime, got %+v", got)
-+	}
-+}
-+
-+func TestSetReadyConditionDuringSpecChange(t *testing.T) {
-+	// Generation 3 has been fully reconciled and is Ready.
-+	tcp := &TenantControlPlane{ObjectMeta: metav1.ObjectMeta{Generation: 3}}
-+	tcp.Status.ObservedGeneration = 3
-+	tcp.Status.Kubernetes.Version.Status = ptr.To(VersionReady)
-+	tcp.SetReadyCondition()
-+
-+	// A spec change (e.g. networkProfile.port) bumps the generation, then an unrelated resource
-+	// writes its status while the version status still reflects the previous generation.
-+	tcp.Generation = 4
-+	tcp.SetReadyCondition()
-+
-+	condition := meta.FindStatusCondition(tcp.Status.Conditions, TenantControlPlaneConditionReadyType)
-+	if condition.ObservedGeneration != 3 {
-+		t.Fatalf("a mid-reconciliation status write must not claim generation 4, got observedGeneration %d", condition.ObservedGeneration)
-+	}
-+
-+	// The completion path advances the observed generation, then the condition follows.
-+	tcp.Status.ObservedGeneration = 4
-+	tcp.SetReadyCondition()
-+
-+	condition = meta.FindStatusCondition(tcp.Status.Conditions, TenantControlPlaneConditionReadyType)
-+	if condition.ObservedGeneration != 4 {
-+		t.Errorf("expected observedGeneration 4 after a com
 ```
 
-**File**: `api/v1alpha1/tenantcontrolplane_const.go` (modified, +4/-0)
+**File**: `e2e/suite_test.go` (modified, +3/-0)
 ```diff
-@@ -10,4 +10,8 @@ const (
+@@ -67,6 +67,9 @@ var _ = BeforeSuite(func() {
+ 	Expect(err).NotTo(HaveOccurred())
+ 	Expect(k8sClient).NotTo(BeNil())
  
- 	// DefaultKubernetesVersion is the default Kubernetes version used in e2e tests.
- 	DefaultKubernetesVersion = "v1.37.0"
++	By("recording the controller-manager Pods and the webhook EndpointSlices")
++	startKamajiTimelineRecorder()
 +
-+	// TenantControlPlaneConditionReadyType is the standard Ready condition type: it is intentionally
-+	// not prefixed, since generic tooling (kubectl wait, kstatus) looks for a condition named Ready.
-+	TenantControlPlaneConditionReadyType = "Ready"
+ 	By("creating GatewayClass for Gateway API tests")
+ 	gatewayClass := &gatewayv1.GatewayClass{
+ 		ObjectMeta: metav1.ObjectMeta{
+```
+
+**File**: `e2e/tcp_additional_resources_blocked_test.go` (modified, +10/-4)
+```diff
+@@ -5,6 +5,7 @@ package e2e
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"time"
+ 
+ 	. "github.com/onsi/ginkgo/v2"
+@@ -13,6 +14,7 @@ import (
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/types"
+ 	pointer "k8s.io/utils/ptr"
++	ctrlclient "sigs.k8s.io/controller-runtime/pkg/client"
+ 
+ 	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
  )
+@@ -142,10 +144,14 @@ var _ = Describe("Deploy a TenantControlPlane resource with additional resources
+ 	})
+ 	// Delete the TenantControlPlane resource after test is finished
+ 	JustAfterEach(func() {
+-		Expect(k8sClient.Delete(context.Background(), tcp)).Should(Succeed())
+-		Expect(k8sClient.Delete(context.Background(), apiServerConfigMap)).NotTo(HaveOccurred())
+-		Expect(k8sClient.Delete(context.Background(), controllerManagerConfigMap)).NotTo(HaveOccurred())
+-		Expect(k8sClient.Delete(context.Background(), schedulerConfigMap)).NotTo(HaveOccurred())
++		// Every delete runs even when one fails, so a failed spec does not leave the ConfigMaps behind
++		// for the next spec in the same namespace.
++		Expect(errors.Join(
++			ctrlclient.IgnoreNotFound(k8sClient.Delete(context.Background(), tcp)),
++			ctrlclient.IgnoreNotFound(k8sClient.Delete(context.Background(), apiServerConfigMap)),
++			ctrlclient.IgnoreNotFound(k8sClient.Delete(context.Background(), controllerManagerConfigMap)),
++			ctrlclient.IgnoreNotFound(k8sClient.Delete(context.Background(), schedulerConfigMap)),
++		)).To(Succeed())
+ 	})
+ 	It("should block wrong Deployment configuration", func() {
+ 		// Should be ready
 ```
 
-**File**: `api/v1alpha1/tenantcontrolplane_status.go` (modified, +6/-0)
+**File**: `e2e/tcp_additional_resources_ready_test.go` (modified, +10/-4)
 ```diff
-@@ -182,6 +182,12 @@ type TenantControlPlaneStatus struct {
- 	ControlPlaneEndpoint string `json:"controlPlaneEndpoint,omitempty"`
- 	// Addons contains the status of the different Addons
- 	Addons AddonsStatus `json:"addons,omitempty"`
-+	// Conditions contains the standard conditions of the Tenant Control Plane, such as Ready,
-+	// allowing generic tooling (kubectl wait, kstatus, GitOps and composition engines) to assess its readiness.
-+	// +optional
-+	// +listType=map
-+	// +listMapKey=type
-+	Conditions []metav1.Condition `json:"conditions,omitempty"`
- }
+@@ -6,6 +6,7 @@ package e2e
  
- // KubernetesStatus defines the status of the resources deployed in the management cluster,
+ import (
+ 	"context"
++	"errors"
+ 	"fmt"
+ 	"time"
+ 
+@@ -18,6 +19,7 @@ import (
+ 	"k8s.io/apimachinery/pkg/types"
+ 	"k8s.io/apimachinery/pkg/util/sets"
+ 	pointer "k8s.io/utils/ptr"
++	ctrlclient "sigs.k8s.io/controller-runtime/pkg/client"
+ 
+ 	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
+ 	"github.com/clastix/kamaji/internal/utilities"
+@@ -178,10 +180,14 @@ var _ = Describe("Deploy a TenantControlPlane resource with additional options",
+ 
+ 	// Delete the TenantControlPlane resource after test is finished
+ 	JustAfterEach(func() {
+-		Expect(k8sClient.Delete(context.Background(), tcp)).Should(Succeed())
+-		Expect(k8sClient.Delete(context.Background(), apiServerConfigMap)).NotTo(HaveOccurred())
+-		Expect(k8sClient.Delete(context.Background(), controllerManagerConfigMap)).NotTo(HaveOccurred())
+-		Expect(k8sClient.Delete(context.Background(), schedulerConfigMap)).NotTo(HaveOccurred())
++		// Every delete runs even when one fails, so a failed spec does not leave the ConfigMaps behind
++		// for the next spec in the same namespace.
++		Expect(errors.Join(
++			ctrlclient.IgnoreNotFound(k8sClient.Delete(context.Background(), tcp)),
++			ctrlclient.IgnoreNotFound(k8sClient.Delete(context.Background(), apiServerConfigMap)),
++			ctrlclient.IgnoreNotFound(k8sClient.Delete(context.Background(), controllerManagerConfigMap)),
++			ctrlclient.IgnoreNotFound(k8sClient.Delete(context.Background(), schedulerConfigMap)),
++		)).To(Succeed())
+ 	})
+ 
+ 	It("should have the additional resources", func() {
 ```
 
-**File**: `api/v1alpha1/zz_generated.deepcopy.go` (modified, +7/-0)
+**File**: `e2e/tcp_kine_image_rollout_test.go` (added, +285/-0)
 ```diff
-@@ -1958,6 +1958,13 @@ func (in *TenantControlPlaneStatus) DeepCopyInto(out *TenantControlPlaneStatus)
- 	in.KubeadmConfig.DeepCopyInto(&out.KubeadmConfig)
- 	in.KubeadmPhase.DeepCopyInto(&out.KubeadmPhase)
- 	in.Addons.DeepCopyInto(&out.Addons)
-+	if in.Conditions != nil {
-+		in, out := &in.Conditions, &out.Conditions
-+		*out = make([]metav1.Condition, len(*in))
-+		for i := range *in {
-+			(*in)[i].DeepCopyInto(&(*out)[i])
+@@ -0,0 +1,285 @@
++// Copyright 2022 Clastix Labs
++// SPDX-License-Identifier: Apache-2.0
++
++package e2e
++
++import (
++	"context"
++	"fmt"
++	"os"
++	"strings"
++	"time"
++
++	. "github.com/onsi/ginkgo/v2"
++	. "github.com/onsi/gomega"
++	appsv1 "k8s.io/api/apps/v1"
++	corev1 "k8s.io/api/core/v1"
++	discoveryv1 "k8s.io/api/discovery/v1"
++	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/types"
++	"k8s.io/apimachinery/pkg/util/rand"
++	"k8s.io/client-go/tools/clientcmd"
++	"k8s.io/client-go/util/retry"
++	pointer "k8s.io/utils/ptr"
++	ctrlclient "sigs.k8s.io/controller-runtime/pkg/client"
++
++	kamajiv1alpha1 "github.com/clastix/kamaji/api/v1alpha1"
++	"github.com/clastix/kamaji/internal/utilities"
++)
++
++const (
++	kamajiNamespace   = "kamaji-system"
++	kineContainerName = "kine"
++	managerContainer  = "manager"
++	kineImageArg      = "--kine-image"
++)
++
++// kamajiManagerDeployment returns the controller-manager Deployment installed by the e2e setup.
++func kamajiManagerDeployment() *appsv1.Deployment {
++	GinkgoHelper()
++
++	list := &appsv1.DeploymentList{}
++	Expect(k8sClient.List(context.Background(), list,
++		ctrlclient.InNamespace(kamajiNamespace),
++		ctrlclient.MatchingLabels{"app.kubernetes.io/component": "controller-manager"},
++	)).To(Succeed())
++	Expect(list.Items).To(HaveLen(1))
++
++	return &list.Items[0]
++}
++
++// managerArgs returns a copy of the args of the manager container.
++func managerArgs(deployment *appsv1.Deployment) []string {
++	for _, c := range deployment.Spec.Template.Spec.Containers {
++		if c.Name == managerContainer {
++			return append([]string(nil), c.Args...)
 +		}
 +	}
++
++	Fail(fmt.Sprintf("container %q not found in %s", managerContainer, deployment.GetName()))
++
++	return nil
++}
++
++// setManagerArgs replaces the args of the manager container, retrying on conflicts with the
++// Deployment controller, and returns once the manager rollout has completed.
++func setManagerArgs(args []string) {
++	GinkgoHelper()
++
++	Expect(retry.RetryOnConflict(retry.DefaultRetry, func() error {
++		deployment := kamajiManagerDeployment()
++
++		for i, c := range deployment.Spec.Template.Spec.Containers {
++			if c.Name == managerContainer {
++				deployment.Spec.Template.Spec.Containers[i].Args = args
++			}
++		}
++
++		return k8sClient.Update(context.Background(), deployment)
++	})).To(Succeed())
++
++	Eventually(func(g Gomega) {
++		deployment := kamajiManagerDeployment()
++		desired := pointer.Deref(deployment.Spec.Replicas, 1)
++
++		g.Expect(deployment.Status.ObservedGeneration).To(BeNumerically(">=", deployment.GetGeneration()))
++		g.Expect(deployment.Status.UpdatedReplicas).To(Equal(desired))
++		g.Expect(deployment.Status.AvailableReplicas).To(Equal(desired))
++		// Old pods are gone once the total matches the desired count.
++		g.Expect(deployment.Status.Replicas).To(Equal(desired))
++	}, 5*time.Minute, time.Second).Should(Succeed())
++
++	// The Deployment status does not count pods that are already terminating, but their endpoints stay
++	// in the webhook Service until the endpoints controller removes them. Wait until none are left.
++	Eventually(func(g Gomega) {
++		pods := &corev1.PodList{}
++		g.Expect(k8sClient.List(context.Background(), pods,
++			ctrlclient.InNamespace(kamajiNamespace),
++			ctrlclient.MatchingLabels{"app.kubernetes.io/component": "controller-manager"},
++		)).To(Succeed())
++
++		for _, pod := range pods.Items {
++			g.Expect(pod.GetDeletionTimestamp()).To(BeNil(), "pod %s is still terminating", pod.GetName())
++		}
++
++		slices := &discoveryv1.EndpointSliceList{}
++		g.Expect(k8sClient.List(context.Background(), slices,
++			ctrlclient.InNamespace(kamajiNamespace),
++			ctrlclient.MatchingLabels{discoveryv1.LabelServiceName: "kamaji-webhook-service"},
++		)).To(Succeed())
++
++		for _, slice := range slices.Items {
++			for _, ep := range slice.Endpoints {
++				g.Expect(pointer.Deref(ep.Conditions.Terminating, false)).To(BeFalse(), "endpoint %v is still terminating", ep.Addresses)
++			}
++		}
++	}, 5*time.Minute, time.Second).Should(Succeed())
++}
++
++// withKineImageArg returns args with --kine-image set to image, replacing any existing value.
++func withKineImageArg(args []string, image string) []string {
++	out := make([]string, 0, len(args)+1)
++
++	for _, a := range args {
++		if !strings.HasPrefix(a, kineImageArg+"=") && a != kineImageArg {
++			out = append(out, a)
++		}
++	}
++
++	return append(out, kineImageArg+"="+image)
++}
++
++// kineRolloutTenantClient returns a client for the tenant control plane API server.
++func kineRolloutTenantClient(tcp *kamajiv1alpha1.TenantControlPlane) ctrlclient.Client {
++	GinkgoHelper()
++
++	config, err := utilities.GetTenantKubeconfig(context.Background(), k8sClient, tcp)
++	Expect(err).ToNot(HaveOccurred())
++
++	b, err := utilities.EncodeToYaml(config)
++	Expect(err).ToNot(HaveOccurred())
++
++	clientCfg, err := clientcmd.NewClientConfigFromBytes(b)
++	Expect(err).ToNot(HaveOccurred())
++
++	restConfig, err := clientCfg
+```
+
+**File**: `e2e/utils_test.go` (modified, +217/-25)
+```diff
+@@ -9,6 +9,8 @@ import (
+ 	"fmt"
+ 	"io"
+ 	"os/exec"
++	"sort"
++	"sync"
+ 	"time"
+ 
+ 	. "github.com/onsi/ginkgo/v2"
+@@ -18,7 +20,9 @@ import (
+ 	"k8s.io/apimachinery/pkg/api/meta"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/types"
++	"k8s.io/client-go/informers"
+ 	"k8s.io/client-go/kubernetes"
++	"k8s.io/client-go/tools/cache"
+ 	"k8s.io/client-go/util/retry"
+ 	pointer "k8s.io/utils/ptr"
+ 	"sigs.k8s.io/controller-runtime/pkg/client"
+@@ -89,45 +93,233 @@ func PrintTenantControlPlaneInfo() {
+ 	}
  }
  
- // DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new TenantControlPlaneStatus.
-```
-
-**File**: `charts/kamaji-crds/hack/kamaji.clastix.io_tenantcontrolplanes_spec.yaml` (modified, +61/-0)
-```diff
-@@ -9818,6 +9818,67 @@ versions:
-                         type: string
-                     type: object
-                 type: object
-+              conditions:
-+                description: |-
-+                  Conditions contains the standard conditions of the Tenant Control Plane, such as Ready,
-+                  allowing generic tooling (kubectl wait, kstatus, GitOps and composition engines) to assess its readiness.
-+                items:
-+                  description: Condition contains details for one aspect of the current state of this API Resource.
-+                  properties:
-+                    lastTransitionTime:
-+                      description: |-
-+                        lastTransitionTime is the last time the condition transitioned from one status to another.
-+                        This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
-+                      format: date-time
-+                      type: string
-+                    message:
-+                      description: |-
-+                        message is a human readable message indicating details about the transition.
-+                        This may be an empty string.
-+                      maxLength: 32768
-+                      type: string
-+                    observedGeneration:
-+                      description: |-
-+                        observedGeneration represents the .metadata.generation that the condition was set based upon.
-+                        For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
-+                        with respect to the current state of the instance.
-+                      format: int64
-+                      minimum: 0
-+                      type: integer
-+                    reason:
-+                      description: |-
-+                        reason contains a programmatic identifier indicating the reason for the condition's last transition.
-+                        Producers of specific condition types may define expected values and meanings for this field,
-+                        and whether the values are considered a guaranteed API.
-+                        The value should be a CamelCase string.
-+                        This field may not be empty.
-+                      maxLength: 1024
-+                      minLength: 1
-+                      pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
-+                      type: string
-+                    status:
-+                      description: status of the condition, one of True, False, Unknown.
-+                      enum:
-+                        - "True"
-+                        - "False"
-+                        - Unknown
-+                      type: string
-+                    type:
-+                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
-+                      maxLength: 316
-+                      pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
-+                      type: string
-+                  required:
-+                    - lastTransitionTime
-+                    - message
-+                    - reason
-+                    - status
-+                    - type
-+                  type: object
-+                type: array
-+                x-kubernetes-list-map-keys:
-+                  - type
-+                x-kubernetes-list-type: map
-               controlPlaneEndpoint:
-                 description: ControlPlaneEndpoint contains the status of the kubernetes control plane
-                 type: string
-```
-
-**File**: `charts/kamaji/crds/kamaji.clastix.io_tenantcontrolplanes.yaml` (modified, +61/-0)
-```diff
-@@ -9826,6 +9826,67 @@ spec:
-                           type: string
-                       type: object
-                   type: object
-+                conditions:
-+                  description: |-
-+                    Conditions contains the standard conditions of the Tenant Control Plane, such as Ready,
-+                    allowing generic tooling (kubectl wait, kstatus, GitOps and composition engines) to assess its readiness.
-+                  items:
-+                    description: Condition contains details for one aspect of the current state of this API Resource.
-+                    properties:
-+                      lastTransitionTime:
-+                        description: |-
-+                          lastTransitionTime is the last time the condition transitioned from one status to another.
-+                          This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
-+                        format: date-time
-+                        type: string
-+                      message:
-+                        description: |-
-+                          message is a human readable message indicating details about the transition.
-+                          This may be an empty string.
-+                        maxLength: 32768
-+                        type: string
-+                      observedGeneration:
-+                        description: |-
-+                          observedGeneration represents the .metadata.generation that the condition was set based upon.
-+                          For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
-+                          with respect to the current state of the instance.
-+                        format: int64
-+                        minimum: 0
-+                        type: integer
-+                      reason:
-+                        description: |-
-+                          reason contains a programmatic identifier indicating the reason for the condition's last transition.
-+                          Producers of specific condition types may define expected values and meanings for this field,
-+                          and whether the values are considered a guaranteed API.
-+                          The value should be a CamelCase string.
-+                          This field may not be empty.
-+                        maxLength: 1024
-+                        minLength: 1
-+                        pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
-+                        type: string
-+                      status:
-+                        description: status of the condition, one of True, False, Unknown.
-+                        enum:
-+                          - "True"
-+                          - "False"
-+                          - Unknown
-+                        type: string
-+                      type:
-+                        description: type of condition in CamelCase or in foo.example.com/CamelCase.
-+                        maxLength: 316
-+                        pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
-+                        type: string
-+                    required:
-+                      - lastTransitionTime
-+                      - message
-+                      - reason
-+                      - status
-+                      - type
-+                    type: object
-+                  type: array
-+                  x-kubernetes-list-map-keys:
-+                    - type
-+                  x-kubernetes-list-type: map
-                 controlPlaneEndpoint:
-                   description: ControlPlaneEndpoint contains the status of the kubernetes control plane
-                   type: string
-```
-
----
-
-### Incident Patch 2: `b0c4cfa9` (2026-11-16)
-**Commit Message**: feat(deps): bump github.com/moby/moby/api from 1.56.1 to 1.57.0 (#1420)
-
-Bumps [github.com/moby/moby/api](https://github.com/moby/moby) from 1.56.1 to 1.57.0.
-- [Release notes](https://github.com/moby/moby/releases)
-- [Commits](https://github.com/moby/moby/compare/api/v1.56.1...api/v1.57.0)
-
----
-updated-dependencies:
-- dependency-name: github.com/moby/moby/api
-  dependency-version: 1.57.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -13,7 +13,7 @@ require (
- 	github.com/google/uuid v1.6.0
- 	github.com/json-iterator/go v1.1.12
- 	github.com/juju/mutex/v2 v2.0.0
--	github.com/moby/moby/api v1.56.1
-+	github.com/moby/moby/api v1.57.0
- 	github.com/nats-io/nats.go v1.55.0
- 	github.com/onsi/ginkgo/v2 v2.34.0
- 	github.com/onsi/gomega v1.44.0
-```
-
-**File**: `go.sum` (modified, +2/-4)
-```diff
-@@ -231,8 +231,8 @@ github.com/moby/docker-image-spec v1.3.1 h1:jMKff3w6PgbfSa69GfNg+zN/XLhfXJGnEx3N
- github.com/moby/docker-image-spec v1.3.1/go.mod h1:eKmb5VW8vQEh/BAr2yvVNvuiJuY6UIocYsFu/DxxRpo=
- github.com/moby/go-archive v0.3.3 h1:OxxR9paxsluYi+zDUEXTTaIxtkK3viymW+Ka7vRhhME=
- github.com/moby/go-archive v0.3.3/go.mod h1:Npdv43fFqlhZW7Xo8fbm3ZMYFvAGNviUPqX21VERbcE=
--github.com/moby/moby/api v1.56.1 h1:PpWkvVPB7Fr/No8w+TfyJ/I6rWZ2YPZhT3JorIg+06c=
--github.com/moby/moby/api v1.56.1/go.mod h1:sZ+THbVWkjOmBPPfbnzdD/G1LuIexWhqlSHHPTDQ1Uk=
-+github.com/moby/moby/api v1.57.0 h1:K2ykv5UZjwFCtmtL486T+SUEVrQ46w3v7isf214RCcw=
-+github.com/moby/moby/api v1.57.0/go.mod h1:pRZ1QRtx6AVhdckeFYo4DUX4ASNF0SCllhyY6aj2mgg=
- github.com/moby/moby/client v0.6.2 h1:ekSPlMccrZGcw6Scb8T9D39qE0mB+XupU/yS0zNw9N4=
- github.com/moby/moby/client v0.6.2/go.mod h1:DGcnO7qmPJrqobx/ggQgQ/AUk+2wgVdQv7uxB0/mEsc=
- github.com/moby/patternmatcher v0.6.1 h1:qlhtafmr6kgMIJjKJMDmMWq7WLkKIo23hsrpR3x084U=
-@@ -549,8 +549,6 @@ k8s.io/utils v0.0.0-20260626114624-be93311217bd h1:Ea7fgQ5we8Y9T0OX5o0dAHzQOBRI0
- k8s.io/utils v0.0.0-20260626114624-be93311217bd/go.mod h1:xDxuJ0whA3d0I4mf/C4ppKHxXynQ+fxnkmQH0vTHnuk=
- mellium.im/sasl v0.3.1 h1:wE0LW6g7U83vhvxjC1IY8DnXM+EU095yeo8XClvCdfo=
- mellium.im/sasl v0.3.1/go.mod h1:xm59PUYpZHhgQ9ZqoJ5QaCqzWMi8IeS49dhp6plPCzw=
--pgregory.net/rapid v1.2.0 h1:keKAYRcjm+e1F0oAuU5F5+YPAWcyxNNRK2wud503Gnk=
--pgregory.net/rapid v1.2.0/go.mod h1:PY5XlDGj0+V1FCq0o192FdRhpKHGTRIWBgqjDBTrq04=
- sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.36.0 h1:/YpDJ4vReG7ZmzSpBGxduXgywWkJU9zHubgJG03MT+Y=
- sigs.k8s.io/apiserver-network-proxy/konnectivity-client v0.36.0/go.mod h1:tJo1aepTXyR+8Xs3sUsGBDk4Ub2AM5dPAPKJx0mpm5c=
- sigs.k8s.io/controller-runtime v0.25.2 h1:bEkK3PVOIVK9X8QWLGVhJgmFc++47vfT6wakSzAOLsQ=
++// kamajiTimeline records, for the whole suite, the changes to the controller-manager Pods and to the
++// EndpointSlices of kamaji-webhook-service, so a failing spec can be matched against them.
++var (
++	kamajiTimelineMu sync.Mutex
++	kamajiTimeline   []string
++)
++
++func recordKamajiTimelinef(format string, args ...any) {
++	kamajiTimelineMu.Lock()
++	defer kamajiTimelineMu.Unlock()
++
++	kamajiTimeline = append(kamajiTimeline, time.Now().Format(time.RFC3339Nano)+" "+fmt.Sprintf(format, args...))
++}
++
++func boolPtrString(b *bool) string {
++	if b == nil {
++		return "nil"
++	}
++
++	return fmt.Sprintf("%t", *b)
++}
++
++// startKamajiTimelineRecorder starts informers that record the controller-manager Pods and the
++// webhook EndpointSlices. It runs until the test process exits.
++func startKamajiTimelineRecorder() {
++	GinkgoHelper()
++
++	clientset, err := kubernetes.NewForConfig(cfg)
++	Expect(err).ToNot(HaveOccurred())
++
++	podFactory := informers.NewSharedInformerFactoryWithOptions(clientset, 0,
++		informers.WithNamespace(kamajiNamespace),
++		informers.WithTweakListOptions(func(o *metav1.ListOptions) {
++			o.LabelSelector = "app.kubernetes.io/component=controller-manager"
++		}))
++	_, err = podFactory.Core().V1().Pods().Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
++		AddFunc:    func(obj interface{}) { recordPodChange("added", obj) },
++		UpdateFunc: func(_, obj interface{}) { recordPodChange("updated", obj) },
++		DeleteFunc: func(obj interface{}) { recordPodChange("deleted", obj) },
++	})
++	Expect(err).ToNot(HaveOccurred())
++
++	sliceFactory := informers.NewSharedInformerFactoryWithOptions(clientset, 0,
++		informers.WithNamespace(kamajiNamespace),
++		informers.WithTweakListOptions(func(o *metav1.ListOptions) {
++			o.LabelSelector = discoveryv1.LabelServiceName + "=kamaji-webhook-service"
++		}))
++	_, err = sliceFactory.Discovery().V1().EndpointSlices().Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
++		AddFunc:    func(obj interface{}) { recordSliceChange("added", obj) },
++		UpdateFunc: func(_, obj interface{}) { recordSliceChange("updated", obj) },
++		DeleteFunc: func(obj interface{}) { recordSliceChange("deleted", obj) },
++	})
++	Expect(err).ToNot(HaveOccurred())
++
++	// Tenant control planes live in default, and their NodePort services are what the specs connect to.
++	tenantSliceFactory := informers.NewSharedInformerFactoryWithOptions(clientset, 0, informers.WithNamespace("default"))
++	_, err = tenantSliceFactory.Discovery().V1().EndpointSlices().Informer().AddEventHandler(cache.ResourceEventHandlerFuncs{
++		AddFunc:    func(obj interface{}) { recordSliceChange("added", obj) },
++		UpdateFunc: func(_, obj interface{}) { recordSliceChange("updated", obj) },
++		DeleteFunc: func(obj interface{}) { recordSliceChange("deleted", obj) },
++	})
++	Expect(err).ToNot(HaveOccurred())
++
++	stop := make(chan struct{})
++	podFactory.Start(stop)
++	sliceFactory.Start(stop)
++	tenantSliceFactory.Start(stop)
++}
++
++func recordPodChange(action string, obj interface{}) {
++	pod, ok := obj.(*corev1.Pod)
++	if !ok {
++		recordKamajiTimelinef("pod %s: unexpected object %T", action, obj)
++
++		return
++	}
++
++	recordKamajiTimelinef("pod %s %s phase=%s ready=%t deleting=%t startTime=%v",
++		action, pod.GetName(), pod.Status.Phase, isPodReady(pod), pod.GetDeletionTimestamp() != nil, pod.Status.StartTime)
++}
++
++func recordSliceChange(action string, obj interface{}) {
++	slice, ok := obj.(*discoveryv1.EndpointSlice)
++	if !ok {
++		recordKamajiTimelinef("endpointslice %s: unexpected object %T", action, obj)
++
++		return
++	}
++
++	if len(slice.Endpoints) == 0 {
++		recordKamajiTimelinef("endpointslice %s %s: no endpoints", action, slice.GetName())
++
++		return
++	}
++
++	for _, ep := range slice.Endpoints {
++		recordKamajiTimelinef("endpointslice %s %s addresses=%v ready=%s serving=%s terminating=%s target=%s",
++			action, slice.GetName(), ep.Addresses,
++			boolPtrString(ep.Conditions.Ready), boolPtrString(ep.Conditions.Serving), boolPtrString(ep.Conditions.Terminating),
++			targetName(ep.TargetRef))
++	}
++}
++
++// PrintKamajiLogs dumps the state of the Kamaji controller-manager (which also serves the webhooks)
++// when a spec fails: the recorded timeline, every controller-manager Pod, its current and previous
++// logs, the webhook Service endpoints and the events in the Kamaji namespace.
+ func PrintKamajiLogs() {
+-	if CurrentSpecReport().Failed() {
+-		clientset, err := kubernetes.NewForConfig(cfg)
+-		Expect(err).ToNot(HaveOccurred
 ```
 
 #### Recent Merged Pull Requests:
@@ -1243,28 +1294,35 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. standard Ready condition on TenantControlPlane
+## X. test(e2e): cover rolling a new default kine image to live tenants
 
 **RULE**:
-When implementing operations in `.github/workflows/e2e.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clastix/kamaji. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `afdb6e7a`: standard Ready condition on TenantControlPlane. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d25aada2`: test(e2e): cover rolling a new default kine image to live tenants. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/e2e.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          sudo sysctl -w fs.inotify.max_user_instances=512 fs.inotify.max_user_watches=524288
+# Newest kine release; upstream publishes its images to GHCR (see k3s-io/kine .github/workflows/release.yml).
+KINE_IMAGE_UPGRADE ?= ghcr.io/k3s-io/kine:v0.17.3
+
+	E2E_KINE_IMAGE_UPGRADE=$(KINE_IMAGE_UPGRADE) $(GINKGO) -v ./e2e
+
+.PHONY: e2e-kine-rollout
+e2e-kine-rollout: ## Roll KINE_IMAGE_UPGRADE out to a live kine TenantControlPlane. Requires e2e-setup.
+	E2E_KINE_IMAGE_UPGRADE=$(KINE_IMAGE_UPGRADE) $(GINKGO) -v --focus "Rolling a new default --kine-image" ./e2e
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	$(GINKGO) -v ./e2e
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `afdb6e7a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d25aada2` are properly handled with clean fallback behavior.

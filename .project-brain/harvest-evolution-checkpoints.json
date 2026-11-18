@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T20:38:01.368Z",
+  "last_updated": "2026-11-18T20:46:22.328Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-18T19:44:32.866Z",
+      "processed_at": "2026-11-18T20:46:21.858Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -943,9 +943,9 @@
       "staged_for_review": 1
     },
     "clastix-kamaji-learnings.md": {
-      "processed_at": "2026-11-17T07:28:24.687Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-18T20:46:21.116Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "modelcontextprotocol-kotlin-sdk-learnings.md": {
       "processed_at": "2026-11-15T20:42:10.118Z",
@@ -2323,8 +2323,8 @@
       "staged_for_review": 0
     },
     "hf-tongyi-mai-z-image-turbo-learnings.md": {
-      "processed_at": "2026-11-14T02:22:03.067Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T20:45:51.706Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-meituan-longcat-longcat-2.5-learnings.md": {
@@ -3473,7 +3473,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2064,
-  "total_canonical_promoted": 365,
-  "total_staged_for_review": 1558
+  "total_dossiers_evaluated": 2067,
+  "total_canonical_promoted": 366,
+  "total_staged_for_review": 1559
 }

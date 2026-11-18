@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T20:37:54.773Z",
-  "total_cycles_completed": 10604,
-  "total_learnings_persisted": 10604,
-  "total_rules_promoted": 10042,
+  "last_updated": "2026-11-18T20:45:48.472Z",
+  "total_cycles_completed": 10606,
+  "total_learnings_persisted": 10606,
+  "total_rules_promoted": 10043,
   "history": [
-    {
-      "timestamp": "2026-11-18T07:30:50.189Z",
-      "repository": "crossplane/crossplane",
-      "learningId": "learn-github-crossplane-crossplane",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T07:30:51.885Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T07:30:54.063Z",
       "repository": "apple/foundationdb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-18T20:37:54.773Z",
       "repository": "typedb/typedb",
       "learningId": "learn-github-typedb-typedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T20:45:38.160Z",
+      "repository": "Tongyi-MAI/Z-Image-Turbo",
+      "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T20:45:48.472Z",
+      "repository": "clastix/kamaji",
+      "learningId": "learn-github-clastix-kamaji",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -895,8 +895,8 @@
     "sourceUrl": "https://huggingface.co/Tongyi-MAI/Z-Image-Turbo",
     "sourceVersion": "hf-tongyi-mai-z-image-turbo",
     "license": "Open-Source",
-    "contentHash": "a552e111f94720176bbfa8bbcb80b6ce17ce4df60ed2115bb44c589bd34424b8",
-    "lastHarvestedAt": "2026-11-14T02:21:24.968Z",
+    "contentHash": "910f2381e49cb191fc4c8076addb96b246dd8af2b2f86ac1b54149005e553441",
+    "lastHarvestedAt": "2026-11-18T20:45:38.155Z",
     "learningId": "learn-huggingface-tongyi-mai-z-image-turbo"
   },
   "hf-meta-llama-meta-llama-3-8b-instruct": {
@@ -4113,10 +4113,10 @@
     "repository": "clastix/kamaji",
     "platform": "github",
     "sourceUrl": "https://github.com/clastix/kamaji",
-    "sourceVersion": "afdb6e7a",
+    "sourceVersion": "d25aada2",
     "license": "Apache-2.0",
-    "contentHash": "1401fba93be506cc52c648c838b7c5a3ea4d1d964800352712326260d85f50ec",
-    "lastHarvestedAt": "2026-11-17T07:28:15.834Z",
+    "contentHash": "b4f259c2d795ae2c99faa3e53f2a152340d7edb899facee74190aadde4c493cf",
+    "lastHarvestedAt": "2026-11-18T20:45:48.467Z",
     "learningId": "learn-github-clastix-kamaji"
   },
   "gluesql-gluesql": {

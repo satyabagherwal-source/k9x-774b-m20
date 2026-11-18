@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-GKMG",
-    "timestamp": "2026-11-17T12:09:32.776Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "dece0dd9a83801700cc6c8a1d6d86fd2f840f7acd949cfab294f79da9b5b0fee",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-043K",
-    "timestamp": "2026-11-17T12:24:44.480Z",
-    "repository": "MiniMaxAI/MiniMax-H3-Image-PE",
-    "learningId": "learn-huggingface-minimaxai-minimax-h3-image-pe",
-    "contentHash": "46a9d839ec2eacb07ce92bc48884e8776c2e506e05c6fad4ba236fb5005b4827",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-05VM",
     "timestamp": "2026-11-17T12:24:46.786Z",
     "repository": "internlm/Sage-S2.1-Flash",
@@ -7490,6 +7460,36 @@
     "repository": "typedb/typedb",
     "learningId": "learn-github-typedb-typedb",
     "contentHash": "7417c405d0711e048a72602e710c7f760e9554ddb472119926bbd1546aa0002e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-C4BR",
+    "timestamp": "2026-11-18T20:45:38.151Z",
+    "repository": "Tongyi-MAI/Z-Image-Turbo",
+    "learningId": "learn-huggingface-tongyi-mai-z-image-turbo",
+    "contentHash": "910f2381e49cb191fc4c8076addb96b246dd8af2b2f86ac1b54149005e553441",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-CCA7",
+    "timestamp": "2026-11-18T20:45:48.463Z",
+    "repository": "clastix/kamaji",
+    "learningId": "learn-github-clastix-kamaji",
+    "contentHash": "b4f259c2d795ae2c99faa3e53f2a152340d7edb899facee74190aadde4c493cf",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
