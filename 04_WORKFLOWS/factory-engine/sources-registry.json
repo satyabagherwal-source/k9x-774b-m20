@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-18T22:30:40.412Z",
-    "lastVerified": "2026-11-18T22:30:40.412Z",
+    "lastChecked": "2026-11-18T23:26:14.574Z",
+    "lastVerified": "2026-11-18T23:26:14.574Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T23:18:30.525Z",
-    "lastVerified": "2026-11-18T23:18:30.525Z",
+    "lastChecked": "2026-11-18T23:26:29.890Z",
+    "lastVerified": "2026-11-18T23:26:29.890Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1743,22 +1743,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectdiscovery-nuclei": {
-    "name": "nuclei",
+    "name": "projectdiscovery/nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-18T17:28:04.737Z",
-    "lastVerified": "2026-11-18T17:28:04.737Z",
+    "lastChecked": "2026-11-18T23:26:13.955Z",
+    "lastVerified": "2026-11-18T23:26:13.955Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "8f889f8f569c0194ff769646ec0fd0ef366289e29b1df8c11f36843e59b4dc0d",
+    "contentHash": "e0035c3dd5a58c321d63af1ca3f96963baf26aa624f76172cbd6e8f627c24569",
     "promotedRulesCount": 1,
-    "recentFixesCount": 4,
+    "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "91c2a7cf"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -4789,5 +4788,60 @@
     "lastChecked": "2026-11-18T23:18:19.222Z",
     "revisionIdentifier": "d30c905f",
     "lastVerified": "2026-11-18T23:18:19.222Z"
+  },
+  "async-rs-async-std": {
+    "name": "async-std",
+    "officialUrl": "https://github.com/async-rs/async-std",
+    "lastChecked": "2026-11-18T23:25:59.467Z",
+    "revisionIdentifier": "844b5525",
+    "lastVerified": "2026-11-18T23:25:59.467Z"
+  },
+  "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
+    "name": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "officialUrl": "https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T23:26:02.258Z",
+    "lastVerified": "2026-11-18T23:26:02.258Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
+    "contentHash": "e08b6ee961bace31491ddafdafe22dfe4e4c9c060920a4c7a587888f4dfa778b",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "learnapollo-learnapollo": {
+    "name": "learnapollo",
+    "officialUrl": "https://github.com/learnapollo/learnapollo",
+    "lastChecked": "2026-11-18T23:26:04.530Z",
+    "revisionIdentifier": "dea1677e",
+    "lastVerified": "2026-11-18T23:26:04.530Z"
+  },
+  "orange-cyberdefense-goad": {
+    "name": "GOAD",
+    "officialUrl": "https://github.com/Orange-Cyberdefense/GOAD",
+    "lastChecked": "2026-11-18T23:26:06.967Z",
+    "revisionIdentifier": "74af01eb",
+    "lastVerified": "2026-11-18T23:26:06.967Z"
+  },
+  "apache-shardingsphere": {
+    "name": "apache/shardingsphere",
+    "officialUrl": "https://github.com/apache/shardingsphere",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-11-18T23:26:25.921Z",
+    "lastVerified": "2026-11-18T23:26:25.921Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-apache-shardingsphere",
+    "contentHash": "9d94a9672a88eea0a5124d20c0c446bdda3ff0188b342cc5e5cf076e709953f9",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

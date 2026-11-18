@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T23:18:32.211Z",
-  "total_records": 1917,
+  "last_updated": "2026-11-18T23:26:56.656Z",
+  "total_records": 1918,
   "domains": {
     "A": {
       "total": 13,
@@ -1277,7 +1277,7 @@
       ]
     },
     "H": {
-      "total": 443,
+      "total": 444,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1721,7 +1721,8 @@
         "domain_intelligence-technical-construction-intelligence-xerj-org-xerj-core-invariants",
         "domain_intelligence-technical-construction-intelligence-tailscale-tailscale-core-invariants",
         "domain_intelligence-technical-construction-intelligence-tailscale-tailscale-learnings-core-invariant",
-        "DOM-H-26FD692A"
+        "DOM-H-26FD692A",
+        "DOM-H-DAFF8DAE"
       ]
     },
     "I": {
@@ -13817,8 +13818,8 @@
       "title": "Research & Knowledge Intelligence: Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-research-knowledge-intelligence-infa.md",
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
-      "content_hash": "3025e6b7db6a8c403e2ce3957629032706120c5d6a8f6a437f89fa30f351935c",
-      "created_at": "2026-11-14T06:56:53.091Z"
+      "content_hash": "de9cac1b26cc0033ac4c0b3b83b9ab5be4606270fc42954d11a2cec5356709ba",
+      "created_at": "2026-11-18T23:26:03.017Z"
     },
     "domain_intelligence-research-knowledge-intelligence-edge0-edge0-145b-nvfp4-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-edge0-edge0-145b-nvfp4-core-invariants",
@@ -13937,8 +13938,8 @@
       "title": "Research & Knowledge Intelligence: hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-infatoshi-glm-5-3-uncensored-exl3-3-0bpw-learnings-research-knowledge-intelli.md",
       "repository": "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings",
-      "content_hash": "451a1151135204f43d8f177db33ab70e915c0373359971ce70983bf59b4df898",
-      "created_at": "2026-11-14T06:57:54.333Z"
+      "content_hash": "f8e8c35355570c0c81003b9c7b06f5aedd9697629ec123c2430539d3f35d1c31",
+      "created_at": "2026-11-18T23:26:30.206Z"
     },
     "domain_intelligence-technical-construction-intelligence-shopify-react-native-skia-learnings-core-inv": {
       "record_id": "domain_intelligence-technical-construction-intelligence-shopify-react-native-skia-learnings-core-inv",
@@ -15266,8 +15267,8 @@
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "repository": "projectdiscovery/nuclei",
-      "content_hash": "22b813e4d327b9eaaf46db95198163954087afa5c0af577db4293e82f659bfe4",
-      "created_at": "2026-11-18T13:17:29.953Z"
+      "content_hash": "f0bcc2df92ba809596de654ce2d9ff7450113183444b3b325f243cc850318e26",
+      "created_at": "2026-11-18T23:26:15.195Z"
     },
     "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
@@ -19815,8 +19816,8 @@
       "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-learnings-architecture-intelligence-projectdiscovery-nuc.md",
       "repository": "projectdiscovery-nuclei-learnings",
-      "content_hash": "1537324b4e3a112381cc781e1a4d3deb870d47350db9f697ca168fbc67929298",
-      "created_at": "2026-11-18T04:37:37.599Z"
+      "content_hash": "7fe2c04238d5b8edb072632966b5698ab4e9ed63ba3ae729e9e5a090067b26fd",
+      "created_at": "2026-11-18T23:26:30.686Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants",
@@ -26170,8 +26171,8 @@
       "title": "Technical Construction Intelligence: apache/shardingsphere Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-shardingsphere-technical-construction-intelligence-apache-shardingsphere-.md",
       "repository": "apache/shardingsphere",
-      "content_hash": "2979bf4ed4f5d73fc8775b5d740ee5ed989cce98eca9a821f0235a73e041dd95",
-      "created_at": "2026-11-18T07:14:13.151Z"
+      "content_hash": "93e5817c92fdc2eb8b8ccaee6a23761bf0b368714322d3e28c75ff942ede3fc2",
+      "created_at": "2026-11-18T23:26:27.136Z"
     },
     "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-core-invariants",
@@ -30032,8 +30033,8 @@
       "title": "Technical Construction Intelligence: apache-shardingsphere-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-shardingsphere-learnings-technical-construction-intelligence-apache-shard.md",
       "repository": "apache-shardingsphere-learnings",
-      "content_hash": "42f1db97f15f95d4adec4f191aff045b61f833674dfd4d842089cb07fa518ad6",
-      "created_at": "2026-11-18T07:14:46.328Z"
+      "content_hash": "3617aa422064860e35d94577881f971d4c7b34daa0c553be0b673448bd071309",
+      "created_at": "2026-11-18T23:26:56.656Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tencent-hy4-flash-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tencent-hy4-flash-core-invariants",
@@ -32095,6 +32096,48 @@
       "repository": "hf-meta-llama-llama-2-7b-learnings",
       "content_hash": "20a586670e0d96917fdbef2125e272d12c78ef3bff48f4640fe13f0e8de2eb99",
       "created_at": "2026-11-18T22:22:51.999Z"
+    },
+    "DOM-H-DAFF8DAE": {
+      "record_id": "DOM-H-DAFF8DAE",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "Support PostgreSQL aggregate FILTER and verify external parser expectations",
+      "content": "When implementing operations in `parser/sql/engine/dialect/postgresql/src/main/antlr4/imports/postgresql/BaseRule.g4`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "021017b11b93cbf0cedc77b290267fb1c53567b92ec32628e9681157ee372cfe",
+      "summary": "Prevents defects observed in production commit `e65f2831`: Support PostgreSQL aggregate FILTER and verify external parser expectations. Unva -> When implementing operations in `parser/sql/engine/dialect/postgresql/src/main/antlr4/imports/postgresql/BaseRule.g4`, engineers MUST enforc",
+      "provenance": {
+        "source_uri": "project://apache-shardingsphere/apache-shardingsphere-learnings.md",
+        "source_version": "e65f2831",
+        "observed_at": "2026-11-18T23:26:25.926Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (apache-shardingsphere)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of apache-shardingsphere"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T23:26:56.274Z"
     }
   }
 }

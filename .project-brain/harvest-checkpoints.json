@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T23:18:27.399Z",
+  "last_updated": "2026-11-18T23:26:26.840Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1385,14 +1385,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw",
-      "content_hash": "ecd9b8955be27d0e8ababaec9d28f067b61c73db86593e85907e0da6482ce2d8",
-      "verified_at": "2026-11-14T06:56:52.974Z",
+      "content_hash": "e08b6ee961bace31491ddafdafe22dfe4e4c9c060920a4c7a587888f4dfa778b",
+      "verified_at": "2026-11-18T23:26:02.849Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T06:56:52.974Z"
+      "last_updated": "2026-11-18T23:26:02.849Z"
     },
     "pablodawson/MiniMax-H3-360-Orbit-LoRA": {
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "8f889f8f569c0194ff769646ec0fd0ef366289e29b1df8c11f36843e59b4dc0d",
-      "verified_at": "2026-11-18T13:17:29.514Z",
+      "content_hash": "e0035c3dd5a58c321d63af1ca3f96963baf26aa624f76172cbd6e8f627c24569",
+      "verified_at": "2026-11-18T23:26:14.883Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T13:17:29.514Z"
+      "last_updated": "2026-11-18T23:26:14.883Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -7431,14 +7431,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-shardingsphere",
-      "content_hash": "d4616187f7ba720c291eb61164e2a65d27eb530abd14d1121d29fa6efbd40d20",
-      "verified_at": "2026-11-18T07:14:12.841Z",
+      "content_hash": "9d94a9672a88eea0a5124d20c0c446bdda3ff0188b342cc5e5cf076e709953f9",
+      "verified_at": "2026-11-18T23:26:26.839Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T07:14:12.841Z"
+      "last_updated": "2026-11-18T23:26:26.839Z"
     },
     "sharkdp/pastel": {
       "repository": "sharkdp/pastel",

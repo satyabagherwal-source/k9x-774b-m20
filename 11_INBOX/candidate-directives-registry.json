@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T23:18:32.067Z",
+  "last_updated": "2026-11-18T23:26:56.502Z",
   "directives": [
     {
       "id": "CD-001",
@@ -31261,6 +31261,37 @@
       "source_repo": "nucleoidai-nucleoid",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-89B5DC-draft-nuc-121-held-values-of-reasoning-s.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-3064",
+      "directive_title": "Empirical Invariant Guard in SYNTAX-REFERENCE.md",
+      "source_repo": "projectdiscovery-nuclei-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3064-empirical-invariant-guard-in-syntax-reference-md.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-3K6U",
+      "directive_title": "Support PostgreSQL aggregate FILTER and verify external parser expectations",
+      "source_repo": "apache-shardingsphere-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3K6U-support-postgresql-aggregate-filter-and-verify-external-parser-expectations.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-665EB1",
+      "directive_title": "Empirical Invariant Guard in SYNTAX-REFERENCE.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "projectdiscovery-nuclei",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-665EB1-empirical-invariant-guard-in-syntax-refe.md",
       "staged_date": "2026-11-18"
     }
   ]

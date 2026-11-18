@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T23:18:32.496Z",
+  "last_updated": "2026-11-18T23:26:56.922Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T22:22:52.966Z",
@@ -88,7 +88,7 @@
       "staged_for_review": 0
     },
     "projectdiscovery-nuclei-learnings.md": {
-      "processed_at": "2026-11-18T04:37:37.270Z",
+      "processed_at": "2026-11-18T23:26:30.359Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -708,7 +708,7 @@
       "staged_for_review": 1
     },
     "apache-shardingsphere-learnings.md": {
-      "processed_at": "2026-11-18T07:14:45.756Z",
+      "processed_at": "2026-11-18T23:26:56.296Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
     },
@@ -2453,8 +2453,8 @@
       "staged_for_review": 0
     },
     "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw-learnings.md": {
-      "processed_at": "2026-11-14T06:57:54.158Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T23:26:30.023Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "shopify-react-native-skia-learnings.md": {
@@ -3473,7 +3473,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2106,
-  "total_canonical_promoted": 368,
-  "total_staged_for_review": 1585
+  "total_dossiers_evaluated": 2109,
+  "total_canonical_promoted": 369,
+  "total_staged_for_review": 1586
 }

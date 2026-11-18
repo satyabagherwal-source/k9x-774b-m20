@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-18T22:22:51.809Z",
+  "updated_at": "2026-11-18T23:26:56.294Z",
   "statistics": {
-    "total_nodes": 366,
+    "total_nodes": 367,
     "total_edges": 170,
     "domain_distribution": {
       "D": 248,
       "M": 1,
-      "H": 51,
+      "H": 52,
       "J": 14,
       "K": 21,
       "L": 6,
@@ -8183,6 +8183,28 @@
       ],
       "created_at": "2026-11-18T22:22:51.809Z",
       "updated_at": "2026-11-18T22:22:51.809Z"
+    },
+    "DOM-H-DAFF8DAE": {
+      "id": "DOM-H-DAFF8DAE",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Support PostgreSQL aggregate FILTER and verify external parser expectations",
+      "summary": "Prevents defects observed in production commit `e65f2831`: Support PostgreSQL aggregate FILTER and verify external parser expectations. Unva -> When implementing operations in `parser/sql/engine/dialect/postgresql/src/main/antlr4/imports/postgresql/BaseRule.g4`, engineers MUST enforc",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://apache-shardingsphere/apache-shardingsphere-learnings.md",
+        "source_version": "e65f2831",
+        "observed_at": "2026-11-18T23:26:25.926Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (apache-shardingsphere)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-18T23:26:56.293Z",
+      "updated_at": "2026-11-18T23:26:56.293Z"
     }
   },
   "edges": [

@@ -11161,3 +11161,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-fermionresearch-phonon-2` | `https://huggingface.co/FermionResearch/Phonon-2` | `hf-fermion` | Multi-dimensional audit evidence | 2026-11-18T23:18:09.928Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `d65ec42b` | Multi-dimensional audit evidence | 2026-11-18T23:18:23.600Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `226268f4` | Multi-dimensional audit evidence | 2026-11-18T23:18:27.391Z |
+| `learn-huggingface-infatoshi-glm-5-3-uncensored-exl3-3-0bpw` | `https://huggingface.co/Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw` | `hf-infatos` | Multi-dimensional audit evidence | 2026-11-18T23:26:02.841Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `28b60e68` | Multi-dimensional audit evidence | 2026-11-18T23:26:14.876Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `e65f2831` | Multi-dimensional audit evidence | 2026-11-18T23:26:26.832Z |
+| `learn-dom-h-daff8dae` | `project://apache-shardingsphere` | `e65f2831` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md` | 2026-11-18T23:26:56.296Z |
