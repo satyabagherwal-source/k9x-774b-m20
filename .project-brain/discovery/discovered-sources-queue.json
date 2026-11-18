@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T21:23:25.939Z",
+  "updated_at": "2026-11-18T21:42:30.878Z",
   "stats": {
-    "total_discovered": 5683,
-    "approved_pending_harvest": 5374,
+    "total_discovered": 5689,
+    "approved_pending_harvest": 5380,
     "harvested_count": 0,
     "rejected_count": 309,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5356,
-      "OFFICIAL_DOCUMENTATION": 180,
+      "COMMUNITY_AND_EXPERT": 5358,
+      "OFFICIAL_DOCUMENTATION": 184,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
       "SECURITY_ADVISORIES": 24,
@@ -122884,6 +122884,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
         "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-2A79D513C26B": {
+      "id": "SRC-2A79D513C26B",
+      "url": "https://github.com/sigs",
+      "title": "https://github.com/sigs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T21:42:30.686Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-0C3ED511D94E": {
+      "id": "SRC-0C3ED511D94E",
+      "url": "https://docs.sigstore.dev/cosign/verify",
+      "title": "https://docs.sigstore.dev/cosign/verify",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T21:42:30.723Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-B7C876FE8E2E": {
+      "id": "SRC-B7C876FE8E2E",
+      "url": "https://docs.sigstore.dev/cosign/verifying/verify",
+      "title": "https://docs.sigstore.dev/cosign/verifying/verify",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T21:42:30.763Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-9DFC5E789387": {
+      "id": "SRC-9DFC5E789387",
+      "url": "https://docs.sigstore.dev/cosign/bundle",
+      "title": "https://docs.sigstore.dev/cosign/bundle",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T21:42:30.798Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-D0FCDC0CEA08": {
+      "id": "SRC-D0FCDC0CEA08",
+      "url": "https://docs.sigstore.dev/about/bundle",
+      "title": "https://docs.sigstore.dev/about/bundle",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T21:42:30.835Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-D109CA4CEADC": {
+      "id": "SRC-D109CA4CEADC",
+      "url": "https://github.com/aquasecurity/trivy/releases",
+      "title": "https://github.com/aquasecurity/trivy/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T21:42:30.878Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
+        "fileName": "aquasecurity-trivy-learnings.md"
       }
     }
   }

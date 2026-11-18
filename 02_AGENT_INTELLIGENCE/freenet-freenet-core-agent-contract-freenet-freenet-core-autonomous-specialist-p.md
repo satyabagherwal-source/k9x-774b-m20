@@ -4,17 +4,17 @@
 {
   "source_repository": "freenet/freenet-core",
   "source_url": "https://github.com/freenet/freenet-core",
-  "source_version": "6e7fbbd6",
+  "source_version": "b7ba2671",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T15:51:33.389Z",
+  "timestamp": "2026-11-18T21:42:22.928Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-freenet-freenet-core",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `6e7fbbd6`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T15:51:33.389Z`  
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `b7ba2671`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-18T21:42:22.928Z`  
 > **Learning ID**: `learn-github-freenet-freenet-core`
 
 
@@ -29,7 +29,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T15:51:32.208Z  
+> **Harvest Timestamp**: 2026-11-18T21:42:21.765Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -39,7 +39,7 @@ PROVENANCE_END -->
 - **Description**: Declare your digital independence
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3127 stars
+- **Stars / Engagement**: 3129 stars
 
 ---
 
@@ -1750,11 +1750,15 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6258** (2026-11-17): **test(quic): pin the crash-breaker marker lock and correct its doc**
-  *Symptoms*: ## Problem  Two leftovers from the review of #6256: - `MARKER_UPDATE` orders the Windows short-run clear and the endpoint-death record, so that in either order the death record survives to the next start. Deleting either lock left every behaviour test green, because a single-threaded test cannot interleave the two writers. - The lock's doc said it covered each read-and-change of the marker. Arming and the Windows panic-hook write do not take it.  ## Approach  Test and documentation only; no behaviour change.  - A source pin, `the_marker_update_lock_is_taken_by_the_clear_and_the_record`, checks that both writers take the lock before reading the marker: `short_runs::clear_short_run`, and both write paths of `note_endpoint_down_exit_with`. - The lock's doc now says it orders exactly those two writers, and why the others do not need it:   - arming, and a death recorded before arming, are ordered by `PENDING`, and the clear timer starts only after arming;   - the Windows panic hook takes no lock. A caught socket-adapter panic writes before the endpoint goes down; an unrelated QUIC panic at the same moment could cost one free restart;   - a clean exit's clear does not run on a death. - A comment on `clear_short_run` notes that a clock stepped back during a run can date a death before the run's start. The clear then removes the marker, and that one death restarts the gateway without counting.  This does not change #6184. An earlier version of this PR also hardened the QUIC runtime a
+- **Issue #6285** (2026-11-18): **fix(hosting): keep contract state inside --max-hosting-storage**
+  *Symptoms*: ## Problem Three paths let contract state stay on disk outside `--max-hosting-storage`, or kept eviction from running:  1. Relayed UPDATEs were merged into, and persisted for, a contract that is neither hosted nor in use. That moves the state generation without re-hosting, so the "written since eviction" guard in `RuntimePool::remove_contract` re-queued reclamation with no limit, for as long as a peer kept sending. 2. `Ring::commit_state_write` refreshed only the generation in the hosting cache, not the size, so state grown by UPDATE was never charged and the byte budget never triggered eviction. 3. `FairEventQueue::pop` served Background only when NetworkRelay was empty, and `EvictContract` was Background, so a steady trickle of relayed writes stalled reclamation.  A fourth issue (a relayed SUBSCRIBE registering a subscriber for state an eviction left on disk) is handled separately.  ## Approach 1. **Merge rule.** A relayed write is merged into the local copy only if the contract is hosted or in use (`Ring::may_merge_relayed_update`). It gates `RequestUpdate`, `BroadcastTo`, their two streaming forms, and PUT `ProbeReconcile`, which previously merged on an upstream lease alone.    - A `RequestUpdate` (streaming or not) for any other contract is forwarded toward the hosts, as for a contract this node does not hold. `BroadcastTo` and a refused `ProbeReconcile` are skipped or routed on.    - Skipped broadcasts are counted in a process counter, logged at `info` on each power of 
+  **Post-Mortem & Fix Analysis**:
+  > <!-- claude-rule-review --> I'm done reading the diff and the rule files, so here is the review.  ### Rule Review: 2 warnings, 2 info  **Rules checked:** git-workflow.md, code-style.md, testing.md, operations.md, contracts.md, ring.md. `contracts.md` and `ring.md` had nothing applicable to these changes. **Files reviewed:** 12 (including the `.claude/rules/operations.md` doc change)  #### Warnings - `crates/core/src/operations/update/op_ctx_task.rs:8330-8353` (`driver_body` plus `every_relay_merge_site_checks_may_merge_relayed_update`, `declined_streaming_request_update_is_forwarded`)   - **Problem:** the new source-scrape pins slice the region with a bare `src.find(name)` and then `body.find("\n}\n")`. They do not reject an anchor that matched inside the test module, as `fn_body()` does.   - **Failure mode:** each `name` is also a string literal in the test's own array, which sits later in the same file. If a driver is renamed or moved, `find` lands on that literal. The region then ru
 
-- **Issue #6257** (2026-11-17): **feat(telemetry): per-path QUIC srtt and send-rate bucket gauges in the transport snapshot**
-  *Symptoms*: ## Problem The transport snapshot says how much QUIC paths lost but not how fast or how far away they are. Judging QUIC as the default (and the removal of UDP) needs the distribution of path round-trip times and send rates across the fleet, which the snapshot does not carry.  ## Approach Two gauge families, both of live QUIC paths that carry data (a path that carries none, such as an idle shadow path, is in neither, and a path that stops carrying leaves), moved at each acknowledgement-watch tick (about 2 s) and left when the path ends, as the existing `quic_loss_rate_<bucket>` gauges are. They live under the `loss` lock and in the same `PathLossWindow`, so a path is in at most one bucket of each and a snapshot reads them consistently; the bucket moves are their own critical section, not written together with a loss report's sums. Observe-only: no transport behaviour changes. - `quic_srtt_<bucket>`: quinn's `PathStats::rtt`. Buckets `lt_10ms`, `lt_25ms`, `lt_50ms`, `lt_100ms`, `lt_200ms`, `lt_400ms`, `ge_400ms`. - `quic_tx_bps_<bucket>`: UDP payload bits per second sent over the last tick. Buckets `lt_10kbps`, `lt_100kbps`, `lt_1mbps`, `lt_10mbps`, `lt_100mbps`, `ge_100mbps`. A tick of 0 ms leaves the path in its bucket.  `tx_bps` counts the datagram bytes quinn built (`udp_tx.bytes`): retransmissions, acknowledgements, padding and keepalives included. It is neither goodput nor capacity. These gauges describe path conditions; the speed of QUIC against UDP is answered from tran
+- **Issue #6283** (2026-11-18): **test: give the two merge-budget sims their own network names**
+  *Symptoms*: ## Problem `non_settling_contract_is_bounded_by_merge_budget` and `non_settling_contract_is_bounded_by_merge_budget_streaming` (added in #6237) both build `TestConfig::medium("merge-budget-non-settling", ..)`. The network name is the node data directory under the temp dir, so when nextest runs the two at once, one run deletes the other's config files. Both then panic with `No such file or directory` at the config build in `testing_impl.rs`. This failed the Simulation job on #6264 (run 44213362154), where both tests failed in the same second.  ## Approach One network name per variant. No other test in `simulation_integration.rs` shares a literal network name; this collision came from the two tests sharing one helper.  ## Testing Both variants run together under nextest with `--features simulation_tests,testing` and `--test-threads 2`: 2 passed.  [AI-assisted - Claude]
+  **Post-Mortem & Fix Analysis**:
+  > <!-- claude-rule-review --> ### Rule Review: No issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md **Files reviewed:** 1  No rule violations detected. The change is a test-only fix in `crates/core/tests/simulation_integration.rs`. It gives each variant of `assert_non_settling_contract_is_bounded` its own network name, so the two variants no longer share a node data directory. The commit subject is in conventional-commit form and under 72 characters. The change is one logical change, adds no banned APIs, and leaves no tests deleted or ignored.  <!-- warning-count: 0 -->  --- *Rule review against `.claude/rules/`. WARNING findings turn the `rule-review/warnings` status red.*
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1771,738 +1775,1752 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `01e05980` (2026-11-17)
-**Commit Message**: test(quic): pin the crash-breaker marker lock and correct its doc (#6258)
+### Incident Patch 1: `6174c624` (2026-11-18)
+**Commit Message**: feat(quic): the peer crash-breaker action for when UDP is removed, switched off (#6268)
 
-**File**: `crates/core/src/transport/quic/breaker.rs` (modified, +59/-5)
+**File**: `.claude/rules/transport.md` (modified, +8/-0)
 ```diff
-@@ -385,11 +385,25 @@ static PENDING: parking_lot::Mutex<Pending> = parking_lot::Mutex::new(Pending {
- /// start would restart the node without bound.
- static OVERRIDDEN: AtomicBool = AtomicBool::new(false);
- 
--/// Held across each read-and-change of this run's marker by the Windows
--/// short-run clear ([`short_runs`]) and by [`note_endpoint_down_exit`], so
--/// in either order the death record survives: a clear that comes first is
--/// followed by the record written again, and a record written first makes
--/// the clear leave the marker.
-+/// Orders exactly two writers of this run's marker: the Windows short-run
-+/// clear (`short_runs::clear_short_run`) and the endpoint-death record
-+/// ([`note_endpoint_down_exit_with`]). Each holds it across its
-+/// read-and-change, so in either order the death record survives: a clear
-+/// that comes first is followed by the record written again, and a record
-+/// written first makes the clear leave the marker. Pinned by
-+/// `the_marker_update_lock_is_taken_by_the_clear_and_the_record`.
-+///
-+/// The other writers do not take it, and it does not order them:
-+/// - arming ([`arm`]) runs under [`PENDING`], as does the record of a death
-+///   before arming, so those two are ordered by that lock instead, and the
-+///   clear timer starts only after arming;
-+/// - the Windows panic hook (`short_runs::mark_quic_panic`) takes no lock,
-+///   since it runs inside a panic. A caught socket-adapter panic marks the
-+///   marker before the endpoint goes down, so its write lands before the
-+///   death record; an unrelated QUIC panic on another thread at the same
-+///   moment could overwrite the record, which then costs one free restart;
-+/// - a clean exit's removal ([`clear_if_owned`]) does not run on a death,
-+///   which ends the process without a clean exit.
- pub(super) static MARKER_UPDATE: parking_lot::Mutex<()> = parking_lot::Mutex::new(());
- 
- /// The marker this process armed, as armed, for a Windows run that must
-@@ -1913,6 +1927,46 @@ mod tests {
-         }
+@@ -3731,6 +3731,14 @@ Liveness ("alive" = the endpoint driver has not ENDED; it does not mean
+     marker (quic-crash-breaker-legacy.json) and never changes whether QUIC
+     runs. It tells what the switch loses (crash loops with no QUIC panic) and
+     what it stops (kills read as crashes). The shadow goes with UDP (#6151).
++    With no UDP to fall back to (breaker::UDP_FALLBACK false, set by the
++    UDP-removal release; until then tests only, switched on in a
++    quic-panic-injection build by FREENET_TEST_BREAKER_NO_UDP_FALLBACK), a
++    peer trips at three again and its trip keeps QUIC on: a start delay of 1
++    minute doubling to 30 (Verdict::Backoff, waited out just before the
++    transport opens, cut short by a stop), the startup update check at once
++    (quic_crash_loop_update_now; the update claim still applies), and a
++    supervised peer exits on endpoint death like a gateway.
+   → When the node drops its last handle, the availability is Released
+     (final; the first final state stored wins, so a release and a
+     driver return racing never overwrite each other) and the driver's
+```
+
+**File**: `crates/core/src/bin/commands/rollback.rs` (modified, +41/-0)
+```diff
+@@ -2701,6 +2701,47 @@ pub(crate) mod tests {
+         assert!(read_probation_at(dir).is_none());
      }
  
-+    /// Both writers [`MARKER_UPDATE`] orders take it before they read the
-+    /// marker. Deleting either lock leaves every behaviour test green (a
-+    /// single-threaded test cannot interleave them), so this pins the lines.
++    /// A rollback that could not run for a transient reason (here the retained
++    /// known-good binary cannot be read) leaves the probation marker, so a
++    /// later crash retries it and succeeds once the cause is gone. Pinned
++    /// because the QUIC crash-loop backoff (#6151) must not clear the marker
++    /// meanwhile (`freenet.rs`'s `wait_for_healthy_window`): this is the case
++    /// a commit during the backoff's wait would have destroyed.
 +    #[test]
-+    fn the_marker_update_lock_is_taken_by_the_clear_and_the_record() {
-+        let flat = |src: &str, signature: &str| -> String {
-+            production_fn_body(src, signature)
-+                .lines()
-+                .map(|line| line.split_once("//").map_or(line, |(code, _)| code))
-+                .collect::<String>()
-+                .split_whitespace()
-+                .collect()
-+        };
-+        let clear = flat(include_str!("breaker/short_runs.rs"), "fn clear_short_run(");
-+        let lock = clear
-+            .find("let_update=super::MARKER_UPDATE.lock();")
-+            .expect("the clear takes the lock");
-+        let read = clear.find("read_previous(path)").expect("the read");
-+        assert!(lock < read, "before it reads the marker: {clear}");
-+        assert!(clear[lock..].contains("clear_if_owned(path,nonce)"));
++    fn a_rollback_that_could_not_run_is_retried_by_a_later_crash() {
++        let tmp = tempfile::tempdir().unwrap();
++        let dir = tmp.path();
++        let live = setup_probation(dir, "0.2.84", "0.2.83");
++        let known_good = known_good_path(dir);
++        let blob = std::fs::read(&known_good).unwrap();
++        // A directory where the blob should be: opening it works, reading fails.
++        std::fs::remove_file(&known_good).unwrap();
++        std::fs::create_dir(&known_good).unwrap();
 +
-+        let record = flat(
-+            include_str!("breaker.rs"),
-+            "fn note_endpoint_down_exit_with(",
++        for _ in 0..ROLLBACK_CRASH_THRESHOLD - 1 {
++            handle_post_stop_at(dir, "101", "0.2.84");
++        }
++        for attempt in 0..2 {
++            let PostStopOutcome::RollbackUnavailable { reason } =
++                handle_post_stop_at(dir, "101", "0.2.84")
++            else {
++                panic!("expected RollbackUnavailable at attempt {attempt}");
++            };
++            assert!(reason.contains("cannot read known-good"), "{reason}");
++            assert!(
++                read_probation_at(dir).is_some(),
++                "the marker must stay for a later crash to retry (attempt {attempt})"
++            );
++        }
++        std::fs::remove_dir(&known_good).unwrap();
++        std::fs::write(&known_good, &blob).unwrap();
++        assert!(matches!(
++            handle_post_stop_at(dir, "101", "0.2.84"),
++            PostStopOutcome::RolledBack { .. }
++        ));
++        assert_eq!(std::fs::read(&live).unwrap(), b"GOOD-BINARY");
++    }
++
+     #[test]
+     fn prepare_known_good_preserves_blob_and_label_for_genuine_chained_install() {
+         // Genuine chained install (existing marker is for the running version,
+```
+
+**File**: `crates/core/src/bin/freenet.rs` (modified, +179/-20)
+```diff
+@@ -409,9 +409,13 @@ async fn run_network_node_with_signals(
+     let commit_probation_task = {
+         let version = build_info::VERSION.to_string();
+         GlobalExecutor::spawn(async move {
+-            tokio::time::sleep(std::time::Duration::from_secs(
+-                commands::rollback::COMMIT_HEALTHY_UPTIME_SECS,
+-            ))
++            // #6151: a start the QUIC crash-loop breaker backed off does not
++            // count the wait, with the transport closed, as healthy uptime:
++            // the window starts again once the transport can open.
++            wait_for_healthy_window(
++                std::time::Duration::from_secs(commands::rollback::COMMIT_HEALTHY_UPTIME_SECS),
++                freenet::wait_for_quic_transport_open,
++            )
+             .await;
+             // `spawn_blocking`, not a direct call: `commit_probation` does
+             // synchronous filesystem work (`read_to_string`, `remove_file`) and
+@@ -630,8 +634,13 @@ async fn run_network_node_with_signals(
+                 "Startup update check skipped: {reason}. Run `freenet update` to update now."
+             );
+         }
+-        let startup_jitter_secs =
+-            freenet::config::GlobalRng::random_u64() % STARTUP_UPDATE_JITTER_MAX_SECS;
++        // #6151: a node the crash-loop breaker found in a QUIC crash loop,
++        // with no UDP to fall back to, checks within seconds: it is broken, and a
++        // fixed release is what ends the loop. The claim below still applies.
++        let startup_jitter_secs = startup_update_jitter_secs(
++            freenet::quic_crash_loop_update_now(),
++            freenet::config::GlobalRng::random_u64(),
 +        );
-+        let lock = record
-+            .find("let_update=MARKER_UPDATE.lock();")
-+            .expect("the record takes the lock");
-+        let armed = record
-+            .find("ifletSome((path,nonce))=armed{")
-+            .expect("the armed-marker path");
-+        let pending = record
-+            .find("letmutpending=pending.lock();")
-+            .expect("the pending-marker path");
+         // `startup_check_ran` is true only if the claim, made after the
+         // jitter, allowed the check.
+         let (startup_check_ran, latest) = match startup_attempt {
+@@ -1291,6 +1300,43 @@ fn gateway_quic_restarts(status: commands::auto_update::SupervisorStatus) -> Gat
+     }
+ }
+ 
++/// Sleep `window`, then, if `wait_for_open` had to wait for the transport to
++/// open (a QUIC crash-loop backoff, #6151), sleep a whole `window` again, until
++/// it has not. The update probation commits after this, so the backoff's wait
++/// with the transport closed never counts as healthy uptime.
++// No upper bound on purpose: if a backoff flag were ever left pending, this
++// keeps the rollback armed rather than committing a probation for a node whose
++// transport never opened, which is the failure the wait exists to prevent.
++async fn wait_for_healthy_window<Fut: std::future::Future<Output = bool>>(
++    window: std::time::Duration,
++    wait_for_open: impl Fn() -> Fut,
++) {
++    loop {
++        tokio::time::sleep(window).await;
++        if !wait_for_open().await {
++            break;
++        }
++    }
++}
++
++/// The startup update check's jitter when the QUIC crash-loop breaker found
++/// this start in a crash loop with no UDP to fall back to (#6151): short, so
++/// the check is still prompt, but a fleet that crashes together does not send
++/// its checks to GitHub at the same second (peers behind one NAT share its
++/// unauthenticated rate limit).
++const CRASH_LOOP_UPDATE_JITTER_MAX_SECS: u64 = 5;
++
++/// The startup update check's jitter: under [`CRASH_LOOP_UPDATE_JITTER_MAX_SECS`]
++/// when the QUIC crash-loop breaker found this start in a crash loop with no
++/// UDP to fall back to (#6151), otherwise `random` reduced to under [`STARTUP_UPDATE_JITTER_MAX_SECS`].
++fn startup_update_jitter_secs(crash_loop: bool, random: u64) -> u64 {
++    if crash_loop {
++        random % CRASH_LOOP_UPDATE_JITTER_MAX_SECS
++    } else {
++        random % STARTUP_UPDATE_JITTER_MAX_SECS
++    }
++}
++
+ /// Whether a finished run (after [`finish_run`]) ended cleanly for the QUIC
+ /// crash-loop breaker (#5940): an operator stop, which `finish_run` made `Ok`,
+ /// or an auto-update exit. Every other ending leaves the marker armed.
+@@ -2092,29 +2138,142 @@ mod tests {
+         );
+     }
+ 
+-    /// #6151: while UDP exists, a peer's QUIC crash-loop breaker trips, and
+-    /// the peer falls back to UDP, before the post-update crash-loop rollback
+-    /// restores the previous release and pins this one as bad. Each run the
+-    /// breaker counts ended in a crash the rollback also counts; the start
+-    /// that trips runs with QUIC off, so it adds no QUIC crash. At that point
+-    /// the rollback's count must still be short of its threshold. This holds
+-    /// for a release whose crashes are all QUIC panics; the rollback also
+-    /// counts unrelated crashes, which the breaker does not, so one of those
+-    /// before the panics lets the rollback act first.
++    /// #6151: the startup update check skips its jitter only in a QUIC crash
++    /// loop with no UDP to fall back to, and the update task takes its jitter
++    /// from that decision.
+     #[test]
+-    fn peer_breaker_trips_before_the_crash_loop_rollback() {
+-        let crashes_when_the_breaker_trips = freenet::PEER_SHORT_RUN
+```
+
+**File**: `crates/core/src/lib.rs` (modified, +4/-1)
+```diff
+@@ -36,12 +36,15 @@ pub use transport::connection_handler::QUIC_RESTORE_MIN_UPTIME;
+ #[doc(hidden)]
+ pub use transport::quic::breaker::{
+     ENDPOINT_DOWN_EXITS_TO_TRIP, GATEWAY_QUIC_BREAKER_COOLDOWN, PEER_SHORT_RUNS_TO_TRIP_WITH_UDP,
++    UDP_FALLBACK as QUIC_BREAKER_UDP_FALLBACK,
++    short_runs_to_trip as quic_breaker_short_runs_to_trip,
+ };
+ pub use transport::quic::breaker::{
+     STOP_NOTE_ENV_VAR as QUIC_BREAKER_STOP_NOTE_ENV_VAR,
+     STOP_NOTE_FILE as QUIC_BREAKER_STOP_NOTE_FILE, enable_quic_crash_breaker,
+-    quic_breaker_clean_exit, quic_breaker_signals_ready,
++    quic_breaker_clean_exit, quic_breaker_signals_ready, quic_crash_loop_update_now,
+     record_deliberate_stop as record_quic_breaker_deliberate_stop,
++    wait_for_transport_open as wait_for_quic_transport_open,
+ };
+ pub use transport::quic::liveness::{
+     enable_gateway_quic_restarts, note_gateway_supervisor_unverified,
+```
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +11/-0)
+```diff
+@@ -1499,6 +1499,17 @@ impl P2pConnManager {
+         notification_channel: EventLoopNotificationsReceiver,
+         node_controller: Receiver<NodeEvent>,
+     ) -> anyhow::Result<Infallible> {
++        // A peer in a QUIC crash loop with no UDP to fall back to waits here,
++        // before its transport opens (#6151, `breaker::Verdict::Backoff`).
++        // The update check is already running by now; a stop ends the wait.
++        // Nothing waits unless the binary's breaker decided a backoff.
++        if crate::transport::quic::breaker::wait_out_crash_loop_backoff(&op_manager.shutting_down)
++            .await
++        {
++            // Stopped during the wait: do not bind the socket for a node
++            // that is going away.
++            return Err(EventLoopExitReason::GracefulShutdown.into());
++        }
+         let transport = open_udp_transport::<S>(
+             self.key_pair.clone(),
+             self.listening_ip,
+```
+
+**File**: `crates/core/src/transport/connection_handler.rs` (modified, +7/-6)
+```diff
+@@ -599,10 +599,11 @@ pub(crate) async fn open_udp_transport<S: Socket>(
+     );
+     // A supervised gateway exits for its supervisor to restart it when that
+     // restores QUIC (#5940): its endpoint died, or the crash-breaker
+-    // cooldown that kept QUIC off for this run ended. Every other node keeps
+-    // running over UDP.
++    // cooldown that kept QUIC off for this run ended. With no UDP to fall
++    // back to (#6151) a supervised peer exits for an endpoint death too.
++    // Every other node keeps running over UDP.
+     let restart = gateway_quic_restart(
+-        is_gateway,
++        super::quic::liveness::restarts_for_quic(is_gateway),
+         super::quic::liveness::gateway_quic_restarts(is_gateway),
+         super::quic::liveness::gateway_supervisor_unverified(),
+         outbound.quic_availability(),
+@@ -678,10 +679,10 @@ fn gateway_quic_restart(
+     }
+     if !enabled && unverified {
+         tracing::warn!(
+-            "This gateway runs under systemd, but its unit does not set FREENET_SUPERVISED=1, \
++            "This node runs under systemd, but its unit does not set FREENET_SUPERVISED=1, \
+              so it does not restart itself to restore QUIC: if its QUIC endpoint dies or a \
+-             crash-breaker cooldown keeps QUIC off, it keeps running over UDP until it is \
+-             restarted. Set FREENET_SUPERVISED=1 in the unit if it restarts the node on exit \
++             crash-breaker cooldown keeps QUIC off, it keeps running until it is restarted, \
++             over UDP while UDP exists and with no transport once it is gone. Set FREENET_SUPERVISED=1 in the unit if it restarts the node on exit \
+              code 42 (units written by `freenet service install` do)"
+         );
+     }
+```
+
+**File**: `crates/core/src/transport/quic/breaker.rs` (modified, +686/-31)
+```diff
+@@ -11,8 +11,10 @@
+ //! on Windows, and a gateway on a unix platform with no boot identity
+ //! (`platform::boot_id`: anything but Linux and macOS), count short runs
+ //! that panicked in QUIC code ([`short_runs`]). A gateway on Linux or macOS
+-//! asks how its last run ended, which the rest of this doc describes. Peers on unix used that second rule until
+-//! #6151; it still runs on them as a shadow ([`legacy_shadow`]) that only
++//! asks how its last run ended, which the rest of this doc describes. With no
++//! UDP to fall back to ([`UDP_FALLBACK`] false) every node counts short runs,
++//! a gateway included, because only that rule can back off. Peers on unix used
++//! that second rule until #6151; it still runs on them as a shadow ([`legacy_shadow`]) that only
+ //! telemetry reads, until UDP is removed.
+ //!
+ //! # Gateways
+@@ -80,6 +82,42 @@
+ //! what they cost: the `quic_breaker_start` event reports what it would have
+ //! decided ([`StartReport`]).
+ //!
++//! # Without UDP (#6151; off until UDP is removed)
++//!
++//! Turning QUIC off is a fallback only while UDP exists. [`UDP_FALLBACK`]
++//! says whether it does; the UDP-removal release sets it to `false`, and
++//! until then everything below runs only in tests. With no UDP:
++//!
++//! - a peer trips at three short runs again
++//!   ([`short_runs::short_runs_to_trip`]);
++//! - a trip keeps QUIC on, on a gateway as on a peer ([`Verdict::Backoff`];
++//!   QUIC off would leave a gateway with no transport for 15 minutes to 4
++//!   hours, and every unix gateway counts short runs for this, see
++//!   [`decides_by_short_runs`]): its transport opens
++//!   only after a delay, 1 minute doubling per further counted run up to 30
++//!   ([`backoff_delay`], waited out in [`wait_out_crash_loop_backoff`] just
++//!   before the transport opens, and cut short by a stop), the marker records
++//!   the step at once with no QUIC panic (so a stop or crash during the wait
++//!   ends the backoff), and a run that outlives the short-run limit clears it.
++//!   The update probation (`rollback::COMMIT_HEALTHY_UPTIME_SECS`) does not
++//!   run while the wait does ([`wait_for_transport_open`]), so a release that
++//!   crashes the moment QUIC opens is still rolled back;
++//! - the binary's startup update check runs after a jitter of under 5
++//!   seconds instead of its 0-60 s one ([`quic_crash_loop_update_now`]), through the same claim, so the
++//!   known-bad pin, the lockout, a release cooling down and the download
++//!   budget still apply, and the backoff spaces the checks to about one per
++//!   30 minutes;
++//! - an earlier release's QUIC-off trip is dropped with a WARN;
++//! - a supervised peer exits when its QUIC endpoint dies, as a gateway does
++//!   (`liveness::gateway_quic_restarts`), under the same endpoint-death rule.
++//!   On unix this is a change in today's behaviour for a gateway with no boot
++//!   identity: [`note_endpoint_down_exit`] now writes its marker again after the
++//!   short-run timer cleared it, where it used to find none and keep running.
++//!
++//! An unsupervised peer whose endpoint dies is not restarted: it keeps
++//! running, with no transport once UDP is gone. Whether it should exit
++//! instead is left to the UDP-removal release.
++//!
+ //! # The marker
+ //!
+ //! [`MARKER_FILE`] in the node's data directory, written atomically:
+@@ -202,6 +240,190 @@ mod short_runs;
+ pub use short_runs::PEER_SHORT_RUNS_TO_TRIP_WITH_UDP;
+ pub(crate) use short_runs::QuicCode;
+ 
++/// Whether UDP is still there to fall back to when the breaker trips (#6151).
++/// While it is, a trip keeps QUIC off for a cooldown and the node runs over
++/// UDP. The UDP-removal release (#5940 phase D) sets this to `false`: a
++/// peer's trip then keeps QUIC on and delays the start instead
++/// ([`Verdict::Backoff`]), runs the update check within seconds, and a supervised
++/// peer exits when its QUIC endpoint dies, as a gateway does; and a peer
++/// trips at [`short_runs::SHORT_RUNS_TO_TRIP`] again. Everything that reads
++/// it takes it as a parameter, so tests cover both values; production reads
++/// it through [`udp_fallback`].
++pub const UDP_FALLBACK: bool = true;
++
++/// [`UDP_FALLBACK`], or `false` in a test build of the binary whose
++/// environment sets `FREENET_TEST_BREAKER_NO_UDP_FALLBACK` (the
++/// `quic-panic-injection` feature, which cannot be built without debug
++/// assertions), so a real-process test can run the post-UDP path.
++pub(crate) fn udp_fallback() -> bool {
++    #[cfg(feature = "quic-panic-injection")]
++    if std::env::var_os("FREENET_TEST_BREAKER_NO_UDP_FALLBACK").is_some() {
++        return false;
++    }
++    UDP_FALLBACK
++}
++
++/// How many short runs in a row trip the crash-loop breaker for a node, with
++/// or without UDP to fall back to. Read by the binary's test of the order
++/// between the breaker and the post-update rollback.
++#[doc(hidden)]
++pub fn short_runs_to_trip(is_gateway: bool, udp_fallback: bool) -> u32 {
++    short_runs::short_runs_to_trip(
+```
+
+**File**: `crates/core/src/transport/quic/breaker/short_runs.rs` (modified, +400/-50)
+```diff
+@@ -179,19 +179,30 @@ pub(super) const SHORT_RUNS_TO_TRIP: u32 = 3;
+ /// every crash (an out-of-memory kill, a SIGKILL, a crash elsewhere), while
+ /// the breaker counts consecutive short runs that panicked in QUIC code, so
+ /// one unrelated crash followed by two QUIC panics still lets the rollback
+-/// act first. Goes back to
+-/// [`SHORT_RUNS_TO_TRIP`] when UDP is removed, when there is no UDP to fall
+-/// back to and a rollback is the better outcome.
++/// act first. Goes back to [`SHORT_RUNS_TO_TRIP`] when UDP is removed
++/// ([`super::UDP_FALLBACK`] false, [`short_runs_to_trip`]), when there is no
++/// UDP to fall back to and a rollback is the better outcome.
+ pub const PEER_SHORT_RUNS_TO_TRIP_WITH_UDP: u32 = 2;
+ 
+-/// How many short runs in a row trip the breaker for `role`.
+-pub(super) const fn short_runs_to_trip(role: BreakerRole) -> u32 {
++/// How many short runs in a row trip the breaker for `role`, with or without
++/// UDP to fall back to ([`super::udp_fallback`]).
++pub(crate) const fn short_runs_to_trip(role: BreakerRole, udp_fallback: bool) -> u32 {
+     match role {
+-        BreakerRole::Peer => PEER_SHORT_RUNS_TO_TRIP_WITH_UDP,
+-        BreakerRole::Gateway => SHORT_RUNS_TO_TRIP,
++        BreakerRole::Peer if udp_fallback => PEER_SHORT_RUNS_TO_TRIP_WITH_UDP,
++        BreakerRole::Peer | BreakerRole::Gateway => SHORT_RUNS_TO_TRIP,
+     }
+ }
+ 
++/// Whether a trip keeps QUIC off for a cooldown, or, with no UDP to fall back
++/// to (#6151), delays the start instead and keeps QUIC on
++/// ([`Verdict::Backoff`]): with UDP removed, QUIC off is no transport at all.
++/// Gateways too: a gateway with QUIC off for 15 minutes to 4 hours would have
++/// no transport, and its backoff is no longer than a peer's. The role does not
++/// matter here; it still sets how many short runs trip ([`short_runs_to_trip`]).
++const fn trips_into_backoff(_role: BreakerRole, udp_fallback: bool) -> bool {
++    !udp_fallback
++}
++
+ /// How many times the timer tries to clear the count, [`SHORT_RUN`] apart. A
+ /// scanner holding the file open makes a removal fail on Windows, and the
+ /// failure only costs one count.
+@@ -218,11 +229,29 @@ pub(super) fn decide(
+     now_secs: u64,
+     ignore_breaker: bool,
+     role: BreakerRole,
++    udp_fallback: bool,
+ ) -> Decision {
+     let arm = |short_runs| Decision {
+         verdict: Verdict::Arm,
+         short_runs,
+     };
++    let backoff = trips_into_backoff(role, udp_fallback);
++    // The backoff step the last run started at; a further counted run (or
++    // endpoint death) on a peer in a backoff goes one step further.
++    let previous_step = match previous {
++        Previous::Marker(Marker::ShortRuns { backoff_step, .. }) => *backoff_step,
++        Previous::Nothing | Previous::Unreadable | Previous::Marker(_) => 0,
++    };
++    let trip = |short_runs: u32| Decision {
++        verdict: if backoff {
++            Verdict::Backoff {
++                step: previous_step.saturating_add(1),
++            }
++        } else {
++            Verdict::Trip
++        },
++        short_runs,
++    };
+     // A gateway's exit because its QUIC endpoint died is decided as on unix,
+     // whatever the run's length, so the restarts per day stay bounded.
+     if let Previous::Marker(Marker::ShortRuns {
+@@ -240,12 +269,10 @@ pub(super) fn decide(
+             role,
+         ) {
+             return match verdict {
+-                Verdict::Trip if !ignore_breaker => Decision {
+-                    verdict,
+-                    short_runs: *short_runs,
+-                },
++                Verdict::Trip if !ignore_breaker => trip(*short_runs),
+                 Verdict::Arm
+                 | Verdict::Trip
++                | Verdict::Backoff { .. }
+                 | Verdict::Cool { .. }
+                 | Verdict::RunUnarmed
+                 | Verdict::Unreadable => arm(0),
+@@ -260,19 +287,25 @@ pub(super) fn decide(
+             ..
+         }) if within(*started_at_secs, now_secs, SHORT_RUN_WINDOW) => {
+             let short_runs = short_runs.saturating_add(1);
+-            if short_runs >= short_runs_to_trip(role) && !ignore_breaker {
+-                Decision {
+-                    verdict: Verdict::Trip,
+-                    short_runs,
+-                }
++            let in_backoff = backoff && previous_step > 0;
++            if (in_backoff || short_runs >= short_runs_to_trip(role, udp_fallback))
++                && !ignore_breaker
++            {
++                trip(short_runs)
+             } else {
+                 arm(short_runs)
+             }
+         }
++        // With no UDP to fall back to, a peer does not keep QUIC off for an
++        // earlier trip (one from a release that still had UDP): it starts
++        // again as if nothing had happened, and `gate` logs it once.
+         Previous::Marker(Marker::Tripped {
+             tripped_at_secs,
+             trips,
+-        }) if !ignore_breaker && within(*tripped_at_secs, now_secs, role.cooldown(*trips)) => {
++        }) if !ignore_b
+```
+
+---
+
+### Incident Patch 2: `b7ba2671` (2026-11-18)
+**Commit Message**: fix(hosting): keep contract state inside --max-hosting-storage (#6285)
+
+**File**: `.claude/rules/operations.md` (modified, +11/-6)
+```diff
+@@ -207,21 +207,26 @@ Rules for choosing the class at a send site:
+                  drive_relay_* drivers, ResyncResponse apply, broadcast-path
+                  summaries/deltas that propagate a real UPDATE. This is also
+                  `Priority::DEFAULT`, so untagged callers fall here safely.
++                 EvictContract disk reclamation runs here too
++                 (reclaim_evicted_contract): it is what makes the hosting
++                 budget a disk bound, so the relayed writes that fill the disk
++                 must not be able to starve it.
+ 
+   Background   → best-effort node-internal work that must yield to client/relay
+                  traffic: the periodic interest-sync summarize
+                  (summary_if_hosted_or_in_use), placement-migration caching,
+-                 renewal, and EvictContract disk reclamation. NEVER tag a
+-                 client- or peer-visible op Background.
++                 and renewal. NEVER tag a client- or peer-visible op Background,
++                 nor work that enforces a resource bound (EvictContract).
+ 
+ When a shared helper is reached from BOTH a client and a relay path (e.g.
+ put_contract, update_contract), thread a `priority` param through rather
+ than hardcoding — decide the class at the driver that knows the origin.
+ 
+-The loop's pop() applies a bounded anti-starvation floor
+-(RELAY_STARVATION_FLOOR) so sustained ClientLocal load cannot indefinitely
+-starve NetworkRelay/Background — but that is a backstop, not a license to
+-mis-tag.
++The loop's pop() applies two bounded anti-starvation floors. RELAY_STARVATION_FLOOR
++stops sustained ClientLocal load from indefinitely starving NetworkRelay and
++Background. BACKGROUND_STARVATION_FLOOR stops sustained NetworkRelay load (the
++tier remote peers feed) from indefinitely starving Background. Both are
++backstops only: tag each send site with the class it belongs to.
+ ```
+ 
+ **Client `DelegateRequest`s and the delegate lane (#6144).** Once
+```
+
+**File**: `crates/core/src/contract/fair_queue.rs` (modified, +225/-9)
+```diff
+@@ -10,8 +10,9 @@
+ //! Two layers of fairness:
+ //!
+ //! 1. **Across priority classes** ([`Priority`]) — events are bucketed into one
+-//!    [`PriorityTier`] per class. [`FairEventQueue::pop`] drains `ClientLocal`
+-//!    fully before `NetworkRelay`, which drains before `Background`. Admission
++//!    [`PriorityTier`] per class. [`FairEventQueue::pop`] serves `ClientLocal`
++//!    before `NetworkRelay`, and `NetworkRelay` before `Background`, with a
++//!    bounded anti-starvation floor for each lower tier. Admission
+ //!    ([`FairEventQueue::try_push`]) reserves `CLIENT_LOCAL_RESERVE` slots that
+ //!    only `ClientLocal` may use, and [`FairEventQueue::evict_background`] sheds
+ //!    queued background work to make room for higher-priority events.
+@@ -87,10 +88,12 @@ pub(super) const MAX_DRAIN_BATCH: usize = 256;
+ #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash, Debug)]
+ pub(crate) enum Priority {
+     /// Best-effort, node-internal background work (summarize for interest-sync,
+-    /// placement-migration caching, renewal, contract eviction). Shed FIRST
+-    /// under pressure; never surfaces a client-facing error when dropped.
++    /// placement-migration caching, renewal). Shed FIRST under pressure; never
++    /// surfaces a client-facing error when dropped.
+     Background,
+-    /// Serving a remote peer's relayed operation. Normal precedence.
++    /// Serving a remote peer's relayed operation. Normal precedence. Also disk
++    /// reclamation of evicted contracts (`EvictContract`): the relayed writes
++    /// that fill the disk must not outrun the work that frees it.
+     NetworkRelay,
+     /// Originated by a WS/HTTP client connected to THIS node. Highest
+     /// precedence; admitted into the reserved lane so it is never rejected
+@@ -258,6 +261,13 @@ pub(super) struct FairEventQueue {
+     /// non-empty lower tier so sustained client load cannot indefinitely starve
+     /// remote relay / background execution (#4534 review).
+     client_streak: usize,
++    /// Consecutive `pop()`s that served a higher tier while `Background` had
++    /// work waiting. Drives the `Background` anti-starvation floor (see `pop`):
++    /// once this reaches `BACKGROUND_STARVATION_FLOOR`, the next `pop` serves
++    /// one `Background` event, so sustained `NetworkRelay` load — the tier
++    /// remote peers feed — cannot indefinitely postpone interest-sync
++    /// summaries and the rest of the `Background` work.
++    background_passed_over: usize,
+     /// Observability counters (#4917). Instance-scoped on purpose: a purely
+     /// process-global counter would make every gauge assertion race other
+     /// tests sharing the binary, which is the #4918 flake. [`Self::publish`]
+@@ -362,13 +372,22 @@ const DEPTH_WARN_BANDS: [usize; 2] = [MAX_TOTAL_FAIR_QUEUE / 2, MAX_TOTAL_FAIR_Q
+ /// `RELAY_STARVATION_FLOOR + 1` pops while still strongly favouring client work.
+ pub(super) const RELAY_STARVATION_FLOOR: usize = 16;
+ 
++/// After this many consecutive pops that passed over waiting `Background` work
++/// (whichever higher tier they served), `pop()` serves one `Background` event
++/// regardless of pending `ClientLocal` / `NetworkRelay`. `RELAY_STARVATION_FLOOR`
++/// alone does not bound `Background` latency: it only fires under `ClientLocal`
++/// load and prefers `NetworkRelay`, so a `NetworkRelay` tier that never runs
++/// empty would otherwise starve `Background` forever.
++pub(super) const BACKGROUND_STARVATION_FLOOR: usize = 16;
++
+ impl FairEventQueue {
+     /// Create a new, empty fair event queue.
+     pub(super) fn new() -> Self {
+         Self {
+             tiers: Default::default(),
+             total_queued: 0,
+             client_streak: 0,
++            background_passed_over: 0,
+             counters: FairQueueCounters::default(),
+         }
+     }
+@@ -587,18 +606,35 @@ impl FairEventQueue {
+     /// relay/background latency while keeping the overwhelming majority of slots
+     /// for client work.
+     ///
++    /// That floor serves `NetworkRelay` ahead of `Background` and never fires
++    /// without `ClientLocal` load, so `Background` has a floor of its own: after
++    /// `BACKGROUND_STARVATION_FLOOR` consecutive pops that served a higher tier
++    /// *with `Background` work waiting*, one `Background` event is served.
++    /// Without it a `NetworkRelay` tier that never runs empty (a busy node, or a
++    /// remote peer that keeps one event queued) suspends `Background` work for
++    /// as long as it lasts.
++    ///
+     /// Returns `None` if all tiers are empty.
+     pub(super) fn pop(&mut self) -> Option<(EventId, ContractHandlerEvent)> {
+         let client_nonempty = self.tiers[Priority::ClientLocal as usize].queued > 0;
+-        let lower_nonempty = self.tiers[Priority::NetworkRelay as usize].queued > 0
+-            || self.tiers[Priority::Background as usize].queued > 0;
++        let relay_nonempty = self.tiers[Priority::NetworkRelay as usize].queued > 0;
++        let background_nonempty = se
+```
+
+**File**: `crates/core/src/operations.rs` (modified, +26/-3)
+```diff
+@@ -764,14 +764,19 @@ pub(crate) fn reclaim_evicted_contract(
+     // safe. See `crate::ring::applied_payloads`.
+     op_manager.ring.applied_payloads.reset(&key);
+ 
+-    // Disk reclamation after hosting-cache eviction is best-effort GC —
+-    // background-tier so it yields the contract loop to client/relay work (#4534).
++    // Disk reclamation after hosting-cache eviction is what makes the hosting
++    // budget a real disk bound, so it is NOT background-tier: `Background`
++    // yields to `NetworkRelay`, the tier remote peers feed, and gets only its
++    // anti-starvation floor share while that tier stays busy — a peer could
++    // hold reclamation back for as long as it kept sending. At relay precedence
++    // it still yields the contract loop to client work (#4534) and takes its
++    // turn among the relayed writes that caused the eviction.
+     op_manager.notify_contract_handler_fire_and_forget_prioritized(
+         crate::contract::ContractHandlerEvent::EvictContract {
+             key,
+             expected_generation,
+         },
+-        crate::contract::Priority::Background,
++        crate::contract::Priority::NetworkRelay,
+     );
+ }
+ 
+@@ -1610,6 +1615,24 @@ mod reclaim_retraction_pin_tests {
+         );
+     }
+ 
++    /// EvictContract is what makes the hosting budget a disk bound, so it must
++    /// not be sheddable `Background` work that relayed writes (the tier remote
++    /// peers feed) can postpone (ANT-2026-YTU5DE0O).
++    #[test]
++    fn evict_contract_is_not_sent_at_background_priority() {
++        let src = include_str!("operations.rs");
++        let needle = ["fn ", "reclaim_evicted_contract("].concat();
++        let code = extract_fn_code(src, &needle);
 +        assert!(
-+            lock < armed && lock < pending,
-+            "before either write path: {record}"
++            code.contains(&["Priority::Network", "Relay"].concat()),
++            "`reclaim_evicted_contract` must send EvictContract at NetworkRelay priority"
++        );
++        assert!(
++            !code.contains(&["Priority::Back", "ground"].concat()),
++            "EvictContract enforces a resource bound and must never be Background"
 +        );
 +    }
 +
-     /// The Windows rewrite of a cleared marker is wired end to end: arming
-     /// keeps the marker as armed, and the endpoint-death record passes it on
-     /// off unix. Neither runs in a unix unit test (arming writes through
+     /// The emission must stay INSIDE the guard. The helper's protection is the
+     /// `on_contract_unhosted_unless_rehosted` return value; a refactor that
+     /// inlined `try_notify_node_event` at the call site — or emitted a retraction
 ```
 
-**File**: `crates/core/src/transport/quic/breaker/short_runs.rs` (modified, +5/-0)
+**File**: `crates/core/src/operations/get/op_ctx_task.rs` (modified, +55/-2)
 ```diff
-@@ -501,6 +501,11 @@ fn in_quic_code() -> bool {
- /// (`super::endpoint_down_verdict`). Runs under [`super::MARKER_UPDATE`],
- /// which the record is written under too, so the two cannot interleave.
- /// Returns whether it removed the marker.
-+///
-+/// A clock stepped back during the run can date the death before
-+/// `started_at_secs`; the clear then takes it for an earlier run's and
-+/// removes the marker, so that death restarts the gateway once without
-+/// counting (`super::endpoint_down_verdict` applies the same test).
- fn clear_short_run(path: &Path, nonce: u64) -> std::io::Result<bool> {
-     let _update = super::MARKER_UPDATE.lock();
-     if let Previous::Marker(Marker::ShortRuns {
-```
-
----
-
-### Incident Patch 2: `6e7fbbd6` (2026-11-17)
-**Commit Message**: fix(connect): one survivor rule for native and UDP connections to one peer (gates 18-19) (#6255)
-
-**File**: `.claude/rules/transport.md` (modified, +42/-12)
-```diff
-@@ -521,9 +521,10 @@ dropped unanswered past the per-CONNECT cap on refused acceptors,
- turned its own native connects off,
- `connect_native_rescued_by_udp_{joiner,acceptor}` for each UDP dial after a
- failed native setup that connected (R5: a connection a node without UDP
--would not have made), `connect_native_both_dials_connected_kept_{udp,native}`
--for a native dial and the UDP dial beside it that both connected (the first
--kept), and the last offer as states
-+would not have made), `connect_native_both_dials_connected_{udp,native}_first`
-+for a native dial and the UDP dial beside it that both connected (the native
-+one kept), `connect_native_survivor_{swapped,udp_dropped}` for each
-+survivor-rule decision, and the last offer as states
- `connect_native_offer_{level,percent,ready}`; see
- `operations/connect/native.rs`) and the shadow-mode upgrade
- telemetry (below, "Upgrade telemetry"). Each label set is declared once in a
-@@ -2284,15 +2285,44 @@ Fallback: a failed native setup is followed by today's UDP dial to the same
-   it with the native dial, and not held back, which punched late. An
-   outcome answers only its own transport's callbacks, except that a kept
-   connection answers both dials' requesters, since all asked for a
--  connection to that peer (never answered Ok without a kept connection). If
--  both connect, the one established first is kept and the later one is
--  closed without touching the ring or the transient budget
--  (connect_native_both_dials_connected_kept_{udp,native}); whether the two
--  sides can disagree on which survives is open (design note 10.2 item 18).
--  A UDP dial beside a native one that fails never backs off (a 30 s backoff
--  would refuse the native dial's own fallback); while the native dial is
--  pending it also marks nothing, and once the native dial has ended without
--  a connection it takes the ordinary failure path apart from the backoff. A
-+  connection to that peer (never answered Ok without a kept connection).
-+  SURVIVOR RULE (design note 10.2 item 18): when a node holds, or is handed,
-+  a native and a UDP connection to one peer key, it keeps the native one,
-+  whichever came first and whether the UDP one was dialled or arrived
-+  inbound (matched key looked up by key, else the address:
-+  native_holds_peer), as long as the native entry is LIVE (heard from within
-+  identity::HOLD_WINDOW, 30 s). A quiet native entry (peer restarted, NAT
-+  rebound) does not hold the peer: the UDP connection takes the ordinary
-+  replace, or it would be refused until the 120 s QUIC idle timeout. Both
-+  ends apply the rule, so they normally agree with no message. Residual:
-+  each end judges liveness on its OWN receipt stamp, so a UDP connection
-+  arriving just as one end's native connection crosses HOLD_WINDOW can be
-+  kept at one end and dropped at the other; that needs the native
-+  connection silent for about two keepalive intervals (HOLD_WINDOW >= 2 x
-+  KEEPALIVE_INTERVAL is a const assert in identity.rs), so about two lost
-+  keepalives. Rare; a gate before native is enabled (design note 10.2 item
-+  18). Native second: replace_transport_in_place swaps only the
-+  transport (listener, sender, connection id, receipt, remote version) and
-+  keeps identity, ring membership, transient status, ReadyState,
-+  connected-since and health (no promotion, prune or budget call); the old
-+  listener's close carries the old id and is ignored. UDP second: dropped,
-+  nothing else touched. A native dial onto an entry bound to ANOTHER key
-+  takes the ordinary replace (the entry is stale). Two UDP connections keep
-+  the old later-replaces-earlier behaviour. record_success runs before any
-+  keep/swap/drop. A dropped UDP dial's requesters are answered with the
-+  native holder's address, and an unused reservation at the dial's own
-+  address is released. Counted: connect_native_survivor_{swapped,udp_dropped},
-+  connect_native_both_dials_connected_{udp,native}_first (beside pair only).
-+  One-sided native setups (one end connected, the other's setup failed;
-+  10.2 item 20) are NOT counted locally: no counter at one end can see them
-+  (a "native won then closed soon" counter was tried in #6255 and both
-+  missed them and counted unrelated closes). They are measured by joining
-+  both ends' setup outcomes by the CONNECT transaction (in simulation, the
-+  native wire trace's native_setup_pairs).
-+  A UDP dial beside a native one that fails while the native dial is
-+  pending neither backs off (a 30 s backoff would refuse the native dial's
-+  own fallback) nor marks anything; once the native dial has ended without
-+  a connection it takes the ordinary failure path, backoff included. A
-   native failure marks
-   no failed address and records no peer backoff, so the fallback is not
-   refused. Until UDP is removed a failed native setup never costs the join
-```
-
-**File**: `crates/core/src/node/network_bridge/in_memory.rs` (modified, +8/-0)
-```diff
-@@ -113,6 +113,12 @@ pub struct FaultInjectorState {
-     /// each with the bytes it has let through so far. Kept here rather than in
-     /// [`FaultConfig`], whose rules are values.
-     pub quic_datagram_cuts: Vec<(crate::simulation::QuicDatagramCut, u64)>,
-+    /// One-way delay added to every QUIC-class datagram
-+    /// (`SimNetwork::delay_quic_datagrams`), if any.
-+    pub quic_datagram_delay: Option<std::time::Duration>,
-+    /// One-way delay added to every legacy UDP intro datagram, the packets
-+    /// that open a UDP connection (`SimNetwork::delay_udp_intros`), if any.
-+    pub udp_intro_delay: Option<std::time::Duration>,
- }
- 
- impl FaultInjectorState {
-@@ -127,6 +133,8 @@ impl FaultInjectorState {
-             network_name: None,
-             enforce_fault_drops: false,
-             quic_datagram_cuts: Vec::new(),
-+            quic_datagram_delay: None,
-+            udp_intro_delay: None,
-         }
-     }
- 
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +17/-5)
-```diff
-@@ -564,6 +564,11 @@ struct ConnectionEntry {
-     /// `None` when the version wasn't exchanged (e.g. joiner->gateway path).
-     /// Used to gate version-dependent message types (e.g. SubscribeHint).
-     remote_version: Option<(u8, u8, u16)>,
-+    /// Whether this transport is a QUIC-native connection rather than a
-+    /// legacy UDP one. The survivor rule reads it: when a node holds, or is
-+    /// handed, a native and a UDP connection to one peer, it keeps the
-+    /// native one (`P2pConnManager::replace_transport_in_place`).
-+    native: bool,
- }
- 
- impl ConnectionEntry {
-@@ -1265,7 +1270,12 @@ impl P2pConnManager {
- 
-     /// Removes a transport from the connection map and the open-transport set.
-     fn remove_connection(&mut self, addr: SocketAddr) -> Option<ConnectionEntry> {
--        self.connections.remove(addr)
-+        let removed = self.connections.remove(addr);
-+        #[cfg(any(test, feature = "testing"))]
-+        if removed.is_some() {
-+            self.trace_transport(addr, None);
-+        }
-+        removed
-     }
- 
-     pub(in crate::node) fn listening_port(&self) -> u16 {
-@@ -3379,10 +3389,10 @@ struct EventListenerState {
-     /// remote peer's, so the bound is the dial's.
-     udp_beside_native: HashMap<SocketAddr, Vec<BesideUdpRequester>>,
-     /// Addresses whose UDP dial beside a still-pending native dial connected
--    /// first. If the native dial then connects too, its connection is closed
--    /// (the first established is kept) and counted as
--    /// `connect_native_both_dials_connected_kept_udp`. Cleared when the native
--    /// dial ends.
-+    /// first. If the native dial then connects too, it is swapped in for the
-+    /// UDP connection (the survivor rule keeps native) and counted as
-+    /// `connect_native_both_dials_connected_udp_first`. Cleared when the
-+    /// native dial ends.
-     beside_udp_connected: HashSet<SocketAddr>,
-     pending_op_results: HashMap<Transaction, Sender<WaiterReply>>,
-     /// Last time pending_op_results was scanned for closed senders.
-@@ -5895,6 +5905,7 @@ pub(crate) mod tests {
-                 created_at: Instant::now(),
-                 link_use: super::zombie_sweep::LinkUseStamp::new(Instant::now()),
-                 remote_version: None,
-+                native: false,
-             },
-         );
-         let (tx2, _rx2) = mpsc::channel(1);
-@@ -5908,6 +5919,7 @@ pub(crate) mod tests {
-                 created_at: Instant::now(),
-                 link_use: super::zombie_sweep::LinkUseStamp::new(Instant::now()),
-                 remote_version: None,
-+                native: false,
-             },
-         );
- 
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle.rs` (modified, +437/-116)
-```diff
-@@ -1247,6 +1247,37 @@ impl P2pConnManager {
-                     }
-                 };
- 
-+                // The survivor rule (`native_holds_peer`): an inbound UDP
-+                // connection from a peer a native connection holds is dropped,
-+                // leaving the native entry, the ring and the transient budget
-+                // untouched. The peer applies the same rule to its own copy
-+                // of this pair, so it normally keeps the native connection
-+                // too; see `native_holds_peer` for when the two ends can
-+                // decide differently.
-+                if let Some(holder) =
-+                    self.native_holds_peer(remote_addr, peer.as_ref().map(|p| p.pub_key()))
-+                {
-+                    tracing::info!(
-+                        remote = %remote_addr,
-+                        %holder,
-+                        transient,
-+                        transaction = ?transaction,
-+                        "Inbound UDP connection from a peer a native connection holds; \
-+                         keeping the native connection"
-+                    );
-+                    TRANSPORT_METRICS.record_connect_native_survivor(false);
-+                    #[cfg(any(test, feature = "testing"))]
-+                    crate::operations::connect::native_wire_trace::record_at(
-+                        remote_addr,
-+                        crate::operations::connect::native_wire_trace::NativeWireEvent::Survivor {
-+                            swapped: false,
-+                            inbound: true,
-+                        },
-+                    );
-+                    drop(connection);
-+                    return Ok(());
-+                }
-+
-                 tracing::info!(
-                     remote = %remote_addr,
-                     peer_known = peer.is_some(),
-@@ -1304,30 +1335,70 @@ impl P2pConnManager {
-                     transaction = %transaction,
-                     "Outbound connection established"
+@@ -3483,12 +3483,23 @@ async fn check_local_with_interest_gate(
+             // Peers with only stale LRU cache (no active interest) defer to
+             // the network but keep the local value as fallback.
+             if !op_manager.interest_manager.has_local_interest(&key) {
+-                // Stale cache only — defer to network, keep as fallback.
++                // Stale cache only — defer to network, keep as fallback, but
++                // only while this node still hosts the contract or has it in use (the
++                // same rule as `Ring::may_merge_relayed_update`: such a copy
++                // still receives updates). An evicted
++                // copy awaiting reclamation is not in the update mesh and no
++                // longer receives updates, so its bytes are frozen: serving
++                // them would answer a read from a stale copy (hosting
++                // invariant 1).
+                 tracing::debug!(
+                     %instance_id,
+                     "GET relay: stale cache (no local interest), will forward"
                  );
--                // A UDP dial beside a native one connected.
-                 if !transport.is_native() {
--                    if let Some(beside) = state.udp_beside_native.remove(&peer_addr) {
--                        // The native dial connected first: the connection
--                        // established first is kept. This one is closed (dropped)
--                        // without touching the ring or the transient budget, and
--                        // this dial's requesters are answered with the kept one.
--                        if self.connections.contains_key(&peer_addr) {
--                            tracing::info!(
--                                remote = %peer_addr,
--                                transaction = %transaction,
--                                "UDP dial beside a native dial connected after the native one; \
--                                 keeping the native connection"
--                            );
-+                    let beside = state.udp_beside_native.remove(&peer_addr);
-+                    // The survivor rule (`native_holds_peer`): a UDP dial to a
-+                    // peer a native connection holds is dropped without
-+                    // touching the ring or the transient budget, whether it
-+                    // ran beside that native dial or not, and its requesters
-+                    // are answered with the native connection.
-+                    if let Some(holder) = self.native_holds_peer(peer_addr, Some(peer.pub_key())) {
-+                        // The in-transit reservation this dial made at its
-+                        // own address is not used: the peer is held at
-+                        // `holder`. At the holder's own address it is the
-+                        // ring entry, which stays.
-+                        // Not while a native dial to that address is
-+                        // pending: the reservation is that dial's too.
-+                        if holder != peer_addr && !state.native_pending.contains(&peer_addr) {
-+                            let cm = &self.bridge.op_manager.ring.connection_manager;
-+                            if !cm.is_in_ring(peer_addr) && cm.has_connection_or_pending(peer_addr)
-+                            {
-+                                cm.prune_in_transit_connection(peer_addr);
-+                            }
-+                        }
-+                        tracing::info!(
-+                            %holder,
-+                            remote = %peer_addr,
-+                            transaction = %transaction,
-+                            beside = beside.is_some(),
-+                            "UDP dial connected to a peer a native connection holds; \
-+                             keeping the native connection"
-+                        );
-+                        TRANSPORT_METRICS.record_connect_native_survivor(false);
-+                        #[cfg(any(test, feature = "testing"))]
-+                        crate::operations:
+-                (None, Some((key, state, contract)))
++                if op_manager.ring.may_merge_relayed_update(&key) {
++                    (None, Some((key, state, contract)))
++                } else {
++                    (None, None)
++                }
+             } else {
+                 // Actively hosting with interest — serve immediately.
+                 (Some((key, state, contract)), None)
+@@ -12925,3 +12936,45 @@ mod candidate_log_call_site_tests {
+         );
+     }
+ }
++
++#[cfg(test)]
++mod evicted_copy_fallback_tests {
++    use super::*;
++    use crate::operations::route_attempt::driver_test_support::op_manager_with_peers_and_store;
++
++    /// A relay's routing-exhausted fallback must not be an evicted copy that is
++    /// awaiting reclamation: it no longer receives updates, so serving it
++    /// answers a read from a frozen copy. A hosted contract keeps being served.
++    #[tokio::test(flavor = "current_thread", start_paused = true)]
++    async fn the_stale_fallback_is_not_an_evicted_unhosted_copy() {
++        let (op_manager, _rx, _peers, _guards, store) =
++            op_manager_with_peers_and_store("get-fallback-evicted", 1).await;
++        let key = ContractKey::from_id_and_code(
++            ContractInstanceId::new([0x5a; 32]),
++            freenet_stdlib::prelude::CodeHash::new([0x5b; 32]),
++        );
++        *store.lock() = Some((key, WrappedState::new(vec![1; 8])));
++        assert!(!op_manager.ring.is_hosting_contract(&key));
++        assert!(!op_manager.interest_manager.has_local_interest(&key));
++
++        let (served, fallback) = check_local_with_interest_gate(&op_manager, key.id(), false).await;
++        assert!(served.is_none());
++        assert!(
++            fallback.is_none(),
++            "an evicted, unreclaimed copy must not be offered as the stale fallback"
++        );
++
++        op_manager.ring.host_contract(
++            key,
++            8,
++            crate::ring::AccessType::Get,
++            crate::ring::HostingCause::Other,
++        );
++        assert!(op_manager.ring.is_hosting_contract(&key));
++        let (served, fallback) = check_local_with_interest_gate(&op_manager, key.id(), false).await;
++        assert!(
++            served.is_some() || fallback.is_some(),
++            "a hosted contract's local copy is served or kept as the fallback"
++        );
++    }
++}
 ```
 
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle/tests.rs` (modified, +643/-12)
+**File**: `crates/core/src/operations/put/op_ctx_task.rs` (modified, +6/-1)
 ```diff
-@@ -4062,11 +4062,15 @@ async fn native_then_udp_both_connect_keeps_the_native_connection() {
-     let mut h = Harness::new("beside-native-then-udp").await;
-     let addr: SocketAddr = "203.0.113.236:6281".parse().unwrap();
-     let before = both_connected_here();
-+    let survivors = survivor_here();
-     let (peer, mut native, mut udp) = beside::dials(&mut h, addr).await;
-     h.handshake_event(beside::established(&peer, true)).await;
-     let id = h.mgr.connections[&addr].connection_id;
-+    let pair = PairState::of(&h, addr);
-     h.handshake_event(beside::established(&peer, false)).await;
-     assert_eq!(both_connected_here(), (before.0, before.1 + 1));
-+    assert_eq!(survivor_here(), (survivors.0 + 1, survivors.1));
-+    assert_eq!(PairState::of(&h, addr), pair, "nothing else changed");
-     assert_eq!(native.try_recv(), Ok(Ok((addr, None))));
-     assert_eq!(udp.try_recv(), Ok(Ok((addr, None))));
-     assert_eq!(
-@@ -4085,26 +4089,37 @@ fn both_connected_here() -> (u64, u64) {
-     (udp, native)
+@@ -5000,7 +5000,12 @@ async fn drive_relay_probe_reconcile(
+     // see `drive_relay_put`.
+     let htl = htl.min(op_manager.ring.max_hops_to_live);
+ 
+-    if op_manager.ring.is_receiving_updates(&key) {
++    // A probe reconcile merges into the local copy like a relayed UPDATE, so
++    // it follows the same rule: an evicted copy awaiting reclamation is not
++    // merged into (`Ring::may_merge_relayed_update`), the reconcile is routed
++    // on instead.
++    if op_manager.ring.is_receiving_updates(&key) && op_manager.ring.may_merge_relayed_update(&key)
++    {
+         // Merge via the same path an UPDATE uses; the contract executor
+         // fans the change out to the rest of the subscriber mesh
+         // automatically on a real state change (`BroadcastStateChange`,
+```
+
+**File**: `crates/core/src/operations/update/op_ctx_task.rs` (modified, +191/-3)
+```diff
+@@ -1097,6 +1097,29 @@ async fn run_relay_broadcast_to(
+     }
  }
  
--/// #6253 review round 2: both dials connect, the UDP one first. The first
--/// connection is kept: the native one is closed without touching the ring
--/// (no prune, so no second DropConnection) and counted, and the native
--/// dial's requesters were answered by the UDP connection.
-+/// Gate 18: both dials connect, the UDP one first. The survivor rule keeps
-+/// the native connection: it is swapped in for the UDP one in place, without
-+/// promotion, prune (so no second DropConnection) or transient budget call,
-+/// and counted. What the ring and the connection manager hold for the peer
-+/// survives the swap: ring entry, ReadyState, connected-since, health record
-+/// and transient count (the in-place switch #6253 removed lost these).
- #[tokio::test]
--async fn udp_then_native_both_connect_keeps_the_udp_connection() {
-+async fn udp_then_native_both_connect_swaps_in_the_native_connection() {
-     let mut h = Harness::new("beside-udp-then-native").await;
-     let addr: SocketAddr = "203.0.113.236:6282".parse().unwrap();
-     let before = both_connected_here();
-+    let survivors = survivor_here();
-     let (peer, mut native, mut udp) = beside::dials(&mut h, addr).await;
-     h.handshake_event(beside::established(&peer, false)).await;
-     assert_eq!(native.try_recv(), Ok(Ok((addr, None))));
-     assert_eq!(udp.try_recv(), Ok(Ok((addr, None))));
-     let udp_id = h.mgr.connections[&addr].connection_id;
-+    assert!(!h.mgr.connections[&addr].native, "premise: a UDP entry");
-+    let cm = &h.mgr.bridge.op_manager.ring.connection_manager;
-+    cm.mark_peer_ready(addr);
-+    cm.peer_health.lock().record_success(addr);
-+    let pair = PairState::of(&h, addr);
-+    assert!(pair.marked_ready && pair.connected_since.is_some() && pair.health == Some((1, 0)));
-     while h.handshake_rx.try_recv().is_ok() {}
-     h.handshake_event(beside::established(&peer, true)).await;
--    assert_eq!(
--        h.mgr.connections[&addr].connection_id, udp_id,
--        "the UDP connection, established first, stays"
-+    let entry = &h.mgr.connections[&addr];
-+    assert_ne!(
-+        entry.connection_id, udp_id,
-+        "the native connection took the entry"
-     );
-+    assert!(entry.native);
-     let mut drops = 0;
-     while let Ok(command) = h.handshake_rx.try_recv() {
-         if matches!(command, HandshakeCommand::DropConnection { addr: a } if a == addr) {
-@@ -4114,10 +4129,88 @@ async fn udp_then_native_both_connect_keeps_the_udp_connection() {
-     // The arm drops the address's expectation once, as for any outbound
-     // connection; a replacement would prune and send a second.
-     assert_eq!(drops, 1, "nothing was pruned or replaced");
--    assert_eq!(h.ring_key_at(addr).as_ref(), Some(peer.pub_key()));
--    assert_eq!(h_count(&h), 1);
-+    assert_eq!(PairState::of(&h, addr), pair, "everything else survived");
-     assert_eq!(both_connected_here(), (before.0 + 1, before.1));
-+    assert_eq!(survivor_here(), (survivors.0, survivors.1 + 1));
-     beside::assert_clear(&h, addr);
-+    // The UDP listener's close carries the old id and is ignored.
-+    h.mgr
-+        .handle_transport_event(
-+            Some(ConnEvent::TransportClosed {
-+                remote_addr: addr,
-+                error: TransportError::ConnectionClosed(addr),
-+                connection_id: udp_id,
-+                reason: crate::tracing::DisconnectReason::Timeout,
-+            }),
-+            &mut h.state,
-+            &h.handshake,
-+        )
-+        .await
-+        .expect("handle_transport_event");
-+    assert!(
-+        h.mgr.connections[&addr].native,
-+        "the stale close is ignored"
-+    );
-+    assert_eq!(PairState::of(&h, addr), pair);
-+    // The old UDP listener itself ended: its sender was dropped, so it
-+    // reports its close, under the old id.
-+    let ended = tokio::time::timeout(Duration::from_secs(5), async {
-+        loop {
-+            match h._conn_events_rx.recv().await {
-+                Some(ConnEvent::TransportClo
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_map.rs` (modified, +1/-0)
-```diff
-@@ -132,6 +132,7 @@ mod tests {
-             created_at: now,
-             link_use: LinkUseStamp::new(now),
-             remote_version: None,
-+            native: false,
-         }
-     }
- 
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/identity.rs` (modified, +19/-6)
-```diff
-@@ -188,6 +188,23 @@ pub(super) enum BindOutcome {
- /// count too, stamped at the path's next 2 s watch tick.
- pub(super) const HOLD_WINDOW: std::time::Duration = std::time::Duration::from_secs(30);
- 
-+// The survivor rule treats a native connection silent for HOLD_WINDOW as
-+// gone; with keepalives at KEEPALIVE_INTERVAL that takes at least two lost
-+// keepalives in a row, not one.
-+const _: () = assert!(
-+    HOLD_WINDOW.as_nanos() >= 2 * crate::transport::quic::config::KEEPALIVE_INTERVAL.as_nanos()
-+);
++/// Broadcasts skipped because this node does not host the contract
++/// (`Ring::may_merge_relayed_update`), since process start.
++static UNHOSTED_BROADCAST_SKIPS: std::sync::atomic::AtomicU64 =
++    std::sync::atomic::AtomicU64::new(0);
 +
-+/// Whether `entry`'s transport received an authenticated packet within
-+/// [`HOLD_WINDOW`]. A transport that does not report receipt (a test double)
-+/// counts as heard from.
-+pub(super) fn heard_from_recently(entry: &ConnectionEntry) -> bool {
-+    entry
-+        .receipt
-+        .as_ref()
-+        .is_none_or(|stamp| stamp.since_last_receipt() <= HOLD_WINDOW)
++/// Count a skipped broadcast for an unhosted contract. The count is logged at
++/// `info` on each power of two, which release builds keep (a `debug` line is
++/// compiled out), so a sender that keeps broadcasting to a node that evicted
++/// the contract is visible. No resync is sent: the sender's belief about this
++/// node heals through the periodic interest sync.
++fn record_unhosted_broadcast_skip(incoming_tx: &Transaction, key: &ContractKey, kind: &str) {
++    let total = UNHOSTED_BROADCAST_SKIPS.fetch_add(1, std::sync::atomic::Ordering::Relaxed) + 1;
++    if total.is_power_of_two() {
++        tracing::info!(
++            tx = %incoming_tx,
++            contract = %key,
++            kind,
++            total_skipped = total,
++            "UPDATE relay: broadcast skipped, contract is not hosted here"
++        );
++    }
 +}
 +
- /// The connection, other than `exclude`, bound to `key`, and whether it was
- /// heard from within [`HOLD_WINDOW`]. A connection whose transport does not
- /// report receipt (a test double) counts as heard from.
-@@ -196,12 +213,7 @@ pub(super) fn key_holder(
-     exclude: Option<SocketAddr>,
-     key: &TransportPublicKey,
- ) -> Option<(SocketAddr, bool)> {
--    let live = |entry: &ConnectionEntry| {
--        entry
--            .receipt
--            .as_ref()
--            .is_none_or(|stamp| stamp.since_last_receipt() <= HOLD_WINDOW)
--    };
-+    let live = heard_from_recently;
-     let mut quiet = None;
-     for (addr, entry) in connections {
-         if Some(*addr) == exclude || entry.identity.key() != Some(key) {
-@@ -492,6 +504,7 @@ mod tests {
-                     created_at: now,
-                     link_use: super::super::zombie_sweep::LinkUseStamp::new(now),
-                     remote_version: None,
-+                    native: false,
-                 },
-             );
+ /// Inner driver for `RequestUpdate`. Mirrors `update.rs:347-594`.
+ ///
+ /// Decision tree:
+@@ -1144,7 +1167,7 @@ async fn drive_relay_request_update(
+         _ => None,
+     };
+ 
+-    if state_before.is_some() {
++    if state_before.is_some() && op_manager.ring.may_merge_relayed_update(&key) {
+         // ── Local apply path ──────────────────────────────────────────────
+         let hash_before = state_before.as_ref().map(state_hash_full);
+ 
+@@ -1971,6 +1994,11 @@ async fn drive_relay_broadcast_to(
+ ) -> Result<(), OpError> {
+     let self_location = op_manager.ring.connection_manager.own_location();
+ 
++    if !op_manager.ring.may_merge_relayed_update(&key) {
++        record_unhosted_broadcast_skip(&incoming_tx, &key, "BroadcastTo");
++        return Ok(());
++    }
++
+     // ── Step 1: update sender's cached summary ────────────────────────────
+     // Empty bytes mean the sender could not summarize itself, NOT that its
+     // summary is empty — see `seed_sender_summary_from_broadcast`.
+@@ -2829,6 +2857,26 @@ async fn drive_relay_request_update_streaming(
+         value,
+     } = payload;
+ 
++    if !op_manager.ring.may_merge_relayed_update(&key) {
++        tracing::debug!(
++            tx = %incoming_tx,
++            %key,
++            "UPDATE relay (driver streaming): RequestUpdateStreaming not merged, \
++             contract is not hosted here; forwarding"
++        );
++        // The non-streaming driver sees the gate refuse as well and takes its
++        // forward path.
++        return drive_relay_request_update(
++            op_manager,
++            incoming_tx,
++            key,
++            related_contracts,
++            value,
++            sender_addr,
++        )
++        .await;
++    }
++
+     // Step 4: apply update. BroadcastStateChange propagates automatically.
+     let UpdateExecution {
+         value: updated_value,
+@@ -3012,6 +3060,10 @@ async fn apply_streaming_broadcast(
+     sender_addr: SocketAddr,
+     covered: crate::ring::broadcast_coverage::CoveredPeers,
+ ) -> Result<(), OpError> {
++    if !op_manager.ring.may_merge_relayed_update(&key) {
++        record_unhosted_broadcast_skip(&incoming_tx, &key, "BroadcastToStreaming");
++        return Ok(());
++    }
+     let mut receiver_terminal = op_manager
+         .payload_mix
+         .receiver_terminal_guard(false, state_bytes.len());
+@@ -4482,6 +4534,7 @@ mod tests {
+             ContractInstanceId::new([7u8; 32]),
+             CodeHash::new([8u8; 32]),
+         );
++        host_for_test(&op_manager, key);
+         let sender_addr: SocketAddr = "127.0.0.1:12100".parse().unwrap();
+ 
+         // First broadcast delta → dropped queue-full → MUST emit a ResyncRequest.
+@@ -4558,6 +4611,7 @@ mod tests {
+             ContractInstanceId::new([9u8; 32]),
+             CodeHash::new([10u8; 32]),
+         );
++        host_for_test(&op_manager, key);
+         let sender_addr: SocketAddr = "127.0.0.1:12200".parse().unwrap();
+ 
+         // First streaming full-state → dropped queue-full → MUST emit a ResyncRequest.
+@@ -4637,6 +4691,7 @@ mod tests {
+         for key in [inline_key, stream_key] {
+             host_for_test(&op_manager, key);
          }
++        let skips_before = UNHOSTED_BROADCAST_SKIPS.load(std::sync::atomic::Ordering::Relaxed);
+ 
+         for _ in 0..2 {
+             let _result: Result<(), OpError> = drive_relay_broadcast_to(
+@@ -4693,8 +4748,16 @@ mod tests {
+             op_manager
+                 .payload_mix
+                 .propagation_event_for_test(Ev::RxDedup),
+-            3,
+-            "telemetry still counts every received skip"
++            2,
++            "a broadcast for a contract this node does not host is skipped before the \
++             dedup cache, so only the two hosted keys' repeats are counted here"
++        );
++        // Every skip is still counted somewhere: the two unhosted b
 ```
 
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/zombie_sweep.rs` (modified, +3/-0)
+**File**: `crates/core/src/ring.rs` (modified, +70/-1)
 ```diff
-@@ -1648,6 +1648,7 @@ mod tests {
-                     created_at: created,
-                     link_use: LinkUseStamp::new(created),
-                     remote_version: None,
-+                    native: false,
-                 },
-             );
-         }
-@@ -1716,6 +1717,7 @@ mod tests {
-             created_at,
-             link_use,
-             remote_version: None,
-+            native: false,
-         }
+@@ -5028,10 +5028,31 @@ impl Ring {
+         self.hosting_manager.committed_state_size(contract)
      }
  
-@@ -2511,6 +2513,7 @@ mod tests {
-                 created_at: created,
-                 link_use: link_use.clone(),
-                 remote_version: None,
-+                native: false,
-             },
++    /// Whether a relayed UPDATE (or probe reconcile) may be merged into, and
++    /// persisted for, `key` here.
++    ///
++    /// A contract that is neither in the hosting cache nor in use (no
++    /// subscriber of any kind) is not hosted: an eviction has queued its bytes
++    /// for reclamation, or this node only still has them on disk. Merging a
++    /// relayed write into such a copy moves its state generation without
++    /// re-hosting it, and a remote peer decides when that happens, so the
++    /// bytes would stay on disk outside every budget (hosting invariants 1
++    /// and 3: a copy is served only while fresh in the update mesh, and the
++    /// demand ranking, not an UPDATE, decides what stays). Callers skip the
++    /// merge and, for a request, forward it toward the hosts instead.
++    pub(crate) fn may_merge_relayed_update(&self, key: &ContractKey) -> bool {
++        self.is_hosting_contract(key) || self.contract_in_use(key)
++    }
++
+     pub(crate) fn commit_state_write(&self, contract: &ContractKey, state_size: usize) {
+         let new_gen = self.hosting_manager.bump_state_generation(contract);
++        // Hosting-budget accounting: charge the hosted entry the size that was
++        // just stored. `host_contract` records a size on PUT/GET only, and the
++        // UPDATE paths must not call it (it stamps recency), so without this a
++        // contract that grows through UPDATE stays charged its PUT-time size
++        // and the byte-budget eviction never sees the growth.
+         self.hosting_manager
+-            .refresh_cache_generation(contract, new_gen);
++            .refresh_cache_after_write(contract, new_gen, state_size as u64);
+         // Disk-usage accounting (#4683): maintain the aggregate on-disk state
+         // total by signed delta (`new − previous_for_key`). Read by the
+         // eviction floor and the admission gates since #4702. No-op until the
+@@ -11322,6 +11343,54 @@ mod cost_pressure_seam_tests {
          );
+     }
  
++    /// A state write must re-charge an already-hosted contract to the hosting
++    /// budget. Goes through the production funnel (`Ring::commit_state_write`,
++    /// the post-write step of every executor PUT/UPDATE chokepoint) and the
++    /// production sweep entry (`Ring::sweep_expired_hosting`). Without the
++    /// size refresh a contract hosted at 1 byte and grown by an UPDATE stays
++    /// charged 1 byte, the cache never goes over budget, and the sweep evicts
++    /// nothing however much state the UPDATEs stored.
++    #[tokio::test]
++    async fn commit_state_write_charges_update_growth_to_the_hosting_budget() {
++        let op_manager = attached_op_manager("commit-state-write-size").await;
++        let hosting = &op_manager.ring.hosting_manager;
++        let budget = hosting.hosting_cache_stats().budget_bytes;
++        let keys: Vec<_> = (0..3).map(wiring_key).collect();
++        for key in &keys {
++            hosting.record_contract_access(
++                *key,
++                1,
++                crate::ring::hosting::AccessType::Put,
++                crate::ring::hosting::HostingCause::Other,
++            );
++        }
++        assert_eq!(hosting.hosting_cache_stats().current_bytes, 3);
++
++        // One UPDATE per contract, each leaving a state of most of the budget.
++        let grown = budget / 2 + 1;
++        for key in &keys {
++            op_manager.ring.commit_state_write(key, grown as usize);
++        }
++        let stats = hosting.hosting_cache_stats();
++        assert_eq!(
++            stats.current_bytes,
++            3 * grown,
++            "every state write must charge the stored size to the hosting cache"
++        );
++        // Byte accounting only: the write itself evicts nothing.
++        assert_eq!(stats.contract_count, 3);
++
++        let swept = op_manager.ring.sweep_expired_hosting();
++        assert_eq!(
++            swept.expired.len(),
++            2,
++            "the sweep must shed the contracts that UPDATE grew over budget"
++        );
++        let stats = hosting.hosting_cache_stats();
++        assert_eq!(stats.current_bytes, grown);
++        assert!(stats.current_bytes <= stats.budget_bytes);
++    }
++
+     fn wiring_peer() -> crate::ring::PeerKey {
+         crate::ring::PeerKey::from(crate::transport::TransportKeypair::new().public().clone())
+     }
+```
+
+**File**: `crates/core/src/ring/hosting.rs` (modified, +102/-0)
+```diff
+@@ -947,12 +947,42 @@ impl HostingManager {
+     /// permanently skip reclamation after an UPDATE-then-evict. No-op when
+     /// the entry is not currently cached. See
+     /// `HostingCache::refresh_entry_generation`.
++    #[cfg(test)]
+     pub(crate) fn refresh_cache_generation(&self, key: &ContractKey, new_gen: u64) {
+         self.hosting_cache
+             .write()
+             .refresh_entry_generation(key, new_gen);
+     }
+ 
++    /// Refresh both the write generation and the size of `key`'s hosting-cache
++    /// entry under ONE write lock, so a concurrent reader never sees the new
++    /// generation with the old size. See `refresh_cache_generation` and
++    /// `refresh_cache_size`.
++    pub(crate) fn refresh_cache_after_write(
++        &self,
++        key: &ContractKey,
++        new_gen: u64,
++        size_bytes: u64,
++    ) {
++        let mut cache = self.hosting_cache.write();
++        cache.refresh_entry_generation(key, new_gen);
++        cache.refresh_entry_size(key, size_bytes);
++    }
++
++    /// Update the hosting-cache size of `key` to the state size just written.
++    /// Paired with `refresh_cache_generation` at every state-write chokepoint
++    /// so a contract that grows (or shrinks) through UPDATE is charged to the
++    /// hosting budget what is actually stored, not its PUT/GET-time size.
++    /// Byte accounting only: no recency stamp, and nothing is evicted here.
++    /// No-op when the entry is not currently cached. See
++    /// `HostingCache::refresh_entry_size`.
++    #[cfg(test)]
++    pub(crate) fn refresh_cache_size(&self, key: &ContractKey, size_bytes: u64) {
++        self.hosting_cache
++            .write()
++            .refresh_entry_size(key, size_bytes);
++    }
++
+     /// Set the storage reference for persisting hosting metadata.
+     /// Must be called after executor creation.
+     pub fn set_storage(&self, storage: crate::contract::storages::Storage) {
+@@ -7013,6 +7043,78 @@ mod tests {
+         );
+     }
+ 
++    /// Without `refresh_cache_size`, a hosted contract whose state grows
++    /// through UPDATE stays charged the size `record_contract_access` was
++    /// given at PUT/GET time (the UPDATE paths must not call it: it stamps
++    /// recency). `current_bytes` then under-counts what is stored, the cache
++    /// never goes over budget, and the sweep that enforces the hosting budget
++    /// evicts nothing while UPDATEs fill the disk.
++    ///
++    /// The fix is to call `refresh_cache_size` paired with
++    /// `refresh_cache_generation` at every state-write chokepoint. This test
++    /// asserts the refresh re-charges the entries and that the next sweep
++    /// then sheds the overage.
++    #[test]
++    fn test_refresh_cache_size_charges_update_growth_to_budget() {
++        let manager = HostingManager::new(DEFAULT_HOSTING_BUDGET_BYTES);
++        {
++            let mut cache = manager.hosting_cache.write();
++            *cache = cache::HostingCache::new(
++                1000,
++                std::sync::Arc::new(crate::util::time_source::InstantTimeSrc::new()),
++            );
++        }
++
++        // Three contracts hosted with 1-byte states: far under budget.
++        let keys = [
++            make_contract_key(1),
++            make_contract_key(2),
++            make_contract_key(3),
++        ];
++        for key in keys {
++            manager.record_contract_access(key, 1, AccessType::Put, HostingCause::Other);
++        }
++        assert_eq!(manager.hosting_cache_stats().current_bytes, 3);
++
++        // Simulate one UPDATE per contract that grows its state to 600
++        // bytes. The refresh is byte accounting only: it evicts nothing.
++        for key in &keys {
++            manager.refresh_cache_size(key, 600);
++        }
++        let stats = manager.hosting_cache_stats();
++        assert_eq!(stats.current_bytes, 1800);
++        assert_eq!(stats.contract_count, 3);
++
++        // The sweep now sees the cache over budget and sheds down to it.
++        // Without the refresh `current_bytes` would still read 3 and nothing
++        // would be evicted.
++        let swept = manager.sweep_expired_hosting();
++        assert_eq!(
++            swept.expired.len(),
++            2,
++            "sweep must evict the contracts that UPDATE grew over budget"
++        );
++        let stats = manager.hosting_cache_stats();
++        assert_eq!(stats.current_bytes, 600);
++        assert_eq!(stats.contract_count, 1);
++    }
++
++    /// `refresh_cache_size` is a no-op when the entry is not in the cache:
++    /// a state write for a contract this node does not host must not insert
++    /// a phantom entry or charge bytes to the hosting budget.
++    #[test]
++    fn test_refresh_cache_size_is_noop_when_entry_absent() {
++        let manager = HostingManager::new(DEFAULT_HOSTING_BUDGET_BYTES);
++        let key = make_contract_key(99);
++
++        manager.refresh_cache_size(&key, 4096);
++        assert!(
++            !manager.hosting_cache.read().contains(&key),
++            "refresh mu
 ```
 
 ---
 
-### Incident Patch 3: `340dbf84` (2026-11-17)
-**Commit Message**: feat(telemetry): per-path QUIC srtt and send-rate bucket gauges in the transport snapshot (#6257)
+### Incident Patch 3: `fdc53266` (2026-11-18)
+**Commit Message**: fix(client-api): bound client subscription leaks, id collisions and the completed set (#6282)
 
-**File**: `.claude/rules/transport.md` (modified, +6/-1)
+**File**: `crates/core/src/client_events.rs` (modified, +628/-89)
 ```diff
-@@ -1526,7 +1526,12 @@ a test passes its own; tests read their own, never the global).
-   both are recorded in one record_path_loss call under the one loss lock, the
-   exception the bug-prevention rule on a metric re-derived at the call site
-   allows (as for broadcast_payload_mix). The single keys are not under quic_carrying_, which the two carrying
--  families share. Packets in flight at close are dropped by quinn, not declared
-+  families share.
-+  Two more gauges of live paths, moved at each watch tick under the same lock and
-+  left by the window's drop: quic_srtt_<bucket> (quinn's PathStats::rtt) and
-+  quic_tx_bps_<bucket> (UDP payload bits per second over the last tick), every
-+  bucket uploaded at 0; both are one tick's reading, so they describe the fleet's
-+  distribution, not a path's throughput. Packets in flight at close are dropped by quinn, not declared
-   lost, so a final bucket can understate the loss at the end. The rate is quinn's lost over
-   sent (quinn-proto 0.11.19), not a measurement of the link: sent counts every
-   packet quinn built, acknowledgement-only ones included; lost counts quinn's
-```
-
-**File**: `crates/core/src/tracing/telemetry.rs` (modified, +2/-0)
-```diff
-@@ -8030,6 +8030,8 @@ mod tests {
-         data.pipe_source = (1108..1112).collect();
-         data.pipe_dropped = (1112..1115).collect();
-         data.late_end = (1121..1124).collect();
-+        data.path_srtt = (1124..1131).collect();
-+        data.path_tx_bps = (1131..1137).collect();
-         let want: std::collections::BTreeMap<String, u64> =
-             snapshot.quic_data.keys().into_iter().collect();
-         assert!(want.values().all(|value| *value != 0));
-```
-
-**File**: `crates/core/src/transport/metrics/quic_data.rs` (modified, +272/-6)
-```diff
-@@ -26,6 +26,8 @@
- //! | `quic_ended_paths_below_floor` | paths that ended in the period before sending 200 packets, so in no bucket |
- //! | `quic_carried_packets_sent`, `quic_carried_packets_lost` | the period's packets sent, and declared lost, while their path carried data (a subset of `quic_sent_packets` and `quic_lost_packets`; the shadow share is the difference, a reconciliation residual: both operands are recorded by `record_path_loss` under the one `loss` lock, the exception the bug-prevention rule "metric describing a filtering decision, re-derived at the call site" allows, as for `broadcast_payload_mix`) |
- //! | `quic_carrying_loss_rate_<bucket>`, `quic_carrying_ended_loss_rate_<bucket>`, `quic_carried_paths_ended_below_floor` | the same three as for every path, for paths that carry data, by their loss counted from the first report that found the path carrying (a path whose data bit came on after it started starts its carrying count then); every gauge bucket sent every period |
-+//! | `quic_srtt_<bucket>` | live QUIC paths that carry data, by their smoothed round-trip time (quinn's `PathStats::rtt`) at their last tick (a gauge, not reset, every bucket sent every period, 0 included): `lt_10ms`, `lt_25ms`, `lt_50ms`, `lt_100ms`, `lt_200ms`, `lt_400ms`, `ge_400ms`. A path is in a bucket from its first tick as a data path (it is built from an established connection, which has an RTT sample), and leaves when it stops carrying or ends; paths that carry no data are in none |
-+//! | `quic_tx_bps_<bucket>` | live QUIC paths that carry data, by the datagram bits per second quinn built on them over their last tick (about 2 s; a gauge, not reset, every bucket sent every period, 0 included): `lt_10kbps`, `lt_100kbps`, `lt_1mbps`, `lt_10mbps`, `lt_100mbps`, `ge_100mbps`. The bytes are UDP payload as quinn counts them (`udp_tx.bytes`): retransmissions, acknowledgements, padding and keepalives included, so it is neither goodput nor capacity. These two gauges describe path conditions; the speed of QUIC against UDP is answered from transfer events (bytes over duration, by transport and release), not from them. One tick's rate, sampled when the snapshot is taken, so it describes the fleet's distribution rather than one path's throughput; a tick of 0 ms is not counted |
- //! | `quic_streams_sampled_paths`, `quic_streams_open_ge_<n>`, `quic_streams_peak_max` | per path and period, the peak of inbound streams read at once: the paths sampled, those whose peak reached each level, and the highest peak |
- //! | `quic_gate_loss_<verdict>` | congestion events by the loss gate's verdict (`recycle::loss_gate`): passed to Cubic as `queue`, `share` (loss share above the ceiling), `persistent`, `ecn` (a congestion mark), `no_sample`, or `ignored` as random loss; summed over the node's paths up to each path's last tick. Over a path's life they sum to its `quic_congestion_events`; within one period they can differ by the events between the two reads of a tick |
- //! | `quic_gate_ended_queue_<bucket>` | paths that ended in the period after at least 20 gate verdicts, by the share of them passed as `queue`: `lt_10pct`, `lt_50pct`, `ge_50pct`. A path whose losses mostly read as a queue runs as plain Cubic, whether the queue is real or jitter |
-@@ -164,6 +166,53 @@ fn loss_rate_bucket(lost: u64, sent: u64) -> usize {
-         .count()
+@@ -63,14 +63,37 @@ use crate::{config::GlobalExecutor, contract::StoreResponse};
+ 
+ use crate::contract::{contains_debug_sections, debug_sections};
+ 
+-/// Helper function to register a subscription listener for GET/PUT operations with auto-subscribe
++/// Test-only record of the `subscribe` flag a client's GET or PUT was started
++/// with, so tests can tell a request started without its subscription from one
++/// that was not changed. Keyed by client id, which is unique per test.
++#[cfg(test)]
++static STARTED_WITH_SUBSCRIBE: std::sync::Mutex<Vec<(ClientId, bool)>> =
++    std::sync::Mutex::new(Vec::new());
++
++/// Helper function to register a subscription listener for GET/PUT operations with auto-subscribe.
++///
++/// Returns `Ok(false)` when the client's `Disconnect` was handled before or
++/// during the registration: nothing stays registered, and the caller must not
++/// start a subscription for it.
+ async fn register_subscription_listener(
+-    op_manager: &OpManager,
++    op_manager: &Arc<OpManager>,
+     instance_id: ContractInstanceId,
+     client_id: ClientId,
+     subscription_listener: mpsc::Sender<HostResult>,
+     operation_type: &str,
+-) -> Result<(), Error> {
++) -> Result<bool, Error> {
++    // The client's `Disconnect` may already have been handled: requests run as
++    // independent tasks, so one can still be in flight after it. Nothing would
++    // ever clean up a subscription registered now (ANT-2026-VCHSBVO6).
++    if op_manager.ring.is_client_disconnected(client_id) {
++        tracing::debug!(
++            client_id = %client_id,
++            contract = %instance_id,
++            operation = operation_type,
++            "Client already disconnected, not registering subscription listener"
++        );
++        return Ok(false);
++    }
+     tracing::debug!(
+         client_id = %client_id,
+         contract = %instance_id,
+@@ -115,7 +138,7 @@ async fn register_subscription_listener(
+                     op_manager.ring.register_events(Either::Left(event)).await;
+                 }
+             }
+-            Ok(())
++            Ok(!sweep_if_client_disconnected(op_manager, client_id).await)
+         }
+         // #4681: registration was rejected (e.g. subscriber-limit reached).
+         // Forward the underlying RequestError so the client sees the real
+@@ -199,6 +222,90 @@ pub(crate) fn should_serve_local_copy(
+     local_satisfies_request && (connection_count == 0 || is_subscribed || has_local_interest)
  }
  
-+/// The per-path round-trip-time gauges' prefix; every bucket is uploaded in
-+/// every snapshot.
-+const PATH_SRTT_PREFIX: &str = "quic_srtt_";
++/// Remove everything a client's `Disconnect` is responsible for: delegate
++/// notification routing, ring and interest subscriptions, upstream
++/// subscriptions nobody needs any more, and the contract handler's
++/// per-client state. Idempotent, so it is also run again when a registration
++/// lands after the client's `Disconnect` (ANT-2026-VCHSBVO6).
++async fn sweep_disconnected_client(op_manager: &Arc<OpManager>, client_id: ClientId) {
++    // Drop any delegate-notification routing registrations for this
++    // client (#3275).
++    crate::contract::delegate_app_registry::remove_client(client_id);
 +
-+/// The upper bounds of the round-trip-time buckets, in milliseconds; the last
-+/// bucket is `ge_400ms`.
-+const PATH_SRTT_BOUNDS_MS: [u128; 6] = [10, 25, 50, 100, 200, 400];
++    let result = op_manager
++        .ring
++        .remove_client_from_all_subscriptions(client_id);
++    for contract in &result.affected_contracts {
++        op_manager.interest_manager.remove_local_client(contract);
++    }
++    if !result.affected_contracts.is_empty() {
++        tracing::debug!(
++            %client_id,
++            subscriptions_cleaned = result.affected_contracts.len(),
++            "Cleaned up client subscriptions and interest tracking"
++        );
++    }
 +
-+/// The round-trip-time buckets' labels (`quic_srtt_<label>`), in order.
-+pub(crate) const PATH_SRTT_LABELS: [&str; 7] = [
-+    "lt_10ms", "lt_25ms", "lt_50ms", "lt_100ms", "lt_200ms", "lt_400ms", "ge_400ms",
-+];
-+
-+fn path_srtt_bucket(rtt: std::time::Duration) -> usize {
-+    let ms = rtt.as_millis();
-+    PATH_SRTT_BOUNDS_MS
-+        .iter()
-+        .take_while(|bound| ms >= **bound)
-+        .count()
-+}
-+
-+/// The per-path send-rate gauges' prefix; uploaded like [`PATH_SRTT_PREFIX`].
-+const PATH_TX_BPS_PREFIX: &str = "quic_tx_bps_";
-+
-+/// The upper bounds of the send-rate buckets, in bits per second; the last
-+/// bucket is `ge_100mbps`.
-+const PATH_TX_BPS_BOUNDS: [u128; 5] = [10_000, 100_000, 1_000_000, 10_000_000, 100_000_000];
-+
-+/// The send-rate buckets' labels (`quic_tx_bps_<label>`), in order.
-+pub(crate) const PATH_TX_BPS_LABELS: [&str; 6] = [
-+    "lt_10kbps",
-+    "lt_100kbps",
-+    "lt_1mbps",
-+    "lt_10mbps",
-+    "lt_100mbps",
-+    "ge_100mbps",
-+];
-+
-+/// The bucket of `bytes` sent in `ms` (not 0) milliseconds.
-+fn path_tx_bps_bucket(bytes: u64, ms: u64) -> usize {
-+    let bits_per_second = u128::from(bytes) * 8 * 1000 / u128::from(ms);
-+    PATH_TX_BPS_BOUNDS
-+        .iter()
-+        .take_while(|bound| bits_per_second >= **bound)
-+        .count()
-+}
-+
- ///
-```
-
-**File**: `crates/core/src/transport/quic/recycle.rs` (modified, +10/-0)
-```diff
-@@ -2297,9 +2297,11 @@ impl PathReport {
-     /// on drop, has no clock, so a path's last tick to its end (under
-     /// [`ACK_WATCH_TICK`]) is not counted.
-     fn report(&mut self, now: Option<u64>) {
-+        let mut tick_ms = None;
-         if let Some(now) = now {
-             // Whole milliseconds, carrying the rest to the next report.
-             let ms = now.saturating_sub(self.timed_at) / 1_000_000;
-+            tick_ms = Some(ms);
-             self.timed_at = self.timed_at.saturating_add(ms * 1_000_000);
-             self.node.record_path_time(ms);
-             if let Some(meter) = &self.meter {
-@@ -2320,6 +2322,14 @@ impl PathReport {
-         self.node
-             .record_path_loss(&mut self.window, delta, carrying);
-         self.loss = next;
-+        // The round-trip time and send-rate gauges of data paths
-+        // (`quic_srtt_<bucket>`, `quic_tx_bps_<bucket>`), at each timed tick.
-+        // The final report has no clock, and the window's drop takes the path
-+        // out of them.
-+        if let Some(ms) = tick_ms {
-+            self.node
-+                .record_path_rates(&mut self.window, stats.path.rtt, sent, ms, carrying);
++    // Send Unsubscribe upstream for contracts with no remaining interest.
++    // FLIP (keystone P6, #4642): the collapse decision is driven by the
++    // reconcile controller's strict-farther interest gate
++    // (`reconcile_wants_collapse` = `!contract_in_use`), replacing the
++    // legacy ANY-downstream `should_unsubscribe_upstream`. The teardown
++    // still targets the STORED upstream (narrow flip keeps the flag).
++    for contract in &result.affected_contracts {
++        if op_manager.reconcile_wants_collapse(
++            contract,
++            crate::node::network_status::ReconcileShadowSite::Collapse,
++        ) {
++            let op_mgr = op_manager.clone();
++            let contract = *contract;
++            GlobalExecutor::spawn(async move {
++                op_mgr.send_unsubscribe_upstream(&contract).await;
++            });
 +        }
-         if let Some((verdicts, seen)) = &mut self.gate {
-             let now = verdicts.read();
-             let delta: [u64; loss_gate::GATE_VERDICTS] =
++    }
++
++    // Notify contract handler to clean up shared_summaries and
++    // shared_notifications for this client (fire-and-forget — no response needed).
++    if let Err(err) = op_manager
++        .ch_outbound
++        .send_to_handler_fire_and_forget(ContractHandlerEvent::ClientDisconnect { client_id })
++    {
++        tracing::warn!(
++            %client_id,
++            error = %err,
++            "Failed to notify contract handler of client disconnect"
++        );
++    }
++
++    // Drop the session actor's registrations for this client. It only forgets
++
 ```
 
-**File**: `crates/core/src/transport/quic/recycle/tests.rs` (modified, +35/-0)
+**File**: `crates/core/src/client_events/session_actor.rs` (modified, +8/-5)
 ```diff
-@@ -1329,6 +1329,41 @@ fn ack_counting_implements_every_controller_method() {
-     assert_eq!(ours, trait_methods);
+@@ -422,18 +422,21 @@ impl<T: TimeSource> SessionActor<T> {
+ 
+     /// Clean up client from all transaction mappings on disconnect
+     fn cleanup_client_transactions(&mut self, client_id: ClientId) {
+-        // Remove client from all transaction mappings
++        // Remove the client from every transaction, remembering the
++        // transactions nobody else waits for.
++        let mut emptied: HashSet<Transaction> = HashSet::new();
+         self.client_transactions.retain(|tx, clients| {
+             clients.remove(&client_id);
+-            // If no clients left for this transaction, also clean up RequestId mappings
+             if clients.is_empty() {
+-                self.client_request_ids.retain(|(t, _), _| t != tx);
++                emptied.insert(*tx);
+             }
+             !clients.is_empty()
+         });
+ 
+-        // Clean up RequestId mappings for this client across all transactions
+-        self.client_request_ids.retain(|(_, c), _| *c != client_id);
++        // One pass over the RequestId mappings: this client's, and those of
++        // transactions that no client waits for any more.
++        self.client_request_ids
++            .retain(|(t, c), _| *c != client_id && !emptied.contains(t));
+     }
+ 
+     /// Prune stale pending results based on TTL and enforce capacity limits.
+```
+
+**File**: `crates/core/src/client_events/types.rs` (modified, +98/-16)
+```diff
+@@ -19,20 +19,19 @@ pub type HostResult = Result<HostResponse, ClientError>;
+ #[repr(transparent)]
+ pub struct RequestId(u64);
+ 
+-const COUNTER_BLOCK: u64 = 1_000_000;
++use crate::util::id_block::IdBlock;
+ 
+ thread_local! {
+-    static REQUEST_ID_COUNTER: Cell<u64> = {
+-        let idx = crate::config::GlobalRng::thread_index();
+-        Cell::new(1 + idx * COUNTER_BLOCK)
+-    };
++    static REQUEST_ID_COUNTER: Cell<IdBlock> =
++        Cell::new(IdBlock::for_thread(crate::config::GlobalRng::thread_index(), 1));
  }
  
-+/// Pin: each timed tick of a path's report passes the path's smoothed RTT, the
-+/// bytes it sent since the last report, the milliseconds since it and whether
-+/// it carries data to the
-+/// per-path gauges (`quic_srtt_<bucket>`, `quic_tx_bps_<bucket>`), and the final
-+/// report, which has no clock, does not. Deleting the call, or passing another
-+/// RTT, leaves every unit test of the gauges green while the fleet reads 0.
-+#[test]
-+fn a_timed_report_feeds_the_per_path_gauges() {
-+    let code: String = include_str!("../recycle.rs")
-+        .lines()
-+        .map(|line| line.split_once("//").map_or(line, |(code, _)| code))
-+        .collect::<Vec<_>>()
-+        .join("\n");
-+    let start = code
-+        .find("fn report(&mut self, now: Option<u64>)")
-+        .expect("PathReport::report not found");
-+    let (body, _) = code[start..]
-+        .split_once("\n    }\n")
-+        .expect("could not locate the end of PathReport::report");
-+    let body: String = body.chars().filter(|c| !c.is_whitespace()).collect();
-+    assert!(
-+        body.contains("iflet Some(now)=now{".replace(' ', "").as_str())
-+            && body.contains("tick_ms=Some(ms);"),
-+        "the timed tick must record the milliseconds it covers"
-+    );
-+    assert!(
-+        body.contains(
-+            "iflet Some(ms)=tick_ms{self.node.record_path_rates(&mutself.window,stats.path.rtt,sent,ms,carrying);}"
-+                .replace(' ', "")
-+                .as_str()
-+        ),
-+        "a timed report must pass the path's rtt, sent bytes and ms to record_path_rates"
-+    );
+ impl RequestId {
+     pub fn new() -> Self {
+         Self(REQUEST_ID_COUNTER.with(|c| {
+-            let v = c.get();
+-            c.set(v + 1);
++            let mut block = c.get();
++            let v = block.take();
++            c.set(block);
+             v
+         }))
+     }
+@@ -41,7 +40,7 @@ impl RequestId {
+     /// Thread-local, so safe for parallel test execution.
+     pub fn reset_counter() {
+         let idx = crate::config::GlobalRng::thread_index();
+-        REQUEST_ID_COUNTER.with(|c| c.set(1 + idx * COUNTER_BLOCK));
++        REQUEST_ID_COUNTER.with(|c| c.set(IdBlock::for_thread(idx, 1)));
+     }
+ }
+ 
+@@ -74,28 +73,27 @@ impl From<ClientId> for usize {
+ }
+ 
+ thread_local! {
+-    static CLIENT_ID_COUNTER: Cell<usize> = {
+-        let idx = crate::config::GlobalRng::thread_index();
+-        Cell::new(1 + (idx as usize) * (COUNTER_BLOCK as usize))
+-    };
++    static CLIENT_ID_COUNTER: Cell<IdBlock> =
++        Cell::new(IdBlock::for_thread(crate::config::GlobalRng::thread_index(), 1));
+ }
+ 
+ impl ClientId {
+     pub const FIRST: Self = ClientId(0);
+ 
+     pub fn next() -> Self {
+         ClientId(CLIENT_ID_COUNTER.with(|c| {
+-            let v = c.get();
+-            c.set(v + 1);
+-            v
++            let mut block = c.get();
++            let v = block.take();
++            c.set(block);
++            v as usize
+         }))
+     }
+ 
+     /// Reset the client ID counter to initial state for this thread.
+     /// Thread-local, so safe for parallel test execution.
+     pub fn reset_counter() {
+         let idx = crate::config::GlobalRng::thread_index();
+-        CLIENT_ID_COUNTER.with(|c| c.set(1 + (idx as usize) * (COUNTER_BLOCK as usize)));
++        CLIENT_ID_COUNTER.with(|c| c.set(IdBlock::for_thread(idx, 1)));
+     }
+ }
+ 
+@@ -396,3 +394,87 @@ mod connection_scope_tests {
+         );
+     }
+ }
++
++/// ANT-2026-8LFV3MG8: a thread's id block used to run into the next thread's
++/// block after 1M allocations, so two clients (or requests) could be handed
++/// the same id and replies were cross-delivered.
++#[cfg(test)]
++mod id_block_overflow_tests {
++    use super::*;
++    use std::collections::HashSet;
++
++    const BLOCK: usize = crate::util::id_block::ID_BLOCK as usize;
++
++    /// Allocate `n` client ids on a fresh thread pinned to index `idx`.
++    fn client_ids_on_thread(idx: u64, n: usize) -> Vec<usize> {
++        std::thread::spawn(move || {
++            crate::config::GlobalRng::pin_thread_index_for_test(idx);
++            (0..n).map(|_| ClientId::next().0).collect()
++        })
++        .join()
++        .unwrap()
++    }
++
++    fn request_ids_on_thread(idx: u64, n: usize) -> Vec<u64> {
++        std::thread::spawn(move || {
++            crate::config::GlobalRng::pin_thread_index_for_test(idx);
++            (0..n).map(|_| RequestId::new().0).collect()
++        })
++        .join()
++        .unwrap()
++    }
++
++    #[test]
++    fn client_ids_stay_unique_after_a_thread_exhausts_its_block() {
++        // Thread 3000007000 allocates past the end of its block; thread 3000007001's first
++        // ids must not be among them.
++        let overflowing = client_ids_on_thread(3000007000, BLOCK + 10);
++        let neighbour = client_ids_on_thread(3000007001, 10);
++        let seen: HashSet<_> = overflowing.iter().copied().collect();
++        assert_eq!(seen.len(), overflowing.len(), "ids repeated on one thread");
++        for id in neighbour {
++            assert!(!seen.contains(&id), "client id {id} handed out twice");
++        }
++    }
++
++    #[test]
++    fn request_ids_stay_unique_after_a_thread_exhausts_its_block() {
++        let overflowing = request_ids_on_thread(3000007100, BLOCK + 10);
++        let neighbour = request_ids_on_thread(3000007101, 10);
++        let seen: HashSet<_> = overflowing.iter().copied().collect();
++        assert_eq!(seen.len(), overflowing.len(), "ids repeated on one thread");
++        for id in neighbour {
++            assert!(!seen.contains(&id), "request id {id} handed out twice");
++        }
++    }
++
++    /// Two threads that both exhaust their blocks must not be given the same
++    /// replacement block.
++    #[test]
++    fn two_overflowing_threads_get_distinct_replacement_blocks() {
++        let a = client_ids_on_thread(3000007200, BLOCK + 10);
++        let b = client_ids_on_thread(3000007300, BLOCK + 10);
++        let seen: HashSet<_> = a.iter().copied().collect();
++        for id in b {
++            assert!(!seen.contains(&id), "client id {id} handed ou
+```
+
+**File**: `crates/core/src/contract/handler.rs` (modified, +48/-17)
+```diff
+@@ -456,20 +456,30 @@ pub(crate) fn contract_handler_channel() -> (
+     )
+ }
+ 
+-const EV_ID_BLOCK: u64 = 1_000_000;
+-
+ thread_local! {
+-    static EV_ID: Cell<u64> = {
+-        let idx = crate::config::GlobalRng::thread_index();
+-        Cell::new(idx * EV_ID_BLOCK)
+-    };
++    static EV_ID: Cell<crate::util::id_block::IdBlock> =
++        Cell::new(crate::util::id_block::IdBlock::for_thread(
++            crate::config::GlobalRng::thread_index(),
++            0,
++        ));
 +}
 +
- /// Each report is the change since the last one, sent and received kept apart,
- /// and the next is taken from the state it hands back; a count that went down
- /// reports 0.
++/// Next contract-handler event id for this thread; never overlaps another
++/// thread's ids (ANT-2026-8LFV3MG8).
++fn next_event_id() -> u64 {
++    EV_ID.with(|c| {
++        let mut block = c.get();
++        let id = block.take();
++        c.set(block);
++        id
++    })
+ }
+ 
+ /// Reset the event ID counter to initial state for this thread.
+ /// Thread-local, so safe for parallel test execution.
+ pub fn reset_event_id_counter() {
+     let idx = crate::config::GlobalRng::thread_index();
+-    EV_ID.with(|c| c.set(idx * EV_ID_BLOCK));
++    EV_ID.with(|c| c.set(crate::util::id_block::IdBlock::for_thread(idx, 0)));
+ }
+ 
+ impl Stream for ContractHandlerChannel<WaitingResolution> {
+@@ -521,11 +531,7 @@ impl ContractHandlerChannel<SenderHalve> {
+         timeout: Duration,
+         priority: super::fair_queue::Priority,
+     ) -> Result<ContractHandlerEvent, ContractError> {
+-        let id = EV_ID.with(|c| {
+-            let v = c.get();
+-            c.set(v + 1);
+-            v
+-        });
++        let id = next_event_id();
+         let (result, result_receiver) = tokio::sync::oneshot::channel();
+         let internal = InternalCHEvent {
+             ev,
+@@ -650,6 +656,35 @@ impl ContractHandlerChannel<SenderHalve> {
+         }
+     }
+ 
++    /// Tell the session actor that `client_id` is gone, so it drops every
++    /// transaction still registered for that client. Without this the actor
++    /// only forgets a registration when a result is delivered for it, and a
++    /// request that was refused after registering never gets one
++    /// (ANT-2026-DN7GTB1F).
++    pub async fn notify_session_actor_client_disconnect(&self, client_id: ClientId) {
++        let Some(session_tx) = &self.session_adapter_tx else {
++            return;
++        };
++        let msg = SessionMessage::ClientDisconnect { client_id };
++        match tokio::time::timeout(Self::WAIT_FOR_RES_SEND_TIMEOUT, session_tx.send(msg)).await {
++            Ok(Ok(())) => {}
++            Ok(Err(e)) => {
++                tracing::error!(
++                    client = %client_id,
++                    error = %e,
++                    "Failed to notify session actor of client disconnect — receiver dropped"
++                );
++            }
++            Err(_) => {
++                tracing::error!(
++                    client = %client_id,
++                    timeout_secs = Self::WAIT_FOR_RES_SEND_TIMEOUT.as_secs(),
++                    "Timed out notifying session actor of client disconnect — channel full"
++                );
++            }
++        }
++    }
++
+     /// Send an event to the contract handler without waiting for a response.
+     ///
+     /// Used for fire-and-forget events like `ClientDisconnect` that don't
+@@ -667,11 +702,7 @@ impl ContractHandlerChannel<SenderHalve> {
+         ev: ContractHandlerEvent,
+         priority: super::fair_queue::Priority,
+     ) -> Result<(), ContractError> {
+-        let id = EV_ID.with(|c| {
+-            let v = c.get();
+-            c.set(v + 1);
+-            v
+-        });
++        let id = next_event_id();
+         // Create a oneshot but immediately drop the receiver — the handler
+         // won't send a response, and if it does, the send will harmlessly fail.
+         let (result, _) = tokio::sync::oneshot::channel();
+```
+
+**File**: `crates/core/src/node/op_state_manager.rs` (modified, +33/-30)
+```diff
+@@ -50,9 +50,10 @@ use super::{
+ struct Ops {
+     // No per-op DashMaps remain. CONNECT, GET, PUT, UPDATE, and
+     // SUBSCRIBE all run on drivers that own state in task
+-    // locals; the only state retained here is the global completed /
+-    // under_progress sets used by the GC sweep.
+-    completed: DashSet<Transaction>,
++    // locals; the only state retained here is the global under_progress
++    // set used by the GC sweep. There is deliberately no `completed` set:
++    // nothing read it, and since #4110 nothing removed from it, so every
++    // finished transaction stayed in memory (ANT-2026-OZWLXLHH).
+     under_progress: DashSet<Transaction>,
+ }
+ 
+@@ -62,14 +63,12 @@ struct Ops {
+ /// run.
+ #[derive(Debug, Default)]
+ struct OpsSizes {
+-    completed: usize,
+     under_progress: usize,
+ }
+ 
+ impl Ops {
+     fn sizes(&self) -> OpsSizes {
+         OpsSizes {
+-            completed: self.completed.len(),
+             under_progress: self.under_progress.len(),
+         }
+     }
+@@ -693,7 +692,7 @@ impl OpManager {
+         let ring = Ring::new(
+             config,
+             notification_channel.clone(),
+-            event_register.clone(),
++            event_register,
+             config.is_gateway,
+             connection_manager,
+             task_monitor,
+@@ -729,7 +728,6 @@ impl OpManager {
+                     ops.clone(),
+                     ring.live_tx_tracker.clone(),
+                     notification_channel.clone(),
+-                    event_register,
+                     result_router_tx.clone(),
+                     request_router.clone(),
+                     contract_waiters.clone(),
+@@ -1903,7 +1901,6 @@ impl OpManager {
+     pub fn completed(&self, id: Transaction) {
+         self.ring.live_tx_tracker.remove_finished_transaction(id);
+         self.ops.under_progress.remove(&id);
+-        self.ops.completed.insert(id);
+ 
+         // Clean up request router to prevent stale entries from blocking subsequent requests
+         if let Some(router) = self.request_router.get() {
+@@ -2728,12 +2725,11 @@ fn notify_transaction_timeout(
+ // has a `ConnectOp` to inspect.
+ 
+ #[allow(clippy::too_many_arguments)]
+-async fn garbage_cleanup_task<ER: NetEventRegister>(
++async fn garbage_cleanup_task(
+     mut new_transactions: tokio::sync::mpsc::Receiver<Transaction>,
+     ops: Arc<Ops>,
+     live_tx_tracker: LiveTransactionTracker,
+     event_loop_notifier: EventLoopNotificationsSender,
+-    mut event_register: ER,
+     _result_router_tx: mpsc::Sender<(Transaction, HostResult)>,
+     request_router: Arc<OnceLock<Arc<RequestRouter>>>,
+     contract_waiters: Arc<
+@@ -2839,7 +2835,6 @@ async fn garbage_cleanup_task<ER: NetEventRegister>(
+                         ops_get = 0,
+                         ops_subscribe = 0,
+                         ops_update = 0,
+-                        ops_completed = ops_sizes.completed,
+                         ops_under_progress = ops_sizes.under_progress,
+                         pending_contract_fetches = pending_fetches,
+                         contract_waiters = waiters_len,
+@@ -2903,15 +2898,6 @@ async fn garbage_cleanup_task<ER: NetEventRegister>(
+ 
+                 let old_missing = std::mem::take(&mut delayed);
+                 for tx in old_missing {
+-                    if let Some(tx) = ops.completed.remove(&tx) {
+-                        if cfg!(feature = "trace-ot") {
+-                            let op_type = tx.transaction_type().description();
+-                            event_register.notify_of_time_out(tx, op_type, None).await;
+-                        } else {
+-                            _ = tx;
+-                        }
+-                        continue;
+-                    }
+                     // Every op runs on a driver and owns
+                     // its own timeout reporting (via
+                     // `Relay*InflightGuard` failure paths or
+@@ -2922,7 +2908,6 @@ async fn garbage_cleanup_task<ER: NetEventRegister>(
+                         delayed.push(tx);
+                     } else {
+                         ops.under_progress.remove(&tx);
+-                        ops.completed.remove(&tx);
+                         tracing::info!(
+                             tx = %tx,
+                             tx_type = ?tx.transaction_type(),
+@@ -2961,15 +2946,6 @@ async fn garbage_cleanup_task<ER: NetEventRegister>(
+                         ops.under_progress.remove(&tx);
+                         // Fall through to normal cleanup below
+                     }
+-                    if let Some(tx) = ops.completed.remove(&tx) {
+-                        tracing::debug!("Clean up timed out: {tx}");
+-                        if cfg!(feature = "trace-ot") {
+-                            let op_type = tx.transaction_type().description();
+-                            event_register.notify_of_time_out(tx, op_type, None).await;
+-                        } else {
+-                            _ = tx;
+-                        }
+-                    }
+    
+```
+
+**File**: `crates/core/src/operations/get/op_ctx_task.rs` (modified, +2/-4)
+```diff
+@@ -483,10 +483,8 @@ async fn drive_client_get_inner(
+     // returns (and the side-effect block below has run). Do not add
+     // explicit `completed()` calls in the arms here — doing so would
+     // race the originator-side side effects (`cache_contract_locally`,
+-    // `maybe_subscribe_child`) because once the tx is in `ops.completed`, any
+-    // `op_manager.push(...)` for that tx is silently dropped (see
+-    // `op_state_manager.rs::push` short-circuit on
+-    // `ops.completed.contains`).
++    // `maybe_subscribe_child`): `completed()` also drops the tx from the
++    // request router and the live-transaction tracker.
+ 
+     match loop_result {
+         RetryLoopOutcome::Done(terminal) => {
+```
+
+**File**: `crates/core/src/ring.rs` (modified, +6/-0)
+```diff
+@@ -5182,6 +5182,12 @@ impl Ring {
+             .remove_client_from_all_subscriptions(client_id)
+     }
+ 
++    /// Whether `client_id`'s disconnect has already been swept, so a
++    /// subscription registered for it now would never be removed.
++    pub(crate) fn is_client_disconnected(&self, client_id: crate::client_events::ClientId) -> bool {
++        self.hosting_manager.is_client_disconnected(client_id)
++    }
++
+     /// Get all hosted contract keys from the hosting cache.
+     pub fn hosting_contract_keys(&self) -> Vec<ContractKey> {
+         self.hosting_manager.hosting_contract_keys()
+```
+
+**File**: `crates/core/src/ring/hosting.rs` (modified, +73/-0)
+```diff
+@@ -450,6 +450,32 @@ impl AddSubscriberOutcome {
+     }
+ }
+ 
++/// Most recently disconnected clients remembered by [`DisconnectedClients`].
++/// Far more than the requests that can be in flight for clients that have just
++/// gone; when it is full the oldest entry is forgotten.
++const MAX_REMEMBERED_DISCONNECTED_CLIENTS: usize = 65_536;
++
++/// Bounded FIFO set of client ids whose disconnect was swept.
++#[derive(Default)]
++struct DisconnectedClients {
++    order: std::collections::VecDeque<crate::client_events::ClientId>,
++    members: HashSet<crate::client_events::ClientId>,
++}
++
++impl DisconnectedClients {
++    fn insert(&mut self, client_id: crate::client_events::ClientId) {
++        if !self.members.insert(client_id) {
++            return;
++        }
++        self.order.push_back(client_id);
++        while self.order.len() > MAX_REMEMBERED_DISCONNECTED_CLIENTS {
++            if let Some(oldest) = self.order.pop_front() {
++                self.members.remove(&oldest);
++            }
++        }
++    }
++}
++
+ /// Result of removing all subscriptions for a disconnected client.
+ #[derive(Debug)]
+ pub struct ClientDisconnectResult {
+@@ -627,6 +653,12 @@ pub(crate) struct HostingManager {
+     /// silently miss it.
+     client_subscriptions: DashMap<ContractInstanceId, LocalSubscribers>,
+ 
++    /// Clients whose `Disconnect` has already been swept. A request from such a
++    /// client can still be in flight (client requests run as independent
++    /// tasks), and without this record it would register its subscription
++    /// after the sweep and keep the slot forever (ANT-2026-VCHSBVO6).
++    disconnected_clients: parking_lot::Mutex<DisconnectedClients>,
++
+     /// Unified hosting cache with byte-budget demand-ordered eviction ("fuel
+     /// gauge") and TTL protection. This is the single source of truth for which
+     /// contracts we're hosting.
+@@ -838,6 +870,7 @@ impl HostingManager {
+         Self {
+             active_subscriptions: Default::default(),
+             client_subscriptions: DashMap::new(),
++            disconnected_clients: Default::default(),
+             hosting_cache: RwLock::new(HostingCache::new(budget_bytes, time_source.clone())),
+             demand_estimator: RwLock::new(ProximityPrior::new()),
+             own_location: RwLock::new(None),
+@@ -1868,11 +1901,25 @@ impl HostingManager {
+         self.maybe_record_abandonment(contract);
+     }
+ 
++    /// Whether `client_id`'s disconnect has been swept already, so a
++    /// subscription registered for it now would never be cleaned up.
++    pub fn is_client_disconnected(&self, client_id: crate::client_events::ClientId) -> bool {
++        self.disconnected_clients
++            .lock()
++            .members
++            .contains(&client_id)
++    }
++
+     /// Remove a client from ALL its subscriptions (used when client disconnects).
+     pub fn remove_client_from_all_subscriptions(
+         &self,
+         client_id: crate::client_events::ClientId,
+     ) -> ClientDisconnectResult {
++        // Record the disconnect BEFORE sweeping. A registration that lands
++        // after the sweep checks this record (`is_client_disconnected`) and
++        // undoes itself; one that landed before it is found by the sweep.
++        self.disconnected_clients.lock().insert(client_id);
++
+         let mut affected_contracts = Vec::new();
+ 
+         // Find all contracts where this client is subscribed
+@@ -4855,6 +4902,32 @@ mod tests {
+         assert!(is_last2);
+     }
+ 
++    /// ANT-2026-VCHSBVO6: the sweep records the client, and the record is a
++    /// bounded FIFO so a flood of connections cannot grow it without limit.
++    #[test]
++    fn sweep_records_the_client_and_the_record_is_bounded() {
++        let manager = HostingManager::new(DEFAULT_HOSTING_BUDGET_BYTES);
++        let first = crate::client_events::ClientId::next();
++        assert!(!manager.is_client_disconnected(first));
++        manager.remove_client_from_all_subscriptions(first);
++        assert!(manager.is_client_disconnected(first));
++
++        for _ in 0..MAX_REMEMBERED_DISCONNECTED_CLIENTS {
++            manager.remove_client_from_all_subscriptions(crate::client_events::ClientId::next());
++        }
++        assert!(
++            !manager.is_client_disconnected(first),
++            "the oldest record is forgotten once the bound is reached"
++        );
++        let last = crate::client_events::ClientId::next();
++        manager.remove_client_from_all_subscriptions(last);
++        assert!(manager.is_client_disconnected(last));
++        assert_eq!(
++            manager.disconnected_clients.lock().members.len(),
++            MAX_REMEMBERED_DISCONNECTED_CLIENTS
++        );
++    }
++
+     #[test]
+     fn test_hosting_cache_basic() {
+         let manager = HostingManager::new(DEFAULT_HOSTING_BUDGET_BYTES);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6258** (2026-11-17): test(quic): pin the crash-breaker marker lock and correct its doc (@sanity)
-- **PR #6257** (2026-11-17): feat(telemetry): per-path QUIC srtt and send-rate bucket gauges in the transport snapshot (@sanity)
-- **PR #6256** (2026-11-17): fix(quic): keep a Windows endpoint-death record past the short-run clear (@sanity)
-- **PR #6255** (2026-11-17): fix(connect): one survivor rule for native and UDP connections to one peer (gates 18-19) (@sanity)
-- **PR #6254** (2026-11-17): fix(telemetry): fill peer_startup's commit and report auto-update state (#5975) (@sanity)
-- **PR #6253** (2026-11-17): fix(connect): native dial timing gates, a NAT model, and UDP dials beside native ones (@sanity)
+- **PR #6285** (2026-11-18): fix(hosting): keep contract state inside --max-hosting-storage (@sanity)
+- **PR #6283** (2026-11-18): test: give the two merge-budget sims their own network names (@sanity)
+- **PR #6282** (2026-11-18): fix(client-api): bound client subscription leaks, id collisions and the completed set (@sanity)
+- **PR #6280** (2026-11-18): fix(hosting): bound per-neighbor hosting adverts and close disconnect race (@sanity)
+- **PR #6279** (2026-11-18): fix: bound remote-controlled relay inputs (UPDATE loop, HTL, reconcile rate, streaming admission) (@sanity)
+- **PR #6278** (2026-11-18): build: release 0.2.160 (@sanity)
 
 ---
 
@@ -2522,52 +3540,38 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(quic): pin the crash-breaker marker lock and correct its doc
+## X. quic): the peer crash-breaker action for when UDP is removed, switched off
 
 **RULE**:
-When implementing operations in `crates/core/src/transport/quic/breaker.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `01e05980`: test(quic): pin the crash-breaker marker lock and correct its doc. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6174c624`: quic): the peer crash-breaker action for when UDP is removed, switched off. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/transport/quic/breaker.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Orders exactly two writers of this run's marker: the Windows short-run
-/// clear (`short_runs::clear_short_run`) and the endpoint-death record
-/// ([`note_endpoint_down_exit_with`]). Each holds it across its
-/// read-and-change, so in either order the death record survives: a clear
-/// that comes first is followed by the record written again, and a record
-/// written first makes the clear leave the marker. Pinned by
-/// `the_marker_update_lock_is_taken_by_the_clear_and_the_record`.
-///
-/// The other writers do not take it, and it does not order them:
-/// - arming ([`arm`]) runs under [`PENDING`], as does the record of a death
-///   before arming, so those two are ordered by that lock instead, and the
-///   clear timer starts only after arming;
-/// - the Windows panic hook (`short_runs::mark_quic_panic`) takes no lock,
-///   since it runs inside a panic. A caught socket-adapter panic marks the
-///   marker before the endpoint goes down, so its write lands before the
-///   death record; an unrelated QUIC panic on another thread at the same
-///   moment could overwrite the record, which then costs one free restart;
-/// - a clean exit's removal ([`clear_if_owned`]) does not run on 
+    With no UDP to fall back to (breaker::UDP_FALLBACK false, set by the
+    UDP-removal release; until then tests only, switched on in a
+    quic-panic-injection build by FREENET_TEST_BREAKER_NO_UDP_FALLBACK), a
+    peer trips at three again and its trip keeps QUIC on: a start delay of 1
+    minute doubling to 30 (Verdict::Backoff, waited out just before the
+    transport opens, cut short by a stop), the startup update check at once
+    (quic_crash_loop_update_now; the update claim still applies), and a
+    supervised peer exits on endpoint death like a gateway.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-/// Held across each read-and-change of this run's marker by the Windows
-/// short-run clear ([`short_runs`]) and by [`note_endpoint_down_exit`], so
-/// in either order the death record survives: a clear that comes first is
-/// followed by the record written again, and a record written first makes
-/// the clear leave the marker.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `01e05980` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6174c624` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

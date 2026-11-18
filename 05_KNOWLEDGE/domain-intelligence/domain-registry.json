@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T21:34:25.005Z",
-  "total_records": 1909,
+  "last_updated": "2026-11-18T21:42:31.198Z",
+  "total_records": 1911,
   "domains": {
     "A": {
       "total": 13,
@@ -23,7 +23,7 @@
       ]
     },
     "B": {
-      "total": 15,
+      "total": 17,
       "record_ids": [
         "DOM-B-44DC921B",
         "DOM-B-1CC83E41",
@@ -39,7 +39,9 @@
         "domain_intelligence-product-intelligence-ganymedenil-document-ai-core-invariants",
         "DOM-B-6AFC12DD",
         "domain_intelligence-product-intelligence-kcl-lang-kcl-core-invariants",
-        "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants"
+        "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
+        "domain_intelligence-product-intelligence-transact-rs-sqlx-core-invariants",
+        "domain_intelligence-product-intelligence-transact-rs-sqlx-learnings-core-invariants"
       ]
     },
     "C": {
@@ -9275,8 +9277,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "80b8a967957257a8e7b029c7d6393e23dc38ddbcc8befc156d051f85790993b9",
-      "created_at": "2026-11-18T15:59:54.541Z"
+      "content_hash": "0f75fa7d032ef90fdd2ddc42771d72ea24144237f14a1089629b65f55c513d0a",
+      "created_at": "2026-11-18T21:42:23.061Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -12745,8 +12747,8 @@
       "title": "Research & Knowledge Intelligence: bigscience/bloom Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-bigscience-bloom-research-knowledge-intelligence-bigscience-bloom-core-invari.md",
       "repository": "bigscience/bloom",
-      "content_hash": "33523b81c05bf52953d6b4d0ee8fe88366cea300736bb91ccb177cfe7c4cb663",
-      "created_at": "2026-11-14T03:32:11.234Z"
+      "content_hash": "dbb85a8873960838f8689f9f60499a12863ff671ede198d7320974165650f567",
+      "created_at": "2026-11-18T21:42:09.090Z"
     },
     "domain_intelligence-architecture-intelligence-moby-buildkit-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-moby-buildkit-core-invariants",
@@ -12805,8 +12807,8 @@
       "title": "Research & Knowledge Intelligence: hf-bigscience-bloom-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-bigscience-bloom-learnings-research-knowledge-intelligence-hf-bigscience-bloo.md",
       "repository": "hf-bigscience-bloom-learnings",
-      "content_hash": "787ff3fb4938daceba385303049bf01e723e0e220f4a19b7e006e9d5506e962a",
-      "created_at": "2026-11-14T03:33:00.256Z"
+      "content_hash": "19531d82b551d4beee5ffb006a34332f5dc217c28a495a2ad344c3130b6065e9",
+      "created_at": "2026-11-18T21:42:30.407Z"
     },
     "domain_intelligence-architecture-intelligence-moby-buildkit-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-moby-buildkit-learnings-core-invariants",
@@ -15672,8 +15674,8 @@
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "638f31b081f93236d40b96cc7815d2e3f7fc6b666c70e939fc5c2ec1f2ac5751",
-      "created_at": "2026-11-18T17:51:23.939Z"
+      "content_hash": "cdd879bf4b2ccadedeb844d9440c313894f68f57a830aa38a1d6c954c792643c",
+      "created_at": "2026-11-18T21:42:26.713Z"
     },
     "DOM-D-C603EFBB": {
       "record_id": "DOM-D-C603EFBB",
@@ -17271,8 +17273,8 @@
       "title": "Technical Construction Intelligence: aquasecurity/trivy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-technical-construction-intelligence-aquasecurity-trivy-core-i.md",
       "repository": "aquasecurity/trivy",
-      "content_hash": "a5d8f42f0255e4ca58122a1e8fe0fed892478836ffe6f84f1045ea786354970a",
-      "created_at": "2026-11-17T08:31:12.053Z"
+      "content_hash": "af6e38ccba02964ec5dc4c988c56bf573b6f02b3c7a6be4252c1c9e43d58047b",
+      "created_at": "2026-11-18T21:42:19.378Z"
     },
     "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tw93-pake-learnings-core-invariants",
@@ -17298,8 +17300,8 @@
       "title": "Technical Construction Intelligence: aquasecurity-trivy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aquasecurity-trivy-learnings-technical-construction-intelligence-aquasecurity-tr.md",
       "repository": "aquasecurity-trivy-learnings",
-      "content_hash": "6f479ce81583f016819690eb6ef4c74a55d4f9b4d7c7b55d81d1ef92e94d01b9",
-      "created_at": "2026-11-17T08:32:19.722Z"
+      "content_hash": "64dba1eed113a7c47219b25ca178d34cd54bf2138b84ff390c44465cd61eabdf",
+      "created_at": "2026-11-18T21:42:31.198Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-nvfp4-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-gev-26b-decide-nvfp4-core-invariants",
@@ -31976,6 +31978,24 @@
       "repository": "hf-openai-gpt-oss-20b-learnings",
       "content_hash": "a707f3a84979a99131eaf4277971dd09ee9ed3303b3eb16ad19b8a03017a10aa",
       "created_at": "2026-11-18T21:34:23.646Z"
+    },
+    "domain_intelligence-product-intelligence-transact-rs-sqlx-core-invariants": {
+      "record_id": "domain_intelligence-product-intelligence-transact-rs-sqlx-core-invariants",
+      "domain_letter": "B",
+      "title": "Product Intelligence: transact-rs/sqlx Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-transact-rs-sqlx-product-intelligence-transact-rs-sqlx-core-invariants.md",
+      "repository": "transact-rs/sqlx",
+      "content_hash": "6485eb63a193673ca948e06dcc2455210924e318f3f183a4d940acc611ae02c1",
+      "created_at": "2026-11-18T21:42:11.117Z"
+    },
+    "domain_intelligence-product-intelligence-transact-rs-sqlx-learnings-core-invariants": {
+      "record_id": "domain_intelligence-product-intelligence-transact-rs-sqlx-learnings-core-invariants",
+      "domain_letter": "B",
+      "title": "Product Intelligence: transact-rs-sqlx-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-transact-rs-sqlx-learnings-product-intelligence-transact-rs-sqlx-learnings-core-.md",
+      "repository": "transact-rs-sqlx-learnings",
+      "content_hash": "1c0be7bbf46c135ec9f71b07b8f73dbb78c3a30eb57f82a9ba2fd0c52cc9b509",
+      "created_at": "2026-11-18T21:42:29.965Z"
     }
   }
 }

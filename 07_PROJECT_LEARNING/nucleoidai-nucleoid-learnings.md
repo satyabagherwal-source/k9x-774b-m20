@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `22d7c31d`  
+> **Source Version**: `f1c29264`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T17:51:22.239Z  
+> **Timestamp**: 2026-11-18T21:42:25.915Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T17:51:22.232Z  
+> **Harvest Timestamp**: 2026-11-18T21:42:25.909Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1197,7 +1197,7 @@ export async function declarations({ train_dataset }) {
 export async function instances({ train_dataset }) {
   milestone.segmenting_training_objects();
 
-  const { instances } = await llm.generate({
+  const { result: instances } = await llm.generate({
     messages: [
       {
         role: "user",
@@ -1217,7 +1217,7 @@ export async function instances({ train_dataset }) {
           })}
           json_format:
           {
-            "instances": [{
+            "result": [{
               "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
               "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
             }]
@@ -1232,8 +1232,15 @@ export async function instances({ train_dataset }) {
   return { instances };
 }
 
-export async function value({ train_dataset, input_matrix, instance }) {
-  milestone.constructing_instance({ instance_name: instance.instance_name });
+export async function value({
+  instance_name,
+  train_dataset,
+  input_matrix,
+  instance,
+}) {
+  milestone.constructing_instance({ instance_name });
+
+  instance.instance_name = instance_name;
 
   const { x, y, width, height, volume } = Matrix.locate(
     instance.input_instance_matrix
@@ -1252,7 +1259,7 @@ export async function value({ train_dataset, input_matrix, instance }) {
     volume,
   });
 
-  milestone.evaluating_rules({ instance_name: instance.instance_name });
+  milestone.evaluating_rules({ instance_name });
 
   const canvas_width: number = input_matrix[0].length;
   const canvas_height: number = input_matrix.length;
@@ -1266,14 +1273,15 @@ export async function value({ train_dataset, input_matrix, instance }) {
   );
 
   milestone.instance_constructed({
-    instance_name: instance.instance_name,
+    instance_name,
     input_instance_matrix: instance.input_instance_matrix,
     output_instance_matrix: instance.output_instance_matrix,
     implementation,
     input_value,
   });
 
-  return { implementation, input_value };
+  instance.implementation = implementation;
+  instance.input_value = input_value;
 }
 
 export async function state(train_dataset) {
@@ -1321,6 +1329,7 @@ import * as milestone from "./lib/milestone.ts";
 import arc_dataset from "./lib/arc_dataset.ts";
 import fs from "node:fs/promises";
 import synthesizer from "./synthesizer.ts";
+import object from "./object.ts";
 
 // Genesis puzzle_id: 3aa6fb7a
 export async function start(puzzle_id: string = "3aa6fb7a") {
@@ -1365,13 +1374,39 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     });
 
     for (const instance of instances) {
-      instance.instance_name = next_instance_name();
+      await analyzer.value({
+        instance_name: next_instance_name(),
+        train_dataset,
+        input_matrix: dataset.input_matrix,
+        instance,
+      });
     }
 
     dataset.instances = instances;
   }
 
   await analyzer.state(train_dataset);
+
+  const synthesized_dataset = await synthesizer.synthesize({ train_dataset });
+
+  for (const dataset of synthesized_dataset) {
+    for (const instance of dataset.instances) {
+      await analyzer.value({
+        instance_name: next_instance_name(),
+        train_dataset,
+        input_matrix: dataset.input_matrix,
+        instance,
+      });
+    }
+
+    await object.state({
+      declarations,
+      input_matrix: dataset.input_matrix,
+      input_instances: dataset.instances,
+    });
+
+    train_dataset.dataset.push(dataset);
+  }
 
   milestone.visualization();
 
@@ -1380,12 +1415,8 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     test_input_matrix,
   });
 
-  let result_matrix = Matrix.draw(
-    [],
-    test_input_matrix.length,
-    test_input_matrix[0].length,
-    0,
-    0
+  let result_matrix = Array.from({ length: test_input_matrix.length }, () =>
+    Array(test_input_matrix[0].length).fill(0)
   );
 
   const input_instances = [];
@@ -1408,11 +1439,11 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     });
   }
 
-  const synthesized_dataset = await synthesizer.synthesize({ train_dataset });
-
-  milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
-
-  await visualizer.state({ declarations, test_input_matrix, input_instances });
+  await object.state({
+    declarations,
+    input_matrix: test_input_matrix,
+    input_instances,
+  });
 
   for (const input_instance of input_instances) {
     const { output_instance_matrix } = await visualizer.output_instance_matrix({
@@ -1532,205 +1563,248 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `22d7c31d` (2026-11-18)
-**Commit Message**: Draft NUC 120 Union Reasoning Selections
+### Incident Patch 1: `f1c29264` (2026-11-18)
+**Commit Message**: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
 
-Category: Reasoning enhancement, drawn uniformly at random (index 3 of
-the five eligible categories in NUC 1's registry, p = 1/5, no redraw)
-for a continuous /nuc-proposal cycle. The token non-regression gate is
-required for this category in continuous mode, so each new case gets an
-accepted-syntax counterpart.
-
-Requested change: a reasoning stage selection |> union(other) that
-selects what either of two explanations selects: the selection's steps
-in their order, followed by the steps of other whose node the selection
-does not select, in other's order, each with its fields unchanged. It
-completes NUC 106's set stages intersect and except; other is written as
-a pipeline's source is and steps are compared by their node. The result
-stays a selection that later stages can narrow, and it stays live
-through every observation of both selections. At the accepted revision
-each such pipeline raises the parse-time TypeError("union is not an
-operation"); union stays an ordinary name everywhere else, and a binding
-named union shadows the stage as bindings shadow the other stages. The
-accepted spelling is (selection).concat(other |> except(selection)).
-
-
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `README.md` (modified, +179/-0)
 ```diff
-@@ -147,6 +147,7 @@ Created: 31-Jul-2026
- | [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Rejected: existing selector-case audit fails |
- | [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Accepted |
- | [112](nuc-0112.md) | Node Names of Reasoning Selections | Accepted |
-+| [120](nuc-0120.md) | Union Reasoning Selections | Draft |
+@@ -2380,6 +2380,185 @@ assert(causes, ["solar", "target", "outside", "insulation"])
+   joins the facts it rests on. See the
+   [root contract](nucleoid.spec.md#node-names-of-reasoning-selections).
  
- ### Language compatibility
- 
-@@ -293,6 +294,7 @@ Created: 31-Jul-2026
- | [117](nuc-0117.md) | First and Last Element Methods | Standards Track | Language compatibility | Accepted |
- | [118](nuc-0118.md) | Case Conversion Method Aliases | Standards Track | Language compatibility | Accepted |
- | [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Accepted |
-+| [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
- 
- ## Copyright
- 
-```
-
-**File**: `docs/nuc-0120.md` (added, +73/-0)
-```diff
-@@ -0,0 +1,73 @@
-+# NUC 120 -- Union Reasoning Selections
++## List and population products
 +
-+```
-+NUC: 120
-+Title: Union Reasoning Selections
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Reasoning enhancement
-+Created: 18-Nov-2026
-+```
-+
-+## Abstract
-+
-+- `selection |> union(other)` selects what either of two explanations
-+  selects: the selection's steps in their order, followed by the steps of
-+  `other` whose node the selection does not select, in `other`'s order,
-+  each with its fields unchanged. So
-+  `tax |> why |> union(shipping |> why)` is everything the tax or the
-+  shipping rests on, each node once.
-+- It completes the set stages of [NUC 106](nuc-0106.md): `intersect` keeps
-+  what both explanations select and `except` what only the first selects,
-+  and `union` gives what either selects. `other` is written as a
-+  pipeline's source is, evaluated in place each time the stage applies,
-+  and steps are compared by their node.
-+- The result is a selection, so further stages follow it, and it stays
-+  live through every observation of both selections.
-+- At the accepted revision each such pipeline raises the parse-time
-+  `TypeError("union is not an operation")`. Only those programs change.
-+  `union` stays an ordinary name everywhere else, as a variable, function,
-+  property or object key, and a binding named `union` shadows the stage,
-+  as bindings shadow the other stages.
-+
-+## Motivation
-+
-+- World models answer questions about several conclusions at once: what
-+  an order's tax or its shipping rests on, which facts a decision or its
-+  audit depends on. NUC 106 answers the shared and the distinct parts of
-+  two explanations with `intersect` and `except`; their combined part has
-+  no stage.
-+- Today the combined part is spelled
-+  `(tax |> why).concat(shipping |> why |> except(tax |> why))`, which names
-+  the first explanation twice. The plain
-+  `(tax |> why).concat(shipping |> why)` lists a shared cause such as the
-+  quantity twice. Either result is a list rather than a selection, so no
-+  stage can follow it: `|> stated` after it raises
-+  `TypeError("Cannot explain ...")`.
-+- A union stage states the question once, keeps each node once, and keeps
-+  the answer a selection that `stated`, `derived` and the other stages can
-+  narrow further.
-+
-+## Rationale
-+
-+- Pending: the proposer completes this section.
-+
-+## Specification
-+
-+- Pending: the proposer completes this section.
-+
-+## Errors
-+
-+- Pending: the proposer completes this section.
-+
-+## Reference Implementation
-+
-+- Pending: the proposer completes this section.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
-```
-
----
-
-### Incident Patch 2: `dca36fec` (2026-11-18)
-**Commit Message**: NUC 119 Finally Clauses for Try Statements
-
-Accepted under the automatic acceptance rule, in a continuous
-/nuc-proposal cycle (Runtime features, brand-new feature): the frozen
-candidate meets every hard criterion and passes every policy check, with
-the token check skipped, as NUC 1's matrix requires for a brand-new
-Runtime features feature in continuous mode. The cycle found no stale
-Draft, drew Runtime features uniformly from the five eligible
-categories, allocated NUC 119 in 9eeb878b, and completed it with a fresh
-baseline, candidate, proposer, Rust improvement pass and evaluator.
-
-A complete try/catch statement may end with a finally clause, finally:
-and a suite on the logical line right after the catch suite at the try
-statement's level, which runs every time the statement ends: after the
-body completes, after the catch suite handles a failure, and before a
-return in either of them leaves. The pending outcome stands unless the
-finally suite changes it: a returned value is still returned and a catch
-suite's error still propagates afterwards, while a return or a failure
-of the finally suite replaces it, as in Python, JavaScript and Java. A
-failed body and a failed catch suite are
-
-**File**: `README.md` (modified, +31/-0)
-```diff
-@@ -2528,6 +2528,37 @@ assert([door.key, door.banner], ["side door", "SIDE DOOR"])
-   values keep their errors. See the
-   [root contract](nucleoid.spec.md#case-conversion-method-aliases).
- 
-+## Finally clauses
-+
-+**Finally clauses record every attempt to unlock a door**
++**Products keep the chance that a trip connects live as flights change**
 +
 +```nuc
-+attempts = []
-+def unlock(code):
-+    try:
-+        if code != 1234:
-+            throw "WRONG CODE"
-+        return "unlocked"
-+    catch reason:
-+        return reason
-+    finally:
-+        attempts.push(code)
-+assert(unlock(1111), "WRONG CODE")
-+assert(unlock(1234), "unlocked")
-+assert(attempts, [1111, 1234])
++class Flight(code, onTime):
++    this.code = code
++    this.onTime = onTime
++first = Flight("AB1", 0.5)
++Flight("CD2", 0.75)
++trip = Flight.product(flight -> flight.onTime)
++assert(trip, 0.375)
++first.onTime = 0.75
++Flight("EF3", 0.5)
++assert(trip, 0.28125)
 +```
 +
-+- [NUC 119](docs/nuc-0119.md) adds the `finally` clause of Python,
-+  JavaScript, Java, Kotlin and C# to complete `try`/`catch` statements:
-+  `finally:` and a suite, on the line after the catch suite, run however
-+  the statement ends.
-+- `unlock` returns from its body and from its catch suite, and the
-+  `finally` suite records the attempt on both paths before the value is
-+  returned. A failed body is rolled back before the catch suite runs, as
-+  without the clause, and a `return` in the `finally` suite would replace
-+  the pending result. See the
-+  [root contract](nucleoid.spec.md#finally-clauses).
++- [NUC 114](docs/nuc-0114.md) adds `product` to lists and class
++  populations, the multiplicative sibling of `sum`.
++  `Flight.product(flight -> flight.onTime)` multiplies the chances that
++  the flights are on time, so `trip` is the chance that all of them are,
++  when the flights are independent.
++- `trip` stays live like its `reduce` spelling,
++  `Flight.reduce((total, flight) => total * flight.onTime, 1)`: a likelier
++  first flight and a third connection both update it. Without a selector,
++  `sides.product()` multiplies the items themselves, and an empty list or
++  class gives `1`. See the
++  [root contract](nucleoid.spec.md#list-and-population-products).
 +
- ## Reactive list flattening
- 
- **Flat turns nested lists into one live list**
++## Repeat loops
++
++**Repeat loops advance a world model a counted number of steps**
++
++```nuc
++class Cup(temp):
++    this.temp = temp
++tea = Cup(90)
++room = 20
++cool = tea.temp < 40
++minutes = 3
++repeat minutes:
++    tea.temp = tea.temp - (tea.temp - room) / 2
++assert(tea.temp, 28.75)
++assert(cool, true)
++```
++
++- [NUC 115](docs/nuc-0115.md) adds `repeat COUNT:` with an indented or
++  same-line body, the count-controlled sibling of `while`. The count is read
++  once, before the first iteration, and each iteration's changes, with what
++  they propagate to standing rules such as `cool`, are live before the next
++  iteration runs.
++- Each minute the tea loses half of its difference from the room, so three
++  minutes take it from `90` to `28.75`. The loop runs once, imperatively: it
++  leaves no standing rule and does not run again when `minutes` changes
++  later. A fraction truncates, a count of zero or less runs nothing, and a
++  count of more than 100,000 iterations raises
++  `TypeError("Repeat count is too large")` before the first one.
++  `repeat` stays an ordinary name everywhere else, and `"ab".repeat(2)` is
++  still `"abab"`. See the
++  [root contract](nucleoid.spec.md#count-controlled-repeat-loops).
++
++## Size and emptiness aliases
++
++**Size and emptiness methods keep an order queue's rules live**
++
++```nuc
++orders = ["tea"]
++idle = orders.isEmpty()
++backlog = orders.size()
++orders.push("cake", "pie")
++assert([idle, backlog], [false, 3])
++orders.pop()
++orders.pop()
++orders.pop()
++assert([idle, backlog, orders.length], [true, 0, 0])
++```
++
++- [NUC 116](docs/nuc-0116.md) adds the size and emptiness methods that
++  Java, Kotlin, C++ and Rust write, as aliases of `length` on lists, class
++  populations and strings: `size()` and `len()` are `length`, `isEmpty()`
++  and `is_empty()` are `length == 0`, and `isNotEmpty()` is `length > 0`.
++  Strings also take Java's `length()`, as lists and populations do.
++- `idle` and `backlog` are standing rules, so every push and pop of the
++  queue updates them, as `orders.length == 0` and `orders.length` would.
++  Reads without a call, such as `orders.size`, stay undefined, and other
++  values keep their errors. See the
++  [root contract](nucleoid.spec.md#size-and-emptiness-method-aliases).
++
++## First and last element methods
++
++**First and last methods keep a sensor's newest reading live**
++
++```nuc
++class Sensor(name):
++    this.name = name
++    this.readings = []
++$Sensor.newest = $Sensor.readings.last()
++$Sensor.firstAlarm = $Sensor.readings.first(reading -> reading > 40)
++oven = Sensor("oven")
++oven.readings.push(35, 52, 38)
++assert([oven.newest, oven.firstAlarm], [38, 52])
++oven.readings.push(41)
++assert([oven.newest, oven.firstAlarm], [41, 52])
++oven.readings.shift()
++oven.readings.shift()
++assert([oven.newest, oven.firstAlarm], [41, 41])
++```
++
++- [NUC 117](docs/nuc-0117.md) adds the `first` and `last` methods that
++  Kotlin, Rust, Swift, Ruby and C#'s LINQ write, as aliases on lists and
++  class populations: `first()` is `at(0)` and `last()` is `at(-1)`, and with
++  a predicate, as Kotlin writes `orders.first { it.open }`, `first(test)` is
++  `find(test)` and `last(test)` is `findLast(test)`.
++- Each sensor's `newest` and `firstAlarm` follow its own readings through
++  the class-level rules, as `$Sensor.readings.at(-1)` and
++  `$Sensor.readings.find(reading -> reading > 40)` would: a new reading
++  replaces the newest, and shifting out the old ones moves the first alarm
++  to `41`. An empty list gives undefined and a predicate that accepts
++  nothing `null`, as their spellings do. See the
++  [root contract](nucleoid.spec.md#first-and-last-element-methods).
++
++## Case conversion method aliases
++
++**Case conversion methods keep
 ```
 
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +19/-16)
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +36/-16)
 ```diff
-@@ -788,19 +788,22 @@
- {"id":"spec-0788","description":"Nucleoid converts case with Kotlin, Rust and Swift spellings","code":"label = \"Front Door\"\nkey = label.lowercase()\ncode = label.to_uppercase()\nbanner = label.uppercased()\nassert([key, code, banner], [\"front door\", \"FRONT DOOR\", \"FRONT DOOR\"])\nlabel = \"Back Gate\"\nassert([key, code, banner], [\"back gate\", \"BACK GATE\", \"BACK GATE\"])\nassert([\"NORTH\".to_lowercase(), \"Mixed Case\".lowercased(), \"ok\".uppercase()], [\"north\", \"mixed case\", \"OK\"])\nstreet = \"Straße\"\nupper = street.uppercase()\nassert([upper, upper.length, street.length], [\"STRASSE\", 7, 6])\nassert([street.to_uppercase(), street.uppercased(), street.toUpperCase()], [upper, upper, upper])\nassert([\"ΟΔΟΣ\".lowercase(), \"ǅ\".uppercased(), \"ﬁx\".to_uppercase(), \"\".lowercased()], [\"οδος\", \"Ǆ\", \"FIX\", \"\"])\nstreet = \"Gasse\"\n[upper, key]","return":"[\"GASSE\",\"back gate\"]"}
- {"id":"spec-0789","description":"Nucleoid keeps class-level and mapped case conversions live","code":"class Badge(name, team):\n    this.name = name\n    this.team = team\n$Badge.login = $Badge.name.to_lowercase()\n$Badge.crest = $Badge.team.uppercased()\nana = Badge(\"Ana Lima\", \"blue\")\nbo = Badge(\"BO CHEN\", \"Red\")\nassert([ana.login, ana.crest, bo.login, bo.crest], [\"ana lima\", \"BLUE\", \"bo chen\", \"RED\"])\nbo.name = \"Bo Chen-Wu\"\nana.team = \"green\"\nassert([bo.login, ana.crest], [\"bo chen-wu\", \"GREEN\"])\ntags = [\"Urgent\", \"low\"]\nshout = tags.map(tag -> tag.uppercase())\nquiet = tags.map(tag -> tag.lowercased())\nassert([shout, quiet], [[\"URGENT\", \"LOW\"], [\"urgent\", \"low\"]])\ntags.push(\"Straße\")\nassert(shout, [\"URGENT\", \"LOW\", \"STRASSE\"])\nquiet","return":"[\"urgent\",\"low\",\"straße\"]"}
- {"id":"spec-0790","description":"Nucleoid rolls back failed updates through case conversion aliases","code":"label = \"door\"\ncode = label.uppercase()\nfailure = \"\"\ntry:\n    label = 7\ncatch error:\n    failure = error\nassert(failure, TypeError(\"number.uppercase is not a function\"))\nassert([label, code], [\"door\", \"DOOR\"])\ntry:\n    label = \"gate\"\n    assert(code, \"GATE\")\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([label, code], [\"door\", \"DOOR\"])\nclass Tag(name):\n    this.name = name\n$Tag.key = $Tag.name.to_lowercase()\nred = Tag(\"RED\")\ntry:\n    red.name = true\ncatch error:\n    failure = error\nassert(failure, TypeError(\"boolean.to_lowercase is not a function\"))\nassert([red.name, red.key], [\"RED\", \"red\"])\nred.name = \"Crimson\"\nred.key","return":"\"crimson\""}
--{"id":"spec-0791","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0792","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0793","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0794","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0795","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","ret
+@@ -771,19 +771,39 @@
+ {"id":"spec-0771","description":"Nucleoid names what a change reaches and the model with nodes","code":"rate = 0.2\nprice = 10\nqty = 3\nsubtotal = price * qty\ntax = subtotal * rate\nreach = price |> affects |> nodes\nknown = model |> nodes\nassert(reach, [\"subtotal\", \"tax\"])\nassert(known, [\"rate\", \"price\", \"qty\", \"subtotal\", \"tax\"])\ntotal = subtotal + tax\nassert(reach, [\"subtotal\", \"tax\", \"total\"])\nassert(known, [\"rate\", \"price\", \"qty\", \"subtotal\", \"tax\", \"total\"])\ntax = qty * rate\nassert(reach, [\"subtotal\", \"total\"])\ndelete total\nassert(known, [\"rate\", \"price\", \"qty\", \"subtotal\", \"tax\"])\nreach","return":"[\"subtotal\"]"}
+ {"id":"spec-0772","description":"Nucleoid names the nodes behind class level rules with nodes","code":"fee = 2\nclass Order(price, qty):\n    this.price = price\n    this.qty = qty\n$Order.total = $Order.price * $Order.qty\n$Order.basis = $Order.total |> why |> nodes\nfirst = Order(10, 2)\nassert(first.basis, [\"first.total\", \"first.price\", \"first.qty\"])\n$Order.total = $Order.price * $Order.qty + fee\nsecond = Order(4, 5)\nassert(first.basis, [\"first.total\", \"first.price\", \"first.qty\", \"fee\"])\nassert(second.basis, [\"second.total\", \"second.price\", \"second.qty\", \"fee\"])\nreach = fee |> affects |> nodes\nassert(reach, [\"first.total\", \"second.total\"])\nfirst.total |> why |> stated |> nodes","return":"[\"fee\"]"}
+ {"id":"spec-0773","description":"Nucleoid rolls back failed updates through node names","code":"price = 10\nqty = 3\nsubtotal = price * qty\nnames = subtotal |> why |> nodes\nfailure = \"\"\ntry:\n    names = 1 |> why |> nodes\ncatch error:\n    failure = error\nassert(failure, TypeError(\"Cannot explain 1\"))\nassert(names, [\"subtotal\", \"price\", \"qty\"])\ntry:\n    fee = 2\n    subtotal = price * qty + fee\n    assert(names, [\"subtotal\", \"price\", \"qty\", \"fee\"])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert(names, [\"subtotal\", \"price\", \"qty\"])\ninputs = subtotal |> why |> stated |> nodes\n[names, inputs]","return":"[[\"subtotal\",\"price\",\"qty\"],[\"price\",\"qty\"]]"}
+-{"id":"spec-0774","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
+-{"id":"spec-0775","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
+-{"id":"spec-0776","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
+-{"id":"spec-0777","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
+-{"id":"spec-0778","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
+-{"id":"spec-0779","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\"
+```
+
+**File**: `dataset/nucleoid.synth.78.jsonl` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++{"id":"synth-78-0001","description":"A product multiplies the sides of a box into its volume","code":"sides = [2, 3, 4]\nvolume = sides.product()\nassert(volume, 24)\nsides.push(0.5)\nvolume","return":"12"}
++{"id":"synth-78-0002","description":"An empty list multiplies to one, the empty product","code":"factors = []\nscale = factors.product()\nassert(scale, 1)\nfactors.push(3, 4)\nscale","return":"12"}
++{"id":"synth-78-0003","description":"A selector compounds growth rates over periods","code":"rates = [0.5, 0.25]\ngrowth = rates.product(rate -> 1 + rate)\nassert(growth, 1.875)\nrates.push(-0.5)\ngrowth","return":"0.9375"}
++{"id":"synth-78-0004","description":"A population product gives the chance that every independent part works","code":"class Part(name, works):\n    this.name = name\n    this.works = works\nPart(\"pump\", 0.5)\nvalve = Part(\"valve\", 0.75)\nchance = Part.product(part -> part.works)\nassert(chance, 0.375)\nvalve.works = 1\nPart(\"seal\", 0.5)\nchance","return":"0.25"}
++{"id":"synth-78-0005","description":"A class-level rule multiplies each instance's own list of factors","code":"class Box(name, sides):\n    this.name = name\n    this.sides = sides\n$Box.volume = $Box.sides.product()\ncrate = Box(\"crate\", [2, 3, 4])\ncube = Box(\"cube\", [3, 3, 3])\ncrate.sides.pop()\n[crate.volume, cube.volume]","return":"[6,27]"}
++{"id":"synth-78-0006","description":"A filtered population product in a class-level rule follows new instances","code":"class Trip(name):\n    this.name = name\nclass Leg(trip, onTime):\n    this.trip = trip\n    this.onTime = onTime\n$Trip.chance = Leg.filter(leg -> leg.trip == $Trip).product(leg -> leg.onTime)\nhome = Trip(\"home\")\nLeg(home, 0.5)\nLeg(home, 0.5)\nassert(home.chance, 0.25)\naway = Trip(\"away\")\nassert(away.chance, 1)\nLeg(away, 0.75)\n[home.chance, away.chance]","return":"[0.25,0.75]"}
++{"id":"synth-78-0007","description":"A product converts its values to numbers as multiplication does","code":"values = [2, \"3\", true, [4]]\nvalues.product()","return":"24"}
++{"id":"synth-78-0008","description":"A selector that is not a function raises a TypeError while a product without one multiplies the items","code":"xs = [2, 3]\nmessage = \"\"\ntry:\n    xs.product(5)\ncatch error:\n    message = error\n[xs.product(), message]","return":"[6,\"TypeError: product expects a function\"]"}
++{"id":"synth-78-0009","description":"An undefined factor keeps a standing product unknown until it is defined","code":"items = [{q: 2}, {}]\ntotal = items.product(item -> item.q)\nassert(total, null)\nitems[1].q = 5\ntotal","return":"10"}
++{"id":"synth-78-0010","description":"A failed update through a product rolls back","code":"def checked(chance):\n    if chance > 1:\n        throw \"NOT_A_CHANCE\"\n    return chance\nodds = [0.5, 0.5]\nboth = odds.product(checked)\ntry:\n    odds.push(3)\ncatch error:\n    pass\n[odds.length, both]","return":"[2,0.25]"}
++{"id":"synth-78-0011","description":"A class name runs the population product beside an instance method named product","code":"class Lens(power):\n    this.power = power\n    def product(other) => this.power * other\nwide = Lens(2)\nLens(3)\nzoom = Lens.product(lens -> lens.power)\n[zoom, wide.product(5)]","return":"[6,10]"}
++{"id":"synth-78-0012","description":"A product counts the combinations of independent choices","code":"courses = [3, 4, 2]\nmeals = courses.product()\nassert(meals, 24)\ncourses.push(5)\nmeals","return":"120"}
+```
+
+**File**: `dataset/nucleoid.synth.79.jsonl` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++{"id":"synth-79-0001","description":"A repeat loop runs its body a counted number of times","code":"steps = 0\nrepeat 4:\n    steps = steps + 1\nsteps","return":"4"}
++{"id":"synth-79-0002","description":"A balance compounds once a year for a counted number of years","code":"balance = 100\nyears = 2\nrepeat years:\n    balance = balance * 1.5\nbalance","return":"225"}
++{"id":"synth-79-0003","description":"A repeat count is read once even when the body grows what it reads","code":"queue = [1, 2]\nsize = queue.length\nrepeat size:\n    queue.push(0)\n[queue.length, size]","return":"[4,4]"}
++{"id":"synth-79-0004","description":"A fractional count truncates and a negative count runs nothing","code":"n = 0\nrepeat 3.7: n = n + 1\nrepeat 2 - 5: n = n + 100\nn","return":"3"}
++{"id":"synth-79-0005","description":"A function accumulates a local across the iterations of a repeat loop","code":"def power(base, exponent):\n    result = 1\n    repeat exponent:\n        result = result * base\n    return result\n[power(2, 10), power(5, 0)]","return":"[1024,1]"}
++{"id":"synth-79-0006","description":"A constructor builds a counted number of parts","code":"class Wheel(car):\n    this.car = car\nclass Car(wheels):\n    repeat wheels:\n        Wheel(this)\nbike = Car(2)\ntrike = Car(3)\nWheel.filter(w -> w.car == trike).length","return":"3"}
++{"id":"synth-79-0007","description":"A method returns from inside a repeat loop","code":"class Stack(items):\n    this.items = items\n    def drop(count):\n        repeat count:\n            if this.items.length == 0:\n                return \"empty\"\n            this.items.pop()\n        return this.items.length\nstack = Stack([1, 2, 3])\n[stack.drop(2), stack.drop(5)]","return":"[1,\"empty\"]"}
++{"id":"synth-79-0008","description":"Nested repeat loops fill a grid of cells","code":"class Cell(row, col):\n    this.row = row\n    this.col = col\nrow = 0\nrepeat 2:\n    col = 0\n    repeat 3:\n        Cell(row, col)\n        col = col + 1\n    row = row + 1\nCell.map(c -> c.row * 10 + c.col)","return":"[0,1,2,10,11,12]"}
++{"id":"synth-79-0009","description":"A thrown value rolls back every iteration of a repeat loop","code":"class Box\nfilled = 0\ntry:\n    repeat 3:\n        Box()\n        filled = filled + 1\n        if filled == 2:\n            throw \"FULL\"\ncatch error:\n    reason = error\n[reason, Box.length, filled]","return":"[\"FULL\",0,0]"}
++{"id":"synth-79-0010","description":"A repeat loop inside a standing rule runs again when the rule runs","code":"class Meter\nmeter = Meter()\nmeter.ticks = 2\nmeter.total = 0\nif meter.ticks > 0:\n    repeat meter.ticks: meter.total = meter.total + 1\nmeter.ticks = 3\nmeter.total","return":"5"}
++{"id":"synth-79-0011","description":"A count above the bound raises before the first iteration","code":"ran = 0\ntry:\n    repeat 100001: ran = ran + 1\ncatch error:\n    problem = error\n[problem, ran]","return":"[\"TypeError: Repeat count is too large\",0]"}
++{"id":"synth-79-0012","description":"Repeat stays an ordinary name beside repeat loops","code":"repeat = 3\nn = 0\nrepeat repeat: n = n + repeat\n[\"ab\".repeat(2), n]","return":"[\"abab\",9]"}
+```
+
+**File**: `dataset/nucleoid.synth.80.jsonl` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++{"id":"synth-80-0001","description":"List size and len give the list's length, as Java and Rust spell them","code":"orders = [\"tea\", \"cake\"]\n[orders.size(), orders.len(), orders.length]","return":"[2,2,2]"}
++{"id":"synth-80-0002","description":"isEmpty and isNotEmpty follow a queue as it is pushed","code":"queue = []\nidle = queue.isEmpty()\nbusy = queue.isNotEmpty()\nqueue.push(\"job\")\n[idle, busy]","return":"[false,true]"}
++{"id":"synth-80-0003","description":"Rust's is_empty tests a list, and the rule follows a later pop","code":"stack = [1]\nempty = stack.is_empty()\nstack.pop()\nempty","return":"true"}
++{"id":"synth-80-0004","description":"A string's length() method gives its character count, as Java writes it","code":"name = \"Zoë\"\n[name.length(), name.size(), name.len(), name.length]","return":"[3,3,3,3]"}
++{"id":"synth-80-0005","description":"Strings answer isEmpty, is_empty and isNotEmpty","code":"[\"\".isEmpty(), \"\".is_empty(), \" \".isEmpty(), \"a\".isNotEmpty()]","return":"[true,true,false,true]"}
++{"id":"synth-80-0006","description":"A class population's size counts its instances and follows new ones","code":"class Order(item):\n    this.item = item\norders = Order.size()\nOrder(\"tea\")\nOrder(\"cake\")\norders","return":"2"}
++{"id":"synth-80-0007","description":"A class without instances is empty and has size 0","code":"class Ticket\n[Ticket.isEmpty(), Ticket.size()]","return":"[true,0]"}
++{"id":"synth-80-0008","description":"A class-level rule tests each instance's list with isEmpty","code":"class Bin(items):\n    this.items = items\n$Bin.empty = $Bin.items.isEmpty()\nfull = Bin([1])\nspare = Bin([])\nfull.items.pop()\n[full.empty, spare.empty]","return":"[true,true]"}
++{"id":"synth-80-0009","description":"Arguments of a size alias are evaluated and ignored, as length() treats them","code":"xs = [1, 2, 3]\n[xs.size(0), xs.len(\"x\", null)]","return":"[3,3]"}
++{"id":"synth-80-0010","description":"On a class name the population alias wins over an instance method of the same name","code":"class Box:\n    def size() => 99\nb = Box()\n[b.size(), Box.size()]","return":"[99,1]"}
++{"id":"synth-80-0011","description":"A failed update through an alias rolls back, so the rule keeps its value","code":"stock = [\"bolt\"]\nlow = stock.size() < 2\nfailure = \"\"\ntry:\n    stock = 7\ncatch error:\n    failure = error\n[stock, low, failure]","return":"[[\"bolt\"],true,\"TypeError: number.size is not a function\"]"}
++{"id":"synth-80-0012","description":"A program that caught the former alias error now receives the size","code":"xs = [1, 2]\ntry:\n    r = xs.size()\ncatch e:\n    r = \"caught\"\nr","return":"2"}
++{"id":"synth-80-0013","description":"Templates and conditional expressions read the aliases","code":"jobs = [\"a\", \"b\"]\nlabel = `${jobs.size()} jobs`\nstate = jobs.isEmpty() ? \"idle\" : \"busy\"\n[label, state]","return":"[\"2 jobs\",\"busy\"]"}
++{"id":"synth-80-0014","description":"Counting the empty shelves of a population with filter, isEmpty and size","code":"class Shelf(items):\n    this.items = items\nShelf([])\nShelf([1])\nShelf([])\nShelf.filter(shelf -> shelf.items.isEmpty()).size()","return":"2"}
+```
+
+**File**: `dataset/nucleoid.synth.81.jsonl` (added, +15/-0)
+```diff
+@@ -0,0 +1,15 @@
++{"id":"synth-81-0001","description":"List first and last give its ends, as Kotlin and Rust spell them","code":"queue = [\"tea\", \"cake\", \"pie\"]\n[queue.first(), queue.last()]","return":"[\"tea\",\"pie\"]"}
++{"id":"synth-81-0002","description":"A sensor's newest reading follows a later push through last","code":"readings = [18, 21]\nnewest = readings.last()\nreadings.push(25)\nnewest","return":"25"}
++{"id":"synth-81-0003","description":"The head of a queue follows a shift through first","code":"queue = [\"ana\", \"bo\"]\nhead = queue.first()\nqueue.shift()\nhead","return":"\"bo\""}
++{"id":"synth-81-0004","description":"Kotlin's first with a predicate finds the first cheap price","code":"prices = [12, 7, 30, 4]\nprices.first(price -> price < 10)","return":"7"}
++{"id":"synth-81-0005","description":"last with a predicate searches from the back, as findLast does","code":"prices = [12, 7, 30, 4]\nprices.last(price -> price > 10)","return":"30"}
++{"id":"synth-81-0006","description":"A predicate that accepts nothing gives null, as find does","code":"xs = [1, 2]\n[xs.first(x -> x > 5), xs.last(x -> x > 5)]","return":"[null,null]"}
++{"id":"synth-81-0007","description":"A standing first over an empty list takes the first item pushed","code":"empty = []\nhead = empty.first()\nempty.push(4, 6)\n[head, empty.last()]","return":"[4,6]"}
++{"id":"synth-81-0008","description":"A class's first and last instances are its first and latest created","code":"class Order(item):\n    this.item = item\nOrder(\"tea\")\nOrder(\"cake\")\n[Order.first().item, Order.last().item]","return":"[\"tea\",\"cake\"]"}
++{"id":"synth-81-0009","description":"A standing last over a class follows each new instance","code":"class Visit(name):\n    this.name = name\nlatest = Visit.last()\nVisit(\"ana\")\nVisit(\"bo\")\nlatest.name","return":"\"bo\""}
++{"id":"synth-81-0010","description":"A class without instances has null as its first and last","code":"class Empty\n[Empty.first(), Empty.last()]","return":"[null,null]"}
++{"id":"synth-81-0011","description":"A class-level rule keeps each sensor's newest reading","code":"class Sensor(name):\n    this.name = name\n    this.readings = []\n$Sensor.newest = $Sensor.readings.last()\nfan = Sensor(\"fan\")\nfan.readings.push(3, 9)\nfan.newest","return":"9"}
++{"id":"synth-81-0012","description":"The first pending task follows the property its predicate reads and new tasks","code":"class Task(title, done):\n    this.title = title\n    this.done = done\nTask(\"a\", true)\nb = Task(\"b\", false)\npending = Task.first(task -> !task.done)\nb.done = true\nTask(\"c\", false)\npending.title","return":"\"c\""}
++{"id":"synth-81-0013","description":"A count is not a predicate, so first raises find's error with its own name","code":"xs = [1, 2]\ntry:\n    r = xs.first(2)\ncatch error:\n    r = error\nr","return":"\"TypeError: first expects a function\""}
++{"id":"synth-81-0014","description":"A program that caught the former error now receives the last item","code":"xs = [5]\ntry:\n    r = xs.last()\ncatch e:\n    r = \"caught\"\nr","return":"5"}
++{"id":"synth-81-0015","description":"A failed replacement rolls back through a standing last","code":"stock = [\"bolt\"]\nnewest = stock.last()\nfailure = \"\"\ntry:\n    stock = 7\ncatch error:\n    failure = error\n[failure, newest]","return":"[\"TypeError: number.last is not a function\",\"bolt\"]"}
+```
+
+**File**: `dataset/nucleoid.synth.82.jsonl` (added, +17/-0)
+```diff
+@@ -0,0 +1,17 @@
++{"id":"synth-82-0001","description":"Kotlin's uppercase converts a whole label, as toUpperCase does","code":"label = \"front door\"\nlabel.uppercase()","return":"\"FRONT DOOR\""}
++{"id":"synth-82-0002","description":"Rust's to_lowercase normalizes an email address read from a form","code":"email = \"Ada@Example.ORG\"\nemail.to_lowercase()","return":"\"ada@example.org\""}
++{"id":"synth-82-0003","description":"Swift's uppercased writes a product code in capitals","code":"code = \"ab-12\"\ncode.uppercased()","return":"\"AB-12\""}
++{"id":"synth-82-0004","description":"A key declared with lowercase follows a later write of its name","code":"name = \"ADA\"\nkey = name.lowercase()\nname = \"Bo\"\nkey","return":"\"bo\""}
++{"id":"synth-82-0005","description":"A country code declared with to_uppercase follows a later write","code":"country = \"pt\"\niso = country.to_uppercase()\ncountry = \"br\"\niso","return":"\"BR\""}
++{"id":"synth-82-0006","description":"Tags mapped through lowercased stay live as a tag is pushed","code":"tags = [\"Urgent\", \"LOW\"]\nsoft = tags.map(tag -> tag.lowercased())\ntags.push(\"Mid\")\nsoft","return":"[\"urgent\",\"low\",\"mid\"]"}
++{"id":"synth-82-0007","description":"A class-level handle follows each user's name through to_lowercase","code":"class User(name):\n    this.name = name\n$User.handle = $User.name.to_lowercase()\nana = User(\"Ana Lima\")\nana.name = \"Ana King\"\nana.handle","return":"\"ana king\""}
++{"id":"synth-82-0008","description":"A class-level condition compares a role in one case with lowercase","code":"class Account(role):\n    this.role = role\nif $Account.role.lowercase() == \"admin\":\n    $Account.admin = true\nelse:\n    $Account.admin = false\nroot = Account(\"ADMIN\")\nguest = Account(\"Guest\")\n[root.admin, guest.admin]","return":"[true,false]"}
++{"id":"synth-82-0009","description":"Full Unicode case mapping can change a string's length","code":"street = \"Straße\"\nloud = street.uppercase()\n[loud, loud.length, street.length]","return":"[\"STRASSE\",7,6]"}
++{"id":"synth-82-0010","description":"Lowering Greek capitals gives a word-final sigma its final form","code":"[\"ΟΔΟΣ\".lowercased(), \"ΣΑΣ\".to_lowercase()]","return":"[\"οδος\",\"σας\"]"}
++{"id":"synth-82-0011","description":"Title-case digraphs and ligatures convert as toUpperCase converts them","code":"[\"ǅ\".uppercase(), \"ǅ\".lowercase(), \"ﬁx\".to_uppercase()]","return":"[\"Ǆ\",\"ǆ\",\"FIX\"]"}
++{"id":"synth-82-0012","description":"Every alias gives exactly its accepted spelling's result","code":"s = \"MiXeD 42\"\n[s.uppercase() == s.toUpperCase(), s.to_uppercase() == s.toUpperCase(), s.uppercased() == s.toUpperCase(), s.lowercase() == s.toLowerCase(), s.to_lowercase() == s.toLowerCase(), s.lowercased() == s.toLowerCase()]","return":"[true,true,true,true,true,true]"}
++{"id":"synth-82-0013","description":"A locale argument is evaluated and ignored, so no Turkish mapping applies","code":"[\"title\".uppercased(\"tr\"), \"I\".lowercase(\"tr-TR\"), \"İ\".to_lowercase(\"tr\").length]","return":"[\"TITLE\",\"i\",2]"}
++{"id":"synth-82-0014","description":"A template interpolation converts a name with uppercased","code":"name = \"ada\"\n`Hello, ${name.uppercased()}!`","return":"\"Hello, ADA!\""}
++{"id":"synth-82-0015","description":"A failed write rolls back through a standing uppercase","code":"label = \"door\"\ncode = label.uppercase()\nfailure = \"\"\ntry:\n    label = 7\ncatch error:\n    failure = error\n[failure, label, code]","return":"[\"TypeError: number.uppercase is not a function\",\"door\",\"DOOR\"]"}
++{"id":"synth-82-0016","description":"A program that caught the former error now receives the converted text","code":"s = \"ab\"\ntry:\n    r = s.uppercase()\ncatch e:\n    r = \"caught\"\nr","return":"\"AB\""}
++{"id":"synth-82-0017","description":"A standing alias reads its name on whatever value its receiver later holds","code":"s = \"ab\"\nu = s.uppercase()\ns = {uppercase: () => \"own\"}\nu","return":"\"own\""}
 ```
 
 **File**: `dataset/nucleoid.synth.83.jsonl` (added, +16/-0)
@@ -1754,282 +1828,189 @@ failed body and a failed catch suite are
 +{"id":"synth-83-0016","description":"finally stays an ordinary name beside a finally clause","code":"finally = 2\nx = 1\ntry:\n    x = x + finally\ncatch:\n    x = 0\nfinally:\n    x = x * finally\nx","return":"6"}
 ```
 
-**File**: `docs/README.md` (modified, +55/-1)
+---
+
+### Incident Patch 2: `7cf12ee9` (2026-11-18)
+**Commit Message**: Enable synthesized ARC training examples
+
+Analyze synthesized instances and compute their object state before adding them to the training dataset. Standardize LLM result envelopes and switch the OpenRouter provider to FP8.
+
+**File**: `arc/src/analyzer.ts` (modified, +2/-2)
 ```diff
-@@ -2461,7 +2461,55 @@ catch
-   tokens, 603 are unchanged, and none increased. All 2,763 protected assertions
-   executed and all 50 explicit expected returns matched.
+@@ -34,7 +34,7 @@ export async function declarations({ train_dataset }) {
+ export async function instances({ train_dataset }) {
+   milestone.segmenting_training_objects();
  
--Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md).
-+### Finally clauses
-+
-+```
-+visits = []
-+def enter(room):
-+    try:
-+        if room == "vault":
-+            throw "LOCKED"
-+        return "open"
-+    catch reason:
-+        return reason
-+    finally:
-+        visits.push(room)
-+assert([enter("hall"), enter("vault")], ["open", "LOCKED"])
-+assert(visits, ["hall", "vault"])
-+visits.length
-+```
-+
-+- This is the complete
-+  `Nucleoid runs finally clauses as Python, JavaScript and Java do` program
-+  in `tests/reference.md`, without its title and expected-return metadata;
-+  it returns `2`.
-+- [NUC 119](nuc-0119.md) adds the `finally` clause of Python, JavaScript,
-+  TypeScript, Java, Kotlin and C#: `finally:` and a suite, which runs
-+  however a complete `try`/`catch` statement ends. `finally` stays an
-+  ordinary name; the clause is the name and its colon at the start of the
-+  line after the catch suite, at the `try` statement's indentation.
-+- When the body or the catch suite completes, normally or by `return`, the
-+  `finally` suite runs and the statement then completes as that suite did,
-+  so `enter` returns `"open"` and `"LOCKED"` and records both rooms. A
-+  pending `return` keeps the value it computed.
-+- A failed body rolls back before the catch suite runs, as without the
-+  clause. A failed catch suite rolls back too, then the `finally` suite
-+  runs and the error propagates; when it leaves the statement, the enclosing
-+  rollback also undoes what the `finally` suite changed.
-+- A `return` in the `finally` suite replaces the pending result or error,
-+  and a failure of the `finally` suite propagates in its place, as in
-+  Python, JavaScript and Java. The catch parameter is not bound in the
-+  `finally` suite.
-+- `finally: NAME` before the end of its line stays the typed declaration of
-+  `finally`, a `finally` on the catch suite's own line or inside a call's
-+  parentheses keeps its `SyntaxError("Unexpected ':'")`, and `try` without
-+  `catch` still raises `SyntaxError("Expected 'catch' after 'try'")`.
-+- The native REPL buffers the clause with its `try` until a blank line; a
-+  blank line before `finally:` commits the statement first, as it does
-+  before a `catch`. See the
-+  [root contract](../nucleoid.spec.md#finally-clauses).
-+
-+Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md).
- 
- ---
- 
-@@ -4892,6 +4940,12 @@ record = {amount: amount unit: "C"}    optional explicit-property comma (NUC 44)
- record = {...base, qty: 1}             copy base's entries in order; later entries win (NUC 81)
- 
- throw value                            raise a value
-+try:                                   run the body; a failure rolls it back
-+    statement
-+catch name:                            then runs this suite with the error bound
-+    statement
-+finally:                               runs however the statement ends (NUC 119)
-+    statement
- return expression                      yield from a block or function
- assert(actual, expected)                existing equality-check helper
- assert: actual, expected                optional statement spelling (Accepted NUC 45)
+-  const { instances } = await llm.generate({
++  const { result: instances } = await llm.generate({
+     messages: [
+       {
+         role: "user",
+@@ -54,7 +54,7 @@ export async function instances({ train_dataset }) {
+           })}
+           json_format:
+           {
+-            "instances": [{
++            "result": [{
+               "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
+               "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
+             }]
 ```
 
-**File**: `docs/examples.md` (modified, +35/-0)
+**File**: `arc/src/app.ts` (modified, +25/-17)
 ```diff
-@@ -4049,6 +4049,41 @@ present
-   scanned. See [NUC 118](nuc-0118.md) and the
-   [root contract](../nucleoid.spec.md#case-conversion-method-aliases).
+@@ -64,22 +64,26 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
  
-+## Finally clauses
-+
-+**Finally clauses log every dispatch of a driver**
-+
-+```nuc
-+class Driver(name, shift):
-+    this.name = name
-+    this.shift = shift
-+    this.log = []
-+$Driver.busy = $Driver.log.length > 2
-+def dispatch(driver, hours):
-+    try:
-+        if driver.shift + hours > 8:
-+            throw "OVERTIME"
-+        return driver.name + " goes"
-+    catch reason:
-+        return reason
-+    finally:
-+        driver.log.push(hours)
-+ana = Driver("Ana", 6)
-+assert(dispatch(ana, 1), "Ana goes")
-+assert(dispatch(ana, 3), "OVERTIME")
-+assert([ana.log, ana.busy], [[1, 3], false])
-+dispatch(ana, 2)
-+ana.busy
-+# return: true
-+```
-+
-+- `dispatch` sends a driver out or refuses overtime, and both paths return.
-+  The `finally` suite logs the hours asked for on either path, where the
-+  accepted spelling would repeat the push before each `return`.
-+- Each driver's `busy` rule follows its log, so the third dispatch makes
-+  Ana busy. See [NUC 119](nuc-0119.md) and the
-+  [root contract](../nucleoid.spec.md#finally-clauses).
-+
- ## Reactive list flattening
+   await analyzer.state(train_dataset);
  
- **Flattening keeps the dirty tiles of every room counted**
+-  // const synthesized_dataset = await synthesizer.synthesize({ train_dataset });
+-  //
+-  // for (const dataset of synthesized_dataset) {
+-  //   for (const instance of dataset.instances) {
+-  //     await analyzer.value({
+-  //       instance_name: next_instance_name(),
+-  //       train_dataset,
+-  //       input_matrix: dataset.input_matrix,
+-  //       instance,
+-  //     });
+-  //   }
+-  //
+-  //   train_dataset.dataset.push(dataset);
+-  // }
+-  //
+-  // await analyzer.state(synthesized_dataset);
++  const synthesized_dataset = await synthesizer.synthesize({ train_dataset });
++
++  for (const dataset of synthesized_dataset) {
++    for (const instance of dataset.instances) {
++      await analyzer.value({
++        instance_name: next_instance_name(),
++        train_dataset,
++        input_matrix: dataset.input_matrix,
++        instance,
++      });
++    }
++
++    await object.state({
++      declarations,
++      input_matrix: dataset.input_matrix,
++      input_instances: dataset.instances,
++    });
++
++    train_dataset.dataset.push(dataset);
++  }
+ 
+   milestone.visualization();
+ 
+@@ -112,7 +116,11 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
+     });
+   }
+ 
+-  await object.state({ declarations, test_input_matrix, input_instances });
++  await object.state({
++    declarations,
++    input_matrix: test_input_matrix,
++    input_instances,
++  });
+ 
+   for (const input_instance of input_instances) {
+     const { output_instance_matrix } = await visualizer.output_instance_matrix({
 ```
 
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
+**File**: `arc/src/lib/openrouter.ts` (modified, +2/-2)
 ```diff
-@@ -96,7 +96,7 @@ Created: 31-Jul-2026
- | [85](nuc-0085.md) | Fixed Cross-Property Class Anchors | Automatic-Accepted: independent evaluation rejected it because fixed-only cycles whose rules build fresh objects never settle; `$Pair.a = {v: $Pair.b@first}` with `$Pair.b = {v: $Pair.a@first}` reaches the 100,000-step propagation limit instead of settling as the proposal claims |
- | [90](nuc-0090.md) | Enum Declarations | Accepted |
- | [115](nuc-0115.md) | Count-Controlled Repeat Loops | Accepted |
--| [119](nuc-0119.md) | Finally Clauses for Try Statements | Draft |
-+| [119](nuc-0119.md) | Finally Clauses for Try Statements | Accepted |
+@@ -27,7 +27,7 @@ export async function generate({ reasoning = false, messages = [] }) {
+       reasoning: { enabled: reasoning },
+       response_format: { type: "json_object" },
+       provider: {
+-        only: ["deepinfra/bf16"],
++        only: ["deepinfra/fp8"],
+         allow_fallbacks: false,
+       },
+     },
+@@ -79,7 +79,7 @@ export async function generate({ reasoning = false, messages = [] }) {
+   let jsonContent;
  
- ### Utility enhancement
- 
-@@ -292,7 +292,7 @@ Created: 31-Jul-2026
- | [116](nuc-0116.md) | Size and Emptiness Method Aliases | Standards Track | Language compatibility | Accepted |
- | [117](nuc-0117.md) | First and Last Element Methods | Standards Track | Language compatibility | Accepted |
- | [118](nuc-0118.md) | Case Conversion Method Aliases | Standards Track | Language compatibility | Accepted |
--| [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Draft |
-+| [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Accepted |
- 
- ## Copyright
- 
+   try {
+-    // console.debug(content);
++    // console.debug(JSON.stringify(JSON.parse(content), null, 2));
+     jsonContent = JSON.parse(content);
+   } catch (error) {
+     throw new Error(
 ```
 
-**File**: `docs/nuc-0119.md` (modified, +1343/-11)
+**File**: `arc/src/object.ts` (modified, +3/-3)
 ```diff
-@@ -4,10 +4,11 @@
- NUC: 119
- Title: Finally Clauses for Try Statements
- Author: Can Mingir <canmingir@gmail.com>
--Status: Draft
-+Status: Accepted
- Type: Standards Track
- Category: Runtime features
- Created: 18-Nov-2026
-+Requires: 9, 46
- ```
+@@ -129,13 +129,13 @@ async function implementation({
+   return implementation;
+ }
  
- ## Abstract
-@@ -29,13 +30,17 @@ Created: 18-Nov-2026
-   enclosing rollback undoes what the `finally` suite changed, with the
-   rest of the statement.
- - At the accepted revision each of these programs raises
--  `SyntaxError("Unexpected ':'")` at the colon after `finally`. Only those
--  programs change. `finally` stays an ordinary name everywhere else, as a
--  variable, property, object key, function or parameter, as in
--  `finally = 4`, `c ? finally : 1` and `{a: 2 finally: 3}`; a bare
--  `finally` line followed by an indented block keeps its accepted reading;
--  and `try` without `catch` keeps
-+  `SyntaxError("Unexpected ':'")`, reported at the token after `finally:`.
-+  Only those programs change. `finally` stays an ordinary name everywhere
-+  else, as a variable, property, object key, function, parameter or enum,
-+  as in `finally = 4`, `c ? finally : 1` and `{a: 2 finally: 3}`;
-+  `finally: NAME` before the end of its statement stays the typed
-+  declaration of `finally`; a bare `finally` line followed by an indented
-+  block keeps its accepted reading; and `try` without `catch` keeps
-   `SyntaxError("Expected 'catch' after 'try'")`.
-+- No keyword, lexer token, error type or message format is added. The
-+  authoritative contract is
-+  [Finally clauses](../nucleoid.spec.md#finally-clauses).
+-async function state({ declarations, test_input_matrix, input_instances }) {
++async function state({ declarations, input_matrix, input_instances }) {
+   const implementations = input_instances.map(
+     ({ implementation }) => implementation
+   );
  
- ## Motivation
- 
-@@ -60,19 +65,1346 @@ Created: 18-Nov-2026
- 
- ## Rationale
- 
--- Pending: the proposer completes this section.
-+- **Category and mode.** The allocating continuous cycle drew Runtime
-+  features with one tool-backed uniform draw over the five categories that
-+  NUC 1's registry marks eligible for automatic selection, index 1 with
-+  probability 1/5 and no redraw, and recorded the requested change in the
-+  allocation commit `9eeb878b`, which this revision pins.
-+- **Runtime applicability: `new_feature`.** No accepted construct runs a
-+  suite on every exit of a `try` statement. Code written after the
-+  statement does not run when the body or the catch suite returns, and the
-+  rewrite that emulates the clause turns each `return` into an assignment
-+  of a result, which inside a function writes state: a function's only
-+  local names are its parameters and loop variables, so at the accepted
-+  revision a function that assigns `r` in its suites leaves the state
-+  name `r` behind. A counterpart therefore changes the program's state and
-+  structure, as [NUC 74](nuc-0074.md)'s rest parameters did. Token
-+  comparison is skipped entirely, as NUC 1's matrix states for a brand-new
-+  runtime feature (`new_runtime_feature`). The skip is neither a measured
-+  comparison nor a passing token gate.
-+- **No counterparts.** Because comparison is skipped, the new cases have no
-+  accepted-syntax counterparts and there is no Baseline B or extra
-+  baseline. They execute their assertions and explicit returns with full
-+  coverage, and every pre-existing case is unchanged.
-+- **Optional evidence.** No hint was supplied. Advisory usefulness is
-+  unscored (`missing_rubric`), not zero. Strategy learning is
-+  `not_configured`, so this revision is unattributed, with no policy,
-+  selection receipt, trial or reward.
-+- **The name of Python, JavaScript and Java, without a reserved word.**
-+  `finally` stays an ordinary identifier. At the accepted revision a line
-+  that starts with the name `finally` and `:` after a catch suite is the
-+  name followed by a stray colon, which raises
-+  `SyntaxError("Unexpected ':'")`, so giving that line clause meaning
-+  changes no accepted program. Rejected: reserving `finally`, which would
-+  break programs that use it as a variable, property, key, function,
-+  parameter or enum name; Ruby's `ensure`, which follows `rescue` rather
-+  than `catch`; and Swift's and Go's `defer`, a statement that registers
-+  work for the end of a scope rather than a clause of `try`.
-+- **On its own line, at the `try` statement's level.** The clause starts
-+  the logical line that directly follows the catch suite, at the `try`
-+  statement's own layout level, as `catch` follows the body. On the catch
-+  suite's line, `finally` is already accepted syntax: after an inline
-+  suite, `x = 2 finally` is the statement `x = 2` followed by the name
-+  `finally`, and `c ? 2 finally : 3` would be a conditional, so a
-+  same-line clause would collide with juxtaposition and conditionals. A
-+  `finally:` after `;`, inside the catch suite, at a shallower level or
-+  without a `try` keeps its accepted error.
-+- **The declaration `finally: NAME` stays.** At the accepted revision
-+  `finally: NAME` before a newline, `;`, dedent or the end of input is the
-+  typed declaration of `finally`, which raises
-+  `ReferenceError("Missing definition")` when it runs. A function whose
-+  `try` 
+-  const canvas_width: number = test_input_matrix[0].length;
+-  const canvas_height: number = test_input_matrix.length;
++  const canvas_width: number = input_matrix[0].length;
++  const canvas_height: number = input_matrix.length;
+   const obj_list = await nucleoid.run(
+     [
+       `canvas_width = ${canvas_width}`,
 ```
 
-**File**: `docs/nucleoid.g4` (modified, +14/-1)
+**File**: `arc/src/synthesizer.ts` (modified, +18/-13)
 ```diff
-@@ -308,8 +308,19 @@ repeatStmt
-     : REPEAT clauseExpression suite     // Stmt::Repeat
-     ;
+@@ -1,7 +1,8 @@
+ import * as llm from "./lib/llm.ts";
  
-+// Without finallyClause a tryStmt is Stmt::Try, with it Stmt::TryFinally.
- tryStmt
--    : TRY body lineSeparator* CATCH (LPAREN name RPAREN | name)? body
-+    : TRY body lineSeparator* CATCH (LPAREN name RPAREN | name)? body finallyClause?
-+    ;
+ async function synthesize({ train_dataset }) {
+-  return await llm.generate({
++  const { result } = await llm.generate({
++    few_shot: null,
+     messages: [
+       {
+         role: "assistant",
+@@ -31,22 +32,26 @@ async function synthesize({ train_dataset }) {
+             ],
+           })}
+           json_format:
+-          [
+-            {
+-              input_matrix: "<INPUT_MATRIX>",
+-              output_matrix: "<OUTPUT_MATRIX>",
+-              instances: [
+-                {
+-                  input_instance_matrix: "<INPUT_INSTANCE_MATRIX>",
+-                  output_instance_matrix: "<OUTPUT_INSTANCE_MATRIX>",
+-                },
+-              ],
+-            },
+-          ],
++          {
++            "result": [
++              {
++                "input_matrix": "<INPUT_MATRIX>",
++                "output_matrix": "<OUTPUT_MATRIX>",
++                "instances": [
++                  {
++                    "input_instance_matrix": "<INPUT_INSTANCE_MATRIX>",
++                    "output_instance_matrix": "<OUTPUT_INSTANCE_MATRIX>",
++                  },
++                ],
++              },
++            ]
++          }
+           `,
+       },
+     ],
+   });
 +
-+// FINALLY starts the logical line after the catch body, at the tryStmt's
-+// layout level: only NEWLINEs follow the catch body, and the token before
-+// FINALLY is a NEWLINE or the DEDENT that closes it. FINALLY on the catch
-+// body's line, after ';', or inside '(' and '[', which suppress layout, keeps
-+// its name reading, and so does 'FINALLY COLON name' before NEWLINE, ';',
-+// DEDENT or EOF, which stays a typeDeclaration.
-+finallyClause
-+    : NEWLINE* FINALLY suite
-     ;
++  return result;
+ }
  
- functionDecl
-@@ -878,6 +889,7 @@ enumName
-     : NAME
-     | WHILE
-     | REPEAT
-+    | FINALLY
-     | ENUM
-     | EXTENDS
-     | IS
-@@ -962,6 +974,7 @@ TYPEOF           : 'typeof';
- 
- WHILE            : 'while';
- REPEAT           : 'repeat';
-+FINALLY          : 'finally';
- ENUM             : 'enum';
- EXTENDS          : 'extends';
- ASSERT           : 'assert';
+ export default { synthesize };
 ```
 
 #### Recent Merged Pull Requests:
@@ -2058,22 +2039,59 @@ failed body and a failed catch suite are
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 120 Union Reasoning Selections
+## X. Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `22d7c31d`: Draft NUC 120 Union Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f1c29264`: Merge branch 'main' of https://github.com/NucleoidAI/Nucleoid. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [120](nuc-0120.md) | Union Reasoning Selections | Draft |
-| [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+## List and population products
+
+**Products keep the chance that a trip connects live as flights change**
+
+```nuc
+class Flight(code, onTime):
+    this.code = code
+    this.onTime = onTime
+first = Flight("AB1", 0.5)
+Flight("CD2", 0.75)
+trip = Flight.product(flight -> flight.onTime)
+assert(trip, 0.375)
+first.onTime = 0.75
+Flight("EF3", 0.5)
+assert(trip, 0.28125)
+```
+
+- [NUC 114](docs/nuc-0114.md) adds `product` to lists and class
+  populations, the multiplicative sibling of `sum`.
+  `Flight.product(flight -> flight.onTime)` multiplies the chances that
+  the flights are on time, so `trip` is the chance that all of them are,
+  when the flights are independent.
+- `trip` stays live like its `reduce` spelling,
+  `Flight.reduce((total, flight) => total * flight.onTime, 1)`: a likelier
+  first flight and a third connection both update it. Without a selector,
+  `sides.product()` multiplies the items themselves, and an empty list or
+  class gives `1`. See the
+  [root contract](nucleoid.spec.md#list-and-population-products).
+
+## Repeat loops
+
+**Repeat loops advance a world model a counted number of steps**
+
+```nuc
+class Cup(temp):
+    this.temp = temp
+tea = Cup(90)
+room = 20
+cool = tea.temp < 
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2083,4 +2101,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `22d7c31d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f1c29264` are properly handled with clean fallback behavior.

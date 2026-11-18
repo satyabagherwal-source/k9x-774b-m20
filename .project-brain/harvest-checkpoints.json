@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T21:33:56.230Z",
+  "last_updated": "2026-11-18T21:42:26.393Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1235,14 +1235,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-bigscience-bloom",
-      "content_hash": "104ff53eb19ec684da31512cfef702e8c094d0f5527cedf4eb1009567c6f08d2",
-      "verified_at": "2026-11-14T03:32:11.074Z",
+      "content_hash": "c6de7bc1a6848bf5a07acb7062a9d2aa21d77b0636521b6fb790aad555b10b45",
+      "verified_at": "2026-11-18T21:42:08.922Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T03:32:11.074Z"
+      "last_updated": "2026-11-18T21:42:08.922Z"
     },
     "openai/gpt-oss-20b": {
       "repository": "openai/gpt-oss-20b",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "d9f95bd0cd638abfbe4cb66bad72354665b87b0e1407d5caae9acadccaac1e14",
-      "verified_at": "2026-11-18T17:51:23.512Z",
+      "content_hash": "a9a7abe4eaeed6cc4b77e47f94646cdc67cddb6c28a84ddfbcd373312471c8d2",
+      "verified_at": "2026-11-18T21:42:26.392Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T17:51:23.512Z"
+      "last_updated": "2026-11-18T21:42:26.392Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "0d7df687d6711ef72bcfd3c283274849a52cba40c5d7e268d10f5df88d474a56",
-      "verified_at": "2026-11-18T15:59:54.210Z",
+      "content_hash": "00cf6fc5e2e525c644a6de493c517cd9d72b4eda94870068e3f15481374dfa44",
+      "verified_at": "2026-11-18T21:42:22.735Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T15:59:54.210Z"
+      "last_updated": "2026-11-18T21:42:22.735Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -7116,14 +7116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aquasecurity-trivy",
-      "content_hash": "08f64fddef4e2d5deddfdc9a5a8bc545a1acd944836b38e1aa39973384ed754c",
-      "verified_at": "2026-11-17T08:31:11.538Z",
+      "content_hash": "11a0b870f5995dd12d8d1eb6b3035d974050c311047516571b4b7094b4b100b9",
+      "verified_at": "2026-11-18T21:42:19.078Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T08:31:11.538Z"
+      "last_updated": "2026-11-18T21:42:19.078Z"
     },
     "sfu-db/connector-x": {
       "repository": "sfu-db/connector-x",
@@ -8046,14 +8046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-transact-rs-sqlx",
-      "content_hash": "ae5f9fba7cba7e9f9c47f59e5fe443d05695fb4273facf02b5f53dff048985d4",
-      "verified_at": "2026-11-17T07:28:07.958Z",
+      "content_hash": "23e62268353c5ce5a14fd4fd6279edf73702f549c949cf034323414e679c9d5e",
+      "verified_at": "2026-11-18T21:42:10.800Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T07:28:07.958Z"
+      "last_updated": "2026-11-18T21:42:10.800Z"
     },
     "bergside/typeui": {
       "repository": "bergside/typeui",

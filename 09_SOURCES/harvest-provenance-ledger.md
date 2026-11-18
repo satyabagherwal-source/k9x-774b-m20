@@ -11134,3 +11134,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-gpt-oss-20b` | `https://huggingface.co/openai/gpt-oss-20b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-18T21:33:42.850Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `f5adbe87` | Multi-dimensional audit evidence | 2026-11-18T21:33:56.222Z |
 | `learn-dom-d-ae671e2b` | `project://hf-openai-gpt-oss-20b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | 2026-11-18T21:34:23.452Z |
+| `learn-huggingface-bigscience-bloom` | `https://huggingface.co/bigscience/bloom` | `hf-bigscie` | Multi-dimensional audit evidence | 2026-11-18T21:42:08.915Z |
+| `learn-github-transact-rs-sqlx` | `https://github.com/transact-rs/sqlx` | `30f4eae0` | Multi-dimensional audit evidence | 2026-11-18T21:42:10.792Z |
+| `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `b12cc963` | Multi-dimensional audit evidence | 2026-11-18T21:42:19.070Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `b7ba2671` | Multi-dimensional audit evidence | 2026-11-18T21:42:22.728Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `f1c29264` | Multi-dimensional audit evidence | 2026-11-18T21:42:26.362Z |

@@ -945,8 +945,8 @@
     "sourceUrl": "https://huggingface.co/bigscience/bloom",
     "sourceVersion": "hf-bigscience-bloom",
     "license": "Open-Source",
-    "contentHash": "104ff53eb19ec684da31512cfef702e8c094d0f5527cedf4eb1009567c6f08d2",
-    "lastHarvestedAt": "2026-11-14T03:32:11.065Z",
+    "contentHash": "c6de7bc1a6848bf5a07acb7062a9d2aa21d77b0636521b6fb790aad555b10b45",
+    "lastHarvestedAt": "2026-11-18T21:42:08.915Z",
     "learningId": "learn-huggingface-bigscience-bloom"
   },
   "hf-openai-gpt-oss-20b": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "22d7c31d",
+    "sourceVersion": "f1c29264",
     "license": "Apache-2.0",
-    "contentHash": "d9f95bd0cd638abfbe4cb66bad72354665b87b0e1407d5caae9acadccaac1e14",
-    "lastHarvestedAt": "2026-11-18T17:51:23.502Z",
+    "contentHash": "a9a7abe4eaeed6cc4b77e47f94646cdc67cddb6c28a84ddfbcd373312471c8d2",
+    "lastHarvestedAt": "2026-11-18T21:42:26.362Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "9811972d",
+    "sourceVersion": "b7ba2671",
     "license": "NOASSERTION",
-    "contentHash": "0d7df687d6711ef72bcfd3c283274849a52cba40c5d7e268d10f5df88d474a56",
-    "lastHarvestedAt": "2026-11-18T15:59:54.202Z",
+    "contentHash": "00cf6fc5e2e525c644a6de493c517cd9d72b4eda94870068e3f15481374dfa44",
+    "lastHarvestedAt": "2026-11-18T21:42:22.728Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -4663,10 +4663,10 @@
     "repository": "aquasecurity/trivy",
     "platform": "github",
     "sourceUrl": "https://github.com/aquasecurity/trivy",
-    "sourceVersion": "00b73947",
+    "sourceVersion": "b12cc963",
     "license": "Apache-2.0",
-    "contentHash": "08f64fddef4e2d5deddfdc9a5a8bc545a1acd944836b38e1aa39973384ed754c",
-    "lastHarvestedAt": "2026-11-17T08:31:11.531Z",
+    "contentHash": "11a0b870f5995dd12d8d1eb6b3035d974050c311047516571b4b7094b4b100b9",
+    "lastHarvestedAt": "2026-11-18T21:42:19.070Z",
     "learningId": "learn-github-aquasecurity-trivy"
   },
   "sfu-db-connector-x": {
@@ -5283,10 +5283,10 @@
     "repository": "transact-rs/sqlx",
     "platform": "github",
     "sourceUrl": "https://github.com/transact-rs/sqlx",
-    "sourceVersion": "488c4113",
+    "sourceVersion": "30f4eae0",
     "license": "Apache-2.0",
-    "contentHash": "ae5f9fba7cba7e9f9c47f59e5fe443d05695fb4273facf02b5f53dff048985d4",
-    "lastHarvestedAt": "2026-11-17T07:28:07.951Z",
+    "contentHash": "23e62268353c5ce5a14fd4fd6279edf73702f549c949cf034323414e679c9d5e",
+    "lastHarvestedAt": "2026-11-18T21:42:10.792Z",
     "learningId": "learn-github-transact-rs-sqlx"
   },
   "bergside-typeui": {

@@ -11101,3 +11101,8 @@
 | `CYCLE-20261118-1Y66` | `2026-11-18T21:33:42.846Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`b2b554a1...`) |
 | `CYCLE-20261118-28HN` | `2026-11-18T21:33:56.219Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9283` | Yes (`42462144...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T21:34:23.452Z` | `hf-openai-gpt-oss-20b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-AE671E2B` [Domain D] | Yes (`cea0eb8e...`) |
+| `CYCLE-20261118-CSNJ` | `2026-11-18T21:42:08.911Z` | `bigscience/bloom` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bigscience-bloom-learnings.md` | Yes (`c6de7bc1...`) |
+| `CYCLE-20261118-CU3P` | `2026-11-18T21:42:10.789Z` | `transact-rs/sqlx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9284` | Yes (`23e62268...`) |
+| `CYCLE-20261118-D0HM` | `2026-11-18T21:42:19.066Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9285` | Yes (`11a0b870...`) |
+| `CYCLE-20261118-D3B8` | `2026-11-18T21:42:22.724Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9286` | Yes (`00cf6fc5...`) |
+| `CYCLE-20261118-D646` | `2026-11-18T21:42:26.358Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`a9a7abe4...`) |
