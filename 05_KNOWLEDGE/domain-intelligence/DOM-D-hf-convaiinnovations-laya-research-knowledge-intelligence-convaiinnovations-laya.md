@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/convaiinnovations/laya",
   "source_version": "hf-convaiinnovations-laya",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T20:17:30.621Z",
+  "timestamp": "2026-11-18T09:28:26.567Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-convaiinnovations-laya",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [convaiinnovations/laya](https://huggingface.co/convaiinnovations/laya) (Revision: `hf-convaii`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T20:17:30.621Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T09:28:26.567Z`  
 > **Learning ID**: `learn-huggingface-convaiinnovations-laya`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/convaiinnovations/laya](https://huggingface.co/convaiinnovations/laya))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T20:17:29.779Z  
+> **Harvest Timestamp**: 2026-11-18T09:28:23.973Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 16719 downloads | 5973 likes
+- **Stars / Engagement**: 16719 downloads | 5976 likes
 
 ---
 

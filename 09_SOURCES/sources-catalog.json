@@ -115,8 +115,8 @@
     "sourceUrl": "https://huggingface.co/convaiinnovations/laya",
     "sourceVersion": "hf-convaiinnovations-laya",
     "license": "Open-Source",
-    "contentHash": "d5b26861e3d1ffbf29c6b00c6368a3480c24e3a49218ef2978bba853771b5e2f",
-    "lastHarvestedAt": "2026-11-17T20:17:30.427Z",
+    "contentHash": "36bb164c2f04b79e2b4d5e8a10dfcab0d46abce3ccc0ba4132dda83a27e34917",
+    "lastHarvestedAt": "2026-11-18T09:28:26.277Z",
     "learningId": "learn-huggingface-convaiinnovations-laya"
   },
   "hf-edge0-audio8-asr-infinite": {
@@ -7843,10 +7843,10 @@
     "repository": "rtk-ai/rtk",
     "platform": "github",
     "sourceUrl": "https://github.com/rtk-ai/rtk",
-    "sourceVersion": "6c94fc51",
+    "sourceVersion": "eb710be4",
     "license": "Apache-2.0",
-    "contentHash": "eba5a86bd33898fea41f3bbd595d192dc4aaeb07218f11607e76e95f29786297",
-    "lastHarvestedAt": "2026-11-18T00:07:47.068Z",
+    "contentHash": "3d4e7ab290d51e15ceb9c406b92af79b930e520a6a097a4542768db60f2f5461",
+    "lastHarvestedAt": "2026-11-18T09:28:27.432Z",
     "learningId": "learn-github-rtk-ai-rtk"
   },
   "gao-sun-eul": {
@@ -10273,10 +10273,10 @@
     "repository": "react/react-native",
     "platform": "github",
     "sourceUrl": "https://github.com/react/react-native",
-    "sourceVersion": "c1acb2bd",
+    "sourceVersion": "cf7f3f39",
     "license": "MIT",
-    "contentHash": "6ba781c2ffb21d5d689003f24ce4427f5a8d82ef493344ed53d8e2b318185e2d",
-    "lastHarvestedAt": "2026-11-17T06:47:10.658Z",
+    "contentHash": "81404fc1347efa6bbbaa616676a16a9f2b7f5eed9c61958c852f773282534690",
+    "lastHarvestedAt": "2026-11-18T09:28:33.912Z",
     "learningId": "learn-github-react-react-native"
   },
   "faker-js-faker": {

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T09:19:44.150Z",
+  "last_updated": "2026-11-18T09:29:19.836Z",
   "total_verified_learnings": 8996,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21109,
+  "total_items": 21114,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114073,10 +114073,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-react-native-technical-construction-intelligence-react-react-native-core-i.md",
       "title": "Technical Construction Intelligence: react/react-native Core Invariants",
       "repository": "react/react-native",
-      "source_version": "c1acb2bd",
-      "content_hash": "f9d67eddfdd8acde8a332113d9b176cb88f1b22f5afd16b2847389c35a244a7c",
+      "source_version": "cf7f3f39",
+      "content_hash": "afad750377cda7842067720d10bb70e722a8dc483ebe561eaba4356c2f773f05",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T06:47:10.957Z"
+      "persisted_at": "2026-11-18T09:28:34.344Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native",
@@ -114085,10 +114085,10 @@
       "relative_path": "08_VERIFICATION/react-react-native-verification-protocol-empirical-defect-shield-for-react-react.md",
       "title": "Verification Protocol: Empirical Defect Shield for react/react-native",
       "repository": "react/react-native",
-      "source_version": "c1acb2bd",
-      "content_hash": "e5699767dd694eef2829e10399199043b4afdf191dbdd043b1ced85f28d2e688",
+      "source_version": "cf7f3f39",
+      "content_hash": "916a973004bc6314661fa26325c68dcb31247184b77e534a1898f72ee79cb91e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T06:47:11.075Z"
+      "persisted_at": "2026-11-18T09:28:34.525Z"
     },
     "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants",
@@ -256785,8 +256785,8 @@
       "slug": "rtk-ai-rtk",
       "platform": "github",
       "source_url": "https://github.com/rtk-ai/rtk",
-      "source_version": "6c94fc51",
-      "content_hash": "eba5a86bd33898fea41f3bbd595d192dc4aaeb07218f11607e76e95f29786297",
+      "source_version": "eb710be4",
+      "content_hash": "3d4e7ab290d51e15ceb9c406b92af79b930e520a6a097a4542768db60f2f5461",
       "dossier_path": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "promoted_rules": [
@@ -256799,6 +256799,11 @@
           "number": 9085,
           "title": "Empirical Invariant Guard in cargo_cmd.rs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9186,
+          "title": "Empirical Invariant Guard in claude.rs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -256806,7 +256811,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T00:07:46.902Z",
+      "verified_at": "2026-11-18T09:28:27.202Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -256848,10 +256853,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rtk-ai-rtk-quality-verification-intelligence-rtk-ai-rtk-core-invariants.md",
       "title": "Quality & Verification Intelligence: rtk-ai/rtk Core Invariants",
       "repository": "rtk-ai/rtk",
-      "source_version": "6c94fc51",
-      "content_hash": "bc0ae11dde8dc8f32ec45f825fc3ffed5faa3004fc09de08fafb91befe7e10e9",
+      "source_version": "eb710be4",
+      "content_hash": "9da12165a79e1b2461575b2aecbc62c33b3b073e2ef6284097869d5ce43258d8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T00:07:47.374Z"
+      "persisted_at": "2026-11-18T09:28:27.871Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk",
@@ -256860,10 +256865,10 @@
       "relative_path": "08_VERIFICATION/rtk-ai-rtk-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk.md",
       "title": "Verification Protocol: Empirical Defect Shield for rtk-ai/rtk",
       "repository": "rtk-ai/rtk",
-      "source_version": "6c94fc51",
-      "content_hash": "aadd3b9727ac343dcf0ff462f0d5329b6c19c7253de8b95928c0faf76c157665",
+      "source_version": "eb710be4",
+      "content_hash": "c45bd017779e662a537fbfbcaa6db40aefa3a89d380bf26dca8533fc47600ab2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T00:07:47.507Z"
+      "persisted_at": "2026-11-18T09:28:28.068Z"
     },
     "rule-8761": {
       "learning_id": "rule-8761",
@@ -256899,9 +256904,9 @@
       "title": "Quality & Verification Intelligence: rtk-ai-rtk-learnings Core Invariants",
       "repository": "rtk-ai-rtk-learnings",
       "source_version": "HEAD",
-      "content_hash": "43cdab992de237188dd269dce508731185222b2d139f2f3ccbc1e9338c683203",
+      "content_hash": "62bebc86ac90216092cc743f96829108ec87c6bd6bf0d5eaf633cfcdde26fb2e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T00:08:01.396Z"
+      "persisted_at": "2026-11-18T09:28:37.903Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk-learnings",
@@ -256911,9 +256916,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rtk-ai-rtk-learnings",
       "repository": "rtk-ai-rtk-learnings",
       "source_version": "HEAD",
-      "content_hash": "561cb583a02242e1615f861611a37068fbf06db775656555b7fd6aff9b404301",
+      "content_hash": "12c6cf030a418cdceb9446fa49d950d22c26f0c4f8e35cc6d50c61031ddbc1f6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T00:08:01.521Z"
+      "persisted_at": "2026-11-18T09:28:38.086Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria",
@@ -266883,14 +266888,19 @@
       "slug": "react-react-native",
       "platform": "github",
       "source_url": "https://github.com/react/react-native",
-      "source_version": "c1acb2bd",
-      "content_hash": "6ba781c2ffb21d5d689003f24ce4427f5a8d82ef493344ed53d8e2b318185e2d",
+      "source_version": "cf7f3f39",
+      "content_hash": "81404fc1347efa6bbbaa616676a16a9f2b7f5eed9c61958c852f773282534690",
       "dossier_path": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/react-react-native-learnings.md",
       "promoted_rules": [
         {
           "number": 8896,
           "title": "TextInput state retain chain in AndroidTextInputShadowNode",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9187,
+          "title": "don't preallocate a view that a commit already created",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -266899,7 +266909,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T06:47:10.487Z",
+      "verified_at": "2026-11-18T09:28:33.682Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -266990,9 +267000,9 @@
       "title": "Technical Construction Intelligence: react-react-native-learnings Core Invariants",
       "repository": "react-react-native-learnings",
       "source_version": "HEAD",
-      "content_hash": "97591b7598248db58dc349bde1dc5fb726c6e65947e1ecf7aafe1c1ace378fea",
+      "content_hash": "0ee74a5c432c435ebddc42dbc019fa82790a64fc14ce13ccd75885019ce47f9b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T06:47:46.154Z"
+      "persisted_at": "2026-11-18T09:29:19.639Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native-learnings",
@@ -267002,9 +267012,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for react-react-native-learnings",
       "repository": "react-react-native-learnings",
       "source_version": "HEAD",
-      "content_hash": "edd85d117f1e73e9d9827821fe2e267a283e07a7396d32686ac97adede059bcc",
+      "content_hash": "fa891fb507affe6d739fa50128c36a301c26cc445dd09c833dffb6eed5f1b0f9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T06:47:46.289Z"
+      "persisted_at": "2026-11-18T09:29:19.836Z"
     },
     "learn-github-mswjs-msw": {
       "learning_id": "learn-github-mswjs-msw",
@@ -277030,7 +277040,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/convaiinnovations/laya",
       "source_version": "hf-convaiinnovations-laya",
-      "content_hash": "d5b26861e3d1ffbf29c6b00c6368a3480c24e3a49218ef2978bba853771b5e2f",
+      "content_hash": "36bb164c2f04b79e2b4d5e8a10dfcab0d46abce3ccc0ba4132dda83a27e34917",
       "dossier_path": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md",
       "promoted_rules": [],
@@ -277039,7 +277049,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T20:17:30.192Z",
+      "verified_at": "2026-11-18T09:28:25.992Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -277056,9 +277066,9 @@
       "title": "Research & Knowledge Intelligence: convaiinnovations/laya Core Invariants",
       "repository": "convaiinnovations/laya",
       "source_version": "hf-convaiinnovations-laya",
-      "content_hash": "8f6ec52bf754c9f48edbc88a6dca9fcae950174d9490a496f5289469cc5923a9",
+      "content_hash": "14f0639523c4d21e8bc3d5bff152fa6021be2a9981fc0febfad8f3e1e83a9da4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T20:17:30.621Z"
+      "persisted_at": "2026-11-18T09:28:26.568Z"
     },
     "rule-9054": {
       "learning_id": "rule-9054",
@@ -277182,9 +277192,9 @@
       "title": "Research & Knowledge Intelligence: hf-convaiinnovations-laya-learnings Core Invariants",
       "repository": "hf-convaiinnovations-laya-learnings",
       "source_version": "HEAD",
-      "content_hash": "bb8c37ec3fea470d20b177f498c28520429b2f9e92a1182188e16a0cbae01178",
+      "content_hash": "9c8e913a192dbefc54ab8c567b036af3217b8d6653f9a6958090b018e0e01b98",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T20:17:52.200Z"
+      "persisted_at": "2026-11-18T09:28:38.513Z"
     },
     "candidate_directive-ext-auth-align-domain-rule-matching-for-ascii-case": {
       "item_id": "candidate_directive-ext-auth-align-domain-rule-matching-for-ascii-case",
@@ -284619,6 +284629,70 @@
       "content_hash": "3889917bf8e324da706b5eef110ab9bc234b77079c64f4a0c14067da1e55feb1",
       "domain_letter": "H",
       "persisted_at": "2026-11-18T09:19:43.993Z"
+    },
+    "rule-9186": {
+      "learning_id": "rule-9186",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9186,
+      "title": "Empirical Invariant Guard in claude.rs",
+      "source_url": "https://github.com/rtk-ai/rtk",
+      "source_version": "eb710be4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T09:28:27.202Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-claude-rs": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-claude-rs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5HEA-empirical-invariant-guard-in-claude-rs.md",
+      "title": "Empirical Invariant Guard in claude.rs",
+      "repository": "rtk-ai-rtk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ef99a41edaea55be0c12b279cbceaee359253f38436a60a0e3a7825313de55e7",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T09:28:37.720Z"
+    },
+    "rule-9187": {
+      "learning_id": "rule-9187",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9187,
+      "title": "don't preallocate a view that a commit already created",
+      "source_url": "https://github.com/react/react-native",
+      "source_version": "cf7f3f39",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T09:28:33.682Z"
+    },
+    "candidate_directive-don-t-preallocate-a-view-that-a-commit-already-created": {
+      "item_id": "candidate_directive-don-t-preallocate-a-view-that-a-commit-already-created",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5ENR-don-t-preallocate-a-view-that-a-commit-already-created.md",
+      "title": "don't preallocate a view that a commit already created",
+      "repository": "react/react-native",
+      "source_version": "cf7f3f39",
+      "content_hash": "b34153a0de7cb079b41c844cc418cd39eea84c354710a6c98c4e1ed3570e7eb3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T09:28:34.168Z"
+    },
+    "candidate_directive-android-don-t-preallocate-a-view-that-a-commit-already-created": {
+      "item_id": "candidate_directive-android-don-t-preallocate-a-view-that-a-commit-already-created",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6DL6-android-don-t-preallocate-a-view-that-a-commit-already-created.md",
+      "title": "android): don't preallocate a view that a commit already created",
+      "repository": "react-react-native-learnings",
+      "source_version": "HEAD",
+      "content_hash": "44bd85423b7054568da4cbb5ea85a6d81cd9fadbbff90777a5c376e970c18bf7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T09:29:19.434Z"
     }
   },
   "ai-builder-brain": {

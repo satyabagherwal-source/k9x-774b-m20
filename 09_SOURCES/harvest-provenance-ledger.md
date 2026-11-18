@@ -10939,3 +10939,7 @@ Every entry in this ledger must capture:
 | `learn-github-dnscontrol-dnscontrol` | `https://github.com/DNSControl/dnscontrol` | `1adf8aea` | Multi-dimensional audit evidence | 2026-11-18T09:14:46.953Z |
 | `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `64b599fc` | Multi-dimensional audit evidence | 2026-11-18T09:14:50.296Z |
 | `learn-huggingface-comfy-org-minimax-h3` | `https://huggingface.co/Comfy-Org/MiniMax-H3` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-18T09:19:39.597Z |
+| `learn-huggingface-convaiinnovations-laya` | `https://huggingface.co/convaiinnovations/laya` | `hf-convaii` | Multi-dimensional audit evidence | 2026-11-18T09:28:26.277Z |
+| `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `eb710be4` | Multi-dimensional audit evidence | 2026-11-18T09:28:27.432Z |
+| `learn-github-react-react-native` | `https://github.com/react/react-native` | `cf7f3f39` | Multi-dimensional audit evidence | 2026-11-18T09:28:33.912Z |
+| `learn-dom-h-cc987e5f` | `project://react-react-native` | `cf7f3f39` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md` | 2026-11-18T09:29:18.930Z |

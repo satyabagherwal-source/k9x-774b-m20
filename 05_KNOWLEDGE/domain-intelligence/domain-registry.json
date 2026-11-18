@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T09:19:43.993Z",
-  "total_records": 1815,
+  "last_updated": "2026-11-18T09:29:19.639Z",
+  "total_records": 1816,
   "domains": {
     "A": {
       "total": 11,
@@ -1218,7 +1218,7 @@
       ]
     },
     "H": {
-      "total": 426,
+      "total": 427,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1645,7 +1645,8 @@
         "DOM-H-CA56AD1F",
         "domain_intelligence-technical-construction-intelligence-msasikanth-twine-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-learnings-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-learnings-core-invaria",
+        "DOM-H-CC987E5F"
       ]
     },
     "I": {
@@ -8764,8 +8765,8 @@
       "title": "Technical Construction Intelligence: react/react-native Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-react-native-technical-construction-intelligence-react-react-native-core-i.md",
       "repository": "react/react-native",
-      "content_hash": "f9d67eddfdd8acde8a332113d9b176cb88f1b22f5afd16b2847389c35a244a7c",
-      "created_at": "2026-11-17T06:47:10.957Z"
+      "content_hash": "afad750377cda7842067720d10bb70e722a8dc483ebe561eaba4356c2f773f05",
+      "created_at": "2026-11-18T09:28:34.344Z"
     },
     "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants",
@@ -23932,8 +23933,8 @@
       "title": "Quality & Verification Intelligence: rtk-ai/rtk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rtk-ai-rtk-quality-verification-intelligence-rtk-ai-rtk-core-invariants.md",
       "repository": "rtk-ai/rtk",
-      "content_hash": "bc0ae11dde8dc8f32ec45f825fc3ffed5faa3004fc09de08fafb91befe7e10e9",
-      "created_at": "2026-11-18T00:07:47.374Z"
+      "content_hash": "9da12165a79e1b2461575b2aecbc62c33b3b073e2ef6284097869d5ce43258d8",
+      "created_at": "2026-11-18T09:28:27.871Z"
     },
     "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-learnings-core-invariants",
@@ -23941,8 +23942,8 @@
       "title": "Quality & Verification Intelligence: rtk-ai-rtk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rtk-ai-rtk-learnings-quality-verification-intelligence-rtk-ai-rtk-learnings-core.md",
       "repository": "rtk-ai-rtk-learnings",
-      "content_hash": "43cdab992de237188dd269dce508731185222b2d139f2f3ccbc1e9338c683203",
-      "created_at": "2026-11-18T00:08:01.396Z"
+      "content_hash": "62bebc86ac90216092cc743f96829108ec87c6bd6bf0d5eaf633cfcdde26fb2e",
+      "created_at": "2026-11-18T09:28:37.903Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria",
@@ -25891,8 +25892,8 @@
       "title": "Technical Construction Intelligence: react-react-native-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-react-native-learnings-technical-construction-intelligence-react-react-nat.md",
       "repository": "react-react-native-learnings",
-      "content_hash": "97591b7598248db58dc349bde1dc5fb726c6e65947e1ecf7aafe1c1ace378fea",
-      "created_at": "2026-11-17T06:47:46.154Z"
+      "content_hash": "0ee74a5c432c435ebddc42dbc019fa82790a64fc14ce13ccd75885019ce47f9b",
+      "created_at": "2026-11-18T09:29:19.639Z"
     },
     "domain_intelligence-quality-verification-intelligence-mswjs-msw-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-mswjs-msw-core-invariants",
@@ -28492,8 +28493,8 @@
       "title": "Research & Knowledge Intelligence: convaiinnovations/laya Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-convaiinnovations-laya-research-knowledge-intelligence-convaiinnovations-laya.md",
       "repository": "convaiinnovations/laya",
-      "content_hash": "8f6ec52bf754c9f48edbc88a6dca9fcae950174d9490a496f5289469cc5923a9",
-      "created_at": "2026-11-17T20:17:30.621Z"
+      "content_hash": "14f0639523c4d21e8bc3d5bff152fa6021be2a9981fc0febfad8f3e1e83a9da4",
+      "created_at": "2026-11-18T09:28:26.568Z"
     },
     "domain_intelligence-quality-verification-intelligence-oxc-project-oxc-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-oxc-project-oxc-core-invariants",
@@ -28519,8 +28520,8 @@
       "title": "Research & Knowledge Intelligence: hf-convaiinnovations-laya-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-convaiinnovations-laya-learnings-research-knowledge-intelligence-hf-convaiinn.md",
       "repository": "hf-convaiinnovations-laya-learnings",
-      "content_hash": "bb8c37ec3fea470d20b177f498c28520429b2f9e92a1182188e16a0cbae01178",
-      "created_at": "2026-11-17T20:17:52.200Z"
+      "content_hash": "9c8e913a192dbefc54ab8c567b036af3217b8d6653f9a6958090b018e0e01b98",
+      "created_at": "2026-11-18T09:28:38.513Z"
     },
     "domain_intelligence-research-knowledge-intelligence-edge0-audio8-asr-infinite-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-edge0-audio8-asr-infinite-core-invariants",
@@ -30491,6 +30492,48 @@
       "repository": "dnscontrol-dnscontrol-learnings",
       "content_hash": "3889917bf8e324da706b5eef110ab9bc234b77079c64f4a0c14067da1e55feb1",
       "created_at": "2026-11-18T09:19:43.993Z"
+    },
+    "DOM-H-CC987E5F": {
+      "record_id": "DOM-H-CC987E5F",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "android): don't preallocate a view that a commit already created",
+      "content": "When implementing operations in `packages/react-native/ReactAndroid/src/main/jni/react/fabric/FabricMountingManager.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "794281838b9869c0d56ab93ad4a3309d67a3f8401f0c6aa9b51caaa624f51e3a",
+      "summary": "Prevents defects observed in production commit `2b60e633`: android): don't preallocate a view that a commit already created. Unvalidated exe -> When implementing operations in `packages/react-native/ReactAndroid/src/main/jni/react/fabric/FabricMountingManager.cpp`, engineers MUST enf",
+      "provenance": {
+        "source_uri": "project://react-react-native/react-react-native-learnings.md",
+        "source_version": "cf7f3f39",
+        "observed_at": "2026-11-18T09:28:32.700Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-react-native)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of react-react-native"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.86,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T09:29:18.893Z"
     }
   }
 }

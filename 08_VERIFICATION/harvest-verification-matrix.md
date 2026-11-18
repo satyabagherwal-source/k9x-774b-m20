@@ -10906,3 +10906,7 @@
 | `CYCLE-20261118-NODI` | `2026-11-18T09:14:46.950Z` | `DNSControl/dnscontrol` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9184` | Yes (`5fd71941...`) |
 | `CYCLE-20261118-NQYD` | `2026-11-18T09:14:50.293Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9185` | Yes (`b4731290...`) |
 | `CYCLE-20261118-TY6H` | `2026-11-18T09:19:39.593Z` | `Comfy-Org/MiniMax-H3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-minimax-h3-learnings.md` | Yes (`85453677...`) |
+| `CYCLE-20261118-58KF` | `2026-11-18T09:28:26.271Z` | `convaiinnovations/laya` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-convaiinnovations-laya-learnings.md` | Yes (`36bb164c...`) |
+| `CYCLE-20261118-59GJ` | `2026-11-18T09:28:27.427Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9186` | Yes (`3d4e7ab2...`) |
+| `CYCLE-20261118-5EGJ` | `2026-11-18T09:28:33.907Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9187` | Yes (`81404fc1...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T09:29:18.930Z` | `react-react-native` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-CC987E5F` [Domain H] | Yes (`79428183...`) |

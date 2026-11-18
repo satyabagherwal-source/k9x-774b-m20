@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T00:08:01.166Z",
+  "timestamp": "2026-11-18T09:28:37.587Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-rtk-ai-rtk-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [rtk-ai-rtk-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T00:08:01.166Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T09:28:37.587Z`  
 > **Learning ID**: `LEARN-EVO-rtk-ai-rtk-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: A (Human & Need Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), G (Architecture Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence)
-- **Confidence Rating**: 78%
+- **Secondary Corroborating Domains**: A (Human & Need Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence)
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from rtk-ai-rtk-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source**: github ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
-> **Source Version**: `6c94fc51`  
+> **Source Version**: `eb710be4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T00:07:46.138Z  
+> **Timestamp**: 2026-11-18T09:28:26.093Z  
 > **Learning ID**: `learn-github-rtk-ai-rtk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T00:07:46.132Z  
+> **Harvest Timestamp**: 2026-11-18T09:28:26.083Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 86940 stars
+- **Stars / Engagement**: 87000 stars
 
 ---
 
@@ -1771,571 +1771,262 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6c94fc51` (2026-11-17)
-**Commit Message**: Merge pull request #5056 from milyin/fix/cargo-toolchain-filtering
+### Incident Patch 1: `eb710be4` (2026-11-18)
+**Commit Message**: Merge pull request #4679 from Ehsan-hash/fix/hook-command-ownership
 
-fix(cargo): filter toolchain and global-prefix invocations
+fix(hooks): preserve compound user hook entries
 
-**File**: `src/cmds/rust/cargo_cmd.rs` (modified, +132/-53)
+**File**: `src/hooks/init/claude.rs` (modified, +189/-0)
 ```diff
-@@ -1,36 +1,131 @@
- //! Filters cargo output — build errors, test results, clippy warnings.
- 
--use crate::core::args_utils;
-+use crate::core::arg_tokenizer::{self, Dialect, TokenKind, ValueSpec};
- use crate::core::runner;
--use crate::core::shell::display_args;
- use crate::core::stream::{BlockHandler, BlockStreamFilter, StreamFilter};
-+use crate::core::tracking;
- use crate::core::truncate::{CAP_ERRORS, CAP_LIST, CAP_WARNINGS};
- use crate::core::utils::{join_with_overflow, resolved_command, truncate};
- use anyhow::Result;
- use serde::Deserialize;
- use std::cmp::Ordering;
- use std::collections::HashMap;
--use std::ffi::OsString;
-+use std::ffi::{OsStr, OsString};
- use std::sync::LazyLock;
- 
--#[derive(Debug, Clone)]
-+#[derive(Debug, Clone, Copy)]
- pub enum CargoCommand {
-     Build,
-     Test,
-     Clippy,
-     Check,
-     Install,
-     Nextest,
-+    Fmt,
- }
- 
--pub fn run(cmd: CargoCommand, args: &[String], verbose: u8) -> Result<i32> {
--    match cmd {
--        CargoCommand::Build => run_build(args, verbose),
-+impl CargoCommand {
-+    pub fn as_str(self) -> &'static str {
-+        match self {
-+            Self::Build => "build",
-+            Self::Test => "test",
-+            Self::Clippy => "clippy",
-+            Self::Check => "check",
-+            Self::Install => "install",
-+            Self::Nextest => "nextest",
-+            Self::Fmt => "fmt",
-+        }
-+    }
-+
-+    /// Find a supported canonical command and its index, inspecting only Cargo's prefix.
-+    /// The original OS arguments are kept separately and forwarded without reconstruction.
-+    pub fn parse<T: AsRef<OsStr>>(args: &[T]) -> Option<(Self, usize)> {
-+        let words: Vec<_> = args
-+            .iter()
-+            .map(|arg| arg.as_ref().to_string_lossy())
-+            .collect();
-+        // Rustup recognizes +toolchain only as the first argument.
-+        // https://rust-lang.github.io/rustup/overrides.html#toolchain-override-shorthand
-+        let start = usize::from(words.first().is_some_and(|arg| arg.starts_with('+')));
-+        let tokens =
-+            arg_tokenizer::tokenize_grammar(&words[start..], &prefix_option_value, Dialect::Posix);
-+        for token in &tokens {
-+            if token.kind == TokenKind::Positional {
-+                if !token.is_free_positional() {
-+                    continue;
-+                }
-+                // Configurable aliases (including b/c/t) cannot safely select a filter.
-+                // https://doc.rust-lang.org/cargo/reference/config.html#alias
-+                return [
-+                    Self::Build,
-+                    Self::Test,
-+                    Self::Clippy,
-+                    Self::Check,
-+                    Self::Install,
-+                    Self::Nextest,
-+                    Self::Fmt,
-+                ]
-+                .into_iter()
-+                .find(|command| command.as_str() == token.text)
-+                .map(|command| (command, start + token.source_index));
-+            }
-+            if prefix_option_value(token.kind, token.text).is_some() {
-+                let value = token.value(&tokens)?;
-+                // The existing POSIX tokenizer can consume a separate option as a value.
-+                // Cargo's prefix options reject that form; leave its diagnostic untouched.
-+                // https://docs.rs/clap/latest/clap/struct.Arg.html#method.allow_hyphen_values
-+                if token.linked.is_some() && value.starts_with('-') && value != "-" {
-+                    return None;
-+                }
-+                if token.kind == TokenKind::Short
-+                    && token.text == "Z"
-+                    && value.trim_start_matches('=').split('=').next() == Some("help")
-+                {
-+                    return None;
-+                }
-+                continue;
-+            }
-+            match (token.kind, token.text) {
-+                (TokenKind::Long, "locked" | "offline" | "frozen" | "quiet" | "verbose")
-+                | (TokenKind::Short, "q" | "v") => {}
-+                // Root actions (--help/--version/--list/--explain), -- and unknown
-+                // options leave the whole invocation to Cargo. Guessing an unknown
-+                // option's arity could mistake its value for the command.
-+                _ => return None,
-+            }
-+        }
-+        None
-+    }
-+}
-+
-+/// Only prefix options that consume a value matter for locating the command.
-+/// Command-specific options are still inspected by the existing runners below.
-+/// https://doc.rust-lang.org/cargo/commands/cargo.html#options
-+fn prefix_option_value(kind: TokenKind, name: &str) -> Option<ValueSpec> {
-+    match (kind, name) {
-+        (TokenKind::Long, "config" | "color") | (TokenKind::Short, "C" | "Z") => {
-+            Some(ValueSpec::value())
-+        }
-+        _ => None,
-+    }
-+}
-+
-+pub fn run(args: &[OsString], verbose: u8) -> Result<i32> {
-+    let Some((command, index)) = CargoCommand::parse(args) else {
-+        return runner::run_passthrough
-```
-
-**File**: `src/core/runner.rs` (modified, +8/-0)
-```diff
-@@ -474,6 +474,14 @@ fn help_spelling(stem: &str, first: Option<&str>) -> HelpSpelling {
- }
- 
- fn asks_for_usage(stem: &str, args: &[String]) -> bool {
-+    // Cargo's prefix does not change the command's existing help/version semantics.
-+    let args = if stem == "cargo"
-+        && let Some((_, index)) = crate::cmds::rust::cargo_cmd::CargoCommand::parse(args)
-+    {
-+        &args[index..]
-+    } else {
-+        args
-+    };
-     let first = args.first().map(String::as_str);
-     let spelling = help_spelling(stem, first);
-     let takes_value = |kind: TokenKind, name: &str| {
-```
-
-**File**: `src/discover/lexer.rs` (modified, +1/-1)
-```diff
-@@ -917,7 +917,7 @@ pub fn strip_quotes(s: &str) -> String {
- /// Turns a coalesced word's raw text (quotes/escapes still literal, as
- /// `tokenize()` preserves them) into argv-ready text: quote chars that
- /// open/close a span are stripped, backslash escapes resolved.
--fn resolve_word_text(raw: &str) -> String {
-+pub(super) fn resolve_word_text(raw: &str) -> String {
-     let mut result = String::new();
-     let mut chars = raw.chars().peekable();
-     let mut quote: Option<char> = None;
-```
-
-**File**: `src/discover/registry.rs` (modified, +101/-2)
-```diff
-@@ -8,8 +8,8 @@ use std::sync::LazyLock;
- 
- use super::lexer::{
-     ParsedToken, PipeKind, QuoteScan, TokenKind, ansi_c_quote_defeats_lexer, coalesce_words,
--    contains_unattestable_construct_in, is_crlf_at, redirect_has_file_target, shell_split,
--    split_on_operators, tokenize, tokenize_with_newlines,
-+    contains_unattestable_construct_in, is_crlf_at, redirect_has_file_target, resolve_word_text,
-+    shell_split, split_on_operators, tokenize, tokenize_with_newlines,
- };
- use super::rules::{IGNORED_EXACT, IGNORED_PREFIXES, RULES, RtkRule};
- use super::shell_wrapper::parse_shell_wrapper;
-@@ -234,6 +234,8 @@ pub fn classify_command(cmd: &str) -> Classification {
-         } else {
-             cmd_normalized
-         };
-+    // Match on the canonical Cargo command, but emit the original shell text when rewriting.
-+    let cmd_normalized = normalize_cargo_command(&cmd_normalized);
-     let cmd_clean = cmd_normalized.as_str();
- 
-     // Exclude cat/head/tail with redirect operators — these are writes, not reads (#315)
-@@ -456,6 +458,29 @@ fn strip_git_global_opts(cmd: &str) -> String {
-     format!("git {}", stripped.trim())
- }
- 
-+fn normalize_cargo_command(cmd: &str) -> String {
-+    // Bash blanks separate the command name; other whitespace can belong to it.
-+    // https://www.gnu.org/software/bash/manual/html_node/Definitions.html
-+    if cmd
-+        .strip_prefix("cargo")
-+        .is_some_and(|tail| tail.starts_with([' ', '\t']))
-+    {
-+        let tokens = tokenize(cmd);
-+        let raw_words = coalesce_words(cmd, &tokens);
-+        let words: Vec<_> = raw_words[1..]
-+            .iter()
-+            .map(|(word, _)| resolve_word_text(word))
-+            .collect();
-+        if let Some((command, index)) = crate::cmds::rust::cargo_cmd::CargoCommand::parse(&words) {
-+            // Preserve the raw suffix so argument-specific exclusions still see its
-+            // original quoting and spacing after the canonical command name.
-+            let (word, offset) = raw_words[index + 1];
-+            return format!("cargo {}{}", command.as_str(), &cmd[offset + word.len()..]);
-+        }
-+    }
-+    cmd.to_owned()
-+}
-+
- /// Strip pnpm global options before the subcommand (mirror of `strip_git_global_opts`).
- /// `pnpm -r install` → `pnpm install`; `pnpm --filter @app list` → `pnpm list`.
- /// Classification only — the rewrite re-emits the ORIGINAL command, so the stripped
-@@ -2093,6 +2118,13 @@ fn rewrite_segment_inner(
- /// Rewrite the command part of a segment (trailing redirects already split
- /// off) with `rule`, or `None` when this rule does not rewrite it.
- fn rewrite_command_part(rule: &RtkRule, cmd_part: &str) -> Option<String> {
-+    if rule.rtk_cmd == "rtk cargo"
-+        && cmd_part
-+            .strip_prefix("cargo")
-+            .is_some_and(|tail| tail.starts_with([' ', '\t']))
-+    {
-+        return Some(format!("rtk {cmd_part}"));
-+    }
-     if rule.rtk_cmd == "rtk golangci-lint run"
-         && let Some(parts) = parse_golangci_run_parts(cmd_part)
-     {
-@@ -2192,6 +2224,9 @@ fn tool_form(cmd_clean: &str, rtk_equivalent: &str) -> String {
-     let normalized = strip_absolute_path(
-         &php_tool_form(cmd_clean, rtk_equivalent).unwrap_or_else(|| cmd_clean.to_string()),
-     );
-+    if rtk_equivalent == "rtk cargo" {
-+        return normalize_cargo_command(&normalized);
-+    }
-     RULES
-         .iter()
-         .find(|r| r.rtk_cmd == rtk_equivalent)
-@@ -7377,6 +7412,70 @@ mod tests {
-         );
+@@ -1176,6 +1176,195 @@ mod tests {
+         ));
      }
  
 +    #[test]
-+    fn test_exclude_cargo_command_covers_toolchain_and_global_prefixes() {
++    fn compound_shell_commands_are_not_rtk_hooks() {
 +        for command in [
-+            "cargo test",
-+            "cargo +stable test",
-+            "cargo --locked test",
-+            "cargo --config 'build.rustflags=[\"--cfg\", \"demo\"]' test --lib",
-+            "cargo +nightly -Zunstable-options -C 'some path' test",
-+            "cargo\t+stable\ttest --lib",
-+            "cargo +stable 'te'\"st\" --lib",
-+            "RUSTUP_TOOLCHAIN=nightly cargo +stable test",
++            "my-audit;/usr/local/bin/rtk hook claude",
++            "my-audit&&/usr/local/bin/rtk hook claude",
++            "my-audit||/usr/local/bin/rtk hook claude",
++            "my-audit|/usr/local/bin/rtk hook claude",
++            "my-audit&/usr/local/bin/rtk hook claude",
++            "my-audit>/usr/local/bin/rtk hook claude",
++            "/usr/local/bin/rtk hook claude > /tmp/audit.log",
++            "/usr/local/bin/rtk\nhook claude",
++            "/usr/local/bin/rtk hook claude\nmy-audit",
++            "/usr/local/bin/rtk hook claude\r\n",
++            "/usr/local/bin/rtk hook claude\r",
++            "/usr/local/bin/rtk hook claude\\ ",
++            "/usr/local/bin/rtk hook \"claude\n",
++            "/usr/local/bin/rtk hook 'claude\n",
++            " \t/usr/local/bin/rtk hook claude\r\n\t ",
++            " \t/usr/local/bin/rtk hook claude\r\t ",
 +        ] {
-+            assert_eq!(
-+                rewrite_command_no_prefixes(command, &["cargo test".to_string()]),
-+                None,
-+                "{command}"
++            assert!(
++                !is_claude_hook_command(command),
++                "user command was claimed as RTK-owned: {command:?}"
 +            );
 +        }
-+        for command in ["cargo +stable check", "cargo --config test check"] {
-+            assert_eq!(
-+                rewrite_command_no_prefixes(command, &["cargo test".to_string()]),
-+                Some(format!("rtk {command}")),
-+                "{command}"
++
++        for command in [
++            "/usr/local/bin/rtk hook claude\n",
++            "\n/usr/local/bin/rtk hook claude",
++            " \n/usr/local/bin/rtk hook claude\n ",
++            "\t\n/usr/local/bin/rtk hook claude\n\t",
++            "${HOME}/.local/bin/rtk hook claude",
++        ] {
++            assert!(
++                is_claude_hook_command(command),
++                "RTK hook command was not recognised: {command:?}"
 +            );
 +        }
-+        assert_eq!(
-+            rewrite_command_no_prefixes("cargo +stable test", &["cargo +stable test".to_string()]),
-+            None
-+        );
++
++        for command in [
++            "\"/usr/local/my;bin/rtk\" hook claude",
++            "/usr/local/my\\;bin/rtk hook claude",
++            "\"/usr/local/my&&bin/rtk\" hook claude",
++        ] {
++            assert!(
++                is_claude_hook_command(command),
++                "literal operator character changed RTK path: {command:?}"
++            );
++        }
 +    }
 +
 +    #[test]
-+    fn test_exclude_cargo_arguments_keep_their_raw_spelling() {
-+        for (pattern, command, excluded) in [
-+            ("^cargo test$", "cargo +stable test", true),
-+            ("^cargo test$", "cargo +stable test --lib", false),
-+            ("cargo test --lib", "cargo --locked test --lib", true),
-+            ("
-```
-
-**File**: `src/lib.rs` (modified, +43/-68)
-```diff
-@@ -699,8 +699,9 @@ enum Commands {
- 
-     /// Cargo commands with compact output
-     Cargo {
--        #[command(subcommand)]
--        command: CargoCommands,
-+        /// Cargo arguments, including toolchain selectors and global options
-+        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
-+        args: Vec<OsString>,
-     },
- 
-     /// npm run with filtered output (strip boilerplate)
-@@ -1615,49 +1616,6 @@ enum PrismaMigrateCommands {
-     },
- }
- 
--#[derive(Debug, Subcommand)]
--enum CargoCommands {
--    /// Build with compact output (strip Compiling lines, keep errors)
--    Build {
--        /// Additional cargo build arguments
--        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
--        args: Vec<String>,
--    },
--    /// Test with failures-only output
--    Test {
--        /// Additional cargo test arguments
--        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
--        args: Vec<String>,
--    },
--    /// Clippy with warnings grouped by lint rule
--    Clippy {
--        /// Additional cargo clippy arguments
--        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
--        args: Vec<String>,
--    },
--    /// Check with compact output (strip Checking lines, keep errors)
--    Check {
--        /// Additional cargo check arguments
--        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
--        args: Vec<String>,
--    },
--    /// Install with compact output (strip dep compilation, keep installed/errors)
--    Install {
--        /// Additional cargo install arguments
--        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
--        args: Vec<String>,
--    },
--    /// Nextest with failures-only output
--    Nextest {
--        /// Additional cargo nextest arguments (e.g., run, list, --lib)
--        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
--        args: Vec<String>,
--    },
--    /// Passthrough: runs any unsupported cargo subcommand directly
--    #[command(external_subcommand)]
--    Other(Vec<OsString>),
--}
--
- #[derive(Debug, Subcommand)]
- enum DotnetCommands {
-     /// Build with compact output
-@@ -1912,8 +1870,18 @@ where
-     I: IntoIterator<Item = T>,
-     T: Into<std::ffi::OsString> + Clone,
- {
--    let matches = rtk_command().try_get_matches_from(args)?;
--    <Cli as clap::FromArgMatches>::from_arg_matches(&matches)
-+    let raw_args: Vec<OsString> = args.into_iter().map(Into::into).collect();
-+    let matches = rtk_command().try_get_matches_from(&raw_args)?;
-+    let mut cli = <Cli as clap::FromArgMatches>::from_arg_matches(&matches)?;
-+    if let Commands::Cargo { args } = &mut cli.command {
-+        // A flat trailing-args field preserves -- after its first argument, but clap
-+        // consumes a leading --. Restore that separator from the raw OS argv suffix.
-+        let start = raw_args.len() - args.len();
-+        if start > 0 && raw_args[start - 1] == "--" {
-+            args.insert(0, OsString::from("--"));
-+        }
-+    }
-+    Ok(cli)
- }
- 
- fn run_fallback(parse_error: clap::Error) -> Result<i32> {
-@@ -3425,27 +3393,7 @@ fn run_cli() -> Result<i32> {
- 
-         Commands::Playwright { args } => playwright_cmd::run(&args, cli.verbose)?,
- 
--        Commands::Cargo { command } => match command {
--            CargoCommands::Build { args } => {
--                cargo_cmd::run(cargo_cmd::CargoCommand::Build, &args, cli.verbose)?
--            }
--            CargoCommands::Test { args } => {
--                cargo_cmd::run(cargo_cmd::CargoCommand::Test, &args, cli.verbose)?
--            }
--            CargoCommands::Clippy { args } => {
--                cargo_cmd::run(cargo_cmd::CargoCommand::Clippy, &args, cli.verbose)?
--            }
--            CargoCommands::Check { args } => {
--                cargo_cmd::run(cargo_cmd::CargoCommand::Check, &args, cli.verbose)?
--            }
--            CargoCommands::Install { args } => {
--                cargo_cmd::run(cargo_cmd::CargoCommand::Install, &args, cli.verbose)?
--            }
--            CargoCommands::Nextest { args } => {
--                cargo_cmd::run(cargo_cmd::CargoCommand::Nextest, &args, cli.verbose)?
--            }
--            CargoCommands::Other(args) => cargo_cmd::run_passthrough(&args, cli.verbose)?,
--        },
-+        Commands::Cargo { args } => cargo_cmd::run(&args, cli.verbose)?,
- 
-         Commands::Bun { command } => match command {
-             BunCommands::Install { args } => bun_cmd::run_pkg("install", &args, cli.verbose)?,
-@@ -4149,6 +4097,33 @@ mod tests {
-     use crate::core::test_isolation;
-     use std::cell::Cell;
- 
-+    #[test]
-+    fn test_cargo_cli_preserves_global_options_and_separators() {
-+        for args in [
-+            vec!["+stable", "--locked", "check"],
-+            vec!["--config", "check", "test", "--", "--nocapture"],
-+            vec![
-+                "+nightly",
-+                "-Z",
-+                "unstable-options",
-+                "-C",
-+                "some path",
-+                "check",
-```
-
-**File**: `tests/cargo_toolchain_test.rs` (added, +518/-0)
-```diff
-@@ -0,0 +1,518 @@
-+mod common;
++    fn install_and_uninstall_preserve_compound_user_hook() {
++        let tmp = test_isolation::tempdir();
++        with_claude_dir_override(&tmp, |dir| {
++            let path = dir.join(SETTINGS_JSON);
++            let compound = serde_json::json!({
++                "type": "command",
++                "command": "my-audit;/usr/local/bin/rtk hook claude",
++                "timeout": 9,
++                "metadata": { "owner": "user", "labels": ["keep"] }
++            });
++            fs::write(
++                &path,
++                serde_json::json!({
++                    "hooks": {
++                        (PRE_TOOL_USE_KEY): [{
++                            "matcher": "Bash|Read",
++                            "hooks": [compound.clone()]
++                        }]
++                    },
++                    "permissions": { "allow": ["Bash(ls)"] }
++                })
++                .to_string(),
++            )
++            .unwrap();
 +
-+fn assert_rewrite(command: &str, expected: Option<&str>) {
-+    let output = common::rtk_command()
-+        .args(["rewrite", command])
-+        .output()
-+        .unwrap();
-+    if let Some(expected) = expected {
-+        assert!(
-+            matches!(output.status.code(), Some(0 | 3)),
-+            "{command}: {output:?}"
++            assert_eq!(
++                patch_settings_json_command(
++                    CLAUDE_HOOK_COMMAND,
++                    PatchMode::Auto,
++                    false,
++                    InitContext::default(),
++                    HookInstallScope::UserGlobal,
++                )
++                .unwrap(),
++                PatchResult::Patched
++            );
++            let installed = read_json_file(&path).unwrap().unwrap();
++            let entries = installed["hooks"][PRE_TOOL_USE_KEY].as_array().unwrap();
++            assert_eq!(entries.len(), 2);
++            assert!(entries.iter().any(|entry| {
++                entry["hooks"]
++                    .as_array()
++                    .is_some_and(|hooks| hooks.iter().any(|hook| hook == &compound))
++            }));
++            assert!(entries.iter().any(|entry| {
++                entry["hooks"].as_array().is_some_and(|hooks| {
++                    hooks
++                        .iter()
++                        .any(|hook| hook["command"].as_str() == Some(CLAUDE_HOOK_COMMAND))
++                })
++            }));
++
++            assert_eq!(
++                remove_settings_entries(InitContext::default()).unwrap(),
++                SettingsRemoval {
++                    hook: true,
++                    proxy_base_url: false
++                }
++            );
++            let after = read_json_file(&path).unwrap().unwrap();
++            assert_eq!(
++                after["hooks"][PRE_TOOL_USE_KEY][0]["hooks"][0], compound,
++                "uninstall must preserve the complete compound user hook"
++            );
++            assert_eq!(after["permissions"]["allow"][0], "Bash(ls)");
++        });
++    }
++
++    #[test]
++    fn boundary_newline_hook_is_idempotent_and_uninstall_is_selective() {
++        let tmp = test_isolation::tempdir();
++        with_claude_dir_override(&tmp, |dir| {
++            let path = dir.join(SETTINGS_JSON);
++            let boundary_hook = format!("{CLA
+```
+
+**File**: `src/hooks/init/codex.rs` (modified, +28/-8)
+```diff
+@@ -1024,6 +1024,7 @@ mod tests {
+         assert!(is_codex_hook_command(
+             "\"C:\\Program Files\\rtk.exe\" hook codex"
+         ));
++        assert!(is_codex_hook_command("rtk hook codex\n"));
+     }
+ 
+     #[test]
+@@ -1263,14 +1264,22 @@ mod tests {
+     fn test_patch_codex_hooks_is_idempotent_and_preserves_existing_hooks() {
+         let temp = TempDir::new().unwrap();
+         let hooks_json = temp.path().join(HOOKS_JSON);
++        let user_hook = serde_json::json!({
++            "type": "command",
++            "command": "audit;/usr/local/bin/rtk hook codex",
++            "timeout": 11,
++            "metadata": { "owner": "user", "labels": ["keep"] }
++        });
++        let user_group = serde_json::json!({
++            "matcher": "Bash",
++            "description": "user group",
++            "hooks": [user_hook.clone()]
++        });
+         fs::write(
+             &hooks_json,
+             serde_json::to_string_pretty(&serde_json::json!({
+                 "hooks": {
+-                    "PreToolUse": [{
+-                        "matcher": "Bash",
+-                        "hooks": [{ "type": "command", "command": "echo existing" }]
+-                    }],
++                    "PreToolUse": [user_group.clone()],
+                     "Stop": [{
+                         "hooks": [{ "type": "command", "command": "echo stop" }]
+                     }]
+@@ -1287,12 +1296,23 @@ mod tests {
+             serde_json::from_str(&fs::read_to_string(&hooks_json).unwrap()).unwrap();
+         assert!(codex_hook_already_present(&root));
+         assert_eq!(root["hooks"]["PreToolUse"].as_array().unwrap().len(), 2);
+-        assert_eq!(
+-            root["hooks"]["PreToolUse"][0]["hooks"][0]["command"],
+-            "echo existing"
+-        );
++        assert_eq!(root["hooks"]["PreToolUse"][0], user_group,);
+         assert_eq!(root["hooks"]["Stop"][0]["hooks"][0]["command"], "echo stop");
+         assert!(hooks_json.with_extension("json.bak").exists());
++
++        assert!(remove_codex_hook_from_file(&hooks_json, InitContext::default()).unwrap());
++        let after: serde_json::Value =
++            serde_json::from_str(&fs::read_to_string(&hooks_json).unwrap()).unwrap();
++        assert!(!codex_hook_already_present(&after));
++        assert_eq!(
++            after["hooks"]["PreToolUse"].as_array().unwrap(),
++            std::slice::from_ref(&user_group)
 +        );
 +        assert_eq!(
-+            String::from_utf8(output.stdout)
-+                .unwrap()
-+                .trim_end_matches('\n'),
-+            expected,
-+            "{command}"
++            after["hooks"]["Stop"][0]["hooks"][0]["command"],
++            "echo stop"
 +        );
-+    } else {
-+        assert_eq!(output.status.code(), Some(1), "{command}: {output:?}");
-+        assert!(output.stdout.is_empty(), "{command}: {output:?}");
-+    }
-+}
-+
-+#[test]
-+fn toolchain_rewrites_preserve_the_original_command() {
-+    for toolchain in ["+stable", "+nightly", "+1.75.0", "+nightly-2026-08-01"] {
-+        for command in ["build", "check", "clippy", "test", "install", "fmt"] {
-+            let original = format!("cargo {toolchain} {command} -p demo");
-+            assert_rewrite(&original, Some(&format!("rtk {original}")));
-+        }
-+    }
-+    for original in [
-+        "cargo --locked check",
-+        "cargo --offline test",
-+        "cargo --frozen build",
-+        "cargo --color never check",
-+        "cargo --color=never check",
-+        "cargo --config check build",
-+        "cargo --config=check build",
-+        "cargo -C check build",
-+        "cargo -C=check build",
-+        "cargo -Ccheck build",
-+        "cargo -Z check build",
-+        "cargo -Z=check build",
-+        "cargo -Zcheck build",
-+        "cargo -q check",
-+        "cargo -vv build",
-+        "cargo --verbose --quiet check",
-+        "cargo +nightly -vvZunstable-options -C 'some path' check",
-+        "cargo +nightly -Zscript check",
-+        "cargo +nightly -Z script check",
-+        r#"cargo  +stable  --config 'build.rustflags=["--cfg", "demo"]' check -p "some package""#,
-+        "cargo\t+stable\tcheck",
-+    ] {
-+        assert_rewrite(original, Some(&format!("rtk {original}")));
-+    }
-+    assert_rewrite(
-+        "RUSTUP_TOOLCHAIN=nightly cargo --locked check",
-+        Some("RUSTUP_TOOLCHAIN=nightly rtk cargo --locked check"),
-+    );
-+}
-+
-+#[test]
-+fn ambiguous_prefixes_and_unsupported_commands_are_not_rewritten() {
-+    for original in [
-+        "cargo",
-+        "cargo +stable",
-+        "cargo --config",
-+        "cargo --config check metadata",
-+        "cargo --config=check metadata",
-+        "cargo --color check metadata",
-+        "cargo --color=check metadata",
-+        "cargo -C check metadata",
-+        "cargo -C=check metadata",
-+        "cargo -Ccheck metadata",
-+        "cargo -Z check metadata",
-+        "cargo -Z=check metadata",
-+        "cargo -Zcheck metadata",
-+        "cargo --locked +stable check",
-+        "cargo +stable +nightly check",
-+        "cargo --unknown check",
-+        "cargo -vx check",
-+        "cargo --version check",
-+        "cargo -V check",
-+        "cargo --list check",
-+        "cargo --explain E0425 check",
-+        "cargo --explain=E0425 check",
-+        "cargo --help check",
-+        "cargo -h check",
-+        "cargo -Zhelp check",
-+        "cargo -- check",
-+        "cargo +stable -- check",
-+        "cargo --config -- check",
-+        "cargo --config --help check",
-+        "cargo --color -- check",
-+        "cargo -C -- check",
-+        "cargo -Z -- check",
-+        "cargo +nightly -Zscript file.rs check",
-+        "cargo +stable metadata",
-+        "cargo +stable checker",
-+        "cargo b",
-+        "cargo c",
-+        "cargo t",
-+        "cargo +stable t",
-+        "cargo --locked c",
-+        "cargo nextest run",
-+        "cargo nextest list",
-+        "cargo nextest show-config test-groups",
-+        "cargo +stable nextest list",
-+    ] {
-+        assert_rewrite(original, None);
-+    }
-+}
-+
-+#[test]
-+fn non_shell_whitespace_does_not_identify_a_cargo_command() {
-+    for gap in ['\u{a0}', '\u{2003}', '\u{202f}', '\r', '\u{b}', '\u{c}'] {
-+        assert_rewrite(&format!("cargo{gap}check"), None);
-+    }
-+}
-+
-+#[cfg(target_os = "linux")]
-+#[test]
-+fn configured_cargo_exclusions_cover_prefixes_and_keep_argument_patterns() {
-+    let config = common::tempdir();
-+    let rtk_config = config.path().join("rtk");
-+    std::fs::create_dir_all(&rtk_config).unwrap();
-+    for (pattern, command, excluded) in [
-+        ("cargo test", "cargo +stable test", true),
-+        ("cargo test", "cargo --locked test", true),
-+        ("cargo test", "cargo --config test check", false),
-+        ("^cargo test$", "cargo +stable test", true),
-+        ("^cargo test$", "cargo +stable test --lib", false),
-+        (
-+            "^cargo test --package 'some package'$",
-+            "cargo --locked test --package 'some package'",
-+            true,
-+        ),
-+        (
-+            "^cargo test --package 'some package'$",
-+            "cargo --locked test --package \"some package\"",
-+            false,
-+        ),
++        assert_eq!(after["hooks"]["PreToolUse"][0]["hooks"][0], user_hook);
+     }
+ 
+     #[test]
+```
 
+**File**: `src/hooks/init/trae.rs` (modified, +1/-0)
+```diff
+@@ -379,6 +379,7 @@ mod tests {
+         assert!(is_trae_hook_command("rtk hook trae"));
+         assert!(is_trae_hook_command("/opt/homebrew/bin/rtk hook trae"));
+         assert!(is_trae_hook_command("\"/opt/homebrew/bin/rtk\" hook trae"));
++        assert!(is_trae_hook_command("rtk hook trae\n"));
+         assert!(!is_trae_hook_command("rtk hook claude"));
+     }
+ 
+```
+
+**File**: `src/hooks/mod.rs` (modified, +29/-0)
+```diff
+@@ -30,6 +30,35 @@ fn is_rtk_binary(binary: &str) -> bool {
+ }
+ 
+ fn is_rtk_hook_command(command: &str, agent: &str) -> bool {
++    let mut tokens = crate::discover::lexer::tokenize_with_newlines(command);
++    // Ignore only literal LF operator tokens at the command's boundaries.
++    // The lexer also reports the CR of a CRLF pair as an LF operator; checking
++    // the source byte leaves that token for the guard below, and the word check
++    // after shell_split would reject the CR anyway.
++    while tokens.first().is_some_and(|token| {
++        matches!(token.kind, crate::discover::lexer::TokenKind::Operator)
++            && token.value == "\n"
++            && command.as_bytes().get(token.offset) == Some(&b'\n')
++    }) {
++        tokens.remove(0);
++    }
++    while tokens.last().is_some_and(|token| {
++        matches!(token.kind, crate::discover::lexer::TokenKind::Operator)
++            && token.value == "\n"
++            && command.as_bytes().get(token.offset) == Some(&b'\n')
++    }) {
++        tokens.pop();
++    }
++    if tokens.iter().any(|token| match token.kind {
++        crate::discover::lexer::TokenKind::Operator
++        | crate::discover::lexer::TokenKind::Pipe(_)
++        | crate::discover::lexer::TokenKind::Redirect => true,
++        crate::discover::lexer::TokenKind::Shellism => token.value == "&",
++        _ => false,
++    }) {
++        return false;
++    }
++
+     let parts = crate::discover::lexer::shell_split(command);
+     let [parsed_binary, hook, target] = parts.as_slice() else {
+         return false;
 ```
 
 #### Recent Merged Pull Requests:
@@ -2364,66 +2055,59 @@ fix(cargo): filter toolchain and global-prefix invocations
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in cargo_cmd.rs
+## X. Empirical Invariant Guard in claude.rs
 
 **RULE**:
-When implementing operations in `src/cmds/rust/cargo_cmd.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/hooks/init/claude.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6c94fc51`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `eb710be4`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmds/rust/cargo_cmd.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/hooks/init/claude.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::core::arg_tokenizer::{self, Dialect, TokenKind, ValueSpec};
-use crate::core::tracking;
-use std::ffi::{OsStr, OsString};
-#[derive(Debug, Clone, Copy)]
-    Fmt,
-impl CargoCommand {
-    pub fn as_str(self) -> &'static str {
-        match self {
-            Self::Build => "build",
-            Self::Test => "test",
-            Self::Clippy => "clippy",
-            Self::Check => "check",
-            Self::Install => "install",
-            Self::Nextest => "nextest",
-            Self::Fmt => "fmt",
+    #[test]
+    fn compound_shell_commands_are_not_rtk_hooks() {
+        for command in [
+            "my-audit;/usr/local/bin/rtk hook claude",
+            "my-audit&&/usr/local/bin/rtk hook claude",
+            "my-audit||/usr/local/bin/rtk hook claude",
+            "my-audit|/usr/local/bin/rtk hook claude",
+            "my-audit&/usr/local/bin/rtk hook claude",
+            "my-audit>/usr/local/bin/rtk hook claude",
+            "/usr/local/bin/rtk hook claude > /tmp/audit.log",
+            "/usr/local/bin/rtk\nhook claude",
+            "/usr/local/bin/rtk hook claude\nmy-audit",
+            "/usr/local/bin/rtk hook claude\r\n",
+            "/usr/local/bin/rtk hook claude\r",
+            "/usr/local/bin/rtk hook claude\\ ",
+            "/usr/local/bin/rtk hook \"claude\n",
+            "/usr/local/bin/rtk hook 'claude\n",
+            " \t/usr/local/bin/rtk hook claude\r\n\t ",
+            " \t/usr/local/bin/rtk hook claude\r\t ",
+        ] {
+            assert!(
+                !is_claude_hook_command(command),
+                "user command was claimed as RTK-owned: {command:?}"
+            );
         }
-    }
 
-    /// Find a supported canonical command and its index, inspecting only Cargo's prefix.
-    /// The original OS arguments are kept separately and forwarded without reconstruction.
-    pub fn parse<T: AsRef<OsStr>>(args: &[T]) -> Option<(Self, usize)> {
-        let words: Vec<_> = args
-            .iter()
-            .map(|arg| arg.as_ref().to_string_lossy())
-            .collect();
-        // Rustup recognizes +toolchain only as the first argument.
-        // https://rust-lang.github.io/rustup/overrides.html#toolchain-override-shorthand
-        let start = usize::from(words.first().is_some_and(|arg| arg.starts_with('+')));
-        let tokens =
-            arg_toke
+        for command in [
+            "/usr/local/bin/rtk hook claude\n",
+     
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-use crate::core::args_utils;
-use crate::core::shell::display_args;
-use std::ffi::OsString;
-#[derive(Debug, Clone)]
-pub fn run(cmd: CargoCommand, args: &[String], verbose: u8) -> Result<i32> {
-    match cmd {
-        CargoCommand::Build => run_build(args, verbose),
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6c94fc51` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `eb710be4` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -4,24 +4,24 @@
 {
   "source_repository": "react/react-native",
   "source_url": "https://github.com/react/react-native",
-  "source_version": "c1acb2bd",
+  "source_version": "cf7f3f39",
   "license": "MIT",
-  "timestamp": "2026-11-17T06:47:10.838Z",
+  "timestamp": "2026-11-18T09:28:34.167Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-react-react-native",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [react/react-native](https://github.com/react/react-native) (Revision: `c1acb2bd`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T06:47:10.838Z`  
+> **Provenance**: Harvested from [react/react-native](https://github.com/react/react-native) (Revision: `cf7f3f39`).  
+> **License**: MIT | **Timestamp**: `2026-11-18T09:28:34.167Z`  
 > **Learning ID**: `learn-github-react-react-native`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 80%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 82%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from react/react-native:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/react-react-native-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/react/react-native](https://github.com/react/react-native))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T06:47:09.763Z  
+> **Harvest Timestamp**: 2026-11-18T09:28:32.693Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A framework for building native applications using React
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 126941 stars
+- **Stars / Engagement**: 126951 stars
 
 ---
 
@@ -636,390 +636,671 @@ export {prepareDebuggerShellFromDotSlashFile};
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fb07ea35` (2026-11-16)
-**Commit Message**: Fix TextInput state retain chain in AndroidTextInputShadowNode
+### Incident Patch 1: `2b60e633` (2026-11-17)
+**Commit Message**: fix(android): don't preallocate a view that a commit already created
 
-Summary:
-`AndroidTextInputShadowNode::getAttributedString` builds the fragment for a controlled `value` with `parentShadowView = ShadowView(*this)`. A full `ShadowView` carries the node's current `state` and `props`. `updateStateIfNeeded` stores that attributed string in the next `AndroidTextInputState` (`reactTreeAttributedString`), so every new state keeps the previous state (and props) alive. The chain grows by one link per value change for as long as the input stays mounted.
+## Summary:
 
-Two effects:
-- Memory: native heap grows with every change to a controlled `TextInput` and is only released on unmount.
-- Crash: on unmount the whole chain is destroyed recursively on the JS thread. Long chains overflow the stack, and crash stacks repeat `State → AttributedString → Fragment → ShadowView → State` dozens of times before ending in a SIGSEGV in `~AndroidTextInputState()`.
+Fixes #60018, and I believe #58526 too.
 
-D94267721 fixed the same retain chain for iOS/macOS by adding `shadowViewFromShadowNode()` in `BaseTextInputShadowNode.h`. `AndroidTextInputShadowNode` does not inherit from `BaseTextInputShadowNode`, so Android still had the bug.
+The preallocation queue is drained on the UI thread, so a commit can get there first. If the commit creates a view and the next commit deletes it again (a View that is flattened right after it mounts, e.g. `opacity` set and cleared in a layout effect), `executeMount` adds the tag to `allocatedViewTags` and erases it before the drain runs. The drain then finds the tag missing, registers it as preallocated and creates the Java view, which the queued `DELETE` removes. The tag stays allocated in C++ with no view behind it. The next `CREATE` for that family is skipped, the inserts land in a view that doesn't exist, and the next `REMOVE` crashes with `Unable to find parentView for tag`.
 
-This change clears `props` and
+This skips the drain for a family that is already part of a committed tree (`ShadowNodeFamily::hasBeenMounted()`). Its view belongs to `executeMount` from then on. The check runs under `allocatedViewsMutex_`, which `executeMount` takes after the commit has marked the family, so the two can't interleave in a way that brings the tag back. Views that haven't been committed yet are stil
 
-**File**: `packages/react-native/ReactCommon/react/renderer/components/textinput/platform/android/react/renderer/components/androidtextinput/AndroidTextInputShadowNode.cpp` (modified, +6/-1)
+**File**: `packages/react-native/ReactAndroid/src/main/jni/react/fabric/FabricMountingManager.cpp` (modified, +11/-1)
 ```diff
-@@ -189,7 +189,12 @@ AttributedString AndroidTextInputShadowNode::getAttributedString(
-     // text value's background will stack. This is a hack/workaround to prevent
-     // that effect.
-     fragment.textAttributes.backgroundColor = clearColor();
--    fragment.parentShadowView = ShadowView(*this);
-+    auto parentShadowView = ShadowView(*this);
-+    // Clearing `props` and `state` (which we don't use) allows avoiding retain
-+    // cycles.
-+    parentShadowView.props = nullptr;
-+    parentShadowView.state = nullptr;
-+    fragment.parentShadowView = std::move(parentShadowView);
-     attributedString.prependFragment(std::move(fragment));
+@@ -1092,7 +1092,17 @@ void FabricMountingManager::drainPreallocateViewsQueue() {
+   {
+     std::lock_guard allocatedViewsLock(allocatedViewsMutex_);
+     for (auto& [shadowView, family] : queuedViews) {
+-      if (pullModel && family.expired()) {
++      auto queuedFamily = family.lock();
++      if (pullModel && queuedFamily == nullptr) {
++        continue;
++      }
++      // Once a family is part of a committed tree, its view is executeMount's
++      // to create. The commit can run before this drain and both create and
++      // delete the view, e.g. when it is flattened again by the next commit;
++      // registering the tag now would leave it allocated with no view behind
++      // it, and its next Create would be skipped. executeMount takes
++      // allocatedViewsMutex_ after the commit has marked the family mounted.
++      if (queuedFamily != nullptr && queuedFamily->hasBeenMounted()) {
+         continue;
+       }
+       auto allocatedViewsIterator =
+```
+
+**File**: `packages/react-native/ReactAndroid/src/main/jni/react/fabric/test_helper/FabricMountingManagerTestHelper.cpp` (modified, +29/-7)
+```diff
+@@ -222,9 +222,9 @@ void FabricMountingManagerTestHelper::drainPreallocationQueue() {
+   mountingManager_->drainPreallocateViewsQueue();
+ }
+ 
+-void FabricMountingManagerTestHelper::executeCreateMutation(
++void FabricMountingManagerTestHelper::executeMutation(
+     jint surfaceId,
+-    jint tag) {
++    ShadowViewMutation mutation) {
+   auto telemetry = TransactionTelemetry{};
+   telemetry.willCommit();
+   telemetry.willDiff();
+@@ -233,11 +233,27 @@ void FabricMountingManagerTestHelper::executeCreateMutation(
+   telemetry.didLayout();
+   telemetry.didCommit();
+   mountingManager_->executeMount(
+-      MountingTransaction{
+-          surfaceId,
+-          0,
+-          {ShadowViewMutation::CreateMutation(makeShadowView(surfaceId, tag))},
+-          telemetry});
++      MountingTransaction{surfaceId, 0, {std::move(mutation)}, telemetry});
++}
++
++void FabricMountingManagerTestHelper::executeCreateMutation(
++    jint surfaceId,
++    jint tag) {
++  executeMutation(
++      surfaceId,
++      ShadowViewMutation::CreateMutation(makeShadowView(surfaceId, tag)));
++}
++
++void FabricMountingManagerTestHelper::executeDeleteMutation(
++    jint surfaceId,
++    jint tag) {
++  executeMutation(
++      surfaceId,
++      ShadowViewMutation::DeleteMutation(makeShadowView(surfaceId, tag)));
++}
++
++void FabricMountingManagerTestHelper::commitQueuedView(jint tag) {
++  queuedShadowNodes_.at(tag)->setMounted(true);
+ }
+ 
+ void FabricMountingManagerTestHelper::dropFamily(jint tag) {
+@@ -495,6 +511,12 @@ void FabricMountingManagerTestHelper::registerNatives() {
+       makeNativeMethod(
+           "executeCreateMutation",
+           FabricMountingManagerTestHelper::executeCreateMutation),
++      makeNativeMethod(
++          "executeDeleteMutation",
++          FabricMountingManagerTestHelper::executeDeleteMutation),
++      makeNativeMethod(
++          "commitQueuedView",
++          FabricMountingManagerTestHelper::commitQueuedView),
+       makeNativeMethod(
+           "dropFamily", FabricMountingManagerTestHelper::dropFamily),
+       makeNativeMethod(
+```
+
+**File**: `packages/react-native/ReactAndroid/src/main/jni/react/fabric/test_helper/FabricMountingManagerTestHelper.h` (modified, +6/-0)
+```diff
+@@ -35,6 +35,10 @@ class FabricMountingManagerTestHelper : public jni::HybridClass<FabricMountingMa
+   void queuePreallocation(jint surfaceId, jint tag);
+   void drainPreallocationQueue();
+   void executeCreateMutation(jint surfaceId, jint tag);
++  void executeDeleteMutation(jint surfaceId, jint tag);
++  // Marks the family of a view queued by queuePreallocation as part of a
++  // committed tree, as ShadowTree's commit does.
++  void commitQueuedView(jint tag);
+   void dropFamily(jint tag);
+   void destroyUnmountedView(jint surfaceId, jint tag);
+   void destroyCommittedView(jint surfaceId, jint tag);
+@@ -66,6 +70,8 @@ class FabricMountingManagerTestHelper : public jni::HybridClass<FabricMountingMa
+ 
+   explicit FabricMountingManagerTestHelper(jni::alias_ref<JFabricUIManager::javaobject> jFabricUIManager);
+ 
++  void executeMutation(jint surfaceId, ShadowViewMutation mutation);
++
+   static void initHybrid(
+       jni::alias_ref<jhybridobject> jobj,
+       jni::alias_ref<JFabricUIManager::javaobject> jFabricUIManager);
+```
+
+**File**: `packages/react-native/ReactAndroid/src/test/java/com/facebook/react/fabric/FabricMountingManagerInstrumentationTest.kt` (modified, +31/-0)
+```diff
+@@ -459,6 +459,37 @@ class FabricMountingManagerInstrumentationTest {
+     assertThat(helper.isTagAllocated(surfaceId, 42)).isFalse()
    }
  
++  /**
++   * A commit can create and delete a view before the queue drains, when the view is flattened again
++   * by the next commit. The drain must not register the tag again: its next Create would be skipped
++   * and the view would never exist.
++   */
++  @Test
++  fun native_drainPreallocationQueue_skipsViewThatACommitCreatedAndDeleted() {
++    val helper = createTestHelper()
++    helper.startSurface(surfaceId)
++    helper.queuePreallocation(surfaceId, 42)
++    helper.commitQueuedView(42)
++    helper.executeCreateMutation(surfaceId, 42)
++    helper.executeDeleteMutation(surfaceId, 42)
++
++    helper.drainPreallocationQueue()
++
++    assertThat(helper.isTagAllocated(surfaceId, 42)).isFalse()
++  }
++
++  /** A view that no commit has taken yet is still preallocated. */
++  @Test
++  fun native_drainPreallocationQueue_preallocatesViewNotYetCommitted() {
++    val helper = createTestHelper()
++    helper.startSurface(surfaceId)
++    helper.queuePreallocation(surfaceId, 42)
++
++    helper.drainPreallocationQueue()
++
++    assertThat(helper.isTagAllocated(surfaceId, 42)).isTrue()
++  }
++
+   /** Without the pull model, a committed family does not destroy its view. */
+   @Test
+   fun native_destroyCommittedView_keepsPreallocatedView() {
+```
+
+**File**: `packages/react-native/ReactAndroid/src/test/java/com/facebook/react/fabric/FabricMountingManagerTestHelper.kt` (modified, +4/-0)
+```diff
+@@ -41,6 +41,10 @@ private constructor(fabricUIManager: FabricUIManager) : HybridClassBase() {
+ 
+   external fun executeCreateMutation(surfaceId: Int, tag: Int)
+ 
++  external fun executeDeleteMutation(surfaceId: Int, tag: Int)
++
++  external fun commitQueuedView(tag: Int)
++
+   external fun dropFamily(tag: Int)
+ 
+   external fun destroyUnmountedView(surfaceId: Int, tag: Int)
 ```
 
 ---
 
-### Incident Patch 2: `4a82359d` (2026-11-16)
-**Commit Message**: Report an actionable error when '@react-native/codegen' is not built (#59650)
+### Incident Patch 2: `bfea95fb` (2026-11-17)
+**Commit Message**: Keep the iOS renderer scheduler alive through instance shutdown
 
-Summary:
+## Summary
 
-When `react-native/codegen` is checked out from source but never built, `babel-plugin-codegen` failed with a bare `Cannot find module .../lib/...` deep inside Babel preset loading. Catch the failed `lib/` fallback and name the fix, keeping the original failure as `cause`. A missing install and a broken `lib/` build report separately. Adds `codegen-load-test.js` covering all three failures.
+Fixes #59721.
 
-Changelog:
-[General][Fixed] - Show an actionable error when `react-native/codegen` is not built
+During a normal bridgeless reload, `RCTInstance::invalidate` suspends the surface presenter before JS-thread cleanup runs. Suspension can destroy the renderer scheduler and its delegate proxy while the current JS task still has rendering updates capturing the proxy by raw pointer.
 
-Reviewed By: cipolleschi
+Retain the scheduler through that cleanup, and clear its Objective-C delegate after stopping surfaces. Before dispatching cleanup, permanently remove its layout-animation run-loop observer on main. Scheduler destruction then stays in the same JS cleanup block as runtime destruction, with the scheduler released first. This prevents both an observer callout racing teardown and queued JSI handles outliving the runtime. It adds no per-rendering-callback guard, synchronous main wait, or JS-to-main-to-JS destruction round trip.
 
-Differential Revision: D127711037
+Add three native lifecycle tests, the required CocoaPods Yoga header dependency for the scheduler import, and regenerated Apple API snapshots.
 
-Pull Request resolved: https://github.com/react/react-native/pull/59650
+## Changelog
 
-**File**: `packages/babel-plugin-codegen/__tests__/codegen-load-test.js` (added, +76/-0)
+[IOS] [FIXED] - Prevent a queued view command from accessing a destroyed scheduler delegate during a normal bridgeless reload
+
+## Test Pla
+
+**File**: `packages/react-native/React/Fabric/RCTScheduler.h` (modified, +3/-0)
 ```diff
-@@ -0,0 +1,76 @@
-+/**
+@@ -62,6 +62,9 @@ NS_ASSUME_NONNULL_BEGIN
+ 
+ - (void)setupAnimationDriver:(const facebook::react::SurfaceHandler &)surfaceHandler;
+ 
++// Permanently removes the layout-animation observer. Call on the main queue.
++- (void)stopObservingLayoutAnimations;
++
+ - (void)onAnimationStarted;
+ 
+ - (void)onAllAnimationsComplete;
+```
+
+**File**: `packages/react-native/React/Fabric/RCTScheduler.mm` (modified, +7/-0)
+```diff
+@@ -8,6 +8,7 @@
+ #import "RCTScheduler.h"
+ 
+ #import <QuartzCore/CADisplayLink.h>
++#import <React/RCTAssert.h>
+ #import <cxxreact/TraceSection.h>
+ #import <react/featureflags/ReactNativeFeatureFlags.h>
+ #import <react/renderer/animations/LayoutAnimationDriver.h>
+@@ -258,6 +259,12 @@ - (void)setupAnimationDriver:(const facebook::react::SurfaceHandler &)surfaceHan
+   surfaceHandler.getMountingCoordinator()->setMountingOverrideDelegate(_animationDriver);
+ }
+ 
++- (void)stopObservingLayoutAnimations
++{
++  RCTAssertMainQueue();
++  _uiRunLoopObserver.reset();
++}
++
+ - (void)onAnimationStarted
+ {
+   if (_uiRunLoopObserver) {
+```
+
+**File**: `packages/react-native/React/Fabric/RCTSurfacePresenter.mm` (modified, +1/-0)
+```diff
+@@ -234,6 +234,7 @@ - (BOOL)suspend
+   }
+ 
+   [self _stopAllSurfacesWithScheduler:scheduler];
++  scheduler.delegate = nil;
+ 
+   return YES;
+ }
+```
+
+**File**: `packages/react-native/ReactCommon/react/runtime/platform/ios/React-RuntimeApple.podspec` (modified, +2/-0)
+```diff
+@@ -18,6 +18,7 @@ end
+ 
+ header_search_paths = [
+   "$(PODS_ROOT)/Headers/Private/React-Core",
++  "$(PODS_ROOT)/Headers/Private/Yoga",
+   "$(PODS_TARGET_SRCROOT)/../../../..",
+   "$(PODS_TARGET_SRCROOT)/../../../../..",
+ ]
+@@ -50,6 +51,7 @@ Pod::Spec.new do |s|
+   s.dependency "React-CoreModules"
+   s.dependency "React-NativeModulesApple"
+   s.dependency "React-RCTFabric"
++  s.dependency "Yoga"
+   s.dependency "React-RuntimeCore"
+   s.dependency "React-Mapbuffer"
+   s.dependency "React-jserrorhandler"
+```
+
+**File**: `packages/react-native/ReactCommon/react/runtime/platform/ios/ReactCommon/RCTInstance.mm` (modified, +30/-21)
+```diff
+@@ -29,6 +29,7 @@
+ #import <React/RCTLogBox.h>
+ #import <React/RCTPerformanceLogger.h>
+ #import <React/RCTRedBox.h>
++#import <React/RCTScheduler.h>
+ #import <React/RCTSurfacePresenter.h>
+ #import <ReactCommon/RCTTurboModule.h>
+ #import <ReactCommon/RCTTurboModuleManager.h>
+@@ -206,28 +207,36 @@ - (void)invalidate
+   }
+   // suspend shouldn't be called under _invalidationMutex: it notifies surface observers,
+   // which can call callFunctionOnJSModule and deadlock on the same mutex.
++  // Queued rendering updates capture the scheduler's delegate by raw pointer.
++  // Stop its run-loop observer on main, but keep it alive until queued JS work
++  // has drained. Release it before the runtime so its queued JSI handles remain valid.
++  __block RCTScheduler *scheduler = _surfacePresenter.scheduler;
+   [_surfacePresenter suspend];
+-  [_jsThreadManager dispatchToJSThread:^{
+-    /**
+-     * Every TurboModule is invalidated on its own method queue.
+-     * TurboModuleManager invalidate blocks the calling thread until all TurboModules are invalidated.
+-     */
+-    [self->_turboModuleManager invalidate];
+-
+-    // Clean up all the Resources
+-    self->_reactInstance = nullptr;
+-    self->_jsRuntimeFactory = nullptr;
+-    self->_appTMMDelegate = nil;
+-    self->_delegate = nil;
+-    [self->_displayLink invalidate];
+-    self->_displayLink = nil;
+-
+-    self->_turboModuleManager = nil;
+-    self->_performanceLogger = nil;
+-
+-    // Terminate the JavaScript thread, so that no other work executes after this block.
+-    self->_jsThreadManager = nil;
+-  }];
++  RCTExecuteOnMainQueue(^{
++    [scheduler stopObservingLayoutAnimations];
++    [self->_jsThreadManager dispatchToJSThread:^{
++      /**
++       * Every TurboModule is invalidated on its own method queue.
++       * TurboModuleManager invalidate blocks the calling thread until all TurboModules are invalidated.
++       */
++      [self->_turboModuleManager invalidate];
++
++      // Clean up all the Resources
++      scheduler = nil;
++      self->_reactInstance = nullptr;
++      self->_jsRuntimeFactory = nullptr;
++      self->_appTMMDelegate = nil;
++      self->_delegate = nil;
++      [self->_displayLink invalidate];
++      self->_displayLink = nil;
++
++      self->_turboModuleManager = nil;
++      self->_performanceLogger = nil;
++
++      // Terminate the JavaScript thread, so that no other work executes after this block.
++      self->_jsThreadManager = nil;
++    }];
++  });
+ }
+ 
+ - (std::shared_ptr<CallInvoker>)jsCallInvoker
+```
+
+**File**: `packages/rn-tester/RNTesterPods.xcodeproj/project.pbxproj` (modified, +4/-0)
+```diff
+@@ -51,6 +51,7 @@
+ 		F0D621C32BBB9E38005960AC /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F0D621C22BBB9E38005960AC /* PrivacyInfo.xcprivacy */; };
+ 		F1A0B1C23D4E5F6071829302 /* RCTTurboModuleArrayBufferTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F1A0B1C23D4E5F6071829301 /* RCTTurboModuleArrayBufferTests.mm */; };
+ 		F1A0B1C23D4E5F6071829322 /* RCTTurboModuleStringConversionTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F1A0B1C23D4E5F6071829321 /* RCTTurboModuleStringConversionTests.mm */; };
++		F1A0B1C23D4E5F6071829342 /* RCTInstanceInvalidationTests.mm in Sources */ = {isa = PBXBuildFile; fileRef = F1A0B1C23D4E5F6071829341 /* RCTInstanceInvalidationTests.mm */; };
+ 		D1A60AD11B9247A080734F02 /* RCTDevLoadingViewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = D1A60AD11B9247A080734F01 /* RCTDevLoadingViewTests.m */; };
+ /* End PBXBuildFile section */
+ 
+@@ -150,6 +151,7 @@
+ 		F0D621C22BBB9E38005960AC /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+ 		F1A0B1C23D4E5F6071829301 /* RCTTurboModuleArrayBufferTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RCTTurboModuleArrayBufferTests.mm; sourceTree = "<group>"; };
+ 		F1A0B1C23D4E5F6071829321 /* RCTTurboModuleStringConversionTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RCTTurboModuleStringConversionTests.mm; sourceTree = "<group>"; };
++		F1A0B1C23D4E5F6071829341 /* RCTInstanceInvalidationTests.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RCTInstanceInvalidationTests.mm; sourceTree = "<group>"; };
+ 		D1A60AD11B9247A080734F01 /* RCTDevLoadingViewTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RCTDevLoadingViewTests.m; sourceTree = "<group>"; };
+ /* End PBXFileReference section */
+ 
+@@ -311,6 +313,7 @@
+ 				E7DB20CB22B2BAA5005AC45F /* RCTModuleMethodTests.mm */,
+ 				F1A0B1C23D4E5F6071829301 /* RCTTurboModuleArrayBufferTests.mm */,
+ 				F1A0B1C23D4E5F6071829321 /* RCTTurboModuleStringConversionTests.mm */,
++				F1A0B1C23D4E5F6071829341 /* RCTInstanceInvalidationTests.mm */,
+ 				E7DB20CF22B2BAA5005AC45F /* RCTMultipartStreamReaderTests.m */,
+ 				A975CA6B2C05EADE0043F72A /* RCTNetworkTaskTests.m */,
+ 				E7DB20BE22B2BAA4005AC45F /* RCTNativeAnimatedNodesManagerTests.m */,
+@@ -623,6 +626,7 @@
+ 				E7DB20E822B2BAA6005AC45F /* RCTModuleMethodTests.mm in Sources */,
+ 				F1A0B1C23D4E5F6071829302 /* RCTTurboModuleArrayBufferTests.mm in Sources */,
+ 				F1A0B1C23D4E5F6071829322 /* RCTTurboModuleStringConversionTests.mm in Sources */,
++				F1A0B1C23D4E5F6071829342 /* RCTInstanceInvalidationTests.mm in Sources */,
+ 				E7DB20E222B2BAA6005AC45F /* RCTGzipTests.m in Sources */,
+ 				E7DB20ED22B2BAA6005AC45F /* RCTURLUtilsTests.m in Sources */,
+ 				E7DB20D322B2BAA6005AC45F /* RCTBlobManagerTests.m in Sources */,
+```
+
+**File**: `packages/rn-tester/RNTesterUnitTests/RCTInstanceInvalidationTests.mm` (added, +196/-0)
+```diff
+@@ -0,0 +1,196 @@
++/*
 + * Copyright (c) Meta Platforms, Inc. and affiliates.
 + *
 + * This source code is licensed under the MIT license found in the
 + * LICENSE file in the root directory of this source tree.
-+ *
-+ * @flow strict-local
-+ * @format
 + */
 +
-+class ModuleNotFoundError extends Error {
-+  code: string = 'MODULE_NOT_FOUND';
++#import <CoreFoundation/CoreFoundation.h>
++#import <XCTest/XCTest.h>
++
++#import <React/RCTSurfacePresenter.h>
++#import <ReactCommon/RCTInstance.h>
++
++@interface RCTSchedulerLifetimeProbe : NSObject
++@property (nonatomic, weak) id delegate;
++@property (nonatomic, copy) void (^onDealloc)(BOOL onMainThread);
++@property (nonatomic, copy) void (^onStopObserving)(BOOL onMainThread);
++@property (nonatomic, copy) dispatch_block_t onTick;
++- (void)startObserving;
++- (void)stopObservingLayoutAnimations;
++@end
++
++@implementation RCTSchedulerLifetimeProbe {
++  CFRunLoopObserverRef _observer;
 +}
 +
-+function missingLibError(): Error {
-+  return new ModuleNotFoundError(
-+    "Cannot find module '@react-native/codegen/lib/parsers/flow/parser'",
-+  );
++- (void)startObserving
++{
++  void *unretainedSelf = (__bridge void *)self;
++  _observer = CFRunLoopObserverCreateWithHandler(
++      kCFAllocatorDefault, kCFRunLoopBeforeWaiting, true, 0, ^(CFRunLoopObserverRef, CFRunLoopActivity) {
++        __unsafe_unretained RCTSchedulerLifetimeProbe *probe = (__bridge RCTSchedulerLifetimeProbe *)unretainedSelf;
++        dispatch_block_t tick = probe.onTick;
++        if (tick) {
++          tick();
++        }
++      });
++  CFRunLoopAddObserver(CFRunLoopGetMain(), _observer, kCFRunLoopCommonModes);
 +}
 +
-+// Failure thrown by the virtual `lib/` mock; tests override it per case.
-+let mockLibLoadError: Error = missingLibError();
++- (void)stopObservingLayoutAnimations
++{
++  if (_observer) {
++    CFRunLoopRemoveObserver(CFRunLoopGetMain(), _observer, kCFRunLoopCommonModes);
++    CFRelease(_observer);
++    _observer = nullptr;
++  }
++  if (_onStopObserving) {
++    _onStopObserving([NSThread isMainThread]);
++  }
++}
 +
-+// `lib/` is gitignored build output and may not exist on disk, so it is
-+// mocked virtually for every test. This stays a top-level `jest.mock`
-+// because only it accepts the options argument under this repo's Flow libdef.
-+jest.mock(
-+  '@react-native/codegen/lib/parsers/flow/parser',
-+  () => {
-+    throw mockLibLoadError;
-+  },
-+  {virtual: true},
-+);
++- (void)dealloc
++{
++  if (_observer) {
++    CFRunLoopRemoveObserver(CFRunLoopGetMain(), _observer, kCFRunLoopCommonModes);
++    CFRelease(_observer);
++  }
++  if (_onDealloc) {
++    _onDealloc([NSThread isMainThread]);
++  }
++}
++@end
 +
-+describe('codegen loading', () => {
-+  beforeEach(() => {
-+    mockLibLoadError = missingLibError();
++@interface RCTJSThreadManagerStub : NSObject
++@property (nonatomic, copy) dispatch_block_t pendingWork;
++@end
++
++@implementation RCTJSThreadManagerStub
++- (void)dispatchToJSThread:(dispatch_block_t)work
++{
++  self.pendingWork = work;
++}
++@end
++
++@interface RCTInstanceInvalidationTests : XCTestCase
++@end
++
++@implementation RCTInstanceInvalidationTests
++
++- (void)runJSWork:(dispatch_block_t)work
++{
++  dispatch_semaphore_t finished = dispatch_semaphore_create(0);
++  dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
++    @autoreleasepool {
++      work();
++    }
++    dispatch_semaphore_signal(finished);
 +  });
++  XCTAssertEqual(dispatch_semaphore_wait(finished, dispatch_time(DISPATCH_TIME_NOW, 3 * NSEC_PER_SEC)), 0);
++}
 +
-+  it('throws an actionable error when @react-native/codegen is not built', () => {
-+    jest.isolateModules(() => {
-+      jest.doMock('@react-native/codegen/src/parsers/flow/parser', () => {
-+        throw new SyntaxError("Unexpected token '{'");
-+      });
-+      expect(() => {
-+        // $FlowFixMe[untyped-import] `../index.js` is `@noflow`.
-+        require('../index.js');
-+      }).toThrow(/never built.*yarn workspace @react-native\/codegen build/s);
-+    });
-+  });
++- (void)testInvalidateStopsObserverOnMainAndReleasesSchedulerDuringJSCleanup
++{
++  XCTAssertTrue([NSThread isMainThread]);
++  RCTSurfacePresenter *presenter = [RCTSurfacePresenter new];
++  RCTJSThreadManagerStub *jsThreadManager = [RCTJSThreadManagerStub new];
++  RCTInstance *instance = [RCTInstance new];
++  [instance setValue:presenter forKey:@"surfacePresenter"];
++  [instance setValue:jsThreadManager forKey:@"jsThreadManager"];
 +
-+  it('throws an actionable error when @react-native/codegen is not installed', () => {
-+    jest.isolateModules(() => {
-+      jest.doMock('@react-native/codegen/src/parsers/flow/parser', () => {
-+        throw new ModuleNotFoundError('Cannot find module');
-+      });
-+      expect(() => {
-+        // $FlowFixMe[untyped-import] `../index.js` is `@noflow`.
-+        require('../index.js');
-+      }).toThrow(/could not be found/);
-+    });
-+  });
++  XCTestExpectation *released = [self expectationWithDescription:@"Scheduler released during JS cleanup"];
++  __block BOOL observerStoppedOnMain = NO;
++  __block BOOL releasedBeforeJSThreadCleanup = NO;
++  __weak RCTInstance *weakInstance = instance;
++  __weak RCTSchedulerLifetimeProbe *weakScheduler;
++  @autoreleasepool {
++    RCTSchedulerLifetimeProbe *scheduler = [RCTSchedulerLifetimeProbe new];
++    scheduler.delegate = presenter;
++    scheduler.onStopObserving = ^(BOOL onMainThread) {
++      observerStoppedOnMain = onMainThread;
++    };
++    scheduler.onDealloc = ^(BOOL) {
++      releasedBeforeJSThreadCleanup = [weakInstance valueForKey:@"jsThreadManager"] != nil;
++      [released fulfill];
++    };
++    weakScheduler = scheduler;
++    // Exercise real instance invalidation and presenter suspension without a JS VM.
++    [presenter setValue:scheduler forKey:@"scheduler"];
++  }
 +
-+  it('throws an actionable error when the built lib is broken', () => {
-+    jest.isolateModules(() => {
-+      mockLibLoadError = new SyntaxError("Unexpected token '{'");
-+      jest.doMock('@react-native/codegen/src/parsers/flow/parser', () => {
-+        throw new ModuleNotFoundError('Cannot find module');
-+      });
-+      expect(() => {
-+        // $FlowFixMe[untyped-import] `../index.js` is `@noflow`.
-+        require('../index.js');
-+      }).toThrow(/failed to load.*Rebuild/s);
-+    });
-+  });
-+});
++  @autoreleasepool {
++    [instance invalidate];
++    XCTAssertNil(presenter.scheduler);
++    XCTAssertNotNil(weakScheduler);
++    XCTAssertNil(weakScheduler.delegate);
++    XCTAssertNotNil(jsThreadManager.pendingWork);
++    XCTAssertTrue(observerStoppedOnMain);
++  }
++
++  dispatch_block_t drainWork = jsThreadManager.pendingWork;
++  [self runJSWork:drainWork];
++
++  [self waitForExpectations:@[ released ] timeout:3];
++  XCTAssertTrue(releasedBeforeJSThreadCleanup);
++  // Keeping the cleanup block itself must not keep the scheduler alive.
++  XCTAssertNil(weakScheduler);
++  XCTAssertNil([instance valueForKey:@"jsThreadManager"]);
++  jsThreadManager.pendingWork = nil;
++}
++
++- (void)testStoppedObserverDoesNotRunWhileWaitingForJSCleanup
++{
++  XCTAssertTrue([NSThread isMainThread]);
++  RCTSurfacePresenter *presenter = [RCTSurfacePresenter new];
++  RCTJSThreadManagerStub *jsThreadManager = [RCTJSThreadManagerStub new];
++  RCTInstance *instance = [RCTInstance new];
++  [instance setValue:presenter forKey:@"surfacePresenter"];
++  [i
 ```
 
-**File**: `packages/babel-plugin-codegen/index.js` (modified, +36/-9)
+**File**: `scripts/cxx-api/api-snapshots/ReactAppleDebugCxx.api` (modified, +1/-0)
 ```diff
-@@ -15,22 +15,49 @@ let FlowParser, TypeScriptParser, RNCodegen;
- const {cheap: traverseCheap} = require('@babel/traverse').default;
- const {basename} = require('node:path');
- 
-+function getCodegenLoadError(srcError, libError) {
-+  if (libError != null && libError.code !== 'MODULE_NOT_FOUND') {
-+    return (
-+      'Unable to load @react-native/codegen: its built `lib/` output failed ' +
-+      'to load, so NativeComponent specs cannot be transformed. Rebuild it, ' +
-+      'e.g. `yarn workspace @react-native/codegen build`, then retry.'
-+    );
-+  }
-+  if (srcError != null && srcError.code !== 'MODULE_NOT_FOUND') {
-+    return (
-+      'Unable to load @react-native/codegen: the package is checked out ' +
-+      'from source but was never built (its `lib/` output is missing), so ' +
-+      'NativeComponent specs cannot be transformed. Build it first, e.g. ' +
-+      '`yarn workspace @react-native/codegen build`, then retry.'
-+    );
-+  }
-+  return (
-+    'Unable to load @react-native/codegen: the package could not be found, ' +
-+    'so NativeComponent specs cannot be transformed. Install dependencies ' +
-+    'first, then retry.'
-+  );
-+}
-+
- try {
-   FlowParser =
-     require('@react-native/codegen/src/parsers/flow/parser').FlowParser;
-   TypeScriptParser =
-     require('@react-native/codegen/src/parsers/typescript/parser').TypeScriptParser;
-   RNCodegen = require('@react-native/codegen/src/generators/RNCodegen');
--} catch (e) {
--  // Fallback to lib when source doesn't exit (e.g. when installed as a dev dependency)
--  FlowParser =
--    // $FlowFixMe[cannot-resolve-module]
--    require('@react-native/codegen/lib/parsers/flow/parser').FlowParser;
--  TypeScriptParser =
-+} catch (srcError) {
-+  // Fallback to lib when source isn't usable (e.g. when installed as a dev dependency)
-+  try {
-+    FlowParser =
-+      // $FlowFixMe[cannot-resolve-module]
-+      require('@react-native/codegen/lib/parsers/flow/parser').FlowParser;
-+    TypeScriptParser =
-+      // $FlowFixMe[cannot-resolve-module]
-+      require('@react-native/codegen/lib/parsers/typescript/parser').TypeScriptParser;
-     // $FlowFixMe[cannot-resolve-module]
--    require('@react-native/codegen/lib/parsers/typescript/parser').TypeScriptParser;
--  // $FlowFixMe[cannot-resolve-module]
--  RNCodegen = require('@react-native/codegen/lib/generators/RNCodegen');
-+    RNCodegen = require('@react-native/codegen/lib/generators/RNCodegen');
-+  } catch (libError) {
-+    throw new Error(getCodegenLoadError(srcError, libError), {cause: libError});
-+  }
+@@ -1614,6 +1614,7 @@ interface RCTScheduler : public NSObject {
+   public virtual void removeEventListener:(const std::shared_ptr<facebook::react::EventListener>& listener);
+   public virtual void reportMount:(facebook::react::SurfaceId surfaceId);
+   public virtual void setupAnimationDriver:(const facebook::react::SurfaceHandler& surfaceHandler);
++  public virtual void stopObservingLayoutAnimations();
+   public virtual void unregisterSurface:(const facebook::react::SurfaceHandler& surfaceHandler);
  }
  
- const flowParser = new FlowParser();
 ```
 
 ---
 
-### Incident Patch 3: `32e6daa9` (2026-11-16)
-**Commit Message**: Build the Fantom tester with platform build modes
+### Incident Patch 3: `2a7b305c` (2026-11-17)
+**Commit Message**: [visual testing] open-example: Wait for RNTester to render before linking
 
-Summary:
-Build the Fantom native tester and Hermes compiler with the standard Linux and macOS build modes instead of the previous per-platform mode set, matching how other internal test runners build their native binaries.
+RNTester ignores a deep link until its JS has rendered, but `open-example.yml` only waits for animations to end - which on a fresh iOS simulator happens ~1.4s after relaunch, before RNTester takes links at ~2.7s. Since #59994 sent the link once on iOS, 17 of 25 iOS capture jobs had a flow fail its first attempt this way (29 failures across almost every flow), and in one job the retries ran out.
 
-- Linux uses the `dev-nosan`, `opt`, `dev-asan`, `dev-tsan`, `dev-cov` and `opt-cov` modes, linked statically because the runner copies the binaries out of the build output directory.
-- macOS uses the macOS platform mode plus separate production, sanitizer and coverage modes. Each mode file is now passed as its own argument; joining them into one space-separated argument made Buck fail to resolve the flag file. The macOS modes do not set the dev/opt build mode constraint, so the runner sets it explicitly; otherwise optimized macOS builds were compiled with `REACT_NATIVE_DEBUG`.
-- Optimized builds also apply the Hermes opt mode.
-- The coverage modes already set the dev/opt build mode, so the explicit build mode modifier is no longer needed.
-- C++ coverage is merged with the LLVM tools that match the compiler used by the new modes.
-- `ReactHost` installs the TurboModule binding through the runtime-aware provider o
+This waits for the "Components" label in RNTester's tab bar, which is on every screen including a restored example, before linking. The five button and switch flows that only waited for `example-container` - which a restored previous example also has, so a missed link could screenshot the wrong screen - now wait for an element only their example has.
 
-**File**: `packages/react-native/ReactCxxPlatform/react/runtime/ReactHost.cpp` (modified, +6/-1)
+Changelog: [Internal]
+
+Test plan:
+Ran every visual flow once (no Maestro retries) on a freshly erased iPhone 17 Pro simulator (iOS 27) with RNTester Release from CI. Locally the drop is deterministic:
+
+| Before the link | Result |
+|---|---|
+| `main` (wait for animations) | All 12 flows failed |
+| This PR (wait for "Components") | All 12 flows passed, 3/3 runs, ~8 min ea
+
+**File**: `packages/rn-tester/visual-tests/README.md` (modified, +1/-1)
 ```diff
-@@ -294,7 +294,12 @@ void ReactHost::createReactInstance() {
-             });
+@@ -36,7 +36,7 @@ The baseline for a PR is the one for the commit it's based on, or the nearest ea
+          id: 'text-width-mode-example'
+    ```
  
-         // Set up TurboModules
--        TurboModuleBinding::install(runtime, std::move(turboModuleManager));
-+        TurboModuleBinding::install(
-+            runtime,
-+            [turboModuleManager = std::move(turboModuleManager)](
-+                jsi::Runtime& /*runtime*/, const std::string& name) {
-+              return turboModuleManager(name);
-+            });
+-   `open-example.yml` deep-links to `rntester://example/<module>/<example>`. Wait for something that's only visible once the example has rendered, and crop to the example's `testID` so that the status bar and surrounding UI aren't part of the screenshot.
++   `open-example.yml` deep-links to `rntester://example/<module>/<example>`. Wait for something that's only visible once the example has rendered, and that only this example has (not the generic `example-container`, which a restored previous example also has), and crop to the example's `testID` so that the status bar and surrounding UI aren't part of the screenshot.
  
-         if (bindingsInstallFunc) {
-           bindingsInstallFunc(runtime);
+ 3. Open a PR. The new test has no baseline yet, so the report lists it as new, and like any other difference it needs a maintainer's approval (see below). Once the PR lands, `main` is captured with it and later PRs are compared against that.
+ 
 ```
 
-**File**: `private/react-native-fantom/runner/llvm/processLLVMCoverage.js` (modified, +3/-4)
+**File**: `packages/rn-tester/visual-tests/flows/button.yml` (modified, +4/-4)
 ```diff
-@@ -48,13 +48,12 @@ function getRepoRoot(): string {
- function getLLVMCommand(command: 'llvm-profdata' | 'llvm-cov'): string {
-   return path.join(
-     getRepoRoot(),
--    'arvr',
--    'third-party',
--    'toolchains',
-+    'fbcode',
-+    'third-party-buck',
-     'platform010',
-     'build',
-     'llvm-fb',
--    '17',
-+    '21',
-     'bin',
-     command,
-   );
+@@ -6,7 +6,7 @@ appId: ${APP_ID}
+       EXAMPLE_URL: rntester://example/ButtonExample/default-styling
+ - extendedWaitUntil:
+     visible:
+-      id: 'example-container'
++      id: 'button_default_styling'
+     timeout: 15000
+ - waitForAnimationToEnd:
+     timeout: 5000
+@@ -20,7 +20,7 @@ appId: ${APP_ID}
+       EXAMPLE_URL: rntester://example/ButtonExample/disabled
+ - extendedWaitUntil:
+     visible:
+-      id: 'example-container'
++      id: 'disabled_button'
+     timeout: 15000
+ - waitForAnimationToEnd:
+     timeout: 5000
+@@ -34,7 +34,7 @@ appId: ${APP_ID}
+       EXAMPLE_URL: rntester://example/ButtonExample/color-red
+ - extendedWaitUntil:
+     visible:
+-      id: 'example-container'
++      id: 'cancel_button'
+     timeout: 15000
+ - waitForAnimationToEnd:
+     timeout: 5000
+@@ -48,7 +48,7 @@ appId: ${APP_ID}
+       EXAMPLE_URL: rntester://example/ButtonExample/two-buttons-flexbox
+ - extendedWaitUntil:
+     visible:
+-      id: 'example-container'
++      id: 'two_cancel_button'
+     timeout: 15000
+ - waitForAnimationToEnd:
+     timeout: 5000
 ```
 
-**File**: `private/react-native-fantom/runner/utils.js` (modified, +44/-43)
+**File**: `packages/rn-tester/visual-tests/flows/switch.yml` (modified, +1/-1)
 ```diff
-@@ -62,8 +62,12 @@ export function getBuckModesForPlatform({
-   enableCoverage: boolean,
-   enableOptimized: boolean,
- }): ReadonlyArray<string> {
--  let mode = enableCoverage ? 'code-coverage' : enableOptimized ? 'opt' : 'dev';
-+  const modes = ['@//xplat/mode/react-native/granite'];
-+  if (enableOptimized) {
-+    modes.push('@//xplat/mode/hermes/opt');
-+  }
- 
-+  let sanitizer: ?('asan' | 'tsan') = null;
-   if (enableOptimized) {
-     if (EnvironmentOptions.enableASAN || EnvironmentOptions.enableTSAN) {
-       printConsoleLog({
-@@ -81,71 +85,68 @@ export function getBuckModesForPlatform({
-         message:
-           'ASAN and TSAN modes cannot be used together. Using ASAN mode as a fallback.',
-       });
--      mode = 'dev-asan';
-+      sanitizer = 'asan';
-     } else if (EnvironmentOptions.enableASAN) {
--      mode = 'dev-asan';
-+      sanitizer = 'asan';
-     } else if (EnvironmentOptions.enableTSAN) {
--      mode = 'dev-tsan';
-+      sanitizer = 'tsan';
-     }
-   }
- 
--  let osPlatform;
-   switch (os.platform()) {
--    case 'linux':
--      osPlatform = `@//arvr/mode/linux/${mode}`;
-+    case 'linux': {
-+      let mode = enableOptimized ? 'opt' : 'dev-nosan';
-+      if (sanitizer != null) {
-+        mode = `dev-${sanitizer}`;
-+      } else if (enableCoverage) {
-+        mode = enableOptimized ? 'opt-cov' : 'dev-cov';
-+      }
-+      modes.push(
-+        `@//fbcode/mode/${mode}`,
-+        // The tester and hermesc binaries are copied out of `buck-out`, so
-+        // they cannot depend on shared libraries next to them.
-+        '--modifier=ovr_config//build_mode/constraints:static',
-+      );
-       break;
-+    }
-     case 'darwin':
--      osPlatform =
--        /* $FlowFixMe[invalid-compare] Error discovered during Constant
--         * Condition roll out. See https://fburl.com/workplace/4oq3zi07. */
-+      modes.push(
-         os.arch() === 'arm64'
--          ? `@//arvr/mode/mac-arm/${mode}`
--          : `@//arvr/mode/mac/${mode}`;
-+          ? '@//fbobjc/mode/macosx-arm64'
-+          : '@//fbobjc/mode/macosx-x86_64',
-+      );
-+      // The macOS modes do not set the build mode constraint, which decides
-+      // between `REACT_NATIVE_DEBUG` and `REACT_NATIVE_PRODUCTION`.
-+      if (enableOptimized) {
-+        modes.push(
-+          '@//fbobjc/mode/production',
-+          '--modifier=ovr_config//build_mode/constraints:opt',
-+        );
-+      } else {
-+        modes.push('--modifier=ovr_config//build_mode/constraints:dev');
-+      }
-+      if (sanitizer != null) {
-+        modes.push(`@//fbobjc/mode/${sanitizer}`);
-+      } else if (enableCoverage) {
-+        modes.push('@//fbobjc/mode/coverage');
-+      }
-       break;
-     case 'win32':
--      osPlatform = `@//arvr/mode/win/${mode}`;
--      break;
-+      throw new Error('Windows is not supported for Fantom');
-     default:
-       throw new Error(`Unsupported platform: ${os.platform()}`);
-   }
- 
--  const result: Array<string> = [
--    '@//xplat/mode/react-native/granite',
--    osPlatform,
--  ];
--
-   if (enableCoverage) {
--    result.push(
-+    modes.push(
-       '-c',
-       'code_coverage.enabled=filtered',
-       '-c',
-       'code_coverage.folder_path_filter=xplat/js/react-native-github',
-     );
-   }
- 
--  // The coverage platform (e.g. `@//arvr/mode/linux/code-coverage`) pins the
--  // `core_build_mode` constraint to `opt`. `get_react_native_preprocessor_flags()`
--  // in `tools/build_defs/oss/rn_defs.bzl` selects on that constraint
--  // (`ovr_config//build_mode/constraints:{dev,opt}`) to decide between
--  // `-DREACT_NATIVE_DEBUG` and `-DREACT_NATIVE_PRODUCTION`. Under coverage it
--  // therefore compiles the native tester with `REACT_NATIVE_PRODUCTION`, which
--  // breaks dev-mode tests that use debug-only native APIs (e.g. timer mocking
--  // via `installHighResTimeStampMock`).
--  //
--  // Explicitly stack the `core_build_mode` constraint so the build reflects the
--  // test's intended dev/opt mode. This only overrides `core_build_mode`; the
--  // coverage instrumentation constraint and `-c code_coverage.*` flags above are
--  // left intact, so coverage is still collected.
--  if (enableCoverage) {
--    result.push(
--      '--modifier',
--      enableOptimized
--        ? 'ovr_config//build_mode/constraints:opt'
--        : 'ovr_config//build_mode/constraints:dev',
--    );
--  }
--
--  return result;
-+  return modes;
- }
- 
- export type AsyncCommandResult = {
+@@ -40,7 +40,7 @@ appId: ${APP_ID}
+       EXAMPLE_URL: rntester://example/SwitchExample/disabled
+ - extendedWaitUntil:
+     visible:
+-      id: 'example-container'
++      id: 'disabled-initial-off'
+     timeout: 15000
+ - assertVisible:
+     id: 'disabled-initial-off'
+```
+
+**File**: `packages/rn-tester/visual-tests/helpers/open-example.yml` (modified, +7/-12)
+```diff
+@@ -2,20 +2,15 @@ appId: ${APP_ID} # iOS: com.meta.RNTester.localDevelopment | Android: com.facebo
+ ---
+ - launchApp:
+     stopApp: true
+-- waitForAnimationToEnd:
++# RNTester ignores links until its JS has rendered, which waiting for
++# animations to end doesn't guarantee. Its tab bar shows "Components" on every
++# screen, including a restored example. Optional, so that a missed link fails
++# at the flow's own check for its example instead.
++- extendedWaitUntil:
++    visible: 'Components'
+     timeout: 30000
++    optional: true
+ - openLink: ${EXAMPLE_URL}
+-# On a slow Android emulator, the first link can arrive before the JS Linking
+-# listener is registered and be dropped, so Android sends it again once settled.
+-# On iOS, each link raises an "Open in RNTester?" dialog, so it's sent once and
+-# accepted. A second, unaccepted dialog leaves RNTester on the previous screen.
+-- runFlow:
+-    when:
+-      platform: Android
+-    commands:
+-      - waitForAnimationToEnd:
+-          timeout: 15000
+-      - openLink: ${EXAMPLE_URL}
+ - runFlow:
+     when:
+       platform: iOS
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #60060** (2026-11-16): Use subtarget syntax for static link-style modifier in Fantom runner. (@nlutsenko)
-- **PR #60054** (2026-11-16): Initialize display metrics before reading them in ReactHostImpl.onConfigurationChanged (#60054) (@bherila)
-- **PR #60047** (2026-11-16): Declare type parameter bounds that type arguments rely on (@SamChou19815)
-- **PR #60045** (closed): Don't measure UISwitch during iOS instance startup (@robhogan)
-- **PR #60044** (closed): [ci] Split Test All into Test JS and Test C++ (@huntie)
-- **PR #60041** (closed): [ci] Split Test All into per-area workflows filtered by paths-ignore (@huntie)
+- **PR #60103** (closed): Reuse parsed text attributes on Android behind a feature flag (@hryhoriiK97)
+- **PR #60101** (2026-11-18): Name function type params and label dictionary keys in Flow libdefs (@SamChou19815)
+- **PR #60096** (2026-11-17): Tolerate unchanged layout metrics on sealed shared nodes (@adityasharat)
+- **PR #60088** (2026-11-17): Preserve the original Fantom spawn error (@jipeng6036-del)
+- **PR #60082** (2026-11-17): Release Yoga ownership of children an unowned node shares with its clone (@javache)
+- **PR #60078** (2026-11-17): [iOS] Sync drifted internal fixes for the status bar stub and scroll content view (@javache)
 
 ---
 
@@ -1039,36 +1320,41 @@ Build the Fantom native tester and Hermes compiler with the standard Linux and m
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. TextInput state retain chain in AndroidTextInputShadowNode
+## X. android): don't preallocate a view that a commit already created
 
 **RULE**:
-When implementing operations in `packages/react-native/ReactCommon/react/renderer/components/textinput/platform/android/react/renderer/components/androidtextinput/AndroidTextInputShadowNode.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native/ReactAndroid/src/main/jni/react/fabric/FabricMountingManager.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fb07ea35`: TextInput state retain chain in AndroidTextInputShadowNode. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2b60e633`: android): don't preallocate a view that a commit already created. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native/ReactCommon/react/renderer/components/textinput/platform/android/react/renderer/components/androidtextinput/AndroidTextInputShadowNode.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native/ReactAndroid/src/main/jni/react/fabric/FabricMountingManager.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    auto parentShadowView = ShadowView(*this);
-    // Clearing `props` and `state` (which we don't use) allows avoiding retain
-    // cycles.
-    parentShadowView.props = nullptr;
-    parentShadowView.state = nullptr;
-    fragment.parentShadowView = std::move(parentShadowView);
+      auto queuedFamily = family.lock();
+      if (pullModel && queuedFamily == nullptr) {
+        continue;
+      }
+      // Once a family is part of a committed tree, its view is executeMount's
+      // to create. The commit can run before this drain and both create and
+      // delete the view, e.g. when it is flattened again by the next commit;
+      // registering the tag now would leave it allocated with no view behind
+      // it, and its next Create would be skipped. executeMount takes
+      // allocatedViewsMutex_ after the commit has marked the family mounted.
+      if (queuedFamily != nullptr && queuedFamily->hasBeenMounted()) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-    fragment.parentShadowView = ShadowView(*this);
+      if (pullModel && family.expired()) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fb07ea35` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2b60e633` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

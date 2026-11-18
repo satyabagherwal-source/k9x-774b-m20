@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T09:19:39.602Z",
-  "total_cycles_completed": 10434,
-  "total_learnings_persisted": 10434,
-  "total_rules_promoted": 9941,
+  "last_updated": "2026-11-18T09:28:33.919Z",
+  "total_cycles_completed": 10437,
+  "total_learnings_persisted": 10437,
+  "total_rules_promoted": 9943,
   "history": [
-    {
-      "timestamp": "2026-11-17T19:37:04.601Z",
-      "repository": "ccore/Qwen3.5-4B-3D-Coder",
-      "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T19:44:53.482Z",
-      "repository": "LiquidAI/LFM3-1.7B",
-      "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T19:44:54.493Z",
-      "repository": "software-mansion/react-native-gesture-handler",
-      "learningId": "learn-github-software-mansion-react-native-gesture-handler",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T19:44:57.008Z",
       "repository": "loft-sh/vcluster",
@@ -1403,6 +1382,27 @@
       "repository": "Comfy-Org/MiniMax-H3",
       "learningId": "learn-huggingface-comfy-org-minimax-h3",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T09:28:26.284Z",
+      "repository": "convaiinnovations/laya",
+      "learningId": "learn-huggingface-convaiinnovations-laya",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T09:28:27.438Z",
+      "repository": "rtk-ai/rtk",
+      "learningId": "learn-github-rtk-ai-rtk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T09:28:33.919Z",
+      "repository": "react/react-native",
+      "learningId": "learn-github-react-react-native",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

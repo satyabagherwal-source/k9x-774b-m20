@@ -69,11 +69,90 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T09:19:42.430Z",
-    "lastVerified": "2026-11-18T09:19:42.430Z",
+    "lastChecked": "2026-11-18T09:28:37.241Z",
+    "lastVerified": "2026-11-18T09:28:37.241Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "rtk-ai-rtk": {
+    "name": "rtk-ai/rtk",
+    "officialUrl": "https://github.com/rtk-ai/rtk",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-18T09:28:26.083Z",
+    "lastVerified": "2026-11-18T09:28:26.083Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-rtk-ai-rtk",
+    "contentHash": "3d4e7ab290d51e15ceb9c406b92af79b930e520a6a097a4542768db60f2f5461",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-convaiinnovations-laya": {
+    "name": "convaiinnovations/laya",
+    "officialUrl": "https://huggingface.co/convaiinnovations/laya",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T09:28:23.973Z",
+    "lastVerified": "2026-11-18T09:28:23.973Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-convaiinnovations-laya",
+    "contentHash": "36bb164c2f04b79e2b4d5e8a10dfcab0d46abce3ccc0ba4132dda83a27e34917",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "react-react-native": {
+    "name": "react/react-native",
+    "officialUrl": "https://github.com/react/react-native",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-11-18T09:28:32.693Z",
+    "lastVerified": "2026-11-18T09:28:32.693Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-react-react-native",
+    "contentHash": "81404fc1347efa6bbbaa616676a16a9f2b7f5eed9c61958c852f773282534690",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "stakater-reloader": {
+    "name": "Reloader",
+    "officialUrl": "https://github.com/stakater/Reloader",
+    "lastChecked": "2026-11-18T09:28:29.021Z",
+    "revisionIdentifier": "5f3fdbdc",
+    "lastVerified": "2026-11-18T09:28:29.021Z"
+  },
+  "microsoft-security-101": {
+    "name": "Security-101",
+    "officialUrl": "https://github.com/microsoft/Security-101",
+    "lastChecked": "2026-11-18T09:28:31.217Z",
+    "revisionIdentifier": "b0a31ff7",
+    "lastVerified": "2026-11-18T09:28:31.217Z"
+  },
+  "meilisearch-meilisearch": {
+    "name": "meilisearch",
+    "officialUrl": "https://github.com/meilisearch/meilisearch",
+    "lastChecked": "2026-11-18T09:28:33.980Z",
+    "revisionIdentifier": "d15a0866",
+    "lastVerified": "2026-11-18T09:28:33.980Z"
+  },
+  "dathere-qsv": {
+    "name": "qsv",
+    "officialUrl": "https://github.com/dathere/qsv",
+    "lastChecked": "2026-11-18T09:28:36.522Z",
+    "revisionIdentifier": "39c445bb",
+    "lastVerified": "2026-11-18T09:28:36.522Z"
   }
 }
