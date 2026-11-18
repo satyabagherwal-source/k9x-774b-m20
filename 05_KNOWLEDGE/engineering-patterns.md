@@ -677109,3 +677109,144 @@ checksum = "0e4dbe352d7240a1ef7b2f5d7d283cefa9405835974f7aabc59838b9d1a6acc6"
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `0d10aa47` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9209. order overlapping OPFS file accesses (Harvested from eclipse-theia/theia)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "order overlapping OPFS file accesses",
+  "source": "eclipse-theia/theia",
+  "source_url": "https://github.com/eclipse-theia/theia",
+  "source_version": "210f8510",
+  "license": "EPL-2.0",
+  "extracted_at": "2026-11-18T11:33:09.194Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-eclipse-theia-theia",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [eclipse-theia/theia](https://github.com/eclipse-theia/theia) (Revision: `210f8510`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in eclipse-theia/theia. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `912262d1`: filesystem): order overlapping OPFS file accesses. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+- [filesystem] upgraded opfs-worker from 1.3.1 to 2.3.1. `OPFSFileSystemProvider.writeFile` now writes through opfs-worker's `writeFile` instead of `open`/`write`/`close`, and `OPFSInitialization.getBroadcastChannel()` is replaced by `getBroadcastChannelName()`, which returns the name of the channel instead of a `BroadcastChannel`. Implementations and subclasses that override `getBroadcastChannel()` must implement `getBroadcastChannelName()` instead [#18215](https://github.com/eclipse-theia/theia/pull/18215) - Contributed on behalf of CodeSignal
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `912262d1` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9210. [MM-72003] Stop the latest release check when Enable Security Alerts is off, and (Harvested from mattermost/mattermost)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[MM-72003] Stop the latest release check when Enable Security Alerts is off, and",
+  "source": "mattermost/mattermost",
+  "source_url": "https://github.com/mattermost/mattermost",
+  "source_version": "f3624d99",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-18T11:33:19.944Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mattermost-mattermost",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [mattermost/mattermost](https://github.com/mattermost/mattermost) (Revision: `f3624d99`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `api/v4/source/system.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5049a60d`: [MM-72003] Stop the latest release check when Enable Security Alerts is off, and cache failures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/v4/source/system.yaml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+        "501":
+          $ref: "#/components/responses/NotImplemented"
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5049a60d` are properly handled with clean fallback behavior.

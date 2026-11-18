@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T11:22:44.128Z",
-  "total_cycles_completed": 10465,
-  "total_learnings_persisted": 10465,
-  "total_rules_promoted": 9964,
+  "last_updated": "2026-11-18T11:33:20.509Z",
+  "total_cycles_completed": 10468,
+  "total_learnings_persisted": 10468,
+  "total_rules_promoted": 9966,
   "history": [
-    {
-      "timestamp": "2026-11-17T21:03:02.636Z",
-      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
-      "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T21:03:05.452Z",
-      "repository": "oven-sh/bun",
-      "learningId": "learn-github-oven-sh-bun",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T21:03:13.492Z",
-      "repository": "sigstore/cosign",
-      "learningId": "learn-github-sigstore-cosign",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T21:03:24.724Z",
       "repository": "Ontos-AI/knowhere",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-18T11:22:44.128Z",
       "repository": "rustls/rustls",
       "learningId": "learn-github-rustls-rustls",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T11:33:09.792Z",
+      "repository": "eclipse-theia/theia",
+      "learningId": "learn-github-eclipse-theia-theia",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T11:33:13.041Z",
+      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+      "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T11:33:20.509Z",
+      "repository": "mattermost/mattermost",
+      "learningId": "learn-github-mattermost-mattermost",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

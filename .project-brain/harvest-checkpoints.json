@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T11:22:44.133Z",
+  "last_updated": "2026-11-18T11:33:20.513Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -320,14 +320,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-      "content_hash": "cb7fd523cfe8d44272526e9049ef1bcc1002853a8c36a92acbaa29aa0520ef4c",
-      "verified_at": "2026-11-17T23:19:23.236Z",
+      "content_hash": "82d20587c9cc6137deee8ab5aa1eac57ad5a7d18fa554cb7c1406541a5cfdf63",
+      "verified_at": "2026-11-18T11:33:13.045Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T23:19:23.236Z"
+      "last_updated": "2026-11-18T11:33:13.045Z"
     },
     "meta-llama/Llama-3.1-8B-Instruct": {
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -3636,14 +3636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mattermost-mattermost",
-      "content_hash": "5dfd58ad6783d9202d47c05f201309ac50702d5f5a6aba079bd4cb29b4ae6852",
-      "verified_at": "2026-11-17T08:56:34.964Z",
+      "content_hash": "97d693fb4ebfe7f2d913dfeb6b69cbde1ce033ff53ef15ab7c8c06c972f8cbd1",
+      "verified_at": "2026-11-18T11:33:20.513Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T08:56:34.964Z"
+      "last_updated": "2026-11-18T11:33:20.513Z"
     },
     "chaos-mesh/chaos-mesh": {
       "repository": "chaos-mesh/chaos-mesh",
@@ -19379,6 +19379,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-18T07:38:51.632Z"
+    },
+    "eclipse-theia/theia": {
+      "repository": "eclipse-theia/theia",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-eclipse-theia-theia",
+      "content_hash": "ca7f2236837f812c33d8ccb3f4d99031e473730ef44c3e2ab5acef865578c8f9",
+      "verified_at": "2026-11-18T11:33:09.796Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-18T11:33:09.796Z"
     }
   },
   "repos": {

@@ -21502,5 +21502,20 @@
     "downloads": 0,
     "qualityScore": 950,
     "discoveredAt": "2026-11-18T07:36:36.629Z"
+  },
+  {
+    "name": "theia",
+    "fullName": "eclipse-theia/theia",
+    "url": "https://github.com/eclipse-theia/theia",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "Eclipse Theia is an open-source platform for building custom IDEs and tools for browser and desktop. It includes Theia AI, the vendor-neutral AI harness platform, and powers the AI-native Theia IDE.",
+    "stars": 21767,
+    "forks": 2947,
+    "openIssues": 1511,
+    "language": "TypeScript",
+    "qualityScore": 12218,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-18T11:29:34.913Z"
   }
 ]

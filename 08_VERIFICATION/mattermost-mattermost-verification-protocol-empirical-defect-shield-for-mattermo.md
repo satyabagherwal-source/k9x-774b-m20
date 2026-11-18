@@ -4,22 +4,22 @@
 {
   "source_repository": "mattermost/mattermost",
   "source_url": "https://github.com/mattermost/mattermost",
-  "source_version": "53ba1b4f",
+  "source_version": "f3624d99",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T08:56:35.161Z",
+  "timestamp": "2026-11-18T11:33:20.744Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-mattermost-mattermost",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [mattermost/mattermost](https://github.com/mattermost/mattermost) (Revision: `53ba1b4f`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T08:56:35.161Z`  
+> **Provenance**: Harvested from [mattermost/mattermost](https://github.com/mattermost/mattermost) (Revision: `f3624d99`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-18T11:33:20.744Z`  
 > **Learning ID**: `learn-github-mattermost-mattermost`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `mattermost/mattermost` (Commit: `53ba1b4f`)
+- **Target Repository**: `mattermost/mattermost` (Commit: `f3624d99`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mattermost-mattermost-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mattermost/mattermost](https://github.com/mattermost/mattermost))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T08:56:33.939Z  
+> **Harvest Timestamp**: 2026-11-18T11:33:19.299Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Mattermost is an open source platform for secure collaboration across the entire software development lifecycle..
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 39632 stars
+- **Stars / Engagement**: 39645 stars
 
 ---
 
@@ -179,6 +179,43 @@ func checkEditFileAttachmentPermission(c *Context, newFileIds []string, original
 	if ok, _ := c.App.SessionHasPermissionToChannel(c.AppContext, *c.AppContext.Session(), originalPost.ChannelId, model.PermissionEditFileAttachment); !ok {
 		c.SetPermissionError(model.PermissionEditFileAttachment)
 	}
+}
+
+// postAttributeValuesForCreate turns the submitted metadata values into PropertyValues to
+// write with the post.
+//
+// When nothing was submitted this returns (nil, nil) before any lookup, channel or property,
+// which is what keeps createPost byte-identical to its pre-feature behaviour — the reason
+// this is safe to add to the most-used endpoint in the product.
+func postAttributeValuesForCreate(c *Context, post *model.Post) ([]*model.PropertyValue, *model.AppError) {
+	items := post.Metadata.GetPropertyValues()
+	if len(items) == 0 {
+		return nil, nil
+	}
+
+	if !c.App.Config().FeatureFlags.PostAttributes {
+		return nil, model.NewAppError("Api4.createPost", "api.post.create_post.attributes_feature_disabled.app_error", nil, "", http.StatusBadRequest)
+	}
+
+	// Fetched only once there are values to check: the team ID decides which team-scoped
+	// fields apply. CreatePostAsUserWithFlags reads the same channel again a moment later.
+	channel, appErr := c.App.GetChannel(c.AppContext, post.ChannelId)
+	if appErr != nil {
+		return nil, appErr
+	}
+
+	values, fields, appErr := c.App.PreparePostPropertyValuesForCreate(c.AppContext, items, channel)
+	if appErr != nil {
+		return nil, appErr
+	}
+
+	for _, field := range fields {
+		if !c.App.CanSetPostPropertyValueOnCreate(c.AppContext, c.AppContext.Session().UserId, field, channel) {
+			return nil, model.NewAppError("Api4.createPost", "api.post.create_post.attribute_no_permission.app_error", nil, "", http.StatusForbidden)
+		}
+	}
+
+	return values, nil
 }
 
 ```
@@ -814,11 +851,7 @@ func (a *App) runGuardedMessageWillBePosted(rctx request.CTX, post *model.Post) 
 		}
 		if replacementPost != nil {
 			post = replacementPost
-			if post.Metadata != nil && metadata != nil {
-				post.Metadata.Priority = metadata.Priority
-			} else {
-				post.Metadata = metadata
-			}
+			restorePriorityAndValues(post, metadata)
 		}
 		return true
 	}, plugin.MessageWillBePostedID)
@@ -846,11 +879,7 @@ func (a *App) runGuardedMessageWillBePosted(rctx request.CTX, post *model.Post) 
 		}
 		if replacement != nil {
 			post = replacement
-			if post.Metadata != nil && metadata != nil {
-				post.Metadata.Priority = metadata.Priority
-			} else {
-				post.Metadata = metadata
-			}
+			restorePriorityAndValues(post, metadata)
 		}
 		if trackPluginDelivery {
 			deliveredPluginIDs = append(deliveredPluginIDs, g.PluginId)
@@ -858,6 +887,18 @@ func (a *App) runGuardedMessageWillBePosted(rctx request.CTX, post *model.Post) 
 	}
 
 	return post, deliveredPluginIDs, nil
+}
+
+// restorePriorityAndValues puts the original post's priority and property values back on a
+// plugin's replacement post. Values are validated before the hooks run, and a plugin sets
+// values through the plugin API, not by rewriting the post here.
+func restorePriorityAndValues(replacement *model.Post, original *model.PostMetadata) {
+	if replacement.Metadata != nil && original != nil {
+		replacement.Metadata.Priority = original.Priority
+		replacement.Metadata.PropertyValues = original.PropertyValues
+	} else {
+		replacement.Metadata = original
+	}
 }
 
 // runGuardedMessageWillBeUpdated dispatches MessageWillBeUpdated. In the non-guarded
@@ -889,12 +930,7 @@ func (a *App) runGuardedMessageWillBeUpdated(rctx request.CTX, newPost, oldPost 
 	}()
 
 	// Phase A: fan out to non-guard plugins, fail-open. With empty guards the exclude list is
-	// empty and behavior is identical to plain RunMultiHook.
-	var rejectionReason string
-	pCtx := pluginContext(rctx)
-	a.ch.RunMultiHookExcluding(pluginIDsOf(guards), func(hooks plugin.Hooks, manifest *model.Manifest) bool {
-		newPost, rejectionReason = hooks.MessageWillBeUpdated(pCtx, newPost.ForPlugin(), oldPost.ForPlugin())
-		if newPost != nil && trackPluginDelivery &
+	// empty 
 ```
 
 ### Core Architecture Module: `server/channels/app/imaging/utils.go`
@@ -1641,849 +1677,993 @@ func allocateCacheTargets[T any](l int) []any {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `47848ece` (2026-11-16)
-**Commit Message**: [MM-69773] Fix layout shift when wide images in posts finish loading (#39961)
+### Incident Patch 1: `5049a60d` (2026-11-18)
+**Commit Message**: [MM-72003] Stop the latest release check when Enable Security Alerts is off, and cache failures (#40132)
 
-* [MM-69773] Size image placeholders like the loaded image to avoid layout shift
+* [MM-72003] Gate the latest release check on EnableSecurityFixAlert and cache failures
 
-The SizeAwareImage placeholder had explicit width/height attributes, so a
-surface's max-width or max-height only clamped one axis and the placeholder
-ended up taller (or wider) than the loaded image. Size it from its src's
-intrinsic dimensions instead, exactly like the real image, and draw the mini
-preview as a background since its fixed size can't be used for sizing.
-
-Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
-
-* [MM-69773] Size image placeholders from the image's real dimensions
-
-Capping the placeholder to 350px in JS produced fractional intrinsic sizes
-that browsers round, so scaled-down placeholders could differ from the real
-image by a fraction of a pixel. CSS already applies the max height to both.
+GetLatestVersion makes no request while ServiceSettings.EnableSecurityFixAlert
+is off and returns a 501. A failed fetch is cached for 6 hours, unless the
+request was cancelled. The health snapshot skips the request when the setting
+is off without recording a Version section error, and the version-behind rules
+report a separate "latest release not checked" reason in that case.
 
 Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
 
-* [MM-69773] Reserve the placeholder's size before its src is decoded
+* [MM-72003] Document the 501 and caching of GET /api/v4/latest_version
 
-Firefox decodes the placeholder's SVG data URI asynchronously, so for its first
-frame the placeholder had no size and the post grew once it decoded. Use size
-containment with the image's natura
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+Co-authored-by: ben.schumacher <[REDACTED_EMAIL]>
 
-**File**: `e2e-tests/playwright/asset/opengraph-tall.html` (added, +18/-0)
+* [MM-72003] Clear the latest version cache when EnableSecurityFixAlert is toggled
+
+Lets an admin who fixed the server's network access retry without waiting
+for the cached failure to expire or restarting the server.
+
+Co-authored-by: mattermost-code <[REDACTED_EMAIL]>
+Co-authored-by: ben.schumacher <[REDACTED_EMAIL]>
+
+* [MM-72003] Document that Enable Security Alerts also controls the latest rel
+
+**File**: `api/v4/source/system.yaml` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,18 @@
-+<!doctype html>
-+<html>
-+    <head>
-+        <meta charset="utf-8" />
-+        <title>OpenGraph Test Page</title>
-+        <meta property="og:type" content="website" />
-+        <meta property="og:site_name" content="Mattermost Test" />
-+        <meta property="og:title" content="OpenGraph Preview Title" />
-+        <meta property="og:description" content="This is a test page with a tall image." />
-+        <meta property="og:url" content="/opengraph-tall.html" />
-+        <meta property="og:image" content="/image-600x1200.jpg" />
-+        <meta property="og:image:width" content="600" />
-+        <meta property="og:image:height" content="1200" />
-+    </head>
-+    <body>
-+        <h1>OpenGraph Test Page</h1>
-+    </body>
-+</html>
-```
-
-**File**: `e2e-tests/playwright/specs/functional/channels/post_list/post_height.spec.ts` (modified, +344/-9)
-```diff
-@@ -9,7 +9,7 @@ import type {Disposable, Locator, Page} from '@playwright/test';
- import type {Post} from '@mattermost/types/posts';
- 
- import {expect, setupFileServer, test, testConfig, watchElementSize} from '@mattermost/playwright-lib';
--import type {ChannelsPage, ChannelsPost, PlaywrightClient4} from '@mattermost/playwright-lib';
-+import type {ChannelsPage, ChannelsPost, PlaywrightClient4, SizeWatcher} from '@mattermost/playwright-lib';
- 
- test.describe('Post height', () => {
-     let userClient: PlaywrightClient4;
-@@ -58,6 +58,11 @@ test.describe('Post height', () => {
-         additionalCheck?: (args: {postComponent: ChannelsPost}) => Promise<void>;
-         /** Playwright project names for which this test case should be skipped. */
-         skipProjects?: string[];
-+        /**
-+         * Allows the post height to change by less than half a pixel. An image file's preview can have a slightly
-+         * different aspect ratio than the original that its placeholder is sized from.
-+         */
-+        allowSubpixelHeightChange?: boolean;
-     };
- 
-     const testCases: PostHeightTestCase[] = [
-@@ -122,8 +127,7 @@ test.describe('Post height', () => {
-         },
-         {
-             name: 'post with a single large image',
--            // MM-69979 Skip this on iPad because images that are too wide but above the minimum height cause layout shift
--            skipProjects: ['ipad'],
-+            allowSubpixelHeightChange: true,
-             makePost: () =>
-                 seedPost({
-                     message: 'post with a single large image',
-@@ -260,8 +264,6 @@ test.describe('Post height', () => {
-         },
-         {
-             name: 'post with a large Markdown image',
--            // MM-69979 Images that are too wide but above the minimum height cause layout shift
--            skipProjects: ['chrome', 'firefox', 'ipad', 'subpath'],
-             makePost: ({fileServerUrl}) =>
-                 seedPost({
-                     message: `![large image](${fileServerUrl}/huge-image.jpg)`,
-@@ -336,8 +338,6 @@ test.describe('Post height', () => {
-         },
-         {
-             name: 'post with a large image preview',
--            // MM-69979 Images that are too wide but above the minimum height cause layout shift
--            skipProjects: ['chrome', 'firefox', 'ipad', 'subpath'],
-             makePost: ({fileServerUrl}) =>
-                 seedPost({
-                     message: `${fileServerUrl}/huge-image.jpg`,
-@@ -465,11 +465,322 @@ test.describe('Post height', () => {
-                 }
- 
-                 // * Verify no height changes were detected
-+                const observations = await sizeWatcher.getObservations();
-+                if (testCase.allowSubpixelHeightChange) {
-+                    expect(observations.length).toBeGreaterThan(0);
-+                    for (const {height} of observations) {
-+                        expect(height).toBeCloseTo(observations[0].height, 0);
-+                    }
-+                } else {
-+                    expect(observations).toHaveLength(1);
-+                }
-+            },
-+        );
-+    }
-+
-+    // Images that are scaled down to fit the width of the post rather than being capped by the max image height. The
-+    // server's previews of these images keep their exact aspect ratio, so their placeholders can match exactly.
-+    const wideImageSurfaces = [
-+        {
-+            name: 'attachment',
-+            makePost: (file: string) => seedPost({message: `post with a ${file} attachment`, files: [file]}),
-+        },
-+        {
-+            name: 'Markdown image',
-+            makePost: (file: string) => seedPost({message: `![wide image](${fileServerUrl}/${file})`}),
-+        },
-+        {
-+            name: 'Markdown image with an explicit size',
-+            makePost: (file: string) => seedPost({message: `![wide image](${fileServerUrl}/${file} =200x50)`}),
-+        },
-+        {
-+            name: 'Markdown image with an explicit width',
-+            makePost: (file: string) => seedPost({message: `![wide image](${fileServerUrl}/${file} =300)`}),
-+        },
-+        {
-+            name: 'image preview',
-+            makePost: (file: string) => seedPost({message: `${fileServerUrl}/${file}`}),
-+        },
-+        {
-+            // An image shorter than its line, where its vertical alignment affects the height of the line
-+            name: 'Markdown image between words',
-+            files: ['image-100x20.jpg'],
-+            makePost: (file: string) =>
-+                seedPost({message: `text before ![inline image](${fileServerUrl}/${file}) text after`}),
-+        },
-+    ];
-+
-+    for (const surface of wideImageSurfaces) {
-+        for (const file of surface.files ?? ['image-2000x400.jpg', 'image-1200x300.jpg']) {
-+            for (const messageDisplay of ['full', 'compact']) {
-+                test(
-+                    `image placeholder should match the size of the loaded image (${file} ${surface.name}, ${messageDisplay} display)`
-```
-
-**File**: `webapp/channels/src/components/block_renderer/image_block.test.tsx` (modified, +28/-0)
-```diff
-@@ -7,6 +7,8 @@ import type {MmImageBlock} from '@mattermost/types/mm_blocks';
- 
- import {openModal} from 'actions/views/modals';
- 
-+import SizeAwareImage from 'components/size_aware_image';
-+
- import {renderWithContext, screen, userEvent} from 'tests/react_testing_utils';
- import {ModalIdentifiers} from 'utils/constants';
- 
-@@ -143,4 +145,30 @@ describe('ImageBlock', () => {
-             }),
-         }));
-     });
-+
-+    // The style is applied to the placeholder over its own aspect ratio, so it mustn't contain an undefined one
-+    it.each([
-+        ['default', undefined, {objectFit: 'contain'}],
-+        ['person', 'person' as const, {objectFit: 'cover', aspectRatio: '1'}],
-+    ])('passes the size caps to SizeAwareImage as a style (%s image)', (_, imageStyle, expectedStyle) => {
-+        renderWithContext(
-+            <ImageBlock
-+                block={{
-+                    type: 'image',
-+                    url: 'https://example.com/photo.png',
-+                    size: 'small',
-+                    image_style: imageStyle,
-+                }}
-+                postId='post-1'
-+            />,
-+        );
-+
-+        expect(jest.mocked(SizeAwareImage).mock.lastCall?.[0].style).toStrictEqual({
-+            width: 'auto',
-+            height: 'auto',
-+            maxWidth: 204,
-+            maxHeight: 120,
-+            ...expectedStyle,
-+        });
-+    });
- });
-```
-
-**File**: `webapp/channels/src/components/block_renderer/image_block.tsx` (modified, +7/-2)
-```diff
-@@ -73,15 +73,20 @@ export const ImageBlock = ({block, postId}: ImageBlockProps) => {
-         return null;
-     }
- 
-+    const isPerson = block.image_style === 'person';
-     const imgClass = classNames('mm-blocks-image__img', {
--        'mm-blocks-image__img--person': block.image_style === 'person',
-+        'mm-blocks-image__img--person': isPerson,
-     });
- 
-     const imageConstraintStyle: CSSProperties = {
-         width: 'auto',
-         height: 'auto',
--        objectFit: block.image_style === 'person' ? 'cover' : 'contain',
-+        objectFit: isPerson ? 'cover' : 'contain',
-     };
-+    if (isPerson) {
-+        // Also applied to SizeAwareImage's placeholder, which otherwise takes the image's aspect ratio
-+        imageConstraintStyle.aspectRatio = '1';
-+    }
-     if (caps.maxWidth !== undefined) {
-         imageConstraintStyle.maxWidth = caps.maxWidth;
-     }
-```
-
-**File**: `webapp/channels/src/components/markdown_image/markdown_image.test.tsx` (modified, +23/-0)
-```diff
-@@ -270,6 +270,29 @@ describe('components/MarkdownImage', () => {
-         expect(img).toHaveAttribute('title', 'test title');
-     });
- 
-+    test.each([
-+        {width: '200', height: '50', expectedHeight: '50'},
-+        {width: '300', height: 'auto', expectedHeight: null},
-+    ])('should reserve the explicit size $width x $height with the placeholder while the image loads', ({width, height, expectedHeight}) => {
-+        const props = {
-+            ...baseProps,
-+            imageMetadata: {format: 'jpg', frameCount: 0, width: 1200, height: 300},
-+            src: 'https://example.com/image.jpg',
-+            width,
-+            height,
-+        };
-+        const {container} = renderWithContext(
-+            <MarkdownImage {...props}/>,
-+        );
-+
-+        const placeholder = container.querySelector('img.image-loading__placeholder');
-+        const img = screen.getByRole('img', {hidden: true});
-+        for (const element of [placeholder, img]) {
-+            expect(element).toHaveAttribute('width', width);
-+            expect(element?.getAttribute('height')).toEqual(expectedHeight);
-+        }
-+    });
-+
-     test(`should render image with MarkdownImageExpand if it is taller than ${Constants.EXPANDABLE_INLINE_IMAGE_MIN_HEIGHT}px`, () => {
-         const props = {
-             ...baseProps,
-```
-
-**File**: `webapp/channels/src/components/post_view/post_attachment_opengraph/post_attachment_opengraph.scss` (modified, +6/-0)
-```diff
-@@ -154,6 +154,12 @@
-             }
-         }
- 
-+        // Keep in sync with the thumbnail branch of getScaledImageDimensions, which sizes the placeholder
-+        &:not(.large) img {
-+            max-width: var(--open-graph-thumbnail-size);
-+            max-height: var(--open-graph-thumbnail-size);
-+        }
-+
-         .preview-toggle {
-             position: absolute;
-             top: -4px;
-```
-
-**File**: `webapp/channels/src/components/post_view/post_attachment_opengraph/post_attachment_opengraph.test.tsx` (modified, +45/-0)
-```diff
-@@ -272,6 +272,27 @@ describe('PostAttachmentOpenGraphImage', () => {
-         expect(container.querySelector('.PostAttachmentOpenGraph__image.large')).not.toBeInTheDocument();
-         expect(container.querySelector('.PostAttachmentOpenGraph__image .preview-toggle')).not.toBeInTheDocument();
-     });
-+
-+    test('should size the placeholder of a tall thumbnail to fit within the thumbnail box', () => {
-+        const props = {
-+            ...baseProps,
-+            imageMetadata: {
-+                ...baseProps.imageMetadata!,
-+                height: 1200,
-+                width: 600,
-+            },
-+        };
-+
-+        const {container} = renderWithContext(
-+            <PostAttachmentOpenGraphImage {...props}/>,
-+            initialState,
-+        );
-+
-+        const placeholder = container.querySelector<HTMLImageElement>('.PostAttachmentOpenGraph__image:not(.large) .image-loading__placeholder');
-+        expect(placeholder).toBeInTheDocument();
-+        expect(placeholder!.style.containIntrinsicSize).toEqual('40px 80px');
-+        expect(placeholder!.style.aspectRatio).toEqual('auto 40 / 80');
-+    });
- });
- 
- describe('PostAttachmentOpenGraphBody', () => {
-@@ -472,6 +493,30 @@ describe('Helpers', () => {
-             });
-         });
- 
-+        test('should scale tall images to fit within the thumbnail box', () => {
-+            expect(getScaledImageDimensions({
-+                format: 'png',
-+                frameCount: 0,
-+                height: 1200,
-+                width: 600,
-+            }, false)).toEqual({
-+                height: OPEN_GRAPH_THUMBNAIL_SIZE,
-+                width: OPEN_GRAPH_THUMBNAIL_SIZE / 2,
-+            });
-+        });
-+
-+        test('should not upscale images smaller than the thumbnail box', () => {
-+            expect(getScaledImageDimensions({
-+                format: 'png',
-+                frameCount: 0,
-+                height: 30,
-+                width: 60,
-+            }, false)).toEqual({
-+                height: 30,
-+                width: 60,
-+            });
-+        });
-+
-         test('should return empty dimensions when metadata is invalid', () => {
-             expect(getScaledImageDimensions({
-                 format: 'png',
-```
-
-**File**: `webapp/channels/src/components/post_view/post_attachment_opengraph/post_attachment_opengraph.tsx` (modified, +1/-0)
-```diff
-@@ -108,6 +108,7 @@ export function getScaledImageDimensions(imageMetadata: ImageMetadata, large: bo
-     const ratio = Math.min(
-         OPEN_GRAPH_THUMBNAIL_SIZE / width,
-         OPEN_GRAPH_THUMBNAIL_SIZE / height,
-+        1,
-     );
- 
-     return {
-```
-
----
-
-### Incident Patch 2: `27945cb7` (2026-11-17)
-**Commit Message**: [MM-71213] Fix SMTP client error handling (#39967)
-
-* MM-71213 Fix SMTP client error handling
-
-* MM-71213 Point to the SMTP Connection Security setting in the error
-
-* Revert "MM-71213 Point to the SMTP Connection Security setting in the error"
-
-This reverts commit 263f08fce24b0b52a8b95803516462ca719cfed6.
-
-* MM-71213 Update STARTTLS Connection Security help text
-
-* MM-71213 Report when the SMTP server does not support STARTTLS
-
-* MM-71213 Update STARTTLS Connection Security docs
-
----------
-
-Co-authored-by: Mattermost Build <[REDACTED_EMAIL]>
-
-**File**: `docs/main/administration-guide/configure/authentication-configuration-settings.mdx` (modified, +1/-1)
-```diff
-@@ -495,7 +495,7 @@ This field is required. Anonymous bind is not currently supported.
- </colgroup>
- <tbody>
- <tr>
--<td><p>This setting controls the type of security Mattermost uses to connect to the AD/LDAP server, with these options:</p><ul><li><strong>None</strong>: <strong>(Default for self-hosted deployments)</strong> No encryption. With this option, it is <strong>highly recommended</strong> that the connection be secured outside of Mattermost, such as by a stunnel proxy. <code>config.json</code> option: <code>""</code></li><li><strong>TLS</strong>: <strong>(Default for Cloud deployments)</strong> Encrypts communication with TLS. <code>config.json</code> option: <code>"TLS"</code></li><li><strong>STARTTLS</strong>: Attempts to upgrade an existing insecure connection to a secure connection with TLS. <code>config.json</code> option: <code>"STARTTLS"</code></li></ul></td>
-+<td><p>This setting controls the type of security Mattermost uses to connect to the AD/LDAP server, with these options:</p><ul><li><strong>None</strong>: <strong>(Default for self-hosted deployments)</strong> No encryption. With this option, it is <strong>highly recommended</strong> that the connection be secured outside of Mattermost, such as by a stunnel proxy. <code>config.json</code> option: <code>""</code></li><li><strong>TLS</strong>: <strong>(Default for Cloud deployments)</strong> Encrypts communication with TLS. <code>config.json</code> option: <code>"TLS"</code></li><li><strong>STARTTLS</strong>: Upgrades an existing insecure connection to TLS. The connection fails if the AD/LDAP server doesn't support STARTTLS. <code>config.json</code> option: <code>"STARTTLS"</code></li></ul></td>
- <td><ul><li>System Config path: <strong>Authentication &gt; AD/LDAP</strong></li><li><code>config.json</code> setting: <code>LdapSettings</code> &gt; <code>ConnectionSecurity</code> &gt; <code>""</code></li><li>Environment variable: <code>MM_LDAPSETTINGS_CONNECTIONSECURITY</code></li></ul></td>
- </tr>
- </tbody>
+@@ -1620,6 +1620,8 @@
+           $ref: "#/components/responses/Forbidden"
+         "500":
+           $ref: "#/components/responses/InternalServerError"
++        "501":
++          $ref: "#/components/responses/NotImplemented"
+   /api/v4/system/schema/version:
+     get:
+       tags:
 ```
 
 **File**: `docs/main/administration-guide/configure/environment-configuration-settings.mdx` (modified, +1/-1)
 ```diff
-@@ -2527,7 +2527,7 @@ With self-hosted deployments, you can configure SMTP email server settings by go
+@@ -2557,7 +2557,7 @@ With self-hosted deployments, you can configure SMTP email server settings by go
  </colgroup>
  <tbody>
  <tr>
--<td><p>Specify connection security for emails sent using SMTP.</p><ul><li><strong>Not specified</strong>: <strong>(Default)</strong> Send email over an unsecure connection.</li><li><strong>TLS</strong>: Communication between Mattermost and your email server is encrypted.</li><li><strong>STARTTLS</strong>: Attempts to upgrade an existing insecure connection to a secure connection using TLS.</li></ul></td>
-+<td><p>Specify connection security for emails sent using SMTP.</p><ul><li><strong>Not specified</strong>: <strong>(Default)</strong> Send email over an unsecure connection.</li><li><strong>TLS</strong>: Communication between Mattermost and your email server is encrypted.</li><li><strong>STARTTLS</strong>: Upgrades an existing insecure connection to TLS. The connection fails if the SMTP server doesn't support STARTTLS.</li></ul></td>
- <td><ul><li>System Config path: <strong>Environment &gt; SMTP</strong></li><li><code>config.json</code> setting: <code>EmailSettings</code> &gt; <code>ConnectionSecurity</code></li><li>Environment variable: <code>MM_EMAILSETTINGS_CONNECTIONSECURITY</code></li></ul></td>
+-<td><p>Enable or disable security alerts.</p><ul><li><strong>true</strong>: <strong>(Default)</strong> System admins are notified by email if a relevant security fix alert is announced. Requires email to be enabled.</li><li><strong>false</strong>: Security alerts are disabled.</li></ul></td>
++<td><p>Enable or disable security alerts and the check for the latest Mattermost release.</p><ul><li><strong>true</strong>: <strong>(Default)</strong> System admins are notified by email if a relevant security fix alert is announced. Requires email to be enabled. The server also fetches the latest Mattermost release from GitHub to report whether it's out of date.</li><li><strong>false</strong>: Security alerts are disabled, and the server doesn't fetch the latest Mattermost release from GitHub.</li></ul></td>
+ <td><ul><li>System Config path: <strong>Environment &gt; SMTP</strong></li><li><code>config.json</code> setting: <code>ServiceSettings</code> &gt; <code>EnableSecurityFixAlert</code> &gt; <code>true</code></li><li>Environment variable: <code>MM_SERVICESETTINGS_ENABLESECURITYFIXALERT</code></li></ul></td>
  </tr>
  </tbody>
 ```
 
-**File**: `server/platform/shared/mail/mail.go` (modified, +8/-7)
+**File**: `docs/main/administration-guide/manage/telemetry.mdx` (modified, +5/-1)
 ```diff
-@@ -11,6 +11,7 @@ import (
- 	"net"
- 	"net/mail"
- 	"net/smtp"
-+	"net/textproto"
+@@ -36,9 +36,13 @@ The following data is collected once every 24 hours:
+ - Whether or not the unit tests have been run
+ - Date and time of the last check for security updates
+ 
++### Latest release check
++
++To report whether the server is running the latest Mattermost release, the server also requests the latest release from GitHub (`api.github.com`).
++
+ ### Opt out
+ 
+-To opt out, you can disable this security update check feature for self-hosted deployments in the System Console by going to **Environment \> SMTP \> Enable Security Alerts**. See the [enable security alerts](/administration-guide/configure/environment-configuration-settings#enable-security-alerts) documentation for details. When this feature is disabled, you will not receive any security alerts.
++To opt out, you can disable this security update check feature for self-hosted deployments in the System Console by going to **Environment \> SMTP \> Enable Security Alerts**. See the [enable security alerts](/administration-guide/configure/environment-configuration-settings#enable-security-alerts) documentation for details. When this feature is disabled, you will not receive any security alerts, and the server doesn't check GitHub for the latest release.
+ 
+ ## Error and diagnostics reporting feature
+ 
+```
+
+**File**: `docs/main/deployment-guide/air-gapped-operations/disable-phone-home-features.mdx` (modified, +2/-0)
+```diff
+@@ -32,3 +32,5 @@ The GIF picker relies on a third-party service which has a dependency on externa
+ ## Telemetry
+ 
+ To avoid log errors, we recommend disabling [telemetry-related features](/administration-guide/manage/telemetry), including the security update check, and error and diagnostics reporting features.
++
++Disabling the security update check in **System Console > Environment > SMTP > [Enable Security Alerts](/administration-guide/configure/environment-configuration-settings#enable-security-alerts)** also stops the server from requesting the latest Mattermost release from GitHub, which health checks use to report whether the server is out of date.
+```
+
+**File**: `server/channels/app/admin.go` (modified, +65/-13)
+```diff
+@@ -23,9 +23,17 @@ import (
+ )
+ 
+ var latestVersionCache = cache.NewLRU(&cache.CacheOptions{
+-	Size: 1,
++	Size: 2,
+ })
+ 
++const (
++	latestVersionCacheKey        = "latest_version_cache"
++	latestVersionFailureCacheKey = "latest_version_failure_cache"
++	// latestVersionFailureExpiry spaces out retries from servers that cannot reach GitHub, which
++	// also keeps servers behind a shared IP under its unauthenticated rate limit.
++	latestVersionFailureExpiry = 6 * time.Hour
++)
++
+ // LatestVersionURL is the GitHub endpoint for the latest server release.
+ const LatestVersionURL = "https://api.github.com/repos/mattermost/mattermost-server/releases/latest"
+ 
+@@ -242,48 +250,92 @@ func (a *App) TestEmail(rctx request.CTX, userID string, cfg *model.Config) *mod
+ 	return nil
+ }
+ 
++// GetLatestVersion fetches the latest release from latestVersionUrl. It makes no request while
++// ServiceSettings.EnableSecurityFixAlert is off, the setting that stops the server contacting
++// external services for update information.
+ func (a *App) GetLatestVersion(rctx request.CTX, latestVersionUrl string) (*model.GithubReleaseInfo, *model.AppError) {
++	if !*a.Config().ServiceSettings.EnableSecurityFixAlert {
++		return nil, model.NewAppError("GetLatestVersion", "app.admin.get_latest_version.disabled.app_error", nil, "", http.StatusNotImplemented)
++	}
++
+ 	var cachedLatestVersion *model.GithubReleaseInfo
+-	if cacheErr := latestVersionCache.Get("latest_version_cache", &cachedLatestVersion); cacheErr == nil {
++	if cacheErr := latestVersionCache.Get(latestVersionCacheKey, &cachedLatestVersion); cacheErr == nil {
+ 		return cachedLatestVersion, nil
+ 	}
+ 
+-	req, err := http.NewRequestWithContext(rctx.Context(), http.MethodGet, latestVersionUrl, nil)
++	var cachedFailure string
++	if cacheErr := latestVersionCache.Get(latestVersionFailureCacheKey, &cachedFailure); cacheErr == nil {
++		return nil, model.NewAppError("GetLatestVersion", model.NoTranslation, nil, cachedFailure, http.StatusInternalServerError)
++	}
++
++	releaseInfoResponse, err := fetchLatestVersion(rctx, latestVersionUrl)
+ 	if err != nil {
++		// A cancelled request says nothing about whether the feed is reachable.
++		if rctx.Context().Err() == nil {
++			if cacheErr := latestVersionCache.SetWithExpiry(latestVersionFailureCacheKey, err.Error(), latestVersionFailureExpiry); cacheErr != nil {
++				rctx.Logger().Warn("Failed to cache the latest version failure", mlog.Err(cacheErr))
++			}
++		}
+ 		return nil, model.NewAppError("GetLatestVersion", model.NoTranslation, nil, "", http.StatusInternalServerError).Wrap(err)
+ 	}
+ 
++	err = latestVersionCache.SetWithExpiry(latestVersionCacheKey, releaseInfoResponse, 24*time.Hour)
++	if err != nil {
++		return nil, model.NewAppError("GetLatestVersion", model.NoTranslation, nil, "", http.StatusInternalServerError).Wrap(err)
++	}
++
++	return releaseInfoResponse, nil
++}
++
++func fetchLatestVersion(rctx request.CTX, latestVersionUrl string) (*model.GithubReleaseInfo, error) {
++	req, err := http.NewRequestWithContext(rctx.Context(), http.MethodGet, latestVersionUrl, nil)
++	if err != nil {
++		return nil, err
++	}
++
+ 	client := &http.Client{Timeout: 10 * time.Second}
+ 	res, err := client.Do(req)
+ 	if err != nil {
+-		return nil, model.NewAppError("GetLatestVersion", model.NoTranslation, nil, "", http.StatusInternalServerError).Wrap(err)
++		return nil, err
+ 	}
+ 
+ 	defer res.Body.Close()
+ 
++	if res.StatusCode != http.StatusOK {
++		_, _ = io.Copy(io.Discard, res.Body)
++		return nil, fmt.Errorf("unexpected status code %d", res.StatusCode)
++	}
++
+ 	responseData, err := io.ReadAll(res.Body)
+ 	if err != nil {
+-		return nil, model.NewAppError("GetLatestVersion", model.NoTranslation, nil, "", http.StatusInternalServerError).Wrap(err)
++		return nil, err
+ 	}
+ 
+ 	var releaseInfoResponse *model.GithubReleaseInfo
+ 	err = json.Unmarshal(responseData, &releaseInfoResponse)
+ 	if err != nil {
+-		return nil, model.NewAppError("GetLatestVersion", model.NoTranslation, nil, "", http.StatusInternalServerError).Wrap(err)
++		return nil, err
+ 	}
+ 
+ 	if validErr := releaseInfoResponse.IsValid(); validErr != nil {
+-		return nil, model.NewAppError("GetLatestVersion", model.NoTranslation, nil, "", http.StatusInternalServerError).Wrap(validErr)
+-	}
+-
+-	err = latestVersionCache.SetWithExpiry("latest_version_cache", releaseInfoResponse, 24*time.Hour)
+-	if err != nil {
+-		return nil, model.NewAppError("GetLatestVersion", model.NoTranslation, nil, "", http.StatusInternalServerError).Wrap(err)
++		return nil, validErr
+ 	}
+ 
+ 	return releaseInfoResponse, nil
+ }
+ 
+ func (a *App) clearLatestVersionCache() error {
+-	return latestVersionCache.Remove("latest_version_cache")
++	return latestVersionCache.Purge()
++}
++
++// clearLatestVersionCacheOnFlip drops a cached release or failure when EnableSecurityFixAlert is
++// toggled, so an admin who fixed the server's network access can retry by toggling it.
++func (ch *Channels) clearLatestVersionCacheOnFlip(prevCfg, cfg *model.Config) {
++	if *prevCfg.ServiceSettings.Enable
+```
+
+**File**: `server/channels/app/admin_test.go` (modified, +90/-0)
+```diff
+@@ -4,12 +4,14 @@
+ package app
+ 
+ import (
++	"context"
+ 	"encoding/json"
+ 	"maps"
+ 	"net/http"
+ 	"net/http/httptest"
  	"slices"
+ 	"strings"
++	"sync/atomic"
+ 	"testing"
  	"time"
  
-@@ -179,7 +180,13 @@ func NewSMTPClientAdvanced(ctx context.Context, conn net.Conn, config *SMTPConfi
- 			InsecureSkipVerify: config.SkipServerCertificateVerification,
- 			ServerName:         config.ServerName,
- 		}
--		c.StartTLS(tlsconfig)
-+		if err := c.StartTLS(tlsconfig); err != nil {
-+			var replyErr *textproto.Error
-+			if errors.As(err, &replyErr) && (replyErr.Code == 500 || replyErr.Code == 502) {
-+				return nil, errors.Wrap(err, "SMTP server does not support STARTTLS")
-+			}
-+			return nil, errors.Wrap(err, "unable to start TLS")
+@@ -102,6 +104,94 @@ func TestGetLatestVersion(t *testing.T) {
+ 		_, appErr := th.App.GetLatestVersion(th.Context, errorServer.URL)
+ 		require.NotNil(t, appErr)
+ 	})
++
++	var requests atomic.Int32
++	countingServer := func(t *testing.T, status int) *httptest.Server {
++		requests.Store(0)
++		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++			requests.Add(1)
++			w.WriteHeader(status)
++			_, err := w.Write(validJSON)
++			assert.NoError(t, err)
++		}))
++		t.Cleanup(server.Close)
++		return server
++	}
++
++	t.Run("a failure is cached", func(t *testing.T) {
++		require.NoError(t, th.App.clearLatestVersionCache())
++		badGateway := countingServer(t, http.StatusBadGateway)
++
++		for range 2 {
++			_, appErr := th.App.GetLatestVersion(th.Context, badGateway.URL)
++			require.NotNil(t, appErr)
++			assert.Equal(t, http.StatusInternalServerError, appErr.StatusCode)
++		}
++		assert.Equal(t, int32(1), requests.Load())
++
++		release, appErr := th.App.GetLatestVersion(th.Context, ts.URL)
++		require.NotNil(t, appErr, "the cached failure is returned until it expires")
++		assert.Nil(t, release)
++	})
++
++	t.Run("toggling security alerts clears a cached failure", func(t *testing.T) {
++		require.NoError(t, th.App.clearLatestVersionCache())
++		badGateway := countingServer(t, http.StatusBadGateway)
++		_, appErr := th.App.GetLatestVersion(th.Context, badGateway.URL)
++		require.NotNil(t, appErr)
++
++		th.App.UpdateConfig(func(cfg *model.Config) { cfg.ServiceSettings.SiteURL = model.NewPointer("http://other.example.com") })
++		_, appErr = th.App.GetLatestVersion(th.Context, ts.URL)
++		require.NotNil(t, appErr, "an unrelated config change keeps the cached failure")
++
++		th.App.UpdateConfig(func(cfg *model.Config) { cfg.ServiceSettings.EnableSecurityFixAlert = model.NewPointer(false) })
++		th.App.UpdateConfig(func(cfg *model.Config) { cfg.ServiceSettings.EnableSecurityFixAlert = model.NewPointer(true) })
++
++		release, appErr := th.App.GetLatestVersion(th.Context, ts.URL)
++		require.Nil(t, appErr)
++		assert.Equal(t, version.TagName, release.TagName)
++	})
++
++	t.Run("a cancelled request is not cached", func(t *testing.T) {
++		require.NoError(t, th.App.clearLatestVersionCache())
++		ok := countingServer(t, http.StatusOK)
++
++		ctx, cancel := context.WithCancel(th.Context.Context())
++		cancel()
++		_, appErr := th.App.GetLatestVersion(th.Context.WithContext(ctx), ok.URL)
++		require.NotNil(t, appErr)
++
++		release, appErr := th.App.GetLatestVersion(th.Context, ok.URL)
++		require.Nil(t, appErr)
++		assert.Equal(t, version.TagName, release.TagName)
++		assert.Equal(t, int32(1), requests.Load())
++	})
++
++	t.Run("no request while security alerts are off", func(t *testing.T) {
++		require.NoError(t, th.App.clearLatestVersionCache())
++		ok := countingServer(t, http.StatusOK)
++		_, appErr := th.App.GetLatestVersion(th.Context, ok.URL)
++		require.Nil(t, appErr)
++		require.Equal(t, int32(1), requests.Load())
++
++		th.App.UpdateConfig(func(cfg *model.Config) { cfg.ServiceSettings.EnableSecurityFixAlert = model.NewPointer(false) })
++		t.Cleanup(func() {
++			th.App.UpdateConfig(func(cfg *model.Config) { cfg.ServiceSettings.EnableSecurityFixAlert = model.NewPointer(true) })
++		})
++
++		assertDisabled := func(t *testing.T) {
++			t.Helper()
++			release, appErr := th.App.GetLatestVersion(th.Context, ok.URL)
++			require.NotNil(t, appErr)
++			assert.Nil(t, release)
++			assert.Equal(t, "app.admin.get_latest_version.disabled.app_error", appErr.Id)
++			assert.Equal(t, http.StatusNotImplemented, appErr.StatusCode)
++		}
++		assertDisabled(t)
++		require.NoError(t, th.App.clearLatestVersionCache())
++		assertDisabled(t)
++		assert.Equal(t, int32(1), requests.Load())
++	})
+ }
+ 
+ type queryLogsCluster struct {
+```
+
+**File**: `server/channels/app/channels.go` (modified, +1/-0)
+```diff
+@@ -305,6 +305,7 @@ func (ch *Channels) Start() error {
+ 	})
+ 
+ 	ch.AddConfigListener(ch.clearABACRenderCachesOnFlip)
++	ch.AddConfigListener(ch.clearLatestVersionCacheOnFlip)
+ 
+ 	// TODO: This should be moved to the platform service.
+ 	if err := ch.srv.platform.EnsureAsymmetricSigningKey(); err != nil {
+```
+
+**File**: `server/channels/app/health_check_snapshot.go` (modified, +9/-6)
+```diff
+@@ -54,12 +54,15 @@ func (a *App) buildHealthSnapshotWithLatestVersionURL(rctx request.CTX, latestVe
+ 	// The Makefile stamps BuildDate with `date -u`; dev builds leave the zero time.
+ 	snapshot.Version.BuildDate, _ = time.Parse(time.UnixDate, model.BuildDate)
+ 
+-	release, appErr := a.GetLatestVersion(rctx, latestVersionURL)
+-	if appErr != nil {
+-		sections[model.SectionVersion] = appErr
+-	} else {
+-		sections[model.SectionVersion] = nil
+-		snapshot.Version.Latest = strings.TrimPrefix(release.TagName, "v")
++	// With the check off, Latest stays empty and the version rules read the reason from the config.
++	sections[model.SectionVersion] = nil
++	if *a.Config().ServiceSettings.EnableSecurityFixAlert {
++		release, appErr := a.GetLatestVersion(rctx, latestVersionURL)
++		if appErr != nil {
++			sections[model.SectionVersion] = appErr
++		} else {
++			snapshot.Version.Latest = strings.TrimPrefix(release.TagName, "v")
 +		}
  	}
  
- 	if config.EnableSMTPAuth {
-@@ -222,12 +229,6 @@ func TestConnection(ctx context.Context, config *SMTPConfig) error {
- 		}
- 		return errors.Wrap(err, "unable to connect")
- 	}
--	// NewSMTPClient ignores a failed StartTLS, so a handshake that ctx cut short can still return a client.
--	// TODO: MM-71213 remove this check once NewSMTPClient returns the StartTLS error; the error branch above
--	// then reports the deadline.
--	if !stop() {
--		return errors.Wrap(ctx.Err(), "unable to connect")
--	}
- 	c.Close()
- 	c.Quit()
- 
-```
-
-**File**: `server/platform/shared/mail/mail_test.go` (modified, +47/-0)
-```diff
-@@ -1051,3 +1051,50 @@ func TestNewSMTPClientAdvancedDeadlineDuringGreeting(t *testing.T) {
- 	_, err = conn.Write([]byte("QUIT\r\n"))
- 	assert.ErrorIs(t, err, net.ErrClosed, "the connection should be closed when the deadline ends the greeting")
- }
-+
-+func TestStartTLSError(t *testing.T) {
-+	for name, tc := range map[string]struct {
-+		reply string
-+		want  string
-+	}{
-+		"STARTTLS refused":       {reply: "454 TLS not available", want: "unable to start TLS"},
-+		"STARTTLS not supported": {reply: "502 not implemented", want: "SMTP server does not support STARTTLS"},
-+		"STARTTLS unrecognized":  {reply: "500 unrecognized command", want: "SMTP server does not support STARTTLS"},
-+	} {
-+		t.Run(name, func(t *testing.T) {
-+			cfg := fakeSMTPServer(t, func(conn net.Conn) {
-+				r := textproto.NewConn(conn)
-+				_ = r.PrintfLine("220 localhost ESMTP")
-+				for {
-+					line, err := r.ReadLine()
-+					if err != nil {
-+						return
-+					}
-+					switch {
-+					case strings.HasPrefix(line, "EHLO"):
-+						_ = r.PrintfLine("250-localhost")
-+						_ = r.PrintfLine("250 STARTTLS")
-+					case strings.HasPrefix(line, "STARTTLS"):
-+						_ = r.PrintfLine("%s", tc.reply)
-+					case strings.HasPrefix(line, "MAIL FROM"):
-+						t.Errorf("mail transaction started: %s", line)
-+						_ = r.PrintfLine("250 OK")
-+					case strings.HasPrefix(line, "QUIT"):
-+						_ = r.PrintfLine("221 bye")
-+						return
-+					default:
-+						_ = r.PrintfLine("250 OK")
-+					}
-+				}
-+			})
-+			cfg.ConnectionSecurity = StartTLS
-+			cfg.FeedbackEmail = "sender@example.com"
-+
-+			err := TestConnection(context.Background(), cfg)
-+			require.ErrorContains(t, err, tc.want)
-+
-+			err = SendMailUsingConfig("recipient@example.com", "subject", "body", cfg, false, "", "", "", "", "")
-+			require.ErrorContains(t, err, tc.want)
-+		})
-+	}
-+}
-```
-
-**File**: `webapp/channels/src/components/admin_console/admin_definition_constants.tsx` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@ const SECTION_STARTTLS = (
-         <td>
-             <FormattedMessage
-                 id='admin.connectionSecurityStartDescription'
--                defaultMessage='Takes an existing insecure connection and attempts to upgrade it to a secure connection using TLS.'
-+                defaultMessage="Upgrades an existing insecure connection to TLS. The connection fails if the server doesn't support STARTTLS."
-             />
-         </td>
-     </tr>
-```
-
-**File**: `webapp/channels/src/i18n/en.json` (modified, +1/-1)
-```diff
-@@ -3864,7 +3864,7 @@
-     "description": "Row label in the Connection Security help table (SMTP/LDAP admin settings); STARTTLS is a protocol name and should not be translated."
-   },
-   "admin.connectionSecurityStartDescription": {
--    "defaultMessage": "Takes an existing insecure connection and attempts to upgrade it to a secure connection using TLS.",
-+    "defaultMessage": "Upgrades an existing insecure connection to TLS. The connection fails if the server doesn't support STARTTLS.",
-     "description": "Description of the 'STARTTLS' option in the Connection Security dropdown used by System Console settings such as SMTP and LDAP."
-   },
-   "admin.connectionSecurityTitle": {
+ 	return snapshot, nil
 ```
 
 ---
 
-### Incident Patch 3: `3c6e3e09` (2026-11-16)
-**Commit Message**: Changelog generator: fixes from the v12.2.0 dry run (#39932)
+### Incident Patch 2: `19c11116` (2026-11-18)
+**Commit Message**: Fix channel intro layout shift while the total user count loads (#40119)
 
-* Changelog generator: fixes from the v12.2.0 dry run
+* Prevent channel intro layout shift while the total user count loads
 
-- Database Schema Changes: the summary bullet names the release instead of VERSION.
-- API Changes: config-change-checker endpoint lines get their full path from the router
-  (the previous release's for a removed route, this release's for an added one). A line
-  whose route can't be found is left out of the note and flagged in the report, never
-  printed with a partial path. The checker itself now chains prefixes back to APIRoot.
-- A note that is already a sentence with its own verb doesn't get "Added" in front of it.
-- A note that says no more than its listed migration's name is folded into Database
-  Schema Changes, the model is told which migrations a note's PR added, and migration
-  numbers are taken out of bullets in every other section.
-- A docs page found for a PR is linked from that PR's bullet in any section, including
-  config.json and Compatibility, when the model didn't link it.
-- A dependency swap that changes behaviour goes under Compatibility, merged with an
-  overlapping bullet there.
-- A dry run also prints its summary to the job log.
+The channel intro picks its action buttons based on whether the workspace has
+fewer than 10 users, but the count is fetched asynchronously. While it was
+unknown, undefined < 10 evaluated to false and the intro rendered the 10+ user
+layout, then shrank by ~30px once /users/stats returned on small workspaces.
 
-Co-Authored-By:
+The post list now fetches the count and keeps its loading screen up until it is
+known when the intro is about to be shown for the first time, so the intro's
+first paint is final. The intro itself no longer guesses a layout for an
+unknown count.
 
-**File**: `.github/scripts/changelog_release.py` (modified, +15/-2)
+* Add E2E guard for channel intro layout shift when the user count loads late
+
+* Stop hiding posts if the total user count takes too long to load
+
+* Release the held user count only after the web app requests it in the intro E2E guard
+
+* Address PR feedback: 0 answered, 1 resolved, 0 declined
+
+Fetch the total user count when the post list mounts whenever it is unknown,
+in parallel with the posts request, instead of waiting for the oldest post
+to be known.
+
+---------
+
+Co-authored-by: Cursor Agen
+
+**File**: `e2e-tests/playwright/specs/functional/channels/post_list/channel_intro_layout.spec.ts` (added, +91/-0)
 ```diff
-@@ -239,6 +239,14 @@ def git_show(ref: str, path: str) -> str | None:
-     raise RuntimeError(f"git show {ref}:{path} failed: {(result.stderr or listing.stderr).strip()}")
- 
- 
-+def git_ls(ref: str, path: str) -> list[str]:
-+    """The files directly under the directory ``path`` (ending in ``/``) at ``ref``. A failing git command raises."""
-+    result = _git("ls-tree", "--name-only", ref, "--", path)
-+    if result.returncode != 0:
-+        raise RuntimeError(f"git ls-tree {ref} -- {path} failed: {result.stderr.strip()}")
-+    return sorted(line for line in result.stdout.splitlines() if line.strip())
+@@ -0,0 +1,91 @@
++// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
++// See LICENSE.txt for license information.
 +
++import type {Page} from '@playwright/test';
 +
- def git_added_files(base: str, head: str, path: str) -> list[str]:
-     """Files under ``path`` added between ``base`` and ``head``. A failing git command raises."""
-     result = _git("diff", "--name-only", "--diff-filter=A", base, head, "--", path)
-@@ -591,7 +599,10 @@ def _pick(candidates: list[dict]) -> dict | None:
- def docs_link(source: str, prs: dict, files_of, read_file) -> dict:
-     """Where the docs for the PR ``source`` are, and why, following the PR to its docs.
- 
--    ``prs`` maps each milestone PR's ``owner/repo#N`` to its title, body and head_ref;
-+    ``prs`` maps each milestone PR's ``owner/repo#N`` to its title, body and head_ref. It may also
-+    hold docs PRs outside the milestone (merged since the previous release, ``"outside": True``):
-+    docs often land after the code, in a later milestone or none. Those count only when they
-+    link the PR, never by a shared Jira key;
-     ``files_of(source)`` lists a PR's changed files (filename, status, patch);
-     ``read_file(path)`` reads a file as it is now, or None if it no longer exists.
- 
-@@ -608,10 +619,12 @@ def docs_link(source: str, prs: dict, files_of, read_file) -> dict:
-         for other, info in prs.items():
-             if other == source or not other.startswith("mattermost/mattermost#"):
-                 continue
--            shared = keys & jira_keys(info.get("title"), info.get("head_ref"), info.get("body"))
-+            shared = set() if info.get("outside") else keys & jira_keys(info.get("title"), info.get("head_ref"), info.get("body"))
-             linked = source in pr_references(info.get("body"), other.split("#")[0])
-             if shared or linked:
-                 via = f"docs PR {other}, which " + (f"names {', '.join(sorted(shared))}" if shared else "links the PR")
-+                if info.get("outside"):
-+                    via += " (outside the milestone)"
-                 candidates += _docs_candidates(files_of(other), via, read_file)
-         chosen = _pick(candidates)
-     if chosen:
++import {expect, test, watchElementSize} from '@mattermost/playwright-lib';
++
++// The intro picks its action buttons based on whether the workspace has fewer than 10 users
++const testCases = [
++    {name: 'fewer than 10 users', totalUsersCount: 3, expectedButton: /Invite others to the workspace/},
++    {name: '10 or more users', totalUsersCount: 50, expectedButton: /^Favorite$/},
++];
++
++for (const {name, totalUsersCount, expectedButton} of testCases) {
++    /**
++     * @objective Verify the channel intro does not change size when the total user count it depends on loads after
++     * the channel posts
++     */
++    test(
++        `keeps the channel intro size stable when the user count loads late with ${name}`,
++        {tag: '@post_list'},
++        async ({pw}) => {
++            const {adminClient, team, user, userClient} = await pw.initSetup();
++
++            const channel = await userClient.createChannel({
++                team_id: team.id,
++                name: `channel-intro-${pw.random.id()}`,
++                display_name: 'Channel intro layout',
++                type: 'O',
++            });
++
++            // # Delete the join messages so that only the channel intro is shown
++            const posts = await adminClient.getPosts(channel.id);
++            for (const postId of posts.order) {
++                await adminClient.deletePost(postId);
++            }
++
++            const {channelsPage, page} = await pw.testBrowser.login(user);
++            const sizeWatcher = await watchElementSize(page, 'channelIntro');
++
++            // # Hold back the total user count
++            const usersStats = await holdBackUsersStats(page, totalUsersCount);
++
++            // # Open the channel and wait for both the total user count request and the channel posts
++            const postsLoaded = page.waitForResponse(
++                (response) => response.url().includes(`/channels/${channel.id}/posts`) && response.ok(),
++            );
++            await channelsPage.goto(team.name, channel.name);
++            await Promise.all([usersStats.requested, postsLoaded]);
++
++            // # Let the total user count load
++            usersStats.release();
++
++            // * Verify that the intro shows the action buttons for the user count
++            await expect(
++                channelsPage.centerView.channelIntro.getByRole('button', {name: expectedButton}),
++            ).toBeVisible();
++
++            // * Verify that the intro was only ever rendered at one size
++            expect(await sizeWatcher.isWatchingElement()).toBe(true);
++            expect(await sizeWatcher.getObservations()).toHaveLength(1);
++        },
++    );
++}
++
++/**
++ * Delay the total user count response until release is called, then respond with the given count. The requested
++ * promise resolves once the web app has asked for the count.
++ */
++async function holdBackUsersStats(page: Page, totalUsersCount: number) {
++    let markRequested = () => {};
++    const requested = new Promise<void>((resolve) => {
++        markRequested = resolve;
++    });
++
++    let release = () => {};
++    const released = new Promise<void>((resolve) => {
++        release = resolve;
++    });
++
++    await page.route(
++        (url) => url.pathname.endsWith('/api/v4/users/stats'),
++        async (route) => {
++            markRequested();
++            await released;
++            await route.fulfill({json: {total_users_count: totalUsersCount}});
++        },
++    );
++
++    return {requested, release};
++}
 ```
 
-**File**: `.github/scripts/check_config_changes_ci.py` (modified, +33/-3)
+**File**: `webapp/channels/src/components/post_view/channel_intro_message/channel_intro_message.test.tsx` (modified, +129/-1)
 ```diff
-@@ -402,20 +402,29 @@ def check_config(patches: dict[str, str]) -> CheckResult:
- )
- _API_ROUTES_PATH = "server/channels/api4/api.go"
+@@ -70,7 +70,7 @@ describe('components/post_view/ChannelIntroMessages', () => {
+         teamIsGroupConstrained: false,
+         creatorName: 'creatorName',
+         currentUser: users[0],
+-        stats: {},
++        stats: {total_users_count: 20},
+         usersLimit: 10,
+         isMobileView: false,
+         channelKind: 'channel' as const,
+@@ -266,6 +266,134 @@ describe('components/post_view/ChannelIntroMessages', () => {
+         });
+     });
  
-+# api.BaseRoutes.APIRoot = srv.Router.PathPrefix(model.APIURLSuffix).Subrouter()
-+_ROOT_RE = re.compile(r'BaseRoutes\.(\w+)\s*=\s*[\w.]*Router\.PathPrefix\(model\.(APIURLSuffix\w*)\)')
-+# The model constants the roots are built from (server/public/model/client4.go).
-+_ROOT_SUFFIXES = {"APIURLSuffix": "/api/v4", "APIURLSuffixV4": "/api/v4", "APIURLSuffixV5": "/api/v5"}
++    describe('total user count', () => {
++        const stateWithInvitePermissions = {
++            ...initialState,
++            entities: {
++                ...initialState.entities,
++                users: {
++                    ...initialState.entities.users,
++                    currentUserId: 'test-user-id',
++                    profiles: {
++                        ...initialState.entities.users.profiles,
++                        'test-user-id': TestHelper.getUserMock({id: 'test-user-id', roles: 'system_user'}),
++                    },
++                },
++                teams: {
++                    ...initialState.entities.teams,
++                    currentTeamId: 'team-id',
++                },
++                roles: {
++                    roles: {
++                        system_user: {permissions: [Permissions.ADD_USER_TO_TEAM, Permissions.INVITE_GUEST, Permissions.INVITE_USER]},
++                    },
++                },
++            },
++        } as any;
 +
- _METHOD_RE    = re.compile(r'(?:http\.Method)?(\w+)')
- _HTTP_METHODS = {"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}
- 
- 
- def _route_prefixes(api_src: str) -> dict[str, str]:
-     """Each api4 subrouter's path prefix, from the PathPrefix(...).Subrouter() lines of api.go.
- 
--    A subrouter hangs off another one, so its prefix is the parent's plus its own. The
--    roots (APIRoot and the like) are not defined by such a line and count as empty.
-+    A subrouter hangs off another one, so its prefix is the parent's plus its own, back to
-+    a root (APIRoot is ``/api/v4``, APIRoot5 ``/api/v5``). A chain that doesn't reach a
-+    known root starts from an empty prefix.
-     """
-     parents = {name: (parent, path) for name, parent, path in _SUBROUTER_RE.findall(api_src)}
--    prefixes: dict[str, str] = {}
-+    roots = {name: _ROOT_SUFFIXES[suffix] for name, suffix in _ROOT_RE.findall(api_src) if suffix in _ROOT_SUFFIXES}
-+    prefixes: dict[str, str] = dict(roots)
- 
-     def prefix(name: str, seen: tuple = ()) -> str:
-+        if name in roots:
-+            return roots[name]
-         if name not in parents or name in seen:
-             return ""
-         if name not in prefixes:
-@@ -490,6 +499,27 @@ def _parse_endpoints(src: str, prefixes: Optional[dict] = None) -> set[tuple[str
-     return endpoints
- 
- 
-+def router_endpoints(sources: list[str], api_src: str) -> set[tuple[str, str, str]]:
-+    """Every endpoint registered in ``sources`` (api4 files), with its full path.
++        const channelsUsingCount = [
++            {name: 'open channel', channel},
++            {name: 'default channel', channel: {...channel, name: Constants.DEFAULT_CHANNEL}},
++            {name: 'off-topic channel', channel: {...channel, name: Constants.OFFTOPIC_CHANNEL}},
++        ];
 +
-+    Only routes on a known subrouter or root are returned: a route on any other receiver
-+    has no prefix that can be worked out, so its path would be partial.
-+    """
-+    prefixes = _route_prefixes(api_src)
-+    known = {name for name in prefixes}
-+    endpoints: set[tuple[str, str, str]] = set()
-+    for src in sources:
-+        blob = " ".join(src.split())
-+        for m in _HANDLE_RE.finditer(blob):
-+            receiver = m.group(1).rsplit(".", 1)[-1]
-+            if receiver not in known:
-+                continue
-+            full = _shorten_path_vars(prefixes[receiver] + m.group(2))
-+            for method in _parse_methods(m.group(4)):
-+                endpoints.add((full or "/", m.group(3), method))
-+    return endpoints
++        for (const testCase of channelsUsingCount) {
++            describe(testCase.name, () => {
++                const props = {...baseProps, channel: testCase.channel, enableUserCreation: true};
 +
++                test('should not render any action buttons while the count is unknown', () => {
++                    const {container} = renderWithContext(
++                        <ChannelIntroMessage
++                            {...props}
++                            stats={{}}
++                        />,
++                        stateWithInvitePermissions,
++                    );
 +
- def check_api(patches: dict[str, str]) -> CheckResult:
-     """
-     Detect API endpoint additions/removals in the api4/ directory.
++                    expect(screen.getByText('test channel')).toBeInTheDocument();
++                    expect(container.querySelector('.channel-intro__actions')).not.toBeInTheDocument();
++                    expect(screen.queryByRole('button')).not.toBeInTheDocument();
++                    expect(container.querySelector('.loading-screen, .fa-spinner')).not.toBeInTheDocument();
++                });
++
++                test('should only render the invite button when there are fewer users than the limit', () => {
++                    renderWithContext(
++                        <ChannelIntroMessage
++                            {...props}
++                            stats={{total_users_count: 3}}
++                        />,
++                        stateWithInvitePermissions,
++                    );
++
++                    expect(screen.getByRole('button', {name: /Invite others to the workspace/})).toBeInTheDocument();
++                    expect(screen.queryByRole('button', {name: 'Favorite'})).not.toBeInTheDocument();
++                    expect(screen.queryByRole('button', {name: 'Notifications'})).not.toBeInTheDocument();
++                });
++
++                test('should render the channel action buttons when there are at least as many users as the limit', () => {
++                    renderWithContext(
++                        <ChannelIntroMessage
++                            {...props}
++                            stats={{total_users_count: 10}}
++                        />,
++                        stateWithInvitePermissions,
++                    );
++
++                    expect(screen.getByRole('button', {name: 'Favorite'})).toBeInTheDocument();
++                    expect(screen.getByRole('button', {name: 'Notifications'})).toBeInTheDocument();
++                    expect(screen.queryByRole('button', {name: /Invite others to the workspace/})).not.toBeInTheDocument();
++                });
++
++                test('should go straight from no action buttons to the final layout once the count loads', () => {
++                    const {rerender} = renderWithContext(
++                        <ChannelIntroMessage
++                            {...props}
++                            stats={{}}
++                        />,
++                        stateWithInvitePermissions,
++                    );
++
++                    expect(screen.queryByRole('button', {name: 'Favorite'})).not.toBeInTheDocument();
++
++                    rerender(
++                        <ChannelIntroMessage
++                            {...props}
++                            stats={{total_users_count: 3}}
++                        />,
++                    )
 ```
 
-**File**: `.github/scripts/generate_changelog.py` (modified, +284/-14)
+**File**: `webapp/channels/src/components/post_view/channel_intro_message/channel_intro_message.tsx` (modified, +9/-3)
 ```diff
-@@ -65,6 +65,7 @@
+@@ -380,7 +380,9 @@ function createOffTopicIntroMessage(
+         />
+     );
  
- sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
- import changelog_release  # noqa: E402
-+import check_config_changes_ci as config_checker  # noqa: E402  (its router parser)
+-    if (inviteUsers) {
++    if (totalUsers === undefined) {
++        actionButtons = null;
++    } else if (inviteUsers) {
+         actionButtons = (
+             <div className='channel-intro__actions'>
+                 {actionButtons = channelInviteButton}
+@@ -504,7 +506,9 @@ function createDefaultIntroMessage(
+         );
+     }
  
- GITHUB_TOKEN = os.environ["GITHUB_TOKEN"]
- REPOS = [r.strip() for r in os.environ["REPOS"].split(",") if r.strip()]
-@@ -189,9 +190,13 @@
+-    if (inviteUsers) {
++    if (totalUsers === undefined) {
++        actionButtons = null;
++    } else if (inviteUsers) {
+         actionButtons = (
+             <div className='channel-intro__actions'>
+                 {actionButtons = teamInviteLink}
+@@ -785,7 +789,9 @@ function createStandardIntroMessage(
+         />
+     );
  
- 12.  **Source markers:** Each raw release note begins with an ID in square brackets, such as `[N12]`. Every note you are given must appear in your output: end every bullet you write with the ID of the note it came from in double square brackets, separated from the text by one space: ` - Fixed an issue where the channel header was hidden. [[N12]]`. A note with no marker on any bullet is treated as left out of the changelog, so check before you answer that every ID you were given appears at least once. If a bullet combines several related notes, it must carry the ID of every note it combines, either in one marker or in several: `[[N3,N7]]` or `[[N3]][[N7]]`. Never merge a note into another bullet without adding its ID to that bullet. Do not put a marker on headings, on the `See BLOG_POST_LINK` line, on the config.json description paragraph, on plan-label bullets such as ` - **Changes to All plans:**`, or on the Database Schema Changes summary bullet; put it on the bullets nested beneath them instead. Never write a marker anywhere else. Markers are removed automatically before publishing.
- 
--13.  **Notes read from the release diff:** Some notes were not written by a developer but read from the code or the performance team's report: pre-packaged plugin version changes, added or removed WebSocket events, database schema migrations (given as SQL), and the benchmarking result. Place each in its section: plugin versions at the top of `#### User Interface` (keep the plugin bullet text and link exactly as given), WebSocket events under `### WebSocket Event Changes`, migrations under `#### Database Schema Changes`, and the benchmarking result as the first bullet of `#### Performance` under `### Improvements`, kept exactly as given. When a developer's note already describes the same change, write one bullet that combines them and carries both IDs, rather than two bullets saying the same thing.
-+13.  **Notes read from the release diff:** Some notes were not written by a developer but read from the code or the performance team's report: pre-packaged plugin version changes, added or removed WebSocket events, database schema migrations (given as SQL), and the benchmarking result. Place each in its section: plugin versions at the top of `#### User Interface` (keep the plugin bullet text and link exactly as given), WebSocket events under `### WebSocket Event Changes`, migrations under `#### Database Schema Changes`, and the benchmarking result as the first bullet of `#### Performance` under `### Improvements`, kept exactly as given. When a developer's note already describes the same change, write one bullet that combines them and carries both IDs, rather than two bullets saying the same thing. A developer's note about a schema change listed under `#### Database Schema Changes` (its PR added that migration, or the note names it) goes into that migration's bullet, carrying both IDs: never write a second bullet for it in another section. Never write a migration number (such as ``000238``) or migration file name anywhere outside `#### Database Schema Changes`.
- 
--14.  **Documentation links:** A note may end with a `Docs page:` line, found by following its PR to the documentation that PR changed. When that note's bullet goes under `### Improvements`, link the feature's name in the bullet to that URL, exactly as given, the way existing entries do: ` - Added [channel attributes](https://docs.mattermost.com/administration-guide/manage/admin/channel-attributes) on Enterprise Advanced.` Link it once, and only in an `### Improvements` bullet. Never add a docs.mattermost.com link that was not given in a note."""
-+14.  **Documentation links:** A note may end with a `Docs page:` line, found by following its PR to the documentation that PR changed. Link that note's bullet to that URL, exactly as given, wherever the bullet goes (under `### Improvements`, `#### config.json`, `#### Compatibility` or any other section), by linking the feature's name the way existing entries do: ` - Added [channel attributes](https://docs.mattermost.com/administration-guide/manage/admin/channel-attributes) on Enterprise Advanced.` Link each page once. Never add a docs.mattermost.com link that was not given in a note.
-+
-+15.  **Verbs:** Start a bullet with "Added" only when the note is about something new being added. A note that is already a sentence with its own verb (such as "``GET /api/v4/posts/{post_id}/thread`` with ``updatesOnly=true`` now includes deleted replies") is kept as that sentence, or rewritten with a fitting verb ("Updated ... so that ..."); never put "Added" in front of it.
-+
-+16.  **Dependency cha
+-    if (inviteUsers) {
++    if (totalUsers === undefined) {
++        actionButtons = null;
++    } else if (inviteUsers) {
+         actionButtons = (
+             <div className='channel-intro__actions'>
+                 {actionButtons = teamInviteLink}
 ```
 
-**File**: `.github/scripts/test_check_config_changes_ci.py` (modified, +22/-0)
+**File**: `webapp/channels/src/components/post_view/post_list/index.tsx` (modified, +14/-1)
 ```diff
-@@ -355,6 +355,28 @@ def test_a_path_variable_whose_pattern_has_braces_is_shortened_whole(self):
-                          {("/health/findings/{fingerprint}/mute", "muteHealthFinding", "POST")})
-         self.assertEqual(checker._shorten_path_vars("/{a:[0-9]{2,3}}/{b}/{c:x}"), "/{a}/{b}/{c}")
+@@ -6,9 +6,11 @@ import {bindActionCreators} from 'redux';
+ import type {Dispatch} from 'redux';
  
-+    def test_routes_chain_back_to_the_api_root(self):
-+        # #39527 and #39528 wrote "GET /posts" and "GET /signup_available": the root and the
-+        # subrouter prefix were lost.
-+        api = ('\tapi.BaseRoutes.APIRoot = srv.Router.PathPrefix(model.APIURLSuffix).Subrouter()\n'
-+               '\tapi.BaseRoutes.APIRoot5 = srv.Router.PathPrefix(model.APIURLSuffixV5).Subrouter()\n'
-+               '\tapi.BaseRoutes.Usage = api.BaseRoutes.APIRoot.PathPrefix("/usage").Subrouter()\n'
-+               '\tapi.BaseRoutes.HostedCustomer = api.BaseRoutes.APIRoot.PathPrefix("/hosted_customer").Subrouter()\n')
-+        usage = ('\tapi.BaseRoutes.Usage.Handle("/posts", api.APISessionRequired(getPostsUsage)).Methods(http.MethodGet)\n'
-+                 '\tapi.BaseRoutes.HostedCustomer.Handle("/signup_available", '
-+                 'api.APISessionRequired(handleSignupAvailable)).Methods(http.MethodGet)\n'
-+                 '\tsomeOtherRouter.Handle("/loose", api.APISessionRequired(loose)).Methods(http.MethodGet)\n')
-+        self.assertEqual(checker._route_prefixes(api)["APIRoot5"], "/api/v5")
-+        self.assertEqual(checker._parse_endpoints(usage, checker._route_prefixes(api)) - {("/loose", "loose", "GET")}, {
-+            ("/api/v4/usage/posts", "getPostsUsage", "GET"),
-+            ("/api/v4/hosted_customer/signup_available", "handleSignupAvailable", "GET"),
-+        })
-+        # The changelog reads the router as a whole and leaves out a route on an unknown receiver.
-+        self.assertEqual(checker.router_endpoints([usage], api), {
-+            ("/api/v4/usage/posts", "getPostsUsage", "GET"),
-+            ("/api/v4/hosted_customer/signup_available", "handleSignupAvailable", "GET"),
-+        })
+ import {markChannelAsRead} from 'mattermost-redux/actions/channels';
++import {getTotalUsersStats} from 'mattermost-redux/actions/users';
+ import {RequestStatus} from 'mattermost-redux/constants';
+-import {isMyChannelAutotranslated} from 'mattermost-redux/selectors/entities/channels';
++import {getChannel, isMyChannelAutotranslated} from 'mattermost-redux/selectors/entities/channels';
+ import {getRecentPostsChunkInChannel, makeGetPostsChunkAroundPost, getUnreadPostsChunk, getPost, isPostsChunkIncludingUnreadsPosts, getLimitedViews} from 'mattermost-redux/selectors/entities/posts';
++import {getTotalUsersStats as getTotalUsersStatsSelector} from 'mattermost-redux/selectors/entities/users';
+ import {memoizeResult} from 'mattermost-redux/utils/helpers';
+ import {makePreparePostIdsForPostList} from 'mattermost-redux/utils/post_list';
+ 
+@@ -22,13 +24,20 @@ import {
+ } from 'actions/views/channel';
+ import {getIsMobileView} from 'selectors/views/browser';
+ 
++import {Constants} from 'utils/constants';
+ import {getLatestPostId} from 'utils/post_utils';
+ 
+ import type {GlobalState} from 'types/store';
+ 
+ import PostList from './post_list';
+ 
+ const isFirstLoad = (state: GlobalState, channelId: string) => !state.entities.posts.postsInChannel[channelId];
 +
-     def test_a_route_on_an_unknown_router_keeps_its_own_path(self):
-         self.assertEqual(checker._parse_endpoints(_HANDLE), {("/api/v4/foo", "getFoo", "GET")})
++// The intro for these channels picks its action buttons based on the total user count
++const isChannelIntroUsingTotalUsers = (state: GlobalState, channelId: string) => {
++    const channelType = getChannel(state, channelId)?.type;
++    return channelType !== Constants.DM_CHANNEL && channelType !== Constants.GM_CHANNEL;
++};
+ const memoizedGetLatestPostId = memoizeResult((postIds: string[]) => getLatestPostId(postIds));
  
+ // This function is added as a fail safe for the channel sync issue we have.
+@@ -59,6 +68,7 @@ function makeMapStateToProps() {
+         const isPrefetchingInProcess = channelViewState.channelPrefetchStatus[channelId] === RequestStatus.STARTED;
+         const limitedViews = getLimitedViews(state);
+         const hasInaccessiblePosts = Boolean(limitedViews.channels[channelId]) || limitedViews.channels[channelId] === 0;
++        const isTotalUsersCountUnknown = getTotalUsersStatsSelector(state).total_users_count === undefined;
+ 
+         const focusedPost = getPost(state, focusedPostId || '');
+ 
+@@ -103,6 +113,8 @@ function makeMapStateToProps() {
+             isMobileView: getIsMobileView(state),
+             hasInaccessiblePosts,
+             isChannelAutotranslated: isMyChannelAutotranslated(state, channelId),
++            isTotalUsersCountUnknown,
++            needsTotalUsersStats: atOldestPost && isTotalUsersCountUnknown && isChannelIntroUsingTotalUsers(state, channelId),
+         };
+     };
+ }
+@@ -117,6 +129,7 @@ function mapDispatchToProps(dispatch: Dispatch) {
+             syncPostsInChannel,
+             markChannelAsRead,
+             updateNewMessagesAtInChannel,
++            getTotalUsersStats,
+         }, dispatch),
+     };
+ }
 ```
 
-**File**: `.github/scripts/test_generate_changelog.py` (modified, +334/-7)
+**File**: `webapp/channels/src/components/post_view/post_list/post_list.test.tsx` (modified, +148/-1)
 ```diff
-@@ -429,6 +429,11 @@ def setUp(self):
-         self.saved_show = gc.changelog_release.git_show
-         self.saved_benchmark = gc.changelog_release.benchmark_notes
-         gc.changelog_release.benchmark_notes = lambda version: []
-+        self.saved_cut = gc.release_branch_cut
-+        gc.release_branch_cut = lambda ref: "2026-10-16T09:18:58Z"
-+        self.merged_since = {}
-+        self.saved_merged = gc.merged_prs_since
-+        gc.merged_prs_since = lambda repo, since: self.merged_since
-         self.saved_env = dict(os.environ)
-         gc.VERSION = gc.MILESTONE_TITLE = "v12.1.0"
-         gc.REPOS = ["mattermost/mattermost"]
-@@ -466,6 +471,8 @@ def tearDown(self):
-         gc.changelog_release.derived_notes = self.saved_derived
-         gc.changelog_release.git_show = self.saved_show
-         gc.changelog_release.benchmark_notes = self.saved_benchmark
-+        gc.release_branch_cut = self.saved_cut
-+        gc.merged_prs_since = self.saved_merged
-         os.environ.clear()
-         os.environ.update(self.saved_env)
+@@ -3,7 +3,7 @@
  
-@@ -554,7 +561,7 @@ def polish(notes):
-         self.assertIn("changed in the same PR, which added the page", link["basis"])
-         self.assertIn(f"is documented in [Feature]({url}) (linked in Administration)", (self.out / "summary.md").read_text())
+ import React from 'react';
  
--    def test_docs_link_on_another_prs_bullet_is_dropped(self):
-+    def test_docs_link_on_another_prs_bullet_moves_to_the_prs_own_bullet(self):
-         self.details[1] = {"head_ref": "MM-123-feature", "files": [{
-             "filename": "docs/main/administration-guide/manage/admin/feature.mdx", "status": "added",
-             "patch": "+# Feature\n+\n+Use the feature.\n",
-@@ -571,11 +578,34 @@ def polish(notes):
-         gc.main()
-         url = "https://docs.mattermost.com/administration-guide/manage/admin/feature"
-         content = self.changelog.read_text()
--        self.assertNotIn(url, content)
--        self.assertIn("Extended the feature.", content)
-+        self.assertIn(f" - Added the feature. See the [Feature]({url}) documentation for details.\n", content)
-+        self.assertIn(" - Extended the feature.\n", content)
-+        self.assertEqual(content.count(url), 1)
-         link = self._payload()["readiness"]["doc_links"][0]
--        self.assertEqual((link["used_in"], link["linked_elsewhere"]), ([], []))
--        self.assertIn("(no bullet links it)", (self.out / "summary.md").read_text())
-+        self.assertEqual((link["used_in"], link["linked_elsewhere"]), (["Administration"], []))
-+        self.assertNotIn("(no bullet links it)", (self.out / "summary.md").read_text())
+-import {renderWithContext, act, runPostRenderAct} from 'tests/react_testing_utils';
++import {renderWithContext, act, runPostRenderAct, screen} from 'tests/react_testing_utils';
+ import {PostRequestTypes} from 'utils/constants';
+ 
+ import PostList, {MAX_EXTRA_PAGES_LOADED} from './post_list';
+@@ -48,6 +48,7 @@ const actionsProp = {
+     markChannelAsRead: jest.fn(),
+     updateNewMessagesAtInChannel: jest.fn(),
+     toggleShouldStartFromBottomWhenUnread: jest.fn(),
++    getTotalUsersStats: jest.fn().mockResolvedValue({data: {total_users_count: 3}}),
+ };
+ 
+ const lastViewedAt = 1532345226632;
+@@ -547,4 +548,150 @@ describe('components/post_view/post_list', () => {
+             }));
+         });
+     });
 +
-+    def test_a_docs_pr_outside_the_milestone_that_links_the_pr_gives_its_page(self):
-+        # Docs that land after the code: #900 is in no milestone and links #1.
-+        self.merged_since = {
-+            "mattermost/mattermost#900": {"title": "Docs for the feature", "body": "Documents https://github.com/mattermost/mattermost/pull/1."},
-+            "mattermost/mattermost#901": {"title": "MM-123 other docs", "body": "Unrelated."},  # a Jira key alone is not enough
++    describe('waiting for the total user count used by the channel intro', () => {
++        const postIds = createFakePosIds(2);
++        const unknownCountProps = {...baseProps, isTotalUsersCountUnknown: true};
++
++        test('should fetch the count on mount before the posts are loaded', () => {
++            renderWithContext(
++                <PostList
++                    {...{...unknownCountProps, postListIds: undefined, needsTotalUsersStats: false}}
++                />,
++            );
++
++            expect(screen.getByTestId('loading-screen')).toBeInTheDocument();
++            expect(actionsProp.getTotalUsersStats).toHaveBeenCalledTimes(1);
++        });
++
++        test('should show the loading screen until the count is known', async () => {
++            const {rerender} = renderWithContext(
++                <PostList
++                    {...{...unknownCountProps, postListIds: postIds, atOldestPost: true, needsTotalUsersStats: true}}
++                />,
++            );
++
++            expect(screen.getByTestId('loading-screen')).toBeInTheDocument();
++            expect(screen.queryByTestId('virt-post-list')).not.toBeInTheDocument();
++            expect(actionsProp.getTotalUsersStats).toHaveBeenCalledTimes(1);
++
++            await runPostRenderAct();
++
++            rerender(
++                <PostList
++                    {...{...baseProps, isTotalUsersCountUnknown: false, postListIds: postIds, atOldestPost: true, needsTotalUsersStats: false}}
++                />,
++            );
++
++            expect(screen.getByTestId('virt-post-list')).toBeInTheDocument();
++            expect(actionsProp.getTotalUsersStats).toHaveBeenCalledTimes(1);
++        });
++
++        test('should not fetch the count again once the posts reach the oldest post', () => {
++            actionsProp.getTotalUsersStats.mockReturnValueOnce(new Promise(() => {}));
++
++            const {rerender} = renderWithContext(
++                <PostList
++                    {...{...unknownCountProps, postListIds: undefined, needsTotalUsersStats: false}}
++                />,
++            );
++
++            rerender(
++                <PostList
++                    {...{...unknownCountProps, postListIds: postIds, atOldestPost: true, needsTotalUsersStats: true}}
++                />,
++            );
++
++            expect(screen.getByTestId('loading-screen')).toBeInTheDocument();
++            expect(actionsProp.getTotalUsersStats).toHaveBeenCalledTimes(1);
++        });
++
++        test('should show the posts if fetching the count fails', async () => {
++            actionsProp.getTotalUsersStats.mockResolvedValueOnce({error: new Error('failed')});
++
++            renderWithContext(
++                <PostList
++                    {...{...unknownCountProps, postListIds: postIds, atOldestPost: true, needsTotalUsersStats: true}}
++                />,
++            );
++
++            expect(screen.getByTestId('loading-screen')).toBeInTheDocument();
++
++            await runPostRenderAct();
++
++            expect(screen.getByTestId('virt-post-list')).toBeInTheDocument();
++            expect(actionsProp.getTotalUsersStats).toHaveBeenCalledTimes(1);
++        });
++
++        test('should show the posts if fetching the count takes too long', async () => {
++            jest.useFakeTimers();
++            actionsProp.getTotalUsersStats.mockReturnValueOnce(new Promise(() => {}));
++
++            renderWithContext(
++                <PostList
++                    {...{...unknownCountProps, postListIds: postIds, atOldestPost: true, needsTotalUsersStats: true}}
++                />,
++            );
++
++            expect(screen.getByTestId('loading-screen')).toBeInTheDocument();
++
++            await act(async () => {
++                jest.advanceTimersByTime(2000);
++            });
++
++            expect(screen.getByTestId('virt-post-list')).toBeInTheDocument();
++            expect(actionsProp.getTotalUsersStats).toHaveBeenCalledTimes(1);
++
++            jest.useRealTimers();
++        });
++
++        test('should not fetch the count when it is already known', () => {
++            renderWithContext(
++                <PostList
++                    {...{...baseProps, isTotalUsersCountUnknown: false, postListIds: postIds, needsTotalUsersStat
+```
+
+**File**: `webapp/channels/src/components/post_view/post_list/post_list.tsx` (modified, +56/-1)
+```diff
+@@ -23,6 +23,9 @@ export const MAX_EXTRA_PAGES_LOADED = 30;
+ const USER_SCROLL_POSTS_PER_PAGE = Constants.POST_CHUNK_SIZE / 2; // 30 posts for user scroll
+ const AUTO_LOAD_POSTS_PER_PAGE = 200; // Maximum server limit for auto-loading
+ 
++// How long to keep posts hidden while waiting for the total user count before showing them anyway
++const TOTAL_USERS_STATS_TIMEOUT = 2000;
++
+ // Measures the time between channel or team switch started and the post list component rendering posts.
+ // Set "fresh" to true when the posts have not been loaded before.
+ function markAndMeasureChannelSwitchEnd(fresh = false) {
+@@ -115,6 +118,13 @@ export interface Props {
+ 
+     isChannelAutotranslated: boolean;
+ 
++    isTotalUsersCountUnknown?: boolean;
++
++    /*
++     * Whether the channel intro will be shown before the total user count it depends on is known
++     */
++    needsTotalUsersStats?: boolean;
++
+     actions: {
+ 
+         /*
+@@ -145,13 +155,23 @@ export interface Props {
+ 
+         markChannelAsRead: (channelId: string) => void;
+         updateNewMessagesAtInChannel: typeof updateNewMessagesAtInChannel;
++        getTotalUsersStats: () => Promise<ActionResult>;
+     };
+ }
+ 
+ interface State {
+     loadingNewerPosts: boolean;
+     loadingOlderPosts: boolean;
+     autoRetryEnable: boolean;
++    channelId: string;
++    postListShown: boolean;
++    stoppedWaitingForTotalUsersStats: boolean;
++}
++
++// The channel intro changes height once the total user count loads, so hold the loading screen until then
++// to avoid shifting the post list. This only applies before the list is first shown for a channel.
++function isWaitingForTotalUsersStats(needsTotalUsersStats: boolean | undefined, state: State) {
++    return Boolean(needsTotalUsersStats) && !state.postListShown && !state.stoppedWaitingForTotalUsersStats;
+ }
+ 
+ export default class PostList extends React.PureComponent<Props, State> {
+@@ -165,6 +185,7 @@ export default class PostList extends React.PureComponent<Props, State> {
+         toggleShouldStartFromBottomWhenUnread: () => void;
+     };
+     private mounted: boolean | undefined;
++    private totalUsersStatsTimeout: NodeJS.Timeout | undefined;
+ 
+     // public for testing purposes only
+     public extraPagesLoaded: number;
+@@ -175,6 +196,9 @@ export default class PostList extends React.PureComponent<Props, State> {
+             loadingNewerPosts: false,
+             loadingOlderPosts: false,
+             autoRetryEnable: true,
++            channelId: props.channelId,
++            postListShown: false,
++            stoppedWaitingForTotalUsersStats: false,
+         };
+ 
+         this.extraPagesLoaded = 0;
+@@ -190,6 +214,13 @@ export default class PostList extends React.PureComponent<Props, State> {
+         };
+     }
+ 
++    static getDerivedStateFromProps(props: Props, state: State): Partial<State> {
++        const postListShown = (props.channelId === state.channelId && state.postListShown) ||
++            (Boolean(props.postListIds) && !isWaitingForTotalUsersStats(props.needsTotalUsersStats, {...state, postListShown: false}));
++
++        return {channelId: props.channelId, postListShown};
++    }
++
+     componentDidMount() {
+         this.mounted = true;
+         if (this.props.channelId) {
+@@ -198,6 +229,11 @@ export default class PostList extends React.PureComponent<Props, State> {
+                 markAndMeasureChannelSwitchEnd();
+             }
+         }
++
++        // Fetched alongside the posts since the intro may need it as soon as they arrive
++        if (this.props.isTotalUsersCountUnknown) {
++            this.loadTotalUsersStats();
 +        }
-+        self.details[900] = {"head_ref": "docs-feature", "files": [{
-+            "filename": "docs/main/administration-guide/manage/admin/feature.mdx", "status": "added",
-+            "patch": "+# Feature\n+\n+Use the feature.\n"}]}
-+        self.details[901] = {"head_ref": "MM-123-docs", "files": [{
-+            "filename": "docs/main/administration-guide/manage/admin/other.mdx", "status": "added", "patch": "+# Other\n"}]}
-+        self.prs[0]["head_ref"] = "MM-123-feature"
-+        pages = {"docs/main/administration-guide/manage/admin/feature.mdx": "---\ntitle: Feature\n---\n# Feature\n",
-+                 "docs/main/administration-guide/manage/admin/other.mdx": "---\ntitle: Other\n---\n# Other\n"}
-+        gc.changelog_release.git_show = lambda ref, path: pages.get(path, "FROM golang:1.27.1-bookworm\n")
-+        self.site_pages.update(pages)
-+        gc.main()
-+        link, = self._payload()["readiness"]["doc_links"]
-+        self.assertEqual((link["source"], link["url"]),
-+                         ("mattermost/mattermost#1", "https://docs.mattermost.com/administration-guide/manage/admin/feature"))
-+        self.assertIn("docs PR mattermost/mattermost#900, which links the PR (outside the milestone)", link["basis"])
+     }
  
-     def test_docs_line_outranks_the_followed_page_and_is_checked(self):
-         self.details[1] = {"head_ref": "MM-123-feature", "files": [{
-@@ -603,7 +633,7 @@ def polish(notes):
-         readiness = self._payload()["readiness"]
-         self.assertEqual(readiness["doc_links"], [{
-             "source": "mattermost/mattermost#1", "url": named, "title": "Named page",
--            "basis": "named on the Docs: line of the PR's release note", "used_in": [], "linked_elsewhere": [],
-+            "basis": "named on the Docs: line of the PR's release note", "used_in": ["Administration"], "linked_elsewhere": [],
-         }])
-         self.assertEqual(readiness["doc_lin
+     componentDidUpdate(prevProps: Props) {
+@@ -212,8 +248,27 @@ export default class PostList extends React.PureComponent<Props, State> {
+ 
+     componentWillUnmount() {
+         this.mounted = false;
++        clearTimeout(this.totalUsersStatsTimeout);
+     }
+ 
++    loadTotalUsersStats = async () => {
++        this.totalUsersStatsTimeout = setTimeout(this.stopWaitingForTotalUsersStats, TOTAL_USERS_STATS_TIMEOUT);
++
++        const {error} = await this.props.actions.getTotalUsersStats();
++
++        clearTimeout(this.totalUsersStatsTimeout);
++
++        if (error) {
++            this.stopWaitingForTotalUsersStats();
++        }
++    };
++
++    stopWaitingForTotalUsersStats = () => {
++        if (this.mounted) {
++            this.setState({stoppedWaitingForTotalUsersStats: true});
++        }
++    };
++
+     postsOnLoad = async (channelId: string) => {
+         const {focusedPostId, isFirstLoad, latestPostTimeStamp, isPrefetchingInProcess, actions} = this.props;
+         if (focusedPostId) {
+@@ -357,7 +412,7 @@ export default class PostList extends React.PureComponent<Props, State> {
+     };
+ 
+     render() {
+-        if (!this.props.postListIds) {
++        if (!this.props.postListIds || isWaitingForTotalUsersStats(this.props.needsTotalUsersStats, this.state)) {
+             return (
+                 <LoadingScreen centered={true}/>
+             );
 ```
 
-**File**: `.github/workflows/changelog-scripts-test.yml` (modified, +1/-0)
-```diff
-@@ -4,6 +4,7 @@ on:
-   pull_request:
-     paths:
-       - '.github/scripts/generate_changelog.py'
-+      - '.github/scripts/check_config_changes_ci.py'
-       - '.github/scripts/changelog_release.py'
-       - '.github/scripts/test_generate_changelog.py'
-       - '.github/scripts/test_changelog_release.py'
-```
+---
 
-**File**: `.github/workflows/generate-changelog.yml` (modified, +8/-1)
+### Incident Patch 3: `93e06e41` (2026-11-17)
+**Commit Message**: Fix flaky TestGetSupportPacketDiagnosticsSectionErrors (#40116)
+
+Automatic Merge
+
+**File**: `server/channels/app/platform/support_packet_test.go` (modified, +6/-0)
 ```diff
-@@ -198,7 +198,7 @@ jobs:
-         run: |
-           # Run the generator from this checkout even after the PR branch is checked out
-           # below: that branch was cut when the PR was opened and may carry an older copy.
--          cp .github/scripts/generate_changelog.py .github/scripts/changelog_release.py "$RUNNER_TEMP/"
-+          cp .github/scripts/generate_changelog.py .github/scripts/changelog_release.py .github/scripts/check_config_changes_ci.py "$RUNNER_TEMP/"
+@@ -1296,6 +1296,12 @@ func TestGetSupportPacketDiagnostics(t *testing.T) {
+ func TestGetSupportPacketDiagnosticsSectionErrors(t *testing.T) {
+ 	th := Setup(t)
  
-           PR_NUMBER="$(gh pr list --repo "$GITHUB_REPOSITORY" --head "changelog/$VERSION" --state open --json number --jq '.[0].number // empty')"
-           BODY_FILE=""
-@@ -282,6 +282,13 @@ jobs:
-             echo
-             cat "$SUMMARY"
-           } >> "$GITHUB_STEP_SUMMARY"
-+          # A dry run's output is only read here and in the artifact; the log keeps a copy
-+          # that can be read without downloading it.
-+          if [ "$MODE" = "dry_run" ]; then
-+            echo "::group::Run summary"
-+            cat "$SUMMARY"
-+            echo "::endgroup::"
-+          fi
- 
-       - name: Upload changelog output
-         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
++	// The default "./data/" only exists once the file store probe has created it, which
++	// races with the disk space lookup on the first call.
++	th.Service.UpdateConfig(func(cfg *model.Config) {
++		cfg.FileSettings.Directory = model.NewPointer(t.TempDir())
++	})
++
+ 	setStore := func(t *testing.T, s *failingDiagnosticsStore) {
+ 		originalStore := th.Service.Store
+ 		s.Store = originalStore
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40092** (2026-11-17): Automated cherry pick of #39549 (@mattermost-build)
-- **PR #40090** (2026-11-17): Automated cherry pick of #40066 (@mattermost-build)
-- **PR #40084** (2026-11-16): [MM-65981] Make AD/LDAP wizard settings searchable in System Console (@cursor[bot])
-- **PR #40083** (2026-11-17): Automated cherry pick of #40076 (@mattermost-code)
-- **PR #40082** (2026-11-17): Automated cherry pick of #40076 (@mattermost-code)
-- **PR #40081** (2026-11-17): Automated cherry pick of #40076 (@mattermost-code)
+- **PR #40139** (2026-11-18): [MM-71631] Restrict Let's Encrypt certificate issuance to the Site URL hostname (@cursor[bot])
+- **PR #40136** (2026-11-17): [MM-62091] Allow undoing formatting applied in the message box (@cursor[bot])
+- **PR #40132** (2026-11-18): [MM-72003] Stop the latest release check when Enable Security Alerts is off, and cache failures (@cursor[bot])
+- **PR #40131** (2026-11-18): Automated cherry pick of #40110 (@mattermost-code)
+- **PR #40130** (2026-11-18): Automated cherry pick of #40110 (@mattermost-code)
+- **PR #40129** (2026-11-18): Automated cherry pick of #40110 (@mattermost-code)
 
 ---
 
@@ -2503,38 +2683,22 @@ Co-Authored-By:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [MM-69773] Fix layout shift when wide images in posts finish loading
+## X. [MM-72003] Stop the latest release check when Enable Security Alerts is off, and
 
 **RULE**:
-When implementing operations in `e2e-tests/playwright/asset/opengraph-tall.html`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `api/v4/source/system.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mattermost/mattermost. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `47848ece`: [MM-69773] Fix layout shift when wide images in posts finish loading. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5049a60d`: [MM-72003] Stop the latest release check when Enable Security Alerts is off, and cache failures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e-tests/playwright/asset/opengraph-tall.html`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/v4/source/system.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-<!doctype html>
-<html>
-    <head>
-        <meta charset="utf-8" />
-        <title>OpenGraph Test Page</title>
-        <meta property="og:type" content="website" />
-        <meta property="og:site_name" content="Mattermost Test" />
-        <meta property="og:title" content="OpenGraph Preview Title" />
-        <meta property="og:description" content="This is a test page with a tall image." />
-        <meta property="og:url" content="/opengraph-tall.html" />
-        <meta property="og:image" content="/image-600x1200.jpg" />
-        <meta property="og:image:width" content="600" />
-        <meta property="og:image:height" content="1200" />
-    </head>
-    <body>
-        <h1>OpenGraph Test Page</h1>
-    </body>
-</html>
+        "501":
+          $ref: "#/components/responses/NotImplemented"
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2544,7 +2708,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `47848ece` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5049a60d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

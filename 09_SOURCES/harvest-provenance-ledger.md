@@ -10973,3 +10973,6 @@ Every entry in this ledger must capture:
 | `learn-github-weaviate-weaviate` | `https://github.com/weaviate/weaviate` | `3507945a` | Multi-dimensional audit evidence | 2026-11-18T11:06:54.202Z |
 | `learn-huggingface-moonshotai-kimi-k3` | `https://huggingface.co/moonshotai/Kimi-K3` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-18T11:22:31.035Z |
 | `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `0d10aa47` | Multi-dimensional audit evidence | 2026-11-18T11:22:44.122Z |
+| `learn-github-eclipse-theia-theia` | `https://github.com/eclipse-theia/theia` | `210f8510` | Multi-dimensional audit evidence | 2026-11-18T11:33:09.785Z |
+| `learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0` | `https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0` | `hf-stabili` | Multi-dimensional audit evidence | 2026-11-18T11:33:13.035Z |
+| `learn-github-mattermost-mattermost` | `https://github.com/mattermost/mattermost` | `f3624d99` | Multi-dimensional audit evidence | 2026-11-18T11:33:20.502Z |

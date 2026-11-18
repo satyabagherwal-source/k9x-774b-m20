@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T11:22:48.335Z",
+  "updated_at": "2026-11-18T11:33:27.019Z",
   "stats": {
-    "total_discovered": 5447,
-    "approved_pending_harvest": 5144,
+    "total_discovered": 5460,
+    "approved_pending_harvest": 5155,
     "harvested_count": 0,
-    "rejected_count": 303,
+    "rejected_count": 305,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5126,
+      "COMMUNITY_AND_EXPERT": 5139,
       "OFFICIAL_DOCUMENTATION": 176,
       "STANDARDS_AND_SPECIFICATIONS": 109,
       "ENGINEERING_BLOGS": 4,
@@ -117734,6 +117734,278 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
         "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-99AAD777BC0A": {
+      "id": "SRC-99AAD777BC0A",
+      "url": "https://github.com/eclipse-theia/theia",
+      "title": "https://github.com/eclipse-theia/theia",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:33:25.047Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/eclipse-theia-theia-learnings.md",
+        "fileName": "eclipse-theia-theia-learnings.md"
+      }
+    },
+    "SRC-3AE260847E97": {
+      "id": "SRC-3AE260847E97",
+      "url": "http://www.eclipse.org/legal/epl-2.0",
+      "title": "http://www.eclipse.org/legal/epl-2.0",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-18T11:33:25.097Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/eclipse-theia-theia-learnings.md",
+        "fileName": "eclipse-theia-theia-learnings.md"
+      }
+    },
+    "SRC-D6193E15FF4E": {
+      "id": "SRC-D6193E15FF4E",
+      "url": "https://www.gnu.org/software/classpath/license.html",
+      "title": "https://www.gnu.org/software/classpath/license.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:33:25.147Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/eclipse-theia-theia-learnings.md",
+        "fileName": "eclipse-theia-theia-learnings.md"
+      }
+    },
+    "SRC-EE3A872FFEB0": {
+      "id": "SRC-EE3A872FFEB0",
+      "url": "https://example.com/%60",
+      "title": "https://example.com/%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:33:25.192Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/eclipse-theia-theia-learnings.md",
+        "fileName": "eclipse-theia-theia-learnings.md"
+      }
+    },
+    "SRC-7036C5ACEAFA": {
+      "id": "SRC-7036C5ACEAFA",
+      "url": "https://theia-ide.org/support",
+      "title": "https://theia-ide.org/support",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:33:25.241Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/eclipse-theia-theia-learnings.md",
+        "fileName": "eclipse-theia-theia-learnings.md"
+      }
+    },
+    "SRC-DF5C5A4D2CD3": {
+      "id": "SRC-DF5C5A4D2CD3",
+      "url": "https://github.com/eclipse-theia/theia/blob/master/doc/Migration.md",
+      "title": "https://github.com/eclipse-theia/theia/blob/master/doc/Migration.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:33:25.297Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/eclipse-theia-theia-learnings.md",
+        "fileName": "eclipse-theia-theia-learnings.md"
+      }
+    },
+    "SRC-A6EDD9B9D566": {
+      "id": "SRC-A6EDD9B9D566",
+      "url": "https://github.com/eclipse-theia/theia/pull/18204",
+      "title": "https://github.com/eclipse-theia/theia/pull/18204",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:33:25.345Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/eclipse-theia-theia-learnings.md",
+        "fileName": "eclipse-theia-theia-learnings.md"
+      }
+    },
+    "SRC-0CD547B8C166": {
+      "id": "SRC-0CD547B8C166",
+      "url": "https://github.com/eclipse-theia/theia/pull/18339",
+      "title": "https://github.com/eclipse-theia/theia/pull/18339",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:33:25.391Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/eclipse-theia-theia-learnings.md",
+        "fileName": "eclipse-theia-theia-learnings.md"
+      }
+    },
+    "SRC-4480293503BA": {
+      "id": "SRC-4480293503BA",
+      "url": "https://github.com/eclipse-theia/theia/pull/18215",
+      "title": "https://github.com/eclipse-theia/theia/pull/18215",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:33:25.439Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/eclipse-theia-theia-learnings.md",
+        "fileName": "eclipse-theia-theia-learnings.md"
+      }
+    },
+    "SRC-3E4E170B248C": {
+      "id": "SRC-3E4E170B248C",
+      "url": "https://registry.npmjs.org/opfs-worker/-/opfs-worker-1.3.1.tgz",
+      "title": "https://registry.npmjs.org/opfs-worker/-/opfs-worker-1.3.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:33:25.489Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/eclipse-theia-theia-learnings.md",
+        "fileName": "eclipse-theia-theia-learnings.md"
+      }
+    },
+    "SRC-2A2D4A818BCE": {
+      "id": "SRC-2A2D4A818BCE",
+      "url": "https://registry.npmjs.org/opfs-worker/-/opfs-worker-2.3.1.tgz",
+      "title": "https://registry.npmjs.org/opfs-worker/-/opfs-worker-2.3.1.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:33:25.540Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/eclipse-theia-theia-learnings.md",
+        "fileName": "eclipse-theia-theia-learnings.md"
+      }
+    },
+    "SRC-3A55C096567B": {
+      "id": "SRC-3A55C096567B",
+      "url": "https://api.github.com/repos/mattermost/mattermost-server/releases/latest",
+      "title": "https://api.github.com/repos/mattermost/mattermost-server/releases/latest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:33:26.971Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
+        "fileName": "mattermost-mattermost-learnings.md"
+      }
+    },
+    "SRC-A8E11810B61A": {
+      "id": "SRC-A8E11810B61A",
+      "url": "http://other.example.com/",
+      "title": "http://other.example.com/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-18T11:33:27.019Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
+        "fileName": "mattermost-mattermost-learnings.md"
       }
     }
   }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T11:22:49.805Z",
-  "total_records": 1830,
+  "last_updated": "2026-11-18T11:33:27.444Z",
+  "total_records": 1836,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 779,
+      "total": 781,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -828,7 +828,9 @@
         "domain_intelligence-research-knowledge-intelligence-automattic-harper-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-automattic-harper-learnings-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-learnings-core-in"
+        "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-learnings-core-in",
+        "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-xl-base-1-0-core-in",
+        "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-xl-base-1-0-lear"
       ]
     },
     "E": {
@@ -901,7 +903,7 @@
       ]
     },
     "G": {
-      "total": 319,
+      "total": 321,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1221,11 +1223,13 @@
         "domain_intelligence-architecture-intelligence-crosspaste-crosspaste-desktop-core-invariants",
         "domain_intelligence-architecture-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariant",
         "domain_intelligence-architecture-intelligence-kubernetes-sigs-aws-load-balancer-controller-core-inva",
-        "domain_intelligence-architecture-intelligence-kubernetes-sigs-aws-load-balancer-controller-learnings"
+        "domain_intelligence-architecture-intelligence-kubernetes-sigs-aws-load-balancer-controller-learnings",
+        "domain_intelligence-architecture-intelligence-mattermost-mattermost-core-invariants",
+        "domain_intelligence-architecture-intelligence-mattermost-mattermost-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 429,
+      "total": 431,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1655,7 +1659,9 @@
         "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-learnings-core-invaria",
         "DOM-H-CC987E5F",
         "domain_intelligence-technical-construction-intelligence-appwrite-appwrite-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-appwrite-appwrite-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-appwrite-appwrite-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-eclipse-theia-theia-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-eclipse-theia-theia-learnings-core-invariant"
       ]
     },
     "I": {
@@ -30724,6 +30730,60 @@
       "repository": "dkhamsing-open-source-ios-apps-learnings",
       "content_hash": "054909ee144f5288039df4b0cb6962007f50f4390a5b5a4f97cfce32809c605f",
       "created_at": "2026-11-18T10:55:22.117Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-eclipse-theia-theia-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-eclipse-theia-theia-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: eclipse-theia/theia Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-eclipse-theia-theia-technical-construction-intelligence-eclipse-theia-theia-core.md",
+      "repository": "eclipse-theia/theia",
+      "content_hash": "ed078cc9b7d51a7be28741ee3dfe68811b46ff83616b67af8267051e2cf3a303",
+      "created_at": "2026-11-18T11:33:10.257Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-xl-base-1-0-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-xl-base-1-0-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: stabilityai/stable-diffusion-xl-base-1.0 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-stabilityai-stable-diffusion-xl-base-1-0-research-knowledge-intelligence-stab.md",
+      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+      "content_hash": "6ae0b52d6bf3dd9e11533d0cd38abaef48620d848c74e7b9923c9b80768b839e",
+      "created_at": "2026-11-18T11:33:13.292Z"
+    },
+    "domain_intelligence-architecture-intelligence-mattermost-mattermost-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-mattermost-mattermost-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: mattermost/mattermost Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mattermost-mattermost-architecture-intelligence-mattermost-mattermost-core-invar.md",
+      "repository": "mattermost/mattermost",
+      "content_hash": "f81134effe61ebe49164543f9e2635e78aecd35b366a92bda5eecd127d14e8b3",
+      "created_at": "2026-11-18T11:33:20.919Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-eclipse-theia-theia-learnings-core-invariant": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-eclipse-theia-theia-learnings-core-invariant",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: eclipse-theia-theia-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-eclipse-theia-theia-learnings-technical-construction-intelligence-eclipse-theia-.md",
+      "repository": "eclipse-theia-theia-learnings",
+      "content_hash": "8a32f370494a63fa681df312683982d8579db9187ad00fcf2b43959a1066ce89",
+      "created_at": "2026-11-18T11:33:25.985Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-xl-base-1-0-lear": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-xl-base-1-0-lear",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-stabilityai-stable-diffusion-xl-base-1.0-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-stabilityai-stable-diffusion-xl-base-1-0-learnings-research-knowledge-intelli.md",
+      "repository": "hf-stabilityai-stable-diffusion-xl-base-1.0-learnings",
+      "content_hash": "8fac0ef38b54a7bb83e606856ae520f9145e2fb2c68331ff5d85413c3eecfbc3",
+      "created_at": "2026-11-18T11:33:26.586Z"
+    },
+    "domain_intelligence-architecture-intelligence-mattermost-mattermost-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-mattermost-mattermost-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: mattermost-mattermost-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mattermost-mattermost-learnings-architecture-intelligence-mattermost-mattermost-.md",
+      "repository": "mattermost-mattermost-learnings",
+      "content_hash": "06687b4771c3cc6777fe8929a1119cf9bc87ff68c0d079411c209c137e22bfac",
+      "created_at": "2026-11-18T11:33:27.444Z"
     }
   }
 }

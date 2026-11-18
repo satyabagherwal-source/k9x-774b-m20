@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T11:22:50.279Z",
+  "last_updated": "2026-11-18T11:33:27.782Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T08:41:54.992Z",
@@ -1798,8 +1798,8 @@
       "staged_for_review": 1
     },
     "hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md": {
-      "processed_at": "2026-11-17T23:20:46.643Z",
-      "promoted_canonical": 2,
+      "processed_at": "2026-11-18T11:33:26.342Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-meta-llama-llama-3.1-8b-instruct-learnings.md": {
@@ -2093,7 +2093,7 @@
       "staged_for_review": 1
     },
     "mattermost-mattermost-learnings.md": {
-      "processed_at": "2026-11-17T08:57:18.782Z",
+      "processed_at": "2026-11-18T11:33:26.789Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3416,9 +3416,14 @@
       "processed_at": "2026-11-18T07:48:41.899Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "eclipse-theia-theia-learnings.md": {
+      "processed_at": "2026-11-18T11:33:25.020Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1911,
+  "total_dossiers_evaluated": 1914,
   "total_canonical_promoted": 353,
-  "total_staged_for_review": 1461
+  "total_staged_for_review": 1463
 }

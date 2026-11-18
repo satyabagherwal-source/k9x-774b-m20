@@ -5182,3 +5182,7 @@ https://github.com/spartan-ng/spartan
 # --- Automatically Discovered by AI Scout Engine [2026-11-18T07:38:44.991Z] ---
 # [HUGGINGFACE-AI-MODELS] tencent/Hy4-flash (950 score) - Verified Hugging Face Model: tencent/Hy4-flash (95 likes, 0 downloads)
 https://huggingface.co/tencent/Hy4-flash
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-18T11:33:04.126Z] ---
+# [AI-AGENTS] eclipse-theia/theia (12218 score) - Eclipse Theia is an open-source platform for building custom IDEs and tools for 
+https://github.com/eclipse-theia/theia

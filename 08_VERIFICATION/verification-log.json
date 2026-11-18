@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-S5IT",
-    "timestamp": "2026-11-17T00:10:43.061Z",
-    "repository": "zeronsh/zeron",
-    "learningId": "learn-github-zeronsh-zeron",
-    "contentHash": "3056f5ab0baaa91e6bf5148f54e37d2b2f153017f10074f0dd090e2c72c5c019",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-SCJW",
-    "timestamp": "2026-11-17T00:10:52.172Z",
-    "repository": "authzed/spicedb",
-    "learningId": "learn-github-authzed-spicedb",
-    "contentHash": "9d70ceefd16bf89b2d50cddfb1b0cb4095ed72a79a5509bfd7620a454ee31636",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-SD43",
-    "timestamp": "2026-11-17T00:10:52.899Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "d965a71dcfa986bce0ef69cab66986e52c3f019bae141492c6ade221660a2a75",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-SFX3",
     "timestamp": "2026-11-17T00:10:56.535Z",
     "repository": "lioensky/VCPToolBox",
@@ -7490,6 +7445,51 @@
     "repository": "rustls/rustls",
     "learningId": "learn-github-rustls-rustls",
     "contentHash": "9e6a9b0ce154695fd0fcc6b968ce8683ba4bb1c8ab70c5ce42f3fa22c6672b42",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-LMVO",
+    "timestamp": "2026-11-18T11:33:09.780Z",
+    "repository": "eclipse-theia/theia",
+    "learningId": "learn-github-eclipse-theia-theia",
+    "contentHash": "ca7f2236837f812c33d8ccb3f4d99031e473730ef44c3e2ab5acef865578c8f9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-LPDY",
+    "timestamp": "2026-11-18T11:33:13.030Z",
+    "repository": "stabilityai/stable-diffusion-xl-base-1.0",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
+    "contentHash": "82d20587c9cc6137deee8ab5aa1eac57ad5a7d18fa554cb7c1406541a5cfdf63",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-LV5E",
+    "timestamp": "2026-11-18T11:33:20.498Z",
+    "repository": "mattermost/mattermost",
+    "learningId": "learn-github-mattermost-mattermost",
+    "contentHash": "97d693fb4ebfe7f2d913dfeb6b69cbde1ce033ff53ef15ab7c8c06c972f8cbd1",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

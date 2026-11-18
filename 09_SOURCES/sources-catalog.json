@@ -285,8 +285,8 @@
     "sourceUrl": "https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0",
     "sourceVersion": "hf-stabilityai-stable-diffusion-xl-base-1.0",
     "license": "Open-Source",
-    "contentHash": "cb7fd523cfe8d44272526e9049ef1bcc1002853a8c36a92acbaa29aa0520ef4c",
-    "lastHarvestedAt": "2026-11-17T23:19:23.225Z",
+    "contentHash": "82d20587c9cc6137deee8ab5aa1eac57ad5a7d18fa554cb7c1406541a5cfdf63",
+    "lastHarvestedAt": "2026-11-18T11:33:13.035Z",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0"
   },
   "hf-meta-llama-llama-3.1-8b-instruct": {
@@ -2333,10 +2333,10 @@
     "repository": "mattermost/mattermost",
     "platform": "github",
     "sourceUrl": "https://github.com/mattermost/mattermost",
-    "sourceVersion": "53ba1b4f",
+    "sourceVersion": "f3624d99",
     "license": "NOASSERTION",
-    "contentHash": "5dfd58ad6783d9202d47c05f201309ac50702d5f5a6aba079bd4cb29b4ae6852",
-    "lastHarvestedAt": "2026-11-17T08:56:34.955Z",
+    "contentHash": "97d693fb4ebfe7f2d913dfeb6b69cbde1ce033ff53ef15ab7c8c06c972f8cbd1",
+    "lastHarvestedAt": "2026-11-18T11:33:20.502Z",
     "learningId": "learn-github-mattermost-mattermost"
   },
   "chaos-mesh-chaos-mesh": {
@@ -12858,5 +12858,15 @@
     "contentHash": "bd9b7ab0567c463c614ca3507bd021c78a271a82057c1d563770ab42ec01a419",
     "lastHarvestedAt": "2026-11-18T07:38:51.621Z",
     "learningId": "learn-huggingface-tencent-hy4-flash"
+  },
+  "eclipse-theia-theia": {
+    "repository": "eclipse-theia/theia",
+    "platform": "github",
+    "sourceUrl": "https://github.com/eclipse-theia/theia",
+    "sourceVersion": "210f8510",
+    "license": "EPL-2.0",
+    "contentHash": "ca7f2236837f812c33d8ccb3f4d99031e473730ef44c3e2ab5acef865578c8f9",
+    "lastHarvestedAt": "2026-11-18T11:33:09.785Z",
+    "learningId": "learn-github-eclipse-theia-theia"
   }
 }
