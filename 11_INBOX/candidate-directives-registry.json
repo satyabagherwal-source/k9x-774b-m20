@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T18:56:58.984Z",
+  "last_updated": "2026-11-18T19:10:14.502Z",
   "directives": [
     {
       "id": "CD-001",
@@ -25122,11 +25122,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-GDII",
+      "id": "CD-XFXC",
       "directive_title": "rust): address the remaining issues in #418",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-GDII-rust-address-the-remaining-issues-in-418.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-XFXC-rust-address-the-remaining-issues-in-418.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-18",
@@ -30606,6 +30606,37 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-F529AD-splash-screen-staying-visible-after-warm.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-XBWB",
+      "directive_title": "accept SSE data fields without a space in audio generation",
+      "source_repo": "Agent-Field/agentfield",
+      "source_commit": "a9ed6a03",
+      "staged_file": "11_INBOX/candidate-directives/CD-XBWB-accept-sse-data-fields-without-a-space-in-audio-generation.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-XF4M",
+      "directive_title": "sdk-go): accept SSE data fields without a space in audio generation",
+      "source_repo": "agent-field-agentfield-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-XF4M-sdk-go-accept-sse-data-fields-without-a-space-in-audio-generation.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-8DF9A6",
+      "directive_title": "rust): address the remaining issues in #418",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8DF9A6-rust-address-the-remaining-issues-in-418.md",
       "staged_date": "2026-11-18"
     }
   ]

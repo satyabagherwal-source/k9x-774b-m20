@@ -815,8 +815,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
     "sourceVersion": "hf-meta-llama-meta-llama-3-8b",
     "license": "Open-Source",
-    "contentHash": "2c0581890988ec430560f974d589d768499c77245a6f032789167457430e1809",
-    "lastHarvestedAt": "2026-11-13T23:28:37.416Z",
+    "contentHash": "04efd8a5e05dca6ea47b01b7c0f883d1beeb1c57f9da11d08c63d40dec3022c3",
+    "lastHarvestedAt": "2026-11-18T19:09:59.444Z",
     "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b"
   },
   "hf-microsoft-frognano-4b-2609": {
@@ -4313,10 +4313,10 @@
     "repository": "Agent-Field/agentfield",
     "platform": "github",
     "sourceUrl": "https://github.com/Agent-Field/agentfield",
-    "sourceVersion": "161cab6a",
+    "sourceVersion": "a9ed6a03",
     "license": "Apache-2.0",
-    "contentHash": "20e7b053022307d15e9072811f10a8561def4f5134a512fb3278554a2f5086fa",
-    "lastHarvestedAt": "2026-11-17T06:20:38.382Z",
+    "contentHash": "f90e9928a044ecc24d2aabd5026bdb371c41888dac95c846659f648413a34702",
+    "lastHarvestedAt": "2026-11-18T19:10:09.036Z",
     "learningId": "learn-github-agent-field-agentfield"
   },
   "typedb-typedb": {

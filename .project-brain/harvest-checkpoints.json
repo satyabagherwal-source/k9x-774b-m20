@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T18:56:51.269Z",
+  "last_updated": "2026-11-18T19:10:09.046Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1055,14 +1055,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-meta-llama-3-8b",
-      "content_hash": "2c0581890988ec430560f974d589d768499c77245a6f032789167457430e1809",
-      "verified_at": "2026-11-13T23:28:37.423Z",
+      "content_hash": "04efd8a5e05dca6ea47b01b7c0f883d1beeb1c57f9da11d08c63d40dec3022c3",
+      "verified_at": "2026-11-18T19:09:59.454Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T23:28:37.423Z"
+      "last_updated": "2026-11-18T19:09:59.454Z"
     },
     "hexgrad/Kokoro-82M": {
       "repository": "hexgrad/Kokoro-82M",
@@ -6591,14 +6591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-agent-field-agentfield",
-      "content_hash": "20e7b053022307d15e9072811f10a8561def4f5134a512fb3278554a2f5086fa",
-      "verified_at": "2026-11-17T06:20:38.392Z",
+      "content_hash": "f90e9928a044ecc24d2aabd5026bdb371c41888dac95c846659f648413a34702",
+      "verified_at": "2026-11-18T19:10:09.046Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T06:20:38.392Z"
+      "last_updated": "2026-11-18T19:10:09.046Z"
     },
     "typedb/typedb": {
       "repository": "typedb/typedb",

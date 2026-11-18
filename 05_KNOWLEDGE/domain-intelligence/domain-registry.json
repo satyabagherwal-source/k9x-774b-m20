@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T18:56:59.119Z",
-  "total_records": 1891,
+  "last_updated": "2026-11-18T19:10:14.678Z",
+  "total_records": 1893,
   "domains": {
     "A": {
       "total": 13,
@@ -924,7 +924,7 @@
       ]
     },
     "G": {
-      "total": 329,
+      "total": 331,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1254,7 +1254,9 @@
         "domain_intelligence-architecture-intelligence-beclab-olares-core-invariants",
         "domain_intelligence-architecture-intelligence-beclab-olares-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-rustcrypto-hashes-core-invariants",
-        "domain_intelligence-architecture-intelligence-rustcrypto-hashes-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-rustcrypto-hashes-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-agent-field-agentfield-core-invariants",
+        "domain_intelligence-architecture-intelligence-agent-field-agentfield-learnings-core-invariants"
       ]
     },
     "H": {
@@ -11396,8 +11398,8 @@
       "title": "Research & Knowledge Intelligence: meta-llama/Meta-Llama-3-8B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-meta-llama-3-8b-research-knowledge-intelligence-meta-llama-meta-ll.md",
       "repository": "meta-llama/Meta-Llama-3-8B",
-      "content_hash": "0f9d3d354a53794f9944134772cb46be42f43fdd6dac7c27368dbe321e8ea29d",
-      "created_at": "2026-11-13T23:28:37.570Z"
+      "content_hash": "cd10a885228b0906a7bd733ffe42b1fe313ca77662dc4e3a45f70914ebaec6e2",
+      "created_at": "2026-11-18T19:09:59.675Z"
     },
     "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-core-invariants",
@@ -11462,8 +11464,8 @@
       "title": "Research & Knowledge Intelligence: hf-meta-llama-meta-llama-3-8b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-meta-llama-3-8b-learnings-research-knowledge-intelligence-hf-meta-.md",
       "repository": "hf-meta-llama-meta-llama-3-8b-learnings",
-      "content_hash": "8124c7a270dc8e6fdf47a4458bd1c53f00a246545d40d1c726f027d0638015c7",
-      "created_at": "2026-11-13T23:29:24.719Z"
+      "content_hash": "00291d2d8fcce76711ed28e2eb61c7d149516b8d6b6a3813775674d15d7b8c39",
+      "created_at": "2026-11-18T19:10:12.939Z"
     },
     "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ontos-ai-knowhere-learnings-core-invariants",
@@ -23062,8 +23064,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "404230c44ed940eb5b10a225a41172108137660242e5233b2d421627ff5f1c85",
-      "created_at": "2026-11-18T18:56:58.360Z"
+      "content_hash": "ca53e35fb772f8244ecc4366e6548908bab5acc1627d05a53204fb86a7bd1ce1",
+      "created_at": "2026-11-18T19:10:14.678Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -31664,6 +31666,24 @@
       "repository": "hf-compvis-stable-diffusion-v1-4-learnings",
       "content_hash": "06943b1b54cf81e30ebc33bbf09749650a8fb5dcf6f6ec15def05039c1854045",
       "created_at": "2026-11-18T18:39:02.634Z"
+    },
+    "domain_intelligence-architecture-intelligence-agent-field-agentfield-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-agent-field-agentfield-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: Agent-Field/agentfield Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-field-agentfield-architecture-intelligence-agent-field-agentfield-core-inv.md",
+      "repository": "Agent-Field/agentfield",
+      "content_hash": "2a8ea76c20c2db0d50f7f55370b815043699f048df8ef11e96889f52892385e2",
+      "created_at": "2026-11-18T19:10:09.456Z"
+    },
+    "domain_intelligence-architecture-intelligence-agent-field-agentfield-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-agent-field-agentfield-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: agent-field-agentfield-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-agent-field-agentfield-learnings-architecture-intelligence-agent-field-agentfiel.md",
+      "repository": "agent-field-agentfield-learnings",
+      "content_hash": "ce5b13f0a3a9bce5fe74477d17928beb405888ac9a971d7bffa10283170d1be9",
+      "created_at": "2026-11-18T19:10:13.645Z"
     }
   }
 }

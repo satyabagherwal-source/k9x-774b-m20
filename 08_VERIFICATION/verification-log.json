@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-OEY5",
-    "timestamp": "2026-11-17T10:51:39.821Z",
-    "repository": "GreptimeTeam/greptimedb",
-    "learningId": "learn-github-greptimeteam-greptimedb",
-    "contentHash": "5d7153712acf569c1a45464490a50056e0fc2f962930136efa8e8d765988de0f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-BLI0",
-    "timestamp": "2026-11-17T11:09:41.400Z",
-    "repository": "ntex-rs/ntex",
-    "learningId": "learn-github-ntex-rs-ntex",
-    "contentHash": "09723e7f2d7d7bd8abb45f1f703882a453b6e03d57ae8070b550dedf48909f26",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-BSSV",
     "timestamp": "2026-11-17T11:09:50.863Z",
     "repository": "zama-ai/tfhe-rs",
@@ -7492,6 +7462,36 @@
     "contentHash": "cb029b1d34e804ddc351c48f449a0dc78750cf0fb6fafc0cff67dcfa5a344f9f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-X4B3",
+    "timestamp": "2026-11-18T19:09:59.439Z",
+    "repository": "meta-llama/Meta-Llama-3-8B",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+    "contentHash": "04efd8a5e05dca6ea47b01b7c0f883d1beeb1c57f9da11d08c63d40dec3022c3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-XBPK",
+    "timestamp": "2026-11-18T19:10:09.032Z",
+    "repository": "Agent-Field/agentfield",
+    "learningId": "learn-github-agent-field-agentfield",
+    "contentHash": "f90e9928a044ecc24d2aabd5026bdb371c41888dac95c846659f648413a34702",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

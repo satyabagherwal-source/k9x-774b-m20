@@ -43,9 +43,9 @@
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "lastChecked": "2026-11-18T18:00:30.633Z",
+    "lastChecked": "2026-11-18T19:10:11.323Z",
     "revisionIdentifier": "108f7135",
-    "lastVerified": "2026-11-18T18:00:30.633Z"
+    "lastVerified": "2026-11-18T19:10:11.323Z"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T18:56:57.512Z",
-    "lastVerified": "2026-11-18T18:56:57.512Z",
+    "lastChecked": "2026-11-18T19:10:12.501Z",
+    "lastVerified": "2026-11-18T19:10:12.501Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -207,9 +207,9 @@
   "microsoft-agent-governance-toolkit": {
     "name": "agent-governance-toolkit",
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "lastChecked": "2026-11-18T14:24:13.278Z",
+    "lastChecked": "2026-11-18T19:10:06.277Z",
     "revisionIdentifier": "3528751a",
-    "lastVerified": "2026-11-18T14:24:13.278Z"
+    "lastVerified": "2026-11-18T19:10:06.277Z"
   },
   "pathwaycom-llm-app": {
     "name": "llm-app",
@@ -3676,5 +3676,60 @@
     "lastChecked": "2026-11-18T18:56:55.025Z",
     "revisionIdentifier": "e449d171",
     "lastVerified": "2026-11-18T18:56:55.025Z"
+  },
+  "mufeedvh-code2prompt": {
+    "name": "code2prompt",
+    "officialUrl": "https://github.com/mufeedvh/code2prompt",
+    "lastChecked": "2026-11-18T19:09:56.247Z",
+    "revisionIdentifier": "d762d9bb",
+    "lastVerified": "2026-11-18T19:09:56.247Z"
+  },
+  "hf-meta-llama-meta-llama-3-8b": {
+    "name": "meta-llama/Meta-Llama-3-8B",
+    "officialUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T19:09:58.772Z",
+    "lastVerified": "2026-11-18T19:09:58.772Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+    "contentHash": "04efd8a5e05dca6ea47b01b7c0f883d1beeb1c57f9da11d08c63d40dec3022c3",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nativewind-nativewind": {
+    "name": "nativewind",
+    "officialUrl": "https://github.com/nativewind/nativewind",
+    "lastChecked": "2026-11-18T19:10:01.365Z",
+    "revisionIdentifier": "ddcfd806",
+    "lastVerified": "2026-11-18T19:10:01.365Z"
+  },
+  "agent-field-agentfield": {
+    "name": "Agent-Field/agentfield",
+    "officialUrl": "https://github.com/Agent-Field/agentfield",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-18T19:10:07.868Z",
+    "lastVerified": "2026-11-18T19:10:07.868Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-agent-field-agentfield",
+    "contentHash": "f90e9928a044ecc24d2aabd5026bdb371c41888dac95c846659f648413a34702",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "erikgrinaker-toydb": {
+    "name": "toydb",
+    "officialUrl": "https://github.com/erikgrinaker/toydb",
+    "lastChecked": "2026-11-18T19:10:08.728Z",
+    "revisionIdentifier": "2d7cd32e",
+    "lastVerified": "2026-11-18T19:10:08.728Z"
   }
 }

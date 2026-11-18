@@ -11108,3 +11108,5 @@ Every entry in this ledger must capture:
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `e3c035e0` | Multi-dimensional audit evidence | 2026-11-18T18:38:21.568Z |
 | `learn-dom-d-70cb2061` | `project://hf-compvis-stable-diffusion-v1-4` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md` | 2026-11-18T18:39:02.365Z |
 | `learn-huggingface-hexgrad-kokoro-82m` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-11-18T18:56:51.261Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-18T19:09:59.444Z |
+| `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `a9ed6a03` | Multi-dimensional audit evidence | 2026-11-18T19:10:09.036Z |

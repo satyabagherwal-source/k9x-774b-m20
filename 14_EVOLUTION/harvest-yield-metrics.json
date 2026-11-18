@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T18:56:51.266Z",
-  "total_cycles_completed": 10590,
-  "total_learnings_persisted": 10590,
-  "total_rules_promoted": 10035,
+  "last_updated": "2026-11-18T19:10:09.042Z",
+  "total_cycles_completed": 10592,
+  "total_learnings_persisted": 10592,
+  "total_rules_promoted": 10036,
   "history": [
-    {
-      "timestamp": "2026-11-18T06:57:41.562Z",
-      "repository": "PrunaAI/P-H3-Image-Comfy",
-      "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T06:57:43.966Z",
-      "repository": "Orange-OpenSource/hurl",
-      "learningId": "learn-github-orange-opensource-hurl",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T06:57:56.158Z",
       "repository": "etcd-io/etcd",
@@ -1403,6 +1389,20 @@
       "repository": "hexgrad/Kokoro-82M",
       "learningId": "learn-huggingface-hexgrad-kokoro-82m",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T19:09:59.450Z",
+      "repository": "meta-llama/Meta-Llama-3-8B",
+      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T19:10:09.042Z",
+      "repository": "Agent-Field/agentfield",
+      "learningId": "learn-github-agent-field-agentfield",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
