@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-18T21:50:18.262Z",
-    "lastVerified": "2026-11-18T21:50:18.262Z",
+    "lastChecked": "2026-11-18T22:30:40.412Z",
+    "lastVerified": "2026-11-18T22:30:40.412Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T22:22:26.686Z",
-    "lastVerified": "2026-11-18T22:22:26.686Z",
+    "lastChecked": "2026-11-18T22:30:40.420Z",
+    "lastVerified": "2026-11-18T22:30:40.420Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1459,9 +1459,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-18T16:49:34.916Z",
+    "lastChecked": "2026-11-18T22:30:35.430Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-18T16:49:34.916Z"
+    "lastVerified": "2026-11-18T22:30:35.430Z"
   },
   "memvid-memvid": {
     "name": "memvid",
@@ -4581,5 +4581,50 @@
     "lastChecked": "2026-11-18T22:22:24.181Z",
     "revisionIdentifier": "146d8664",
     "lastVerified": "2026-11-18T22:22:24.181Z"
+  },
+  "smol-rs-smol": {
+    "name": "smol",
+    "officialUrl": "https://github.com/smol-rs/smol",
+    "lastChecked": "2026-11-18T22:30:25.423Z",
+    "revisionIdentifier": "41579301",
+    "lastVerified": "2026-11-18T22:30:25.423Z"
+  },
+  "hf-deepseek-ai-deepseek-v3": {
+    "name": "deepseek-ai/DeepSeek-V3",
+    "officialUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T22:30:28.242Z",
+    "lastVerified": "2026-11-18T22:30:28.242Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
+    "contentHash": "fff8ed049b5caa47684e8aee77906096e97aab9134fe0bf1cde491aa805c3cae",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "flipkart-recyclerlistview": {
+    "name": "recyclerlistview",
+    "officialUrl": "https://github.com/Flipkart/recyclerlistview",
+    "lastChecked": "2026-11-18T22:30:30.571Z",
+    "revisionIdentifier": "3485036e",
+    "lastVerified": "2026-11-18T22:30:30.571Z"
+  },
+  "encoredev-encore": {
+    "name": "encore",
+    "officialUrl": "https://github.com/encoredev/encore",
+    "lastChecked": "2026-11-18T22:30:33.134Z",
+    "revisionIdentifier": "8a7465a4",
+    "lastVerified": "2026-11-18T22:30:33.134Z"
+  },
+  "sfu-db-connector-x": {
+    "name": "connector-x",
+    "officialUrl": "https://github.com/sfu-db/connector-x",
+    "lastChecked": "2026-11-18T22:30:37.885Z",
+    "revisionIdentifier": "c52b20c0",
+    "lastVerified": "2026-11-18T22:30:37.885Z"
   }
 }

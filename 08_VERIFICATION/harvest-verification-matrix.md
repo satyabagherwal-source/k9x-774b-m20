@@ -11117,3 +11117,4 @@
 | `CYCLE-20261118-ILJB` | `2026-11-18T22:14:39.239Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9291` | Yes (`5deac58d...`) |
 | `CYCLE-20261118-SD89` | `2026-11-18T22:22:15.033Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | Yes (`a66f4b68...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T22:22:51.811Z` | `hf-meta-llama-llama-2-7b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-3CA866B9` [Domain J] | Yes (`d6893a36...`) |
+| `CYCLE-20261118-2Y9Y` | `2026-11-18T22:30:28.870Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`fff8ed04...`) |

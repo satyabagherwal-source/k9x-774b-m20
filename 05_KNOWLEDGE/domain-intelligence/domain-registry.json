@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T22:22:53.224Z",
+  "last_updated": "2026-11-18T22:30:42.115Z",
   "total_records": 1917,
   "domains": {
     "A": {
@@ -13279,8 +13279,8 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v3-research-knowledge-intelligence-deepseek-ai-deepseek-.md",
       "repository": "deepseek-ai/DeepSeek-V3",
-      "content_hash": "a6b89d2a967493e2a6c1f73b36b30cf2be4c8720e24058d6c132a38146eb2f15",
-      "created_at": "2026-11-14T04:50:27.870Z"
+      "content_hash": "ba865055eea42f14625a14650cfe5a4edfcc971b13012c6ced8dae0fa58eeabd",
+      "created_at": "2026-11-18T22:30:29.058Z"
     },
     "domain_intelligence-architecture-intelligence-keybase-client-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-keybase-client-core-invariants",
@@ -13339,8 +13339,8 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v3-learnings-research-knowledge-intelligence-hf-deepseek.md",
       "repository": "hf-deepseek-ai-deepseek-v3-learnings",
-      "content_hash": "53aa4d66bc1582d076b56dabd721cd795a6bd5442de10a3ad2f641011b5c7042",
-      "created_at": "2026-11-14T04:51:07.845Z"
+      "content_hash": "ccd91c83783a066e0b45a38ddc8a85bd2c43457d0865098fb2785cba82e33672",
+      "created_at": "2026-11-18T22:30:40.736Z"
     },
     "domain_intelligence-architecture-intelligence-keybase-client-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-keybase-client-learnings-core-invariants",
@@ -14708,8 +14708,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "fdd8fc67a02d4fd74dd5f84469e2295c3f6ce925acc38363c4cf618ff8f30de5",
-      "created_at": "2026-11-18T18:56:59.119Z"
+      "content_hash": "6dd3ebd6d10842dd4d0267e9093f426a25e6cd8c2c524b18940303c373e80202",
+      "created_at": "2026-11-18T22:30:42.115Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -23088,8 +23088,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "4b23681492c337c00015317e7c94fe031bd9800ebecefad94a4b84c64038de28",
-      "created_at": "2026-11-18T21:34:25.005Z"
+      "content_hash": "9659ad05ca5c414da7cf192360038565757fe348f162a786bc47409143f9be37",
+      "created_at": "2026-11-18T22:30:41.312Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",

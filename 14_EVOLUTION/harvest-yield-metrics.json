@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T22:22:15.041Z",
-  "total_cycles_completed": 10627,
-  "total_learnings_persisted": 10627,
+  "last_updated": "2026-11-18T22:30:28.879Z",
+  "total_cycles_completed": 10628,
+  "total_learnings_persisted": 10628,
   "total_rules_promoted": 10054,
   "history": [
-    {
-      "timestamp": "2026-11-18T08:51:35.973Z",
-      "repository": "msasikanth/twine",
-      "learningId": "learn-github-msasikanth-twine",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T09:02:22.225Z",
       "repository": "amazon/chronos-2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-18T22:22:15.041Z",
       "repository": "meta-llama/Llama-2-7b",
       "learningId": "learn-huggingface-meta-llama-llama-2-7b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T22:30:28.879Z",
+      "repository": "deepseek-ai/DeepSeek-V3",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v3",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
