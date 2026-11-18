@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T12:16:17.662Z",
+  "last_updated": "2026-11-18T12:24:05.294Z",
   "total_verified_learnings": 9000,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21217,
+  "total_items": 21226,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -214797,8 +214797,8 @@
       "slug": "zulip-zulip",
       "platform": "github",
       "source_url": "https://github.com/zulip/zulip",
-      "source_version": "19e7b6bb",
-      "content_hash": "dec91f3b6fe914115d76f59d3791a255e5d4e430b515c0eeedcc72190c5a2046",
+      "source_version": "64b848e5",
+      "content_hash": "88e6a4c6052ac1afbae67331489fd8bde75211e7333a6cc81560730a647464b5",
       "dossier_path": "07_PROJECT_LEARNING/zulip-zulip-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zulip-zulip-learnings.md",
       "promoted_rules": [
@@ -214818,7 +214818,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T10:51:31.836Z",
+      "verified_at": "2026-11-18T12:23:57.261Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220761,14 +220761,19 @@
       "slug": "goharbor-harbor",
       "platform": "github",
       "source_url": "https://github.com/goharbor/harbor",
-      "source_version": "e7dbdea2",
-      "content_hash": "173d139b7688e07773db8f38e0327249cc97e27760e8d1623c687afb6eba5c46",
+      "source_version": "966747bd",
+      "content_hash": "9813239bcd7d9d9f5a0ab06265c18174fe9ed299449369ebc0e6543163f30dde",
       "dossier_path": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
       "promoted_rules": [
         {
           "number": 8419,
           "title": "ignore 401 when listing labels of a Harbor registry",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9217,
+          "title": "fix the dead Clarity link in CONTRIBUTING",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -220777,7 +220782,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T02:06:21.665Z",
+      "verified_at": "2026-11-18T12:24:00.457Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220819,10 +220824,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-goharbor-harbor-architecture-intelligence-goharbor-harbor-core-invariants.md",
       "title": "Architecture Intelligence: goharbor/harbor Core Invariants",
       "repository": "goharbor/harbor",
-      "source_version": "e7dbdea2",
-      "content_hash": "472d0331dc29aea11f4c4ced332a4aaf9b669a4bbe821938c7e7dddcfd463189",
+      "source_version": "966747bd",
+      "content_hash": "388e3665aeb8004fcacc2897ef6b2638338e2c717dc13194eedd75a54670cfef",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T02:06:22.016Z"
+      "persisted_at": "2026-11-18T12:24:00.959Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-goharbor-harbor": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-goharbor-harbor",
@@ -220831,10 +220836,10 @@
       "relative_path": "08_VERIFICATION/goharbor-harbor-verification-protocol-empirical-defect-shield-for-goharbor-harbo.md",
       "title": "Verification Protocol: Empirical Defect Shield for goharbor/harbor",
       "repository": "goharbor/harbor",
-      "source_version": "e7dbdea2",
-      "content_hash": "bcc67754802457c60249a02dba791e83b8f64e4be833daf6a82f493e414066be",
+      "source_version": "966747bd",
+      "content_hash": "d26e4418287ee63cdeb05c9585091eacb049363a51c307298a1db418f623ae29",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T02:06:22.095Z"
+      "persisted_at": "2026-11-18T12:24:01.100Z"
     },
     "learn-github-lioensky-vcptoolbox": {
       "learning_id": "learn-github-lioensky-vcptoolbox",
@@ -230073,8 +230078,8 @@
       "slug": "hmbown-codewhale",
       "platform": "github",
       "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "af6fc33a",
-      "content_hash": "5cc29110976d575534b3a66db1ffc9c9915bab97364f67a3e226ed1b0db6def7",
+      "source_version": "1ad8da62",
+      "content_hash": "a8f016f40877b6558d68e7c64d0e47e5e4118d961cc751ed9a8297364c032ac0",
       "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
@@ -230112,6 +230117,11 @@
           "number": 9112,
           "title": "build(release): publish codewhale-ratatui 0.2.0 as a workspace member (§213)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9216,
+          "title": "resolve correctness review findings B1, B2 and non-blocking 1-5",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230119,7 +230129,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T03:39:24.221Z",
+      "verified_at": "2026-11-18T12:23:54.011Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230173,10 +230183,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/hmbown-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-specialist-per.md",
       "title": "Agent Contract: codewhale-hq/Codewhale Autonomous Specialist Persona",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "af6fc33a",
-      "content_hash": "0f2a077cff7cc2ee6a4aafab0c1d57ab1d148488e2fd654466bb8b2d234df275",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-18T03:39:25.061Z"
+      "source_version": "1ad8da62",
+      "content_hash": "dcd0d701a2a8ced9ecf05fe10ab5a11ff0b0b7c3b1d30f8a4669d9bfa3d40d50",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T12:23:54.668Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale",
@@ -230185,10 +230195,10 @@
       "relative_path": "08_VERIFICATION/hmbown-codewhale-verification-protocol-empirical-defect-shield-for-codewhale-hq-.md",
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "af6fc33a",
-      "content_hash": "233ed47c58f426ccd2f26d6f06ec8dba531dcd0946977c3d4de3029fb2d51bc9",
+      "source_version": "1ad8da62",
+      "content_hash": "6c474686e7eed98752d1fea77f41a563e4357f1c1be83f9b0fbe58f68af12885",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T03:39:25.216Z"
+      "persisted_at": "2026-11-18T12:23:54.787Z"
     },
     "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model": {
       "item_id": "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model",
@@ -237891,9 +237901,9 @@
       "title": "Agent Contract: hmbown-codewhale-learnings Autonomous Specialist Persona",
       "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "7f910191b8412f2de5ca722e9fd135555a5c0012add0413ef08bd7f587241a67",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-18T03:39:41.577Z"
+      "content_hash": "f05d20ee47e7c6162cb00a7b890037bccfcf3af1c1e58299c85e54b005291348",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T12:24:04.377Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-hmbown-codewhale-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hmbown-codewhale-learnings",
@@ -237903,9 +237913,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for hmbown-codewhale-learnings",
       "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "ad094616f197422408beec9aa52f7bc1e91b8b5b02f4f147499339a59e5f928d",
+      "content_hash": "90838f897e5a07e64a77688ceba73e558c3500a0fc1384842ca01ee5b424fde7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T03:39:41.732Z"
+      "persisted_at": "2026-11-18T12:24:04.496Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants",
@@ -279810,7 +279820,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
       "source_version": "hf-nvidia-nemotron-3-diarization",
-      "content_hash": "6476d41f82fdf7d89cd1676f4f0d06a1e35a01d8a7478e227a61d4f667f50af6",
+      "content_hash": "dc3273c0cd95cd615a9d3f46afbf7eb173580e8c2d523330cb1a2128e9aceeb2",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
       "promoted_rules": [],
@@ -279819,7 +279829,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T01:18:46.737Z",
+      "verified_at": "2026-11-18T12:23:49.796Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -279836,9 +279846,9 @@
       "title": "Research & Knowledge Intelligence: nvidia/Nemotron-3-Diarization Core Invariants",
       "repository": "nvidia/Nemotron-3-Diarization",
       "source_version": "hf-nvidia-nemotron-3-diarization",
-      "content_hash": "1c89d304cb0d90dd1091fcc986b85c079d02b13ee55a33ed2eac4d501abefcac",
+      "content_hash": "fbd271769906f3b35f1bd23ce61e879c22d57c09cade32d479e6d0b253eed601",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T01:18:47.071Z"
+      "persisted_at": "2026-11-18T12:23:50.177Z"
     },
     "rule-9100": {
       "learning_id": "rule-9100",
@@ -279874,9 +279884,9 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-nemotron-3-diarization-learnings Core Invariants",
       "repository": "hf-nvidia-nemotron-3-diarization-learnings",
       "source_version": "HEAD",
-      "content_hash": "7edb8e340bc65c1dcf8de7dcbb680e164503ce01ebac223f70fe020bd7e8de3b",
+      "content_hash": "ca36b7b65a887a985e109f48aed56f35d8e9f2f70b179954f414563060e3e320",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T01:18:59.167Z"
+      "persisted_at": "2026-11-18T12:24:04.802Z"
     },
     "candidate_directive-android-dispatch-helper-taps-and-keys-without-the-global-animation-wait": {
       "item_id": "candidate_directive-android-dispatch-helper-taps-and-keys-without-the-global-animation-wait",
@@ -286195,6 +286205,118 @@
       "content_hash": "15607bfb546bfc8806ac90cee49e46460a44136881bc96b7d09050db963519bd",
       "domain_letter": "H",
       "persisted_at": "2026-11-18T12:16:17.380Z"
+    },
+    "rule-9216": {
+      "learning_id": "rule-9216",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9216,
+      "title": "resolve correctness review findings B1, B2 and non-blocking 1-5",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "1ad8da62",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T12:23:54.011Z"
+    },
+    "candidate_directive-resolve-correctness-review-findings-b1-b2-and-non-blocking-1-5": {
+      "item_id": "candidate_directive-resolve-correctness-review-findings-b1-b2-and-non-blocking-1-5",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EW49-resolve-correctness-review-findings-b1-b2-and-non-blocking-1-5.md",
+      "title": "resolve correctness review findings B1, B2 and non-blocking 1-5",
+      "repository": "codewhale-hq/Codewhale",
+      "source_version": "1ad8da62",
+      "content_hash": "fb64e5b4db9685de36bf855ff439b7e0fafa654330fc1990e3c20e1720a80c80",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T12:23:54.397Z"
+    },
+    "domain_intelligence-content-information-intelligence-codewhale-hq-codewhale-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-codewhale-hq-codewhale-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-hmbown-codewhale-content-information-intelligence-codewhale-hq-codewhale-core-in.md",
+      "title": "Content & Information Intelligence: codewhale-hq/Codewhale Core Invariants",
+      "repository": "codewhale-hq/Codewhale",
+      "source_version": "1ad8da62",
+      "content_hash": "11248a2956aab1adf7329ea7b0cb2496e2f9bae7635cc7c631ebc4e64b6a7c1f",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T12:23:54.534Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zulip-zulip-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-zulip-zulip-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-technical-construction-intelligence-zulip-zulip-core-invariants.md",
+      "title": "Technical Construction Intelligence: zulip/zulip Core Invariants",
+      "repository": "zulip/zulip",
+      "source_version": "64b848e5",
+      "content_hash": "efbdb4db2bce886e70dce865dce89a1962d6851687ee40326f50083e3eba2ff6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T12:23:57.629Z"
+    },
+    "rule-9217": {
+      "learning_id": "rule-9217",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9217,
+      "title": "fix the dead Clarity link in CONTRIBUTING",
+      "source_url": "https://github.com/goharbor/harbor",
+      "source_version": "966747bd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T12:24:00.457Z"
+    },
+    "candidate_directive-fix-the-dead-clarity-link-in-contributing": {
+      "item_id": "candidate_directive-fix-the-dead-clarity-link-in-contributing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F12S-fix-the-dead-clarity-link-in-contributing.md",
+      "title": "fix the dead Clarity link in CONTRIBUTING",
+      "repository": "goharbor/harbor",
+      "source_version": "966747bd",
+      "content_hash": "778d5e17d6ebf6d2c13e94a33f8fbf2252bb0312616dea15bc16332dc92a7622",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T12:24:00.821Z"
+    },
+    "candidate_directive-web-resolve-correctness-review-findings-b1-b2-and-non-blocking-1-5": {
+      "item_id": "candidate_directive-web-resolve-correctness-review-findings-b1-b2-and-non-blocking-1-5",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F3LF-web-resolve-correctness-review-findings-b1-b2-and-non-blocking-1-5.md",
+      "title": "web): resolve correctness review findings B1, B2 and non-blocking 1-5",
+      "repository": "hmbown-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fb00781861efa2319676213d5246a55713d5dc7e69c157f616526c9536fb03bb",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T12:24:04.087Z"
+    },
+    "domain_intelligence-content-information-intelligence-hmbown-codewhale-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-hmbown-codewhale-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-hmbown-codewhale-learnings-content-information-intelligence-hmbown-codewhale-lea.md",
+      "title": "Content & Information Intelligence: hmbown-codewhale-learnings Core Invariants",
+      "repository": "hmbown-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cb6a8625aeec4e0906fdb9589c8c17a07f083c8dcfd0d7c9fcbd37f9acac425e",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T12:24:04.226Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zulip-zulip-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-zulip-zulip-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
+      "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
+      "repository": "zulip-zulip-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a4b2af2049388da90fc47ab420805870ddd2cf52b8e111a889d6efbb3334c1a0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T12:24:05.294Z"
     }
   },
   "ai-builder-brain": {

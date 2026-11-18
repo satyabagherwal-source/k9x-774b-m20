@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T12:16:17.212Z",
+  "updated_at": "2026-11-18T12:24:05.116Z",
   "stats": {
-    "total_discovered": 5478,
-    "approved_pending_harvest": 5173,
+    "total_discovered": 5482,
+    "approved_pending_harvest": 5177,
     "harvested_count": 0,
     "rejected_count": 305,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5157,
+      "COMMUNITY_AND_EXPERT": 5161,
       "OFFICIAL_DOCUMENTATION": 176,
       "STANDARDS_AND_SPECIFICATIONS": 109,
       "ENGINEERING_BLOGS": 4,
@@ -118402,6 +118402,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
         "fileName": "t8y2-dbx-learnings.md"
+      }
+    },
+    "SRC-B9485CFF1593": {
+      "id": "SRC-B9485CFF1593",
+      "url": "https://github.com/user-attachments/assets/92a03a3e-31aa-4ca9-b3d4-937ff6b6c628",
+      "title": "https://github.com/user-attachments/assets/92a03a3e-31aa-4ca9-b3d4-937ff6b6c628",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:24:04.994Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zulip-zulip-learnings.md",
+        "fileName": "zulip-zulip-learnings.md"
+      }
+    },
+    "SRC-CF1461272131": {
+      "id": "SRC-CF1461272131",
+      "url": "https://github.com/user-attachments/assets/997b752a-28df-4ba3-a42b-3705af83a81d",
+      "title": "https://github.com/user-attachments/assets/997b752a-28df-4ba3-a42b-3705af83a81d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:24:05.031Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zulip-zulip-learnings.md",
+        "fileName": "zulip-zulip-learnings.md"
+      }
+    },
+    "SRC-F233DE0CA98A": {
+      "id": "SRC-F233DE0CA98A",
+      "url": "https://zulip.com/apps",
+      "title": "https://zulip.com/apps",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:24:05.068Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zulip-zulip-learnings.md",
+        "fileName": "zulip-zulip-learnings.md"
+      }
+    },
+    "SRC-4D692974F448": {
+      "id": "SRC-4D692974F448",
+      "url": "https://zulip.com/development-community",
+      "title": "https://zulip.com/development-community",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:24:05.116Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zulip-zulip-learnings.md",
+        "fileName": "zulip-zulip-learnings.md"
       }
     }
   }

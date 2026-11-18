@@ -10989,3 +10989,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-11-18T12:15:59.149Z |
 | `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `b80cd53e` | Multi-dimensional audit evidence | 2026-11-18T12:15:59.703Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `5d542c80` | Multi-dimensional audit evidence | 2026-11-18T12:16:12.914Z |
+| `learn-huggingface-nvidia-nemotron-3-diarization` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-18T12:23:50.001Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `1ad8da62` | Multi-dimensional audit evidence | 2026-11-18T12:23:54.194Z |
+| `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `64b848e5` | Multi-dimensional audit evidence | 2026-11-18T12:23:57.450Z |
+| `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `966747bd` | Multi-dimensional audit evidence | 2026-11-18T12:24:00.640Z |

@@ -10956,3 +10956,7 @@
 | `CYCLE-20261118-4PEX` | `2026-11-18T12:15:59.145Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md` | Yes (`c2bd952c...`) |
 | `CYCLE-20261118-4PUB` | `2026-11-18T12:15:59.699Z` | `sharkdp/fd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`255298cc...`) |
 | `CYCLE-20261118-5016` | `2026-11-18T12:16:12.906Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9215` | Yes (`f126212d...`) |
+| `CYCLE-20261118-ESQ4` | `2026-11-18T12:23:49.996Z` | `nvidia/Nemotron-3-Diarization` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md` | Yes (`dc3273c0...`) |
+| `CYCLE-20261118-EVYM` | `2026-11-18T12:23:54.190Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9216` | Yes (`a8f016f4...`) |
+| `CYCLE-20261118-EYH2` | `2026-11-18T12:23:57.446Z` | `zulip/zulip` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/zulip-zulip-learnings.md` | Yes (`88e6a4c6...`) |
+| `CYCLE-20261118-F0XO` | `2026-11-18T12:24:00.636Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9217` | Yes (`9813239b...`) |

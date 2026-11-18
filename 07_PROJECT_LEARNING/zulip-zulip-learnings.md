@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source**: github ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
-> **Source Version**: `19e7b6bb`  
+> **Source Version**: `64b848e5`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T10:51:31.102Z  
+> **Timestamp**: 2026-11-18T12:23:57.022Z  
 > **Learning ID**: `learn-github-zulip-zulip`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zulip-zulip-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zulip/zulip](https://github.com/zulip/zulip))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T10:51:30.816Z  
+> **Harvest Timestamp**: 2026-11-18T12:23:57.017Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Zulip server and web application. Open-source team chat that helps teams stay productive and focused.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: package.json, pyproject.toml, README.md
-- **Stars / Engagement**: 26241 stars
+- **Stars / Engagement**: 26250 stars
 
 ---
 
@@ -1210,14 +1210,14 @@ def check_rabbitmq_queues() -> None:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40683** (2026-11-14): **Error while sending update announcements**
-  *Symptoms*: Since upgrading our self-hosted Zulip Server from 12.1 to 13.0, we received the following error once per hour:  ``` Error while sending update announcements  IndexError list index out of range  Django Version: 5.2.18 Python Executable: /usr/bin/python3 Python Version: 3.12.3 Python Path: ['/home/zulip/deployments/2026-11-12-21-29-38/.venv/lib/python3.12/site-packages', '/home/zulip/deployments/2026-11-12-21-29-38', '/usr/lib/python312.zip', '/usr/lib/python3.12', '/usr/lib/python3.12/lib-dynload', '/usr/local/lib/python3.12/dist-packages', '/usr/lib/python3/dist-packages', '/home/zulip/deployments/2026-11-12-21-29-38'] Server time: Fri, 13 Nov 2026 15:47:03 +0000 Installed Applications: '' Installed Middleware: ''   Traceback (most recent call last):   File "/home/zulip/deployments/2026-11-12-21-29-38/zerver/lib/zulip_update_announcements.py", line 830, in send_zulip_update_announcements     send_zulip_update_announcements_to_realm(realm, skip_delay)     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^   File "/home/zulip/deployments/2026-11-12-21-29-38/zerver/lib/zulip_update_announcements.py", line 927, in send_zulip_update_announcements_to_realm     internal_prep_zulip_update_announcements_stream_messages(     ^   File "/home/zulip/deployments/2026-11-12-21-29-38/zerver/lib/zulip_update_announcements.py", line 778, in internal_prep_zulip_update_announcements_stream_messages     content = get_zulip_update_announcements_message_for_level(level=current_level + 1)  
-  **Post-Mortem & Fix Analysis**:
-  > Thank you for this report @srittau! This is fixed in 13.1, and a separate late-breaking change required 13.2 today. Can you grab 13.2 and let us know if you experience any other challenges?
-  > The message was now delivered successfully after an update, thanks!
+- **Issue #40737** (2026-11-17): **Vagrant 2.4 on macOS fails with false forwarded port 9991 collision**
+  *Symptoms*: ### Describe the bug When running `vagrant up --provider=docker` on macOS using modern Vagrant (v2.4.x, which embeds Ruby 3.3), provisioning fails immediately due to a false `ForwardPortCollision`:  ```text Vagrant cannot forward the specified ports on this VM, since they would collide with some other application that is already listening on these ports. The forwarded port to 9991 is already in use on the host machine. ```  No service or process is listening on port 9991 (verified via `lsof -nP -iTCP:9991`).  ### Environment - **Host OS**: macOS (Apple Silicon / Intel) - **Vagrant Version**: 2.4.9 (embedded Ruby 3.3.0) - **Provider**: Docker (Docker Desktop on macOS)  ### Steps to reproduce 1. Clone the Zulip repository on macOS. 2. Install Docker Desktop and Vagrant via Homebrew (`brew install hashicorp/tap/hashicorp-vagrant`). 3. Ensure no local service is listening on port 9991. 4. Run `vagrant up --provider=docker`. 5. Observe the false port collision failure on port 9991.  ### Root Cause Vagrant checks whether a port is open in `lib/vagrant/util/is_port_open.rb` by executing: ```ruby Socket.tcp(host, port, connect_timeout: 0.1).close ``` expecting an `Errno::ECONNREFUSED` exception if the port is closed.  On Darwin with Ruby 3.3, a non-blocking connect (`connect_timeout`) to an unused port does not raise `Errno::ECONNREFUSED`. Instead, `IO.select` marks the socket writable, and the error code is held in the socket option `SO_ERROR: 61 (ECONNREFUSED)`.   Because no except
 
-- **Issue #40658** (2026-11-16): **Inbox: pressing r replies to the wrong topic after the list changes**
-  *Symptoms*: In Inbox, if I focus a topic with the arrow keys and then a topic above it gets marked as read somewhere else, pressing `r` replies to the wrong topic (the one just below the focused one).  **To reproduce**  1. Open Inbox in two tabs with a few unread topics. 2. In tab 1, arrow down to a topic near the bottom. 3. In tab 2, mark a topic near the top as read. 4. In tab 1, press `r`.  Compose opens for the next topic down, even though the focus ring is still on the one I picked. It also happens when a new unread topic shows up above the focused row.  From what I can tell, `row_focus` in `web/src/inbox_ui.ts` stores the row's position, and it isn't updated when rows above it are added or removed.  I have a small fix and can open a PR.  **AI use:** I used Claude to help find and understand this issue, and to debug and draft the fix.
+- **Issue #40704** (2026-11-17): **Update 12.4 to 13.2**
+  *Symptoms*: Following an update from 12.4 to 13.2, the following issues have appeared on Windows 7 clients using Firefox 115.26: 1. Status indicators have turned white. 2. The `message_feed_container` header overlaps with the main window.  <img width="1366" height="452" alt="zulip" src="https://github.com/user-attachments/assets/92a03a3e-31aa-4ca9-b3d4-937ff6b6c628" />  I also noticed that there are long-running requests leading up to these events:  <img width="1262" height="335" alt="events_1" src="https://github.com/user-attachments/assets/997b752a-28df-4ba3-a42b-3705af83a81d" /> 
+  **Post-Mortem & Fix Analysis**:
+  > A couple preliminary things to try on your end while I chat with folks here: - Are your users able to update to a more recent version of Firefox ESR 115? It looks like 115.45 was just released. - Can they try Zulip Desktop https://zulip.com/apps/?
+  > Update: the oldest Firefox that we support in Zulip 13 is ESR 126. However, our team is not able to think of any changes between 12 and 13 that would cause the display issues you're seeing. Wondering if there could be something cached on the user's system that’s causing this?  Please feel welcome to come chat about it in the [production help](https://chat.zulip.org/#narrow/channel/31-production-help) channel of the [Zulip Development Community](https://zulip.com/development-community/)! Folks with more helpful context are active there.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1234,385 +1234,448 @@ def check_rabbitmq_queues() -> None:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1bc06e2d` (2026-11-05)
-**Commit Message**: portico: Fix typos on development community and security pages.
+### Incident Patch 1: `08bb8255` (2026-10-02)
+**Commit Message**: reactions: Remove `overflow: hidden` from the reactions box.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+With reaction pills now shrinking to fit the reactions box, nothing
+in the box can extend past its edges, so its `overflow: hidden` is no
+longer needed. It was added in bb0225acec to suppress a scroll bar,
+back when the pills were floats contained by the overflow; the box
+is now a wrapping flexbox, which contains its items by itself.
 
-**File**: `templates/corporate/development-community.md` (modified, +1/-1)
+Fixes #38594.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `web/styles/reactions.css` (modified, +0/-1)
 ```diff
-@@ -263,7 +263,7 @@ topic to a different channel](/help/move-content-to-another-channel).
- - [#learning](https://chat.zulip.org/#narrow/channel/92-learning) is
-   for posting great learning resources one comes across.
- - [#off topic](https://chat.zulip.org/#narrow/channel/97-off-topic) is
--  is for occasional conversations not related to Zulip, usually things
-+  for occasional conversations not related to Zulip, usually things
-   of general interest to open-source communities.
+@@ -1,5 +1,4 @@
+ .message_reactions {
+-    overflow: hidden;
+     user-select: none;
  
- You can always find the description for the channel you’re reading at
-```
-
-**File**: `templates/corporate/security.md` (modified, +1/-1)
-```diff
-@@ -111,7 +111,7 @@ security issues from being introduced in Zulip.
- 
- ### Development process
- 
--- **Comprehensive automated testing**: The Zulip server has an remarkably
-+- **Comprehensive automated testing**: The Zulip server has a remarkably
-   complete automated test suite, including [complete test
-   coverage](https://app.codecov.io/gh/zulip/zulip/tree/main/zerver) in
-   security-sensitive code paths.
+     &:has(.message_reaction) {
 ```
 
 ---
 
-### Incident Patch 2: `5e601915` (2026-11-16)
-**Commit Message**: skills: Add write-security-advisory skill.
+### Incident Patch 2: `543451f6` (2026-10-21)
+**Commit Message**: streams: Fix "-1 days" in channel retention change notice.
 
-This is a skill for generating the first draft of a security advisory in
-the style that we usually use.
+When a channel's retention period changed between the organization
+default and an explicit value, and both resolved to forever, the
+notice showed "New retention period: -1 days" and said messages would
+be deleted "-1 days after they are sent". Only the notice was wrong;
+such channels are still excluded from retention-based deletion.
 
-I used it for drafting multiple of recent security advisories and the
-quality of the generated draft is much more satisfactory than without
-this skill. Of course proof-reading is still required, as Claude makes
-subtle factual mistakes or uses clunky or imprecise phrasing.
+Fix this by formatting the old and new periods independently, and
+label a period that comes from the organization default, so that
+default-to-explicit changes with the same effective period no longer
+read as "Forever -> Forever" or "N days -> N days".
 
-**File**: `.claude/skills/write-security-advisory/SKILL.md` (added, +105/-0)
+Reported at
+https://chat.zulip.org/#narrow/channel/31-production-help/topic/bug.20when.20retention.20is.20set.20to.20forever.3F/with/2542327
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
+
+**File**: `zerver/actions/streams.py` (modified, +15/-11)
 ```diff
-@@ -0,0 +1,105 @@
-+---
-+name: write-security-advisory
-+description: "Draft or revise a GitHub security advisory for a Zulip vulnerability. Use whenever writing, reviewing, or editing advisory text, such as a GHSA or CVE description."
-+---
+@@ -1634,27 +1634,31 @@ def send_change_stream_message_retention_days_notification(
+     sender = get_system_bot(settings.NOTIFICATION_BOT, user_profile.realm_id)
+     user_mention = silent_mention_syntax_for_user(user_profile)
+ 
++    old_is_realm_default = old_value is None
++    new_is_realm_default = new_value is None
 +
-+# Writing a Zulip security advisory
+     # If switching from or to the organization's default retention policy,
+     # we want to take the realm's default into account.
+     if old_value is None:
+         old_value = stream.realm.message_retention_days
+     if new_value is None:
+         new_value = stream.realm.message_retention_days
+ 
++    def format_retention_period(value: int, is_realm_default: bool) -> str:
++        if value == Stream.MESSAGE_RETENTION_SPECIAL_VALUES_MAP["unlimited"]:
++            if is_realm_default:
++                return _("Forever (organization default)")
++            return _("Forever")
++        if is_realm_default:
++            return _("{number_of_days} days (organization default)").format(number_of_days=value)
++        return _("{number_of_days} days").format(number_of_days=value)
 +
-+A security advisory is read by administrators deciding whether they're affected and
-+how urgently to upgrade. Every sentence should help that decision. Anything that only
-+matters to Zulip developers (how the fix works internally, data model history,
-+migrations, backfills) is noise, and gets cut in review.
-+
-+Read `references/examples.md` before drafting: it has three advisories that show
-+the expected style. Match their tone, length, and structure.
-+
-+## Before writing: verify the facts
-+
-+Advisories get cited for years, so every factual claim must come from the code or git
-+history, not from a bug report or memory. Before drafting, establish:
-+
-+- **Affected versions.** Find the introducing commit and run
-+  `git tag --contains <sha> | sort -V | head` for the first affected release, and
-+  `git tag -l '<major>.*' | sort -V | tail` for the latest release. Write the range as
-+  "Zulip Server X.Y through A.B". The fixed version is usually the next patch release
-+  of the stable branch, but confirm it with the user.
-+- **Who can trigger it.** Check the permission decorators and checks on the endpoint
-+  (e.g., `@require_realm_admin`, owner-only checks), and say which role is needed.
-+- **Every code path that leads to the vulnerable state.** E.g., if users can be deleted
-+  with or without their messages, the advisory has to be accurate for both cases.
-+- **Where a feature exists.** Code in `corporate/` (such as the `/activity/support`
-+  panel) only exists on Zulip Cloud, not on self-hosted servers.
-+- **User-facing names.** Use the names from the help center
-+  (`starlight_help/src/content/docs/`), e.g., "Public and private data (with consent)"
-+  export or "reusable invitation link", rather than internal names, except where
-+  Details explains the mechanism.
-+
-+## Structure
-+
-+Start the file with a `Title:` line, then the sections as `###` headings.
-+
-+**Title.** Describe the behavior in plain language, as an admin would notice it.
-+"Sign-up via reusable invitation links skips single sign-on" is good;
-+"Fix missing check in HomepageForm" is not. If the attacker gains more than one
-+capability, the title should cover all of them, without overstating any.
-+
-+**Summary.** Must work alone for triage. Say what an attacker can do, to whom, and under
-+which conditions. End with a severity sentence that names the preconditions that limit
-+it, e.g., "Severity is low: it requires a valid reusable invitation link, which only
-+administrators can create by default." If a precondition is rare, state the fact that
-+makes it rare (for example "User deletion isn't available in the Zulip apps…"), not a
-+guess like "deleted users are rare".
-+
-+**Details.** The root cause: what the feature normally does, what went wrong, and why.
-+Naming functions and files is fine (`get_consented_user_ids` (`zerver/lib/export.py`)),
-+as is referencing an earlier CVE whose check was incomplete. Name an API endpoint
-+or parameter only when it's needed to explain the root cause. Don't include
-+reproduction steps or exploit scripts.
-+
-+**Impact.** What the attacker gains, and from whom. List the conditions an
-+organization must meet to be affected, as bullets if there are several. If it helps,
-+say what the attacker does _not_ gain, e.g., "This is an integrity issue only". End with
-+the affected version range and then simply "This is fixed in Zulip Server X.Y." Leave out:
-+
-+- how the fix works, migrations, or backfills;
-+- anything an admin can't act on.
-+
-+**Severity** (optional, for serious issues). A CVSS score, plus a note when CVSS misses
-+the real-world impact.
-+
-+**Workarounds** (only if a real one exists). A workaround must neutralize the bug
-+without upgrading, e.g., revoking reusable invitation links, or removing the configured
-+email domains. "Don't use the affected feature" is not a workaround. When there's no
-+real workaround, leave the section out entirely rather than writing "None" or a weak
-+mitigation.
-+
-+**References** (optional). Links to relevant `https://zulip.com/help/...` articles,
-+with anchors where useful.
-+
-+Don't credit the reporter in the body. GitHub's credit field handles that.
-+
-+## Prose
-+
-+Reviewers read every sentence closely. These are the most common problems in drafts:
-+
-+- **Imprecise words.** "never allowed" when the accurate phrase is "had not allowed"
-+  (a user may have allowed it and later turned it off), or "messages of the deleted
-+  user" when some deletion paths remove them ("any remaining messages").
-+- **Inconsistent terms across sections.** If Details says the setting is "disabled",
-+  Impact must not say it was "reset".
-+- **Overloaded sentences.** One idea per sentence. Avoid tacked-on clauses
-+  ("…, even when …"), 
+     with override_language(stream.realm.default_language):
+-        if old_value == Stream.MESSAGE_RETENTION_SPECIAL_VALUES_MAP["unlimited"]:
+-            old_retention_period = _("Forever")
+-            new_retention_period = _("{number_of_days} days").format(number_of_days=new_value)
+-            summary_line = _(
+-                "Messages in this channel will now be automatically deleted {number_of_days} days after they are sent."
+-            ).format(number_of_days=new_value)
+-        elif new_value == Stream.MESSAGE_RETENTION_SPECIAL_VALUES_MAP["unlimited"]:
+-            old_retention_period = _("{number_of_days} days").format(number_of_days=old_value)
+-            new_retention_period = _("Forever")
++        old_retention_period = format_retention_period(old_value, old_is_realm_default)
++        new_retention_period = format_retention_period(new_value, new_is_realm_default)
++        if new_value == Stream.MESSAGE_RETENTION_SPECIAL_VALUES_MAP["unlimited"]:
+             summary_line = _("Messages in this channel will now be retained forever.")
+         else:
+-            old_retention_period = _("{number_of_days} days").format(number_of_days=old_value)
+-            new_retention_period = _("{number_of_days} days").format(number_of_days=new_value)
+             summary_line = _(
+                 "Messages in this channel will now be automatically deleted {number_of_days} days after they are sent."
+             ).format(number_of_days=new_value)
 ```
 
-**File**: `.claude/skills/write-security-advisory/references/examples.md` (added, +108/-0)
+**File**: `zerver/tests/test_subs.py` (modified, +83/-2)
 ```diff
-@@ -0,0 +1,108 @@
-+# Example advisories
+@@ -2314,7 +2314,7 @@ def test_change_stream_message_retention_days_notifications(self) -> None:
+         self.assert_length(messages, 1)
+         expected_notification = (
+             f"@_**Desdemona|{user_profile.id}** has changed the [message retention period](/help/message-retention-policy) for this channel:\n"
+-            "* **Old retention period**: Forever\n"
++            "* **Old retention period**: Forever (organization default)\n"
+             "* **New retention period**: 2 days\n\n"
+             "Messages in this channel will now be automatically deleted 2 days after they are sent."
+         )
+@@ -2358,7 +2358,7 @@ def test_change_stream_message_retention_days_notifications(self) -> None:
+         expected_notification = (
+             f"@_**Desdemona|{user_profile.id}** has changed the [message retention period](/help/message-retention-policy) for this channel:\n"
+             "* **Old retention period**: 8 days\n"
+-            "* **New retention period**: Forever\n\n"
++            "* **New retention period**: Forever (organization default)\n\n"
+             "Messages in this channel will now be retained forever."
+         )
+         self.assertEqual(messages[2].content, expected_notification)
+@@ -2372,6 +2372,87 @@ def test_change_stream_message_retention_days_notifications(self) -> None:
+         }
+         self.assertEqual(realm_audit_log.extra_data, expected_extra_data)
+ 
++        # Go from realm default (forever) to forever
++        result = self.client_patch(
++            f"/json/streams/{stream.id}",
++            {"message_retention_days": orjson.dumps("unlimited").decode()},
++        )
++        self.assert_json_success(result)
++        messages = get_topic_messages(user_profile, stream, "channel events")
++        self.assert_length(messages, 4)
++        expected_notification = (
++            f"@_**Desdemona|{user_profile.id}** has changed the [message retention period](/help/message-retention-policy) for this channel:\n"
++            "* **Old retention period**: Forever (organization default)\n"
++            "* **New retention period**: Forever\n\n"
++            "Messages in this channel will now be retained forever."
++        )
++        self.assertEqual(messages[3].content, expected_notification)
 +
-+Three advisories that show the expected style. The first two are lower severity and
-+use the standard structure. The third is a more serious issue with a Severity section,
-+a Workarounds section, and an Impact-first structure.
++        # Go from forever to realm default (forever)
++        result = self.client_patch(
++            f"/json/streams/{stream.id}",
++            {"message_retention_days": orjson.dumps("realm_default").decode()},
++        )
++        self.assert_json_success(result)
++        messages = get_topic_messages(user_profile, stream, "channel events")
++        self.assert_length(messages, 5)
++        expected_notification = (
++            f"@_**Desdemona|{user_profile.id}** has changed the [message retention period](/help/message-retention-policy) for this channel:\n"
++            "* **Old retention period**: Forever\n"
++            "* **New retention period**: Forever (organization default)\n\n"
++            "Messages in this channel will now be retained forever."
++        )
++        self.assertEqual(messages[4].content, expected_notification)
 +
-+## Example 1: Data exposure, no workaround (fixed in 12.4)
++        do_set_realm_property(realm, "message_retention_days", 10, acting_user=None)
 +
-+```markdown
-+Title: Exports with member consent include direct messages of deleted users' conversations
++        # Go from realm default (10 days) to 10 days
++        result = self.client_patch(
++            f"/json/streams/{stream.id}", {"message_retention_days": orjson.dumps(10).decode()}
++        )
++        self.assert_json_success(result)
++        messages = get_topic_messages(user_profile, stream, "channel events")
++        self.assert_length(messages, 6)
++        expected_notification = (
++            f"@_**Desdemona|{user_profile.id}** has changed the [message retention period](/help/message-retention-policy) for this channel:\n"
++            "* **Old retention period**: 10 days (organization default)\n"
++            "* **New retention period**: 10 days\n\n"
++            "Messages in this channel will now be automatically deleted 10 days after they are sent."
++        )
++        self.assertEqual(messages[5].content, expected_notification)
 +
-+### Summary
++        # Go from 10 days to realm default (10 days)
++        result = self.client_patch(
++            f"/json/streams/{stream.id}",
++            {"message_retention_days": orjson.dumps("realm_default").decode()},
++        )
++        self.assert_json_success(result)
++        messages = get_topic_messages(user_profile, stream, "channel events")
++        self.assert_length(messages, 7)
++        expected_notification = (
++            f"@_**Desdemona|{user_profile.id}** has changed the [message retention period](/help/message-retention-policy) for this channel:\n"
++            "* **Old retention period**: 10 days\n"
++            "* **New retention period**: 10 days (organization default)\n\n"
++            "Messages in this channel will now be automatically deleted 10 days after they are sent."
++        )
++        self.assertEqual(messages[6].content, expected_notification)
 +
-+An organization export of public and private data with member consent treated every deleted user as having consented to the export of their private data. As a result, the export included direct messages from conversations that a deleted user had been part of, including messages written by other participants who had not consented. Severity is limited: creating such an export requires administrator permissions, and only conversations involving a deleted user are affected. User deletion isn't available in the Zulip apps: on self-hosted servers, it requires running the `manage.py delete_user` management command, and on Zulip Cloud, it's done by Zulip's support team.
-+
-+### Details
-+
-+The "Public and private data (with consent)" export includes the private data of users who have allowed administrators to export it. Since Zulip Server 11.0, it also treats mirror dummy accounts as consenting. Mirror dummies are placeholder accounts that represent users from data imported from other products, such as Slack, and they only contain data that was already accessible to the exporting organization.
-+
-+When a user is deleted (as opposed to deactivated), their account is turned into a mirror dummy too, so `get_consented_user_ids` (`zerver/lib/export.py`) considered them to be consenting. Deleting a user also disables their export consent setting, but since mirror dummies are considered consenting regardless of that setting, this had no effect. The deleted account remains a participant in its direct message conversations, so the export included those conversations, along with messages from the other participants.
-+
-+### Impact
-+
-+An organization administrator could obtain, through an export with member consent, direct messages in conversations that a deleted user had been part of. This includes messages sent in such conversations by other participants who had not allowed administrators to export their private data, as well as any remaining messages of the deleted user, whose consent setting was disabled when they were deleted.
-+
-+This affects Zulip Server 11.0 through 12.3, and only organizations with at least one deleted user.
-+
-+This is fixed in Zulip Server 12.4.
-+
-+### References
-+
-+- [Export your organization](https://zulip.com/help/export-your-organization)
-+- [Configure whether administrators can export your private data](https://zulip.com/help/export-your-organization#configure-whether-administrators-can-export-your-private-data)
-+```
-+
-+Notes: there was no real workaround, so Workarounds was left out. ("Use the public
-+data export instead" was rejected because it just means not using the feature.)
-+Sentences about a migration for users deleted before 12.0 and about existing exports
-+were cut as noise.
-+
-+## Example 2: Authentication bypass with a workaround
-+
-+```markdown
-+Title: Sign-up via reusable invitation links skips single sign-on
-+
-+### Summary
-+
-+In Zulip organizations where only external authentication methods are enabled (e.g., SAML, OpenID Connect or Google), anyone with a reusable invitation link could create an account without using any of those methods. They only needed to control an email address the organization allows. Severity is low: it requires a valid reusable invitation link, which only administrators can create by default.
-+
-+### Details
-+
-+A reusable invitation link's sign-up page doesn't show the email form when no password-based authentication method (email or LDAP) is enabled. However, the server still accepted an email address submitted to the link (`/join/<key>/`). It sent a confirmation email to that address, and following the confirmation link created the account and logged the user in.
-+
-+The check that rejects email-based sign-up in such organizations, added for CVE-2025-31478 in `HomepageForm.clean_email` (`zerver/forms.py`), was skipped for requests coming from reusable invitation links (`from_multiuse_invite`).
-+
-+### Impact
-+
-+This lets someone skip the organization's single sign-on requirement. It affects organizations that:
-+- have no password-based authentication method enabled; and
-+- have at least one active reusable invitation link.
-+
-+The person must possess the link and control the email address used. The resulting account has the role and channel subscriptions specified by the link. Restricting sign-up to specific email domains limits which addresses can be used. Revoking reusable invitation links fully mitigates the issue until upgrading.
-+
-+This is fixed in Zulip Server 12.4.
-+```
-+
-+Notes: the workaround (revoking reus
++        # Go from realm default (10 days) to forever
++ 
 ```
 
 ---
 
-### Incident Patch 3: `48a97cc0` (2026-11-05)
-**Commit Message**: docs: Fix typos and grammar errors.
+### Incident Patch 3: `c0b7d8bd` (2026-11-16)
+**Commit Message**: message_edit: Fix move notification links breaking on topic renames.
 
-This fixes repeated words, misspellings, and incorrect a/an usage
-across the developer and API documentation. It also removes an
-unmatched closing parenthesis from an API changelog entry.
+When a topic's name can't be written in the `#**channel>topic**`
+syntax, for example because it contains backticks, the notifications
+sent when messages are moved fall back to a plain Markdown link to
+that topic. That link had no `with` operand, unlike the link the
+syntax renders to, so it stopped working once the topic was renamed
+or moved again.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Fix this by adding a `with` operand to the fallback link. It uses the
+latest message in the linked topic that the user who moved the
+messages can access, which is the message the syntax would have
+picked.
 
-**File**: `api_docs/changelog.md` (modified, +3/-3)
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `zerver/actions/message_edit.py` (modified, +32/-3)
 ```diff
-@@ -1065,7 +1065,7 @@ No changes; API feature level used for the Zulip 11.0 release.
-   integration URL parameter options. Previously, these optional URL
-   parameters were included in the `config_options` field (see feature
-   level 318 entry). The `config_options` object is now reserved for
--  configuration data that can be set when creating an bot user for a
-+  configuration data that can be set when creating a bot user for a
-   specific incoming webhook integration.
+@@ -73,6 +73,7 @@
+ from zerver.lib.timestamp import datetime_to_timestamp
+ from zerver.lib.topic import (
+     RESOLVED_TOPIC_PREFIX,
++    get_latest_message_for_user_in_topic,
+     get_topic_display_name,
+     maybe_rename_general_chat_to_empty_topic,
+     messages_for_topic,
+@@ -81,7 +82,10 @@
+     update_edit_history,
+     update_messages_for_topic_edit,
+ )
+-from zerver.lib.topic_link_util import get_stream_topic_link_syntax
++from zerver.lib.topic_link_util import (
++    get_stream_topic_link_syntax,
++    topic_link_needs_fallback_markdown_link,
++)
+ from zerver.lib.types import (
+     DirectMessageEditRequest,
+     EditHistoryEvent,
+@@ -334,6 +338,27 @@ def maybe_delete_previous_resolve_topic_notification(
+     return True
  
- **Feature level 402**
-@@ -3386,7 +3386,7 @@ No changes; feature level used for Zulip 7.0 release.
  
- * [All REST API endpoints](/api/rest-error-handling#ignored-parameters):
-   Implemented `ignored_parameters_unsupported` as a possible return value
--  in the JSON success response for all endpoints. This value is a array
-+  in the JSON success response for all endpoints. This value is an array
-   of any parameters that were sent in the request by the client that are
-   not supported by the endpoint. Previously, unsupported parameters were
-   silently ignored, except in the subset of endpoints which already
-@@ -4646,7 +4646,7 @@ No changes; feature level used for Zulip 3.0 release.
-   `realm_bot` events no longer contain an `email` field to identify
-   the user; use the `user_id` field instead.  Previously, some (but
-   not all) events of these types contained an `email` key in addition to
--  to `user_id`) for identifying the modified user.
-+  `user_id` for identifying the modified user.
- * [`PATCH /users/{user_id}`](/api/update-user): The `is_admin` and
-   `is_guest` parameters were removed in favor of the more general
-   `role` parameter for specifying a change in user role.
++def get_topic_link_syntax_for_move_notification(
++    stream: Stream, topic_name: str, user_profile: UserProfile
++) -> str:
++    # The #**channel>topic** syntax gets its `with` operand when it is
++    # rendered, so we only look one up when that syntax can't be used.
++    with_message_id = None
++    if topic_link_needs_fallback_markdown_link(stream.name, topic_name):
++        assert stream.recipient_id is not None
++        with_message_id = get_latest_message_for_user_in_topic(
++            stream.realm_id,
++            user_profile,
++            stream.recipient_id,
++            topic_name,
++            stream.is_history_public_to_subscribers(),
++            acting_user_has_channel_content_access=True,
++        )
++    return get_stream_topic_link_syntax(
++        stream.id, stream.name, topic_name, with_message_id=with_message_id
++    )
++
++
+ def send_message_moved_breadcrumbs(
+     target_message: Message,
+     user_profile: UserProfile,
+@@ -352,8 +377,6 @@ def send_message_moved_breadcrumbs(
+     old_topic_name = message_edit_request.orig_topic_name
+     new_stream = message_edit_request.target_stream
+     new_topic_name = message_edit_request.target_topic_name
+-    old_topic_link = get_stream_topic_link_syntax(old_stream.id, old_stream.name, old_topic_name)
+-    new_topic_link = get_stream_topic_link_syntax(new_stream.id, new_stream.name, new_topic_name)
+     message = {
+         "id": target_message.id,
+         "stream_id": new_stream.id,
+@@ -363,6 +386,9 @@ def send_message_moved_breadcrumbs(
+     moved_message_link = stream_message_url(target_message.realm, message)
+ 
+     if new_thread_notification_string is not None:
++        old_topic_link = get_topic_link_syntax_for_move_notification(
++            old_stream, old_topic_name, user_profile
++        )
+         with override_language(new_stream.realm.default_language):
+             internal_send_stream_message(
+                 sender,
+@@ -379,6 +405,9 @@ def send_message_moved_breadcrumbs(
+             )
+ 
+     if old_thread_notification_string is not None:
++        new_topic_link = get_topic_link_syntax_for_move_notification(
++            new_stream, new_topic_name, user_profile
++        )
+         with override_language(old_stream.realm.default_language):
+             # Send a notification to the old stream that the topic was moved.
+             internal_send_stream_message(
 ```
 
-**File**: `docs/outreach/gsoc.md` (modified, +1/-1)
+**File**: `zerver/lib/topic_link_util.py` (modified, +19/-3)
 ```diff
-@@ -226,7 +226,7 @@ Django, TypeScript/JavaScript, and CSS.
-   number of others we would like to add. Also, several extensions to the
-   framework that would dramatically improve the user experience of using
-   integrations, e.g., being able to do callbacks to third-party services
--  like Stripe to display more user-friendly notifications. The [the integrations
-+  like Stripe to display more user-friendly notifications. The [integrations
-   label on GitHub](https://github.com/zulip/zulip/labels/area%3A%20integrations)
-   lists some of the priorities here (many of which are great preparatory
-   projects). 175 or 350 hours; medium difficulty with various possible difficult
-```
-
-**File**: `docs/overview/changelog.md` (modified, +4/-4)
-```diff
-@@ -1372,7 +1372,7 @@ _Released 2025-03-20_
-   Permissions panel showing all the permissions that membership in the
-   group grants.
- - Channel administration permissions have been restructured to be
--  based on groups, with new settings for administrering channels,
-+  based on groups, with new settings for administering channels,
-   adding subscribers, removing them, and being able to join channels.
- - The access control model for message content in channels has been
-   generalized to allow users to be able to join a private channel at
-@@ -1578,7 +1578,7 @@ _Released 2025-03-20_
-   which collection of messages to move.
- - Improved compose user mention typeahead to de-prioritize bots.
- - Improved internationalization (emoji picker categories, joining
--  lists of names without hardcoding `,` as a the separator, etc.)
-+  lists of names without hardcoding `,` as the separator, etc.)
- - Fixed a bug where new user accounts joining an organization that had
-   been idle in recent months would be created with very few messages
-   in their combined feed.
-@@ -2329,7 +2329,7 @@ _Released 2023-12-15_
- - Linkifiers are now processed in a defined, editable order.
- - Scheduled messages are now displayed when viewing the conversation
-   where they will be sent.
--- Message edit history has a Shift+H keyboard shortuct and is now
-+- Message edit history has a Shift+H keyboard shortcut and is now
-   accessed via the mouse exclusively by clicking on EDITED/MOVED
-   notices, simplifying the main message actions popover.
- - Users can now delete messages sent by bots that they control as
-@@ -2747,7 +2747,7 @@ _Released 2023-05-31_
-   been migrated from a custom format string to RFC 6570 URL
-   templates. A database migration will automatically migrate existing
-   linkifiers correctly in the vast majority of cases, but some fancier
--  linkfiers may require manual adjustment to generate correct URLs
-+  linkifiers may require manual adjustment to generate correct URLs
-   following this upgrade.
- - PostgreSQL 11 is no longer supported; if you are currently using it, you will
-   need to [upgrade PostgreSQL](../production/upgrade.md#upgrading-postgresql)
-```
-
-**File**: `docs/production/mobile-push-notifications.md` (modified, +1/-1)
-```diff
-@@ -507,7 +507,7 @@ Server or the mobile app is a version predating the 12.0 release
- non-E2EE protocol will be used.
+@@ -58,19 +58,31 @@ def get_message_link_label(
  
- The central design goal of the legacy Push Notification Service
--service was to avoid any message content being stored or logged by the
-+was to avoid any message content being stored or logged by the
- service, even in error cases.
  
- - The Push Notification Service only stores the necessary metadata for
-```
-
-**File**: `docs/production/upload-backends.md` (modified, +1/-1)
-```diff
-@@ -286,7 +286,7 @@ lifecycle transition cost][s3-pricing].
+ def get_fallback_markdown_link(
+-    stream_id: int, stream_name: str, topic_name: str | None = None, message_id: int | None = None
++    stream_id: int,
++    stream_name: str,
++    topic_name: str | None = None,
++    message_id: int | None = None,
++    *,
++    with_message_id: int | None = None,
+ ) -> str:
+     """
+     Helper that should only be called by other methods in this file.
  
- ## Data export bucket
+     Generates the vanilla markdown link syntax for a stream/topic/message link, as
+     a fallback for cases where the nicer Zulip link syntax would not
+     render properly due to special characters in the channel or topic name.
++
++    `with_message_id` makes a topic link follow that message if the
++    topic is later moved or renamed, as the `#**channel>topic**` syntax
++    does when rendered.
+     """
+     link = f"#narrow/channel/{encode_channel(stream_id, stream_name)}"
+     if topic_name is not None:
+         link += f"/topic/{encode_hash_component(topic_name)}"
  
--The [data export process](export-and-import.md#data-export) process, when
-+The [data export process](export-and-import.md#data-export), when
- [triggered from the
- UI](https://zulip.com/help/export-your-organization), uploads the
- completed export so it is available to download from the server; this
-```
-
-**File**: `docs/subsystems/billing.md` (modified, +1/-1)
-```diff
-@@ -127,7 +127,7 @@ Here are some flows to test when upgrading a remote Zulip organization:
-   `SELF_HOSTING_FREE_TRIAL_DAYS` to `30` days. You can change this
-   value and other settings for your development environment only in
-   `zproject/custom_dev_settings.py`, or secrets in
--  `zproject/dev-secrets.conf`. Note that this only provides free trail
-+  `zproject/dev-secrets.conf`. Note that this only provides a free trial
-   for the basic plan.
++    if with_message_id is not None:
++        link += f"/with/{with_message_id}"
++
+     if message_id is not None:
+         link += f"/near/{message_id}"
  
-   - Using a valid card number like `4242 4242 4242 4242`, the
-```
-
-**File**: `docs/subsystems/performance.md` (modified, +1/-1)
-```diff
-@@ -208,7 +208,7 @@ The cost for fetching `page_params` varies dramatically based
- primarily on the organization's size, varying from 90ms-300ms for a
- typical organization but potentially multiple seconds for large open
- organizations with 10,000s of users. There is also smaller
--variability based on a individual user's personal data state,
-+variability based on an individual user's personal data state,
- primarily in that having 10,000s of unread messages results in a
- somewhat expensive query to find which channels/topics those are in.
+@@ -95,11 +107,15 @@ def get_message_link_syntax(
+     return f"#**{stream_name}>{topic_name}@{message_id}**"
+ 
+ 
+-def get_stream_topic_link_syntax(stream_id: int, stream_name: str, topic_name: str) -> str:
++def get_stream_topic_link_syntax(
++    stream_id: int, stream_name: str, topic_name: str, *, with_message_id: int | None = None
++) -> str:
+     # If the stream/topic name is such that it will generate an invalid #**stream>topic** syntax,
+     # we revert to generating the normal markdown syntax for a link.
+     if topic_link_needs_fallback_markdown_link(stream_name, topic_name):
+-        return get_fallback_markdown_link(stream_id, stream_name, topic_name)
++        return get_fallback_markdown_link(
++            stream_id, stream_name, topic_name, with_message_id=with_message_id
++        )
+     return f"#**{stream_name}>{topic_name}**"
+ 
  
 ```
 
-**File**: `docs/subsystems/realms.md` (modified, +1/-1)
+**File**: `zerver/tests/test_message_move_stream.py` (modified, +64/-0)
 ```diff
-@@ -61,7 +61,7 @@ test the various Zulip configurations for different subdomains:
- - The root domain (like `zulip.com` itself) is `zulipdev.com` itself.
- - The default realm is hosted on `localhost:9991` rather than
-   `zulip.zulipdev.com`, using the [`REALM_HOSTS`
--  feature](../production/multiple-organizations.md) feature.
-+  feature](../production/multiple-organizations.md).
+@@ -446,6 +446,70 @@ def test_move_message_to_stream(self) -> None:
+             f"This topic was moved here from #**test move stream>test** by @_**Iago|{user_profile.id}**.",
+         )
  
- Details are below.
- 
++    def test_move_message_to_topic_name_unsupported_by_topic_link_syntax(self) -> None:
++        (user_profile, old_stream, new_stream, msg_id, _msg_id_lt) = self.prepare_move_topics(
++            "iago", "test move stream", "new stream", "test"
++        )
++
++        result = self.client_patch(
++            f"/json/messages/{msg_id}",
++            {
++                "stream_id": new_stream.id,
++                "topic": "new `code` topic",
++                "propagate_mode": "change_all",
++                "send_notification_to_old_thread": "true",
++            },
++        )
++        self.assert_json_success(result)
++
++        messages = get_topic_messages(user_profile, new_stream, "new `code` topic")
++        self.assert_length(messages, 4)
++        latest_message_id_in_new_topic = messages[3].id
++
++        messages = get_topic_messages(user_profile, old_stream, "test")
++        self.assert_length(messages, 1)
++        self.assertEqual(
++            messages[0].content,
++            f"This topic was moved to [#new stream > new &#96;code&#96; topic](#narrow/channel/{new_stream.id}-new-stream/topic/new.20.60code.60.20topic/with/{latest_message_id_in_new_topic}) by @_**Iago|{user_profile.id}**.",
++        )
++
++    def test_move_message_from_topic_name_unsupported_by_topic_link_syntax(self) -> None:
++        (user_profile, old_stream, new_stream, _msg_id, msg_id_later) = self.prepare_move_topics(
++            "iago", "test move stream", "new stream", "old `code` topic"
++        )
++
++        result = self.client_patch(
++            f"/json/messages/{msg_id_later}",
++            {
++                "stream_id": new_stream.id,
++                "propagate_mode": "change_one",
++                "send_notification_to_old_thread": "false",
++                "send_notification_to_new_thread": "true",
++            },
++        )
++        self.assert_json_success(result)
++
++        messages = get_topic_messages(user_profile, old_stream, "old `code` topic")
++        self.assert_length(messages, 2)
++        latest_message_id_in_old_topic = messages[1].id
++
++        messages = get_topic_messages(user_profile, new_stream, "old `code` topic")
++        self.assert_length(messages, 2)
++        self.assertEqual(messages[0].id, msg_id_later)
++        moved_message_link = stream_message_url(
++            user_profile.realm,
++            {
++                "id": msg_id_later,
++                "stream_id": new_stream.id,
++                "display_recipient": new_stream.name,
++                "topic": "old `code` topic",
++            },
++        )
++        self.assertEqual(
++            messages[1].content,
++            f"[A message]({moved_message_link}) was moved here from [#test move stream > old &#96;code&#96; topic](#narrow/channel/{old_stream.id}-test-move-stream/topic/old.20.60code.60.20topic/with/{latest_message_id_in_old_topic}) by @_**Iago|{user_profile.id}**.",
++        )
++
+     def test_move_message_to_preexisting_topic(self) -> None:
+         (user_profile, old_stream, new_stream, msg_id, _msg_id_lt) = self.prepare_move_topics(
+             "iago",
+```
+
+**File**: `zerver/tests/test_topic_link_util.py` (modified, +10/-0)
+```diff
+@@ -32,6 +32,16 @@ def test_stream_topic_link_syntax(self) -> None:
+         self.assertEqual(
+             get_stream_topic_link_syntax(sweden_id, "Sweden", "topic"), "#**Sweden>topic**"
+         )
++        self.assertEqual(
++            get_stream_topic_link_syntax(sweden_id, "Sweden", "topic", with_message_id=123),
++            "#**Sweden>topic**",
++        )
++        self.assertEqual(
++            get_stream_topic_link_syntax(
++                sweden_id, "Sweden", "test `test` test", with_message_id=123
++            ),
++            f"[#Sweden > test &#96;test&#96; test](#narrow/channel/{sweden_id}-Sweden/topic/test.20.60test.60.20test/with/123)",
++        )
+         self.assertEqual(
+             get_stream_topic_link_syntax(sweden_id, "Sweden", "test `test` test"),
+             f"[#Sweden > test &#96;test&#96; test](#narrow/channel/{sweden_id}-Sweden/topic/test.20.60test.60.20test)",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #40743** (2026-11-18): Updated translations for main from Weblate. (@mateuszmandera)
+- **PR #40742** (closed): Updated translations for main from Weblate. (@mateuszmandera)
+- **PR #40733** (2026-11-17): [ai] ci: Test upgrades from 13.0. (@amanagr)
 - **PR #40728** (2026-11-17): [Backport] oidc: Enable PKCE. (@mateuszmandera)
-- **PR #40719** (closed): message_edit: Use a `with` link in the moved-message notification. (@evykassirer)
-- **PR #40713** (2026-11-16): version: Update version for Zulip Server 13.2 release. (@mateuszmandera)
-- **PR #40712** (2026-11-16): 13.x branch cleanup  (@mateuszmandera)
-- **PR #40706** (2026-11-17): oidc: Enable PKCE. (@mateuszmandera)
-- **PR #40705** (2026-11-16): skills: Add write-security-advisory skill. (@mateuszmandera)
+- **PR #40727** (closed): message_flags: Fix marking empty topics as read. (@nikitha-bit)
+- **PR #40720** (2026-11-18): message_edit: Fix "moved to" links breaking when the topic is renamed. (@evykassirer)
 
 ---
 
@@ -1626,34 +1689,3 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. portico: Fix typos on development community and security pages.
-
-**RULE**:
-When implementing operations in `templates/corporate/development-community.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `1bc06e2d`: portico: Fix typos on development community and security pages.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `templates/corporate/development-community.md`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```python
-// Verified production-grade fix pattern:
-  for occasional conversations not related to Zulip, usually things
-```
-
-**NEGATIVE CONSTRAINT**:
-```python
-// Induced defect failure mode:
-  is for occasional conversations not related to Zulip, usually things
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1bc06e2d` are properly handled with clean fallback behavior.

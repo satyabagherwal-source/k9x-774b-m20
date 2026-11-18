@@ -335,8 +335,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
     "sourceVersion": "hf-nvidia-nemotron-3-diarization",
     "license": "Open-Source",
-    "contentHash": "6476d41f82fdf7d89cd1676f4f0d06a1e35a01d8a7478e227a61d4f667f50af6",
-    "lastHarvestedAt": "2026-11-18T01:18:46.902Z",
+    "contentHash": "dc3273c0cd95cd615a9d3f46afbf7eb173580e8c2d523330cb1a2128e9aceeb2",
+    "lastHarvestedAt": "2026-11-18T12:23:50.001Z",
     "learningId": "learn-huggingface-nvidia-nemotron-3-diarization"
   },
   "hf-lightricks-ltx-2.5": {
@@ -2603,20 +2603,20 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "af6fc33a",
+    "sourceVersion": "1ad8da62",
     "license": "MIT",
-    "contentHash": "5cc29110976d575534b3a66db1ffc9c9915bab97364f67a3e226ed1b0db6def7",
-    "lastHarvestedAt": "2026-11-18T03:39:24.450Z",
+    "contentHash": "a8f016f40877b6558d68e7c64d0e47e5e4118d961cc751ed9a8297364c032ac0",
+    "lastHarvestedAt": "2026-11-18T12:23:54.194Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {
     "repository": "zulip/zulip",
     "platform": "github",
     "sourceUrl": "https://github.com/zulip/zulip",
-    "sourceVersion": "19e7b6bb",
+    "sourceVersion": "64b848e5",
     "license": "Apache-2.0",
-    "contentHash": "dec91f3b6fe914115d76f59d3791a255e5d4e430b515c0eeedcc72190c5a2046",
-    "lastHarvestedAt": "2026-11-17T10:51:32.012Z",
+    "contentHash": "88e6a4c6052ac1afbae67331489fd8bde75211e7333a6cc81560730a647464b5",
+    "lastHarvestedAt": "2026-11-18T12:23:57.450Z",
     "learningId": "learn-github-zulip-zulip"
   },
   "goodrain-rainbond": {
@@ -7183,10 +7183,10 @@
     "repository": "goharbor/harbor",
     "platform": "github",
     "sourceUrl": "https://github.com/goharbor/harbor",
-    "sourceVersion": "e7dbdea2",
+    "sourceVersion": "966747bd",
     "license": "Apache-2.0",
-    "contentHash": "173d139b7688e07773db8f38e0327249cc97e27760e8d1623c687afb6eba5c46",
-    "lastHarvestedAt": "2026-11-14T02:06:21.783Z",
+    "contentHash": "9813239bcd7d9d9f5a0ab06265c18174fe9ed299449369ebc0e6543163f30dde",
+    "lastHarvestedAt": "2026-11-18T12:24:00.640Z",
     "learningId": "learn-github-goharbor-harbor"
   },
   "joreilly-peopleinspace": {

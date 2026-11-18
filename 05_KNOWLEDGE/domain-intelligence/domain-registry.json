@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T12:16:17.507Z",
-  "total_records": 1845,
+  "last_updated": "2026-11-18T12:24:05.294Z",
+  "total_records": 1849,
   "domains": {
     "A": {
       "total": 11,
@@ -1236,7 +1236,7 @@
       ]
     },
     "H": {
-      "total": 431,
+      "total": 433,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1668,11 +1668,13 @@
         "domain_intelligence-technical-construction-intelligence-appwrite-appwrite-core-invariants",
         "domain_intelligence-technical-construction-intelligence-appwrite-appwrite-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-eclipse-theia-theia-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-eclipse-theia-theia-learnings-core-invariant"
+        "domain_intelligence-technical-construction-intelligence-eclipse-theia-theia-learnings-core-invariant",
+        "domain_intelligence-technical-construction-intelligence-zulip-zulip-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-zulip-zulip-learnings-core-invariants"
       ]
     },
     "I": {
-      "total": 89,
+      "total": 91,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1762,7 +1764,9 @@
         "domain_intelligence-content-information-intelligence-sayanarijit-xplr-learnings-core-invariants",
         "DOM-I-7687380A",
         "domain_intelligence-content-information-intelligence-projectcontour-contour-core-invariants",
-        "domain_intelligence-content-information-intelligence-projectcontour-contour-learnings-core-invariant"
+        "domain_intelligence-content-information-intelligence-projectcontour-contour-learnings-core-invariant",
+        "domain_intelligence-content-information-intelligence-codewhale-hq-codewhale-core-invariants",
+        "domain_intelligence-content-information-intelligence-hmbown-codewhale-learnings-core-invariants"
       ]
     },
     "J": {
@@ -12094,8 +12098,8 @@
       "title": "Architecture Intelligence: goharbor/harbor Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-goharbor-harbor-architecture-intelligence-goharbor-harbor-core-invariants.md",
       "repository": "goharbor/harbor",
-      "content_hash": "472d0331dc29aea11f4c4ced332a4aaf9b669a4bbe821938c7e7dddcfd463189",
-      "created_at": "2026-11-14T02:06:22.016Z"
+      "content_hash": "388e3665aeb8004fcacc2897ef6b2638338e2c717dc13194eedd75a54670cfef",
+      "created_at": "2026-11-18T12:24:00.959Z"
     },
     "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-lioensky-vcptoolbox-core-invariants",
@@ -29251,8 +29255,8 @@
       "title": "Research & Knowledge Intelligence: nvidia/Nemotron-3-Diarization Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nemotron-3-diarization-research-knowledge-intelligence-nvidia-nemotron.md",
       "repository": "nvidia/Nemotron-3-Diarization",
-      "content_hash": "1c89d304cb0d90dd1091fcc986b85c079d02b13ee55a33ed2eac4d501abefcac",
-      "created_at": "2026-11-18T01:18:47.071Z"
+      "content_hash": "fbd271769906f3b35f1bd23ce61e879c22d57c09cade32d479e6d0b253eed601",
+      "created_at": "2026-11-18T12:23:50.177Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nemotron-3-diarization-learnings-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nemotron-3-diarization-learnings-core-",
@@ -29260,8 +29264,8 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-nemotron-3-diarization-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nemotron-3-diarization-learnings-research-knowledge-intelligence-hf-nv.md",
       "repository": "hf-nvidia-nemotron-3-diarization-learnings",
-      "content_hash": "7edb8e340bc65c1dcf8de7dcbb680e164503ce01ebac223f70fe020bd7e8de3b",
-      "created_at": "2026-11-18T01:18:59.167Z"
+      "content_hash": "ca36b7b65a887a985e109f48aed56f35d8e9f2f70b179954f414563060e3e320",
+      "created_at": "2026-11-18T12:24:04.802Z"
     },
     "domain_intelligence-research-knowledge-intelligence-lightricks-ltx-2-5-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-lightricks-ltx-2-5-core-invariants",
@@ -30907,6 +30911,42 @@
       "repository": "sharkdp-fd-learnings",
       "content_hash": "075748f0c4fab8a244d2ae74811a5fb029310497b46053e0cc42e52b859fb11a",
       "created_at": "2026-11-18T12:16:16.570Z"
+    },
+    "domain_intelligence-content-information-intelligence-codewhale-hq-codewhale-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-codewhale-hq-codewhale-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: codewhale-hq/Codewhale Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-hmbown-codewhale-content-information-intelligence-codewhale-hq-codewhale-core-in.md",
+      "repository": "codewhale-hq/Codewhale",
+      "content_hash": "11248a2956aab1adf7329ea7b0cb2496e2f9bae7635cc7c631ebc4e64b6a7c1f",
+      "created_at": "2026-11-18T12:23:54.534Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zulip-zulip-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-zulip-zulip-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: zulip/zulip Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-technical-construction-intelligence-zulip-zulip-core-invariants.md",
+      "repository": "zulip/zulip",
+      "content_hash": "efbdb4db2bce886e70dce865dce89a1962d6851687ee40326f50083e3eba2ff6",
+      "created_at": "2026-11-18T12:23:57.629Z"
+    },
+    "domain_intelligence-content-information-intelligence-hmbown-codewhale-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-hmbown-codewhale-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: hmbown-codewhale-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-hmbown-codewhale-learnings-content-information-intelligence-hmbown-codewhale-lea.md",
+      "repository": "hmbown-codewhale-learnings",
+      "content_hash": "cb6a8625aeec4e0906fdb9589c8c17a07f083c8dcfd0d7c9fcbd37f9acac425e",
+      "created_at": "2026-11-18T12:24:04.226Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-zulip-zulip-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-zulip-zulip-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
+      "repository": "zulip-zulip-learnings",
+      "content_hash": "a4b2af2049388da90fc47ab420805870ddd2cf52b8e111a889d6efbb3334c1a0",
+      "created_at": "2026-11-18T12:24:05.294Z"
     }
   }
 }

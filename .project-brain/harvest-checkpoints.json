@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T12:16:12.923Z",
+  "last_updated": "2026-11-18T12:24:00.648Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -395,14 +395,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nemotron-3-diarization",
-      "content_hash": "6476d41f82fdf7d89cd1676f4f0d06a1e35a01d8a7478e227a61d4f667f50af6",
-      "verified_at": "2026-11-18T01:18:46.910Z",
+      "content_hash": "dc3273c0cd95cd615a9d3f46afbf7eb173580e8c2d523330cb1a2128e9aceeb2",
+      "verified_at": "2026-11-18T12:23:50.009Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T01:18:46.910Z"
+      "last_updated": "2026-11-18T12:23:50.009Z"
     },
     "Lightricks/LTX-2.5": {
       "repository": "Lightricks/LTX-2.5",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "5cc29110976d575534b3a66db1ffc9c9915bab97364f67a3e226ed1b0db6def7",
-      "verified_at": "2026-11-18T03:39:24.461Z",
+      "content_hash": "a8f016f40877b6558d68e7c64d0e47e5e4118d961cc751ed9a8297364c032ac0",
+      "verified_at": "2026-11-18T12:23:54.202Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T03:39:24.461Z"
+      "last_updated": "2026-11-18T12:23:54.202Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -4056,14 +4056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zulip-zulip",
-      "content_hash": "dec91f3b6fe914115d76f59d3791a255e5d4e430b515c0eeedcc72190c5a2046",
-      "verified_at": "2026-11-17T10:51:32.020Z",
+      "content_hash": "88e6a4c6052ac1afbae67331489fd8bde75211e7333a6cc81560730a647464b5",
+      "verified_at": "2026-11-18T12:23:57.458Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T10:51:32.020Z"
+      "last_updated": "2026-11-18T12:23:57.458Z"
     },
     "goodrain/rainbond": {
       "repository": "goodrain/rainbond",
@@ -10821,14 +10821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goharbor-harbor",
-      "content_hash": "173d139b7688e07773db8f38e0327249cc97e27760e8d1623c687afb6eba5c46",
-      "verified_at": "2026-11-14T02:06:21.790Z",
+      "content_hash": "9813239bcd7d9d9f5a0ab06265c18174fe9ed299449369ebc0e6543163f30dde",
+      "verified_at": "2026-11-18T12:24:00.647Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T02:06:21.790Z"
+      "last_updated": "2026-11-18T12:24:00.647Z"
     },
     "joreilly/PeopleInSpace": {
       "repository": "joreilly/PeopleInSpace",

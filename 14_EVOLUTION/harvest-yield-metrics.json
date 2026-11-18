@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T12:16:12.919Z",
-  "total_cycles_completed": 10480,
-  "total_learnings_persisted": 10480,
-  "total_rules_promoted": 9973,
+  "last_updated": "2026-11-18T12:24:00.645Z",
+  "total_cycles_completed": 10484,
+  "total_learnings_persisted": 10484,
+  "total_rules_promoted": 9975,
   "history": [
-    {
-      "timestamp": "2026-11-17T21:56:55.768Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T22:10:59.588Z",
-      "repository": "audio-cpp/audio.cpp-gguf",
-      "learningId": "learn-huggingface-audio-cpp-audio-cpp-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T22:11:01.961Z",
-      "repository": "apache/arrow",
-      "learningId": "learn-github-apache-arrow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T22:11:10.884Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T22:27:14.292Z",
       "repository": "black-forest-labs/FLUX.1-dev",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-18T12:16:12.919Z",
       "repository": "t8y2/dbx",
       "learningId": "learn-github-t8y2-dbx",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T12:23:50.006Z",
+      "repository": "nvidia/Nemotron-3-Diarization",
+      "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T12:23:54.199Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T12:23:57.455Z",
+      "repository": "zulip/zulip",
+      "learningId": "learn-github-zulip-zulip",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T12:24:00.645Z",
+      "repository": "goharbor/harbor",
+      "learningId": "learn-github-goharbor-harbor",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

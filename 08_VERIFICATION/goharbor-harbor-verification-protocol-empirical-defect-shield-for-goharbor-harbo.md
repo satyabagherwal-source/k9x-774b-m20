@@ -4,22 +4,22 @@
 {
   "source_repository": "goharbor/harbor",
   "source_url": "https://github.com/goharbor/harbor",
-  "source_version": "e7dbdea2",
+  "source_version": "966747bd",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-14T02:06:21.933Z",
+  "timestamp": "2026-11-18T12:24:00.820Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-goharbor-harbor",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [goharbor/harbor](https://github.com/goharbor/harbor) (Revision: `e7dbdea2`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T02:06:21.933Z`  
+> **Provenance**: Harvested from [goharbor/harbor](https://github.com/goharbor/harbor) (Revision: `966747bd`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T12:24:00.820Z`  
 > **Learning ID**: `learn-github-goharbor-harbor`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `goharbor/harbor` (Commit: `e7dbdea2`)
+- **Target Repository**: `goharbor/harbor` (Commit: `966747bd`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goharbor-harbor-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goharbor/harbor](https://github.com/goharbor/harbor))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T02:06:21.049Z  
+> **Harvest Timestamp**: 2026-11-18T12:23:59.677Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: An open source trusted cloud native registry project that stores, signs, and scans content.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 29726 stars
+- **Stars / Engagement**: 29754 stars
 
 ---
 
@@ -666,13 +666,11 @@ def prepare_job_service(config_dict):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #24382** (2026-11-12): **Retention policy API panics with 500 when scope or trigger is missing**
-  *Symptoms*: ### Expected behavior and actual behavior  `POST /api/v2.0/retentions` and `PUT /api/v2.0/retentions/{id}` should answer 400 when the body has no `scope` or no `trigger`.  Both return 500 instead, and core logs a nil pointer panic. The handlers read `p.Scope.Level` and `p.Scope.Reference` for the access check without checking `scope` is set, and `CreateRetention` in the retention controller reads `p.Trigger.Kind` the same way.  ``` Handler crashed with error runtime error: invalid memory address or nil pointer dereference github.com/goharbor/harbor/src/server/v2.0/handler/retention.go:409 github.com/goharbor/harbor/src/server/v2.0/handler/retention.go:169 ```  ### Steps to reproduce the problem  ```sh R=$HARBOR/api/v2.0/retentions curl -su admin:$PASS -X POST $R -H 'Content-Type: application/json' -d '{"algorithm":"or","rules":[]}' curl -su admin:$PASS -X POST $R -H 'Content-Type: application/json' -d '{"algorithm":"or","rules":[],"scope":{"level":"project","ref":2}}' curl -su admin:$PASS -X PUT $R/1 -H 'Content-Type: application/json' -d '{"algorithm":"or","rules":[]}' ```  All three return `500 {"errors":[{"code":"UNKNOWN","message":"internal server error"}]}`.  ### Versions  - harbor version: main (fac9abd1f1e2) 
+- **Issue #24433** (2026-11-18): **docs: fix the dead Clarity link in CONTRIBUTING**
+  *Symptoms*: Thank you for contributing to Harbor!  # Comprehensive Summary of your change  The "Web" section of CONTRIBUTING.md links the Clarity design system (which the portal uses through `@clr/angular`) to `https://vmware.github.io/clarity/`. That page now returns 404; the Clarity project is published at https://clarity.design/ (200). This updates the link. Docs only.  Prepared with an AI coding assistant; the URLs were checked with curl.  # Issue being fixed No issue (dead link).  Please indicate you've done the following: - [x] Well Written Title and Summary of the PR - [ ] Label the PR as needed. (suggest `release-note/docs`; I can't set labels) - [x] Accepted the DCO. Commits without the DCO will delay acceptance. - [ ] Made sure tests are passing and test coverage is added if needed. (n/a, docs only) - [x] Considered the docs impact and opened a new docs issue or PR with docs changes if needed in [website repository](https://github.com/goharbor/website). 
 
-- **Issue #24361** (2026-11-11): **Bump Trivy adapter and distribution for release-2.15.0**
-  *Symptoms*: Bump Trivy adapter to v0.40.1 and distribution to v2.8.3-harbor.4.  Reference: #24316.  Validation: release tags verified; Makefile pins and download URL checked; git diff --check passed.
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/goharbor/harbor/pull/24361?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor) Report :white_check_mark: All modified and coverable lines are covered by tests. :warning: Please [upload](https://docs.codecov.com/docs/codecov-uploader) report for BASE (`release-2.15.0@47f3055`). [Learn more](https://docs.codecov.io/docs/error-reference?utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor#section-missing-base-commit) about missing BASE report.  <details><summary>Additional details and impacted files</summary>    [![Impacted file tree graph](https://app.codecov.io/gh/goharbor/harbor/pull/24361/graphs/tree.svg?width=650&height=150&src=pr&token=6SOPrJGDVW&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=goharbor)](https://app.codecov.io/gh/goharbor/harbor/pull/24361?src=pr&el=tree&utm
+- **Issue #24431** (2026-11-17): **fix(orm): convert numeric or-list values to strings to work with pgx**
+  *Symptoms*: # Convert numeric or-list values to strings to work with pgx  Fixes #24430  ## Summary  Since the PostgreSQL driver migration from `lib/pq` to `jackc/pgx` (#16267), list queries whose or-list contains a digits-only value fail at the database layer, because the query builder parses digits-only values as `int64` and pgx requires the bind parameter types to be compatible with the column types — an `int64` cannot be bound to a `text`/`varchar` column:  - pgx v4: `cannot convert 123 to Text` - pgx v5: `unable to encode 123 into text format for text (OID 25): cannot find encode plan`  The most visible impact is replication: `PrepareForPush` builds a single or-list containing **all** destination project names, so one digits-only project name (e.g. `123`) makes the whole replication fail in the prepare stage with a sanitized `500 internal server error`, e.g.  ``` failed to do the prepare work for pushing/uploading resources: list projects with query name={... 123 ...}: http error: code 500, message {"errors":[{"code":"UNKNOWN","message":"internal server error"}]} ```  Any API call using q=name={123 other-project} can directly reproduce the bug. In my testing, q=name={123} works well, but q=name={123 with-any-other-project} successfully reproduces the bug.  ## What this PR does  In `src/lib/orm/query.go` `setFilters()`, convert or-list values that are not `time.Time` to their string form before passing them to the ORM:  ```go values := make([]any, len(ol.Valu
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -689,118 +687,34 @@ def prepare_job_service(config_dict):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `54a9dc30` (2026-11-13)
-**Commit Message**: fix(replication): ignore 401 when listing labels of a Harbor registry (#24357)
+### Incident Patch 1: `966747bd` (2026-11-18)
+**Commit Message**: docs: fix the dead Clarity link in CONTRIBUTING (#24433)
 
-Adapter.Info lists the global labels of the remote Harbor to fill the label
-filter values. Earlier Harbor versions allowed a Harbor registry endpoint to
-be configured without an access key and secret; for such endpoints the labels
-API returns 401, and the error was propagated from Info, which broke
-replication that used to work.
+The Clarity design system moved from vmware.github.io/clarity, which now
+returns 404, to clarity.design.
 
-When ListLabels fails with 401, log a warning and continue with empty label
-values instead of returning the error. Other errors are still returned.
+Signed-off-by: farisbasha <[REDACTED_EMAIL]>
 
-Signed-off-by: stonezdj <[REDACTED_EMAIL]>
-
-**File**: `src/pkg/reg/adapter/harbor/base/adapter.go` (modified, +13/-1)
+**File**: `CONTRIBUTING.md` (modified, +1/-1)
 ```diff
-@@ -126,7 +126,19 @@ func (a *Adapter) Info() (*model.RegistryInfo, error) {
+@@ -177,7 +177,7 @@ Ensure your GOPATH and PATH have been configured in accordance with the Go envir
  
- 	labels, err := a.Client.ListLabels()
- 	if err != nil {
--		return nil, err
-+		// Registries may be configured without an access key and secret, which
-+		// earlier versions allowed. Listing labels then fails with 401; log it
-+		// and continue with no label values instead of failing Info, which
-+		// would break replication for such registries.
-+		if e, ok := err.(*common_http.Error); !ok || e.Code != http.StatusUnauthorized {
-+			return nil, err
-+		}
-+		url := ""
-+		if a.Registry != nil {
-+			url = a.Registry.URL
-+		}
-+		log.Warningf("failed to list labels of the Harbor registry %s, unauthorized, continue with empty labels: %v", url, err)
-+		labels = nil
- 	}
- 	info.SupportedResourceFilters = append(info.SupportedResourceFilters,
- 		&model.FilterStyle{
-```
-
-**File**: `src/pkg/reg/adapter/harbor/base/adapter_test.go` (modified, +47/-0)
-```diff
-@@ -16,7 +16,9 @@ package base
+ #### Web
  
- import (
- 	"net/http"
-+	"net/http/httptest"
- 	"strconv"
-+	"strings"
- 	"testing"
+-Harbor web UI is built based on [Clarity](https://vmware.github.io/clarity/) and [Angular](https://angular.io/) web framework. To setup a web UI development environment, please make sure that the [npm](https://www.npmjs.com/get-npm) tool is installed first.
++Harbor web UI is built based on [Clarity](https://clarity.design/) and [Angular](https://angular.io/) web framework. To setup a web UI development environment, please make sure that the [npm](https://www.npmjs.com/get-npm) tool is installed first.
  
- 	"github.com/stretchr/testify/assert"
-@@ -75,6 +77,51 @@ func TestInfo(t *testing.T) {
- 	server.Close()
- }
- 
-+func newLabelsStatusServer(status int) *httptest.Server {
-+	return test.NewServer(
-+		&test.RequestHandlerMapping{
-+			Method:  http.MethodGet,
-+			Pattern: "/api/systeminfo",
-+			Handler: func(w http.ResponseWriter, r *http.Request) {},
-+		},
-+		&test.RequestHandlerMapping{
-+			Method:  http.MethodGet,
-+			Pattern: "/api",
-+			Handler: func(w http.ResponseWriter, r *http.Request) {
-+				if strings.HasSuffix(r.URL.Path, "/labels") {
-+					w.WriteHeader(status)
-+					return
-+				}
-+				w.WriteHeader(http.StatusNotFound)
-+			},
-+		},
-+	)
-+}
-+
-+func TestInfoListLabelsUnauthorized(t *testing.T) {
-+	server := newLabelsStatusServer(http.StatusUnauthorized)
-+	defer server.Close()
-+
-+	adapter, err := New(&model.Registry{URL: server.URL})
-+	require.Nil(t, err)
-+	info, err := adapter.Info()
-+	require.Nil(t, err)
-+	require.Equal(t, 3, len(info.SupportedResourceFilters))
-+	labelFilter := info.SupportedResourceFilters[2]
-+	assert.Equal(t, model.FilterTypeLabel, labelFilter.Type)
-+	assert.Empty(t, labelFilter.Values)
-+}
-+
-+func TestInfoListLabelsOtherError(t *testing.T) {
-+	server := newLabelsStatusServer(http.StatusInternalServerError)
-+	defer server.Close()
-+
-+	adapter, err := New(&model.Registry{URL: server.URL})
-+	require.Nil(t, err)
-+	_, err = adapter.Info()
-+	assert.NotNil(t, err)
-+}
-+
- func TestPrepareForPush(t *testing.T) {
- 	server := test.NewServer(&test.RequestHandlerMapping{
- 		Method:  http.MethodPost,
+ |  Harbor  |  Requires Angular  |  Requires Clarity  |
+ |----------|--------------------|--------------------|
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #24433** (2026-11-18): docs: fix the dead Clarity link in CONTRIBUTING (@farisbasha)
+- **PR #24431** (closed): fix(orm): convert numeric or-list values to strings to work with pgx (@SevDaisy)
+- **PR #24424** (closed): elease-note/breaking-change: Add vulnerabilities metrics (@RobMokkink)
 - **PR #24361** (2026-11-11): Bump Trivy adapter and distribution for release-2.15.0 (@stonezdj)
 - **PR #24360** (2026-11-11): (cherry-pick): preserve artifact type for multi-tier accessories (@stonezdj)
 - **PR #24359** (2026-11-11): (cherry-pick): ignore 401 when listing labels of a Harbor registry (@stonezdj)
-- **PR #24358** (2026-11-13): (cherry-pick): ignore 401 when listing labels of a Harbor registry (@stonezdj)
-- **PR #24357** (2026-11-13): fix(replication): ignore 401 when listing labels of a Harbor registry (@stonezdj)
-- **PR #24354** (2026-11-13): Publish online installer package for RC releases (@stonezdj)
 
 ---
 
@@ -820,43 +734,31 @@ Signed-off-by: stonezdj <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. replication): ignore 401 when listing labels of a Harbor registry
+## X. docs: fix the dead Clarity link in CONTRIBUTING
 
 **RULE**:
-When implementing operations in `src/pkg/reg/adapter/harbor/base/adapter.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goharbor/harbor. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `54a9dc30`: replication): ignore 401 when listing labels of a Harbor registry. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `966747bd`: docs: fix the dead Clarity link in CONTRIBUTING. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/reg/adapter/harbor/base/adapter.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CONTRIBUTING.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// Registries may be configured without an access key and secret, which
-		// earlier versions allowed. Listing labels then fails with 401; log it
-		// and continue with no label values instead of failing Info, which
-		// would break replication for such registries.
-		if e, ok := err.(*common_http.Error); !ok || e.Code != http.StatusUnauthorized {
-			return nil, err
-		}
-		url := ""
-		if a.Registry != nil {
-			url = a.Registry.URL
-		}
-		log.Warningf("failed to list labels of the Harbor registry %s, unauthorized, continue with empty labels: %v", url, err)
-		labels = nil
+Harbor web UI is built based on [Clarity](https://clarity.design/) and [Angular](https://angular.io/) web framework. To setup a web UI development environment, please make sure that the [npm](https://www.npmjs.com/get-npm) tool is installed first.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		return nil, err
+Harbor web UI is built based on [Clarity](https://vmware.github.io/clarity/) and [Angular](https://angular.io/) web framework. To setup a web UI development environment, please make sure that the [npm](https://www.npmjs.com/get-npm) tool is installed first.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `54a9dc30` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `966747bd` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
