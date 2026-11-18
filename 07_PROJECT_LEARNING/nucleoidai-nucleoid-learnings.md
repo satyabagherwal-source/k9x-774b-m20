@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `9eeb878b`  
+> **Source Version**: `22d7c31d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T14:05:00.611Z  
+> **Timestamp**: 2026-11-18T17:51:22.239Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T14:05:00.468Z  
+> **Harvest Timestamp**: 2026-11-18T17:51:22.232Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -102,7 +102,7 @@ pub fn generate(statement: &Stmt) -> String {
         } => format!("for {key},{value} of {iterable}"),
         Stmt::While { condition, body } => loop_key("while", condition, body),
         Stmt::Repeat { count, body } => loop_key("repeat", count, body),
-        Stmt::Try { .. } => "try".to_string(),
+        Stmt::Try { .. } | Stmt::TryFinally { .. } => "try".to_string(),
         Stmt::Declaration { name, type_name } => format!("{name}:{type_name}"),
         Stmt::Pass => "pass".to_string(),
         Stmt::Suppose { target, body } => {
@@ -121,6 +121,18 @@ fn loop_key(word: &str, header: &Expr, body: &[Stmt]) -> String {
 
 fn loop_suite(word: &str, header: &Expr, body: &[Stmt]) -> String {
     format!("{word} {header}:\n{}", indent(&source_all(body)))
+}
+
+fn try_suite(body: &[Stmt], parameter: &str, catch: &[Stmt]) -> String {
+    format!(
+        "try:\n{}\ncatch {parameter}:\n{}",
+        indent(&source_all(body)),
+        indent(&source_all(catch))
+    )
+}
+
+fn finally_suite(attempt: &str, finally: &[Stmt]) -> String {
+    format!("{attempt}\nfinally:\n{}", indent(&source_all(finally)))
 }
 
 fn assignment_source(target: &Expr, value: &Expr) -> String {
@@ -238,11 +250,13 @@ fn source(statement: &Stmt) -> String {
             body,
             parameter,
             catch,
-        } => format!(
-            "try:\n{}\ncatch {parameter}:\n{}",
-            indent(&source_all(body)),
-            indent(&source_all(catch))
-        ),
+        } => try_suite(body, parameter, catch),
+        Stmt::TryFinally {
+            body,
+            parameter,
+            catch,
+            finally,
+        } => finally_suite(&try_suite(body, parameter, catch), finally),
         Stmt::Block(body) => format!("{{\n{}\n}}", source_all(body)),
         Stmt::Suppose { target, body } => format!(
             "{}suppose:\n{}",
@@ -1518,110 +1532,103 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9eeb878b` (2026-11-18)
-**Commit Message**: Draft NUC 119 Finally Clauses for Try Statements
+### Incident Patch 1: `22d7c31d` (2026-11-18)
+**Commit Message**: Draft NUC 120 Union Reasoning Selections
 
-Category: Runtime features, drawn uniformly at random (index 1 of the
-five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
-continuous /nuc-proposal cycle. Runtime applicability: new_feature,
-since no accepted construct runs a suite on every exit of a try
-statement, so the token non-regression gate is skipped as NUC 1's matrix
-requires for a brand-new runtime feature.
+Category: Reasoning enhancement, drawn uniformly at random (index 3 of
+the five eligible categories in NUC 1's registry, p = 1/5, no redraw)
+for a continuous /nuc-proposal cycle. The token non-regression gate is
+required for this category in continuous mode, so each new case gets an
+accepted-syntax counterpart.
 
-Requested change: a complete try/catch statement may end with a finally
-clause, finally: followed by a suite on its own line, which runs every
-time the statement ends: after the body completes, after the catch suite
-handles a failure, and before a return in either leaves the function or
-the program. The pending outcome stands unless the finally suite returns
-or fails, which replaces it. A failed body's changes are rolled back
-before the catch suite runs, as now, and a failed catch suite's changes
-before the finally suite runs. At the accepted revision each such
-program raises SyntaxError("Unexpected ':'") at the colon after finally;
-finally stays an ordinary name everywhere else, a bare finally line
-followed by an indented block keeps its accepted re
+Requested change: a reasoning stage selection |> union(other) that
+selects what either of two explanations selects: the selection's steps
+in their order, followed by the steps of other whose node the selection
+does not select, in other's order, each with its fields unchanged. It
+completes NUC 106's set stages intersect and except; other is written as
+a pipeline's source is and steps are compared by their node. The result
+stays a selection that later stages can narrow, and it stays live
+through every observation of both selections. At the accepted revision
+each such pipeline raises the parse-time TypeError("union is not an
+operation"); union stays an ordinary name everywhere else, and a binding
+named union shadows the stage as bindings shadow the other stages. The
+accepted spelling is (selection).concat(other |> except(selection)).
+
+
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -96,6 +96,7 @@ Created: 31-Jul-2026
- | [85](nuc-0085.md) | Fixed Cross-Property Class Anchors | Automatic-Accepted: independent evaluation rejected it because fixed-only cycles whose rules build fresh objects never settle; `$Pair.a = {v: $Pair.b@first}` with `$Pair.b = {v: $Pair.a@first}` reaches the 100,000-step propagation limit instead of settling as the proposal claims |
- | [90](nuc-0090.md) | Enum Declarations | Accepted |
- | [115](nuc-0115.md) | Count-Controlled Repeat Loops | Accepted |
-+| [119](nuc-0119.md) | Finally Clauses for Try Statements | Draft |
+@@ -147,6 +147,7 @@ Created: 31-Jul-2026
+ | [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Rejected: existing selector-case audit fails |
+ | [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Accepted |
+ | [112](nuc-0112.md) | Node Names of Reasoning Selections | Accepted |
++| [120](nuc-0120.md) | Union Reasoning Selections | Draft |
  
- ### Utility enhancement
+ ### Language compatibility
  
-@@ -291,6 +292,7 @@ Created: 31-Jul-2026
- | [116](nuc-0116.md) | Size and Emptiness Method Aliases | Standards Track | Language compatibility | Accepted |
+@@ -293,6 +294,7 @@ Created: 31-Jul-2026
  | [117](nuc-0117.md) | First and Last Element Methods | Standards Track | Language compatibility | Accepted |
  | [118](nuc-0118.md) | Case Conversion Method Aliases | Standards Track | Language compatibility | Accepted |
-+| [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Draft |
+ | [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Accepted |
++| [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0119.md` (added, +82/-0)
+**File**: `docs/nuc-0120.md` (added, +73/-0)
 ```diff
-@@ -0,0 +1,82 @@
-+# NUC 119 -- Finally Clauses for Try Statements
+@@ -0,0 +1,73 @@
++# NUC 120 -- Union Reasoning Selections
 +
 +```
-+NUC: 119
-+Title: Finally Clauses for Try Statements
++NUC: 120
++Title: Union Reasoning Selections
 +Author: Can Mingir <canmingir@gmail.com>
 +Status: Draft
 +Type: Standards Track
-+Category: Runtime features
++Category: Reasoning enhancement
 +Created: 18-Nov-2026
 +```
 +
 +## Abstract
 +
-+- A complete `try`/`catch` statement may end with a `finally` clause,
-+  `finally:` followed by a suite, which runs every time the statement
-+  ends: after the body completes, after the catch suite handles a
-+  failure, and before a `return` in either of them leaves the function or
-+  the program.
-+- The pending outcome stands unless the `finally` suite changes it: a
-+  value that the body or the catch suite returns is still returned, and
-+  an error that the catch suite raises still propagates afterwards. A
-+  `return` or a failure of the `finally` suite replaces it, as in Python,
-+  JavaScript and Java.
-+- Nucleoid's transactions are kept. A failed body's changes are rolled
-+  back before the catch suite runs, as they are now, and a failed catch
-+  suite's changes before the `finally` suite runs, so no suite runs on the
-+  partial changes of a failed one. When an error leaves the statement, the
-+  enclosing rollback undoes what the `finally` suite changed, with the
-+  rest of the statement.
-+- At the accepted revision each of these programs raises
-+  `SyntaxError("Unexpected ':'")` at the colon after `finally`. Only those
-+  programs change. `finally` stays an ordinary name everywhere else, as a
-+  variable, property, object key, function or parameter, as in
-+  `finally = 4`, `c ? finally : 1` and `{a: 2 finally: 3}`; a bare
-+  `finally` line followed by an indented block keeps its accepted reading;
-+  and `try` without `catch` keeps
-+  `SyntaxError("Expected 'catch' after 'try'")`.
++- `selection |> union(other)` selects what either of two explanations
++  selects: the selection's steps in their order, followed by the steps of
++  `other` whose node the selection does not select, in `other`'s order,
++  each with its fields unchanged. So
++  `tax |> why |> union(shipping |> why)` is everything the tax or the
++  shipping rests on, each node once.
++- It completes the set stages of [NUC 106](nuc-0106.md): `intersect` keeps
++  what both explanations select and `except` what only the first selects,
++  and `union` gives what either selects. `other` is written as a
++  pipeline's source is, evaluated in place each time the stage applies,
++  and steps are compared by their node.
++- The result is a selection, so further stages follow it, and it stays
++  live through every observation of both selections.
++- At the accepted revision each such pipeline raises the parse-time
++  `TypeError("union is not an operation")`. Only those programs change.
++  `union` stays an ordinary name everywhere else, as a variable, function,
++  property or object key, and a binding named `union` shadows the stage,
++  as bindings shadow the other stages.
 +
 +## Motivation
 +
-+- Mainstream languages with `try`/`catch` have a clause that runs however
-+  the statement ends: `finally` in Python, JavaScript, TypeScript, Java,
-+  Kotlin and C#, `ensure` in Ruby, and `defer` in Swift and Go. Programs
-+  and models written by people and LLMs use it to record that an
-+  operation ran, to count attempts or to log on every path. In Nucleoid
-+  each of them raises `SyntaxError("Unexpected ':'")` at `finally:`.
-+- Without it, a function whose body and catch suite both return has to
-+  repeat the shared work before each `return`, or turn each `return` into
-+  an assignment of a result followed by one `return` after the statement.
-+  Inside a function such an assignment writes state, because a function's
-+  only local names are its parameters and loop variables, so the rewrite
-+  changes the shape of the program and adds a state name the model did
-+  not have.
-+- World models record what happened as well as what holds: an attempt, an
-+  audit entry, a retry count. A `finally` clause states such a record
-+  once, beside the operation it follows, and keeps the statement's
-+  transaction: what the record writes commits with the statement or rolls
-+  back with it.
++- World models answer questions about several conclusions at once: what
++  an order's tax or its shipping rests on, which facts a decision or its
++  audit depends on. NUC 106 answers the shared and the distinct parts of
++  two explanations with `intersect` and `except`; their combined part has
++  no stage.
++- Today the combined part is spelled
++  `(tax |> why).concat(shipping |> why |> except(tax |> why))`, which names
++  the first explanation twice. The plain
++  `(tax |> why).concat(shipping |> why)` lists a shared cause such as the
++  quantity twice. Either result is a list rather than a selection, so no
++  stage can follow it: `|> stated` after it raises
++  `TypeError("Cannot explain ...")`.
++- A union stage states the question once, keeps each node once, and keeps
++  the answer a selection that `stated`, `derived` and the other stages can
++  narrow further.
 +
 +## Rationale
 +
@@ -1645,6 +1652,384 @@ followed by an indented block keeps its accepted re
 +
 +This document is licensed under the Apache License, Version 2.0. See
 +[LICENSE](../LICENSE) for the full text.
+```
+
+---
+
+### Incident Patch 2: `dca36fec` (2026-11-18)
+**Commit Message**: NUC 119 Finally Clauses for Try Statements
+
+Accepted under the automatic acceptance rule, in a continuous
+/nuc-proposal cycle (Runtime features, brand-new feature): the frozen
+candidate meets every hard criterion and passes every policy check, with
+the token check skipped, as NUC 1's matrix requires for a brand-new
+Runtime features feature in continuous mode. The cycle found no stale
+Draft, drew Runtime features uniformly from the five eligible
+categories, allocated NUC 119 in 9eeb878b, and completed it with a fresh
+baseline, candidate, proposer, Rust improvement pass and evaluator.
+
+A complete try/catch statement may end with a finally clause, finally:
+and a suite on the logical line right after the catch suite at the try
+statement's level, which runs every time the statement ends: after the
+body completes, after the catch suite handles a failure, and before a
+return in either of them leaves. The pending outcome stands unless the
+finally suite changes it: a returned value is still returned and a catch
+suite's error still propagates afterwards, while a return or a failure
+of the finally suite replaces it, as in Python, JavaScript and Java. A
+failed body and a failed catch suite are
+
+**File**: `README.md` (modified, +31/-0)
+```diff
+@@ -2528,6 +2528,37 @@ assert([door.key, door.banner], ["side door", "SIDE DOOR"])
+   values keep their errors. See the
+   [root contract](nucleoid.spec.md#case-conversion-method-aliases).
+ 
++## Finally clauses
++
++**Finally clauses record every attempt to unlock a door**
++
++```nuc
++attempts = []
++def unlock(code):
++    try:
++        if code != 1234:
++            throw "WRONG CODE"
++        return "unlocked"
++    catch reason:
++        return reason
++    finally:
++        attempts.push(code)
++assert(unlock(1111), "WRONG CODE")
++assert(unlock(1234), "unlocked")
++assert(attempts, [1111, 1234])
++```
++
++- [NUC 119](docs/nuc-0119.md) adds the `finally` clause of Python,
++  JavaScript, Java, Kotlin and C# to complete `try`/`catch` statements:
++  `finally:` and a suite, on the line after the catch suite, run however
++  the statement ends.
++- `unlock` returns from its body and from its catch suite, and the
++  `finally` suite records the attempt on both paths before the value is
++  returned. A failed body is rolled back before the catch suite runs, as
++  without the clause, and a `return` in the `finally` suite would replace
++  the pending result. See the
++  [root contract](nucleoid.spec.md#finally-clauses).
++
+ ## Reactive list flattening
+ 
+ **Flat turns nested lists into one live list**
+```
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +19/-16)
+```diff
+@@ -788,19 +788,22 @@
+ {"id":"spec-0788","description":"Nucleoid converts case with Kotlin, Rust and Swift spellings","code":"label = \"Front Door\"\nkey = label.lowercase()\ncode = label.to_uppercase()\nbanner = label.uppercased()\nassert([key, code, banner], [\"front door\", \"FRONT DOOR\", \"FRONT DOOR\"])\nlabel = \"Back Gate\"\nassert([key, code, banner], [\"back gate\", \"BACK GATE\", \"BACK GATE\"])\nassert([\"NORTH\".to_lowercase(), \"Mixed Case\".lowercased(), \"ok\".uppercase()], [\"north\", \"mixed case\", \"OK\"])\nstreet = \"Straße\"\nupper = street.uppercase()\nassert([upper, upper.length, street.length], [\"STRASSE\", 7, 6])\nassert([street.to_uppercase(), street.uppercased(), street.toUpperCase()], [upper, upper, upper])\nassert([\"ΟΔΟΣ\".lowercase(), \"ǅ\".uppercased(), \"ﬁx\".to_uppercase(), \"\".lowercased()], [\"οδος\", \"Ǆ\", \"FIX\", \"\"])\nstreet = \"Gasse\"\n[upper, key]","return":"[\"GASSE\",\"back gate\"]"}
+ {"id":"spec-0789","description":"Nucleoid keeps class-level and mapped case conversions live","code":"class Badge(name, team):\n    this.name = name\n    this.team = team\n$Badge.login = $Badge.name.to_lowercase()\n$Badge.crest = $Badge.team.uppercased()\nana = Badge(\"Ana Lima\", \"blue\")\nbo = Badge(\"BO CHEN\", \"Red\")\nassert([ana.login, ana.crest, bo.login, bo.crest], [\"ana lima\", \"BLUE\", \"bo chen\", \"RED\"])\nbo.name = \"Bo Chen-Wu\"\nana.team = \"green\"\nassert([bo.login, ana.crest], [\"bo chen-wu\", \"GREEN\"])\ntags = [\"Urgent\", \"low\"]\nshout = tags.map(tag -> tag.uppercase())\nquiet = tags.map(tag -> tag.lowercased())\nassert([shout, quiet], [[\"URGENT\", \"LOW\"], [\"urgent\", \"low\"]])\ntags.push(\"Straße\")\nassert(shout, [\"URGENT\", \"LOW\", \"STRASSE\"])\nquiet","return":"[\"urgent\",\"low\",\"straße\"]"}
+ {"id":"spec-0790","description":"Nucleoid rolls back failed updates through case conversion aliases","code":"label = \"door\"\ncode = label.uppercase()\nfailure = \"\"\ntry:\n    label = 7\ncatch error:\n    failure = error\nassert(failure, TypeError(\"number.uppercase is not a function\"))\nassert([label, code], [\"door\", \"DOOR\"])\ntry:\n    label = \"gate\"\n    assert(code, \"GATE\")\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([label, code], [\"door\", \"DOOR\"])\nclass Tag(name):\n    this.name = name\n$Tag.key = $Tag.name.to_lowercase()\nred = Tag(\"RED\")\ntry:\n    red.name = true\ncatch error:\n    failure = error\nassert(failure, TypeError(\"boolean.to_lowercase is not a function\"))\nassert([red.name, red.key], [\"RED\", \"red\"])\nred.name = \"Crimson\"\nred.key","return":"\"crimson\""}
+-{"id":"spec-0791","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
+-{"id":"spec-0792","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
+-{"id":"spec-0793","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
+-{"id":"spec-0794","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
+-{"id":"spec-0795","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","ret
+```
+
+**File**: `dataset/nucleoid.synth.83.jsonl` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++{"id":"synth-83-0001","description":"A finally clause runs after a try body that completes","code":"log = []\ntry:\n    log.push(\"work\")\ncatch:\n    log.push(\"fail\")\nfinally:\n    log.push(\"done\")\nlog","return":"[\"work\",\"done\"]"}
++{"id":"synth-83-0002","description":"A finally clause runs after the catch suite handles a thrown value","code":"log = []\ntry:\n    throw \"JAM\"\ncatch problem:\n    log.push(problem)\nfinally:\n    log.push(\"done\")\nlog","return":"[\"JAM\",\"done\"]"}
++{"id":"synth-83-0003","description":"A function records every attempt in finally whether it pays or declines","code":"attempts = []\ndef pay(balance, amount):\n    try:\n        if amount > balance:\n            throw \"DECLINED\"\n        return balance - amount\n    catch reason:\n        return reason\n    finally:\n        attempts.push(amount)\n[pay(50, 20), pay(10, 40), attempts]","return":"[30,\"DECLINED\",[20,40]]"}
++{"id":"synth-83-0004","description":"A pending return keeps its value when finally changes what it read","code":"stock = 3\ndef take():\n    try:\n        return stock\n    catch:\n        return 0\n    finally:\n        stock = stock - 1\n[take(), stock]","return":"[3,2]"}
++{"id":"synth-83-0005","description":"A return in finally replaces the value the body returned","code":"def status():\n    try:\n        return \"busy\"\n    catch:\n        return \"error\"\n    finally:\n        return \"idle\"\nstatus()","return":"\"idle\""}
++{"id":"synth-83-0006","description":"A return in finally replaces the error a catch suite raised","code":"def fetch():\n    try:\n        throw \"TIMEOUT\"\n    catch problem:\n        throw problem + \" AGAIN\"\n    finally:\n        return \"cached\"\nfetch()","return":"\"cached\""}
++{"id":"synth-83-0007","description":"A failed body rolls back before the catch suite and finally run","code":"balance = 10\nseen = []\ntry:\n    balance = 0\n    throw \"VOID\"\ncatch:\n    seen.push(balance)\nfinally:\n    seen.push(balance)\nseen","return":"[10,10]"}
++{"id":"synth-83-0008","description":"A failed catch suite rolls back before finally returns","code":"retries = 0\ndef attempt():\n    try:\n        throw \"DOWN\"\n    catch problem:\n        retries = retries + 1\n        throw problem\n    finally:\n        return retries\n[attempt(), retries]","return":"[0,0]"}
++{"id":"synth-83-0009","description":"An error leaving a try statement also rolls back its finally clause","code":"log = []\ntry:\n    try:\n        throw \"LEAK\"\n    catch problem:\n        throw problem + \"!\"\n    finally:\n        log.push(\"cleanup\")\ncatch outer:\n    log.push(outer)\nlog","return":"[\"LEAK!\"]"}
++{"id":"synth-83-0010","description":"A finally clause that throws replaces the pending result","code":"result = \"\"\ntry:\n    try:\n        result = \"saved\"\n    catch:\n        result = \"failed\"\n    finally:\n        throw \"DISK FULL\"\ncatch problem:\n    result = problem\nresult","return":"\"DISK FULL\""}
++{"id":"synth-83-0011","description":"The catch parameter is not bound inside the finally clause","code":"problem = \"none\"\ntry:\n    throw \"FIRE\"\ncatch problem:\n    caught = problem\nfinally:\n    after = problem\n[caught, after]","return":"[\"FIRE\",\"none\"]"}
++{"id":"synth-83-0012","description":"A same-line finally clause runs semicolon-separated statements","code":"x = 0\ntry: x = 1\ncatch: x = 2\nfinally: x = x + 1; y = 5\n[x, y]","return":"[2,5]"}
++{"id":"synth-83-0013","description":"A finally clause in a loop body runs once for every instance","code":"class Job(hours):\n    this.hours = hours\nJob(2)\nJob(9)\nlog = []\nfor job of Job:\n    try:\n        if job.hours > 8:\n            throw \"LONG\"\n        log.push(job.hours)\n    catch problem:\n        log.push(problem)\n    finally:\n        log.push(\"checked\")\nlog","return":"[2,\"checked\",\"LONG\",\"checked\"]"}
++{"id":"synth-83-0014","description":"A standing conditional runs its finally clause each time it runs","code":"level = 0\nif level > 0:\n    try:\n        alarm = level\n    catch:\n        alarm = 0\n    finally:\n        checked = level * 10\nlevel = 1\nlevel = 3\n[alarm, checked]","return":"[3,30]"}
++{"id":"synth-83-0015","description":"A declaration in a finally clause stays live like one in a catch suite","code":"rate = 2\ntry:\n    throw \"LATE\"\ncatch:\n    fee = rate * 5\nfinally:\n    total = rate * 7\nrate = 3\n[fee, total]","return":"[15,21]"}
++{"id":"synth-83-0016","description":"finally stays an ordinary name beside a finally clause","code":"finally = 2\nx = 1\ntry:\n    x = x + finally\ncatch:\n    x = 0\nfinally:\n    x = x * finally\nx","return":"6"}
+```
+
+**File**: `docs/README.md` (modified, +55/-1)
+```diff
+@@ -2461,7 +2461,55 @@ catch
+   tokens, 603 are unchanged, and none increased. All 2,763 protected assertions
+   executed and all 50 explicit expected returns matched.
+ 
+-Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md).
++### Finally clauses
++
++```
++visits = []
++def enter(room):
++    try:
++        if room == "vault":
++            throw "LOCKED"
++        return "open"
++    catch reason:
++        return reason
++    finally:
++        visits.push(room)
++assert([enter("hall"), enter("vault")], ["open", "LOCKED"])
++assert(visits, ["hall", "vault"])
++visits.length
++```
++
++- This is the complete
++  `Nucleoid runs finally clauses as Python, JavaScript and Java do` program
++  in `tests/reference.md`, without its title and expected-return metadata;
++  it returns `2`.
++- [NUC 119](nuc-0119.md) adds the `finally` clause of Python, JavaScript,
++  TypeScript, Java, Kotlin and C#: `finally:` and a suite, which runs
++  however a complete `try`/`catch` statement ends. `finally` stays an
++  ordinary name; the clause is the name and its colon at the start of the
++  line after the catch suite, at the `try` statement's indentation.
++- When the body or the catch suite completes, normally or by `return`, the
++  `finally` suite runs and the statement then completes as that suite did,
++  so `enter` returns `"open"` and `"LOCKED"` and records both rooms. A
++  pending `return` keeps the value it computed.
++- A failed body rolls back before the catch suite runs, as without the
++  clause. A failed catch suite rolls back too, then the `finally` suite
++  runs and the error propagates; when it leaves the statement, the enclosing
++  rollback also undoes what the `finally` suite changed.
++- A `return` in the `finally` suite replaces the pending result or error,
++  and a failure of the `finally` suite propagates in its place, as in
++  Python, JavaScript and Java. The catch parameter is not bound in the
++  `finally` suite.
++- `finally: NAME` before the end of its line stays the typed declaration of
++  `finally`, a `finally` on the catch suite's own line or inside a call's
++  parentheses keeps its `SyntaxError("Unexpected ':'")`, and `try` without
++  `catch` still raises `SyntaxError("Expected 'catch' after 'try'")`.
++- The native REPL buffers the clause with its `try` until a blank line; a
++  blank line before `finally:` commits the statement first, as it does
++  before a `catch`. See the
++  [root contract](../nucleoid.spec.md#finally-clauses).
++
++Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md).
+ 
+ ---
+ 
+@@ -4892,6 +4940,12 @@ record = {amount: amount unit: "C"}    optional explicit-property comma (NUC 44)
+ record = {...base, qty: 1}             copy base's entries in order; later entries win (NUC 81)
+ 
+ throw value                            raise a value
++try:                                   run the body; a failure rolls it back
++    statement
++catch name:                            then runs this suite with the error bound
++    statement
++finally:                               runs however the statement ends (NUC 119)
++    statement
+ return expression                      yield from a block or function
+ assert(actual, expected)                existing equality-check helper
+ assert: actual, expected                optional statement spelling (Accepted NUC 45)
+```
+
+**File**: `docs/examples.md` (modified, +35/-0)
+```diff
+@@ -4049,6 +4049,41 @@ present
+   scanned. See [NUC 118](nuc-0118.md) and the
+   [root contract](../nucleoid.spec.md#case-conversion-method-aliases).
+ 
++## Finally clauses
++
++**Finally clauses log every dispatch of a driver**
++
++```nuc
++class Driver(name, shift):
++    this.name = name
++    this.shift = shift
++    this.log = []
++$Driver.busy = $Driver.log.length > 2
++def dispatch(driver, hours):
++    try:
++        if driver.shift + hours > 8:
++            throw "OVERTIME"
++        return driver.name + " goes"
++    catch reason:
++        return reason
++    finally:
++        driver.log.push(hours)
++ana = Driver("Ana", 6)
++assert(dispatch(ana, 1), "Ana goes")
++assert(dispatch(ana, 3), "OVERTIME")
++assert([ana.log, ana.busy], [[1, 3], false])
++dispatch(ana, 2)
++ana.busy
++# return: true
++```
++
++- `dispatch` sends a driver out or refuses overtime, and both paths return.
++  The `finally` suite logs the hours asked for on either path, where the
++  accepted spelling would repeat the push before each `return`.
++- Each driver's `busy` rule follows its log, so the third dispatch makes
++  Ana busy. See [NUC 119](nuc-0119.md) and the
++  [root contract](../nucleoid.spec.md#finally-clauses).
++
+ ## Reactive list flattening
+ 
+ **Flattening keeps the dirty tiles of every room counted**
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
+```diff
+@@ -96,7 +96,7 @@ Created: 31-Jul-2026
+ | [85](nuc-0085.md) | Fixed Cross-Property Class Anchors | Automatic-Accepted: independent evaluation rejected it because fixed-only cycles whose rules build fresh objects never settle; `$Pair.a = {v: $Pair.b@first}` with `$Pair.b = {v: $Pair.a@first}` reaches the 100,000-step propagation limit instead of settling as the proposal claims |
+ | [90](nuc-0090.md) | Enum Declarations | Accepted |
+ | [115](nuc-0115.md) | Count-Controlled Repeat Loops | Accepted |
+-| [119](nuc-0119.md) | Finally Clauses for Try Statements | Draft |
++| [119](nuc-0119.md) | Finally Clauses for Try Statements | Accepted |
+ 
+ ### Utility enhancement
+ 
+@@ -292,7 +292,7 @@ Created: 31-Jul-2026
+ | [116](nuc-0116.md) | Size and Emptiness Method Aliases | Standards Track | Language compatibility | Accepted |
+ | [117](nuc-0117.md) | First and Last Element Methods | Standards Track | Language compatibility | Accepted |
+ | [118](nuc-0118.md) | Case Conversion Method Aliases | Standards Track | Language compatibility | Accepted |
+-| [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Draft |
++| [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Accepted |
+ 
+ ## Copyright
+ 
+```
+
+**File**: `docs/nuc-0119.md` (modified, +1343/-11)
+```diff
+@@ -4,10 +4,11 @@
+ NUC: 119
+ Title: Finally Clauses for Try Statements
+ Author: Can Mingir <canmingir@gmail.com>
+-Status: Draft
++Status: Accepted
+ Type: Standards Track
+ Category: Runtime features
+ Created: 18-Nov-2026
++Requires: 9, 46
+ ```
+ 
+ ## Abstract
+@@ -29,13 +30,17 @@ Created: 18-Nov-2026
+   enclosing rollback undoes what the `finally` suite changed, with the
+   rest of the statement.
+ - At the accepted revision each of these programs raises
+-  `SyntaxError("Unexpected ':'")` at the colon after `finally`. Only those
+-  programs change. `finally` stays an ordinary name everywhere else, as a
+-  variable, property, object key, function or parameter, as in
+-  `finally = 4`, `c ? finally : 1` and `{a: 2 finally: 3}`; a bare
+-  `finally` line followed by an indented block keeps its accepted reading;
+-  and `try` without `catch` keeps
++  `SyntaxError("Unexpected ':'")`, reported at the token after `finally:`.
++  Only those programs change. `finally` stays an ordinary name everywhere
++  else, as a variable, property, object key, function, parameter or enum,
++  as in `finally = 4`, `c ? finally : 1` and `{a: 2 finally: 3}`;
++  `finally: NAME` before the end of its statement stays the typed
++  declaration of `finally`; a bare `finally` line followed by an indented
++  block keeps its accepted reading; and `try` without `catch` keeps
+   `SyntaxError("Expected 'catch' after 'try'")`.
++- No keyword, lexer token, error type or message format is added. The
++  authoritative contract is
++  [Finally clauses](../nucleoid.spec.md#finally-clauses).
+ 
+ ## Motivation
+ 
+@@ -60,19 +65,1346 @@ Created: 18-Nov-2026
+ 
+ ## Rationale
+ 
+-- Pending: the proposer completes this section.
++- **Category and mode.** The allocating continuous cycle drew Runtime
++  features with one tool-backed uniform draw over the five categories that
++  NUC 1's registry marks eligible for automatic selection, index 1 with
++  probability 1/5 and no redraw, and recorded the requested change in the
++  allocation commit `9eeb878b`, which this revision pins.
++- **Runtime applicability: `new_feature`.** No accepted construct runs a
++  suite on every exit of a `try` statement. Code written after the
++  statement does not run when the body or the catch suite returns, and the
++  rewrite that emulates the clause turns each `return` into an assignment
++  of a result, which inside a function writes state: a function's only
++  local names are its parameters and loop variables, so at the accepted
++  revision a function that assigns `r` in its suites leaves the state
++  name `r` behind. A counterpart therefore changes the program's state and
++  structure, as [NUC 74](nuc-0074.md)'s rest parameters did. Token
++  comparison is skipped entirely, as NUC 1's matrix states for a brand-new
++  runtime feature (`new_runtime_feature`). The skip is neither a measured
++  comparison nor a passing token gate.
++- **No counterparts.** Because comparison is skipped, the new cases have no
++  accepted-syntax counterparts and there is no Baseline B or extra
++  baseline. They execute their assertions and explicit returns with full
++  coverage, and every pre-existing case is unchanged.
++- **Optional evidence.** No hint was supplied. Advisory usefulness is
++  unscored (`missing_rubric`), not zero. Strategy learning is
++  `not_configured`, so this revision is unattributed, with no policy,
++  selection receipt, trial or reward.
++- **The name of Python, JavaScript and Java, without a reserved word.**
++  `finally` stays an ordinary identifier. At the accepted revision a line
++  that starts with the name `finally` and `:` after a catch suite is the
++  name followed by a stray colon, which raises
++  `SyntaxError("Unexpected ':'")`, so giving that line clause meaning
++  changes no accepted program. Rejected: reserving `finally`, which would
++  break programs that use it as a variable, property, key, function,
++  parameter or enum name; Ruby's `ensure`, which follows `rescue` rather
++  than `catch`; and Swift's and Go's `defer`, a statement that registers
++  work for the end of a scope rather than a clause of `try`.
++- **On its own line, at the `try` statement's level.** The clause starts
++  the logical line that directly follows the catch suite, at the `try`
++  statement's own layout level, as `catch` follows the body. On the catch
++  suite's line, `finally` is already accepted syntax: after an inline
++  suite, `x = 2 finally` is the statement `x = 2` followed by the name
++  `finally`, and `c ? 2 finally : 3` would be a conditional, so a
++  same-line clause would collide with juxtaposition and conditionals. A
++  `finally:` after `;`, inside the catch suite, at a shallower level or
++  without a `try` keeps its accepted error.
++- **The declaration `finally: NAME` stays.** At the accepted revision
++  `finally: NAME` before a newline, `;`, dedent or the end of input is the
++  typed declaration of `finally`, which raises
++  `ReferenceError("Missing definition")` when it runs. A function whose
++  `try` 
+```
+
+**File**: `docs/nucleoid.g4` (modified, +14/-1)
+```diff
+@@ -308,8 +308,19 @@ repeatStmt
+     : REPEAT clauseExpression suite     // Stmt::Repeat
+     ;
+ 
++// Without finallyClause a tryStmt is Stmt::Try, with it Stmt::TryFinally.
+ tryStmt
+-    : TRY body lineSeparator* CATCH (LPAREN name RPAREN | name)? body
++    : TRY body lineSeparator* CATCH (LPAREN name RPAREN | name)? body finallyClause?
++    ;
++
++// FINALLY starts the logical line after the catch body, at the tryStmt's
++// layout level: only NEWLINEs follow the catch body, and the token before
++// FINALLY is a NEWLINE or the DEDENT that closes it. FINALLY on the catch
++// body's line, after ';', or inside '(' and '[', which suppress layout, keeps
++// its name reading, and so does 'FINALLY COLON name' before NEWLINE, ';',
++// DEDENT or EOF, which stays a typeDeclaration.
++finallyClause
++    : NEWLINE* FINALLY suite
+     ;
+ 
+ functionDecl
+@@ -878,6 +889,7 @@ enumName
+     : NAME
+     | WHILE
+     | REPEAT
++    | FINALLY
+     | ENUM
+     | EXTENDS
+     | IS
+@@ -962,6 +974,7 @@ TYPEOF           : 'typeof';
+ 
+ WHILE            : 'while';
+ REPEAT           : 'repeat';
++FINALLY          : 'finally';
+ ENUM             : 'enum';
+ EXTENDS          : 'extends';
+ ASSERT           : 'assert';
 ```
 
 #### Recent Merged Pull Requests:
@@ -1673,13 +2058,13 @@ followed by an indented block keeps its accepted re
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 119 Finally Clauses for Try Statements
+## X. Draft NUC 120 Union Reasoning Selections
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9eeb878b`: Draft NUC 119 Finally Clauses for Try Statements. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `22d7c31d`: Draft NUC 120 Union Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -1687,8 +2072,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [119](nuc-0119.md) | Finally Clauses for Try Statements | Draft |
-| [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Draft |
+| [120](nuc-0120.md) | Union Reasoning Selections | Draft |
+| [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1698,4 +2083,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9eeb878b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `22d7c31d` are properly handled with clean fallback behavior.

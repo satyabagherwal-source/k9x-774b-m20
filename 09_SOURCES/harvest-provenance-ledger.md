@@ -11094,3 +11094,7 @@ Every entry in this ledger must capture:
 | `learn-github-mfontanini-presenterm` | `https://github.com/mfontanini/presenterm` | `c6ae2eab` | Multi-dimensional audit evidence | 2026-11-18T17:36:31.051Z |
 | `learn-github-builderio-builder` | `https://github.com/BuilderIO/builder` | `2c87a393` | Multi-dimensional audit evidence | 2026-11-18T17:36:36.020Z |
 | `learn-huggingface-qwen-qwen3-0-6b` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-18T17:41:28.765Z |
+| `learn-huggingface-google-t5-t5-small` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-18T17:51:06.063Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `6a92f86a` | Multi-dimensional audit evidence | 2026-11-18T17:51:18.462Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `22d7c31d` | Multi-dimensional audit evidence | 2026-11-18T17:51:23.502Z |
+| `learn-dom-d-714854bb` | `project://tailscale-tailscale` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md` | 2026-11-18T17:52:02.407Z |

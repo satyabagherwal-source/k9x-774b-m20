@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T17:41:33.709Z",
-  "total_records": 1883,
+  "last_updated": "2026-11-18T17:52:03.949Z",
+  "total_records": 1886,
   "domains": {
     "A": {
       "total": 13,
@@ -51,7 +51,7 @@
       ]
     },
     "D": {
-      "total": 795,
+      "total": 796,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -847,7 +847,8 @@
         "domain_intelligence-research-knowledge-intelligence-hf-briaai-rmbg-3-0-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-huggingfacetb-smolvlm2-256m-video-instruct-core-",
         "DOM-D-9D26CBBB",
-        "domain_intelligence-research-knowledge-intelligence-hf-huggingfacetb-smolvlm2-256m-video-instruct-le"
+        "domain_intelligence-research-knowledge-intelligence-hf-huggingfacetb-smolvlm2-256m-video-instruct-le",
+        "DOM-D-714854BB"
       ]
     },
     "E": {
@@ -1254,7 +1255,7 @@
       ]
     },
     "H": {
-      "total": 440,
+      "total": 442,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1695,7 +1696,9 @@
         "DOM-H-41A8ED4B",
         "domain_intelligence-technical-construction-intelligence-smallstep-cli-core-invariants",
         "domain_intelligence-technical-construction-intelligence-smallstep-cli-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-xerj-org-xerj-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-xerj-org-xerj-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-tailscale-tailscale-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-tailscale-tailscale-learnings-core-invariant"
       ]
     },
     "I": {
@@ -10881,8 +10884,8 @@
       "title": "Research & Knowledge Intelligence: google-t5/t5-small Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-t5-t5-small-research-knowledge-intelligence-google-t5-t5-small-core-in.md",
       "repository": "google-t5/t5-small",
-      "content_hash": "c528048422371446d167a13ac831c92bd370f122461c95a3f76da20ca2106012",
-      "created_at": "2026-11-13T21:50:21.463Z"
+      "content_hash": "e2c8e034d9d336f94a6d59c03a715af09d0a1517c1b13a247dfea8f9b62c4294",
+      "created_at": "2026-11-18T17:51:06.316Z"
     },
     "domain_intelligence-architecture-intelligence-ntex-rs-ntex-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ntex-rs-ntex-learnings-core-invariants",
@@ -10941,8 +10944,8 @@
       "title": "Research & Knowledge Intelligence: hf-google-t5-t5-small-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-t5-t5-small-learnings-research-knowledge-intelligence-hf-google-t5-t5-.md",
       "repository": "hf-google-t5-t5-small-learnings",
-      "content_hash": "f5c198b520bbbba6b94ec0df453d55baedccdb676f27ffa9a1600dd8e1366fb6",
-      "created_at": "2026-11-13T21:50:53.466Z"
+      "content_hash": "780c360743948ac95cee2a4c64f39aa2744185e165a8c16db55d6ef2ba03fb01",
+      "created_at": "2026-11-18T17:51:27.257Z"
     },
     "domain_intelligence-design-intelligence-callstack-react-native-paper-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-callstack-react-native-paper-learnings-core-invariants",
@@ -15646,8 +15649,8 @@
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "f993e0e10b1a160ba1d38a46fe7d84b9bcfc205d11ea7d43f20cab2faeda2415",
-      "created_at": "2026-11-17T19:19:50.991Z"
+      "content_hash": "638f31b081f93236d40b96cc7815d2e3f7fc6b666c70e939fc5c2ec1f2ac5751",
+      "created_at": "2026-11-18T17:51:23.939Z"
     },
     "DOM-D-C603EFBB": {
       "record_id": "DOM-D-C603EFBB",
@@ -15706,8 +15709,8 @@
       "title": "Technical Construction Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-learnings-technical-construction-intelligence-nucleoidai-nuc.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "32c5c36daf93bfc24c7bc993ad888f0af4c99aded28d825d743e964537dae3ba",
-      "created_at": "2026-11-17T19:19:54.562Z"
+      "content_hash": "286f640bfe88839e5f8532a23a59173389edac80a1a1071cfccca97f9d7346aa",
+      "created_at": "2026-11-18T17:52:03.949Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp",
@@ -31518,6 +31521,66 @@
       "repository": "hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings",
       "content_hash": "05e1ea7f6b84377eb9eb9bc8763c9093335793363ef300869c6b0df716567efd",
       "created_at": "2026-11-18T16:32:22.797Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tailscale-tailscale-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tailscale-tailscale-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: tailscale/tailscale Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tailscale-tailscale-technical-construction-intelligence-tailscale-tailscale-core.md",
+      "repository": "tailscale/tailscale",
+      "content_hash": "b632d682a3f9f55bcaf2024e67721833cf36eaa4a3f4db5272bbf78cdcd64b38",
+      "created_at": "2026-11-18T17:51:18.715Z"
+    },
+    "DOM-D-714854BB": {
+      "record_id": "DOM-D-714854BB",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): tailscale/tailscale",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  \n> **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  \n> **Source Version**: `6a92f86a`  \n> **License**: BSD-3-Clause  \n> **Synthesized By**: zero-clone-stru",
+      "content_hash": "ee43c9c9fedded97b9b75340d7996b4d73e16047ece32923f0276d1f5c43a82f",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  \n> **Source**: github ([https://github.com/tailsc -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  \n> **Source**: github ([https://github.com/tailsc",
+      "provenance": {
+        "source_uri": "project://tailscale-tailscale/tailscale-tailscale-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T17:51:27.448Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (tailscale-tailscale)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of tailscale-tailscale"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T17:52:02.379Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tailscale-tailscale-learnings-core-invariant": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tailscale-tailscale-learnings-core-invariant",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: tailscale-tailscale-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tailscale-tailscale-learnings-technical-construction-intelligence-tailscale-tail.md",
+      "repository": "tailscale-tailscale-learnings",
+      "content_hash": "2df913af3b6293b290f6f4fbcccd96517cd175f8692a353712b90d0705069356",
+      "created_at": "2026-11-18T17:52:02.941Z"
     }
   }
 }

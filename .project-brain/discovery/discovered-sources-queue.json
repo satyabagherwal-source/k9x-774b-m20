@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T17:28:19.682Z",
+  "updated_at": "2026-11-18T17:52:02.669Z",
   "stats": {
-    "total_discovered": 5603,
-    "approved_pending_harvest": 5296,
+    "total_discovered": 5607,
+    "approved_pending_harvest": 5300,
     "harvested_count": 0,
     "rejected_count": 307,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5278,
+      "COMMUNITY_AND_EXPERT": 5282,
       "OFFICIAL_DOCUMENTATION": 178,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -121138,6 +121138,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-4538CA6003D1": {
+      "id": "SRC-4538CA6003D1",
+      "url": "https://github.com/isaacs/minimatch",
+      "title": "https://github.com/isaacs/minimatch",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T17:52:02.500Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
+        "fileName": "tailscale-tailscale-learnings.md"
+      }
+    },
+    "SRC-DD79C77ED81B": {
+      "id": "SRC-DD79C77ED81B",
+      "url": "https://github.com/isaacs/minimatch/releases",
+      "title": "https://github.com/isaacs/minimatch/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T17:52:02.556Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
+        "fileName": "tailscale-tailscale-learnings.md"
+      }
+    },
+    "SRC-297AA44560BC": {
+      "id": "SRC-297AA44560BC",
+      "url": "https://github.com/isaacs/minimatch/blob/main/changelog.md",
+      "title": "https://github.com/isaacs/minimatch/blob/main/changelog.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T17:52:02.619Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
+        "fileName": "tailscale-tailscale-learnings.md"
+      }
+    },
+    "SRC-0FD0F9A44A8B": {
+      "id": "SRC-0FD0F9A44A8B",
+      "url": "https://github.com/isaacs/minimatch/compare/v3.1.2...v3.1.5",
+      "title": "https://github.com/isaacs/minimatch/compare/v3.1.2...v3.1.5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T17:52:02.669Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
+        "fileName": "tailscale-tailscale-learnings.md"
       }
     }
   }

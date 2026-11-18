@@ -11061,3 +11061,7 @@
 | `CYCLE-20261118-KWUE` | `2026-11-18T17:36:31.046Z` | `mfontanini/presenterm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9266` | Yes (`536dad1e...`) |
 | `CYCLE-20261118-L0OG` | `2026-11-18T17:36:36.016Z` | `BuilderIO/builder` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9267` | Yes (`e91cb662...`) |
 | `CYCLE-20261118-RAK8` | `2026-11-18T17:41:28.760Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`046a7b1a...`) |
+| `CYCLE-20261118-3O0A` | `2026-11-18T17:51:06.058Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | Yes (`0cf0b8b7...`) |
+| `CYCLE-20261118-3XKP` | `2026-11-18T17:51:18.457Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md` | Yes (`b187f220...`) |
+| `CYCLE-20261118-41GP` | `2026-11-18T17:51:23.497Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9268` | Yes (`d9f95bd0...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T17:52:02.407Z` | `tailscale-tailscale` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-714854BB` [Domain D] | Yes (`ee43c9c9...`) |

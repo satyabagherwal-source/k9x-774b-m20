@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T17:41:28.772Z",
-  "total_cycles_completed": 10578,
-  "total_learnings_persisted": 10578,
-  "total_rules_promoted": 10029,
+  "last_updated": "2026-11-18T17:51:23.508Z",
+  "total_cycles_completed": 10581,
+  "total_learnings_persisted": 10581,
+  "total_rules_promoted": 10030,
   "history": [
-    {
-      "timestamp": "2026-11-18T06:15:27.630Z",
-      "repository": "necolas/react-native-web",
-      "learningId": "learn-github-necolas-react-native-web",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T06:23:23.895Z",
-      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T06:32:29.657Z",
-      "repository": "PSRben/VisionHOPE",
-      "learningId": "learn-huggingface-psrben-visionhope",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T06:32:30.683Z",
       "repository": "ratatui/ratatui",
@@ -1403,6 +1382,27 @@
       "repository": "Qwen/Qwen3-0.6B",
       "learningId": "learn-huggingface-qwen-qwen3-0-6b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T17:51:06.070Z",
+      "repository": "google-t5/t5-small",
+      "learningId": "learn-huggingface-google-t5-t5-small",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T17:51:18.467Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T17:51:23.508Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

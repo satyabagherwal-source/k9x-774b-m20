@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T17:41:28.776Z",
+  "last_updated": "2026-11-18T17:51:23.513Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -965,14 +965,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-t5-t5-small",
-      "content_hash": "2a34ef3cf0c79795dc42ce6297a5d7ea2655d2d5e1aa05840aec44836ef836a1",
-      "verified_at": "2026-11-18T08:51:35.088Z",
+      "content_hash": "0cf0b8b7b5a82bc133ab563a1a70ae74b92392367b66b8bb49f1703feecf4c92",
+      "verified_at": "2026-11-18T17:51:06.074Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T08:51:35.088Z"
+      "last_updated": "2026-11-18T17:51:06.074Z"
     },
     "maxrave-dev/kotlin-footguns": {
       "repository": "maxrave-dev/kotlin-footguns",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "d815b07f56e6839f22223de5382769498f08c54db6dd6d7f9aa62f9378d6f918",
-      "verified_at": "2026-11-18T14:05:01.690Z",
+      "content_hash": "d9f95bd0cd638abfbe4cb66bad72354665b87b0e1407d5caae9acadccaac1e14",
+      "verified_at": "2026-11-18T17:51:23.512Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T14:05:01.690Z"
+      "last_updated": "2026-11-18T17:51:23.512Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "790d4267191d07f65311c82040128f2b3e3f49746c45d382adac51b88940066e",
-      "verified_at": "2026-11-18T13:34:23.184Z",
+      "content_hash": "b187f2207c146de39280010542f7b630b06a01faa6ecff8729c609d5bf5f1bba",
+      "verified_at": "2026-11-18T17:51:18.471Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T13:34:23.184Z"
+      "last_updated": "2026-11-18T17:51:18.471Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",

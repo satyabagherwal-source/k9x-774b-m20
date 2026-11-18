@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T17:41:31.725Z",
-    "lastVerified": "2026-11-18T17:41:31.725Z",
+    "lastChecked": "2026-11-18T17:51:26.833Z",
+    "lastVerified": "2026-11-18T17:51:26.833Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -287,22 +287,21 @@
     "lastVerified": "2026-11-18T09:57:21.136Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T17:10:27.733Z",
-    "lastVerified": "2026-11-18T17:10:27.733Z",
+    "lastChecked": "2026-11-18T17:51:22.232Z",
+    "lastVerified": "2026-11-18T17:51:22.232Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "d815b07f56e6839f22223de5382769498f08c54db6dd6d7f9aa62f9378d6f918",
+    "contentHash": "d9f95bd0cd638abfbe4cb66bad72354665b87b0e1407d5caae9acadccaac1e14",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "9eeb878b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1888,14 +1887,14 @@
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-18T13:34:22.211Z",
-    "lastVerified": "2026-11-18T13:34:22.211Z",
+    "lastChecked": "2026-11-18T17:51:17.882Z",
+    "lastVerified": "2026-11-18T17:51:17.882Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "790d4267191d07f65311c82040128f2b3e3f49746c45d382adac51b88940066e",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "contentHash": "b187f2207c146de39280010542f7b630b06a01faa6ecff8729c609d5bf5f1bba",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3400,5 +3399,50 @@
     "lastChecked": "2026-11-18T17:36:37.492Z",
     "revisionIdentifier": "93f05675",
     "lastVerified": "2026-11-18T17:36:37.492Z"
+  },
+  "vi-websocat": {
+    "name": "websocat",
+    "officialUrl": "https://github.com/vi/websocat",
+    "lastChecked": "2026-11-18T17:51:02.618Z",
+    "revisionIdentifier": "097582e3",
+    "lastVerified": "2026-11-18T17:51:02.618Z"
+  },
+  "hf-google-t5-t5-small": {
+    "name": "google-t5/t5-small",
+    "officialUrl": "https://huggingface.co/google-t5/t5-small",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T17:51:05.277Z",
+    "lastVerified": "2026-11-18T17:51:05.277Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-google-t5-t5-small",
+    "contentHash": "0cf0b8b7b5a82bc133ab563a1a70ae74b92392367b66b8bb49f1703feecf4c92",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "founded-labs-react-native-reusables": {
+    "name": "react-native-reusables",
+    "officialUrl": "https://github.com/founded-labs/react-native-reusables",
+    "lastChecked": "2026-11-18T17:51:07.766Z",
+    "revisionIdentifier": "7df9e76c",
+    "lastVerified": "2026-11-18T17:51:07.766Z"
+  },
+  "liftbridge-io-liftbridge": {
+    "name": "liftbridge",
+    "officialUrl": "https://github.com/liftbridge-io/liftbridge",
+    "lastChecked": "2026-11-18T17:51:10.202Z",
+    "revisionIdentifier": "af2a6626",
+    "lastVerified": "2026-11-18T17:51:10.202Z"
+  },
+  "dingodb-dingo": {
+    "name": "dingo",
+    "officialUrl": "https://github.com/dingodb/dingo",
+    "lastChecked": "2026-11-18T17:51:15.249Z",
+    "revisionIdentifier": "bb96a741",
+    "lastVerified": "2026-11-18T17:51:15.249Z"
   }
 }

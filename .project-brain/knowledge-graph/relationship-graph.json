@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-18T16:32:22.479Z",
+  "updated_at": "2026-11-18T17:52:02.404Z",
   "statistics": {
-    "total_nodes": 359,
+    "total_nodes": 360,
     "total_edges": 166,
     "domain_distribution": {
-      "D": 244,
+      "D": 245,
       "M": 1,
       "H": 50,
       "J": 13,
@@ -8025,6 +8025,28 @@
       ],
       "created_at": "2026-11-18T16:32:22.479Z",
       "updated_at": "2026-11-18T16:32:22.479Z"
+    },
+    "DOM-D-714854BB": {
+      "id": "DOM-D-714854BB",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): tailscale/tailscale",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  \n> **Source**: github ([https://github.com/tailsc -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  \n> **Source**: github ([https://github.com/tailsc",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://tailscale-tailscale/tailscale-tailscale-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T17:51:27.448Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (tailscale-tailscale)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-18T17:52:02.404Z",
+      "updated_at": "2026-11-18T17:52:02.404Z"
     }
   },
   "edges": [
