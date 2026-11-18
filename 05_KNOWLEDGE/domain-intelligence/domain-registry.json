@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T15:43:05.658Z",
-  "total_records": 1872,
+  "last_updated": "2026-11-18T15:51:56.517Z",
+  "total_records": 1874,
   "domains": {
     "A": {
       "total": 13,
@@ -1691,7 +1691,7 @@
       ]
     },
     "I": {
-      "total": 91,
+      "total": 93,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1783,7 +1783,9 @@
         "domain_intelligence-content-information-intelligence-projectcontour-contour-core-invariants",
         "domain_intelligence-content-information-intelligence-projectcontour-contour-learnings-core-invariant",
         "domain_intelligence-content-information-intelligence-codewhale-hq-codewhale-core-invariants",
-        "domain_intelligence-content-information-intelligence-hmbown-codewhale-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-hmbown-codewhale-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-lioensky-vcptoolbox-core-invariants",
+        "domain_intelligence-content-information-intelligence-lioensky-vcptoolbox-learnings-core-invariants"
       ]
     },
     "J": {
@@ -7978,8 +7980,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "4cf02ff8cc9b94605c9117387c7032b356de4b469a30a0f0a567d7ea8b91a9df",
-      "created_at": "2026-11-18T02:42:45.977Z"
+      "content_hash": "5c60db6f638f48956a8dbc15a0dbd7759e6029592264076291d799670666f4b7",
+      "created_at": "2026-11-18T15:51:49.070Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -9211,8 +9213,8 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-learnings-architecture-intelligence-provablehq-snarkos-learni.md",
       "repository": "provablehq-snarkos-learnings",
-      "content_hash": "4d812227d7ca1d3a4d3747188ede90216f7b609e80cae95d2be9bae27248bdd7",
-      "created_at": "2026-11-18T02:42:50.061Z"
+      "content_hash": "87199a267a5805ec69579e90ddae388937c8491f45a30c66944d187503046fd5",
+      "created_at": "2026-11-18T15:51:55.539Z"
     },
     "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
@@ -9535,8 +9537,8 @@
       "title": "Research & Knowledge Intelligence: PSRben/VisionHOPE Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-psrben-visionhope-research-knowledge-intelligence-psrben-visionhope-core-inva.md",
       "repository": "PSRben/VisionHOPE",
-      "content_hash": "9a7362c6fa9ba3029124fb423156d272eeeae1982fc845d97912705eb05616b4",
-      "created_at": "2026-11-18T06:32:29.894Z"
+      "content_hash": "96d4f596d2a059929647ae60338f323f5e029132f40db1bb119984eab18cea53",
+      "created_at": "2026-11-18T15:51:33.401Z"
     },
     "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-core-invariants",
@@ -9595,8 +9597,8 @@
       "title": "Research & Knowledge Intelligence: hf-psrben-visionhope-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-psrben-visionhope-learnings-research-knowledge-intelligence-hf-psrben-visionh.md",
       "repository": "hf-psrben-visionhope-learnings",
-      "content_hash": "547056cd577c83ab5d0b53b8cd44d5ba26311fd0f07bebace2a31c0ae81424b8",
-      "created_at": "2026-11-18T06:32:45.109Z"
+      "content_hash": "fc0b343996a2e888cbd52e50f3546b5715950f8b6fe658dcfad5f286c335f41a",
+      "created_at": "2026-11-18T15:51:54.769Z"
     },
     "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-learnings-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-learnings-core-invariants",
@@ -31309,6 +31311,24 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-18T15:35:48.251Z"
+    },
+    "domain_intelligence-content-information-intelligence-lioensky-vcptoolbox-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-lioensky-vcptoolbox-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: lioensky/VCPToolBox Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-lioensky-vcptoolbox-content-information-intelligence-lioensky-vcptoolbox-core-in.md",
+      "repository": "lioensky/VCPToolBox",
+      "content_hash": "4d05a9e32ce7fd661a420194e633c036e5c8c01020e3c17171d311078d8ebd62",
+      "created_at": "2026-11-18T15:51:51.476Z"
+    },
+    "domain_intelligence-content-information-intelligence-lioensky-vcptoolbox-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-lioensky-vcptoolbox-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: lioensky-vcptoolbox-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-lioensky-vcptoolbox-learnings-content-information-intelligence-lioensky-vcptoolb.md",
+      "repository": "lioensky-vcptoolbox-learnings",
+      "content_hash": "daa508f70f966259f6f9d9649c7551841657ddb1515de2cb2844fd85e828ab0b",
+      "created_at": "2026-11-18T15:51:56.517Z"
     }
   }
 }

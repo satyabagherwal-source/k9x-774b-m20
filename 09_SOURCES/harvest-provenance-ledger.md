@@ -11060,3 +11060,6 @@ Every entry in this ledger must capture:
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `dc1a4622` | Multi-dimensional audit evidence | 2026-11-18T15:35:16.325Z |
 | `learn-dom-d-a606f2df` | `project://rustls-rustls` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md` | 2026-11-18T15:35:48.272Z |
 | `learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ukisai-` | Multi-dimensional audit evidence | 2026-11-18T15:42:52.132Z |
+| `learn-huggingface-psrben-visionhope` | `https://huggingface.co/PSRben/VisionHOPE` | `hf-psrben-` | Multi-dimensional audit evidence | 2026-11-18T15:51:33.155Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `6728d177` | Multi-dimensional audit evidence | 2026-11-18T15:51:48.630Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `ec435c0e` | Multi-dimensional audit evidence | 2026-11-18T15:51:51.046Z |

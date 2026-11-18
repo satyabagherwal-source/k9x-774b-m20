@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T15:47:57.336Z",
+  "timestamp": "2026-11-18T15:51:56.221Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-lioensky-vcptoolbox-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [lioensky-vcptoolbox-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T15:47:57.336Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T15:51:56.221Z`  
 > **Learning ID**: `LEARN-EVO-lioensky-vcptoolbox-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source**: github ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
-> **Source Version**: `a2a3b8b8`  
+> **Source Version**: `ec435c0e`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T15:47:52.692Z  
+> **Timestamp**: 2026-11-18T15:51:49.915Z  
 > **Learning ID**: `learn-github-lioensky-vcptoolbox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lioensky/VCPToolBox](https://github.com/lioensky/VCPToolBox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T15:47:52.546Z  
+> **Harvest Timestamp**: 2026-11-18T15:51:49.908Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1810,11 +1810,11 @@ export function useDashboardLayoutV2(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #602** (2026-11-15): **fix(Plugin): 插件子进程自动继承父进程 Node 运行时以防止原生模块 ABI 冲突**
-  *Symptoms*: ### 解决的问题 在多 Node.js 版本共存或使用 NVM/系统预装 Node 的环境下（例如系统全局预装老版本 Node，而 VCP 主服务使用 NVM/更高版本 Node 启动）： 虽然 `ecosystem.config.js` 显式指定了解释器避免了 PM2 启动主服务时的 ABI 错位，但在 `PluginManager` 中使用 `spawn(command, args, { shell: true })` 启动独立进程插件（如 `ToolCallRecordQuery` 等）时，系统 shell 会从默认 PATH 中解析 `node` 命令，导致以系统老版本 Node 启动插件。  这会导致依赖原生 C++ 二进制扩展（如 `better-sqlite3`）的插件抛出 ABI 不匹配崩溃： ```text The module better_sqlite3.node was compiled against a different Node.js version using NODE_MODULE_VERSION 127. This version of Node.js requires NODE_MODULE_VERSION 93. ```  ### 改进方案 在 `Plugin.js` 的 `executeStaticPlugin` 与 `executePlugin` 构造子进程环境变量时，将当前父进程正在运行的解释器所在目录 (`path.dirname(process.execPath)`) 优先注入到 `PATH` 的最前端：  ```javascript // 无论系统默认 PATH 是什么，子进程优先继承运行当前 VCP 主服务的同一个 Node.js 运行时 const currentNodeBinDir = path.dirname(process.execPath); envForProcess.PATH = `${currentNodeBinDir}${path.delimiter}${envForProcess.PATH || process.env.PATH || ""}`; ```  ### 优势 1. **零侵入**：插件清单无需硬编码绝对路径，继续保留自然的 `"command": "node xxx.js"`。 2. **跨平台自适应**：使用 `path.delimiter` 兼容 Windows/Linux/macOS；未来主服务切换至任何 Node 版本，所有插件子进程均会自动继承并对齐 ABI，彻底杜绝此类崩溃。
+- **Issue #618** (2026-11-18): **# feat(WarpedFieldAtlas): 读取 Tag 和 Chunk 双曲场训练快照，支持按节点或对话消息查询近邻**
+  *Symptoms*:   ## 变更内容  - 新增 `Plugin/WarpedFieldAtlas/`。从知识库目录读取 Tag 训练快照 `.vcpwf`、Chunk（文本片段）训练快照 `.vcpwc` 和 SQLite 数据，返回场图、节点详情和查询结果。 - `/api/plugins/WarpedFieldAtlas/` 下的 `/status` 返回可用场和节点数，`/field/tag`、`/field/chunk` 返回场图。可从已有节点查询近邻，也可选取已有消息向量，查看同一条消息在两个场中的结果。 - 加载快照时，用快照自带的距离表逐项核对 JS 距离函数；不一致时停用查询视图。计算在工作线程中执行，十分钟无请求后释放。  ## 对现有功能的影响  新增 18 个文件，不修改后端核心文件、训练流程或原生检索。接口沿用后端认证，不调用模型或嵌入服务，不写知识库；布局等缓存只写入插件自己的 `state/`。  ## 验证  - 基于 `e22aeded` 运行 `node --test Plugin/WarpedFieldAtlas/geometry.test.js Plugin/WarpedFieldAtlas/layout.test.js Plugin/WarpedFieldAtlas/compact.test.js`，10 项通过。 - 在此前的上游基线 `5adb12bb` 上实际启动后端：无密钥请求返回 401；带密钥读取到 4292 个 Tag 节点、407 个片段节点，并完成查询。 - 同一基线上，用真实库副本中的 40 条消息对照原生检索。Tag 结果的先后次序检查通过 40/40，候选重合率 99.5%；打乱半径后的反向对照为 0/40。Chunk 场比较了 400 个分数，最大绝对差为 8.9e-16。更新基线后未在新的原生二进制上重跑这组对照。  ## 不在本次范围  多份快照并存时，插件选取的 Tag 预设或 Chunk 模型可能与原生检索不同。目前只展示训练快照，不读取训练后追加节点的 `.vcpwi` 文件，因此场图不是实时索引的完整视图。该限制不影响原生检索。
 
-- **Issue #600** (2026-11-15): **fix(roleDivider): 保护记忆包络与代码字面量免受角色误切分并保留多模态缓存断点**
-  *Symptoms*: ### 动机与背景  1. **思忆托盘搬移后的跨模块误切分**：未开启 `MemoryThinkingTray` 时，第 0 条 `system` 消息受 `chatCompletionHandler` 中 `roleDivider.process(..., { skipCount: 1 })` 豁免保护；开启 `MemoryThinkingTray` 后，记忆思维区被搬移至对话尾部生成 `user` 角色承载消息（`index >= 1`），不再处于 `skipCount: 1` 豁免范围内。当 RAG 记忆、冷知识库或技术讨论正文中以行内代码（如 `` `<<<[END_ROLE_DIVIDE_USER]>>>` ``）或代码块形式引用角色分割符字面量时，会触发 `roleDivider` 的孤立结束标签鲁棒性分支，导致单条消息被从反引号中间错误劈裂为多个 `user` 消息块并吞噬标签文本。 2. **多模态分片属性丢失隐患**：`processArrayMessage` 在处理未发生角色拆分的文本分片时，重新构造了纯 `{ type: 'text', text: ... }` 字面量对象，导致上游预处理器（如 `MemoryThinkingTray` 开启 `MEMORY_THINKING_TRAY_CACHE_BREAKPOINT` 时）挂载在文本分片上的 `cache_control` 等扩展属性被意外剥落。  ### 架构与解决方案  在完全不改变合法角色分割语义与预处理器管线顺序的前提下，将 `modules/roleDivider.js` 中的 `protectToolContent` 升级为双阶段可组合的 Unicode 私用区（PUA）隐身护盾：  1. **`O(1)` 特征子串门禁直通**：扫描前快速检测消息是否包含 `ROLE_DIVIDE_` 子串，确保 99.9% 不含分割标记的常规消息零额外解析开销直接放行。 2. **第一阶段：结构化数据包络遮蔽（`findEnvelopeRanges`）**：在原有 `TOOL_REQUEST`（同步兼容 `TOOL_REQUEST_ESCAPE`）与工具结果汇总块保护基础上，增补对闭合 `<!-- VCP_RAG_BLOCK_START ... <!-- VCP_RAG_BLOCK_END -->` 与 `[--- TDB 冷知识库检索 ... [--- 知识库检索结束 ---]` 记忆包络的区间遮蔽，跨越上游多次对象浅拷贝依然稳定生效。 3. **第二阶段：带外层作用域上界的单遍代码词法护盾（`findCodeLiteralRanges`）**：    - **CommonMark 围栏与行内代码解析**：支持 3 字符及以上变长反引号/波浪线围栏（含 `>` 引用块前缀）、HTML `<pre>` / 单行 `<code>` 标签，以及遵循单行约束与前置反斜杠转义识别的等长行内反引号代码段；普通代码块通过统一游标整体跨过，防止代码块内奇数个孤立反引号泄露至外部引发错位配对。    - **外层角色作用域上界守卫（`isBrokenAcrossOuterRole`）**：当合法的未加引号 `ROLE_DIVIDE` 开启标签位于代码块外部时，严格校验内部围栏不得跨越并破坏外层配对的 `END` 标签；未闭合的孤立反引号或半截残缺代码围栏自动退化为普通字符推进，绝不吞噬真实的分割指令。 4. **多模态文本分片元数据保真**：在 `processArrayMessage`
+- **Issue #617** (2026-11-18): **fix: 出站请求中降级无法投递的 Markdown data: 图片（避免上游 415/500）**
+  *Symptoms*: <!-- claude-projects-attribution: {"github_login":"RoxyAsahi"} --> _Requested by **Roxy** · [project thread](https://claude.ai/code/project/chan_01G7J9WTke3jQbPqbkD51nLh?thread=cmsg_01G7J9WTke3jQbPqbkD51nLhAx6jw8oXcWRmYxMAabVYZf)_  ## 问题  上下文文本里只要出现 `![alt](data:...)`，经过 Gemini 原生渠道的 new-api 中转时整轮请求会失败，而且这段内容留在历史里之后每一轮都会失败：  ``` Upstream API returned status 415: image 1: supported media formats are PNG, JPEG, WebP, MP4, WebM, MOV, and MKV Upstream returned status 500: decode markdown base64 image data failed: failed to decode base64 string: illegal base64 data at input byte 4 (convert_request_failed) ```  原因在 new-api 的 OpenAI→Gemini 请求转换（`relaykit/relayconvert/internal/oai_chat/to_gemini_chat_req.go`）：它会扫描文本中的 `![` … `](data:` … `)` 并转成 `inlineData`，没有开关。  - **415**：网页抓取带进来的懒加载 1x1 GIF 占位图是合法 base64，被当成 `image/gif` 发给上游后被拒。 - **500**：匹配到的片段里没有逗号时（截断的 base64、非 base64 的 data URL、甚至讨论这种语法的普通文字），网关把整串 `data:image/...` 当 base64 解码，第 4 个字节正是 `data:` 的冒号。  ## 修复  在所有上游请求共用的 `projectToolBatchForUpstream()` 投影中增加一个出站守卫（`modules/markdownDataImageGuard.js`），因此首次请求、流式/非流式工具循环共 5 处 fetch 都被覆盖。只改写发往上游的请求副本，不改历史、不改前端显示。  规则：  - PNG / JPEG / WebP、base64 完整、不小于 1KB 的真图**原样保留**（例如生图模型多轮改图回传的 `![image](data:image/png;base64,...)`）。 - 其余（GIF、SVG、残缺 base64、占位像素）降级成 `[图片: alt]`。 - 零散的 `](data:` 片段插入一个空格，避免被网关误配对。 - 只处理字符串 content 和 `type: 'text'` 的 part；`image_url` 等多模态 part、`tool_calls` 参数和其他字段都不触碰。 - 没有 `](data:` 的文本直接返回，未改动的消息保持原对象引用。  开关：`EnableMarkdownDataImageGuard`（默认 `true`，已写入 `config.env
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1831,174 +1831,396 @@ export function useDashboardLayoutV2(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c515e6c4` (2026-11-12)
-**Commit Message**: fix(native-rerank): keep the specific error code when a Rerank batch fails
+### Incident Patch 1: `40ef8cba` (2026-11-18)
+**Commit Message**: fix: 出站请求中降级无法投递的 Markdown data: 图片
 
-Every traditional Rerank batch failure was reported as
-RERANK_BATCH_FAILED, so a wrong key (RERANK_HTTP_401), rate limiting
-(RERANK_HTTP_429), an oversized response or an invalid response all
-looked the same in diagnostics.nativeRerank.error. The codes returned by
-post and parse_rerank are static and contain no URL, key or document
-text, and the Jev path already passes them through. They are now passed
-through for Rerank too; a task that panicked or was cancelled still
-reports RERANK_BATCH_FAILED. Successful rankings are unchanged.
+部分上游网关在 OpenAI→Gemini 原生格式转换时会把文本里的 ![alt](data:...)
+转成内联图片。网页抓取带来的 1x1 GIF 占位图会被上游以 415 拒绝，没有逗号或
+base64 残缺的片段会让网关以 500 失败，并且内容留在历史后每一轮都会复现。
 
-**File**: `rust-vexus-lite/src/native_rerank.rs` (modified, +28/-1)
+在所有上游请求共用的 projectToolBatchForUpstream 投影中增加守卫：仅改写请求副本
+里的文本，完整的 PNG/JPEG/WebP 真图原样保留，其余降级为 [图片: alt]。
+image_url 等多模态内容、工具参数和本地历史不受影响。
+可用 EnableMarkdownDataImageGuard=false 关闭。
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01TCfNdNdmqxmPkCxeKTqFSt
+
+**File**: `modules/markdownDataImageGuard.js` (added, +86/-0)
 ```diff
-@@ -229,7 +229,9 @@ impl Ranker {
-             while let Some(result) = pending.join_next().await {
-                 match result {
-                     Ok(Ok(mut scores)) => output.append(&mut scores),
--                    _ => return Err("RERANK_BATCH_FAILED".into()),
-+                    // post/parse_rerank codes are already sanitized; keep them.
-+                    Ok(Err(error)) => return Err(error),
-+                    Err(_) => return Err("RERANK_BATCH_FAILED".into()),
-                 }
-             }
-         }
-@@ -430,6 +432,31 @@ mod tests {
-         }
-     }
- 
-+    #[tokio::test]
-+    async fn traditional_batch_failure_keeps_sanitized_error_code() {
-+        use tokio::io::{AsyncReadExt, AsyncWriteExt};
-+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-+        let address = listener.local_addr().unwrap();
-+        let server = tokio::spawn(async move {
-+            let (mut socket, _) = listener.accept().await.unwrap();
-+            let mut bytes = [0; 4096];
-+            let _ = socket.read(&mut bytes).await;
-+            socket.write_all(b"HTTP/1.1 429 Too Many Requests\r\nContent-Length: 0\r\nConnection: close\r\n\r\n")
-+                .await.unwrap();
-+        });
-+        let values = HashMap::from([
-+            ("RerankUrl".into(), format!("http://{address}/")),
-+            ("RerankApi".into(), "fixture".into()),
-+            ("RerankModel".into(), "fixture".into()),
-+            ("NativeRerankTimeoutMs".into(), "5000".into()),
-+        ]);
-+        let ranker = Ranker::from_values(&values, Some(false)).unwrap();
-+        let error = ranker.rank("query", &[json!({"id":1,"text":"one"}), json!({"id":2,"text":"two"})])
-+            .await.unwrap_err();
-+        assert_eq!(error, "RERANK_HTTP_429");
-+        server.abort();
-+    }
+@@ -0,0 +1,86 @@
++'use strict';
 +
-     #[test]
-     fn prompt_override_is_local_and_preserves_legacy_default() {
-         let values = HashMap::from([
-```
-
----
-
-### Incident Patch 2: `c1e9c4a9` (2026-11-14)
-**Commit Message**: perf(wormhole): build unified-bonus trace objects only when a trace is requested
-
-V4 retired the RRF fusion to a test-only reference, so the earlier change to its trace is reverted to upstream and the same gating moves to apply_unified_bonus: every numeric field is computed as before and only the JSON trace is skipped when includeTrace is off. Scores are bit-identical (test unified_trace_is_optional_and_preserves_score_bits).
-
-**File**: `rust-vexus-lite/src/rivermemo_wormhole.rs` (modified, +46/-1)
-```diff
-@@ -541,6 +541,9 @@ pub(super) fn apply_unified_bonus(
-         item.final_score = clamp01(item.pure_score + item.path_bonus
-             + item.gated_bonus + item.anchor_bonus);
-         item.ranking_score = item.final_score;
-+        // Only the optional topology trace consumes this JSON; score clipping
-+        // and ranking use the numeric fields above directly.
-+        if !input.include_trace { continue; }
-         traces.insert(item.curve.id, serde_json::json!({
-             "mode":"continuous-shared-topology-budget", "active": xw.eligible || proxy > 0.0,
-             "wormhole":xw, "proxyEvidence":proxy, "proxyEdge":proxy_edge,
-@@ -720,6 +723,48 @@ mod score_contract_fixture_tests {
-         assert_eq!(work[1].final_score,0.9);
-     }
- 
-+    #[test]
-+    fn unified_trace_is_optional_and_preserves_score_bits() {
-+        let mut input: NativeInput = serde_json::from_value(json!({
-+            "query":{"vector":[1,0]}, "queryState":{
-+                "completeObservation":true,
-+                "fieldProvenance":[{"id":1,"hop":0,"sourceType":"core"}],
-+                "riverNodes":[{"id":1,"hop":0},{"id":2,"hop":1}],
-+                "riverEdges":[{"sourceId":1,"targetId":2,"flow":0.1}]
-+            }
-+        })).unwrap();
-+        let omega = compute_omega(&input);
-+        let graph = NativeArtifact {
-+            node_ids:vec![1,2], node_index:HashMap::from([(1,0),(2,1)]),
-+            row_offsets:vec![0,1,1], targets:vec![1], weights:vec![0.4],
-+            ..NativeArtifact::default()
-+        };
-+        let model = Model { eligible_routes:1, routes:vec![Route {
-+            source_id:1,target_id:2,flow:1.0,relative_flow:0.625,
-+            vector:Arc::from(vec![1.0_f32,0.0]),
-+        }] };
-+        let mut expected = None;
-+        for trace in [true, false] {
-+            input.include_trace = trace;
-+            let mut work = vec![candidate(1,0.5,true),candidate(2,0.5,false)];
-+            work[0].v2_bonus = 0.013;
-+            let traces = apply_unified_bonus(&mut work,&model,&input,&omega,&graph);
-+            assert_eq!(traces.len(), if trace { work.len() } else { 0 });
-+            let bits = work.iter().map(|item| (item.curve.id,
-+                item.gated_bonus.to_bits(), item.final_score.to_bits(), item.ranking_score.to_bits()))
-+                .collect::<Vec<_>>();
-+            if trace {
-+                for item in &work {
-+                    assert_eq!(traces[&item.curve.id]["finalScore"].as_f64().unwrap().to_bits(),
-+                        item.final_score.to_bits());
-+                }
-+                expected = Some(bits);
-+            } else {
-+                assert_eq!(&bits, expected.as_ref().unwrap());
-+            }
-+        }
-+    }
++/**
++ * 出站守卫：文本里的 Markdown data: 图片。
++ *
++ * 部分上游网关在把 OpenAI 格式转成 Gemini 原生格式时，会扫描文本中的
++ * `![alt](data:...)` 并把它转成内联图片。网页抓取带进来的 1x1 GIF 占位图、
++ * 残缺的 base64、甚至讨论这种语法的普通文字，都会让整轮请求以 415/500 失败，
++ * 而且这段内容留在历史里之后每一轮都会失败。
++ *
++ * 这里只处理发往上游的请求副本里的文本：
++ *   - 格式受支持、base64 完整、体积不是占位级别的真图原样保留；
++ *   - 其余降级成 `[图片: alt]`；
++ *   - 零散的 `](data:` 片段插入一个空格，避免被网关误配对。
++ * image_url 等多模态 part、工具参数和其他字段都不触碰。
++ */
 +
-     #[test]
-     fn complementary_graph_and_transport_are_bounded_and_idempotent() {
-         let input: NativeInput = serde_json::from_value(json!({
-@@ -803,4 +848,4 @@ mod score_contract_fixture_tests {
-         items.sort_by(|a,b| b.ranking_score.total_cmp(&a.ranking_score));
-         assert_eq!(items.iter().map(|c|c.curve.id).collect::<Vec<_>>(),vec![30,10,20]);
-     }
--}
-\ No newline at end of file
++const MARKER = '](data:';
++const KEEP_MIME = new Set(['image/png', 'image/jpeg', 'image/webp']);
++// 小于这个体积的内联图基本只会是占位图或跟踪像素。
++const MIN_KEEP_BYTES = 1024;
++const DATA_URL_RE = /^data:([^;,]+);base64,([A-Za-z0-9+/]+={0,2})$/;
++const MARKDOWN_DATA_IMAGE_RE = /!\[([^\]\n]{0,300})\]\((data:[^)\s]*)\)/g;
++
++function isGuardEnabled() {
++    return String(process.env.EnableMarkdownDataImageGuard || 'true').toLowerCase() !== 'false';
 +}
++
++function isDeliverableImage(dataUrl) {
++    const match = DATA_URL_RE.exec(dataUrl);
++    if (!match) return false;
++    if (!KEEP_MIME.has(match[1].toLowerCase())) return false;
++    const base64 = match[2];
++    if (base64.length % 4 !== 0) return false;
++    return Math.floor(base64.length * 3 / 4) >= MIN_KEEP_BYTES;
++}
++
++function guardMarkdownDataImagesInText(text) {
++    if (typeof text !== 'string' || !text.includes(MARKER)) return text;
++
++    const withoutBadImages = text.replace(MARKDOWN_DATA_IMAGE_RE, (whole, alt, dataUrl) => {
++        if (isDeliverableImage(dataUrl)) return whole;
++        const label = alt.trim();
++        return label ? `[图片: ${label}]` : '[图片]';
++    });
++    if (!withoutBadImages.includes(MARKER)) return withoutBadImages;
++
++    return withoutBadImages.replace(/\]\(data:/g, (marker, offset) => {
++        const close = withoutBadImages.indexOf(')', offset);
++        const dataUrl = close === -1 ? '' : withoutBadImages.slice(offset + 2, close);
++        return isDeliverableImage(dataUrl) ? marker : '] (data:';
++    });
++}
++
++/** Request-only copy; returns the same object when nothing needs to change. */
++function guardMarkdownDataImagesForUpstream(body) {
++    if (!isGuardEnabled() || !body || !Array.isArray(body.messages)) return body;
++    let changed = false;
++    const messages = body.messages.map(message => {
++        if (!message) return message;
++        const content = message.content;
++        if (typeof content === 'string') {
++            const guarded = guardMarkdownDataImagesInText(content);
++            if (guarded === content) return message;
++            changed = true;
++            return { ...message, content: guarded };
++        }
++        if (Array.isArray(content)) {
++            let partChanged = false;
++            const parts = content.map(part => {
++                if (part?.type !== 'text' || typeof part.text !== 'string') return part;
++                const guarded = guardMarkdownDataImagesInText(part.text);
++                if (guarded === part.text) return part;
++                partChanged = true;
++                return { ...part, text: guarded };
++            });
++            if (!partChanged) return message;
++            changed = true;
++            return { ...message, content: parts };
++        }
++        return message;
++    });
++    return changed ? { ...body, messages } : body;
++}
++
++module.exports = { guardMarkdownDataImagesInText, guardMarkdownDataImagesForUpstream };
+```
+
+**File**: `modules/toolResultBatch.js` (modified, +6/-0)
+```diff
+@@ -1,5 +1,7 @@
+ 'use strict';
+ 
++const { guardMarkdownDataImagesForUpstream } = require('./markdownDataImageGuard.js');
++
+ let lastTimestampMs = 0;
+ const START_PREFIX = '<<<[VCP_TOOL_BATCH_START:';
+ const END_PREFIX = '<<<[VCP_TOOL_BATCH_END:';
+@@ -104,6 +106,10 @@ function projectBatchWrapperText(text, role) {
+ /** Request-only copy; media, tool arguments and all other fields remain untouched. */
+ function projectToolBatchForUpstream(body) {
+     if (!body || !Array.isArray(body.messages)) return body;
++    return guardMarkdownDataImagesForUpstream(projectBatchWrappersForUpstream(body));
++}
++
++function projectBatchWrappersForUpstream(body) {
+     return {
+         ...body,
+         messages: body.messages.map(message => {
+```
+
+**File**: `tests/markdownDataImageGuard.test.js` (added, +119/-0)
+```diff
+@@ -0,0 +1,119 @@
++'use strict';
++const test = require('node:test');
++const assert = require('node:assert/strict');
++const {
++    guardMarkdownDataImagesInText,
++    guardMarkdownDataImagesForUpstream
++} = require('../modules/markdownDataImageGuard');
++const { projectToolBatchForUpstream } = require('../modules/toolResultBatch');
++
++const PIXEL_GIF = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
++const REAL_PNG = `data:image/png;base64,iVBORw0KGgoA${'A'.repeat(4000)}`;
++const REAL_JPEG = `data:image/jpeg;base64,/9j/${'A'.repeat(4000)}`;
++
++/**
++ * 网关侧扫描逻辑的等价实现：返回 'ok'、'decode-error' 或被当作图片发出的 MIME 列表。
++ */
++function gatewayScan(text) {
++    const mimes = [];
++    for (;;) {
++        const start = text.indexOf('![');
++        if (start === -1) break;
++        let bracket = text.slice(start).indexOf('](data:');
++        if (bracket === -1) break;
++        bracket += start;
++        let close = text.slice(bracket + 2).indexOf(')');
++        if (close === -1) break;
++        close += bracket + 2;
++        const url = text.slice(bracket + 2, close);
++        const comma = url.indexOf(',');
++        const prefix = comma === -1 ? '' : url.slice(0, comma);
++        if (comma === -1 || !prefix.includes(';')) return 'decode-error';
++        mimes.push(prefix.slice(prefix.indexOf(':') + 1, prefix.indexOf(';')));
++        text = text.slice(close + 1);
++    }
++    return mimes.length ? mimes : 'ok';
++}
++
++test('placeholder pixel from scraped pages is degraded and the surrounding text survives', () => {
++    const input = `[Infographic] A ![chart](${PIXEL_GIF}) B 后面的正文`;
++    assert.deepEqual(gatewayScan(input), ['image/gif']);
++    const output = guardMarkdownDataImagesInText(input);
++    assert.equal(output, '[Infographic] A [图片: chart] B 后面的正文');
++    assert.equal(gatewayScan(output), 'ok');
++});
++
++test('data URLs the gateway cannot decode are neutralized', () => {
++    for (const input of [
++        '网关会把 ![...](data:image/gif...) 转成图片',
++        '![a](data:image/png;base64,iVBO…)',
++        '![a](data:image/svg+xml;utf8,<svg/>)',
++        '![](data:image/png;base64)',
++        '前文 ![说明\n跨行](data:image/png;base64 后文没有闭合也有 ) 括号'
++    ]) {
++        assert.notEqual(gatewayScan(input), 'ok', input);
++        assert.equal(gatewayScan(guardMarkdownDataImagesInText(input)), 'ok', input);
++    }
++    assert.equal(guardMarkdownDataImagesInText('![](data:image/png;base64)'), '[图片]');
++});
++
++test('unsupported formats and tiny images are degraded even when the base64 is valid', () => {
++    const tinyPng = 'data:image/png;base64,iVBORw0KGgo=';
++    const svg = `data:image/svg+xml;base64,${'A'.repeat(4000)}`;
++    assert.equal(guardMarkdownDataImagesInText(`![t](${tinyPng})`), '[图片: t]');
++    assert.equal(guardMarkdownDataImagesInText(`![s](${svg})`), '[图片: s]');
++});
++
++test('real inline images are kept byte-for-byte', () => {
++    for (const url of [REAL_PNG, REAL_JPEG]) {
++        const input = `看这张 ![image](${url}) 再改一下`;
++        assert.equal(guardMarkdownDataImagesInText(input), input);
++    }
++    const mixed = `![x](${PIXEL_GIF}) 和 ![image](${REAL_PNG})`;
++    assert.equal(guardMarkdownDataImagesInText(mixed), `[图片: x] 和 ![image](${REAL_PNG})`);
++});
++
++test('ordinary content is untouched', () => {
++    for (const input of [
++        '<img src="http://localhost:6005/pw=x/images/通用表情包/开心.png" width="60">',
++        '![cat](https://example.com/a.gif)',
++        `<img src="${PIXEL_GIF}">`,
++        'CSS: background: url(data:image/gif;base64,R0lGOD)',
++        '没有任何图片的普通文本'
++    ]) {
++        assert.equal(guardMarkdownDataImagesInText(input), input);
++    }
++});
++
++test('request projection only rewrites text and keeps untouched objects by reference', () => {
++    const imagePart = { type: 'image_url', image_url: { url: PIXEL_GIF } };
++    const clean = { role: 'user', content: [{ type: 'text', text: 'hi' }, imagePart] };
++    const dirtyString = { role: 'user', content: `x ![p](${PIXEL_GIF}) y` };
++    const dirtyParts = { role: 'user', content: [{ type: 'text', text: `![p](${PIXEL_GIF})` }, imagePart] };
++    const toolCall = { role: 'assistant', content: null, tool_calls: [{ function: { arguments: `![p](${PIXEL_GIF})` } }] };
++    const body = { model: 'm', messages: [clean, dirtyString, dirtyParts, toolCall] };
++    const snapshot = JSON.stringify(body);
++
++    const output = guardMarkdownDataImagesForUpstream(body);
++    assert.equal(JSON.stringify(body), snapshot, 'input is not mutated');
++    assert.equal(output.messages[0], clean);
++    assert.equal(output.messages[1].content, 'x [图片: p] y');
++    assert.equal(output.messages[2].content[0].text, '[图片: p]');
++    assert.equal(output.messages[2].content[1], imagePart);
++    assert.equal(output.messages[3], toolCall);
++
++    const cleanBody = { messages: [clean] };
++    assert.equal(guardMarkdownDataImagesForUpstream(cleanBody), cleanBody);
++});
++
++test('the shared upstream projection applies the guard and honours the switch', () => {
++
 ```
 
 ---
 
-### Incident Patch 3: `f73945c2` (2026-11-12)
-**Commit Message**: refactor(index): use RetrievalIndex::model_hash for the SQL build identity
+### Incident Patch 2: `b318526c` (2026-11-18)
+**Commit Message**: Merge pull request #610 from silk2onion/fix/stream-empty-and-hydrogen-recovery
 
-index_source.rs hashed the model signature with its own
-Sha256::digest(model_sig.as_bytes()), while retrieval_index.rs and
-index_lifecycle.rs use RetrievalIndex::model_hash for the same identity
-field. Same input to the same SHA-256, so the identity is unchanged;
-the existing sql_owned_asset_is_removed_after_host_mapping_is_released
-test asserts this equality.
+fix(stream): surface empty-response reason and recover mapped malformed FC for isolated models
 
-**File**: `rust-vexus-lite/src/index_source.rs` (modified, +1/-1)
+**File**: `modules/handlers/streamHandler.js` (modified, +49/-1)
 ```diff
-@@ -161,7 +161,7 @@ fn build_with_source(
-     let identity = AssetIdentity {
-         dimension,
-         scope: u8::from(diary.is_none()),
--        model_hash: Sha256::digest(model_sig.as_bytes()).into(),
-+        model_hash: crate::retrieval_index::RetrievalIndex::model_hash(model_sig),
-         content_digest: digest.finalize().into(),
-     };
-     let lookup = if diary.is_some() {
+@@ -199,6 +199,7 @@ class StreamHandler {
+         let clientReasoningEndsWithNewline = false;
+ 
+         let finishReason = null;
++        let nativeFinishReason = null;
+         let malformedFunctionCall = false;
+         let sawDone = false;
+         let invalidPayload = false;
+@@ -208,15 +209,24 @@ class StreamHandler {
+         const shouldStripNativeTools = (payloadModel) =>
+           matchesNativeToolIsolation(payloadModel || originalBody?.model);
+         const result = () => {
++          const firstSettle = !streamSettled;
+           streamSettled = true;
+           if (toolTailTimer) clearTimeout(toolTailTimer);
++          if (firstSettle && !streamAborted && !sawNativeToolCall && collectedContentThisTurn.trim().length === 0) {
++            console.warn(
++              `[VCP Stream Empty] requestId=${id || 'unknown'} model=${originalBody?.model || 'unknown'} ` +
++              `status=${aiResponse?.status ?? 'unknown'} finishReason=${finishReason || 'none'} ` +
++              `nativeFinishReason=${nativeFinishReason || 'none'} sawDone=${sawDone} ` +
++              `reasoningChars=${message.reasoning_content.length} invalidPayload=${invalidPayload} malformedFC=${malformedFunctionCall}`
++            );
++          }
+           const hasNativeToolCompletion = sawNativeToolCall && (
+             ['tool_calls', 'function_call', 'stop'].includes(finishReason) ||
+             (!finishReason && sawDone)
+           );
+           return {
+             content: collectedContentThisTurn, message, malformedFunctionCall,
+-            streamAborted, hasPayloadError, sawNativeToolCall, finishReason,
++            streamAborted, hasPayloadError, sawNativeToolCall, finishReason, nativeFinishReason,
+             completed: !streamAborted && !invalidPayload && aiResponse.ok && (
+               (collectedContentThisTurn.trim().length > 0 &&
+                 (finishReason === 'stop' || (!finishReason && sawDone))) ||
+@@ -250,6 +260,8 @@ class StreamHandler {
+           }
+           const reason = parsedData?.choices?.[0]?.finish_reason;
+           if (reason) finishReason = reason;
++          const nativeReason = parsedData?.choices?.[0]?.native_finish_reason;
++          if (nativeReason) nativeFinishReason = nativeReason;
+         };
+ 
+         const appendDelta = (delta) => {
+@@ -591,6 +603,18 @@ class StreamHandler {
+     const processAIResponseStreamHelper = async (aiResponse, isInitialCall) => {
+       let data = await readAIResponseStream(aiResponse, isInitialCall);
+       if (data.streamAborted) return { ...data, content: '', completed: false };
++      if (
++        !data.malformedFunctionCall &&
++        !data.hasPayloadError &&
++        !data.sawNativeToolCall &&
++        data.finishReason === 'content_filter' &&
++        !data.content.trim() &&
++        !data.message.reasoning_content &&
++        matchesNativeToolIsolation(originalBody?.model)
++      ) {
++        console.warn(`[VCP Stream Recovery] requestId=${id || 'unknown'} hydrogen 上游返回空正文 content_filter，判定为上游映射的 MALFORMED_FUNCTION_CALL，将触发纠偏重发。`);
++        data.malformedFunctionCall = true;
++      }
+       if (!data.malformedFunctionCall) return data;
+       if (abortController?.signal.aborted || data.streamAborted || res.writableEnded || res.destroyed) return data;
+ 
+@@ -660,6 +684,7 @@ class StreamHandler {
+     // --- 初始 AI 调用 ---
+     if (DEBUG_MODE) console.log('[VCP Stream Loop] Processing initial AI call.');
+     let initialAIResponseData = await processAIResponseStreamHelper(firstAiAPIResponse, true);
++    let lastAIResponseData = initialAIResponseData;
+     let lastTurnSawNativeToolCall = Boolean(initialAIResponseData.sawNativeToolCall);
+     let lastTurnFinishReason = initialAIResponseData.finishReason || null;
+     validUpstreamTurns = initialAIResponseData.completed;
+@@ -694,6 +719,28 @@ class StreamHandler {
+         if (DEBUG_MODE) console.log('[VCP Stream Loop] No tool calls found. Exiting loop.');
+         if (!res.writableEnded) {
+           try {
++            if (
++              !lastTurnSawNativeToolCall &&
++              !lastAIResponseData?.streamAborted &&
++              !lastAIResponseData?.malformedFunctionCall &&
++              (!currentAIContentForLoop || !currentAIContentForLoop.trim())
++            ) {
++              const reasonParts = [];
++              if (lastAIResponseData?.finishReason) reasonParts.push(`finish_reason=${lastAIResponseData.finishReason}`);
++              if (lastAIResponseData?.nativeFinishReason) reasonParts.push(`native_finish_reason=${lastAIResponseData.nativeFinishReason}`);
++              if (lastAIResponseData?.message?.reasoning_content?.length > 0) {
++                reasonParts.push(`思考=${lastAIResponseData.message.reasoning_content.length}字`);
++              }
++              if (lastAIResponseData?.hasPayloadError) reasonParts.push('上游payload报错');
++              const emptyReason = reasonParts.length > 0 ? reasonParts.join(', ') : '上游未返回任何正文';
++              res.write(`data: ${JSON.stringify({
++ 
+```
+
+---
+
+### Incident Patch 3: `5b6fc9d1` (2026-11-18)
+**Commit Message**: Merge pull request #611 from TaoCultivator/fix/requirements-no-downgrade
+
+fix(deps): 解除 requirements 中会触发降级的精确钉版
+
+**File**: `Plugin/VideoGenerator/requirements.txt` (modified, +5/-3)
+```diff
+@@ -1,4 +1,6 @@
+-requests==2.31.0
+-python-dotenv==1.0.0
++# 本地部署改用 >=：系统已装更高版本（requests 2.34.2 / python-dotenv 1.2.4 / Pillow 12.2.0），
++# 按部署约定「不降级」，避免 pip install -r 时把宿主依赖回退。
++requests>=2.31.0
++python-dotenv>=1.0.0
+ 
+-Pillow==11.0.0
++Pillow>=11.0.0
+```
+
+**File**: `requirements.txt` (modified, +4/-2)
+```diff
+@@ -4,8 +4,10 @@ scipy
+ numpy
+ 
+ # Wan2.1VideoGen dependencies
+-requests==2.31.0
+-python-dotenv==1.0.0
++# 本地部署改用 >=：系统已装更高版本（requests 2.34.2 / python-dotenv 1.2.4 / Pillow 12.2.0），
++# 按部署约定「不降级」，避免 pip install -r 时把宿主依赖回退。
++requests>=2.31.0
++python-dotenv>=1.0.0
+ Pillow>=11.0.0
+ 
+ # MCP-O
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #602** (2026-11-15): fix(Plugin): 插件子进程自动继承父进程 Node 运行时以防止原生模块 ABI 冲突 (@InSciTech)
-- **PR #600** (2026-11-15): fix(roleDivider): 保护记忆包络与代码字面量免受角色误切分并保留多模态缓存断点 (@infinite-vector)
-- **PR #599** (2026-11-14): perf(rust-vexus-lite): 去重、NNLS、索引、存储、入库、Spike、元思考、LightMemo 的一批逐位不变改进 (@CI-IISATO)
-- **PR #598** (2026-11-14): fix(RAGDiary): ContextVectorManager 向量表加上限，分段排除当前这一轮，复用清洗缓存 (@CI-IISATO)
-- **PR #597** (2026-11-14): fix(RAGDiary): ::TimeDecay 中文标签、::Time 名额、时间表头时区、联合日记本补三篇、时间片段日期 (@CI-IISATO)
-- **PR #596** (2026-11-13): feat(memo): deliver Cone-AGS NNLS and unified continuous topology scoring (@lioensky)
+- **PR #618** (2026-11-18): # feat(WarpedFieldAtlas): 读取 Tag 和 Chunk 双曲场训练快照，支持按节点或对话消息查询近邻 (@CI-IISATO)
+- **PR #617** (2026-11-18): fix: 出站请求中降级无法投递的 Markdown data: 图片（避免上游 415/500） (@RoxyAsahi)
+- **PR #616** (2026-11-18): feat(memo): 1% 阈值训练对纯追加窗口按依赖复用 Tag 局部残差 (@CI-IISATO)
+- **PR #615** (closed): 驱动兼容性版本更新 (@TaoCultivator)
+- **PR #614** (2026-11-18): RiverMemo V5.2：以属概念门控校准种差，移除独立直锚加分 (@lioensky)
+- **PR #613** (2026-11-18): feat(vexus): 全局 Chunk 双曲场的增量超过缓冲上限后转化为热编码，查询不再逐条读取原件 (@CI-IISATO)
 
 ---
 
@@ -2018,52 +2240,69 @@ test asserts this equality.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. native-rerank): keep the specific error code when a Rerank batch fails
+## X. 出站请求中降级无法投递的 Markdown data: 图片
 
 **RULE**:
-When implementing operations in `rust-vexus-lite/src/native_rerank.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `modules/markdownDataImageGuard.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lioensky/VCPToolBox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c515e6c4`: native-rerank): keep the specific error code when a Rerank batch fails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `40ef8cba`: 出站请求中降级无法投递的 Markdown data: 图片. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust-vexus-lite/src/native_rerank.rs`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `modules/markdownDataImageGuard.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-                    // post/parse_rerank codes are already sanitized; keep them.
-                    Ok(Err(error)) => return Err(error),
-                    Err(_) => return Err("RERANK_BATCH_FAILED".into()),
-    #[tokio::test]
-    async fn traditional_batch_failure_keeps_sanitized_error_code() {
-        use tokio::io::{AsyncReadExt, AsyncWriteExt};
-        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-        let address = listener.local_addr().unwrap();
-        let server = tokio::spawn(async move {
-            let (mut socket, _) = listener.accept().await.unwrap();
-            let mut bytes = [0; 4096];
-            let _ = socket.read(&mut bytes).await;
-            socket.write_all(b"HTTP/1.1 429 Too Many Requests\r\nContent-Length: 0\r\nConnection: close\r\n\r\n")
-                .await.unwrap();
-        });
-        let values = HashMap::from([
-            ("RerankUrl".into(), format!("http://{address}/")),
-            ("RerankApi".into(), "fixture".into()),
-            ("RerankModel".into(), "fixture".into()),
-            ("NativeRerankTimeoutMs".into(), "5000".into()),
-        ]);
-        let ranker = Ranker::from_values(&values, Some(false)).un
+'use strict';
+
+/**
+ * 出站守卫：文本里的 Markdown data: 图片。
+ *
+ * 部分上游网关在把 OpenAI 格式转成 Gemini 原生格式时，会扫描文本中的
+ * `![alt](data:...)` 并把它转成内联图片。网页抓取带进来的 1x1 GIF 占位图、
+ * 残缺的 base64、甚至讨论这种语法的普通文字，都会让整轮请求以 415/500 失败，
+ * 而且这段内容留在历史里之后每一轮都会失败。
+ *
+ * 这里只处理发往上游的请求副本里的文本：
+ *   - 格式受支持、base64 完整、体积不是占位级别的真图原样保留；
+ *   - 其余降级成 `[图片: alt]`；
+ *   - 零散的 `](data:` 片段插入一个空格，避免被网关误配对。
+ * image_url 等多模态 part、工具参数和其他字段都不触碰。
+ */
+
+const MARKER = '](data:';
+const KEEP_MIME = new Set(['image/png', 'image/jpeg', 'image/webp']);
+// 小于这个体积的内联图基本只会是占位图或跟踪像素。
+const MIN_KEEP_BYTES = 1024;
+const DATA_URL_RE = /^data:([^;,]+);base64,([A-Za-z0-9+/]+={0,2})$/;
+const MARKDOWN_DATA_IMAGE_RE = /!\[([^\]\n]{0,300})\]\((data:[^)\s]*)\)/g;
+
+function isGuardEnabled() {
+    return String(process.env.EnableMarkdownDataImageGuard || 'true').toLowerCase() !== 'false';
+}
+
+function isDeliverableImage(dataUrl) {
+    const match = DATA_URL_RE.exec(dataUrl);
+    if (!match) return false;
+    if (!KEEP_MIME.has(match[1].toLowerCase())) return false;
+    const base64 = match[2];
+    if (base64.length % 4 !== 0) return false;
+    return Math.floor(base64.length * 3 / 4) >= MIN_KEEP_BYTES;
+}
+
+function guardMarkdownDataImagesInText(text) {
+    if
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-                    _ => return Err("RERANK_BATCH_FAILED".into()),
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c515e6c4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `40ef8cba` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

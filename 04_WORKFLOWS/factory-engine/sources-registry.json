@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T15:43:03.975Z",
-    "lastVerified": "2026-11-18T15:43:03.975Z",
+    "lastChecked": "2026-11-18T15:51:54.366Z",
+    "lastVerified": "2026-11-18T15:51:54.366Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -292,8 +292,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T15:14:25.517Z",
-    "lastVerified": "2026-11-18T15:14:25.517Z",
+    "lastChecked": "2026-11-18T15:51:44.652Z",
+    "lastVerified": "2026-11-18T15:51:44.652Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -970,11 +970,21 @@
     "lastVerified": "2026-11-18T11:45:04.270Z"
   },
   "provablehq-snarkos": {
-    "name": "snarkOS",
+    "name": "aleo-labs-protocol/snarkOS",
     "officialUrl": "https://github.com/ProvableHQ/snarkOS",
-    "lastChecked": "2026-11-18T11:45:06.775Z",
-    "revisionIdentifier": "497534cd",
-    "lastVerified": "2026-11-18T11:45:06.775Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-18T15:51:47.453Z",
+    "lastVerified": "2026-11-18T15:51:47.453Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "527f0642aaa0c1d3597cda468a0238c875e18e0c22f2d01bfe16c1dc20afd30b",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "clockworklabs-spacetimedb": {
     "name": "clockworklabs/SpacetimeDB",
@@ -2700,5 +2710,60 @@
     "lastChecked": "2026-11-18T15:43:01.446Z",
     "revisionIdentifier": "b2be8cc8",
     "lastVerified": "2026-11-18T15:43:01.446Z"
+  },
+  "clementtsang-bottom": {
+    "name": "bottom",
+    "officialUrl": "https://github.com/ClementTsang/bottom",
+    "lastChecked": "2026-11-18T15:51:29.712Z",
+    "revisionIdentifier": "6e1c1385",
+    "lastVerified": "2026-11-18T15:51:29.712Z"
+  },
+  "hf-psrben-visionhope": {
+    "name": "PSRben/VisionHOPE",
+    "officialUrl": "https://huggingface.co/PSRben/VisionHOPE",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T15:51:32.415Z",
+    "lastVerified": "2026-11-18T15:51:32.415Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-psrben-visionhope",
+    "contentHash": "fcbb1b569efa98453447a808e60630a2fa8a72c6fb71113178d600916cd6577c",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jhen0409-react-native-debugger": {
+    "name": "react-native-debugger",
+    "officialUrl": "https://github.com/jhen0409/react-native-debugger",
+    "lastChecked": "2026-11-18T15:51:34.842Z",
+    "revisionIdentifier": "bd3435a4",
+    "lastVerified": "2026-11-18T15:51:34.842Z"
+  },
+  "sorintlab-stolon": {
+    "name": "stolon",
+    "officialUrl": "https://github.com/sorintlab/stolon",
+    "lastChecked": "2026-11-18T15:51:37.165Z",
+    "revisionIdentifier": "bcea7a75",
+    "lastVerified": "2026-11-18T15:51:37.165Z"
+  },
+  "lioensky-vcptoolbox": {
+    "name": "lioensky/VCPToolBox",
+    "officialUrl": "https://github.com/lioensky/VCPToolBox",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-11-18T15:51:49.908Z",
+    "lastVerified": "2026-11-18T15:51:49.908Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-lioensky-vcptoolbox",
+    "contentHash": "5de0fd7a43dd29a63ad39deff50fcba7ef3716cf9a3f953a6f3563927e996d84",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 5,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T15:42:52.143Z",
+  "last_updated": "2026-11-18T15:51:51.058Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -740,14 +740,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-psrben-visionhope",
-      "content_hash": "a6add2170d72dcd62036112826357d49374363ab7705836f1742ff171c2df170",
-      "verified_at": "2026-11-18T06:32:29.662Z",
+      "content_hash": "fcbb1b569efa98453447a808e60630a2fa8a72c6fb71113178d600916cd6577c",
+      "verified_at": "2026-11-18T15:51:33.172Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T06:32:29.662Z"
+      "last_updated": "2026-11-18T15:51:33.172Z"
     },
     "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "b2d7e0d9e20e7e0b80b028b96c658df12ce819602e42edf619e361a061990f82",
-      "verified_at": "2026-11-18T02:42:45.680Z",
+      "content_hash": "527f0642aaa0c1d3597cda468a0238c875e18e0c22f2d01bfe16c1dc20afd30b",
+      "verified_at": "2026-11-18T15:51:48.642Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T02:42:45.680Z"
+      "last_updated": "2026-11-18T15:51:48.642Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -4611,14 +4611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lioensky-vcptoolbox",
-      "content_hash": "df767793283c97082bc1705c9bc6083f638ea071e22b71296c469e972f75517e",
-      "verified_at": "2026-11-17T23:17:40.584Z",
+      "content_hash": "5de0fd7a43dd29a63ad39deff50fcba7ef3716cf9a3f953a6f3563927e996d84",
+      "verified_at": "2026-11-18T15:51:51.058Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T23:17:40.584Z"
+      "last_updated": "2026-11-18T15:51:51.058Z"
     },
     "Megabit/Blazorise": {
       "repository": "Megabit/Blazorise",

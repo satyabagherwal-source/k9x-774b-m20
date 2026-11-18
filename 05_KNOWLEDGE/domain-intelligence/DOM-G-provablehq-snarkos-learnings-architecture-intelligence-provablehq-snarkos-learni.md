@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T02:42:49.842Z",
+  "timestamp": "2026-11-18T15:51:55.233Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-provablehq-snarkos-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [provablehq-snarkos-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T02:42:49.842Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T15:51:55.233Z`  
 > **Learning ID**: `LEARN-EVO-provablehq-snarkos-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
 - **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 68%
+- **Confidence Rating**: 62%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from provablehq-snarkos-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `497534cd`  
+> **Source Version**: `6728d177`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T02:42:45.079Z  
+> **Timestamp**: 2026-11-18T15:51:47.461Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T02:42:45.074Z  
+> **Harvest Timestamp**: 2026-11-18T15:51:47.453Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -833,6 +833,8 @@ impl SyncState {
                 Ordering::Greater => warn!("Greatest peer height reduced from {old_height} to {peer_height}"),
                 Ordering::Less => trace!("Greatest peer height increased from {old_height} to {peer_height}"),
             }
+        } else {
+            trace!("Greatest peer height set to {peer_height}");
         }
 
         self.greatest_peer_height = Some(peer_height);
@@ -852,13 +854,6 @@ impl SyncState {
 
     /// Updates the state of `is_block_synced` for the sync module.
     fn update_is_block_synced(&mut self) {
-        trace!(
-            "Updating is_block_synced: greatest_peer_height={greatest_peer:?}, current_height={current}, status={status:?}",
-            greatest_peer = self.greatest_peer_height,
-            current = self.sync_height,
-            status = self.status,
-        );
-
         let num_blocks_behind = self.num_blocks_behind();
         let old_status = self.status;
 
@@ -948,7 +943,13 @@ mod tests {
         assert_eq!(state.num_blocks_behind(), None);
 
         state.set_greatest_peer_height(15);
-        as
+        assert_eq!(state.num_blocks_behind(), Some(5));
+    }
+
+    #[test]
+    fn num_blocks_behind_saturates_when_the_node_leads_every_peer() {
+        let mut state = SyncState::new_with_height(100);
+        
 ```
 
 ### Core Architecture Module: `utilities/src/callback_handle.rs`
@@ -1125,6 +1126,9 @@ pub use node_data::*;
 
 mod callback_handle;
 pub use callback_handle::CallbackHandle;
+
+#[cfg(any(test, feature = "test-helpers"))]
+pub mod test_fixture;
 
 /// Seed used for deterministic RNG in development mode.
 pub const DEVELOPMENT_MODE_RNG_SEED: u64 = 1234567890u64;
@@ -2016,48 +2020,310 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1555d308` (2026-11-17)
-**Commit Message**: Merge pull request #4693 from aleo-labs-protocol/fix/mainnet-v4131-advisories
+### Incident Patch 1: `b19d9215` (2026-11-18)
+**Commit Message**: Merge pull request #4700 from aleo-labs-protocol/chore/quiet-is-block-synced-trace
 
-[Release] Address dependency advisories for v4.13.1
+Drop the per-update is_block_synced trace
 
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `node/sync/src/block_sync/sync_state.rs` (modified, +2/-7)
 ```diff
-@@ -3015,9 +3015,9 @@ dependencies = [
+@@ -146,6 +146,8 @@ impl SyncState {
+                 Ordering::Greater => warn!("Greatest peer height reduced from {old_height} to {peer_height}"),
+                 Ordering::Less => trace!("Greatest peer height increased from {old_height} to {peer_height}"),
+             }
++        } else {
++            trace!("Greatest peer height set to {peer_height}");
+         }
  
- [[package]]
- name = "libz-sys"
--version = "1.1.31"
-+version = "1.1.33"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
-+checksum = "fee3f59f4321dab0c78d828942e7aa09d0bd8ad6e78a501977e6bf3d02938045"
- dependencies = [
-  "cc",
-  "libc",
+         self.greatest_peer_height = Some(peer_height);
+@@ -165,13 +167,6 @@ impl SyncState {
+ 
+     /// Updates the state of `is_block_synced` for the sync module.
+     fn update_is_block_synced(&mut self) {
+-        trace!(
+-            "Updating is_block_synced: greatest_peer_height={greatest_peer:?}, current_height={current}, status={status:?}",
+-            greatest_peer = self.greatest_peer_height,
+-            current = self.sync_height,
+-            status = self.status,
+-        );
+-
+         let num_blocks_behind = self.num_blocks_behind();
+         let old_status = self.status;
+ 
 ```
 
-**File**: `deny.toml` (modified, +3/-0)
+---
+
+### Incident Patch 2: `d921e76a` (2026-11-18)
+**Commit Message**: Drop the per-update is_block_synced trace and log the first greatest peer height
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01UYfmmNguQv7Z8sMQsuFM3o
+
+**File**: `node/sync/src/block_sync/sync_state.rs` (modified, +2/-7)
 ```diff
-@@ -11,6 +11,9 @@ ignore = [
-   "RUSTSEC-2025-0057",
-   # TODO remove once we migrate away from bincode, or it becomes maintained again.
-   "RUSTSEC-2025-0141",
-+  # Ledger distribution and CLI diagnostics depend on these unmaintained crates.
-+  "RUSTSEC-2026-0542",
-+  "RUSTSEC-2026-0543",
- ]
+@@ -146,6 +146,8 @@ impl SyncState {
+                 Ordering::Greater => warn!("Greatest peer height reduced from {old_height} to {peer_height}"),
+                 Ordering::Less => trace!("Greatest peer height increased from {old_height} to {peer_height}"),
+             }
++        } else {
++            trace!("Greatest peer height set to {peer_height}");
+         }
  
- [licenses]
+         self.greatest_peer_height = Some(peer_height);
+@@ -165,13 +167,6 @@ impl SyncState {
+ 
+     /// Updates the state of `is_block_synced` for the sync module.
+     fn update_is_block_synced(&mut self) {
+-        trace!(
+-            "Updating is_block_synced: greatest_peer_height={greatest_peer:?}, current_height={current}, status={status:?}",
+-            greatest_peer = self.greatest_peer_height,
+-            current = self.sync_height,
+-            status = self.status,
+-        );
+-
+         let num_blocks_behind = self.num_blocks_behind();
+         let old_status = self.status;
+ 
+```
+
+---
+
+### Incident Patch 3: `2ddd0723` (2026-11-18)
+**Commit Message**: Merge pull request #4677 from aleo-labs-protocol/perf/consensus-test-fixture-reuse
+
+Share the sample transactions of the consensus tests between nextest processes
+
+**File**: `Cargo.lock` (modified, +2/-0)
+```diff
+@@ -5571,6 +5571,7 @@ dependencies = [
+  "snarkos-node-network",
+  "snarkos-node-sync-locators",
+  "snarkos-node-tcp",
++ "snarkos-utilities",
+  "snarkvm",
+  "test-strategy",
+  "time",
+@@ -5781,6 +5782,7 @@ dependencies = [
+  "snarkos-node-network",
+  "snarkos-node-sync-locators",
+  "snarkos-node-tcp",
++ "snarkos-utilities",
+  "snarkvm",
+  "test-strategy",
+  "tokio-util",
+```
+
+**File**: `node/bft/Cargo.toml` (modified, +4/-0)
+```diff
+@@ -202,6 +202,10 @@ features = [ "test" ]
+ workspace = true
+ features = [ "test" ]
+ 
++[dev-dependencies.snarkos-utilities]
++workspace = true
++features = [ "test-helpers" ]
++
+ [dev-dependencies.snarkvm]
+ workspace = true
+ features = [ "prop-tests" ]
+```
+
+**File**: `node/bft/events/Cargo.toml` (modified, +10/-1)
+```diff
+@@ -29,7 +29,7 @@ test-helpers = [ "dep:rand_chacha", "dep:rand", "dep:proptest" ]
+ # means something narrower here (it pulls the rng and proptest dependencies but
+ # un-gates nothing). Enabling this in a production build would compile the
+ # generators into the binary, so it is deliberately not implied by anything.
+-fuzz-helpers = [ "test-helpers", "dep:test-strategy", "dep:time", "snarkos-node-sync-locators/test", "snarkvm/test-helpers", "snarkvm/algorithms" ]
++fuzz-helpers = [ "test-helpers", "dep:snarkos-utilities", "dep:test-strategy", "dep:time", "snarkos-node-sync-locators/test", "snarkvm/test-helpers", "snarkvm/algorithms" ]
+ 
+ [dependencies.anyhow]
+ workspace = true
+@@ -58,6 +58,11 @@ workspace = true
+ [dependencies.snarkos-node-sync-locators]
+ workspace = true
+ 
++[dependencies.snarkos-utilities]
++workspace = true
++features = [ "test-helpers" ]
++optional = true
++
+ [dependencies.snarkos-node-tcp]
+ workspace = true
+ 
+@@ -105,6 +110,10 @@ workspace = true
+ workspace = true
+ features = [ "test" ]
+ 
++[dev-dependencies.snarkos-utilities]
++workspace = true
++features = [ "test-helpers" ]
++
+ [dev-dependencies.snarkos-node-bft-events]
+ path = "."
+ features = [ "test-helpers" ]
+```
+
+**File**: `node/bft/events/src/block_response.rs` (modified, +22/-1)
+```diff
+@@ -188,18 +188,39 @@ pub mod prop_tests {
+     #![cfg_attr(not(test), allow(unused_imports))]
+     use crate::{BlockRequest, BlockResponse, DataBlocks, block_request::prop_tests::any_block_request};
+ 
++    use snarkos_utilities::test_fixture::cached_fixture;
+     use snarkvm::{
+         console::network::ConsensusVersion,
+-        ledger::{narwhal::Data, test_helpers::sample_genesis_block},
++        ledger::narwhal::Data,
+         prelude::{FromBytes, TestRng, ToBytes, block::Block},
+     };
+ 
+     use bytes::{Buf, BufMut, BytesMut};
+     use proptest::prelude::{BoxedStrategy, ProptestConfig, Strategy, any};
++    use std::sync::OnceLock;
+     use test_strategy::proptest;
+ 
+     type CurrentNetwork = snarkvm::prelude::MainnetV0;
+ 
++    /// Returns a sample genesis block, which costs two execution proofs to build.
++    ///
++    /// Every call returns the same block, whatever `rng` is, and so does every test process of this
++    /// binary.
++    pub fn sample_genesis_block(rng: &mut TestRng) -> Block<CurrentNetwork> {
++        static BLOCK: OnceLock<Block<CurrentNetwork>> = OnceLock::new();
++        BLOCK
++            .get_or_init(|| {
++                cached_fixture(
++                    "sample-genesis-block",
++                    &[],
++                    |block: &Block<CurrentNetwork>| block.to_bytes_le().unwrap(),
++                    |bytes| Block::from_bytes_le(bytes).ok(),
++                    || snarkvm::ledger::test_helpers::sample_genesis_block(rng),
++                )
++            })
++            .clone()
++    }
++
+     pub fn any_block_response() -> BoxedStrategy<BlockResponse<CurrentNetwork>> {
+         (any_block_request(), any::<u64>())
+             .prop_map(|(request, seed)| {
+```
+
+**File**: `node/bft/ledger-service/Cargo.toml` (modified, +4/-0)
+```diff
+@@ -87,6 +87,10 @@ workspace = true
+ optional = true
+ features = [ "log" ]
+ 
++[dev-dependencies.snarkos-utilities]
++workspace = true
++features = [ "test-helpers" ]
++
+ [dev-dependencies.snarkvm]
+ workspace = true
+ features = [ "test-helpers" ]
+```
+
+**File**: `node/bft/ledger-service/src/helpers.rs` (modified, +19/-5)
+```diff
+@@ -73,14 +73,28 @@ pub fn deserialize_solution_strict<N: Network>(solution: Data<Solution<N>>) -> R
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++    use snarkos_utilities::test_fixture::cached_fixture;
+     use snarkvm::{
+         console::account::{Address, PrivateKey},
+-        ledger::{puzzle::PartialSolution, test_helpers::sample_execution_transaction_with_fee},
+-        prelude::{MainnetV0, Rng, TestRng, ToBytes},
++        ledger::puzzle::PartialSolution,
++        prelude::{FromBytes, MainnetV0, Rng, TestRng, ToBytes},
+     };
+ 
+     type CurrentNetwork = MainnetV0;
+ 
++    /// Returns a sample execution transaction with a public fee, which costs three proofs to build.
++    ///
++    /// Every test process of this binary gets the same transaction, whatever `rng` is.
++    fn sample_execution_transaction(rng: &mut TestRng) -> Transaction<CurrentNetwork> {
++        cached_fixture(
++            "sample-execution-transaction",
++            &[],
++            |transaction: &Transaction<CurrentNetwork>| transaction.to_bytes_le().unwrap(),
++            |bytes| Transaction::from_bytes_le(bytes).ok(),
++            || snarkvm::ledger::test_helpers::sample_execution_transaction_with_fee(false, rng, 0),
++        )
++    }
++
+     fn sample_solution(rng: &mut TestRng) -> Solution<CurrentNetwork> {
+         let private_key = PrivateKey::<CurrentNetwork>::new(rng).unwrap();
+         let address = Address::try_from(private_key).unwrap();
+@@ -91,7 +105,7 @@ mod tests {
+     #[test]
+     fn deserialize_transaction_strict_accepts_object() -> Result<()> {
+         let rng = &mut TestRng::default();
+-        let expected = sample_execution_transaction_with_fee(false, rng, 0);
++        let expected = sample_execution_transaction(rng);
+ 
+         let actual = deserialize_transaction_strict(Data::Object(expected.clone()))?;
+ 
+@@ -102,7 +116,7 @@ mod tests {
+     #[test]
+     fn deserialize_transaction_strict_accepts_canonical_buffer() -> Result<()> {
+         let rng = &mut TestRng::default();
+-        let expected = sample_execution_transaction_with_fee(false, rng, 0);
++        let expected = sample_execution_transaction(rng);
+         let bytes = expected.to_bytes_le()?;
+ 
+         let actual = deserialize_transaction_strict(Data::Buffer(bytes.into()))?;
+@@ -114,7 +128,7 @@ mod tests {
+     #[test]
+     fn deserialize_transaction_strict_rejects_padded_buffer() -> Result<()> {
+         let rng = &mut TestRng::default();
+-        let transaction = sample_execution_transaction_with_fee(false, rng, 0);
++        let transaction = sample_execution_transaction(rng);
+         let mut bytes = transaction.to_bytes_le()?;
+         bytes.push(0);
+ 
+```
+
+**File**: `node/bft/ledger-service/src/mock.rs` (modified, +2/-4)
+```diff
+@@ -62,10 +62,8 @@ impl<N: Network> MockLedgerService<N> {
+ 
+     /// Initializes a new mock ledger service at the specified height.
+     pub fn new_at_height(committee: Committee<N>, height: u32) -> Self {
+-        let mut height_to_hash = BTreeMap::new();
+-        for i in 0..=height {
+-            height_to_hash.insert(i, (i as u64 * 2, Field::<N>::from_u32(i).into()));
+-        }
++        let height_to_hash: BTreeMap<_, _> =
++            (0..=height).map(|i| (i, (i as u64 * 2, Field::<N>::from_u32(i).into()))).collect();
+         Self { height_to_round_and_hash: Mutex::new(height_to_hash), ..Self::new(committee) }
+     }
+ 
+```
+
+**File**: `node/bft/src/helpers/storage.rs` (modified, +1/-1)
+```diff
+@@ -1463,7 +1463,7 @@ pub(crate) mod tests {
+         // carries neither the transmission nor its ID, so only the ledger and storage know it; any
+         // block will do here, hence the sample genesis block.
+         let certificate_2 = make_certificate(1, rng);
+-        let block = snarkvm::ledger::test_helpers::sample_genesis_block(rng);
++        let block = crate::test_helpers::sample_genesis_block(rng);
+         storage
+             .sync_certificate_with_block(&block, certificate_2.clone(), &Default::default(), false)
+             .expect("syncing a certificate referencing a previously-aborted transmission must succeed");
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4701** (2026-11-18): ci: make an old node dial an upgraded node in the full upgrade test (@cbeck88)
+- **PR #4700** (2026-11-18): Drop the per-update is_block_synced trace (@cbeck88)
+- **PR #4699** (2026-11-18): Turn off the snarkVM timing log targets at every verbosity (@cbeck88)
 - **PR #4695** (closed): Merge testnet into staging (@aleo-labs-merge-bot[bot])
 - **PR #4694** (2026-11-17): Merge mainnet into staging (@aleo-labs-merge-bot[bot])
 - **PR #4693** (2026-11-17): [Release] Address dependency advisories for v4.13.1 (@snarkworld)
-- **PR #4692** (2026-11-17): Bump snarkVM to aleo-labs-protocol/snarkVM@de20fd4ea (@aleo-labs-merge-bot[bot])
-- **PR #4691** (2026-11-17): [Release] Mainnet v4.13.1 (@snarkworld)
-- **PR #4690** (2026-11-17): [Release] Testnet v4.13.1 (@snarkworld)
 
 ---
 
@@ -2077,33 +2343,38 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in Cargo.lock
+## X. Empirical Invariant Guard in sync_state.rs
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `node/sync/src/block_sync/sync_state.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1555d308`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b19d9215`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/sync/src/block_sync/sync_state.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "1.1.33"
-checksum = "fee3f59f4321dab0c78d828942e7aa09d0bd8ad6e78a501977e6bf3d02938045"
+        } else {
+            trace!("Greatest peer height set to {peer_height}");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "1.1.31"
-checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
+        trace!(
+            "Updating is_block_synced: greatest_peer_height={greatest_peer:?}, current_height={current}, status={status:?}",
+            greatest_peer = self.greatest_peer_height,
+            current = self.sync_height,
+            status = self.status,
+        );
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1555d308` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b19d9215` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T15:43:05.993Z",
+  "last_updated": "2026-11-18T15:51:56.718Z",
   "total_verified_learnings": 9003,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21343,
+  "total_items": 21349,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112801,10 +112801,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "497534cd",
-      "content_hash": "4cf02ff8cc9b94605c9117387c7032b356de4b469a30a0f0a567d7ea8b91a9df",
+      "source_version": "6728d177",
+      "content_hash": "5c60db6f638f48956a8dbc15a0dbd7759e6029592264076291d799670666f4b7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T02:42:45.977Z"
+      "persisted_at": "2026-11-18T15:51:49.070Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
@@ -112813,10 +112813,10 @@
       "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "497534cd",
-      "content_hash": "04c6d92bde254f5db38fbf907637654a757bd874f5d7d357af7f729bb1c1d0e1",
+      "source_version": "6728d177",
+      "content_hash": "29fc92fc4e55494d9cc87250c184575d9c984a01a10d0cdae7a2bc6e726fc4cb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T02:42:46.097Z"
+      "persisted_at": "2026-11-18T15:51:49.247Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -114578,9 +114578,9 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "4d812227d7ca1d3a4d3747188ede90216f7b609e80cae95d2be9bae27248bdd7",
+      "content_hash": "87199a267a5805ec69579e90ddae388937c8491f45a30c66944d187503046fd5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T02:42:50.061Z"
+      "persisted_at": "2026-11-18T15:51:55.539Z"
     },
     "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_": {
       "item_id": "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_",
@@ -212331,7 +212331,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/PSRben/VisionHOPE",
       "source_version": "hf-psrben-visionhope",
-      "content_hash": "a6add2170d72dcd62036112826357d49374363ab7705836f1742ff171c2df170",
+      "content_hash": "fcbb1b569efa98453447a808e60630a2fa8a72c6fb71113178d600916cd6577c",
       "dossier_path": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "promoted_rules": [],
@@ -212340,7 +212340,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T06:32:29.407Z",
+      "verified_at": "2026-11-18T15:51:32.908Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212357,9 +212357,9 @@
       "title": "Research & Knowledge Intelligence: PSRben/VisionHOPE Core Invariants",
       "repository": "PSRben/VisionHOPE",
       "source_version": "hf-psrben-visionhope",
-      "content_hash": "9a7362c6fa9ba3029124fb423156d272eeeae1982fc845d97912705eb05616b4",
+      "content_hash": "96d4f596d2a059929647ae60338f323f5e029132f40db1bb119984eab18cea53",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T06:32:29.894Z"
+      "persisted_at": "2026-11-18T15:51:33.401Z"
     },
     "learn-github-argoproj-argo-workflows": {
       "learning_id": "learn-github-argoproj-argo-workflows",
@@ -212462,9 +212462,9 @@
       "title": "Research & Knowledge Intelligence: hf-psrben-visionhope-learnings Core Invariants",
       "repository": "hf-psrben-visionhope-learnings",
       "source_version": "HEAD",
-      "content_hash": "547056cd577c83ab5d0b53b8cd44d5ba26311fd0f07bebace2a31c0ae81424b8",
+      "content_hash": "fc0b343996a2e888cbd52e50f3546b5715950f8b6fe658dcfad5f286c335f41a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T06:32:45.109Z"
+      "persisted_at": "2026-11-18T15:51:54.769Z"
     },
     "candidate_directive-controller-fail-containerset-nodes-of-a-pod-rejected-by-kubelet": {
       "item_id": "candidate_directive-controller-fail-containerset-nodes-of-a-pod-rejected-by-kubelet",
@@ -215560,8 +215560,8 @@
       "slug": "provablehq-snarkos",
       "platform": "github",
       "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "497534cd",
-      "content_hash": "b2d7e0d9e20e7e0b80b028b96c658df12ce819602e42edf619e361a061990f82",
+      "source_version": "6728d177",
+      "content_hash": "527f0642aaa0c1d3597cda468a0238c875e18e0c22f2d01bfe16c1dc20afd30b",
       "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
@@ -215589,6 +215589,11 @@
           "number": 8852,
           "title": "Remove the locktick profile and tokio_console flag checks from build.rs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9252,
+          "title": "Empirical Invariant Guard in sync_state.rs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215596,7 +215601,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T02:42:45.514Z",
+      "verified_at": "2026-11-18T15:51:48.398Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219485,9 +219490,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for provablehq-snarkos-learnings",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "5fca25eec917c02b780f6704fbfd1d7b4f97076ec34e1760d5704404e28ab9a4",
+      "content_hash": "7e264427101e6aef27b4dc4f11cb4f34754c1414c004c0eb0ee0c0f7eb8e6bf8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T02:42:50.179Z"
+      "persisted_at": "2026-11-18T15:51:55.720Z"
     },
     "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions": {
       "item_id": "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions",
@@ -220926,8 +220931,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "4eaca06a",
-      "content_hash": "df767793283c97082bc1705c9bc6083f638ea071e22b71296c469e972f75517e",
+      "source_version": "ec435c0e",
+      "content_hash": "5de0fd7a43dd29a63ad39deff50fcba7ef3716cf9a3f953a6f3563927e996d84",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -220950,6 +220955,11 @@
           "number": 9081,
           "title": "Empirical Invariant Guard in KnowledgeBaseManager.js",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9253,
+          "title": "出站请求中降级无法投递的 Markdown data: 图片",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220957,7 +220967,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T23:17:40.353Z",
+      "verified_at": "2026-11-18T15:51:50.820Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221011,10 +221021,10 @@
       "relative_path": "08_VERIFICATION/lioensky-vcptoolbox-verification-protocol-empirical-defect-shield-for-lioensky-v.md",
       "title": "Verification Protocol: Empirical Defect Shield for lioensky/VCPToolBox",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "4eaca06a",
-      "content_hash": "3f353d35d54c05a0841ab89320ffb98de1d22bef0d4bec7b063af9a6159faf5f",
+      "source_version": "ec435c0e",
+      "content_hash": "bf96b1fa65ab6576c741fa92e206046329fc1784ddbc282ab5058e8b21490907",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T23:17:41.185Z"
+      "persisted_at": "2026-11-18T15:51:51.653Z"
     },
     "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false": {
       "item_id": "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false",
@@ -246225,9 +246235,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for lioensky-vcptoolbox-learnings",
       "repository": "lioensky-vcptoolbox-learnings",
       "source_version": "HEAD",
-      "content_hash": "0d09c08382bea1acada2cf892213314519e78065b1d946cb8a33af0bbc06b3ed",
+      "content_hash": "603f331a0ed30eb9a5bfaa4dd546b65447d4e934aa519d023c11fb83a4968a79",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T15:47:57.802Z"
+      "persisted_at": "2026-11-18T15:51:56.718Z"
     },
     "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf": {
       "learning_id": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
@@ -288020,6 +288030,82 @@
       "content_hash": "558562e2bea9be748cc07899f979fee4d92116b1d4f4a0d420d4584c587a9335",
       "domain_letter": "G",
       "persisted_at": "2026-11-18T15:35:20.509Z"
+    },
+    "rule-9252": {
+      "learning_id": "rule-9252",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9252,
+      "title": "Empirical Invariant Guard in sync_state.rs",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "6728d177",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T15:51:48.398Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-sync_state-rs": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-sync_state-rs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UEHM-empirical-invariant-guard-in-sync_state-rs.md",
+      "title": "Empirical Invariant Guard in sync_state.rs",
+      "repository": "provablehq-snarkos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "be3da5d5dabc568027a1913983a1c1e36805bebe9f3c306683976cd31d9c5127",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T15:51:55.360Z"
+    },
+    "rule-9253": {
+      "learning_id": "rule-9253",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9253,
+      "title": "出站请求中降级无法投递的 Markdown data: 图片",
+      "source_url": "https://github.com/lioensky/VCPToolBox",
+      "source_version": "ec435c0e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T15:51:50.820Z"
+    },
+    "candidate_directive-markdown-data": {
+      "item_id": "candidate_directive-markdown-data",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UF8S-markdown-data.md",
+      "title": "出站请求中降级无法投递的 Markdown data: 图片",
+      "repository": "lioensky-vcptoolbox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "63705b19c236a9dccb32e2ab92156fbb0cdcb618c12197e756ee35906e9d340b",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T15:51:56.338Z"
+    },
+    "domain_intelligence-content-information-intelligence-lioensky-vcptoolbox-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-lioensky-vcptoolbox-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-lioensky-vcptoolbox-content-information-intelligence-lioensky-vcptoolbox-core-in.md",
+      "title": "Content & Information Intelligence: lioensky/VCPToolBox Core Invariants",
+      "repository": "lioensky/VCPToolBox",
+      "source_version": "ec435c0e",
+      "content_hash": "4d05a9e32ce7fd661a420194e633c036e5c8c01020e3c17171d311078d8ebd62",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T15:51:51.476Z"
+    },
+    "domain_intelligence-content-information-intelligence-lioensky-vcptoolbox-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-lioensky-vcptoolbox-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-lioensky-vcptoolbox-learnings-content-information-intelligence-lioensky-vcptoolb.md",
+      "title": "Content & Information Intelligence: lioensky-vcptoolbox-learnings Core Invariants",
+      "repository": "lioensky-vcptoolbox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "daa508f70f966259f6f9d9649c7551841657ddb1515de2cb2844fd85e828ab0b",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T15:51:56.517Z"
     }
   },
   "ai-builder-brain": {
