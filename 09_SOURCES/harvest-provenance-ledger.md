@@ -10993,3 +10993,5 @@ Every entry in this ledger must capture:
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `1ad8da62` | Multi-dimensional audit evidence | 2026-11-18T12:23:54.194Z |
 | `learn-github-zulip-zulip` | `https://github.com/zulip/zulip` | `64b848e5` | Multi-dimensional audit evidence | 2026-11-18T12:23:57.450Z |
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `966747bd` | Multi-dimensional audit evidence | 2026-11-18T12:24:00.640Z |
+| `learn-huggingface-lightricks-ltx-2-5` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-11-18T12:33:02.565Z |
+| `learn-github-software-mansion-argent` | `https://github.com/software-mansion/argent` | `fad5534a` | Multi-dimensional audit evidence | 2026-11-18T12:33:29.325Z |

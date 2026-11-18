@@ -21529,5 +21529,20 @@
     "downloads": 277,
     "qualityScore": 1257,
     "discoveredAt": "2026-11-18T11:52:35.860Z"
+  },
+  {
+    "name": "argent",
+    "fullName": "software-mansion/argent",
+    "url": "https://github.com/software-mansion/argent",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "An agentic toolkit to control, debug, and profile iOS and Android apps. Made by Software Mansion.",
+    "stars": 3208,
+    "forks": 159,
+    "openIssues": 466,
+    "language": "TypeScript",
+    "qualityScore": 2102,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-18T12:29:28.108Z"
   }
 ]

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T12:24:00.645Z",
-  "total_cycles_completed": 10484,
-  "total_learnings_persisted": 10484,
-  "total_rules_promoted": 9975,
+  "last_updated": "2026-11-18T12:33:29.332Z",
+  "total_cycles_completed": 10486,
+  "total_learnings_persisted": 10486,
+  "total_rules_promoted": 9976,
   "history": [
-    {
-      "timestamp": "2026-11-17T22:27:14.292Z",
-      "repository": "black-forest-labs/FLUX.1-dev",
-      "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T22:39:49.376Z",
-      "repository": "deepseek-ai/DeepSeek-R1",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-r1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T22:39:51.260Z",
       "repository": "google/tcmalloc",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-18T12:24:00.645Z",
       "repository": "goharbor/harbor",
       "learningId": "learn-github-goharbor-harbor",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T12:33:02.571Z",
+      "repository": "Lightricks/LTX-2.5",
+      "learningId": "learn-huggingface-lightricks-ltx-2-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T12:33:29.332Z",
+      "repository": "software-mansion/argent",
+      "learningId": "learn-github-software-mansion-argent",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

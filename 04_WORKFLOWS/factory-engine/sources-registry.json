@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T12:24:03.744Z",
-    "lastVerified": "2026-11-18T12:24:03.744Z",
+    "lastChecked": "2026-11-18T12:33:32.607Z",
+    "lastVerified": "2026-11-18T12:33:32.607Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -151,9 +151,9 @@
   "dathere-qsv": {
     "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
-    "lastChecked": "2026-11-18T11:55:04.797Z",
+    "lastChecked": "2026-11-18T12:33:14.085Z",
     "revisionIdentifier": "39c445bb",
-    "lastVerified": "2026-11-18T11:55:04.797Z"
+    "lastVerified": "2026-11-18T12:33:14.085Z"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1269,5 +1269,67 @@
     "lastChecked": "2026-11-18T12:23:58.839Z",
     "revisionIdentifier": "f16560b6",
     "lastVerified": "2026-11-18T12:23:58.839Z"
+  },
+  "hf-lightricks-ltx-2.5": {
+    "name": "Lightricks/LTX-2.5",
+    "officialUrl": "https://huggingface.co/Lightricks/LTX-2.5",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T12:33:01.813Z",
+    "lastVerified": "2026-11-18T12:33:01.813Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-lightricks-ltx-2-5",
+    "contentHash": "78ef199998c215421e97e52e21efc5f0ae2f999be5265c560549a4c14f85e5f3",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "react-native-elements-react-native-elements": {
+    "name": "react-native-elements",
+    "officialUrl": "https://github.com/react-native-elements/react-native-elements",
+    "lastChecked": "2026-11-18T12:33:04.156Z",
+    "revisionIdentifier": "32ae0eda",
+    "lastVerified": "2026-11-18T12:33:04.156Z"
+  },
+  "go-kratos-kratos": {
+    "name": "kratos",
+    "officialUrl": "https://github.com/go-kratos/kratos",
+    "lastChecked": "2026-11-18T12:33:06.970Z",
+    "revisionIdentifier": "dd0fb7df",
+    "lastVerified": "2026-11-18T12:33:06.970Z"
+  },
+  "lunasec-io-lunasec": {
+    "name": "lunasec",
+    "officialUrl": "https://github.com/lunasec-io/lunasec",
+    "lastChecked": "2026-11-18T12:33:09.066Z",
+    "revisionIdentifier": "c6bb0762",
+    "lastVerified": "2026-11-18T12:33:09.066Z"
+  },
+  "seaql-sea-orm": {
+    "name": "sea-orm",
+    "officialUrl": "https://github.com/SeaQL/sea-orm",
+    "lastChecked": "2026-11-18T12:33:11.534Z",
+    "revisionIdentifier": "c453c64e",
+    "lastVerified": "2026-11-18T12:33:11.534Z"
+  },
+  "software-mansion-argent": {
+    "name": "software-mansion/argent",
+    "officialUrl": "https://github.com/software-mansion/argent",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-18T12:32:59.914Z",
+    "lastVerified": "2026-11-18T12:32:59.914Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-software-mansion-argent",
+    "contentHash": "c8ae96e0ebfcbcfaef9197b2108037b468b0df31e3e167ad83def7960e4bd9eb",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 15,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

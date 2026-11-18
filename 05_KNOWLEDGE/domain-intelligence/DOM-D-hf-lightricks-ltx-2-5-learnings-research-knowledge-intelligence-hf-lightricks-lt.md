@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T01:38:46.632Z",
+  "timestamp": "2026-11-18T12:33:33.800Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-lightricks-ltx-2.5-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-lightricks-ltx-2.5-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T01:38:46.632Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T12:33:33.800Z`  
 > **Learning ID**: `LEARN-EVO-hf-lightricks-ltx-2.5-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-lightrick`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T01:38:27.505Z  
+> **Timestamp**: 2026-11-18T12:33:01.978Z  
 > **Learning ID**: `learn-huggingface-lightricks-ltx-2-5`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Lightricks/LTX-2.5](https://huggingface.co/Lightricks/LTX-2.5))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T01:38:27.267Z  
+> **Harvest Timestamp**: 2026-11-18T12:33:01.813Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-to-video
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2828071 downloads | 12406 likes
+- **Stars / Engagement**: 2871190 downloads | 12480 likes
 
 ---
 

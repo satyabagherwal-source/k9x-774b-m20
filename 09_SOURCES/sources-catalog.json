@@ -345,8 +345,8 @@
     "sourceUrl": "https://huggingface.co/Lightricks/LTX-2.5",
     "sourceVersion": "hf-lightricks-ltx-2.5",
     "license": "Open-Source",
-    "contentHash": "e12a0af0311053f893919f04bb1574ca760edda72fca9e84ed42e4b414b6a978",
-    "lastHarvestedAt": "2026-11-18T01:38:27.938Z",
+    "contentHash": "78ef199998c215421e97e52e21efc5f0ae2f999be5265c560549a4c14f85e5f3",
+    "lastHarvestedAt": "2026-11-18T12:33:02.565Z",
     "learningId": "learn-huggingface-lightricks-ltx-2-5"
   },
   "hf-prism-ml-ternary-bonsai-2-27b-gguf": {
@@ -12878,5 +12878,15 @@
     "contentHash": "746c30cf258690d2188ce80395fb273a6209bf56a5d42df6d2e6a69acb7f4698",
     "lastHarvestedAt": "2026-11-18T11:54:50.302Z",
     "learningId": "learn-huggingface-kormo-vl-kormo-web-11b"
+  },
+  "software-mansion-argent": {
+    "repository": "software-mansion/argent",
+    "platform": "github",
+    "sourceUrl": "https://github.com/software-mansion/argent",
+    "sourceVersion": "fad5534a",
+    "license": "Apache-2.0",
+    "contentHash": "c8ae96e0ebfcbcfaef9197b2108037b468b0df31e3e167ad83def7960e4bd9eb",
+    "lastHarvestedAt": "2026-11-18T12:33:29.325Z",
+    "learningId": "learn-github-software-mansion-argent"
   }
 }

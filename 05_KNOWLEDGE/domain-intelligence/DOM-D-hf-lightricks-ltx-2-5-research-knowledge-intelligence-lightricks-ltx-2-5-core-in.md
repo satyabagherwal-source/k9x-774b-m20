@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
   "source_version": "hf-lightricks-ltx-2.5",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T01:38:28.117Z",
+  "timestamp": "2026-11-18T12:33:02.810Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-lightricks-ltx-2-5",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Lightricks/LTX-2.5](https://huggingface.co/Lightricks/LTX-2.5) (Revision: `hf-lightri`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T01:38:28.117Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T12:33:02.810Z`  
 > **Learning ID**: `learn-huggingface-lightricks-ltx-2-5`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Lightricks/LTX-2.5](https://huggingface.co/Lightricks/LTX-2.5))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T01:38:27.267Z  
+> **Harvest Timestamp**: 2026-11-18T12:33:01.813Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-to-video
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2828071 downloads | 12406 likes
+- **Stars / Engagement**: 2871190 downloads | 12480 likes
 
 ---
 

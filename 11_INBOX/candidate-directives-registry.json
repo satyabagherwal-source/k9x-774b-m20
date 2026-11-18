@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T12:24:04.956Z",
+  "last_updated": "2026-11-18T12:33:34.687Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-OQBC",
+      "id": "CD-RBVF",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-OQBC-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-RBVF-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-18",
@@ -29196,6 +29196,37 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "A",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E4F815-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-R7XC",
+      "directive_title": "stop the runner leaving screen recordings on the phone",
+      "source_repo": "software-mansion/argent",
+      "source_commit": "fad5534a",
+      "staged_file": "11_INBOX/candidate-directives/CD-R7XC-stop-the-runner-leaving-screen-recordings-on-the-phone.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-RAOU",
+      "directive_title": "ios-device): stop the runner leaving screen recordings on the phone",
+      "source_repo": "software-mansion-argent-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-RAOU-ios-device-stop-the-runner-leaving-screen-recordings-on-the-phone.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-624AB7",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-624AB7-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-18"
     }
   ]

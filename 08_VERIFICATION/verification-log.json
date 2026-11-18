@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-I030",
-    "timestamp": "2026-11-17T01:54:47.916Z",
-    "repository": "doobidoo/mcp-memory-service",
-    "learningId": "learn-github-doobidoo-mcp-memory-service",
-    "contentHash": "bcbb81d4df96828d852949442ad13f8866d4920f236c6950368b6fb51c4fcf2a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-RG02",
-    "timestamp": "2026-11-17T02:02:08.450Z",
-    "repository": "OliviaRossi/Minimax-h3_Singularity-x-10Eros-Max_PRISM",
-    "learningId": "learn-huggingface-oliviarossi-minimax-h3_singularity-x-10eros-max_prism",
-    "contentHash": "5ad2152eeaec76b0b491b362e5e2c129cca5f787ce1ad2cef058c55f97902d6f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-RJ1M",
     "timestamp": "2026-11-17T02:02:12.394Z",
     "repository": "ClementTsang/bottom",
@@ -7490,6 +7460,36 @@
     "repository": "goharbor/harbor",
     "learningId": "learn-github-goharbor-harbor",
     "contentHash": "9813239bcd7d9d9f5a0ab06265c18174fe9ed299449369ebc0e6543163f30dde",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-QN34",
+    "timestamp": "2026-11-18T12:33:02.560Z",
+    "repository": "Lightricks/LTX-2.5",
+    "learningId": "learn-huggingface-lightricks-ltx-2-5",
+    "contentHash": "78ef199998c215421e97e52e21efc5f0ae2f999be5265c560549a4c14f85e5f3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-R7QH",
+    "timestamp": "2026-11-18T12:33:29.321Z",
+    "repository": "software-mansion/argent",
+    "learningId": "learn-github-software-mansion-argent",
+    "contentHash": "c8ae96e0ebfcbcfaef9197b2108037b468b0df31e3e167ad83def7960e4bd9eb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

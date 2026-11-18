@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T12:24:05.294Z",
-  "total_records": 1849,
+  "last_updated": "2026-11-18T12:33:34.866Z",
+  "total_records": 1851,
   "domains": {
     "A": {
       "total": 11,
@@ -21,7 +21,7 @@
       ]
     },
     "B": {
-      "total": 14,
+      "total": 15,
       "record_ids": [
         "DOM-B-44DC921B",
         "DOM-B-1CC83E41",
@@ -36,7 +36,8 @@
         "domain_intelligence-product-intelligence-crate-ci-typos-learnings-core-invariants",
         "domain_intelligence-product-intelligence-ganymedenil-document-ai-core-invariants",
         "DOM-B-6AFC12DD",
-        "domain_intelligence-product-intelligence-kcl-lang-kcl-core-invariants"
+        "domain_intelligence-product-intelligence-kcl-lang-kcl-core-invariants",
+        "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants"
       ]
     },
     "C": {
@@ -1800,7 +1801,7 @@
       ]
     },
     "K": {
-      "total": 89,
+      "total": 90,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1890,7 +1891,8 @@
         "DOM-K-92DB8DFD",
         "domain_intelligence-quality-verification-intelligence-hf-cross-encoder-ms-marco-minilm-l6-v2-learnin",
         "domain_intelligence-quality-verification-intelligence-sharkdp-fd-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-sharkdp-fd-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-sharkdp-fd-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-software-mansion-argent-learnings-core-invaria"
       ]
     },
     "L": {
@@ -8582,8 +8584,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "0befb23566a7a42fa922b2d02a2d0192dedde0d6d74119f36ca7da73b3596cec",
-      "created_at": "2026-11-18T12:03:33.939Z"
+      "content_hash": "2b747e7a1a918711d1e2b9eff658418329a29416babbf10548117b084466aa20",
+      "created_at": "2026-11-18T12:33:34.866Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -29273,8 +29275,8 @@
       "title": "Research & Knowledge Intelligence: Lightricks/LTX-2.5 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lightricks-ltx-2-5-research-knowledge-intelligence-lightricks-ltx-2-5-core-in.md",
       "repository": "Lightricks/LTX-2.5",
-      "content_hash": "919e7b31fa255b5f122151501d2e220a2e1da81003e8abe0d62fd246b996f896",
-      "created_at": "2026-11-18T01:38:28.117Z"
+      "content_hash": "95a52b776390656ec308f3e843104b7c5aad727b4e114e353fbd1cd9cd1ce02b",
+      "created_at": "2026-11-18T12:33:02.811Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-lightricks-ltx-2-5-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-lightricks-ltx-2-5-learnings-core-invariants",
@@ -29282,8 +29284,8 @@
       "title": "Research & Knowledge Intelligence: hf-lightricks-ltx-2.5-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lightricks-ltx-2-5-learnings-research-knowledge-intelligence-hf-lightricks-lt.md",
       "repository": "hf-lightricks-ltx-2.5-learnings",
-      "content_hash": "4c797dba77213c3fdb83cefdeee69e2b17e1d11fcb686d6ee3c59a889e4baea5",
-      "created_at": "2026-11-18T01:38:46.723Z"
+      "content_hash": "2ae7c938b2b628da93eb66b4533bd261406fd1ed9b6cd6d9ccf7ee3ad7a7cecc",
+      "created_at": "2026-11-18T12:33:33.931Z"
     },
     "DOM-D-B990E946": {
       "record_id": "DOM-D-B990E946",
@@ -30947,6 +30949,24 @@
       "repository": "zulip-zulip-learnings",
       "content_hash": "a4b2af2049388da90fc47ab420805870ddd2cf52b8e111a889d6efbb3334c1a0",
       "created_at": "2026-11-18T12:24:05.294Z"
+    },
+    "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
+      "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
+      "domain_letter": "B",
+      "title": "Product Intelligence: software-mansion/argent Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-software-mansion-argent-product-intelligence-software-mansion-argent-core-invari.md",
+      "repository": "software-mansion/argent",
+      "content_hash": "9e6e4f1e42e8d517bfd50a619db4b814e3b938a899912d8489628c66c3004bd8",
+      "created_at": "2026-11-18T12:33:29.744Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-software-mansion-argent-learnings-core-invaria": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-software-mansion-argent-learnings-core-invaria",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: software-mansion-argent-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-software-mansion-argent-learnings-quality-verification-intelligence-software-man.md",
+      "repository": "software-mansion-argent-learnings",
+      "content_hash": "463f03c016ac61f82cc56fd2c199a79fe5c2f412964cef0e62e03856d09bf800",
+      "created_at": "2026-11-18T12:33:33.335Z"
     }
   }
 }

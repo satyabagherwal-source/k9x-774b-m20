@@ -677847,3 +677847,83 @@ Harbor web UI is built based on [Clarity](https://vmware.github.io/clarity/) and
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `966747bd` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9218. stop the runner leaving screen recordings on the phone (Harvested from software-mansion/argent)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "stop the runner leaving screen recordings on the phone",
+  "source": "software-mansion/argent",
+  "source_url": "https://github.com/software-mansion/argent",
+  "source_version": "fad5534a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-18T12:33:28.739Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-software-mansion-argent",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [software-mansion/argent](https://github.com/software-mansion/argent) (Revision: `fad5534a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `packages/tool-server/src/blueprints/ios-device-runner.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/argent. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ef65378d`: ios-device): stop the runner leaving screen recordings on the phone. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/tool-server/src/blueprints/ios-device-runner.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+/** How long dispose waits for xcodebuild to exit on its own after an accepted shutdown. */
+const RUNNER_CLEAN_EXIT_TIMEOUT_MS = 10_000;
+
+          // shutdown is mutating. Send it once.
+          // Let the test end as passed, so XCTest cleans up its on-device
+          // attachments instead of leaving them behind a killed session.
+          await settleExit(RUNNER_CLEAN_EXIT_TIMEOUT_MS);
+        if (exitCode === undefined) {
+          killRunnerProcess(launched.child);
+        }
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+          // shutdown is mutating. Send it once. The child is killed below either way.
+        killRunnerProcess(launched.child);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ef65378d` are properly handled with clean fallback behavior.

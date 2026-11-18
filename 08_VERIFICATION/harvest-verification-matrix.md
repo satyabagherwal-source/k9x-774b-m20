@@ -10960,3 +10960,5 @@
 | `CYCLE-20261118-EVYM` | `2026-11-18T12:23:54.190Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9216` | Yes (`a8f016f4...`) |
 | `CYCLE-20261118-EYH2` | `2026-11-18T12:23:57.446Z` | `zulip/zulip` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/zulip-zulip-learnings.md` | Yes (`88e6a4c6...`) |
 | `CYCLE-20261118-F0XO` | `2026-11-18T12:24:00.636Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9217` | Yes (`9813239b...`) |
+| `CYCLE-20261118-QN34` | `2026-11-18T12:33:02.560Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md` | Yes (`78ef1999...`) |
+| `CYCLE-20261118-R7QH` | `2026-11-18T12:33:29.321Z` | `software-mansion/argent` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9218` | Yes (`c8ae96e0...`) |
