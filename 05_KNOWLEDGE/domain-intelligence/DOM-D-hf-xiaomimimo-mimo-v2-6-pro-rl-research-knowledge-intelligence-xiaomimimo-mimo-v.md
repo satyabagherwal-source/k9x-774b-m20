@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
   "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T05:52:26.070Z",
+  "timestamp": "2026-11-18T15:14:14.045Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [XiaomiMiMo/MiMo-V2.6-Pro-RL](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL) (Revision: `hf-xiaomim`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T05:52:26.070Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T15:14:14.045Z`  
 > **Learning ID**: `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T05:52:25.179Z  
+> **Harvest Timestamp**: 2026-11-18T15:14:13.240Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 24905 downloads | 823 likes
+- **Stars / Engagement**: 26174 downloads | 825 likes
 
 ---
 

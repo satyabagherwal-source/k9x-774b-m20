@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T15:06:15.788Z",
+  "last_updated": "2026-11-18T15:14:27.638Z",
   "total_records": 1866,
   "domains": {
     "A": {
@@ -9118,8 +9118,8 @@
       "title": "Research & Knowledge Intelligence: XiaomiMiMo/MiMo-V2.6-Pro-RL Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-pro-rl-research-knowledge-intelligence-xiaomimimo-mimo-v.md",
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-      "content_hash": "3c62fa31daec30814667a9216f4185af4397ea7d09d31456c4d68642f2c5978d",
-      "created_at": "2026-11-18T05:52:26.071Z"
+      "content_hash": "42a5c882dc4e91e016aa74689d03221eb342ce588ee4924c7869e2fa57466929",
+      "created_at": "2026-11-18T15:14:14.046Z"
     },
     "domain_intelligence-architecture-intelligence-appwrite-appwrite-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-appwrite-appwrite-core-invariants",
@@ -9187,8 +9187,8 @@
       "title": "Research & Knowledge Intelligence: hf-xiaomimimo-mimo-v2.6-pro-rl-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-pro-rl-learnings-research-knowledge-intelligence-hf-xiao.md",
       "repository": "hf-xiaomimimo-mimo-v2.6-pro-rl-learnings",
-      "content_hash": "27133e3dd4b19ce9a54a23b2881bf842aa14b4b0adf0ea4a0cdb1219dfb04821",
-      "created_at": "2026-11-18T05:52:38.841Z"
+      "content_hash": "9f2eaa49a9cb428aa9d0e1d3ecd143e3d3a9072ee315c0eba49198cb46aad041",
+      "created_at": "2026-11-18T15:14:25.865Z"
     },
     "domain_intelligence-architecture-intelligence-appwrite-appwrite-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-appwrite-appwrite-learnings-core-invariants",
@@ -17516,8 +17516,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "a15fe390b571f5bf1cf2f66d57aeec81c4031f98f55320080212b0a283adeb6f",
-      "created_at": "2026-11-17T23:42:40.792Z"
+      "content_hash": "639072aa9b1447f95dfbc623f21a7ea5d7def5ed441154643b4285d5c7b53b07",
+      "created_at": "2026-11-18T15:14:27.638Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -23037,8 +23037,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "ded1c30ac312dd1107a9c38d4cf180b5d2bc551dc769071f8bc89d1102d73c13",
-      "created_at": "2026-11-18T15:06:15.788Z"
+      "content_hash": "478576a528bfc67ccdee41c564f198f4ae5c9096ed96d828c6e992419680ce3c",
+      "created_at": "2026-11-18T15:14:26.506Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",

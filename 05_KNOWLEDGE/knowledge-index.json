@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T15:06:16.039Z",
+  "last_updated": "2026-11-18T15:14:27.638Z",
   "total_verified_learnings": 9003,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "c90ea0c45859384a09a45588c0649d8adec24e6644952cc2198186a2c8ddb972",
+      "content_hash": "e4793acbdfa829211d1654b85684579c03323e88060518dc735dc2e50a686989",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T15:06:15.921Z"
+      "persisted_at": "2026-11-18T15:14:26.654Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "1392f4e93648ba9314f6c0c7f8c6112d20a06c0127a917eaf0ef322674beaeb2",
+      "content_hash": "7e92b3c46e040e2e25e35c919045d63c0e13896c0cc20f60c6976e40c22dafca",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T15:06:16.039Z"
+      "persisted_at": "2026-11-18T15:14:26.787Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -114458,9 +114458,9 @@
       "title": "Research & Knowledge Intelligence: XiaomiMiMo/MiMo-V2.6-Pro-RL Core Invariants",
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
-      "content_hash": "3c62fa31daec30814667a9216f4185af4397ea7d09d31456c4d68642f2c5978d",
+      "content_hash": "42a5c882dc4e91e016aa74689d03221eb342ce588ee4924c7869e2fa57466929",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T05:52:26.071Z"
+      "persisted_at": "2026-11-18T15:14:14.046Z"
     },
     "candidate_directive-dsn-look-up-getparam-keys-by-their-bytes": {
       "item_id": "candidate_directive-dsn-look-up-getparam-keys-by-their-bytes",
@@ -114542,9 +114542,9 @@
       "title": "Research & Knowledge Intelligence: hf-xiaomimimo-mimo-v2.6-pro-rl-learnings Core Invariants",
       "repository": "hf-xiaomimimo-mimo-v2.6-pro-rl-learnings",
       "source_version": "HEAD",
-      "content_hash": "27133e3dd4b19ce9a54a23b2881bf842aa14b4b0adf0ea4a0cdb1219dfb04821",
+      "content_hash": "9f2eaa49a9cb428aa9d0e1d3ecd143e3d3a9072ee315c0eba49198cb46aad041",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T05:52:38.841Z"
+      "persisted_at": "2026-11-18T15:14:25.865Z"
     },
     "domain_intelligence-architecture-intelligence-appwrite-appwrite-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-appwrite-appwrite-learnings-core-invariants",
@@ -235454,9 +235454,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "a15fe390b571f5bf1cf2f66d57aeec81c4031f98f55320080212b0a283adeb6f",
+      "content_hash": "639072aa9b1447f95dfbc623f21a7ea5d7def5ed441154643b4285d5c7b53b07",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T23:42:40.792Z"
+      "persisted_at": "2026-11-18T15:14:27.638Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -252362,9 +252362,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ded1c30ac312dd1107a9c38d4cf180b5d2bc551dc769071f8bc89d1102d73c13",
+      "content_hash": "478576a528bfc67ccdee41c564f198f4ae5c9096ed96d828c6e992419680ce3c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T15:06:15.788Z"
+      "persisted_at": "2026-11-18T15:14:26.506Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -275035,13 +275035,13 @@
       "item_id": "candidate_directive-rust-address-the-remaining-issues-in-418",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-7OIS-rust-address-the-remaining-issues-in-418.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-I74W-rust-address-the-remaining-issues-in-418.md",
       "title": "rust): address the remaining issues in #418",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "4648e7ba45e78e53aa7727ef4b7b6a011f922f94890da47db165bffe6308e0d1",
+      "content_hash": "e0e4164b47f5ffef9a454930e118f87728e892b55538c28bcb3d2867c5242099",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T15:06:15.656Z"
+      "persisted_at": "2026-11-18T15:14:26.341Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",
@@ -282416,7 +282416,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "source_version": "hf-xiaomimimo-mimo-v2.6-pro-rl",
-      "content_hash": "0480348388e0a3242399dada683ece5c8ccf2625889b015321ac1216fa03e0e4",
+      "content_hash": "09997bb28065bd9c11131cb188e793dfceec98cf03a4e3e9ff8bfefad17141e9",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md",
       "promoted_rules": [],
@@ -282425,7 +282425,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T05:52:25.606Z",
+      "verified_at": "2026-11-18T15:14:13.633Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

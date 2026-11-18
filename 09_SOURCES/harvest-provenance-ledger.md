@@ -11051,3 +11051,4 @@ Every entry in this ledger must capture:
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `12a8e01c` | Multi-dimensional audit evidence | 2026-11-18T14:57:03.932Z |
 | `learn-huggingface-unsloth-qwen-image-2-1-gguf` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-18T15:06:02.204Z |
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `f3fc98fb` | Multi-dimensional audit evidence | 2026-11-18T15:06:04.295Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-18T15:14:13.850Z |

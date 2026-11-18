@@ -11018,3 +11018,4 @@
 | `CYCLE-20261118-VUT3` | `2026-11-18T14:57:03.927Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9248` | Yes (`014721c6...`) |
 | `CYCLE-20261118-7E54` | `2026-11-18T15:06:02.200Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`7961d7ab...`) |
 | `CYCLE-20261118-7FR7` | `2026-11-18T15:06:04.291Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9249` | Yes (`a3b13afe...`) |
+| `CYCLE-20261118-HXHY` | `2026-11-18T15:14:13.846Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | Yes (`09997bb2...`) |
