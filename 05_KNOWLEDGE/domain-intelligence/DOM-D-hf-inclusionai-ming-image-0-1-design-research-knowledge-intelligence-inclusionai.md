@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
   "source_version": "hf-inclusionai-ming-image-0.1-design",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T17:24:39.482Z",
+  "timestamp": "2026-11-18T04:49:44.334Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-inclusionai-ming-image-0-1-design",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [inclusionAI/Ming-Image-0.1-Design](https://huggingface.co/inclusionAI/Ming-Image-0.1-Design) (Revision: `hf-inclusi`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T17:24:39.482Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T04:49:44.334Z`  
 > **Learning ID**: `learn-huggingface-inclusionai-ming-image-0-1-design`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/inclusionAI/Ming-Image-0.1-Design](https://huggingface.co/inclusionAI/Ming-Image-0.1-Design))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T17:24:38.761Z  
+> **Harvest Timestamp**: 2026-11-18T04:49:43.541Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1801 downloads | 440 likes
+- **Stars / Engagement**: 893 downloads | 442 likes
 
 ---
 

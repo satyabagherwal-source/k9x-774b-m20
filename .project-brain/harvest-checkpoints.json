@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T04:37:33.745Z",
+  "last_updated": "2026-11-18T04:49:45.767Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -620,14 +620,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "content_hash": "145ab63e180ee23782214241017097cdd63a9535ae8ab79374dc5fcea2c48a24",
-      "verified_at": "2026-11-13T17:24:39.307Z",
+      "content_hash": "76aec619b0821df4b375a33f5060787dcf03f9ee9b65c9955ac3481c5a14d9a5",
+      "verified_at": "2026-11-18T04:49:44.173Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T17:24:39.307Z"
+      "last_updated": "2026-11-18T04:49:44.173Z"
     },
     "deepseek-ai/DeepSeek-V4.1-Flash": {
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -4641,14 +4641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-metalbear-co-mirrord",
-      "content_hash": "26d0be52e8736ea8256f7f37d1d95bd270837cc38703df6b5fe5bd8d2e5ad330",
-      "verified_at": "2026-11-16T22:47:29.623Z",
+      "content_hash": "06e8695af0236dc0a7bbbf46f0598b4121423d75d132afdd7c1469a859253734",
+      "verified_at": "2026-11-18T04:49:45.766Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T22:47:29.623Z"
+      "last_updated": "2026-11-18T04:49:45.766Z"
     },
     "openkruise/kruise": {
       "repository": "openkruise/kruise",

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T04:37:38.498Z",
-  "total_verified_learnings": 8977,
+  "last_updated": "2026-11-18T04:49:57.586Z",
+  "total_verified_learnings": 8978,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20883,
+  "total_items": 20885,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-R9KQ-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-73VG-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "7cc72284af7e81489858eb2a531dfa17832d6aa5a9fbfb11f9acc0381c63791e",
+      "content_hash": "2a3e0d1bba61414eedc787f00b0f732f9cdd57307df507afedbe7c2cfa7c618f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T04:37:38.237Z"
+      "persisted_at": "2026-11-18T04:49:57.342Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "6bae6b5672beb813d90237cdc909e5397c4ee9c31bc4f211effbe95eccb300d4",
+      "content_hash": "a8f0828b88814ed6c2b42500de786c7e85f4156923a576badb52038578d496f0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T04:37:38.366Z"
+      "persisted_at": "2026-11-18T04:49:57.467Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "45c2a40782cba793c0daddb25f4908be405c472e00e9263d2789b281afa26266",
+      "content_hash": "8e5768576b450bde612d99542810a4b691f0413b60cc762b58333d31e96f2f41",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T04:37:38.498Z"
+      "persisted_at": "2026-11-18T04:49:57.586Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -113894,9 +113894,9 @@
       "title": "Research & Knowledge Intelligence: inclusionAI/Ming-Image-0.1-Design Core Invariants",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
       "source_version": "hf-inclusionai-ming-image-0.1-design",
-      "content_hash": "8e53a7fac471a7c64e7fb7e83ae5b3fcb59cfd4b7107d15ac3831e9abda07bdc",
+      "content_hash": "5e9e2856503e645c086d3f40e14e691d5bb2c288a5e867ee7f597ec6811fdf3c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T17:24:39.483Z"
+      "persisted_at": "2026-11-18T04:49:44.335Z"
     },
     "candidate_directive-fix-fix-what-the-local-stores-campaign-found-in-maildir-and-mbox": {
       "item_id": "candidate_directive-fix-fix-what-the-local-stores-campaign-found-in-maildir-and-mbox",
@@ -114002,9 +114002,9 @@
       "title": "Research & Knowledge Intelligence: hf-inclusionai-ming-image-0.1-design-learnings Core Invariants",
       "repository": "hf-inclusionai-ming-image-0.1-design-learnings",
       "source_version": "HEAD",
-      "content_hash": "9e5ec42b7ca8eba6507dca5e02f68a428454caf8ee38e0be2d7b3bd6b7323146",
+      "content_hash": "19aa54b4227790309e0001beb2892711f57a9a66d7b4030b70eeb10625859b4f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T17:25:37.679Z"
+      "persisted_at": "2026-11-18T04:49:56.864Z"
     },
     "candidate_directive-record-the-board-signature-after-autoroute-import_ses-and-refill_zones": {
       "item_id": "candidate_directive-record-the-board-signature-after-autoroute-import_ses-and-refill_zones",
@@ -239302,8 +239302,8 @@
       "slug": "metalbear-co-mirrord",
       "platform": "github",
       "source_url": "https://github.com/metalbear-co/mirrord",
-      "source_version": "c5bdfc45",
-      "content_hash": "26d0be52e8736ea8256f7f37d1d95bd270837cc38703df6b5fe5bd8d2e5ad330",
+      "source_version": "c133334a",
+      "content_hash": "06e8695af0236dc0a7bbbf46f0598b4121423d75d132afdd7c1469a859253734",
       "dossier_path": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
       "promoted_rules": [
@@ -239323,7 +239323,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T22:47:29.480Z",
+      "verified_at": "2026-11-18T04:49:45.570Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239365,10 +239365,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-metalbear-co-mirrord-technical-construction-intelligence-metalbear-co-mirrord-co.md",
       "title": "Technical Construction Intelligence: metalbear-co/mirrord Core Invariants",
       "repository": "metalbear-co/mirrord",
-      "source_version": "c5bdfc45",
-      "content_hash": "e117fb22d755912aa05349e0c6b938a51d0d9dd0aa0d934e0e82b5f818fe2b74",
+      "source_version": "c133334a",
+      "content_hash": "c070fd694592191abaa4c079d3ea5948423a16ce4c3b1798e62534c094c70493",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T22:47:29.855Z"
+      "persisted_at": "2026-11-18T04:49:46.054Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord",
@@ -239377,10 +239377,10 @@
       "relative_path": "08_VERIFICATION/metalbear-co-mirrord-verification-protocol-empirical-defect-shield-for-metalbear.md",
       "title": "Verification Protocol: Empirical Defect Shield for metalbear-co/mirrord",
       "repository": "metalbear-co/mirrord",
-      "source_version": "c5bdfc45",
-      "content_hash": "6d081f75b521eb313b5f44580791c93951cd3dbb028d137d572e6cac548ed113",
+      "source_version": "c133334a",
+      "content_hash": "e6d1355a72b63264793fada3766d845875d295829bdd67f0d3c07b414e5d0568",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T22:47:29.955Z"
+      "persisted_at": "2026-11-18T04:49:46.172Z"
     },
     "learn-github-run-llama-llama_index": {
       "learning_id": "learn-github-run-llama-llama_index",
@@ -239536,9 +239536,9 @@
       "title": "Technical Construction Intelligence: metalbear-co-mirrord-learnings Core Invariants",
       "repository": "metalbear-co-mirrord-learnings",
       "source_version": "HEAD",
-      "content_hash": "82cedbb1576f1871f66e564c9076e58bf46d525e7ff14f0b7e05273b970f1367",
+      "content_hash": "bd5f4d32fee94c4e60dd7a328e6f0f1754dcb53c0dca3fa3166c62e0cc5b96eb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T22:47:41.303Z"
+      "persisted_at": "2026-11-18T04:49:56.473Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-metalbear-co-mirrord-learnings",
@@ -239548,9 +239548,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for metalbear-co-mirrord-learnings",
       "repository": "metalbear-co-mirrord-learnings",
       "source_version": "HEAD",
-      "content_hash": "e98513613f6349934c7621738eb8049ee566e3732fde785ae8fdc92808ad0893",
+      "content_hash": "a75c0225c2cd1eb1dcc684ff27888db7b83f1db3b3e4f6bc38b1b74e3c7c8568",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T22:47:41.404Z"
+      "persisted_at": "2026-11-18T04:49:56.601Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-dealignai-deepseek-v4-1-flash-uncensored-fp8-",
@@ -281160,6 +281160,45 @@
       "content_hash": "417cbe23520bd960683ff9759aedaa40f9e6d118b838854c4b63efa2ea0e7a25",
       "domain_letter": "D",
       "persisted_at": "2026-11-18T04:37:37.465Z"
+    },
+    "learn-huggingface-inclusionai-ming-image-0-1-design": {
+      "learning_id": "learn-huggingface-inclusionai-ming-image-0-1-design",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "inclusionAI/Ming-Image-0.1-Design",
+      "repository": "inclusionAI/Ming-Image-0.1-Design",
+      "slug": "hf-inclusionai-ming-image-0.1-design",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
+      "source_version": "hf-inclusionai-ming-image-0.1-design",
+      "content_hash": "76aec619b0821df4b375a33f5060787dcf03f9ee9b65c9955ac3481c5a14d9a5",
+      "dossier_path": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T04:49:43.986Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "candidate_directive-prepare-release-3-290-0": {
+      "item_id": "candidate_directive-prepare-release-3-290-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-733W-prepare-release-3-290-0.md",
+      "title": "Prepare release 3.290.0",
+      "repository": "metalbear-co-mirrord-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cc39cd13e5f91af53f9482aa14ccebe0222e541ca74ec6df81e9f80babea3330",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T04:49:56.351Z"
     }
   },
   "ai-builder-brain": {

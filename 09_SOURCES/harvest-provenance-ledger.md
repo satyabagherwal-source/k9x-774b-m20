@@ -10844,3 +10844,5 @@ Every entry in this ledger must capture:
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `f7a68cdf` | Multi-dimensional audit evidence | 2026-11-18T04:29:19.919Z |
 | `learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-18T04:37:22.097Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `76040802` | Multi-dimensional audit evidence | 2026-11-18T04:37:33.737Z |
+| `learn-huggingface-inclusionai-ming-image-0-1-design` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-11-18T04:49:44.166Z |
+| `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `c133334a` | Multi-dimensional audit evidence | 2026-11-18T04:49:45.739Z |

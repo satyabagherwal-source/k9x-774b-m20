@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T04:37:38.615Z",
+  "last_updated": "2026-11-18T04:49:57.689Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T04:11:36.483Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-18T04:37:37.883Z",
+      "processed_at": "2026-11-18T04:49:56.997Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -428,7 +428,7 @@
       "staged_for_review": 1
     },
     "metalbear-co-mirrord-learnings.md": {
-      "processed_at": "2026-11-16T22:47:40.971Z",
+      "processed_at": "2026-11-18T04:49:55.829Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2013,8 +2013,8 @@
       "staged_for_review": 1
     },
     "hf-inclusionai-ming-image-0.1-design-learnings.md": {
-      "processed_at": "2026-11-13T17:25:37.479Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T04:49:56.716Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "kirillzyusko-react-native-keyboard-controller-learnings.md": {
@@ -3378,7 +3378,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1800,
+  "total_dossiers_evaluated": 1803,
   "total_canonical_promoted": 334,
-  "total_staged_for_review": 1392
+  "total_staged_for_review": 1394
 }

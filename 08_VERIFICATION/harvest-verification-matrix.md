@@ -10811,3 +10811,5 @@
 | `CYCLE-20261118-GL2J` | `2026-11-18T04:29:19.915Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6477` | Yes (`f8849855...`) |
 | `CYCLE-20261118-QX4D` | `2026-11-18T04:37:22.093Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md` | Yes (`ff894251...`) |
 | `CYCLE-20261118-R63Q` | `2026-11-18T04:37:33.734Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9125` | Yes (`47697e5c...`) |
+| `CYCLE-20261118-6TPE` | `2026-11-18T04:49:44.162Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md` | Yes (`76aec619...`) |
+| `CYCLE-20261118-6UX4` | `2026-11-18T04:49:45.736Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md` | Yes (`06e8695a...`) |

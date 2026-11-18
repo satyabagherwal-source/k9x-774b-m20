@@ -505,8 +505,8 @@
     "sourceUrl": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
     "sourceVersion": "hf-inclusionai-ming-image-0.1-design",
     "license": "Open-Source",
-    "contentHash": "145ab63e180ee23782214241017097cdd63a9535ae8ab79374dc5fcea2c48a24",
-    "lastHarvestedAt": "2026-11-13T17:24:39.296Z",
+    "contentHash": "76aec619b0821df4b375a33f5060787dcf03f9ee9b65c9955ac3481c5a14d9a5",
+    "lastHarvestedAt": "2026-11-18T04:49:44.166Z",
     "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash": {
@@ -3013,10 +3013,10 @@
     "repository": "metalbear-co/mirrord",
     "platform": "github",
     "sourceUrl": "https://github.com/metalbear-co/mirrord",
-    "sourceVersion": "c5bdfc45",
+    "sourceVersion": "c133334a",
     "license": "MIT",
-    "contentHash": "26d0be52e8736ea8256f7f37d1d95bd270837cc38703df6b5fe5bd8d2e5ad330",
-    "lastHarvestedAt": "2026-11-16T22:47:29.615Z",
+    "contentHash": "06e8695af0236dc0a7bbbf46f0598b4121423d75d132afdd7c1469a859253734",
+    "lastHarvestedAt": "2026-11-18T04:49:45.739Z",
     "learningId": "learn-github-metalbear-co-mirrord"
   },
   "openkruise-kruise": {

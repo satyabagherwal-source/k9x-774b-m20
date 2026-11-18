@@ -4,22 +4,22 @@
 {
   "source_repository": "metalbear-co/mirrord",
   "source_url": "https://github.com/metalbear-co/mirrord",
-  "source_version": "c5bdfc45",
+  "source_version": "c133334a",
   "license": "MIT",
-  "timestamp": "2026-11-16T22:47:29.767Z",
+  "timestamp": "2026-11-18T04:49:45.932Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-metalbear-co-mirrord",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [metalbear-co/mirrord](https://github.com/metalbear-co/mirrord) (Revision: `c5bdfc45`).  
-> **License**: MIT | **Timestamp**: `2026-11-16T22:47:29.767Z`  
+> **Provenance**: Harvested from [metalbear-co/mirrord](https://github.com/metalbear-co/mirrord) (Revision: `c133334a`).  
+> **License**: MIT | **Timestamp**: `2026-11-18T04:49:45.932Z`  
 > **Learning ID**: `learn-github-metalbear-co-mirrord`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `metalbear-co/mirrord` (Commit: `c5bdfc45`)
+- **Target Repository**: `metalbear-co/mirrord` (Commit: `c133334a`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/metalbear-co/mirrord](https://github.com/metalbear-co/mirrord))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T22:47:28.686Z  
+> **Harvest Timestamp**: 2026-11-18T04:49:45.334Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Run any process, on your machine or in an AI agent's environment, as if it were a pod in your Kubernetes cluster: real env vars, DNS, network, traffic.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 5412 stars
+- **Stars / Engagement**: 5417 stars
 
 ---
 
@@ -1540,410 +1540,550 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ce8e8e23` (2026-11-16)
-**Commit Message**: Show MetalBear Cloud sessions in mirrord ui (#5242)
+### Incident Patch 1: `c133334a` (2026-11-17)
+**Commit Message**: Prepare release 3.290.0 (#5250)
 
-* Show MetalBear Cloud sessions in mirrord ui
+Co-authored-by: cubby-mb[bot] <273354325+cubby-mb[bot]@users.noreply.github.com>
 
-Serverless targets run without an operator, so mirrord ui had nothing to
-list for them and showed an operator or Kubernetes error instead. The
-sessions-manager now lists the live sessions of the organization the
-`mirrord login` token names (`GET /v1/sessions`, served by the operator
-repo), and mirrord ui shows them in a MetalBear Cloud section. While the
-user is logged in, a missing operator or kube context isn't an error.
+**File**: `CHANGELOG.md` (modified, +27/-0)
+```diff
+@@ -8,6 +8,33 @@ This project uses [*towncrier*](https://towncrier.readthedocs.io/) and the chang
+ 
+ <!-- towncrier release notes start -->
+ 
++## [3.290.0](https://github.com/metalbear-co/mirrord/tree/3.290.0) - 2026-11-17
++
++
++### Added
++
++- `mirrord preview start` and `mirrord preview up` can now run without a target
++  to provision branch databases alone: with `feature.db_branches` and no
++  `target`, the operator creates the branches and keeps them for the preview's
++  TTL. A targetless `mirrord exec` with branches the operator provisions
++  creates them the same way and gets their connection values in its
++  environment. Branch connection values must then come from a literal, a
++  Kubernetes Secret, or a ConfigMap named directly, since there is no target
++  pod to read them from. Secret manager sources and `iam_auth` work without a
++  target only for S3 and turbopuffer branches, and Spanner branches still need
++  a target.
++
++
++### Fixed
++
++- The serverless workload companion and the CLI's sessions-manager connection
++  trust the CA certificates bundled into mirrord, alongside the system's when
++  it has any, so application images no longer need `ca-certificates` installed
++  to connect to MetalBear Cloud. The data-plane connection trusts the system's
++  CA certificates too, so a sessions-manager behind a private CA or a
++  transparently intercepting proxy no longer passes registration only to fail
++  every data-plane connection.
++
+ ## [3.289.0](https://github.com/metalbear-co/mirrord/tree/3.289.0) - 2026-11-16
+ 
+ 
+```
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+**File**: `Cargo.lock` (modified, +55/-55)
+```diff
+@@ -2501,7 +2501,7 @@ checksum = "1aaf95b3e5c8f23aa320147307562d361db0ae0d51242340f558153b4eb2439b"
+ 
+ [[package]]
+ name = "double_listen"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "libc",
+ ]
+@@ -2902,7 +2902,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "fileops"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "libc",
+ ]
+@@ -4076,7 +4076,7 @@ checksum = "a6cb138bb79a146c1bd460005623e142ef0181e3d0219cb493e02f7d08a35695"
+ 
+ [[package]]
+ name = "issue1317"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "axum",
+  "env_logger",
+@@ -4086,7 +4086,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "issue1776"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "errno 0.3.14",
+  "libc",
+@@ -4095,22 +4095,22 @@ dependencies = [
+ 
+ [[package]]
+ name = "issue1776portnot53"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "libc",
+  "socket2 0.5.10",
+ ]
+ 
+ [[package]]
+ name = "issue1899"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "libc",
+ ]
+ 
+ [[package]]
+ name = "issue2001"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "libc",
+ ]
+@@ -4714,7 +4714,7 @@ checksum = "32a66949e030da00e8c7d4434b251670a91556f4144941d37452769c25d58a53"
+ 
+ [[package]]
+ name = "listen_ports"
+-version = "3.289.0"
++version = "3.290.0"
+ 
+ [[package]]
+ name = "litemap"
+@@ -5064,7 +5064,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "actix-codec",
+  "atomic-write-file",
+@@ -5172,7 +5172,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-agent"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "actix-codec",
+  "async-pidfd",
+@@ -5241,7 +5241,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-agent-env"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "base64 0.22.1",
+  "k8s-openapi",
+@@ -5254,7 +5254,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-agent-iptables"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "async-trait",
+  "caps",
+@@ -5270,7 +5270,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-analytics"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "assert-json-diff",
+  "base64 0.22.1",
+@@ -5288,7 +5288,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-auth"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "base64 0.22.1",
+  "bcder",
+@@ -5316,7 +5316,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-cluster-auth"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "aws-config",
+  "aws-credential-types",
+@@ -5350,7 +5350,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-command"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "tempfile",
+  "tokio",
+@@ -5359,7 +5359,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-config"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "base64 0.22.1",
+  "bimap",
+@@ -5402,7 +5402,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-config-derive"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "proc-macro2",
+  "proc-macro2-diagnostics",
+@@ -5412,7 +5412,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-console"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "bincode",
+  "drain",
+@@ -5431,7 +5431,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-intproxy"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "actix-codec",
+  "anyhow",
+@@ -5486,7 +5486,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-intproxy-protocol"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "bincode",
+  "bytes",
+@@ -5500,7 +5500,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-jaq"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "jaq-core",
+  "jaq-json",
+@@ -5513,7 +5513,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-kube"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "async-stream",
+  "futures",
+@@ -5542,7 +5542,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-layer"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "actix-codec",
+  "apple-codesign",
+@@ -5584,7 +5584,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-layer-core"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "frida-gum",
+  "libc",
+@@ -5594,7 +5594,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-layer-go"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "frida-gum",
+  "libc",
+@@ -5606,7 +5606,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-layer-lib"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "base64 0.22.1",
+  "bincode",
+@@ -5646,7 +5646,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-layer-macro"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+@@ -5655,7 +5655,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "mirrord-layer-tests"
+-version = "3.289.0"
++version = "3.290.0"
+ dependencies = [
+  "actix-codec",
+  "apple-codesign",
+@@ -5682,7 +5682,7
+```
 
-* Address review of the Cloud sessions in mirrord ui
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -72,7 +72,7 @@ ignored-paths = [
+ # latest commits on rustls suppress certificate verification
+ [workspace.package]
+ edition = "2024"
+-version = "3.289.0"
++version = "3.290.0"
+ license = "MIT"
+ readme = "README.md"
+ repository = "https://github.com/metalbear/mirrord"
+```
 
-- Decide that the developer uses Cloud from the login the backend read, not from any non-loggedOut status, so a failed check doesn't hide the operator and Kubernetes guidance.
-- Treat a login the sessions-manager refused as logged out.
-- Show a Cloud pane instead of the Kubernetes quick start for Cloud users.
-- Render Cloud rows as plain content, and show their replica.
+**File**: `changelog.d/+preview-targetless-db-branches.added.md` (removed, +0/-1)
+```diff
+@@ -1 +0,0 @@
+-`mirrord preview start` and `mirrord preview up` can now run without a target to provision branch databases alone: with `feature.db_branches` and no `target`, the operator creates the branches and keeps them for the preview's TTL. A targetless `mirrord exec` with branches the operator provisions creates them the same way and gets their connection values in its environment. Branch connection values must then come from a literal, a Kubernetes Secret, or a ConfigMap named directly, since there is no target pod to read them from. Secret manager sources and `iam_auth` work without a target only for S3 and turbopuffer branches, and Spanner branches still need a target.
+```
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+**File**: `changelog.d/+serverless-bundled-ca.fixed.md` (removed, +0/-1)
+```diff
+@@ -1 +0,0 @@
+-The serverless workload companion and the CLI's sessions-manager connection trust the CA certificates bundled into mirrord, alongside the system's when it has any, so application images no longer need `ca-certificates` installed to connect to MetalBear Cloud. The data-plane connection trusts the system's CA certificates too, so a sessions-manager behind a private CA or a transparently intercepting proxy no longer passes registration only to fail every data-plane connection.
+```
 
-* Fix review findings in the Cloud sessions of mirrord ui
+**File**: `changelog.d/+serverless-disabled-error-kind.internal.md` (removed, +0/-1)
+```diff
+@@ -1 +0,0 @@
+-Report an operator that has the serverless sessions-manager turned off under the same analytics error kind as one that does not serve it.
+```
 
-- Show the Cloud overview only where the operator guidance would have been.
-- Don
+**File**: `mirrord/mcp/corpus/docs.pin.json` (modified, +2/-2)
+```diff
+@@ -1,5 +1,5 @@
+ {
+   "repo": "metalbear-co/docs",
+-  "commit": "e76683ea1f3ea13d6ef452d969863cfbef8666db",
+-  "synced_at": "2026-11-16T23:45:28Z"
++  "commit": "0f121e6b2432ceaa89dd14cae6af905d7b9ec83f",
++  "synced_at": "2026-11-17T13:02:18Z"
+ }
+```
 
-**File**: `changelog.d/+cloud-sessions-in-ui.added.md` (added, +1/-0)
+**File**: `mirrord/mcp/corpus/docs/getting-started/first-session.md` (modified, +2/-2)
+```diff
+@@ -41,7 +41,7 @@ To run several services together from one config file, use [`mirrord up`](../usi
+ mirrord up init
+ ```
+ 
+-This walks you through an interactive wizard and writes a `mirrord-up.yaml` for you, so you don't need to write any config by hand. Once you have a `mirrord-up.yaml`, start the services by running `mirrord up`.
++This walks you through an interactive wizard and writes a `mirrord-up.yaml` for you, so you don't need to write any config by hand. To answer the same questions in your browser, run `mirrord wizard` (see [Onboarding Wizard](onboarding-wizard.md)). Once you have a `mirrord-up.yaml`, start the services by running `mirrord up`.
+ 
+ ## IDE extensions
+ 
+@@ -92,7 +92,7 @@ Install the [mirrord browser extension](https://chromewebstore.google.com/detail
+ 
+ mirrord reads config from `<project-path>/.mirrord/mirrord.json` (also supports `.toml` and `.yaml`). You can also prefix config files, e.g. `my-config.mirrord.json`.
+ 
+-Run `mirrord wizard` to generate a config file interactively (see [Onboarding Wizard](onboarding-wizard.md)), or see the full [configuration options](https://metalbear.com/mirrord/docs/config). To keep an Operator preference across projects, see [Global Configuration](../installing-mirrord/global-configuration.md).
++See the full [configuration options](https://metalbear.com/mirrord/docs/config). To keep an Operator preference across projects, see [Global Configuration](../installing-mirrord/global-configuration.md).
+ 
+ {% hint style="info" %}
+ The IDE extensions provide autocomplete for mirrord config files.
+```
+
+---
+
+### Incident Patch 2: `c889ba3e` (2026-11-17)
+**Commit Message**: Report a turned-off serverless sessions-manager as not served (#5247)
+
+* Report a turned-off serverless sessions-manager as not served
+
+An operator that supports the serverless sessions-manager but has it turned
+off was reported to analytics as a generic agent connection failure.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+* Fix matching
+
+* Clear new cargo-deny advisories
+
+Upgrade libz-sys to 1.1.33 for RUSTSEC-2026-0544, and ignore the zip
+advisories apple-codesign holds us on (no aes-crypto, and it only writes
+zips) and the unmaintained chrono family, which has no replacement yet.
+
+---------
+
+Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
+Co-authored-by: Razz4780 <[REDACTED_EMAIL]>
+Co-authored-by: Michał Smolarek <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +2/-2)
+```diff
+@@ -4671,9 +4671,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "libz-sys"
+-version = "1.1.31"
++version = "1.1.33"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
++checksum = "fee3f59f4321dab0c78d828942e7aa09d0bd8ad6e78a501977e6bf3d02938045"
+ dependencies = [
+  "cc",
+  "libc",
+```
+
+**File**: `changelog.d/+serverless-disabled-error-kind.internal.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+`mirrord ui` shows the sessions of your organization on MetalBear Cloud after `mirrord login`, and while you're logged in, no longer reports an error when the cluster has no mirrord operator or there is no Kubernetes context.
++Report an operator that has the serverless sessions-manager turned off under the same analytics error kind as one that does not serve it.
 ```
 
-**File**: `mirrord/cli/src/ui/server/v2.rs` (modified, +5/-0)
+**File**: `deny.toml` (modified, +10/-0)
 ```diff
-@@ -17,6 +17,9 @@
- //! - `operator/*` — cluster sessions from the operator. Fetched per-request for the selected
- //!   context and filtered to the selected namespace; the upstream is itself a poll of the operator
- //!   CRD, so a stateless per-context fetch is the natural fit.
-+//! - `cloud/*`    — sessions of the developer's organization from the MetalBear Cloud
-+//!   sessions-manager, for serverless targets that run without an operator. Authenticated with
-+//!   the `mirrord login` token; see [`cloud`].
- //! - `kube/*`     — kubeconfig/cluster metadata used to populate the context and namespace pickers.
- 
- use std::{collections::BTreeMap, time::Duration};
-@@ -53,6 +56,7 @@ use super::{
- };
- use crate::{data::GlobalConfig, ui::error::ApiError};
- 
-+mod cloud;
- mod events;
- mod targets;
- 
-@@ -72,6 +76,7 @@ pub(super) fn v2_router() -> Router<AppState> {
-         .route("/operator/events", get(events::operator_events_sse))
-         .route("/operator/previews/{id}", get(operator_preview_detail))
-         .route("/operator/license", get(operator_license))
-+        .route("/cloud/sessions", get(cloud::cloud_sessions))
-         .route("/kube/contexts", get(kube_contexts))
-         .route("/kube/namespaces", get(kube_namespaces))
-         .route("/kube/user", get(kube_user))
+@@ -25,6 +25,16 @@ ignore = [
+   "RUSTSEC-2026-0368",
+   "RUSTSEC-2026-0369",
+   "RUSTSEC-2026-0429",
++  # zip AES entries read without checking their MAC; we don't enable `aes-crypto`.
++  "RUSTSEC-2026-0545",
++  # zip `ZipStreamReader` names can differ from the central directory; apple-codesign only writes zips.
++  "RUSTSEC-2026-0548",
++  # chrono and the crates around it are unmaintained, with no maintained release to move to yet
++  # (https://github.com/chronotope/chrono/issues/1768). chrono-tz comes from tera.
++  "RUSTSEC-2026-0542", # humantime
++  "RUSTSEC-2026-0543", # chrono
++  "RUSTSEC-2026-0555", # chrono-tz
++  "RUSTSEC-2026-0559", # chrono-tz-build
+   # crypto-bigint timing side channels, held at 0.5 by apple-codesign's elliptic-curve 0.13. We only use it to
+   # re-sign binaries locally, with no secrets an attacker could observe.
+   "RUSTSEC-2026-0387",
 ```
 
-**File**: `mirrord/cli/src/ui/server/v2/cloud.rs` (added, +184/-0)
+**File**: `mirrord/cli/src/error.rs` (modified, +3/-3)
 ```diff
-@@ -0,0 +1,184 @@
-+//! `cloud/*`: sessions of the developer's organization, from the MetalBear Cloud sessions-manager.
-+//!
-+//! Serverless targets run without an operator, so there's no cluster resource that lists their
-+//! sessions. Instead, the sessions-manager the developer is logged in to with `mirrord login`
-+//! lists the live sessions of their organization. It's the same sessions-manager, and the same
-+//! login, that `mirrord exec` connects a serverless target through.
-+//!
-+//! The frontend polls this next to `operator/sessions`. While a response carries the login's
-+//! `email`, the developer uses MetalBear Cloud, and a missing operator or kube context is expected
-+//! rather than an error. Only a response that read a usable login carries it, so a failure to tell
-+//! never hides the operator and Kubernetes guidance.
-+
-+use std::sync::Arc;
-+
-+use chrono::{DateTime, Utc};
-+use mirrord_sessions_manager_client::{
-+    DirectTransport, SESSIONS_MANAGER_URL_ENV, SessionOwner, SessionSummary,
-+    SessionsManagerClientError, SessionsManagerEndpoint,
-+};
-+use serde::Serialize;
-+use tokio::sync::OnceCell;
-+use tracing::warn;
-+
-+use crate::{
-+    data::{AuthStore, StoredLogin},
-+    login::issuer,
-+};
-+
-+#[derive(Serialize)]
-+#[serde(rename_all = "camelCase")]
-+enum CloudStatus {
-+    Available,
-+    /// No usable `mirrord login` token, so the developer doesn't use MetalBear Cloud. Includes a
-+    /// token the sessions-manager refused, such as a revoked one, with the refusal as `reason`.
-+    LoggedOut,
-+    /// Logged in, but the sessions couldn't be listed.
-+    Unavailable,
-+}
-+
-+#[derive(Serialize)]
-+#[serde(rename_all = "camelCase")]
-+pub(super) struct CloudSessionsResponse {
-+    status: CloudStatus,
-+    #[serde(skip_serializing_if = "Option::is_none")]
-+    reason: Option<String>,
-+    /// The developer `mirrord login` signed in. Set only once a login was read and not refused,
-+    /// which is how the frontend tells a Cloud user from a failure to check.
-+    #[serde(skip_serializing_if = "Option::is_none")]
-+    email: Option<String>,
-+    sessions: Vec<CloudSession>,
-+}
-+
-+#[derive(Serialize)]
-+#[serde(rename_all = "camelCase")]
-+struct CloudSession {
-+    id: String,
-+    environment: String,
-+    service: String,
-+    replica_id: String,
-+    user_session_id: String,
-+    #[serde(skip_serializing_if = "Option::is_none")]
-+    owner: Option<CloudSessionOwner>,
-+    /// RFC 3339, like the operator sessions' `createdAt`.
-+    created_at: String,
-+    connected: bool,
-+}
-+
-+#[derive(Serialize)]
-+#[serde(rename_all = "camelCase")]
-+struct CloudSessionOwner {
-+    user_id: String,
-+    email: String,
-+}
-+
-+impl From<SessionOwner> for CloudSessionOwner {
-+    fn from(owner: SessionOwner) -> Self {
-+        Self {
-+            user_id: owner.user_id,
-+            email: owner.email,
-+        }
-+    }
-+}
-+
-+impl From<SessionSummary> for CloudSession {
-+    fn from(session: SessionSummary) -> Self {
-+        // Out of range only for a malformed listing, which shouldn't take the handler down.
-+        let created_at = i64::try_from(session.started_at)
-+            .ok()
-+            .and_then(|secs| DateTime::<Utc>::from_timestamp(secs, 0))
-+            .unwrap_or_default();
-+        Self {
-+            id: session.id,
-+            environment: session.scope.environment,
-+            service: session.scope.service,
-+            replica_id: session.agent_replica_id.to_string(),
-+            user_session_id: session.user_session_id,
-+            owner: session.owner.map(CloudSessionOwner::from),
-+            created_at: created_at.to_rfc3339(),
-+            connected: session.connected,
-+        }
-+    }
-+}
-+
-+impl CloudSessionsResponse {
-+    fn unavailable(email: Option<String>, reason: String) -> Self {
-+        warn!("{reason}");
-+        Self {
-+            status: CloudStatus::Unavailable,
-+            reason: Some(reason),
-+            email,
-+            sessions: Vec::new(),
-+        }
-+    }
-+}
-+
-+pub(super) async fn cloud_sessions() -> axum::Json<CloudSessionsResponse> {
-+    let cloud_url = match StoredLogin::cloud_url() {
-+        Ok(url) => url,
-+        Err(error) => {
-+            return axum::Json(CloudSessionsResponse::unavailable(
-+                None,
-+                format!("MetalBear Cloud URL is invalid: {error}"),
-+            ));
-+        }
-+    };
-+
-+    let login = match AuthStore::login_token(issuer(&cloud_url)).await {
-+        Ok(Some(login)) => login,
-+        Ok(None) => {
-+            return axum::Json(CloudSessionsResponse {
-+                status: CloudStatus::LoggedOut,
-+                reason: None,
-+                email: None,
-+                sessions: Vec::new(),
-+            });
-+        }
-+        Err(error) => {
-+            return axum::Json(CloudSessionsResponse::unavailable(
-+                None,
-+                format!("Could not read your mirrord login: {error}"),
-+            ));
-+        }
-+    };
-+    let email = Some(login.email);
-+
-+    // Built 
-```
-
-**File**: `mirrord/sessions-manager/client/src/control_plane/api.rs` (modified, +8/-1)
-```diff
-@@ -27,7 +27,11 @@ pub(crate) struct ControlPlaneApi {
- }
- 
- pub(crate) enum ControlPlaneEndpoint<'a> {
--    Assignments { scope: &'a ServiceScope },
-+    Assignments {
-+        scope: &'a ServiceScope,
-+    },
-+    /// The live sessions of the caller's organization.
-+    Sessions,
- }
- 
- impl ControlPlaneApi {
-@@ -60,6 +64,9 @@ impl ControlPlaneApi {
-                     let service = slug::slugify(&scope.service);
-                     segments.extend(["env", &environment, "service", &service, "assignments"]);
-                 }
-+                ControlPlaneEndpoint::Sessions => {
-+                    segments.push("sessions");
-+                }
-             }
+@@ -1378,6 +1378,9 @@ impl From<OperatorApiError> for CliError {
+         {
+             return Self::LocalShare(LocalShareError::Operator(status.message.clone()));
          }
-         Ok(url)
++        if value.is_sessions_manager_not_served() {
++            return Self::ServerlessSessionsManagerNotServed;
++        }
+ 
+         match value {
+             OperatorApiError::BranchCreationFailed { operation, message } => {
+@@ -1411,9 +1414,6 @@ impl From<OperatorApiError> for CliError {
+                 Self::LocalPaidFeatureRequiresPlan { feature, gate }
+             }
+             OperatorApiError::FeatureNotLicensed { gate } => Self::PaidFeatureRequiresPlan { gate },
+-            OperatorApiError::ServerlessSessionsManagerNotServed => {
+-                Self::ServerlessSessionsManagerNotServed
+-            }
+             OperatorApiError::CreateKubeClient(e) => {
+                 Self::friendlier_error_or_else(e, Self::CreateKubeApiFailed)
+             }
 ```
 
-**File**: `mirrord/sessions-manager/client/src/lib.rs` (modified, +3/-1)
+**File**: `mirrord/operator/src/client.rs` (modified, +3/-12)
 ```diff
-@@ -31,7 +31,9 @@ pub use credentials::{
-     SESSIONS_MANAGER_URL_DEFAULT, SharedSecretCredentials, cloud_url_from_env,
- };
- pub use error::{Result, SessionsManagerClientError};
--pub use mirrord_sessions_manager_protocol::{IntproxyIdentity, ReplicaId, ServiceScope};
-+pub use mirrord_sessions_manager_protocol::{
-+    IntproxyIdentity, ReplicaId, ServiceScope, SessionList, SessionOwner, SessionSummary,
-+};
- pub use transport::{
-     DirectTransport, EndpointSource, OperatorTransport, SESSIONS_MANAGER_URL_ENV,
-     SessionsManagerEndpoint, SessionsManagerTransport,
-```
-
-**File**: `mirrord/sessions-manager/client/src/transport/direct.rs` (modified, +39/-10)
-```diff
-@@ -20,7 +20,7 @@ use mirrord_operator_websocket::{
- };
- use mirrord_protocol_io::ProtocolEndpoint;
- use mirrord_sessions_manager_protocol::{
--    AssignmentSubscription, ConnectionAssignment, ServiceScope,
-+    AssignmentSubscription, ConnectionAssignment, ServiceScope, SessionList,
- };
- use reqwest::StatusCode;
- use tokio::time::Instant;
-@@ -158,6 +158,43 @@ impl DirectTransport {
-         self
+@@ -787,18 +787,11 @@ where
+         &self.client
      }
  
-+    /// The live sessions of the organization the credentials name, for showing them without an
-+    /// operator (`mirrord ui`).
-+    pub async fn list_sessions(&self) -> Result<SessionList, SessionsManagerClientError> {
-+        let deadline = Instant::now() + RESPONSE_HEADER_TIMEOUT;
-+        let endpoint = self.api.endpoint(ControlPlaneEndpoint::Sessions)?;
-+        let credentials =
-+            with_deadline(Some(deadline), self.credentials.control_plane_headers()).await??;
-+        let sent_authorization = credentials.contains_key(AUTHORIZATION);
-+        let request = self.http.get(endpoint).headers(credentials).send();
-+        let response = with_deadline(Some(deadline), request).await??;
-+        self.check_refused(response.status(), sent_authorization)?;
-+        if !response.status().is_success() {
-+            return Err(SessionsManagerClientError::HttpStatus(response.status()));
-+        }
-+        Ok(with_deadline(Some(deadline), response.json()).await??)
-+    }
-+
-+    /// Explains a control-plane request the sessions-manager refused by who it refused, the
-+    /// credentials (`401`) or the caller they name (`403`). `sent_authorization` is whether the
-+    /// request carried an `Authorization` header, without which a `401` says nothing about them.
-+    fn check_refused(
-+        &self,
-+        status: StatusCode,
-+        sent_authorization: bool,
-+    ) -> Result<(), SessionsManagerClientError> {
-+        if status == StatusCode::UNAUTHORIZED
-+            && sent_authorization
-+            && let Some(error) = self.credentials.unauthorized_error()
-+        {
-+            return Err(error);
-+        }
-+        if status == StatusCode::FORBIDDEN {
-+            return Err(SessionsManagerClientError::Forbidden);
-+        }
-+        Ok(())
-+    }
-+
-     /// Dials and authorizes the data-plane WebSocket described by a control-plane assignment.
-     ///
-     /// Assignment endpoints are relative to the configured base URL. The assignment
-@@ -254,15 +291,7 @@ impl SessionsManagerTransport for DirectTransport {
-             .header(ACCEPT, "text/event-stream")
-             .send();
-         let response = with_deadline(Some(deadline), request).await??;
--        if response.status() == StatusCode::UNAUTHORIZED
--            && sent_authorization
--            && let Some(error) = self.credentials.unauthorized_error()
--        {
--            return Err(error);
--        }
--        if response.status() == StatusCode::FORBIDDEN {
--            return Err(SessionsManagerClientError::Forbidden);
--        }
-+        self.check_refused(response.status(), sent_authorization)?;
-         verify_event_stream(response.status(), response.headers())?;
+-    /// Fails with [`OperatorApiError::ServerlessSessionsManagerNotServed`] unless this operator
+-    /// serves the operator-hosted sessions-manager routes.
++    /// Checks whether this operator serves the sessions-manager routes.
+     pub fn check_serverless_sessions_manager_served(&self) -> OperatorApiResult<()> {
+         self.operator
+             .spec
+             .require_feature(NewOperatorFeature::ServerlessSessionsManager)
+-            .map_err(|error| match error {
+-                OperatorApiError::UnsupportedFeature { .. } => {
+-                    OperatorApiError::ServerlessSessionsManagerNotServed
+-                }
+-                error => error,
+-            })
+     }
  
-         Ok(ControlPlaneEventStream::from_bytes(response.bytes_stream()))
+     /// Create a new CI api key by generating a random key pair, creating a certificate
+@@ -3997,10 +3990,8 @@ mod test {
+                         assert_eq!(gate.required_plan, crate::types::RequiredPlan::Team);
+                     }
+                     (None, Ok(())) => {}
+-                    (
+-                        None | Some("future_plan"),
+-                        Err(OperatorApiError::ServerlessSessionsManagerNotServed),
+-                    ) => {}
++                    (None | Some("future_plan"), Err(error))
++                        if error.is_sessions_manager_not_served() => {}
+                     (plan, result) => {
+                         panic!("unexpected serverless result for {plan:?}: {result:?}")
+                     }
 ```
 
-**File**: `mirrord/sessions-manager/protocol/src/lib.rs` (modified, +2/-0)
+**File**: `mirrord/operator/src/client/error.rs` (modified, +16/-2)
 ```diff
-@@ -21,10 +21,12 @@ pub use data_plane::{
- };
- pub use error::SessionsManagerProtocolError;
- use serde::{Deserialize, Serialize};
-+pub use sessions::{SessionList, SessionOwner, SessionSummary};
+@@ -94,8 +94,6 @@ pub enum OperatorApiError {
  
- mod control_plane;
- mod data_plane;
- mod error;
-+mod sessions;
+     #[error("{gate}")]
+     FeatureNotLicensed { gate: PaidFeatureGate },
+-    #[error("mirrord operator does not serve the operator-hosted sessions-manager")]
+-    ServerlessSessionsManagerNotServed,
  
- /// Information a control-plane subscription sends to one peer.
- #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-```
-
-**File**: `mirrord/sessions-manager/protocol/src/sessions.rs` (added, +44/-0)
-```diff
-@@ -0,0 +1,44 @@
-+//! The listing of live sessions a standalone sessions-manager serves at `GET /v1/sessions`.
-+//!
-+//! Without an operator there is no cluster resource to read sessions from, so `mirrord ui` asks
-+//! the sessions-manager the developer is logged in to, the same way it reads the operator's status
-+//! when one is installed. The caller sees every session of the organization their `mirrord login`
-+//! token names, which matches what the operator shows its users.
-+
-+use serde::{Deserialize, Serialize};
-+
-+use crate::{ReplicaId, ServiceScope};
-+
-+/// Every live session of the caller's organization.
-+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-+pub struct SessionList {
-+    pub sessions: Vec<SessionSummary>,
+     #[error("{operation} failed with code {}: {}", status.code, status.reason)]
+     StatusFailure {
+@@ -211,4 +209,20 @@ pub enum OperatorApiError {
+     },
+ }
+ 
++impl OperatorApiError {
++    /// Whether the operator refused the operator-hosted sessions-manager because it either does
++    /// not support it or has it turned off.
++    pub fn is_sessions_manager_not_served(&self) -> bool {
++        matches!(
++            self,
++            Self::FeatureDisabled {
++                feature: NewOperatorFeature::ServerlessSessionsManager,
++            } | Self::UnsupportedFeature {
++                feature: NewOperatorFeature::ServerlessSessionsManager,
++                ..
++            }
++        )
++    }
 +}
 +
-+/// One intproxy connection paired with an agent. A mirrord run that connects several times shows
-+/// up once per connection, all sharing its `user_session_id`.
-+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-+pub struct SessionSummary {
-+    /// Unique among the listed sessions, and stable for as long as the pairing lasts.
-+    pub id: String,
-+    pub scope: ServiceScope,
-+    /// The replica whose agent serves the session.
-+    pub agent_replica_id: ReplicaId,
-+    /// The developer's mirrord run, shared by all of its connections.
-+    pub user_session_id: String,
-+    /// Absent when the sessions-manager does not authenticate developers.
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub owner: Option<SessionOwner>,
-+    /// When the pairing was made, in seconds since the Unix epoch.
-+    pub started_at: u64,
-+    /// Whether both sides have attached to the data plane. A pairing whose sides never attach is
-+    /// dropped after the sessions-manager's attach timeout.
-+    pub connected: bool,
-+}
-+
-+/// The developer who started a session, as their `mirrord login` token names them.
-+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-+pub struct SessionOwner {
-+    pub user_id: String,
-+    pub email: String,
-+}
+ pub type OperatorApiResult<T, E = OperatorApiError> = Result<T, E>;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5250** (2026-11-17): Release 3.290.0 (@cubby-mb[bot])
+- **PR #5249** (2026-11-17): Release 3.289.0 (@cubby-mb[bot])
+- **PR #5247** (2026-11-17): Report a turned-off serverless sessions-manager as not served (@hank-metalbear)
 - **PR #5246** (2026-11-16): intproxy: redact credential headers in the request log (@MintSoup)
 - **PR #5245** (2026-11-16): Report serverless connection failures with their own analytics error kinds (@hank-metalbear)
 - **PR #5244** (closed): mirrord ui: stop asking MetalBear Cloud users for an operator (@DmitryDodzin)
-- **PR #5243** (2026-11-15): Release 3.288.0 (@cubby-mb[bot])
-- **PR #5242** (2026-11-16): Show MetalBear Cloud sessions in mirrord ui (@DmitryDodzin)
-- **PR #5239** (2026-11-14): Remove GitHub PATs in CI (@0x00A5)
 
 ---
 
@@ -1963,21 +2103,45 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Show MetalBear Cloud sessions in mirrord ui
+## X. Prepare release 3.290.0
 
 **RULE**:
-When implementing operations in `changelog.d/+cloud-sessions-in-ui.added.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in metalbear-co/mirrord. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ce8e8e23`: Show MetalBear Cloud sessions in mirrord ui. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c133334a`: Prepare release 3.290.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/+cloud-sessions-in-ui.added.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-`mirrord ui` shows the sessions of your organization on MetalBear Cloud after `mirrord login`, and while you're logged in, no longer reports an error when the cluster has no mirrord operator or there is no Kubernetes context.
+## [3.290.0](https://github.com/metalbear-co/mirrord/tree/3.290.0) - 2026-11-17
+
+
+### Added
+
+- `mirrord preview start` and `mirrord preview up` can now run without a target
+  to provision branch databases alone: with `feature.db_branches` and no
+  `target`, the operator creates the branches and keeps them for the preview's
+  TTL. A targetless `mirrord exec` with branches the operator provisions
+  creates them the same way and gets their connection values in its
+  environment. Branch connection values must then come from a literal, a
+  Kubernetes Secret, or a ConfigMap named directly, since there is no target
+  pod to read them from. Secret manager sources and `iam_auth` work without a
+  target only for S3 and turbopuffer branches, and Spanner branches still need
+  a target.
+
+
+### Fixed
+
+- The serverless workload companion and the CLI's sessions-manager connection
+  trust the CA certificates bundled into mirrord, alongside the system's when
+  it has any, so application images no longer need `ca-certificates` installed
+  to connect to MetalBear Cloud. The data-plane connection trusts the system's
+  CA certificates too, so a sessions-manager behind a private CA or a
+  transparently in
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1987,7 +2151,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ce8e8e23` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c133334a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
