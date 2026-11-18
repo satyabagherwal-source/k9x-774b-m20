@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T14:16:03.675Z",
+  "last_updated": "2026-11-18T14:24:30.594Z",
   "total_verified_learnings": 9002,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21301,
+  "total_items": 21304,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112117,10 +112117,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "39c445bb",
-      "content_hash": "7f1b87661b00a1125a29ae4a8c046a486c2cfb42157bf872183e795dd497f189",
+      "source_version": "52f21a8b",
+      "content_hash": "d72f7c623e4471b4129da645e5d5dcfedcee5e06cac8b4a90b3845e90359bba6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T03:56:23.000Z"
+      "persisted_at": "2026-11-18T14:24:25.476Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112154,9 +112154,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "76312dd23db08a496e26b21538f7bfcd9bc235e88f3f1c495a4dc666f163a863",
+      "content_hash": "c33dde94c07b9542b47625ff659e5bf48ee2841dd5c2c2835d75b5988d59977e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T03:56:27.324Z"
+      "persisted_at": "2026-11-18T14:24:30.594Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -113606,9 +113606,9 @@
       "title": "Research & Knowledge Intelligence: akhilaaa3/Jev-Omni Core Invariants",
       "repository": "akhilaaa3/Jev-Omni",
       "source_version": "hf-akhilaaa3-jev-omni",
-      "content_hash": "03f7eef6b65ee5ad465a996d9a4a4201abd44fa36a8c3e8158f486c1676cbb52",
+      "content_hash": "6e35c6dbdb4afb1e7f17b2ee089aa023054f367fa3ac49e075847285e9fbecd3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T04:29:04.839Z"
+      "persisted_at": "2026-11-18T14:24:07.043Z"
     },
     "candidate_directive-batch-qdrant-upserts-under-the-32mb-request-limit-7140": {
       "item_id": "candidate_directive-batch-qdrant-upserts-under-the-32mb-request-limit-7140",
@@ -113654,9 +113654,9 @@
       "title": "Research & Knowledge Intelligence: hf-akhilaaa3-jev-omni-learnings Core Invariants",
       "repository": "hf-akhilaaa3-jev-omni-learnings",
       "source_version": "HEAD",
-      "content_hash": "d788d462a7beb04da951fa13321bf2080c2694a0b92cdb49fc0fb789fa3088ea",
+      "content_hash": "8c4c45abb94abc0d5e478779c48cab1bc174cca951dcf1e7539b22bcd42f012f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T04:29:24.052Z"
+      "persisted_at": "2026-11-18T14:24:28.584Z"
     },
     "domain_intelligence-technical-construction-intelligence-mintplex-labs-anything-llm-learnings-core-in": {
       "item_id": "domain_intelligence-technical-construction-intelligence-mintplex-labs-anything-llm-learnings-core-in",
@@ -219312,8 +219312,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "39c445bb",
-      "content_hash": "9f7b1be3a78afcbcc4477002f96d9c6348d39ec1da24f93378ae0cd9cc592b0d",
+      "source_version": "52f21a8b",
+      "content_hash": "456c93c985a8f08cd3a88d15113bfb2ba2378c6c011c613220f63ce37c0e43be",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -219408,7 +219408,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T03:56:22.259Z",
+      "verified_at": "2026-11-18T14:24:24.632Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220324,10 +220324,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "d6fb6afa",
-      "content_hash": "0e253685fe2b4d75feac3d0c88dc436975c7fd156d074c6f3c986e887fc81c71",
+      "source_version": "52f21a8b",
+      "content_hash": "bfdcc20d73cff0bb85bcbffa02530a62851caa7a87695f37c97cb8360e3f8daf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T20:17:47.750Z"
+      "persisted_at": "2026-11-18T14:24:25.299Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -220397,9 +220397,9 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "e441888b17162016f5e7f0929746a03170a4fff10e46358b718f0f813771f30e",
+      "content_hash": "d470bc1fc8f5b2188627622c537b5198c3a6c7b3a69e1be8d0c08dc5625e8bd2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T15:35:22.167Z"
+      "persisted_at": "2026-11-18T14:24:30.407Z"
     },
     "learn-huggingface-qwen-qwen3-8-flash-next": {
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
@@ -235681,13 +235681,13 @@
       "item_id": "candidate_directive-update-lock-file",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-40PR-update-lock-file.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-PVDO-update-lock-file.md",
       "title": "update lock file",
       "repository": "dathere/qsv",
-      "source_version": "a3c23355",
-      "content_hash": "6c2f90f1e2909963e4cf96c5f670499542233ffe83bf366a3da98f0231474b07",
+      "source_version": "52f21a8b",
+      "content_hash": "ea19db0b35d2f8d527d08e1745b58023ae1945d3b06e60069692fcdbb034875c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T20:32:39.331Z"
+      "persisted_at": "2026-11-18T14:24:25.122Z"
     },
     "learn-huggingface-qwen-qwen-image-2-1-turbo": {
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1-turbo",
@@ -247057,8 +247057,8 @@
       "slug": "nats-io-nats.go",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats.go",
-      "source_version": "febd2b97",
-      "content_hash": "243da6b64ca184fe7b1e4b2fac7b40c5b6e64aa60415a9a15c4fa48a59e5dc5a",
+      "source_version": "792e440f",
+      "content_hash": "d37c954f809d082b8e2f6c03169612bd25448c5631909c0cb147887574f339c0",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats.go-learnings.md",
       "promoted_rules": [
@@ -247076,6 +247076,11 @@
           "number": 9072,
           "title": "[FIXED] Cap StreamState NumDeleted at MaxInt when decoding",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9243,
+          "title": "[ADDED] Option to sign the server nonce as a trusted proxy",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -247083,7 +247088,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T21:41:09.876Z",
+      "verified_at": "2026-11-18T14:24:16.866Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -247125,10 +247130,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-go-technical-construction-intelligence-nats-io-nats-go-core-invaria.md",
       "title": "Technical Construction Intelligence: nats-io/nats.go Core Invariants",
       "repository": "nats-io/nats.go",
-      "source_version": "1b180714",
-      "content_hash": "3f2fe3b98a7ec3bc7b3bf2c3884400aa1c73cffc86019f2b1eb73f849bf32a83",
+      "source_version": "792e440f",
+      "content_hash": "9d355a3263ddd889eb487d95fe0816d63c5c6bfe4e16480dc3d73fba7c579e9e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T00:24:03.564Z"
+      "persisted_at": "2026-11-18T14:24:17.539Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-go": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-go",
@@ -247137,10 +247142,10 @@
       "relative_path": "08_VERIFICATION/nats-io-nats-go-verification-protocol-empirical-defect-shield-for-nats-io-nats-g.md",
       "title": "Verification Protocol: Empirical Defect Shield for nats-io/nats.go",
       "repository": "nats-io/nats.go",
-      "source_version": "febd2b97",
-      "content_hash": "aa9f39308080aa66c8a1b36170efa94c7c4fb86d08ae764791cc62ed961e062a",
+      "source_version": "792e440f",
+      "content_hash": "bbcfe8a142a8fd88709fb0cfcc422b54d922824aef3f8e2614790170d0b950a3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T21:41:10.489Z"
+      "persisted_at": "2026-11-18T14:24:17.731Z"
     },
     "rule-8635": {
       "learning_id": "rule-8635",
@@ -247188,9 +247193,9 @@
       "title": "Technical Construction Intelligence: nats-io-nats.go-learnings Core Invariants",
       "repository": "nats-io-nats.go-learnings",
       "source_version": "HEAD",
-      "content_hash": "227bf2f1124af9aa88fe0ed85b9ff39f20a3e5312f8d1544acab5f7961304b3e",
+      "content_hash": "8694203fd7075ee9a782e69906b570ec1c205c64b263e0e9e4a6965a895f63bb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T00:27:05.542Z"
+      "persisted_at": "2026-11-18T14:24:29.324Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-go-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-go-learnings",
@@ -247200,9 +247205,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nats-io-nats.go-learnings",
       "repository": "nats-io-nats.go-learnings",
       "source_version": "HEAD",
-      "content_hash": "7796b9718f957aafa12f1b013588d787072a792ff3c363e9b967ae751f70dec0",
+      "content_hash": "82c7977f106331b3b239657450b5f700481b9ba7219af2a8e0920e7c32cc3cfb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T21:41:21.678Z"
+      "persisted_at": "2026-11-18T14:24:29.504Z"
     },
     "candidate_directive-security-drop-hardcoded-cloudflare-credentials-from-sync_status-py": {
       "item_id": "candidate_directive-security-drop-hardcoded-cloudflare-credentials-from-sync_status-py",
@@ -281472,7 +281477,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
       "source_version": "hf-akhilaaa3-jev-omni",
-      "content_hash": "0a27583fc01bdfb07338366713c99e946563ab5cf6343e5548b4e46defaa658f",
+      "content_hash": "6ec93e8ff27f909ed04c68725ea90ffcff0dbad10ce2f447a2c7ba067b689b76",
       "dossier_path": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
       "promoted_rules": [],
@@ -281481,7 +281486,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T04:29:04.439Z",
+      "verified_at": "2026-11-18T14:24:06.554Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -287426,6 +287431,44 @@
       "content_hash": "574f661f2e549145d14557c520306b3c6951c1dd1ae055e87e7e7c98e4b82d00",
       "domain_letter": "H",
       "persisted_at": "2026-11-18T14:15:59.184Z"
+    },
+    "rule-9243": {
+      "learning_id": "rule-9243",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9243,
+      "title": "[ADDED] Option to sign the server nonce as a trusted proxy",
+      "source_url": "https://github.com/nats-io/nats.go",
+      "source_version": "792e440f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T14:24:16.866Z"
+    },
+    "candidate_directive-added-option-to-sign-the-server-nonce-as-a-trusted-proxy": {
+      "item_id": "candidate_directive-added-option-to-sign-the-server-nonce-as-a-trusted-proxy",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PYHC-added-option-to-sign-the-server-nonce-as-a-trusted-proxy.md",
+      "title": "[ADDED] Option to sign the server nonce as a trusted proxy",
+      "repository": "nats-io-nats.go-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2682be1767a89cbc3fbb6a05acaadb05d873a2e6a23d791eabd30621c99fde14",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T14:24:29.136Z"
+    },
+    "candidate_directive-deps-update-lock-file": {
+      "item_id": "candidate_directive-deps-update-lock-file",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PZBF-deps-update-lock-file.md",
+      "title": "deps: update lock file",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7dd66f85a5537cf3ba07d700bd0fa5fdf502998b71bdf0690d6387b5a5e0b04e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T14:24:30.224Z"
     }
   },
   "ai-builder-brain": {

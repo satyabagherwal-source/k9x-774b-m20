@@ -11002,3 +11002,6 @@
 | `CYCLE-20261118-EUXB` | `2026-11-18T14:15:51.311Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9240` | Yes (`4df3d9e8...`) |
 | `CYCLE-20261118-EXK1` | `2026-11-18T14:15:54.721Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9241` | Yes (`e3f1892a...`) |
 | `CYCLE-20261118-F0UM` | `2026-11-18T14:15:58.990Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9242` | Yes (`b823806a...`) |
+| `CYCLE-20261118-PH8W` | `2026-11-18T14:24:06.800Z` | `akhilaaa3/Jev-Omni` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md` | Yes (`6ec93e8f...`) |
+| `CYCLE-20261118-PP6V` | `2026-11-18T14:24:17.095Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9243` | Yes (`d37c954f...`) |
+| `CYCLE-20261118-PV6F` | `2026-11-18T14:24:24.855Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`456c93c9...`) |

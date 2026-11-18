@@ -485,8 +485,8 @@
     "sourceUrl": "https://huggingface.co/akhilaaa3/Jev-Omni",
     "sourceVersion": "hf-akhilaaa3-jev-omni",
     "license": "Open-Source",
-    "contentHash": "0a27583fc01bdfb07338366713c99e946563ab5cf6343e5548b4e46defaa658f",
-    "lastHarvestedAt": "2026-11-18T04:29:04.646Z",
+    "contentHash": "6ec93e8ff27f909ed04c68725ea90ffcff0dbad10ce2f447a2c7ba067b689b76",
+    "lastHarvestedAt": "2026-11-18T14:24:06.805Z",
     "learningId": "learn-huggingface-akhilaaa3-jev-omni"
   },
   "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "39c445bb",
+    "sourceVersion": "52f21a8b",
     "license": "NOASSERTION",
-    "contentHash": "9f7b1be3a78afcbcc4477002f96d9c6348d39ec1da24f93378ae0cd9cc592b0d",
-    "lastHarvestedAt": "2026-11-18T03:56:22.458Z",
+    "contentHash": "456c93c985a8f08cd3a88d15113bfb2ba2378c6c011c613220f63ce37c0e43be",
+    "lastHarvestedAt": "2026-11-18T14:24:24.859Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -2563,10 +2563,10 @@
     "repository": "nats-io/nats.go",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats.go",
-    "sourceVersion": "febd2b97",
+    "sourceVersion": "792e440f",
     "license": "Apache-2.0",
-    "contentHash": "243da6b64ca184fe7b1e4b2fac7b40c5b6e64aa60415a9a15c4fa48a59e5dc5a",
-    "lastHarvestedAt": "2026-11-17T21:41:10.050Z",
+    "contentHash": "d37c954f809d082b8e2f6c03169612bd25448c5631909c0cb147887574f339c0",
+    "lastHarvestedAt": "2026-11-18T14:24:17.100Z",
     "learningId": "learn-github-nats-io-nats-go"
   },
   "chrispybacon-dev-dockflare": {

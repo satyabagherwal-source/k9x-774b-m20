@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T14:16:03.385Z",
+  "last_updated": "2026-11-18T14:24:30.224Z",
   "directives": [
     {
       "id": "CD-001",
@@ -13463,14 +13463,14 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-40PR",
+      "id": "CD-PVDO",
       "directive_title": "update lock file",
       "source_repo": "dathere/qsv",
-      "source_commit": "a3c23355",
-      "staged_file": "11_INBOX/candidate-directives/CD-40PR-update-lock-file.md",
+      "source_commit": "52f21a8b",
+      "staged_file": "11_INBOX/candidate-directives/CD-PVDO-update-lock-file.md",
       "status": "STAGED_FOR_REVIEW",
       "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
-      "date_staged": "2026-11-14",
+      "date_staged": "2026-11-18",
       "domain_letter": "G"
     },
     {
@@ -29719,6 +29719,37 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-953998-increment-frontend-chart-version-to-v1-2.md",
       "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-PYHC",
+      "directive_title": "[ADDED] Option to sign the server nonce as a trusted proxy",
+      "source_repo": "nats-io-nats.go-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PYHC-added-option-to-sign-the-server-nonce-as-a-trusted-proxy.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-5F0993",
+      "directive_title": "[ADDED] Option to sign the server nonce as a trusted proxy",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nats-io-nats.go",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5F0993--added-option-to-sign-the-server-nonce-a.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-PZBF",
+      "directive_title": "deps: update lock file",
+      "source_repo": "dathere-qsv-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PZBF-deps-update-lock-file.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
     }
   ]
 }

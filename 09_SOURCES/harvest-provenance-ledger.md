@@ -11035,3 +11035,6 @@ Every entry in this ledger must capture:
 | `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `42a68706` | Multi-dimensional audit evidence | 2026-11-18T14:15:51.315Z |
 | `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `f060cbd7` | Multi-dimensional audit evidence | 2026-11-18T14:15:54.725Z |
 | `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `583c8505` | Multi-dimensional audit evidence | 2026-11-18T14:15:58.994Z |
+| `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-11-18T14:24:06.805Z |
+| `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `792e440f` | Multi-dimensional audit evidence | 2026-11-18T14:24:17.100Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `52f21a8b` | Multi-dimensional audit evidence | 2026-11-18T14:24:24.859Z |

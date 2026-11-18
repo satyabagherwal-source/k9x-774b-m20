@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T14:16:03.525Z",
+  "last_updated": "2026-11-18T14:24:30.407Z",
   "total_records": 1860,
   "domains": {
     "A": {
@@ -8515,8 +8515,8 @@
       "title": "Research & Knowledge Intelligence: akhilaaa3/Jev-Omni Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akhilaaa3-jev-omni-research-knowledge-intelligence-akhilaaa3-jev-omni-core-in.md",
       "repository": "akhilaaa3/Jev-Omni",
-      "content_hash": "03f7eef6b65ee5ad465a996d9a4a4201abd44fa36a8c3e8158f486c1676cbb52",
-      "created_at": "2026-11-18T04:29:04.839Z"
+      "content_hash": "6e35c6dbdb4afb1e7f17b2ee089aa023054f367fa3ac49e075847285e9fbecd3",
+      "created_at": "2026-11-18T14:24:07.043Z"
     },
     "domain_intelligence-technical-construction-intelligence-mintplex-labs-anything-llm-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-mintplex-labs-anything-llm-core-invariants",
@@ -8575,8 +8575,8 @@
       "title": "Research & Knowledge Intelligence: hf-akhilaaa3-jev-omni-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akhilaaa3-jev-omni-learnings-research-knowledge-intelligence-hf-akhilaaa3-jev.md",
       "repository": "hf-akhilaaa3-jev-omni-learnings",
-      "content_hash": "d788d462a7beb04da951fa13321bf2080c2694a0b92cdb49fc0fb789fa3088ea",
-      "created_at": "2026-11-18T04:29:24.052Z"
+      "content_hash": "8c4c45abb94abc0d5e478779c48cab1bc174cca951dcf1e7539b22bcd42f012f",
+      "created_at": "2026-11-18T14:24:28.584Z"
     },
     "domain_intelligence-technical-construction-intelligence-mintplex-labs-anything-llm-learnings-core-in": {
       "record_id": "domain_intelligence-technical-construction-intelligence-mintplex-labs-anything-llm-learnings-core-in",
@@ -11917,8 +11917,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "0e253685fe2b4d75feac3d0c88dc436975c7fd156d074c6f3c986e887fc81c71",
-      "created_at": "2026-11-17T20:17:47.750Z"
+      "content_hash": "bfdcc20d73cff0bb85bcbffa02530a62851caa7a87695f37c97cb8360e3f8daf",
+      "created_at": "2026-11-18T14:24:25.299Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -11986,8 +11986,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "e441888b17162016f5e7f0929746a03170a4fff10e46358b718f0f813771f30e",
-      "created_at": "2026-11-17T15:35:22.167Z"
+      "content_hash": "d470bc1fc8f5b2188627622c537b5198c3a6c7b3a69e1be8d0c08dc5625e8bd2",
+      "created_at": "2026-11-18T14:24:30.407Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -21508,8 +21508,8 @@
       "title": "Technical Construction Intelligence: nats-io/nats.go Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-go-technical-construction-intelligence-nats-io-nats-go-core-invaria.md",
       "repository": "nats-io/nats.go",
-      "content_hash": "3f2fe3b98a7ec3bc7b3bf2c3884400aa1c73cffc86019f2b1eb73f849bf32a83",
-      "created_at": "2026-11-17T00:24:03.564Z"
+      "content_hash": "9d355a3263ddd889eb487d95fe0816d63c5c6bfe4e16480dc3d73fba7c579e9e",
+      "created_at": "2026-11-18T14:24:17.539Z"
     },
     "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nats-io-nats-go-learnings-core-invariants",
@@ -21517,8 +21517,8 @@
       "title": "Technical Construction Intelligence: nats-io-nats.go-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-go-learnings-technical-construction-intelligence-nats-io-nats-go-le.md",
       "repository": "nats-io-nats.go-learnings",
-      "content_hash": "227bf2f1124af9aa88fe0ed85b9ff39f20a3e5312f8d1544acab5f7961304b3e",
-      "created_at": "2026-11-17T00:27:05.542Z"
+      "content_hash": "8694203fd7075ee9a782e69906b570ec1c205c64b263e0e9e4a6965a895f63bb",
+      "created_at": "2026-11-18T14:24:29.324Z"
     },
     "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-learnings-core-i": {
       "record_id": "domain_intelligence-technical-construction-intelligence-doobidoo-mcp-memory-service-learnings-core-i",

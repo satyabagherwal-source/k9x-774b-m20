@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-3IMA",
-    "timestamp": "2026-11-17T04:31:29.794Z",
-    "repository": "typedb/typedb",
-    "learningId": "learn-github-typedb-typedb",
-    "contentHash": "23f6d4abfb272e14f679f8f7cd1a639711dca060cac048e747f1d643a6bce41e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-J9HI",
-    "timestamp": "2026-11-17T04:43:44.454Z",
-    "repository": "LiquidAI/LFM3-1.7B-GGUF",
-    "learningId": "learn-huggingface-liquidai-lfm3-1-7b-gguf",
-    "contentHash": "69dd95b2a6f1da0523c9107ed16b82d68fb4c6ec5f82db6c977db7a3785cfd97",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-JHWI",
-    "timestamp": "2026-11-17T04:43:55.362Z",
-    "repository": "sigstore/cosign",
-    "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "b79b24c85211c584c21e984399872ea56490bc49b7e93c0d4815cb2fbe0d9819",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-022E",
     "timestamp": "2026-11-17T04:56:47.990Z",
     "repository": "Saffsanity/sill",
@@ -7490,6 +7445,51 @@
     "repository": "infiniflow/infinity",
     "learningId": "learn-github-infiniflow-infinity",
     "contentHash": "b823806aa857d013c921c19b82ac0b4f3b40da2f72d9d2deaf3268ac060650f0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-PH8W",
+    "timestamp": "2026-11-18T14:24:06.800Z",
+    "repository": "akhilaaa3/Jev-Omni",
+    "learningId": "learn-huggingface-akhilaaa3-jev-omni",
+    "contentHash": "6ec93e8ff27f909ed04c68725ea90ffcff0dbad10ce2f447a2c7ba067b689b76",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-PP6V",
+    "timestamp": "2026-11-18T14:24:17.095Z",
+    "repository": "nats-io/nats.go",
+    "learningId": "learn-github-nats-io-nats-go",
+    "contentHash": "d37c954f809d082b8e2f6c03169612bd25448c5631909c0cb147887574f339c0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-PV6F",
+    "timestamp": "2026-11-18T14:24:24.855Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "456c93c985a8f08cd3a88d15113bfb2ba2378c6c011c613220f63ce37c0e43be",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

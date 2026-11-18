@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T14:15:59.003Z",
+  "last_updated": "2026-11-18T14:24:24.871Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -590,14 +590,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-akhilaaa3-jev-omni",
-      "content_hash": "0a27583fc01bdfb07338366713c99e946563ab5cf6343e5548b4e46defaa658f",
-      "verified_at": "2026-11-18T04:29:04.654Z",
+      "content_hash": "6ec93e8ff27f909ed04c68725ea90ffcff0dbad10ce2f447a2c7ba067b689b76",
+      "verified_at": "2026-11-18T14:24:06.816Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T04:29:04.654Z"
+      "last_updated": "2026-11-18T14:24:06.816Z"
     },
     "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B": {
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "9f7b1be3a78afcbcc4477002f96d9c6348d39ec1da24f93378ae0cd9cc592b0d",
-      "verified_at": "2026-11-18T03:56:22.466Z",
+      "content_hash": "456c93c985a8f08cd3a88d15113bfb2ba2378c6c011c613220f63ce37c0e43be",
+      "verified_at": "2026-11-18T14:24:24.870Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T03:56:22.467Z"
+      "last_updated": "2026-11-18T14:24:24.870Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -3981,14 +3981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-go",
-      "content_hash": "243da6b64ca184fe7b1e4b2fac7b40c5b6e64aa60415a9a15c4fa48a59e5dc5a",
-      "verified_at": "2026-11-17T21:41:10.057Z",
+      "content_hash": "d37c954f809d082b8e2f6c03169612bd25448c5631909c0cb147887574f339c0",
+      "verified_at": "2026-11-18T14:24:17.110Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T21:41:10.057Z"
+      "last_updated": "2026-11-18T14:24:17.110Z"
     },
     "ChrispyBacon-dev/DockFlare": {
       "repository": "ChrispyBacon-dev/DockFlare",

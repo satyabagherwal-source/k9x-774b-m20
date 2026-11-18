@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T00:27:05.335Z",
+  "timestamp": "2026-11-18T14:24:29.015Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nats-io-nats.go-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nats-io-nats.go-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T00:27:05.335Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T14:24:29.015Z`  
 > **Learning ID**: `LEARN-EVO-nats-io-nats.go-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 56%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nats-io-nats.go-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
-> **Source Version**: `1b180714`  
+> **Source Version**: `792e440f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T00:24:02.417Z  
+> **Timestamp**: 2026-11-18T14:24:15.890Z  
 > **Learning ID**: `learn-github-nats-io-nats-go`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T00:24:02.302Z  
+> **Harvest Timestamp**: 2026-11-18T14:24:15.883Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Golang client for NATS, the cloud native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 6812 stars
+- **Stars / Engagement**: 6813 stars
 
 ---
 
@@ -1589,234 +1589,213 @@ func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1b180714` (2026-11-16)
-**Commit Message**: [FIXED] Report TLS verification failures during reconnect (#2229)
+### Incident Patch 1: `792e440f` (2026-11-17)
+**Commit Message**: [ADDED] Option to sign the server nonce as a trusted proxy
 
-Notify reconnect error handlers when post-dial connection initialization fails, preserving the error before asynchronous dispatch. Cover TLS verification failure and recovery for both handshake modes.
+nats-server 2.12 trusts a proxy that adds proxy_sig, its signature of
+the server nonce, to CONNECT, and accepts a user with proxy_required
+only then. A proxy that relays a NATS client can add the field to the
+client's CONNECT. An application that authenticates clients of another
+protocol and opens their NATS connections itself cannot: the client
+writes CONNECT, inside the TLS session when there is one.
 
-Signed-off-by: Seven Cheng <[REDACTED_EMAIL]>
+ProxySignature sets a callback that signs the nonce, as Nkey does for
+the connection's own credential, and the signature goes out beside
+whatever credential the connection uses.
 
-**File**: `nats.go` (modified, +4/-0)
+Signed-off-by: Byron Ruth <[REDACTED_EMAIL]>
+
+**File**: `nats.go` (modified, +34/-1)
 ```diff
-@@ -3589,6 +3589,10 @@ func (nc *Conn) doReconnect(err error, forceReconnect bool) {
+@@ -146,6 +146,7 @@ var (
+ 	ErrNoUserCB                      = errors.New("nats: user callback not defined")
+ 	ErrNkeyAndUser                   = errors.New("nats: user callback and nkey defined")
+ 	ErrNkeysNotSupported             = errors.New("nats: nkeys not supported by the server")
++	ErrProxySignatureNotSupported    = errors.New("nats: proxy signature not supported by the server")
+ 	ErrStaleConnection               = errors.New("nats: " + STALE_CONNECTION)
+ 	ErrTokenAlreadySet               = errors.New("nats: token and token handler both set")
+ 	ErrUserInfoAlreadySet            = errors.New("nats: cannot set user info callback and user/pass")
+@@ -525,6 +526,12 @@ type Options struct {
+ 	// presented from the server.
+ 	SignatureCB SignatureHandler
  
- 		// Process connect logic
- 		if nc.err = nc.processConnectInit(); nc.err != nil {
-+			if reconnectErrCB := nc.Opts.ReconnectErrCB; reconnectErrCB != nil {
-+				reconnectErr := nc.err
-+				nc.ach.push(func() { reconnectErrCB(nc, reconnectErr) })
-+			}
- 			// Check if we should abort reconnect. If so, break out
- 			// of the loop and connection will be closed.
- 			if nc.ar {
++	// ProxySignatureCB designates the function used to sign the nonce
++	// presented from the server as one of its trusted proxies. The
++	// signature is sent beside the connection's own credentials, and lets
++	// the server accept a user that requires a proxy.
++	ProxySignatureCB SignatureHandler
++
+ 	// User sets the username to be used when connecting to the server.
+ 	User string
+ 
+@@ -1138,6 +1145,7 @@ type connectInfo struct {
+ 	Echo         bool   `json:"echo"`
+ 	Headers      bool   `json:"headers"`
+ 	NoResponders bool   `json:"no_responders"`
++	ProxySig     string `json:"proxy_sig,omitempty"`
+ }
+ 
+ // MsgHandler is a callback function that processes messages delivered to
+@@ -1657,6 +1665,18 @@ func Nkey(pubKey string, sigCB SignatureHandler) Option {
+ 	}
+ }
+ 
++// ProxySignature will set the callback that signs the server nonce as a
++// trusted proxy of the server (see the proxies block of the server
++// configuration, in nats-server v2.12.0 and later). It is for applications
++// that connect on behalf of clients they have authenticated themselves, and
++// is independent of the credentials the connection authenticates with.
++func ProxySignature(sigCB SignatureHandler) Option {
++	return func(o *Options) error {
++		o.ProxySignatureCB = sigCB
++		return nil
++	}
++}
++
+ // SyncQueueLen will set the maximum queue len for the internal
+ // channel used for SubscribeSync().
+ // Defaults to 65536.
+@@ -3222,7 +3242,7 @@ func (nc *Conn) sendProto(proto string) {
+ // applicable. The lock is assumed to be held upon entering.
+ func (nc *Conn) connectProto() (string, error) {
+ 	o := nc.Opts
+-	var nkey, sig, user, pass, token, ujwt string
++	var nkey, sig, user, pass, token, ujwt, proxySig string
+ 	u := nc.current.URL.User
+ 	if u != nil {
+ 		// if no password, assume username is authToken
+@@ -3273,6 +3293,18 @@ func (nc *Conn) connectProto() (string, error) {
+ 		sig = base64.RawURLEncoding.EncodeToString(sigraw)
+ 	}
+ 
++	if o.ProxySignatureCB != nil {
++		// The server sends a nonce when it has trusted proxies configured.
++		if nc.info.Nonce == _EMPTY_ {
++			return _EMPTY_, ErrProxySignatureNotSupported
++		}
++		sigraw, err := o.ProxySignatureCB([]byte(nc.info.Nonce))
++		if err != nil {
++			return _EMPTY_, fmt.Errorf("error signing nonce as proxy: %w", err)
++		}
++		proxySig = base64.RawURLEncoding.EncodeToString(sigraw)
++	}
++
+ 	if nc.Opts.TokenHandler != nil {
+ 		if token != _EMPTY_ {
+ 			return _EMPTY_, ErrTokenAlreadySet
+@@ -3285,6 +3317,7 @@ func (nc *Conn) connectProto() (string, error) {
+ 	cinfo := connectInfo{
+ 		o.Verbose, o.Pedantic, ujwt, nkey, sig, user, pass, token,
+ 		o.Secure, o.Name, LangString, Version, clientProtoInfo, !o.NoEcho, hdrs, hdrs,
++		proxySig,
+ 	}
+ 
+ 	b, err := json.Marshal(cinfo)
 ```
 
-**File**: `test/reconnect_test.go` (modified, +79/-0)
+**File**: `test/nats_test.go` (modified, +78/-0)
 ```diff
 @@ -15,6 +15,7 @@ package test
  
  import (
- 	"context"
-+	"crypto/x509"
- 	"errors"
+ 	"bytes"
++	"errors"
  	"fmt"
- 	"net/url"
-@@ -1848,3 +1849,81 @@ func TestSetServerPool(t *testing.T) {
- 		})
- 	})
+ 	"net"
+ 	"os"
+@@ -419,6 +420,83 @@ func TestNkeyAuth(t *testing.T) {
+ 	}
  }
+ 
++func TestProxySignature(t *testing.T) {
++	kp, _ := nkeys.CreateUser()
++	pub, _ := kp.PublicKey()
++	untrusted, _ := nkeys.CreateUser()
 +
-+func TestReconnectTLSVerificationError(t *testing.T) {
++	authBody := `authorization {
++  users: [
++    { user: "proxied", password: "pwd", proxy_required: true }
++  ]
++}`
++	proxies := fmt.Sprintf(`proxies {
++  trusted: [
++    { key: %q }
++  ]
++}`, pub)
++
 +	c := newTester(t)
-+	inst := c.CreateServer(t, false, managedTLSOpts(t, testservice.TLSServerOnly()))
++	inst := c.CreateServer(t, false, append(singleUserPassOpts(authBody), testservice.WithTopLevel(proxies))...)
 +	t.Cleanup(func() { inst.Destroy(t) })
++	clientURL := inst.Servers[0].URL
 +
-+	// Trust the test server's CA so the first connection succeeds.
-+	trustedRoots := x509.NewCertPool()
-+	if !trustedRoots.AppendCertsFromPEM([]byte(inst.TLS.CAPEM)) {
-+		t.Fatal("Failed to parse server CA")
++	connect := func(opts ...nats.Option) (*nats.Conn, error) {
++		opts = append([]nats.Option{
++			nats.UserInfo("proxied", "pwd"),
++			nats.MaxReconnects(10),
++			nats.ReconnectWait(100 * time.Millisecond),
++		}, opts...)
++		return nats.Connect(clientURL, opts...)
 +	}
-+	var rejectNext atomic.Bool
-+	reconnectErrors := make(chan error, 1)
-+	reconnected := make(chan struct{}, 1)
-+	nc, err := nats.Connect(inst.Servers[0].URL,
-+		nats.ClientTLSConfig(nil, func() (*x509.CertPool, error) {
-+			// This function supplies trusted CAs for each TLS handshake.
-+			// Swap(false) reads the flag and clears it at the same time.
-+			// An empty pool makes this handshake reject the server certificate.
-+			// The next call trusts the CA again, even if no error callback runs.
-+			if rejectNext.Swap(false) {
-+				return x509.NewCertPool(), nil
-+			}
-+			return trustedRoots, nil
-+		}),
-+		nats.MaxReconnects(-1),
-+		nats.ReconnectWait(10*time.Millisecond),
-+		nats.ReconnectJitter(0, 0),
-+		nats.ReconnectErrHandler(func(nc *nats.Conn, err error) {
-+			// Check that the callback can safely query the connection status.
-+			// Calling it directly while holding the connection's write lock would deadlock.
-+			nc.Status()
-+			select {
-+			case reconnectErrors <- err:
-+			default:
-+			}
-+		}),
-+		nats.ReconnectHandler(func(_ *nats.Conn) {
-+			select {
-+			case reconnected <- struct{}{}:
-+			default:
-+			}
-+		}),
-+	)
++
++	if _, err := connect(); !errors.Is(err, nats.ErrAuthorization) {
++		t.Fatalf("Expected an authorization error with no proxy signature, got %v", err)
++	}
++	if _, err := connect(nats.ProxySignature(untrusted.Sign)); !errors.Is(err, nats.ErrAuthorization) {
++		t.Fatalf("Expected an authorization error with an untrusted proxy signature, got %v", err)
++	}
++	failSign := func(nonce []byte) ([]byte, error) {
++		return nil, errors.New("no key")
++	}
++	if _, err := connect(nats.ProxySignature(failSign)); err == nil || !strings.Contains(err.Error(), "no key") {
++		t.Fatalf("Expected the signature callback's error, got %v", err)
++	}
++
++	nc, err := connect(nats.ProxySignature(kp.Sign))
 +	if err != nil {
-+		t.Fatalf("Failed to establish trusted TLS connection: %v", err)
++		t.Fatalf("Expected to succeed but got %v", err)
 +	}
-+	t.Cleanup(nc.Close)
++	defer nc.Close()
 +
-+	// Disconnect the client while leaving the server running.
-+	// Fail the first retry, then allow the next retry to succeed.
-+	rejectNext.Store(true)
-+	if err := nc.ForceReconnect(); err != nil {
-+		t.Fatalf("Failed to force reconnection: %v", err)
-+	}
-+	select {
-+	case <-reconnected:
-+	case <-time.After(5 * time.Second):
-+		t.Fatal("Connection did not recover after restoring trusted roots")
-+	}
++	// A reconnect gets a new nonce, which must be signed again.
++	inst.StopServer(t, inst.Servers[0])
++	inst.StartServer(t, inst.Servers[0])
 +
-+	// Callbacks run one at a time, in the order they were queued.
-+	// The recovery notification tells us any earlier error callback has finished.
-+	select {
-+	case err = <-reconnectErrors:
-+	default:
-+		t.Fatal("No TLS reconnect error callback received")
-+	}
-+	// The error must identify TLS verification failure caused by an unknown CA.
-+	var authorityErr x509.UnknownAuthorityError
-+	if !errors.Is(err, nats.ErrTLS) || !errors.As(err, &authorityErr) {
-+		t.Fatalf("Expected a TLS certificate verification error for an unknown CA, got %v", err)
-+	}
-+	// Flush sends PING and waits for PONG to check the connection still works.
-+	if err := nc.FlushTimeout(time.Second); err != nil {
-+		t.Fatalf("Recovered connection is not usable: %v", err)
++	if err := nc.FlushTimeout(5 * time.Second); err != nil {
++		t.Fatalf("Error on Flush: %v", err)
 +	}
 +}
-```
-
----
-
-### Incident Patch 2: `354c4471` (2026-11-16)
-**Commit Message**: [IMPROVED] Bump ntf-client to v0.0.5 to fix nightly tester failures (#2243)
-
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-
-**File**: `go_test.mod` (modified, +11/-9)
-```diff
-@@ -4,21 +4,23 @@ go 1.26.0
- 
- require (
- 	github.com/golang/protobuf v1.5.4
--	github.com/klauspost/compress v1.20.0
--	github.com/nats-io/jwt/v2 v2.8.2
--	github.com/nats-io/nkeys v0.4.16
-+	github.com/klauspost/compress v1.20.4
-+	github.com/nats-io/jwt/v2 v2.8.3
-+	github.com/nats-io/nkeys v0.4.17
- 	github.com/nats-io/nuid v1.0.1
--	github.com/synadia-io/orbit.go/ntf v0.0.2
--	github.com/synadia-io/orbit.go/ntf-client v0.0.3
-+	github.com/synadia-io/orbit.go/ntf v0.0.4
-+	github.com/synadia-io/orbit.go/ntf-client v0.0.5
- 	google.golang.org/protobuf v1.36.12
- )
- 
- require (
--	github.com/antithesishq/antithesis-sdk-go v0.8.0 // indirect
-+	github.com/antithesishq/antithesis-sdk-go v0.9.0 // indirect
- 	github.com/google/go-tpm v0.9.8 // indirect
- 	github.com/minio/highwayhash v1.0.4 // indirect
--	github.com/nats-io/nats-server/v2 v2.15.0 // indirect
--	golang.org/x/crypto v0.57.0 // indirect
--	golang.org/x/sys v0.48.0 // indirect
-+	github.com/nats-io/nats-server/v2 v2.15.3 // indirect
-+	github.com/santhosh-tekuri/jsonschema/v6 v6.0.3 // indirect
-+	golang.org/x/crypto v0.59.0 // indirect
-+	golang.org/x/sys v0.50.0 // indirect
-+	golang.org/x/text v0.44.0 // indirect
- 	golang.org/x/time v0.16.0 // indirect
- )
-```
-
-**File**: `go_test.sum` (modified, +34/-18)
-```diff
-@@ -1,32 +1,48 @@
--github.com/antithesishq/antithesis-sdk-go v0.8.0 h1:bVV5ZAuwaREn4klRSJusYaA+A7NXq8Qi9C/knCaQ2N4=
--github.com/antithesishq/antithesis-sdk-go v0.8.0/go.mod h1:FQyySiasQQM8735Ddel3MRojmy4dA1IqCeyJ5jmPMbI=
-+github.com/antithesishq/antithesis-sdk-go v0.9.0 h1:JQpWOgYSYBb9HqgPtaXBswHxZFmOnXRsPFDI0yeCJWM=
-+github.com/antithesishq/antithesis-sdk-go v0.9.0/go.mod h1:FQyySiasQQM8735Ddel3MRojmy4dA1IqCeyJ5jmPMbI=
-+github.com/bahlo/generic-list-go v0.2.0 h1:5sz/EEAK+ls5wF+NeqDpk5+iNdMDXrh3z3nPnH1Wvgk=
-+github.com/bahlo/generic-list-go v0.2.0/go.mod h1:2KvAjgMlE5NNynlg/5iLrrCCZ2+5xWbdbCW3pNTGyYg=
-+github.com/buger/jsonparser v1.6.1 h1:I0phFv0PlbLHnM7TZAVjZ2MJ2/eWRTDyuO7GLR98IEs=
-+github.com/buger/jsonparser v1.6.1/go.mod h1:6RYKKt7H4d4+iWqouImQ9R2FZql3VbhNgx27UK13J/0=
-+github.com/dlclark/regexp2 v1.11.0 h1:G/nrcoOa7ZXlpoa/91N3X7mM3r8eIlMBBJZvsz/mxKI=
-+github.com/dlclark/regexp2 v1.11.0/go.mod h1:DHkYz0B9wPfa6wondMfaivmHpzrQ3v9q8cnmRbL6yW8=
- github.com/golang/protobuf v1.5.4 h1:i7eJL8qZTpSEXOPTxNKhASYpMn+8e5Q6AdndVa1dWek=
- github.com/golang/protobuf v1.5.4/go.mod h1:lnTiLA8Wa4RWRcIUkrtSVa5nRhsEGBg48fD6rSs7xps=
- github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
- github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
- github.com/google/go-tpm v0.9.8 h1:slArAR9Ft+1ybZu0lBwpSmpwhRXaa85hWtMinMyRAWo=
- github.com/google/go-tpm v0.9.8/go.mod h1:h9jEsEECg7gtLis0upRBQU+GhYVH6jMjrFxI8u6bVUY=
--github.com/klauspost/compress v1.20.0 h1:a3C1ke2ohxFymNlb2HWAHjDeKCI90scRskErZkR0ezA=
--github.com/klauspost/compress v1.20.0/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
-+github.com/invopop/jsonschema v0.14.0 h1:MHQqLhvpNUZfw+hM3AZDYK7jxO8FZoQeQM77g8iyZjg=
-+github.com/invopop/jsonschema v0.14.0/go.mod h1:ygm6C2EaVNMBDPpaPlnOA2pFAxBnxGjFlMZABxm9n2I=
-+github.com/klauspost/compress v1.20.4 h1:dD0v/bvxtjCBqQu6sx1TNWkalEY5lNTIe+HY9w8TeNI=
-+github.com/klauspost/compress v1.20.4/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
- github.com/minio/highwayhash v1.0.4 h1:asJizugGgchQod2ja9NJlGOWq4s7KsAWr5XUc9Clgl4=
- github.com/minio/highwayhash v1.0.4/go.mod h1:GGYsuwP/fPD6Y9hMiXuapVvlIUEhFhMTh0rxU3ik1LQ=
--github.com/nats-io/jwt/v2 v2.8.2 h1:XXRgB60MSTnqsRwejQurVDs/hcv2dkt+86GjI+I/bMc=
--github.com/nats-io/jwt/v2 v2.8.2/go.mod h1:Ag/56sq9OblL4JgdYufDd16Egb17Kr/8WwwuO/forVc=
--github.com/nats-io/nats-server/v2 v2.15.0 h1:M99yf0y05rTr46/qc/Is6ZAowI58Ryp2SjufLCUeVJc=
--github.com/nats-io/nats-server/v2 v2.15.0/go.mod h1:5qLF4CDGzZVFt//3fUrY1ePpwbi05r7QHPNroSUtolk=
--github.com/nats-io/nkeys v0.4.16 h1:rd5oAuLOb8mnAycB0xleuEBNS1pVVnN0fv/FF34Eypg=
--github.com/nats-io/nkeys v0.4.16/go.mod h1:llLgWoI0o4z/Q57q2R1kHfmocyhGV6VG/U18Glg1Afs=
-+github.com/nats-io/jwt/v2 v2.8.3 h1:pqImTmlqH2zPHKNdRXO0YRyWif2diGRlrtLFJ2RxM2I=
-+github.com/nats-io/jwt/v2 v2.8.3/go.mod h1:OOY2rP/UU8tcfoqhbHmBKcNdpFMKvmxIkmFFa16M4wI=
-+github.com/nats-io/nats-server/v2 v2.15.3 h1:IgHIKL4DYN9mEfwtPcdM39muvXG8v9FBADQn0f4Whs0=
-+github.com/nats-io/nats-server/v2 v2.15.3/go.mod h1:6Xv7yIatdWlcqIzqFkW1uC78c5o8vG3dBrhazEF8WDA=
-+github.com/nats-io/nkeys v0.4.17 h1:JAJrlDhOyQqOt0a1eg4cbIZ1Kc7+vmkCigAltpwQpVA=
-+github.com/nats-io/nkeys v0.4.17/go.mod h1:llLgWoI0o4z/Q57q2R1kHfmocyhGV6VG/U18Glg1Afs=
- github.com/nats-io/nuid v1.0.1 h1:5iA8DT8V7q8WK2EScv2padNa/rTESc1KdnPw4TC2paw=
- github.com/nats-io/nuid v1.0.1/go.mod h1:19wcPz3Ph3q0Jbyiqsd0kePYG7A95tJPxeL+1OSON2c=
--github.com/synadia-io/orbit.go/ntf v0.0.2 h1:2dWNVOiGQ77h95EEz+ToLQlI2e+3qHrDf13MyeCAVRI=
--github.com/synadia-io/orbit.go/ntf v0.0.2/go.mod h1:bqN0tG8Qy12AMwyoy/bJqxQ1NmNEPZYy4+pMGFpLWfE=
--github.com/synadia-io/orbit.go/ntf-client v0.0.3 h1:FoFjSd+idhy10BqDadGpUk4OcpBu/7V/Y8sHWhbSjdc=
--github.com/synadia-io/orbit.go/ntf-client v0.0.3/go.mod h1:P745h+KxJPtoHF6csj2PQUB+uf72XR49o2krTaTQ8Ls=
--golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
--golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
-+github.com/pb33f/go-yaml v0.1.1 h1:yWGmhVdwzionRnSc/hEJwcfq6PaZL2QdYzyReXBbX7Q=
-+github.com/pb33f/go-yaml v0.1.1/go.mod h1:QvWdkHP5VjFYAeHMQUkaPQqREaQnBNOXmWzAjNrnSdo=
-+github.com/pb33f/ordered-map/v2 v2.3.2 h1:wDyaZ2Pv9QLh64X4utCeD5Zoi9nIv2aW3lwv172O5PQ=
-+github.com/pb33f/ordered-map/v2 v2.3.2/go.mod h1:1OhFrXu3OYw3kM+FXF+Ug3ugmmZ9LE8z0JfQMLvtV0w=
-+github.com/santhosh-tekuri/jsonschema/v6 v6.0.3 h1:1EYB5IzjZawrrnELUi78f9fPu57HuXjmddZPjrls/28=
-+github.com/santhosh-tekuri/jsonschema/v6 v6.0.3/go.mod h1:JXeL+ps8p7/KNMjDQk3TCwPpBy0wYklyWTfbkIzdIFU=
-+github.com/synadia-io/orbit.go/ntf v0.0.4 h1:ssM4OZjBzYWX7HmEIpx8noDhnOyV8AKCF7g53Xq/JIs=
-+github.com/synadia-io/orbit.go/ntf v0.0.4/go.mod h1:bIiJGEJV5FA2ZcAX72QYstQC6X8YQhnn7YEFCBFT834=
-+github.com/synadia-io/orbit.go/ntf-client v0.0.5 h1:zGxrBYO1rrK2+awMuYkEq1oUGPrmv/tXTrob6mq4c34=
-+github.com/synadia-io/orbit.go/ntf-client v0.0.5/go.mod h1:KI9vwo9rUCpKYDOGkCxwzxq48cAytL1PF3yCDAW2C64=
-+golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
-+golan
++
++func TestProxySignatureNotSupported(t *testing.T) {
++	kp, _ := nkeys.CreateUser()
++
++	// Without trusted proxies or nkeys, the server sends no nonce.
++	authBody := `authorization {
++  users: [
++    { user: "user", password: "pwd" }
++  ]
++}`
++	c := newTester(t)
++	inst := c.CreateServer(t, false, singleUserPassOpts(authBody)...)
++	t.Cleanup(func() { inst.Destroy(t) })
++
++	_, err := nats.Connect(inst.Servers[0].URL, nats.UserInfo("user", "pwd"), nats.ProxySignature(kp.Sign))
++	if !errors.Is(err, nats.ErrProxySignatureNotSupported) {
++		t.Fatalf("Expected %v, got %v", nats.ErrProxySignatureNotSupported, err)
++	}
++}
++
+ // These drive the server-pool shuffle with a comma-joined two-URL pool. The
+ // DNS multi-IP path (net.LookupHost returning several addresses for one host)
+ // reaches the same srvPool shuffle but is not covered directly: the tester
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2249** (2026-11-18): [ADDED] Option to sign the server nonce as a trusted proxy (@bruth)
+- **PR #2246** (2026-11-17): Release v1.56.0 (@piotrpio)
+- **PR #2245** (2026-11-17): [CHANGED] Fixes for TLS and server discovery (@piotrpio)
 - **PR #2243** (2026-11-16): [IMPROVED] Bump ntf-client to v0.0.5 to fix nightly tester failures (@piotrpio)
 - **PR #2242** (2026-11-15): docs: remove duplicated word in MemoryMaxStreamBytes comment (@ninglinLiu)
 - **PR #2237** (2026-11-12): [FIXED] Require a separator before inline header status (@ViktorBystrov72)
-- **PR #2233** (2026-11-08): [IMPROVED] Remove stale go.mod version notes from docs (@nik-6174)
-- **PR #2232** (2026-11-08): [FIXED] Draining subscriptions resubscribed on reconnect (@MauriceVanVeen)
-- **PR #2229** (2026-11-16): [FIXED] Report TLS verification failures during reconnect (@cr7258)
 
 ---
 
@@ -1836,13 +1815,13 @@ Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Report TLS verification failures during reconnect
+## X. [ADDED] Option to sign the server nonce as a trusted proxy
 
 **RULE**:
 When implementing operations in `nats.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1b180714`: [FIXED] Report TLS verification failures during reconnect. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `792e440f`: [ADDED] Option to sign the server nonce as a trusted proxy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `nats.go`.
@@ -1850,20 +1829,43 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			if reconnectErrCB := nc.Opts.ReconnectErrCB; reconnectErrCB != nil {
-				reconnectErr := nc.err
-				nc.ach.push(func() { reconnectErrCB(nc, reconnectErr) })
-			}
+	ErrProxySignatureNotSupported    = errors.New("nats: proxy signature not supported by the server")
+	// ProxySignatureCB designates the function used to sign the nonce
+	// presented from the server as one of its trusted proxies. The
+	// signature is sent beside the connection's own credentials, and lets
+	// the server accept a user that requires a proxy.
+	ProxySignatureCB SignatureHandler
+
+	ProxySig     string `json:"proxy_sig,omitempty"`
+// ProxySignature will set the callback that signs the server nonce as a
+// trusted proxy of the server (see the proxies block of the server
+// configuration, in nats-server v2.12.0 and later). It is for applications
+// that connect on behalf of clients they have authenticated themselves, and
+// is independent of the credentials the connection authenticates with.
+func ProxySignature(sigCB SignatureHandler) Option {
+	return func(o *Options) error {
+		o.ProxySignatureCB = sigCB
+		return nil
+	}
+}
+
+	var nkey, sig, user, pass, token, ujwt, proxySig string
+	if o.ProxySignatureCB != nil {
+		// The server sends a nonce when it has trusted proxies configured.
+		if nc.info.Nonce == _EMPTY_ {
+			return _EMPTY_, ErrProxySignatureNotSupported
+		}
+		sigraw, err
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	var nkey, sig, user, pass, token, ujwt string
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1b180714` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `792e440f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -4,22 +4,22 @@
 {
   "source_repository": "nats-io/nats.go",
   "source_url": "https://github.com/nats-io/nats.go",
-  "source_version": "febd2b97",
+  "source_version": "792e440f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T21:41:10.231Z",
+  "timestamp": "2026-11-18T14:24:17.350Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nats-io-nats-go",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nats-io/nats.go](https://github.com/nats-io/nats.go) (Revision: `febd2b97`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T21:41:10.231Z`  
+> **Provenance**: Harvested from [nats-io/nats.go](https://github.com/nats-io/nats.go) (Revision: `792e440f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T14:24:17.350Z`  
 > **Learning ID**: `learn-github-nats-io-nats-go`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `nats-io/nats.go` (Commit: `febd2b97`)
+- **Target Repository**: `nats-io/nats.go` (Commit: `792e440f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats.go-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats.go](https://github.com/nats-io/nats.go))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T21:41:09.118Z  
+> **Harvest Timestamp**: 2026-11-18T14:24:15.883Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1572,885 +1572,213 @@ func endlessPublish(ctx context.Context, nc *nats.Conn, js jetstream.JetStream) 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `febd2b97` (2026-11-17)
-**Commit Message**: [FIXED] Cap StreamState NumDeleted at MaxInt when decoding
+### Incident Patch 1: `792e440f` (2026-11-17)
+**Commit Message**: [ADDED] Option to sign the server nonce as a trusted proxy
 
-On 32-bit platforms int is 32 bits, so stream info with more than 2^31
-interior deletes (e.g. MaxMsgsPerSubject=1 with heavy churn) fails to
-decode and Stream()/StreamInfo() return an error.
+nats-server 2.12 trusts a proxy that adds proxy_sig, its signature of
+the server nonce, to CONNECT, and accepts a user with proxy_required
+only then. A proxy that relays a NATS client can add the field to the
+client's CONNECT. An application that authenticates clients of another
+protocol and opens their NATS connections itself cannot: the client
+writes CONNECT, inside the TLS session when there is one.
 
-Keep NumDeleted an int and add a custom UnmarshalJSON on StreamState,
-in both jetstream and the legacy nats package, that decodes num_deleted
-as int64 and caps it to the range of int. Nothing changes on 64-bit
-platforms. On 32-bit platforms values beyond the range of int are
-reported as math.MaxInt, which is documented on the field.
+ProxySignature sets a callback that signs the nonce, as Nkey does for
+the connection's own credential, and the signature goes out beside
+whatever credential the connection uses.
 
-Resolves #2230
+Signed-off-by: Byron Ruth <[REDACTED_EMAIL]>
 
-Signed-off-by: Sven Neumann <[REDACTED_EMAIL]>
-
-**File**: `jetstream/stream_config.go` (modified, +31/-0)
+**File**: `nats.go` (modified, +34/-1)
 ```diff
-@@ -17,6 +17,7 @@ import (
- 	"encoding/json"
- 	"errors"
- 	"fmt"
-+	"math"
- 	"strings"
- 	"time"
- )
-@@ -294,6 +295,10 @@ type (
- 		// stream. Only deleted messages causing a gap in stream sequence numbers
- 		// are counted. Messages deleted at the beginning or end of the stream
- 		// are not counted.
-+		//
-+		// The value is capped at math.MaxInt when decoded. This only matters
-+		// on 32-bit platforms, where int cannot hold every value the server
-+		// can report.
- 		NumDeleted int `json:"num_deleted"`
+@@ -146,6 +146,7 @@ var (
+ 	ErrNoUserCB                      = errors.New("nats: user callback not defined")
+ 	ErrNkeyAndUser                   = errors.New("nats: user callback and nkey defined")
+ 	ErrNkeysNotSupported             = errors.New("nats: nkeys not supported by the server")
++	ErrProxySignatureNotSupported    = errors.New("nats: proxy signature not supported by the server")
+ 	ErrStaleConnection               = errors.New("nats: " + STALE_CONNECTION)
+ 	ErrTokenAlreadySet               = errors.New("nats: token and token handler both set")
+ 	ErrUserInfoAlreadySet            = errors.New("nats: cannot set user info callback and user/pass")
+@@ -525,6 +526,12 @@ type Options struct {
+ 	// presented from the server.
+ 	SignatureCB SignatureHandler
  
- 		// NumSubjects is the number of unique subjects the stream has received
-@@ -864,3 +869,29 @@ func (alg *StoreCompression) UnmarshalJSON(b []byte) error {
++	// ProxySignatureCB designates the function used to sign the nonce
++	// presented from the server as one of its trusted proxies. The
++	// signature is sent beside the connection's own credentials, and lets
++	// the server accept a user that requires a proxy.
++	ProxySignatureCB SignatureHandler
++
+ 	// User sets the username to be used when connecting to the server.
+ 	User string
+ 
+@@ -1138,6 +1145,7 @@ type connectInfo struct {
+ 	Echo         bool   `json:"echo"`
+ 	Headers      bool   `json:"headers"`
+ 	NoResponders bool   `json:"no_responders"`
++	ProxySig     string `json:"proxy_sig,omitempty"`
+ }
+ 
+ // MsgHandler is a callback function that processes messages delivered to
+@@ -1657,6 +1665,18 @@ func Nkey(pubKey string, sigCB SignatureHandler) Option {
  	}
- 	return nil
- }
-+
-+// UnmarshalJSON decodes num_deleted as an int64 and caps it to the range of
-+// int. On 32-bit platforms a stream can have more interior deletes than int
-+// can hold, which would otherwise fail decoding of the whole stream info.
-+func (s *StreamState) UnmarshalJSON(data []byte) error {
-+	type streamState StreamState
-+	aux := struct {
-+		*streamState
-+		NumDeleted int64 `json:"num_deleted"`
-+	}{
-+		streamState: (*streamState)(s),
-+		NumDeleted:  int64(s.NumDeleted),
-+	}
-+	if err := json.Unmarshal(data, &aux); err != nil {
-+		return err
-+	}
-+	switch {
-+	case aux.NumDeleted > math.MaxInt:
-+		s.NumDeleted = math.MaxInt
-+	case aux.NumDeleted < math.MinInt:
-+		s.NumDeleted = math.MinInt
-+	default:
-+		s.NumDeleted = int(aux.NumDeleted)
-+	}
-+	return nil
-+}
-```
-
-**File**: `jetstream/stream_config_test.go` (added, +71/-0)
-```diff
-@@ -0,0 +1,71 @@
-+// Copyright 2026 The NATS Authors
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package jetstream
-+
-+import (
-+	"encoding/json"
-+	"fmt"
-+	"math"
-+	"testing"
-+)
-+
-+// On 32-bit platforms int cannot hold every num_deleted value the server can
-+// report (e.g. for a stream with MaxMsgsPerSubject=1 and heavy churn). Such
-+// values must be capped at math.MaxInt instead of failing to decode.
-+func TestStreamStateNumDeletedOverflow(t *testing.T) {
-+	tests := []struct {
-+		name       string
-+		numDeleted int64
-+	}{
-+		{name: "zero", numDeleted: 0},
-+		{name: "max int32", numDeleted: math.MaxInt32},
-+		{name: "above int32", numDeleted: 1 << 32},
-+		{name: "max int64", numDeleted: math.MaxInt64},
-+		{name: "negative", numDeleted: -1},
-+		{name: "below int32", numDeleted: -(1 << 32)},
-+	}
-+	for _, test := range tests {
-+		t.Run(test.name, func(t *testing.T) {
-+			data := fmt.Appendf(nil, `{"messages":5,"last_seq":10,"consumer_count":3,"num_deleted":%d,"deleted":[2,4]}`, test.numDeleted)
-+
-+			var state StreamState
-+			if err := json.Unmarshal(data, &state); err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+
-+			want := test.numDeleted
-+			if want > math.MaxInt {
-+				want = math.MaxInt
-+			} else if want < math.MinInt {
-+				want = math.MinInt
-+			}
-+			if int64(state.NumDeleted) != want {
-+				t.Fatalf("Invalid NumDeleted; want: %d; got: %d", want, state.NumDeleted)
-+			}
-+			if state.Msgs != 5 || state.LastSeq != 10 || state.Consumers != 3 || len(state.Deleted) != 2 {
-+				t.Fatalf("Other fields not decoded correctly: %+v", state)
-+			}
-+		})
-+	}
-+
-+	// A response without num_deleted leaves the field untouched, as for any
-+	// other field.
-+	state := StreamState{NumDeleted: 7}
-+	if err := json.Unmarshal([]byte(`{"messages":1}`), &state); err != nil {
-+		t.Fatalf("Unexpected error: %v", err)
-+	}
-+	if state.NumDeleted != 7 || state.Msgs != 1 {
-+		t.Fatalf("Unexpected state: %+v", state)
-+	}
-+}
-```
-
-**File**: `jsm.go` (modified, +30/-0)
-```diff
-@@ -18,6 +18,7 @@ import (
- 	"encoding/json"
- 	"errors"
- 	"fmt"
-+	"math"
- 	"strconv"
- 	"strings"
- 	"time"
-@@ -1079,6 +1080,9 @@ type StreamSourceInfo struct {
  }
  
- // StreamState is information about the given stream.
-+//
-+// NumDeleted is capped at math.MaxInt when decoded. This only matters on
-+// 32-bit platforms, where int cannot hold every value the server can report.
- type StreamState struct {
- 	Msgs        uint64            `json:"messages"`
- 	Bytes       uint64            `json:"bytes"`
-@@ -1093,6 +1097,32 @@ type StreamState struct {
- 	Subjects    map[string]uint64 `json:"subjects"`
- }
- 
-+// UnmarshalJSON decodes num_deleted as an int64 and caps it to the range of
-+// int. On 32-bit platforms a stream can have more interior deletes than int
-+// can hold, which would otherwise fail decoding of the whole stream info.
-+func (s *StreamState) UnmarshalJSON(data []byte) error {
-+	type streamState StreamState
-+	aux := struct {
-+		*streamState
-+		NumDeleted int64 `json:"num_deleted"`
-+	}{
-+		streamState: (*streamState)(s),
-+		NumDeleted:  int64(s.NumDeleted),
-+	}
-+	if err := json.Unmarshal(data, &aux); err != nil {
-+		return err
-+	}
-+	switch {
-+	case aux.NumDeleted > math.MaxInt:
-+		s.NumDeleted = math.MaxInt
-+	case aux.NumDeleted < math.MinInt:
-+		s.NumDeleted = math.MinInt
-+	default:
-+		s.NumDeleted = int(aux.NumDeleted)
-+	}
-+	return nil
-+}
-+
- // ClusterInfo shows information about the underlying set of servers
- // that make up the stream or consumer.
- type ClusterInfo struct {
-```
-
-**File**: `nats_test.go` (modified, +51/-0)
-```diff
-@@ -29,6 +29,7 @@ import (
- 	"encoding/json"
- 	"errors"
- 	"fmt"
-+	"math"
- 	"math/big"
- 	"net"
- 	"net/url"
-@@ -2279,3 +2280,53 @@ func TestSetServerPoolTLSURLKeepsState(t *testing.T) {
- 		}
- 	})
- }
-+
-+// On 32-bit platforms int cannot hold every num_deleted value the server can
-+// report (e.g. for a stream with MaxMsgsPerSubject=1 and heavy churn). Such
-+// values must be capped at math.MaxInt instead of failing to decode.
-+func TestStreamStateNumDeletedOverflow(t *testing.T) {
-+	tests := []struct {
-+		name       string
-+		numDeleted int64
-+	}{
-+		{name: "zero", numDeleted: 0},
-+		{name: "max int32", numDeleted: math.MaxInt32},
-+		{name: "above int32", numDeleted: 1 << 32},
-+		{name: "max int64", numDeleted: math.MaxInt64},
-+		{name: "negative", numDeleted: -1},
-+		{name: "below int32", numDeleted: -(1 << 32)},
-+	}
-+	for _, test := range tests {
-+		t.Run(test.name, func(t *testing.T) {
-+			data := fmt.Appendf(nil, `{"messages":5,"last_seq":10,"consumer_count":3,"num_deleted":%d,"deleted":[2,4]}`, test.numDeleted)
-+
-+			var state StreamState
-+			if err := json.Unmarshal(data, &state); err != nil {
-+				t.Fatalf("Unexpected error: %v", err)
-+			}
-+
-+			want := test.numDeleted
-+			if want > math.MaxInt {
-+				want = math.MaxInt
-+			} else if want < math.MinInt {
-+				want = math.MinInt
-+			}
-+			if int64(state.NumDeleted) != want {
-+				t.Fatalf("Invalid NumDeleted; want: %d; got: %d", want, state.NumDeleted)
-+			}
-+			if state.Msgs != 5 || state.LastSeq != 10 || state.Consumers != 3 || len(state.Deleted) != 2 {
-+				t.Fatalf("Other fields not decoded correctly: %+v", state)
-+			}
-+		})
-+	}
-+
-+	// A response without num_deleted leaves the field untouched, as for any
-+	// other field.
-+	state := StreamState{NumDeleted: 7}
-+	if err := json.Unmarshal([]byte(`{"messages":1}`), &state); err != nil {
-+		t.Fatalf("Unexpected error: %v", err)
-+	}
-+	if state.NumDeleted != 7 || state.Msgs != 1 {
-+		t.Fatalf("Unexpected state: %+v", state)
++// ProxySignature will set the callback that signs the server nonce as a
++// trusted proxy of the server (see the proxies block of the server
++// configuration, in nats-server v2.12.0 and later). It is for applications
++// that connect on behalf of clients they have authenticated themselves, and
++// is independent of the credentials the connection authenticates with.
++func ProxySignature(sigCB SignatureHandler) Option {
++	return func(o *Options) error {
++		o.ProxySignatureCB = sigCB
++		return nil
 +	}
 +}
-```
-
----
-
-### Incident Patch 2: `8490a898` (2026-10-30)
-**Commit Message**: [CHANGED] Require TLS when a TLS configuration is set
-
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-
-**File**: `nats.go` (modified, +40/-2)
-```diff
-@@ -354,7 +354,8 @@ type Options struct {
- 	Secure bool
- 
- 	// TLSConfig is a custom TLS configuration to use for secure
--	// transports.
-+	// transports. Setting it, RootCAsCB or TLSCertCB asks for TLS with
-+	// every server, as Secure does.
- 	TLSConfig *tls.Config
- 
- 	// TLSCertCB is used to fetch and return custom tls certificate.
-@@ -693,6 +694,8 @@ type Conn struct {
- 	ar            bool // abort reconnect
- 	rqch          chan struct{}
- 	ws            bool // true if a websocket connection
-+	// tlsReason says what made the client ask for TLS.
-+	tlsReason string
- 
- 	// New style response handler
- 	respSub       string               // The wildcard subject
-@@ -2025,12 +2028,19 @@ func (o Options) Connect() (*Conn, error) {
- 		}
++
+ // SyncQueueLen will set the maximum queue len for the internal
+ // channel used for SubscribeSync().
+ // Defaults to 65536.
+@@ -3222,7 +3242,7 @@ func (nc *Conn) sendProto(proto string) {
+ // applicable. The lock is assumed to be held upon entering.
+ func (nc *Conn) connectProto() (string, error) {
+ 	o := nc.Opts
+-	var nkey, sig, user, pass, token, ujwt string
++	var nkey, sig, user, pass, token, ujwt, proxySig string
+ 	u := nc.current.URL.User
+ 	if u != nil {
+ 		// if no password, assume username is authToken
+@@ -3273,6 +3293,18 @@ func (nc *Conn) connectProto() (string, error) {
+ 		sig = base64.RawURLEncoding.EncodeToString(sigraw)
  	}
  
-+	nc.tlsReason = nc.Opts.tlsReason()
-+
- 	// If the TLSHandshakeFirst option is specified, make sure that
- 	// the Secure boolean is true.
- 	if nc.Opts.TLSHandshakeFirst {
- 		nc.Opts.Secure = true
- 	}
- 
-+	// A TLS configuration asks for TLS.
-+	if nc.Opts.TLSConfig != nil || nc.Opts.RootCAsCB != nil || nc.Opts.TLSCertCB != nil {
-+		nc.Opts.Secure = true
-+	}
-+
- 	if err := nc.setupServerPool(); err != nil {
- 		return nil, err
- 	}
-@@ -2217,6 +2227,9 @@ func (nc *Conn) setupServerPool() error {
- 		if srv.URL.Scheme == tlsScheme || srv.URL.Scheme == wsSchemeTLS {
- 			// FIXME(dlc), this is for all in the pool, should be case by case.
- 			nc.Opts.Secure = true
-+			if nc.tlsReason == _EMPTY_ {
-+				nc.tlsReason = fmt.Sprintf("the URL %s://%s asks for TLS", srv.URL.Scheme, srv.URL.Host)
-+			}
- 			if nc.Opts.TLSConfig == nil {
- 				nc.Opts.TLSConfig = &tls.Config{MinVersion: tls.VersionTLS12}
- 			}
-@@ -3063,6 +3076,27 @@ func (nc *Conn) connect() (bool, error) {
- 	return connectionEstablished, err
- }
- 
-+// tlsReason names the setting that asks for TLS, if any. Secure comes before
-+// the TLS fields because the options that set it fill in TLSConfig too.
-+func (o *Options) tlsReason() string {
-+	var name string
-+	switch {
-+	case o.TLSHandshakeFirst:
-+		name = "TLSHandshakeFirst"
-+	case o.Secure:
-+		name = "Secure (set by Secure, RootCAs, ClientCert or ClientTLSConfig)"
-+	case o.TLSConfig != nil:
-+		name = "TLSConfig"
-+	case o.RootCAsCB != nil:
-+		name = "RootCAsCB"
-+	case o.TLSCertCB != nil:
-+		name = "TLSCertCB"
-+	default:
-+		return _EMPTY_
-+	}
-+	return name + " asks for TLS"
-+}
-+
- // This will check to see if the connection should be
- // secure. This can be dictated from either end and should
- // only be called after the INIT protocol has been received.
-@@ -3072,7 +3106,11 @@ func (nc *Conn) checkForSecure() error {
- 
- 	// Check for mismatch in setups
- 	if o.Secure && !nc.info.TLSRequired && !nc.info.TLSAvailable {
--		return ErrSecureConnWanted
-+		host := nc.current.URL.Host
-+		if o.InProcessServer != nil {
-+			host = "the in-process server"
++	if o.ProxySignatureCB != nil {
++		// The server sends a nonce when it has trusted proxies configured.
++		if nc.info.Nonce == _EMPTY_ {
++			return _EMPTY_, ErrProxySignatureNotSupported
 +		}
-+		return fmt.Errorf("%w: %s and %s does not offer it", ErrSecureConnWanted, nc.tlsReason, host)
- 	} else if nc.info.TLSRequired && !o.Secure {
- 		// Switch to Secure since server needs TLS.
- 		o.Secure = true
++		sigraw, err := o.ProxySignatureCB([]byte(nc.info.Nonce))
++		if err != nil {
++			return _EMPTY_, fmt.Errorf("error signing nonce as proxy: %w", err)
++		}
++		proxySig = base64.RawURLEncoding.EncodeToString(sigraw)
++	}
++
+ 	if nc.Opts.TokenHandler != nil {
+ 		if token != _EMPTY_ {
+ 			return _EMPTY_, ErrTokenAlreadySet
+@@ -3285,6 +3317,7 @@ func (nc *Conn) connectProto() (string, error) {
+ 	cinfo := connectInfo{
+ 		o.Verbose, o.Pedantic, ujwt, nkey, sig, user, pass, token,
+ 		o.Secure, o.Name, LangString, Version, clientProtoInfo, !o.NoEcho, hdrs, hdrs,
++		proxySig,
+ 	}
+ 
+ 	b, err := json.Marshal(cinfo)
 ```
 
-**File**: `test/conn_test.go` (modified, +202/-1)
-```diff
-@@ -230,7 +230,7 @@ func TestServerSecureConnections(t *testing.T) {
- 	t.Cleanup(func() { dInst.Destroy(t) })
- 
- 	nc, err = nats.Connect(dInst.Servers[0].URL, nats.Secure(), nats.RootCAs(caPath))
--	if err == nil || nc != nil || err != nats.ErrSecureConnWanted {
-+	if err == nil || nc != nil || !errors.Is(err, nats.ErrSecureConnWanted) {
- 		if nc != nil {
- 			nc.Close()
- 		}
-@@ -587,6 +587,207 @@ func TestServerTLSHintConnections(t *testing.T) {
- 	defer nc.Close()
- }
- 
-+// A TLS configuration keeps asking for TLS on reconnect: once the TLS server
-+// is gone, a server without TLS is refused before CONNECT.
-+func TestTLSConfigAsksForTLSOnReconnect(t *testing.T) {
-+	c := newTester(t)
-+	inst := c.CreateServer(t, false, managedTLSOpts(t, testservice.TLSServerOnly()))
-+	t.Cleanup(func() { inst.Destroy(t) })
-+	cfg, err := testservice.TLSConfig(inst)
-+	if err != nil {
-+		t.Fatalf("Error on TLS config: %v", err)
-+	}
-+	connects := make(chan string, 1)
-+	plain := newFakeServer(t, recordConnects(connects))
-+
-+	nc, err := nats.Connect(
-+		"nats://"+hostPortFromURL(inst.Servers[0].URL)+",nats://"+plain.addr(),
-+		nats.DontRandomize(),
-+		nats.ReconnectWait(10*time.Millisecond),
-+		nats.ReconnectJitter(0, 0),
-+		func(o *nats.Options) error {
-+			o.TLSConfig = cfg
-+			return nil
-+		},
-+	)
-+	if err != nil {
-+		t.Fatalf("Error on connect: %v", err)
-+	}
-+	defer nc.Close()
-+	if _, err := nc.TLSConnectionState(); err != nil {
-+		t.Fatalf("Expected a TLS connection, got: %v", err)
-+	}
-+
-+	inst.StopServer(t, inst.Servers[0])
-+	select {
-+	case c := <-connects:
-+		t.Fatalf("CONNECT sent without TLS on reconnect: %s", c)
-+	case <-time.After(time.Second):
-+	}
-+}
-+
-+// A TLS configuration asks for TLS with a discovered server too: once the TLS
-+// server that listed it is gone, a server without TLS is refused before CONNECT.
-+func TestTLSConfigAsksForTLSWithDiscoveredServer(t *testing.T) {
-+	connects := make(chan string, 1)
-+	redialed := make(chan struct{})
-+	var dials atomic.Int32
-+	plain := newFakeServer(t, func(conn net.Conn) {
-+		if dials.Add(1) == 2 {
-+			close(redialed)
-+		}
-+		recordConnects(connects)(conn)
-+	})
-+	cfg := fakeTLSConfig(t)
-+	srv := newFakeServer(t, func(conn net.Conn) {
-+		conn.Write(fakeInfoWith(map[string]any{"tls_required": true}))
-+		tc := tls.Server(conn, cfg)
-+		if tc.Handshake() != nil {
-+			return
-+		}
-+		// Servers send the list inside TLS, after the first PONG.
-+		serveProto(tc, func(line string) {
-+			if line == "PING" {
-+				tc.Write(fakeInfoWith(map[string]any{"tls_required": true}, plain.addr()))
-+				tc.Close()
-+			}
-+		})
-+	})
-+	ca, err := os.ReadFile("./configs/certs/ca.pem")
-+	if err != nil {
-+		t.Fatalf("Error reading the CA: %v", err)
-+	}
-+	pool := x509.NewCertPool()
-+	pool.AppendCertsFromPEM(ca)
-+	nc, err := nats.Connect("nats://"+srv.addr(),
-+		nats.ReconnectWait(10*time.Millisecond),
-+		nats.ReconnectJitter(0, 0),
-+		func(o *nats.Options) error {
-+			o.TLSConfig = &tls.Config{RootCAs: pool}
-+			return nil
-+		},
-+	)
-+	if err != nil {
-+		t.Fatalf("Error on connect: %v", err)
-+	}
-+	defer nc.Close()
-+	// A second dial means the first attempt ended without CONNECT.
-+	select {
-+	case c := <-connects:
-+		t.Fatalf("CONNECT sent without TLS to discovered server %s: %s", plain.addr(), c)
-+	case <-redialed:
-+	case <-time.After(5 * time.Second):
-+		t.Fatalf("Client did not retry %s", plain.addr())
-+	}
-+}
-+
-+// dialInProcess is an InProcessConnProvider that dials the given address.
-+type dialInProcess string
-+
-+func (a dialInProcess) InProcessConn() (net.Conn, error) {
-+	return net.Dial("tcp", string(a))
-+}
-+
-+// A TLS configuration asks for TLS: a server without TLS is refused before
-+// CONNECT, and a server that only offers TLS is upgraded.
-+func TestTLSConfigAsksForTLS(t *testing.T) {
-+	pool := x509.NewCertPool()
-+	for _, test := range []struct {
-+		name string
-+		set  nats.Option
-+	}{
-+		{"TLSConfig", func(o *nats.Options) error {
-+			o.TLSConfig = &tls.Config{RootCAs: pool}
-+			return nil
-+		}},
-+		{"RootCAsCB", func(o *nats.Options) error {
-+			o.RootCAsCB = func() (*x509.CertPool, error) { return pool, nil }
-+			return nil
-+		}},
-+		{"TLSCertCB", func(o *nats.Options) error {
-+			o.TLSCertCB = func() (tls.Certificate, error) { return tls.Certificate{}, nil }
-+			return nil
-+		}},
-+	} {
-+		t.Run(test.name+" without TLS", func(t *testing.T) {
-+			connects := make(chan string, 1)
-+			srv := newFakeServer(t, recordConnects(connects))
-+			nc, err := nats.Connect("nats://"+srv.addr(), test.set)
-+			if err == nil {
-+				nc.Close()
-+			}
-+			select {
-+			case c := <-connects:
-+				t.Fatalf("CONNECT sent without TLS: %s", c)
-+			default:
-+			}
-+			if !errors.Is(err, nats.ErrSecureConnWanted) {
-+				t.Fatalf("Expected %v, got: %v", nats.ErrSecureConnWanted, err)
-+			}
-+			if want := test.name + " asks for TLS and " + srv.addr() + " does not offer it"; !strings.Contains(err.Error(), want) {
-+				t.Fatalf("Expected the error to say %q, got: %v", want, err)
-+			}
-+		})
-+	}
-+
-+	// These options fill in TLSConf
-```
-
-**File**: `test/helper_test.go` (modified, +16/-0)
+**File**: `test/nats_test.go` (modified, +78/-0)
 ```diff
 @@ -15,6 +15,7 @@ package test
  
  import (
- 	"bufio"
-+	"crypto/tls"
- 	"encoding/json"
- 	"errors"
+ 	"bytes"
++	"errors"
  	"fmt"
-@@ -229,6 +230,21 @@ func fakeInfoWith(extra map[string]any, connectURLs ...string) []byte {
- 	return []byte(fmt.Sprintf("INFO %s\r\n", b))
- }
- 
-+// fakeTLSConfig is the server side of the test certificate that carries both
-+// localhost and 127.0.0.1.
-+func fakeTLSConfig(t *testing.T) *tls.Config {
-+	return fakeTLSConfigFrom(t, "./configs/certs/server.pem", "./configs/certs/key.pem")
-+}
-+
-+func fakeTLSConfigFrom(t *testing.T, certFile, keyFile string) *tls.Config {
-+	t.Helper()
-+	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
-+	if err != nil {
-+		t.Fatalf("Could not load the server certificate: %v", err)
-+	}
-+	return &tls.Config{Certificates: []tls.Certificate{cert}}
-+}
-+
- // serveProto answers every PING on conn with PONG and passes each line,
- // without its line ending, to onLine, until the connection ends.
- func serveProto(conn net.Conn, onLine func(line string)) {
-```
-
----
-
-### Incident Patch 3: `6b33b5ab` (2026-10-30)
-**Commit Message**: [FIXED] Use the reporting server's credentials for discovered servers
-
-Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
-
-**File**: `nats.go` (modified, +6/-5)
-```diff
-@@ -2271,11 +2271,8 @@ func (nc *Conn) parseServerURL(sURL string, implicit, saveTLSName bool) (*Server
- 	var tlsName string
- 	if implicit {
- 		curl := nc.current.URL
--		// Check to see if we do not have a url.User but current connected
--		// url does. If so copy over.
--		if u.User == nil && curl.User != nil {
--			u.User = curl.User
--		}
-+		// Use the reporting server's credentials, never the entry's own.
-+		u.User = curl.User
- 		// We are checking to see if we have a secure connection and are
- 		// adding an implicit server that just has an IP. If so we will remember
- 		// the current hostname we are connected to. If we are connected to an
-@@ -4349,6 +4346,10 @@ func (nc *Conn) processInfo(info string) error {
- 	// Transform that to a map for easy lookups
- 	tmp := make(map[string]struct{}, len(urls))
- 	for _, curl := range urls {
-+		// An entry is matched by its address; its user info is never used.
-+		if at := strings.LastIndex(curl, "@"); at >= 0 {
-+			curl = curl[at+1:]
-+		}
- 		tmp[curl] = struct{}{}
+ 	"net"
+ 	"os"
+@@ -419,6 +420,83 @@ func TestNkeyAuth(t *testing.T) {
  	}
- 	// Walk the pool and removed the implicit servers that are no longer in the
-```
-
-**File**: `test/cluster_test.go` (modified, +119/-0)
-```diff
-@@ -14,6 +14,8 @@
- package test
- 
- import (
-+	"bufio"
-+	"encoding/json"
- 	"errors"
- 	"fmt"
- 	"math"
-@@ -1038,3 +1040,120 @@ func TestIgnoreDiscoveredServers(t *testing.T) {
- 		}
- 	})
  }
+ 
++func TestProxySignature(t *testing.T) {
++	kp, _ := nkeys.CreateUser()
++	pub, _ := kp.PublicKey()
++	untrusted, _ := nkeys.CreateUser()
 +
-+// An entry with user info is the same server on every INFO, so the failures
-+// to reach it count toward MaxReconnects.
-+func TestUserInfoEntryCountsTowardMaxReconnects(t *testing.T) {
-+	// b lists itself with a token in front and refuses every CONNECT.
-+	b := newFakeServer(t, func(conn net.Conn) {
-+		conn.Write(fakeInfo("tok@" + conn.LocalAddr().String()))
-+		serveProto(conn, func(line string) {
-+			if strings.HasPrefix(line, "CONNECT ") {
-+				conn.Write([]byte("-ERR 'Authorization Violation'\r\n"))
-+				conn.Close()
-+			}
-+		})
-+	})
-+	a := newFakeServer(t, func(conn net.Conn) {
-+		conn.Write(fakeInfo("tok@" + b.addr()))
-+		serveProto(conn, nil)
-+	})
-+	closed := make(chan struct{})
-+	nc, err := nats.Connect("nats://"+a.addr(),
-+		nats.MaxReconnects(3),
-+		nats.ReconnectWait(10*time.Millisecond),
-+		nats.ReconnectJitter(0, 0),
-+		nats.ClosedHandler(func(*nats.Conn) { close(closed) }))
++	authBody := `authorization {
++  users: [
++    { user: "proxied", password: "pwd", proxy_required: true }
++  ]
++}`
++	proxies := fmt.Sprintf(`proxies {
++  trusted: [
++    { key: %q }
++  ]
++}`, pub)
++
++	c := newTester(t)
++	inst := c.CreateServer(t, false, append(singleUserPassOpts(authBody), testservice.WithTopLevel(proxies))...)
++	t.Cleanup(func() { inst.Destroy(t) })
++	clientURL := inst.Servers[0].URL
++
++	connect := func(opts ...nats.Option) (*nats.Conn, error) {
++		opts = append([]nats.Option{
++			nats.UserInfo("proxied", "pwd"),
++			nats.MaxReconnects(10),
++			nats.ReconnectWait(100 * time.Millisecond),
++		}, opts...)
++		return nats.Connect(clientURL, opts...)
++	}
++
++	if _, err := connect(); !errors.Is(err, nats.ErrAuthorization) {
++		t.Fatalf("Expected an authorization error with no proxy signature, got %v", err)
++	}
++	if _, err := connect(nats.ProxySignature(untrusted.Sign)); !errors.Is(err, nats.ErrAuthorization) {
++		t.Fatalf("Expected an authorization error with an untrusted proxy signature, got %v", err)
++	}
++	failSign := func(nonce []byte) ([]byte, error) {
++		return nil, errors.New("no key")
++	}
++	if _, err := connect(nats.ProxySignature(failSign)); err == nil || !strings.Contains(err.Error(), "no key") {
++		t.Fatalf("Expected the signature callback's error, got %v", err)
++	}
++
++	nc, err := connect(nats.ProxySignature(kp.Sign))
 +	if err != nil {
-+		t.Fatalf("Error on connect: %v", err)
++		t.Fatalf("Expected to succeed but got %v", err)
 +	}
 +	defer nc.Close()
-+	a.close()
-+	select {
-+	case <-closed:
-+	case <-time.After(5 * time.Second):
-+		t.Fatal("Client kept reconnecting past MaxReconnects")
++
++	// A reconnect gets a new nonce, which must be signed again.
++	inst.StopServer(t, inst.Servers[0])
++	inst.StartServer(t, inst.Servers[0])
++
++	if err := nc.FlushTimeout(5 * time.Second); err != nil {
++		t.Fatalf("Error on Flush: %v", err)
 +	}
 +}
 +
-+// A discovered server is dialed with the credentials the client uses for the
-+// server that reported it; user info in the connect_urls entry itself is
-+// dropped.
-+func TestDiscoveredServerCredentials(t *testing.T) {
-+	for _, test := range []struct {
-+		name string
-+		url  string
-+		opts []nats.Option
-+		// userInfo is written in front of the discovered server's entry.
-+		userInfo string
-+		// relist makes the reporting server list the discovered server a
-+		// second time, without user info.
-+		relist           bool
-+		user, pass, auth string
-+	}{
-+		{name: "credentials in URL", url: "nats://alice:secret@%s", userInfo: "bob:pw@", user: "alice", pass: "secret"},
-+		{name: "credentials in options", url: "nats://%s", opts: []nats.Option{nats.UserInfo("alice", "secret")}, userInfo: "bob:pw@", user: "alice", pass: "secret"},
-+		{name: "token in options", url: "nats://%s", opts: []nats.Option{nats.Token("tok")}, userInfo: "other@", auth: "tok"},
-+		{name: "no credentials", url: "nats://%s", userInfo: "bob:pw@"},
-+		{name: "plain entry, credentials in URL", url: "nats://alice:secret@%s", user: "alice", pass: "secret"},
-+		{name: "plain entry, token in URL", url: "nats://tok@%s", auth: "tok"},
-+		{name: "empty user info", url: "nats://alice:secret@%s", userInfo: "@", user: "alice", pass: "secret"},
-+		{name: "user info that does not parse", url: "nats://alice:secret@%s", userInfo: "%zz@", user: "alice", pass: "secret"},
-+		{name: "token handler", url: "nats://%s", opts: []nats.Option{nats.TokenHandler(func() string { return "tok" })}, userInfo: "other@", auth: "tok"},
-+		{name: "user JWT", url: "nats://%s", opts: []nats.Option{nats.UserJWT(
-+			func() (string, error) { return "jwt", nil },
-+			func([]byte) ([]byte, error) { return []byte("sig"), nil })}, userInfo: "other@"},
-+		{name: "entry listed again without user info", url: "nats://alice:secret@%s", userInfo: "bob:pw@", relist: true, user: "alice", pass: "secret"},
-+	} {
-+		t.Run(test.name, func(t *testing.T) {
-+			connects := make(chan string, 1)
-+			b := newFakeServer(t, recordConnects(connects))
-+			// a reports b, then drops the client after its first PING.
-+			a := newFakeServer(t, func(conn net.Conn) {
-+				conn.Write(fakeInfo(test.userInfo + b.addr()))
-+				br := bufio.NewReader(conn)
-+				for {
-+					line, err := br.ReadString('\n')
-+					if err != nil {
-+						return
-+					}
-+					if strings.HasPrefix(line, "PING") {
-+						conn.Write([]byte("PONG\r\n"))
-+						if test.relist {
-+							conn.Write(fakeInfo(b.addr()))
-+						}
-+						return
-+					}
-+				}
-+			})
++func TestProxySignatureNotSupported(t *testing.T) {
++	kp, _ := nkeys.CreateUser()
 +
-+			opts := append([]nats.Option{
-+				nats.ReconnectWait(10 * time.Millisecond),
-+				nats.ReconnectJitter(0, 0),
-+			}, test.opts...)
-+			nc, err := nats.Connect(fmt.Sprintf(test.url, a.addr()), opts...)
-+			if err != nil {
-+				t.Fatalf("Error on connect: %v", err)
-+			}
-+			defer nc.Close()
++	// Without trusted proxies or nkeys, the server sends no nonce.
++	authBody := `authorization {
++  users: [
++    { user: "user", password: "pwd" }
++  ]
++}`
++	c := newTester(t)
++	inst := c.CreateServer(t, false, singleUserPassOpts(authBody)...)
++	t.Cleanup(func() { inst.Destroy(t) })
 +
-+			var connect struct {
-+				User string `json:"user"`
-+				Pass string `json:"pass"`
-+				Auth string `json:"auth_token"`
-+			}
-+			select {
-+			case c := <-connects:
-+				if err := json.Unmarshal([]byte(c), &connect); err != nil {
-+					t.Fatalf("Invalid CONNECT %q: %v", c, err)
-+				}
-+			case <-time.After(5 * time.Second):
-+				t.Fatal("Client did not connect to the discovered server")
-+			}
-+			if connect.User != test.user || connect.Pass != test.pass || connect.Auth != test.auth {
-+				t.Fatalf("Discovered server got user %q pass %q token %q, expected user %q pass %q token %q",
-+					connect.User, connect.Pass, connect.Auth, test.user, test.pass, test.auth)
-+			}
-+		})
-+	}
-+}
-```
-
-**File**: `test/helper_test.go` (modified, +120/-0)
-```diff
-@@ -14,10 +14,15 @@
- package test
- 
- import (
-+	"bufio"
-+	"encoding/json"
- 	"errors"
- 	"fmt"
-+	"maps"
-+	"net"
- 	"runtime"
- 	"strings"
-+	"sync"
- 	"testing"
- 	"time"
- )
-@@ -143,3 +148,118 @@ func checkFor(t *testing.T, totalWait, sleepDur time.Duration, f func() error) {
- 	t.Helper()
- 	waitFor(t, totalWait, sleepDur, f)
- }
-+
-+// fakeServer is a local listener that hands every accepted connection to
-+// handle, for tests that script the server side of the protocol.
-+type fakeServer struct {
-+	ln   net.Listener
-+	port int
-+
-+	mu    sync.Mutex
-+	conns map[net.Conn]struct{}
-+}
-+
-+func newFakeServer(t *testing.T, handle func(net.Conn)) *fakeServer {
-+	t.Helper()
-+	ln, err := net.Listen("tcp", "127.0.0.1:0")
-+	if err != nil {
-+		t.Fatalf("Could not listen: %v", err)
-+	}
-+	fs := &fakeServer{
-+		ln:    ln,
-+		port:  ln.Addr().(*net.TCPAddr).Port,
-+		conns: make(map[net.Conn]struct{}),
-+	}
-+	t.Cleanup(fs.close)
-+	go func() {
-+		for {
-+			conn, err := ln.Accept()
-+			if err != nil {
-+				return
-+			}
-+			fs.mu.Lock()
-+			fs.conns[conn] = struct{}{}
-+			fs.mu.Unlock()
-+			go func() {
-+				defer fs.drop(conn)
-+				handle(conn)
-+			}()
-+		}
-+	}()
-+	return fs
-+}
-+
-+func (fs *fakeServer) addr() string {
-+	return fmt.Sprintf("127.0.0.1:%d", fs.port)
-+}
-+
-+func (fs *fakeServer) drop(conn net.Conn) {
-+	fs.mu.Lock()
-+	delete(fs.conns, conn)
-+	fs.mu.Unlock()
-+	conn.Close()
-+}
-+
-+func (fs *fakeServer) close() {
-+	fs.ln.Close()
-+	fs.mu.Lock()
-+	defer fs.mu.Unlock()
-+	for conn := range fs.conns {
-+		conn.Close()
++	_, err := nats.Connect(inst.Servers[0].URL, nats.UserInfo("user", "pwd"), nats.ProxySignature(kp.Sign))
++	if !errors.Is(err, nats.ErrProxySignatureNotSupported) {
++		t.Fatalf("Expected %v, got %v", nats.ErrProxySignatureNotSupported, err)
 +	}
 +}
 +
-+func fakeInfo(connectURLs ...string) []byte {
-+	return fakeInfoWith(nil, connectURLs...)
-+}
-+
-+// fakeInfoWith is fakeInfo with extra fields added or overridden.
-+func fakeInfoWith(extra map[string]any, connectURLs ...string) []byte {
-+	info := map[string]any{
-+		"server_id":   "FAKE",
-+		"proto":       1,
-+		"headers":     true,
-+		"max_payload": 1048576,
-+	}
-+	if len(connectURLs) > 0 {
-+		info["connect_urls"] = connectURLs
-+	}
-+	maps.Copy(info, extra)
-+	b, _ := json.Marshal(info)
-+	return []byte(fmt.Sprintf("INFO %s\r\n", b))
-+}
-+
-+// serveProto answers every PING on conn with PONG and passes each line,
-+// without its line ending, to onLine, until the connection ends.
-+func serveProto(conn net.Conn, onLine func(line string)) {
-+	br := bufio.NewReader(conn)
-+	for {
-+		line, err := br.ReadString('\n')
-+		if err != nil {
-+			return
-+		}
-+		line = strings.TrimRight(line, "\r\n")
-+		if line == "PING" {
-+			conn.Write([]byte("PONG\r\n"))
-+		}
-+		if onLine != nil {
-+			onLine(line)
-+		}
-+	}
-+}
-+
-+// recordConnects serves a plaintext server that reports the payload of every
-+// CONNECT on connects, dropping it when nobody is waiting.
-+func recordConnects(connects chan<- string) func(net.Conn) {
-+	return func(conn net.Conn) {
-+		conn.Write(fakeInfo())
-+		serveProto(conn, func(line string) {
-+			if strings.HasPrefix(line, "CONNECT ") {
-+				select {
-+				case connects <- strings.TrimSpace(line[len("CONNECT "):]):
-+				default:
-+				}
-+			}
-+		})
-+	}
-+}
+ // These drive the server-pool shuffle with a comma-joined two-URL pool. The
+ // DNS multi-IP path (net.LookupHost returning several addresses for one host)
+ // reaches the same srvPool shuffle but is not covered directly: the tester
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2249** (2026-11-18): [ADDED] Option to sign the server nonce as a trusted proxy (@bruth)
 - **PR #2246** (2026-11-17): Release v1.56.0 (@piotrpio)
 - **PR #2245** (2026-11-17): [CHANGED] Fixes for TLS and server discovery (@piotrpio)
 - **PR #2243** (2026-11-16): [IMPROVED] Bump ntf-client to v0.0.5 to fix nightly tester failures (@piotrpio)
 - **PR #2242** (2026-11-15): docs: remove duplicated word in MemoryMaxStreamBytes comment (@ninglinLiu)
 - **PR #2237** (2026-11-12): [FIXED] Require a separator before inline header status (@ViktorBystrov72)
-- **PR #2233** (2026-11-08): [IMPROVED] Remove stale go.mod version notes from docs (@nik-6174)
 
 ---
 
@@ -2470,61 +1798,57 @@ Signed-off-by: Piotr Piotrowski <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [FIXED] Cap StreamState NumDeleted at MaxInt when decoding
+## X. [ADDED] Option to sign the server nonce as a trusted proxy
 
 **RULE**:
-When implementing operations in `jetstream/stream_config.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `nats.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats.go. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `febd2b97`: [FIXED] Cap StreamState NumDeleted at MaxInt when decoding. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `792e440f`: [ADDED] Option to sign the server nonce as a trusted proxy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `jetstream/stream_config.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `nats.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"math"
-		//
-		// The value is capped at math.MaxInt when decoded. This only matters
-		// on 32-bit platforms, where int cannot hold every value the server
-		// can report.
+	ErrProxySignatureNotSupported    = errors.New("nats: proxy signature not supported by the server")
+	// ProxySignatureCB designates the function used to sign the nonce
+	// presented from the server as one of its trusted proxies. The
+	// signature is sent beside the connection's own credentials, and lets
+	// the server accept a user that requires a proxy.
+	ProxySignatureCB SignatureHandler
 
-// UnmarshalJSON decodes num_deleted as an int64 and caps it to the range of
-// int. On 32-bit platforms a stream can have more interior deletes than int
-// can hold, which would otherwise fail decoding of the whole stream info.
-func (s *StreamState) UnmarshalJSON(data []byte) error {
-	type streamState StreamState
-	aux := struct {
-		*streamState
-		NumDeleted int64 `json:"num_deleted"`
-	}{
-		streamState: (*streamState)(s),
-		NumDeleted:  int64(s.NumDeleted),
+	ProxySig     string `json:"proxy_sig,omitempty"`
+// ProxySignature will set the callback that signs the server nonce as a
+// trusted proxy of the server (see the proxies block of the server
+// configuration, in nats-server v2.12.0 and later). It is for applications
+// that connect on behalf of clients they have authenticated themselves, and
+// is independent of the credentials the connection authenticates with.
+func ProxySignature(sigCB SignatureHandler) Option {
+	return func(o *Options) error {
+		o.ProxySignatureCB = sigCB
+		return nil
 	}
-	if err := json.Unmarshal(data, &aux); err != nil {
-		return err
-	}
-	switch {
-	case aux.NumDeleted > math.MaxInt:
-		s.NumDeleted = math.MaxInt
-	case aux.NumDeleted < math.MinInt:
-		s.NumDeleted = math.MinInt
-	default:
-		s.NumDeleted = int(aux.NumDeleted)
-	}
-	return nil
 }
+
+	var nkey, sig, user, pass, token, ujwt, proxySig string
+	if o.ProxySignatureCB != nil {
+		// The server sends a nonce when it has trusted proxies configured.
+		if nc.info.Nonce == _EMPTY_ {
+			return _EMPTY_, ErrProxySignatureNotSupported
+		}
+		sigraw, err
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	var nkey, sig, user, pass, token, ujwt string
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `febd2b97` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `792e440f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
