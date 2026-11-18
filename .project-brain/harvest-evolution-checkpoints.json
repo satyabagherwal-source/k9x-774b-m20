@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T23:26:56.922Z",
+  "last_updated": "2026-11-18T23:35:01.551Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T22:22:52.966Z",
@@ -103,7 +103,7 @@
       "staged_for_review": 1
     },
     "trufflesecurity-trufflehog-learnings.md": {
-      "processed_at": "2026-11-16T23:52:59.508Z",
+      "processed_at": "2026-11-18T23:35:00.517Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1098,7 +1098,7 @@
       "staged_for_review": 1
     },
     "gocd-gocd-learnings.md": {
-      "processed_at": "2026-11-16T04:18:00.283Z",
+      "processed_at": "2026-11-18T23:34:59.383Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2463,8 +2463,8 @@
       "staged_for_review": 1
     },
     "hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md": {
-      "processed_at": "2026-11-14T07:19:17.742Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T23:34:58.972Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md": {
@@ -3473,7 +3473,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2109,
+  "total_dossiers_evaluated": 2112,
   "total_canonical_promoted": 369,
-  "total_staged_for_review": 1586
+  "total_staged_for_review": 1588
 }

@@ -11132,3 +11132,7 @@
 | `CYCLE-20261118-2O2G` | `2026-11-18T23:26:14.872Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9298` | Yes (`e0035c3d...`) |
 | `CYCLE-20261118-2XAK` | `2026-11-18T23:26:26.828Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9299` | Yes (`9d94a967...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T23:26:56.296Z` | `apache-shardingsphere` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-DAFF8DAE` [Domain H] | Yes (`021017b1...`) |
+| `CYCLE-20261118-DIL6` | `2026-11-18T23:34:40.986Z` | `pablodawson/MiniMax-H3-360-Orbit-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md` | Yes (`2f28419b...`) |
+| `CYCLE-20261118-DQIA` | `2026-11-18T23:34:51.250Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9300` | Yes (`5373ada2...`) |
+| `CYCLE-20261118-DRQV` | `2026-11-18T23:34:52.855Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9301` | Yes (`186a5248...`) |
+| `CYCLE-20261118-DTVB` | `2026-11-18T23:34:55.607Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9302` | Yes (`8e22db0e...`) |

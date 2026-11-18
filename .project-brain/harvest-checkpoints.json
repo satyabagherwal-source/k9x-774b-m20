@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T23:26:26.840Z",
+  "last_updated": "2026-11-18T23:34:55.621Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1400,14 +1400,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "1b16d2f3a7636c37c60a2fc103fd26172c537f724b3feda47c735e5831dfb41d",
-      "verified_at": "2026-11-14T07:17:51.506Z",
+      "content_hash": "2f28419bb7d9a57cbf7d4429850547e62cab60a5ca8dc944f39ec9db6ae1bb9c",
+      "verified_at": "2026-11-18T23:34:41.000Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T07:17:51.506Z"
+      "last_updated": "2026-11-18T23:34:41.000Z"
     },
     "Venastine-Research/Xing4.0-29B-A4B-GGUF": {
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
@@ -5586,14 +5586,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trufflesecurity-trufflehog",
-      "content_hash": "086bdeecb96b71975a99ec59a539a0027c5c43ec4154808b738fa20c1f02aa26",
-      "verified_at": "2026-11-16T23:52:55.869Z",
+      "content_hash": "186a5248c3284caea4a040321b4f6942d3db16975e868f7081fd325ab5460e11",
+      "verified_at": "2026-11-18T23:34:52.869Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T23:52:55.869Z"
+      "last_updated": "2026-11-18T23:34:52.869Z"
     },
     "neural-maze/ava-whatsapp-agent-course": {
       "repository": "neural-maze/ava-whatsapp-agent-course",
@@ -7491,14 +7491,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rqlite-rqlite",
-      "content_hash": "b09352c56b2dbec2c1fa5fd4804241750333422cc0cb63f50718b8d83d9acce8",
-      "verified_at": "2026-11-18T07:23:11.410Z",
+      "content_hash": "8e22db0e69dadad1c892de1dfbad69af8744d3c96369a7c04336f33d19910e3d",
+      "verified_at": "2026-11-18T23:34:55.621Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T07:23:11.410Z"
+      "last_updated": "2026-11-18T23:34:55.621Z"
     },
     "arco-design/arco-design": {
       "repository": "arco-design/arco-design",
@@ -7866,14 +7866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gocd-gocd",
-      "content_hash": "6888cb5de98f60e276572c5fbae156e241b4d9037531c4e42ce8e45d11fc94a9",
-      "verified_at": "2026-11-18T08:06:05.918Z",
+      "content_hash": "5373ada2c7049c951ab50a46336e08720e5f308378ff15fd186d2ab7021eed3e",
+      "verified_at": "2026-11-18T23:34:51.264Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T08:06:05.918Z"
+      "last_updated": "2026-11-18T23:34:51.264Z"
     },
     "citusdata/citus": {
       "repository": "citusdata/citus",

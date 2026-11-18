@@ -4,22 +4,22 @@
 {
   "source_repository": "rqlite/rqlite",
   "source_url": "https://github.com/rqlite/rqlite",
-  "source_version": "338a824d",
+  "source_version": "5db0619d",
   "license": "MIT",
-  "timestamp": "2026-11-18T07:23:11.584Z",
+  "timestamp": "2026-11-18T23:34:55.831Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-rqlite-rqlite",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [rqlite/rqlite](https://github.com/rqlite/rqlite) (Revision: `338a824d`).  
-> **License**: MIT | **Timestamp**: `2026-11-18T07:23:11.584Z`  
+> **Provenance**: Harvested from [rqlite/rqlite](https://github.com/rqlite/rqlite) (Revision: `5db0619d`).  
+> **License**: MIT | **Timestamp**: `2026-11-18T23:34:55.831Z`  
 > **Learning ID**: `learn-github-rqlite-rqlite`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `rqlite/rqlite` (Commit: `338a824d`)
+- **Target Repository**: `rqlite/rqlite` (Commit: `5db0619d`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rqlite-rqlite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rqlite/rqlite](https://github.com/rqlite/rqlite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T07:23:10.505Z  
+> **Harvest Timestamp**: 2026-11-18T23:34:54.503Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The lightweight, fault-tolerant database built on SQLite. Designed to keep your data highly available with minimal effort.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17959 stars
+- **Stars / Engagement**: 17960 stars
 
 ---
 
@@ -2080,11 +2080,11 @@ func forbiddenUses(file *ast.File, path string) []violation {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3066** (2026-11-18): **Upgrade dependencies via `go get`**
+  *Symptoms*: 
+
 - **Issue #3065** (2026-11-18): **Fix flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout**
   *Symptoms*: The read-only half of the test relied on a 1ns database timeout expiring before a trivial SELECT completed. On a machine with a coarse clock, such as the AppVeyor Windows workers, the read can finish before the timeout is noticed, so the request succeeds and the test fails.  Stall the read until the timeout expires instead, and assert that the result carries the query timeout error. 
-
-- **Issue #3064** (2026-11-18): **Shorten e2e test timeouts**
-  *Symptoms*: This testing takes place on localhost. 200 ms should be sufficient for testing.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2101,130 +2101,200 @@ func forbiddenUses(file *ast.File, path string) []violation {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `20470c69` (2026-11-18)
-**Commit Message**: Fix flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout
+### Incident Patch 1: `5db0619d` (2026-11-18)
+**Commit Message**: Update CHANGELOG.md
 
-The read-only half of the test relied on a 1ns database timeout expiring
-before a trivial SELECT completed. On a machine with a coarse clock, such
-as the AppVeyor Windows workers, the read can finish before the timeout
-is noticed, so the request succeeds and the test fails.
-
-Stall the read until the timeout expires instead, and assert that the
-result carries the query timeout error.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `store/store_test.go` (modified, +11/-4)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -814,11 +814,18 @@ func Test_SingleNodeRequest_WriteIgnoresDBTimeout(t *testing.T) {
- 		t.Fatalf("unexpected results for request\nexp: %s\ngot: %s", exp, got)
- 	}
- 
--	// The timeout does apply to a request which only reads.
-+	// The timeout does apply to a request which only reads. The read is
-+	// stalled until the timeout expires, so the outcome does not depend on
-+	// the timeout expiring before a fast read completes.
- 	eqr = executeQueryRequestFromString(`SELECT * FROM foo`, proto.ConsistencyLevel_WEAK, false, false, false)
--	eqr.Request.DbTimeout = 1
--	if _, _, _, err := s.Request(context.Background(), eqr); err == nil {
--		t.Fatalf("expected read-only request to time out")
-+	eqr.Request.Statements[0].ForceStall = true
-+	eqr.Request.DbTimeout = int64(20 * time.Millisecond)
-+	r, _, _, err = s.Request(context.Background(), eqr)
-+	if err != nil {
-+		t.Fatalf("failed to execute read-only request on single node: %s", err.Error())
-+	}
-+	if len(r) != 1 || r[0].GetQ().GetError() != db.ErrQueryTimeout.Error() {
-+		t.Fatalf("expected read-only request to time out, got %s", asJSON(r))
- 	}
- }
+@@ -1,7 +1,7 @@
+ ## v10.7.4 (unreleased)
+ ### Implementation changes and bug fixes
+ - [PR #3062](https://github.com/rqlite/rqlite/pull/3062): When rewriting time capture the value once per statement, to match SQLite.
+-- [PR #3063](https://github.com/rqlite/rqlite/pull/3063): Normalize timezone for JulianDay calculations. Fixes issue [#3061](https://github.com/rqlite/rqlite/issues/3061). Thanks @clarkmcc
++- [PR #3063](https://github.com/rqlite/rqlite/pull/3063): Normalize timezone for _Julian Day_ calculations. Fixes issue [#3061](https://github.com/rqlite/rqlite/issues/3061). Thanks @clarkmcc
+ - [PR #3064](https://github.com/rqlite/rqlite/pull/3064): Shorten end-to-end testing leader timeouts, speeding up test completion.
+ - [PR #3066](https://github.com/rqlite/rqlite/pull/3066): Upgrade dependencies via `go get`.
  
 ```
 
 ---
 
-### Incident Patch 2: `338a824d` (2026-11-18)
-**Commit Message**: Merge pull request #3065 from rqlite/fix-flaky-write-ignores-db-timeout-test
+### Incident Patch 2: `5d81cea7` (2026-11-18)
+**Commit Message**: Merge pull request #3066 from rqlite/gomod-20261118
 
-Fix flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout
+Upgrade dependencies via `go get`
 
-**File**: `store/store_test.go` (modified, +11/-4)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -814,11 +814,18 @@ func Test_SingleNodeRequest_WriteIgnoresDBTimeout(t *testing.T) {
- 		t.Fatalf("unexpected results for request\nexp: %s\ngot: %s", exp, got)
- 	}
+@@ -3,6 +3,7 @@
+ - [PR #3062](https://github.com/rqlite/rqlite/pull/3062): When rewriting time capture the value once per statement, to match SQLite.
+ - [PR #3063](https://github.com/rqlite/rqlite/pull/3063): Normalize timezone for JulianDay calculations. Fixes issue [#3061](https://github.com/rqlite/rqlite/issues/3061). Thanks @clarkmcc
+ - [PR #3064](https://github.com/rqlite/rqlite/pull/3064): Shorten end-to-end testing leader timeouts, speeding up test completion.
++- [PR #3066](https://github.com/rqlite/rqlite/pull/3066): Upgrade dependencies via `go get`.
  
--	// The timeout does apply to a request which only reads.
-+	// The timeout does apply to a request which only reads. The read is
-+	// stalled until the timeout expires, so the outcome does not depend on
-+	// the timeout expiring before a fast read completes.
- 	eqr = executeQueryRequestFromString(`SELECT * FROM foo`, proto.ConsistencyLevel_WEAK, false, false, false)
--	eqr.Request.DbTimeout = 1
--	if _, _, _, err := s.Request(context.Background(), eqr); err == nil {
--		t.Fatalf("expected read-only request to time out")
-+	eqr.Request.Statements[0].ForceStall = true
-+	eqr.Request.DbTimeout = int64(20 * time.Millisecond)
-+	r, _, _, err = s.Request(context.Background(), eqr)
-+	if err != nil {
-+		t.Fatalf("failed to execute read-only request on single node: %s", err.Error())
-+	}
-+	if len(r) != 1 || r[0].GetQ().GetError() != db.ErrQueryTimeout.Error() {
-+		t.Fatalf("expected read-only request to time out, got %s", asJSON(r))
- 	}
- }
- 
+ ## v10.7.3 (November 17th 2026)
+ This release enforces a maximum request size between nodes and fixes some SQL rewriting bugs. The request size limit defaults to 1GB, but is user-configurable at launch time via the `-node-max-request-size` command-line flag. If you are working with datasets approaching 1GB in size and are [loading](https://rqlite.io/docs/guides/backup/#restoring-from-sqlite) them into a cluster, you may need to increase this limit.
 ```
 
----
-
-### Incident Patch 3: `aedcce1d` (2026-11-18)
-**Commit Message**: Merge pull request #3064 from rqlite/e2e-shorten-timeouts
-
-Shorten e2e test timeouts
-
-**File**: `system_test/e2e/helpers.py` (modified, +10/-1)
+**File**: `go.mod` (modified, +30/-30)
 ```diff
-@@ -17,6 +17,9 @@
- import string
+@@ -3,15 +3,15 @@ module github.com/rqlite/rqlite/v10
+ go 1.27.0
  
- TIMEOUT=10
-+RAFT_HEARTBEAT_TIMEOUT="200ms"
-+RAFT_ELECTION_TIMEOUT="200ms"
-+RAFT_LEADER_LEASE_TIMEOUT="200ms"
+ require (
+-	github.com/aws/aws-sdk-go-v2 v1.47.5
+-	github.com/aws/aws-sdk-go-v2/config v1.33.12
+-	github.com/aws/aws-sdk-go-v2/credentials v1.20.12
+-	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.23.18
+-	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.6
++	github.com/aws/aws-sdk-go-v2 v1.48.0
++	github.com/aws/aws-sdk-go-v2/config v1.33.19
++	github.com/aws/aws-sdk-go-v2/credentials v1.21.1
++	github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.23.26
++	github.com/aws/aws-sdk-go-v2/service/s3 v1.115.0
+ 	github.com/hashicorp/go-hclog v1.6.3
+ 	github.com/hashicorp/raft v1.8.0
+-	github.com/klauspost/compress v1.20.3
+-	github.com/mattn/go-sqlite3 v1.14.52
++	github.com/klauspost/compress v1.20.4
++	github.com/mattn/go-sqlite3 v1.14.53
+ 	github.com/mkideal/cli v0.2.7
+ 	github.com/mkideal/pkg v0.1.3
+ 	github.com/peterh/liner v1.2.3
+@@ -25,27 +25,27 @@ require (
+ 	go.opentelemetry.io/otel/sdk v1.47.0
+ 	go.opentelemetry.io/otel/sdk/metric v1.47.0
+ 	go.opentelemetry.io/proto/otlp v1.11.1
+-	golang.org/x/net v0.62.0
++	golang.org/x/net v0.63.0
+ 	google.golang.org/grpc v1.85.0
+ 	google.golang.org/protobuf v1.36.12
+ )
  
- seqRe = re.compile(r"^{'results': \[\], 'sequence_number': \d+}$")
+ require (
+ 	github.com/armon/go-metrics v0.7.0 // indirect
+-	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.25 // indirect
+-	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.5 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.8 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.8 // indirect
+-	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.8 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.23 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.9 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.8 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.8 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/signin v1.12.0 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/sso v1.39.0 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.0 // indirect
+-	github.com/aws/aws-sdk-go-v2/service/sts v1.51.6 // indirect
+-	github.com/aws/smithy-go v1.28.7 // indirect
++	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.27 // indirect
++	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.9 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.12 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.12 // indirect
++	github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.12 // indirect
++	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.25 // indirect
++	github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.13 // indirect
++	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.12 // indirect
++	github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.12 // indirect
++	github.com/aws/aws-sdk-go-v2/service/signin v1.13.1 // indirect
++	github.com/aws/aws-sdk-go-v2/service/sso v1.39.5 // indirect
++	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.5 // indirect
++	github.com/aws/aws-sdk-go-v2/service/sts v1.52.0 // indirect
++	github.com/aws/smithy-go v1.28.9 // indirect
+ 	github.com/cenkalti/backoff/v5 v5.0.3 // indirect
+ 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
+ 	github.com/clipperhouse/uax29/v2 v2.7.0 // indirect
+@@ -57,7 +57,7 @@ require (
+ 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
+ 	github.com/golang/protobuf v1.5.4 // indirect
+ 	github.com/google/uuid v1.6.0 // indirect
+-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.33.0 // indirect
++	github.com/grpc-ecosystem/grpc-gateway/v2 v2.34.0 // indirect
+ 	github.com/hashicorp/consul/api v1.35.0 // indirect
+ 	github.com/hashicorp/errwrap v1.1.0 // indirect
+ 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
+@@ -84,13 +84,13 @@ require (
+ 	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+ 	go.uber.org/zap v1.28.0 // indirect
+-	golang.org/x/crypto v0.58.0 // indirect
+-	golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e // indirect
+-	golang.org/x/sys v0.49.0 // indirect
+-	golang.org/x/term v0.47.0 // indirect
+-	golang.org/x/text v0.43.0 // indirect
+-	google.golang.org/genproto/googleapis/api v0.0.0-20261026165753-2ffab32bce7e // indirect
+-	google.golang.org/genproto/googleapis/rpc v0.0.0-20261026165753-2ffab32bce7e // indirect
++	golang.org/x/crypto v0.59.0 // indirect
++	golang.org/x/exp v0.0.0-20261117202309-7a49493bfd90 // indirect
++	golang.org/x/sys v0.50.0 // indirect
++	golang.org/x/term v0.48.0 // indirect
++	golang.org/x/text v0.44.0 // indirect
++	google.golang.org/genproto/googleapis/api v0.0.0-20261116203732-fd2c7689a808 // indirect
++	google.golang.org/genproto/googleapis/rpc v0.0.0-20261116203732-fd2c7689a808 // indirect
+ )
  
-@@ -129,6 +132,9 @@ def __init__(self, exe_path, node_id, extensions_path=None,
-     self.raft_snap_threshold = raft_snap_threshold
-     self.raft_snap_int = raft_snap_int
-     self.raft_cluster_remove_shutdown = raft_cluster_remove_shutdown
-+    self.raft_election_timeout = RAFT_ELECTION_TIMEOUT
-+    self.raft_heartbeat_timeout = RAFT_HEARTBEAT_TIMEOUT
-+    self.raft_leader_lease_timeout = RAFT_LEADER_LEASE_TIMEOUT
-     self.http_cert = http_cert
-     self.http_key = http_key
-     self.http_no_verify = http_no_verify
-@@ -197,7 +203,10 @@ def start(self, join=None, join_attempts=None, join_interval="1s", join_as=None,
-                '-raft-snap', str(self.raft_snap_threshold),
-                '-raft-snap-int', self.raft_snap_int,
-                '-raft-cluster-remove-shutdown=%s' % str(self.raft_cluster_remove_shutdown).lower(),
--               '-raft-non-voter=%s' % str(not self.raft_voter).lower()]
-+               '-raft-non-voter=%s' % str(not self.raft_voter).lower(),
-+               '-raft-election-timeout=%s' % self.raft_election_timeout,
-+               '-raft-heartbeat-timeout=%s' % self.raft_heartbeat_timeout,
-+               '-raft-leader-lease-timeout=%s' % self.raft_leader_lease_timeout]
-     if self.cdc_config is not None:
-       command += ['-cdc-config', self.cdc_config]
-     if self.extensions_path is not None:
+ replace (
+```
+
+**File**: `go.sum` (modified, +60/-60)
+```diff
+@@ -3,44 +3,44 @@ github.com/alecthomas/template v0.0.0-20160405071501-a0175ee3bccc/go.mod h1:LOuy
+ github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751/go.mod h1:LOuyumcjzFXgccqObfd/Ljyb9UuFJ6TxHnclSeseNhc=
+ github.com/alecthomas/units v0.0.0-20151022065526-2efee857e7cf/go.mod h1:ybxpYRFXyAe+OPACYpWeL0wqObRcbAqCMya13uyzqw0=
+ github.com/alecthomas/units v0.0.0-20190717042225-c3de453c63f4/go.mod h1:ybxpYRFXyAe+OPACYpWeL0wqObRcbAqCMya13uyzqw0=
+-github.com/aws/aws-sdk-go-v2 v1.47.5 h1:5yA+A+BiXbDq1ZLbYwPViwhEGDMdR0MEhL8Jh2LnLS4=
+-github.com/aws/aws-sdk-go-v2 v1.47.5/go.mod h1:iNIkogrRvFwm+1OQIUOP2lPBtlXZboOIUWiCa+pHEMw=
+-github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.25 h1:MW0Iql1SOTgQPj8mCxrU/eH/K/AIDWi08ItOsXaWRLU=
+-github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.25/go.mod h1:+ucVYmHYB3JqVueY0E1RHahdXAnKQbIHqybSbvOUbOM=
+-github.com/aws/aws-sdk-go-v2/config v1.33.12 h1:IV1YARaXahwCqUIyP8IlWsP85Lil+5ozTozDQXPumRk=
+-github.com/aws/aws-sdk-go-v2/config v1.33.12/go.mod h1:h51R06bzMVwNBRZOX5ylHhNDnkB/azZeq/LvxM6q2pQ=
+-github.com/aws/aws-sdk-go-v2/credentials v1.20.12 h1:6P7Q7yH/GIwHg6MLKv3ySsBqaCoE1z+C0OTzYMenhEY=
+-github.com/aws/aws-sdk-go-v2/credentials v1.20.12/go.mod h1:Kw/SaoW/wc7IqJErqXJIzKo8b7Aelxfbuc6XlbrRnsc=
+-github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.5 h1:iXjy2SFhGYNB1jWZBhQqq8HbhsbPF23w+/zbMvPXsTg=
+-github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.5/go.mod h1:k0RUiBnyXU0AXRJ9tJmY2jQke6XUIX2PNVnWtvgaPtc=
+-github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.23.18 h1:cNToRnziFY/DKoIUg9Vw350yx0sFfaN1FCJ+xVuF53Y=
+-github.com/aws/aws-sdk-go-v2/feature/s3/manager v1.23.18/go.mod h1:FQWrFCsxaXWlLBYB3YQOBx1zbfDNRrrVspVnnsTZ8Z0=
+-github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.8 h1:gzIWc3DTPfPbWKrQnmL6BV6WD7NPD1htxzgdk/bQ/Z4=
+-github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.8/go.mod h1:vvUA5cDAZWGo4R14FZPZfXfJCmgsafOWEq78Kg0D+ug=
+-github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.8 h1:PWv+vG8aCLS8qd+HPdYhK7Vees90aKHWFFQ1AGYD/8E=
+-github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.8.8/go.mod h1:xxPZEpflYHJA12366ZGyq66z9dHPCoeCIu99Jck+MPw=
+-github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.8 h1:WOp5De9iWdEHDPh2Kb0tBP3vGBm/dVAuRGh4a4tqduo=
+-github.com/aws/aws-sdk-go-v2/internal/v4a v1.5.8/go.mod h1:z8W8YgfhbWl62XqcTtK+CxPrE+iHGRVUOtrrbIOp7ZY=
+-github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.23 h1:MCIR6iZaCKO4UE0hUvoWWLI6JVjppopV64JfAJaMjng=
+-github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.23/go.mod h1:pphWFS+z0MmIPivj8c/6bATd1Z+Av7Ust75DPdEFsPA=
+-github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.9 h1:GACgECI422Xt5n4Pojr3O0aocPv8lfH4PJe2Aon5Wv8=
+-github.com/aws/aws-sdk-go-v2/service/internal/checksum v1.11.9/go.mod h1:lPfnRkHpn1qWZJLbVEw10rIqSuCee1pNQTyGkUjAYh8=
+-github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.8 h1:+PMpWlJYOn2tm7sm6OZ/ZLd4jStl17T7wjNapd1Rczs=
+-github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.14.8/go.mod h1:cnG3xZLGQL4c/bt8pjdzlFtZsW7epBBuNS04a5xMjdo=
+-github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.8 h1:RS1Wt+K0r4X0ci9Vf4JYTUfHzsQihYA2LgGJeEneKpk=
+-github.com/aws/aws-sdk-go-v2/service/internal/s3shared v1.20.8/go.mod h1:adMnTy5kyoUW86jhXnGSVc/mvMQI4GZd1qYWMeaS8M8=
+-github.com/aws/aws-sdk-go-v2/service/s3 v1.114.6 h1:to7+Vr3rLkpYRwVKJ5QRriI0eE306vrVN/6TnVHgxvY=
+-github.com/aws/aws-sdk-go-v2/service/s3 v1.114.6/go.mod h1:Jc89ASa2k7HMAskj3bSnt8bf+k+p2IApzkoXnEjkgUw=
+-github.com/aws/aws-sdk-go-v2/service/signin v1.12.0 h1:3vu/eUqh0rjh7Zy4N4YKcpZX4Aud+zinB3VsLhhlQFw=
+-github.com/aws/aws-sdk-go-v2/service/signin v1.12.0/go.mod h1:wxAk0D2oVBSjuXEIzvcKxTZfM90zticdAbh/VD42L0Y=
+-github.com/aws/aws-sdk-go-v2/service/sso v1.39.0 h1:kIEpD5dUry7VET3Ybl7zj7PPHRB4lb52G9iTz+a1Tqk=
+-github.com/aws/aws-sdk-go-v2/service/sso v1.39.0/go.mod h1:UGsEYgWz4Gi+46vDQ5zkFLqUgJziyOE2SXjZjgmfmHc=
+-github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.0 h1:WfFev+HgTodggcNon5HieiLxxwWwb8Br8R2+nDkixvk=
+-github.com/aws/aws-sdk-go-v2/service/ssooidc v1.44.0/go.mod h1:gJSdIY6YUzDvqQLcMtPVZgBRHrFwzHryvpE8Igzbxps=
+-github.com/aws/aws-sdk-go-v2/service/sts v1.51.6 h1:BVjKrtRUtSYKztBCCfE1oAB+d3ViKcW2cKZfserOqMQ=
+-github.com/aws/aws-sdk-go-v2/service/sts v1.51.6/go.mod h1:eSukFLeLkPMm+1OxDR+F0joauZdyBkF47Ow7MqjZiJw=
+-github.com/aws/smithy-go v1.28.7 h1:h/n1SHrwVtaDYLz8mR1/Kq4Xh4RaFbFW7bOYckg9mfE=
+-github.com/aws/smithy-go v1.28.7/go.mod h1:YE2RhdIuDbA5E5bTdciG9KrW3+TiEONeUWCqxX9i1Fc=
++github.com/aws/aws-sdk-go-v2 v1.48.0 h1:tFU7EJVm7MfyaXLsXdYTZ0Vd6vwt9OljCyqq0gqk0Mc=
++github.com/aws/aws-sdk-go-v2 v1.48.0/go.mod h1:oeKU5p+TQBnpeLmU42WZLWvzv+ORLn+74n4QVLnm/Z0=
++github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.27 h1:3dMP9eEmHVosFN1QiD24IJBKVY8m6iUfVYXqRCT118Q=
++github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.27/go.mod h1:KH4PKcqtjy1m0656eqQV2v53xE04ddJzuNloEKqlHkI=
++github.com/aws/aws-sdk-go-v2/config v1.33.19 h1:M0aPu5EdAMR6lGYN2GvM76WY0yqTyDi+gxV7s7Cdnr8=
++g
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3066** (2026-11-18): Upgrade dependencies via `go get` (@otoolep)
 - **PR #3065** (2026-11-18): Fix flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout (@otoolep)
 - **PR #3064** (2026-11-18): Shorten e2e test timeouts (@otoolep)
 - **PR #3063** (2026-11-18): Normalize timezone for JulianDay calculations (@otoolep)
 - **PR #3062** (2026-11-18): Capture 'now' once per statement when rewriting (@otoolep)
 - **PR #3060** (2026-11-17): Don't enforce timeouts for writes (@otoolep)
-- **PR #3056** (2026-11-17): Fix non-deterministic time rewrite when "now" is missing (@otoolep)
 
 ---
 
@@ -2244,44 +2314,31 @@ Shorten e2e test timeouts
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout
+## X. Update CHANGELOG.md
 
 **RULE**:
-When implementing operations in `store/store_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rqlite/rqlite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `20470c69`: flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5db0619d`: Update CHANGELOG.md. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `store/store_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// The timeout does apply to a request which only reads. The read is
-	// stalled until the timeout expires, so the outcome does not depend on
-	// the timeout expiring before a fast read completes.
-	eqr.Request.Statements[0].ForceStall = true
-	eqr.Request.DbTimeout = int64(20 * time.Millisecond)
-	r, _, _, err = s.Request(context.Background(), eqr)
-	if err != nil {
-		t.Fatalf("failed to execute read-only request on single node: %s", err.Error())
-	}
-	if len(r) != 1 || r[0].GetQ().GetError() != db.ErrQueryTimeout.Error() {
-		t.Fatalf("expected read-only request to time out, got %s", asJSON(r))
+- [PR #3063](https://github.com/rqlite/rqlite/pull/3063): Normalize timezone for _Julian Day_ calculations. Fixes issue [#3061](https://github.com/rqlite/rqlite/issues/3061). Thanks @clarkmcc
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	// The timeout does apply to a request which only reads.
-	eqr.Request.DbTimeout = 1
-	if _, _, _, err := s.Request(context.Background(), eqr); err == nil {
-		t.Fatalf("expected read-only request to time out")
+- [PR #3063](https://github.com/rqlite/rqlite/pull/3063): Normalize timezone for JulianDay calculations. Fixes issue [#3061](https://github.com/rqlite/rqlite/issues/3061). Thanks @clarkmcc
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `20470c69` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5db0619d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

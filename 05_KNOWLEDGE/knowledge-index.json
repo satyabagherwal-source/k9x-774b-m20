@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T23:26:56.797Z",
+  "last_updated": "2026-11-18T23:35:01.415Z",
   "total_verified_learnings": 9009,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21512,
+  "total_items": 21518,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113269,10 +113269,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "repository": "gocd/gocd",
-      "source_version": "fb93a763",
-      "content_hash": "56c4679a830d0d3ee2e3daaf968853b7a599a3809dd6f5e37c842f320d6eb710",
+      "source_version": "f1b08976",
+      "content_hash": "a129e68f5cc219689ae05a7c557e77e05d5e13e2d37896642e8a7df60f2d6e1b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T08:06:06.487Z"
+      "persisted_at": "2026-11-18T23:34:51.654Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd",
@@ -113281,10 +113281,10 @@
       "relative_path": "08_VERIFICATION/gocd-gocd-verification-protocol-empirical-defect-shield-for-gocd-gocd.md",
       "title": "Verification Protocol: Empirical Defect Shield for gocd/gocd",
       "repository": "gocd/gocd",
-      "source_version": "fb93a763",
-      "content_hash": "346bb9773848899276c2b7211962bd83d8a3e86e1068503929c90899b9968d23",
+      "source_version": "f1b08976",
+      "content_hash": "3f0baa1d8b258f261dfeae95695b67979955e71c8cd9363c198c63e4c6e90b9c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T08:06:06.728Z"
+      "persisted_at": "2026-11-18T23:34:51.808Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -113342,9 +113342,9 @@
       "title": "Technical Construction Intelligence: gocd-gocd-learnings Core Invariants",
       "repository": "gocd-gocd-learnings",
       "source_version": "HEAD",
-      "content_hash": "79761d1e124b3c3904999d717ab071c4067161e22b96f6b41f60f132931c2c6f",
+      "content_hash": "9eefaf1be380eb3f50f3f9c9dcf671c3bcafe1591d0b05840ab53b02e2d64e3b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T04:18:00.973Z"
+      "persisted_at": "2026-11-18T23:35:00.202Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-gocd-gocd-learnings",
@@ -113354,9 +113354,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for gocd-gocd-learnings",
       "repository": "gocd-gocd-learnings",
       "source_version": "HEAD",
-      "content_hash": "a309d014329330074767b7c9d5c8ab599c88d47925e6aaf96332c3e8f52a6ab2",
+      "content_hash": "0d28ab81c75aa63db043ef6291bf82c3038017b549f58e8ec8de49a761c36285",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T04:18:01.118Z"
+      "persisted_at": "2026-11-18T23:35:00.353Z"
     },
     "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
@@ -214705,9 +214705,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for trufflesecurity-trufflehog-learnings",
       "repository": "trufflesecurity-trufflehog-learnings",
       "source_version": "HEAD",
-      "content_hash": "5387b82543688c1ab0db23c45994cd727b8d9fe92f31a746207f48afa0d99ebc",
+      "content_hash": "647f7500554416ac833fa3c651a989bf9dc4f6ab2cd114ad7d04bbad53ccd09f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T23:53:00.080Z"
+      "persisted_at": "2026-11-18T23:35:01.415Z"
     },
     "learn-huggingface-cloudflare-clef-flash": {
       "learning_id": "learn-huggingface-cloudflare-clef-flash",
@@ -221987,8 +221987,8 @@
       "slug": "trufflesecurity-trufflehog",
       "platform": "github",
       "source_url": "https://github.com/trufflesecurity/trufflehog",
-      "source_version": "ffdee00a",
-      "content_hash": "086bdeecb96b71975a99ec59a539a0027c5c43ec4154808b738fa20c1f02aa26",
+      "source_version": "9529cc61",
+      "content_hash": "186a5248c3284caea4a040321b4f6942d3db16975e868f7081fd325ab5460e11",
       "dossier_path": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md",
       "promoted_rules": [
@@ -222006,6 +222006,11 @@
           "number": 8820,
           "title": "add upsert_error to AWSSecretsManager metadata",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9301,
+          "title": "Make result ordering more deterministic and scope dedupe to the job",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222013,7 +222018,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T23:52:55.719Z",
+      "verified_at": "2026-11-18T23:34:52.665Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222055,10 +222060,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trufflesecurity-trufflehog-architecture-intelligence-trufflesecurity-trufflehog-.md",
       "title": "Architecture Intelligence: trufflesecurity/trufflehog Core Invariants",
       "repository": "trufflesecurity/trufflehog",
-      "source_version": "ffdee00a",
-      "content_hash": "309653b71939fe7eaf413ee95e59c8c3497cee150ce7a334722d1cd9c66f23fa",
+      "source_version": "9529cc61",
+      "content_hash": "f672a35cd84e2c06af95b5e5b3bdd7bf5a49a8ed6cf73906f888795d2002f491",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T23:52:56.134Z"
+      "persisted_at": "2026-11-18T23:34:53.227Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-trufflesecurity-trufflehog": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-trufflesecurity-trufflehog",
@@ -222067,10 +222072,10 @@
       "relative_path": "08_VERIFICATION/trufflesecurity-trufflehog-verification-protocol-empirical-defect-shield-for-tru.md",
       "title": "Verification Protocol: Empirical Defect Shield for trufflesecurity/trufflehog",
       "repository": "trufflesecurity/trufflehog",
-      "source_version": "ffdee00a",
-      "content_hash": "20af8249ffd6a10c4db223b3139ec3a47bae187e1b27631bb1c2ff022c335709",
+      "source_version": "9529cc61",
+      "content_hash": "9c88c4887abfc0a681cd21b13ba3ace370e2f70bde1762196f133d81cb6ec7b1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T23:52:56.233Z"
+      "persisted_at": "2026-11-18T23:34:53.381Z"
     },
     "learn-github-matrixorigin-matrixone": {
       "learning_id": "learn-github-matrixorigin-matrixone",
@@ -225804,7 +225809,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "1b16d2f3a7636c37c60a2fc103fd26172c537f724b3feda47c735e5831dfb41d",
+      "content_hash": "2f28419bb7d9a57cbf7d4429850547e62cab60a5ca8dc944f39ec9db6ae1bb9c",
       "dossier_path": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md",
       "promoted_rules": [],
@@ -225813,7 +225818,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T07:17:51.325Z",
+      "verified_at": "2026-11-18T23:34:40.768Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225830,9 +225835,9 @@
       "title": "Research & Knowledge Intelligence: pablodawson/MiniMax-H3-360-Orbit-LoRA Core Invariants",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
       "source_version": "hf-pablodawson-minimax-h3-360-orbit-lora",
-      "content_hash": "83d848175cb8e753075a79e810198182d02d1068d0a97c90506b01007979986d",
+      "content_hash": "c73045fcb9b2c6a88c6309e90bf67901471f86f3d1a81a86b81265703ed75694",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T07:17:51.669Z"
+      "persisted_at": "2026-11-18T23:34:41.200Z"
     },
     "learn-github-matthart1983-netwatch": {
       "learning_id": "learn-github-matthart1983-netwatch",
@@ -226198,9 +226203,9 @@
       "title": "Research & Knowledge Intelligence: hf-pablodawson-minimax-h3-360-orbit-lora-learnings Core Invariants",
       "repository": "hf-pablodawson-minimax-h3-360-orbit-lora-learnings",
       "source_version": "HEAD",
-      "content_hash": "c3589934b81304188f59d76c00835de80437990a840e8b5e662bc3d65c674f74",
+      "content_hash": "143a12a8bc5a41f8d0ea1cff4235c0ec74a97175dd2657803a39fa67eb376209",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T07:19:17.950Z"
+      "persisted_at": "2026-11-18T23:34:59.181Z"
     },
     "domain_intelligence-quality-verification-intelligence-kgateway-dev-kgateway-learnings-core-invariant": {
       "item_id": "domain_intelligence-quality-verification-intelligence-kgateway-dev-kgateway-learnings-core-invariant",
@@ -230660,8 +230665,8 @@
       "slug": "rqlite-rqlite",
       "platform": "github",
       "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "338a824d",
-      "content_hash": "b09352c56b2dbec2c1fa5fd4804241750333422cc0cb63f50718b8d83d9acce8",
+      "source_version": "5db0619d",
+      "content_hash": "8e22db0e69dadad1c892de1dfbad69af8744d3c96369a7c04336f33d19910e3d",
       "dossier_path": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "promoted_rules": [
@@ -230694,6 +230699,11 @@
           "number": 9153,
           "title": "flaky Test_SingleNodeRequest_WriteIgnoresDBTimeout",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9302,
+          "title": "Update CHANGELOG.md",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230701,7 +230711,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T07:23:11.241Z",
+      "verified_at": "2026-11-18T23:34:55.351Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230743,10 +230753,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-architecture-intelligence-rqlite-rqlite-core-invariants.md",
       "title": "Architecture Intelligence: rqlite/rqlite Core Invariants",
       "repository": "rqlite/rqlite",
-      "source_version": "338a824d",
-      "content_hash": "65e78dac8b08fd4d3a8c41557bd48347c39b70a3966de3dbe7b13a92dda74d79",
+      "source_version": "5db0619d",
+      "content_hash": "37de53125192ff1d602ea613c286aea31df02f061e0d17d02cf2c8f607b2364a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T07:23:11.707Z"
+      "persisted_at": "2026-11-18T23:34:55.984Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rqlite-rqlite",
@@ -230755,10 +230765,10 @@
       "relative_path": "08_VERIFICATION/rqlite-rqlite-verification-protocol-empirical-defect-shield-for-rqlite-rqlite.md",
       "title": "Verification Protocol: Empirical Defect Shield for rqlite/rqlite",
       "repository": "rqlite/rqlite",
-      "source_version": "338a824d",
-      "content_hash": "7ba8797c8b90e5dbf8a1cd85b60bb7179a12940a014dfdff44aef10f69a2ce8a",
+      "source_version": "5db0619d",
+      "content_hash": "64b267c05666a72ef3ce00e5be6d5e3fc4fe3c29e7b98a61fa23d9c8b69cb144",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T07:23:11.824Z"
+      "persisted_at": "2026-11-18T23:34:56.136Z"
     },
     "rule-8495": {
       "learning_id": "rule-8495",
@@ -237053,8 +237063,8 @@
       "slug": "gocd-gocd",
       "platform": "github",
       "source_url": "https://github.com/gocd/gocd",
-      "source_version": "fb93a763",
-      "content_hash": "6888cb5de98f60e276572c5fbae156e241b4d9037531c4e42ce8e45d11fc94a9",
+      "source_version": "f1b08976",
+      "content_hash": "5373ada2c7049c951ab50a46336e08720e5f308378ff15fd186d2ab7021eed3e",
       "dossier_path": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/gocd-gocd-learnings.md",
       "promoted_rules": [
@@ -237087,6 +237097,11 @@
           "number": 9169,
           "title": "Blocking Entropy-Drain Guard for Headless Runtime Initialization",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9300,
+          "title": "remove hack for registry mirror login",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237094,7 +237109,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T08:06:05.718Z",
+      "verified_at": "2026-11-18T23:34:51.059Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -247689,13 +247704,13 @@
       "item_id": "candidate_directive-update-changelog-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-RRCG-update-changelog-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-DU1F-update-changelog-md.md",
       "title": "Update CHANGELOG.md",
-      "repository": "SeekStorm/SeekStorm",
-      "source_version": "c4888cbb",
-      "content_hash": "0312a193aa99d788c258c164c1e06b74f03515b79180408b77de37d82ab1c6f7",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-17T02:02:23.155Z"
+      "repository": "rqlite/rqlite",
+      "source_version": "5db0619d",
+      "content_hash": "35c6da34b7d7051fe86a561728418e0fb14f40a42f5d6dab166c6c1032366215",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T23:34:55.832Z"
     },
     "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-core-invariants",
@@ -249739,9 +249754,9 @@
       "title": "Architecture Intelligence: trufflesecurity-trufflehog-learnings Core Invariants",
       "repository": "trufflesecurity-trufflehog-learnings",
       "source_version": "HEAD",
-      "content_hash": "37b1bfa055c70b08daac240726da794c9d31cf368c03f3ce2235187fbf3b0add",
+      "content_hash": "04291e7c831c5e61a9102fdbe82d65524a2ff566f26cc21ee282d10527852ad7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T23:52:59.975Z"
+      "persisted_at": "2026-11-18T23:35:01.223Z"
     },
     "learn-huggingface-microsoft-florence-2-base": {
       "learning_id": "learn-huggingface-microsoft-florence-2-base",
@@ -290489,6 +290504,84 @@
       "content_hash": "2d6ee26dfd0f0025bea11dd294fe9101fbe52dca906181f7f42f6968f16ae3f6",
       "domain_letter": "H",
       "persisted_at": "2026-11-18T23:26:56.502Z"
+    },
+    "rule-9300": {
+      "learning_id": "rule-9300",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9300,
+      "title": "remove hack for registry mirror login",
+      "source_url": "https://github.com/gocd/gocd",
+      "source_version": "f1b08976",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T23:34:51.059Z"
+    },
+    "candidate_directive-remove-hack-for-registry-mirror-login": {
+      "item_id": "candidate_directive-remove-hack-for-registry-mirror-login",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DQO6-remove-hack-for-registry-mirror-login.md",
+      "title": "remove hack for registry mirror login",
+      "repository": "gocd/gocd",
+      "source_version": "f1b08976",
+      "content_hash": "834f0d92011a01272f2095b56963d17c02519eea5ab12c509bc64b4f3f7a9f1c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T23:34:51.463Z"
+    },
+    "rule-9301": {
+      "learning_id": "rule-9301",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9301,
+      "title": "Make result ordering more deterministic and scope dedupe to the job",
+      "source_url": "https://github.com/trufflesecurity/trufflehog",
+      "source_version": "9529cc61",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T23:34:52.665Z"
+    },
+    "candidate_directive-make-result-ordering-more-deterministic-and-scope-dedupe-to-the-job": {
+      "item_id": "candidate_directive-make-result-ordering-more-deterministic-and-scope-dedupe-to-the-job",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DY33-make-result-ordering-more-deterministic-and-scope-dedupe-to-the-job.md",
+      "title": "Make result ordering more deterministic and scope dedupe to the job",
+      "repository": "trufflesecurity-trufflehog-learnings",
+      "source_version": "HEAD",
+      "content_hash": "63cccf53f8c10e7fe55a1368598cca18bae050abba1a2a83d41a79ef1eb6d7b3",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-18T23:35:01.072Z"
+    },
+    "rule-9302": {
+      "learning_id": "rule-9302",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9302,
+      "title": "Update CHANGELOG.md",
+      "source_url": "https://github.com/rqlite/rqlite",
+      "source_version": "5db0619d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T23:34:55.351Z"
+    },
+    "candidate_directive-build-remove-hack-for-registry-mirror-login": {
+      "item_id": "candidate_directive-build-remove-hack-for-registry-mirror-login",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DXAA-build-remove-hack-for-registry-mirror-login.md",
+      "title": "build: remove hack for registry mirror login",
+      "repository": "gocd-gocd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "24be605f04c1fc86f22acd8813336f433a92be958f75a1d48363ecb63e2366c6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T23:35:00.035Z"
     }
   },
   "ai-builder-brain": {

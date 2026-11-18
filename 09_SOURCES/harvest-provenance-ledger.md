@@ -11165,3 +11165,7 @@ Every entry in this ledger must capture:
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `28b60e68` | Multi-dimensional audit evidence | 2026-11-18T23:26:14.876Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `e65f2831` | Multi-dimensional audit evidence | 2026-11-18T23:26:26.832Z |
 | `learn-dom-h-daff8dae` | `project://apache-shardingsphere` | `e65f2831` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md` | 2026-11-18T23:26:56.296Z |
+| `learn-huggingface-pablodawson-minimax-h3-360-orbit-lora` | `https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA` | `hf-pabloda` | Multi-dimensional audit evidence | 2026-11-18T23:34:40.991Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `f1b08976` | Multi-dimensional audit evidence | 2026-11-18T23:34:51.254Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `9529cc61` | Multi-dimensional audit evidence | 2026-11-18T23:34:52.859Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `5db0619d` | Multi-dimensional audit evidence | 2026-11-18T23:34:55.611Z |

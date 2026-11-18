@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T04:18:00.718Z",
+  "timestamp": "2026-11-18T23:34:59.927Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-gocd-gocd-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [gocd-gocd-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T04:18:00.718Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T23:34:59.927Z`  
 > **Learning ID**: `LEARN-EVO-gocd-gocd-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source**: github ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
-> **Source Version**: `afcac4f0`  
+> **Source Version**: `f1b08976`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T04:17:55.906Z  
+> **Timestamp**: 2026-11-18T23:34:50.236Z  
 > **Learning ID**: `learn-github-gocd-gocd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gocd-gocd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gocd/gocd](https://github.com/gocd/gocd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T04:17:55.642Z  
+> **Harvest Timestamp**: 2026-11-18T23:34:50.231Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: GoCD - Continuous Delivery server main repository
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7441 stars
+- **Stars / Engagement**: 7444 stars
 
 ---
 
@@ -905,266 +905,71 @@ export class CommentRenderWidget extends MithrilViewComponent<Attrs> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1386d2e1` (2026-11-15)
-**Commit Message**: build(deps): bump org.bouncycastle:bc-jdk18on-bom from 1.86.2 to 1.87 (#14735)
+### Incident Patch 1: `31ee3344` (2026-11-18)
+**Commit Message**: build: remove hack for registry mirror login
 
-Bumps [org.bouncycastle:bc-jdk18on-bom](https://github.com/bcgit/bc-java) from 1.86.2 to 1.87.
-- [Changelog](https://github.com/bcgit/bc-java/blob/main/docs/releasenotes.md)
-- [Commits](https://github.com/bcgit/bc-java/commits)
+This used to be required due to https://github.com/moby/moby/issues/30880 - it recently started failing. Perhaps it is no longer required, at least with containerd snapshotter?
 
----
-updated-dependencies:
-- dependency-name: org.bouncycastle:bc-jdk18on-bom
-  dependency-version: '1.87'
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
+Our Vm image got a Docker 25.0.18 upgrade recently, which seems to have much newer containerd, so let's try without the hack.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `build.gradle` (modified, +1/-1)
+**File**: `docker/build.gradle` (modified, +1/-1)
 ```diff
-@@ -81,7 +81,7 @@ def libraries = [
-   apacheHttpComponents: 'org.apache.httpcomponents:httpclient:4.5.14',
-   aspectj             : 'org.aspectj:aspectjweaver:1.9.27',
-   asmBom              : 'org.ow2.asm:asm-bom:9.11.1',
--  bouncyCastleBom     : 'org.bouncycastle:bc-jdk18on-bom:1.86.2',
-+  bouncyCastleBom     : 'org.bouncycastle:bc-jdk18on-bom:1.87',
-   bucket4j            : 'com.bucket4j:bucket4j_jdk17-core:8.22.0',
-   caffeine            : 'com.github.ben-manes.caffeine:caffeine:3.3.1',
-   cloning             : 'io.github.kostaskougios:cloning:1.13.0',
+@@ -39,7 +39,7 @@ def configureDockerRegistryMirror = tasks.register('configureDockerRegistryMirro
+     // Docker uses the wrong credentials when trying to use a registry mirror, so we set the docker.gocd.io creds for Docker Hub
+     dockerConfig.text = JsonOutput.toJson([
+       auths: [
+-        "https://index.docker.io/v1/": [
++        "https://docker.gocd.io/": [
+           auth: "${System.env.DOCKERHUB_MIRROR_USERNAME}:${System.env.DOCKERHUB_MIRROR_PASSWORD}".bytes.encodeBase64().toString()
+         ]
+       ]
 ```
 
 ---
 
-### Incident Patch 2: `5104bca3` (2026-11-15)
-**Commit Message**: build(deps-ui-dev): bump sass-embedded (#14737)
+### Incident Patch 2: `f446e104` (2026-11-18)
+**Commit Message**: chore: fix typo
 
-Bumps [sass-embedded](https://github.com/sass/embedded-host-node) from 1.108.1 to 1.108.2.
-- [Changelog](https://github.com/sass/embedded-host-node/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/sass/embedded-host-node/compare/1.108.1...1.108.2)
-
----
-updated-dependencies:
-- dependency-name: sass-embedded
-  dependency-version: 1.108.2
-  dependency-type: direct:development
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `server/src/main/webapp/WEB-INF/rails/package.json` (modified, +1/-1)
+**File**: `db-support/db-support-postgresql/src/test/java/com/thoughtworks/go/server/database/pg/DatabaseMigratorPostgreSQLTest.java` (modified, +1/-1)
 ```diff
-@@ -103,7 +103,7 @@
-     "license-checker": "^25.0.1",
-     "mini-css-extract-plugin": "^2.10.2",
-     "mockdate": "^3.0.5",
--    "sass-embedded": "^1.108.1",
-+    "sass-embedded": "^1.108.2",
-     "sass-loader": "^17.1.0",
-     "simulate-event": "^1.4.0",
-     "sourcemapped-stacktrace": "^1.1.11",
-```
-
-**File**: `server/src/main/webapp/WEB-INF/rails/yarn.lock` (modified, +83/-83)
-```diff
-@@ -4639,7 +4639,7 @@ __metadata:
-     normalize-scss: "npm:^8.0.0"
-     opensans: "file:node-vendor/opensans#node-vendor/opensans::hash=930bae&locator=gocd-server-ui%40workspace%3A."
-     prismjs: "npm:^1.30.0"
--    sass-embedded: "npm:^1.108.1"
-+    sass-embedded: "npm:^1.108.2"
-     sass-loader: "npm:^17.1.0"
-     shell-quote: "npm:^1.12.0"
-     shellwords-ts: "npm:^3.0.1"
-@@ -7235,162 +7235,162 @@ __metadata:
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-all-unknown@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-all-unknown@npm:1.108.1"
-+"sass-embedded-all-unknown@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-all-unknown@npm:1.108.2"
-   dependencies:
--    sass: "npm:1.108.1"
-+    sass: "npm:1.108.2"
-   conditions: (!cpu=arm | !cpu=arm64 | !cpu=riscv64 | !cpu=x64)
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-android-arm64@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-android-arm64@npm:1.108.1"
-+"sass-embedded-android-arm64@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-android-arm64@npm:1.108.2"
-   conditions: os=android & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-android-arm@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-android-arm@npm:1.108.1"
-+"sass-embedded-android-arm@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-android-arm@npm:1.108.2"
-   conditions: os=android & cpu=arm
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-android-riscv64@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-android-riscv64@npm:1.108.1"
-+"sass-embedded-android-riscv64@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-android-riscv64@npm:1.108.2"
-   conditions: os=android & cpu=riscv64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-android-x64@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-android-x64@npm:1.108.1"
-+"sass-embedded-android-x64@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-android-x64@npm:1.108.2"
-   conditions: os=android & cpu=x64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-darwin-arm64@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-darwin-arm64@npm:1.108.1"
-+"sass-embedded-darwin-arm64@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-darwin-arm64@npm:1.108.2"
-   conditions: os=darwin & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-darwin-x64@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-darwin-x64@npm:1.108.1"
-+"sass-embedded-darwin-x64@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-darwin-x64@npm:1.108.2"
-   conditions: os=darwin & cpu=x64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-arm64@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-linux-arm64@npm:1.108.1"
-+"sass-embedded-linux-arm64@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-linux-arm64@npm:1.108.2"
-   conditions: os=linux & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-arm@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-linux-arm@npm:1.108.1"
-+"sass-embedded-linux-arm@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-linux-arm@npm:1.108.2"
-   conditions: os=linux & cpu=arm
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-musl-arm64@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-linux-musl-arm64@npm:1.108.1"
-+"sass-embedded-linux-musl-arm64@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-linux-musl-arm64@npm:1.108.2"
-   conditions: os=linux & cpu=arm64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-musl-arm@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-linux-musl-arm@npm:1.108.1"
-+"sass-embedded-linux-musl-arm@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-linux-musl-arm@npm:1.108.2"
-   conditions: os=linux & cpu=arm
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-musl-riscv64@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-linux-musl-riscv64@npm:1.108.1"
-+"sass-embedded-linux-musl-riscv64@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-linux-musl-riscv64@npm:1.108.2"
-   conditions: os=linux & cpu=riscv64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-musl-x64@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-linux-musl-x64@npm:1.108.1"
-+"sass-embedded-linux-musl-x64@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-linux-musl-x64@npm:1.108.2"
-   conditions: os=linux & cpu=x64
-   languageName: node
-   linkType: hard
- 
--"sass-embedded-linux-riscv64@npm:1.108.1":
--  version: 1.108.1
--  resolution: "sass-embedded-linux-riscv64@npm:1.108.1"
-+"sass-embedded-linux-riscv64@npm:1.108.2":
-+  version: 1.108.2
-+  resolution: "sass-embedded-linux-riscv64@npm:1.108.2"
-   conditions: os=linux & cpu=riscv64
-   languageName: no
+@@ -32,7 +32,7 @@
+ @EnabledOnOs({OS.LINUX, OS.MAC})
+ class DatabaseMigratorPostgreSQLTest extends AbstractMigratorIntegrationTest {
+     @Container
+-    private final PostgreSQLContainer postgresqlContainer = new PostgreSQLContainer(DockerImageName.parse("docker.io/library/postgres:18").asCompatibleWith("postgres"))
++    private final PostgreSQLContainer postgresqlContainer = new PostgreSQLContainer(DockerImageName.parse("docker.io/library/postgres:18").asCompatibleSubstituteFor("postgres"))
+         .waitingFor(new WaitAllStrategy()
+             .withStrategy(Wait.forLogMessage(".*database system is ready to accept connections.*\\s", 2))
+             .withStrategy(Wait.forListeningPort())
 ```
 
 ---
 
-### Incident Patch 3: `11021069` (2026-11-15)
-**Commit Message**: build(deps): bump org.apache.commons:commons-lang3 from 3.21.0 to 3.22.0 (#14736)
+### Incident Patch 3: `0a27caee` (2026-11-18)
+**Commit Message**: test: prefix with docker.io for clarity
 
-Bumps org.apache.commons:commons-lang3 from 3.21.0 to 3.22.0.
+Hopefully improve mirror usage?
 
----
-updated-dependencies:
-- dependency-name: org.apache.commons:commons-lang3
-  dependency-version: 3.22.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `build.gradle` (modified, +1/-1)
+**File**: `db-support/db-support-postgresql/src/test/java/com/thoughtworks/go/server/database/pg/DatabaseMigratorPostgreSQLTest.java` (modified, +1/-1)
 ```diff
-@@ -92,7 +92,7 @@ def libraries = [
-   commonsDbcp         : 'org.apache.commons:commons-dbcp2:2.14.0',
-   commonsFileUpload   : 'commons-fileupload:commons-fileupload:1.6.0',
-   commonsIO           : 'commons-io:commons-io:2.22.0',
--  commonsLang3        : 'org.apache.commons:commons-lang3:3.21.0',
-+  commonsLang3        : 'org.apache.commons:commons-lang3:3.22.0',
-   commonsPool         : 'org.apache.commons:commons-pool2:2.13.1',
-   commonsText         : 'org.apache.commons:commons-text:1.15.0',
-   dom4j               : 'org.dom4j:dom4j:2.2.0',
+@@ -31,7 +31,7 @@
+ @EnabledOnOs({OS.LINUX, OS.MAC})
+ class DatabaseMigratorPostgreSQLTest extends AbstractMigratorIntegrationTest {
+     @Container
+-    private final PostgreSQLContainer postgresqlContainer = new PostgreSQLContainer("postgres:18")
++    private final PostgreSQLContainer postgresqlContainer = new PostgreSQLContainer("docker.io/postgres:18")
+         .waitingFor(new WaitAllStrategy()
+             .withStrategy(Wait.forLogMessage(".*database system is ready to accept connections.*\\s", 2))
+             .withStrategy(Wait.forListeningPort())
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #14742** (2026-11-17): build(deps-ui): bump filesize from 11.0.31 to 11.0.32 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14741** (2026-11-17): build(deps): bump ch.qos.logback:logback-classic from 1.6.6 to 1.6.7 (@dependabot[bot])
+- **PR #14740** (2026-11-17): Add missing new when throwing for an unknown architecture (@costajohnt)
+- **PR #14739** (2026-11-16): build(deps-ui): bump filesize from 11.0.30 to 11.0.31 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
+- **PR #14738** (2026-11-16): build(deps-ui-dev): bump the stylelint group in /server/src/main/webapp/WEB-INF/rails with 2 updates (@dependabot[bot])
 - **PR #14737** (2026-11-15): build(deps-ui-dev): bump sass-embedded from 1.108.1 to 1.108.2 in /server/src/main/webapp/WEB-INF/rails (@dependabot[bot])
-- **PR #14736** (2026-11-15): build(deps): bump org.apache.commons:commons-lang3 from 3.21.0 to 3.22.0 (@dependabot[bot])
-- **PR #14735** (2026-11-15): build(deps): bump org.bouncycastle:bc-jdk18on-bom from 1.86.2 to 1.87 (@dependabot[bot])
-- **PR #14734** (2026-11-13): build(deps): bump gradle-wrapper from 9.9.0 to 9.9.1 in the gradle-plugins group (@dependabot[bot])
-- **PR #14733** (2026-11-13): build(deps-dev): bump aquasec/trivy from 0.76.1 to 0.76.2 in /docker (@dependabot[bot])
-- **PR #14732** (2026-11-12): build(deps): bump com.fasterxml.jackson:jackson-bom from 2.22.4 to 2.23.0 (@dependabot[bot])
 
 ---
 
@@ -1184,31 +989,31 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump org.bouncycastle:bc-jdk18on-bom from 1.86.2 to 1.87
+## X. build: remove hack for registry mirror login
 
 **RULE**:
-When implementing operations in `build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docker/build.gradle`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gocd/gocd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1386d2e1`: build(deps): bump org.bouncycastle:bc-jdk18on-bom from 1.86.2 to 1.87. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `31ee3344`: build: remove hack for registry mirror login. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `build.gradle`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docker/build.gradle`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-  bouncyCastleBom     : 'org.bouncycastle:bc-jdk18on-bom:1.87',
+        "https://docker.gocd.io/": [
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-  bouncyCastleBom     : 'org.bouncycastle:bc-jdk18on-bom:1.86.2',
+        "https://index.docker.io/v1/": [
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1386d2e1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `31ee3344` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

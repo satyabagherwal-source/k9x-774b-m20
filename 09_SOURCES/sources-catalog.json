@@ -1065,8 +1065,8 @@
     "sourceUrl": "https://huggingface.co/pablodawson/MiniMax-H3-360-Orbit-LoRA",
     "sourceVersion": "hf-pablodawson-minimax-h3-360-orbit-lora",
     "license": "Open-Source",
-    "contentHash": "1b16d2f3a7636c37c60a2fc103fd26172c537f724b3feda47c735e5831dfb41d",
-    "lastHarvestedAt": "2026-11-14T07:17:51.498Z",
+    "contentHash": "2f28419bb7d9a57cbf7d4429850547e62cab60a5ca8dc944f39ec9db6ae1bb9c",
+    "lastHarvestedAt": "2026-11-18T23:34:40.991Z",
     "learningId": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora"
   },
   "hf-venastine-research-xing4.0-29b-a4b-gguf": {
@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "ffdee00a",
+    "sourceVersion": "9529cc61",
     "license": "AGPL-3.0",
-    "contentHash": "086bdeecb96b71975a99ec59a539a0027c5c43ec4154808b738fa20c1f02aa26",
-    "lastHarvestedAt": "2026-11-16T23:52:55.862Z",
+    "contentHash": "186a5248c3284caea4a040321b4f6942d3db16975e868f7081fd325ab5460e11",
+    "lastHarvestedAt": "2026-11-18T23:34:52.859Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {
@@ -4913,10 +4913,10 @@
     "repository": "rqlite/rqlite",
     "platform": "github",
     "sourceUrl": "https://github.com/rqlite/rqlite",
-    "sourceVersion": "338a824d",
+    "sourceVersion": "5db0619d",
     "license": "MIT",
-    "contentHash": "b09352c56b2dbec2c1fa5fd4804241750333422cc0cb63f50718b8d83d9acce8",
-    "lastHarvestedAt": "2026-11-18T07:23:11.404Z",
+    "contentHash": "8e22db0e69dadad1c892de1dfbad69af8744d3c96369a7c04336f33d19910e3d",
+    "lastHarvestedAt": "2026-11-18T23:34:55.611Z",
     "learningId": "learn-github-rqlite-rqlite"
   },
   "arco-design-arco-design": {
@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "fb93a763",
+    "sourceVersion": "f1b08976",
     "license": "Apache-2.0",
-    "contentHash": "6888cb5de98f60e276572c5fbae156e241b4d9037531c4e42ce8e45d11fc94a9",
-    "lastHarvestedAt": "2026-11-18T08:06:05.891Z",
+    "contentHash": "5373ada2c7049c951ab50a46336e08720e5f308378ff15fd186d2ab7021eed3e",
+    "lastHarvestedAt": "2026-11-18T23:34:51.254Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {

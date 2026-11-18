@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T23:26:56.656Z",
+  "last_updated": "2026-11-18T23:35:01.223Z",
   "total_records": 1918,
   "domains": {
     "A": {
@@ -8312,8 +8312,8 @@
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "repository": "gocd/gocd",
-      "content_hash": "56c4679a830d0d3ee2e3daaf968853b7a599a3809dd6f5e37c842f320d6eb710",
-      "created_at": "2026-11-18T08:06:06.487Z"
+      "content_hash": "a129e68f5cc219689ae05a7c557e77e05d5e13e2d37896642e8a7df60f2d6e1b",
+      "created_at": "2026-11-18T23:34:51.654Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -8390,8 +8390,8 @@
       "title": "Technical Construction Intelligence: gocd-gocd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-learnings-technical-construction-intelligence-gocd-gocd-learnings-core.md",
       "repository": "gocd-gocd-learnings",
-      "content_hash": "79761d1e124b3c3904999d717ab071c4067161e22b96f6b41f60f132931c2c6f",
-      "created_at": "2026-11-16T04:18:00.973Z"
+      "content_hash": "9eefaf1be380eb3f50f3f9c9dcf671c3bcafe1591d0b05840ab53b02e2d64e3b",
+      "created_at": "2026-11-18T23:35:00.202Z"
     },
     "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-taichuai-zdtaichu5-0-9b-core-invariants",
@@ -12632,8 +12632,8 @@
       "title": "Architecture Intelligence: trufflesecurity/trufflehog Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trufflesecurity-trufflehog-architecture-intelligence-trufflesecurity-trufflehog-.md",
       "repository": "trufflesecurity/trufflehog",
-      "content_hash": "309653b71939fe7eaf413ee95e59c8c3497cee150ce7a334722d1cd9c66f23fa",
-      "created_at": "2026-11-16T23:52:56.134Z"
+      "content_hash": "f672a35cd84e2c06af95b5e5b3bdd7bf5a49a8ed6cf73906f888795d2002f491",
+      "created_at": "2026-11-18T23:34:53.227Z"
     },
     "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-core-invariants",
@@ -13956,8 +13956,8 @@
       "title": "Research & Knowledge Intelligence: pablodawson/MiniMax-H3-360-Orbit-LoRA Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pablodawson-minimax-h3-360-orbit-lora-research-knowledge-intelligence-pabloda.md",
       "repository": "pablodawson/MiniMax-H3-360-Orbit-LoRA",
-      "content_hash": "83d848175cb8e753075a79e810198182d02d1068d0a97c90506b01007979986d",
-      "created_at": "2026-11-14T07:17:51.669Z"
+      "content_hash": "c73045fcb9b2c6a88c6309e90bf67901471f86f3d1a81a86b81265703ed75694",
+      "created_at": "2026-11-18T23:34:41.200Z"
     },
     "domain_intelligence-architecture-intelligence-matthart1983-netwatch-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-matthart1983-netwatch-core-invariants",
@@ -14085,8 +14085,8 @@
       "title": "Research & Knowledge Intelligence: hf-pablodawson-minimax-h3-360-orbit-lora-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-pablodawson-minimax-h3-360-orbit-lora-learnings-research-knowledge-intelligen.md",
       "repository": "hf-pablodawson-minimax-h3-360-orbit-lora-learnings",
-      "content_hash": "c3589934b81304188f59d76c00835de80437990a840e8b5e662bc3d65c674f74",
-      "created_at": "2026-11-14T07:19:17.950Z"
+      "content_hash": "143a12a8bc5a41f8d0ea1cff4235c0ec74a97175dd2657803a39fa67eb376209",
+      "created_at": "2026-11-18T23:34:59.181Z"
     },
     "DOM-K-2852CE47": {
       "record_id": "DOM-K-2852CE47",
@@ -15795,8 +15795,8 @@
       "title": "Architecture Intelligence: rqlite/rqlite Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rqlite-rqlite-architecture-intelligence-rqlite-rqlite-core-invariants.md",
       "repository": "rqlite/rqlite",
-      "content_hash": "65e78dac8b08fd4d3a8c41557bd48347c39b70a3966de3dbe7b13a92dda74d79",
-      "created_at": "2026-11-18T07:23:11.707Z"
+      "content_hash": "37de53125192ff1d602ea613c286aea31df02f061e0d17d02cf2c8f607b2364a",
+      "created_at": "2026-11-18T23:34:55.984Z"
     },
     "domain_intelligence-research-knowledge-intelligence-higurashi-ai-haru-4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-higurashi-ai-haru-4b-core-invariants",
@@ -22376,8 +22376,8 @@
       "title": "Architecture Intelligence: trufflesecurity-trufflehog-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trufflesecurity-trufflehog-learnings-architecture-intelligence-trufflesecurity-t.md",
       "repository": "trufflesecurity-trufflehog-learnings",
-      "content_hash": "37b1bfa055c70b08daac240726da794c9d31cf368c03f3ce2235187fbf3b0add",
-      "created_at": "2026-11-16T23:52:59.975Z"
+      "content_hash": "04291e7c831c5e61a9102fdbe82d65524a2ff566f26cc21ee282d10527852ad7",
+      "created_at": "2026-11-18T23:35:01.223Z"
     },
     "domain_intelligence-research-knowledge-intelligence-microsoft-florence-2-base-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-microsoft-florence-2-base-core-invariants",

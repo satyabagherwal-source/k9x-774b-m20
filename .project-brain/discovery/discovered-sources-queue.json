@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T23:18:31.094Z",
+  "updated_at": "2026-11-18T23:34:59.622Z",
   "stats": {
-    "total_discovered": 5722,
-    "approved_pending_harvest": 5413,
+    "total_discovered": 5724,
+    "approved_pending_harvest": 5415,
     "harvested_count": 0,
     "rejected_count": 309,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5390,
+      "COMMUNITY_AND_EXPERT": 5392,
       "OFFICIAL_DOCUMENTATION": 185,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -123742,6 +123742,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
         "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-4D0537A328C4": {
+      "id": "SRC-4D0537A328C4",
+      "url": "https://github.com/moby/moby/issues/30880",
+      "title": "https://github.com/moby/moby/issues/30880",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T23:34:59.561Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-6212EFDE92EF": {
+      "id": "SRC-6212EFDE92EF",
+      "url": "https://docker.gocd.io/",
+      "title": "https://docker.gocd.io/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T23:34:59.622Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
+        "fileName": "gocd-gocd-learnings.md"
       }
     }
   }
