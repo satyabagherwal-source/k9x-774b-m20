@@ -4,24 +4,24 @@
 {
   "source_repository": "lancedb/lancedb",
   "source_url": "https://github.com/lancedb/lancedb",
-  "source_version": "16af7297",
+  "source_version": "a6d7d02f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T19:27:36.163Z",
+  "timestamp": "2026-11-18T13:17:32.479Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-lancedb-lancedb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [lancedb/lancedb](https://github.com/lancedb/lancedb) (Revision: `16af7297`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T19:27:36.163Z`  
+> **Provenance**: Harvested from [lancedb/lancedb](https://github.com/lancedb/lancedb) (Revision: `a6d7d02f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T13:17:32.479Z`  
 > **Learning ID**: `learn-github-lancedb-lancedb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from lancedb/lancedb:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/lancedb-lancedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/lancedb/lancedb](https://github.com/lancedb/lancedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T19:27:34.970Z  
+> **Harvest Timestamp**: 2026-11-18T13:17:31.025Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Developer-friendly OSS embedded retrieval library for multimodal AI. Search More; Manage Less.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11917 stars
+- **Stars / Engagement**: 11934 stars
 
 ---
 
@@ -1247,11 +1247,11 @@ pub fn rename_column(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5084** (2026-11-18): **fix(python): allow static diagnostic imports in Functions**
+  *Symptoms*: Functions previously rejected every `sys` or `importlib` import even when the source only used a statically visible diagnostic. Allow exactly `sys.stderr`, `sys.version_info`, and `importlib.metadata.version`, with direct imports, `from` imports, and aliases treated identically whether they appear at module level or inside the function or class body.  Every other use of a namespace-access module still fails at decoration. The error now names the rejected operation, such as `sys.modules`, and lists the supported diagnostic operations.  Tests package and execute the artifact offline for each import form, and reject unsupported attributes, submodules, dynamic attribute access, and rebinding. ENT-3918. 
+
 - **Issue #5073** (2026-11-17): **fix(deps): ignore unmaintained chrono family advisories**
   *Symptoms*: `cargo deny` fails on main because RUSTSEC-2026-0543 (`chrono`), RUSTSEC-2026-0555 (`chrono-tz`) and RUSTSEC-2026-0542 (`humantime`) mark the chrono family unmaintained. Add exceptions reviewed on 2026-11-17, with the advisory links and the upstream migration constraint; none of the three is a vulnerability and RustSec lists no patched version for any of them (chrono recommends jiff/time).  Dependency paths (from `cargo tree -i` at version fb34b1c7 of main):  - `chrono` 0.4.45: arrow 59 / datafusion 55 and the lance stack, across the workspace. - `chrono-tz` 0.10.4: arrow-array → arrow → datafusion/lance. - `humantime` 2.3.0: lance, object_store (through datafusion), and xet-runtime.  Clearing the advisories requires the arrow/datafusion/lance ecosystem to migrate off chrono; no upstream fix exists to consume. Also remove the RUSTSEC-2026-0441 `pin-utils` ignore, which the current lockfile no longer needs.  Validation on commit 04259a04 (cargo-deny 0.21.0, the version the CI action installs):  - Before: `cargo deny check advisories` failed on the three chrono-family advisories, and warned that the pin-utils ignore was not encountered. - After: `cargo deny check advisories bans licenses sources` passes all four checks, matching the Rust CI deny job. - `git diff --check` passes. 
-
-- **Issue #5071** (2026-11-17): **fix(remote): forward job statistics through refresh handles**
-  *Symptoms*: A Function refresh submitted through the LanceDB SDK returns a handle wrapped for read-freshness tracking. lancedb/lancedb#5016 added canonical `Job::stats()` on the server-job handle, but the refresh wrapper did not forward `stats`. The returned handle therefore reported `job statistics is only available for server-side jobs`, while `db.open_job(<same id>).stats()` returned the server report.  Forward `stats` through the refresh wrapper and cover it at the public refresh entry point. The regression submits with `refresh_column_async`, then reads `stats` from that returned handle without reopening the job. With the forwarding removed, the test fails with the same `NotSupported` error; with the change, it passes.  Validation on `57b20fb11`: the targeted Rust test passed, `cargo fmt --check` passed, and `cargo clippy -p lancedb --features remote --lib --tests -- -D warnings` passed.  Part of ENT-3974. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1268,291 +1268,569 @@ pub fn rename_column(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `16708593` (2026-11-17)
-**Commit Message**: fix(deps): ignore unmaintained chrono family advisories (#5073)
+### Incident Patch 1: `a653d861` (2026-11-18)
+**Commit Message**: fix(python): allow static diagnostic imports in Functions (#5084)
 
-`cargo deny` fails on main because RUSTSEC-2026-0543 (`chrono`),
-RUSTSEC-2026-0555 (`chrono-tz`) and RUSTSEC-2026-0542 (`humantime`) mark
-the chrono family unmaintained. Add exceptions reviewed on 2026-11-17,
-with the advisory links and the upstream migration constraint; none of
-the three is a vulnerability and RustSec lists no patched version for
-any of them (chrono recommends jiff/time).
+Functions previously rejected every `sys` or `importlib` import even
+when the source only used a statically visible diagnostic. Allow exactly
+`sys.stderr`, `sys.version_info`, and `importlib.metadata.version`, with
+direct imports, `from` imports, and aliases treated identically whether
+they appear at module level or inside the function or class body.
 
-Dependency paths (from `cargo tree -i` at version fb34b1c7 of main):
+Every other use of a namespace-access module still fails at decoration.
+The error now names the rejected operation, such as `sys.modules`, and
+lists the supported diagnostic operations.
 
-- `chrono` 0.4.45: arrow 59 / datafusion 55 and the lance stack, across
-the workspace.
-- `chrono-tz` 0.10.4: arrow-array → arrow → datafusion/lance.
-- `humantime` 2.3.0: lance, object_store (through datafusion), and
-xet-runtime.
+Tests package and execute the artifact offline for each import form, and
+reject unsupported attributes, submodules, dynamic attribute access, and
+rebinding. ENT-3918.
 
-Clearing the advisories requires the arrow/datafusion/lance ecosystem to
-migrate off chrono; no upstream fix exists to consume. Also remove the
-RUSTSEC-2026-0441 `pin-utils` ignore, which the current lockfile no
-longer needs.
-
-Validation on commit 04259a04 (cargo-deny 0.21.0, the version the CI
-action installs):
-
-- Before: `cargo deny check advisories` failed on the three
-chrono-family advisories, and warned that the pin-utils ignore was
-
-**File**: `deny.toml` (modified, +24/-6)
+**File**: `docs/src/python/python.md` (modified, +35/-13)
 ```diff
-@@ -132,13 +132,31 @@ ignore = [
-     { id = "RUSTSEC-2026-0398", reason = "zstd-safe 7 via arrow-ipc 58; affected seekable API is not enabled" },
-     { id = "RUSTSEC-2026-0403", reason = "zstd-safe 7 via arrow-ipc 58; affected streaming decoder API is unused" },
+@@ -481,19 +481,41 @@ scaler.close()
+ ### Function packaging restrictions
  
--    # pin-utils: unmaintained; reviewed 2026-11-05. Transitive via
--    # aws-smithy-http/runtime/types, including aws-config -> lance-io.
--    # No safe upgrade exists; clearing requires AWS Smithy to migrate to
--    # core::pin::pin!, pin-project, or pin-project-lite. Revisit on AWS updates.
-+    # pin-utils: unmaintained; reviewed 2026-11-05, removed 2026-11-17 after
-+    # the lockfile dropped the aws-smithy pins that carried it.
-     # https://rustsec.org/advisories/RUSTSEC-2026-0441
--    # https://github.com/rustsec/advisory-db/issues/3314
--    { id = "RUSTSEC-2026-0441", reason = "pin-utils unmaintained via AWS Smithy; no safe upgrade, awaiting upstream migration" },
+ The decorator snapshots the Function's source and referenced globals into a new
+-module. It conservatively rejects imports of `sys`, `builtins`, `importlib`,
+-`inspect`, `gc`, `ctypes`, and `types`, including submodules such as `ctypes.util`
+-and `importlib.metadata`. This applies to imports inside function or class bodies
+-and references to module-level aliases. Even ordinary uses such as `sys.version`
+-and `ctypes.util.find_library` are blocked: these modules can reach names outside
+-the reconstructed Function namespace. References to `globals`, `locals`, `vars`,
+-`eval`, `exec`, `compile`, and `__import__` are rejected as dynamic namespace access.
+-These restrictions also apply to the deprecated `@udf` alias.
+-
+-For legitimate uses, move the code into an importable helper module and ship it
+-with `code=`, or install its package with `pip=` or `conda=`. Imported helpers keep
+-their own namespace; the packager does not scan their bodies. Helpers defined in
+-`__main__` are copied by source and have the same restrictions as the Function.
++module. It supports three statically recognizable diagnostic operations:
++`sys.stderr`, `sys.version_info`, and `importlib.metadata.version`. Direct
++imports, `from` imports, and aliases are treated the same way, whether the
++import appears inside a function or class body or at module level.
 +
-+    # chrono: unmaintained; reviewed 2026-11-17. Informational notice, not a
-+    # vulnerability. Transitive via arrow 59 / datafusion 55 and the lance
-+    # stack throughout the workspace. RustSec lists no patched version and
-+    # recommends jiff/time; clearing it requires the arrow/datafusion/lance
-+    # ecosystem to migrate.
-+    # https://rustsec.org/advisories/RUSTSEC-2026-0543
-+    { id = "RUSTSEC-2026-0543", reason = "chrono unmaintained via arrow/datafusion/lance; no fixed upstream release, awaiting ecosystem migration" },
++Other imports of `sys`, `builtins`, `importlib`, `inspect`, `gc`, `ctypes`, and
++`types`, including submodules such as `ctypes.util` and `importlib.resources`,
++remain blocked. This applies to imports inside function or class bodies and
++references to module-level aliases. Even ordinary uses such as `sys.version`
++and `ctypes.util.find_library` are blocked: these modules can reach names
++outside the reconstructed Function namespace. References to `globals`, `locals`,
++`vars`, `eval`, `exec`, `compile`, and `__import__` are rejected as dynamic
++namespace access. These restrictions also apply to the deprecated `@udf` alias.
 +
-+    # chrono-tz: unmaintained; reviewed 2026-11-17. Informational notice, not
-+    # a vulnerability. Transitive via arrow-array → arrow → datafusion/lance.
-+    # No patched version exists; clearing it needs the same ecosystem
-+    # migration off chrono as RUSTSEC-2026-0543.
-+    # https://rustsec.org/advisories/RUSTSEC-2026-0555
-+    { id = "RUSTSEC-2026-0555", reason = "chrono-tz unmaintained via arrow/datafusion/lance; no fixed upstream release" },
++For example, a diagnostic Function can report its Python version and NumPy
++version without a helper module:
 +
-+    # humantime: unmaintained; reviewed 2026-11-17. Informational notice, not
-+    # a vulnerability. Transitive via lance, object_store (through datafusion)
-+    # and xet-runtime. No patched version exists; the advisory follows chrono's
-+    # maintenance status.
-+    # https://rustsec.org/advisories/RUSTSEC-2026-0542
-+    { id = "RUSTSEC-2026-0542", reason = "humantime unmaintained via lance/object_store/xet-runtime; no fixed upstream release" },
- ]
++```python
++import importlib.metadata
++import sys
++
++from lancedb import function
++
++
++@function(pip=["numpy"])
++def report(value: int) -> str:
++    print("diagnostic", file=sys.stderr)
++    return f"numpy {importlib.metadata.version('numpy')} on {sys.version_info}"
++```
++
++For other restricted uses, move the code into an importable helper module and
++ship it with `code=`, or install its package with `pip=` or `conda=`. Imported
++helpers keep their own namespace; the packager does not scan their bodies.
++Helpers defined in `__main__` are copied by source and have the same
++restrictions as the Function.
+ 
+ For example, put this helper in `native_diagnostics/__init__.py`:
+ 
+```
+
+**File**: `docs/web/management/function.mdx` (modified, +19/-0)
+```diff
+@@ -767,6 +767,25 @@ seen and unsupported where it cannot: `globals()`, `eval`, `sys.modules`,
+ `builtins`. Closures and a non-standard `__builtins__` are rejected outright.
+ </Warning>
+ 
++Three statically recognizable diagnostic operations are supported: `sys.stderr`,
++`sys.version_info`, and `importlib.metadata.version`. Direct imports, `from`
++imports, and aliases work the same way. Any other use of `sys`, `builtins`,
++`importlib`, `inspect`, `gc`, `ctypes`, or `types` is rejected; move it into an
++importable helper module.
++
++```python
++import importlib.metadata
++import sys
++
++from lancedb import function
++
++
++@function(pip=["numpy"])
++def report(value: int) -> str:
++    print("diagnostic", file=sys.stderr)
++    return f"numpy {importlib.metadata.version('numpy')} on {sys.version_info}"
++```
++
+ In practice this means a function should be self-contained: take its inputs as
+ arguments, import what it needs at module level, and avoid capturing state from
+ the surrounding scope.
+```
+
+**File**: `python/python/lancedb/functions.py` (modified, +214/-33)
+```diff
+@@ -16,6 +16,7 @@
+ import base64
+ import functools
+ import hashlib
++import importlib.metadata
+ import importlib.util
+ import inspect
+ import symtable
+@@ -2114,6 +2115,17 @@ def _python_extension_type(data_type: pa.DataType) -> Optional[pa.ExtensionType]
+ _DYNAMIC_NAMESPACE_ACCESS = frozenset(
+     {"globals", "locals", "vars", "eval", "exec", "compile", "__import__"}
+ )
++# Static diagnostic operations the packager can reconstruct. Anything else that
++# reaches through a namespace-access module remains unrepresentable.
++_APPROVED_NAMESPACE_ATTRIBUTES = {
++    "sys": frozenset({"stderr", "version_info"}),
++    "importlib.metadata": frozenset({"version"}),
++}
++_APPROVED_NAMESPACE_OPERATIONS = (
++    "sys.stderr",
++    "sys.version_info",
++    "importlib.metadata.version",
++)
+ # Modules that hand out namespaces (`sys.modules`, `builtins`, importers,
+ # introspection). The artifact's module namespace holds only the names it was
+ # packaged with, so reaching around it cannot be represented.
+@@ -2128,28 +2140,170 @@ def _python_extension_type(data_type: pa.DataType) -> Optional[pa.ExtensionType]
+ )
  
  
++_APPROVED_NAMESPACE_HINT = (
++    "The supported diagnostic operations are "
++    + ", ".join(_APPROVED_NAMESPACE_OPERATIONS)
++    + ". "
++)
++
++
++def _namespace_operation_error(operations: Sequence[str]) -> ValueError:
++    label = operations[0] if len(operations) == 1 else list(operations)
++    return ValueError(
++        f"@function cannot package namespace operation {label!r}. "
++        "The artifact's module namespace holds only the names it was packaged "
++        "with, so references that reach around it cannot be represented. "
++        + _APPROVED_NAMESPACE_HINT
++        + _NAMESPACE_HELPER_HINT
++    )
++
++
+ def _namespace_import_error(modules: Sequence[str]) -> ValueError:
+     return ValueError(
+         f"@function cannot package imports from namespace-access modules: {modules!r}. "
+         f"Imports of {', '.join(sorted(_NAMESPACE_MODULES))} (including submodules) "
+         "are blocked because they can access names outside the packaged "
+-        "Function's reconstructed module namespace. " + _NAMESPACE_HELPER_HINT
++        "Function's reconstructed module namespace. "
++        + _APPROVED_NAMESPACE_HINT
++        + _NAMESPACE_HELPER_HINT
+     )
+ 
+ 
+-def _namespace_imports(definition: Union[ast.FunctionDef, ast.ClassDef]) -> list[str]:
+-    found: set[str] = set()
++def _namespace_import_bindings(
++    definition: Union[ast.FunctionDef, ast.ClassDef],
++) -> tuple[dict[str, frozenset[str]], list[str], list[str]]:
++    """Return approved diagnostic bindings and rejected imports.
++
++    A binding maps the local name an import creates to the attribute paths
++    that may be read through it. Rejected modules and operations are kept
++    separate so each error names the relevant rule.
++    """
++    bindings: dict[str, frozenset[str]] = {}
++    blocked_modules: set[str] = set()
++    blocked_operations: set[str] = set()
+     for node in ast.walk(definition):
+         if isinstance(node, ast.Import):
+-            found.update(
+-                alias.name
+-                for alias in node.names
+-                if alias.name.split(".")[0] in _NAMESPACE_MODULES
+-            )
+-        elif isinstance(node, ast.ImportFrom) and node.module:
+-            if node.module.split(".")[0] in _NAMESPACE_MODULES:
+-                found.add(node.module)
+-    return sorted(found)
++            for alias in node.names:
++                root = alias.name.split(".")[0]
++                if root not in _NAMESPACE_MODULES:
++                    continue
++                attributes = _APPROVED_NAMESPACE_ATTRIBUTES.get(alias.name)
++                if attributes is None:
++                    blocked_modules.add(alias.name)
++                    continue
++                if alias.asname:
++                    name = alias.asname
++                    bases = frozenset(f"{name}.{attribute}" for attribute in attributes)
++                else:
++                    name = root
++                    module = alias.name if "." in alias.name else name
++                    bases = frozenset(
++                        f"{module}.{attribute}" for attribute in attributes
++                    )
++                bindings[name] = bindings.get(name, frozenset()) | bases
++        elif (
++            isinstance(node, ast.ImportFrom)
++            and node.level == 0
++            and node.module
++            and node.module.split(".")[0] in _NAMESPACE_MODULES
++        ):
++            if node.module == "importlib":
++                for alias in node.names:
++                    if alias.name == "metadata":
++                        name = alias.asname or "metadata"
++                        bindings[name] = bindings.get(name, frozenset()) | frozenset(
++                            {f"{name}.version"}
++                        )
++                    else:
++                        blocked_modules.add("importlib")
++                continue
++            attributes = _A
+```
+
+**File**: `python/python/tests/test_function_packaging.py` (modified, +140/-2)
+```diff
+@@ -727,15 +727,13 @@ def closes_over(value: int) -> int:
+ @pytest.mark.parametrize(
+     "module_name",
+     [
+-        "sys",
+         "builtins",
+         "importlib",
+         "inspect",
+         "gc",
+         "ctypes",
+         "types",
+         "ctypes.util",
+-        "importlib.metadata",
+     ],
+ )
+ @pytest.mark.parametrize("import_style", ["import", "from", "global"])
+@@ -772,6 +770,146 @@ def test_namespace_module_errors_explain_the_rule_and_remedy(
+     assert "dynamic namespace access" not in message
+ 
+ 
++@pytest.mark.parametrize("module_level", [False, True], ids=["body", "module"])
++@pytest.mark.parametrize(
++    ("import_statement", "expression"),
++    [
++        ("import sys", "sys.stderr"),
++        ("import sys as diagnostic", "diagnostic.stderr"),
++        ("from sys import stderr", "stderr"),
++        ("from sys import stderr as error_stream", "error_stream"),
++        ("import sys", "sys.version_info"),
++        ("import sys as diagnostic", "diagnostic.version_info"),
++        ("from sys import version_info", "version_info"),
++        ("from sys import version_info as python_version", "python_version"),
++        ("import importlib.metadata", "importlib.metadata.version('pytest')"),
++        ("import importlib.metadata as diagnostic", "diagnostic.version('pytest')"),
++        ("from importlib import metadata", "metadata.version('pytest')"),
++        (
++            "from importlib import metadata as diagnostic",
++            "diagnostic.version('pytest')",
++        ),
++        ("from importlib.metadata import version", "version('pytest')"),
++        (
++            "from importlib.metadata import version as diagnostic",
++            "diagnostic('pytest')",
++        ),
++    ],
++)
++def test_diagnostic_namespace_operations_package_and_run(
++    helper_package, module_level, import_statement, expression
++):
++    if module_level:
++        source = (
++            f"{import_statement}\n\n"
++            "def probe(value: str) -> str:\n"
++            f"    return str({expression}) + value\n"
++        )
++    else:
++        source = (
++            "def probe(value: str) -> str:\n"
++            f"    {import_statement}\n"
++            f"    return str({expression}) + value\n"
++        )
++    module = helper_package("fx_diagnostic_operation", {"__init__.py": source})
++
++    packaged = artifact(function(module.probe)).decode()
++    namespace = {}
++    exec(compile(packaged, "user_function.py", "exec"), namespace)
++    assert namespace["probe"]("!").endswith("!")
++
++
++@pytest.mark.parametrize(
++    ("body", "operation"),
++    [
++        ("import sys\nreturn str(sys.modules)", "sys.modules"),
++        ("import sys as s\nreturn str(s.path)", "s.path"),
++        ("import sys\nreturn str(sys.version)", "sys.version"),
++        ("import sys\nreturn str(sys.stdout)", "sys.stdout"),
++        ("import sys\nreturn str(getattr(sys, 'stderr'))", "sys"),
++        ("import sys\nstream = sys\nreturn str(stream)", "sys"),
++        ("import sys\nsys = object()\nreturn str(sys)", "sys"),
++        ("from sys import path\nreturn str(path)", "sys.path"),
++        (
++            "import importlib.metadata\n"
++            "return importlib.metadata.distribution('pytest').version",
++            "importlib.metadata.distribution",
++        ),
++        (
++            "import importlib.metadata as m\nreturn m.distribution('pytest').version",
++            "m.distribution",
++        ),
++        (
++            "from importlib.metadata import distribution\n"
++            "return distribution('pytest').version",
++            "importlib.metadata.distribution",
++        ),
++        (
++            "from importlib.metadata import version\nreturn str(version.__globals__)",
++            "version.__globals__",
++        ),
++        (
++            "import importlib\nreturn str(importlib.import_module('os'))",
++            "importlib",
++        ),
++        (
++            "from importlib import import_module\nreturn str(import_module('os'))",
++            "importlib",
++        ),
++        (
++            "import importlib.resources\nreturn str(importlib.resources.files('x'))",
++            "importlib.resources",
++        ),
++        ("import inspect\nreturn str(inspect.currentframe())", "inspect"),
++        (
++            "from ctypes import util\nreturn str(util.find_library('c'))",
++            "ctypes",
++        ),
++        ("import gc\nreturn str(gc.get_objects())", "gc"),
++        ("import builtins\nreturn str(builtins)", "builtins"),
++        ("import types\nreturn str(types.SimpleNamespace())", "types"),
++    ],
++)
++def test_unsupported_namespace_operations_are_rejected(helper_package, body, operation):
++    source = "def blocked(value: str) -> str:\n" + textwrap.indent(body, "    ")
++    module = helper_package(
++        "fx_unsupported_namespace_operation", {"__init__.py": source}
++    )
++
++    with pytest.raises(ValueError) as error:
++        function(module.blocked)
++    message = str(error.value)
++    assert repr(operation) in message
 ```
 
 ---
 
-### Incident Patch 2: `961a4518` (2026-11-17)
-**Commit Message**: fix(remote): forward job statistics through refresh handles (#5071)
+### Incident Patch 2: `a6d7d02f` (2026-11-18)
+**Commit Message**: docs: add semantic sampling guide (#5085)
 
-A Function refresh submitted through the LanceDB SDK returns a handle
-wrapped for read-freshness tracking. lancedb/lancedb#5016 added
-canonical `Job::stats()` on the server-job handle, but the refresh
-wrapper did not forward `stats`. The returned handle therefore reported
-`job statistics is only available for server-side jobs`, while
-`db.open_job(<same id>).stats()` returned the server report.
+Add a standalone Semantic Sampling guide immediately below Statistical
+Sampling in Data Curation, with links from the curation overview and SQL
+sampling reference. Explain per-partition row quotas, repeatability,
+filtering order, and index requirements.
 
-Forward `stats` through the refresh wrapper and cover it at the public
-refresh entry point. The regression submits with `refresh_column_async`,
-then reads `stats` from that returned handle without reopening the job.
-With the forwarding removed, the test fails with the same `NotSupported`
-error; with the change, it passes.
-
-Validation on `57b20fb11`: the targeted Rust test passed, `cargo fmt
---check` passed, and `cargo clippy -p lancedb --features remote --lib
---tests -- -D warnings` passed.
-
-Part of ENT-3974.
-
-**File**: `rust/lancedb/src/remote/table.rs` (modified, +43/-0)
-```diff
-@@ -335,6 +335,10 @@ impl<S: HttpSend> crate::job::JobHandle for FreshnessJob<S> {
-         crate::job::JobHandle::events(&self.inner, request).await
-     }
- 
-+    async fn stats(&self) -> Result<Option<String>> {
-+        crate::job::JobHandle::stats(&self.inner).await
-+    }
-+
-     async fn wait(&self) -> Result<crate::job::TerminalResult> {
-         crate::job::JobHandle::wait_with_progress(self, None).await
-     }
-@@ -424,6 +428,10 @@ impl<S: HttpSend> crate::job::JobHandle for MaterializedViewRefreshJob<S> {
-         crate::job::JobHandle::events(&self.inner, request).await
-     }
- 
-+    async fn stats(&self) -> Result<Option<String>> {
-+        crate::job::JobHandle::stats(&self.inner).await
-+    }
-+
-     async fn wait(&self) -> Result<crate::job::TerminalResult> {
-         crate::job::JobHandle::wait_with_progress(self, None).await
-     }
-@@ -11601,6 +11609,19 @@ mod tests {
-                         .to_string(),
-                     )
-                     .unwrap(),
-+                "/v1/jobs/stats" => {
-+                    let body: serde_json::Value =
-+                        serde_json::from_slice(request.body().unwrap().as_bytes().unwrap())
-+                            .unwrap();
-+                    assert_eq!(body["job_id"], "job-1");
-+                    http::Response::builder()
-+                        .status(200)
-+                        .body(
-+                            r#"{"job_id":"job-1","profile":{},"report":"Function job: finished\nRows: 1600\n"}"#
-+                                .to_string(),
-+                        )
-+                        .unwrap()
-+                }
-                 "/v1/table/ns$view/describe/" => http::Response::builder()
-                     .status(200)
-                     .body(r#"{"version":42,"schema":{"fields":[]}}"#.to_string())
-@@ -11623,6 +11644,10 @@ mod tests {
-         }));
- 
-         assert_eq!(job.id(), Some("job-1"));
-+        assert_eq!(
-+            job.stats().await.unwrap().as_deref(),
-+            Some("Function job: finished\nRows: 1600\n")
-+        );
-         let observations = Arc::new(Mutex::new(Vec::new()));
-         let observed = observations.clone();
-         let result: RefreshMaterializedViewResult = if with_progress {
-@@ -13142,13 +13167,31 @@ mod tests {
-                         .body(events.clone())
-                         .unwrap()
-                 }
-+                "/v1/jobs/stats" => {
-+                    let body: serde_json::Value =
-+                        serde_json::from_slice(request.body().unwrap().as_bytes().unwrap())
-+                            .unwrap();
-+                    assert_eq!(body["job_id"], "j-42");
-+                    http::Response::builder()
-+                        .status(200)
-+                        .body(
-+                            r#"{"job_id":"j-42","profile":{},"report":"Function job: finished\nRows: 1600\n"}"#
-+                                .as_bytes()
-+                                .to_vec(),
-+                        )
-+                        .unwrap()
-+                }
-                 "/v1/jobs/timeline" => http::Response::builder().status(200)
-                     .body(br#"{"traceEvents":[],"metadata":{"partial":true}}"#.to_vec()).unwrap(),
-                 other => panic!("unexpected path {other}"),
-             }
-         });
- 
-         let job = table.refresh_column_async("doubled").await.unwrap();
-+        assert_eq!(
-+            job.stats().await.unwrap().as_deref(),
-+            Some("Function job: finished\nRows: 1600\n")
-+        );
-         job.refresh().await.unwrap();
-         assert_eq!(job.state().as_deref(), Some("running"));
-         assert_eq!(job.job_type().as_deref(), Some("refresh_column"));
+```sql
+SELECT id, caption
+FROM documents
+TABLESAMPLE IVF (embedding, 100 ROWS)
+REPEATABLE (42);
 ```
 
----
-
-### Incident Patch 3: `c278f90c` (2026-11-17)
-**Commit Message**: feat: expose shared Arrow type golden behind test-fixtures (#5065)
-
-Downstream compatibility tests currently load the Function Arrow type
-golden from a LanceDB source checkout. Add a default-off `test-fixtures`
-feature that exposes
-`lancedb::test_fixtures::FUNCTION_ARROW_TYPES_JSON`, so consumers can
-enable it on their existing LanceDB dev-dependency and use the golden
-from the same revision.
-
-The golden stays in its existing location with unchanged bytes.
-LanceDB's Rust test reads the exported constant; Python tests and
-release/versioning workflows remain unchanged.
-
-**File**: `rust/lancedb/Cargo.toml` (modified, +2/-0)
+**File**: `docs/web/curation/index.mdx` (modified, +1/-0)
 ```diff
-@@ -140,6 +140,8 @@ pprof = { version = "0.14", features = ["flamegraph"] }
- 
- [features]
- default = []
-+# Shared golden data for downstream compatibility tests.
-+test-fixtures = []
- # Local SQL computed columns and materialized-view creation/refresh.
- # Remote clients and shared server primitives do not require this feature.
- experimental-functions = []
+@@ -24,6 +24,7 @@ records belong, and save the selected data or the rules used to produce it.
+ | [Scope to what changed](/curation/changes) | How to process only the rows added since your last run. |
+ | [Profile a dataset](/curation/aggregate) | Whether coverage, missing values and class balance suit the task. |
+ | [Statistical Sampling](/curation/statistical-sampling) | Which random fraction to inspect or use for an experiment. |
++| [Semantic Sampling](/curation/semantic-sampling) | How to draw rows from every cluster in an existing IVF vector index. |
+ | [Selective Sampling](/curation/selective-sampling) | How to re-fetch specific rows by ID, address or offset. |
+ | [Join datasets](/curation/join) | How to attach labels, metadata or scores stored elsewhere. |
+ | [Rank and deduplicate](/curation/windowing) | Which records to keep when several share an explicit key. |
 ```
 
-**File**: `rust/lancedb/src/lib.rs` (modified, +4/-0)
+**File**: `docs/web/curation/semantic-sampling.mdx` (added, +121/-0)
 ```diff
-@@ -48,6 +48,8 @@
- //!   Install any `metrics`-compatible recorder to collect them.
- //! - `metrics-otel` - Add a pull-based adapter (the `metrics_otel` module) over
- //!   the `metrics` facade for bridging metrics into OpenTelemetry or similar.
-+//! - `test-fixtures` - Expose shared golden data through `test_fixtures` for
-+//!   downstream compatibility tests. Disabled by default.
- //!
- //! ### Quick Start
- //!
-@@ -220,6 +222,8 @@ pub mod server_info;
- pub mod sql;
- pub mod storage_integration;
- pub mod table;
-+#[cfg(any(test, feature = "test-fixtures"))]
-+pub mod test_fixtures;
- #[cfg(test)]
- pub mod test_utils;
- pub mod utils;
-```
-
-**File**: `rust/lancedb/src/table/computed_columns.rs` (modified, +2/-4)
-```diff
-@@ -2906,10 +2906,8 @@ mod tests {
- 
-     #[test]
-     fn output_arrow_type_grammar_matches_the_shared_golden() {
--        let golden: serde_json::Value = serde_json::from_str(include_str!(
--            "../../tests/fixtures/first_class_functions/v1/arrow_types.json"
--        ))
--        .unwrap();
-+        let golden: serde_json::Value =
-+            serde_json::from_str(crate::test_fixtures::FUNCTION_ARROW_TYPES_JSON).unwrap();
-         let valid = golden["valid"].as_array().unwrap().iter();
-         for case in valid.chain(golden["server_only"].as_array().unwrap()) {
-             let raw = case["arrow_type"].as_str().unwrap();
-```
-
-**File**: `rust/lancedb/src/test_fixtures.rs` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+// SPDX-License-Identifier: Apache-2.0
-+// SPDX-FileCopyrightText: Copyright The LanceDB Authors
+@@ -0,0 +1,121 @@
++---
++title: "Semantic Sampling"
++sidebarTitle: "Semantic Sampling"
++description: "Sample rows from every cluster in an existing IVF vector index with SQL TABLESAMPLE IVF."
++icon: circle-nodes
++keywords: ["semantic sampling", "sampling", "tablesample", "ivf", "clusters", "embeddings", "repeatable"]
++availability:
++  embedded: unavailable
++  enterprise: available
++---
 +
-+//! Shared golden data for downstream compatibility tests.
-+//!
-+//! Enable the `test-fixtures` feature to access these fixtures from another crate.
++Semantic sampling draws rows from every partition of an existing IVF vector
++index. Each partition acts as a cluster of similar embeddings. Use it to
++inspect examples across your embedding space, build a dataset with broader
++topic coverage, or try an expensive operation on examples from each cluster.
++The clusters reflect your embeddings and index; they do not guarantee
++coverage of every label or topic.
 +
-+/// The version 1 Function Arrow type golden as UTF-8 JSON.
-+///
-+/// Contains supported declaration spellings, their canonical JSON Arrow types,
-+/// and declarations that must be rejected. The contents match the golden used by
-+/// LanceDB's Rust and Python tests; parsing is left to the consumer.
-+///
-+/// ```
-+/// let golden: serde_json::Value =
-+///     serde_json::from_str(lancedb::test_fixtures::FUNCTION_ARROW_TYPES_JSON).unwrap();
-+/// assert!(golden["valid"].is_array());
-+/// assert!(golden["invalid"].is_array());
-+/// ```
-+pub const FUNCTION_ARROW_TYPES_JSON: &str =
-+    include_str!("../tests/fixtures/first_class_functions/v1/arrow_types.json");
++## Sample rows from every cluster {#sample}
++
++Connect with an [Enterprise SQL client](/basics/sql). The examples assume a
++`documents` table with `id`, `caption`, and `embedding` columns. The
++`embedding` column must have an up-to-date, single-segment
++[IVF vector index](/indexing/vector-index) that includes every live row.
++Wait for the index build to finish before sampling.
++
++<CodeGroup>
++```sql SQL icon="database"
++SELECT id, caption
++FROM documents
++TABLESAMPLE IVF (embedding, 100 ROWS)
++REPEATABLE (42);
++```
++</CodeGroup>
++
++This selects up to **100 rows from each IVF partition**, without replacement.
++A partition with fewer than 100 rows contributes all its rows; empty
++partitions contribute none. The result contains the table's existing columns,
++so you can project the fields you need without returning `embedding`.
++
++The count is per partition, not a limit on the whole result. For example:
++
++| Rows in a partition | Rows selected with `100 ROWS` |
++| --- | --- |
++| 5 | 5 |
++| 100 | 100 |
++| 1,000 | 100 |
++
++With 1,024 populated partitions, the query returns at most 102,400 rows.
++Choose the quota with the number of partitions and your output budget in mind.
++
++Equal quotas give sparse clusters more weight relative to their size.
++This makes semantic sampling useful for cluster coverage, but the resulting
++sample does not preserve the table's overall distribution. Use
++[Statistical Sampling](/curation/statistical-sampling) for uniform row
++sampling or account for the different sampling probabilities when estimating
++whole-table statistics.
++
++To group records by partition or select a subset of whole partitions, use
++[`ivf_partition()`](/sql/dql/ivf-partition) instead. Its `count` argument
++selects the number of partitions; `TABLESAMPLE IVF` selects rows within
++every partition.
++
++## Repeat a sample {#repeatable}
++
++`REPEATABLE (42)` fixes the seed. With the same table snapshot, index, and
++seed, repeated queries select the same rows. Output order is unspecified.
++Omit `REPEATABLE` to draw a new sample each time.
++
++Changes to the source data or rebuilding the index can change the selected
++rows even with the same seed. Save a sample when you need a fixed dataset
++for evaluation or comparison:
++
++<CodeGroup>
++```sql SQL icon="database"
++CREATE TABLE semantic_eval AS
++SELECT id, caption, embedding
++FROM documents
++TABLESAMPLE IVF (embedding, 100 ROWS)
++REPEATABLE (42);
++```
++</CodeGroup>
++
++Create the output once with a fresh name and keep it unchanged. Record the
++source version and sampling policy alongside the result.
++
++## Filter sampled rows {#filters}
++
++Sampling happens before `WHERE`, joins, aggregation, and an outer `LIMIT`.
++For example, this draws up to 100 rows per partition and then removes rows
++with missing captions:
++
++<CodeGroup>
++```sql SQL icon="database"
++SELECT id, caption
++FROM documents
++TABLESAMPLE IVF (embedding, 100 ROWS)
++REPEATABLE (42)
++WHERE caption IS NOT NULL;
++```
++</CodeGroup>
++
++The result can contain fewer than 100 rows from a partition after filtering.
++If you need a quota from an eligible subset, first save that subset as a
++base table and build its IVF index before sampling it.
++
++## Requirements and limits {#requirements}
++
++| Requirement | Behavior |
++| --- | --- |
++| Source | Sample a base table directly. Views, derived relations, WAL-backed tables, and `CHANGES` relations are unsupported. |
++| Vector column | Name the indexed vector column directly, rather than an expression. |
++| Index | Exactly one eligible IVF index segment must cover every current fragment and assign every live row exactly once. Missing, ambiguous, or stale indexes are rejected. |
++| New or unindexed rows | Rebuild the index so all live rows are covered by a single segment. Null vectors omitted by the index also prevent complete coverage. |
++| Deleted rows | Tables with deletion vectors are rejected. Compact deleted rows and rebuild the IVF index before sampling. |
++| Row count and seed | Use nonnegative integer literals. A count of zero returns no rows. This mode accepts row counts, not percentages. |
++
++Sampling examines the membership of every partition and fetches projected
++data for the select
+```
+
+**File**: `docs/web/curation/statistical-sampling.mdx` (modified, +2/-0)
+```diff
+@@ -16,6 +16,8 @@ statistics without reading every row. For a random subset through the
+ Python SDK instead -- in Embedded or Enterprise -- see
+ [Permutation](/training/permutation). To select specific, known rows
+ rather than a random fraction, see [Selective Sampling](/curation/selective-sampling).
++To draw rows from every cluster of an existing vector index, use
++[Semantic Sampling](/curation/semantic-sampling).
+ 
+ ## Example data {#example-data}
+ 
+```
+
+**File**: `docs/web/docs.json` (modified, +1/-0)
+```diff
+@@ -450,6 +450,7 @@
+               "curation/create-function",
+               "curation/chunking",
+               "curation/statistical-sampling",
++              "curation/semantic-sampling",
+               "curation/selective-sampling",
+               "curation/aggregate",
+               "curation/join",
+```
+
+**File**: `docs/web/sql/dql/sampling.mdx` (modified, +3/-0)
+```diff
+@@ -22,6 +22,9 @@ SELECT * FROM documents TABLESAMPLE (500 ROWS)  -- 500 rows
+ 
+ A bare number is a **percentage**. Add `ROWS` for a count instead.
+ 
++To sample rows independently from every partition of an IVF vector index,
++use [`TABLESAMPLE IVF`](/curation/semantic-sampling).
++
+ ## Rows or fragments {#methods}
+ 
+ The standard calls these two methods of one clause. They are different
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5073** (2026-11-17): fix(deps): ignore unmaintained chrono family advisories (@Xuanwo)
-- **PR #5071** (2026-11-17): fix(remote): forward job statistics through refresh handles (@Xuanwo)
-- **PR #5069** (2026-11-17): chore: update lance dependency to v15.0.0-beta.25 (@Xuanwo)
-- **PR #5068** (closed): chore: update lance dependency to v15.0.0-beta.24 (@lancedb-robot)
-- **PR #5065** (2026-11-17): feat: expose shared Arrow type golden behind test-fixtures (@Xuanwo)
-- **PR #5064** (2026-11-17): feat(function): expose descriptor refresh plan in terminal result (@Xuanwo)
+- **PR #5087** (2026-11-18): docs: add an ordinary Blob v2 photo tutorial (@Xuanwo)
+- **PR #5086** (2026-11-18): docs: show how to read and copy filtered blob rows (@Xuanwo)
+- **PR #5085** (2026-11-18): docs: add semantic sampling guide (@jackye1995)
+- **PR #5084** (2026-11-18): fix(python): allow static diagnostic imports in Functions (@Xuanwo)
+- **PR #5080** (2026-11-18): docs: say the Tables page covers schema changes and field metadata (@brendanclement)
+- **PR #5079** (2026-11-17): docs: publish the CLI page (@brendanclement)
 
 ---
 
@@ -1572,54 +1850,70 @@ release/versioning workflows remain unchanged.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): ignore unmaintained chrono family advisories
+## X. python): allow static diagnostic imports in Functions
 
 **RULE**:
-When implementing operations in `deny.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/src/python/python.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `16708593`: deps): ignore unmaintained chrono family advisories. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a653d861`: python): allow static diagnostic imports in Functions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `deny.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/python/python.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    # pin-utils: unmaintained; reviewed 2026-11-05, removed 2026-11-17 after
-    # the lockfile dropped the aws-smithy pins that carried it.
+module. It supports three statically recognizable diagnostic operations:
+`sys.stderr`, `sys.version_info`, and `importlib.metadata.version`. Direct
+imports, `from` imports, and aliases are treated the same way, whether the
+import appears inside a function or class body or at module level.
 
-    # chrono: unmaintained; reviewed 2026-11-17. Informational notice, not a
-    # vulnerability. Transitive via arrow 59 / datafusion 55 and the lance
-    # stack throughout the workspace. RustSec lists no patched version and
-    # recommends jiff/time; clearing it requires the arrow/datafusion/lance
-    # ecosystem to migrate.
-    # https://rustsec.org/advisories/RUSTSEC-2026-0543
-    { id = "RUSTSEC-2026-0543", reason = "chrono unmaintained via arrow/datafusion/lance; no fixed upstream release, awaiting ecosystem migration" },
+Other imports of `sys`, `builtins`, `importlib`, `inspect`, `gc`, `ctypes`, and
+`types`, including submodules such as `ctypes.util` and `importlib.resources`,
+remain blocked. This applies to imports inside function or class bodies and
+references to module-level aliases. Even ordinary uses such as `sys.version`
+and `ctypes.util.find_library` are blocked: these modules can reach names
+outside the reconstructed Function namespace. References to `globals`, `locals`,
+`vars`, `eval`, `exec`, `compile`, and `__import__` are rejected as dynamic
+namespace access. These restrictions also apply to the deprecated `@udf` alias.
 
-    # chrono-tz: unmaintained; reviewed 2026-11-17. Informational notice, not
-    # a vulnerability. Transitive via arrow-array → arrow → datafusion/lance.
-    # No patched version exists; clearing it needs the same ecosystem
-    # migration off chrono as RUSTSEC-2026-0543.
-    # https://rustsec.org/advisories/RUSTSEC-2026-0555
-    { id = "RUSTSEC-2026-0555", reason = "chrono-tz unmaintained via arrow/datafusion/lance; no fixed upstream release" },
+For example, a diagnostic Function can report its Python version and NumPy
+version without a helper module:
 
-    # humantime: unmaintained; reviewed 2026-11-17. Informational n
+```python
+import importlib.metadata
+import sys
+
+from lancedb import function
+
+
+@function(pip=["numpy"])
+def report(value: int) -> str:
+    print("diagnostic", file=sys.stderr)
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    # pin-utils: unmaintained; reviewed 2026-11-05. Transitive via
-    # aws-smithy-http/runtime/types, including aws-config -> lance-io.
-    # No safe upgrade exists; clearing requires AWS Smithy to migrate to
-    # core::pin::pin!, pin-project, or pin-project-lite. Revisit on AWS updates.
-    # https://github.com/rustsec/advisory-db/issues/3314
-    { id = "RUSTSEC-2026-0441", reason = "pin-utils unmaintained via AWS Smithy; no safe upgrade, awaiting upstream migration" },
+module. It conservatively rejects imports of `sys`, `builtins`, `importlib`,
+`inspect`, `gc`, `ctypes`, and `types`, including submodules such as `ctypes.util`
+and `importlib.metadata`. This applies to imports inside function or class bodies
+and references to module-level aliases. Even ordinary uses such as `sys.version`
+and `ctypes.util.find_library` are blocked: these modules can reach names outside
+the reconstructed Function namespace. References to `globals`, `locals`, `vars`,
+`eval`, `exec`, `compile`, and `__import__` are rejected as dynamic namespace access.
+These restrictions also apply to the deprecated `@udf` alias.
+
+For legitimate uses, move the code into an importable helper module and ship it
+with `code=`, or install its package with `pip=` or `conda=`. Imported helpers keep
+their own namespace; the packager does not scan their bodies. Helpers defined in
+`__main__` are copied by source and have the same restrictions as the Function.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `16708593` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a653d861` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

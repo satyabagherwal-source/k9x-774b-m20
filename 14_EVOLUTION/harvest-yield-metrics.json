@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T13:09:04.829Z",
-  "total_cycles_completed": 10498,
-  "total_learnings_persisted": 10498,
-  "total_rules_promoted": 9984,
+  "last_updated": "2026-11-18T13:17:32.247Z",
+  "total_cycles_completed": 10503,
+  "total_learnings_persisted": 10503,
+  "total_rules_promoted": 9988,
   "history": [
-    {
-      "timestamp": "2026-11-18T00:07:54.930Z",
-      "repository": "beclab/Olares",
-      "learningId": "learn-github-beclab-olares",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T00:07:57.599Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T00:22:46.895Z",
-      "repository": "openziti/zrok",
-      "learningId": "learn-github-openziti-zrok",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T00:27:00.683Z",
-      "repository": "Qwen/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T00:43:27.966Z",
-      "repository": "Contrastive-LM/CLM-v0.1-8B",
-      "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T00:43:42.441Z",
       "repository": "neuron-core/neuron-ai",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-18T13:09:04.829Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T13:17:16.897Z",
+      "repository": "apple/LensVLM-9B",
+      "learningId": "learn-huggingface-apple-lensvlm-9b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T13:17:19.867Z",
+      "repository": "FalkorDB/FalkorDB",
+      "learningId": "learn-github-falkordb-falkordb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T13:17:27.911Z",
+      "repository": "moby/buildkit",
+      "learningId": "learn-github-moby-buildkit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T13:17:29.510Z",
+      "repository": "projectdiscovery/nuclei",
+      "learningId": "learn-github-projectdiscovery-nuclei",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T13:17:32.247Z",
+      "repository": "lancedb/lancedb",
+      "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

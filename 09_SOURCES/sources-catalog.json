@@ -405,8 +405,8 @@
     "sourceUrl": "https://huggingface.co/apple/LensVLM-9B",
     "sourceVersion": "hf-apple-lensvlm-9b",
     "license": "Open-Source",
-    "contentHash": "39fcf5d730426699279996addfadaf15b4d7b163ab3fdfc69ec683331377ebda",
-    "lastHarvestedAt": "2026-11-18T03:17:08.875Z",
+    "contentHash": "59f1f70d4ff446dbe3d91dfd03ae685ae605e194d80d23ce36441d68ebb4e6fe",
+    "lastHarvestedAt": "2026-11-18T13:17:16.890Z",
     "learningId": "learn-huggingface-apple-lensvlm-9b"
   },
   "hf-altworld-hemmingway-1": {
@@ -2113,10 +2113,10 @@
     "repository": "moby/buildkit",
     "platform": "github",
     "sourceUrl": "https://github.com/moby/buildkit",
-    "sourceVersion": "6aebc64b",
+    "sourceVersion": "bfe7dac5",
     "license": "Apache-2.0",
-    "contentHash": "abbc83ae6838ea01112d8c2c7f51f5f5b14f4d934012a81cbee3157971d12c69",
-    "lastHarvestedAt": "2026-11-17T20:03:33.769Z",
+    "contentHash": "03ffaaa4d2803d18df5f7b497f690e0a730ce605f48f2d808387b16ee01c27c0",
+    "lastHarvestedAt": "2026-11-18T13:17:27.905Z",
     "learningId": "learn-github-moby-buildkit"
   },
   "microsoft-agent-governance-toolkit": {
@@ -2893,10 +2893,10 @@
     "repository": "FalkorDB/FalkorDB",
     "platform": "github",
     "sourceUrl": "https://github.com/FalkorDB/FalkorDB",
-    "sourceVersion": "aafdc4ae",
+    "sourceVersion": "4e3ca0b2",
     "license": "NOASSERTION",
-    "contentHash": "1f39cf5e837dbebcf69291448160aa51b41f9bfa496a613f4f8766ebdbb7905e",
-    "lastHarvestedAt": "2026-11-18T04:29:07.684Z",
+    "contentHash": "6a2e00087b2819c9f8c39dee4ef5eb0242f412ed85cf7a0c4721f0ccd5ae5675",
+    "lastHarvestedAt": "2026-11-18T13:17:19.861Z",
     "learningId": "learn-github-falkordb-falkordb"
   },
   "feathersjs-feathers": {
@@ -3453,10 +3453,10 @@
     "repository": "projectdiscovery/nuclei",
     "platform": "github",
     "sourceUrl": "https://github.com/projectdiscovery/nuclei",
-    "sourceVersion": "76040802",
+    "sourceVersion": "91c2a7cf",
     "license": "MIT",
-    "contentHash": "47697e5c65ae02fa273eaa53f7f6bf22abd296377a83bd1e2fc24c366608b14f",
-    "lastHarvestedAt": "2026-11-18T04:37:33.737Z",
+    "contentHash": "8f889f8f569c0194ff769646ec0fd0ef366289e29b1df8c11f36843e59b4dc0d",
+    "lastHarvestedAt": "2026-11-18T13:17:29.504Z",
     "learningId": "learn-github-projectdiscovery-nuclei"
   },
   "okteto-okteto": {
@@ -7433,10 +7433,10 @@
     "repository": "lancedb/lancedb",
     "platform": "github",
     "sourceUrl": "https://github.com/lancedb/lancedb",
-    "sourceVersion": "16af7297",
+    "sourceVersion": "a6d7d02f",
     "license": "Apache-2.0",
-    "contentHash": "6b9858ea9bf1ee60afedb4282d47e000172c24fb71a029f9d40890cab529e639",
-    "lastHarvestedAt": "2026-11-17T19:27:35.979Z",
+    "contentHash": "4b1bdec01711914855d0c2f13893d9368d8ce97087f16de21b5a915e7a40d182",
+    "lastHarvestedAt": "2026-11-18T13:17:32.241Z",
     "learningId": "learn-github-lancedb-lancedb"
   },
   "agent-of-empires-agent-of-empires": {

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T13:09:10.396Z",
+  "last_updated": "2026-11-18T13:17:38.002Z",
   "total_verified_learnings": 9002,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21258,
+  "total_items": 21264,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112526,9 +112526,9 @@
       "title": "Research & Knowledge Intelligence: apple/LensVLM-9B Core Invariants",
       "repository": "apple/LensVLM-9B",
       "source_version": "hf-apple-lensvlm-9b",
-      "content_hash": "6d5276537b4a049b1fd24d9c528387f0ea0c3ea9d028330092852ef77dbda8d9",
+      "content_hash": "ca1f78b293f16280fcfb4349f98e28e64391ff4f8fb02cbdabb3d3bb45bc39ff",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T03:17:09.043Z"
+      "persisted_at": "2026-11-18T13:17:17.119Z"
     },
     "candidate_directive-deps-update-go-dependencies": {
       "item_id": "candidate_directive-deps-update-go-dependencies",
@@ -112658,9 +112658,9 @@
       "title": "Research & Knowledge Intelligence: hf-apple-lensvlm-9b-learnings Core Invariants",
       "repository": "hf-apple-lensvlm-9b-learnings",
       "source_version": "HEAD",
-      "content_hash": "6b80c7db0cfa59cf8b4c353b97962c5edebe9f458eb77d15bb5840eb32eb16bc",
+      "content_hash": "3ff4bf49d8046334f835a022c2a1f9aec610dd4a26d2b5ea3024ffe9e665a753",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T03:17:20.618Z"
+      "persisted_at": "2026-11-18T13:17:37.045Z"
     },
     "domain_intelligence-content-information-intelligence-crossplane-crossplane-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-crossplane-crossplane-learnings-core-invariants",
@@ -216425,8 +216425,8 @@
       "slug": "lancedb-lancedb",
       "platform": "github",
       "source_url": "https://github.com/lancedb/lancedb",
-      "source_version": "16af7297",
-      "content_hash": "6b9858ea9bf1ee60afedb4282d47e000172c24fb71a029f9d40890cab529e639",
+      "source_version": "a6d7d02f",
+      "content_hash": "4b1bdec01711914855d0c2f13893d9368d8ce97087f16de21b5a915e7a40d182",
       "dossier_path": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lancedb-lancedb-learnings.md",
       "promoted_rules": [
@@ -216454,6 +216454,11 @@
           "number": 9039,
           "title": "ignore unmaintained chrono family advisories",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9229,
+          "title": "allow static diagnostic imports in Functions",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216461,7 +216466,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T19:27:35.786Z",
+      "verified_at": "2026-11-18T13:17:32.013Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216515,10 +216520,10 @@
       "relative_path": "08_VERIFICATION/lancedb-lancedb-verification-protocol-empirical-defect-shield-for-lancedb-lanced.md",
       "title": "Verification Protocol: Empirical Defect Shield for lancedb/lancedb",
       "repository": "lancedb/lancedb",
-      "source_version": "16af7297",
-      "content_hash": "9345f7c8dd4b0afe90929843b397d8751a74159395443ee0be3af932a7dbcfcd",
+      "source_version": "a6d7d02f",
+      "content_hash": "a8c9540825b80d1e1e0c2252f4e564b7ba4392a1ca75f98540cc19b4544a1a10",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T19:27:36.436Z"
+      "persisted_at": "2026-11-18T13:17:32.847Z"
     },
     "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-learnings-core-invariants",
@@ -222331,8 +222336,8 @@
       "slug": "moby-buildkit",
       "platform": "github",
       "source_url": "https://github.com/moby/buildkit",
-      "source_version": "6aebc64b",
-      "content_hash": "abbc83ae6838ea01112d8c2c7f51f5f5b14f4d934012a81cbee3157971d12c69",
+      "source_version": "bfe7dac5",
+      "content_hash": "03ffaaa4d2803d18df5f7b497f690e0a730ce605f48f2d808387b16ee01c27c0",
       "dossier_path": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/moby-buildkit-learnings.md",
       "promoted_rules": [
@@ -222350,6 +222355,11 @@
           "number": 9051,
           "title": "Empirical Invariant Guard in gha.go",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9228,
+          "title": "Empirical Invariant Guard in reference.md",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222357,7 +222367,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T20:03:33.590Z",
+      "verified_at": "2026-11-18T13:17:27.661Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222399,10 +222409,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-architecture-intelligence-moby-buildkit-core-invariants.md",
       "title": "Architecture Intelligence: moby/buildkit Core Invariants",
       "repository": "moby/buildkit",
-      "source_version": "6aebc64b",
-      "content_hash": "51a04179f2a89360926b2ea13bf7460c57a85a770e33729ac941b3f4374dbd74",
+      "source_version": "bfe7dac5",
+      "content_hash": "37d5d4de40f1408c342715ffaeb2225f4237656d7682b6f2f39c5c6d0de29d45",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T20:03:34.084Z"
+      "persisted_at": "2026-11-18T13:17:28.376Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit",
@@ -222411,10 +222421,10 @@
       "relative_path": "08_VERIFICATION/moby-buildkit-verification-protocol-empirical-defect-shield-for-moby-buildkit.md",
       "title": "Verification Protocol: Empirical Defect Shield for moby/buildkit",
       "repository": "moby/buildkit",
-      "source_version": "6aebc64b",
-      "content_hash": "e0beef5529742bc39b6231a061042a56f45ed763a7454f8f6b9e3c7b8dd7f17b",
+      "source_version": "bfe7dac5",
+      "content_hash": "09aa9e49e9b9cf7777e47e720a95cfea4665361c821820bc85f3a6e1674b2e35",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T20:03:34.212Z"
+      "persisted_at": "2026-11-18T13:17:28.556Z"
     },
     "learn-github-tailscale-tailscale": {
       "learning_id": "learn-github-tailscale-tailscale",
@@ -222552,9 +222562,9 @@
       "title": "Architecture Intelligence: moby-buildkit-learnings Core Invariants",
       "repository": "moby-buildkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "5e6e48d22c409a5dba9361769e756920fed93d5b811d38a0a05d7308115aed3e",
+      "content_hash": "2c642512219f370baee1388b4f034b51f41a88c18e8013485f42b3dd95f5cb38",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T20:03:47.127Z"
+      "persisted_at": "2026-11-18T13:17:37.821Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-moby-buildkit-learnings",
@@ -222564,9 +222574,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for moby-buildkit-learnings",
       "repository": "moby-buildkit-learnings",
       "source_version": "HEAD",
-      "content_hash": "05a550bbcdf022dc939d80b4052e2520ae0555ee7213cb463304644943493af9",
+      "content_hash": "cbbfdbc7b3c35acb789a7cc331d3b28d738531f7d2de52f379d9b3bf686d8edf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T20:03:47.262Z"
+      "persisted_at": "2026-11-18T13:17:38.002Z"
     },
     "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants",
@@ -229252,8 +229262,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "76040802",
-      "content_hash": "47697e5c65ae02fa273eaa53f7f6bf22abd296377a83bd1e2fc24c366608b14f",
+      "source_version": "91c2a7cf",
+      "content_hash": "8f889f8f569c0194ff769646ec0fd0ef366289e29b1df8c11f36843e59b4dc0d",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -229290,7 +229300,7 @@
         {
           "number": 9014,
           "title": "Empirical Invariant Guard in SECURITY_CONTEXT.md",
-          "status": "PROMOTED_AND_VERIFIED"
+          "status": "ALREADY_PRESENT_VERIFIED"
         },
         {
           "number": 9125,
@@ -229303,7 +229313,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T04:37:33.561Z",
+      "verified_at": "2026-11-18T13:17:29.269Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229345,10 +229355,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "76040802",
-      "content_hash": "84386099f64a5184ac1b45281971ceb0a0de686e63e90ddd4958f2d43e80da8f",
+      "source_version": "91c2a7cf",
+      "content_hash": "22b813e4d327b9eaaf46db95198163954087afa5c0af577db4293e82f659bfe4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T04:37:34.054Z"
+      "persisted_at": "2026-11-18T13:17:29.953Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei",
@@ -229357,10 +229367,10 @@
       "relative_path": "08_VERIFICATION/projectdiscovery-nuclei-verification-protocol-empirical-defect-shield-for-projec.md",
       "title": "Verification Protocol: Empirical Defect Shield for projectdiscovery/nuclei",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "76040802",
-      "content_hash": "5dc42a452057372ff78c3f3fb19c603a8b010af3b6be90ebabce422ab28326e9",
+      "source_version": "91c2a7cf",
+      "content_hash": "074e90ec77ab4051d978a7b440324165dca360344cbf1693d0b91516aaa2b214",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T04:37:34.185Z"
+      "persisted_at": "2026-11-18T13:17:30.136Z"
     },
     "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog": {
       "item_id": "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog",
@@ -239161,8 +239171,8 @@
       "slug": "falkordb-falkordb",
       "platform": "github",
       "source_url": "https://github.com/FalkorDB/FalkorDB",
-      "source_version": "aafdc4ae",
-      "content_hash": "1f39cf5e837dbebcf69291448160aa51b41f9bfa496a613f4f8766ebdbb7905e",
+      "source_version": "4e3ca0b2",
+      "content_hash": "6a2e00087b2819c9f8c39dee4ef5eb0242f412ed85cf7a0c4721f0ccd5ae5675",
       "dossier_path": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "promoted_rules": [
@@ -239180,6 +239190,11 @@
           "number": 9122,
           "title": "a cascaded edge of a new type no longer panics compact replies or opens a replic",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9227,
+          "title": "a WHERE after a writing CALL {} no longer starves the write (#748, #997)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239187,7 +239202,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T04:29:07.491Z",
+      "verified_at": "2026-11-18T13:17:19.631Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239229,10 +239244,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-falkordb-falkordb-technical-construction-intelligence-falkordb-falkordb-core-inv.md",
       "title": "Technical Construction Intelligence: FalkorDB/FalkorDB Core Invariants",
       "repository": "FalkorDB/FalkorDB",
-      "source_version": "aafdc4ae",
-      "content_hash": "bbd60be5b00c1e3e387bb509fa192eea1fdc9afe9302bfdf0c6ec5b8ab7c2cbd",
+      "source_version": "4e3ca0b2",
+      "content_hash": "3aa6dc8e32a9319387cde4e366fed97397120342bdda008b5a891a2a2ae5ff46",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T04:29:08.039Z"
+      "persisted_at": "2026-11-18T13:17:20.319Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-falkordb-falkordb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-falkordb-falkordb",
@@ -239241,10 +239256,10 @@
       "relative_path": "08_VERIFICATION/falkordb-falkordb-verification-protocol-empirical-defect-shield-for-falkordb-fal.md",
       "title": "Verification Protocol: Empirical Defect Shield for FalkorDB/FalkorDB",
       "repository": "FalkorDB/FalkorDB",
-      "source_version": "aafdc4ae",
-      "content_hash": "da6578d6800ebcb191fcfd2d8166d1196f3c987c638acadb200005e37c681fca",
+      "source_version": "4e3ca0b2",
+      "content_hash": "740110ece66e6a51a1ad5f49e5db7cfbdfe436c1bba9bbc9b6d5c6ed5c714e6e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T04:29:08.173Z"
+      "persisted_at": "2026-11-18T13:17:20.514Z"
     },
     "learn-github-tencent-tds-kuiklyui": {
       "learning_id": "learn-github-tencent-tds-kuiklyui",
@@ -239335,9 +239350,9 @@
       "title": "Technical Construction Intelligence: falkordb-falkordb-learnings Core Invariants",
       "repository": "falkordb-falkordb-learnings",
       "source_version": "HEAD",
-      "content_hash": "18d0550a61a32af60f86c7b9f3c3030fcc5b530c900807b3fe5f66759680609b",
+      "content_hash": "ac67b683f701970b8b3a195cfde8bf330b1b964634bf83f0c655cf4fc6c96ee9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T04:29:23.581Z"
+      "persisted_at": "2026-11-18T13:17:36.438Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-falkordb-falkordb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-falkordb-falkordb-learnings",
@@ -239347,9 +239362,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for falkordb-falkordb-learnings",
       "repository": "falkordb-falkordb-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ab62c632ad0fff281526f7182b22192cd1c11ea8d82199aa55cff53c82af396",
+      "content_hash": "fadf94e4b5bf7b7512c8e6ed890f3b6d666f033a993b234ff54be09e7ac6d820",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T04:29:23.726Z"
+      "persisted_at": "2026-11-18T13:17:36.621Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-learnings-core-invari",
@@ -243888,10 +243903,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lancedb-lancedb-technical-construction-intelligence-lancedb-lancedb-core-invaria.md",
       "title": "Technical Construction Intelligence: lancedb/lancedb Core Invariants",
       "repository": "lancedb/lancedb",
-      "source_version": "16af7297",
-      "content_hash": "df48bdc2ca6b663b2593502052f4da3367943e126af1f624be6fbbe8a87f5eb7",
+      "source_version": "a6d7d02f",
+      "content_hash": "7a246fc0bd810da72ea95a5e37442e52f212ca179f66fb203b94a04899cc73a1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T19:27:36.295Z"
+      "persisted_at": "2026-11-18T13:17:32.659Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-lancedb-lancedb",
@@ -274543,25 +274558,25 @@
       "rule_number": 9014,
       "title": "Empirical Invariant Guard in SECURITY_CONTEXT.md",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "aaa21d53",
+      "source_version": "91c2a7cf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-17T17:02:38.320Z"
+      "verified_at": "2026-11-18T13:17:29.269Z"
     },
     "candidate_directive-empirical-invariant-guard-in-security_context-md": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-security_context-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-XL7O-empirical-invariant-guard-in-security_context-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-BT49-empirical-invariant-guard-in-security_context-md.md",
       "title": "Empirical Invariant Guard in SECURITY_CONTEXT.md",
-      "repository": "projectdiscovery-nuclei-learnings",
-      "source_version": "HEAD",
-      "content_hash": "aee32befa4de42a7b419ba0742062e4a2fdac972a01161d2ad2187824bba7aee",
+      "repository": "projectdiscovery/nuclei",
+      "source_version": "91c2a7cf",
+      "content_hash": "2729f2cce7751c322e706c66c487c7758fbb57073aaf53433612e94181297bcb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T17:02:42.854Z"
+      "persisted_at": "2026-11-18T13:17:29.775Z"
     },
     "candidate_directive-auth-register-oauth-token-waiters-before-reading-the-deadline": {
       "item_id": "candidate_directive-auth-register-oauth-token-waiters-before-reading-the-deadline",
@@ -280689,7 +280704,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/apple/LensVLM-9B",
       "source_version": "hf-apple-lensvlm-9b",
-      "content_hash": "39fcf5d730426699279996addfadaf15b4d7b163ab3fdfc69ec683331377ebda",
+      "content_hash": "59f1f70d4ff446dbe3d91dfd03ae685ae605e194d80d23ce36441d68ebb4e6fe",
       "dossier_path": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "promoted_rules": [],
@@ -280698,7 +280713,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T03:17:08.695Z",
+      "verified_at": "2026-11-18T13:17:16.641Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -286796,6 +286811,84 @@
       "content_hash": "22ab7ca75c48149939b78d906652022f7c771b5bbb4d4f80439e882ee44b726f",
       "domain_letter": "B",
       "persisted_at": "2026-11-18T13:09:10.036Z"
+    },
+    "rule-9227": {
+      "learning_id": "rule-9227",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9227,
+      "title": "a WHERE after a writing CALL {} no longer starves the write (#748, #997)",
+      "source_url": "https://github.com/FalkorDB/FalkorDB",
+      "source_version": "4e3ca0b2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T13:17:19.631Z"
+    },
+    "candidate_directive-a-where-after-a-writing-call-no-longer-starves-the-write-748-997": {
+      "item_id": "candidate_directive-a-where-after-a-writing-call-no-longer-starves-the-write-748-997",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BY48-a-where-after-a-writing-call-no-longer-starves-the-write-748-997.md",
+      "title": "a WHERE after a writing CALL {} no longer starves the write (#748, #997)",
+      "repository": "falkordb-falkordb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9472e68305b583eeea889c0414e85839cbae4647d9438fb76ee0891d19a1ba20",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T13:17:36.256Z"
+    },
+    "rule-9228": {
+      "learning_id": "rule-9228",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9228,
+      "title": "Empirical Invariant Guard in reference.md",
+      "source_url": "https://github.com/moby/buildkit",
+      "source_version": "bfe7dac5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T13:17:27.661Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-reference-md": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-reference-md",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BZ6S-empirical-invariant-guard-in-reference-md.md",
+      "title": "Empirical Invariant Guard in reference.md",
+      "repository": "moby-buildkit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "79d8a9b6d54a521d28ae918be719e1ddb207684a866acb8b178a78a0f74ee403",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T13:17:37.641Z"
+    },
+    "rule-9229": {
+      "learning_id": "rule-9229",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9229,
+      "title": "allow static diagnostic imports in Functions",
+      "source_url": "https://github.com/lancedb/lancedb",
+      "source_version": "a6d7d02f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T13:17:32.013Z"
+    },
+    "candidate_directive-allow-static-diagnostic-imports-in-functions": {
+      "item_id": "candidate_directive-allow-static-diagnostic-imports-in-functions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BV7I-allow-static-diagnostic-imports-in-functions.md",
+      "title": "allow static diagnostic imports in Functions",
+      "repository": "lancedb/lancedb",
+      "source_version": "a6d7d02f",
+      "content_hash": "7d38b21c40ddd77f771aac595c5b621b91521125edbed5c1b360d218cd92b4c7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T13:17:32.484Z"
     }
   },
   "ai-builder-brain": {

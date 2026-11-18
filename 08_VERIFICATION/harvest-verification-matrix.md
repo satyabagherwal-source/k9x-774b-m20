@@ -10974,3 +10974,8 @@
 | `CYCLE-20261118-0OAH` | `2026-11-18T13:08:50.297Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`651e8953...`) |
 | `CYCLE-20261118-0WD9` | `2026-11-18T13:09:00.765Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9225` | Yes (`e2ff7c35...`) |
 | `CYCLE-20261118-0ZHU` | `2026-11-18T13:09:04.818Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9226` | Yes (`bfa5c974...`) |
+| `CYCLE-20261118-BJ6E` | `2026-11-18T13:17:16.886Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md` | Yes (`59f1f70d...`) |
+| `CYCLE-20261118-BLGX` | `2026-11-18T13:17:19.857Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9227` | Yes (`6a2e0008...`) |
+| `CYCLE-20261118-BROB` | `2026-11-18T13:17:27.899Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9228` | Yes (`03ffaaa4...`) |
+| `CYCLE-20261118-BSWQ` | `2026-11-18T13:17:29.498Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9014` | Yes (`8f889f8f...`) |
+| `CYCLE-20261118-BV0S` | `2026-11-18T13:17:32.236Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9229` | Yes (`4b1bdec0...`) |

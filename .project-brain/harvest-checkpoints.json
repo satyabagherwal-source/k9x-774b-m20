@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T13:09:04.833Z",
+  "last_updated": "2026-11-18T13:17:32.251Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -485,14 +485,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-apple-lensvlm-9b",
-      "content_hash": "39fcf5d730426699279996addfadaf15b4d7b163ab3fdfc69ec683331377ebda",
-      "verified_at": "2026-11-18T03:17:08.882Z",
+      "content_hash": "59f1f70d4ff446dbe3d91dfd03ae685ae605e194d80d23ce36441d68ebb4e6fe",
+      "verified_at": "2026-11-18T13:17:16.900Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T03:17:08.882Z"
+      "last_updated": "2026-11-18T13:17:16.900Z"
     },
     "Altworld/Hemmingway-1": {
       "repository": "Altworld/Hemmingway-1",
@@ -3306,14 +3306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-moby-buildkit",
-      "content_hash": "abbc83ae6838ea01112d8c2c7f51f5f5b14f4d934012a81cbee3157971d12c69",
-      "verified_at": "2026-11-17T20:03:33.776Z",
+      "content_hash": "03ffaaa4d2803d18df5f7b497f690e0a730ce605f48f2d808387b16ee01c27c0",
+      "verified_at": "2026-11-18T13:17:27.915Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T20:03:33.776Z"
+      "last_updated": "2026-11-18T13:17:27.915Z"
     },
     "microsoft/agent-governance-toolkit": {
       "repository": "microsoft/agent-governance-toolkit",
@@ -4476,14 +4476,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-falkordb-falkordb",
-      "content_hash": "1f39cf5e837dbebcf69291448160aa51b41f9bfa496a613f4f8766ebdbb7905e",
-      "verified_at": "2026-11-18T04:29:07.692Z",
+      "content_hash": "6a2e00087b2819c9f8c39dee4ef5eb0242f412ed85cf7a0c4721f0ccd5ae5675",
+      "verified_at": "2026-11-18T13:17:19.871Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T04:29:07.692Z"
+      "last_updated": "2026-11-18T13:17:19.871Z"
     },
     "feathersjs/feathers": {
       "repository": "feathersjs/feathers",
@@ -5301,14 +5301,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-projectdiscovery-nuclei",
-      "content_hash": "47697e5c65ae02fa273eaa53f7f6bf22abd296377a83bd1e2fc24c366608b14f",
-      "verified_at": "2026-11-18T04:37:33.745Z",
+      "content_hash": "8f889f8f569c0194ff769646ec0fd0ef366289e29b1df8c11f36843e59b4dc0d",
+      "verified_at": "2026-11-18T13:17:29.514Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T04:37:33.745Z"
+      "last_updated": "2026-11-18T13:17:29.514Z"
     },
     "okteto/okteto": {
       "repository": "okteto/okteto",
@@ -11196,14 +11196,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-lancedb-lancedb",
-      "content_hash": "6b9858ea9bf1ee60afedb4282d47e000172c24fb71a029f9d40890cab529e639",
-      "verified_at": "2026-11-17T19:27:35.987Z",
+      "content_hash": "4b1bdec01711914855d0c2f13893d9368d8ce97087f16de21b5a915e7a40d182",
+      "verified_at": "2026-11-18T13:17:32.250Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T19:27:35.987Z"
+      "last_updated": "2026-11-18T13:17:32.250Z"
     },
     "agent-of-empires/agent-of-empires": {
       "repository": "agent-of-empires/agent-of-empires",

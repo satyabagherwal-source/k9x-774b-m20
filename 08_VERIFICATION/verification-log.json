@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-RJBC",
-    "timestamp": "2026-11-17T03:26:11.592Z",
-    "repository": "scrapinghub/dateparser",
-    "learningId": "learn-github-scrapinghub-dateparser",
-    "contentHash": "37e6d41ab47065701adb0bbaf203b25ff2b7580a49ec859362d50d10d4ff4546",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-RLDG",
-    "timestamp": "2026-11-17T03:26:14.260Z",
-    "repository": "signerlabs/Klee",
-    "learningId": "learn-github-signerlabs-klee",
-    "contentHash": "0bd559fb1b7b6602720778c75798d52b2bd433b30563f53a24cf655a000ca005",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-RNCZ",
-    "timestamp": "2026-11-17T03:26:16.835Z",
-    "repository": "skyhook-io/radar",
-    "learningId": "learn-github-skyhook-io-radar",
-    "contentHash": "3bb767671b0641f1206da2b8a1cb8861c8f839b66d797d8dd93a608204132473",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-RQCG",
-    "timestamp": "2026-11-17T03:26:20.704Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "d9d6d6bebbdabd7fa03ab1ea5f54e3750d061bddbfc123f772cb5483a952d4f3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-RRHM",
-    "timestamp": "2026-11-17T03:26:22.186Z",
-    "repository": "risingwavelabs/risingwave",
-    "learningId": "learn-github-risingwavelabs-risingwave",
-    "contentHash": "2bd29a48078f0c87f357becf39afab60b42c37a36a2574b34e4976463e559f40",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-1R6X",
     "timestamp": "2026-11-17T03:34:08.361Z",
     "repository": "microsoft/Mage-VL-Cowork",
@@ -7490,6 +7415,81 @@
     "repository": "cilium/cilium",
     "learningId": "learn-github-cilium-cilium",
     "contentHash": "bfa5c974fef3678e3b2e3225ed4a0ffc1a18796771a793b25cba54986931268b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-BJ6E",
+    "timestamp": "2026-11-18T13:17:16.886Z",
+    "repository": "apple/LensVLM-9B",
+    "learningId": "learn-huggingface-apple-lensvlm-9b",
+    "contentHash": "59f1f70d4ff446dbe3d91dfd03ae685ae605e194d80d23ce36441d68ebb4e6fe",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-BLGX",
+    "timestamp": "2026-11-18T13:17:19.857Z",
+    "repository": "FalkorDB/FalkorDB",
+    "learningId": "learn-github-falkordb-falkordb",
+    "contentHash": "6a2e00087b2819c9f8c39dee4ef5eb0242f412ed85cf7a0c4721f0ccd5ae5675",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-BROB",
+    "timestamp": "2026-11-18T13:17:27.899Z",
+    "repository": "moby/buildkit",
+    "learningId": "learn-github-moby-buildkit",
+    "contentHash": "03ffaaa4d2803d18df5f7b497f690e0a730ce605f48f2d808387b16ee01c27c0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-BSWQ",
+    "timestamp": "2026-11-18T13:17:29.498Z",
+    "repository": "projectdiscovery/nuclei",
+    "learningId": "learn-github-projectdiscovery-nuclei",
+    "contentHash": "8f889f8f569c0194ff769646ec0fd0ef366289e29b1df8c11f36843e59b4dc0d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-BV0S",
+    "timestamp": "2026-11-18T13:17:32.236Z",
+    "repository": "lancedb/lancedb",
+    "learningId": "learn-github-lancedb-lancedb",
+    "contentHash": "4b1bdec01711914855d0c2f13893d9368d8ce97087f16de21b5a915e7a40d182",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

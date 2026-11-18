@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T13:09:10.215Z",
+  "last_updated": "2026-11-18T13:17:37.821Z",
   "total_records": 1853,
   "domains": {
     "A": {
@@ -7827,8 +7827,8 @@
       "title": "Research & Knowledge Intelligence: apple/LensVLM-9B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-apple-lensvlm-9b-research-knowledge-intelligence-apple-lensvlm-9b-core-invari.md",
       "repository": "apple/LensVLM-9B",
-      "content_hash": "6d5276537b4a049b1fd24d9c528387f0ea0c3ea9d028330092852ef77dbda8d9",
-      "created_at": "2026-11-18T03:17:09.043Z"
+      "content_hash": "ca1f78b293f16280fcfb4349f98e28e64391ff4f8fb02cbdabb3d3bb45bc39ff",
+      "created_at": "2026-11-18T13:17:17.119Z"
     },
     "domain_intelligence-content-information-intelligence-crossplane-crossplane-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-crossplane-crossplane-core-invariants",
@@ -7905,8 +7905,8 @@
       "title": "Research & Knowledge Intelligence: hf-apple-lensvlm-9b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-apple-lensvlm-9b-learnings-research-knowledge-intelligence-hf-apple-lensvlm-9.md",
       "repository": "hf-apple-lensvlm-9b-learnings",
-      "content_hash": "6b80c7db0cfa59cf8b4c353b97962c5edebe9f458eb77d15bb5840eb32eb16bc",
-      "created_at": "2026-11-18T03:17:20.618Z"
+      "content_hash": "3ff4bf49d8046334f835a022c2a1f9aec610dd4a26d2b5ea3024ffe9e665a753",
+      "created_at": "2026-11-18T13:17:37.045Z"
     },
     "domain_intelligence-content-information-intelligence-crossplane-crossplane-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-crossplane-crossplane-learnings-core-invariants",
@@ -12698,8 +12698,8 @@
       "title": "Architecture Intelligence: moby/buildkit Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-architecture-intelligence-moby-buildkit-core-invariants.md",
       "repository": "moby/buildkit",
-      "content_hash": "51a04179f2a89360926b2ea13bf7460c57a85a770e33729ac941b3f4374dbd74",
-      "created_at": "2026-11-17T20:03:34.084Z"
+      "content_hash": "37d5d4de40f1408c342715ffaeb2225f4237656d7682b6f2f39c5c6d0de29d45",
+      "created_at": "2026-11-18T13:17:28.376Z"
     },
     "DOM-D-F2B017DF": {
       "record_id": "DOM-D-F2B017DF",
@@ -12758,8 +12758,8 @@
       "title": "Architecture Intelligence: moby-buildkit-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-moby-buildkit-learnings-architecture-intelligence-moby-buildkit-learnings-core-i.md",
       "repository": "moby-buildkit-learnings",
-      "content_hash": "5e6e48d22c409a5dba9361769e756920fed93d5b811d38a0a05d7308115aed3e",
-      "created_at": "2026-11-17T20:03:47.127Z"
+      "content_hash": "2c642512219f370baee1388b4f034b51f41a88c18e8013485f42b3dd95f5cb38",
+      "created_at": "2026-11-18T13:17:37.821Z"
     },
     "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tailscale-tailscale-learnings-core-invariants",
@@ -15202,8 +15202,8 @@
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "repository": "projectdiscovery/nuclei",
-      "content_hash": "84386099f64a5184ac1b45281971ceb0a0de686e63e90ddd4958f2d43e80da8f",
-      "created_at": "2026-11-18T04:37:34.054Z"
+      "content_hash": "22b813e4d327b9eaaf46db95198163954087afa5c0af577db4293e82f659bfe4",
+      "created_at": "2026-11-18T13:17:29.953Z"
     },
     "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
@@ -18677,8 +18677,8 @@
       "title": "Technical Construction Intelligence: FalkorDB/FalkorDB Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-falkordb-falkordb-technical-construction-intelligence-falkordb-falkordb-core-inv.md",
       "repository": "FalkorDB/FalkorDB",
-      "content_hash": "bbd60be5b00c1e3e387bb509fa192eea1fdc9afe9302bfdf0c6ec5b8ab7c2cbd",
-      "created_at": "2026-11-18T04:29:08.039Z"
+      "content_hash": "3aa6dc8e32a9319387cde4e366fed97397120342bdda008b5a891a2a2ae5ff46",
+      "created_at": "2026-11-18T13:17:20.319Z"
     },
     "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-core-invariants",
@@ -18695,8 +18695,8 @@
       "title": "Technical Construction Intelligence: falkordb-falkordb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-falkordb-falkordb-learnings-technical-construction-intelligence-falkordb-falkord.md",
       "repository": "falkordb-falkordb-learnings",
-      "content_hash": "18d0550a61a32af60f86c7b9f3c3030fcc5b530c900807b3fe5f66759680609b",
-      "created_at": "2026-11-18T04:29:23.581Z"
+      "content_hash": "ac67b683f701970b8b3a195cfde8bf330b1b964634bf83f0c655cf4fc6c96ee9",
+      "created_at": "2026-11-18T13:17:36.438Z"
     },
     "DOM-D-04368044": {
       "record_id": "DOM-D-04368044",
@@ -20347,8 +20347,8 @@
       "title": "Technical Construction Intelligence: lancedb/lancedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lancedb-lancedb-technical-construction-intelligence-lancedb-lancedb-core-invaria.md",
       "repository": "lancedb/lancedb",
-      "content_hash": "df48bdc2ca6b663b2593502052f4da3367943e126af1f624be6fbbe8a87f5eb7",
-      "created_at": "2026-11-17T19:27:36.295Z"
+      "content_hash": "7a246fc0bd810da72ea95a5e37442e52f212ca179f66fb203b94a04899cc73a1",
+      "created_at": "2026-11-18T13:17:32.659Z"
     },
     "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meshtastic-meshtastic-android-core-invariant",

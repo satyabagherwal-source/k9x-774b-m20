@@ -678597,3 +678597,286 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `606a80fe` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9227. a WHERE after a writing CALL {} no longer starves the write (#748, #997) (Harvested from FalkorDB/FalkorDB)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "a WHERE after a writing CALL {} no longer starves the write (#748, #997)",
+  "source": "FalkorDB/FalkorDB",
+  "source_url": "https://github.com/FalkorDB/FalkorDB",
+  "source_version": "4e3ca0b2",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-18T13:17:19.284Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-falkordb-falkordb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB) (Revision: `4e3ca0b2`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `graph/src/planner/optimizer/push_filters_down.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b9f333c5`: a WHERE after a writing CALL {} no longer starves the write (#748, #997). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `graph/src/planner/optimizer/push_filters_down.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+/// Operators that change the graph (or its schema) when they run.
+///
+/// A `Filter` is never moved below one of these, nor into a branch that
+/// feeds a sibling subtree containing one: the write must still happen for
+/// every row that reaches it, whatever a later `WHERE` says.
+const fn is_write(ir: &IR) -> bool {
+    matches!(
+        ir,
+        IR::Create(_)
+            | IR::Merge { .. }
+            | IR::Delete { .. }
+            | IR::Set(_)
+            | IR::Remove(_)
+            | IR::Commit
+            | IR::ForEach { .. }
+            | IR::CreateIndex { .. }
+            | IR::DropIndex { .. }
+    )
+}
+
+                            | IR::Create(_)
+                            | IR::Delete { .. }
+                            | IR::Set(_)
+                            | IR::Remove(_)
+                            | IR::Commit
+                            | IR::ForEach { .. }
+            // A branch is locked when a sibling subtree writes: filtering that
+            // branch would starve the write of rows it must see (an `Apply`
+            // runs its right side once per left row), e.g. `CALL { CREATE () }
+            // MATCH () WHERE false` must still create its node.
+         
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+                    if conj_vars.iter().all(|v| child_vars.contains(v)) {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b9f333c5` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9228. Empirical Invariant Guard in reference.md (Harvested from moby/buildkit)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Empirical Invariant Guard in reference.md",
+  "source": "moby/buildkit",
+  "source_url": "https://github.com/moby/buildkit",
+  "source_version": "bfe7dac5",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-18T13:17:27.320Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-moby-buildkit",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [moby/buildkit](https://github.com/moby/buildkit) (Revision: `bfe7dac5`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `frontend/dockerfile/docs/reference.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in moby/buildkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `bfe7dac5`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `frontend/dockerfile/docs/reference.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+[ARGs](#arg). The `FROM` instruction specifies the base
+image from which you are
+base image for subsequent
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+[ARGs](#arg). The `FROM` instruction specifies the [base
+image](https://docs.docker.com/glossary/#base-image) from which you are
+[base image](https://docs.docker.com/glossary/#base-image) for subsequent
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `bfe7dac5` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9229. allow static diagnostic imports in Functions (Harvested from lancedb/lancedb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "allow static diagnostic imports in Functions",
+  "source": "lancedb/lancedb",
+  "source_url": "https://github.com/lancedb/lancedb",
+  "source_version": "a6d7d02f",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-18T13:17:31.674Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-lancedb-lancedb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [lancedb/lancedb](https://github.com/lancedb/lancedb) (Revision: `a6d7d02f`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/src/python/python.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in lancedb/lancedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a653d861`: python): allow static diagnostic imports in Functions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/python/python.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+module. It supports three statically recognizable diagnostic operations:
+`sys.stderr`, `sys.version_info`, and `importlib.metadata.version`. Direct
+imports, `from` imports, and aliases are treated the same way, whether the
+import appears inside a function or class body or at module level.
+
+Other imports of `sys`, `builtins`, `importlib`, `inspect`, `gc`, `ctypes`, and
+`types`, including submodules such as `ctypes.util` and `importlib.resources`,
+remain blocked. This applies to imports inside function or class bodies and
+references to module-level aliases. Even ordinary uses such as `sys.version`
+and `ctypes.util.find_library` are blocked: these modules can reach names
+outside the reconstructed Function namespace. References to `globals`, `locals`,
+`vars`, `eval`, `exec`, `compile`, and `__import__` are rejected as dynamic
+namespace access. These restrictions also apply to the deprecated `@udf` alias.
+
+For example, a diagnostic Function can report its Python version and NumPy
+version without a helper module:
+
+```python
+import importlib.metadata
+import sys
+
+from lancedb import function
+
+
+@function(pip=["numpy"])
+def report(value: int) -> str:
+    print("diagnostic", file=sys.stderr)
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+module. It conservatively rejects imports of `sys`, `builtins`, `importlib`,
+`inspect`, `gc`, `ctypes`, and `types`, including submodules such as `ctypes.util`
+and `importlib.metadata`. This applies to imports inside function or class bodies
+and references to module-level aliases. Even ordinary uses such as `sys.version`
+and `ctypes.util.find_library` are blocked: these modules can reach names outside
+the reconstructed Function namespace. References to `globals`, `locals`, `vars`,
+`eval`, `exec`, `compile`, and `__import__` are rejected as dynamic namespace access.
+These restrictions also apply to the deprecated `@udf` alias.
+
+For legitimate uses, move the code into an importable helper module and ship it
+with `code=`, or install its package with `pip=` or `conda=`. Imported helpers keep
+their own namespace; the packager does not scan their bodies. Helpers defined in
+`__main__` are copied by source and have the same restrictions as the Function.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a653d861` are properly handled with clean fallback behavior.

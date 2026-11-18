@@ -11007,3 +11007,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-11-18T13:08:50.302Z |
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `95d1059a` | Multi-dimensional audit evidence | 2026-11-18T13:09:00.769Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `606a80fe` | Multi-dimensional audit evidence | 2026-11-18T13:09:04.822Z |
+| `learn-huggingface-apple-lensvlm-9b` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-11-18T13:17:16.890Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `4e3ca0b2` | Multi-dimensional audit evidence | 2026-11-18T13:17:19.861Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `bfe7dac5` | Multi-dimensional audit evidence | 2026-11-18T13:17:27.905Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `91c2a7cf` | Multi-dimensional audit evidence | 2026-11-18T13:17:29.504Z |
+| `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `a6d7d02f` | Multi-dimensional audit evidence | 2026-11-18T13:17:32.241Z |

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source**: github ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
-> **Source Version**: `aafdc4ae`  
+> **Source Version**: `4e3ca0b2`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T04:29:06.648Z  
+> **Timestamp**: 2026-11-18T13:17:18.660Z  
 > **Learning ID**: `learn-github-falkordb-falkordb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T04:29:06.641Z  
+> **Harvest Timestamp**: 2026-11-18T13:17:18.652Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matrix graph representation. Our goal is to provide the best Knowledge Graph for LLM (GraphRAG).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10508 stars
+- **Stars / Engagement**: 10506 stars
 
 ---
 
@@ -1260,1032 +1260,1002 @@ print("bgsave status", r.info('persistence')['rdb_last_bgsave_status'])
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `27951021` (2026-11-17)
-**Commit Message**: fix: a cascaded edge of a new type no longer panics compact replies or opens a replica id gap (#3447) (#3461)
+### Incident Patch 1: `b9f333c5` (2026-11-18)
+**Commit Message**: fix: a WHERE after a writing CALL {} no longer starves the write (#748, #997) (#3582)
 
-* fix: register the type of a cascaded pending relationship at commit (#3447)
+* fix: a WHERE after a writing CALL {} no longer starves the write (#748, #997)
 
-A relationship of a new type whose endpoint a DETACH DELETE removes in the
-same segment is cascaded into `cancelled_relationships`, and its emptied
-`created_rels_by_type` group is dropped, so `Pending::commit` never
-registered the type. Two symptoms followed:
+push_filters_down pushed a WHERE onto every child that covered its
+variables, including the rows feeding a sibling subtree that writes. A
+constant-false WHERE therefore emptied the left side of an Apply whose right
+side was the CALL body, and the body never ran.
 
-- the compact reply of the snapshotted edge called
-  `get_type_id(..).unwrap()` on the unregistered name and panicked the
-  server (src/reply.rs:260);
-- `digest_cancelled` skipped the cancelled edge's CREATE_EDGE/DELETE_EDGE
-  pair, leaving a hole in the replica's relationship id space that
-  `IdSpace::verify` refuses with a forced full resync.
+A branch is now locked when a sibling subtree holds a write, and the filter
+never moves under a write operator.
 
-`Pending::commit` now registers the type of every cancelled relationship,
-so every type a segment named is in the dictionary after commit, as in C.
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* Merge origin/main into fix/748-filter-not-below-write; const fn is_write
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix: count cancelled entities in Pending::effects_count so a cancellation-only commit emits its schema additions (#3447)
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix: build against mai
-
-**File**: `graph/src/effects/v3/emit.rs` (modified, +4/-7)
-```diff
-@@ -445,13 +445,10 @@ fn digest_cancelled(
-     }
-     let mut pairs: Vec<(u32, IdList, IdList, IdList)> = Vec::with_capacity(by_type.len());
-     for (type_name, mut rels) in by_type {
--        // A type whose every edge was cancelled was never registered on this
--        // graph — nothing of it reached `create_relationships_bulk` — so there
--        // is no id to state and no `ADD_SCHEMA` announcing one. Skipped rather
--        // than invented: a made-up id would index the pair under some other
--        // type. The reservation those ids came from is still the master's, so
--        // this case leaves the two relationship bounds apart. It cannot be
--        // closed with the records this format has.
-+        // `Pending::commit` registers the type of every cancelled edge, so the
-+        // id is there and `emit_schema_additions` has announced it. Skipped
-+        // rather than invented if it ever is not: a made-up id would index the
-+        // pair under some other type.
-         let Some(relation_id) = graph.get_type_id(&type_name).map(|t| schema_id(t.0)) else {
-             continue;
-         };
-```
-
-**File**: `graph/src/runtime/pending.rs` (modified, +20/-5)
-```diff
-@@ -926,11 +926,9 @@ impl Pending {
-             self.created_rel_types.remove(&rel_id);
-             if let Some(entries) = self.created_rels_by_type.get_mut(&type_name) {
-                 entries.retain(|(rid, _, _)| *rid != rel_id);
--                // And drop the group once it is empty. A type whose every edge
--                // was cascaded away was never registered on the graph — nothing
--                // of that type reached `create_relationships_bulk` — so leaving
--                // the key behind hands the effects emitter a type name it
--                // cannot resolve.
-+                // And drop the group once it is empty, so commit creates no
-+                // edges for it. The type itself is still registered at commit,
-+                // from `cancelled_relationships`.
-                 if entries.is_empty() {
-                     self.created_rels_by_type.remove(&type_name);
-                 }
-@@ -1366,6 +1364,18 @@ impl Pending {
-                     .map_err(|e| e.to_string())?;
-             }
-         }
-+        // A type whose every edge a cascade cancelled never reached the loop
-+        // above, yet it was named by this segment: the snapshot a reply reads
-+        // states it by id, and so does the cancelled pair the effects carry to
-+        // the replica. Register it, as C does when the edge is created.
-+        // Once per type: a bulk cascade cancels many edges of the same few
-+        // types, and each lookup scans the schema.
-+        let mut cancelled_types: FxHashSet<&Arc<String>> = FxHashSet::default();
-+        for r in &self.cancelled_relationships {
-+            if cancelled_types.insert(&r.type_name) {
-+                g.get_type_id_mut(&r.type_name);
-+            }
-+        }
-         if !self.set_labels.is_empty() {
-             let (rows, cols) = flatten_label_map(&self.set_labels);
-             // Pairs for nodes created in this transaction cannot already be
-@@ -1969,6 +1979,11 @@ impl Pending {
-             + self.created_rel_types.len() as u64
-             + self.deleted_nodes.len()
-             + self.deleted_relationships.len()
-+            // A cancelled entity is emitted as a create and a delete, and its
-+            // type (registered at commit) as a schema addition: a commit holding
-+            // nothing else must still build its buffer.
-+            + 2 * self.cancelled_nodes.len()
-+            + 2 * self.cancelled_relationships.len() as u64
-             + self.new_nodes_attrs.len() as u64
-             + self.existing_nodes_attrs.len() as u64
-             + self.new_relationships_attrs.len() as u64
-```
-
-**File**: `proofs/FINDINGS.md` (modified, +1/-1)
-```diff
-@@ -196,7 +196,7 @@ A triage of every open `type:Bug label:rust` issue (live on Rust main 9d3869aa8
- ### Open reports #3442–#3454 (gkorland, 2026-10-22)
- Of the twelve Rust bugs filed on 2026-10-21 and reproduced against main b84473a7f and C, these are still open. #3446 (GRAPH.EFFECT expands a compressed id range eagerly) is a memory cost outside what the proofs can express. Common causes: operators modelled over the committed graph only (pending deletes and staged labels invisible to MERGE/ExpandInto/IncludePending/UDFs), label sets modelled as only growing (REMOVE), and replies or effect streams proven for shape only, with the panicking lookups taken as total.
- 
--- #3447 (store/effects→replica): `remove_pending_relationships_for_node` (pending.rs:839-896) drops a type's `created_rels_by_type` group once empty, so `Pending::commit` (pending.rs:1239-1253) never registers a type whose only edges were cascaded; `digest_cancelled` (emit.rs:457) skips that cancelled edge id and the replica's relationship id space has a hole that `IdSpace::verify` (id_space.rs:737-790) refuses. Lean bug3447_cancelled_edge_id_gap, bug3447_cascade_drops_type_key; property RelIdsCovered / CancelledTypeRegistered; fix relIdsCovered_of_registered.
-+- #3447 (store/effects→replica): `remove_pending_relationships_for_node` (pending.rs:839-896) drops a type's `created_rels_by_type` group once empty, so `Pending::commit` (pending.rs:1239-1253) never registers a type whose only edges were cascaded; `digest_cancelled` (emit.rs:457) skips that cancelled edge id and the replica's relationship id space has a hole that `IdSpace::verify` (id_space.rs:737-790) refuses. Lean bug3447_cancelled_edge_id_gap, bug3447_cascade_drops_type_key; property RelIdsCovered / CancelledTypeRegistered; fix relIdsCovered_of_registered. **Fixed by #3461** (f203972c5): `Pending::commit` registers every cancelled relationship's type (pending.rs:1360-1371); Lean relIdsCovered_after_commit, fixed3447_cancelled_edge_id_gap, pending_commit PC.stCancelTypes_registers; old counterexample kept as pre3461_bug3447_cancelled_edge_id_gap. #3461 also makes `effects_count` (pending.rs:1970) count cancelled entities, fixing the cancelled half of W2-effects-1 (gate_ships_of_cancelled; history pre3461_gate_drops_cancelled, pre3461_cancelled_edge_attr_dropped); schema-only writes are still dropped (gate_drops_schema_only).
- - #3447 (srv/reply, compact part): a pending edge of a new type that a DETACH DELETE cascades away is snapshotted with its type name. Its type is never registered, because Pending::commit registers only surviving groups (pending.rs:872-873, :1242-1251). The compact reply's `get_type_id(..).unwrap()` (reply.rs:260) then panics; the verbose reply renders the edge. Lean bug3447_compact_cancelled_new_type_panics; property RegisteredTypes ⇒ ReplyTotal (replyTotal_of_registered).
- - #3448 (store/effects): `remove_node_labels` (pending.rs:699-711) also stages labels that were only staged, and `delete_pending_node` (:788) never clears `remove_labels`; `emit_v3` digests `remove_labels` (emit.rs:372) before `digest_cancelled` (:376), so `CREATE (n:Foo) REMOVE n:Foo DELETE n` emits `RemoveLabels [0]` before `CreateNode [0]` and the replica's `require_live` (apply.rs:359-360) refuses it. Lean bug3448_removeLabels_before_create_refused, bug3448_remove_of_staged_label, bug3448_cancelled_node_keeps_remL; property ReplayApplies / RemLCommitted / RemLLive.
- - #3450 (binder REMOVE/WITH labels): `bind_ir` QueryIR::Remove (binder.rs:477-482) leaves `node_labels` alone; `bind_projection` copies the parent's labels to the WITH child (:1132-1141/:1159-1168) and `update_all_node_labels` (:122-134) stamps them on the next MATCH, so `MATCH (a:A) REMOVE a:A WITH a MATCH (a)-[:R]->(b)` scans `(a:A)` (Rust 0 rows, C 1). Lean bug3450_remove_label_kept_across_with; property StampedLabelsHeld.
-```
-
-**File**: `proofs/effects_emit_apply/COVERAGE.tsv` (modified, +11/-11)
-```diff
-@@ -5,15 +5,15 @@ graph/src/effects/v3/emit.rs	build_constraint_buffer	110	PROVEN	EmitDDL.buildCon
- graph/src/effects/v3/emit.rs	encode_all	186	PROVEN	EmitDDL.encodeAll: encodeAll_ok, encodeAll_failed
- graph/src/effects/v3/emit.rs	index_field_flags	204	PROVEN	EmitDDL.indexFieldFlags: indexFieldFlags_spec
- graph/src/effects/v3/emit.rs	build_index_buffer	226	PROVEN	EmitDDL.buildIndexRec/resolveRefs + encodeAll: buildIndexRec_verifies, encodeAll_ok
--graph/src/effects/v3/emit.rs	for_each_record	323	PROVEN	Emit.gate_zero_stream, Emit.commitShips_eq_iff (record-opcode granularity); emit-then-apply with cancellation (CancelGap): RemoveLabels for a created/cancelled node precedes its CREATE_NODE and the replica refuses it, ReplayApplies refuted: bug3448_removeLabels_before_create_refused (BUG #3448; control agree3448_without_stale_remL); when every allocated relationship type is registered, relIdsCovered_of_registered proves each id reaches a CREATE_EDGE; bug3447_cancelled_edge_id_gap refutes this on main (BUG #3447)
--graph/src/effects/v3/emit.rs	digest_cancelled	395	PROVEN	Digests.digestCancelledF: digestCancelled_pairs; Emit.digestCancelled (gate); digestCancelled_pairs only covers cancelled edges of registered types: a type whose every edge was cascaded away has no id, the pair is skipped and the replica IdSpace has a hole: RelIdsCovered refuted by CancelGap.bug3447_cancelled_edge_id_gap (BUG #3447), fix property relIdsCovered_of_registered
--graph/src/effects/v3/emit.rs	digest_created_nodes	497	PROVEN	Basic.memoGroup_eq_groupBy, Basic.sortDedup_set_eq, Basic.groupBy_flat, Basic.groupBy_keyed (+ proofs/replication emit/apply roundtrip over groupBy)
--graph/src/effects/v3/emit.rs	digest_created_edges	574	PROVEN	Digests.digestCreatedEdges/mkEdgeRec: digestCreatedEdges_perm, digestCreatedEdges_keyed, mkEdgeRec_shape (FxHashMap order abstracted; theorems order-insensitive)
--graph/src/effects/v3/emit.rs	digest_deleted_edges	634	PROVEN	Digests.digestDeletedEdges: digestDeletedEdges_perm
--graph/src/effects/v3/emit.rs	digest_updates	685	PROVEN	Digests.digestUpdates/updKey: digestUpdates_perm, digestUpdates_shape
--graph/src/effects/v3/emit.rs	digest_deleted_nodes	790	PROVEN	Basic.memoGroup_eq_groupBy, Basic.sortDedup_set_eq (the ascending cursor walk over deleted_node_labels is not modelled)
--graph/src/effects/v3/emit.rs	digest_labels	852	PROVEN	Digests.digestLabels: digestLabels_perm, digestLabels_nonempty; called with skip=None for remove_labels (emit.rs:370), so a stale remove_labels entry of a cancelled node ships before its CREATE_NODE: CancelGap.bug3448_removeLabels_before_create_refused (BUG #3448)
--graph/src/effects/v3/emit.rs	gather_rows	920	PROVEN	Emit.mergeRow_eq_lookup, Emit.gatherRows_length (+ unsorted counterexample example)
-+graph/src/effects/v3/emit.rs	for_each_record	323	PROVEN	Emit.gate_zero_stream, Emit.commitShips_eq_iff (record-opcode granularity); emit-then-apply with cancellation (CancelGap): RemoveLabels for a created/cancelled node precedes its CREATE_NODE and the replica refuses it, ReplayApplies refuted: bug3448_removeLabels_before_create_refused (BUG #3448; control agree3448_without_stale_remL); when every allocated relationship type is registered, relIdsCovered_of_registered proves each id reaches a CREATE_EDGE; since #3461 commit registers every cancelled type: relIdsCovered_after_commit (BUG #3447 fixed; history pre3461_bug3447_cancelled_edge_id_gap)
-+graph/src/effects/v3/emit.rs	digest_cancelled	395	PROVEN	Digests.digestCancelledF: digestCancelled_pairs; Emit.digestCancelled (gate); digestCancelled_pairs only covers cancelled edges of registered types; since #3461 Pending::commit registers every cancelled type (CancelGap.typesAfterCommit), so RelIdsCovered holds: CancelGap.relIdsCovered_after_commit, fixed3447_cancelled_edge_id_gap (BUG #3447 fixed; history pre3461_bug3447_cancelled_edge_id_gap), via relIdsCovered_of_registered
-+graph/src/effects/v3/emit.rs	digest_created_nodes	494	PROVEN	Basic.memoGroup_eq_groupBy, Basic.sortDedup_set_eq, Basic.groupBy_flat, Basic.groupBy_keyed (+ proofs/replication emit/apply roundtrip over groupBy)
-+graph/src/effects/v3/emit.rs	digest_created_edges	571	PROVEN	Digests.digestCreatedEdges/mkEdgeRec: digestCreatedEdges_perm, digestCreatedEdges_keyed, mkEdgeRec_shape (FxHashMap order abstracted; theorems order-insensitive)
-+graph/src/effects/v3/emit.rs	digest_deleted_edges	631	PROVEN	Digests.digestDeletedEdges: digestDeletedEdges_perm
-+graph/src/effects/v3/emit.rs	digest_updates	682	PROVEN	Digests.digestUpdates/updKey: digestUpdates_perm, digestUpdates_shape
-+graph/src/effects/v3/emit.rs	digest_deleted_nodes	787	PROVEN	Basic.memoGroup_eq_groupBy, Basic.sortDedup_set_eq (the ascending cursor walk over deleted_node_labels is not modelled)
-+graph/src/effects/v3/emit.rs	digest_labels	849	PROVEN	Digests.digestLabels: digestLabels_perm, digestLabels_nonempty; called with skip=None for remove_labels (emit.rs:370), so a stale remove_labels entry of a cancelled node s
-```
-
-**File**: `proofs/effects_emit_apply/FalkorEffectsEmitApply.lean` (modified, +10/-6)
-```diff
-@@ -27,7 +27,7 @@ Builds with `lake build`; no `sorry`, `admit` or `axiom`.
- | `Emit.schemaAdditions`                 | `emit_schema_additions`, `emit.rs:60`                       |
- | `Emit.digestCancelled`                 | `digest_cancelled`, `emit.rs:395`                           |
- | `Emit.forEachRecord`                   | `for_each_record`, `emit.rs:323` (opcode granularity)       |
--| `Emit.effectsCount`                    | `Pending::effects_count`, `pending.rs:1958`                 |
-+| `Emit.effectsCount`                    | `Pending::effects_count`, `pending.rs:1970` (#3461: +2 per cancelled entity) |
- | `Emit.commitShips`                     | `if estimated > 0 { buf.build(..) }`, `commit.rs:108`       |
- | `Emit.applyAddName`                    | `apply_add_schema` + `verify_id`, `apply.rs:532,552`        |
- | `Apply.createOne`                      | `Record::CreateNode` arm, `apply.rs:210`                    |
-@@ -61,8 +61,10 @@ Builds with `lake build`; no `sorry`, `admit` or `axiom`.
-   `wf_updateNode_live`, `wf_setLabels_live` — with a liveness check each node
-   arm preserves well-formedness (the fix, proved).
- * Counterexamples (all by `decide`, all reproduced in Rust):
--  `gate_drops_cancelled`, `gate_drops_schema_only`, `next_payload_refused`,
--  `cancelled_edge_attr_dropped`. The ones fixed by #3022 (`18fc277b9`) were removed after 17ccc5412, the last commit that holds them.
-+  `gate_drops_schema_only`, `next_payload_refused`. `gate_drops_cancelled` and
-+  `cancelled_edge_attr_dropped` were fixed by #3461 (f203972c5, `effects_count`
-+  counts cancelled entities): kept as `pre3461_*` over `effectsCountPre3461`; the fix
-+  is `gate_ships_of_cancelled`, `gate_ships_cancelled`, `cancelled_edge_attr_ships`. The ones fixed by #3022 (`18fc277b9`) were removed after 17ccc5412, the last commit that holds them.
- 
- ## #3022 (`Liveness.lean`): every record that acts on an entity checks it is live
- 
-@@ -196,7 +198,7 @@ node) — refused since #3298 (`createNode_repeat_refused`).
- * ~~The documented `rel_bound` gap (`emit.rs:448-454`)~~ — **confirmed as #3447**
-   (2026-10-22): when the same segment also creates a surviving edge above the
-   cancelled id, the replica's relationship `IdSpace::verify` refuses the hole and
--  forces a full resync. Proven in `CancelGap.lean` (`bug3447_cancelled_edge_id_gap`).
-+  forces a full resync. Proven in `CancelGap.lean` (`pre3461_bug3447_cancelled_edge_id_gap`); fixed by #3461.
- * C master (`bin/macos-arm64v8-release/falkordb.so`, Redis 8.6.2) aborts on
-   `OPTIONAL MATCH (n:Nope) SET n:L6` (`blocked.c:346 'server.also_propagate.numops
-   == 0'`), with or without a replica. C-side; not investigated further.
-@@ -210,13 +212,15 @@ master's pre-segment state accepts. Two properties, both refuted on b84473a7f:
- | Lean | Rust (b84473a7f) |
- | --- | --- |
- | `CancelGap.verifyRange` | `IdSpace::verify`'s hole check (id_space.rs:737-790) |
--| `CancelGap.typesAfterCommit` | `Pending::commit` → `create_relationships_bulk` → `get_type_id_mut` (pending.rs:1236-1249, graph.rs:2610/:1265): only `created_rels_by_type` keys are registered |
-+| `CancelGap.typesAfterCommit` | `Pending::commit` (pending.rs:1345-1371, #3461): `created_rels_by_type` keys via `create_relationships_bulk`, then every `cancelled_relationships` type via `get_type_id_mut` (`typesAfterCommitPre3461`: the keys only, before #3461) |
- | `CancelGap.toLive` | opcode records → `apply_record` arms (`RemoveLabels` `require_live`, apply.rs:359-360) |
- 
- * **#3447** (property `RelIdsCovered`: every relationship id allocated in the
-   segment reaches a `CREATE_EDGE`): `digest_cancelled` skips a cancelled edge
-   whose type has no id (emit.rs:455), and a type whose only edges were cascaded
--  is never registered. `bug3447_cancelled_edge_id_gap` (live repro `CREATE
-+  is never registered. **Fixed by #3461** (f203972c5: commit registers every
-+  cancelled type): `relIdsCovered_after_commit` (for every `Pending`),
-+  `fixed3447_cancelled_edge_id_gap`; history `pre3461_bug3447_cancelled_edge_id_gap` (live repro `CREATE
-   (a)-[r1:NEW_TYPE]->(b), (c)-[r2:EXISTING]->(d) DETACH DELETE a`): payload has
-   `CreateEdge [2]` and nothing for 1; master's id space verifies, replica's has a
-   hole. Fix property `relIdsCovered_of_registered` (holds for every `Pending`
-```
-
-**File**: `proofs/effects_emit_apply/FalkorEffectsEmitApply/CancelGap.lean` (modified, +72/-8)
-```diff
-@@ -17,7 +17,8 @@ pre-segment state* accepts. Two properties, both refuted on main:
-   (`Pending::commit` registers only `created_rels_by_type` keys via
-   `create_relationships_bulk` → `get_type_id_mut`, pending.rs:1236-1249,
-   graph.rs:2610/:1265; proofs/pending_commit `bug3447_cascade_drops_type_key`).
--  `bug3447_cancelled_edge_id_gap`: live repro `CREATE ()-[:EXISTING]->()` then
-+  `pre3461_bug3447_cancelled_edge_id_gap` (fixed by #3461, which registers every
-+  cancelled type at commit: `relIdsCovered_after_commit`): live repro `CREATE ()-[:EXISTING]->()` then
-   `CREATE (a)-[r1:NEW_TYPE]->(b), (c)-[r2:EXISTING]->(d) DETACH DELETE a`; the
-   payload carries `CreateEdge{ids:[2]}` and nothing for 1, the replica's verify
-   refuses (`verifyRange`), the master's passes. `relIdsCovered_of_registered`:
-@@ -58,11 +59,22 @@ def allocated (p : Pending) : List Nat := p.createdRelTypes.flatMap (·.2) ++ p.
- /-- **Property `RelIdsCovered`**. -/
- def RelIdsCovered (p : Pending) (g : Schema) : Prop := ∀ i ∈ allocated p, i ∈ edgeIds (forEachRecord p g)
- 
--/-- The relationship-type dictionary after `Pending::commit`: each
--`created_rels_by_type` key is get-or-created (pending.rs:1236-1249); cancelled
--types are not looked at. -/
-+/-- Get-or-create of one name (`get_type_id_mut`, graph.rs). -/
-+def regName (ts : List Name) (n : Name) : List Name := if n ∈ ts then ts else ts ++ [n]
-+
-+/-- The relationship-type dictionary after `Pending::commit` before #3461:
-+each `created_rels_by_type` key is get-or-created (pending.rs:1236-1249 on
-+343e077f2); cancelled types are not looked at. -/
-+def typesAfterCommitPre3461 (base : List Name) (p : Pending) : List Name :=
-+  p.createdRelTypes.foldl (fun ts q => regName ts q.1) base
-+
-+/-- The relationship-type dictionary after `Pending::commit` (pending.rs:1345-1371,
-+#3461): each `created_rels_by_type` key is get-or-created by
-+`create_relationships_bulk`, then the type of every `cancelled_relationships`
-+entry by `get_type_id_mut` (the `FxHashSet` only skips repeats, which
-+get-or-create ignores anyway). -/
- def typesAfterCommit (base : List Name) (p : Pending) : List Name :=
--  p.createdRelTypes.foldl (fun ts q => if q.1 ∈ ts then ts else ts ++ [q.1]) base
-+  p.cancelledRels.foldl (fun ts q => regName ts q.1) (typesAfterCommitPre3461 base p)
- 
- /-- `CREATE (a)-[r1:NEW_TYPE]->(b), (c)-[r2:EXISTING]->(d) DETACH DELETE a` after
- `CREATE ()-[:EXISTING]->()` (nodes 0,1 and edge 0 committed): `a` = 2 is
-@@ -74,14 +86,15 @@ def pGap : Pending :=
-     setLabels := [], removeLabels := [], cancelledNodes := [2], cancelledRels := [("NEW_TYPE", 1)],
-     baseline := ⟨[], ["EXISTING"], []⟩ }
- 
--def gGap : Schema := ⟨[], typesAfterCommit ["EXISTING"] pGap, []⟩
-+def gGap : Schema := ⟨[], typesAfterCommitPre3461 ["EXISTING"] pGap, []⟩
- 
--/-- **#3447**: `NEW_TYPE` is never registered, so the cancelled edge 1 is not
-+/-- History (fixed by #3461, f203972c5; now `relIdsCovered_after_commit`).
-+**#3447**: `NEW_TYPE` is never registered, so the cancelled edge 1 is not
- in the payload; the master's relationship id space `{0, 1, 2}` (entry bound 1)
- verifies, the replica's `{0} ∪ {2}` has a hole and is refused
- (live: "effects buffer allocated relationship ids 1..=2 but created only 1 of
- them … forced full resync"; C stays in sync). -/
--theorem bug3447_cancelled_edge_id_gap :
-+theorem pre3461_bug3447_cancelled_edge_id_gap :
-     gGap.types = ["EXISTING"] ∧
-     forEachRecord pGap gGap = [.createNode [3, 4, 5] [], .createEdge [2] 0, .createNode [2] [], .deleteNode [2] []] ∧
-     ¬ RelIdsCovered pGap gGap ∧
-@@ -151,6 +164,57 @@ theorem relIdsCovered_of_registered (p : Pending) (g : Schema)
-     simp only [List.mem_append]
-     simp [hmem]
- 
-+theorem regName_mem (ts : List Name) (n : Name) : n ∈ regName ts n := by
-+  unfold regName; split
-+  · assumption
-+  · simp
-+
-+theorem regName_mono (ts : List Name) (n m : Name) (h : m ∈ ts) : m ∈ regName ts n := by
-+  unfold regName; split
-+  · exact h
-+  · simp [h]
-+
-+theorem foldl_regName_mono {α} (f : α → Name) (l : List α) (ts : List Name) (m : Name) (h : m ∈ ts) :
-+    m ∈ l.foldl (fun ts q => regName ts (f q)) ts := by
-+  induction l generalizing ts with
-+  | nil => exact h
-+  | cons x xs ih => exact ih _ (regName_mono _ _ _ h)
-+
-+theorem foldl_regName_mem {α} (f : α → Name) (l : List α) (ts : List Name) (q : α) (hq : q ∈ l) :
-+    f q ∈ l.foldl (fun ts q => regName ts (f q)) ts := by
-+  induction l generalizing ts with
-+  | nil => cases hq
-+  | cons x xs ih =>
-+    rcases List.mem_cons.mp hq with rfl | hq
-+    · exact foldl_regName_mono f xs _ _ (regName_mem _ _)
-+    · exact ih _ hq
-+
-+theorem idxOf_isSome_of_mem (l : List Name) (n : Name) (h : n ∈ l) : (idxOf l n).isSome := by
-+  unfold idxOf
-+  have : (l.findIdx? (· == n)).isSome := by
-+    rw [List.findIdx?_isSome, List.any_eq_true]; exact ⟨n, h, by simp⟩
-+  revert this; cases l.findIdx? (· == n) <;> simp
-+
-+/-- **#3461 fix of #3447 (`RelIdsCovered`)**: with the dictionary `Pending::commit`
-+now leaves, e
-```
-
-**File**: `proofs/effects_emit_apply/FalkorEffectsEmitApply/Emit.lean` (modified, +56/-8)
-```diff
-@@ -230,10 +230,22 @@ structure Pending where
-   baseline          : Schema
- deriving Repr
- 
--/-- `Pending::effects_count` (`runtime/pending.rs:1958-1977`), term for term.
--    Note what is **not** summed: `cancelled_nodes`, `cancelled_relationships`,
--    and the schema registered since `baseline`. -/
-+/-- `Pending::effects_count` (`runtime/pending.rs:1970-1993`), term for term.
-+    Since #3461 (f203972c5) a cancelled node or relationship counts twice (its
-+    create and its delete). Note what is still **not** summed: the schema
-+    registered since `baseline`. -/
- def effectsCount (p : Pending) : Nat :=
-+  p.createdNodes.length + p.createdRelTypes.length + p.deletedNodes.length
-+  + p.deletedRels.length
-+  + 2 * p.cancelledNodes.length + 2 * p.cancelledRels.length
-+  + p.newNodesAttrs.length + p.existingNodesAttrs.length
-+  + p.newRelsAttrs.length + p.existingRelsAttrs.length
-+  + (p.setLabels.map (fun q => q.2.length)).sum
-+  + (p.removeLabels.map (fun q => q.2.length)).sum
-+
-+/-- `effects_count` before #3461 (pending.rs:1958-1977 on 343e077f2): the
-+    cancelled sets were not summed. History for the `pre3461_*` theorems. -/
-+def effectsCountPre3461 (p : Pending) : Nat :=
-   p.createdNodes.length + p.createdRelTypes.length + p.deletedNodes.length
-   + p.deletedRels.length + p.newNodesAttrs.length + p.existingNodesAttrs.length
-   + p.newRelsAttrs.length + p.existingRelsAttrs.length
-@@ -290,6 +302,10 @@ def forEachRecord (p : Pending) (g : Schema) : List Rec :=
- def commitShips (p : Pending) (g : Schema) : List Rec :=
-   if effectsCount p > 0 then forEachRecord p g else []
- 
-+/-- The gate before #3461, over `effectsCountPre3461`. -/
-+def commitShipsPre3461 (p : Pending) (g : Schema) : List Rec :=
-+  if effectsCountPre3461 p > 0 then forEachRecord p g else []
-+
- /-! ## What the gate drops -/
- 
- theorem sum_zero_nil : ∀ l : List (Nat × List Nat),
-@@ -320,6 +336,8 @@ theorem gate_zero_stream (p : Pending) (g : Schema) (h : effectsCount p = 0) :
-   have h2 : p.createdRelTypes = [] := List.eq_nil_of_length_eq_zero (by omega)
-   have h3 : p.deletedNodes = [] := List.eq_nil_of_length_eq_zero (by omega)
-   have h4 : p.deletedRels = [] := List.eq_nil_of_length_eq_zero (by omega)
-+  have h11 : p.cancelledNodes = [] := List.eq_nil_of_length_eq_zero (by omega)
-+  have h12 : p.cancelledRels = [] := List.eq_nil_of_length_eq_zero (by omega)
-   have h6 : p.existingNodesAttrs = [] := List.eq_nil_of_length_eq_zero (by omega)
-   have h8 : p.existingRelsAttrs = [] := List.eq_nil_of_length_eq_zero (by omega)
-   have h9 := sum_zero_nil p.setLabels (by omega)
-@@ -358,14 +376,34 @@ def pCancelled : Pending :=
- 
- def gCancelled : Schema := ⟨["A"], [], ["p"]⟩
- 
--theorem gate_drops_cancelled :
--    effectsCount pCancelled = 0 ∧
-+/-- History: before #3461 the gate dropped a fully cancelled write (fixed by
-+    #3461, f203972c5; now `gate_ships_cancelled`). -/
-+theorem pre3461_gate_drops_cancelled :
-+    effectsCountPre3461 pCancelled = 0 ∧
-     forEachRecord pCancelled gCancelled =
-       [.addLabel 0 "A", .addAttribute 0 "p", .createNode [0] [], .deleteNode [0] []] ∧
--    commitShips pCancelled gCancelled = [] := by
-+    commitShipsPre3461 pCancelled gCancelled = [] := by
-   refine ⟨rfl, ?_, rfl⟩
-   decide
- 
-+/-- **#3461**: the same write now ships its whole stream. -/
-+theorem gate_ships_cancelled :
-+    effectsCount pCancelled = 2 ∧
-+    commitShips pCancelled gCancelled =
-+      [.addLabel 0 "A", .addAttribute 0 "p", .createNode [0] [], .deleteNode [0] []] := by
-+  decide
-+
-+/-- **#3461**: any segment that cancelled a node or a relationship passes the
-+    gate, so its cancelled pairs (and the schema it registered) ship. -/
-+theorem gate_ships_of_cancelled (p : Pending) (g : Schema)
-+    (h : p.cancelledNodes ≠ [] ∨ p.cancelledRels ≠ []) : commitShips p g = forEachRecord p g := by
-+  have hpos : effectsCount p > 0 := by
-+    unfold effectsCount
-+    rcases h with h | h
-+    · have := List.length_pos_iff.mpr h; omega
-+    · have := List.length_pos_iff.mpr h; omega
-+  simp [commitShips, hpos]
-+
- /-- `OPTIONAL MATCH (n:Nope) SET n:L6`: `L6` registered, nothing else. -/
- def pSchemaOnly : Pending := { pCancelled with cancelledNodes := [] }
- def gSchemaOnly : Schema := ⟨["L6"], [], []⟩
-@@ -402,12 +440,22 @@ theorem next_payload_refused :
-     (`cancelled_edge_attribute_is_a_silent_dictionary_divergence`). Here even an
-     un-gated emitter would say nothing about `T1`'s edges, since the type has no
-     id (`emit.rs:448-454`), but it would still announce `p4`. -/
--theorem cancelled_edge_attr_dropped :
-+theorem pre3461_cancelled_edge_attr_dropped :
-     let p : Pending := { pCancelled with cancelledNodes := [0, 1], cancelledRels := [("T1", 0)] }
-     let g : Schema := ⟨[], [], ["p4"]⟩
--    effectsCount p = 0 ∧ commitShips p g = [] ∧
-+    effectsCountPre3461 p = 0 ∧ commitShipsPre3461 p g = [] ∧
-     forEachRecord p g = [.addAttribute 0 "p4", .createNode [0, 1] [], .deleteNode [0, 1] []] := by
-   refine ⟨rfl, rfl, ?_⟩
-   decide
- 
-+/
-```
-
-**File**: `proofs/effects_emit_apply/README.md` (modified, +5/-5)
-```diff
-@@ -22,10 +22,10 @@ The full Lean↔Rust mapping is in the header of [`FalkorEffectsEmitApply.lean`]
- 
- The counterexamples are concrete queries:
- 
--- `CREATE (a:A {p:1}) DELETE a` registers label `A` and attribute `p` on the master and ships nothing (`gate_drops_cancelled`);
-+- `CREATE (a:A {p:1}) DELETE a` registered label `A` and attribute `p` on the master and shipped nothing before #3461 (`pre3461_gate_drops_cancelled`; now `gate_ships_cancelled`);
- - `OPTIONAL MATCH (n:Nope) SET n:L6` registers `L6` and ships nothing (`gate_drops_schema_only`);
- - the next write's `ADD_SCHEMA 1 "K6"` is then refused by the replica, which would assign id 0 (`next_payload_refused`). That forces a full resync, and during AOF load the server exits;
--- `CREATE (a)-[:T1 {p4:1}]->(b) DELETE a, b` is worse: no error at all, but the replica's attribute dictionary is missing `p4` (`cancelled_edge_attr_dropped`).
-+- `CREATE (a)-[:T1 {p4:1}]->(b) DELETE a, b` is worse: no error at all, but the replica's attribute dictionary is missing `p4` (`pre3461_cancelled_edge_attr_dropped`; fixed by #3461, `cancelled_edge_attr_ships`).
- 
- **2. Can a payload that the replica accepts leave its graph broken?**
- 
-@@ -82,11 +82,11 @@ All four were reproduced in Rust and against a live server (see [`../FINDINGS.md
- 
- | # | Theorem (counterexample) | What it means | Status |
- |---|---|---|---|
--| W2-effects-1 | `gate_drops_cancelled`, `gate_drops_schema_only`, `next_payload_refused`, `cancelled_edge_attr_dropped` | A write that only registers a name or only cancels entities ships nothing. The next payload is refused (full resync; AOF load exits), or the replica silently misses an attribute name. 134 of 200 random seeds diverge | **Open**: the gate at `commit.rs:107-108` is unchanged on 1d15bf713; no issue or PR yet |
-+| W2-effects-1 | `pre3461_gate_drops_cancelled`, `gate_drops_schema_only`, `next_payload_refused`, `pre3461_cancelled_edge_attr_dropped` | A write that only registers a name or only cancels entities ships nothing. The next payload is refused (full resync; AOF load exits), or the replica silently misses an attribute name. 134 of 200 random seeds diverge | Cancelled half **fixed by #3461** (`effects_count` counts cancelled entities: `gate_ships_of_cancelled`, `gate_ships_cancelled`, `cancelled_edge_attr_ships`); schema-only writes still dropped (`gate_drops_schema_only`) |
- | W2-effects-2 | removed (17ccc5412) | `UPDATE_NODE`/`UPDATE_EDGE`/`SET_LABELS`/`REMOVE_LABELS` on a dead id were accepted; the next node to recycle the id inherited the property or label | Fixed by #3022 (`wf_updateNode_live`, `wf_setLabels_live`, `apply_wf`) |
- | W2-effects-3 | removed (17ccc5412) | `DELETE_NODE` of a node with edges was accepted; the edge dangled and the next node with that id inherited it | Fixed by #3022 (`wf_deleteNode`, `apply_wf`) |
- | #3247 | removed (17ccc5412) | A `CREATE_NODE` naming the same id twice (`[2, 3, 2]`) applied: the id set created one node where the record named two, and the repeated id's row had no node of its own | Fixed by #3298 (`2bb51088b`): `createNode_repeat_refused`, `createNode_ok_nodup`, `a_repeated_node_id_in_one_create_is_refused` |
--| #3447 | `bug3447_cancelled_edge_id_gap` (property `RelIdsCovered`) | An edge of a new type cascaded away by `DETACH DELETE` never registers its type, so `digest_cancelled` drops its id. With a surviving edge above it in the same segment the replica's relationship id space has a hole: `IdSpace::verify` refuses and forces a full resync. C stays in sync | **Open** (#3447) |
-+| #3447 | `pre3461_bug3447_cancelled_edge_id_gap` (property `RelIdsCovered`) | An edge of a new type cascaded away by `DETACH DELETE` never registers its type, so `digest_cancelled` drops its id. With a surviving edge above it in the same segment the replica's relationship id space has a hole: `IdSpace::verify` refuses and forces a full resync. C stays in sync | **Fixed by #3461** (`relIdsCovered_after_commit`, `fixed3447_cancelled_edge_id_gap`) |
- | #3448 | `bug3448_removeLabels_before_create_refused` (property `ReplayApplies`) | `CREATE (n:Foo) REMOVE n:Foo DELETE n` leaves `n` in `remove_labels`; the stream emits `RemoveLabels [0]` before the cancelled pair's `CreateNode [0]`, and the replica refuses node 0 as not live (full resync). C stays in sync | **Open** (#3448) |
- | W2-effects-4 | none (the model has no indexes) | A refused buffer's `CREATE_INDEX` is not rolled back, because the `Indexer` is shared by `Arc` across versions | **Open** (PR #3235) |
- 
-@@ -130,7 +130,7 @@ Every row is PROVEN. For `effects_count` and the gate, "PROVEN" means the model
- - **Indexes and rollback.** W2-effects-4 is outside the model.
- - **Index and constraint DDL apply** is checked only by a live Rust-vs-C differential (18 steps, all agree), not by a theorem.
- - **`IdSpace` and `first_node_with_relationships`** are specs here, proven in `id_space` and `graph_queries`.
--- The `rel_bound` gap documented at `emit.rs:448-454` is no long
-```
-
----
-
-### Incident Patch 2: `b9b99e33` (2026-11-17)
-**Commit Message**: fix: a refused fulltext CREATE INDEX no longer leaks the RediSearch options block (#3274)
-
-* fix: a refused fulltext CREATE INDEX no longer leaks the RediSearch options block
-
-create_rs_index allocated the index options before its fallible CString
-conversions and returned early on them (and on an unsupported language)
-without freeing the block. Convert first, and free the options on the
-language error.
-
-Closes #3273
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test: say why the refused CREATE FULLTEXT INDEX error is ignored
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* refactor: do not shadow c_stopwords in create_rs_index
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test: the leak test checks the refusal it expects and always deletes its graph
+* proofs: list #3582's new fns in COVERAGE.tsv
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 * proofs: update the Lean proofs for this change (proof-impact bot)
 
-Verified patch of the proof-impact run https://github.com/FalkorDB/FalkorDB/actions/runs/43749173381
-at 683bf60fc66ec8180690579d1bf137599f35da5b, applied on request of AviAvni (held items reviewed).
+Verified patch of the proof-impact run https://github.com/FalkorDB/FalkorDB/actions/runs/43741670268
+at 7c04fa5983c30168b07bea5ffd9925f360f10e60, applied on request of AviAvni (held items reviewed).
 
-Proof-Bot-Run: https://github.com/FalkorDB/FalkorDB/actions/runs/43749173381
+Proof-Bot-Run: https://github.com/FalkorDB/FalkorDB/actions/runs/43741670268
 
-* ci: run CI on 
+* ci: run CI on the proof 
 
-**File**: `graph/src/index/mod.rs` (modified, +26/-19)
+**File**: `graph/src/planner/optimizer/push_filters_down.rs` (modified, +77/-1)
 ```diff
-@@ -1108,6 +1108,27 @@ impl Index {
-         stopwords: Option<&Vec<Arc<String>>>,
-         language: Option<&Arc<String>>,
-     ) -> Result<(), String> {
-+        // Every fallible conversion runs before the options block is
-+        // allocated, so an early return cannot leak it.
-+        let c_stopwords: Option<Vec<CString>> = stopwords
-+            .map(|words| {
-+                words
-+                    .iter()
-+                    .map(|s| CString::new(s.as_str()).map_err(|e| e.to_string()))
-+                    .collect::<Result<Vec<_>, _>>()
-+            })
-+            .transpose()?;
-+        // `RediSearch_IndexOptionsSetLanguage` only stores the raw pointer
-+        // (`options->lang = lang`); `_CreateIndex` later reads it via
-+        // `RSLanguage_Find` to convert to an enum, so this `CString` must
-+        // outlive that call.
-+        // (Bug uncovered by ASAN: heap-use-after-free in `RSLanguage_Find`
-+        // when the inner `c_lang` was dropped at end of its if-let block.)
-+        let c_lang: Option<CString> = language
-+            .map(|lang| CString::new(lang.as_str()).map_err(|e| e.to_string()))
-+            .transpose()?;
-+        let clabel = CString::new(label.as_str()).map_err(|e| e.to_string())?;
+@@ -78,6 +78,26 @@ fn branch_output_variables(node: &orx_tree::DynNode<IR>) -> Option<HashSet<u32>>
+     }
+ }
+ 
++/// Operators that change the graph (or its schema) when they run.
++///
++/// A `Filter` is never moved below one of these, nor into a branch that
++/// feeds a sibling subtree containing one: the write must still happen for
++/// every row that reaches it, whatever a later `WHERE` says.
++const fn is_write(ir: &IR) -> bool {
++    matches!(
++        ir,
++        IR::Create(_)
++            | IR::Merge { .. }
++            | IR::Delete { .. }
++            | IR::Set(_)
++            | IR::Remove(_)
++            | IR::Commit
++            | IR::ForEach { .. }
++            | IR::CreateIndex { .. }
++            | IR::DropIndex { .. }
++    )
++}
 +
-         unsafe {
-             // Requires the global lock (the host's module GIL):
-             // `RediSearch_CreateIndex` registers a GC timer in the host event loop
-@@ -1120,13 +1141,9 @@ impl Index {
-             // `RediSearch_IndexOptionsSetStopwords` deep-copies via
-             // `rm_strdup`, so our CStrings can drop as soon as the call
-             // returns.
--            if let Some(stop_words) = stopwords {
--                let c_stopwords: Vec<CString> = stop_words
--                    .iter()
--                    .map(|s| CString::new(s.as_str()).map_err(|e| e.to_string()))
--                    .collect::<Result<Vec<_>, _>>()?;
-+            if let Some(stopword_cstrs) = &c_stopwords {
-                 let mut ptrs: Vec<*const c_char> =
--                    c_stopwords.iter().map(|cs| cs.as_ptr()).collect();
-+                    stopword_cstrs.iter().map(|cs| cs.as_ptr()).collect();
-                 RediSearch_IndexOptionsSetStopwords(
-                     options,
-                     ptrs.as_mut_ptr(),
-@@ -1136,24 +1153,14 @@ impl Index {
-                 RediSearch_IndexOptionsSetStopwords(options, null_mut(), 0);
+ /// Pushes filter conjuncts down through nodes.
+ ///
+ /// Transforms:
+@@ -171,6 +191,12 @@ pub(super) fn push_filters_down(optimized_plan: &mut DynTree<IR>) {
+                         IR::Project { .. }
+                             | IR::Aggregate { .. }
+                             | IR::Merge { .. }
++                            | IR::Create(_)
++                            | IR::Delete { .. }
++                            | IR::Set(_)
++                            | IR::Remove(_)
++                            | IR::Commit
++                            | IR::ForEach { .. }
+                             | IR::Argument(_)
+                             | IR::IncludePending { .. }
+                             | IR::SemiApply
+@@ -190,6 +216,18 @@ pub(super) fn push_filters_down(optimized_plan: &mut DynTree<IR>) {
+                 }
              }
  
--            // `RediSearch_IndexOptionsSetLanguage`, in contrast, only stores
--            // the raw pointer (`options->lang = lang`); `_CreateIndex` later
--            // reads it via `RSLanguage_Find` to convert to an enum, so the
--            // backing `CString` must outlive that call.
--            // (Bug uncovered by ASAN: heap-use-after-free in `RSLanguage_Find`
--            // when the inner `c_lang` was dropped at end of its if-let block.)
--            let _language_owner: Option<CString> = if let Some(lang) = language {
--                let c_lang = CString::new(lang.as_str()).map_err(|e| e.to_string())?;
-+            if let (Some(lang), Some(c_lang)) = (language, &c_lang) {
-                 if RediSearch_IndexOptionsSetLanguage(options, c_lang.as_ptr()) != 0 {
-+                    RediSearch_FreeIndexOptions(options);
-                     return Err(format!("Language is not supported: {lang}"));
-                 }
--                Some(c_lang)
-             } else {
-                 RediSearch_IndexOptionsSetLanguage(options, null_mut());
--                None
--            };
--
--            let clabel = CString::new(label.as_str()).map_err(|e| e.to_string())?;
-+            }
- 
-             // GIL is already held at the top of this unsafe block, covering
-             // CreateIndex's transitive RM_CreateTimer call.
-```
-
-**File**: `proofs/index_layer/COVERAGE.tsv` (modified, +1/-1)
-```diff
-@@ -50,7 +50,7 @@ graph/src/index/mod.rs	bump_id	1053	PROVEN	Slots.bump; bump_total, bump_fresh, o
- graph/src/index/mod.rs	clone_for_update	1072	PROVEN	Meta.Idx.cloneForUpdate_eq
- graph/src/index/mod.rs	has_rs_index	1092	PROVEN	Meta.Idx.hasRsIndex_spec
- graph/src/index/mod.rs	rs_ptr	1099	PROVEN	Meta.Idx.hasRsIndex_spec (rsPtr)
--graph/src/index/mod.rs	create_rs_index	1105	PROVEN	Meta.Idx.createRsIndex_ok, createRsIndex_lang_err (FFI create = fresh handle); #3166 gap: records the spec's stopword list as Idx.rsStop (IndexGaps.createRsIndex_stop)
-+graph/src/index/mod.rs	create_rs_index	1105	PROVEN	Meta.Idx.createRsIndex_ok, createRsIndex_lang_err_cleanLabel (FFI create = fresh handle; #3274 counterexample createRsIndex_lang_err_fails: label NUL now reported before unsupported language); #3166 gap: records the spec's stopword list as Idx.rsStop (IndexGaps.createRsIndex_stop)
- graph/src/index/mod.rs	register_fields	1185	PROVEN	Meta.Idx.registerOne_range/_text/_vector_err, registerAll_ok, registerFields_ok, metricOf_ok; never changes the spec's stopwords (IndexGaps.registerFields_stop); fulltext phonetic flag = TextOpts.phoneticEnabled since #3514 (a0ba12950): registerOne_text
- graph/src/index/text_index_options.rs	phonetic_enabled	48	PROVEN	Meta.TextOpts.phoneticEnabled: phoneticEnabled_off_spellings, phoneticEnabled_code, phoneticEnabled_iff_ne_no; fixed3514_phonetic_no_is_off (#3514)
- graph/src/index/mod.rs	value_to_numeric	1361	PROVEN	valueToNumeric; equal_exact, numRange_exact
-```
-
-**File**: `proofs/index_layer/FalkorIndexLayer.lean` (modified, +6/-0)
-```diff
-@@ -189,6 +189,12 @@ every range query on `n.s` is built against the fulltext field `s` instead of `r
- (live, ports 18850 Rust / 18851 C). Fix: pick the field with `ty == IndexType::Range`.
- Suspected, unconfirmed: `create_rs_index` returns `Err` on a NUL in a stopword/language/label
- after `RediSearch_CreateIndexOptions` without `RediSearch_FreeIndexOptions` (leak only).
-+#3274 fixes that leak by running every `CString::new` (stopwords, language, label) before
-+the options block is allocated and freeing it on the unsupported-language return. Side
-+effect: the label NUL check now precedes the unsupported-language check, so
-+`createRsIndex_lang_err` is false on the new code (`createRsIndex_lang_err_fails`; label
-+``L\0`` with `language: 'x'` reports the NUL error instead of `Language is not supported: x`);
-+`createRsIndex_lang_err_cleanLabel` proves the message for NUL-free labels.
- 
- ## Re-target to 49f698d22 (#3087)
- `Document::set` now adds a `VecF32` only if
-```
-
-**File**: `proofs/index_layer/FalkorIndexLayer/IndexM.lean` (modified, +31/-11)
-```diff
-@@ -68,17 +68,18 @@ def rsPtr (x : Idx) : Option Nat := x.spec
- 
- def hasNul (s : String) : Bool := s.toList.contains (Char.ofNat 0)
- 
--/-- `create_rs_index` (`mod.rs:1101`). Error order as in Rust: stopwords
--`CString::new` (1108), language `CString::new`/unsupported (1129-1133), label
--`CString::new` (1140). On success the spec is fresh and carries only
--`NONE_INDEXABLE_FIELDS` (1155-1163), and (#3166 gap) is created with the stopword
--list `stop` (`mod.rs:1119-1133`), recorded as `rsStop`. -/
-+/-- `create_rs_index` (`mod.rs:1105`). Error order as in Rust (#3274): stopwords
-+`CString::new` (1113-1120), language `CString::new` (1127-1129), label
-+`CString::new` (1130), all before the options block is allocated; then
-+unsupported language (1156-1160). On success the spec is fresh and carries only
-+`NONE_INDEXABLE_FIELDS` (1175-1186), and (#3166 gap) is created with the stopword
-+list `stop` (`mod.rs:1144-1154`), recorded as `rsStop`. -/
- def createRsIndex (x : Idx) (label : String) (stop : Option (List String)) (lang : Option String)
-     (langOk : String → Bool) (fresh : Nat) : Except String Idx :=
-   if (stop.getD []).any hasNul then .error "nul" else
-   match lang with
--  | some l => if hasNul l then .error "nul" else if !langOk l then .error s!"Language is not supported: {l}"
--              else if hasNul label then .error "nul"
-+  | some l => if hasNul l then .error "nul" else if hasNul label then .error "nul"
-+              else if !langOk l then .error s!"Language is not supported: {l}"
-               else .ok { x with spec := some fresh, rs := [⟨"NONE_INDEXABLE_FIELDS", .noneTag⟩], rsStop := stop }
-   | none => if hasNul label then .error "nul"
-             else .ok { x with spec := some fresh, rs := [⟨"NONE_INDEXABLE_FIELDS", .noneTag⟩], rsStop := stop }
-@@ -210,11 +211,30 @@ theorem createRsIndex_ok (x : Idx) (label : String) (stop : Option (List String)
-   · split at h; · cases h
-     cases h; simp
- 
--theorem createRsIndex_lang_err (x : Idx) (label : String) (stop : Option (List String)) (l : String)
--    (langOk : String → Bool) (fresh : Nat) (h1 : (stop.getD []).any hasNul = false)
--    (h2 : hasNul l = false) (h3 : langOk l = false) :
-+/-- The pre-#3274 statement of `createRsIndex_lang_err`: with NUL-free stopwords
-+and language, an unsupported language is always reported, whatever the label. -/
-+def LangErrSpec (x : Idx) : Prop :=
-+  ∀ (label : String) (stop : Option (List String)) (l : String)
-+    (langOk : String → Bool) (fresh : Nat), (stop.getD []).any hasNul = false →
-+    hasNul l = false → langOk l = false →
-+    createRsIndex x label stop (some l) langOk fresh = .error s!"Language is not supported: {l}"
++            // A branch is locked when a sibling subtree writes: filtering that
++            // branch would starve the write of rows it must see (an `Apply`
++            // runs its right side once per left row), e.g. `CALL { CREATE () }
++            // MATCH () WHERE false` must still create its node.
++            let holds_write: Vec<bool> = children
++                .iter()
++                .map(|(i, ..)| subtree_contains(optimized_plan, *i, is_write))
++                .collect();
++            let locked: Vec<bool> = (0..children.len())
++                .map(|i| holds_write.iter().enumerate().any(|(j, w)| *w && j != i))
++                .collect();
 +
-+/-- Counterexample (#3274): the label `CString::new` now runs before the language
-+check, so a label with a NUL byte and an unsupported language `x` reports the NUL
-+error, not `Language is not supported: x`. -/
-+theorem createRsIndex_lang_err_fails (x : Idx) : ¬ LangErrSpec x := by
-+  intro h
-+  have := h "L\x00" none "x" (fun _ => false) 0 rfl (by decide) rfl
-+  simp [createRsIndex, hasNul] at this
-+  exact absurd this (by decide)
+             // Compute inherited variables from Apply context.
+             // When Apply propagates bound variables via Argument leaves,
+             // the right branch effectively has access to the left branch's
+@@ -271,7 +309,7 @@ pub(super) fn push_filters_down(optimized_plan: &mut DynTree<IR>) {
+                 let conj_vars = collect_expr_variables(&conjunct);
+                 let mut matched_any = false;
+                 for (i, (_, child_vars, _)) in children.iter().enumerate() {
+-                    if conj_vars.iter().all(|v| child_vars.contains(v)) {
++                    if !locked[i] && conj_vars.iter().all(|v| child_vars.contains(v)) {
+                         child_conjuncts[i].push(conjunct.clone());
+                         matched_any = true;
+                     }
+@@ -287,6 +325,7 @@ pub(super) fn push_filters_down(optimized_plan: &mut DynTree<IR>) {
+             // CP wrapped with that conjunct as a filter.
+             if !remaining.is_empty()
+                 && child_conjuncts.iter().all(Vec::is_empty)
++                && !holds_write.contains(&true)
+                 && let Some(filter_child) = optimized_plan.node(idx).get_child(0)
+                 && matches!(filter_child.data(), IR::CartesianProduct)
+                 && filter_child.num_children() > 2
+@@ -538,4 +577,41 @@ mod tests {
+             ]],
+         );
+     }
++    /// A `WHERE` after a `CALL {}` that writes must not reach the rows feeding
++    /// the write: the `Apply` runs its right side once per left row, so a
++    /// filter on the left starves the write (#748, #997).
++    #[test]
++    fn filter_never_lands_on_the_input_of_a_write() {
++        for query in [
++            "CALL { CREATE () } UNWIND 0 AS x MATCH () WHERE false RETURN 0",
++            "WITH 0 AS n0 CALL { MERGE () RETURN 0 AS n1 } MATCH () WHERE false RETURN 0",
++        ] {
++            let _ = crate::runtime::functions::init_functions();
++            let mut parser = Parser::new(query);
++            parser.parse_parameters().expect("parse parameters");
++            let raw = parser.parse().expect("parse");
++            let (ir, scope_vars) = Binder::default().bind(raw).expect("bind");
++            let mut plan = Planner::new(scope_vars).plan(ir);
++            push_filters_down(&mut plan);
 +
-+/-- What still holds on the new code: an unsupported language is reported when
-+the stopwords, language and label are all NUL-free. -/
-+theorem createRsIndex_lang_err_cleanLabel (x : Idx) (label : String) (stop : Option (List String))
-+    (l : String) (langOk : String → Bool) (fresh : Nat) (h1 : (stop.getD []).any hasNul = false)
-+    (h2 : hasNul l = false) (h4 : hasNul label = false) (h3 : langOk l = false) :
-     createRsIndex x label stop (some l) langOk fresh = .error s!"Language is not supported: {l}" := by
--  simp [createRsIndex, h1, h2, h3]
-+  simp [createRsIndex, h1, h2, h3, h4]
- 
- theorem metricOf_ok (sim : Option String) (m : String) (h : metricOf sim = .ok m) :
-     sim.getD "euclidean" ∈ ["euclidean", "ip", "cosine"] := by
++            for idx in plan.root().indices::<Bfs>() {
++                let node = plan.node(idx);
++                if !matches!(node.data(), IR::Apply) || node.num_children() != 2 {
++                    continue;
++                }
++                let writes = node
++                    .child(1)
++                    .indices::<Bfs>()
++                    .any(|i| super::is_write(plan.node(i).data()));
++                let filtered_input =
 ```
 
-**File**: `tests/flow/test_index_create.py` (modified, +36/-0)
+**File**: `proofs/optimizer_rewrites/COVERAGE.tsv` (modified, +5/-4)
 ```diff
-@@ -870,6 +870,42 @@ def test16_index_creation_stats(self):
-         self.env.assertEqual(result.indices_created, 1)
-         self.env.assertEqual(result.labels_added, 1)
+@@ -1,4 +1,5 @@
+ file	function	line	bucket	lean_name_or_reason
++# graphblas *_bench.rs: benchmark harnesses, no production callers; listed here so the aggregator can exclude them
+ graph/src/planner/optimizer/mod.rs	collect_expr_variables	92	PROVEN	Passes.routesIdOnly / id_only_routing_unsound (id-only unsound), routesScoped_sound; empty set routes everywhere: PushPlan.bug997_create_skipped
+ graph/src/planner/optimizer/mod.rs	collect_subtree_variables	103	PROVEN	Helpers.mem_subtreeIds (ids of get_variables); ids only — Passes.id_only_routing_unsound; PushPlan.gv walks through Aggregate into the pre-WITH plan: bug3352_routes_unbound
+ graph/src/planner/optimizer/mod.rs	optimize	125	PROVEN	Sequence.passes_order (exact order, reduce_var_len_path twice), applyAll_sound (each pass preserves R => optimize does), optimize_nested/optimize_plain
+@@ -23,9 +24,9 @@ graph/src/planner/optimizer/fuse_optional_traverse.rs	fusable_traverse	40	PROVEN
+ graph/src/planner/optimizer/fuse_optional_traverse.rs	fused_traverse	81	PROVEN	Helpers.fusedCT_spec (same traverse, optional = true); Passes.optCT
+ graph/src/planner/optimizer/fuse_optional_traverse.rs	fuse_optional_traverse	105	PROVEN	Passes.fuse_optional_correct
+ graph/src/planner/optimizer/push_filters_down.rs	branch_output_variables	59	PROVEN	Helpers.branchOut_spec (Project/Aggregate outputs, ids only; none otherwise); PushPlan.branchOut (reset-env children in the tree model)
+-graph/src/planner/optimizer/push_filters_down.rs	push_filters_down	102	PROVEN	Basic.push_cp_left, push_cp_right, push_extend, push_sort_perm, push_sort_sorted, push_limit_const, limit_not_transparent, skip_not_transparent, merge_order_rust_errors, merge_child_first_row, merge_rust_fixed_example, merge_rust_same (#3006 merges child conjuncts first); Passes.limit_skip_not_excluded, id_only_routing_unsound; W6-opt-1 Case-2 walk (CallBoundary, from pr2845_review): Pr2845.filter_pushed_through_boundary, fixed_keeps_filter, fixed_conservative; #3335 rebuilds the filter with ExprIR::and_of: AndOf.flat_passes (same Filter verdict, errors included), flat_eval; gap closed 2026-10-20 (PushPlan, plan tree with writes and id-only routing): property EffectSound/RowSound/RoutesBound REFUTED on main by bug748_merge_skipped, bug997_create_skipped (constant conjunct starves a CALL write), bug3352_slot_collision_drops_match, bug3352_routes_unbound (pre-WITH id taken for r); fixed routing bug748_fixed, bug997_fixed, bug3352_fixed
+-graph/src/planner/optimizer/push_filters_down.rs	rebuild_with_cp_split	378	PROVEN	Basic.push_cp_left/right (CP associativity/regrouping of branches as the same identity); #3335 rebuilds the filter with ExprIR::and_of: AndOf.flat_passes (same Filter verdict, errors included), flat_eval
+-graph/src/planner/optimizer/push_filters_down.rs	rebuild_node	385	PROVEN	Sequence.rebuildCP_off (copy off target), rebuildCP_on, splitCP_perm (CP children permuted, none lost)
++graph/src/planner/optimizer/push_filters_down.rs	push_filters_down	122	PROVEN	Basic.push_cp_left, push_cp_right, push_extend, push_sort_perm, push_sort_sorted, push_limit_const, limit_not_transparent, skip_not_transparent, merge_order_rust_errors, merge_child_first_row, merge_rust_fixed_example, merge_rust_same (#3006 merges child conjuncts first); Passes.limit_skip_not_excluded, id_only_routing_unsound; W6-opt-1 Case-2 walk (CallBoundary, from pr2845_review): Pr2845.filter_pushed_through_boundary, fixed_keeps_filter, fixed_conservative; #3335 rebuilds the filter with ExprIR::and_of: AndOf.flat_passes (same Filter verdict, errors included), flat_eval; gap closed 2026-10-20 (PushPlan, plan tree with writes and id-only routing): property EffectSound/RowSound/RoutesBound REFUTED on main by bug748_merge_skipped, bug997_create_skipped (constant conjunct starves a CALL write), bug3352_slot_collision_drops_match, bug3352_routes_unbound (pre-WITH id taken for r); fixed routing bug748_fixed, bug997_fixed, bug3352_fixed; #3582 write lock (Cfg.pr3582: write ops excluded, siblings of a writing branch locked, CP split off when a branch writes — CP split not modelled): PushPlan.pr3582_left_untouched, pr3582_write_excluded, pr3582_748_plan, pr3582_748_fixed, pr3582_997_plan, pr3582_997_fixed, pr3582_controls, pr3582_2556_push_not_cause; #3352 still open: pr3582_3352_open; Passes.excludedChild (exclusion list with write kinds)
++graph/src/planner/optimizer/push_filters_down.rs	rebuild_with_cp_split	423	PROVEN	Basic.push_cp_left/right (CP associativity/regrouping of branches as the same identity); #3335 rebuilds the filter with ExprIR::and_of: AndOf.flat_passes (same Filter verdict, errors included), flat_eval
++graph/src/planner/optimizer/push_filters_down.rs	rebuild_node	430	PROVEN	Sequence.rebuildCP_off (copy off target), rebuildCP_on, splitCP_perm (CP children permuted, none lost)
+ graph/src/planner/optimizer/reduce_bound_edge.rs	reduce_bound_edge	30	PROVEN	References2.ancestorsRead refsNew (ancestor walk), ancestors_le_outside; main_misses_call_sibling (
+```
+
+**File**: `proofs/optimizer_rewrites/FalkorOptimizer.lean` (modified, +3/-0)
+```diff
+@@ -174,6 +174,9 @@ node, labels, relationships and attributes are not written); `RowSound` is the o
+    `bug748_merge_skipped`, `bug997_create_skipped` (`¬ EffectSound`), `bug748_rows_only_blind`
+    / `bug997_rows_only_blind` (the rows-only criterion holds on them), controls
+    `bug748_with_star_control`, `bug997_case_control`; `bug748_fixed`/`bug997_fixed` for a write barrier.
++   **Fixed by #3582** (write kinds excluded, siblings of a writing branch locked, `Cfg.pr3582`):
++   `pr3582_748_fixed`, `pr3582_997_fixed`, `pr3582_left_untouched`, `pr3582_write_excluded`,
++   `pr3582_controls`; #3352 below is still open there (`pr3582_3352_open`).
+ 10. **#3352: filter push-down mistakes a pre-WITH variable for `r`** — Case 2
+    (`push_filters_down.rs:233-236`) inherits `collect_subtree_variables` of the Apply's
+    left subtree, and `get_variables` (`runtime.rs:319-323`) walks through `Aggregate`
+```
+
+**File**: `proofs/optimizer_rewrites/FalkorOptimizer/Passes.lean` (modified, +7/-3)
+```diff
+@@ -13,7 +13,7 @@
+ | `labelScanOk`, `reorder` | `NodeByLabelScan` label test and `reorder_labels` (`optimizer/reorder_labels.rs:16-47`) stable sort by label id |
+ | `vhj`, `cpEq`          | `ValueHashJoin` (`runtime/ops/value_hash_join.rs`, `key_as_i64` l.153) vs `Filter(=)` over `CartesianProduct` (`replace_cartesian_with_hash_join.rs:101-217`) |
+ | `toF`                  | `i as f64` in `Value::compare_value` for Int vs Float, exact in `[0, 2^54]` |
+-| `excludedChild`        | the operator list at `push_filters_down.rs:165-178` |
++| `excludedChild`        | the operator list at `push_filters_down.rs:181-200` |
+ -/
+ import FalkorOptimizer.Basic
  
-+    def test20_failed_fulltext_create_does_not_leak(self):
-+        # A fulltext CREATE refused while building the RediSearch index
-+        # (unsupported language, NUL byte in a stopword) must free the
-+        # options block it allocated: ~56 bytes per statement leaked before.
-+        conn = self.env.getConnection()
-+        graph = self.db.select_graph("failed_fulltext_create_leak")
-+        try:
-+            graph.query("CREATE (:L {s:'a'})")
-+            n = 10000
-+            cases = [
-+                ("CREATE FULLTEXT INDEX FOR (n:L) ON (n.s) OPTIONS {language:'klingon'}",
-+                 "Language is not supported"),
-+                ("CREATE FULLTEXT INDEX FOR (n:L) ON (n.s) OPTIONS {stopwords:['a\\u0000b']}",
-+                 "nul byte"),
-+            ]
-+            for q, expected in cases:
-+                def run(times):
-+                    for _ in range(times):
-+                        try:
-+                            graph.query(q)
-+                            self.env.assertTrue(False, message=q)
-+                        except ResponseError as e:
-+                            # Refused by design; only what the refusal leaves
-+                            # behind is measured, and it must be this refusal.
-+                            if expected not in str(e):
-+                                self.env.assertTrue(False, message=f"{q}: {e}")
-+                                return
-+                run(100)  # warm up
-+                before = conn.info('memory')['used_memory']
-+                run(n)
-+                grown = conn.info('memory')['used_memory'] - before
-+                # the leak alone was ~560 KB here; allow for allocator noise
-+                self.env.assertLess(grown, 200_000, message=q)
-+        finally:
-+            graph.delete()
+@@ -324,14 +324,18 @@ theorem hash_join_drops_row :
+ inductive Kind where
+   | project | aggregate | merge | argument | includePending | semiApply | antiSemiApply
+   | orApplyMultiplexer | optional
++  | create | delete | set | remove | commit | forEach
+   | limit | skip | sort | distinct | cartesianProduct | apply | unwind | condTraverse
+   | other
+ deriving DecidableEq, Repr
+ 
+-/-- push_filters_down.rs:165-178: children the filter may *not* look through. -/
++/-- push_filters_down.rs:181-200: children the filter may *not* look through
++(#3582 adds the write operators `Create`, `Delete`, `Set`, `Remove`, `Commit`,
++`ForEach`). -/
+ def excludedChild : Kind → Bool
+   | .project | .aggregate | .merge | .argument | .includePending | .semiApply | .antiSemiApply
+-  | .orApplyMultiplexer | .optional => true
++  | .orApplyMultiplexer | .optional
++  | .create | .delete | .set | .remove | .commit | .forEach => true
+   | _ => false
+ 
+ /-- The operators that are transparent for a row filter (the theorems
+```
+
+**File**: `proofs/optimizer_rewrites/FalkorOptimizer/PushPlan.lean` (modified, +96/-8)
+```diff
+@@ -17,11 +17,13 @@ computes it, so both families are visible.
+ | `run` | the runtime ops, eager: `apply.rs:102-340` (right branch re-run per left row with `Argument` = that row), `optional.rs:91-292` (one null row when the branch is empty), `aggregate.rs:288` (no keys → one row even on empty input), `create.rs:101-160`, `merge.rs:67-300` (match else create), `filter.rs:48-80` (`Basic.filterRows`), `unwind.rs`, `node_by_label_scan.rs`, `cond_traverse.rs` (bound destination) |
+ | `gv` | `GetVariables::get_variables` (`runtime/runtime.rs:212-330`): `Aggregate` adds `names` and keeps walking, `Project` adds its outputs and `break`s |
+ | `branchOut` | `branch_output_variables` (`optimizer/push_filters_down.rs:59-79`) |
+-| `excluded` | the child exclusion list (`push_filters_down.rs:161-175`) |
++| `excluded` | the child exclusion list (`push_filters_down.rs:181-200`; before #3582 without the write kinds) |
++| `isWriteOp`, `locked` | `is_write` (:86-99) and `holds_write`/`locked` (:213-223, used at :306), #3582 (`Cfg.pr3582`) |
+ | `pushAt` | one Filter's routing (`push_filters_down.rs:138-364`): grandchild variable sets (:176-185), Case 1 (:196-201), Case 2 inherited (`inh`, :210-244), augmentation of `Argument` subtrees (:247-257), the `all` test over ids (:264-276) |
+ | `childInh` | Case 2's ancestor walk, top-down: below an `Apply`'s right child the left subtree's ids, below its left child nothing, below `Merge` nothing (:212-243) |
+ | `sweep`, `pushFilters` | the restart loop (:103-370), as a top-down sweep that follows each pushed filter |
+-| `Cfg.main` | ids only (`collect_expr_variables`/`collect_subtree_variables`, `optimizer/mod.rs:92-110`), no write barrier |
++| `Cfg.main` | before #3582: ids only (`collect_expr_variables`/`collect_subtree_variables`, `optimizer/mod.rs:92-110`), no write barrier |
++| `Cfg.pr3582` | Rust at 7c04fa598 (#3582): ids only, write kinds excluded, siblings of a writing branch locked; the CP split's `!holds_write` guard (:322) is not modelled (no CP split here) |
+ 
+ The property each bug violates is `EffectSound`: a rewrite keeps the rows
+ **and** the graph the query leaves behind. `RowSound` is the old criterion,
+@@ -204,13 +206,21 @@ child's variable set, and whether a write blocks the push. -/
+ structure Cfg where
+   eqv : Var → Var → Bool
+   writeBarrier : Bool
++  /-- #3582: write operators (`Create`, `Commit`, …) join the exclusion list,
++  and a grandchild is locked when a sibling subtree writes (`is_write`,
++  `holds_write`/`locked`, push_filters_down.rs:86-99, :213-223, :306). -/
++  lockSiblings : Bool
+ 
+-/-- Rust main: ids only, no barrier. -/
+-def Cfg.main : Cfg := ⟨fun a b => a.id == b.id, false⟩
++/-- Rust before #3582: ids only, no barrier. -/
++def Cfg.main : Cfg := ⟨fun a b => a.id == b.id, false, false⟩
+ 
+ /-- A candidate fix: `(id, scope)` matching and no push below an operator whose
+ subtree writes (`Merge`/`Create`). -/
+-def Cfg.fixed : Cfg := ⟨fun a b => a == b, true⟩
++def Cfg.fixed : Cfg := ⟨fun a b => a == b, true, false⟩
 +
-     def test19_index_options_validation(self):
-         # index OPTIONS are validated like C: a vector index needs a dimension
-         # and a similarity function (matched case-insensitively), and a
++/-- Rust with #3582 (7c04fa598): ids only, write operators excluded, siblings
++of a writing branch locked. -/
++def Cfg.pr3582 : Cfg := ⟨fun a b => a.id == b.id, false, true⟩
+ 
+ /-- `get_variables` (runtime.rs:212-330). -/
+ def gv : Op → List Var
+@@ -247,11 +257,18 @@ def hasWrite : Op → Bool
+     hasWrite c
+   | .apply l r => hasWrite l || hasWrite r
+ 
+-/-- push_filters_down.rs:161-175 (the kinds that occur here). -/
++/-- push_filters_down.rs:181-200 before #3582 (the kinds that occur here). -/
+ def excluded : Op → Bool
+   | .project _ _ | .aggregate _ _ _ | .merge _ _ | .argument | .optional _ _ => true
+   | _ => false
+ 
++/-- `is_write` (push_filters_down.rs:86-99), the kinds that occur here; #3582
++adds `Create`/`Commit` (and `Delete`/`Set`/`Remove`/`ForEach`, not modelled)
++to the exclusion list (:188-193). -/
++def isWriteOp : Op → Bool
++  | .create _ _ | .merge _ _ | .commit _ => true
++  | _ => false
++
+ def kid (c : Op) : List Op := match c with | .unit => [] | c => [c]
+ 
+ /-- `children()` of an operator. -/
+@@ -299,12 +316,19 @@ def avail (inh : List Var) (k : Op) : List Var :=
+   let (vs, reset) := info k
+   if !inh.isEmpty && !reset && hasArg k then vs ++ inh else vs
+ 
++/-- `locked[i]` (push_filters_down.rs:217-223): some other grandchild's subtree
++writes (`subtree_contains(…, is_write)`; in the model a `Commit` always wraps a
++`Create`/`Merge`, so `hasWrite` is that test). -/
++def locked (cfg : Cfg) (ks : List Op) (i : Nat) : Bool :=
++  cfg.lockSiblings && (ks.zipIdx.any (fun kj => hasWrite kj.1 && kj.2 != i))
++
+ /-- One Filter `p` over `c`, with Case-2 inherited variables `inh`. -/
+ def pushAt (cfg : Cfg) (inh : List Var) (p : Expr) (c : Op) : Op :=
+   let ks := kids c
+-  if excluded c || ks.isEmpty || (cfg.writeBarrier && hasWrite c) then .filter p c else
++  if excluded c || (cfg.lockSiblings && isWriteOp c) || ks.isEmpty || (cfg.writeBarrier && hasWrite c) then
++    .filter p c else
+   let inh := (if isApply c then ((ks.head?.
+```
+
+**File**: `proofs/optimizer_rewrites/README.md` (modified, +2/-2)
+```diff
+@@ -119,8 +119,8 @@ Each bug has a Rust repro (`cargo test -p graph --test lean_optimizer_rewrites`,
+ | 7 | `refsNew_sees_*` (the per-operator reads the pre-#2390 oracle missed), `main_misses_call_sibling`, `refsNew_misses_sibling_edges` | An edge read outside the traverse's ancestors is collapsed (#2896, W2-traverse-1) | Per-operator part fixed by #2390; sibling part **open** (PR #2918 not merged) |
+ | 8 (W4-plan-4) | `root_scan_has_no_parent` | `CALL db.labels() YIELD label MATCH (n)` makes a scan the plan root; `utilize_node_by_id` calls `parent().unwrap()` on it | **Repro closed by #3297** (validation now rejects the query, main b84473a7f); the `unwrap()` remains as a hazard |
+ | W6-opt-1 | `filter_pushed_through_boundary` | Push-down gives an OPTIONAL MATCH inside `CALL {}` the outer ids: "Variable n not found" where C returns rows. `fixed_keeps_filter` checks the trial fix | **Open** |
+-| #748 | `bug748_merge_skipped` (property `EffectSound`; `bug748_rows_only_blind`) | `WITH 0 AS n0 CALL { MERGE () RETURN 0 AS n1 } MATCH () WHERE false RETURN 0`: the constant `false` is pushed into both Apply branches, so the MERGE never runs. Rust 0 nodes, C 1; with `WITH *` both 1 (`bug748_with_star_control`) | **Open** |
+-| #997 | `bug997_create_skipped` (property `EffectSound`; `bug997_rows_only_blind`) | `CALL { CREATE () } UNWIND 0 AS x MATCH () WHERE false RETURN 0`: `false` lands on the Apply's `Argument`, the CREATE never runs. Rust 0 nodes, C 1; the CASE-wrapped `false` reads `x` and stays above the Apply, 1 on both (`bug997_case_control`) | **Open** |
++| #748 | `bug748_merge_skipped` (property `EffectSound`; `bug748_rows_only_blind`) | `WITH 0 AS n0 CALL { MERGE () RETURN 0 AS n1 } MATCH () WHERE false RETURN 0`: the constant `false` is pushed into both Apply branches, so the MERGE never runs. Rust 0 nodes, C 1; with `WITH *` both 1 (`bug748_with_star_control`) | **Fixed by #3582** (`pr3582_748_fixed`, `pr3582_left_untouched`) |
++| #997 | `bug997_create_skipped` (property `EffectSound`; `bug997_rows_only_blind`) | `CALL { CREATE () } UNWIND 0 AS x MATCH () WHERE false RETURN 0`: `false` lands on the Apply's `Argument`, the CREATE never runs. Rust 0 nodes, C 1; the CASE-wrapped `false` reads `x` and stays above the Apply, 1 on both (`bug997_case_control`) | **Fixed by #3582** (`pr3582_997_fixed`) |
+ | #3352 | `bug3352_slot_collision_drops_match`, `bug3352_routes_unbound` (properties `RowSound`, `RoutesBound`) | `… WITH p, count(r0) AS n OPTIONAL MATCH (r:Rule)-[:SCOPED_TO]->(p) WHERE r.status = 'revoked' …`: Case 2 inherits the bare ids of the whole pre-WITH subtree (through `Aggregate`), id 2 is taken for `r`, the filter lands on the `Argument`. Rust `e = null`, C 123 | **Open** (PR #3367) |
+ | #2556 | `bug2556_filter_below_binding`, `bug2556_t_seeded`, `bug2556_plan` (property `KeepsFiltersBound`) | `… WITH collect(x) AS fs UNWIND fs AS f MATCH (f)<-[:HAS_CREATOR]-(post:Post), (post)-[:HAS_TAG]->(t:Tag {id:100}), (post)-[:HAS_TAG]->(tag:Tag) RETURN count(post)`: `select_scan_node` picks `t` as the best endpoint, seeds it into `initial_bound` although the outer `Unwind` child is kept and no scan for `t` is built, and places `t.id = 100` after the first hop, before `t` is bound. Rust 0, C 3 (the issue's query: a type error). Not `push_filters_down` (`bug2556_push_not_cause`); `bug2556_fixed` gives the C plan | **Open** |
+ 
+```
+
+**File**: `tests/flow/test_call_subquery.py` (modified, +37/-0)
+```diff
+@@ -2980,6 +2980,43 @@ def test_54_writes_apply_to_every_input_row(self):
+         self.env.assertEqual(res.nodes_deleted, 2)
+         self.get_res_and_assertEquals("MATCH (p:Person) RETURN count(p)", [[1]])
+ 
++    def test_54_1_where_after_a_write_does_not_starve_it(self):
++        """A WHERE of a later MATCH filters the rows after the CALL {} body
++        wrote, never before: the filter was pushed onto the rows feeding the
++        write, so a constant-false WHERE skipped the write altogether
++        (#748, #997). The node count must not depend on the predicate."""
++
++        queries = [
++            # https://github.com/FalkorDB/FalkorDB/issues/997
++            "CALL { CREATE () } UNWIND 0 AS x MATCH () WHERE false RETURN 0",
++            "CALL { CREATE () } UNWIND 0 AS x MATCH () WHERE (CASE WHEN true THEN false ELSE x END) RETURN 0",
++            # https://github.com/FalkorDB/FalkorDB/issues/748
++            "WITH 0 AS n0 CALL { MERGE () RETURN 0 AS n1 } MATCH () WHERE false RETURN 0",
++            "WITH 0 AS n0 CALL { MERGE () RETURN 0 AS n1 } WITH * MATCH () WHERE false RETURN 0",
++        ]
++        for i, q in enumerate(queries):
++            g = self.db.select_graph(f"where_after_write_{i}")
++            res = g.query(q)
++            self.env.assertEqual(res.nodes_created, 1, message=q)
++            self.env.assertEqual(res.result_set, [], message=q)
++
++        # A predicate on the outer rows runs after the writes of every row
++        g = self.db.select_graph("where_after_write_outer")
++        g.query("CREATE (:Z {v: 1}), (:Z {v: 2})")
++        res = g.query("""UNWIND [1, 2] AS x
++                                  CALL { CREATE (:T) }
++                                  MATCH (n:Z) WHERE x = 2
++                                  RETURN count(*)""")
++        self.env.assertEqual(res.nodes_created, 2)
++        self.env.assertEqual(res.result_set, [[2]])
++
++        res = g.query("""MATCH (a:Z)
++                                  CALL { WITH a SET a.w = 1 }
++                                  MATCH (b:Z) WHERE a.v = 5
++                                  RETURN count(*)""")
++        self.env.assertEqual(res.properties_set, 2)
++        self.env.assertEqual(res.result_set, [[0]])
++
+     def test_55_body_variables_do_not_alias_the_imported_row(self):
+         """A subquery body without an explicit `WITH` import must still be
+         isolated from the outer row, not evaluate its own predicates against
 ```
 
 ---
 
-### Incident Patch 3: `e0d9c218` (2026-11-17)
-**Commit Message**: fix: never reissue an id the same query freed (CALL {} DELETE then CREATE corrupts the graph) (#3641)
+### Incident Patch 2: `ace8f477` (2026-11-18)
+**Commit Message**: fix: keep an earlier MATCH … WHERE / UNWIND under a variable-length traverse (#3264)
 
-* fix(planner): a UNION branch of a CALL body that imports nothing keeps its own labels
+* fix: keep an earlier clause under a variable-length traverse when scanning its other end
 
-Each UNION branch of a CALL body is bound by its own binder, whose scope
-ids restart at 0. The outer binder then applied its accumulated labels to
-the whole body, matching a branch's inner (scope, id) keys against the
-outer query's entries, so `MATCH (a:N) CALL { RETURN 0 AS x UNION CREATE
-(:New) RETURN 1 AS x }` created the node as :N. The branches are already
-labelled by their own binders, so skip the outer pass for a UNION body.
-
-Part of #3164.
+select_var_len_scan_node's leaf rewrite replaces the child of a
+CondVarLenTraverse with a fresh scan of the more selective endpoint,
+keeping only an Argument leaf. planner_scan_alias looks through Filter
+wrappers, so an earlier MATCH ... WHERE stitched under the traverse
+(Filter(scan a)) was taken for the planner's own scan and dropped, and so
+was anything below the scan (an earlier UNWIND). Only rewrite when the
+subtree is the planner's own scan: no Filter wrapper and nothing under the
+scan but an Argument leaf.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix: never reissue an id the same query freed (#3164)
+* test: assert the single-MATCH var-len traverse still scans the selective end (Copilot review)
 
-A write query is several commit segments over one MVCC version: a CALL body
-commits once per input row, and a WITH after a write commits too. A segment's
-DELETE freed its ids into the recycle bin, and the next segment's CREATE took
-them back, while later rows (or later clauses) still held the old entity. Their
-DELETE/SET then hit the NEW node: lost nodes, a corrupted graph, stats counting
-each id several times.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-IdSpace now keeps what earlier
+* proofs: update the Lean proofs for this change (proof-impact bot)
 
-**File**: `graph/src/graph/graph.rs` (modified, +30/-3)
+Verified patch of the proof-impact run https://github.com/FalkorDB/FalkorDB/actions/runs/43740335998
+at 0615f92a7a313c2507b19bb3057063b648ac92b6, applied on request of AviAvni (held items reviewed).
+
+Proof-Bot-Run: https://github.co
+
+**File**: `graph/src/planner/optimizer/select_scan_node.rs` (modified, +28/-6)
 ```diff
-@@ -1067,13 +1067,28 @@ impl Graph {
+@@ -649,18 +649,20 @@ fn select_var_len_scan_node(
+         //    an optimization, and losing a predicate is not a trade worth making.
+         let scan_idx = planner_scan_idx(optimized_plan, child_idx)
+             .expect("planner_scan_alias matched, so a scan is there");
+-        let wrapper_ok = {
++        let (has_filter, has_include_pending) = {
+             let mut node = optimized_plan.node(child_idx);
+-            let mut ok = true;
++            let (mut filter, mut include_pending) = (false, false);
+             while node.idx() != scan_idx {
+-                if matches!(node.data(), IR::IncludePending { .. } | IR::Filter(_)) {
+-                    ok = false;
+-                    break;
++                match node.data() {
++                    IR::Filter(_) => filter = true,
++                    IR::IncludePending { .. } => include_pending = true,
++                    _ => {}
+                 }
+                 node = node.child(0);
+             }
+-            ok
++            (filter, include_pending)
+         };
++        let wrapper_ok = !has_filter && !has_include_pending;
+         if wrapper_ok && child_subtree_binds(optimized_plan, scan_idx, &to.alias) {
+             let kept: Vec<DynTree<IR>> = optimized_plan
+                 .node(scan_idx)
+@@ -680,6 +682,26 @@ fn select_var_len_scan_node(
+             }
          }
-     }
  
-+    /// Everything a version does once, after its last mutation and before it is
-+    /// published. Called once at MVCC commit; add new end-of-version cleanups
-+    /// here rather than at the call site.
-+    pub fn finish_version(&mut self) {
-+        self.trim_attr_stores();
-+        self.end_id_quarantine();
-+    }
++        // The leaf rewrite below replaces the whole subtree with a fresh scan
++        // of `to`, carrying over only an `Argument` leaf (and re-adding
++        // `IncludePending` inside MERGE). Anything else there is an earlier
++        // clause that `plan_query` stitched under the traverse: a `Filter`
++        // (`MATCH (a) WHERE a.v = 1 MATCH (a)-[*]->(b)`) or an operator below
++        // the scan (`UNWIND … MATCH (a)-[*]->(b)`). Dropping it would lose a
++        // predicate or rows, so keep the planner's direction instead.
++        let scan_node = optimized_plan.node(scan_idx);
++        let only_argument_below = match scan_node.num_children() {
++            0 => true,
++            1 => {
++                let below = scan_node.child(0);
++                matches!(below.data(), IR::Argument(_)) && below.num_children() == 0
++            }
++            _ => false,
++        };
++        if has_filter || !only_argument_below {
++            continue;
++        }
 +
-     /// Reclaim attribute-arena growth slop on blocks touched by this version.
--    /// Called once at MVCC commit.
--    pub fn trim_attr_stores(&mut self) {
-+    fn trim_attr_stores(&mut self) {
-         self.node_attrs.trim();
-         self.relationship_attrs.trim();
-     }
- 
-+    /// The query that owned this version is done: ids it freed may be handed out
-+    /// again by the next one, and the set that held them back is not carried
-+    /// into a published version. Called once at MVCC commit.
-+    fn end_id_quarantine(&mut self) {
-+        self.node_ids.end_quarantine();
-+        self.relationship_ids.end_quarantine();
-+    }
-+
-     #[must_use]
-     pub fn new_version(&self) -> Self {
-         // One dictionary clone per version instead of the two the split tables cost.
-@@ -1591,6 +1606,17 @@ impl Graph {
-         Ok(())
-     }
- 
-+    /// Test stand-in for one whole query starting: open its batch and let
-+    /// what an earlier query freed be reissued, as `MvccGraph` does when it
-+    /// publishes. Not folded into [`Self::open_id_batches`]: that also runs
-+    /// mid-query (via [`Self::roll_id_batches`]), where ending the quarantine
-+    /// would let the same query reuse an id it freed.
-+    #[cfg(test)]
-+    fn begin_query_ids(&mut self) {
-+        self.open_id_batches().expect("a consistent space");
-+        self.end_id_quarantine();
-+    }
-+
-     /// Close the open batch and begin the next one where it left the boundary.
-     ///
-     /// A batch is not a scope: the write path's batch ends and the next begins
-@@ -5532,7 +5558,7 @@ mod reservation_tests {
-     impl Query {
-         /// Opening a query opens the graph's batch, exactly as `Commit` does.
-         fn new(g: &mut Graph) -> Self {
--            g.open_id_batches().expect("a consistent space");
-+            g.begin_query_ids();
-             Self {
-                 created: RoaringTreemap::new(),
-                 cancelled: RoaringTreemap::new(),
-@@ -5765,6 +5791,7 @@ mod reservation_tests {
-         // One in the bin, two live, so three ids handed out.
-         // A fresh batch, so nothing is outstanding: the first one committed.
-         g.open_id_batches().expect("a consistent space");
-+        g.end_id_quarantine();
-         let ids = g
-             .relationship_id_space()
-             .reserve(2, &RoaringTreemap::new())
+         // A correlated sub-plan may already bind `to` from its outer context;
+         // scanning it here would rebind it. `Argument(None)` is opaque about
+         // what it carries, so treat it as binding everything.
 ```
 
-**File**: `graph/src/graph/graph/falkordb_index_tests.rs` (modified, +2/-1)
+**File**: `proofs/FINDINGS.md` (modified, +1/-1)
 ```diff
-@@ -52,7 +52,8 @@ fn reserve_nodes(
-     g: &mut Graph,
-     n: usize,
- ) -> Vec<u64> {
--    g.open_id_batches().expect("a consistent space");
-+    // Each call stands for a query of its own.
-+    g.begin_query_ids();
-     g.node_id_space()
-         .reserve(n, &RoaringTreemap::new())
-         .expect("reserved")
+@@ -162,7 +162,7 @@ IDs are `W2-<area>-<n>`. "C ✓" means C gives the correct answer, so the bug is
+ - **W6-opt-1** (found reviewing PR #2845, pre-existing on main 89d68334a) — filter push-down gives an OPTIONAL MATCH inside a `CALL {}` body the outer query's variable ids, so the filter on `n` is pushed onto a row where that slot is unbound (`push_filters_down.rs:217`, `:238`). `MATCH (x:A:B) CALL { OPTIONAL MATCH (n:A:B {id:3}) RETURN n.id AS nid } RETURN x.id, nid` → Rust "Variable n not found", C `[[1,3],[2,3],[3,3]]`; four variants fail the same way. Possibly related to #2728. Lean `filter_pushed_through_boundary` (binder `CallBoundary.lean`). A trial fix (match `IR::Apply | IR::Optional(_)` and inherit `branch_output_variables(left)`) makes all five match C, and 166/166 related flow tests pass.
+ - **W4-index-1** — a range index on an attribute that already has a fulltext index is never queried correctly. `build_query_node` takes the attribute's first field whatever its type (`index/mod.rs:1386,1411,1459,1471,1529,1590`). After `CREATE FULLTEXT INDEX … ON (n.s)` then `CREATE INDEX … ON (n.s)`, `n.s='foo'`, `n.s > 'c'`, `{s:'bar'}` and `n.s IN [...]` all return `[]` (C returns the rows). Fix: pick the field whose type is `IndexType::Range`. Lean `IndexerM.bug_range_after_fulltext`.
+ - Unconfirmed: `create_rs_index` leaks index options on its NUL-byte error path.
+-- **W7-scan-1**: `select_var_len_scan_node`'s leaf rewrite prunes a Filter wrapper: `MATCH (a) WHERE a.v=1 MATCH (a)-[*1..2]->(b:B {w:2})` returns an extra row. Predates #2390. Lean `ScanTree.vl_leaf_*`.
++- **W7-scan-1**: `select_var_len_scan_node`'s leaf rewrite prunes a Filter wrapper: `MATCH (a) WHERE a.v=1 MATCH (a)-[*1..2]->(b:B {w:2})` returns an extra row. Predates #2390. Lean `ScanTree.vl_leaf_*`. Fixed by PR #3264 (`ScanTree.vlLeaf_keeps_filter`, `vl_leaf_bug_case_fixed`).
+ 
+ ### Open bugs the proofs had missed (triage of 2026-10-20)
+ A triage of every open `type:Bug label:rust` issue (live on Rust main 9d3869aa8 and C) found 56 the proofs had not flagged. Only the proof gaps needed a model change; the models were extended so each has a stated property a fix can prove and a `bug<issue>_*` counterexample on main that matches the live repro. The entries below are the ones still open. Root-cause families: slot ids reused across WITH/aggregation scopes (#3333 #3372 #3375), named paths over an already-bound node (#2311 #2725 #2727 #2737 #2744), rewrite criteria that compared rows but not writes (#748 #997), and per-row write visibility through CALL {} (#2729 #2738 #3164). #2502 is the parser (a WHERE pattern predicate swallows the next MATCH), and #2556 is select_scan_node seeding an unbound endpoint, not push-down.
 ```
 
-**File**: `graph/src/graph/id_space.rs` (modified, +101/-3)
+**File**: `proofs/optimizer_scan/COVERAGE.tsv` (modified, +2/-2)
 ```diff
-@@ -205,6 +205,18 @@ pub struct IdSpace {
-     /// id an earlier record of the same batch freed. Cleared with `taken`, for
-     /// the same reason.
-     released: RoaringTreemap,
-+    /// Every id *earlier batches of this version* released: freed, but not yet
-+    /// to be handed out again.
-+    ///
-+    /// A write query is many batches (one per commit segment) over one MVCC
-+    /// version, and a row it is still carrying may name an entity an earlier
-+    /// segment deleted — a `CALL {}` body commits once per input row, so row 2
-+    /// still holds the node row 1's body deleted. Reissuing that id to a node
-+    /// the next invocation creates makes row 2's `DELETE` remove the new node
-+    /// (#3164). So [`Self::reserve`] skips these until the version is dropped:
-+    /// [`Self::new_version`] starts empty, and the ids are ordinary free ids
-+    /// to the next query. Accumulated by [`Self::open_batch`] from `released`.
-+    quarantined: RoaringTreemap,
+@@ -15,8 +15,8 @@ graph/src/planner/optimizer/select_scan_node.rs	collect_output_aliases	453	PROVE
+ graph/src/planner/optimizer/select_scan_node.rs	node_path	504	PROVEN	ScanTree.nodePath_eq
+ graph/src/planner/optimizer/select_scan_node.rs	resolve_path	521	PROVEN	ScanTree.resolve_nodePath, pruneAt_parent
+ graph/src/planner/optimizer/select_scan_node.rs	child_subtree_binds	537	PROVEN	ScanTree.childSubtreeBinds_spec
+-graph/src/planner/optimizer/select_scan_node.rs	select_var_len_scan_node	572	PROVEN	ScanTree.vl_reverse_sound, reach_reverse_iff, vlNonLeaf_keeps_wrappers, vlLeaf_guards; CONFIRMED BUG vl_leaf_fires_over_filter, vl_leaf_drops_filter (leaf rewrite prunes a Filter wrapper, line 723)
+-graph/src/planner/optimizer/select_scan_node.rs	select_scan_node	743	PROVEN	ScanOrder.order_sound, ScanTree.startKeyLt/equality_beats_late (start-point key, #3821 equality tie-break), order_length, pick_perm, run_perm, place_wellScoped, initialBound_wellScoped, initialBound_keeps_row, runScoped_wellScoped, salvage_wellScoped, Salvage.salvaged_wellScoped/premise_of_spine (sound only with an honest initial_bound, and only when the salvaged filters read bound variables); FIXED by #3523 (lines 1048-1051: best_node seeded only when no outer child is kept; initialBound_wellScoped, initialBound_keeps_row); CONFIRMED BUG #2972, open fix PR #3099 (Salvage.premise_fails, salvage_loses_row): a planner scan with an Unwind child is pruned whole (is_planner_scan_subtree:377, argument_leaf_of:338 keeps only an Argument) while its Filter reading the Unwind variable is salvaged: WITH 1 AS k MATCH (b:B) WHERE b.v = k MATCH (b)-[:H]->(c:C) Rust 0, C 1
++graph/src/planner/optimizer/select_scan_node.rs	select_var_len_scan_node	572	PROVEN	ScanTree.vl_reverse_sound, reach_reverse_iff, vlNonLeaf_keeps_wrappers, vlLeaf_guards, vlLeaf_keeps_filter, vl_never_drops_filter, vlLeaf_eq_pre, vl_leaf_bug_case_fixed; FIXED BUG (#3264) vl_leaf_fires_over_filter, vl_leaf_drops_filter (pre-#3264 leaf rewrite pruned a Filter wrapper)
++graph/src/planner/optimizer/select_scan_node.rs	select_scan_node	765	PROVEN	ScanOrder.order_sound, ScanTree.startKeyLt/equality_beats_late (start-point key, #3821 equality tie-break), order_length, pick_perm, run_perm, place_wellScoped, initialBound_wellScoped, initialBound_keeps_row, runScoped_wellScoped, salvage_wellScoped, Salvage.salvaged_wellScoped/premise_of_spine (sound only with an honest initial_bound, and only when the salvaged filters read bound variables); FIXED by #3523 (lines 1070-1073: best_node seeded only when no outer child is kept; initialBound_wellScoped, initialBound_keeps_row); CONFIRMED BUG #2972, open fix PR #3099 (Salvage.premise_fails, salvage_loses_row): a planner scan with an Unwind child is pruned whole (is_planner_scan_subtree:377, argument_leaf_of:338 keeps only an Argument) while its Filter reading the Unwind variable is salvaged: WITH 1 AS k MATCH (b:B) WHERE b.v = k MATCH (b)-[:H]->(c:C) Rust 0, C 1
+ graph/src/planner/optimizer/utilize_index.rs	build_has_labels_filter	71	PROVEN	Cleanup.hasLabelsFilter, isHasLabelsFor_build, addToLabels_idem
+ graph/src/planner/optimizer/utilize_index.rs	alias	101	PROVEN	trait IndexSubject: EdgeInline.subject_accessors, nMatch_spec, eMatch_spec; ScanOrder.withPrimary_sound
+ graph/src/planner/optimizer/utilize_index.rs	all_labels	105	PROVEN	trait IndexSubject: EdgeInline.subject_accessors, nMatch_spec, eMatch_spec; ScanOrder.withPrimary_sound
+```
+
+**File**: `proofs/optimizer_scan/OptimizerScan.lean` (modified, +4/-0)
+```diff
+@@ -230,6 +230,10 @@ RETURN a.v, b.w` on `(:A {v:1})-[:R]->(:B {w:2}), (:A {v:5})-[:R]->(:B {w:2})` r
+ `[1,2],[5,2]` (should be `[1,2]`; the fixed-length `-[:R]->` form is right) on builds 88e92ae25
+ and b3582e34a. `ScanTree.vl_leaf_fires_over_filter`, `vl_leaf_drops_filter`. Fix: refuse the leaf
+ rewrite when the wrapper holds a `Filter`, or salvage it above the traverse with `filters_of`.
++FIXED by PR #3264 (0615f92a7): the leaf rewrite now refuses a `Filter` in the wrapper chain and any
++operator under the scan other than a childless `Argument` (`select_scan_node.rs:623-641`). Model:
++`VLCase.scanOnlyArgBelow`, `vlLeaf` (new) vs `vlLeafPre` (history); `vlLeaf_keeps_filter`,
++`vl_never_drops_filter`, `vlLeaf_eq_pre`, `vl_leaf_bug_case_fixed`.
+ 
+ ## PR #3821 (f71981fa3: equality-pinned endpoint tie-break)
+ `score_endpoint` returns `(score, has_equality, filter_runs_late, cardinality)`;
+```
+
+**File**: `proofs/optimizer_scan/OptimizerScan/ScanTree.lean` (modified, +37/-6)
+```diff
+@@ -767,6 +767,7 @@ structure VLCase where
+   wrapperHasFilter : Bool     -- a `Filter` between the child and the scan
+   childBindsTo : Bool         -- `child_subtree_binds(scan, to)`
+   scanHasChildren : Bool      -- `kept` non-empty
++  scanOnlyArgBelow : Bool     -- the scan is a leaf or has exactly one childless `Argument` child (#3264)
+   argBindsTo : Bool
+   argOpaque : Bool
+   fromScore : Nat
+@@ -780,9 +781,16 @@ def vlGuards (c : VLCase) : Bool :=
+ def vlNonLeaf (c : VLCase) : Bool :=
+   vlGuards c && !c.wrapperHasPending && !c.wrapperHasFilter && c.childBindsTo && c.scanHasChildren
+ 
+-/-- The leaf rewrite (`select_scan_node.rs:619-665`): scan `to` instead, replacing the *whole* child
+-    subtree (`node_mut(child_idx).prune()`, line 661) — wrapper chain included. -/
++/-- The leaf rewrite (`select_scan_node.rs:623-686`): scan `to` instead, replacing the *whole* child
++    subtree (`node_mut(child_idx).prune()`, line 684) — wrapper chain included. Since #3264 it is
++    refused when the wrapper chain holds a `Filter` or the scan has anything but a childless
++    `Argument` under it (`select_scan_node.rs:630-641`). -/
+ def vlLeaf (c : VLCase) : Bool :=
++  vlGuards c && !vlNonLeaf c && !c.wrapperHasFilter && c.scanOnlyArgBelow &&
++    !c.argOpaque && !c.argBindsTo && decide (c.fromScore < c.toScore)
++
++/-- The leaf rewrite before #3264 (history, base 343e077f2): no `Filter` / below-scan check. -/
++def vlLeafPre (c : VLCase) : Bool :=
+   vlGuards c && !vlNonLeaf c && !c.argOpaque && !c.argBindsTo && decide (c.fromScore < c.toScore)
+ 
+ /-- **PROVEN** (#2390): the non-leaf rewrite never drops a `Filter` (nor an `IncludePending`). -/
+@@ -796,7 +804,26 @@ theorem vlLeaf_guards (c : VLCase) (h : vlLeaf c = true) :
+     c.childIsFromScan = true ∧ c.argBindsTo = false ∧ c.argOpaque = false ∧ c.fromScore < c.toScore := by
+   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> simp_all [vlLeaf, vlGuards]
+ 
+-/-! ### CONFIRMED BUG (pre-existing, not fixed by #2390): the leaf rewrite drops a wrapper `Filter`
++/-- **PROVEN** (#3264): the leaf rewrite never prunes a `Filter` wrapper, nor an operator under the
++    planner's scan other than a childless `Argument` (which it carries over). -/
++theorem vlLeaf_keeps_filter (c : VLCase) (h : vlLeaf c = true) :
++    c.wrapperHasFilter = false ∧ c.scanOnlyArgBelow = true := by
++  cases hf : c.wrapperHasFilter <;> cases ho : c.scanOnlyArgBelow <;> simp_all [vlLeaf]
++
++/-- **PROVEN** (#3264): neither rewrite of `select_var_len_scan_node` drops a `Filter` wrapper. -/
++theorem vl_never_drops_filter (c : VLCase) (h : vlNonLeaf c = true ∨ vlLeaf c = true) :
++    c.wrapperHasFilter = false := by
++  rcases h with h | h
++  · exact (vlNonLeaf_keeps_wrappers c h).1
++  · exact (vlLeaf_keeps_filter c h).1
++
++/-- The new rewrite is the old one plus the two #3264 refusals. -/
++theorem vlLeaf_eq_pre (c : VLCase) :
++    vlLeaf c = (vlLeafPre c && !c.wrapperHasFilter && c.scanOnlyArgBelow) := by
++  simp only [vlLeaf, vlLeafPre]; cases vlGuards c <;> cases vlNonLeaf c <;> cases c.wrapperHasFilter <;>
++    cases c.scanOnlyArgBelow <;> cases c.argOpaque <;> cases c.argBindsTo <;> simp
++
++/-! ### CONFIRMED BUG (pre-existing, not fixed by #2390; FIXED by #3264): the leaf rewrite drops a wrapper `Filter`
+ 
+ `MATCH (a) WHERE a.v = 1 MATCH (a)-[*1..2]->(b:B {w:2}) RETURN a.v, b.w`: clause 1's
+ `Filter(a.v = 1) → AllNodeScan(a)` is stitched in as the var-length traverse's child, which
+@@ -812,12 +839,16 @@ pre-#2390 build 88e92ae25): graph `(:A {v:1})-[:R]->(:B {w:2}), (:A {v:5})-[:R]-
+ def vlBugCase : VLCase :=
+   { expandInto := false, bidirectional := false, allShortest := false, sameEnds := false, oneChild := true,
+     childIsFromScan := true, wrapperHasPending := false, wrapperHasFilter := true, childBindsTo := false,
+-    scanHasChildren := false, argBindsTo := false, argOpaque := false,
++    scanHasChildren := false, scanOnlyArgBelow := true, argBindsTo := false, argOpaque := false,
+     fromScore := (scoreEndpoint ⟨(0, 0), []⟩ ⟨[(1, 0)], [(1, 0), (0, 0)], []⟩ [] (fun _ => 1)).1,
+     toScore := (scoreEndpoint ⟨(1, 0), [7]⟩ ⟨[(1, 0)], [(1, 0), (0, 0)], []⟩ [] (fun _ => 1)).1 }
+ 
+-/-- The rewrite fires on the repro although the wrapper holds `a.v = 1`. -/
+-theorem vl_leaf_fires_over_filter : vlLeaf vlBugCase = true ∧ vlBugCase.wrapperHasFilter = true := by
++/-- History (before #3264): the rewrite fired on the repro although the wrapper holds `a.v = 1`. -/
++theorem vl_leaf_fires_over_filter : vlLeafPre vlBugCase = true ∧ vlBugCase.wrapperHasFilter = true := by
++  decide
++
++/-- **PROVEN** (#3264 fixes it): the leaf rewrite now refuses the repro and keeps `a.v = 1`. -/
++theorem vl_leaf_bug_case_fixed : vlLeaf vlBugCase = false := by
+   decide
+ 
+ /-- What the rewritten plan selects (`Lt b`, `Lf a`, the backward walk) differs from the original
+```
+
+**File**: `proofs/optimizer_scan/README.md` (modified, +1/-1)
+```diff
+@@ -82,7 +82,7 @@ Each bug has a Rust repro (`cargo test -p graph --test lean_optimizer_scan`, not
+ | W2-scan-4 | `IndexCex` C7, C7' | `abs(n.a) IN [1]` is pushed as `n.a IN [1]` and misses `a = -1`; `toString(n.a) IN ['1']` returns `[]` (C: `[1]`) | Fixed by #3068 |
+ | W2-scan-5 | `IndexCex` C8 | `2 IN [n.a, n.b]` becomes array-contains on `n.a`: `[]` (C: `[3]`) | Fixed by #3068 |
+ | W2-scan-6 (#2972) | `Salvage.premise_fails`, `salvage_loses_row`, `rebuilt_drops_unwind` | The pass prunes a planner scan whole but salvages only its `Filter`s and `Argument` leaf, so an `Unwind`/`WITH` child is lost: `WITH 1 AS k MATCH (b:B) WHERE b.v = k MATCH (b)-[:H]->(c:C) RETURN count(*)` returns 0 (C 1); `UNWIND [1,1] AS k MATCH (b:B) WHERE b.v = 1 MATCH (b)-[:H]->(c:C) RETURN count(*)` returns 1 (C 2) | **Open**, fix in PR #3099 |
+-| W7-scan-1 | `vl_leaf_fires_over_filter`, `vl_leaf_drops_filter` | The var-length leaf rewrite prunes a Filter wrapper: `MATCH (a) WHERE a.v = 1 MATCH (a)-[*1..2]->(b:B {w:2})` returns an extra row | **Open** |
++| W7-scan-1 | `vl_leaf_fires_over_filter`, `vl_leaf_drops_filter` | The var-length leaf rewrite prunes a Filter wrapper: `MATCH (a) WHERE a.v = 1 MATCH (a)-[*1..2]->(b:B {w:2})` returns an extra row | **Fixed** by PR #3264 (`vlLeaf_keeps_filter`, `vl_leaf_bug_case_fixed`) |
+ | — | `IdSeek.lean` examples on `g5` | `id(n) > -1` returns 0 rows, and non-integer bounds error. Reported as bugs 3–4 of [`../optimizer_rewrites`](../optimizer_rewrites) | **Open** |
+ 
+ The `IndexCex.lean` examples also reproduce bugs owned by [`../index_layer`](../index_layer): a folded `date()` constant returns every node (C3); `IN [.., date()]` drops the item (C9); multi-label AND/OR (C5, C6); Bool/Int conflation (C1, shared with C). C2 (temporals indexed as numbers, #3076), C10 (array-contains inside AND, shared with C, #3736) and C11 (`n.v > 'B' AND n.v < 'B'`, #3072) are fixed; their examples now state agreement.
+```
+
+**File**: `tests/test_e2e.py` (modified, +33/-0)
+```diff
+@@ -2057,6 +2057,39 @@ def test_optional_match_null_merge():
+ 
+ 
+ 
++def test_var_len_traverse_keeps_earlier_clause_below_it():
++    """Reversing a variable-length traverse to scan its more selective end
++    must not drop an earlier clause stitched under it: a MATCH … WHERE
++    filter or an UNWIND (#2972, variable-length shape)."""
++    query(
++        "CREATE (:S {v: 1})-[:R]->(:B {w: 2}), (:S {v: 0})-[:R]->(:B {w: 2}),"
++        " (:S {v: 0})-[:R]->(:X)-[:R]->(:B {w: 2})",
++        write=True,
++    )
++
++    res = query(
++        "MATCH (a) WHERE a.v = 1 MATCH (a)-[*1..2]->(b:B {w: 2}) RETURN a.v, b.w"
++    )
++    assert res.result_set == [[1, 2]]
++
++    res = query(
++        "UNWIND [1, 2] AS i MATCH (a) WHERE a.v = 1 MATCH (a)-[*1..2]->(b:B {w: 2}) RETURN count(*)"
++    )
++    assert res.result_set == [[2]]
++
++    res = query("UNWIND [1, 2] AS i MATCH (a)-[*1..2]->(b:B {w: 2}) RETURN count(*)")
++    assert res.result_set == [[8]]
++
++    # A single MATCH still scans the selective end.
++    res = query("MATCH (a {v: 0})-[*1..2]->(b:B {w: 2}) RETURN count(*)")
++    assert res.result_set == [[2]]
++
++    plan = str(
++        common.g.explain("MATCH (a {v: 0})-[*1..2]->(b:B {w: 2}) RETURN count(*)")
++    )
++    assert "Node By Label Scan | (b:B)" in plan, plan
++
++
+ def test_variable_named_like_an_anonymous_entity():
+     # An unnamed pattern entity has no name at all, so no variable a query
+     # writes can be it - not `_anon_<n>`, not `_anonymous`, and not even the
+```
+
+---
+
+### Incident Patch 3: `adf7bad4` (2026-11-18)
+**Commit Message**: fix: a WHERE after WITH no longer drops every row when a variable id is reused (#2557) (#3521)
+
+* fix: a filter after WITH stays above the operator that binds its variable (#2557)
+
+GetVariables walked through Aggregate into the plan of the previous scope.
+Variable ids restart in every scope, so a variable hidden below the WITH
+passed for the later variable that reuses its id: push_filters_down moved
+`WHERE m.id < 999` below the traverse that binds `m`, and select_scan_node
+counted a later node as already bound. The walk now stops at Project and
+Aggregate, which reset the environment, and reports their copies too.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test: outer-join degrees across WITH and a filter after UNWIND keep their variables (#3371)
+
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+* fix: report a projection's output variable, and only an existence check's input, from get_variables (#2557)
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* proofs: re-point get_return_names rows
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* proofs: list #3521's new fns in COVERAGE.tsv
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* proofs: update the
+
+**File**: `graph/src/runtime/runtime.rs` (modified, +28/-12)
+```diff
+@@ -64,11 +64,11 @@ use crate::{
+ };
+ use chrono::{DateTime, Utc};
+ use once_cell::unsync::Lazy;
+-use orx_tree::{Bfs, Dyn, DynNode, DynTree, MemoryPolicy, NodeIdx, NodeRef};
++use orx_tree::{Dyn, DynNode, DynTree, MemoryPolicy, NodeIdx, NodeRef};
+ use roaring::RoaringTreemap;
+ use std::{
+     cell::{Cell, OnceCell, Ref, RefCell, RefMut},
+-    collections::HashMap,
++    collections::{HashMap, VecDeque},
+     marker::PhantomData,
+     sync::Arc,
+     time::{Duration, Instant},
+@@ -258,10 +258,18 @@ pub trait GetVariables {
  }
  
- /// Append up to `count` ids from `pool` that `held` does not already hold, to
-@@ -245,10 +257,12 @@ fn reclaim_ids(
-     pool: &RoaringTreemap,
-     taken: &RoaringTreemap,
-     issued: &RoaringTreemap,
-+    quarantined: &RoaringTreemap,
-     count: u64,
-     out: &mut Vec<u64>,
- ) -> u64 {
--    let free = pool - taken - issued;
-+    let mut free = pool - taken - issued;
-+    free -= quarantined;
-     let before = out.len();
-     out.extend(free.iter().take(count as usize));
-     (out.len() - before) as u64
-@@ -270,6 +284,7 @@ impl IdSpace {
-             entry_bound: 0,
-             taken: RoaringTreemap::new(),
-             released: RoaringTreemap::new(),
-+            quarantined: RoaringTreemap::new(),
+ impl<T: MemoryPolicy> GetVariables for DynNode<'_, IR, T> {
++    /// The variables the rows leaving this subtree can carry.
++    ///
++    /// `Project` and `Aggregate` start a fresh environment, so the walk stops
++    /// at them: only what they name survives, which is the output variable of
++    /// each projection and of each `(source, output)` copy. Variable ids
++    /// restart in every scope, so a variable hidden below a `WITH` would
++    /// otherwise pass for the later variable that reuses its id.
+     fn get_variables(&self) -> Vec<Variable> {
+         let mut vars = vec![];
+-        for node in self.walk::<Bfs>() {
+-            match node {
++        let mut queue = VecDeque::from([self.clone()]);
++        while let Some(node) = queue.pop_front() {
++            match node.data() {
+                 IR::Optional(variables) => vars.extend(variables.iter().cloned()),
+                 IR::ProcedureCall {
+                     yields: named_outputs,
+@@ -298,9 +306,6 @@ impl<T: MemoryPolicy> GetVariables for DynNode<'_, IR, T> {
+                 | IR::Union
+                 | IR::NestedPlans
+                 | IR::Apply
+-                | IR::SemiApply
+-                | IR::AntiSemiApply
+-                | IR::OrApplyMultiplexer(_)
+                 | IR::Sort(_)
+                 | IR::Skip(_)
+                 | IR::Limit(_)
+@@ -309,6 +314,13 @@ impl<T: MemoryPolicy> GetVariables for DynNode<'_, IR, T> {
+                 | IR::IncludePending { .. }
+                 | IR::CreateIndex { .. }
+                 | IR::DropIndex { .. } => {}
++                // Child 0 is the input; the other children are existence
++                // checks whose variables never reach the rows leaving the
++                // operator, and their ids may be reused later.
++                IR::SemiApply | IR::AntiSemiApply | IR::OrApplyMultiplexer(_) => {
++                    queue.extend(node.children().next());
++                    continue;
++                }
+                 IR::NodeByLabelScan { node, .. }
+                 | IR::AllNodeScan(node)
+                 | IR::NodeByIndexScan { node, .. }
+@@ -365,15 +377,19 @@ impl<T: MemoryPolicy> GetVariables for DynNode<'_, IR, T> {
+                     }
+                 }
+                 IR::Aggregate {
+-                    names: variables, ..
++                    names, projections, ..
+                 } => {
+-                    vars.extend(variables.iter().cloned());
++                    vars.extend(names.iter().cloned());
++                    vars.extend(projections.iter().map(|(_, v)| v.clone()));
++                    continue;
+                 }
+-                IR::Project { exprs: items, .. } => {
+-                    vars.extend(items.iter().map(|v| v.0.clone()));
+-                    break;
++                IR::Project { exprs, copies } => {
++                    vars.extend(exprs.iter().map(|(v, _)| v.clone()));
++                    vars.extend(copies.iter().map(|(_, v)| v.clone()));
++                    continue;
+                 }
+             }
++            queue.extend(node.children());
          }
+         vars
      }
+```
+
+**File**: `proofs/FINDINGS.md` (modified, +1/-1)
+```diff
+@@ -186,7 +186,7 @@ A triage of every open `type:Bug label:rust` issue (live on Rust main 9d3869aa8
+ - #3226 (idx): a write that commits while its own index scan is open (scan below LIMIT) re-takes the RediSearch spec lock as a writer while holding it as a reader, and the server aborts at spec.c:2304; the same path takes the GIL while holding RediSearch's global lock (stall with RESTORE). Lean SC.Locks.bug3226_open_scan_upgrade; property noReacquire.
+ - #3333 (aggregate/binder ids): the pre-projection alias of m (id 2) stays bound on the Aggregate output and the next MATCH gives b id 2, so b starts bound to m and the query returns []. Lean bug3333_alias_binds_next_var; property EmitsOnlyScope.
+ - #3349 (udf): WCC, pageRank and betweenness on a one-node nodeLabels projection fail with -1000: GraphBLAS stores the 1×1 compact matrix by column, LAGraph_CheckGraph rejects it, and Rust returns the error. Lean bug3349_one_node_projection_fails; property ProjectionTotal.
+-- #3352 (plan/optimizer): Case 2 push-down inherits bare ids from the whole pre-WITH subtree (get_variables walks through Aggregate), takes the pre-WITH id 2 for `r`, and puts `r.status = 'revoked'` on the Argument: Rust e=null, C 123. Lean bug3352_slot_collision_drops_match (bug3352_routes_unbound); property RowSound (RoutesBound).
++- #3352 (plan/optimizer): Case 2 push-down inherits bare ids from the whole pre-WITH subtree (get_variables walks through Aggregate), takes the pre-WITH id 2 for `r`, and puts `r.status = 'revoked'` on the Argument: Rust e=null, C 123. Lean bug3352_slot_collision_drops_match (bug3352_routes_unbound); property RowSound (RoutesBound). Since #3521 get_variables stops at Aggregate/Project (`RuntimeCore.Plan.getVariables_stops`, old walk `pre3521_hidden_reported`).
+ - #3368, #3369 (rt, filed repros fixed by #3050): model only and not yet run live: equal leftovers in two rows of the SAME MERGE still share one `merge_pattern_cache` entry (`MergeSlot.same_op_leftover_shares_entry`).
+ - #3372 (rt/aggregate→traverse): Aggregate re-binds a grouping key at its slot from the previous scope (aggregate.rs:1187-1196), and the binder restarts slot ids at 0 in each scope (binder.rs:2261). A fresh variable in the next MATCH that gets the same slot is read by CondTraverse as already bound to that node (cond_traverse.rs:648-652,771-777), so `WITH c, count(*) AS k MATCH (c)-[:E]->(d)` returns 0 instead of 4. Lean bug3372_slot_reuse_drops_rows; property ScopedRow.
+ - #3375 (aggregate/binder ids): count(x)'s output id equals sum(x)'s accumulator id and is written into `combined` first, so sum returns the count (3 vs 6) and avg panics in finalize_avg. Lean bug3375_output_overwrites_next_acc, bug3375_avg_panics; property OutputsOwnAcc.
+```
+
+**File**: `proofs/runtime_core/COVERAGE.tsv` (modified, +4/-4)
+```diff
+@@ -1,9 +1,9 @@
+ file	function	line	bucket	lean_name_or_reason
+ graph/src/runtime/runtime.rs	deref	141	NOT COVERED	stale model (re-target pending): the published version is an Arc<Graph>; a write query's fork is a plain Graph the runtime holds in a RefCell until it publishes it (no HeldRead, no cell around published versions); proofs/runtime_core Cell/Drop/Proto still model HeldRead. Was PROVEN: Cell.deref: graph_deref, graph_same_result (both GraphRef arms deref to g's cell)
+-graph/src/runtime/runtime.rs	get_variables	257	PROVEN	Plan.getVariables/nodeVars (trait decl): getVariables_spec, getVariables_stops
+-graph/src/runtime/runtime.rs	get_variables	261	PROVEN	Plan.getVariables/nodeVars: getVariables_spec, getVariables_stops
+-graph/src/runtime/runtime.rs	get_return_names	383	PROVEN	Plan.returnNames (trait decl): returnNames_spec
+-graph/src/runtime/runtime.rs	get_return_names	387	PROVEN	Plan.returnNames/skipApply: returnNames_spec
++graph/src/runtime/runtime.rs	get_variables	257	PROVEN	Plan.getVariables/nodeVars/expand (trait decl): getVariables_spec, getVariables_mem, getVariables_stops, getVariables_sibling
++graph/src/runtime/runtime.rs	get_variables	268	PROVEN	Plan.getVariables/nodeVars/expand: getVariables_spec, getVariables_mem, getVariables_stops, getVariables_sibling, pre3521_hidden_reported
++graph/src/runtime/runtime.rs	get_return_names	399	PROVEN	Plan.returnNames (trait decl): returnNames_spec
++graph/src/runtime/runtime.rs	get_return_names	403	PROVEN	Plan.returnNames/skipApply: returnNames_spec
+ graph/src/runtime/runtime.rs	inspect_batch	433	PROVEN	Plan.inspectBatch: inspectBatch_spec
+ graph/src/runtime/runtime.rs	new	455	NOT COVERED	stale model (re-target pending): the published version is an Arc<Graph>; a write query's fork is a plain Graph the runtime holds in a RefCell until it publishes it (no HeldRead, no cell around published versions); proofs/runtime_core Cell/Drop/Proto still model HeldRead. Was PROVEN: Plan.rtNew: rtNew_spec; Misc.checkTimeout_spec (deadline); Cell.new: new_ok, new_vals; Proto.readNew_never_panics; Drop.held_survives, drop_sound (either field order), held_swapped_unsound (HeldRead internal order), g_never_reassigned
+ graph/src/runtime/runtime.rs	check_timeout	522	PROVEN	Misc.checkTimeout_spec
+```
+
+**File**: `proofs/runtime_core/RuntimeCore.lean` (modified, +1/-1)
+```diff
+@@ -99,7 +99,7 @@ instantiated; `Instant` arithmetic.
+ ## Wave-5 additions
+ * `RelAccessors`: relationship reads, pending attribute writes (`setPendingAttr_spec`), typed
+   materialisation, `label_id`, endpoints/type lookups (deleted > pending > committed).
+-* `Plan`: `get_variables` (BFS walk stopping at the first Project), `get_return_names`,
++* `Plan`: `get_variables` (BFS queue; Project/Aggregate end their subtree, existence checks keep only their input), `get_return_names`,
+   `inspect_batch`, `Runtime::new`, delegating accessors, `default_batch`, `run_nested_plan`,
+   `build_batch_op` child popping and SKIP/LIMIT/VHJ checks; `children_to_recurse` spec in RunBatch.
+ -/
+```
+
+**File**: `proofs/runtime_core/RuntimeCore/Plan.lean` (modified, +126/-36)
+```diff
+@@ -3,8 +3,8 @@ Plan-shape helpers and constructors of `Runtime` (graph/src/runtime/runtime.rs).
  
-@@ -288,6 +303,7 @@ impl IdSpace {
-             entry_bound,
-             taken: RoaringTreemap::new(),
-             released: RoaringTreemap::new(),
-+            quarantined: RoaringTreemap::new(),
-         }
-     }
+ | here | there |
+ | --- | --- |
+-| `IRK`, `nodeVars`, `getVariables` | `GetVariables` trait (:209) and its `DynNode` impl (:213-330) |
+-| `PT`, `returnNames`  | `ReturnNames` trait (:335) and its impl (:339-380) |
++| `IRK`, `VT`, `nodeVars`, `expand`, `getVariables`, `visible` | `GetVariables` trait (:256) and its `DynNode` impl (:260-396) |
++| `PT`, `returnNames`  | `ReturnNames` trait (:398) and its impl (:402-) |
+ | `inspectBatch`       | `Runtime::inspect_batch` (:384) |
+ | `RtInit`, `rtNew`    | `Runtime::new` (:406-463) |
+ | `writeEscalation`, `resyncPublished`, `commitDeferred` | `write_escalation` (:494), `resync_published_indexes` (:500), `commit_deferred_indexes` (:510) |
+@@ -15,7 +15,7 @@ Plan-shape helpers and constructors of `Runtime` (graph/src/runtime/runtime.rs).
+ -/
+ namespace RuntimeCore.Plan
  
-@@ -357,6 +373,12 @@ impl IdSpace {
-         self.bound() - 1
-     }
+-/-! ## `get_variables` (:213) -/
++/-! ## `get_variables` (:257-396) -/
  
-+    /// Forget what earlier batches freed: the version's query is over, so those
-+    /// ids are ordinary free ids to whoever reserves next.
-+    pub fn end_quarantine(&mut self) {
-+        self.quarantined = RoaringTreemap::new();
-+    }
+ /-- The variable-bearing payload of each IR variant, as `get_variables` reads it. -/
+ inductive IRK where
+@@ -24,54 +24,144 @@ inductive IRK where
+   | unwind (v : Nat)
+   | createOrMerge (nodes rels paths : List Nat)
+   | forEachOrLoadCsv (v : Nat)
+-  | silent                     -- Delete, Argument, Set, Remove, Filter, products, applies, Sort, Skip, …
++  | silent                     -- Delete, Argument, Set, Remove, Filter, products, Apply, Sort, Skip, …
++  | semi                       -- SemiApply, AntiSemiApply, OrApplyMultiplexer (:320-323)
+   | scan (node : Nat)          -- label/all/index/label-and-id scans, id seek
+   | scored (ent : Nat) (score : Option Nat)  -- fulltext / vector scans
+   | rel (r f t : Nat)          -- CondTraverse, EdgeByIndexScan, AllShortestPaths, ExpandInto
+   | varLen (r f t : Nat) (path : Option Nat)
+   | pathBuilder (vars : List Nat)
+-  | aggregate (names : List Nat)
+-  | project (names : List Nat)
++  | aggregate (names projOuts : List Nat)  -- `names`, then each projection's output (:379-385)
++  | project (exprs copyOuts : List Nat)    -- each expr's variable, then each copy's output (:386-390)
+ 
+ def nodeVars : IRK → List Nat
+-  | .optional vs | .procCall vs | .pathBuilder vs | .aggregate vs | .project vs => vs
++  | .optional vs | .procCall vs | .pathBuilder vs => vs
++  | .aggregate ns ps | .project ns ps => ns ++ ps
+   | .unwind v | .forEachOrLoadCsv v | .scan v => [v]
+   | .createOrMerge ns rs ps => ns ++ rs ++ ps
+-  | .silent => []
++  | .silent | .semi => []
+   | .scored e s => e :: s.toList
+   | .rel r f t => [r, f, t]
+   | .varLen r f t p => [r, f, t] ++ p.toList
+ 
+-/-- The BFS walk (:214-327): collect each node's variables; the first `Project` ends the
+-walk after contributing its names (`break`). `bfs` = the subtree in `walk::<Bfs>` order. -/
+-def getVariables : List IRK → List Nat
++/-- A plan subtree (`DynNode<IR>`): its IR payload and its children, in order. -/
++inductive VT where
++  | node (k : IRK) (kids : List VT)
 +
-     /// The same id space in a new MVCC version, with a fresh batch.
-     ///
-     /// A version is where a batch begins, so neither `taken` nor `released` is
-@@ -384,6 +406,7 @@ impl IdSpace {
-             entry_bound,
-             taken,
-             released: RoaringTreemap::new(),
-+            quarantined: RoaringTreemap::new(),
-         }
-     }
- 
-@@ -447,7 +470,17 @@ impl IdSpace {
-     pub fn open_batch(&mut self) -> Result<(), IdSpaceError> {
-         self.checked()?;
-         self.entry_bound = self.bound();
-+        // What this batch freed stays unavailable for the rest of the version.
-+        // So does an id it took and handed back ([`Self::cancel`]): a creation
-+        // cancelled before it committed is just as stale to a reference the
-+        // query still holds, and it sits in `recycled` without being `released`.
-+        self.released |= &self.taken & &self.recycled;
-         self.taken.clear();
-+        if self.quarantined.is_empty() {
-+            std::mem::swap(&mut self.quarantined, &mut self.released);
-+        } else {
-+            self.quarantined |= std::mem::take(&mut self.released);
-+        }
-         self.released.clear();
-         Ok(())
-     }
-@@ -495,7 +528,14 @@ impl IdSpace {
-         // — `GRAPH.BULK`, or anything reserving one id at a time — would
-         // otherwise have to hand its own creations back to the thing that
-         // recorded them.
--        let reclaimed = reclaim_ids(&self.recycled, &self.taken, issued, count, &mut ids);
-+        let reclaimed = reclaim_ids(
-+            &self.recycled,
-+            &self.taken,
-+            issued,
-+            &self.quarantined,
-+            count,
-+            &mut ids,
-+        );
- 
-         // Above every id ever handed out. `entry_bound` accounts for everything
-         // issued before this batch; the ids issued *by* it that sit at or above
-@@ -1025,6 +1065,56 @@ mod tests {
-         assert_eq!(next, vec![1], "not 0 again, even though it is free");
-     }
- 
-+    /// #3164: a later segment of the same version must not be handed an id an
-+    /// earlier segment freed, since a row can still carry the old entity.
-+    #[test]
-+    fn an_id_released_by_an_earlier_batch_is_not_reissued_in_the_version() {
-+        let mut space = IdSpace::restored(3, RoaringTreemap::new());
-+        space.open_batch().expect("a consistent space");
-+        space.release(&ids(&[0]), &ids(&[0])).expect("0 is live");
++/-- The children the walk enqueues after a node: none below `Project`/`Aggregate`
++(`continue`, :384, :389), only child 0 (the input) of an existence check (:321), all
++children otherwise (:392). -/
++def expand : IRK → List VT → List VT
++  | .project .., _ | .aggregate .., _ => []
++  | .semi, kids => kids.take 1
++  | _, kids => kids
 +
-+        // Same batch: delete is committed after the reservations, nothing to see.
-+        space.open_batch().expect("a consistent space");
-+        let next = space.reserve(1, &RoaringTreemap::new()).expect("reserved");
-+        assert_eq!(next, vec![3], "fresh, not the freed 0");
++theorem sizeOf_append (a b : List VT) : sizeOf (a ++ b) + 1 = sizeOf a + sizeOf b := by
++  induction a with
++  | nil => simp; omega
++  | cons x a ih => simp [List.cons_append]; omega
 +
-+        space.create(&ids
++theorem one_le_sizeOf (l : List VT) : 1 ≤ sizeOf l := by
++  cases l <;> simp <;> omega
++
++theorem sizeOf_expand (k : IRK) (kids : List VT) : sizeOf (expand k kids) ≤ sizeOf kids := by
++  cases k <;> cases kids <;> simp [expand] <;> first | omega | exact one_le_sizeOf _
++
++/-- The BFS queue (:270-394): pop the front, collect its variables, enqueue `expand`.
++`get_variables` on a node `t` is `getVariables [t]`. -/
++def getVariables : List VT → List Nat
++  | [] => []
++  | .node k kids :: q => nodeVars k ++ getVariables (q ++ expand k kids)
++termination_by q => sizeOf q
++decreasing_by
++  have h1 := sizeOf_append q (expand k kids)
++  have h2 := sizeOf_expand k kids
++  simp
++  omega
++
++/-- The node kinds whose variables reach the rows leaving `t`: `t` itself, then (depth
++first) what is visible in the children `expand` keeps. -/
++def visible : VT → List IRK
++  | .node k kids => k :: match k with
++    | .project .. | .aggregate .. => []
++    | .semi => match kids with
++      | [] => []
++      | c :: _ => visible c
++    | _ => kids.flatMap visible
++
++theorem visible_node (k : IRK) (kids : List VT) :
++    visible (.node k kids) = k :: (expand k kids).flatMap visible := by
++  cases k <;> cases kids <;> simp [visible, expand]
++
++/-- One step of the walk, and what `expand` keeps. -/
++theorem getVariables_spec (k : IRK) (kids q : List VT) :
++    getVariables [] = [] ∧
++    getVariables (.node k kids :: q) = nodeVars k ++ getVariables (q ++ expand k kids) ∧
++    (∀ n
 ```
 
-**File**: `graph/src/graph/mvcc_graph.rs` (modified, +1/-1)
+**File**: `tests/flow/test_filters.py` (modified, +104/-0)
 ```diff
-@@ -327,7 +327,7 @@ impl MvccGraph {
-             new_graph.schema_version += 1;
-         }
- 
--        new_graph.trim_attr_stores();
-+        new_graph.finish_version();
- 
-         // Fold away any delta that has grown comparable to its base, then
-         // materialize every committed base before publishing. The transaction
-```
-
-**File**: `graph/src/planner/binder.rs` (modified, +11/-1)
-```diff
-@@ -827,7 +827,17 @@ impl Binder {
-         // 2b. Apply node labels to the inner body NOW, before the inner
-         // scopes are popped.  This prevents scope_id reuse in the outer
-         // query from overwriting the inner body's label entries.
--        self.update_all_node_labels(&mut bound_body);
-+        //
-+        // A UNION body is the exception: each branch is bound by its own binder
-+        // (scope ids restart at 0) and was labelled from that binder's own
-+        // `node_labels` already. Applying this binder's labels on top would
-+        // match the branch's inner `(scope, id)` keys against the OUTER
-+        // query's entries and relabel a branch node that imports nothing —
-+        // `MATCH (a:N) CALL { RETURN 0 AS x UNION CREATE (:New) RETURN 1 AS x }`
-+        // created the node as `:N`.
-+        if !matches!(bound_body, QueryIR::Union { .. }) {
-+            self.update_all_node_labels(&mut bound_body);
-+        }
- 
-         // 2c. Remove inner-scope entries from node_labels so that a
-         // subsequent CALL body (which reuses the same scope_id range)
-```
-
-**File**: `graph/src/runtime/pending.rs` (modified, +7/-0)
-```diff
-@@ -944,6 +944,13 @@ impl Pending {
-             // The graph's half of the same event. Paired here so a caller cannot
-             // unwind the pending side and leave the id unreturned.
-             g.cancel_relationship_id(rel_id)?;
-+            // The id stays held back for the rest of the query, so a later
-+            // relationship takes the next one. The replica is told about the
-+            // cancelled id as a create/delete pair of its type, which needs the
-+            // type to exist: a type whose every edge was cancelled would
-+            // otherwise never be registered and the pair skipped, leaving a
-+            // hole before the next id that the replica refuses.
-+            g.get_type_id_mut(&type_name);
-             // The one durable record that this id was ever handed out, the same
-             // role `cancelled_nodes` plays for the node above.
-             self.cancelled_relationships.push(CancelledRelationship {
-```
-
-**File**: `proofs/graph_queries/COVERAGE.tsv` (modified, +3/-1)
-```diff
-@@ -15,7 +15,7 @@ graph/src/graph/graph.rs	grow_cap	860	PROVEN	Schema.growCap/growStep: growCap_ge
- graph/src/graph/graph.rs	new	876	PROVEN	Ids.newG_spec
- graph/src/graph/graph.rs	restore	921	PROVEN	Ids.restore_ids, restoreCap_covers, clampTiers_mono, restore_LInv, fillEndpoints_spec
- graph/src/graph/graph.rs	rebuild_derived_matrices	1034	PROVEN	Ids.rebuildRelType_complete (tensor rebuild_backward = GraphBLAS transpose); #3250 node half Ids.rebuildNodeMs (node_cap = max(node_cap, saved)): rebuild_never_shrinks, rebuild_keeps_entries (tensor dims not on Ten; Tensor::resize in versioned_matrix)
--graph/src/graph/graph.rs	trim_attr_stores	1072	PROVEN	Ids.trimAttrStores_id
-+graph/src/graph/graph.rs	trim_attr_stores	1079	PROVEN	Ids.trimAttrStores_id
- graph/src/graph/graph.rs	new_version	1078	PROVEN	Ids.newVersion_spec (fresh batch per version)
- graph/src/graph/graph.rs	name	1140	PROVEN	Accessors (field projection; newVersion_spec keeps it)
- graph/src/graph/graph.rs	node_count	1145	PROVEN	Ids.markNodesLive_spec / nodeBound_eq (IdSpace::live) || IdSpaceContract discharged: IdRust.rustIdOps_contract (instances in IdRustUse)
-@@ -201,3 +201,5 @@ graph/src/graph/graph.rs	edge_has_type_id	1332	PROVEN	Schema.edgeHasTypeId_iff (
- # Online index build (#2355): fns the background builder added, not modelled yet.
- graph/src/graph/graph.rs	Graph::add_native_build	4510	NOT COVERED	online index build (#2355): not modelled yet
- graph/src/graph/graph.rs	Graph::native_build_total	4546	NOT COVERED	online index build (#2355): not modelled yet
-+graph/src/graph/graph.rs	end_id_quarantine	1087	NOT COVERED	(#3164): not modelled yet
-+graph/src/graph/graph.rs	finish_version	1073	NOT COVERED	(#3164): end-of-version tail calling trim_attr_stores and end_id_quarantine; the quarantine half is not modelled yet
-```
-
-**File**: `proofs/id_space/COVERAGE.tsv` (modified, +4/-3)
-```diff
-@@ -10,16 +10,17 @@ graph/src/graph/id_space.rs	IdSpace::taken	311	PROVEN	IdSpace.takenSet: takenSet
- graph/src/graph/id_space.rs	IdSpace::released	317	PROVEN	IdSpace.releasedSet: releasedSet_eq, released_new/restored/newVersion, openBatch_clears, release_records, create/cancel_keeps_released, Inv.relOk (#3022)
- graph/src/graph/id_space.rs	IdSpace::recycled_count	323	PROVEN	IdSpace.recycledCount (= sLen recycled): release_succeeds bound arithmetic
- graph/src/graph/id_space.rs	IdSpace::is_free	329	PROVEN	IdSpace.isFree (= recycled id): cancel_succeeds (free iff below boundary)
--graph/src/graph/id_space.rs	IdSpace::bound	343	PROVEN	IdSpace.bound: checked_ok_iff, release_succeeds (unchanged by release), roll_inv
-+graph/src/graph/id_space.rs	IdSpace::bound	361	PROVEN	IdSpace.bound: checked_ok_iff, release_succeeds (unchanged by release), roll_inv
- graph/src/graph/id_space.rs	IdSpace::max_id	353	PROVEN	IdSpace.maxId: maxId_spec (bound - 1 cannot underflow when live != 0)
- graph/src/graph/id_space.rs	IdSpace::new_version	367	PROVEN	IdSpace.newVersion: newVersion_spec, openBatch_eq_newVersion, roll_inv, released_newVersion (released not carried, #3022)
- graph/src/graph/id_space.rs	IdSpace::checked	403	PROVEN	IdSpace.checked: checked_ok_iff (checked_add, expected == bound), Inv.checked
--graph/src/graph/id_space.rs	IdSpace::open_batch	447	PROVEN	IdSpace.openBatch: openBatch_spec, openBatch_ok, openBatch_eq_newVersion, roll_inv, openBatch_clears (taken and released emptied, #3022)
-+graph/src/graph/id_space.rs	IdSpace::open_batch	472	NOT COVERED	(#3164): open_batch now also quarantines the ids freed or cancelled in the segment (end_quarantine), which the model does not carry. Was PROVEN: IdSpace.openBatch: openBatch_spec, openBatch_ok, openBatch_eq_newVersion, roll_inv, openBatch_clears (taken and released emptied, #3022)
- graph/src/graph/id_space.rs	IdSpace::reserve	483	PROVEN	IdSpace.reserve: reserve_spec (exact and unconditional, total: reclaimed prefix ++ fresh run whose u64 end wraps in release), reserve_spec_nowrap, reserve_wraps/reserve_wraps_example (the overflow case: restored(u64::MAX) + 1 id gives none), reserve_length (when the run's end fits in a u64), reserve_alloc_fail (unconditional). Corollaries reserve_fresh/reserve_then_cancel/lifecycle_fresh (ids fresh, then cancellable) take caller-state hypotheses hdense (taken/issued ids at or above eb lie below start; maintained by the batch's own create/cancel) and id != u64::MAX; not needed for the spec
- graph/src/graph/id_space.rs	IdSpace::cancel	529	PROVEN	IdSpace.cancel: cancel_taken, cancel_fresh (unconditional, total). Corollary cancel_succeeds (Ok + Inv kept) takes caller hypotheses id != u64::MAX (cancel does not check it) and id fresh below eb iff recycled; reserve_then_cancel discharges the latter for ids from reserve
- graph/src/graph/id_space.rs	IdSpace::refuse_recycled	550	PROVEN	IdSpace.refuseRecycled: refuseRecycled_ok, refuseRecycled_err
--graph/src/graph/id_space.rs	IdSpace::create	581	PROVEN	IdSpace.create/idLimit: create_spec (all or nothing), create_out_of_range (max >= ID_LIMIT refused, #2911), create_expect_unreachable, create_succeeds, create_preserves
-+graph/src/graph/id_space.rs	IdSpace::create	623	PROVEN	IdSpace.create/idLimit: create_spec (all or nothing), create_out_of_range (max >= ID_LIMIT refused, #2911), create_expect_unreachable, create_succeeds, create_preserves
- graph/src/graph/id_space.rs	IdSpace::refuse_undeletable	637	PROVEN	IdSpace.refuseUndeletable: refuseUndeletable_ok, refuseUndeletable_err
- graph/src/graph/id_space.rs	IdSpace::refuse_not_live	675	PROVEN	IdSpace.refuseNotLive: refuseNotLive_ok, refuseNotLive_err, refuseNotLive_live (accepts exactly live ids), refuseNotLive_minus_released, freed_earlier_refused (#3022)
- graph/src/graph/id_space.rs	IdSpace::release	699	CONDITIONAL	IdSpace.release: release_spec, release_refused, release_records describe the model, whose afterRelease subtracts with Nat (saturating at 0); Rust does `self.live -= freed.len()` on u64 (id_space.rs:716: panics in debug, wraps in release). The two agree only under the caller contract freed ⊆ requested (hsub) with Inv, which Rust checks only by debug_assert! (id_space.rs:711) and which no proof discharges for the callers (graph.rs delete paths): undischarged hypothesis. Given it, release_no_underflow (|freed| ≤ live) and release_succeeds hold.
- graph/src/graph/id_space.rs	IdSpace::verify	733	PROVEN	IdSpace.holeCheck/verify: holeCheck_eq, noHole_iff, verify_ok_iff (checked + taken>=eb = [eb, eb+created)), verify_hole, verify_no_underflow
-+graph/src/graph/id_space.rs	IdSpace::end_quarantine	380	NOT COVERED	(#3164): not modelled yet
+@@ -295,3 +295,107 @@ def test10_subscript_as_predicate(self):
+                 self.env.assertTrue(False, depth=1)
+             except redis.ResponseError as e:
+                 self.env.assertContains(error, str(e), depth=1)
++
++    def test11_filter_after_with_keeps_its_own_variables(self):
++        # Variable ids restart after a WITH, so a variable of the new scope
++        # can share its id with one hidden below the WITH. That one must not
++        # count as bound: the filter on `m` was pushed below the traverse
++        # that binds `m` and dropped every row (#2557).
++        g = self.db.select_graph("filter_after_with")
++        g.query("""CREATE (p:Person {id:1}), (f:Person {id:2}), (p)-[:KNOWS]->(f),
++                          (m1:Post {id:10}), (m2:Post {id:11}),
++                          (m1)-[:HAS_CREATOR]->(f), (m2)-[:HAS_CREATOR]->(f)""")
++
++        for pred, expected in [("m.id < 999", 2), ("m.id = 10", 1),
++                               ("999 > m.id", 2), ("m.id <> 5", 2)]:
++            res = g.query(f"""MATCH (root:Person {{id:1}})-[:KNOWS]-(friend:Person)
++                              WITH collect(friend) AS friends
++                              UNWIND friends AS f
++                              MATCH (f)<-[:HAS_CREATOR]-(m:Post)
++                              WHERE {pred}
++                              RETURN count(m)""")
++            self.env.assertEqual(res.result_set, [[expected]], depth=1)
++
++        # The same collision through an Apply: the WHERE of an OPTIONAL MATCH
++        # after an aggregating WITH must stay above the traverse binding `r`.
++        g.query("CREATE (:Rule {status:'revoked'})-[:SCOPED_TO]->(:Person {id:3})")
++        res = g.query("""MATCH (p:Person {id:3})
++                         OPTIONAL MATCH (r0:Rule)-[:SCOPED_TO]->(p)
++                         WITH p, count(r0) AS n
++                         OPTIONAL MATCH (r:Rule)-[:SCOPED_TO]->(p)
++                         WHERE r.status = 'revoked'
++                         RETURN n, r.status""")
++        self.env.assertEqual(res.result_set, [[1, 'revoked']])
++
++    def test11_optional_match_degrees_across_with(self):
++        # Outer-join aggregations chained through WITH reuse variable ids
++        # (u, v, du, ... restart after every WITH), so a filter of a later
++        # OPTIONAL MATCH was pushed below the traverse binding its variable and
++        # the sums came out as -12 instead of 25 (#3371). Expected values are
++        # what C returns: central_sum - 3 * triangles = simple 4-node paths.
++        cases = [
++            ([(1, 2)], [[1, 2, 0, 0, 0]], 0, 0, 0),
++            ([(1, 2), (2, 3), (3, 4)],
++             [[1, 2, 0, 1, 0], [2, 3, 1, 1, 1], [3, 4, 1, 0, 0]], 1, 0, 1),
++            ([(1, 2), (1, 3), (2, 3)],
++             [[1, 2, 1, 1, 1], [1, 3, 1, 1, 1], [2, 3, 1, 1, 1]], 3, 1, 0),
++            ([(1, 2), (1, 3), (1, 4), (2, 3), (2, 4), (3, 4), (1, 5), (2, 6)],
++             [[1, 2, 3, 3, 9], [1, 3, 3, 2, 6], [1, 4, 3, 2, 6],
++              [1, 5, 3, 0, 0], [2, 3, 3, 2, 6], [2, 4, 3, 2, 6],
++              [2, 6, 3, 0, 0], [3, 4, 2, 2, 4]], 37, 4, 25),
++        ]
++        degrees = """MATCH (u:MT04)-[:E04]-(v:MT04) WHERE u.id<v.id
++                     OPTIONAL MATCH (u)-[ru:E04]-(nu:MT04) WHERE nu<>v
++                     WITH u,v,count(ru) AS du
++                     OPTIONAL MATCH (v)-[rv:E04]-(nv:MT04) WHERE nv<>u
++                     WITH u,v,du,count(rv) AS dv """
++        for i, (edges, per_edge, central, triangles, paths) in enumerate(cases):
++            g = self.db.select_graph(f"degrees_across_with_{i}")
++            nodes = sorted({n for e in edges for n in e})
++            pattern = [f"(v{n}:MT04 {{id: {n}}})" for n in nodes]
++            pattern += [f"(v{a})-[:E04]->(v{b})" for a, b in edges]
++            g.query("CREATE " + ", ".join(pattern))
++
++            res = g.query(degrees + "RETURN u.id,v.id,du,dv,du*dv ORDER BY u.id,v.id")
++            self.env.assertEqual(res.result_set, per_edge, depth=1)
++
++            res = g.query(degrees + """WITH sum(du*dv) AS central_sum
++                OPTIONAL MATCH p=(a:MT04)-[:E04]-(b:MT04)-[:E04]-(c:MT04)-[:E04]-(a)
++                WHERE a.id<b.id AND b.id<c.id
++                WITH central_sum, count(p) AS triangles
++                RETURN central_sum, triangles, central_sum-3*triangles""")
++            self.env.assertEqual(res.result_set, [[central, triangles, paths]], depth=1)
++
++    def test12_filter_after_unwind_stays_above_the_unwind(self):
++        # `x` (bound by the UNWIND) shared an id with a variable inside the
++        # CALL {} body below it, so `WHERE x = 2` was pushed below the UNWIND
++        # and rejected every row. C returns 2.
++        g = self.db.select_graph("filter_above_unwind")
++        g.query("CREATE (:A), (:A)")
++        res = g.query("""CALL { CREATE () } UNWIND [1, 2] AS x
++                         MATCH (n:A) WHERE x = 2 RETURN count(*)""")
++        self.env.assertEqual(res.result_set, [[2]])
++
++    def test13_fi
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3860** (2026-11-18): chore(deps): upgrade valkey-module to the crates.io 0.2.0 release (@DvirDukhan)
 - **PR #3853** (closed): fix: a queued write an inline write overtook re-runs as a writer, so a stream of them cannot starve it (@AviAvni)
 - **PR #3839** (2026-11-16): fix(fuzz): initialise RediSearch in the fuzz harnesses so index queries don't crash (@AviAvni)
 - **PR #3837** (2026-11-17): chore(proofs): Lean v4.36.0; retire the PR review projects (@AviAvni)
 - **PR #3833** (2026-11-16): ci: /proofs apply commits a held proof patch whose gates passed (@AviAvni)
 - **PR #3825** (2026-11-15): chore(deps): bump the cargo-deps group across 1 directory with 4 updates (@dependabot[bot])
-- **PR #3824** (2026-11-15): fix: AUTH on Valkey crashes the server in RediSearch's slot migration handler (@DvirDukhan)
 
 ---
 
@@ -2305,37 +2275,58 @@ IdSpace now keeps what earlier
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. a cascaded edge of a new type no longer panics compact replies or opens a replic
+## X. a WHERE after a writing CALL {} no longer starves the write (#748, #997)
 
 **RULE**:
-When implementing operations in `graph/src/effects/v3/emit.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `graph/src/planner/optimizer/push_filters_down.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `27951021`: a cascaded edge of a new type no longer panics compact replies or opens a replica id gap. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b9f333c5`: a WHERE after a writing CALL {} no longer starves the write (#748, #997). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `graph/src/effects/v3/emit.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `graph/src/planner/optimizer/push_filters_down.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // `Pending::commit` registers the type of every cancelled edge, so the
-        // id is there and `emit_schema_additions` has announced it. Skipped
-        // rather than invented if it ever is not: a made-up id would index the
-        // pair under some other type.
+/// Operators that change the graph (or its schema) when they run.
+///
+/// A `Filter` is never moved below one of these, nor into a branch that
+/// feeds a sibling subtree containing one: the write must still happen for
+/// every row that reaches it, whatever a later `WHERE` says.
+const fn is_write(ir: &IR) -> bool {
+    matches!(
+        ir,
+        IR::Create(_)
+            | IR::Merge { .. }
+            | IR::Delete { .. }
+            | IR::Set(_)
+            | IR::Remove(_)
+            | IR::Commit
+            | IR::ForEach { .. }
+            | IR::CreateIndex { .. }
+            | IR::DropIndex { .. }
+    )
+}
+
+                            | IR::Create(_)
+                            | IR::Delete { .. }
+                            | IR::Set(_)
+                            | IR::Remove(_)
+                            | IR::Commit
+                            | IR::ForEach { .. }
+            // A branch is locked when a sibling subtree writes: filtering that
+            // branch would starve the write of rows it must see (an `Apply`
+            // runs its right side once per left row), e.g. `CALL { CREATE () }
+            // MATCH () WHERE false` must still create its node.
+         
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        // A type whose every edge was cancelled was never registered on this
-        // graph — nothing of it reached `create_relationships_bulk` — so there
-        // is no id to state and no `ADD_SCHEMA` announcing one. Skipped rather
-        // than invented: a made-up id would index the pair under some other
-        // type. The reservation those ids came from is still the master's, so
-        // this case leaves the two relationship bounds apart. It cannot be
-        // closed with the records this format has.
+                    if conj_vars.iter().all(|v| child_vars.contains(v)) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `27951021` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b9f333c5` are properly handled with clean fallback behavior.

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T13:09:10.036Z",
+  "last_updated": "2026-11-18T13:17:37.641Z",
   "directives": [
     {
       "id": "CD-001",
@@ -25005,14 +25005,14 @@
       "domain_letter": "H"
     },
     {
-      "id": "CD-XL7O",
+      "id": "CD-BT49",
       "directive_title": "Empirical Invariant Guard in SECURITY_CONTEXT.md",
-      "source_repo": "projectdiscovery-nuclei-learnings",
-      "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-XL7O-empirical-invariant-guard-in-security_context-md.md",
-      "status": "QUARANTINED_REJECT",
-      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-17",
+      "source_repo": "projectdiscovery/nuclei",
+      "source_commit": "91c2a7cf",
+      "staged_file": "11_INBOX/candidate-directives/CD-BT49-empirical-invariant-guard-in-security_context-md.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
       "domain_letter": "D"
     },
     {
@@ -29393,6 +29393,57 @@
       "source_repo": "cilium-cilium",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-1FCA43-gha-scale-bump-cilium-scaffolding-commit.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-BY48",
+      "directive_title": "a WHERE after a writing CALL {} no longer starves the write (#748, #997)",
+      "source_repo": "falkordb-falkordb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BY48-a-where-after-a-writing-call-no-longer-starves-the-write-748-997.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-BZ6S",
+      "directive_title": "Empirical Invariant Guard in reference.md",
+      "source_repo": "moby-buildkit-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BZ6S-empirical-invariant-guard-in-reference-md.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-BV7I",
+      "directive_title": "allow static diagnostic imports in Functions",
+      "source_repo": "lancedb/lancedb",
+      "source_commit": "a6d7d02f",
+      "staged_file": "11_INBOX/candidate-directives/CD-BV7I-allow-static-diagnostic-imports-in-functions.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-951266",
+      "directive_title": "a WHERE after a writing CALL {} no longer starves the write (#748, #997)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "falkordb-falkordb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-951266-a-where-after-a-writing-call-no-longer-s.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-REV-907601",
+      "directive_title": "Empirical Invariant Guard in reference.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "moby-buildkit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-907601-empirical-invariant-guard-in-reference-m.md",
       "staged_date": "2026-11-18"
     }
   ]
