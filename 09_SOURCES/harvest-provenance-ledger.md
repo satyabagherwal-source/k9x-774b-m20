@@ -10788,3 +10788,10 @@ Every entry in this ledger must capture:
 | `learn-dom-f-d22a5dee` | `project://hf-qwen-qwen-image-2.1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | 2026-11-18T00:27:31.206Z |
 | `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-11-18T00:43:27.961Z |
 | `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `c2b9a03e` | Multi-dimensional audit evidence | 2026-11-18T00:43:42.436Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `0f1aceae` | Multi-dimensional audit evidence | 2026-11-18T00:59:27.513Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `517e1695` | Multi-dimensional audit evidence | 2026-11-18T00:59:31.270Z |
+| `learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf` | `https://huggingface.co/mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF` | `hf-mraderm` | Multi-dimensional audit evidence | 2026-11-18T01:02:29.311Z |
+| `learn-github-shoutem-ui` | `https://github.com/shoutem/ui` | `101f9805` | Multi-dimensional audit evidence | 2026-11-18T01:02:34.334Z |
+| `learn-dom-f-f03e14a5` | `project://hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings.md` | 2026-11-18T01:03:04.627Z |
+| `learn-dom-l-9579240f` | `project://shoutem-ui` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shoutem-ui-learnings.md` | 2026-11-18T01:03:39.617Z |
+| `learn-dom-f-b4186028` | `project://shoutem-ui` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shoutem-ui-learnings.md` | 2026-11-18T01:04:22.737Z |

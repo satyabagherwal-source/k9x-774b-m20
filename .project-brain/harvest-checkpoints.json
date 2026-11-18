@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T00:43:42.444Z",
+  "last_updated": "2026-11-18T01:02:34.343Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3666,14 +3666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "484a02b33cc83183114f611cf109fe7dfc8eebae3c2aefdbde24565df10f6a8a",
-      "verified_at": "2026-11-17T14:50:01.857Z",
+      "content_hash": "0ec3be99580619a3479bb72805b8f8128ec30edf5e8d681a7f157d045e4d4ce2",
+      "verified_at": "2026-11-18T00:59:27.521Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T14:50:01.857Z"
+      "last_updated": "2026-11-18T00:59:27.521Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -4881,14 +4881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matrixorigin-matrixone",
-      "content_hash": "399434a8eeee9ce3e7c0ecef8c41ee11daa972fb37d14760c999102085783f5e",
-      "verified_at": "2026-11-17T01:34:09.096Z",
+      "content_hash": "00d84dde34b7e87842f3cc3ec3739b3d33ed9dfa42cf0ffdae38f3abcac59348",
+      "verified_at": "2026-11-18T00:59:31.277Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T01:34:09.096Z"
+      "last_updated": "2026-11-18T00:59:31.277Z"
     },
     "fallow-rs/fallow": {
       "repository": "fallow-rs/fallow",
@@ -9201,14 +9201,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-shoutem-ui",
-      "content_hash": "1892fcd5b069a5906eeae69ae8cf2e23c6f517e670581e2f867684bc47037e75",
-      "verified_at": "2026-11-07T18:09:42.598Z",
+      "content_hash": "ae4a8d89db6dbebf97a990b5adf34fea80f19815d8b3af10bd3d7f6dd951e021",
+      "verified_at": "2026-11-18T01:02:34.342Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T18:09:42.598Z"
+      "last_updated": "2026-11-18T01:02:34.342Z"
     },
     "databricks/click": {
       "repository": "databricks/click",
@@ -18366,14 +18366,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf",
-      "content_hash": "9970d2b3fb06fad2935502eddaca45cf33c61f74b3884f28c11f2648208370c4",
-      "verified_at": "2026-11-13T13:34:22.611Z",
+      "content_hash": "9694a4b4d1f35829a72892db1bbe1f917e0d9f070a88a84c607a754836810fb8",
+      "verified_at": "2026-11-18T01:02:29.319Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T13:34:22.611Z"
+      "last_updated": "2026-11-18T01:02:29.319Z"
     },
     "Scantist/GLM-5.3-SLIM-GGUF": {
       "repository": "Scantist/GLM-5.3-SLIM-GGUF",

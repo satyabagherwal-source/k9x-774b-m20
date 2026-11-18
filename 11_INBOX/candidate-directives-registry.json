@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T00:43:46.973Z",
+  "last_updated": "2026-11-18T01:04:24.185Z",
   "directives": [
     {
       "id": "CD-001",
@@ -26674,6 +26674,94 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-4D2304-rust-address-the-remaining-issues-in-418.md",
       "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-YOUX",
+      "directive_title": "forward http streamable mcp",
+      "source_repo": "nolabs-ai/nono",
+      "source_commit": "0f1aceae",
+      "staged_file": "11_INBOX/candidate-directives/CD-YOUX-forward-http-streamable-mcp.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-YRQY",
+      "directive_title": "restart ordered monitoring after receive errors",
+      "source_repo": "matrixorigin/matrixone",
+      "source_commit": "517e1695",
+      "staged_file": "11_INBOX/candidate-directives/CD-YRQY-restart-ordered-monitoring-after-receive-errors.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-50OZ",
+      "directive_title": "Invariant Subtraction of Multi-Axis Box Constraints Under Loose Nullability",
+      "source_repo": "shoutem-ui-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-50OZ-invariant-subtraction-of-multi-axis-box-constraints-under-loose-nullability.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-50P0",
+      "directive_title": "Asymmetric Safe Inset Fallback Resolution for Edge-to-Edge Runtimes",
+      "source_repo": "shoutem-ui-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-50P0-asymmetric-safe-inset-fallback-resolution-for-edge-to-edge-runtimes.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-2P00",
+      "directive_title": "Asymmetric Safe Inset Fallback Resolution for Edge-to-Edge Runtimes",
+      "source_repo": "shoutem/ui",
+      "source_commit": "101f9805",
+      "staged_file": "11_INBOX/candidate-directives/CD-2P00-asymmetric-safe-inset-fallback-resolution-for-edge-to-edge-runtimes.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-3CFY",
+      "directive_title": "Unified Quantization Metadata and Output Tensor Guard",
+      "source_repo": "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3CFY-unified-quantization-metadata-and-output-tensor-guard.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-3CFZ",
+      "directive_title": "Multi-Modal Projector Separation Invariant for Unified Model Artifacts",
+      "source_repo": "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3CFZ-multi-modal-projector-separation-invariant-for-unified-model-artifacts.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-51LW",
+      "directive_title": "proxy): forward http streamable mcp",
+      "source_repo": "nolabs-ai-nono-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-51LW-proxy-forward-http-streamable-mcp.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
     }
   ]
 }

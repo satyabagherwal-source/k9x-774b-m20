@@ -2,9 +2,9 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-18T00:27:31.204Z",
+  "updated_at": "2026-11-18T01:04:22.735Z",
   "statistics": {
-    "total_nodes": 326,
+    "total_nodes": 329,
     "total_edges": 156,
     "domain_distribution": {
       "D": 232,
@@ -12,9 +12,9 @@
       "H": 42,
       "J": 12,
       "K": 17,
-      "L": 4,
+      "L": 5,
       "G": 1,
-      "F": 12,
+      "F": 14,
       "B": 2,
       "E": 1,
       "I": 2
@@ -7298,6 +7298,72 @@
       ],
       "created_at": "2026-11-18T00:27:31.204Z",
       "updated_at": "2026-11-18T00:27:31.204Z"
+    },
+    "DOM-F-F03E14A5": {
+      "id": "DOM-F-F03E14A5",
+      "domain": "F",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Multimodal Projector Quantization Contamination (BUG-VLM-MMPROJ-02)",
+      "summary": "The dynamic importance matrix pipeline (`llama-imatrix`) only routes tokens through the autoregressive text decoder, leaving visual layers u -> Vision projector weights must be isolated from autoregressive importance matrix pipelines and retained in `FP16`, `BF16`, or dedicated high-",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf/hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T01:02:37.776Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "F",
+        "Design Intelligence"
+      ],
+      "created_at": "2026-11-18T01:03:04.625Z",
+      "updated_at": "2026-11-18T01:03:04.625Z"
+    },
+    "DOM-L-9579240F": {
+      "id": "DOM-L-9579240F",
+      "domain": "L",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Operator Precedence & Undefined Dereference in SimpleHtml Dimensions (BUG-DIM-01)",
+      "summary": "Unsafe property access on an unverified nested object (`style.container`) combined with operator precedence collisions between binary additi -> Never perform mathematical additions inline with boolean fallback operators. Always destructure objects with default values from a guarantee",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://shoutem-ui/shoutem-ui-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T01:03:05.457Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (shoutem-ui)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "L",
+        "Deployment & Operations Intelligence"
+      ],
+      "created_at": "2026-11-18T01:03:39.616Z",
+      "updated_at": "2026-11-18T01:03:39.616Z"
+    },
+    "DOM-F-B4186028": {
+      "id": "DOM-F-B4186028",
+      "domain": "F",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Android 15 / RN 0.77 Edge-to-Edge Navigation Bar Overlap (BUG-INSET-02)",
+      "summary": "Premature architectural optimization hardcoding platform-specific assumptions instead of querying native runtime display metrics. -> System-level display parameters (safe area, notches, navigation bars) must never be hardcoded by platform identity. The design system must c",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://shoutem-ui/shoutem-ui-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T01:03:05.457Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (shoutem-ui)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "F",
+        "Design Intelligence"
+      ],
+      "created_at": "2026-11-18T01:04:22.735Z",
+      "updated_at": "2026-11-18T01:04:22.735Z"
     }
   },
   "edges": [

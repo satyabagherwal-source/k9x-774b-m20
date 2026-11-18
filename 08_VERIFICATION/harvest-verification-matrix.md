@@ -10755,3 +10755,10 @@
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T00:27:31.206Z` | `hf-qwen-qwen-image-2.1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-D22A5DEE` [Domain F] | Yes (`a48d2f8b...`) |
 | `CYCLE-20261118-E4B9` | `2026-11-18T00:43:27.957Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md` | Yes (`346b5dbd...`) |
 | `CYCLE-20261118-EFHC` | `2026-11-18T00:43:42.432Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9092` | Yes (`21244158...`) |
+| `CYCLE-20261118-YOPH` | `2026-11-18T00:59:27.509Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9093` | Yes (`0ec3be99...`) |
+| `CYCLE-20261118-YRLU` | `2026-11-18T00:59:31.266Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9094` | Yes (`00d84dde...`) |
+| `CYCLE-20261118-2KZF` | `2026-11-18T01:02:29.307Z` | `mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9095, Rule 9096` | Yes (`9694a4b4...`) |
+| `CYCLE-20261118-2OUY` | `2026-11-18T01:02:34.330Z` | `shoutem/ui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9097, Rule 9098, Rule 9099` | Yes (`ae4a8d89...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T01:03:04.627Z` | `hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-F03E14A5` [Domain F] | Yes (`570ccef8...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T01:03:39.617Z` | `shoutem-ui` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-L-9579240F` [Domain L] | Yes (`d8bdb548...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T01:04:22.737Z` | `shoutem-ui` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-B4186028` [Domain F] | Yes (`701089a9...`) |

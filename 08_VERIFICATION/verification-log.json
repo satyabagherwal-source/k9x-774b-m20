@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-Q0W2",
-    "timestamp": "2026-11-16T01:45:22.178Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "123f1b4873a59e75bc18a7657b3cc8ecd560698e26b58e6b185d1c04e9f83b62",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-ZEXI",
-    "timestamp": "2026-11-16T01:52:40.278Z",
-    "repository": "restatedev/restate",
-    "learningId": "learn-github-restatedev-restate",
-    "contentHash": "e9c4f18bd4402c94a12274402c926965ae603b8905ced4211a72442d396c2f70",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-ZM5H",
-    "timestamp": "2026-11-16T01:52:49.637Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "4d0a93b31a41f9e3c284230bd52f542506f684a20de864af74911cffb9c7c33f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-GZ82",
-    "timestamp": "2026-11-16T02:06:19.730Z",
-    "repository": "pulumi/pulumi",
-    "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "9ed3fc04618cb19a54ac19d4bd17c911730eeab617fb5900de0ede4120402533",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-H2Z8",
     "timestamp": "2026-11-16T02:06:24.596Z",
     "repository": "yugabyte/yugabyte-db",
@@ -7492,6 +7432,66 @@
     "contentHash": "21244158c13164db35db715833e1f093d8825e5e593936ae2dffddf56c2bd278",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-YOPH",
+    "timestamp": "2026-11-18T00:59:27.509Z",
+    "repository": "nolabs-ai/nono",
+    "learningId": "learn-github-nolabs-ai-nono",
+    "contentHash": "0ec3be99580619a3479bb72805b8f8128ec30edf5e8d681a7f157d045e4d4ce2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-YRLU",
+    "timestamp": "2026-11-18T00:59:31.266Z",
+    "repository": "matrixorigin/matrixone",
+    "learningId": "learn-github-matrixorigin-matrixone",
+    "contentHash": "00d84dde34b7e87842f3cc3ec3739b3d33ed9dfa42cf0ffdae38f3abcac59348",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-2KZF",
+    "timestamp": "2026-11-18T01:02:29.307Z",
+    "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
+    "learningId": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf",
+    "contentHash": "9694a4b4d1f35829a72892db1bbe1f917e0d9f070a88a84c607a754836810fb8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-2OUY",
+    "timestamp": "2026-11-18T01:02:34.330Z",
+    "repository": "shoutem/ui",
+    "learningId": "learn-github-shoutem-ui",
+    "contentHash": "ae4a8d89db6dbebf97a990b5adf34fea80f19815d8b3af10bd3d7f6dd951e021",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

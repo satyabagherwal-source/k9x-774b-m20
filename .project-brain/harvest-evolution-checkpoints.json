@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T00:43:47.476Z",
+  "last_updated": "2026-11-18T01:04:24.818Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T00:27:32.940Z",
@@ -543,7 +543,7 @@
       "staged_for_review": 1
     },
     "nolabs-ai-nono-learnings.md": {
-      "processed_at": "2026-11-17T14:50:09.331Z",
+      "processed_at": "2026-11-18T01:04:23.800Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1838,9 +1838,9 @@
       "staged_for_review": 1
     },
     "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings.md": {
-      "processed_at": "2026-11-13T13:34:34.530Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-18T01:03:04.627Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "hf-nvidia-nemotron-3-diarization-learnings.md": {
       "processed_at": "2026-11-13T13:43:04.931Z",
@@ -3361,9 +3361,14 @@
       "processed_at": "2026-11-17T21:57:33.619Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "shoutem-ui-learnings.md": {
+      "processed_at": "2026-11-18T01:04:22.737Z",
+      "promoted_canonical": 2,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1749,
-  "total_canonical_promoted": 329,
-  "total_staged_for_review": 1361
+  "total_dossiers_evaluated": 1752,
+  "total_canonical_promoted": 332,
+  "total_staged_for_review": 1362
 }

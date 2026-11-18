@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T00:43:42.441Z",
-  "total_cycles_completed": 10304,
-  "total_learnings_persisted": 10304,
-  "total_rules_promoted": 9839,
+  "last_updated": "2026-11-18T01:02:34.339Z",
+  "total_cycles_completed": 10308,
+  "total_learnings_persisted": 10308,
+  "total_rules_promoted": 9846,
   "history": [
-    {
-      "timestamp": "2026-11-17T12:09:32.786Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T12:24:44.490Z",
-      "repository": "MiniMaxAI/MiniMax-H3-Image-PE",
-      "learningId": "learn-huggingface-minimaxai-minimax-h3-image-pe",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T12:24:46.796Z",
-      "repository": "internlm/Sage-S2.1-Flash",
-      "learningId": "learn-huggingface-internlm-sage-s2-1-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T12:24:56.763Z",
-      "repository": "diggerhq/digger",
-      "learningId": "learn-github-diggerhq-digger",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T12:25:04.836Z",
       "repository": "ytsaurus/ytsaurus",
@@ -1403,6 +1375,34 @@
       "repository": "neuron-core/neuron-ai",
       "learningId": "learn-github-neuron-core-neuron-ai",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T00:59:27.518Z",
+      "repository": "nolabs-ai/nono",
+      "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T00:59:31.275Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T01:02:29.316Z",
+      "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
+      "learningId": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T01:02:34.339Z",
+      "repository": "shoutem/ui",
+      "learningId": "learn-github-shoutem-ui",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

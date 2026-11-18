@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T00:43:47.107Z",
-  "total_records": 1724,
+  "last_updated": "2026-11-18T01:04:24.352Z",
+  "total_records": 1732,
   "domains": {
     "A": {
       "total": 11,
@@ -814,7 +814,7 @@
       ]
     },
     "F": {
-      "total": 42,
+      "total": 44,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -857,11 +857,13 @@
         "DOM-F-DEB23BA9",
         "domain_intelligence-design-intelligence-qwen-qwen-image-2-1-core-invariants",
         "DOM-F-D22A5DEE",
-        "domain_intelligence-design-intelligence-hf-qwen-qwen-image-2-1-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-hf-qwen-qwen-image-2-1-learnings-core-invariants",
+        "DOM-F-F03E14A5",
+        "DOM-F-B4186028"
       ]
     },
     "G": {
-      "total": 300,
+      "total": 301,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1162,11 +1164,12 @@
         "domain_intelligence-architecture-intelligence-emberstack-kubernetes-reflector-core-invariants",
         "domain_intelligence-architecture-intelligence-emberstack-kubernetes-reflector-learnings-core-invaria",
         "domain_intelligence-architecture-intelligence-tanstack-router-core-invariants",
-        "domain_intelligence-architecture-intelligence-tanstack-router-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-tanstack-router-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-matrixorigin-matrixone-core-invariants"
       ]
     },
     "H": {
-      "total": 405,
+      "total": 409,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1572,7 +1575,11 @@
         "domain_intelligence-technical-construction-intelligence-jithin-sabu-purge-app-learnings-core-invaria",
         "domain_intelligence-technical-construction-intelligence-stabilityai-stable-diffusion-xl-base-1-0-cor",
         "DOM-H-D0F5C3D5",
-        "domain_intelligence-technical-construction-intelligence-hf-stabilityai-stable-diffusion-xl-base-1-0-"
+        "domain_intelligence-technical-construction-intelligence-hf-stabilityai-stable-diffusion-xl-base-1-0-",
+        "domain_intelligence-technical-construction-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-unce",
+        "domain_intelligence-technical-construction-intelligence-shoutem-ui-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-u",
+        "domain_intelligence-technical-construction-intelligence-shoutem-ui-learnings-core-invariants"
       ]
     },
     "I": {
@@ -1770,7 +1777,7 @@
       ]
     },
     "L": {
-      "total": 13,
+      "total": 14,
       "record_ids": [
         "DOM-L-1B851132",
         "DOM-L-80D1F65C",
@@ -1784,7 +1791,8 @@
         "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-core-invariants",
         "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-learnings-core-invariants",
         "DOM-L-817D65B4",
-        "DOM-L-497D3321"
+        "DOM-L-497D3321",
+        "DOM-L-9579240F"
       ]
     },
     "M": {
@@ -8475,8 +8483,8 @@
       "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
       "repository": "nolabs-ai/nono",
-      "content_hash": "830621a9bc7375380aec7e0a027c8736eb66c223b563eae3f7df9d2107b9b948",
-      "created_at": "2026-11-17T14:50:02.161Z"
+      "content_hash": "3604aa05faaa17ee780ee4b6c4fb0a419b133a60d838aa1663a831257a41bb22",
+      "created_at": "2026-11-18T00:59:27.846Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants",
@@ -8544,8 +8552,8 @@
       "title": "Architecture Intelligence: nolabs-ai-nono-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-learnings-architecture-intelligence-nolabs-ai-nono-learnings-core.md",
       "repository": "nolabs-ai-nono-learnings",
-      "content_hash": "2993ca8ae88813bcf36e0360c3b6fcecab464733269a8088c30994c0761aba79",
-      "created_at": "2026-11-17T14:50:09.721Z"
+      "content_hash": "dd7c7b47cf6f52863429edde4b74373ba2fac2b7883c3e339d434457c52b6013",
+      "created_at": "2026-11-18T01:04:24.352Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar",
@@ -28976,6 +28984,153 @@
       "repository": "hf-contrastive-lm-clm-v0.1-8b-learnings",
       "content_hash": "f2e1a684876ac4f918aa1c1eb4b7e469d709a1f200a35cc757f4e03d163bd544",
       "created_at": "2026-11-18T00:43:45.861Z"
+    },
+    "domain_intelligence-architecture-intelligence-matrixorigin-matrixone-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-matrixorigin-matrixone-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: matrixorigin/matrixone Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-matrixorigin-matrixone-architecture-intelligence-matrixorigin-matrixone-core-inv.md",
+      "repository": "matrixorigin/matrixone",
+      "content_hash": "17f9726c5be6568a65584585a59872806762aac93f4b7d186614ff2c8a62474d",
+      "created_at": "2026-11-18T00:59:31.585Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-unce": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-unce",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf-technical-.md",
+      "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
+      "content_hash": "f9ad8f8623c38a3fcc1c85e573bf156f61171e43e90597047198355dbb0e992c",
+      "created_at": "2026-11-18T01:02:29.644Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-shoutem-ui-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-shoutem-ui-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: shoutem/ui Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shoutem-ui-technical-construction-intelligence-shoutem-ui-core-invariants.md",
+      "repository": "shoutem/ui",
+      "content_hash": "e60e84f5119311bc39c00e36b83ad4484e47f0c669784c4487fd3e5ae2dc6fb9",
+      "created_at": "2026-11-18T01:02:34.872Z"
+    },
+    "DOM-F-F03E14A5": {
+      "record_id": "DOM-F-F03E14A5",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "Multimodal Projector Quantization Contamination (BUG-VLM-MMPROJ-02)",
+      "content": "Vision projector weights must be isolated from autoregressive importance matrix pipelines and retained in `FP16`, `BF16`, or dedicated high-precision K-quants (`Q6_K`).",
+      "content_hash": "570ccef8e9698dea5ef240782635c434ab52afc9ad34405bf2cd8b84f91935f0",
+      "summary": "The dynamic importance matrix pipeline (`llama-imatrix`) only routes tokens through the autoregressive text decoder, leaving visual layers u -> Vision projector weights must be isolated from autoregressive importance matrix pipelines and retained in `FP16`, `BF16`, or dedicated high-",
+      "provenance": {
+        "source_uri": "project://hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf/hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T01:02:37.776Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Notice in `README.md`:"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T01:03:04.607Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-u": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-u",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf-learnings-.md",
+      "repository": "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings",
+      "content_hash": "0dea137f72bbc8c6cc535ff7391fe30c1076f1a663f191980fb5a0440e1d351f",
+      "created_at": "2026-11-18T01:03:05.167Z"
+    },
+    "DOM-L-9579240F": {
+      "record_id": "DOM-L-9579240F",
+      "domain_letter": "L",
+      "domain_id": "deployment_operations",
+      "domain_name": "Deployment & Operations Intelligence",
+      "secondary_domains": [],
+      "title": "Operator Precedence & Undefined Dereference in SimpleHtml Dimensions (BUG-DIM-01)",
+      "content": "Never perform mathematical additions inline with boolean fallback operators. Always destructure objects with default values from a guaranteed object literal fallback (`style.container || {}`), and evaluate arithmetic as distinct, flat subtractions.",
+      "content_hash": "d8bdb548cbb112222b7a4c33deb47f76a15342b955c4aed66667f806be5afb7c",
+      "summary": "Unsafe property access on an unverified nested object (`style.container`) combined with operator precedence collisions between binary additi -> Never perform mathematical additions inline with boolean fallback operators. Always destructure objects with default values from a guarantee",
+      "provenance": {
+        "source_uri": "project://shoutem-ui/shoutem-ui-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T01:03:05.457Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (shoutem-ui)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `c811ec19`, PR #946, `[SEEXT-13303] SimpleHtml: subtract both paddings and outerPadding from max width`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T01:03:39.586Z"
+    },
+    "DOM-F-B4186028": {
+      "record_id": "DOM-F-B4186028",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "Android 15 / RN 0.77 Edge-to-Edge Navigation Bar Overlap (BUG-INSET-02)",
+      "content": "System-level display parameters (safe area, notches, navigation bars) must never be hardcoded by platform identity. The design system must consume live window metric subscriptions with platform constants relegated strictly to uninitialized fallback conditions.",
+      "content_hash": "701089a94cad8f288418314dc550f6b1bece963a77f53a8f778dc1da01967247",
+      "summary": "Premature architectural optimization hardcoding platform-specific assumptions instead of querying native runtime display metrics. -> System-level display parameters (safe area, notches, navigation bars) must never be hardcoded by platform identity. The design system must c",
+      "provenance": {
+        "source_uri": "project://shoutem-ui/shoutem-ui-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T01:03:05.457Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (shoutem-ui)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Issue #922: `fix/ android edge to edge bottom inset`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T01:04:22.716Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-shoutem-ui-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-shoutem-ui-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: shoutem-ui-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shoutem-ui-learnings-technical-construction-intelligence-shoutem-ui-learnings-co.md",
+      "repository": "shoutem-ui-learnings",
+      "content_hash": "ce079ccfcc440b19518577dbaea0962adaba1652b64d22165114325ec2cfc557",
+      "created_at": "2026-11-18T01:04:23.456Z"
     }
   }
 }
