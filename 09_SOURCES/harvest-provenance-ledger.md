@@ -10947,3 +10947,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-18T09:57:11.907Z |
 | `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `1227202d` | Multi-dimensional audit evidence | 2026-11-18T09:57:19.411Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `266b9114` | Multi-dimensional audit evidence | 2026-11-18T09:57:29.140Z |
+| `learn-huggingface-sentence-transformers-all-minilm-l6-v2` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-18T10:08:39.221Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `10b9eec3` | Multi-dimensional audit evidence | 2026-11-18T10:08:47.766Z |
+| `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `2d0d14cb` | Multi-dimensional audit evidence | 2026-11-18T10:08:53.902Z |

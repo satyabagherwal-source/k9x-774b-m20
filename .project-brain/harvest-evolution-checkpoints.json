@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T09:57:35.257Z",
+  "last_updated": "2026-11-18T10:08:58.726Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T08:41:54.992Z",
@@ -1108,7 +1108,7 @@
       "staged_for_review": 1
     },
     "milvus-io-milvus-learnings.md": {
-      "processed_at": "2026-11-15T02:35:54.454Z",
+      "processed_at": "2026-11-18T10:08:58.110Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1363,7 +1363,7 @@
       "staged_for_review": 1
     },
     "nginx-kubernetes-ingress-learnings.md": {
-      "processed_at": "2026-11-16T18:10:59.114Z",
+      "processed_at": "2026-11-18T10:08:57.457Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1728,7 +1728,7 @@
       "staged_for_review": 0
     },
     "hf-sentence-transformers-all-minilm-l6-v2-learnings.md": {
-      "processed_at": "2026-11-17T20:45:44.421Z",
+      "processed_at": "2026-11-18T10:08:57.120Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3418,7 +3418,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1890,
+  "total_dossiers_evaluated": 1893,
   "total_canonical_promoted": 351,
-  "total_staged_for_review": 1448
+  "total_staged_for_review": 1450
 }

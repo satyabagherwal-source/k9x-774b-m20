@@ -145,8 +145,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
     "sourceVersion": "hf-sentence-transformers-all-minilm-l6-v2",
     "license": "Open-Source",
-    "contentHash": "62c5a79ef00004e18d5bb71368d95b33fe365ff82dbd8f93fe3c466e3e78c9c7",
-    "lastHarvestedAt": "2026-11-17T20:45:29.861Z",
+    "contentHash": "c31d38ca2f2865f20e4c49f3278fba49ca581f7d8bfc3a18f6632794f691064c",
+    "lastHarvestedAt": "2026-11-18T10:08:39.221Z",
     "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2"
   },
   "hf-cross-encoder-ms-marco-minilm-l6-v2": {
@@ -6663,20 +6663,20 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "a21523d1",
+    "sourceVersion": "10b9eec3",
     "license": "Apache-2.0",
-    "contentHash": "b1f0df368ba81c36ae79e9e0d566ce5ac7af06323c92462c17ed6d8f15be370c",
-    "lastHarvestedAt": "2026-11-17T17:20:22.573Z",
+    "contentHash": "4d97eab80f8789d70b10b2d90f90a4336b4eeaff94a3d884b4e461ff8160cfec",
+    "lastHarvestedAt": "2026-11-18T10:08:47.766Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {
     "repository": "milvus-io/milvus",
     "platform": "github",
     "sourceUrl": "https://github.com/milvus-io/milvus",
-    "sourceVersion": "f266503a",
+    "sourceVersion": "2d0d14cb",
     "license": "Apache-2.0",
-    "contentHash": "ac4a63a0790cea296481eab66498636c57b4eec4cc207f79de4e2680a7e21d66",
-    "lastHarvestedAt": "2026-11-17T16:31:05.444Z",
+    "contentHash": "d966e46438ba3b5e24f152ddb9db6516cc2df74b18cc2e9992d87973fc510c6a",
+    "lastHarvestedAt": "2026-11-18T10:08:53.902Z",
     "learningId": "learn-github-milvus-io-milvus"
   },
   "ynqa-jnv": {

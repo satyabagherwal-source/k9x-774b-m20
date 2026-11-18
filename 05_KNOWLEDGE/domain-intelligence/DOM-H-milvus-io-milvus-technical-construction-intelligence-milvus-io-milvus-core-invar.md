@@ -4,23 +4,23 @@
 {
   "source_repository": "milvus-io/milvus",
   "source_url": "https://github.com/milvus-io/milvus",
-  "source_version": "9f1054c2",
+  "source_version": "2d0d14cb",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T13:38:33.227Z",
+  "timestamp": "2026-11-18T10:08:54.089Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-milvus-io-milvus",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [milvus-io/milvus](https://github.com/milvus-io/milvus) (Revision: `9f1054c2`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T13:38:33.227Z`  
+> **Provenance**: Harvested from [milvus-io/milvus](https://github.com/milvus-io/milvus) (Revision: `2d0d14cb`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T10:08:54.089Z`  
 > **Learning ID**: `learn-github-milvus-io-milvus`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
 - **Confidence Rating**: 60%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/milvus-io-milvus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/milvus-io/milvus](https://github.com/milvus-io/milvus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T13:38:32.204Z  
+> **Harvest Timestamp**: 2026-11-18T10:08:52.939Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Milvus is a high-performance, cloud-native vector database built for scalable vector ANN search
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 46674 stars
+- **Stars / Engagement**: 46687 stars
 
 ---
 
@@ -1363,14 +1363,11 @@ BENCHMARK_MAIN();
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55561** (2026-11-16): **fix: [cp3.0]Retry coordinator RPCs promptly after ServerID changes**
-  *Symptoms*: Cherry-pick from master (PR still open)  pr: #55553 issue: #55552  Backport coordinator retry recovery to 3.0: after a retryable ServerID mismatch, try a successfully acquired connection immediately when its ServerID differs. Preserve fresh acquisition after backoff when discovery remains stale or lookup/dial fails, including recovery during the wait with only one attempt left.  This is a preemptive backport of master PR #55553 at commit 5283826e54dcdfe5678d35c85af0ed1e63d4af42. The original PR is still open; this backport must be updated if it changes.  Verification: - [x] All 6 changed files match the original PR: 700 additions, 9 deletions. - [x] Added/deleted lines match per file, including duplicate counts. - [x] Applied without conflicts; no conflict markers; `git diff --check` passes. - [ ] make static-check (skipped by cherry-pick workflow)  Tests were not rerun locally on 3.0; target-branch validation is left to CI. This patch does not wake an existing backoff or change its maximum. The historical 14.120-second recovery delay is not a measured saving from this change. 
-  **Post-Mortem & Fix Analysis**:
-  > [ci-v2-notice] Notice: ci-v2 system is enabled for this PR (3.0 branch).  To rerun ci-v2 checks, comment with: - /ci-rerun-code-check-macos  // for Code Checker MacOS (GitHub Actions) - /ci-rerun-build-ut-cov  // for ci-v2/build-ut-cov (build + unit tests) - /ci-rerun-e2e-amd  // for ci-v2/e2e-amd (e2e tests) - /ci-rerun-e2e-dist-wp  // for ci-v2/e2e-dist-wp (Tencent distributed woodpecker-service boundary) - /ci-rerun-gosdk  // for ci-v2/go-sdk (Go SDK E2E tests) - /ci-rerun-gosdk-std  // for ci-v2/go-sdk-std (Go SDK E2E, standalone) - /ci-rerun-gosdk-dist-wp // for ci-v2/go-sdk-dist-wp (distributed + Woodpecker service)  If you have any questions or requests, please contact @zhikunyao. 
-  > [INFO] PR Label Summary by Default [FAILED] PR #55553 not merged - Title: fix: Retry coordinator RPCs promptly after ServerID changes - Status: OPEN - Link: https://github.com/milvus-io/milvus/pull/55553   [WARNING] Milestone not set - PR: #55561 - Title: fix: [cp3.0]Retry coordinator RPCs promptly after ServerID changes Please set a milestone for better release tracking  You can set milestone by commenting:   /set-milestone <milestone-name> Example:   /set-milestone 2.5.0  Use /refresh-label to update related check and label manually
+- **Issue #55669** (2026-11-18): **fix: publish local chunk manager writes atomically by rename**
+  *Symptoms*: LocalChunkManager.Write truncated the target in place. An interrupted overwrite destroyed the previous content and left a partial file. Callers are written against object store PUT semantics, where a reader sees either the old object or the complete new one. walsummary relies on this when it rewrites its per-term manifest. A torn manifest fails its checksum, Restore returns ErrStoreCorrupted, and WAL recovery of the pchannel fails.  issue: #55668  This PR is independent of #54667 (fsync of local writes) and based on master.  Changes: - New `localstorage.WriteFileAtomic` writes to a `.milvus-tmp-<random>` file in the target directory (O_EXCL, perm subject to the umask). It fsyncs and closes the file, then renames it onto the target. A failed write leaves the previous content in place and removes its temporary file. The temporary file is created in the directory the kernel resolves for the target, which is not always the lexically cleaned one when the path contains symlinks and `..`. - `LocalChunkManager.Write` uses it. Readers that already opened or mapped the previous file keep its inode. - `LocalChunkManager.WalkWithPrefix` skips temporary files in both recursive and non-recursive mode, as object stores do not list in-progress uploads. This also keeps a concurrent write from failing a walk: its temporary file can be renamed away between readdir and stat. walsummary's `ListManifestTerms` already ignores names it cannot parse.  Crash behavior: after a crash, the target holds t
 
-- **Issue #55560** (2026-11-16): **enhance: [cp3.0]revoke session leases before a forced stop exit**
-  *Symptoms*: Cherry-pick from master  pr: #54556  When graceful stop times out, revoke the session leases this process keeps alive before forced exit so a standby coordinator can take over without waiting for lease expiry. Backports merged master PR #54556 to 3.0 without code changes or conflict resolution.  Verification: - [x] All 3 changed files match the original PR: 77 additions, 0 deletions. - [x] Added/deleted lines match per file, including duplicate counts. - [x] No conflict markers; `git diff --check` passes. - [ ] make static-check (skipped by cherry-pick workflow)  Runtime tests were not run locally; validation is left to CI. 
+- **Issue #55668** (2026-11-18): **[Bug]: interrupted local overwrite leaves a torn WAL summary manifest and fails WAL recovery**
+  *Symptoms*: ### Problem  With local storage, `LocalChunkManager.Write` truncates the target in place. If the process crashes, the machine loses power or the disk fills up mid-overwrite, the previous content is already gone and only a partial or 0-byte file remains.  Callers of `ChunkManager` are written against object store PUT semantics. On MinIO, S3, GCS or Azure, a PUT replaces the object atomically, so a reader sees either the old object or the complete new one. The local implementation does not provide this.  ### Impact  The streaming node's WAL summary depends on this. It rewrites its per-term manifest `.../manifest/{term:020d}` in place on every publish, and the manifest is the only index into the summary chunk set. After an interrupted rewrite:  1. The node reopens with a new term. `Restore` lists manifests and reads the newest term, which is the torn one. 2. `unmarshalManifest` fails the length or sha256 check and returns `ErrStoreCorrupted`. That error is terminal. 3. `restore pchannel summary` fails in `recovery_persisted.go`, so the WAL of the pchannel cannot open, and every collection on it becomes unavailable.  There is no fallback. Older-term manifests are deleted after a new one is published, and `Restore` reads only the newest one.  This is case 2 of #54436. Fsyncing completed writes (#54667) does not fix it: the truncation destroys the previous content before the new content is written, let alone synced.  Remote storage is not affected.  ### Proposed fix  Make `LocalChu
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1387,392 +1384,620 @@ BENCHMARK_MAIN();
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `86534551` (2026-11-15)
-**Commit Message**: test: fix flaky TestBuildLatencyExcludesAdmissionWait (#55314)
-
-## Problem
-
-`TestBuildLatencyExcludesAdmissionWait`
-(`internal/datanode/index/task_test.go`) intermittently fails in CI. It
-was observed failing in `milvus-build-ut-ciloop-pipeline-for-tcus/4060`
-(UT-GO) with:
-
-```
-=== FAIL: internal/datanode/index TestIndexBuildTask/TestBuildLatencyExcludesAdmissionWait (unknown)
-signal: segmentation fault (core dumped)
-```
-
-The test patched the globally-hot `time.Now` with
-`mockey.Mock(time.Now)`. mockey rewrites the target function's machine
-code non-atomically, so concurrent `time.Now` callers (e.g. the
-config-refresh goroutine started by `paramtable.Init` in `TestMain`)
-race with the patch. Under `-race` this surfaces as a data race; without
-`-race` it segfaults.
-
-## Root cause
-
-`mockey.Mock(time.Now)` in `TestBuildLatencyExcludesAdmissionWait` races
-with background goroutines that call `time.Now` concurrently. Reproduced
-locally with `-race -gcflags="all=-N -l"`:
-
-- `-test.run 'TestIndexBuildTask/TestBuildLatencyExcludesAdmissionWait'
--test.count=300` → repeated `WARNING: DATA RACE` between goroutine 214
-(test goroutine at `task_test.go:231` `mockey.Mock(time.Now)`) and
-goroutine
-
-**File**: `internal/datanode/index/task_index.go` (modified, +8/-6)
-```diff
-@@ -61,6 +61,7 @@ type indexBuildTask struct {
- 	prepareDur     time.Duration // Preparation and input loading, excluding waits between stages.
- 	manager        *TaskManager
- 
-+	now           func() time.Time // Injectable clock; defaults to time.Now, tests override it.
- 	pluginContext *indexcgopb.StoragePluginContext
- }
- 
-@@ -79,6 +80,7 @@ func NewIndexBuildTask(ctx context.Context,
- 		req:           req,
- 		tr:            timerecord.NewTimeRecorder(fmt.Sprintf("IndexBuildID: %d, ClusterID: %s", req.GetBuildID(), req.GetClusterID())),
- 		manager:       manager,
-+		now:           time.Now,
- 		pluginContext: pluginContext,
- 	}
- 
-@@ -163,7 +165,7 @@ func (it *indexBuildTask) IsVectorIndex() bool {
- }
- 
- func (it *indexBuildTask) PreExecute(ctx context.Context) error {
--	started := time.Now()
-+	started := it.now()
- 	it.queueDur = it.tr.RecordSpan()
- 	mlog.Info(ctx, "Begin to prepare indexBuildTask", mlog.FieldBuildID(it.req.GetBuildID()),
- 		mlog.Int64("Collection", it.req.GetCollectionID()), mlog.Int64("SegmentID", it.req.GetSegmentID()))
-@@ -237,7 +239,7 @@ func (it *indexBuildTask) PreExecute(ctx context.Context) error {
- 		mlog.Int32("currentIndexVersion", it.req.GetCurrentIndexVersion()),
- 		mlog.Int32("currentScalarIndexVersion", it.req.GetCurrentScalarIndexVersion()),
- 	)
--	it.prepareDur = time.Since(started)
-+	it.prepareDur = it.now().Sub(started)
- 	return nil
- }
- 
-@@ -261,7 +263,7 @@ func redactBuildIndexParamsForLog(params *indexcgopb.BuildIndexInfo) *indexcgopb
- }
- 
- func (it *indexBuildTask) LoadData(ctx context.Context) error {
--	started := time.Now()
-+	started := it.now()
- 	if it.index == nil {
- 		if err := it.createBuilder(ctx); err != nil {
- 			return err
-@@ -270,7 +272,7 @@ func (it *indexBuildTask) LoadData(ctx context.Context) error {
- 	if err := it.index.LoadData(); err != nil {
- 		return err
- 	}
--	it.prepareDur += time.Since(started)
-+	it.prepareDur += it.now().Sub(started)
- 	it.tr.RecordSpan()
- 	return nil
- }
-@@ -404,11 +406,11 @@ func (it *indexBuildTask) Execute(ctx context.Context) error {
- 	if it.index == nil {
- 		return merr.WrapErrServiceInternalMsg("index input has not been prepared")
- 	}
--	started := time.Now()
-+	started := it.now()
- 	if err := it.index.Build(); err != nil {
- 		return err
- 	}
--	buildIndexLatency := it.prepareDur + time.Since(started)
-+	buildIndexLatency := it.prepareDur + it.now().Sub(started)
- 	metrics.DataNodeKnowhereBuildIndexLatency.WithLabelValues(strconv.FormatInt(paramtable.GetNodeID(), 10)).Observe(buildIndexLatency.Seconds())
- 	it.tr.RecordSpan()
- 	return nil
-```
-
-**File**: `internal/datanode/index/task_test.go` (modified, +2/-3)
-```diff
-@@ -228,10 +228,9 @@ func (suite *IndexBuildTaskSuite) TestBuildLatencyExcludesAdmissionWait() {
- 	}
- 	before := readMetric()
- 	var elapsed atomic.Int64
--	clock := mockey.Mock(time.Now).To(func() time.Time {
-+	task.now = func() time.Time {
- 		return time.Unix(1000, elapsed.Load())
--	}).Build()
--	defer clock.UnPatch()
-+	}
- 	prepare := mockey.Mock(getCurrentIndexVersion).To(func(version int32) int32 {
- 		elapsed.Add(int64(2 * time.Second))
- 		return version
-```
-
----
-
-### Incident Patch 2: `e07890ac` (2026-11-16)
-**Commit Message**: fix: restrict default collection lookup fallback to missing keys (#55261)
+### Incident Patch 1: `519cc7d0` (2026-11-18)
+**Commit Message**: test: fix CDC concurrent checker teardown (#55666)
 
 ## Summary
 
-Fix RootCoord default-database collection lookup so legacy metadata is
-used only when the modern default-database key is explicitly absent.
+Use the shared chaos monitor context manager in the CDC concurrent
+workload so the checker threads are stopped and joined at scope exit.
+Keep the workload duration, readiness wait and success-rate assertions.
+Aggregate request statistics after the monitor threads have drained.
 
-## Root Cause
+## Evidence
 
-`loadCollectionFromDb` converted every `Load` error and tombstone into
-`ErrCollectionNotFound`. `loadCollectionFromDefaultDb` then treated
-every non-nil error as evidence that the modern key was absent and read
-the legacy `NonDBID` key.
+In CDC Chaos build 135, the concurrent test printed `1 passed, 1
+warning`, then the process aborted after `terminate called without an
+active exception`. The warnings show a background Import 2PC writer was
+still handling MinIO connection failures. The concurrent test started
+daemon checkers and did not wait for their exit. The native abort's
+exact stack was unavailable.
 
-As a result, a valid legacy collection could be returned after a logical
-deletion or a storage I/O failure.
+## Validation
 
-## Changes
+- A focused harness executed the original and changed test methods
+against the actual shared monitor helpers with real checker threads. It
+reproduced the live thread after the original method returned, verified
+the patched method drains it, and verified that a forced workload error
+and a failed success-rate assertion still propagate.
+- Ruff 0.15.11 check and format, Ruff configuration smoke, Python
+compilation and `git diff --check` passed. The repos
 
-- Preserve typed storage errors and classify untyped load errors as
-`ErrIoFailed`.
-- Fall back to the legacy `NonDBID` key only for `ErrIoKeyNotFound`.
-- Keep tombstones as `ErrCollectionNotFound`.
-- Preserve `ErrCollectionNotFound` when both the default and legacy keys
-are absent.
-- Add regression coverage for tombstones, I/O errors, explicit key
-absence, and both keys being absent.
-
-## Testing
-
-Passed:
-
-- Focused `GetCollectionByID` regression tests with `-tags dynamic,test
--gcflags="all=-N -l"`.
-- Catalog-focused RootCoord metastore tests.
-- `go build ./internal/metastore/kv/rootcoord`
-- 
-
-**File**: `internal/metastore/kv/rootcoord/kv_catalog.go` (modified, +18/-3)
+**File**: `tests/python_client/cdc/stablity/test_concurrent_operation.py` (modified, +13/-13)
 ```diff
-@@ -267,7 +267,11 @@ func (kc *Catalog) loadCollectionFromDb(ctx context.Context, dbID int64, collect
- 	collKey := BuildCollectionKey(dbID, collectionID)
- 	collVal, err := kc.Txn.Load(ctx, collKey)
- 	if err != nil {
--		return nil, merr.WrapErrCollectionNotFound(collectionID, err.Error())
-+		// Return the storage error as is. The default-database compatibility
-+		// fallback must distinguish a missing key from a tombstone or an I/O
-+		// failure, and callers must still see a cancellation or a timeout as
-+		// such.
-+		return nil, err
- 	}
- 
- 	// Legacy SuffixSnapshot deletion with ts!=0 overwrote the plain key with a
-@@ -283,9 +287,13 @@ func (kc *Catalog) loadCollectionFromDb(ctx context.Context, dbID int64, collect
- }
- 
- func (kc *Catalog) loadCollectionFromDefaultDb(ctx context.Context, collectionID typeutil.UniqueID, ts typeutil.Timestamp) (*pb.CollectionInfo, error) {
--	if info, err := kc.loadCollectionFromDb(ctx, util.DefaultDBID, collectionID, ts); err == nil {
-+	info, err := kc.loadCollectionFromDb(ctx, util.DefaultDBID, collectionID, ts)
-+	if err == nil {
- 		return info, nil
- 	}
-+	if !errors.Is(err, merr.ErrIoKeyNotFound) {
-+		return nil, err
-+	}
- 	// get collection from older version.
- 	return kc.loadCollectionFromDb(ctx, util.NonDBID, collectionID, ts)
- }
-@@ -294,12 +302,19 @@ func (kc *Catalog) loadCollection(ctx context.Context, dbID int64, collectionID
- 	if isDefaultDB(dbID) {
- 		info, err := kc.loadCollectionFromDefaultDb(ctx, collectionID, ts)
- 		if err != nil {
-+			if errors.Is(err, merr.ErrIoKeyNotFound) {
-+				return nil, merr.WrapErrCollectionNotFound(collectionID)
-+			}
- 			return nil, err
- 		}
- 		kc.fixDefaultDBIDConsistency(ctx, info, ts)
- 		return info, nil
- 	}
--	return kc.loadCollectionFromDb(ctx, dbID, collectionID, ts)
-+	info, err := kc.loadCollectionFromDb(ctx, dbID, collectionID, ts)
-+	if errors.Is(err, merr.ErrIoKeyNotFound) {
-+		return nil, merr.WrapErrCollectionNotFound(collectionID)
-+	}
-+	return info, err
- }
- 
- func partitionVersionAfter210(collMeta *pb.CollectionInfo) bool {
-```
-
-**File**: `internal/metastore/kv/rootcoord/kv_catalog_test.go` (modified, +2/-1)
-```diff
-@@ -414,9 +414,10 @@ func TestCatalog_GetCollectionByID(t *testing.T) {
- 	ss := mocks.NewTxnKV(t)
- 	c := NewCatalog(ss)
- 
--	ss.EXPECT().Load(mock.Anything, mock.Anything).Return("", errors.New("load error")).Twice()
-+	ss.EXPECT().Load(mock.Anything, mock.Anything).Return("", errors.New("load error")).Once()
- 	coll, err := c.GetCollectionByID(ctx, 0, 1, 1)
- 	assert.Error(t, err)
-+	assert.False(t, merr.ErrCollectionNotFound.Is(err))
- 	assert.Nil(t, coll)
- 
- 	ss.EXPECT().Load(mock.Anything, mock.Anything).RunAndReturn(func(ctx context.Context, key string) (string, error) {
-```
-
-**File**: `internal/metastore/kv/rootcoord/kv_catalog_tombstone_test.go` (modified, +86/-2)
-```diff
-@@ -72,8 +72,10 @@ func TestCatalog_ListCollections_SkipsTombstone(t *testing.T) {
- func TestCatalog_GetCollectionByID_TombstoneIsNotFound(t *testing.T) {
- 	ctx := context.Background()
- 	kv := mocks.NewTxnKV(t)
--	// Both default-db attempt and legacy-path attempt return the tombstone.
--	kv.EXPECT().Load(mock.Anything, mock.Anything).Return(tombstone(), nil)
-+	defaultKey := BuildCollectionKey(util.DefaultDBID, 99999)
-+	// A tombstone is a logical deletion, not evidence that the modern key is
-+	// absent. The legacy key must not be read.
-+	kv.EXPECT().Load(mock.Anything, defaultKey).Return(tombstone(), nil).Once()
- 
- 	kc := NewCatalog(kv)
- 	got, err := kc.GetCollectionByID(ctx, util.DefaultDBID, 1, 99999)
-@@ -82,6 +84,88 @@ func TestCatalog_GetCollectionByID_TombstoneIsNotFound(t *testing.T) {
- 	assert.Nil(t, got)
- }
- 
-+func TestCatalog_GetCollectionByID_DefaultLoadErrorDoesNotFallback(t *testing.T) {
-+	ctx := context.Background()
-+	defaultKey := BuildCollectionKey(util.DefaultDBID, 42)
-+	kv := mocks.NewTxnKV(t)
-+	kv.EXPECT().Load(mock.Anything, defaultKey).
-+		Return("", merr.WrapErrIoFailed(defaultKey, context.DeadlineExceeded)).Once()
-+
-+	kc := NewCatalog(kv)
-+	got, err := kc.GetCollectionByID(ctx, util.DefaultDBID, 1, 42)
-+	assert.Error(t, err)
-+	assert.True(t, merr.ErrIoFailed.Is(err))
-+	assert.False(t, merr.ErrCollectionNotFound.Is(err))
-+	assert.Nil(t, got)
-+}
-+
-+func TestCatalog_GetCollectionByID_DefaultLoadContextErrorIsPreserved(t *testing.T) {
-+	ctx := context.Background()
-+	defaultKey := BuildCollectionKey(util.DefaultDBID, 42)
-+	for _, loadErr := range []error{context.DeadlineExceeded, context.Canceled} {
-+		kv := mocks.NewTxnKV(t)
-+		// The KV layer returns the context error unwrapped. It must reach the
-+		// caller unchanged and must not trigger the legacy fallback.
-+		kv.EXPECT().Load(mock.Anything, defaultKey).Return("", loadErr).Once()
-+
-+		kc := NewCatalog(kv)
-+		got, err := kc.GetCollectionByID(ctx, util.DefaultDBID, 1, 42)
-+		assert.ErrorIs(t, err, loadErr)
-+		assert.True(t, merr.IsCanceledOrTimeout(err))
-+		assert.False(t, merr.ErrCollectionNotFound.Is(err))
-+		assert.Nil(t, got)
-+	}
-+}
-+
-+func TestCatalog_GetCollectionByID_DefaultKeyNotFoundFallsBackToLegacy(t *testing.T) {
-+	ctx := context.Background()
-+	defaultKey := BuildCollectionKey(util.DefaultDBID, 42)
-+	legacyKey := BuildCollectionKey(util.NonDBID, 42)
-+	legacy := &pb.CollectionInfo{
-+		ID:    42,
-+		DbId:  util.DefaultDBID,
-+		State: pb.CollectionState_CollectionCreated,
-+		Schema: &schemapb.CollectionSchema{
-+			Name:   "legacy-collection",
-+			Fields: []*schemapb.FieldSchema{{FieldID: 1, Name: "field"}},
-+		},
-+		PartitionIDs:               []int64{43},
-+		PartitionNames:             []string{"_default"},
-+		PartitionCreatedTimestamps: []uint64{1},
-+	}
-+	legacyValue, err := proto.Marshal(legacy)
-+	require.NoError(t, err)
-+
-+	kv := mocks.NewTxnKV(t)
-+	kv.EXPECT().Load(mock.Anything, defaultKey).
-+		Return("", merr.WrapErrIoKeyNotFound(defaultKey)).Once()
-+	kv.EXPECT().Load(mock.Anything, legacyKey).
-+		Return(string(legacyValue), nil).Once()
-+
-+	kc := NewCatalog(kv)
-+	got, err := kc.GetCollectionByID(ctx, util.DefaultDBID, 1, 42)
-+	require.NoError(t, err)
-+	require.NotNil(t, got)
-+	assert.Equal(t, "legacy-collection", got.Name)
-+}
-+
-+func TestCatalog_GetCollectionByID_DefaultAndLegacyKeysNotFound(t *testing.T) {
-+	ctx := context.Background()
-+	defaultKey := BuildCollectionKey(util.DefaultDBID, 42)
-+	legacyKey := BuildCollectionKey(util.NonDBID, 42)
-+	kv := mocks.NewTxnKV(t)
-+	kv.EXPECT().Load(mock.Anything, defaultKey).
-+		Return("", merr.WrapErrIoKeyNotFound(defaultKey)).Once()
-+	kv.EXPECT().Load(mock.Anything, legacyKey).
-+		Return("", merr.WrapErrIoKeyNotFound(legacyKey)).Once()
-+
-+	kc := NewCatalog(kv)
-+	got, err := kc.GetCollectionByID(ctx, util.DefaultDBID, 1, 42)
-+	assert.Error(t, err)
-+	assert.True(t, merr.ErrCollectionNotFound.Is(err))
-+	assert.Nil(t, got)
-+}
-+
- func TestCatalog_GetCollectionByName_SkipsTombstone(t *testing.T) {
- 	ctx := context.Background()
- 	kv := mocks.NewTxnKV(t)
+@@ -176,19 +176,19 @@ def test_operations(self, request_duration, is_check, collection_name):
+         # event_records.insert("init_health_checkers", "start")
+         self.init_health_checkers(collection_name=c_name)
+         # event_records.insert("init_health_checkers", "finished")
+-        cc.start_monitor_threads(self.health_checkers)
+-        log.info("*********************Load Start**********************")
+-        request_duration = request_duration.replace("h", "*3600+").replace("m", "*60+").replace("s", "")
+-        if request_duration[-1] == "+":
+-            request_duration = request_duration[:-1]
+-        request_duration = eval(request_duration)
+-        for i in range(10):
+-            sleep(request_duration // 10)
+-            for k, v in self.health_checkers.items():
+-                v.check_result()
+-                # log.info(v.check_result())
+-        wait_pods_ready(self.milvus_ns, f"app.kubernetes.io/instance={self.release_name}")
+-        time.sleep(60)
++        with cc.monitor_threads(self.health_checkers):
++            log.info("*********************Load Start**********************")
++            request_duration = request_duration.replace("h", "*3600+").replace("m", "*60+").replace("s", "")
++            if request_duration[-1] == "+":
++                request_duration = request_duration[:-1]
++            request_duration = eval(request_duration)
++            for i in range(10):
++                sleep(request_duration // 10)
++                for k, v in self.health_checkers.items():
++                    v.check_result()
++                    # log.info(v.check_result())
++            wait_pods_ready(self.milvus_ns, f"app.kubernetes.io/instance={self.release_name}")
++            time.sleep(60)
+         ra = ResultAnalyzer()
+         ra.get_stage_success_rate()
+         if is_check:
 ```
 
 ---
 
-### Incident Patch 3: `4d2a35e4` (2026-11-16)
-**Commit Message**: test: fix chaos cleanup hook for pytest 8 (#55501)
+### Incident Patch 2: `042464c8` (2026-11-18)
+**Commit Message**: fix: avoid holding the IDF lock during obsolete stats cleanup (#54853)
 
-When `TestChaosApply` fails after creating a Chaos Mesh Schedule, its
-legacy `teardown` method is ignored by pytest 8.3.4. The Schedule
-remains installed and can keep disrupting the instance while subsequent
-checks run.
+issue: #54840
 
-Rename the hook to `teardown_method` so pytest executes the existing
-cleanup on both success and failure. Preserve the Schedule visibility
-assertion and existing deletion behavior.
+### Problem and behavior
 
-Validation:
-- Replayed the source cleanup method under pytest 8.3.4: the original
-hook left both tracked resources undeleted after an intentional
-assertion failure.
-- With the supported hook, cleanup ran in four local scenarios:
-assertion failure, partial-creation state, failure before configuration,
-and normal completion. The original test outcomes were preserved.
-Kubernetes deletion was replaced with a recorder for this isolated
-lifecycle check.
-- Ruff 0.15.11 check and format check, Python compilation, and `git diff
---check` passed. The repository's configured license-header scope covers
-`internal/**/*.go`; this Python-only change is outside that scope.
-- Full Kubernetes chaos E2E was not rerun.
+In the legacy delegator IDF oracle, obsolete sealed BM25 statistics were
+removed while holding the oracle write lock. Waiting for local
+statistics readers and deleting their directories could block online
+`BuildIDF` readers during target synchronization.
 
-Signed-off-by: zhuwenxing <[REDACTED
+Detach obsolete entries while publishing the target, then remove their
+files after releasing the oracle lock. Each entry now owns a unique
+local directory. A replacement for the same segment ID uses a different
+directory, so delayed cleanup of the old entry cannot delete replacement
+files.
 
-**File**: `tests/python_client/chaos/test_chaos_apply.py` (modified, +1/-1)
+Reopen downloads missing fields into its own temporary directory under
+the same oracle root. Under the existing oracle and entry locks, it
+validates the observed entry, installs complete field directories, and
+then publishes the field list, aggregate statistics and disk accounting.
+A partial install is rolled back; a retry also removes unpublished
+destination directories left by unsuccessful cleanup. Stale or already
+removed entries return the existing retryable `ServiceUnavailable` error
+so the caller can resample readability.
+
+This
+
+**File**: `docs/agent_guides/storage/path_contract.md` (modified, +13/-0)
 ```diff
-@@ -131,7 +131,7 @@ def reconnect(self):
-         if connections.has_connection("default") is False:
-             raise Exception("no connections")
+@@ -55,6 +55,19 @@ storage; explicitly authenticated external sources use their own object
+ permissions. All output writes retain the cluster chunk manager and layout.
+ See [source storage design](../../design-docs/design_docs/20261110-external-import-storage.md).
  
--    def teardown(self):
-+    def teardown_method(self):
-         for chaos_config in getattr(self, "chaos_configs", [getattr(self, "chaos_config", {})]):
-             if not chaos_config:
-                 continue
++## Delegator BM25 local cache
++
++The legacy delegator IDF oracle creates a unique directory per sealed-statistics
++entry under its channel-local BM25 root. Readers use the entry's `localDir`;
++cleanup must delete that exact directory, never reconstruct it from segment ID.
++These directories are downloaded caches, not recovery metadata.
++Reopen downloads missing fields into a separate unique directory under the same
++root, then installs complete field directories under the oracle and entry locks.
++Only after installation succeeds are fields, aggregate statistics and disk
++accounting published. An obsolete entry can be detached under the oracle lock
++and physically removed after unlocking without waiting for a replacement's
++remote download. The sync still waits for that entry's local readers and removal.
++
+ ## Manifest index artifacts
+ 
+ When `dataCoord.index.writeSegmentIndexToManifest` is enabled, new StorageV3
+```
+
+**File**: `internal/querynodev2/delegator/idf_oracle.go` (modified, +87/-37)
+```diff
+@@ -577,15 +577,18 @@ func (o *idfOracle) DirPath() string {
+ 	return o.dirPath
+ }
+ 
+-func (o *idfOracle) preloadSealed(segmentID int64, stats *sealedBm25Stats, memoryStats bm25Stats) {
++func (o *idfOracle) registerSealedStats(segmentID int64, stats *sealedBm25Stats, memoryStats bm25Stats) {
+ 	// Read lock only, so loads of different segments merge into current in parallel.
+ 	// SyncDistribution sets the target version under the write lock, so the check below
+ 	// and the merge are atomic with respect to it.
+ 	o.RLock()
+ 	defer o.RUnlock()
+ 
+-	// skip preload if first target was loaded.
+-	if o.targetVersion.Load() != 0 {
++	// Publish the disk charge with the entry: sync may detach and remove it as
++	// soon as this read lock is released, without waiting for the loader.
++	o.sealedDiskSize.Add(stats.diskSize)
++	// Skip preload if disabled or the first target was already loaded.
++	if memoryStats == nil || o.targetVersion.Load() != 0 {
+ 		o.sealed.Insert(segmentID, stats)
+ 		return
+ 	}
+@@ -626,6 +629,9 @@ func observeForReopen(seg *sealedBm25Stats, activateIfReadable bool) (reopenView
+ 	}
+ 	seg.RLock()
+ 	defer seg.RUnlock()
++	if seg.removed {
++		return reopenView{}, errReopenStateChanged(seg.segmentID)
++	}
+ 	view := reopenView{seg: seg, version: seg.version, active: seg.activate.Load()}
+ 	if activateIfReadable && !view.active {
+ 		existing, err := seg.fetchFieldsLocked(seg.fieldList)
+@@ -652,13 +658,13 @@ func (o *idfOracle) activateExistingSealedStats(segmentID int64, view reopenView
+ 
+ 	segStats, existed := o.sealed.Get(segmentID)
+ 	if !existed {
+-		return false, nil
++		return false, errReopenStateChanged(segmentID)
+ 	}
+ 
+ 	segStats.Lock()
+ 	defer segStats.Unlock()
+ 	if segStats.removed {
+-		return false, merr.WrapErrServiceInternalMsg("sealed bm25 stats for segment %d already removed", segmentID)
++		return false, errReopenStateChanged(segmentID)
+ 	}
+ 	if !view.stillHolds(segStats, existed) {
+ 		return false, errReopenStateChanged(segmentID)
+@@ -713,7 +719,7 @@ func (o *idfOracle) SyncFunctions(functions []*schemapb.FunctionSchema) error {
+ // Idempotent: skips if segment already loaded.
+ func (o *idfOracle) LoadSealed(ctx context.Context, segmentID int64, loadInfo *querypb.SegmentLoadInfo, cm storage.ChunkManager) error {
+ 	_, err, _ := o.sf.Do(fmt.Sprintf("load_sealed_%d", segmentID), func() (any, error) {
+-		if o.sealed.Contain(segmentID) {
++		if _, loaded := o.sealed.Get(segmentID); loaded {
+ 			return nil, nil
+ 		}
+ 
+@@ -734,11 +740,6 @@ func (o *idfOracle) LoadSealed(ctx context.Context, segmentID int64, loadInfo *q
+ 
+ 		result, err := o.streamLoad(ctx, segmentID, logpaths, cm, needParse)
+ 		if err != nil {
+-			// cleanup on failure
+-			cleanupPath := path.Join(o.dirPath, fmt.Sprintf("%d", segmentID))
+-			if rmErr := os.RemoveAll(cleanupPath); rmErr != nil {
+-				mlog.Warn(ctx, "failed to cleanup bm25 stats dir on load failure", mlog.Err(rmErr), mlog.String("path", cleanupPath))
+-			}
+ 			return nil, err
+ 		}
+ 
+@@ -751,12 +752,7 @@ func (o *idfOracle) LoadSealed(ctx context.Context, segmentID int64, loadInfo *q
+ 			diskSize:  result.diskSize,
+ 		}
+ 
+-		if needParse && result.stats != nil {
+-			o.preloadSealed(segmentID, segStats, result.stats)
+-		} else {
+-			o.sealed.Insert(segmentID, segStats)
+-		}
+-		o.sealedDiskSize.Add(result.diskSize)
++		o.registerSealedStats(segmentID, segStats, result.stats)
+ 
+ 		o.syncResource()
+ 		return nil, nil
+@@ -814,24 +810,20 @@ func (o *idfOracle) LoadSealedForReopen(ctx context.Context, segmentID int64, lo
+ 			return nil, nil
+ 		}
+ 
+-		installed := false
+-		cleanup := func() {
+-			if installed {
+-				return
+-			}
+-			for fieldID := range missingPaths {
+-				cleanupPath := path.Join(o.dirPath, fmt.Sprintf("%d", segmentID), fmt.Sprintf("%d", fieldID))
+-				if rmErr := os.RemoveAll(cleanupPath); rmErr != nil {
+-					logger.Warn(ctx, "failed to cleanup reopened bm25 stats field dir", mlog.Err(rmErr), mlog.String("path", cleanupPath))
+-				}
+-			}
+-		}
+-		defer cleanup()
+-
+ 		result, err := o.streamLoad(ctx, segmentID, missingPaths, cm, true)
+ 		if err != nil {
+ 			return nil, err
+ 		}
++		installed := false
++		defer func() {
++			// An existing entry adopts the fields, not the staging directory.
++			// A new entry takes ownership of the whole directory on success.
++			if !installed || existedBeforeLoad {
++				if err := os.RemoveAll(result.localDir); err != nil {
++					logger.Warn(ctx, "failed to cleanup reopened bm25 stats staging dir", mlog.Err(err), mlog.String("path", result.localDir))
++				}
++			}
++		}()
+ 
+ 		var observed *sealedBm25Stats
+ 		if existedBeforeLoad {
+@@ -858,7 +850,7 @@ func (o *idfOracle) LoadSealedForReopen(ctx context.Context, segmentID int64, lo
+ 		}
+ 		if existed && segStats.removed {
+ 			unlock()
+-			return nil, merr.WrapErrServiceInternalMsg("sealed bm25 stats for segment %d already removed", segmentID)
++			return nil, errReopenStateChanged(segmentID)
+ 		}
+ 		if !view.stillHolds(segStats, existed) {
+ 			unlock()
+@@ -882,6 +874,10 @@ func (o *idfOracl
+```
+
+**File**: `internal/querynodev2/delegator/idf_oracle_cleanup_test.go` (added, +361/-0)
+```diff
+@@ -0,0 +1,361 @@
++// Licensed to the LF AI & Data foundation under one
++// or more contributor license agreements. See the NOTICE file
++// distributed with this work for additional information
++// regarding copyright ownership. The ASF licenses this file
++// to you under the Apache License, Version 2.0 (the
++// "License"); you may not use this file except in compliance
++// with the License. You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package delegator
++
++import (
++	"bytes"
++	"context"
++	"os"
++	"path"
++	"sync"
++	"testing"
++	"time"
++
++	"github.com/bytedance/mockey"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/mock"
++	"github.com/stretchr/testify/require"
++
++	"github.com/milvus-io/milvus-proto/go-api/v3/schemapb"
++	"github.com/milvus-io/milvus/internal/mocks"
++	"github.com/milvus-io/milvus/internal/storage"
++	"github.com/milvus-io/milvus/pkg/v3/proto/querypb"
++	"github.com/milvus-io/milvus/pkg/v3/util/merr"
++)
++
++type idfCleanupCall struct {
++	done chan struct{}
++	err  error
++}
++
++func runIDFCleanupCall(fn func() error) *idfCleanupCall {
++	c := &idfCleanupCall{done: make(chan struct{})}
++	go func() {
++		c.err = fn()
++		close(c.done)
++	}()
++	return c
++}
++
++func (c *idfCleanupCall) result(t *testing.T) error {
++	t.Helper()
++	select {
++	case <-c.done:
++		return c.err
++	case <-time.After(5 * time.Second):
++		t.Fatal("IDF operation did not complete")
++		return nil
++	}
++}
++
++// Keep a statistics reader alive so physical removal cannot finish. Publication
++// must still complete; cleanup and accounting are joined separately by the test.
++func blockIDFCleanup(t *testing.T, o *idfOracle, id int64, target *snapshot) (*sealedBm25Stats, func(), *idfCleanupCall) {
++	t.Helper()
++	old, ok := o.sealed.Get(id)
++	require.True(t, ok)
++	old.RLock()
++	var once sync.Once
++	release := func() { once.Do(old.RUnlock) }
++	o.next.SetSnapshot(target)
++	call := runIDFCleanupCall(o.SyncDistribution)
++	t.Cleanup(func() {
++		release()
++		require.NoError(t, call.result(t))
++	})
++	require.Eventually(t, func() bool { return o.TargetVersion() == target.targetVersion }, 5*time.Second, time.Millisecond)
++	return old, release, call
++}
++
++func TestIDFCleanupDoesNotBlockReadersOrSchemaSync(t *testing.T) {
++	o := newSyncTestOracle(t, 102)
++	o.targetVersion.Store(1)
++	dropped := newSyncTestSegment(t, 1, genBM25StatsForField(102, 1, 4))
++	kept := newSyncTestSegment(t, 2, genBM25StatsForField(102, 10, 15))
++	dropped.load(t, o, 102)
++	kept.load(t, o, 102)
++	// Keep the obsolete entry inactive: this isolates physical cleanup from
++	// the separate activation-state reconciliation performed under the lock.
++	syncWithHook(t, o, syncTestSnapshotUnreadable(2, []int64{2}, 1), func() {})
++	diskBefore := o.diskSize()
++	old, release, cleanup := blockIDFCleanup(t, o, 1, syncTestSnapshot(3, 2))
++
++	assert.False(t, o.sealed.Contain(1))
++	assert.DirExists(t, old.localDir)
++	assert.Equal(t, diskBefore, o.diskSize(), "pending physical cleanup is still charged")
++
++	reader := runIDFCleanupCall(func() error {
++		_, _, err := o.BuildIDF(102, &schemapb.SparseFloatArray{})
++		return err
++	})
++	t.Cleanup(func() { release(); require.NoError(t, reader.result(t)) })
++	require.NoError(t, reader.result(t))
++	assertCurrentField(t, o, 102, kept.stats[102])
++
++	// Leaving the detached entry in sealed would make SyncFunctions wait for
++	// its statistics lock while holding the global oracle lock again.
++	schema := runIDFCleanupCall(func() error { return o.SyncFunctions(syncTestFunctions(102)) })
++	t.Cleanup(func() { release(); require.NoError(t, schema.result(t)) })
++	require.NoError(t, schema.result(t))
++	assertCurrentField(t, o, 102, kept.stats[102])
++
++	release()
++	require.NoError(t, cleanup.result(t))
++	assert.NoDirExists(t, old.localDir)
++	keptEntry, ok := o.sealed.Get(2)
++	require.True(t, ok)
++	assert.Equal(t, keptEntry.diskSize, o.diskSize())
++}
++
++// The replacement owns different files and must not wait for an old local reader.
++func TestIDFReloadDoesNotWaitForCleanup(t *testing.T) {
++	for _, reopen := range []bool{false, true} {
++		name := "load"
++		if reopen {
++			name = "reopen"
++		}
++		t.Run(name, func(t *testing.T) {
++			o := newSyncTestOracle(t, 102)
++			o.targetVersion.Store(1)
++			oldSegment := newSyncTestSegment(t, 1, genBM25StatsForField(102, 1, 4))
++			oldSegment.load(t, o, 102)
++			old, release, cleanup := blockIDFCleanup(t, o, 1, syncTestSnapshot(2))
++			fresh := newSyncTestSegment(t, 1, genBM25StatsForField(102, 10, 15))
++			load := runIDFCleanupCall(func() error {
++				if reopen {
++					return o.LoadSealedForReopen(context.Background(), 1, fresh.loadInfo(102), 
+```
+
+**File**: `internal/querynodev2/delegator/idf_oracle_sync_test.go` (modified, +8/-2)
+```diff
+@@ -382,7 +382,9 @@ func TestSyncDistributionFetchFailureChangesNothing(t *testing.T) {
+ 	o.LazyRemoveGrowings(2, 3)
+ 	broken := newSyncTestSegment(t, 2, map[int64]*storage.BM25Stats{102: randomSyncTestStats(r, 3)})
+ 	broken.load(t, o, 102)
+-	require.NoError(t, os.RemoveAll(path.Join(o.dirPath, "2", "102")))
++	brokenEntry, loaded := o.sealed.Get(2)
++	require.True(t, loaded)
++	require.NoError(t, os.RemoveAll(path.Join(brokenEntry.localDir, "102")))
+ 
+ 	o.next.SetSnapshot(syncTestSnapshot(2, 1, 2))
+ 	assert.Error(t, o.SyncDistribution())
+@@ -524,7 +526,11 @@ func TestReopenAddsFieldToSegmentRemovedDuringDownload(t *testing.T) {
+ 	seg.load(t, o, 102) // inactive
+ 
+ 	reopenWithRetry(t, o, seg, func() bool { return false }, func() {
+-		syncWithHook(t, o, syncTestSnapshot(2), func() {})
++		// The staging directory is independent: the entire sync, including
++		// physical cleanup, finishes before the reopen tries to install.
++		o.next.SetSnapshot(syncTestSnapshot(2))
++		require.NoError(t, o.SyncDistribution())
++		require.Equal(t, int64(2), o.TargetVersion())
+ 		require.False(t, o.sealed.Contain(1))
+ 	}, 102, 104)
+ 
+```
+
+**File**: `internal/querynodev2/delegator/idf_oracle_test.go` (modified, +20/-6)
+```diff
+@@ -90,6 +90,11 @@ func (suite *IDFOracleSuite) TearDownTest() {
+ func (s *IDFOracleSuite) waitTargetVersion(targetVersion int64) {
+ 	for {
+ 		if s.idfOracle.TargetVersion() >= targetVersion {
++			// Publication no longer waits for physical cleanup. Join the sync
++			// before tests inspect files or disk-resource accounting.
++			s.idfOracle.syncMu.Lock()
++			s.GreaterOrEqual(s.idfOracle.diskSize(), int64(0))
++			s.idfOracle.syncMu.Unlock()
+ 			return
+ 		}
+ 		time.Sleep(time.Millisecond * 100)
+@@ -461,7 +466,9 @@ func (suite *IDFOracleSuite) TestLoadSealedNoParse() {
+ 	suite.Equal(int64(0), suite.idfOracle.current.NumRow())
+ 
+ 	// disk file should exist
+-	segDir := path.Join(suite.idfOracle.dirPath, "1", "102")
++	sealedEntry, loaded := suite.idfOracle.sealed.Get(1)
++	suite.Require().True(loaded)
++	segDir := path.Join(sealedEntry.localDir, "102")
+ 	entries, err := os.ReadDir(segDir)
+ 	suite.NoError(err)
+ 	suite.NotEmpty(entries)
+@@ -491,9 +498,9 @@ func (suite *IDFOracleSuite) TestLoadSealedFailureCleanup() {
+ 	suite.Equal(int64(0), suite.idfOracle.sealedDiskSize.Load())
+ 
+ 	// disk directory should be cleaned up
+-	segDir := path.Join(suite.idfOracle.dirPath, "1")
+-	_, statErr := os.Stat(segDir)
+-	suite.True(os.IsNotExist(statErr))
++	dirs, statErr := os.ReadDir(suite.idfOracle.dirPath)
++	suite.Require().NoError(statErr)
++	suite.Empty(dirs, "failed download must remove its actual unique directory")
+ }
+ 
+ // setFieldForTest replaces the stats of one field.
+@@ -702,6 +709,7 @@ func TestLoadSealedForReopenIdempotentAfterSuccess(t *testing.T) {
+ 		fieldList: []int64{102},
+ 		diskSize:  7,
+ 	}
++	require.NoError(t, os.MkdirAll(sealedStats.localDir, 0o700))
+ 	idfOracle.sealed.Insert(1, sealedStats)
+ 	idfOracle.sealedDiskSize.Store(7)
+ 
+@@ -833,8 +841,13 @@ func TestLoadSealedForReopenFailureCleanupPreservesExistingFields(t *testing.T)
+ 	assert.Equal(t, int64(4), idfOracle.sealedDiskSize.Load())
+ 	_, err = os.Stat(oldFieldDir)
+ 	assert.NoError(t, err)
+-	_, err = os.Stat(path.Join(idfOracle.dirPath, "1", "104"))
+-	assert.True(t, os.IsNotExist(err))
++	dirs, err := os.ReadDir(idfOracle.dirPath)
++	require.NoError(t, err)
++	require.Len(t, dirs, 1, "failed reopen must remove its staging directory")
++	fields, err := os.ReadDir(sealedStats.localDir)
++	require.NoError(t, err)
++	require.Len(t, fields, 1)
++	assert.Equal(t, "102", fields[0].Name())
+ }
+ 
+ func TestActiveReopenBM25MergesNewFieldStats(t *testing.T) {
+@@ -859,6 +872,7 @@ func TestActiveReopenBM25MergesNewFieldStats(t *testing.T) {
+ 		fieldList: []int64{102},
+ 		diskSize:  7,
+ 	}
++	require.NoError(t, os.MkdirAll(sealedStats.localDir, 0o700))
+ 	idfOracle.sealed.Insert(1, sealedStats)
+ 	idfOracle.sealedDiskSize.Store(7)
+ 
+```
+
+---
+
+### Incident Patch 3: `11dcaf00` (2026-11-17)
+**Commit Message**: fix: sync RocksDB WAL writes before acknowledging metadata and RocksMQ produce (#55641)
+
+RocksdbKV and RocksMQ Produce write with default WriteOptions, so a
+successful write can still be in the OS page cache. After a machine
+failure, acknowledged RocksMQ messages and RocksDB metadata writes can
+be lost.
+
+issue: #54436
+
+Changes:
+- RocksdbKV sets `WriteOptions.SetSync(true)`, so every metadata write
+persists the WAL before it returns.
+- RocksMQ Produce writes its message batch with a synchronous WAL write
+before acknowledging.
+- Retention deletes stay asynchronous: they are idempotent and are
+redone after a crash.
+- Tests: TestRocksmq_Throughout produces 1,000 messages instead of
+100,000, because each Produce now waits for a sync.
+TestRmqRetention_PageSizeExpire consumes in batches of 1,000, so it
+still covers the >1 MiB retention case without one synchronous page-ack
+update per message.
+
+Cost: each RocksMQ Produce now waits for two synchronous WAL commits
+under the topic lock, one for the message store and one for the
+page-info meta KV. The meta-KV sync only protects retention bookkeeping.
+
+This is split out of #54667, which keeps the local file durability
+changes.
+
+Validation (loca
+
+**File**: `pkg/kv/rocksdb/rocksdb_kv.go` (modified, +2/-0)
+```diff
+@@ -76,6 +76,8 @@ func NewRocksdbKV(name string) (*RocksdbKV, error) {
+ func NewRocksdbKVWithOpts(name string, opts *gorocksdb.Options) (*RocksdbKV, error) {
+ 	ro := gorocksdb.NewDefaultReadOptions()
+ 	wo := gorocksdb.NewDefaultWriteOptions()
++	// Persist the WAL before reporting a successful metadata write.
++	wo.SetSync(true)
+ 
+ 	// only has one columnn families
+ 	db, err := gorocksdb.OpenDb(opts, name)
+```
+
+**File**: `pkg/mq/mqimpl/rocksmq/server/rocksmq_impl.go` (modified, +2/-0)
+```diff
+@@ -746,6 +746,8 @@ func (rmq *rocksmq) Produce(topicName string, messages []ProducerMessage) ([]Uni
+ 
+ 	opts := gorocksdb.NewDefaultWriteOptions()
+ 	defer opts.Destroy()
++	// Persist messages to the WAL before acknowledging the produce.
++	opts.SetSync(true)
+ 	err = rmq.store.Write(opts, batch)
+ 	if err != nil {
+ 		return []UniqueID{}, err
+```
+
+**File**: `pkg/mq/mqimpl/rocksmq/server/rocksmq_impl_test.go` (modified, +5/-1)
+```diff
+@@ -489,7 +489,11 @@ func TestRocksmq_Throughout(t *testing.T) {
+ 	assert.NoError(t, err)
+ 	defer rmq.DestroyTopic(channelName)
+ 
+-	entityNum := 100000
++	// Each Produce now waits for WAL synchronization. Keep the unit test
++	// bounded on disks with expensive syncs while still exercising individual
++	// message acknowledgements and consumption; bulk throughput belongs in a
++	// benchmark using batched Produce calls.
++	entityNum := 1000
+ 
+ 	pt0 := time.Now().UnixNano() / int64(time.Millisecond)
+ 	for i := 0; i < entityNum; i++ {
+```
+
+**File**: `pkg/mq/mqimpl/rocksmq/server/rocksmq_retention_test.go` (modified, +9/-5)
+```diff
+@@ -19,6 +19,7 @@ import (
+ 	"time"
+ 
+ 	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
+ 
+ 	"github.com/milvus-io/milvus/pkg/v3/mlog"
+ 	"github.com/milvus-io/milvus/pkg/v3/util/paramtable"
+@@ -619,11 +620,14 @@ func TestRmqRetention_PageSizeExpire(t *testing.T) {
+ 	rmq.RegisterConsumer(consumer)
+ 
+ 	assert.NoError(t, err)
+-	cMsgs := make([]ConsumerMessage, 0)
+-	for i := 0; i < msgNum; i++ {
+-		cMsg, err := rmq.Consume(topicName, groupName, 1)
+-		assert.NoError(t, err)
+-		cMsgs = append(cMsgs, cMsg[0])
++	// Preserve the >1 MiB retention case while amortizing durable page-ack
++	// updates. Single-message consumption is covered by the basic tests.
++	cMsgs := make([]ConsumerMessage, 0, msgNum)
++	for len(cMsgs) < msgNum {
++		cMsg, err := rmq.Consume(topicName, groupName, 1000)
++		require.NoError(t, err)
++		require.NotEmpty(t, cMsg)
++		cMsgs = append(cMsgs, cMsg...)
+ 	}
+ 	assert.Equal(t, len(cMsgs), msgNum)
+ 	mlog.Debug(context.TODO(), "Already consumed, wait for message cleaned by retention")
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55561** (2026-11-16): fix: [cp3.0]Retry coordinator RPCs promptly after ServerID changes (@bigsheeper)
-- **PR #55560** (2026-11-16): enhance: [cp3.0]revoke session leases before a forced stop exit (@bigsheeper)
-- **PR #55559** (2026-11-16): test: stabilize Base64 vector allocation budget (@chyezh)
-- **PR #55553** (2026-11-16): fix: Retry coordinator RPCs promptly after ServerID changes (@bigsheeper)
-- **PR #55550** (2026-11-16): test: wait for the index before iterating in search_iterator_using_mul_db (@xiaofan-luan)
-- **PR #55548** (2026-11-15): test: fix nil viewFeedback panic in TestQueryViewReleaseRuntimeShutdown (@xiaofan-luan)
+- **PR #55669** (2026-11-18): fix: publish local chunk manager writes atomically by rename (@xiaofan-luan)
+- **PR #55666** (2026-11-18): test: fix CDC concurrent checker teardown (@zhuwenxing)
+- **PR #55663** (2026-11-18): test: fix bulkimport test build after ValidateSnapshotImportPlan rename (@czs007)
+- **PR #55648** (2026-11-18): enhance: reduce QueryView balancer allocation churn (@chyezh)
+- **PR #55647** (2026-11-18): test: [cp3.0] add FMINDEX CMEK integration coverage (@yanliang567)
+- **PR #55646** (2026-11-18): test: [cp3.0] add FMINDEX E2E coverage (@yanliang567)
 
 ---
 
@@ -1792,43 +2017,55 @@ Signed-off-by: zhuwenxing <[REDACTED
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: fix flaky TestBuildLatencyExcludesAdmissionWait
+## X. test: fix CDC concurrent checker teardown
 
 **RULE**:
-When implementing operations in `internal/datanode/index/task_index.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/python_client/cdc/stablity/test_concurrent_operation.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in milvus-io/milvus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `86534551`: test: fix flaky TestBuildLatencyExcludesAdmissionWait. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `519cc7d0`: test: fix CDC concurrent checker teardown. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/datanode/index/task_index.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/python_client/cdc/stablity/test_concurrent_operation.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	now           func() time.Time // Injectable clock; defaults to time.Now, tests override it.
-		now:           time.Now,
-	started := it.now()
-	it.prepareDur = it.now().Sub(started)
-	started := it.now()
-	it.prepareDur += it.now().Sub(started)
-	started := it.now()
-	buildIndexLatency := it.prepareDur + it.now().Sub(started)
+        with cc.monitor_threads(self.health_checkers):
+            log.info("*********************Load Start**********************")
+            request_duration = request_duration.replace("h", "*3600+").replace("m", "*60+").replace("s", "")
+            if request_duration[-1] == "+":
+                request_duration = request_duration[:-1]
+            request_duration = eval(request_duration)
+            for i in range(10):
+                sleep(request_duration // 10)
+                for k, v in self.health_checkers.items():
+                    v.check_result()
+                    # log.info(v.check_result())
+            wait_pods_ready(self.milvus_ns, f"app.kubernetes.io/instance={self.release_name}")
+            time.sleep(60)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	started := time.Now()
-	it.prepareDur = time.Since(started)
-	started := time.Now()
-	it.prepareDur += time.Since(started)
-	started := time.Now()
-	buildIndexLatency := it.prepareDur + time.Since(started)
+        cc.start_monitor_threads(self.health_checkers)
+        log.info("*********************Load Start**********************")
+        request_duration = request_duration.replace("h", "*3600+").replace("m", "*60+").replace("s", "")
+        if request_duration[-1] == "+":
+            request_duration = request_duration[:-1]
+        request_duration = eval(request_duration)
+        for i in range(10):
+            sleep(request_duration // 10)
+            for k, v in self.health_checkers.items():
+                v.check_result()
+                # log.info(v.check_result())
+        wait_pods_ready(self.milvus_ns, f"app.kubernetes.io/instance={self.release_name}")
+        time.sleep(60)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `86534551` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `519cc7d0` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

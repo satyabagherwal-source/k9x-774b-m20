@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T09:57:29.151Z",
+  "last_updated": "2026-11-18T10:08:53.911Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -81,14 +81,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
-      "content_hash": "62c5a79ef00004e18d5bb71368d95b33fe365ff82dbd8f93fe3c466e3e78c9c7",
-      "verified_at": "2026-11-17T20:45:29.870Z",
+      "content_hash": "c31d38ca2f2865f20e4c49f3278fba49ca581f7d8bfc3a18f6632794f691064c",
+      "verified_at": "2026-11-18T10:08:39.229Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T20:45:29.870Z"
+      "last_updated": "2026-11-18T10:08:39.229Z"
     },
     "cross-encoder/ms-marco-MiniLM-L6-v2": {
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
@@ -10056,14 +10056,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nginx-kubernetes-ingress",
-      "content_hash": "b1f0df368ba81c36ae79e9e0d566ce5ac7af06323c92462c17ed6d8f15be370c",
-      "verified_at": "2026-11-17T17:20:22.582Z",
+      "content_hash": "4d97eab80f8789d70b10b2d90f90a4336b4eeaff94a3d884b4e461ff8160cfec",
+      "verified_at": "2026-11-18T10:08:47.773Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T17:20:22.582Z"
+      "last_updated": "2026-11-18T10:08:47.773Z"
     },
     "milvus-io/milvus": {
       "repository": "milvus-io/milvus",
@@ -10071,14 +10071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-milvus-io-milvus",
-      "content_hash": "ac4a63a0790cea296481eab66498636c57b4eec4cc207f79de4e2680a7e21d66",
-      "verified_at": "2026-11-17T16:31:05.450Z",
+      "content_hash": "d966e46438ba3b5e24f152ddb9db6516cc2df74b18cc2e9992d87973fc510c6a",
+      "verified_at": "2026-11-18T10:08:53.910Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T16:31:05.450Z"
+      "last_updated": "2026-11-18T10:08:53.910Z"
     },
     "ynqa/jnv": {
       "repository": "ynqa/jnv",

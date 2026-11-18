@@ -10914,3 +10914,6 @@
 | `CYCLE-20261118-682N` | `2026-11-18T09:57:11.903Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | Yes (`c6266a0e...`) |
 | `CYCLE-20261118-6DV3` | `2026-11-18T09:57:19.407Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9188` | Yes (`d9b795ec...`) |
 | `CYCLE-20261118-6LDC` | `2026-11-18T09:57:29.136Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9189` | Yes (`da3514bc...`) |
+| `CYCLE-20261118-KYEO` | `2026-11-18T10:08:39.216Z` | `sentence-transformers/all-MiniLM-L6-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-minilm-l6-v2-learnings.md` | Yes (`c31d38ca...`) |
+| `CYCLE-20261118-L502` | `2026-11-18T10:08:47.762Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9190` | Yes (`4d97eab8...`) |
+| `CYCLE-20261118-L9QI` | `2026-11-18T10:08:53.898Z` | `milvus-io/milvus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9191` | Yes (`d966e464...`) |

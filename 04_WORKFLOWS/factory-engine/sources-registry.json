@@ -43,9 +43,9 @@
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "lastChecked": "2026-11-18T09:14:47.078Z",
+    "lastChecked": "2026-11-18T10:08:51.137Z",
     "revisionIdentifier": "108f7135",
-    "lastVerified": "2026-11-18T09:14:47.078Z"
+    "lastVerified": "2026-11-18T10:08:51.137Z"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T09:57:32.448Z",
-    "lastVerified": "2026-11-18T09:57:32.448Z",
+    "lastChecked": "2026-11-18T10:08:57.000Z",
+    "lastVerified": "2026-11-18T10:08:57.000Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -289,6 +289,78 @@
     "contentHash": "da3514bcbe6892f81195fc280b67fe8f43097401c35857bf7cb35b7a61839ed7",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "lapce-lapce": {
+    "name": "lapce",
+    "officialUrl": "https://github.com/lapce/lapce",
+    "lastChecked": "2026-11-18T10:08:36.193Z",
+    "revisionIdentifier": "f66ffaa9",
+    "lastVerified": "2026-11-18T10:08:36.193Z"
+  },
+  "hf-sentence-transformers-all-minilm-l6-v2": {
+    "name": "sentence-transformers/all-MiniLM-L6-v2",
+    "officialUrl": "https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T10:08:38.666Z",
+    "lastVerified": "2026-11-18T10:08:38.666Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+    "contentHash": "c31d38ca2f2865f20e4c49f3278fba49ca581f7d8bfc3a18f6632794f691064c",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "enaqx-awesome-react": {
+    "name": "awesome-react",
+    "officialUrl": "https://github.com/enaqx/awesome-react",
+    "lastChecked": "2026-11-18T10:08:41.249Z",
+    "revisionIdentifier": "e6fd973e",
+    "lastVerified": "2026-11-18T10:08:41.249Z"
+  },
+  "nginx-kubernetes-ingress": {
+    "name": "nginx/kubernetes-ingress",
+    "officialUrl": "https://github.com/nginx/kubernetes-ingress",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-18T10:08:46.802Z",
+    "lastVerified": "2026-11-18T10:08:46.802Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-nginx-kubernetes-ingress",
+    "contentHash": "4d97eab80f8789d70b10b2d90f90a4336b4eeaff94a3d884b4e461ff8160cfec",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "smallstep-cli": {
+    "name": "cli",
+    "officialUrl": "https://github.com/smallstep/cli",
+    "lastChecked": "2026-11-18T10:08:46.154Z",
+    "revisionIdentifier": "eed88c74",
+    "lastVerified": "2026-11-18T10:08:46.154Z"
+  },
+  "milvus-io-milvus": {
+    "name": "milvus-io/milvus",
+    "officialUrl": "https://github.com/milvus-io/milvus",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-18T10:08:52.939Z",
+    "lastVerified": "2026-11-18T10:08:52.939Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "d966e46438ba3b5e24f152ddb9db6516cc2df74b18cc2e9992d87973fc510c6a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

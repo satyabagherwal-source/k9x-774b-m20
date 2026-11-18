@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T18:10:59.213Z",
+  "timestamp": "2026-11-18T10:08:57.566Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nginx-kubernetes-ingress-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nginx-kubernetes-ingress-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T18:10:59.213Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T10:08:57.566Z`  
 > **Learning ID**: `LEARN-EVO-nginx-kubernetes-ingress-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nginx-kubernetes-ingress-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source**: github ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
-> **Source Version**: `866ce54b`  
+> **Source Version**: `10b9eec3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T18:10:49.104Z  
+> **Timestamp**: 2026-11-18T10:08:46.807Z  
 > **Learning ID**: `learn-github-nginx-kubernetes-ingress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T18:10:48.881Z  
+> **Harvest Timestamp**: 2026-11-18T10:08:46.802Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: NGINX and  NGINX Plus Ingress Controllers for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md
-- **Stars / Engagement**: 5096 stars
+- **Stars / Engagement**: 5098 stars
 
 ---
 
@@ -1453,227 +1453,534 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `11830790` (2026-11-16)
-**Commit Message**: [ci] 1.5: Add security-scan composite action (#11419)
+### Incident Patch 1: `10b9eec3` (2026-11-17)
+**Commit Message**: [ci] Phase 2 - Unifying workflow files (#11451)
 
-* Add security-scan composite action
+* fix unification gate
 
-Closes np-206.
+* fix gating, use new vault login action
 
-Also adds renovate for the action, plus additional inputs
-to azure upload, and more logging to azure upload.
+* fix gating, use new vault login action
 
-* Change pattern input to wildcard in action.yml
+* fix gating, use new vault login action
 
-Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
-Signed-off-by: Gabor Javorszky <[REDACTED_EMAIL]>
+* fix gating, use new vault login action
 
-* Remove echoing the CONTAINER_NAME
+* fix gating, use new vault login action, use pkg secrets action
 
-* Add option to upload to github code scanning
+* use ubuntu 26 as a fallback runner
+
+* 2.1 Unify build-test-image.yml: add repository gating
+
+* 2.8 Unify lint-format.yml: add repository gating, consolidate triggers
+
+* feedback: missing vault + pkg-secrets action calls
+
+* more feedback: rename setup-ci-vars to resolve-test-runner
+
+* use vars.RELEASE_RUNNER
 
 ---------
 
-Signed-off-by: Gabor Javorszky <[REDACTED_EMAIL]>
-Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
+Co-authored-by: Gabor Javorszky <[REDACTED_EMAIL]>
 
-**File**: `.github/actions/azure-blob/action.yml` (modified, +5/-0)
+**File**: `.github/actions/resolve-test-runner/action.yml` (renamed, +5/-5)
 ```diff
-@@ -44,6 +44,7 @@ runs:
-         SOURCE_DIR: ${{ inputs.source-dir }}
-         DESTINATION_PATH: ${{ inputs.destination-path }}
-         PATTERN: ${{ inputs.pattern }}
-+        DRY_RUN: ${{ inputs.dry-run }}
-       run: |
-         # An empty destination would upload to the container root; an empty source usually means the producing step failed.
-         if [ -z "${DESTINATION_PATH%/}" ]; then
-@@ -53,6 +54,7 @@ runs:
-         shopt -s globstar nullglob dotglob
-         src="${SOURCE_DIR%/}"
-         found=0
-+        echo "Uploading '$PATTERN' from '$src':"
-         # shellcheck disable=SC2231 # PATTERN is deliberately unquoted so it globs
-         for f in "$src"/**/$PATTERN; do
-           [ -f "$f" ] || continue
-@@ -63,6 +65,9 @@ runs:
-           echo "::error::no files matching '$PATTERN' in '$SOURCE_DIR'"
-           exit 1
-         fi
-+        if [ "$DRY_RUN" = "true" ]; then
-+          echo "dry-run: skipping upload of $found file(s)"
-+        fi
+@@ -1,4 +1,4 @@
+-name: Setup CI vars
++name: Resolve test runner
+ description: Resolve the test-runner image and runner label in one step
  
-     - name: Azure login for upload
-       if: ${{ inputs.dry-run != 'true' }}
+ # Checkout: the image tag hashes tests/requirements.txt and tests/Dockerfile from the workspace,
+@@ -16,12 +16,12 @@ description: Resolve the test-runner image and runner label in one step
+ #     setup:
+ #       runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}  # resolves its own runner
+ #       outputs:
+-#         runner: ${{ steps.ci-vars.outputs.runner }}
+-#         test_runner_image: ${{ steps.ci-vars.outputs.test_runner_image }}
++#         runner: ${{ steps.test-runner.outputs.runner }}
++#         test_runner_image: ${{ steps.test-runner.outputs.test_runner_image }}
+ #       steps:
+ #         - uses: actions/checkout@...
+-#         - id: ci-vars
+-#           uses: ./.github/actions/setup-ci-vars
++#         - id: test-runner
++#           uses: ./.github/actions/resolve-test-runner
+ #           with:
+ #             runner: ${{ vars.RUNNER }}
+ #             test-runner-registry: ${{ vars.TEST_RUNNER_REGISTRY }}
 ```
 
-**File**: `.github/actions/security-scan/action.yml` (added, +129/-0)
+**File**: `.github/workflows/build-base-images.yml` (modified, +43/-91)
 ```diff
-@@ -0,0 +1,129 @@
-+name: Security Scan
-+description: Scan an image with Docker Scout into a SARIF file, and optionally upload the SARIF to GitHub code scanning or Azure Blob Storage.
-+
-+# The scan fails this step on error; callers that want a soft fail set `continue-on-error: true`
-+# and gate follow-up steps on `steps.<id>.outcome == 'success'`. Uploads only run after a successful scan.
-+#
-+# Where the SARIF goes: composite actions cannot read `vars`, so callers pass both
-+#   github-upload: ${{ vars.IS_PUBLIC == 'true' }}
-+#   azure-upload: ${{ vars.IS_PUBLIC == 'false' }}
-+# Both compare against an explicit value, so an unset IS_PUBLIC uploads nowhere instead of to the wrong place.
-+# The public repository uploads to GitHub code scanning (Security tab), which needs `permissions: security-events: write`.
-+# The internal repository is private, so its SARIF goes to Azure instead. That needs
-+# `permissions: id-token: write` and a non-empty `prefix`, and stores the file as <prefix>/<blob-name>.
-+#
-+# Run docker/login-action for Docker Hub before this action; Docker Scout needs it.
-+# A sparse checkout must include .github/actions/security-scan, .github/actions/scout-cache and
-+# .github/actions/azure-blob, which this action calls.
-+
-+inputs:
-+  image:
-+    description: Image reference to scan
-+    required: true
-+  sarif-file:
-+    description: Path to write the SARIF file to, relative to the workspace
-+    required: true
-+  ignore-base:
-+    description: Ignore vulnerabilities from the base image
-+    required: false
-+    default: "false"
-+  github-upload:
-+    description: Upload the SARIF to GitHub code scanning (pass vars.IS_PUBLIC == 'true')
-+    required: false
-+    default: "false"
-+  azure-upload:
-+    description: Upload the SARIF to Azure Blob Storage (pass vars.IS_PUBLIC == 'false')
-+    required: false
-+    default: "false"
-+  prefix:
-+    description: Virtual directory in the container to upload into, e.g. nic/2026-10-13-38399827758. Empty skips the upload
-+    required: false
-+    default: ""
-+  blob-name:
-+    description: Blob name for the SARIF under prefix, e.g. debian-nap-waf.sarif. Required when uploading
-+    required: false
-+    default: ""
-+  client-id:
-+    description: Azure client ID used for the OIDC login
-+    required: false
-+    default: ""
-+  tenant-id:
-+    description: Azure tenant ID
-+    required: false
-+    default: ""
-+  subscription-id:
-+    description: Azure subscription ID
-+    required: false
-+    default: ""
-+  storage-account:
-+    description: Azure storage account name
-+    required: false
-+    default: ""
-+  container-name:
-+    description: Blob container name
-+    required: false
-+    default: ""
-+
-+runs:
-+  using: composite
-+  steps:
-+    # Keep version/sha in sync with the docker/scout-action pin below (renovate bumps both).
-+    - name: Restore Docker Scout binary
-+      uses: ./.github/actions/scout-cache
-+      with:
-+        mode: restore
-+        version: v1.29.0
-+        sha: e7e2a72bf1485d10a58f30696b6c513b261ce4fa # renovate-digest: datasource=github-tags depName=docker/scout-action
-+
-+    - name: Prepare SARIF directory
-+      shell: bash
-+      env:
-+        SARIF_FILE: ${{ inputs.sarif-file }}
-+      run: mkdir -p "$(dirname "${SARIF_FILE}")"
-+
-+    - name: Run Docker Scout vulnerability scanner
-+      uses: docker/scout-action@e7e2a72bf1485d10a58f30696b6c513b261ce4fa # v1.29.0
-+      with:
-+        command: cves
-+        image: ${{ inputs.image }}
-+        ignore-base: ${{ inputs.ignore-base }}
-+        sarif-file: ${{ inputs.sarif-file }}
-+        write-comment: false
-+        summary: true
-+
-+    - name: Upload SARIF to GitHub code scanning
-+      if: ${{ inputs.github-upload == 'true' }}
-+      uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-+      with:
-+        sarif_file: ${{ inputs.sarif-file }}
-+
-+    # azure-blob uploads a directory, so stage the SARIF under its blob name inside the workspace
-+    # (the Azure CLI step only mounts GITHUB_WORKSPACE).
-+    - name: Stage SARIF for upload
-+      if: ${{ inputs.azure-upload == 'true' && inputs.prefix != '' }}
-+      shell: bash
-+      env:
-+        SARIF_FILE: ${{ inputs.sarif-file }}
-+        BLOB_NAME: ${{ inputs.blob-name }}
-+      run: |
-+        set -euo pipefail
-+        if [ -z "${BLOB_NAME}" ] || [[ "${BLOB_NAME}" == */* ]]; then
-+          echo "::error::blob-name must be a non-empty file name when uploading, got '${BLOB_NAME}'"
-+          exit 1
-+        fi
-+        rm -rf .security-scan-upload
-+        mkdir .security-scan-upload
-+        cp "${SARIF_FILE}" ".security-scan-upload/${BLOB_NAME}"
-+
-+    - name: Upload SARIF to Azure
-+      if: ${{ inputs.azure-upload == 'true' && inputs.prefix != '' }}
-+      uses: ./.github/actions/azure-blob
-+      with:
-+        client-id: ${{ inputs.client-id }}
-+        tenant-id: ${{ inputs.tenant-id }}
-+        subscription-id: ${{ inputs.subscription-id }}
-+        storage-account: ${{ inputs.storage-
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +1/-1)
-```diff
-@@ -411,7 +411,7 @@ jobs:
-         continue-on-error: true # soft-fail: scans fall back to an authenticated download
+@@ -20,8 +20,8 @@ permissions:
+ jobs:
+   checks:
+     name: Checks and variables
+-    if: github.repository == 'nginx/kubernetes-ingress'
+-    runs-on: ubuntu-26.04
++    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal') && (github.event_name != 'schedule' || github.repository == 'nginx/kubernetes-ingress')
++    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
+     outputs:
+       docker_md5: ${{ steps.vars.outputs.docker_md5 }}
+       ic_version: ${{ steps.vars.outputs.ic_version }}
+@@ -45,8 +45,8 @@ jobs:
+ 
+   build-oss:
+     name: Build OSS base images
+-    if: github.repository == 'nginx/kubernetes-ingress'
+-    runs-on: ubuntu-26.04
++    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
++    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
+     needs: checks
+     permissions:
+       contents: read
+@@ -67,29 +67,21 @@ jobs:
          with:
-           mode: seed
--          # Keep in sync with the docker/scout-action pin in build-oss.yml and build-plus.yml.
-+          # Keep in sync with the docker/scout-action pin in build-oss.yml, build-plus.yml and .github/actions/security-scan.
-           version: v1.29.0
-           sha: e7e2a72bf1485d10a58f30696b6c513b261ce4fa # renovate-digest: datasource=github-tags depName=docker/scout-action
+           platforms: arm64
  
+-      - name: Setup secrets
+-        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
++      - name: Login to GCR
++        uses: ./.github/actions/vault-gcr-login
+         with:
+-          client-id: "${{ secrets.AZURE_VAULT_CLIENT_ID }}"
+-          tenant-id: "${{ secrets.AZURE_VAULT_TENANT_ID }}"
++          client-id: ${{ secrets.AZURE_VAULT_CLIENT_ID }}
++          tenant-id: ${{ secrets.AZURE_VAULT_TENANT_ID }}
+           vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
+-          secret-names: "gcr-workload-identity, kic-pipeline-gcr-sa"
+-          env-names: "GCR_WORKLOAD_ID, GCR_SERVICE_ACCOUNT"
+-
+-      - name: Authenticate to Google Cloud
+-        id: auth
+-        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+-        with:
+-          token_format: access_token
+-          workload_identity_provider: ${{ env.GCR_WORKLOAD_ID }}
+-          service_account: ${{ env.GCR_SERVICE_ACCOUNT }}
+ 
+-      - name: Login to GCR
+-        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
++      # Only staging (pkgs-test.nginx.com) needs the certificate for OSS packages.
++      - name: Setup NGINX package secrets
++        if: ${{ vars.OSS_REPO != 'packages.nginx.org' }}
++        uses: ./.github/actions/nginx-pkg-secrets
+         with:
+-          registry: gcr.io
+-          username: oauth2accesstoken
+-          password: ${{ steps.auth.outputs.access_token }}
++          client-id: ${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}
++          tenant-id: ${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}
++          vault-name: ${{ secrets.COMMON_KEYVAULT_NAME }}
+ 
+       - name: Docker meta
+         id: meta
+@@ -118,11 +110,19 @@ jobs:
+             BUILD_OS=${{ matrix.build_os }}
+             IC_VERSION=${{ needs.checks.outputs.ic_version }}
+             OSS_PACKAGE_REPO=${{ vars.OSS_REPO }}
++          secret-files: |
++            ${{ vars.OSS_REPO != 'packages.nginx.org' && 'nginx-repo.crt=nginx-repo.crt' || '' }}
++            ${{ vars.OSS_REPO != 'packages.nginx.org' && 'nginx-repo.key=nginx-repo.key' || '' }}
++
++      - name: Clean up secrets
++        run: |
++          rm -f nginx-repo.crt nginx-repo.key
++        if: always()
+ 
+   build-plus:
+     name: Build Plus base images
+-    if: github.repository == 'nginx/kubernetes-ingress'
+-    runs-on: ubuntu-26.04
++    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
++    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
+     needs: checks
+     permissions:
+       contents: read
+@@ -135,28 +135,19 @@ jobs:
+       - name: Checkout Repository
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+ 
+-      - name: Setup NIC secrets
+-        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
++      - name: Login to GCR
++        uses: ./.github/actions/vault-gcr-login
+         with:
+-          client-id: "${{ secrets.AZURE_VAULT_CLIENT_ID }}"
+-          tenant-id: "${{ secrets.AZURE_VAULT_TENANT_ID }}"
++          client-id: ${{ secrets.AZURE_VAULT_CLIENT_ID }}
++          tenant-id: ${{ secrets.AZURE_VAULT_TENANT_ID }}
+           vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
+-          secret-names: "gcr-workload-identity, kic-pipeline-gcr-sa"
+-          env-names: "GCR_WORKLOAD_ID, GCR_SERVICE_ACCOUNT"
+ 
+-      - name: Setup Common secrets
+-        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
++      - name: Setup NGINX package secrets
++        uses: ./.github/actions/nginx-pkg-secrets
+         with:
+-          client-id: "${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}"
+-          tenant-id: "${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}"
++          client-id: ${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}
++          tenant-id: ${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}
+           vault-name: ${{ secrets.COMMON_KEYVAU
 ```
 
-**File**: `renovate.json` (modified, +3/-2)
+**File**: `.github/workflows/build-single-image.yml` (modified, +10/-34)
 ```diff
-@@ -345,9 +345,10 @@
-   "customManagers": [
-     {
-       "customType": "regex",
--      "description": "Update version + sha pairs pinned with a `# renovate-digest:` comment in Github Actions workflows (e.g. the scout-cache action inputs in ci.yml)",
-+      "description": "Update version + sha pairs pinned with a `# renovate-digest:` comment in Github Actions workflows and composite actions (e.g. the scout-cache action inputs in ci.yml and security-scan)",
-       "managerFilePatterns": [
--        "/.github/workflows/.+\\.ya?ml$/"
-+        "/.github/workflows/.+\\.ya?ml$/",
-+        "/.github/actions/.+\\.ya?ml$/"
-       ],
-       "matchStrings": [
-         "version: (?<currentValue>\\S+)\\s+sha: (?<currentDigest>[a-f0-9]{40}) # renovate-digest: datasource=(?<datasource>[a-z-]+?) depName=(?<depName>\\S+)"
+@@ -62,8 +62,8 @@ jobs:
+     permissions:
+       contents: read # for docker/build-push-action to read repo content
+       id-token: write # for login to GCP
+-    if: github.repository == 'nginx/kubernetes-ingress'
+-    runs-on: ubuntu-26.04
++    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
++    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
+     steps:
+       - name: Checkout Repository
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+@@ -85,43 +85,19 @@ jobs:
+           echo "ic_version=${IC_VERSION}" >> $GITHUB_OUTPUT
+           cat $GITHUB_OUTPUT
+ 
+-      - name: Setup NIC secrets
+-        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
++      - name: Login to GCR
++        uses: ./.github/actions/vault-gcr-login
+         with:
+-          client-id: "${{ secrets.AZURE_VAULT_CLIENT_ID }}"
+-          tenant-id: "${{ secrets.AZURE_VAULT_TENANT_ID }}"
++          client-id: ${{ secrets.AZURE_VAULT_CLIENT_ID }}
++          tenant-id: ${{ secrets.AZURE_VAULT_TENANT_ID }}
+           vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
+-          secret-names: "gcr-workload-identity, kic-pipeline-gcr-sa"
+-          env-names: "GCR_WORKLOAD_ID, GCR_SERVICE_ACCOUNT"
+ 
+-      - name: Setup Common secrets
+-        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
++      - name: Setup NGINX package secrets
++        uses: ./.github/actions/nginx-pkg-secrets
+         with:
+-          client-id: "${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}"
+-          tenant-id: "${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}"
++          client-id: ${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}
++          tenant-id: ${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}
+           vault-name: ${{ secrets.COMMON_KEYVAULT_NAME }}
+-          secret-names: "nginx-pkg-certificate, nginx-pkg-key"
+-          env-names: "PLUS_CERT, PLUS_KEY"
+-
+-      - name: Write secrets
+-        run: |
+-          echo "$PLUS_CERT" > nginx-repo.crt
+-          echo "$PLUS_KEY" > nginx-repo.key
+-
+-      - name: Authenticate to Google Cloud
+-        id: auth
+-        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+-        with:
+-          token_format: access_token
+-          workload_identity_provider: ${{ env.GCR_WORKLOAD_ID }}
+-          service_account: ${{ env.GCR_SERVICE_ACCOUNT }}
+-
+-      - name: Login to GCR
+-        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+-        with:
+-          registry: gcr.io
+-          username: oauth2accesstoken
+-          password: ${{ steps.auth.outputs.access_token }}
+ 
+       - name: Fetch Cached Binary Artifacts
+         id: binary-cache
+```
+
+**File**: `.github/workflows/build-test-image.yml` (modified, +11/-27)
+```diff
+@@ -24,8 +24,8 @@ permissions:
+ jobs:
+   build:
+     name: Build test image
+-    if: github.repository == 'nginx/kubernetes-ingress'
+-    runs-on: ubuntu-26.04
++    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
++    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
+     permissions:
+       contents: read
+       id-token: write
+@@ -37,31 +37,17 @@ jobs:
+       - name: Docker Buildx
+         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+ 
+-      - name: Setup secrets
+-        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
+-        with:
+-          client-id: "${{ secrets.AZURE_VAULT_CLIENT_ID }}"
+-          tenant-id: "${{ secrets.AZURE_VAULT_TENANT_ID }}"
+-          vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
+-          secret-names: "gcr-workload-identity, kic-pipeline-gcr-sa"
+-          env-names: "GCR_WORKLOAD_ID, GCR_SERVICE_ACCOUNT"
+-
+-      - name: Authenticate to Google Cloud
+-        id: auth
+-        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+-        with:
+-          token_format: access_token
+-          workload_identity_provider: ${{ env.GCR_WORKLOAD_ID }}
+-          service_account: ${{ env.GCR_SERVICE_ACCOUNT }}
+-
++      # Internal pushes the test-runner image to GCR (vars.TEST_RUNNER_REGISTRY); public pushes to GHCR only.
+       - name: Login to GCR
+-        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
++        if: ${{ github.repository == 'nginx/kubernetes-ingress-internal' }}
++        uses: ./.github/actions/vault-gcr-login
+         with:
+-          registry: gcr.io
+-          username: oauth2accesstoken
+-          password: ${{ steps.auth.outputs.access_token }}
++          client-id: ${{ secrets.AZURE_VAULT_CLIENT_ID }}
++          tenant-id: ${{ secrets.AZURE_VAULT_TENANT_ID }}
++          vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
+ 
+       - name: Login to GHCR
++        if: ${{ github.repository == 'nginx/kubernetes-ingress' }}
+         uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
+         with:
+           registry: ghcr.io
+@@ -75,9 +61,7 @@ jobs:
+           context: "."
+           cache-from: type=gha,scope=test-runner
+           tags: |
+-            ghcr.io/nginx/kubernetes-ingress/test-runner:${{ hashFiles('./tests/requirements.txt', './tests/Dockerfile') }}
+-            ghcr.io/nginx/kubernetes-ingress/test-runner:latest
+-            gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev/test-runner:${{ hashFiles('./tests/requirements.txt', './tests/Dockerfile') }}
+-            gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev/test-runner:latest
++            ${{ vars.TEST_RUNNER_REGISTRY || 'ghcr.io/nginx/kubernetes-ingress' }}/test-runner:${{ hashFiles('./tests/requirements.txt', './tests/Dockerfile') || 'latest' }}
++            ${{ vars.TEST_RUNNER_REGISTRY || 'ghcr.io/nginx/kubernetes-ingress' }}/test-runner:latest
+           pull: true
+           push: true
+```
+
+**File**: `.github/workflows/build-ubi-dependency.yml` (modified, +5/-9)
+```diff
+@@ -23,7 +23,7 @@ jobs:
+   build-binaries:
+     name: Build Binary Container Image
+     if: github.repository == 'nginx/kubernetes-ingress'
+-    runs-on: ubuntu-26.04
++    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
+     permissions:
+       packages: write
+       contents: read
+@@ -45,20 +45,16 @@ jobs:
+           secret-names: "rhel-creds"
+           env-names: "RHEL_CREDS"
+ 
+-      - name: Setup Common secrets
+-        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
++      - name: Setup NGINX package secrets
++        uses: ./.github/actions/nginx-pkg-secrets
+         with:
+-          client-id: "${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}"
+-          tenant-id: "${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}"
++          client-id: ${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}
++          tenant-id: ${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}
+           vault-name: ${{ secrets.COMMON_KEYVAULT_NAME }}
+-          secret-names: "nginx-pkg-certificate, nginx-pkg-key"
+-          env-names: "PLUS_CERT, PLUS_KEY"
+ 
+       - name: Write secrets
+         run: |
+           echo "$RHEL_CREDS" > rhel_license
+-          echo "$PLUS_CERT" > nginx-repo.crt
+-          echo "$PLUS_KEY" > nginx-repo.key
+ 
+       - name: Setup QEMU
+         uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+```
+
+**File**: `.github/workflows/lint-format.yml` (modified, +16/-12)
+```diff
+@@ -4,6 +4,10 @@ on:
+   pull_request:
+     branches:
+       - main
++      - embargo/security-fixes*
++      - embargo/security-fixes-work/**
++    paths-ignore:
++      - .github/permissions-tracking.md
+   merge_group:
+ 
+ defaults:
+@@ -21,8 +25,8 @@ jobs:
+ 
+   format:
+     name: Format
+-    if: github.repository == 'nginx/kubernetes-ingress'
+-    runs-on: ubuntu-26.04
++    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
++    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
+     steps:
+       - name: Checkout Repository
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+@@ -39,8 +43,8 @@ jobs:
+ 
+   lint:
+     name: Lint
+-    if: github.repository == 'nginx/kubernetes-ingress'
+-    runs-on: ubuntu-26.04
++    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
++    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
+     permissions:
+       contents: read
+       pull-requests: read # for golangci-lint-action
+@@ -67,8 +71,8 @@ jobs:
+ 
+   python-unit:
+     name: Python Test Utils Unit Tests
+-    if: github.repository == 'nginx/kubernetes-ingress'
+-    runs-on: ubuntu-26.04
++    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
++    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
+     steps:
+       - name: Checkout Repository
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+@@ -87,8 +91,8 @@ jobs:
+ 
+   actionlint:
+     name: Actionlint
+-    if: github.repository == 'nginx/kubernetes-ingress'
+-    runs-on: ubuntu-26.04
++    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
++    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
+     steps:
+       - name: Checkout Repository
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+@@ -104,8 +108,8 @@ jobs:
+ 
+   chart-lint:
+     name: Chart Lint
+-    if: github.repository == 'nginx/kubernetes-ingress'
+-    runs-on: ubuntu-26.04
++    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
++    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
+     steps:
+       - name: Checkout Repository
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+@@ -120,8 +124,8 @@ jobs:
+ 
+   markdown-lint:
+     name: Markdown Lint
+-    if: github.repository == 'nginx/kubernetes-ingress'
+-    runs-on: ubuntu-26.04
++    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
++    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
+     steps:
+       - name: Checkout Repository
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+```
+
+**File**: `.github/workflows/pull-nap-images.yml` (modified, +6/-23)
+```diff
+@@ -30,35 +30,18 @@ jobs:
+     permissions:
+       contents: read
+       id-token: write
+-    if: github.repository == 'nginx/kubernetes-ingress'
+-    runs-on: ubuntu-24.04-amd64
++    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
++    runs-on: ${{ vars.RELEASE_RUNNER || 'ubuntu-24.04-amd64' }}
+     steps:
+       - name: Checkout Repository
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+ 
+-      - name: Setup NIC secrets
+-        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
+-        with:
+-          client-id: "${{ secrets.AZURE_VAULT_CLIENT_ID }}"
+-          tenant-id: "${{ secrets.AZURE_VAULT_TENANT_ID }}"
+-          vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
+-          secret-names: "gcr-workload-identity, kic-pipeline-gcr-sa"
+-          env-names: "GCR_WORKLOAD_ID, GCR_SERVICE_ACCOUNT"
+-
+-      - name: Authenticate to Google Cloud
+-        id: gcr-auth
+-        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+-        with:
+-          token_format: access_token
+-          workload_identity_provider: ${{ env.GCR_WORKLOAD_ID }}
+-          service_account: ${{ env.GCR_SERVICE_ACCOUNT }}
+-
+       - name: Login to GCR
+-        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
++        uses: ./.github/actions/vault-gcr-login
+         with:
+-          registry: gcr.io
+-          username: oauth2accesstoken
+-          password: ${{ steps.gcr-auth.outputs.access_token }}
++          client-id: ${{ secrets.AZURE_VAULT_CLIENT_ID }}
++          tenant-id: ${{ secrets.AZURE_VAULT_TENANT_ID }}
++          vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
+ 
+       - name: Get Id Token
+         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+```
+
+**File**: `.github/workflows/retag-images.yml` (modified, +6/-23)
+```diff
+@@ -34,38 +34,21 @@ permissions:
+ jobs:
+   copy-to-gcr-dev-registry:
+     name: Re-tag images in GCR Dev Registry
+-    if: github.repository == 'nginx/kubernetes-ingress'
+-    runs-on: ubuntu-26.04
++    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
++    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
+     permissions:
+       contents: read
+       id-token: write
+     steps:
+       - name: Checkout Repository
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+ 
+-      - name: Setup secrets
+-        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
+-        with:
+-          client-id: "${{ secrets.AZURE_VAULT_CLIENT_ID }}"
+-          tenant-id: "${{ secrets.AZURE_VAULT_TENANT_ID }}"
+-          vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
+-          secret-names: "gcr-workload-identity, kic-pipeline-gcr-sa"
+-          env-names: "GCR_WORKLOAD_ID, GCR_SERVICE_ACCOUNT"
+-
+-      - name: Authenticate to Google Cloud
+-        id: gcr-auth
+-        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+-        with:
+-          token_format: access_token
+-          workload_identity_provider: ${{ env.GCR_WORKLOAD_ID }}
+-          service_account: ${{ env.GCR_SERVICE_ACCOUNT }}
+-
+       - name: Login to GCR
+-        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
++        uses: ./.github/actions/vault-gcr-login
+         with:
+-          registry: gcr.io
+-          username: oauth2accesstoken
+-          password: ${{ steps.gcr-auth.outputs.access_token }}
++          client-id: ${{ secrets.AZURE_VAULT_CLIENT_ID }}
++          tenant-id: ${{ secrets.AZURE_VAULT_TENANT_ID }}
++          vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
+ 
+       - name: Retag images
+         run: |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11451** (2026-11-17): [ci] Phase 2 - Unifying workflow files (@sean-breen)
+- **PR #11450** (2026-11-17): Update module github.com/aws/aws-sdk-go-v2/credentials to v1.21.1 (release-5.8) (@renovate[bot])
+- **PR #11449** (2026-11-17): Update balabit/syslog-ng Docker tag to v4.13.0 (main) (@renovate[bot])
+- **PR #11448** (2026-11-17): Update module github.com/aws/aws-sdk-go-v2/credentials to v1.21.1 (main) (@renovate[bot])
+- **PR #11447** (2026-11-16): renovate config for makefile ubi10 (@nic-create-pr[bot])
 - **PR #11446** (2026-11-16): renovate config for makefile ubi10 (@vepatel)
-- **PR #11445** (2026-11-16): [ci] 1.5-5.8: Add security-scan composite action- #11420 (@javorszky)
-- **PR #11443** (2026-11-16): user gh var for plm helm chart (@vepatel)
-- **PR #11441** (2026-11-16): update lts version (@vepatel)
-- **PR #11427** (2026-11-13): update versions for 5.8.0 release (@vepatel)
-- **PR #11426** (2026-11-13): Update version bump job condition to include both repositories (@pdabelf5)
 
 ---
 
@@ -1693,35 +2000,39 @@ Co-authored-by: Copilot Autofix powered by AI <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ci] 1.5: Add security-scan composite action
+## X. [ci] Phase 2 - Unifying workflow files
 
 **RULE**:
-When implementing operations in `.github/actions/azure-blob/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/actions/resolve-test-runner/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `11830790`: [ci] 1.5: Add security-scan composite action. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `10b9eec3`: [ci] Phase 2 - Unifying workflow files. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/azure-blob/action.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/resolve-test-runner/action.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        DRY_RUN: ${{ inputs.dry-run }}
-        echo "Uploading '$PATTERN' from '$src':"
-        if [ "$DRY_RUN" = "true" ]; then
-          echo "dry-run: skipping upload of $found file(s)"
-        fi
+name: Resolve test runner
+#         runner: ${{ steps.test-runner.outputs.runner }}
+#         test_runner_image: ${{ steps.test-runner.outputs.test_runner_image }}
+#         - id: test-runner
+#           uses: ./.github/actions/resolve-test-runner
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+name: Setup CI vars
+#         runner: ${{ steps.ci-vars.outputs.runner }}
+#         test_runner_image: ${{ steps.ci-vars.outputs.test_runner_image }}
+#         - id: ci-vars
+#           uses: ./.github/actions/setup-ci-vars
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `11830790` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `10b9eec3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

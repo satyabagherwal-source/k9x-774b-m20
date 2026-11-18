@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-T54Z",
-    "timestamp": "2026-11-16T22:19:30.755Z",
-    "repository": "crate/crate",
-    "learningId": "learn-github-crate-crate",
-    "contentHash": "a8f7fdff6627b84b88323e7709e495bdd1955ea34bcb5cd225e9ba6621ecb7ee",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-C2NO",
-    "timestamp": "2026-11-16T22:34:14.004Z",
-    "repository": "nodejs/undici",
-    "learningId": "learn-github-nodejs-undici",
-    "contentHash": "beca9c504d3f8df08ae52a1cf2c5103fc1d56814f4cc3117c01cddad8d55aab8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-T4JW",
-    "timestamp": "2026-11-16T22:47:29.612Z",
-    "repository": "metalbear-co/mirrord",
-    "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "26d0be52e8736ea8256f7f37d1d95bd270837cc38703df6b5fe5bd8d2e5ad330",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-T6GJ",
     "timestamp": "2026-11-16T22:47:32.083Z",
     "repository": "axios/axios",
@@ -7490,6 +7445,51 @@
     "repository": "NucleoidAI/Nucleoid",
     "learningId": "learn-github-nucleoidai-nucleoid",
     "contentHash": "da3514bcbe6892f81195fc280b67fe8f43097401c35857bf7cb35b7a61839ed7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-KYEO",
+    "timestamp": "2026-11-18T10:08:39.216Z",
+    "repository": "sentence-transformers/all-MiniLM-L6-v2",
+    "learningId": "learn-huggingface-sentence-transformers-all-minilm-l6-v2",
+    "contentHash": "c31d38ca2f2865f20e4c49f3278fba49ca581f7d8bfc3a18f6632794f691064c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-L502",
+    "timestamp": "2026-11-18T10:08:47.762Z",
+    "repository": "nginx/kubernetes-ingress",
+    "learningId": "learn-github-nginx-kubernetes-ingress",
+    "contentHash": "4d97eab80f8789d70b10b2d90f90a4336b4eeaff94a3d884b4e461ff8160cfec",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-L9QI",
+    "timestamp": "2026-11-18T10:08:53.898Z",
+    "repository": "milvus-io/milvus",
+    "learningId": "learn-github-milvus-io-milvus",
+    "contentHash": "d966e46438ba3b5e24f152ddb9db6516cc2df74b18cc2e9992d87973fc510c6a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

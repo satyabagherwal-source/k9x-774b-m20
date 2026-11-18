@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T09:57:34.917Z",
+  "last_updated": "2026-11-18T10:08:58.459Z",
   "total_records": 1816,
   "domains": {
     "A": {
@@ -8843,8 +8843,8 @@
       "title": "Technical Construction Intelligence: milvus-io/milvus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-technical-construction-intelligence-milvus-io-milvus-core-invar.md",
       "repository": "milvus-io/milvus",
-      "content_hash": "0b035169a68481fdea9bfff80314f002570615b697b99e243866d0a22f2b67a7",
-      "created_at": "2026-11-16T13:38:33.344Z"
+      "content_hash": "d7ffd4e3741e2ff89dadc1fd3740e5c2a6b7ee2f4060e71885105564379fe9a9",
+      "created_at": "2026-11-18T10:08:54.227Z"
     },
     "DOM-D-E7346FF5": {
       "record_id": "DOM-D-E7346FF5",
@@ -8903,8 +8903,8 @@
       "title": "Technical Construction Intelligence: milvus-io-milvus-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-milvus-io-milvus-learnings-technical-construction-intelligence-milvus-io-milvus-.md",
       "repository": "milvus-io-milvus-learnings",
-      "content_hash": "5547acb646807a763327f7fffd03e2366d9dd86469dea472cbd6a238ca9cccfd",
-      "created_at": "2026-11-15T02:35:54.871Z"
+      "content_hash": "54ed1502bcfe202799cca16a00d812b06bff529c6937a2887cc60f9ecf95c1b6",
+      "created_at": "2026-11-18T10:08:58.459Z"
     },
     "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-akatz-ai-minimax-h3-character-swap-lora-core-inv",
@@ -24065,8 +24065,8 @@
       "title": "Architecture Intelligence: nginx/kubernetes-ingress Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-architecture-intelligence-nginx-kubernetes-ingress-core.md",
       "repository": "nginx/kubernetes-ingress",
-      "content_hash": "b35223d0ade5ecc5d973d677c327cfb4f61b040a3540fc2bb81db19c52f34931",
-      "created_at": "2026-11-17T17:20:22.894Z"
+      "content_hash": "458d467e9824f67c5ed1b3a3848116d2914d0656bc31f7801f4cd593fb16f564",
+      "created_at": "2026-11-18T10:08:48.091Z"
     },
     "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants",
@@ -24083,8 +24083,8 @@
       "title": "Architecture Intelligence: nginx-kubernetes-ingress-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-learnings-architecture-intelligence-nginx-kubernetes-in.md",
       "repository": "nginx-kubernetes-ingress-learnings",
-      "content_hash": "21f6ca572a7af3ed11ac982cb3a2cca2d21c0c454d1cea7d9734b51b75a1a60a",
-      "created_at": "2026-11-16T18:10:59.434Z"
+      "content_hash": "14b1c481b04ac48f23c9d464a67175dca7925a9461c6c4f2c7745443350b71a0",
+      "created_at": "2026-11-18T10:08:57.819Z"
     },
     "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants",
@@ -28556,8 +28556,8 @@
       "title": "Research & Knowledge Intelligence: sentence-transformers/all-MiniLM-L6-v2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-all-minilm-l6-v2-research-knowledge-intelligence-senten.md",
       "repository": "sentence-transformers/all-MiniLM-L6-v2",
-      "content_hash": "25deb2987cfaf9f50d52cd95d19bafe4263d628bbeb534a552f1fac9b587fd25",
-      "created_at": "2026-11-17T20:45:30.053Z"
+      "content_hash": "0ae4d99db93a13cc086ac96f227a01268acea9e5ee6ffbbe4306132c78b11f4a",
+      "created_at": "2026-11-18T10:08:39.404Z"
     },
     "domain_intelligence-technical-construction-intelligence-kubeedge-kubeedge-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kubeedge-kubeedge-core-invariants",
@@ -28574,8 +28574,8 @@
       "title": "Research & Knowledge Intelligence: hf-sentence-transformers-all-minilm-l6-v2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-all-minilm-l6-v2-learnings-research-knowledge-intellige.md",
       "repository": "hf-sentence-transformers-all-minilm-l6-v2-learnings",
-      "content_hash": "110aadd30db565c8fee6d9b2e8d4c7a2350dd7ca51205e92d3d557dcd05a522e",
-      "created_at": "2026-11-17T20:45:44.601Z"
+      "content_hash": "e7bfac092fc2d551010045ce8c222fd5fe25fc3912ee0962d069a6ae694b2adc",
+      "created_at": "2026-11-18T10:08:57.302Z"
     },
     "domain_intelligence-technical-construction-intelligence-kubeedge-kubeedge-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kubeedge-kubeedge-learnings-core-invariants",
