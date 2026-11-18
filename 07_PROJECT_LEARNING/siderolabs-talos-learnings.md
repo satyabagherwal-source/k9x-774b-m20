@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `23d2aaec`  
+> **Source Version**: `95d1059a`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T19:53:39.586Z  
+> **Timestamp**: 2026-11-18T13:08:59.593Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T19:53:39.473Z  
+> **Harvest Timestamp**: 2026-11-18T13:08:59.586Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11547 stars
+- **Stars / Engagement**: 11561 stars
 
 ---
 
@@ -2132,287 +2132,175 @@ func a
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b04d378c` (2026-11-17)
-**Commit Message**: fix: allow two busy unmounts in TestUnmountBusy
+### Incident Patch 1: `d29d9863` (2026-11-13)
+**Commit Message**: fix: keep foreign bridge ports enslaved across settings changes
 
-Point.Unmount retries EBUSY for up to 5s. "b-other" can wait behind
-two busy attempts on "a-busy": one in an iteration that ran before
-its teardown, one in the iteration that handles it. That is ~10s,
-the default assertion timeout, so the test flaked in CI.
+Changing a bridge's settings unslaves every port first, but only ports
+with a LinkSpec were ever put back, by their own master sync. A port
+Talos does not manage, such as a virtual machine tap, was left off the
+bridge for good.
 
-Raise the "b-other" assertion timeout to 20s and keep the teardown
-order, so a controller that stalls on the busy mount still fails.
+Remember the ports removed and re-enslave them once the settings are
+applied.
 
 Signed-off-by: Mateusz Urbanek <[REDACTED_EMAIL]>
 
-**File**: `internal/app/machined/pkg/controllers/block/mount_test.go` (modified, +8/-1)
+**File**: `internal/app/machined/pkg/controllers/network/link_spec.go` (modified, +30/-10)
 ```diff
-@@ -5,11 +5,13 @@
- package block_test
+@@ -274,6 +274,18 @@ func rawLinkData(link *rtnetlink.LinkMessage) []byte {
+ 	return linkData.Data
+ }
  
- import (
-+	"context"
- 	"os"
- 	"path/filepath"
- 	"testing"
- 	"time"
- 
-+	"github.com/cosi-project/runtime/pkg/resource/rtestutils"
- 	"github.com/stretchr/testify/assert"
- 	"github.com/stretchr/testify/suite"
- 
-@@ -212,7 +214,12 @@ func (suite *MountSuite) TestUnmountBusy() {
- 		suite.Require().NoError(err)
- 	}
- 
--	ctest.AssertResource(suite, "b-other", func(mountRequest *block.MountRequest, asrt *assert.Assertions) {
-+	// each busy unmount attempt blocks for ~5s retrying EBUSY, and "b-other" may wait behind two of them:
-+	// one in an iteration that ran before its teardown, one in the iteration handling it
-+	ctx, cancel := context.WithTimeout(suite.Ctx(), 20*time.Second)
-+	defer cancel()
-+
-+	rtestutils.AssertResource(ctx, suite.T(), suite.State(), "b-other", func(mountRequest *block.MountRequest, asrt *assert.Assertions) {
- 		asrt.True(mountRequest.Metadata().Finalizers().Empty())
- 	})
- 
-```
-
----
-
-### Incident Patch 2: `a3f33fd5` (2026-11-16)
-**Commit Message**: fix: use multihop BFD for ebgpMultiHop neighbors
-
-BuildPeer never set the GoBGP BFD multihop flag, so BFD to an
-ebgpMultiHop neighbor ran as single-hop BFD on port 3784. Single-hop
-BFD (RFC 5881) drops packets with a TTL below 255, and packets from
-a peer more than one hop away arrive with a lower TTL, so the BFD
-session never came up.
-
-Enable multihop BFD (RFC 5883) when the neighbor's TTL is above 1.
-
-Fixes: #14971
-
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
-
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/bgp.go` (modified, +2/-0)
-```diff
-@@ -76,6 +76,8 @@ func BuildPeer(peer Peer, multipath bool) *gobgpapi.Peer {
- 			DesiredMinimumTxInterval: uint32(peer.Config.BFD.TransmitInterval.Microseconds()),
- 			RequiredMinimumReceive:   uint32(peer.Config.BFD.ReceiveInterval.Microseconds()),
- 			DetectionMultiplier:      uint32(peer.Config.BFD.DetectMultiplier),
-+			// single-hop BFD (RFC 5881) drops packets with a TTL below 255
-+			Multihop: peer.Config.EBGPMultiHop > 1,
- 		}
- 	}
- 
-```
-
-**File**: `internal/app/machined/pkg/controllers/network/internal/bgp/bgp_test.go` (modified, +11/-0)
-```diff
-@@ -57,9 +57,20 @@ func TestBuildPeer(t *testing.T) {
- 	assert.Equal(t, uint32(300000), peer.GetBfd().GetDesiredMinimumTxInterval())
- 	assert.Equal(t, uint32(400000), peer.GetBfd().GetRequiredMinimumReceive())
- 	assert.Equal(t, uint32(3), peer.GetBfd().GetDetectionMultiplier())
-+	assert.True(t, peer.GetBfd().GetMultihop(), "BFD to a multihop neighbor must use multihop BFD")
- 	require.Len(t, peer.GetAfiSafis(), 2)
- 	assert.True(t, peer.GetAfiSafis()[0].GetUseMultiplePaths().GetConfig().GetEnabled())
- 	assert.True(t, peer.GetAfiSafis()[1].GetUseMultiplePaths().GetConfig().GetEnabled())
-+
-+	singleHop := internalbgp.BuildPeer(internalbgp.Peer{
-+		Address: "192.0.2.1",
-+		Config: network.BGPNeighborConfigSpec{
-+			PeerASN: 65002,
-+			BFD:     &network.BGPBFDConfigSpec{},
++// setLinkMaster enslaves link under the master with the given index; zero unslaves it.
++func setLinkMaster(conn *rtnetlink.Conn, link rtnetlink.LinkMessage, masterIndex uint32) error {
++	return conn.Link.Set(&rtnetlink.LinkMessage{
++		Family: link.Family,
++		Type:   link.Type,
++		Index:  link.Index,
++		Attributes: &rtnetlink.LinkAttributes{
++			Master: new(masterIndex),
 +		},
-+	}, false)
-+
-+	assert.False(t, singleHop.GetBfd().GetMultihop())
- }
- 
- func TestBuildOriginatedPath(t *testing.T) {
-```
-
----
-
-### Incident Patch 3: `26aa4126` (2026-11-15)
-**Commit Message**: fix: detach the host /proc in the sandbox namespace
-
-sandboxd mounted a procfs scoped to its PID namespace over the host
-/proc it inherited. A privileged pod that entered the sandbox mount
-namespace could unmount the scoped /proc and get the host /proc back,
-with machined's fds and detached mounts.
-
-sandboxd now detaches the host /proc and mounts the scoped one on the
-rootfs /proc dir. That mount sits on the root mount, which is a peer
-of machined's, so it would cover machined's /proc: the root mount
-alone is made a slave first.
-
-A mount made directly on the root after that arrives in the sandbox
-as a slave, and mounts made under it in the sandbox stop reaching
-machined. sandboxd now waits for the volumes CRI uses, so /var and
-/opt are copied in as peers, and it is stopped with the ephemeral
-services since it holds them.
-
-Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
-
-**File**: `internal/app/machined/pkg/runtime/v1alpha1/v1alpha1_sequencer_tasks.go` (modified, +3/-1)
-```diff
-@@ -428,7 +428,9 @@ func PreShutdownServices(runtime.Sequence, any) (runtime.TaskExecutionFunc, stri
- func StopServicesEphemeral(runtime.Sequence, any) (runtime.TaskExecutionFunc, string) {
- 	return func(ctx context.Context, logger *log.Logger, r runtime.Runtime) (err error) {
- 		// stopping 'cri' service stops everything which depends on it (kubelet, etcd, ...)
--		return system.Services(r).StopWithRevDepenencies(ctx, "cri", "trustd")
-+		//
-+		// sandboxd holds the same volumes as cri, so it is stopped as well.
-+		return system.Services(r).StopWithRevDepenencies(ctx, "cri", "trustd", sandboxd.ServiceID)
- 	}, "stopServicesForUpgrade"
- }
- 
-```
-
-**File**: `internal/app/machined/pkg/sandboxd/init.go` (modified, +50/-10)
-```diff
-@@ -25,6 +25,7 @@ import (
- 
- 	"github.com/siderolabs/talos/internal/pkg/selinux"
- 	"github.com/siderolabs/talos/pkg/machinery/constants"
-+	"github.com/siderolabs/talos/pkg/xfs/fsopen"
- )
- 
- // Control protocol between machined (Client) and sandboxd.
-@@ -96,6 +97,53 @@ func ignoreTerminationSignals() func() {
- 	return func() { signal.Stop(signals) }
- }
- 
-+// scopeProc replaces the inherited host /proc with one scoped to THIS PID namespace.
-+//
-+// The host /proc is detached rather than overmounted: unmounting an overmount
-+// exposes the host /proc again, with machined's fds and detached mounts.
-+//
-+// Only the root mount is made a slave: the scoped /proc lands on it and must not
-+// cover machined's /proc. The mounts under it stay peers of machined's (sandboxd
-+// starts once the volumes CRI uses are mounted, see services.Sandboxd).
-+// /proc is made private so detaching it does not detach machined's /proc.
-+func scopeProc() error {
-+	if err := unix.MountSetattr(unix.AT_FDCWD, "/", 0, &unix.MountAttr{Propagation: unix.MS_SLAVE}); err != nil {
-+		return fmt.Errorf("make / a slave: %w", err)
-+	}
-+
-+	if err := unix.MountSetattr(unix.AT_FDCWD, "/", 0, &unix.MountAttr{Propagation: unix.MS_SHARED}); err != nil {
-+		return fmt.Errorf("make / shared: %w", err)
-+	}
-+
-+	if err := unix.MountSetattr(unix.AT_FDCWD, "/proc", unix.AT_RECURSIVE, &unix.MountAttr{Propagation: unix.MS_PRIVATE}); err != nil {
-+		return fmt.Errorf("make /proc private: %w", err)
-+	}
-+
-+	if err := unix.Unmount("/proc", unix.MNT_DETACH); err != nil {
-+		return fmt.Errorf("detach host /proc: %w", err)
-+	}
-+
-+	procfs := fsopen.New("proc")
-+	defer procfs.Close() //nolint:errcheck
-+
-+	fd, err := procfs.Open()
-+	if err != nil {
-+		return fmt.Errorf("create scoped /proc: %w", err)
-+	}
-+
-+	if err = unix.MountSetattr(fd, "", unix.AT_EMPTY_PATH, &unix.MountAttr{
-+		Attr_set: unix.MOUNT_ATTR_NOSUID | unix.MOUNT_ATTR_NODEV | unix.MOUNT_ATTR_NOEXEC,
-+	}); err != nil {
-+		return fmt.Errorf("harden scoped /proc: %w", err)
-+	}
-+
-+	if _, err = procfs.MountAt("/proc"); err != nil {
-+		return fmt.Errorf("mount scoped /proc: %w", err)
-+	}
-+
-+	return nil
++	})
 +}
 +
- // Main is the entry point for the sandboxd subprocess. It is PID 1 of
- // the sandbox PID+mount namespace and:
- //  1. protects itself from the OOM killer and scopes /proc to this PID namespace,
-@@ -107,16 +155,8 @@ func Main() {
- 	// else: its death collapses the entire namespace.
- 	setSelfOOMScoreAdj(oomScoreAdjInit)
+ func verifyVethPeers(links []rtnetlink.LinkMessage, name, peerName string) error {
+ 	nameLink := findLink(links, name, false)
+ 	if nameLink == nil {
+@@ -818,21 +830,18 @@ func (ctrl *LinkSpecController) syncLink(ctx context.Context, r controller.Runti
+ 					return fmt.Errorf("error changing flags for %q: %w", link.TypedSpec().Name, err)
+ 				}
  
--	// Make /proc private so the overmount below stays in this mount namespace,
--	// then remount /proc scoped to THIS PID namespace.
--	if err := syscall.Mount("", "/proc", "", syscall.MS_PRIVATE|syscall.MS_REC, ""); err != nil {
--		logf("make /proc private: %v", err)
--		os.Exit(1)
--	}
--
--	if err := syscall.Mount("proc", "/proc", "proc",
--		syscall.MS_NOSUID|syscall.MS_NOEXEC|syscall.MS_NODEV, ""); err != nil {
--		logf("remount /proc: %v", err)
-+	if err := scopeProc(); err != nil {
-+		logf("%v", err)
- 		os.Exit(1)
- 	}
+-				// unslave all slaves
++				// unslave all slaves, remembering them: ports this controller does not manage (e.g.
++				// virtual machine taps) would otherwise never be put back
++				var unslaved []int
++
+ 				for i, slave := range *links {
+ 					if slave.Attributes.Master != nil && *slave.Attributes.Master == existing.Index {
+-						if err = conn.Link.Set(&rtnetlink.LinkMessage{
+-							Family: slave.Family,
+-							Type:   slave.Type,
+-							Index:  slave.Index,
+-							Attributes: &rtnetlink.LinkAttributes{
+-								Master: new(uint32(0)),
+-							},
+-						}); err != nil {
+-							return fmt.Errorf("error unslaving link %q under %q: %w", slave.Attributes.Name, link.TypedSpec().BridgeSlave.MasterName, err)
++						if err = setLinkMaster(conn, slave, 0); err != nil {
++							return fmt.Errorf("error unslaving link %q under %q: %w", slave.Attributes.Name, link.TypedSpec().Name, err)
+ 						}
  
+ 						(*links)[i].Attributes.Master = nil
++						unslaved = append(unslaved, i)
+ 					}
+ 				}
+ 
+@@ -854,6 +863,17 @@ func (ctrl *LinkSpecController) syncLink(ctx context.Context, r controller.Runti
+ 					return fmt.Errorf("error updating bridge settings for %q: %w", link.TypedSpec().Name, err)
+ 				}
+ 
++				// re-enslave the ports removed above
++				for _, i := range unslaved {
++					slave := (*links)[i]
++
++					if err = setLinkMaster(conn, slave, existing.Index); err != nil {
++						return fmt.Errorf("error re-enslaving link %q under %q: %w", slave.Attributes.Name, link.TypedSpec().Name, err)
++					}
++
++					(*links)[i].Attributes.Master = new(existing.Index)
++				}
++
+ 				logger.Info("updated bridge settings")
+ 			}
+ 		}
 ```
 
-**File**: `internal/app/machined/pkg/system/services/sandboxd.go` (modified, +6/-2)
+**File**: `internal/app/machined/pkg/controllers/network/link_spec_test.go` (modified, +77/-0)
 ```diff
-@@ -55,8 +55,12 @@ func (s *Sandboxd) DependsOn(runtime.Runtime) []string {
+@@ -1191,6 +1191,83 @@ func (suite *LinkSpecSuite) TestBridge() {
+ 	ctest.AssertNoResource[*network.LinkStatus](suite, bridgeName)
  }
  
- // Volumes implements the Service interface.
--func (s *Sandboxd) Volumes(runtime.Runtime) []string {
--	return nil
-+//
-+// The sandbox root is a slave of the host root: a mount made directly on it after
-+// sandboxd starts arrives as a slave, and mounts under it in the sandbox no longer
-+// reach machined. Waiting for the volumes CRI uses copies them in as peers.
-+func (s *Sandboxd) Volumes(r runtime.Runtime) []string {
-+	return (&CRI{}).Volumes(r)
- }
- 
- // HealthFunc implements the HealthcheckedService interface. The namespace is
-```
-
-**File**: `internal/pkg/selinux/policy/file_contexts` (modified, +1/-0)
-```diff
-@@ -18,6 +18,7 @@
- /bin	system_u:object_r:bin_exec_t:s0
- /lib	system_u:object_r:lib_t:s0
- /sbin	system_u:object_r:bin_exec_t:s0
-+/proc	-d	system_u:object_r:procfs_t:s0
- /lib64	system_u:object_r:lib_t:s0
- /usr/sbin	system_u:object_r:bin_exec_t:s0
- /usr/lib64	system_u:object_r:lib_t:s0
-```
-
-**File**: `internal/pkg/selinux/policy/selinux/immutable/fs.cil` (modified, +2/-0)
-```diff
-@@ -50,6 +50,8 @@
- (type procfs_t)
- (call filesystem_f (procfs_t))
- (context procfs_t (system_u object_r procfs_t (systemLow systemLow)))
-+; The /proc mountpoint on the rootfs: sandboxd mounts its scoped procfs here once the host one is detached.
-+(filecon "/proc" dir (system_u object_r procfs_t (systemLow systemLow)))
- (genfscon proc "/" procfs_t)
- (genfscon proc "/sysvipc" procfs_t)
- 
-```
-
-**File**: `internal/pkg/selinux/policy/selinux/services/sandboxd.cil` (modified, +3/-2)
-```diff
-@@ -29,8 +29,9 @@
- (allow sandboxd_t service_exec_f (file (execute)))
- (allow sandboxd_t service_exec_f (fs_classes (ro)))
- 
--; Anchor the namespace: overmount a fresh procfs scoped to the new PID namespace.
--(allow sandboxd_t procfs_t (filesystem (mount remount)))
-+; Anchor the namespace: replace the host procfs with a fresh one scoped to the new PID namespace.
-+; Once the host procfs is detached, the mountpoint is the /proc dir of the rootfs, also procfs_t.
-+(allow sandboxd_t procfs_t (filesystem (mount remount unmount)))
- (allow sandboxd_t procfs_t (dir (mounton)))
- 
- ; Control + per-service SEQPACKET sockets are created by machined (init_t).
++// TestBridgeKeepsForeignPorts verifies that a bridge settings change does not leave a port the
++// controller does not manage (e.g. a virtual machine tap) unslaved.
++func (suite *LinkSpecSuite) TestBridgeKeepsForeignPorts() {
++	bridgeName := uniqueDummyInterface()
++	bridge := network.NewLinkSpec(network.NamespaceName, bridgeName)
++	*bridge.TypedSpec() = network.LinkSpecSpec{
++		Name:        bridgeName,
++		Type:        nethelpers.LinkEther,
++		Kind:        network.LinkKindBridge,
++		Up:          true,
++		Logical:     true,
++		ConfigLayer: network.ConfigDefault,
++	}
++
++	suite.Create(bridge)
++
++	var bridgeIndex uint32
++
++	ctest.AssertResource(suite, bridgeName, func(r *network.LinkStatus, asrt *assert.Assertions) {
++		asrt.Equal(network.LinkKindBridge, r.TypedSpec().Kind)
++
++		bridgeIndex = r.TypedSpec().Index
++	})
++
++	conn, err := rtnetlink.Dial(nil)
++	suite.Require().NoError(err)
++
++	defer conn.Close() //nolint:errcheck
++
++	foreignName := uniqueDummyInterface()
++
++	suite.Require().NoError(conn.Link.New(&rtnetlink.LinkMessage{
++		Type: uint16(nethelpers.LinkEther),
++		Attributes: &rtnetlink.LinkAttributes{
++			Name:   foreignName,
++			Master: new(bridgeIndex),
++			Info: &rtnetlink.LinkInfo{
++				Kind: "dummy",
++				Data: &rtnetlink.LinkData{Name: "dummy"},
++			},
++		},
++	}))
++
++	defer func() {
++		if iface, ifaceErr := net.InterfaceByName(foreignName); ifaceErr == nil {
++			conn.Link.Delete(uint32(iface.Index)) //nolint:errcheck
++		}
++	}()
++
++	ctest.AssertResource(suite, foreignName, func(r *network.LinkStatus, asrt *assert.Assertions) {
++		asrt.Equal(bridgeIndex, r.TypedSpec().MasterIndex)
++	})
++
++	ctest.UpdateWithConflicts(suite, bridge, func(r *network.LinkSpec) error {
++		r.TypedSpec().BridgeMaster.STP.Enabled = true
++
++		return nil
++	})
++
++	ctest.AssertResource(suite, bridgeName, func(r *network.LinkStatus, asrt *assert.Assertions) {
++		asrt.True(r.TypedSpec().BridgeMaster.STP.Enabled)
++	})
++
++	// read the kernel state directly: the foreign port's LinkStatus may not have caught up yet
++	foreign, err := net.InterfaceByName(foreignName)
++	suite.Require().NoError(err)
++
++	msg, err := conn.Link.Get(uint32(foreign.Index))
++	suite.Require().NoError(err)
++	suite.Require().NotNil(msg.Attributes.Master, "foreign port was left unslaved")
++	suite.Assert().Equal(bridgeIndex, *msg.Attributes.Master)
++
++	suite.Require().NoError(suite.State().TeardownAndDestroy(suite.Ctx(), bridge.Metadata()))
++
++	ctest.AssertNoResource[*network.LinkStatus](suite, bridgeName)
++}
++
+ //nolint:gocyclo
+ func (suite *LinkSpecSuite) TestVRF() {
+ 	vrfName := uniqueDummyInterface()
 ```
 
 #### Recent Merged Pull Requests:
@@ -2441,35 +2329,66 @@ Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. allow two busy unmounts in TestUnmountBusy
+## X. keep foreign bridge ports enslaved across settings changes
 
 **RULE**:
-When implementing operations in `internal/app/machined/pkg/controllers/block/mount_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/app/machined/pkg/controllers/network/link_spec.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b04d378c`: allow two busy unmounts in TestUnmountBusy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d29d9863`: keep foreign bridge ports enslaved across settings changes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/block/mount_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/network/link_spec.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"context"
-	"github.com/cosi-project/runtime/pkg/resource/rtestutils"
-	// each busy unmount attempt blocks for ~5s retrying EBUSY, and "b-other" may wait behind two of them:
-	// one in an iteration that ran before its teardown, one in the iteration handling it
-	ctx, cancel := context.WithTimeout(suite.Ctx(), 20*time.Second)
-	defer cancel()
+// setLinkMaster enslaves link under the master with the given index; zero unslaves it.
+func setLinkMaster(conn *rtnetlink.Conn, link rtnetlink.LinkMessage, masterIndex uint32) error {
+	return conn.Link.Set(&rtnetlink.LinkMessage{
+		Family: link.Family,
+		Type:   link.Type,
+		Index:  link.Index,
+		Attributes: &rtnetlink.LinkAttributes{
+			Master: new(masterIndex),
+		},
+	})
+}
 
-	rtestutils.AssertResource(ctx, suite.T(), suite.State(), "b-other", func(mountRequest *block.MountRequest, asrt *assert.Assertions) {
+				// unslave all slaves, remembering them: ports this controller does not manage (e.g.
+				// virtual machine taps) would otherwise never be put back
+				var unslaved []int
+
+						if err = setLinkMaster(conn, slave, 0); err != nil {
+							return fmt.Errorf("error unslaving link %q under %q: %w", slave.Attributes.Name, link.TypedSpec().Name, err)
+						unslaved = append(unslaved, i)
+				// re-enslave the ports removed above
+				for _, i := range unslaved {
+					slave := (*links)[i]
+
+					if err = setLinkMaster(conn, slave, existing.Index); err != nil {
+						return fmt.Errorf("error re-enslaving link %q under %q: %w", slave.Attributes.Name, link.TypedSpec().Name, err)
+					}
+
+					(*links)[i].Attributes.Master = new(existing.Index)
+				}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	ctest.AssertResource(suite, "b-other", func(mountRequest *block.MountRequest, asrt *assert.Assertions) {
+				// unslave all slaves
+						if err = conn.Link.Set(&rtnetlink.LinkMessage{
+							Family: slave.Family,
+							Type:   slave.Type,
+							Index:  slave.Index,
+							Attributes: &rtnetlink.LinkAttributes{
+								Master: new(uint32(0)),
+							},
+						}); err != nil {
+							return fmt.Errorf("error unslaving link %q under %q: %w", slave.Attributes.Name, link.TypedSpec().BridgeSlave.MasterName, err)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b04d378c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d29d9863` are properly handled with clean fallback behavior.

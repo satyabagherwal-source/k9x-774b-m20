@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T12:58:39.264Z",
+  "last_updated": "2026-11-18T13:09:10.036Z",
   "directives": [
     {
       "id": "CD-001",
@@ -29353,6 +29353,46 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E39683-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-12RA",
+      "directive_title": "keep foreign bridge ports enslaved across settings changes",
+      "source_repo": "siderolabs-talos-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-12RA-keep-foreign-bridge-ports-enslaved-across-settings-changes.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-13IN",
+      "directive_title": "gha/scale: bump cilium/scaffolding commit SHA",
+      "source_repo": "cilium-cilium-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-13IN-gha-scale-bump-cilium-scaffolding-commit-sha.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-REV-572FB0",
+      "directive_title": "keep foreign bridge ports enslaved across settings changes",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "siderolabs-talos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-572FB0-keep-foreign-bridge-ports-enslaved-acros.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-REV-1FCA43",
+      "directive_title": "gha/scale: bump cilium/scaffolding commit SHA",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "cilium-cilium",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1FCA43-gha-scale-bump-cilium-scaffolding-commit.md",
       "staged_date": "2026-11-18"
     }
   ]

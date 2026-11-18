@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T16:54:59.983Z",
+  "timestamp": "2026-11-18T13:09:09.916Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-cilium-cilium-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [cilium-cilium-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T16:54:59.983Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T13:09:09.916Z`  
 > **Learning ID**: `LEARN-EVO-cilium-cilium-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain B (Product Intelligence)
-- **Secondary Corroborating Domains**: L (Deployment & Operations Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 79%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 83%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from cilium-cilium-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `f0eb96d2`  
+> **Source Version**: `606a80fe`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T16:54:55.133Z  
+> **Timestamp**: 2026-11-18T13:09:03.654Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T16:54:55.129Z  
+> **Harvest Timestamp**: 2026-11-18T13:09:03.648Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25858 stars
+- **Stars / Engagement**: 25864 stars
 
 ---
 
@@ -1287,15 +1287,14 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #50080** (2026-11-17): **gha: Don't fail artifact merges on source deletion errors**
-  *Symptoms*: The merge-artifacts action merges a run's per-job artifacts with actions/upload-artifact/merge, which then deletes the source artifacts. That deletion sometimes fails after the action already uploaded the merged artifact [1]:    The 2 artifact(s) have been successfully merged!   ##[error]Failed to DeleteArtifact: Received non-retryable error: Failed request: (404) Not Found: artifact does not exist  The merge job then fails although the merged artifact holds every file. This failed 11 runs on main between 2026-10-29 and 2026-11-16, across 9 workflows.  This commit lets the merge step continue on error and adds a check that fails the job only when the step did not set artifact-id, which upload-artifact sets right after it uploads the merged artifact and before it deletes the sources. A failed deletion now leaves a warning, and the source artifacts stay until their retention ends.  1: https://github.com/cilium/cilium/actions/runs/43909849539/job/133467728864  This PR was prepared with AIL:3. I personally checked the merge code of the pinned upload-artifact release. 
+- **Issue #50103** (2026-11-18): **gha/scale: bump cilium/scaffolding commit SHA**
+  *Symptoms*: The image for the previously referenced SHA had not been built correctly due to a GitHub incident, causing the scale tests to fail while trying to pull it. Hence, let's manually bump it, rather than waiting for the next Renovate's run. 
   **Post-Mortem & Fix Analysis**:
   > /test
+  > /scale-clustermesh
 
-- **Issue #50067** (2026-11-17): **install: Update image digests for v1.20.5**
-  *Symptoms*: Generated from https://github.com/cilium/cilium/actions/runs/44054612089  ## Docker Manifests  ### cilium  `quay.io/cilium/cilium:v1.20.5@sha256:aa72499f075ad729947ea91b026218aceba24f1a8e4534bf36b8368c7c561526` `quay.io/cilium/cilium:stable@sha256:aa72499f075ad729947ea91b026218aceba24f1a8e4534bf36b8368c7c561526`  ### clustermesh-apiserver  `quay.io/cilium/clustermesh-apiserver:v1.20.5@sha256:2c56909601bee74abaa5398916f6be6d6f7b9a0f8472a37d1a7a9853d3f1cc69` `quay.io/cilium/clustermesh-apiserver:stable@sha256:2c56909601bee74abaa5398916f6be6d6f7b9a0f8472a37d1a7a9853d3f1cc69`  ### hubble-relay  `quay.io/cilium/hubble-relay:v1.20.5@sha256:d0b3f5b944adc4a79f82ac51bcdc2d723b734c2c97872d8551626ad48b3c5538` `quay.io/cilium/hubble-relay:stable@sha256:d0b3f5b944adc4a79f82ac51bcdc2d723b734c2c97872d8551626ad48b3c5538`  ### operator-alibabacloud  `quay.io/cilium/operator-alibabacloud:v1.20.5@sha256:44c975fb0d8da251783a7cbe82eb8388be938200de5e524d4206db83eb426d12` `quay.io/cilium/operator-alibabacloud:stable@sha256:44c975fb0d8da251783a7cbe82eb8388be938200de5e524d4206db83eb426d12`  ### operator-aws  `quay.io/cilium/operator-aws:v1.20.5@sha256:a22e3a18046db179141563cec088d054d8bb0e2c949516086cd6d56448f1859d` `quay.io/cilium/operator-aws:stable@sha256:a22e3a18046db179141563cec088d054d8bb0e2c949516086cd6d56448f1859d`  ### operator-azure  `quay.io/cilium/operator-azure:v1.20.5@sha256:80dbf632a2c49315d37d1c154f775efdb713a2c8ee1436657255e60a33d26cc6` `quay.io/cilium/operator-azure:stable@sha256:80
-  **Post-Mortem & Fix Analysis**:
-  > /test
+- **Issue #50081** (2026-11-17): **helm/certgen: enable readOnlyRootFilesystem**
+  *Symptoms*: Please ensure your pull request adheres to the following guidelines:  - [x] For first time contributors, read [Submitting a pull request] - [ ] All code is covered by unit and/or runtime tests where feasible. - [x] All commits contain a well written commit description including a title,       description and a `Fixes: #XXX` line if the commit addresses a particular       GitHub issue. - [ ] If your commit description contains a `Fixes: <commit-id>` tag, then       please add the commit author[s] as reviewer[s] to this issue. - [x] All commits are signed off. See the section [Developer’s Certificate of Origin] - [x] Provide a title or release-note blurb suitable for the release notes. - [x] Describe how you have tested this change in a live environment such as       [kind], if applicable. - [x] Disclose use of machine learning models (including LLMs and other generative AI)       in accordance with the [Cilium AI Policy], and indicate the rating using       [AI Influence Level].       Example: "This PR was prepared with AIL:N. I personally checked X." - [x] Thanks for contributing!  <!-- Description of change -->  While this is a very short lived job, this does help in environments where this might be enforced.  ```release-note Hubble certgen CronJob jobs now run with readOnlyRootFilesystem enabled. ```  [AI Influence Level]: https://danielmiessler.com/blog/ai-influence-level-ail [Cilium AI Policy]: https://github.com/cilium/community/blob/main/AI-POLICY.md [Developer’s Certif
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1312,400 +1311,170 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f0eb96d2` (2026-11-16)
-**Commit Message**: ci: Update docs-builder references for existing images
+### Incident Patch 1: `606a80fe` (2026-11-18)
+**Commit Message**: gha/scale: bump cilium/scaffolding commit SHA
 
-The docs-builder workflow tags the image with the tree hash of
-images/docs-builder and skips the build when quay.io already has that
-tag. The reference update jobs only run when the build step reports a
-digest, so they get skipped as well and the branch keeps the old image.
-Renovate branches hit this whenever Renovate recreates one and drops
-the earlier reference commit. On #50024 [1] the v1.19 all-dependencies
-branch had already built the same tree, and "Check generated
-documentation" failed on the old image.
+The image for the previously referenced SHA had not been built correctly
+due to a GitHub incident, causing the scale tests to fail while trying
+to pull it. Hence, let's manually bump it, rather than waiting for the
+next Renovate's run.
 
-This commit looks up the digest of an existing tag, as the base images
-workflow does, so the reference update runs in both cases. The update
-job now commits only when the references change, and the push job only
-runs after such a commit, because a PR that already points at the image
-now reaches that job too.
+Signed-off-by: Marco Iorio <[REDACTED_EMAIL]>
 
-This commit was prepared with AIL:3. I personally checked the update
-step extracted from the workflow against the two #50024 heads.
-
-Fixes: 662d00cb1238 ("ci: Build the docs-builder image for Renovate branches")
-1: https://github.com/cilium/cilium/pull/50024
-
-Signed-off-by: André Martins <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/build-images-docs-builder-v1.18.yaml` (modified, +21/-2)
+**File**: `.github/workflows/scale-test-clustermesh.yaml` (modified, +1/-1)
 ```diff
-@@ -49,7 +49,7 @@ jobs:
-       deployment: false
-     outputs:
-       tag: ${{ steps.docs-builder-tag.outputs.tag }}
--      digest: ${{ steps.docker-build-docs-builder.outputs.digest }}
-+      digest: ${{ steps.docker-build-docs-builder.outputs.digest || steps.docs-builder-existing-digest.outputs.digest }}
-     steps:
-       - name: Checkout base branch (trusted)
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -91,6 +91,14 @@ jobs:
-             echo exists="false" >> $GITHUB_OUTPUT
-           fi
+@@ -63,7 +63,7 @@ env:
+   # renovate: datasource=docker depName=google/cloud-sdk
+   gcloud_version: 593.0.0
+   # renovate: datasource=git-refs depName=https://github.com/cilium/scaffolding branch=main
+-  cmapisrv_mock_ref: b6e1820b795c5e309759ce87757dcba3c0bcd897
++  cmapisrv_mock_ref: 025ce1681817379a72339710ba532b115d2ae00d
  
-+      - name: Get digest of the existing docs-builder image
-+        if: ${{ steps.docs-builder-tag-in-repositories.outputs.exists == 'true' }}
-+        id: docs-builder-existing-digest
-+        shell: bash
-+        run: |
-+          digest="$(docker buildx imagetools inspect ${{ env.REGISTRY_DEV }}/${{ env.ORGANIZATION_DEV }}/docs-builder:${{ steps.docs-builder-tag.outputs.tag }} --format '{{json .Manifest}}' | jq -er .digest)"
-+          echo digest="${digest}" >> $GITHUB_OUTPUT
-+
-       # Quay's registry endpoint only accepts credentials or a JWT signed by
-       # Quay itself, so the GitHub OIDC token cannot be used as the registry
-       # password directly. Trade it for a short lived robot token first.
-@@ -154,6 +162,8 @@ jobs:
-     if: needs.build-and-push.outputs.digest
-     runs-on: ubuntu-24.04
-     timeout-minutes: 10
-+    outputs:
-+      changed: ${{ steps.update-reference.outputs.changed }}
-     steps:
-       - name: Checkout base branch (trusted)
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -180,18 +190,26 @@ jobs:
-           git config user.email "noreply@cilium.io"
- 
-       - name: Update docs-builder image reference in CI workflow
-+        id: update-reference
-         run: |
-           NEW_IMAGE="${{ env.REGISTRY_DEV }}/${{ env.ORGANIZATION_DEV }}/docs-builder:${{ needs.build-and-push.outputs.tag }}@${{ needs.build-and-push.outputs.digest }}"
-           # Run in Docker to prevent the script from accessing the environment.
-           docker run --rm -v $PWD:/cilium -w /cilium "${NEW_IMAGE}" \
-               bash -c "git config --global --add safe.directory /cilium && \
-                        /cilium/Documentation/update-docs-builder-image.sh ${NEW_IMAGE}"
--          git commit -sam "ci: update docs-builder"
-+          if git diff --quiet; then
-+            echo changed="false" >> $GITHUB_OUTPUT
-+          else
-+            git commit -sam "ci: update docs-builder"
-+            echo changed="true" >> $GITHUB_OUTPUT
-+          fi
- 
-       - name: Generate patch from update commit
-+        if: ${{ steps.update-reference.outputs.changed == 'true' }}
-         run: git format-patch HEAD~1 --stdout > /tmp/update.patch
- 
-       - name: Upload patch artifact
-+        if: ${{ steps.update-reference.outputs.changed == 'true' }}
-         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-         with:
-           name: docs-builder-update-patch
-@@ -204,6 +222,7 @@ jobs:
-   push-update:
-     name: Push docs-builder image reference update
-     needs: [build-and-push, prepare-update]
-+    if: needs.prepare-update.outputs.changed == 'true'
-     runs-on: ubuntu-24.04
-     timeout-minutes: 10
-     environment:
+   test_name: scale-clustermesh
+   cluster_name: ${{ github.run_id }}-${{ github.run_attempt }}
 ```
 
-**File**: `.github/workflows/build-images-docs-builder-v1.19.yaml` (modified, +21/-2)
+**File**: `.github/workflows/scale-test-egw.yaml` (modified, +1/-1)
 ```diff
-@@ -49,7 +49,7 @@ jobs:
-       deployment: false
-     outputs:
-       tag: ${{ steps.docs-builder-tag.outputs.tag }}
--      digest: ${{ steps.docker-build-docs-builder.outputs.digest }}
-+      digest: ${{ steps.docker-build-docs-builder.outputs.digest || steps.docs-builder-existing-digest.outputs.digest }}
-     steps:
-       - name: Checkout base branch (trusted)
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -91,6 +91,14 @@ jobs:
-             echo exists="false" >> $GITHUB_OUTPUT
-           fi
+@@ -80,7 +80,7 @@ env:
+   # Hosted under quay.io/cilium/egw-scale-utils and built by
+   # a workflow in cilium/scaffolding.
+   # renovate: datasource=git-refs depName=https://github.com/cilium/scaffolding branch=main
+-  egw_utils_ref: b6e1820b795c5e309759ce87757dcba3c0bcd897
++  egw_utils_ref: 025ce1681817379a72339710ba532b115d2ae00d
+   test_name: egw
+   cluster_name: ${{ github.run_id }}-${{ github.run_attempt }}
  
-+      - name: Get digest of the existing docs-builder image
-+        if: ${{ steps.docs-builder-tag-in-repositories.outputs.exists == 'true' }}
-+        id: docs-builder-existing-digest
-+        shell: bash
-+        run: |
-+          digest="$(docker buildx imagetools inspect ${{ env.REGISTRY_DEV }}/${{ env.ORGANIZATION_DEV }}/docs-builder:${{ steps.docs-builder-tag.outputs.tag }} --format '{{json .Manifest}}' | jq -er .digest)"
-+          echo digest="${digest}" >> $GITHUB_OUTPUT
-+
-       # Quay's registry endpoint only accepts credentials or a JWT signed by
-       # Quay itself, so the GitHub OIDC token cannot be used as the registry
-       # password directly. Trade it for a short lived robot token first.
-@@ -154,6 +162,8 @@ jobs:
-     if: needs.build-and-push.outputs.digest
-     runs-on: ubuntu-24.04
-     timeout-minutes: 10
-+    outputs:
-+      changed: ${{ steps.update-reference.outputs.changed }}
-     steps:
-       - name: Checkout base branch (trusted)
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -180,18 +190,26 @@ jobs:
-           git config user.email "noreply@cilium.io"
- 
-       - name: Update docs-builder image reference in CI workflow
-+        id: update-reference
-         run: |
-           NEW_IMAGE="${{ env.REGISTRY_DEV }}/${{ env.ORGANIZATION_DEV }}/docs-builder:${{ needs.build-and-push.outputs.tag }}@${{ needs.build-and-push.outputs.digest }}"
-           # Run in Docker to prevent the script from accessing the environment.
-           docker run --rm -v $PWD:/cilium -w /cilium "${NEW_IMAGE}" \
-               bash -c "git config --global --add safe.directory /cilium && \
-                        /cilium/Documentation/update-docs-builder-image.sh ${NEW_IMAGE}"
--          git commit -sam "ci: update docs-builder"
-+          if git diff --quiet; then
-+            echo changed="false" >> $GITHUB_OUTPUT
-+          else
-+            git commit -sam "ci: update docs-builder"
-+            echo changed="true" >> $GITHUB_OUTPUT
-+          fi
- 
-       - name: Generate patch from update commit
-+        if: ${{ steps.update-reference.outputs.changed == 'true' }}
-         run: git format-patch HEAD~1 --stdout > /tmp/update.patch
- 
-       - name: Upload patch artifact
-+        if: ${{ steps.update-reference.outputs.changed == 'true' }}
-         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-         with:
-           name: docs-builder-update-patch
-@@ -204,6 +222,7 @@ jobs:
-   push-update:
-     name: Push docs-builder image reference update
-     needs: [build-and-push, prepare-update]
-+    if: needs.prepare-update.outputs.changed == 'true'
-     runs-on: ubuntu-24.04
-     timeout-minutes: 10
-     environment:
-```
-
-**File**: `.github/workflows/build-images-docs-builder-v1.20.yaml` (modified, +21/-2)
-```diff
-@@ -49,7 +49,7 @@ jobs:
-       deployment: false
-     outputs:
-       tag: ${{ steps.docs-builder-tag.outputs.tag }}
--      digest: ${{ steps.docker-build-docs-builder.outputs.digest }}
-+      digest: ${{ steps.docker-build-docs-builder.outputs.digest || steps.docs-builder-existing-digest.outputs.digest }}
-     steps:
-       - name: Checkout base branch (trusted)
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -91,6 +91,14 @@ jobs:
-             echo exists="false" >> $GITHUB_OUTPUT
-           fi
- 
-+      - name: Get digest of the existing docs-builder image
-+        if: ${{ steps.docs-builder-tag-in-repositories.outputs.exists == 'true' }}
-+        id: docs-builder-existing-digest
-+        shell: bash
-+        run: |
-+          digest="$(docker buildx imagetools inspect ${{ env.REGISTRY_DEV }}/${{ env.ORGANIZATION_DEV }}/docs-builder:${{ steps.docs-builder-tag.outputs.tag }} --format '{{json .Manifest}}' | jq -er .digest)"
-+          echo digest="${digest}" >> $GITHUB_OUTPUT
-+
-       # Quay's registry endpoint only accepts credentials or a JWT signed by
-       # Quay itself, so the GitHub OIDC token cannot be used as the registry
-       # password directly. Trade it for a short lived robot token first.
-@@ -154,6 +162,8 @@ jobs:
-     if: needs.build-and-push.outputs.digest
-     runs-on: ubuntu-26.04
-     timeout-minutes: 10
-+    outputs:
-+      changed: ${{ steps.update-reference.outputs.changed }}
-     steps:
-       - name: Checkout base branch (trusted)
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -180,18 +190,26 @@ jobs:
-           git config user.email "noreply@cilium.io"
- 
-       - name: Update docs-builder image reference in CI workflow
-+        id: update-reference
-         run: |
-           NEW_IMAGE="${{ env.REGISTRY_DEV }}/${{ env.ORGANIZATION_DEV }}/docs-builder:${{ needs.build-and-push.outputs.tag }}@${{ needs.build-and-push.outputs.digest }}"
-           # Run in Docker to prevent the script from accessing the environment.
-           docker run --rm -v $PWD:/cilium -w /cilium "${NEW_IMAGE}" \
-               bash -c "git config --global --add safe.directory /cilium && \
-                        /cilium/Documentation/update-docs-builder-image.sh ${NEW_IMAGE}"
--          git commit -sam "ci: update docs-builder"
-+          if git diff --quiet; then
-+            echo changed="false" >> $GITHUB_OUTPUT
-+          else
-+            git commit -sam "ci: update docs-builder"
-+            echo changed="true" >> $GITHUB_OUTPUT
-+          fi
- 
-       - name: Generate patch from update commit
-+        if: ${{ steps.update-reference.outputs.changed == 'true' }}
-         run: git format-patch HEAD~1 --stdout > /tmp/update.patch
- 
-       - name: Upload patch artifact
-+        if: ${{ steps.update-reference.outputs.changed == 'true' }}
-         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-         with:
-           name: docs-builder-update-patch
-@@ -204,6 +222,7 @@ jobs:
-   push-update:
-     name: Push docs-builder image reference update
-     needs: [build-and-push, prepare-update]
-+    if: needs.prepare-update.outputs.changed == 'true'
-     runs-on: ubuntu-26.04
-     timeout-minutes: 10
-     environment:
-```
-
-**File**: `.github/workflows/build-images-docs-builder.yaml` (modified, +21/-2)
-```diff
-@@ -50,7 +50,7 @@ jobs:
-       deployment: false
-     outputs:
-       tag: ${{ steps.docs-builder-tag.outputs.tag }}
--      digest: ${{ steps.docker-build-docs-builder.outputs.digest }}
-+      digest: ${{ steps.docker-build-docs-builder.outputs.digest || steps.docs-builder-existing-digest.outputs.digest }}
-     steps:
-       - name: Checkout base branch (trusted)
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -92,6 +92,14 @@ jobs:
-             echo exists="false" >> $GITHUB_OUTPUT
-           fi
- 
-+      - name: Get digest of the existing docs-builder image
-+        if: ${{ steps.docs-builder-tag-in-repositories.outputs.exists == 'true' }}
-+        id: docs-builder-existing-digest
-+        shell: bash
-+        run: |
-+          digest="$(docker buildx imagetools inspect ${{ env.REGISTRY_DEV }}/${{ env.ORGANIZATION_DEV }}/docs-builder:${{ steps.docs-builder-tag.outputs.tag }} --format '{{json .Manifest}}' | jq -er .digest)"
-+          echo digest="${digest}" >> $GITHUB_OUTPUT
-+
-       # Quay's registry endpoint only accepts credentials or a JWT signed by
-       # Quay itself, so the GitHub OIDC token cannot be used as the registry
-       # password directly. Trade it for a short lived robot token first.
-@@ -155,6 +163,8 @@ jobs:
-     if: needs.build-and-push.outputs.digest
-     runs-on: ubuntu-26.04
-     timeout-minutes: 10
-+    outputs:
-+      changed: ${{ steps.update-reference.outputs.changed }}
-     steps:
-       - name: Checkout base branch (trusted)
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -181,18 +191,26 @@ jobs:
-           git config user.email "noreply@cilium.io"
- 
-       - name: Update docs-builder image reference in CI workflow
-+        id: update-reference
-         run: |
-           NEW_IMAGE="${{ env.REGISTRY_DEV }}/${{ env.ORGANIZATION_DEV }}/docs-builder:${{ needs.build-and-push.outputs.tag }}@${{ needs.build-and-push.outputs.digest }}"
-           # Run in Docker to prevent the script from accessing the environment.
-           docker run --rm -v $PWD:/cilium -w /cilium "${NEW_IMAGE}" \
-               bash -c "git config --global --add safe.directory /cilium && \
-                        /cilium/Documentation/update-docs-builder-image.sh ${NEW_IMAGE}"
--          git commit -sam "ci: update docs-builder"
-+          if git diff --quiet; then
-+            echo changed="false" >> $GITHUB_OUTPUT
-+          else
-+            git commit -sam "ci: update docs-builder"
-+            echo changed="true" >> $GITHUB_OUTPUT
-+          fi
- 
-       - name: Generate patch from update commit
-+        if: ${{ steps.update-reference.outputs.changed == 'true' }}
-         run: git format-patch HEAD~1 --stdout > /tmp/update.patch
- 
-       - name: Upload patch artifact
-+        if: ${{ steps.update-reference.outputs.changed == 'true' }}
-         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-         with:
-           name: docs-builder-update-patch
-@@ -205,6 +223,7 @@ jobs:
-   push-update:
-     name: Push docs-builder image reference update
-     needs: [build-and-push, prepare-update]
-+    if: needs.prepare-update.outputs.changed == 'true'
-     runs-on: ubuntu-26.04
-     timeout-minutes: 10
-     environment:
 ```
 
 ---
 
-### Incident Patch 2: `3b742f99` (2026-11-03)
-**Commit Message**: gha/setup-aks-cluster: Fix the create step budget
+### Incident Patch 2: `36d88648` (2026-11-13)
+**Commit Message**: datapath: Error if kernel lacks BTF
 
-The AKS create step refuses a timeout that cannot hold its bounded
-waits, but the 820 seconds it counts past the two create deadlines
-leave out the second attempt's last status query. That query can start
-just before the deadline and take 60 seconds to report Succeeded, so
-the waits add up to 870 seconds and the step needs 3270 seconds, 30
-more than its 54 minutes. The az and kubectl calls without a time limit
-in the same step come on top of that.
+Cilium datapath has started to rely on BPF global functions. For
+non-simple function arguments (such as sk_buff) they rely on the kernel
+built with BTF.
 
-This commit counts 900 seconds, the 870 plus 30 for those calls, and
-gives the step 60 minutes, which leaves 300 seconds to spare. The step
-only comes near either limit when the first create stalls until its
-deadline.
+Fail cilium-agent if kernel lacks BTF, instead of progressing with
+half-functioning Cilium cluster.
 
-This commit was prepared with AIL:3. I personally checked the diff.
+Previously users got a non-terminating error message in the cilium-agent
+logs:
 
-Fixes: 69a3c581b2a7 ("gha/setup-aks-cluster: Retry a create that never starts")
+    Verifier error: program tail_handle_snat_fwd_ipv6: load program:
+    invalid argument: Caller passes invalid args into func#1
+    ('snat_v6_nat') (244 line(s) omitted)
 
-Signed-off-by: André Martins <[REDACTED_EMAIL]>
+Reported by https://github.com/cilium/cilium/issues/45224.
 
-**File**: `.github/actions/setup-aks-cluster/action.sh` (modified, +5/-2)
+Signed-off-by: Martynas Pumputis <[REDACTED_EMAIL]>
+
+**File**: `Documentation/operations/upgrade-next.inc` (modified, +5/-0)
 ```diff
-@@ -28,9 +28,12 @@ az group create \
-   "${group_args[@]}"
+@@ -34,6 +34,11 @@ notes carefully below to understand what to do during upgrade.
+   set ``k8sClusterNetworkPolicy.enabled=false``. See
+   :ref:`ClusterNetworkPolicy_enable`. If you manage RBAC manifests outside of
+   Helm, see :ref:`ClusterNetworkPolicy_rbac`.
++* The Cilium agent now fails to start if the kernel lacks BTF
++  (``CONFIG_DEBUG_INFO_BTF=y``), which is listed in the
++  :ref:`kernel requirements <admin_kernel_version>`. Previously, the agent could
++  start on such kernels but failed to load some BPF programs. Ensure all nodes
++  run a kernel with BTF before upgrading.
  
- # Both attempts, the teardown between them and the node waits in the
--# steps below all share this step's timeout-minutes.
-+# steps below all share this step's timeout-minutes. Past the deadlines,
-+# the first attempt's last query, sleep and abort take 150s, the second
-+# attempt's last query 60s and the node waits 660s, and 30s more cover
-+# the calls without a time limit.
- budget=$(( TIMEOUT_MINUTES * 60 ))
--required=$(( ATTEMPT_DEADLINE + RETRY_DEADLINE + 820 ))
-+required=$(( ATTEMPT_DEADLINE + RETRY_DEADLINE + 900 ))
- if [ "${budget}" -lt "${required}" ]; then
-   echo "::error::timeout_minutes gives ${budget}s and the create needs ${required}s"
-   exit 1
+ Informational Notes
+ ~~~~~~~~~~~~~~~~~~~
 ```
 
-**File**: `.github/actions/setup-aks-cluster/action.yml` (modified, +1/-1)
+**File**: `pkg/datapath/linux/probes/probes.go` (modified, +41/-0)
 ```diff
-@@ -18,7 +18,7 @@ inputs:
-   timeout_minutes:
-     description: 'Budget for this action, matching the caller step timeout-minutes.'
-     required: false
--    default: 54
-+    default: 60
-   attempt_deadline:
-     description: 'Seconds the first create may stay in Creating before this action abandons it.'
-     required: false
+@@ -17,6 +17,7 @@ import (
+ 
+ 	"github.com/cilium/ebpf"
+ 	"github.com/cilium/ebpf/asm"
++	"github.com/cilium/ebpf/btf"
+ 	"github.com/cilium/ebpf/features"
+ 	"github.com/cilium/ebpf/link"
+ 	"github.com/gopacket/gopacket"
+@@ -546,6 +547,46 @@ func HaveDeadCodeElim() error {
+ 	return nil
+ }
+ 
++// HaveBTF checks whether kernel is built with BTF.
++//
++// The check exercises loading BPF global functions, which rely on BTF.
++// An alternative approach would have been to check for /sys/kernel/btf/vmlinux existence. However, some
++// distros might put it in different places, or /sys/kernel/btf might be not accessible to Cilium pod.
++var HaveBTF = sync.OnceValue(func() error {
++	proto := &btf.FuncProto{
++		Return: &btf.Int{Name: "int", Size: 4, Encoding: btf.Signed},
++		Params: []btf.FuncParam{{
++			Name: "ctx",
++			Type: &btf.Pointer{Target: &btf.Struct{Name: "__sk_buff"}},
++		}},
++	}
++	entry := &btf.Func{Name: "probe_entry", Type: proto, Linkage: btf.GlobalFunc}
++	global := &btf.Func{Name: "probe_global", Type: proto, Linkage: btf.GlobalFunc}
++
++	// int probe_entry(struct __sk_buff *ctx) {
++	//   return probe_global(ctx);
++	// }
++	// int probe_global(struct __sk_buff *ctx) {
++	//   return 0;
++	// }
++	prog, err := ebpf.NewProgram(&ebpf.ProgramSpec{
++		Type:    ebpf.SchedCLS,
++		License: "Apache-2.0",
++		Instructions: asm.Instructions{
++			btf.WithFuncMetadata(asm.Call.Label(global.Name), entry),
++			asm.Return(),
++			btf.WithFuncMetadata(asm.Mov.Imm(asm.R0, 0), global).WithSymbol(global.Name),
++			asm.Return(),
++		},
++	})
++	if err != nil {
++		return fmt.Errorf("loading program: %w", err)
++	}
++
++	prog.Close()
++	return nil
++})
++
+ // HaveIPv6Support tests whether kernel can open an IPv6 socket. This will
+ // also implicitly auto-load IPv6 kernel module if available and not yet
+ // loaded.
 ```
 
-**File**: `.github/workflows/conformance-aks.yaml` (modified, +1/-1)
+**File**: `pkg/datapath/linux/requirements.go` (modified, +5/-0)
 ```diff
-@@ -105,7 +105,7 @@ concurrency:
- env:
-   name: ${{ github.repository_owner }}-${{ github.event.repository.name }}-${{ github.run_id }}-${{ inputs.UID }}-${{ github.run_attempt }}
-   cost_reduction: --node-vm-size Standard_B2s --node-osdisk-size 64
--  create_timeout_minutes: 54
-+  create_timeout_minutes: 60
-   ipv4_pod_cidr: 192.168.0.0/16
-   ipv6_pod_cidr: fd00::/104
-   test_concurrency: 5
+@@ -5,6 +5,7 @@ package linux
+ 
+ import (
+ 	"errors"
++	"fmt"
+ 	"log/slog"
+ 	"os"
+ 
+@@ -148,6 +149,10 @@ func CheckRequirements(log *slog.Logger) error {
+ 			}
+ 			log.Info("BPF_FIB_LOOKUP_SRC is not supported; it will not be used")
+ 		}
++
++		if err := probes.HaveBTF(); err != nil {
++			return fmt.Errorf("Require kernel BTF support (CONFIG_DEBUG_INFO_BTF=y): %w", err)
++		}
+ 	}
+ 	return nil
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #50103** (2026-11-18): gha/scale: bump cilium/scaffolding commit SHA (@giorio94)
+- **PR #50081** (2026-11-17): helm/certgen: enable readOnlyRootFilesystem (@Scrumplex)
 - **PR #50080** (2026-11-17): gha: Don't fail artifact merges on source deletion errors (@aanm)
-- **PR #50067** (2026-11-17): install: Update image digests for v1.20.5 (@cilium-release-bot[bot])
-- **PR #50066** (2026-11-17): install: Update image digests for v1.19.11 (@cilium-release-bot[bot])
-- **PR #50065** (2026-11-17): install: Update image digests for v1.18.17 (@cilium-release-bot[bot])
-- **PR #50063** (2026-11-17): Prepare for release v1.20.5 (@cilium-release-bot[bot])
-- **PR #50059** (2026-11-17): ci: Update docs-builder references for existing images (@aanm)
+- **PR #50076** (2026-11-18): cilium-cli: Wait for the l7-lb deployment (@aanm)
+- **PR #50073** (2026-11-18): datapath: sockets: fix returned result from InetDiagDestroyEnabled() (@julianwiedmann)
+- **PR #50071** (2026-11-17): README: Update releases (@aanm)
 
 ---
 
@@ -1725,52 +1494,31 @@ Signed-off-by: André Martins <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: Update docs-builder references for existing images
+## X. gha/scale: bump cilium/scaffolding commit SHA
 
 **RULE**:
-When implementing operations in `.github/workflows/build-images-docs-builder-v1.18.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/scale-test-clustermesh.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f0eb96d2`: ci: Update docs-builder references for existing images. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `606a80fe`: gha/scale: bump cilium/scaffolding commit SHA. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build-images-docs-builder-v1.18.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/scale-test-clustermesh.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      digest: ${{ steps.docker-build-docs-builder.outputs.digest || steps.docs-builder-existing-digest.outputs.digest }}
-      - name: Get digest of the existing docs-builder image
-        if: ${{ steps.docs-builder-tag-in-repositories.outputs.exists == 'true' }}
-        id: docs-builder-existing-digest
-        shell: bash
-        run: |
-          digest="$(docker buildx imagetools inspect ${{ env.REGISTRY_DEV }}/${{ env.ORGANIZATION_DEV }}/docs-builder:${{ steps.docs-builder-tag.outputs.tag }} --format '{{json .Manifest}}' | jq -er .digest)"
-          echo digest="${digest}" >> $GITHUB_OUTPUT
-
-    outputs:
-      changed: ${{ steps.update-reference.outputs.changed }}
-        id: update-reference
-          if git diff --quiet; then
-            echo changed="false" >> $GITHUB_OUTPUT
-          else
-            git commit -sam "ci: update docs-builder"
-            echo changed="true" >> $GITHUB_OUTPUT
-          fi
-        if: ${{ steps.update-reference.outputs.changed == 'true' }}
-        if: ${{ steps.update-reference.outputs.changed == 'true' }}
-    if: needs.prepare-update.outputs.changed == 'true'
+  cmapisrv_mock_ref: 025ce1681817379a72339710ba532b115d2ae00d
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-      digest: ${{ steps.docker-build-docs-builder.outputs.digest }}
-          git commit -sam "ci: update docs-builder"
+  cmapisrv_mock_ref: b6e1820b795c5e309759ce87757dcba3c0bcd897
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f0eb96d2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `606a80fe` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

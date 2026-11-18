@@ -10971,3 +10971,6 @@
 | `CYCLE-20261118-DVJ0` | `2026-11-18T12:51:06.588Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9223` | Yes (`0c7a359e...`) |
 | `CYCLE-20261118-N65T` | `2026-11-18T12:58:20.273Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`518d40b7...`) |
 | `CYCLE-20261118-NHFV` | `2026-11-18T12:58:34.891Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9224` | Yes (`1ae4ac9f...`) |
+| `CYCLE-20261118-0OAH` | `2026-11-18T13:08:50.297Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`651e8953...`) |
+| `CYCLE-20261118-0WD9` | `2026-11-18T13:09:00.765Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9225` | Yes (`e2ff7c35...`) |
+| `CYCLE-20261118-0ZHU` | `2026-11-18T13:09:04.818Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9226` | Yes (`bfa5c974...`) |

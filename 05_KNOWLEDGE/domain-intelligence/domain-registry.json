@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T12:58:39.380Z",
+  "last_updated": "2026-11-18T13:09:10.215Z",
   "total_records": 1853,
   "domains": {
     "A": {
@@ -7596,8 +7596,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "1e09c87b43065331c355037bb24872682f11faba2f861ae247b5a92ef7531749",
-      "created_at": "2026-11-18T04:29:18.363Z"
+      "content_hash": "28c4c370824ab573c225def48ed775596da2fc64d0683ac1c0dd9623bce1f6d4",
+      "created_at": "2026-11-18T13:09:05.239Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -7614,8 +7614,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "5e6ce6c2999d1e8886802bff4bada5777c63160f2d7a11079643302f43301480",
-      "created_at": "2026-11-17T16:55:00.150Z"
+      "content_hash": "e69779cc4b3bd3ff928cfaf4799280b78c6a7fbc83e90d9518d26579a62c4602",
+      "created_at": "2026-11-18T13:09:10.215Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -7677,8 +7677,8 @@
       "title": "Research & Knowledge Intelligence: SupersonicLabs/Julia-1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-supersoniclabs-julia-1-research-knowledge-intelligence-supersoniclabs-julia-1.md",
       "repository": "SupersonicLabs/Julia-1",
-      "content_hash": "9d72b7816548f221d9f72429e3a00c1bc437620853d16e9cad3f72daca12a4cd",
-      "created_at": "2026-11-18T02:42:35.979Z"
+      "content_hash": "e70e9181721561cabeb4dc333e3dc957be2b563adbe755ac9d96262ec1bf71b2",
+      "created_at": "2026-11-18T13:08:50.534Z"
     },
     "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-core-invariants",
@@ -7695,8 +7695,8 @@
       "title": "Research & Knowledge Intelligence: hf-supersoniclabs-julia-1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-supersoniclabs-julia-1-learnings-research-knowledge-intelligence-hf-supersoni.md",
       "repository": "hf-supersoniclabs-julia-1-learnings",
-      "content_hash": "df184cefd4c7ab2c9bb18a2babf7270ddda7df86e29db6e3858f36a53d21dd9e",
-      "created_at": "2026-11-18T02:42:49.008Z"
+      "content_hash": "3a702576ef11df0faa3d8c3e1195bdce49f522a35fbf886a2ecbdfd816a8d16e",
+      "created_at": "2026-11-18T13:09:08.543Z"
     },
     "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-learnings-core-invaria",
@@ -12558,8 +12558,8 @@
       "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
       "repository": "siderolabs/talos",
-      "content_hash": "7363353427fdeb171b07092036c3fe53d3a17bbbac65856155bb45183b84697f",
-      "created_at": "2026-11-17T19:53:40.851Z"
+      "content_hash": "0f8bf32bd4a347ff1b92138b5d9f0f809db1dcd2e35364c9df6ace5830412160",
+      "created_at": "2026-11-18T13:09:01.195Z"
     },
     "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants",
@@ -12680,8 +12680,8 @@
       "title": "Technical Construction Intelligence: siderolabs-talos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-learnings-technical-construction-intelligence-siderolabs-talos-.md",
       "repository": "siderolabs-talos-learnings",
-      "content_hash": "43c301a67cc1e92df86d6b387451a449412d0cd27f6cb9fca8c2ad87b2ba00a1",
-      "created_at": "2026-11-17T19:54:48.173Z"
+      "content_hash": "5725f20f15e507180299687ea86e37e3ca7fabe27a3e2f1a09332bcc35dd232e",
+      "created_at": "2026-11-18T13:09:09.231Z"
     },
     "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants",

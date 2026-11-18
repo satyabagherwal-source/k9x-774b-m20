@@ -395,8 +395,8 @@
     "sourceUrl": "https://huggingface.co/SupersonicLabs/Julia-1",
     "sourceVersion": "hf-supersoniclabs-julia-1",
     "license": "Open-Source",
-    "contentHash": "4f5bb37b7d8d3f25a831c1c7257afc5a160f9a4195a1ee537a335c85b50045a6",
-    "lastHarvestedAt": "2026-11-18T02:42:35.807Z",
+    "contentHash": "651e895331e0cbca5331a9294a6dc103e6f0aabbd05960d85477a62d873f7e1b",
+    "lastHarvestedAt": "2026-11-18T13:08:50.302Z",
     "learningId": "learn-huggingface-supersoniclabs-julia-1"
   },
   "hf-apple-lensvlm-9b": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "e3f13487",
+    "sourceVersion": "606a80fe",
     "license": "Apache-2.0",
-    "contentHash": "0193804985b332e31d24c72d559438b5a6601e70fe9e2394872dfcead5c61be2",
-    "lastHarvestedAt": "2026-11-18T04:29:18.029Z",
+    "contentHash": "bfa5c974fef3678e3b2e3225ed4a0ffc1a18796771a793b25cba54986931268b",
+    "lastHarvestedAt": "2026-11-18T13:09:04.822Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "23d2aaec",
+    "sourceVersion": "95d1059a",
     "license": "MPL-2.0",
-    "contentHash": "446667f9ae3934ed8bc4be901cb400bab1a6bff36810889b786a6d9f14a28eb9",
-    "lastHarvestedAt": "2026-11-17T19:53:40.531Z",
+    "contentHash": "e2ff7c352b09c4809ea6facef13284961e9ebf99cd7bcb0fca8f73b455ef2d56",
+    "lastHarvestedAt": "2026-11-18T13:09:00.769Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {

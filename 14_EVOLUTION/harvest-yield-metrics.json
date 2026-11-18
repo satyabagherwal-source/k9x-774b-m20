@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T12:58:34.900Z",
-  "total_cycles_completed": 10495,
-  "total_learnings_persisted": 10495,
-  "total_rules_promoted": 9982,
+  "last_updated": "2026-11-18T13:09:04.829Z",
+  "total_cycles_completed": 10498,
+  "total_learnings_persisted": 10498,
+  "total_rules_promoted": 9984,
   "history": [
-    {
-      "timestamp": "2026-11-17T23:42:26.697Z",
-      "repository": "meta-llama/Llama-3.1-8B-Instruct",
-      "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T00:07:46.269Z",
-      "repository": "XingChen-AGI/TeleOCR",
-      "learningId": "learn-huggingface-xingchen-agi-teleocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T00:07:47.073Z",
-      "repository": "rtk-ai/rtk",
-      "learningId": "learn-github-rtk-ai-rtk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T00:07:54.930Z",
       "repository": "beclab/Olares",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-18T12:58:34.900Z",
       "repository": "langchain4j/langchain4j",
       "learningId": "learn-github-langchain4j-langchain4j",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T13:08:50.308Z",
+      "repository": "SupersonicLabs/Julia-1",
+      "learningId": "learn-huggingface-supersoniclabs-julia-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T13:09:00.776Z",
+      "repository": "siderolabs/talos",
+      "learningId": "learn-github-siderolabs-talos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T13:09:04.829Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

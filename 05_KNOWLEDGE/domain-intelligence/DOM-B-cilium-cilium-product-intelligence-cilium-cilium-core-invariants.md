@@ -4,23 +4,23 @@
 {
   "source_repository": "cilium/cilium",
   "source_url": "https://github.com/cilium/cilium",
-  "source_version": "e3f13487",
+  "source_version": "606a80fe",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T04:29:18.229Z",
+  "timestamp": "2026-11-18T13:09:05.061Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-cilium-cilium",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `e3f13487`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T04:29:18.229Z`  
+> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `606a80fe`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T13:09:05.061Z`  
 > **Learning ID**: `learn-github-cilium-cilium`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain B (Product Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 83%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T04:29:17.023Z  
+> **Harvest Timestamp**: 2026-11-18T13:09:03.648Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25863 stars
+- **Stars / Engagement**: 25864 stars
 
 ---
 
@@ -1273,13 +1273,14 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #50081** (2026-11-17): **helm/certgen: enable readOnlyRootFilesystem**
-  *Symptoms*: Please ensure your pull request adheres to the following guidelines:  - [x] For first time contributors, read [Submitting a pull request] - [ ] All code is covered by unit and/or runtime tests where feasible. - [x] All commits contain a well written commit description including a title,       description and a `Fixes: #XXX` line if the commit addresses a particular       GitHub issue. - [ ] If your commit description contains a `Fixes: <commit-id>` tag, then       please add the commit author[s] as reviewer[s] to this issue. - [x] All commits are signed off. See the section [Developer’s Certificate of Origin] - [x] Provide a title or release-note blurb suitable for the release notes. - [x] Describe how you have tested this change in a live environment such as       [kind], if applicable. - [x] Disclose use of machine learning models (including LLMs and other generative AI)       in accordance with the [Cilium AI Policy], and indicate the rating using       [AI Influence Level].       Example: "This PR was prepared with AIL:N. I personally checked X." - [x] Thanks for contributing!  <!-- Description of change -->  While this is a very short lived job, this does help in environments where this might be enforced.  ```release-note Hubble certgen CronJob jobs now run with readOnlyRootFilesystem enabled. ```  [AI Influence Level]: https://danielmiessler.com/blog/ai-influence-level-ail [Cilium AI Policy]: https://github.com/cilium/community/blob/main/AI-POLICY.md [Developer’s Certif
-
-- **Issue #50080** (2026-11-17): **gha: Don't fail artifact merges on source deletion errors**
-  *Symptoms*: The merge-artifacts action merges a run's per-job artifacts with actions/upload-artifact/merge, which then deletes the source artifacts. That deletion sometimes fails after the action already uploaded the merged artifact [1]:    The 2 artifact(s) have been successfully merged!   ##[error]Failed to DeleteArtifact: Received non-retryable error: Failed request: (404) Not Found: artifact does not exist  The merge job then fails although the merged artifact holds every file. This failed 11 runs on main between 2026-10-29 and 2026-11-16, across 9 workflows.  This commit lets the merge step continue on error and adds a check that fails the job only when the step did not set artifact-id, which upload-artifact sets right after it uploads the merged artifact and before it deletes the sources. A failed deletion now leaves a warning, and the source artifacts stay until their retention ends.  1: https://github.com/cilium/cilium/actions/runs/43909849539/job/133467728864  This PR was prepared with AIL:3. I personally checked the merge code of the pinned upload-artifact release. 
+- **Issue #50103** (2026-11-18): **gha/scale: bump cilium/scaffolding commit SHA**
+  *Symptoms*: The image for the previously referenced SHA had not been built correctly due to a GitHub incident, causing the scale tests to fail while trying to pull it. Hence, let's manually bump it, rather than waiting for the next Renovate's run. 
   **Post-Mortem & Fix Analysis**:
   > /test
+  > /scale-clustermesh
+
+- **Issue #50081** (2026-11-17): **helm/certgen: enable readOnlyRootFilesystem**
+  *Symptoms*: Please ensure your pull request adheres to the following guidelines:  - [x] For first time contributors, read [Submitting a pull request] - [ ] All code is covered by unit and/or runtime tests where feasible. - [x] All commits contain a well written commit description including a title,       description and a `Fixes: #XXX` line if the commit addresses a particular       GitHub issue. - [ ] If your commit description contains a `Fixes: <commit-id>` tag, then       please add the commit author[s] as reviewer[s] to this issue. - [x] All commits are signed off. See the section [Developer’s Certificate of Origin] - [x] Provide a title or release-note blurb suitable for the release notes. - [x] Describe how you have tested this change in a live environment such as       [kind], if applicable. - [x] Disclose use of machine learning models (including LLMs and other generative AI)       in accordance with the [Cilium AI Policy], and indicate the rating using       [AI Influence Level].       Example: "This PR was prepared with AIL:N. I personally checked X." - [x] Thanks for contributing!  <!-- Description of change -->  While this is a very short lived job, this does help in environments where this might be enforced.  ```release-note Hubble certgen CronJob jobs now run with readOnlyRootFilesystem enabled. ```  [AI Influence Level]: https://danielmiessler.com/blog/ai-influence-level-ail [Cilium AI Policy]: https://github.com/cilium/community/blob/main/AI-POLICY.md [Developer’s Certif
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1296,208 +1297,170 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e3f13487` (2026-11-17)
-**Commit Message**: datapath: sockets: fix returned result from InetDiagDestroyEnabled()
+### Incident Patch 1: `606a80fe` (2026-11-18)
+**Commit Message**: gha/scale: bump cilium/scaffolding commit SHA
 
-After the function has been called once, any subsequent call will skip
-the assignment to `err` and always returns `nil`, instead of the actual
-probe result.
+The image for the previously referenced SHA had not been built correctly
+due to a GitHub incident, causing the scale tests to fail while trying
+to pull it. Hence, let's manually bump it, rather than waiting for the
+next Renovate's run.
 
-Fix this by caching the result in a gloval variable.
+Signed-off-by: Marco Iorio <[REDACTED_EMAIL]>
 
-Signed-off-by: Julian Wiedmann <[REDACTED_EMAIL]>
-
-**File**: `pkg/datapath/sockets/probe.go` (modified, +6/-4)
+**File**: `.github/workflows/scale-test-clustermesh.yaml` (modified, +1/-1)
 ```diff
-@@ -20,7 +20,10 @@ import (
- 	"golang.org/x/sys/unix"
- )
+@@ -63,7 +63,7 @@ env:
+   # renovate: datasource=docker depName=google/cloud-sdk
+   gcloud_version: 593.0.0
+   # renovate: datasource=git-refs depName=https://github.com/cilium/scaffolding branch=main
+-  cmapisrv_mock_ref: b6e1820b795c5e309759ce87757dcba3c0bcd897
++  cmapisrv_mock_ref: 025ce1681817379a72339710ba532b115d2ae00d
  
--var probeOnce sync.Once
-+var (
-+	probeOnce sync.Once
-+	probeErr  error
-+)
+   test_name: scale-clustermesh
+   cluster_name: ${{ github.run_id }}-${{ github.run_attempt }}
+```
+
+**File**: `.github/workflows/scale-test-egw.yaml` (modified, +1/-1)
+```diff
+@@ -80,7 +80,7 @@ env:
+   # Hosted under quay.io/cilium/egw-scale-utils and built by
+   # a workflow in cilium/scaffolding.
+   # renovate: datasource=git-refs depName=https://github.com/cilium/scaffolding branch=main
+-  egw_utils_ref: b6e1820b795c5e309759ce87757dcba3c0bcd897
++  egw_utils_ref: 025ce1681817379a72339710ba532b115d2ae00d
+   test_name: egw
+   cluster_name: ${{ github.run_id }}-${{ github.run_attempt }}
  
- type closer interface {
- 	Close() error
-@@ -208,11 +211,10 @@ func probeForSockDestroy(ctx context.Context, logger *slog.Logger, tcp, udp bool
- // and attempts to terminate it to probe for functionality enabled by
- // CONFIG_INET_DIAG_DESTROY.
- func InetDiagDestroyEnabled(logger *slog.Logger, probeTCP, probeUDP bool) error {
--	var err error
- 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
- 	defer cancel()
- 	probeOnce.Do(func() {
--		err = probeForSockDestroy(ctx, logger, probeTCP, probeUDP)
-+		probeErr = probeForSockDestroy(ctx, logger, probeTCP, probeUDP)
- 	})
--	return err
-+	return probeErr
- }
 ```
 
 ---
 
-### Incident Patch 2: `2c41a804` (2026-11-02)
-**Commit Message**: clustermesh-apiserver: Move synchronizer event handling into syncLoop
+### Incident Patch 2: `36d88648` (2026-11-13)
+**Commit Message**: datapath: Error if kernel lacks BTF
 
-Move the per-event logic of the synchronization loop out of the
-RegisterSynchronizer closure and into methods of a new syncLoop type:
-handleResource for resource events, and handleNamespace for namespace
-events. The goroutine and the select over the event channels stay in
-RegisterSynchronizer, and namespaceHandler becomes a syncLoop method.
+Cilium datapath has started to rely on BPF global functions. For
+non-simple function arguments (such as sk_buff) they rely on the kernel
+built with BTF.
 
-This lets unit tests drive the event handling synchronously and in a
-deterministic order, which the script tests can't do.
+Fail cilium-agent if kernel lacks BTF, instead of progressing with
+half-functioning Cilium cluster.
 
-Signed-off-by: Hadrien Patte <[REDACTED_EMAIL]>
+Previously users got a non-terminating error message in the cilium-agent
+logs:
 
-**File**: `clustermesh-apiserver/clustermesh/synchronizer.go` (modified, +120/-87)
+    Verifier error: program tail_handle_snat_fwd_ipv6: load program:
+    invalid argument: Caller passes invalid args into func#1
+    ('snat_v6_nat') (244 line(s) omitted)
+
+Reported by https://github.com/cilium/cilium/issues/45224.
+
+Signed-off-by: Martynas Pumputis <[REDACTED_EMAIL]>
+
+**File**: `Documentation/operations/upgrade-next.inc` (modified, +5/-0)
 ```diff
-@@ -87,23 +87,6 @@ func RegisterSynchronizer[T runtime.Object](in syncParams[T]) {
+@@ -34,6 +34,11 @@ notes carefully below to understand what to do during upgrade.
+   set ``k8sClusterNetworkPolicy.enabled=false``. See
+   :ref:`ClusterNetworkPolicy_enable`. If you manage RBAC manifests outside of
+   Helm, see :ref:`ClusterNetworkPolicy_rbac`.
++* The Cilium agent now fails to start if the kernel lacks BTF
++  (``CONFIG_DEBUG_INFO_BTF=y``), which is listed in the
++  :ref:`kernel requirements <admin_kernel_version>`. Previously, the agent could
++  start on such kernels but failed to load some BPF programs. Ensure all nodes
++  run a kernel with BTF before upgrading.
  
- 	synced := in.SyncState.WaitForResource()
+ Informational Notes
+ ~~~~~~~~~~~~~~~~~~~
+```
+
+**File**: `pkg/datapath/linux/probes/probes.go` (modified, +41/-0)
+```diff
+@@ -17,6 +17,7 @@ import (
  
--	// process is a helper function to log and execute store operations.
--	process := func(invoker, op, key string, do func() error) {
--		logger.Info("Updating resource in etcd",
--			logfields.Reason, invoker,
--			logfields.Operation, op,
--			logfields.Key, key,
--		)
--		if err := do(); err != nil {
--			logger.Warn("Failed updating resource in etcd",
--				logfields.Error, err,
--				logfields.Reason, invoker,
--				logfields.Operation, op,
--				logfields.Key, key,
--			)
--		}
--	}
--
- 	in.JobGroup.Add(
- 		job.OneShot(
- 			fmt.Sprintf("%s-sync", strings.ToLower(in.Options.Resource)),
-@@ -114,6 +97,17 @@ func RegisterSynchronizer[T runtime.Object](in syncParams[T]) {
- 				}
- 				logger.Info("Starting synchronization")
- 
-+				loop := &syncLoop[T]{
-+					logger:           logger,
-+					namespaced:       in.Options.Namespaced,
-+					converter:        in.Converter,
-+					namespaceManager: in.NamespaceManager,
-+					namespacer:       in.Namespacer,
-+					store:            store,
-+					resourceStore:    resourceStore,
-+					synced:           synced,
-+				}
-+
- 				// Get event channels
- 				resourceEvents := in.Resource.Events(ctx)
- 				var namespaceEvents <-chan resource.Event[*slim_corev1.Namespace]
-@@ -131,75 +125,13 @@ func RegisterSynchronizer[T runtime.Object](in syncParams[T]) {
- 							resourceEvents = nil
- 							continue
- 						}
--
--						if event.Kind == resource.Sync {
--							event.Done(nil)
--							logger.Info("Initial entries successfully received from Kubernetes")
--							store.Synced(ctx, synced)
--							continue
--						}
--						// Filter the event based on namespace global status.
--						// Only required for certain resource types.
--						// Ignore delete events as they should always be processed.
--						if event.Kind != resource.Delete && in.Options.Namespaced {
--							ns := in.Namespacer.ExtractNamespace(event)
--							if ns == "" {
--								logger.Error("Failed to determine namespace for resource event, skipping",
--									logfields.Name, event.Key.Name,
--								)
--								// No way to process this event, just mark done and continue.
--								event.Done(nil)
--								continue
--							}
--							isGlobal, err := in.NamespaceManager.IsGlobalNamespaceByName(ns)
--							if err != nil {
--								logger.Warn("Failed to determine if namespace is global",
--									logfields.Error, err,
--									logfields.K8sNamespace, ns,
--								)
--								// Retry this as it might succeed later.
--								event.Done(err)
--								continue
--							}
--							if !isGlobal {
--								logger.Debug("Deleting resource event as it is not in a global namespace",
--									logfields.Name, event.Key.Name,
--									logfields.K8sNamespace, ns,
--								)
--								// Handle resources transitioning out of global namespaces.
--								// If a resource was previously in a global namespace and is now
--								// in a non-global namespace (e.g.,mutable fields like in CiliumEndpointSlice),
--								// we need to delete it from kvstore. Convert the event to a delete to ensure cleanup.
--								// event.Done will be called later during normal processing.
--								event.Kind = resource.Delete
--							}
--						}
--
--						// No possible errors past this point.
--						event.Done(nil)
--
--						upserts, deletes := in.Converter.Convert(event)
--						for upsert := range upserts {
--							process("resource-event", "upsert", upsert.GetKeyName(), func() error { return store.UpsertKey(ctx, upsert) })
--						}
--						for delete := range deletes {
--							process("resource-event", "delete", delete.GetKeyName(), func() error { return store.DeleteKey(ctx, delete) })
--						}
-+						loop.handleResource(ctx, event)
- 					case event, ok := <-namespaceEvents:
- 						if !ok {
- 							namespaceEvents = nil
- 							continue
- 						}
--						event.Done(nil)
--						for resEvent := range namespaceHandler(in, resourceStore, event) {
--							upserts, deletes := in.Converter.Convert(resEvent)
--							for upsert := range upserts {
--								process("namespace-event", "upsert", upsert.GetKeyName(), func() error { return store.UpsertKey(ctx, upsert) })
--							}
--							for delete := range deletes {
--								process("namespace-event", "delete", delete.GetKeyName(), func() error { return store.DeleteKey(ctx, delete) })
--							}
--						}
-+						loop.handleNamespace(ctx, event)
- 					}
- 				}
- 				logger.Info("Stopping synchronization")
-@@ -216,22 +148,123 @@ func RegisterSynchronizer[T runtime.Object](in syncParams[T]) {
- 	)
+ 	"github.com/cilium/ebpf"
+ 	"github.com/cilium/ebpf/asm"
++	"github.com/cilium/ebpf/btf"
+ 	"github.com/cilium/ebpf/features"
+ 	"github.com/cilium/ebpf/link"
+ 	"github.com/gopacket/gopacket"
+@@ -546,6 +547,46 @@ func HaveDeadCodeElim() error {
+ 	return nil
  }
  
-+// syncLoop holds the state of the synchronization loop of a given resource,
-+// and processes the resource and namespace events. Its methods must only be
-+// invoked from a single goroutine.
-+type syncLoop[T runtime.Object] struct {
-+	logger           *slog.Logger
-+	namespaced       bool
-+	converter        Converter[T]
-+	namespaceManager cmnamespace.Manager
-+	namespacer       Namespacer[T]
-+	store            store.SyncStor
++// HaveBTF checks whether kernel is built with BTF.
++//
++// The check exercises loading BPF global functions, which rely on BTF.
++// An alternative approach would have been to check for /sys/kernel/btf/vmlinux existence. However, some
++// distros might put it in different places, or /sys/kernel/btf might be not accessible to Cilium pod.
++var HaveBTF = sync.OnceValue(func() error {
++	proto := &btf.FuncProto{
++		Return: &btf.Int{Name: "int", Size: 4, Encoding: btf.Signed},
++		Params: []btf.FuncParam{{
++			Name: "ctx",
++			Type: &btf.Pointer{Target: &btf.Struct{Name: "__sk_buff"}},
++		}},
++	}
++	entry := &btf.Func{Name: "probe_entry", Type: proto, Linkage: btf.GlobalFunc}
++	global := &btf.Func{Name: "probe_global", Type: proto, Linkage: btf.GlobalFunc}
++
++	// int probe_entry(struct __sk_buff *ctx) {
++	//   return probe_global(ctx);
++	// }
++	// int probe_global(struct __sk_buff *ctx) {
++	//   return 0;
++	// }
++	prog, err := ebpf.NewProgram(&ebpf.ProgramSpec{
++		Type:    ebpf.SchedCLS,
++		License: "Apache-2.0",
++		Instructions: asm.Instructions{
++			btf.WithFuncMetadata(asm.Call.Label(global.Name), entry),
++			asm.Return(),
++			btf.WithFuncMetadata(asm.Mov.Imm(asm.R0, 0), global).WithSymbol(global.Name),
++			asm.Return(),
++		},
++	})
++	if err != nil {
++		return fmt.Errorf("loading program: %w", err)
++	}
++
++	prog.Close()
++	return nil
++})
++
+ // HaveIPv6Support tests whether kernel can open an IPv6 socket. This will
+ // also implicitly auto-load IPv6 kernel module if available and not yet
+ // loaded.
+```
+
+**File**: `pkg/datapath/linux/requirements.go` (modified, +5/-0)
+```diff
+@@ -5,6 +5,7 @@ package linux
+ 
+ import (
+ 	"errors"
++	"fmt"
+ 	"log/slog"
+ 	"os"
+ 
+@@ -148,6 +149,10 @@ func CheckRequirements(log *slog.Logger) error {
+ 			}
+ 			log.Info("BPF_FIB_LOOKUP_SRC is not supported; it will not be used")
+ 		}
++
++		if err := probes.HaveBTF(); err != nil {
++			return fmt.Errorf("Require kernel BTF support (CONFIG_DEBUG_INFO_BTF=y): %w", err)
++		}
+ 	}
+ 	return nil
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #50103** (2026-11-18): gha/scale: bump cilium/scaffolding commit SHA (@giorio94)
 - **PR #50081** (2026-11-17): helm/certgen: enable readOnlyRootFilesystem (@Scrumplex)
 - **PR #50080** (2026-11-17): gha: Don't fail artifact merges on source deletion errors (@aanm)
+- **PR #50076** (2026-11-18): cilium-cli: Wait for the l7-lb deployment (@aanm)
 - **PR #50073** (2026-11-18): datapath: sockets: fix returned result from InetDiagDestroyEnabled() (@julianwiedmann)
 - **PR #50071** (2026-11-17): README: Update releases (@aanm)
-- **PR #50067** (2026-11-17): install: Update image digests for v1.20.5 (@cilium-release-bot[bot])
-- **PR #50066** (2026-11-17): install: Update image digests for v1.19.11 (@cilium-release-bot[bot])
 
 ---
 
@@ -1517,39 +1480,31 @@ Signed-off-by: Hadrien Patte <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. datapath: sockets: fix returned result from InetDiagDestroyEnabled()
+## X. gha/scale: bump cilium/scaffolding commit SHA
 
 **RULE**:
-When implementing operations in `pkg/datapath/sockets/probe.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/scale-test-clustermesh.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e3f13487`: datapath: sockets: fix returned result from InetDiagDestroyEnabled(). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `606a80fe`: gha/scale: bump cilium/scaffolding commit SHA. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/datapath/sockets/probe.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/scale-test-clustermesh.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-var (
-	probeOnce sync.Once
-	probeErr  error
-)
-		probeErr = probeForSockDestroy(ctx, logger, probeTCP, probeUDP)
-	return probeErr
+  cmapisrv_mock_ref: 025ce1681817379a72339710ba532b115d2ae00d
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-var probeOnce sync.Once
-	var err error
-		err = probeForSockDestroy(ctx, logger, probeTCP, probeUDP)
-	return err
+  cmapisrv_mock_ref: b6e1820b795c5e309759ce87757dcba3c0bcd897
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e3f13487` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `606a80fe` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

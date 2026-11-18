@@ -11004,3 +11004,6 @@ Every entry in this ledger must capture:
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `018b1eb3` | Multi-dimensional audit evidence | 2026-11-18T12:51:06.592Z |
 | `learn-huggingface-xingchen-agi-xing4-0-29b-a4b` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-11-18T12:58:20.277Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `8d519498` | Multi-dimensional audit evidence | 2026-11-18T12:58:34.894Z |
+| `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-11-18T13:08:50.302Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `95d1059a` | Multi-dimensional audit evidence | 2026-11-18T13:09:00.769Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `606a80fe` | Multi-dimensional audit evidence | 2026-11-18T13:09:04.822Z |

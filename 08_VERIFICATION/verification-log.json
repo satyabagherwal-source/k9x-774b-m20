@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-EJ34",
-    "timestamp": "2026-11-17T03:16:04.768Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "2e54951cda9c142250d2d5b53c75a3e6b763e0bd2611aa9a30501928a68e4a0d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-FL9A",
-    "timestamp": "2026-11-17T03:16:54.238Z",
-    "repository": "kumahq/kuma",
-    "learningId": "learn-github-kumahq-kuma",
-    "contentHash": "1eab0b8b2ba475562b648fe0a6bb025f0d8483302be3fd7f5d796f66c7a2869d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-FPT4",
-    "timestamp": "2026-11-17T03:17:00.136Z",
-    "repository": "pixeltable/pixeltable",
-    "learningId": "learn-github-pixeltable-pixeltable",
-    "contentHash": "34482e4587bbf435f05efc8a983a2d7f3c04df87be35d67055574e3adb060605",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-RJBC",
     "timestamp": "2026-11-17T03:26:11.592Z",
     "repository": "scrapinghub/dateparser",
@@ -7490,6 +7445,51 @@
     "repository": "langchain4j/langchain4j",
     "learningId": "learn-github-langchain4j-langchain4j",
     "contentHash": "1ae4ac9fc3564f685d60012f8733c9f10d0bb9af0ed6776b8d33490e6688391b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-0OAH",
+    "timestamp": "2026-11-18T13:08:50.297Z",
+    "repository": "SupersonicLabs/Julia-1",
+    "learningId": "learn-huggingface-supersoniclabs-julia-1",
+    "contentHash": "651e895331e0cbca5331a9294a6dc103e6f0aabbd05960d85477a62d873f7e1b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-0WD9",
+    "timestamp": "2026-11-18T13:09:00.765Z",
+    "repository": "siderolabs/talos",
+    "learningId": "learn-github-siderolabs-talos",
+    "contentHash": "e2ff7c352b09c4809ea6facef13284961e9ebf99cd7bcb0fca8f73b455ef2d56",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-0ZHU",
+    "timestamp": "2026-11-18T13:09:04.818Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "bfa5c974fef3678e3b2e3225ed4a0ffc1a18796771a793b25cba54986931268b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
