@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T00:11:24.164Z",
+  "timestamp": "2026-11-18T14:40:48.863Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zeronsh-zeron-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zeronsh-zeron-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T00:11:24.164Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T14:40:48.863Z`  
 > **Learning ID**: `LEARN-EVO-zeronsh-zeron-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 58%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zeronsh-zeron-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source**: github ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
-> **Source Version**: `f6a9bbfc`  
+> **Source Version**: `b1064c1b`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T00:10:42.466Z  
+> **Timestamp**: 2026-11-18T14:40:32.626Z  
 > **Learning ID**: `learn-github-zeronsh-zeron`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T00:10:42.331Z  
+> **Harvest Timestamp**: 2026-11-18T14:40:32.619Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A native control plane for Claude Code, Codex, Cursor, Devin and other coding agents.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3696 stars
+- **Stars / Engagement**: 3711 stars
 
 ---
 
@@ -1561,847 +1561,469 @@ class TranscriptState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f6a9bbfc` (2026-11-15)
-**Commit Message**: Merge pull request #1468 from zeronsh/zeron/main-catches-up-0.3.7
+### Incident Patch 1: `b1064c1b` (2026-11-18)
+**Commit Message**: Zeron v2: in step with the default's page after #1515 (#1517)
 
-main catches up with the release line (Zeron 0.3.7)
+#1515 gave the default's page the tab strip's window width (`width = props.width`).
+v2's single-page shell has no session tabs, so it needs no such line: only its
+record of the default it follows is brought up to date (ZERON_V2_BLESS=1).
 
-**File**: `Cargo.lock` (modified, +34/-34)
+Co-authored-by: Wing <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `apps/zgx/ui/templates/zeron-v2/.base.json` (modified, +1/-1)
 ```diff
-@@ -13347,7 +13347,7 @@ dependencies = [
- 
- [[package]]
- name = "zatex"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "tiny-skia",
-  "ttf-parser",
-@@ -13598,7 +13598,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "clap",
-@@ -13623,7 +13623,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-audio"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "base64 0.22.1",
-  "cpal 0.18.2",
-@@ -13635,7 +13635,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-cli"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "clap",
-@@ -13651,7 +13651,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-client"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -13682,7 +13682,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-doc"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "chrono",
-  "loro",
-@@ -13697,7 +13697,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-engine"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "alacritty_terminal",
-  "anyhow",
-@@ -13757,7 +13757,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-harness"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -13791,7 +13791,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-launch"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "libc",
-  "tempfile",
-@@ -13800,14 +13800,14 @@ dependencies = [
- 
- [[package]]
- name = "zeron-markdown"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "pulldown-cmark",
- ]
- 
- [[package]]
- name = "zeron-mcp"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -13829,7 +13829,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-mobile"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "async-trait",
-  "serde",
-@@ -13856,14 +13856,14 @@ dependencies = [
- 
- [[package]]
- name = "zeron-mobile-bindgen"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "uniffi",
- ]
- 
- [[package]]
- name = "zeron-notify"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "objc",
-  "sha2",
-@@ -13872,19 +13872,19 @@ dependencies = [
- 
- [[package]]
- name = "zeron-orb"
--version = "0.3.6"
-+version = "0.3.7"
- 
- [[package]]
- name = "zeron-plugin-guard"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "serde_json",
-  "tempfile",
- ]
- 
- [[package]]
- name = "zeron-preview"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -13914,11 +13914,11 @@ dependencies = [
- 
- [[package]]
- name = "zeron-preview-label"
--version = "0.3.6"
-+version = "0.3.7"
- 
- [[package]]
- name = "zeron-proto"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "chrono",
-  "pulldown-cmark",
-@@ -13929,7 +13929,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-rpc"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -13950,7 +13950,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-sync"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "base64 0.22.1",
-  "block2 0.6.2",
-@@ -13976,7 +13976,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-syntax"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "thiserror 2.0.20",
-  "tree-sitter",
-@@ -14011,14 +14011,14 @@ dependencies = [
- 
- [[package]]
- name = "zeron-term"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "alacritty_terminal",
- ]
- 
- [[package]]
- name = "zeron-term-link"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -14035,7 +14035,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-text"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "core-foundation 0.10.1",
-  "core-graphics 0.24.0",
-@@ -14052,7 +14052,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-theme"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "clap",
-@@ -14067,7 +14067,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-ui"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "alacritty_terminal",
-  "anyhow",
-@@ -14150,7 +14150,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-update"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "futures",
-@@ -14167,11 +14167,11 @@ dependencies = [
- 
- [[package]]
- name = "zeron-veil"
--version = "0.3.6"
-+version = "0.3.7"
- 
- [[package]]
- name = "zeron-visual"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "base64 0.22.1",
-  "gltf",
-@@ -14183,7 +14183,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-visual-gpu"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "image",
-  "pollster 0.4.0",
-@@ -14194,7 +14194,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-voice"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "cpal 0.17.3",
-@@ -14213,7 +14213,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-voice-media"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "async-trait",
-  "semver",
-@@ -14
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -38,7 +38,7 @@ members = [
- ]
- 
- [workspace.package]
--version = "0.3.6"
-+version = "0.3.7"
- edition = "2024"
- license = "MIT"
- publish = false
-```
-
-**File**: `apps/zgx/Cargo.lock` (modified, +12/-12)
-```diff
-@@ -7067,7 +7067,7 @@ dependencies = [
- 
- [[package]]
- name = "zatex"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "ttf-parser",
- ]
-@@ -7233,7 +7233,7 @@ checksum = "e13084392c5e4bc371903e2935a5eaeed24905a7511356b883835e18a78f6879"
- 
- [[package]]
- name = "zeron-cli"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "clap",
-@@ -7248,15 +7248,15 @@ dependencies = [
- 
- [[package]]
- name = "zeron-launch"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "libc",
-  "windows-sys 0.61.2",
- ]
- 
- [[package]]
- name = "zeron-notify"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "objc",
-  "sha2",
-@@ -7265,18 +7265,18 @@ dependencies = [
- 
- [[package]]
- name = "zeron-plugin-guard"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "serde_json",
- ]
- 
- [[package]]
- name = "zeron-preview-label"
--version = "0.3.6"
-+version = "0.3.7"
- 
- [[package]]
- name = "zeron-proto"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "chrono",
-  "pulldown-cmark 0.12.2",
-@@ -7287,7 +7287,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-theme"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "clap",
-@@ -7301,7 +7301,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-update"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "futures",
-@@ -7318,7 +7318,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-visual"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "base64 0.22.1",
-  "gltf",
-@@ -7330,7 +7330,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-visual-gpu"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "pollster",
-  "tracing",
-@@ -7340,7 +7340,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-voice"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "cpal",
+@@ -5,6 +5,6 @@
+   "screens/chat/lane_tab.luau": "c73af1b7c16fd56e",
+   "screens/panel/init.luau": "a0df0db6e977845f",
+   "screens/shell/init.luau": "302aa5fc3350cd0a",
+-  "screens/shell/page.luau": "c1debbce640a5d45",
++  "screens/shell/page.luau": "c60a2e8010d8068e",
+   "screens/shell/view.luau": "95dec891b31add1d"
+ }
 ```
 
 ---
 
-### Incident Patch 2: `55a5c392` (2026-11-15)
-**Commit Message**: Zeron 0.3.7: Cloud chats switch accounts; a scroll away stays away
+### Incident Patch 2: `2c965d7a` (2026-11-18)
+**Commit Message**: zgx: apps/zgx/tests pass, and CI runs them (#1516)
 
-0.3.6 plus:
-- A Cloud chat's model menu offers Cloud's accounts again, to switch the
-  provider account every Cloud machine uses (#1467).
-- The transcript no longer pulls you back to the end after you scroll away:
-  not during a send's glide, nor at a resize after a scroll (#1450).
+* zgx: no debugging left behind (tests/leftovers.rs passes)
 
-Version 0.3.7.
+- The sidebar's scroll probe (b4b8cf043, "sidebar-probe:" on every step
+  back) and the mention menu's M.debug prints are gone.
+- The CLI's error and the Windows install's are main's own error now
+  (same "Error: …" and exit status 1), not an eprintln! beside it.
+- The transcript's opt-in trace logs as `zeron-zgx: transcript …`, its
+  switch the shared value `trace.transcript` (ZERON_ZGX_TRACE_TRANSCRIPT=1
+  still turns it on); a stand-in part that didn't load logs as zeron-zgx.
+- The activity bench's knobs are ACTIVITY_*, as its ACTIVITY_PIXELS and
+  ACTIVITY_ONLY already were, not DEBUG_*.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +34/-34)
+* zgx gallery: the syntax demo's editor takes its code size as the token
+
+bcd094662 gave the textarea its size as text_size, but as the number the
+theme's $zeron.prose.code.size held when the page was built, which the
+design lint reads as a hard-coded 13 (tests/design_lint.rs). The token
+itself follows the theme.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* zgx tests: reload's Settings scroll stubs the actions General now
+
+**File**: `.github/workflows/zgx-tests.yml` (modified, +9/-2)
 ```diff
-@@ -13347,7 +13347,7 @@ dependencies = [
- 
- [[package]]
- name = "zatex"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "tiny-skia",
-  "ttf-parser",
-@@ -13598,7 +13598,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "clap",
-@@ -13623,7 +13623,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-audio"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "base64 0.22.1",
-  "cpal 0.18.2",
-@@ -13635,7 +13635,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-cli"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "clap",
-@@ -13651,7 +13651,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-client"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -13682,7 +13682,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-doc"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "chrono",
-  "loro",
-@@ -13697,7 +13697,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-engine"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "alacritty_terminal",
-  "anyhow",
-@@ -13757,7 +13757,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-harness"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -13791,7 +13791,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-launch"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "libc",
-  "tempfile",
-@@ -13800,14 +13800,14 @@ dependencies = [
- 
- [[package]]
- name = "zeron-markdown"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "pulldown-cmark",
- ]
- 
- [[package]]
- name = "zeron-mcp"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -13829,7 +13829,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-mobile"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "async-trait",
-  "serde",
-@@ -13856,14 +13856,14 @@ dependencies = [
- 
- [[package]]
- name = "zeron-mobile-bindgen"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "uniffi",
- ]
- 
- [[package]]
- name = "zeron-notify"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "objc",
-  "sha2",
-@@ -13872,19 +13872,19 @@ dependencies = [
- 
- [[package]]
- name = "zeron-orb"
--version = "0.3.6"
-+version = "0.3.7"
- 
- [[package]]
- name = "zeron-plugin-guard"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "serde_json",
-  "tempfile",
- ]
- 
- [[package]]
- name = "zeron-preview"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -13914,11 +13914,11 @@ dependencies = [
- 
- [[package]]
- name = "zeron-preview-label"
--version = "0.3.6"
-+version = "0.3.7"
- 
- [[package]]
- name = "zeron-proto"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "chrono",
-  "pulldown-cmark",
-@@ -13929,7 +13929,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-rpc"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -13950,7 +13950,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-sync"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "base64 0.22.1",
-  "block2 0.6.2",
-@@ -13976,7 +13976,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-syntax"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "thiserror 2.0.20",
-  "tree-sitter",
-@@ -14011,14 +14011,14 @@ dependencies = [
- 
- [[package]]
- name = "zeron-term"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "alacritty_terminal",
- ]
- 
- [[package]]
- name = "zeron-term-link"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "async-trait",
-@@ -14035,7 +14035,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-text"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "core-foundation 0.10.1",
-  "core-graphics 0.24.0",
-@@ -14052,7 +14052,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-theme"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "clap",
-@@ -14067,7 +14067,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-ui"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "alacritty_terminal",
-  "anyhow",
-@@ -14150,7 +14150,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-update"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "futures",
-@@ -14167,11 +14167,11 @@ dependencies = [
- 
- [[package]]
- name = "zeron-veil"
--version = "0.3.6"
-+version = "0.3.7"
- 
- [[package]]
- name = "zeron-visual"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "base64 0.22.1",
-  "gltf",
-@@ -14183,7 +14183,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-visual-gpu"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "image",
-  "pollster 0.4.0",
-@@ -14194,7 +14194,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-voice"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "cpal 0.17.3",
-@@ -14213,7 +14213,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-voice-media"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "async-trait",
-  "semver",
-@@ -14
+@@ -4,8 +4,9 @@ name: zgx tests
+ # crate it or the engine's plugin host builds changes. zgx-beta.yml only builds.
+ #
+ #   apps/zgx's unit tests (`cargo test --bin zeron-zgx`: src/plugins/*_tests.rs
+-#   among them) and its Luau UI tests (`zgx test ui`, the zgx CLI at the rev
+-#   apps/zgx/Cargo.toml pins), on macOS and Linux, the known failures let
++#   among them), its integration tests (`cargo test --test '*'`:
++#   apps/zgx/tests/*.rs) and its Luau UI tests (`zgx test ui`, the zgx CLI at
++#   the rev apps/zgx/Cargo.toml pins), on macOS and Linux, the known failures let
+ #   through (scripts/ci/test-zgx.sh, scripts/ci/zgx-known-failures.txt);
+ #   and on macOS the engine's plugin tests (its lib's `plugins::` tests and
+ #   tests/plugin_services.rs), which core-tests runs on Linux.
+@@ -86,6 +87,9 @@ jobs:
+             --git https://github.com/zeronsh/zgx --rev "$REV" zgx-script --bin zgx --features inspect --root ~/zgx-cli
+       - name: apps/zgx unit tests
+         run: scripts/ci/test-zgx.sh rust
++      - name: apps/zgx integration tests
++        if: ${{ !cancelled() }}
++        run: scripts/ci/test-zgx.sh tests
+       - name: apps/zgx Luau UI tests
+         if: ${{ !cancelled() }}
+         run: scripts/ci/test-zgx.sh ui ~/zgx-cli/bin/zgx
+@@ -143,6 +147,9 @@ jobs:
+             --git https://github.com/zeronsh/zgx --rev "$REV" zgx-script --bin zgx --features inspect --root ~/zgx-cli
+       - name: apps/zgx unit tests
+         run: scripts/ci/test-zgx.sh rust
++      - name: apps/zgx integration tests
++        if: ${{ !cancelled() }}
++        run: scripts/ci/test-zgx.sh tests
+       - name: apps/zgx Luau UI tests
+         if: ${{ !cancelled() }}
+         run: scripts/ci/test-zgx.sh ui ~/zgx-cli/bin/zgx
 ```
 
-**File**: `Cargo.toml` (modified, +1/-1)
+**File**: `apps/zgx/src/activity_cost_tests.rs` (modified, +26/-26)
 ```diff
-@@ -38,7 +38,7 @@ members = [
- ]
+@@ -50,7 +50,7 @@ fn thread_cpu() -> Duration {
+ }
  
- [workspace.package]
--version = "0.3.6"
-+version = "0.3.7"
- edition = "2024"
- license = "MIT"
- publish = false
+ /// One call row's scene (kinds and boxes, no text) and every node above it to
+-/// the root, for zgx's layout work to reproduce alone (`DEBUG_TREE=1`).
++/// the root, for zgx's layout work to reproduce alone (`ACTIVITY_TREE=1`).
+ fn dump_row(bench: &mut Bench) {
+     let Some(button) = bench.app.find("role:button ~\"package part8 --\"") else {
+         eprintln!("TREE no row in view");
+@@ -88,9 +88,9 @@ fn dump_row(bench: &mut Bench) {
+ }
+ 
+ thread_local! {
+-    /// Whether `DEBUG_NODE` has shown its node.
++    /// Whether `ACTIVITY_NODE` has shown its node.
+     static NODE_SHOWN: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+-    /// Whether frames show their damage now (`DEBUG_DAMAGE`: the scroll's).
++    /// Whether frames show their damage now (`ACTIVITY_DAMAGE`: the scroll's).
+     static DAMAGE_SHOWN: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+ }
+ 
+@@ -125,7 +125,7 @@ fn show_damage(scene: &zgx::scene::Scene, damage: &[zgx::scene::Rect]) {
+             }
+         }
+     }
+-    if std::env::var_os("DEBUG_DAMAGE_AT").is_some() {
++    if std::env::var_os("ACTIVITY_DAMAGE_AT").is_some() {
+         for (rect, radius) in scene.backdrop_filters() {
+             eprintln!("DAMAGE backdrop filter {:.1},{:.1} {:.1}x{:.1} radius {radius}", rect.x, rect.y, rect.width, rect.height);
+         }
+@@ -496,9 +496,9 @@ impl Bench {
+         let gpu = draw.then(|| {
+             let mut gpu = GpuRenderer::new((W * SCALE) as u32, (H * SCALE) as u32).expect("a GPU");
+             gpu.set_scale_factor(SCALE);
+-            // (`DEBUG_SCROLL_COPY`: copying scrolls as a window does; offscreen
++            // (`ACTIVITY_SCROLL_COPY`: copying scrolls as a window does; offscreen
+             // on macOS the renderer repaints them instead.)
+-            if std::env::var_os("DEBUG_SCROLL_COPY").is_some() {
++            if std::env::var_os("ACTIVITY_SCROLL_COPY").is_some() {
+                 gpu.debug_allow_scroll_copies();
+             }
+             for font in crate::fonts() {
+@@ -579,7 +579,7 @@ impl Bench {
+         // ahead), then the frame's own work.
+         let (mut spare, mut spare_calls) = (0, 0);
+         let process_from = process_cpu();
+-        let debug = std::env::var_os("DEBUG_FRAMES").is_some();
++        let debug = std::env::var_os("ACTIVITY_FRAMES").is_some();
+         if debug {
+             eprintln!("@SPARE");
+         }
+@@ -603,10 +603,10 @@ impl Bench {
+         let drawn = !report.damage.is_empty();
+         if drawn && let Some(gpu) = &mut self.gpu {
+             let stats = gpu.render(&self.app.ui.scene.borrow(), &report.damage).expect("a frame drawn");
+-            if std::env::var_os("DEBUG_GPU").is_some() && zgx::trace::enabled() {
++            if std::env::var_os("ACTIVITY_GPU").is_some() && zgx::trace::enabled() {
+                 eprintln!("GPU {stats:?}");
+             }
+-            if std::env::var_os("DEBUG_DAMAGE").is_some() && DAMAGE_SHOWN.get() {
++            if std::env::var_os("ACTIVITY_DAMAGE").is_some() && DAMAGE_SHOWN.get() {
+                 eprintln!("DAMAGE frame: {} rects, {} px repainted, {} scroll copies, {} layer repaints, {} backdrop copies", report.damage.len(), stats.damaged_pixels, stats.scroll_copies, stats.layer_repaints, stats.backdrop_copies);
+                 show_damage(&self.app.ui.scene.borrow(), &report.damage);
+             }
+@@ -730,7 +730,7 @@ fn scenarios(n: usize, think: usize, open: bool) {
+     }
+     bench.settle(30);
+     let ticks = bench.frames(60);
+-    if std::env::var_os("DEBUG_TREE").is_some() && open {
++    if std::env::var_os("ACTIVITY_TREE").is_some() && open {
+         dump_row(&mut bench);
+     }
+     row(n, think, label, "ticks", &ticks, 60, bench.nodes());
+@@ -774,10 +774,10 @@ fn scenarios(n: usize, think: usize, open: bool) {
+         let new = call(calls, 4);
+         let id = new["id"].as_str().unwrap().to_owned();
+         entry["parts"].as_array_mut().unwrap().push(new);
+-        if std::env::var_os("DEBUG_FRAMES").is_some() {
++        if std::env::var_os("ACTIVITY_FRAMES").is_some() {
+             eprintln!("@CALL {calls}");
+         }
+-        let tracing = std::env::var_os("DEBUG_TRACE").is_some() && calls == n + 2;
++        let tracing = std::env::var_os("ACTIVITY_TRACE").is_some() && calls == n + 2;
+         if tracing {
+             zgx::trace::set_enabled(true);
+         }
+@@ -787,8 +787,8 @@ fn scenarios(n: usize, think: usize, open: bool) {
+         call_cost.add(&cost);
+         if tracing {
+             // (A few frames into the arrival's animations.)
+-            // (`DEBUG_TRACE_FRAMES`: how many of the arrival's frames, 7 unless set.)
+-            let traced: usize = std::env::var("DEBUG_TRACE_FRAMES").ok().and_then(|n| n.parse().ok()).unwrap_or(7);
++            // (`ACTIVITY_TRACE_FRAMES`: how many of the arrival's frames, 7 unless set.)
++            let traced: usize = std::env::var("ACTIVITY_TRACE_FRAMES").ok().and_then(|n| n.pars
 ```
 
-**File**: `apps/zgx/Cargo.lock` (modified, +12/-12)
+**File**: `apps/zgx/src/main.rs` (modified, +4/-8)
 ```diff
-@@ -7067,7 +7067,7 @@ dependencies = [
+@@ -249,7 +249,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+     // may not have brought: bring it in first (src/windows_install.rs).
+     #[cfg(all(windows, feature = "beta"))]
+     {
+-        windows_install::complete_if_needed(&argv);
++        windows_install::complete_if_needed(&argv)?;
+         if let Some(dir) = std::env::current_exe().ok().as_deref().and_then(zeron_update::windows::install_directory) {
+             zeron_launch::set_full_app_engine(
+                 zeron_update::windows::version_files(&dir, about::APP_VERSION).join("engine").join("zeron.exe"),
+@@ -259,12 +259,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+     if cfg!(feature = "beta") || !dev_launch(&argv[1..]) {
+         match zeron_cli::run(about::APP_VERSION, zeron_cli::Engines::Helper) {
+             zeron_cli::Launch::Done(result) => {
+-                // (As a `main` returning it would: the error, exit status 1.)
+-                if let Err(error) = result {
+-                    eprintln!("Error: {error:?}");
+-                    std::process::exit(1);
+-                }
+-                return Ok(());
++                // (Its error is `main`'s: "Error: …", exit status 1.)
++                return result.map_err(Into::into);
+             }
+             zeron_cli::Launch::Window { open_url: url, safe_mode } => {
+                 open_url = url;
+@@ -717,7 +713,7 @@ fn script_host_at(cx: &mut WindowContext, path: PathBuf, entry: &str) -> ScriptH
+     // ds/transcript's trace (`ZERON_ZGX_TRACE_TRANSCRIPT=1`): the hover lane
+     // and the rows' heights as they change, a line each on stdout.
+     if std::env::var("ZERON_ZGX_TRACE_TRANSCRIPT").is_ok_and(|v| v == "1") {
+-        host.shared("debug.trace_transcript", true);
++        host.shared("trace.transcript", true);
+     }
+     // How much the desktop blurs behind the glass (`window.blur`), for the
+     // glass's tint (ds/material).
+```
+
+**File**: `apps/zgx/src/windows_install.rs` (modified, +30/-15)
+```diff
+@@ -21,35 +21,52 @@ use zeron_update::windows::{self, Completion};
  
- [[package]]
- name = "zatex"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "ttf-parser",
- ]
-@@ -7233,7 +7233,7 @@ checksum = "e13084392c5e4bc371903e2935a5eaeed24905a7511356b883835e18a78f6879"
+ use crate::about::APP_VERSION;
  
- [[package]]
- name = "zeron-cli"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "clap",
-@@ -7248,15 +7248,15 @@ dependencies = [
++/// Why this launch can't go on, as `main`'s error: said as written
++/// ("Error: …"), exit status 1.
++pub struct Failed(String);
++
++impl std::fmt::Debug for Failed {
++    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
++        f.write_str(&self.0)
++    }
++}
++
++impl std::fmt::Display for Failed {
++    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
++        f.write_str(&self.0)
++    }
++}
++
++impl std::error::Error for Failed {}
++
+ /// Complete this installation if it needs it; returns once this process may
+ /// go on. Exits instead when the newer `zeron.exe` the feed had by then ran
+-/// in its place, or when the person gives up.
+-pub fn complete_if_needed(argv: &[String]) {
++/// in its place; fails when the person gives up (or isn't asked: a command).
++pub fn complete_if_needed(argv: &[String]) -> Result<(), Failed> {
+     windows::set_packaged();
+     // Answered without the folder: the old updater checks a staged copy so.
+     if matches!(argv.get(1).map(String::as_str), Some("--version" | "-V" | "--help" | "-h" | "help")) {
+-        return;
++        return Ok(());
+     }
+     let Ok(exe) = std::env::current_exe() else {
+-        return;
++        return Ok(());
+     };
+     let Some(directory) = windows::incomplete_install(&exe, APP_VERSION) else {
+-        return;
++        return Ok(());
+     };
+     // A window launch: nothing, a link, or the update's relaunch.
+     let window = argv
+         .get(1)
+         .is_none_or(|arg| arg.starts_with("--") || arg.starts_with("zeron:"));
+     loop {
+         match complete(&directory) {
+-            Ok(Completion::Complete | Completion::Installed) => return,
++            Ok(Completion::Complete | Completion::Installed) => return Ok(()),
+             Ok(Completion::Updated(version)) => {
+-                run_installed(&directory, &argv[1..], &version);
++                return Err(run_installed(&directory, &argv[1..], &version));
+             }
+             Err(error) => {
+-                eprintln!("Error: Zeron couldn't finish installing this update: {error}");
+                 if !window || !ask_to_retry(&error) {
+-                    std::process::exit(1);
++                    return Err(Failed(format!("Zeron couldn't finish installing this update: {error}")));
+                 }
+             }
+         }
+@@ -68,15 +85,13 @@ fn complete(directory: &Path) -> Result<Completion, String> {
+ }
  
- [[package]]
- name = "zeron-launch"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "libc",
-  "windows-sys 0.61.2",
- ]
+ /// The feed had a newer release, now installed as `zeron.exe`: it runs this
+-/// launch instead, and its exit is this one's.
+-fn run_installed(directory: &Path, args: &[String], version: &str) -> ! {
++/// launch instead, and its exit is this one's. Returns only when it
++/// couldn't start.
++fn run_installed(directory: &Path, args: &[String], version: &str) -> Failed {
+     let installed = directory.join("zeron.exe");
+     match std::process::Command::new(&installed).args(args).status() {
+         Ok(status) => std::process::exit(status.code().unwrap_or(1)),
+-        Err(error) => {
+-            eprintln!("Error: Zeron {version} is installed, but couldn't start: {error}");
+-            std::process::exit(1);
+-        }
++        Err(error) => Failed(format!("Zeron {version} is installed, but couldn't start: {error}")),
+     }
+ }
  
- [[package]]
- name = "zeron-notify"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "objc",
-  "sha2",
-@@ -7265,18 +7265,18 @@ dependencies = [
+```
+
+**File**: `apps/zgx/tests/cli.rs` (modified, +2/-1)
+```diff
+@@ -67,7 +67,8 @@ fn the_engine_s_subcommands_run_in_the_helper_beside_the_app() {
+     let dir = scratch("helper");
+     let zeron = zeron_in(&dir);
+     let heard = dir.join("heard");
+-    let helper = dir.join("Zeron Engine");
++    // (The helper's name here: "Zeron Engine" on macOS, zeron-engine on Linux.)
++    let helper = dir.join(zeron_launch::ENGINE_EXECUTABLES[0]);
+     std::fs::write(&helper, format!("#!/bin/sh\necho \"$@\" > '{}'\nexit 7\n", heard.display())).unwrap();
+     std::fs::set_permissions(&helper, std::fs::Permissions::from_mode(0o755)).unwrap();
+     let status = Command::new(&zeron).args(["plugin", "list"]).env("ZERON_DATA_DIR", &dir).status().unwrap();
+```
+
+**File**: `apps/zgx/tests/pointer_cursor.rs` (modified, +13/-10)
+```diff
+@@ -1,9 +1,12 @@
+ //! The pointer's cursor is the one under it: the sidebar's edge shows the
+-//! column-resize cursor, a sidebar row the pointing hand. zgx gives the
+-//! cursor of the front-most node at the pointer (`Scene::cursor_at`); a
+-//! layer the window's size in front of the shell, even one that lets the
+-//! pointer through (the session hover card's, until it was made an anchor of
+-//! no size), took every cursor away.
++//! column-resize cursor, a sidebar row the pointing hand. Asked as the
++//! window asks zgx (zgx-desktop's `ui.input.cursor_at`): the cursor of what
++//! a press there would reach, past a layer that lets the pointer through, as
++//! CSS's `pointer-events: none`. A layer the window's size in front of the
++//! shell that doesn't took every cursor away. (`Scene::cursor_at`, the
++//! front-most node's whatever it passes, isn't the window's: the session
++//! card's root is the window's size, passing the pointer, since 1b409eb0e,
++//! so the card leaving stays by its own row.)
  
- [[package]]
- name = "zeron-plugin-guard"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "serde_json",
- ]
+ use std::path::PathBuf;
  
- [[package]]
- name = "zeron-preview-label"
--version = "0.3.6"
-+version = "0.3.7"
+@@ -21,7 +24,7 @@ fn the_sidebar_edge_shows_the_resize_cursor_and_a_row_the_hand() {
+     let b = scene.visible_bounds(edge).expect("the sidebar shows");
+     // Its edge: its last few points, down its whole height.
+     for y in [b.y + 120., b.y + b.height / 2., b.y + b.height - 120.] {
+-        assert_eq!(scene.cursor_at(b.x + b.width - 3., y), Some(Cursor::ColResize), "at its edge, y {y}");
++        assert_eq!(app.ui.input.cursor_at(&scene, b.x + b.width - 3., y), Some(Cursor::ColResize), "at its edge, y {y}");
+     }
+     // A row: the hand, as a button.
+     let row = scene
+@@ -30,7 +33,7 @@ fn the_sidebar_edge_shows_the_resize_cursor_and_a_row_the_hand() {
+         .find_map(|id| scene.cursor_for(id))
+         .expect("a sidebar row under the pointer");
+     assert_eq!(row, Cursor::Pointer);
+-    assert_eq!(scene.cursor_at(100., 290.), Some(Cursor::Pointer));
++    assert_eq!(app.ui.input.cursor_at(&scene, 100., 290.), Some(Cursor::Pointer));
+ }
  
- [[package]]
- name = "zeron-proto"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "chrono",
-  "pulldown-cmark 0.12.2",
-@@ -7287,7 +7287,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-theme"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "clap",
-@@ -7301,7 +7301,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-update"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "futures",
-@@ -7318,7 +7318,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-visual"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "base64 0.22.1",
-  "gltf",
-@@ -7330,7 +7330,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-visual-gpu"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "pollster",
-  "tracing",
-@@ -7340,7 +7340,7 @@ dependencies = [
- 
- [[package]]
- name = "zeron-voice"
--version = "0.3.6"
-+version = "0.3.7"
- dependencies = [
-  "anyhow",
-  "cpal",
+ /// Every resize handle Zeron v3 has shows its cursor under the pointer, a
+@@ -57,11 +60,11 @@ fn every_resize_edge_shows_its_cursor_alone_and_in_a_split() {
+         let scene = app.ui.scene.borrow();
+         let b = scene.visible_bounds(sidebar).expect("the sidebar shows");
+         for y in [b.y + 120., b.y + b.height / 2., b.y + b.height - 120.] {
+-            assert_eq!(scene.cursor_at(b.x + b.width - 3., y), Some(Cursor::ColResize), "{when}: the sidebar's edge, y {y}");
++            assert_eq!(app.ui.input.cursor_at(&scene, b.x + b.width - 3., y), Some(Cursor::ColResize), "{when}: the sidebar's edge, y {y}");
+         }
+         let e = scene.visible_bounds(panel).expect("the panel's edge shows");
+         for y in [e.y + 120., e.y + e.height / 2., e.y + e.height - 120.] {
+-            assert_eq!(scene.cursor_at(e.x + e.width / 2., y), Some(Cursor::ColResize), "{when}: the panel's edge, y {y}");
++            assert_eq!(app.ui.input.cursor_at(&scene, e.x + e.width / 2., y), Some(Cursor::ColResize), "{when}: the panel's edge, y {y}");
+         }
+     };
+     check(&mut app, "a chat alone");
+@@ -92,5 +95,5 @@ fn every_resize_edge_shows_its_cursor_alone_and_in_a_split() {
+     let tab = app.target("#panel-strip >> role:tab").expect("a panel tab");
+     let scene = app.ui.scene.borrow();
+     let r = scene.visible_bounds(tab).expect("the tab shows");
+-    assert_eq!(scene.cursor_at(r.x + r.width / 2., r.y + r.height / 2.), Some(Cursor::Pointer), "a panel tab under the title bar's band");
++    assert_eq!(app.ui.input.cursor_at(&scene, r.x + r.width / 2., r.y + r.height / 2.), Some(Cursor::Pointer), "a panel tab under the title bar's band");
+ }
+```
+
+**File**: `apps/zgx/tests/reload.rs` (modified, +13/-5)
+```diff
+@@ -49,6 +49,8 @@ const CALLS: &[&str] = &[
+     "account.revoke_invite",
+     "account.resend_invite",
+     "account.rename_org",
++    "account.keeps_chats_local",
++    "account.keep_chats_local",
+     "agents.complete",
+     "agents.install",
+     "agents.remove",
+@@ -102,6 +104,7 @@ const INVOKES: &[&str] = &[
+     "app.open_main",
+     "appearance",
+     "chat.catalog",
++    "chat.catalog_on",
+     "chat.open",
+     "done",
+     "files.unwatch",
+@@ -760,18 +763,21 @@ fn a_reload_keeps_the_sidebar_and_settings_where_they_were_scrolled() {
+     // Settings' page, scrolled down.
+     assert!(app.host.run_command("shell.settings"));
+     app.frames(60);
+-    for _ in 0..4 {
+-        // (At a heading in view: the page runs on below the window.)
++    // (Scrolled at a heading in view: the page runs on below the window.)
++    let heading_in_view = |app: &mut TestApp| {
+         let target = zgx_script::driver::parse("#settings-page >> role:heading").unwrap();
+         app.ui.prepare_frame();
+         let found = zgx_script::driver::find_all(&app.ui, &app.handle, &target).unwrap_or_default();
+-        let id = found
++        found
+             .into_iter()
+             .find(|&id| {
+                 let b = app.ui.scene.borrow().hit_bounds(id);
+                 b.y > 40. && b.y < 560.
+             })
+-            .expect("a heading in view");
++            .expect("a heading in view")
++    };
++    for _ in 0..4 {
++        let id = heading_in_view(&mut app);
+         zgx_script::driver::scroll(&mut app.ui, id, 150.);
+         app.settle();
+         app.frames(4);
+@@ -793,7 +799,9 @@ fn a_reload_keeps_the_sidebar_and_settings_where_they_were_scrolled() {
+     app.frames(30);
+     assert_eq!(on_screen(&mut app, headings), before, "once settled after the reload: settings' page moved");
+     let kept = scroll(&app);
+-    let heading = app.target("#settings-page >> role:heading \"Links\"").expect("a heading in view");
++    // (Any heading in view: General's Links section, which this scrolled
++    // at, went with "Open pull requests in", 0d8a6eb3f.)
++    let heading = heading_in_view(&mut app);
+     zgx_script::driver::scroll(&mut app.ui, heading, -100.);
+     app.settle();
+     app.frames(30);
+```
+
+**File**: `apps/zgx/ui/demos/syntax.luau` (modified, +1/-2)
+```diff
+@@ -70,8 +70,7 @@ local function editor(id: string, value: State<string>): Node
+ 		highlight = Syntax.highlighter(id),
+ 		line_numbers = true,
+ 		font = "$font.mono",
+-		-- The textarea takes its type size as a number, not a token.
+-		text_size = ui.theme.get("zeron.prose.code.size") :: number,
++		text_size = "$zeron.prose.code.size",
+ 		tab = "    ",
+ 		current_line = "$hover",
+ 		-- No inset on the scrolling sides: a textarea clips inside its padding.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1468** (2026-11-15): main catches up with the release line (Zeron 0.3.7) (@wingleeio)
-- **PR #1467** (2026-11-15): Composer: a Cloud chat's model menu offers Cloud's accounts (@wingleeio)
-- **PR #1459** (2026-11-15): Windows start: the engine up with the window, the interface laid down in parallel (@wingleeio)
-- **PR #1457** (2026-11-15): main catches up with the release line (Zeron 0.3.6) (@wingleeio)
-- **PR #1456** (2026-11-15): Providers: Cloud is a choice again, its accounts and API keys managed there (@wingleeio)
-- **PR #1455** (2026-11-15): Cloud: the updater and the pre-sleep tidy keep zeron-engine (@wingleeio)
+- **PR #1517** (2026-11-18): Zeron v2: in step with the default's page after #1515 (@wingleeio)
+- **PR #1516** (2026-11-18): zgx: apps/zgx/tests pass, and CI runs them (@wingleeio)
+- **PR #1515** (2026-11-18): Tab strip: no script per frame while the title bar's controls or the sidebar move (@wingleeio)
+- **PR #1514** (2026-11-18): Island glass: plain tokens, solid through the window's theme (no script per animated frame) (@wingleeio)
+- **PR #1513** (2026-11-18): Preview discovery leaves test servers alone, and lists a server whose environment read empty (@wingleeio)
+- **PR #1512** (2026-11-18): Engine: a long chat opened with rows held sends what changed among its newest entries first (@wingleeio)
 
 ---
 
@@ -2421,95 +2043,31 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in Cargo.lock
+## X. Zeron v2: in step with the default's page after #1515
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/zgx/ui/templates/zeron-v2/.base.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f6a9bbfc`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b1064c1b`: Zeron v2: in step with the default's page after #1515. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/zgx/ui/templates/zeron-v2/.base.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
-version = "0.3.7"
+  "screens/shell/page.luau": "c60a2e8010d8068e",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
-version = "0.3.6"
+  "screens/shell/page.luau": "c1debbce640a5d45",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f6a9bbfc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b1064c1b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

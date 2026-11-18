@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-TL78",
-    "timestamp": "2026-11-17T05:19:45.812Z",
-    "repository": "a2ui-project/a2ui",
-    "learningId": "learn-github-a2ui-project-a2ui",
-    "contentHash": "b88241c73a49fb53abc3a1125ca74a9b780dc2152fb6eb5c3b3b045347dc35f5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-FXU3",
-    "timestamp": "2026-11-17T05:37:08.619Z",
-    "repository": "pimalaya/himalaya",
-    "learningId": "learn-github-pimalaya-himalaya",
-    "contentHash": "2d931f626ca5fe7defdd2162a8f9a5ca1170260d5617776ffc4b1884872c05e9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-FZTJ",
-    "timestamp": "2026-11-17T05:37:11.191Z",
-    "repository": "TanStack/query",
-    "learningId": "learn-github-tanstack-query",
-    "contentHash": "2a7862c8dff8e4989bc07af5a69e52f12c63007eb9b6222fd055b432e294d9ac",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-G1I8",
-    "timestamp": "2026-11-17T05:37:13.376Z",
-    "repository": "gauthierpiarrette/highball",
-    "learningId": "learn-github-gauthierpiarrette-highball",
-    "contentHash": "7a3d26411b018bb3a94381a329fbdfd6c7f1c053513a94b5c1fff40b8e14637d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-G3GJ",
     "timestamp": "2026-11-17T05:37:15.907Z",
     "repository": "argoproj/argo-events",
@@ -7490,6 +7430,66 @@
     "repository": "crate/crate",
     "learningId": "learn-github-crate-crate",
     "contentHash": "0a651b5f501251f3070918e7c54eb72dc0a6224a99a04dfade5bd1e6c891d456",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-AIWZ",
+    "timestamp": "2026-11-18T14:40:28.739Z",
+    "repository": "inclusionAI/Ming-Image-0.1-Design",
+    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
+    "contentHash": "c312ae80df8ccbc05eee897404571ff1c4d2eddd9a84e19af2d0e1c872219b0b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-AMUB",
+    "timestamp": "2026-11-18T14:40:33.827Z",
+    "repository": "zeronsh/zeron",
+    "learningId": "learn-github-zeronsh-zeron",
+    "contentHash": "2c669ceee8a8e1996a51e83af491694a9b6ddfd96e08bc981cfdc2dc61bdbe81",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-ATIG",
+    "timestamp": "2026-11-18T14:40:42.472Z",
+    "repository": "smallstep/cli",
+    "learningId": "learn-github-smallstep-cli",
+    "contentHash": "f75b8123630faff29b2817e7c0bcb2a9095e18a4bbd2ddaa2033c0cfa8ee5e60",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-AVLH",
+    "timestamp": "2026-11-18T14:40:45.173Z",
+    "repository": "Ontos-AI/knowhere",
+    "learningId": "learn-github-ontos-ai-knowhere",
+    "contentHash": "fee643031259c875c5e2d89294c6a19bb2f4d5b005b47562e5d78efc7ca9e815",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

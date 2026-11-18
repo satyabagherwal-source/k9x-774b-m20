@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T14:32:16.370Z",
+  "last_updated": "2026-11-18T14:40:45.189Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -620,14 +620,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "content_hash": "76aec619b0821df4b375a33f5060787dcf03f9ee9b65c9955ac3481c5a14d9a5",
-      "verified_at": "2026-11-18T04:49:44.173Z",
+      "content_hash": "c312ae80df8ccbc05eee897404571ff1c4d2eddd9a84e19af2d0e1c872219b0b",
+      "verified_at": "2026-11-18T14:40:28.755Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T04:49:44.173Z"
+      "last_updated": "2026-11-18T14:40:28.755Z"
     },
     "deepseek-ai/DeepSeek-V4.1-Flash": {
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -3561,14 +3561,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-smallstep-cli",
-      "content_hash": "3afb8375131063f51e7ad28e152e2df6a80bede05772e254df18099fce9f11c9",
-      "verified_at": "2026-11-09T21:59:31.747Z",
+      "content_hash": "f75b8123630faff29b2817e7c0bcb2a9095e18a4bbd2ddaa2033c0cfa8ee5e60",
+      "verified_at": "2026-11-18T14:40:42.488Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T21:59:31.747Z"
+      "last_updated": "2026-11-18T14:40:42.488Z"
     },
     "Ontos-AI/knowhere": {
       "repository": "Ontos-AI/knowhere",
@@ -3576,14 +3576,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ontos-ai-knowhere",
-      "content_hash": "7c0e03d8c765f89a122603a53ab8c876b4fdfb03cf386c4574497ec306776793",
-      "verified_at": "2026-11-17T21:03:24.726Z",
+      "content_hash": "fee643031259c875c5e2d89294c6a19bb2f4d5b005b47562e5d78efc7ca9e815",
+      "verified_at": "2026-11-18T14:40:45.188Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T21:03:24.726Z"
+      "last_updated": "2026-11-18T14:40:45.188Z"
     },
     "Bitterbot-AI/bitterbot-desktop": {
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -5271,14 +5271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeronsh-zeron",
-      "content_hash": "8d37abb04e3e7db192128f7bdfeae93187706ca66e62b017cecfee0b29a94d9b",
-      "verified_at": "2026-11-18T06:15:22.677Z",
+      "content_hash": "2c669ceee8a8e1996a51e83af491694a9b6ddfd96e08bc981cfdc2dc61bdbe81",
+      "verified_at": "2026-11-18T14:40:33.843Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T06:15:22.677Z"
+      "last_updated": "2026-11-18T14:40:33.843Z"
     },
     "welldone-software/why-did-you-render": {
       "repository": "welldone-software/why-did-you-render",

@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T14:32:20.142Z",
+  "updated_at": "2026-11-18T14:40:50.277Z",
   "stats": {
-    "total_discovered": 5522,
-    "approved_pending_harvest": 5217,
+    "total_discovered": 5528,
+    "approved_pending_harvest": 5223,
     "harvested_count": 0,
     "rejected_count": 305,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5200,
+      "COMMUNITY_AND_EXPERT": 5205,
       "OFFICIAL_DOCUMENTATION": 177,
-      "STANDARDS_AND_SPECIFICATIONS": 109,
+      "STANDARDS_AND_SPECIFICATIONS": 110,
       "ENGINEERING_BLOGS": 4,
       "SECURITY_ADVISORIES": 24,
       "LEGAL_AND_REGULATORY": 2,
@@ -119370,6 +119370,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-crate-learnings.md",
         "fileName": "crate-crate-learnings.md"
+      }
+    },
+    "SRC-F5D66F577051": {
+      "id": "SRC-F5D66F577051",
+      "url": "https://github.com/smallstep/cli",
+      "title": "https://github.com/smallstep/cli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:40:50.010Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/smallstep-cli-learnings.md",
+        "fileName": "smallstep-cli-learnings.md"
+      }
+    },
+    "SRC-99C49AFF116D": {
+      "id": "SRC-99C49AFF116D",
+      "url": "https://smallstep.com/docs/step-ca/templates",
+      "title": "https://smallstep.com/docs/step-ca/templates",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:40:50.080Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/smallstep-cli-learnings.md",
+        "fileName": "smallstep-cli-learnings.md"
+      }
+    },
+    "SRC-E826DA746429": {
+      "id": "SRC-E826DA746429",
+      "url": "https://github.com/user-attachments/assets/64cc31fa-8446-460f-950a-fa6cf1618d31",
+      "title": "https://github.com/user-attachments/assets/64cc31fa-8446-460f-950a-fa6cf1618d31",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:40:50.132Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/smallstep-cli-learnings.md",
+        "fileName": "smallstep-cli-learnings.md"
+      }
+    },
+    "SRC-565F51897786": {
+      "id": "SRC-565F51897786",
+      "url": "https://github.com/user-attachments/assets/31f36537-309e-44db-b349-9703330da34f",
+      "title": "https://github.com/user-attachments/assets/31f36537-309e-44db-b349-9703330da34f",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:40:50.177Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/smallstep-cli-learnings.md",
+        "fileName": "smallstep-cli-learnings.md"
+      }
+    },
+    "SRC-CA89380AD786": {
+      "id": "SRC-CA89380AD786",
+      "url": "https://github.com/smallstep/cli/pull/1544",
+      "title": "https://github.com/smallstep/cli/pull/1544",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:40:50.230Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/smallstep-cli-learnings.md",
+        "fileName": "smallstep-cli-learnings.md"
+      }
+    },
+    "SRC-EBCFE867F361": {
+      "id": "SRC-EBCFE867F361",
+      "url": "https://www.rfc-editor.org/rfc/rfc5280",
+      "title": "IETF RFC 5280",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:40:50.277Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/smallstep-cli-learnings.md",
+        "fileName": "smallstep-cli-learnings.md"
       }
     }
   }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T14:32:21.061Z",
-  "total_records": 1862,
+  "last_updated": "2026-11-18T14:40:50.691Z",
+  "total_records": 1864,
   "domains": {
     "A": {
       "total": 13,
@@ -1241,7 +1241,7 @@
       ]
     },
     "H": {
-      "total": 437,
+      "total": 439,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1679,7 +1679,9 @@
         "domain_intelligence-technical-construction-intelligence-ajeetdsouza-zoxide-core-invariants",
         "domain_intelligence-technical-construction-intelligence-ajeetdsouza-zoxide-learnings-core-invariants",
         "DOM-H-50457654",
-        "DOM-H-41A8ED4B"
+        "DOM-H-41A8ED4B",
+        "domain_intelligence-technical-construction-intelligence-smallstep-cli-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-smallstep-cli-learnings-core-invariants"
       ]
     },
     "I": {
@@ -8700,8 +8702,8 @@
       "title": "Research & Knowledge Intelligence: inclusionAI/Ming-Image-0.1-Design Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-ming-image-0-1-design-research-knowledge-intelligence-inclusionai.md",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
-      "content_hash": "5e9e2856503e645c086d3f40e14e691d5bb2c288a5e867ee7f597ec6811fdf3c",
-      "created_at": "2026-11-18T04:49:44.335Z"
+      "content_hash": "4df7cd538f3bc75ac6a3f7ee50ccd779c657fa22e57b978c9ce3eca22453c897",
+      "created_at": "2026-11-18T14:40:28.985Z"
     },
     "domain_intelligence-product-intelligence-pimalaya-himalaya-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-pimalaya-himalaya-core-invariants",
@@ -8784,8 +8786,8 @@
       "title": "Research & Knowledge Intelligence: hf-inclusionai-ming-image-0.1-design-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inclusionai-ming-image-0-1-design-learnings-research-knowledge-intelligence-h.md",
       "repository": "hf-inclusionai-ming-image-0.1-design-learnings",
-      "content_hash": "19aa54b4227790309e0001beb2892711f57a9a66d7b4030b70eeb10625859b4f",
-      "created_at": "2026-11-18T04:49:56.864Z"
+      "content_hash": "2e04405621275b0129332db30dfc89caf26d681b4742c109201661c8aa477741",
+      "created_at": "2026-11-18T14:40:49.786Z"
     },
     "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-core-invariants",
@@ -11376,8 +11378,8 @@
       "title": "Architecture Intelligence: Ontos-AI/knowhere Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ontos-ai-knowhere-architecture-intelligence-ontos-ai-knowhere-core-invariants.md",
       "repository": "Ontos-AI/knowhere",
-      "content_hash": "baa5e282740f5bd59d28afc0bcdd6883fde3f8805b32409ddec6a1b44fa5fb7d",
-      "created_at": "2026-11-17T21:03:25.002Z"
+      "content_hash": "88a057f476250d0ffca4b843a6b9230cb1dcf50586a080ec6de0034b042637fa",
+      "created_at": "2026-11-18T14:40:45.592Z"
     },
     "DOM-J-44A35728": {
       "record_id": "DOM-J-44A35728",
@@ -24765,8 +24767,8 @@
       "title": "Technical Construction Intelligence: zeronsh/zeron Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zeronsh-zeron-technical-construction-intelligence-zeronsh-zeron-core-invariants.md",
       "repository": "zeronsh/zeron",
-      "content_hash": "b59fdcffabe8c82e8e10b0c2a01263f18de93d5943b93c0a476737aedf512042",
-      "created_at": "2026-11-17T00:10:43.364Z"
+      "content_hash": "3cd0570d0a3c9e0fbb3ca724fcbc9a0b54558c7d07acb89bdced4e61accbc5d3",
+      "created_at": "2026-11-18T14:40:34.274Z"
     },
     "domain_intelligence-technical-construction-intelligence-authzed-spicedb-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-authzed-spicedb-core-invariants",
@@ -24792,8 +24794,8 @@
       "title": "Technical Construction Intelligence: zeronsh-zeron-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zeronsh-zeron-learnings-technical-construction-intelligence-zeronsh-zeron-learni.md",
       "repository": "zeronsh-zeron-learnings",
-      "content_hash": "cf1de35e0b3f768e6e76fe0207672f5743605718f33dcc9c18481285357b2abe",
-      "created_at": "2026-11-17T00:11:24.384Z"
+      "content_hash": "502bc71c40c94d49f0f16a8ee9eba80a1aa9c357a18d12eee519738977bad8d4",
+      "created_at": "2026-11-18T14:40:49.184Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor",
@@ -31176,6 +31178,24 @@
       "repository": "crate-crate-learnings",
       "content_hash": "f9ebb8d13662e738d4c51d0c2d5a4e127d3d07b4fcc5a9e07889fc9cc1699f44",
       "created_at": "2026-11-18T14:32:20.494Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-smallstep-cli-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-smallstep-cli-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: smallstep/cli Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-smallstep-cli-technical-construction-intelligence-smallstep-cli-core-invariants.md",
+      "repository": "smallstep/cli",
+      "content_hash": "19a18866a6303f8036f7adcde04e7f3030802a477231519f1191d35925d157bc",
+      "created_at": "2026-11-18T14:40:42.912Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-smallstep-cli-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-smallstep-cli-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: smallstep-cli-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-smallstep-cli-learnings-technical-construction-intelligence-smallstep-cli-learni.md",
+      "repository": "smallstep-cli-learnings",
+      "content_hash": "6de6a1d909c8460f307f6aff8d33dd567593738af8745bd0e3362bf6b135c305",
+      "created_at": "2026-11-18T14:40:50.691Z"
     }
   }
 }

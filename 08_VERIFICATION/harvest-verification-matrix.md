@@ -11007,3 +11007,7 @@
 | `CYCLE-20261118-PV6F` | `2026-11-18T14:24:24.855Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`456c93c9...`) |
 | `CYCLE-20261118-ZMRL` | `2026-11-18T14:32:00.513Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md` | Yes (`d2b2bd05...`) |
 | `CYCLE-20261118-ZYZP` | `2026-11-18T14:32:16.357Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9244` | Yes (`0a651b5f...`) |
+| `CYCLE-20261118-AIWZ` | `2026-11-18T14:40:28.739Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md` | Yes (`c312ae80...`) |
+| `CYCLE-20261118-AMUB` | `2026-11-18T14:40:33.827Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9245` | Yes (`2c669cee...`) |
+| `CYCLE-20261118-ATIG` | `2026-11-18T14:40:42.472Z` | `smallstep/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8879` | Yes (`f75b8123...`) |
+| `CYCLE-20261118-AVLH` | `2026-11-18T14:40:45.173Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9246` | Yes (`fee64303...`) |

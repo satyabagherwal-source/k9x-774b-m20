@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T14:32:20.769Z",
+  "last_updated": "2026-11-18T14:40:50.504Z",
   "directives": [
     {
       "id": "CD-001",
@@ -22254,14 +22254,14 @@
       "domain_letter": "D"
     },
     {
-      "id": "CD-7633",
+      "id": "CD-AZPK",
       "directive_title": "Empirical Invariant Guard in go.mod",
-      "source_repo": "krakend-krakend-ce-learnings",
+      "source_repo": "smallstep-cli-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-7633-empirical-invariant-guard-in-go-mod.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-AZPK-empirical-invariant-guard-in-go-mod.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-17",
+      "date_staged": "2026-11-18",
       "domain_letter": "D"
     },
     {
@@ -29778,6 +29778,46 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "A",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-3AA86B-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-AYJI",
+      "directive_title": "Zeron v2: in step with the default's page after #1515",
+      "source_repo": "zeronsh-zeron-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-AYJI-zeron-v2-in-step-with-the-default-s-page-after-1515.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-AVS5",
+      "directive_title": "Install CJK fonts in the worker image so rendered PDFs show Chinese text",
+      "source_repo": "Ontos-AI/knowhere",
+      "source_commit": "87ea9514",
+      "staged_file": "11_INBOX/candidate-directives/CD-AVS5-install-cjk-fonts-in-the-worker-image-so-rendered-pdfs-show-chinese-text.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-BF585A",
+      "directive_title": "Zeron v2: in step with the default's page after #1515",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zeronsh-zeron",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BF585A-zeron-v2-in-step-with-the-default-s-page.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-REV-54DC18",
+      "directive_title": "Empirical Invariant Guard in go.mod",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "smallstep-cli",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-54DC18-empirical-invariant-guard-in-go-mod.md",
       "staged_date": "2026-11-18"
     }
   ]

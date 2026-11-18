@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source**: github ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
-> **Source Version**: `b9d146c8`  
+> **Source Version**: `87ea9514`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T21:03:23.811Z  
+> **Timestamp**: 2026-11-18T14:40:43.958Z  
 > **Learning ID**: `learn-github-ontos-ai-knowhere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T21:03:23.806Z  
+> **Harvest Timestamp**: 2026-11-18T14:40:43.952Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Knowhere extracts, parses, and outputs structured chunks ready for AI Agents and RAG.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4059 stars
+- **Stars / Engagement**: 4070 stars
 
 ---
 
@@ -1002,141 +1002,60 @@ class ApiTelemetryMiddleware:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fe0c0b40` (2026-11-17)
-**Commit Message**: Reject page-memory documents whose page count cannot be read
+### Incident Patch 1: `d771e355` (2026-11-18)
+**Commit Message**: Install CJK fonts in the worker image so rendered PDFs show Chinese text
 
-The admission page limit relied on the workload estimate, which falls
-back to one page when pypdf or python-pptx cannot read the file. Such a
-document passed the limit check and was charged one page. Page-memory
-jobs with a fallback estimate are now rejected before billing.
+LibreOffice renders DOCX/PPTX to PDF for page previews, and the worker
+image had no CJK font, so every Chinese character in the rendered
+source.pdf became an empty box. Hipo shows that PDF during the baseline
+stage, so customers saw garbled Chinese.
+
+Install fonts-noto-cjk and alias Microsoft YaHei, SimHei, and SimSun to
+the Noto CJK SC faces; without the aliases fontconfig falls back to the
+Hong Kong glyph variant.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `apps/worker/app/services/document_ingestion/page_limit_policy.py` (modified, +19/-2)
+**File**: `deploy/docker/Dockerfile.worker` (modified, +15/-0)
 ```diff
-@@ -2,18 +2,35 @@
+@@ -43,6 +43,7 @@ WORKDIR /app
+ RUN apt-get update && apt-get install -y --no-install-recommends \
+     curl \
+     ffmpeg \
++    fonts-noto-cjk \
+     libgl1 \
+     libglib2.0-0 \
+     libgomp1 \
+@@ -53,6 +54,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
+     openjdk-21-jre-headless \
+     && rm -rf /var/lib/apt/lists/*
  
- from typing import Any
++# LibreOffice renders DOCX/PPTX to PDF for page previews. Without a CJK font
++# Chinese text renders as empty boxes, and without these aliases the
++# fontconfig fallback picks the Hong Kong glyph variant, so common Simplified
++# Chinese Office fonts are mapped to the Noto CJK SC faces.
++RUN printf '%s\n' \
++    '<?xml version="1.0"?>' \
++    '<!DOCTYPE fontconfig SYSTEM "fonts.dtd">' \
++    '<fontconfig>' \
++    '  <alias binding="same"><family>Microsoft YaHei</family><prefer><family>Noto Sans CJK SC</family></prefer></alias>' \
++    '  <alias binding="same"><family>SimHei</family><prefer><family>Noto Sans CJK SC</family></prefer></alias>' \
++    '  <alias binding="same"><family>SimSun</family><prefer><family>Noto Serif CJK SC</family></prefer></alias>' \
++    '</fontconfig>' \
++    > /etc/fonts/conf.d/65-cjk-office-aliases.conf
++
+ # tabula-py shells out to Java for page-memory table HTML extraction.
+ RUN java -version
  
-+from app.services.document_ingestion.page_estimator import WorkloadEstimate
- from shared.core.exceptions.domain_exceptions import ValidationException
- from shared.models.schemas.job_metadata import JobMetadataHelper
- 
- 
- def build_page_memory_page_limit_rejection(
-     *,
-     job_metadata: dict[str, Any],
--    page_count: int,
-+    workload_estimate: WorkloadEstimate,
- ) -> ValidationException | None:
--    """Reject a page-memory document over its page limit before it is charged."""
-+    """Reject a page-memory document whose page count is unknown or over its limit before it is charged."""
-     if JobMetadataHelper.get_parse_track(job_metadata) != "page_memory":
-         return None
-+    if workload_estimate.fallback_reason is not None:
-+        return ValidationException(
-+            user_message=(
-+                "Could not read the page count of this document, "
-+                "so it cannot be checked against the page limit."
-+            ),
-+            violations=[
-+                {
-+                    "field": "page_count",
-+                    "description": (
-+                        f"Page count estimation failed: {workload_estimate.fallback_reason}"
-+                    ),
-+                }
-+            ],
-+        )
-+    page_count = workload_estimate.page_count
-     max_pages = JobMetadataHelper.get_page_memory_config(job_metadata).max_pages
-     if page_count <= max_pages:
-         return None
-```
-
-**File**: `apps/worker/app/services/document_ingestion/processing_run.py` (modified, +1/-1)
-```diff
-@@ -176,7 +176,7 @@ def _run_parse_job(
-             job_user_id=job_context.job_user_id,
-         ) or build_page_memory_page_limit_rejection(
-             job_metadata=job_context.job_metadata,
--            page_count=page_count,
-+            workload_estimate=workload_estimate,
-         )
-         if admission_rejection is not None:
-             billing_snapshot = record_skipped_parse_job_billing(
-```
-
-**File**: `apps/worker/tests/contract/test_parse_task_contract.py` (modified, +52/-0)
-```diff
-@@ -555,6 +555,58 @@ def fail_if_parsed(**_kwargs):
-     assert contract.observe_user_billing(job["user_id"])["transaction_types"] == []
- 
- 
-+def test_parse_task_should_reject_page_memory_document_with_unreadable_page_count_before_billing(
-+    worker_contract_environment: None,
-+    monkeypatch: pytest.MonkeyPatch,
-+    tmp_path: Path,
-+) -> None:
-+    contract = WorkerParseContract.create()
-+    contract.use_workspace_root(monkeypatch, tmp_path)
-+    contract.use_billing(monkeypatch, is_enabled=True)
-+
-+    source_file_name = "unreadable.pdf"
-+    pdf_path = tmp_path / source_file_name
-+    pdf_path.write_bytes(b"not a pdf")
-+    job = contract.create_file_job(
-+        source_file_name=source_file_name,
-+        job_id_prefix="job_page_unknown",
-+        extra_metadata={"parse_track": "page_memory"},
-+    )
-+    contract.upload_source_file(local_file_path=pdf_path, s3_key=job["s3_key"])
-+
-+    from app.services.document_ingestion import processing_run
-+
-+    def fail_if_parsed(**_kwargs):
-+        raise AssertionError("a document with an unknown page count must not reach the parser")
-+
-+    monkeypatch.setattr(processing_run, "execute_document_parse", fail_if_parsed)
-+
-+    celery_result = contract.enqueue_parse_task(
-+        job_id=job["job_id"],
-+        user_id=job["user_id"],
-+    )
-+
-+    assert celery_result.failed()
-+    job_row = contract.observe_job_status(job["job_id"])
-+    assert job_row["status"] == "failed"
-+    assert job_row["billing_status"] == "skipped"
-+    assert job_row["credits_charged"] == 0
-+    assert job_row["error_code"] == "INVALID_ARGUMENT"
-+    assert job_row["error_message"] == (
-+        "Could not read the page count of this document, "
-+        "so it cannot be checked against the page limit."
-+    )
-+    assert contract.get_job_metadata(job["job_id"])["error_details"] == {
-+        "violations": [
-+            {
-+                "field": "page_count",
-+                "description": "Page count estimation failed: pdf_metadata_error:PdfStreamError",
-+            }
-+        ]
-+    }
-+    assert contract.observe_user_billing(job["user_id"])["transaction_types"] == []
-+
-+
- def test_parse_task_should_reject_identical_source_before_billing_or_parsing(
-     worker_contract_environment: None,
-     monkeypatch: pytest.MonkeyPatch,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #569** (2026-11-18): chore: promote main to staging (worker CJK fonts, document-page limit) (@EricNGOntos)
+- **PR #568** (2026-11-18): Install CJK fonts in the worker image; count only document pages against the page limit (@EricNGOntos)
 - **PR #567** (2026-11-17): chore: promote main to staging (slide-deck route, page-limit admission, parse-path slimming) (@EricNGOntos)
 - **PR #566** (2026-11-17): Slide-deck structure route, page-limit admission, and parse-path slimming (@EricNGOntos)
 - **PR #564** (2026-11-17): chore: promote main to staging (PPTX embedded media, page-scoped retrieval) (@EricNGOntos)
 - **PR #563** (2026-11-17): feat: PPTX embedded media, and retrieval that returns a hit's own pages (@EricNGOntos)
-- **PR #562** (2026-11-15): feat: release a stopped shadow backfill issuer while PostgreSQL serves (@suguanYang)
-- **PR #561** (2026-11-15): chore: promote the OpenSearch open-index limit, recorder and issuer recovery to main (@suguanYang)
 
 ---
 
@@ -1156,47 +1075,42 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Reject page-memory documents whose page count cannot be read
+## X. Install CJK fonts in the worker image so rendered PDFs show Chinese text
 
 **RULE**:
-When implementing operations in `apps/worker/app/services/document_ingestion/page_limit_policy.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `deploy/docker/Dockerfile.worker`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fe0c0b40`: Reject page-memory documents whose page count cannot be read. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d771e355`: Install CJK fonts in the worker image so rendered PDFs show Chinese text. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/worker/app/services/document_ingestion/page_limit_policy.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `deploy/docker/Dockerfile.worker`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-from app.services.document_ingestion.page_estimator import WorkloadEstimate
-    workload_estimate: WorkloadEstimate,
-    """Reject a page-memory document whose page count is unknown or over its limit before it is charged."""
-    if workload_estimate.fallback_reason is not None:
-        return ValidationException(
-            user_message=(
-                "Could not read the page count of this document, "
-                "so it cannot be checked against the page limit."
-            ),
-            violations=[
-                {
-                    "field": "page_count",
-                    "description": (
-                        f"Page count estimation failed: {workload_estimate.fallback_reason}"
-                    ),
-                }
-            ],
-        )
-    page_count = workload_estimate.page_count
+    fonts-noto-cjk \
+# LibreOffice renders DOCX/PPTX to PDF for page previews. Without a CJK font
+# Chinese text renders as empty boxes, and without these aliases the
+# fontconfig fallback picks the Hong Kong glyph variant, so common Simplified
+# Chinese Office fonts are mapped to the Noto CJK SC faces.
+RUN printf '%s\n' \
+    '<?xml version="1.0"?>' \
+    '<!DOCTYPE fontconfig SYSTEM "fonts.dtd">' \
+    '<fontconfig>' \
+    '  <alias binding="same"><family>Microsoft YaHei</family><prefer><family>Noto Sans CJK SC</family></prefer></alias>' \
+    '  <alias binding="same"><family>SimHei</family><prefer><family>Noto Sans CJK SC</family></prefer></alias>' \
+    '  <alias binding="same"><family>SimSun</family><prefer><family>Noto Serif CJK SC</family></prefer></alias>' \
+    '</fontconfig>' \
+    > /etc/fonts/conf.d/65-cjk-office-aliases.conf
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-    page_count: int,
-    """Reject a page-memory document over its page limit before it is charged."""
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fe0c0b40` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d771e355` are properly handled with clean fallback behavior.

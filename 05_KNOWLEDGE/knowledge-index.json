@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T14:32:21.061Z",
-  "total_verified_learnings": 9002,
+  "last_updated": "2026-11-18T14:40:50.901Z",
+  "total_verified_learnings": 9003,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21309,
+  "total_items": 21318,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113894,9 +113894,9 @@
       "title": "Research & Knowledge Intelligence: inclusionAI/Ming-Image-0.1-Design Core Invariants",
       "repository": "inclusionAI/Ming-Image-0.1-Design",
       "source_version": "hf-inclusionai-ming-image-0.1-design",
-      "content_hash": "5e9e2856503e645c086d3f40e14e691d5bb2c288a5e867ee7f597ec6811fdf3c",
+      "content_hash": "4df7cd538f3bc75ac6a3f7ee50ccd779c657fa22e57b978c9ce3eca22453c897",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T04:49:44.335Z"
+      "persisted_at": "2026-11-18T14:40:28.985Z"
     },
     "candidate_directive-fix-fix-what-the-local-stores-campaign-found-in-maildir-and-mbox": {
       "item_id": "candidate_directive-fix-fix-what-the-local-stores-campaign-found-in-maildir-and-mbox",
@@ -114002,9 +114002,9 @@
       "title": "Research & Knowledge Intelligence: hf-inclusionai-ming-image-0.1-design-learnings Core Invariants",
       "repository": "hf-inclusionai-ming-image-0.1-design-learnings",
       "source_version": "HEAD",
-      "content_hash": "19aa54b4227790309e0001beb2892711f57a9a66d7b4030b70eeb10625859b4f",
+      "content_hash": "2e04405621275b0129332db30dfc89caf26d681b4742c109201661c8aa477741",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T04:49:56.864Z"
+      "persisted_at": "2026-11-18T14:40:49.786Z"
     },
     "candidate_directive-record-the-board-signature-after-autoroute-import_ses-and-refill_zones": {
       "item_id": "candidate_directive-record-the-board-signature-after-autoroute-import_ses-and-refill_zones",
@@ -218858,8 +218858,8 @@
       "slug": "ontos-ai-knowhere",
       "platform": "github",
       "source_url": "https://github.com/Ontos-AI/knowhere",
-      "source_version": "b9d146c8",
-      "content_hash": "7c0e03d8c765f89a122603a53ab8c876b4fdfb03cf386c4574497ec306776793",
+      "source_version": "87ea9514",
+      "content_hash": "fee643031259c875c5e2d89294c6a19bb2f4d5b005b47562e5d78efc7ca9e815",
       "dossier_path": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "promoted_rules": [
@@ -218877,6 +218877,11 @@
           "number": 9067,
           "title": "Reject page-memory documents whose page count cannot be read",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9246,
+          "title": "Install CJK fonts in the worker image so rendered PDFs show Chinese text",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218884,7 +218889,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T21:03:24.560Z",
+      "verified_at": "2026-11-18T14:40:44.944Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218926,10 +218931,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ontos-ai-knowhere-architecture-intelligence-ontos-ai-knowhere-core-invariants.md",
       "title": "Architecture Intelligence: Ontos-AI/knowhere Core Invariants",
       "repository": "Ontos-AI/knowhere",
-      "source_version": "b9d146c8",
-      "content_hash": "baa5e282740f5bd59d28afc0bcdd6883fde3f8805b32409ddec6a1b44fa5fb7d",
+      "source_version": "87ea9514",
+      "content_hash": "88a057f476250d0ffca4b843a6b9230cb1dcf50586a080ec6de0034b042637fa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T21:03:25.002Z"
+      "persisted_at": "2026-11-18T14:40:45.592Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ontos-ai-knowhere": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ontos-ai-knowhere",
@@ -218938,10 +218943,10 @@
       "relative_path": "08_VERIFICATION/ontos-ai-knowhere-verification-protocol-empirical-defect-shield-for-ontos-ai-kno.md",
       "title": "Verification Protocol: Empirical Defect Shield for Ontos-AI/knowhere",
       "repository": "Ontos-AI/knowhere",
-      "source_version": "b9d146c8",
-      "content_hash": "8ea483971610c566f8de48db13f0682b263aeb06df3692bd370ce46ff9137ba2",
+      "source_version": "87ea9514",
+      "content_hash": "5549bd113d315af42d8d7b2b7428ae16878ebc59a178ea9be7e3028ee793b361",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T21:03:25.122Z"
+      "persisted_at": "2026-11-18T14:40:45.776Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-learnings-core-inv",
@@ -241234,8 +241239,8 @@
       "slug": "zeronsh-zeron",
       "platform": "github",
       "source_url": "https://github.com/zeronsh/zeron",
-      "source_version": "c58f65e8",
-      "content_hash": "8d37abb04e3e7db192128f7bdfeae93187706ca66e62b017cecfee0b29a94d9b",
+      "source_version": "b1064c1b",
+      "content_hash": "2c669ceee8a8e1996a51e83af491694a9b6ddfd96e08bc981cfdc2dc61bdbe81",
       "dossier_path": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zeronsh-zeron-learnings.md",
       "promoted_rules": [
@@ -241253,6 +241258,11 @@
           "number": 9137,
           "title": "a finished reply's rows built as what they are, not as what might st",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9245,
+          "title": "Zeron v2: in step with the default's page after #1515",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -241260,7 +241270,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T06:15:22.502Z",
+      "verified_at": "2026-11-18T14:40:33.600Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -241314,10 +241324,10 @@
       "relative_path": "08_VERIFICATION/zeronsh-zeron-verification-protocol-empirical-defect-shield-for-zeronsh-zeron.md",
       "title": "Verification Protocol: Empirical Defect Shield for zeronsh/zeron",
       "repository": "zeronsh/zeron",
-      "source_version": "c58f65e8",
-      "content_hash": "da37f6e26d8ba7f8d77614e04568b730105899231d8ade9329a1def814d75462",
+      "source_version": "b1064c1b",
+      "content_hash": "90dc0b012da47aaa7c0a838f36e941a676f74c590ac059bdcbcf2a199245a6c0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:15:23.110Z"
+      "persisted_at": "2026-11-18T14:40:34.454Z"
     },
     "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf": {
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
@@ -241465,9 +241475,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zeronsh-zeron-learnings",
       "repository": "zeronsh-zeron-learnings",
       "source_version": "HEAD",
-      "content_hash": "b0f3dab07aad3ae91d55c3b9c671e68e49ad80da8f66bf12ec056a6df8734b26",
+      "content_hash": "42d35f08909a045abeda342d5b23a4a696186ca174bf3fa7066aec580b07deb6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:15:33.636Z"
+      "persisted_at": "2026-11-18T14:40:49.386Z"
     },
     "candidate_directive-chat-template-mutation-via-gguf-metadata-partitioning": {
       "item_id": "candidate_directive-chat-template-mutation-via-gguf-metadata-partitioning",
@@ -261570,10 +261580,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zeronsh-zeron-technical-construction-intelligence-zeronsh-zeron-core-invariants.md",
       "title": "Technical Construction Intelligence: zeronsh/zeron Core Invariants",
       "repository": "zeronsh/zeron",
-      "source_version": "f6a9bbfc",
-      "content_hash": "b59fdcffabe8c82e8e10b0c2a01263f18de93d5943b93c0a476737aedf512042",
+      "source_version": "b1064c1b",
+      "content_hash": "3cd0570d0a3c9e0fbb3ca724fcbc9a0b54558c7d07acb89bdced4e61accbc5d3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T00:10:43.364Z"
+      "persisted_at": "2026-11-18T14:40:34.274Z"
     },
     "rule-8821": {
       "learning_id": "rule-8821",
@@ -261686,9 +261696,9 @@
       "title": "Technical Construction Intelligence: zeronsh-zeron-learnings Core Invariants",
       "repository": "zeronsh-zeron-learnings",
       "source_version": "HEAD",
-      "content_hash": "cf1de35e0b3f768e6e76fe0207672f5743605718f33dcc9c18481285357b2abe",
+      "content_hash": "502bc71c40c94d49f0f16a8ee9eba80a1aa9c357a18d12eee519738977bad8d4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T00:11:24.384Z"
+      "persisted_at": "2026-11-18T14:40:49.184Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor",
@@ -265901,26 +265911,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8879,
       "title": "Empirical Invariant Guard in go.mod",
-      "source_url": "https://github.com/krakend/krakend-ce",
-      "source_version": "b2187c50",
+      "source_url": "https://github.com/smallstep/cli",
+      "source_version": "537c15c1",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-17T05:58:12.271Z"
+      "verified_at": "2026-11-18T14:40:42.248Z"
     },
     "candidate_directive-empirical-invariant-guard-in-go-mod": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-go-mod",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-7633-empirical-invariant-guard-in-go-mod.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-AZPK-empirical-invariant-guard-in-go-mod.md",
       "title": "Empirical Invariant Guard in go.mod",
-      "repository": "krakend-krakend-ce-learnings",
+      "repository": "smallstep-cli-learnings",
       "source_version": "HEAD",
-      "content_hash": "3f3e7538bcd8c76c72df5dfdcff80d151d1204a25173d557e8fbb64bbf76e5fb",
+      "content_hash": "6a5f9ad9dcabb615b58c18ecaa02074b0873da7da9b5d804c37bb38193aac785",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T05:58:19.023Z"
+      "persisted_at": "2026-11-18T14:40:50.504Z"
     },
     "domain_intelligence-architecture-intelligence-krakend-krakend-ce-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-krakend-krakend-ce-core-invariants",
@@ -281745,7 +281755,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
       "source_version": "hf-inclusionai-ming-image-0.1-design",
-      "content_hash": "76aec619b0821df4b375a33f5060787dcf03f9ee9b65c9955ac3481c5a14d9a5",
+      "content_hash": "c312ae80df8ccbc05eee897404571ff1c4d2eddd9a84e19af2d0e1c872219b0b",
       "dossier_path": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md",
       "promoted_rules": [],
@@ -281754,7 +281764,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T04:49:43.986Z",
+      "verified_at": "2026-11-18T14:40:28.489Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -287536,6 +287546,139 @@
       "content_hash": "bf5b3c4caaf0cb1c9e137881d1b0c865614440bf93279a803d699243e5ac090b",
       "domain_letter": "K",
       "persisted_at": "2026-11-18T14:32:20.635Z"
+    },
+    "rule-9245": {
+      "learning_id": "rule-9245",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9245,
+      "title": "Zeron v2: in step with the default's page after #1515",
+      "source_url": "https://github.com/zeronsh/zeron",
+      "source_version": "b1064c1b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T14:40:33.600Z"
+    },
+    "candidate_directive-zeron-v2-in-step-with-the-default-s-page-after-1515": {
+      "item_id": "candidate_directive-zeron-v2-in-step-with-the-default-s-page-after-1515",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AYJI-zeron-v2-in-step-with-the-default-s-page-after-1515.md",
+      "title": "Zeron v2: in step with the default's page after #1515",
+      "repository": "zeronsh-zeron-learnings",
+      "source_version": "HEAD",
+      "content_hash": "32a415b63b0be70e0f43f6537c68ee26b71be8bc3ab8e78860f536908ef03d6c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T14:40:48.997Z"
+    },
+    "learn-github-smallstep-cli": {
+      "learning_id": "learn-github-smallstep-cli",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "smallstep/cli",
+      "repository": "smallstep/cli",
+      "slug": "smallstep-cli",
+      "platform": "github",
+      "source_url": "https://github.com/smallstep/cli",
+      "source_version": "537c15c1",
+      "content_hash": "f75b8123630faff29b2817e7c0bcb2a9095e18a4bbd2ddaa2033c0cfa8ee5e60",
+      "dossier_path": "07_PROJECT_LEARNING/smallstep-cli-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/smallstep-cli-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8879,
+          "title": "Empirical Invariant Guard in go.mod",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T14:40:42.248Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-technical-construction-intelligence-smallstep-cli-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-smallstep-cli-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-smallstep-cli-technical-construction-intelligence-smallstep-cli-core-invariants.md",
+      "title": "Technical Construction Intelligence: smallstep/cli Core Invariants",
+      "repository": "smallstep/cli",
+      "source_version": "537c15c1",
+      "content_hash": "19a18866a6303f8036f7adcde04e7f3030802a477231519f1191d35925d157bc",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T14:40:42.912Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-smallstep-cli": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-smallstep-cli",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/smallstep-cli-verification-protocol-empirical-defect-shield-for-smallstep-cli.md",
+      "title": "Verification Protocol: Empirical Defect Shield for smallstep/cli",
+      "repository": "smallstep/cli",
+      "source_version": "537c15c1",
+      "content_hash": "ccc2adfd63aa6e46fcb4fe6024a1993fefa223d5d750678ebf1dd568b298a14b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T14:40:43.098Z"
+    },
+    "rule-9246": {
+      "learning_id": "rule-9246",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9246,
+      "title": "Install CJK fonts in the worker image so rendered PDFs show Chinese text",
+      "source_url": "https://github.com/Ontos-AI/knowhere",
+      "source_version": "87ea9514",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T14:40:44.944Z"
+    },
+    "candidate_directive-install-cjk-fonts-in-the-worker-image-so-rendered-pdfs-show-chinese-text": {
+      "item_id": "candidate_directive-install-cjk-fonts-in-the-worker-image-so-rendered-pdfs-show-chinese-text",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AVS5-install-cjk-fonts-in-the-worker-image-so-rendered-pdfs-show-chinese-text.md",
+      "title": "Install CJK fonts in the worker image so rendered PDFs show Chinese text",
+      "repository": "Ontos-AI/knowhere",
+      "source_version": "87ea9514",
+      "content_hash": "f2158c80402a35215132fc481bb97e1d551804649fd373735c1451d0f50c6525",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T14:40:45.414Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-smallstep-cli-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-smallstep-cli-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-smallstep-cli-learnings-technical-construction-intelligence-smallstep-cli-learni.md",
+      "title": "Technical Construction Intelligence: smallstep-cli-learnings Core Invariants",
+      "repository": "smallstep-cli-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6de6a1d909c8460f307f6aff8d33dd567593738af8745bd0e3362bf6b135c305",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T14:40:50.691Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-smallstep-cli-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-smallstep-cli-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/smallstep-cli-learnings-verification-protocol-empirical-defect-shield-for-smalls.md",
+      "title": "Verification Protocol: Empirical Defect Shield for smallstep-cli-learnings",
+      "repository": "smallstep-cli-learnings",
+      "source_version": "HEAD",
+      "content_hash": "677a17186ddb3ffa32a2b7e50337d1963f978a5cf1da5bf1ae253300962ffd55",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T14:40:50.901Z"
     }
   },
   "ai-builder-brain": {

@@ -11040,3 +11040,7 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `52f21a8b` | Multi-dimensional audit evidence | 2026-11-18T14:24:24.859Z |
 | `learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-18T14:32:00.517Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `20da9e4b` | Multi-dimensional audit evidence | 2026-11-18T14:32:16.361Z |
+| `learn-huggingface-inclusionai-ming-image-0-1-design` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-11-18T14:40:28.744Z |
+| `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `b1064c1b` | Multi-dimensional audit evidence | 2026-11-18T14:40:33.832Z |
+| `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `537c15c1` | Multi-dimensional audit evidence | 2026-11-18T14:40:42.477Z |
+| `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `87ea9514` | Multi-dimensional audit evidence | 2026-11-18T14:40:45.178Z |

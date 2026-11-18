@@ -505,8 +505,8 @@
     "sourceUrl": "https://huggingface.co/inclusionAI/Ming-Image-0.1-Design",
     "sourceVersion": "hf-inclusionai-ming-image-0.1-design",
     "license": "Open-Source",
-    "contentHash": "76aec619b0821df4b375a33f5060787dcf03f9ee9b65c9955ac3481c5a14d9a5",
-    "lastHarvestedAt": "2026-11-18T04:49:44.166Z",
+    "contentHash": "c312ae80df8ccbc05eee897404571ff1c4d2eddd9a84e19af2d0e1c872219b0b",
+    "lastHarvestedAt": "2026-11-18T14:40:28.744Z",
     "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design"
   },
   "hf-deepseek-ai-deepseek-v4.1-flash": {
@@ -2283,20 +2283,20 @@
     "repository": "smallstep/cli",
     "platform": "github",
     "sourceUrl": "https://github.com/smallstep/cli",
-    "sourceVersion": "eed88c74",
+    "sourceVersion": "537c15c1",
     "license": "Apache-2.0",
-    "contentHash": "3afb8375131063f51e7ad28e152e2df6a80bede05772e254df18099fce9f11c9",
-    "lastHarvestedAt": "2026-11-09T21:59:31.739Z",
+    "contentHash": "f75b8123630faff29b2817e7c0bcb2a9095e18a4bbd2ddaa2033c0cfa8ee5e60",
+    "lastHarvestedAt": "2026-11-18T14:40:42.477Z",
     "learningId": "learn-github-smallstep-cli"
   },
   "ontos-ai-knowhere": {
     "repository": "Ontos-AI/knowhere",
     "platform": "github",
     "sourceUrl": "https://github.com/Ontos-AI/knowhere",
-    "sourceVersion": "b9d146c8",
+    "sourceVersion": "87ea9514",
     "license": "Apache-2.0",
-    "contentHash": "7c0e03d8c765f89a122603a53ab8c876b4fdfb03cf386c4574497ec306776793",
-    "lastHarvestedAt": "2026-11-17T21:03:24.719Z",
+    "contentHash": "fee643031259c875c5e2d89294c6a19bb2f4d5b005b47562e5d78efc7ca9e815",
+    "lastHarvestedAt": "2026-11-18T14:40:45.178Z",
     "learningId": "learn-github-ontos-ai-knowhere"
   },
   "bitterbot-ai-bitterbot-desktop": {
@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "c58f65e8",
+    "sourceVersion": "b1064c1b",
     "license": "MIT",
-    "contentHash": "8d37abb04e3e7db192128f7bdfeae93187706ca66e62b017cecfee0b29a94d9b",
-    "lastHarvestedAt": "2026-11-18T06:15:22.669Z",
+    "contentHash": "2c669ceee8a8e1996a51e83af491694a9b6ddfd96e08bc981cfdc2dc61bdbe81",
+    "lastHarvestedAt": "2026-11-18T14:40:33.832Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {

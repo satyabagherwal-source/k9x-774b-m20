@@ -4,22 +4,22 @@
 {
   "source_repository": "zeronsh/zeron",
   "source_url": "https://github.com/zeronsh/zeron",
-  "source_version": "c58f65e8",
+  "source_version": "b1064c1b",
   "license": "MIT",
-  "timestamp": "2026-11-18T06:15:22.855Z",
+  "timestamp": "2026-11-18T14:40:34.091Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zeronsh-zeron",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zeronsh/zeron](https://github.com/zeronsh/zeron) (Revision: `c58f65e8`).  
-> **License**: MIT | **Timestamp**: `2026-11-18T06:15:22.855Z`  
+> **Provenance**: Harvested from [zeronsh/zeron](https://github.com/zeronsh/zeron) (Revision: `b1064c1b`).  
+> **License**: MIT | **Timestamp**: `2026-11-18T14:40:34.091Z`  
 > **Learning ID**: `learn-github-zeronsh-zeron`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `zeronsh/zeron` (Commit: `c58f65e8`)
+- **Target Repository**: `zeronsh/zeron` (Commit: `b1064c1b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zeronsh-zeron-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zeronsh/zeron](https://github.com/zeronsh/zeron))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T06:15:21.766Z  
+> **Harvest Timestamp**: 2026-11-18T14:40:32.619Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1544,1522 +1544,469 @@ class TranscriptState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8bd5b5d6` (2026-11-17)
-**Commit Message**: Transcript: a finished reply's rows built as what they are, not as what might still change
+### Incident Patch 1: `b1064c1b` (2026-11-18)
+**Commit Message**: Zeron v2: in step with the default's page after #1515 (#1517)
 
-A long thread's open built about 1,640 reactive runs and 1,680 layout
-measurements for one screen of words and folded tool rows: each folded
-group a rolling title, a loader and a whole tree of its own; each text a
-window of runs and a find switch per block; each held run a three-node
-switch. (zgx inspect frames, M5 Max, ademark's 1,000-step thread opened:
-67.0M -> 53.8M main-thread instructions, runs 1,642 -> 1,146, measured
-1,679 -> 1,184.)
+#1515 gave the default's page the tab strip's window width (`width = props.width`).
+v2's single-page shell has no session tabs, so it needs no such line: only its
+record of the default it follows is brought up to date (ZERON_V2_BLESS=1).
 
-- Activity: a group made done keeps its line (no roll, no loader); its
-  tree (its list, heights and their effect) is made the first time it
-  opens, easing open from nothing as one made earlier does.
-- A long reply's held run is one box as tall as it was (`min_h`), its
-  blocks a component made only once it's near.
-- Markdown: a finished text that fits one run is its blocks, made once
-  under one switch (its words, and a find's marks in it), not a window of
-  runs nor a switch per block.
-- chat.rs: an opening tail's entry the same as the row held keeps what
-  was built from it.
+Co-authored-by: Wing <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-zgx test ui: 1,460 tests, 0 failed.
-
-Co-Authored-By: Claude Opus 5.5 <[RED
-
-**File**: `apps/zgx/src/chat.rs` (modified, +13/-3)
+**File**: `apps/zgx/ui/templates/zeron-v2/.base.json` (modified, +1/-1)
 ```diff
-@@ -2362,10 +2362,20 @@ impl View {
-                     };
-                     for entry in tail {
-                         let id = entry["id"].as_str().unwrap_or_default().to_owned();
--                        open.built.remove(id.as_str());
-+                        let fresh = Entry::new(entry);
-                         match open.entries.iter_mut().find(|e| *e.id == *id) {
--                            Some(held) => *held = Entry::new(entry),
--                            None => open.entries.push(Entry::new(entry)),
-+                            // The same as the row it has (most of a tail, a
-+                            // chat opened again): what was built from it
-+                            // stays, so nothing showing is made again.
-+                            Some(held) if held.sum() == fresh.sum() => {}
-+                            Some(held) => {
-+                                open.built.remove(id.as_str());
-+                                *held = fresh;
-+                            }
-+                            None => {
-+                                open.built.remove(id.as_str());
-+                                open.entries.push(fresh);
-+                            }
-                         }
-                     }
-                     open.heard = true;
-```
-
-**File**: `apps/zgx/ui/ds/activity.luau` (modified, +141/-117)
-```diff
-@@ -858,6 +858,12 @@ return ui.component(function(props: Props): Node
- 	-- be built for nothing as a list scrolls, and a selection across the
- 	-- reply would take text no one can see.
- 	local mounted = ui.use_state(opened:peek())
-+	-- (The tree itself, its list and what keeps its rows' heights, is made
-+	-- the first time it opens: a finished reply's groups, folded, most of a
-+	-- long thread's, never make one. `unfolded`: one made by opening eases
-+	-- open from nothing, as one made earlier does.)
-+	local tree_made = ui.use_state(opened:peek())
-+	local unfolded = ui.use_state(opened:peek())
- 	local folding: (() -> ())? = nil
- 	ui.effect(function()
- 		local on = opened:get()
-@@ -866,106 +872,150 @@ return ui.component(function(props: Props): Node
- 			folding = nil
- 		end
- 		if on then
--			mounted:set(true)
-+			ui.batch(function()
-+				tree_made:set(true)
-+				mounted:set(true)
-+			end)
- 		elseif mounted:peek() then
- 			folding = ui.after(FOLD, function()
- 				folding = nil
- 				mounted:set(false)
- 			end)
- 		end
- 	end)
--	-- The rows: a list virtualized by the view around it (the transcript's),
--	-- each call a row of its own, built only as the view shows it, the rows
--	-- about to come into it built ahead in the time frames leave over
--	-- (zgx's `ahead`), so a scroll or the tree opening builds what shows
--	-- alone. A row follows its tool in place (its item as a state), and
--	-- holds its height in `heights`: a call's line is ROW, one opened or a
--	-- thought its own, as it was last laid out.
--	local own_key = key or tostring(own)
--	local heights = ui.use_state({} :: { number })
--	local listed: { string } = {}
--	-- Calls arriving while the rows are made: each plays `ENTER` as it is
--	-- first built, as a row joining a `ui.each` does.
--	local arriving: { [string]: boolean } = {}
--	local was_mounted = false
--	-- A row's height as it is first laid out: a call's line, ROW, or as it
--	-- was last laid out if opened; a thought, as it was if it's short or
--	-- opened, else its four lines folded before it knows it's long (its
--	-- button's room comes a frame on, as the words are measured).
--	local line = ui.theme.get("zeron.prose.small.line") :: number
--	local first_folded = THOUGHT_LINES * line + (ROW - line)
--	local function height_of(t: Tool): number
--		local h = MEASURED[`{own_key}:{t.id}`]
--		local open = CALLS_OPEN:peek()[t.id] == true
--		if t.kind ~= "thought" then
--			return if open and h then h else ROW
--		end
--		if h and (open or h <= first_folded) then
--			return h
-+	local Tree = ui.component(function(_: {}): Node
-+		-- The rows: a list virtualized by the view around it (the transcript's),
-+		-- each call a row of its own, built only as the view shows it, the rows
-+		-- about to come into it built ahead in the time frames leave over
-+		-- (zgx's `ahead`), so a scroll or the tree opening builds what shows
-+		-- alone. A row follows its tool in place (its item as a state), and
-+		-- holds its height in `heights`: a call's line is ROW, one opened or a
-+		-- thought its own, as it was last laid out.
-+		local own_key = key or tostring(own)
-+		local heights = ui.use_state({} :: { number })
-+		local listed: { string } = {}
-+		-- Calls arriving while the rows are made: each plays `ENTER` as it is
-+		-- first built, as a row joining a `ui.each` does.
-+		local arriving: { [string]: boolean } = {}
-+		local was_mounted = false
-+		-- A row's height as it is first laid out: a call's line, ROW, or as it
-+		-- was last laid out if opened; a thought, as it was if it's short or
-+		-- opened, else its four lines folded before it knows it's long (its
-+		-- button's room comes a frame on, as the words are measured).
-+		local line = ui.theme.get("zeron.prose.small.line") :: number
-+		local first_folded = THOUGHT_LINES * line + (ROW - line)
-+		local function height_of(t: Tool): number
-+			local h = MEASURED[`{own_key}:{t.id}`]
-+			local open = CALLS_OPEN:peek()[t.id] == true
-+			if t.kind ~= "thought" then
-+				return if open and h then h else ROW
-+			end
-+			if h and (open or h <= first_folded) then
-+				return h
-+			end
-+			return first_folded
- 		end
--		return first_folded
--	end
--	ui.effect(function()
--		local list = tools:get()
--		local m = mounted:get()
--		local n = #list
--		-- (Rows that were there before: the same calls in the same places,
--		-- looked at at the ends; anything else is written whole.)
--		local same = #listed <= n
--			and (#listed == 0 or (list[1].id == listed[1] and list[#listed].id == listed[#listed]))
--		ui.batch(function()
--			if not same then
--				heights:set({})
--				table.clear(listed)
-+		ui.effect(function()
-+			local list = tools:get()
-+			local m = mounted:get()
-+			local n = #list
-+			-- (Rows that were there before: the same calls in the same places,
-+			-- looked at at the ends; anything else is written whole.)
-+			local same = #listed <= n
-+				and (#listed == 0 or (list[1].id == listed[1] and list[#listed].id == listed[#listed]))
-+			ui.batch(function()
-+				if not same then
-+					heights:
-```
-
-**File**: `apps/zgx/ui/ds/markdown.luau` (modified, +42/-0)
-```diff
-@@ -2037,6 +2037,48 @@ return function(props: Props): Node
- 		}
- 	end
- 
-+	-- A finished text in a transcript (`window`, not being written) that fits
-+	-- one run, most of a reply's: its blocks made once, plain, under one
-+	-- switch that makes them again only if its words change (a finished
-+	-- text's don't) or a find's marks in it do. Not runs held, judged and
-+	-- watched for coming near the view, nor a switch per block for a find
-+	-- no one is running: those are for a long text, or one still growing.
-+	if window and type(text) == "function" and not ((window :: any).live and (window :: any).live()) then
-+		local source = text :: () -> string
-+		local first_text = source()
-+		local first_list = parse(first_text, opts)
-+		if #first_list <= CHUNK then
-+			local f = find
-+			return ui.presence(function(): string
-+				local t = source()
-+				if not f then
-+					return t
-+				end
-+				local q = f.query()
-+				if q == "" then
-+					return t
-+				end
-+				local c = f.current()
-+				local at = if c and c.key == f.key then `{c.block}:{c.k}` else "0:0"
-+				return `{at}|{q}|{t}`
-+			end, function(_: string): Node
-+				local t = source()
-+				local list = if t == first_text then first_list else parse(t, opts)
-+				if ctx and ctx.task then
-+					ctx.tasks = {}
-+					number_tasks(list, ctx.tasks)
-+				end
-+				local q = if f then f.query() else ""
-+				local c = if f and q ~= "" then f.current() else nil
-+				local out: { Node } = {}
-+				for i, b in list do
-+					local k = if c and c.key == (f :: Find).key and c.block == i then c.k else 0
-+					out[i] = marked(b, i, q, k)
-+				end
-+				return ui.column { w_full = column.w_full, min_w = column.min_w, gap = column.gap, out }
-+			end)
-+		end
-+	end
- 	-- A windowed text (a reply in a transcript) is parsed lazily: one that
- 	-- lands whole and long comes back at once, its blocks not parsed yet
- 	-- held in place (`pending`) and parsed over the next frames, its end
-```
-
-**File**: `apps/zgx/ui/ds/transcript.luau` (modified, +16/-18)
-```diff
-@@ -1067,6 +1067,16 @@ local function blocks_of(list: () -> { Block }, m: Message, now: () -> Message,
- 				near:set(shows)
- 			end
- 		end
-+		-- (Its blocks, made only once it's near: a component's body runs as it
-+		-- mounts, so a run held away from the view asks for none of them.)
-+		local Blocks = ui.component(function(_: {}): Node
-+			return ui.each(ui.computed(function(): { Block }
-+				local r = row:get()
-+				return if aside then blocks_in(r) else r.blocks
-+			end), function(b: Block, _j: number, brow: State<Block>): Node
-+				return block(b, brow)
-+			end, { key = key, w_full = true, gap = "$space.3" })
-+		end)
- 		judges[run.key] = judge
- 		ui.on_cleanup(function()
- 			if judges[run.key] == judge then
-@@ -1118,24 +1128,12 @@ local function blocks_of(list: () -> { Block }, m: Message, now: () -> Message,
- 					w.offset:set(math.max(0, w.offset:peek() + size.h - before))
- 				end
- 			end,
--			ui.presence(function(): string
--				return if near:get() then "built" else "held"
--			end, function(kind: string): Node
--				if kind == "built" then
--					return ui.each(ui.computed(function(): { Block }
--						local r = row:get()
--						return if aside then blocks_in(r) else r.blocks
--					end), function(b: Block, _j: number, brow: State<Block>): Node
--						return block(b, brow)
--					end, { key = key, w_full = true, gap = "$space.3" })
--				end
--				return ui.div {
--					w_full = true,
--					h = function(): number
--						return held:get()
--					end,
--				}
--			end, { w_full = true, min_w = 0 }),
-+			-- Away from the view, this box alone, as tall as the run last was
-+			-- (or its guess); near, its blocks.
-+			min_h = function(): number
-+				return if near:get() then 0 else held:get()
-+			end,
-+			ui.show(near, Blocks {}),
- 		}
- 	end, {
- 		key = function(run: Run): string
+@@ -5,6 +5,6 @@
+   "screens/chat/lane_tab.luau": "c73af1b7c16fd56e",
+   "screens/panel/init.luau": "a0df0db6e977845f",
+   "screens/shell/init.luau": "302aa5fc3350cd0a",
+-  "screens/shell/page.luau": "c1debbce640a5d45",
++  "screens/shell/page.luau": "c60a2e8010d8068e",
+   "screens/shell/view.luau": "95dec891b31add1d"
+ }
 ```
 
 ---
 
-### Incident Patch 2: `e8069c40` (2026-11-17)
-**Commit Message**: Commands and Cloud: fixes from the security review
+### Incident Patch 2: `2c965d7a` (2026-11-18)
+**Commit Message**: zgx: apps/zgx/tests pass, and CI runs them (#1516)
 
-From an independent review of the PR (engine command code, edge registry):
-- A background command whose chat was deleted before the chats next
-  changed, or that started for a chat already archived, was never
-  stopped: the chat follower now also re-checks as commands start.
-- An agent's RunCommand/ListBackgroundCommands are filed under its own
-  chat (the gate sets chatId), so they stop and list with the right one.
-- Commands no longer inherit Zeron's own ZERON_* variables (its edge
-  token, a Cloud machine's enrollment code), as the agent installer.
-- The folder a command ended in is written to a file the environment
-  names: no path in the script, so no quoting (a curly quote in the
-  Windows temp path broke every PowerShell command).
-- A project-canvas terminal starts in a project's folder only when the
-  project is this device's.
-- A runner's one-time full resync is sent at most three times, writes
-  nothing once it's done, and its record goes with its device row.
-- docs/design/cloud-device.md said a stolen runner key couldn't reach
-  the account or vault; through a client link to an online computer it
-  reaches all that comp
+* zgx: no debugging left behind (tests/leftovers.rs passes)
 
-**File**: `crates/engine/src/commands.rs` (modified, +126/-35)
+- The sidebar's scroll probe (b4b8cf043, "sidebar-probe:" on every step
+  back) and the mention menu's M.debug prints are gone.
+- The CLI's error and the Windows install's are main's own error now
+  (same "Error: …" and exit status 1), not an eprintln! beside it.
+- The transcript's opt-in trace logs as `zeron-zgx: transcript …`, its
+  switch the shared value `trace.transcript` (ZERON_ZGX_TRACE_TRANSCRIPT=1
+  still turns it on); a stand-in part that didn't load logs as zeron-zgx.
+- The activity bench's knobs are ACTIVITY_*, as its ACTIVITY_PIXELS and
+  ACTIVITY_ONLY already were, not DEBUG_*.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* zgx gallery: the syntax demo's editor takes its code size as the token
+
+bcd094662 gave the textarea its size as text_size, but as the number the
+theme's $zeron.prose.code.size held when the page was built, which the
+design lint reads as a hard-coded 13 (tests/design_lint.rs). The token
+itself follows the theme.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* zgx tests: reload's Settings scroll stubs the actions General now
+
+**File**: `.github/workflows/zgx-tests.yml` (modified, +9/-2)
 ```diff
-@@ -273,13 +273,20 @@ impl Commands {
-             .inner
-             .kind
-             .says_folder()
--            .then(|| tempfile::NamedTempFile::new().ok().map(|file| file.into_temp_path()))
-+            .then(|| {
-+                tempfile::NamedTempFile::new()
-+                    .ok()
-+                    .map(|file| file.into_temp_path())
-+            })
-             .flatten();
--        let script = self
--            .inner
--            .kind
--            .script(command, ended_in.as_deref());
--        let mut child = spawn(&self.inner.shell, self.inner.kind, cwd, &script)?;
-+        let script = self.inner.kind.script(command, ended_in.is_some());
-+        let mut child = spawn(
-+            &self.inner.shell,
-+            self.inner.kind,
-+            cwd,
-+            &script,
-+            ended_in.as_deref(),
-+        )?;
-         let (sender, mut chunks) = tokio::sync::mpsc::channel::<Vec<u8>>(16);
-         let readers = pumps(&mut child, sender);
+@@ -4,8 +4,9 @@ name: zgx tests
+ # crate it or the engine's plugin host builds changes. zgx-beta.yml only builds.
+ #
+ #   apps/zgx's unit tests (`cargo test --bin zeron-zgx`: src/plugins/*_tests.rs
+-#   among them) and its Luau UI tests (`zgx test ui`, the zgx CLI at the rev
+-#   apps/zgx/Cargo.toml pins), on macOS and Linux, the known failures let
++#   among them), its integration tests (`cargo test --test '*'`:
++#   apps/zgx/tests/*.rs) and its Luau UI tests (`zgx test ui`, the zgx CLI at
++#   the rev apps/zgx/Cargo.toml pins), on macOS and Linux, the known failures let
+ #   through (scripts/ci/test-zgx.sh, scripts/ci/zgx-known-failures.txt);
+ #   and on macOS the engine's plugin tests (its lib's `plugins::` tests and
+ #   tests/plugin_services.rs), which core-tests runs on Linux.
+@@ -86,6 +87,9 @@ jobs:
+             --git https://github.com/zeronsh/zgx --rev "$REV" zgx-script --bin zgx --features inspect --root ~/zgx-cli
+       - name: apps/zgx unit tests
+         run: scripts/ci/test-zgx.sh rust
++      - name: apps/zgx integration tests
++        if: ${{ !cancelled() }}
++        run: scripts/ci/test-zgx.sh tests
+       - name: apps/zgx Luau UI tests
+         if: ${{ !cancelled() }}
+         run: scripts/ci/test-zgx.sh ui ~/zgx-cli/bin/zgx
+@@ -143,6 +147,9 @@ jobs:
+             --git https://github.com/zeronsh/zgx --rev "$REV" zgx-script --bin zgx --features inspect --root ~/zgx-cli
+       - name: apps/zgx unit tests
+         run: scripts/ci/test-zgx.sh rust
++      - name: apps/zgx integration tests
++        if: ${{ !cancelled() }}
++        run: scripts/ci/test-zgx.sh tests
+       - name: apps/zgx Luau UI tests
+         if: ${{ !cancelled() }}
+         run: scripts/ci/test-zgx.sh ui ~/zgx-cli/bin/zgx
+```
+
+**File**: `apps/zgx/src/activity_cost_tests.rs` (modified, +26/-26)
+```diff
+@@ -50,7 +50,7 @@ fn thread_cpu() -> Duration {
+ }
  
-@@ -344,8 +351,8 @@ impl Commands {
-                 "{MAX_BACKGROUND} background commands are already running on this device: stop one first"
-             ));
+ /// One call row's scene (kinds and boxes, no text) and every node above it to
+-/// the root, for zgx's layout work to reproduce alone (`DEBUG_TREE=1`).
++/// the root, for zgx's layout work to reproduce alone (`ACTIVITY_TREE=1`).
+ fn dump_row(bench: &mut Bench) {
+     let Some(button) = bench.app.find("role:button ~\"package part8 --\"") else {
+         eprintln!("TREE no row in view");
+@@ -88,9 +88,9 @@ fn dump_row(bench: &mut Bench) {
+ }
+ 
+ thread_local! {
+-    /// Whether `DEBUG_NODE` has shown its node.
++    /// Whether `ACTIVITY_NODE` has shown its node.
+     static NODE_SHOWN: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+-    /// Whether frames show their damage now (`DEBUG_DAMAGE`: the scroll's).
++    /// Whether frames show their damage now (`ACTIVITY_DAMAGE`: the scroll's).
+     static DAMAGE_SHOWN: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+ }
+ 
+@@ -125,7 +125,7 @@ fn show_damage(scene: &zgx::scene::Scene, damage: &[zgx::scene::Rect]) {
+             }
          }
--        let script = self.inner.kind.script(command, None);
--        let mut child = spawn(&self.inner.shell, self.inner.kind, cwd, &script)?;
-+        let script = self.inner.kind.script(command, false);
-+        let mut child = spawn(&self.inner.shell, self.inner.kind, cwd, &script, None)?;
-         let id = format!("cmd-{}", &uuid::Uuid::new_v4().simple().to_string()[..12]);
-         let background = Arc::new(Background {
-             id: id.clone(),
-@@ -505,11 +512,14 @@ impl Commands {
      }
+-    if std::env::var_os("DEBUG_DAMAGE_AT").is_some() {
++    if std::env::var_os("ACTIVITY_DAMAGE_AT").is_some() {
+         for (rect, radius) in scene.backdrop_filters() {
+             eprintln!("DAMAGE backdrop filter {:.1},{:.1} {:.1}x{:.1} radius {radius}", rect.x, rect.y, rect.width, rect.height);
+         }
+@@ -496,9 +496,9 @@ impl Bench {
+         let gpu = draw.then(|| {
+             let mut gpu = GpuRenderer::new((W * SCALE) as u32, (H * SCALE) as u32).expect("a GPU");
+             gpu.set_scale_factor(SCALE);
+-            // (`DEBUG_SCROLL_COPY`: copying scrolls as a window does; offscreen
++            // (`ACTIVITY_SCROLL_COPY`: copying scrolls as a window does; offscreen
+             // on macOS the renderer repaints them instead.)
+-            if std::env::var_os("DEBUG_SCROLL_COPY").is_some() {
++            if std::env::var_os("ACTIVITY_SCROLL_COPY").is_some() {
+                 gpu.debug_allow_scroll_copies();
+             }
+             for font in crate::fonts() {
+@@ -579,7 +579,7 @@ impl Bench {
+         // ahead), then the frame's own work.
+         let (mut spare, mut spare_calls) = (0, 0);
+         let process_from = process_cpu();
+-        let debug = std::env::var_os("DEBUG_FRAMES").is_some();
++        let debug = std::env::var_os("ACTIVITY_FRAMES").is_some();
+         if debug {
+             eprintln!("@SPARE");
+         }
+@@ -603,10 +603,10 @@ impl Bench {
+         let drawn = !report.damage.is_empty();
+         if drawn && let Some(gpu) = &mut self.gpu {
+             let stats = gpu.render(&self.app.ui.scene.borrow(), &report.damage).expect("a frame drawn");
+-            if std::env::var_os("DEBUG_GPU").is_some() && zgx::trace::enabled() {
++            if std::env::var_os("ACTIVITY_GPU").is_some() && zgx::trace::enabled() {
+                 eprintln!("GPU {stats:?}");
+             }
+-            if std::env::var_os("DEBUG_DAMAGE").is_some() && DAMAGE_SHOWN.get() {
++            if std::env::var_os("ACTIVITY_DAMAGE").is_some() && DAMAGE_SHOWN.get() {
+                 eprintln!("DAMAGE frame: {} rects, {} px repainted, {} scroll copies, {} layer repaints, {} backdrop copies", report.damage.len(), stats.damaged_pixels, stats.scroll_copies, stats.layer_repaints, stats.backdrop_copies);
+                 show_damage(&self.app.ui.scene.borrow(), &report.damage);
+             }
+@@ -730,7 +730,7 @@ fn scenarios(n: usize, think: usize, open: bool) {
+     }
+     bench.settle(30);
+     let ticks = bench.frames(60);
+-    if std::env::var_os("DEBUG_TREE").is_some() && open {
++    if std::env::var_os("ACTIVITY_TREE").is_some() && open {
+         dump_row(&mut bench);
+     }
+     row(n, think, label, "ticks", &ticks, 60, bench.nodes());
+@@ -774,10 +774,10 @@ fn scenarios(n: usize, think: usize, open: bool) {
+         let new = call(calls, 4);
+         let id = new["id"].as_str().unwrap().to_owned();
+         entry["parts"].as_array_mut().unwrap().push(new);
+-        if std::env::var_os("DEBUG_FRAMES").is_some() {
++        if std::env::var_os("ACTIVITY_FRAMES").is_some() {
+             eprintln!("@CALL {calls}");
+         }
+-        let tracing = std::env::var_os("DEBUG_TRACE").is_some() && calls == n + 2;
++        let tracing = std::env::var_os("ACTIVITY_TRACE").is_some() && calls == n + 2;
+         if tracing {
+             zgx::trace::set_enabled(true);
+         }
+@@ -787,8 +787,8 @@ fn scenarios(n: usize, think: usize, open: bool) {
+         call_cost.add(&cost);
+         if tracing {
+             // (A few frames into the arrival's animations.)
+-            // (`DEBUG_TRACE_FRAMES`: how many of the arrival's frames, 7 unless set.)
+-            let traced: usize = std::env::var("DEBUG_TRACE_FRAMES").ok().and_then(|n| n.parse().ok()).unwrap_or(7);
++            // (`ACTIVITY_TRACE_FRAMES`: how many of the arrival's frames, 7 unless set.)
++            let traced: usize = std::env::var("ACTIVITY_TRACE_FRAMES").ok().and_then(|n| n.pars
+```
+
+**File**: `apps/zgx/src/main.rs` (modified, +4/-8)
+```diff
+@@ -249,7 +249,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+     // may not have brought: bring it in first (src/windows_install.rs).
+     #[cfg(all(windows, feature = "beta"))]
+     {
+-        windows_install::complete_if_needed(&argv);
++        windows_install::complete_if_needed(&argv)?;
+         if let Some(dir) = std::env::current_exe().ok().as_deref().and_then(zeron_update::windows::install_directory) {
+             zeron_launch::set_full_app_engine(
+                 zeron_update::windows::version_files(&dir, about::APP_VERSION).join("engine").join("zeron.exe"),
+@@ -259,12 +259,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
+     if cfg!(feature = "beta") || !dev_launch(&argv[1..]) {
+         match zeron_cli::run(about::APP_VERSION, zeron_cli::Engines::Helper) {
+             zeron_cli::Launch::Done(result) => {
+-                // (As a `main` returning it would: the error, exit status 1.)
+-                if let Err(error) = result {
+-                    eprintln!("Error: {error:?}");
+-                    std::process::exit(1);
+-                }
+-                return Ok(());
++                // (Its error is `main`'s: "Error: …", exit status 1.)
++                return result.map_err(Into::into);
+             }
+             zeron_cli::Launch::Window { open_url: url, safe_mode } => {
+                 open_url = url;
+@@ -717,7 +713,7 @@ fn script_host_at(cx: &mut WindowContext, path: PathBuf, entry: &str) -> ScriptH
+     // ds/transcript's trace (`ZERON_ZGX_TRACE_TRANSCRIPT=1`): the hover lane
+     // and the rows' heights as they change, a line each on stdout.
+     if std::env::var("ZERON_ZGX_TRACE_TRANSCRIPT").is_ok_and(|v| v == "1") {
+-        host.shared("debug.trace_transcript", true);
++        host.shared("trace.transcript", true);
+     }
+     // How much the desktop blurs behind the glass (`window.blur`), for the
+     // glass's tint (ds/material).
+```
+
+**File**: `apps/zgx/src/windows_install.rs` (modified, +30/-15)
+```diff
+@@ -21,35 +21,52 @@ use zeron_update::windows::{self, Completion};
  
-     /// Stop background commands whose chat is archived or deleted, as
--    /// `chats` (this engine's) change. A chat counts as deleted only once
--    /// these chats have shown it, so one not synced here yet isn't taken as
--    /// gone. Ends with the engine.
-+    /// `chats` (this engine's) change and as commands start (one started
-+    /// for a chat already archived, or deleted before the chats next change,
-+    /// is caught too). A chat counts as deleted only once these chats have
-+    /// shown it, so one not synced here yet isn't taken as gone. Ends with
-+    /// the engine.
-     pub fn follow_chats(&self, mut chats: watch::Receiver<Vec<zeron_proto::Chat>>) {
-         let inner: Weak<Inner> = Arc::downgrade(&self.inner);
-+        let mut started = self.inner.changes.subscribe();
-         tokio::spawn(async move {
-             // Commands whose chat these chats have shown.
-             let mut seen = std::collections::HashSet::<String>::new();
-@@ -545,7 +555,11 @@ impl Commands {
-                     tracing::info!(command = %command.id, "its chat went away: stopping it");
-                     command.stop.notify_one();
-                 }
--                if chats.changed().await.is_err() {
-+                let next = tokio::select! {
-+                    changed = chats.changed() => changed,
-+                    changed = started.changed() => changed,
-+                };
-+                if next.is_err() {
-                     return;
+ use crate::about::APP_VERSION;
+ 
++/// Why this launch can't go on, as `main`'s error: said as written
++/// ("Error: …"), exit status 1.
++pub struct Failed(String);
++
++impl std::fmt::Debug for Failed {
++    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
++        f.write_str(&self.0)
++    }
++}
++
++impl std::fmt::Display for Failed {
++    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
++        f.write_str(&self.0)
++    }
++}
++
++impl std::error::Error for Failed {}
++
+ /// Complete this installation if it needs it; returns once this process may
+ /// go on. Exits instead when the newer `zeron.exe` the feed had by then ran
+-/// in its place, or when the person gives up.
+-pub fn complete_if_needed(argv: &[String]) {
++/// in its place; fails when the person gives up (or isn't asked: a command).
++pub fn complete_if_needed(argv: &[String]) -> Result<(), Failed> {
+     windows::set_packaged();
+     // Answered without the folder: the old updater checks a staged copy so.
+     if matches!(argv.get(1).map(String::as_str), Some("--version" | "-V" | "--help" | "-h" | "help")) {
+-        return;
++        return Ok(());
+     }
+     let Ok(exe) = std::env::current_exe() else {
+-        return;
++        return Ok(());
+     };
+     let Some(directory) = windows::incomplete_install(&exe, APP_VERSION) else {
+-        return;
++        return Ok(());
+     };
+     // A window launch: nothing, a link, or the update's relaunch.
+     let window = argv
+         .get(1)
+         .is_none_or(|arg| arg.starts_with("--") || arg.starts_with("zeron:"));
+     loop {
+         match complete(&directory) {
+-            Ok(Completion::Complete | Completion::Installed) => return,
++            Ok(Completion::Complete | Completion::Installed) => return Ok(()),
+             Ok(Completion::Updated(version)) => {
+-                run_installed(&directory, &argv[1..], &version);
++                return Err(run_installed(&directory, &argv[1..], &version));
+             }
+             Err(error) => {
+-                eprintln!("Error: Zeron couldn't finish installing this update: {error}");
+                 if !window || !ask_to_retry(&error) {
+-                    std::process::exit(1);
++                    return Err(Failed(format!("Zeron couldn't finish installing this update: {error}")));
                  }
              }
-@@ -611,21 +625,23 @@ impl ShellKind {
-         matches!(self, Self::Posix | Self::PowerShell)
-     }
- 
--    /// `command` as this shell runs it; with `ended_in`, it also writes the
--    /// folder it ended in there (in PowerShell, not after an `exit`).
--    fn script(self, command: &str, ended_in: Option<&std::path::Path>) -> String {
--        match (self, ended_in) {
--            (Self::Posix, Some(path)) => format!(
--                "trap '__zeron_status=$?; pwd -P >| {} 2>/dev/null; exit $__zeron_status' EXIT\n{command}\n",
--                quote(&path.to_string_lossy()).replace('\'', r"'\''")
-+    /// `command` as this shell runs it; with `says_folder`, it also writes
-+    /// the folder it ended in to the file [`FOLDER_FILE_ENV`] names (in
-+    /// PowerShell, not after an `exit`). The path is never in the script,
-+    /// so nothing in it needs quoting.
-+    fn script(self, command: &str, says_folder: bool) -> String {
-+        match (self, says_folder) {
-+            (Self::Posix, true) => format!(
-+                "trap '__zeron_status=$?; pwd -P >| \"${FOLDER_FILE_ENV}\" 2>/dev/null; exit $__zeron_status' EXIT\n{command}\n"
-             ),
--            (Self::PowerShell, ended_in) => {
--                let say_folder = ended_in.map_or_else(String::new, |path| {
-+            (Self::PowerShell, says_folder) => {
-+                let say_folder = if says_folder {
-                     format!(
--                        "try {{ [System.IO.File]::WriteAllText('{}', (Get-Location).ProviderPath) }} catch {{}}\n",
--                        path.to_string_lossy().replace('\'', "''")
-+                        "try {{ [System.IO.File]::WriteAllText($env:{FOLDER_FILE_ENV}, (Get-Location).ProviderPath) }} catch {{}}\n"
-                     )
--                });
-+                } else {
-+                    Strin
-```
-
-**File**: `crates/engine/src/rpc.rs` (modified, +3/-0)
-```diff
-@@ -5757,11 +5757,14 @@ impl RpcService for EngineRpc {
-                     .flatten()
-                     .filter(|chat| chat.device_id == self.doc_host.device_id());
-                 let chat_cwd = hosted.as_ref().and_then(|chat| chat.cwd.clone());
-+                // Likewise only a project made on this device: another's
-+                // folder is a path there.
-                 let space_cwd = canvas_space_id(&p.chat_id).and_then(|space_id| {
-                     self.workspace
-                         .space(space_id)
-                         .ok()
-                         .flatten()
-+                        .filter(|space| space.device_id == self.doc_host.device_id())
-                         .map(|space| space.path)
-                 });
-                 let cwd = resolve_open_terminal_cwd(
-```
-
-**File**: `crates/engine/src/rpc/agent_gate.rs` (modified, +23/-9)
-```diff
-@@ -109,13 +109,19 @@ impl EngineRpc {
-             let full = calling.as_ref().is_none_or(|c| {
-                 c.ceiling.is_none_or(|(_, access)| access == AccessMode::FullAccess)
-             });
--            return if full {
--                Ok(params)
--            } else {
--                Err(refused(
-+            if !full {
-+                return Err(refused(
-                     "A command runs as the person, unconfined: only a chat with full access runs one. Ask the person to give this chat full access, or to run it themselves",
--                ))
--            };
-+                ));
-+            }
-+            // A command is its agent's own chat's (it stops when that chat
-+            // goes, and lists under it), whatever chat the call names.
-+            if let Some(chat) = chat
-+                && matches!(method, methods::RUN_COMMAND | methods::LIST_BACKGROUND_COMMANDS)
-+            {
-+                params["chatId"] = json!(chat);
-+            }
-+            return Ok(params);
          }
-         match method {
-             methods::MUTATE => match params["op"].as_str().unwrap_or_default() {
-@@ -324,7 +330,15 @@ mod tests {
-         chat(&core, "app", "App", "workspace-write", "full-access").await;
-         chat(&core, "free", "Free", "danger-full-access", "full-access").await;
-         let rpc = core.rpc_service();
--        let open = json!({"command":"ls", "targetDeviceId":"laptop"});
-+        // Naming another chat: a command is filed under the caller's own.
-+        let open = json!({"command":"ls", "targetDeviceId":"laptop", "chatId":"careful"});
-+        let as_from = |chat: &str, method: &str| {
-+            let mut params = open.clone();
-+            if matches!(method, methods::RUN_COMMAND | methods::LIST_BACKGROUND_COMMANDS) {
-+                params["chatId"] = json!(chat);
-+            }
-+            params
-+        };
-         for method in [
-             methods::RUN_COMMAND,
-             methods::READ_COMMAND_OUTPUT,
-@@ -343,13 +357,13 @@ mod tests {
-             let app = with_caller(agent("app"), async { rpc.agent_gate(method, open.clone()) })
-                 .await
-                 .unwrap();
--            assert_eq!(app, open, "{method}");
-+            assert_eq!(app, as_from("app", method), "{method}");
-             let allowed = with_caller(agent("free"), async {
-                 rpc.agent_gate(method, open.clone())
-             })
-             .await
-             .unwrap();
--            assert_eq!(allowed, open, "{method}");
-+            assert_eq!(allowed, as_from("free", method), "{method}");
-             // A server with no chat (set up by hand) is capped by nothing.
-             with_caller(Caller::Agent { chat: None }, async {
-                 rpc.agent_gate(method, open.clone())
-```
-
-**File**: `docs/design/cloud-device.md` (modified, +10/-6)
-```diff
-@@ -193,12 +193,16 @@ its own, on its own machine, recorded with `parentChatId` = the parent's chat.
- - **Delete**: the registry lets it delete its delegates' chat and session rows
-   (`runnerChildren`) — never re-home them.
+@@ -68,15 +85,13 @@ fn complete(directory: &Path) -> Result<Completion, String> {
+ }
  
--A stolen runner key therefore reaches what an agent on any of the person's devices reaches:
--their chats (reading them, messaging them, starting chats on their devices) and, through a
--client link, those devices' RPC surface (terminals, files) — plus starting machines on the
--repository its session already has (bounded by credits and the awake limit). It still can't
--manage the account, read the vault, host another device, or change the person's
--preferences.
-+A stolen runner key therefore reaches what any of the person's devices reaches. Directly, at
-+the edge: their chats (reading them, messaging them, starting chats on their devices) and
-+starting machines on the repository its session already has (bounded by credits and the awake
-+limit); the edge still refuses it the account (`/auth/*`, `/cloud/*`), the vault beyond its own
-+grant, hosting another device's room, and the person's preferences. But through a client link
-+to one of their online computers it reaches that computer's whole RPC surface, which acts with
-+that computer's own session: running commands and opening terminals there, its files, and the
-+calls that computer makes for the person (account, vault, Cloud and billing). So in practice a
-+compromised session machine can act as the person while any of their computers is online —
-+the trade-off accepted for Cloud chats working with every device as a computer's chats do.
- 
- ### Workflows (Cloudflare Workflows)
- 
-```
-
-**File**: `edge/src/registry-room.ts` (modified, +39/-17)
-```diff
-@@ -29,6 +29,12 @@
-  */
- import { applyOp, validateOp, type Op, type Row } from "./registry-core";
- import { chatHost, runnerCanSee, runnerOpRefusal } from "./registry-runner";
-+
-+/** Full states a runner from before the widening is sent at most
-+ * (RegistryRoom.runnerBehind). */
-+const RUNNER_FULL_TRIES = 3;
-+/** The meta key of a runner's full-resync record. */
-+const runnerSentKey = (device: string): string => `runnerSentAll:${device}`;
- import { AUTH_USER_HEADER, RUNNER_ACCOUNT_HEADER, RUNNER_DEVICE_HEADER, apnsConfig, type Env } from "./env";
- import { isDeadToken, sendApns, type ApnsEnvironment } from "./apns";
- import { WriteMeter } from "./write-meter";
-@@ -225,18 +231,31 @@ export class RegistryRoom implements DurableObject {
-    * sees (registry-runner.ts). Before, a runner was sent only its own rows,
-    * so a Cloud machine that synced then holds a cursor past laptop chats,
-    * projects and sessions it never received: its first state since is full.
--   * Recorded as the seq that full state was sent at. Only a cursor PAST it
--   * proves the runner applied it (and a row since): a cursor at it may be
--   * one that never got the reply, so that runner is sent everything again
--   * (a few extra full states at most — its own rows move the head on).
--   * Records the send when true.
-+   *
-+   * Recorded per device as the cursor it first came with (`from`) and how
-+   * many full states it was sent (`sent`). A cursor past `from` proves it
-+   * applied one (it can only have moved through a state sent since). At
-+   * `from` still, the reply may have been lost, or the room was quiet (the
-+   * state's seq was `from` too), which a cursor can't tell apart: it is sent
-+   * again, at most [`RUNNER_FULL_TRIES`] times in all. Writes only while it
-+   * sends; the record goes with its device row.
-+   *
-+   * Returns whether the state is full: `full` (already full for another
-+   * reason: a first sync, a cursor behind GC or ahead of the head), or this.
-+   * A runner sent everything for another reason is recorded as caught up.
-    */
--  private runnerBehind(device: string | undefined, cursor: number | null, seq: number): boolean {
--    if (device === undefined) return false;
--    const key = `runnerSentAll:${device}`;
--    const sentAt = this.getMeta(key);
--    if (sentAt !== undefined && cursor !== null && cursor > Number(sentAt)) return false;
--    this.setMeta(key, String(seq));
-+  private runnerBehind(device: string | undefined, cursor: number | null, full: boolean): boolean {
-+    if (device === undefined) return full;
-+    const key = runnerSentKey(device);
-+    const raw = this.getMeta(key);
-+    if (full) {
-+      if (raw === undefined) this.setMeta(key, JSON.stringify({ from: -1, sent: 0 }));
-+      return true;
-+    }
-+    if (cursor === null) return true;
-+    const record = raw === undefined ? undefined : (JSON.parse(raw) as { from: number; sent: number });
-+    if (record !== undefined && (cursor > record.from || record.sent >= RUNNER_FULL_TRIES)) return false;
-+    this.setMeta(key, JSON.stringify({ from: record?.from ?? cursor, sent: (record?.sent ?? 0) + 1 }));
-     return true;
-   }
- 
-@@ -388,12 +407,12 @@ export class RegistryRoom implements DurableObject {
-       }
-       const seq = this.seq();
-       const gcFloor = this.gcFloor();
--      const full = cursor === null || cursor < gcFloor || cursor > seq || this.runnerBehind(runner, cursor, seq);
-+      const full = this.runnerBehind(runner, cursor, cursor === null || cursor < gcFloor || cursor > seq);
-       return json({
-         seq,
-         full,
-         gcFloor,
--        rows: this.visible(full ? this.rowsSince(0) : this.rowsSince(cursor), runner, runnerAccount),
-+        rows: this.visible(full || cursor === null ? this.rowsSince(0) : this.rowsSince(cursor), runner, runnerAccount),
-         presence: Object.fromEntries(this.presence)
-       });
-     }
-@@ -520,9 +539,8 @@ export class RegistryRoom implements DurableObject {
-     // reset/wipe) — both force `full`, and the client reacts by replacing
-     // (former) or re-seeding the server (latter; see registry.rs). So does a
-     // Cloud machine's cursor from before it saw every row (runnerBehind).
--    const full =
--      cursor === null || cursor < gcFloor || cursor > seq || this.runnerBehind(state.runner, cursor, seq);
--    const rows = this.visible(full ? this.rowsSince(0) : this.rowsSince(cursor), state.runner, state.runnerAccount);
-+    const full = this.runnerBehind(state.runner, cursor, cursor === null || cursor < gcFloor || cursor > seq);
-+    const rows = this.visible(full || cursor === null ? this.rowsSince(0) : this.rowsSince(cursor), state.runner, state.runnerAccount);
-     send(ws, {
-       t: "state",
-       seq,
-@@ -621,7 +639,11 @@ export class RegistryRoom implements DurableObject {
-     if (applied > 0) {
-       // The rows are the only thing a push must store: their seq IS the new
-       // head (see `seq`). One event's writes commit together.
--      for (co
-```
-
-**File**: `edge/test/workerd/runner-boundary.workerd.test.ts` (modified, +4/-1)
-```diff
-@@ -167,8 +167,11 @@ describe("registry reads", () => {
-     const first = await pull(runner, head);
-     expect(first.full).toBe(true);
-     expect(find(first.rows, "chats", laptopChat)).toBeDefined();
--    // At that cursor still: maybe it never got the reply, so again.
-+    // At that cursor still: maybe it never got the reply, so again, but at
-+    // most three times in all (a quiet room can't tell applied from lost).
-     expect((await pull(runner, head)).full).toBe(true);
-+    expect((await pull(runner, head)).full).toBe(true);
-+    expect((await pull(runner, head)).full).toBe(false);
-     // Past it (applied, and a row since): incremental from then on.
-     await push(user, [upsert("chats", laptopChat, { title: "renamed" }, "laptop")]);
-     const after = (await pull(user, 0)).seq;
-```
-
----
-
-### Incident Patch 3: `7ca6d857` (2026-11-16)
-**Commit Message**: Commands on the engine's own foundations; Cloud widening's regressions fixed
-
-Commands (redone with no shortcuts):
-- commands::Commands is an engine-owned service like Terminals, shut down
-  with EngineCore, wired into update quiescence and the Cloud heartbeat; no
-  process-wide state (one engine could stop another's commands before).
-- Each command runs as zeron_harness::process::owned::Child (now public):
-  its own process group / Job Object, TERM then KILL after a grace with
-  escaped descendants, killed on drop, no nested-Claude markers. Anything
-  a command leaves running ends with it; background: true is for that.
-- The login shell's PATH and variables come from the harness's snapshot
-  (new compose_user_path), captured once: plain `-c`, no profile per run.
-- PowerShell gets -EncodedCommand (no quoting), passes a native command's
-  exit code on and says where it ended; Windows-only tests for CI.
-- The background band follows each device's WatchBackgroundCommands
-  stream instead of polling: an ended command leaves as it ends; the row
-  keeps the live heartbeat's cadence.
-- stop waits on the command's end (watch), not a sleep loop.
-
-Cloud regressions found in review:
-- A Cloud
-
-**File**: `crates/engine/src/commands.rs` (added, +1262/-0)
-```diff
-@@ -0,0 +1,1262 @@
-+//! Shell commands for agents, on this device or another of the person's
-+//! (Zeron MCP's `run_command` & co., forwarded by `targetDeviceId`): what an
-+//! agent's own shell tool does on its machine, on any of them. Owned by the
-+//! engine ([`crate::EngineCore`]) like its terminals, and shut down with it.
-+//!
-+//! - [`Commands::run`] (`RunCommand`): one command run to its end. Its
-+//!   output and exit code come back, and the folder it ended in (`cwd`, from
-+//!   a POSIX shell), so an agent's `cd` carries over to its next command.
-+//! - [`Commands::start`] (`RunCommand {background}`): one left running (a dev
-+//!   server, a watcher, a long build), read with [`Commands::read`], stopped
-+//!   with [`Commands::stop`], listed with [`Commands::list`] and watched with
-+//!   [`Commands::watch`] (`WatchBackgroundCommands`: how the chat's host
-+//!   keeps its background band current, wherever the command runs).
-+//!
-+//! No PTY and no session. The user's shell runs the command (`-c`;
-+//! PowerShell or cmd on Windows) with the PATH and variables their login
-+//! shell sets, captured once per process ([`zeron_harness::compose_user_path`]),
-+//! and empty stdin, so a prompt for input ends instead of hanging. Each runs
-+//! as an owned process ([`zeron_harness::process::owned`]): a process group
-+//! (Job Object on Windows) of its own, without the markers of a Claude
-+//! session Zeron may itself run in. What it costs is bounded:
-+//!
-+//! - **Memory**: a run keeps at most [`HEAD`] + [`TAIL`] bytes of output (its
-+//!   start and end); a background command its newest [`RING`] bytes. What's
-+//!   left out is counted, not kept. At most [`MAX_ENDED`] ended background
-+//!   commands are remembered, none for longer than [`KEEP_ENDED`].
-+//! - **Processes**: when a command ends, so does everything it started. At
-+//!   its timeout, on a stop, when the chat that started it is archived or
-+//!   deleted ([`Commands::follow_chats`]), and at engine shutdown, its group
-+//!   is asked to stop and killed after [`GRACE`]; a call abandoned mid-run
-+//!   kills it at once.
-+//! - **Concurrency**: at most [`MAX_RUNNING`] runs and [`MAX_BACKGROUND`]
-+//!   background commands at once per device; past that, refused, not queued.
-+//!
-+//! Running commands count as work ([`Commands::running`]): a Cloud machine
-+//! stays awake for them, and an update waits for them.
-+
-+use std::collections::{HashMap, VecDeque};
-+use std::sync::{Arc, Mutex, Weak};
-+use std::time::{Duration, Instant};
-+
-+use futures::StreamExt as _;
-+use futures::stream::BoxStream;
-+use serde::Serialize;
-+use tokio::io::{AsyncRead, AsyncReadExt};
-+use tokio::sync::{Notify, Semaphore, watch};
-+use zeron_harness::process::{Command, Stdio, owned};
-+
-+pub const DEFAULT_TIMEOUT: Duration = Duration::from_secs(120);
-+pub const MAX_TIMEOUT: Duration = Duration::from_secs(600);
-+/// Output a run keeps from its start, and from its end.
-+const HEAD: usize = 16 * 1024;
-+const TAIL: usize = 48 * 1024;
-+/// Output a background command keeps (its newest), and the most one read
-+/// returns.
-+const RING: usize = 128 * 1024;
-+const MAX_READ: usize = 48 * 1024;
-+/// How long output is still read once a shell has exited: a process that
-+/// left the group (`setsid`) may hold the pipes open for good.
-+const DRAIN: Duration = Duration::from_millis(250);
-+/// Between asking a command's processes to stop and killing them.
-+pub const GRACE: Duration = Duration::from_secs(2);
-+pub const MAX_RUNNING: usize = 16;
-+pub const MAX_BACKGROUND: usize = 32;
-+const MAX_ENDED: usize = 32;
-+const KEEP_ENDED: Duration = Duration::from_secs(60 * 60);
-+
-+fn lock<T>(mutex: &Mutex<T>) -> std::sync::MutexGuard<'_, T> {
-+    mutex
-+        .lock()
-+        .unwrap_or_else(std::sync::PoisonError::into_inner)
-+}
-+
-+/// This engine's agents' commands. Cheap to clone (shared state).
-+#[derive(Clone)]
-+pub struct Commands {
-+    inner: Arc<Inner>,
-+}
-+
-+struct Inner {
-+    shell: String,
-+    kind: ShellKind,
-+    running: Semaphore,
-+    background: Mutex<HashMap<String, Arc<Background>>>,
-+    /// Bumped when a background command starts, ends or is forgotten.
-+    changes: watch::Sender<u64>,
-+    /// Commands shown on chats hosted here, followed wherever they run: one
-+    /// task per (chat, device), `None` being this one ([`Commands::show`]).
-+    followers: Mutex<HashMap<(String, Option<String>), tokio::task::AbortHandle>>,
-+}
-+
-+impl Default for Commands {
-+    fn default() -> Self {
-+        Self::with_shell(crate::terminals::selected_shell())
-+    }
-+}
-+
-+/// How one run ended.
-+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
-+#[serde(rename_all = "camelCase")]
-+pub struct RunOutcome {
-+    /// `None` when it was killed (timed out, or by a signal).
-+    pub exit_code: Option<i32>,
-+    /// Stdout and stderr together, in the order they arrived. When it was
-+    /// too long, its start and end with a line saying how much was left out.
-+    pub output: String,
-+    /// Bytes of ou
-```
-
-**File**: `crates/engine/src/lib.rs` (modified, +24/-8)
-```diff
-@@ -44,6 +44,7 @@ mod chat_persistence;
- mod cloud_accounts;
- pub mod cloud_client;
- pub mod cloud_disk;
-+pub mod commands;
- pub mod commit_credit;
- pub mod credentials;
- pub mod deferred;
-@@ -71,7 +72,6 @@ pub mod registry;
- pub mod remote_terminals;
- pub mod repos;
- pub mod rpc;
--pub mod run_command;
- pub mod run_journal;
- pub mod runner;
- pub mod wake_trace;
-@@ -186,6 +186,8 @@ pub struct EngineCore {
-     pub repos: Repos,
-     pub workspace_files: WorkspaceFiles,
-     pub terminals: Terminals,
-+    /// Agents' shell commands on this device ([`commands`]).
-+    pub commands: commands::Commands,
-     /// I/O routing for terminals on other devices (direct link or relay).
-     pub remote_terminals: remote_terminals::RemoteTerminals,
-     pub project_actions: ProjectActionsStore,
-@@ -385,14 +387,18 @@ impl EngineCore {
-             repos.clone(),
-             workspace.clone(),
-             device_id.clone(),
--            runner::session()
--                .and_then(|session| session.path.clone())
--                .map(std::path::PathBuf::from),
-+            runner::session().and_then(|session| {
-+                Some(workspace_files::CloudCheckout {
-+                    path: std::path::PathBuf::from(session.path.clone()?),
-+                    chat_id: session.chat_id.clone(),
-+                })
-+            }),
-         );
-         let terminals = Terminals::new();
-         sessions.track_terminal_activity(terminals.clone(), workspace.clone());
-+        let commands = commands::Commands::default();
-         // An agent's background commands end with its chat.
--        run_command::follow_chats(workspace.watch_chats());
-+        commands.follow_chats(workspace.watch_chats());
-         let project_actions = ProjectActionsStore::open(profile.store_root())?;
-         doc_host.set_project_action_runtime(project_actions.clone(), terminals.clone());
-         let previews = zeron_preview::PreviewService::new(
-@@ -499,6 +505,7 @@ impl EngineCore {
-             repos,
-             workspace_files,
-             terminals,
-+            commands,
-             remote_terminals: Default::default(),
-             project_actions,
-             previews,
-@@ -533,11 +540,12 @@ impl EngineCore {
-     pub fn update_quiescence(&self, cloud: bool) -> zeron_update::QuiescentCheck {
-         let sessions = self.sessions.clone();
-         let terminals = self.terminals.clone();
-+        let commands = self.commands.clone();
-         let doc_host = cloud.then(|| self.doc_host.clone());
-         Arc::new(move || {
-             !sessions.any_active()
-                 && !terminals.any_open()
--                && run_command::running_count() == 0
-+                && commands.running() == 0
-                 && !doc_host.as_ref().is_some_and(DocHost::has_waiting_commands)
-         })
-     }
-@@ -677,6 +685,7 @@ impl EngineCore {
-         .with_auth(self.auth())
-         .with_previews(self.previews.clone())
-         .with_remote_terminals(self.remote_terminals.clone())
-+        .with_commands(self.commands.clone())
-         .with_harness_updates(self.harness_updates.clone())
-         .with_viewport_focus(self.viewport_focus.clone())
-         .with_plugins(self.plugins.clone());
-@@ -762,7 +771,7 @@ impl EngineCore {
-         }
-         self.sessions.shutdown().await;
-         self.terminals.shutdown();
--        run_command::shutdown();
-+        self.commands.shutdown().await;
-         self.sessions.stop_activity_projection().await;
-         self.agent_accounts.shutdown();
-         self.change_requests.shutdown();
-@@ -1153,11 +1162,18 @@ impl Engine {
-             core.registry.set_run_environment(Arc::new(broker.clone()));
-             broker.start();
-             let sessions = core.sessions.clone();
-+            let commands = core.commands.clone();
-             let activity = runner::RelayActivity::default();
-             let heartbeat = runner::spawn_heartbeat(
-                 identity.edge_url(),
-                 tokens,
--                Arc::new(move || sessions.run_counts()),
-+                // An agent's running commands (a dev server left running)
-+                // keep the machine awake as background work does.
-+                Arc::new(move || {
-+                    let mut counts = sessions.run_counts();
-+                    counts.background += commands.running();
-+                    counts
-+                }),
-                 Arc::new(cloud_disk::machine_usage),
-                 activity.clone(),
-                 runner::HEARTBEAT_INTERVAL,
-```
-
-**File**: `crates/engine/src/rpc.rs` (modified, +138/-99)
-```diff
-@@ -915,6 +915,8 @@ pub struct EngineRpc {
-     workspace_files: crate::WorkspaceFiles,
-     terminals: Terminals,
-     remote_terminals: crate::remote_terminals::RemoteTerminals,
-+    /// Agents' shell commands here ([`crate::commands`]).
-+    commands: crate::commands::Commands,
-     project_actions: ProjectActionsStore,
-     previews: Option<zeron_preview::PreviewService>,
-     change_requests: CheckoutChangeRequests,
-@@ -979,6 +981,7 @@ impl EngineRpc {
-             workspace_files,
-             terminals,
-             remote_terminals: Default::default(),
-+            commands: Default::default(),
-             project_actions,
-             previews: None,
-             change_requests,
-@@ -1010,6 +1013,12 @@ impl EngineRpc {
-     }
- 
-     /// Share the engine-wide routing state for terminals on other devices.
-+    /// The engine's agents' commands (one service per engine).
-+    pub fn with_commands(mut self, commands: crate::commands::Commands) -> Self {
-+        self.commands = commands;
-+        self
-+    }
-+
-     pub fn with_remote_terminals(
-         mut self,
-         remote_terminals: crate::remote_terminals::RemoteTerminals,
-@@ -1924,9 +1933,9 @@ impl EngineRpc {
- 
-     /// A background command the calling agent just started (`device`: where,
-     /// `None` here): its chat shows it with its runtime's background
--    /// processes until it ends. Only an agent's own call: a peer forwarding
--    /// one here is running it for a chat hosted there.
--    fn track_command(&self, device: Option<&str>, started: &serde_json::Value) {
-+    /// processes until it ends ([`Self::follow_commands`]). Only an agent's
-+    /// own call: a peer forwarding one here runs it for a chat hosted there.
-+    fn show_command(&self, device: Option<&str>, started: &serde_json::Value) {
-         let zeron_rpc::Caller::Agent { chat: Some(chat) } = zeron_rpc::caller() else {
-             return;
-         };
-@@ -1941,88 +1950,92 @@ impl EngineRpc {
-                 .find(|d| d.id == device)
-                 .map(|d| d.name)
-         });
--        let task = zeron_proto::BackgroundTask {
--            id: match device {
--                Some(device) => format!("{id}@{device}"),
--                None => id.to_owned(),
--            },
--            command: started["command"].as_str().unwrap_or_default().to_owned(),
--            description: name.map(|name| format!("on {name}")),
--            started_at: chrono::Utc::now(),
--        };
--        let command = crate::run_command::CommandTask {
-+        let task = crate::commands::CommandTask {
-             device: device.map(str::to_owned),
-             id: id.to_owned(),
--            task,
-+            task: zeron_proto::BackgroundTask {
-+                id: match device {
-+                    Some(device) => format!("{id}@{device}"),
-+                    None => id.to_owned(),
-+                },
-+                command: started["command"].as_str().unwrap_or_default().to_owned(),
-+                description: name.map(|name| format!("on {name}")),
-+                started_at: chrono::Utc::now(),
-+            },
-         };
--        if self.sessions.track_command(&chat, command) {
--            let rpc = self.clone();
--            tokio::spawn(async move { rpc.follow_commands().await });
+ /// The feed had a newer release, now installed as `zeron.exe`: it runs this
+-/// launch instead, and its exit is this one's.
+-fn run_installed(directory: &Path, args: &[String], version: &str) -> ! {
++/// launch instead, and its exit is this one's. Returns only when it
++/// couldn't start.
++fn run_installed(directory: &Path, args: &[String], version: &str) -> Failed {
+     let installed = directory.join("zeron.exe");
+     match std::process::Command::new(&installed).args(args).status() {
+         Ok(status) => std::process::exit(status.code().unwrap_or(1)),
+-        Err(error) => {
+-            eprintln!("Error: Zeron {version} is installed, but couldn't start: {error}");
+-            std::process::exit(1);
 -        }
-+        let follower = self.clone();
-+        let (chat_id, device) = (chat.clone(), task.device.clone());
-+        self.commands.show(&self.sessions, &chat, task, move || {
-+            tokio::spawn(follower.follow_commands(chat_id, device))
-+        });
++        Err(error) => Failed(format!("Zeron {version} is installed, but couldn't start: {error}")),
      }
- 
--    /// While any are tracked: every few seconds, ask each device which of a
--    /// chat's commands still run, and show those. A device out of reach
--    /// keeps its commands shown for [`COMMAND_UNREACHABLE`], then they go.
--    async fn follow_commands(self) {
--        const EVERY: Duration = Duration::from_secs(5);
--        const COMMAND_UNREACHABLE: Duration = Duration::from_secs(120);
--        let mut unreachable: std::collections::HashMap<String, std::time::Instant> = Default::default();
-+    /// Follow the commands `chat` shows on `device` (`None`: here) through
-+    /// that device's `WatchBackgroundCommands`: each one that ends leaves the
-+    /// row as it ends, and the row stays fresh (the live heartbeat's
-+    /// cadence) while any run. A device out of reach keeps its commands
-+    /// shown for [`COMMANDS_UNREACHABLE`] while it's dialled again, then they
-+    /// go. Ends when the chat shows none there.
-+    async fn follow_commands(self, chat: String, device: Option<String>) {
-+        const COMMANDS_UNREACHABLE: Duration = Duration::from_secs(120);
-+        const REDIAL: Duration = Duration::from_secs(3);
-+        let heartbeat_every =
-+            Duration::from_millis(zeron_proto::view::SESSION_HEARTBEAT_MS as u64 / 2);
-+        let mut heartbeat = tokio::time::interval(heartbeat_every);
-+        heartbeat.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Delay);
-+        let mut lost_since: Option<t
-```
-
-**File**: `crates/engine/src/rpc/agent_gate.rs` (modified, +78/-24)
-```diff
-@@ -319,35 +319,72 @@ mod tests {
-     async fn only_an_unconfined_agent_runs_a_command() {
-         let (_temp, core) = core().await;
-         chat(&core, "careful", "Careful", "read-only", "supervised").await;
--        chat(&core, "sandboxed", "Sandboxed", "workspace-write", "full-access").await;
-+        chat(
-+            &core,
-+            "sandboxed",
-+            "Sandboxed",
-+            "workspace-write",
-+            "full-access",
-+        )
-+        .await;
-         chat(&core, "free", "Free", "danger-full-access", "full-access").await;
-         let rpc = core.rpc_service();
-         let open = json!({"command":"ls", "targetDeviceId":"laptop"});
--        for method in [methods::RUN_COMMAND, methods::READ_COMMAND_OUTPUT, methods::STOP_COMMAND, methods::LIST_BACKGROUND_COMMANDS] {
-+        for method in [
-+            methods::RUN_COMMAND,
-+            methods::READ_COMMAND_OUTPUT,
-+            methods::STOP_COMMAND,
-+            methods::LIST_BACKGROUND_COMMANDS,
-+        ] {
-             for who in ["careful", "sandboxed", "nowhere"] {
--                let refused = with_caller(agent(who), async { rpc.agent_gate(method, open.clone()) }).await;
-+                let refused =
-+                    with_caller(agent(who), async { rpc.agent_gate(method, open.clone()) }).await;
-                 assert!(
-                     matches!(&refused, Err(zeron_rpc::RpcError::Failed(m)) if m.contains("full access and no sandbox")),
-                     "{who} {method}: {refused:?}"
-                 );
-             }
--            let allowed = with_caller(agent("free"), async { rpc.agent_gate(method, open.clone()) }).await.unwrap();
-+            let allowed = with_caller(agent("free"), async {
-+                rpc.agent_gate(method, open.clone())
-+            })
-+            .await
-+            .unwrap();
-             assert_eq!(allowed, open, "{method}");
-             // A server with no chat (set up by hand) is capped by nothing.
--            with_caller(Caller::Agent { chat: None }, async { rpc.agent_gate(method, open.clone()) }).await.unwrap();
-+            with_caller(Caller::Agent { chat: None }, async {
-+                rpc.agent_gate(method, open.clone())
-+            })
-+            .await
-+            .unwrap();
-             assert_eq!(rpc.agent_gate(method, open.clone()).unwrap(), open);
-         }
-         // Through the engine, it runs here and says how it went.
-         let dir = tempfile::tempdir().unwrap();
-         let ran = with_caller(
-             agent("free"),
--            rpc.handle(methods::RUN_COMMAND, json!({"command":"echo hi; exit 2", "cwd": dir.path()})),
-+            rpc.handle(
-+                methods::RUN_COMMAND,
-+                json!({"command":"echo hi; exit 2", "cwd": dir.path()}),
-+            ),
-         )
-         .await
-         .unwrap();
--        let zeron_rpc::RpcReply::Value(ran) = ran else { panic!("a stream") };
--        assert_eq!((ran["exitCode"].clone(), ran["output"].as_str().unwrap().ends_with("hi\n")), (json!(2), true), "{ran}");
--        let refused = with_caller(agent("careful"), rpc.handle(methods::RUN_COMMAND, json!({"command":"echo hi"}))).await;
-+        let zeron_rpc::RpcReply::Value(ran) = ran else {
-+            panic!("a stream")
-+        };
-+        assert_eq!(
-+            (
-+                ran["exitCode"].clone(),
-+                ran["output"].as_str().unwrap().ends_with("hi\n")
-+            ),
-+            (json!(2), true),
-+            "{ran}"
-+        );
-+        let refused = with_caller(
-+            agent("careful"),
-+            rpc.handle(methods::RUN_COMMAND, json!({"command":"echo hi"})),
-+        )
-+        .await;
-         assert!(refused.is_err());
-         core.sessions.shutdown().await;
-     }
-@@ -359,7 +396,8 @@ mod tests {
-     async fn a_chat_shows_the_commands_its_agent_left_running() {
-         let (_temp, core) = core().await;
-         chat(&core, "free", "Free", "danger-full-access", "full-access").await;
--        core.sessions.seed_status("free", zeron_proto::SessionStatus::Working);
-+        core.sessions
-+            .seed_status("free", zeron_proto::SessionStatus::Working);
-         let rpc = core.rpc_service();
-         let dir = tempfile::tempdir().unwrap();
-         let value = |reply: zeron_rpc::RpcReply| match reply {
-@@ -375,7 +413,11 @@ mod tests {
-                 ),
-             )
-         };
--        let server = value(start("echo listening; while true; do sleep 0.05; done").await.unwrap());
-+        let server = value(
-+            start("echo listening; while true; do sleep 0.05; done")
-+                .await
-+                .unwrap(),
-+        );
-         let quick = value(start("echo done").await.unwrap());
-         let shown = |core: &crate::EngineCore| -> Vec<String> {
-             core.sessions
-@@ -391,25 +433,34 @@ mod tests {
-         let give_up = std::time::Instant::now() + std::time::Duration::from_secs(5);
-         loop {
-             let tail = value(
--                rpc.handle(methods::REA
-```
-
-**File**: `crates/engine/src/run_command.rs` (removed, +0/-853)
-```diff
-@@ -1,853 +0,0 @@
--//! Shell commands for agents, on this device or another of the person's
--//! (Zeron MCP's `run_command` & co., forwarded by `targetDeviceId`): what an
--//! agent's own shell tool does on its machine, on any of them.
--//!
--//! - [`run`] (`RunCommand`): one command run to its end. Its output and exit
--//!   code come back, and where it ended up (`cwd`, from a POSIX shell), so an
--//!   agent's `cd` carries over to its next command.
--//! - [`start`] (`RunCommand {background}`): one left running (a dev server,
--//!   a watcher, a long build), read with [`read`] (`ReadCommandOutput`),
--//!   stopped with [`stop`] (`StopCommand`), listed with [`list`]
--//!   (`ListCommands`).
--//!
--//! No PTY and no session: the user's shell runs the command as a login shell
--//! (`-l -c`, so it has the PATH their terminal has; PowerShell or cmd on
--//! Windows), with empty stdin so a prompt for input ends instead of hanging.
--//! What it costs is bounded:
--//!
--//! - **Memory**: a run keeps at most [`HEAD`] + [`TAIL`] bytes of output (its
--//!   start and end); a background command its newest [`RING`] bytes. What's
--//!   left out is counted, not kept. At most [`MAX_ENDED`] ended background
--//!   commands are remembered, none for longer than [`KEEP_ENDED`].
--//! - **Time**: a run has a timeout (at most [`MAX_TIMEOUT`]). Each command
--//!   gets its own process group (Unix), which is killed at the timeout, when
--//!   the call is abandoned, when a background command is stopped, when the
--//!   chat that started it is archived or deleted ([`follow_chats`]), and when
--//!   the engine shuts down ([`shutdown`]). Nothing it started lives on.
--//! - **Concurrency**: at most [`MAX_RUNNING`] runs and [`MAX_BACKGROUND`]
--//!   background commands at once per device; past that, refused, not queued.
--//!
--//! Running commands count as work ([`running_count`]): a Cloud machine stays
--//! awake for them, and an update waits for them.
--
--use std::collections::{HashMap, VecDeque};
--use std::process::Stdio;
--use std::sync::atomic::{AtomicBool, Ordering};
--use std::sync::{Arc, LazyLock, Mutex};
--use std::time::{Duration, Instant};
--
--use serde::Serialize;
--use tokio::io::{AsyncRead, AsyncReadExt};
--use tokio::sync::Semaphore;
--
--pub const DEFAULT_TIMEOUT: Duration = Duration::from_secs(120);
--pub const MAX_TIMEOUT: Duration = Duration::from_secs(600);
--/// Output a run keeps from its start, and from its end.
--const HEAD: usize = 16 * 1024;
--const TAIL: usize = 48 * 1024;
--/// Output a background command keeps (its newest), and the most one read
--/// returns.
--const RING: usize = 128 * 1024;
--const MAX_READ: usize = 48 * 1024;
--/// How long output is still read once a run's shell has exited.
--const DRAIN: Duration = Duration::from_millis(250);
--pub const MAX_RUNNING: usize = 16;
--pub const MAX_BACKGROUND: usize = 32;
--const MAX_ENDED: usize = 32;
--const KEEP_ENDED: Duration = Duration::from_secs(60 * 60);
--
--static RUNNING: Semaphore = Semaphore::const_new(MAX_RUNNING);
--static BACKGROUND: LazyLock<Mutex<HashMap<String, Arc<Background>>>> = LazyLock::new(Default::default);
--
--fn lock<T>(mutex: &Mutex<T>) -> std::sync::MutexGuard<'_, T> {
--    mutex.lock().unwrap_or_else(std::sync::PoisonError::into_inner)
--}
--
--/// Commands running now, run or background: work in progress.
--pub fn running_count() -> usize {
--    let background = lock(&BACKGROUND).values().filter(|c| c.ended().is_none()).count();
--    MAX_RUNNING - RUNNING.available_permits() + background
--}
--
--/// How one run ended.
--#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
--#[serde(rename_all = "camelCase")]
--pub struct RunOutcome {
--    /// `None` when it was killed (timed out, or by a signal).
--    pub exit_code: Option<i32>,
--    /// Stdout and stderr together, in the order they arrived. When it was
--    /// too long, its start and end with a line saying how much was left out.
--    pub output: String,
--    /// Bytes of output left out of the middle.
--    #[serde(skip_serializing_if = "is_zero")]
--    pub omitted_bytes: u64,
--    pub timed_out: bool,
--    pub duration_ms: u64,
--    /// The folder it ended in (a POSIX shell's `pwd`), when it finished.
--    #[serde(skip_serializing_if = "Option::is_none")]
--    pub cwd: Option<String>,
--}
--
--fn is_zero(n: &u64) -> bool {
--    *n == 0
--}
--
--/// Run `command` in `cwd` with the user's shell, for at most `timeout`.
--pub async fn run(cwd: &str, command: &str, timeout: Duration) -> Result<RunOutcome, String> {
--    run_with_shell(&crate::terminals::selected_shell(), cwd, command, timeout).await
--}
--
--pub(crate) async fn run_with_shell(
--    shell: &str,
--    cwd: &str,
--    command: &str,
--    timeout: Duration,
--) -> Result<RunOutcome, String> {
--    if command.trim().is_empty() {
--        return Err("The command is empty".into());
--    }
--    let _slot = RUNNING.try_acquire().map_err(|_| {
--        format!("{MAX_RUNNING} commands are already running on this device: wait for one to finish")
--    })?;
--    let timeout = t
-```
-
-**File**: `crates/engine/src/sessions.rs` (modified, +49/-50)
-```diff
-@@ -262,9 +262,7 @@ struct Inner {
-     /// said), and the background commands its agent started with Zeron's
-     /// `run_command`, here or on another device. Its session row shows both.
-     runtime_tasks: Mutex<HashMap<String, Vec<zeron_proto::BackgroundTask>>>,
--    command_tasks: Mutex<HashMap<String, Vec<crate::run_command::CommandTask>>>,
--    /// A task follows the tracked commands (see [`SessionsEngine::track_command`]).
--    command_tracker: std::sync::atomic::AtomicBool,
-+    command_tasks: Mutex<HashMap<String, Vec<crate::commands::CommandTask>>>,
-     /// The engine is shutting down: dying runs re-dispatch nothing.
-     shutting_down: std::sync::atomic::AtomicBool,
-     /// A shutdown marks the turns it cuts off for pick-up on the next boot
-@@ -487,7 +485,6 @@ impl SessionsEngine {
-                 device_id,
-                 runtime_tasks: Mutex::new(HashMap::new()),
-                 command_tasks: Mutex::new(HashMap::new()),
--                command_tracker: std::sync::atomic::AtomicBool::new(false),
-                 shutting_down: std::sync::atomic::AtomicBool::new(false),
-                 revive_after_shutdown: std::sync::atomic::AtomicBool::new(true),
-                 revivals: Mutex::new(HashMap::new()),
-@@ -815,66 +812,67 @@ impl SessionsEngine {
- 
-     /// Ask the chat's runtime to stop one of its background processes. False
-     /// when no live runtime lists it (it ended meanwhile).
--    /// A background command `chat_id`'s agent started with `run_command`
--    /// (here or on another device): shown on its session row with its
--    /// runtime's processes until it ends. True when nothing follows the
--    /// tracked commands yet: the caller starts [`Self::follow_commands`]'s
--    /// loop.
--    pub fn track_command(&self, chat_id: &str, command: crate::run_command::CommandTask) -> bool {
-+    /// Show a background command `chat_id`'s agent started with
-+    /// `run_command` (here or on another device) on its session row, with
-+    /// its runtime's own background processes ([`crate::commands::Commands::show`]).
-+    pub fn show_command(&self, chat_id: &str, command: crate::commands::CommandTask) {
-         lock(&self.inner.command_tasks)
-             .entry(chat_id.to_owned())
-             .or_default()
-             .push(command);
-         self.inner.publish_background_tasks(chat_id);
--        !self
--            .inner
--            .command_tracker
--            .swap(true, std::sync::atomic::Ordering::AcqRel)
--    }
--
--    /// Every chat's tracked commands.
--    pub fn tracked_commands(&self) -> HashMap<String, Vec<crate::run_command::CommandTask>> {
--        lock(&self.inner.command_tasks).clone()
-     }
- 
--    /// The tracked commands of `chat_id` still running, as just checked:
--    /// shown, and the row kept fresh while there are any.
--    pub fn set_tracked_commands(&self, chat_id: &str, commands: Vec<crate::run_command::CommandTask>) {
-+    /// Keep showing those of `chat_id`'s commands on `device` that `keep`
-+    /// says still run (and every command elsewhere).
-+    pub fn retain_commands(
-+        &self,
-+        chat_id: &str,
-+        device: &Option<String>,
-+        keep: impl Fn(&str) -> bool,
-+    ) {
-         let changed = {
--            let mut tracked = lock(&self.inner.command_tasks);
--            let before = tracked.get(chat_id).map_or(0, Vec::len);
--            let after = commands.len();
-+            let mut shown = lock(&self.inner.command_tasks);
-+            let Some(commands) = shown.get_mut(chat_id) else {
-+                return;
-+            };
-+            let before = commands.len();
-+            commands.retain(|c| &c.device != device || keep(&c.id));
-+            let changed = commands.len() != before;
-             if commands.is_empty() {
--                tracked.remove(chat_id);
--            } else {
--                tracked.insert(chat_id.to_owned(), commands);
-+                shown.remove(chat_id);
-             }
--            before != after
-+            changed
-         };
-         if changed {
-             self.inner.publish_background_tasks(chat_id);
-         }
--        self.inner.touch_session(chat_id);
-     }
- 
--    /// One tracked command no longer shown (it was stopped).
--    pub fn untrack_command(&self, chat_id: &str, task_id: &str) {
--        let mut commands = lock(&self.inner.command_tasks).get(chat_id).cloned().unwrap_or_default();
--        commands.retain(|c| c.task.id != task_id);
--        self.set_tracked_commands(chat_id, commands);
-+    /// No longer show one of `chat_id`'s commands (the person stopped it).
-+    pub fn hide_command(&self, chat_id: &str, task_id: &str) {
-+        let device = lock(&self.inner.command_tasks)
-+            .get(chat_id)
-+            .and_then(|commands| commands.iter().find(|c| c.task.id == task_id))
-+            .map(|c| (c.device.clone(), c.id.clone()));
-+        if let Some((device, id)) = device {
-+            self.retain_commands(chat_id, &device, |shown| shown != id);
-+        }
-     }
- 
-
-```
-
-**File**: `crates/engine/src/workspace_files.rs` (modified, +58/-25)
-```diff
-@@ -56,13 +56,23 @@ pub struct WorkspaceFiles {
-     inner: Arc<WorkspaceFilesInner>,
  }
  
-+/// A Cloud session machine's checkout: the folder its session chat's
-+/// project (made on another device) is cloned into
-+/// ([`crate::runner::session`]).
-+#[derive(Debug, Clone)]
-+pub struct CloudCheckout {
-+    pub path: PathBuf,
-+    /// The chat the machine was started for; its side chats share it.
-+    pub chat_id: String,
-+}
-+
- struct WorkspaceFilesInner {
-     repos: Repos,
-     workspace: WorkspaceHost,
-     device_id: String,
-     /// On a Cloud session machine, its checkout of the session's repository:
-     /// where a chat whose project was made on another device works.
--    cloud_checkout: Option<PathBuf>,
-+    cloud_checkout: Option<CloudCheckout>,
-     mutation_gates: Mutex<HashMap<String, Weak<tokio::sync::RwLock<()>>>>,
-     write_locks: Mutex<HashMap<WorkspaceFileKey, Weak<tokio::sync::Mutex<()>>>>,
-     watches: Mutex<HashMap<String, Arc<CheckoutWatch>>>,
-@@ -258,7 +268,7 @@ impl WorkspaceFiles {
-         repos: Repos,
-         workspace: WorkspaceHost,
-         device_id: impl Into<String>,
--        cloud_checkout: Option<PathBuf>,
-+        cloud_checkout: Option<CloudCheckout>,
-     ) -> Self {
-         Self {
-             inner: Arc::new(WorkspaceFilesInner {
-@@ -274,6 +284,25 @@ impl WorkspaceFiles {
-         }
-     }
- 
-+    /// Where `space`'s files are on this device: its folder, when this
-+    /// device made it. A Cloud session machine answers from its own checkout
-+    /// for its session chat's project — only that one: it sees every
-+    /// project, and any other is a folder on another device.
-+    fn space_root(&self, space: &zeron_proto::Space) -> Option<PathBuf> {
-+        if space.device_id == self.inner.device_id {
-+            return Some(PathBuf::from(&space.path));
-+        }
-+        let checkout = self.inner.cloud_checkout.as_ref()?;
-+        let session_project = self
-+            .inner
-+            .workspace
-+            .chat(&checkout.chat_id)
-+            .ok()
-+            .flatten()
-+            .and_then(|chat| chat.space_id);
-+        (session_project.as_deref() == Some(space.id.as_str())).then(|| checkout.path.clone())
-+    }
-+
-     pub(crate) async fn resolve_target(
-         &self,
-         target: &WorkspaceTarget,
-@@ -340,18 +369,11 @@ impl WorkspaceFiles {
-                     .ok_or_else(|| {
-                         WorkspaceFilesError::NotFound("chat workspace space not found".into())
-                     })?;
--                // A project made on another device is that device's folder —
--                // except on a Cloud session machine, which works in its own
--                // checkout of the project's repository.
--                let space_path = if space.device_id == self.inner.device_id {
--                    PathBuf::from(&space.path)
--                } else if let Some(checkout) = &self.inner.cloud_checkout {
--                    checkout.clone()
--                } else {
--                    return Err(WorkspaceFilesError::Authorization(
-+                let space_path = self.space_root(&space).ok_or_else(|| {
-+                    WorkspaceFilesError::Authorization(
-                         "chat space belongs to another device".into(),
--                    ));
--                };
-+                    )
-+                })?;
-                 let (checkout, identity) = tokio::join!(
-                     self.inner.repos.workspace_checkout(&space_path, &cwd),
-                     self.inner.repos.checkout_identity(&cwd),
-@@ -370,17 +392,9 @@ impl WorkspaceFiles {
-                     .space(space_id)
-                     .map_err(|error| WorkspaceFilesError::Io(error.to_string()))?
-                     .ok_or_else(|| WorkspaceFilesError::NotFound("space not found".into()))?;
--                // As for a chat target: a Cloud session machine answers for a
--                // project made elsewhere from its own checkout of it.
--                let space_path = if space.device_id == self.inner.device_id {
--                    PathBuf::from(&space.path)
--                } else if let Some(checkout) = &self.inner.cloud_checkout {
--                    checkout.clone()
--                } else {
--                    return Err(WorkspaceFilesError::Authorization(
--                        "space belongs to another device".into(),
--                    ));
--                };
-+                let space_path = self.space_root(&space).ok_or_else(|| {
-+                    WorkspaceFilesError::Authorization("space belongs to another device".into())
-+                })?;
-                 let requested = target
-                     .checkout_path
-                     .as_deref()
-@@ -3670,6 +3684,8 @@ mod image_tests {
-         .unwrap();
-         host.create_space("space", "laptop", "/Users/me/app", None, true)
-             .unwrap();
-+        host.create_space("laptop-space", "laptop", "/Users/me/other", None, true)
-+            .unwrap();
-         // Hosted on t
 ```
 
-**File**: `crates/engine/tests/agent_commands.rs` (modified, +39/-8)
+**File**: `apps/zgx/tests/cli.rs` (modified, +2/-1)
 ```diff
-@@ -13,19 +13,38 @@ use zeron_rpc::memory_client;
- #[tokio::test]
- async fn an_agent_runs_commands_as_its_own_shell_tool_would() {
-     let dir = tempfile::tempdir().unwrap();
--    let core = EngineCore::assemble(dir.path(), Arc::new(default_registry()), HarnessId::Mock, None).unwrap();
--    let tools = Tools::new(Arc::new(Zeron::with_client(memory_client(core.rpc_service()), Origin::default())));
-+    let core = EngineCore::assemble(
-+        dir.path(),
-+        Arc::new(default_registry()),
-+        HarnessId::Mock,
-+        None,
-+    )
-+    .unwrap();
-+    let tools = Tools::new(Arc::new(Zeron::with_client(
-+        memory_client(core.rpc_service()),
-+        Origin::default(),
-+    )));
-     let work = tempfile::tempdir().unwrap();
-     std::fs::create_dir(work.path().join("app")).unwrap();
-     let app = std::fs::canonicalize(work.path().join("app")).unwrap();
+@@ -67,7 +67,8 @@ fn the_engine_s_subcommands_run_in_the_helper_beside_the_app() {
+     let dir = scratch("helper");
+     let zeron = zeron_in(&dir);
+     let heard = dir.join("heard");
+-    let helper = dir.join("Zeron Engine");
++    // (The helper's name here: "Zeron Engine" on macOS, zeron-engine on Linux.)
++    let helper = dir.join(zeron_launch::ENGINE_EXECUTABLES[0]);
+     std::fs::write(&helper, format!("#!/bin/sh\necho \"$@\" > '{}'\nexit 7\n", heard.display())).unwrap();
+     std::fs::set_permissions(&helper, std::fs::Permissions::from_mode(0o755)).unwrap();
+     let status = Command::new(&zeron).args(["plugin", "list"]).env("ZERON_DATA_DIR", &dir).status().unwrap();
+```
+
+**File**: `apps/zgx/tests/pointer_cursor.rs` (modified, +13/-10)
+```diff
+@@ -1,9 +1,12 @@
+ //! The pointer's cursor is the one under it: the sidebar's edge shows the
+-//! column-resize cursor, a sidebar row the pointing hand. zgx gives the
+-//! cursor of the front-most node at the pointer (`Scene::cursor_at`); a
+-//! layer the window's size in front of the shell, even one that lets the
+-//! pointer through (the session hover card's, until it was made an anchor of
+-//! no size), took every cursor away.
++//! column-resize cursor, a sidebar row the pointing hand. Asked as the
++//! window asks zgx (zgx-desktop's `ui.input.cursor_at`): the cursor of what
++//! a press there would reach, past a layer that lets the pointer through, as
++//! CSS's `pointer-events: none`. A layer the window's size in front of the
++//! shell that doesn't took every cursor away. (`Scene::cursor_at`, the
++//! front-most node's whatever it passes, isn't the window's: the session
++//! card's root is the window's size, passing the pointer, since 1b409eb0e,
++//! so the card leaving stays by its own row.)
  
-     // Output and exit code; cd carries over to the next command.
-     let ran = tools
--        .call("run_command", json!({ "command": "cd app && echo hi && exit 3", "cwd": work.path() }))
-+        .call(
-+            "run_command",
-+            json!({ "command": "cd app && echo hi && exit 3", "cwd": work.path() }),
-+        )
-+        .await
-+        .unwrap();
-+    assert_eq!(
-+        (ran["output"].as_str(), ran["exitCode"].as_i64()),
-+        (Some("hi\n"), Some(3)),
-+        "{ran}"
-+    );
-+    let ran = tools
-+        .call("run_command", json!({ "command": "pwd -P" }))
-         .await
-         .unwrap();
--    assert_eq!((ran["output"].as_str(), ran["exitCode"].as_i64()), (Some("hi\n"), Some(3)), "{ran}");
--    let ran = tools.call("run_command", json!({ "command": "pwd -P" })).await.unwrap();
-     assert_eq!(ran["output"].as_str().map(str::trim), app.to_str(), "{ran}");
+ use std::path::PathBuf;
  
-     // A server left running: read as it goes, then stopped.
-@@ -41,13 +60,25 @@ async fn an_agent_runs_commands_as_its_own_shell_tool_would() {
-     let give_up = Instant::now() + Duration::from_secs(10);
-     while !printed.contains("listening") {
-         assert!(Instant::now() < give_up, "{printed:?}");
--        let read: Value = tools.call("command_output", json!({ "id": id })).await.unwrap();
-+        let read: Value = tools
-+            .call("command_output", json!({ "id": id }))
-+            .await
-+            .unwrap();
-         printed.push_str(read["output"].as_str().unwrap_or_default());
-         tokio::time::sleep(Duration::from_millis(50)).await;
+@@ -21,7 +24,7 @@ fn the_sidebar_edge_shows_the_resize_cursor_and_a_row_the_hand() {
+     let b = scene.visible_bounds(edge).expect("the sidebar shows");
+     // Its edge: its last few points, down its whole height.
+     for y in [b.y + 120., b.y + b.height / 2., b.y + b.height - 120.] {
+-        assert_eq!(scene.cursor_at(b.x + b.width - 3., y), Some(Cursor::ColResize), "at its edge, y {y}");
++        assert_eq!(app.ui.input.cursor_at(&scene, b.x + b.width - 3., y), Some(Cursor::ColResize), "at its edge, y {y}");
      }
-     let listed = tools.call("list_commands", json!({})).await.unwrap();
--    assert!(listed["commands"].as_array().unwrap().iter().any(|c| c["id"] == id.as_str() && c["status"] == "running"));
--    let stopped = tools.call("stop_command", json!({ "id": id })).await.unwrap();
-+    assert!(
-+        listed["commands"]
-+            .as_array()
-+            .unwrap()
-+            .iter()
-+            .any(|c| c["id"] == id.as_str() && c["status"] == "running")
-+    );
-+    let stopped = tools
-+        .call("stop_command", json!({ "id": id }))
-+        .await
-+        .unwrap();
-     assert_eq!(stopped["status"], "stopped", "{stopped}");
-     core.sessions.shutdown().await;
+     // A row: the hand, as a button.
+     let row = scene
+@@ -30,7 +33,7 @@ fn the_sidebar_edge_shows_the_resize_cursor_and_a_row_the_hand() {
+         .find_map(|id| scene.cursor_for(id))
+         .expect("a sidebar row under the pointer");
+     assert_eq!(row, Cursor::Pointer);
+-    assert_eq!(scene.cursor_at(100., 290.), Some(Cursor::Pointer));
++    assert_eq!(app.ui.input.cursor_at(&scene, 100., 290.), Some(Cursor::Pointer));
  }
+ 
+ /// Every resize handle Zeron v3 has shows its cursor under the pointer, a
+@@ -57,11 +60,11 @@ fn every_resize_edge_shows_its_cursor_alone_and_in_a_split() {
+         let scene = app.ui.scene.borrow();
+         let b = scene.visible_bounds(sidebar).expect("the sidebar shows");
+         for y in [b.y + 120., b.y + b.height / 2., b.y + b.height - 120.] {
+-            assert_eq!(scene.cursor_at(b.x + b.width - 3., y), Some(Cursor::ColResize), "{when}: the sidebar's edge, y {y}");
++            assert_eq!(app.ui.input.cursor_at(&scene, b.x + b.width - 3., y), Some(Cursor::ColResize), "{when}: the sidebar's edge, y {y}");
+         }
+         let e = scene.visible_bounds(panel).expect("the panel's edge shows");
+         for y in [e.y + 120., e.y + e.height / 2., e.y + e.height - 120.] {
+-            assert_eq!(scene.cursor_at(e.x + e.width / 2., y), Some(Cursor::ColResize), "{when}: the panel's edge, y {y}");
++            assert_eq!(app.ui.input.cursor_at(&scene, e.x + e.width / 2., y), Some(Cursor::ColResize), "{when}: the panel's edge, y {y}");
+         }
+     };
+     check(&mut app, "a chat alone");
+@@ -92,5 +95,5 @@ fn every_resize_edge_shows_its_cursor_alone_and_in_a_split() {
+     let tab = app.target("#panel-strip >> role:tab").expect("a panel tab");
+     let scene = app.ui.scene.borrow();
+     let r = scene.visible_bounds(tab).expect("the tab shows");
+-    assert_eq!(scene.cursor_at(r.x + r.width / 2., r.y + r.height / 2.), Some(Cursor::Pointer), "a panel tab under the title bar's band");
++    assert_eq!(app.ui.input.cursor_at(&scene, r.x + r.width / 2., r.y + r.height / 2.), Some(Cursor::Pointer), "a panel tab under the title bar's band");
+ }
+```
+
+**File**: `apps/zgx/tests/reload.rs` (modified, +13/-5)
+```diff
+@@ -49,6 +49,8 @@ const CALLS: &[&str] = &[
+     "account.revoke_invite",
+     "account.resend_invite",
+     "account.rename_org",
++    "account.keeps_chats_local",
++    "account.keep_chats_local",
+     "agents.complete",
+     "agents.install",
+     "agents.remove",
+@@ -102,6 +104,7 @@ const INVOKES: &[&str] = &[
+     "app.open_main",
+     "appearance",
+     "chat.catalog",
++    "chat.catalog_on",
+     "chat.open",
+     "done",
+     "files.unwatch",
+@@ -760,18 +763,21 @@ fn a_reload_keeps_the_sidebar_and_settings_where_they_were_scrolled() {
+     // Settings' page, scrolled down.
+     assert!(app.host.run_command("shell.settings"));
+     app.frames(60);
+-    for _ in 0..4 {
+-        // (At a heading in view: the page runs on below the window.)
++    // (Scrolled at a heading in view: the page runs on below the window.)
++    let heading_in_view = |app: &mut TestApp| {
+         let target = zgx_script::driver::parse("#settings-page >> role:heading").unwrap();
+         app.ui.prepare_frame();
+         let found = zgx_script::driver::find_all(&app.ui, &app.handle, &target).unwrap_or_default();
+-        let id = found
++        found
+             .into_iter()
+             .find(|&id| {
+                 let b = app.ui.scene.borrow().hit_bounds(id);
+                 b.y > 40. && b.y < 560.
+             })
+-            .expect("a heading in view");
++            .expect("a heading in view")
++    };
++    for _ in 0..4 {
++        let id = heading_in_view(&mut app);
+         zgx_script::driver::scroll(&mut app.ui, id, 150.);
+         app.settle();
+         app.frames(4);
+@@ -793,7 +799,9 @@ fn a_reload_keeps_the_sidebar_and_settings_where_they_were_scrolled() {
+     app.frames(30);
+     assert_eq!(on_screen(&mut app, headings), before, "once settled after the reload: settings' page moved");
+     let kept = scroll(&app);
+-    let heading = app.target("#settings-page >> role:heading \"Links\"").expect("a heading in view");
++    // (Any heading in view: General's Links section, which this scrolled
++    // at, went with "Open pull requests in", 0d8a6eb3f.)
++    let heading = heading_in_view(&mut app);
+     zgx_script::driver::scroll(&mut app.ui, heading, -100.);
+     app.settle();
+     app.frames(30);
+```
+
+**File**: `apps/zgx/ui/demos/syntax.luau` (modified, +1/-2)
+```diff
+@@ -70,8 +70,7 @@ local function editor(id: string, value: State<string>): Node
+ 		highlight = Syntax.highlighter(id),
+ 		line_numbers = true,
+ 		font = "$font.mono",
+-		-- The textarea takes its type size as a number, not a token.
+-		text_size = ui.theme.get("zeron.prose.code.size") :: number,
++		text_size = "$zeron.prose.code.size",
+ 		tab = "    ",
+ 		current_line = "$hover",
+ 		-- No inset on the scrolling sides: a textarea clips inside its padding.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1509** (2026-11-18): iOS: close the sidebar and start a session with it hidden (iPhone Duo, iPad) (@wingleeio)
-- **PR #1508** (2026-11-18): Engine: keep 12 chats' documents warm again (fixes switch freezes and skeletons in 0.3.8) (@wingleeio)
-- **PR #1502** (2026-11-18): Zeron 0.3.8 (@wingleeio)
-- **PR #1501** (2026-11-17): zgx: title bar buttons stay put when a window manager snaps the window (@wingleeio)
-- **PR #1500** (2026-11-17): Engine: keep 3 chats' documents warm, not 12 (@wingleeio)
-- **PR #1499** (2026-11-17): Retire the GPUI desktop app (v2): crates/ui, its CI and its scripts (@wingleeio)
+- **PR #1517** (2026-11-18): Zeron v2: in step with the default's page after #1515 (@wingleeio)
+- **PR #1516** (2026-11-18): zgx: apps/zgx/tests pass, and CI runs them (@wingleeio)
+- **PR #1515** (2026-11-18): Tab strip: no script per frame while the title bar's controls or the sidebar move (@wingleeio)
+- **PR #1514** (2026-11-18): Island glass: plain tokens, solid through the window's theme (no script per animated frame) (@wingleeio)
+- **PR #1513** (2026-11-18): Preview discovery leaves test servers alone, and lists a server whose environment read empty (@wingleeio)
+- **PR #1512** (2026-11-18): Engine: a long chat opened with rows held sends what changed among its newest entries first (@wingleeio)
 
 ---
 
@@ -3079,45 +2026,31 @@ Cloud regressions found in review:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Transcript: a finished reply's rows built as what they are, not as what might st
+## X. Zeron v2: in step with the default's page after #1515
 
 **RULE**:
-When implementing operations in `apps/zgx/src/chat.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/zgx/ui/templates/zeron-v2/.base.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8bd5b5d6`: Transcript: a finished reply's rows built as what they are, not as what might still change. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b1064c1b`: Zeron v2: in step with the default's page after #1515. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/zgx/src/chat.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/zgx/ui/templates/zeron-v2/.base.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                        let fresh = Entry::new(entry);
-                            // The same as the row it has (most of a tail, a
-                            // chat opened again): what was built from it
-                            // stays, so nothing showing is made again.
-                            Some(held) if held.sum() == fresh.sum() => {}
-                            Some(held) => {
-                                open.built.remove(id.as_str());
-                                *held = fresh;
-                            }
-                            None => {
-                                open.built.remove(id.as_str());
-                                open.entries.push(fresh);
-                            }
+  "screens/shell/page.luau": "c60a2e8010d8068e",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                        open.built.remove(id.as_str());
-                            Some(held) => *held = Entry::new(entry),
-                            None => open.entries.push(Entry::new(entry)),
+  "screens/shell/page.luau": "c1debbce640a5d45",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8bd5b5d6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b1064c1b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
