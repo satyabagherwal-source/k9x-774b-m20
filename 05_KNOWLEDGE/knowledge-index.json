@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T18:00:32.114Z",
+  "last_updated": "2026-11-18T18:14:54.929Z",
   "total_verified_learnings": 9006,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21403,
+  "total_items": 21409,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112798,25 +112798,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "6728d177",
-      "content_hash": "5c60db6f638f48956a8dbc15a0dbd7759e6029592264076291d799670666f4b7",
+      "source_version": "7e65929d",
+      "content_hash": "68b43bca53553eef397fafabcb78978d5016667a10adaad0cdea9f8998d48785",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T15:51:49.070Z"
+      "persisted_at": "2026-11-18T18:10:01.265Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
+      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "6728d177",
-      "content_hash": "29fc92fc4e55494d9cc87250c184575d9c984a01a10d0cdae7a2bc6e726fc4cb",
+      "source_version": "7e65929d",
+      "content_hash": "75f624bdf3ea45b58fc0715932399fa67f630fa602d3ca880ba8a33d3946a7d8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T15:51:49.247Z"
+      "persisted_at": "2026-11-18T18:10:01.444Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -215567,13 +215567,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "provablehq-snarkos",
+      "slug": "aleo-labs-protocol-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "6728d177",
-      "content_hash": "527f0642aaa0c1d3597cda468a0238c875e18e0c22f2d01bfe16c1dc20afd30b",
-      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "7e65929d",
+      "content_hash": "472e72c44eee914e8404f908c5d5117c8238a50c1bac0e950985a02345cdb026",
+      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 8012,
@@ -215604,6 +215604,11 @@
           "number": 9252,
           "title": "Empirical Invariant Guard in sync_state.rs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9270,
+          "title": "Quiet expected committee-lookback failures while the ledger is behind",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215611,7 +215616,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T15:51:48.398Z",
+      "verified_at": "2026-11-18T18:10:00.600Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217930,7 +217935,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
       "source_version": "hf-timm-mobilenetv3_small_100.lamb_in1k",
-      "content_hash": "9dc822c30f1783edd6626b8ee7dc8fafc9ec0223bcb857bd7e8d50af3cb92903",
+      "content_hash": "4dc1dd262380c342e51f248bc7105f6e50c9f954d8efc09b8d3639223086d8e1",
       "dossier_path": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md",
       "promoted_rules": [],
@@ -217939,7 +217944,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T22:30:46.131Z",
+      "verified_at": "2026-11-18T18:14:48.839Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217956,9 +217961,9 @@
       "title": "Research & Knowledge Intelligence: timm/mobilenetv3_small_100.lamb_in1k Core Invariants",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
       "source_version": "hf-timm-mobilenetv3_small_100.lamb_in1k",
-      "content_hash": "4d0d0a7179e44992f04601482a1b6f733fda5ccd1e65dc020909ab3e81b0ba63",
+      "content_hash": "37151e981043ca29ff0d54dc9af717c3b189a7262bf6db19f87fe9fcda568a57",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T22:30:46.414Z"
+      "persisted_at": "2026-11-18T18:14:49.331Z"
     },
     "learn-github-infiniflow-infinity": {
       "learning_id": "learn-github-infiniflow-infinity",
@@ -224771,8 +224776,8 @@
       "slug": "pixeltable-pixeltable",
       "platform": "github",
       "source_url": "https://github.com/pixeltable/pixeltable",
-      "source_version": "b7363f1f",
-      "content_hash": "6782c64d387accb1089638fca9761e10bff7459ec3accec33e2a7171a47e2c4f",
+      "source_version": "6da45f64",
+      "content_hash": "ae357ba55f4539d17b997644794f9996ae8e56965ca9fcb2fd8e57e731b7f3b7",
       "dossier_path": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "promoted_rules": [
@@ -224805,6 +224810,11 @@
           "number": 9113,
           "title": "Run every ffmpeg invocation with -nostdin and stdin=DEVNULL",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9271,
+          "title": "[PXT-1788] Fix embed function name in error messages",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224812,7 +224822,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T03:39:35.692Z",
+      "verified_at": "2026-11-18T18:10:04.007Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224866,10 +224876,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/pixeltable-pixeltable-agent-contract-pixeltable-pixeltable-autonomous-specialist.md",
       "title": "Agent Contract: pixeltable/pixeltable Autonomous Specialist Persona",
       "repository": "pixeltable/pixeltable",
-      "source_version": "b7363f1f",
-      "content_hash": "8c1c385ee0109f9e9b517a6aaeeedbfb8b21e859bd4511f0a7a8e02d47e16f26",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-18T03:39:36.540Z"
+      "source_version": "6da45f64",
+      "content_hash": "70ef842d15e0d071afbc2fb03246e71f684d7318ea4d37f8e082433a90ff228a",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T18:10:04.852Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable",
@@ -224878,10 +224888,10 @@
       "relative_path": "08_VERIFICATION/pixeltable-pixeltable-verification-protocol-empirical-defect-shield-for-pixeltab.md",
       "title": "Verification Protocol: Empirical Defect Shield for pixeltable/pixeltable",
       "repository": "pixeltable/pixeltable",
-      "source_version": "9c30a9a6",
-      "content_hash": "3a51e34d1e0529e89cc54287a75f1498d85c7017e6d088356286b249eb7d7951",
+      "source_version": "6da45f64",
+      "content_hash": "3d639ec6e5cc2fbf9889c97d58459bdac3bc9c4d3403242208964e3b7e266824",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:17:00.799Z"
+      "persisted_at": "2026-11-18T18:10:05.008Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-aleph-alpha-kolibri-1-learnings-core-invarian",
@@ -224939,9 +224949,9 @@
       "title": "Agent Contract: pixeltable-pixeltable-learnings Autonomous Specialist Persona",
       "repository": "pixeltable-pixeltable-learnings",
       "source_version": "HEAD",
-      "content_hash": "2bb5639ee7015729f094eb2b8f225c11f8b4019b714b200b6ae794722ca30176",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-18T03:39:43.173Z"
+      "content_hash": "b1d13f43a92036c7cb691431cd453a75a5ce2806e7c0ba636aef08356a41779e",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T18:14:54.772Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable-learning",
@@ -224951,9 +224961,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pixeltable-pixeltable-learnings",
       "repository": "pixeltable-pixeltable-learnings",
       "source_version": "HEAD",
-      "content_hash": "3a694a3e8564d5355f8f8d8b35e417f06ae1446129ad9059e87a5c134f07a5fd",
+      "content_hash": "922a06b1dd3490528a0074f5b58f85e1a4051fc60bc49f16cdf29349827c659d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T03:39:43.326Z"
+      "persisted_at": "2026-11-18T18:14:54.929Z"
     },
     "learn-huggingface-fermionresearch-phonon-2": {
       "learning_id": "learn-huggingface-fermionresearch-phonon-2",
@@ -225607,8 +225617,8 @@
       "slug": "shopify-react-native-skia",
       "platform": "github",
       "source_url": "https://github.com/Shopify/react-native-skia",
-      "source_version": "0ac4f44a",
-      "content_hash": "bb490618394828c3ef70cd85a5681db38fe246a68ab8572814a58ae9b77f76e7",
+      "source_version": "72ed90d0",
+      "content_hash": "f78b8de1dafdd6c98dcea5a097d61c951b686b64dd133cdf899200d05decd219",
       "dossier_path": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
       "promoted_rules": [
@@ -225621,6 +225631,11 @@
           "number": 8858,
           "title": "🗿): pace a canvas's frames with one scheduler, and hold a present for the GPU o",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 9269,
+          "title": "🍏): present at full rate on macOS 14+ ProMotion devices",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -225628,7 +225643,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T18:18:38.702Z",
+      "verified_at": "2026-11-18T18:09:56.692Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225670,10 +225685,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-technical-construction-intelligence-wcandillon-react-n.md",
       "title": "Technical Construction Intelligence: wcandillon/react-native-skia Core Invariants",
       "repository": "wcandillon/react-native-skia",
-      "source_version": "0ac4f44a",
-      "content_hash": "b726066716e124fde3385585f31ee97dbfd51773cb61919ab678e604389de648",
+      "source_version": "72ed90d0",
+      "content_hash": "5a5f2b1d14eccfe45b46761a613d67af71351174c6166942002341c7c73eafee",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T18:18:39.318Z"
+      "persisted_at": "2026-11-18T18:09:57.387Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-wcandillon-react-native-skia": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wcandillon-react-native-skia",
@@ -225682,10 +225697,10 @@
       "relative_path": "08_VERIFICATION/shopify-react-native-skia-verification-protocol-empirical-defect-shield-for-wcan.md",
       "title": "Verification Protocol: Empirical Defect Shield for wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "source_version": "0ac4f44a",
-      "content_hash": "aaf740cded621d5b470aa5828419bb76b480a58f0f1739f59bf99c63b62295ef",
+      "source_version": "72ed90d0",
+      "content_hash": "cbb8eba1c444c894254df473ea9c6f7e4ec945356c9e6497c3daad4062a016b1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T18:18:39.494Z"
+      "persisted_at": "2026-11-18T18:09:57.576Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-edge0-edge0-145b-nvfp4-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-edge0-edge0-145b-nvfp4-learnings-core-invaria",
@@ -225719,9 +225734,9 @@
       "title": "Technical Construction Intelligence: shopify-react-native-skia-learnings Core Invariants",
       "repository": "shopify-react-native-skia-learnings",
       "source_version": "HEAD",
-      "content_hash": "b1d9cb4ab70bf8c2ee260e86ffdcda0dc9007e0e9ca1778889636d81b742964f",
+      "content_hash": "3eec7bcc4539845cca21f02ac00d2b10e7c1d7981611d62fb2d78140dd50563a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T18:18:44.540Z"
+      "persisted_at": "2026-11-18T18:14:52.893Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-shopify-react-native-skia-lear": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-shopify-react-native-skia-lear",
@@ -225731,9 +225746,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for shopify-react-native-skia-learnings",
       "repository": "shopify-react-native-skia-learnings",
       "source_version": "HEAD",
-      "content_hash": "fbd7bb61ba44231adf9bf974a0951ef7674adf25c4c78dabcc2ffd2fa5d49a94",
+      "content_hash": "40dcc9af6c862e90b60fe2125ca75572f8169f6b75ce7049d6b37849d0303d94",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T18:18:44.712Z"
+      "persisted_at": "2026-11-18T18:14:53.092Z"
     },
     "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora": {
       "learning_id": "learn-huggingface-pablodawson-minimax-h3-360-orbit-lora",
@@ -248043,10 +248058,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pixeltable-pixeltable-content-information-intelligence-pixeltable-pixeltable-cor.md",
       "title": "Content & Information Intelligence: pixeltable/pixeltable Core Invariants",
       "repository": "pixeltable/pixeltable",
-      "source_version": "890b85ab",
-      "content_hash": "6676670d2e6f7ff1bf422063f62970929e5aea123041fa60db86518b0f68bdf5",
+      "source_version": "6da45f64",
+      "content_hash": "b30f1d3d8a6c6a47ca06840cd7b8685e0a72c568586e738021e291dbeced0955",
       "domain_letter": "I",
-      "persisted_at": "2026-11-15T19:32:16.812Z"
+      "persisted_at": "2026-11-18T18:10:04.672Z"
     },
     "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-learnings-core-invariants",
@@ -248056,9 +248071,9 @@
       "title": "Content & Information Intelligence: pixeltable-pixeltable-learnings Core Invariants",
       "repository": "pixeltable-pixeltable-learnings",
       "source_version": "HEAD",
-      "content_hash": "14a1e0ec980be48bffb02752579108ebbce5f72b19ef457b2607bd258481b601",
+      "content_hash": "0d1829b9a790735ea6dc571241d8385dd362ec750d9786564077cbf8d5e9e1a5",
       "domain_letter": "I",
-      "persisted_at": "2026-11-15T19:32:21.450Z"
+      "persisted_at": "2026-11-18T18:14:54.593Z"
     },
     "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf": {
       "learning_id": "learn-huggingface-atomicchat-deepseek-v4-1-flash-1017-uncensored-gsq-rco-gguf",
@@ -253872,9 +253887,9 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "9ebbf03deddf9982971d221220fe402ddffb81abd0db240a5476f489a7607ebe",
+      "content_hash": "a1fd22e027a7fd0f0f60a6ba87fd13d649fe76e7d70eecde606d0bd4d84d2465",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T22:40:08.305Z"
+      "persisted_at": "2026-11-18T18:14:53.782Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos-lea",
@@ -253884,9 +253899,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol-snarkos-learnings",
       "repository": "aleo-labs-protocol-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "bbbe3ee7d6aec89414370acae2b47da85c402234d19dda578a96bd19f982ba90",
+      "content_hash": "c7db680b6866b14fa2f6c46ab806241e5ceb9a03b094e199d0b4581772fbf23e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T22:40:08.440Z"
+      "persisted_at": "2026-11-18T18:14:53.967Z"
     },
     "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and": {
       "item_id": "candidate_directive-keep-what-a-step-installs-for-the-next-one-and-give-jobs-the-runner-s-rust-and",
@@ -288907,6 +288922,84 @@
       "content_hash": "2df913af3b6293b290f6f4fbcccd96517cd175f8692a353712b90d0705069356",
       "domain_letter": "H",
       "persisted_at": "2026-11-18T17:52:02.941Z"
+    },
+    "rule-9269": {
+      "learning_id": "rule-9269",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9269,
+      "title": "🍏): present at full rate on macOS 14+ ProMotion devices",
+      "source_url": "https://github.com/Shopify/react-native-skia",
+      "source_version": "72ed90d0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T18:09:56.692Z"
+    },
+    "candidate_directive-present-at-full-rate-on-macos-14-promotion-devices": {
+      "item_id": "candidate_directive-present-at-full-rate-on-macos-14-promotion-devices",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y8TG-present-at-full-rate-on-macos-14-promotion-devices.md",
+      "title": "🍏): present at full rate on macOS 14+ ProMotion devices",
+      "repository": "shopify-react-native-skia-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9417a7735e31d5d90fa686fce8f79a5d38598ddae7607718396eb8d50d262aaf",
+      "domain_letter": "M",
+      "persisted_at": "2026-11-18T18:14:52.714Z"
+    },
+    "rule-9270": {
+      "learning_id": "rule-9270",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9270,
+      "title": "Quiet expected committee-lookback failures while the ledger is behind",
+      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
+      "source_version": "7e65929d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T18:10:00.600Z"
+    },
+    "candidate_directive-quiet-expected-committee-lookback-failures-while-the-ledger-is-behind": {
+      "item_id": "candidate_directive-quiet-expected-committee-lookback-failures-while-the-ledger-is-behind",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y9I5-quiet-expected-committee-lookback-failures-while-the-ledger-is-behind.md",
+      "title": "Quiet expected committee-lookback failures while the ledger is behind",
+      "repository": "aleo-labs-protocol-snarkos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "193f64ff28f93a6ffbfe512a443283e2e19ff77dd670481c58aa11c86c12f05c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T18:14:53.602Z"
+    },
+    "rule-9271": {
+      "learning_id": "rule-9271",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9271,
+      "title": "[PXT-1788] Fix embed function name in error messages",
+      "source_url": "https://github.com/pixeltable/pixeltable",
+      "source_version": "6da45f64",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T18:10:04.007Z"
+    },
+    "candidate_directive-pxt-1788-fix-embed-function-name-in-error-messages": {
+      "item_id": "candidate_directive-pxt-1788-fix-embed-function-name-in-error-messages",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YA4W-pxt-1788-fix-embed-function-name-in-error-messages.md",
+      "title": "[PXT-1788] Fix embed function name in error messages",
+      "repository": "pixeltable-pixeltable-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c0efb41f0cdf0a756c43ba3a43fbcf0068700ec86690b1b6f507be776449107a",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T18:14:54.417Z"
     }
   },
   "ai-builder-brain": {

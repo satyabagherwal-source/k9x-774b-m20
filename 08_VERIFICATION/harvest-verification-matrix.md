@@ -11066,3 +11066,7 @@
 | `CYCLE-20261118-41GP` | `2026-11-18T17:51:23.497Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9268` | Yes (`d9f95bd0...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T17:52:02.407Z` | `tailscale-tailscale` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-714854BB` [Domain D] | Yes (`ee43c9c9...`) |
 | `CYCLE-20261118-FJ39` | `2026-11-18T18:00:19.557Z` | `amazon/chronos-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md` | Yes (`bef1a6bd...`) |
+| `CYCLE-20261118-RWL6` | `2026-11-18T18:09:56.922Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9269` | Yes (`f78b8de1...`) |
+| `CYCLE-20261118-RZLH` | `2026-11-18T18:10:00.821Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9270` | Yes (`472e72c4...`) |
+| `CYCLE-20261118-S28F` | `2026-11-18T18:10:04.239Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9271` | Yes (`ae357ba5...`) |
+| `CYCLE-20261118-Y60Y` | `2026-11-18T18:14:49.090Z` | `timm/mobilenetv3_small_100.lamb_in1k` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md` | Yes (`4dc1dd26...`) |

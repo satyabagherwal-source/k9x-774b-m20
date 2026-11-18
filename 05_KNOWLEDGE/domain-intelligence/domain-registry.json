@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T18:00:32.114Z",
+  "last_updated": "2026-11-18T18:14:54.593Z",
   "total_records": 1886,
   "domains": {
     "A": {
@@ -7990,10 +7990,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "5c60db6f638f48956a8dbc15a0dbd7759e6029592264076291d799670666f4b7",
-      "created_at": "2026-11-18T15:51:49.070Z"
+      "content_hash": "68b43bca53553eef397fafabcb78978d5016667a10adaad0cdea9f8998d48785",
+      "created_at": "2026-11-18T18:10:01.265Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -11163,8 +11163,8 @@
       "title": "Research & Knowledge Intelligence: timm/mobilenetv3_small_100.lamb_in1k Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-timm-mobilenetv3_small_100-lamb_in1k-research-knowledge-intelligence-timm-mob.md",
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
-      "content_hash": "4d0d0a7179e44992f04601482a1b6f733fda5ccd1e65dc020909ab3e81b0ba63",
-      "created_at": "2026-11-13T22:30:46.414Z"
+      "content_hash": "37151e981043ca29ff0d54dc9af717c3b189a7262bf6db19f87fe9fcda568a57",
+      "created_at": "2026-11-18T18:14:49.331Z"
     },
     "domain_intelligence-architecture-intelligence-infiniflow-infinity-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-infiniflow-infinity-core-invariants",
@@ -13804,8 +13804,8 @@
       "title": "Technical Construction Intelligence: wcandillon/react-native-skia Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-technical-construction-intelligence-wcandillon-react-n.md",
       "repository": "wcandillon/react-native-skia",
-      "content_hash": "b726066716e124fde3385585f31ee97dbfd51773cb61919ab678e604389de648",
-      "created_at": "2026-11-17T18:18:39.318Z"
+      "content_hash": "5a5f2b1d14eccfe45b46761a613d67af71351174c6166942002341c7c73eafee",
+      "created_at": "2026-11-18T18:09:57.387Z"
     },
     "DOM-D-AF708B11": {
       "record_id": "DOM-D-AF708B11",
@@ -13915,8 +13915,8 @@
       "title": "Technical Construction Intelligence: shopify-react-native-skia-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-learnings-technical-construction-intelligence-shopify-.md",
       "repository": "shopify-react-native-skia-learnings",
-      "content_hash": "b1d9cb4ab70bf8c2ee260e86ffdcda0dc9007e0e9ca1778889636d81b742964f",
-      "created_at": "2026-11-17T18:18:44.540Z"
+      "content_hash": "3eec7bcc4539845cca21f02ac00d2b10e7c1d7981611d62fb2d78140dd50563a",
+      "created_at": "2026-11-18T18:14:52.893Z"
     },
     "domain_intelligence-research-knowledge-intelligence-pablodawson-minimax-h3-360-orbit-lora-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-pablodawson-minimax-h3-360-orbit-lora-core-invar",
@@ -21795,8 +21795,8 @@
       "title": "Content & Information Intelligence: pixeltable/pixeltable Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pixeltable-pixeltable-content-information-intelligence-pixeltable-pixeltable-cor.md",
       "repository": "pixeltable/pixeltable",
-      "content_hash": "6676670d2e6f7ff1bf422063f62970929e5aea123041fa60db86518b0f68bdf5",
-      "created_at": "2026-11-15T19:32:16.812Z"
+      "content_hash": "b30f1d3d8a6c6a47ca06840cd7b8685e0a72c568586e738021e291dbeced0955",
+      "created_at": "2026-11-18T18:10:04.672Z"
     },
     "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-pixeltable-pixeltable-learnings-core-invariants",
@@ -21804,8 +21804,8 @@
       "title": "Content & Information Intelligence: pixeltable-pixeltable-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pixeltable-pixeltable-learnings-content-information-intelligence-pixeltable-pixe.md",
       "repository": "pixeltable-pixeltable-learnings",
-      "content_hash": "14a1e0ec980be48bffb02752579108ebbce5f72b19ef457b2607bd258481b601",
-      "created_at": "2026-11-15T19:32:21.450Z"
+      "content_hash": "0d1829b9a790735ea6dc571241d8385dd362ec750d9786564077cbf8d5e9e1a5",
+      "created_at": "2026-11-18T18:14:54.593Z"
     },
     "domain_intelligence-research-knowledge-intelligence-atomicchat-deepseek-v4-1-flash-1017-uncensored-g": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-deepseek-v4-1-flash-1017-uncensored-g",
@@ -23408,8 +23408,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "9ebbf03deddf9982971d221220fe402ddffb81abd0db240a5476f489a7607ebe",
-      "created_at": "2026-11-17T22:40:08.305Z"
+      "content_hash": "a1fd22e027a7fd0f0f60a6ba87fd13d649fe76e7d70eecde606d0bd4d84d2465",
+      "created_at": "2026-11-18T18:14:53.782Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",

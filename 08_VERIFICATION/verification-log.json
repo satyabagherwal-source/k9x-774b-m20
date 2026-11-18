@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-81ZI",
-    "timestamp": "2026-11-17T10:10:56.910Z",
-    "repository": "NVIDIA/cuda-rust",
-    "learningId": "learn-github-nvidia-cuda-rust",
-    "contentHash": "f467f04b39512e38aba9c4255d7ef1f7f64d2ad3cfbdad8b8e028dc3359f60bf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-85VS",
-    "timestamp": "2026-11-17T10:11:01.960Z",
-    "repository": "karakeep-app/karakeep",
-    "learningId": "learn-github-karakeep-app-karakeep",
-    "contentHash": "2b9de76c881575bc0d4ab248309170576ffb5054b39465c3ee3a1e65f444b84f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-8BVG",
-    "timestamp": "2026-11-17T10:11:09.724Z",
-    "repository": "apache/pinot",
-    "learningId": "learn-github-apache-pinot",
-    "contentHash": "48263a6dd89c0f2b747b976764daf9a3826bed5057073def9c34bc5656109612",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-AODF",
-    "timestamp": "2026-11-17T10:40:58.851Z",
-    "repository": "speridlabs/idol",
-    "learningId": "learn-huggingface-speridlabs-idol",
-    "contentHash": "2d27364c35b5481b9c597abca05ad3ce348dc510c610c80e3124137579f8914e",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-APD9",
     "timestamp": "2026-11-17T10:41:00.141Z",
     "repository": "mlua-rs/mlua",
@@ -7490,6 +7430,66 @@
     "repository": "amazon/chronos-2",
     "learningId": "learn-huggingface-amazon-chronos-2",
     "contentHash": "bef1a6bd8077bbe26a5806ca457bde930963dd55c4c4f866013ed00ffcb0516c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-RWL6",
+    "timestamp": "2026-11-18T18:09:56.922Z",
+    "repository": "wcandillon/react-native-skia",
+    "learningId": "learn-github-wcandillon-react-native-skia",
+    "contentHash": "f78b8de1dafdd6c98dcea5a097d61c951b686b64dd133cdf899200d05decd219",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-RZLH",
+    "timestamp": "2026-11-18T18:10:00.821Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "472e72c44eee914e8404f908c5d5117c8238a50c1bac0e950985a02345cdb026",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-S28F",
+    "timestamp": "2026-11-18T18:10:04.239Z",
+    "repository": "pixeltable/pixeltable",
+    "learningId": "learn-github-pixeltable-pixeltable",
+    "contentHash": "ae357ba55f4539d17b997644794f9996ae8e56965ca9fcb2fd8e57e731b7f3b7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-Y60Y",
+    "timestamp": "2026-11-18T18:14:49.090Z",
+    "repository": "timm/mobilenetv3_small_100.lamb_in1k",
+    "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
+    "contentHash": "4dc1dd262380c342e51f248bc7105f6e50c9f954d8efc09b8d3639223086d8e1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

@@ -785,8 +785,8 @@
     "sourceUrl": "https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k",
     "sourceVersion": "hf-timm-mobilenetv3_small_100.lamb_in1k",
     "license": "Open-Source",
-    "contentHash": "9dc822c30f1783edd6626b8ee7dc8fafc9ec0223bcb857bd7e8d50af3cb92903",
-    "lastHarvestedAt": "2026-11-13T22:30:46.271Z",
+    "contentHash": "4dc1dd262380c342e51f248bc7105f6e50c9f954d8efc09b8d3639223086d8e1",
+    "lastHarvestedAt": "2026-11-18T18:14:49.094Z",
     "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k"
   },
   "hf-amazon-chronos-2": {
@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "497534cd",
+    "sourceVersion": "7e65929d",
     "license": "Apache-2.0",
-    "contentHash": "472bc827164b171b34ecc69a0308ca4a2627c72fc788fc5e0cc2b51708d25ef0",
-    "lastHarvestedAt": "2026-11-17T22:40:00.200Z",
+    "contentHash": "472e72c44eee914e8404f908c5d5117c8238a50c1bac0e950985a02345cdb026",
+    "lastHarvestedAt": "2026-11-18T18:10:00.825Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -3713,10 +3713,10 @@
     "repository": "pixeltable/pixeltable",
     "platform": "github",
     "sourceUrl": "https://github.com/pixeltable/pixeltable",
-    "sourceVersion": "b7363f1f",
+    "sourceVersion": "6da45f64",
     "license": "Apache-2.0",
-    "contentHash": "6782c64d387accb1089638fca9761e10bff7459ec3accec33e2a7171a47e2c4f",
-    "lastHarvestedAt": "2026-11-18T03:39:35.917Z",
+    "contentHash": "ae357ba55f4539d17b997644794f9996ae8e56965ca9fcb2fd8e57e731b7f3b7",
+    "lastHarvestedAt": "2026-11-18T18:10:04.244Z",
     "learningId": "learn-github-pixeltable-pixeltable"
   },
   "honojs-hono": {
@@ -4753,10 +4753,10 @@
     "repository": "wcandillon/react-native-skia",
     "platform": "github",
     "sourceUrl": "https://github.com/Shopify/react-native-skia",
-    "sourceVersion": "0ac4f44a",
+    "sourceVersion": "72ed90d0",
     "license": "MIT",
-    "contentHash": "bb490618394828c3ef70cd85a5681db38fe246a68ab8572814a58ae9b77f76e7",
-    "lastHarvestedAt": "2026-11-17T18:18:38.913Z",
+    "contentHash": "f78b8de1dafdd6c98dcea5a097d61c951b686b64dd133cdf899200d05decd219",
+    "lastHarvestedAt": "2026-11-18T18:09:56.927Z",
     "learningId": "learn-github-wcandillon-react-native-skia"
   },
   "saltstack-salt": {

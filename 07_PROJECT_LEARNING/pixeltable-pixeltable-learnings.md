@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source**: github ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
-> **Source Version**: `b7363f1f`  
+> **Source Version**: `6da45f64`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T03:39:34.695Z  
+> **Timestamp**: 2026-11-18T18:10:03.058Z  
 > **Learning ID**: `learn-github-pixeltable-pixeltable`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T03:39:34.688Z  
+> **Harvest Timestamp**: 2026-11-18T18:10:03.052Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1152,13 +1152,13 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1988** (2026-11-18): **Don't fail closing the Parallel MCP client when its connection task ends cancelled (anyio 4.16)**
-  *Symptoms*: ## Problem  In a `pip-install-tests` run on `main` ([run 44197090253](https://github.com/pixeltable/pixeltable/actions/runs/44197090253)), both jobs that install `mcp` failed with `AlreadyExistsError: Path 'test_tbl' is an existing table`. The failures hit Parallel's tests and, on 3.13, the `TestString` tests after them.  Each job's first error came in the teardown of a test that left a Parallel MCP session open: `test_free_tier` on 3.11, `test_free_rate_limit_is_retried[429]` on 3.13. `_configure()`'s cleanup calls `reset_runtime()`, which raised `asyncio.CancelledError: Cancelled via cancel scope`. That aborted the cleanup, left `test_tbl` behind, and every later `create_table('test_tbl')` failed.  How it happens: - `Runtime.close()` cancels every pending task on its own loop before it closes clients (`runtime.py:273-280`). That includes `_ParallelMcpClient`'s connection task, waiting in `disconnect.wait()`. - From anyio 4.16, the task then ends in cancellation. As it unwinds, anyio's task group also cancels the session-ending `DELETE`. - `close_clients()` then calls `_ParallelMcpClient.close()`, whose `await connection` re-raises that cancellation. `try_close()` catches only `Exception`, so it escapes `reset_runtime()`.  It depends on anyio's version, not on load:  | Code | anyio | `test_free_rate_limit_is_retried` | |---|---|---| | `main` | 4.14.2 (`uv.lock`) | passes | | `main` | 4.16.0 (what the run installed) | `CancelledError` in teardown | | this PR | 4.16.0 | passes
+- **Issue #1990** (2026-11-18): **[PXT-1788] Fix embed function name in error messages**
+  *Symptoms*: `ExprTemplateFunction` (created by `Function.using()`) has `.name == None` because it is built without a name. Error messages in `embedding_index.py` were using `.name`, causing `None` to appear in the message text.  ## Changes - Replace all `.name` with `.display_name` for `embed_fn`/`embed` in error messages in `embedding_index.py`. `display_name` falls back to the wrapped function's name. - Add a test verifying the function name appears (not `None`) in the error message when using `.using()`.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
   **Post-Mortem & Fix Analysis**:
-  > agent review
+  > agents review
 
-- **Issue #1983** (2026-11-18): **[PXT-1795] Fix FastAPIRouter docstring to reflect both use cases**
-  *Symptoms*: ## Summary  - The `FastAPIRouter` class docstring incorrectly said the router is only for apps that already have a FastAPI server, and to use `pxt service` otherwise - In reality, `pxt service` itself serves `FastAPIRouter` objects, so users always need a router regardless of which path they take - Updated the docstring to clarify: `FastAPIRouter` declares routes over tables or models; `pxt service` runs it standalone, or an existing FastAPI app mounts it via `include_router()` after `bind()`  Fixes [PXT-1795](https://pixeltable.atlassian.net/jira/browse/PXT-1795).  🤖 Generated with [Claude Code](https://claude.com/claude-code)  [PXT-1795]: https://pixeltable.atlassian.net/browse/PXT-1795?atlOrigin=eyJpIjoiNWRkNTljNzYxNjVmNDY3MDlhMDU5Y2ZhYzA5YTRkZjUiLCJwIjoiZ2l0aHViLWNvbS1KU1cifQ
+- **Issue #1989** (2026-11-18): **Support SQLAlchemy 2.1, the newest OpenAI and Anthropic SDKs, google-genai 3.x and pytest 9.2**
+  *Symptoms*: ## Problem  A `pip-install-tests` run on `main` ([run 44197090253](https://github.com/pixeltable/pixeltable/actions/runs/44197090253)) installs the newest release of every dependency, unlike `pytest.yml`, which installs from `uv.lock`. It found failures that come from newer dependency versions:  - **SQLAlchemy 2.1.9** (locked: 2.0.48): `test_math.py::TestMath::test_to_int` failed in every job with `Filter not expressible in SQL: x // 2.to_int() == -2`. In SQLAlchemy 2.1, `Float` is no longer a subclass of `Numeric`; both now derive from `NumericCommon`. `to_int()`'s SQL translation used `isinstance(self.type, sql.Numeric)` to cover floats, so it returned `None` for every float, and a `delete()` or other filter on a float's `to_int()` couldn't run in SQL. Pixeltable requires only `sqlalchemy>=2.0.40`, so users installing today get 2.1. - **anthropic 2.10.0** (locked: 1.3.0): `test_anthropic.py::TestAnthropicTypedDictAdherence::test_mirrors` failed because `Message` gained `diagnostics` and `Usage` gained `speed`. - **openai 3.54.0** (locked: 3.32.0): `test_openai.py::TestOpenaiTypedDictAdherence::test_response` failed because `Response` gained `image`, `input_transformations` and `tool_usage`, image generation output items gained `svg_usage`, and the input token details gained `cache_write_tokens_details`. - **google-genai 3.4.0** (locked: 2.22.0): five `TestGemini` tests failed with 400s from the `v1` API, which 3.x uses by default: "Developer instruction is not enabled for a
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1175,859 +1175,109 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `34cb37cd` (2026-11-17)
-**Commit Message**: Run every ffmpeg invocation with -nostdin and stdin=DEVNULL (#1972)
+### Incident Patch 1: `f94700e7` (2026-11-18)
+**Commit Message**: [PXT-1788] Fix embed function name in error messages (#1990)
 
-The merge queue's `standard, windows-2025, 3.11` job timed out ([run
-43958988160](https://github.com/pixeltable/pixeltable/actions/runs/43958988160/job/133621168998)).
-`test_ffmpeg_filter` started at 22:08:44 and never finished. The
-30-minute faulthandler dump shows the worker's main thread waiting in
-`subprocess.run()` for the `ffmpeg` that `ffmpeg_filter()` started. Both
-of `subprocess`'s reader threads were still blocked on `ffmpeg`'s stdout
-and stderr, so those pipes were still open after 30 minutes.
+`ExprTemplateFunction` (created by `Function.using()`) has `.name ==
+None` because it is built without a name. Error messages in
+`embedding_index.py` were using `.name`, causing `None` to appear in the
+message text.
 
-## Change
+## Changes
+- Replace all `.name` with `.display_name` for `embed_fn`/`embed` in
+error messages in `embedding_index.py`. `display_name` falls back to the
+wrapped function's name.
+- Add a test verifying the function name appears (not `None`) in the
+error message when using `.using()`.
 
-Every `ffmpeg` invocation now goes through `av_utils.run_ffmpeg()`,
-which passes `-nostdin` and `stdin=subprocess.DEVNULL`. There were 9
-call sites: `get_max_volume_db()`, `run_ffmpeg_cmdline()`, 4 in
-`video/editing.py`, 2 in `video/iterators.py` and the `-encoders` probe
-in `env.py`. Before this change none of them redirected stdin.
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
-By default, `ffmpeg` polls stdin for keyboard commands (`q`, `c`, `d`,
-...) and prompts on stdin before it overwrites an existing output. With
-an inherited terminal or open pipe, it can consume input meant for its
-parent or block. With `-nostdin`, an existing output file 
+Co-authored-by: Claude Sonnet 4.6 <[REDACTED_EMAIL]>
 
-**File**: `pixeltable/env.py` (modified, +3/-2)
+**File**: `pixeltable/index/embedding_index.py` (modified, +7/-7)
 ```diff
-@@ -11,7 +11,6 @@
- import math
- import os
- import shutil
--import subprocess
- import threading
- import types
- import typing
-@@ -872,6 +871,8 @@ def _determine_default_video_encoder(self) -> str | None:
-         - the user might prefer a hardware-accelerated encoder (eg, h264_nvenc or h264_videotoolbox)
-         - allow user override via a config option 'video_encoder'
-         """
-+        from pixeltable.utils.av import run_ffmpeg
-+
-         # look for available encoders, in this order
-         candidates = [
-             'libx264',  # GPL, best quality
-@@ -880,7 +881,7 @@ def _determine_default_video_encoder(self) -> str | None:
- 
-         try:
-             # Get list of available encoders
--            result = subprocess.run(['ffmpeg', '-encoders'], capture_output=True, text=True, timeout=10, check=True)
-+            result = run_ffmpeg(['-encoders'], timeout=10)
- 
-             if result.returncode == 0:
-                 available_encoders = result.stdout
-```
-
-**File**: `pixeltable/functions/video/editing.py` (modified, +8/-12)
-```diff
-@@ -1,5 +1,4 @@
- import glob
--import logging
- import subprocess
- from pathlib import Path
- from typing import Any, Literal
-@@ -17,8 +16,6 @@
- 
- from .iterators import VideoSegment
- 
--_logger = logging.getLogger(__name__)
--
- 
- @pxt.uda(requires_order_by=True)
- class make_video(pxt.Aggregator):
-@@ -431,7 +428,7 @@ def segment_video(
-     if mode == 'accurate':
-         # Use ffmpeg -f segment for accurate segmentation with re-encoding
-         output_pattern = f'{base_path}_segment_%04d.mp4'
--        cmd = av_utils.ffmpeg_segment_cmd(
-+        cmd = av_utils.ffmpeg_segment_args(
-             str(video),
-             output_pattern,
-             segment_duration=duration,
-@@ -441,7 +438,7 @@ def segment_video(
-         )
- 
-         try:
--            _ = subprocess.run(cmd, capture_output=True, text=True, check=True)
-+            _ = av_utils.run_ffmpeg(cmd)
-             output_paths = sorted(glob.glob(f'{base_path}_segment_*.mp4'))
-             # TODO: is this actually an error?
-             # if len(output_paths) == 0:
-@@ -469,9 +466,9 @@ def segment_video(
-                 else:
-                     target_duration = None  # the rest
-                 segment_path = f'{base_path}_segment_{len(output_paths)}.mp4'
--                cmd = av_utils.ffmpeg_clip_cmd(str(video), segment_path, start_time, target_duration)
-+                cmd = av_utils.ffmpeg_clip_output_args(str(video), segment_path, start_time, target_duration)
- 
--                _ = subprocess.run(cmd, capture_output=True, text=True, check=True)
-+                _ = av_utils.run_ffmpeg(cmd)
-                 segment_duration = av_utils.get_video_duration(segment_path)
-                 if segment_duration is None:
-                     # a generated segment whose duration we cannot read
-@@ -574,10 +571,9 @@ def _concat_videos(
- 
-     try:
-         # First attempt: fast copy without re-encoding (works for compatible formats)
--        cmd = ['ffmpeg', '-f', 'concat', '-safe', '0', '-i', str(filelist_path), '-c', 'copy', '-y', str(output_path)]
--        _logger.debug(f'_concat_videos(): {" ".join(cmd)}')
-+        cmd = ['-f', 'concat', '-safe', '0', '-i', str(filelist_path), '-c', 'copy', '-y', str(output_path)]
-         try:
--            _ = subprocess.run(cmd, capture_output=True, text=True, check=True)
-+            _ = av_utils.run_ffmpeg(cmd)
-             return str(output_path)
-         except subprocess.CalledProcessError:
-             # Expected for mixed formats - continue to fallback
-@@ -600,7 +596,7 @@ def _concat_videos(
-         # - [0:a:0][1:a:0] - audio stream 0 from inputs 0 and 1
-         # - concat=n=2:v=0:a=1[outa] - concat 2 inputs, 0 video, 1 audio stream, output to [outa]
- 
--        cmd = ['ffmpeg']
-+        cmd = []
-         for video in videos:
-             cmd.extend(['-i', video])
- 
-@@ -621,7 +617,7 @@ def _concat_videos(
-             cmd.extend(['-c:a', 'aac'])
-         cmd.extend(['-pix_fmt', 'yuv420p', str(output_path)])
- 
--        _ = subprocess.run(cmd, capture_output=True, text=True, check=True)
-+        _ = av_utils.run_ffmpeg(cmd)
-         return str(output_path)
- 
-     except subprocess.CalledProcessError as e:
-```
-
-**File**: `pixeltable/functions/video/iterators.py` (modified, +4/-4)
-```diff
-@@ -516,8 +516,8 @@ def video_splitter(
-                     target_duration = None  # the rest of the video
- 
-                 segment_path = str(TempStore.create_path(extension='.mp4'))
--                cmd = av_utils.ffmpeg_clip_cmd(video, segment_path, start_time, target_duration)
--                _ = subprocess.run(cmd, capture_output=True, text=True, check=True)
-+                cmd = av_utils.ffmpeg_clip_output_args(video, segment_path, start_time, target_duration)
-+                _ = av_utils.run_ffmpeg(cmd)
- 
-                 # use the actual duration
-                 actual_duration = av_utils.get_video_duration(segment_path)
-@@ -563,7 +563,7 @@ def video_splitter(
-         base_path = TempStore.create_path(extension='')
-         # Use ffmpeg -f segment for accurate segmentation with re-encoding
-         output_pattern = f'{base_path}_segment_%04d.mp4'
--        cmd = av_utils.ffmpeg_segment_cmd(
-+        cmd = av_utils.ffmpeg_segment_args(
-             video,
-             output_pattern,
-             segment_duration=duration,
-@@ -572,7 +572,7 @@ def video_splitter(
-             video_encoder_args=video_encoder_args,
-         )
-         try:
--            _ = subprocess.run(cmd, capture_output=True, text=True, check=True)
-+            _ = av_utils.run_ffmpeg(cmd)
-             output_paths = sorted(glob.glob(f'{base_path}_segment_*.mp4'))
-             # TODO: is this actually an error?
-             # if len(output_paths) == 0:
-```
-
-**File**: `pixeltable/utils/av.py` (modified, +24/-13)
-```diff
-@@ -121,9 +121,9 @@ def get_max_volume_db(path: str) -> float | None:
-     Env.get().require_binary('ffmpeg')
-     # -vn/-sn/-dn: ignore non-audio streams; -f null -: discard the output, we only want stderr.
-     # Explicit -loglevel info so volumedetect's report reaches us regardless of the build default.
--    cmd = ['ffmpeg', '-i', path, '-vn', '-sn', '-dn', '-af', 'volumedetect', '-f', 'null', '-loglevel', 'info', '-']
-+    args = ['-i', path, '-vn', '-sn', '-dn', '-af', 'volumedetect', '-f', 'null', '-loglevel', 'info', '-']
-     try:
--        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-+        result = run_ffmpeg(args)
-     except subprocess.CalledProcessError as e:
-         handle_ffmpeg_error(e)
-     # Stderr lines look like: "[Parsed_volumedetect_0 @ 0x...] max_volume: -6.0 dB"
-@@ -211,6 +211,20 @@ def estimate_segment_duration(path: str, approx_decoded_bytes: int) -> float | N
-     return frames_per_segment / fps
- 
- 
-+def run_ffmpeg(args: list[str], timeout: float | None = None) -> subprocess.CompletedProcess[str]:
-+    """
-+    Run ffmpeg with args and capture its output; raises subprocess.CalledProcessError on a nonzero exit status.
-+
-+    By default ffmpeg polls stdin for keyboard commands and prompts there before overwriting an output file; with an
-+    inherited stdin that is a terminal or an open pipe, it can consume another reader's input or block forever.
-+    -nostdin turns both off (ffmpeg then refuses to overwrite and writes nothing), and DEVNULL keeps the caller's stdin
-+    out of the child.
-+    """
-+    cmd = ['ffmpeg', '-nostdin', *args]
-+    _logger.debug(f'running ffmpeg commandline: {" ".join(cmd)}')
-+    return subprocess.run(cmd, stdin=subprocess.DEVNULL, capture_output=True, text=True, check=True, timeout=timeout)
-+
-+
- def handle_ffmpeg_error(e: subprocess.CalledProcessError) -> NoReturn:
-     error_msg = f'ffmpeg failed with return code {e.returncode}'
-     if e.stderr is not None:
-@@ -230,21 +244,20 @@ def run_ffmpeg_cmdline(
- 
-     If encode_video==True, command is expected to encode video and requires video encoder args
-     """
--    cmd = ['ffmpeg', *ffmpeg_args]
-+    args = list(ffmpeg_args)
-     if encode_video:
--        append_video_encoder(cmd, video_encoder, video_encoder_args)
-+        append_video_encoder(args, video_encoder, video_encoder_args)
-     # loglevel=error: avoid excessive logging
--    cmd += ['-loglevel', 'error', output_path]
-+    args += ['-loglevel', 'error', output_path]
- 
-     try:
--        _logger.debug(f'running ffmpeg commandline: {" ".join(cmd)}')
--        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-+        result = run_ffmpeg(args)
-         output_file = Path(output_path)
-         if not output_file.exists() or output_file.stat().st_size == 0:
-             stderr_output = result.stderr.strip() if result.stderr is not None else ''
-             raise pxt.RequestError(
-                 pxt.ErrorCode.INVALID_DATA_FORMAT,
--                f'ffmpeg failed to create output file for commandline: {" ".join(cmd)}\n{stderr_output}',
-+                f'ffmpeg failed to create output file for commandline: {" ".join(result.args)}\n{stderr_output}',
-             )
-         return output_path
-     except subprocess.CalledProcessError as e:
-@@ -319,7 +332,7 @@ def ffmpeg_clip_args(
-     return cmd
- 
- 
--def ffmpeg_clip_cmd(
-+def ffmpeg_clip_output_args(
-     input_path: str,
-     output_path: str,
-     start_time: float,
-@@ -329,29 +342,27 @@ def ffmpeg_clip_cmd(
-     video_encoder_args: dict[str, Any] | None = None,
- ) -> list[str]:
-     return [
--        'ffmpeg',
-         *ffmpeg_clip_args(input_path, start_time, duration, fast, video_encoder, video_encoder_args),
-         '-loglevel',
-         'error',
-         output_path,
-     ]
- 
- 
--def ffmpeg_segment_cmd(
-+def ffmpeg_segment_args(
-     input_path: str,
-     output_pattern: str,
-     segment_duration: float | None = None,
-     segment_times: list[float] | None = None,
-     video_encoder: str | None = None,
-     video_encoder_args: dict[str, Any] | None = None,
- ) -> list[str]:
--    """Commandline for frame-accurate segmentation"""
-+    """ffmpeg arguments for frame-accurate segmentation"""
-     assert (segment_duration is None) != (segment_times is None)
-     if video_encoder is None:
-         video_encoder = Env.get().default_video_encoder
- 
-     cmd = [
--        'ffmpeg',
-         '-i',
-         input_path,
-         '-map',
-```
-
-**File**: `tests/test_video.py` (modified, +27/-15)
-```diff
-@@ -2220,7 +2220,7 @@ def test_scene_detect_spans_video(self, uses_db: None, tmp_path: Path) -> None:
- 
-     @pytest.mark.db_roots('local', reason='reads Env default video encoder config')
-     def test_default_video_codec(self, uses_db: None) -> None:
--        result = subprocess.run(['ffmpeg', '-version'], capture_output=True, text=True, check=False)
-+        result = av_utils.run_ffmpeg(['-version'])
-         print(f'ffmpeg -version:\n{result.stdout}')
- 
-         default_encoder = Env.get().default_video_encoder
-@@ -2317,20 +2317,8 @@ def test_mix_audio_errors(self, uses_db: None, tmp_path: Path) -> None:
-     def test_mix_audio_duration_modes(self, uses_db: None, tmp_path: Path) -> None:
-         def make_audio(duration: float, name: str) -> str:
-             out = tmp_path / f'{name}.m4a'
--            subprocess.run(
--                [
--                    'ffmpeg',
--                    '-f',
--                    'lavfi',
--                    '-i',
--                    f'sine=frequency=220:duration={duration}',
--                    '-c:a',
--                    'aac',
--                    '-y',
--                    str(out),
--                ],
--                capture_output=True,
--                check=True,
-+            av_utils.run_ffmpeg(
-+                ['-f', 'lavfi', '-i', f'sine=frequency=220:duration={duration}', '-c:a', 'aac', '-y', str(out)]
-             )
-             return str(out)
- 
-@@ -2638,6 +2626,30 @@ def test_transition_errors(self, uses_db: None, tmp_path: Path) -> None:
-         with pxt_raises(pxt.ErrorCode.UNSUPPORTED_OPERATION, match=r'transition duration.*exceeds duration'):
-             u2.select(transition(u2.v1, u2.v2, duration=1.0)).collect()
- 
-+    def test_run_ffmpeg_ignores_stdin(self, tmp_path: Path) -> None:
-+        """ffmpeg's overwrite prompt must neither read nor wait on the caller's stdin."""
-+        output_path = tmp_path / 'existing.mp4'
-+        output_path.touch()
-+        read_fd, write_fd = os.pipe()
-+        os.write(write_fd, b'y\n')
-+        os.close(write_fd)
-+        saved_stdin = os.dup(0)
-+        os.dup2(read_fd, 0)
-+        try:
-+            # a refused overwrite exits with status 1 before ffmpeg 6.1 and 0 from 6.1 on
-+            stderr = av_utils.run_ffmpeg(
-+                ['-i', get_video_files()[0], '-c', 'copy', str(output_path)], timeout=60
-+            ).stderr
-+        except subprocess.CalledProcessError as e:
-+            stderr = e.stderr
-+        finally:
-+            os.dup2(saved_stdin, 0)
-+            os.close(saved_stdin)
-+        assert 'already exists' in stderr
-+        assert output_path.stat().st_size == 0
-+        assert os.read(read_fd, 2) == b'y\n'
-+        os.close(read_fd)
-+
-     @pytest.mark.db_roots('local', reason='pure UDF test')
-     def test_ffmpeg_filter(self, uses_db: None) -> None:
-         video_filepaths = get_video_files()
-```
-
-**File**: `tests/utils.py` (modified, +7/-7)
-```diff
-@@ -53,7 +53,7 @@
- from pixeltable.service import management_client, proxy_daemon
- from pixeltable.telemetry import SubscriberRegistry
- from pixeltable.types import ColumnSpec
--from pixeltable.utils import sha256sum
-+from pixeltable.utils import av as av_utils, sha256sum
- from pixeltable.utils.console_output import ConsoleMessageFilter, ConsoleOutputHandler
- from pixeltable.utils.filecache import FileCache
- from pixeltable.utils.local_store import LocalStore, TempStore
-@@ -593,7 +593,7 @@ def generate_test_video(
-     pix_fmt: str = 'yuv420p',
- ) -> str:
-     """Create test video with specific properties using ffmpeg and return its path"""
--    cmd = ['ffmpeg', '-f', 'lavfi', '-i', f'testsrc=duration={duration}:size={size}:rate={fps}']
-+    cmd = ['-f', 'lavfi', '-i', f'testsrc=duration={duration}:size={size}:rate={fps}']
-     if has_audio:
-         cmd.extend(['-f', 'lavfi', '-i', f'sine=frequency=440:duration={duration}'])
-     if Env.get().default_video_encoder is not None:
-@@ -603,7 +603,7 @@ def generate_test_video(
-         cmd.extend(['-c:a', 'aac'])
-     output_path = tmp_path / f'{uuid4()}.mp4'
-     cmd.extend(['-y', str(output_path)])
--    subprocess.run(cmd, capture_output=True, check=True)
-+    av_utils.run_ffmpeg(cmd)
-     return str(output_path)
- 
- 
-@@ -616,25 +616,25 @@ def generate_color_video(
-     Each segment is a (color, fps) pair; segments with different fps produce a variable frame rate video. The first
-     frame is at start_time.
-     """
--    cmd = ['ffmpeg']
-+    cmd: list[str] = []
-     for color, fps in segments:
-         cmd.extend(['-f', 'lavfi', '-i', f'color=c={color}:s=64x64:r={fps}:d=1'])
-     inputs = ''.join(f'[{i}]' for i in range(len(segments)))
-     cmd.extend(['-filter_complex', f'{inputs}concat=n={len(segments)}:v=1', '-fps_mode', 'passthrough'])
-     cmd.extend(['-output_ts_offset', str(start_time), '-c:v', 'libx264', '-pix_fmt', 'yuv420p'])
-     output_path = tmp_path / f'{uuid4()}.{extension}'
-     cmd.extend(['-y', str(output_path)])
--    subprocess.run(cmd, capture_output=True, check=True)
-+    av_utils.run_ffmpeg(cmd)
-     return str(output_path)
- 
- 
- def generate_tone_audio(tmp_path: Path, extension: str, start_time: float = 0.0) -> str:
-     """Create a 2-second 440 Hz tone whose first sample is at start_time and return its path."""
-     codec = 'libopus' if extension == 'webm' else 'flac'
-     output_path = tmp_path / f'{uuid4()}.{extension}'
--    cmd = ['ffmpeg', '-f', 'lavfi', '-i', 'sine=frequency=440:duration=2']
-+    cmd = ['-f', 'lavfi', '-i', 'sine=frequency=440:duration=2']
-     cmd.extend(['-output_ts_offset', str(start_time), '-c:a', codec, '-y', str(output_path)])
--    subprocess.run(cmd, capture_output=True, check=True)
-+    av_utils.run_ffmpeg(cmd)
-     return str(output_path)
- 
- 
-```
-
----
-
-### Incident Patch 2: `67876f91` (2026-11-17)
-**Commit Message**: Dump a hung test's child processes at faulthandler_timeout (#1975)
-
-Follow-up to #1972. When a test reaches `faulthandler_timeout` (1800 s),
-a new `pytest_runtest_protocol` wrapper in `tests/conftest.py` lists the
-xdist worker's child processes, right after pytest's own stack dump. For
-each child it shows pid, status, thread count, command line, and CPU
-time sampled twice, 10 s apart. The list goes to the same stderr dup as
-pytest's stack dump, so it appears in the job log on every OS.
-
-Why: in the Windows `ffmpeg` hang ([run
-43958988160](https://github.com/pixeltable/pixeltable/actions/runs/43958988160/job/133621168998)),
-the stack dump showed the worker blocked in `subprocess.run()`, waiting
-for EOF on `ffmpeg`'s pipes. That stack looks the same whether `ffmpeg`
-was spinning, blocked, or gone while another process held a copy of its
-pipe handles. The SIGUSR1 watchdog from #1941 also skips Windows. With
-this dump, the next such timeout tells the cases apart:
-- CPU time rising: the child is busy (a spin or livelock).
-- CPU time flat: the child is blocked (for example, a deadlock).
-- No such child: the child exited, and a leaked handle is holding the
-pipe open.
-
-Example, from a test
-
-**File**: `tests/conftest.py` (modified, +49/-0)
-```diff
-@@ -14,15 +14,18 @@
- import signal
- import sys
- import threading
-+import time
- import urllib.parse
- import uuid
- from typing import Any, Callable, Generator, Iterator, get_args
- 
-+import psutil
- import pytest
- import requests
- import sqlalchemy as sql
- import tenacity
- from _pytest.config import Config as PytestConfig, argparsing
-+from _pytest.faulthandler import fault_handler_stderr_fd_key
- from filelock import FileLock
- from sqlalchemy import text
- 
-@@ -170,6 +173,52 @@ def _clear_model_caches() -> None:
-         ctypes.CDLL('libc.so.6').malloc_trim(0)
- 
- 
-+@pytest.hookimpl(wrapper=True)
-+def pytest_runtest_protocol(item: pytest.Item) -> Generator[None, object, object]:
-+    """At faulthandler_timeout, after pytest's stack dump, a dump of this process's child processes.
-+
-+    A main thread blocked on a subprocess looks the same in the stack dump whether the child is spinning, blocked, or
-+    gone while another process holds its pipes. The SIGUSR1 dump in CI also skips Windows.
-+    """
-+    timer: threading.Timer | None = None
-+    timeout = float(item.config.getini('faulthandler_timeout') or 0)
-+    if timeout > 0:
-+        fd = item.config.stash[fault_handler_stderr_fd_key]
-+        timer = threading.Timer(timeout, _dump_child_processes, args=(item, fd))
-+        timer.daemon = True
-+        timer.start()
-+    try:
-+        return (yield)  # noqa: B901
-+    finally:
-+        if timer is not None:
-+            timer.cancel()
-+
-+
-+def _dump_child_processes(item: pytest.Item, fd: int) -> None:
-+    children = psutil.Process().children(recursive=True)
-+    cpu_before: dict[int, float] = {}
-+    for child in children:
-+        with contextlib.suppress(psutil.Error):
-+            cpu_before[child.pid] = sum(child.cpu_times()[:2])
-+    # CPU time rising over the interval means a busy child; flat means a blocked one
-+    time.sleep(10)
-+    lines = [f'Child processes of pid {os.getpid()} in {item.nodeid}:']
-+    for child in children:
-+        try:
-+            with child.oneshot():
-+                cpu = f'{cpu_before.get(child.pid, float("nan")):.1f}s -> {sum(child.cpu_times()[:2]):.1f}s'
-+                lines.append(
-+                    f'  pid {child.pid} {child.status()}, cpu {cpu}, {child.num_threads()} threads: '
-+                    + ' '.join(child.cmdline())
-+                )
-+        except psutil.Error as e:
-+            lines.append(f'  pid {child.pid}: {e!r}')
-+    if len(children) == 0:
-+        lines.append('  none')
-+    with contextlib.suppress(OSError):
-+        os.write(fd, ('\n'.join(lines) + '\n').encode())
-+
-+
- def pytest_runtest_teardown(item: pytest.Item) -> None:
-     if IN_CI:
-         _free_disk_space()
-```
-
----
-
-### Incident Patch 3: `cb05f733` (2026-11-17)
-**Commit Message**: Stream conduit rows into a single insert plan (#1956)
-
-An insert from a source with several record batches (Parquet row groups
-or files, Hugging Face datasets) created one version per batch on the
-table and on every view below it. `revert()` undid only the last batch,
-the intermediate versions were states no operation produced, and every
-view was loaded once per batch.
-
-**Cause.** `InsertableTable._insert_table_data_source()` called
-`TableVersion.insert()` once per `TableDataConduit.valid_row_batch()`
-batch.
-
-**Fix.** The batches are gone at the source:
-- `TableDataConduit.rows()` yields one row dict at a time. Parquet
-streams `iter_tuples2()` without `list()`; Hugging Face still converts
-each Arrow chunk column-wise, then yields rows from the converted
-columns; pandas, row-dict and Pydantic sources yield rows prepared
-before the plan runs (see below).
-- The new `RowDataNode` turns that stream into `DataRowBatch`es of
-`ctx.batch_size` rows (1024 for inserts, the value `SqlDataNode` uses; 0
-still means a single batch, which `compute()` relies on). It replaces
-`InMemoryDataNode`, since a list of rows is just another stream.
-- The whole insert is one plan, so `TableVersion.insert()` c
-
-**File**: `pixeltable/catalog/insertable_table.py` (modified, +9/-20)
-```diff
-@@ -161,11 +161,10 @@ def _insert_table_data_source(
-         return_rows: bool = False,
-         skip_existing_keys: bool = False,
-     ) -> pxt.UpdateStatus:
--        """Insert row batches into this table from a `TableDataConduit`."""
-+        """Insert the rows of a `TableDataConduit` into this table."""
-         from pixeltable.io.table_data_conduit import QueryTableDataConduit
- 
-         start_ts = time.perf_counter()
--        status = pxt.UpdateStatus()
-         query = data_source.pxt_query if isinstance(data_source, QueryTableDataConduit) else None
-         read_tbl_keys = query.referenced_tbl_keys() if query is not None else None
-         # ON CONFLICT DO NOTHING skips a concurrent writer's key only under READ COMMITTED, not REPEATABLE READ
-@@ -180,24 +179,14 @@ def _insert_table_data_source(
-             # in on_error='abort' mode the exec raises the internal ExprEvalError on the first failing cell;
-             # convert it to a user-facing Error (on_error='ignore' records per-cell errors and never raises)
-             try:
--                if query is not None:
--                    status += self._tbl_version.get().insert(
--                        source=None,
--                        query=query,
--                        print_stats=print_stats,
--                        fail_on_exception=fail_on_exception,
--                        skip_existing_keys=skip_existing_keys,
--                    )
--                else:
--                    for row_batch in data_source.valid_row_batch():
--                        status += self._tbl_version.get().insert(
--                            source=row_batch,
--                            query=None,
--                            print_stats=print_stats,
--                            fail_on_exception=fail_on_exception,
--                            return_rows=return_rows,
--                            skip_existing_keys=skip_existing_keys,
--                        )
-+                status = self._tbl_version.get().insert(
-+                    source=data_source.rows() if query is None else None,
-+                    query=query,
-+                    print_stats=print_stats,
-+                    fail_on_exception=fail_on_exception,
-+                    return_rows=return_rows,
-+                    skip_existing_keys=skip_existing_keys,
-+                )
-             except excs.ExprEvalError as e:
-                 excs.raise_from_expr_eval_err(e)
- 
-```
-
-**File**: `pixeltable/catalog/insertable_table_proxy.py` (modified, +7/-4)
-```diff
-@@ -90,7 +90,9 @@ def insert(
-                 data_source.src_pk = []
-                 data_source.infer_schema()
-                 data_source.prepare_for_insert_into_table()
--                rows = self._convert_local_paths(row for batch in data_source.valid_row_batch() for row in batch)
-+                # TODO: this materializes all rows of the source to send them in one request; streaming them to the
-+                # daemon would bound the client's memory
-+                rows = self._convert_local_paths(data_source.rows())
-                 return self._dispatch(
-                     'insert',
-                     {
-@@ -148,9 +150,10 @@ def insert(
-         elif isinstance(data_source, PandasTableDataConduit):
-             data_source.src_pk = []
-             data_source.infer_schema()
--            data_source.prepare_for_insert_into_table()  # populates valid_rows (df -> pxt-native dicts)
--            assert data_source.valid_rows is not None
--            rows = data_source.valid_rows
-+            data_source.prepare_for_insert_into_table()
-+            # TODO: this materializes all rows of the source to send them in one request; streaming them to the
-+            # daemon would bound the client's memory
-+            rows = list(data_source.rows())
-         else:
+@@ -302,7 +302,7 @@ def resolve_embeddings(
+                 if resolved_fn is None:
+                     raise excs.RequestError(
+                         excs.ErrorCode.INVALID_CONFIGURATION,
+-                        f'The function `{embed_fn.name}` is not a valid {embed_type.name.lower()} '
++                        f'The function `{embed_fn.display_name}` is not a valid {embed_type.name.lower()} '
+                         f'embedding: it must take a single {embed_type.name.lower()} parameter',
+                     )
+                 embeddings[embed_type] = resolved_fn
+@@ -316,7 +316,7 @@ def resolve_embeddings(
+             # `embed` was specified and contains no matching signatures.
              raise excs.RequestError(
-                 excs.ErrorCode.UNSUPPORTED_OPERATION,
+                 excs.ErrorCode.INVALID_CONFIGURATION,
+-                f'The function `{embed.name}` is not a valid embedding: '
++                f'The function `{embed.display_name}` is not a valid embedding: '
+                 'it must take a single string, image, audio, video, or document parameter',
+             )
+         return embeddings
+@@ -363,33 +363,33 @@ def _validate_embedding_fn(cls, embed_fn: func.Function, array_column_shape: tup
+         if not isinstance(return_type, ts.ArrayType):
+             raise excs.RequestError(
+                 excs.ErrorCode.INVALID_CONFIGURATION,
+-                f'The function `{embed_fn.name}` is not a valid embedding: '
++                f'The function `{embed_fn.display_name}` is not a valid embedding: '
+                 f'it must return an array, but returns {return_type}',
+             )
+         shape = return_type.shape
+         if shape is None or len(shape) != 1:
+             raise excs.RequestError(
+                 excs.ErrorCode.INVALID_CONFIGURATION,
+-                f'The function `{embed_fn.name}` is not a valid embedding: '
++                f'The function `{embed_fn.display_name}` is not a valid embedding: '
+                 f'it must return a 1-dimensional array, but returns {return_type}',
+             )
+         if shape[0] is None:
+             raise excs.RequestError(
+                 excs.ErrorCode.INVALID_CONFIGURATION,
+-                f'The function `{embed_fn.name}` is not a valid embedding: '
++                f'The function `{embed_fn.display_name}` is not a valid embedding: '
+                 f'it must return a 1-dimensional array of a specific length',
+             )
+         if shape[0] <= 0:
+             raise excs.RequestError(
+                 excs.ErrorCode.INVALID_CONFIGURATION,
+-                f'The function `{embed_fn.name}` is not a valid embedding: '
++                f'The function `{embed_fn.display_name}` is not a valid embedding: '
+                 f'it returns an array of invalid length {shape[0]}',
+             )
+ 
+         if array_column_shape is not None and shape != array_column_shape:
+             raise excs.RequestError(
+                 excs.ErrorCode.TYPE_MISMATCH,
+-                f'The function `{embed_fn.name}` returns an array with shape {shape}, '
++                f'The function `{embed_fn.display_name}` returns an array with shape {shape}, '
+                 f'but the indexed column has shape {array_column_shape}',
+             )
+ 
 ```
 
-**File**: `pixeltable/catalog/local_table.py` (modified, +3/-1)
+**File**: `tests/test_index.py` (modified, +5/-0)
 ```diff
-@@ -288,7 +288,9 @@ def compute(
-                 # the compute plan checks for the required columns that the outputs read
-                 data_source.reqd_col_names.clear()
-                 data_source.prepare_for_insert_into_table()
--                input_rows = [row for batch in data_source.valid_row_batch() for row in batch]
-+                # TODO: this materializes all input rows; streaming them into the compute plan (RowDataNode accepts a
-+                # stream) would bound memory, but create_compute_plan() currently validates and filters a list
-+                input_rows = list(data_source.rows())
+@@ -1004,6 +1004,11 @@ def test_embedding_errors(self, small_img_tbl: pxt.Table, test_tbl: pxt.Table, l
+         ):
+             test_tbl.add_embedding_index(test_tbl.c1, embedding=local_embedding.using(dim=0), precision='fp16')
  
-                 output_cols = path.columns()
-                 if output_md is not None:
-```
-
-**File**: `pixeltable/catalog/table_proxy.py` (modified, +3/-1)
-```diff
-@@ -402,7 +402,9 @@ def _pydantic_to_rows(
-         if not check_required:
-             converter.reqd_col_names.clear()
-         converter.prepare_for_insert_into_table()
--        return converter.pxt_rows
-+        # TODO: this materializes all rows to send them in one request; streaming them to the daemon would bound the
-+        # client's memory
-+        return list(converter.rows())
- 
-     def update(
-         self,
-```
-
-**File**: `pixeltable/catalog/table_version.py` (modified, +2/-2)
-```diff
-@@ -1295,15 +1295,15 @@ def _create_schema_version(self) -> None:
- 
-     def insert(
-         self,
--        source: list[dict[str, Any]] | SqlDataSource | None,
-+        source: Iterable[dict[str, Any]] | SqlDataSource | None,
-         query: Query | None,
-         print_stats: bool = False,
-         fail_on_exception: bool = True,
-         return_rows: bool = False,
-         skip_existing_keys: bool = False,
-     ) -> UpdateStatus:
-         """
--        Insert rows into this table from an explicit list of dicts, a Query, or a SqlDataSource.
-+        Insert rows into this table from a stream of row dicts, a Query, or a SqlDataSource.
- 
-         With skip_existing_keys, a row whose primary key is already in the table is not inserted.
-         """
-```
-
-**File**: `pixeltable/exec/__init__.py` (modified, +1/-1)
-```diff
-@@ -12,8 +12,8 @@
- from .exec_plan import ExecPlan
- from .expr_eval import ExprEvalNode
- from .filter_node import FilterNode
--from .in_memory_data_node import InMemoryDataNode
- from .object_store_save_node import ObjectStoreSaveNode
-+from .row_data_node import RowDataNode
- from .row_update_node import RowUpdateNode
- from .sql_data_node import SqlDataNode
- from .sql_node import SqlAggregationNode, SqlJoinNode, SqlLookupNode, SqlNode, SqlSampleNode, SqlScanNode
-```
-
-**File**: `pixeltable/exec/cache_prefetch_node.py` (modified, +23/-7)
-```diff
-@@ -25,19 +25,20 @@ class CachePrefetchNode(ExecNode):
-     """Brings files with external URLs into the cache
- 
-     TODO:
--    - Process a row at a time and limit the number of in-flight rows to control memory usage
-     - Create asyncio.Tasks to consume our input in order to increase concurrency.
-     """
- 
-     QUEUE_DEPTH_HIGH_WATER = 50  # target number of in-flight requests
-     QUEUE_DEPTH_LOW_WATER = 20  # target number of in-flight requests
-     BATCH_SIZE = 16
-+    MAX_BUFFERED_ROWS = 2048
-     MAX_WORKERS = 15
- 
-     retain_input_order: bool  # if True, return rows in the exact order they were received
-     file_col_info: list[exprs.ColumnSlotIdx]
- 
-     # execution state
-+    num_input_rows: int
-     num_returned_rows: int
-     progress_reporter: ProgressReporter | None
- 
-@@ -71,7 +72,13 @@ def __init__(
-     def queued_work(self) -> int:
-         return len(self.in_flight_requests)
- 
-+    @property
-+    def num_buffered_rows(self) -> int:
-+        # we can't rely on ready_rows because it includes placeholders for in-flight rows
-+        return self.num_input_rows - self.num_returned_rows
++        with pxt_raises(pxt.ErrorCode.INVALID_CONFIGURATION) as exc_info:
++            test_tbl.add_embedding_index(test_tbl.c1, embedding=local_embedding.using(dim=0))
++        assert 'local_embedding' in str(exc_info.value), str(exc_info.value)
++        assert 'None' not in str(exc_info.value), str(exc_info.value)
 +
-     def _init_exec_state(self) -> None:
-+        self.num_input_rows = 0
-         self.num_returned_rows = 0
-         self.ready_rows = deque()
-         self.in_flight_rows = {}
-@@ -91,6 +98,8 @@ async def get_input_batch(self, input_iter: AsyncIterator[DataRowBatch]) -> Data
-             input_batch = await anext(input_iter)
-             if input_batch is None:
-                 self.input_finished = True
-+            else:
-+                self.num_input_rows += len(input_batch)
-             return input_batch
-         except StopAsyncIteration:
-             self.input_finished = True
-@@ -100,22 +109,29 @@ async def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:
-         async with contextlib.aclosing(aiter(self.input)) as input_iter:
-             with futures.ThreadPoolExecutor(max_workers=self.MAX_WORKERS) as executor:
-                 while True:
--                    # Create work to fill the queue to the high water mark,
--                    # without overrunning the in-flight row limit.
--                    while not self.input_finished and self.queued_work < self.QUEUE_DEPTH_HIGH_WATER:
-+                    # Fetch whole batches; buffered rows can overshoot the limit by less than one input batch.
-+                    while (
-+                        not self.input_finished
-+                        and self.queued_work < self.QUEUE_DEPTH_HIGH_WATER
-+                        and self.num_buffered_rows < self.MAX_BUFFERED_ROWS
-+                    ):
-                         input_batch = await self.get_input_batch(input_iter)
-                         if input_batch is not None:
-                             self.__process_input_batch(input_batch, executor)
- 
--                    # Wait for enough completions to enable more queueing or if we're done
-+                    # Wait for queue capacity, end-of-input work, or a blocked output at the row limit.
-                     while self.queued_work > self.QUEUE_DEPTH_LOW_WATER or (
--                        self.input_finished and self.queued_work > 0
-+                        self.queued_work > 0
-+                        and (
-+                            self.input_finished
-+                            or (self.num_buffered_rows >= self.MAX_BUFFERED_ROWS and not self.__has_ready_batch())
-+                        )
-                     ):
-                         done, _ = futures.wait(self.in_flight_requests, return_when=futures.FIRST_COMPLETED)
-                         self.__process_completions(done, ignore_errors=self.ctx.ignore_errors)
- 
-                     # Emit results to meet batch size requirements or empty the in-flight row queue
--                    if self.__has_ready_batch() or (
-+                    while self.__has_ready_batch() or (
-                         len(self.ready_rows) > 0 and self.input_finished and self.queued_work == 0
-                     ):
-                         # create DataRowBatch from the first BATCH_SIZE ready rows
-```
-
-**File**: `pixeltable/exec/object_store_save_node.py` (modified, +23/-9)
-```diff
-@@ -32,14 +32,12 @@ class ObjectStoreSaveNode(ExecNode):
-             src_path -> [dest1, dest2, ...]
-                 dest1: [row_location1, row_location2, ...]
-     Paths with multiple destinations are removed from the TempStore only after all destination copies are complete.
--
--    TODO:
--    - Process a row at a time and limit the number of in-flight rows to control memory usage
-     """
- 
-     QUEUE_DEPTH_HIGH_WATER = 50  # target number of in-flight requests
-     QUEUE_DEPTH_LOW_WATER = 20  # target number of in-flight requests
-     BATCH_SIZE = 16
-+    MAX_BUFFERED_ROWS = 2048
-     MAX_WORKERS = 15
- 
-     class WorkDesignator(NamedTuple):
-@@ -64,6 +62,7 @@ class WorkItem(NamedTuple):
-     file_col_info: list[exprs.ColumnSlotIdx]
- 
-     # execution state
-+    num_input_rows: int
-     num_returned_rows: int
- 
-     # ready_rows: rows that are ready to be returned, ordered by row idx;
-@@ -103,7 +102,13 @@ def __init__(self, file_col_info: list[exprs.ColumnSlotIdx], input: ExecNode, re
-     def queued_work(self) -> int:
-         return len(self.in_flight_requests)
- 
-+    @property
-+    def num_buffered_rows(self) -> int:
-+        # we can't rely on ready_rows because it includes placeholders for in-flight rows
-+        return self.num_input_rows - self.num_returned_rows
-+
-     def _init_exec_state(self) -> None:
-+        self.num_input_rows = 0
-         self.num_returned_rows = 0
-         self.ready_rows = deque()
-         self.in_flight_rows = {}
-@@ -123,6 +128,8 @@ async def get_input_batch(self, input_iter: AsyncIterator[DataRowBatch]) -> Data
-             input_batch = await anext(input_iter)
-             if input_batch is None:
-                 self.input_finished = True
-+            else:
-+                self.num_input_rows += len(input_batch)
-             return input_batch
-         except StopAsyncIteration:
-             self.input_finished = True
-@@ -132,22 +139,29 @@ async def __aiter__(self) -> AsyncGenerator[DataRowBatch, None]:
-         async with contextlib.aclosing(aiter(self.input)) as input_iter:
-             with futures.ThreadPoolExecutor(max_workers=self.MAX_WORKERS) as executor:
-                 while True:
--                    # Create work to fill the queue to the high water mark,
--                    # without overrunning the in-flight row limit.
--                    while not self.input_finished and self.queued_work < self.QUEUE_DEPTH_HIGH_WATER:
-+                    # Fetch whole batches; buffered rows can overshoot the limit by less than one input batch.
-+                    while (
-+                        not self.input_finished
-+                        and self.queued_work < self.QUEUE_DEPTH_HIGH_WATER
-+                        and self.num_buffered_rows < self.MAX_BUFFERED_ROWS
-+                    ):
-                         input_batch = await self.get_input_batch(input_iter)
-                         if input_batch is not None:
-                             self.__process_input_batch(input_batch, executor)
- 
--                    # Wait for enough completions to enable more queueing or if we're done
-+                    # Wait for queue capacity, end-of-input work, or a blocked output at the row limit.
-                     while self.queued_work > self.QUEUE_DEPTH_LOW_WATER or (
--                        self.input_finished and self.queued_work > 0
-+                        self.queued_work > 0
-+                        and (
-+                            self.input_finished
-+                            or (self.num_buffered_rows >= self.MAX_BUFFERED_ROWS and not self.__has_ready_batch())
-+                        )
-                     ):
-                         done, _ = futures.wait(self.in_flight_requests, return_when=futures.FIRST_COMPLETED)
-                         self.__process_completions(done)
- 
-                     # Emit results to meet batch size requirements or empty the in-flight row queue
--                    if self.__has_ready_batch() or (
-+                    while self.__has_ready_batch() or (
-                         len(self.ready_rows) > 0 and self.input_finished and self.queued_work == 0
-                     ):
-                         # create DataRowBatch from the first BATCH_SIZE ready rows
+     def run_btree_test(
+         self, p: Callable[[str], str], data: list, data_type: type, is_data_versioned: bool
+     ) -> pxt.Table:
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1990** (2026-11-18): [PXT-1788] Fix embed function name in error messages (@sergey-mkhitaryan)
+- **PR #1989** (2026-11-18): Support SQLAlchemy 2.1, the newest OpenAI and Anthropic SDKs, google-genai 3.x and pytest 9.2 (@aaron-siegel)
 - **PR #1988** (2026-11-18): Don't fail closing the Parallel MCP client when its connection task ends cancelled (anyio 4.16) (@aaron-siegel)
-- **PR #1983** (2026-11-18): [PXT-1795] Fix FastAPIRouter docstring to reflect both use cases (@sergey-mkhitaryan)
-- **PR #1976** (2026-11-17): Select notebook tests with the pytest test-tier markers (@aaron-siegel)
-- **PR #1975** (2026-11-17): Dump a hung test's child processes at faulthandler_timeout (@aaron-siegel)
-- **PR #1974** (2026-11-17): Raise the proxy daemon's keep-alive to 60 s so a stall can't reset the next request (@aaron-siegel)
-- **PR #1972** (2026-11-17): Run every ffmpeg invocation with -nostdin and stdin=DEVNULL (@aaron-siegel)
+- **PR #1987** (2026-11-18): Wait for shared in-flight saves of a row whose files are all in flight (@aaron-siegel)
+- **PR #1985** (2026-11-18): [PXT-1814] Raise RequestError when similarity() is called without modality argument (@sergey-mkhitaryan)
+- **PR #1984** (2026-11-18): [PXT-1819] Create RateLimitInfo for resources that appear in later responses (@sergey-mkhitaryan)
 
 ---
 
@@ -2047,31 +1297,40 @@ still means a single batch, which `compute()` relies on). It replaces
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Run every ffmpeg invocation with -nostdin and stdin=DEVNULL
+## X. [PXT-1788] Fix embed function name in error messages
 
 **RULE**:
-When implementing operations in `pixeltable/env.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pixeltable/index/embedding_index.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `34cb37cd`: Run every ffmpeg invocation with -nostdin and stdin=DEVNULL. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f94700e7`: [PXT-1788] Fix embed function name in error messages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixeltable/env.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixeltable/index/embedding_index.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-        from pixeltable.utils.av import run_ffmpeg
-
-            result = run_ffmpeg(['-encoders'], timeout=10)
+                        f'The function `{embed_fn.display_name}` is not a valid {embed_type.name.lower()} '
+                f'The function `{embed.display_name}` is not a valid embedding: '
+                f'The function `{embed_fn.display_name}` is not a valid embedding: '
+                f'The function `{embed_fn.display_name}` is not a valid embedding: '
+                f'The function `{embed_fn.display_name}` is not a valid embedding: '
+                f'The function `{embed_fn.display_name}` is not a valid embedding: '
+                f'The function `{embed_fn.display_name}` returns an array with shape {shape}, '
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-import subprocess
-            result = subprocess.run(['ffmpeg', '-encoders'], capture_output=True, text=True, timeout=10, check=True)
+                        f'The function `{embed_fn.name}` is not a valid {embed_type.name.lower()} '
+                f'The function `{embed.name}` is not a valid embedding: '
+                f'The function `{embed_fn.name}` is not a valid embedding: '
+                f'The function `{embed_fn.name}` is not a valid embedding: '
+                f'The function `{embed_fn.name}` is not a valid embedding: '
+                f'The function `{embed_fn.name}` is not a valid embedding: '
+                f'The function `{embed_fn.name}` returns an array with shape {shape}, '
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `34cb37cd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f94700e7` are properly handled with clean fallback behavior.

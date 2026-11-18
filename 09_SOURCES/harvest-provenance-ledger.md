@@ -11099,3 +11099,7 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `22d7c31d` | Multi-dimensional audit evidence | 2026-11-18T17:51:23.502Z |
 | `learn-dom-d-714854bb` | `project://tailscale-tailscale` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md` | 2026-11-18T17:52:02.407Z |
 | `learn-huggingface-amazon-chronos-2` | `https://huggingface.co/amazon/chronos-2` | `hf-amazon-` | Multi-dimensional audit evidence | 2026-11-18T18:00:19.561Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/Shopify/react-native-skia` | `72ed90d0` | Multi-dimensional audit evidence | 2026-11-18T18:09:56.927Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `7e65929d` | Multi-dimensional audit evidence | 2026-11-18T18:10:00.825Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `6da45f64` | Multi-dimensional audit evidence | 2026-11-18T18:10:04.244Z |
+| `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-11-18T18:14:49.094Z |

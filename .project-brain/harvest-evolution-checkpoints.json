@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T18:00:32.256Z",
+  "last_updated": "2026-11-18T18:14:55.089Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T18:00:31.874Z",
@@ -148,7 +148,7 @@
       "staged_for_review": 0
     },
     "aleo-labs-protocol-snarkos-learnings.md": {
-      "processed_at": "2026-11-17T22:40:07.945Z",
+      "processed_at": "2026-11-18T18:14:53.271Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1523,7 +1523,7 @@
       "staged_for_review": 0
     },
     "pixeltable-pixeltable-learnings.md": {
-      "processed_at": "2026-11-18T03:39:42.365Z",
+      "processed_at": "2026-11-18T18:14:54.140Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2458,9 +2458,9 @@
       "staged_for_review": 0
     },
     "shopify-react-native-skia-learnings.md": {
-      "processed_at": "2026-11-17T18:18:43.915Z",
+      "processed_at": "2026-11-18T18:14:52.224Z",
       "promoted_canonical": 0,
-      "staged_for_review": 0
+      "staged_for_review": 1
     },
     "hf-pablodawson-minimax-h3-360-orbit-lora-learnings.md": {
       "processed_at": "2026-11-14T07:19:17.742Z",
@@ -3458,7 +3458,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2037,
+  "total_dossiers_evaluated": 2040,
   "total_canonical_promoted": 362,
-  "total_staged_for_review": 1540
+  "total_staged_for_review": 1543
 }

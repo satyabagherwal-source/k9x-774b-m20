@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T18:00:19.570Z",
+  "last_updated": "2026-11-18T18:14:49.108Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1010,14 +1010,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
-      "content_hash": "9dc822c30f1783edd6626b8ee7dc8fafc9ec0223bcb857bd7e8d50af3cb92903",
-      "verified_at": "2026-11-13T22:30:46.278Z",
+      "content_hash": "4dc1dd262380c342e51f248bc7105f6e50c9f954d8efc09b8d3639223086d8e1",
+      "verified_at": "2026-11-18T18:14:49.107Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T22:30:46.278Z"
+      "last_updated": "2026-11-18T18:14:49.107Z"
     },
     "amazon/chronos-2": {
       "repository": "amazon/chronos-2",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "527f0642aaa0c1d3597cda468a0238c875e18e0c22f2d01bfe16c1dc20afd30b",
-      "verified_at": "2026-11-18T15:51:48.642Z",
+      "content_hash": "472e72c44eee914e8404f908c5d5117c8238a50c1bac0e950985a02345cdb026",
+      "verified_at": "2026-11-18T18:10:00.836Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T15:51:48.642Z"
+      "last_updated": "2026-11-18T18:10:00.836Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -5691,14 +5691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pixeltable-pixeltable",
-      "content_hash": "6782c64d387accb1089638fca9761e10bff7459ec3accec33e2a7171a47e2c4f",
-      "verified_at": "2026-11-18T03:39:35.928Z",
+      "content_hash": "ae357ba55f4539d17b997644794f9996ae8e56965ca9fcb2fd8e57e731b7f3b7",
+      "verified_at": "2026-11-18T18:10:04.253Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T03:39:35.928Z"
+      "last_updated": "2026-11-18T18:10:04.253Z"
     },
     "honojs/hono": {
       "repository": "honojs/hono",
@@ -7251,14 +7251,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-wcandillon-react-native-skia",
-      "content_hash": "bb490618394828c3ef70cd85a5681db38fe246a68ab8572814a58ae9b77f76e7",
-      "verified_at": "2026-11-17T18:18:38.923Z",
+      "content_hash": "f78b8de1dafdd6c98dcea5a097d61c951b686b64dd133cdf899200d05decd219",
+      "verified_at": "2026-11-18T18:09:56.938Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T18:18:38.923Z"
+      "last_updated": "2026-11-18T18:09:56.938Z"
     },
     "saltstack/salt": {
       "repository": "saltstack/salt",

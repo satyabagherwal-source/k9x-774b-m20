@@ -4,24 +4,24 @@
 {
   "source_repository": "pixeltable/pixeltable",
   "source_url": "https://github.com/pixeltable/pixeltable",
-  "source_version": "890b85ab",
+  "source_version": "6da45f64",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-15T19:32:16.672Z",
+  "timestamp": "2026-11-18T18:10:04.488Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-pixeltable-pixeltable",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [pixeltable/pixeltable](https://github.com/pixeltable/pixeltable) (Revision: `890b85ab`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T19:32:16.672Z`  
+> **Provenance**: Harvested from [pixeltable/pixeltable](https://github.com/pixeltable/pixeltable) (Revision: `6da45f64`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T18:10:04.488Z`  
 > **Learning ID**: `learn-github-pixeltable-pixeltable`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 63%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from pixeltable/pixeltable:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pixeltable/pixeltable](https://github.com/pixeltable/pixeltable))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T19:32:15.419Z  
+> **Harvest Timestamp**: 2026-11-18T18:10:03.052Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The backend agents build with - Multimodal database, orchestration, and serving in one file
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 1662 stars
+- **Stars / Engagement**: 1664 stars
 
 ---
 
@@ -1166,11 +1166,13 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1957** (2026-11-13): **Rename TableDataConduit to SourceAdapter**
-  *Symptoms*: **Stacked on #1956.** Until #1956 merges, this PR also shows its commits; the rename is only the last commit, https://github.com/pixeltable/pixeltable/pull/1957/commits/fff442aedc4e8cf21c23aa06c3f0e434168a173d.  `TableDataConduit` adapts a user-supplied `TableDataSource` for Pixeltable: it infers a schema for `create_table()`, validates the source against a target table, and yields its rows (`valid_rows()`, after #1956). "Conduit" only says that data flows through it; this renames it after its role.  | Before | After | |---|---| | `pixeltable/io/table_data_conduit.py` | `pixeltable/io/source_adapter.py` | | `TableDataConduit` | `SourceAdapter` | | `TableDataConduitFormat` | `SourceFormat` | | `QueryTableDataConduit`, `RowDataTableDataConduit`, `PandasTableDataConduit`, `CSVTableDataConduit`, `ExcelTableDataConduit`, `JsonTableDataConduit`, `HFTableDataConduit`, `ParquetTableDataConduit`, `PydanticTableDataConduit` | `QueryAdapter`, `RowDataAdapter`, `PandasAdapter`, `CSVAdapter`, `ExcelAdapter`, `JsonAdapter`, `HFAdapter`, `ParquetAdapter`, `PydanticAdapter` |  Names with "DataSource" were avoided because `TableDataSource` and `SqlDataSource` already name the raw input. The classes are internal (not exported from `pixeltable` or `pixeltable.io`), so there is no public API change.  No behavior change. Local runs with `-k "not cloud"`: `test_table`, `test_view`, `tests/io/`, `test_types`, `test_query`, `test_proxy_daemon`, `serving/test_fastapi` (888 passed).  🤖 Generated with
+- **Issue #1990** (2026-11-18): **[PXT-1788] Fix embed function name in error messages**
+  *Symptoms*: `ExprTemplateFunction` (created by `Function.using()`) has `.name == None` because it is built without a name. Error messages in `embedding_index.py` were using `.name`, causing `None` to appear in the message text.  ## Changes - Replace all `.name` with `.display_name` for `embed_fn`/`embed` in error messages in `embedding_index.py`. `display_name` falls back to the wrapped function's name. - Add a test verifying the function name appears (not `None`) in the error message when using `.using()`.  🤖 Generated with [Claude Code](https://claude.com/claude-code)
+  **Post-Mortem & Fix Analysis**:
+  > agents review
 
-- **Issue #1955** (2026-11-13): **Write the default config atomically and require init_env for tests that reach Env**
-  *Symptoms*: ## Problem  [Run 43480825714](https://github.com/pixeltable/pixeltable/actions/runs/43480825714/job/132076789915) (`standard, macos-15, 3.11`, the merge group for #1945) failed in `TestAnthropicTypedDictAdherence::test_mirrors` with `pixeltable/file_cache_size_g is missing from configuration`. Two things combined:  1. **The default config isn't written atomically.** When `config.toml` doesn't exist, `Config` creates it with `open(path, 'w')` followed by `toml.dump()`. A process that reads it between the two sees an empty file and caches a config with no `file_cache_size_g`. On a fresh runner, the xdist workers all start at once and race on `~/.pixeltable/config.toml`. 2. **#1855 added 9 tests that reach `Env.get()` without `init_env`**, through `skip_test_if_not_installed()`. `test_mirrors` was gw2's first test, so it read the shared config outside `init_env`'s file lock while gw0 and gw1 were creating it. #1855's own merge-queue run passed because a different test ran first.  Locally, with 3 processes starting at once against an empty home, 25 of 180 processes read an empty config.  ## Changes  - `Config` writes the default config with `atomic_write()` (a unique temp file renamed into place), so no process reads a partial file. Users who start several Pixeltable processes on a fresh install could hit the same race. Because `atomic_write()` uses `mkstemp`, a new default config is created with mode 0600 rather than 0644. - `tests/conftest.py` fails any test that reaches `Env.g
+- **Issue #1989** (2026-11-18): **Support SQLAlchemy 2.1, the newest OpenAI and Anthropic SDKs, google-genai 3.x and pytest 9.2**
+  *Symptoms*: ## Problem  A `pip-install-tests` run on `main` ([run 44197090253](https://github.com/pixeltable/pixeltable/actions/runs/44197090253)) installs the newest release of every dependency, unlike `pytest.yml`, which installs from `uv.lock`. It found failures that come from newer dependency versions:  - **SQLAlchemy 2.1.9** (locked: 2.0.48): `test_math.py::TestMath::test_to_int` failed in every job with `Filter not expressible in SQL: x // 2.to_int() == -2`. In SQLAlchemy 2.1, `Float` is no longer a subclass of `Numeric`; both now derive from `NumericCommon`. `to_int()`'s SQL translation used `isinstance(self.type, sql.Numeric)` to cover floats, so it returned `None` for every float, and a `delete()` or other filter on a float's `to_int()` couldn't run in SQL. Pixeltable requires only `sqlalchemy>=2.0.40`, so users installing today get 2.1. - **anthropic 2.10.0** (locked: 1.3.0): `test_anthropic.py::TestAnthropicTypedDictAdherence::test_mirrors` failed because `Message` gained `diagnostics` and `Usage` gained `speed`. - **openai 3.54.0** (locked: 3.32.0): `test_openai.py::TestOpenaiTypedDictAdherence::test_response` failed because `Response` gained `image`, `input_transformations` and `tool_usage`, image generation output items gained `svg_usage`, and the input token details gained `cache_write_tokens_details`. - **google-genai 3.4.0** (locked: 2.22.0): five `TestGemini` tests failed with 400s from the `v1` API, which 3.x uses by default: "Developer instruction is not enabled for a
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1187,322 +1189,109 @@ def check_udf_references(bases: list[model.TableModelMeta]) -> list[str]:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `890b85ab` (2026-11-14)
-**Commit Message**: Add built-in web search and fetching through Parallel MCP (#1793)
+### Incident Patch 1: `f94700e7` (2026-11-18)
+**Commit Message**: [PXT-1788] Fix embed function name in error messages (#1990)
 
-Give Pixeltable tool-calling workflows and computed columns free web
-search and page excerpts with [Parallel Search
-MCP](https://docs.parallel.ai/integrations/mcp/search-mcp). Install
-`pixeltable[web]`, then call `pxtf.web.search(query)` and
-`pxtf.web.fetch(url)`, or include them in `pxt.tools()`. Search uses
-Fast mode, with no account or API key needed.
+`ExprTemplateFunction` (created by `Function.using()`) has `.name ==
+None` because it is built without a name. Error messages in
+`embedding_index.py` were using `.name`, causing `None` to appear in the
+message text.
 
-The new web functions use Parallel when unconfigured. Existing tool
-lists and MCP server selections stay explicit. Set `PARALLEL_API_KEY` to
-use an existing account, and bind the application's conversation ID for
-related searches and fetches.
+## Changes
+- Replace all `.name` with `.display_name` for `embed_fn`/`embed` in
+error messages in `embedding_index.py`. `display_name` falls back to the
+wrapped function's name.
+- Add a test verifying the function name appears (not `None`) in the
+error message when using `.using()`.
 
-I work at Parallel.
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
 
----------
+Co-authored-by: Claude Sonnet 4.6 <[REDACTED_EMAIL]>
 
-Co-authored-by: George Pickett <[REDACTED_EMAIL]>
-Co-authored-by: Marcel Kornacker <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/pytest.yml` (modified, +1/-0)
+**File**: `pixeltable/index/embedding_index.py` (modified, +7/-7)
 ```diff
-@@ -110,6 +110,7 @@ env:
-   OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-   OTEL_EXPORTER_OTLP_ENDPOINT: ${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}
-   OTEL_EXPORTER_OTLP_HEADERS: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
-+  PARALLEL_API_KEY: ${{ secrets.PARALLEL_API_KEY }}
-   R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-   R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
-   REPLICATE_API_TOKEN: ${{ secrets.REPLICATE_API_TOKEN }}
-```
-
-**File**: `docs/public_api.opml` (modified, +4/-0)
-```diff
-@@ -481,6 +481,10 @@
-         <outline text="module|pixeltable.functions.openrouter">
-           <outline text="udf|pixeltable.functions.openrouter.chat_completions" />
-         </outline>
-+        <outline text="module|pixeltable.functions.parallel">
-+          <outline text="udf|pixeltable.functions.parallel.search" />
-+          <outline text="udf|pixeltable.functions.parallel.extract" />
-+        </outline>
-         <outline text="module|pixeltable.functions.replicate">
-           <outline text="udf|pixeltable.functions.replicate.run" />
-         </outline>
-```
-
-**File**: `docs/release/docs.json` (modified, +2/-0)
-```diff
-@@ -125,6 +125,7 @@
-                       "sdk/latest/ollama",
-                       "sdk/latest/openai",
-                       "sdk/latest/openrouter",
-+                      "sdk/latest/parallel",
-                       "sdk/latest/replicate",
-                       "sdk/latest/runwayml",
-                       "sdk/latest/together",
-@@ -373,6 +374,7 @@
-               "howto/providers/working-with-ollama",
-               "howto/providers/working-with-openai",
-               "howto/providers/working-with-openrouter",
-+              "howto/providers/working-with-parallel",
-               "howto/providers/working-with-pydantic",
-               "howto/providers/working-with-replicate",
-               "howto/providers/working-with-runwayml",
-```
-
-**File**: `docs/release/howto/providers/working-with-parallel.ipynb` (added, +510/-0)
-```diff
-@@ -0,0 +1,510 @@
-+{
-+ "cells": [
-+  {
-+   "cell_type": "markdown",
-+   "metadata": {},
-+   "source": [
-+    "# Working with Parallel in Pixeltable\n",
-+    "\n",
-+    "Pixeltable's [Parallel](https://parallel.ai/) integration gives your tables and agents web search and page\n",
-+    "extraction, as computed columns that run once per row and are cached with the rest of your data.\n",
-+    "\n",
-+    "The UDFs work without a Parallel account: with no API key configured, they call Parallel's free MCP endpoint,\n",
-+    "which serves searches in Fast mode under the service's anonymous rate limits. With a key, they call the Search and\n",
-+    "Extract REST APIs, which also accept the settings shown further down.\n",
-+    "\n",
-+    "### Prerequisites\n",
-+    "\n",
-+    "- `pip install mcp`, which the free endpoint needs\n",
-+    "- Optionally, a Parallel account and API key (https://platform.parallel.ai/)\n",
-+    "\n",
-+    "### Important notes\n",
-+    "\n",
-+    "- Parallel usage may incur costs based on your Parallel plan. Searches in `basic` and `advanced` mode cost five\n",
-+    "  times those in `fast` and `turbo` mode.\n",
-+    "- Be mindful of sensitive data and consider security measures when integrating with external services."
-+   ]
-+  },
-+  {
-+   "cell_type": "code",
-+   "execution_count": null,
-+   "metadata": {},
-+   "outputs": [],
-+   "source": [
-+    "%pip install -qU pixeltable mcp"
-+   ]
-+  },
-+  {
-+   "cell_type": "markdown",
-+   "metadata": {},
-+   "source": [
-+    "Everything up to [Searching with your own account](#searching-with-your-own-account) runs without a\n",
-+    "Parallel API key, on the free endpoint, in Fast mode. That section needs one."
-+   ]
-+  },
-+  {
-+   "cell_type": "code",
-+   "execution_count": 2,
-+   "metadata": {},
-+   "outputs": [
-+    {
-+     "name": "stdout",
-+     "output_type": "stream",
-+     "text": [
-+      "No PARALLEL_API_KEY: using the free endpoint, in Fast mode.\n"
-+     ]
-+    }
-+   ],
-+   "source": [
-+    "import os\n",
-+    "\n",
-+    "if 'PARALLEL_API_KEY' in os.environ:\n",
-+    "    print('Using the Search and Extract APIs of your Parallel account.')\n",
-+    "else:\n",
-+    "    print('No PARALLEL_API_KEY: using the free endpoint, in Fast mode.')"
-+   ]
-+  },
-+  {
-+   "cell_type": "markdown",
-+   "metadata": {},
-+   "source": [
-+    "Now let's create a Pixeltable directory to hold the tables for our demo."
-+   ]
-+  },
-+  {
-+   "cell_type": "code",
-+   "execution_count": 3,
-+   "metadata": {},
-+   "outputs": [
-+    {
-+     "name": "stdout",
-+     "output_type": "stream",
-+     "text": [
-+      "Created directory 'parallel_demo'.\n"
-+     ]
-+    },
-+    {
-+     "data": {
-+      "text/plain": [
-+       "<pixeltable.catalog.dir.Dir at 0x7fddbe435c10>"
-+      ]
-+     },
-+     "execution_count": 3,
-+     "metadata": {},
-+     "output_type": "execute_result"
-+    }
-+   ],
-+   "source": [
-+    "import pixeltable as pxt\n",
-+    "\n",
-+    "# Remove the 'parallel_demo' directory and its contents, if it exists\n",
-+    "pxt.drop_dir('parallel_demo', force=True)\n",
-+    "pxt.create_dir('parallel_demo')"
-+   ]
-+  },
-+  {
-+   "cell_type": "markdown",
-+   "metadata": {},
-+   "source": [
-+    "## Searching the web\n",
-+    "\n",
-+    "`parallel.search()` takes the information a row needs and returns the sources that answer it, each with the\n",
-+    "passages relevant to the request. Pass `search_queries` to rank sources against keyword queries of your own;\n",
-+    "with none, the UDF sends the objective as the only query.\n",
-+    "\n",
-+    "Each row also carries a conversation ID, which the next section uses."
-+   ]
-+  },
-+  {
-+   "cell_type": "code",
-+   "execution_count": 4,
-+   "metadata": {},
-+   "outputs": [
-+    {
-+     "name": "stdout",
-+     "output_type": "stream",
-+     "text": [
-+      "Created table 'research'.\n",
-+      "Added 0 column values with 0 errors in 0.01 s\n"
-+     ]
-+    },
-+    {
-+     "data": {
-+      "text/plain": [
-+       "No rows affected."
-+      ]
-+     },
-+     "execution_count": 4,
-+     "metadata": {},
-+     "output_type": "execute_result"
-+    }
-+   ],
-+   "source": [
-+    "import uuid\n",
-+    "from pixeltable.functions import parallel\n",
-+    "\n",
-+    "research_t = pxt.create_table(\n",
-+    "    'parallel_demo.research',\n",
-+    "    {'question': pxt.String, 'conversation': pxt.String},\n",
-+    ")\n",
-+    "research_t.add_computed_column(\n",
-+    "    sources=parallel.search(\n",
-+    "        research_t.question, session_id=research_t.conversation\n",
-+    "    )\n",
-+    ")"
-+   ]
-+  },
-+  {
-+   "cell_type": "code",
-+   "execution_count": 5,
-+   "metadata": {},
-+   "outputs": [
-+    {
-+     "name": "stdout",
-+     "output_type": "stream",
-+     "text": [
-+      "Inserted 2 rows with 0 errors in 1.46 s (1.37 rows/s)\n"
-+     ]
-+    },
-+    {
-+     "data": {
-+      "text/plain": [
-+       "2 rows inserted."
-+      ]
-+     },
-+     "execution_count": 5,
-+     "metadata": {},
-+     "output_type": "execute_result"
-```
-
-**File**: `docs/release/integrations/frameworks.mdx` (modified, +10/-0)
-```diff
-@@ -283,6 +283,16 @@ Platforms that host or route many models from a shared catalog.
-   </Card>
- </CardGroup>
+@@ -302,7 +302,7 @@ def resolve_embeddings(
+                 if resolved_fn is None:
+                     raise excs.RequestError(
+                         excs.ErrorCode.INVALID_CONFIGURATION,
+-                        f'The function `{embed_fn.name}` is not a valid {embed_type.name.lower()} '
++                        f'The function `{embed_fn.display_name}` is not a valid {embed_type.name.lower()} '
+                         f'embedding: it must take a single {embed_type.name.lower()} parameter',
+                     )
+                 embeddings[embed_type] = resolved_fn
+@@ -316,7 +316,7 @@ def resolve_embeddings(
+             # `embed` was specified and contains no matching signatures.
+             raise excs.RequestError(
+                 excs.ErrorCode.INVALID_CONFIGURATION,
+-                f'The function `{embed.name}` is not a valid embedding: '
++                f'The function `{embed.display_name}` is not a valid embedding: '
+                 'it must take a single string, image, audio, video, or document parameter',
+             )
+         return embeddings
+@@ -363,33 +363,33 @@ def _validate_embedding_fn(cls, embed_fn: func.Function, array_column_shape: tup
+         if not isinstance(return_type, ts.ArrayType):
+             raise excs.RequestError(
+                 excs.ErrorCode.INVALID_CONFIGURATION,
+-                f'The function `{embed_fn.name}` is not a valid embedding: '
++                f'The function `{embed_fn.display_name}` is not a valid embedding: '
+                 f'it must return an array, but returns {return_type}',
+             )
+         shape = return_type.shape
+         if shape is None or len(shape) != 1:
+             raise excs.RequestError(
+                 excs.ErrorCode.INVALID_CONFIGURATION,
+-                f'The function `{embed_fn.name}` is not a valid embedding: '
++                f'The function `{embed_fn.display_name}` is not a valid embedding: '
+                 f'it must return a 1-dimensional array, but returns {return_type}',
+             )
+         if shape[0] is None:
+             raise excs.RequestError(
+                 excs.ErrorCode.INVALID_CONFIGURATION,
+-                f'The function `{embed_fn.name}` is not a valid embedding: '
++                f'The function `{embed_fn.display_name}` is not a valid embedding: '
+                 f'it must return a 1-dimensional array of a specific length',
+             )
+         if shape[0] <= 0:
+             raise excs.RequestError(
+                 excs.ErrorCode.INVALID_CONFIGURATION,
+-                f'The function `{embed_fn.name}` is not a valid embedding: '
++                f'The function `{embed_fn.display_name}` is not a valid embedding: '
+                 f'it returns an array of invalid length {shape[0]}',
+             )
  
-+## Web search
+         if array_column_shape is not None and shape != array_column_shape:
+             raise excs.RequestError(
+                 excs.ErrorCode.TYPE_MISMATCH,
+-                f'The function `{embed_fn.name}` returns an array with shape {shape}, '
++                f'The function `{embed_fn.display_name}` returns an array with shape {shape}, '
+                 f'but the indexed column has shape {array_column_shape}',
+             )
+ 
+```
+
+**File**: `tests/test_index.py` (modified, +5/-0)
+```diff
+@@ -1004,6 +1004,11 @@ def test_embedding_errors(self, small_img_tbl: pxt.Table, test_tbl: pxt.Table, l
+         ):
+             test_tbl.add_embedding_index(test_tbl.c1, embedding=local_embedding.using(dim=0), precision='fp16')
+ 
++        with pxt_raises(pxt.ErrorCode.INVALID_CONFIGURATION) as exc_info:
++            test_tbl.add_embedding_index(test_tbl.c1, embedding=local_embedding.using(dim=0))
++        assert 'local_embedding' in str(exc_info.value), str(exc_info.value)
++        assert 'None' not in str(exc_info.value), str(exc_info.value)
 +
-+<Card
-+  title="Parallel"
-+  icon="magnifying-glass"
-+  href="/howto/providers/working-with-parallel"
-+>
-+  Web search and page extraction, with or without a Parallel account
-+</Card>
-+
- ## Enterprise
- 
- <Card
-```
-
-**File**: `docs/release/platform/configuration.mdx` (modified, +1/-0)
-```diff
-@@ -144,6 +144,7 @@ The pods read these settings at startup. The endpoint and protocol in the entry
- | OPENROUTER_API_KEY | [openrouter]<br/>api_key | (string) API key to use for OpenRouter services |
- | OPENROUTER_SITE_URL | [openrouter]<br/>site_url | (string) Application URL (optional, for OpenRouter analytics) |
- | OPENROUTER_APP_NAME | [openrouter]<br/>app_name | (string) Application name (optional, for OpenRouter analytics) |
-+| PARALLEL_API_KEY | [parallel]<br/>api_key | (string, optional) API key to use for Parallel services; without one, search and extraction use Parallel's free endpoint |
- | REPLICATE_API_TOKEN | [replicate]<br/>api_token | (string) API token to use for Replicate services |
- | TOGETHER_API_KEY | [together]<br/>api_key | (string) API key to use for Together AI services |
- | TWELVELABS_API_KEY | [twelvelabs]<br/>api_key | (string) API key to use for TwelveLabs services |
-```
-
-**File**: `docs/release/use-cases/agentic-workflows.mdx` (modified, +2/-0)
-```diff
-@@ -53,6 +53,8 @@ assistant.select(assistant.message, assistant.tool_output).collect()
- 
- `pxt service list` prints the URL. POST `/ask` with `{"message": "..."}`. Chat history is another table with an embedding index: [Agent memory](/howto/cookbooks/agents/pattern-agent-memory). MCP tools load with `pxt.mcp_udfs(...)` and go into the same `pxt.tools()` list.
- 
-+For web search and page extraction, `pxt.tools(pxtf.parallel.search, pxtf.parallel.extract)` works without a Parallel account: [Working with Parallel](/howto/providers/working-with-parallel).
-+
- A full chat app: [`uvx pixeltable-new`](https://github.com/pixeltable/pixeltable-new) copies the [starter kit](/resources/starter-kit) agent. Pass `agent` as the last argument to `pxt schema update`. `/ask` needs `ANTHROPIC_API_KEY`.
- 
- On Cloud, sign in with `pxt login`, or set `PIXELTABLE_API_KEY`. `pxt org create` provisions `main`. Then run `pxt db update`, `pxt schema update`, and `pxt service update` against `pxt://org:main`. [Pixeltable Cloud](/cloud).
-```
-
-**File**: `pixeltable/config.py` (modified, +1/-0)
-```diff
-@@ -1066,6 +1066,7 @@ def describe_setting(self, section: str, key: str) -> str:
-         'metrics': 'Export metrics via OTLP (default: only when an OTLP endpoint is configured)',
-         'logs': 'Export pixeltable logs via OTLP (default: false)',
-     },
-+    'parallel': {'api_key': 'Parallel API key', 'rate_limit': 'Rate limit for Parallel API requests'},
-     'replicate': {'api_token': 'Replicate API token'},
-     'runwayml': {'api_secret': 'RunwayML API secret'},
-     'together': {
+     def run_btree_test(
+         self, p: Callable[[str], str], data: list, data_type: type, is_data_versioned: bool
+     ) -> pxt.Table:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1957** (closed): Rename TableDataConduit to SourceAdapter (@sergey-mkhitaryan)
-- **PR #1955** (2026-11-13): Write the default config atomically and require init_env for tests that reach Env (@aaron-siegel)
-- **PR #1954** (2026-11-13): Dump the Postgres server's state before the CI test step times out (@aaron-siegel)
-- **PR #1953** (2026-11-13): Fix diffusers pipeline placement on CUDA in text_to_image and image_to_image (@aaron-siegel)
-- **PR #1952** (2026-11-13): Raise faulthandler_timeout to 30 minutes to stop macOS worker hangs (@aaron-siegel)
-- **PR #1950** (2026-11-14): Make int % in SQL follow Python's sign convention (@sohailshk)
+- **PR #1990** (2026-11-18): [PXT-1788] Fix embed function name in error messages (@sergey-mkhitaryan)
+- **PR #1989** (2026-11-18): Support SQLAlchemy 2.1, the newest OpenAI and Anthropic SDKs, google-genai 3.x and pytest 9.2 (@aaron-siegel)
+- **PR #1988** (2026-11-18): Don't fail closing the Parallel MCP client when its connection task ends cancelled (anyio 4.16) (@aaron-siegel)
+- **PR #1987** (2026-11-18): Wait for shared in-flight saves of a row whose files are all in flight (@aaron-siegel)
+- **PR #1985** (2026-11-18): [PXT-1814] Raise RequestError when similarity() is called without modality argument (@sergey-mkhitaryan)
+- **PR #1984** (2026-11-18): [PXT-1819] Create RateLimitInfo for resources that appear in later responses (@sergey-mkhitaryan)
 
 ---
 
@@ -1522,31 +1311,43 @@ Co-authored-by: Marcel Kornacker <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add built-in web search and fetching through Parallel MCP
+## X. [PXT-1788] Fix embed function name in error messages
 
 **RULE**:
-When implementing operations in `.github/workflows/pytest.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pixeltable/index/embedding_index.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pixeltable/pixeltable. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `890b85ab`: Add built-in web search and fetching through Parallel MCP. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f94700e7`: [PXT-1788] Fix embed function name in error messages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/pytest.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pixeltable/index/embedding_index.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-  PARALLEL_API_KEY: ${{ secrets.PARALLEL_API_KEY }}
+                        f'The function `{embed_fn.display_name}` is not a valid {embed_type.name.lower()} '
+                f'The function `{embed.display_name}` is not a valid embedding: '
+                f'The function `{embed_fn.display_name}` is not a valid embedding: '
+                f'The function `{embed_fn.display_name}` is not a valid embedding: '
+                f'The function `{embed_fn.display_name}` is not a valid embedding: '
+                f'The function `{embed_fn.display_name}` is not a valid embedding: '
+                f'The function `{embed_fn.display_name}` returns an array with shape {shape}, '
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+                        f'The function `{embed_fn.name}` is not a valid {embed_type.name.lower()} '
+                f'The function `{embed.name}` is not a valid embedding: '
+                f'The function `{embed_fn.name}` is not a valid embedding: '
+                f'The function `{embed_fn.name}` is not a valid embedding: '
+                f'The function `{embed_fn.name}` is not a valid embedding: '
+                f'The function `{embed_fn.name}` is not a valid embedding: '
+                f'The function `{embed_fn.name}` returns an array with shape {shape}, '
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `890b85ab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f94700e7` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
