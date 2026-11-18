@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T06:41:28.907Z",
-  "total_records": 1772,
+  "last_updated": "2026-11-18T06:50:19.574Z",
+  "total_records": 1776,
   "domains": {
     "A": {
       "total": 11,
@@ -880,7 +880,7 @@
       ]
     },
     "G": {
-      "total": 309,
+      "total": 311,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1190,11 +1190,13 @@
         "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-core-invariants",
         "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-1jehuang-jcode-core-invariants",
-        "domain_intelligence-architecture-intelligence-1jehuang-jcode-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-1jehuang-jcode-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-core-invariants",
+        "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 413,
+      "total": 415,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1608,7 +1610,9 @@
         "domain_intelligence-technical-construction-intelligence-trailbaseio-trailbase-core-invariants",
         "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-core-invariants",
         "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-learnings-core-invariants",
-        "DOM-H-0137E2F6"
+        "DOM-H-0137E2F6",
+        "domain_intelligence-technical-construction-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-",
+        "domain_intelligence-technical-construction-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gg"
       ]
     },
     "I": {
@@ -14851,8 +14855,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "8e2a688ff5836e1d9e32a2a5d9e9687fe2e85ef18441dcc75aac9657339c2cba",
-      "created_at": "2026-11-18T03:39:37.580Z"
+      "content_hash": "7022cc73a93938b20f31a109a8f85f37d3c4ae91038b16c8d68853954a062678",
+      "created_at": "2026-11-18T06:49:19.876Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -17179,8 +17183,8 @@
       "title": "Content & Information Intelligence: pulumi/pulumi Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-content-information-intelligence-pulumi-pulumi-core-invariants.md",
       "repository": "pulumi/pulumi",
-      "content_hash": "fc4088b8c7ab3d0a91e6ceccf9f656137b5cc52d6e040a8dcc08ad30f5236f2c",
-      "created_at": "2026-11-16T02:06:20.009Z"
+      "content_hash": "d41f9b4960f4e19afab204a13f84c4ddccc30e1d1e5022c466b63523f4d81e24",
+      "created_at": "2026-11-18T06:49:13.809Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-core-invariants",
@@ -17248,8 +17252,8 @@
       "title": "Content & Information Intelligence: pulumi-pulumi-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-learnings-content-information-intelligence-pulumi-pulumi-learnings.md",
       "repository": "pulumi-pulumi-learnings",
-      "content_hash": "d83b7bf92502d4559be6df079c9f1129b996b5fae62e3f3203fed83eca8ca306",
-      "created_at": "2026-11-16T02:06:37.382Z"
+      "content_hash": "297c6681e6c97630010158c22778c6aa6a16025906e2f394006c0c7a8db6167c",
+      "created_at": "2026-11-18T06:50:18.781Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
@@ -29688,6 +29692,42 @@
       "repository": "1jehuang-jcode-learnings",
       "content_hash": "fc531969db28f8db46126d4d18f68805ea9aabb0065e6fd7e7ef171dce85738e",
       "created_at": "2026-11-18T06:41:27.138Z"
+    },
+    "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: sqlpage/SQLPage Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sqlpage-sqlpage-architecture-intelligence-sqlpage-sqlpage-core-invariants.md",
+      "repository": "sqlpage/SQLPage",
+      "content_hash": "7d0caf2fb61d9bbcedab22a33dd9ef6f95460d66d9b08201a851cad903df50b0",
+      "created_at": "2026-11-18T06:49:17.944Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-technical-construction-intelligen.md",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "content_hash": "73cf84f25ea6675728c3d1b5db2caca67d45ee07c4099eb33d22591b42c63b92",
+      "created_at": "2026-11-18T06:50:14.339Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gg": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gg",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-learnings-technical-construction-.md",
+      "repository": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings",
+      "content_hash": "25f0afbc4df20be2705ecf2fd94a56ab7992e771698c5ed2f3e91d59374e33ce",
+      "created_at": "2026-11-18T06:50:17.847Z"
+    },
+    "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: sqlpage-sqlpage-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sqlpage-sqlpage-learnings-architecture-intelligence-sqlpage-sqlpage-learnings-co.md",
+      "repository": "sqlpage-sqlpage-learnings",
+      "content_hash": "eeb404e0e190fd0ff13bfe3e85f62c315d66f83ab308440b166bdd2eecd403d5",
+      "created_at": "2026-11-18T06:50:19.574Z"
     }
   }
 }

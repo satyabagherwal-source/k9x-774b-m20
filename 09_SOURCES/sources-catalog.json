@@ -615,8 +615,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
     "license": "Open-Source",
-    "contentHash": "cfd88c0efc3d62cd133926f2feeea8ab865a51259d0d61ee1e9f3246523a4096",
-    "lastHarvestedAt": "2026-11-13T19:39:54.408Z",
+    "contentHash": "40be959b3c633a7efccc512fc51becd1101035b727c5a6a5e3d56ffb9429e4a4",
+    "lastHarvestedAt": "2026-11-18T06:50:14.005Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf"
   },
   "hf-facebook-sam3": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "7bc9f013",
+    "sourceVersion": "db6acd1d",
     "license": "Apache-2.0",
-    "contentHash": "215d9286690704e8c272e1b9fdb337e8a26658b367511443917a4c3f5db9d338",
-    "lastHarvestedAt": "2026-11-18T03:39:37.112Z",
+    "contentHash": "8c4ca953c0bd50760a51c3ae8750b677a854f67196b5e4e57ad6e543a44ab4a4",
+    "lastHarvestedAt": "2026-11-18T06:49:19.562Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -4713,20 +4713,20 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "9dd4c570",
+    "sourceVersion": "bc509bd5",
     "license": "Apache-2.0",
-    "contentHash": "9ed3fc04618cb19a54ac19d4bd17c911730eeab617fb5900de0ede4120402533",
-    "lastHarvestedAt": "2026-11-16T02:06:19.734Z",
+    "contentHash": "a1d392b6b9502f97193f5d3fa593f41c2f46db97a5567088935e93c7a013673e",
+    "lastHarvestedAt": "2026-11-18T06:49:13.467Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {
     "repository": "sqlpage/SQLPage",
     "platform": "github",
     "sourceUrl": "https://github.com/sqlpage/SQLPage",
-    "sourceVersion": "4cb43afc",
+    "sourceVersion": "1fe252ca",
     "license": "MIT",
-    "contentHash": "fbf2c763987b5e208cab73d87483a4b0f34afafffea8f9e8af8afc54ea6b18a3",
-    "lastHarvestedAt": "2026-11-13T08:13:00.486Z",
+    "contentHash": "4882323f14429fae10178e63fc6856f3e9c4e152f53a21e6610729f957faeea1",
+    "lastHarvestedAt": "2026-11-18T06:49:17.639Z",
     "learningId": "learn-github-sqlpage-sqlpage"
   },
   "douyinfe-semi-design": {

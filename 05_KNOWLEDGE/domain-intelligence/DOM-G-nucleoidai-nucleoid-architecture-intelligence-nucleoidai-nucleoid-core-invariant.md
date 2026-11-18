@@ -4,24 +4,24 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "7bc9f013",
+  "source_version": "db6acd1d",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T03:39:37.399Z",
+  "timestamp": "2026-11-18T06:49:19.742Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `7bc9f013`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T03:39:37.399Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `db6acd1d`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T06:49:19.742Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), E (Creative Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NucleoidAI/Nucleoid:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T03:39:36.515Z  
+> **Harvest Timestamp**: 2026-11-18T06:49:18.646Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Logic Language for World Models 🌱🐋🌍
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 770 stars
+- **Stars / Engagement**: 771 stars
 
 ---
 
@@ -1532,212 +1532,325 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c3a013a9` (2026-11-18)
-**Commit Message**: NUC 115 Count-Controlled Repeat Loops
+### Incident Patch 1: `db6acd1d` (2026-11-18)
+**Commit Message**: Draft NUC 117 First and Last Element Methods
 
-Accepted under the automatic acceptance rule, in a continuous
-/nuc-proposal cycle (Runtime features, existing comparable feature): the
-frozen candidate meets every hard criterion and passes every policy
-check, including the required token non-regression gate; the
-counterparts are fair, with a finding that leaves the gate's verdict
-unchanged. The cycle found no stale Draft, drew Runtime features
-uniformly from the five eligible categories, allocated NUC 115 in
-62b0d320, and completed it with fresh baselines, candidate, proposer,
-Rust improvement pass and evaluator.
+Category: Language compatibility, drawn uniformly at random (index 4 of
+the five eligible categories in NUC 1's registry, p = 1/5, no redraw)
+for a continuous /nuc-proposal cycle. Language compatibility skips the
+token non-regression gate categorically.
 
-repeat COUNT: followed by a suite runs the suite COUNT times. COUNT is
-evaluated once, before the first iteration, and converted as the string
-method repeat converts its count: to a number, NaN and negative numbers
-give 0 and fractions truncate. The body runs as a while body does,
-imperatively in the enclosing scope with no frame and no loop variable,
-return leaves the enclosing function, errors roll back through the
-existing transaction, and a completed loop yields null and files nothing
-in the graph. A count that converts to more than 100,000, the bound of
-while, raises TypeError(
+Requested change: lists and class populations gain the first and last
+methods of Kotlin, Rust, Swift, Ruby and C#'s LINQ as aliases of
+accepted queries. RECEIVER.first() gives RECEIVER.at(0) and
+RECEIVER.last() gives RECEIVER.at(-1); with a function, Kotlin's and
+LINQ's predicate overloads, RECEIVER.first(PREDICATE) gives
+RECEIVER.find(PREDICATE) and RECEIVER.last(PREDICATE) gives
+RECEIVER.findLast(PREDICATE). Each alias behaves as its accepted
+spelling: an empty receiver gives undefined, a predicate that matches
+nothing gives null, declarations stay live, and any other argument
+raises find's error with the name as written. At the accepted revision
+each call raises TypeError("<receiver>.<name> is not a function");
+instance methods, function-valued properties, strings, other receivers,
+property reads and the state versions xs@first and xs@last keep their
+accepted results.
 
-**File**: `README.md` (modified, +32/-0)
+This allocatio
+
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -2409,6 +2409,38 @@ assert(trip, 0.28125)
-   class gives `1`. See the
-   [root contract](nucleoid.spec.md#list-and-population-products).
+@@ -160,6 +160,7 @@ Created: 31-Jul-2026
+ | [107](nuc-0107.md) | Python-Style Self Parameters | Accepted |
+ | [110](nuc-0110.md) | Python String Method Aliases | Accepted |
+ | [116](nuc-0116.md) | Size and Emptiness Method Aliases | Accepted |
++| [117](nuc-0117.md) | First and Last Element Methods | Draft |
  
-+## Repeat loops
+ ### Documentation
+ 
+@@ -287,6 +288,7 @@ Created: 31-Jul-2026
+ | [114](nuc-0114.md) | List and Population Products | Standards Track | Utility enhancement | Accepted |
+ | [115](nuc-0115.md) | Count-Controlled Repeat Loops | Standards Track | Runtime features | Accepted |
+ | [116](nuc-0116.md) | Size and Emptiness Method Aliases | Standards Track | Language compatibility | Accepted |
++| [117](nuc-0117.md) | First and Last Element Methods | Standards Track | Language compatibility | Draft |
+ 
+ ## Copyright
+ 
+```
+
+**File**: `docs/nuc-0117.md` (added, +87/-0)
+```diff
+@@ -0,0 +1,87 @@
++# NUC 117 -- First and Last Element Methods
 +
-+**Repeat loops advance a world model a counted number of steps**
-+
-+```nuc
-+class Cup(temp):
-+    this.temp = temp
-+tea = Cup(90)
-+room = 20
-+cool = tea.temp < 40
-+minutes = 3
-+repeat minutes:
-+    tea.temp = tea.temp - (tea.temp - room) / 2
-+assert(tea.temp, 28.75)
-+assert(cool, true)
++```
++NUC: 117
++Title: First and Last Element Methods
++Author: Can Mingir <canmingir@gmail.com>
++Status: Draft
++Type: Standards Track
++Category: Language compatibility
++Created: 18-Nov-2026
 +```
 +
-+- [NUC 115](docs/nuc-0115.md) adds `repeat COUNT:` with an indented or
-+  same-line body, the count-controlled sibling of `while`. The count is read
-+  once, before the first iteration, and each iteration's changes, with what
-+  they propagate to standing rules such as `cool`, are live before the next
-+  iteration runs.
-+- Each minute the tea loses half of its difference from the room, so three
-+  minutes take it from `90` to `28.75`. The loop runs once, imperatively: it
-+  leaves no standing rule and does not run again when `minutes` changes
-+  later. A fraction truncates, a count of zero or less runs nothing, and a
-+  count of more than 100,000 iterations raises
-+  `TypeError("Repeat count is too large")` before the first one.
-+  `repeat` stays an ordinary name everywhere else, and `"ab".repeat(2)` is
-+  still `"abab"`. See the
-+  [root contract](nucleoid.spec.md#count-controlled-repeat-loops).
++## Abstract
++
++- Lists and class populations gain the `first` and `last` methods that
++  Kotlin, Rust, Swift, Ruby and C#'s LINQ spell, as aliases of accepted
++  queries:
++  - `RECEIVER.first()` gives `RECEIVER.at(0)` and `RECEIVER.last()` gives
++    `RECEIVER.at(-1)`, so a population's first and last instances are the
++    first and latest created;
++  - with a function, Kotlin's and LINQ's predicate overloads,
++    `RECEIVER.first(PREDICATE)` gives `RECEIVER.find(PREDICATE)` and
++    `RECEIVER.last(PREDICATE)` gives `RECEIVER.findLast(PREDICATE)`.
++- Each alias behaves as its accepted spelling does: an empty receiver gives
++  undefined, a predicate that matches nothing gives `null`, a declaration
++  that holds the call stays live as the receiver changes, and any other
++  argument raises the error that `find` raises for it, with the name as
++  written.
++- At the accepted revision each of these calls raises
++  `TypeError("<receiver>.<name> is not a function")`. Every other reading
++  of the names is kept: instance methods and function-valued properties
++  named `first` or `last` keep running, strings and other values keep
++  their accepted errors, property reads such as `xs.first` stay undefined,
++  and the state versions `xs@first` and `xs@last` are unchanged. `at`,
++  `find` and `findLast` stay the canonical spellings, and no syntax, token
++  or keyword is added.
++
++## Motivation
++
++- Programs and models written by people and LLMs that know Kotlin, Rust,
++  Swift, Ruby or C# ask a collection for its first and last elements by
++  name: `list.first()` and `list.last()` in Kotlin and Rust, `first` and
++  `last` in Swift and Ruby, and `First()` and `Last()` in LINQ, where
++  Kotlin and LINQ also take a predicate, as in
++  `orders.first { it.open }`. In Nucleoid every one of them raises
++  `TypeError("<receiver>.<name> is not a function")`, so a world model that
++  reads a sensor's latest reading with `readings.last()` or the next job
++  with `queue.first()` fails before it runs, although the accepted
++  spellings `readings.at(-1)` and `queue.at(0)` say the same thing.
++- World models read the ends of their collections constantly: the newest
++  reading of a sensor, the oldest order in a queue, the latest instance of
++  a class, the first item that meets a condition. These reads are standing,
++  so they must follow every later push and pop, which the accepted `at`,
++  `find` and `findLast` already do and the aliases inherit.
++- The aliases advance the language-superset aspiration of the Language
++  compatibility category. The accepted `this`/`self`, `=>`/`->`, `append`,
++  `contains`, `lower`, `upper`, `strip`, NUC 110's `startswith`, `endswith`
++  and `join`, and NUC 116's `size`, `len`, `isEmpty`, `is_empty` and
++  `isNotEmpty` follow the same pattern: an equivalent familiar spelling
++  beside the canonical one, with no change to any accepted program.
++- Kotlin's `first()`, `last()`, `first(predicate)` and `last(predicate)`,
++  Rust's `first()` and `last()`, Swift's and Ruby's `first` and `last`,
++  and LINQ's `First()` and `Last()` with their predicate overloads are the
++  prior art.
++
++## Rationale
++
++- Pending: the proposer completes this section.
++
++## Specification
++
++- Pending: the proposer completes this section.
++
++## Errors
++
++- Pending: the proposer completes this section.
++
++## Reference Implementation
++
++- Pending: the proposer completes this section.
++
++## Copyright
++
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
+```
+
+---
+
+### Incident Patch 2: `ae720b15` (2026-11-18)
+**Commit Message**: NUC 116 Size and Emptiness Method Aliases
+
+Accepted under the automatic acceptance rule, in a continuous
+/nuc-proposal cycle (Language compatibility): the frozen candidate meets
+every hard criterion and passes every policy check, with the token check
+skipped categorically, as NUC 1's matrix requires for continuous
+Language compatibility cycles. The cycle found no stale Draft, drew
+Language compatibility uniformly from the five eligible categories,
+allocated NUC 116 in 7bc9f013, and completed it with a fresh baseline,
+candidate, proposer, Rust improvement pass and evaluator.
+
+Lists, class populations and strings gain the size and emptiness methods
+of Java, Kotlin, C++ and Rust as aliases of the accepted length:
+RECEIVER.size() and RECEIVER.len() give RECEIVER.length,
+RECEIVER.isEmpty() and RECEIVER.is_empty() give RECEIVER.length == 0,
+RECEIVER.isNotEmpty() gives RECEIVER.length > 0, and strings also answer
+TEXT.length(), as lists and populations already do. Each alias behaves
+as the accepted length() call: the receiver is read before its
+arguments, which are evaluated once and ignored, declarations stay live,
+a class without instances has size 0, and strings count characters. At
+th
+
+**File**: `README.md` (modified, +27/-0)
+```diff
+@@ -2441,6 +2441,33 @@ assert(cool, true)
+   still `"abab"`. See the
+   [root contract](nucleoid.spec.md#count-controlled-repeat-loops).
+ 
++## Size and emptiness aliases
++
++**Size and emptiness methods keep an order queue's rules live**
++
++```nuc
++orders = ["tea"]
++idle = orders.isEmpty()
++backlog = orders.size()
++orders.push("cake", "pie")
++assert([idle, backlog], [false, 3])
++orders.pop()
++orders.pop()
++orders.pop()
++assert([idle, backlog, orders.length], [true, 0, 0])
++```
++
++- [NUC 116](docs/nuc-0116.md) adds the size and emptiness methods that
++  Java, Kotlin, C++ and Rust write, as aliases of `length` on lists, class
++  populations and strings: `size()` and `len()` are `length`, `isEmpty()`
++  and `is_empty()` are `length == 0`, and `isNotEmpty()` is `length > 0`.
++  Strings also take Java's `length()`, as lists and populations do.
++- `idle` and `backlog` are standing rules, so every push and pop of the
++  queue updates them, as `orders.length == 0` and `orders.length` would.
++  Reads without a call, such as `orders.size`, stay undefined, and other
++  values keep their errors. See the
++  [root contract](nucleoid.spec.md#size-and-emptiness-method-aliases).
 +
  ## Reactive list flattening
  
  **Flat turns nested lists into one live list**
 ```
 
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +20/-16)
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +19/-16)
 ```diff
-@@ -775,19 +775,23 @@
- {"id":"spec-0775","description":"Nucleoid multiplies class instance populations with product","code":"class Part(name, works):\n    this.name = name\n    this.works = works\npump = Part(\"pump\", 0.5)\nPart(\"valve\", 0.75)\nchance = Part.product(part -> part.works)\nnewest = Part[-1:].product(part -> part.works)\nassert([chance, newest], [0.375, 0.75])\nPart(\"seal\", 0.5)\nassert([chance, newest], [0.1875, 0.5])\npump.works = 1\nassert(chance, 0.375)\nclass Day(dry): this.dry = dry\nstaysDry = Day.product(day -> day.dry)\nassert(staysDry, 1)\nDay(0.5)\nDay(0.25)\nassert(staysDry, 0.125)","return":null}
- {"id":"spec-0776","description":"Nucleoid keeps products live in class level rules","code":"class Box(sides): this.sides = sides\n$Box.volume = $Box.sides.product()\ncrate = Box([2, 3, 4])\ncube = Box([3, 3, 3])\nassert([crate.volume, cube.volume], [24, 27])\ncrate.sides.push(0.5)\ncube.sides = []\nassert([crate.volume, cube.volume], [12, 1])\nclass Route(name): this.name = name\nclass Leg(route, onTime):\n    this.route = route\n    this.onTime = onTime\n$Route.chance = Leg.filter(leg -> leg.route == $Route).product(leg -> leg.onTime)\nnorth = Route(\"north\")\nsouth = Route(\"south\")\nLeg(north, 0.5)\nslow = Leg(north, 0.5)\nLeg(south, 0.75)\nnetwork = Route.product(route -> route.chance)\nassert([north.chance, south.chance, network], [0.25, 0.75, 0.1875])\nslow.onTime = 1\nLeg(south, 0.5)\nassert([north.chance, south.chance, network], [0.5, 0.375, 0.1875])\nwest = Route(\"west\")\nassert([west.chance, network], [1, 0.1875])\nLeg(west, 0.5)\nassert(network, 0.09375)","return":null}
- {"id":"spec-0777","description":"Nucleoid rolls back failed product updates","code":"def checked(chance):\n    if chance > 1:\n        throw \"NOT_A_CHANCE\"\n    return chance\nchances = [0.5, 0.5]\nboth = chances.product(checked)\nfailure = \"\"\ntry:\n    chances.push(2)\ncatch error:\n    failure = error\nassert([failure, chances, both], [\"NOT_A_CHANCE\", [0.5, 0.5], 0.25])\ntry:\n    chances.push(0.5)\n    assert(both, 0.125)\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([chances, both], [[0.5, 0.5], 0.25])\nclass Stage(chance): this.chance = chance\nStage(0.5)\npasses = Stage.product(stage -> checked(stage.chance))\nfailure = \"\"\ntry:\n    Stage(4)\ncatch error:\n    failure = error\nassert([failure, Stage.length, passes], [\"NOT_A_CHANCE\", 1, 0.5])\nStage(0.25)\npasses","return":"0.125"}
--{"id":"spec-0778","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0779","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0780","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0781","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0782","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
--{"id":"spec-0783","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    
+@@ -779,19 +779,22 @@
+ {"id":"spec-0779","description":"Nucleoid evaluates a repeat count once and truncates it","code":"team = [\"ana\", \"bo\"]\nsize = team.length\nrepeat size:\n    team.push(\"hire\")\nassert(team, [\"ana\", \"bo\", \"hire\", \"hire\"])\nassert(size, 4)\ndef culture(cells, hours):\n    total = cells\n    repeat hours:\n        total = total * 2\n    return total\nassert([culture(1, 3), culture(1, 2.9), culture(1, \"3\"), culture(1, true)], [8, 4, 8, 2])\nassert([culture(5, 0), culture(5, -2), culture(5, null)], [5, 5, 5])","return":null}
+ {"id":"spec-0780","description":"Nucleoid runs repeat loops in constructors and methods with return","code":"class Shelf(levels):\n    this.bins = []\n    repeat levels:\n        this.bins.push(this.bins.length * 10)\n    def take(count):\n        weight = 0\n        repeat count:\n            if this.bins.length == 0:\n                return \"short\"\n            weight = weight + this.bins.pop()\n        return weight\nshelf = Shelf(3)\nassert(shelf.bins, [0, 10, 20])\nassert(shelf.take(2), 30)\nassert(shelf.take(2), \"short\")\nassert(shelf.bins, [])","return":null}
+ {"id":"spec-0781","description":"Nucleoid nests repeat loops and rolls back a failed iteration","code":"class Crate(row):\n    this.row = row\nrows = 2\nrepeat rows:\n    repeat 3: Crate(rows)\n    rows = rows + 1\nassert(Crate.map(crate -> crate.row), [2, 2, 2, 3, 3, 3])\nloaded = Crate.length\ntry:\n    repeat 2:\n        Crate(0)\n        if loaded > 7:\n            throw \"FULL\"\ncatch error:\n    failure = error\nassert(failure, \"FULL\")\nassert([loaded, rows], [6, 4])","return":null}
+-{"id":"spec-0782","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
+-{"id":"spec-0783","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
+-{"id":"spec-0784","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
+-{"id":"spec-0785","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
+-{"id":"spec-0786","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
+-{"id":"spec-0787","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
+-{"id":"spec-0788","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nassert([1, 2] in [[1, 2], [3]], true)\nassert({ x: 1 } in [{ x: 1 }, null], true)\nassert(null in [1, null], true)\nassert(Number.NaN in [Number.NaN], false)\nassert(\"ell\" in \"hello\", true)\nassert(1 in \"a1\", true)\nassert(\"\
 ```
 
-**File**: `dataset/nucleoid.synth.79.jsonl` (added, +12/-0)
+**File**: `dataset/nucleoid.synth.80.jsonl` (added, +14/-0)
 ```diff
-@@ -0,0 +1,12 @@
-+{"id":"synth-79-0001","description":"A repeat loop runs its body a counted number of times","code":"steps = 0\nrepeat 4:\n    steps = steps + 1\nsteps","return":"4"}
-+{"id":"synth-79-0002","description":"A balance compounds once a year for a counted number of years","code":"balance = 100\nyears = 2\nrepeat years:\n    balance = balance * 1.5\nbalance","return":"225"}
-+{"id":"synth-79-0003","description":"A repeat count is read once even when the body grows what it reads","code":"queue = [1, 2]\nsize = queue.length\nrepeat size:\n    queue.push(0)\n[queue.length, size]","return":"[4,4]"}
-+{"id":"synth-79-0004","description":"A fractional count truncates and a negative count runs nothing","code":"n = 0\nrepeat 3.7: n = n + 1\nrepeat 2 - 5: n = n + 100\nn","return":"3"}
-+{"id":"synth-79-0005","description":"A function accumulates a local across the iterations of a repeat loop","code":"def power(base, exponent):\n    result = 1\n    repeat exponent:\n        result = result * base\n    return result\n[power(2, 10), power(5, 0)]","return":"[1024,1]"}
-+{"id":"synth-79-0006","description":"A constructor builds a counted number of parts","code":"class Wheel(car):\n    this.car = car\nclass Car(wheels):\n    repeat wheels:\n        Wheel(this)\nbike = Car(2)\ntrike = Car(3)\nWheel.filter(w -> w.car == trike).length","return":"3"}
-+{"id":"synth-79-0007","description":"A method returns from inside a repeat loop","code":"class Stack(items):\n    this.items = items\n    def drop(count):\n        repeat count:\n            if this.items.length == 0:\n                return \"empty\"\n            this.items.pop()\n        return this.items.length\nstack = Stack([1, 2, 3])\n[stack.drop(2), stack.drop(5)]","return":"[1,\"empty\"]"}
-+{"id":"synth-79-0008","description":"Nested repeat loops fill a grid of cells","code":"class Cell(row, col):\n    this.row = row\n    this.col = col\nrow = 0\nrepeat 2:\n    col = 0\n    repeat 3:\n        Cell(row, col)\n        col = col + 1\n    row = row + 1\nCell.map(c -> c.row * 10 + c.col)","return":"[0,1,2,10,11,12]"}
-+{"id":"synth-79-0009","description":"A thrown value rolls back every iteration of a repeat loop","code":"class Box\nfilled = 0\ntry:\n    repeat 3:\n        Box()\n        filled = filled + 1\n        if filled == 2:\n            throw \"FULL\"\ncatch error:\n    reason = error\n[reason, Box.length, filled]","return":"[\"FULL\",0,0]"}
-+{"id":"synth-79-0010","description":"A repeat loop inside a standing rule runs again when the rule runs","code":"class Meter\nmeter = Meter()\nmeter.ticks = 2\nmeter.total = 0\nif meter.ticks > 0:\n    repeat meter.ticks: meter.total = meter.total + 1\nmeter.ticks = 3\nmeter.total","return":"5"}
-+{"id":"synth-79-0011","description":"A count above the bound raises before the first iteration","code":"ran = 0\ntry:\n    repeat 100001: ran = ran + 1\ncatch error:\n    problem = error\n[problem, ran]","return":"[\"TypeError: Repeat count is too large\",0]"}
-+{"id":"synth-79-0012","description":"Repeat stays an ordinary name beside repeat loops","code":"repeat = 3\nn = 0\nrepeat repeat: n = n + repeat\n[\"ab\".repeat(2), n]","return":"[\"abab\",9]"}
+@@ -0,0 +1,14 @@
++{"id":"synth-80-0001","description":"List size and len give the list's length, as Java and Rust spell them","code":"orders = [\"tea\", \"cake\"]\n[orders.size(), orders.len(), orders.length]","return":"[2,2,2]"}
++{"id":"synth-80-0002","description":"isEmpty and isNotEmpty follow a queue as it is pushed","code":"queue = []\nidle = queue.isEmpty()\nbusy = queue.isNotEmpty()\nqueue.push(\"job\")\n[idle, busy]","return":"[false,true]"}
++{"id":"synth-80-0003","description":"Rust's is_empty tests a list, and the rule follows a later pop","code":"stack = [1]\nempty = stack.is_empty()\nstack.pop()\nempty","return":"true"}
++{"id":"synth-80-0004","description":"A string's length() method gives its character count, as Java writes it","code":"name = \"Zoë\"\n[name.length(), name.size(), name.len(), name.length]","return":"[3,3,3,3]"}
++{"id":"synth-80-0005","description":"Strings answer isEmpty, is_empty and isNotEmpty","code":"[\"\".isEmpty(), \"\".is_empty(), \" \".isEmpty(), \"a\".isNotEmpty()]","return":"[true,true,false,true]"}
++{"id":"synth-80-0006","description":"A class population's size counts its instances and follows new ones","code":"class Order(item):\n    this.item = item\norders = Order.size()\nOrder(\"tea\")\nOrder(\"cake\")\norders","return":"2"}
++{"id":"synth-80-0007","description":"A class without instances is empty and has size 0","code":"class Ticket\n[Ticket.isEmpty(), Ticket.size()]","return":"[true,0]"}
++{"id":"synth-80-0008","description":"A class-level rule tests each instance's list with isEmpty","code":"class Bin(items):\n    this.items = items\n$Bin.empty = $Bin.items.isEmpty()\nfull = Bin([1])\nspare = Bin([])\nfull.items.pop()\n[full.empty, spare.empty]","return":"[true,true]"}
++{"id":"synth-80-0009","description":"Arguments of a size alias are evaluated and ignored, as length() treats them","code":"xs = [1, 2, 3]\n[xs.size(0), xs.len(\"x\", null)]","return":"[3,3]"}
++{"id":"synth-80-0010","description":"On a class name the population alias wins over an instance method of the same name","code":"class Box:\n    def size() => 99\nb = Box()\n[b.size(), Box.size()]","return":"[99,1]"}
++{"id":"synth-80-0011","description":"A failed update through an alias rolls back, so the rule keeps its value","code":"stock = [\"bolt\"]\nlow = stock.size() < 2\nfailure = \"\"\ntry:\n    stock = 7\ncatch error:\n    failure = error\n[stock, low, failure]","return":"[[\"bolt\"],true,\"TypeError: number.size is not a function\"]"}
++{"id":"synth-80-0012","description":"A program that caught the former alias error now receives the size","code":"xs = [1, 2]\ntry:\n    r = xs.size()\ncatch e:\n    r = \"caught\"\nr","return":"2"}
++{"id":"synth-80-0013","description":"Templates and conditional expressions read the aliases","code":"jobs = [\"a\", \"b\"]\nlabel = `${jobs.size()} jobs`\nstate = jobs.isEmpty() ? \"idle\" : \"busy\"\n[label, state]","return":"[\"2 jobs\",\"busy\"]"}
++{"id":"synth-80-0014","description":"Counting the empty shelves of a population with filter, isEmpty and size","code":"class Shelf(items):\n    this.items = items\nShelf([])\nShelf([1])\nShelf([])\nShelf.filter(shelf -> shelf.items.isEmpty()).size()","return":"2"}
 ```
 
-**File**: `docs/README.md` (modified, +49/-0)
+**File**: `docs/README.md` (modified, +47/-2)
 ```diff
-@@ -1882,6 +1882,51 @@ while savings.balance < 150:
+@@ -2595,9 +2595,9 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md).
+ | `Boolean` | `Boolean(value)` |
+ | `Number` | `Number.MAX_INTEGER` |
+ | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
+-| `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), and Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)) |
++| `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), and the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)) |
+ | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
+-| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), and `product` ([NUC 114](nuc-0114.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
++| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), and the size and emptiness aliases `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
+ | `Class` | the global list of declared types; `Class.length` |
  
- Normative detail: [while loops](../nucleoid.spec.md#while-loops).
+ ```
+@@ -2702,6 +2702,48 @@ listing == scripts.join(", ")
+   [root section](../nucleoid.spec.md#python-string-method-aliases) and its
+   three appended entries define the results, liveness and rollback.
  
-+### repeat
++### Size and emptiness method aliases
 +
 +```
-+class Account(balance):
-+    this.balance = balance
-+savings = Account(100)
-+years = 3
-+repeat years:
-+    savings.balance = savings.balance * 1.5
-+assert(savings.balance, 337.5)
-+years = 10
-+savings.balance
++class Task(title):
++    this.title = title
++inbox = ["call ana", "pay rent"]
++pending = inbox.size()
++clear = inbox.isEmpty()
++Task("plan trip")
++assert([pending, inbox.len(), Task.size(), "inbox".length()], [2, 2, 1, 5])
++inbox.pop()
++inbox.pop()
++assert([pending, clear, inbox.is_empty(), Task.isNotEmpty()], [0, true, true, true])
++pending == inbox.length
 +```
 +
-+- This is the complete
-+  `Nucleoid repeats statements a counted number of times` program in
-+  `tests/reference.md`, without its title and expected-return metadata; it
-+  returns `337.5`, and setting `years` later does not run the loop again.
-+- `repeat <count>:` runs its body `count` times, under
-+  [NUC 115](nuc-0115.md). The body is an indented block, or statements on
-+  the same line separated by `;`.
-+- The count is evaluated once, before the first iteration. It converts to a
-+  number and then as the count of the string method `repeat` does: NaN and
-+  negative numbers give 0 and fractions truncate, so `2.9` runs the body
-+  twice, `"3"` three times, and `0`, `-1` and `null` not at all. What the body
-+  changes never changes the count.
-+- The body runs as a `while` body does: once per iteration, imperatively, in
-+  the enclosing scope, with no scope frame and no loop variable. A local that
-+  the enclosing function or loop body assigned accumulates, where a `for`
-+  loop over a string of the count's length would leave it unchanged.
-+  `return` leaves the enclosing function, as from a `while` body.
-+- The loop runs once, like `while`: nothing is filed in the graph, and the
-+  loop does not run again when its count or its inputs change later.
-+- Each run of a loop runs its body at most 100,000 times. A count that
-+  converts to more than 100,000 raises
-+  `TypeError("Repeat count is too large")` before the first iteration, and
-+  the transaction rolls back.
-+- `repeat` is not reserved. `repeat NAME: TYPE`, `repeat assert: ...`, a
-+  count whose last token is a bare `lambda`, a `suppose` count, and colon-free
-+  or braced headers keep their accepted readings as separate statements, and
-+  names, calls and properties named `repeat` and the string method
-+  `"ab".repeat(2)` keep working.
-+
-+Normative detail: [count-controlled repeat loops](../nucleoid.spec.md#count-controlled-repeat-loops).
-+
- ---
- 
- ## 9. Functions
-@@ -4482,6 +4527,7 @@ Messages are exact and are part of the observable behaviour of the language.
- | Repeated string output is too large to represent or allocate | `Repeated string is too large` |
- | Padded string output of `padStart` or `padEnd` is too large to represent or allocate | `Padded string is too large` |
- | A `while` loop whose condition still holds after 100,000 iterations of one run | `Loop did not terminate` |
-+| A `repeat` loop whose count converts to more than 100,000, `Infinity` included, raised before the first iteration | `Repeat count is too large` |
- | An undeclared constructor label | `Unknown constructor argument '<name>' for <class>` |
- | A repeated constructor binding, including positional plus named | `Duplicate constructor argument '<name>' for <class>` |
- | A positional constructor argument following a label | `Positional constructor argument after named arguments for <class>` |
-@@ -4653,6 +4699,9 @@ for source:                            indented iteration with local it
- while condition:                       repeat while the condition holds (NUC 63)
-     statement
- while condition: statement             same loop with a same-line body
-+repeat count:                          run the body count times; count is read once (NUC 115)
-+    statement
-+repeat count: statement                same loop with a same-line body
- 
- value => expression                    anonymous arrow; also (a, b) => expression
- value => { statement }                 anonymous arrow with a statement body
++- [NUC 116](nuc-0116.md) adds the size and emptiness methods of Java,
++  Kotlin, C++ and Rust as aliases of `length` on lists, class populations
++  and strings. `size()` and `len()` are `length`, `isEmpty()` and
++  `is_empty()` are `length == 0`, and `isNotEmpty()` is `length > 0`.
++  Strings also take Java's `length()`, which lists and populations already
++  take, and every receiver counts characters, as `length` does.
++- Each alias evaluates its receiver and then its arguments, which it
++  ignores, and stays live like its accepted spelling: `pending` and `clear`
++  follow the pops. `why` names the same dependencies.
++- Only calls on lists, populations and strings change. Other receivers keep
++  their errors, as their `length()` does, so `(5).size()` still raises
++  `TypeError("number.size is not a function")`. Reads such as `xs.size`
++  without a call, functions, properties and methods of the same names, and
++  `$Name` inside a class-level rule, where it is the instance, keep their
++  behavior.
 ```
 
-**File**: `docs/examples.md` (modified, +30/-0)
+**File**: `docs/examples.md` (modified, +29/-0)
 ```diff
-@@ -3931,6 +3931,36 @@ opened.rates.push(1)
-   updates only that account's balance. See [NUC 114](nuc-0114.md) and the
-   [root contract](../nucleoid.spec.md#list-and-population-products).
+@@ -3961,6 +3961,35 @@ Car(local)
+   in the constructor does not run again. See [NUC 115](nuc-0115.md) and the
+   [root contract](../nucleoid.spec.md#count-controlled-repeat-loops).
  
-+## Repeat loops
++## Size and emptiness aliases
 +
-+**Repeat loops build the cars of every train**
++**Emptiness methods keep every shelf's restock count live**
 +
 +```nuc
-+class Car(train):
-+    this.train = train
-+    this.seats = 40
-+class Train(cars):
-+    repeat cars:
-+        Car(this)
-+$Train.capacity = Car.filter(car -> car.train == $Train).sum(car -> car.seats)
-+local = Train(2)
-+express = Train(3)
-+assert([local.capacity, express.capacity], [80, 120])
-+Car(local)
-+[local.capacity, express.capacity]
-+# return: [120,120]
++class Shelf(aisle):
++    this.aisle = aisle
++    this.items = []
++$Shelf.empty = $Shelf.items.isEmpty()
++$Shelf.stocked = $Shelf.items.len()
++north = Shelf("north")
++south = Shelf("south")
++north.items.push("bolt", "nut")
++assert([north.empty, north.stocked, south.empty, south.stocked], [false, 2, true, 0])
++restock = Shelf.filter(shelf -> shelf.empty).size()
++assert(restock, 1)
++south.items.push("gear")
++restock
++# return: 0
 +```
 +
-+- Each train's constructor builds as many cars as it is given:
-+  `repeat cars:` runs `Car(this)` that many times, and `this` is the train
-+  being built. The loop needs no counter and leaves none behind, where
-+  accepted syntax writes `for _ of "a".repeat(cars):` or a `while` loop that
-+  counts `cars` down.
-+- The class-level rule keeps each train's capacity live over its cars, so a
-+  car added to the local train later updates that train alone, and the loop
-+  in the constructor does not run again. See [NUC 115](nuc-0115.md) and the
-+  [root contract](../nucleoid.spec.md#count-controlled-repeat-loops).
++- Each shelf's `empty` and `stocked` follow its own list through the
++  class-level rules, written as Java's `isEmpty()` and Rust's `len()` where
++  accepted syntax writes `$Shelf.items.length == 0` and
++  `$Shelf.items.length`.
++- `restock` counts the empty shelves with `size()`, so stocking the south
++  shelf takes it to `0`. See [NUC 116](nuc-0116.md) and the
++  [root contract](../nucleoid.spec.md#size-and-emptiness-method-aliases).
 +
  ## Reactive list flattening
  
@@ -1746,192 +1859,201 @@ while, raises TypeError(
 
 **File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -95,7 +95,7 @@ Created: 31-Jul-2026
- | [81](nuc-0081.md) | Object Spread Entries | Accepted |
- | [85](nuc-0085.md) | Fixed Cross-Property Class Anchors | Automatic-Accepted: independent evaluation rejected it because fixed-only cycles whose rules build fresh objects never settle; `$Pair.a = {v: $Pair.b@first}` with `$Pair.b = {v: $Pair.a@first}` reaches the 100,000-step propagation limit instead of settling as the proposal claims |
- | [90](nuc-0090.md) | Enum Declarations | Accepted |
--| [115](nuc-0115.md) | Count-Controlled Repeat Loops | Draft |
-+| [115](nuc-0115.md) | Count-Controlled Repeat Loops | Accepted |
+@@ -159,7 +159,7 @@ Created: 31-Jul-2026
+ | [99](nuc-0099.md) | SQL-Style Inequality | Rejected: full suite fails 14 corpus-count assertions |
+ | [107](nuc-0107.md) | Python-Style Self Parameters | Accepted |
+ | [110](nuc-0110.md) | Python String Method Aliases | Accepted |
+-| [116](nuc-0116.md) | Size and Emptiness Method Aliases | Draft |
++| [116](nuc-0116.md) | Size and Emptiness Method Aliases | Accepted |
  
- ### Utility enhancement
+ ### Documentation
  
-@@ -284,7 +284,7 @@ Created: 31-Jul-2026
- | [112](nuc-0112.md) | Node Names of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+@@ -286,7 +286,7 @@ Created: 31-Jul-2026
  | [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Accepted |
  | [114](nuc-0114.md) | List and Population Products | Standards Track | Utility enhancement | Accepted |
--| [115](nuc-0115.md) | Count-Controlled Repeat Loops | Standards Track | Runtime features | Draft |
-+| [115](nuc-0115.md) | Count-Controlled Repeat Loops | Standards Track | Runtime features | Accepted |
+ | [115](nuc-0115.md) | Count-Controlled Repeat Loops | Standards Track | Runtime features | Accepted |
+-| [116](nuc-0116.md) | Size and Emptiness Method Aliases | Standards Track | Language compatibility | Draft |
++| [116](nuc-0116.md) | Size and Emptiness Method Aliases | Standards Track | Language compatibility | Accepted |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0115.md` (modified, +1430/-21)
+**File**: `docs/nuc-0116.md` (modified, +1146/-18)
 ```diff
-@@ -4,10 +4,11 @@
- NUC: 115
- Title: Count-Controlled Repeat Loops
+@@ -4,7 +4,7 @@
+ NUC: 116
+ Title: Size and Emptiness Method Aliases
  Author: Can Mingir <canmingir@gmail.com>
 -Status: Draft
 +Status: Accepted
  Type: Standards Track
- Category: Runtime features
+ Category: Language compatibility
  Created: 17-Nov-2026
-+Requires: 10, 63, 86, 93
- ```
- 
- ## Abstract
-@@ -28,14 +29,17 @@ Created: 17-Nov-2026
-   cause, are visible to the next. `return` leaves the enclosing function,
-   errors and thrown values roll back through the existing transaction, and
-   a completed loop yields `null` and files nothing in the graph.
--- The bound of `while` keeps every loop finite: a count above 100,000 raises
--  `TypeError("Repeat count is too large")` before the first iteration.
--- At the accepted revision every such statement raises
--  `SyntaxError("Unexpected ':'")`. No keyword or lexer token is added.
--  `repeat` stays an ordinary name everywhere else, in variables, functions,
--  `repeat(...)` calls and the string method `repeat`, and the four
--  spellings that NUC 63 keeps for `while`, such as `repeat NAME: TYPE`, keep
--  their accepted readings for `repeat`.
-+- The bound of `while` keeps every loop finite: a count that converts to
-+  more than 100,000 raises `TypeError("Repeat count is too large")` before
-+  the first iteration.
-+- At the accepted revision every such statement is a `SyntaxError`, usually
-+  `SyntaxError("Unexpected ':'")` at its colon. No keyword or lexer token is
-+  added. `repeat` stays an ordinary name everywhere else, in variables,
-+  functions, `repeat(...)` calls and the string method `repeat`, and the
-+  four spellings that NUC 63 keeps for `while`, such as `repeat NAME: TYPE`,
-+  keep their accepted readings for `repeat`.
+@@ -25,14 +25,21 @@ Created: 17-Nov-2026
+   for lists and populations: its arguments are evaluated and ignored, a
+   declaration that holds it stays live as the receiver changes, and a class
+   with no instances has size `0`. A string's size counts its characters, as
+-  `TEXT.length` does.
++  `TEXT.length` does, so `"Zoë".len()` is `3`.
+ - At the accepted revision each of these calls raises
+-  `TypeError("<receiver>.<name> is not a function")`. Every other reading
+-  of the names is kept: instance methods and function-valued properties
+-  named `size`, `len`, `isEmpty`, `is_empty`, `isNotEmpty` or `length` keep
+-  running, other values keep their accepted errors, and property reads such
+-  as `xs.size` stay undefined. `length` stays the canonical spelling, and no
+-  syntax, token or keyword is added.
++  `TypeError("<receiver>.<name> is not a function")`. Only those calls
++  change, along with the programs that caught that error. On every other
++  receiver the names keep the reading that `length()` has there: numbers,
++  booleans, functions, dates and regular expressions keep their
++  `TypeError`, objects and instances keep their methods, callable
++  properties and undefined members, a `null` or undefined receiver stays
++  undefined, and a class declared as `Math`, `Number`, `String` or `Date`
++  keeps reaching that namespace's static methods. Reads without a call,
++  such as `xs.size`, stay undefined.
++- `length` stays the canonical spelling. No token, keyword, syntax-tree
++  node, error type or message format, dependency or public item is added.
 +- The authoritative contract is
-+  [Count-controlled repeat loops](../nucleoid.spec.md#count-controlled-repeat-loops).
++  [Size and emptiness method aliases](../nucleoid.spec.md#size-and-emptiness-method-aliases).
  
  ## Motivation
  
-@@ -46,33 +50,1438 @@ Created: 17-Nov-2026
- - The accepted spellings count by hand. A `while` loop needs its own
-   counter, initialized, tested and incremented around the body, and leaves
-   it behind: `i = 0`, `while i < years:` and `i = i + 1` are 15 lexer
--  tokens with their newlines, where `repeat years:` is 3. A string loop
--  turns the count into characters: `for _ of "a".repeat(years):` is 10
--  tokens, and `for _ of "aaa":` is 5 for a literal count.
--- The string loop is also wrong in most bodies. A `for` loop pushes a scope
--  frame for each iteration, and inside a function, method, loop or block
--  body that frame turns a name the enclosing body already assigned into a
--  local, so `for _ of "a".repeat(k): total = total + 1` leaves `total` at
--  `0` there. Only the hand-counted `while` loop accumulates.
-+  tokens with their newlines, where `repeat years:` is 3, and with
-+  `i += 1` they are still 13. A `while` loop that counts the count itself
-+  down, `while years:` with `years -= 1`, adds 4 tokens and destroys the
-+  count. A string loop turns the count into characters:
-+  `for _ of "a".repeat(years):` is 10 tokens, and `for _ of "aaa":` is 5
-+  for a literal count.
-+- The string loop is also wrong for local accumulators. A `for` loop pushes
-+  a scope frame for each iteration, and inside a function, method, loop or
-+  block body that frame turns a name the enclosing body already assigned
-+  into a local of the iteration, so `for _ of "a".repeat(k):` with the body
-+  `total = total + 1` leaves `total` at `0` there. Property writes, pushes,
-+  parameters and top-level names still work, but only a `while` loop with
-+  its own counter accumulates a local.
- - Kotlin's `repeat(n)`, Logo's and Scratch's `repeat n`, Smalltalk's
-   `timesRepeat:`, Ruby's `n.times` and Python's `for _ in range(n)` give the
-   operation a name.
-+- Each of the seven new executable cases uses 4 to 13 fewer lexer tokens
-+  than the most compact fair accepted spelling found, one that runs any
-+  count the case could give its loops, and 2 to 6 fewer than every excluded
-+  spelling found, which hardcode a count, write the body out, recurse or
-+  rewrite other lines, as [Counterparts](#counterparts) records.
+@@ -45,30 +52,1151 @@ Created: 17-Nov-2026
+   model that guards a rule with `queue.isEmpty()` or reports
+   `orders.size()` fails before it runs, although the accepted spellings
+   `queue.length == 0` and `orders.length` say the same thing.
++- A world model is often guarded by emptiness: a queue that is idle when it
++  holds no job, a shelf to restock when it holds no item, a sensor that is
++  silent until it reads a value. These rules are standing, so they must
++  follow every later push and pop, which the accepted `length` already
++  does and the aliases inherit.
+ - The aliases advance the language-superset aspiration of the Language
+   compatibility category. The accepted `this`/`self`, `=>`/`->`, `append`,
+-  `contains`, `lower`, `upper`, `strip` and NUC 110's `startswith`,
+-  `endswith` and `join` follow the same pattern: an equivalent familiar
+-  spelling beside the canonical one, with no change to any accepted program.
+-- Java's `Collection.size()`, `Collection.isEmpty()` and `String.length()`,
+-  Kotlin's `isEmpty()` and `isNotEmpty()`, C++'s `size()` and Rust's `len()`
+-  and `is_empty()` are the prior art.
++  `find`, `contains`, `lower`, `upper`, `strip`, `substr` and NUC 110's
++  `startswith`, `endswith` and `join` follow the same pattern: an
++  equivalent familiar spelling beside the canonical one, with no change to
++  any accepted program.
++- Prior art: Java's `Collection.size()`, `Collection.isEmpty()` and
++  `String.length()`, Kotlin's `isEmpty()` and `isNotEmpty()`, C++'s
++  `size()`, and Rust's `len()` and `is_empty()`.
  
  ## Rationale
  
 -- Pending: the proposer completes this section.
-+- **Category and mode.** The caller drew Runtime features with one
-+  tool-backed uniform draw over the five categories that NUC 1's registry
-+  marks eligible for automatic selection: index 1, with probability 1/5, at
-+  15:42:53 on 17-Nov-2026, and no redraw. This is a continuous cycle, so the
-+  token non-regression gate is required. Runtime applicability is
-+  `existing_comparable`: counted repetition is written today with a `while`
-+  loop and its own counter, with a `while` loop that counts a variable down,
-+  or with a string loop such as `for _ of "a".repeat(n):`, and every case of
-+  this proposal is paired with such an accepted-syntax program.
-+- **Selection.** Within the category the caller chose one bounded
-+  enhancement, `repeat COUNT:`, the count-controlled sibling of NUC 63's
-+  condition-controlled loop, which no NUC proposes. It set aside, after
-+  probing the accepted revis
++- **Category and mode.** The allocating continuous cycle drew Language
++  compatibility with one tool-backed uniform draw over the five categories
++  that NUC 1's registry marks eligible for automatic selection, index 4
++  with probability 1/5 and no redraw, and recorded the requested change in
++  the allocation commit `7bc9f013`, which this revision pins. Token
++  comparison is therefore skipped as `language_compatibility`. The skip is
++  categorical; it is neither a measured comparison nor a passing token
++  gate. Runtime applicability does not apply to this category.
++- **No counterparts.** Because comparison is skipped, the new cases have no
++  accepted-syntax counterparts. They execute their assertions and explicit
++  returns with full coverage, and every pre-existing case is unchanged.
++- **Optional evidence.** No hint was supplied. Advisory usefulness is
++  unscored (`missing_rubric`), not zero. Strategy learning is
++  `not_configured`, so this revision is unattributed, with no policy,
++  selection receipt, trial or reward.
++- **Only former errors.** At the accepted revision every call of the five
++  names on a list, population or string receiver, and every `length()` call
++  on a string, raises `TypeError("<receiver>.<name> is not a function")` at
++  the start of the running statement, in plain and JSON output alike,
++  unless an argument raises first. No accepted test, document case, dataset
++  
 ```
 
-**File**: `docs/nucleoid.g4` (modified, +18/-8)
+**File**: `nucleoid.spec.md` (modified, +163/-0)
 ```diff
-@@ -102,11 +102,12 @@ block
+@@ -371,6 +371,81 @@ operator-chain diagnostics and source positions are preserved.
+   specify the executable behavior. `tests/python_string_aliases.rs` executes
+   the rest.
  
- // Statements need no separator where the preceding production ends.
- // At statement start, '{' is a block or pattern, never an object literal.
--// Destructuring and whileStmt are tentative; other recognized statement
--// headers commit even if a later token fails to match.
-+// Destructuring, whileStmt and repeatStmt are tentative; other recognized
-+// statement headers commit even if a later token fails to match.
- statement
-     : destructuring
-     | whileStmt
-+    | repeatStmt
-     | enumStmt
-     | ifStmt
-     | forStmt
-@@ -301,6 +302,12 @@ whileStmt
-     : WHILE clauseExpression suite      // Stmt::While
-     ;
- 
-+// The tentative count follows the whileStmt rules above, through one shared
-+// header test. It is evaluated once, before the first iteration.
-+repeatStmt
-+    : REPEAT clauseExpression suite     // Stmt::Repeat
-+    ;
++## Size and emptiness method aliases
 +
- tryStmt
-     : TRY body lineSeparator* CATCH (LPAREN name RPAREN | name)? body
-     ;
-@@ -748,9 +755,9 @@ atVariable
-  *   of a comprehension have no THIS receiver, so their reads keep the
-  *   accepted error; a comprehension's source and a quantified condition
-  *   keep THIS. A classBody inside such a body has THIS again.
-- * - The NUC 93 probes of whileStmt and supposeStmt headers read THIS
-- *   receivers but no assignment receivers, as the accepted probes read the
-- *   written-out 'THIS DOT property'.
-+ * - The NUC 93 probes of whileStmt, repeatStmt and supposeStmt headers read
-+ *   THIS receivers but no assignment receivers, as the accepted probes read
-+ *   the written-out 'THIS DOT property'.
-  */
- receiverRead
-     : DOT property                      // Expr::Member over the receiver path
-@@ -790,9 +797,10 @@ quantified
-  *   "Use all instead of every inside if" at the EVERY (NUC 98 revision 2).
-  *   The other two words are unchanged there. The rule decides no parse: it
-  *   is checked on the reading the parser keeps, so a tentative
-- *   destructuring value, whileStmt condition, premise or Python conditional
-- *   that holds such an EVERY and is dropped, or a parse pass that fails,
-- *   leaves every decision as before; see the parse-pass contract.
-+ *   destructuring value, whileStmt condition, repeatStmt count, premise or
-+ *   Python conditional that holds such an EVERY and is dropped, or a parse
-+ *   pass that fails, leaves every decision as before; see the parse-pass
-+ *   contract.
-  */
- spelledClass
-     : (ANY | ALL) name                  // Expr::ClassRef
-@@ -869,6 +877,7 @@ name
- enumName
-     : NAME
-     | WHILE
-+    | REPEAT
-     | ENUM
-     | EXTENDS
-     | IS
-@@ -952,6 +961,7 @@ TRY              : 'try';
- TYPEOF           : 'typeof';
++- [NUC 116](docs/nuc-0116.md) adds the size and emptiness methods that
++  Java, Kotlin, C++ and Rust write, as aliases of the accepted `length` on
++  lists, class populations and strings. They join the accepted aliases
++  `append`, `find`, `contains`, `lower`, `upper`, `strip`, `substr`,
++  `startswith`, `endswith` and `join`. No token, keyword, syntax tree node,
++  error type or message format is added.
++- `RECEIVER.size()` and `RECEIVER.len()` are `RECEIVER.length`,
++  `RECEIVER.isEmpty()` and `RECEIVER.is_empty()` are `RECEIVER.length == 0`,
++  and `RECEIVER.isNotEmpty()` is `RECEIVER.length > 0`. A string also takes
++  `TEXT.length()`, as lists and populations already do. A string's size
++  counts its characters, Unicode scalar values, as `TEXT.length` does, so
++  `"Zoë".size()` is `3`.
++- **Receivers.** A list however it is reached, including a literal, a
++  property, a call or query result, a `.value` snapshot and a list read from
++  a state version; a declared class's instances, named by the class, by a
++  variable or parameter that holds it, or by `$Name` outside a class-level
++  rule or conditional, where a class without instances has size `0`; and a
++  string however it is reached, including a template and the empty string.
++- **Evaluation.** The receiver is read first, then every argument once, left
++  to right, as for every call. The values are ignored, so `xs.size(1)` is
++  `xs.length`, and an argument's error, such as
++  `ReferenceError("missing is not defined")`, propagates before the alias
++  runs.
++- **Live.** A declaration or class-level rule that calls an alias depends on
++  what its receiver reads, as the accepted spelling does:
++  `idle = jobs.isEmpty()` follows pushes, pops, shifts and replacements of
++  `jobs`, `orders = Order.size()` follows new and deleted instances, and
++  `$Sensor.silent = $Sensor.readings.is_empty()` follows each sensor's
++  readings. Errors roll back through the existing transaction.
++- **Rendering.** Statements, `why`, `affects`, `--graph` and graph keys show
++  the call as written. Its dependencies are those of the accepted spelling,
++  so `why n` after `n = xs.size()` shows `n` read from `xs`, as after
++  `n = xs.length`.
++- **Unchanged.** Only calls of the six names on a list, population or
++  string receiver change; each raised
++  `TypeError("<receiver>.<name> is not a function")`, or an argument's error
++  first, which stays.
++  - Numbers, booleans, functions, dates and regular expressions keep their
++    `TypeError`, as their `length()` does, although their `length` reads
++    undefined: `(5).size()` raises `TypeError("number.size is not a function")`.
++  - Objects and instances keep their routing: instance methods and callable
++    properties named `size`, `len`, `isEmpty`, `is_empty`, `isNotEmpty` or
++    `length` keep running, a property that is not a function keeps its
++    `TypeError`, and a missing member stays undefined. Inside a class-level
++    rule or conditional `$Name` is the instance, so `$Name.size()` there
++    keeps calling the instance's method or giving undefined.
++  - On a class name the population alias wins over an instance method of
++    the same name, as `Name.length()` already does, and instances keep
++    calling the method.
++  - A class declared as `Math`, `Number`, `String` or `Date` reaches that
++    namespace's static methods, so `Math.size()` keeps raising
++    `TypeError("Math.size is not a function")`, as `Math.length()` does.
++    `Boolean`, `Class`, `Object`, `List`, `Function`, `JSON` and `RegExp`,
++    without a declared class of that name, keep
++    `ReferenceError("<name> is not defined")`, as their `length()` does.
++  - A `null` or undefined receiver stays undefined without evaluating the
++    arguments. Reads without a call, such as `xs.size`, stay undefined, and
++    `xs.size = 2` keeps raising `TypeError("Cannot assign 'size' on list")`.
++    Functions named `size`, `len`, `isEmpty`, `is_empty` or `isNotEmpty`
++    keep their calls, such as `size(xs)`.
++- **Source-language differences.** These stay out: Kotlin's `size` and
++  Swift's `isEmpty` read as properties, while `xs.size` and `xs.isEmpty`
++  without a call stay undefined; Java's `isEmpty()` on maps and other
++  objects, which keep their routing; C++'s `empty()`; and Python's
++  `len(xs)`. Every receiver counts characters, where Java counts UTF-16 code
++  units and C++ and Rust count bytes, so `"Zoë".len()` is `3` where Rust
++  gives `4`.
++- The three entries beginning
++  `Nucleoid sizes lists, populations and strings with size and len`
++  through `Nucleoid rolls back failed updates through size and emptiness aliases`
++  specify the executable behavior. `tests/size_and_emptiness_aliases.rs`
++  executes the rest.
++
+ ## Reactive string padding
  
- WHILE            : 'while';
-+REPEAT           : 'repeat';
- ENUM             : 'enum';
- EXTENDS          : 'extends';
- ASSERT           : 'assert';
+
 ```
 
 #### Recent Merged Pull Requests:
@@ -1960,52 +2082,22 @@ while, raises TypeError(
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 115 Count-Controlled Repeat Loops
+## X. Draft NUC 117 First and Last Element Methods
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c3a013a9`: NUC 115 Count-Controlled Repeat Loops. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `db6acd1d`: Draft NUC 117 First and Last Element Methods. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## Repeat loops
-
-**Repeat loops advance a world model a counted number of steps**
-
-```nuc
-class Cup(temp):
-    this.temp = temp
-tea = Cup(90)
-room = 20
-cool = tea.temp < 40
-minutes = 3
-repeat minutes:
-    tea.temp = tea.temp - (tea.temp - room) / 2
-assert(tea.temp, 28.75)
-assert(cool, true)
-```
-
-- [NUC 115](docs/nuc-0115.md) adds `repeat COUNT:` with an indented or
-  same-line body, the count-controlled sibling of `while`. The count is read
-  once, before the first iteration, and each iteration's changes, with what
-  they propagate to standing rules such as `cool`, are live before the next
-  iteration runs.
-- Each minute the tea loses half of its difference from the room, so three
-  minutes take it from `90` to `28.75`. The loop runs once, imperatively: it
-  leaves no standing rule and does not run again when `minutes` changes
-  later. A fraction truncates, a count of zero or less runs nothing, and a
-  count of more than 100,000 iterations raises
-  `TypeError("Repeat count is too large")` before the first one.
-  `repeat` stays an ordinary name everywhere else, and `"ab".repeat(2)` is
-  still `"abab"`. See the
-  [root contract](nucleoid.spec.md#count-controlled-repeat-loops).
-
+| [117](nuc-0117.md) | First and Last Element Methods | Draft |
+| [117](nuc-0117.md) | First and Last Element Methods | Standards Track | Language compatibility | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2015,7 +2107,7 @@ assert(cool, true)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c3a013a9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `db6acd1d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

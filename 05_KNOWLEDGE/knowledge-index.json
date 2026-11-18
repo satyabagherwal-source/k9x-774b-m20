@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T06:41:29.083Z",
-  "total_verified_learnings": 8990,
+  "last_updated": "2026-11-18T06:50:19.698Z",
+  "total_verified_learnings": 8991,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20959,
+  "total_items": 20976,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -213089,16 +213089,27 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
-      "content_hash": "cfd88c0efc3d62cd133926f2feeea8ab865a51259d0d61ee1e9f3246523a4096",
+      "content_hash": "40be959b3c633a7efccc512fc51becd1101035b727c5a6a5e3d56ffb9429e4a4",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 9144,
+          "title": "Non-Uniform MoE Tensor Quantization Homogeneity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9145,
+          "title": "Gumbel-Softmax Quantization (GSQ) Dynamic Grid Continuity Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T19:39:54.189Z",
+      "verified_at": "2026-11-18T06:50:13.833Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228230,8 +228241,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "7bc9f013",
-      "content_hash": "215d9286690704e8c272e1b9fdb337e8a26658b367511443917a4c3f5db9d338",
+      "source_version": "db6acd1d",
+      "content_hash": "8c4ca953c0bd50760a51c3ae8750b677a854f67196b5e4e57ad6e543a44ab4a4",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -228319,6 +228330,11 @@
           "number": 9073,
           "title": "Draft NUC 115 Count-Controlled Repeat Loops",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9143,
+          "title": "Draft NUC 117 First and Last Element Methods",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228326,7 +228342,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T03:39:36.865Z",
+      "verified_at": "2026-11-18T06:49:19.390Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228368,10 +228384,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "7bc9f013",
-      "content_hash": "8e2a688ff5836e1d9e32a2a5d9e9687fe2e85ef18441dcc75aac9657339c2cba",
+      "source_version": "db6acd1d",
+      "content_hash": "7022cc73a93938b20f31a109a8f85f37d3c4ae91038b16c8d68853954a062678",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T03:39:37.580Z"
+      "persisted_at": "2026-11-18T06:49:19.876Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -228380,10 +228396,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "7bc9f013",
-      "content_hash": "329bc2f6ccf7251b97eff841065d744b626cfbfb6af92708fd0d0934acf314da",
+      "source_version": "db6acd1d",
+      "content_hash": "d40545cbde56662cdb080d4d05c3adb3ff0c87c89ebcae23e3231cfc06476ebf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T03:39:37.754Z"
+      "persisted_at": "2026-11-18T06:49:20.003Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -234665,8 +234681,8 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "9dd4c570",
-      "content_hash": "9ed3fc04618cb19a54ac19d4bd17c911730eeab617fb5900de0ede4120402533",
+      "source_version": "bc509bd5",
+      "content_hash": "a1d392b6b9502f97193f5d3fa593f41c2f46db97a5567088935e93c7a013673e",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
@@ -234679,6 +234695,11 @@
           "number": 8688,
           "title": "silent `up --plan` failure for whole-resource stack outputs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": "EXISTING",
+          "title": "Update vulnerable dependencies [SECURITY]",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234686,7 +234707,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T02:06:19.571Z",
+      "verified_at": "2026-11-18T06:49:13.296Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234728,10 +234749,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-pulumi-pulumi-content-information-intelligence-pulumi-pulumi-core-invariants.md",
       "title": "Content & Information Intelligence: pulumi/pulumi Core Invariants",
       "repository": "pulumi/pulumi",
-      "source_version": "9dd4c570",
-      "content_hash": "fc4088b8c7ab3d0a91e6ceccf9f656137b5cc52d6e040a8dcc08ad30f5236f2c",
+      "source_version": "bc509bd5",
+      "content_hash": "d41f9b4960f4e19afab204a13f84c4ddccc30e1d1e5022c466b63523f4d81e24",
       "domain_letter": "I",
-      "persisted_at": "2026-11-16T02:06:20.009Z"
+      "persisted_at": "2026-11-18T06:49:13.809Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi",
@@ -234740,10 +234761,10 @@
       "relative_path": "08_VERIFICATION/pulumi-pulumi-verification-protocol-empirical-defect-shield-for-pulumi-pulumi.md",
       "title": "Verification Protocol: Empirical Defect Shield for pulumi/pulumi",
       "repository": "pulumi/pulumi",
-      "source_version": "9dd4c570",
-      "content_hash": "402496f3fb5c121a7a3500e86144f730f339308964944cba5b47268644859d42",
+      "source_version": "bc509bd5",
+      "content_hash": "7393a9abb783c70dbf288d73fa37401900ec6d8d98022600f0978a6a940015f7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T02:06:20.126Z"
+      "persisted_at": "2026-11-18T06:49:13.937Z"
     },
     "learn-github-ytsaurus-ytsaurus": {
       "learning_id": "learn-github-ytsaurus-ytsaurus",
@@ -234858,9 +234879,9 @@
       "title": "Content & Information Intelligence: pulumi-pulumi-learnings Core Invariants",
       "repository": "pulumi-pulumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "d83b7bf92502d4559be6df079c9f1129b996b5fae62e3f3203fed83eca8ca306",
+      "content_hash": "297c6681e6c97630010158c22778c6aa6a16025906e2f394006c0c7a8db6167c",
       "domain_letter": "I",
-      "persisted_at": "2026-11-16T02:06:37.382Z"
+      "persisted_at": "2026-11-18T06:50:18.781Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pulumi-pulumi-learnings",
@@ -234870,9 +234891,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pulumi-pulumi-learnings",
       "repository": "pulumi-pulumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "e45206c40cf6c854362520c21eceeb2ebbec54f157a1161fd1a6cdd09d29a1e2",
+      "content_hash": "f6e76b11b2a97930e321382d1d8a42a09991b0c9d57d51d89bd1891d727a6f6e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T08:46:52.650Z"
+      "persisted_at": "2026-11-18T06:50:18.922Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
@@ -252209,13 +252230,13 @@
       "item_id": "candidate_directive-update-vulnerable-dependencies-security",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-82EH-update-vulnerable-dependencies-security.md",
-      "title": "update vulnerable dependencies [security]",
-      "repository": "crossplane/crossplane",
-      "source_version": "0bc4615f",
-      "content_hash": "483d23b02cb07a7507bb38807f93fa65216642fa076ffe3587d78fe22cc654c3",
+      "relative_path": "11_INBOX/candidate-directives/CD-HVVG-update-vulnerable-dependencies-security.md",
+      "title": "Update vulnerable dependencies [SECURITY]",
+      "repository": "pulumi-pulumi-learnings",
+      "source_version": "HEAD",
+      "content_hash": "768e058c70bb45c587e60642eb3f1df958676ce385e7776a94c412af14c6e6a3",
       "domain_letter": "I",
-      "persisted_at": "2026-11-16T03:23:22.798Z"
+      "persisted_at": "2026-11-18T06:50:18.654Z"
     },
     "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-robots-txt-tester-learnings": {
       "item_id": "domain_intelligence-search-distribution-intelligence-crawlcove-crawlcove-robots-txt-tester-learnings",
@@ -282394,6 +282415,239 @@
       "content_hash": "a68a934f3bb5b8f01e6449fb8d415eb86ee853252cf83d048b62640fe7b2d671",
       "domain_letter": "G",
       "persisted_at": "2026-11-18T06:41:27.328Z"
+    },
+    "learn-github-sqlpage-sqlpage": {
+      "learning_id": "learn-github-sqlpage-sqlpage",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "sqlpage/SQLPage",
+      "repository": "sqlpage/SQLPage",
+      "slug": "sqlpage-sqlpage",
+      "platform": "github",
+      "source_url": "https://github.com/sqlpage/SQLPage",
+      "source_version": "1fe252ca",
+      "content_hash": "4882323f14429fae10178e63fc6856f3e9c4e152f53a21e6610729f957faeea1",
+      "dossier_path": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9142,
+          "title": "Let big number titles and descriptions wrap",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T06:49:17.468Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9142": {
+      "learning_id": "rule-9142",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9142,
+      "title": "Let big number titles and descriptions wrap",
+      "source_url": "https://github.com/sqlpage/SQLPage",
+      "source_version": "1fe252ca",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T06:49:17.468Z"
+    },
+    "candidate_directive-let-big-number-titles-and-descriptions-wrap": {
+      "item_id": "candidate_directive-let-big-number-titles-and-descriptions-wrap",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HWHG-let-big-number-titles-and-descriptions-wrap.md",
+      "title": "Let big number titles and descriptions wrap",
+      "repository": "sqlpage-sqlpage-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0e443f449098f4dcc34422f4dae5bdfab6185b79cac5a7be8ca3b9ba857929b8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T06:50:19.445Z"
+    },
+    "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sqlpage-sqlpage-architecture-intelligence-sqlpage-sqlpage-core-invariants.md",
+      "title": "Architecture Intelligence: sqlpage/SQLPage Core Invariants",
+      "repository": "sqlpage/SQLPage",
+      "source_version": "1fe252ca",
+      "content_hash": "7d0caf2fb61d9bbcedab22a33dd9ef6f95460d66d9b08201a851cad903df50b0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T06:49:17.944Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-sqlpage-sqlpage": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sqlpage-sqlpage",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/sqlpage-sqlpage-verification-protocol-empirical-defect-shield-for-sqlpage-sqlpag.md",
+      "title": "Verification Protocol: Empirical Defect Shield for sqlpage/SQLPage",
+      "repository": "sqlpage/SQLPage",
+      "source_version": "1fe252ca",
+      "content_hash": "6efa2ddc746d554217afa466dcd82f6b717e32225cccc2ca54e30c4c5bc4cbed",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T06:49:18.072Z"
+    },
+    "rule-9143": {
+      "learning_id": "rule-9143",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9143,
+      "title": "Draft NUC 117 First and Last Element Methods",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "db6acd1d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T06:49:19.390Z"
+    },
+    "candidate_directive-draft-nuc-117-first-and-last-element-methods": {
+      "item_id": "candidate_directive-draft-nuc-117-first-and-last-element-methods",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GMF1-draft-nuc-117-first-and-last-element-methods.md",
+      "title": "Draft NUC 117 First and Last Element Methods",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "db6acd1d",
+      "content_hash": "6e675921eae4e3ae9cf15b21e4be4696c49b399aa13ac248cc656737adc991ad",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T06:49:19.745Z"
+    },
+    "rule-9144": {
+      "learning_id": "rule-9144",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9144,
+      "title": "Non-Uniform MoE Tensor Quantization Homogeneity Invariant",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T06:50:13.833Z"
+    },
+    "rule-9145": {
+      "learning_id": "rule-9145",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9145,
+      "title": "Gumbel-Softmax Quantization (GSQ) Dynamic Grid Continuity Invariant",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T06:50:13.833Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-technical-construction-intelligen.md",
+      "title": "Technical Construction Intelligence: ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF Core Invariants",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
+      "content_hash": "73cf84f25ea6675728c3d1b5db2caca67d45ee07c4099eb33d22591b42c63b92",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T06:50:14.339Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-ista-daslab-qwen3-8-flash-next": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ista-daslab-qwen3-8-flash-next",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-verification-protocol-empirical-d.md",
+      "title": "Verification Protocol: Empirical Defect Shield for ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
+      "content_hash": "52045aa507cabd75b53a9a7dca6b5b33342bbb9c6233465f8325dee0ee413b05",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T06:50:14.470Z"
+    },
+    "candidate_directive-non-uniform-moe-tensor-quantization-homogeneity-invariant": {
+      "item_id": "candidate_directive-non-uniform-moe-tensor-quantization-homogeneity-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HV1K-non-uniform-moe-tensor-quantization-homogeneity-invariant.md",
+      "title": "Non-Uniform MoE Tensor Quantization Homogeneity Invariant",
+      "repository": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d7ac2e1b522d6828c6683ccb973bf076a0a53e52e33bccc9430e9dff858654ac",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T06:50:17.577Z"
+    },
+    "candidate_directive-gumbel-softmax-quantization-gsq-dynamic-grid-continuity-invariant": {
+      "item_id": "candidate_directive-gumbel-softmax-quantization-gsq-dynamic-grid-continuity-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HV1K-gumbel-softmax-quantization-gsq-dynamic-grid-continuity-invariant.md",
+      "title": "Gumbel-Softmax Quantization (GSQ) Dynamic Grid Continuity Invariant",
+      "repository": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f235663ab9614f6e0f6ed62eda2f9c81d0c8c4504306f62cca15a4a1af8c02d2",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T06:50:17.709Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gg": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gg",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-learnings-technical-construction-.md",
+      "title": "Technical Construction Intelligence: hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings Core Invariants",
+      "repository": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "25f0afbc4df20be2705ecf2fd94a56ab7992e771698c5ed2f3e91d59374e33ce",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T06:50:17.847Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-ista-daslab-qwen3-8-flash-n": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-ista-daslab-qwen3-8-flash-n",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-learnings-verification-protocol-e.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings",
+      "repository": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "828b2b946d95caa3369044826653208bb98a3b75356ed5eabd3f765f29fb9464",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T06:50:17.975Z"
+    },
+    "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sqlpage-sqlpage-learnings-architecture-intelligence-sqlpage-sqlpage-learnings-co.md",
+      "title": "Architecture Intelligence: sqlpage-sqlpage-learnings Core Invariants",
+      "repository": "sqlpage-sqlpage-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eeb404e0e190fd0ff13bfe3e85f62c315d66f83ab308440b166bdd2eecd403d5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T06:50:19.574Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-sqlpage-sqlpage-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sqlpage-sqlpage-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/sqlpage-sqlpage-learnings-verification-protocol-empirical-defect-shield-for-sqlp.md",
+      "title": "Verification Protocol: Empirical Defect Shield for sqlpage-sqlpage-learnings",
+      "repository": "sqlpage-sqlpage-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c5e8262e02119cade3a7a452c0b13cdbd6fafeb667aeb0aedb0c5402fe332768",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T06:50:19.698Z"
     }
   },
   "ai-builder-brain": {

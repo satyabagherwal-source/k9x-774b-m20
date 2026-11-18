@@ -10878,3 +10878,7 @@ Every entry in this ledger must capture:
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `a1246154` | Multi-dimensional audit evidence | 2026-11-18T06:32:38.661Z |
 | `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-18T06:41:15.131Z |
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `44c58e8c` | Multi-dimensional audit evidence | 2026-11-18T06:41:17.223Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `bc509bd5` | Multi-dimensional audit evidence | 2026-11-18T06:49:13.467Z |
+| `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `1fe252ca` | Multi-dimensional audit evidence | 2026-11-18T06:49:17.639Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `db6acd1d` | Multi-dimensional audit evidence | 2026-11-18T06:49:19.562Z |
+| `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-18T06:50:14.005Z |

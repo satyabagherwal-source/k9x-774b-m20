@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T06:41:28.728Z",
+  "last_updated": "2026-11-18T06:50:19.445Z",
   "directives": [
     {
       "id": "CD-001",
@@ -27791,6 +27791,77 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9B2D16-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-HVVG",
+      "directive_title": "Update vulnerable dependencies [SECURITY]",
+      "source_repo": "pulumi-pulumi-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-HVVG-update-vulnerable-dependencies-security.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-HWHG",
+      "directive_title": "Let big number titles and descriptions wrap",
+      "source_repo": "sqlpage-sqlpage-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-HWHG-let-big-number-titles-and-descriptions-wrap.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-GMF1",
+      "directive_title": "Draft NUC 117 First and Last Element Methods",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "db6acd1d",
+      "staged_file": "11_INBOX/candidate-directives/CD-GMF1-draft-nuc-117-first-and-last-element-methods.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-EC8E0D",
+      "directive_title": "GGUF Alignment Mismatch in Multimodal Projection Tensor Tables (BUG-GGUF-ALIGN-01)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EC8E0D-gguf-alignment-mismatch-in-multimodal-pr.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-HV1K",
+      "directive_title": "Gumbel-Softmax Quantization (GSQ) Dynamic Grid Continuity Invariant",
+      "source_repo": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-HV1K-gumbel-softmax-quantization-gsq-dynamic-grid-continuity-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-EB8227",
+      "directive_title": "Update vulnerable dependencies [SECURITY]",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pulumi-pulumi",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EB8227-update-vulnerable-dependencies-security-.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-REV-E0EFF5",
+      "directive_title": "Let big number titles and descriptions wrap",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sqlpage-sqlpage",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E0EFF5-let-big-number-titles-and-descriptions-w.md",
       "staged_date": "2026-11-18"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T06:41:17.234Z",
+  "last_updated": "2026-11-18T06:50:14.013Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -770,14 +770,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-      "content_hash": "cfd88c0efc3d62cd133926f2feeea8ab865a51259d0d61ee1e9f3246523a4096",
-      "verified_at": "2026-11-13T19:39:54.419Z",
+      "content_hash": "40be959b3c633a7efccc512fc51becd1101035b727c5a6a5e3d56ffb9429e4a4",
+      "verified_at": "2026-11-18T06:50:14.013Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T19:39:54.419Z"
+      "last_updated": "2026-11-18T06:50:14.013Z"
     },
     "unsloth/Qwen3.8-27B-GGUF": {
       "repository": "unsloth/Qwen3.8-27B-GGUF",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "215d9286690704e8c272e1b9fdb337e8a26658b367511443917a4c3f5db9d338",
-      "verified_at": "2026-11-18T03:39:37.151Z",
+      "content_hash": "8c4ca953c0bd50760a51c3ae8750b677a854f67196b5e4e57ad6e543a44ab4a4",
+      "verified_at": "2026-11-18T06:49:19.569Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T03:39:37.151Z"
+      "last_updated": "2026-11-18T06:49:19.569Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -7188,17 +7188,17 @@
     "pulumi/pulumi": {
       "repository": "pulumi/pulumi",
       "pipeline_mode": "CLOUD_HARVEST",
-      "stage": "PROMOTED",
-      "status": "FAILED_PERSISTENCE",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "7ee1793c509840f8babe55dc3e62987d633850f5c593a2f7e76cc5eee797611f",
-      "verified_at": null,
+      "content_hash": "a1d392b6b9502f97193f5d3fa593f41c2f46db97a5567088935e93c7a013673e",
+      "verified_at": "2026-11-18T06:49:13.474Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
-      "knowledge_index_updated": false,
-      "last_updated": "2026-11-17T08:42:32.976Z"
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-18T06:49:13.474Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",
@@ -7206,14 +7206,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sqlpage-sqlpage",
-      "content_hash": "fbf2c763987b5e208cab73d87483a4b0f34afafffea8f9e8af8afc54ea6b18a3",
-      "verified_at": "2026-11-13T08:13:00.496Z",
+      "content_hash": "4882323f14429fae10178e63fc6856f3e9c4e152f53a21e6610729f957faeea1",
+      "verified_at": "2026-11-18T06:49:17.646Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T08:13:00.496Z"
+      "last_updated": "2026-11-18T06:49:17.646Z"
     },
     "DouyinFE/semi-design": {
       "repository": "DouyinFE/semi-design",

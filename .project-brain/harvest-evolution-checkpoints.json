@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T06:41:29.237Z",
+  "last_updated": "2026-11-18T06:50:19.809Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T04:11:36.483Z",
@@ -668,7 +668,7 @@
       "staged_for_review": 1
     },
     "sqlpage-sqlpage-learnings.md": {
-      "processed_at": "2026-11-13T08:13:20.826Z",
+      "processed_at": "2026-11-18T06:50:19.044Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -998,8 +998,8 @@
       "staged_for_review": 1
     },
     "pulumi-pulumi-learnings.md": {
-      "processed_at": "2026-11-17T08:46:51.548Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T06:50:18.097Z",
+      "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "nvidia-cuda-rust-learnings.md": {
@@ -2098,9 +2098,9 @@
       "staged_for_review": 1
     },
     "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md": {
-      "processed_at": "2026-11-13T19:40:46.216Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-18T06:50:17.401Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "nervjs-taro-learnings.md": {
       "processed_at": "2026-11-17T09:27:26.785Z",
@@ -3403,7 +3403,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1836,
+  "total_dossiers_evaluated": 1839,
   "total_canonical_promoted": 337,
-  "total_staged_for_review": 1416
+  "total_staged_for_review": 1419
 }

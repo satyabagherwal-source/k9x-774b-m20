@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T06:41:26.494Z",
-    "lastVerified": "2026-11-18T06:41:26.494Z",
+    "lastChecked": "2026-11-18T06:50:17.270Z",
+    "lastVerified": "2026-11-18T06:50:17.270Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -468,22 +468,21 @@
     "revisionIdentifier": "99d7433f"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T06:15:33.037Z",
-    "lastVerified": "2026-11-18T06:15:33.037Z",
+    "lastChecked": "2026-11-18T06:49:18.646Z",
+    "lastVerified": "2026-11-18T06:49:18.646Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "215d9286690704e8c272e1b9fdb337e8a26658b367511443917a4c3f5db9d338",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 1,
+    "contentHash": "8c4ca953c0bd50760a51c3ae8750b677a854f67196b5e4e57ad6e543a44ab4a4",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "7bc9f013"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tabbyml-tabby": {
     "name": "tabby",
@@ -833,8 +832,8 @@
     "officialUrl": "https://github.com/DefGuard/defguard",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T01:38:34.446Z",
-    "lastVerified": "2026-11-18T01:38:34.446Z",
+    "lastChecked": "2026-11-18T06:49:08.869Z",
+    "lastVerified": "2026-11-18T06:49:08.869Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-defguard-defguard",
@@ -3026,9 +3025,9 @@
   "rigellute-spotify-tui": {
     "name": "spotify-tui",
     "officialUrl": "https://github.com/Rigellute/spotify-tui",
-    "lastChecked": "2026-11-17T01:15:46.279Z",
+    "lastChecked": "2026-11-18T06:48:58.838Z",
     "revisionIdentifier": "c4dcf6b9",
-    "lastVerified": "2026-11-17T01:15:46.279Z"
+    "lastVerified": "2026-11-18T06:48:58.838Z"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
     "name": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -3585,13 +3584,13 @@
     "officialUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-13T19:39:46.545Z",
-    "lastVerified": "2026-11-13T19:39:46.545Z",
+    "lastChecked": "2026-11-18T06:49:01.676Z",
+    "lastVerified": "2026-11-18T06:49:01.676Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
-    "contentHash": "cfd88c0efc3d62cd133926f2feeea8ab865a51259d0d61ee1e9f3246523a4096",
-    "promotedRulesCount": 0,
+    "contentHash": "40be959b3c633a7efccc512fc51becd1101035b727c5a6a5e3d56ffb9429e4a4",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -5446,22 +5445,21 @@
     "lastVerified": "2026-11-17T20:45:27.908Z"
   },
   "pulumi-pulumi": {
-    "name": "pulumi",
+    "name": "pulumi/pulumi",
     "officialUrl": "https://github.com/pulumi/pulumi",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-17T08:41:17.045Z",
-    "lastVerified": "2026-11-17T08:41:17.045Z",
+    "lastChecked": "2026-11-18T06:49:12.488Z",
+    "lastVerified": "2026-11-18T06:49:12.488Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pulumi-pulumi",
-    "contentHash": "9ed3fc04618cb19a54ac19d4bd17c911730eeab617fb5900de0ede4120402533",
+    "contentHash": "a1d392b6b9502f97193f5d3fa593f41c2f46db97a5567088935e93c7a013673e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "9dd4c570"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "slatedb-slatedb": {
     "name": "slatedb/slatedb",
@@ -5871,22 +5869,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sqlpage-sqlpage": {
-    "name": "SQLPage",
+    "name": "sqlpage/SQLPage",
     "officialUrl": "https://github.com/sqlpage/SQLPage",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-17T07:20:12.725Z",
-    "lastVerified": "2026-11-17T07:20:12.725Z",
+    "lastChecked": "2026-11-18T06:49:16.719Z",
+    "lastVerified": "2026-11-18T06:49:16.719Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sqlpage-sqlpage",
-    "contentHash": "fbf2c763987b5e208cab73d87483a4b0f34afafffea8f9e8af8afc54ea6b18a3",
+    "contentHash": "4882323f14429fae10178e63fc6856f3e9c4e152f53a21e6610729f957faeea1",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "4cb43afc"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "mlua-rs-mlua": {
     "name": "mlua-rs/mlua",
@@ -8312,9 +8309,9 @@
   "mobilenativefoundation-store": {
     "name": "Store",
     "officialUrl": "https://github.com/MobileNativeFoundation/Store",
-    "lastChecked": "2026-11-15T02:14:57.896Z",
+    "lastChecked": "2026-11-18T06:49:03.832Z",
     "revisionIdentifier": "74a5988f",
-    "lastVerified": "2026-11-15T02:14:57.896Z"
+    "lastVerified": "2026-11-18T06:49:03.832Z"
   },
   "volcengine-openviking": {
     "name": "volcengine/OpenViking",

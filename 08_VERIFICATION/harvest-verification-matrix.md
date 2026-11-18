@@ -10845,3 +10845,7 @@
 | `CYCLE-20261118-V5Z3` | `2026-11-18T06:32:38.655Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9140` | Yes (`38a4a887...`) |
 | `CYCLE-20261118-68HJ` | `2026-11-18T06:41:15.127Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md` | Yes (`fbe1e4c9...`) |
 | `CYCLE-20261118-6A3M` | `2026-11-18T06:41:17.218Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9141` | Yes (`62229382...`) |
+| `CYCLE-20261118-GHKN` | `2026-11-18T06:49:13.463Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`a1d392b6...`) |
+| `CYCLE-20261118-GKSJ` | `2026-11-18T06:49:17.635Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9142` | Yes (`4882323f...`) |
+| `CYCLE-20261118-GM9Y` | `2026-11-18T06:49:19.558Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9143` | Yes (`8c4ca953...`) |
+| `CYCLE-20261118-HSA9` | `2026-11-18T06:50:14.001Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9144, Rule 9145` | Yes (`40be959b...`) |

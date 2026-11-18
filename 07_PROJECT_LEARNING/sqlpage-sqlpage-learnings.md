@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source**: github ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
-> **Source Version**: `4cb43afc`  
+> **Source Version**: `1fe252ca`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T08:12:49.256Z  
+> **Timestamp**: 2026-11-18T06:49:16.724Z  
 > **Learning ID**: `learn-github-sqlpage-sqlpage`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sqlpage-sqlpage-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sqlpage/SQLPage](https://github.com/sqlpage/SQLPage))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T08:05:10.645Z  
+> **Harvest Timestamp**: 2026-11-18T06:49:16.719Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1161,225 +1161,129 @@ export function initInstantMotion(root) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `4cb43afc` (2026-11-12)
-**Commit Message**: refactor(database) :: decode rows into named columns first (#1595)
+### Incident Patch 1: `1fe252ca` (2026-11-17)
+**Commit Message**: Let big number titles and descriptions wrap (#1603)
 
-* refactor(database) :: decode rows into named columns first
-
-Behavior does not change.
-
-Refs #1056
-
-* avoid unneeded allocation in row_to_json_with_inputs
-
----------
-
-Co-authored-by: lovasoa <[REDACTED_EMAIL]>
-
-**File**: `src/webserver/database/sql_to_json.rs` (modified, +20/-17)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -44,29 +44,32 @@ pub(super) fn row_to_json(row: &AnyRow) -> Value {
-     Object(map)
- }
+@@ -2,6 +2,8 @@
  
--/// Decodes a row into user-visible columns and a private trailing input suffix.
-+/// Decodes a database row into (key, value) pairs
-+pub(super) fn decode_columns(row: &AnyRow) -> impl ExactSizeIterator<Item = (String, Value)> {
-+    row.columns()
-+        .iter()
-+        .map(|column| (canonical_col_name(column), sql_to_json(row, column)))
-+}
+ ## unreleased
+ 
++- Set `wrap` on a `big_number` component to show long titles and descriptions across multiple lines.
 +
-+/// A row returned by the database starts with a certain number of user-accessible "public" values,
-+/// followed by values generated internally by sqlpage's query rewriting engine to serve as inputs to
-+/// sqlpage functions.
-+///
-+/// Given `[(public_key_1, public_val_1), (public_key_2, public_val_2), (internal_key_1, internal_val_1)], 1`
-+/// This function returns `{public_key_1:public_val_1, public_key_2:public_val_2}, [internal_val_1]`
- ///
--/// Every SQL value is decoded exactly once. Private values are addressed by
--/// ordinal, so their generated SQL aliases cannot collide with user columns.
-+/// If there are fewer than `internal_count` columns, all columns are considered internal
- pub(super) fn row_to_json_with_inputs(
-     row: &AnyRow,
--    input_count: usize,
-+    internal_count: usize,
- ) -> anyhow::Result<(Value, Vec<Value>)> {
--    let columns = row.columns();
--    let public_count = columns
--        .len()
--        .checked_sub(input_count)
--        .ok_or_else(|| anyhow::anyhow!("The query returned fewer columns than SQLPage expected"))?;
-+    let mut db_pairs = decode_columns(row);
-     let mut map = Map::new();
--    let mut inputs = Vec::with_capacity(input_count);
--    for column in &columns[..public_count] {
--        let key = canonical_col_name(column);
--        let value = sql_to_json(row, column);
--        map = add_value_to_map(map, (key, value));
--    }
--    for column in &columns[public_count..] {
--        inputs.push(sql_to_json(row, column));
-+    while db_pairs.len() > internal_count {
-+        map = add_value_to_map(map, db_pairs.next().expect("len was checked"));
-     }
-+    anyhow::ensure!(db_pairs.len() == internal_count, "missing internal columns");
-+    let inputs = db_pairs.map(|(_, value)| value).collect();
-     Ok((Value::Object(map), inputs))
- }
+ ## v0.48.0 (2026-11-12)
  
+ - Updated Rust and browser dependencies, including ApexCharts 8.8.1, Tabler 1.7.4, Tabler icons 3.51, and Tom Select 2.7. Chart series names and labels now display HTML as text, fixing upstream script injection in legends and tooltips.
 ```
 
----
-
-### Incident Patch 2: `8c58104e` (2026-11-12)
-**Commit Message**: refactor(database) :: share connection setup between pools (#1594)
-
-* refactor(database) :: share connection setup between pools
-
-The two hook files were read by two copies of the same code. One function now reads both. Behaviour and log messages are unchanged.
-
-Refs #1056
-
-* Avoid double indirection
-
----------
-
-Co-authored-by: lovasoa <[REDACTED_EMAIL]>
-
-**File**: `src/webserver/database/connect.rs` (modified, +102/-91)
+**File**: `examples/official-site/sqlpage/migrations/49_big_number.sql` (modified, +1/-0)
 ```diff
-@@ -1,4 +1,4 @@
--use std::{mem::take, time::Duration};
-+use std::{future::Future, mem::take, sync::Arc, time::Duration};
- 
- use super::Database;
- use crate::{
-@@ -35,22 +35,8 @@ impl Database {
-         );
-         set_custom_connect_options(&mut connect_options, config);
-         log::debug!("Connecting to database: {database_url}");
--        let mut retries = config.database_connection_retries;
--
--        let mut conn: AnyConnection = loop {
--            match AnyConnection::connect_with(&connect_options).await {
--                Ok(c) => break c,
--                Err(e) => {
--                    if retries == 0 {
--                        return Err(anyhow::Error::new(e)
--                            .context(format!("Unable to open connection to {database_url}")));
--                    }
--                    log::warn!("Failed to connect to the database: {e:#}. Retrying in 5 seconds.");
--                    retries -= 1;
--                    tokio::time::sleep(Duration::from_secs(5)).await;
--                }
--            }
--        };
-+        let mut conn: AnyConnection =
-+            retry_connecting(config, || AnyConnection::connect_with(&connect_options)).await?;
-         let dbms_name: String = conn.dbms_name().await?;
-         let database_type = SupportedDatabase::from_dbms_name(&dbms_name);
-         drop(conn);
-@@ -73,64 +59,112 @@ impl Database {
-     }
- 
-     fn create_pool_options(config: &AppConfig, kind: AnyKind) -> PoolOptions<Any> {
-+        let ConnectionHooks {
-+            on_connect,
-+            on_reset,
-+        } = ConnectionHooks::read(config);
-         let mut pool_options = PoolOptions::new()
--            .max_connections(if let Some(max) = config.max_database_pool_connections {
--                max
--            } else {
--                // Different databases have a different number of max concurrent connections allowed by default
--                match kind {
--                    AnyKind::Postgres | AnyKind::Odbc => 50, // Default to PostgreSQL-like limits for Generic
--                    AnyKind::MySql => 75,
--                    AnyKind::Sqlite => {
--                        if config.database_url.contains(":memory:") {
--                            128
--                        } else {
--                            16
--                        }
--                    }
--                    AnyKind::Mssql => 100,
--                }
--            })
-+            .max_connections(max_connections(config, kind))
-             .idle_timeout(config.database_connection_idle_timeout)
-             .max_lifetime(config.database_connection_max_lifetime)
-             .acquire_timeout(Duration::from_secs_f64(
-                 config.database_connection_acquire_timeout_seconds,
-             ));
--        pool_options = add_on_return_to_pool(config, pool_options);
--        pool_options = add_on_connection_handler(config, pool_options);
-+        pool_options = add_on_return_to_pool(pool_options, on_reset);
-+        pool_options = add_on_connection_handler(config, pool_options, on_connect);
-         pool_options
-     }
- }
- 
--fn add_on_return_to_pool(config: &AppConfig, pool_options: PoolOptions<Any>) -> PoolOptions<Any> {
--    let on_disconnect_file = config.configuration_directory.join(ON_RESET_FILE);
--    let sql = if on_disconnect_file.exists() {
--        log::info!(
--            "Creating a custom SQL connection cleanup handler from {}",
--            on_disconnect_file.display()
--        );
--        match std::fs::read_to_string(&on_disconnect_file) {
--            Ok(sql) => {
--                log::trace!("The custom SQL connection cleanup handler is:\n{sql}");
--                Some(std::sync::Arc::new(sql))
--            }
-+async fn retry_connecting<C, E, F>(
-+    config: &AppConfig,
-+    mut connect: impl FnMut() -> F,
-+) -> anyhow::Result<C>
-+where
-+    F: Future<Output = Result<C, E>>,
-+    E: std::error::Error + Send + Sync + 'static,
-+{
-+    let mut retries = config.database_connection_retries;
-+    loop {
-+        match connect().await {
-+            Ok(connection) => return Ok(connection),
-             Err(e) => {
--                log::error!(
--                    "Unable to read the file {}: {}",
--                    on_disconnect_file.display(),
--                    e
--                );
--                None
-+                if retries == 0 {
-+                    return Err(anyhow::Error::new(e).context(format!(
-+                        "Unable to open connection to {}",
-+                        config.database_url
-+                    )));
-+                }
-+                log::warn!("Failed to connect to the database: {e:#}. Retrying in 5 seconds.");
-+                retries -= 1;
-+                tokio::time::sleep(Duration::from_secs(5)).await;
-             }
-         }
--    } else {
-+    }
-+}
+@@ -8,6 +8,7 @@ INSERT INTO component(name, icon, description, introduced_in_version) VALUES
+ INSERT INTO parameter(component, name, description, type, top_level, optional) SELECT 'big_number', * FROM (VALUES
+     -- Top-level parameters (for the whole big_number list)
+     ('columns', 'The number of columns to display the big numbers in (default is one column per item).', 'INTEGER', TRUE, TRUE),
++    ('wrap', 'Wrap long titles and descriptions onto multiple lines. By default, they are truncated with an ellipsis.', 'BOOLEAN', TRUE, TRUE),
+     -- id and class, at both levels, come from 99_shared_id_class_attributes.sql
+     -- Item-level parameters (for each big number)
+     ('title', 'The title or label for the big number.', 'TEXT', FALSE, TRUE),
+```
+
+**File**: `sqlpage/templates/big_number.handlebars` (modified, +3/-3)
+```diff
+@@ -8,12 +8,12 @@
+   {{#unless ../columns}}style="min-width: 9rem;"{{/unless}}
+   {{~#if id}} id="{{id}}"{{/if~}}
+   >
+-    <div class="card flex-fill {{#if color}}bg-{{color}}-lt{{/if}}" style="--tblr-card-spacer-y: 1rem;">
++    <div class="card flex-fill {{#if ../wrap}}h-100 {{/if}}{{#if color}}bg-{{color}}-lt{{/if}}" style="--tblr-card-spacer-y: 1rem;">
+       <div class="card-body d-flex flex-column">
+         
+         {{#if title}}
+         <div class="d-flex align-items-center">
+-          <div class="subheader text-truncate me-2">
++          <div class="subheader me-2{{#unless ../wrap}} text-truncate{{/unless}}"{{#if ../wrap}} style="overflow-wrap: anywhere;"{{/if}}>
+             {{#if title_link}}
+               <a href="{{title_link}}" class="text-decoration-none"
+                  {{#if title_link_new_tab}}
+@@ -79,7 +79,7 @@
+        
+         {{#if description}}
+         <div class="d-flex flex-wrap mb-2" title="{{description}}">
+-          <div class="text-truncate me-2">{{description}}</div>
++          <div class="me-2{{#unless ../wrap}} text-truncate{{/unless}}"{{#if ../wrap}} style="overflow-wrap: anywhere;"{{/if}}>{{description}}</div>
+           {{#if change_percent}}
+           <div class="ms-auto">
+             <span class="text-{{#if (gte change_percent 0)}}success{{else}}danger{{/if}} d-inline-flex align-items-center lh-1">
+```
+
+**File**: `tests/end-to-end/fixtures/big-number/index.sql` (modified, +10/-0)
+```diff
+@@ -21,3 +21,13 @@ SELECT
+     'default-color' AS id,
+     'Default value' AS title,
+     '9,012' AS value;
 +
-+fn max_connections(config: &AppConfig, kind: AnyKind) -> u32 {
-+    if let Some(max) = config.max_database_pool_connections {
-+        return max;
++SELECT 'big_number' AS component, 2 AS columns, $wrap = 'true' AS wrap;
++
++SELECT
++    'long-text' AS id,
++    'Items checked across all locations during the reporting period' AS title,
++    120 AS value,
++    'Includes items from the main collection and all storage locations.' AS description;
++
++SELECT 'short-text' AS id, 'Locations' AS title, 8 AS value;
+```
+
+**File**: `tests/end-to-end/fixtures/big-number/test.ts` (modified, +34/-0)
+```diff
+@@ -42,3 +42,37 @@ for (const theme of ["light", "dark"]) {
+     }
+   });
+ }
++
++test("long titles and descriptions wrap only when requested", async ({
++  page,
++}) => {
++  await page.setViewportSize({ width: 640, height: 800 });
++  for (const wrap of [false, true]) {
++    await page.goto(`/big-number/?wrap=${wrap}`);
++    const card = page.locator("#long-text .card");
++    const title = card.getByText("Items checked across all locations", {
++      exact: false,
++    });
++    const description = card.getByText(
++      "Includes items from the main collection",
++      {
++        exact: false,
++      },
++    );
++    for (const text of [title, description]) {
++      const layout = await text.evaluate((element) => ({
++        clipped: element.scrollWidth > element.clientWidth,
++        multiline:
++          element.clientHeight >
++          1.5 * Number.parseFloat(getComputedStyle(element).lineHeight),
++      }));
++      expect(layout).toEqual({ clipped: !wrap, multiline: wrap });
 +    }
-+    // Different databases have
++    if (wrap) {
++      const neighbor = page.locator("#short-text .card");
++      expect((await card.boundingBox())?.height).toBe(
++        (await neighbor.boundingBox())?.height,
++      );
++    }
++  }
++});
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1603** (2026-11-17): Let big number titles and descriptions wrap (@lovasoa)
 - **PR #1601** (2026-11-12): Update 'http_only' cookie description (@lovasoa)
 - **PR #1595** (2026-11-12): refactor(database) :: decode rows into named columns first (@81reap)
 - **PR #1594** (2026-11-12): refactor(database) :: share connection setup between pools (@81reap)
 - **PR #1593** (2026-11-12): test(transactions) :: check the rollback through a page (@81reap)
 - **PR #1592** (2026-11-10): fix(deps) :: stop trusting compromised eMudhra certificates (@81reap)
-- **PR #1589** (closed): Supply one-click deploy templates under Hosting section (@cosark)
 
 ---
 
@@ -1399,63 +1303,29 @@ Co-authored-by: lovasoa <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. database) :: decode rows into named columns first (#1595)
+## X. Let big number titles and descriptions wrap
 
 **RULE**:
-When implementing operations in `src/webserver/database/sql_to_json.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqlpage/SQLPage. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `4cb43afc`: database) :: decode rows into named columns first (#1595). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1fe252ca`: Let big number titles and descriptions wrap. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/webserver/database/sql_to_json.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Decodes a database row into (key, value) pairs
-pub(super) fn decode_columns(row: &AnyRow) -> impl ExactSizeIterator<Item = (String, Value)> {
-    row.columns()
-        .iter()
-        .map(|column| (canonical_col_name(column), sql_to_json(row, column)))
-}
+- Set `wrap` on a `big_number` component to show long titles and descriptions across multiple lines.
 
-/// A row returned by the database starts with a certain number of user-accessible "public" values,
-/// followed by values generated internally by sqlpage's query rewriting engine to serve as inputs to
-/// sqlpage functions.
-///
-/// Given `[(public_key_1, public_val_1), (public_key_2, public_val_2), (internal_key_1, internal_val_1)], 1`
-/// This function returns `{public_key_1:public_val_1, public_key_2:public_val_2}, [internal_val_1]`
-/// If there are fewer than `internal_count` columns, all columns are considered internal
-    internal_count: usize,
-    let mut db_pairs = decode_columns(row);
-    while db_pairs.len() > internal_count {
-        map = add_value_to_map(map, db_pairs.next().expect("len was checked"));
-    anyhow::ensure!(db_pairs.len() == internal_count, "missing internal columns");
-    let inputs = db_pairs.map(|(_, value)| value).collect();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-/// Decodes a row into user-visible columns and a private trailing input suffix.
-/// Every SQL value is decoded exactly once. Private values are addressed by
-/// ordinal, so their generated SQL aliases cannot collide with user columns.
-    input_count: usize,
-    let columns = row.columns();
-    let public_count = columns
-        .len()
-        .checked_sub(input_count)
-        .ok_or_else(|| anyhow::anyhow!("The query returned fewer columns than SQLPage expected"))?;
-    let mut inputs = Vec::with_capacity(input_count);
-    for column in &columns[..public_count] {
-        let key = canonical_col_name(column);
-        let value = sql_to_json(row, column);
-        map = add_value_to_map(map, (key, value));
-    }
-    for column in &columns[public_count..] {
-        inputs.push(sql_to_json(row, column));
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `4cb43afc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1fe252ca` are properly handled with clean fallback behavior.

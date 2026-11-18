@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T06:41:17.229Z",
-  "total_cycles_completed": 10386,
-  "total_learnings_persisted": 10386,
-  "total_rules_promoted": 9893,
+  "last_updated": "2026-11-18T06:50:14.010Z",
+  "total_cycles_completed": 10390,
+  "total_learnings_persisted": 10390,
+  "total_rules_promoted": 9898,
   "history": [
-    {
-      "timestamp": "2026-11-17T17:02:32.366Z",
-      "repository": "aws-amplify/amplify-js",
-      "learningId": "learn-github-aws-amplify-amplify-js",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T17:02:38.480Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T17:11:28.601Z",
-      "repository": "arxanas/git-branchless",
-      "learningId": "learn-github-arxanas-git-branchless",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T17:11:31.632Z",
-      "repository": "unsloth/flint-GGUF",
-      "learningId": "learn-huggingface-unsloth-flint-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T17:11:34.199Z",
       "repository": "berty/berty",
@@ -1403,6 +1375,34 @@
       "repository": "1jehuang/jcode",
       "learningId": "learn-github-1jehuang-jcode",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T06:49:13.471Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T06:49:17.644Z",
+      "repository": "sqlpage/SQLPage",
+      "learningId": "learn-github-sqlpage-sqlpage",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T06:49:19.566Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T06:50:14.010Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]
