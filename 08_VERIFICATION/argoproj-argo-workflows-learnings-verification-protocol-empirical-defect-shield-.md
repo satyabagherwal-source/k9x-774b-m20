@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T15:06:29.010Z",
+  "timestamp": "2026-11-19T02:56:54.828Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-argoproj-argo-workflows-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [argoproj-argo-workflows-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T15:06:29.010Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T02:56:54.828Z`  
 > **Learning ID**: `LEARN-EVO-argoproj-argo-workflows-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
-> **Source Version**: `8c331dbf`  
+> **Source Version**: `73d41c0a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T15:06:23.196Z  
+> **Timestamp**: 2026-11-19T02:56:49.304Z  
 > **Learning ID**: `learn-github-argoproj-argo-workflows`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-workflows](https://github.com/argoproj/argo-workflows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T15:06:23.191Z  
+> **Harvest Timestamp**: 2026-11-19T02:56:04.368Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Workflow Engine for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 17102 stars
+- **Stars / Engagement**: 17104 stars
 
 ---
 
@@ -792,13 +792,11 @@ func githubMatch(secret string, r *http.Request) bool {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #17519** (2026-11-17): **chore(deps): update module golang.org/x/crypto to v0.59.0 [security] (release-4.1)**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [golang.org/x/crypto](https://go.googlesource.com/crypto) | `v0.58.0` → `v0.59.0` | ![age](https://developer.mend.io/api/mc/badges/age/go/golang.org%2fx%2fcrypto/v0.59.0?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/go/golang.org%2fx%2fcrypto/v0.59.0?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/go/golang.org%2fx%2fcrypto/v0.58.0/v0.59.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/golang.org%2fx%2fcrypto/v0.58.0/v0.59.0?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/15285) for more information.  ---  ### The golang.org/x/crypto/openpgp package is unmaintained, unsafe by design, and has known security issues [GO-2026-5932](https://pkg.go.dev/vuln/GO-2026-5932)  <details> <summary>More information</summary>  #### Details The golang.org/x/crypto/openpgp package is unsafe by design, has numerous known security issues, is not maintained, and should not be used.  If you are required to interoperate with OpenPGP systems and need a maintained package, consider github.com/ProtonMail/go-crypto/op
-  **Post-Mortem & Fix Analysis**:
-  > ### ℹ️ Artifact update notice  ##### File name: go.mod  In order to perform the update(s) described in the table above, Renovate ran the `go get` command, which resulted in the following additional change(s):   - 4 additional dependencies were updated   Details:   | **Package**         | **Change**             | | :------------------ | :--------------------- | | `golang.org/x/sync` | `v0.24.0` -> `v0.25.0` | | `golang.org/x/sys`  | `v0.49.0` -> `v0.50.0` | | `golang.org/x/term` | `v0.47.0` -> `v0.48.0` | | `golang.org/x/text` | `v0.43.0` -> `v0.44.0` |  ##### File name: sdks/go/grpc-client/go.mod  In order to perform the update(s) described in the table above, Renovate ran the `go get` command, which resulted in the following additional change(s):   - 4 additional dependencies were updated   Details:   | **Package**         | **Change**             | | :------------------ | :--------------------- | | `golang.org/x/sync` | `v0.24.0` -> `v0.25.0` | | `golang.org/x/sys`  | `v0.49.0` -> `v
+- **Issue #17540** (2026-11-18): **fix: build the OSS Scanner image like release builds**
+  *Symptoms*: <!-- markdownlint-disable MD041 -- this is rendered within existing HTML, so allow starting without an H1 -->  See the [pull request guide](https://argo-workflows.readthedocs.io/en/latest/pull-requests/) for details on each item.  - [ ] Ran `make pre-commit -B` - [x] Signed-off commits with [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) messages - [x] PR title is a conventional commit message (it becomes the release notes entry) - [ ] Unit or e2e tests cover the change - [ ] For features: an associated issue and a feature description file (`make feature-new`) - [x] Opened as draft; will mark "Ready for review" once builds are green  ### Motivation  `.oss-scanner/Dockerfile` (#17462) was tested against a base from before #16796. Since #16796, plain `go build` of `./cmd/argo` panics at startup in `pkg/apiclient/protocompat.go`, because the binaries need the `kubernetes_protomessage_one_more_release` build tag and the patched vendor tree that `make vendor` creates. The OSS Scanner image build therefore fails on `main`.  Building with only the tag isn't enough. Without `hack/vendor-patches.sh`, the gateway panics on log requests with `invalid Go type string for field k8s_io.api.core.v1.PodLogOptions.stream`, so the scanner would be testing a server that behaves differently from a release build.  ### Modifications  - `.oss-scanner/Dockerfile`: run `make vendor` after `go mod download`, and set `GOFLAGS=-tags=kubernetes_protomessage_one_more_release` as the M
 
-- **Issue #17518** (2026-11-17): **chore(deps): update module go.opentelemetry.io/otel/trace to v1.47.0 [security] (release-4.1) - abandoned**
-  *Symptoms*: > [!NOTE] > This PR body was truncated due to platform limits.  This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Adoption](https://docs.renovatebot.com/merge-confidence/) | [Passing](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---|---|---| | [go.opentelemetry.io/otel/trace](https://redirect.github.com/open-telemetry/opentelemetry-go) | `v1.45.0` → `v1.47.0` | ![age](https://developer.mend.io/api/mc/badges/age/go/go.opentelemetry.io%2fotel%2ftrace/v1.47.0?slim=true) | ![adoption](https://developer.mend.io/api/mc/badges/adoption/go/go.opentelemetry.io%2fotel%2ftrace/v1.47.0?slim=true) | ![passing](https://developer.mend.io/api/mc/badges/compatibility/go/go.opentelemetry.io%2fotel%2ftrace/v1.45.0/v1.47.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/go/go.opentelemetry.io%2fotel%2ftrace/v1.45.0/v1.47.0?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the [Dependency Dashboard](../issues/15285) for more information.  ---  ### opentelemetry-go: AttributeValueLengthLimit is fully bypassed by attribute values composed of valid U+FFFD runes [CVE-2026-128085](https://nvd.nist.gov/vuln/detail/CVE-2026-128085) / [GHSA-q7gw-24fr-5p69](https://redirect.github.com/advisories/GHSA-q7gw-24fr-5p69)  <details> <summary>More information</summary>  #### Details ##### Summary  The `A
+- **Issue #17538** (2026-11-18): **chore(deps): update rancher/k3s docker tag to v1.37.2 (main)**
+  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [rancher/k3s](https://redirect.github.com/k3s-io/k3s) | max | minor | `v1.36.2` → `v1.37.2` |  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automerge**: Disabled by config. Please merge this manually once you are satisfied.  ♻ **Rebasing**: Whenever PR becomes conflicted, or you tick the rebase/retry checkbox.  🔕 **Ignore**: Close this PR and you won't be reminded about this update again.  ---   - [ ] <!-- rebase-check -->If you want to rebase/retry this PR, check this box  ---  This PR was generated by [Mend Renovate](https://mend.io/renovate/). View the [repository job log](https://developer.mend.io/github/argoproj/argo-workflows). <!--renovate-debug:eyJjcmVhdGVkSW5WZXIiOiI0NC4yNDkuMSIsInVwZGF0ZWRJblZlciI6IjQ0LjI0OS4xIiwidGFyZ2V0QnJhbmNoIjoibWFpbiIsImxhYmVscyI6WyJ0eXBlL2RlcGVuZGVuY2llcyJdfQ==--> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -815,357 +813,437 @@ func githubMatch(secret string, r *http.Request) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d25c9693` (2026-11-17)
-**Commit Message**: docs: document ARGO_ARTIFACT_GC_ENABLED, artifact security headers and TLS_MIN_VERSION (#17503)
+### Incident Patch 1: `66ce7147` (2026-11-18)
+**Commit Message**: fix: build the OSS Scanner image like release builds (#17540)
 
-Signed-off-by: Bhavishya Jain <[REDACTED_EMAIL]>
+Signed-off-by: Alan Clucas <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `.cspell.json` (modified, +1/-0)
+**File**: `.oss-scanner/Dockerfile` (modified, +9/-3)
 ```diff
-@@ -79,6 +79,7 @@
-     "podpriority",
-     "promtail",
-     "robfig",
-+    "SAMEORIGIN",
-     "secretkey",
-     "Siri",
-     "STEPNAME",
+@@ -5,9 +5,13 @@
+ FROM docker.io/library/golang:1.27-trixie
+ 
+ # Unit tests expect no cluster: KUBECONFIG=/dev/null is what `make test` uses.
++# GOFLAGS matches what the Makefile exports: without the build tag, k8s.io types lack ProtoMessage() and
++# pkg/apiclient panics at startup. Keep it in step with the Makefile, since `go build` here does not go through make.
++# The patched vendor tree (see `make vendor` below) is the other half of how release builds handle this.
+ ENV DEBIAN_FRONTEND=noninteractive \
+     CGO_ENABLED=0 \
+-    KUBECONFIG=/dev/null
++    KUBECONFIG=/dev/null \
++    GOFLAGS=-tags=kubernetes_protomessage_one_more_release
+ 
+ RUN apt-get update && apt-get install -y --no-install-recommends \
+       ca-certificates curl git make jq procps \
+@@ -25,8 +29,10 @@ COPY . /src
+ WORKDIR /src
+ 
+ # Go dependencies. If go.mod asks for a newer Go than this image has, the toolchain is downloaded here and stays
+-# in the module cache for offline use.
+-RUN go mod download
++# in the module cache for offline use. Release builds use the vendor tree that `make vendor` creates and patches
++# (hack/vendor-patches.sh), so build from the same tree; Go then uses vendor/ automatically.
++RUN go mod download \
++    && make vendor
+ 
+ # The UI is embedded into the argo binary (ui/embed.go), so build it before the Go binaries.
+ # yarn.lock pulls argo-ui from git, which is why git is installed above.
 ```
 
-**File**: `docs/environment-variables.md` (modified, +5/-0)
+**File**: `.oss-scanner/threat_model.md` (modified, +7/-1)
 ```diff
-@@ -19,6 +19,7 @@ This document outlines environment variables that can be used to customize behav
- | `ARGO_PROGRESS_FILE_TICK_DURATION`       | `time.Duration`     | `3s`                                                                                        | How often the progress file is read by the executor. Set to 0 to disable self reporting progress.                                                                                                                                                                        |
- | `ARGO_REMOVE_PVC_PROTECTION_FINALIZER`   | `bool`              | `true`                                                                                      | Remove the `kubernetes.io/pvc-protection` finalizer from persistent volume claims (PVC) after marking PVCs created for the workflow for deletion, so deleted is not blocked until the pods are deleted.  [#6629](https://github.com/argoproj/argo-workflows/issues/6629) |
- | `ARGO_TRACE`                             | `string`            | ``                                                                                          | Whether to enable tracing statements in Argo components.                                                                                                                                                                                                                 |
-+| `ARGO_ARTIFACT_GC_ENABLED`               | `bool`              | `true`                                                                                      | Enable [Artifact Garbage Collection](walk-through/artifacts.md#artifact-garbage-collection). When `false`, the controller adds no artifact GC finalizer to new workflows and runs no artifact GC for completed ones. It also stops removing the finalizer from workflows that already have one, so deleting such a workflow blocks until GC is re-enabled or you [remove the finalizer](walk-through/artifacts.md#what-happens-if-garbage-collection-fails). |
- | `ARGO_ARTIFACT_GC_RETRY_WINDOW`          | `time.Duration`     | `60m`                                                                                       | How long after a workflow completes (or is deleted) the controller keeps retrying a failed attempt to start artifact GC before abandoning it.                                                                                                                             |
- | `ARGO_AGENT_PATCH_RATE`                  | `time.Duration`     | `DEFAULT_REQUEUE_TIME`                                                                      | Rate that the Argo Agent will patch the workflow task-set.                                                                                                                                                                                                               |
- | `ARGO_AGENT_CPU_LIMIT`                   | `resource.Quantity` | `100m`                                                                                      | CPU resource limit for the agent.                                                                                                                                                                                                                                        |
-@@ -50,6 +51,7 @@ This document outlines environment variables that can be used to customize behav
- | `RECENTLY_DELETED_POD_DURATION`          | `time.Duration`     | `2m`                                                                                       | The duration of a pod before the pod is considered to be recently deleted.                                                                                                                                                                                                |
- | `TASK_RESULT_TIMEOUT_DURATION`           | `time.Duration`     | `10m`                                                                                       | The duration of time before a node is marked completed but the `taskresult` has not arrived yet, this is a more general and more conservative version of `RECENTLY_DELETED_POD_DURATION` that is used when a `taskresult` hasn't arrived but the pod is still around.    |
- | `RETRY_BACKOFF_DURATION`                 | `time.Duration`     | `10ms`                                                                                      | The retry back-off duration when retrying API calls.                                                                                                                                                                                                                     |
-+| `TLS_MIN_VERSION`                        | `int`               | `771`                                                                                       | Minimum TLS version for the controller's metrics server, which serves TLS unless `metricsConfig.secure` is explicitly `false` (it defaults to `true`). Given as a Go [`cr
+@@ -108,6 +108,8 @@ Operator security notes: `docs/security.md`, `docs/workflow-restrictions.md`, `d
+ - Executor and artifact plugin code, as above.
+ - Vulnerabilities in dependencies (Go modules, npm packages, container images) that are not reachable
+   through Argo Workflows code. Dependency CVEs reported only from a version number are out of scope.
++  `vendor/` is generated by `make vendor` and is third-party code, apart from the small patches that
++  `hack/vendor-patches.sh` applies to it.
+ - `test/`, `hack/`, `docs/`, `examples/`, `dev/` and `sdks/`.
+ 
+ ## Known weak areas
+@@ -139,7 +141,11 @@ Many past advisories were incomplete fixes, so look for siblings of these:
+ - There is no Kubernetes cluster, Docker daemon or database in the image. Prefer reproducers as Go unit
+   tests. Tests that start Postgres or MySQL with testcontainers (in `persist/sqldb`, `util/sqldb` and
+   `workflow/sync`) fail there. That is expected and not a finding. The scan has no network access, so
+-  tests that fetch remote content also fail.
++  tests that fetch remote content also fail, for example `TestGitArtifactDriver_Load` in
++  `workflow/artifacts/git` and `TestHTTPArtifactDriver_Load` and `TestArtifactoryArtifactDriver_Load` in
++  `workflow/artifacts/http`, which reach github.com.
++- Builds go through the patched `vendor/` tree and `GOFLAGS=-tags=kubernetes_protomessage_one_more_release`,
++  both set up in the image as release builds use them. Plain `go build` and `go test` in `/src` pick both up.
+ 
+ ## How we rate severity
+ 
 ```
 
 ---
 
-### Incident Patch 2: `d6c471db` (2026-11-17)
-**Commit Message**: chore(deps): update module golang.org/x/crypto to v0.59.0 [security] (main) (#17513)
+### Incident Patch 2: `27fb6a4e` (2026-11-18)
+**Commit Message**: feat(ui): add dark mode. Fixes #5037 (#17128)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Signed-off-by: zvdy <[REDACTED_EMAIL]>
 
-**File**: `go.mod` (modified, +5/-5)
+**File**: `.features/pending/ui-dark-mode.md` (added, +8/-0)
 ```diff
-@@ -90,11 +90,11 @@ require (
- 	go.opentelemetry.io/otel/trace v1.47.0
- 	go.uber.org/mock v0.6.0
- 	go.yaml.in/yaml/v3 v3.0.6
--	golang.org/x/crypto v0.58.0
-+	golang.org/x/crypto v0.59.0
- 	golang.org/x/oauth2 v0.37.0
--	golang.org/x/sync v0.24.0
--	golang.org/x/sys v0.49.0
--	golang.org/x/term v0.47.0
-+	golang.org/x/sync v0.25.0
-+	golang.org/x/sys v0.50.0
-+	golang.org/x/term v0.48.0
- 	golang.org/x/time v0.16.0
- 	google.golang.org/api v0.310.0
- 	google.golang.org/genproto/googleapis/api v0.0.0-20261104224025-d1e00e9f33ab
-@@ -343,7 +343,7 @@ require (
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	golang.org/x/exp v0.0.0-20260813180055-c1d0aacb2297 // indirect
- 	golang.org/x/net v0.62.0 // indirect
--	golang.org/x/text v0.43.0 // indirect
-+	golang.org/x/text v0.44.0 // indirect
- 	google.golang.org/genproto v0.0.0-20261012220534-4341edf3f941 // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20261019180522-ce908d29299b // indirect
- 	google.golang.org/protobuf v1.36.12 // indirect
-```
-
-**File**: `go.sum` (modified, +12/-12)
-```diff
-@@ -967,8 +967,8 @@ golang.org/x/crypto v0.19.0/go.mod h1:Iy9bg/ha4yyC70EfRS8jz+B6ybOBKMaSxLj6P6oBDf
- golang.org/x/crypto v0.20.0/go.mod h1:Xwo95rrVNIoSMx9wa1JroENMToLWn3RNVrTBpLHgZPQ=
- golang.org/x/crypto v0.23.0/go.mod h1:CKFgDieR+mRhux2Lsu27y0fO304Db0wZe70UKqHu0v8=
- golang.org/x/crypto v0.24.0/go.mod h1:Z1PMYSOR5nyMcyAVAIQSKCDwalqy85Aqn1x3Ws4L5DM=
--golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
--golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
-+golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
-+golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
- golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20190306152737-a1d7652674e8/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20200908183739-ae8ad444f925/go.mod h1:1phAWC201xIgDyaFpmDeZkgf70Q4Pd/CNqfRtVPtxNw=
-@@ -1037,8 +1037,8 @@ golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.3.0/go.mod h1:FU7BRWz2tNW+3quACPkgCx/L+uEAv1htQ0V83Z9Rj+Y=
- golang.org/x/sync v0.6.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
- golang.org/x/sync v0.7.0/go.mod h1:Czt+wKu1gCyEFDUtn0jG5QVvpJ6rzVqr5aXyt9drQfk=
--golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
--golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.25.0 h1:dJnifr0nMV8/SBnBvdo4eSGGnrc3O4FFx6IqvtLcmRs=
-+golang.org/x/sync v0.25.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20180905080454-ebe1bf3edb33/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20180909124046-d0be0721c37e/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
-@@ -1079,8 +1079,8 @@ golang.org/x/sys v0.16.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
- golang.org/x/sys v0.17.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
- golang.org/x/sys v0.20.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
- golang.org/x/sys v0.21.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
--golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
--golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/sys v0.50.0 h1:dkKZEFTEKaLr1sjhs0WiKqoi8Jj5nHbS3Njmx1UoMJs=
-+golang.org/x/sys v0.50.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/telemetry v0.0.0-20240228155512-f48c80bd79b2/go.mod h1:TeRTkGYfJXctD9OcfyVLyj2J3IxLnKwHJR8f4D8a3YE=
- golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
-@@ -1092,8 +1092,8 @@ golang.org/x/term v0.16.0/go.mod h1:yn7UURbUtPyrVJPGPq404EukNFxcm/foM+bV/bfcDsY=
- golang.org/x/term v0.17.0/go.mod h1:lLRBjIVuehSbZlaOtGMbcMncT+aqLLLmKrsjNrUguwk=
- golang.org/x/term v0.20.0/go.mod h1:8UkIAJTvZgivsXaD6/pH6U9ecQzZ45awqEOzuCvwpFY=
- golang.org/x/term v0.21.0/go.mod h1:ooXLefLobQVslOqselCNF4SxFAaoS6KujMbsGzSDmX0=
--golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
--golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
-+golang.org/x/term v0.48.0 h1:G6UU1eiSB8nl3DzeUGt7Mg+2SctI8tPS6Z5/mBt6cOk=
-+golang.org/x/term v0.48.0/go.mod h1:BRDLHCZr2SUjIeBHHpRyQeC9xzSAVbzY2rvKgafnHf4=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
- golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
-@@ -1106,8 +1106,8 @@ golang.org/x/text v0.13.0/go.mod h1:TvPlkZtksWOMsz7fbANvkp4WM8x/WCo/om8BMLbz+aE=
- golang.org/x/text v0.14.0/go.mod h1:18ZOQIKpY8NJVqYksKHtTdi31H5itFRjB5/qKTNYzSU=
- golang.org/x/text v0.15.0/go.mod h1:18ZOQIKpY8NJVqYksKHtTdi31H5itFRjB5/qKTNYzSU=
- golang.org/x/text v0.16.0/go.mod h1:GhwF1Be+LQoKShO3cGOHzqOgRrGaYc9AvblQOmPVHnI=
--golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
--golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
-+golang.org/x/text v0.44.0 h1:YItdp/mQNGnsmrgpcdA5yQ3bnRxCfo/Tj/iByGW9GGo=
-+golang.org/x/text v0.44.0/go.mod h1:S4FR1waQ9LbjQTls97SyRjDaUUVkaM+cXwwuG/G+MwY=
- golang.org/x/time v0.16.0 h1:vMb6ptszcQMkcwiRTAuNNU50gom6++Q/6gY2hDM6VDE=
- golang.org/x/time v0.16.0/go.mod h1:rVKOqvZeKvrDKTQiAHJ7wmwP0RzleSphoEA9RcdLA0s=
- golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
-@@ -1133,8 +1133,8 @@ golang.org/x/tools v0.1.12/go.mod h1:hNGJHUnrk76NpqgfD5Aqm5Crs+Hm0VOH/i9J2+nxYbc
- golang.org/x/tools v0.6.0/go.mod h1:Xwgl3UAJ/d3gWutnCtw505GrjyAbvKui8lOU390QaIU=
- golang.or
-```
-
-**File**: `gomod2nix.toml` (modified, +10/-10)
-```diff
-@@ -941,8 +941,8 @@ schema = 3
-     version = "v3.0.6"
-     hash = "sha256-4XBaZyVp0pU1FzRY+M/juXISzENKJ+v189aVvU0mvqM="
-   [mod."golang.org/x/crypto"]
--    version = "v0.58.0"
--    hash = "sha256-33ioL7suoYfgBIEQDAeqy+lwhbCgy885BkcXavowffo="
-+    version = "v0.59.0"
-+    hash = "sha256-fV67qsYNvsuqUtB92wKlWxrmcKOcZBehfEtAX0k3JTQ="
-   [mod."golang.org/x/exp"]
-     version = "v0.0.0-20260813180055-c1d0aacb2297"
-     hash = "sha256-0tPDTSYvSnHQZHt8ekiEhMy1s1DXtzehjOX7gK84EPQ="
-@@ -953,17 +953,17 @@ schema = 3
-     version = "v0.37.0"
-     hash = "sha256-CbL8ICe9yooSIiVL8F3UnYY/NayjpI2C7sueOauW2EI="
-   [mod."golang.org/x/sync"]
--    version = "v0.24.0"
--    hash = "sha256-gViyLpsZFBKTEUtK6Li3m6plz5J/VCAcpTLymQVRpj4="
-+    version = "v0.25.0"
-+    hash = "sha256-exsN7AZ9kxJ+V5TK5XewgUVKAu3L0FqmNe95mlPMMSI="
-   [mod."golang.org/x/sys"]
--    version = "v0.49.0"
--    hash = "sha256-/1S3yy3in72ygZT1CKymvOzJZqCMYiGSqZDfvSyB3LI="
-+    version = "v0.50.0"
-+    hash = "sha256-3T1I5T5pgbQBxRhN9Q2Ajvsy1kJW9WM/uddR9cOUVNA="
-   [mod."golang.org/x/term"]
--    version = "v0.47.0"
--    hash = "sha256-XtEeyv5y3g9nWfzB7vevm5KwNR8hW+LVsBNEectqIhA="
-+    version = "v0.48.0"
-+    hash = "sha256-iTwcS7DeeZIc9MEPaTY4SgM0e5OVBim7xW7umCcxdkc="
-   [mod."golang.org/x/text"]
--    version = "v0.43.0"
--    hash = "sha256-gykmMKFe61Tc4tblLPd3IyMKCqL0MSTQpgb6yE5EnDA="
-+    version = "v0.44.0"
-+    hash = "sha256-dTeEJZSwSLJ5jumnR+JjT4gSpXW6E22IxT0aCrcf2vQ="
-   [mod."golang.org/x/time"]
-     version = "v0.16.0"
-     hash = "sha256-OvekWcaTHMs5n3Img4EmYaORRgSmybBS+tObSnPqftY="
-```
-
-**File**: `sdks/go/grpc-client/go.mod` (modified, +5/-5)
-```diff
-@@ -159,13 +159,13 @@ require (
- 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
- 	go.yaml.in/yaml/v3 v3.0.6 // indirect
--	golang.org/x/crypto v0.58.0 // indirect
-+	golang.org/x/crypto v0.59.0 // indirect
- 	golang.org/x/net v0.62.0 // indirect
- 	golang.org/x/oauth2 v0.37.0 // indirect
--	golang.org/x/sync v0.24.0 // indirect
--	golang.org/x/sys v0.49.0 // indirect
--	golang.org/x/term v0.47.0 // indirect
--	golang.org/x/text v0.43.0 // indirect
-+	golang.org/x/sync v0.25.0 // indirect
-+	golang.org/x/sys v0.50.0 // indirect
-+	golang.org/x/term v0.48.0 // indirect
-+	golang.org/x/text v0.44.0 // indirect
- 	golang.org/x/time v0.16.0 // indirect
- 	google.golang.org/genproto v0.0.0-20261012220534-4341edf3f941 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20261104224025-d1e00e9f33ab // indirect
-```
-
-**File**: `sdks/go/grpc-client/go.sum` (modified, +14/-14)
-```diff
-@@ -572,8 +572,8 @@ golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5y
- golang.org/x/crypto v0.6.0/go.mod h1:OFC/31mSvZgRz0V1QTNCzfAI1aIRzbiufJtkMIlEp58=
- golang.org/x/crypto v0.19.0/go.mod h1:Iy9bg/ha4yyC70EfRS8jz+B6ybOBKMaSxLj6P6oBDfU=
- golang.org/x/crypto v0.20.0/go.mod h1:Xwo95rrVNIoSMx9wa1JroENMToLWn3RNVrTBpLHgZPQ=
--golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
--golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
-+golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
-+golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
- golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
- golang.org/x/exp v0.0.0-20260813180055-c1d0aacb2297 h1:YXnL44eJ77R+ji4/ooy8UsXIhz+lbi2Qgdlc8iRN0gY=
- golang.org/x/exp v0.0.0-20260813180055-c1d0aacb2297/go.mod h1:Mkmymgv+uMpSQ/XxJ/7GpdrdYoqm3u72jEbpCLiJmNk=
-@@ -587,8 +587,8 @@ golang.org/x/mod v0.2.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
- golang.org/x/mod v0.3.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
- golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
- golang.org/x/mod v0.8.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
--golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
--golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
-+golang.org/x/mod v0.42.0 h1:ICeL3t2L30ljSPHHxDnR4fqVcBt/zR2zJAb9juavmQg=
-+golang.org/x/mod v0.42.0/go.mod h1:u5fzIrRInkL8MaO1cbRkUHT64v303YIT5KEqpNr7jRs=
- golang.org/x/net v0.0.0-20180724234803-3673e40ba225/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20180826012351-8a410e7b638d/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20190108225652-1e06a53dbb7e/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
-@@ -621,8 +621,8 @@ golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJ
- golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
--golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.25.0 h1:dJnifr0nMV8/SBnBvdo4eSGGnrc3O4FFx6IqvtLcmRs=
-+golang.org/x/sync v0.25.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20180830151530-49385e6e1522/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20180905080454-ebe1bf3edb33/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
-@@ -644,16 +644,16 @@ golang.org/x/sys v0.1.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.5.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.8.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.17.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
--golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
--golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/sys v0.50.0 h1:dkKZEFTEKaLr1sjhs0WiKqoi8Jj5nHbS3Njmx1UoMJs=
-+golang.org/x/sys v0.50.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/term v0.0.0-20201117132131-f5c789dd3221/go.mod h1:Nr5EML6q2oocZ2LXRh80K7BxOlk5/8JxuGnuhpl+muw=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
- golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
- golang.org/x/term v0.5.0/go.mod h1:jMB1sMXY+tzblOD4FWmEbocvup2/aLOaQEp7JmGp78k=
- golang.org/x/term v0.8.0/go.mod h1:xPskH00ivmX89bAKVGSKKtLOWNx2+17Eiy94tnKShWo=
- golang.org/x/term v0.17.0/go.mod h1:lLRBjIVuehSbZlaOtGMbcMncT+aqLLLmKrsjNrUguwk=
--golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
--golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
-+golang.org/x/term v0.48.0 h1:G6UU1eiSB8nl3DzeUGt7Mg+2SctI8tPS6Z5/mBt6cOk=
-+golang.org/x/term v0.48.0/go.mod h1:BRDLHCZr2SUjIeBHHpRyQeC9xzSAVbzY2rvKgafnHf4=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
- golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
-@@ -663,8 +663,8 @@ golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
- golang.org/x/text v0.7.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
- go
-```
-
----
-
-### Incident Patch 3: `b08fb284` (2026-11-17)
-**Commit Message**: docs: fix metric modifiers keys and add missing sections to the controller ConfigMap reference (#17504)
-
-Signed-off-by: Bhavishya Jain <[REDACTED_EMAIL]>
-
-**File**: `docs/workflow-controller-configmap.yaml` (modified, +37/-3)
-```diff
-@@ -39,6 +39,9 @@ data:
-   # This config item allows you to disable this.
-   nodeEvents: |
-     enabled: true
-+    # Emit node events from the Pod instead of the Workflow, with annotations linking the event back to the Workflow.
-+    # Default false.
-+    sendAsPod: false
- 
-   # Whether or not to emit events on workflow status changes. These can take a up a lot of space in
-   # k8s (typically etcd), see nodeEvents above.
-@@ -238,10 +241,10 @@ data:
-     ignoreErrors: false
-     # Use a self-signed cert for TLS
-     secure: true
--    # Options for configuring individual metrics
--    options:
-+    # Modifiers configure individual metrics by name
-+    modifiers:
-       pod_missing:
--        disable: true
-+        disabled: true
-       cronworkflows_triggered_total:
-         disabledAttributes:
-           - name
-@@ -271,6 +274,17 @@ data:
-       maxIdleConns: 100
-       maxOpenConns: 0
-       connMaxLifetime: 0s # 0 means connections don't have a max lifetime
-+    # Retry settings for reconnecting when a query fails with a network error. The initial connection isn't retried.
-+    reconnectionConfig:
-+      # Number of retries after the first reconnection attempt. Default 5.
-+      maxRetries: 5
-+      # The wait before retry n is baseDelaySeconds * n * retryMultiple, capped at maxDelaySeconds. Default 0 (100ms).
-+      baseDelaySeconds: 0
-+      # Upper limit on the wait between attempts, in seconds. Default 30.
-+      maxDelaySeconds: 30
-+      # Multiplier on the wait. Defaults to 2.0 when reconnectionConfig is
-+      # absent; when the block is present but this field is omitted, 1.0 is used.
-+      retryMultiple: 2.0
-     #  if true node status is only saved to the persistence DB to avoid the 1MB limit in etcd
-     nodeStatusOffLoad: false
-     # save completed workloads to the workflow archive
-@@ -344,6 +358,14 @@ data:
-       maxOpenConns: 0
-       connMaxLifetime: 0s # 0 means connections don't have a max lifetime
- 
-+    # Retry settings for reconnecting when a query fails with a network error, same fields and
-+    # defaults as persistence.reconnectionConfig. The initial connection isn't retried.
-+    reconnectionConfig:
-+      maxRetries: 5
-+      baseDelaySeconds: 0
-+      maxDelaySeconds: 30
-+      retryMultiple: 2.0
+@@ -0,0 +1,8 @@
++Description: Add dark mode to the UI
++Authors: [zvdy](https://github.com/zvdy)
++Component: UI
++Issues: 5037
 +
-     # Required - sets a unique name for this controller instance
-     # Must be different for each controller instance to properly coordinate lock ownership
-     controllerName: controller-1
-@@ -426,6 +448,18 @@ data:
-   #   failed: 3
-   #   errored: 3
++The UI starts in your operating system's light or dark mode, and follows it until you pick one.
++Use the theme button under the version number in the navigation bar to switch between light and dark mode.
++Your choice is saved in the browser.
+```
+
+**File**: `ui/src/app-router.tsx` (modified, +13/-1)
+```diff
+@@ -3,6 +3,7 @@ import {NotificationsManager} from 'argo-ui/src/components/notifications/notific
+ import {Notifications, NotificationType} from 'argo-ui/src/components/notifications/notifications';
+ import {Popup, PopupProps} from 'argo-ui/src/components/popup/popup';
+ import {PopupManager} from 'argo-ui/src/components/popup/popup-manager';
++import {Theme, useTheme} from 'argo-ui/v2/shared/context/theme';
+ import * as H from 'history';
+ import * as React from 'react';
+ import {useEffect, useState} from 'react';
+@@ -22,6 +23,7 @@ import sensors from './sensors';
+ import {uiUrl} from './shared/base';
+ import {ChatButton} from './shared/components/chat-button';
+ import ErrorBoundary from './shared/components/error-boundary';
++import {ThemeToggle} from './shared/components/theme-toggle';
+ import {Version} from './shared/models';
+ import * as nsUtils from './shared/namespaces';
+ import {services} from './shared/services';
+@@ -53,6 +55,10 @@ export function AppRouter({popupManager, history, notificationsManager}: {popupM
+     const [version, setVersion] = useState<Version>();
+     const [namespace, setNamespace] = useState<string>();
+     const [navBarBackgroundColor, setNavBarBackgroundColor] = useState<string>();
++    const theme = useTheme();
++    useEffect(() => {
++        document.body.classList.toggle('theme-dark', theme === Theme.Dark);
++    }, [theme]);
+     const setError = (error: Error) => {
+         notificationsManager.show({
+             content: 'Failed to load version/info ' + error,
+@@ -95,6 +101,7 @@ export function AppRouter({popupManager, history, notificationsManager}: {popupM
+                     <Route exact={true} strict={true} path={loginUrl} component={login.component} />
+                     <Route path={uiUrl('widgets')} component={Widgets} />
+                     <Layout
++                        theme={theme}
+                         navBarStyle={{backgroundColor: navBarBackgroundColor}}
+                         navItems={[
+                             {
+@@ -163,7 +170,12 @@ export function AppRouter({popupManager, history, notificationsManager}: {popupM
+                                 iconClassName: 'fa fa-question-circle'
+                             }
+                         ]}
+-                        version={() => <>{version ? version.version : 'unknown'}</>}>
++                        version={() => (
++                            <>
++                                {version ? version.version : 'unknown'}
++                                <ThemeToggle />
++                            </>
++                        )}>
+                         <Notifications notifications={notificationsManager.notifications} />
+                         <ErrorBoundary>
+                             <Switch>
+```
+
+**File**: `ui/src/app.tsx` (modified, +7/-3)
+```diff
+@@ -1,10 +1,12 @@
+ import {NavigationManager} from 'argo-ui/src/components/navigation';
+ import {NotificationsManager} from 'argo-ui/src/components/notifications/notification-manager';
+ import {PopupManager} from 'argo-ui/src/components/popup/popup-manager';
++import {ThemeProvider} from 'argo-ui/v2/shared/context/theme';
+ import type {History} from 'history';
+ import * as React from 'react';
  
-+  # FailedPodRestart restarts pods that fail before their main container starts,
-+  # for example after an eviction or a node shutdown. See docs/pod-restarts.md
-+  # failedPodRestart: |
-+  #   enabled: true
-+  #   # Maximum number of automatic restarts per node before giving up. Default 3.
-+  #   maxRestarts: 3
+ import 'argo-ui/src/styles/main.scss';
++import './dark-theme.scss';
+ 
+ import {AppRouter} from './app-router';
+ import {ContextApis, Provider} from './shared/context';
+@@ -22,8 +24,10 @@ export function App({history}: {history: History}) {
+     };
+ 
+     return (
+-        <Provider value={providerContext}>
+-            <AppRouter history={history} notificationsManager={notificationsManager} popupManager={popupManager} />
+-        </Provider>
++        <ThemeProvider>
++            <Provider value={providerContext}>
++                <AppRouter history={history} notificationsManager={notificationsManager} popupManager={popupManager} />
++            </Provider>
++        </ThemeProvider>
+     );
+ }
+```
+
+**File**: `ui/src/dark-theme.scss` (added, +113/-0)
+```diff
+@@ -0,0 +1,113 @@
++@import 'node_modules/argo-ui/src/styles/config';
 +
-+  # InitlessPod (beta) selects the init-less pod layout for all workflow pods scheduled by this controller.
-+  # It needs Kubernetes image volumes on every node that runs workflow pods, see docs/initless-pod.md
-+  # initlessPod: |
-+  #   enabled: true
++.theme-dark {
++    color: $argo-color-gray-3;
++    background-color: $dark-theme-background-1;
 +
-   # SemaphoreLimitCacheSeconds specifies the duration in seconds before the workflow controller will re-fetch the limit
-   # for a semaphore from its associated ConfigMap(s). Defaults to 0 seconds (re-fetch every time the semaphore is checked).
-   semaphoreLimitCacheSeconds: "0"
++    .wf-summary-container,
++    .wf-filters-container,
++    .workflows-list__filters-container,
++    .graph-options-panel {
++        background-color: $dark-theme-background-2;
++        box-shadow: none;
++    }
++
++    .login__box {
++        background-color: $dark-theme-background-1;
++    }
++
++    .workflows-list__row-container a,
++    .wf-summary-container__title {
++        color: $argo-color-gray-4;
++    }
++
++    .workflow-details__topbar-buttons a {
++        color: $argo-color-gray-5;
++
++        &.active {
++            color: $argo-color-gray-8;
++        }
++    }
++
++    .graph-options-panel .active {
++        background-color: $argo-color-gray-7;
++        border-color: $argo-color-gray-6;
++    }
++
++    .graph text.node-label,
++    .graph .edge text {
++        fill: $argo-color-gray-4;
++    }
++
++    .row.header {
++        color: $argo-color-gray-3;
++        background-color: $dark-theme-background-2;
++    }
++
++    .artifact-row,
++    .workflow-details__attribute-grid {
++        color: $argo-color-gray-3;
++    }
++
++    .workflow-details__attribute-grid > * {
++        border-color: $argo-color-gray-7;
++    }
++
++    .artifact-row:hover {
++        background-color: $argo-color-gray-7;
++    }
++
++    .workflow-timeline {
++        background-color: $dark-theme-background-1;
++    }
++
++    .workflow-timeline__row {
++        border-bottom-color: $argo-color-gray-7;
++    }
++
++    .workflow-timeline__row--header {
++        background-color: $dark-theme-background-2;
++    }
++
++    .workflow-timeline__start-line {
++        border-right-color: $argo-color-gray-7;
++    }
++
++    .log-box {
++        color: $argo-color-gray-3;
++        background-color: $dark-theme-background-1;
++    }
++
++    .workflow-dag-render-options-panel,
++    .workflows-toolbar,
++    .workflow-drawer,
++    .modal-content,
++    .help-box {
++        background-color: $dark-theme-background-2;
++    }
++
++    textarea {
++        color: $argo-color-gray-3;
++        background-color: $dark-theme-background-1;
++    }
++}
++
++.theme-toggle {
++    display: block;
++    margin: 4px auto 0;
++    padding: 0;
++    font-size: 20px;
++    color: $white-color;
++    background: none;
++    border: 0;
++    cursor: pointer;
++
++    &:hover {
++        color: $argo-color-gray-4;
++    }
++
++    &:focus-visible {
++        outline: 2px solid $argo-color-teal-5;
++        outline-offset: 2px;
++    }
++}
+```
+
+**File**: `ui/src/shared/components/suspense-monaco-editor.test.tsx` (added, +40/-0)
+```diff
+@@ -0,0 +1,40 @@
++import {render, screen} from '@testing-library/react';
++import * as React from 'react';
++
++jest.mock('react-monaco-editor', () => ({
++    __esModule: true,
++    default: ({theme}: {theme: string}) => <div data-testid='monaco' data-theme={theme} />
++}));
++
++function renderEditor(stored?: string) {
++    localStorage.clear();
++    if (stored !== undefined) {
++        localStorage.setItem('theme', stored);
++    }
++    let argo: typeof import('argo-ui/v2/shared/context/theme');
++    let editor: typeof import('./suspense-monaco-editor');
++    jest.isolateModules(() => {
++        argo = require('argo-ui/v2/shared/context/theme');
++        editor = require('./suspense-monaco-editor');
++    });
++    const {ThemeProvider} = argo!;
++    const {SuspenseMonacoEditor} = editor!;
++    const ui = (
++        <ThemeProvider>
++            <SuspenseMonacoEditor />
++        </ThemeProvider>
++    );
++    return render(ui);
++}
++
++describe('SuspenseMonacoEditor', () => {
++    it('uses the light editor theme by default', async () => {
++        renderEditor();
++        expect((await screen.findByTestId('monaco')).getAttribute('data-theme')).toBe('vs');
++    });
++
++    it('uses the dark editor theme when the app theme is dark', async () => {
++        renderEditor('"dark"');
++        expect((await screen.findByTestId('monaco')).getAttribute('data-theme')).toBe('vs-dark');
++    });
++});
+```
+
+**File**: `ui/src/shared/components/suspense-monaco-editor.tsx` (modified, +3/-1)
+```diff
+@@ -1,3 +1,4 @@
++import {Theme, useTheme} from 'argo-ui/v2/shared/context/theme';
+ import * as React from 'react';
+ import type {MonacoEditorProps} from 'react-monaco-editor';
+ import type MonacoEditor from 'react-monaco-editor';
+@@ -14,9 +15,10 @@ const LazyMonacoEditor = React.lazy(() => {
+ const noop = () => {}; // tslint:disable-line:no-empty
+ 
+ export const SuspenseMonacoEditor = React.forwardRef(function InnerMonacoEditor(props: MonacoEditorProps, ref: React.MutableRefObject<MonacoEditor>) {
++    const theme = useTheme();
+     return (
+         <React.Suspense fallback={<Loading />}>
+-            <LazyMonacoEditor ref={ref} editorWillUnmount={noop} {...props} />
++            <LazyMonacoEditor ref={ref} editorWillUnmount={noop} theme={theme === Theme.Dark ? 'vs-dark' : 'vs'} {...props} />
+         </React.Suspense>
+     );
+ });
+```
+
+**File**: `ui/src/shared/components/theme-toggle.test.tsx` (added, +49/-0)
+```diff
+@@ -0,0 +1,49 @@
++import * as React from 'react';
++import type {ReactNode} from 'react';
++
++function load(stored?: string) {
++    localStorage.clear();
++    if (stored !== undefined) {
++        localStorage.setItem('theme', stored);
++    }
++    let rtl: typeof import('@testing-library/react');
++    let argo: typeof import('argo-ui/v2/shared/context/theme');
++    let toggle: typeof import('./theme-toggle');
++    jest.isolateModules(() => {
++        rtl = require('@testing-library/react');
++        argo = require('argo-ui/v2/shared/context/theme');
++        toggle = require('./theme-toggle');
++    });
++    const {ThemeProvider} = argo!;
++    const {ThemeToggle} = toggle!;
++    const wrapper = ({children}: {children?: ReactNode}) => <ThemeProvider>{children}</ThemeProvider>;
++    return {...rtl!, ui: <ThemeToggle />, wrapper};
++}
++
++describe('ThemeToggle', () => {
++    it('is a labelled button that offers dark mode while the theme is light', () => {
++        const {render, ui, wrapper} = load();
++        const view = render(ui, {wrapper});
++        const button = view.getByRole('button', {name: 'Switch to dark theme'});
++        expect(button.querySelector('.fa-moon')).not.toBeNull();
++        view.unmount();
++    });
++
++    it('offers light mode while the theme is dark', () => {
++        const {render, ui, wrapper} = load('"dark"');
++        const view = render(ui, {wrapper});
++        const button = view.getByRole('button', {name: 'Switch to light theme'});
++        expect(button.querySelector('.fa-sun')).not.toBeNull();
++        view.unmount();
++    });
++
++    it('switches the theme and saves it when clicked', () => {
++        const {render, fireEvent, ui, wrapper} = load();
++        const view = render(ui, {wrapper});
++        fireEvent.click(view.getByRole('button', {name: 'Switch to dark theme'}));
++        expect(JSON.parse(localStorage.getItem('theme')!)).toBe('dark');
++        fireEvent.click(view.getByRole('button', {name: 'Switch to light theme'}));
++        expect(JSON.parse(localStorage.getItem('theme')!)).toBe('light');
++        view.unmount();
++    });
++});
+```
+
+**File**: `ui/src/shared/components/theme-toggle.tsx` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++import {Theme, ThemeContext} from 'argo-ui/v2/shared/context/theme';
++import * as React from 'react';
++
++export function ThemeToggle() {
++    const {theme, set} = React.useContext(ThemeContext);
++    const dark = theme === Theme.Dark;
++    const label = dark ? 'Switch to light theme' : 'Switch to dark theme';
++    return (
++        <button type='button' className='theme-toggle' title={label} aria-label={label} onClick={() => set(dark ? Theme.Light : Theme.Dark)}>
++            <i className={`fa ${dark ? 'fa-sun' : 'fa-moon'}`} />
++        </button>
++    );
++}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #17519** (2026-11-17): chore(deps): update module golang.org/x/crypto to v0.59.0 [security] (release-4.1) (@renovate[bot])
-- **PR #17518** (closed): chore(deps): update module go.opentelemetry.io/otel/trace to v1.47.0 [security] (release-4.1) - abandoned (@renovate[bot])
-- **PR #17517** (2026-11-17): chore(deps): update module go.opentelemetry.io/otel/sdk to v1.47.0 [security] (release-4.1) (@renovate[bot])
-- **PR #17516** (2026-11-17): chore(deps): update module golang.org/x/crypto to v0.59.0 [security] (release-4.0) (@renovate[bot])
-- **PR #17515** (closed): chore(deps): update module go.opentelemetry.io/otel/trace to v1.47.0 [security] (release-4.0) - autoclosed (@renovate[bot])
-- **PR #17514** (2026-11-17): chore(deps): update module go.opentelemetry.io/otel/sdk to v1.47.0 [security] (release-4.0) (@renovate[bot])
+- **PR #17540** (2026-11-18): fix: build the OSS Scanner image like release builds (@Joibel)
+- **PR #17538** (2026-11-18): chore(deps): update rancher/k3s docker tag to v1.37.2 (main) (@renovate[bot])
+- **PR #17536** (2026-11-18): chore(deps): update dependency @playwright/test to v1.65.1 (main) (@renovate[bot])
+- **PR #17535** (2026-11-18): chore(deps): update actions/setup-java action to v6.3.0 (main) (@renovate[bot])
+- **PR #17534** (2026-11-18): chore(deps): update actions/setup-go action to v7.1.0 (main) (@renovate[bot])
+- **PR #17533** (2026-11-18): chore(deps): update actions/create-github-app-token action to v3.4.0 (main) (@renovate[bot])
 
 ---
 
@@ -1185,31 +1263,41 @@ Signed-off-by: Bhavishya Jain <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: document ARGO_ARTIFACT_GC_ENABLED, artifact security headers and TLS_MIN_V
+## X. build the OSS Scanner image like release builds
 
 **RULE**:
-When implementing operations in `.cspell.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.oss-scanner/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d25c9693`: docs: document ARGO_ARTIFACT_GC_ENABLED, artifact security headers and TLS_MIN_VERSION. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `66ce7147`: build the OSS Scanner image like release builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cspell.json`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.oss-scanner/Dockerfile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    "SAMEORIGIN",
+# GOFLAGS matches what the Makefile exports: without the build tag, k8s.io types lack ProtoMessage() and
+# pkg/apiclient panics at startup. Keep it in step with the Makefile, since `go build` here does not go through make.
+# The patched vendor tree (see `make vendor` below) is the other half of how release builds handle this.
+    KUBECONFIG=/dev/null \
+    GOFLAGS=-tags=kubernetes_protomessage_one_more_release
+# in the module cache for offline use. Release builds use the vendor tree that `make vendor` creates and patches
+# (hack/vendor-patches.sh), so build from the same tree; Go then uses vendor/ automatically.
+RUN go mod download \
+    && make vendor
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    KUBECONFIG=/dev/null
+# in the module cache for offline use.
+RUN go mod download
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d25c9693` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `66ce7147` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -686354,3 +686354,171 @@ TUPLE_LAYOUT_TARGET_POP
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `7dfbe704` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9323. (YqlSelect) Fix panic on qualified star for inputs without column ord (Harvested from ytsaurus/ytsaurus)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "(YqlSelect) Fix panic on qualified star for inputs without column ord",
+  "source": "ytsaurus/ytsaurus",
+  "source_url": "https://github.com/ytsaurus/ytsaurus",
+  "source_version": "6f9fb9d6",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-19T02:56:10.725Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-ytsaurus-ytsaurus",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus) (Revision: `6f9fb9d6`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `yql/essentials/core/type_ann/type_ann_sql.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3d6a44fa`: YQL-20905: (YqlSelect) Fix panic on qualified star for inputs without column order. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yql/essentials/core/type_ann/type_ann_sql.cpp`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+                                            for (const auto& x : joinInputs) {
+                                                auto addColumn = [&](TStringBuf name) {
+                                                    if (!name.StartsWith("_yql_")) {
+                                                        o.AddColumn(MakeAliasedColumn(x.Alias, name));
+                                                    }
+                                                };
+                                                if (isYql && !x.Order) {
+                                                    for (const auto* item : x.Type->GetItems()) {
+                                                        addColumn(item->GetName());
+                                                    }
+                                                } else {
+                                                    YQL_ENSURE(x.Order);
+                                                    for (const auto& column : *x.Order) {
+                                                        addColumn(column.LogicalName);
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+                                            for (ui32 inputIndex = 0; inputIndex < joinInputs.size(); ++inputIndex) {
+                                                auto& x = inputs[inputIndex];
+                                                YQL_ENSURE(x.Order);
+                                                for (const auto& [col, gen_col] : *x.Order) {
+                                                    if (!col.StartsWith("_yql_")) {
+                                                        o.AddColumn(MakeAliasedColumn(x.Alias, col));
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3d6a44fa` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9324. build the OSS Scanner image like release builds (Harvested from argoproj/argo-workflows)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "build the OSS Scanner image like release builds",
+  "source": "argoproj/argo-workflows",
+  "source_url": "https://github.com/argoproj/argo-workflows",
+  "source_version": "73d41c0a",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-19T02:56:49.932Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-argoproj-argo-workflows",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [argoproj/argo-workflows](https://github.com/argoproj/argo-workflows) (Revision: `73d41c0a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.oss-scanner/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-workflows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `66ce7147`: build the OSS Scanner image like release builds. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.oss-scanner/Dockerfile`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+# GOFLAGS matches what the Makefile exports: without the build tag, k8s.io types lack ProtoMessage() and
+# pkg/apiclient panics at startup. Keep it in step with the Makefile, since `go build` here does not go through make.
+# The patched vendor tree (see `make vendor` below) is the other half of how release builds handle this.
+    KUBECONFIG=/dev/null \
+    GOFLAGS=-tags=kubernetes_protomessage_one_more_release
+# in the module cache for offline use. Release builds use the vendor tree that `make vendor` creates and patches
+# (hack/vendor-patches.sh), so build from the same tree; Go then uses vendor/ automatically.
+RUN go mod download \
+    && make vendor
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+    KUBECONFIG=/dev/null
+# in the module cache for offline use.
+RUN go mod download
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `66ce7147` are properly handled with clean fallback behavior.

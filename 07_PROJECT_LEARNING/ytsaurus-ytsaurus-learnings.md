@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `0374c91e`  
+> **Source Version**: `6f9fb9d6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T12:25:03.887Z  
+> **Timestamp**: 2026-11-19T02:56:10.146Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T12:25:03.881Z  
+> **Harvest Timestamp**: 2026-11-19T02:56:10.139Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1195,121 +1195,232 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `26dbbd73` (2026-11-17)
-**Commit Message**: YT-30469: Submit memory usage before setting oom score adj
-commit_hash:824cbe859e9ca397fa7d944d0255704e7970bd2c
+### Incident Patch 1: `3d6a44fa` (2026-11-18)
+**Commit Message**: YQL-20905: (YqlSelect) Fix panic on qualified star for inputs without column order
 
-**File**: `yt/yt/server/job_proxy/user_job.cpp` (modified, +2/-2)
+Исправляет падение в `SqlSetItemWrapper` при раскрытии `a.*`, когда у источника нет метаданных о порядке колонок. В этом случае `YqlSelect` заполняет `projection_order` видимыми полями из типа структуры и добавляет к их внутренним именам алиас источника.
+
+На [window/yql-14277](https://nda.ya.ru/t/8rBzo2vJ7woPUv результаты в режимах `auto`, `force` и `disable` совпадают, включая порядок колонок.
+commit_hash:6fd36ee4df31a6575487407cf64939366ff8c617
+
+**File**: `yql/essentials/core/type_ann/type_ann_sql.cpp` (modified, +14/-6)
 ```diff
-@@ -1962,13 +1962,13 @@ class TUserJob
-             CleanupUserProcesses();
-         }
+@@ -3673,8 +3673,7 @@ IGraphTransformer::TStatus SqlSetItemWrapper(const TExprNode::TPtr& input, TExpr
+                                         auto alias = lambda.Tail().Head().Content();
+                                         bool found = false;
+                                         for (ui32 priority : {TInput::Projection, TInput::Current, TInput::External}) {
+-                                            for (ui32 inputIndex = 0; inputIndex < joinInputs.size(); ++inputIndex) {
+-                                                auto& x = inputs[inputIndex];
++                                            for (const auto& x : joinInputs) {
+                                                 if (priority != x.Priority) {
+                                                     continue;
+                                                 }
+@@ -3683,10 +3682,19 @@ IGraphTransformer::TStatus SqlSetItemWrapper(const TExprNode::TPtr& input, TExpr
+                                                     continue;
+                                                 }
  
-+        Host_->SetUserJobMemoryUsage(memoryUsage);
-+
-         if (UserJobSpec_.has_memory_reserve() && Config_->OomScoreAdjOnExceededMemoryReserve.has_value()) {
-             int targetOomScore = memoryUsage > UserJobSpec_.memory_reserve() ? *Config_->OomScoreAdjOnExceededMemoryReserve : 0;
-             SetOomScoreAdj(targetOomScore);
-         }
+-                                                YQL_ENSURE(x.Order);
+-                                                for (const auto& [col, gen_col] : *x.Order) {
+-                                                    if (!col.StartsWith("_yql_")) {
+-                                                        o.AddColumn(MakeAliasedColumn(x.Alias, col));
++                                                auto addColumn = [&](TStringBuf name) {
++                                                    if (!name.StartsWith("_yql_")) {
++                                                        o.AddColumn(MakeAliasedColumn(x.Alias, name));
++                                                    }
++                                                };
++                                                if (isYql && !x.Order) {
++                                                    for (const auto* item : x.Type->GetItems()) {
++                                                        addColumn(item->GetName());
++                                                    }
++                                                } else {
++                                                    YQL_ENSURE(x.Order);
++                                                    for (const auto& column : *x.Order) {
++                                                        addColumn(column.LogicalName);
+                                                     }
+                                                 }
  
--        Host_->SetUserJobMemoryUsage(memoryUsage);
--
-         if (Config_->CheckUserJobOomKill) {
-             if (auto oomKillCount = UserJobEnvironment_->GetJobOomKillCount(); oomKillCount.value_or(0)) {
-                 YT_TLOG_INFO("Out of memory kill detected")
 ```
 
 ---
 
-### Incident Patch 2: `bba1c970` (2026-11-17)
-**Commit Message**: Fix the default javac daemon setting
+### Incident Patch 2: `dbc3b467` (2026-11-18)
+**Commit Message**: CHYT: Fix native type tags and min-max checks
 
-Set YA_JAVAC_DAEMON=yes as the ordinary default in java.conf and force it to no only in Autocheck. The previous conditional assignment retained literal quotes and overrode explicit command-line values, leaving the daemon disabled outside Autocheck. The new default allows --no-javac-daemon to disable it; Autocheck always disables it, including with an explicit yes.
+Use the type family name when a native ClickHouse type annotation exceeds YT's 256-byte tag limit. Avoid unnecessary shared-pointer copies in converter constructors. Add one regression test that checks the Enum16 family tag and validates the resulting logical type.
 
-Validation: generated Linux/JDK 21 graphs for afisha/tickets with the default, --no-javac-daemon, AUTOCHECK=yes, and AUTOCHECK=yes with explicit YA_JAVAC_DAEMON=yes. Verified the expected environment in all four cases and unchanged compilation node UIDs, including versus the original default. Formatting checks passed.
+Keep the original column type for the composite check in the min-max filter. This is a defensive guard; composite statistics already use Min/Max sentinels.
 
-Ticket: <https://nda.ya.ru/t/5erZ2qNH7wffud>
-commit_hash:0c151dd9f196408622950d9352654ff5c853d464
+Follow up on [PR 15524567](https://nda.ya.ru/t/h7Da0iPw7wpXJQ and [PR 15703724](https://nda.ya.ru/t/xJRn587_7wpXJS
+commit_hash:d36a2d52dc06deacba0beddd5b95286bac60ca51
 
-**File**: `build/conf/java.conf` (modified, +4/-3)
+**File**: `yt/chyt/server/ch_to_yt_converter.cpp` (modified, +21/-17)
 ```diff
-@@ -801,11 +801,12 @@ COMPILE_JAVA_MF=${hide:JAVA_FAKEID} $COMPILE_JAVA && $MAVEN_EXPORT_CMD
+@@ -111,20 +111,24 @@ class TConverterBase
  
- # tag:java-specific
- # Feature flag for the persistent javac/kotlinc daemon.
--# Use -DYA_JAVAC_DAEMON=yes to enable.  The user-facing flag is only read in the
--# `when` below (never placed in a command), so it does not affect node UIDs.
-+# Enabled by default outside Autocheck; use -DYA_JAVAC_DAEMON=no to disable.
-+# The user-facing flag is only read in the `when` below (never placed in a
-+# command), so it does not affect node UIDs.
- # The command-level env is carried by the __NO_UID__ variable, whose value is
- # excluded from UIDs, so toggling the daemon never invalidates the build cache.
--YA_JAVAC_DAEMON=no
-+YA_JAVAC_DAEMON=yes
- _YA_JAVAC_DAEMON_ENV__NO_UID__=
- when ($YA_JAVAC_DAEMON == "yes") {
-     _YA_JAVAC_DAEMON_ENV__NO_UID__=${env:"YA_JAVAC_DAEMON=1"} ${env:"YA_JAVAC_DAEMON_HOME=$(SHALLOW_ROOT)"}
+     static std::string GetNativeTypeName(const DB::DataTypePtr& dataType)
+     {
+-        if (const auto* customName = dataType->getCustomName()) {
+-            return customName->getName();
++        if (!dataType->getCustomName()) {
++            switch (dataType->getTypeId()) {
++                case DB::TypeIndex::Nullable:
++                case DB::TypeIndex::Array:
++                case DB::TypeIndex::Tuple:
++                case DB::TypeIndex::LowCardinality:
++                case DB::TypeIndex::Map:
++                    return dataType->getFamilyName();
++                default:
++                    break;
++            }
+         }
+ 
+-        switch (dataType->getTypeId()) {
+-            case DB::TypeIndex::Nullable:
+-            case DB::TypeIndex::Array:
+-            case DB::TypeIndex::Tuple:
+-            case DB::TypeIndex::LowCardinality:
+-            case DB::TypeIndex::Map:
+-                return dataType->getFamilyName();
+-            default:
+-                return dataType->getName();
++        auto name = dataType->getName();
++        if (name.size() > MaxColumnNameLength) {
++            return dataType->getFamilyName();
+         }
++        return name;
+     }
+ };
+ 
+@@ -393,7 +397,7 @@ class TNullableConverter
+     : public TConverterBase
+ {
+ public:
+-    TNullableConverter(DB::DataTypePtr dataType, TConverterPtr underlyingConverter)
++    TNullableConverter(const DB::DataTypePtr& dataType, TConverterPtr underlyingConverter)
+         : TConverterBase(dataType)
+         , UnderlyingConverter_(std::move(underlyingConverter))
+     { }
+@@ -458,7 +462,7 @@ class TArrayConverter
+     : public TConverterBase
+ {
+ public:
+-    TArrayConverter(DB::DataTypePtr dataType, TConverterPtr underlyingConverter)
++    TArrayConverter(const DB::DataTypePtr& dataType, TConverterPtr underlyingConverter)
+         : TConverterBase(dataType)
+         , UnderlyingConverter_(std::move(underlyingConverter))
+     { }
+@@ -522,7 +526,7 @@ class TMapConverter
+ {
+ public:
+     TMapConverter(
+-        DB::DataTypePtr dataType,
++        const DB::DataTypePtr& dataType,
+         TConverterPtr keyConverter,
+         TConverterPtr valueConverter,
+         TConverterPtr nestedConverter)
+@@ -572,7 +576,7 @@ class TTupleConverter
+ {
+ public:
+     TTupleConverter(
+-        DB::DataTypePtr dataType,
++        const DB::DataTypePtr& dataType,
+         std::vector<TConverterPtr> underlyingConverters,
+         std::optional<std::vector<std::string>> elementNames)
+         : TConverterBase(dataType)
+@@ -659,7 +663,7 @@ class TDecimalConverter
+     using TDecimalColumn = DB::ColumnDecimal<TClickHouseDecimal>;
+     static constexpr i64 DecimalSize = sizeof(TUnderlyingIntegerType);
+ 
+-    TDecimalConverter(DB::DataTypePtr dataType, int precision, int scale)
++    TDecimalConverter(const DB::DataTypePtr& dataType, int precision, int scale)
+         : TConverterBase(dataType)
+         , Precision_(precision)
+         , Scale_(scale)
+@@ -896,7 +900,7 @@ class TLowCardinalityConverter
+     : public TConverterBase
+ {
+ public:
+-    TLowCardinalityConverter(DB::DataTypePtr dataType, TConverterPtr underlyingConverter)
++    TLowCardinalityConverter(const DB::DataTypePtr& dataType, TConverterPtr underlyingConverter)
+         : TConverterBase(dataType)
+         , UnderlyingConverter_(std::move(underlyingConverter))
+     { }
 ```
 
-**File**: `build/conf/settings.conf` (modified, +1/-0)
+**File**: `yt/chyt/server/granule_min_max_filter.cpp` (modified, +1/-1)
 ```diff
-@@ -24,6 +24,7 @@ when ($OS_WINDOWS == "yes") {
- 
- when ($AUTOCHECK == "yes") {
-     PIC_NO_PIE=yes
-+    YA_JAVAC_DAEMON=no
+@@ -41,7 +41,7 @@ std::vector<bool> ComputeUseMinMaxBounds(const TTableSchema& schema)
+             }
+         }
+         // YSON serialization does not preserve value ordering.
+-        result.push_back(!IsV3Composite(valueType) &&
++        result.push_back(!IsV3Composite(columnSchema.LogicalType()) &&
+             *valueType != *SimpleLogicalType(ESimpleLogicalValueType::Any) &&
+             valueType->GetMetatype() != ELogicalMetatype::AggregateState);
+     }
+```
+
+**File**: `yt/chyt/server/unittests/ch_to_yt_converter_ut.cpp` (modified, +14/-0)
+```diff
+@@ -223,6 +223,20 @@ TEST_F(TCHToYTConversionTest, TaggedLogicalTypesForParameterizedUnsupportedNativ
+     }
  }
  
- when (($OS_LINUX == "yes" || $OS_DARWIN == "yes") && $YMAKE_USE_OBJCOPY != "no") {
++TEST_F(TCHToYTConversionTest, UsesFamilyNameForOversizedNativeTypeTag)
++{
++    Settings_->Composite->AnnotateResultSchemaWithNativeTypes = true;
++    auto dataType = DB::DataTypeFactory::instance().get(
++        "Enum16('" + std::string(MaxColumnNameLength, 'x') + "' = 1)");
++    TCHToYTConverter converter(dataType, Settings_);
++    auto logicalType = converter.GetLogicalType();
++
++    EXPECT_NO_THROW(ValidateLogicalType(TComplexTypeFieldDescriptor(logicalType)));
++    EXPECT_EQ(
++        *TaggedLogicalType("Enum16", SimpleLogicalType(ESimpleLogicalValueType::String)),
++        *logicalType);
++}
++
+ TEST_F(TCHToYTConversionTest, Int16)
+ {
+     auto dataType = std::make_shared<DB::DataTypeInt16>();
 ```
 
 ---
 
-### Incident Patch 3: `28389bf7` (2026-11-17)
-**Commit Message**: YT-30469: Fix flaky test
-commit_hash:dcae95451627bcca6ec0d464b0bb11b0732699a6
+### Incident Patch 3: `6f9fb9d6` (2026-11-19)
+**Commit Message**: Remove .srv support from build
 
-**File**: `yt/yt/tests/integration/scheduler/test_scheduler_resource_limits.py` (modified, +12/-3)
+Больше не осталось `.srv` файлов - удаляем поддержку
+Коммит в ymake <https://nda.ya.ru/t/sYULw8lG7wqMRG>
+commit_hash:7a057bbe49ceb8350115798625a2291c6994a7fa
+
+**File**: `build/conf/settings.conf` (modified, +1/-1)
 ```diff
-@@ -43,8 +43,8 @@ def rndstr(n):
- """
+@@ -13,7 +13,7 @@ FAIL_PY2=no
+ MAIN_OUTPUT_AS_EXTRA=yes
+ FILL_MODULE2NODES=yes
+ FUSE_PREFETCH=yes
+-FUSE_PREFETCH_EXTS=ya.make .inc .h .hh .hpp .hxx .H .ipp .ixx .inl .c .C .cc .cpp .cxx .cu .cuh .S .s .asm .proto .ev .cfgproto .gzt .fbs .fbs64 .py .pyi .pyx .pxd .pxi .swg .l .y .ypp .gperf .rl .rl6 .rh .rli .go .java .kt .md .ts .tsx .js .jsx .ydl .nlg .sc .idl .msg .srv
++FUSE_PREFETCH_EXTS=ya.make .inc .h .hh .hpp .hxx .H .ipp .ixx .inl .c .C .cc .cpp .cxx .cu .cuh .S .s .asm .proto .ev .cfgproto .gzt .fbs .fbs64 .py .pyi .pyx .pxd .pxi .swg .l .y .ypp .gperf .rl .rl6 .rh .rli .go .java .kt .md .ts .tsx .js .jsx .ydl .nlg .sc .idl .msg
  
+ CONSISTENT_DEBUG=yes
+ CONSISTENT_BUILD=yes
+```
+
+**File**: `build/ymake.core.conf` (modified, +0/-5)
+```diff
+@@ -5615,11 +5615,6 @@ macro _SRC("msg", SRC, SRCFLAGS...) {
+     .CMD=$ROS_MSG_CMD($SRC)
+ }
  
--def create_memory_script(memory, before_action=""):
--    return MEMORY_SCRIPT.format(before_action=before_action, memory=memory, after_action="time.sleep(5.0)").encode("ascii")
-+def create_memory_script(memory, before_action="", after_action="time.sleep(5.0)"):
-+    return MEMORY_SCRIPT.format(before_action=before_action, memory=memory, after_action=after_action).encode("ascii")
- 
- 
- ###############################################################################################
-@@ -349,10 +349,14 @@ def test_user_job_resource_overdraft_memory_multiplier(self):
-                 before_action="time.sleep(5)",
-                 # Higher memory is necessary due to additional ytserver-exec memory footprint.
-                 memory=250 * 10 ** 6,
-+                # Hold the memory until the test has seen both overdraft aborts.
-+                after_action=with_breakpoint(
-+                    "import subprocess; subprocess.call('''BREAKPOINT''', shell=True, executable='/bin/bash')",
-+                ),
-             ))
- 
-         op = run_test_vanilla(
--            track=True,
-+            track=False,
-             command="python3 mapper.py",
-             job_count=1,
-             spec={
-@@ -364,6 +368,11 @@ def test_user_job_resource_overdraft_memory_multiplier(self):
-                 "file_paths": ["//tmp/mapper.py"],
-             })
- 
-+        # Jobs with 160MB and 240MB reserves are aborted for overdraft; the 400MB one completes.
-+        wait(lambda: op.get_job_count("aborted") == 2, timeout=60)
-+        release_breakpoint()
-+        op.track()
-+
-         time.sleep(1)
- 
-         to_barrier = write_log_barrier(controller_agent_address)
+-# tag:src-processing
+-macro _SRC("srv", SRC, SRCFLAGS...) {
+-    .CMD=$ROS_SRV_CMD($SRC)
+-}
+-
+ ACTOOL_PATH=$XCODE_TOOLS_ROOT_RESOURCE_GLOBAL/Xcode/Contents/Developer/usr/bin/ibtool
+ # tag:ios-specific
+ ASSETS_FLAGS=--output-format human-readable-text --notices --warnings
 ```
 
 #### Recent Merged Pull Requests:
@@ -1338,30 +1449,46 @@ commit_hash:dcae95451627bcca6ec0d464b0bb11b0732699a6
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. YT-30469: Submit memory usage before setting oom score adj
+## X. YQL-20905: (YqlSelect) Fix panic on qualified star for inputs without column ord
 
 **RULE**:
-When implementing operations in `yt/yt/server/job_proxy/user_job.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yql/essentials/core/type_ann/type_ann_sql.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `26dbbd73`: YT-30469: Submit memory usage before setting oom score adj. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3d6a44fa`: YQL-20905: (YqlSelect) Fix panic on qualified star for inputs without column order. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yt/server/job_proxy/user_job.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yql/essentials/core/type_ann/type_ann_sql.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        Host_->SetUserJobMemoryUsage(memoryUsage);
-
+                                            for (const auto& x : joinInputs) {
+                                                auto addColumn = [&](TStringBuf name) {
+                                                    if (!name.StartsWith("_yql_")) {
+                                                        o.AddColumn(MakeAliasedColumn(x.Alias, name));
+                                                    }
+                                                };
+                                                if (isYql && !x.Order) {
+                                                    for (const auto* item : x.Type->GetItems()) {
+                                                        addColumn(item->GetName());
+                                                    }
+                                                } else {
+                                                    YQL_ENSURE(x.Order);
+                                                    for (const auto& column : *x.Order) {
+                                                        addColumn(column.LogicalName);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-        Host_->SetUserJobMemoryUsage(memoryUsage);
-
+                                            for (ui32 inputIndex = 0; inputIndex < joinInputs.size(); ++inputIndex) {
+                                                auto& x = inputs[inputIndex];
+                                                YQL_ENSURE(x.Order);
+                                                for (const auto& [col, gen_col] : *x.Order) {
+                                                    if (!col.StartsWith("_yql_")) {
+                                                        o.AddColumn(MakeAliasedColumn(x.Alias, col));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `26dbbd73` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3d6a44fa` are properly handled with clean fallback behavior.

@@ -11179,3 +11179,6 @@
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T01:55:42.494Z` | `hf-akhaliq-minimax-h3-image-character-swap` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C41D220B` [Domain D] | Yes (`f80ac589...`) |
 | `CYCLE-20261119-OYUS` | `2026-11-19T02:03:33.364Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`dfc96ea9...`) |
 | `CYCLE-20261119-Z09R` | `2026-11-19T02:11:21.760Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | Yes (`a3e80301...`) |
+| `CYCLE-20261119-KJMG` | `2026-11-19T02:56:06.232Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`b88a9e24...`) |
+| `CYCLE-20261119-KNIR` | `2026-11-19T02:56:11.283Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9323` | Yes (`1494f499...`) |
+| `CYCLE-20261119-LHRY` | `2026-11-19T02:56:50.494Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9324` | Yes (`cb051452...`) |

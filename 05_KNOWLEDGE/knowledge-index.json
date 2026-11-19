@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T02:11:35.075Z",
+  "last_updated": "2026-11-19T02:56:56.434Z",
   "total_verified_learnings": 9013,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21596,
+  "total_items": 21603,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -212369,8 +212369,8 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "8c331dbf",
-      "content_hash": "87a579b78485e19012d258ea6ea752f088c3f65c6e67011dd3681b2ae9dba3d9",
+      "source_version": "73d41c0a",
+      "content_hash": "cb051452fb527d8dd8b0edc5feac957a616a89ec75e0c96fee72f9250842e911",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
@@ -212388,6 +212388,11 @@
           "number": 8983,
           "title": "document ARGO_ARTIFACT_GC_ENABLED, artifact security headers and TLS_MIN_V",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9324,
+          "title": "build the OSS Scanner image like release builds",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -212395,7 +212400,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T15:06:23.923Z",
+      "verified_at": "2026-11-19T02:56:50.271Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212449,10 +212454,10 @@
       "relative_path": "08_VERIFICATION/argoproj-argo-workflows-verification-protocol-empirical-defect-shield-for-argopr.md",
       "title": "Verification Protocol: Empirical Defect Shield for argoproj/argo-workflows",
       "repository": "argoproj/argo-workflows",
-      "source_version": "8c331dbf",
-      "content_hash": "bbead8a7e50763c82e753248f32936b71199b40c3cf4719d2d2e14f64a492411",
+      "source_version": "73d41c0a",
+      "content_hash": "0f27a15efdbdc7d108a1267461fdfda84879b388541617c4fdfac3feedc2e8eb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T15:06:24.512Z"
+      "persisted_at": "2026-11-19T02:56:51.108Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants",
@@ -212498,9 +212503,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for argoproj-argo-workflows-learnings",
       "repository": "argoproj-argo-workflows-learnings",
       "source_version": "HEAD",
-      "content_hash": "0a51041c2fe4a89660abc023d8b6212e33976d1c100749217a00eee09e01e419",
+      "content_hash": "d0440afb0fe03631926fae3fc7ae408b791ce7bd6a7e053121f9554e04db2bc9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T15:06:29.353Z"
+      "persisted_at": "2026-11-19T02:56:55.307Z"
     },
     "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf": {
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
@@ -229816,7 +229821,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-8B",
       "source_version": "hf-qwen-qwen3-8b",
-      "content_hash": "e2ab85eb99f87c7cb7e6d06a8e333f2bf11747f7edfb5513efff42ca7db3c02b",
+      "content_hash": "b88a9e242c04c92d37595bc6b2e91e402320ee90081d42ef19e6c2d4b4868908",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md",
       "promoted_rules": [],
@@ -229825,7 +229830,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T13:28:59.638Z",
+      "verified_at": "2026-11-19T02:56:05.988Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229842,9 +229847,9 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-8B Core Invariants",
       "repository": "Qwen/Qwen3-8B",
       "source_version": "hf-qwen-qwen3-8b",
-      "content_hash": "0c921a446efafc05a07c4648efdc9dc1081b4e55b5d826764eb3f1b640a2ad1d",
+      "content_hash": "4483ab75af1f20d8bd875e8f52652fff2e3301d15882821e8ae458b333003b6c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T13:29:00.001Z"
+      "persisted_at": "2026-11-19T02:56:06.475Z"
     },
     "learn-github-dosco-graphjin": {
       "learning_id": "learn-github-dosco-graphjin",
@@ -229937,9 +229942,9 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-8b-learnings Core Invariants",
       "repository": "hf-qwen-qwen3-8b-learnings",
       "source_version": "HEAD",
-      "content_hash": "b89fadc2f6c6129a591eba5bed56ecef28a3f0634ff9713901b826c266a9b669",
+      "content_hash": "6b80d1c2368693898d10cd2b078609e628359be6f78517928b9b339079665d59",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T13:29:45.663Z"
+      "persisted_at": "2026-11-19T02:56:54.229Z"
     },
     "candidate_directive-introspection-expose-columns-of-postgres-functions-returning-table-rows": {
       "item_id": "candidate_directive-introspection-expose-columns-of-postgres-functions-returning-table-rows",
@@ -235279,8 +235284,8 @@
       "slug": "ytsaurus-ytsaurus",
       "platform": "github",
       "source_url": "https://github.com/ytsaurus/ytsaurus",
-      "source_version": "0374c91e",
-      "content_hash": "a582e4fd73190db69e709fa985841dce2ac37c676bcab48ff9b5a359d67d0e35",
+      "source_version": "6f9fb9d6",
+      "content_hash": "1494f499a0265de243e1f75e3474e3ffef2426f0a7a070c1c45fd743882bb42d",
       "dossier_path": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
       "promoted_rules": [
@@ -235298,6 +235303,11 @@
           "number": 8964,
           "title": "Submit memory usage before setting oom score adj",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9323,
+          "title": "(YqlSelect) Fix panic on qualified star for inputs without column ord",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235305,7 +235315,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T12:25:04.643Z",
+      "verified_at": "2026-11-19T02:56:11.061Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235347,10 +235357,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ytsaurus-ytsaurus-architecture-intelligence-ytsaurus-ytsaurus-core-invariants.md",
       "title": "Architecture Intelligence: ytsaurus/ytsaurus Core Invariants",
       "repository": "ytsaurus/ytsaurus",
-      "source_version": "349c6541",
-      "content_hash": "36fd31f79a58d1e65554b21c7c1e7ddafe9af4df5131894448a8aefa3f2e57ad",
+      "source_version": "6f9fb9d6",
+      "content_hash": "12e19d69324732713cd9f935f17493bcd6c7daf7588ce2f06aad3b14812311e3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T19:20:51.246Z"
+      "persisted_at": "2026-11-19T02:56:11.722Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ytsaurus-ytsaurus": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ytsaurus-ytsaurus",
@@ -235359,10 +235369,10 @@
       "relative_path": "08_VERIFICATION/ytsaurus-ytsaurus-verification-protocol-empirical-defect-shield-for-ytsaurus-yts.md",
       "title": "Verification Protocol: Empirical Defect Shield for ytsaurus/ytsaurus",
       "repository": "ytsaurus/ytsaurus",
-      "source_version": "0374c91e",
-      "content_hash": "830bcb2a433998dd2877dc53612f2434f2d9f9043d89fcb77768d4a2c04f626a",
+      "source_version": "6f9fb9d6",
+      "content_hash": "8576e8ebe39981a3d8a9e8bb3e7e1012c34d288cf89ff52ddab293b5b2aa29e7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T12:25:05.253Z"
+      "persisted_at": "2026-11-19T02:56:11.906Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-gev-26b-decide-nvfp4-learnings-core",
@@ -235408,9 +235418,9 @@
       "title": "Architecture Intelligence: ytsaurus-ytsaurus-learnings Core Invariants",
       "repository": "ytsaurus-ytsaurus-learnings",
       "source_version": "HEAD",
-      "content_hash": "8167a87b76e643f9ce8a72dd6feae7aa39af9ae1c15346dab2eb25411d26d890",
+      "content_hash": "bf0a382e220e8d3e5d1ba084f4b0c4c3f27f877b9593d2ae3374067b5a869d84",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T19:21:24.660Z"
+      "persisted_at": "2026-11-19T02:56:56.216Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ytsaurus-ytsaurus-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ytsaurus-ytsaurus-learnings",
@@ -235420,9 +235430,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ytsaurus-ytsaurus-learnings",
       "repository": "ytsaurus-ytsaurus-learnings",
       "source_version": "HEAD",
-      "content_hash": "acab7c25a02c2d5d732c93d38614c6ca726d1ccd96f246ba2a7b9dd3c40db36d",
+      "content_hash": "49d9dc8611662c0c142f74e5f761b95bade99552720fcf5dd7f1997f3bb2011b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T03:37:31.063Z"
+      "persisted_at": "2026-11-19T02:56:56.434Z"
     },
     "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf": {
       "learning_id": "learn-huggingface-sc117-qwen3-8-flash-next-gsq-rco-abliterated-gguf",
@@ -291731,6 +291741,94 @@
       "content_hash": "b218c41936dae20d101496da15b760bec5fbd437f16926af9aecf917fbaec33a",
       "domain_letter": "D",
       "persisted_at": "2026-11-19T01:55:42.784Z"
+    },
+    "rule-9323": {
+      "learning_id": "rule-9323",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9323,
+      "title": "(YqlSelect) Fix panic on qualified star for inputs without column ord",
+      "source_url": "https://github.com/ytsaurus/ytsaurus",
+      "source_version": "6f9fb9d6",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T02:56:11.061Z"
+    },
+    "candidate_directive-yqlselect-fix-panic-on-qualified-star-for-inputs-without-column-ord": {
+      "item_id": "candidate_directive-yqlselect-fix-panic-on-qualified-star-for-inputs-without-column-ord",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-KNPQ-yqlselect-fix-panic-on-qualified-star-for-inputs-without-column-ord.md",
+      "title": "(YqlSelect) Fix panic on qualified star for inputs without column ord",
+      "repository": "ytsaurus/ytsaurus",
+      "source_version": "6f9fb9d6",
+      "content_hash": "9a18dce6076ae02008d9459e0b6bb1c9da22c2777e91bfdcfeced2f96a0a8fa6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T02:56:11.535Z"
+    },
+    "rule-9324": {
+      "learning_id": "rule-9324",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9324,
+      "title": "build the OSS Scanner image like release builds",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "73d41c0a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T02:56:50.271Z"
+    },
+    "candidate_directive-build-the-oss-scanner-image-like-release-builds": {
+      "item_id": "candidate_directive-build-the-oss-scanner-image-like-release-builds",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LL7J-build-the-oss-scanner-image-like-release-builds.md",
+      "title": "build the OSS Scanner image like release builds",
+      "repository": "argoproj-argo-workflows-learnings",
+      "source_version": "HEAD",
+      "content_hash": "83f656bda87c6c5d901f3900823ef3e37ac9187734d06b840e01cbcba1ad6237",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-19T02:56:54.943Z"
+    },
+    "domain_intelligence-design-intelligence-argoproj-argo-workflows-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-argoproj-argo-workflows-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-argoproj-argo-workflows-design-intelligence-argoproj-argo-workflows-core-invaria.md",
+      "title": "Design Intelligence: argoproj/argo-workflows Core Invariants",
+      "repository": "argoproj/argo-workflows",
+      "source_version": "73d41c0a",
+      "content_hash": "f6675641add672df9f578abe3867e4c0cd231af5f4bd2b1171ab0c5e22465121",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-19T02:56:50.928Z"
+    },
+    "domain_intelligence-design-intelligence-argoproj-argo-workflows-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-argoproj-argo-workflows-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-argoproj-argo-workflows-learnings-design-intelligence-argoproj-argo-workflows-le.md",
+      "title": "Design Intelligence: argoproj-argo-workflows-learnings Core Invariants",
+      "repository": "argoproj-argo-workflows-learnings",
+      "source_version": "HEAD",
+      "content_hash": "533ca999d33fbdc70adaf13e20f057bc80621fc676f400f9e8abace8a32937c6",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-19T02:56:55.129Z"
+    },
+    "candidate_directive-yql-20905-yqlselect-fix-panic-on-qualified-star-for-inputs-without-column-ord": {
+      "item_id": "candidate_directive-yql-20905-yqlselect-fix-panic-on-qualified-star-for-inputs-without-column-ord",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LM1U-yql-20905-yqlselect-fix-panic-on-qualified-star-for-inputs-without-column-ord.md",
+      "title": "YQL-20905: (YqlSelect) Fix panic on qualified star for inputs without column ord",
+      "repository": "ytsaurus-ytsaurus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2770c334838cc28565061c9ce53e01b3aac9e1d7e712cbaf9212e9653fff422b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T02:56:56.034Z"
     }
   },
   "ai-builder-brain": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T19:21:24.458Z",
+  "timestamp": "2026-11-19T02:56:55.924Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-ytsaurus-ytsaurus-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ytsaurus-ytsaurus-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T19:21:24.458Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T02:56:55.924Z`  
 > **Learning ID**: `LEARN-EVO-ytsaurus-ytsaurus-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 58%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 51%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from ytsaurus-ytsaurus-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source**: github ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
-> **Source Version**: `349c6541`  
+> **Source Version**: `6f9fb9d6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T19:20:50.139Z  
+> **Timestamp**: 2026-11-19T02:56:10.146Z  
 > **Learning ID**: `learn-github-ytsaurus-ytsaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ytsaurus/ytsaurus](https://github.com/ytsaurus/ytsaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T19:20:50.134Z  
+> **Harvest Timestamp**: 2026-11-19T02:56:10.139Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1223,183 +1223,232 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `16e53abb` (2026-11-13)
-**Commit Message**: Fix worker stack introspection and GWM leader reporting
+### Incident Patch 1: `3d6a44fa` (2026-11-18)
+**Commit Message**: YQL-20905: (YqlSelect) Fix panic on qualified star for inputs without column order
 
-Unblock SIGUSR1 after InitSignals and before starting dq_service_process worker threads when monitoring is enabled. Thread and fiber introspection can then receive the signal instead of leaving stack requests stuck.
+Исправляет падение в `SqlSetItemWrapper` при раскрытии `a.*`, когда у источника нет метаданных о порядке колонок. В этом случае `YqlSelect` заполняет `projection_order` видимыми полями из типа структуры и добавляет к их внутренним именам алиас источника.
 
-Add the GWM leader to ClusterInfo immediately after leadership is acquired, before the first IsReady request. Report its address through Coordinator->GetIp(), matching other service nodes and supporting combined service/worker nodes.
+На [window/yql-14277](https://nda.ya.ru/t/8rBzo2vJ7woPUv результаты в режимах `auto`, `force` и `disable` совпадают, включая порядок колонок.
+commit_hash:6fd36ee4df31a6575487407cf64939366ff8c617
 
-Keep DQ UI changes in [PR 17119089](https://nda.ya.ru/t/9XhVa8Ox7wStjx This PR contains the worker/GWM changes and their regression tests.
-
-Validation: the signal test passed, checking the inherited thread mask and preservation of other signals. All 108 GWM tests passed, including leader visibility before readiness and its IP address.
-commit_hash:aba56d6d8bf048b0f1681797c9a3959f3e381f89
-
-**File**: `yt/yql/providers/dq/global_worker_manager/global_worker_manager.cpp` (modified, +7/-3)
+**File**: `yql/essentials/core/type_ann/type_ann_sql.cpp` (modified, +14/-6)
 ```diff
-@@ -28,7 +28,6 @@
- #include <util/generic/vector.h>
- #include <util/generic/guid.h>
- #include <util/system/fs.h>
--#include <util/system/hostname.h>
- #include <util/system/getpid.h>
- #include <util/generic/scope.h>
- #include <util/random/shuffle.h>
-@@ -931,6 +930,8 @@ class TGlobalWorkerManager: public TWorkerManagerCommon<TGlobalWorkerManager> {
-         // update leader info (used for leader)
-         auto attributes = NYT::NodeFromYsonString(ev->Get()->Attributes).AsMap();
-         UpdateLeaderInfo(attributes);
-+        // Report the leader even before its first IsReady request.
-+        UpdateLocalCriticalFiles();
+@@ -3673,8 +3673,7 @@ IGraphTransformer::TStatus SqlSetItemWrapper(const TExprNode::TPtr& input, TExpr
+                                         auto alias = lambda.Tail().Head().Content();
+                                         bool found = false;
+                                         for (ui32 priority : {TInput::Projection, TInput::Current, TInput::External}) {
+-                                            for (ui32 inputIndex = 0; inputIndex < joinInputs.size(); ++inputIndex) {
+-                                                auto& x = inputs[inputIndex];
++                                            for (const auto& x : joinInputs) {
+                                                 if (priority != x.Priority) {
+                                                     continue;
+                                                 }
+@@ -3683,10 +3682,19 @@ IGraphTransformer::TStatus SqlSetItemWrapper(const TExprNode::TPtr& input, TExpr
+                                                     continue;
+                                                 }
  
-         YQL_CLOG(INFO, ProviderDq) << "Become leader, epoch=" << CurrentResourceId.Epoch;
-         YQL_CLOG(INFO, ProviderDq) << "Leader resolver=" << LeaderHost << ":" << LeaderPort;
-@@ -1682,6 +1683,10 @@ class TGlobalWorkerManager: public TWorkerManagerCommon<TGlobalWorkerManager> {
-             //}
-             LocalCriticalFiles->AddFile("unused", f.GetObjectId());
+-                                                YQL_ENSURE(x.Order);
+-                                                for (const auto& [col, gen_col] : *x.Order) {
+-                                                    if (!col.StartsWith("_yql_")) {
+-                                                        o.AddColumn(MakeAliasedColumn(x.Alias, col));
++                                                auto addColumn = [&](TStringBuf name) {
++                                                    if (!name.StartsWith("_yql_")) {
++                                                        o.AddColumn(MakeAliasedColumn(x.Alias, name));
++                                                    }
++                                                };
++                                                if (isYql && !x.Order) {
++                                                    for (const auto* item : x.Type->GetItems()) {
++                                                        addColumn(item->GetName());
++                                                    }
++                                                } else {
++                                                    YQL_ENSURE(x.Order);
++                                                    for (const auto& column : *x.Order) {
++                                                        addColumn(column.LogicalName);
+                                                     }
+                                                 }
+ 
+```
+
+---
+
+### Incident Patch 2: `dbc3b467` (2026-11-18)
+**Commit Message**: CHYT: Fix native type tags and min-max checks
+
+Use the type family name when a native ClickHouse type annotation exceeds YT's 256-byte tag limit. Avoid unnecessary shared-pointer copies in converter constructors. Add one regression test that checks the Enum16 family tag and validates the resulting logical type.
+
+Keep the original column type for the composite check in the min-max filter. This is a defensive guard; composite statistics already use Min/Max sentinels.
+
+Follow up on [PR 15524567](https://nda.ya.ru/t/h7Da0iPw7wpXJQ and [PR 15703724](https://nda.ya.ru/t/xJRn587_7wpXJS
+commit_hash:d36a2d52dc06deacba0beddd5b95286bac60ca51
+
+**File**: `yt/chyt/server/ch_to_yt_converter.cpp` (modified, +21/-17)
+```diff
+@@ -111,20 +111,24 @@ class TConverterBase
+ 
+     static std::string GetNativeTypeName(const DB::DataTypePtr& dataType)
+     {
+-        if (const auto* customName = dataType->getCustomName()) {
+-            return customName->getName();
++        if (!dataType->getCustomName()) {
++            switch (dataType->getTypeId()) {
++                case DB::TypeIndex::Nullable:
++                case DB::TypeIndex::Array:
++                case DB::TypeIndex::Tuple:
++                case DB::TypeIndex::LowCardinality:
++                case DB::TypeIndex::Map:
++                    return dataType->getFamilyName();
++                default:
++                    break;
++            }
          }
-+        UpdateLocalCriticalFiles();
-+    }
-+
-+    void UpdateLocalCriticalFiles() {
-         TVector<TFileResource> files;
-         LocalCriticalFiles->Walk([&](const TString& objectId) {
-             TFileResource r;
-@@ -1692,7 +1697,7 @@ class TGlobalWorkerManager: public TWorkerManagerCommon<TGlobalWorkerManager> {
-         r.SetObjectId(Revision);
-         files.push_back(r);
  
--        AllCriticalFiles.Add(TGUID(), SelfId().NodeId(), Revision, Address, Pid, TString(), files);
-+        AllCriticalFiles.Add(TGUID(), SelfId().NodeId(), Revision, Coordinator->GetIp(), Pid, TString(), files);
+-        switch (dataType->getTypeId()) {
+-            case DB::TypeIndex::Nullable:
+-            case DB::TypeIndex::Array:
+-            case DB::TypeIndex::Tuple:
+-            case DB::TypeIndex::LowCardinality:
+-            case DB::TypeIndex::Map:
+-                return dataType->getFamilyName();
+-            default:
+-                return dataType->getName();
++        auto name = dataType->getName();
++        if (name.size() > MaxColumnNameLength) {
++            return dataType->getFamilyName();
+         }
++        return name;
      }
- 
-     void OnIsReadyForward(TEvIsReady::TPtr& ev, const TActorContext& ctx) {
-@@ -1932,7 +1937,6 @@ class TGlobalWorkerManager: public TWorkerManagerCommon<TGlobalWorkerManager> {
-     TInstant LastCleanTime;
-     TDuration CleanInterval = TDuration::Seconds(2);
-     bool TerminatingMode = false;
--    const TString Address = HostName();
-     const ui32 Pid = GetPID();
  };
  
+@@ -393,7 +397,7 @@ class TNullableConverter
+     : public TConverterBase
+ {
+ public:
+-    TNullableConverter(DB::DataTypePtr dataType, TConverterPtr underlyingConverter)
++    TNullableConverter(const DB::DataTypePtr& dataType, TConverterPtr underlyingConverter)
+         : TConverterBase(dataType)
+         , UnderlyingConverter_(std::move(underlyingConverter))
+     { }
+@@ -458,7 +462,7 @@ class TArrayConverter
+     : public TConverterBase
+ {
+ public:
+-    TArrayConverter(DB::DataTypePtr dataType, TConverterPtr underlyingConverter)
++    TArrayConverter(const DB::DataTypePtr& dataType, TConverterPtr underlyingConverter)
+         : TConverterBase(dataType)
+         , UnderlyingConverter_(std::move(underlyingConverter))
+     { }
+@@ -522,7 +526,7 @@ class TMapConverter
+ {
+ public:
+     TMapConverter(
+-        DB::DataTypePtr dataType,
++        const DB::DataTypePtr& dataType,
+         TConverterPtr keyConverter,
+         TConverterPtr valueConverter,
+         TConverterPtr nestedConverter)
+@@ -572,7 +576,7 @@ class TTupleConverter
+ {
+ public:
+     TTupleConverter(
+-        DB::DataTypePtr dataType,
++        const DB::DataTypePtr& dataType,
+         std::vector<TConverterPtr> underlyingConverters,
+         std::optional<std::vector<std::string>> elementNames)
+         : TConverterBase(dataType)
+@@ -659,7 +663,7 @@ class TDecimalConverter
+     using TDecimalColumn = DB::ColumnDecimal<TClickHouseDecimal>;
+     static constexpr i64 DecimalSize = sizeof(TUnderlyingIntegerType);
+ 
+-    TDecimalConverter(DB::DataTypePtr dataType, int precision, int scale)
++    TDecimalConverter(const DB::DataTypePtr& dataType, int precision, int scale)
+         : TConverterBase(dataType)
+         , Precision_(precision)
+         , Scale_(scale)
+@@ -896,7 +900,7 @@ class TLowCardinalityConverter
+     : public TConverterBase
+ {
+ public:
+-    TLowCardinalityConverter(DB::DataTypePtr dataType, TConverterPtr underlyingConverter)
++    TLowCardinalityConverter(const DB::DataTypePtr& dataType, TConverterPtr underlyingConverter)
+         : TConverterBase(dataType)
+         , UnderlyingConverter_(std::move(underlyingConverter))
+     { }
 ```
 
-**File**: `yt/yql/providers/dq/global_worker_manager/global_worker_manager_ut.cpp` (modified, +16/-0)
+**File**: `yt/chyt/server/granule_min_max_filter.cpp` (modified, +1/-1)
 ```diff
-@@ -235,6 +235,7 @@ class TGlobalWorkerManagerTest: public TTestBase {
-     UNIT_TEST(TestTasksAllocation5)
-     UNIT_TEST(RejectsNegativeWorkerCapacity)
-     UNIT_TEST(RejectsTargetCapacityOverflow)
-+    UNIT_TEST(ReportsLeaderBeforeReadiness)
-     UNIT_TEST_SUITE_END();
- 
-     void SetUp() override {
-@@ -335,6 +336,21 @@ class TGlobalWorkerManagerTest: public TTestBase {
-         remove("/tmp/test");
+@@ -41,7 +41,7 @@ std::vector<bool> ComputeUseMinMaxBounds(const TTableSchema& schema)
+             }
+         }
+         // YSON serialization does not preserve value ordering.
+-        result.push_back(!IsV3Composite(valueType) &&
++        result.push_back(!IsV3Composite(columnSchema.LogicalType()) &&
+             *valueType != *SimpleLogicalType(ESimpleLogicalValueType::Any) &&
+             valueType->GetMetatype() != ELogicalMetatype::AggregateState);
      }
+```
+
+**File**: `yt/chyt/server/unittests/ch_to_yt_converter_ut.cpp` (modified, +14/-0)
+```diff
+@@ -223,6 +223,20 @@ TEST_F(TCHToYTConversionTest, TaggedLogicalTypesForParameterizedUnsupportedNativ
+     }
+ }
  
-+    void ReportsLeaderBeforeReadiness() {
-+        const auto sender = ActorRuntime_->AllocateEdgeActor();
-+        ActorRuntime_->Send(new IEventHandle(MakeWorkerManagerActorID(NodeId()), sender, new TEvClusterStatus()));
-+        const auto response = ActorRuntime_->GrabEdgeEvent<TEvClusterStatusResponse>(sender);
-+        const auto& status = response->Get()->Record.GetResponse();
-+        UNIT_ASSERT_VALUES_EQUAL(status.ServiceNodeSize(), 1);
-+        const auto& leader = status.GetServiceNode(0);
-+        UNIT_ASSERT_VALUES_EQUAL(leader.GetGuid(), "0-0-0-0");
-+        UNIT_ASSERT_VALUES_EQUAL(leader.GetNodeId(), NodeId());
-+        UNIT_ASSERT_VALUES_EQUAL(leader.GetAddress(), "::1");
-+        UNIT_ASSERT_VALUES_EQUAL(leader.GetRevision(), status.GetRevision());
-+        UNIT_ASSERT_VALUES_EQUAL(leader.FileSize(), 1);
-+        UNIT_ASSERT_VALUES_EQUAL(leader.GetFile(0), status.GetRevision());
-+    }
++TEST_F(TCHToYTConversionTest, UsesFamilyNameForOversizedNativeTypeTag)
++{
++    Settings_->Composite->AnnotateResultSchemaWithNativeTypes = true;
++    auto dataType = DB::DataTypeFactory::instance().get(
++        "Enum16('" + std::string(MaxColumnNameLength, 'x') + "' = 1)");
++    TCHToYTConverter converter(dataType, Settings_);
++    auto logicalType = converter.GetLogicalType();
 +
-     void TestTasksAllocation1() {
-         TVector<TVector<TString>> filesPerNode = {
-             {"file0", "file11"},
++    EXPECT_NO_THROW(ValidateLogicalType(TComplexTypeFieldDescriptor(logicalType)));
++    EXPECT_EQ(
++        *TaggedLogicalType("Enum16", SimpleLogicalType(ESimpleLogicalValueType::String)),
++        *logicalType);
++}
++
+ TEST_F(TCHToYTConversionTest, Int16)
+ {
+     auto dataType = std::make_shared<DB::DataTypeInt16>();
 ```
 
 ---
 
-### Incident Patch 2: `e6831dd8` (2026-11-14)
-**Commit Message**: erm: Add new version for `@yatool/prebuilder`: `2.1.0` and set `2.1.0` as default
+### Incident Patch 3: `6f9fb9d6` (2026-11-19)
+**Commit Message**: Remove .srv support from build
 
-Executed command: `./erm --verbose --profile update @yatool/prebuilder`
-commit_hash:ac1683ec49a5dedebed24ea2bcac7708a13ca2b7
+Больше не осталось `.srv` файлов - удаляем поддержку
+Коммит в ymake <https://nda.ya.ru/t/sYULw8lG7wqMRG>
+commit_hash:7a057bbe49ceb8350115798625a2291c6994a7fa
 
-**File**: `devtools/frontend_build_platform/erm/erm-packages.json` (modified, +11/-1)
+**File**: `build/conf/settings.conf` (modified, +1/-1)
 ```diff
-@@ -410,7 +410,7 @@
-     "title": "@yatool/prebuilder",
-     "description": "Сборщик нативных зависимостей, поставляющий на проект уже готовые, собранные под нужную платформу пакеты.",
-     "type": "NPM_PACKAGE",
--    "default": "2.0.1",
-+    "default": "2.1.0",
-     "links": {
-       "Home": "https://a.yandex-team.ru/arcadia/devtools/frontend_build_platform/prebuilder/cli",
-       "Sources": "https://a.yandex-team.ru/arcadia/devtools/frontend_build_platform/prebuilder/cli",
-@@ -419,6 +419,16 @@
-     },
-     "internal": true,
-     "versions": {
-+      "2.1.0": {
-+        "add_date": "2026-11-14T19:21:29",
-+        "resources": [
-+          {
-+            "id": 14269615047,
-+            "platform": "any",
-+            "arch": "any"
-+          }
-+        ]
-+      },
-       "2.0.1": {
-         "add_date": "2026-10-26T15:40:27",
-         "resources": [
+@@ -13,7 +13,7 @@ FAIL_PY2=no
+ MAIN_OUTPUT_AS_EXTRA=yes
+ FILL_MODULE2NODES=yes
+ FUSE_PREFETCH=yes
+-FUSE_PREFETCH_EXTS=ya.make .inc .h .hh .hpp .hxx .H .ipp .ixx .inl .c .C .cc .cpp .cxx .cu .cuh .S .s .asm .proto .ev .cfgproto .gzt .fbs .fbs64 .py .pyi .pyx .pxd .pxi .swg .l .y .ypp .gperf .rl .rl6 .rh .rli .go .java .kt .md .ts .tsx .js .jsx .ydl .nlg .sc .idl .msg .srv
++FUSE_PREFETCH_EXTS=ya.make .inc .h .hh .hpp .hxx .H .ipp .ixx .inl .c .C .cc .cpp .cxx .cu .cuh .S .s .asm .proto .ev .cfgproto .gzt .fbs .fbs64 .py .pyi .pyx .pxd .pxi .swg .l .y .ypp .gperf .rl .rl6 .rh .rli .go .java .kt .md .ts .tsx .js .jsx .ydl .nlg .sc .idl .msg
+ 
+ CONSISTENT_DEBUG=yes
+ CONSISTENT_BUILD=yes
 ```
 
----
-
-### Incident Patch 3: `9edb1cc5` (2026-11-13)
-**Commit Message**: Fix grammar
-commit_hash:e793856f6d3d44d11aa2ef36d469c6f5fe6b277c
-
-**File**: `util/thread/pool.h` (modified, +4/-4)
+**File**: `build/ymake.core.conf` (modified, +0/-5)
 ```diff
-@@ -150,7 +150,7 @@ class IThreadPool: public IThreadFactory, public TNonCopyable {
+@@ -5615,11 +5615,6 @@ macro _SRC("msg", SRC, SRCFLAGS...) {
+     .CMD=$ROS_MSG_CMD($SRC)
+ }
  
-     /**
-      * Safe versions of Add*() functions. Behave exactly like as non-safe
--     * version of Add*(), but use exceptions instead returning false
-+     * version of Add*(), but use exceptions instead of returning false
-      */
-     void SafeAdd(IObjectInQueue* obj);
- 
-@@ -162,7 +162,7 @@ class IThreadPool: public IThreadFactory, public TNonCopyable {
-     void SafeAddAndOwn(THolder<IObjectInQueue> obj);
- 
-     /**
--     * Add object to queue, run obj->Proccess in other threads.
-+     * Add object to queue, run obj->Process in other threads.
-      * Obj is not deleted after execution
-      * @return true of obj is successfully added to queue
-      * @return false if queue is full or shutting down
-@@ -220,7 +220,7 @@ class IThreadPool: public IThreadFactory, public TNonCopyable {
-      * CreateThreadSpecificResource and DestroyThreadSpecificResource
-      * called from internals of (TAdaptiveThreadPool, TThreadPool, ...) implementation,
-      * not by user of IThreadPool interface.
--     * Created resource is passed to IObjectInQueue::Proccess function.
-+     * Created resource is passed to IObjectInQueue::Process function.
-      */
-     virtual void* CreateThreadSpecificResource() {
-         return nullptr;
-@@ -237,7 +237,7 @@ class IThreadPool: public IThreadFactory, public TNonCopyable {
- };
- 
- /**
-- * Single-threaded implementation of IThreadPool, process tasks in same thread when
-+ * Single-threaded implementation of IThreadPool, process tasks in the same thread when
-  * added.
-  * Can be used to remove multithreading.
-  */
+-# tag:src-processing
+-macro _SRC("srv", SRC, SRCFLAGS...) {
+-    .CMD=$ROS_SRV_CMD($SRC)
+-}
+-
+ ACTOOL_PATH=$XCODE_TOOLS_ROOT_RESOURCE_GLOBAL/Xcode/Contents/Developer/usr/bin/ibtool
+ # tag:ios-specific
+ ASSETS_FLAGS=--output-format human-readable-text --notices --warnings
 ```
 
 #### Recent Merged Pull Requests:
@@ -1428,39 +1477,49 @@ commit_hash:e793856f6d3d44d11aa2ef36d469c6f5fe6b277c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. worker stack introspection and GWM leader reporting
+## X. YQL-20905: (YqlSelect) Fix panic on qualified star for inputs without column ord
 
 **RULE**:
-When implementing operations in `yt/yql/providers/dq/global_worker_manager/global_worker_manager.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `yql/essentials/core/type_ann/type_ann_sql.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ytsaurus/ytsaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `16e53abb`: worker stack introspection and GWM leader reporting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3d6a44fa`: YQL-20905: (YqlSelect) Fix panic on qualified star for inputs without column order. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yt/yql/providers/dq/global_worker_manager/global_worker_manager.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `yql/essentials/core/type_ann/type_ann_sql.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-        // Report the leader even before its first IsReady request.
-        UpdateLocalCriticalFiles();
-        UpdateLocalCriticalFiles();
-    }
-
-    void UpdateLocalCriticalFiles() {
-        AllCriticalFiles.Add(TGUID(), SelfId().NodeId(), Revision, Coordinator->GetIp(), Pid, TString(), files);
+                                            for (const auto& x : joinInputs) {
+                                                auto addColumn = [&](TStringBuf name) {
+                                                    if (!name.StartsWith("_yql_")) {
+                                                        o.AddColumn(MakeAliasedColumn(x.Alias, name));
+                                                    }
+                                                };
+                                                if (isYql && !x.Order) {
+                                                    for (const auto* item : x.Type->GetItems()) {
+                                                        addColumn(item->GetName());
+                                                    }
+                                                } else {
+                                                    YQL_ENSURE(x.Order);
+                                                    for (const auto& column : *x.Order) {
+                                                        addColumn(column.LogicalName);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-#include <util/system/hostname.h>
-        AllCriticalFiles.Add(TGUID(), SelfId().NodeId(), Revision, Address, Pid, TString(), files);
-    const TString Address = HostName();
+                                            for (ui32 inputIndex = 0; inputIndex < joinInputs.size(); ++inputIndex) {
+                                                auto& x = inputs[inputIndex];
+                                                YQL_ENSURE(x.Order);
+                                                for (const auto& [col, gen_col] : *x.Order) {
+                                                    if (!col.StartsWith("_yql_")) {
+                                                        o.AddColumn(MakeAliasedColumn(x.Alias, col));
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `16e53abb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3d6a44fa` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
