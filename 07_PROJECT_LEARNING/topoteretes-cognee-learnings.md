@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/topoteretes-cognee-learnings.md`  
 > **Source**: github ([https://github.com/topoteretes/cognee](https://github.com/topoteretes/cognee))  
-> **Source Version**: `5870f15d`  
+> **Source Version**: `c8a09437`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T15:10:07.568Z  
+> **Timestamp**: 2026-11-19T13:03:10.925Z  
 > **Learning ID**: `learn-github-topoteretes-cognee`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/topoteretes-cognee-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/topoteretes/cognee](https://github.com/topoteretes/cognee))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T15:10:07.562Z  
+> **Harvest Timestamp**: 2026-11-19T13:03:10.804Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Cognee is the open-source AI memory platform for agents. Give your AI agents persistent long-term memory with small models for free
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md, Dockerfile
-- **Stars / Engagement**: 33347 stars
+- **Stars / Engagement**: 33404 stars
 
 ---
 
@@ -203,19 +203,19 @@ __all__ = [
 """Slack request signature verification, on the core webhook verifier.
 
 Copied from cognee.modules.integrations.slack.verify_slack_signature (cognee dev,
-2026-10-27). The HMAC is now :class:`cognee_connectors_core.signatures.HmacVerifier`
+2026-11-12). The HMAC is now :class:`cognee_connectors_core.signatures.HmacVerifier`
 with the ``slack_v0`` scheme, the one ``CONNECTOR`` declares, so the hand-written
 Slack routes and a host serving the generic ``/events`` route verify deliveries the
 same way. The FastAPI dependency that sat next to the check lives in
 :mod:`cognee_connector_slack.cognee_host.verify_slack_signature`.
 
-Every inbound Slack payload — slash commands, Events API, interactivity — is
+Every inbound Slack payload — Events API, interactivity — is
 authenticated by an HMAC over ``v0:{timestamp}:{raw_body}`` keyed with the
 app's signing secret, compared against the ``X-Slack-Signature`` header
 (https://docs.slack.dev/authentication/verifying-requests-from-slack).
 
-The check MUST run over the raw request bytes, before any parsing: slash
-commands arrive form-encoded, and re-serializing a parsed dict changes key
+The check MUST run over the raw request bytes, before any parsing: interactive
+payloads arrive form-encoded, and re-serializing a parsed dict changes key
 order/escaping and breaks the HMAC. Handlers therefore take the verified raw
 body from the host's ``verify_slack_request`` dependency and parse it
 themselves instead of declaring parsed body parameters.
@@ -1525,1008 +1525,825 @@ class DescriptorConnector(Connector):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5870f15d` (2026-11-16)
-**Commit Message**: feat(hermes): Move the Hermes plugin into cognee-integrations/ (SDK-1489) (#6650)
-
-<!-- .github/pull_request_template.md -->
+### Incident Patch 1: `ebd8caba` (2026-11-18)
+**Commit Message**: fix(postgres): Shrink per-dataset pools and bound waits (SDK-1663) (#6787)
 
 ## Description
 
-Moves the Hermes Agent memory plugin (`cognee-integration-hermes-agent`)
-from topoteretes/cognee-integrations into
-`cognee-integrations/integrations/hermes-agent`, the first of the agent
-plugins to move into this repository. The shared conformance case tables
-come along as `cognee-integrations/integrations/conformance/`.
+The datasheets nightly on the full Postgres stack failed for the first
+time on main `e6b5b5b9c` (v1.6.9): runs 2 and 3 failed in cognify with
+`TooManyConnectionsError: sorry, too many clients already`
+([job](https://github.com/topoteretes/cognee/actions/runs/44366851571/job/135022793198)).
 
-- **Code:** the plugin is the released `hermes-agent-v1.4.3`
-(cognee-integrations@3b2a19b6), byte for byte, except the README (new
-location and release flow), a CHANGELOG note and preamble, `[tool.uv]`
-in its pyproject plus the re-lock, the conformance README's "Copy" note
-and a header comment in `cognee-integrations/pyproject.toml`. Neither
-the cognee sdist nor the wheel includes `cognee-integrations/`.
-- **CI:** `test_integrations.yml` finds plugins by their folders, so a
-moved plugin needs no workflow edit. On a PR it lints, lock-checks and
-tests the changed plugins, and `integrations-tests` is its gate job.
-When dispatched with `live`, it runs each plugin's live round trip
-against a real cognee server and LLM. That tier 
+The pgvector binary write pool from #6672 opens up to `pool_size +
+max_overflow` connections per adapter, next to the adapter's SQLAlchemy
+pool. With the defaults, one dataset's cognify process could open:
 
-**File**: `.github/workflows/nightly_scheduler.yml` (modified, +75/-0)
+| Pool | Before | After |
+|---|---|---|
+| Relational | 40 | 40 |
+| Graph (per dataset) | 22 | 12 |
+| pgvector SQLAlchemy (per dataset) | 22 | 12 |
+| pgvector write pool (per dataset) | 22 | 12 |
+| **Total** | **106** | **76** |
+
+Postgres's default `max_connections` is 100. PR CI's Postgres benchmark
+ingests 20 memories and never gets there; the nightly ingests 164.
+
+Changes:
+- Graph and pgvector per-dataset pool defaults go from 2 + 20 to 2 + 10.
+The write pool follows the pgvector value. `VECTOR_POOL_ARGS` /
+`POOL_ARGS` still override them.
+- Every Postgres pool waits up to 360 s for a free connection
+
+**File**: `.env.template` (modified, +3/-2)
 ```diff
-@@ -156,3 +156,78 @@ jobs:
-           payload: |
-             channel: ${{ secrets.SLACK_NIGHTLY_CHANNEL_ID }}
-             text: "Nightly Scheduler failed to dispatch Nightly Tests at `${{ steps.pick.outputs.ref }}` — tonight's nightly will not run and will post nothing. ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-+
-+  # The integrations' live round trip (test_integrations.yml, `live`), every
-+  # evening against dev: plugin fixes land on dev, and main only moves at core
-+  # releases, so main's copy of the plugins would be weeks old. Its own job, so a
-+  # failure here never stops the core nightly above. Skips the Sunday 06:00 cron,
-+  # which would run it a second time that day.
-+  dispatch-integrations:
-+    name: Dispatch the integrations live tier
-+    if: ${{ github.event_name == 'schedule' && github.event.schedule != '0 6 * * 0' }}
-+    runs-on: ubuntu-latest
-+    timeout-minutes: 10
-+    permissions:
-+      contents: read
-+      actions: write
-+    steps:
-+      - name: Note the newest existing integrations run
-+        id: baseline
-+        env:
-+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+          GH_REPO: ${{ github.repository }}
-+        run: |
-+          set -euo pipefail
-+          # Before dispatching, so the confirm step below cannot match an older run.
-+          id="$(gh run list --workflow test_integrations.yml --branch dev \
-+                  --event workflow_dispatch --limit 1 \
-+                  --json databaseId --jq '.[0].databaseId // 0')"
-+          echo "id=$id" >> "$GITHUB_OUTPUT"
-+          echo "baseline run id: $id"
-+
-+      - name: Dispatch test_integrations.yml at dev with live
-+        env:
-+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+          GH_REPO: ${{ github.repository }}
-+        run: |
-+          set -euo pipefail
-+          # Input values as strings, as the dispatch API documents them; a
-+          # boolean input still arrives as a boolean `inputs.live`.
-+          jq -nc '{ref: "dev", inputs: {live: "true"}}' \
-+          | gh api -X POST \
-+              "repos/$GH_REPO/actions/workflows/test_integrations.yml/dispatches" \
-+              --input -
-+
-+      - name: Confirm a NEW run was created
-+        env:
-+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-+          GH_REPO: ${{ github.repository }}
-+          BASELINE: ${{ steps.baseline.outputs.id }}
-+        run: |
-+          set -euo pipefail
-+          # The dispatch endpoint answers 204 with no body, so a lost dispatch
-+          # looks like success, and a live tier that never starts posts nothing.
-+          for _ in $(seq 1 12); do
-+            read -r id url <<<"$(gh run list --workflow test_integrations.yml \
-+                  --branch dev --event workflow_dispatch --limit 1 \
-+                  --json databaseId,url --jq '.[0] | "\(.databaseId) \(.url)"' \
-+                  2>/dev/null || echo "0 -")"
-+            if [ "${id:-0}" != "0" ] && [ "${id}" != "${BASELINE}" ]; then
-+              echo "dispatched: $url"
-+              echo "Integrations live tier dispatched at \`dev\`: $url" >> "$GITHUB_STEP_SUMMARY"
-+              exit 0
-+            fi
-+            sleep 5
-+          done
-+          echo "::error::no NEW test_integrations.yml run appeared for dev within 60s"
-+          exit 1
-+
-+      - name: Alert Slack if the dispatch failed
-+        if: ${{ failure() }}
-+        uses: slackapi/slack-github-action@dcb1066f776dd043e64d0e8ba94ca15cc7e1875d  # v4.0.0
-+        with:
-+          method: chat.postMessage
-+          token: ${{ secrets.SLACK_BOT_TOKEN }}
-+          payload: |
-+            channel: ${{ secrets.SLACK_INTEGRATIONS_NIGHTLY_CHANNEL_ID }}
-+            text: "Nightly Scheduler failed to dispatch the integrations live tier at `dev` — tonight's live tier will not run and will post nothing. ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-```
-
-**File**: `.github/workflows/pre_test.yml` (modified, +6/-1)
-```diff
-@@ -34,6 +34,11 @@ jobs:
-         if: ${{ !cancelled() }}
-         run: uv sync --extra dev
+@@ -292,11 +292,12 @@ VECTOR_DATASET_DATABASE_HANDLER="lancedb"
  
-+      # The Hermes plugin is excluded: it came from topoteretes/cognee-integrations,
-+      # where these rules did not apply, and catches broad exceptions on purpose so
-+      # a memory failure never crashes the host agent. Each plugin that moves here
-+      # is excluded by its own entry, not by a rule covering all of them.
-+      #
-       # Exception-handling rules are enforced without escape hatch: `--ignore-noqa`
-       # makes a `# noqa` comment on these rules count as a finding, so a silent
-       # `except Exception` has to be fixed (log with traceback, re-raise, or narrow
-@@ -42,7 +47,7 @@ jobs:
-       # Exception raise.
-       - name: Ruff exception-handling rules (strict, noqa ignored)
-         if: ${{ !cancelled() }}
--        run: uv run ruff check . --select BLE001,S110,S112,G201,TRY201,TRY002 --ignore-noqa
-+        run: uv run ruff check . --select BLE001,S110,S112,G201,TRY201,TRY002 --ignore-noqa --extend-exclude cognee-integrations/integrations/hermes-agent
+ # Connection pool tuning for PGVector per-dataset engines (JSON).
+ # When ENABLE_BACKEND_ACCESS_CONTROL=true each dataset gets its own engine; this controls
+-# its pool size independently from POOL_ARGS (default: pool_size=2, max_overflow=20).
++# its pool size independently from POOL_ARGS (default: pool_size=2, max_overflow=10).
+ # Vector writes use a second pool of the same ceiling (pool_size + max_overflow), which
+ # opens connections on demand and closes them after 60 s idle, so an adapter can hold
+ # up to that many connections twice. Both values must be bounded: pool_size above 0,
+-# max_overflow 0 or more.
++# max_overflow 0 or more. Every Postgres pool, the write pool included, waits up to
++# pool_timeout seconds for a free connection (default 360) before the call fails.
+ #VECTOR_POOL_ARGS='{"pool_size": 2, "max_overflow": 5, "pool_recycle": 1800}'
  
-       - name: Ty type check
-         if: ${{ !cancelled() }}
+ # pgvector only: create new collections as this many hash partitions (by id), each
 ```
 
-**File**: `.github/workflows/release_hermes_plugin.yml` (added, +146/-0)
+**File**: `cognee/infrastructure/databases/cache/sql/SqlCacheAdapter.py` (modified, +7/-0)
 ```diff
-@@ -0,0 +1,146 @@
-+name: release_hermes_plugin.yml
-+# Publish the Hermes Agent memory plugin (cognee-integrations/integrations/hermes-agent) to
-+# PyPI as cognee-integration-hermes-agent.
-+#
-+# The plugin versions independently of the cognee library, so, like cognee-mcp,
-+# it has its own workflow and its own tag namespace (hermes-agent-v*). The tag
-+# names are the same as when the plugin lived in topoteretes/cognee-integrations.
-+#
-+# Release flow:
-+#   1. Bump the version in pyproject.toml, plugin.yaml,
-+#      cognee_integration_hermes/_plugin_root/plugin.yaml and the hermes-agent
-+#      entry of cognee-integrations/integrations/inventory.yml (the tests and
-+#      the inventory check verify they match), re-lock, and add a CHANGELOG.md
-+#      section. Merge that to main.
-+#   2. Run this workflow from main. It tests, builds, attests, publishes and
-+#      then tags the released commit hermes-agent-v<version>.
-+#
-+# Auth: PyPI Trusted Publishing only. A PyPI owner of
-+# cognee-integration-hermes-agent has to add a publisher with
-+#   Repository owner: topoteretes
-+#   Repository name:  cognee
-+#   Workflow name:    release_hermes_plugin.yml
-+#   Environment:      (leave blank)
-+# The publisher for topoteretes/cognee-integrations can be removed once the
-+# first release from here is out.
-+on:
-+  workflow_dispatch:
-+
-+# Minimal default permissions (OSSF Scorecard: Token-Permissions). The one job
-+# opts in to exactly what it needs.
-+permissions:
-+  contents: read
-+
-+concurrency:
-+  group: release-hermes-plugin
-+  cancel-in-progress: false
-+
-+jobs:
-+  release-hermes-plugin-pypi:
-+    name: Release cognee-integration-hermes-agent to PyPI from ${{ github.ref_name }}
-+    permissions:
-+      contents: write       # push the hermes-agent-v* tag
-+      id-token: write       # OIDC: Trusted Publishing and signing attestations
-+      attestations: write   # Persist the SLSA build provenance attestation
-+    runs-on: ubuntu-latest
-+    timeout-minutes: 30
-+    env:
-+      TELEMETRY_DISABLED: "1"
-+    defaults:
-+      run:
-+        working-directory: cognee-integrations/integrations/hermes-agent
-+
-+    steps:
-+      - name: Refuse any ref but main
-+        working-directory: .
-+        run: |
-+          if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
-+            echo "::error::release_hermes_plugin.yml publishes and tags permanently; run it from main (got ${GITHUB_REF})."
-+            exit 1
-+          fi
-+
-+      - name: Check out ${{ github.ref_name }} at ${{ github.sha }}
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-+        with:
-+          # The commit the run was dispatched on, not the branch head now.
-+          ref: ${{ github.sha }}
-+
-+      - name: Install uv
-+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7  # v10.2.0
-+
-+      - name: Install Python
-+        run: uv python install
-+
-+      - name: Resolve version and tag
-+        id: meta
-+        run: |
-+          VERSION="$(uv version --short)"
-+          TAG="hermes-agent-v${VERSION}"
-+          echo "Releasing cognee-integration-hermes-agent ${VERSION} as ${TAG}"
-+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
-+
-+      - name: Refuse to republish an existing version
-+        env:
-+          VERSION: ${{ steps.meta.outputs.version }}
-+          TAG: ${{ steps.meta.outputs.tag }}
-+        run: |
-+          # PyPI versions are immutable: a second upload of the same version is
-+          # rejected. Fail here, with a message that says what to do, rather
-+          # than at the upload step.
-+          if curl -fsS "https://pypi.org/pypi/cognee-integration-hermes-agent/${VERSION}/json" >/dev/null 2>&1; then
-+            echo "::error::cognee-integration-hermes-agent ${VERSION} is already on PyPI. Bump the version (pyproject.toml, both plugin.yaml files and inventory.yml) and re-lock before releasing."
-+            exit 1
-+          fi
-+          if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null 2>&1; then
-+            echo "::error::Tag ${TAG} already exists on origin."
-+            exit 1
-+          fi
-+          echo "${VERSION} is unpublished and ${TAG} is free."
-+
-+      - name: Run the test suite
-+        run: |
-+          uv sync --locked --dev
-+          uv pip install -r local-mode-requirements.txt
-+          uv run --no-sync pytest tests/ -q
-+
-+      - name: Build distributions
-+        run: uv build
-+
-+      - name: Verify distributions were built
-+        run: |
-+          shopt -s nullglob
-+          wheels=(dist/*.whl)
-+          sdists=(dist/*.tar.gz)
-+          if [ "${#wheels[@]}" -ne 1 ] || [ "${#sdists[@]}" -ne 1 ] || \
-+             [ ! -s "${wheels[0]}" ] || [ ! -s "${sdists[0]}" ]; then
-+            echo "::error::Build must produce exactly one nonempty wheel and sdist."
-+            ls -lh dist/ || true
-+            exit 1
-+          fi
-+          ls -lh "${wheels[@]}" "${sdists[@]}"
-+
-+ 
+@@ -35,6 +35,9 @@
+ )
+ from cognee.infrastructure.databases.postgres.deadlock import is_deadlock
+ from cognee.infrastructure.databases.relational import get_relational_config
++from cognee.infrastructure.databases.relational.sqlalchemy.SqlAlchemyAdapter import (
++    DEFAULT_POOL_TIMEOUT,
++)
+ from cognee.modules.storage.utils import JSONEncoder
+ from cognee.shared.logging_utils import get_logger
+ 
+@@ -152,6 +155,10 @@ def __init__(
+             # same value must work here — SQLAlchemy itself needs the class.
+             if pool_args.get("poolclass", "").lower() == "nullpool":
+                 pool_args["poolclass"] = NullPool
++            elif not is_sqlite:
++                # The Postgres cache waits for a pooled connection as long as cognee's
++                # other Postgres pools do.
++                pool_args.setdefault("pool_timeout", DEFAULT_POOL_TIMEOUT)
+             if is_sqlite:
+                 # Concurrency tuning: wait out writer locks instead of failing
+                 # with SQLITE_BUSY when several processes share one cache.db.
 ```
 
-**File**: `.github/workflows/test_integrations.yml` (added, +473/-0)
+**File**: `cognee/infrastructure/databases/graph/postgres_demo/adapter.py` (modified, +6/-3)
 ```diff
-@@ -0,0 +1,473 @@
-+name: test | integrations
-+# Checks for the agent plugins under cognee-integrations/integrations/: lint, the
-+# lockfile and each plugin's own test suite on every change, and, when dispatched
-+# with `live`, each plugin's live round trip against a real cognee server and LLM.
-+#
-+# Plugins are discovered from their folders (a pyproject.toml makes a Python
-+# plugin), so moving one here needs no edit to this file. A pull request tests
-+# only the plugins it changes, or all of them when it changes something they
-+# share. `integrations-tests` is the one job to require.
-+#
-+# Each plugin declares no cognee dependency (cognee's pins conflict with the
-+# environments the host agents share between plugins). A plugin whose tests
-+# start a local server gets cognee from its local-mode-requirements.txt, the
-+# release its local mode installs: a PyPI release, not this checkout.
-+#
-+# The live tier (tests/test_integration_*.py) needs secrets and spends LLM
-+# tokens, so it runs only on dispatch: nightly_scheduler.yml dispatches it
-+# against dev every evening. It fails when any of those tests skips, so a
-+# missing dependency or key can never pass as green, and `notify` posts every
-+# dispatched run's result, green included, to #nightly-ci-integrations: the
-+# live tier and every other job that run executes, so no failure reports green.
-+#
-+# The case tables in integrations/conformance/ are a copy: the hook plugins in
-+# topoteretes/cognee-integrations generate two of them and test against the
-+# same files there. `conformance-drift` fails when the copy here differs from
-+# upstream main, on pull requests that touch it and on every dispatched run.
-+
-+on:
-+  push:
-+    branches: [ main, dev ]
-+    paths: &paths
-+      - "cognee-integrations/**"
-+      - ".github/workflows/test_integrations.yml"
-+  pull_request:
-+    branches: [ main, dev ]
-+    types: [opened, synchronize, reopened]
-+    paths: *paths
-+  workflow_dispatch:
-+    inputs:
-+      live:
-+        description: "Also run each plugin's live round trip (real cognee server and LLM)"
-+        required: false
-+        type: boolean
-+        default: false
-+
-+permissions:
-+  contents: read
-+
-+concurrency:
-+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}-${{ inputs.live && 'live' || 'checks' }}
-+  # Cancel superseded PR runs, never a push-to-dev or live run.
-+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
-+
-+env:
-+  TELEMETRY_DISABLED: "1"
-+
-+jobs:
-+  detect:
-+    name: Detect integration plugins
-+    runs-on: ubuntu-22.04
-+    outputs:
-+      python: ${{ steps.plugins.outputs.python }}
-+      live: ${{ steps.plugins.outputs.live }}
-+      conformance: ${{ steps.plugins.outputs.conformance }}
-+    steps:
-+      - name: Check out repository
-+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
-+        with:
-+          # The pull request's base commit, to list what it changed.
-+          fetch-depth: 0
-+
-+      - name: List the plugins to test
-+        id: plugins
-+        env:
-+          EVENT: ${{ github.event_name }}
-+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
-+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
-+        run: |
-+          set -euo pipefail
-+          # On a pull request, test the plugins it changed, or all of them when it
-+          # changed something they share. Everywhere else, test all of them.
-+          # Conformance drift: on pull requests that touch the tables, and on
-+          # dispatched runs (the nightly), never on a push.
-+          all=true
-+          changed=""
-+          conformance=false
-+          if [ "${EVENT}" = "workflow_dispatch" ]; then
-+            conformance=true
-+          fi
-+          if [ "${EVENT}" = "pull_request" ]; then
-+            conformance=true
-+            changed="$(git diff --name-only "${BASE_SHA}...${HEAD_SHA}")"
-+            if ! grep -q -E '^(cognee-integrations/pyproject\.toml|cognee-integrations/integrations/conformance/|\.github/workflows/test_integrations\.yml)' <<<"${changed}"; then
-+              all=false
-+            fi
-+            if ! grep -q '^cognee-integrations/integrations/conformance/' <<<"${changed}"; then
-+              conformance=false
-+            fi
-+          fi
-+
-+          python=()
-+          live=()
-+          cd cognee-integrations/integrations
-+          for dir in */; do
-+            slug="${dir%/}"
-+            case "${slug}" in conformance|tests) continue ;; esac
-+            if [ -f "${slug}/pyproject.toml" ]; then
-+              if [ "${all}" = true ] || grep -q "^cognee-integrations/integrations/${slug}/" <<<"${changed}"; then
-+                python+=("${slug}")
-+              fi
-+              # The live tier runs every plugin that has one, changed or not.
-+              if compgen -G "${slug}/tests/test_integration_*.py" > /dev/null; then
-+                live+=("${slug}")
-+              fi
-+            elif [ -f "${slug}/package.json
+@@ -44,6 +44,9 @@
+     get_source_ref_key_from_source_run_ref,
+ )
+ from cognee.infrastructure.databases.relational import get_relational_config
++from cognee.infrastructure.databases.relational.sqlalchemy.SqlAlchemyAdapter import (
++    DEFAULT_POOL_TIMEOUT,
++)
+ from cognee.infrastructure.engine import DataPoint
+ from cognee.modules.graph.methods.sanitize_relational_payload import sanitize_relational_payload
+ from cognee.modules.storage.utils import JSONEncoder
+@@ -182,17 +185,17 @@ def _select_nodeset_neighbor_ids(
+ 
+ _DEFAULT_POOL_ARGS = {
+     "pool_size": 2,
+-    "max_overflow": 20,  # 22-connection ceiling, PER DATASET
++    "max_overflow": 10,  # 12-connection ceiling, PER DATASET
+     "pool_pre_ping": True,
+     "pool_recycle": 280,
+-    "pool_timeout": 280,
++    "pool_timeout": DEFAULT_POOL_TIMEOUT,
+ }
+ 
+ 
+ def _resolve_engine_args(configured_pool_args) -> dict:
+     """Turn the configured POOL_ARGS into create_async_engine kwargs.
+ 
+-    Defaults mirror PGVectorAdapter._ACCESS_CONTROL_DEFAULT_POOL_ARGS (2/20),
++    Defaults mirror PGVectorAdapter._ACCESS_CONTROL_DEFAULT_POOL_ARGS (2/10),
+     NOT SqlAlchemyAdapter's 5/35. Like PGVector's, this engine is created per
+     dataset — the engine-cache key includes graph_database_schema — so its
+     ceiling is multiplied by dataset count, not paid once. dict() handles the
 ```
 
-**File**: `cognee-integrations/README.md` (added, +94/-0)
+**File**: `cognee/infrastructure/databases/relational/sqlalchemy/SqlAlchemyAdapter.py` (modified, +5/-1)
 ```diff
-@@ -0,0 +1,94 @@
-+# Cognee integrations
-+
-+Plugins that give agent tools persistent memory backed by Cognee. Each plugin
-+is its own package, released on its own schedule.
-+
-+The integrations are moving here from
-+[topoteretes/cognee-integrations](https://github.com/topoteretes/cognee-integrations),
-+one at a time. Until an integration is listed below, its source, docs and
-+releases are still in that repository.
-+
-+## Moved so far
-+
-+<!-- inventory:start -->
-+<!-- Generated by scripts/inventory.py from integrations/inventory.yml; do not edit by hand. -->
-+
-+| Integration | Package | Version | Source | Release |
-+|---|---|---|---|---|
-+| Cognee Memory Plugin for Hermes Agent | [`cognee-integration-hermes-agent`](https://pypi.org/project/cognee-integration-hermes-agent/) | 1.4.3 | [`integrations/hermes-agent`](integrations/hermes-agent) | [`release_hermes_plugin.yml`](../.github/workflows/release_hermes_plugin.yml), tags `hermes-agent-v*` |
-+
-+<!-- inventory:end -->
-+
-+The table is rendered from [`integrations/inventory.yml`](integrations/inventory.yml)
-+by `scripts/inventory.py`, which also checks the inventory against the plugin
-+folders and their manifests.
-+
-+## Layout
-+
-+```
-+cognee-integrations/
-+├── pyproject.toml   Shared lint and test settings for every plugin below
-+├── scripts/         inventory.py: checks the inventory, renders the table above
-+└── integrations/
-+    ├── inventory.yml One entry per plugin below
-+    ├── conformance/ Case tables that every plugin tests against
-+    └── <plugin>/    One folder per plugin, with its own pyproject.toml or
-+                     package.json, tests, README and CHANGELOG
-+```
-+
-+The layout is the same as in topoteretes/cognee-integrations, with this
-+folder in place of that repository's root, so paths inside a plugin keep
-+working when it moves. Everything at that repository's root has a place here:
-+
-+| In topoteretes/cognee-integrations | Here |
-+|---|---|
-+| `integrations/<plugin>/` | `integrations/<plugin>/` |
-+| `integrations/tests/` (the shared hook-plugin suite) | `integrations/tests/` |
-+| `integrations/inventory.yml`, `integrations/CONFIGURATION.md` | `integrations/` |
-+| `scripts/`, `assets/`, `n8n_workflows/` | `scripts/`, `assets/`, `n8n_workflows/` |
-+| `.github/workflows/` | the shared workflows in this repository's `.github/workflows/` |
-+| `reports/` | not moved |
-+| `.claude-plugin/`, `.cursor-plugin/`, `.grok-plugin/`, `.agents/plugins/` | not moved; see [Marketplace plugins](#marketplace-plugins) |
-+
-+`integrations/conformance/` is a copy. Two of its tables are generated from
-+the Claude Code and Codex hook plugins, which are still in
-+topoteretes/cognee-integrations, so that copy is canonical until they move
-+here. `test_integrations.yml` fails when this copy differs from it.
-+
-+## Marketplace plugins
-+
-+The Claude Code, Codex, Cursor and Grok Bot plugins are installed from agent
-+marketplaces, not from a package registry. Their code moves here like the rest.
-+They are distributed through the official listings (the claude.ai Directory,
-+and each agent's own marketplace), pointed at this repository. Nothing is added
-+at this repository's root for them.
-+
-+topoteretes/cognee-integrations keeps only its marketplace manifests, repointed
-+here, for users who added that repository as a marketplace by hand. Once they
-+have moved to the official listings, it is archived.
-+
-+## Moving a plugin
-+
-+1. Copy the plugin folder from topoteretes/cognee-integrations to
-+   `integrations/<plugin>/`, move its entry from that repository's
-+   `integrations/inventory.yml` to `integrations/inventory.yml` here (adding
-+   `path`, `tag_prefix`, `release_workflow` and `moved_from`), and run
-+   `python scripts/inventory.py` to render the table above.
-+2. If it is listed in a marketplace or directory, point that listing at
-+   `topoteretes/cognee` and `cognee-integrations/integrations/<plugin>` first.
-+   The Directory reviews each version, so allow time for that.
-+3. In topoteretes/cognee-integrations, in the same change: replace the plugin
-+   folder with a note pointing here, remove it from that repository's CI and
-+   release workflows, and mark it moved in `integrations/inventory.yml`.
-+4. Triage the CodeQL alerts the move raises on the copied code, and dismiss
-+   the false positives with a reason.
-+
-+## Development and releases
-+
-+Each plugin's README covers its own setup, tests and release steps.
-+`.github/workflows/test_integrations.yml` lints and tests every plugin under
-+`integrations/` that has a `pyproject.toml`, and runs each plugin's live round
-+trip (`tests/test_integration_*.py`) nightly against `dev`, posting every
-+result to `#nightly-ci-integrations` on Slack. It needs no edit when a plugin
-+moves here. Releases are per plugin for now, for example
-+`release_hermes_plugin.yml` for Hermes.
+@@ -31,6 +31,10 @@
+ # QueuePool sizing of a server-database engine when POOL_ARGS does not give it.
+ DEFAULT_POOL_SIZE = 5
+ DEFAULT_MAX_OVERFLOW = 35
++# Seconds a caller waits for a free connection from any of cognee's Postgres pools
++# (relational, graph, both pgvector pools, the Postgres session cache) before the
++# wait raises, when the pool args do not give ``pool_timeout``.
++DEFAULT_POOL_TIMEOUT = 360
+ 
+ 
+ class SQLAlchemyAdapter:
+@@ -155,7 +159,7 @@ def __init__(
+                 pool_args.setdefault("max_overflow", DEFAULT_MAX_OVERFLOW)
+                 pool_args.setdefault("pool_pre_ping", True)
+                 pool_args.setdefault("pool_recycle", 280)
+-                pool_args.setdefault("pool_timeout", 280)
++                pool_args.setdefault("pool_timeout", DEFAULT_POOL_TIMEOUT)
+ 
+             engine_kwargs = {**pool_args}
+             if final_connect_args:
 ```
 
-**File**: `cognee-integrations/integrations/conformance/README.md` (added, +173/-0)
+**File**: `cognee/infrastructure/databases/vector/pgvector/PGVectorAdapter.py` (modified, +16/-5)
 ```diff
-@@ -0,0 +1,173 @@
-+> **Copy.** These case tables are shared by every Cognee agent plugin. Only the
-+> Hermes plugin has moved into this repository so far. The canonical tables are
-+> in `integrations/conformance/` of
-+> [topoteretes/cognee-integrations](https://github.com/topoteretes/cognee-integrations):
-+> `recall_text_cases.json` and `capture_policy_cases.json` are generated there
-+> from the hook plugins' `_recall_text.py` and `_capture_policy.py`, and Claude
-+> Code, Codex and OpenClaw test against them there. Change a table there first,
-+> then copy it here; `.github/workflows/test_integrations.yml` fails when the
-+> two differ. The test paths below are paths in that repository, except
-+> hermes-agent's, which are under `cognee-integrations/` here.
-+
-+# Session id sanitization conformance
-+
-+Every Cognee integration turns a native session id into a Cognee session id with
-+the same shape: `{agent}_{native_id}`. Before the native id is used, each
-+integration runs it through a small sanitizer. The rule is:
-+
-+- Keep only the ASCII set `[A-Za-z0-9-_.]`.
-+- Replace every other character with `_`.
-+- Trim leading and trailing `.` and `_`.
-+- Cap the length at 120 characters.
-+
-+`session_id_cases.json` is the single source of truth for that rule. It is a
-+list of `{ "input", "expected", "note" }` cases. Each test loads this file and
-+checks its sanitizer against it. The tests live with the suite that already
-+covers the tree they test, so no integration needs a test project of its own:
-+
-+- claude-code and codex:
-+  `integrations/tests/tests/unit/test_session_id_conformance.py` — the shared
-+  hook-plugin suite, parametrized over both plugin trees.
-+- hermes-agent: `integrations/hermes-agent/tests/test_session_id_conformance.py`
-+- openclaw: `integrations/openclaw/__tests__/unit/test_session_id_conformance.ts`
-+
-+Because every test reads the same file, any implementation that drifts from the
-+rule fails its test. CI runs all of them on every pull request through the
-+existing jobs in `.github/workflows/ci.yml`: the shared suite via `test-python`
-+(`detect-changes` maps a claude-code or codex change onto the `tests` cell) and
-+again under Python 3.9 via `test-hooks-python39`, hermes-agent via `test-python`
-+(it has its own `pyproject.toml`), and openclaw via `test-typescript`, which
-+runs `npm test` as well as the type check.
-+
-+## Note on empty results
-+
-+The table only holds inputs whose sanitized output is not empty. hermes-agent
-+returns `"session"` when the result would be empty, while the others return an
-+empty string. That one case is left out on purpose so the shared table stays
-+identical for all four integrations.
-+
-+# Dataset name sanitization conformance
-+
-+cognee rejects a dataset name that contains a space or a dot
-+(`check_dataset_name`, run on every write: remember, improve, memify and the
-+pipelines). Every integration therefore runs a configured or derived dataset
-+name through a small sanitizer before using it. The rule is deliberately narrow:
-+
-+- Trim surrounding whitespace.
-+- Replace every run of spaces and dots with a single `_`.
-+- If nothing but underscores is left (and the input was not already that),
-+  use the integration's default dataset instead.
-+
-+Nothing else changes. A name the server accepts today (`Foo+Bar`, `héllo`,
-+`_x_`) comes back unchanged, so no user is silently moved to a new, empty
-+dataset. A name that contains a space or a dot never took a write, so rewriting
-+it orphans nothing. The vscode extension's `sanitizeDatasetName` is stricter
-+(`[^A-Za-z0-9_-]` → `_`) because it only cleans names it derives itself.
-+
-+`dataset_name_cases.json` holds `{ "input", "fallback", "expected", "note" }`
-+cases; each test passes `fallback` as the default, so one table serves
-+integrations with different defaults. The tests live next to the session-id ones:
-+
-+- claude-code, codex and antigravity:
-+  `integrations/tests/tests/unit/test_dataset_name_conformance.py`
-+- hermes-agent: `integrations/hermes-agent/tests/test_dataset_name_conformance.py`
-+- openclaw: `integrations/openclaw/__tests__/unit/test_dataset_name_conformance.ts`
-+
-+Where a name is typed explicitly (the dataset-switch commands), an invalid name
-+is refused with the sanitized form as a suggestion instead of being rewritten,
-+so a switch never lands in a dataset the user did not name.
-+
-+# Recall text trimming conformance
-+
-+On cognee 1.6.x a graph recall with `only_context` returns the full prompt the
-+server's own LLM would have received: the conversation history, the question
-+template around the retrieved context, and the `## Active session guidance`
-+block. The hook plugins and openclaw keep only the retrieved context and shrink
-+it the same way, without an LLM:
-+
-+- Find the context by the question marker (`` The question is: `<prompt>` ``)
-+  and the final backtick, or the last `` `\n\n## Active session guidance ``.
-+  Text that does not fit is returned whole and flagged `parsed: false`.
-+- Drop passages w
+@@ -48,6 +48,7 @@
+ from ...relational.sqlalchemy.SqlAlchemyAdapter import (
+     DEFAULT_MAX_OVERFLOW,
+     DEFAULT_POOL_SIZE,
++    DEFAULT_POOL_TIMEOUT,
+     SQLAlchemyAdapter,
+ )
+ from ..embeddings.EmbeddingGateway import EmbeddingGateway
+@@ -64,7 +65,7 @@
+ # Lean pool_size limits connection fan-out across datasets (only pool_size connections are
+ # retained while idle); the large max_overflow keeps burst headroom, since overflow
+ # connections close on release instead of idling.
+-_ACCESS_CONTROL_DEFAULT_POOL_ARGS = {"pool_size": 2, "max_overflow": 20}
++_ACCESS_CONTROL_DEFAULT_POOL_ARGS = {"pool_size": 2, "max_overflow": 10}
+ 
+ # pgvector builds HNSW indexes on vector up to 2,000 dimensions and on halfvec up to
+ # 4,000; a larger embedding stays unindexed and is searched by a full scan.
+@@ -97,7 +98,8 @@
+ _PG_MAX_IDENTIFIER_BYTES = 63
+ # Vectors reach Postgres in binary through an asyncpg pool of the adapter's own
+ # (``_get_write_pool``): connections open on demand and close after this long idle.
+-# Its size follows the adapter's pool args (``_write_pool_size``).
++# Its size follows the adapter's pool args (``_write_pool_size``), and so does how long
++# a write waits for a free connection (their ``pool_timeout``, as on the SQLAlchemy pool).
+ _WRITE_POOL_IDLE_SECONDS = 60.0
+ # SQLAlchemy's asyncpg dialect consumes these connect_args itself; asyncpg.connect
+ # does not accept them.
+@@ -438,6 +440,9 @@ def __init__(
+         self._write_pool_loop = None
+         self._write_pool_lock = LoopAgnosticLock()
+         self._write_pool_max_size = _write_pool_size(effective_pool_args)
++        self._write_pool_acquire_timeout = effective_pool_args.get(
++            "pool_timeout", DEFAULT_POOL_TIMEOUT
++        )
+ 
+         # Reuse engine and sessionmaker if the relational engine is provided and is the same database as the one configured for pgvector
+         db_name1 = make_url(relational_db.db_uri).database
+@@ -672,7 +677,10 @@ async def _write_rows(self, collection_name: str, rows: list[dict], statement_fo
+         statement = statement_for(self._qualified_table(collection_name), collection_name)
+         params = [(row["id"], json.dumps(row["payload"]), row["vector"]) for row in rows]
+         pool = await self._get_write_pool()
+-        async with pool.acquire() as connection, connection.transaction():
++        async with (
++            pool.acquire(timeout=self._write_pool_acquire_timeout) as connection,
++            connection.transaction(),
++        ):
+             await connection.executemany(statement, params)
+ 
+     async def embed_data(self, data: list[str]) -> list[list[float]]:
+@@ -1064,7 +1072,7 @@ async def create_data_points(self, collection_name: str, data_points: list[DataP
+         # open across it. A changed row whose text is the same is embedded too, although
+         # the upsert keeps its stored vector.
+         pool = await self._get_write_pool()
+-        async with pool.acquire() as connection:
++        async with pool.acquire(timeout=self._write_pool_acquire_timeout) as connection:
+             missing, changed = await self._classify(connection, collection_name, rows)
+         if not missing and not changed:
+             return
+@@ -1147,7 +1155,10 @@ def params(batch: list[dict]) -> list[tuple]:
+ 
+         table = self._qualified_table(collection_name)
+         pool = await self._get_write_pool()
+-        async with pool.acquire() as connection, connection.transaction():
++        async with (
++            pool.acquire(timeout=self._write_pool_acquire_timeout) as connection,
++            connection.transaction(),
++        ):
+             missing, changed = await self._classify(connection, collection_name, rows)
+             # A lost-race row (below) was missing here, so it has a vector too.
+             unembedded = [row for row in missing + changed if str(row["id"]) not in vectors]
 ```
 
-**File**: `cognee-integrations/integrations/conformance/capture_policy_cases.json` (added, +1568/-0)
+**File**: `cognee/tests/unit/infrastructure/databases/graph/test_postgres_adapter.py` (modified, +3/-3)
 ```diff
-@@ -0,0 +1,1568 @@
-+{
-+  "_comment": "Generated by running integrations/claude-code/scripts/_capture_policy.py. tool_cases: expected is true/false, or \"error\" when the policy raises (fail closed). redact_cases: expected output, or error=true when redaction raises.",
-+  "tool_cases": [
-+    {
-+      "note": "default allows any tool",
-+      "env": {},
-+      "tool": "Bash",
-+      "params": {
-+        "command": "ls -la"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "default allows a read of an ordinary file",
-+      "env": {},
-+      "tool": "Read",
-+      "params": {
-+        "file_path": "/project/main.py"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "allow list by name keeps the named tool",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "Grep|Glob"
-+      },
-+      "tool": "Grep",
-+      "params": {
-+        "path": "main.py"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "allow list by name drops other tools",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "Grep|Glob"
-+      },
-+      "tool": "Read",
-+      "params": {
-+        "path": "main.py"
-+      },
-+      "expected": false
-+    },
-+    {
-+      "note": "allow list glob",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "mcp__*"
-+      },
-+      "tool": "mcp__github__get_issue",
-+      "params": {},
-+      "expected": true
-+    },
-+    {
-+      "note": "allow list glob drops non-matching",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "mcp__*"
-+      },
-+      "tool": "Bash",
-+      "params": {
-+        "command": "ls"
-+      },
-+      "expected": false
-+    },
-+    {
-+      "note": "allow list as JSON array",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "[\"Read\", \"Bash(git:*)\"]"
-+      },
-+      "tool": "Read",
-+      "params": {
-+        "file_path": "a.py"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "empty JSON array allow list means everything",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "[]"
-+      },
-+      "tool": "Write",
-+      "params": {
-+        "file_path": "a.py"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "an env value starting with [ is read as JSON",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "[RW]*"
-+      },
-+      "tool": "Write",
-+      "params": {
-+        "file_path": "a.py"
-+      },
-+      "expected": "error"
-+    },
-+    {
-+      "note": "glob with character class",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "[\"[RW]*\"]"
-+      },
-+      "tool": "Write",
-+      "params": {
-+        "file_path": "a.py"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "glob with negated character class",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "[\"[!RW]*\"]"
-+      },
-+      "tool": "Write",
-+      "params": {
-+        "file_path": "a.py"
-+      },
-+      "expected": false
-+    },
-+    {
-+      "note": "glob with a range",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "[\"[A-C]*\"]"
-+      },
-+      "tool": "Bash",
-+      "params": {
-+        "command": "ls"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "glob question mark",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "Rea?"
-+      },
-+      "tool": "Read",
-+      "params": {
-+        "file_path": "a.py"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "whitespace around pipe entries is trimmed",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": " Read | Grep "
-+      },
-+      "tool": "Grep",
-+      "params": {},
-+      "expected": true
-+    },
-+    {
-+      "note": "prefix keeps the command",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
-+      },
-+      "tool": "Bash",
-+      "params": {
-+        "command": "git status"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "prefix keeps the bare command",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
-+      },
-+      "tool": "Bash",
-+      "params": {
-+        "command": "git"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "prefix ends on a word boundary",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
-+      },
-+      "tool": "Bash",
-+      "params": {
-+        "command": "gitk --all"
-+      },
-+      "expected": false
-+    },
-+    {
-+      "note": "prefix ignores leading whitespace",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
-+      },
-+      "tool": "Bash",
-+      "params": {
-+        "command": "   git log"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "prefix boundary may be a tab",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
-+      },
-+      "tool": "Bash",
-+      "params": {
-+        "command": "git\tlog"
-+      },
-+      "expected": true
-+    },
-+    {
-+      "note": "compound command counts as its first word",
-+      "env": {
-+        "COGNEE_CAPTURE_TOOLS": "Bash(git:*)"
-+      },
-+      "tool": "Bash",
-+      "params": {
-+        "command": "cd x && git status"
-+      },
-+      "expected": false
-+    },
-
+@@ -254,16 +254,16 @@ async def _probe():
+ 
+ def test_resolve_engine_args_defaults_match_the_per_dataset_pgvector_sizing():
+     args = _resolve_engine_args({})
+-    assert (args["pool_size"], args["max_overflow"]) == (2, 20)
+-    assert args["pool_timeout"] == 280  # stock 30s before this change
++    assert (args["pool_size"], args["max_overflow"]) == (2, 10)
++    assert args["pool_timeout"] == 360
+     assert args["pool_recycle"] == 280
+     assert args["pool_pre_ping"] is True
+     assert "poolclass" not in args
+ 
+ 
+ def test_resolve_engine_args_honors_configured_pool_args():
+     assert _resolve_engine_args({"pool_size": 7})["pool_size"] == 7
+-    assert _resolve_engine_args({"pool_size": 7})["max_overflow"] == 20
++    assert _resolve_engine_args({"pool_size": 7})["max_overflow"] == 10
+ 
+ 
+ def test_resolve_engine_args_keeps_the_nullpool_escape_hatch():
 ```
 
-**File**: `cognee-integrations/integrations/conformance/dataset_name_cases.json` (added, +92/-0)
+**File**: `cognee/tests/unit/infrastructure/databases/vector/test_pgvector_pool_lifecycle.py` (modified, +24/-1)
 ```diff
-@@ -0,0 +1,92 @@
-+[
-+  {
-+    "input": "agent_sessions",
-+    "fallback": "agent_sessions",
-+    "expected": "agent_sessions",
-+    "note": "a valid name passes through unchanged"
-+  },
-+  {
-+    "input": "My-Project_2",
-+    "fallback": "agent_sessions",
-+    "expected": "My-Project_2",
-+    "note": "letters, digits, dash and underscore are untouched"
-+  },
-+  {
-+    "input": "Foo+Bar@team",
-+    "fallback": "agent_sessions",
-+    "expected": "Foo+Bar@team",
-+    "note": "characters the server accepts are left alone, so no existing dataset is orphaned"
-+  },
-+  {
-+    "input": "héllo-wörld",
-+    "fallback": "agent_sessions",
-+    "expected": "héllo-wörld",
-+    "note": "non-ASCII letters are accepted by the server and left alone"
-+  },
-+  {
-+    "input": "my project",
-+    "fallback": "agent_sessions",
-+    "expected": "my_project",
-+    "note": "a space becomes an underscore"
-+  },
-+  {
-+    "input": "project-x_2.0",
-+    "fallback": "agent_sessions",
-+    "expected": "project-x_2_0",
-+    "note": "a dot becomes an underscore"
-+  },
-+  {
-+    "input": "team-user-a.b@x.com",
-+    "fallback": "agent_sessions",
-+    "expected": "team-user-a_b@x_com",
-+    "note": "dots inside a derived name (an email user id) are replaced"
-+  },
-+  {
-+    "input": "a . b",
-+    "fallback": "agent_sessions",
-+    "expected": "a_b",
-+    "note": "a run of spaces and dots collapses to one underscore"
-+  },
-+  {
-+    "input": "  padded  ",
-+    "fallback": "agent_sessions",
-+    "expected": "padded",
-+    "note": "surrounding whitespace is trimmed"
-+  },
-+  {
-+    "input": ".hidden",
-+    "fallback": "agent_sessions",
-+    "expected": "_hidden",
-+    "note": "a leading dot becomes an underscore rather than being dropped"
-+  },
-+  {
-+    "input": "_x_",
-+    "fallback": "agent_sessions",
-+    "expected": "_x_",
-+    "note": "existing underscores are not trimmed"
-+  },
-+  {
-+    "input": "___",
-+    "fallback": "agent_sessions",
-+    "expected": "___",
-+    "note": "a valid all-underscore name is kept, not replaced by the fallback"
-+  },
-+  {
-+    "input": "...",
-+    "fallback": "agent_sessions",
-+    "expected": "agent_sessions",
-+    "note": "nothing usable left after replacement falls back to the default"
-+  },
-+  {
-+    "input": "   ",
-+    "fallback": "my-default",
-+    "expected": "my-default",
-+    "note": "a blank name falls back to the integration's own default"
-+  },
-+  {
-+    "input": "",
-+    "fallback": "agent_sessions",
-+    "expected": "agent_sessions",
-+    "note": "an empty name falls back to the default"
-+  }
-+]
+@@ -67,11 +67,34 @@ async def test_close_always_disposes_owned_engine_after_pool_termination(closed)
+         old_loop.close()
+ 
+ 
++@pytest.mark.asyncio
++async def test_write_waits_for_a_connection_only_up_to_the_pool_timeout():
++    """A write asks the binary write pool for a connection with the adapter's
++    pool_timeout, so a full pool fails the write instead of waiting forever."""
++    adapter = object.__new__(PGVectorAdapter)
++    adapter._write_pool_acquire_timeout = 360
++    adapter._qualified_table = lambda name: name
++    connection = SimpleNamespace(transaction=Mock(), executemany=AsyncMock())
++    connection.transaction.return_value.__aenter__ = AsyncMock()
++    connection.transaction.return_value.__aexit__ = AsyncMock(return_value=False)
++    acquired = Mock()
++    acquired.__aenter__ = AsyncMock(return_value=connection)
++    acquired.__aexit__ = AsyncMock(return_value=False)
++    pool = SimpleNamespace(acquire=Mock(return_value=acquired))
++    adapter._get_write_pool = AsyncMock(return_value=pool)
++
++    await adapter._write_rows(
++        "c", [{"id": "1", "payload": {}, "vector": [0.0]}], lambda table, name: "SQL"
++    )
++
++    pool.acquire.assert_called_once_with(timeout=360)
++
++
+ def test_write_pool_ceiling_is_the_sqlalchemy_pools_ceiling():
+     """One setting sizes both pools: pool_size + max_overflow of the adapter's pool args,
+     with the SQLAlchemy adapter's defaults for a key that is not given."""
+     assert _write_pool_size({"pool_size": 3, "max_overflow": 4}) == 7
+-    assert _write_pool_size(_ACCESS_CONTROL_DEFAULT_POOL_ARGS) == 22
++    assert _write_pool_size(_ACCESS_CONTROL_DEFAULT_POOL_ARGS) == 12
+     assert _write_pool_size({}) == 40
+     assert _write_pool_size({"pool_size": 1, "max_overflow": 0, "pool_recycle": 60}) == 1
+     assert _write_pool_size({"poolclass": "nullpool"}) == 40
+```
+
+**File**: `cognee/tests/unit/infrastructure/databases/vector/test_pgvector_write_ordering.py` (modified, +7/-1)
+```diff
+@@ -85,12 +85,17 @@ async def executemany(self, statement, params):
+         self.log.append(("upsert", statement, list(params)))
+ 
+ 
++_ACQUIRE_TIMEOUT = 360
++
++
+ class _Pool:
+     def __init__(self, connection):
+         self.connection = connection
+ 
+     @asynccontextmanager
+-    async def acquire(self):
++    async def acquire(self, *, timeout):
++        # Required: every write must bound its wait for a connection.
++        assert timeout == _ACQUIRE_TIMEOUT
+         self.connection.events.append("acquire")
+         yield self.connection
+         self.connection.events.append("release")
+@@ -102,6 +107,7 @@ def _adapter(log, schema="", changed=frozenset(), unchanged=frozenset(), events=
+     adapter.schema = schema
+     adapter._write_locks = {}
+     adapter._write_locks_guard = threading.Lock()
++    adapter._write_pool_acquire_timeout = _ACQUIRE_TIMEOUT
+     adapter.connection = _Connection(log, changed, unchanged, events)
+ 
+     async def has_collection(name):
 ```
 
 ---
 
-### Incident Patch 2: `f5250eab` (2026-11-13)
-**Commit Message**: ci: Report every nightly job to Slack (SDK-1489)
+### Incident Patch 2: `35bab192` (2026-11-18)
+**Commit Message**: fix(postgres): Shrink per-dataset pools and bound waits (SDK-1663)
 
-A dispatched run also runs the plugin checks, the conformance drift
-check and the inventory check, but the Slack report waited for the live
-tier alone and built its headline from it. A failed drift check or unit
-test posted "green" while the run was red, and since the bot dispatches
-the run, GitHub notified nobody.
+The pgvector binary write pool (#6672) opens up to pool_size +
+max_overflow connections per adapter, next to the adapter's SQLAlchemy
+pool. With the defaults one dataset's cognify could open 106
+connections, past Postgres's default max_connections of 100, and the
+datasheets nightly failed with TooManyConnectionsError.
 
-notify now needs every job of the run, lists each one's result and
-counts it in the headline, so any failure turns the post red.
+The graph and pgvector per-dataset defaults go from 2 + 20 to 2 + 10
+(worst case 76 for one dataset). Every Postgres pool now waits up to
+360 s for a free connection, the write pool's acquire included, which
+had no timeout and could wait forever.
 
-**File**: `.github/workflows/test_integrations.yml` (modified, +29/-8)
+**File**: `.env.template` (modified, +3/-2)
 ```diff
-@@ -17,7 +17,8 @@ name: test | integrations
- # tokens, so it runs only on dispatch: nightly_scheduler.yml dispatches it
- # against dev every evening. It fails when any of those tests skips, so a
- # missing dependency or key can never pass as green, and `notify` posts every
--# live run's result, green included, to #nightly-ci-integrations.
-+# dispatched run's result, green included, to #nightly-ci-integrations: the
-+# live tier and every other job that run executes, so no failure reports green.
- #
- # The case tables in integrations/conformance/ are a copy: the hook plugins in
- # topoteretes/cognee-integrations generate two of them and test against the
-@@ -295,9 +296,12 @@ jobs:
-           retention-days: 7
+@@ -292,11 +292,12 @@ VECTOR_DATASET_DATABASE_HANDLER="lancedb"
  
-   notify:
--    name: Slack live report
--    needs: [detect, live]
--    # Every live run, green included: a failure-only report makes a passing
-+    name: Slack nightly report
-+    # Every job a dispatched run executes: a dispatch also runs the plugin checks,
-+    # the conformance drift check and the inventory check, and a report built from
-+    # the live tier alone would post green over any of them failing.
-+    needs: [detect, python-plugin, live, conformance-drift, inventory]
-+    # Every dispatched run, green included: a failure-only report makes a passing
-     # night and a broken notifier look the same. Not on push or PR runs.
-     if: ${{ always() && inputs.live }}
-     runs-on: ubuntu-22.04
-@@ -318,6 +322,9 @@ jobs:
-           PLUGINS: ${{ needs.detect.outputs.live }}
-           DETECT_RESULT: ${{ needs.detect.result }}
-           LIVE_RESULT: ${{ needs.live.result }}
-+          PLUGIN_CHECKS_RESULT: ${{ needs.python-plugin.result }}
-+          CONFORMANCE_RESULT: ${{ needs.conformance-drift.result }}
-+          INVENTORY_RESULT: ${{ needs.inventory.result }}
-           REPORTS: ${{ runner.temp }}/reports
-           REF: ${{ github.ref_name }}
-           TRIGGER: ${{ github.event_name }}
-@@ -333,13 +340,14 @@ jobs:
-           token = os.environ["SLACK_BOT_TOKEN"].strip()
-           channel = os.environ["SLACK_CHANNEL"].strip()
-           if not token or not channel:
--              print("::error::SLACK_BOT_TOKEN / SLACK_INTEGRATIONS_NIGHTLY_CHANNEL_ID are not set; cannot post the live report.")
-+              print("::error::SLACK_BOT_TOKEN / SLACK_INTEGRATIONS_NIGHTLY_CHANNEL_ID are not set; cannot post the nightly report.")
-               sys.exit(1)
+ # Connection pool tuning for PGVector per-dataset engines (JSON).
+ # When ENABLE_BACKEND_ACCESS_CONTROL=true each dataset gets its own engine; this controls
+-# its pool size independently from POOL_ARGS (default: pool_size=2, max_overflow=20).
++# its pool size independently from POOL_ARGS (default: pool_size=2, max_overflow=10).
+ # Vector writes use a second pool of the same ceiling (pool_size + max_overflow), which
+ # opens connections on demand and closes them after 60 s idle, so an adapter can hold
+ # up to that many connections twice. Both values must be bounded: pool_size above 0,
+-# max_overflow 0 or more.
++# max_overflow 0 or more. Every Postgres pool, the write pool included, waits up to
++# pool_timeout seconds for a free connection (default 360) before the call fails.
+ #VECTOR_POOL_ARGS='{"pool_size": 2, "max_overflow": 5, "pool_recycle": 1800}'
  
-           icons = {
-               "success": ":white_check_mark:",
-               "failure": ":red_circle:",
-               "cancelled": ":octagonal_sign:",
-+              "skipped": ":fast_forward:",
-           }
-           try:
-               plugins = json.loads(os.environ.get("PLUGINS") or "[]")
-@@ -364,14 +372,27 @@ jobs:
-               if status != "success" and not any(t.strip() for t in tests):
-                   lines.append("> no per-test summary — the job likely crashed or timed out; see the run log")
+ # pgvector only: create new collections as this many hash partitions (by id), each
+```
+
+**File**: `cognee/infrastructure/databases/cache/sql/SqlCacheAdapter.py` (modified, +7/-0)
+```diff
+@@ -35,6 +35,9 @@
+ )
+ from cognee.infrastructure.databases.postgres.deadlock import is_deadlock
+ from cognee.infrastructure.databases.relational import get_relational_config
++from cognee.infrastructure.databases.relational.sqlalchemy.SqlAlchemyAdapter import (
++    DEFAULT_POOL_TIMEOUT,
++)
+ from cognee.modules.storage.utils import JSONEncoder
+ from cognee.shared.logging_utils import get_logger
  
-+          # The other jobs of the run. Skipped means it had nothing to check
-+          # (no plugin, no conformance run) and does not change the headline.
-+          checks = {
-+              "lint and unit tests": os.environ["PLUGIN_CHECKS_RESULT"],
-+              "conformance drift": os.environ["CONFORMANCE_RESULT"],
-+              "inventory": os.environ["INVENTORY_RESULT"],
-+          }
-+          for name, result in checks.items():
-+              result = result or "unknown"
-+              lines.append(f"{icons.get(result, ':white_circle:')} *{name}*: {result}")
-+              if result != "skipped":
-+                  outcomes.add(result)
+@@ -152,6 +155,10 @@ def __init__(
+             # same value must work here — SQLAlchemy itself needs the class.
+             if pool_args.get("poolclass", "").lower() == "nullpool":
+                 pool_args["poolclass"] = NullPool
++            elif not is_sqlite:
++                # The Postgres cache waits for a pooled connection as long as cognee's
++                # other Postgres pools do.
++                pool_args.setdefault("pool_timeout", DEFAULT_POOL_TIMEOUT)
+             if is_sqlite:
+                 # Concurrency tuning: wait out writer locks instead of failing
+                 # with SQLITE_BUSY when several processes share one cache.db.
+```
+
+**File**: `cognee/infrastructure/databases/graph/postgres_demo/adapter.py` (modified, +6/-3)
+```diff
+@@ -44,6 +44,9 @@
+     get_source_ref_key_from_source_run_ref,
+ )
+ from cognee.infrastructure.databases.relational import get_relational_config
++from cognee.infrastructure.databases.relational.sqlalchemy.SqlAlchemyAdapter import (
++    DEFAULT_POOL_TIMEOUT,
++)
+ from cognee.infrastructure.engine import DataPoint
+ from cognee.modules.graph.methods.sanitize_relational_payload import sanitize_relational_payload
+ from cognee.modules.storage.utils import JSONEncoder
+@@ -182,17 +185,17 @@ def _select_nodeset_neighbor_ids(
+ 
+ _DEFAULT_POOL_ARGS = {
+     "pool_size": 2,
+-    "max_overflow": 20,  # 22-connection ceiling, PER DATASET
++    "max_overflow": 10,  # 12-connection ceiling, PER DATASET
+     "pool_pre_ping": True,
+     "pool_recycle": 280,
+-    "pool_timeout": 280,
++    "pool_timeout": DEFAULT_POOL_TIMEOUT,
+ }
+ 
+ 
+ def _resolve_engine_args(configured_pool_args) -> dict:
+     """Turn the configured POOL_ARGS into create_async_engine kwargs.
+ 
+-    Defaults mirror PGVectorAdapter._ACCESS_CONTROL_DEFAULT_POOL_ARGS (2/20),
++    Defaults mirror PGVectorAdapter._ACCESS_CONTROL_DEFAULT_POOL_ARGS (2/10),
+     NOT SqlAlchemyAdapter's 5/35. Like PGVector's, this engine is created per
+     dataset — the engine-cache key includes graph_database_schema — so its
+     ceiling is multiplied by dataset count, not paid once. dict() handles the
+```
+
+**File**: `cognee/infrastructure/databases/relational/sqlalchemy/SqlAlchemyAdapter.py` (modified, +5/-1)
+```diff
+@@ -31,6 +31,10 @@
+ # QueuePool sizing of a server-database engine when POOL_ARGS does not give it.
+ DEFAULT_POOL_SIZE = 5
+ DEFAULT_MAX_OVERFLOW = 35
++# Seconds a caller waits for a free connection from any of cognee's Postgres pools
++# (relational, graph, both pgvector pools, the Postgres session cache) before the
++# wait raises, when the pool args do not give ``pool_timeout``.
++DEFAULT_POOL_TIMEOUT = 360
+ 
+ 
+ class SQLAlchemyAdapter:
+@@ -155,7 +159,7 @@ def __init__(
+                 pool_args.setdefault("max_overflow", DEFAULT_MAX_OVERFLOW)
+                 pool_args.setdefault("pool_pre_ping", True)
+                 pool_args.setdefault("pool_recycle", 280)
+-                pool_args.setdefault("pool_timeout", 280)
++                pool_args.setdefault("pool_timeout", DEFAULT_POOL_TIMEOUT)
+ 
+             engine_kwargs = {**pool_args}
+             if final_connect_args:
+```
+
+**File**: `cognee/infrastructure/databases/vector/pgvector/PGVectorAdapter.py` (modified, +16/-5)
+```diff
+@@ -48,6 +48,7 @@
+ from ...relational.sqlalchemy.SqlAlchemyAdapter import (
+     DEFAULT_MAX_OVERFLOW,
+     DEFAULT_POOL_SIZE,
++    DEFAULT_POOL_TIMEOUT,
+     SQLAlchemyAdapter,
+ )
+ from ..embeddings.EmbeddingGateway import EmbeddingGateway
+@@ -64,7 +65,7 @@
+ # Lean pool_size limits connection fan-out across datasets (only pool_size connections are
+ # retained while idle); the large max_overflow keeps burst headroom, since overflow
+ # connections close on release instead of idling.
+-_ACCESS_CONTROL_DEFAULT_POOL_ARGS = {"pool_size": 2, "max_overflow": 20}
++_ACCESS_CONTROL_DEFAULT_POOL_ARGS = {"pool_size": 2, "max_overflow": 10}
+ 
+ # pgvector builds HNSW indexes on vector up to 2,000 dimensions and on halfvec up to
+ # 4,000; a larger embedding stays unindexed and is searched by a full scan.
+@@ -97,7 +98,8 @@
+ _PG_MAX_IDENTIFIER_BYTES = 63
+ # Vectors reach Postgres in binary through an asyncpg pool of the adapter's own
+ # (``_get_write_pool``): connections open on demand and close after this long idle.
+-# Its size follows the adapter's pool args (``_write_pool_size``).
++# Its size follows the adapter's pool args (``_write_pool_size``), and so does how long
++# a write waits for a free connection (their ``pool_timeout``, as on the SQLAlchemy pool).
+ _WRITE_POOL_IDLE_SECONDS = 60.0
+ # SQLAlchemy's asyncpg dialect consumes these connect_args itself; asyncpg.connect
+ # does not accept them.
+@@ -438,6 +440,9 @@ def __init__(
+         self._write_pool_loop = None
+         self._write_pool_lock = LoopAgnosticLock()
+         self._write_pool_max_size = _write_pool_size(effective_pool_args)
++        self._write_pool_acquire_timeout = effective_pool_args.get(
++            "pool_timeout", DEFAULT_POOL_TIMEOUT
++        )
+ 
+         # Reuse engine and sessionmaker if the relational engine is provided and is the same database as the one configured for pgvector
+         db_name1 = make_url(relational_db.db_uri).database
+@@ -672,7 +677,10 @@ async def _write_rows(self, collection_name: str, rows: list[dict], statement_fo
+         statement = statement_for(self._qualified_table(collection_name), collection_name)
+         params = [(row["id"], json.dumps(row["payload"]), row["vector"]) for row in rows]
+         pool = await self._get_write_pool()
+-        async with pool.acquire() as connection, connection.transaction():
++        async with (
++            pool.acquire(timeout=self._write_pool_acquire_timeout) as connection,
++            connection.transaction(),
++        ):
+             await connection.executemany(statement, params)
+ 
+     async def embed_data(self, data: list[str]) -> list[list[float]]:
+@@ -1064,7 +1072,7 @@ async def create_data_points(self, collection_name: str, data_points: list[DataP
+         # open across it. A changed row whose text is the same is embedded too, although
+         # the upsert keeps its stored vector.
+         pool = await self._get_write_pool()
+-        async with pool.acquire() as connection:
++        async with pool.acquire(timeout=self._write_pool_acquire_timeout) as connection:
+             missing, changed = await self._classify(connection, collection_name, rows)
+         if not missing and not changed:
+             return
+@@ -1147,7 +1155,10 @@ def params(batch: list[dict]) -> list[tuple]:
+ 
+         table = self._qualified_table(collection_name)
+         pool = await self._get_write_pool()
+-        async with pool.acquire() as connection, connection.transaction():
++        async with (
++            pool.acquire(timeout=self._write_pool_acquire_timeout) as connection,
++            connection.transaction(),
++        ):
+             missing, changed = await self._classify(connection, collection_name, rows)
+             # A lost-race row (below) was missing here, so it has a vector too.
+             unembedded = [row for row in missing + changed if str(row["id"]) not in vectors]
+```
+
+**File**: `cognee/tests/unit/infrastructure/databases/graph/test_postgres_adapter.py` (modified, +3/-3)
+```diff
+@@ -254,16 +254,16 @@ async def _probe():
+ 
+ def test_resolve_engine_args_defaults_match_the_per_dataset_pgvector_sizing():
+     args = _resolve_engine_args({})
+-    assert (args["pool_size"], args["max_overflow"]) == (2, 20)
+-    assert args["pool_timeout"] == 280  # stock 30s before this change
++    assert (args["pool_size"], args["max_overflow"]) == (2, 10)
++    assert args["pool_timeout"] == 360
+     assert args["pool_recycle"] == 280
+     assert args["pool_pre_ping"] is True
+     assert "poolclass" not in args
+ 
+ 
+ def test_resolve_engine_args_honors_configured_pool_args():
+     assert _resolve_engine_args({"pool_size": 7})["pool_size"] == 7
+-    assert _resolve_engine_args({"pool_size": 7})["max_overflow"] == 20
++    assert _resolve_engine_args({"pool_size": 7})["max_overflow"] == 10
+ 
+ 
+ def test_resolve_engine_args_keeps_the_nullpool_escape_hatch():
+```
+
+**File**: `cognee/tests/unit/infrastructure/databases/vector/test_pgvector_pool_lifecycle.py` (modified, +24/-1)
+```diff
+@@ -67,11 +67,34 @@ async def test_close_always_disposes_owned_engine_after_pool_termination(closed)
+         old_loop.close()
+ 
+ 
++@pytest.mark.asyncio
++async def test_write_waits_for_a_connection_only_up_to_the_pool_timeout():
++    """A write asks the binary write pool for a connection with the adapter's
++    pool_timeout, so a full pool fails the write instead of waiting forever."""
++    adapter = object.__new__(PGVectorAdapter)
++    adapter._write_pool_acquire_timeout = 360
++    adapter._qualified_table = lambda name: name
++    connection = SimpleNamespace(transaction=Mock(), executemany=AsyncMock())
++    connection.transaction.return_value.__aenter__ = AsyncMock()
++    connection.transaction.return_value.__aexit__ = AsyncMock(return_value=False)
++    acquired = Mock()
++    acquired.__aenter__ = AsyncMock(return_value=connection)
++    acquired.__aexit__ = AsyncMock(return_value=False)
++    pool = SimpleNamespace(acquire=Mock(return_value=acquired))
++    adapter._get_write_pool = AsyncMock(return_value=pool)
 +
-           trigger = os.environ["TRIGGER"]
-           ref = os.environ["REF"]
-           if outcomes == {"success"}:
--              headline = f":large_green_circle: *Integrations live tier green* (`{ref}`, {trigger})"
-+              headline = f":large_green_circle: *Integrations nightly green* (`{ref}`, {trigger})"
-           elif "failure" in outcomes:
--              headline = f":rotating_light: *Integrations live tier failed* (`{ref}`, {trigger})"
-+              headline = f":rotating_light: *Integrations nightly failed* (`{ref}`, {trigger})"
-           else:
--              headline = f":warning: *Integrations live tier incomplete* (`{ref}`, {trigger}) — a plugin was cancelled or not run"
-+              headline = f":warning: *Integrations nightly incomplete* (`{ref}`, {trigger}) — a job was cancelled or not run"
-           text = "\n".join([headline, *lines, f"<{os.environ['RUN_URL']}|Open the run>"])
++    await adapter._write_rows(
++        "c", [{"id": "1", "payload": {}, "vector": [0.0]}], lambda table, name: "SQL"
++    )
++
++    pool.acquire.assert_called_once_with(timeout=360)
++
++
+ def test_write_pool_ceiling_is_the_sqlalchemy_pools_ceiling():
+     """One setting sizes both pools: pool_size + max_overflow of the adapter's pool args,
+     with the SQLAlchemy adapter's defaults for a key that is not given."""
+     assert _write_pool_size({"pool_size": 3, "max_overflow": 4}) == 7
+-    assert _write_pool_size(_ACCESS_CONTROL_DEFAULT_POOL_ARGS) == 22
++    assert _write_pool_size(_ACCESS_CONTROL_DEFAULT_POOL_ARGS) == 12
+     assert _write_pool_size({}) == 40
+     assert _write_pool_size({"pool_size": 1, "max_overflow": 0, "pool_recycle": 60}) == 1
+     assert _write_pool_size({"poolclass": "nullpool"}) == 40
+```
+
+---
+
+### Incident Patch 3: `11f696cd` (2026-11-18)
+**Commit Message**: fix(chunking): Stamp chunks centrally (SDK-1525) (#6775)
+
+## Description
+Follow-up to #6762. It fixes four review findings on it.
+
+- **A rebuild could leave a document with no graph.** A registered
+chunker that left its id off a chunk failed the run. On `update()`'s
+full-rebuild path that failure came after `forget(memory_only=True)` had
+dropped the document's memory, so the document had no graph until the
+chunker was fixed. Now cognee stamps every chunk a chunker yields
+without an id with that chunker's id (`stamp_chunk`, in
+`extract_chunks_from_documents` and `_chunk_region`), so a forgotten
+stamp no longer fails anything.
+- **The stamp rule depended on registration.** Only registered chunkers
+were checked, so the same class passed per call (`update(chunker=C)`) in
+a process that never registered it could store chunks with no id, which
+`TextChunker` later patched as its own. Stamping now works the same for
+registered and per-call chunkers, and `stamps_every_chunk` no longer
+looks at the registry.
+- **Chunker id checks.** `register_chunker()` now refuses `code_docs`,
+the id the code-docs pipeline stamps on its chunks. The docs now say
+never to reuse the id of a chunker that is no 
+
+**File**: `CLAUDE.md` (modified, +1/-1)
+```diff
+@@ -305,7 +305,7 @@ A stored connection syncs on a schedule when a sync policy covers it (`cognee/mo
  
-           request = urllib.request.Request(
+ Runs under the per-dataset lock with the dataset-scoped database context (multi-tenant-safe). Falls back to the full delete + re-add + cognify flow when preconditions fail (first ingestion, non-text content, pre-v2 chunk ownership, or an unverified graph adapter — verified: Kuzu/Ladybug, Neo4j and the Postgres demo adapter; Neptune falls back); disable with `update(..., chunk_level_diff=False)` or the same query param on `PATCH /update`. Document metadata follows a PATCH rule on either path: `node_set`, and a `DataItem`'s `label`, `external_metadata` and `node_set`, keep their stored values when not passed, an explicit empty value (`node_set=[]`, `label=""`, `external_metadata={}`) clears them, and a value replaces them (`merge_existing_row_metadata` in `cognee/tasks/ingestion/ingest_data.py`; the call's and the item's node sets count together, as their union). Passing any of them forces the full rebuild, since the chunk-level path never touches the row.
+ 
+-Every call that names no chunker uses the deployment's default: the chunker `DEFAULT_CHUNKER` names (registered with `register_chunker()`), else TextChunker. That holds for `cognify()`, `remember()`, `update()`, the CLI (`--chunker` only overrides it), the API, the dry-run estimator, the task-list builders custom pipelines use (`get_default_tasks`, `get_indexing_tasks`, `get_gliner_demo_tasks`) and cognee's own pipelines (session and trace bridging in `improve()`); every public entry point that takes a chunker defaults to None and resolves it once with `resolve_chunker()`, and the helpers below it take the resolved class; `remember()` resolves it before `add()`, so an unregistered name stores nothing. The dlt route alone pins TextChunker, since its rows are not cut. Register the chunker in every process that reads the setting (API workers, MCP server, CLI, scripts): an unregistered name fails every write. `update()` uses the resolved chunker on both paths. The chunk-level path needs the chunker that cut the stored chunks (compared by `chunker_id`): a document holding any other chunker's id is rebuilt in full with the resolved one (`unsupported_chunker`), so the first update after `DEFAULT_CHUNKER` changes rebuilds that document once and later updates are chunk-level again; `cognify()` alone never re-cuts a document it already processed, and an update with unchanged content does not either. What a chunker needs for the chunk-level path (its own `chunker_id` stamped on every chunk, chunks that join back to the document's text) is in the `cognee/modules/chunking/chunker_registry.py` docstring. `register_chunker()` refuses a class with no `chunker_id`, or with the id of another registered or built-in chunker, and "TextChunker" always names TextChunker; a registered chunker that yields a chunk without its id fails the run with `CogneeConfigurationError` (`require_chunker_stamp`; only chunks being cut are checked, never stored ones). Chunks stored before cognee 1.5.4 carry no `chunker_id`: TextChunker goes on updating those documents chunk-level, and a registered chunker rebuilds such a document once, like any document it did not cut. Example: `examples/guides/custom_chunker.py`; journey: `cognee/tests/journeys/test_default_chunker_update.py`.
++Every call that names no chunker uses the deployment's default: the chunker `DEFAULT_CHUNKER` names (registered with `register_chunker()`), else TextChunker. That holds for `cognify()`, `remember()`, `update()`, the CLI (`--chunker` only overrides it), the API, the dry-run estimator, the task-list builders custom pipelines use (`get_default_tasks`, `get_indexing_tasks`, `get_gliner_demo_tasks`) and cognee's own pipelines (session and trace bridging in `improve()`); every public entry point that takes a chunker defaults to None and resolves it once with `resolve_chunker()`, and the helpers below it take the resolved class; `remember()` resolves it before `add()`, so an unregistered name stores nothing. The dlt route alone pins TextChunker, since its rows are not cut. Register the chunker in every process that reads the setting (API workers, MCP server, CLI, scripts): an unregistered name fails every write. `update()` uses the resolved chunker on both paths. The chunk-level path needs the chunker that cut the stored chunks (compared by `chunker_id`): a document holding any other chunker's id is rebuilt in full with the resolved one (`unsupported_chunker`), so the first update after `DEFAULT_CHUNKER` changes rebuilds that document once and later updates are chunk-level again; `cognify()` alone never re-cuts a document it already processed, and an update with unchanged content does not either. What a chunker needs for the chunk-level path (its own `chunker_id` stamped on every chunk, chunks that join back to the document's text) is in the `cognee/modules/chunking/chunker_registry.py` docstring. `register_chunker()` refuse
+```
+
+**File**: `cognee/api/v1/update/incremental.py` (modified, +3/-3)
+```diff
+@@ -1035,9 +1035,9 @@ async def _stage_and_plan(
+         # indistinguishable from a document that was never cognified.
+         # Any id other than this chunker's means another chunker cut part of the
+         # document. Chunks with no id were stored before chunks carried one (cognee
+-        # before 1.5.4). TextChunker keeps updating those, as it always has. A
+-        # chunker the deployment registered stamps every chunk it cuts, so it did
+-        # not cut them: patching them with it would leave two cuts in one document.
++        # before 1.5.4). TextChunker keeps updating those, as it always has. Every
++        # chunk any other chunker with an id cuts is stamped (``stamp_chunk``), so it
++        # did not cut them: patching them with it would leave two cuts in one document.
+         # getattr: a chunker passed per call need not subclass Chunker.
+         own_id = getattr(chunker, "chunker_id", "")
+         stored_ids = {node.get("chunker_id") or None for node in stored_chunks}
+```
+
+**File**: `cognee/api/v1/update/update.py` (modified, +1/-1)
+```diff
+@@ -140,7 +140,7 @@ async def update(
+                  so the first update after a deployment changes its default chunker
+                  rebuilds the document once and later updates are chunk-level again.
+                  Chunks stored before cognee 1.5.4 carry no chunker id: TextChunker
+-                 still updates them chunk-level, a registered chunker rebuilds them.
++                 still updates them chunk-level, any other chunker rebuilds them.
+         policy: Decides which chunks exist after the edit and what happens to the old
+                  ones. Replaceable without touching storage or update orchestration.
+                  Chunk-level path only; not exposed on the HTTP route.
+```
+
+**File**: `cognee/cli/commands/cognify_command.py` (modified, +8/-4)
+```diff
+@@ -124,15 +124,19 @@ async def run_cognify():
+                             from cognee.modules.chunking.LangchainChunker import LangchainChunker
+ 
+                             chunker_class = LangchainChunker
+-                        except ImportError:
+-                            fmt.warning("LangchainChunker not available, using the default chunker")
++                        except ImportError as error:
++                            raise CliCommandInnerException(
++                                "LangchainChunker needs langchain: pip install 'cognee[langchain]'"
++                            ) from error
+                     elif args.chunker == "CsvChunker":
+                         try:
+                             from cognee.modules.chunking.CsvChunker import CsvChunker
+ 
+                             chunker_class = CsvChunker
+-                        except ImportError:
+-                            fmt.warning("CsvChunker not available, using the default chunker")
++                        except ImportError as error:
++                            raise CliCommandInnerException(
++                                f"CsvChunker could not be imported: {error}"
++                            ) from error
+ 
+                     # Translate --ontology-file into the canonical ontology Config
+                     # structure, built with the same factory cognify() uses for
+```
+
+**File**: `cognee/cli/commands/remember_command.py` (modified, +8/-4)
+```diff
+@@ -361,15 +361,19 @@ async def run_remember():
+                             from cognee.modules.chunking.LangchainChunker import LangchainChunker
+ 
+                             chunker_class = LangchainChunker
+-                        except ImportError:
+-                            fmt.warning("LangchainChunker not available, using the default chunker")
++                        except ImportError as error:
++                            raise CliCommandInnerException(
++                                "LangchainChunker needs langchain: pip install 'cognee[langchain]'"
++                            ) from error
+                     elif args.chunker == "CsvChunker":
+                         try:
+                             from cognee.modules.chunking.CsvChunker import CsvChunker
+ 
+                             chunker_class = CsvChunker
+-                        except ImportError:
+-                            fmt.warning("CsvChunker not available, using the default chunker")
++                        except ImportError as error:
++                            raise CliCommandInnerException(
++                                f"CsvChunker could not be imported: {error}"
++                            ) from error
+ 
+                     data_to_add = args.data[0] if len(args.data) == 1 else args.data
+ 
+```
+
+**File**: `cognee/modules/chunking/chunk_policy.py` (modified, +2/-2)
+```diff
+@@ -30,7 +30,7 @@
+ 
+ from cognee.modules.chunking.chunk_id import chunk_content_hash, content_chunk_id
+ from cognee.modules.chunking.Chunker import Chunker
+-from cognee.modules.chunking.chunker_registry import require_chunker_stamp
++from cognee.modules.chunking.chunker_registry import stamp_chunk
+ from cognee.modules.chunking.incremental_chunking import (
+     IncrementalPlan,
+     IncrementalPlanError,
+@@ -91,7 +91,7 @@ async def get_text():
+     chunker = chunker_cls(document, get_text, max_chunk_size)
+     chunks = [chunk async for chunk in chunker.read()]
+     for chunk in chunks:
+-        require_chunker_stamp(chunker_cls, chunk)
++        stamp_chunk(chunker_cls, chunk)
+     return chunks
+ 
+ 
+```
+
+**File**: `cognee/modules/chunking/chunker_registry.py` (modified, +31/-16)
+```diff
+@@ -12,10 +12,10 @@
+ 
+ For ``update()`` to replace only the chunks an edit touched, the chunker has to:
+ 
+-* declare its own ``chunker_id`` and stamp it on every chunk it yields
+-  (``DocumentChunk(chunker_id=self.chunker_id, ...)``). ``update()`` compares it with
+-  the id on the stored chunks, and rebuilds a document another chunker cut. A chunk
+-  yielded without it fails the run (``require_chunker_stamp``);
++* declare its own ``chunker_id``. cognee stamps it on every chunk the chunker yields
++  without one (``stamp_chunk``); a chunk yielded with another id fails the run.
++  ``update()`` compares it with the id on the stored chunks, and rebuilds a document
++  another chunker cut;
+ * cut without overlap or loss: its chunk texts, joined in order, are the document's
+   text. A document whose chunks do not join back to its text is rebuilt in full on
+   every update (``chunks_not_tiling``).
+@@ -40,6 +40,8 @@ def register_chunker(name: str, chunker: type[Chunker]) -> None:
+     The class needs a ``chunker_id`` that no other class uses, registered under any
+     name or built into cognee: it is how ``update()`` tells which chunker cut a stored
+     document. A subclass that cuts differently from its parent declares a new one.
++    Never reuse an id, not even that of a chunker no longer registered: documents it
++    cut still carry it, and only ids registered now or built in are checked here.
+     Registering a class again under its name changes nothing; "TextChunker" always
+     names TextChunker.
+     """
+@@ -57,6 +59,14 @@ def register_chunker(name: str, chunker: type[Chunker]) -> None:
+                 f"{chunker.__name__} has the chunker_id of {other.__name__} "
+                 f"({chunker.chunker_id!r}); declare its own."
+             )
++    # The code-docs pipeline stamps its chunks with an id it has no chunker class for.
++    from cognee.tasks.code_docs.extract_code_docs import CHUNKER_ID as CODE_DOCS_ID
++
++    if chunker.chunker_id == CODE_DOCS_ID:
++        raise ValueError(
++            f"{chunker.__name__} has the chunker_id of the code-docs pipeline "
++            f"({CODE_DOCS_ID!r}); declare its own."
++        )
+     registered_chunkers[name] = chunker
+ 
+ 
+@@ -88,25 +98,30 @@ def resolve_chunker(chunker: type[Chunker] | None) -> type[Chunker]:
+ def stamps_every_chunk(chunker: type[Chunker]) -> bool:
+     """Whether every chunk ``chunker`` cut is known to carry its ``chunker_id``.
+ 
+-    True for a chunker a deployment registered, which ``require_chunker_stamp`` holds
+-    to it. Not for TextChunker: chunks carry an id since cognee 1.5.4, so documents it
+-    cut before then have none, and it keeps updating them. Not for a chunker passed
+-    per call either, which may predate the id as well.
++    True for any chunker with an id, registered or passed per call: ``stamp_chunk``
++    gives every chunk it cuts that id. Not for TextChunker: chunks carry an id since
++    cognee 1.5.4, so documents it cut before then have none, and it keeps updating
++    them.
+     """
+-    return chunker is not TextChunker and chunker in registered_chunkers.values()
++    return chunker is not TextChunker and bool(getattr(chunker, "chunker_id", ""))
+ 
+ 
+-def require_chunker_stamp(chunker: type[Chunker], chunk) -> None:
+-    """Raise when a registered chunker yields a chunk that does not carry its id.
++def stamp_chunk(chunker: type[Chunker], chunk) -> None:
++    """Give a chunk being cut the id of the chunker that cut it.
+ 
+-    Only chunks being cut now are checked, never stored ones. Stored without the id,
+-    such a chunk could later be updated by another chunker with nothing to tell.
++    A chunk the chunker left without an id gets ``chunker.chunker_id``, so a chunker
++    need not stamp its chunks itself. A chunk carrying another id raises: stored
++    with it, the document would later be updated as if that chunker cut it. Only
++    chunks being cut are stamped, never stored ones.
+     """
+-    if stamps_every_chunk(chunker) and chunk.chunker_id != chunker.chunker_id:
++    own_id = getattr(chunker, "chunker_id", "") or None
++    if not chunk.chunker_id:
++        chunk.chunker_id = own_id
++    elif chunk.chunker_id != own_id:
+         raise CogneeConfigurationError(
+             message=f"{chunker.__name__} yielded a chunk with chunker_id "
+-            f"{chunk.chunker_id!r}, not its own ({chunker.chunker_id!r}).",
+-            remediation="Build every chunk with chunker_id=self.chunker_id.",
++            f"{chunk.chunker_id!r}, not its own ({own_id!r}).",
++            remediation="Build every chunk with chunker_id=self.chunker_id, or leave it unset.",
+         )
+ 
+ 
+```
+
+**File**: `cognee/tasks/documents/extract_chunks_from_documents.py` (modified, +2/-2)
+```diff
+@@ -5,7 +5,7 @@
+ 
+ from cognee.infrastructure.databases.relational import get_relational_engine
+ from cognee.modules.chunking.Chunker import Chunker
+-from cognee.modules.chunking.chunker_registry import require_chunker_stamp, resolve_chunker
++from cognee.modules.chunking.chunker_registry import resolve_chunker, stamp_chunk
+ from cognee.modules.data.models import Data
+ from cognee.modules.data.processing.document_types.Document import Document
+ from cognee.modules.engine.utils.temporal_hints import hint_lines
+@@ -65,7 +65,7 @@ async def extract_chunks_from_documents(
+         async for document_chunk in document.read(
+             max_chunk_size=max_chunk_size, chunker_cls=chunker
+         ):
+-            require_chunker_stamp(chunker, document_chunk)
++            stamp_chunk(chunker, document_chunk)
+             document_token_count += document_chunk.chunk_size
+             document_chunk.belongs_to_set = document.belongs_to_set
+             if temporal_hints:
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6737** (closed): dev -> main (@mertzamir)
-- **PR #6718** (closed): feat: resolve issue #5916 - Hackathon [Feature]: Add Polar customer-state, sub (@ademolaaa)
-- **PR #6717** (2026-11-16): docs(guides): rework hybrid decomposition guide, remove dlt column search guide (RES-110) (@ArmagedonFlamer)
-- **PR #6715** (2026-11-13): feat: package standalone Vercel connector (SDK-1568) (@NMZivkovic)
-- **PR #6714** (2026-11-16): perf(pgvector): Store new collections as halfvec, require pgvector 0.7.0 (SDK-651) (@dexters1)
-- **PR #6712** (2026-11-14): perf(pgvector): Build HNSW indexes with 8 links per node (SDK-651) (@dexters1)
+- **PR #6790** (2026-11-18): chore: Release v1.6.10 (@dexters1)
+- **PR #6789** (2026-11-18): Release v1.6.10 (@dexters1)
+- **PR #6788** (closed): Release V1.6.10 (@dexters1)
+- **PR #6787** (2026-11-18): fix(postgres): Shrink per-dataset pools and bound waits (SDK-1663) (@dexters1)
+- **PR #6786** (2026-11-18): docs: replace retired claude-3-5-sonnet-20241022 with claude-sonnet-5-5 (@CodeWizard0909)
+- **PR #6781** (2026-11-18): fix(postgres-graph): Fix review issues (SDK-1658) (@uvizhe)
 
 ---
 
@@ -2546,55 +2363,31 @@ counts it in the headline, so any failure turns the post red.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. hermes): Move the Hermes plugin into cognee-integrations/ (SDK-1489)
+## X. postgres): Shrink per-dataset pools and bound waits (SDK-1663)
 
 **RULE**:
-When implementing operations in `.github/workflows/nightly_scheduler.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.env.template`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in topoteretes/cognee. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5870f15d`: hermes): Move the Hermes plugin into cognee-integrations/ (SDK-1489). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ebd8caba`: postgres): Shrink per-dataset pools and bound waits (SDK-1663). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/nightly_scheduler.yml`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `.env.template`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-
-  # The integrations' live round trip (test_integrations.yml, `live`), every
-  # evening against dev: plugin fixes land on dev, and main only moves at core
-  # releases, so main's copy of the plugins would be weeks old. Its own job, so a
-  # failure here never stops the core nightly above. Skips the Sunday 06:00 cron,
-  # which would run it a second time that day.
-  dispatch-integrations:
-    name: Dispatch the integrations live tier
-    if: ${{ github.event_name == 'schedule' && github.event.schedule != '0 6 * * 0' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    permissions:
-      contents: read
-      actions: write
-    steps:
-      - name: Note the newest existing integrations run
-        id: baseline
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-        run: |
-          set -euo pipefail
-          # Before dispatching, so the confirm step below cannot match an older run.
-          id="$(gh run list --workflow test_integrations.yml --branch dev \
-                  --event workflow_dispatch --limit 1 \
-                  --json databaseId --jq '.[0].databaseId // 0')"
-          echo "id=$id" >> "$GITHUB_OUTPUT"
- 
+# its pool size independently from POOL_ARGS (default: pool_size=2, max_overflow=10).
+# max_overflow 0 or more. Every Postgres pool, the write pool included, waits up to
+# pool_timeout seconds for a free connection (default 360) before the call fails.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+# its pool size independently from POOL_ARGS (default: pool_size=2, max_overflow=20).
+# max_overflow 0 or more.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5870f15d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ebd8caba` are properly handled with clean fallback behavior.

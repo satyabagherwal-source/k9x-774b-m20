@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T12:40:39.866Z",
-  "total_records": 1975,
+  "last_updated": "2026-11-19T13:08:09.525Z",
+  "total_records": 1978,
   "domains": {
     "A": {
       "total": 13,
@@ -1310,7 +1310,7 @@
       ]
     },
     "H": {
-      "total": 460,
+      "total": 463,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1771,7 +1771,10 @@
         "DOM-H-91651630",
         "domain_intelligence-technical-construction-intelligence-vcaesar-riot-core-invariants",
         "domain_intelligence-technical-construction-intelligence-vcaesar-riot-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-learnings-core-invariant"
+        "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-learnings-core-invariant",
+        "domain_intelligence-technical-construction-intelligence-topoteretes-cognee-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-xevrion-hatchzip-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-xevrion-hatchzip-learnings-core-invariants"
       ]
     },
     "I": {
@@ -18001,8 +18004,8 @@
       "title": "Research & Knowledge Intelligence: FrancisRing/Prism Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-francisring-prism-research-knowledge-intelligence-francisring-prism-core-inva.md",
       "repository": "FrancisRing/Prism",
-      "content_hash": "ac4291ec9cdaa153ab6d4b14ec30029a13163538d1ec664101cf566468a57d9f",
-      "created_at": "2026-11-14T21:38:17.402Z"
+      "content_hash": "23b3b13954bd7902cc47e0de6b368e506098dd4d9bbc5e5a182beeb08dc0cd1e",
+      "created_at": "2026-11-19T13:07:57.811Z"
     },
     "domain_intelligence-technical-construction-intelligence-dathere-qsv-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dathere-qsv-core-invariants",
@@ -18061,8 +18064,8 @@
       "title": "Research & Knowledge Intelligence: hf-francisring-prism-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-francisring-prism-learnings-research-knowledge-intelligence-hf-francisring-pr.md",
       "repository": "hf-francisring-prism-learnings",
-      "content_hash": "c0c5aef820ab40571906f5581f194966bab62b5f91235835a1443d9f494eecde",
-      "created_at": "2026-11-14T21:39:04.835Z"
+      "content_hash": "e4f4a8fe77500ad8b2254c4d8e6068b44099074da2b52449f8ac42a24b368301",
+      "created_at": "2026-11-19T13:08:08.985Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nerkyor-qwen3-8-27b-coder390-efficientthink-opus": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nerkyor-qwen3-8-27b-coder390-efficientthink-opus",
@@ -30219,8 +30222,8 @@
       "title": "Architecture Intelligence: CrossPaste/crosspaste-desktop Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-crosspaste-crosspaste-desktop-architecture-intelligence-crosspaste-crosspaste-de.md",
       "repository": "CrossPaste/crosspaste-desktop",
-      "content_hash": "9140a407038e329cacf57e66d679cd077f132b956012853a2881835b1685625c",
-      "created_at": "2026-11-18T08:06:02.204Z"
+      "content_hash": "1a80940f3b4f3ba9be2df5ab26305175df91657b7532e50b3bd41d2510b37a7c",
+      "created_at": "2026-11-19T13:08:04.930Z"
     },
     "domain_intelligence-design-intelligence-baai-bge-m3-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-baai-bge-m3-core-invariants",
@@ -30382,8 +30385,8 @@
       "title": "Architecture Intelligence: crosspaste-crosspaste-desktop-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-crosspaste-crosspaste-desktop-learnings-architecture-intelligence-crosspaste-cro.md",
       "repository": "crosspaste-crosspaste-desktop-learnings",
-      "content_hash": "e335b7bc53c3a7524bf041183986fcba6187de8c6ab779bacf5fc7d54190a19d",
-      "created_at": "2026-11-18T08:08:45.250Z"
+      "content_hash": "2bf80d5c2b6a14c8270c0f771e237f868b37e7e2dbc1e8bb1a14564070335071",
+      "created_at": "2026-11-19T13:08:09.525Z"
     },
     "domain_intelligence-design-intelligence-qwen-qwen3-0-6b-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-qwen-qwen3-0-6b-core-invariants",
@@ -33194,6 +33197,33 @@
       "repository": "vectifyai-pageindex-learnings",
       "content_hash": "2a41cef910a94a77f7697a7d59f22673cb030b82447ca9fa7cba523de4003cf9",
       "created_at": "2026-11-19T11:51:25.700Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-topoteretes-cognee-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-topoteretes-cognee-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: topoteretes/cognee Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-topoteretes-cognee-technical-construction-intelligence-topoteretes-cognee-core-i.md",
+      "repository": "topoteretes/cognee",
+      "content_hash": "53ce8223ec4fffa0928c6f4652e7b96c18d7587ad6abc289ef579026acc2f8c5",
+      "created_at": "2026-11-19T13:03:12.235Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-xevrion-hatchzip-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-xevrion-hatchzip-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: xevrion/hatchzip Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-xevrion-hatchzip-technical-construction-intelligence-xevrion-hatchzip-core-invar.md",
+      "repository": "xevrion/hatchzip",
+      "content_hash": "edbb8effd73375ec442e1e471dbeb030064aa61d1c7727ea261040b3a9af31ce",
+      "created_at": "2026-11-19T13:07:59.873Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-xevrion-hatchzip-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-xevrion-hatchzip-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: xevrion-hatchzip-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-xevrion-hatchzip-learnings-technical-construction-intelligence-xevrion-hatchzip-.md",
+      "repository": "xevrion-hatchzip-learnings",
+      "content_hash": "4f9e86a8a82adc8ddd3c25110ccfbb56717cf305003c42a2a04c7450a1bcd9ae",
+      "created_at": "2026-11-19T13:08:08.534Z"
     }
   }
 }

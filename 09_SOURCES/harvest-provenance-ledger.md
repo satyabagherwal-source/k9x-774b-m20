@@ -11300,3 +11300,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-phocinae-phocinae-largha-150m-v1` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-11-19T12:20:08.633Z |
 | `learn-huggingface-microsoft-frognano-4b-2609` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-19T12:40:26.257Z |
 | `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `877521d6` | Multi-dimensional audit evidence | 2026-11-19T12:40:35.391Z |
+| `learn-github-topoteretes-cognee` | `https://github.com/topoteretes/cognee` | `c8a09437` | Multi-dimensional audit evidence | 2026-11-19T13:03:11.898Z |
+| `learn-huggingface-francisring-prism` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-11-19T13:07:57.628Z |
+| `learn-github-xevrion-hatchzip` | `https://github.com/xevrion/hatchzip` | `b1d4a640` | Multi-dimensional audit evidence | 2026-11-19T13:07:59.538Z |
+| `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `5023ba50` | Multi-dimensional audit evidence | 2026-11-19T13:08:04.604Z |

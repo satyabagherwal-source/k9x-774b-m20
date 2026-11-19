@@ -11267,3 +11267,7 @@
 | `CYCLE-20261119-PWL1` | `2026-11-19T12:20:08.629Z` | `Phocinae/Phocinae-Largha-150M-v1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-phocinae-phocinae-largha-150m-v1-learnings.md` | Yes (`e4b57f4a...`) |
 | `CYCLE-20261119-G03X` | `2026-11-19T12:40:26.253Z` | `microsoft/FrogNano-4B-2609` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md` | Yes (`e6e90b54...`) |
 | `CYCLE-20261119-G75O` | `2026-11-19T12:40:35.388Z` | `flux-iac/tofu-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9375` | Yes (`9dd96374...`) |
+| `CYCLE-20261119-99UD` | `2026-11-19T13:03:11.893Z` | `topoteretes/cognee` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9376` | Yes (`8fb25f57...`) |
+| `CYCLE-20261119-FEBC` | `2026-11-19T13:07:57.624Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md` | Yes (`e585a0b2...`) |
+| `CYCLE-20261119-FFSE` | `2026-11-19T13:07:59.534Z` | `xevrion/hatchzip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9377` | Yes (`2ca6466a...`) |
+| `CYCLE-20261119-FJP4` | `2026-11-19T13:08:04.600Z` | `CrossPaste/crosspaste-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9378` | Yes (`422b6c3c...`) |

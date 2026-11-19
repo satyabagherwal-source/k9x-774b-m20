@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/FrancisRing/Prism",
   "source_version": "hf-francisring-prism",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T21:38:17.401Z",
+  "timestamp": "2026-11-19T13:07:57.811Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-francisring-prism",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [FrancisRing/Prism](https://huggingface.co/FrancisRing/Prism) (Revision: `hf-francis`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T21:38:17.401Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T13:07:57.811Z`  
 > **Learning ID**: `learn-huggingface-francisring-prism`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/FrancisRing/Prism](https://huggingface.co/FrancisRing/Prism))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T21:38:16.757Z  
+> **Harvest Timestamp**: 2026-11-19T13:02:56.423Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---

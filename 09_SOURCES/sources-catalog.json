@@ -225,8 +225,8 @@
     "sourceUrl": "https://huggingface.co/FrancisRing/Prism",
     "sourceVersion": "hf-francisring-prism",
     "license": "Open-Source",
-    "contentHash": "bd0c6ae72997914a193bae240eb6d955656924a0e4b7b7c96410a78879a68a7f",
-    "lastHarvestedAt": "2026-11-14T21:38:17.240Z",
+    "contentHash": "e585a0b20c977af1b3b44c6cccb2c977d961897d287c2c04c94732b32978f909",
+    "lastHarvestedAt": "2026-11-19T13:07:57.628Z",
     "learningId": "learn-huggingface-francisring-prism"
   },
   "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
@@ -6803,10 +6803,10 @@
     "repository": "topoteretes/cognee",
     "platform": "github",
     "sourceUrl": "https://github.com/topoteretes/cognee",
-    "sourceVersion": "5870f15d",
+    "sourceVersion": "c8a09437",
     "license": "Apache-2.0",
-    "contentHash": "314216efa4368f94afa850a3f1557ff68a24616621622ef65a4a3b76e4db9e62",
-    "lastHarvestedAt": "2026-11-16T15:10:08.494Z",
+    "contentHash": "8fb25f5718a01adc4508ad8f85a8a99175347aed83a3a5fa1fe549bd2e48cd5c",
+    "lastHarvestedAt": "2026-11-19T13:03:11.898Z",
     "learningId": "learn-github-topoteretes-cognee"
   },
   "radix-ui-primitives": {
@@ -7603,10 +7603,10 @@
     "repository": "CrossPaste/crosspaste-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/CrossPaste/crosspaste-desktop",
-    "sourceVersion": "a38884fa",
+    "sourceVersion": "5023ba50",
     "license": "AGPL-3.0",
-    "contentHash": "c9bb0e88aed58e2e0227c380ba64d419f29f43e6ab15814b1dbd5e831c0d696d",
-    "lastHarvestedAt": "2026-11-18T08:06:01.633Z",
+    "contentHash": "422b6c3c168813edbd86a06ad868d189c35fe6886c9393e4b4cb32b65b7e4f3a",
+    "lastHarvestedAt": "2026-11-19T13:08:04.604Z",
     "learningId": "learn-github-crosspaste-crosspaste-desktop"
   },
   "infiniflow-infinity": {
@@ -12968,5 +12968,15 @@
     "contentHash": "40573d65738333d21d2aa74d53d2d6bc87b0ec8a436cdce7b21ced895863c79f",
     "lastHarvestedAt": "2026-11-19T10:15:58.226Z",
     "learningId": "learn-huggingface-radixark-daisyrose-27b"
+  },
+  "xevrion-hatchzip": {
+    "repository": "xevrion/hatchzip",
+    "platform": "github",
+    "sourceUrl": "https://github.com/xevrion/hatchzip",
+    "sourceVersion": "b1d4a640",
+    "license": "Apache-2.0",
+    "contentHash": "2ca6466aed64c6c082736ed0dfa292615a55a0903e885c01c2b45cd993a7bc89",
+    "lastHarvestedAt": "2026-11-19T13:07:59.538Z",
+    "learningId": "learn-github-xevrion-hatchzip"
   }
 }

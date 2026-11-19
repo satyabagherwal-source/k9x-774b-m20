@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T12:40:35.397Z",
-  "total_cycles_completed": 10760,
-  "total_learnings_persisted": 10760,
-  "total_rules_promoted": 10146,
+  "last_updated": "2026-11-19T13:08:04.609Z",
+  "total_cycles_completed": 10764,
+  "total_learnings_persisted": 10764,
+  "total_rules_promoted": 10149,
   "history": [
-    {
-      "timestamp": "2026-11-18T16:40:59.092Z",
-      "repository": "Cloudflare/clef",
-      "learningId": "learn-huggingface-cloudflare-clef",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T16:41:05.404Z",
-      "repository": "GitoxideLabs/gitoxide",
-      "learningId": "learn-github-gitoxidelabs-gitoxide",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T16:41:10.421Z",
-      "repository": "okteto/okteto",
-      "learningId": "learn-github-okteto-okteto",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T16:41:21.986Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T16:49:28.173Z",
       "repository": "Cloudflare/clef-flash",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-19T12:40:35.397Z",
       "repository": "flux-iac/tofu-controller",
       "learningId": "learn-github-flux-iac-tofu-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T13:03:11.903Z",
+      "repository": "topoteretes/cognee",
+      "learningId": "learn-github-topoteretes-cognee",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T13:07:57.632Z",
+      "repository": "FrancisRing/Prism",
+      "learningId": "learn-huggingface-francisring-prism",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T13:07:59.543Z",
+      "repository": "xevrion/hatchzip",
+      "learningId": "learn-github-xevrion-hatchzip",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T13:08:04.609Z",
+      "repository": "CrossPaste/crosspaste-desktop",
+      "learningId": "learn-github-crosspaste-crosspaste-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

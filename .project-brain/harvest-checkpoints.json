@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T12:40:35.401Z",
+  "last_updated": "2026-11-19T13:08:04.612Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1865,14 +1865,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-francisring-prism",
-      "content_hash": "bd0c6ae72997914a193bae240eb6d955656924a0e4b7b7c96410a78879a68a7f",
-      "verified_at": "2026-11-14T21:38:17.247Z",
+      "content_hash": "e585a0b20c977af1b3b44c6cccb2c977d961897d287c2c04c94732b32978f909",
+      "verified_at": "2026-11-19T13:07:57.635Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T21:38:17.247Z"
+      "last_updated": "2026-11-19T13:07:57.635Z"
     },
     "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2": {
       "repository": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
@@ -10266,14 +10266,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-topoteretes-cognee",
-      "content_hash": "314216efa4368f94afa850a3f1557ff68a24616621622ef65a4a3b76e4db9e62",
-      "verified_at": "2026-11-16T15:10:08.502Z",
+      "content_hash": "8fb25f5718a01adc4508ad8f85a8a99175347aed83a3a5fa1fe549bd2e48cd5c",
+      "verified_at": "2026-11-19T13:03:11.905Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T15:10:08.502Z"
+      "last_updated": "2026-11-19T13:03:11.905Z"
     },
     "radix-ui/primitives": {
       "repository": "radix-ui/primitives",
@@ -11451,14 +11451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crosspaste-crosspaste-desktop",
-      "content_hash": "c9bb0e88aed58e2e0227c380ba64d419f29f43e6ab15814b1dbd5e831c0d696d",
-      "verified_at": "2026-11-18T08:06:01.639Z",
+      "content_hash": "422b6c3c168813edbd86a06ad868d189c35fe6886c9393e4b4cb32b65b7e4f3a",
+      "verified_at": "2026-11-19T13:08:04.611Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T08:06:01.639Z"
+      "last_updated": "2026-11-19T13:08:04.611Z"
     },
     "infiniflow/infinity": {
       "repository": "infiniflow/infinity",
@@ -19544,6 +19544,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-19T10:15:58.234Z"
+    },
+    "xevrion/hatchzip": {
+      "repository": "xevrion/hatchzip",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-xevrion-hatchzip",
+      "content_hash": "2ca6466aed64c6c082736ed0dfa292615a55a0903e885c01c2b45cd993a7bc89",
+      "verified_at": "2026-11-19T13:07:59.546Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-19T13:07:59.546Z"
     }
   },
   "repos": {

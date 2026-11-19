@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T11:13:04.653Z",
+  "updated_at": "2026-11-19T13:08:08.187Z",
   "stats": {
-    "total_discovered": 5877,
-    "approved_pending_harvest": 5564,
+    "total_discovered": 5883,
+    "approved_pending_harvest": 5570,
     "harvested_count": 0,
     "rejected_count": 313,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5529,
+      "COMMUNITY_AND_EXPERT": 5535,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -127124,6 +127124,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/milvus-io-milvus-learnings.md",
         "fileName": "milvus-io-milvus-learnings.md"
+      }
+    },
+    "SRC-A50A68BE733D": {
+      "id": "SRC-A50A68BE733D",
+      "url": "https://github.com/xevrion/hatchzip",
+      "title": "https://github.com/xevrion/hatchzip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T13:08:07.990Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
+        "fileName": "xevrion-hatchzip-learnings.md"
+      }
+    },
+    "SRC-F420C84592D9": {
+      "id": "SRC-F420C84592D9",
+      "url": "https://static.cloudflareinsights.com/",
+      "title": "https://static.cloudflareinsights.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T13:08:08.028Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
+        "fileName": "xevrion-hatchzip-learnings.md"
+      }
+    },
+    "SRC-C62044A1F947": {
+      "id": "SRC-C62044A1F947",
+      "url": "https://cloud.umami.is/",
+      "title": "https://cloud.umami.is/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T13:08:08.076Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
+        "fileName": "xevrion-hatchzip-learnings.md"
+      }
+    },
+    "SRC-A65D25F35558": {
+      "id": "SRC-A65D25F35558",
+      "url": "https://cloudflareinsights.com/",
+      "title": "https://cloudflareinsights.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T13:08:08.110Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
+        "fileName": "xevrion-hatchzip-learnings.md"
+      }
+    },
+    "SRC-467D8B14ACD8": {
+      "id": "SRC-467D8B14ACD8",
+      "url": "https://api-gateway.umami.dev/",
+      "title": "https://api-gateway.umami.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T13:08:08.146Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
+        "fileName": "xevrion-hatchzip-learnings.md"
+      }
+    },
+    "SRC-AFAEBA455CCF": {
+      "id": "SRC-AFAEBA455CCF",
+      "url": "https://gateway.umami.is/",
+      "title": "https://gateway.umami.is/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T13:08:08.187Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xevrion-hatchzip-learnings.md",
+        "fileName": "xevrion-hatchzip-learnings.md"
       }
     }
   }
