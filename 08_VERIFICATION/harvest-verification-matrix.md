@@ -11254,3 +11254,6 @@
 | `CYCLE-20261119-9XFD` | `2026-11-19T10:15:44.761Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9368` | Yes (`584aaebc...`) |
 | `CYCLE-20261119-A7TA` | `2026-11-19T10:15:58.222Z` | `RadixArk/DaisyRose-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md` | Yes (`40573d65...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T10:16:28.054Z` | `hf-radixark-daisyrose-27b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-14D059C0` [Domain D] | Yes (`3eff38c8...`) |
+| `CYCLE-20261119-EBPC` | `2026-11-19T10:47:09.504Z` | `Qwen/Qwen3-4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md` | Yes (`37fd7aeb...`) |
+| `CYCLE-20261119-ED0U` | `2026-11-19T10:47:11.214Z` | `zvec-ai/zvec-grep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9369` | Yes (`742844eb...`) |
+| `CYCLE-20261119-EKJ3` | `2026-11-19T10:47:20.943Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9370` | Yes (`5bf865f7...`) |

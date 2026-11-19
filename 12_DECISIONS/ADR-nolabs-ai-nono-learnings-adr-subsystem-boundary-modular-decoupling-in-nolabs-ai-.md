@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T14:48:47.935Z",
+  "timestamp": "2026-11-19T10:47:26.360Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nolabs-ai-nono-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nolabs-ai-nono-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T14:48:47.935Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T10:47:26.360Z`  
 > **Learning ID**: `LEARN-EVO-nolabs-ai-nono-learnings`
 
 
@@ -27,10 +27,10 @@ During deep inspection of nolabs-ai-nono-learnings, modular boundaries, performa
 ## Decision
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source**: github ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
-> **Source Version**: `b3794a06`  
+> **Source Version**: `540850e3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T14:48:42.104Z  
+> **Timestamp**: 2026-11-19T10:47:19.948Z  
 > **Learning ID**: `learn-github-nolabs-ai-nono`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -44,7 +44,7 @@ During deep inspection of nolabs-ai-nono-learnings, modular boundaries, performa
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T14:48:42.099Z  
+> **Harvest Timestamp**: 2026-11-19T10:47:19.943Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -54,7 +54,7 @@ During deep inspection of nolabs-ai-nono-learnings, modular boundaries, performa
 - **Description**: agent runtime security - zero trust, zero setup, zero latency agent sandboxing
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 5044 stars
+- **Stars / Engagement**: 5047 stars
 
 ---
 
@@ -987,6 +987,9 @@ pub struct SandboxState {
     /// Proxy domain allowlist at sandbox creation time
     #[serde(default)]
     pub allowed_domains: Vec<String>,
+    /// Unlisted hosts require a network approval, including with an empty allowlist.
+    #[serde(default)]
+    pub network_approvals: bool,
     /// Proxy domain denylist (`network.deny_domain`) at sandbox creation time.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub denied_domains: Vec<String>,
@@ -1182,13 +1185,7 @@ impl SandboxState {
             bypass_protection_paths,
             &[],
             allowed_domains,
-            &[],
-            domain_endpoints,
-        )
-    }
 
-    /// Create sandbox state including explicit filesystem deny paths.
-    pu
 ```
 
 ### Core Architecture Module: `crates/nono-cli/src/state_paths.rs`
@@ -3015,368 +3012,335 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b3794a06` (2026-11-18)
-**Commit Message**: fix(platform): retain hooks as inert bundle content (#2337)
+### Incident Patch 1: `540850e3` (2026-11-19)
+**Commit Message**: feat(platform): enforce signed policy at session startup (#2341)
 
 Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
 
-**File**: `crates/nono-cli/src/profile/bundle.rs` (modified, +73/-4)
+**File**: `crates/nono-cli/src/app_runtime.rs` (modified, +3/-1)
 ```diff
-@@ -1,7 +1,7 @@
- //! Preserve source predicates until the requesting device resolves its policy.
- use super::{
-     MAX_INHERITANCE_DEPTH, Profile, ResolvedBase, load_base_profile_raw, parse_profile_bytes,
--    resolve_extends_with, validate_delivered_profile,
-+    resolve_extends_with,
- };
- use nono::{NonoError, Result};
- use std::collections::{BTreeMap, BTreeSet};
-@@ -87,7 +87,6 @@ impl Collector {
-         source: Option<&Path>,
-     ) -> Result<serde_json::Value> {
-         let raw = parse_profile(&document)?;
--        validate_delivered_profile(&raw)?;
-         self.include_declared_packs(&raw)?;
-         if self.stack.len() >= MAX_INHERITANCE_DEPTH {
-             return Err(NonoError::ProfileInheritance(
-@@ -222,16 +221,36 @@ fn resolve(bundle: &PolicySources) -> Result<Profile> {
-         })?;
-         parse_profile(document).map(ResolvedBase::Global)
-     };
--    let profile = resolve_extends_with(root, &mut Vec::new(), 0, None, None, &mut loader)?;
-+    let mut profile = resolve_extends_with(root, &mut Vec::new(), 0, None, None, &mut loader)?;
-     if !profile.packs.is_empty() {
-         return Err(NonoError::ProfileParse(
-             "delivered policy contains runtime package dependencies".into(),
-         ));
-     }
--    validate_delivered_profile(&profile)?;
-+    disable_hooks(&mut profile);
-     Ok(profile)
+@@ -21,6 +21,7 @@ use crate::why_runtime::run_why;
+ use crate::{DETACHED_LAUNCH_ENV, Result};
+ 
+ pub(crate) fn run(cli: Cli) -> Result<()> {
++    crate::platform_policy::enforced::guard_command(&cli.command)?;
+     let mut update_handle = start_update_check_handle(&cli);
+     dispatch_command(cli.command, cli.silent, &mut update_handle)
+ }
+@@ -168,8 +169,9 @@ fn run_command_with_banner_and_update<T>(
+     run_command_with_update(update_handle, silent, command)
  }
  
-+/// Delivered hook declarations and files are retained as authenticated content.
-+/// Keep them out of the runtime profile until managed hook execution and wiring
-+/// have their own activation contract. This never changes the signed sources.
-+fn disable_hooks(profile: &mut Profile) {
-+    profile.hooks = Default::default();
-+    profile.session_hooks = Default::default();
-+    if let Some(overrides) = &mut profile.platform_overrides {
-+        for item in [
-+            &mut overrides.macos,
-+            &mut overrides.linux,
-+            &mut overrides.windows,
-+        ]
-+        .into_iter()
-+        .flatten()
-+        {
-+            disable_hooks(&mut item.0);
+-fn run_or_detach(args: RunArgs, silent: bool) -> Result<()> {
++fn run_or_detach(mut args: RunArgs, silent: bool) -> Result<()> {
+     if args.detached && std::env::var_os(DETACHED_LAUNCH_ENV).is_none() {
++        crate::platform_policy::prepare_start(&mut args.sandbox, silent)?;
+         run_detached_launch(args, silent)
+     } else {
+         output::print_banner(silent);
+```
+
+**File**: `crates/nono-cli/src/approval_runtime.rs` (modified, +1/-1)
+```diff
+@@ -250,7 +250,7 @@ impl ApprovalBackend for NamedTerminalApproval {
+ 
+ /// Path of the platform's enrolled approval ingest, relative to the enrolled
+ /// platform URL. The poll route is `<this>/{request_id}`.
+-const PLATFORM_APPROVALS_PATH: &str = "/api/v1/approvals";
++pub(crate) const PLATFORM_APPROVALS_PATH: &str = "/api/v1/approvals";
+ /// Pause between polls when the server answers `pending` immediately instead
+ /// of holding the request open.
+ const PLATFORM_POLL_BACKOFF: Duration = Duration::from_millis(250);
+```
+
+**File**: `crates/nono-cli/src/cli_bootstrap.rs` (modified, +1/-0)
+```diff
+@@ -26,6 +26,7 @@ pub(crate) fn init_theme(cli: &Cli) {
+ /// `RUST_LOG=debug`. It is a no-op when `RUST_LOG` is unset or empty, so normal
+ /// runs stay silent. Errors from a double-init are swallowed: the launcher only
+ /// ever calls this once, but `try_init` keeps it defensive.
++#[cfg(target_os = "macos")]
+ pub(crate) fn init_internal_entrypoint_tracing() {
+     let Some(filter) = std::env::var_os("RUST_LOG") else {
+         return;
+```
+
+**File**: `crates/nono-cli/src/command_runtime.rs` (modified, +4/-1)
+```diff
+@@ -184,7 +184,9 @@ pub(crate) fn run_sandbox(mut run_args: RunArgs, silent: bool) -> Result<()> {
+         silent,
+     )?;
+ 
+-    if should_auto_enable_claude_launch_services(&run_args.sandbox, &program, &cmd_args) {
++    if !crate::platform_policy::enforced::active(&run_args.sandbox)
++        && should_auto_enable_claude_launch_services(&run_args.sandbox, &program, &cmd_args)
++    {
+         warn!(
+             "Auto-enabling --allow-launch-services for Claude Code because no refresh-capable local auth was detected"
+         );
+@@ -377,6 +379,7 @@ fn reject_network_approvals_under_wrap(
+ pub(crate) fn run_wrap(wrap_args: WrapArgs, silent: bool) -> Result<()> {
+     let mut args: SandboxArgs = wrap_args.sandbox.into();
+     crate::platform_policy::prepare_start(&mut args, silent)?;
++    crate::platform_policy::enforced::reject_wrap(args.policy_session.as_ref())?;
+     let command = wrap_args.command;
+     let no_diagnostics = wrap_args.no_diagnostics;
+ 
+```
+
+**File**: `crates/nono-cli/src/execution_runtime.rs` (modified, +4/-0)
+```diff
+@@ -959,6 +959,10 @@ fn write_capability_state_file(
+         denied_domains,
+         domain_endpoints,
+     );
++    state.network_approvals = flags
++        .network
++        .proxy_options()
++        .is_some_and(|proxy| !proxy.network_approval_backends.is_empty());
+     #[cfg(target_os = "linux")]
+     let linux_af_unix_mediation = flags.af_unix_mediation.is_pathname();
+     #[cfg(not(target_os = "linux"))]
+```
+
+**File**: `crates/nono-cli/src/platform_client.rs` (modified, +65/-6)
+```diff
+@@ -572,7 +572,7 @@ fn read_state(path: &Path) -> Result<Option<StoredEnrollment>> {
+         || stored
+             .last_policy_mode
+             .as_deref()
+-            .is_some_and(|mode| !matches!(mode, "audit_only" | "advisory"))
++            .is_some_and(|mode| !matches!(mode, "audit_only" | "advisory" | "enforced"))
+     {
+         return Err(NonoError::ConfigParse(
+             "unsupported local platform enrollment state".into(),
+@@ -590,9 +590,13 @@ pub(crate) fn save_login_enrollment(
+     display_name: &str,
+ ) -> Result<()> {
+     let path = scoped_state_path(&state.platform_url, &state.tenant_id, &session.user_subject)?;
+-    let last_policy_mode = read_state(&path)?
+-        .filter(|stored| same_enrollment(&stored.state, &state))
+-        .and_then(|stored| stored.last_policy_mode);
++    let last_policy_mode = if enforced_identity_is_active(&state)? {
++        Some("enforced".into())
++    } else {
++        read_state(&path)?
++            .filter(|stored| same_enrollment(&stored.state, &state))
++            .and_then(|stored| stored.last_policy_mode)
++    };
+     let stored = StoredEnrollment {
+         tenant: session
+             .organizations
+@@ -638,6 +642,7 @@ pub(crate) fn remember_policy_mode(state: &PlatformState, mode: &str) -> Result<
+ 
+ fn write_enrollment(stored: &StoredEnrollment) -> Result<()> {
+     let state = &stored.state;
++    enforced_identity_is_active(state)?;
+     if let Some(user) = &stored.login_user_id {
+         write_json_secure(
+             &scoped_state_path(&state.platform_url, &state.tenant_id, user)?,
+@@ -647,6 +652,19 @@ fn write_enrollment(stored: &StoredEnrollment) -> Result<()> {
+     write_json_secure(&state_path()?, stored)
+ }
+ 
++fn enforced_identity_is_active(next: &PlatformState) -> Result<bool> {
++    let active = read_state(&state_path()?)?;
++    if let Some(active) = active
++        && active.last_policy_mode.as_deref() == Some("enforced")
++    {
++        if !same_enrollment(&active.state, next) {
++            return Err(NonoError::ActionRequired("enforced platform policy: changing the active enrollment requires a verified platform mode change first".into()));
 +        }
++        return Ok(true);
 +    }
++    Ok(false)
 +}
 +
- pub(crate) fn parse_sources(sources: &PolicySources) -> Result<(Profile, crate::policy::Policy)> {
-     let profile = resolve(sources)?;
-     let policy = crate::policy::delivered_policy(&sources.groups)?;
-@@ -252,6 +271,56 @@ mod tests {
-         }
+ fn selected_enrollment(
+     session: &crate::platform_oauth::session::SessionRecord,
+ ) -> Result<Option<StoredEnrollment>> {
+@@ -671,7 +689,9 @@ fn selected_enrollment(
+ pub(crate) fn activate_login_enrollment(
+     session: &crate::platform_oauth::session::SessionRecord,
+ ) -> Result<()> {
+-    if let Some(stored) = selected_enrollment(session)? {
++    if let Some(stored) = selected_enrollment(session)?
++        && !enforced_identity_is_active(&stored.state)?
++    {
+         write_json_secure(&state_path()?, &stored)?;
      }
+     Ok(())
+@@ -724,10 +744,17 @@ fn with_tenant_label(mut stored: StoredEnrollment, session: &SessionRecord) -> S
+ }
  
-+    #[test]
-+    fn delivered_hooks_are_retained_in_sources_but_disabled_for_managed_launches() {
-+        let _lock = crate::test_env::ENV_LOCK.lock().expect("environment lock");
-+        let hooks = json!({"claude":{"event":"PreToolUse","matcher":"Bash","script":"hook.sh"}});
-+        let session_hooks = json!({
-+            "before":{"script":"$PACK_DIR/bin/before.sh"},
-+            "after":{"script":"$PACK_DIR/bin/after.sh"}
-+        });
-+        for inherited in [false, true] {
-+            let fragment = json!({"hooks":hooks,"session_hooks":session_hooks});
-+            let mut document = fragment.clone();
-+            document["platform_overrides"] = json!({
-+                "linux":fragment,"macos":fragment,"windows":fragment
-+            });
-+            let bundle = sources(if inherited {
-+                json!({"root":{"extends":"base"},"profiles":{"base":document},"groups":{}})
-+            } else {
-+                json!({"root":document,"profiles":{},"groups":{}})
-+            });
-+            let source = if inherited {
-+                &bundle.profiles["base"]
-+            } else {
-+                &bundle.root
-+            };
-+            let original = source.clone();
-+            let local = parse_profile(source).expect("local profile retains hooks");
-+            assert!(!local.hooks.hooks.is_empty());
-+            assert!(local.session_hooks.before.is_some());
-+            assert!(local.session_hooks.after.is_some());
-+
-+            let (profile, _) = parse_sources(&bundle).expect("inert delivered profile");
-+            let assert_disabled = |profile: &Profile| {
-+                assert!(profile.hooks.hooks.is_empty());
-+                assert!(profile.session_hooks.before.is_none());
-+                assert!(profile.session_hooks.after.is_none());
-+            };
-+            assert_disabled(&profile);
-+            let overrides = profile.platform_overrides.as_ref().expect("OS overrides");
-+            for item in [&overrides.linux, &overrides.macos, &overrides.windows] {
-+                assert_disabled(&item.as_ref().expect("OS profile").0);
-+            }
-+            let managed = ManagedProfile::from_sources(&bundle).expect("managed runtime profile");
-+            assert_disabled(&managed.profile);
-+            assert_eq!(
-+                *source, original,
-+                "signed hook declarations must stay intact"
-+            );
-+        }
+ fn load_enrollment() -> Result<Option<StoredEnrollment>> {
++    let active = read_state(&state_path()?)?;
++    if active
++        .as_ref()
++        .is_some_and(|stored| stored.last_policy_mode.as_deref() == Some("enforced"))
++    {
++        return Ok(active);
 +    }
-+
-     #[test]
-     fn delivered_groups_are_isolated_between_launches_and_local_policy() {
-         let _lock = crate::test_env::ENV_LOCK.lock().expect("environment lock");
-```
-
-**File**: `crates/nono-cli/src/profile/mod.rs` (modified, +0/-20)
-```diff
-@@ -3670,26 +3670,6 @@ pub(crate) fn load_raw_profile_from_path(path: &Path) -> Result<Profile> {
-     parse_profile_file(path)
+     if let Some(session) = crate::platform_oauth::session::load_record()? {
+         return load_for_session(&session);
+     }
+-    read_state(&state_path()?)
++    Ok(active)
  }
  
--pub(crate) fn validate_delivered_profile(profile: &Profile) -> Result<()> {
--    if profile.session_hooks.before.is_some()
--        || profile.session_hooks.after.is_some()
--        || !profile.hooks.hooks.is_empty()
--    {
--        return Err(NonoError::ProfileParse(
--            "delivered policies cannot contain host or session hooks".into(),
--        ));
--    }
--    if let Some(overrides) = &profile.platform_overrides {
--        for item in [&overrides.macos, &overrides.linux, &overrides.windows]
--            .into_iter()
--            .flatten()
--        {
--            validate_delivered_profile(&item.0)?;
--        }
--    }
--    Ok(())
--}
--
- /// Resolve inheritance and apply implicit default-group merging for a raw profile.
- pub(crate) fn finalize_profile(profile: Profile) -> Result<Profile> {
-     finalize_profile_with_policy(profile, &crate::policy::load_embedded_policy()?)
+ pub(crate) fn enrollment_for_login(session: &SessionRecord) -> Result<Option<PlatformState>> {
+@@ -1094,6 +1121,38 @@ mod tests {
+         };
+         save_login_enrollment(second.clone(), &login, "Laptop").unwrap();
+         assert_eq!(last_policy_mode(&second).expect("other tenant mode"), None);
++        remember_policy_mode(&second, "enforced").unwrap();
++        fs::remove_file(
++            scoped_state_path(&second.platform_url, &second.tenant_id, &login.user_subject)
++                .unwrap(),
++        )
++        .unwrap();
++        save_login_enrollment(second.clone(), &login, "Laptop").unwrap();
++        assert_eq!(
++            last_policy_mode(&second).unwrap().as_deref(),
++            Some("enforced"),
++            "refreshing the same identity preserves enforcement even if its scoped copy was lost"
++        );
++        login.tenant_id = "t-1".into();
++        login.tenant_selection_pending = true;
++        session::save_record(&lock, &login).unwrap();
++        assert_eq!(
++            load_state().unwrap().unwrap().subject_id,
++            "device-two",
++            "enforced enrollment wins over changed or pending human context"
++        );
++        assert!(
++            activate_login_enrollment(&login).is_err(),
++            "lazy remote sign-in cannot activate another enrollment"
++        );
++        assert!(
++            save_login_enrollment(first.clone(), &login, "Laptop").is_err(),
++            "enrollment writes cannot bypass the identity guard"
++        );
++        assert_eq!(load_state().unwrap().unwrap().subject_id, "device-two");
++        login.tenant_id = "t-2".into();
++        login.tenant_selection_pending = fa
 ```
 
-**File**: `crates/nono-cli/tests/managed_policy.rs` (modified, +151/-9)
+**File**: `crates/nono-cli/src/platform_policy.rs` (modified, +30/-3)
 ```diff
-@@ -106,12 +106,34 @@ impl Client {
-             if include_pack {
-                 let pack = test.home().join(".config/nono/packages/acme/assets");
-                 fs::create_dir_all(pack.join("skills")).expect("pack");
--                fs::write(pack.join("package.json"), json!({"schema_version":1,"name":"assets","artifacts":[{"type":"plugin","path":"skills/SKILL.md"}],"wiring":[{"type":"write_file","source":"skills/SKILL.md","dest":"$HOME/SHOULD_NOT_BE_INSTALLED"}]}).to_string()).expect("manifest");
-+                fs::create_dir_all(pack.join("profiles")).expect("profiles");
-+                fs::create_dir_all(pack.join("bin")).expect("scripts");
-+                fs::write(pack.join("package.json"), json!({"schema_version":1,"name":"assets","artifacts":[{"type":"profile","path":"policy.json","install_as":"assets"},{"type":"plugin","path":"skills/SKILL.md"},{"type":"plugin","path":"bin/hook.sh"}],"wiring":[{"type":"write_file","source":"skills/SKILL.md","dest":"$HOME/SHOULD_NOT_BE_INSTALLED"}]}).to_string()).expect("manifest");
-+                fs::write(pack.join("profiles/assets.json"), json!({
-+                    "hooks":{"claude":{"event":"PreToolUse","matcher":"Bash","script":"bin/hook.sh"}},
-+                    "session_hooks":{
-+                        "before":{"script":"$PACK_DIR/bin/hook.sh"},
-+                        "after":{"script":"$PACK_DIR/bin/hook.sh"}
-+                    }
-+                }).to_string()).expect("profile with hooks");
-+                let hook = pack.join("bin/hook.sh");
-+                fs::write(&hook, "#!/bin/sh\nprintf '%s\\n' \"$NONO_HOOK_TYPE\" >> \"$HOME/HOOK_EXECUTED\"\n").expect("hook script");
-+                #[cfg(unix)]
-+                {
-+                    use std::os::unix::fs::PermissionsExt;
-+                    fs::set_permissions(&hook, fs::Permissions::from_mode(0o700)).expect("executable hook");
-+                }
-                 fs::write(pack.join("skills/SKILL.md"), "# Signed skill\n").expect("skill");
-                 fs::write(pack.join("bundle.sig"), "{\"upstream\":\"preserved\"}").expect("upstream signature");
-                 fs::create_dir_all(pack.join("assets")).expect("assets");
-                 fs::write(pack.join("assets/blob.bin"),vec![7u8;2*1024*1024]).expect("large asset");
-                 profile["packs"] = json!(["acme/assets"]);
-+                profile["extends"] = json!("acme/assets");
-+                // Resolvable local paths prove non-execution independently of
-+                // the inherited $PACK_DIR declarations retained in the pack.
-+                profile["session_hooks"] = json!({
-+                    "before":{"script":hook},"after":{"script":hook}
-+                });
-             }
-             profile["filesystem"]["read"] = json!([allowed]);
-             let source = test.root().join("source.json");
-@@ -941,15 +963,135 @@ fn complete_pack_is_cached_without_wiring_and_every_asset_is_verified() {
-         "{\"upstream\":\"preserved\"}"
-     );
-     assert!(!client.test.home().join("SHOULD_NOT_BE_INSTALLED").exists());
--    fs::write(&skill, "# Changed skill\n").expect("tamper");
--    client
-+    assert!(!client.test.home().join("HOOK_EXECUTED").exists());
-+    assert_eq!(
-+        fs::read_to_string(directory.join("packs/acme/assets/bin/hook.sh"))
-+            .expect("delivered hook"),
-+        "#!/bin/sh\nprintf '%s\\n' \"$NONO_HOOK_TYPE\" >> \"$HOME/HOOK_EXECUTED\"\n"
-+    );
-+    let original: serde_json::Value = serde_json::from_slice(
-+        &fs::read(directory.join("packs/acme/assets/policy.json")).expect("original pack profile"),
-+    )
-+    .expect("pack profile JSON");
-+    assert_eq!(
-+        original["session_hooks"]["before"]["script"],
-+        "$PACK_DIR/bin/hook.sh"
-+    );
-+    assert_eq!(
-+        original["session_hooks"]["after"]["script"],
-+        "$PACK_DIR/bin/hook.sh"
-+    );
-+    assert_eq!(original["hooks"]["claude"]["script"], "bin/hook.sh");
-+    for relative in [
-+        "skills/SKILL.md",
-+        "bin/hook.sh",
-+        "package.json",
-+        "policy.json",
-+    ] {
-+        let path = directory.join("packs/acme/assets").join(relative);
-+        let original = fs::read(&path).expect("original asset");
-+        let mut changed = original.clone();
-+        changed[0] ^= 1; // Same size: verification must check the digest.
-+        fs::write(&path, changed).expect("tamper");
-+        for mode in ["run", "wrap"] {
-+            let output = client
-+                .test
-+                .command()
-+                .args([mode, "--", "/bin/echo", "MUST_NOT_RUN"])
-+                .output()
-+                .expect("tampered startup");
-+            assert!(!output.status.success(), "{mode}: {relative}");
-+            let error = String::from_utf8_lossy(&output.stderr);
-+            assert!(
-+                error.contains(&format!("packs/acme/assets/{relative}")),
-+                "{error}"
-+            );
-+            assert!(error.contains("Session not started."), "{err
-```
-
-**File**: `crates/nono-cli/tests/profile_cmd.rs` (modified, +32/-9)
-```diff
-@@ -426,22 +426,38 @@ fn bundle_export_includes_bases_and_preserves_device_predicates() {
- }
+@@ -1,5 +1,6 @@
+ //! Fetch policy once per launch; cached state is for discovery, never offline authority.
+ pub(crate) mod display;
++pub(crate) mod enforced;
+ pub(crate) mod inputs;
+ pub(crate) mod protocol;
  
- #[test]
--fn bundle_export_rejects_host_hooks_before_delivery() {
-+fn bundle_export_retains_hook_declarations_without_executing_them() {
-+    use base64::{Engine as _, engine::general_purpose::STANDARD};
-     let dir = tempfile::tempdir().expect("fixture");
-     let path = dir.path().join("managed.json");
--    std::fs::write(
--        &path,
--        r#"{"meta":{"name":"managed"},"hooks":{"claude":{"command":"untrusted-helper"}}}"#,
--    )
--    .expect("profile");
-+    let profile = serde_json::json!({
-+        "meta":{"name":"managed"},
-+        "hooks":{"claude":{"event":"PreToolUse","matcher":"Bash","script":"missing-hook.sh"}},
-+        "session_hooks":{
-+            "before":{"script":"/missing/before.sh"},
-+            "after":{"script":"/missing/after.sh"}
+@@ -65,6 +66,16 @@ impl RefreshFailure {
+         previous: Option<&AssignmentClaims>,
+         remembered_mode: Option<&str>,
+     ) -> bool {
++        if remembered_mode == Some("enforced")
++            || previous.is_some_and(|policy| policy.management_mode == "enforced")
++        {
++            return false;
 +        }
-+    });
-+    std::fs::write(&path, profile.to_string()).expect("profile");
-     let output = nono_bin()
-         .args(["profile", "show"])
-         .arg(&path)
-         .args(["--format", "bundle"])
-         .output()
-         .expect("export");
--    assert!(!output.status.success());
--    assert!(output.stdout.is_empty());
-+    assert!(
-+        output.status.success(),
-+        "{}",
-+        String::from_utf8_lossy(&output.stderr)
-+    );
-+    let export: serde_json::Value = serde_json::from_slice(&output.stdout).expect("export");
-+    let delivered: serde_json::Value = serde_json::from_slice(
-+        &STANDARD
-+            .decode(export["files"]["policy.json"].as_str().expect("policy"))
-+            .expect("base64"),
-+    )
-+    .expect("policy JSON");
-+    assert_eq!(delivered, profile);
++        let mode =
++            remembered_mode.or_else(|| previous.map(|policy| policy.management_mode.as_str()));
++        if !matches!(mode, Some("audit_only" | "advisory")) {
++            return false;
++        }
+         match self {
+             Self::Unavailable(_) => {
+                 explicit_local
+@@ -263,7 +274,7 @@ fn verify(
+     }
+     match claims.management_mode.as_str() {
+         "audit_only" if claims.policy.is_none() => {}
+-        "advisory" if claims.policy.is_some() => {}
++        "advisory" | "enforced" if claims.policy.is_some() => {}
+         _ => {
+             return Err(NonoError::ConfigParse(
+                 "unsupported platform management mode or policy shape".into(),
+@@ -511,13 +522,19 @@ fn prepare_start_inner(args: &mut SandboxArgs, silent: bool) -> Result<()> {
+         overrides: args.policy_inputs.keys().cloned().collect(),
+         override_sources: args.policy_inputs.clone(),
+     };
+-    if mode == "advisory" && !local_override {
++    if mode == "enforced" {
++        enforced::validate_inputs(args)?;
++    }
++    if mode == "enforced" || (mode == "advisory" && !local_override) {
+         let policy = claims.as_ref().and_then(|c| c.policy.as_ref()).ok_or_else(|| NonoError::ActionRequired("platform policy could not be refreshed; explicitly choose --profile to run locally".into()))?;
+         let root = load(&state)?
+             .trust_root
+             .ok_or_else(|| NonoError::ConfigParse("missing policy trust root".into()))?;
+         let loaded =
+             profile::bundle::ManagedProfile::from_sources(&policy_sources(policy, &root)?)?;
++        if mode == "enforced" {
++            enforced::validate_profile(&loaded.profile, &state)?;
++        }
+         session.policy_source = "platform".into();
+         args.managed_profile = Some(loaded);
+     }
+@@ -663,7 +680,7 @@ mod tests {
+ 
+     #[test]
+     fn missing_bundles_unsupported_modes_and_legacy_documents_fail_closed() {
+-        for mode in ["enforced", "unknown", "audit_only"] {
++        for mode in ["unknown", "audit_only"] {
+             let mut value = claims();
+             value.management_mode = mode.into();
+             let (root, response) = signed(&value);
+@@ -673,6 +690,9 @@ mod tests {
+             );
+         }
+         let mut value = claims();
++        value.management_mode = "enforced".into();
++        let (root, response) = signed(&value);
++        assert!(verify(&response, &root, &state(), Some("request-a")).is_ok());
+         value.policy = None;
+         let (root, response) = signed(&value);
+         assert!(verify(&response, &root, &state(), Some("request-a")).is_err());
+@@ -723,5 +743,12 @@ mod tests {
+         assert!(service.allows_local_fallback(true, Some(&advisory), None));
+         let invalid = RefreshFailure::Invalid("invalid signature or assignment".into());
+         assert!(!invalid.allows_local_fallback(true, Some(&advisory), Some("advisory")));
++        let mut enforced = claims();
++        enforced.management_mode = "enforced".into();
++        for failure in [&offline, &service, &invalid] {
++            assert!(!failure.allows_local_fallback(true, None, None));
++            assert!(!failure.allows_local_fallback(true, Some(&enforced), Some("advisory")));
++            assert!(!failure.allows_local_fallback(true, Some(&advisory), Some("enforced")));
++        }
+     }
  }
- 
- fn complete_pack_fixture() -> (
-@@ -456,7 +472,14 @@ fn complete_pack_fixture() -> (
-             "agent",
-             json!({"meta":{"name":"agent"},"extends":"acme/base"}),
-         ),
--        ("base", json!({"meta":{"name":"base"}})),
-+        (
-+            "base",
-+            json!({
-+                "meta":{"name":"base"},
-+                "hooks":{"claude":{"event":"PreToolUse","matcher":"Bash","script":"bin/hook.sh"}},
-+                "session_hooks":{"before":{"script":"$PACK_DIR/bin/hook.sh"}}
-+            }),
-+        ),
-     ] {
-         let manifest = json!({"schema_version":1,"name":name,"artifacts":[
-             {"type":"profile","path":"policy.json","install_as":name},
 ```
 
-**File**: `docs/protocols/nono-bundle-v1.md` (modified, +6/-3)
+**File**: `crates/nono-cli/src/platform_policy/display.rs` (modified, +6/-1)
 ```diff
-@@ -120,9 +120,12 @@ The separate `policy.json` and `profiles/` files are policy projections with
- closed inheritance bindings and runtime pack references removed. Clients use
- these projections and the delivered groups for sandboxing. Included pack files
- are verified and cached but do not install agent configuration, execute hooks or
--activate skills. Existing restrictions on executable profile content remain in
--force. New execution semantics require their own compatibility and permission
--decisions; authenticating a file never authorizes its execution.
-+activate skills. Hook declarations are retained in the signed policy sources,
-+including inherited profiles and OS overrides. Consumers clear host and session
-+hooks only from the in-memory managed runtime profile before launch; the signed
-+sources and cached pack files remain unchanged. New execution semantics require
-+their own compatibility and permission decisions; authenticating a file never
-+authorizes its execution.
- 
- ## Managed delivery v2
- 
-```
-
----
-
-### Incident Patch 2: `73bc1c54` (2026-11-18)
-**Commit Message**: fix(sandbox): support musl ioctl type for ns_get_parent (#2339)
-
-Update the type of the `NS_GET_PARENT` ioctl constant to use `libc::Ioctl` instead of `libc::c_ulong`. This ensures compatibility across different C libraries since the request type varies between `c_ulong` on glibc and `c_int` on musl.
-
-Signed-off-by: Luke Hinds <[REDACTED_EMAIL]>
-
-**File**: `crates/nono/src/sandbox/linux_mount_watch.rs` (modified, +4/-1)
-```diff
-@@ -25,7 +25,10 @@ use std::os::unix::ffi::OsStrExt;
- use std::path::{Path, PathBuf};
- 
- /// `NS_GET_PARENT` from `linux/nsfs.h`: `_IO(0xb7, 0x2)`.
--const NS_GET_PARENT: libc::c_ulong = 0xb702;
-+///
-+/// Typed as `libc::Ioctl` because the request type is `c_ulong` on glibc but
-+/// `c_int` on musl.
-+const NS_GET_PARENT: libc::Ioctl = 0xb702;
- /// User namespaces nest at most 32 deep.
- const MAX_USERNS_DEPTH: usize = 33;
- /// Rounds of scanning and killing before giving up on a forking sandbox.
+@@ -50,7 +50,12 @@ pub(crate) fn session_summary(session: &PolicySession) -> String {
+             .map(|name| format!("--{}", safe_text(name)))
+             .collect::<Vec<_>>()
+             .join(", ");
+-        text.push_str(&summary_row("Overrides", &overrides));
++        let label = if session.management_mode == "enforced" {
++            "Local options"
++        } else {
++            "Overrides"
++        };
++        text.push_str(&summary_row(label, &overrides));
+     }
+     text.push('\n');
+     text
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2341** (2026-11-19): feat(platform): enforce signed policy at session startup (@SequeI)
 - **PR #2339** (2026-11-18): fix(sandbox): support musl ioctl type for ns_get_parent (@lukehinds)
 - **PR #2337** (2026-11-18): fix(platform): retain hooks as inert bundle content (@SequeI)
 - **PR #2336** (2026-11-18): feat(platform): verify self-contained signed file bundles (@SequeI)
 - **PR #2332** (2026-11-17): fix(audit): include session profile references in platform uploads (@SequeI)
 - **PR #2331** (2026-11-17): feat(cli): announce pending non-interactive approval queries (@lukehinds)
-- **PR #2329** (2026-11-17): feat(linux): implement mount namespace isolation and host IPC masking (@lukehinds)
 
 ---
 
@@ -3396,62 +3360,33 @@ Signed-off-by: Luke Hinds <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. platform): retain hooks as inert bundle content
+## X. platform): enforce signed policy at session startup
 
 **RULE**:
-When implementing operations in `crates/nono-cli/src/profile/bundle.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/nono-cli/src/app_runtime.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b3794a06`: platform): retain hooks as inert bundle content. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `540850e3`: platform): enforce signed policy at session startup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/src/profile/bundle.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/src/app_runtime.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    resolve_extends_with,
-    let mut profile = resolve_extends_with(root, &mut Vec::new(), 0, None, None, &mut loader)?;
-    disable_hooks(&mut profile);
-/// Delivered hook declarations and files are retained as authenticated content.
-/// Keep them out of the runtime profile until managed hook execution and wiring
-/// have their own activation contract. This never changes the signed sources.
-fn disable_hooks(profile: &mut Profile) {
-    profile.hooks = Default::default();
-    profile.session_hooks = Default::default();
-    if let Some(overrides) = &mut profile.platform_overrides {
-        for item in [
-            &mut overrides.macos,
-            &mut overrides.linux,
-            &mut overrides.windows,
-        ]
-        .into_iter()
-        .flatten()
-        {
-            disable_hooks(&mut item.0);
-        }
-    }
-}
-
-    #[test]
-    fn delivered_hooks_are_retained_in_sources_but_disabled_for_managed_launches() {
-        let _lock = crate::test_env::ENV_LOCK.lock().expect("environment lock");
-        let hooks = json!({"claude":{"event":"PreToolUse","matcher":"Bash","script":"hook.sh"}});
-        let session_hooks = json!({
-            "before":{"script":"$PACK_DIR/bin/before.s
+    crate::platform_policy::enforced::guard_command(&cli.command)?;
+fn run_or_detach(mut args: RunArgs, silent: bool) -> Result<()> {
+        crate::platform_policy::prepare_start(&mut args.sandbox, silent)?;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    resolve_extends_with, validate_delivered_profile,
-        validate_delivered_profile(&raw)?;
-    let profile = resolve_extends_with(root, &mut Vec::new(), 0, None, None, &mut loader)?;
-    validate_delivered_profile(&profile)?;
+fn run_or_detach(args: RunArgs, silent: bool) -> Result<()> {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b3794a06` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `540850e3` are properly handled with clean fallback behavior.
 
 
 ## Consequences

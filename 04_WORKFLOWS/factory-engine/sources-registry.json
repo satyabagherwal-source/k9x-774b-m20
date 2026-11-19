@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T10:16:01.063Z",
-    "lastVerified": "2026-11-19T10:16:01.063Z",
+    "lastChecked": "2026-11-19T10:47:24.229Z",
+    "lastVerified": "2026-11-19T10:47:24.229Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -174,8 +174,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T08:27:44.228Z",
-    "lastVerified": "2026-11-19T08:27:44.228Z",
+    "lastChecked": "2026-11-19T10:47:21.656Z",
+    "lastVerified": "2026-11-19T10:47:21.656Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -315,9 +315,9 @@
   "run-llama-llama_index": {
     "name": "llama_index",
     "officialUrl": "https://github.com/run-llama/llama_index",
-    "lastChecked": "2026-11-18T09:57:21.136Z",
+    "lastChecked": "2026-11-19T10:47:18.929Z",
     "revisionIdentifier": "99d7433f",
-    "lastVerified": "2026-11-18T09:57:21.136Z"
+    "lastVerified": "2026-11-19T10:47:18.930Z"
   },
   "nucleoidai-nucleoid": {
     "name": "NucleoidAI/Nucleoid",
@@ -478,22 +478,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "nolabs-ai-nono": {
-    "name": "nono",
+    "name": "nolabs-ai/nono",
     "officialUrl": "https://github.com/nolabs-ai/nono",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T01:32:41.024Z",
-    "lastVerified": "2026-11-19T01:32:41.024Z",
+    "lastChecked": "2026-11-19T10:47:19.943Z",
+    "lastVerified": "2026-11-19T10:47:19.943Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nolabs-ai-nono",
-    "contentHash": "6e757196989ad344350fbba2b3d9b92a4f1b372805e0c880a12606e907e0cb45",
+    "contentHash": "5bf865f7a0841fd7b14433fc9ac2bbe99c3589981acd70705055b93920183907",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "b3794a06"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "vectifyai-pageindex": {
     "name": "VectifyAI/PageIndex",
@@ -711,9 +710,9 @@
   "kube-rs-kube": {
     "name": "kube",
     "officialUrl": "https://github.com/kube-rs/kube",
-    "lastChecked": "2026-11-18T10:55:12.326Z",
+    "lastChecked": "2026-11-19T10:47:14.012Z",
     "revisionIdentifier": "fc801fba",
-    "lastVerified": "2026-11-18T10:55:12.326Z"
+    "lastVerified": "2026-11-19T10:47:14.012Z"
   },
   "chrispybacon-dev-dockflare": {
     "name": "DockFlare",
@@ -6996,5 +6995,46 @@
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zvec-ai-zvec-grep": {
+    "name": "zvec-ai/zvec-grep",
+    "officialUrl": "https://github.com/zvec-ai/zvec-grep",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-19T10:47:10.181Z",
+    "lastVerified": "2026-11-19T10:47:10.181Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-zvec-ai-zvec-grep",
+    "contentHash": "742844ebbc8fbba702c0eacb1c8dbfafe6d55c0d04feb051f622d35cdb54a226",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-qwen-qwen3-4b": {
+    "name": "Qwen/Qwen3-4B",
+    "officialUrl": "https://huggingface.co/Qwen/Qwen3-4B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T10:47:08.942Z",
+    "lastVerified": "2026-11-19T10:47:08.942Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-qwen-qwen3-4b",
+    "contentHash": "37fd7aebb20505dbff2f39f6482630845d8a24d0d88c122348b5627312bcab67",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jordanbaird-ice": {
+    "name": "Ice",
+    "officialUrl": "https://github.com/jordanbaird/Ice",
+    "lastChecked": "2026-11-19T10:47:11.634Z",
+    "revisionIdentifier": "11edd391",
+    "lastVerified": "2026-11-19T10:47:11.634Z"
   }
 }

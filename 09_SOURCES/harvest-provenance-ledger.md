@@ -11287,3 +11287,6 @@ Every entry in this ledger must capture:
 | `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `7966afdd` | Multi-dimensional audit evidence | 2026-11-19T10:15:44.765Z |
 | `learn-huggingface-radixark-daisyrose-27b` | `https://huggingface.co/RadixArk/DaisyRose-27B` | `hf-radixar` | Multi-dimensional audit evidence | 2026-11-19T10:15:58.226Z |
 | `learn-dom-d-14d059c0` | `project://hf-radixark-daisyrose-27b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md` | 2026-11-19T10:16:28.054Z |
+| `learn-huggingface-qwen-qwen3-4b` | `https://huggingface.co/Qwen/Qwen3-4B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-19T10:47:09.508Z |
+| `learn-github-zvec-ai-zvec-grep` | `https://github.com/zvec-ai/zvec-grep` | `cc3ff0fe` | Multi-dimensional audit evidence | 2026-11-19T10:47:11.218Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `540850e3` | Multi-dimensional audit evidence | 2026-11-19T10:47:20.947Z |

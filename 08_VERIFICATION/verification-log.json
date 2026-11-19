@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-EBZS",
-    "timestamp": "2026-11-17T20:03:41.752Z",
-    "repository": "Bitterbot-AI/bitterbot-desktop",
-    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-    "contentHash": "b9d861094915540141be11ad4c82124659495784a6fe43af689082fba52a684d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-W3EF",
-    "timestamp": "2026-11-17T20:17:30.423Z",
-    "repository": "convaiinnovations/laya",
-    "learningId": "learn-huggingface-convaiinnovations-laya",
-    "contentHash": "d5b26861e3d1ffbf29c6b00c6368a3480c24e3a49218ef2978bba853771b5e2f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-W6VX",
-    "timestamp": "2026-11-17T20:17:34.941Z",
-    "repository": "oxc-project/oxc",
-    "learningId": "learn-github-oxc-project-oxc",
-    "contentHash": "aeea49b111403c9deb597cd7071a909494cbc31582738b90de8fa1410267f764",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-WB20",
     "timestamp": "2026-11-17T20:17:40.344Z",
     "repository": "higress-group/higress",
@@ -7492,6 +7447,51 @@
     "contentHash": "40573d65738333d21d2aa74d53d2d6bc87b0ec8a436cdce7b21ced895863c79f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-EBPC",
+    "timestamp": "2026-11-19T10:47:09.504Z",
+    "repository": "Qwen/Qwen3-4B",
+    "learningId": "learn-huggingface-qwen-qwen3-4b",
+    "contentHash": "37fd7aebb20505dbff2f39f6482630845d8a24d0d88c122348b5627312bcab67",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-ED0U",
+    "timestamp": "2026-11-19T10:47:11.214Z",
+    "repository": "zvec-ai/zvec-grep",
+    "learningId": "learn-github-zvec-ai-zvec-grep",
+    "contentHash": "742844ebbc8fbba702c0eacb1c8dbfafe6d55c0d04feb051f622d35cdb54a226",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-EKJ3",
+    "timestamp": "2026-11-19T10:47:20.943Z",
+    "repository": "nolabs-ai/nono",
+    "learningId": "learn-github-nolabs-ai-nono",
+    "contentHash": "5bf865f7a0841fd7b14433fc9ac2bbe99c3589981acd70705055b93920183907",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1035,8 +1035,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-4B",
     "sourceVersion": "hf-qwen-qwen3-4b",
     "license": "Open-Source",
-    "contentHash": "d09138b3e349f5a16b64ee80adffc51880f9ab87a92851c20a3b5028616ae5ba",
-    "lastHarvestedAt": "2026-11-14T19:46:34.102Z",
+    "contentHash": "37fd7aebb20505dbff2f39f6482630845d8a24d0d88c122348b5627312bcab67",
+    "lastHarvestedAt": "2026-11-19T10:47:09.508Z",
     "learningId": "learn-huggingface-qwen-qwen3-4b"
   },
   "hf-fermionresearch-phonon-2": {
@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "b3794a06",
+    "sourceVersion": "540850e3",
     "license": "Apache-2.0",
-    "contentHash": "6e757196989ad344350fbba2b3d9b92a4f1b372805e0c880a12606e907e0cb45",
-    "lastHarvestedAt": "2026-11-18T14:48:43.003Z",
+    "contentHash": "5bf865f7a0841fd7b14433fc9ac2bbe99c3589981acd70705055b93920183907",
+    "lastHarvestedAt": "2026-11-19T10:47:20.947Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -7133,10 +7133,10 @@
     "repository": "zvec-ai/zvec-grep",
     "platform": "github",
     "sourceUrl": "https://github.com/zvec-ai/zvec-grep",
-    "sourceVersion": "75047201",
+    "sourceVersion": "cc3ff0fe",
     "license": "Apache-2.0",
-    "contentHash": "41f4f1538515e4df527482fe01324090b031410a52a3f9d6f97f1a01d9a45c69",
-    "lastHarvestedAt": "2026-11-17T17:20:14.341Z",
+    "contentHash": "742844ebbc8fbba702c0eacb1c8dbfafe6d55c0d04feb051f622d35cdb54a226",
+    "lastHarvestedAt": "2026-11-19T10:47:11.218Z",
     "learningId": "learn-github-zvec-ai-zvec-grep"
   },
   "jetbrains-kotlinconf-app": {

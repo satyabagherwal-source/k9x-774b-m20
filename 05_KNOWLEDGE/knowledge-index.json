@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T10:16:29.592Z",
+  "last_updated": "2026-11-19T10:47:26.891Z",
   "total_verified_learnings": 9017,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21737,
+  "total_items": 21745,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "499d0dd0f82d4f5cf967f619b7b6f7a25853f1086c59e4485754d5faeadba0b5",
-      "domain_letter": "D",
-      "persisted_at": "2026-11-19T05:55:02.912Z"
+      "content_hash": "dc76efcd0a8966950459656e168f0c9ea505b63c4853c40992a8cff67ed7fbb2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T10:47:25.580Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "15f079f276e0ac1e7da694d584a9a47688a79cecfbee4c8bc64e7f6a53871260",
+      "content_hash": "bcad8822d50c2b4b9142d8b5131290515decbd42fdd8877b6032077e10766127",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T05:55:03.022Z"
+      "persisted_at": "2026-11-19T10:47:25.708Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -113749,10 +113749,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
       "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
       "repository": "nolabs-ai/nono",
-      "source_version": "b3794a06",
-      "content_hash": "ebe90f7e8db3b13796f9e63f3b96b556574746d1c7ab5cd2140b2643acf752b7",
+      "source_version": "540850e3",
+      "content_hash": "998ccae374495722263671ad8c62fb1382d9d05f4b3006959ebb3712ee497e7a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T14:48:43.307Z"
+      "persisted_at": "2026-11-19T10:47:21.304Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono",
@@ -113761,10 +113761,10 @@
       "relative_path": "12_DECISIONS/ADR-nolabs-ai-nono-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in nolabs-ai/nono",
       "repository": "nolabs-ai/nono",
-      "source_version": "b3794a06",
-      "content_hash": "9abc24ef4d347917cf736d96fa985b5a9fedaa382e20f7961c515cd933151b45",
+      "source_version": "540850e3",
+      "content_hash": "512fcd5e3d10131265f757ca5fe3ca785a4244acef9a80fbf10d7aee70cbb6ae",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T14:48:43.426Z"
+      "persisted_at": "2026-11-19T10:47:21.452Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono",
@@ -113773,10 +113773,10 @@
       "relative_path": "08_VERIFICATION/nolabs-ai-nono-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono.md",
       "title": "Verification Protocol: Empirical Defect Shield for nolabs-ai/nono",
       "repository": "nolabs-ai/nono",
-      "source_version": "b3794a06",
-      "content_hash": "9e97215e22aaebfd3a242d71a317a7e5b9b2eeeeca2ef96fa9ac07092535707e",
+      "source_version": "540850e3",
+      "content_hash": "4d0d5024dce2fa33d29d43c745ddd8d6ae38beba97a03b80cc2333f63ac7f193",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T14:48:43.531Z"
+      "persisted_at": "2026-11-19T10:47:21.575Z"
     },
     "candidate_directive-merge-pull-request-6734-from-meilisearch-switch-macos-runner": {
       "item_id": "candidate_directive-merge-pull-request-6734-from-meilisearch-switch-macos-runner",
@@ -113834,9 +113834,9 @@
       "title": "Architecture Intelligence: nolabs-ai-nono-learnings Core Invariants",
       "repository": "nolabs-ai-nono-learnings",
       "source_version": "HEAD",
-      "content_hash": "d35247c1207f46b86ffcd70c2d7b2faa13484d93708b77409da15543d267c41f",
+      "content_hash": "a097b8af9f9d11ec83ca8d7a3b5cd00650653d2ee54f078bb4607592dff834ce",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T14:48:48.163Z"
+      "persisted_at": "2026-11-19T10:47:26.620Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono-learnings",
@@ -113846,9 +113846,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in nolabs-ai-nono-learnings",
       "repository": "nolabs-ai-nono-learnings",
       "source_version": "HEAD",
-      "content_hash": "1c000da2d4e9dce10b53dde030d973ad6623750972bd5ac2fa1ed5dad044c91b",
+      "content_hash": "50a3dd5a44f3b7ce121b71a27e45f8bb4d5a555d089a35d10bed3873b4a75daf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T14:48:48.282Z"
+      "persisted_at": "2026-11-19T10:47:26.762Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono-learnings",
@@ -113858,9 +113858,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nolabs-ai-nono-learnings",
       "repository": "nolabs-ai-nono-learnings",
       "source_version": "HEAD",
-      "content_hash": "973d78ffe4728d6341758c3810ff3486df472a3a493cbf8e728862e452929841",
+      "content_hash": "01c3a49e11257c6c3f4ea28d05fd84f93fd7a5a3fe01c576e1412c1572f7c709",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T14:48:48.389Z"
+      "persisted_at": "2026-11-19T10:47:26.891Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar": {
       "item_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar",
@@ -225413,8 +225413,8 @@
       "slug": "zvec-ai-zvec-grep",
       "platform": "github",
       "source_url": "https://github.com/zvec-ai/zvec-grep",
-      "source_version": "75047201",
-      "content_hash": "41f4f1538515e4df527482fe01324090b031410a52a3f9d6f97f1a01d9a45c69",
+      "source_version": "cc3ff0fe",
+      "content_hash": "742844ebbc8fbba702c0eacb1c8dbfafe6d55c0d04feb051f622d35cdb54a226",
       "dossier_path": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
       "promoted_rules": [
@@ -225432,6 +225432,11 @@
           "number": 9017,
           "title": "address the remaining issues in #418",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9369,
+          "title": "download ONNX Runtime archives from npmmirror",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -225439,7 +225444,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T17:20:14.162Z",
+      "verified_at": "2026-11-19T10:47:11.017Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225493,10 +225498,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/zvec-ai-zvec-grep-agent-contract-zvec-ai-zvec-grep-autonomous-specialist-persona.md",
       "title": "Agent Contract: zvec-ai/zvec-grep Autonomous Specialist Persona",
       "repository": "zvec-ai/zvec-grep",
-      "source_version": "75047201",
-      "content_hash": "d2d2db5ab424c58f5f56c929ef7aa70c28dde2c9e2593b07b35ef504e65787bd",
-      "domain_letter": "D",
-      "persisted_at": "2026-11-17T17:20:14.789Z"
+      "source_version": "cc3ff0fe",
+      "content_hash": "226c18e2d57dab0027da431c6085ce459fda5a01770ad4de2b0a91685d050c28",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T10:47:11.719Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep",
@@ -225505,10 +225510,10 @@
       "relative_path": "08_VERIFICATION/zvec-ai-zvec-grep-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec.md",
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai/zvec-grep",
       "repository": "zvec-ai/zvec-grep",
-      "source_version": "75047201",
-      "content_hash": "217760161dfc237c80374e8d47fdd413af524644c2e68cdd816417e6d1a53391",
+      "source_version": "cc3ff0fe",
+      "content_hash": "e5e3af8216b1e6262cef8ad4d8b50c2cf7534965a9467b56f71f4779b848a71c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T17:20:14.911Z"
+      "persisted_at": "2026-11-19T10:47:11.845Z"
     },
     "learn-huggingface-openbmb-minicpm-ocr-1-0": {
       "learning_id": "learn-huggingface-openbmb-minicpm-ocr-1-0",
@@ -235698,7 +235703,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-4B",
       "source_version": "hf-qwen-qwen3-4b",
-      "content_hash": "d09138b3e349f5a16b64ee80adffc51880f9ab87a92851c20a3b5028616ae5ba",
+      "content_hash": "37fd7aebb20505dbff2f39f6482630845d8a24d0d88c122348b5627312bcab67",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-4b-learnings.md",
       "promoted_rules": [],
@@ -235707,7 +235712,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T19:46:33.868Z",
+      "verified_at": "2026-11-19T10:47:09.297Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235724,9 +235729,9 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-4B Core Invariants",
       "repository": "Qwen/Qwen3-4B",
       "source_version": "hf-qwen-qwen3-4b",
-      "content_hash": "93dbc772bfeb07b54ef3c71de49c445e0891dcec60df35c7894980058d094aaf",
+      "content_hash": "094b4476e7857e09de19c65215d17d32bea824f2b225a3ebc2c3ccc88563efea",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T19:46:34.313Z"
+      "persisted_at": "2026-11-19T10:47:09.691Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-4b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-4b-learnings-core-invariants",
@@ -235736,9 +235741,9 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-4b-learnings Core Invariants",
       "repository": "hf-qwen-qwen3-4b-learnings",
       "source_version": "HEAD",
-      "content_hash": "47f57f8f761c9c383e6195adc53389792f76fb0699c22aac09189776f8934e61",
+      "content_hash": "7d5c26210c4bf2a32da7eb1603729a22f7a3f9179fd729cf58b3ac6cb8651215",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T19:47:13.240Z"
+      "persisted_at": "2026-11-19T10:47:26.023Z"
     },
     "candidate_directive-core-embed-structured-design-context-in-synthesized-templates-metadatacontext": {
       "item_id": "candidate_directive-core-embed-structured-design-context-in-synthesized-templates-metadatacontext",
@@ -238869,8 +238874,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "b3794a06",
-      "content_hash": "6e757196989ad344350fbba2b3d9b92a4f1b372805e0c880a12606e907e0cb45",
+      "source_version": "540850e3",
+      "content_hash": "5bf865f7a0841fd7b14433fc9ac2bbe99c3589981acd70705055b93920183907",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -238903,6 +238908,11 @@
           "number": 9247,
           "title": "retain hooks as inert bundle content",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9370,
+          "title": "enforce signed policy at session startup",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238910,7 +238920,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T14:48:42.838Z",
+      "verified_at": "2026-11-19T10:47:20.757Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -293828,6 +293838,106 @@
       "content_hash": "796d71b7b998eca23fea701b67e489d7a8ddf9bdf0d0f0996dafa3ab0627c9d2",
       "domain_letter": "D",
       "persisted_at": "2026-11-19T10:16:28.285Z"
+    },
+    "rule-9369": {
+      "learning_id": "rule-9369",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9369,
+      "title": "download ONNX Runtime archives from npmmirror",
+      "source_url": "https://github.com/zvec-ai/zvec-grep",
+      "source_version": "cc3ff0fe",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T10:47:11.017Z"
+    },
+    "candidate_directive-download-onnx-runtime-archives-from-npmmirror": {
+      "item_id": "candidate_directive-download-onnx-runtime-archives-from-npmmirror",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ED6N-download-onnx-runtime-archives-from-npmmirror.md",
+      "title": "download ONNX Runtime archives from npmmirror",
+      "repository": "zvec-ai/zvec-grep",
+      "source_version": "cc3ff0fe",
+      "content_hash": "3400b8a86c6631d1b2180bde4083aac05c1f80aff46d6f8a867446e620a284ea",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T10:47:11.424Z"
+    },
+    "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-architecture-intelligence-zvec-ai-zvec-grep-core-invariants.md",
+      "title": "Architecture Intelligence: zvec-ai/zvec-grep Core Invariants",
+      "repository": "zvec-ai/zvec-grep",
+      "source_version": "cc3ff0fe",
+      "content_hash": "30957c6c636063ccf87dc354e773a5a12118841e1295f94d8a4b8bb8c6df5513",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T10:47:11.571Z"
+    },
+    "rule-9370": {
+      "learning_id": "rule-9370",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9370,
+      "title": "enforce signed policy at session startup",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "540850e3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T10:47:20.757Z"
+    },
+    "candidate_directive-enforce-signed-policy-at-session-startup": {
+      "item_id": "candidate_directive-enforce-signed-policy-at-session-startup",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EKOM-enforce-signed-policy-at-session-startup.md",
+      "title": "enforce signed policy at session startup",
+      "repository": "nolabs-ai/nono",
+      "source_version": "540850e3",
+      "content_hash": "d6a62a10c852b7612bf1670d89c2d9313b7d4e03546a6ba682c7aff3f2c2e906",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T10:47:21.146Z"
+    },
+    "candidate_directive-build-download-onnx-runtime-archives-from-npmmirror": {
+      "item_id": "candidate_directive-build-download-onnx-runtime-archives-from-npmmirror",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ENVW-build-download-onnx-runtime-archives-from-npmmirror.md",
+      "title": "build): download ONNX Runtime archives from npmmirror",
+      "repository": "zvec-ai-zvec-grep-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8c1bbbd78c29261014d59ccf34ee5f22b73cb36270c76ba47f5f1d895beac6b2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T10:47:25.293Z"
+    },
+    "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
+      "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
+      "repository": "zvec-ai-zvec-grep-learnings",
+      "source_version": "HEAD",
+      "content_hash": "40e17a3413446b2457dabc25487a8acc14eb88b16c96aa7d612e132626aa3685",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T10:47:25.438Z"
+    },
+    "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
+      "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EOSR-platform-enforce-signed-policy-at-session-startup.md",
+      "title": "platform): enforce signed policy at session startup",
+      "repository": "nolabs-ai-nono-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f2b35c62a3676418fdd56001650c6cfb7ea71db0c29678fd80817b8c8be743d2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T10:47:26.478Z"
     }
   },
   "ai-builder-brain": {

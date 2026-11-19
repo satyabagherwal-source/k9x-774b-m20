@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T10:16:28.074Z",
+  "updated_at": "2026-11-19T10:47:25.093Z",
   "stats": {
-    "total_discovered": 5855,
-    "approved_pending_harvest": 5542,
+    "total_discovered": 5871,
+    "approved_pending_harvest": 5558,
     "harvested_count": 0,
     "rejected_count": 313,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5507,
+      "COMMUNITY_AND_EXPERT": 5523,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -126640,6 +126640,358 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-radixark-daisyrose-27b-learnings.md",
         "fileName": "hf-radixark-daisyrose-27b-learnings.md"
+      }
+    },
+    "SRC-A1045850E48F": {
+      "id": "SRC-A1045850E48F",
+      "url": "https://github.com/sqlfluff/sqlfluff/blob/db9801b7eb7fd014e765117f63ee1b0675fa9f87/src/sqlfluff/rules/layout/LT09.py",
+      "title": "https://github.com/sqlfluff/sqlfluff/blob/db9801b7eb7fd014e765117f63ee1b0675fa9f87/src/sqlfluff/rules/layout/LT09.py",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T10:47:24.433Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-AF2509A51BFF": {
+      "id": "SRC-AF2509A51BFF",
+      "url": "https://github.com/sqlfluff/sqlfluff/blob/db9801b7eb7fd014e765117f63ee1b0675fa9f87/src/sqlfluff/utils/functional/context.py",
+      "title": "https://github.com/sqlfluff/sqlfluff/blob/db9801b7eb7fd014e765117f63ee1b0675fa9f87/src/sqlfluff/utils/functional/context.py",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T10:47:24.476Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-BCA6DFDF2FDF": {
+      "id": "SRC-BCA6DFDF2FDF",
+      "url": "https://github.com/sqlfluff/sqlfluff.git",
+      "title": "https://github.com/sqlfluff/sqlfluff.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T10:47:24.521Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-DB609F8D06B0": {
+      "id": "SRC-DB609F8D06B0",
+      "url": "https://github.com/zvec",
+      "title": "https://github.com/zvec",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T10:47:24.564Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-94E13753D194": {
+      "id": "SRC-94E13753D194",
+      "url": "https://github.com/zhanglei1949/zvec-grep/blob/740f2a25715b4e1bc10c0cef59626022625e799e/benchmarks/swe-qa-bench/fixtures/caller-callee-dev/lib.rs",
+      "title": "https://github.com/zhanglei1949/zvec-grep/blob/740f2a25715b4e1bc10c0cef59626022625e799e/benchmarks/swe-qa-bench/fixtures/caller-callee-dev/lib.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T10:47:24.607Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-0C52276E5FC1": {
+      "id": "SRC-0C52276E5FC1",
+      "url": "https://github.com/zhanglei1949/zvec-grep/blob/74",
+      "title": "https://github.com/zhanglei1949/zvec-grep/blob/74",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T10:47:24.650Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-E1A038FD5B70": {
+      "id": "SRC-E1A038FD5B70",
+      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-linux-x64-1.21.0.tgz",
+      "title": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-linux-x64-1.21.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T10:47:24.693Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-C2A4AFC2F415": {
+      "id": "SRC-C2A4AFC2F415",
+      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-linux-x64-1.21.0.tgz",
+      "title": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-linux-x64-1.21.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T10:47:24.735Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-99AC6F00F888": {
+      "id": "SRC-99AC6F00F888",
+      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-linux-aarch64-1.21.0.tgz",
+      "title": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-linux-aarch64-1.21.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T10:47:24.778Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-DBADA7F80064": {
+      "id": "SRC-DBADA7F80064",
+      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-linux-aarch64-1.21.0.tgz",
+      "title": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-linux-aarch64-1.21.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T10:47:24.822Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-6C66C08D9EBF": {
+      "id": "SRC-6C66C08D9EBF",
+      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-linux-x64-gpu-1.21.0.tgz",
+      "title": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-linux-x64-gpu-1.21.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T10:47:24.865Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-718C61D4C0BE": {
+      "id": "SRC-718C61D4C0BE",
+      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-linux-x64-gpu-1.21.0.tgz",
+      "title": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-linux-x64-gpu-1.21.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T10:47:24.909Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-4C920ED9B438": {
+      "id": "SRC-4C920ED9B438",
+      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-osx-arm64-1.21.0.tgz",
+      "title": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-osx-arm64-1.21.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T10:47:24.952Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-F4EA220512E9": {
+      "id": "SRC-F4EA220512E9",
+      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-osx-arm64-1.21.0.tgz",
+      "title": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-osx-arm64-1.21.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T10:47:24.995Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-07783F29AEF3": {
+      "id": "SRC-07783F29AEF3",
+      "url": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-osx-x86_64-1.21.0.tgz",
+      "title": "https://github.com/microsoft/onnxruntime/releases/download/v1.21.0/onnxruntime-osx-x86_64-1.21.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T10:47:25.049Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
+      }
+    },
+    "SRC-0956746B0F1C": {
+      "id": "SRC-0956746B0F1C",
+      "url": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-osx-x86_64-1.21.0.tgz",
+      "title": "https://registry.npmmirror.com/-/binary/onnxruntime/v1.21.0/onnxruntime-osx-x86_64-1.21.0.tgz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T10:47:25.093Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zvec-ai-zvec-grep-learnings.md",
+        "fileName": "zvec-ai-zvec-grep-learnings.md"
       }
     }
   }

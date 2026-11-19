@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T10:15:58.232Z",
-  "total_cycles_completed": 10748,
-  "total_learnings_persisted": 10748,
-  "total_rules_promoted": 10139,
+  "last_updated": "2026-11-19T10:47:20.952Z",
+  "total_cycles_completed": 10751,
+  "total_learnings_persisted": 10751,
+  "total_rules_promoted": 10141,
   "history": [
-    {
-      "timestamp": "2026-11-18T15:51:48.638Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T15:51:51.053Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T15:59:39.768Z",
-      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T15:59:54.207Z",
       "repository": "freenet/freenet-core",
@@ -1403,6 +1382,27 @@
       "repository": "RadixArk/DaisyRose-27B",
       "learningId": "learn-huggingface-radixark-daisyrose-27b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T10:47:09.513Z",
+      "repository": "Qwen/Qwen3-4B",
+      "learningId": "learn-huggingface-qwen-qwen3-4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T10:47:11.223Z",
+      "repository": "zvec-ai/zvec-grep",
+      "learningId": "learn-github-zvec-ai-zvec-grep",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T10:47:20.952Z",
+      "repository": "nolabs-ai/nono",
+      "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

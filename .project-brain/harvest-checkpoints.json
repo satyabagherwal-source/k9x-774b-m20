@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T10:15:58.235Z",
+  "last_updated": "2026-11-19T10:47:20.956Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1355,14 +1355,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-4b",
-      "content_hash": "d09138b3e349f5a16b64ee80adffc51880f9ab87a92851c20a3b5028616ae5ba",
-      "verified_at": "2026-11-14T19:46:34.112Z",
+      "content_hash": "37fd7aebb20505dbff2f39f6482630845d8a24d0d88c122348b5627312bcab67",
+      "verified_at": "2026-11-19T10:47:09.516Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T19:46:34.112Z"
+      "last_updated": "2026-11-19T10:47:09.516Z"
     },
     "FermionResearch/Phonon-2": {
       "repository": "FermionResearch/Phonon-2",
@@ -3666,14 +3666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "6e757196989ad344350fbba2b3d9b92a4f1b372805e0c880a12606e907e0cb45",
-      "verified_at": "2026-11-18T14:48:43.010Z",
+      "content_hash": "5bf865f7a0841fd7b14433fc9ac2bbe99c3589981acd70705055b93920183907",
+      "verified_at": "2026-11-19T10:47:20.955Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T14:48:43.010Z"
+      "last_updated": "2026-11-19T10:47:20.955Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -10746,14 +10746,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zvec-ai-zvec-grep",
-      "content_hash": "41f4f1538515e4df527482fe01324090b031410a52a3f9d6f97f1a01d9a45c69",
-      "verified_at": "2026-11-17T17:20:14.349Z",
+      "content_hash": "742844ebbc8fbba702c0eacb1c8dbfafe6d55c0d04feb051f622d35cdb54a226",
+      "verified_at": "2026-11-19T10:47:11.226Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T17:20:14.349Z"
+      "last_updated": "2026-11-19T10:47:11.226Z"
     },
     "JetBrains/kotlinconf-app": {
       "repository": "JetBrains/kotlinconf-app",

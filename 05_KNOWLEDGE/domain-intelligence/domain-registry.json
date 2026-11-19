@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T10:16:29.304Z",
-  "total_records": 1967,
+  "last_updated": "2026-11-19T10:47:26.620Z",
+  "total_records": 1969,
   "domains": {
     "A": {
       "total": 13,
@@ -958,7 +958,7 @@
       ]
     },
     "G": {
-      "total": 340,
+      "total": 342,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1299,7 +1299,9 @@
         "domain_intelligence-architecture-intelligence-aome510-spotify-player-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-pulumi-pulumi-core-invariants",
         "domain_intelligence-architecture-intelligence-nezhahq-nezha-core-invariants",
-        "domain_intelligence-architecture-intelligence-nezhahq-nezha-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-nezhahq-nezha-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-core-invariants",
+        "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8718,8 +8720,8 @@
       "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
       "repository": "nolabs-ai/nono",
-      "content_hash": "ebe90f7e8db3b13796f9e63f3b96b556574746d1c7ab5cd2140b2643acf752b7",
-      "created_at": "2026-11-18T14:48:43.307Z"
+      "content_hash": "998ccae374495722263671ad8c62fb1382d9d05f4b3006959ebb3712ee497e7a",
+      "created_at": "2026-11-19T10:47:21.304Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants",
@@ -8787,8 +8789,8 @@
       "title": "Architecture Intelligence: nolabs-ai-nono-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-learnings-architecture-intelligence-nolabs-ai-nono-learnings-core.md",
       "repository": "nolabs-ai-nono-learnings",
-      "content_hash": "d35247c1207f46b86ffcd70c2d7b2faa13484d93708b77409da15543d267c41f",
-      "created_at": "2026-11-18T14:48:48.163Z"
+      "content_hash": "a097b8af9f9d11ec83ca8d7a3b5cd00650653d2ee54f078bb4607592dff834ce",
+      "created_at": "2026-11-19T10:47:26.620Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar",
@@ -17488,8 +17490,8 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-4B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-4b-research-knowledge-intelligence-qwen-qwen3-4b-core-invariants.md",
       "repository": "Qwen/Qwen3-4B",
-      "content_hash": "93dbc772bfeb07b54ef3c71de49c445e0891dcec60df35c7894980058d094aaf",
-      "created_at": "2026-11-14T19:46:34.313Z"
+      "content_hash": "094b4476e7857e09de19c65215d17d32bea824f2b225a3ebc2c3ccc88563efea",
+      "created_at": "2026-11-19T10:47:09.691Z"
     },
     "DOM-D-B7601B75": {
       "record_id": "DOM-D-B7601B75",
@@ -17539,8 +17541,8 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-4b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-4b-learnings-research-knowledge-intelligence-hf-qwen-qwen3-4b-lear.md",
       "repository": "hf-qwen-qwen3-4b-learnings",
-      "content_hash": "47f57f8f761c9c383e6195adc53389792f76fb0699c22aac09189776f8934e61",
-      "created_at": "2026-11-14T19:47:13.240Z"
+      "content_hash": "7d5c26210c4bf2a32da7eb1603729a22f7a3f9179fd729cf58b3ac6cb8651215",
+      "created_at": "2026-11-19T10:47:26.023Z"
     },
     "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aws-aws-cdk-learnings-core-invariants",
@@ -33081,6 +33083,24 @@
       "repository": "hf-radixark-daisyrose-27b-learnings",
       "content_hash": "796d71b7b998eca23fea701b67e489d7a8ddf9bdf0d0f0996dafa3ab0627c9d2",
       "created_at": "2026-11-19T10:16:28.285Z"
+    },
+    "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: zvec-ai/zvec-grep Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-architecture-intelligence-zvec-ai-zvec-grep-core-invariants.md",
+      "repository": "zvec-ai/zvec-grep",
+      "content_hash": "30957c6c636063ccf87dc354e773a5a12118841e1295f94d8a4b8bb8c6df5513",
+      "created_at": "2026-11-19T10:47:11.571Z"
+    },
+    "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
+      "repository": "zvec-ai-zvec-grep-learnings",
+      "content_hash": "40e17a3413446b2457dabc25487a8acc14eb88b16c96aa7d612e132626aa3685",
+      "created_at": "2026-11-19T10:47:25.438Z"
     }
   }
 }
