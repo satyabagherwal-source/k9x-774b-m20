@@ -11169,3 +11169,7 @@ Every entry in this ledger must capture:
 | `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `f1b08976` | Multi-dimensional audit evidence | 2026-11-18T23:34:51.254Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `9529cc61` | Multi-dimensional audit evidence | 2026-11-18T23:34:52.859Z |
 | `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `5db0619d` | Multi-dimensional audit evidence | 2026-11-18T23:34:55.611Z |
+| `learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf` | `https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF` | `hf-venasti` | Multi-dimensional audit evidence | 2026-11-19T00:00:09.443Z |
+| `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `85ddf6c2` | Multi-dimensional audit evidence | 2026-11-19T00:00:13.025Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `c4d689ce` | Multi-dimensional audit evidence | 2026-11-19T00:00:22.861Z |
+| `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `39fb2391` | Multi-dimensional audit evidence | 2026-11-19T00:00:24.721Z |

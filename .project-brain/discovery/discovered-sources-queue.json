@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T23:34:59.622Z",
+  "updated_at": "2026-11-19T00:00:29.714Z",
   "stats": {
-    "total_discovered": 5724,
-    "approved_pending_harvest": 5415,
+    "total_discovered": 5726,
+    "approved_pending_harvest": 5417,
     "harvested_count": 0,
     "rejected_count": 309,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5392,
+      "COMMUNITY_AND_EXPERT": 5394,
       "OFFICIAL_DOCUMENTATION": 185,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -123786,6 +123786,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gocd-gocd-learnings.md",
         "fileName": "gocd-gocd-learnings.md"
+      }
+    },
+    "SRC-56D9489F2345": {
+      "id": "SRC-56D9489F2345",
+      "url": "https://github.com/elibol/grout/blob/23ae5a3e78dc39e242918824839ba8a35e4adce9/src/kernels.rs",
+      "title": "https://github.com/elibol/grout/blob/23ae5a3e78dc39e242918824839ba8a35e4adce9/src/kernels.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T00:00:28.376Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md",
+        "fileName": "nvidia-cuda-rust-learnings.md"
+      }
+    },
+    "SRC-4F47AEB3D751": {
+      "id": "SRC-4F47AEB3D751",
+      "url": "https://github.com/tailscale/tailscale/issues/22488",
+      "title": "https://github.com/tailscale/tailscale/issues/22488",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T00:00:29.714Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
+        "fileName": "tailscale-tailscale-learnings.md"
       }
     }
   }

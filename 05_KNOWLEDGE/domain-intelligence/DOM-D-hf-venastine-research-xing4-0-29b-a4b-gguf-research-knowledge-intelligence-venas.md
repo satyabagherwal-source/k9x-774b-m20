@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
   "source_version": "hf-venastine-research-xing4.0-29b-a4b-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T07:30:37.535Z",
+  "timestamp": "2026-11-19T00:00:09.676Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Venastine-Research/Xing4.0-29B-A4B-GGUF](https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF) (Revision: `hf-venasti`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T07:30:37.535Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T00:00:09.676Z`  
 > **Learning ID**: `learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF](https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T07:30:36.775Z  
+> **Harvest Timestamp**: 2026-11-19T00:00:08.552Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 25703 downloads | 791 likes
+- **Stars / Engagement**: 24416 downloads | 792 likes
 
 ---
 

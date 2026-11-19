@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T23:35:01.072Z",
+  "last_updated": "2026-11-19T00:00:29.944Z",
   "directives": [
     {
       "id": "CD-001",
@@ -31335,6 +31335,59 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-A32EC4-make-result-ordering-more-deterministic-.md",
       "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-ACWW",
+      "directive_title": "add strided prefill and improve FP16 GEMM",
+      "source_repo": "NVIDIA/cuda-rust",
+      "source_commit": "85ddf6c2",
+      "staged_file": "11_INBOX/candidate-directives/CD-ACWW-add-strided-prefill-and-improve-fp16-gemm.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-APRS",
+      "directive_title": "tstest/natlab: Fix typo in README sample command",
+      "source_repo": "tailscale-tailscale-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-APRS-tstest-natlab-fix-typo-in-readme-sample-command.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-ALXM",
+      "directive_title": "Bounds-check untrusted flat_buffers input",
+      "source_repo": "apple/foundationdb",
+      "source_commit": "39fb2391",
+      "staged_file": "11_INBOX/candidate-directives/CD-ALXM-bounds-check-untrusted-flat_buffers-input.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-19",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-AORK",
+      "directive_title": "cutile-kernels): add strided prefill and improve FP16 GEMM",
+      "source_repo": "nvidia-cuda-rust-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-AORK-cutile-kernels-add-strided-prefill-and-improve-fp16-gemm.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-6BE067",
+      "directive_title": "tstest/natlab: Fix typo in README sample command",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tailscale-tailscale",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6BE067-tstest-natlab-fix-typo-in-readme-sample-.md",
+      "staged_date": "2026-11-19"
     }
   ]
 }

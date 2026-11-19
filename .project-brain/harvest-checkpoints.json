@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T23:34:55.621Z",
+  "last_updated": "2026-11-19T00:00:24.732Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1415,14 +1415,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-      "content_hash": "76530577fa7501066b66d71fe092ec2fdaab0a3aab85b46afe2f7daaa2c06125",
-      "verified_at": "2026-11-14T07:30:37.383Z",
+      "content_hash": "e717ecb93ce086d0eff0297cf7081d5dffd9372091ab945a1ab9896e00b41247",
+      "verified_at": "2026-11-19T00:00:09.453Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T07:30:37.383Z"
+      "last_updated": "2026-11-19T00:00:09.453Z"
     },
     "NaiveAI/Naive-N0.5-Flash": {
       "repository": "NaiveAI/Naive-N0.5-Flash",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "b187f2207c146de39280010542f7b630b06a01faa6ecff8729c609d5bf5f1bba",
-      "verified_at": "2026-11-18T17:51:18.471Z",
+      "content_hash": "cdcd0eaee00a4e8642b3c16f0d91062b082986cc180ef38bb5297e4e309ccb86",
+      "verified_at": "2026-11-19T00:00:22.871Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T17:51:18.471Z"
+      "last_updated": "2026-11-19T00:00:22.871Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -7581,14 +7581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apple-foundationdb",
-      "content_hash": "c249dbd439d0bf86e0c59e1b94794ea1f1b774cdc47bd75dc7883d319ef88b2f",
-      "verified_at": "2026-11-18T07:30:54.065Z",
+      "content_hash": "335aab112d218418ff523d8dd01a2e80a7b6df89fe8af25e42b95e892ad434d4",
+      "verified_at": "2026-11-19T00:00:24.731Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T07:30:54.065Z"
+      "last_updated": "2026-11-19T00:00:24.731Z"
     },
     "kucherenko/jscpd": {
       "repository": "kucherenko/jscpd",
@@ -8781,14 +8781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nvidia-cuda-rust",
-      "content_hash": "f467f04b39512e38aba9c4255d7ef1f7f64d2ad3cfbdad8b8e028dc3359f60bf",
-      "verified_at": "2026-11-17T10:10:56.923Z",
+      "content_hash": "80e1d8a83bc0cd86982bc456dc335337553032f16c4822a1d5e0627246dfcbc0",
+      "verified_at": "2026-11-19T00:00:13.036Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T10:10:56.923Z"
+      "last_updated": "2026-11-19T00:00:13.036Z"
     },
     "typestack/routing-controllers": {
       "repository": "typestack/routing-controllers",

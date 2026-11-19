@@ -11136,3 +11136,7 @@
 | `CYCLE-20261118-DQIA` | `2026-11-18T23:34:51.250Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9300` | Yes (`5373ada2...`) |
 | `CYCLE-20261118-DRQV` | `2026-11-18T23:34:52.855Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9301` | Yes (`186a5248...`) |
 | `CYCLE-20261118-DTVB` | `2026-11-18T23:34:55.607Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9302` | Yes (`8e22db0e...`) |
+| `CYCLE-20261119-A9Y6` | `2026-11-19T00:00:09.438Z` | `Venastine-Research/Xing4.0-29B-A4B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-venastine-research-xing4.0-29b-a4b-gguf-learnings.md` | Yes (`e717ecb9...`) |
+| `CYCLE-20261119-ACPO` | `2026-11-19T00:00:13.020Z` | `NVIDIA/cuda-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9303` | Yes (`80e1d8a8...`) |
+| `CYCLE-20261119-AKAW` | `2026-11-19T00:00:22.856Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9304` | Yes (`cdcd0eae...`) |
+| `CYCLE-20261119-ALQL` | `2026-11-19T00:00:24.717Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9305` | Yes (`335aab11...`) |

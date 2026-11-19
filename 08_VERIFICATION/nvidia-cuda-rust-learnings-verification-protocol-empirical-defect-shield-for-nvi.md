@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T10:11:13.188Z",
+  "timestamp": "2026-11-19T00:00:28.515Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nvidia-cuda-rust-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nvidia-cuda-rust-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T10:11:13.188Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T00:00:28.515Z`  
 > **Learning ID**: `LEARN-EVO-nvidia-cuda-rust-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source**: github ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
-> **Source Version**: `f13e7dfc`  
+> **Source Version**: `85ddf6c2`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T10:10:55.918Z  
+> **Timestamp**: 2026-11-19T00:00:11.771Z  
 > **Learning ID**: `learn-github-nvidia-cuda-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nvidia-cuda-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NVIDIA/cuda-rust](https://github.com/NVIDIA/cuda-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T10:10:55.689Z  
+> **Harvest Timestamp**: 2026-11-19T00:00:11.763Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: NVIDIA's CUDA platform for Rust. Host runtime crates plus Tile (cutile-rs) and SIMT (cuda-oxide) kernel programming models in idiomatic Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4064 stars
+- **Stars / Engagement**: 4067 stars
 
 ---
 
@@ -2280,11 +2280,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1830** (2026-11-17): **fix(cuda-oxide): let blackwell-mma smoketest honor detected sm_121a target**
+  *Symptoms*: ## What This PR Does  Fixes `scripts/smoketest.sh` on **GB10 (`sm_121`)** for the `blackwell-mma` category (`mma_mxf8f6f4`), resolving **NVBug 7101256**:  ```text BEFORE (in `scripts/smoketest.sh` on GB10, compute capability 12.1):   smoketest.sh ──► cargo oxide run mma_mxf8f6f4 --arch=sm_120a                      └─► sets CUDA_OXIDE_TARGET=sm_120a (overrides hint sm_121a)                      └─► emits .target sm_120a ──► DriverError(218) on sm_121 [X]  AFTER (matches `tcgen05` and `wgmma`):   smoketest.sh ──► cargo oxide run mma_mxf8f6f4                      ├─► on sm_121 (GB10): hint sm_121a ──► .target sm_121a ──► executes & passes [OK]                      ├─► on sm_120 (50xx): hint sm_120a ──► .target sm_120a ──► executes & passes [OK]                      └─► elsewhere / build:             ──► .target sm_120a ──► PTX check & passes [OK] ```  ---  ### 1. Drop Forced `--arch=sm_120a` Override in `smoketest.sh`  * `cuda-oxide-codegen` (`v1:i0876` in `intrinsics/catalog.json`: `sm_120a|sm_120f|sm_121a|sm_121f`) and `cargo-oxide` (`format_sm_arch((12, 1)) == "sm_121a"`) already select `sm_121a` from `CUDA_OXIDE_DEVICE_ARCH` on GB10, `sm_120a` on `sm_120`, and fall back to `sm_120a` on every other GPU and in `cargo oxide build`. * Appending `--arch=sm_120a` in `smoketest.sh` promoted that fallback to an explicit `CUDA_OXIDE_TARGET=sm_120a` override; because the `a` suffix is architecture-locked to exact `sm_120`, loading `.target sm_120a` PTX on `sm_121` failed PTX JIT with 
+
 - **Issue #1789** (2026-11-12): **fix(cuda-oxide): omit NVVM-only --arch on compile-only code-shape prebuild**
   *Symptoms*: ## What This PR Does  Fixes `scripts/smoketest.sh --compile-only` on **Rubin (`R100`, `sm_107`)** for the two `NVVM_VERIFY_EXAMPLES` that also ship a `verify-code-shape.sh` gate (`kernel_reference_validity` and `promoted_ref_return`), resolving **NVBug 7084024**:  ```text BEFORE (in `scripts/smoketest.sh --compile-only` on R100, where nvvm_arch = sm_107):   ├──► Step 1 (NVPTX): cargo oxide build <ex> --arch=sm_107       [X] fails (NVPTX lacks sm_107)   └──► Step 2 (NVVM):  cargo oxide emit-ltoir <ex> --arch=sm_107  (never reached)  AFTER:   ├──► Step 1 (NVPTX): cargo oxide build <ex>                     [OK] NVPTX emits forward-compatible PTX   │                    bash verify-code-shape.sh                  [OK] validates .ll and .ptx code shape   └──► Step 2 (NVVM):  cargo oxide emit-ltoir <ex> --arch=sm_107  [OK] libNVVM compiles natively for sm_107 ```  ---  ### 1. Keep `--arch=sm_107` Scoped to the NVVM (`emit-ltoir`) Step  `cuda-oxide` has two device compilation routes: * **NVPTX (`llc` / LLVM 23)** (`cargo oxide build` / `run`): does not have a processor entry for Rubin (`sm_107`). When invoked without an explicit `--arch` on R100, the compiler sees `sm_107a` only as an advisory device hint, ignores it, and emits forward-compatible `sm_80` PTX. * **NVVM (`libNVVM` / `nvJitLink`)** (`cargo oxide emit-ltoir`): supports `sm_107` natively.  In PR #1726, `smoketest.sh --compile-only` added a `cargo oxide build` pre-step before `emit-ltoir` so `verify-code-shape.sh` could ins
-
-- **Issue #1779** (2026-11-11): **fix(cuda-host): coalesce DWARF debug sections and disambiguate labels in merge_ptx_bundles (NVBug 7038557)**
-  *Symptoms*: ## What This PR Does  Fixes **NVBug 7038557** so multi-crate programs built with `--device-debug` merge and JIT-load their PTX bundles cleanly (`cuda_host::merge_ptx_bundles` / `load_all_ptx_bundles_merged`):  1. **Disambiguate bundle-local labels (`$L__*`) and `.local` stack depots (`__local_depot*`) across bundles (`cuda-host`)** 2. **Coalesce `.section .debug_*` blocks once at the end of the merged PTX module and shift per-CU offsets (`cuda-host`)** 3. **Touch direct workspace member crates during `cargo oxide build` / `run` (`cargo-oxide`)**  ---  ### 1. Why Multi-Crate `--device-debug` PTX Failed `ptxas` Assembly  Each crate's `--device-debug` PTX file has code at the top (with internal labels like `$L__func_begin0` and `$L__pubNames_start0`) and DWARF `.section .debug_*` tables at the bottom. Previously, `merge_ptx_bundles` glued the second PTX file directly under the first one, leaving duplicate labels and repeated `.section` blocks in the middle of the merged file:  ```text BEFORE (glued raw PTX files -> ptxas fails with DriverError(218)):   [Crate A Code ($L__func_begin0)] + [Crate A .section .debug_*]   [Crate B Code ($L__func_begin0)] + [Crate B .section .debug_*]  <-- duplicate labels & overlapping sections!  AFTER (rename bundle-local labels + coalesce one .section per name at the end):   [Crate A Code ($L__func_begin0)]   [Crate B Code ($L__func_begin0__bundle_1)]   [.section .debug_abbrev { CU_A + CU_B }]   [.section .debug_info   { CU_A + CU_B (with .debug_abb
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2301,519 +2301,852 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f13e7dfc` (2026-11-16)
-**Commit Message**: ci: test against CUDA 13.5.0 as well as the baseline toolkit (#1813)
+### Incident Patch 1: `85ddf6c2` (2026-11-18)
+**Commit Message**: fix(cutile-kernels): add strided prefill and improve FP16 GEMM (#1833)
 
-Run the CUDA toolkit CI lanes against CUDA 13.5.0 as well as the baseline,
-run the cutile tile-library GPU tests on 13.5, and build the test tile
-library from its .mlir sources in CI instead of using checked-in bytecode.
+## Summary
 
-- unit-tests and examples-compile: the CUDA image is a matrix axis (the
-  baseline plus nvcr.io/nvidia/cuda:13.5.0-devel-ubuntu24.04).
-- cutile-rs: the two Tile IR jobs become one tile-ir job with lanes
-  tile-ir-cuda13-2 and tile-ir-cuda13-5 (was tile-ir-cuda13-4). The newest
-  lane runs the 13.5 assemble tests with CUTILE_REQUIRE_TILELIB=1. A
-  required-checks list that names tile-ir-cuda13-4 needs updating.
-- New cuda-tile-translate job builds the translator with cuda-tile-rs and
-  caches it on the cuda-tile submodule commit and build.rs.
-- gpu-tests runs on 13.3.0 and 13.5.0; the 13.5.0 lane fails instead of
-  skipping static_tilelib tests.
-- cutile: static_tilelib assembles its library from the .mlir sources with
-  cuda-tile-translate; the prebuilt .tilebc files are removed. A new
-  cutile-ir test reads a 13.5 preview$call back with tileirdisasm.
-- setup action: new cache-key input so matri
+Add prefill attention entry points that accept independent physical K/V
+head strides, supporting caches whose reserved capacity exceeds their
+active sequence length. Keep FP16 operands in the FP16-output GEMM while
+retaining FP32 accumulation.
 
-**File**: `.github/workflows/cutile-rs.yml` (modified, +170/-36)
+## Changes
+
+- Add ordinary and split-K strided prefill entries. Existing contiguous
+entry signatures remain compatible through shared device
+implementations.
+- Document element strides, alignment, buffer extents and split/merge
+requirements.
+- Extend GPU regressions to cover unequal K/V capacities, contiguous
+compatibility, cached prefixes, query/KV tails, four schedules and empty
+splits.
+- Remove FP32 operand conversions before GEMM MMA and cover FP16 output
+on aligned and partial-row shapes.
+- Add a concise kernel source index and clarify precision, layout and
+complete-pipeline measurement. Correct tensor-shape formatting in
+rustdoc.
+
+## Testing
+
+Passed with public CUDA 13.5 tooling on RTX 5090:
+
+- `cargo test -p cutile-kernels --test smoke` (11 tests).
+- `cargo test -p cutile-kernels --test gpu -- --ignored
+--test-threads=1` (2 tests).
+- `cargo test -p cut
+
+**File**: `cutile-rs/CHANGELOG.md` (modified, +4/-0)
 ```diff
-@@ -6,6 +6,8 @@
- # Checkout does not init submodules. cuda-tile-rs is outside default-members,
- # and these CUDA images have no git until the setup action, so
- # `submodules: recursive` makes actions/checkout reject the REST API fallback.
-+# Only the cuda-tile-translate job needs the cuda-tile submodule; it fetches it
-+# itself.
- name: cutile-rs-pr
+@@ -20,6 +20,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
  
- on:
-@@ -94,62 +96,85 @@ jobs:
-       - name: Check Tile dependencies including optional reference examples
-         run: cargo deny --workspace --all-features --locked check
+ ### Added
  
--  # Exercise the oldest Tile IR assembler, including its lack of
--  # --list-versions. The separate 13.0 lane only checks shared host crates.
--  tile-ir-cuda13-2:
-+  # Tile IR assembler lanes. The base lane exercises the oldest assembler,
-+  # including its lack of --list-versions; the newest lane needs an assembler
-+  # that lists bytecode 13.5, which the Tile IR 13.5 gates in the compiler and
-+  # encoder depend on. The separate 13.0 lane only checks shared host crates.
-+  # The job names are tile-ir-cuda13-2 and tile-ir-cuda13-5.
-+  #
-+  # Tests that need the 13.5 toolkit skip, and pass, without it. The newest lane
-+  # sets CUTILE_REQUIRE_TILELIB=1, and then such a skip is a failure: the
-+  # cutile-ir test that reads a preview$call back with the toolkit's tileirdisasm
-+  # must run there.
-+  tile-ir:
-+    name: ${{ matrix.lane.name }}
-     needs: changes
-     if: >-
-       github.event_name == 'workflow_dispatch' ||
-       needs.changes.outputs.tile == 'true' ||
-       needs.changes.outputs.any_changed != 'true'
-     runs-on: linux-amd64-cpu16
-     container:
--      image: nvidia/cuda:13.2.0-devel-ubuntu24.04
-+      image: ${{ matrix.lane.image }}
-       env:
-         DEBIAN_FRONTEND: noninteractive
-     env:
-       CUDA_TOOLKIT_PATH: /usr/local/cuda
--      CUTILE_TILEIRAS_PATH: /usr/local/cuda/bin/tileiras
-+      CUTILE_REQUIRE_TILELIB: ${{ matrix.lane.newest && '1' || '' }}
-     timeout-minutes: 30
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        lane:
-+          - name: tile-ir-cuda13-2
-+            image: nvidia/cuda:13.2.0-devel-ubuntu24.04
-+            newest: false
-+          # Same image digest as Docker Hub's nvidia/cuda:13.5.0-devel-ubuntu24.04;
-+          # nvcr.io has no anonymous pull limit.
-+          - name: tile-ir-cuda13-5
-+            image: nvcr.io/nvidia/cuda:13.5.0-devel-ubuntu24.04
-+            newest: true
-     steps:
-       - uses: actions/checkout@v7
-+      # The lanes share github.job, so the lane name keeps their caches apart.
-       - uses: ./cutile-rs/.github/actions/setup
-+        with:
-+          cache-key: ${{ matrix.lane.name }}
-+      # The tests test whether CUTILE_TILEIRAS_PATH is set, so only the base lane
-+      # exports it, for the steps below.
-       - name: Verify assembler
-+        if: ${{ !matrix.lane.newest }}
-         run: |
--          "$CUTILE_TILEIRAS_PATH" --version
--          "$CUTILE_TILEIRAS_PATH" --help | grep -q 'sm_120'
--      - name: CPU and assembler tests
--        run: ./scripts/run_cpu_tests.sh
--      - name: Standalone bytecode example
--        run: cargo run -p cutile-ir --example build_basic
--
--  # Newest Tile IR assembler: the 13.4 gates in the compiler and encoder must
--  # pass here and refuse correctly on the 13.2 lane above. The dev image may
--  # ship the toolkit without the assembler package; install it when missing.
--  tile-ir-cuda13-4:
--    needs: changes
--    if: >-
--      github.event_name == 'workflow_dispatch' ||
--      needs.changes.outputs.tile == 'true' ||
--      needs.changes.outputs.any_changed != 'true'
--    runs-on: linux-amd64-cpu16
--    container:
--      image: nvidia/cuda:13.4.1-devel-ubuntu24.04
--      env:
--        DEBIAN_FRONTEND: noninteractive
--    env:
--      CUDA_TOOLKIT_PATH: /usr/local/cuda
--    timeout-minutes: 30
--    steps:
--      - uses: actions/checkout@v7
--      - uses: ./cutile-rs/.github/actions/setup
-+          echo "CUTILE_TILEIRAS_PATH=/usr/local/cuda/bin/tileiras" >> "$GITHUB_ENV"
-+          /usr/local/cuda/bin/tileiras --version
-+          /usr/local/cuda/bin/tileiras --help | grep -q 'sm_120'
-+      # The dev image may ship the toolkit without the assembler package;
-+      # install it when missing. The package also holds tileirdisasm.
-       - name: Verify assembler version
-+        if: ${{ matrix.lane.newest }}
-         run: |
--          command -v tileiras || apt-get install -y -qq --no-install-recommends cuda-tileiras-13-4
-+          command -v tileiras || apt-get install -y -qq --no-install-recommends cuda-tileiras-13-5
-           tileiras --version
--          tileiras --list-versions | grep -q '13.4'
-+          tileiras --list-versions | grep -qF '13.5'
-+          "$(dirname "$(command -v tileiras)")/tileirdisasm" --version
-       - name: CPU and assembler tests
-         run: ./scripts/run_cpu_tests.sh
-+      # The assemble_* tests need a 13.5 assembler, not a GPU, so they are
-+      # #[ignore]d and the default run skips them. They call the real tileiras
-
++- Add strided long-prefill attention entries with independent K/V head strides,
++  including split-K prefill. Existing contiguous entry signatures are unchanged.
+ - Add experimental FP16 GEMM, causal attention and routed MoE variants with
+   shared host examples, correctness coverage and optimization guidance.
+ 
+@@ -65,6 +67,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
+ 
+ ### Fixed
+ 
++- Keep FP16 operands in the experimental FP16-output GEMM instead of widening
++  them before MMA; retain FP32 accumulation and a final FP16 conversion.
+ - Fix scalar padding broadcasts for multidimensional masked pointer loads.
+ 
+ - Keep masked QKV tail-row slot pointers in bounds, retaining the original
 ```
 
-**File**: `.github/workflows/examples-compile.yml` (modified, +19/-6)
+**File**: `cutile-rs/cutile-kernels/README.md` (modified, +43/-5)
 ```diff
-@@ -69,13 +69,13 @@ jobs:
-   examples-compile:
-     needs: changes
-     if: ${{ !cancelled() && (github.event_name != 'push' || needs.changes.outputs.relevant == 'true' || needs.changes.outputs.any_changed != 'true') }}
--    name: compile all examples (device pipeline, GPU-less)
-+    name: compile all examples (device pipeline, GPU-less)${{ matrix.cuda.suffix }}
-     runs-on: linux-amd64-cpu4
--    # CUDA 13.3.1 devel image: nvcc, cudart, libcurand, and libnvJitLink.
--    # The materialization gate below needs nvJitLink, which the devel image
--    # ships. rustup is installed in the container.
-+    # CUDA devel image (see the matrix): nvcc, cudart, libcurand, and
-+    # libnvJitLink. The materialization gate below needs nvJitLink, which the
-+    # devel image ships. rustup is installed in the container.
-     container:
--      image: nvidia/cuda:13.3.1-devel-ubuntu24.04
-+      image: ${{ matrix.cuda.image }}
-       env:
-         DEBIAN_FRONTEND: noninteractive
-     env:
-@@ -86,6 +86,17 @@ jobs:
-     # Leave job-level headroom around the 50-minute full compile and the
-     # focused 10-minute materialization gate, plus toolkit/LLVM setup.
-     timeout-minutes: 75
-+    strategy:
-+      fail-fast: false
-+      # The baseline lane keeps its existing job name (empty suffix); the newer
-+      # image is a separate lane. The nvcr.io image has the same digest as Docker
-+      # Hub's nvidia/cuda:13.5.0-devel-ubuntu24.04 and no anonymous pull limit.
-+      matrix:
-+        cuda:
-+          - image: nvidia/cuda:13.3.1-devel-ubuntu24.04
-+            suffix: ""
-+          - image: nvcr.io/nvidia/cuda:13.5.0-devel-ubuntu24.04
-+            suffix: " (CUDA 13.5.0)"
-     steps:
-       # $/ installs git before checkout. The CUDA image has no git; without
-       # it checkout stores a tarball. The same step installs python3 for
-@@ -320,7 +331,9 @@ jobs:
-         if: failure()
-         uses: actions/upload-artifact@v4
-         with:
--          name: smoketest-compile-logs
-+          # Artifact names are unique per run; the baseline lane keeps its name
-+          # (empty suffix) and the newer lane adds its suffix.
-+          name: smoketest-compile-logs${{ matrix.cuda.suffix }}
-           # One glob per log the artifact-modes step writes. `iket-trace-*`
-           # matched neither of the other two, so the one assertion that
-           # exercises the full libNVVM + nvJitLink path -- and the only one
-```
-
-**File**: `.github/workflows/unit-tests.yml` (modified, +15/-5)
-```diff
-@@ -143,19 +143,29 @@ jobs:
-   # cuda.h crates. A container is chosen per job, so these cannot share the
-   # rust image above without also handing cargo-oxide a toolkit.
-   rust-unit-tests-cuda:
--    name: cargo test -p ${{ matrix.package }}
-+    name: cargo test -p ${{ matrix.test.package }}${{ matrix.cuda.suffix }}
-     runs-on: linux-amd64-cpu4
-     container:
--      image: nvidia/cuda:13.3.1-devel-ubuntu24.04
-+      image: ${{ matrix.cuda.image }}
-       env:
-         DEBIAN_FRONTEND: noninteractive
-     env:
-       CUDA_TOOLKIT_PATH: /usr/local/cuda
-     timeout-minutes: 30
-     strategy:
-       fail-fast: false
-+      # Every crate below runs against each toolkit image. The baseline keeps its
-+      # existing job names (empty suffix); the newer image is a separate lane.
-       matrix:
--        include:
-+        cuda:
-+          - image: nvidia/cuda:13.3.1-devel-ubuntu24.04
-+            suffix: ""
-+          # Same image digest as Docker Hub's nvidia/cuda:13.5.0-devel-ubuntu24.04;
-+          # nvcr.io has no anonymous pull limit. Pinned to the newest CUDA
-+          # release published as of 2026-11-09.
-+          - image: nvcr.io/nvidia/cuda:13.5.0-devel-ubuntu24.04
-+            suffix: " (CUDA 13.5.0)"
-+        test:
-           # Includes a real llc -> ptxas spine-kernel validation.
-           - package: cuda-oxide-codegen
-           # Facade macro tests compile host metadata through cuda-host.
-@@ -178,7 +188,7 @@ jobs:
-         uses: actions/checkout@v4
+@@ -21,15 +21,32 @@ NVFP4 MoE requires block-scaled MMA support: Tile IR 13.3 or newer and SM100+
+ Select the 13.5 `tileiras` binary, for example via `CUTILE_TILEIRAS_PATH`;
+ the kernels can use the existing supported bytecode formats.
  
-       - name: Install LLVM 21 (llc/opt for the NVPTX backend)
--        if: matrix.package == 'cuda-oxide-codegen'
-+        if: matrix.test.package == 'cuda-oxide-codegen'
-         run: |
-           set -euo pipefail
-           source /etc/os-release
-@@ -198,7 +208,7 @@ jobs:
-           sysroot="$(rustc --print sysroot)"
-           export LIBRARY_PATH="${sysroot}/lib:${LIBRARY_PATH:-}"
-           export LD_LIBRARY_PATH="${sysroot}/lib:${LD_LIBRARY_PATH:-}"
--          cargo test -p ${{ matrix.package }} ${{ matrix.test_args || '--all-targets' }}
-+          cargo test -p ${{ matrix.test.package }} ${{ matrix.test.test_args || '--all-targets' }}
- 
-   rustc-codegen-cuda-unit-tests:
-     name: cargo test --lib (rustc-codegen-cuda)
-```
-
-**File**: `cutile-rs/.github/actions/setup/action.yml` (modified, +11/-3)
-```diff
-@@ -14,6 +14,12 @@ inputs:
-   cache:
-     description: Restore and save the Rust build cache for this job.
-     default: "true"
-+  cache-key:
-+    description: >-
-+      Extra cache key, appended to the job id. A matrix job passes a value that
-+      tells its lanes apart (for example the lane name), because every lane has
-+      the same job id.
-+    default: ""
- 
- runs:
-   using: composite
-@@ -71,8 +77,10 @@ runs:
-       if: inputs.cache == 'true'
-       uses: swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6  # v2.9.2
-       with:
--        # One cache per job: the CUDA image differs per lane and bindgen output
--        # with it, so artifacts are not interchangeable across lanes.
-+        # One cache per job and lane: the CUDA image differs per lane and
-+        # bindgen output with it, so artifacts are not interchangeable across
-+        # lanes. The lanes of a matrix job share github.job; they tell them apart
-+        # with cache-key.
-         workspaces: cutile-rs
--        key: ${{ github.job }}
-+        key: ${{ github.job }}${{ inputs.cache-key != '' && format('-{0}', inputs.cache-key) || '' }}
-         cache-on-failure: true
-```
-
-**File**: `cutile-rs/CHANGELOG.md` (modified, +7/-0)
-```diff
-@@ -47,6 +47,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
-   KV-scatter kernel, with a correctness example and opt-in CUDA graph benchmark
-   sweep. The initial schedule is not B200-tuned (#1746).
- 
-+### Changed
++## Choosing a starting point
 +
-+- The static tile-library GPU tests always assemble their library from its
-+  `.mlir` sources; the checked-in bytecode is removed. They take
-+  `cuda-tile-translate` from `CUTILE_TILE_TRANSLATE`, or from next to
-+  `tileiras`.
++| Operation | Source | What to check before reuse |
++| --- | --- | --- |
++| Prefill and decode attention | [`attention`](src/attention.rs), [`experimental::attention`](src/experimental/attention.rs) | Causal masking, query groups, tensor layout, active KV length versus reserved capacity, and split/merge scratch |
++| GEMM and short causal attention | [`gemm`](src/experimental/gemm.rs), [`gemm_variants`](src/experimental/gemm_variants.rs), [`attention_f16`](src/experimental/attention_f16.rs) | Input/output precision, row alignment, masked tails, and tile working set; see the variant table below |
++| Expert computation | [`moe_f16`](src/experimental/moe_f16.rs), [`nvfp4_moe`](src/experimental/nvfp4_moe.rs), [`moe`](src/experimental/moe.rs) | FP16 versus block-scaled FP4, routing layout, quantization, and all stages needed for the final weighted output |
++| Normalization and fused epilogues | [`norms`](src/norms.rs), [`experimental::norms`](src/experimental/norms.rs), [`fused_transformer`](src/experimental/fused_transformer.rs) | Single-token versus multi-row work, in-place/aliasing rules, and whether fusion eliminates an intermediate |
++| Embeddings, RoPE and KV movement | [`embeddings`](src/embeddings.rs), [`positional`](src/positional.rs), [`kv_cache`](src/kv_cache.rs), [`kvbm`](src/experimental/kvbm.rs) | Physical strides, position source, and cache/block layout; convenience variants have different calling contracts |
++| Pointwise operations and selection | [`pointwise`](src/pointwise.rs), [`argmax`](src/argmax.rs) | Vector versus matrix layout, output type, and any required reduction launch |
++| Fused QKV projection | [`qkv`](src/experimental/qkv.rs) | Head layout, quantization scales, slot bounds and schedule compatibility; use the host guide below |
 +
- ### Documentation
++Start with an entry that matches the operation and buffer contract, then tune
++its configuration. Neither inclusion here nor the `experimental` label is a
++performance ranking. Compare with the appropriate library baseline on the
++target workload; the validation commands below check correctness, not optimality.
++
+ ## Grout kernels
  
- - Link the Tile library provider catalog and CUDA Oxide export workflow;
+ The corpus includes the kernels from
+ [Grout `23ae5a3`](https://github.com/elibol/grout/blob/23ae5a3e78dc39e242918824839ba8a35e4adce9/src/kernels.rs),
+ organized into separate modules. The current cuTile API adaptations are retained,
+ including guarded blocks in place of early returns in the LPT attention kernels.
+ The refresh adds vector operations, single-token embedding/RoPE/cache updates,
+-head-major attention, baseline GEMM, split-K prefill and merge, and persistent
+-RMSNorm. The baseline GEMM and persistent RMSNorm variants are experimental;
++head-major attention, mixed-precision GEMM, split-K prefill and merge, and persistent
++RMSNorm. The GEMM and persistent RMSNorm variants are experimental;
+ their presence does not imply they are Grout's default dispatch choices.
+ 
+ Kernel implementations belong here; runnable host-side examples in
+@@ -45,10 +62,22 @@ scheduling parameters. With `M_EFF = BM * GROUP` and
+ `[q_len, num_head_groups * GROUP, D]`. See the entry-point safety contracts for
+ alignment, grid, and dimension requirements.
+ 
++The raw-pointer `fmha_prefill_gqa_lpt` and `fmha_prefill_gqa_lpt_split` entries
++retain their contiguous K/V contract: physical head stride `kv_len * D`.
++For caches with reserved capacity, use `fmha_prefill_gqa_lpt_strided` or
++`fmha_prefill_gqa_lpt_split_strided`. Immediately after `kv_len`, these take
++`k_head_stride` and `v_head_stride`, independently, **in elements**. For example,
++K/V storage `[kv_heads, capacity, D]` has head stride `capacity * D`, while
++`kv_len` remains the active length. Token rows must still be contiguous with
++stride `D`; this interface does not support arbitrary layouts. Split scratch
++and the merge call are unchanged. The tensor-view attention entries are another
++option when the existing view already carries the required strides.
++
+ ## GEMM, causal attention and FP16 MoE variants
+ 
+ | Module | Choices and output |
+ | --- | --- |
++| `experimental::gemm` | FP16 operands and output, FP32 accumulation; K must be divisible by the K tile size |
+ | `experimental::gemm_variants` | FP16 inputs, FP32 output; TMA/non-TMA access, transposed MMA, masked gathers for contiguous matrices with unaligned row strides |
+ | `experimental::attention_f16` | FP16 causal attention with FP32 output; single-tile, narrow-tail and streaming paths |
+ | `experimental::moe_f16` | Routed FP16 ReLU-squared MoE; direct gathers or packed input, FP32 weighted atomic combine |
+@@ -60,6 +89,14 @@ The FP16 MoE path is separate from the block-scaled NVFP4 pipeline below.
+ It requires Tile IR 13.4 or newer for explicit inbounds TMA lo
 ```
 
-**File**: `cutile-rs/cuda-tile-rs/README.md` (modified, +10/-0)
+**File**: `cutile-rs/cutile-kernels/examples/support/variants.rs` (modified, +24/-1)
 ```diff
-@@ -167,3 +167,13 @@ CUTILE_REFERENCE_TRANSLATE=$HOME/.cargo/bin/cuda-tile-translate \
- 
- An explicitly configured translator must pass; an incompatible version is a
- test failure rather than a skipped check.
-+
-+The `cutile` static tile-library GPU tests (`cutile/tests/gpu/static_tilelib.rs`)
-+assemble their library from `.mlir` sources with `cuda-tile-translate`, which
-+the CUDA toolkit does not ship. Name the installed translator with
-+`CUTILE_TILE_TRANSLATE`; without one those tests skip:
-+
-+```bash
-+CUTILE_TILE_TRANSLATE=$HOME/.cargo/bin/cuda-tile-translate \
-+    cargo test -p cutile --test gpu static_tilelib
-+```
-```
-
-**File**: `cutile-rs/cutile-ir/tests/bytecode_13_5.rs` (modified, +69/-0)
-```diff
-@@ -9,6 +9,8 @@
- //!
- //! The translator checks use `CUTILE_REFERENCE_TRANSLATE` when configured,
- //! otherwise a `cuda-tile-translate` next to the selected 13.5 `tileiras`.
-+//! The disassembler check uses `tileirdisasm`, which the toolkit installs next
-+//! to `tileiras`; with `CUTILE_REQUIRE_TILELIB=1` it fails instead of skipping.
- //! They never need a GPU.
- 
- use std::path::{Path, PathBuf};
-@@ -666,3 +668,70 @@ fn official_translator_reads_13_5_preview_calls() {
-     );
-     assert!(mlir.contains("!cuda_tile.token"), "{mlir}");
+@@ -36,7 +36,7 @@ fn compare(actual: &[f32], reference: &[f32], atol: f32, rtol: f32) -> Result {
+ pub fn gemm() -> Result {
+     use gemm_variants::kernels as k;
+     let stream = Context::new(0)?.new_stream()?;
+-    for (m, n, inner) in [(48usize, 80usize, 96usize), (35, 53, 71)] {
++    for (m, n, inner) in [(48usize, 80usize, 96usize), (35, 53, 71), (35, 80, 96)] {
+         let av = values(m * inner, 3);
+         let bv = values(inner * n, 7);
+         let mut reference = vec![0.0; m * n];
+@@ -85,6 +85,29 @@ pub fn gemm() -> Result {
+             compare(&actual, &reference, 0.002, 0.002)?;
+             println!("GEMM {m}x{n}x{inner} {mode}: PASS");
+         }
++        if inner % 32 == 0 && n % 8 == 0 {
++            let out = api::full(f16::NAN, &[m, n]).sync_on(&stream)?;
++            // SAFETY: K is divisible by BK, row strides are TMA aligned,
++            // and the output is disjoint. Partial M/N tiles are masked.
++            let result = unsafe {
++                cutile_kernels::experimental::gemm_f16(
++                    out.partition([32, 32]),
++                    a.clone(),
++                    b.clone(),
++                )
++            }
++            .generics(vec![
++                "32".into(),
++                "32".into(),
++                "32".into(),
++                inner.to_string(),
++            ])
++            .sync_on(&stream)?;
++            let actual = result.0.unpartition().to_host_vec().sync_on(&stream)?;
++            let actual = actual.iter().map(|x| x.to_f32()).collect::<Vec<_>>();
++            compare(&actual, &reference, 0.002, 0.002)?;
++            println!("GEMM {m}x{n}x{inner} f16 output: PASS");
++        }
+     }
+     Ok(())
  }
-+
-+/// `tileirdisasm` next to the selected `tileiras`, when that assembler
-+/// accepts Tile IR 13.5; the toolkit installs the two together. Without one
-+/// the caller skips, and with `CUTILE_REQUIRE_TILELIB=1` this panics instead.
-+fn disassembler() -> Option<PathBuf> {
-+    let tileiras = cutile_ir::toolchain::tileiras_from_env();
-+    let tileiras = if tileiras.components().count() == 1 {
-+        which(&tileiras).unwrap_or(tileiras)
-+    } else {
-+        tileiras
-+    };
-+    let disassembler = tileiras
-+        .parent()
-+        .map(|bin| bin.join("tileirdisasm"))
-+        .filter(|path| path.is_file());
-+    let accepts_13_5 =
-+        cutile_ir::toolchain::negotiate_bytecode_version(&tileiras, Some("13.5".as_ref())).is_ok();
-+    if let (Some(disassembler), true) = (disassembler, accepts_13_5) {
-+        return Some(disassembler);
-+    }
-+    let reason = format!("no tileirdisasm accepting Tile IR 13.5 next to {tileiras:?}");
-+    if std::env::var("CUTILE_REQUIRE_TILELIB").as_deref() == Ok("1") {
-+        panic!("CUTILE_REQUIRE_TILELIB=1 but the disassembler check cannot run: {reason}");
-+    }
-+    eprintln!("skipped: {reason}");
-+    None
-+}
-+
-+/// The disassembly of `bytes`, which may contain public-preview operations.
-+fn disassemble(disassembler: &Path, bytes: &[u8]) -> String {
-+    let dir = std::env::temp_dir().join(format!("cutile-13-5-disasm-{}", uuid_like()));
-+    std::fs::create_dir_all(&dir).unwrap();
-+    let file = dir.join("module.tilebc");
-+    std::fs::write(&file, bytes).unwrap();
-+    let output = Command::new(disassembler)
-+        .arg("--preview=simt")
-+        .arg(&file)
-+        .output()
-+        .unwrap();
-+    std::fs::remove_dir_all(&dir).ok();
-+    assert!(
-+        output.status.success(),
-+        "{}",
-+        String::from_utf8_lossy(&output.stderr)
-+    );
-+    String::from_utf8(output.stdout).unwrap()
-+}
-+
-+/// The toolkit's own reader accepts the `preview$call` this crate writes and
-+/// prints the callee, its constant arguments and the token it threads. Unlike
-+/// the translator, the disassembler is in every CUDA 13.5 toolkit.
-+#[test]
-+fn toolkit_disassembler_reads_13_5_preview_calls() {
-+    let Some(disassembler) = disassembler() else {
-+        return;
-+    };
-+    let module = cholesky_module();
-+    let text = disassemble(
-+        &disassembler,
-+        &write(&module, BytecodeVersion::V13_5).unwrap(),
-+    );
-+    assert!(
-+        text.contains(r#"preview$call @cholesky<["potrf", "lower", 1, 32, f64]>"#),
-+        "{text}"
-+    );
-+    assert!(text.contains("!cuda_tile.token"), "{text}");
-+}
 ```
 
-**File**: `cutile-rs/cutile/tests/gpu/static_tilelib.rs` (modified, +81/-40)
+**File**: `cutile-rs/cutile-kernels/src/experimental/attention.rs` (modified, +323/-10)
 ```diff
-@@ -4,18 +4,22 @@
+@@ -13,6 +13,19 @@ pub mod fmha_prefill_gqa_lpt_module {
+     use cutile::core::*;
+ 
+     /// Raw-pointer long-prefill GQA attention with LPT/swizzled scheduling. Experimental TileGym-style path for long transformer prefill cells.
++    ///
++    /// # Safety
++    /// Q/output are contiguous [q_len, q_heads, D]; K/V are contiguous
++    /// [kv_heads, kv_len, D]. In particular, the physical K/V head stride
++    /// must equal kv_len * D. For a cache with a larger reserved sequence
++    /// stride, use [`fmha_prefill_gqa_lpt_strided`]. Pointers must be
++    /// 16-byte aligned and outputs must not alias inputs or concurrent writes.
++    /// M_EFF = BM * GROUP; GROUP divides query_group_size, which divides
++    /// q_heads = num_head_groups * GROUP. Dimensions and scheduling divisors
++    /// are positive; num_q_blocks = ceil(q_len / BM). EVEN_K = 1 requires
++    /// kv_len divisible by BN. Use a matching schedule/swizzle and a 1-D grid
++    /// covering num_q_blocks * num_head_groups. Padded indices must fit i32.
++    /// query_start must be nonnegative and query_start + q_len <= kv_len.
+     #[cutile::entry(print_ir=false,
+                        unchecked_accesses=true,
+                        optimization_hints = (
+@@ -45,6 +58,147 @@ pub mod fmha_prefill_gqa_lpt_module {
+         swizzle: i32,
+         num_hb_quotient: i32,
+         num_hb_remainder: i32,
++    ) {
++        unsafe {
++            fmha_prefill_gqa_lpt_impl::<
++                BM,
++                BN,
++                D,
++                GROUP,
++                M_EFF,
++                CAUSAL,
++                EVEN_K,
++                LATENCY,
++                SCHED,
++                MASK_SPLIT,
++            >(
++                q_ptr,
++                k_ptr,
++                v_ptr,
++                out_ptr,
++                qk_scale,
++                query_group_size,
++                q_len,
++                kv_len,
++                kv_len * D,
++                kv_len * D,
++                query_start,
++                num_q_blocks,
++                num_head_groups,
++                swizzle,
++                num_hb_quotient,
++                num_hb_remainder,
++            );
++        }
++    }
++
++    /// Prefill with independent physical K/V head strides, in elements.
++    /// Token rows remain contiguous with stride D; only kv_len active rows
++    /// per head are read, even when storage reserves a longer sequence.
++    ///
++    /// # Safety
++    /// All requirements of [`fmha_prefill_gqa_lpt`] apply except its K/V head
++    /// layout: k_head_stride and v_head_stride must each be at least kv_len * D
++    /// elements and a multiple of 8 (16 bytes for f16). Strides and padded
++    /// indices must fit i32.
++    /// Each allocation must cover (kv_heads - 1) * head_stride + kv_len * D
++    /// elements. Q/output retain their contiguous layouts.
++    #[cutile::entry(print_ir=false,
++                       unchecked_accesses=true,
++                       optimization_hints = (
++                         sm_100 = (occupancy=2, max_divisibility=16,),
++                         sm_120 = (occupancy=2, max_divisibility=16,),
++                       ))]
++    unsafe fn fmha_prefill_gqa_lpt_strided<
++        const BM: i32,
++        const BN: i32,
++        const D: i32,
++        const GROUP: i32,
++        const M_EFF: i32, // caller MUST pass BM * GROUP
++        const CAUSAL: i32,
++        const EVEN_K: i32,
++        const LATENCY: i32,
++        const SCHED: i32,
++        const MASK_SPLIT: i32,
++    >(
++        q_ptr: *mut f16,   // [q_len, q_heads, D]
++        k_ptr: *mut f16,   // [kv_heads, kv_len, D]
++        v_ptr: *mut f16,   // [kv_heads, kv_len, D]
++        out_ptr: *mut f16, // [q_len, q_heads, D]
++        qk_scale: f32,
++        query_group_size: i32,
++        q_len: i32,
++        kv_len: i32,
++        k_head_stride: i32,
++        v_head_stride: i32,
++        query_start: i32,
++        num_q_blocks: i32,
++        num_head_groups: i32,
++        swizzle: i32,
++        num_hb_quotient: i32,
++        num_hb_remainder: i32,
++    ) {
++        unsafe {
++            fmha_prefill_gqa_lpt_impl::<
++                BM,
++                BN,
++                D,
++                GROUP,
++                M_EFF,
++                CAUSAL,
++                EVEN_K,
++                LATENCY,
++                SCHED,
++                MASK_SPLIT,
++            >(
++                q_ptr,
++                k_ptr,
++                v_ptr,
++                out_ptr,
++                qk_scale,
++                query_group_size,
++                q_len,
++                kv_len,
++                k_head_stride,
++                v_head_stride,
++                query_start,
++                num_q_blocks,
++                num_head_groups,
++                swizzle,
++                num_hb_quotient,
++                num_hb_remainder,
++            );
++        }
++    }
++
++    unsafe fn fmha_prefill_gqa_lpt_impl<
++        const BM: i32,
++        const BN: i32,
++        const D: i32,
++        cons
+```
+
+**File**: `cutile-rs/cutile-kernels/src/experimental/gemm.rs` (modified, +11/-7)
+```diff
+@@ -3,17 +3,24 @@
+  * SPDX-License-Identifier: Apache-2.0
   */
  
- //! Foreign tile-library calls executed on the GPU, against a static test
--//! tile library built from `gpu/tilelib/` with the toolkit's own tools:
-+//! tile library built from the sources in `gpu/tilelib/`:
- //! `cuda-tile-translate` assembles the interface and the implementation
- //! catalog, `nvcc` compiles the SIMT code to LTO-IR, and `tileiras
--//! --preview-create-tile-lib` packages them. Skipped without a Tile IR 13.5
--//! `tileiras` or without `nvcc` next to it.
-+//! --preview-create-tile-lib` packages them.
-+//!
-+//! `nvcc` and `tileiras` come from the toolkit. The public toolkit has no
-+//! `cuda-tile-translate`: `CUTILE_TILE_TRANSLATE` names the executable, and
-+//! without it the one next to `tileiras` is used. `cargo build --release -p
-+//! cuda-tile-rs` builds one (see that crate's README).
-+//!
-+//! Skipped without a Tile IR 13.5 `tileiras`, without `nvcc` next to it, or
-+//! without `cuda-tile-translate`. With `CUTILE_REQUIRE_TILELIB=1` a skip is a
-+//! failure.
+-//! Experimental baseline GEMM kernels.
++//! Experimental mixed-precision GEMM kernels.
+ 
+ #[cutile::module]
+ pub mod gemm_f16_module {
+     use cutile::core::*;
+ 
+-    /// Baseline f16 GEMM with f32 MMA operands.
++    /// GEMM with f16 operands, f32 accumulation, and f16 output.
++    ///
++    /// Keep the operands in f16 for MMA; widening them before multiplication
++    /// changes the operation selected by the compiler. Only the accumulator
++    /// needs f32 precision. The output is rounded to f16 once after the K loop.
+     ///
+     /// # Safety
+-    /// K must be divisible by BK. Inputs must cover every tile addressed by the
+-    /// output partition/grid, and output must not alias inputs or other writers.
++    /// X[M,K], Y[K,N], and Z[M,N] must have matching positive dimensions and
++    /// TMA-compatible strides. K must be divisible by BK. Use supported MMA
++    /// tile sizes, output partitions [BM,BN], and grid (ceil(M/BM),ceil(N/BN),1).
++    /// Partial M/N tiles are masked. Output must not alias inputs or other
++    /// writers, and padded indices must fit i32.
+     #[cutile::entry(print_ir=false,
+                        unchecked_accesses=true,
+                        optimization_hints = (
+@@ -31,10 +38,7 @@ pub mod gemm_f16_module {
+         for i in 0i32..(K / BK) {
+             let tile_x: Tile<f16, { [BM, BK] }> = part_x.load([pid.0, i]);
+             let tile_y: Tile<f16, { [BK, BN] }> = part_y.load([i, pid.1]);
+-            let tile_x: Tile<f32, { [BM, BK] }> = convert_tile(tile_x);
+-            let tile_y: Tile<f32, { [BK, BN] }> = convert_tile(tile_y);
+             tile_z = mma(tile_x, tile_y, tile_z);
+-            continue;
+         }
+         let tile_z: Tile<f16, { [BM, BN] }> = convert_tile(tile_z);
+         z.store(tile_z);
+```
+
+**File**: `cutile-rs/cutile-kernels/src/experimental/gemm_variants.rs` (modified, +2/-2)
+```diff
+@@ -5,7 +5,7 @@
+ 
+ //! FP16-input, FP32-output GEMM with selectable memory and MMA schedules.
  //!
- //! A static tile library carries precompiled SIMT code and needs no
--//! implementation-provider shared library. When the toolkit has no
--//! `cuda-tile-translate`, `gpu/tilelib/prebuilt/` is used instead; after
--//! editing a `.mlir` file, regenerate it with
--//! `cuda-tile-translate <name>.mlir --mlir-to-cudatilebc --preview=simt
--//! --bytecode-version=13.5 -o prebuilt/<name>.tilebc`.
-+//! implementation-provider shared library.
+-//! Tensors represent A[M,K], B[K,N] and C[M,N]. Use an output partition [BM,BN]
++//! Tensors represent `A[M,K]`, `B[K,N]` and `C[M,N]`. Use an output partition `[BM,BN]`
+ //! and grid (ceil(M/BM), ceil(N/BN), 1), with target-supported MMA tile sizes.
+ //! L is a load-latency hint. MODE=0 uses TMA loads/stores, MODE=1 disables TMA
+ //! stores, and MODE=2 disables TMA loads and stores.
+@@ -102,7 +102,7 @@ pub mod kernels {
+     /// Gather GEMM for contiguous row-major inputs with masked tails.
+     ///
+     /// # Safety
+-    /// A/B must have strides [K,1]/[N,1] and matching K. C has shape [M,N]
++    /// A/B must have strides `[K,1]`/`[N,1]` and matching K. C has shape `[M,N]`
+     /// and does not alias inputs. Use the documented grid and partition.
+     /// Padded coordinates must fit i32; AEL=BM*BK and BEL=BK*BN.
+     /// Pointer offsets are computed in i64 before multiplication.
+```
+
+**File**: `cutile-rs/cutile-kernels/src/experimental/mod.rs` (modified, +1/-1)
+```diff
+@@ -23,7 +23,7 @@ pub mod qkv;
  
- use crate::common::supports_tile_ir as supports;
- use cutile::prelude::*;
-@@ -30,6 +34,9 @@ use std::sync::OnceLock;
- /// The built `test_lib.tilelib`, once [`test_tilelib_available`] built it.
- static TILELIB: OnceLock<PathBuf> = OnceLock::new();
+ pub use attention::{
+     attention_decode_kernel_grouped, fmha_prefill_gqa_lpt, fmha_prefill_gqa_lpt_split,
+-    prefill_splitk_reduce_merge,
++    fmha_prefill_gqa_lpt_split_strided, fmha_prefill_gqa_lpt_strided, prefill_splitk_reduce_merge,
+ };
+ pub use fused_transformer::{qk_norm_rope_kv_decode_raw_f16, qk_norm_rope_kv_prefill_raw_f16};
+ pub use gemm::gemm_f16;
+```
+
+**File**: `cutile-rs/cutile-kernels/src/experimental/moe_f16.rs` (modified, +4/-4)
+```diff
+@@ -20,10 +20,10 @@
+ //! two >= ceil(NR/BM). CAP >= ceil(NR/BM)+E. All sizes, padded indices and
+ //! intermediate integer products must fit i32. FK=BM*BK, FN=BM*BN.
+ //!
+-//! Required element capacities: input[T,H], up[E,I,H], down[E,H,I],
+-//! expert_ids[NR] (each in [0,E)), route_weights[NR], map[E,NR], counts[E],
+-//! tasks[CAP,2], total[1], output[T,H]. With PACKED, packed[CAP*BM,H] and
+-//! activation[CAP*BM,I]; otherwise activation[NR,I]. A route identifies
++//! Required element capacities: `input[T,H]`, `up[E,I,H]`, `down[E,H,I]`,
++//! `expert_ids[NR]` (each in `[0,E)`), `route_weights[NR]`, `map[E,NR]`, `counts[E]`,
++//! `tasks[CAP,2]`, `total[1]`, `output[T,H]`. With PACKED, `packed[CAP*BM,H]` and
++//! `activation[CAP*BM,I]`; otherwise `activation[NR,I]`. A route identifies
+ //! token=floor(route/R); repeated expert IDs are allowed.
+ //!
+ //! prepare_small requires NR <= 2*BM and a nonempty 1-D grid. prepare_large
+```
+
+---
+
+### Incident Patch 2: `860375a1` (2026-11-17)
+**Commit Message**: feat(cuda-core): make Function::set_max_dynamic_shared_memory_bytes public (#1817)
+
+## Summary
+
+Makes `Function::set_max_dynamic_shared_memory_bytes` public, so a
+function launched without a typed launch contract can opt into more than
+the portable dynamic shared-memory limit. An example is a function
+loaded from PTX with `load_module_from_ptx_src` / `load_function`. Until
+now only typed launch preparation could call the setter, while the
+matching getter (`max_dynamic_shared_memory_bytes`) and the device limit
+(`Context::max_opt_in_shared_memory_per_block`) were already public.
+Closes #1816.
+
+## Changes
+
+- `cuda-core/src/module.rs`: `pub(crate)` → `pub`. The function body is
+unchanged. Its doc comment now explains when to call it: typed launches
+do it on their own, untyped ones have to call it before the first launch
+that needs the memory. It also states that the value is a persistent
+attribute of the loaded function, and which errors to expect.
+- `cuda-core/tests/function_dynamic_shared_memory.rs` (new): on a
+function loaded from PTX, the full opt-in budget
+(`max_opt_in_shared_memory_per_block` minus static shared memory)
+round-trips through `max_dynamic_shared_memory_bytes`. Sett
+
+**File**: `cuda-core/src/module.rs` (modified, +22/-7)
+```diff
+@@ -331,14 +331,29 @@ impl Function {
+         }
+     }
  
-+/// The `cuda-tile-translate` that built it (see [`tile_translate`]).
-+static TRANSLATE: OnceLock<PathBuf> = OnceLock::new();
+-    /// Opts this function into a larger dynamic shared-memory allocation.
++    /// Opts this function into a dynamic shared-memory allocation of up to
++    /// `bytes` per block.
+     ///
+-    /// Typed launch preparation calls this at most once, and only after
+-    /// checking static plus dynamic memory against the device opt-in limit.
+-    pub(crate) fn set_max_dynamic_shared_memory_bytes(
+-        &self,
+-        bytes: u32,
+-    ) -> Result<(), DriverError> {
++    /// A launch whose static plus dynamic shared memory exceeds the portable
++    /// per-block limit needs this first, up to
++    /// [`Context::max_opt_in_shared_memory_per_block`](crate::Context::max_opt_in_shared_memory_per_block)
++    /// in total. Typed launch preparation calls it on its own, after checking
++    /// the contract against that limit. A function launched without a typed
++    /// contract, for example one loaded from PTX or a cubin, has to call it
++    /// before its first launch that needs the memory.
++    ///
++    /// The value is an attribute of the loaded function
++    /// (`CU_FUNC_ATTRIBUTE_MAX_DYNAMIC_SHARED_SIZE_BYTES`): it applies to every
++    /// later launch of this function in this context, whichever handle
++    /// launches it. Read it back with
++    /// [`max_dynamic_shared_memory_bytes`](Self::max_dynamic_shared_memory_bytes).
++    ///
++    /// # Errors
++    ///
++    /// `CUDA_ERROR_INVALID_VALUE` if `bytes` does not fit in an `i32`, or if
++    /// the driver rejects it, for example when the function's static shared
++    /// memory plus `bytes` exceeds the device's opt-in limit.
++    pub fn set_max_dynamic_shared_memory_bytes(&self, bytes: u32) -> Result<(), DriverError> {
+         self.context().bind_to_thread()?;
+         let bytes = i32::try_from(bytes)
+             .map_err(|_| DriverError(cuda_bindings::cudaError_enum_CUDA_ERROR_INVALID_VALUE))?;
+```
+
+**File**: `cuda-core/tests/function_dynamic_shared_memory.rs` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++/*
++ * SPDX-FileCopyrightText: Copyright (c) 2026 NVIDIA CORPORATION & AFFILIATES. All rights reserved.
++ * SPDX-License-Identifier: Apache-2.0
++ */
 +
- /// The test library, as the host configures it.
- fn tilelib() -> TileLibrarySpec {
-     TileLibrarySpec::new(TILELIB.get().expect("test library built"))
-@@ -245,35 +252,44 @@ fn tilelib_sources() -> PathBuf {
-     Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/gpu/tilelib")
- }
- 
-+/// The `cuda-tile-translate` that assembles the library's `.mlir` sources:
-+/// `CUTILE_TILE_TRANSLATE` when it is set, otherwise the one next to
-+/// `tileiras` in `bin`, if there is one.
-+fn tile_translate(bin: &Path) -> Option<PathBuf> {
-+    match std::env::var_os("CUTILE_TILE_TRANSLATE").filter(|path| !path.is_empty()) {
-+        Some(path) => {
-+            let path = PathBuf::from(path);
-+            assert!(
-+                path.is_file(),
-+                "CUTILE_TILE_TRANSLATE names {path:?}, which is not a file"
-+            );
-+            Some(path)
-+        }
-+        None => Some(bin.join("cuda-tile-translate")).filter(|path| path.is_file()),
-+    }
++//! `Function::set_max_dynamic_shared_memory_bytes` on a function loaded from
++//! PTX, the untyped case that cannot rely on typed launch preparation: the
++//! value round-trips through `max_dynamic_shared_memory_bytes`, and a request
++//! past the device's opt-in limit is refused by the driver.
++
++use cuda_core::Context;
++
++const NOOP_PTX: &str = "\
++.version 7.0
++.target sm_52
++.address_size 64
++
++.visible .entry noop()
++{
++    ret;
++}
++";
++
++const INVALID_VALUE: cuda_core::sys::CUresult =
++    cuda_core::sys::cudaError_enum_CUDA_ERROR_INVALID_VALUE;
++
++fn has_gpu() -> bool {
++    Context::device_count().map(|n| n > 0).unwrap_or(false)
 +}
 +
- /// Builds `test_lib.tilelib` for the device's architecture into `dir`, with
--/// the SIMT implementation in `simt_source`. Intermediate files go to a
--/// per-process directory, and the library is renamed into place, so
--/// concurrent test processes never see a partial file.
--fn build_test_tilelib(bin: &Path, sm: &str, simt_source: &Path, dir: &Path) {
-+/// the SIMT implementation in `simt_source`. `translate` assembles the
-+/// `.mlir` sources; `nvcc` and `tileiras` are taken from `bin`. Intermediate
-+/// files go to a per-process directory, and the library is renamed into
-+/// place, so concurrent test processes never see a partial file.
-+fn build_test_tilelib(translate: &Path, bin: &Path, sm: &str, simt_source: &Path, dir: &Path) {
-     let src = tilelib_sources();
-     let work = dir.join(format!("build-{}", std::process::id()));
-     std::fs::create_dir_all(&work).expect("create the test tile-library directory");
--    let translate = bin.join("cuda-tile-translate");
-     for name in ["interface", "implementation"] {
--        let out = work.join(format!("{name}.tilebc"));
--        if translate.is_file() {
--            run(
--                &translate,
--                &[
--                    src.join(format!("{name}.mlir")).as_os_str(),
--                    "--mlir-to-cudatilebc".as_ref(),
--                    "--preview=simt".as_ref(),
--                    "--bytecode-version=13.5".as_ref(),
--                    "-o".as_ref(),
--                    out.as_os_str(),
--                ],
--            );
--        } else {
--            // Some toolkits do not ship cuda-tile-translate; the prebuilt
--            // bytecode is assembled from the same .mlir files.
--            std::fs::copy(src.join(format!("prebuilt/{name}.tilebc")), &out)
--                .expect("copy prebuilt tile bytecode");
--        }
-+        run(
-+            translate,
-+            &[
-+                src.join(format!("{name}.mlir")).as_os_str(),
-+                "--mlir-to-cudatilebc".as_ref(),
-+                "--preview=simt".as_ref(),
-+                "--bytecode-version=13.5".as_ref(),
-+                "-o".as_ref(),
-+                work.join(format!("{name}.tilebc")).as_
++#[test]
++fn dynamic_shared_memory_opt_in_round_trips_and_respects_the_device_limit() {
++    if !has_gpu() {
++        return;
++    }
++    let ctx = Context::new(0).expect("failed to create CUDA context");
++    let module = ctx
++        .load_module_from_ptx_src(NOOP_PTX)
++        .expect("failed to load the PTX module");
++    let function = module.load_function("noop").expect("missing `noop`");
++
++    let opt_in = ctx
++        .max_opt_in_shared_memory_per_block()
++        .expect("opt-in shared-memory limit");
++    let static_bytes = function
++        .static_shared_memory_bytes()
++        .expect("static shared memory");
++    let allowed = opt_in - static_bytes;
++
++    // The whole opt-in budget is accepted and observable.
++    function
++        .set_max_dynamic_shared_memory_bytes(allowed)
++        .expect("setting the opt-in maximum must succeed");
++    assert_eq!(function.max_dynamic_shared_memory_bytes().unwrap(), allowed);
++
++    // Lowering it again is also a plain round trip.
++    function.set_max_dynamic_shared_memory_bytes(0).unwrap();
++    assert_eq!(function.max_dynamic_shared_memory_bytes().unwrap(), 0);
++
++    // One byte past the budget is the driver's to refuse.
++    let err = function
++        .set_max_dynamic_shared_memory_bytes(allowed + 1)
++        .expect_err("a request past the opt-in limit must fail");
++    assert_eq!(err.0, INVALID_VALUE);
++
++    // Values that do not fit the driver's `int` are rejected before the call.
++    let err = function
++        .set_max_dynamic_shared_memory_bytes(u32::MAX)
++        .expect_err("u32::MAX does not fit in an i32");
++    assert_eq!(err.0, INVALID_VALUE);
++}
+```
+
+---
+
+### Incident Patch 3: `367cd5a9` (2026-11-17)
+**Commit Message**: fix(cuda-oxide): let blackwell-mma smoketest honor detected sm_121a target (#1830)
+
+## What This PR Does
+
+Fixes `scripts/smoketest.sh` on **GB10 (`sm_121`)** for the
+`blackwell-mma` category (`mma_mxf8f6f4`), resolving **NVBug 7101256**:
+
+```text
+BEFORE (in `scripts/smoketest.sh` on GB10, compute capability 12.1):
+  smoketest.sh ──► cargo oxide run mma_mxf8f6f4 --arch=sm_120a
+                     └─► sets CUDA_OXIDE_TARGET=sm_120a (overrides hint sm_121a)
+                     └─► emits .target sm_120a ──► DriverError(218) on sm_121 [X]
+
+AFTER (matches `tcgen05` and `wgmma`):
+  smoketest.sh ──► cargo oxide run mma_mxf8f6f4
+                     ├─► on sm_121 (GB10): hint sm_121a ──► .target sm_121a ──► executes & passes [OK]
+                     ├─► on sm_120 (50xx): hint sm_120a ──► .target sm_120a ──► executes & passes [OK]
+                     └─► elsewhere / build:             ──► .target sm_120a ──► PTX check & passes [OK]
+```
+
+---
+
+### 1. Drop Forced `--arch=sm_120a` Override in `smoketest.sh`
+
+* `cuda-oxide-codegen` (`v1:i0876` in `intrinsics/catalog.json`:
+`sm_120a|sm_120f|sm_121a|sm_121f`) and `cargo-oxide`
+(`format_sm_arch((12, 1)) == "sm_121a"`) already select `sm_121a` fr
+
+**File**: `cuda-oxide/crates/cargo-oxide/src/commands/tests.rs` (modified, +6/-0)
+```diff
+@@ -4079,18 +4079,24 @@ fn format_sm_arch_uses_cuda_target_spelling() {
+     assert_eq!(format_sm_arch((10, 1)), "sm_101a");
+     assert_eq!(format_sm_arch((10, 3)), "sm_103a");
+     assert_eq!(format_sm_arch((12, 0)), "sm_120a"); // consumer Blackwell
++    assert_eq!(format_sm_arch((12, 1)), "sm_121a"); // GB10 / DGX Spark
+ }
+ 
+ #[test]
+ fn parse_compute_cap_accepts_real_nvidia_smi_output() {
+     assert_eq!(parse_compute_cap("12.0\n"), Some((12, 0)));
++    assert_eq!(parse_compute_cap("12.1\n"), Some((12, 1)));
+     assert_eq!(parse_compute_cap("7.5\n"), Some((7, 5)));
+     assert_eq!(parse_compute_cap("10.3"), Some((10, 3)));
+     // End-to-end with format_sm_arch: the values the backend sees.
+     assert_eq!(
+         format_sm_arch(parse_compute_cap("12.0\n").unwrap()),
+         "sm_120a"
+     );
++    assert_eq!(
++        format_sm_arch(parse_compute_cap("12.1\n").unwrap()),
++        "sm_121a"
++    );
+     assert_eq!(format_sm_arch(parse_compute_cap("7.5\n").unwrap()), "sm_75");
+ }
+ 
+```
+
+**File**: `cuda-oxide/crates/cuda-oxide-codegen/src/target/tests/generated_floors.rs` (modified, +55/-0)
+```diff
+@@ -932,3 +932,58 @@ fn generated_scalar_math_floors_admit_turing() {
+         "sm_75"
+     );
+ }
++
++/// Regression guard for NVBug 7101256: `mma_m16n8k32_mxf8f6f4_f32_e4m3_e4m3`
++/// (`v1:i0876`) honors the detected GPU hint on both `sm_120a` and `sm_121a`
++/// (GB10), and falls back to `sm_120a` when no compatible GPU hint is present.
++#[test]
++fn generated_mxf8f6f4_mma_honors_sm121a_hint_and_falls_back_to_sm120a() {
++    use crate::generated_intrinsic_targets::{
++        GeneratedIntrinsicBackend, generated_intrinsic_target_by_marker,
++    };
++
++    let mma = generated_intrinsic_target_by_marker("v1:i0876").unwrap();
++    assert_eq!(mma.id, "mma_m16n8k32_mxf8f6f4_f32_e4m3_e4m3");
++    let llvm = GeneratedModuleRequirements::from_targets(vec![mma])
++        .for_backend(GeneratedIntrinsicBackend::LlvmNvptx);
++
++    for supported_hint in ["sm_120a", "sm_121a"] {
++        let hint = supported_hint
++            .parse::<cuda_target_spec::DeviceArch>()
++            .unwrap();
++        assert_eq!(
++            resolve_ptx_target_with_generated(
++                None,
++                "CUDA_OXIDE_TARGET",
++                Some(&hint),
++                DetectedFeatures::Basic,
++                &llvm,
++            )
++            .unwrap(),
++            (supported_hint.parse().unwrap(), "detected GPU"),
++            "{supported_hint}"
++        );
++    }
++
++    for fallback_hint in [
++        None,
++        Some("sm_80"),
++        Some("sm_90a"),
++        Some("sm_100a"),
++        Some("sm_107a"),
++    ] {
++        let hint = fallback_hint.map(|h| h.parse::<cuda_target_spec::DeviceArch>().unwrap());
++        assert_eq!(
++            resolve_ptx_target_with_generated(
++                None,
++                "CUDA_OXIDE_TARGET",
++                hint.as_ref(),
++                DetectedFeatures::Basic,
++                &llvm,
++            )
++            .unwrap(),
++            ("sm_120a".parse().unwrap(), "feature requirement"),
++            "{fallback_hint:?}"
++        );
++    }
++}
+```
+
+**File**: `cuda-oxide/crates/rustc-codegen-cuda/examples/mma_mxf8f6f4/src/main.rs` (modified, +18/-8)
+```diff
+@@ -18,20 +18,24 @@
+ //!   byte, so scale selection cannot mask a data-path error, but the
+ //!   scale *selector* logic is only trivially exercised.
+ //!
+-//! The instruction only exists on Blackwell consumer parts (sm_120a/f,
+-//! sm_121a/f), so the device code is always compiled for sm_120a
+-//! (smoketest passes `--arch=sm_120a`). On any other GPU the example
+-//! verifies the generated PTX instead of executing and exits cleanly.
++//! The instruction only exists on Blackwell consumer parts (`sm_120a`/`f`,
++//! `sm_121a`/`f`). `cargo oxide run` selects the detected GPU target on
++//! `sm_120`/`sm_121` and falls back to `sm_120a` elsewhere; on any other GPU
++//! the example verifies the generated PTX instead of executing and exits
++//! cleanly.
+ //!
+ //! Build and run with:
+-//!   cargo oxide run mma_mxf8f6f4 --arch sm_120a
++//!   cargo oxide run mma_mxf8f6f4
+ 
+ use cuda_core::LaunchConfig;
+ use cuda_core::{CudaContext, DeviceBuffer};
+ use cuda_device::{DisjointSlice, cuda_module, kernel, thread, wmma};
+ 
++/// Output matrix row count for the `m16n8k32` warp MMA shape.
+ const M: usize = 16;
++/// Output matrix column count for the `m16n8k32` warp MMA shape.
+ const N: usize = 8;
++/// Inner reduction dimension for the `m16n8k32` warp MMA shape.
+ const K: usize = 32;
+ /// Every selectable ue8m0 byte = 127 -> scale factor 2^0 = 1.0.
+ const SCALES_ONE: u32 = 0x7F7F_7F7F;
+@@ -80,16 +84,20 @@ fn encode_e4m3(v: i32) -> u8 {
+     }
+ }
+ 
++/// Deterministic small integer (`-3..=3`) at `(row, k)` in operand matrix `A`.
++/// Every value in this range is exact in OCP `e4m3`.
+ fn a_value(row: usize, k: usize) -> i32 {
+     ((row + k) % 7) as i32 - 3
+ }
+ 
++/// Deterministic small integer (`-2..=2`) at `(k, col)` in operand matrix `B`.
++/// Every value in this range is exact in OCP `e4m3`.
+ fn b_value(k: usize, col: usize) -> i32 {
+     ((k * 2 + col) % 5) as i32 - 2
+ }
+ 
+-/// Non-Blackwell-consumer fallback: confirm the sm_120a PTX was generated
+-/// and actually contains the block-scaled MMA instruction.
++/// Non-Blackwell-consumer fallback: confirm the generated PTX contains the
++/// block-scaled `kind::mxf8f6f4` MMA instruction.
+ fn verify_ptx_only() -> Result<(), Box<dyn std::error::Error>> {
+     let ptx_path = std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("mma_mxf8f6f4.ptx");
+     let ptx = std::fs::read_to_string(&ptx_path)?;
+@@ -103,14 +111,16 @@ fn verify_ptx_only() -> Result<(), Box<dyn std::error::Error>> {
+     Ok(())
+ }
+ 
++/// Executes the `m16n8k32` `kind::mxf8f6f4` numeric check on `sm_120`/`sm_121`
++/// or verifies PTX emission on other GPUs.
+ fn main() -> Result<(), Box<dyn std::error::Error>> {
+     println!("=== mxf8f6f4 block-scale MMA numeric check (e4m3 x e4m3 -> f32) ===");
+     let ctx = CudaContext::new(0)?;
+ 
+     // kind::mxf8f6f4 exists only on sm_120/sm_121 (Blackwell consumer).
+     let (major, minor) = ctx.compute_capability()?;
+     println!("GPU Compute Capability: sm_{major}{minor}");
+-    if major != 12 {
++    if !matches!((major, minor), (12, 0 | 1)) {
+         println!("WARNING: mxf8f6f4 block-scale MMA requires sm_120/sm_121 (Blackwell consumer)");
+         println!("         detected sm_{major}{minor}; verifying generated PTX only");
+         return verify_ptx_only();
+```
+
+**File**: `cuda-oxide/scripts/check-example-smoketest-contract.sh` (modified, +43/-0)
+```diff
+@@ -228,6 +228,49 @@ esac
+                  f"{r100_result.returncode}, {r100_result.stdout!r}, {r100_result.stderr!r}")
+     print("OK: R100 (sm_107) compile-only NVVM code-shape prebuild omits --arch on build and passes --arch=sm_107 to emit-ltoir.")
+ 
++    # On GB10 (compute capability 12.1), blackwell-mma examples must run via
++    # `cargo oxide run <ex>` without forcing `--arch=sm_120a`, so cargo-oxide's
++    # detected `sm_121a` hint reaches the backend and the module JIT-loads on
++    # `sm_121` instead of failing with DriverError 218 (NVBug 7101256).
++    gb10_ex = simt / "crates/rustc-codegen-cuda/examples/mma_mxf8f6f4"
++    gb10_ex.mkdir(parents=True, exist_ok=True)
++    (gb10_ex / "Cargo.toml").touch()
++    (bin_dir / "nvidia-smi").write_text('#!/usr/bin/env bash\necho "NVIDIA GB10, 12.1"\n')
++    (bin_dir / "cargo").write_text('''#!/usr/bin/env bash
++case "$*" in
++    "oxide --help"|"oxide setup") exit 0 ;;
++    "oxide __debug-policy") echo unset; exit 0 ;;
++    "oxide run mma_mxf8f6f4")
++        echo "GPU Compute Capability: sm_121"
++        echo "SUCCESS"
++        exit 0 ;;
++    "oxide build mma_mxf8f6f4")
++        printf '.version 8.7\n.target sm_120a\n.address_size 64\n' > "crates/rustc-codegen-cuda/examples/mma_mxf8f6f4/mma_mxf8f6f4.ptx"
++        exit 0 ;;
++    *)
++        echo "unexpected cargo invocation: $*" >&2
++        exit 99 ;;
++esac
++''')
++    gb10_assembler = root / "ptxas-gb10"
++    gb10_assembler.write_text('''#!/usr/bin/env bash
++[[ "$*" == "-arch=sm_120a crates/rustc-codegen-cuda/examples/mma_mxf8f6f4/mma_mxf8f6f4.ptx -o /dev/null" ]] || exit 99
++exit 0
++''')
++    gb10_assembler.chmod(0o755)
++    gb10_env = dict(env, CUDA_OXIDE_PTXAS=str(gb10_assembler))
++    for extra_flags, mode_label in (([], "runtime"), (["--compile-only"], "compile-only")):
++        gb10_result = subprocess.run(
++            ["bash", str(script), *extra_flags, "--only", "^mma_mxf8f6f4$", "--no-color"],
++            cwd=root, env=gb10_env, capture_output=True, text=True,
++        )
++        if (gb10_result.returncode != 0
++                or not re.search(r"^Pass:\s+1 / 1$", gb10_result.stdout, re.M)
++                or not re.search(r"^Fail:\s+0 / 1$", gb10_result.stdout, re.M)):
++            sys.exit(f"GB10 {mode_label} blackwell-mma smoketest failed: "
++                     f"{gb10_result.returncode}, {gb10_result.stdout!r}, {gb10_result.stderr!r}")
++    print("OK: GB10 (sm_121) blackwell-mma runtime and compile-only smoketest omit forced --arch=sm_120a.")
++
+ # Exercise the actual CLI/preflight without building or launching an example.
+ # The Rust parser owns aliases and normalization; this checks that the shell
+ # trusts its token, honors explicit mode, and refuses a failed/malformed reply.
+```
+
+**File**: `cuda-oxide/scripts/smoketest.sh` (modified, +5/-11)
+```diff
+@@ -22,11 +22,11 @@
+ #                   elsewhere PTX compilation is sufficient (plus the
+ #                   ptxas gate).
+ #   blackwell-mma -- Blackwell-consumer-only MMA (kind::mxf8f6f4 exists on
+-#                   sm_120/sm_121 alone), always compiled with
+-#                   `--arch=sm_120a` because the generated target gating
+-#                   rejects every other architecture at compile time. On an
+-#                   sm_120/121 host require full execution; elsewhere the
+-#                   example verifies the generated PTX and exits 0.
++#                   sm_120/sm_121 alone). Target selection uses the detected
++#                   host arch on sm_120/sm_121 (sm_120a / sm_121a) and falls
++#                   back to sm_120a elsewhere. On an sm_120/121 host require
++#                   full execution; elsewhere the example verifies the
++#                   generated PTX and exits 0 (plus the ptxas gate).
+ #   ltoir        -- runs with `--emit-nvvm-ir --arch=<host>`; the host
+ #                   compute capability is detected via `nvidia-smi` so the
+ #                   resulting cubin actually loads. Execution must succeed
+@@ -2288,12 +2288,6 @@ run_cargo() {
+         # here too, so this lane exercises the full native-artifact path.
+         args+=("--arch=sm_90")
+     fi
+-    # kind::mxf8f6f4 admits only sm_120/sm_121 in the generated target
+-    # gating, so the device build must always pin sm_120a; the example
+-    # itself decides at runtime whether the host GPU can execute it.
+-    if [[ "${cat}" == "blackwell-mma" ]]; then
+-        args+=("--arch=sm_120a")
+-    fi
+     if [[ "${cat}" == "ltoir" || ( "${cat}" == "auto-nvvm" && ${COMPILE_ONLY} -eq 1 ) ]]; then
+         args+=("--emit-nvvm-ir" "--arch=${LTOIR_ARCH}")
+     fi
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1833** (2026-11-18): fix(cutile-kernels): add strided prefill and improve FP16 GEMM (@elibol)
+- **PR #1830** (2026-11-17): fix(cuda-oxide): let blackwell-mma smoketest honor detected sm_121a target (@nihalpasham)
+- **PR #1829** (2026-11-17): fix(cutile): correct masked padding and add FP16 kernel variants (@elibol)
+- **PR #1817** (2026-11-17): feat(cuda-core): make Function::set_max_dynamic_shared_memory_bytes public (@Code4me2)
 - **PR #1813** (2026-11-16): ci: test against CUDA 13.5.0 as well as the baseline toolkit (@roivanov)
 - **PR #1807** (closed): docs(cuda-core): link nvls_all_reduce example in tests (@Code4me2)
-- **PR #1806** (2026-11-14): docs(cuda-core): locate the NVLS all-reduce example (@elibol)
-- **PR #1799** (2026-11-13): docs(cutile): clarify versioned API compatibility (@elibol)
-- **PR #1798** (2026-11-13): fix(cutile-examples): add explicit B200 profiles and safe QKV tail loads (@elibol)
-- **PR #1790** (closed): fix(mir-importer,codegen): lower ConstantMemory::{get_ref,get} at opt-level 0 (@ssoj13)
 
 ---
 
@@ -2833,85 +3166,34 @@ library from its .mlir sources in CI instead of using checked-in bytecode.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: test against CUDA 13.5.0 as well as the baseline toolkit
+## X. cutile-kernels): add strided prefill and improve FP16 GEMM
 
 **RULE**:
-When implementing operations in `.github/workflows/cutile-rs.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cutile-rs/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NVIDIA/cuda-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f13e7dfc`: ci: test against CUDA 13.5.0 as well as the baseline toolkit. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `85ddf6c2`: cutile-kernels): add strided prefill and improve FP16 GEMM. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/cutile-rs.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cutile-rs/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Only the cuda-tile-translate job needs the cuda-tile submodule; it fetches it
-# itself.
-  # Tile IR assembler lanes. The base lane exercises the oldest assembler,
-  # including its lack of --list-versions; the newest lane needs an assembler
-  # that lists bytecode 13.5, which the Tile IR 13.5 gates in the compiler and
-  # encoder depend on. The separate 13.0 lane only checks shared host crates.
-  # The job names are tile-ir-cuda13-2 and tile-ir-cuda13-5.
-  #
-  # Tests that need the 13.5 toolkit skip, and pass, without it. The newest lane
-  # sets CUTILE_REQUIRE_TILELIB=1, and then such a skip is a failure: the
-  # cutile-ir test that reads a preview$call back with the toolkit's tileirdisasm
-  # must run there.
-  tile-ir:
-    name: ${{ matrix.lane.name }}
-      image: ${{ matrix.lane.image }}
-      CUTILE_REQUIRE_TILELIB: ${{ matrix.lane.newest && '1' || '' }}
-    strategy:
-      fail-fast: false
-      matrix:
-        lane:
-          - name: tile-ir-cuda13-2
-            image: nvidia/cuda:13.2.0-devel-ubuntu24.04
-            newest: false
-          # Same image digest as Docker Hub's nvidia/cuda:13.5.0-devel-ubuntu24.04;
-          # nvcr.io has no anonymous pull limit.
-          -
+- Add strided long-prefill attention entries with independent K/V head strides,
+  including split-K prefill. Existing contiguous entry signatures are unchanged.
+- Keep FP16 operands in the experimental FP16-output GEMM instead of widening
+  them before MMA; retain FP32 accumulation and a final FP16 conversion.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  # Exercise the oldest Tile IR assembler, including its lack of
-  # --list-versions. The separate 13.0 lane only checks shared host crates.
-  tile-ir-cuda13-2:
-      image: nvidia/cuda:13.2.0-devel-ubuntu24.04
-      CUTILE_TILEIRAS_PATH: /usr/local/cuda/bin/tileiras
-          "$CUTILE_TILEIRAS_PATH" --version
-          "$CUTILE_TILEIRAS_PATH" --help | grep -q 'sm_120'
-      - name: CPU and assembler tests
-        run: ./scripts/run_cpu_tests.sh
-      - name: Standalone bytecode example
-        run: cargo run -p cutile-ir --example build_basic
-
-  # Newest Tile IR assembler: the 13.4 gates in the compiler and encoder must
-  # pass here and refuse correctly on the 13.2 lane above. The dev image may
-  # ship the toolkit without the assembler package; install it when missing.
-  tile-ir-cuda13-4:
-    needs: changes
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      needs.changes.outputs.tile == 'true' ||
-      needs.changes.outputs.any_changed != 'true'
-    runs-on: linux-amd64-cpu16
-    container:
-      image: nvidia/cuda:13.4.1-devel-ubuntu24.04
-      env:
-        DEBIAN_FRONTEND: noninteractive
-    env:
-      CUDA_TOOLKIT_PATH: /usr/local/cuda
-    timeout-minutes: 30
-
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f13e7dfc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `85ddf6c2` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

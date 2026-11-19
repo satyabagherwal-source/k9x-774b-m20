@@ -4,22 +4,22 @@
 {
   "source_repository": "apple/foundationdb",
   "source_url": "https://github.com/apple/foundationdb",
-  "source_version": "33871e2f",
+  "source_version": "39fb2391",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T07:30:54.237Z",
+  "timestamp": "2026-11-19T00:00:24.976Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-apple-foundationdb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apple/foundationdb](https://github.com/apple/foundationdb) (Revision: `33871e2f`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T07:30:54.237Z`  
+> **Provenance**: Harvested from [apple/foundationdb](https://github.com/apple/foundationdb) (Revision: `39fb2391`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T00:00:24.976Z`  
 > **Learning ID**: `learn-github-apple-foundationdb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `apple/foundationdb` (Commit: `33871e2f`)
+- **Target Repository**: `apple/foundationdb` (Commit: `39fb2391`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apple-foundationdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apple/foundationdb](https://github.com/apple/foundationdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T07:30:53.157Z  
+> **Harvest Timestamp**: 2026-11-19T00:00:23.509Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1968,283 +1968,445 @@ constexpr std::string_view to_string(WaitState st) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dc406d9f` (2026-11-17)
-**Commit Message**: Preserve sampled V6 trace IDs and reject zero tracing IDs
+### Incident Patch 1: `39fb2391` (2026-11-18)
+**Commit Message**: Bounds-check untrusted flat_buffers input (#14563)
 
-**File**: `bindings/c/test/unit/unit_tests.cpp` (modified, +43/-15)
+* Bounds-check untrusted flat_buffers input
+
+ArenaObjectReader kept only the start of the received bytes, so every
+root offset, vtable offset, string length and vector count read from the
+wire was followed with no check against the packet. One short packet to
+a public endpoint with a huge root offset made fdbserver read unmapped
+memory and crash before verify() ran.
+
+Keep the end of the buffer and reject any load outside it with
+serialization_failed. A file identifier mismatch throws instead of
+asserting. In deliverNow, serialization_failed from a peer is logged and
+dropped rather than exiting the process. The receive() implementations
+take their promise ref after deserialization so a throw does not leak it.
+
+In simulation a malformed buffer still asserts, since there it means a
+writer or the checks are wrong.
+
+* Downgrade file identifier mismatch trace and reuse SerializationFailed event
+
+A malformed peer packet no longer emits an unsuppressed SevError, which would
+fail simulation runs and spam traces; simulation still asserts via
+flat_buffer_load_failed. Fix the comments on flat_buffer_load_failed and
+check_range.
+
+* Test that h
+
+**File**: `fdbclient/DatabaseConfiguration.cpp` (modified, +1/-1)
 ```diff
-@@ -2583,7 +2583,14 @@ TEST_CASE("special-key-space set transaction ID after write") {
- 	}
- }
- 
-+static void wait_for_client_connection() {
-+	// The external client may still be connecting. Keep the retrying read in a separate
-+	// transaction so tracing options can be set before any reads in the test transaction.
-+	get_value(key(""), /* snapshot */ true, {});
-+}
-+
- TEST_CASE("special-key-space decimal transaction ID") {
-+	wait_for_client_connection();
- 	fdb::Transaction tr(db);
- 	fdb_check(tr.set_option(FDB_TR_OPTION_SPECIAL_KEY_SPACE_ENABLE_WRITES, nullptr, 0));
- 	constexpr std::string_view idKey = "\xff\xff/tracing/transaction_id";
-@@ -2601,22 +2608,38 @@ TEST_CASE("special-key-space decimal transaction ID") {
- }
- 
- TEST_CASE("special-key-space invalid tracing and maintenance values") {
-+	wait_for_client_connection();
- 	fdb::Transaction tr(db);
- 	fdb_check(tr.set_option(FDB_TR_OPTION_SPECIAL_KEY_SPACE_ENABLE_WRITES, nullptr, 0));
--	SUBCASE("out-of-range decimal transaction ID") {
--		tr.set("\xff\xff/tracing/transaction_id", "18446744073709551616");
--	}
--	SUBCASE("non-hexadecimal digit in transaction ID") {
--		tr.set("\xff\xff/tracing/transaction_id", "0000000000000001000000000000000g");
--	}
--	SUBCASE("non-numeric maintenance duration") {
--		tr.set("\xff\xff/management/maintenance/zone1", "abc");
--	}
--	SUBCASE("non-finite maintenance duration") {
--		tr.set("\xff\xff/management/maintenance/zone1", "nan");
-+	std::string_view expectedDetail;
-+	SUBCASE("invalid tracing ID") {
-+		constexpr std::string_view idKey = "\xff\xff/tracing/transaction_id";
-+		expectedDetail = "transaction_id";
-+		SUBCASE("out-of-range decimal transaction ID") {
-+			tr.set(idKey, "18446744073709551616");
-+		}
-+		SUBCASE("non-hexadecimal digit in transaction ID") {
-+			tr.set(idKey, "0000000000000001000000000000000g");
-+		}
-+		SUBCASE("zero decimal transaction ID") {
-+			tr.set(idKey, "0");
-+		}
-+		SUBCASE("zero hexadecimal transaction ID") {
-+			tr.set(idKey, "00000000000000000000000000000000");
-+		}
- 	}
--	SUBCASE("maintenance duration exceeds the version range") {
--		tr.set("\xff\xff/management/maintenance/zone1", "1e30");
-+	SUBCASE("invalid maintenance duration") {
-+		constexpr std::string_view zoneKey = "\xff\xff/management/maintenance/zone1";
-+		expectedDetail = "duration";
-+		SUBCASE("non-numeric maintenance duration") {
-+			tr.set(zoneKey, "abc");
-+		}
-+		SUBCASE("non-finite maintenance duration") {
-+			tr.set(zoneKey, "nan");
-+		}
-+		SUBCASE("maintenance duration exceeds the version range") {
-+			tr.set(zoneKey, "1e30");
-+		}
- 	}
- 	auto commit = tr.commit();
- 	REQUIRE(wait_future(commit) == error_code_special_keys_api_failure);
-@@ -2626,8 +2649,13 @@ TEST_CASE("special-key-space invalid tracing and maintenance values") {
- 	const uint8_t* value;
- 	int length;
- 	fdb_check(message.get(&present, &value, &length));
--	CHECK(present);
--	CHECK(length > 0);
-+	REQUIRE(present);
-+	rapidjson::Document diagnostic;
-+	diagnostic.Parse(reinterpret_cast<const char*>(value), length);
-+	REQUIRE(diagnostic.IsObject());
-+	REQUIRE(diagnostic.HasMember("message"));
-+	REQUIRE(diagnostic["message"].IsString());
-+	CHECK(std::string_view(diagnostic["message"].GetString()).find(expectedDetail) != std::string_view::npos);
- }
- 
- TEST_CASE("special-key-space disable tracing") {
+@@ -1005,7 +1005,7 @@ TEST_CASE("/fdbclient/databaseConfiguration/snapshotSerialization") {
+ 	ObjectWriter writer(IncludeVersion());
+ 	writer.serialize(id, config);
+ 	const auto object = writer.toString();
+-	ObjectReader reader(object.begin(), IncludeVersion());
++	ObjectReader reader(object, IncludeVersion());
+ 	loaded.set("\xff/conf/obsolete"_sr, "old"_sr);
+ 	reader.deserialize(id, loaded);
+ 	ASSERT(!loaded.get("\xff/conf/obsolete"_sr).present());
 ```
 
-**File**: `documentation/sphinx/source/special-keys.rst` (modified, +1/-1)
+**File**: `fdbclient/IdempotencyId.cpp` (modified, +1/-1)
 ```diff
-@@ -273,7 +273,7 @@ data. Every transaction contains a unique identifier which follows the
- transaction through the system. By providing access to set this identifier,
- clients can connect FoundationDB transactions to outside events.
- 
--#. ``\xff\xff/tracing/transaction_id := <transaction_id>`` Read/write. A 128-bit trace ID which follows the transaction as it moves through FoundationDB. A new transaction receives a random ID. Reading this key returns the ID as 32 hexadecimal digits. To set a custom ID, provide 32 hexadecimal digits or an unsigned 64-bit decimal integer. A decimal ID occupies the low 64 bits of the trace ID.
-+#. ``\xff\xff/tracing/transaction_id := <transaction_id>`` Read/write. A 128-bit trace ID which follows the transaction as it moves through FoundationDB. A new transaction receives a random ID. Reading this key returns the ID as 32 hexadecimal digits. To set a custom ID, provide a nonzero value as 32 hexadecimal digits or as an unsigned 64-bit decimal integer. An input of exactly 32 digits is interpreted as hexadecimal. A decimal ID occupies the low 64 bits of the trace ID.
- #. ``\xff\xff/tracing/token := <tracing_enabled>`` Read/write. Set to true/false to enable or disable tracing for the transaction, respectively. If read, returns a 64-bit integer set to 0 if tracing has been disabled, or a random 64-bit integer otherwise (this integers value has no meaning to the client other than to determine whether the transaction will be traced).
- 
- .. _special-key-space-deprecation:
+@@ -167,7 +167,7 @@ TEST_CASE("/fdbclient/IdempotencyId/serialization") {
+ 		auto id = generate(arena);
+ 		auto serialized = ObjectWriter::toValue(id, Unversioned());
+ 		IdempotencyIdRef t;
+-		ObjectReader reader(serialized.begin(), Unversioned());
++		ObjectReader reader(serialized, Unversioned());
+ 		reader.deserialize(t);
+ 		ASSERT(t == id);
+ 	}
 ```
 
-**File**: `fdbclient/SpecialKeySpace.cpp` (modified, +27/-8)
+**File**: `fdbclient/ManagementAPI.cpp` (modified, +1/-1)
 ```diff
-@@ -1765,11 +1765,11 @@ void TracingOptionsImpl::set(ReadYourWritesTransaction* ryw, const KeyRef& key,
- 
- 	if (key.endsWith(kTracingTransactionIdKey)) {
- 		auto id = parseTracingTransactionId(value.toStringView());
--		if (!id.present()) {
-+		if (!id.present() || !id.get().isValid()) {
- 			ryw->setSpecialKeySpaceErrorMsg(ManagementAPIError::toJsonString(
- 			    false,
- 			    "configure trace",
--			    "transaction_id must be an unsigned decimal 64-bit integer or 32 hex digits"));
-+			    "transaction_id must be nonzero and specified as an unsigned 64-bit decimal integer or 32 hex digits"));
- 			ryw->getSpecialKeySpaceWriteMap().insert(key, std::make_pair(true, Optional<Value>()));
- 			return;
- 		}
-@@ -2566,6 +2566,28 @@ Future<RangeResult> MaintenanceImpl::getRange(ReadYourWritesTransaction* ryw,
- 	return MaintenanceGetRangeActor(ryw, getKeyRange().begin, kr);
- }
- 
-+static Optional<Version> maintenanceEndVersion(Version readVersion, double seconds) {
-+	constexpr Version maxVersion = std::numeric_limits<Version>::max();
-+	const double duration = seconds * CLIENT_KNOBS->CORE_VERSIONSPERSECOND;
-+	if (!(duration >= 0 && duration < static_cast<double>(maxVersion))) {
-+		return {};
-+	}
-+	const Version delta = static_cast<Version>(duration);
-+	if (readVersion > maxVersion - delta) {
-+		return {};
-+	}
-+	return readVersion + delta;
-+}
-+
-+TEST_CASE("/fdbclient/SpecialKeySpace/MaintenanceEndVersion") {
-+	constexpr Version maxVersion = std::numeric_limits<Version>::max();
-+	const Version lastStart = maxVersion - CLIENT_KNOBS->CORE_VERSIONSPERSECOND;
-+	auto end = maintenanceEndVersion(lastStart, 1.0);
-+	ASSERT(end.present() && end.get() == maxVersion);
-+	ASSERT(!maintenanceEndVersion(lastStart + 1, 1.0).present());
-+	return Void();
-+}
-+
- // Commit the change to healthZoneKey
- // We do not allow more than one zone to be set in maintenance in one transaction
- // In addition, if the zoneId now is 'ignoreSSFailuresZoneString',
-@@ -2618,16 +2640,13 @@ static Future<Optional<std::string>> maintenanceCommitActor(ReadYourWritesTransa
- 			    "The specified maintenance time " + boost::lexical_cast<std::string>(seconds) + " is a negative value";
- 			co_return Optional<std::string>(ManagementAPIError::toJsonString(false, "maintenance", msg));
- 		} else {
--			const Version readVersion = ryw->getTransaction().getReadVersion().get();
--			const double duration = seconds * CLIENT_KNOBS->CORE_VERSIONSPERSECOND;
--			if (!(duration < static_cast<double>(std::numeric_limits<Version>::max())) ||
--			    static_cast<Version>(duration) > std::numeric_limits<Version>::max() - readVersion) {
-+			auto endVersion = maintenanceEndVersion(ryw->getTransaction().getReadVersion().get(), seconds);
-+			if (!endVersion.present()) {
- 				co_return Optional<std::string>(ManagementAPIError::toJsonString(
- 				    false, "maintenance", "Maintenance duration must give a representable end version"));
+@@ -3429,7 +3429,7 @@ Future<Optional<BulkDumpOwnerInfo>> getBulkOwner(Database cx, UID jobId, bool is
+ 				co_return Optional<BulkDumpOwnerInfo>();
  			}
- 			TraceEvent(SevDebug, "SKSMaintenanceSet").detail("ZoneId", zoneId.toString());
--			ryw->getTransaction().set(healthyZoneKey,
--			                          healthyZoneValue(zoneId, readVersion + static_cast<Version>(duration)));
-+			ryw->getTransaction().set(healthyZoneKey, healthyZoneValue(zoneId, endVersion.get()));
- 		}
- 	}
- 	co_return Optional<std::string>();
+ 			BulkDumpOwnerInfo info;
+-			ObjectReader reader(value.get().begin(), IncludeVersion());
++			ObjectReader reader(value.get(), IncludeVersion());
+ 			reader.deserialize(info);
+ 			co_return info;
+ 		} catch (Error& e) {
 ```
 
-**File**: `fdbserver/storageserver/storageserver.cpp` (modified, +30/-7)
+**File**: `fdbclient/MonitorLeader.cpp` (modified, +1/-1)
 ```diff
-@@ -10364,6 +10364,35 @@ Future<Void> tssDelayForever() {
- 	}
- }
+@@ -889,7 +889,7 @@ Future<Void> monitorLeaderAndGetClientInfo(Key clusterKey,
+ 			}
  
-+SpanContext readV6SpanContext(ArenaReader& reader) {
-+	SpanContextMessage message;
-+	reader >> message;
-+	// Pre-OTEL writers used the second word as a sampling token. OTEL writers put the entire
-+	// trace ID in the V6 record and reserve the all-zero ID for unsampled transactions.
-+	const UID id = message.spanContext;
-+	const bool sampled = reader.protocolVersion().hasOTELSpanContext() ? id.isValid() : id.second() != 0;
-+	return SpanContext(id, 0, sampled ? TraceFlags::sampled : TraceFlags::unsampled);
-+}
-+
-+TEST_CASE("/fdbserver/storageserver/readV6SpanContext") {
-+	auto check = [](ProtocolVersion version, UID id, bool sampled) {
-+		auto record = BinaryWriter::toValue(SpanContextMessage(id), AssumeVersion(version));
-+		ArenaReader reader(record.arena(), record, AssumeVersion(version));
-+		const SpanContext context = readV6SpanContext(reader);
-+		ASSERT(context.traceID == id);
-+		ASSERT(context.spanID == 0);
-+		ASSERT(context.isSampled() == sampled);
-+	};
-+	const auto otel = ProtocolVersion::withOTELSpanContext();
-+	check(otel, UID(0, 12345), true);
-+	check(otel, UID(12345, 0), true);
-+	check(otel, UID(), false);
-+	const auto legacy = ProtocolVersion::withSpanContext();
-+	check(legacy, UID(12345, 0), false);
-+	check(legacy, UID(12345, 1), true);
-+	return Void();
-+}
-+
- Future<Void> update(StorageServer* data, bool* pReceivedUpdate) {
- 	double updateStart = g_network->timer();
- 	double start{ 0 };
-@@ -10637,14 +10666,8 @@ Future<Void> update(StorageServer* data, bool* pReceivedUpdate) {
- 					cloneCursor2->setProtocolVersion(rd.protocolVersion());
- 					spanContext.traceID = UID();
- 				} else if (rd.protocolVersion().hasSpanContext() && SpanContextMessage::isNextIn(rd)) {
--					SpanContextMessage scm;
--					rd >> scm;
- 					CODE_PROBE(true, "storageserveractor converting SpanContextMessage into OTEL SpanContext");
--					spanContext = SpanContext(UID(scm.spanContext.first(), scm.spanContext.second()),
--					                          0,
--					                          scm.spanContext.first() != 0 && scm.spanContext.second() != 0
--					                              ? TraceFlags::sampled
--					                              : TraceFlags::unsampled);
-+					spanContext = readV6SpanContext(rd);
- 				} else if (rd.protocolVersion().hasOTELSpanContext() && OTELSpanContextMessage::isNextIn(rd)) {
- 					CODE_PROBE(true, "storageserveractor reading OTELSpanContextMessage");
- 					OTELSpanContextMessage scm;
+ 			if (!leader.get().first.serializedInfo.empty()) {
+-				ObjectReader reader(leader.get().first.serializedInfo.begin(), IncludeVersion());
++				ObjectReader reader(leader.get().first.serializedInfo, IncludeVersion());
+ 				ClusterControllerClientInterface res;
+ 				reader.deserialize(res);
+ 				knownLeader->set(res);
+```
+
+**File**: `fdbclient/SystemData.cpp` (modified, +13/-13)
+```diff
+@@ -294,7 +294,7 @@ Value accumulativeChecksumValue(const AccumulativeChecksumState& acsState) {
+ 
+ AccumulativeChecksumState decodeAccumulativeChecksum(const ValueRef& value) {
+ 	AccumulativeChecksumState acsState;
+-	ObjectReader reader(value.begin(), IncludeVersion());
++	ObjectReader reader(value, IncludeVersion());
+ 	reader.deserialize(acsState);
+ 	return acsState;
+ }
+@@ -387,7 +387,7 @@ Value auditStorageStateValue(const AuditStorageState& auditStorageState) {
+ 
+ AuditStorageState decodeAuditStorageState(const ValueRef& value) {
+ 	AuditStorageState auditState;
+-	ObjectReader reader(value.begin(), IncludeVersion());
++	ObjectReader reader(value, IncludeVersion());
+ 	reader.deserialize(auditState);
+ 	return auditState;
+ }
+@@ -414,7 +414,7 @@ UID decodeCheckpointKey(const KeyRef& key) {
+ 
+ CheckpointMetaData decodeCheckpointValue(const ValueRef& value) {
+ 	CheckpointMetaData checkpoint;
+-	ObjectReader reader(value.begin(), IncludeVersion());
++	ObjectReader reader(value, IncludeVersion());
+ 	reader.deserialize(checkpoint);
+ 	return checkpoint;
+ }
+@@ -449,7 +449,7 @@ UID decodeDataMoveKey(const KeyRef& key) {
+ 
+ DataMoveMetaData decodeDataMoveValue(const ValueRef& value) {
+ 	DataMoveMetaData dataMove;
+-	ObjectReader reader(value.begin(), IncludeVersion());
++	ObjectReader reader(value, IncludeVersion());
+ 	reader.deserialize(dataMove);
+ 	return dataMove;
+ }
+@@ -674,7 +674,7 @@ UID decodeServerMetadataKey(const KeyRef& key) {
+ 
+ StorageMetadataType decodeServerMetadataValue(const KeyRef& value) {
+ 	StorageMetadataType type;
+-	ObjectReader rd(value.begin(), IncludeVersion());
++	ObjectReader rd(value, IncludeVersion());
+ 	rd.deserialize(type);
+ 	return type;
+ }
+@@ -1126,7 +1126,7 @@ UID decodeServerListKey(KeyRef const& key) {
+ 
+ StorageServerInterface decodeServerListValueFB(ValueRef const& value) {
+ 	StorageServerInterface s;
+-	ObjectReader reader(value.begin(), IncludeVersion());
++	ObjectReader reader(value, IncludeVersion());
+ 	reader.deserialize(s);
+ 	return s;
+ }
+@@ -1148,7 +1148,7 @@ Value swVersionValue(SWVersion const& swversion) {
+ 
+ SWVersion decodeSWVersionValue(ValueRef const& value) {
+ 	SWVersion s;
+-	ObjectReader reader(value.begin(), IncludeVersion());
++	ObjectReader reader(value, IncludeVersion());
+ 	reader.deserialize(s);
+ 	return s;
+ }
+@@ -1454,7 +1454,7 @@ Value bulkLoadTaskStateValue(const BulkLoadTaskState& bulkLoadTaskState) {
+ 
+ BulkLoadTaskState decodeBulkLoadTaskState(const ValueRef& value) {
+ 	BulkLoadTaskState bulkLoadTaskState;
+-	ObjectReader reader(value.begin(), IncludeVersion());
++	ObjectReader reader(value, IncludeVersion());
+ 	reader.deserialize(bulkLoadTaskState);
+ 	return bulkLoadTaskState;
+ }
+@@ -1465,7 +1465,7 @@ Value ssBulkLoadMetadataValue(const SSBulkLoadMetadata& ssBulkLoadMetadata) {
+ 
+ SSBulkLoadMetadata decodeSSBulkLoadMetadata(const ValueRef& value) {
+ 	SSBulkLoadMetadata ssBulkLoadMetadata;
+-	ObjectReader reader(value.begin(), IncludeVersion());
++	ObjectReader reader(value, IncludeVersion());
+ 	reader.deserialize(ssBulkLoadMetadata);
+ 	return ssBulkLoadMetadata;
+ }
+@@ -1479,7 +1479,7 @@ Value bulkLoadJobValue(const BulkLoadJobState& bulkLoadJobState) {
+ 
+ BulkLoadJobState decodeBulkLoadJobState(const ValueRef& value) {
+ 	BulkLoadJobState bulkLoadJobState;
+-	ObjectReader reader(value.begin(), IncludeVersion());
++	ObjectReader reader(value, IncludeVersion());
+ 	reader.deserialize(bulkLoadJobState);
+ 	return bulkLoadJobState;
+ }
+@@ -1507,7 +1507,7 @@ Value bulkDumpStateValue(const BulkDumpState& bulkDumpState) {
+ 
+ BulkDumpState decodeBulkDumpState(const ValueRef& value) {
+ 	BulkDumpState bulkDumpState;
+-	ObjectReader reader(value.begin(), IncludeVersion());
++	ObjectReader reader(value, IncludeVersion());
+ 	reader.deserialize(bulkDumpState);
+ 	return bulkDumpState;
+ }
+@@ -1546,7 +1546,7 @@ Value rangeLockStateSetValue(const RangeLockStateSet& rangeLockStateSet) {
+ 
+ RangeLockStateSet decodeRangeLockStateSet(const ValueRef& value) {
+ 	RangeLockStateSet rangeLockStateSet;
+-	ObjectReader reader(value.begin(), IncludeVersion());
++	ObjectReader reader(value, IncludeVersion());
+ 	reader.deserialize(rangeLockStateSet);
+ 	return rangeLockStateSet;
+ }
+@@ -1567,7 +1567,7 @@ Value rangeLockOwnerValue(const RangeLockOwner& rangeLockOwner) {
+ 
+ RangeLockOwner decodeRangeLockOwner(const ValueRef& value) {
+ 	RangeLockOwner rangeLockOwner;
+-	ObjectReader reader(value.begin(), IncludeVersion());
++	ObjectReader reader(value, IncludeVersion());
+ 	reader.deserialize(rangeLockOwner);
+ 	return rangeLockOwner;
+ }
+```
+
+**File**: `fdbclient/bench/BenchVersionVectorSerialization.cpp` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ static void bench_serializable_traits_version(benchmark::State& state) {
+ 		size = msg.size();
+ 		state.ResumeTiming();
+ 
+-		ObjectReader rd(msg.begin(), Unversioned());
++		ObjectReader rd(msg, Unversioned());
+ 		rd.deserialize(deserializedVV);
+ 	}
+ 	ASSERT(serializedVV.compare(deserializedVV));
+```
+
+**File**: `fdbrpc/FlowTransport.cpp` (modified, +8/-1)
+```diff
+@@ -1376,10 +1376,17 @@ static void deliverNow(TransportData* self,
+ 				g_currentDeliveryPeerDisconnect = nullptr;
+ 			});
+ 			StringRef data = reader.arenaReadAll();
+-			ASSERT_GT(data.size(), 8);
+ 			ArenaObjectReader objReader(std::move(reader.arena()), data, AssumeVersion(reader.protocolVersion()));
+ 			receiver->receive(objReader);
+ 		} catch (Error& e) {
++			if (e.code() == error_code_serialization_failed) {
++				// Malformed peer input is not a local invariant violation.
++				TraceEvent(SevWarnAlways, "ReceiverDeserializationFailed")
++				    .suppressFor(1.0)
++				    .detail("Token", destination.token.toString())
++				    .detail("PeerAddress", peerAddress);
++				return;
++			}
+ 			TraceEvent(SevError, "ReceiverError")
+ 			    .error(e)
+ 			    .detail("Token", destination.token.toString())
+```
+
+**File**: `fdbrpc/include/fdbrpc/fdbrpc.h` (modified, +3/-3)
+```diff
+@@ -130,9 +130,9 @@ struct NetSAV final : SAV<T>, FlowReceiver, FastAllocated<NetSAV<T>> {
+ 	void receive(ArenaObjectReader& reader) override {
+ 		if (!SAV<T>::canBeSet())
+ 			return;
+-		this->addPromiseRef();
+ 		ErrorOr<EnsureTable<T>> message;
+ 		reader.deserialize(message);
++		this->addPromiseRef();
+ 		if (message.isError()) {
+ 			SAV<T>::sendErrorAndDelPromiseRef(message.getError());
+ 		} else {
+@@ -394,9 +394,9 @@ struct NetNotifiedQueueWithAcknowledgements final : NotifiedQueue<T>,
+ 
+ 	void destroy() override { delete this; }
+ 	void receive(ArenaObjectReader& reader) override {
+-		this->addPromiseRef();
+ 		ErrorOr<EnsureTable<T>> message;
+ 		reader.deserialize(message);
++		this->addPromiseRef();
+ 
+ 		if (message.isError()) {
+ 			if (message.getError().code() == error_code_broken_promise) {
+@@ -732,9 +732,9 @@ struct NetNotifiedQueue final : NotifiedQueue<T>, FlowReceiver, FastAllocated<Ne
+ 
+ 	void destroy() override { delete this; }
+ 	void receive(ArenaObjectReader& reader) override {
+-		this->addPromiseRef();
+ 		T message;
+ 		reader.deserialize(message);
++		this->addPromiseRef();
+ 		if constexpr (IsPublic) {
+ 			if (!message.verify()) {
+ 				if constexpr (HasReply<T>) {
 ```
 
 ---
 
-### Incident Patch 2: `6be9783e` (2026-11-17)
-**Commit Message**: bindings/go: fix go-1.27 vet check for wrapped error pointer (#14567)
+### Incident Patch 2: `1e6c973b` (2026-11-18)
+**Commit Message**: Learn the leader during the candidacy delay (#14550)
 
-Most error types do not support pointers in the Is() method,
-but our error type does, so just trick "go vet" to allow this.
+* fdbserver/LeaderElection: learn the leader during the candidacy delay
 
-**File**: `bindings/go/src/fdb/errors_test.go` (modified, +8/-5)
+A process whose DC or process class is a poor fit for the cluster
+controller waits WAIT_FOR_GOOD_RECRUITMENT_DELAY (1s) or
+WAIT_FOR_GOOD_REMOTE_RECRUITMENT_DELAY (5s, e.g. remote and satellite DC
+processes) before running for leader, so that better candidates win. Until
+then it does not know the leader, so it cannot register with the cluster
+controller, and recruitment after a cluster restart waits for those
+processes.
+
+With MONITOR_LEADER_DURING_CANDIDACY_DELAY (new, default false), the process
+long-polls the coordinators for the current leader during the delay,
+without running for leader, and publishes it, so it registers as soon as a
+leader is elected. The candidacy itself still waits for the delay.
+
+* fdbserver/LeaderElection: learn the leader with monitorLeaderInternal() during the candidacy delay
+
+Replace the custom one-coordinator-at-a-time ElectionResultRequest loop with
+monitorLeaderInternal(), the monitor that processes which never run for
+leader already use. It long-polls every coordinator, publishes the leader a
+majority agrees on, and follows f
+
+**File**: `fdbserver/core/LeaderElection.cpp` (modified, +23/-4)
 ```diff
-@@ -34,14 +34,16 @@ func TestErrorWrapping(t *testing.T) {
- 	MustAPIVersion(API_VERSION)
- 	db := MustOpenDefault()
+@@ -78,7 +78,8 @@ Future<Void> buggifyDelayedAsyncVar(Reference<AsyncVar<T>> in, Reference<AsyncVa
  
-+	// Static type error keeps vet's printf check from rejecting %w of *Error;
-+	// wrapping *Error is deliberately covered since Error.Is handles it.
-+	var ptrErr error = &Error{Code: 2007}
+ template <class T>
+ Future<Void> buggifyDelayedAsyncVar(Reference<AsyncVar<T>>& var) {
+-	auto in = makeReference<AsyncVar<T>>();
++	// Starts from the current value, so that wrapping `var` does not clear a value it already has.
++	auto in = makeReference<AsyncVar<T>>(var->get());
+ 	auto f = buggifyDelayedAsyncVar(in, var);
+ 	var = in;
+ 	return f;
+@@ -121,19 +122,37 @@ Future<Void> tryBecomeLeaderInternal(ServerCoordinators coordinators,
+ 	bool iAmLeader{ false };
+ 	UID prevChangeID;
+ 
++	double candidacyDelay = 0;
+ 	if (asyncPriorityInfo->get().dcFitness == ClusterControllerPriorityInfo::FitnessBad ||
+ 	    asyncPriorityInfo->get().dcFitness == ClusterControllerPriorityInfo::FitnessRemote ||
+ 	    asyncPriorityInfo->get().dcFitness == ClusterControllerPriorityInfo::FitnessNotPreferred ||
+ 	    asyncPriorityInfo->get().isExcluded) {
+-		co_await delay(SERVER_KNOBS->WAIT_FOR_GOOD_REMOTE_RECRUITMENT_DELAY);
++		candidacyDelay = SERVER_KNOBS->WAIT_FOR_GOOD_REMOTE_RECRUITMENT_DELAY;
+ 	} else if (asyncPriorityInfo->get().processClassFitness > recruitment::UnsetFit) {
+-		co_await delay(SERVER_KNOBS->WAIT_FOR_GOOD_RECRUITMENT_DELAY);
++		candidacyDelay = SERVER_KNOBS->WAIT_FOR_GOOD_RECRUITMENT_DELAY;
++	}
 +
- 	testCases := []error{
- 		nil,
- 		&Error{
- 			Code: 2007,
- 		},
--		fmt.Errorf("wrapped error: %w", &Error{
--			Code: 2007,
--		}),
-+		fmt.Errorf("wrapped error: %w", ptrErr),
- 		Error{
- 			Code: 2007,
- 		},
-@@ -74,8 +76,9 @@ func TestErrorIs(t *testing.T) {
- 	if !errors.Is(fmt.Errorf("wrap: %w", Error{Code: 1007}), ErrTransactionTooOld) {
- 		t.Error("expected match through wrapping")
++	if (candidacyDelay > 0) {
++		if (SERVER_KNOBS->MONITOR_LEADER_DURING_CANDIDACY_DELAY) {
++			// The delay only lets better candidates win the election. Learning the current leader meanwhile, the way
++			// processes that never run for leader do, lets this process register with it, so recruitment does not wait
++			// for the delay to expire.
++			// The monitor runs only until the delay ends, when it goes out of scope; an error only stops it early.
++			Future<Void> leaderMonitor = monitorLeaderInternal(coordinators.ccr, outSerializedLeader);
++			co_await delay(candidacyDelay);
++			TraceEvent("CandidacyDelayLeaderMonitor").detail("LeaderKnown", !outSerializedLeader->get().empty());
++		} else {
++			co_await delay(candidacyDelay);
++		}
  	}
--	// wrapped pointer
--	if !errors.Is(fmt.Errorf("wrap: %w", &Error{Code: 1007}), ErrTransactionTooOld) {
-+	// wrapped pointer (static type error, see TestErrorWrapping)
-+	var ptrErr error = &Error{Code: 1007}
-+	if !errors.Is(fmt.Errorf("wrap: %w", ptrErr), ErrTransactionTooOld) {
- 		t.Error("expected match through wrapped *Error")
- 	}
- 	// no false positive: wrong code
+ 
+ 	nominees.resize(coordinators.leaderElectionServers.size());
+ 
+ 	myInfo.serializedInfo = proposedSerializedInterface;
+-	outSerializedLeader->set(Value());
++	// Keeps a leader learned during the candidacy delay; the election below replaces it if the leader changes.
++	if (!SERVER_KNOBS->MONITOR_LEADER_DURING_CANDIDACY_DELAY) {
++		outSerializedLeader->set(Value());
++	}
+ 
+ 	[[maybe_unused]] Future<Void> buggifyDelay =
+ 	    (SERVER_KNOBS->BUGGIFY_ALL_COORDINATION || buggify()) ? buggifyDelayedAsyncVar(outSerializedLeader) : Void();
+```
+
+**File**: `fdbserver/core/ServerKnobs.cpp` (modified, +1/-0)
+```diff
+@@ -966,6 +966,7 @@ void ServerKnobs::initialize(Randomize randomize, ClientKnobs* clientKnobs, IsSi
+ 	init( CC_CLASS_DELAY,                                       0.01 );
+ 	init( WAIT_FOR_GOOD_RECRUITMENT_DELAY,                       1.0 );
+ 	init( WAIT_FOR_GOOD_REMOTE_RECRUITMENT_DELAY,                5.0 );
++	init( MONITOR_LEADER_DURING_CANDIDACY_DELAY,               false ); if( randomize && buggify() ) MONITOR_LEADER_DURING_CANDIDACY_DELAY = deterministicRandom()->coinflip();
+ 	init( ATTEMPT_RECRUITMENT_DELAY,                           0.035 );
+ 	init( WAIT_FOR_DISTRIBUTOR_JOIN_DELAY,                       1.0 );
+ 	init( WAIT_FOR_RATEKEEPER_JOIN_DELAY,                        1.0 );
+```
+
+**File**: `fdbserver/core/include/fdbserver/core/Knobs.h` (modified, +4/-0)
+```diff
+@@ -841,6 +841,10 @@ class SWIFT_CXX_IMMORTAL_SINGLETON_TYPE ServerKnobs : public KnobsImpl<ServerKno
+ 	double CC_CLASS_DELAY;
+ 	double WAIT_FOR_GOOD_RECRUITMENT_DELAY;
+ 	double WAIT_FOR_GOOD_REMOTE_RECRUITMENT_DELAY;
++	// If true, a process waiting WAIT_FOR_GOOD_RECRUITMENT_DELAY or WAIT_FOR_GOOD_REMOTE_RECRUITMENT_DELAY before
++	// running for leader learns the current leader from the coordinators meanwhile, so it can register with it
++	// without waiting for the delay to expire.
++	bool MONITOR_LEADER_DURING_CANDIDACY_DELAY;
+ 	double ATTEMPT_RECRUITMENT_DELAY;
+ 	double WAIT_FOR_DISTRIBUTOR_JOIN_DELAY;
+ 	double WAIT_FOR_RATEKEEPER_JOIN_DELAY;
+```
+
+**File**: `tests/CMakeLists.txt` (modified, +2/-0)
+```diff
+@@ -81,6 +81,7 @@ if(WITH_PYTHON)
+       list(APPEND MULTIREGION_IGNORE_PATTERNS "${CMAKE_CURRENT_SOURCE_DIR}/rare/ClogRemoteTLog\\.toml$")
+       list(APPEND MULTIREGION_IGNORE_PATTERNS "${CMAKE_CURRENT_SOURCE_DIR}/rare/FailoverWithSSLag\\.toml$")
+       list(APPEND MULTIREGION_IGNORE_PATTERNS "${CMAKE_CURRENT_SOURCE_DIR}/fast/KillRegionCycle\\.toml$")
++      list(APPEND MULTIREGION_IGNORE_PATTERNS "${CMAKE_CURRENT_SOURCE_DIR}/fast/KillRegionCycleLeaderMonitor\\.toml$")
+       list(APPEND MULTIREGION_IGNORE_PATTERNS "${CMAKE_CURRENT_SOURCE_DIR}/slow/GcGenerations\\.toml$")
+       list(APPEND MULTIREGION_IGNORE_PATTERNS "${CMAKE_CURRENT_SOURCE_DIR}/slow/DiskFailureCycle\\.toml$")
+   endif()
+@@ -315,6 +316,7 @@ if(WITH_PYTHON)
+     add_fdb_test(TEST_FILES rare/DcLag.toml)
+     add_fdb_test(TEST_FILES slow/GcGenerations.toml)
+     add_fdb_test(TEST_FILES fast/KillRegionCycle.toml)
++    add_fdb_test(TEST_FILES fast/KillRegionCycleLeaderMonitor.toml)
+     add_fdb_test(TEST_FILES rare/ClogRemoteTLog.toml)
+   endif()
+ 
+```
+
+**File**: `tests/fast/KillRegionCycleLeaderMonitor.toml` (added, +23/-0)
+```diff
+@@ -0,0 +1,23 @@
++# KillRegionCycle with MONITOR_LEADER_DURING_CANDIDACY_DELAY always on. The remote region's processes wait
++# WAIT_FOR_GOOD_REMOTE_RECRUITMENT_DELAY before running for leader, so every run exercises learning the leader
++# during that delay, through recoveries and the loss of a region.
++[configuration]
++minimumRegions = 2
++
++[[knobs]]
++max_read_transaction_life_versions = 5000000
++monitor_leader_during_candidacy_delay = true
++
++[[test]]
++testTitle = 'KillRegionCycleLeaderMonitor'
++clearAfterTest = false
++
++    [[test.workload]]
++    testName = 'Cycle'
++    nodeCount = 30000
++    transactionsPerSecond = 2500.0
++    testDuration = 30.0
++
++    [[test.workload]]
++    testName = 'KillRegion'
++    testDuration = 30.0
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #14568** (2026-11-18): [release-8.0] bindings/go: fix go-1.27 vet check for wrapped error pointer (@ploxiln)
 - **PR #14567** (2026-11-17): bindings/go: fix go-1.27 vet check for wrapped error pointer (@ploxiln)
+- **PR #14563** (2026-11-18): Bounds-check untrusted flat_buffers input (@saintstack)
 - **PR #14562** (2026-11-17): Drop --system-metadata from fdbrestore help and docs (@saintstack)
 - **PR #14561** (2026-11-18): [main] Release notes 8.0.1, forward port 7.4.9 and 7.4.10 release notes (@spraza)
 - **PR #14560** (2026-11-17): [release-8.0] Release notes 8.0.1, forward port 7.4.9 and 7.4.10 release notes (@spraza)
-- **PR #14558** (2026-11-17): [release-8.0] tests: throttling test timer fix (@ploxiln)
 
 ---
 
@@ -2264,78 +2426,31 @@ but our error type does, so just trick "go vet" to allow this.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Preserve sampled V6 trace IDs and reject zero tracing IDs
+## X. Bounds-check untrusted flat_buffers input
 
 **RULE**:
-When implementing operations in `bindings/c/test/unit/unit_tests.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `fdbclient/DatabaseConfiguration.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apple/foundationdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dc406d9f`: Preserve sampled V6 trace IDs and reject zero tracing IDs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `39fb2391`: Bounds-check untrusted flat_buffers input. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `bindings/c/test/unit/unit_tests.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `fdbclient/DatabaseConfiguration.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-static void wait_for_client_connection() {
-	// The external client may still be connecting. Keep the retrying read in a separate
-	// transaction so tracing options can be set before any reads in the test transaction.
-	get_value(key(""), /* snapshot */ true, {});
-}
-
-	wait_for_client_connection();
-	wait_for_client_connection();
-	std::string_view expectedDetail;
-	SUBCASE("invalid tracing ID") {
-		constexpr std::string_view idKey = "\xff\xff/tracing/transaction_id";
-		expectedDetail = "transaction_id";
-		SUBCASE("out-of-range decimal transaction ID") {
-			tr.set(idKey, "18446744073709551616");
-		}
-		SUBCASE("non-hexadecimal digit in transaction ID") {
-			tr.set(idKey, "0000000000000001000000000000000g");
-		}
-		SUBCASE("zero decimal transaction ID") {
-			tr.set(idKey, "0");
-		}
-		SUBCASE("zero hexadecimal transaction ID") {
-			tr.set(idKey, "00000000000000000000000000000000");
-		}
-	SUBCASE("invalid maintenance duration") {
-		constexpr std::string_view zoneKey = "\xff\xff/management/maintenance/zone1";
-		expectedDetail = "duration";
-		SUBCASE("non-numeric maintenance duration") {
-			tr.set(zoneKey, "abc");
-		}
-		SUBCASE("non-finite maintenance duration") {
-			tr.set(zoneKey, "nan");
-		}
-
+	ObjectReader reader(object, IncludeVersion());
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-	SUBCASE("out-of-range decimal transaction ID") {
-		tr.set("\xff\xff/tracing/transaction_id", "18446744073709551616");
-	}
-	SUBCASE("non-hexadecimal digit in transaction ID") {
-		tr.set("\xff\xff/tracing/transaction_id", "0000000000000001000000000000000g");
-	}
-	SUBCASE("non-numeric maintenance duration") {
-		tr.set("\xff\xff/management/maintenance/zone1", "abc");
-	}
-	SUBCASE("non-finite maintenance duration") {
-		tr.set("\xff\xff/management/maintenance/zone1", "nan");
-	SUBCASE("maintenance duration exceeds the version range") {
-		tr.set("\xff\xff/management/maintenance/zone1", "1e30");
-	CHECK(present);
-	CHECK(length > 0);
+	ObjectReader reader(object.begin(), IncludeVersion());
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dc406d9f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `39fb2391` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

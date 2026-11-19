@@ -1075,8 +1075,8 @@
     "sourceUrl": "https://huggingface.co/Venastine-Research/Xing4.0-29B-A4B-GGUF",
     "sourceVersion": "hf-venastine-research-xing4.0-29b-a4b-gguf",
     "license": "Open-Source",
-    "contentHash": "76530577fa7501066b66d71fe092ec2fdaab0a3aab85b46afe2f7daaa2c06125",
-    "lastHarvestedAt": "2026-11-14T07:30:37.374Z",
+    "contentHash": "e717ecb93ce086d0eff0297cf7081d5dffd9372091ab945a1ab9896e00b41247",
+    "lastHarvestedAt": "2026-11-19T00:00:09.443Z",
     "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf"
   },
   "hf-naiveai-naive-n0.5-flash": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "6a92f86a",
+    "sourceVersion": "c4d689ce",
     "license": "BSD-3-Clause",
-    "contentHash": "b187f2207c146de39280010542f7b630b06a01faa6ecff8729c609d5bf5f1bba",
-    "lastHarvestedAt": "2026-11-18T17:51:18.462Z",
+    "contentHash": "cdcd0eaee00a4e8642b3c16f0d91062b082986cc180ef38bb5297e4e309ccb86",
+    "lastHarvestedAt": "2026-11-19T00:00:22.861Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -4973,10 +4973,10 @@
     "repository": "apple/foundationdb",
     "platform": "github",
     "sourceUrl": "https://github.com/apple/foundationdb",
-    "sourceVersion": "33871e2f",
+    "sourceVersion": "39fb2391",
     "license": "Apache-2.0",
-    "contentHash": "c249dbd439d0bf86e0c59e1b94794ea1f1b774cdc47bd75dc7883d319ef88b2f",
-    "lastHarvestedAt": "2026-11-18T07:30:54.058Z",
+    "contentHash": "335aab112d218418ff523d8dd01a2e80a7b6df89fe8af25e42b95e892ad434d4",
+    "lastHarvestedAt": "2026-11-19T00:00:24.721Z",
     "learningId": "learn-github-apple-foundationdb"
   },
   "kucherenko-jscpd": {
@@ -5773,10 +5773,10 @@
     "repository": "NVIDIA/cuda-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/NVIDIA/cuda-rust",
-    "sourceVersion": "f13e7dfc",
+    "sourceVersion": "85ddf6c2",
     "license": "Apache-2.0",
-    "contentHash": "f467f04b39512e38aba9c4255d7ef1f7f64d2ad3cfbdad8b8e028dc3359f60bf",
-    "lastHarvestedAt": "2026-11-17T10:10:56.914Z",
+    "contentHash": "80e1d8a83bc0cd86982bc456dc335337553032f16c4822a1d5e0627246dfcbc0",
+    "lastHarvestedAt": "2026-11-19T00:00:13.025Z",
     "learningId": "learn-github-nvidia-cuda-rust"
   },
   "typestack-routing-controllers": {

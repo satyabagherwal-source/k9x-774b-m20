@@ -4,22 +4,22 @@
 {
   "source_repository": "tailscale/tailscale",
   "source_url": "https://github.com/tailscale/tailscale",
-  "source_version": "87edd6b4",
+  "source_version": "c4d689ce",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-18T13:34:23.354Z",
+  "timestamp": "2026-11-19T00:00:23.097Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tailscale-tailscale",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `87edd6b4`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-18T13:34:23.354Z`  
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `c4d689ce`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-19T00:00:23.097Z`  
 > **Learning ID**: `learn-github-tailscale-tailscale`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `tailscale/tailscale` (Commit: `87edd6b4`)
+- **Target Repository**: `tailscale/tailscale` (Commit: `c4d689ce`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T13:34:22.211Z  
+> **Harvest Timestamp**: 2026-11-19T00:00:21.663Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39279 stars
+- **Stars / Engagement**: 39298 stars
 
 ---
 
@@ -834,221 +834,147 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `89b8a8e5` (2026-11-15)
-**Commit Message**: tka: fix OS name validation in signing deeplinks
+### Incident Patch 1: `019902a6` (2026-11-18)
+**Commit Message**: tstest/natlab: Fix typo in README sample command
+
+The current command fails with:
+
+    invalid value "15" for flag -timeout: parse error
+
+because the timeout flag wants a time.Duration value.
 
 Updates #cleanup
 
-Signed-off-by: IgorPolyakov <[REDACTED_EMAIL]>
+Change-Id: I645974078ce60c42b9d5d7bd227226de5fff26ad
+Signed-off-by: Francois Marier <[REDACTED_EMAIL]>
 
-**File**: `tka/deeplink.go` (modified, +1/-1)
+**File**: `tstest/natlab/README.md` (modified, +1/-1)
 ```diff
-@@ -169,7 +169,7 @@ func (a *Authority) ValidateDeeplink(urlString string) DeeplinkValidationResult
- 	}
+@@ -18,7 +18,7 @@ yourself to the `kvm` group to avoid QEMU falling back to software emulation.
+ ## Running locally
  
- 	osName := parsedUrl.Query().Get("os")
--	if len(deviceName) == 0 {
-+	if len(osName) == 0 {
- 		return DeeplinkValidationResult{
- 			IsValid: false,
- 			Error:   "missing os (OSName) query parameter",
+ ```
+-go test ./tstest/natlab/vmtest/ --run-vm-tests -v -timeout=15
++go test ./tstest/natlab/vmtest/ --run-vm-tests -v -timeout=15m
+ ```
+ 
+ `go test`'s default timeout (10 min) is likely not enough to cover the whole
 ```
 
 ---
 
-### Incident Patch 2: `5123b036` (2026-10-10)
-**Commit Message**: feature/linuxdnsfight: watch only the directory, filtered by the kernel
+### Incident Patch 2: `c4d689ce` (2026-11-18)
+**Commit Message**: util/syspolicy, docs/windows: add HideWindowedUI system policy (#22447)
 
-gonotify.NewDirWatcher registers IN_ALL_EVENTS on the directory and
-every subdirectory below it, and applies the caller's mask only in
-userspace. Watching /etc that way wakes tailscaled for every open or
-read of any file under /etc, including /etc/ld.so.cache on each exec.
-Under a busy exec or open loop tailscaled used 150-230% CPU.
+This device policy hides entry points to the new windowed UI and uses the legacy tray based menu instead
 
-Use a plain inotify watch on the directory itself with the events we
-care about, so the kernel drops everything else. Call cb once at
-startup, which NewDirWatcher's synthetic events for existing files
-used to do.
+Updates tailscale/corp#50029
 
-Rework TestWatchFile to wait for the startup callback first, so it
-still checks that a write triggers one, and add a test that reads and
-writes to other files don't.
+Signed-off-by: kari-ts <[REDACTED_EMAIL]>
 
-Fixes #21743
-Updates #16576
-
-Change-Id: Idf1b13a6dffde4191ce8744cbb0e24a74b7a5b82
-Signed-off-by: Yerassyl Urazalin <[REDACTED_EMAIL]>
-
-**File**: `feature/linuxdnsfight/linuxdnsfight.go` (modified, +23/-7)
+**File**: `docs/windows/policy/en-US/tailscale.adml` (modified, +10/-0)
 ```diff
-@@ -37,19 +37,35 @@ func watchFile(ctx context.Context, dir, filename string, cb func()) error {
- 		gonotify.IN_MODIFY |
- 		gonotify.IN_MOVE
+@@ -219,6 +219,16 @@ If you enable this policy setting, you can specify which categories of network d
+ If you disable or do not configure this policy setting, all devices will be displayed.
  
--	watcher, err := gonotify.NewDirWatcher(ctx, events, dir)
-+	// Watch only dir itself (not recursively) and only for the events
-+	// above. gonotify.NewDirWatcher registers IN_ALL_EVENTS on every
-+	// subdirectory and filters afterwards, so every open or read under
-+	// /etc (including /etc/ld.so.cache on each exec) woke this goroutine.
-+	in, err := gonotify.NewInotify(ctx)
- 	if err != nil {
--		return fmt.Errorf("NewDirWatcher: %w", err)
-+		return fmt.Errorf("NewInotify: %w", err)
- 	}
-+	if _, err := in.AddWatch(dir, events|gonotify.IN_ONLYDIR); err != nil {
-+		return fmt.Errorf("AddWatch: %w", err)
-+	}
+ Hiding a device from the UI does not remove it from the tailnet or block network connectivity.]]></string>
++            <string id="HideWindowedUI">Hide the windowed user interface</string>
++            <string id="HideWindowedUI_Help"><![CDATA[This policy controls whether the client's windowed interface is available during its rollout.
 +
-+	// NewDirWatcher used to emit a synthetic event for existing files,
-+	// which ran cb once at startup. Keep that behavior.
-+	cb()
++If you enable this policy, Tailscale uses the legacy tray-based interface instead of the windowed UI. This removes the "Open Tailscale" menu item and device navigation actions, and restores the legacy Preferences submenu is used instead of opening the windowed Settings page.
++
++If you disable or do not configure this policy, the windowed user interface is available on supported devices.
++
++Changes to this policy require restarting the Tailscale GUI application to take effect.
++
++This policy is intended as a temporary option during the transition to the windowed user interface and may be deprecated or removed in a future release.]]></string>
+             <string id="TestMenu">Show the "Debug" submenu</string>
+             <string id="TestMenu_Help"><![CDATA[This policy can be used to show or hide the Debug submenu of the Tailscale menu.
  
- 	for {
--		select {
--		case event := <-watcher.C:
--			if event.Name == filename {
-+		evs, err := in.Read()
-+		if err != nil {
-+			if ctx.Err() != nil {
-+				return ctx.Err()
-+			}
-+			return fmt.Errorf("Read: %w", err)
-+		}
-+		for _, ev := range evs {
-+			if ev.Name == filename {
- 				cb()
-+				break
- 			}
--		case <-ctx.Done():
--			return ctx.Err()
- 		}
- 	}
- }
 ```
 
-**File**: `feature/linuxdnsfight/linuxdnsfight_test.go` (modified, +54/-37)
+**File**: `docs/windows/policy/tailscale.admx` (modified, +10/-0)
 ```diff
-@@ -8,56 +8,73 @@ package linuxdnsfight
- import (
- 	"context"
- 	"errors"
--	"fmt"
- 	"os"
--	"sync/atomic"
-+	"path/filepath"
- 	"testing"
- 	"time"
+@@ -351,6 +351,16 @@
+         </boolean>
+       </elements>
+     </policy>
++    <policy name="HideWindowedUI" class="Both" displayName="$(string.HideWindowedUI)" explainText="$(string.HideWindowedUI_Help)" key="Software\Policies\Tailscale" valueName="HideWindowedUI">
++      <parentCategory ref="UI_Category" />
++      <supportedOn ref="SINCE_V1_106" />
++      <enabledValue>
++        <decimal value="1" />
++      </enabledValue>
++      <disabledValue>
++        <decimal value="0" />
++      </disabledValue>
++    </policy>
+     <policy name="TestMenu" class="Both" displayName="$(string.TestMenu)" explainText="$(string.TestMenu_Help)" key="Software\Policies\Tailscale" valueName="TestMenu">
+       <parentCategory ref="UI_Category" />
+       <supportedOn ref="SINCE_V1_22" />
+```
+
+**File**: `util/syspolicy/pkey/pkey.go` (modified, +3/-0)
+```diff
+@@ -135,6 +135,9 @@ const (
+ 	LogSCMInteractions      Key = "LogSCMInteractions"
+ 	FlushDNSOnSessionUnlock Key = "FlushDNSOnSessionUnlock"
  
- 	"golang.org/x/sync/errgroup"
- )
- 
-+// startWatch runs watchFile on dir/filename and returns a channel that
-+// receives a value for each callback. It waits for the callback that
-+// watchFile makes at startup, so the watch is in place on return.
-+func startWatch(t *testing.T, dir, filename string) <-chan struct{} {
-+	t.Helper()
-+	ctx, cancel := context.WithCancel(context.Background())
-+	calls := make(chan struct{}, 100)
-+	var eg errgroup.Group
-+	eg.Go(func() error {
-+		return watchFile(ctx, dir, filename, func() { calls <- struct{}{} })
-+	})
-+	t.Cleanup(func() {
-+		cancel()
-+		if err := eg.Wait(); err != nil && !errors.Is(err, context.Canceled) {
-+			t.Error(err)
-+		}
-+	})
-+	select {
-+	case <-calls:
-+	case <-time.After(5 * time.Second):
-+		t.Fatal("no callback at startup")
-+	}
-+	return calls
-+}
-+
- func TestWatchFile(t *testing.T) {
- 	dir := t.TempDir()
--	filepath := dir + "/test.txt"
-+	path := filepath.Join(dir, "test.txt")
-+	calls := startWatch(t, dir, path)
- 
--	ctx, cancel := context.WithCancel(context.Background())
--	defer cancel()
--
--	var callbackCalled atomic.Bool
--	callbackDone := make(chan bool)
--	callback := func() {
--		// We only send to the channel once to avoid blocking if the
--		// callback is called multiple times -- this happens occasionally
--		// if inotify sends multiple events before we cancel the context.
--		if !callbackCalled.Load() {
--			callbackDone <- true
--			callbackCalled.Store(true)
--		}
-+	if err := os.WriteFile(path, []byte("write"), 0644); err != nil {
-+		t.Fatal(err)
- 	}
-+	select {
-+	case <-calls:
-+	case <-time.After(5 * time.Second):
-+		t.Fatal("callback was not called after write")
-+	}
-+}
- 
--	var eg errgroup.Group
--	eg.Go(func() error { return watchFile(ctx, dir, filepath, callback) })
--
--	// Keep writing until we get a callback.
--	func() {
--		for i := range 10000 {
--			if err := os.WriteFile(filepath, fmt.Appendf(nil, "write%d", i), 0644); err != nil {
--				t.Fatal(err)
--			}
--			select {
--			case <-callbackDone:
--				return
--			case <-time.After(10 * time.Millisecond):
--			}
--		}
--	}()
-+func TestWatchFileIgnoresReadsAndOtherFiles(t *testing.T) {
-+	dir := t.TempDir()
-+	path := filepath.Join(dir, "test.txt")
-+	if err := os.WriteFile(path, []byte("x"), 0644); err != nil {
-+		t.Fatal(err)
-+	}
-+	calls := startWatch(t, dir, path)
- 
--	cancel()
--	if err := eg.Wait(); err != nil && !errors.Is(err, context.Canceled) {
--		t.Error(err)
-+	for range 100 {
-+		if _, err := os.ReadFile(path); err != nil {
-+			t.Fatal(err)
-+		}
-+	}
-+	if err := os.WriteFile(filepath.Join(dir, "other.txt"), []byte("x"), 0644); err != nil {
-+		t.Fatal(err)
- 	}
--	if !callbackCalled.Load() {
--		t.Error("callback was not called")
-+	select {
-+	case <-calls:
-+		t.Fatal("callback called for reads or another file")
-+	case <-time.After(200 * time.Millisecond):
- 	}
++	// HideWindowedUI is a boolean policy that hides the Windows windowed UI.
++	// It does not close an already-open window.
++	HideWindowedUI Key = "HideWindowedUI"
+ 	// EncryptState is a boolean setting that specifies whether to encrypt the
+ 	// tailscaled state file.
+ 	// Windows and Linux use a TPM device, Apple uses the Keychain.
+```
+
+**File**: `util/syspolicy/policy_keys.go` (modified, +1/-0)
+```diff
+@@ -62,6 +62,7 @@ var implicitDefinitions = []*setting.Definition{
+ 	setting.NewDefinition(pkey.TestMenuVisibility, setting.UserSetting, setting.VisibilityValue),
+ 	setting.NewDefinition(pkey.UpdateMenuVisibility, setting.UserSetting, setting.VisibilityValue),
+ 	setting.NewDefinition(pkey.OnboardingFlowVisibility, setting.UserSetting, setting.VisibilityValue),
++	setting.NewDefinition(pkey.HideWindowedUI, setting.UserSetting, setting.BooleanValue),
  }
+ 
+ func init() {
+```
+
+---
+
+### Incident Patch 3: `055a07bf` (2026-11-17)
+**Commit Message**: .github: stop using direct proxy for webclient prebuilt
+
+Stop using the direct proxy for webclient prebuilt as this is preventing
+some packages that are no longer available on GitHub from installing
+properly during the build.
+
+Fixes https://github.com/tailscale/tailscale/issues/22488
+
+Signed-off-by: Mario Minardi <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/update-webclient-prebuilt.yml` (modified, +2/-2)
+```diff
+@@ -18,8 +18,8 @@ jobs:
+ 
+       - name: Run go get
+         run: |
+-          ./tool/go version # build gocross if needed using regular GOPROXY
+-          GOPROXY=direct ./tool/go get github.com/tailscale/web-client-prebuilt
++          ./tool/go version 
++          ./tool/go get github.com/tailscale/web-client-prebuilt
+           ./tool/go mod tidy
+ 
+       - name: Get access token
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #22481** (closed): net/tstun: reclaim orphaned TUN interfaces without recreating them (@raggi)
-- **PR #22476** (2026-11-17): go.mod: bump github.com/tailscale/wireguard-go (@tailscale-code-updater[bot])
-- **PR #22471** (2026-11-17): client/web,tool: bump node to 26.x LTS (@mpminardi)
-- **PR #22464** (2026-11-17): client/web,release/dist: move web client from yarn to pnpm (@j--w)
-- **PR #22460** (2026-11-17): derp/xdp: don't write counters back to the per-CPU map on every packet (@mikeodr)
-- **PR #22452** (2026-11-17): go.mod: bump gvisor.dev/gvisor (@tailscale-code-updater[bot])
+- **PR #22506** (2026-11-18): tstest/natlab: Fix typo in README sample command (@fmarier)
+- **PR #22505** (closed): tstest/natlab: Fix invalid example command in README (@fmarier)
+- **PR #22501** (2026-11-18): go.toolchain.rev: bump Go toolchain (@tailscale-code-updater[bot])
+- **PR #22500** (2026-11-18): wgengine/magicsock: remove logging from zero discokey to nonzero (@cmol)
+- **PR #22491** (2026-11-18): tstest/natlab/vmtest: make ssh tests run across Linux test matrix (@cmol)
+- **PR #22489** (2026-11-18): feature/linuxdnsfight, go.mod: replace gonotify with direct inotify calls (@bradfitz)
 
 ---
 
@@ -1068,31 +994,31 @@ Signed-off-by: Yerassyl Urazalin <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tka: fix OS name validation in signing deeplinks
+## X. tstest/natlab: Fix typo in README sample command
 
 **RULE**:
-When implementing operations in `tka/deeplink.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tstest/natlab/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `89b8a8e5`: tka: fix OS name validation in signing deeplinks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `019902a6`: tstest/natlab: Fix typo in README sample command. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tka/deeplink.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tstest/natlab/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	if len(osName) == 0 {
+go test ./tstest/natlab/vmtest/ --run-vm-tests -v -timeout=15m
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	if len(deviceName) == 0 {
+go test ./tstest/natlab/vmtest/ --run-vm-tests -v -timeout=15
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `89b8a8e5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `019902a6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

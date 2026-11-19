@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T23:35:01.223Z",
+  "last_updated": "2026-11-19T00:00:30.132Z",
   "total_records": 1918,
   "domains": {
     "A": {
@@ -7805,8 +7805,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "c9d11cd43584256d833ac1dd4ccc69c06eb6b20ed92fa558e2bc5739ce2dfa13",
-      "created_at": "2026-11-18T13:34:23.493Z"
+      "content_hash": "7bfb9bb54a507e5e9bf325ef4913af30957646c3f1b54ae3569b4adfea2de056",
+      "created_at": "2026-11-19T00:00:23.279Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -10646,8 +10646,8 @@
       "title": "Technical Construction Intelligence: NVIDIA/cuda-rust Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-technical-construction-intelligence-nvidia-cuda-rust-core-invar.md",
       "repository": "NVIDIA/cuda-rust",
-      "content_hash": "34f5012ce3fc4cf153a5109c28cc9b829504b3bae71158980cb211da07acfb51",
-      "created_at": "2026-11-17T10:10:57.292Z"
+      "content_hash": "aad3d007de7df17fa14367943cd5b772733d5aadb5890d3a28904ed5d9c85477",
+      "created_at": "2026-11-19T00:00:13.472Z"
     },
     "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-infinitered-reactotron-core-invariants",
@@ -10682,8 +10682,8 @@
       "title": "Technical Construction Intelligence: nvidia-cuda-rust-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nvidia-cuda-rust-learnings-technical-construction-intelligence-nvidia-cuda-rust-.md",
       "repository": "nvidia-cuda-rust-learnings",
-      "content_hash": "8c06511cb1f37e9764b14a4506e6e315acf618fe7d74775792cf7b22743b168f",
-      "created_at": "2026-11-17T10:11:13.421Z"
+      "content_hash": "8fc9e6324e5710f97b588204cbd5f833dad967afc7fb08102ccae751394a47da",
+      "created_at": "2026-11-19T00:00:28.829Z"
     },
     "DOM-D-86956AB2": {
       "record_id": "DOM-D-86956AB2",
@@ -12832,8 +12832,8 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-learnings-architecture-intelligence-tailscale-tailscale-lear.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "302f411444eb144b0e0058a43f03b8a0e18e4d411a5fb8d5d7d7dceb4578c88a",
-      "created_at": "2026-11-18T13:34:27.933Z"
+      "content_hash": "fa84d41aeffec9bf25b6d4795adb4073d003e85ffbbaa6f5f3da9a1c9bceb43a",
+      "created_at": "2026-11-19T00:00:30.132Z"
     },
     "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",
@@ -14145,8 +14145,8 @@
       "title": "Research & Knowledge Intelligence: Venastine-Research/Xing4.0-29B-A4B-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-venastine-research-xing4-0-29b-a4b-gguf-research-knowledge-intelligence-venas.md",
       "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-      "content_hash": "7c7ad4ba3978e4ba801acca712a79150c53dd7ff4b19d9470dcc11b8b90fc13d",
-      "created_at": "2026-11-14T07:30:37.535Z"
+      "content_hash": "aa00fe07506165ba0e7f1f0dd75bb26e6181efd74b7ef17dd03578d4835dae2e",
+      "created_at": "2026-11-19T00:00:09.677Z"
     },
     "domain_intelligence-architecture-intelligence-helixdb-helix-db-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-helixdb-helix-db-core-invariants",
@@ -14205,8 +14205,8 @@
       "title": "Research & Knowledge Intelligence: hf-venastine-research-xing4.0-29b-a4b-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-venastine-research-xing4-0-29b-a4b-gguf-learnings-research-knowledge-intellig.md",
       "repository": "hf-venastine-research-xing4.0-29b-a4b-gguf-learnings",
-      "content_hash": "e8960f44d34021a9813120b13ae8e15e360364f41eae9a5a4464dc814e63bea1",
-      "created_at": "2026-11-14T07:31:22.893Z"
+      "content_hash": "e0cd8b2876c2f76ddbd8d0dc819afabb9e71bc50b5454b65ab0866e3c2ab5ae9",
+      "created_at": "2026-11-19T00:00:29.436Z"
     },
     "domain_intelligence-architecture-intelligence-helixdb-helix-db-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-helixdb-helix-db-learnings-core-invariants",
@@ -15942,8 +15942,8 @@
       "title": "Quality & Verification Intelligence: apple/foundationdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-apple-foundationdb-quality-verification-intelligence-apple-foundationdb-core-inv.md",
       "repository": "apple/foundationdb",
-      "content_hash": "b020e4fa9610990bf3413d2395fcf857c40f3a560a5cd047dc6feac38ca03bad",
-      "created_at": "2026-11-18T07:30:54.367Z"
+      "content_hash": "7576de0bf7dfe2134f9b303ef5fdc8a9ffac46eab356efe4dd641f3cfcef5144",
+      "created_at": "2026-11-19T00:00:25.173Z"
     },
     "DOM-F-0C4992D6": {
       "record_id": "DOM-F-0C4992D6",

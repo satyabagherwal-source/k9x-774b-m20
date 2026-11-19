@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-3TIX",
-    "timestamp": "2026-11-17T15:43:34.713Z",
-    "repository": "reflection/Beam-1.0-501B-A23B",
-    "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
-    "contentHash": "01a56bef17d409c0393aaeaa3e5a344c01645ad8cf82be871355f9b14e1496b5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-3W1P",
-    "timestamp": "2026-11-17T15:43:37.981Z",
-    "repository": "dalance/procs",
-    "learningId": "learn-github-dalance-procs",
-    "contentHash": "1ad464a89124a54078e854c4d7f091abbd4d8af2991b9a6292c4ea68c9637e00",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-40J9",
-    "timestamp": "2026-11-17T15:43:43.797Z",
-    "repository": "software-mansion/react-native-reanimated",
-    "learningId": "learn-github-software-mansion-react-native-reanimated",
-    "contentHash": "523c66bf909c6be0c70ed6926e663ea99d5b369c79ef0be1d7d916071aaf2113",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-41YH",
-    "timestamp": "2026-11-17T15:43:45.641Z",
-    "repository": "open-policy-agent/opa",
-    "learningId": "learn-github-open-policy-agent-opa",
-    "contentHash": "6ab7bfe11063ac260aeddce35fe23a09c5af89d92e5e868de1e86f93bb2ceefb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-44GV",
     "timestamp": "2026-11-17T15:43:48.895Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7490,6 +7430,66 @@
     "repository": "rqlite/rqlite",
     "learningId": "learn-github-rqlite-rqlite",
     "contentHash": "8e22db0e69dadad1c892de1dfbad69af8744d3c96369a7c04336f33d19910e3d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-A9Y6",
+    "timestamp": "2026-11-19T00:00:09.438Z",
+    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
+    "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
+    "contentHash": "e717ecb93ce086d0eff0297cf7081d5dffd9372091ab945a1ab9896e00b41247",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-ACPO",
+    "timestamp": "2026-11-19T00:00:13.020Z",
+    "repository": "NVIDIA/cuda-rust",
+    "learningId": "learn-github-nvidia-cuda-rust",
+    "contentHash": "80e1d8a83bc0cd86982bc456dc335337553032f16c4822a1d5e0627246dfcbc0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-AKAW",
+    "timestamp": "2026-11-19T00:00:22.856Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "cdcd0eaee00a4e8642b3c16f0d91062b082986cc180ef38bb5297e4e309ccb86",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-ALQL",
+    "timestamp": "2026-11-19T00:00:24.717Z",
+    "repository": "apple/foundationdb",
+    "learningId": "learn-github-apple-foundationdb",
+    "contentHash": "335aab112d218418ff523d8dd01a2e80a7b6df89fe8af25e42b95e892ad434d4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
