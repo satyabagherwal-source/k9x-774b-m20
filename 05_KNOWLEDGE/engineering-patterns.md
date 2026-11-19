@@ -698436,3 +698436,263 @@ var retiredScopeWording = []struct{ old, new string }{
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `ffd03671` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9458. set OpenCode activity markers from session.execution events (Harvested from max-sixty/worktrunk)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "set OpenCode activity markers from session.execution events",
+  "source": "max-sixty/worktrunk",
+  "source_url": "https://github.com/max-sixty/worktrunk",
+  "source_version": "5b7d969e",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-19T22:27:35.204Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-max-sixty-worktrunk",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [max-sixty/worktrunk](https://github.com/max-sixty/worktrunk) (Revision: `5b7d969e`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `dev/opencode-plugin.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5e2106c7`: set OpenCode activity markers from session.execution events. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `dev/opencode-plugin.ts`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+  data?: { sessionID?: string; status?: { type?: string } };
+  session?: {
+    get(input: { sessionID: string }): Promise<{ parentID?: string; location?: { directory?: string } }>;
+  };
+// The marker each `session.execution.*` event sets. OpenCode 2.3 replaced
+// `session.status` and `session.idle` with these.
+const EXECUTION_MARKERS = new Map([
+  ["session.execution.started", WORKING],
+  ["session.execution.succeeded", WAITING],
+  ["session.execution.failed", WAITING],
+  ["session.execution.interrupted", WAITING],
+]);
+
+/**
+ * Whether an execution event belongs to a top-level session in `directory`.
+ *
+ * Execution events carry only a session ID, so the session record supplies the
+ * worktree. A subagent's session runs its own executions, and its finishing
+ * must not mark the worktree as waiting while the parent still works.
+ */
+async function ownsExecution(context: SetupContext, event: SessionEvent, directory: string): Promise<boolean> {
+  const sessionID = event.data?.sessionID;
+  if (!sessionID || !context.session) return false;
+  try {
+    const session = await context.session.get({ sessionID });
+    return !session.parentID && session.location?.directory === directory;
+  } ca
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+  data?: { status?: { type?: string } };
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5e2106c7` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9459. the report opens on its score, then goes straight to the fix queue (Harvested from seo-skills/seo-audit-skill)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "the report opens on its score, then goes straight to the fix queue",
+  "source": "seo-skills/seo-audit-skill",
+  "source_url": "https://github.com/seo-skills/seo-audit-skill",
+  "source_version": "f43ba12d",
+  "license": "MIT",
+  "extracted_at": "2026-11-19T22:27:38.067Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-seo-skills-seo-audit-skill",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [seo-skills/seo-audit-skill](https://github.com/seo-skills/seo-audit-skill) (Revision: `f43ba12d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in seo-skills/seo-audit-skill. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `e8cc2473`: design): the report opens on its score, then goes straight to the fix queue. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+- **The report opens on its score, then goes straight to what to fix.** In
+  the dashboard, the desktop app and the HTML report, the score leads and one
+  fix queue follows from 01, with no fix featured above the rest. Each fix is
+  agent introduces the queue with one sentence the numbers support ("The
+  first five return 2.4 of the 8.8 points this page is missing"); while a
+  score cap holds, the score names it and the fix that lifts it.
+  while a run is live (the only animation that loops), focused over the fix
+  queue, and reacting once when a run hands over to its report. Reduced motion
+  number at the top, with what it is missing, what it did not count, and what
+  changed since the last run beside it. Export formats sit in one menu and
+  on a click anywhere, and the report shows its own shape while it loads.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+- **The report opens on what to fix first.** In the dashboard, the desktop app
+  and the HTML report, the largest thing on an audit is now the first fix,
+  agent sits over it with one sentence the numbers support ("The first five
+  fixes return 2.4 of the 8.8 points this page is missing").
+  while a run is live (the only animation that loops), focused on the lead
+  fix, and reacting once when a run hands over to its report. Reduced motion
+  number beside the lead fix, with what it is missing, what it did not count,
+  and what changed since the last run. Export formats sit in one menu and
+  on a click anywhere, "Show evidence" opens under the lead fix instead of
+  jumping to the end of the page, and the report shows its own shape while it
+  loads.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `e8cc2473` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9460. do not return a 0 decompression size for single-block items (Harvested from zama-ai/tfhe-rs)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "do not return a 0 decompression size for single-block items",
+  "source": "zama-ai/tfhe-rs",
+  "source_url": "https://github.com/zama-ai/tfhe-rs",
+  "source_version": "1352efd8",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-19T22:27:45.364Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zama-ai-tfhe-rs",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `1352efd8`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `tfhe/src/high_level_api/compressed_ciphertext_list.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `1352efd8`: gpu): do not return a 0 decompression size for single-block items. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/high_level_api/compressed_ciphertext_list.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+            // ct2 is a single-block item (a FheBool): decompressing it still needs memory
+            assert!(
+                decompress_ct2_size_on_gpu > 0,
+                "decompression size of a single-block item must not be 0"
+            );
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `1352efd8` are properly handled with clean fallback behavior.

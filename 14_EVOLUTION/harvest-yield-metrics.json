@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T22:19:48.518Z",
-  "total_cycles_completed": 10875,
-  "total_learnings_persisted": 10875,
-  "total_rules_promoted": 10232,
+  "last_updated": "2026-11-19T22:27:45.795Z",
+  "total_cycles_completed": 10878,
+  "total_learnings_persisted": 10878,
+  "total_rules_promoted": 10235,
   "history": [
-    {
-      "timestamp": "2026-11-19T01:32:51.685Z",
-      "repository": "GreptimeTeam/greptimedb",
-      "learningId": "learn-github-greptimeteam-greptimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T01:47:08.575Z",
-      "repository": "Dicklesworthstone/destructive_command_guard",
-      "learningId": "learn-github-dicklesworthstone-destructive_command_guard",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T01:47:20.913Z",
-      "repository": "ydb-platform/ydb",
-      "learningId": "learn-github-ydb-platform-ydb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T01:47:28.260Z",
       "repository": "nomic-ai/nomic-embed-text-v1.5",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-19T22:19:48.518Z",
       "repository": "dosco/graphjin",
       "learningId": "learn-github-dosco-graphjin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T22:27:35.644Z",
+      "repository": "max-sixty/worktrunk",
+      "learningId": "learn-github-max-sixty-worktrunk",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T22:27:38.498Z",
+      "repository": "seo-skills/seo-audit-skill",
+      "learningId": "learn-github-seo-skills-seo-audit-skill",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T22:27:45.795Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

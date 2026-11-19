@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T22:19:54.067Z",
+  "last_updated": "2026-11-19T22:28:15.582Z",
   "total_verified_learnings": 9020,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22025,
+  "total_items": 22033,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -15452,19 +15452,24 @@
       "slug": "seo-skills-seo-audit-skill",
       "platform": "github",
       "source_url": "https://github.com/seo-skills/seo-audit-skill",
-      "source_version": "4a69dc96",
-      "content_hash": "f0576e7c724480e6d241a6526a39c230f00768d82dc0051053f73b26c95c72b1",
+      "source_version": "f43ba12d",
+      "content_hash": "9431c5e425388678abfcc49b4b229936b0ca1afb9598d4ccd4f56e5cae070736",
       "dossier_path": "07_PROJECT_LEARNING/seo-skills-seo-audit-skill-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/seo-skills-seo-audit-skill-learnings.md",
       "promoted_rules": [
-        1610
+        1610,
+        {
+          "number": 9459,
+          "title": "the report opens on its score, then goes straight to the fix queue",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
       ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T14:56:03.428Z",
+      "verified_at": "2026-11-19T22:27:38.326Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213381,8 +213386,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "cd105ed8",
-      "content_hash": "5cb08fe69155aba9daff4604809fab8b59024091b8b57f909a5b66fe2f0cfd6f",
+      "source_version": "1352efd8",
+      "content_hash": "2440176c747ad710cc591a8bad0b51243766b8d49c19aeebf37173d28f54b631",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -213425,6 +213430,11 @@
           "number": 9395,
           "title": "use merge commit parent as backward compat base",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9460,
+          "title": "do not return a 0 decompression size for single-block items",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213432,7 +213442,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T15:42:35.064Z",
+      "verified_at": "2026-11-19T22:27:45.624Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213474,10 +213484,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "cd105ed8",
-      "content_hash": "31a783aa0f45186c7103b7ec097bf02eafef6968bb2489ed44c8f4dfca1b8ef7",
+      "source_version": "1352efd8",
+      "content_hash": "cdd89cc5b9c41eaa0ffd1a2b79c5510c8ce04ecee0898437ccb9d13a57e2f282",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T15:42:35.757Z"
+      "persisted_at": "2026-11-19T22:27:46.106Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs",
@@ -213486,10 +213496,10 @@
       "relative_path": "08_VERIFICATION/zama-ai-tfhe-rs-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-r.md",
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai/tfhe-rs",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "cd105ed8",
-      "content_hash": "b0f83e367c68ed00908af0be1eef1aa0b02b473041f7cd13d71b70b64c2476df",
+      "source_version": "1352efd8",
+      "content_hash": "2217c398ec1e6c0cf2e0e5acda0867e48f40d5841c174887091410066f8a094a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T15:42:35.950Z"
+      "persisted_at": "2026-11-19T22:27:46.235Z"
     },
     "learn-github-tursodatabase-turso": {
       "learning_id": "learn-github-tursodatabase-turso",
@@ -237400,8 +237410,8 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "af889698",
-      "content_hash": "c26f2bea60f19bd103703a8d8210289def4c94e104b3dabbab2033739d021465",
+      "source_version": "5b7d969e",
+      "content_hash": "598a9b3014d9acdae6a942b399f884408f3df2932cf55f9f62d1a2f141bba76a",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
@@ -237424,6 +237434,11 @@
           "number": 9204,
           "title": "keep --path and --execute in the leftover-branch hint",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9458,
+          "title": "set OpenCode activity markers from session.execution events",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237431,7 +237446,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T11:06:41.307Z",
+      "verified_at": "2026-11-19T22:27:35.463Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237473,10 +237488,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-research-knowledge-intelligence-max-sixty-worktrunk-core-inv.md",
       "title": "Research & Knowledge Intelligence: max-sixty/worktrunk Core Invariants",
       "repository": "max-sixty/worktrunk",
-      "source_version": "af889698",
-      "content_hash": "5b3704b50eeae2fe767598b6177219c4392b566825aeda9fac0ba999e9e6e313",
+      "source_version": "5b7d969e",
+      "content_hash": "9170b4bc7c79e7f40d20305cb005805a80bb836a934a9d6635fb093e4643c188",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T11:06:41.786Z"
+      "persisted_at": "2026-11-19T22:27:35.945Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk",
@@ -237485,10 +237500,10 @@
       "relative_path": "08_VERIFICATION/max-sixty-worktrunk-verification-protocol-empirical-defect-shield-for-max-sixty-.md",
       "title": "Verification Protocol: Empirical Defect Shield for max-sixty/worktrunk",
       "repository": "max-sixty/worktrunk",
-      "source_version": "af889698",
-      "content_hash": "3bd1c46e58129cdc4bf1a48294861dcc9a6cecf978d9c832f7163806856ad5e6",
+      "source_version": "5b7d969e",
+      "content_hash": "a3dd12bc69db21e9c9dcc45676f2bdde3baf80d270c1b612204df441d3f037d1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T11:06:41.907Z"
+      "persisted_at": "2026-11-19T22:27:36.078Z"
     },
     "candidate_directive-state-stop-a-branch-s-vars-from-including-a-dotted-branch-s-vars": {
       "item_id": "candidate_directive-state-stop-a-branch-s-vars-from-including-a-dotted-branch-s-vars",
@@ -237510,9 +237525,9 @@
       "title": "Research & Knowledge Intelligence: max-sixty-worktrunk-learnings Core Invariants",
       "repository": "max-sixty-worktrunk-learnings",
       "source_version": "HEAD",
-      "content_hash": "6c56af178b106b88776a59a5e92fcce77752a424d5754b332b5afb4b415c2726",
+      "content_hash": "5493c7227574510463d3a8184dac7075805bade850d1e61554ad68fb2646dec0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T11:06:57.731Z"
+      "persisted_at": "2026-11-19T22:27:49.379Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk-learnings",
@@ -237522,9 +237537,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for max-sixty-worktrunk-learnings",
       "repository": "max-sixty-worktrunk-learnings",
       "source_version": "HEAD",
-      "content_hash": "b08dd839ff99f11b7b61fbbc07477a42dbc12004ce2d5dc1966674dbf0e94245",
+      "content_hash": "e1a260a98936e530bb824995633b9317ec51dfcd06c65f077b2373bcaf567cb2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T11:06:57.866Z"
+      "persisted_at": "2026-11-19T22:27:49.527Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv",
@@ -246816,10 +246831,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-seo-skills-seo-audit-skill-quality-verification-intelligence-seo-skills-seo-audi.md",
       "title": "Quality & Verification Intelligence: seo-skills/seo-audit-skill Core Invariants",
       "repository": "seo-skills/seo-audit-skill",
-      "source_version": "4a69dc96",
-      "content_hash": "a33272c8b3c5f967278a790cd9ffccf7d3ca77710c7bdf470e61874caeeb2264",
+      "source_version": "f43ba12d",
+      "content_hash": "90f0da09146e84eb4dbc108ef98b79bd9a71ee3a9d82d489e5c3ff12a8526d5a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T14:56:03.853Z"
+      "persisted_at": "2026-11-19T22:27:38.838Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-seo-skills-seo-audit-skill": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-seo-skills-seo-audit-skill",
@@ -246828,10 +246843,10 @@
       "relative_path": "08_VERIFICATION/seo-skills-seo-audit-skill-verification-protocol-empirical-defect-shield-for-seo.md",
       "title": "Verification Protocol: Empirical Defect Shield for seo-skills/seo-audit-skill",
       "repository": "seo-skills/seo-audit-skill",
-      "source_version": "4a69dc96",
-      "content_hash": "4639a261c2ea4d2f2904df4059c20532cc345204e26cead96a2beda43b9f6896",
+      "source_version": "f43ba12d",
+      "content_hash": "da0449a6df5ccb2566fdf8bf21adb901fe37a06389832576f02c8d665395db65",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T14:56:03.952Z"
+      "persisted_at": "2026-11-19T22:27:38.970Z"
     },
     "candidate_directive-cli-make-the-browser-render-opt-in-with-cwv": {
       "item_id": "candidate_directive-cli-make-the-browser-render-opt-in-with-cwv",
@@ -246853,9 +246868,9 @@
       "title": "Quality & Verification Intelligence: seo-skills-seo-audit-skill-learnings Core Invariants",
       "repository": "seo-skills-seo-audit-skill-learnings",
       "source_version": "HEAD",
-      "content_hash": "844fb3e90b020019fe3d044dda1fb62d278cc7a1801cd5590212cd58b3a725fe",
+      "content_hash": "9723aa6a5f6b462ad6e9249198be6bb45fd10a3ce094071dc923b89b3af0ccd8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T14:56:41.206Z"
+      "persisted_at": "2026-11-19T22:28:14.743Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-seo-skills-seo-audit-skill-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-seo-skills-seo-audit-skill-lea",
@@ -246865,9 +246880,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for seo-skills-seo-audit-skill-learnings",
       "repository": "seo-skills-seo-audit-skill-learnings",
       "source_version": "HEAD",
-      "content_hash": "8be642e62e3e8f5d8c0976c0b00a1112dc31c8a309962d22ccf41bf007c0e09a",
+      "content_hash": "ff1f184cdc693669d9e74f74a2ad312d2355eaf33743f9f4e7b38dda7ca24b4b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T14:56:41.324Z"
+      "persisted_at": "2026-11-19T22:28:14.896Z"
     },
     "learn-github-siteline-swiftui-introspect": {
       "learning_id": "learn-github-siteline-swiftui-introspect",
@@ -271468,9 +271483,9 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "repository": "zama-ai-tfhe-rs-learnings",
       "source_version": "HEAD",
-      "content_hash": "c8389ca233eff8e8040f7ca46675d9f027bcc6ca64b7e231b86d27e28c0ed617",
+      "content_hash": "155e2e0cbe60bec1002dbae43646656a21d68e40118f3d4c0ef53eb4b1817c73",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T23:02:52.626Z"
+      "persisted_at": "2026-11-19T22:28:15.435Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings",
@@ -271480,9 +271495,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai-tfhe-rs-learnings",
       "repository": "zama-ai-tfhe-rs-learnings",
       "source_version": "HEAD",
-      "content_hash": "693f54c1a92f8770745476980b8db94d8497412f33107fc32322c419addc67fa",
+      "content_hash": "3b915ab008f18e2be4e35ea417b2f7a6e68f53f0cde078947aeec97acae8791a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T23:02:52.740Z"
+      "persisted_at": "2026-11-19T22:28:15.582Z"
     },
     "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6": {
       "learning_id": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6",
@@ -297973,6 +297988,108 @@
       "content_hash": "63d4db0adeceb9db7a7885403a5dba56f37615174a6ddf42b4511c5d24f476e8",
       "domain_letter": "D",
       "persisted_at": "2026-11-19T22:19:53.031Z"
+    },
+    "rule-9458": {
+      "learning_id": "rule-9458",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9458,
+      "title": "set OpenCode activity markers from session.execution events",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "5b7d969e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T22:27:35.463Z"
+    },
+    "candidate_directive-set-opencode-activity-markers-from-session-execution-events": {
+      "item_id": "candidate_directive-set-opencode-activity-markers-from-session-execution-events",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FDRW-set-opencode-activity-markers-from-session-execution-events.md",
+      "title": "set OpenCode activity markers from session.execution events",
+      "repository": "max-sixty-worktrunk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "08205f917b9b6b435fa6f6130fabe3f9ef24f9d425c7e28fa94f1936e1125d2b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T22:27:49.248Z"
+    },
+    "rule-9459": {
+      "learning_id": "rule-9459",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9459,
+      "title": "the report opens on its score, then goes straight to the fix queue",
+      "source_url": "https://github.com/seo-skills/seo-audit-skill",
+      "source_version": "f43ba12d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T22:27:38.326Z"
+    },
+    "candidate_directive-the-report-opens-on-its-score-then-goes-straight-to-the-fix-queue": {
+      "item_id": "candidate_directive-the-report-opens-on-its-score-then-goes-straight-to-the-fix-queue",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-F5MQ-the-report-opens-on-its-score-then-goes-straight-to-the-fix-queue.md",
+      "title": "the report opens on its score, then goes straight to the fix queue",
+      "repository": "seo-skills/seo-audit-skill",
+      "source_version": "f43ba12d",
+      "content_hash": "bf9ca717367135bf390671cbe24951670ea219790b69d7fca6c341700cb5b361",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T22:27:38.693Z"
+    },
+    "rule-9460": {
+      "learning_id": "rule-9460",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9460,
+      "title": "do not return a 0 decompression size for single-block items",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "1352efd8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T22:27:45.624Z"
+    },
+    "candidate_directive-do-not-return-a-0-decompression-size-for-single-block-items": {
+      "item_id": "candidate_directive-do-not-return-a-0-decompression-size-for-single-block-items",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FB94-do-not-return-a-0-decompression-size-for-single-block-items.md",
+      "title": "do not return a 0 decompression size for single-block items",
+      "repository": "zama-ai/tfhe-rs",
+      "source_version": "1352efd8",
+      "content_hash": "a495343cb69bb3de7e2eef7f6b0a30e3cbed15ca3112f9099c529105b5289bbd",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T22:27:45.979Z"
+    },
+    "candidate_directive-design-the-report-opens-on-its-score-then-goes-straight-to-the-fix-queue": {
+      "item_id": "candidate_directive-design-the-report-opens-on-its-score-then-goes-straight-to-the-fix-queue",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FXBK-design-the-report-opens-on-its-score-then-goes-straight-to-the-fix-queue.md",
+      "title": "design): the report opens on its score, then goes straight to the fix queue",
+      "repository": "seo-skills-seo-audit-skill-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3c60912a14793676ae1c328234e29a1e6a6f6c8b6d46084eeb7c5dd69aed60e3",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-19T22:28:14.582Z"
+    },
+    "candidate_directive-gpu-do-not-return-a-0-decompression-size-for-single-block-items": {
+      "item_id": "candidate_directive-gpu-do-not-return-a-0-decompression-size-for-single-block-items",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FXV2-gpu-do-not-return-a-0-decompression-size-for-single-block-items.md",
+      "title": "gpu): do not return a 0 decompression size for single-block items",
+      "repository": "zama-ai-tfhe-rs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a886d74b81c63e7b9cfca4a177440d5f787eaf00b3eedf942183cb35b0bff2bf",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T22:28:15.285Z"
     }
   },
   "ai-builder-brain": {

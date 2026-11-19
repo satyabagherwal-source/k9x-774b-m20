@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-19T22:07:47.861Z",
+  "updated_at": "2026-11-19T22:28:14.239Z",
   "statistics": {
-    "total_nodes": 393,
+    "total_nodes": 394,
     "total_edges": 181,
     "domain_distribution": {
       "D": 261,
       "M": 1,
       "H": 59,
-      "J": 14,
+      "J": 15,
       "K": 22,
       "L": 8,
       "G": 1,
@@ -8788,6 +8788,28 @@
       ],
       "created_at": "2026-11-19T22:07:47.861Z",
       "updated_at": "2026-11-19T22:07:47.861Z"
+    },
+    "DOM-J-E0C204D8": {
+      "id": "DOM-J-E0C204D8",
+      "domain": "J",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Engineering Pattern: The results details object as JSON including the pageUrl the engine adds t",
+      "summary": "The result's `details` object as JSON, including the `pageUrl` the engine adds to every result. -> The result's `details` object as JSON, including the `pageUrl` the engine adds to every result.",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://seo-skills-seo-audit-skill/seo-skills-seo-audit-skill-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "`details_json`",
+        "author_or_entity": "AI-Builder-Brain Project Learning (seo-skills-seo-audit-skill)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "J",
+        "Search & Distribution Intelligence"
+      ],
+      "created_at": "2026-11-19T22:28:14.239Z",
+      "updated_at": "2026-11-19T22:28:14.239Z"
     }
   },
   "edges": [

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T22:19:48.521Z",
+  "last_updated": "2026-11-19T22:27:45.798Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3621,14 +3621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-max-sixty-worktrunk",
-      "content_hash": "c26f2bea60f19bd103703a8d8210289def4c94e104b3dabbab2033739d021465",
-      "verified_at": "2026-11-18T11:06:41.483Z",
+      "content_hash": "598a9b3014d9acdae6a942b399f884408f3df2932cf55f9f62d1a2f141bba76a",
+      "verified_at": "2026-11-19T22:27:35.647Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T11:06:41.483Z"
+      "last_updated": "2026-11-19T22:27:35.647Z"
     },
     "mattermost/mattermost": {
       "repository": "mattermost/mattermost",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "5cb08fe69155aba9daff4604809fab8b59024091b8b57f909a5b66fe2f0cfd6f",
-      "verified_at": "2026-11-19T15:42:35.323Z",
+      "content_hash": "2440176c747ad710cc591a8bad0b51243766b8d49c19aeebf37173d28f54b631",
+      "verified_at": "2026-11-19T22:27:45.798Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T15:42:35.323Z"
+      "last_updated": "2026-11-19T22:27:45.798Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -19041,14 +19041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-seo-skills-seo-audit-skill",
-      "content_hash": "f0576e7c724480e6d241a6526a39c230f00768d82dc0051053f73b26c95c72b1",
-      "verified_at": "2026-11-15T14:56:03.588Z",
+      "content_hash": "9431c5e425388678abfcc49b4b229936b0ca1afb9598d4ccd4f56e5cae070736",
+      "verified_at": "2026-11-19T22:27:38.500Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T14:56:03.588Z"
+      "last_updated": "2026-11-19T22:27:38.500Z"
     },
     "chocoford/ExcalidrawZ": {
       "repository": "chocoford/ExcalidrawZ",

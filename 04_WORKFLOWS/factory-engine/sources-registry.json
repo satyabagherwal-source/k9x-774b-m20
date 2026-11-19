@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T22:19:51.599Z",
-    "lastVerified": "2026-11-19T22:19:51.599Z",
+    "lastChecked": "2026-11-19T22:27:48.868Z",
+    "lastVerified": "2026-11-19T22:27:48.868Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-19T21:24:08.300Z",
+    "lastChecked": "2026-11-19T22:27:44.014Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-19T21:24:08.300Z"
+    "lastVerified": "2026-11-19T22:27:44.014Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -795,12 +795,12 @@
     "officialUrl": "https://github.com/max-sixty/worktrunk",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T11:06:40.548Z",
-    "lastVerified": "2026-11-18T11:06:40.548Z",
+    "lastChecked": "2026-11-19T22:27:34.556Z",
+    "lastVerified": "2026-11-19T22:27:34.556Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-max-sixty-worktrunk",
-    "contentHash": "c26f2bea60f19bd103703a8d8210289def4c94e104b3dabbab2033739d021465",
+    "contentHash": "598a9b3014d9acdae6a942b399f884408f3df2932cf55f9f62d1a2f141bba76a",
     "promotedRulesCount": 1,
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
@@ -1627,14 +1627,14 @@
     "officialUrl": "https://github.com/zama-ai/tfhe-rs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T15:42:33.986Z",
-    "lastVerified": "2026-11-19T15:42:33.986Z",
+    "lastChecked": "2026-11-19T22:27:44.885Z",
+    "lastVerified": "2026-11-19T22:27:44.885Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-zama-ai-tfhe-rs",
-    "contentHash": "5cb08fe69155aba9daff4604809fab8b59024091b8b57f909a5b66fe2f0cfd6f",
+    "contentHash": "2440176c747ad710cc591a8bad0b51243766b8d49c19aeebf37173d28f54b631",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3195,9 +3195,9 @@
   "neuron-core-neuron-ai": {
     "name": "neuron-ai",
     "officialUrl": "https://github.com/neuron-core/neuron-ai",
-    "lastChecked": "2026-11-18T16:31:38.529Z",
+    "lastChecked": "2026-11-19T22:27:41.528Z",
     "revisionIdentifier": "c2b9a03e",
-    "lastVerified": "2026-11-18T16:31:38.529Z"
+    "lastVerified": "2026-11-19T22:27:41.528Z"
   },
   "gitoxidelabs-gitoxide": {
     "name": "GitoxideLabs/gitoxide",
@@ -3538,9 +3538,9 @@
   "alibaba-sentinel-golang": {
     "name": "sentinel-golang",
     "officialUrl": "https://github.com/alibaba/sentinel-golang",
-    "lastChecked": "2026-11-18T17:28:02.217Z",
+    "lastChecked": "2026-11-19T22:27:36.735Z",
     "revisionIdentifier": "f7a7f957",
-    "lastVerified": "2026-11-18T17:28:02.217Z"
+    "lastVerified": "2026-11-19T22:27:36.735Z"
   },
   "parthsarthi03-raptor": {
     "name": "raptor",
@@ -8608,5 +8608,29 @@
     "lastChecked": "2026-11-19T22:19:40.328Z",
     "revisionIdentifier": "b0960c1d",
     "lastVerified": "2026-11-19T22:19:40.328Z"
+  },
+  "seo-skills-seo-audit-skill": {
+    "name": "seo-skills/seo-audit-skill",
+    "officialUrl": "https://github.com/seo-skills/seo-audit-skill",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-19T22:27:37.588Z",
+    "lastVerified": "2026-11-19T22:27:37.588Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-seo-skills-seo-audit-skill",
+    "contentHash": "9431c5e425388678abfcc49b4b229936b0ca1afb9598d4ccd4f56e5cae070736",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 21,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "react-native-maps-react-native-maps": {
+    "name": "react-native-maps",
+    "officialUrl": "https://github.com/react-native-maps/react-native-maps",
+    "lastChecked": "2026-11-19T22:27:34.058Z",
+    "revisionIdentifier": "39c6fd17",
+    "lastVerified": "2026-11-19T22:27:34.058Z"
   }
 }

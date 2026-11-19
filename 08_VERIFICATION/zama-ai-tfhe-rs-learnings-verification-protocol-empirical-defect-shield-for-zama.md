@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T23:02:52.423Z",
+  "timestamp": "2026-11-19T22:28:15.179Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zama-ai-tfhe-rs-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zama-ai-tfhe-rs-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T23:02:52.423Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T22:28:15.179Z`  
 > **Learning ID**: `LEARN-EVO-zama-ai-tfhe-rs-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `fbc8b20d`  
+> **Source Version**: `1352efd8`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T22:57:58.477Z  
+> **Timestamp**: 2026-11-19T22:27:44.890Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T22:57:58.472Z  
+> **Harvest Timestamp**: 2026-11-19T22:27:44.885Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: TFHE-rs: A Pure Rust implementation of the TFHE Scheme for Boolean and Integer Arithmetics Over Encrypted Data.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 1681 stars
+- **Stars / Engagement**: 1682 stars
 
 ---
 
@@ -477,6 +477,7 @@ template <typename Torus> struct int_decompression {
 #include "integer/radix_ciphertext.cuh"
 #include "integer/radix_ciphertext.h"
 #include "keyswitch/keyswitch.h"
+#include "pbs/pbs_multibit_utilities.h"
 #include "pbs/pbs_utilities.h"
 #include "pbs/programmable_bootstrap.cuh"
 #include "utils/helper_multi_gpu.cuh"
@@ -673,8 +674,7 @@ void generate_device_accumulator_with_encoding(
     cudaStream_t stream, uint32_t gpu_index, Torus *acc, uint64_t *degree,
     uint64_t *max_degree, uint32_t glwe_dimension, uint32_t polynomial_size,
     uint32_t input_message_modulus, uint32_t input_carry_modulus,
-    uint32_t output_message_modulus, uint32_t output_carry_modulus,
-    std::function<Torus(Torus)> 
+    uint32_t output_message_modulus, uint32_t output_carry_m
 ```
 
 ### Core Architecture Module: `backends/tfhe-cuda-backend/cuda/include/integer/kv_store/kv_store_utilities.h`
@@ -1724,6 +1724,17 @@ bool has_support_to_cuda_programmable_bootstrap_tbc_multi_bit(
     uint32_t num_samples, const CudaLweBootstrapKeyParamsFFI &bsk_params,
     uint32_t max_shared_memory);
 
+// The variant the multi-bit scratch selects for num_samples inputs.
+template <typename Torus>
+PBS_VARIANT
+get_multi_bit_pbs_variant(uint32_t gpu_index,
+                          const CudaLweBootstrapKeyParamsFFI &bsk_params,
+                          uint32_t num_samples);
+template <>
+PBS_VARIANT get_multi_bit_pbs_variant<uint64_t>(
+    uint32_t gpu_index, const CudaLweBootstrapKeyParamsFFI &bsk_params,
+    uint32_t num_samples);
+
 #if CUDA_ARCH >= 900
 template <typename Torus>
 uint64_t scratch_cuda_tbc_multi_bit_programmable_bootstrap(
@@ -1832,6 +1843,9 @@ struct pbs_buffer<Torus, PBS_TYPE::MULTI_BIT> : public pbs_buffer_base {
   uint32_t level_count;
   uint32_t input_lwe_ciphertext_count;
   uint32_t max_shared_memory;
+  uint32_t max_num_inputs() const override {
+    return input_lwe_ciphertext_count;
+  }
 
 private:
   // Variant-free part: shared fields plus the buffers every multi-bit variant
@@ -1917,17 +1931,6 @@ public:
              const CudaLweBootstrapKeyParamsFFI &bsk_params,
              uint32_t input_lwe_ciphertext_count, uint64_t lwe_chunk_size,
              pbs_variant_tag<PBS_VARIANT::DEFAULT>, bool allocate_gpu_memory,
-             uint64_t &size_tracker)
-      : pbs_buffer(stream, gpu_index, bsk_params, input_lwe_ciphertext_count,
-                   lwe_chunk_size, allocate_gpu_memory, size_tracker) {
-    pbs_variant = PBS_VARIANT::DEFAULT;
-
-    uint64_t full_sm_accumulate_step_one =
-        get_buffer_size_full_sm_multibit_programmable_bootstrap_step_one<Torus>(
-            polynomial_size);
-    uint64_t partial_sm_accumulate_step_one =
-        get_buffer_size_partial_sm_multibit_programmable_bootstrap_step_one<
-            Torus>(
 ```
 
 
@@ -1960,115 +1963,130 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fbc8b20d` (2026-11-18)
-**Commit Message**: chore: python tooling is subpar, call the right pre-installed python (#4178)
+### Incident Patch 1: `1352efd8` (2026-11-19)
+**Commit Message**: fix(gpu): do not return a 0 decompression size for single-block items (#4195)
 
-* chore: python tooling is subpar, call the right pre-installed python
-
-* chore: fix nvm installation on m1 runner
-
-* chore: rust has a bug on macOS 27, update recipe triggering the bug
-
-- rust bug https://github.com/rust-lang/rust/issues/157750
-- nightly toolchain are up to date enough
-- avoids changing the promises of the project
-
-**File**: `.github/workflows/m1_tests.yml` (modified, +36/-7)
+**File**: `tfhe/src/high_level_api/compressed_ciphertext_list.rs` (modified, +5/-0)
 ```diff
-@@ -43,23 +43,52 @@ jobs:
-     timeout-minutes: 720
- 
-     steps:
--      - name: Override NVM_DIR for proper node detection on this runner
--        run: |
--          echo "NVM_DIR=${HOME}/.nvm" >> "${GITHUB_ENV}"
--
-       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-         with:
-           persist-credentials: "false"
-           token: ${{ env.CHECKOUT_TOKEN }}
- 
--      - name: Setup Python
--        uses: ./.github/actions/setup_python
--
-       - name: Install latest stable
-         uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # zizmor: ignore[stale-action-refs] this action doesn't create releases
-         with:
-           toolchain: stable
- 
-+      # Indicate which python3 binary to use
-+      - name: Set python executable for macOS
-+        run: |
-+          version="$(make python_min_version)"
-+          echo "PYTHON_EXE=python${version}" >> "${GITHUB_ENV}"
-+
-+      - name: Node setup
-+        run: |
-+          # Resolve the Node major pinned in the Makefile to its most recent release: the cache key
-+          # below and all the make recipes of this job then use that exact release, so a new Node
-+          # release invalidates the cache instead of being shadowed by a cached older one.
-+          echo "NODE_VERSION=$(make node_latest_version)" >> "${GITHUB_ENV}"
-+
-+      - name: Node cache restoration
-+        id: node-cache
-+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 #v6.1.0
-+        with:
-+          path: |
-+            .nvm
-+            .npm
-+          key: node-${{ runner.os }}-${{ runner.arch }}-${{ env.NODE_VERSION }}
-+
-+      - name: Install Node
-+        if: steps.node-cache.outputs.cache-hit != 'true'
-+        run: |
-+          make install_node
-+
-+      - name: Node cache save
-+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 #v6.1.0
-+        if: steps.node-cache.outputs.cache-hit != 'true'
-+        with:
-+          path: |
-+            .nvm
-+            .npm
-+          key: node-${{ runner.os }}-${{ runner.arch }}-${{ env.NODE_VERSION }}
-+
-       - name: Install Safe-Chain
-         run: |
-           make install_aikido_safe_chain
+@@ -1431,6 +1431,11 @@ mod tests {
+                 .unwrap()
+                 .unwrap();
+             check_valid_cuda_malloc_assert_oom(decompress_ct2_size_on_gpu, GpuIndex::new(0));
++            // ct2 is a single-block item (a FheBool): decompressing it still needs memory
++            assert!(
++                decompress_ct2_size_on_gpu > 0,
++                "decompression size of a single-block item must not be 0"
++            );
+             compressed_list.move_to_current_device().unwrap();
+             let decompress_ct1_size_on_gpu_1 = compressed_list
+                 .get_decompression_size_on_gpu(0)
 ```
 
-**File**: `Makefile` (modified, +1/-1)
+**File**: `tfhe/src/integer/ciphertext/compressed_ciphertext_list.rs` (modified, +1/-6)
 ```diff
-@@ -237,7 +237,7 @@ install_node_impl:
- 	@if ! [ -d "$(NVM_DIR)" ]; then mkdir -p "$(NVM_DIR)"; fi
- 	$(SHELL) nvm_install.sh
- 	@rm nvm_install.sh
--	$(target_shell) -i -c 'nvm install $(NODE_VERSION)' || \
-+	$(target_shell) -i -c 'source "$(NVM_DIR)"/nvm.sh && nvm install $(NODE_VERSION)' || \
- 	( echo "Unable to install node, unknown error." && exit 1 )
- 
- .PHONY: node_version # Return Node version that will be installed
+@@ -224,14 +224,9 @@ impl CompressedCiphertextList {
+         let Some((_, block_range)) = self.block_range(index)? else {
+             return Ok(None);
+         };
+-        if block_range.is_empty() {
+-            return Ok(Some(0));
+-        }
+-
+         Ok(Some(decomp_key.get_cpu_list_unpack_size_on_gpu(
+             &self.packed_list,
+-            block_range.start,
+-            block_range.end - 1,
++            block_range,
+             streams,
+         )))
+     }
 ```
 
-**File**: `make/benchmark_utils.mk` (modified, +1/-1)
+**File**: `tfhe/src/integer/gpu/ciphertext/compressed_ciphertext_list.rs` (modified, +1/-6)
 ```diff
-@@ -36,6 +36,6 @@ clippy_data_extractor: install_rs_check_toolchain
- # No database needed, the extractor's profile test reads ci/regression.toml.
- .PHONY: test_benchmark_utils # Run tests for benchmark_spec, the browser ids, the bench parser and the data extractor
- test_benchmark_utils:
--	RUSTFLAGS="$(RUSTFLAGS)" cargo test --profile $(CARGO_PROFILE) \
-+	RUSTFLAGS="$(RUSTFLAGS)" cargo "$(CARGO_RS_CHECK_TOOLCHAIN)" test --profile $(CARGO_PROFILE) \
- 		--all-targets -p benchmark_spec -p benchmark-spec-js -p tfhe-benchmark-parser \
- 		-p tfhe-data-extractor
+@@ -161,14 +161,9 @@ impl CudaCompressedCiphertextList {
+         let Some((_, block_range)) = self.block_range(index)? else {
+             return Ok(None);
+         };
+-        if block_range.is_empty() {
+-            return Ok(Some(0));
+-        }
+-
+         Ok(Some(decomp_key.get_gpu_list_unpack_size_on_gpu(
+             &self.packed_list,
+-            block_range.start,
+-            block_range.end - 1,
++            block_range,
+             streams,
+         )))
+     }
+```
+
+**File**: `tfhe/src/integer/gpu/list_compression/server_keys.rs` (modified, +7/-12)
+```diff
+@@ -31,6 +31,7 @@ use crate::shortint::parameters::AtomicPatternKind;
+ use crate::shortint::prelude::{GlweDimension, LweDimension};
+ use crate::shortint::{CarryModulus, MessageModulus, PBSOrder};
+ use itertools::Itertools;
++use std::ops::Range;
+ use tfhe_cuda_backend::cuda_bind::cuda_memcpy_async_gpu_to_gpu;
+ 
+ #[derive(Debug)]
+@@ -696,21 +697,18 @@ impl CudaDecompressionKey {
+     pub fn get_gpu_list_unpack_size_on_gpu(
+         &self,
+         packed_list: &CudaPackedGlweCiphertextList<u64>,
+-        start_block_index: usize,
+-        end_block_index: usize,
++        block_range: Range<usize>,
+         streams: &CudaStreams,
+     ) -> u64 {
+-        if start_block_index == end_block_index {
++        if block_range.is_empty() {
+             return 0;
+         }
+ 
+         let Some(ref meta) = packed_list.meta else {
+             panic!("Missing ciphertext metadata in CompressedCiphertextList")
+         };
+ 
+-        let indexes_array = (start_block_index..=end_block_index)
+-            .map(|x| x as u32)
+-            .collect_vec();
++        let indexes_array = block_range.map(|x| x as u32).collect_vec();
+ 
+         let encryption_glwe_dimension = self.glwe_dimension;
+         let encryption_polynomial_size = self.polynomial_size;
+@@ -743,17 +741,14 @@ impl CudaDecompressionKey {
+     pub fn get_cpu_list_unpack_size_on_gpu(
+         &self,
+         packed_list: &CompressedCiphertextList,
+-        start_block_index: usize,
+-        end_block_index: usize,
++        block_range: Range<usize>,
+         streams: &CudaStreams,
+     ) -> u64 {
+-        if start_block_index == end_block_index {
++        if block_range.is_empty() {
+             return 0;
+         }
+ 
+-        let indexes_array = (start_block_index..=end_block_index)
+-            .map(|x| x as u32)
+-            .collect_vec();
++        let indexes_array = block_range.map(|x| x as u32).collect_vec();
+ 
+         let encryption_glwe_dimension = self.glwe_dimension;
+         let encryption_polynomial_size = self.polynomial_size;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4197** (2026-11-19): fix(ci): use merge commit parent as backward compat base (@SouchonTheo)
+- **PR #4195** (2026-11-19): fix(gpu): do not return a 0 decompression size for single-block items (@agnesLeroy)
+- **PR #4194** (2026-11-19): chore: publish steps are put beyon a release environment (@IceTDrinker)
 - **PR #4193** (closed): fix(gpu): fixing inplace shift and rotate with dirty inputs (@enzodimaria)
 - **PR #4189** (2026-11-18): fix(gpu): write the result into the input of shift and rotate assign functions when it has carries (@pdroalves)
 - **PR #4183** (2026-11-17): chore: simpler CODEOWNERS while still respecting guidelines (@IceTDrinker)
-- **PR #4181** (2026-11-17): chore: make pip timeout longer to avoid problem with potentially safe… (@IceTDrinker)
-- **PR #4178** (2026-11-18): actions/setup-python has insane requirements, make do without them (@IceTDrinker)
-- **PR #4177** (2026-11-18): fix(gpu): automatically generated files should be excluded from `cargo::rerun-if-changed` (@enzodimaria)
 
 ---
 
@@ -2088,66 +2106,35 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. python tooling is subpar, call the right pre-installed python
+## X. gpu): do not return a 0 decompression size for single-block items
 
 **RULE**:
-When implementing operations in `.github/workflows/m1_tests.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tfhe/src/high_level_api/compressed_ciphertext_list.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fbc8b20d`: python tooling is subpar, call the right pre-installed python. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1352efd8`: gpu): do not return a 0 decompression size for single-block items. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/m1_tests.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/high_level_api/compressed_ciphertext_list.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      # Indicate which python3 binary to use
-      - name: Set python executable for macOS
-        run: |
-          version="$(make python_min_version)"
-          echo "PYTHON_EXE=python${version}" >> "${GITHUB_ENV}"
-
-      - name: Node setup
-        run: |
-          # Resolve the Node major pinned in the Makefile to its most recent release: the cache key
-          # below and all the make recipes of this job then use that exact release, so a new Node
-          # release invalidates the cache instead of being shadowed by a cached older one.
-          echo "NODE_VERSION=$(make node_latest_version)" >> "${GITHUB_ENV}"
-
-      - name: Node cache restoration
-        id: node-cache
-        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 #v6.1.0
-        with:
-          path: |
-            .nvm
-            .npm
-          key: node-${{ runner.os }}-${{ runner.arch }}-${{ env.NODE_VERSION }}
-
-      - name: Install Node
-        if: steps.node-cache.outputs.cache-hit != 'true'
-        run: |
-          make install_node
-
-      - name: Node cache save
-        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 #v6.1.0
-        if: steps.node-cache.outputs.cache-
+            // ct2 is a single-block item (a FheBool): decompressing it still needs memory
+            assert!(
+                decompress_ct2_size_on_gpu > 0,
+                "decompression size of a single-block item must not be 0"
+            );
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      - name: Override NVM_DIR for proper node detection on this runner
-        run: |
-          echo "NVM_DIR=${HOME}/.nvm" >> "${GITHUB_ENV}"
-
-      - name: Setup Python
-        uses: ./.github/actions/setup_python
-
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fbc8b20d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1352efd8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-Z4NL",
-    "timestamp": "2026-11-18T06:07:43.953Z",
-    "repository": "ShiftHackZ/SDAI-KMP",
-    "learningId": "learn-github-shifthackz-sdai-kmp",
-    "contentHash": "9c23d536dd9c76c5a7cc80011faa27608522c5f43b6ebebb55f073b904ecee53",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-8XDR",
-    "timestamp": "2026-11-18T06:15:21.087Z",
-    "repository": "Alissonerdx/BFS-Best-Face-Swap",
-    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-    "contentHash": "8e137501a0e054ac96cd835e1927fa8e125cc839d7b79e98ea2f7d5dd8059d65",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-8YLM",
-    "timestamp": "2026-11-18T06:15:22.666Z",
-    "repository": "zeronsh/zeron",
-    "learningId": "learn-github-zeronsh-zeron",
-    "contentHash": "8d37abb04e3e7db192128f7bdfeae93187706ca66e62b017cecfee0b29a94d9b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-92FA",
     "timestamp": "2026-11-18T06:15:27.622Z",
     "repository": "necolas/react-native-web",
@@ -7490,6 +7445,51 @@
     "repository": "dosco/graphjin",
     "learningId": "learn-github-dosco-graphjin",
     "contentHash": "239e1951270f4c30bbf6c456f98a3ee5fd5f8b83ac3e60d48c390a516fd8e763",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-F39W",
+    "timestamp": "2026-11-19T22:27:35.636Z",
+    "repository": "max-sixty/worktrunk",
+    "learningId": "learn-github-max-sixty-worktrunk",
+    "contentHash": "598a9b3014d9acdae6a942b399f884408f3df2932cf55f9f62d1a2f141bba76a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-F5H5",
+    "timestamp": "2026-11-19T22:27:38.489Z",
+    "repository": "seo-skills/seo-audit-skill",
+    "learningId": "learn-github-seo-skills-seo-audit-skill",
+    "contentHash": "9431c5e425388678abfcc49b4b229936b0ca1afb9598d4ccd4f56e5cae070736",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-FB3V",
+    "timestamp": "2026-11-19T22:27:45.787Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "2440176c747ad710cc591a8bad0b51243766b8d49c19aeebf37173d28f54b631",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

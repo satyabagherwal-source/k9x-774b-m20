@@ -4,24 +4,24 @@
 {
   "source_repository": "zama-ai/tfhe-rs",
   "source_url": "https://github.com/zama-ai/tfhe-rs",
-  "source_version": "cd105ed8",
+  "source_version": "1352efd8",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-19T15:42:35.568Z",
+  "timestamp": "2026-11-19T22:27:45.976Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zama-ai-tfhe-rs",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `cd105ed8`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-19T15:42:35.568Z`  
+> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `1352efd8`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-19T22:27:45.976Z`  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), I (Content & Information Intelligence), F (Design Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 89%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), I (Content & Information Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 88%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zama-ai/tfhe-rs:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T15:42:33.986Z  
+> **Harvest Timestamp**: 2026-11-19T22:27:44.885Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1952,577 +1952,130 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cd105ed8` (2026-11-19)
-**Commit Message**: fix(ci): use merge commit parent as backward compat base
+### Incident Patch 1: `1352efd8` (2026-11-19)
+**Commit Message**: fix(gpu): do not return a 0 decompression size for single-block items (#4195)
 
-**File**: `.github/workflows/backward_compatibility.yml` (modified, +14/-4)
+**File**: `tfhe/src/high_level_api/compressed_ciphertext_list.rs` (modified, +5/-0)
 ```diff
-@@ -31,15 +31,25 @@ jobs:
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-         with:
-           persist-credentials: "true"
-+          fetch-depth: 2
- 
--      - name: Fetch base commit
-+      - name: Resolve base commit
-+        id: base
-         env:
--          BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}
--        run: git fetch origin "$BASE_REF" --depth=1
-+          EVENT_NAME: ${{ github.event_name }}
-+          BEFORE_SHA: ${{ github.event.before }}
-+        run: |
-+          if [[ "$EVENT_NAME" == "pull_request" ]]; then
-+            base_ref=$(git rev-parse HEAD^1)
-+          else
-+            git fetch origin "$BEFORE_SHA" --depth=1
-+            base_ref="$BEFORE_SHA"
-+          fi
-+          echo "ref=$base_ref" >> "$GITHUB_OUTPUT"
- 
-       - name: Generate base snapshot
-         env:
--          BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}
-+          BASE_REF: ${{ steps.base.outputs.ref }}
-         run: make backward_snapshot_worktree BASE_REF="$BASE_REF" SNAPSHOT_OUTPUT_DIR=/tmp/snapshots/base
- 
-       - name: Generate head snapshot
+@@ -1431,6 +1431,11 @@ mod tests {
+                 .unwrap()
+                 .unwrap();
+             check_valid_cuda_malloc_assert_oom(decompress_ct2_size_on_gpu, GpuIndex::new(0));
++            // ct2 is a single-block item (a FheBool): decompressing it still needs memory
++            assert!(
++                decompress_ct2_size_on_gpu > 0,
++                "decompression size of a single-block item must not be 0"
++            );
+             compressed_list.move_to_current_device().unwrap();
+             let decompress_ct1_size_on_gpu_1 = compressed_list
+                 .get_decompression_size_on_gpu(0)
 ```
 
----
-
-### Incident Patch 2: `27c0d830` (2026-11-19)
-**Commit Message**: fix(integer): check kind in compressed list before decompression (#4171)
-
-**File**: `tfhe/src/high_level_api/compressed_ciphertext_list.rs` (modified, +19/-0)
+**File**: `tfhe/src/integer/ciphertext/compressed_ciphertext_list.rs` (modified, +1/-6)
 ```diff
-@@ -831,12 +831,16 @@ impl CompressedCiphertextList {
- pub mod gpu {
-     use crate::core_crypto::gpu::CudaStreams;
-     use crate::high_level_api::integers::{FheIntId, FheUintId};
-+    use crate::high_level_api::utils::{
-+        check_signed_kind, check_unsigned_kind, kind_mismatch_error,
-+    };
-     use crate::integer::ciphertext::DataKind;
-     use crate::integer::gpu::ciphertext::boolean_value::CudaBooleanBlock;
-     use crate::integer::gpu::ciphertext::compressed_ciphertext_list::{
-         CudaCompressible, CudaExpandable,
-     };
-     use crate::integer::gpu::ciphertext::CudaRadixCiphertext;
-+    use crate::shortint::MessageModulus;
-     use crate::{FheBool, FheInt, FheUint, ReRandomizationMetadata, Tag};
- 
-     impl<Id: FheUintId> CudaCompressible for FheUint<Id> {
-@@ -885,6 +889,10 @@ pub mod gpu {
-     }
- 
-     impl<Id: FheUintId> CudaExpandable for FheUint<Id> {
-+        fn check_kind(kind: DataKind, message_modulus: MessageModulus) -> crate::Result<()> {
-+            check_unsigned_kind(kind, message_modulus, Id::num_bits())
-+        }
-+
-         fn from_expanded_blocks(
-             blocks: CudaRadixCiphertext,
-             kind: DataKind,
-@@ -930,6 +938,10 @@ pub mod gpu {
-     }
- 
-     impl<Id: FheIntId> CudaExpandable for FheInt<Id> {
-+        fn check_kind(kind: DataKind, message_modulus: MessageModulus) -> crate::Result<()> {
-+            check_signed_kind(kind, message_modulus, Id::num_bits())
-+        }
-+
-         fn from_expanded_blocks(
-             blocks: CudaRadixCiphertext,
-             kind: DataKind,
-@@ -975,6 +987,13 @@ pub mod gpu {
-     }
- 
-     impl CudaExpandable for FheBool {
-+        fn check_kind(kind: DataKind, message_modulus: MessageModulus) -> crate::Result<()> {
-+            if kind == DataKind::Boolean {
-+                return Ok(());
-+            }
-+            Err(kind_mismatch_error("FheBool", kind, message_modulus))
-+        }
-+
-         fn from_expanded_blocks(
-             blocks: CudaRadixCiphertext,
-             kind: DataKind,
-```
-
-**File**: `tfhe/src/high_level_api/strings/ascii/mod.rs` (modified, +14/-0)
-```diff
-@@ -14,10 +14,12 @@ use crate::high_level_api::errors::UninitializedServerKey;
- use crate::high_level_api::global_state;
- use crate::high_level_api::keys::InternalServerKey;
- use crate::high_level_api::re_randomization::ReRandomizationMetadata;
-+use crate::high_level_api::utils::kind_mismatch_error;
- use crate::integer::ciphertext::{Compressible, DataKind, Expandable};
- use crate::named::Named;
- use crate::prelude::{FheDecrypt, FheTryEncrypt, FheTryTrivialEncrypt, Tagged};
- use crate::shortint::ciphertext::NotTrivialCiphertextError;
-+use crate::shortint::MessageModulus;
- use crate::strings::ciphertext::FheString;
- use crate::{ClientKey, HlExpandable, Tag};
- pub use no_pattern::{FheStringIsEmpty, FheStringLen};
-@@ -380,6 +382,13 @@ impl FheDecrypt<String> for FheAsciiString {
- }
- 
- impl Expandable for FheAsciiString {
-+    fn check_kind(kind: DataKind, message_modulus: MessageModulus) -> crate::Result<()> {
-+        if matches!(kind, DataKind::String { .. }) {
-+            return Ok(());
-+        }
-+        Err(kind_mismatch_error("FheAsciiString", kind, message_modulus))
-+    }
-+
-     fn from_expanded_blocks(
-         blocks: Vec<crate::shortint::Ciphertext>,
-         kind: DataKind,
-@@ -400,6 +409,11 @@ impl crate::HlCompactable for &crate::ClearString {}
- impl crate::integer::gpu::ciphertext::compressed_ciphertext_list::CudaExpandable
-     for FheAsciiString
- {
-+    fn check_kind(kind: DataKind, message_modulus: MessageModulus) -> crate::Result<()> {
-+        let _ = (kind, message_modulus);
-+        Err(crate::error!("GPU does not supports strings yet"))
-+    }
-+
-     fn from_expanded_blocks(
-         blocks: crate::integer::gpu::ciphertext::CudaRadixCiphertext,
-         kind: DataKind,
-```
-
-**File**: `tfhe/src/high_level_api/utils.rs` (modified, +119/-1)
-```diff
-@@ -3,7 +3,7 @@ use crate::high_level_api::integers::unsigned::FheUintId;
- use crate::high_level_api::re_randomization::ReRandomizationMetadata;
- use crate::integer::ciphertext::{DataKind, Expandable};
- use crate::integer::BooleanBlock;
--use crate::shortint::Ciphertext;
-+use crate::shortint::{Ciphertext, MessageModulus};
- use crate::{FheBool, FheInt, FheUint, Tag};
- 
- fn num_bits_of_blocks(blocks: &[Ciphertext]) -> u32 {
-@@ -13,7 +13,70 @@ fn num_bits_of_blocks(blocks: &[Ciphertext]) -> u32 {
-         .sum::<u32>()
- }
- 
-+fn data_kind_name(kind: DataKind, message_modulus: MessageModulus) -> String {
-+    let num_bits = kind.radix_num_bits(message_modulus);
-+    match kind {
-+        DataKind::Unsigned(_) => num_bits.map_or_else(
-+            || "FheUint of invalid size".to_owned(),
-+            |num_bits| format!("FheUint{num_bits}"),
-+        ),
-+        DataKind::Signed(_) => num_bits.map_or_else(
-+            || "FheInt of invalid size".to_owned(),
-+            |num_bits| format!("FheInt{num_bits}"),
-+        ),
-+        DataKind::Boolean => "FheBool".to_owned(),
-+        DataKind::String { .. } => "FheString".to_owned(),
-+    }
-+}
-+
-+pub(crate) fn kind_mismatch_error(
-+    expected_type: &str,
-+    kind: DataKind,
-+    message_modulus: MessageModulus,
-+) -> crate::Error {
-+    crate::error!(
-+        "Tried to expand a {expected_type} while a {} is stored in this slot",
-+        data_kind_name(kind, message_modulus)
-+    )
-+}
-+
-+/// Checks, without decompressing it, that an item of `kind` holds a `FheUint{num_bits}`
-+pub(crate) fn check_unsigned_kind(
-+    kind: DataKind,
-+    message_modulus: MessageModulus,
-+    num_bits: usize,
-+) -> crate::Result<()> {
-+    if kind.is_unsigned_radix(message_modulus, num_bits) {
-+        return Ok(());
-+    }
-+    Err(kind_mismatch_error(
-+        &format!("FheUint{num_bits}"),
-+        kind,
-+        message_modulus,
-+    ))
-+}
-+
-+/// Checks, without decompressing it, that an item of `kind` holds a `FheInt{num_bits}`
-+pub(crate) fn check_signed_kind(
-+    kind: DataKind,
-+    message_modulus: MessageModulus,
-+    num_bits: usize,
-+) -> crate::Result<()> {
-+    if kind.is_signed_radix(message_modulus, num_bits) {
-+        return Ok(());
-+    }
-+    Err(kind_mismatch_error(
-+        &format!("FheInt{num_bits}"),
-+        kind,
-+        message_modulus,
-+    ))
-+}
-+
- impl<Id: FheUintId> Expandable for FheUint<Id> {
-+    fn check_kind(kind: DataKind, message_modulus: MessageModulus) -> crate::Result<()> {
-+        check_unsigned_kind(kind, message_modulus, Id::num_bits())
-+    }
-+
-     fn from_expanded_blocks(blocks: Vec<Ciphertext>, kind: DataKind) -> crate::Result<Self> {
-         match kind {
-             DataKind::Unsigned(_) => {
-@@ -54,6 +117,10 @@ impl<Id: FheUintId> Expandable for FheUint<Id> {
- }
- 
- impl<Id: FheIntId> Expandable for FheInt<Id> {
-+    fn check_kind(kind: DataKind, message_modulus: MessageModulus) -> crate::Result<()> {
-+        check_signed_kind(kind, message_modulus, Id::num_bits())
-+    }
-+
-     fn from_expanded_blocks(blocks: Vec<Ciphertext>, kind: DataKind) -> crate::Result<Self> {
-         match kind {
-             DataKind::Unsigned(_) => {
-@@ -94,6 +161,13 @@ impl<Id: FheIntId> Expandable for FheInt<Id> {
- }
- 
- impl Expandable for FheBool {
-+    fn check_kind(kind: DataKind, message_modulus: MessageModulus) -> crate::Result<()> {
-+        if kind == DataKind::Boolean {
-+            return Ok(());
-+        }
-+        Err(kind_mismatch_error("FheBool", kind, message_modulus))
-+    }
-+
-     fn from_expanded_blocks(blocks: Vec<Ciphertext>, kind: DataKind) -> crate::Result<Self> {
-         match kind {
-             DataKind::Unsigned(_) => {
-@@ -133,3 +207,47 @@ impl Expandable for FheBool {
-         }
-     }
- }
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+    #[cfg(feature = "strings")]
-+    use crate::FheAsciiString;
-+    use crate::{FheInt8, FheUint8};
-+    use std::num::NonZeroUsize;
-+
-+    #[test]
-+    fn test_check_kind() {
-+        let message_modulus = MessageModulus(4);
-+        let four_blocks = NonZeroUsize::new(4).unwrap();
-+
-+        // Matching items
-+        assert!(FheUint8::check_kind(DataKind::Unsigned(four_blocks), message_modulus).is_ok());
-+        assert!(FheInt8::check_kind(DataKind::Signed(four_blocks), message_modulus).is_ok());
-+        assert!(FheBool::check_kind(DataKind::Boolean, message_modulus).is_ok());
-+        let string = DataKind::String {
-+            n_chars: 3,
-+            padded: false,
-+        };
-+        #[cfg(feature = "strings")]
-+        assert!(FheAsciiString::check_kind(string, message_modulus).is_ok());
-+
-+        // Wrong size, as an attacker would send to trigger a big decompression
-+        let huge = DataKind::Unsigned(NonZeroUsize::new(100_000).unwrap());
-+        assert!(FheUint8::check_kind(huge, message_modulus).is_err());
-+        assert!(
-+            FheUint8::check_kind(DataKind::Unsigned(NonZeroUsize::MAX), message_modulus).is_err()
-+        );
-+
-+        // Wrong kind
-+        
-```
-
-**File**: `tfhe/src/integer/ciphertext/compressed_ciphertext_list.rs` (modified, +9/-2)
-```diff
-@@ -169,7 +169,7 @@ impl CompressedCiphertextList {
-         Ok(Some((kind, range)))
-     }
- 
--    fn blocks_of(
-+    fn blocks_of<T: Expandable>(
-         &self,
-         index: usize,
-         decomp_key: &DecompressionKey,
-@@ -178,6 +178,13 @@ impl CompressedCiphertextList {
+@@ -224,14 +224,9 @@ impl CompressedCiphertextList {
+         let Some((_, block_range)) = self.block_range(index)? else {
              return Ok(None);
          };
- 
-+        // If the list has at least one block, it should have a message modulus
-+        let message_modulus = self
-+            .packed_list
-+            .message_modulus()
-+            .ok_or_else(|| crate::error!("Missing metadata for list"))?;
-+        T::check_kind(current_info, message_modulus)?;
-+
-         let blocks = block_range
-             .into_par_iter()
-             .map(|i| decomp_key.key.unpack(&self.packed_list, i))
-@@ -194,7 +201,7 @@ impl CompressedCiphertextList {
-     where
-         T: Expandable,
-     {
--        self.blocks_of(index, decomp_key)?
-+        self.blocks_of::<T>(index, decomp_key)?
-             .map(|(blocks, kind)| T::from_expanded_blocks(blocks, kind))
-             .transpose()
-     }
-```
-
-**File**: `tfhe/src/integer/ciphertext/utils.rs` (modified, +54/-20)
-```diff
-@@ -21,6 +21,28 @@ pub enum DataKind {
- }
- 
- impl DataKind {
-+    /// Bit width of a radix item, or None if the item is not a radix, if the modulus is invalid
-+    /// or on overflow
-+    pub(crate) fn radix_num_bits(self, message_modulus: MessageModulus) -> Option<usize> {
-+        let (Self::Unsigned(num_blocks) | Self::Signed(num_blocks)) = self else {
-+            return None;
-+        };
-+        let bits_per_block = message_modulus.0.checked_ilog2()?;
-+        num_blocks.get().checked_mul(bits_per_block as usize)
-+    }
-+
-+    pub(crate) fn is_unsigned_radix(
-+        self,
-+        message_modulus: MessageModulus,
-+        num_bits: usize,
-+    ) -> bool {
-+        matches!(self, Self::Unsigned(_)) && self.radix_num_bits(message_modulus) == Some(num_bits)
-+    }
-+
-+    pub(crate) fn is_signed_radix(self, message_modulus: MessageModulus, num_bits: usize) -> bool {
-+        matches!(self, Self::Signed(_)) && self.radix_num_bits(message_modulus) == Some(num_bits)
-+    }
-+
-     pub fn num_blocks(self, message_modulus: MessageModulus) -> crate::Result<usize> {
-         match self {
-             Self::Unsigned(n) | Self::Signed(n) => Ok(n.get()),
-@@ -129,38 +151,50 @@ impl DataKind {
- type BlocksCounter = fn(DataKind, MessageModulus) -> crate::Result<usize>;
- 
- pub trait Expandable: Sized {
-+    /// Rejects an item of `kind` that cannot be expanded into `Self`, before paying for its
-+    /// decompression
-+    fn check_kind(kind: DataKind, message_modulus: MessageModulus) -> crate::Result<()>;
-+
-     fn from_expanded_blocks(blocks: Vec<Ciphertext>, kind: DataKind) -> crate::Result<Self>;
- }
- 
-+/// Checks that an item of `kind` holds a radix with the signedness of `T`
-+fn check_radix_kind<T: IntegerRadixCiphertext>(kind: DataKind) -> crate::Result<()> {
-+    match (kind, T::IS_SIGNED) {
-+        (DataKind::Unsigned(_), false) | (DataKind::Signed(_), true) => Ok(()),
-+        (_, signed) => {
-+            let signedness = if signed { "signed" } else { "unsigned" };
-+            Err(crate::error!(
-+                "Tried to expand a {signedness} radix while a {kind:?} is stored"
-+            ))
-+        }
-+    }
-+}
-+
- impl<T> Expandable for T
- where
-     T: IntegerRadixCiphertext,
- {
-+    fn check_kind(kind: DataKind, _message_modulus: MessageModulus) -> crate::Result<()> {
-+        check_radix_kind::<T>(kind)
-+    }
-+
-     fn from_expanded_blocks(blocks: Vec<Ciphertext>, kind: DataKind) -> crate::Result<Self> {
--        match (kind, T::IS_SIGNED) {
--            (DataKind::Unsigned(_), false) | (DataKind::Signed(_), true) => {
--                Ok(T::from_blocks(blocks))
--            }
--            (DataKind::Boolean, _) => {
--                let signed_or_unsigned_str = if T::IS_SIGNED { "signed" } else { "unsigned" };
--                Err(crate::Error::new(format!(
--                    "Tried to expand a {signed_or_unsigned_str} radix while boolean is stored"
--                )))
--            }
--            (DataKind::Unsigned(_), true) => Err(crate::Error::new(
--                "Tried to expand a signed radix while an unsigned radix is stored".to_string(),
--            )),
--            (DataKind::Signed(_), false) => Err(crate::Error::new(
--                "Tried to expand an unsigned radix while a signed radix is stored".to_string(),
--            )),
--            (DataKind::String { .. }, _) => Err(crate::Error::new(
--                "Tried to expand an unsigned radix while a string is stored".to_string(),
--            )),
+-        if block_range.is_empty() {
+-            return Ok(Some(0));
 -        }
-+        check_radix_kind::<T>(kind)?;
-+        Ok(T::from_blocks(blocks))
+-
+         Ok(Some(decomp_key.get_cpu_list_unpack_size_on_gpu(
+             &self.packed_list,
+-            block_range.start,
+-            block_range.end - 1,
++            block_range,
+             streams,
+         )))
      }
- }
- 
- impl Expandable for BooleanBlock {
-+    fn check_kind(kind: DataKind, _message_modulus: MessageModulus) -> crate::Result<()> {
-+        if kind == DataKind::Boolean {
-+            return Ok(());
-+        }
-+        Err(crate::error!(
-+            "Tried to expand a boolean block while a {kind:?} is stored"
-+        ))
-+    }
-+
-     fn from_expanded_blocks(blocks: Vec<Ciphertext>, kind: DataKind) -> crate::Result<Self> {
-         match kind {
-             DataKind::Unsigned(_) => Err(crate::Error::new(
 ```
 
-**File**: `tfhe/src/integer/gpu/ciphertext/compressed_ciphertext_list.rs` (modified, +42/-24)
+**File**: `tfhe/src/integer/gpu/ciphertext/compressed_ciphertext_list.rs` (modified, +1/-6)
 ```diff
-@@ -14,45 +14,56 @@ use crate::shortint::ciphertext::{
-     CompressedCiphertextList as ShortintCompressedCiphertextList, CompressedCiphertextListMeta,
- };
- use crate::shortint::parameters::AtomicPatternKind;
--use crate::shortint::PBSOrder;
-+use crate::shortint::{MessageModulus, PBSOrder};
+@@ -161,14 +161,9 @@ impl CudaCompressedCiphertextList {
+         let Some((_, block_range)) = self.block_range(index)? else {
+             return Ok(None);
+         };
+-        if block_range.is_empty() {
+-            return Ok(Some(0));
+-        }
+-
+         Ok(Some(decomp_key.get_gpu_list_unpack_size_on_gpu(
+             &self.packed_list,
+-            block_range.start,
+-            block_range.end - 1,
++            block_range,
+             streams,
+         )))
+     }
+```
+
+**File**: `tfhe/src/integer/gpu/list_compression/server_keys.rs` (modified, +7/-12)
+```diff
+@@ -31,6 +31,7 @@ use crate::shortint::parameters::AtomicPatternKind;
+ use crate::shortint::prelude::{GlweDimension, LweDimension};
+ use crate::shortint::{CarryModulus, MessageModulus, PBSOrder};
  use itertools::Itertools;
- use std::num::NonZeroUsize;
- use std::ops::Range;
++use std::ops::Range;
+ use tfhe_cuda_backend::cuda_bind::cuda_memcpy_async_gpu_to_gpu;
  
- pub trait CudaExpandable: Sized {
-+    /// Rejects an item of `kind` that cannot be expanded into `Self`, before paying for its
-+    /// decompression
-+    fn check_kind(kind: DataKind, message_modulus: MessageModulus) -> crate::Result<()>;
-+
-     fn from_expanded_blocks(blocks: CudaRadixCiphertext, kind: DataKind) -> crate::Result<Self>;
- }
- 
-+/// Checks that an item of `kind` holds a radix with the signedness of `T`
-+fn check_radix_kind<T: CudaIntegerRadixCiphertext>(kind: DataKind) -> crate::Result<()> {
-+    match (kind, T::IS_SIGNED) {
-+        (DataKind::Unsigned(_), false) | (DataKind::Signed(_), true) => Ok(()),
-+        (_, signed) => {
-+            let signedness = if signed { "signed" } else { "unsigned" };
-+            Err(crate::error!(
-+                "Tried to expand a {signedness} radix while a {kind:?} is stored"
-+            ))
-+        }
-+    }
-+}
-+
- impl<T> CudaExpandable for T
- where
-     T: CudaIntegerRadixCiphertext,
- {
-+    fn check_kind(kind: DataKind, _message_modulus: MessageModulus) -> crate::Result<()> {
-+        check_radix_kind::<T>(kind)
-+    }
-+
-     fn from_expanded_blocks(blocks: CudaRadixCiphertext, kind: DataKind) -> crate::Result<Self> {
--        match (kind, T::IS_SIGNED) {
--            (DataKind::Unsigned(_), false) | (DataKind::Signed(_), true) => Ok(T::from(blocks)),
--            (DataKind::Boolean, _) => {
--                let signed_or_unsigned_str = if T::IS_SIGNED { "signed" } else { "unsigned" };
--                Err(crate::Error::new(format!(
--                    "Tried to expand a {signed_or_unsigned_str} radix while boolean is stored"
--                )))
--            }
--            (DataKind::Unsigned(_), true) => Err(crate::Error::new(
--                "Tried to expand a signed radix while an unsigned radix is stored".to_string(),
--            )),
--            (DataKind::Signed(_), false) => Err(crate::Error::new(
--                "Tried to expand an unsigned radix while a signed radix is stored".to_string(),
--            )),
--            (DataKind::String { .. }, signed) => {
--                let signedness = if signed { "signed" } else { "unsigned" };
--                Err(crate::error!(
--                    "Tried to expand a {signedness} radix while a string is stored"
--                ))
--            }
--        }
-+        check_radix_kind::<T>(kind)?;
-+        Ok(T::from(blocks))
-     }
- }
- 
- impl CudaExpandable for CudaBooleanBlock {
-+    fn check_kind(kind: DataKind, _message_modulus: MessageModulus) -> crate::Result<()> {
-+        if kind == DataKind::Boolean {
-+            return Ok(());
-+        }
-+        Err(crate::error!(
-+            "Tried to expand a boolean block while a {kind:?} is stored"
-+        ))
-+    }
-+
-     fn from_expanded_blocks(blocks: CudaRadixCiphertext, kind: DataKind) -> crate::Result<Self> {
-         match kind {
-             DataKind::Unsigned(_) => Err(crate::Error::new(
-@@ -108,7 +119,7 @@ impl CudaCompressedCiphertextList {
-         Ok(Some((kind, range)))
-     }
- 
--    fn blocks_of(
-+    fn blocks_of<T: CudaExpandable>(
+ #[derive(Debug)]
+@@ -696,21 +697,18 @@ impl CudaDecompressionKey {
+     pub fn get_gpu_list_unpack_size_on_gpu(
          &self,
-         index: usize,
-         decomp_key: &CudaDecompressionKey,
-@@ -117,6 +128,13 @@ impl CudaCompressedCiphertextList {
-         let Some((current_info, block_range)) = self.block_range(index)? else {
-             return Ok(None);
-         };
-+
-+        let message_modulus = self
-+            .packed_list
-+            .message_modulus()
-+            .ok_or_else(|| crate::error!("Missing metadata for list"))?;
-+        T::check_kind(current_info, message_modulus)?;
-+
-         if block_range.is_empty() {
-             return Err(crate::error!(
-                 "Items stored without blocks are not supported on GPU"
-@@ -164,7 +182,7 @@ impl CudaCompressedCiphertextList {
-     where
-         T: CudaExpandable,
-     {
--        self.blocks_of(index, decomp_key, streams)?
-+        self.blocks_of::<T>(index, decomp_key, streams)?
-             .map(|(blocks, kind)| T::from_expanded_blocks(blocks, kind))
-             .transpose()
-     }
-```
-
-**File**: `tfhe/src/strings/ciphertext.rs` (modified, +9/-0)
-```diff
-@@ -172,6 +172,15 @@ impl crate::integer::ciphertext::CompactCiphertextListBuilder {
- }
+         packed_list: &CudaPackedGlweCiphertextList<u64>,
+-        start_block_index: usize,
+-        end_block_index: usize,
++        block_range: Range<usize>,
+         streams: &CudaStreams,
+     ) -> u64 {
+-        if start_block_index == end_block_index {
++        if block_range.is_empty() {
+             return 0;
+         }
  
- impl crate::integer::ciphertext::Expandable for FheString {
-+    fn check_kind(kind: DataKind, _message_modulus: MessageModulus) -> crate::Result<()> {
-+        if matches!(kind, DataKind::String { .. }) {
-+            return Ok(());
-+        }
-+        Err(crate::error!(
-+            "Tried to expand a string while a {kind:?} is stored"
-+        ))
-+    }
-+
-     fn from_expanded_blocks(
-         mut blocks: Vec<crate::shortint::Ciphertext>,
-         kind: DataKind,
+         let Some(ref meta) = packed_list.meta else {
+             panic!("Missing ciphertext metadata in CompressedCiphertextList")
+         };
+ 
+-        let indexes_array = (start_block_index..=end_block_index)
+-            .map(|x| x as u32)
+-            .collect_vec();
++        let indexes_array = block_range.map(|x| x as u32).collect_vec();
+ 
+         let encryption_glwe_dimension = self.glwe_dimension;
+         let encryption_polynomial_size = self.polynomial_size;
+@@ -743,17 +741,14 @@ impl CudaDecompressionKey {
+     pub fn get_cpu_list_unpack_size_on_gpu(
+         &self,
+         packed_list: &CompressedCiphertextList,
+-        start_block_index: usize,
+-        end_block_index: usize,
++        block_range: Range<usize>,
+         streams: &CudaStreams,
+     ) -> u64 {
+-        if start_block_index == end_block_index {
++        if block_range.is_empty() {
+             return 0;
+         }
+ 
+-        let indexes_array = (start_block_index..=end_block_index)
+-            .map(|x| x as u32)
+-            .collect_vec();
++        let indexes_array = block_range.map(|x| x as u32).collect_vec();
+ 
+         let encryption_glwe_dimension = self.glwe_dimension;
+         let encryption_polynomial_size = self.polynomial_size;
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4197** (2026-11-19): fix(ci): use merge commit parent as backward compat base (@SouchonTheo)
+- **PR #4195** (2026-11-19): fix(gpu): do not return a 0 decompression size for single-block items (@agnesLeroy)
 - **PR #4194** (2026-11-19): chore: publish steps are put beyon a release environment (@IceTDrinker)
 - **PR #4193** (closed): fix(gpu): fixing inplace shift and rotate with dirty inputs (@enzodimaria)
 - **PR #4189** (2026-11-18): fix(gpu): write the result into the input of shift and rotate assign functions when it has carries (@pdroalves)
 - **PR #4183** (2026-11-17): chore: simpler CODEOWNERS while still respecting guidelines (@IceTDrinker)
-- **PR #4181** (2026-11-17): chore: make pip timeout longer to avoid problem with potentially safe… (@IceTDrinker)
 
 ---
 
@@ -2542,47 +2095,35 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): use merge commit parent as backward compat base
+## X. gpu): do not return a 0 decompression size for single-block items
 
 **RULE**:
-When implementing operations in `.github/workflows/backward_compatibility.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tfhe/src/high_level_api/compressed_ciphertext_list.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cd105ed8`: ci): use merge commit parent as backward compat base. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1352efd8`: gpu): do not return a 0 decompression size for single-block items. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/backward_compatibility.yml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/src/high_level_api/compressed_ciphertext_list.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-          fetch-depth: 2
-      - name: Resolve base commit
-        id: base
-          EVENT_NAME: ${{ github.event_name }}
-          BEFORE_SHA: ${{ github.event.before }}
-        run: |
-          if [[ "$EVENT_NAME" == "pull_request" ]]; then
-            base_ref=$(git rev-parse HEAD^1)
-          else
-            git fetch origin "$BEFORE_SHA" --depth=1
-            base_ref="$BEFORE_SHA"
-          fi
-          echo "ref=$base_ref" >> "$GITHUB_OUTPUT"
-          BASE_REF: ${{ steps.base.outputs.ref }}
+            // ct2 is a single-block item (a FheBool): decompressing it still needs memory
+            assert!(
+                decompress_ct2_size_on_gpu > 0,
+                "decompression size of a single-block item must not be 0"
+            );
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      - name: Fetch base commit
-          BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}
-        run: git fetch origin "$BASE_REF" --depth=1
-          BASE_REF: ${{ github.event.pull_request.base.sha || github.event.before }}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cd105ed8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1352efd8` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

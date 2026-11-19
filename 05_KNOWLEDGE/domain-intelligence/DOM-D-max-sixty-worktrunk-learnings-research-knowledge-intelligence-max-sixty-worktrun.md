@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T11:06:57.497Z",
+  "timestamp": "2026-11-19T22:27:49.136Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-max-sixty-worktrunk-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [max-sixty-worktrunk-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T11:06:57.497Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T22:27:49.136Z`  
 > **Learning ID**: `LEARN-EVO-max-sixty-worktrunk-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain D (Research & Knowledge Intelligence)
-- **Secondary Corroborating Domains**: A (Human & Need Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 67%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), A (Human & Need Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 65%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from max-sixty-worktrunk-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source**: github ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
-> **Source Version**: `af889698`  
+> **Source Version**: `5b7d969e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T11:06:40.556Z  
+> **Timestamp**: 2026-11-19T22:27:34.724Z  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T11:06:40.548Z  
+> **Harvest Timestamp**: 2026-11-19T22:27:34.556Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12605 stars
+- **Stars / Engagement**: 12640 stars
 
 ---
 
@@ -2043,444 +2043,236 @@ fn no_matching_commands_error(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ecf8bcda` (2026-11-18)
-**Commit Message**: fix(switch): keep --path and --execute in the leftover-branch hint (#4841)
+### Incident Patch 1: `5e2106c7` (2026-11-19)
+**Commit Message**: fix: set OpenCode activity markers from session.execution events (#4850)
 
-When `wt switch --create` failed after `git worktree add -b` had already
-written the branch, the leftover-branch hint suggested a bare `wt switch
-<branch>`. Following it created the worktree at the `worktree-path`
-template location instead of the `--path` given, and skipped the
-`--execute` command. `WorktreeCreationFailed` is raised in
-`execute_switch`, whose errors weren't wrapped in `WithSwitchSuggestion`
-the way `plan_switch`'s are, so the hint had no flags to draw on.
+OpenCode 2.3 stopped emitting `session.status` and `session.idle`, the
+two events the plugin's OpenCode 2 watcher sets markers from, so `wt
+list` never shows 🤖 or 💬 there. The watcher now also handles
+`session.execution.started` (🤖) and `succeeded` / `failed` /
+`interrupted` (💬). Those events carry only a `sessionID`, so the plugin
+looks the session up with `context.session.get` and marks only when the
+session's `location.directory` is this instance's worktree and the
+session has no `parentID`. Without the `parentID` check, a subagent
+finishing would flip a still-working parent to 💬. The old
+`session.status` / `session.idle` cases stay for earlier OpenCode 2
+hosts, and the OpenCode 1 `server` path is unchanged.
 
-`SwitchPipeline::run` now wraps that variant with the switch context,
-and the hint applies it. The hint becomes e.g. `wt switch stranded
---path=blocked/stranded --execute='echo hi' -- extra`. `--create` is not
-in the context, so it stays out of the suggestion, which is correct now
-that the branch exists. Other `execute_switch` errors pass through
-unchanged, so their context chains and downcasts are untouched.
+The event names and shapes come from OpenCode v2.3.2's source:
+`packages/schema/src/session-event.ts` defines the four execution events
+with only `sessionID`, its e2e helper maps `busy`/`idle` onto
+`execution.started`/`succeeded`, and `Session.Info` carries `location`
+and `parentID`. I drove `setup()` under Node with a fake context and a
+fake `wt` that logs its calls. Before this change the event
 
-`test_switch_create_leftover_branch_hint_keeps_flags` fails on `main`
-(the hint ends at `wt switch stranded`) and passes with this change. The
-existing leftover-branch test still covers the no-flags form.
-
-#4705 adds a hint for pre-
-
-**File**: `src/commands/worktree/switch.rs` (modified, +25/-9)
+**File**: `dev/opencode-plugin.ts` (modified, +38/-1)
 ```diff
-@@ -1923,6 +1923,19 @@ pub(crate) struct SwitchPipeline<'a> {
-     pub shell_integration_binary: Option<&'a str>,
- }
+@@ -81,7 +81,7 @@ async function marker(directory: string, args: string[]): Promise<void> {
+ type SessionEvent = {
+   type: string;
+   location?: { directory: string };
+-  data?: { status?: { type?: string } };
++  data?: { sessionID?: string; status?: { type?: string } };
+ };
  
-+/// Wrap a [`GitError`] so its `wt switch` hint carries the invocation's
-+/// `--path`, `--execute`, and trailing args. Other errors pass through.
-+fn with_switch_suggestion(err: anyhow::Error, ctx: &SwitchSuggestionCtx) -> anyhow::Error {
-+    match err.downcast::<GitError>() {
-+        Ok(git_err) => GitError::WithSwitchSuggestion {
-+            source: Box::new(git_err),
-+            ctx: ctx.clone(),
-+        }
-+        .into(),
-+        Err(err) => err,
-+    }
+ type Signal = { signal: AbortSignal };
+@@ -101,6 +101,9 @@ type WorktreeDefinition = {
+ 
+ type SetupContext = {
+   location?: { directory: string };
++  session?: {
++    get(input: { sessionID: string }): Promise<{ parentID?: string; location?: { directory?: string } }>;
++  };
+   event?: { subscribe(options?: { signal?: AbortSignal }): AsyncIterable<SessionEvent> };
+   worktree?: {
+     transform(callback: (editor: { add(definition: WorktreeDefinition): void }) => void): Promise<unknown>;
+@@ -189,6 +192,34 @@ const strategy: WorktreeDefinition = {
+   },
+ };
+ 
++// The marker each `session.execution.*` event sets. OpenCode 2.3 replaced
++// `session.status` and `session.idle` with these.
++const EXECUTION_MARKERS = new Map([
++  ["session.execution.started", WORKING],
++  ["session.execution.succeeded", WAITING],
++  ["session.execution.failed", WAITING],
++  ["session.execution.interrupted", WAITING],
++]);
++
++/**
++ * Whether an execution event belongs to a top-level session in `directory`.
++ *
++ * Execution events carry only a session ID, so the session record supplies the
++ * worktree. A subagent's session runs its own executions, and its finishing
++ * must not mark the worktree as waiting while the parent still works.
++ */
++async function ownsExecution(context: SetupContext, event: SessionEvent, directory: string): Promise<boolean> {
++  const sessionID = event.data?.sessionID;
++  if (!sessionID || !context.session) return false;
++  try {
++    const session = await context.session.get({ sessionID });
++    return !session.parentID && session.location?.directory === directory;
++  } catch {
++    // A session deleted in the meantime has nothing left to mark.
++    return false;
++  }
 +}
 +
- impl SwitchPipeline<'_> {
-     /// Plan, approve, execute, and report the switch, then spawn its
-     /// background hooks and run any `--execute` command.
-@@ -1993,14 +2006,7 @@ impl SwitchPipeline<'_> {
-         let plan =
-             plan_switch(repo, target, create, base, path, clobber, config).map_err(|err| {
-                 match suggestion_ctx {
--                    Some(ref ctx) => match err.downcast::<GitError>() {
--                        Ok(git_err) => GitError::WithSwitchSuggestion {
--                            source: Box::new(git_err),
--                            ctx: ctx.clone(),
--                        }
--                        .into(),
--                        Err(err) => err,
--                    },
-+                    Some(ref ctx) => with_switch_suggestion(err, ctx),
-                     None => err,
-                 }
-             })?;
-@@ -2026,7 +2032,17 @@ impl SwitchPipeline<'_> {
-                     {
-                         print_json(&SwitchJsonOutput::from_result(result, branch_info))?;
-                     }
--                    return Err(failure.error);
-+                    // A leftover branch's hint suggests `wt switch <branch>`;
-+                    // it needs the same flags as the `plan_switch` hints, or
-+                    // following it drops `--path` and `--execute`.
-+                    let leftover_hint = matches!(
-+                        failure.error.downcast_ref::<GitError>(),
-+                        Some(GitError::WorktreeCreationFailed { .. })
-+                    );
-+                    return Err(match &suggestion_ctx {
-+                        Some(ctx) if leftover_hint => with_switch_suggestion(failure.error, ctx),
-+                        _ => failure.error,
-+                    });
-                 }
-             };
+ async function setup(context: SetupContext) {
+   // A host without worktree strategies passes no `worktree`, including the
+   // OpenCode 1.18 loader noted below; activity tracking doesn't depend on it.
+@@ -205,11 +236,17 @@ async function setup(context: SetupContext) {
  
-```
-
-**File**: `src/git/error.rs` (modified, +8/-4)
-```diff
-@@ -1082,9 +1082,10 @@ impl GitError {
-     /// Write the styled diagnostic block, with optional switch-suggestion
-     /// context propagated from a [`GitError::WithSwitchSuggestion`] wrapper.
-     ///
--    /// Most variants ignore `ctx`. The three that render `wt switch` suggestions
--    /// (`BranchAlreadyExists`, `BranchNotFound`, `WorktreePathExists`) use it
--    /// to append extra flags and trailing args for a copy-pasteable command.
-+    /// Most variants ignore `ctx`. The ones that render `wt switch` suggestions
-+    /// (`BranchAlreadyExists`, `BranchNotFound`, `WorktreePathExists`,
-+    /// `WorktreeCreationFailed`) use it to append extra flags and trailing args
-+    /// for a copy-pasteable command.
-     ///
-     /// Called internally by [`Diagnostic::render`]; not part of the public API.
-     fn write_render_with_ctx<W: std::fmt::Write>(
-@@ -1375,7 +1376,10 @@ impl GitError {
-                 // it here is what keeps the next `--create` run's `Branch …
-                 // already exists` from reading as a fresh name collision.
-                 let escaped = escape(Cow::Borrowed(branch.as_str()));
--                let switch_cmd = suggest_command("switch", &[branch], &[]);
-+                let mut switch_cmd = suggest_command("switch", &[branch], &[]);
-+                if let Some(ctx) = ctx {
-+                    switch_cmd = ctx.apply(switch_cmd);
-+                }
-                 write!(
-                     f,
-                     "\n{}",
-```
-
-**File**: `tests/integration_tests/switch.rs` (modified, +34/-0)
-```diff
-@@ -9657,6 +9657,40 @@ fn test_switch_create_names_branch_left_by_failed_worktree_add(repo: TestRepo, #
-     }
- }
+   const watcher = (async () => {
+     for await (const event of events.subscribe({ signal: controller.signal })) {
++      const execution = EXECUTION_MARKERS.get(event.type);
++      if (execution) {
++        if (await ownsExecution(context, event, directory)) await marker(directory, ["set", execution]);
++        continue;
++      }
+       // The event envelope makes `location` optional; the session events below
+       // carry one, and skipping the rest keeps each instance to its own worktree.
+       if (event.location?.directory !== directory) continue;
  
-+#[rstest]
-+fn test_switch_create_leftover_branch_hint_keeps_flags(repo: TestRepo) {
-+    // The leftover-branch hint's `wt switch <branch>` must carry `--path`,
-+    // `--execute`, and trailing args (minus `--create`), or following it would
-+    // create the worktree somewhere else and skip the command (issue #4839).
-+    fs::write(repo.root_path().join("blocked"), "not a directory").unwrap();
-+
-+    let output = repo
-+        .wt_command()
-+        .args([
-+            "switch",
-+            "--create",
-+            "stranded",
-+            "--path",
-+            "blocked/stranded",
-+            "--execute",
-+            "echo hi",
-+            "--",
-+            "extra",
-+        ])
-+        .output()
-+        .unwrap();
-+    assert!(!output.status.success());
-+
-+    let stderr = String::from_utf8_lossy(&output.stderr);
-+    let stderr = stderr.ansi_strip();
-+    assert!(
-+        stderr.contains(
-+            "to use it, run wt switch stranded --path=blocked/stranded --execute='echo hi' -- extra"
-+        ),
-+        "expected the recovery suggestion to keep the original flags, got: {stderr}"
-+    );
-+}
-+
- // `--path` tests
- 
- #[rstest]
+       switch (event.type) {
++        // Earlier OpenCode 2 releases emit these instead of `session.execution.*`.
+         case "session.status":
+           // Status is `idle | busy | retry`. OpenCode 2 marks `session.idle`
+           // deprecated in favor of this, so read the status, not the event name.
 ```
 
 ---
 
-### Incident Patch 2: `af889698` (2026-11-18)
-**Commit Message**: fix: give each detached worktree its own summary cache directory (#4840)
+### Incident Patch 2: `bac28450` (2026-11-19)
+**Commit Message**: fix(config): reject vars keys git would lowercase or refuse (#4830)
 
-Every detached worktree wrote its LLM summary to the same cache
-directory, `summary/(detached)/`, because the directory was keyed by the
-branch string and both `wt list --full` and the picker pass `(detached)`
-for a row without a branch. `CachedSummary::write` trims that directory
-to one entry after each write, so two detached worktrees with changes
-evicted each other, and the next run called the LLM for both again. A
-detached row's directory key now includes a hash of its worktree path.
-Named branches keep their existing directories, so no cached summary has
-to be regenerated. The JSON `branch` field still reads `(detached)`, so
-`wt config state get` displays these rows the same way, with one row per
-detached worktree instead of one shared row.
-
-`test_detached_worktrees_keep_separate_cached_summaries` creates two
-detached worktrees with different uncommitted changes and summarizes
-each one twice. On the old code, the second summary of the first
-worktree re-ran the LLM command (`left: "regenerated"`, `right: "Summary
-A"`). It passes with the fix.
-
-Detached summaries cached by earlier releases sit in the share
-
-**File**: `src/commands/list/collect/tasks.rs` (modified, +1/-2)
+**File**: `docs/src/content/docs/config.md` (modified, +1/-1)
 ```diff
-@@ -767,11 +767,10 @@ fn compute_summary_generate(ctx: &TaskContext) -> anyhow::Result<TaskResult> {
-         anyhow::bail!("summary generation requires an LLM command");
-     };
+@@ -1541,7 +1541,7 @@ dev = "npm start -- --port {{ vars.config.port }}"
  
--    let branch = ctx.branch_ref.short_name().unwrap_or("(detached)");
-     let worktree_path = ctx.branch_ref.worktree_path();
+ ### Storage format
  
-     let summary = crate::summary::generate_summary_core(
--        branch,
-+        ctx.branch_ref.short_name(),
-         &ctx.branch_ref.commit_sha,
-         worktree_path,
-         llm_command,
+-Stored in git config as `worktrunk.state.<branch>.vars.<key>`. Keys may contain only letters, digits, and hyphens.
++Stored in git config as `worktrunk.state.<branch>.vars.<key>`. Keys start with a lowercase letter and contain only lowercase letters, digits, and hyphens.
+ 
+ ### Command reference
+ 
 ```
 
-**File**: `src/commands/picker/summary.rs` (modified, +140/-25)
+**File**: `plugins/worktrunk/skills/worktrunk/reference/config.md` (modified, +1/-1)
 ```diff
-@@ -45,9 +45,8 @@ pub(super) fn generate_summary_for_item(
-     llm_command: &str,
-     repo: &Repository,
- ) -> String {
--    let branch = item.branch_name();
-     let worktree_path = item.worktree_path();
--    crate::summary::generate_summary(branch, item.head(), worktree_path, llm_command, repo)
-+    crate::summary::generate_summary(item.branch(), item.head(), worktree_path, llm_command, repo)
- }
+@@ -1533,7 +1533,7 @@ dev = "npm start -- --port {{ vars.config.port }}"
  
- #[cfg(test)]
-@@ -129,7 +128,7 @@ mod tests {
-             branch: branch.to_string(),
-             generated_at: 100,
-         };
--        first.write(&repo, "deadbeef");
-+        first.write(&repo, branch, "deadbeef");
+ ### Storage format
  
-         let loaded = CachedSummary::read(&repo, branch, "deadbeef").unwrap();
-         assert_eq!(loaded.summary, first.summary);
-@@ -151,7 +150,7 @@ mod tests {
-             branch: branch.to_string(),
-             generated_at: 200,
-         };
--        second.write(&repo, "cafebabe");
-+        second.write(&repo, branch, "cafebabe");
+-Stored in git config as `worktrunk.state.<branch>.vars.<key>`. Keys may contain only letters, digits, and hyphens.
++Stored in git config as `worktrunk.state.<branch>.vars.<key>`. Keys start with a lowercase letter and contain only lowercase letters, digits, and hyphens.
  
-         assert!(CachedSummary::read(&repo, branch, "deadbeef").is_none());
-         assert_eq!(
-@@ -187,7 +186,7 @@ mod tests {
-             generated_at: 0,
-         };
-         // Should not panic — just logs and returns
--        cached.write(&repo, "deadbeef");
-+        cached.write(&repo, "main", "deadbeef");
-         assert!(CachedSummary::read(&repo, "main", "deadbeef").is_none());
+ ### Command reference
  
-         // Cleanup: remove the blocker file so TempDir cleanup works
-@@ -213,7 +212,7 @@ mod tests {
-             generated_at: 0,
-         };
-         // Should not panic — just logs and returns
--        cached.write(&repo, "deadbeef");
-+        cached.write(&repo, "main", "deadbeef");
-         assert!(CachedSummary::read(&repo, "main", "deadbeef").is_none());
- 
-         // Restore permissions so TempDir cleanup works
-@@ -257,13 +256,13 @@ mod tests {
-             branch: "feature-a".to_string(),
-             generated_at: 100,
-         }
--        .write(&repo, "aaaa");
-+        .write(&repo, "feature-a", "aaaa");
-         CachedSummary {
-             summary: "b".to_string(),
-             branch: "feature-b".to_string(),
-             generated_at: 200,
-         }
--        .write(&repo, "bbbb");
-+        .write(&repo, "feature-b", "bbbb");
- 
-         let entries = CachedSummary::list_all(&repo);
-         assert_eq!(entries.len(), 2);
-@@ -285,13 +284,13 @@ mod tests {
-             branch: "feature-a".to_string(),
-             generated_at: 0,
-         }
--        .write(&repo, "aaaa");
-+        .write(&repo, "feature-a", "aaaa");
-         CachedSummary {
-             summary: "b".to_string(),
-             branch: "feature-b".to_string(),
-             generated_at: 0,
-         }
--        .write(&repo, "bbbb");
-+        .write(&repo, "feature-b", "bbbb");
- 
-         assert_eq!(CachedSummary::clear_all(&repo).unwrap(), 2);
-         assert!(CachedSummary::read(&repo, "feature-a", "aaaa").is_none());
-@@ -327,7 +326,7 @@ mod tests {
-             branch: "feature".to_string(),
-             generated_at: 0,
-         }
--        .write(&repo, "aaaa");
-+        .write(&repo, "feature", "aaaa");
- 
-         // Replace the json file with a directory named `bad.json` so
-         // remove_file returns a non-NotFound error (EISDIR / similar).
-@@ -457,7 +456,7 @@ mod tests {
-         use crate::summary::compute_combined_diff;
-         let (t, repo, head) = temp_repo_with_feature();
- 
--        let result = compute_combined_diff("feature", &head, Some(t.path()), &repo);
-+        let result = compute_combined_diff(Some("feature"), &head, Some(t.path()), &repo);
-         assert!(result.is_some());
-         let combined = result.unwrap();
-         assert!(combined.diff.contains("new.txt"));
-@@ -469,7 +468,7 @@ mod tests {
-         use crate::summary::compute_combined_diff;
-         let (t, repo, head) = temp_repo_configured();
- 
--        let result = compute_combined_diff("main", &head, Some(t.path()), &repo);
-+        let result = compute_combined_diff(Some("main"), &head, Some(t.path()), &repo);
-         assert!(result.is_none());
-     }
- 
-@@ -481,7 +480,7 @@ mod tests {
-         fs::write(t.path().join("uncommitted.txt"), "wip\n").unwrap();
-         repo.run_command(&["add", "uncommitted.txt"]).unwrap();
- 
--        let result = compute_combined_diff("feature", &head, Some(t.path()), &repo);
-+        let result = compute_combined_diff(Some("feature"), &head, Some(t.path()), &repo);
-         assert!(result.is_some());
-         let combined = result.unwrap();
-         // Should contain both the branch diff and the working tree diff
-@@ -494,7 +493,7 @@ mod tests {
-         use crate::summary::compute_combined_diff;
-         let (_t, repo, head) = temp_repo_with_feature();
-         // Branch-only item (no worktree data) — only branch diff included
--        let result = compute_combined_diff("feature", &head, None, &repo);
-+        let result = compute_combined_diff(Some("feature"), &head, None, &repo);
-         assert!(result.is_some());
-         let combined = result.unwrap();
-         assert
 ```
 
-**File**: `src/summary.rs` (modified, +81/-29)
+**File**: `skills/worktrunk/reference/config.md` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,7 @@
- //! Shared LLM summary generation for branches.
- //!
- //! Generates branch summaries using the configured LLM command, with caching
--//! in `.git/wt/cache/summary/{sanitized_branch}/{diff_hash}.json`. The
-+//! in `.git/wt/cache/summary/{sanitized_key}/{diff_hash}.json`. The
- //! combined diff (branch diff + working tree diff) is hashed with SHA-256
- //! and the hex-truncated digest becomes the filename — so a cache hit is
- //! just "does the file exist?" rather than parsing JSON to compare a field.
-@@ -21,11 +21,25 @@
- //! diff; it stays open because the value is display-only and rebuilding it
- //! costs a model call per branch.
- //!
-+//! # Directory key
-+//!
-+//! The directory is keyed by branch name. A detached worktree has no branch,
-+//! so its key adds a hash of the worktree path ([`cache_key`]); without it
-+//! every detached row would share one directory and each write would prune
-+//! the others' entries.
-+//!
-+//! Older releases keyed every detached row as plain `(detached)`. That legacy
-+//! directory is indistinguishable from the one for a real branch named
-+//! `(detached)`, which Git permits, so a detached write removes it only when
-+//! no such local branch exists ([`CachedSummary::prune_legacy_detached`]).
-+//! Otherwise `wt config state get` would list the stale pre-upgrade summary
-+//! next to the current one indefinitely.
-+//!
- //! # Prune on write
- //!
--//! After a successful write, the branch directory is trimmed to one entry
-+//! After a successful write, the key's directory is trimmed to one entry
- //! via [`cache::sweep_lru`] with a cap of 1 — same mechanism `sha_cache`
--//! uses, just at a per-branch directory with a size of one. The newest-mtime
-+//! uses, just at a per-key directory with a size of one. The newest-mtime
- //! file (the one we just wrote) survives; older hashes are dead weight.
- //!
- //! Best-effort: two concurrent writers for the same branch can briefly
-@@ -59,12 +73,29 @@ static LLM_SEMAPHORE: LazyLock<Semaphore> = LazyLock::new(|| Semaphore::new(8));
- /// Subdirectory of `.git/wt/cache/` holding cached summaries.
- const KIND: &str = "summary";
+@@ -1533,7 +1533,7 @@ dev = "npm start -- --port {{ vars.config.port }}"
  
--/// Cached summary stored in `.git/wt/cache/summary/{branch}/{hash}.json`.
-+/// Display name for a row without a branch, matching `wt list`.
-+const DETACHED: &str = "(detached)";
-+
-+/// Cache directory key for a row (before filename sanitization).
+ ### Storage format
+ 
+-Stored in git config as `worktrunk.state.<branch>.vars.<key>`. Keys may contain only letters, digits, and hyphens.
++Stored in git config as `worktrunk.state.<branch>.vars.<key>`. Keys start with a lowercase letter and contain only lowercase letters, digits, and hyphens.
+ 
+ ### Command reference
+ 
+```
+
+**File**: `src/cli/config.rs` (modified, +1/-1)
+```diff
+@@ -1308,7 +1308,7 @@ dev = "npm start -- --port {{ vars.config.port }}"
+ 
+ ## Storage format
+ 
+-Stored in git config as `worktrunk.state.<branch>.vars.<key>`. Keys may contain only letters, digits, and hyphens."#
++Stored in git config as `worktrunk.state.<branch>.vars.<key>`. Keys start with a lowercase letter and contain only lowercase letters, digits, and hyphens."#
+     )]
+     Vars {
+         #[command(subcommand)]
+```
+
+**File**: `src/commands/config/state.rs` (modified, +16/-3)
+```diff
+@@ -1653,13 +1653,26 @@ fn summaries_json(repo: &Repository) -> Vec<serde_json::Value> {
+ 
+ // ==================== Vars Operations ====================
+ 
+-/// Validate a vars key name: letters, digits, and hyphens only.
++/// Validate a vars key name: a lowercase letter, then lowercase letters,
++/// digits, and hyphens.
 +///
-+/// A branch names its own directory. A detached worktree adds a hash of its
-+/// path so detached rows don't share — and prune — one directory.
-+fn cache_key(branch: Option<&str>, worktree_path: Option<&Path>) -> String {
-+    match branch {
-+        Some(branch) => branch.to_string(),
-+        None => {
-+            let path = worktree_path.map(Path::to_string_lossy).unwrap_or_default();
-+            format!("{DETACHED}-{}", hash_diff(&path))
-+        }
-+    }
++/// The key is a git config variable name, which git requires to start with a
++/// letter and stores lowercased. An uppercase key would read back from
++/// `vars_entries` under a different name than the user set, so
++/// `{{ vars.Ticket }}` would render empty.
+ fn validate_vars_key(key: &str) -> anyhow::Result<()> {
+     if key.is_empty() {
+         anyhow::bail!("Key cannot be empty");
+     }
+-    if !key.chars().all(|c| c.is_ascii_alphanumeric() || c == '-') {
+-        anyhow::bail!("Invalid key {key:?}: keys must contain only letters, digits, and hyphens");
++    let starts_with_letter = key.starts_with(|c: char| c.is_ascii_lowercase());
++    if !starts_with_letter
++        || !key
++            .chars()
++            .all(|c| c.is_ascii_lowercase() || c.is_ascii_digit() || c == '-')
++    {
++        anyhow::bail!(
++            "Invalid key {key:?}: keys must start with a lowercase letter and contain only lowercase letters, digits, and hyphens"
++        );
+     }
+     Ok(())
+ }
+```
+
+**File**: `tests/integration_tests/config_state.rs` (modified, +22/-1)
+```diff
+@@ -2796,7 +2796,28 @@ fn test_vars_invalid_key(repo: TestRepo) {
+         .output()
+         .unwrap();
+     assert!(!output.status.success());
+-    assert_snapshot!(String::from_utf8_lossy(&output.stderr), @r#"[31m✗[39m [31mInvalid key "foo.bar": keys must contain only letters, digits, and hyphens[39m"#);
++    assert_snapshot!(String::from_utf8_lossy(&output.stderr), @r#"[31m✗[39m [31mInvalid key "foo.bar": keys must start with a lowercase letter and contain only lowercase letters, digits, and hyphens[39m"#);
 +}
 +
-+/// Cached summary stored in `.git/wt/cache/summary/{key}/{hash}.json`.
- ///
--/// The diff hash lives in the filename; the branch lives in the directory
--/// name. The `branch` field holds the original (un-sanitized) branch name
--/// so `list_all` can surface it for display without needing to reverse
--/// `sanitize_for_filename`.
-+/// The diff hash lives in the filename; the [`cache_key`] lives in the
-+/// directory name. The `branch` field holds the display name (the original
-+/// branch name, or `(detached)`) so `list_all` can surface it without
-+/// reversing `sanitize_for_filename`.
- #[derive(Debug, Clone, Serialize, Deserialize)]
- pub(crate) struct CachedSummary {
-     pub summary: String,
-@@ -109,28 +140,42 @@ impl CachedSummary {
-         cache::cache_dir(repo, KIND)
-     }
++/// Git lowercases config variable names, so a mixed-case key would read back
++/// under a name templates don't reference (`{{ vars.Ticket }}` renders empty),
++/// and a leading digit is not a valid git config name at all.
++#[rstest]
++#[case::uppercase("Ticket=ABC")]
++#[case::leading_digit("1st=ABC")]
++fn test_vars_set_rejects_keys_git_cannot_store_verbatim(repo: TestRepo, #[case] arg: &str) {
++    let output = wt_state_cmd(&repo, "vars", "set", &[arg]).output().unwrap();
++    assert!(!output.status.success());
++    let stderr = String::from_utf8_lossy(&output.stderr);
++    assert!(
++        stderr.contains("keys must start with a lowercase letter"),
++        "unexpected stderr: {stderr}"
++    );
++
++    let output = wt_state_cmd(&repo, "vars", "list", &["--format=json"])
++        .output()
++        .unwrap();
++    assert_eq!(String::from_utf8_lossy(&output.stdout).trim(), "{}");
+ }
  
--    /// Per-branch directory holding one file per cached diff hash.
--    fn branch_dir(repo: &Repository, branch: &str) -> PathBuf {
--        Self::cache_root(repo).join(sanitize_for_filename(branch))
-+    /// Per-key directory holding one file per cached diff hash.
-+    fn key_dir(repo: &Repository, key: &str) -> PathBuf {
-+        Self::cache_root(repo).join(sanitize_for_filename(key))
-     }
- 
--    /// Full path for a specific (branch, hash) pair.
--    pub(crate) fn cache_file(repo: &Repository, branch: &str, hash: &str) -> PathBuf {
--        Self::branch_dir(repo, branch).join(format!("{hash}.json"))
-+    /// Full path for a specific (key, hash) pair.
-+    pub(crate) fn cache_file(repo: &Repository, key: &str, hash: &str) -> PathBuf {
-+        Self::key_dir(repo, key).join(format!("{hash}.json"))
-     }
- 
--    /// Read the cached summary for a branch at a specific diff hash.
-+    /// Read the cached summary for a [`cache_key`] at a specific diff hash.
-     /// See [`worktrunk::cache::read_json`] for the miss semantics.
--    pub(crate) fn read(repo: &Repository, branch: &str, hash: &str) -> Option<Self> {
--        cache::read_json(&Self::cache_file(repo, branch, hash))
-+    pub(crate) fn read(repo: &Repository, key: &str, hash: &str) -> Option<Self> {
-+        cache::read_json(&Self::cache_file(repo, key, hash)
+ #[rstest]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4841** (2026-11-18): fix(switch): keep --path and --execute in the leftover-branch hint (@worktrunk-bot)
-- **PR #4840** (2026-11-18): fix: give each detached worktree its own summary cache directory (@worktrunk-bot)
-- **PR #4837** (2026-11-18): test(approval): make approval PTY assertions able to fail (@worktrunk-bot)
-- **PR #4836** (2026-11-18): chore: correct stale comments in switch, config loading, and two test files (@worktrunk-bot)
-- **PR #4835** (2026-11-18): chore: update tend workflows (0.3.26 → 0.3.27) (@worktrunk-bot)
-- **PR #4834** (2026-11-18): chore: bump taiki-e/install-action from 2.90.3 to 2.90.4 (@dependabot[bot])
+- **PR #4850** (2026-11-19): fix: set OpenCode activity markers from session.execution events (@worktrunk-bot)
+- **PR #4848** (2026-11-19): skills(release): drop the citation of a personal skill from the ordering rule (@max-sixty)
+- **PR #4847** (2026-11-19): chore: correct two FAQ inventory gaps and stale comments in wt list and config show (@worktrunk-bot)
+- **PR #4846** (2026-11-19): test: make relocate and remove assertions able to fail (@worktrunk-bot)
+- **PR #4845** (2026-11-19): chore: bump taiki-e/install-action from 2.90.4 to 2.90.5 (@dependabot[bot])
+- **PR #4844** (2026-11-19): Have the weekly survey flag agent CLI additions Worktrunk could use (@max-sixty)
 
 ---
 
@@ -2500,63 +2292,57 @@ Detached summaries cached by earlier releases sit in the share
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. switch): keep --path and --execute in the leftover-branch hint
+## X. set OpenCode activity markers from session.execution events
 
 **RULE**:
-When implementing operations in `src/commands/worktree/switch.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `dev/opencode-plugin.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ecf8bcda`: switch): keep --path and --execute in the leftover-branch hint. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5e2106c7`: set OpenCode activity markers from session.execution events. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/commands/worktree/switch.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `dev/opencode-plugin.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Wrap a [`GitError`] so its `wt switch` hint carries the invocation's
-/// `--path`, `--execute`, and trailing args. Other errors pass through.
-fn with_switch_suggestion(err: anyhow::Error, ctx: &SwitchSuggestionCtx) -> anyhow::Error {
-    match err.downcast::<GitError>() {
-        Ok(git_err) => GitError::WithSwitchSuggestion {
-            source: Box::new(git_err),
-            ctx: ctx.clone(),
-        }
-        .into(),
-        Err(err) => err,
-    }
-}
+  data?: { sessionID?: string; status?: { type?: string } };
+  session?: {
+    get(input: { sessionID: string }): Promise<{ parentID?: string; location?: { directory?: string } }>;
+  };
+// The marker each `session.execution.*` event sets. OpenCode 2.3 replaced
+// `session.status` and `session.idle` with these.
+const EXECUTION_MARKERS = new Map([
+  ["session.execution.started", WORKING],
+  ["session.execution.succeeded", WAITING],
+  ["session.execution.failed", WAITING],
+  ["session.execution.interrupted", WAITING],
+]);
 
-                    Some(ref ctx) => with_switch_suggestion(err, ctx),
-                    // A leftover branch's hint suggests `wt switch <branch>`;
-                    // it needs the same flags as the `plan_switch` hints, or
-                    // following it drops `--path` and `--execute`.
-                    let leftover_hint = matches!(
-                        failure.error.downcast_ref::<GitError>(),
-                        Some(GitError::WorktreeCreationFailed { .. })
-                    );
-                    return Err(match &suggestion_ctx {
-                        Some(ctx) if leftover_hint => with_switch_suggestion(failure.error, ctx),
-                        _ => failure.error,
-                    });
+/**
+ * Whether an execution event belongs to a top-level session in `directory`.
+ *
+ * Execution events carry only a session ID, so the session record supplies the
+ * worktree. A subagent's session runs its own executions, and its finishing
+ * must not mark the worktree as waiting while the parent still works.
+ */
+async function ownsExecution(context: SetupContext, event: SessionEvent, directory: string): Promise<boolean> {
+  const sessionID = event.data?.sessionID;
+  if (!sessionID || !context.session) return false;
+  try {
+    const session = await context.session.get({ sessionID });
+    return !session.parentID && session.location?.directory === directory;
+  } ca
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                    Some(ref ctx) => match err.downcast::<GitError>() {
-                        Ok(git_err) => GitError::WithSwitchSuggestion {
-                            source: Box::new(git_err),
-                            ctx: ctx.clone(),
-                        }
-                        .into(),
-                        Err(err) => err,
-                    },
-                    return Err(failure.error);
+  data?: { status?: { type?: string } };
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ecf8bcda` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5e2106c7` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

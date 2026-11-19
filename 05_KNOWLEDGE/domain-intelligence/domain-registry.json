@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T22:19:53.936Z",
-  "total_records": 2033,
+  "last_updated": "2026-11-19T22:28:15.435Z",
+  "total_records": 2034,
   "domains": {
     "A": {
       "total": 17,
@@ -1930,7 +1930,7 @@
       ]
     },
     "J": {
-      "total": 28,
+      "total": 29,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -1959,7 +1959,8 @@
         "DOM-J-3AB0ED35",
         "DOM-J-3CA866B9",
         "domain_intelligence-search-distribution-intelligence-melnixdev-seo-crawl-audit-core-invariants",
-        "domain_intelligence-search-distribution-intelligence-melnixdev-seo-crawl-audit-learnings-core-invari"
+        "domain_intelligence-search-distribution-intelligence-melnixdev-seo-crawl-audit-learnings-core-invari",
+        "DOM-J-E0C204D8"
       ]
     },
     "K": {
@@ -9882,8 +9883,8 @@
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "repository": "zama-ai/tfhe-rs",
-      "content_hash": "31a783aa0f45186c7103b7ec097bf02eafef6968bb2489ed44c8f4dfca1b8ef7",
-      "created_at": "2026-11-19T15:42:35.757Z"
+      "content_hash": "cdd89cc5b9c41eaa0ffd1a2b79c5510c8ce04ecee0898437ccb9d13a57e2f282",
+      "created_at": "2026-11-19T22:27:46.106Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
@@ -17990,8 +17991,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty/worktrunk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-research-knowledge-intelligence-max-sixty-worktrunk-core-inv.md",
       "repository": "max-sixty/worktrunk",
-      "content_hash": "5b3704b50eeae2fe767598b6177219c4392b566825aeda9fac0ba999e9e6e313",
-      "created_at": "2026-11-18T11:06:41.786Z"
+      "content_hash": "9170b4bc7c79e7f40d20305cb005805a80bb836a934a9d6635fb093e4643c188",
+      "created_at": "2026-11-19T22:27:35.945Z"
     },
     "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants",
@@ -17999,8 +18000,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty-worktrunk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-learnings-research-knowledge-intelligence-max-sixty-worktrun.md",
       "repository": "max-sixty-worktrunk-learnings",
-      "content_hash": "6c56af178b106b88776a59a5e92fcce77752a424d5754b332b5afb4b415c2726",
-      "created_at": "2026-11-18T11:06:57.731Z"
+      "content_hash": "5493c7227574510463d3a8184dac7075805bade850d1e61554ad68fb2646dec0",
+      "created_at": "2026-11-19T22:27:49.379Z"
     },
     "DOM-D-88E5B240": {
       "record_id": "DOM-D-88E5B240",
@@ -21341,8 +21342,8 @@
       "title": "Quality & Verification Intelligence: seo-skills/seo-audit-skill Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-seo-skills-seo-audit-skill-quality-verification-intelligence-seo-skills-seo-audi.md",
       "repository": "seo-skills/seo-audit-skill",
-      "content_hash": "a33272c8b3c5f967278a790cd9ffccf7d3ca77710c7bdf470e61874caeeb2264",
-      "created_at": "2026-11-15T14:56:03.853Z"
+      "content_hash": "90f0da09146e84eb4dbc108ef98b79bd9a71ee3a9d82d489e5c3ff12a8526d5a",
+      "created_at": "2026-11-19T22:27:38.838Z"
     },
     "DOM-K-8A108F40": {
       "record_id": "DOM-K-8A108F40",
@@ -21384,8 +21385,8 @@
       "title": "Quality & Verification Intelligence: seo-skills-seo-audit-skill-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-seo-skills-seo-audit-skill-learnings-quality-verification-intelligence-seo-skill.md",
       "repository": "seo-skills-seo-audit-skill-learnings",
-      "content_hash": "844fb3e90b020019fe3d044dda1fb62d278cc7a1801cd5590212cd58b3a725fe",
-      "created_at": "2026-11-15T14:56:41.206Z"
+      "content_hash": "9723aa6a5f6b462ad6e9249198be6bb45fd10a3ce094071dc923b89b3af0ccd8",
+      "created_at": "2026-11-19T22:28:14.743Z"
     },
     "domain_intelligence-content-information-intelligence-siteline-swiftui-introspect-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-siteline-swiftui-introspect-core-invariants",
@@ -27029,8 +27030,8 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-learnings-technical-construction-intelligence-zama-ai-tfhe-rs-le.md",
       "repository": "zama-ai-tfhe-rs-learnings",
-      "content_hash": "c8389ca233eff8e8040f7ca46675d9f027bcc6ca64b7e231b86d27e28c0ed617",
-      "created_at": "2026-11-18T23:02:52.626Z"
+      "content_hash": "155e2e0cbe60bec1002dbae43646656a21d68e40118f3d4c0ef53eb4b1817c73",
+      "created_at": "2026-11-19T22:28:15.435Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in",
@@ -34088,6 +34089,40 @@
       "repository": "koderover-zadig-learnings",
       "content_hash": "f7bb81b609e2fa5d7b89dd3ae3726bb8bf78d3c7a470e23813da03126cd25832",
       "created_at": "2026-11-19T22:07:50.380Z"
+    },
+    "DOM-J-E0C204D8": {
+      "record_id": "DOM-J-E0C204D8",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [],
+      "title": "Engineering Pattern: The results details object as JSON including the pageUrl the engine adds t",
+      "content": "The result's `details` object as JSON, including the `pageUrl` the engine adds to every result.",
+      "content_hash": "db83363c3ff37652b89239a6a64c07d1a31357e9c46e664e931dee89e78e5430",
+      "summary": "The result's `details` object as JSON, including the `pageUrl` the engine adds to every result. -> The result's `details` object as JSON, including the `pageUrl` the engine adds to every result.",
+      "provenance": {
+        "source_uri": "project://seo-skills-seo-audit-skill/seo-skills-seo-audit-skill-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "`details_json`",
+        "author_or_entity": "AI-Builder-Brain Project Learning (seo-skills-seo-audit-skill)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of seo-skills-seo-audit-skill"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T22:28:14.218Z"
     }
   }
 }

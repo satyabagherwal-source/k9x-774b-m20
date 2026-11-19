@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "af889698",
+    "sourceVersion": "5b7d969e",
     "license": "Apache-2.0",
-    "contentHash": "c26f2bea60f19bd103703a8d8210289def4c94e104b3dabbab2033739d021465",
-    "lastHarvestedAt": "2026-11-18T11:06:41.476Z",
+    "contentHash": "598a9b3014d9acdae6a942b399f884408f3df2932cf55f9f62d1a2f141bba76a",
+    "lastHarvestedAt": "2026-11-19T22:27:35.639Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "cd105ed8",
+    "sourceVersion": "1352efd8",
     "license": "NOASSERTION",
-    "contentHash": "5cb08fe69155aba9daff4604809fab8b59024091b8b57f909a5b66fe2f0cfd6f",
-    "lastHarvestedAt": "2026-11-19T15:42:35.313Z",
+    "contentHash": "2440176c747ad710cc591a8bad0b51243766b8d49c19aeebf37173d28f54b631",
+    "lastHarvestedAt": "2026-11-19T22:27:45.790Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -12623,10 +12623,10 @@
     "repository": "seo-skills/seo-audit-skill",
     "platform": "github",
     "sourceUrl": "https://github.com/seo-skills/seo-audit-skill",
-    "sourceVersion": "4a69dc96",
+    "sourceVersion": "f43ba12d",
     "license": "MIT",
-    "contentHash": "f0576e7c724480e6d241a6526a39c230f00768d82dc0051053f73b26c95c72b1",
-    "lastHarvestedAt": "2026-11-15T14:56:03.572Z",
+    "contentHash": "9431c5e425388678abfcc49b4b229936b0ca1afb9598d4ccd4f56e5cae070736",
+    "lastHarvestedAt": "2026-11-19T22:27:38.493Z",
     "learningId": "learn-github-seo-skills-seo-audit-skill"
   },
   "hf-autotrust-autotrust-decider-pro-vision-27b": {

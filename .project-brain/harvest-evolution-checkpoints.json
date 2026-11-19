@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T22:19:54.180Z",
+  "last_updated": "2026-11-19T22:28:15.711Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T21:43:51.561Z",
@@ -73,7 +73,7 @@
       "staged_for_review": 1
     },
     "zama-ai-tfhe-rs-learnings.md": {
-      "processed_at": "2026-11-18T23:02:52.278Z",
+      "processed_at": "2026-11-19T22:28:15.052Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -293,7 +293,7 @@
       "staged_for_review": 1
     },
     "max-sixty-worktrunk-learnings.md": {
-      "processed_at": "2026-11-18T11:06:57.368Z",
+      "processed_at": "2026-11-19T22:27:48.989Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2998,7 +2998,7 @@
       "staged_for_review": 1
     },
     "seo-skills-seo-audit-skill-learnings.md": {
-      "processed_at": "2026-11-15T14:56:40.646Z",
+      "processed_at": "2026-11-19T22:28:14.241Z",
       "promoted_canonical": 1,
       "staged_for_review": 1
     },
@@ -3528,7 +3528,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2340,
-  "total_canonical_promoted": 395,
-  "total_staged_for_review": 1747
+  "total_dossiers_evaluated": 2343,
+  "total_canonical_promoted": 396,
+  "total_staged_for_review": 1750
 }

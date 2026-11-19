@@ -11425,3 +11425,7 @@ Every entry in this ledger must capture:
 | `learn-dom-l-453b4d1d` | `project://iii-hq-iii` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iii-hq-iii-learnings.md` | 2026-11-19T22:07:47.864Z |
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `0dfea2bd` | Multi-dimensional audit evidence | 2026-11-19T22:19:41.478Z |
 | `learn-github-dosco-graphjin` | `https://github.com/dosco/graphjin` | `ffd03671` | Multi-dimensional audit evidence | 2026-11-19T22:19:48.513Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `5b7d969e` | Multi-dimensional audit evidence | 2026-11-19T22:27:35.639Z |
+| `learn-github-seo-skills-seo-audit-skill` | `https://github.com/seo-skills/seo-audit-skill` | `f43ba12d` | Multi-dimensional audit evidence | 2026-11-19T22:27:38.493Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `1352efd8` | Multi-dimensional audit evidence | 2026-11-19T22:27:45.790Z |
+| `learn-dom-j-e0c204d8` | `project://seo-skills-seo-audit-skill` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seo-skills-seo-audit-skill-learnings.md` | 2026-11-19T22:28:14.241Z |

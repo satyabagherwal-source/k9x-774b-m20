@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T22:19:52.842Z",
+  "updated_at": "2026-11-19T22:28:14.367Z",
   "stats": {
-    "total_discovered": 6041,
-    "approved_pending_harvest": 5709,
+    "total_discovered": 6043,
+    "approved_pending_harvest": 5711,
     "harvested_count": 0,
     "rejected_count": 332,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5692,
+      "COMMUNITY_AND_EXPERT": 5694,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 112,
       "ENGINEERING_BLOGS": 4,
@@ -130600,6 +130600,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
         "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-FCD0F6CA9469": {
+      "id": "SRC-FCD0F6CA9469",
+      "url": "https://www.npmjs.com/package/@seomator/seo-audit",
+      "title": "https://www.npmjs.com/package/@seomator/seo-audit",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T22:28:14.319Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seo-skills-seo-audit-skill-learnings.md",
+        "fileName": "seo-skills-seo-audit-skill-learnings.md"
+      }
+    },
+    "SRC-21BDA9809EB2": {
+      "id": "SRC-21BDA9809EB2",
+      "url": "https://seomator.com/free-seo-audit-tool",
+      "title": "https://seomator.com/free-seo-audit-tool",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T22:28:14.367Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seo-skills-seo-audit-skill-learnings.md",
+        "fileName": "seo-skills-seo-audit-skill-learnings.md"
       }
     }
   }
