@@ -4,24 +4,24 @@
 {
   "source_repository": "databendlabs/databend",
   "source_url": "https://github.com/databendlabs/databend",
-  "source_version": "58dd5893",
+  "source_version": "a83eaead",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T19:53:45.824Z",
+  "timestamp": "2026-11-19T17:23:31.142Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-databendlabs-databend",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [databendlabs/databend](https://github.com/databendlabs/databend) (Revision: `58dd5893`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T19:53:45.824Z`  
+> **Provenance**: Harvested from [databendlabs/databend](https://github.com/databendlabs/databend) (Revision: `a83eaead`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T17:23:31.142Z`  
 > **Learning ID**: `learn-github-databendlabs-databend`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from databendlabs/databend:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T19:53:44.675Z  
+> **Harvest Timestamp**: 2026-11-19T17:23:29.696Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9498 stars
+- **Stars / Engagement**: 9501 stars
 
 ---
 
@@ -1210,11 +1210,14 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #21111** (2026-11-17): **fix(query): finish queries correctly on the queries executor**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Fixes how queries finish on the executor shared by all the queries (`enable_queries_executor`, off by default). It does not enable the executor; nothing changes when the switch is off.  | Bug | Case | main | This PR | |---|---|---|---| | Bug 1 | Client stops reading the result | The result sink blocks a shared worker; enough such queries hold every worker | The sink waits asynchronously, no worker is held | | Bug 2 | A query fails or is killed while its other processors run | Finish callbacks run concurrently with those processors | Finish callbacks run after no worker runs a task of the query | | Bug 3 | Tasks of a finished query still queued | Run | Dropped | | Bug 4 | The result is read right after a query fails | The finish flag is set before the error is stored, so the error can be missed | The error is stored before the flag | | Bug 5 | All processors finish in their first event | The query hangs | The query completes | | Bug 6 | Stopped early without an error, e.g. `finish(None)` | Returns `Ok` | Returns an error, as the per-query executor | | Bug 7 | Fails to start, or dropped without being executed | Finish callbacks are skipped | Finish callbacks run | | Bug 8 | Executor finishes with tasks queued | Tasks dropped with the executor, possibly after the global IO runtime (aborts in tests) | Tasks dropped in `finish`; none queued afterwards | | Bug 9 | A first e
+- **Issue #21126** (2026-11-19): **fix(query): enforce stage WRITE on HTTP uploads**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  The HTTP stage upload handler now requires the same stage `WRITE` permission as SQL writes, before initializing storage or reading the upload body. Permission denials return HTTP 403. Uploads to the authenticated user's own `~` stage and both stage-name header formats remain supported.  Stateless regression `18_0027_http_stage_write` checks HTTP 403 without `WRITE`, successful uploads via role grants or ownership, and the user's own `~` stage. The targeted test passed twice against a local server with the fix; shell syntax and formatting checks passed.  Fixes #21094.  <!-- Briefly describe what this PR aims to solve. Include background context that will help reviewers understand the purpose of the PR.  Write for humans, in your own words: the concrete problem, why it matters, how you validated it. Do NOT paste model transcripts, long logs, or stack traces here - link a gist or use <details>. The automated PR Assistant checks reject bloated, repetitive, or template-placeholder descriptions.  - fixes: #[Link the issue here] -->  ## Tests  - [ ] Unit Test - [x] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [x] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [ ] Breaking Change (fix or feature that could cause existing functionality not to work as expected) - [ ] Do
 
-- **Issue #21104** (2026-11-17): **fix(storage): bound fuse_page Thrift decoding and drop thrift dep**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  `fuse_page` previously decoded Parquet `PageHeader` metadata through `thrift` 0.17's `TCompactInputProtocol` and the deprecated `parquet::format::PageHeader` API. Because `TCompactInputProtocol::read_bytes` eagerly allocates a `Vec<u8>` sized directly from the wire varint before reading payload bytes, a corrupted or crafted column chunk header could trigger multi-gigabyte allocations from a few bytes of input.  - Add reusable zero-allocation Parquet/Thrift helpers in `databend-storages-common-blocks`:   - `thrift_compact::ThriftCompactReader`: bounded Thrift Compact Protocol slice reader that checks binary and container lengths against remaining slice bytes before advancing, enforces a recursion depth budget (64), and validates field wire types.   - `parquet_page::{read_parquet_page_header, iter_parquet_page_headers, ParquetPageHeader}`: decodes Parquet v1/v2/dictionary/index page headers lazily over an in-memory column chunk slice without intermediate `Vec` materialization. - Simplify `fuse_page` to stream `iter_parquet_page_headers`, drop `#![allow(deprecated)]`, and remove the direct `thrift` dependency from `Cargo.toml` and `src/query/storages/fuse/Cargo.toml`. - Validated with unit tests in `databend_storages_common_blocks::parquet_page::tests` (`ArrowWriter` v1/v2 multi-page round-trips with page statistics, `u32::MAX` binary length prefixes, oversized/negative 
+- **Issue #21125** (2026-11-19): **refactor: query: read the ownership and access caches without a lock**
+  *Symptoms*:   I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  ##### refactor: query: read the ownership and access caches without a lock # Summary  The ownership, network rule and external access integration caches are no longer behind a tokio `Mutex`: `RoleMgr` and `UserApiProvider` hold them as `Arc<Cache>` and `Cache`, since the sub-cache reads take `&self`.  # Details  Concurrent `RoleMgr::list_ownerships` calls no longer queue on the lock: they share the copy, and each still waits while it initializes or reconnects. `UserApiProvider::external_access_values` no longer needs `try_lock` to avoid that queue, since `Cache::try_get_ready` never waits. The test of busy caches uses caches that cannot answer instead of holding their locks.  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test  - _Explain why_  ## Type of change  - [x] Refactoring  ## AI assistance  - AI usage: An AI coding agent generated code and wrote tests; I reviewed and confirmed every line before committing it. - Responsible human: @drmingdrmer - [x] The responsible human has read every line of this diff and can explain each change  ## Related Issues  <!-- Reviewable:start --> - - - This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/databendlabs/databend/21125) <!-- Reviewable:end --> 
+  **Post-Mortem & Fix Analysis**:
+  > ## ⏱ CI timing · Dev  ### [run 44318988933](https://github.com/databendlabs/databend/actions/runs/44318988933) · **37.5 min** (main p50 47.3 min, **−9.8 min**)  | stage | this run | main p50 | Δ | |---|--:|--:|--:| | **total** | 37.5 min | 47.3 min | **−9.8 min** | | **build (aarch64, ci profile)** | 21.8 min | 33.6 min | **−11.8 min** | | ├ deps + crates (parallel) | 4.9 min | — | — | | ├ databend-query codegen | 2.8 min | — | — | | ├ databend-binaries link | 12.0 min | — | — | | └ sccache hit rate | 97.5 % | — | — | | **test_unit** | 15.9 min | 15.1 min | +0.8 min | | mac_check | — | 14.0 min | — | | **tests after build (52 jobs)** | 14.5 min | 11.6 min | **+2.9 min** | | ├ queue p50 / max | 4.4 min / 11.1 min | 1.8 min / 4.5 min | **+2.7 min** | | ├ sqllogic standalone (8 jobs, max) | 5.4 min | 5.2 min | +0.2 min | | ├ sqllogic cluster (8 jobs, max) | 9.7 min | 9.1 min | +0.6 min | | ├ sqllogic stage (2 jobs, max) | 6.7 min | 6.3 min | +0.3 min | | ├ sqllogic other (13 jobs, max) | 
+  > Folded into #21124, whose branch now carries this commit on top of its own, as 3917502b8e.  <!-- x-pr-ship -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1231,1722 +1234,908 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `58dd5893` (2026-11-17)
-**Commit Message**: fix(query): finish queries correctly on the queries executor (#21111)
+### Incident Patch 1: `dea33860` (2026-11-19)
+**Commit Message**: fix(query): batch small blocks before the window partition exchange (#21112)
 
-* ci(query): let unit tests run on the queries executor
+* fix(query): batch small blocks before the window partition exchange
 
-ConfigBuilder::enable_queries_executor starts the executor shared by all the
-queries. The test guard finishes it and waits for its workers on teardown:
-they would outlive the test and look up the global instances of a dropped
-test.
+The window partition exchange scatters every input block into
+`window_num_partitions` pieces. When the blocks that reach it are small,
+for example after a selective filter or after the per-block top-n
+truncation of `row_number`/`rank`, each piece holds one or two rows but
+still a full set of allocations per column. Those allocations take far
+more memory than the rows, are not counted by `memory_size`, so the
+window buffer never reaches its spill threshold.
 
-* fix(query): do not hold a shared worker for an unconsumed result
+Add `TransformWindowPartitionBatch` before the exchange of every
+partitioned window. Blocks that would give fewer than 64 rows and less
+than 1 KiB per column to each partition on average are buffered until
+they are not small together and then concatenated; other blocks pass
+through untouched. The top-n truncation moves from
+`WindowPartitionTopNExchange` into this transform, so top-n windows now
+use the plain `WindowPartitionExchange`.
 
-The sink of a pulling query blocks its thread when the result channel is
-full. On the queries executor that thread is a worker shared by all the
-queries, so a client that stops reading could hold every worker. The sink
-now waits asynchronously there; the per-query executor is unchanged.
+* fix(query): send large window blocks without concatenation and keep partition ids above 255
 
-* fix(query): drop the queued tasks when the queries executor finishes
+* fix(query): copy small window blocks into the batch 
 
-The queued tasks hold the graphs of the queries. They were dropped with the
-executor itself, which may outlive what the processors need to shut down,
-e.g. the global IO runtime that an async sink uses on drop. finish now takes
-them out of the queue and drops them out of the lock, and no task is queued
-once the executor is finished.
-
-* fix(query): finish a query of the queries executor after its tasks stop
-
-
-
-**File**: `src/query/pipeline/src/sinks/async_sink.rs` (modified, +18/-16)
+**File**: `src/query/expression/src/kernels/stream_partition.rs` (modified, +135/-12)
 ```diff
-@@ -73,22 +73,24 @@ impl<T: AsyncSink + 'static> AsyncSinker<T> {
- impl<T: AsyncSink + 'static> Drop for AsyncSinker<T> {
-     fn drop(&mut self) {
-         drop_guard(move || {
--            if !self.called_on_start || !self.called_on_finish {
--                if let Some(mut inner) = self.inner.take() {
--                    GlobalIORuntime::instance().spawn({
--                        let called_on_start = self.called_on_start;
--                        let called_on_finish = self.called_on_finish;
--                        async move {
--                            if !called_on_start && T::CALL_ON_START_ON_ERROR {
--                                let _ = inner.on_start().await;
--                            }
--
--                            if !called_on_finish && T::CALL_ON_FINISH_ON_ERROR {
--                                let _ = inner.on_finish().await;
--                            }
--                        }
--                    });
--                }
-+            let run_on_start = !self.called_on_start && T::CALL_ON_START_ON_ERROR;
-+            let run_on_finish = !self.called_on_finish && T::CALL_ON_FINISH_ON_ERROR;
-+            // Nothing to run: do not touch the global runtime, which a sink
-+            // dropped late may outlive.
-+            if !run_on_start && !run_on_finish {
-+                return;
-+            }
-+
-+            if let Some(mut inner) = self.inner.take() {
-+                GlobalIORuntime::instance().spawn(async move {
-+                    if run_on_start {
-+                        let _ = inner.on_start().await;
-+                    }
-+
-+                    if run_on_finish {
-+                        let _ = inner.on_finish().await;
-+                    }
-+                });
-             }
-         })
-     }
-```
-
-**File**: `src/query/service/src/pipelines/executor/executor_graph.rs` (modified, +115/-15)
-```diff
-@@ -28,6 +28,7 @@ use std::time::SystemTime;
- use databend_common_base::base::WatchNotify;
- use databend_common_base::runtime::ExecutorStats;
- use databend_common_base::runtime::ExecutorStatsSnapshot;
-+use databend_common_base::runtime::LimitMemGuard;
- use databend_common_base::runtime::MemStat;
- use databend_common_base::runtime::ParentMemStat;
- use databend_common_base::runtime::PerfEvent;
-@@ -216,6 +217,8 @@ const DEFAULT_POINTS: u64 = 3;
- 
- struct ExecutingGraph {
-     finished_nodes: AtomicUsize,
-+    /// The tasks of the graph running on a worker of the queries executor.
-+    running_tasks: AtomicUsize,
-     graph: StableGraph<Arc<Node>, EdgeInfo>,
-     /// points store two values
-     ///
-@@ -263,6 +266,7 @@ impl ExecutingGraph {
-         Ok(ExecutingGraph {
-             graph,
-             finished_nodes: AtomicUsize::new(0),
-+            running_tasks: AtomicUsize::new(0),
-             points: AtomicU64::new((DEFAULT_POINTS << 32) | init_epoch as u64),
-             max_points: AtomicU64::new(DEFAULT_POINTS),
-             query_id,
-@@ -312,6 +316,7 @@ impl ExecutingGraph {
-         let executor_stats = ExecutorStats::new();
-         Ok(ExecutingGraph {
-             finished_nodes: AtomicUsize::new(0),
-+            running_tasks: AtomicUsize::new(0),
-             graph,
-             points: AtomicU64::new((DEFAULT_POINTS << 32) | init_epoch as u64),
-             max_points: AtomicU64::new(DEFAULT_POINTS),
-@@ -965,31 +970,63 @@ impl RunningGraph {
+@@ -136,6 +136,33 @@ impl PendingColumn {
+         copy_column(indices, column, self.builder(indices.len()));
      }
  
-     /// Flag the graph should finish and no more tasks should be scheduled.
-+    ///
-+    /// The first call decides the result of the graph. Its error is stored before
-+    /// the flag is set, so whoever sees the flag sees the error too. The waiter of
-+    /// the graph is woken once no worker runs a task of it.
-     pub fn should_finish<C>(&self, cause: Result<(), C>) -> Result<()> {
-         let cause = cause.with_context(|| "should finish");
- 
--        if self.0.should_finish.load(Ordering::SeqCst) {
--            return Ok(());
-+        {
-+            let mut finished_error = self.0.finished_error.lock();
-+            if self.0.should_finish.load(Ordering::SeqCst) {
-+                return Ok(());
-+            }
-+            *finished_error = cause.as_ref().err().cloned();
-+            // It is also the interrupt flag of the processors.
-+            self.0.should_finish.store(true, Ordering::SeqCst);
-         }
--        self.0.should_finish.store(true, Ordering::SeqCst);
-+
-+        self.0.finished_notify.notify_waiters();
-+        self.notify_finished_if_idle();
-+
-+        // After the notifications: the diagnostics wait for locks that other
-+        // queries hold, e.g. the one of `DataExchangeManager::shutdown_query`,
-+        // and may run on a thread that exceeded its memory limit.
-         if let Err(cause) = &cause {
-+            let _guard = LimitMemGuard::enter_unlimited();
-             log_memory_limit_diagnostics(cause, "memory limit exceeded");
-         }
--        self.0.finished_notify.notify_waiters();
--        self.interrupt();
--        let mut finished_error = self.0.finished_error.lock();
--        if finished_error.is_none() {
--            *finished_error = cause.err();
--            drop(finished_error);
-+        Ok(())
-+    }
-+
-+    /// Counts a task of the graph as running until the guard is dropped.
-+    ///
-+    /// Check `is_should_finish` after this, not before: a graph that finishes in
-+    /// between has woken its waiter already, which then runs concurrently with
-+    /// the task.
-+    pub(crate) fn track_running_task(self: &Arc<Self>) -> RunningTaskGuard {
-+        self.0.running_tasks.fetch_add(1, Ordering::SeqCst);
-+        RunningTaskGuard {
-+            graph: self.clone(),
++    /// Add every row of `column`, in order.
++    fn append_column(&mut self, column: &Column) {
++        let builder = self.builder(column.len());
++        if builder.data_type() == column.data_type() {
++            builder.append_column(column);
++        } else {
++            // Such as an `Array` column into an `EmptyArray` builder, which
++            // only `copy_column` turns into an `Array` builder.
++            let indices = (0..column.len() as u32).collect::<Vec<_>>();
++            copy_column(&indices, column, builder);
 +        }
 +    }
 +
-+    /// Wakes the waiter of the graph, which runs the finish callbacks of the
-+    /// query, once the graph should finish and no worker runs a task of it.
-+    ///
-+    /// The async tasks of the graph are not waited for: they are aborted by
-+    /// `finished_notify`, as on the per-query executor.
-+    fn notify_finished_if_idle(&self) {
-+        if !self.is_should_finish() || self.0.running_tasks.load(Ordering::SeqCst) != 0 {
-+            return;
-         }
- 
--        if let Some(notify) = self.0.finish_condvar_notify.clone() {
--            let (lock, cvar) = &*notify;
--            let mut started = lock.lock();
--            *started = true;
--            cvar.notify_one();
-+        if let Some(notify) = &self.0.finish_condvar_notify {
-+            let (lock, cvar) = &**notify;
-+            *lock.lock() = true;
-+            cvar.notify_all();
-         }
--        Ok(())
-     }
- 
-     /// Checks if the graph should finish and no more tasks should be scheduled.
-@@ -1194,6 +1231,18 @@ impl RunningGraph {
-     }
- }
- 
-+/// A task of a graph running on a worker of the queries executor.
-+pub(crate) struct RunningTaskGuard {
-+    graph: Arc<RunningGraph>,
-+}
-+
-+impl Drop for RunningTaskGuard {
-+    fn drop(&mut self) {
-+       
-```
-
-**File**: `src/query/service/src/pipelines/executor/global_queries_executor.rs` (modified, +5/-0)
-```diff
-@@ -38,4 +38,9 @@ impl GlobalQueriesExecutor {
-     pub fn instance() -> Arc<QueriesPipelineExecutor> {
-         GlobalInstance::get()
-     }
-+
-+    /// The executor, `None` if `enable_queries_executor` is off.
-+    pub fn try_instance() -> Option<Arc<QueriesPipelineExecutor>> {
-+        GlobalInstance::try_get()
-+    }
- }
-```
-
-**File**: `src/query/service/src/pipelines/executor/pipeline_executor.rs` (modified, +82/-29)
-```diff
-@@ -20,6 +20,8 @@ use std::time::Instant;
- use databend_common_base::base::WatchNotify;
- use databend_common_base::runtime::ExecutorStatsSnapshot;
- use databend_common_base::runtime::GlobalIORuntime;
-+use databend_common_base::runtime::LimitMemGuard;
-+use databend_common_base::runtime::ThreadTracker;
- use databend_common_base::runtime::catch_unwind;
- use databend_common_base::runtime::defer;
- use databend_common_exception::ErrorCode;
-@@ -32,6 +34,7 @@ use databend_common_pipeline::core::PlanProfile;
- use futures_util::future::Either;
- use futures_util::future::select;
- use log::info;
-+use log::warn;
- use parking_lot::Condvar;
- use parking_lot::Mutex;
- 
-@@ -55,6 +58,42 @@ pub struct QueryWrapper {
-     finished_notify: Arc<WatchNotify>,
- }
- 
-+impl QueryWrapper {
-+    /// Runs the finish callbacks of the query with its result. Only the first
-+    /// call runs them.
-+    fn on_finished(&self, res: Result<()>) -> Result<()> {
-+        let mut on_finished_chain = self.on_finished_chain.lock();
-+
-+        // untracking for on finished
-+        let tracking_payload = ThreadTracker::new_tracking_payload();
-+        let _guard = ThreadTracker::tracking(tracking_payload);
-+        let profiling = self
-+            .graph
-+            .fetch_profiling(Some(self.settings.executor_node_id.clone()));
-+        on_finished_chain.apply(ExecutionInfo::create(res, profiling))
-+    }
-+}
-+
-+/// Runs the finish callbacks of a query that never executed, as the per-query
-+/// executor does on drop. A no-op once `execute` has run them.
-+impl Drop for QueryWrapper {
-+    fn drop(&mut self) {
-+        let _guard = LimitMemGuard::enter_unlimited();
-+
-+        // Drops the tasks that the wakers of its processors may still queue.
-+        if let Err(cause) = self.graph.should_finish::<()>(Ok(())) {
-+            warn!("Shutdown failure: {:?}", cause);
-+        }
-+
-+        let cause = self.graph.get_error().unwrap_or_else(|| {
-+            ErrorCode::Internal("Pipeline illegal state: not successfully shutdown")
-+        });
-+        if let Err(cause) = self.on_finished(Err(cause)) {
-+            warn!("Shutdown failure: {:?}", cause);
++    /// Add `rows` of a constant, kept a constant when it can be.
++    fn append_const(
++        &mut self,
++        scalar: &Scalar,
++        data_type: &DataType,
++        rows: usize,
++        size: &mut impl FnMut() -> ExpandedSize,
++    ) {
++        if !self.try_push_const(scalar, data_type, rows, size) {
++            let column = ColumnBuilder::repeat(&scalar.as_ref(), rows, data_type).build();
++            self.append_column(&column);
 +        }
 +    }
-+}
 +
- pub enum PipelineExecutor {
-     QueryPipelineExecutor(Arc<QueryPipelineExecutor>),
-     QueriesPipelineExecutor(QueryWrapper),
-@@ -179,37 +218,51 @@ impl PipelineExecutor {
+     /// Turn the pending rows into a builder with room for `additional` more.
+     fn builder(&mut self, additional: usize) -> &mut ColumnBuilder {
          match self {
-             PipelineExecutor::QueryPipelineExecutor(executor) => executor.execute(),
-             PipelineExecutor::QueriesPipelineExecutor(query_wrapper) => {
--                Self::init(
--                    &query_wrapper.on_init_callback,
--                    &query_wrapper.settings.query_id,
--                )?;
--                GlobalQueriesExecutor::instance().send_graph(query_wrapper.graph.clone())?;
--                Self::start_executor_daemon(
--                    query_wrapper,
--                    query_wrapper.settings.max_execute_time_in_seconds,
--                )?;
--                let (lock, cvar) = &*query_wrapper.finish_condvar_wait;
--                let mut finished = lock.lock();
--                if !*finished {
--                    cvar.wait(&mut finished);
--                }
-+                let res = Self::run_on_queries_executor(query_wrapper);
-+                query_wrapper.on_finished(res.clone()).and(res)
-+            }
+@@ -215,6 +242,21 @@ fn copy_const(scalar: &Scalar, data_type: &DataType, rows: usize, to: &mut Colum
+     copy_column(&indices, &column, to);
+ }
+ 
++/// The expanded size of the last constant seen in a column.
++type ConstSize = Option<(Scalar, DataType, ExpandedSize)>;
++
++fn cached_const_size(cache: &mut ConstSize, scalar: &Scalar, data_type: &DataType) -> ExpandedSize {
++    if let Some((s, t, size)) = cache.as_ref()
++        && s == scalar
++        && t == data_type
++    {
++        return *size;
++    }
++    let size = ExpandedSize::measure(scalar, data_type);
++    *cache = Some((scalar.clone(), data_type.clone(), size));
++    size
++}
++
+ struct PartitionBlockBuilder {
+     num_rows: usize,
+     columns: Vec<PendingColumn>,
+@@ -244,7 +286,7 @@ pub struct BlockPartitionStream {
+     partitions: Vec<PartitionBlockBuilder>,
+     // The expanded size of the last constant seen in each column, as the same
+     // constant usually comes in every block.
+-    const_sizes: Vec<Option<(Scalar, DataType, ExpandedSize)>>,
++    const_sizes: Vec<ConstSize>,
+ }
+ 
+ impl BlockPartitionStream {
+@@ -313,17 +355,7 @@ impl BlockPartitionStream {
+             match entry {
+                 BlockEntry::Const(scalar, data_type, num_rows) => {
+                     let const_size = &mut self.const_sizes[column_idx];
+-                    let mut size = || {
+-                        if let Some((s, t, size)) = const_size.as_ref()
+-                            && *s == scalar
+-                            && *t == data_type
+-                        {
+-                            return *size;
+-                        }
+-                        let size = ExpandedSize::measure(&scalar, &data_type);
+-                        *const_size = Some((scalar.clone(), data_type.clone(), size));
+-                        size
+-                    };
++                    let mut size = || cached_const_size(const_size, &scalar, &data_type);
+                     // Expanded once for the partitions that already hold other
+                     // rows, as every block used to be.
+                     let mut expanded = None;
+@@ -435,6 +467,97 @@ impl BlockPartitionStream {
+     }
+ }
+ 
++/// Concatenates blocks into blocks of `rows_threshold` rows or
++/// `bytes_threshold` bytes, whichever is reached first: a
++/// `BlockPartitionStream` with one partition, without row indices.
++///
++/// The rows of each block are appended to the column builders as it arrives,
++/// so the block, which can be a slice of a larger one, is not kept. A column
++/// that has been the same constant in every block so far stays a constant,
++/// counted as if expanded. Once a block is sent, the builders of the next one
++/// reserve as many rows.
++pub struct BlockConcatStream {
++    rows_threshold: usize,
++    bytes_threshold: usize,
++    pending: PartitionBlockBuilder,
++    const_sizes: Vec<ConstSize>,
++}
++
++impl BlockConcatStream {
++    pub fn create(rows_threshold: usize, bytes_threshold: usize) -> BlockConcatStream {
++        BlockConcatStream {
++            rows_threshold: if rows_threshold == 0 {
++                usize::MAX
++            } else {
++                rows_threshold
++            },
++            bytes_threshold: if bytes_threshold == 0 {
++                usize::MAX
++            } else {
++                bytes_threshold
++            },
++            pending: PartitionBlockBuilder {
++                num_rows: 0,
++                columns: vec![],
++            },
++            const_sizes: vec![],
 +        }
 +    }
- 
--                query_wrapper.finished_notify.notify_waiters();
-+    /// Runs the graph of the query on the queries executor until it finishes.
-+    fn run_on_queries_executor(query_wrapper: &QueryWrapper) -> Result<()> {
-+        let graph = &query_wrapper.graph;
-+        let started = Self::init(
-+            &query_wrapper.on_init_callback,
-+            &query_wrapper.settings.query_id,
-+        )
-+        .and_then(|_| GlobalQueriesExecutor::instance().send_graph(graph.clone()));
-+        match &started {
-+            Ok(_) => Self::start_executor_daemon(
-+                query_wrapper,
-+                query_wrapper.settings.max_execute_time_in_seconds,
-+            )?,
-+            // A processor may have woken a worker from its first event before
-+            // another one failed, so a task of the graph may be running: wait
-+            // for it as well. The tasks still queued are dropped.
-+            Err(cause) => graph.should_finish(Err(cause.clone()))?,
-+        }
- 
--                let may_error = query_wrapper.graph.get_error();
--                match may_error {
--                    None => {
--                        let mut finished_chain = query_wrapper.on_finished_chain.lock();
--                        let info = ExecutionInfo::create(Ok(()), self.fetch_profiling(true));
--                        finished_chain.apply(info)
--                    }
--                    Some(cause) => {
--                        let mut finished_chain = query_wrapper.on_finished_chain.lock();
--                        let profiling = self.fetch_profiling(true);
--                        let info = ExecutionInfo::create(Err(cause.cl
++
++    /// Appends the rows of `block`, and returns the concatenated block once
++    /// it reaches a threshold.
++    pub fn push(&mut self, block: DataBlock) -> Option<DataBlock
 ```
 
-**File**: `src/query/service/src/pipelines/executor/pipeline_pulling_executor.rs` (modified, +58/-17)
+**File**: `src/query/expression/tests/it/stream_partition.rs` (modified, +57/-0)
 ```diff
-@@ -17,7 +17,9 @@ use std::sync::atomic::AtomicBool;
- use std::sync::atomic::Ordering;
+@@ -14,6 +14,7 @@
  
- use async_channel::Receiver;
-+use async_channel::SendError;
- use async_channel::Sender;
-+use async_trait::async_trait;
- use databend_common_base::base::Progress;
- use databend_common_base::base::ProgressValues;
- use databend_common_base::runtime::Thread;
-@@ -33,6 +35,8 @@ use databend_common_pipeline::core::Pipeline;
+ use std::collections::HashSet;
+ 
++use databend_common_expression::BlockConcatStream;
+ use databend_common_expression::BlockEntry;
+ use databend_common_expression::BlockPartitionStream;
+ use databend_common_expression::DataBlock;
+@@ -107,6 +108,62 @@ fn assert_same_as_expanded(
+     output
+ }
+ 
++#[test]
++fn test_concat_stream_cuts_as_one_partition() {
++    // Columns, runs of one constant, a new constant and a slice, cut at 10
++    // rows as a `BlockPartitionStream` with one partition cuts them.
++    let blocks = [
++        column_block(5, 0),
++        const_block(4, 5, "a"),
++        const_block(3, 9, "a"),
++        column_block(8, 10).slice(2..6),
++        const_block(2, 20, "b"),
++        column_block(7, 30),
++        const_block(1, 40, "b"),
++    ];
++    let mut stream = BlockConcatStream::create(10, 0);
++    let mut reference = BlockPartitionStream::create(10, 0, 1);
++    for block in &blocks {
++        let actual = stream.push(block.clone());
++        let mut expected = reference.partition(vec![0; block.num_rows()], block.clone(), true);
++        assert_eq!(actual.is_some(), expected.len() == 1);
++        if let (Some(a), Some((_, e))) = (&actual, expected.pop()) {
++            assert_same_values(a, &e);
++        }
++    }
++    let actual = stream.finish();
++    let expected = reference.finalize_partition(0);
++    assert_eq!(actual.is_some(), expected.is_some());
++    if let (Some(a), Some(e)) = (&actual, &expected) {
++        assert_same_values(a, e);
++    }
++    assert!(stream.finish().is_none());
++}
++
++#[test]
++fn test_concat_stream_keeps_one_constant() {
++    let mut stream = BlockConcatStream::create(0, 0);
++    assert!(stream.push(const_block(3, 0, "a")).is_none());
++    assert!(stream.push(const_block(4, 3, "a")).is_none());
++    assert_eq!(stream.num_rows(), 7);
++
++    let block = stream.finish().unwrap();
++    assert_eq!(block.num_rows(), 7);
++    assert_eq!(block.get_by_offset(1).as_scalar(), Some(&Scalar::Null));
++    assert_eq!(
++        block.get_by_offset(2).as_scalar(),
++        Some(&Scalar::String("a".to_string()))
++    );
++    assert_same_values(
++        &block,
++        &DataBlock::concat(&[
++            expanded(&const_block(3, 0, "a")),
++            expanded(&const_block(4, 3, "a")),
++        ])
++        .unwrap(),
++    );
++}
++
+ #[test]
+ fn test_partition_preserves_timezone_representations() {
+     use databend_common_column::types::timestamp_tz;
+```
+
+**File**: `src/query/service/src/physical_plans/physical_window.rs` (modified, +16/-18)
+```diff
+@@ -32,6 +32,7 @@ use databend_common_functions::BUILTIN_FUNCTIONS;
  use databend_common_pipeline::core::Processor;
  use databend_common_pipeline::core::ProcessorPtr;
- use databend_common_pipeline::core::basic_callback;
-+use databend_common_pipeline::sinks::AsyncSink;
-+use databend_common_pipeline::sinks::AsyncSinker;
- use databend_common_pipeline::sinks::Sink;
- use databend_common_pipeline::sinks::Sinker;
- use fastrace::func_path;
-@@ -105,6 +109,7 @@ impl PipelinePullingExecutor {
-         pipeline: &mut Pipeline,
-         tx: Sender<DataBlock>,
-         progress: Option<Arc<Progress>>,
-+        settings: &ExecutorSettings,
-     ) -> Result<()> {
-         if !pipeline.is_pulling_pipeline()? {
-             return Err(ErrorCode::Internal(
-@@ -117,6 +122,7 @@ impl PipelinePullingExecutor {
-                 tx.clone(),
-                 progress.clone(),
-                 input,
-+                settings.enable_queries_executor,
-             )))
-         })?;
+ use databend_common_pipeline_transforms::MemorySettings;
++use databend_common_pipeline_transforms::TransformPipelineHelper;
+ use databend_common_sql::ColumnSet;
+ use databend_common_sql::ScalarExpr;
+ use databend_common_sql::Symbol;
+@@ -68,10 +69,10 @@ use crate::pipelines::memory_settings::MemorySettingsExt;
+ use crate::pipelines::processors::transforms::FrameBound;
+ use crate::pipelines::processors::transforms::SortStrategy;
+ use crate::pipelines::processors::transforms::TransformWindow;
++use crate::pipelines::processors::transforms::TransformWindowPartitionBatch;
+ use crate::pipelines::processors::transforms::TransformWindowPartitionCollect;
+ use crate::pipelines::processors::transforms::WindowFunctionInfo;
+ use crate::pipelines::processors::transforms::WindowPartitionExchange;
+-use crate::pipelines::processors::transforms::WindowPartitionTopNExchange;
+ use crate::pipelines::processors::transforms::WindowSortDesc;
  
-@@ -137,7 +143,7 @@ impl PipelinePullingExecutor {
+ #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+@@ -449,23 +450,20 @@ fn apply_window_partition(
+         .map(|index| input_schema.index_of(&index.to_string()))
+         .collect::<Result<Vec<_>>>()?;
  
-         let (sender, receiver) = async_channel::bounded(std::cmp::max(1, pipeline.output_len()));
- 
--        Self::wrap_pipeline(&mut pipeline, sender, None)?;
-+        Self::wrap_pipeline(&mut pipeline, sender, None, &settings)?;
-         let executor = PipelineExecutor::create(pipeline, settings)?;
- 
-         Ok(PipelinePullingExecutor {
-@@ -170,7 +176,7 @@ impl PipelinePullingExecutor {
-         let (sender, receiver) =
-             async_channel::bounded(std::cmp::max(1, main_pipeline.output_len()));
- 
--        Self::wrap_pipeline(&mut main_pipeline, sender, result_progress)?;
-+        Self::wrap_pipeline(&mut main_pipeline, sender, result_progress, &settings)?;
- 
-         let mut pipelines = build_res.sources_pipelines;
-         pipelines.push(main_pipeline);
-@@ -285,15 +291,39 @@ struct PullingSink {
- }
- 
- impl PullingSink {
-+    /// The sink waits for the consumer of the query when the channel is full. On
-+    /// the queries executor it waits asynchronously: blocking would hold a worker
-+    /// shared by all the queries for as long as the consumer does not read.
-     pub fn create(
-         tx: Sender<DataBlock>,
-         progress: Option<Arc<Progress>>,
-         input: Arc<InputPort>,
-+        enable_queries_executor: bool,
-     ) -> Box<dyn Processor> {
--        Sinker::create(input, PullingSink {
-+        let sink = PullingSink {
-             sender: Some(tx),
-             progress,
--        })
-+        };
-+        match enable_queries_executor {
-+            true => AsyncSinker::create(input, sink),
-+            false => Sinker::create(input, sink),
-+        }
-+    }
-+
-+    fn record_progress(&self, data_block: &DataBlock) {
-+        if let Some(progress) = &self.progress {
-+            progress.incr(&ProgressValues {
-+                rows: data_block.num_rows(),
-+                bytes: data_block.memory_size(),
-+            });
-+        }
-+    }
-+
-+    fn send_error(cause: SendError<DataBlock>) -> ErrorCode {
-+        ErrorCode::Internal(format!(
-+            "Logical error, cannot push data into SyncSender, cause {:?}",
-+            cause
-+        ))
-     }
- }
- 
-@@ -306,22 +336,33 @@ impl Sink for PullingSink {
-     }
- 
-     fn consume(&mut self, data_block: DataBlock) -> Result<()> {
--        if let Some(progress) = &self.progress {
--            progress.incr(&ProgressValues {
--                rows: data_block.num_rows(),
--                bytes: data_block.memory_size(),
--            });
--        }
--
-+        self.record_progress(&data_block);
-         if let Some(sender) = &self.sender {
--            if let Err(cause) = sender.send_blocking(data_block) {
--                return Err(ErrorCode::Internal(format!(
--                    "Logical error, cannot push data into SyncSender, cause {:?}",
--                    cause
--                )));
--            }
-+            sender.send_blocking(data_block).map_err(Self::send_error)?;
-         }
-+        Ok(())
-+    }
-+}
- 
-+#[async_trait]
-+impl AsyncSink for PullingSink {
-+    const NAME: &'static str = "PullingExecutorSink";
-+    // Nothing to run on drop: the sender is dropped with the sink. Running the
-+    // hooks there would need the global runtime, which a query dropped late
-+    // may outlive.
-+    const CALL_ON_START_ON_ERROR: bool = false;
-+    const CALL_ON_FINISH_ON_ERROR: bool = false;
-+
-+    async fn on_finish(&mut self) -> Result<()> {
-+        drop(self.sender.take());
-         Ok(())
-     }
-+
-+    async fn consume(&mut self, data_block: DataBlock) -> Result<bool> {
-+        self.record_progress(&data_block);
-+        if let Some(sender) = &self.sender {
-+            sender.send(data_block).
-```
-
-**File**: `src/query/service/src/pipelines/executor/queries_executor_tasks.rs` (modified, +29/-0)
-```diff
-@@ -46,6 +46,15 @@ impl WorkersTasks {
-         }
-     }
- 
-+    /// Takes all the queued tasks, so they are dropped out of the lock.
-+    pub fn take_tasks(&mut self) -> (ExecutorTasks, ExecutorTasks) {
-+        let workers_size = self.workers_waiting_status.total_size();
-+        (
-+            mem::replace(&mut self.current_tasks, ExecutorTasks::create(workers_size)),
-+            mem::replace(&mut self.next_tasks, ExecutorTasks::create(workers_size)),
-+        )
-+    }
-+
-     pub fn swap_tasks(&mut self) {
-         mem::swap(&mut self.current_tasks, &mut self.next_tasks);
-     }
-@@ -88,7 +97,14 @@ impl QueriesExecutorTasksQueue {
-             wakeup_workers.push(worker_id);
-         }
- 
-+        // No worker runs the queued tasks any more. They hold the graphs of the
-+        // queries, whose processors must not be dropped with the executor: it may
-+        // outlive what they need to shut down, e.g. the global runtimes. The flag
-+        // is set before the lock is taken, so no task is queued after this.
-+        let queued_tasks = workers_tasks.take_tasks();
-         drop(workers_tasks);
-+        drop(queued_tasks);
-+
-         for wakeup_worker in wakeup_workers {
-             workers_condvar.wakeup(wakeup_worker);
-         }
-@@ -165,6 +181,9 @@ impl QueriesExecutorTasksQueue {
- 
-     pub fn init_sync_tasks(&self, tasks: VecDeque<ProcessorWrapper>, condvar: Arc<WorkersCondvar>) {
-         let mut workers_tasks = self.workers_tasks.lock();
-+        if self.is_finished() {
-+            return;
-+        }
- 
-         let mut worker_id = 0;
-         for proc in tasks.into_iter() {
-@@ -191,6 +210,9 @@ impl QueriesExecutorTasksQueue {
-         condvar: Arc<WorkersCondvar>,
-     ) {
-         let mut workers_tasks = self.workers_tasks.lock();
-+        if self.is_finished() {
-+            return;
-+        }
- 
-         let mut worker_id = 0;
-         for proc in tasks.into_iter() {
-@@ -208,6 +230,10 @@ impl QueriesExecutorTasksQueue {
- 
-     pub fn completed_async_task(&self, condvar: Arc<WorkersCondvar>, task: CompletedAsyncTask) {
-         let mut workers_tasks = self.workers_tasks.lock();
-+        if self.is_finished() {
-+            condvar.dec_active_async_worker();
-+            return;
-+        }
-         // The worker id of a waker is not always the id of a worker of this
-         // executor, e.g. a fuse source passes its index among the sources.
-         let workers = workers_tasks.workers_waiting_status.total_size();
-@@ -248,6 +274,9 @@ impl QueriesExecutorTasksQueue {
-         mut next_tasks: VecDeque<ExecutorTask>,
-     ) {
-         let mut workers_tasks = self.workers_tasks.lock();
-+        if self.is_finished() {
-+            return;
-+        }
- 
-         if let Some(mut tasks) = current_tasks {
-             while let Some(task) = tasks.pop_front() {
-```
-
-**File**: `src/query/service/src/pipelines/executor/queries_pipeline_executor.rs` (modified, +19/-0)
-```diff
-@@ -118,6 +118,12 @@ impl QueriesPipelineExecutor {
-             let sync_queue = std::mem::take(&mut init_schedule_queue.sync_queue);
-             self.global_tasks_queue
-                 .init_sync_tasks(sync_queue, self.workers_condvar.clone());
-+
-+            // All its processors finished in their first event, so no worker runs
-+            // a task of the graph that would finish it.
-+            if graph.is_all_nodes_finished() {
-+                graph.should_finish::<()>(Ok(()))?;
+-    if let Some((top, func)) = window_top_n(window) {
+-        builder.main_pipeline.exchange(
+-            num_processors,
+-            WindowPartitionTopNExchange::create(
+-                partition_by.clone(),
+-                sort_desc.clone(),
+-                top,
+-                func,
+-                num_partitions as u64,
+-            ),
+-        )?;
+-    } else {
+-        builder.main_pipeline.exchange(
+-            num_processors,
+-            WindowPartitionExchange::create(partition_by.clone(), num_partitions),
+-        )?;
+-    }
++    let top_n = window_top_n(window);
++    builder.main_pipeline.add_accumulating_transformer(|| {
++        let transform = TransformWindowPartitionBatch::create(num_partitions);
++        match top_n {
++            Some((top, func)) => {
++                transform.with_top_n(partition_by.clone(), sort_desc.clone(), top, func)
 +            }
-             Ok(())
-         }
-     }
-@@ -222,6 +228,19 @@ impl QueriesPipelineExecutor {
++            None => transform,
++        }
++    });
++    builder.main_pipeline.exchange(
++        num_processors,
++        WindowPartitionExchange::create(partition_by.clone(), num_partitions),
++    )?;
  
-                 while !self.global_tasks_queue.is_finished() && context.has_task() {
-                     let task_info = context.get_task_info();
-+                    // Counted before the check: a graph that finishes in between
-+                    // waits for this task before running its finish callbacks.
-+                    let _running_task = task_info
-+                        .as_ref()
-+                        .map(|(graph, _)| graph.track_running_task());
-+                    if task_info
-+                        .as_ref()
-+                        .is_some_and(|(graph, _)| graph.is_should_finish())
-+                    {
-+                        drop(context.take_task());
-+                        continue;
-+                    }
-+
-                     let execute_res = catch_unwind(|| context.execute_task(Some(self)));
-                     match execute_res {
-                         Ok(res) => {
+     let window_spill_settings = MemorySettings::from_window_settings(&builder.ctx)?;
+     let plan_schema = DataSchemaRefExt::create(input_schema.fields().clone());
 ```
 
-**File**: `src/query/service/src/test_kits/config.rs` (modified, +6/-0)
+**File**: `src/query/service/src/physical_plans/physical_window_partition.rs` (modified, +14/-15)
 ```diff
-@@ -167,6 +167,12 @@ ADDRESS = 'https://databend.com';"
-         self
-     }
+@@ -21,6 +21,7 @@ use databend_common_exception::Result;
+ use databend_common_expression::SortColumnDescription;
+ use databend_common_pipeline::core::ProcessorPtr;
+ use databend_common_pipeline_transforms::MemorySettings;
++use databend_common_pipeline_transforms::TransformPipelineHelper;
+ use databend_common_sql::Symbol;
+ use databend_common_sql::executor::physical_plans::SortDesc;
  
-+    /// Run the queries on the executor shared by all the queries.
-+    pub fn enable_queries_executor(mut self) -> ConfigBuilder {
-+        self.conf.query.common.enable_queries_executor = true;
+@@ -33,9 +34,9 @@ use crate::physical_plans::physical_plan::PhysicalPlanMeta;
+ use crate::pipelines::PipelineBuilder;
+ use crate::pipelines::memory_settings::MemorySettingsExt;
+ use crate::pipelines::processors::transforms::SortStrategy;
++use crate::pipelines::processors::transforms::TransformWindowPartitionBatch;
+ use crate::pipelines::processors::transforms::TransformWindowPartitionCollect;
+ use crate::pipelines::processors::transforms::WindowPartitionExchange;
+-use crate::pipelines::processors::transforms::WindowPartitionTopNExchange;
+ 
+ #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+ pub struct WindowPartition {
+@@ -121,25 +122,23 @@ impl IPhysicalPlan for WindowPartition {
+             })
+             .collect::<Result<Vec<_>>>()?;
+ 
+-        if let Some(top_n) = &self.top_n
+-            && top_n.top < 10000
+-        {
+-            builder.main_pipeline.exchange(
+-                num_processors,
+-                WindowPartitionTopNExchange::create(
++        let top_n = self.top_n.as_ref().filter(|top_n| top_n.top < 10000);
++        builder.main_pipeline.add_accumulating_transformer(|| {
++            let transform = TransformWindowPartitionBatch::create(num_partitions);
++            match top_n {
++                Some(top_n) => transform.with_top_n(
+                     partition_by.clone(),
+                     sort_desc.clone(),
+                     top_n.top,
+                     top_n.func,
+-                    num_partitions as u64,
+                 ),
+-            )?;
+-        } else {
+-            builder.main_pipeline.exchange(
+-                num_processors,
+-                WindowPartitionExchange::create(partition_by.clone(), num_partitions),
+-            )?;
+-        }
++                None => transform,
++            }
++        });
++        builder.main_pipeline.exchange(
++            num_processors,
++            WindowPartitionExchange::create(partition_by.clone(), num_partitions),
++        )?;
+ 
+         let window_spill_settings = MemorySettings::from_window_settings(&builder.ctx)?;
+ 
+```
+
+**File**: `src/query/service/src/pipelines/processors/transforms/window/partition/mod.rs` (modified, +2/-2)
+```diff
+@@ -13,14 +13,14 @@
+ // limitations under the License.
+ 
+ mod data_processor_strategy;
++mod transform_window_partition_batch;
+ mod transform_window_partition_collect;
+ mod window_partition_buffer;
+ mod window_partition_exchange;
+ mod window_partition_meta;
+-mod window_partition_partial_top_n_exchange;
+ 
+ pub use data_processor_strategy::*;
++pub use transform_window_partition_batch::*;
+ pub use transform_window_partition_collect::*;
+ pub use window_partition_exchange::*;
+ pub use window_partition_meta::*;
+-pub use window_partition_partial_top_n_exchange::*;
+```
+
+**File**: `src/query/service/src/pipelines/processors/transforms/window/partition/transform_window_partition_batch.rs` (added, +518/-0)
+```diff
+@@ -0,0 +1,518 @@
++// Copyright 2021 Datafuse Labs
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++use databend_common_exception::Result;
++use databend_common_expression::BlockConcatStream;
++use databend_common_expression::DataBlock;
++use databend_common_expression::FromData;
++use databend_common_expression::ProjectedBlock;
++use databend_common_expression::SortColumnDescription;
++use databend_common_expression::SortCompare;
++use databend_common_expression::Value;
++use databend_common_expression::group_hash_entries;
++use databend_common_expression::types::UInt64Type;
++use databend_common_expression::visitor::ValueVisitor;
++use databend_common_pipeline_transforms::AccumulatingTransform;
++
++use crate::physical_plans::WindowPartitionTopNFunc;
++
++/// A block is small when, scattered into the window partitions, each piece
++/// gets fewer rows than this on average and fewer bytes than
++/// `MIN_PIECE_BYTES_PER_COLUMN` per column. A constant column counts with its
++/// value repeated for every row, the size it can take once buffered.
++const MIN_PIECE_ROWS: usize = 64;
++
++const MIN_PIECE_BYTES_PER_COLUMN: usize = 1024;
++
++/// Prepares the input blocks of the window exchange, which scatters each
++/// block into `window_num_partitions` pieces.
++///
++/// A small block, such as the output of a selective filter, would be cut into
++/// pieces of one or two rows. Each piece holds its own allocations per
++/// column, which take more memory than its rows, and the window buffers the
++/// pieces until all input arrives. So small blocks go to a
++/// `BlockConcatStream`: their rows are appended as they arrive, so a small
++/// slice does not keep its source block, and they are sent as one block once
++/// they are not small together. Other blocks are sent as they are.
++///
++/// There is one buffer for each input stream, not one per window partition:
++/// the exchange scatters the batch into the window partitions afterwards.
++///
++/// With a top-n window function, the rows of each block that cannot rank
++/// within `top` of their partition are dropped first.
++pub struct TransformWindowPartitionBatch {
++    top_n: Option<PartitionTopN>,
++
++    min_rows: usize,
++    min_bytes_per_column: usize,
++    // Created by the first small block, as its threshold in bytes depends on
++    // the number of columns.
++    stream: Option<BlockConcatStream>,
++}
++
++impl TransformWindowPartitionBatch {
++    pub fn create(num_partitions: usize) -> TransformWindowPartitionBatch {
++        TransformWindowPartitionBatch {
++            top_n: None,
++            min_rows: num_partitions * MIN_PIECE_ROWS,
++            min_bytes_per_column: num_partitions * MIN_PIECE_BYTES_PER_COLUMN,
++            stream: None,
++        }
++    }
++
++    pub fn with_top_n(
++        mut self,
++        partition_indices: Vec<usize>,
++        order_by: Vec<SortColumnDescription>,
++        top: usize,
++        func: WindowPartitionTopNFunc,
++    ) -> TransformWindowPartitionBatch {
++        self.top_n = Some(PartitionTopN::new(partition_indices, order_by, top, func));
 +        self
 +    }
 +
-     pub fn table_meta_segment_bytes(mut self, value: u64) -> ConfigBuilder {
-         self.conf.cache.table_meta_segment_bytes = value;
-         self
-```
-
----
-
-### Incident Patch 2: `db269224` (2026-11-17)
-**Commit Message**: fix(storage): bound fuse_page Thrift decoding and drop thrift dep (#21104)
-
-* fix(storage): bound fuse_page Thrift decoding and drop thrift dep
-
-* refactor(storage): extract bounded Thrift and Parquet page header readers
-
-**File**: `Cargo.lock` (modified, +0/-12)
-```diff
-@@ -4290,7 +4290,6 @@ dependencies = [
-  "tantivy",
-  "tantivy-jieba",
-  "tempfile",
-- "thrift",
-  "tokio",
-  "typetag",
-  "uuid",
-@@ -15084,15 +15083,6 @@ dependencies = [
-  "once_cell",
- ]
- 
--[[package]]
--name = "threadpool"
--version = "1.8.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d050e60b33d41c19108b32cea32164033a9013fe3b46cbd4457559bfbf77afaa"
--dependencies = [
-- "num_cpus",
--]
--
- [[package]]
- name = "thrift"
- version = "0.17.0"
-@@ -15101,9 +15091,7 @@ checksum = "7e54bc85fc7faa8bc175c4bab5b92ba8d9a3ce893d0e9f42cc455c8ab16a9e09"
- dependencies = [
-  "byteorder",
-  "integer-encoding 3.0.4",
-- "log",
-  "ordered-float 2.10.1",
-- "threadpool",
- ]
- 
- [[package]]
-```
-
-**File**: `Cargo.toml` (modified, +0/-1)
-```diff
-@@ -477,7 +477,6 @@ terminal_size = "0.4.2"
- test-harness = "0.3.0"
- testcontainers = "0.23"
- thiserror = { version = "1" }
--thrift = "0.17.0"
- tikv-jemalloc-ctl = { version = "0.6.0", features = ["use_std", "stats"] }
- tikv-jemalloc-sys = "0.6.0"
- tokio = { version = "1.54.1", features = ["full"] }
-```
-
-**File**: `src/query/storages/common/blocks/src/lib.rs` (modified, +3/-0)
-```diff
-@@ -14,8 +14,11 @@
- 
- #![allow(clippy::collapsible_if, clippy::uninlined_format_args)]
- 
-+mod parquet_page;
- mod parquet_rs;
- mod parquet_writer;
-+pub mod thrift_compact;
-+pub use parquet_page::*;
- pub use parquet_rs::*;
- pub use parquet_writer::*;
- pub mod memory;
-```
-
-**File**: `src/query/storages/common/blocks/src/parquet_page.rs` (added, +564/-0)
-```diff
-@@ -0,0 +1,564 @@
-+// Copyright 2021 Datafuse Labs
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+use databend_common_exception::ErrorCode;
-+use databend_common_exception::Result;
-+
-+use crate::thrift_compact::CompactType;
-+use crate::thrift_compact::ThriftCompactReader;
-+
-+const PAGE_TYPE_DATA_PAGE: i32 = 0;
-+const PAGE_TYPE_INDEX_PAGE: i32 = 1;
-+const PAGE_TYPE_DICTIONARY_PAGE: i32 = 2;
-+const PAGE_TYPE_DATA_PAGE_V2: i32 = 3;
-+
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+pub enum ParquetPageKind {
-+    DataPageV1 {
-+        num_values: u64,
-+        encoding: i32,
-+    },
-+    DataPageV2 {
-+        num_values: u64,
-+        num_rows: u64,
-+        encoding: i32,
-+    },
-+    DictionaryPage {
-+        num_values: u64,
-+        encoding: i32,
-+    },
-+    IndexPage,
-+    Unknown(i32),
-+}
-+
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+pub struct ParquetPageHeader {
-+    pub kind: ParquetPageKind,
-+    pub compressed_size: u64,
-+    pub uncompressed_size: u64,
-+    pub header_size: u64,
-+    pub page_offset: u64,
-+}
-+
-+impl ParquetPageHeader {
-+    pub fn is_index_page(&self) -> bool {
-+        matches!(self.kind, ParquetPageKind::IndexPage)
-+    }
-+
-+    pub fn page_type_name(&self) -> &'static str {
-+        match self.kind {
-+            ParquetPageKind::DataPageV1 { .. } => "data_page_v1",
-+            ParquetPageKind::DataPageV2 { .. } => "data_page_v2",
-+            ParquetPageKind::DictionaryPage { .. } => "dictionary",
-+            ParquetPageKind::IndexPage => "index_page",
-+            ParquetPageKind::Unknown(_) => "unknown",
-+        }
-+    }
-+
-+    pub fn encoding_name(&self) -> &'static str {
-+        match self.kind {
-+            ParquetPageKind::DataPageV1 { encoding, .. }
-+            | ParquetPageKind::DataPageV2 { encoding, .. }
-+            | ParquetPageKind::DictionaryPage { encoding, .. } => parquet_encoding_name(encoding),
-+            ParquetPageKind::IndexPage | ParquetPageKind::Unknown(_) => "unknown",
-+        }
-+    }
-+
-+    pub fn num_values(&self) -> u64 {
-+        match self.kind {
-+            ParquetPageKind::DataPageV1 { num_values, .. }
-+            | ParquetPageKind::DataPageV2 { num_values, .. }
-+            | ParquetPageKind::DictionaryPage { num_values, .. } => num_values,
-+            ParquetPageKind::IndexPage | ParquetPageKind::Unknown(_) => 0,
-+        }
-+    }
-+
-+    pub fn num_rows(&self) -> Option<u64> {
-+        match self.kind {
-+            ParquetPageKind::DataPageV1 { num_values, .. } => Some(num_values),
-+            ParquetPageKind::DataPageV2 { num_rows, .. } => Some(num_rows),
-+            ParquetPageKind::DictionaryPage { .. }
-+            | ParquetPageKind::IndexPage
-+            | ParquetPageKind::Unknown(_) => None,
-+        }
++    fn is_small(&self, rows: usize, bytes: usize, columns: usize) -> bool {
++        rows < self.min_rows && bytes < columns * self.min_bytes_per_column
 +    }
 +}
 +
-+pub fn parquet_encoding_name(encoding: i32) -> &'static str {
-+    match encoding {
-+        0 => "plain",
-+        2 => "plain_dictionary",
-+        3 => "rle",
-+        4 => "bit_packed",
-+        5 => "delta_binary_packed",
-+        6 => "delta_length_byte_array",
-+        7 => "delta_byte_array",
-+        8 => "rle_dictionary",
-+        9 => "byte_stream_split",
-+        _ => "unknown",
-+    }
-+}
++impl AccumulatingTransform for TransformWindowPartitionBatch {
++    const NAME: &'static str = "TransformWindowPartitionBatch";
 +
-+/// Decodes a single Parquet `PageHeader` from the start of `input` without allocating.
-+pub fn read_parquet_page_header(input: &[u8], page_offset: u64) -> Result<ParquetPageHeader> {
-+    let mut reader = ThriftCompactReader::new(input);
-+    let mut page_type = None;
-+    let mut uncompressed_size = None;
-+    let mut compressed_size = None;
-+    let mut data_v1 = None;
-+    let mut dict = None;
-+    let mut data_v2 = None;
-+
-+    reader.read_root_struct(|r, field_id, ty| {
-+        match field_id {
-+            1 => page_type = Some(r.read_i32(ty)?),
-+            2 => uncompressed_size = Some(r.read_i32(ty)?),
-+            3 => compressed_size = Some(r.read_i32(ty)?),
-+            4 => {
-+                let _ = r.read_i32(ty)?;
-+            }
-+            5 => data_v1 = Some(read_data_page_v1(r, ty)?),
-+            6 => r.read_struct(ty, |r, _, ty| r.skip_value(ty))?,
-+            7 => dict = Some(read_dictionary_page(r, ty)?),
-+            8 => data_v2 = Some(read_data_page_v2(r, ty)?),
-+            _ => r.skip_value(ty)?,
-+        }
-+        Ok(())
-+    })?;
-+
-+    let header_size = (input.len() - reader.remaining()) as u64;
-+    let page_type = required_field(page_type, "PageHeader.type")?;
-+    let uncompressed_size = non_negative_i32(
-+        required_field(uncompressed_size, "PageHead
-```
-
-**File**: `src/query/storages/common/blocks/src/thrift_compact.rs` (added, +319/-0)
-```diff
-@@ -0,0 +1,319 @@
-+// Copyright 2021 Datafuse Labs
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+use databend_common_exception::ErrorCode;
-+use databend_common_exception::Result;
-+
-+const MAX_VARINT32_BYTES: usize = 5;
-+const MAX_VARINT64_BYTES: usize = 10;
-+pub const DEFAULT_MAX_THRIFT_DEPTH: usize = 64;
-+
-+/// Wire types in the Thrift Compact Protocol.
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+pub enum CompactType {
-+    /// Struct boolean field whose value is encoded in the field header nibble.
-+    InlineBool(bool),
-+    /// Collection boolean element stored as a 1-byte value (`0x00..=0x02`).
-+    Bool,
-+    I8,
-+    I16,
-+    I32,
-+    I64,
-+    Double,
-+    Binary,
-+    List,
-+    Set,
-+    Map,
-+    Struct,
-+    Uuid,
-+}
-+
-+impl CompactType {
-+    fn from_common_nibble(nibble: u8) -> Result<Self> {
-+        match nibble {
-+            0x03 => Ok(Self::I8),
-+            0x04 => Ok(Self::I16),
-+            0x05 => Ok(Self::I32),
-+            0x06 => Ok(Self::I64),
-+            0x07 => Ok(Self::Double),
-+            0x08 => Ok(Self::Binary),
-+            0x09 => Ok(Self::List),
-+            0x0A => Ok(Self::Set),
-+            0x0B => Ok(Self::Map),
-+            0x0C => Ok(Self::Struct),
-+            0x0D => Ok(Self::Uuid),
-+            other => Err(thrift_err(format!(
-+                "unknown Thrift compact wire type {other}"
-+            ))),
-+        }
-+    }
-+
-+    fn from_field_nibble(nibble: u8) -> Result<Self> {
-+        match nibble {
-+            0x01 => Ok(Self::InlineBool(true)),
-+            0x02 => Ok(Self::InlineBool(false)),
-+            other => Self::from_common_nibble(other),
-+        }
-+    }
-+
-+    fn from_elem_nibble(nibble: u8) -> Result<Self> {
-+        match nibble {
-+            // Both 0x01 and 0x02 are valid for collection booleans per the Thrift compact spec.
-+            0x01 | 0x02 => Ok(Self::Bool),
-+            other => Self::from_common_nibble(other),
-+        }
-+    }
-+
-+    fn min_wire_size(self) -> usize {
-+        match self {
-+            Self::InlineBool(_) => 0,
-+            Self::Double => 8,
-+            Self::Uuid => 16,
-+            _ => 1,
-+        }
-+    }
-+}
-+
-+/// Bounded, zero-allocation Thrift Compact Protocol reader over an in-memory byte slice.
-+///
-+/// Binary and container lengths are validated against the remaining slice before advancing,
-+/// avoiding eager heap allocations from untrusted length prefixes.
-+pub struct ThriftCompactReader<'a> {
-+    buf: &'a [u8],
-+    depth_budget: usize,
-+}
-+
-+impl<'a> ThriftCompactReader<'a> {
-+    pub fn new(buf: &'a [u8]) -> Self {
-+        Self {
-+            buf,
-+            depth_budget: DEFAULT_MAX_THRIFT_DEPTH,
-+        }
-+    }
-+
-+    pub fn remaining(&self) -> usize {
-+        self.buf.len()
-+    }
-+
-+    pub fn read_byte(&mut self) -> Result<u8> {
-+        let (&b, rest) = self
-+            .buf
-+            .split_first()
-+            .ok_or_else(|| thrift_err("unexpected EOF"))?;
-+        self.buf = rest;
-+        Ok(b)
-+    }
-+
-+    pub fn read_slice(&mut self, len: usize) -> Result<&'a [u8]> {
-+        let (head, tail) = self
-+            .buf
-+            .split_at_checked(len)
-+            .ok_or_else(|| thrift_err("unexpected EOF"))?;
-+        self.buf = tail;
-+        Ok(head)
-+    }
-+
-+    pub fn read_varint32(&mut self) -> Result<u32> {
-+        let mut result = 0u32;
-+        let mut shift = 0u32;
-+        for _ in 0..MAX_VARINT32_BYTES {
-+            let b = self.read_byte()?;
-+            result |= u32::from(b & 0x7F) << shift;
-+            if b & 0x80 == 0 {
-+                return Ok(result);
-+            }
-+            shift += 7;
-+        }
-+        Err(thrift_err("varint32 exceeds 5 bytes"))
-+    }
-+
-+    pub fn read_zigzag_i32(&mut self) -> Result<i32> {
-+        let n = self.read_varint32()?;
-+        Ok(((n >> 1) as i32) ^ -(n as i32 & 1))
-+    }
-+
-+    pub fn read_bool(&mut self, ty: CompactType) -> Result<bool> {
-+        match ty {
-+            CompactType::InlineBool(v) => Ok(v),
-+            CompactType::Bool => match self.read_byte()? {
-+                0x01 => Ok(true),
-+                0x00 | 0x02 => Ok(false),
-+                other => Err(thrift_err(format!("invalid boolean value {other}"))),
-+            },
-+            other => Err(unexpected_type(other, "Bool")),
-+        }
-+    }
-+
-+    pub fn read_i32(&mut self, ty: CompactType) -> Result<i32> {
-+        if ty != CompactType::I32 {
-+            return Err(unexpected_type(ty, "I32"));
++    fn transform(&mut self, block: DataBlock) -> Result<Vec<DataBlock>> {
++        if block.is_empty() {
++            return Ok(vec![]);
 +        }
 +
-```
-
-**File**: `src/query/storages/fuse/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -80,7 +80,6 @@ siphasher = { workspace = true }
- tantivy = { workspace = true }
- tantivy-jieba = { workspace = true }
- tempfile = { workspace = true }
--thrift = { workspace = true }
- tokio = { workspace = true }
- typetag = { workspace = true }
- uuid = { workspace = true }
-```
-
-**File**: `src/query/storages/fuse/src/table_functions/fuse_page.rs` (modified, +18/-189)
-```diff
-@@ -1,5 +1,3 @@
--#![allow(deprecated)]
--
- // Copyright 2021 Datafuse Labs
- //
- // Licensed under the Apache License, Version 2.0 (the "License");
-@@ -14,7 +12,6 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
--use std::io::Read;
- use std::sync::Arc;
- 
- use databend_common_catalog::table::Table;
-@@ -33,14 +30,11 @@ use databend_common_expression::types::StringType;
- use databend_common_expression::types::TimestampType;
- use databend_common_expression::types::UInt64Type;
- use databend_common_expression::types::string::StringColumnBuilder;
-+use databend_storages_common_blocks::iter_parquet_page_headers;
- use databend_storages_common_cache::CachePolicy;
- use databend_storages_common_table_meta::meta::SegmentInfo;
- use databend_storages_common_table_meta::meta::TableSnapshot;
- use opendal::Operator;
--use parquet::format::PageHeader;
--use parquet::format::PageType;
--use parquet::thrift::TSerializable;
--use thrift::protocol::TCompactInputProtocol;
- 
- use crate::FuseStorageFormat;
- use crate::FuseTable;
-@@ -52,18 +46,6 @@ use crate::table_functions::function_template::TableMetaFunc;
- pub struct FusePage;
- pub type FusePageFunc = TableMetaFuncTemplate<FusePage>;
- 
--struct PageMetaRow<'a> {
--    column_name: &'a str,
--    page_type: &'static str,
--    encoding: &'static str,
--    num_values: u64,
--    num_rows: Option<u64>,
--    compressed_size: u64,
--    uncompressed_size: u64,
--    header_size: u64,
--    page_offset: u64,
--}
--
- #[async_trait::async_trait]
- impl TableMetaFunc for FusePage {
-     fn schema() -> Arc<TableSchema> {
-@@ -164,26 +146,29 @@ impl TableMetaFunc for FusePage {
-                             parquet_meta.len,
-                         )
-                         .await?;
--                        for (page_ordinal_in_column, page) in parse_page_headers(
-+                        let mut page_ordinal_in_column = 0u64;
-+                        for page in iter_parquet_page_headers(
-                             field.name(),
-                             parquet_meta.offset,
--                            column_bytes.as_slice(),
--                        )?
--                        .into_iter()
--                        .enumerate()
--                        {
-+                            column_bytes.as_ref(),
-+                        ) {
-+                            let page = page?;
-+                            if page.is_index_page() {
-+                                continue;
-+                            }
-                             block_location.put_and_commit(&block.location.0);
--                            column_name.put_and_commit(page.column_name);
--                            page_type.put_and_commit(page.page_type);
--                            encoding.put_and_commit(page.encoding);
--                            page_ordinal.push(page_ordinal_in_column as u64);
--                            num_values.push(page.num_values);
--                            num_rows.push(page.num_rows);
-+                            column_name.put_and_commit(field.name());
-+                            page_type.put_and_commit(page.page_type_name());
-+                            encoding.put_and_commit(page.encoding_name());
-+                            page_ordinal.push(page_ordinal_in_column);
-+                            num_values.push(page.num_values());
-+                            num_rows.push(page.num_rows());
-                             compressed_size.push(page.compressed_size);
-                             uncompressed_size.push(page.uncompressed_size);
-                             header_size.push(page.header_size);
-                             page_offset.push(page.page_offset);
- 
-+                            page_ordinal_in_column += 1;
-                             rows += 1;
-                             if rows >= limit {
-                                 break 'FOR;
-@@ -220,7 +205,7 @@ async fn read_parquet_column_chunk(
-     location: &str,
-     offset: u64,
-     len: u64,
--) -> Result<Vec<u8>> {
-+) -> Result<bytes::Bytes> {
-     let end = offset.checked_add(len).ok_or_else(|| {
-         ErrorCode::ParquetFileInvalid(format!(
-             "invalid parquet file {}, column chunk length overflow",
-@@ -232,161 +217,5 @@ async fn read_parquet_column_chunk(
-         .range(offset..end)
-         .await
-         .map_err(|err| ErrorCode::StorageOther(err.to_string()))?;
--    Ok(buffer.to_vec())
--}
--
--fn parse_page_headers<'a>(
--    column_name: &'a str,
--    column_offset: u64,
--    column_bytes: &'a [u8],
--) -> Result<Vec<PageMetaRow<'a>>> {
--    let mut cursor = std::io::Cursor::new(column_bytes);
--    let total_len = column_bytes.len() as u64;
--    let mut pages = Vec::new();
--
--    while cursor.position() < total_len {
--        let header_offset = cursor.position();
--        let (header_len, header) = read_page_header_len(&mut cursor)?;
--        let compressed_size =
--            convert_i32_to_u64(header.compressed_page_size, "compresse
-```
-
----
-
-### Incident Patch 3: `9012edc8` (2026-11-17)
-**Commit Message**: fix(query): correct HNSW graph construction and SQ8 scoring in vector indexes (#21097)
-
-* fix(query): correct HNSW graph construction and SQ8 scoring in vector indexes
-
-* fix calibration_count = 0
-
-**File**: `src/query/service/tests/it/indexes/vector_index/pruning.rs` (modified, +30/-57)
-```diff
-@@ -741,13 +741,13 @@ async fn test_block_pruner() -> anyhow::Result<()> {
-         // Third query: l2_distance with query_values1
-         vec![
-             vec![
--                VectorScoreResult::new(0, 0, 0, 3.5187712),
--                VectorScoreResult::new(0, 0, 9, 3.5518785),
-+                VectorScoreResult::new(0, 0, 0, 0.0),
-+                VectorScoreResult::new(0, 0, 9, 0.4838298),
-+                VectorScoreResult::new(0, 0, 1, 0.59597003),
-             ],
-             vec![
--                VectorScoreResult::new(1, 3, 6, 3.4702706),
--                VectorScoreResult::new(1, 3, 7, 3.5206928),
--                VectorScoreResult::new(1, 3, 1, 3.556445),
-+                VectorScoreResult::new(1, 0, 9, 0.51379997),
-+                VectorScoreResult::new(1, 0, 5, 0.58313537),
-             ],
-         ],
-         // Fourth query: cosine_distance with query_values2
-@@ -771,12 +771,17 @@ async fn test_block_pruner() -> anyhow::Result<()> {
-             ],
-         ],
-         // Sixth query: l2_distance with query_values2
--        vec![vec![VectorScoreResult::new(1, 1, 8, 3.4763064)], vec![
--            VectorScoreResult::new(1, 3, 5, 3.4903116),
--            VectorScoreResult::new(1, 3, 9, 3.4926815),
--            VectorScoreResult::new(1, 3, 0, 3.527872),
--            VectorScoreResult::new(1, 3, 8, 3.560473),
--        ]],
-+        vec![
-+            vec![
-+                VectorScoreResult::new(0, 1, 6, 0.48633155),
-+                VectorScoreResult::new(0, 1, 5, 0.7715289),
-+            ],
-+            vec![VectorScoreResult::new(1, 1, 8, 0.0)],
-+            vec![
-+                VectorScoreResult::new(1, 4, 8, 0.47685158),
-+                VectorScoreResult::new(1, 4, 7, 0.71438366),
-+            ],
-+        ],
-     ];
- 
-     let mut extras = Vec::new();
-@@ -887,32 +892,17 @@ async fn test_block_pruner() -> anyhow::Result<()> {
-                 VectorScoreResult::new(1, 0, 9, 0.7167929),
-             ],
-         ],
--        // Third query: l2_distance with filter and query_values1
-+        // Third query: l2_distance with filter and query_values1. L2 scores are
-+        // small, so few rows pass `> 2.0`; these are the TopN rows themselves,
-+        // which `filtered_topn` leaves unchanged.
-         vec![
-+            vec![VectorScoreResult::new(0, 0, 7, 2.1106725)],
-             vec![
--                VectorScoreResult::new(0, 0, 0, 3.5187712),
--                VectorScoreResult::new(0, 0, 1, 3.5688834),
--                VectorScoreResult::new(0, 0, 2, 4.158467),
--                VectorScoreResult::new(0, 0, 3, 3.8972623),
--                VectorScoreResult::new(0, 0, 4, 3.9402654),
--                VectorScoreResult::new(0, 0, 5, 3.8295133),
--                VectorScoreResult::new(0, 0, 6, 4.16049),
--                VectorScoreResult::new(0, 0, 7, 4.1032534),
--                VectorScoreResult::new(0, 0, 8, 4.2184787),
--                VectorScoreResult::new(0, 0, 9, 3.5518785),
--            ],
--            vec![
--                VectorScoreResult::new(1, 3, 0, 3.9212408),
--                VectorScoreResult::new(1, 3, 1, 3.556445),
--                VectorScoreResult::new(1, 3, 2, 3.7241573),
--                VectorScoreResult::new(1, 3, 3, 4.1835504),
--                VectorScoreResult::new(1, 3, 4, 3.6078227),
--                VectorScoreResult::new(1, 3, 5, 3.5779395),
--                VectorScoreResult::new(1, 3, 6, 3.4702706),
--                VectorScoreResult::new(1, 3, 7, 3.5206928),
--                VectorScoreResult::new(1, 3, 8, 3.8251386),
--                VectorScoreResult::new(1, 3, 9, 3.616931),
-+                VectorScoreResult::new(0, 3, 6, 2.0039008),
-+                VectorScoreResult::new(0, 3, 1, 2.0506036),
-             ],
-+            vec![VectorScoreResult::new(1, 0, 6, 2.0104616)],
-+            vec![VectorScoreResult::new(1, 1, 4, 2.070966)],
-         ],
-         // Fourth query: cosine_distance with filter and query_values2
-         vec![],
-@@ -967,32 +957,15 @@ async fn test_block_pruner() -> anyhow::Result<()> {
-                 VectorScoreResult::new(1, 3, 9, 2.011335),
-             ],
-         ],
--        // Sixth query: l2_distance with filter and query_values2
-+        // Sixth query: l2_distance with filter and query_values2, TopN rows as above.
-         vec![
-             vec![
--                VectorScoreResult::new(1, 1, 0, 3.819309),
--                VectorScoreResult::new(1, 1, 1, 3.8105543),
--                VectorScoreResult::new(1, 1, 2, 3.8291273),
--                VectorScoreResult::new(1, 1, 3, 3.7389958),
--                VectorScoreResult::new(1, 1, 4, 3.5913217),
--                VectorScoreResult::new(1, 1, 5, 3.870244),
--                VectorScoreResult::new(1, 1, 6, 3.7941854),
--                VectorScoreResult::new(1, 1, 7, 3.585766),
--                VectorScoreResult::new(1, 1, 8, 3.4763064),
--                VectorScoreResult::new(1, 1, 9, 3.709784),
--            ],
--            vec![
--                VectorScoreResult::new(1,
-```
-
-**File**: `src/query/storages/common/index/src/hnsw_index/graph_layers_builder.rs` (modified, +59/-3)
-```diff
-@@ -248,13 +248,18 @@ impl GraphLayersBuilder {
- 
-     /// Map a uniform `[0, 1)` sample to a geometric level.
-     ///
-+    /// With `level_factor = 1 / ln(m)`, `floor` gives `P(level >= l) = m^-l`,
-+    /// the distribution from the HNSW paper: 1 in `m` points reaches level 1.
-+    /// Rounding instead would give `m^-(l - 0.5)`, putting 4x as many points on
-+    /// level 1 at `m = 16` and growing the upper layers with no search benefit.
-+    ///
-     /// `Uniform::new(0.0, 1.0)` is half-open, so `sample` can be exactly `0.0`.
--    /// `ln(0.0)` is `-inf`, and `(-(-inf) * factor).round() as usize` saturates
-+    /// `ln(0.0)` is `-inf`, and `(-(-inf) * factor).floor() as usize` saturates
-     /// to `usize::MAX`, which then makes `set_levels` allocate unboundedly.
-     /// Clamp to the smallest positive `f64` so the level stays bounded (qdrant#9959).
-     fn level_from_sample(sample: f64, level_factor: f64) -> usize {
-         let sample = sample.max(f64::MIN_POSITIVE);
--        (-sample.ln() * level_factor).round() as usize
-+        (-sample.ln() * level_factor).floor() as usize
-     }
- 
-     pub(crate) fn get_point_level(&self, point_id: PointOffsetType) -> usize {
-@@ -468,8 +473,13 @@ impl GraphLayersBuilder {
- 
- #[cfg(test)]
- mod tests {
-+    use rand::SeedableRng as _;
-+    use rand::rngs::SmallRng;
-+
-     use super::*;
- 
-+    const M: usize = 8;
-+
-     #[test]
-     fn test_level_from_sample() {
-         // A zero uniform sample used to make ln(0) = -inf and saturate the
-@@ -482,6 +492,52 @@ mod tests {
-         );
-         // Other samples keep their level.
-         assert_eq!(GraphLayersBuilder::level_from_sample(0.5, level_factor), 0);
--        assert_eq!(GraphLayersBuilder::level_from_sample(0.1, level_factor), 1);
-+        assert_eq!(GraphLayersBuilder::level_from_sample(0.05, level_factor), 1);
-+    }
-+
-+    #[test]
-+    fn level_from_sample_level_boundaries() {
-+        // A point reaches level `l` exactly when `sample <= m^-l`.
-+        let m = M as f64;
-+        let level_factor = 1.0 / m.ln();
-+        let level = |sample: f64| GraphLayersBuilder::level_from_sample(sample, level_factor);
-+
-+        assert_eq!(level(0.99), 0);
-+        assert_eq!(level(1.1 / m), 0);
-+        assert_eq!(level(0.9 / m), 1);
-+        assert_eq!(level(1.1 / (m * m)), 1);
-+        assert_eq!(level(0.9 / (m * m)), 2);
-+        // Rounding would put this sample on level 1 (`-ln(0.2) / ln(8) = 0.77`).
-+        assert_eq!(level(0.2), 0);
-+    }
-+
-+    #[test]
-+    fn get_random_layer_follows_geometric_distribution() {
-+        let level_factor = 1.0 / (M as f64).ln();
-+        let distribution = Uniform::new(0.0, 1.0);
-+        let mut rng = SmallRng::seed_from_u64(42);
-+        let samples: u32 = 1_000_000;
-+
-+        let mut at_or_above = [0usize; 4];
-+        for _ in 0..samples {
-+            let sample: f64 = rng.sample(distribution);
-+            let level = GraphLayersBuilder::level_from_sample(sample, level_factor);
-+            for (l, count) in at_or_above.iter_mut().enumerate() {
-+                if level >= l {
-+                    *count += 1;
-+                }
-+            }
-+        }
-+
-+        // `P(level >= l) = M^-l`
-+        for (l, &count) in at_or_above.iter().enumerate().skip(1) {
-+            let expected = f64::from(samples) * (M as f64).powi(-i32::try_from(l).unwrap());
-+            let observed = count as f64;
-+            let tolerance = 5.0 * expected.sqrt() + 1.0;
-+            assert!(
-+                (observed - expected).abs() <= tolerance,
-+                "level >= {l}: observed {observed}, expected {expected:.0} +- {tolerance:.0}",
-+            );
-+        }
-     }
- }
-```
-
-**File**: `src/query/storages/common/index/src/hnsw_index/hnsw.rs` (modified, +3/-0)
-```diff
-@@ -397,8 +397,11 @@ impl HNSWIndex {
-         };
- 
-         let builder = Vec::new();
-+        // NULL rows hold a placeholder vector: encode them to keep point ids as
-+        // block rows, but fit the value range on the real vectors only.
-         let encoded_vectors = EncodedVectorsU8::encode(
-             (0..params.count).map(|i| &data.as_ref()[i * params.dim..(i + 1) * params.dim]),
-+            (0..params.count).map(|i| validity.as_ref().is_none_or(|bitmap| bitmap.get_bit(i))),
-             builder,
-             &params,
-             None,
-```
-
-**File**: `src/query/storages/common/index/src/hnsw_index/links_container.rs` (modified, +83/-9)
-```diff
-@@ -14,9 +14,8 @@
- // limitations under the License.
- 
- // Ported from qdrant `lib/segment/src/index/hnsw_index/links_container.rs`
--// (v1.20.0, "Heuristic optimization", qdrant#6501). The redundancy test keeps the
--// strict comparison of the original heuristic, so the selected links are the same.
--// Unlike qdrant, the first link is also marked as processed.
-+// (v1.20.0, "Heuristic optimization", qdrant#6501), with the redundancy test of
-+// qdrant#10239. Unlike qdrant, the first link is also marked as processed.
- 
- use std::cell::Cell;
- use std::iter::Copied;
-@@ -25,11 +24,28 @@ use crate::hnsw_index::common::types::PointOffsetType;
- use crate::hnsw_index::common::types::ScoreType;
- use crate::hnsw_index::common::types::ScoredPointOffset;
- 
--/// Neighbour-selection ("not closer than base") test: a candidate is dropped when
--/// an already selected link is closer to it than the target is.
-+/// Neighbour-selection ("not closer than base") test.
-+///
-+/// A candidate is dropped when an already selected link is closer to it than the
-+/// target is. The comparison is strict, *except* between candidates that are
-+/// exactly equidistant from the target: without that exception a group of
-+/// byte-identical vectors is mutually non-pruning and fills every link slot,
-+/// turning the group into a sink with no edges leaving it.
-+///
-+/// Restricting the non-strict comparison to `candidate_score == existing_score`
-+/// keeps ordinary (non-duplicate) candidates unaffected: for them the equality
-+/// case has measure zero.
- #[inline]
--fn is_redundant(candidate_to_existing: ScoreType, candidate_score: ScoreType) -> bool {
--    candidate_to_existing > candidate_score
-+fn is_redundant(
-+    candidate_to_existing: ScoreType,
-+    candidate_score: ScoreType,
-+    existing_score: ScoreType,
-+) -> bool {
-+    if candidate_score == existing_score {
-+        candidate_to_existing >= candidate_score
-+    } else {
-+        candidate_to_existing > candidate_score
-+    }
- }
- 
- /// The links of a point on one level, sorted from the closest, and how many of
-@@ -85,13 +101,20 @@ impl LinksContainer {
-             self.processed_by_heuristic = 0;
-             return;
-         }
-+        // Scores of the already selected links, to detect exact ties (see `is_redundant`).
-+        let mut selected_scores: Vec<ScoreType> = Vec::with_capacity(level_m);
-         'outer: for candidate in candidates {
--            for &existing in &self.links {
--                if is_redundant(score(candidate.idx, existing), candidate.score) {
-+            for (&existing, &existing_score) in self.links.iter().zip(&selected_scores) {
-+                if is_redundant(
-+                    score(candidate.idx, existing),
-+                    candidate.score,
-+                    existing_score,
-+                ) {
-                     continue 'outer;
-                 }
-             }
-             self.links.push(candidate.idx);
-+            selected_scores.push(candidate.score);
-             if self.links.len() >= level_m {
-                 break;
-             }
-@@ -213,6 +236,7 @@ impl LinksContainer {
-                 if is_redundant(
-                     score(candidate.idx, existing.idx),
-                     candidate.cached_score(target_point_id, &mut score),
-+                    existing.cached_score(target_point_id, &mut score),
-                 ) {
-                     continue 'outer;
-                 }
-@@ -387,6 +411,56 @@ mod tests {
-         assert_eq!(links_container.links(), &[1, 2, 3, 4, 5, 6]);
-     }
- 
-+    /// A group of byte-identical vectors must not consume each other's whole link
-+    /// budget: every copy is equidistant from every other, so under a strictly
-+    /// greater comparison none of them prunes any other and the group ends up as a
-+    /// sink at level 0 with no edges leaving it.
-+    #[test]
-+    fn test_exact_duplicates_do_not_fill_the_link_list() {
-+        const M: usize = 6;
-+        const COPIES: usize = 8;
-+
-+        // Point 0 is the target. Points 1..=COPIES are byte-identical to it.
-+        // The remaining points are ordinary neighbours, all a little further away.
-+        let mut points: Vec<Vec<f32>> = vec![vec![0.0, 0.0]; COPIES + 1];
-+        points.extend([vec![1.0, 0.0], vec![0.0, 1.0], vec![-1.0, 0.0], vec![
-+            0.0, -1.0,
-+        ]]);
-+        let scorer = |a: PointOffsetType, b: PointOffsetType| {
-+            -((points[a as usize][0] - points[b as usize][0]).powi(2)
-+                + (points[a as usize][1] - points[b as usize][1]).powi(2))
-+            .sqrt()
++        let block = match &self.top_n {
++            Some(top_n) => top_n.truncate(block)?,
++            None => block,
 +        };
 +
-+        let mut candidates = FixedLengthPriorityQueue::new(points.len() - 1);
-+        for id in 1..points.len() as PointOffsetType {
-+            candidates.push(ScoredPointOffset {
-+                idx: id,
-+                score: scorer(0, id),
-+            });
++        let rows = block.num_rows();
++        let columns = block.num_columns();
++        let bytes = block.estimate_block_size(columns);
++        // A block that is not small is sent as it is, even when small blocks
++        // are buffered: buffering it would copy all its rows. The window
++        // sorts each partition later, so the order of the blocks does not
++        // matter.
++        if !self.is_small(rows, bytes, columns) {
++            return Ok(vec![block]);
 +        }
 +
-+        let mut container = LinksContainer::with_capacity(M);
-+        container.fill_from_sorted_with_heuristic(candidates.into_iter_sorted(),
++        // The stream sends the buffered rows once they reach either
++        // threshold, which is when they are no longer small.
++        let (min_rows, min_bytes) = (self.min_rows, columns * self.min_bytes_per_column);
++        let stream = self
++            .stream
++            .get_or_insert_with(|| BlockConcatStream::crea
 ```
 
-**File**: `src/query/storages/common/index/src/hnsw_index/point_scorer.rs` (modified, +1/-0)
+**File**: `src/query/service/src/pipelines/processors/transforms/window/partition/window_partition_exchange.rs` (modified, +38/-1)
 ```diff
-@@ -248,6 +248,7 @@ mod tests {
-         };
-         let encoded = EncodedVectorsU8::encode(
-             data.chunks(dim),
-+            std::iter::repeat_n(true, count),
-             Vec::new(),
-             &params,
-             None,
-```
-
-**File**: `src/query/storages/common/index/src/hnsw_index/quantization/encoded_vectors.rs` (modified, +50/-0)
-```diff
-@@ -79,6 +79,25 @@ impl DistanceType {
-     }
- }
+@@ -51,7 +51,7 @@ impl Exchange for WindowPartitionExchange {
+         // Scatter the data block to different partitions.
+         let indices = hashes
+             .iter()
+-            .map(|&hash| (hash % self.num_partitions as u64) as u8)
++            .map(|&hash| (hash % self.num_partitions as u64) as u32)
+             .collect::<Vec<_>>();
+         let scatter_blocks = DataBlock::scatter(&data_block, &indices, self.num_partitions)?;
  
-+/// The vectors of `data` to fit the quantization parameters on, and how many there are.
-+///
-+/// `keep` holds one flag per vector of `data`, set for the vectors to fit on.
-+pub(crate) fn calibration_vectors<V>(
-+    data: impl Iterator<Item = V> + Clone,
-+    keep: impl Iterator<Item = bool> + Clone,
-+) -> (impl Iterator<Item = V> + Clone, usize) {
-+    debug_assert_eq!(
-+        keep.clone().count(),
-+        data.clone().count(),
-+        "calibration mask must have one flag per vector",
-+    );
-+    let count = keep.clone().filter(|&keep| keep).count();
-+    let vectors = data
-+        .zip(keep)
-+        .filter_map(|(vector, keep)| keep.then_some(vector));
-+    (vectors, count)
-+}
-+
- pub(crate) fn validate_vector_parameters<'a>(
-     data: impl Iterator<Item = impl AsRef<[f32]> + 'a> + Clone,
-     vector_parameters: &VectorParameters,
-@@ -103,3 +122,34 @@ pub(crate) fn validate_vector_parameters<'a>(
+@@ -69,3 +69,40 @@ impl Exchange for WindowPartitionExchange {
+             .collect())
      }
-     Ok(())
  }
 +
 +#[cfg(test)]
 +mod tests {
++    use databend_common_expression::BlockMetaInfoDowncast;
++    use databend_common_expression::FromData;
++    use databend_common_expression::types::Int32Type;
++
 +    use super::*;
 +
 +    #[test]
-+    fn test_calibration_vectors() {
-+        let data = [[1.0f32], [2.0], [3.0]];
-+        let (vectors, count) = calibration_vectors(data.iter(), [true, false, true].into_iter());
-+        assert_eq!(count, 2);
-+        assert_eq!(vectors.collect::<Vec<_>>(), [&[1.0], &[3.0]]);
-+    }
++    fn test_more_than_256_partitions() -> Result<()> {
++        let exchange = WindowPartitionExchange::create(vec![0], 512);
++        let block =
++            DataBlock::new_from_columns(vec![Int32Type::from_data((0..4096).collect::<Vec<_>>())]);
 +
-+    #[test]
-+    #[cfg(debug_assertions)]
-+    #[should_panic(expected = "calibration mask must have one flag per vector")]
-+    fn test_calibration_vectors_rejects_short_mask() {
-+        let data = [[1.0f32], [2.0], [3.0]];
-+        let (vectors, _) = calibration_vectors(data.iter(), [true, true].into_iter());
-+        vectors.for_each(drop);
-+    }
++        let mut outputs = exchange.partition(block, 1)?;
++        assert_eq!(outputs.len(), 1);
++        let meta = outputs
++            .pop()
++            .and_then(|block| block.get_owned_meta())
++            .and_then(WindowPartitionMeta::downcast_from)
++            .unwrap();
 +
-+    #[test]
-+    #[cfg(debug_assertions)]
-+    #[should_panic(expected = "calibration mask must have one flag per vector")]
-+    fn test_calibration_vectors_rejects_long_mask() {
-+        let data = [[1.0f32], [2.0], [3.0]];
-+        let (vectors, _) = calibration_vectors(data.iter(), [true; 4].into_iter());
-+        vectors.for_each(drop);
++        let rows = meta
++            .partitioned_data
++            .iter()
++            .map(|(_, block)| block.num_rows())
++            .sum::<usize>();
++        assert_eq!(rows, 4096);
++        assert!(
++            meta.partitioned_data
++                .iter()
++                .any(|(id, block)| *id >= 256 && !block.is_empty())
++        );
++        Ok(())
 +    }
 +}
 ```
 
-**File**: `src/query/storages/common/index/src/hnsw_index/quantization/encoded_vectors_u8.rs` (modified, +370/-46)
+**File**: `src/query/service/src/pipelines/processors/transforms/window/partition/window_partition_partial_top_n_exchange.rs` (removed, +0/-309)
 ```diff
-@@ -31,10 +31,15 @@ use crate::hnsw_index::quantization::encoded_storage::EncodedStorageBuilder;
- use crate::hnsw_index::quantization::encoded_vectors::DistanceType;
- use crate::hnsw_index::quantization::encoded_vectors::EncodedVectors;
- use crate::hnsw_index::quantization::encoded_vectors::VectorParameters;
-+use crate::hnsw_index::quantization::encoded_vectors::calibration_vectors;
- use crate::hnsw_index::quantization::encoded_vectors::validate_vector_parameters;
- use crate::hnsw_index::quantization::quantile::find_min_max_from_iter;
- use crate::hnsw_index::quantization::quantile::find_quantile_interval;
- 
-+// Ported from qdrant `lib/quantization/src/encoded_vectors_u8.rs`. Deviation: a
-+// constant range is widened in `alpha_offset_from_min_max`, qdrant quantizes it
-+// with `alpha = 0`.
-+
- pub const ALIGNMENT: usize = 16;
- 
- pub struct EncodedVectorsU8<TStorage: EncodedStorage> {
-@@ -61,15 +66,59 @@ struct Metadata {
-     vector_parameters: VectorParameters,
- }
- 
-+impl Metadata {
-+    #[inline]
-+    fn postprocess_score(&self, score: f32, query_offset: f32, vector_offset: f32) -> f32 {
-+        self.multiplier * score + query_offset + vector_offset
-+    }
-+
-+    #[inline]
-+    fn postprocess_internal_score(
-+        &self,
-+        score: f32,
-+        vector_1_offset: f32,
-+        vector_2_offset: f32,
-+    ) -> f32 {
-+        let query_offset = vector_1_offset - self.get_shift();
-+        self.postprocess_score(score, query_offset, vector_2_offset)
-+    }
-+
-+    fn get_shift(&self) -> f32 {
-+        // Dotprod after shifting produces a number which is not related to vector and query
-+        // (x - a)(y - a) = xy - ax - ay + a^2
-+        // this a^2 is returned here
-+        let shift = match self.vector_parameters.distance_type {
-+            DistanceType::Dot => self.actual_dim as f32 * self.offset * self.offset,
-+            // L2 is computed from squared code differences. The common quantizer offset cancels
-+            // before squaring, so adding an absolute offset^2 shift would make scores depend on
-+            // translating all vectors and the query by the same constant.
-+            DistanceType::L1 | DistanceType::L2 => 0.0,
-+        };
-+        if self.vector_parameters.invert {
-+            -shift
-+        } else {
-+            shift
-+        }
-+    }
-+}
-+
- impl EncodedVectorsU8<HugePageBytes> {
-     pub(crate) fn memory_size(&self) -> usize {
-         std::mem::size_of::<Self>() + self.encoded_vectors.capacity()
-     }
- }
- 
- impl<TStorage: EncodedStorage> EncodedVectorsU8<TStorage> {
-+    /// Encode vector data using scalar quantization.
-+    ///
-+    /// Every vector of `orig_data` is encoded, but the value range (min/max or quantile) is
-+    /// fitted only on the vectors whose flag in `keep` is set. `keep` holds one flag per vector;
-+    /// clear the flags of vectors that are not real (e.g. the placeholders of NULL vectors).
-+    /// If no flag is set while `orig_data` is not empty, no vector is real, so no score matters,
-+    /// and a zero range is used.
-     pub fn encode<'a>(
-         orig_data: impl Iterator<Item = impl AsRef<[f32]> + 'a> + Clone,
-+        keep: impl Iterator<Item = bool> + Clone,
-         mut storage_builder: impl EncodedStorageBuilder<TStorage>,
-         vector_parameters: &VectorParameters,
-         quantile: Option<f32>,
-@@ -92,12 +141,17 @@ impl<TStorage: EncodedStorage> EncodedVectorsU8<TStorage> {
-         }
- 
-         debug_assert!(validate_vector_parameters(orig_data.clone(), vector_parameters).is_ok());
--        let (alpha, offset) = Self::find_alpha_offset_size_dim(orig_data.clone());
-+        let (calibration_data, calibration_count) = calibration_vectors(orig_data.clone(), keep);
-+        let (alpha, offset) = if calibration_count == 0 {
-+            (0.0, 0.0)
-+        } else {
-+            Self::find_alpha_offset_size_dim(calibration_data.clone())
-+        };
-         let (alpha, offset) = if let Some(quantile) = quantile {
-             if let Some((min, max)) = find_quantile_interval(
--                orig_data.clone(),
-+                calibration_data,
-                 vector_parameters.dim,
--                vector_parameters.count,
-+                calibration_count,
-                 quantile,
-             ) {
-                 Self::alpha_offset_from_min_max(min, max)
-@@ -108,6 +162,30 @@ impl<TStorage: EncodedStorage> EncodedVectorsU8<TStorage> {
-             (alpha, offset)
-         };
- 
-+        let multiplier = match vector_parameters.distance_type {
-+            // (alpha*x - offset) * (alpha*y - offset) = alpha^2*x*y - alpha*offset*x - alpha*offset*y + offset^2
-+            // multiplier is applied to xy term only, so we need to multiply score by alpha^2
-+            DistanceType::Dot => alpha * alpha,
-+            // |(alpha*x - offset) - (alpha*y - offset)| = alpha*|x - y|
-+            // multiplier is applied to |x - y| term only, so we need to multiply score by alpha
-+            DistanceType::L1 => alpha,
-+            // ((alpha*
+@@ -1,309 +0,0 @@
+-// Copyright 2021 Datafuse Labs
+-//
+-// Licensed under the Apache License, Version 2.0 (the "License");
+-// you may not use this file except in compliance with the License.
+-// You may obtain a copy of the License at
+-//
+-//     http://www.apache.org/licenses/LICENSE-2.0
+-//
+-// Unless required by applicable law or agreed to in writing, software
+-// distributed under the License is distributed on an "AS IS" BASIS,
+-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-// See the License for the specific language governing permissions and
+-// limitations under the License.
+-
+-use std::sync::Arc;
+-
+-use databend_common_exception::Result;
+-use databend_common_expression::DataBlock;
+-use databend_common_expression::SortColumnDescription;
+-use databend_common_expression::SortCompare;
+-use databend_common_expression::group_hash_value_spread;
+-use databend_common_expression::visitor::ValueVisitor;
+-use databend_common_pipeline::basic::Exchange;
+-
+-use super::WindowPartitionMeta;
+-use crate::physical_plans::WindowPartitionTopNFunc;
+-
+-pub struct WindowPartitionTopNExchange {
+-    partition_indices: Box<[usize]>,
+-    top: usize,
+-    func: WindowPartitionTopNFunc,
+-
+-    sort_desc: Box<[SortColumnDescription]>,
+-    num_partitions: u64,
+-}
+-
+-impl WindowPartitionTopNExchange {
+-    pub fn create(
+-        partition_indices: Vec<usize>,
+-        order_by: Vec<SortColumnDescription>,
+-        top: usize,
+-        func: WindowPartitionTopNFunc,
+-        num_partitions: u64,
+-    ) -> Arc<WindowPartitionTopNExchange> {
+-        assert!(top > 0);
+-        let partition_indices = partition_indices.into_boxed_slice();
+-        let sort_desc = partition_indices
+-            .iter()
+-            .map(|&offset| SortColumnDescription {
+-                offset,
+-                asc: true,
+-                nulls_first: false,
+-            })
+-            .chain(order_by)
+-            .collect::<Vec<_>>()
+-            .into();
+-
+-        Arc::new(WindowPartitionTopNExchange {
+-            num_partitions,
+-            partition_indices,
+-            top,
+-            func,
+-            sort_desc,
+-        })
+-    }
+-}
+-
+-impl Exchange for WindowPartitionTopNExchange {
+-    const NAME: &'static str = "WindowTopN";
+-    const SKIP_EMPTY_DATA_BLOCK: bool = true;
+-
+-    fn partition(&self, block: DataBlock, n: usize) -> Result<Vec<DataBlock>> {
+-        let partition_permutation = self.partition_permutation(&block);
+-
+-        // Partition the data blocks to different processors.
+-        let mut output_data_blocks = vec![vec![]; n];
+-        for (partition_id, indices) in partition_permutation.into_iter().enumerate() {
+-            output_data_blocks[partition_id % n]
+-                .push((partition_id, block.take(indices.as_slice())?));
+-        }
+-
+-        // Union data blocks for each processor.
+-        Ok(output_data_blocks
+-            .into_iter()
+-            .map(WindowPartitionMeta::create)
+-            .map(DataBlock::empty_with_meta)
+-            .collect())
+-    }
+-}
+-
+-impl WindowPartitionTopNExchange {
+-    fn partition_permutation(&self, block: &DataBlock) -> Vec<Vec<u32>> {
+-        let rows = block.num_rows();
+-        let mut sort_compare = SortCompare::with_force_equality(self.sort_desc.to_vec(), rows);
+-
+-        for &offset in &self.partition_indices {
+-            let array = block.get_by_offset(offset).value();
+-            sort_compare.visit_value(array).unwrap();
+-            sort_compare.increment_column_index();
+-        }
+-
+-        let partition_equality = sort_compare.equality_index().to_vec();
+-
+-        for desc in self.sort_desc.iter().skip(self.partition_indices.len()) {
+-            let array = block.get_by_offset(desc.offset).value();
+-            sort_compare.visit_value(array).unwrap();
+-            sort_compare.increment_column_index();
+-        }
+-
+-        let full_equality = sort_compare.equality_index().to_vec();
+-        let permutation = sort_compare.take_permutation();
+-
+-        let hash_indices = std::iter::once(permutation[0])
+-            .chain(
+-                partition_equality
+-                    .iter()
+-                    .enumerate()
+-                    .filter_map(|(i, &eq)| if eq == 0 { Some(permutation[i]) } else { None }),
+-            )
+-            .collect::<Vec<_>>();
+-
+-        let mut hashes = vec![0u64; rows];
+-        for (i, &offset) in self.partition_indices.iter().enumerate() {
+-            let entry = block.get_by_offset(offset);
+-            group_hash_value_spread(&hash_indices, entry.value(), i == 0, &mut hashes).unwrap();
+-        }
+-
+-        let mut partition_permutation = vec![Vec::new(); self.num_partitions as usize];
+-
+-        let mut start = 0;
+-        let mut cur = 0;
+-        while cur < rows {
+-            let partition = &mut partition_permutation
+-                [(hashes[permutation[start] as usize] % self.num_partitions) as usize];
+-            partition.push(permutation[start]);
+-
+-          
 ```
 
-**File**: `tests/sqllogictests/suites/query/index/09_vector_index/09_0000_vector_index_base.test` (modified, +12/-10)
+---
+
+### Incident Patch 2: `76caf9e8` (2026-11-19)
+**Commit Message**: fix(query): enforce stage WRITE on HTTP uploads (#21126)
+
+* fix(query): enforce stage WRITE on HTTP uploads (#21094)
+
+* test(query): cover HTTP stage WRITE in the stateless suite
+
+**File**: `src/query/service/src/interpreters/access/mod.rs` (modified, +1/-0)
 ```diff
-@@ -177,14 +177,16 @@ SELECT id, l1_distance(embedding, [0.02559146, 0.38549544, 0.77889671, 0.3159103
- 2 1.8405688
- 11 1.8465419
+@@ -22,3 +22,4 @@ pub use management_mode_access::ManagementModeAccess;
+ pub use privilege_access::PrivilegeAccess;
+ pub(crate) use privilege_access::validate_share_management_for_connection;
+ pub(crate) use privilege_access::validate_share_object_by_id;
++pub(crate) use privilege_access::validate_stage_write_access;
+```
+
+**File**: `src/query/service/src/interpreters/access/privilege_access.rs` (modified, +9/-0)
+```diff
+@@ -275,6 +275,15 @@ enum ObjectId {
+ // table functions that need `Super` privilege
+ const SYSTEM_TABLE_FUNCTIONS: [&str; 3] = ["fuse_amend", "set_cache_capacity", "send_notification"];
  
-+# Row 1 is the query vector: its SQ8 distance is the quantization error alone,
-+# not shifted by the quantizer offset of its block.
- query IR
- SELECT id, l2_distance(embedding, [0.50515236, 0.8561939, 0.87169914, 0.55843271, 0.73689797, 0.49985862, 0.64527255, 0.29313098]::vector(8)) AS similarity FROM t ORDER BY similarity ASC LIMIT 5;
- ----
--1 0.052975703
--10 0.73442644
--12 0.84724534
--8 0.92271036
--3 0.9368646
-+1 0.00069053395
-+10 0.6369769
-+12 0.764318
-+8 0.9160794
-+3 0.9353659
++pub(crate) async fn validate_stage_write_access(
++    ctx: Arc<QueryContext>,
++    stage: &StageInfo,
++) -> Result<()> {
++    PrivilegeAccess::new(ctx)
++        .validate_stage_access(stage, UserPrivilegeType::Write)
++        .await
++}
++
+ pub(crate) async fn validate_share_management_for_connection(
+     ctx: Arc<QueryContext>,
+     connection: Option<&str>,
+```
+
+**File**: `src/query/service/src/interpreters/mod.rs` (modified, +1/-0)
+```diff
+@@ -233,6 +233,7 @@ mod interpreter_virtual_column_vacuum;
+ pub(crate) mod util;
  
- query IR
- SELECT id, l2_distance(embedding, [0.50515236, 0.8561939, 0.87169914, 0.55843271, 0.73689797, 0.49985862, 0.64527255, 0.29313098]::vector(8)) AS similarity FROM t1 ORDER BY similarity ASC LIMIT 5;
-@@ -198,11 +200,11 @@ SELECT id, l2_distance(embedding, [0.50515236, 0.8561939, 0.87169914, 0.55843271
- query IR
- SELECT id, l2_distance(embedding, [0.02559146, 0.38549544, 0.77889671, 0.31591033, 0.48453478, 0.51902057, 0.74154714, 0.75059576]::vector(8)) AS similarity FROM t ORDER BY similarity ASC LIMIT 5;
- ----
--4 0.41017252
--16 0.69951516
--6 0.73418504
--2 0.7379028
--11 0.8144757
-+4 0.4067377
-+16 0.6988953
-+6 0.72583383
-+11 0.7278242
-+2 0.73599905
+ pub use access::ManagementModeAccess;
++pub(crate) use access::validate_stage_write_access;
+ pub use common::InterpreterQueryLog;
+ pub use common::QueryFinishHooks;
+ pub use hook::HookOperator;
+```
+
+**File**: `src/query/service/src/servers/http/v1/stage.rs` (modified, +10/-0)
+```diff
+@@ -14,6 +14,7 @@
  
- query IR
- SELECT id, l2_distance(embedding, [0.02559146, 0.38549544, 0.77889671, 0.31591033, 0.48453478, 0.51902057, 0.74154714, 0.75059576]::vector(8)) AS similarity FROM t1 ORDER BY similarity ASC LIMIT 5;
+ use async_compat::CompatExt;
+ use databend_common_catalog::session_type::SessionType;
++use databend_common_exception::ErrorCode;
+ use databend_common_meta_app::principal::StageInfo;
+ use databend_common_sql::binder::validate_stage_path_traversal_policy;
+ use databend_common_storage::init_stage_operator;
+@@ -22,6 +23,7 @@ use futures_util::AsyncWriteExt;
+ use futures_util::io;
+ use http::StatusCode;
+ use poem::Request;
++use poem::error::Forbidden;
+ use poem::error::InternalServerError;
+ use poem::error::Result as PoemResult;
+ use poem::web::Json;
+@@ -31,6 +33,7 @@ use serde::Serialize;
+ 
+ use super::HttpQueryContext;
+ use super::require_upload_filename;
++use crate::interpreters::validate_stage_write_access;
+ use crate::sessions::TableContextAuthorization;
+ use crate::sessions::TableContextTableAccess;
+ 
+@@ -114,6 +117,13 @@ pub async fn upload_to_stage(
+             .map_err(InternalServerError)?
+     };
+ 
++    validate_stage_write_access(context, &stage)
++        .await
++        .map_err(|e| match e.code() {
++            ErrorCode::PERMISSION_DENIED => Forbidden(e),
++            _ => InternalServerError(e),
++        })?;
++
+     let op = init_stage_operator(&stage).map_err(InternalServerError)?;
+     let path_traversal_policy = databend_common_config::GlobalConfig::instance()
+         .storage
+```
+
+**File**: `tests/suites/0_stateless/18_rbac/18_0027_http_stage_write.result` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++Without a stage grant: 403
++With READ only: 403
++Named stage file count before authorization: 0
++With WRITE: SUCCESS
++With ownership (legacy header): SUCCESS
++Named stage file sizes:
++2
++2
++Own user stage: SUCCESS
++Own user stage file size: 2
+```
+
+**File**: `tests/suites/0_stateless/18_rbac/18_0027_http_stage_write.sh` (added, +87/-0)
+```diff
+@@ -0,0 +1,87 @@
++#!/usr/bin/env bash
++
++set -euo pipefail
++
++CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
++. "$CURDIR"/../../../shell_env.sh
++
++url="http://${QUERY_MYSQL_HANDLER_HOST}:${QUERY_HTTP_HANDLER_PORT}/v1/upload_to_stage"
++user=stage_write_user_0027
++password=stage_write_test_password
++role=stage_write_role_0027
++stage=stage_write_0027
++owned_stage=stage_owned_0027
++file=stage_write_0027.csv
++clean_user_stage=false
++
++cleanup() {
++	local status=0
++	if "$clean_user_stage"; then
++		bendsql_connect_user "$user" "$password" --output null --query="REMOVE @~/$file" || status=$?
++	fi
++	bendsql_connect_root_null --query="
++DROP STAGE IF EXISTS $stage;
++DROP STAGE IF EXISTS $owned_stage;
++DROP USER IF EXISTS $user;
++DROP ROLE IF EXISTS $role;
++"
++	return "$status"
++}
++
++expect_denied() {
++	# No file part: check authorization without attempting to write data.
++	printf -- '--stage-test--\r\n' |
++		curl --silent --show-error --user "$user:$password" --request PUT \
++			--header "x-databend-stage-name: $stage" \
++			--header 'Content-Type: multipart/form-data; boundary=stage-test' \
++			--data-binary @- --output /dev/null --write-out '%{http_code}\n' "$url"
++}
++
++expect_allowed() {
++	printf '1\n' |
++		curl --fail --silent --show-error --user "$user:$password" --request PUT \
++			--header "$1: $2" --form "upload=@-;filename=$file" "$url" |
++		jq -er --arg stage "$2" --arg file "$file" \
++			'select(.stage_name == $stage and .state == "SUCCESS" and .files == [$file]) | .state'
++}
++
++cleanup
++trap cleanup EXIT
++bendsql_connect_root_null --query="
++CREATE USER $user IDENTIFIED BY '$password';
++CREATE ROLE $role;
++GRANT ROLE $role TO USER $user;
++CREATE STAGE $stage;
++CREATE STAGE $owned_stage;
++GRANT OWNERSHIP ON STAGE $owned_stage TO ROLE $role;
++"
++
++printf 'Without a stage grant: '
++expect_denied
++
++bendsql_connect_root_null --query="GRANT READ ON STAGE $stage TO ROLE $role"
++printf 'With READ only: '
++expect_denied
++
++printf 'Named stage file count before authorization: '
++bendsql_connect_root --output tsv --query="SELECT count(*) FROM list_stage(location => '@$stage')"
++
++bendsql_connect_root_null --query="GRANT WRITE ON STAGE $stage TO ROLE $role"
++printf 'With WRITE: '
++expect_allowed x-databend-stage-name "$stage"
++
++printf 'With ownership (legacy header): '
++expect_allowed stage_name "$owned_stage"
++
++printf 'Named stage file sizes:\n'
++bendsql_connect_root --output tsv --query="
++SELECT size FROM list_stage(location => '@$stage/$file');
++SELECT size FROM list_stage(location => '@$owned_stage/$file');
++"
++
++clean_user_stage=true
++printf 'Own user stage: '
++expect_allowed x-databend-stage-name '~'
++printf 'Own user stage file size: '
++bendsql_connect_user "$user" "$password" --output tsv \
++	--query="SELECT size FROM list_stage(location => '@~/$file')"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #21111** (2026-11-17): fix(query): finish queries correctly on the queries executor (@bohutang)
-- **PR #21104** (2026-11-17): fix(storage): bound fuse_page Thrift decoding and drop thrift dep (@sundy-li)
-- **PR #21102** (2026-11-17): refactor(storage): look up search pin ranges by start (@bohutang)
-- **PR #21101** (closed): [EXPERIMENTAL - DO NOT MERGE] feat(query): add /v1/data/search and speed up full-text top-k search (@bohutang)
-- **PR #21099** (2026-11-16): fix(meta): decode BLOOM table index type; default cache.data_max_ratio to 0 (@zhang2014)
-- **PR #21097** (2026-11-17): fix(query): correct HNSW graph construction and SQ8 scoring in vector indexes (@b41sh)
+- **PR #21126** (2026-11-19): fix(query): enforce stage WRITE on HTTP uploads (@youngsofun)
+- **PR #21125** (closed): refactor: query: read the ownership and access caches without a lock (@drmingdrmer)
+- **PR #21124** (2026-11-19): feat: config: add `ownership` to `cache.meta_service_caches` (@drmingdrmer)
+- **PR #21123** (2026-11-18): chore: meta: use sub-cache 0.4.1, which stops a dropped cache's watch (@drmingdrmer)
+- **PR #21121** (2026-11-18): refactor(query): remove dead code and leftovers of the aggregate rewrites (@dqhl76)
+- **PR #21118** (2026-11-18): fix(query): abbreviate large SQL constants in INFO logs (@bohutang)
 
 ---
 
@@ -2966,63 +2155,72 @@ once the executor is finished.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): finish queries correctly on the queries executor
+## X. query): batch small blocks before the window partition exchange
 
 **RULE**:
-When implementing operations in `src/query/pipeline/src/sinks/async_sink.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/expression/src/kernels/stream_partition.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `58dd5893`: query): finish queries correctly on the queries executor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dea33860`: query): batch small blocks before the window partition exchange. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/pipeline/src/sinks/async_sink.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/expression/src/kernels/stream_partition.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            let run_on_start = !self.called_on_start && T::CALL_ON_START_ON_ERROR;
-            let run_on_finish = !self.called_on_finish && T::CALL_ON_FINISH_ON_ERROR;
-            // Nothing to run: do not touch the global runtime, which a sink
-            // dropped late may outlive.
-            if !run_on_start && !run_on_finish {
-                return;
-            }
+    /// Add every row of `column`, in order.
+    fn append_column(&mut self, column: &Column) {
+        let builder = self.builder(column.len());
+        if builder.data_type() == column.data_type() {
+            builder.append_column(column);
+        } else {
+            // Such as an `Array` column into an `EmptyArray` builder, which
+            // only `copy_column` turns into an `Array` builder.
+            let indices = (0..column.len() as u32).collect::<Vec<_>>();
+            copy_column(&indices, column, builder);
+        }
+    }
 
-            if let Some(mut inner) = self.inner.take() {
-                GlobalIORuntime::instance().spawn(async move {
-                    if run_on_start {
-                        let _ = inner.on_start().await;
-                    }
+    /// Add `rows` of a constant, kept a constant when it can be.
+    fn append_const(
+        &mut self,
+        scalar: &Scalar,
+        data_type: &DataType,
+        rows: usize,
+        size: &mut impl FnMut() -> ExpandedSize,
+    ) {
+        if !self.try_push_const(scalar, data_type, rows, size) {
+            let column = ColumnBuilder::repeat(&scalar.as_ref(), rows, data_type).build();
+            self.append_column(&column);
+        }
+    }
 
-                    if run_on_finish {
-                        let _ = inner.on_finish().await;
-                    }
-                });
+/// The expanded size of the last constant seen in a column.
+type ConstSize = Option<(Scalar, DataType, ExpandedSize)>;
+
+fn cached_const_size(cache: &mut ConstSize, scalar: &Scalar, data_type: &DataType)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            if !self.called_on_start || !self.called_on_finish {
-                if let Some(mut inner) = self.inner.take() {
-                    GlobalIORuntime::instance().spawn({
-                        let called_on_start = self.called_on_start;
-                        let called_on_finish = self.called_on_finish;
-                        async move {
-                            if !called_on_start && T::CALL_ON_START_ON_ERROR {
-                                let _ = inner.on_start().await;
-                            }
-
-                            if !called_on_finish && T::CALL_ON_FINISH_ON_ERROR {
-                                let _ = inner.on_finish().await;
-                            }
+    const_sizes: Vec<Option<(Scalar, DataType, ExpandedSize)>>,
+                    let mut size = || {
+                        if let Some((s, t, size)) = const_size.as_ref()
+                            && *s == scalar
+                            && *t == data_type
+                        {
+                            return *size;
                         }
-                    });
-                }
+                        let size = ExpandedSize::measure(&scalar, &data_type);
+                        *const_size = Some((scalar.clone(), data_type.clone(), size));
+                        size
+                    };
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `58dd5893` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dea33860` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

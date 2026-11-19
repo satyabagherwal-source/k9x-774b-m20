@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T17:07:55.489Z",
+  "last_updated": "2026-11-19T17:23:36.870Z",
   "total_records": 2002,
   "domains": {
     "A": {
@@ -10991,8 +10991,8 @@
       "title": "Technical Construction Intelligence: databendlabs/databend Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-databendlabs-databend-technical-construction-intelligence-databendlabs-databend-.md",
       "repository": "databendlabs/databend",
-      "content_hash": "1fdfe207f0274bbddc2a9d9146513e59efe63c338ee40f2cc5445ea08bf3bed8",
-      "created_at": "2026-11-17T19:53:45.954Z"
+      "content_hash": "e738b62f9389f323795c28ce99d791aaebda6b568eabaa22dc187f1c4f98f55d",
+      "created_at": "2026-11-19T17:23:31.340Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-t5-t5-small-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-t5-t5-small-core-invariants",
@@ -16980,8 +16980,8 @@
       "title": "Content & Information Intelligence: apache/arrow Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-arrow-content-information-intelligence-apache-arrow-core-invariants.md",
       "repository": "apache/arrow",
-      "content_hash": "e163fc13aeab42744f508998302ec94b89399bb3c669bab308675594c09bdbb3",
-      "created_at": "2026-11-17T22:11:02.352Z"
+      "content_hash": "7098d91cf838e512bda725f0621f4286ca1a251875a266340438557b1006f796",
+      "created_at": "2026-11-19T17:23:18.949Z"
     },
     "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-greptimeteam-greptimedb-core-invariants",
@@ -16998,8 +16998,8 @@
       "title": "Content & Information Intelligence: apache-arrow-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-arrow-learnings-content-information-intelligence-apache-arrow-learnings-c.md",
       "repository": "apache-arrow-learnings",
-      "content_hash": "b2419c1faaa95854960ecde70c657f335f185beb28ff71ab1aac780e2f3112fc",
-      "created_at": "2026-11-17T22:11:15.208Z"
+      "content_hash": "52b6c62d3d9bf46bc28bdcf000344beaf97f52c34d068962c7a690a5337b62cf",
+      "created_at": "2026-11-19T17:23:35.335Z"
     },
     "DOM-D-A21D48E1": {
       "record_id": "DOM-D-A21D48E1",
@@ -19432,8 +19432,8 @@
       "title": "Research & Knowledge Intelligence: black-forest-labs/flux-3-image-klein-comfy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-3-image-klein-comfy-research-knowledge-intelligence-bl.md",
       "repository": "black-forest-labs/flux-3-image-klein-comfy",
-      "content_hash": "5ee21d5b040efdf343ae6006f5c21681ce9ff2cefcfa684c48d4f63b47995554",
-      "created_at": "2026-11-15T04:04:53.228Z"
+      "content_hash": "878e4668456b011384ed615055e721237532fc32c3c5ba4b88195a81193881fc",
+      "created_at": "2026-11-19T17:23:15.235Z"
     },
     "domain_intelligence-architecture-intelligence-kuddev-pebrel-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-kuddev-pebrel-core-invariants",
@@ -19501,8 +19501,8 @@
       "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux-3-image-klein-comfy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-3-image-klein-comfy-learnings-research-knowledge-intel.md",
       "repository": "hf-black-forest-labs-flux-3-image-klein-comfy-learnings",
-      "content_hash": "58d1d36bcacf46732563ff0fe4a18b3e87b5b70776fce97463394e290e9cb149",
-      "created_at": "2026-11-15T04:05:31.601Z"
+      "content_hash": "a16f10c879dee590cd90e11d9320ac462f1e2e76d08ec2a1fdf9e2b21f48ea07",
+      "created_at": "2026-11-19T17:23:35.935Z"
     },
     "domain_intelligence-architecture-intelligence-zeronsh-zeron-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zeronsh-zeron-core-invariants",
@@ -20782,8 +20782,8 @@
       "title": "Technical Construction Intelligence: databendlabs-databend-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-databendlabs-databend-learnings-technical-construction-intelligence-databendlabs.md",
       "repository": "databendlabs-databend-learnings",
-      "content_hash": "877a38bb7d8431b3f939164e1eee3b77a968ca170dcf0c4d1606cef92bd2cb4e",
-      "created_at": "2026-11-15T10:53:36.993Z"
+      "content_hash": "97ad1f6bbf414ddbe93623ee6a32089329e04dc42469dff8365ba62e94292d53",
+      "created_at": "2026-11-19T17:23:36.870Z"
     },
     "domain_intelligence-research-knowledge-intelligence-abiray-minimax-h3-image-gguf-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-abiray-minimax-h3-image-gguf-core-invariants",

@@ -11369,3 +11369,6 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `e737db35` | Multi-dimensional audit evidence | 2026-11-19T17:06:58.401Z |
 | `learn-huggingface-meta-models-muse-spark-open-816b-a42b` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-11-19T17:07:12.831Z |
 | `learn-dom-h-2a9142c7` | `project://pola-rs-polars` | `e02c237a` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pola-rs-polars-learnings.md` | 2026-11-19T17:07:53.122Z |
+| `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy` | `https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-19T17:23:14.977Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `ac7d3fab` | Multi-dimensional audit evidence | 2026-11-19T17:23:18.495Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `a83eaead` | Multi-dimensional audit evidence | 2026-11-19T17:23:30.897Z |

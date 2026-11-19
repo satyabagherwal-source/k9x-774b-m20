@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T17:07:12.843Z",
+  "last_updated": "2026-11-19T17:23:30.908Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2436,14 +2436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
-      "content_hash": "0080ee173c6dae45446ba75afbdb97835c9f3f67b05c406dddf37f33ce0429f1",
-      "verified_at": "2026-11-15T04:04:53.087Z",
+      "content_hash": "f2d87d9fe2a55d18ce7fa71d38edcb3f00e7ddf470e1e0d108cef39ed6aa444f",
+      "verified_at": "2026-11-19T17:23:14.987Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T04:04:53.087Z"
+      "last_updated": "2026-11-19T17:23:14.987Z"
     },
     "roseyco-management-seo-resources": {
       "status": "VERIFIED_LEARNING",
@@ -11286,14 +11286,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-databendlabs-databend",
-      "content_hash": "7cf29f9be509c34ba7283affc17c75ec451f5ac27deba6cfebd425d9f81bcb4e",
-      "verified_at": "2026-11-18T13:47:07.695Z",
+      "content_hash": "06b460af33ffe84487f705da73d847fa0cea81ac7088f7dcd43ada47da9dd2bc",
+      "verified_at": "2026-11-19T17:23:30.907Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T13:47:07.695Z"
+      "last_updated": "2026-11-19T17:23:30.907Z"
     },
     "atanunq/viu": {
       "repository": "atanunq/viu",
@@ -11436,14 +11436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-arrow",
-      "content_hash": "ac22cb855f48d02538f4579371cfd4915113d2763ea6c390d939705b26e31fe1",
-      "verified_at": "2026-11-17T22:11:01.964Z",
+      "content_hash": "5970ec9b8416c322b62dd9f0f07e9133a9901293ff5d7d83012675c843616a8f",
+      "verified_at": "2026-11-19T17:23:18.512Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T22:11:01.964Z"
+      "last_updated": "2026-11-19T17:23:18.512Z"
     },
     "CrossPaste/crosspaste-desktop": {
       "repository": "CrossPaste/crosspaste-desktop",

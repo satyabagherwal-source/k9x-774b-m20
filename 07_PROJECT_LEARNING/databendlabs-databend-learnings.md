@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `6546196f`  
+> **Source Version**: `a83eaead`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T13:47:06.520Z  
+> **Timestamp**: 2026-11-19T17:23:29.703Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T13:47:06.513Z  
+> **Harvest Timestamp**: 2026-11-19T17:23:29.696Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9500 stars
+- **Stars / Engagement**: 9501 stars
 
 ---
 
@@ -1196,11 +1196,14 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #21121** (2026-11-18): **refactor(query): remove dead code and leftovers of the aggregate rewrites**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  The aggregate went through several rewrites (adaptive partial aggregation over the global shuffle, states kept in pages, the chunked hash index), which left formats, fields and helpers without callers. This PR removes them and simplifies what remains, one commit per step; it changes no query result.  - **Shuffle path**: partial and final aggregates now only meet through the global shuffle (`AggregateScatter`, `AggregateStatesMeta`). The merge-exchange serializer/deserializer, `AggregateSerdeMeta` and the `Serialized`/`AggregatePayload` variants of `AggregateMeta` had no producer: the serializer only accepted a variant nothing constructs. `AggregateMeta` now only carries the payload list; serialized and spilled states stay inside the final aggregate. The `serde/` module is folded into the aggregator. - **Planner**: the partial/final plan building no longer repeats itself; the plans it produces are unchanged. - **Hash table and index**: drop `ProbeState::row_count` (always overwritten before being read), test-only flush paths (tests now go through `into_payloads` + `Payload::merge_result`, the path the final aggregate runs), unused parameters, and name the chunk lanes once (`CHUNK_SLOTS`). `hash_index/` becomes one module with its sizing math. `ProbeState::new_boxed` no longer takes a reference to zeroed memory holding a `Vec`. - **Payloads**: scattering a payload count
+- **Issue #21126** (2026-11-19): **fix(query): enforce stage WRITE on HTTP uploads**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  The HTTP stage upload handler now requires the same stage `WRITE` permission as SQL writes, before initializing storage or reading the upload body. Permission denials return HTTP 403. Uploads to the authenticated user's own `~` stage and both stage-name header formats remain supported.  Stateless regression `18_0027_http_stage_write` checks HTTP 403 without `WRITE`, successful uploads via role grants or ownership, and the user's own `~` stage. The targeted test passed twice against a local server with the fix; shell syntax and formatting checks passed.  Fixes #21094.  <!-- Briefly describe what this PR aims to solve. Include background context that will help reviewers understand the purpose of the PR.  Write for humans, in your own words: the concrete problem, why it matters, how you validated it. Do NOT paste model transcripts, long logs, or stack traces here - link a gist or use <details>. The automated PR Assistant checks reject bloated, repetitive, or template-placeholder descriptions.  - fixes: #[Link the issue here] -->  ## Tests  - [ ] Unit Test - [x] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [x] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [ ] Breaking Change (fix or feature that could cause existing functionality not to work as expected) - [ ] Do
 
-- **Issue #21118** (2026-11-18): **fix(query): abbreviate large SQL constants in INFO logs**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Fixes #21116. Mask secrets and abbreviate large constants in one token scan, keeping the first three items and the omitted count.  **HTTP and Fuse.** Before, the request, query creation, and initial response each logged the SQL, and the partition log dumped `PushDownInfo`. After, only `Creating new query` carries SQL. Example from a 1536-dimensional Top-K query (IDs shortened, fields shown inline):  ```text New query request  query_id=<query-id> Creating new query  query_id=<query-id>   sql=SELECT id FROM t ORDER BY cosine_distance(embedding,     [0.234567, -0.123456, 0.234567, ... (+1533 more)]::VECTOR(1536)) ASC LIMIT 1 Reading partitions for table t, snapshot: Some(<snapshot-id>) Initial response for query_id=<query-id>, state=Succeeded, rows=1, next_page=None ```  **Physical plan.** The INFO plan keeps the tree, sort direction, and limit; it abbreviates the vector rather than printing all 1536 values. Excerpt from the same query:  ```text Query physical plan: TopN(Final) ├── sort keys: [cosine_distance(embedding, [0.234567, -0.123456, 0.234567, ... (+1533 more)]::VECTOR(1536)) ASC NULLS LAST] ├── limit: 1 ```  **`VALUES`.** A 500-row insert counts omitted rows, not fields:  ```text INSERT INTO t VALUES (1, 'abc'), (1, 'abc'), (1, 'abc'), ... (+497 more); ```  `EXPLAIN`, query history, and query hashes are unchanged.  | Total INFO for HTTP Top-K on `db0-aws` | Befo
+- **Issue #21125** (2026-11-19): **refactor: query: read the ownership and access caches without a lock**
+  *Symptoms*:   I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  ##### refactor: query: read the ownership and access caches without a lock # Summary  The ownership, network rule and external access integration caches are no longer behind a tokio `Mutex`: `RoleMgr` and `UserApiProvider` hold them as `Arc<Cache>` and `Cache`, since the sub-cache reads take `&self`.  # Details  Concurrent `RoleMgr::list_ownerships` calls no longer queue on the lock: they share the copy, and each still waits while it initializes or reconnects. `UserApiProvider::external_access_values` no longer needs `try_lock` to avoid that queue, since `Cache::try_get_ready` never waits. The test of busy caches uses caches that cannot answer instead of holding their locks.  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test  - _Explain why_  ## Type of change  - [x] Refactoring  ## AI assistance  - AI usage: An AI coding agent generated code and wrote tests; I reviewed and confirmed every line before committing it. - Responsible human: @drmingdrmer - [x] The responsible human has read every line of this diff and can explain each change  ## Related Issues  <!-- Reviewable:start --> - - - This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/databendlabs/databend/21125) <!-- Reviewable:end --> 
+  **Post-Mortem & Fix Analysis**:
+  > ## ⏱ CI timing · Dev  ### [run 44318988933](https://github.com/databendlabs/databend/actions/runs/44318988933) · **37.5 min** (main p50 47.3 min, **−9.8 min**)  | stage | this run | main p50 | Δ | |---|--:|--:|--:| | **total** | 37.5 min | 47.3 min | **−9.8 min** | | **build (aarch64, ci profile)** | 21.8 min | 33.6 min | **−11.8 min** | | ├ deps + crates (parallel) | 4.9 min | — | — | | ├ databend-query codegen | 2.8 min | — | — | | ├ databend-binaries link | 12.0 min | — | — | | └ sccache hit rate | 97.5 % | — | — | | **test_unit** | 15.9 min | 15.1 min | +0.8 min | | mac_check | — | 14.0 min | — | | **tests after build (52 jobs)** | 14.5 min | 11.6 min | **+2.9 min** | | ├ queue p50 / max | 4.4 min / 11.1 min | 1.8 min / 4.5 min | **+2.7 min** | | ├ sqllogic standalone (8 jobs, max) | 5.4 min | 5.2 min | +0.2 min | | ├ sqllogic cluster (8 jobs, max) | 9.7 min | 9.1 min | +0.6 min | | ├ sqllogic stage (2 jobs, max) | 6.7 min | 6.3 min | +0.3 min | | ├ sqllogic other (13 jobs, max) | 
+  > Folded into #21124, whose branch now carries this commit on top of its own, as 3917502b8e.  <!-- x-pr-ship -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1217,1348 +1220,908 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `50f8ae1b` (2026-11-18)
-**Commit Message**: fix(query): stream all-pairs joins with bounded memory (#20966)
+### Incident Patch 1: `dea33860` (2026-11-19)
+**Commit Message**: fix(query): batch small blocks before the window partition exchange (#21112)
 
-* refactor(query): share constant-row block broadcasting
+* fix(query): batch small blocks before the window partition exchange
 
-Extract merge_with_constant_row and reuse it in the nested-loop join.
+The window partition exchange scatters every input block into
+`window_num_partitions` pieces. When the blocks that reach it are small,
+for example after a selective filter or after the per-block top-n
+truncation of `row_number`/`rank`, each piece holds one or two rows but
+still a full set of allocations per column. Those allocations take far
+more memory than the rows, are not counted by `memory_size`, so the
+window buffer never reaches its spill threshold.
 
-Keep repeated build values as constant columns without materializing their payload.
+Add `TransformWindowPartitionBatch` before the exchange of every
+partitioned window. Blocks that would give fewer than 64 rows and less
+than 1 KiB per column to each partition on average are buffered until
+they are not small together and then concatenated; other blocks pass
+through untouched. The top-n truncation moves from
+`WindowPartitionTopNExchange` into this transform, so top-n windows now
+use the plain `WindowPartitionExchange`.
 
-* fix(query): stream all-pairs joins with bounded memory
+* fix(query): send large window blocks without concatenation and keep partition ids above 255
 
-Use a resumable, batch-bounded probe for cross joins and inner joins without hash keys. Count zero-column build rows without retaining their payload, and preserve interruption and early-output cancellation.
+* fix(query): copy small window blocks into the batch 
 
-Replay all probe spill files and retained buffers once per build round, including column-free probe blocks. Share the path across the legacy and experimental join settings.
-
-Cover bounded batches, spill replay, multiple workers, zero-column inputs and LIMIT in Rust and SQL regressions. Make affected result tests independent of unspecified cross-join order and keep deterministic TPC-H spill checks.
-
-* fix(query): rebuild window sorting after decorrelation
-
-Rebuild legacy window input sorting and partition exchange using the final decorrelated partition and ordering keys. Replace obsolete binder sorts without dropping limit or top truncation.
-
-Cover
-
-**File**: `src/query/service/src/physical_plans/physical_hash_join.rs` (modified, +111/-132)
+**File**: `src/query/expression/src/kernels/stream_partition.rs` (modified, +135/-12)
 ```diff
-@@ -61,7 +61,6 @@ use crate::physical_plans::format::PhysicalFormat;
- use crate::physical_plans::physical_plan::IPhysicalPlan;
- use crate::physical_plans::physical_plan::PhysicalPlan;
- use crate::physical_plans::physical_plan::PhysicalPlanMeta;
--use crate::physical_plans::resolve_scalar;
- use crate::physical_plans::runtime_filter::build_runtime_filter;
- use crate::pipelines::HashJoinStateRef;
- use crate::pipelines::PipelineBuilder;
-@@ -74,6 +73,7 @@ use crate::pipelines::processors::transforms::RuntimeFiltersDesc;
- use crate::pipelines::processors::transforms::TransformHashJoin;
- use crate::pipelines::processors::transforms::TransformHashJoinBuild;
- use crate::pipelines::processors::transforms::TransformHashJoinProbe;
-+use crate::pipelines::processors::transforms::probes_all_pairs;
- use crate::sessions::QueryContext;
- 
- // Type aliases to simplify complex return types
-@@ -101,12 +101,6 @@ type MergedFieldsResult = (
-     Vec<(usize, (bool, bool))>,
- );
- 
--#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
--pub struct NestedLoopFilterInfo {
--    pub predicates: Vec<RemoteExpr>,
--    pub projection: Vec<usize>,
--}
--
- #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
- pub struct HashJoin {
-     pub meta: PhysicalPlanMeta,
-@@ -145,7 +139,6 @@ pub struct HashJoin {
- 
-     pub runtime_filter: PhysicalRuntimeFilters,
-     pub broadcast_id: Option<u32>,
--    pub nested_loop_filter: Option<NestedLoopFilterInfo>,
- }
- 
- #[typetag::serde]
-@@ -266,7 +259,6 @@ impl IPhysicalPlan for HashJoin {
-             build_side_cache_info: self.build_side_cache_info.clone(),
-             runtime_filter: self.runtime_filter.clone(),
-             broadcast_id: self.broadcast_id,
--            nested_loop_filter: self.nested_loop_filter.clone(),
-         })
+@@ -136,6 +136,33 @@ impl PendingColumn {
+         copy_column(indices, column, self.builder(indices.len()));
      }
  
-@@ -279,7 +271,9 @@ impl IPhysicalPlan for HashJoin {
-         let experimental_new_join = builder.settings.get_enable_experimental_new_join()?;
-         let (enable_optimization, _) = builder.merge_into_get_optimization_flag(self);
- 
-+        // Joins without anything to hash stream all pairs on this executor.
-         if desc.single_to_inner.is_none()
-+            && !desc.probes_all_pairs()
-             && matches!(
-                 self.join_type,
-                 JoinType::Inner
-@@ -319,6 +313,28 @@ impl IPhysicalPlan for HashJoin {
- }
- 
- impl HashJoin {
-+    /// When the probe streams all pairs, a side without required columns
-+    /// contributes only its row count, which the build side keeps without
-+    /// retaining or spilling any block. Build it from that side. The
-+    /// zero-column side occupies no projected positions, so join conditions
-+    /// and the output keep the same column offsets.
-+    fn build_zero_column_side(&mut self) {
-+        // Build-side caches consume the build state of the side the planner chose.
-+        if !probes_all_pairs(
-+            self.join_type,
-+            !self.build_keys.is_empty(),
-+            self.single_to_inner,
-+        ) || !self.probe_projections.is_empty()
-+            || self.build_projections.is_empty()
-+            || self.build_side_cache_info.is_some()
-+        {
-+            return;
++    /// Add every row of `column`, in order.
++    fn append_column(&mut self, column: &Column) {
++        let builder = self.builder(column.len());
++        if builder.data_type() == column.data_type() {
++            builder.append_column(column);
++        } else {
++            // Such as an `Array` column into an `EmptyArray` builder, which
++            // only `copy_column` turns into an `Array` builder.
++            let indices = (0..column.len() as u32).collect::<Vec<_>>();
++            copy_column(&indices, column, builder);
 +        }
-+        debug_assert!(self.build_keys.is_empty() && self.probe_to_build.is_empty());
-+        std::mem::swap(&mut self.probe, &mut self.build);
-+        std::mem::swap(&mut self.probe_projections, &mut self.build_projections);
 +    }
 +
-     fn build_state(&self, builder: &mut PipelineBuilder) -> Result<Arc<HashJoinState>> {
-         let (enable_optimization, is_distributed) = builder.merge_into_get_optimization_flag(self);
-         HashJoinState::try_create(
-@@ -1195,71 +1211,6 @@ impl PhysicalPlanBuilder {
++    /// Add `rows` of a constant, kept a constant when it can be.
++    fn append_const(
++        &mut self,
++        scalar: &Scalar,
++        data_type: &DataType,
++        rows: usize,
++        size: &mut impl FnMut() -> ExpandedSize,
++    ) {
++        if !self.try_push_const(scalar, data_type, rows, size) {
++            let column = ColumnBuilder::repeat(&scalar.as_ref(), rows, data_type).build();
++            self.append_column(&column);
++        }
++    }
++
+     /// Turn the pending rows into a builder with room for `additional` more.
+     fn builder(&mut self, additional: usize) -> &mut ColumnBuilder {
+         match self {
+@@ -215,6 +242,21 @@ fn copy_const(scalar: &Scalar, data_type: &DataType, rows: usize, to: &mut Colum
+     copy_column(&indices, &column, to);
+ }
  
-         Ok(non_equi_conditions)
++/// The expanded size of the last constant seen in a column.
++type ConstSize = Option<(Scalar, DataType, ExpandedSize)>;
++
++fn cached_const_size(cache: &mut ConstSize, scalar: &Scalar, data_type: &DataType) -> ExpandedSize {
++    if let Some((s, t, size)) = cache.as_ref()
++        && s == scalar
++        && t == data_type
++    {
++        return *size;
++    }
++    let size = ExpandedSize::measure(scalar, data_type);
++    *cache = Some((scalar.clone(), data_type.clone(), size));
++    size
++}
++
+ struct PartitionBlockBuilder {
+     num_rows: usize,
+     columns: Vec<PendingColumn>,
+@@ -244,7 +286,7 @@ pub struct BlockPartitionStream {
+     partitions: Vec<PartitionBlockBuilder>,
+     // The expanded size of the last constant seen in each column, as the same
+     // constant usually comes in every block.
+-    const_sizes: Vec<Option<(Scalar, DataType, ExpandedSize)>>,
++    const_sizes: Vec<ConstSize>,
+ }
+ 
+ impl BlockPartitionStream {
+@@ -313,17 +355,7 @@ impl BlockPartitionStream {
+             match entry {
+                 BlockEntry::Const(scalar, data_type, num_rows) => {
+                     let const_size = &mut self.const_sizes[column_idx];
+-                    let mut size = || {
+-                        if let Some((s, t, size)) = const_size.as_ref()
+-                            && *s == scalar
+-                            && *t == data_type
+-                        {
+-                            return *size;
+-                        }
+-                        let size = ExpandedSize::measure(&scalar, &data_type);
+-                        *const_size = Some((scalar.clone(), data_type.clone(), size));
+-                        size
+-                    };
++                    let mut size = || cached_const_size(const_size, &scalar, &data_type);
+                     // Expanded once for the partitions that already hold other
+                     // rows, as every block used to be.
+                     let mut expanded = None;
+@@ -435,6 +467,97 @@ impl BlockPartitionStream {
      }
--
--    fn build_nested_loop_filter_info(
--        &self,
--        join: &Join,
--        probe_schema: &DataSchema,
--        build_schema: &DataSchema,
--        target_schema: &DataSchema,
--    ) -> Result<Option<NestedLoopFilterInfo>> {
--        build_nested_loop_filter_info_for_join(join, probe_schema, build_schema, target_schema)
--    }
--}
--
--fn build_nested_loop_filter_info_for_join(
--    join: &Join,
--    probe_schema: &DataSchema,
--    build_schema: &DataSchema,
--    target_schema: &DataSchema,
--) -> Result<Option<NestedLoopFilterInfo>> {
--    if !matches!(join.join_type, JoinType::Inner) {
--        return Ok(None);
--    }
--
--    if !join.equi_conditions.is_empty() {
--        // Inner joins with equality keys should still use the hash table even
--        // when the build side is small. Falling back to nested-loop evaluates
--        // the equality and residual predicates for every probe/build pair.
--        return Ok(None);
--    }
--
--    let merged = DataSchema::new(
--        probe_schema
--            .fields
--            .iter()
--            .cloned()
--            .chain(build_schema.fields.iter().cloned())
--            .collect(),
--    );
--
--    let mut predicates =
--        Vec::with_capacity(join.equi_conditions.len() + join.non_equi_conditio
+ }
+ 
++/// Concatenates blocks into blocks of `rows_threshold` rows or
++/// `bytes_threshold` bytes, whichever is reached first: a
++/// `BlockPartitionStream` with one partition, without row indices.
++///
++/// The rows of each block are appended to the column builders as it arrives,
++/// so the block, which can be a slice of a larger one, is not kept. A column
++/// that has been the same constant in every block so far stays a constant,
++/// counted as if expanded. Once a block is sent, the builders of the next one
++/// reserve as many rows.
++pub struct BlockConcatStream {
++    rows_threshold: usize,
++    bytes_threshold: usize,
++    pending: PartitionBlockBuilder,
++    const_sizes: Vec<ConstSize>,
++}
++
++impl BlockConcatStream {
++    pub fn create(rows_threshold: usize, bytes_threshold: usize) -> BlockConcatStream {
++        BlockConcatStream {
++            rows_threshold: if rows_threshold == 0 {
++                usize::MAX
++            } else {
++                rows_threshold
++            },
++            bytes_threshold: if bytes_threshold == 0 {
++                usize::MAX
++            } else {
++                bytes_threshold
++            },
++            pending: PartitionBlockBuilder {
++                num_rows: 0,
++                columns: vec![],
++            },
++            const_sizes: vec![],
++        }
++    }
++
++    /// Appends the rows of `block`, and returns the concatenated block once
++    /// it reaches a threshold.
++    pub fn push(&mut self, block: DataBlock) -> Option<DataBlock
 ```
 
-**File**: `src/query/service/src/pipelines/processors/transforms/hash_join/desc.rs` (modified, +40/-72)
+**File**: `src/query/expression/tests/it/stream_partition.rs` (modified, +57/-0)
 ```diff
-@@ -23,19 +23,15 @@ use databend_common_expression::DataSchemaRef;
- use databend_common_expression::EvaluateOptions;
- use databend_common_expression::Evaluator;
- use databend_common_expression::Expr;
--use databend_common_expression::FieldIndex;
--use databend_common_expression::FilterExecutor;
- use databend_common_expression::FunctionContext;
- use databend_common_expression::RemoteExpr;
- use databend_common_expression::arrow::and_validities;
- use databend_common_expression::type_check::check_function;
- use databend_common_functions::BUILTIN_FUNCTIONS;
--use databend_common_settings::Settings;
- use databend_common_sql::executor::cast_expr_to_non_null_boolean;
- use parking_lot::RwLock;
+@@ -14,6 +14,7 @@
  
- use crate::physical_plans::HashJoin;
--use crate::physical_plans::NestedLoopFilterInfo;
- use crate::physical_plans::PhysicalRuntimeFilter;
- use crate::physical_plans::PhysicalRuntimeFilters;
- use crate::pipelines::processors::transforms::wrap_true_validity;
-@@ -72,7 +68,6 @@ pub struct HashJoinDesc {
-     pub(crate) probe_to_build: Vec<(usize, (bool, bool))>,
-     pub(crate) build_schema: DataSchemaRef,
-     pub(crate) probe_schema: DataSchemaRef,
--    pub(crate) nested_loop_filter: Option<NestedLoopFilterInfo>,
+ use std::collections::HashSet;
+ 
++use databend_common_expression::BlockConcatStream;
+ use databend_common_expression::BlockEntry;
+ use databend_common_expression::BlockPartitionStream;
+ use databend_common_expression::DataBlock;
+@@ -107,6 +108,62 @@ fn assert_same_as_expanded(
+     output
  }
  
- #[derive(Debug, Clone)]
-@@ -117,7 +112,31 @@ impl From<&PhysicalRuntimeFilter> for RuntimeFilterDesc {
-     }
- }
++#[test]
++fn test_concat_stream_cuts_as_one_partition() {
++    // Columns, runs of one constant, a new constant and a slice, cut at 10
++    // rows as a `BlockPartitionStream` with one partition cuts them.
++    let blocks = [
++        column_block(5, 0),
++        const_block(4, 5, "a"),
++        const_block(3, 9, "a"),
++        column_block(8, 10).slice(2..6),
++        const_block(2, 20, "b"),
++        column_block(7, 30),
++        const_block(1, 40, "b"),
++    ];
++    let mut stream = BlockConcatStream::create(10, 0);
++    let mut reference = BlockPartitionStream::create(10, 0, 1);
++    for block in &blocks {
++        let actual = stream.push(block.clone());
++        let mut expected = reference.partition(vec![0; block.num_rows()], block.clone(), true);
++        assert_eq!(actual.is_some(), expected.len() == 1);
++        if let (Some(a), Some((_, e))) = (&actual, expected.pop()) {
++            assert_same_values(a, &e);
++        }
++    }
++    let actual = stream.finish();
++    let expected = reference.finalize_partition(0);
++    assert_eq!(actual.is_some(), expected.is_some());
++    if let (Some(a), Some(e)) = (&actual, &expected) {
++        assert_same_values(a, e);
++    }
++    assert!(stream.finish().is_none());
++}
++
++#[test]
++fn test_concat_stream_keeps_one_constant() {
++    let mut stream = BlockConcatStream::create(0, 0);
++    assert!(stream.push(const_block(3, 0, "a")).is_none());
++    assert!(stream.push(const_block(4, 3, "a")).is_none());
++    assert_eq!(stream.num_rows(), 7);
++
++    let block = stream.finish().unwrap();
++    assert_eq!(block.num_rows(), 7);
++    assert_eq!(block.get_by_offset(1).as_scalar(), Some(&Scalar::Null));
++    assert_eq!(
++        block.get_by_offset(2).as_scalar(),
++        Some(&Scalar::String("a".to_string()))
++    );
++    assert_same_values(
++        &block,
++        &DataBlock::concat(&[
++            expanded(&const_block(3, 0, "a")),
++            expanded(&const_block(4, 3, "a")),
++        ])
++        .unwrap(),
++    );
++}
++
+ #[test]
+ fn test_partition_preserves_timezone_representations() {
+     use databend_common_column::types::timestamp_tz;
+```
+
+**File**: `src/query/service/src/physical_plans/physical_window.rs` (modified, +16/-18)
+```diff
+@@ -32,6 +32,7 @@ use databend_common_functions::BUILTIN_FUNCTIONS;
+ use databend_common_pipeline::core::Processor;
+ use databend_common_pipeline::core::ProcessorPtr;
+ use databend_common_pipeline_transforms::MemorySettings;
++use databend_common_pipeline_transforms::TransformPipelineHelper;
+ use databend_common_sql::ColumnSet;
+ use databend_common_sql::ScalarExpr;
+ use databend_common_sql::Symbol;
+@@ -68,10 +69,10 @@ use crate::pipelines::memory_settings::MemorySettingsExt;
+ use crate::pipelines::processors::transforms::FrameBound;
+ use crate::pipelines::processors::transforms::SortStrategy;
+ use crate::pipelines::processors::transforms::TransformWindow;
++use crate::pipelines::processors::transforms::TransformWindowPartitionBatch;
+ use crate::pipelines::processors::transforms::TransformWindowPartitionCollect;
+ use crate::pipelines::processors::transforms::WindowFunctionInfo;
+ use crate::pipelines::processors::transforms::WindowPartitionExchange;
+-use crate::pipelines::processors::transforms::WindowPartitionTopNExchange;
+ use crate::pipelines::processors::transforms::WindowSortDesc;
  
-+/// Cross joins, and Inner joins without equi keys, have nothing to hash: the
-+/// probe streams every build/probe pair through the Cross cursor, filtered by
-+/// the non-equi conditions. A rewritten scalar subquery keeps the Inner hash
-+/// join for its single-row check.
-+pub(crate) fn probes_all_pairs(
-+    join_type: JoinType,
-+    has_keys: bool,
-+    single_to_inner: Option<JoinType>,
-+) -> bool {
-+    match join_type {
-+        JoinType::Cross => true,
-+        JoinType::Inner => !has_keys && single_to_inner.is_none(),
-+        _ => false,
+ #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+@@ -449,23 +450,20 @@ fn apply_window_partition(
+         .map(|index| input_schema.index_of(&index.to_string()))
+         .collect::<Result<Vec<_>>>()?;
+ 
+-    if let Some((top, func)) = window_top_n(window) {
+-        builder.main_pipeline.exchange(
+-            num_processors,
+-            WindowPartitionTopNExchange::create(
+-                partition_by.clone(),
+-                sort_desc.clone(),
+-                top,
+-                func,
+-                num_partitions as u64,
+-            ),
+-        )?;
+-    } else {
+-        builder.main_pipeline.exchange(
+-            num_processors,
+-            WindowPartitionExchange::create(partition_by.clone(), num_partitions),
+-        )?;
+-    }
++    let top_n = window_top_n(window);
++    builder.main_pipeline.add_accumulating_transformer(|| {
++        let transform = TransformWindowPartitionBatch::create(num_partitions);
++        match top_n {
++            Some((top, func)) => {
++                transform.with_top_n(partition_by.clone(), sort_desc.clone(), top, func)
++            }
++            None => transform,
++        }
++    });
++    builder.main_pipeline.exchange(
++        num_processors,
++        WindowPartitionExchange::create(partition_by.clone(), num_partitions),
++    )?;
+ 
+     let window_spill_settings = MemorySettings::from_window_settings(&builder.ctx)?;
+     let plan_schema = DataSchemaRefExt::create(input_schema.fields().clone());
+```
+
+**File**: `src/query/service/src/physical_plans/physical_window_partition.rs` (modified, +14/-15)
+```diff
+@@ -21,6 +21,7 @@ use databend_common_exception::Result;
+ use databend_common_expression::SortColumnDescription;
+ use databend_common_pipeline::core::ProcessorPtr;
+ use databend_common_pipeline_transforms::MemorySettings;
++use databend_common_pipeline_transforms::TransformPipelineHelper;
+ use databend_common_sql::Symbol;
+ use databend_common_sql::executor::physical_plans::SortDesc;
+ 
+@@ -33,9 +34,9 @@ use crate::physical_plans::physical_plan::PhysicalPlanMeta;
+ use crate::pipelines::PipelineBuilder;
+ use crate::pipelines::memory_settings::MemorySettingsExt;
+ use crate::pipelines::processors::transforms::SortStrategy;
++use crate::pipelines::processors::transforms::TransformWindowPartitionBatch;
+ use crate::pipelines::processors::transforms::TransformWindowPartitionCollect;
+ use crate::pipelines::processors::transforms::WindowPartitionExchange;
+-use crate::pipelines::processors::transforms::WindowPartitionTopNExchange;
+ 
+ #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+ pub struct WindowPartition {
+@@ -121,25 +122,23 @@ impl IPhysicalPlan for WindowPartition {
+             })
+             .collect::<Result<Vec<_>>>()?;
+ 
+-        if let Some(top_n) = &self.top_n
+-            && top_n.top < 10000
+-        {
+-            builder.main_pipeline.exchange(
+-                num_processors,
+-                WindowPartitionTopNExchange::create(
++        let top_n = self.top_n.as_ref().filter(|top_n| top_n.top < 10000);
++        builder.main_pipeline.add_accumulating_transformer(|| {
++            let transform = TransformWindowPartitionBatch::create(num_partitions);
++            match top_n {
++                Some(top_n) => transform.with_top_n(
+                     partition_by.clone(),
+                     sort_desc.clone(),
+                     top_n.top,
+                     top_n.func,
+-                    num_partitions as u64,
+                 ),
+-            )?;
+-        } else {
+-            builder.main_pipeline.exchange(
+-                num_processors,
+-                WindowPartitionExchange::create(partition_by.clone(), num_partitions),
+-            )?;
+-        }
++                None => transform,
++            }
++        });
++        builder.main_pipeline.exchange(
++            num_processors,
++            WindowPartitionExchange::create(partition_by.clone(), num_partitions),
++        )?;
+ 
+         let window_spill_settings = MemorySettings::from_window_settings(&builder.ctx)?;
+ 
+```
+
+**File**: `src/query/service/src/pipelines/processors/transforms/window/partition/mod.rs` (modified, +2/-2)
+```diff
+@@ -13,14 +13,14 @@
+ // limitations under the License.
+ 
+ mod data_processor_strategy;
++mod transform_window_partition_batch;
+ mod transform_window_partition_collect;
+ mod window_partition_buffer;
+ mod window_partition_exchange;
+ mod window_partition_meta;
+-mod window_partition_partial_top_n_exchange;
+ 
+ pub use data_processor_strategy::*;
++pub use transform_window_partition_batch::*;
+ pub use transform_window_partition_collect::*;
+ pub use window_partition_exchange::*;
+ pub use window_partition_meta::*;
+-pub use window_partition_partial_top_n_exchange::*;
+```
+
+**File**: `src/query/service/src/pipelines/processors/transforms/window/partition/transform_window_partition_batch.rs` (added, +518/-0)
+```diff
+@@ -0,0 +1,518 @@
++// Copyright 2021 Datafuse Labs
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++use databend_common_exception::Result;
++use databend_common_expression::BlockConcatStream;
++use databend_common_expression::DataBlock;
++use databend_common_expression::FromData;
++use databend_common_expression::ProjectedBlock;
++use databend_common_expression::SortColumnDescription;
++use databend_common_expression::SortCompare;
++use databend_common_expression::Value;
++use databend_common_expression::group_hash_entries;
++use databend_common_expression::types::UInt64Type;
++use databend_common_expression::visitor::ValueVisitor;
++use databend_common_pipeline_transforms::AccumulatingTransform;
++
++use crate::physical_plans::WindowPartitionTopNFunc;
++
++/// A block is small when, scattered into the window partitions, each piece
++/// gets fewer rows than this on average and fewer bytes than
++/// `MIN_PIECE_BYTES_PER_COLUMN` per column. A constant column counts with its
++/// value repeated for every row, the size it can take once buffered.
++const MIN_PIECE_ROWS: usize = 64;
++
++const MIN_PIECE_BYTES_PER_COLUMN: usize = 1024;
++
++/// Prepares the input blocks of the window exchange, which scatters each
++/// block into `window_num_partitions` pieces.
++///
++/// A small block, such as the output of a selective filter, would be cut into
++/// pieces of one or two rows. Each piece holds its own allocations per
++/// column, which take more memory than its rows, and the window buffers the
++/// pieces until all input arrives. So small blocks go to a
++/// `BlockConcatStream`: their rows are appended as they arrive, so a small
++/// slice does not keep its source block, and they are sent as one block once
++/// they are not small together. Other blocks are sent as they are.
++///
++/// There is one buffer for each input stream, not one per window partition:
++/// the exchange scatters the batch into the window partitions afterwards.
++///
++/// With a top-n window function, the rows of each block that cannot rank
++/// within `top` of their partition are dropped first.
++pub struct TransformWindowPartitionBatch {
++    top_n: Option<PartitionTopN>,
++
++    min_rows: usize,
++    min_bytes_per_column: usize,
++    // Created by the first small block, as its threshold in bytes depends on
++    // the number of columns.
++    stream: Option<BlockConcatStream>,
++}
++
++impl TransformWindowPartitionBatch {
++    pub fn create(num_partitions: usize) -> TransformWindowPartitionBatch {
++        TransformWindowPartitionBatch {
++            top_n: None,
++            min_rows: num_partitions * MIN_PIECE_ROWS,
++            min_bytes_per_column: num_partitions * MIN_PIECE_BYTES_PER_COLUMN,
++            stream: None,
++        }
++    }
++
++    pub fn with_top_n(
++        mut self,
++        partition_indices: Vec<usize>,
++        order_by: Vec<SortColumnDescription>,
++        top: usize,
++        func: WindowPartitionTopNFunc,
++    ) -> TransformWindowPartitionBatch {
++        self.top_n = Some(PartitionTopN::new(partition_indices, order_by, top, func));
++        self
++    }
++
++    fn is_small(&self, rows: usize, bytes: usize, columns: usize) -> bool {
++        rows < self.min_rows && bytes < columns * self.min_bytes_per_column
 +    }
 +}
 +
- impl HashJoinDesc {
-+    pub(crate) fn probes_all_pairs(&self) -> bool {
-+        probes_all_pairs(
-+            self.join_type,
-+            !self.build_keys.is_empty(),
-+            self.single_to_inner,
-+        )
-+    }
++impl AccumulatingTransform for TransformWindowPartitionBatch {
++    const NAME: &'static str = "TransformWindowPartitionBatch";
 +
-     pub fn create(join: &HashJoin) -> Result<HashJoinDesc> {
-         let other_predicate = Self::join_predicate(&join.join_type, &join.non_equi_conditions)?;
++    fn transform(&mut self, block: DataBlock) -> Result<Vec<DataBlock>> {
++        if block.is_empty() {
++            return Ok(vec![]);
++        }
++
++        let block = match &self.top_n {
++            Some(top_n) => top_n.truncate(block)?,
++            None => block,
++        };
++
++        let rows = block.num_rows();
++        let columns = block.num_columns();
++        let bytes = block.estimate_block_size(columns);
++        // A block that is not small is sent as it is, even when small blocks
++        // are buffered: buffering it would copy all its rows. The window
++        // sorts each partition later, so the order of the blocks does not
++        // matter.
++        if !self.is_small(rows, bytes, columns) {
++            return Ok(vec![block]);
++        }
++
++        // The stream sends the buffered rows once they reach either
++        // threshold, which is when they are no longer small.
++        let (min_rows, min_bytes) = (self.min_rows, columns * self.min_bytes_per_column);
++        let stream = self
++            .stream
++            .get_or_insert_with(|| BlockConcatStream::crea
+```
+
+**File**: `src/query/service/src/pipelines/processors/transforms/window/partition/window_partition_exchange.rs` (modified, +38/-1)
+```diff
+@@ -51,7 +51,7 @@ impl Exchange for WindowPartitionExchange {
+         // Scatter the data block to different partitions.
+         let indices = hashes
+             .iter()
+-            .map(|&hash| (hash % self.num_partitions as u64) as u8)
++            .map(|&hash| (hash % self.num_partitions as u64) as u32)
+             .collect::<Vec<_>>();
+         let scatter_blocks = DataBlock::scatter(&data_block, &indices, self.num_partitions)?;
  
-@@ -150,7 +169,6 @@ impl HashJoinDesc {
-             probe_projection: join.probe_projections.clone(),
-             build_schema: join.build.output_schema()?,
-             probe_schema: join.probe.output_schema()?,
--            nested_loop_filter: join.nested_loop_filter.clone(),
-         })
+@@ -69,3 +69,40 @@ impl Exchange for WindowPartitionExchange {
+             .collect())
      }
- 
-@@ -276,72 +294,22 @@ impl HashJoinDesc {
-             }
-         }
-     }
--
--    pub fn create_nested_loop_desc(
--        &self,
--        settings: &Settings,
--        function_ctx: &FunctionContext,
--    ) -> Result<Option<NestedLoopDesc>> {
--        let nested_loop_join_threshold = settings.get_nested_loop_join_threshold()? as usize;
--        let block_size = settings.get_max_block_size()? as usize;
--        if nested_loop_join_threshold == 0 {
--            return Ok(None);
--        }
--
--        let Some(NestedLoopFilterInfo {
--            predicates,
--            projection,
--        }) = &self.nested_loop_filter
--        else {
--            return Ok(None);
--        };
--
--        let predicates = predicates
--            .iter()
--            .map(|x| Ok(x.as_expr(&BUILTIN_FUNCTIONS)))
--            .reduce(|lhs, rhs| {
--                check_function(None, "and_filters", &[], &[lhs?, rhs?], &BUILTIN_FUNCTIONS)
--            })
--            .transpose()?;
--        let Some(predicates) = predicates else {
--            return Ok(None);
--        };
--
--        let projections = projection.iter().copied().collect::<BTreeSet<usize>>();
--        let field_reorder = {
--            let mapper = projections.iter().copied().collect::<Vec<_>>();
--            debug_assert!(mapper.is_sorted());
--            let reorder = projection
--                .iter()
--                .map(|a| mapper.iter().position(|b| a == b).unwrap())
--                .collect::<Vec<_>>();
--
--            if reorder.iter().copied().enumerate().all(|(a, b)| a == b) {
--                None
--            } else {
--                Some(reorder)
--            }
--        };
--
--        Ok(Some(NestedLoopDesc {
--            filter: FilterExecutor::new(
--                predicates,
--                function_ctx.clone(),
--                block_size,
--                None,
--                &BUILTIN_FUNCTIONS,
--                false,
--            ),
--            projections,
--            field_reorder,
--            nested_loop_join_threshold,
--        }))
--    }
  }
- 
--pub struct NestedLoopDesc {
--    pub filter: FilterExecutor,
--    pub projections: BTreeSet<usize>,
--    pub field_reorder: Option<Vec<FieldIndex>>,
--    pub nested_loop_join_threshold: usize,
++
 +#[cfg(test)]
 +mod tests {
++    use databend_common_expression::BlockMetaInfoDowncast;
++    use databend_common_expression::FromData;
++    use databend_common_expression::types::Int32Type;
++
 +    use super::*;
 +
 +    #[test]
-+    fn joins_without_keys_probe_all_pairs() {
-+        assert!(probes_all_pairs(JoinType::Cross, false, No
-```
-
-**File**: `src/query/service/src/pipelines/processors/transforms/hash_join/hash_join_build_state.rs` (modified, +3/-10)
-```diff
-@@ -261,7 +261,7 @@ impl HashJoinBuildState {
-                 return Ok(());
-             }
- 
--            if self.hash_join_state.hash_join_desc.join_type == JoinType::Cross {
-+            if self.hash_join_state.probes_all_pairs() {
-                 return Ok(());
-             }
-             let unique_entry = matches!(
-@@ -770,7 +770,6 @@ impl HashJoinBuildState {
-                     "Aborted query, because the hash table is uninitialized.",
-                 ));
-             }
--            HashJoinHashTable::NestedLoop(_) => unreachable!(),
-             HashJoinHashTable::UniqueSerializer(table) => insert_binary_key! {
-               &mut table.hash_table, &table.hash_method, chunk, build_keys, valids, chunk_index as u32, entry_size, &mut local_raw_entry_spaces,
-             },
-@@ -817,9 +816,7 @@ impl HashJoinBuildState {
-         info!("finish build hash table with {} rows", build_num_rows);
- 
-         let data_blocks = &mut build_state.generation_state.chunks;
--        if !data_blocks.is_empty()
--            && self.hash_join_state.hash_join_desc.join_type != JoinType::Cross
--        {
-+        if !data_blocks.is_empty() && !self.hash_join_state.probes_all_pairs() {
-             let num_columns = data_blocks[0].num_columns();
-             let columns_data_type: Vec<DataType> = (0..num_columns)
-                 .map(|index| data_blocks[0].data_type(index))
-@@ -843,7 +840,7 @@ impl HashJoinBuildState {
-         if self.finalize_counter.fetch_sub(1, Ordering::AcqRel) == 1 {
-             self.build_generation_state();
-             if self.hash_join_state.need_next_round.load(Ordering::Acquire) {
--                let partition_id = if self.join_type() != JoinType::Cross {
-+                let partition_id = if !self.hash_join_state.probes_all_pairs() {
-                     // If build side has spilled data, we need to wait build side to next round.
-                     // Set partition id to `HashJoinState`
-                     let mut spill_partitions = self.hash_join_state.spilled_partitions.write();
-@@ -915,10 +912,6 @@ impl HashJoinBuildState {
-         Ok(())
-     }
- 
--    pub(crate) fn join_type(&self) -> JoinType {
--        self.hash_join_state.hash_join_desc.join_type
--    }
--
-     pub fn runtime_filter_desc(&self) -> &[RuntimeFilterDesc] {
-         &self.hash_join_state.hash_join_desc.runtime_filter.filters
-     }
-```
-
-**File**: `src/query/service/src/pipelines/processors/transforms/hash_join/hash_join_probe_state.rs` (modified, +15/-11)
-```diff
-@@ -43,6 +43,7 @@ use parking_lot::Mutex;
- use parking_lot::RwLock;
- use tokio::sync::Barrier;
- 
-+use super::PendingProbe;
- use super::ProbeState;
- use super::ProcessState;
- use crate::pipelines::processors::HashJoinState;
-@@ -152,25 +153,29 @@ impl HashJoinProbeState {
- 
-     /// Probe the hash table and retrieve matched rows as DataBlocks.
-     pub fn probe(&self, input: DataBlock, probe_state: &mut ProbeState) -> Result<Vec<DataBlock>> {
--        match self.hash_join_state.hash_join_desc.join_type {
--            JoinType::Cross => self.cross_join(input, probe_state),
--            _ => self.probe_join(input, probe_state),
-+        if self.hash_join_state.probes_all_pairs() {
-+            self.cross_join(input, probe_state)
-+        } else {
-+            self.probe_join(input, probe_state)
-         }
-     }
- 
-     pub fn next_probe(&self, probe_state: &mut ProbeState) -> Result<Vec<DataBlock>> {
--        let process_state = probe_state.process_state.as_ref().unwrap();
-+        let process_state = match probe_state.pending.take() {
-+            Some(PendingProbe::Hash(process_state)) => process_state,
-+            Some(PendingProbe::Cross(cursor)) => return self.next_cross_join(cursor, probe_state),
-+            None => unreachable!("no pending probe"),
-+        };
-+        let keys_state = process_state.keys_state.clone();
-+        probe_state.pending = Some(PendingProbe::Hash(process_state));
-         let hash_table = unsafe { &*self.hash_join_state.hash_table.get() };
-         with_join_hash_method!(|T| match hash_table {
-             HashJoinHashTable::T(table) => {
-                 // Build `keys` and get the hashes of `keys`.
--                let keys = table
--                    .hash_method
--                    .build_keys_accessor(process_state.keys_state.clone())?;
-+                let keys = table.hash_method.build_keys_accessor(keys_state)?;
-                 // Continue to probe hash table and process data blocks.
-                 self.result_blocks(probe_state, keys, &table.hash_table)
-             }
--            HashJoinHashTable::NestedLoop(_) => unreachable!(),
-             HashJoinHashTable::Null => Err(ErrorCode::AbortedQuery(
-                 "Aborted query, because the hash table is uninitialized.",
-             )),
-@@ -328,12 +333,12 @@ impl HashJoinProbeState {
-                     .build_keys_hashes(&keys_state, &mut probe_state.hashes);
-                 let keys = table.hash_method.build_keys_accessor(keys_state.clone())?;
- 
--                probe_state.process_state = Some(ProcessState {
-+                probe_state.pending = Some(PendingProbe::Hash(ProcessState {
-                     input,
-                     probe_has_null,
-                     keys_state,
-                     next_idx: 0,
--                });
-+                }));
- 
-                 // Perform a round of hash table probe.
-                 probe_state.probe_with_selection = prefer_early_filtering;
-@@ -379,7 +384,6 @@ impl HashJoinProbeState {
-                 // Continue to probe hash table and process data blocks.
-                 self.result_blocks(probe_state, keys, &table.hash_table)
-             }
--            HashJoinHashTable::NestedLoop(_) => unreachable!(),
-             HashJoinHashTable::Null => Err(ErrorCode::AbortedQuery(
-                 "Aborted query, because the hash table is uninitialized.",
-             )),
-```
-
-**File**: `src/query/service/src/pipelines/processors/transforms/hash_join/hash_join_spiller.rs` (modified, +26/-12)
-```diff
-@@ -45,6 +45,8 @@ pub struct HashJoinSpiller {
-     partition_buffer: PartitionBuffer,
-     partition_threshold: usize,
-     join_type: JoinType,
-+    /// Spill and replay every pair in rounds rather than by hash partition.
-+    probes_all_pairs: bool,
-     join_state: Arc<HashJoinState>,
-     is_build_side: bool,
-     func_ctx: FunctionContext,
-@@ -54,6 +56,9 @@ pub struct HashJoinSpiller {
-     hash_method: HashMethodKind,
-     /// Next restore file index, only used for cross join.
-     next_restore_file: usize,
-+    /// The retained probe buffer must be replayed once per build round, even
-+    /// when it has no columns and therefore no spill files advance the cursor.
-+    replay_buffer_restored: bool,
-     block_partition_stream: BlockPartitionStream,
- }
- 
-@@ -100,6 +105,7 @@ impl HashJoinSpiller {
-         let partition_buffer = PartitionBuffer::create(num_partitions);
- 
-         let join_type = join_state.join_type();
-+        let probes_all_pairs = join_state.probes_all_pairs();
-         Ok(Self {
-             spiller,
-             partition_buffer,
-@@ -108,10 +114,12 @@ impl HashJoinSpiller {
-             hash_keys,
-             hash_method,
-             join_type,
-+            probes_all_pairs,
-             join_state,
-             func_ctx: ctx.get_function_context()?,
-             is_build_side,
-             next_restore_file: 0,
-+            replay_buffer_restored: false,
-             block_partition_stream: BlockPartitionStream::create(0, block_bytes, num_partitions),
-         })
-     }
-@@ -122,7 +130,7 @@ impl HashJoinSpiller {
-             return Ok(());
-         }
- 
--        if self.join_type == JoinType::Cross {
-+        if self.probes_all_pairs {
-             return self.cross_buffer(data_blocks);
-         }
- 
-@@ -167,7 +175,7 @@ impl HashJoinSpiller {
-         data_blocks: Vec<DataBlock>,
-         partition_need_to_spill: Option<&HashSet<usize>>,
-     ) -> Result<Vec<DataBlock>> {
--        if self.join_type == JoinType::Cross {
-+        if self.probes_all_pairs {
-             return self
-                 .cross_spill(&data_blocks, partition_need_to_spill)
-                 .await;
-@@ -271,11 +279,15 @@ impl HashJoinSpiller {
-                     unspilled_data_blocks.push(data_block);
-                     continue;
-                 }
-+                // Parquet cannot preserve row counts without columns. Keep
-+                // these blocks in the replay buffer even at a zero threshold.
-+                let has_columns = data_block.num_columns() > 0;
-                 self.partition_buffer
-                     .add_data_block(partition_id, data_block);
--                if let Some(data_blocks) = self
--                    .partition_buffer
--                    .fetch_data_blocks(partition_id, &fetch_option)
-+                if has_columns
-+                    && let Some(data_blocks) = self
-+                        .partition_buffer
-+                        .fetch_data_blocks(partition_id, &fetch_option)
-                 {
-                     self.spiller
-                         .spill_with_partition(partition_id, data_blocks)
-@@ -291,10 +303,11 @@ impl HashJoinSpiller {
-         let mut data_blocks = vec![];
-         if self.need_read_buffer() {
-             // 1. restore data from SpillBuffer.
--            if self.join_type == JoinType::Cross {
-+            if self.probes_all_pairs {
-                 if let Some(buffer_blocks) = self.restore_cross_buffer(partition_id)? {
-                     data_blocks.extend(buffer_blocks);
-                 }
-+                self.replay_buffer_restored = true;
-             } else if let Some(buffer_block) = self.restore_buffer(partition_id) {
-                 data_blocks.push(buffer_block);
-             }
-@@ -310,7 +323,7 @@ impl HashJoinSpiller {
-                 }
-             }
-         } else {
--            // Cross join.
-+            // All-pairs probe.
-             let spilled_files = self.spiller.private_spilled_files();
-             let file_index = self.next_restore_file;
- 
-@@ -350,7 +363,7 @@ impl HashJoinSpiller {
-         join_type: JoinType,
-         partition_bits: usize,
-     ) -> Result<Vec<DataBlock>> {
--        if join_type == JoinType::Cross {
-+        if self.probes_all_pairs {
-             Ok(vec![data_block.clone()])
-         } else {
-             let mut hashes = self.get_hashes(data_block, join_type)?;
-@@ -407,22 +420,23 @@ impl HashJoinSpiller {
- 
-     pub fn has_next_restore_file(&self) -> bool {
-         self.next_restore_file < self.spiller.private_spilled_files().len()
--            || (self.next_restore_file == 0 && !self.partition_buffer.is_partition_empty(0))
-+            || (!self.replay_buffer_restored && !self.partition_buffer.is_partition_empty(0))
-     }
- 
-     pub fn reset_next_restore_file(&mut self) {
-         self.next_restore_file = 0;
-+        self.replay_buffer_restored = false;
-     }
- 
-     pub fn need_read_buffer(&self) -> bool {
--        self.join_type != JoinType::Cross || self.next_restore_file == 0
-+ 
-```
-
-**File**: `src/query/service/src/pipelines/processors/transforms/hash_join/hash_join_state.rs` (modified, +25/-1)
-```diff
-@@ -75,7 +75,6 @@ pub struct FixedKeyHashJoinHashTable<T: HashtableKeyable + FixedKey, const UNIQU
- 
- pub enum HashJoinHashTable {
-     Null,
--    NestedLoop(Vec<DataBlock>),
-     Serializer(SerializerHashJoinHashTable),
-     UniqueSerializer(UniqueSerializerHashJoinHashTable),
-     SingleBinary(SingleBinaryHashJoinHashTable),
-@@ -234,6 +233,31 @@ impl HashJoinState {
-         self.hash_join_desc.join_type
-     }
- 
-+    /// See [`probes_all_pairs`]. Merge into tracks matches per build row, so it
-+    /// keeps the hash join probe.
-+    ///
-+    /// [`probes_all_pairs`]: super::probes_all_pairs
-+    pub(crate) fn probes_all_pairs(&self) -> bool {
-+        self.hash_join_desc.probes_all_pairs() && self.merge_into_state.is_none()
-+    }
++    fn test_more_than_256_partitions() -> Result<()> {
++        let exchange = WindowPartitionExchange::create(vec![0], 512);
++        let block =
++            DataBlock::new_from_columns(vec![Int32Type::from_data((0..4096).collect::<Vec<_>>())]);
 +
-+    /// The build side of an all-pairs probe without projected columns is only
-+    /// a row count.
-+    pub(crate) fn is_row_count_build(&self) -> bool {
-+        self.probes_all_pairs() && self.hash_join_desc.build_projection.is_empty()
-+    }
++        let mut outputs = exchange.partition(block, 1)?;
++        assert_eq!(outputs.len(), 1);
++        let meta = outputs
++            .pop()
++            .and_then(|block| block.get_owned_meta())
++            .and_then(WindowPartitionMeta::downcast_from)
++            .unwrap();
 +
-+    /// Whether probing updates build-side state that is read after the probe
-+    /// output: the final scan, merge into, or the RightSingle row check.
-+    pub(crate) fn probe_mutates_build_side(&self) -> bool {
-+        self.need_final_scan()
-+            || self.merge_into_state.is_some()
-+            || matches!(
-+                self.hash_join_desc.single_to_inner,
-+                Some(JoinType::RightSingle)
-+            )
-+    }
-+
-     pub fn need_outer_scan(&self) -> bool {
-         matches!(
-             self.hash_join_desc.join_type,
-```
-
-**File**: `src/query/service/src/pipelines/processors/transforms/hash_join/mod.rs` (modified, +2/-1)
-```diff
-@@ -33,12 +33,13 @@ mod util;
- pub use common::wrap_nullable_block;
- pub use common::wrap_true_validity;
- pub use desc::HashJoinDesc;
--pub use desc::NestedLoopDesc;
- pub use desc::RuntimeFilterDesc;
-+pub(crate) use desc::probes_all_pairs;
- pub use hash_join_build_state::HashJoinBuildState;
- pub use hash_join_probe_state::HashJoinProbeState;
- pub use hash_join_spiller::HashJoinSpiller;
- pub use hash_join_state::*;
-+pub(crate) use probe_state::PendingProbe;
- pub use probe_state::ProbeState;
- pub use probe_state::ProcessState;
- pub use runtime_filter::*;
-```
-
-**File**: `src/query/service/src/pipelines/processors/transforms/hash_join/probe_join/cross_join.rs` (modified, +554/-40)
-```diff
-@@ -12,65 +12,579 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
-+use std::collections::BTreeSet;
-+
- use databend_common_exception::Result;
-+use databend_common_expression::BlockEntry;
-+use databend_common_expression::ChunkIndex;
- use databend_common_expression::DataBlock;
-+use databend_common_expression::DataBlockVec;
-+use databend_common_expression::FilterExecutor;
-+use databend_common_pipeline::core::check_interrupt;
- 
- use crate::pipelines::processors::transforms::hash_join::HashJoinProbeState;
-+use crate::pipelines::processors::transforms::hash_join::PendingProbe;
- use crate::pipelines::processors::transforms::hash_join::ProbeState;
-+use crate::pipelines::processors::transforms::merge_with_constant_row;
-+
-+/// A cursor over one probe block and the current build round. Build chunks remain
-+/// owned by the build state; only a bounded window, never an unbounded
-+/// build concatenation or Cartesian product, may be retained.
-+pub(crate) struct CrossJoinProbe {
-+    probe: DataBlock,
-+    build_block_index: usize,
-+    build_row_index: usize,
-+    probe_offset: usize,
-+    remaining_build_rows: usize,
-+    // Shared by every probe row before advancing to the next build window.
-+    // Only small chunks need gathering; a single-chunk window is a slice.
-+    window: Option<DataBlock>,
-+}
-+
-+impl CrossJoinProbe {
-+    fn new(probe: DataBlock, build_rows: usize) -> Self {
-+        Self {
-+            probe,
-+            build_block_index: 0,
-+            build_row_index: 0,
-+            probe_offset: 0,
-+            remaining_build_rows: build_rows,
-+            window: None,
-+        }
-+    }
-+
-+    fn is_finished(&self, build_blocks: &[DataBlock]) -> bool {
-+        self.probe.is_empty()
-+            || (self.window.is_none() && self.build_block_index >= build_blocks.len())
-+    }
-+
-+    fn advance_build(&mut self, build_blocks: &[DataBlock], count: usize) {
-+        self.build_row_index += count;
-+        self.remaining_build_rows -= count;
-+        if self.build_row_index == build_blocks[self.build_block_index].num_rows() {
-+            self.build_block_index += 1;
-+            self.build_row_index = 0;
-+        }
-+    }
-+
-+    fn skip_empty_chunks(&mut self, build_blocks: &[DataBlock]) -> Result<()> {
-+        while self.build_block_index < build_blocks.len()
-+            && build_blocks[self.build_block_index].num_rows() == 0
-+        {
-+            check_interrupt()?;
-+            self.build_block_index += 1;
-+        }
++        let rows = meta
++            .partitioned_data
++            .iter()
++            .map(|(_, block)| block.num_rows())
++            .sum::<usize>();
++        assert_eq!(rows, 4096);
++        assert!(
++            meta.partitioned_data
++                .iter()
++                .any(|(id, block)| *id >= 256 && !block.is_empty())
++        );
 +        Ok(())
 +    }
-+
-+    fn build_window(
-+        &mut self,
-+        build_blocks: &[DataBlock],
-+        build_projection: &BTreeSet<usize>,
-+        max_block_size: usize,
-+    ) -> Result<DataBlock> {
-+        let build = &build_blocks[self.build_block_index];
-+        let available = build.num_rows() - self.build_row_index;
-+        if available >= max_block_size
-+            || available == self.remaining_build_rows
-+            || u32::try_from(max_block_size).is_err()
-+        {
-+            // A window fits in this chunk. Keep its shared representation,
-+            // including a short final window; never gather a single range.
-+            let count = available.min(max_block_size);
-+            let block = build
-+                .slice(self.build_row_index..self.build_row_index + count)
-+                .project(build_projection);
-+            self.advance_build(build_blocks, count);
-+            return Ok(block);
-+        }
-+
-+        // Many tiny chunks would otherwise cause tiny output blocks. Gather
-+        // only this window, once, and reuse it for all rows of this probe.
-+        let count = max_block_size.min(self.remaining_build_rows);
-+        let mut blocks = DataBlockVec::default();
-+        let mut indices = ChunkIndex::default();
-+        while indices.num_rows() < count {
-+            check_interrupt()?;
-+            self.skip_empty_chunks(build_blocks)?;
-+            let build = &build_blocks[self.build_block_index];
-+            let rows = (count - indices.num_rows()).min(build.num_rows() - self.build_row_index);
-+            // Both conversions fit: the window has <= u32::MAX rows and
-+            // every registered block is a nonempty slice within that window.
-+            let index = u32::try_from(blocks.block_rows().len()).unwrap();
-+            let len = u32::try_from(rows).unwrap();
-+            blocks.push(
-+                build
-+                    .slice(self.build_row_index..self.build_row_index + rows)
-+                    .project(build_projection),
-+            )?;
-+            indices.push_merge_range(index, 0, len);
-+            self.advance_build(build_blocks, rows);
-+        }
-+        Ok(blocks.take(&indices))
-+    }
-+
-+    fn next_candidate(
-+        &mut self,
-+        build_blocks: &[DataBlock],
-+        build_projection: &BTreeSet<usize>,
-+        max_block_size: usize,
-+    ) -> Result<Option<DataBlock>> {
-+        check_interrupt()?;
-+        if self.is_finished(b
++}
+```
+
+**File**: `src/query/service/src/pipelines/processors/transforms/window/partition/window_partition_partial_top_n_exchange.rs` (removed, +0/-309)
+```diff
+@@ -1,309 +0,0 @@
+-// Copyright 2021 Datafuse Labs
+-//
+-// Licensed under the Apache License, Version 2.0 (the "License");
+-// you may not use this file except in compliance with the License.
+-// You may obtain a copy of the License at
+-//
+-//     http://www.apache.org/licenses/LICENSE-2.0
+-//
+-// Unless required by applicable law or agreed to in writing, software
+-// distributed under the License is distributed on an "AS IS" BASIS,
+-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-// See the License for the specific language governing permissions and
+-// limitations under the License.
+-
+-use std::sync::Arc;
+-
+-use databend_common_exception::Result;
+-use databend_common_expression::DataBlock;
+-use databend_common_expression::SortColumnDescription;
+-use databend_common_expression::SortCompare;
+-use databend_common_expression::group_hash_value_spread;
+-use databend_common_expression::visitor::ValueVisitor;
+-use databend_common_pipeline::basic::Exchange;
+-
+-use super::WindowPartitionMeta;
+-use crate::physical_plans::WindowPartitionTopNFunc;
+-
+-pub struct WindowPartitionTopNExchange {
+-    partition_indices: Box<[usize]>,
+-    top: usize,
+-    func: WindowPartitionTopNFunc,
+-
+-    sort_desc: Box<[SortColumnDescription]>,
+-    num_partitions: u64,
+-}
+-
+-impl WindowPartitionTopNExchange {
+-    pub fn create(
+-        partition_indices: Vec<usize>,
+-        order_by: Vec<SortColumnDescription>,
+-        top: usize,
+-        func: WindowPartitionTopNFunc,
+-        num_partitions: u64,
+-    ) -> Arc<WindowPartitionTopNExchange> {
+-        assert!(top > 0);
+-        let partition_indices = partition_indices.into_boxed_slice();
+-        let sort_desc = partition_indices
+-            .iter()
+-            .map(|&offset| SortColumnDescription {
+-                offset,
+-                asc: true,
+-                nulls_first: false,
+-            })
+-            .chain(order_by)
+-            .collect::<Vec<_>>()
+-            .into();
+-
+-        Arc::new(WindowPartitionTopNExchange {
+-            num_partitions,
+-            partition_indices,
+-            top,
+-            func,
+-            sort_desc,
+-        })
+-    }
+-}
+-
+-impl Exchange for WindowPartitionTopNExchange {
+-    const NAME: &'static str = "WindowTopN";
+-    const SKIP_EMPTY_DATA_BLOCK: bool = true;
+-
+-    fn partition(&self, block: DataBlock, n: usize) -> Result<Vec<DataBlock>> {
+-        let partition_permutation = self.partition_permutation(&block);
+-
+-        // Partition the data blocks to different processors.
+-        let mut output_data_blocks = vec![vec![]; n];
+-        for (partition_id, indices) in partition_permutation.into_iter().enumerate() {
+-            output_data_blocks[partition_id % n]
+-                .push((partition_id, block.take(indices.as_slice())?));
+-        }
+-
+-        // Union data blocks for each processor.
+-        Ok(output_data_blocks
+-            .into_iter()
+-            .map(WindowPartitionMeta::create)
+-            .map(DataBlock::empty_with_meta)
+-            .collect())
+-    }
+-}
+-
+-impl WindowPartitionTopNExchange {
+-    fn partition_permutation(&self, block: &DataBlock) -> Vec<Vec<u32>> {
+-        let rows = block.num_rows();
+-        let mut sort_compare = SortCompare::with_force_equality(self.sort_desc.to_vec(), rows);
+-
+-        for &offset in &self.partition_indices {
+-            let array = block.get_by_offset(offset).value();
+-            sort_compare.visit_value(array).unwrap();
+-            sort_compare.increment_column_index();
+-        }
+-
+-        let partition_equality = sort_compare.equality_index().to_vec();
+-
+-        for desc in self.sort_desc.iter().skip(self.partition_indices.len()) {
+-            let array = block.get_by_offset(desc.offset).value();
+-            sort_compare.visit_value(array).unwrap();
+-            sort_compare.increment_column_index();
+-        }
+-
+-        let full_equality = sort_compare.equality_index().to_vec();
+-        let permutation = sort_compare.take_permutation();
+-
+-        let hash_indices = std::iter::once(permutation[0])
+-            .chain(
+-                partition_equality
+-                    .iter()
+-                    .enumerate()
+-                    .filter_map(|(i, &eq)| if eq == 0 { Some(permutation[i]) } else { None }),
+-            )
+-            .collect::<Vec<_>>();
+-
+-        let mut hashes = vec![0u64; rows];
+-        for (i, &offset) in self.partition_indices.iter().enumerate() {
+-            let entry = block.get_by_offset(offset);
+-            group_hash_value_spread(&hash_indices, entry.value(), i == 0, &mut hashes).unwrap();
+-        }
+-
+-        let mut partition_permutation = vec![Vec::new(); self.num_partitions as usize];
+-
+-        let mut start = 0;
+-        let mut cur = 0;
+-        while cur < rows {
+-            let partition = &mut partition_permutation
+-                [(hashes[permutation[start] as usize] % self.num_partitions) as usize];
+-            partition.push(permutation[start]);
+-
+-          
 ```
 
 ---
 
-### Incident Patch 2: `e6c0a8fb` (2026-11-18)
-**Commit Message**: fix(query): prevent scalar range integer overflow (#21115)
+### Incident Patch 2: `76caf9e8` (2026-11-19)
+**Commit Message**: fix(query): enforce stage WRITE on HTTP uploads (#21126)
 
-* fix(query): prevent scalar range integer overflow
+* fix(query): enforce stage WRITE on HTTP uploads (#21094)
 
-* refactor(query): keep scalar range arithmetic 64-bit
+* test(query): cover HTTP stage WRITE in the stateless suite
 
-**File**: `src/query/functions/src/scalars/array.rs` (modified, +18/-16)
+**File**: `src/query/service/src/interpreters/access/mod.rs` (modified, +1/-0)
 ```diff
-@@ -319,15 +319,18 @@ pub fn register(registry: &mut FunctionRegistry) {
-         "range",
-         |_, _, _| FunctionDomain::Full,
-         |start, end, ctx| {
--            const MAX: i64 = 500000000;
--            if end - start > MAX {
-+            const MAX: u64 = 500000000;
-+            if start >= end {
-+                return vec![].into();
-+            }
-+            let len = start.abs_diff(end);
-+            if len > MAX {
-                 // the same behavior as Clickhouse
-                 ctx.set_error(
-                     0,
-                     format!(
-                         "the allowed maximum values of range function is {}, but got {}",
--                        MAX,
--                        end - start
-+                        MAX, len
-                     ),
-                 );
-                 return vec![].into();
-@@ -340,15 +343,18 @@ pub fn register(registry: &mut FunctionRegistry) {
-         "range",
-         |_, _, _, _| FunctionDomain::Full,
-         |start, end, step, ctx| {
--            const MAX: i64 = 500000000;
-+            const MAX: u64 = 500000000;
-             if step == 0 {
-                 ctx.set_error(
-                     0,
-                     "step cannot be zero".to_string()
-                 );
-                 return vec![].into();
-             }
--            let len = ((end - start) / step).abs();
-+            if (step > 0 && start >= end) || (step < 0 && start <= end) {
-+                return vec![].into();
-+            }
-+            let len = start.abs_diff(end).div_ceil(step.unsigned_abs());
-             if len > MAX {
-                 // the same behavior as Clickhouse
-                 ctx.set_error(
-@@ -363,16 +369,12 @@ pub fn register(registry: &mut FunctionRegistry) {
-             }
-             let mut vals = Vec::with_capacity(len as usize);
-             let mut num = start;
--            if step > 0 {
--                while num < end {
--                    vals.push(num);
--                    num += step;
--                }
--            } else {
--                while num > end {
--                    vals.push(num);
--                    num += step;
--                }
-+            while (step > 0 && num < end) || (step < 0 && num > end) {
-+                vals.push(num);
-+                let Some(next) = num.checked_add(step) else {
-+                    break;
-+                };
-+                num = next;
-             }
-             vals.into()
-         },
+@@ -22,3 +22,4 @@ pub use management_mode_access::ManagementModeAccess;
+ pub use privilege_access::PrivilegeAccess;
+ pub(crate) use privilege_access::validate_share_management_for_connection;
+ pub(crate) use privilege_access::validate_share_object_by_id;
++pub(crate) use privilege_access::validate_stage_write_access;
 ```
 
-**File**: `src/query/functions/tests/it/scalars/array.rs` (modified, +46/-0)
+**File**: `src/query/service/src/interpreters/access/privilege_access.rs` (modified, +9/-0)
 ```diff
-@@ -130,6 +130,52 @@ fn test_range(file: &mut impl Write) {
-     run_ast(file, "range(-1, -10, -2)", &[]);
- }
+@@ -275,6 +275,15 @@ enum ObjectId {
+ // table functions that need `Super` privilege
+ const SYSTEM_TABLE_FUNCTIONS: [&str; 3] = ["fuse_amend", "set_cache_capacity", "send_notification"];
  
-+#[test]
-+fn test_range_overflow() {
-+    let mut mint = Mint::new("tests/it/scalars/testdata");
-+    let file = &mut mint.new_goldenfile("range_overflow.txt").unwrap();
-+
-+    for expr in [
-+        "range(10, 20, 9223372036854775806)",
-+        "range(10, 20, 9223372036854775798)",
-+        "range(-10, -20, -9223372036854775806)",
-+        "array_generate_range(10, 20, 9223372036854775806)",
-+        "range(10, 20, 9223372036854775797)",
-+        "range(10, 20, 100)",
-+        "range(0, 9223372036854775807, 4611686018427387904)",
-+        "range(0, -9223372036854775808, -4611686018427387904)",
-+        "range(-9223372036854775808, 9223372036854775807, 9223372036854775807)",
-+        "range(9223372036854775807, -9223372036854775808, -9223372036854775808)",
-+        "range(0, -9223372036854775808, -9223372036854775808)",
-+        "range(-9223372036854775808, 0, -1)",
-+        "range(9223372036854775807, -9223372036854775808)",
-+        "range(9223372036854775807, -9223372036854775808, 1)",
-+        "range(1, 1, -9223372036854775808)",
-+        "range(0, 1, 0)",
-+        "range(-9223372036854775808, 9223372036854775807)",
-+        "range(-9223372036854775808, 9223372036854775807, 1)",
-+        "range(9223372036854775807, -9223372036854775808, -1)",
-+        "range(-9223372036854775808, 0, 1)",
-+        "range(0, -9223372036854775808, -1)",
-+        // The limit applies to the actual length, not the truncated quotient.
-+        "range(0, 1000000001, 2)",
-+        "range(0, -1000000001, -2)",
-+    ] {
-+        run_ast(file, expr, &[]);
-+    }
-+
-+    let columns = &[
-+        ("a", Int64Type::from_data(vec![10, -10, i64::MIN, i64::MAX])),
-+        ("b", Int64Type::from_data(vec![20, -20, i64::MAX, i64::MIN])),
-+        (
-+            "c",
-+            Int64Type::from_data(vec![i64::MAX - 1, i64::MIN + 2, i64::MAX, i64::MIN]),
-+        ),
-+    ];
-+    run_ast(file, "range(a, b, c)", columns);
-+    run_ast(file, "array_generate_range(a, b, c)", columns);
++pub(crate) async fn validate_stage_write_access(
++    ctx: Arc<QueryContext>,
++    stage: &StageInfo,
++) -> Result<()> {
++    PrivilegeAccess::new(ctx)
++        .validate_stage_access(stage, UserPrivilegeType::Write)
++        .await
 +}
 +
- fn test_get(file: &mut impl Write) {
-     run_ast(file, "[1, 2]['a']", &[]);
-     run_ast(file, "[][1]", &[]);
+ pub(crate) async fn validate_share_management_for_connection(
+     ctx: Arc<QueryContext>,
+     connection: Option<&str>,
 ```
 
-**File**: `src/query/functions/tests/it/scalars/testdata/range_overflow.txt` (added, +249/-0)
+**File**: `src/query/service/src/interpreters/mod.rs` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,249 @@
-+ast            : range(10, 20, 9223372036854775806)
-+raw expr       : range(10, 20, 9223372036854775806)
-+checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(10_u8 AS Int64), CAST<UInt8>(20_u8 AS Int64), CAST<UInt64>(9223372036854775806_u64 AS Int64))
-+optimized expr : [10]
-+output type    : Array(Int64)
-+output domain  : [{10..=10}]
-+output         : [10]
-+
-+
-+ast            : range(10, 20, 9223372036854775798)
-+raw expr       : range(10, 20, 9223372036854775798)
-+checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(10_u8 AS Int64), CAST<UInt8>(20_u8 AS Int64), CAST<UInt64>(9223372036854775798_u64 AS Int64))
-+optimized expr : [10]
-+output type    : Array(Int64)
-+output domain  : [{10..=10}]
-+output         : [10]
-+
-+
-+ast            : range(-10, -20, -9223372036854775806)
-+raw expr       : range(-10, -20, -9223372036854775806)
-+checked expr   : range<Int64, Int64, Int64>(CAST<Int8>(-10_i8 AS Int64), CAST<Int8>(-20_i8 AS Int64), -9223372036854775806_i64)
-+optimized expr : [-10]
-+output type    : Array(Int64)
-+output domain  : [{-10..=-10}]
-+output         : [-10]
-+
-+
-+ast            : array_generate_range(10, 20, 9223372036854775806)
-+raw expr       : array_generate_range(10, 20, 9223372036854775806)
-+checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(10_u8 AS Int64), CAST<UInt8>(20_u8 AS Int64), CAST<UInt64>(9223372036854775806_u64 AS Int64))
-+optimized expr : [10]
-+output type    : Array(Int64)
-+output domain  : [{10..=10}]
-+output         : [10]
-+
-+
-+ast            : range(10, 20, 9223372036854775797)
-+raw expr       : range(10, 20, 9223372036854775797)
-+checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(10_u8 AS Int64), CAST<UInt8>(20_u8 AS Int64), CAST<UInt64>(9223372036854775797_u64 AS Int64))
-+optimized expr : [10]
-+output type    : Array(Int64)
-+output domain  : [{10..=10}]
-+output         : [10]
-+
-+
-+ast            : range(10, 20, 100)
-+raw expr       : range(10, 20, 100)
-+checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(10_u8 AS Int64), CAST<UInt8>(20_u8 AS Int64), CAST<UInt8>(100_u8 AS Int64))
-+optimized expr : [10]
-+output type    : Array(Int64)
-+output domain  : [{10..=10}]
-+output         : [10]
-+
-+
-+ast            : range(0, 9223372036854775807, 4611686018427387904)
-+raw expr       : range(0, 9223372036854775807, 4611686018427387904)
-+checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(0_u8 AS Int64), CAST<UInt64>(9223372036854775807_u64 AS Int64), CAST<UInt64>(4611686018427387904_u64 AS Int64))
-+optimized expr : [0, 4611686018427387904]
-+output type    : Array(Int64)
-+output domain  : [{0..=4611686018427387904}]
-+output         : [0, 4611686018427387904]
-+
-+
-+ast            : range(0, -9223372036854775808, -4611686018427387904)
-+raw expr       : range(0, -9223372036854775808, -4611686018427387904)
-+checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(0_u8 AS Int64), -9223372036854775808_i64, -4611686018427387904_i64)
-+optimized expr : [0, -4611686018427387904]
-+output type    : Array(Int64)
-+output domain  : [{-4611686018427387904..=0}]
-+output         : [0, -4611686018427387904]
-+
-+
-+ast            : range(-9223372036854775808, 9223372036854775807, 9223372036854775807)
-+raw expr       : range(-9223372036854775808, 9223372036854775807, 9223372036854775807)
-+checked expr   : range<Int64, Int64, Int64>(-9223372036854775808_i64, CAST<UInt64>(9223372036854775807_u64 AS Int64), CAST<UInt64>(9223372036854775807_u64 AS Int64))
-+optimized expr : [-9223372036854775808, -1, 9223372036854775806]
-+output type    : Array(Int64)
-+output domain  : [{-9223372036854775808..=9223372036854775806}]
-+output         : [-9223372036854775808, -1, 9223372036854775806]
-+
-+
-+ast            : range(9223372036854775807, -9223372036854775808, -9223372036854775808)
-+raw expr       : range(9223372036854775807, -9223372036854775808, -9223372036854775808)
-+checked expr   : range<Int64, Int64, Int64>(CAST<UInt64>(9223372036854775807_u64 AS Int64), -9223372036854775808_i64, -9223372036854775808_i64)
-+optimized expr : [9223372036854775807, -1]
-+output type    : Array(Int64)
-+output domain  : [{-1..=9223372036854775807}]
-+output         : [9223372036854775807, -1]
-+
-+
-+ast            : range(0, -9223372036854775808, -9223372036854775808)
-+raw expr       : range(0, -9223372036854775808, -9223372036854775808)
-+checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(0_u8 AS Int64), -9223372036854775808_i64, -9223372036854775808_i64)
-+optimized expr : [0]
-+output type    : Array(Int64)
-+output domain  : [{0..=0}]
-+output         : [0]
-+
-+
-+ast            : range(-9223372036854775808, 0, -1)
-+raw expr       : range(-9223372036854775808, 0, -1)
-+checked expr   : range<Int64, Int64, Int64>(-9223372036854775808_i64, CAST<UInt8>(0_u8 AS Int64), CAST<Int8>(-1_i8 AS Int64))
-+optimized expr : []
-+output type    : Array(Int64)
-+output domain  : []
-+output         : []
-+
-+
-+ast            : range(9223372036854775807, -9223372036854775808)
-+raw expr       : range(9223372036854775807, -922337203
-```
-
-**File**: `tests/sqllogictests/suites/query/functions/02_0061_function_array.test` (modified, +66/-0)
-```diff
-@@ -134,6 +134,72 @@ select range(-1, -20, -3)
- statement error
- select range(10, 5000000011)
+@@ -233,6 +233,7 @@ mod interpreter_virtual_column_vacuum;
+ pub(crate) mod util;
  
-+# Scalar range must stop before step addition overflows (issue #21109).
-+query TTT
-+select range(10, 20, 9223372036854775806), range(10, 20, 9223372036854775798), range(-10, -20, -9223372036854775806)
-+----
-+[10] [10] [-10]
-+
-+query TTT
-+select array_generate_range(10, 20, 9223372036854775806), range(10, 20, 9223372036854775797), range(10, 20, 100)
-+----
-+[10] [10] [10]
-+
-+query TT
-+select range(0, 9223372036854775807, 4611686018427387904), range(0, -9223372036854775808, -4611686018427387904)
-+----
-+[0,4611686018427387904] [0,-4611686018427387904]
-+
-+# The distance and the absolute value of step need not fit in Int64.
-+query TT
-+select range(-9223372036854775808, 9223372036854775807, 9223372036854775807), range(9223372036854775807, -9223372036854775808, -9223372036854775808)
-+----
-+[-9223372036854775808,-1,9223372036854775806] [9223372036854775807,-1]
-+
-+query T
-+select range(0, -9223372036854775808, -9223372036854775808)
-+----
-+[0]
-+
-+# Exercise vectorized evaluation, not just constant folding.
-+query TT
-+select range(10, 20, 9223372036854775806::int64 - number::int64), array_generate_range(10, 20, 9223372036854775806::int64 - number::int64) from numbers(2) order by number
-+----
-+[10] [10]
-+[10] [10]
-+
-+# Equal endpoints and a step pointing away from the endpoint produce empty arrays.
-+query TTTT
-+select range(9223372036854775807, -9223372036854775808), range(9223372036854775807, -9223372036854775808, 1), range(-9223372036854775808, 0, -1), range(1, 1, -9223372036854775808)
-+----
-+[] [] [] []
-+
-+statement error step cannot be zero
-+select range(0, 1, 0)
-+
-+# Reject oversized ranges before allocating, even when the distance overflows Int64.
-+statement error the allowed maximum values of range function is 500000000, but got 18446744073709551615
-+select range(-9223372036854775808, 9223372036854775807)
-+
-+statement error the allowed maximum values of range function is 500000000, but got 18446744073709551615
-+select range(-9223372036854775808, 9223372036854775807, 1)
-+
-+statement error the allowed maximum values of range function is 500000000, but got 18446744073709551615
-+select range(9223372036854775807, -9223372036854775808, -1)
-+
-+statement error the allowed maximum values of range function is 500000000, but got 9223372036854775808
-+select range(-9223372036854775808, 0, 1)
-+
-+statement error the allowed maximum values of range function is 500000000, but got 9223372036854775808
-+select range(0, -9223372036854775808, -1)
-+
-+# Non-divisible distances must round the element count up, not down.
-+statement error the allowed maximum values of range function is 500000000, but got 500000001
-+select range(0, 1000000001, 2)
-+
-+statement error the allowed maximum values of range function is 500000000, but got 500000001
-+select range(0, -1000000001, -2)
-+
- statement ok
- DROP DATABASE IF EXISTS array_func_test
- 
+ pub use access::ManagementModeAccess;
++pub(crate) use access::validate_stage_write_access;
+ pub use common::InterpreterQueryLog;
+ pub use common::QueryFinishHooks;
+ pub use hook::HookOperator;
 ```
 
----
-
-### Incident Patch 3: `169e5018` (2026-11-18)
-**Commit Message**: fix(query): check Decimal64 sum and avg overflow (#21114)
-
-**File**: `src/query/functions/src/aggregates/function_impl/avg.rs` (modified, +7/-15)
+**File**: `src/query/service/src/servers/http/v1/stage.rs` (modified, +10/-0)
 ```diff
-@@ -342,25 +342,17 @@ impl AvgBuilder {
-                     DecimalDataKind::DECIMAL => {
-                         let decimal_size =
-                             DecimalSize::new_unchecked(DECIMAL::MAX_PRECISION, size.scale().max(4));
--                        let should_check_overflow = DECIMAL::MAX_PRECISION > i64::MAX_PRECISION
--                            && size.precision() > i64::MAX_PRECISION;
-                         let scale_add = decimal_size.scale() - size.scale();
-                         let return_type = DataType::Decimal(decimal_size);
-                         let function_info = DecimalAvgData { scale_add };
+@@ -14,6 +14,7 @@
  
--                        if should_check_overflow {
--                            Self::create_decimal::<AggregateDecimalAvgState<true, DECIMAL>, DECIMAL>(
--                                build,
--                                return_type,
--                                function_info,
--                            )
--                        } else {
--                            Self::create_decimal::<AggregateDecimalAvgState<false, DECIMAL>, DECIMAL>(
--                                build,
--                                return_type,
--                                function_info,
--                            )
--                        }
-+                        // Division cannot recover a sum that has already overflowed,
-+                        // including when the input uses Decimal64 storage.
-+                        Self::create_decimal::<AggregateDecimalAvgState<true, DECIMAL>, DECIMAL>(
-+                            build,
-+                            return_type,
-+                            function_info,
-+                        )
-                     }
-                 })
-             }
-```
-
-**File**: `src/query/functions/src/aggregates/function_impl/sum.rs` (modified, +24/-56)
-```diff
-@@ -737,34 +737,19 @@ impl SumBuilder {
-                         let decimal_size =
-                             DecimalSize::new_unchecked(DECIMAL::MAX_PRECISION, size.scale());
-                         let return_type = DataType::Decimal(decimal_size);
--                        let should_check_overflow = DECIMAL::MAX_PRECISION > i64::MAX_PRECISION
--                            && size.precision() > i64::MAX_PRECISION;
--
--                        if should_check_overflow {
--                            build.create_unary_or_null::<
--                                AggregateDecimalSumState<true, DECIMAL>,
--                                DecimalType<DECIMAL>,
--                                DecimalType<DECIMAL>,
--                            >(
--                                return_type.wrap_nullable(),
--                                AggregateDecimalSumState::<true, DECIMAL>::state_description(
--                                    return_type,
--                                ),
--                                (),
--                            )
--                        } else {
--                            build.create_unary_or_null::<
--                                AggregateDecimalSumState<false, DECIMAL>,
--                                DecimalType<DECIMAL>,
--                                DecimalType<DECIMAL>,
--                            >(
--                                return_type.wrap_nullable(),
--                                AggregateDecimalSumState::<false, DECIMAL>::state_description(
--                                    return_type,
--                                ),
--                                (),
--                            )
--                        }
-+                        // Decimal64 has no wider accumulator: it needs the same
-+                        // precision checks as the other decimal storage widths.
-+                        build.create_unary_or_null::<
-+                            AggregateDecimalSumState<true, DECIMAL>,
-+                            DecimalType<DECIMAL>,
-+                            DecimalType<DECIMAL>,
-+                        >(
-+                            return_type.wrap_nullable(),
-+                            AggregateDecimalSumState::<true, DECIMAL>::state_description(
-+                                return_type,
-+                            ),
-+                            (),
-+                        )
-                     }
-                 })
-             }
-@@ -809,34 +794,17 @@ impl SumBuilder {
-                         let decimal_size =
-                             DecimalSize::new_unchecked(DECIMAL::MAX_PRECISION, size.scale());
-                         let return_type = DataType::Decimal(decimal_size);
--                        let should_check_overflow = DECIMAL::MAX_PRECISION > i64::MAX_PRECISION
--                            && size.precision() > i64::MAX_PRECISION;
--
--                        if should_check_overflow {
--                            build.create_unary_distinct_or_null::<
--                                AggregateDecimalSumState<true, DECIMAL>,
--                                DecimalType<DECIMAL>,
--                                DecimalType<DECIMAL>,
--                            >(
--                                return_type.wrap_nullable(),
--                                AggregateDecimalSumState::<true, DECIMAL>::state_description(
--                                    return_type,
--                                ),
--                                (),
--                            )
--                        } else {
--                            build.create_unary_distinct_or_null::<
--                                AggregateDecimalSumState<false, DECIMAL>,
--                                DecimalType<DECIMAL>,
--                                DecimalType<DECIMAL>,
--                            >(
--                                return_type.wrap_nullable(),
--                                AggregateDecimalSumState::<false, DECIMAL>::state_description(
--                                    return_type,
--                                ),
--                                (),
--                            )
--                        }
-+                        build.create_unary_distinct_or_null::<
-+                            AggregateDecimalSumState<true, DECIMAL>,
-+                            DecimalType<DECIMAL>,
-+                            DecimalType<DECIMAL>,
-+                        >(
-+                            return_type.wrap_nullable(),
-+                            AggregateDecimalSumState::<true, DECIMAL>::state_description(
-+                                return_type,
-+                            ),
-+                            (),
-+                        )
-                     }
-                 })
-             }
-```
-
-**File**: `src/query/functions/tests/it/aggregates/sum.rs` (modified, +139/-0)
-```diff
-@@ -8,6 +8,7 @@ use databend_common_expression::ColumnBuilder;
- use databend_common_expression::FromData;
- use databend_common_expression::Scalar;
- use databend_common_expression::ScalarRef;
-+use databend_common_expression::StateSerdeItem;
- use databend_common_expression::aggregate::aggregate_function::*;
- use databend_common_expression::aggregate_function::AggregateStateWritePolicy;
- use databend_common_expression::types::ArgType;
-@@ -16,6 +17,7 @@ use databend_common_expression::types::BooleanType;
- use databend_common_expression::types::DataType;
- use databend_common_expression::types::Decimal64Type;
- use databend_common_expression::types::Decimal128Type;
-+use databend_common_expression::types::DecimalScalar;
- use databend_common_expression::types::DecimalSize;
- use databend_common_expression::types::Float64Type;
- use databend_common_expression::types::Int32Type;
-@@ -191,6 +193,143 @@ fn test_sum_group_by() {
-     run_sum_cases(file, simulate_two_groups_group_by);
- }
+ use async_compat::CompatExt;
+ use databend_common_catalog::session_type::SessionType;
++use databend_common_exception::ErrorCode;
+ use databend_common_meta_app::principal::StageInfo;
+ use databend_common_sql::binder::validate_stage_path_traversal_policy;
+ use databend_common_storage::init_stage_operator;
+@@ -22,6 +23,7 @@ use futures_util::AsyncWriteExt;
+ use futures_util::io;
+ use http::StatusCode;
+ use poem::Request;
++use poem::error::Forbidden;
+ use poem::error::InternalServerError;
+ use poem::error::Result as PoemResult;
+ use poem::web::Json;
+@@ -31,6 +33,7 @@ use serde::Serialize;
  
-+// Decimal64 aggregates retain Decimal64 states/results, so overflow must be
-+// reported even when the average or a later cancellation would fit.
-+#[test]
-+fn test_decimal64_aggregate_overflow() -> Result<()> {
-+    let max = 999_999_999_999_999_999_i64;
-+    for name in ["sum", "sum_distinct", "avg", "avg_distinct"] {
-+        for scale in [0, 17] {
-+            for sign in [1, -1] {
-+                let size = DecimalSize::new_unchecked(18, scale);
-+                // The second value is distinct; both SUM variants must overflow.
-+                let values = vec![sign * max, sign * (max - 1)];
-+                let entries = [Decimal64Type::from_data_with_size(values, Some(size)).into()];
-+                for serialized in [false, true] {
-+                    let error = eval_v2_aggr(name, &entries, 2, serialized).unwrap_err();
-+                    assert_eq!(error.code(), 1049, "{name}: {error}");
-+                    assert!(error.message().contains("Decimal overflow"));
-+                }
-+            }
-+        }
-+    }
-+
-+    // Match the issue's ten-row native-i64 wraparound, including constants.
-+    let size = DecimalSize::new_unchecked(18, 17);
-+    for entry in [
-+        Decimal64Type::from_data_with_size(vec![max; 10], Some(size)).into(),
-+        BlockEntry::new_const_column(
-+            DataType::Decimal(size),
-+            Scalar::Decimal(DecimalScalar::Decimal64(max, size)),
-+            10,
-+        ),
-+    ] {
-+        for name in ["sum", "avg"] {
-+            let error = eval_v2_aggr(name, std::slice::from_ref(&entry), 10, false).unwrap_err();
-+            assert_eq!(error.code(), 1049);
-+        }
-+    }
-+    Ok(())
-+}
-+
-+#[test]
-+fn test_decimal64_aggregate_boundaries_and_nulls() -> Result<()> {
-+    let max = 999_999_999_999_999_999_i64;
-+    let size = DecimalSize::new_unchecked(18, 17);
-+    for name in ["sum", "sum_distinct", "avg", "avg_distinct"] {
-+        for sign in [1, -1] {
-+            // The masked-out value would overflow if it were accumulated.
-+            let entries =
-+                [
-+                    Decimal64Type::from_data_with_size(vec![sign * max, sign * max], Some(size))
-+                        .wrap_nullable(Some(Bitmap::from([true, false])))
-+                        .into(),
-+                ];
-+            for serialized in [false, true] {
-+                let (column, ty) = eval_v2_aggr(name, &entries, 2, serialized)?;
-+                assert_eq!(ty, DataType::Decimal(size).wrap_nullable());
-+                assert_eq!(
-+                    column.index(0).unwrap(),
-+                    ScalarRef::Decimal(DecimalScalar::Decimal64(sign * max, size))
-+                );
-+            }
-+        }
-+        for values in [vec![], vec![None, None]] {
-+            let rows = values.len();
-+            let entries = [Decimal64Type::from_opt_data_with_size(values, Some(size)).into()];
-+            let (column, _) = eval_v2_aggr(name, &entries, rows, false)?;
-+            assert_eq!(column.index(0).unwrap(), ScalarRef::Null);
-+        }
-+    }
-+    Ok(())
-+}
-+
-+#[test]
-+fn test_decimal64_aggregate_row_and_merge_overflow() -> Result<()> {
-+    let size = DecimalSize::new_unchecked(18, 17);
-+    let value = 500_000_000_000_000_000_i64;
-+    let entries = [Decimal64Type::from_data_with_size(vec![value, value], Some(size)).into()];
-+    let args_type = [DataType::Decimal(size)];
-+    for name in ["sum", "avg"] {
-+        let function = AGGR_REGISTRY.resolve(RawAggregateCall {
-+            name,
-+            params: &[],
-+            args_type: &args_type,
-+            distinct: false,
-+            order_by: &[],
+ use super::HttpQueryContext;
+ use super::require_upload_filename;
++use crate::interpreters::validate_stage_write_access;
+ use crate::sessions::TableContextAuthorization;
+ use crate::sessions::TableContextTableAccess;
+ 
+@@ -114,6 +117,13 @@ pub async fn upload_to_stage(
+             .map_err(InternalServerError)?
+     };
+ 
++    validate_stage_write_access(context, &stage)
++        .await
++        .map_err(|e| match e.code() {
++            ErrorCode::PERMISSION_DENIED => Forbidden(e),
++            _ => InternalServerError(e),
 +        })?;
-+        let left = AggregateStateOwner::new(vec![function.clone()])?;
-+        let right = AggregateStateOwner::new(vec![function.clone()])?;
-+        function.accumulate_row(left.state(0), (&entries).into(), 0)?;
-+        function.accumulate_row(right.state(0), (&entries).into(), 1)?;
 +
-+        // Both partial states fit; merging them must check the combined sum.
-+    
+     let op = init_stage_operator(&stage).map_err(InternalServerError)?;
+     let path_traversal_policy = databend_common_config::GlobalConfig::instance()
+         .storage
+```
+
+**File**: `tests/suites/0_stateless/18_rbac/18_0027_http_stage_write.result` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++Without a stage grant: 403
++With READ only: 403
++Named stage file count before authorization: 0
++With WRITE: SUCCESS
++With ownership (legacy header): SUCCESS
++Named stage file sizes:
++2
++2
++Own user stage: SUCCESS
++Own user stage file size: 2
+```
+
+**File**: `tests/suites/0_stateless/18_rbac/18_0027_http_stage_write.sh` (added, +87/-0)
+```diff
+@@ -0,0 +1,87 @@
++#!/usr/bin/env bash
++
++set -euo pipefail
++
++CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
++. "$CURDIR"/../../../shell_env.sh
++
++url="http://${QUERY_MYSQL_HANDLER_HOST}:${QUERY_HTTP_HANDLER_PORT}/v1/upload_to_stage"
++user=stage_write_user_0027
++password=stage_write_test_password
++role=stage_write_role_0027
++stage=stage_write_0027
++owned_stage=stage_owned_0027
++file=stage_write_0027.csv
++clean_user_stage=false
++
++cleanup() {
++	local status=0
++	if "$clean_user_stage"; then
++		bendsql_connect_user "$user" "$password" --output null --query="REMOVE @~/$file" || status=$?
++	fi
++	bendsql_connect_root_null --query="
++DROP STAGE IF EXISTS $stage;
++DROP STAGE IF EXISTS $owned_stage;
++DROP USER IF EXISTS $user;
++DROP ROLE IF EXISTS $role;
++"
++	return "$status"
++}
++
++expect_denied() {
++	# No file part: check authorization without attempting to write data.
++	printf -- '--stage-test--\r\n' |
++		curl --silent --show-error --user "$user:$password" --request PUT \
++			--header "x-databend-stage-name: $stage" \
++			--header 'Content-Type: multipart/form-data; boundary=stage-test' \
++			--data-binary @- --output /dev/null --write-out '%{http_code}\n' "$url"
++}
++
++expect_allowed() {
++	printf '1\n' |
++		curl --fail --silent --show-error --user "$user:$password" --request PUT \
++			--header "$1: $2" --form "upload=@-;filename=$file" "$url" |
++		jq -er --arg stage "$2" --arg file "$file" \
++			'select(.stage_name == $stage and .state == "SUCCESS" and .files == [$file]) | .state'
++}
++
++cleanup
++trap cleanup EXIT
++bendsql_connect_root_null --query="
++CREATE USER $user IDENTIFIED BY '$password';
++CREATE ROLE $role;
++GRANT ROLE $role TO USER $user;
++CREATE STAGE $stage;
++CREATE STAGE $owned_stage;
++GRANT OWNERSHIP ON STAGE $owned_stage TO ROLE $role;
++"
++
++printf 'Without a stage grant: '
++expect_denied
++
++bendsql_connect_root_null --query="GRANT READ ON STAGE $stage TO ROLE $role"
++printf 'With READ only: '
++expect_denied
++
++printf 'Named stage file count before authorization: '
++bendsql_connect_root --output tsv --query="SELECT count(*) FROM list_stage(location => '@$stage')"
++
++bendsql_connect_root_null --query="GRANT WRITE ON STAGE $stage TO ROLE $role"
++printf 'With WRITE: '
++expect_allowed x-databend-stage-name "$stage"
++
++printf 'With ownership (legacy header): '
++expect_allowed stage_name "$owned_stage"
++
++printf 'Named stage file sizes:\n'
++bendsql_connect_root --output tsv --query="
++SELECT size FROM list_stage(location => '@$stage/$file');
++SELECT size FROM list_stage(location => '@$owned_stage/$file');
++"
++
++clean_user_stage=true
++printf 'Own user stage: '
++expect_allowed x-databend-stage-name '~'
++printf 'Own user stage file size: '
++bendsql_connect_user "$user" "$password" --output tsv \
++	--query="SELECT size FROM list_stage(location => '@~/$file')"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #21126** (2026-11-19): fix(query): enforce stage WRITE on HTTP uploads (@youngsofun)
+- **PR #21125** (closed): refactor: query: read the ownership and access caches without a lock (@drmingdrmer)
+- **PR #21124** (2026-11-19): feat: config: add `ownership` to `cache.meta_service_caches` (@drmingdrmer)
+- **PR #21123** (2026-11-18): chore: meta: use sub-cache 0.4.1, which stops a dropped cache's watch (@drmingdrmer)
 - **PR #21121** (2026-11-18): refactor(query): remove dead code and leftovers of the aggregate rewrites (@dqhl76)
 - **PR #21118** (2026-11-18): fix(query): abbreviate large SQL constants in INFO logs (@bohutang)
-- **PR #21115** (2026-11-18): fix(query): prevent scalar range integer overflow (@KKould)
-- **PR #21114** (2026-11-18): fix(query): check Decimal64 sum and avg overflow (@KKould)
-- **PR #21113** (2026-11-18): fix(query): decouple grace join partition bits from hash table buckets (@dqhl76)
-- **PR #21111** (2026-11-17): fix(query): finish queries correctly on the queries executor (@bohutang)
 
 ---
 
@@ -2578,84 +2141,69 @@ Cover
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): stream all-pairs joins with bounded memory
+## X. query): batch small blocks before the window partition exchange
 
 **RULE**:
-When implementing operations in `src/query/service/src/physical_plans/physical_hash_join.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/expression/src/kernels/stream_partition.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `50f8ae1b`: query): stream all-pairs joins with bounded memory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dea33860`: query): batch small blocks before the window partition exchange. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/service/src/physical_plans/physical_hash_join.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/expression/src/kernels/stream_partition.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use crate::pipelines::processors::transforms::probes_all_pairs;
-        // Joins without anything to hash stream all pairs on this executor.
-            && !desc.probes_all_pairs()
-    /// When the probe streams all pairs, a side without required columns
-    /// contributes only its row count, which the build side keeps without
-    /// retaining or spilling any block. Build it from that side. The
-    /// zero-column side occupies no projected positions, so join conditions
-    /// and the output keep the same column offsets.
-    fn build_zero_column_side(&mut self) {
-        // Build-side caches consume the build state of the side the planner chose.
-        if !probes_all_pairs(
-            self.join_type,
-            !self.build_keys.is_empty(),
-            self.single_to_inner,
-        ) || !self.probe_projections.is_empty()
-            || self.build_projections.is_empty()
-            || self.build_side_cache_info.is_some()
-        {
-            return;
+    /// Add every row of `column`, in order.
+    fn append_column(&mut self, column: &Column) {
+        let builder = self.builder(column.len());
+        if builder.data_type() == column.data_type() {
+            builder.append_column(column);
+        } else {
+            // Such as an `Array` column into an `EmptyArray` builder, which
+            // only `copy_column` turns into an `Array` builder.
+            let indices = (0..column.len() as u32).collect::<Vec<_>>();
+            copy_column(&indices, column, builder);
         }
-        debug_assert!(self.build_keys.is_empty() && self.probe_to_build.is_empty());
-        std::mem::swap(&mut self.probe, &mut self.build);
-        std::mem::swap(&mut self.probe_projections, &mut self.build_projection
+    }
+
+    /// Add `rows` of a constant, kept a constant when it can be.
+    fn append_const(
+        &mut self,
+        scalar: &Scalar,
+        data_type: &DataType,
+        rows: usize,
+        size: &mut impl FnMut() -> ExpandedSize,
+    ) {
+        if !self.try_push_const(scalar, data_type, rows, size) {
+            let column = ColumnBuilder::repeat(&scalar.as_ref(), rows, data_type).build();
+            self.append_column(&column);
+        }
+    }
+
+/// The expanded size of the last constant seen in a column.
+type ConstSize = Option<(Scalar, DataType, ExpandedSize)>;
+
+fn cached_const_size(cache: &mut ConstSize, scalar: &Scalar, data_type: &DataType)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-use crate::physical_plans::resolve_scalar;
-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
-pub struct NestedLoopFilterInfo {
-    pub predicates: Vec<RemoteExpr>,
-    pub projection: Vec<usize>,
-}
-
-    pub nested_loop_filter: Option<NestedLoopFilterInfo>,
-            nested_loop_filter: self.nested_loop_filter.clone(),
-
-    fn build_nested_loop_filter_info(
-        &self,
-        join: &Join,
-        probe_schema: &DataSchema,
-        build_schema: &DataSchema,
-        target_schema: &DataSchema,
-    ) -> Result<Option<NestedLoopFilterInfo>> {
-        build_nested_loop_filter_info_for_join(join, probe_schema, build_schema, target_schema)
-    }
-}
-
-fn build_nested_loop_filter_info_for_join(
-    join: &Join,
-    probe_schema: &DataSchema,
-    build_schema: &DataSchema,
-    target_schema: &DataSchema,
-) -> Result<Option<NestedLoopFilterInfo>> {
-    if !matches!(join.join_type, JoinType::Inner) {
-        return Ok(None);
-    }
-
-    if !join.equi_conditions.is_empty() {
-        // Inner joins with equality keys should still use the hash table even
-        // when the build side is small. Falling back to nested-loop evaluates
-        // the equality and residual predicates fo
+    const_sizes: Vec<Option<(Scalar, DataType, ExpandedSize)>>,
+                    let mut size = || {
+                        if let Some((s, t, size)) = const_size.as_ref()
+                            && *s == scalar
+                            && *t == data_type
+                        {
+                            return *size;
+                        }
+                        let size = ExpandedSize::measure(&scalar, &data_type);
+                        *const_size = Some((scalar.clone(), data_type.clone(), size));
+                        size
+                    };
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `50f8ae1b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dea33860` are properly handled with clean fallback behavior.

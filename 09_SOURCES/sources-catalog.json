@@ -1575,8 +1575,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
     "sourceVersion": "hf-black-forest-labs-flux-3-image-klein-comfy",
     "license": "Open-Source",
-    "contentHash": "0080ee173c6dae45446ba75afbdb97835c9f3f67b05c406dddf37f33ce0429f1",
-    "lastHarvestedAt": "2026-11-15T04:04:53.081Z",
+    "contentHash": "f2d87d9fe2a55d18ce7fa71d38edcb3f00e7ddf470e1e0d108cef39ed6aa444f",
+    "lastHarvestedAt": "2026-11-19T17:23:14.977Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy"
   },
   "dayuanjiang-next-ai-draw-io": {
@@ -7493,10 +7493,10 @@
     "repository": "databendlabs/databend",
     "platform": "github",
     "sourceUrl": "https://github.com/databendlabs/databend",
-    "sourceVersion": "6546196f",
+    "sourceVersion": "a83eaead",
     "license": "Apache-2.0",
-    "contentHash": "7cf29f9be509c34ba7283affc17c75ec451f5ac27deba6cfebd425d9f81bcb4e",
-    "lastHarvestedAt": "2026-11-18T13:47:07.685Z",
+    "contentHash": "06b460af33ffe84487f705da73d847fa0cea81ac7088f7dcd43ada47da9dd2bc",
+    "lastHarvestedAt": "2026-11-19T17:23:30.897Z",
     "learningId": "learn-github-databendlabs-databend"
   },
   "atanunq-viu": {
@@ -7593,10 +7593,10 @@
     "repository": "apache/arrow",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/arrow",
-    "sourceVersion": "aa4b89d9",
+    "sourceVersion": "ac7d3fab",
     "license": "Apache-2.0",
-    "contentHash": "ac22cb855f48d02538f4579371cfd4915113d2763ea6c390d939705b26e31fe1",
-    "lastHarvestedAt": "2026-11-17T22:11:01.954Z",
+    "contentHash": "5970ec9b8416c322b62dd9f0f07e9133a9901293ff5d7d83012675c843616a8f",
+    "lastHarvestedAt": "2026-11-19T17:23:18.495Z",
     "learningId": "learn-github-apache-arrow"
   },
   "crosspaste-crosspaste-desktop": {

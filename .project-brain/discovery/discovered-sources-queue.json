@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T17:07:53.240Z",
+  "updated_at": "2026-11-19T17:23:36.423Z",
   "stats": {
-    "total_discovered": 5939,
-    "approved_pending_harvest": 5624,
+    "total_discovered": 5945,
+    "approved_pending_harvest": 5629,
     "harvested_count": 0,
-    "rejected_count": 315,
+    "rejected_count": 316,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5590,
+      "COMMUNITY_AND_EXPERT": 5596,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 112,
       "ENGINEERING_BLOGS": 4,
@@ -128474,6 +128474,131 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pola-rs-polars-learnings.md",
         "fileName": "pola-rs-polars-learnings.md"
+      }
+    },
+    "SRC-C6B034C8BC9F": {
+      "id": "SRC-C6B034C8BC9F",
+      "url": "https://arrow.apache.org/",
+      "title": "https://arrow.apache.org/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T17:23:34.749Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-C9D998A2A648": {
+      "id": "SRC-C9D998A2A648",
+      "url": "https://arrow.apache.org/docs/r",
+      "title": "https://arrow.apache.org/docs/r",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T17:23:34.808Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-DAB0686EDA25": {
+      "id": "SRC-DAB0686EDA25",
+      "url": "https://github.com/apache/arrow/issues",
+      "title": "https://github.com/apache/arrow/issues",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T17:23:34.865Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-FAFD9A8ACAB7": {
+      "id": "SRC-FAFD9A8ACAB7",
+      "url": "https://reviewable.io/reviews/databendlabs/databend/21125",
+      "title": "https://reviewable.io/reviews/databendlabs/databend/21125",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T17:23:36.315Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
+        "fileName": "databendlabs-databend-learnings.md"
+      }
+    },
+    "SRC-D4357AFAAD97": {
+      "id": "SRC-D4357AFAAD97",
+      "url": "https://github.com/databendlabs/databend/actions/runs/44318988933",
+      "title": "https://github.com/databendlabs/databend/actions/runs/44318988933",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T17:23:36.370Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
+        "fileName": "databendlabs-databend-learnings.md"
+      }
+    },
+    "SRC-0D8581FA541D": {
+      "id": "SRC-0D8581FA541D",
+      "url": "http://${query_mysql_handler_host/",
+      "title": "http://${query_mysql_handler_host/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T17:23:36.423Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
+        "fileName": "databendlabs-databend-learnings.md"
       }
     }
   }

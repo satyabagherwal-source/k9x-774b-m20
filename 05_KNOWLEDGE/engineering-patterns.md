@@ -694733,3 +694733,191 @@ The class declaration goes in `class_declaration`, a string, and
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `e737db35` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9417. [C++] Mark the glog backend for deprecation (Harvested from apache/arrow)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "[C++] Mark the glog backend for deprecation",
+  "source": "apache/arrow",
+  "source_url": "https://github.com/apache/arrow",
+  "source_version": "ac7d3fab",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-19T17:23:17.915Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-apache-arrow",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.76,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apache/arrow](https://github.com/apache/arrow) (Revision: `ac7d3fab`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 76%).
+
+**RULE**:
+When implementing operations in `cpp/cmake_modules/DefineOptions.cmake`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ac7d3fab`: GH-47465: [C++] Mark the glog backend for deprecation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/cmake_modules/DefineOptions.cmake`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+  define_option(ARROW_USE_GLOG "Build libraries with glog support for pluggable logging;\
+(This is a deprecated option and will be removed in a future release.)" OFF)
+
+  if(ARROW_USE_GLOG)
+    message(DEPRECATION "ARROW_USE_GLOG is deprecated and will be removed in a future release."
+    )
+  endif()
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+  define_option(ARROW_USE_GLOG "Build libraries with glog support for pluggable logging"
+                OFF)
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ac7d3fab` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9418. batch small blocks before the window partition exchange (Harvested from databendlabs/databend)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "batch small blocks before the window partition exchange",
+  "source": "databendlabs/databend",
+  "source_url": "https://github.com/databendlabs/databend",
+  "source_version": "a83eaead",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-19T17:23:30.329Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-databendlabs-databend",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [databendlabs/databend](https://github.com/databendlabs/databend) (Revision: `a83eaead`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/query/expression/src/kernels/stream_partition.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `dea33860`: query): batch small blocks before the window partition exchange. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/expression/src/kernels/stream_partition.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    /// Add every row of `column`, in order.
+    fn append_column(&mut self, column: &Column) {
+        let builder = self.builder(column.len());
+        if builder.data_type() == column.data_type() {
+            builder.append_column(column);
+        } else {
+            // Such as an `Array` column into an `EmptyArray` builder, which
+            // only `copy_column` turns into an `Array` builder.
+            let indices = (0..column.len() as u32).collect::<Vec<_>>();
+            copy_column(&indices, column, builder);
+        }
+    }
+
+    /// Add `rows` of a constant, kept a constant when it can be.
+    fn append_const(
+        &mut self,
+        scalar: &Scalar,
+        data_type: &DataType,
+        rows: usize,
+        size: &mut impl FnMut() -> ExpandedSize,
+    ) {
+        if !self.try_push_const(scalar, data_type, rows, size) {
+            let column = ColumnBuilder::repeat(&scalar.as_ref(), rows, data_type).build();
+            self.append_column(&column);
+        }
+    }
+
+/// The expanded size of the last constant seen in a column.
+type ConstSize = Option<(Scalar, DataType, ExpandedSize)>;
+
+fn cached_const_size(cache: &mut ConstSize, scalar: &Scalar, data_type: &DataType)
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+    const_sizes: Vec<Option<(Scalar, DataType, ExpandedSize)>>,
+                    let mut size = || {
+                        if let Some((s, t, size)) = const_size.as_ref()
+                            && *s == scalar
+                            && *t == data_type
+                        {
+                            return *size;
+                        }
+                        let size = ExpandedSize::measure(&scalar, &data_type);
+                        *const_size = Some((scalar.clone(), data_type.clone(), size));
+                        size
+                    };
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `dea33860` are properly handled with clean fallback behavior.

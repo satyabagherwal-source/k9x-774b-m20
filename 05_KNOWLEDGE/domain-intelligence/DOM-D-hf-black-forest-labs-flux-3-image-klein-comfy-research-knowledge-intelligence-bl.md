@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy",
   "source_version": "hf-black-forest-labs-flux-3-image-klein-comfy",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T04:04:53.228Z",
+  "timestamp": "2026-11-19T17:23:15.234Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [black-forest-labs/flux-3-image-klein-comfy](https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy) (Revision: `hf-black-f`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T04:04:53.228Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T17:23:15.234Z`  
 > **Learning ID**: `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy](https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T04:04:52.615Z  
+> **Harvest Timestamp**: 2026-11-19T17:23:13.024Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1292519 downloads | 3186 likes
+- **Stars / Engagement**: 1000730 downloads | 3512 likes
 
 ---
 

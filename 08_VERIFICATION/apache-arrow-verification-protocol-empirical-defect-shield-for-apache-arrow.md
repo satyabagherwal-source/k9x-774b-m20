@@ -4,22 +4,22 @@
 {
   "source_repository": "apache/arrow",
   "source_url": "https://github.com/apache/arrow",
-  "source_version": "aa4b89d9",
+  "source_version": "ac7d3fab",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T22:11:02.193Z",
+  "timestamp": "2026-11-19T17:23:18.763Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-apache-arrow",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apache/arrow](https://github.com/apache/arrow) (Revision: `aa4b89d9`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T22:11:02.193Z`  
+> **Provenance**: Harvested from [apache/arrow](https://github.com/apache/arrow) (Revision: `ac7d3fab`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T17:23:18.763Z`  
 > **Learning ID**: `learn-github-apache-arrow`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `apache/arrow` (Commit: `aa4b89d9`)
+- **Target Repository**: `apache/arrow` (Commit: `ac7d3fab`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T22:11:00.809Z  
+> **Harvest Timestamp**: 2026-11-19T17:23:17.271Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17310 stars
+- **Stars / Engagement**: 17317 stars
 
 ---
 
@@ -1388,11 +1388,11 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #55663** (2026-11-18): **GH-55625: [CI][R] test-r-m1-san fails in "Install dependencies" since 2026-11-09**
+  *Symptoms*: ### Rationale for this change  pak calculates binary name incorrectly in new release so job fails  ### What changes are included in this PR?  Use dev pak which has fix  ### Are these changes tested?  Will run CI  ### Are there any user-facing changes?  No  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [x] AI  **Reviewed before submission by:**  - [x] Human - [ ] AI - [ ] Not reviewed  * GitHub Issue: #55625
+
 - **Issue #55657** (2026-11-17): **MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates**
   *Symptoms*: Bumps the apache-infrastructure-actions-stash group with 2 updates: [apache/infrastructure-actions/stash/restore](https://github.com/apache/infrastructure-actions) and [apache/infrastructure-actions/stash/save](https://github.com/apache/infrastructure-actions).  Updates `apache/infrastructure-actions/stash/restore` from 5a4eaabe6c43770c9df95875a513a6b8362be5eb to 762a01f36a09ab9e0e4c8af8f4b0f2ed12683df5 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/apache/infrastructure-actions/commit/762a01f36a09ab9e0e4c8af8f4b0f2ed12683df5"><code>762a01f</code></a> fork-ci: Add optional commit status reporting (<a href="https://redirect.github.com/apache/infrastructure-actions/issues/1534">#1534</a>)</li> <li><a href="https://github.com/apache/infrastructure-actions/commit/48e6b4cd4def0995346e9a48ce9b9e1598b407fc"><code>48e6b4c</code></a> Remove Expired Refs</li> <li><a href="https://github.com/apache/infrastructure-actions/commit/5bbd162d9e5952388608e1ae502ec644b99ee358"><code>5bbd162</code></a> fork-ci: list jobs that did not succeed in the check (<a href="https://redirect.github.com/apache/infrastructure-actions/issues/1533">#1533</a>)</li> <li><a href="https://github.com/apache/infrastructure-actions/commit/39fedec0756fecc6c05a89266fd6c5c4a9a93b94"><code>39fedec</code></a> Bump the codeql-action group across 1 directory with 2 updates (<a href="https://redirect.github.com/apache/infrastructure-actions/issues/1531">#1531</a>)</li> <li><a href="https://github.c
-
-- **Issue #55654** (2026-11-17): **GH-55653: [Python][Docs] Correction for operator list of Array/Scalar**
-  *Symptoms*: ### Rationale for this change Fixes #55653. Docstring correction - replacing the non-implemented Python arithmetic operator `%` with the missing`*`.  ### What changes are included in this PR? Docstring correction in `array.pxi` and `scalar.pxi` and `compute.rst`  ### Are these changes tested? Yes  ### Are there any user-facing changes? No other than docs correction  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [ ] AI  **Reviewed before submission by:**  - [x] Human - [ ] AI - [ ] Not reviewed * GitHub Issue: #55653
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1409,21 +1409,182 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `28a0530b` (2026-11-17)
-**Commit Message**: GH-55648: [C++][CI] Fix protobuf-induced Valgrind failures (#55649)
+### Incident Patch 1: `ac7d3fab` (2026-11-19)
+**Commit Message**: GH-47465: [C++] Mark the glog backend for deprecation (#55632)
 
 ### Rationale for this change
+As discussed in GH-47465, glog is no longer maintained, therefore this PR deprecates the glog backend in Apache Arrow.
 
-Silence Valgrind failures due to eternal memory allocation in Protobuf initialization routines.
-Also fix Valgrind failures due to processing uninitialized padding when chunking JSON input.
+### What changes are included in this PR?
+- Mark `ARROW_USE_GLOG` CMake option as deprecated and emit a warning for it
+- Mark `GLOG` as deprecated in the C++ build docs
+- Deprecate `ArrowLog::InstallFailureSignalHandler()` and `ArrowLog::UninstallSignalAction()` and suppress the deprecation warnings for their calls in `acero_main.cc` and `test_integration_client.cc`
 
 ### Are these changes tested?
-
-Yes, by existing CI job.
+Yes, I tested them locally with CMake/Ninja.
 
 ### Are there any user-facing changes?
 
-No.
+Yes, `ARROW_USE_GLOG`, `ArrowLog::InstallFailureSignalHandler()` and `UninstallSignalAction()` now emit deprecation warnings.
+
+### Was AI used for this PR?
+
+Yes, Copilot's code review caught a macro for deprecation that I hadn't used. I accepted its suggestion, and the commit that added it has Copilot as a co-author.
+
+**PR code and description written by:**
+
+- [x] Human
+- [x] AI
+
+**Reviewed before submission by:**
+
+- [x] Human
+- [ ] AI
+- [ ] Not reviewed
+
+* GitHub Issue: #47465
+
+Lead-authored-by
+
+**File**: `cpp/cmake_modules/DefineOptions.cmake` (modified, +7/-2)
+```diff
+@@ -519,8 +519,8 @@ takes precedence over ccache if a storage backend is configured" ON)
+   define_option(ARROW_ZSTD_USE_SHARED "Rely on zstd shared libraries where relevant"
+                 ${ARROW_DEPENDENCY_USE_SHARED})
+ 
+-  define_option(ARROW_USE_GLOG "Build libraries with glog support for pluggable logging"
+-                OFF)
++  define_option(ARROW_USE_GLOG "Build libraries with glog support for pluggable logging;\
++(This is a deprecated option and will be removed in a future release.)" OFF)
+ 
+   define_option(ARROW_WITH_BACKTRACE "Build with backtrace support" ON)
+ 
+@@ -703,6 +703,11 @@ macro(config_summary_message)
+   if(ARROW_PYTHON)
+     message(WARNING "ARROW_PYTHON is deprecated. Use CMake presets instead.")
+   endif()
++
++  if(ARROW_USE_GLOG)
++    message(DEPRECATION "ARROW_USE_GLOG is deprecated and will be removed in a future release."
++    )
++  endif()
+ endmacro()
+ 
+ macro(config_summary_json)
+```
+
+**File**: `cpp/src/arrow/flight/integration_tests/test_integration_client.cc` (modified, +4/-0)
+```diff
+@@ -217,7 +217,9 @@ arrow::Status RunScenario(arrow::flight::integration_tests::Scenario* scenario)
+ }
+ 
+ int main(int argc, char** argv) {
++  ARROW_SUPPRESS_DEPRECATION_WARNING
+   arrow::util::ArrowLog::InstallFailureSignalHandler();
++  ARROW_UNSUPPRESS_DEPRECATION_WARNING
+ 
+   gflags::SetUsageMessage("Integration testing client for Flight.");
+   gflags::ParseCommandLineFlags(&argc, &argv, true);
+@@ -240,6 +242,8 @@ int main(int argc, char** argv) {
+   }
+   ABORT_NOT_OK(status);
+ 
++  ARROW_SUPPRESS_DEPRECATION_WARNING
+   arrow::util::ArrowLog::UninstallSignalAction();
++  ARROW_UNSUPPRESS_DEPRECATION_WARNING
+   return 0;
+ }
+```
+
+**File**: `cpp/src/arrow/flight/sql/example/acero_main.cc` (modified, +2/-0)
+```diff
+@@ -56,7 +56,9 @@ int main(int argc, char** argv) {
+ 
+   arrow::util::ArrowLog::StartArrowLog("acero-flight-sql-server",
+                                        arrow::util::ArrowLogLevel::ARROW_INFO);
++  ARROW_SUPPRESS_DEPRECATION_WARNING
+   arrow::util::ArrowLog::InstallFailureSignalHandler();
++  ARROW_UNSUPPRESS_DEPRECATION_WARNING
+ 
+   arrow::Status st = RunMain(FLAGS_location);
+ 
+```
+
+**File**: `cpp/src/arrow/util/logging.cc` (modified, +4/-0)
+```diff
+@@ -187,6 +187,8 @@ void ArrowLog::StartArrowLog(const std::string& app_name,
+ #endif
+ }
+ 
++ARROW_SUPPRESS_DEPRECATION_WARNING
++
+ void ArrowLog::UninstallSignalAction() {
+ #ifdef ARROW_USE_GLOG
+   ARROW_LOG(DEBUG) << "Uninstall signal handlers.";
+@@ -223,6 +225,8 @@ void ArrowLog::InstallFailureSignalHandler() {
+ #endif
+ }
+ 
++ARROW_UNSUPPRESS_DEPRECATION_WARNING
++
+ bool ArrowLog::IsLevelEnabled(ArrowLogLevel log_level) {
+   return log_level >= severity_threshold_;
+ }
+```
+
+**File**: `cpp/src/arrow/util/logging.h` (modified, +4/-0)
+```diff
+@@ -189,9 +189,13 @@ class ARROW_EXPORT ArrowLog : public ArrowLogBase {
+ 
+   /// Install the failure signal handler to output call stack when crash.
+   /// If glog is not installed, this function won't do anything.
++  /// \deprecated Deprecated in 27.0.0. GLog support is deprecated.
++  ARROW_DEPRECATED("Deprecated in 27.0.0. GLog support is deprecated.")
+   static void InstallFailureSignalHandler();
+ 
+   /// Uninstall the signal actions installed by InstallFailureSignalHandler.
++  /// \deprecated Deprecated in 27.0.0. GLog support is deprecated.
++  ARROW_DEPRECATED("Deprecated in 27.0.0. GLog support is deprecated.")
+   static void UninstallSignalAction();
+ 
+   /// Return whether or not the log level is enabled in current setting.
+```
+
+**File**: `docs/source/developers/cpp/building.rst` (modified, +1/-1)
+```diff
+@@ -494,7 +494,7 @@ The build system supports a number of third-party dependencies
+   * ``BZip2``: for data compression
+   * ``c-ares``: a dependency of gRPC
+   * ``gflags``: for command line utilities (formerly Googleflags)
+-  * ``GLOG``: for logging
++  * ``GLOG``: for logging (deprecated)
+   * ``google_cloud_cpp_storage``: for Google Cloud Storage support, requires
+     system cURL and can use the ``BUNDLED`` method described below
+   * ``gRPC``: for remote procedure calls
+```
+
+---
+
+### Incident Patch 2: `931b9ccc` (2026-11-18)
+**Commit Message**: GH-55478: [R] Vendored dependencies to enable parquet (smallest change, biggest tarball) (#55491)
+
+### Rationale for this change
+
+Vendor (and trim) C++ dependencies for offline builds that would allow us to build Parquet even when CMake cannot reach the internet. This is an R-package-only change, but in doing so can't trim quite as much (specifically building thrift without boost). The resulting tarball is larger than strictly necessary (~13.1 MB).
+
+Resolves #55478
+
+### What changes are included in this PR?
+
+Scripts for vendoring and trimming dependencies, tests
+
+### Are these changes tested?
+
+Yes
+
+### Are there any user-facing changes?
+
+More full-feature arrow builds 
 
 ### Was AI used for this PR?
 
@@ -1437,341 +1598,168 @@ In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/de
 **Reviewed before submission by:**
 
 - [x] Human
-- [ ] AI
-- [ ] Not reviewed
-
-* GitHub Issue: #55648
-
-Authored-by: Antoine Pitrou <[REDACTED_EMAIL]>
-Signed-off-by: Antoine Pitrou <[REDACTED_EMAIL]>
-
-**File**: `cpp/src/arrow/json/chunker.cc` (modified, +2/-0)
-```diff
-@@ -101,6 +101,8 @@ class ParsingBoundaryFinder : public BoundaryFinder {
-     auto data = buffer_->mutable_data();
-     std::memcpy(data, partial.data(), partial.size());
-     std::memcpy(data + partial.size(), block.data(), block.size());
-+    // Zero-initialize padding area, to avoid Valgrind failures.
-+    std::memset(data + partial.size() + block.size(), 0, simdjson::SIMDJSON_PADDING);
-     auto view = simdjson::padded_string_view(data, /*len=*/data_size,
-                                              /*capacity=*/buffer_->capacity());
-     DCHECK(view.has_sufficient_padding());
-```
-
-**File**: `cpp/valgrind.supp` (modified, +1/-1)
-```diff
-@@ -86,7 +86,7 @@
-     <protobuf>:leak on library initialization
-     Memcheck:Leak
-     ...
--    fun:*google*protobuf*AddDescriptorsRunner*
-+    fun:*google*protobuf*AddDescriptors*
- }
- {
-     <protobuf>:leak on library initialization
-```
-
----
-
-### Incident Patch 2: `a092214b` (2026-11-17)
-**Commit Message**: GH-55638: [C++][Parquet] Fix CDC to make list page boundaries independent of array chunking (#55639)
-
-### Rationale for this change
-
-With content-defined chunking, list columns lose the chunk boundaries that fall at the start of a `WriteArrow()` call, so their pages depend on how the data is chunked in memory.
-
-### What changes are included in this PR?
-
-CDC marks a page boundary at the start of an input array-chunk with an empty CDC-chunk. For list columns this empty CDC-chunk was dropped, so the boundary was lost. Now it is kept, like for non-list columns.
-
-```
-content-defined boundary before D
-
-WriteArrow([A B C])   CDC-chunks: [A B C]       page [A B C] stays open
-WriteArrow([D E F])
-  bug:                CDC-chunks: [D E F]       empty CDC-chunk dropped, D E F join page [A B C]
-  fix:                CDC-chunks: [] [D E F]    empty CDC-chunk closes page [A B C]
-
-pages (bug):  [A B C D E F]
-pages (fix):  [A B C] [D E F]
-```
-
-### Are these changes tested?
-
-Yes. A new test compares the pages of a chunked table and its combined version for each tested type, and the tests now check that no data page is empty.
-
-### Are there any user-facing changes?
-
-No.
-
-### Was AI used for this PR?
-
-
-**File**: `cpp/src/parquet/chunker_internal.cc` (modified, +7/-8)
-```diff
-@@ -229,7 +229,8 @@ class ContentDefinedChunker::Impl {
-     // chunks must be non-empty and monotonic increasing
-     ARROW_DCHECK(!chunks.empty());
- 
--    // the first chunk must start at the first level
-+    // the first chunk must start at the first level, it may be empty to close the
-+    // page left open by the previous call
-     auto first_chunk = chunks.front();
-     ARROW_DCHECK_EQ(first_chunk.level_offset, 0);
-     ARROW_DCHECK_EQ(first_chunk.value_offset, 0);
-@@ -326,13 +327,11 @@ class ContentDefinedChunker::Impl {
-         }
- 
-         if (rep_level == 0 && gearhash.NeedNewChunk()) {
--          // if we are at a record boundary and need a new chunk, we create a new chunk
--          auto levels_to_write = offset - prev_offset;
--          if (levels_to_write > 0) {
--            chunks.push_back({prev_offset, prev_value_offset, levels_to_write});
--            prev_offset = offset;
--            prev_value_offset = value_offset;
--          }
-+          // if we are at a record boundary and need a new chunk, we create a new chunk,
-+          // at offset 0 it is empty and closes the page of the previous call
-+          chunks.push_back({prev_offset, prev_value_offset, offset - prev_offset});
-+          prev_offset = offset;
-+          prev_value_offset = value_offset;
-         }
-         if (def_level >= level_info_.repeated_ancestor_def_level) {
-           // we only increment the value offset if we have a leaf value
-```
-
-**File**: `cpp/src/parquet/chunker_internal_test.cc` (modified, +22/-0)
-```diff
-@@ -396,6 +396,7 @@ ParquetInfo GetColumnParquetInfo(const std::shared_ptr<Buffer>& data, int column
-     while (auto page = page_reader->NextPage()) {
-       if (page->type() == PageType::DATA_PAGE || page->type() == PageType::DATA_PAGE_V2) {
-         auto data_page = static_cast<DataPage*>(page.get());
-+        EXPECT_GT(data_page->num_values(), 0) << "empty data page";
-         column_info.page_sizes.push_back(data_page->uncompressed_size());
-         column_info.page_lengths.push_back(data_page->num_values());
-       } else if (page->type() == PageType::DICTIONARY_PAGE) {
-@@ -1467,6 +1468,27 @@ TEST_P(TestCDCSingleRowGroup, ArrayOffsets) {
-   }
- }
- 
-+TEST_P(TestCDCSingleRowGroup, IndependentOfArrayChunks) {
-+  // Content-defined chunking should produce the same pages
-+  // for logically equal inputs, regardless of the inputs' own
-+  // in-memory chunking.
-+  const auto& param = GetParam();
-+  ASSERT_OK_AND_ASSIGN(auto chunked, ConcatenateTables({part1_, part2_, part3_}));
-+  ASSERT_OK_AND_ASSIGN(auto combined, chunked->CombineChunks());
-+  ASSERT_EQ(chunked->column(0)->num_chunks(), 3);
-+  ASSERT_EQ(combined->column(0)->num_chunks(), 1);
-+  ASSERT_OK_AND_ASSIGN(
-+      auto chunked_parquet,
-+      WriteTableToBuffer(chunked, kMinChunkSize, kMaxChunkSize, kRowGroupLength, false,
-+                         param.data_page_version));
-+  ASSERT_OK_AND_ASSIGN(
-+      auto combined_parquet,
-+      WriteTableToBuffer(combined, kMinChunkSize, kMaxChunkSize, kRowGroupLength, false,
-+                         param.data_page_version));
-+  ASSERT_EQ(GetPageEnds(chunked_parquet, /*column_index=*/0),
-+            GetPageEnds(combined_parquet, /*column_index=*/0));
-+}
-+
- #if defined(ADDRESS_SANITIZER) || defined(ARROW_VALGRIND)
- // Instantiate the test suite with a reduced set of types to avoid slow tests
- INSTANTIATE_TEST_SUITE_P(
-```
-
----
-
-### Incident Patch 3: `e34fe04c` (2026-11-17)
-**Commit Message**: GH-55500: [Python] Remove the have_signal_refcycle workaround in error.pxi (#55502)
-
-### Rationale for this change
-
-Since we require Python 3.11 the `have_signal_refcycle` code and the connected workaround  in error.pxi is dead code and can be removed.
-
-### What changes are included in this PR?
-
-`have_signal_refcycle` and connected code in removed.
-
-### Are these changes tested?
-
-The test exercising this workaround is removed, current tests should pass.
-
-### Are there any user-facing changes?
-
-No.
-
-### Was AI used for this PR?
-
-**PR code and description written by:**
-
-- [x] Human
-- [ ] AI
-
-**Reviewed before submission by:**
-
-- [x] Human
 - [x] AI
 - [ ] Not reviewed
 
-* GitHub Issue: #55500
+* GitHub Issue: #55478
 
-Authored-by: AlenkaF <[REDACTED_EMAIL]>
-Signed-off-by: AlenkaF <[REDACTED_EMAIL]>
+Authored-by: Jonathan Keane <[REDACTED_EMAIL]>
+Signed-off-by: Jonathan Keane <[REDACTED_EMAIL]>
 
-**File**: `python/pyarrow/error.pxi` (modified, +0/-11)
+**File**: `ci/scripts/r_test.sh` (modified, +20/-0)
 ```diff
-@@ -19,15 +19,12 @@ from cpython.exc cimport PyErr_CheckSignals, PyErr_SetInterrupt
+@@ -158,6 +158,26 @@ if [ "${ARROW_R_TEST_OFFLINE:-false}" = "true" ]; then
+   cp /etc/resolv.conf{.bak,}
+ fi
  
- from pyarrow.includes.libarrow cimport CStatus
- from pyarrow.includes.libarrow_python cimport IsPyError, RestorePyError
--from pyarrow.includes.common cimport c_string
- 
--from contextlib import contextmanager
- import os
- import signal
- import threading
- 
- from pyarrow.lib import is_threading_enabled
--from pyarrow.util import _break_traceback_cycle_from_frame
- 
- 
- class ArrowException(Exception):
-@@ -188,11 +185,6 @@ def enable_signal_handlers(c_bool enable):
- 
- # For internal use
- 
--# Whether we need a workaround for https://bugs.python.org/issue42248
--have_signal_refcycle = (sys.version_info < (3, 8, 10) or
--                        (3, 9) <= sys.version_info < (3, 9, 5) or
--                        sys.version_info[:2] == (3, 10))
--
- cdef class SignalStopHandler:
-     cdef:
-         StopToken _stop_token
-@@ -203,9 +195,6 @@ cdef class SignalStopHandler:
-         self._enabled = False
- 
-         self._init_signals()
--        if have_signal_refcycle:
--            _break_traceback_cycle_from_frame(sys._getframe(0))
--
-         self._stop_token = StopToken()
- 
-         if not self._signals.empty():
++if [ -n "${ARROW_R_EXPECTED_FEATURES:-}" ]; then
++  # The tests skip what the build doesn't support, so make sure the features
++  # we expect (e.g. from the vendored thirdparty sources) were actually built.
++  # ARROW_R_EXPECTED_FEATURES is a comma-separated list of
++  # names(arrow::arrow_info()$capabilities) and memory pool backends
++  # (e.g. mimalloc).
++  ${R_BIN} -s -e "
++    library(arrow, lib.loc = 'check/arrow.Rcheck')
++    info <- arrow_info()
++    print(info\$capabilities)
++    print(info\$memory_pool\$available_backends)
++    available <- c(names(which(info\$capabilities)), info\$memory_pool\$available_backends)
++    expected <- strsplit(Sys.getenv('ARROW_R_EXPECTED_FEATURES'), ',')[[1]]
++    missing <- setdiff(expected, available)
++    if (length(missing) > 0) {
++      stop('Expected features are not available: ', paste(missing, collapse = ', '))
++    }
++  "
++fi
++
+ AFTER=$(ls -alh ~/)
+ if [ "$NOT_CRAN" != "true" ] && [ "$BEFORE" != "$AFTER" ]; then
+   # Ignore ~/.TinyTex/ and ~/R/ because it has many files.
 ```
 
-**File**: `python/pyarrow/tests/test_util.py` (modified, +1/-32)
+**File**: `cpp/cmake_modules/ThirdpartyToolchain.cmake` (modified, +6/-0)
 ```diff
-@@ -15,19 +15,14 @@
- # specific language governing permissions and limitations
- # under the License.
+@@ -470,6 +470,12 @@ foreach(_VERSION_ENTRY ${TOOLCHAIN_VERSIONS_TXT})
+     continue()
+   endif()
  
--import gc
- import os
--import signal
- import shutil
- import sys
- import textwrap
--import weakref
++  # Allow overriding checksums by environment variables, e.g. for a source
++  # archive given by ARROW_$LIBRARY_URL that differs from the upstream one
++  if(_VARIABLE_NAME MATCHES "_CHECKSUM$" AND DEFINED ENV{${_VARIABLE_NAME}})
++    set(_VARIABLE_VALUE "$ENV{${_VARIABLE_NAME}}")
++  endif()
++
+   # For debugging
+   message(STATUS "${_VARIABLE_NAME}: ${_VARIABLE_VALUE}")
  
- import pytest
- 
--from pyarrow.util import (doc, _break_traceback_cycle_from_frame,
--                          download_tzdata_on_windows)
--from pyarrow.tests.util import disabled_gc
-+from pyarrow.util import doc, download_tzdata_on_windows
- 
- 
- @doc(method="func_a", operation="A")
-@@ -186,32 +181,6 @@ def test_escaping_in_docstring():
-     assert func_f.__doc__ == docstr
- 
- 
--def exhibit_signal_refcycle():
--    # Put an object in the frame locals and return a weakref to it.
--    # If `signal.getsignal` has a bug where it creates a reference cycle
--    # keeping alive the current execution frames, `obj` will not be
--    # destroyed immediately when this function returns.
--    obj = set()
--    signal.getsignal(signal.SIGINT)
--    return weakref.ref(obj)
--
--
--def test_signal_refcycle():
--    # Test possible workaround for https://bugs.python.org/issue42248
--    with disabled_gc():
--        wr = exhibit_signal_refcycle()
--        if wr() is None:
--            pytest.skip(
--                "Python version does not have the bug we're testing for")
--
--    gc.collect()
--    with disabled_gc():
--        wr = exhibit_signal_refcycle()
--        assert wr() is not None
--        _break_traceback_cycle_from_frame(sys._getframe(0))
--        assert wr() is None
--
--
- @pytest.mark.skipif(sys.platform != "win32",
-                     reason="Timezone database is already provided.")
- def test_download_tzdata_on_windows():
 ```
 
-**File**: `python/pyarrow/util.py` (modified, +0/-25)
+**File**: `dev/release/rat_exclude_files.txt` (modified, +1/-0)
 ```diff
-@@ -20,11 +20,9 @@
- import os
- import contextlib
- import functools
--import gc
- import socket
- import sys
- import textwrap
--import types
- import warnings
+@@ -97,6 +97,7 @@ r/tests/testthat/_snaps/*.md
+ r/inst/include/cpp11.hpp
+ r/inst/include/cpp11/*.hpp
+ r/tools/nixlibs-allowlist.txt
++r/inst/COPYRIGHTS
+ .gitattributes
+ ruby/red-arrow/.yardopts
+ ruby/red-arrow-format/lib/arrow-format/org/*
+```
+
+**File**: `dev/tasks/tasks.yml` (modified, +21/-7)
+```diff
+@@ -633,14 +633,28 @@ tasks:
+     template: r/github.linux.offline.build.yml
  
+   # Simulate a CRAN builder without network access: the build should detect
+-  # that it is offline and fall back to a minimal build without downloading
+-  # anything.
+-  test-r-offline-minimal:
+-    ci: github
+-    template: docker-tests/github.linux.yml
+-    params:
+-      flags: '-e ARROW_R_TEST_OFFLINE=true -e NOT_CRAN=false -e SKIP_VIGNETTES=true'
++  # that it is offline and build libarrow without downloading anything, using
++  # the thirdparty sources vendored in the package (tools/vendored) to still
++  # include Parquet, Dataset, JSON, the compression codecs, etc.
++  # ARROW_SOURCE_HOME='' makes it use the C++ source copied into tools/cpp
++  # (like the CRAN package does), whose versions.txt has the checksums of the
++  # trimmed tarballs. bz2 is off by default on Linux, so it is turned on to make
++  # sure every vendored tarball is built. Brotli and Zstandard aren't vendored.
++  test-r-offline-vendored:
++    ci: github
++    template: docker-tests/github.linux.yml
++    params:
++      flags: >-
++        -e ARROW_R_TEST_OFFLINE=true
++        -e NOT_CRAN=false
++        -e SKIP_VIGNETTES=true
++        -e ARROW_SOURCE_HOME=''
++        -e ARROW_WITH_BZ2=ON
++        -e ARROW_R_EXPECTED_FEATURES=dataset,parquet,json,mimalloc,re2,utf8proc,snappy,gzip,lz4,bz2
+       image: r
++      # A full libarrow build with 2 cores (NOT_CRAN=false) and no sccache
++      # (it's offline)
++      timeout: 180
  
-@@ -207,29 +205,6 @@ def guid():
-     return uuid4().hex
+   # This one has -flto=auto
+   test-r-ubuntu-22.04:
+```
+
+**File**: `docs/source/developers/cpp/building.rst` (modified, +4/-0)
+```diff
+@@ -581,6 +581,10 @@ internet.
+ To enable offline builds, you can download the source artifacts yourself and
+ use environment variables of the form ``ARROW_$LIBRARY_URL`` to direct the
+ build system to read from a local file rather than accessing the internet.
++Each archive is checked against the SHA256 checksum in
++``thirdparty/versions.txt``; if you use an archive that differs from the
++upstream one, you can set the matching ``ARROW_$LIBRARY_BUILD_SHA256_CHECKSUM``
++environment variable to its checksum.
  
- 
--def _break_traceback_cycle_from_frame(frame):
--    # Clear local variables in all inner frames, so as to break the
--    # reference cycle.
--    this_frame = sys._getframe(0)
--    refs = gc.get_referrers(frame)
--    while refs:
--        for frame in refs:
--            if frame is not this_frame and isinstance(frame, types.FrameType):
--                break
--        else:
--            # No frame found in referrers (finished?)
--            break
--        refs = None
--        # Clear the frame locals, to try and break the cycle (it is
--        # somewhere along the chain of execution frames).
--        frame.clear()
--        # To visit the inner frame, we need to find it among the
--        # referrers of this frame (while `frame.f_back` would let
--        # us visit the outer frame).
--        refs = gc.get_referrers(frame)
--    refs = frame = this_frame = None
--
--
- def _download_urllib(url, out_path):
-     from urllib.request import urlopen, Request
-     req = Request(url, headers={'User-Agent': 'pyarrow'})
+ To make this easier for you, we have prepared a script
+ ``thirdparty/download_dependencies.sh`` which will download the correct version
+```
+
+**File**: `r/.Rbuildignore` (modified, +2/-0)
+```diff
+@@ -32,3 +32,5 @@ STYLE.md
+ ^inst/__pycache__$
+ ^bootstrap.R$
+ air.toml
++^tools/vendored-downloads$
++^tools/trim$
+```
+
+**File**: `r/.gitignore` (modified, +2/-0)
+```diff
+@@ -35,3 +35,5 @@ extra-tests/files
+ # Source tarballs of required dependencies that we ship for offline builds.
+ # They're downloaded by `make sync-cpp` (see tools/vendor_dependencies.sh).
+ /tools/vendored/
++# Cache of the upstream (untrimmed) tarballs used by tools/vendor_dependencies.sh
++/tools/vendored-downloads/
+```
+
+**File**: `r/DESCRIPTION` (modified, +1/-0)
+```diff
+@@ -24,6 +24,7 @@ Description: 'Apache' 'Arrow' <https://arrow.apache.org/> is a cross-language
+     package provides an interface to the 'Arrow C++' library.
+ Depends: R (>= 4.2)
+ License: Apache License (>= 2.0)
++Copyright: See file inst/COPYRIGHTS
+ URL: https://github.com/apache/arrow/, https://arrow.apache.org/docs/r/
+ BugReports: https://github.com/apache/arrow/issues
+ Encoding: UTF-8
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #55663** (2026-11-18): GH-55625: [CI][R] test-r-m1-san fails in "Install dependencies" since 2026-11-09 (@thisisnic)
 - **PR #55657** (2026-11-17): MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates (@dependabot[bot])
 - **PR #55654** (2026-11-17): GH-55653: [Python][Docs] Correction for operator list of Array/Scalar (@tadeja)
 - **PR #55651** (2026-11-17): GH-55630: [CI][C++] Relax simdjson error message checking (@pitrou)
 - **PR #55649** (2026-11-17): GH-55648: [C++][CI] Fix protobuf-induced Valgrind failures (@pitrou)
 - **PR #55639** (2026-11-17): GH-55638: [C++][Parquet] Fix CDC to make list page boundaries independent of array chunking (@kszucs)
-- **PR #55637** (2026-11-17): MINOR: [C++][Parquet] Clean up chunker test assertions (@Sumdiboii)
 
 ---
 
@@ -1791,32 +1779,38 @@ Signed-off-by: AlenkaF <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-55648: [C++][CI] Fix protobuf-induced Valgrind failures
+## X. GH-47465: [C++] Mark the glog backend for deprecation
 
 **RULE**:
-When implementing operations in `cpp/src/arrow/json/chunker.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cpp/cmake_modules/DefineOptions.cmake`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `28a0530b`: GH-55648: [C++][CI] Fix protobuf-induced Valgrind failures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ac7d3fab`: GH-47465: [C++] Mark the glog backend for deprecation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/src/arrow/json/chunker.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/cmake_modules/DefineOptions.cmake`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    // Zero-initialize padding area, to avoid Valgrind failures.
-    std::memset(data + partial.size() + block.size(), 0, simdjson::SIMDJSON_PADDING);
+  define_option(ARROW_USE_GLOG "Build libraries with glog support for pluggable logging;\
+(This is a deprecated option and will be removed in a future release.)" OFF)
+
+  if(ARROW_USE_GLOG)
+    message(DEPRECATION "ARROW_USE_GLOG is deprecated and will be removed in a future release."
+    )
+  endif()
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+  define_option(ARROW_USE_GLOG "Build libraries with glog support for pluggable logging"
+                OFF)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `28a0530b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ac7d3fab` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T10:53:36.728Z",
+  "timestamp": "2026-11-19T17:23:36.551Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-databendlabs-databend-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [databendlabs-databend-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T10:53:36.728Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T17:23:36.551Z`  
 > **Learning ID**: `LEARN-EVO-databendlabs-databend-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 65%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from databendlabs-databend-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `4fc66b82`  
+> **Source Version**: `a83eaead`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T10:48:13.741Z  
+> **Timestamp**: 2026-11-19T17:23:29.703Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T10:43:13.054Z  
+> **Harvest Timestamp**: 2026-11-19T17:23:29.696Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9495 stars
+- **Stars / Engagement**: 9501 stars
 
 ---
 
@@ -1224,11 +1224,14 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #21093** (2026-11-15): **fix(query): link cosine HNSW graphs with normalized vectors**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - On main, `HNSWIndex::build` normalizes cosine vectors only for SQ8 and links the graph with the raw vectors (inner product), so non-unit-length data gets a poor graph and needs a much larger ef. Link the graph with the normalized vectors; L1/L2 are unchanged. - Test: `test_cosine_graph_ignores_vector_lengths` (recall 0.196 before, 0.904 after).  Cohere 1M (768d, cosine, top 100), aarch64 8 vCPU, warm cache, refine 2, single round. Both columns use the same binary (it also carries a separate aarch64 SQ8 kernel tweak, not part of this PR), so they differ only in how the index was built:  | | 18 blocks (default)<br>main | 18 blocks (default)<br>this PR | 4 × 250K rows<br>main | 4 × 250K rows<br>this PR | 1 × 1M rows<br>this PR | |---|---:|---:|---:|---:|---:| | ef | 200 | 200 | 800 | 200 | 400 | | Recall@100 | 0.9677 | 0.9858 | 0.9686 | 0.9767 | 0.9742 | | c1 QPS | 86.3 | 85.1 | 97.6 | 111.7 | 103.5 | | c8 QPS | 334.9 | 335.8 | 415.7 | 524.7 | 570.9 | | c80 QPS | 438.0 | 437.1 | 583.1 | **812.2** | **948.4** | | c80 P99 (ms) | 295.0 | 293.3 | 219.1 | 149.5 | 129.2 |  At Recall ≥ 0.9677, the best c80 goes from 583.1 QPS (main, 4 × 250K, ef 800) to 948.4 QPS (this PR, 1 × 1M, ef 400), **+63%**. main needs ef 800 on 4 blocks because ef 200 only reaches recall 0.8943.  Layouts: `CREATE TABLE t (id BIGINT, emb VECTOR(768), VECTOR INDEX vi (emb) distance='cosine' m=16 ef_con
+- **Issue #21126** (2026-11-19): **fix(query): enforce stage WRITE on HTTP uploads**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  The HTTP stage upload handler now requires the same stage `WRITE` permission as SQL writes, before initializing storage or reading the upload body. Permission denials return HTTP 403. Uploads to the authenticated user's own `~` stage and both stage-name header formats remain supported.  Stateless regression `18_0027_http_stage_write` checks HTTP 403 without `WRITE`, successful uploads via role grants or ownership, and the user's own `~` stage. The targeted test passed twice against a local server with the fix; shell syntax and formatting checks passed.  Fixes #21094.  <!-- Briefly describe what this PR aims to solve. Include background context that will help reviewers understand the purpose of the PR.  Write for humans, in your own words: the concrete problem, why it matters, how you validated it. Do NOT paste model transcripts, long logs, or stack traces here - link a gist or use <details>. The automated PR Assistant checks reject bloated, repetitive, or template-placeholder descriptions.  - fixes: #[Link the issue here] -->  ## Tests  - [ ] Unit Test - [x] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [x] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [ ] Breaking Change (fix or feature that could cause existing functionality not to work as expected) - [ ] Do
 
-- **Issue #21092** (2026-11-13): **fix(query): truncate REPLACE statements in query logs**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - Long `REPLACE INTO ... VALUES ...` statements bypass `short_sql_max_length` because `short_sql` only recognizes `INSERT`. Add `REPLACE` to the existing keyword list so its query log text is truncated in the same way, including in `system_history.query_history`. - Keep truncation behavior unchanged for all other statement types. For example, an oversized `REPLACE INTO t ON (id) VALUES (1, '...')` now retains the configured prefix followed by `...[X more characters]`; execution SQL is unaffected. - Add `test_short_sql_replace` covering keyword case, leading whitespace, Unicode, and lengths below, at, and above the limit. Confirmed the regression fails before the fix and passes afterward alongside the existing `INSERT` tests. - Validation: `cargo test --offline -p databend-common-base --test it test_short_sql`, `cargo clippy --offline -p databend-common-base --tests -- -D warnings`, formatting, and `git diff --check` passed. Full-service end-to-end validation was not run. No migrations or new settings are required.  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test - _Explain why_  ## Type of change  - [x] Bug Fix (non-breaking change which fixes an issue) - [ ] New Feature (non-breaking change which adds functionality) - [ ] Breaking Change (fix or feature that could cause existing functionality not to work as expected) - [ ] Documentation 
+- **Issue #21125** (2026-11-19): **refactor: query: read the ownership and access caches without a lock**
+  *Symptoms*:   I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  ##### refactor: query: read the ownership and access caches without a lock # Summary  The ownership, network rule and external access integration caches are no longer behind a tokio `Mutex`: `RoleMgr` and `UserApiProvider` hold them as `Arc<Cache>` and `Cache`, since the sub-cache reads take `&self`.  # Details  Concurrent `RoleMgr::list_ownerships` calls no longer queue on the lock: they share the copy, and each still waits while it initializes or reconnects. `UserApiProvider::external_access_values` no longer needs `try_lock` to avoid that queue, since `Cache::try_get_ready` never waits. The test of busy caches uses caches that cannot answer instead of holding their locks.  ## Tests  - [x] Unit Test - [ ] Logic Test - [ ] Benchmark Test - [ ] No Test  - _Explain why_  ## Type of change  - [x] Refactoring  ## AI assistance  - AI usage: An AI coding agent generated code and wrote tests; I reviewed and confirmed every line before committing it. - Responsible human: @drmingdrmer - [x] The responsible human has read every line of this diff and can explain each change  ## Related Issues  <!-- Reviewable:start --> - - - This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/databendlabs/databend/21125) <!-- Reviewable:end --> 
+  **Post-Mortem & Fix Analysis**:
+  > ## ⏱ CI timing · Dev  ### [run 44318988933](https://github.com/databendlabs/databend/actions/runs/44318988933) · **37.5 min** (main p50 47.3 min, **−9.8 min**)  | stage | this run | main p50 | Δ | |---|--:|--:|--:| | **total** | 37.5 min | 47.3 min | **−9.8 min** | | **build (aarch64, ci profile)** | 21.8 min | 33.6 min | **−11.8 min** | | ├ deps + crates (parallel) | 4.9 min | — | — | | ├ databend-query codegen | 2.8 min | — | — | | ├ databend-binaries link | 12.0 min | — | — | | └ sccache hit rate | 97.5 % | — | — | | **test_unit** | 15.9 min | 15.1 min | +0.8 min | | mac_check | — | 14.0 min | — | | **tests after build (52 jobs)** | 14.5 min | 11.6 min | **+2.9 min** | | ├ queue p50 / max | 4.4 min / 11.1 min | 1.8 min / 4.5 min | **+2.7 min** | | ├ sqllogic standalone (8 jobs, max) | 5.4 min | 5.2 min | +0.2 min | | ├ sqllogic cluster (8 jobs, max) | 9.7 min | 9.1 min | +0.6 min | | ├ sqllogic stage (2 jobs, max) | 6.7 min | 6.3 min | +0.3 min | | ├ sqllogic other (13 jobs, max) | 
+  > Folded into #21124, whose branch now carries this commit on top of its own, as 3917502b8e.  <!-- x-pr-ship -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1245,858 +1248,908 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `86507e14` (2026-11-14)
-**Commit Message**: fix(iceberg): stop Iceberg DDL/DML from silently doing nothing (#21073)
+### Incident Patch 1: `dea33860` (2026-11-19)
+**Commit Message**: fix(query): batch small blocks before the window partition exchange (#21112)
 
-* fix(iceberg): reject silent no-ops and fix DDL/DML on Iceberg tables
+* fix(query): batch small blocks before the window partition exchange
 
-Several Iceberg statements reported success while changing nothing, and a
-few write paths could not handle the schemas they were given.
+The window partition exchange scatters every input block into
+`window_num_partitions` pieces. When the blocks that reach it are small,
+for example after a selective filter or after the per-block top-n
+truncation of `row_number`/`rank`, each piece holds one or two rows but
+still a full set of allocations per column. Those allocations take far
+more memory than the rows, are not counted by `memory_size`, so the
+window buffer never reaches its spill threshold.
 
-- CREATE TABLE ... AS SELECT panicked on the missing table id sequence of an
-  Iceberg catalog reply, and then hit the meta-only staging and
-  commit_table_meta paths. External catalogs now create and insert without
-  the staging protocol.
-- CREATE TABLE with DECIMAL, TUPLE, ARRAY or MAP columns failed during the
-  arrow to iceberg schema conversion: decimals were handed over as
-  Decimal64/Decimal256 and nested fields carried no field id. Convert the
-  databend schema recursively instead.
-- The writer cast block columns to the physical iceberg types, so a
-  decimal(10, 2) or an array column can be written at all.
-- INSERT OVERWRITE, TRUNCATE TABLE and ALTER TABLE ADD/DROP COLUMN return a
-  clear unsupported error instead of silently appending or leaving rows and
-  schemas untouched.
-- Partition values are computed through the partition transform; only
-  identity was applied before, which corrupted (or pa
+Add `TransformWindowPartitionBatch` before the exchange of every
+partitioned window. Blocks that would give fewer than 64 rows and less
+than 1 KiB per column to each partition on average are buffered until
+they are not small together and then concatenated; other blocks pass
+through untouched. The top-n truncation moves from
+`WindowPartitionTopNExchange` into this transform, so top-n windows now
+use the plain `WindowPartitionExchange`.
 
-**File**: `Cargo.lock` (modified, +1/-0)
+* fix(query): send large window blocks without concatenation and keep partition ids above 255
+
+* fix(query): copy small window blocks into the batch 
+
+**File**: `src/query/expression/src/kernels/stream_partition.rs` (modified, +135/-12)
 ```diff
-@@ -4302,6 +4302,7 @@ version = "0.1.0"
- dependencies = [
-  "anyhow",
-  "arrow-array",
-+ "arrow-cast",
-  "arrow-schema",
-  "async-backtrace",
-  "async-trait",
-```
-
-**File**: `src/query/service/src/interpreters/interpreter_table_add_column.rs` (modified, +5/-1)
-```diff
-@@ -36,6 +36,7 @@ use databend_common_sql::plans::Mutation;
- use databend_common_sql::plans::Plan;
- use databend_common_storages_basic::view_table::VIEW_ENGINE;
- use databend_common_storages_fuse::FuseTable;
-+use databend_common_storages_iceberg::table::ICEBERG_ENGINE;
- use databend_common_storages_stream::stream_table::STREAM_ENGINE;
- use databend_meta_client::types::MatchSeq;
- use databend_storages_common_table_meta::meta::TableSnapshot;
-@@ -91,7 +92,10 @@ impl Interpreter for AddTableColumnInterpreter {
+@@ -136,6 +136,33 @@ impl PendingColumn {
+         copy_column(indices, column, self.builder(indices.len()));
+     }
  
-             let mut table_info = tbl.get_table_info().clone();
-             let engine = table_info.engine();
--            if matches!(engine, VIEW_ENGINE | STREAM_ENGINE) {
-+            if matches!(
-+                engine.to_uppercase().as_str(),
-+                VIEW_ENGINE | STREAM_ENGINE | ICEBERG_ENGINE
-+            ) {
-                 return Err(ErrorCode::TableEngineNotSupported(format!(
-                     "{}.{} engine is {} that doesn't support alter",
-                     self.plan.database, self.plan.table, engine
-```
-
-**File**: `src/query/service/src/interpreters/interpreter_table_create.rs` (modified, +31/-7)
-```diff
-@@ -279,13 +279,18 @@ impl CreateTableInterpreter {
-         let tenant = self.ctx.get_tenant();
- 
-         let catalog = self.ctx.get_catalog(&self.plan.catalog).await?;
-+        // Tables of an external catalog (iceberg) are committed by the catalog itself right
-+        // away: they cannot be staged as dropped and they have no meta table id to commit.
-+        let external_catalog = catalog.is_external();
- 
-         let mut req = self.build_request()?;
-         let dictionary_indexes = self.take_dictionary_indexes(&mut req.table_meta).await?;
- 
-         // create a dropped table first.
--        req.as_dropped = true;
--        req.table_meta.drop_on = Some(Utc::now());
-+        if !external_catalog {
-+            req.as_dropped = true;
-+            req.table_meta.drop_on = Some(Utc::now());
-+        }
-         let table_meta = req.table_meta.clone();
-         // The prefix is moved into the pipeline's 'static finish hook, while the request itself can
-         // be consumed by the catalog.
-@@ -321,7 +326,7 @@ impl CreateTableInterpreter {
-             .expect("internal error: table_id_seq must have been set. CTAS(replace) of table");
-         let db_id = reply.db_id;
- 
--        if temp_prefix.is_none() {
-+        if temp_prefix.is_none() && !external_catalog {
-             self.process_ownership(&tenant, reply).await?;
-         }
- 
-@@ -381,7 +386,13 @@ impl CreateTableInterpreter {
-             schema: self.plan.schema.clone(),
-             overwrite: false,
-             source: InsertInputSource::SelectPlan(select_plan),
--            table_info: Some(table_info),
-+            // An external catalog resolves the table it created from the catalog; the staged
-+            // table info has no iceberg engine options to read it with.
-+            table_info: if external_catalog {
-+                None
-+            } else {
-+                Some(table_info)
-+            },
-             lineage_target_table_id: None,
-             lineage_target_catalog_type: if self.plan.engine == Engine::Iceberg {
-                 CatalogType::Iceberg
-@@ -433,9 +444,8 @@ impl CreateTableInterpreter {
-         //
-         // If the un-drop fails, data inserted and the table will be invisible, and available for vacuum.
- 
--        pipeline
--            .main_pipeline
--            .lift_on_finished(move |info: &ExecutionInfo| {
-+        if !external_catalog {
-+            pipeline.main_pipeline.lift_on_finished(move |info: &ExecutionInfo| {
-                 let qualified_table_name = format!("{}.{}", db_name, table_name);
- 
-                 if info.res.is_ok() {
-@@ -466,6 +476,20 @@ impl CreateTableInterpreter {
- 
-                 Ok(())
-             });
++    /// Add every row of `column`, in order.
++    fn append_column(&mut self, column: &Column) {
++        let builder = self.builder(column.len());
++        if builder.data_type() == column.data_type() {
++            builder.append_column(column);
 +        } else {
-+            let qualified_table_name = format!("{}.{}", db_name, table_name);
-+            pipeline
-+                .main_pipeline
-+                .lift_on_finished(move |info: &ExecutionInfo| {
-+                    if info.res.is_ok() {
-+                        info!(
-+                            "create_table_as_select {} success, committed by the external catalog",
-+                            qualified_table_name
-+                        );
-+                    }
-+                    Ok(())
-+                });
++            // Such as an `Array` column into an `EmptyArray` builder, which
++            // only `copy_column` turns into an `Array` builder.
++            let indices = (0..column.len() as u32).collect::<Vec<_>>();
++            copy_column(&indices, column, builder);
 +        }
- 
-         if let Some(temp_prefix) = temp_prefix {
-             let temp_tbl_mgr = self.ctx.get_current_session().temp_tbl_mgr();
-```
-
-**File**: `src/query/service/src/interpreters/interpreter_table_drop_column.rs` (modified, +5/-1)
-```diff
-@@ -24,6 +24,7 @@ use databend_common_sql::BloomIndexColumns;
- use databend_common_sql::binder::validate_constraints_by_schema;
- use databend_common_sql::plans::DropTableColumnPlan;
- use databend_common_storages_basic::view_table::VIEW_ENGINE;
-+use databend_common_storages_iceberg::table::ICEBERG_ENGINE;
- use databend_common_storages_stream::stream_table::STREAM_ENGINE;
- use databend_storages_common_table_meta::table::OPT_KEY_ANALYZE_FREQUENCY_COLUMNS;
- use databend_storages_common_table_meta::table::OPT_KEY_APPROX_DISTINCT_COLUMNS;
-@@ -77,7 +78,10 @@ impl Interpreter for DropTableColumnInterpreter {
- 
-             let table_info = table.get_table_info();
-             let engine = table_info.engine();
--            if matches!(engine, VIEW_ENGINE | STREAM_ENGINE) {
-+            if matches!(
-+                engine.to_uppercase().as_str(),
-+                VIEW_ENGINE | STREAM_ENGINE | ICEBERG_ENGINE
-+            ) {
-                 return Err(ErrorCode::TableEngineNotSupported(format!(
-                     "{}.{} engine is {} that doesn't support alter",
-                     self.plan.database, self.plan.table, engine
-```
-
-**File**: `src/query/storages/iceberg/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -9,6 +9,7 @@ publish = false
- [dependencies]
- anyhow = { workspace = true }
- arrow-array = { workspace = true }
-+arrow-cast = { workspace = true }
- arrow-schema = { workspace = true }
- async-backtrace = { workspace = true }
- async-trait = { workspace = true }
-```
-
-**File**: `src/query/storages/iceberg/src/append.rs` (modified, +403/-94)
-```diff
-@@ -28,6 +28,7 @@ use databend_common_expression::DataBlock;
- use databend_common_expression::ScalarRef;
- use databend_common_expression::types::Bitmap;
- use databend_common_expression::types::MutableBitmap;
-+use databend_common_expression::types::NumberScalar;
- use databend_common_meta_app::schema::CatalogInfo;
- use databend_common_pipeline::core::InputPort;
- use databend_common_pipeline::core::ProcessorPtr;
-@@ -37,11 +38,17 @@ use databend_common_pipeline_transforms::AsyncAccumulatingTransform;
- use databend_common_storage::MutationStatus;
- use iceberg::arrow::schema_to_arrow_schema;
- use iceberg::spec::DataFileFormat;
-+use iceberg::spec::Datum;
- use iceberg::spec::Literal;
- use iceberg::spec::PartitionKey;
-+use iceberg::spec::PrimitiveLiteral;
-+use iceberg::spec::PrimitiveType;
- use iceberg::spec::Struct as IcebergStruct;
- use iceberg::transaction::ApplyTransactionAction;
- use iceberg::transaction::Transaction;
-+use iceberg::transform::BoxedTransformFunction;
-+use iceberg::transform::TransformFunction;
-+use iceberg::transform::create_transform_function;
- use iceberg::writer::IcebergWriter;
- use iceberg::writer::IcebergWriterBuilder;
- use iceberg::writer::base_writer::data_file_writer::DataFileWriterBuilder;
-@@ -211,7 +218,7 @@ impl IcebergDataFileWriter {
-     {
-         // Get partition column indices and field info
-         let partition_fields = partition_spec.fields();
--        let mut partition_column_indices = Vec::with_capacity(partition_fields.len());
-+        let mut partition_sources = Vec::with_capacity(partition_fields.len());
- 
-         for field in partition_fields {
-             // Find the source column index in the schema
-@@ -234,7 +241,29 @@ impl IcebergDataFileWriter {
-                     ))
-                 })?;
- 
--            partition_column_indices.push((col_idx, field.clone()));
-+            let source_type = match schema_field.field_type.as_ref() {
-+                iceberg::spec::Type::Primitive(primitive) => primitive.clone(),
-+                _ => {
-+                    return Err(ErrorCode::TableEngineNotSupported(format!(
-+                        "Iceberg partition source column '{field_name}' is not a primitive type"
-+                    )));
-+                }
-+            };
++    }
 +
-+            // The stored partition value is the transformed source value, which is not
-+            // necessarily the raw column value (bucket, truncate, temporal transforms).
-+            let transform = create_transform_function(&field.transform).map_err(|err| {
-+                ErrorCode::TableEngineNotSupported(format!(
-+                    "Iceberg partition transform '{}' on column '{field_name}' is not supported: {err}",
-+                    field.transform
-+                ))
-+            })?;
++    /// Add `rows` of a constant, kept a constant when it can be.
++    fn append_const(
++        &mut self,
++        scalar: &Scalar,
++        data_type: &DataType,
++        rows: usize,
++        size: &mut impl FnMut() -> ExpandedSize,
++    ) {
++        if !self.try_push_const(scalar, data_type, rows, size) {
++            let column = ColumnBuilder::repeat(&scalar.as_ref(), rows, data_type).build();
++            self.append_column(&column);
++        }
++    }
 +
-+            partition_sources.push(PartitionSource {
-+                column_index: col_idx,
-+                transform,
-+                source_type,
-+            });
-         }
- 
-         // Group rows by partition values
-@@ -244,7 +273,7 @@ impl IcebergDataFileWriter {
-         for row_idx in 0..num_rows {
-             // Build partition value for this row
-             let partition_value =
--                self.extract_partition_value(&block, row_idx, &partition_column_indices)?;
-+                self.extract_partition_value(&block, row_idx, &partition_sources)?;
-             let bitmap = partition_groups.entry(partition_value).or_insert_with(|| {
-                 let mut bitmap = MutableBitmap::new();
-                 bitmap.extend_constant(num_rows, false);
-@@ -293,118 +322,186 @@ impl IcebergDataFileWriter {
-         &self,
-         block: &DataBlock,
-         row_idx: usize,
--        partition_column_indices: &[(usize, iceberg::spec::PartitionField)],
-+        partition_sources: &[PartitionSource],
-     ) -> Result<IcebergStruct> {
--        let mut literals: Vec<Option<Literal>> = Vec::with_capacity(partition_column_indices.len());
-+        let mut literals: Vec<Option<Literal>> = Vec::with_capacity(partition_sources.len());
- 
--        for (col_idx, _field) in partition_column_indices {
--            let entry = &block.columns()[*col_idx];
-+        for source in partition_sources {
-+            let entry = &block.columns()[source.column_index];
-             let column = entry.to_column();
-             let value = column.index(row_idx);
--
--            // Convert Databend ScalarRef to Iceberg Literal
--            // Note: We only support Identity transform for now
--            let literal = self.scalar_to_iceberg_literal(value)?;
--            literals.push(literal);
-+            literals.push(transform_partition_literal(
-+                value,
-+                &source.source_type,
-+                source.transform.as_ref(),
-+            )?);
-         }
- 
-         Ok(IcebergStruct::from_iter(literals))
-     }
- 
--    fn scalar_to_iceberg_literal(&self, scalar: Option<ScalarRef>) -> Result<Option<Literal>> {
--        match scalar {
--            None => Ok(None),
--            Some(s) => {
--    
-```
-
-**File**: `src/query/storages/iceberg/src/database.rs` (modified, +286/-19)
-```diff
-@@ -17,14 +17,17 @@
- use std::collections::HashMap;
- use std::sync::Arc;
- 
-+use arrow_schema::DataType as ArrowDataType;
- use arrow_schema::Field;
- use arrow_schema::Schema;
-+use arrow_schema::TimeUnit;
- use async_trait::async_trait;
- use databend_common_catalog::catalog::Catalog;
- use databend_common_catalog::database::Database;
- use databend_common_catalog::table::Table;
- use databend_common_exception::ErrorCode;
- use databend_common_exception::Result;
-+use databend_common_expression::ColumnId;
- use databend_common_expression::TableDataType;
- use databend_common_expression::TableDataType::Null;
- use databend_common_expression::TableDataType::Timestamp;
-@@ -194,17 +197,29 @@ impl Database for IcebergDatabase {
-         match req.create_option {
-             CreateOption::Create => {}
-             CreateOption::CreateIfNotExists => {
--                if let Ok(exists) = self.ctl.iceberg_catalog().table_exists(&table_name).await {
--                    if exists {
--                        return Ok(CreateTableReply {
--                            table_id: 0,
--                            table_id_seq: None,
--                            db_id: 0,
--                            new_table: true,
--                            prev_table_id: None,
--                            orphan_table_name: None,
--                        });
--                    }
-+                // `Catalog::table_exists` asks the REST catalog with a HEAD request, which older
-+                // REST servers (iceberg-rest 0.10 answers 400 to any HEAD) reject, so the table
-+                // is looked up instead: a GET works everywhere, and a failed lookup means there
-+                // is nothing to do.
-+                if self
-+                    .ctl
-+                    .iceberg_catalog()
-+                    .load_table(&table_name)
-+                    .await
-+                    .is_ok()
-+                {
-+                    return Ok(CreateTableReply {
-+                        table_id: 0,
-+                        table_id_seq: Some(0),
-+                        db_id: 0,
-+                        // The table is already there, so `CREATE TABLE IF NOT EXISTS` has
-+                        // nothing to do. Callers such as CTAS only skip their write when the
-+                        // reply says the table is not new; reporting a new table here made them
-+                        // append to the existing one.
-+                        new_table: false,
-+                        prev_table_id: None,
-+                        orphan_table_name: None,
-+                    });
-                 }
-             }
-             CreateOption::CreateOrReplace => {
-@@ -250,7 +265,9 @@ impl Database for IcebergDatabase {
-             })?;
-         Ok(CreateTableReply {
-             table_id: 0,
--            table_id_seq: None,
-+            // Iceberg tables are not managed by the meta service, but callers such as CTAS
-+            // expect the sequence number of the created table to be present.
-+            table_id_seq: Some(0),
-             db_id: 0,
-             new_table: true,
-             prev_table_id: None,
-@@ -300,14 +317,20 @@ fn convert_table_schema(
-     db_name: &str,
-     table_name: &str,
- ) -> Result<IcebergSchema> {
--    let mut fields = vec![];
-+    // Nested fields have no column id of their own, but iceberg requires a unique id on every
-+    // field of the schema, including struct members, list elements and map keys/values.
-+    let mut next_field_id = schema
-+        .fields()
-+        .iter()
-+        .map(|f| f.column_id)
-+        .max()
-+        .unwrap_or(0)
-+        + 1;
-+    let mut fields = Vec::with_capacity(schema.fields().len());
-     for f in schema.fields() {
--        let mut metadata = HashMap::new();
--        metadata.insert(
--            PARQUET_FIELD_ID_META_KEY.to_string(),
--            f.column_id.to_string(),
--        );
--        fields.push(Field::from(f).with_metadata(metadata));
-+        let field =
-+            databend_field_to_arrow(&f.name, &f.data_type, f.column_id, &mut next_field_id)?;
-+        fields.push(field.with_nullable(f.is_nullable() || f.data_type.is_nullable()));
-     }
-     let metadata = schema
-         .metadata
-@@ -326,6 +349,119 @@ fn convert_table_schema(
-     Ok(schema) // Return the converted Iceberg schema
+     /// Turn the pending rows into a builder with room for `additional` more.
+     fn builder(&mut self, additional: usize) -> &mut ColumnBuilder {
+         match self {
+@@ -215,6 +242,21 @@ fn copy_const(scalar: &Scalar, data_type: &DataType, rows: usize, to: &mut Colum
+     copy_column(&indices, &column, to);
  }
  
-+/// Convert a databend field to an arrow field that [`arrow_schema_to_schema`] accepts.
++/// The expanded size of the last constant seen in a column.
++type ConstSize = Option<(Scalar, DataType, ExpandedSize)>;
++
++fn cached_const_size(cache: &mut ConstSize, scalar: &Scalar, data_type: &DataType) -> ExpandedSize {
++    if let Some((s, t, size)) = cache.as_ref()
++        && s == scalar
++        && t == data_type
++    {
++        return *size;
++    }
++    let size = ExpandedSize::measure(scalar, data_type);
++    *cache = Some((scalar.clone(), data_type.clone(), size));
++    size
++}
++
+ struct PartitionBlockBuilder {
+     num_rows: usize,
+     columns: Vec<PendingColumn>,
+@@ -244,7 +286,7 @@ pub struct BlockPartitionStream {
+     partitions: Vec<PartitionBlockBuilder>,
+     // The expanded size of the last constant seen in each column, as the same
+     // constant usually comes in every block.
+-    const_sizes: Vec<Option<(Scalar, DataType, ExpandedSize)>>,
++    const_sizes: Vec<ConstSize>,
+ }
+ 
+ impl BlockPartitionStream {
+@@ -313,17 +355,7 @@ impl BlockPartitionStream {
+             match entry {
+                 BlockEntry::Const(scalar, data_type, num_rows) => {
+                     let const_size = &mut self.const_sizes[column_idx];
+-                    let mut size = || {
+-                        if let Some((s, t, size)) = const_size.as_ref()
+-                            && *s == scalar
+-                            && *t == data_type
+-                        {
+-                            return *size;
+-                        }
+-                        let size = ExpandedSize::measure(&scalar, &data_type);
+-                        *const_size = Some((scalar.clone(), data_type.clone(), size));
+-                        size
+-                    };
++                    let mut size = || cached_const_size(const_size, &scalar, &data_type);
+                     // Expanded once for the partitions that already hold other
+                     // rows, as every block used to be.
+                     let mut expanded = None;
+@@ -435,6 +467,97 @@ impl BlockPartitionStream {
+     }
+ }
+ 
++/// Concatenates blocks into blocks of `rows_threshold` rows or
++/// `bytes_threshold` bytes, whichever is reached first: a
++/// `BlockPartitionStream` with one partition, without row indices.
 +///
-+/// Decimals are restricted to `Decimal128` and every field carries the field id that iceberg
-+/// expects in its metadata.
-+fn databend_field_to_arrow(
-+    name: &str,
-+    ty: &TableDataType,
-+    field_id: ColumnId,
-+    next_field_id: &mut ColumnId,
-+) -> Result<Field> {
-+    let arrow_ty = databend_type_to_arrow(ty, next_field_id)?;
-+    let metadata = HashMap::from([(PARQUET_FIELD_ID_META_KEY.to_string(), field_id.to_string())]);
-+    Ok(Field::new(name, arrow_ty, ty.is_nullable()).with_metadata(metadata))
++/// The rows of each block are appended to the column builders as it arrives,
++/// so the block, which can be a slice of a larger one, is not kept. A column
++/// that has been the same constant in every block so far stays a constant,
++/// counted as if expanded. Once a block is sent, the builders of the next one
++/// reserve as many rows.
++pub struct BlockConcatStream {
++    rows_threshold: usize,
++    bytes_threshold: usize,
++    pending: PartitionBlockBuilder,
++    const_sizes: Vec<ConstSize>,
 +}
 +
-+fn next_nested_field(
-+    name: &str,
-+    ty: &TableDataType,
-+
-```
-
-**File**: `src/query/storages/iceberg/src/statistics.rs` (modified, +36/-7)
-```diff
-@@ -60,7 +60,17 @@ impl IcebergStatistics {
-         let Some(snapshot) = table.metadata().current_snapshot() else {
-             return Ok(IcebergStatistics::default());
-         };
-+        Self::parse_snapshot(table, snapshot).await
-+    }
- 
-+    /// Get statistics of the given snapshot.
-+    ///
-+    /// Time travel reads a historical snapshot, so its row counts and column bounds must be
-+    /// computed from that snapshot's manifests instead of the current one.
-+    pub async fn parse_snapshot(
-+        table: &iceberg::table::Table,
-+        snapshot: &iceberg::spec::Snapshot,
-+    ) -> Result<IcebergStatistics> {
-         // Map from column id to the total size on disk of all regions that
-         // store the column. Does not include bytes necessary to read other
-         // columns, like footers. Leave null for row-oriented formats (Avro)
-@@ -95,6 +105,10 @@ impl IcebergStatistics {
-             .await
-             .map_err(|err| ErrorCode::Internal(format!("load manifest list error: {err:?}")))?;
- 
-+        let snapshot_schema = snapshot.schema(table.metadata()).map_err(|err| {
-+            ErrorCode::TableSchemaMismatch(format!("Iceberg snapshot schema: {err}"))
-+        })?;
-+
-         for manifest_file in manifest.entries() {
-             statistics.number_of_manifest_files += 1;
- 
-@@ -167,13 +181,28 @@ impl IcebergStatistics {
- 
-         let mut computed_statistics = HashMap::new();
-         for field in IcebergTable::get_schema(table)?.fields() {
--            let column_stats = get_column_stats(
--                field,
--                &column_sizes,
--                &lower_bounds,
--                &upper_bounds,
--                &null_value_counts,
--            );
-+            // A column that the scanned snapshot does not know about has no files in it, so
-+            // it can only report nulls. Lookups stay on the field id, which both schemas share.
-+            let known_in_snapshot = snapshot_schema
-+                .field_by_id(field.column_id as i32)
-+                .is_some();
-+            let column_stats = if known_in_snapshot {
-+                get_column_stats(
-+                    field,
-+                    &column_sizes,
-+                    &lower_bounds,
-+                    &upper_bounds,
-+                    &null_value_counts,
-+                )
++impl BlockConcatStream {
++    pub fn create(rows_threshold: usize, bytes_threshold: usize) -> BlockConcatStream {
++        BlockConcatStream {
++            rows_threshold: if rows_threshold == 0 {
++                usize::MAX
 +            } else {
-+                BasicColumnStatistics {
-+                    min: None,
-+                    max: None,
-+                    ndv: None,
-+                    null_count: statistics.record_count,
-+                    in_memory_size: 0,
-+                }
-+            };
-             computed_statistics.insert(field.column_id, column_stats);
-         }
- 
-```
-
----
-
-### Incident Patch 2: `4fc66b82` (2026-11-15)
-**Commit Message**: feat(query): enable the memory limit and the shared cache by default (#21091)
-
-* feat(query): enable the memory limit and the shared cache by default
-
-max_memory_limit_enabled and cache.shared_memory_enabled now default to
-true. A max_server_memory_usage of 0 is derived as 80% of the memory of
-the machine, or of the cgroup the process runs in; the process limit and
-the shared cache pools both use it.
-
-The shared backend no longer refuses to start without the memory limit:
-its pools are then sized but not shrunk under pressure.
-
-CI keeps the legacy backend covered by the former shared-cache job, and
-tests that need the legacy backend select it explicitly.
-
-* test(query): pin the memory limit in the system.caches golden test
-
-The shared cache backend is the default, so system.caches lists its pools, sized by the memory limit. Fix the limit at 1 GiB so the capacities do not depend on the machine.
-
-* test(query): ignore the cache-dependent read sources in the cluster EXPLAIN ANALYZE test
-
-The shared cache backend is the default and keeps table data in memory, so
-re-reads of a table are served partly from the memory cache of whichever node
-scans each block. The remote/memory split is no
-
-**File**: `.github/actions/test_sqllogic_standalone_linux/action.yml` (modified, +3/-9)
-```diff
-@@ -18,9 +18,9 @@ inputs:
-     required: false
-     default: "true"
-   shared_cache:
--    description: "Use the shared cache backend"
-+    description: "Use the shared cache backend, the default; false runs the legacy backend"
-     required: false
--    default: "false"
-+    default: "true"
- 
- runs:
-   using: "composite"
-@@ -36,10 +36,4 @@ runs:
-         TEST_PARALLEL: ${{ inputs.parallel }}
-         CACHE_ENABLE_TABLE_META_CACHE: ${{ inputs.enable_table_meta_cache}}
-         CACHE_SHARED_MEMORY_ENABLED: ${{ inputs.shared_cache }}
--      run: |
--        if [ "$CACHE_SHARED_MEMORY_ENABLED" = "true" ]; then
--          # The shared cache backend requires a server memory limit: 80% of the runner memory.
--          export QUERY_MAX_MEMORY_LIMIT_ENABLED=true
--          export QUERY_MAX_SERVER_MEMORY_USAGE=$(( $(awk '/MemTotal/{print $2}' /proc/meminfo) * 1024 * 8 / 10 ))
--        fi
--        bash ./scripts/ci/ci-run-sqllogic-tests.sh ${{ inputs.dirs }}
-+      run: bash ./scripts/ci/ci-run-sqllogic-tests.sh ${{ inputs.dirs }}
-```
-
-**File**: `.github/workflows/reuse.sqllogic.yml` (modified, +6/-3)
-```diff
-@@ -370,13 +370,16 @@ jobs:
-           dirs: ${{ matrix.dirs }}
-           handlers: ${{ matrix.handler }}
-           enable_table_meta_cache: false
-+          # `enable_table_meta_cache` is an option of the legacy cache backend.
-+          shared_cache: false
-       - name: Upload failure
-         if: failure()
-         uses: ./.github/actions/artifact_failure
-         with:
-           name: test-sqllogic-standalone-no-table-meta-cache-${{ matrix.dirs }}-${{ matrix.handler }}
- 
--  standalone_shared_cache:
-+  # The cache backend is the shared one by default; these keep the legacy one covered.
-+  standalone_legacy_cache:
-     runs-on:
-       - self-hosted
-       - ${{ inputs.runner_arch }}
-@@ -397,12 +400,12 @@ jobs:
-         with:
-           dirs: ${{ matrix.tests.dirs }}
-           handlers: http
--          shared_cache: true
-+          shared_cache: false
-       - name: Upload failure
-         if: failure()
-         uses: ./.github/actions/artifact_failure
-         with:
--          name: test-sqllogic-standalone-shared-cache-${{ matrix.tests.dirs }}
-+          name: test-sqllogic-standalone-legacy-cache-${{ matrix.tests.dirs }}
- 
-   ee:
-     runs-on:
-```
-
-**File**: `Cargo.lock` (modified, +1/-11)
-```diff
-@@ -3294,6 +3294,7 @@ dependencies = [
-  "serde_ignored",
-  "serde_with",
-  "serfig",
-+ "sysinfo",
-  "temp-env",
-  "tempfile",
-  "toml 0.8.22",
-@@ -3998,7 +3999,6 @@ dependencies = [
-  "once_cell",
-  "serde",
-  "serde_json",
-- "sys-info",
-  "tokio",
- ]
- 
-@@ -14687,16 +14687,6 @@ dependencies = [
-  "syn 2.0.106",
- ]
- 
--[[package]]
--name = "sys-info"
--version = "0.9.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0b3a0d0aba8bf96a0e1ddfdc352fc53b3df7f39318c71854910c3c4b024ae52c"
--dependencies = [
-- "cc",
-- "libc",
--]
--
- [[package]]
- name = "sysinfo"
- version = "0.34.2"
-```
-
-**File**: `Cargo.toml` (modified, +0/-1)
-```diff
-@@ -465,7 +465,6 @@ stringslice = "0.2.0"
- strum = "0.24.1"
- sub-cache = "0.2.1"
- syn = { version = "2.0", features = ["full"] }
--sys-info = "0.9"
- sysinfo = "0.34.2"
- tantivy = { version = "0.26.2", features = ["quickwit"] }
- tantivy-common = "0.11.0"
-```
-
-**File**: `src/binaries/query/entry.rs` (modified, +2/-2)
-```diff
-@@ -135,7 +135,7 @@ async fn precheck_services(conf: &InnerConfig) -> Result<(), MainError> {
-     let make_error = || "failed to precheck";
- 
-     if conf.query.common.max_memory_limit_enabled {
--        let size = conf.query.common.max_server_memory_usage as i64;
-+        let size = conf.server_memory_limit() as i64;
-         info!("Set memory limit: {}", size);
-         GLOBAL_MEM_STAT.set_limit(size, false);
-     }
-@@ -324,7 +324,7 @@ pub async fn start_services(conf: &InnerConfig) -> Result<(), MainError> {
-         if conf.query.common.max_memory_limit_enabled {
-             format!(
-                 "Memory: server memory limit to {} (bytes)",
--                conf.query.common.max_server_memory_usage
-+                conf.server_memory_limit()
-             )
-         } else {
-             "unlimited".to_string()
-```
-
-**File**: `src/query/config/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -28,6 +28,7 @@ serde = { workspace = true }
- serde_ignored = { workspace = true }
- serde_with = { workspace = true }
- serfig = { workspace = true }
-+sysinfo = { workspace = true }
- toml = { workspace = true }
- 
- [dev-dependencies]
-```
-
-**File**: `src/query/config/src/config.rs` (modified, +10/-8)
-```diff
-@@ -1715,15 +1715,17 @@ pub struct QueryConfig {
-     #[clap(long, value_name = "VALUE", default_value = "false")]
-     pub global_statement_queue: bool,
- 
--    /// The max total memory in bytes that can be used by this process.
-+    /// The max total memory in bytes that can be used by this process. 0, the default, is 80%
-+    /// of the memory of the machine, or of the cgroup the process runs in.
-     #[clap(long, value_name = "VALUE", default_value = "0")]
-     pub max_server_memory_usage: u64,
- 
-+    /// Enforce `max_server_memory_usage`: queries are killed when the process reaches it.
-     #[clap(
-         long,
-         value_name = "VALUE",
-         value_parser = clap::value_parser!(bool),
--        default_value = "false"
-+        default_value = "true"
-     )]
-     pub max_memory_limit_enabled: bool,
- 
-@@ -3551,15 +3553,15 @@ pub struct CacheConfig {
- 
-     /// Use the shared cache backend: three memory pools (meta, index and data), each sized as a
-     /// percentage of the server memory limit, evicted with S3-FIFO and shrunk under memory
--    /// pressure before queries are killed. Requires a server memory limit
--    /// (`max_memory_limit_enabled` and `max_server_memory_usage`). The per-cache capacity options
--    /// above and `enable_table_meta_cache` are then ignored; disk cache options still apply.
-+    /// pressure before queries are killed, which takes `max_memory_limit_enabled`. The per-cache
-+    /// capacity options above and `enable_table_meta_cache` are then ignored; disk cache options
-+    /// still apply. Set it to false for the legacy backend, sized by those options.
-     #[clap(
-         long = "cache-shared-memory-enabled",
-         value_name = "VALUE",
--        default_value = "false"
-+        default_value = "true"
-     )]
--    #[serde(default = "bool_false")]
-+    #[serde(default = "bool_true")]
-     pub shared_memory_enabled: bool,
- 
-     /// Shared backend: percentage of the server memory limit for table, segment and index
-@@ -3647,7 +3649,7 @@ impl Default for CacheConfig {
-             table_data_deserialized_memory_ratio: 0,
-             table_data_encoded_dictionary_ndv_ratio: 100,
-             iceberg_table_meta_count: 1024,
--            shared_memory_enabled: false,
-+            shared_memory_enabled: true,
-             meta_max_ratio: 10,
-             index_max_ratio: 40,
-             data_max_ratio: 10,
-```
-
-**File**: `src/query/config/src/inner.rs` (modified, +20/-0)
-```diff
-@@ -128,6 +128,16 @@ impl InnerConfig {
-         Config::load_with_config_file("")?.try_into()
-     }
- 
-+    /// The server memory limit in bytes: `max_server_memory_usage`, or when that is 0,
-+    /// [`default_server_memory_limit`]. The allocator limit, the cache pools and the
-+    /// `max_memory_usage` setting, from which the spill thresholds derive, all use it.
-+    pub fn server_memory_limit(&self) -> u64 {
-+        match self.query.common.max_server_memory_usage {
-+            0 => default_server_memory_limit(),
-+            limit => limit,
++                rows_threshold
++            },
++            bytes_threshold: if bytes_threshold == 0 {
++                usize::MAX
++            } else {
++                bytes_threshold
++            },
++            pending: PartitionBlockBuilder {
++                num_rows: 0,
++                columns: vec![],
++            },
++            const_sizes: vec![],
 +        }
 +    }
 +
-     pub fn tls_query_cli_enabled(&self) -> bool {
-         !self
-             .query
-@@ -170,6 +180,16 @@ impl InnerConfig {
-     }
++    /// Appends the rows of `block`, and returns the concatenated block once
++    /// it reaches a threshold.
++    pub fn push(&mut self, block: DataBlock) -> Option<DataBlock
+```
+
+**File**: `src/query/expression/tests/it/stream_partition.rs` (modified, +57/-0)
+```diff
+@@ -14,6 +14,7 @@
+ 
+ use std::collections::HashSet;
+ 
++use databend_common_expression::BlockConcatStream;
+ use databend_common_expression::BlockEntry;
+ use databend_common_expression::BlockPartitionStream;
+ use databend_common_expression::DataBlock;
+@@ -107,6 +108,62 @@ fn assert_same_as_expanded(
+     output
  }
  
-+/// 80% of the memory of the machine, or of the cgroup the process runs in.
-+pub fn default_server_memory_limit() -> u64 {
-+    let mut system = sysinfo::System::new();
-+    system.refresh_memory();
-+    let total = system
-+        .cgroup_limits()
-+        .map_or(system.total_memory(), |limits| limits.total_memory);
-+    total / 10 * 8
++#[test]
++fn test_concat_stream_cuts_as_one_partition() {
++    // Columns, runs of one constant, a new constant and a slice, cut at 10
++    // rows as a `BlockPartitionStream` with one partition cuts them.
++    let blocks = [
++        column_block(5, 0),
++        const_block(4, 5, "a"),
++        const_block(3, 9, "a"),
++        column_block(8, 10).slice(2..6),
++        const_block(2, 20, "b"),
++        column_block(7, 30),
++        const_block(1, 40, "b"),
++    ];
++    let mut stream = BlockConcatStream::create(10, 0);
++    let mut reference = BlockPartitionStream::create(10, 0, 1);
++    for block in &blocks {
++        let actual = stream.push(block.clone());
++        let mut expected = reference.partition(vec![0; block.num_rows()], block.clone(), true);
++        assert_eq!(actual.is_some(), expected.len() == 1);
++        if let (Some(a), Some((_, e))) = (&actual, expected.pop()) {
++            assert_same_values(a, &e);
++        }
++    }
++    let actual = stream.finish();
++    let expected = reference.finalize_partition(0);
++    assert_eq!(actual.is_some(), expected.is_some());
++    if let (Some(a), Some(e)) = (&actual, &expected) {
++        assert_same_values(a, e);
++    }
++    assert!(stream.finish().is_none());
 +}
 +
- impl Debug for InnerConfig {
-     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
-         f.debug_struct("InnerConfig")
++#[test]
++fn test_concat_stream_keeps_one_constant() {
++    let mut stream = BlockConcatStream::create(0, 0);
++    assert!(stream.push(const_block(3, 0, "a")).is_none());
++    assert!(stream.push(const_block(4, 3, "a")).is_none());
++    assert_eq!(stream.num_rows(), 7);
++
++    let block = stream.finish().unwrap();
++    assert_eq!(block.num_rows(), 7);
++    assert_eq!(block.get_by_offset(1).as_scalar(), Some(&Scalar::Null));
++    assert_eq!(
++        block.get_by_offset(2).as_scalar(),
++        Some(&Scalar::String("a".to_string()))
++    );
++    assert_same_values(
++        &block,
++        &DataBlock::concat(&[
++            expanded(&const_block(3, 0, "a")),
++            expanded(&const_block(4, 3, "a")),
++        ])
++        .unwrap(),
++    );
++}
++
+ #[test]
+ fn test_partition_preserves_timezone_representations() {
+     use databend_common_column::types::timestamp_tz;
 ```
 
----
-
-### Incident Patch 3: `2c77ade4` (2026-11-15)
-**Commit Message**: fix(query): link cosine HNSW graphs with normalized vectors (#21093)
-
-HNSWIndex::build normalized cosine vectors only for SQ8 encoding and linked
-the graph with the raw column, which builds an inner product graph for
-vectors that are not unit length. Queries, SQ8 codes and FP16 refinement all
-score cosine, so recall needed a much larger ef.
-
-Link the graph with the normalized vectors. L1 and L2 are unchanged.
-
-**File**: `src/query/storages/common/index/src/hnsw_index/hnsw.rs` (modified, +62/-0)
+**File**: `src/query/service/src/physical_plans/physical_window.rs` (modified, +16/-18)
 ```diff
-@@ -289,6 +289,11 @@ impl HNSWIndex {
-         let column = column.remove_nullable();
-         let vector_column = column.as_vector().unwrap();
-         let vector_column = preprocess(distance_type, vector_column.clone());
-+        // Link the graph with the vectors that queries are scored against. For
-+        // cosine, those are normalized (the SQ8 codes, the query and the FP16
-+        // refinement all use cosine); linking raw vectors would build an inner
-+        // product graph that favours long vectors and loses recall.
-+        let column = Column::Vector(vector_column.clone());
+@@ -32,6 +32,7 @@ use databend_common_functions::BUILTIN_FUNCTIONS;
+ use databend_common_pipeline::core::Processor;
+ use databend_common_pipeline::core::ProcessorPtr;
+ use databend_common_pipeline_transforms::MemorySettings;
++use databend_common_pipeline_transforms::TransformPipelineHelper;
+ use databend_common_sql::ColumnSet;
+ use databend_common_sql::ScalarExpr;
+ use databend_common_sql::Symbol;
+@@ -68,10 +69,10 @@ use crate::pipelines::memory_settings::MemorySettingsExt;
+ use crate::pipelines::processors::transforms::FrameBound;
+ use crate::pipelines::processors::transforms::SortStrategy;
+ use crate::pipelines::processors::transforms::TransformWindow;
++use crate::pipelines::processors::transforms::TransformWindowPartitionBatch;
+ use crate::pipelines::processors::transforms::TransformWindowPartitionCollect;
+ use crate::pipelines::processors::transforms::WindowFunctionInfo;
+ use crate::pipelines::processors::transforms::WindowPartitionExchange;
+-use crate::pipelines::processors::transforms::WindowPartitionTopNExchange;
+ use crate::pipelines::processors::transforms::WindowSortDesc;
  
-         let mut rng = thread_rng();
-         let mut graph_layers_builder = GraphLayersBuilder::new(
-@@ -655,4 +660,61 @@ mod tests {
-         }
-         Ok(())
-     }
-+
-+    /// A cosine graph is linked by the angles between rows, not their lengths:
-+    /// with lengths from 1 to 1000, an inner product graph links rows to the
-+    /// longest ones and a small ef misses most nearest neighbours.
-+    #[test]
-+    fn test_cosine_graph_ignores_vector_lengths() -> Result<()> {
-+        use rand::Rng as _;
-+        use rand::SeedableRng as _;
-+        use rand::rngs::StdRng;
-+
-+        // Measured 0.904 with the normalized graph and 0.196 with the inner
-+        // product graph; the threshold sits far from both.
-+        const RECALL_THRESHOLD: f64 = 0.6;
-+        let (dim, num_points, num_queries, limit, ef) = (16, 3000, 50, 10, 16);
-+        let mut rng = StdRng::seed_from_u64(7);
-+        let mut direction = || -> Vec<f32> { (0..dim).map(|_| rng.gen_range(-1.0..1.0)).collect() };
-+        let queries: Vec<Vec<f32>> = (0..num_queries).map(|_| direction()).collect();
-+        let directions: Vec<Vec<f32>> = (0..num_points).map(|_| direction()).collect();
-+        let rows: Vec<Vec<f32>> = directions
-+            .iter()
-+            .enumerate()
-+            .map(|(i, row)| {
-+                // Lengths spread evenly over 1..1000 on a log scale.
-+                let length = 10f32.powf(3.0 * (i * 7919 % num_points) as f32 / num_points as f32);
-+                row.iter().map(|value| value * length).collect()
-+            })
-+            .collect();
-+        let values: Vec<F32> = rows.iter().flatten().map(|&v| F32::from(v)).collect();
-+        let column = Column::Vector(VectorColumn::Float32((values.into(), dim)));
-+        let (_, entries) = HNSWIndex::build(8, 64, 0, column, DistanceType::Dot)?;
-+        let columns: Vec<_> = entries.iter().map(|entry| entry.to_column()).collect();
-+        let components: Vec<_> = columns
-+            .iter()
-+            .map(|column| column.as_binary().unwrap().index(0).unwrap())
-+            .collect();
-+        let index = HNSWIndex::open(DistanceType::Dot, dim, num_points, &components, None)?;
-+
-+        let cosine = |a: &[f32], b: &[f32]| {
-+            let dot: f32 = a.iter().zip(b).map(|(x, y)| x * y).sum();
-+            let norm = |v: &[f32]| v.iter().map(|x| x * x).sum::<f32>().sqrt();
-+            dot / (norm(a) * norm(b))
-+        };
-+        let mut hits = 0;
-+        for query in &queries {
-+            let mut exact: Vec<usize> = (0..num_points).collect();
-+            exact.sort_by(|&a, &b| cosine(query, &rows[b]).total_cmp(&cosine(query, &rows[a])));
-+            let query = HNSWIndex::preprocess_query(DistanceType::Dot, query.clone());
-+            let found = index.search_with_ef(limit, Some(ef), &query, false)?;
-+            hits += found
-+                .iter()
-+                .filter(|point| exact[..limit].contains(&(point.idx as usize)))
-+                .count();
+ #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+@@ -449,23 +450,20 @@ fn apply_window_partition(
+         .map(|index| input_schema.index_of(&index.to_string()))
+         .collect::<Result<Vec<_>>>()?;
+ 
+-    if let Some((top, func)) = window_top_n(window) {
+-        builder.main_pipeline.exchange(
+-            num_processors,
+-            WindowPartitionTopNExchange::create(
+-                partition_by.clone(),
+-                sort_desc.clone(),
+-                top,
+-                func,
+-                num_partitions as u64,
+-            ),
+-        )?;
+-    } else {
+-        builder.main_pipeline.exchange(
+-            num_processors,
+-            WindowPartitionExchange::create(partition_by.clone(), num_partitions),
+-        )?;
+-    }
++    let top_n = window_top_n(window);
++    builder.main_pipeline.add_accumulating_transformer(|| {
++        let transform = TransformWindowPartitionBatch::create(num_partitions);
++        match top_n {
++            Some((top, func)) => {
++                transform.with_top_n(partition_by.clone(), sort_desc.clone(), top, func)
++            }
++            None => transform,
 +        }
-+        let recall = hits as f64 / (num_queries * limit) as f64;
-+        assert!(recall >= RECALL_THRESHOLD, "cosine recall {recall}");
++    });
++    builder.main_pipeline.exchange(
++        num_processors,
++        WindowPartitionExchange::create(partition_by.clone(), num_partitions),
++    )?;
+ 
+     let window_spill_settings = MemorySettings::from_window_settings(&builder.ctx)?;
+     let plan_schema = DataSchemaRefExt::create(input_schema.fields().clone());
+```
+
+**File**: `src/query/service/src/physical_plans/physical_window_partition.rs` (modified, +14/-15)
+```diff
+@@ -21,6 +21,7 @@ use databend_common_exception::Result;
+ use databend_common_expression::SortColumnDescription;
+ use databend_common_pipeline::core::ProcessorPtr;
+ use databend_common_pipeline_transforms::MemorySettings;
++use databend_common_pipeline_transforms::TransformPipelineHelper;
+ use databend_common_sql::Symbol;
+ use databend_common_sql::executor::physical_plans::SortDesc;
+ 
+@@ -33,9 +34,9 @@ use crate::physical_plans::physical_plan::PhysicalPlanMeta;
+ use crate::pipelines::PipelineBuilder;
+ use crate::pipelines::memory_settings::MemorySettingsExt;
+ use crate::pipelines::processors::transforms::SortStrategy;
++use crate::pipelines::processors::transforms::TransformWindowPartitionBatch;
+ use crate::pipelines::processors::transforms::TransformWindowPartitionCollect;
+ use crate::pipelines::processors::transforms::WindowPartitionExchange;
+-use crate::pipelines::processors::transforms::WindowPartitionTopNExchange;
+ 
+ #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+ pub struct WindowPartition {
+@@ -121,25 +122,23 @@ impl IPhysicalPlan for WindowPartition {
+             })
+             .collect::<Result<Vec<_>>>()?;
+ 
+-        if let Some(top_n) = &self.top_n
+-            && top_n.top < 10000
+-        {
+-            builder.main_pipeline.exchange(
+-                num_processors,
+-                WindowPartitionTopNExchange::create(
++        let top_n = self.top_n.as_ref().filter(|top_n| top_n.top < 10000);
++        builder.main_pipeline.add_accumulating_transformer(|| {
++            let transform = TransformWindowPartitionBatch::create(num_partitions);
++            match top_n {
++                Some(top_n) => transform.with_top_n(
+                     partition_by.clone(),
+                     sort_desc.clone(),
+                     top_n.top,
+                     top_n.func,
+-                    num_partitions as u64,
+                 ),
+-            )?;
+-        } else {
+-            builder.main_pipeline.exchange(
+-                num_processors,
+-                WindowPartitionExchange::create(partition_by.clone(), num_partitions),
+-            )?;
+-        }
++                None => transform,
++            }
++        });
++        builder.main_pipeline.exchange(
++            num_processors,
++            WindowPartitionExchange::create(partition_by.clone(), num_partitions),
++        )?;
+ 
+         let window_spill_settings = MemorySettings::from_window_settings(&builder.ctx)?;
+ 
+```
+
+**File**: `src/query/service/src/pipelines/processors/transforms/window/partition/mod.rs` (modified, +2/-2)
+```diff
+@@ -13,14 +13,14 @@
+ // limitations under the License.
+ 
+ mod data_processor_strategy;
++mod transform_window_partition_batch;
+ mod transform_window_partition_collect;
+ mod window_partition_buffer;
+ mod window_partition_exchange;
+ mod window_partition_meta;
+-mod window_partition_partial_top_n_exchange;
+ 
+ pub use data_processor_strategy::*;
++pub use transform_window_partition_batch::*;
+ pub use transform_window_partition_collect::*;
+ pub use window_partition_exchange::*;
+ pub use window_partition_meta::*;
+-pub use window_partition_partial_top_n_exchange::*;
+```
+
+**File**: `src/query/service/src/pipelines/processors/transforms/window/partition/transform_window_partition_batch.rs` (added, +518/-0)
+```diff
+@@ -0,0 +1,518 @@
++// Copyright 2021 Datafuse Labs
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//     http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++use databend_common_exception::Result;
++use databend_common_expression::BlockConcatStream;
++use databend_common_expression::DataBlock;
++use databend_common_expression::FromData;
++use databend_common_expression::ProjectedBlock;
++use databend_common_expression::SortColumnDescription;
++use databend_common_expression::SortCompare;
++use databend_common_expression::Value;
++use databend_common_expression::group_hash_entries;
++use databend_common_expression::types::UInt64Type;
++use databend_common_expression::visitor::ValueVisitor;
++use databend_common_pipeline_transforms::AccumulatingTransform;
++
++use crate::physical_plans::WindowPartitionTopNFunc;
++
++/// A block is small when, scattered into the window partitions, each piece
++/// gets fewer rows than this on average and fewer bytes than
++/// `MIN_PIECE_BYTES_PER_COLUMN` per column. A constant column counts with its
++/// value repeated for every row, the size it can take once buffered.
++const MIN_PIECE_ROWS: usize = 64;
++
++const MIN_PIECE_BYTES_PER_COLUMN: usize = 1024;
++
++/// Prepares the input blocks of the window exchange, which scatters each
++/// block into `window_num_partitions` pieces.
++///
++/// A small block, such as the output of a selective filter, would be cut into
++/// pieces of one or two rows. Each piece holds its own allocations per
++/// column, which take more memory than its rows, and the window buffers the
++/// pieces until all input arrives. So small blocks go to a
++/// `BlockConcatStream`: their rows are appended as they arrive, so a small
++/// slice does not keep its source block, and they are sent as one block once
++/// they are not small together. Other blocks are sent as they are.
++///
++/// There is one buffer for each input stream, not one per window partition:
++/// the exchange scatters the batch into the window partitions afterwards.
++///
++/// With a top-n window function, the rows of each block that cannot rank
++/// within `top` of their partition are dropped first.
++pub struct TransformWindowPartitionBatch {
++    top_n: Option<PartitionTopN>,
++
++    min_rows: usize,
++    min_bytes_per_column: usize,
++    // Created by the first small block, as its threshold in bytes depends on
++    // the number of columns.
++    stream: Option<BlockConcatStream>,
++}
++
++impl TransformWindowPartitionBatch {
++    pub fn create(num_partitions: usize) -> TransformWindowPartitionBatch {
++        TransformWindowPartitionBatch {
++            top_n: None,
++            min_rows: num_partitions * MIN_PIECE_ROWS,
++            min_bytes_per_column: num_partitions * MIN_PIECE_BYTES_PER_COLUMN,
++            stream: None,
++        }
++    }
++
++    pub fn with_top_n(
++        mut self,
++        partition_indices: Vec<usize>,
++        order_by: Vec<SortColumnDescription>,
++        top: usize,
++        func: WindowPartitionTopNFunc,
++    ) -> TransformWindowPartitionBatch {
++        self.top_n = Some(PartitionTopN::new(partition_indices, order_by, top, func));
++        self
++    }
++
++    fn is_small(&self, rows: usize, bytes: usize, columns: usize) -> bool {
++        rows < self.min_rows && bytes < columns * self.min_bytes_per_column
++    }
++}
++
++impl AccumulatingTransform for TransformWindowPartitionBatch {
++    const NAME: &'static str = "TransformWindowPartitionBatch";
++
++    fn transform(&mut self, block: DataBlock) -> Result<Vec<DataBlock>> {
++        if block.is_empty() {
++            return Ok(vec![]);
++        }
++
++        let block = match &self.top_n {
++            Some(top_n) => top_n.truncate(block)?,
++            None => block,
++        };
++
++        let rows = block.num_rows();
++        let columns = block.num_columns();
++        let bytes = block.estimate_block_size(columns);
++        // A block that is not small is sent as it is, even when small blocks
++        // are buffered: buffering it would copy all its rows. The window
++        // sorts each partition later, so the order of the blocks does not
++        // matter.
++        if !self.is_small(rows, bytes, columns) {
++            return Ok(vec![block]);
++        }
++
++        // The stream sends the buffered rows once they reach either
++        // threshold, which is when they are no longer small.
++        let (min_rows, min_bytes) = (self.min_rows, columns * self.min_bytes_per_column);
++        let stream = self
++            .stream
++            .get_or_insert_with(|| BlockConcatStream::crea
+```
+
+**File**: `src/query/service/src/pipelines/processors/transforms/window/partition/window_partition_exchange.rs` (modified, +38/-1)
+```diff
+@@ -51,7 +51,7 @@ impl Exchange for WindowPartitionExchange {
+         // Scatter the data block to different partitions.
+         let indices = hashes
+             .iter()
+-            .map(|&hash| (hash % self.num_partitions as u64) as u8)
++            .map(|&hash| (hash % self.num_partitions as u64) as u32)
+             .collect::<Vec<_>>();
+         let scatter_blocks = DataBlock::scatter(&data_block, &indices, self.num_partitions)?;
+ 
+@@ -69,3 +69,40 @@ impl Exchange for WindowPartitionExchange {
+             .collect())
+     }
+ }
++
++#[cfg(test)]
++mod tests {
++    use databend_common_expression::BlockMetaInfoDowncast;
++    use databend_common_expression::FromData;
++    use databend_common_expression::types::Int32Type;
++
++    use super::*;
++
++    #[test]
++    fn test_more_than_256_partitions() -> Result<()> {
++        let exchange = WindowPartitionExchange::create(vec![0], 512);
++        let block =
++            DataBlock::new_from_columns(vec![Int32Type::from_data((0..4096).collect::<Vec<_>>())]);
++
++        let mut outputs = exchange.partition(block, 1)?;
++        assert_eq!(outputs.len(), 1);
++        let meta = outputs
++            .pop()
++            .and_then(|block| block.get_owned_meta())
++            .and_then(WindowPartitionMeta::downcast_from)
++            .unwrap();
++
++        let rows = meta
++            .partitioned_data
++            .iter()
++            .map(|(_, block)| block.num_rows())
++            .sum::<usize>();
++        assert_eq!(rows, 4096);
++        assert!(
++            meta.partitioned_data
++                .iter()
++                .any(|(id, block)| *id >= 256 && !block.is_empty())
++        );
 +        Ok(())
 +    }
- }
++}
+```
+
+**File**: `src/query/service/src/pipelines/processors/transforms/window/partition/window_partition_partial_top_n_exchange.rs` (removed, +0/-309)
+```diff
+@@ -1,309 +0,0 @@
+-// Copyright 2021 Datafuse Labs
+-//
+-// Licensed under the Apache License, Version 2.0 (the "License");
+-// you may not use this file except in compliance with the License.
+-// You may obtain a copy of the License at
+-//
+-//     http://www.apache.org/licenses/LICENSE-2.0
+-//
+-// Unless required by applicable law or agreed to in writing, software
+-// distributed under the License is distributed on an "AS IS" BASIS,
+-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-// See the License for the specific language governing permissions and
+-// limitations under the License.
+-
+-use std::sync::Arc;
+-
+-use databend_common_exception::Result;
+-use databend_common_expression::DataBlock;
+-use databend_common_expression::SortColumnDescription;
+-use databend_common_expression::SortCompare;
+-use databend_common_expression::group_hash_value_spread;
+-use databend_common_expression::visitor::ValueVisitor;
+-use databend_common_pipeline::basic::Exchange;
+-
+-use super::WindowPartitionMeta;
+-use crate::physical_plans::WindowPartitionTopNFunc;
+-
+-pub struct WindowPartitionTopNExchange {
+-    partition_indices: Box<[usize]>,
+-    top: usize,
+-    func: WindowPartitionTopNFunc,
+-
+-    sort_desc: Box<[SortColumnDescription]>,
+-    num_partitions: u64,
+-}
+-
+-impl WindowPartitionTopNExchange {
+-    pub fn create(
+-        partition_indices: Vec<usize>,
+-        order_by: Vec<SortColumnDescription>,
+-        top: usize,
+-        func: WindowPartitionTopNFunc,
+-        num_partitions: u64,
+-    ) -> Arc<WindowPartitionTopNExchange> {
+-        assert!(top > 0);
+-        let partition_indices = partition_indices.into_boxed_slice();
+-        let sort_desc = partition_indices
+-            .iter()
+-            .map(|&offset| SortColumnDescription {
+-                offset,
+-                asc: true,
+-                nulls_first: false,
+-            })
+-            .chain(order_by)
+-            .collect::<Vec<_>>()
+-            .into();
+-
+-        Arc::new(WindowPartitionTopNExchange {
+-            num_partitions,
+-            partition_indices,
+-            top,
+-            func,
+-            sort_desc,
+-        })
+-    }
+-}
+-
+-impl Exchange for WindowPartitionTopNExchange {
+-    const NAME: &'static str = "WindowTopN";
+-    const SKIP_EMPTY_DATA_BLOCK: bool = true;
+-
+-    fn partition(&self, block: DataBlock, n: usize) -> Result<Vec<DataBlock>> {
+-        let partition_permutation = self.partition_permutation(&block);
+-
+-        // Partition the data blocks to different processors.
+-        let mut output_data_blocks = vec![vec![]; n];
+-        for (partition_id, indices) in partition_permutation.into_iter().enumerate() {
+-            output_data_blocks[partition_id % n]
+-                .push((partition_id, block.take(indices.as_slice())?));
+-        }
+-
+-        // Union data blocks for each processor.
+-        Ok(output_data_blocks
+-            .into_iter()
+-            .map(WindowPartitionMeta::create)
+-            .map(DataBlock::empty_with_meta)
+-            .collect())
+-    }
+-}
+-
+-impl WindowPartitionTopNExchange {
+-    fn partition_permutation(&self, block: &DataBlock) -> Vec<Vec<u32>> {
+-        let rows = block.num_rows();
+-        let mut sort_compare = SortCompare::with_force_equality(self.sort_desc.to_vec(), rows);
+-
+-        for &offset in &self.partition_indices {
+-            let array = block.get_by_offset(offset).value();
+-            sort_compare.visit_value(array).unwrap();
+-            sort_compare.increment_column_index();
+-        }
+-
+-        let partition_equality = sort_compare.equality_index().to_vec();
+-
+-        for desc in self.sort_desc.iter().skip(self.partition_indices.len()) {
+-            let array = block.get_by_offset(desc.offset).value();
+-            sort_compare.visit_value(array).unwrap();
+-            sort_compare.increment_column_index();
+-        }
+-
+-        let full_equality = sort_compare.equality_index().to_vec();
+-        let permutation = sort_compare.take_permutation();
+-
+-        let hash_indices = std::iter::once(permutation[0])
+-            .chain(
+-                partition_equality
+-                    .iter()
+-                    .enumerate()
+-                    .filter_map(|(i, &eq)| if eq == 0 { Some(permutation[i]) } else { None }),
+-            )
+-            .collect::<Vec<_>>();
+-
+-        let mut hashes = vec![0u64; rows];
+-        for (i, &offset) in self.partition_indices.iter().enumerate() {
+-            let entry = block.get_by_offset(offset);
+-            group_hash_value_spread(&hash_indices, entry.value(), i == 0, &mut hashes).unwrap();
+-        }
+-
+-        let mut partition_permutation = vec![Vec::new(); self.num_partitions as usize];
+-
+-        let mut start = 0;
+-        let mut cur = 0;
+-        while cur < rows {
+-            let partition = &mut partition_permutation
+-                [(hashes[permutation[start] as usize] % self.num_partitions) as usize];
+-            partition.push(permutation[start]);
+-
+-          
+```
+
+---
+
+### Incident Patch 2: `76caf9e8` (2026-11-19)
+**Commit Message**: fix(query): enforce stage WRITE on HTTP uploads (#21126)
+
+* fix(query): enforce stage WRITE on HTTP uploads (#21094)
+
+* test(query): cover HTTP stage WRITE in the stateless suite
+
+**File**: `src/query/service/src/interpreters/access/mod.rs` (modified, +1/-0)
+```diff
+@@ -22,3 +22,4 @@ pub use management_mode_access::ManagementModeAccess;
+ pub use privilege_access::PrivilegeAccess;
+ pub(crate) use privilege_access::validate_share_management_for_connection;
+ pub(crate) use privilege_access::validate_share_object_by_id;
++pub(crate) use privilege_access::validate_stage_write_access;
+```
+
+**File**: `src/query/service/src/interpreters/access/privilege_access.rs` (modified, +9/-0)
+```diff
+@@ -275,6 +275,15 @@ enum ObjectId {
+ // table functions that need `Super` privilege
+ const SYSTEM_TABLE_FUNCTIONS: [&str; 3] = ["fuse_amend", "set_cache_capacity", "send_notification"];
+ 
++pub(crate) async fn validate_stage_write_access(
++    ctx: Arc<QueryContext>,
++    stage: &StageInfo,
++) -> Result<()> {
++    PrivilegeAccess::new(ctx)
++        .validate_stage_access(stage, UserPrivilegeType::Write)
++        .await
++}
++
+ pub(crate) async fn validate_share_management_for_connection(
+     ctx: Arc<QueryContext>,
+     connection: Option<&str>,
+```
+
+**File**: `src/query/service/src/interpreters/mod.rs` (modified, +1/-0)
+```diff
+@@ -233,6 +233,7 @@ mod interpreter_virtual_column_vacuum;
+ pub(crate) mod util;
+ 
+ pub use access::ManagementModeAccess;
++pub(crate) use access::validate_stage_write_access;
+ pub use common::InterpreterQueryLog;
+ pub use common::QueryFinishHooks;
+ pub use hook::HookOperator;
+```
+
+**File**: `src/query/service/src/servers/http/v1/stage.rs` (modified, +10/-0)
+```diff
+@@ -14,6 +14,7 @@
+ 
+ use async_compat::CompatExt;
+ use databend_common_catalog::session_type::SessionType;
++use databend_common_exception::ErrorCode;
+ use databend_common_meta_app::principal::StageInfo;
+ use databend_common_sql::binder::validate_stage_path_traversal_policy;
+ use databend_common_storage::init_stage_operator;
+@@ -22,6 +23,7 @@ use futures_util::AsyncWriteExt;
+ use futures_util::io;
+ use http::StatusCode;
+ use poem::Request;
++use poem::error::Forbidden;
+ use poem::error::InternalServerError;
+ use poem::error::Result as PoemResult;
+ use poem::web::Json;
+@@ -31,6 +33,7 @@ use serde::Serialize;
+ 
+ use super::HttpQueryContext;
+ use super::require_upload_filename;
++use crate::interpreters::validate_stage_write_access;
+ use crate::sessions::TableContextAuthorization;
+ use crate::sessions::TableContextTableAccess;
+ 
+@@ -114,6 +117,13 @@ pub async fn upload_to_stage(
+             .map_err(InternalServerError)?
+     };
+ 
++    validate_stage_write_access(context, &stage)
++        .await
++        .map_err(|e| match e.code() {
++            ErrorCode::PERMISSION_DENIED => Forbidden(e),
++            _ => InternalServerError(e),
++        })?;
++
+     let op = init_stage_operator(&stage).map_err(InternalServerError)?;
+     let path_traversal_policy = databend_common_config::GlobalConfig::instance()
+         .storage
+```
+
+**File**: `tests/suites/0_stateless/18_rbac/18_0027_http_stage_write.result` (added, +10/-0)
+```diff
+@@ -0,0 +1,10 @@
++Without a stage grant: 403
++With READ only: 403
++Named stage file count before authorization: 0
++With WRITE: SUCCESS
++With ownership (legacy header): SUCCESS
++Named stage file sizes:
++2
++2
++Own user stage: SUCCESS
++Own user stage file size: 2
+```
+
+**File**: `tests/suites/0_stateless/18_rbac/18_0027_http_stage_write.sh` (added, +87/-0)
+```diff
+@@ -0,0 +1,87 @@
++#!/usr/bin/env bash
++
++set -euo pipefail
++
++CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
++. "$CURDIR"/../../../shell_env.sh
++
++url="http://${QUERY_MYSQL_HANDLER_HOST}:${QUERY_HTTP_HANDLER_PORT}/v1/upload_to_stage"
++user=stage_write_user_0027
++password=stage_write_test_password
++role=stage_write_role_0027
++stage=stage_write_0027
++owned_stage=stage_owned_0027
++file=stage_write_0027.csv
++clean_user_stage=false
++
++cleanup() {
++	local status=0
++	if "$clean_user_stage"; then
++		bendsql_connect_user "$user" "$password" --output null --query="REMOVE @~/$file" || status=$?
++	fi
++	bendsql_connect_root_null --query="
++DROP STAGE IF EXISTS $stage;
++DROP STAGE IF EXISTS $owned_stage;
++DROP USER IF EXISTS $user;
++DROP ROLE IF EXISTS $role;
++"
++	return "$status"
++}
++
++expect_denied() {
++	# No file part: check authorization without attempting to write data.
++	printf -- '--stage-test--\r\n' |
++		curl --silent --show-error --user "$user:$password" --request PUT \
++			--header "x-databend-stage-name: $stage" \
++			--header 'Content-Type: multipart/form-data; boundary=stage-test' \
++			--data-binary @- --output /dev/null --write-out '%{http_code}\n' "$url"
++}
++
++expect_allowed() {
++	printf '1\n' |
++		curl --fail --silent --show-error --user "$user:$password" --request PUT \
++			--header "$1: $2" --form "upload=@-;filename=$file" "$url" |
++		jq -er --arg stage "$2" --arg file "$file" \
++			'select(.stage_name == $stage and .state == "SUCCESS" and .files == [$file]) | .state'
++}
++
++cleanup
++trap cleanup EXIT
++bendsql_connect_root_null --query="
++CREATE USER $user IDENTIFIED BY '$password';
++CREATE ROLE $role;
++GRANT ROLE $role TO USER $user;
++CREATE STAGE $stage;
++CREATE STAGE $owned_stage;
++GRANT OWNERSHIP ON STAGE $owned_stage TO ROLE $role;
++"
++
++printf 'Without a stage grant: '
++expect_denied
++
++bendsql_connect_root_null --query="GRANT READ ON STAGE $stage TO ROLE $role"
++printf 'With READ only: '
++expect_denied
++
++printf 'Named stage file count before authorization: '
++bendsql_connect_root --output tsv --query="SELECT count(*) FROM list_stage(location => '@$stage')"
++
++bendsql_connect_root_null --query="GRANT WRITE ON STAGE $stage TO ROLE $role"
++printf 'With WRITE: '
++expect_allowed x-databend-stage-name "$stage"
++
++printf 'With ownership (legacy header): '
++expect_allowed stage_name "$owned_stage"
++
++printf 'Named stage file sizes:\n'
++bendsql_connect_root --output tsv --query="
++SELECT size FROM list_stage(location => '@$stage/$file');
++SELECT size FROM list_stage(location => '@$owned_stage/$file');
++"
++
++clean_user_stage=true
++printf 'Own user stage: '
++expect_allowed x-databend-stage-name '~'
++printf 'Own user stage file size: '
++bendsql_connect_user "$user" "$password" --output tsv \
++	--query="SELECT size FROM list_stage(location => '@~/$file')"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #21093** (2026-11-15): fix(query): link cosine HNSW graphs with normalized vectors (@bohutang)
-- **PR #21092** (2026-11-13): fix(query): truncate REPLACE statements in query logs (@TCeason)
-- **PR #21091** (2026-11-15): feat(query): enable the memory limit and the shared cache by default (@bohutang)
-- **PR #21090** (2026-11-13): refactor(query): scan only the rows matched by the inverted index (@bohutang)
-- **PR #21087** (2026-11-13): feat(query): support native charset conversion for binary strings (@sundy-li)
-- **PR #21083** (2026-11-13): fix(query): keep multi-table insert distributed when the source needs reorder (@zhang2014)
+- **PR #21126** (2026-11-19): fix(query): enforce stage WRITE on HTTP uploads (@youngsofun)
+- **PR #21125** (closed): refactor: query: read the ownership and access caches without a lock (@drmingdrmer)
+- **PR #21124** (2026-11-19): feat: config: add `ownership` to `cache.meta_service_caches` (@drmingdrmer)
+- **PR #21123** (2026-11-18): chore: meta: use sub-cache 0.4.1, which stops a dropped cache's watch (@drmingdrmer)
+- **PR #21121** (2026-11-18): refactor(query): remove dead code and leftovers of the aggregate rewrites (@dqhl76)
+- **PR #21118** (2026-11-18): fix(query): abbreviate large SQL constants in INFO logs (@bohutang)
 
 ---
 
@@ -2116,31 +2169,72 @@ Link the graph with the normalized vectors. L1 and L2 are unchanged.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. iceberg): stop Iceberg DDL/DML from silently doing nothing
+## X. query): batch small blocks before the window partition exchange
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/expression/src/kernels/stream_partition.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `86507e14`: iceberg): stop Iceberg DDL/DML from silently doing nothing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `dea33860`: query): batch small blocks before the window partition exchange. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/expression/src/kernels/stream_partition.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "arrow-cast",
+    /// Add every row of `column`, in order.
+    fn append_column(&mut self, column: &Column) {
+        let builder = self.builder(column.len());
+        if builder.data_type() == column.data_type() {
+            builder.append_column(column);
+        } else {
+            // Such as an `Array` column into an `EmptyArray` builder, which
+            // only `copy_column` turns into an `Array` builder.
+            let indices = (0..column.len() as u32).collect::<Vec<_>>();
+            copy_column(&indices, column, builder);
+        }
+    }
+
+    /// Add `rows` of a constant, kept a constant when it can be.
+    fn append_const(
+        &mut self,
+        scalar: &Scalar,
+        data_type: &DataType,
+        rows: usize,
+        size: &mut impl FnMut() -> ExpandedSize,
+    ) {
+        if !self.try_push_const(scalar, data_type, rows, size) {
+            let column = ColumnBuilder::repeat(&scalar.as_ref(), rows, data_type).build();
+            self.append_column(&column);
+        }
+    }
+
+/// The expanded size of the last constant seen in a column.
+type ConstSize = Option<(Scalar, DataType, ExpandedSize)>;
+
+fn cached_const_size(cache: &mut ConstSize, scalar: &Scalar, data_type: &DataType)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    const_sizes: Vec<Option<(Scalar, DataType, ExpandedSize)>>,
+                    let mut size = || {
+                        if let Some((s, t, size)) = const_size.as_ref()
+                            && *s == scalar
+                            && *t == data_type
+                        {
+                            return *size;
+                        }
+                        let size = ExpandedSize::measure(&scalar, &data_type);
+                        *const_size = Some((scalar.clone(), data_type.clone(), size));
+                        size
+                    };
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `86507e14` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `dea33860` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
