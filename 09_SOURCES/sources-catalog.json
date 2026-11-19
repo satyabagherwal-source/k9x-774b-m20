@@ -1555,8 +1555,8 @@
     "sourceUrl": "https://huggingface.co/pyannote/speaker-diarization-community-1",
     "sourceVersion": "hf-pyannote-speaker-diarization-community-1",
     "license": "Open-Source",
-    "contentHash": "0242fd5e465141f5f1c1423d85996b316f1452a82b725c910bb950bb6bf23b59",
-    "lastHarvestedAt": "2026-11-15T03:34:20.796Z",
+    "contentHash": "9a97d00726b16f7b42159709fd8be7b7040ef7f16858059b1a0dd5d865d7965c",
+    "lastHarvestedAt": "2026-11-19T16:40:53.951Z",
     "learningId": "learn-huggingface-pyannote-speaker-diarization-community-1"
   },
   "hf-meta-models-muse-spark-open-816b-a42b": {
@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "f5adbe87",
+    "sourceVersion": "fefb2cb8",
     "license": "Apache-2.0",
-    "contentHash": "f7d2811c23a207770094824e2db6756d4fa812d42a3242a1bb6cf4e502eb36cc",
-    "lastHarvestedAt": "2026-11-19T00:31:33.752Z",
+    "contentHash": "6ea93397e4c295ff033df3f3c8de99a95802050e53c887c5cb6d9e6010546d0d",
+    "lastHarvestedAt": "2026-11-19T16:41:06.961Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -7823,10 +7823,10 @@
     "repository": "astral-sh/uv",
     "platform": "github",
     "sourceUrl": "https://github.com/astral-sh/uv",
-    "sourceVersion": "7f396534",
+    "sourceVersion": "9b34eb69",
     "license": "Apache-2.0",
-    "contentHash": "6a4c057c64337d38331b381d1f091f0f71bcc4ca421f424bfafedc755f7aea3a",
-    "lastHarvestedAt": "2026-11-17T21:22:18.883Z",
+    "contentHash": "feca5bca0199c1e4d18ae36e23f79a5128b440917fc8280eb102c4de35af6a47",
+    "lastHarvestedAt": "2026-11-19T16:40:56.377Z",
     "learningId": "learn-github-astral-sh-uv"
   },
   "thaw-app-thaw": {

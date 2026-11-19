@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T16:33:29.478Z",
+  "last_updated": "2026-11-19T16:41:06.968Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2406,14 +2406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-pyannote-speaker-diarization-community-1",
-      "content_hash": "0242fd5e465141f5f1c1423d85996b316f1452a82b725c910bb950bb6bf23b59",
-      "verified_at": "2026-11-15T03:34:20.805Z",
+      "content_hash": "9a97d00726b16f7b42159709fd8be7b7040ef7f16858059b1a0dd5d865d7965c",
+      "verified_at": "2026-11-19T16:40:53.958Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T03:34:20.805Z"
+      "last_updated": "2026-11-19T16:40:53.958Z"
     },
     "meta-models/Muse-Spark-Open-816B-A42B": {
       "repository": "meta-models/Muse-Spark-Open-816B-A42B",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "f7d2811c23a207770094824e2db6756d4fa812d42a3242a1bb6cf4e502eb36cc",
-      "verified_at": "2026-11-19T00:31:33.760Z",
+      "content_hash": "6ea93397e4c295ff033df3f3c8de99a95802050e53c887c5cb6d9e6010546d0d",
+      "verified_at": "2026-11-19T16:41:06.968Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T00:31:33.760Z"
+      "last_updated": "2026-11-19T16:41:06.968Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -11766,14 +11766,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-astral-sh-uv",
-      "content_hash": "6a4c057c64337d38331b381d1f091f0f71bcc4ca421f424bfafedc755f7aea3a",
-      "verified_at": "2026-11-17T21:22:18.890Z",
+      "content_hash": "feca5bca0199c1e4d18ae36e23f79a5128b440917fc8280eb102c4de35af6a47",
+      "verified_at": "2026-11-19T16:40:56.388Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T21:22:18.890Z"
+      "last_updated": "2026-11-19T16:40:56.388Z"
     },
     "thaw-app/Thaw": {
       "repository": "thaw-app/Thaw",

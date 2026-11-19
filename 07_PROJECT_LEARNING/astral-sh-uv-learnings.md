@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source**: github ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
-> **Source Version**: `7f396534`  
+> **Source Version**: `9b34eb69`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T21:22:18.008Z  
+> **Timestamp**: 2026-11-19T16:40:55.582Z  
 > **Learning ID**: `learn-github-astral-sh-uv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/astral-sh-uv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/astral-sh/uv](https://github.com/astral-sh/uv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T21:22:18.002Z  
+> **Harvest Timestamp**: 2026-11-19T16:40:55.578Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: An extremely fast Python package and project manager, written in Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 92229 stars
+- **Stars / Engagement**: 92410 stars
 
 ---
 
@@ -1499,11 +1499,10 @@ mod types;
 - **Issue #23261** (2026-11-16): **Reject wheels with mismatched names**
   *Symptoms*: When fetching a wheel from an index, reject it when its name does not match the the originally requested package name.  This doesn't eagerly fail, and allows another index to supply the necessary wheel (depending on normal index policy). This seemed like it had precedent.
 
-- **Issue #23222** (2026-11-12): **uv does not install requirement `eccodeslib` when `eccodes` is requested**
-  *Symptoms*: ### Summary  Contrary to pip, uv does not install [`eccodeslib`](https://pypi.org/project/eccodeslib/) when requesting [`eccodes`](https://pypi.org/project/eccodes/). A workaround is to request/add `eccodeslib` explicitly. But why is this necessary?   ### Platform  Darwin 25.6.0 arm64  ### Version  uv 0.11.28 (ebf0f43d7 2026-07-07 aarch64-apple-darwin)  ### Python version  Python 3.11.15
+- **Issue #23248** (2026-11-19): **`uv upgrade` is not aware of other dependency groups**
+  *Symptoms*: ### Summary  I have `ipython` in my project, listed under the dev dependency group:  ```toml dependencies = [ ... ]  [dependency-groups] dev = ["ipython", ... ] ```  I want to update it in my lock file so I ran: `uv upgrade ipython`, but it doesn't work. Then I tried `uv upgrade --dev ipython`, assuming it understood that argument, since many other subcommands do. But it doesn't.  ```sh uv upgrade ipython error: Dependency `ipython` was not found in `project.dependencies` uv upgrade --dev ipython error: unexpected argument '--dev' found ```  How is one supposed to upgrade a non-main dep group dependency without manually updating the version range/pin in the pyproject.toml file?  ### Platform  Ubuntu 24.04  ### Version  uv 0.13.7 (x86_64-unknown-linux-gnu)  ### Python version  3.14.7
   **Post-Mortem & Fix Analysis**:
-  > Maybe related: https://github.com/ecmwf/eccodes-python/issues/150
-  > eccodes does not depend on eccodeslib according to the metadata they publish on PyPI:   ```shell  curl -s https://pypi.org/pypi/eccodes/json |                   jq '.info.requires_dist' ```  shows  ``` [   "numpy",   "attrs",   "cffi",   "findlibs" ] ```  it's a bug with ecmwf packaging, and the referenced bug i think says so too.
+  > Hi, thanks for opening an issue. This is a known gap in `uv upgrade` at the moment, and is tracked under https://github.com/astral-sh/uv/issues/20783
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1520,686 +1519,79 @@ mod types;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7424870a` (2026-11-17)
-**Commit Message**: Preserve marker identity across equivalent platform expressions (#23185)
+### Incident Patch 1: `9b34eb69` (2026-11-19)
+**Commit Message**: Update blake2 dependency from 0.11.0-rc.6 to 0.11.0 (#23294)
+
+<!--
+Thank you for contributing to uv! To help us out with reviewing, please
+consider the following:
+
+- Does this pull request include a summary of the change? (See below.)
+- Does this pull request include a descriptive title?
+- Does this pull request include references to any relevant issues?
+-->
 
 ## Summary
 
-uv compares environment markers by their internal tree identity. Today,
-we remove known impossible platform combinations when individual
-conjunctions are built. Grouping the same conditions differently can
-therefore produce different trees, causing `uv lock --locked` to reject
-a lockfile uv just wrote. For example, the Linux branch is impossible
-here because `os_name == 'nt'`:
+<!-- What's the purpose of the change? What does it do, and why? -->
+Update the minimum version of `blake2` from `0.11.0-rc.6` to `0.11.0` in
+`Cargo.toml`. The 0.11.0 final release has been available for a while,
+and it’s already in `Cargo.lock`, so there’s no need to allow a release
+candidate anymore.
 
+## Test Plan
+
+<!-- How was it tested? -->
+`cargo update blake2` succeeds and does not modify `Cargo.lock`
+
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
--(python_full_version >= '3.13' and os_name == 'nt') or (os_name == 'nt' and sys_platform == 'linux')
-+python_full_version >= '3.13' and os_name == 'nt'
-```
-
-We now apply the known exclusions between `os_name`, `sys_platform`, and
-`platform_system` consistently after tree operations, so equivalent
-markers retain their identity when regrouped or reparsed. We also quote
-literals containing apostrophes correctly. The existing
-`platform_release` comparison limitation remains
-([#22259](https://github.com/astral-sh/uv/issues/22259)).
-
-This adds work and a process-lifetime cache for trees that mix platform
-keys; other trees skip canonicalization. The mixed-platform fixture now
-passes `uv lock --locked` and produces a 29% s
-
-**File**: `crates/uv-pep508/src/marker/algebra.rs` (modified, +21/-333)
-```diff
-@@ -72,6 +72,7 @@ use crate::{
- };
- 
- pub(super) mod isop;
-+mod platform;
- 
- /// The global node interner.
- pub(crate) static INTERNER: LazyLock<Interner> = LazyLock::new(Interner::default);
-@@ -104,8 +105,7 @@ struct InternerState {
-     /// Note that `OR` is implemented in terms of `AND`.
-     cache: FxHashMap<(NodeId, NodeId), NodeId>,
- 
--    /// The [`NodeId`] for the disjunction of known, mutually incompatible markers.
--    exclusions: Option<NodeId>,
-+    platform: platform::Cache,
- }
- 
- impl InternerShared {
-@@ -204,7 +204,8 @@ impl InternerGuard<'_> {
-                     var,
-                     children: children.into_boxed(),
-                 };
--                let id = NodeId::new(self.shared.nodes.push(node), false);
-+                let flags = platform::node_flags(&node);
-+                let id = NodeId::new(self.shared.nodes.push(node), flags);
-                 entry.insert((hash, id));
-                 id
-             }
-@@ -461,14 +462,6 @@ impl InternerGuard<'_> {
- 
-         let (x, y) = (self.shared.node(xi), self.shared.node(yi));
- 
--        // Determine whether the conjunction _could_ contain a conflict.
--        //
--        // As an optimization, we only have to perform this check at the top-level, since these
--        // variables are given higher priority in the tree. In other words, if they're present, they
--        // _must_ be at the top; and if they're not at the top, we know they aren't present in any
--        // children.
--        let conflicts = x.var.is_conflicting_variable() && y.var.is_conflicting_variable();
--
-         // Perform Shannon Expansion of the higher order variable.
-         let (func, children) = match x.var.cmp(&y.var) {
-             // X is higher order than Y, apply Y to every child of X.
-@@ -491,18 +484,6 @@ impl InternerGuard<'_> {
-         // Create the output node.
-         let node = self.create_node(func, children);
- 
--        // If the node includes known incompatibilities, map it to `false`.
--        let node = if conflicts {
--            let exclusions = self.exclusions();
--            if self.disjointness(node, exclusions.not()) {
--                NodeId::FALSE
--            } else {
--                node
--            }
--        } else {
--            node
--        };
--
-         // Memoize the result of this operation.
-         //
-         // ADDs often contain duplicated subgraphs in distinct branches due to the restricted
-@@ -512,50 +493,11 @@ impl InternerGuard<'_> {
-         node
-     }
- 
--    /// Returns `true` if there is no environment in which both marker trees can apply,
--    /// i.e. their conjunction is always `false`.
--    pub(crate) fn is_disjoint_nontrivial(&mut self, xi: NodeId, yi: NodeId) -> bool {
--        debug_assert!(
--            xi.is_disjoint_trivial(yi).is_none(),
--            "`is_disjoint_nontrivial` requires non-trivial disjointness"
--        );
--
--        let (x, y) = (self.shared.node(xi), self.shared.node(yi));
--
--        // Determine whether the conjunction _could_ contain a conflict.
--        //
--        // As an optimization, we only have to perform this check at the top-level, since these
--        // variables are given higher priority in the tree. In other words, if they're present, they
--        // _must_ be at the top; and if they're not at the top, we know they aren't present in any
--        // children.
--        if x.var.is_conflicting_variable() && y.var.is_conflicting_variable() {
--            return self.and(xi, yi).is_false();
--        }
--
--        // Perform Shannon Expansion of the higher order variable.
--        match x.var.cmp(&y.var) {
--            // X is higher order than Y, Y must be disjoint with every child of X.
--            Ordering::Less => x
--                .children
--                .nodes()
--                .all(|x| self.disjointness(x.negate(xi), yi)),
--            // Y is higher order than X, X must be disjoint with every child of Y.
--            Ordering::Greater => y
--                .children
--                .nodes()
--                .all(|y| self.disjointness(y.negate(yi), xi)),
--            // X and Y represent the same variable, their merged edges must be unsatisfiable.
--            Ordering::Equal => x.children.is_disjoint(xi, &y.children, yi, self),
--        }
--    }
--
-     /// Returns `true` if there is no environment in which both marker trees can apply,
-     /// i.e., their conjunction is always `false`.
-     fn disjointness(&mut self, xi: NodeId, yi: NodeId) -> bool {
--        // NOTE(charlie): This is equivalent to `is_disjoint`, with the exception that it doesn't
--        // perform the mutually-incompatible marker check. If it did, we'd create an infinite loop,
--        // since `is_disjoint` calls `and` (when relevant variables are present) which then calls
--        // `disjointness`.
-+        // This tests the two diagrams over their full domains, including impossible
-+        // platform combinations. Callers can supply the valid platform domain explicitly.
- 
-       
-```
-
-**File**: `crates/uv-pep508/src/marker/algebra/platform.rs` (added, +265/-0)
-```diff
-@@ -0,0 +1,265 @@
-+//! Canonical marker trees over compatible platform assignments.
-+//!
-+//! The exclusion table describes combinations of marker values that cannot occur together.
-+//! On those assignments, choose a consistent value so that markers that agree on every
-+//! compatible platform share the same node ID.
-+
-+use std::cmp::Ordering;
-+
-+use arcstr::literal;
-+use rustc_hash::FxHashMap;
-+
-+use super::{InternerGuard, Node, NodeId, Variable};
-+use crate::MarkerValueString::{OsName, PlatformSystem, SysPlatform};
-+use crate::marker::lowering::CanonicalMarkerValueString;
-+use crate::{MarkerExpression, MarkerOperator};
-+
-+#[derive(Default)]
-+pub(super) struct Cache {
-+    /// The disjunction of known incompatible marker pairs.
-+    exclusions: Option<NodeId>,
-+    /// Canonical representatives of nodes that test multiple platform keys.
-+    canonical: FxHashMap<NodeId, NodeId>,
-+}
-+
-+// Bit zero in a NodeId is reserved for complemented edges.
-+const PLATFORM_KEY: usize = 1 << 1;
-+const MIXED_KEYS: usize = 1 << 2;
-+
-+fn is_platform_key(var: &Variable) -> bool {
-+    matches!(
-+        var,
-+        Variable::String(
-+            CanonicalMarkerValueString::OsName
-+                | CanonicalMarkerValueString::SysPlatform
-+                | CanonicalMarkerValueString::PlatformSystem
-+        )
-+    )
-+}
-+
-+impl NodeId {
-+    fn tests_platform_key(self) -> bool {
-+        self.0 & PLATFORM_KEY != 0
-+    }
-+
-+    fn mixes_platform_keys(self) -> bool {
-+        self.0 & MIXED_KEYS != 0
-+    }
-+}
-+
-+/// The platform keys come first in decision order. A second key on the same path
-+/// must therefore occur in an immediate child.
-+pub(super) fn node_flags(node: &Node) -> usize {
-+    if !is_platform_key(&node.var) {
-+        return 0;
-+    }
-+    if node.children.nodes().any(NodeId::tests_platform_key) {
-+        PLATFORM_KEY | MIXED_KEYS
-+    } else {
-+        PLATFORM_KEY
-+    }
-+}
-+
-+impl InternerGuard<'_> {
-+    /// Returns `true` if there is no environment in which both marker trees can apply,
-+    /// i.e. their conjunction is always `false`.
-+    pub(in crate::marker) fn is_disjoint_nontrivial(&mut self, xi: NodeId, yi: NodeId) -> bool {
-+        debug_assert!(
-+            xi.is_disjoint_trivial(yi).is_none(),
-+            "`is_disjoint_nontrivial` requires non-trivial disjointness"
-+        );
-+
-+        // Both operands can name an incompatible pair only if both start with
-+        // a key in the platform exclusion table.
-+        if xi.tests_platform_key() && yi.tests_platform_key() {
-+            let intersection = self.and_nontrivial(xi, yi);
-+            return self.canonicalize(intersection).is_false();
-+        }
-+
-+        self.disjoint_edges(xi, yi)
-+    }
-+
-+    /// Choose the same diagram for functions that agree on all compatible platform
-+    /// assignments. The values on incompatible assignments are don't-cares.
-+    #[inline]
-+    pub(in crate::marker) fn canonicalize(&mut self, marker: NodeId) -> NodeId {
-+        if marker.mixes_platform_keys() {
-+            self.canonicalize_mixed_platforms(marker)
-+        } else {
-+            marker
-+        }
-+    }
-+
-+    #[inline(never)]
-+    fn canonicalize_mixed_platforms(&mut self, marker: NodeId) -> NodeId {
-+        if let Some(&result) = self.state.platform.canonical.get(&marker) {
-+            return result;
-+        }
-+        let platforms = self.exclusions().not();
-+        let result = self.platform_cofactor(marker, platforms, &mut FxHashMap::default());
-+
-+        // Children are also exposed as standalone marker trees. Complete their
-+        // platform assignments without assuming the value of their parent.
-+        let result = if result.mixes_platform_keys() {
-+            let node = self.shared.node(result);
-+            let children = node.children.map(result, |child| self.canonicalize(child));
-+            self.create_node(node.var.clone(), children)
-+        } else {
-+            result
-+        };
-+        self.state.platform.canonical.insert(marker, result);
-+        self.state
-+            .platform
-+            .canonical
-+            .insert(marker.not(), result.not());
-+        result
-+    }
-+
-+    /// Extend a marker from the compatible platforms to the whole decision domain.
-+    /// Each exclusion names a pair of nonempty strings. The first range of a platform
-+    /// key therefore allows every assignment to the remaining keys that any other
-+    /// range allows. Use its child as the default wherever another range cannot
-+    /// distinguish its own child from that default on compatible platforms.
-+    fn platform_cofactor(
-+        &mut self,
-+        value: NodeId,
-+        domain: NodeId,
-+        cache: &mut FxHashMap<(NodeId, NodeId), NodeId>,
-+    ) -> NodeId {
-+        if domain.is_true() || value.is_true() || value.is_false() {
-+            return value;
-+        }
-+        // Each recursion visits a reachable domain. Excluded edges take the default branch below.
-+        debug_assert!(!domain.is_false()
-```
-
-**File**: `crates/uv-pep508/src/marker/lowering.rs` (modified, +0/-11)
-```diff
-@@ -61,17 +61,6 @@ pub enum CanonicalMarkerValueString {
-     ImplementationName,
- }
- 
--impl CanonicalMarkerValueString {
--    /// Returns `true` if the marker is known to be involved in _at least_ one conflicting
--    /// marker pair.
--    ///
--    /// For example, `sys_platform == 'win32'` and `platform_system == 'Darwin'` are known to
--    /// never be true at the same time.
--    pub(crate) fn is_conflicting(self) -> bool {
--        self <= Self::PlatformSystem
--    }
--}
--
- impl From<MarkerValueString> for CanonicalMarkerValueString {
-     fn from(value: MarkerValueString) -> Self {
-         match value {
-```
-
-**File**: `crates/uv-pep508/src/marker/tree.rs` (modified, +97/-41)
-```diff
-@@ -13,7 +13,7 @@ use version_ranges::Ranges;
- use uv_normalize::{ExtraName, GroupName};
- use uv_pep440::{Version, VersionParseError, VersionSpecifier};
- 
--use super::algebra::{Edges, INTERNER, NodeId, Variable};
-+use super::algebra::{Edges, INTERNER, InternerGuard, NodeId, Variable};
- use super::simplify;
- #[cfg(test)]
- use crate::Pep508ErrorSource;
-@@ -214,7 +214,7 @@ impl Display for MarkerValue {
-             Self::MarkerEnvString(marker_value_string) => marker_value_string.fmt(f),
-             Self::MarkerEnvList(marker_value_contains) => marker_value_contains.fmt(f),
-             Self::Extra => f.write_str("extra"),
--            Self::QuotedString(value) => write!(f, "'{value}'"),
-+            Self::QuotedString(value) => quoted(value).fmt(f),
-         }
-     }
- }
-@@ -631,6 +631,12 @@ impl MarkerExpression {
-     }
- }
- 
-+/// PEP 508 string literals may contain the opposite quote character.
-+fn quoted(value: &str) -> impl Display {
-+    let quote = if value.contains('\'') { '"' } else { '\'' };
-+    fmt::from_fn(move |f| write!(f, "{quote}{value}{quote}"))
-+}
-+
- impl Display for MarkerExpression {
-     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-         match self {
-@@ -652,21 +658,29 @@ impl Display for MarkerExpression {
-                 operator,
-                 value,
-             } => {
-+                let value = quoted(value);
-                 if matches!(
-                     operator,
-                     MarkerOperator::Contains | MarkerOperator::NotContains
-                 ) {
--                    return write!(f, "'{value}' {} {key}", operator.invert());
-+                    return write!(f, "{value} {} {key}", operator.invert());
-                 }
- 
--                write!(f, "{key} {operator} '{value}'")
-+                write!(f, "{key} {operator} {value}")
-             }
-             Self::List { pair, operator } => {
--                write!(f, "'{}' {} {}", pair.value(), operator, pair.key())
-+                write!(f, "{} {operator} {}", quoted(&pair.value()), pair.key())
-             }
--            Self::Extra { operator, name } => {
-+            Self::Extra {
-+                operator,
-+                name: MarkerValueExtra::Extra(name),
-+            } => {
-                 write!(f, "extra {operator} '{name}'")
-             }
-+            Self::Extra {
-+                operator,
-+                name: MarkerValueExtra::Arbitrary(name),
-+            } => write!(f, "extra {operator} {}", quoted(name)),
-         }
-     }
- }
-@@ -762,6 +776,13 @@ impl FromStr for MarkerTree {
- }
- 
- impl MarkerTree {
-+    /// Finish a diagram operation by choosing a single representation on valid platforms.
-+    fn from_operation(operation: impl FnOnce(&mut InternerGuard<'_>) -> NodeId) -> Self {
-+        let mut interner = INTERNER.lock();
-+        let value = operation(&mut interner);
-+        Self(interner.canonicalize(value))
-+    }
-+
-     /// An empty marker that always evaluates to `true`.
-     pub const TRUE: Self = Self(NodeId::TRUE);
- 
-@@ -806,7 +827,7 @@ impl MarkerTree {
-         if let Some(node) = self.0.and_trivial(tree.0) {
-             return Self(node);
-         }
--        Self(INTERNER.lock().and_nontrivial(self.0, tree.0))
-+        Self::from_operation(|interner| interner.and_nontrivial(self.0, tree.0))
-     }
- 
-     /// Returns a new marker tree that combines this one with the given one via a disjunction.
-@@ -815,7 +836,7 @@ impl MarkerTree {
-         if let Some(node) = self.0.or_trivial(tree.0) {
-             return Self(node);
-         }
--        Self(INTERNER.lock().or_nontrivial(self.0, tree.0))
-+        Self::from_operation(|interner| interner.or_nontrivial(self.0, tree.0))
-     }
- 
-     /// Returns a marker equivalent to the implication of this one and the given consequent.
-@@ -845,14 +866,10 @@ impl MarkerTree {
- 
-     /// Returns whether this marker is unsatisfiable under known environment constraints.
-     ///
--    /// Unlike [`MarkerTree::is_false`], this checks combinations such as `os_name == 'posix'`
--    /// and `sys_platform == 'win32'` even when they occur in different decision branches.
--    /// Relationships not modeled by the marker algebra can still produce false negatives.
-+    /// Known platform exclusions are applied when building the tree. Relationships
-+    /// outside those exclusions can still produce false negatives.
-     pub fn is_unreachable(self) -> bool {
--        if self.is_true() || self.is_false() {
--            return self.is_false();
--        }
--        INTERNER.lock().is_unreachable(self.0)
-+        self.is_false()
-     }
- 
-     /// Returns the contents of this marker tree, if it contains at least one expression.
-@@ -1248,11 +1265,7 @@ impl MarkerTree {
-     /// should reconstitute all relevant markers from the source data.)
-     #[must_use]
-     pub fn simplify_python_versions(self, lower: Bound<&Version>, upper: Bound<&Version>) -> Self {
--        Self(
--            INTERNER
--                .lock()
--                .simplify_py
+@@ -143,7 +143,7 @@ backon = { version = "1.3.0", default-features = false, features = [
+ ] }
+ base64 = { version = "0.23.0", default-features = false, features = ["std"] }
+ bitflags = { version = "2.6.0", default-features = false }
+-blake2 = { version = "0.11.0-rc.6", default-features = false }
++blake2 = { version = "0.11.0", default-features = false }
+ blake3 = { version = "1.8.5", default-features = false, features = ["std"] }
+ boxcar = { version = "0.2.5", default-features = false }
+ bytecheck = { version = "0.8.0", default-features = false }
 ```
 
 ---
 
-### Incident Patch 2: `7f396534` (2026-11-17)
-**Commit Message**: Require explicit marker tree deserialization (#23256)
+### Incident Patch 2: `99a766b1` (2026-11-19)
+**Commit Message**: Bump webpki-root-certs (#23302)
 
-Refactor marker deserialization so each field explicitly chooses the
-dependency-marker or environment-selector parser. Both entry points
-accept
-the same syntax. The split lets dependency specifiers gain wheel variant
-variables while environment selectors can reject them.
+Closes #23269. FWICT there's no risk with these, but there's also no
+harm in removing them.
 
-This change is limited to a behavior-preserving refactor.
+Signed-off-by: William Woodruff <[REDACTED_EMAIL]>
 
-**File**: `crates/uv-distribution-types/src/requirement.rs` (modified, +1/-0)
+Signed-off-by: William Woodruff <[REDACTED_EMAIL]>
+
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -55,6 +55,7 @@ pub struct Requirement {
-     #[serde(
-         skip_serializing_if = "marker::ser::is_empty",
-         serialize_with = "marker::ser::serialize",
-+        deserialize_with = "MarkerTree::deserialize_dependency",
-         default
-     )]
-     pub marker: MarkerTree,
-```
-
-**File**: `crates/uv-distribution-types/src/requires_python.rs` (modified, +4/-1)
-```diff
-@@ -581,7 +581,10 @@ impl From<RequiresPythonRange> for Ranges<Version> {
- /// a simplified marker, one must re-contextualize it by adding the
- /// `requires-python` constraint back to the marker.
- #[derive(Clone, Copy, Debug, Default, Eq, PartialEq, PartialOrd, Ord, serde::Deserialize)]
--pub struct SimplifiedMarkerTree(MarkerTree);
-+#[serde(transparent)]
-+pub struct SimplifiedMarkerTree(
-+    #[serde(deserialize_with = "MarkerTree::deserialize_environment")] MarkerTree,
-+);
+@@ -8473,9 +8473,9 @@ dependencies = [
  
- impl SimplifiedMarkerTree {
-     /// Simplifies the given markers by assuming the given `requires-python`
-```
-
-**File**: `crates/uv-lock/src/lock/export/pylock_toml.rs` (modified, +19/-1)
-```diff
-@@ -260,7 +260,11 @@ pub struct PylockToml {
-     #[serde(deserialize_with = "deserialize_lock_version")]
-     lock_version: Version,
-     created_by: String,
--    #[serde(skip_serializing)]
-+    #[serde(
-+        skip_serializing,
-+        default,
-+        deserialize_with = "deserialize_environments"
-+    )]
-     environments: Option<Vec<MarkerTree>>,
-     #[serde(skip_serializing_if = "Option::is_none")]
-     pub requires_python: Option<RequiresPython>,
-@@ -275,6 +279,19 @@ pub struct PylockToml {
-     attestation_identities: Vec<PylockTomlAttestationIdentity>,
- }
- 
-+fn deserialize_environments<'de, D: serde::Deserializer<'de>>(
-+    deserializer: D,
-+) -> Result<Option<Vec<MarkerTree>>, D::Error> {
-+    #[derive(Deserialize)]
-+    #[serde(transparent)]
-+    struct Environments(
-+        #[serde(deserialize_with = "MarkerTree::deserialize_environment_list")] Vec<MarkerTree>,
-+    );
-+
-+    Option::<Environments>::deserialize(deserializer)
-+        .map(|environments| environments.map(|env| env.0))
-+}
-+
- fn deserialize_lock_version<'de, D>(deserializer: D) -> Result<Version, D::Error>
- where
-     D: serde::Deserializer<'de>,
-@@ -333,6 +350,7 @@ pub struct PylockTomlPackage {
-     #[serde(
-         skip_serializing_if = "uv_pep508::marker::ser::is_empty",
-         serialize_with = "uv_pep508::marker::ser::serialize",
-+        deserialize_with = "MarkerTree::deserialize_environment",
-         default
-     )]
-     marker: MarkerTree,
-```
-
-**File**: `crates/uv-pep508/src/marker/tree.rs` (modified, +36/-24)
-```diff
-@@ -745,29 +745,6 @@ impl Default for MarkerTree {
-     }
- }
- 
--impl<'de> Deserialize<'de> for MarkerTree {
--    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
--    where
--        D: Deserializer<'de>,
--    {
--        struct Visitor;
--
--        impl de::Visitor<'_> for Visitor {
--            type Value = MarkerTree;
--
--            fn expecting(&self, f: &mut Formatter) -> fmt::Result {
--                f.write_str("a string")
--            }
--
--            fn visit_str<E: de::Error>(self, v: &str) -> Result<Self::Value, E> {
--                MarkerTree::from_str(v).map_err(de::Error::custom)
--            }
--        }
--
--        deserializer.deserialize_str(Visitor)
--    }
--}
--
- impl FromStr for MarkerTree {
-     type Err = Pep508Error;
- 
-@@ -784,6 +761,39 @@ impl MarkerTree {
-         Self(interner.canonicalize(value))
-     }
- 
-+    /// Deserialize a dependency marker.
-+    pub fn deserialize_dependency<'de, D: Deserializer<'de>>(
-+        deserializer: D,
-+    ) -> Result<Self, D::Error> {
-+        Self::from_str(&String::deserialize(deserializer)?).map_err(de::Error::custom)
-+    }
-+
-+    /// Parse an environment selector.
-+    pub fn parse_environment(input: &str) -> Result<Self, Pep508Error> {
-+        Self::from_str(input)
-+    }
-+
-+    /// Deserialize an environment selector.
-+    pub fn deserialize_environment<'de, D: Deserializer<'de>>(
-+        deserializer: D,
-+    ) -> Result<Self, D::Error> {
-+        Self::parse_environment(&String::deserialize(deserializer)?).map_err(de::Error::custom)
-+    }
-+
-+    /// Deserialize a list of environment selectors.
-+    pub fn deserialize_environment_list<'de, D: Deserializer<'de>>(
-+        deserializer: D,
-+    ) -> Result<Vec<Self>, D::Error> {
-+        #[derive(Deserialize)]
-+        #[serde(transparent)]
-+        struct EnvironmentMarker(
-+            #[serde(deserialize_with = "MarkerTree::deserialize_environment")] MarkerTree,
-+        );
-+
-+        Vec::<EnvironmentMarker>::deserialize(deserializer)
-+            .map(|markers| markers.into_iter().map(|marker| marker.0).collect())
-+    }
-+
-     /// An empty marker that always evaluates to `true`.
-     pub const TRUE: Self = Self(NodeId::TRUE);
- 
-@@ -4026,7 +4036,9 @@ mod test {
-         let serialized = serde_json::to_string(&MarkerTree::FALSE.contents())?;
-         assert_snapshot!(serialized, @r#""python_version < '0'""#);
-         assert_eq!(
--            serde_json::from_str::<MarkerTree>(&serialized)?,
-+            MarkerTree::deserialize_dependency(&mut serde_json::Deserializer::from_str(
-+                &serialized,
-+            ))?,
-             MarkerTree::FALSE,
-         );
-         Ok(())
-```
-
-**File**: `crates/uv-pypi-types/src/supported_environments.rs` (modified, +6/-12)
-```diff
-@@ -1,5 +1,4 @@
--use std::str::FromStr;
--
-+use serde::de::value::SeqAccessDeserializer;
- use serde::ser::SerializeSeq;
- 
- use uv_pep508::MarkerTree;
-@@ -78,22 +77,17 @@ impl<'de> serde::Deserialize<'de> for SupportedEnvironments {
-             where
-                 E: serde::de::Error,
-             {
--                let marker = MarkerTree::from_str(value).map_err(serde::de::Error::custom)?;
-+                let marker =
-+                    MarkerTree::parse_environment(value).map_err(serde::de::Error::custom)?;
-                 Ok(SupportedEnvironments(vec![marker]))
-             }
- 
--            fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
-+            fn visit_seq<A>(self, seq: A) -> Result<Self::Value, A::Error>
-             where
-                 A: serde::de::SeqAccess<'de>,
-             {
--                let mut markers = Vec::new();
--
--                while let Some(elem) = seq.next_element::<String>()? {
--                    let marker = MarkerTree::from_str(&elem).map_err(serde::de::Error::custom)?;
--                    markers.push(marker);
--                }
--
--                Ok(SupportedEnvironments(markers))
-+                MarkerTree::deserialize_environment_list(SeqAccessDeserializer::new(seq))
-+                    .map(SupportedEnvironments)
-             }
-         }
- 
-```
-
-**File**: `crates/uv-test/src/packse/scenario.rs` (modified, +1/-1)
-```diff
-@@ -338,7 +338,7 @@ pub struct ResolverOptions {
-     pub python_platform: Option<TargetTriple>,
- 
-     /// Required environments (platform markers).
--    #[serde(default)]
-+    #[serde(default, deserialize_with = "MarkerTree::deserialize_environment_list")]
-     pub required_environments: Vec<MarkerTree>,
- }
- 
-```
-
-**File**: `crates/uv-workspace/src/pyproject.rs` (modified, +1/-5)
-```diff
-@@ -1374,11 +1374,7 @@ impl<'de> Deserialize<'de> for Source {
-             package: Option<bool>,
-             index: Option<IndexName>,
-             workspace: Option<WorkspaceReference>,
--            #[serde(
--                skip_serializing_if = "uv_pep508::marker::ser::is_empty",
--                serialize_with = "uv_pep508::marker::ser::serialize",
--                default
--            )]
-+            #[serde(default, deserialize_with = "MarkerTree::deserialize_environment")]
-             marker: MarkerTree,
-             extra: Option<ExtraName>,
-             group: Option<GroupName>,
+ [[package]]
+ name = "webpki-root-certs"
+-version = "1.0.10"
++version = "1.0.12"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "58ec80e73fd8baf57bf0d9615554c75348bda990d6d5bbeab964dd068319fecb"
++checksum = "293198dcebfb821155b5092ab94b5a82ff180eddd7241df3bd6e66a4ffd1a585"
+ dependencies = [
+  "rustls-pki-types",
+ ]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23281** (2026-11-17): Use GPT-6.2 for issue and PR automation (@woodruffw)
-- **PR #23276** (2026-11-17): Tweak proxy indexes docs (@zsol)
-- **PR #23273** (2026-11-17): Bump version to 0.13.9 (@konstin)
-- **PR #23264** (2026-11-16): Use Rust 1.98 stabilized APIs (@charliermarsh)
-- **PR #23263** (2026-11-16): Update Rust to 1.100 and MSRV to 1.98 (@charliermarsh)
-- **PR #23261** (2026-11-16): Reject wheels with mismatched names (@EliteTK)
+- **PR #23303** (2026-11-19): Cite Minato's original description of the ISOP algorithm (@charliermarsh)
+- **PR #23302** (2026-11-19): Bump webpki-root-certs (@woodruffw)
+- **PR #23296** (2026-11-19): Move typos to its own dependency group (@zsol)
+- **PR #23294** (2026-11-19): Update blake2 dependency from 0.11.0-rc.6 to 0.11.0 (@musicinmybrain)
+- **PR #23292** (closed): Report HTTP proxy connection and tunnel errors (@arifrhm)
+- **PR #23289** (2026-11-19): Use `uv check` for repository type checking in CI (@zsol)
 
 ---
 
@@ -2219,58 +1611,28 @@ This change is limited to a behavior-preserving refactor.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Preserve marker identity across equivalent platform expressions
+## X. Update blake2 dependency from 0.11.0-rc.6 to 0.11.0
 
 **RULE**:
-When implementing operations in `crates/uv-pep508/src/marker/algebra.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in astral-sh/uv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7424870a`: Preserve marker identity across equivalent platform expressions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9b34eb69`: Update blake2 dependency from 0.11.0-rc.6 to 0.11.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/uv-pep508/src/marker/algebra.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-mod platform;
-    platform: platform::Cache,
-                let flags = platform::node_flags(&node);
-                let id = NodeId::new(self.shared.nodes.push(node), flags);
-        // This tests the two diagrams over their full domains, including impossible
-        // platform combinations. Callers can supply the valid platform domain explicitly.
+blake2 = { version = "0.11.0", default-features = false }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    /// The [`NodeId`] for the disjunction of known, mutually incompatible markers.
-    exclusions: Option<NodeId>,
-                let id = NodeId::new(self.shared.nodes.push(node), false);
-        // Determine whether the conjunction _could_ contain a conflict.
-        //
-        // As an optimization, we only have to perform this check at the top-level, since these
-        // variables are given higher priority in the tree. In other words, if they're present, they
-        // _must_ be at the top; and if they're not at the top, we know they aren't present in any
-        // children.
-        let conflicts = x.var.is_conflicting_variable() && y.var.is_conflicting_variable();
-
-        // If the node includes known incompatibilities, map it to `false`.
-        let node = if conflicts {
-            let exclusions = self.exclusions();
-            if self.disjointness(node, exclusions.not()) {
-                NodeId::FALSE
-            } else {
-                node
-            }
-        } else {
-            node
-        };
-
-    /// Returns `true` if there is no environment in which both marker trees can apply,
-    /// i.e. their conjunction is always `false`.
-    pub(crate) fn is_disjoin
+blake2 = { version = "0.11.0-rc.6", default-features = false }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7424870a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9b34eb69` are properly handled with clean fallback behavior.

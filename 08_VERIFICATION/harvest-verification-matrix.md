@@ -11329,3 +11329,6 @@
 | `CYCLE-20261119-RN3X` | `2026-11-19T16:33:26.205Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9410` | Yes (`30ad7162...`) |
 | `CYCLE-20261119-ROHG` | `2026-11-19T16:33:27.988Z` | `mitmproxy/mitmproxy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9411` | Yes (`53f007c9...`) |
 | `CYCLE-20261119-RPMJ` | `2026-11-19T16:33:29.467Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9412` | Yes (`04d06beb...`) |
+| `CYCLE-20261119-18L8` | `2026-11-19T16:40:53.948Z` | `pyannote/speaker-diarization-community-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-pyannote-speaker-diarization-community-1-learnings.md` | Yes (`9a97d007...`) |
+| `CYCLE-20261119-1AGM` | `2026-11-19T16:40:56.374Z` | `astral-sh/uv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9413` | Yes (`feca5bca...`) |
+| `CYCLE-20261119-1IMM` | `2026-11-19T16:41:06.958Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9414` | Yes (`6ea93397...`) |

@@ -11362,3 +11362,6 @@ Every entry in this ledger must capture:
 | `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `c9e95eba` | Multi-dimensional audit evidence | 2026-11-19T16:33:26.209Z |
 | `learn-github-mitmproxy-mitmproxy` | `https://github.com/mitmproxy/mitmproxy` | `c4919869` | Multi-dimensional audit evidence | 2026-11-19T16:33:27.992Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `ae665a46` | Multi-dimensional audit evidence | 2026-11-19T16:33:29.470Z |
+| `learn-huggingface-pyannote-speaker-diarization-community-1` | `https://huggingface.co/pyannote/speaker-diarization-community-1` | `hf-pyannot` | Multi-dimensional audit evidence | 2026-11-19T16:40:53.951Z |
+| `learn-github-astral-sh-uv` | `https://github.com/astral-sh/uv` | `9b34eb69` | Multi-dimensional audit evidence | 2026-11-19T16:40:56.377Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `fefb2cb8` | Multi-dimensional audit evidence | 2026-11-19T16:41:06.961Z |

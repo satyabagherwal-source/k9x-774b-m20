@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T16:33:34.413Z",
+  "last_updated": "2026-11-19T16:41:11.365Z",
   "directives": [
     {
       "id": "CD-001",
@@ -33652,6 +33652,46 @@
       "source_repo": "darrylmorley-whatcable",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-690A30-mirror-from-private-dbb642d1-.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-1LC1",
+      "directive_title": "Update blake2 dependency from 0.11.0-rc.6 to 0.11.0",
+      "source_repo": "astral-sh-uv-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-1LC1-update-blake2-dependency-from-0-11-0-rc-6-to-0-11-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-1M0W",
+      "directive_title": "Empirical Invariant Guard in Cargo.toml",
+      "source_repo": "aleo-labs-protocol-snarkos-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-1M0W-empirical-invariant-guard-in-cargo-toml.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-CB9FB6",
+      "directive_title": "Update blake2 dependency from 0.11.0-rc.6 to 0.11.0",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "astral-sh-uv",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CB9FB6-update-blake2-dependency-from-0-11-0-rc-.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-FF12BC",
+      "directive_title": "Empirical Invariant Guard in Cargo.toml",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "aleo-labs-protocol-snarkos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-FF12BC-empirical-invariant-guard-in-cargo-toml.md",
       "staged_date": "2026-11-19"
     }
   ]

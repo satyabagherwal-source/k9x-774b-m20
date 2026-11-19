@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T16:33:34.228Z",
+  "updated_at": "2026-11-19T16:41:11.207Z",
   "stats": {
-    "total_discovered": 5936,
-    "approved_pending_harvest": 5621,
+    "total_discovered": 5938,
+    "approved_pending_harvest": 5623,
     "harvested_count": 0,
     "rejected_count": 315,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5587,
+      "COMMUNITY_AND_EXPERT": 5589,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 112,
       "ENGINEERING_BLOGS": 4,
@@ -128408,6 +128408,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/darrylmorley-whatcable-learnings.md",
         "fileName": "darrylmorley-whatcable-learnings.md"
+      }
+    },
+    "SRC-3D55D2155FBB": {
+      "id": "SRC-3D55D2155FBB",
+      "url": "https://github.com/astral-sh/uv/issues/20783",
+      "title": "https://github.com/astral-sh/uv/issues/20783",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T16:41:10.268Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
+        "fileName": "astral-sh-uv-learnings.md"
+      }
+    },
+    "SRC-D26872A51D49": {
+      "id": "SRC-D26872A51D49",
+      "url": "https://claude.ai/code/session_01UYfmmLteo8RJcUAnUrf9qy",
+      "title": "https://claude.ai/code/session_01UYfmmLteo8RJcUAnUrf9qy",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T16:41:11.207Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
       }
     }
   }
