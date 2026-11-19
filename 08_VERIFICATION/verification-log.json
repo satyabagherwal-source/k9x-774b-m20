@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-D849",
-    "timestamp": "2026-11-17T16:46:52.762Z",
-    "repository": "stakater/Reloader",
-    "learningId": "learn-github-stakater-reloader",
-    "contentHash": "af427e774b3eeae9ef0ad50307353136b733ad2cd6294081a6db36cb2c696460",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-NA1G",
     "timestamp": "2026-11-17T16:54:41.812Z",
     "repository": "Qwen/Qwen3-14B",
@@ -7490,6 +7475,21 @@
     "repository": "google/gemma-4-26B-A4B-it",
     "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
     "contentHash": "210ef14df814cbd863ce5451a9908c01b2a54ad916ca177c89d6a543c9054281",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-OYUS",
+    "timestamp": "2026-11-19T02:03:33.364Z",
+    "repository": "intfloat/multilingual-e5-small",
+    "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
+    "contentHash": "dfc96ea9d7ceab467359fc046733fbb2212b7012b1da088df39a29df3b538913",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

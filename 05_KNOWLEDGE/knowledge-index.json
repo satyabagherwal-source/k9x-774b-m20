@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T01:55:44.297Z",
+  "last_updated": "2026-11-19T02:03:46.457Z",
   "total_verified_learnings": 9013,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5a1b9b294c62691ae808833b688374862fa5a7b02bc8e4a7591bc4c9ccb8b464",
+      "content_hash": "14e5d8f87d6b89347b95fc47c886c3d5eddb4010c5cfb0690d2eb7f6ed14955c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T01:55:44.150Z"
+      "persisted_at": "2026-11-19T02:03:46.335Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "2d39a160e75d31e5807bbe02f9a22f51a45e180fc5d5a28e5f979b6c75a00339",
+      "content_hash": "ee29590076ad2cb3c5f8e1bd210e4558ac21f2984c72803e52c84aedaee09f23",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T01:55:44.297Z"
+      "persisted_at": "2026-11-19T02:03:46.457Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -229268,7 +229268,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/intfloat/multilingual-e5-small",
       "source_version": "hf-intfloat-multilingual-e5-small",
-      "content_hash": "0edcbcffce489376ef5b65d364f7b24844fbc55d4dcaccdc305f9a287cb2e7d8",
+      "content_hash": "dfc96ea9d7ceab467359fc046733fbb2212b7012b1da088df39a29df3b538913",
       "dossier_path": "07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md",
       "promoted_rules": [],
@@ -229277,7 +229277,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T12:33:50.763Z",
+      "verified_at": "2026-11-19T02:03:33.153Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229294,9 +229294,9 @@
       "title": "Research & Knowledge Intelligence: intfloat/multilingual-e5-small Core Invariants",
       "repository": "intfloat/multilingual-e5-small",
       "source_version": "hf-intfloat-multilingual-e5-small",
-      "content_hash": "6f3b8553a1eb49c3881e743c2b8085e2a5652cfb87b25bbc56cf329819944699",
+      "content_hash": "750b02667d8da9cb6968a3e22443664689e9e5773b174f63da73e8d1b72c9993",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T12:33:51.096Z"
+      "persisted_at": "2026-11-19T02:03:33.557Z"
     },
     "learn-github-agent-of-empires-agent-of-empires": {
       "learning_id": "learn-github-agent-of-empires-agent-of-empires",
@@ -229656,9 +229656,9 @@
       "title": "Research & Knowledge Intelligence: hf-intfloat-multilingual-e5-small-learnings Core Invariants",
       "repository": "hf-intfloat-multilingual-e5-small-learnings",
       "source_version": "HEAD",
-      "content_hash": "5ebe283baad455aa3fdb7e5cd135799a889cd471d211c4f978c01f6b6eba908d",
+      "content_hash": "ffefabee674be812417d34c02bd581f60ed992757f5db608c4aff918ac1abd20",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T12:34:36.456Z"
+      "persisted_at": "2026-11-19T02:03:45.173Z"
     },
     "domain_intelligence-architecture-intelligence-koderover-zadig-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-koderover-zadig-learnings-core-invariants",
@@ -252677,9 +252677,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "1c4cefcc867e86bbb6317fc6c4689336068b1f2e572bab33ea512f70f2d82a7a",
+      "content_hash": "f5d7c3856b63d670cfbf883815656eb5c9c4cccba439de27ee70948c17a69136",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T01:55:43.986Z"
+      "persisted_at": "2026-11-19T02:03:46.193Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -275381,13 +275381,13 @@
       "item_id": "candidate_directive-rust-address-the-remaining-issues-in-418",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-EWJK-rust-address-the-remaining-issues-in-418.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-P8N1-rust-address-the-remaining-issues-in-418.md",
       "title": "rust): address the remaining issues in #418",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "300ce4ff6d50651dcc4545a839a7c9fbd7cbc776c2846146146dc4fecfe45f4f",
+      "content_hash": "64c99aca5321c4ec125c7b20ab89476295545f89382cd4d233df4dd80bc3c1d6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T01:55:43.821Z"
+      "persisted_at": "2026-11-19T02:03:46.048Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",
@@ -286829,9 +286829,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "7fd63b8a238426615026f3d5d281a789c9a2ba12dd6541b97de97dd4d9f49880",
+      "content_hash": "2563c5bd6db6e447c68d4c92c8fb3ef0d9a7d22549afbf71597541d3f28be886",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T01:06:12.607Z"
+      "persisted_at": "2026-11-19T02:03:45.609Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T01:55:43.986Z",
+  "last_updated": "2026-11-19T02:03:46.193Z",
   "total_records": 1935,
   "domains": {
     "A": {
@@ -15257,8 +15257,8 @@
       "title": "Research & Knowledge Intelligence: intfloat/multilingual-e5-small Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-intfloat-multilingual-e5-small-research-knowledge-intelligence-intfloat-multi.md",
       "repository": "intfloat/multilingual-e5-small",
-      "content_hash": "6f3b8553a1eb49c3881e743c2b8085e2a5652cfb87b25bbc56cf329819944699",
-      "created_at": "2026-11-14T12:33:51.096Z"
+      "content_hash": "750b02667d8da9cb6968a3e22443664689e9e5773b174f63da73e8d1b72c9993",
+      "created_at": "2026-11-19T02:03:33.557Z"
     },
     "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-core-invariants",
@@ -15344,8 +15344,8 @@
       "title": "Research & Knowledge Intelligence: hf-intfloat-multilingual-e5-small-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-intfloat-multilingual-e5-small-learnings-research-knowledge-intelligence-hf-i.md",
       "repository": "hf-intfloat-multilingual-e5-small-learnings",
-      "content_hash": "5ebe283baad455aa3fdb7e5cd135799a889cd471d211c4f978c01f6b6eba908d",
-      "created_at": "2026-11-14T12:34:36.456Z"
+      "content_hash": "ffefabee674be812417d34c02bd581f60ed992757f5db608c4aff918ac1abd20",
+      "created_at": "2026-11-19T02:03:45.173Z"
     },
     "domain_intelligence-architecture-intelligence-koderover-zadig-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-koderover-zadig-learnings-core-invariants",
@@ -23106,8 +23106,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "1c4cefcc867e86bbb6317fc6c4689336068b1f2e572bab33ea512f70f2d82a7a",
-      "created_at": "2026-11-19T01:55:43.986Z"
+      "content_hash": "f5d7c3856b63d670cfbf883815656eb5c9c4cccba439de27ee70948c17a69136",
+      "created_at": "2026-11-19T02:03:46.193Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -31031,8 +31031,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "7fd63b8a238426615026f3d5d281a789c9a2ba12dd6541b97de97dd4d9f49880",
-      "created_at": "2026-11-19T01:06:12.607Z"
+      "content_hash": "2563c5bd6db6e447c68d4c92c8fb3ef0d9a7d22549afbf71597541d3f28be886",
+      "created_at": "2026-11-19T02:03:45.609Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",

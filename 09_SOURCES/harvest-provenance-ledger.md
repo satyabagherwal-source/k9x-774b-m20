@@ -11210,3 +11210,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-akhaliq-minimax-h3-image-character-swap` | `https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap` | `hf-akhaliq` | Multi-dimensional audit evidence | 2026-11-19T01:54:57.662Z |
 | `learn-huggingface-google-gemma-4-26b-a4b-it` | `https://huggingface.co/google/gemma-4-26B-A4B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-19T01:55:00.150Z |
 | `learn-dom-d-c41d220b` | `project://hf-akhaliq-minimax-h3-image-character-swap` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-akhaliq-minimax-h3-image-character-swap-learnings.md` | 2026-11-19T01:55:42.494Z |
+| `learn-huggingface-intfloat-multilingual-e5-small` | `https://huggingface.co/intfloat/multilingual-e5-small` | `hf-intfloa` | Multi-dimensional audit evidence | 2026-11-19T02:03:33.369Z |

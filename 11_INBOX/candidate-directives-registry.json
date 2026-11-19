@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T01:55:43.821Z",
+  "last_updated": "2026-11-19T02:03:46.048Z",
   "directives": [
     {
       "id": "CD-001",
@@ -25122,11 +25122,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-EWJK",
+      "id": "CD-P8N1",
       "directive_title": "rust): address the remaining issues in #418",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-EWJK-rust-address-the-remaining-issues-in-418.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-P8N1-rust-address-the-remaining-issues-in-418.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-19",
@@ -31781,6 +31781,24 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-705280-rust-address-the-remaining-issues-in-418.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-9DA39D",
+      "directive_title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9DA39D-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-2C31E1",
+      "directive_title": "rust): address the remaining issues in #418",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2C31E1-rust-address-the-remaining-issues-in-418.md",
       "staged_date": "2026-11-19"
     }
   ]
