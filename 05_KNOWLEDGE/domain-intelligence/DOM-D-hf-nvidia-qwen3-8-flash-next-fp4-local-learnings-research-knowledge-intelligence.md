@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T04:44:29.800Z",
+  "timestamp": "2026-11-19T18:06:29.745Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-nvidia-qwen3.8-flash-next-fp4-local-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-nvidia-qwen3.8-flash-next-fp4-local-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T04:44:29.800Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T18:06:29.745Z`  
 > **Learning ID**: `LEARN-EVO-hf-nvidia-qwen3.8-flash-next-fp4-local-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-nvidia-qw`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T04:43:49.774Z  
+> **Timestamp**: 2026-11-19T18:06:13.128Z  
 > **Learning ID**: `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local](https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T04:43:49.674Z  
+> **Harvest Timestamp**: 2026-11-19T18:06:12.978Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 45884 downloads | 409 likes
+- **Stars / Engagement**: 41192 downloads | 425 likes
 
 ---
 

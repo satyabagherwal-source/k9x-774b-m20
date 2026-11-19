@@ -1665,8 +1665,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
     "sourceVersion": "hf-nvidia-qwen3.8-flash-next-fp4-local",
     "license": "Open-Source",
-    "contentHash": "5129eb1355d9058db0fb2e2ebd86fd913794fada4cb06f0e7abfbc1ffa641051",
-    "lastHarvestedAt": "2026-11-15T04:43:50.114Z",
+    "contentHash": "ae83d637cc71404086aa474abae54ea475720069dc29234185d64ed89ee7ee7a",
+    "lastHarvestedAt": "2026-11-19T18:06:13.553Z",
     "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local"
   },
   "hf-openmoss-team-moss-image-base": {
@@ -2213,10 +2213,10 @@
     "repository": "openziti/zrok",
     "platform": "github",
     "sourceUrl": "https://github.com/openziti/zrok",
-    "sourceVersion": "1a535cfa",
+    "sourceVersion": "d8e5316d",
     "license": "Apache-2.0",
-    "contentHash": "64a81af53335c3cedb1a4cf14a142acb275abf0d946040af0076558cbbf33246",
-    "lastHarvestedAt": "2026-11-18T00:22:46.891Z",
+    "contentHash": "dabb4604d2657a7ca9ad91de59950f11e692bad43d8d8707cab5636913e888dd",
+    "lastHarvestedAt": "2026-11-19T18:06:25.650Z",
     "learningId": "learn-github-openziti-zrok"
   },
   "crate-crate": {
@@ -2803,10 +2803,10 @@
     "repository": "karmada-io/karmada",
     "platform": "github",
     "sourceUrl": "https://github.com/karmada-io/karmada",
-    "sourceVersion": "12a8e01c",
+    "sourceVersion": "f4c69979",
     "license": "Apache-2.0",
-    "contentHash": "014721c6f6508fbdba8b08792f22c1bad015eca35fd39234fd40b985cf1f05d6",
-    "lastHarvestedAt": "2026-11-18T14:57:03.932Z",
+    "contentHash": "2616dec24f231a040fef8b8755cf2ff83646a4422f72ecff70abf96da490a0ba",
+    "lastHarvestedAt": "2026-11-19T18:06:24.096Z",
     "learningId": "learn-github-karmada-io-karmada"
   },
   "milvus-io-bootcamp": {
@@ -7683,10 +7683,10 @@
     "repository": "google/tcmalloc",
     "platform": "github",
     "sourceUrl": "https://github.com/google/tcmalloc",
-    "sourceVersion": "01b9fd85",
+    "sourceVersion": "f076c560",
     "license": "Apache-2.0",
-    "contentHash": "a1ab1a814223e50ca3ac8179e5344983801206f0dcbb620afde8360a3b87103c",
-    "lastHarvestedAt": "2026-11-17T22:39:51.256Z",
+    "contentHash": "6c1b379a6793e79a21ed89dbda22ef506f484ff3b14b213d90c98b556de42a12",
+    "lastHarvestedAt": "2026-11-19T18:06:15.515Z",
     "learningId": "learn-github-google-tcmalloc"
   },
   "russhwolf-multiplatform-settings": {

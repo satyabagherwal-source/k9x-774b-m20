@@ -11377,3 +11377,7 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `17861239` | Multi-dimensional audit evidence | 2026-11-19T17:38:09.206Z |
 | `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-19T17:42:49.261Z |
 | `learn-dom-d-6fa503ee` | `project://hf-openbmb-minicpm-v-4.7-35b-a3b-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md` | 2026-11-19T17:43:22.591Z |
+| `learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local` | `https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-19T18:06:13.553Z |
+| `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `f076c560` | Multi-dimensional audit evidence | 2026-11-19T18:06:15.515Z |
+| `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `f4c69979` | Multi-dimensional audit evidence | 2026-11-19T18:06:24.096Z |
+| `learn-github-openziti-zrok` | `https://github.com/openziti/zrok` | `d8e5316d` | Multi-dimensional audit evidence | 2026-11-19T18:06:25.650Z |

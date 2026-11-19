@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T17:42:49.266Z",
-  "total_cycles_completed": 10831,
-  "total_learnings_persisted": 10831,
-  "total_rules_promoted": 10194,
+  "last_updated": "2026-11-19T18:06:25.680Z",
+  "total_cycles_completed": 10835,
+  "total_learnings_persisted": 10835,
+  "total_rules_promoted": 10196,
   "history": [
-    {
-      "timestamp": "2026-11-18T23:02:48.460Z",
-      "repository": "baidu/Unlimited-OCR",
-      "learningId": "learn-huggingface-baidu-unlimited-ocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T23:10:18.121Z",
-      "repository": "Aleph-Alpha/Kolibri-1",
-      "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T23:10:28.172Z",
-      "repository": "meshery/meshery",
-      "learningId": "learn-github-meshery-meshery",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T23:10:32.876Z",
-      "repository": "etcd-io/etcd",
-      "learningId": "learn-github-etcd-io-etcd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T23:18:09.934Z",
       "repository": "FermionResearch/Phonon-2",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-19T17:42:49.266Z",
       "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
       "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T18:06:13.558Z",
+      "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+      "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T18:06:15.519Z",
+      "repository": "google/tcmalloc",
+      "learningId": "learn-github-google-tcmalloc",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T18:06:24.101Z",
+      "repository": "karmada-io/karmada",
+      "learningId": "learn-github-karmada-io-karmada",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T18:06:25.680Z",
+      "repository": "openziti/zrok",
+      "learningId": "learn-github-openziti-zrok",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

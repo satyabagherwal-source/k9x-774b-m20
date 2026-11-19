@@ -11344,3 +11344,7 @@
 | `CYCLE-20261119-2V8Y` | `2026-11-19T17:38:09.202Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9421` | Yes (`88eaf3ea...`) |
 | `CYCLE-20261119-8VC9` | `2026-11-19T17:42:49.257Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md` | Yes (`1e56cb9e...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T17:43:22.591Z` | `hf-openbmb-minicpm-v-4.7-35b-a3b-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-6FA503EE` [Domain D] | Yes (`732540a4...`) |
+| `CYCLE-20261119-2YWD` | `2026-11-19T18:06:13.549Z` | `nvidia/Qwen3.8-Flash-Next-FP4-Local` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md` | Yes (`ae83d637...`) |
+| `CYCLE-20261119-30EV` | `2026-11-19T18:06:15.511Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9422` | Yes (`6c1b379a...`) |
+| `CYCLE-20261119-3718` | `2026-11-19T18:06:24.092Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9423` | Yes (`2616dec2...`) |
+| `CYCLE-20261119-388D` | `2026-11-19T18:06:25.645Z` | `openziti/zrok` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/openziti-zrok-learnings.md` | Yes (`dabb4604...`) |

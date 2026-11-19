@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-ODR2",
-    "timestamp": "2026-11-18T03:39:24.446Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "5cc29110976d575534b3a66db1ffc9c9915bab97364f67a3e226ed1b0db6def7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-OMLL",
-    "timestamp": "2026-11-18T03:39:35.913Z",
-    "repository": "pixeltable/pixeltable",
-    "learningId": "learn-github-pixeltable-pixeltable",
-    "contentHash": "6782c64d387accb1089638fca9761e10bff7459ec3accec33e2a7171a47e2c4f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-ONIR",
-    "timestamp": "2026-11-18T03:39:37.107Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "215d9286690704e8c272e1b9fdb337e8a26658b367511443917a4c3f5db9d338",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-ZEG4",
-    "timestamp": "2026-11-18T03:47:58.564Z",
-    "repository": "HemmingwayAI/Hemmingway-1",
-    "learningId": "learn-huggingface-altworld-hemmingway-1",
-    "contentHash": "8b3a444b34f24555a48351919e3f72f7bc07f2705ba3591dc7c198f72c0ed004",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-ZJGT",
     "timestamp": "2026-11-18T03:48:05.069Z",
     "repository": "amir1376/ab-download-manager",
@@ -7490,6 +7430,66 @@
     "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
     "contentHash": "1e56cb9eeb722c83ace7145ce4f33540e6a4d36db3572c4dfb7a05b2b0da4c03",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-2YWD",
+    "timestamp": "2026-11-19T18:06:13.549Z",
+    "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
+    "learningId": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
+    "contentHash": "ae83d637cc71404086aa474abae54ea475720069dc29234185d64ed89ee7ee7a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-30EV",
+    "timestamp": "2026-11-19T18:06:15.511Z",
+    "repository": "google/tcmalloc",
+    "learningId": "learn-github-google-tcmalloc",
+    "contentHash": "6c1b379a6793e79a21ed89dbda22ef506f484ff3b14b213d90c98b556de42a12",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-3718",
+    "timestamp": "2026-11-19T18:06:24.092Z",
+    "repository": "karmada-io/karmada",
+    "learningId": "learn-github-karmada-io-karmada",
+    "contentHash": "2616dec24f231a040fef8b8755cf2ff83646a4422f72ecff70abf96da490a0ba",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-388D",
+    "timestamp": "2026-11-19T18:06:25.645Z",
+    "repository": "openziti/zrok",
+    "learningId": "learn-github-openziti-zrok",
+    "contentHash": "dabb4604d2657a7ca9ad91de59950f11e692bad43d8d8707cab5636913e888dd",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

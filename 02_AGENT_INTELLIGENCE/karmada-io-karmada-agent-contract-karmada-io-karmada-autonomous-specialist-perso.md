@@ -4,17 +4,17 @@
 {
   "source_repository": "karmada-io/karmada",
   "source_url": "https://github.com/karmada-io/karmada",
-  "source_version": "12a8e01c",
+  "source_version": "f4c69979",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T14:57:04.169Z",
+  "timestamp": "2026-11-19T18:06:24.276Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-karmada-io-karmada",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [karmada-io/karmada](https://github.com/karmada-io/karmada) (Revision: `12a8e01c`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T14:57:04.169Z`  
+> **Provenance**: Harvested from [karmada-io/karmada](https://github.com/karmada-io/karmada) (Revision: `f4c69979`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T18:06:24.276Z`  
 > **Learning ID**: `learn-github-karmada-io-karmada`
 
 
@@ -29,7 +29,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T14:57:02.763Z  
+> **Harvest Timestamp**: 2026-11-19T18:06:23.148Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -39,7 +39,7 @@ PROVENANCE_END -->
 - **Description**: Open, Multi-Cloud, Multi-Cluster Kubernetes Orchestration
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5769 stars
+- **Stars / Engagement**: 5771 stars
 
 ---
 
@@ -1023,500 +1023,175 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ceba46ce` (2026-11-12)
-**Commit Message**: fix(helm): allow initial cert provisioning on upgrade in auto cert mode
+### Incident Patch 1: `f4c69979` (2026-11-19)
+**Commit Message**: Merge pull request #8024 from asarj/fix/insufficient-capacity-unschedulable
 
-The cert Job only ran on pre-install, so enabling karmada as a subchart in an
-existing release failed in karmada-pre-upgrade because karmada-cert did not
-exist. The new certs.auto.provisionOnUpgrade option, off by default, adds a
-dedicated pre-upgrade Job that generates the certs only when neither
-karmada-cert nor the karmada apiserver Deployment exists, so an existing CA is
-never replaced. The cert generation script is shared with the pre-install Job
-through a named template.
+fix(scheduler): handle insufficient capacity as unschedulable
 
-The script also turns shell tracing off before it handles the generated
-private keys. It ran under set -ex and passed the base64 encoded keys to sed
-as arguments, so the trace wrote them to the Job's pod log.
-
-Signed-off-by: Brent <[REDACTED_EMAIL]>
-
-**File**: `charts/karmada/templates/_helpers.tpl` (modified, +36/-0)
+**File**: `pkg/scheduler/helper.go` (modified, +2/-1)
 ```diff
-@@ -722,3 +722,39 @@ See: https://github.com/karmada-io/karmada/blob/f2b734140bd0ba5fa399ffa1d08a3b31
-   {{- end -}}
-   {{- tpl (toJson $hosts) . -}}
- {{- end -}}
-+
-+{{/*
-+Generates the auto mode certificates into /opt/certs and fills them into the
-+cert, kubeconfig and webhook-cert manifests under /opt/configs.
-+*/}}
-+{{- define "karmada.certs.generate" -}}
-+mkdir -p /opt/certs
-+cp -r -L /opt/mount/* /opt/configs/
-+openssl req -x509 -sha256 -new -nodes -days {{ .Values.certs.auto.rootCAExpiryDays }} -newkey rsa:{{ .Values.certs.auto.rsaSize }} -keyout "/opt/certs/server-ca.key" -out "/opt/certs/server-ca.crt" -subj "/C=xx/ST=x/L=x/O=x/OU=x/CN=ca/emailAddress=x/"
-+openssl req -x509 -sha256 -new -nodes -days {{ .Values.certs.auto.rootCAExpiryDays }} -newkey rsa:{{ .Values.certs.auto.rsaSize }} -keyout "/opt/certs/front-proxy-ca.key" -out "/opt/certs/front-proxy-ca.crt" -subj "/C=xx/ST=x/L=x/O=x/OU=x/CN=ca/emailAddress=x/"
-+echo '{"signing":{"default":{"expiry":{{ printf `"%s"` .Values.certs.auto.expiry }},"usages":["signing","key encipherment","client auth","server auth"]}}}' > "/opt/certs/server-ca-config.json"
-+echo '{"CN":"system:admin","hosts":{{ include "karmada.certHosts" . }},"names":[{"O":"system:masters"}],"key":{"algo":"rsa","size":{{ .Values.certs.auto.rsaSize }}}}' | cfssl gencert -ca=/opt/certs/server-ca.crt -ca-key=/opt/certs/server-ca.key -config=/opt/certs/server-ca-config.json - | cfssljson -bare /opt/certs/karmada
-+echo '{"signing":{"default":{"expiry":{{ printf `"%s"` .Values.certs.auto.expiry }},"usages":["signing","key encipherment","client auth","server auth"]}}}' > "/opt/certs/front-proxy-ca-config.json"
-+echo '{"CN":"front-proxy-client","hosts":{{ include "karmada.certHosts" . }},"names":[{"O":"system:masters"}],"key":{"algo":"rsa","size":{{ .Values.certs.auto.rsaSize }}}}' | cfssl gencert -ca=/opt/certs/front-proxy-ca.crt -ca-key=/opt/certs/front-proxy-ca.key -config=/opt/certs/front-proxy-ca-config.json - | cfssljson -bare /opt/certs/front-proxy-client
-+# Stop tracing: the commands below carry the private keys in their arguments.
-+set +x
-+karmada_ca=$(base64 /opt/certs/server-ca.crt | tr -d '\r\n')
-+karmada_ca_key=$(base64 /opt/certs/server-ca.key | tr -d '\r\n')
-+karmada_crt=$(base64 /opt/certs/karmada.pem | tr -d '\r\n')
-+karmada_key=$(base64 /opt/certs/karmada-key.pem | tr -d '\r\n')
-+front_proxy_ca=$(base64 /opt/certs/front-proxy-ca.crt | tr -d '\r\n')
-+front_proxy_client_crt=$(base64 /opt/certs/front-proxy-client.pem | tr -d '\r\n')
-+front_proxy_client_key=$(base64 /opt/certs/front-proxy-client-key.pem | tr -d '\r\n')
-+sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/cert.yaml
-+sed -i'' -e "s/{{ print "{{ ca_key }}" }}/${karmada_ca_key}/g" /opt/configs/cert.yaml
-+sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/cert.yaml
-+sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/cert.yaml
-+sed -i'' -e "s/{{ print "{{ front_proxy_ca_crt }}" }}/${front_proxy_ca}/g" /opt/configs/cert.yaml
-+sed -i'' -e "s/{{ print "{{ front_proxy_crt }}" }}/${front_proxy_client_crt}/g" /opt/configs/cert.yaml
-+sed -i'' -e "s/{{ print "{{ front_proxy_key }}" }}/${front_proxy_client_key}/g" /opt/configs/cert.yaml
-+sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/kubeconfig.yaml
-+sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/kubeconfig.yaml
-+sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/kubeconfig.yaml
-+sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/webhook-cert.yaml
-+sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/webhook-cert.yaml
-+{{- end -}}
+@@ -116,7 +116,8 @@ func getConditionByError(err error) (metav1.Condition, bool) {
+ 	}
+ 
+ 	var unschedulableErr *framework.UnschedulableError
+-	if errors.As(err, &unschedulableErr) {
++	var insufficientCapacityErr *framework.InsufficientCapacityError
++	if errors.As(err, &unschedulableErr) || errors.As(err, &insufficientCapacityErr) {
+ 		return util.NewCondition(workv1alpha2.Scheduled, workv1alpha2.BindingReasonUnschedulable, err.Error(), metav1.ConditionFalse), false
+ 	}
+ 
 ```
 
-**File**: `charts/karmada/templates/pre-install-job.yaml` (modified, +3/-28)
+**File**: `pkg/scheduler/helper_test.go` (modified, +19/-4)
 ```diff
-@@ -290,7 +290,8 @@ metadata:
-   name: {{ $name }}-config
-   namespace: {{ $namespace }}
-   annotations:
--    "helm.sh/hook": pre-install
-+    {{- /* The pre-upgrade-certs Job in pre-upgrade-job.yaml mounts this ConfigMap on upgrade. */}}
-+    "helm.sh/hook": pre-install{{ if .Values.certs.auto.provisionOnUpgrade }},pre-upgrade{{ end }}
-     "helm.sh/hook-weight": "2"
-   {{- if "karmada.preInstallJob.labels" }}
-   labels:
-@@ -438,33 +439,7 @@ spec:
-           bash <<'EOF'
-           set -ex
-           mkdir -p /opt/configs
--          mkdir -p /opt/certs
--          cp -r -L /opt/mount/* /opt/configs/
--          openssl req -x509 -sha256 -new -nodes -days {{ .Values.certs.auto.rootCAExpiryDays }} -newkey rsa:{{ .Values.certs.auto.rsaSize }} -keyout "/opt/certs/server-ca.key" -out "/opt/certs/server-ca.crt" -subj "/C=xx/ST=x/L=x/O=x/OU=x/CN=ca/emailAddress=x/"
--          openssl req -x509 -sha256 -new -nodes -days {{ .Values.certs.auto.rootCAExpiryDays }} -newkey rsa:{{ .Values.certs.auto.rsaSize }} -keyout "/opt/certs/front-proxy-ca.key" -out "/opt/certs/front-proxy-ca.crt" -subj "/C=xx/ST=x/L=x/O=x/OU=x/CN=ca/emailAddress=x/"
--          echo '{"signing":{"default":{"expiry":{{ printf `"%s"` .Values.certs.auto.expiry }},"usages":["signing","key encipherment","client auth","server auth"]}}}' > "/opt/certs/server-ca-config.json"
--          echo '{"CN":"system:admin","hosts":{{ include "karmada.certHosts" . }},"names":[{"O":"system:masters"}],"key":{"algo":"rsa","size":{{ .Values.certs.auto.rsaSize }}}}' | cfssl gencert -ca=/opt/certs/server-ca.crt -ca-key=/opt/certs/server-ca.key -config=/opt/certs/server-ca-config.json - | cfssljson -bare /opt/certs/karmada
--          echo '{"signing":{"default":{"expiry":{{ printf `"%s"` .Values.certs.auto.expiry }},"usages":["signing","key encipherment","client auth","server auth"]}}}' > "/opt/certs/front-proxy-ca-config.json"
--          echo '{"CN":"front-proxy-client","hosts":{{ include "karmada.certHosts" . }},"names":[{"O":"system:masters"}],"key":{"algo":"rsa","size":{{ .Values.certs.auto.rsaSize }}}}' | cfssl gencert -ca=/opt/certs/front-proxy-ca.crt -ca-key=/opt/certs/front-proxy-ca.key -config=/opt/certs/front-proxy-ca-config.json - | cfssljson -bare /opt/certs/front-proxy-client
--          karmada_ca=$(base64 /opt/certs/server-ca.crt | tr -d '\r\n')
--          karmada_ca_key=$(base64 /opt/certs/server-ca.key | tr -d '\r\n')
--          karmada_crt=$(base64 /opt/certs/karmada.pem | tr -d '\r\n')
--          karmada_key=$(base64 /opt/certs/karmada-key.pem | tr -d '\r\n')
--          front_proxy_ca=$(base64 /opt/certs/front-proxy-ca.crt | tr -d '\r\n')
--          front_proxy_client_crt=$(base64 /opt/certs/front-proxy-client.pem | tr -d '\r\n')
--          front_proxy_client_key=$(base64 /opt/certs/front-proxy-client-key.pem | tr -d '\r\n')
--          sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/cert.yaml
--          sed -i'' -e "s/{{ print "{{ ca_key }}" }}/${karmada_ca_key}/g" /opt/configs/cert.yaml
--          sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/cert.yaml
--          sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/cert.yaml
--          sed -i'' -e "s/{{ print "{{ front_proxy_ca_crt }}" }}/${front_proxy_ca}/g" /opt/configs/cert.yaml
--          sed -i'' -e "s/{{ print "{{ front_proxy_crt }}" }}/${front_proxy_client_crt}/g" /opt/configs/cert.yaml
--          sed -i'' -e "s/{{ print "{{ front_proxy_key }}" }}/${front_proxy_client_key}/g" /opt/configs/cert.yaml
--          sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/kubeconfig.yaml
--          sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/kubeconfig.yaml
--          sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/kubeconfig.yaml
--          sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/webhook-cert.yaml
--          sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/webhook-cert.yaml
-+          {{- include "karmada.certs.generate" . | nindent 10 }}
-           sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/static-resources-configmaps.yaml
-           sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/crds-patches-configmaps.yaml
-           EOF
+@@ -461,7 +461,7 @@ func Test_getConditionByError(t *testing.T) {
+ 		{
+ 			name:              "no error",
+ 			err:               nil,
+-			expectedCondition: metav1.Condition{Type: workv1alpha2.Scheduled, Reason: workv1alpha2.BindingReasonSuccess, Status: metav1.ConditionTrue},
++			expectedCondition: metav1.Condition{Type: workv1alpha2.Scheduled, Reason: workv1alpha2.BindingReasonSuccess, Status: metav1.ConditionTrue, Message: successfulSchedulingMessage},
+ 			ignoreErr:         true,
+ 		},
+ 		{
+@@ -473,13 +473,13 @@ func Test_getConditionByError(t *testing.T) {
+ 		{
+ 			name:              "no cluster fit",
+ 			err:               &framework.FitError{},
+-			expectedCondition: metav1.Condition{Type: workv1alpha2.Scheduled, Reason: workv1alpha2.BindingReasonNoClusterFit, Status: metav1.ConditionFalse},
++			expectedCondition: metav1.Condition{Type: workv1alpha2.Scheduled, Reason: workv1alpha2.BindingReasonNoClusterFit, Status: metav1.ConditionFalse, Message: "0/0 clusters are available: no cluster exists."},
+ 			ignoreErr:         true,
+ 		},
+ 		{
+ 			name:              "aggregated fit error",
+ 			err:               utilerrors.NewAggregate([]error{&framework.FitError{}, errors.New("")}),
+-			expectedCondition: metav1.Condition{Type: workv1alpha2.Scheduled, Reason: workv1alpha2.BindingReasonNoClusterFit, Status: metav1.ConditionFalse},
++			expectedCondition: metav1.Condition{Type: workv1alpha2.Scheduled, Reason: workv1alpha2.BindingReasonNoClusterFit, Status: metav1.ConditionFalse, Message: "[0/0 clusters are available: no cluster exists., ]"},
+ 			ignoreErr:         false,
+ 		},
+ 		{
+@@ -491,7 +491,19 @@ func Test_getConditionByError(t *testing.T) {
+ 		{
+ 			name:              "wrapped unschedulable error",
+ 			err:               fmt.Errorf("failed to assign replicas: %w", fmt.Errorf("failed to scale up: %w", &framework.UnschedulableError{Message: "insufficient replicas"})),
+-			expectedCondition: metav1.Condition{Type: workv1alpha2.Scheduled, Reason: workv1alpha2.BindingReasonUnschedulable, Status: metav1.ConditionFalse},
++			expectedCondition: metav1.Condition{Type: workv1alpha2.Scheduled, Reason: workv1alpha2.BindingReasonUnschedulable, Status: metav1.ConditionFalse, Message: "failed to assign replicas: failed to scale up: insufficient replicas"},
++			ignoreErr:         false,
++		},
++		{
++			name:              "insufficient capacity error",
++			err:               &framework.InsufficientCapacityError{Message: "insufficient cluster capacity"},
++			expectedCondition: metav1.Condition{Type: workv1alpha2.Scheduled, Reason: workv1alpha2.BindingReasonUnschedulable, Status: metav1.ConditionFalse, Message: "insufficient cluster capacity"},
++			ignoreErr:         false,
++		},
++		{
++			name:              "wrapped insufficient capacity error",
++			err:               fmt.Errorf("failed to schedule: %w", fmt.Errorf("failed to select clusters: %w", &framework.InsufficientCapacityError{Message: "insufficient cluster capacity"})),
++			expectedCondition: metav1.Condition{Type: workv1alpha2.Scheduled, Reason: workv1alpha2.BindingReasonUnschedulable, Status: metav1.ConditionFalse, Message: "failed to schedule: failed to select clusters: insufficient cluster capacity"},
+ 			ignoreErr:         false,
+ 		},
+ 	}
+@@ -504,6 +516,9 @@ func Test_getConditionByError(t *testing.T) {
+ 				t.Errorf("expected condition: (%s, %s, %s), but got (%s, %s, %s)",
+ 					tt.expectedCondition.Type, tt.expectedCondition.Reason, tt.expectedCondition.Status, condition.Type, condition.Reason, condition.Status)
+ 			}
++			if condition.Message != tt.expectedCondition.Message {
++				t.Errorf("expected condition message: %q, but got %q", tt.expectedCondition.Message, condition.Message)
++			}
+ 
+ 			if ignoreErr != tt.ignoreErr {
+ 				t.Errorf("expect to ignore error: %v. but got: %v", tt.ignoreErr, ignoreErr)
 ```
 
-**File**: `charts/karmada/templates/pre-upgrade-job.yaml` (modified, +103/-1)
+**File**: `pkg/scheduler/scheduler.go` (modified, +2/-1)
 ```diff
-@@ -38,11 +38,12 @@ data:
-     {{- include "karmada.crd.patch.webhook.clusterresourcebinding" . | nindent 8 }}
-   {{- print "webhook_in_resourcebindings.yaml: " | nindent 6 }} |-
-     {{- include "karmada.crd.patch.webhook.resourcebinding" . | nindent 8 }}
-+{{- if .Values.certs.auto.provisionOnUpgrade }}
- ---
- apiVersion: batch/v1
- kind: Job
- metadata:
--  name: "{{ $name }}-pre-upgrade"
-+  name: "{{ $name }}-pre-upgrade-certs"
-   namespace: {{ $namespace }}
-   annotations:
-     "helm.sh/hook": pre-upgrade
-@@ -52,6 +53,107 @@ metadata:
-   labels:
-     {{- include "karmada.preUpdateJob.labels" . | nindent 4 }}
-   {{- end }}
-+spec:
-+  parallelism: 1
-+  completions: 1
-+  template:
-+    metadata:
-+      name: {{ $name }}-pre-upgrade-certs
-+      labels:
-+        app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-+        app.kubernetes.io/instance: {{ $name | quote }}
-+        helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-+    spec:
-+      {{- include "karmada.imagePullSecrets" . | nindent 6 }}
-+      {{- with .Values.preUpdateJob.tolerations}}
-+      tolerations:
-+      {{- toYaml . | nindent 8 }}
-+      {{- end }}
-+      {{- with .Values.preUpdateJob.nodeSelector }}
-+      nodeSelector:
-+      {{- toYaml . | nindent 8 }}
-+      {{- end }}
-+      serviceAccountName: {{ $name }}-hook-job
-+      restartPolicy: Never
-+      initContainers:
-+      - name: check
-+        image: {{ template "karmada.kubectl.image" . }}
-+        imagePullPolicy: {{ .Values.kubectl.image.pullPolicy }}
-+        command:
-+        - /bin/sh
-+        - -c
-+        - |
-+          set -ex
-+          # Standalone assignments so a failed lookup aborts the Job instead of reading as missing.
-+          cert_secret=$(kubectl get secret {{ $name }}-cert -n {{ $namespace }} --ignore-not-found -o name)
-+          if [ -n "$cert_secret" ]; then
-+            echo "secret {{ $name }}-cert already exists, skipping cert provisioning"
-+            touch /opt/configs/skip
-+            exit 0
-+          fi
-+          apiserver=$(kubectl get deploy {{ $name }}-apiserver -n {{ $namespace }} --ignore-not-found -o name)
-+          if [ -n "$apiserver" ]; then
-+            echo "secret {{ $name }}-cert is missing but karmada is already deployed, refusing to generate a new CA" >&2
-+            exit 1
-+          fi
-+        volumeMounts:
-+        - name: configs
-+          mountPath: /opt/configs
-+      - name: generate
-+        image: {{ template "karmada.cfssl.image" . }}
-+        imagePullPolicy: {{ .Values.cfssl.image.pullPolicy }}
-+        workingDir: /opt/mount
-+        command:
-+        - /bin/sh
-+        - -c
-+        - |
-+          bash <<'EOF'
-+          set -ex
-+          [ -f /opt/configs/skip ] && exit 0
-+          {{- include "karmada.certs.generate" . | nindent 10 }}
-+          EOF
-+        volumeMounts:
-+        - name: mount
-+          mountPath: /opt/mount
-+        - name: configs
-+          mountPath: /opt/configs
-+      containers:
-+      - name: provision
-+        image: {{ template "karmada.kubectl.image" . }}
-+        imagePullPolicy: {{ .Values.kubectl.image.pullPolicy }}
-+        command:
-+        - /bin/sh
-+        - -c
-+        - |
-+          set -ex
-+          [ -f /opt/configs/skip ] && exit 0
-+          # karmada-cert goes last so a partial failure leaves it missing and the next attempt regenerates all three.
-+          kubectl apply --server-side -f /opt/configs/kubeconfig.yaml -f /opt/configs/webhook-cert.yaml
-+          kubectl apply --server-side -f /opt/configs/cert.yaml
-+        volumeMounts:
-+        - name: configs
-+          mountPath: /opt/configs
-+      volumes:
-+      - name: mount
-+        configMap:
-+          name: {{ $name }}-config
-+      - name: configs
-+        emptyDir: {}
-+{{- end }}
-+---
-+apiVersion: batch/v1
-+kind: Job
-+metadata:
-+  name: "{{ $name }}-pre-upgrade"
-+  namespace: {{ $namespace }}
-+  annotations:
-+    "helm.sh/hook": pre-upgrade
-+    "helm.sh/hook-weight": "4"
-+    "helm.sh/hook-delete-policy": {{ .Values.preUpdateJob.hookDeletePolicy }}
-+  {{- if "karmada.preUpdateJob.labels" }}
-+  labels:
-+    {{- include "karmada.preUpdateJob.labels" . | nindent 4 }}
-+  {{- end }}
- spec:
-   parallelism: 1
-   completions: 1
+@@ -943,7 +943,8 @@ func (s *Scheduler) handleErr(err error, bindingInfo *internalqueue.QueuedBindin
+ 	}
+ 
+ 	var unschedulableErr *framework.UnschedulableError
+-	if errors.As(err, &unschedulableErr) {
++	var insufficientCapacityErr *framework.InsufficientCapacityError
++	if errors.As(err, &unschedulableErr) || errors.As(err, &insufficientCapacityErr) {
+ 		s.priorityQueue.PushUnschedulableIfNotPresent(bindingInfo)
+ 	} else {
+ 		s.priorityQueue.PushBackoffIfNotPresent(bindingInfo)
 ```
 
-**File**: `charts/karmada/values.yaml` (modified, +6/-0)
+**File**: `pkg/scheduler/scheduler_test.go` (modified, +22/-0)
 ```diff
-@@ -153,6 +153,12 @@ certs:
-     ]
-     ## @param certs.auto.rsaSize rsa key size of the certificate
-     rsaSize: 3072
-+    ## @param certs.auto.provisionOnUpgrade Allow initial certificate provisioning during a Helm upgrade.
-+    ## Useful when Karmada is first enabled as a subchart in an existing release.
-+    ## To guard against unintended CA replacement, provisioning is allowed only when
-+    ## neither the main certificate Secret nor the Karmada API server Deployment exists.
-+    ## Warning: Enabling this option may replace existing certificates if the conditions are met.
-+    provisionOnUpgrade: false
-   custom:
-     ## @param certs.custom.caCrt ca of the certificate
-     caCrt: |
+@@ -26,6 +26,7 @@ import (
+ 
+ 	"github.com/stretchr/testify/assert"
+ 	corev1 "k8s.io/api/core/v1"
++	apierrors "k8s.io/apimachinery/pkg/api/errors"
+ 	"k8s.io/apimachinery/pkg/api/resource"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/labels"
+@@ -2615,6 +2616,15 @@ func TestHandleErr(t *testing.T) {
+ 			err:          nil,
+ 			expectForget: true,
+ 		},
++		{
++			name: "terminating namespace calls Forget",
++			err: &apierrors.StatusError{ErrStatus: metav1.Status{
++				Details: &metav1.StatusDetails{
++					Causes: []metav1.StatusCause{{Type: corev1.NamespaceTerminatingCause}},
++				},
++			}},
++			expectForget: true,
++		},
+ 		{
+ 			name:              "generic error calls PushBackoffIfNotPresent",
+ 			err:               fmt.Errorf("some transient error"),
+@@ -2632,6 +2642,18 @@ func TestHandleErr(t *testing.T) {
+ 					&framework.UnschedulableError{Message: "insufficient replicas"})),
+ 			expectPushUnschedulable: true,
+ 		},
++		{
++			name:                    "bare InsufficientCapacityError calls PushUnschedulableIfNotPresent",
++			err:                     &framework.InsufficientCapacityError{Message: "insufficient cluster capacity"},
++			expectPushUnschedulable: true,
++		},
++		{
++			name: "wrapped InsufficientCapacityError calls PushUnschedulableIfNotPresent",
++			err: fmt.Errorf("failed to schedule: %w",
++				fmt.Errorf("failed to select clusters: %w",
++					&framework.InsufficientCapacityError{Message: "insufficient cluster capacity"})),
++			expectPushUnschedulable: true,
++		},
+ 	}
+ 
+ 	for _, tt := range tests {
 ```
 
----
-
-### Incident Patch 2: `12a8e01c` (2026-11-18)
-**Commit Message**: Merge pull request #7930 from brenth-monad/fix/helm-upgrade-missing-certs
-
-fix(helm): generate missing certs on upgrade in auto cert mode
-
-**File**: `charts/karmada/templates/_helpers.tpl` (modified, +36/-0)
+**File**: `test/e2e/suites/base/estimator_test.go` (modified, +3/-3)
 ```diff
-@@ -795,3 +795,39 @@ See: https://github.com/karmada-io/karmada/blob/f2b734140bd0ba5fa399ffa1d08a3b31
-   {{- end -}}
-   {{- tpl (toJson $hosts) . -}}
- {{- end -}}
-+
-+{{/*
-+Generates the auto mode certificates into /opt/certs and fills them into the
-+cert, kubeconfig and webhook-cert manifests under /opt/configs.
-+*/}}
-+{{- define "karmada.certs.generate" -}}
-+mkdir -p /opt/certs
-+cp -r -L /opt/mount/* /opt/configs/
-+openssl req -x509 -sha256 -new -nodes -days {{ .Values.certs.auto.rootCAExpiryDays }} -newkey rsa:{{ .Values.certs.auto.rsaSize }} -keyout "/opt/certs/server-ca.key" -out "/opt/certs/server-ca.crt" -subj "/C=xx/ST=x/L=x/O=x/OU=x/CN=ca/emailAddress=x/"
-+openssl req -x509 -sha256 -new -nodes -days {{ .Values.certs.auto.rootCAExpiryDays }} -newkey rsa:{{ .Values.certs.auto.rsaSize }} -keyout "/opt/certs/front-proxy-ca.key" -out "/opt/certs/front-proxy-ca.crt" -subj "/C=xx/ST=x/L=x/O=x/OU=x/CN=ca/emailAddress=x/"
-+echo '{"signing":{"default":{"expiry":{{ printf `"%s"` .Values.certs.auto.expiry }},"usages":["signing","key encipherment","client auth","server auth"]}}}' > "/opt/certs/server-ca-config.json"
-+echo '{"CN":"system:admin","hosts":{{ include "karmada.certHosts" . }},"names":[{"O":"system:masters"}],"key":{"algo":"rsa","size":{{ .Values.certs.auto.rsaSize }}}}' | cfssl gencert -ca=/opt/certs/server-ca.crt -ca-key=/opt/certs/server-ca.key -config=/opt/certs/server-ca-config.json - | cfssljson -bare /opt/certs/karmada
-+echo '{"signing":{"default":{"expiry":{{ printf `"%s"` .Values.certs.auto.expiry }},"usages":["signing","key encipherment","client auth","server auth"]}}}' > "/opt/certs/front-proxy-ca-config.json"
-+echo '{"CN":"front-proxy-client","hosts":{{ include "karmada.certHosts" . }},"names":[{"O":"system:masters"}],"key":{"algo":"rsa","size":{{ .Values.certs.auto.rsaSize }}}}' | cfssl gencert -ca=/opt/certs/front-proxy-ca.crt -ca-key=/opt/certs/front-proxy-ca.key -config=/opt/certs/front-proxy-ca-config.json - | cfssljson -bare /opt/certs/front-proxy-client
-+# Stop tracing: the commands below carry the private keys in their arguments.
-+set +x
-+karmada_ca=$(base64 /opt/certs/server-ca.crt | tr -d '\r\n')
-+karmada_ca_key=$(base64 /opt/certs/server-ca.key | tr -d '\r\n')
-+karmada_crt=$(base64 /opt/certs/karmada.pem | tr -d '\r\n')
-+karmada_key=$(base64 /opt/certs/karmada-key.pem | tr -d '\r\n')
-+front_proxy_ca=$(base64 /opt/certs/front-proxy-ca.crt | tr -d '\r\n')
-+front_proxy_client_crt=$(base64 /opt/certs/front-proxy-client.pem | tr -d '\r\n')
-+front_proxy_client_key=$(base64 /opt/certs/front-proxy-client-key.pem | tr -d '\r\n')
-+sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/cert.yaml
-+sed -i'' -e "s/{{ print "{{ ca_key }}" }}/${karmada_ca_key}/g" /opt/configs/cert.yaml
-+sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/cert.yaml
-+sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/cert.yaml
-+sed -i'' -e "s/{{ print "{{ front_proxy_ca_crt }}" }}/${front_proxy_ca}/g" /opt/configs/cert.yaml
-+sed -i'' -e "s/{{ print "{{ front_proxy_crt }}" }}/${front_proxy_client_crt}/g" /opt/configs/cert.yaml
-+sed -i'' -e "s/{{ print "{{ front_proxy_key }}" }}/${front_proxy_client_key}/g" /opt/configs/cert.yaml
-+sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/kubeconfig.yaml
-+sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/kubeconfig.yaml
-+sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/kubeconfig.yaml
-+sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/webhook-cert.yaml
-+sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/webhook-cert.yaml
-+{{- end -}}
-```
-
-**File**: `charts/karmada/templates/pre-install-job.yaml` (modified, +3/-28)
-```diff
-@@ -290,7 +290,8 @@ metadata:
-   name: {{ $name }}-config
-   namespace: {{ $namespace }}
-   annotations:
--    "helm.sh/hook": pre-install
-+    {{- /* The pre-upgrade-certs Job in pre-upgrade-job.yaml mounts this ConfigMap on upgrade. */}}
-+    "helm.sh/hook": pre-install{{ if .Values.certs.auto.provisionOnUpgrade }},pre-upgrade{{ end }}
-     "helm.sh/hook-weight": "2"
-   {{- if "karmada.preInstallJob.labels" }}
-   labels:
-@@ -438,33 +439,7 @@ spec:
-           bash <<'EOF'
-           set -ex
-           mkdir -p /opt/configs
--          mkdir -p /opt/certs
--          cp -r -L /opt/mount/* /opt/configs/
--          openssl req -x509 -sha256 -new -nodes -days {{ .Values.certs.auto.rootCAExpiryDays }} -newkey rsa:{{ .Values.certs.auto.rsaSize }} -keyout "/opt/certs/server-ca.key" -out "/opt/certs/server-ca.crt" -subj "/C=xx/ST=x/L=x/O=x/OU=x/CN=ca/emailAddress=x/"
--          openssl req -x509 -sha256 -new -nodes -days {{ .Values.certs.auto.rootCAExpiryDays }} -newkey rsa:{{ .Values.certs.auto.rsaSize }} -keyout "/opt/certs/front-proxy-ca.key" -out "/opt/certs/front-proxy-ca.crt" -subj "/C=xx/ST=x/L=x/O=x/OU=x/CN=ca/emailAddress=x/"
--          echo '{"signing":{"default":{"expiry":{{ printf `"%s"` .Values.certs.auto.expiry }},"usages":["signing","key encipherment","client auth","server auth"]}}}' > "/opt/certs/server-ca-config.json"
--          echo '{"CN":"system:admin","hosts":{{ include "karmada.certHosts" . }},"names":[{"O":"system:masters"}],"key":{"algo":"rsa","size":{{ .Values.certs.auto.rsaSize }}}}' | cfssl gencert -ca=/opt/certs/server-ca.crt -ca-key=/opt/certs/server-ca.key -config=/opt/certs/server-ca-config.json - | cfssljson -bare /opt/certs/karmada
--          echo '{"signing":{"default":{"expiry":{{ printf `"%s"` .Values.certs.auto.expiry }},"usages":["signing","key encipherment","client auth","server auth"]}}}' > "/opt/certs/front-proxy-ca-config.json"
--          echo '{"CN":"front-proxy-client","hosts":{{ include "karmada.certHosts" . }},"names":[{"O":"system:masters"}],"key":{"algo":"rsa","size":{{ .Values.certs.auto.rsaSize }}}}' | cfssl gencert -ca=/opt/certs/front-proxy-ca.crt -ca-key=/opt/certs/front-proxy-ca.key -config=/opt/certs/front-proxy-ca-config.json - | cfssljson -bare /opt/certs/front-proxy-client
--          karmada_ca=$(base64 /opt/certs/server-ca.crt | tr -d '\r\n')
--          karmada_ca_key=$(base64 /opt/certs/server-ca.key | tr -d '\r\n')
--          karmada_crt=$(base64 /opt/certs/karmada.pem | tr -d '\r\n')
--          karmada_key=$(base64 /opt/certs/karmada-key.pem | tr -d '\r\n')
--          front_proxy_ca=$(base64 /opt/certs/front-proxy-ca.crt | tr -d '\r\n')
--          front_proxy_client_crt=$(base64 /opt/certs/front-proxy-client.pem | tr -d '\r\n')
--          front_proxy_client_key=$(base64 /opt/certs/front-proxy-client-key.pem | tr -d '\r\n')
--          sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/cert.yaml
--          sed -i'' -e "s/{{ print "{{ ca_key }}" }}/${karmada_ca_key}/g" /opt/configs/cert.yaml
--          sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/cert.yaml
--          sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/cert.yaml
--          sed -i'' -e "s/{{ print "{{ front_proxy_ca_crt }}" }}/${front_proxy_ca}/g" /opt/configs/cert.yaml
--          sed -i'' -e "s/{{ print "{{ front_proxy_crt }}" }}/${front_proxy_client_crt}/g" /opt/configs/cert.yaml
--          sed -i'' -e "s/{{ print "{{ front_proxy_key }}" }}/${front_proxy_client_key}/g" /opt/configs/cert.yaml
--          sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/kubeconfig.yaml
--          sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/kubeconfig.yaml
--          sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/kubeconfig.yaml
--          sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/webhook-cert.yaml
--          sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/webhook-cert.yaml
-+          {{- include "karmada.certs.generate" . | nindent 10 }}
-           sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/static-resources-configmaps.yaml
-           sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/crds-patches-configmaps.yaml
-           EOF
-```
-
-**File**: `charts/karmada/templates/pre-upgrade-job.yaml` (modified, +103/-1)
-```diff
-@@ -38,11 +38,12 @@ data:
-     {{- include "karmada.crd.patch.webhook.clusterresourcebinding" . | nindent 8 }}
-   {{- print "webhook_in_resourcebindings.yaml: " | nindent 6 }} |-
-     {{- include "karmada.crd.patch.webhook.resourcebinding" . | nindent 8 }}
-+{{- if .Values.certs.auto.provisionOnUpgrade }}
- ---
- apiVersion: batch/v1
- kind: Job
- metadata:
--  name: "{{ $name }}-pre-upgrade"
-+  name: "{{ $name }}-pre-upgrade-certs"
-   namespace: {{ $namespace }}
-   annotations:
-     "helm.sh/hook": pre-upgrade
-@@ -52,6 +53,107 @@ metadata:
-   labels:
-     {{- include "karmada.preUpdateJob.labels" . | nindent 4 }}
-   {{- end }}
-+spec:
-+  parallelism: 1
-+  completions: 1
-+  template:
-+    metadata:
-+      name: {{ $name }}-pre-upgrade-certs
-+      labels:
-+        app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
-+        app.kubernetes.io/instance: {{ $name | quote }}
-+        helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-+    spec:
-+      {{- include "karmada.imagePullSecrets" . | nindent 6 }}
-+      {{- with .Values.preUpdateJob.tolerations}}
-+      tolerations:
-+      {{- toYaml . | nindent 8 }}
-+      {{- end }}
-+      {{- with .Values.preUpdateJob.nodeSelector }}
-+      nodeSelector:
-+      {{- toYaml . | nindent 8 }}
-+      {{- end }}
-+      serviceAccountName: {{ $name }}-hook-job
-+      restartPolicy: Never
-+      initContainers:
-+      - name: check
-+        image: {{ template "karmada.kubectl.image" . }}
-+        imagePullPolicy: {{ .Values.kubectl.image.pullPolicy }}
-+        command:
-+        - /bin/sh
-+        - -c
-+        - |
-+          set -ex
-+          # Standalone assignments so a failed lookup aborts the Job instead of reading as missing.
-+          cert_secret=$(kubectl get secret {{ $name }}-cert -n {{ $namespace }} --ignore-not-found -o name)
-+          if [ -n "$cert_secret" ]; then
-+            echo "secret {{ $name }}-cert already exists, skipping cert provisioning"
-+            touch /opt/configs/skip
-+            exit 0
-+          fi
-+          apiserver=$(kubectl get deploy {{ $name }}-apiserver -n {{ $namespace }} --ignore-not-found -o name)
-+          if [ -n "$apiserver" ]; then
-+            echo "secret {{ $name }}-cert is missing but karmada is already deployed, refusing to generate a new CA" >&2
-+            exit 1
-+          fi
-+        volumeMounts:
-+        - name: configs
-+          mountPath: /opt/configs
-+      - name: generate
-+        image: {{ template "karmada.cfssl.image" . }}
-+        imagePullPolicy: {{ .Values.cfssl.image.pullPolicy }}
-+        workingDir: /opt/mount
-+        command:
-+        - /bin/sh
-+        - -c
-+        - |
-+          bash <<'EOF'
-+          set -ex
-+          [ -f /opt/configs/skip ] && exit 0
-+          {{- include "karmada.certs.generate" . | nindent 10 }}
-+          EOF
-+        volumeMounts:
-+        - name: mount
-+          mountPath: /opt/mount
-+        - name: configs
-+          mountPath: /opt/configs
-+      containers:
-+      - name: provision
-+        image: {{ template "karmada.kubectl.image" . }}
-+        imagePullPolicy: {{ .Values.kubectl.image.pullPolicy }}
-+        command:
-+        - /bin/sh
-+        - -c
-+        - |
-+          set -ex
-+          [ -f /opt/configs/skip ] && exit 0
-+          # karmada-cert goes last so a partial failure leaves it missing and the next attempt regenerates all three.
-+          kubectl apply --server-side -f /opt/configs/kubeconfig.yaml -f /opt/configs/webhook-cert.yaml
-+          kubectl apply --server-side -f /opt/configs/cert.yaml
-+        volumeMounts:
-+        - name: configs
-+          mountPath: /opt/configs
-+      volumes:
-+      - name: mount
-+        configMap:
-+          name: {{ $name }}-config
-+      - name: configs
-+        emptyDir: {}
-+{{- end }}
-+---
-+apiVersion: batch/v1
-+kind: Job
-+metadata:
-+  name: "{{ $name }}-pre-upgrade"
-+  namespace: {{ $namespace }}
-+  annotations:
-+    "helm.sh/hook": pre-upgrade
-+    "helm.sh/hook-weight": "4"
-+    "helm.sh/hook-delete-policy": {{ .Values.preUpdateJob.hookDeletePolicy }}
-+  {{- if "karmada.preUpdateJob.labels" }}
-+  labels:
-+    {{- include "karmada.preUpdateJob.labels" . | nindent 4 }}
-+  {{- end }}
- spec:
-   parallelism: 1
-   completions: 1
-```
-
-**File**: `charts/karmada/values.yaml` (modified, +6/-0)
-```diff
-@@ -153,6 +153,12 @@ certs:
-     ]
-     ## @param certs.auto.rsaSize rsa key size of the certificate
-     rsaSize: 3072
-+    ## @param certs.auto.provisionOnUpgrade Allow initial certificate provisioning during a Helm upgrade.
-+    ## Useful when Karmada is first enabled as a subchart in an existing release.
-+    ## To guard against unintended CA replacement, provisioning is allowed only when
-+    ## neither the main certificate Secret nor the Karmada API server Deployment exists.
-+    ## Warning: Enabling this option may replace existing certificates if the conditions are met.
-+    provisionOnUpgrade: false
-   custom:
-     ## @param certs.custom.caCrt ca of the certificate
-     caCrt: |
+@@ -364,7 +364,7 @@ var _ = framework.SerialDescribe("[EstimatorAssumption] ResourceQuota plugin ass
+ 				func(binding *workv1alpha2.ResourceBinding) bool {
+ 					cond := meta.FindStatusCondition(binding.Status.Conditions, workv1alpha2.Scheduled)
+ 					return cond != nil && cond.Status == metav1.ConditionFalse &&
+-						cond.Reason == workv1alpha2.BindingReasonSchedulerError &&
++						cond.Reason == workv1alpha2.BindingReasonUnschedulable &&
+ 						strings.Contains(cond.Message, "no enough resource")
+ 				})
+ 		})
+@@ -514,7 +514,7 @@ var _ = framework.SerialDescribe("[EstimatorAssumption] NodeResource plugin assu
+ 						if cond == nil {
+ 							return false
+ 						}
+-						if cond.Status == metav1.ConditionFalse && cond.Reason == workv1alpha2.BindingReasonSchedulerError &&
++						if cond.Status == metav1.ConditionFalse && cond.Reason == workv1alpha2.BindingReasonUnschedulable &&
+ 							strings.Contains(cond.Message, "no enough resource") {
+ 							assumptionExhausted = true
+ 							return true
+@@ -667,7 +667,7 @@ func assertSingleTemplateDeploymentUnschedulable(namespace, targetCluster string
+ 		func(binding *workv1alpha2.ResourceBinding) bool {
+ 			cond := meta.FindStatusCondition(binding.Status.Conditions, workv1alpha2.Scheduled)
+ 			return cond != nil && cond.Status == metav1.ConditionFalse &&
+-				cond.Reason == workv1alpha2.BindingReasonSchedulerError &&
++				cond.Reason == workv1alpha2.BindingReasonUnschedulable &&
+ 				strings.Contains(cond.Message, "no enough resource")
+ 		})
+ }
 ```
 
 #### Recent Merged Pull Requests:
@@ -1545,42 +1220,32 @@ fix(helm): generate missing certs on upgrade in auto cert mode
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. helm): allow initial cert provisioning on upgrade in auto cert mode
+## X. Empirical Invariant Guard in helper.go
 
 **RULE**:
-When implementing operations in `charts/karmada/templates/_helpers.tpl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/scheduler/helper.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ceba46ce`: helm): allow initial cert provisioning on upgrade in auto cert mode. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f4c69979`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `charts/karmada/templates/_helpers.tpl`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/scheduler/helper.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-
-{{/*
-Generates the auto mode certificates into /opt/certs and fills them into the
-cert, kubeconfig and webhook-cert manifests under /opt/configs.
-*/}}
-{{- define "karmada.certs.generate" -}}
-mkdir -p /opt/certs
-cp -r -L /opt/mount/* /opt/configs/
-openssl req -x509 -sha256 -new -nodes -days {{ .Values.certs.auto.rootCAExpiryDays }} -newkey rsa:{{ .Values.certs.auto.rsaSize }} -keyout "/opt/certs/server-ca.key" -out "/opt/certs/server-ca.crt" -subj "/C=xx/ST=x/L=x/O=x/OU=x/CN=ca/emailAddress=x/"
-openssl req -x509 -sha256 -new -nodes -days {{ .Values.certs.auto.rootCAExpiryDays }} -newkey rsa:{{ .Values.certs.auto.rsaSize }} -keyout "/opt/certs/front-proxy-ca.key" -out "/opt/certs/front-proxy-ca.crt" -subj "/C=xx/ST=x/L=x/O=x/OU=x/CN=ca/emailAddress=x/"
-echo '{"signing":{"default":{"expiry":{{ printf `"%s"` .Values.certs.auto.expiry }},"usages":["signing","key encipherment","client auth","server auth"]}}}' > "/opt/certs/server-ca-config.json"
-echo '{"CN":"system:admin","hosts":{{ include "karmada.certHosts" . }},"names":[{"O":"system:masters"}],"key":{"algo":"rsa","size":{{ .Values.certs.auto.rsaSize }}}}' | cfssl gencert -ca=/opt/certs/server-ca.crt -ca-key=/opt/certs/server-ca.key 
+	var insufficientCapacityErr *framework.InsufficientCapacityError
+	if errors.As(err, &unschedulableErr) || errors.As(err, &insufficientCapacityErr) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	if errors.As(err, &unschedulableErr) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ceba46ce` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f4c69979` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

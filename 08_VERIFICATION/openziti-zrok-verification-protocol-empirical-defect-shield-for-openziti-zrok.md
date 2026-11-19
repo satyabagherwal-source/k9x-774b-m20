@@ -4,22 +4,22 @@
 {
   "source_repository": "openziti/zrok",
   "source_url": "https://github.com/openziti/zrok",
-  "source_version": "1a535cfa",
+  "source_version": "d8e5316d",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T00:22:47.068Z",
+  "timestamp": "2026-11-19T18:06:25.867Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-openziti-zrok",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [openziti/zrok](https://github.com/openziti/zrok) (Revision: `1a535cfa`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T00:22:47.068Z`  
+> **Provenance**: Harvested from [openziti/zrok](https://github.com/openziti/zrok) (Revision: `d8e5316d`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T18:06:25.867Z`  
 > **Learning ID**: `learn-github-openziti-zrok`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `openziti/zrok` (Commit: `1a535cfa`)
+- **Target Repository**: `openziti/zrok` (Commit: `d8e5316d`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openziti-zrok-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openziti/zrok](https://github.com/openziti/zrok))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T00:22:45.768Z  
+> **Harvest Timestamp**: 2026-11-19T18:06:25.172Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1394,15 +1394,15 @@ func singleJoiningSlash(a, b string) string {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1291** (2026-11-17): **v2011-failed**
-  *Symptoms*: FIX: The agent can release and clean up an access or a private share that the zrok service has already removed. When the share behind an access was deleted on its own side, the access showed as `failed` in `zrok2 agent status`, `zrok2 agent release access` answered `unaccessNotFound`, and only restarting the agent cleared it. The agent now confirms through the account overview that the access or share is really gone and finishes the cleanup. Deleting a private share or an access from the agent is also bounded at 30 seconds, as deleting a public share already was.
+- **Issue #1295** (2026-11-19): **v2.0.11 changelog**
+  *Symptoms*: last one before the release.
   **Post-Mortem & Fix Analysis**:
-  > [vc]: #2SYYoG7XSSwRROPRjc0d+oRXboHeZfk1GU6uSuwe/LU=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJ6cm9rIiwicHJvamVjdElkIjoicHJqX000ODk4ZTc2OXRxY2l3MVRUUmVQc21nallRcVYiLCJ2MCI6ZmFsc2UsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiJ6cm9rLWdpdC12MjAxMS1mYWlsZWQtb3BlbnppdGkudmVyY2VsLmFwcCJ9LCJpbnNwZWN0b3JVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vb3BlbnppdGkvenJvay9EZFBrY1h5TFNWY294N3hpN0pWSGlBS0JNQzVaIiwicHJldmlld1VybCI6Inpyb2stZ2l0LXYyMDExLWZhaWxlZC1vcGVueml0aS52ZXJjZWwuYXBwIiwibmV4dENvbW1pdFN0YXR1cyI6IkRFUExPWUVEIn1dLCJyZXF1ZXN0UmV2aWV3VXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3ZlcmNlbC1hZ2VudC9yZXF1ZXN0LXJldmlldz9vd25lcj1vcGVueml0aSZyZXBvPXpyb2smcHI9MTI5MSJ9 The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href="https://vercel.com/openziti/zrok"><sup><img src="https://vercel.com/api/www/av
+  > [vc]: #KAVR6rs5+OVUDQ1PJWdHVtd7g07Nxr1P2RraN5Fwiac=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJ6cm9rIiwicHJvamVjdElkIjoicHJqX000ODk4ZTc2OXRxY2l3MVRUUmVQc21nallRcVYiLCJ2MCI6ZmFsc2UsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiIifSwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL29wZW56aXRpL3pyb2svMjM1TUF0TFdhZ294UTJnNmFzODZKU1JhUG1vNiIsIm5leHRDb21taXRTdGF0dXMiOiJJR05PUkVEIn1dLCJyZXF1ZXN0UmV2aWV3VXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3ZlcmNlbC1hZ2VudC9yZXF1ZXN0LXJldmlldz9vd25lcj1vcGVueml0aSZyZXBvPXpyb2smcHI9MTI5NSJ9 The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).   <details><summary>1 Skipped Deployment</summary>  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href="https://vercel.com/openziti/zrok"><sup><img src="https://vercel.com/api/www/avatar?projectId=prj_M4898e769tqciw1TTRePsmgjYQqV&teamId=team_bT6ULN5oFw8uRka0uFkKt
 
-- **Issue #1290** (2026-11-16): **v2.0.10**
-  *Symptoms*: changelog.
+- **Issue #1294** (2026-11-19): **usage-file-tailing**
+  *Symptoms*: FIX: The metrics bridge with a file source could skip usage events, or pass on a partial event that was then discarded, when it read the file while OpenZiti was writing to it. Some usage consequently went unrecorded. The file source now delivers each event once, when its line is complete.
   **Post-Mortem & Fix Analysis**:
-  > [vc]: #++2hR7sx9UqnUwTRoXbDe/7l77nsyRmfLeKmJKP6S7s=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJ6cm9rIiwicHJvamVjdElkIjoicHJqX000ODk4ZTc2OXRxY2l3MVRUUmVQc21nallRcVYiLCJ2MCI6ZmFsc2UsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiIifSwiaW5zcGVjdG9yVXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL29wZW56aXRpL3pyb2svR0M4NldFNGJ4QkdTV3llZ2FpeTNRN0g2dlBhWiIsIm5leHRDb21taXRTdGF0dXMiOiJJR05PUkVEIn1dLCJyZXF1ZXN0UmV2aWV3VXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3ZlcmNlbC1hZ2VudC9yZXF1ZXN0LXJldmlldz9vd25lcj1vcGVueml0aSZyZXBvPXpyb2smcHI9MTI5MCJ9 The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).   <details><summary>1 Skipped Deployment</summary>  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href="https://vercel.com/openziti/zrok"><sup><img src="https://vercel.com/api/www/avatar?projectId=prj_M4898e769tqciw1TTRePsmgjYQqV&teamId=team_bT6ULN5oFw8uRka0uFkKt
+  > [vc]: #hDbZPPIRHGJvP1U+mWcvuInMCBXgccneru/ejAuZV4U=:eyJpc01vbm9yZXBvIjp0cnVlLCJ0eXBlIjoiZ2l0aHViIiwicHJvamVjdHMiOlt7Im5hbWUiOiJ6cm9rIiwicHJvamVjdElkIjoicHJqX000ODk4ZTc2OXRxY2l3MVRUUmVQc21nallRcVYiLCJ2MCI6ZmFsc2UsImxpdmVGZWVkYmFjayI6eyJyZXNvbHZlZCI6MCwidW5yZXNvbHZlZCI6MCwidG90YWwiOjAsImxpbmsiOiJ6cm9rLWdpdC11c2FnZS1maWxlLXRhaWxpbmctb3BlbnppdGkudmVyY2VsLmFwcCJ9LCJpbnNwZWN0b3JVcmwiOiJodHRwczovL3ZlcmNlbC5jb20vb3BlbnppdGkvenJvay83NXdvbkZEWnpCMldiV0NnREVDS0F5Smo1TWRlIiwicHJldmlld1VybCI6Inpyb2stZ2l0LXVzYWdlLWZpbGUtdGFpbGluZy1vcGVueml0aS52ZXJjZWwuYXBwIiwibmV4dENvbW1pdFN0YXR1cyI6IkRFUExPWUVEIn1dLCJyZXF1ZXN0UmV2aWV3VXJsIjoiaHR0cHM6Ly92ZXJjZWwuY29tL3ZlcmNlbC1hZ2VudC9yZXF1ZXN0LXJldmlldz9vd25lcj1vcGVueml0aSZyZXBvPXpyb2smcHI9MTI5NCJ9 The latest updates on your projects. Learn more about [Vercel for GitHub](https://vercel.link/github-learn-more).  | Project | Deployment | Actions | Updated | | :--- | :----- | :------ | :------ | | <a href="https://vercel.com/openziti/zrok"><sup><img src="https://verce
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1419,23 +1419,10 @@ func singleJoiningSlash(a, b string) string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1a535cfa` (2026-11-17)
-**Commit Message**: Merge pull request #1291 from openziti/v2011-failed
+### Incident Patch 1: `d8e5316d` (2026-11-19)
+**Commit Message**: Merge pull request #1295 from openziti/v2011-release
 
-v2011-failed
-
-**File**: `.github/workflows/agent-smoke.yml` (modified, +1/-1)
-```diff
-@@ -155,7 +155,7 @@ jobs:
- 
-       - name: offline harness tests
-         shell: bash
--        run: go test -race -tags agent_smoke ./tests/agent-smoke -count=1 -timeout=5m
-+        run: go test -race -tags agent_smoke ./tests/agent-smoke -count=1 -timeout=10m
- 
-       - name: live scenario
-         shell: bash
-```
+v2.0.11 changelog
 
 **File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
@@ -1443,453 +1430,38 @@ v2011-failed
  
  ## Unreleased
  
-+FIX: The agent can release and clean up an access or a private share that the zrok service has already removed. When the share behind an access was deleted on its own side, the access showed as `failed` in `zrok2 agent status`, `zrok2 agent release access` answered `unaccessNotFound`, and only restarting the agent cleared it. The agent now confirms through the account overview that the access or share is really gone and finishes the cleanup. Deleting a private share or an access from the agent is also bounded at 30 seconds, as deleting a public share already was.
++## v2.0.11
 +
- ## v2.0.10
+ FIX: The metrics bridge with a file source could skip usage events, or pass on a partial event that was then discarded, when it read the file while OpenZiti was writing to it. Some usage consequently went unrecorded. The file source now delivers each event once, when its line is complete.
  
- CHANGE: **The agent registry (`agent-registry.json`) is now version 3, which agents from v2.0.9 and earlier cannot read.** The agent reads an existing version 2 registry as it is and saves it as version 3 at the end of its first startup, so upgrading needs no manual step. A v2.0.9 agent will not start on a version 3 registry: it reports the unsupported version, exits 1 and leaves the file as it was. Rolling back to v2.0.9 or earlier therefore needs a manual edit of the registry before the older agent will run; the procedure is in `docs/current/agent-share-lifecycle.md`. A v2.0.8 agent does start, with nothing restored, and replaces the registry with an empty one at its next save, so for v2.0.8 make the edit before starting it.
-```
-
-**File**: `agent/agent.go` (modified, +2/-4)
-```diff
-@@ -84,15 +84,13 @@ func NewAgent(cfg *AgentConfig, root env_core.Root) (*Agent, error) {
- 		createPublic: func(ctx context.Context, req *sdk.ShareRequest) (*sdk.Share, error) {
- 			return sdk.CreateShareContext(ctx, root, req)
- 		},
--		deleteShare: func(_ context.Context, token string) error { return sdk.DeleteShare(root, &sdk.Share{Token: token}) },
--		deleteAccess: func(_ context.Context, token, frontend string) error {
--			return sdk.DeleteAccess(root, &sdk.Access{Token: frontend, ShareToken: token})
--		},
- 		loadRegistry:   LoadRegistry,
- 		saveRegistry:   func(registry *Registry, path string) error { return registry.Save(path) },
- 		remoteListener: func(token string) (net.Listener, error) { return sdk.NewListener(token, root) },
- 	}
- 	a.deps.deletePublic = a.deletePublicShare
-+	a.deps.deleteShare = a.deletePrivateShare
-+	a.deps.deleteAccess = a.deleteAccess
- 	return a, nil
- }
- 
-```
-
-**File**: `agent/legacyCleanup.go` (added, +41/-0)
-```diff
-@@ -0,0 +1,41 @@
-+package agent
-+
-+import (
-+	"context"
-+	"errors"
-+
-+	restshare "github.com/openziti/zrok/v2/rest_client_zrok/share"
-+	"github.com/openziti/zrok/v2/rest_model_zrok"
-+	"github.com/openziti/zrok/v2/sdk/golang/sdk"
-+)
-+
-+// private shares and accesses keep their legacy creation ownership: their workers create them. the agent deletes
-+// them, and a resource the controller has already removed must not leave its operation unable to finish cleanup.
-+// the controller removes every access to a share when that share is torn down, so an access is routinely gone
-+// before the agent asks.
-+
-+func (a *Agent) deletePrivateShare(ctx context.Context, token string) error {
-+	return a.deleteShareConfirmingAbsence(ctx, "private share", token)
-+}
-+
-+// deleteAccess deletes an access by its frontend token. a typed not-found counts as deleted only once the account
-+// overview confirms no environment still lists that frontend.
-+func (a *Agent) deleteAccess(ctx context.Context, shareToken, frontendToken string) error {
-+	err := sdk.DeleteAccessContext(ctx, a.root, &sdk.Access{Token: frontendToken, ShareToken: shareToken})
-+	var missing *restshare.UnaccessNotFound
-+	if !errors.As(err, &missing) {
-+		return err
-+	}
-+	listed := func(resources *rest_model_zrok.EnvironmentAndResources) bool {
-+		for _, frontend := range resources.Frontends {
-+			if frontend != nil && frontend.FrontendToken == frontendToken {
-+				return true
-+			}
-+		}
-+		return false
-+	}
-+	if absenceErr := a.confirmAbsence(ctx, "access", frontendToken, listed); absenceErr != nil {
-+		return errors.Join(err, absenceErr)
-+	}
-+	return nil
-+}
-```
-
-**File**: `agent/legacyCleanup_test.go` (added, +178/-0)
-```diff
-@@ -0,0 +1,178 @@
-+package agent
-+
-+import (
-+	"context"
-+	"encoding/json"
-+	"net/http"
-+	"net/http/httptest"
-+	"sync/atomic"
-+	"testing"
-+	"time"
-+
-+	"github.com/openziti/zrok/v2/agent/agentGrpc"
-+	"github.com/openziti/zrok/v2/agent/proctree"
-+	"github.com/openziti/zrok/v2/rest_model_zrok"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+// legacyOverview answers the account overview with the agent's environment and, when listed, the resource a
-+// cleanup is asking about.
-+func legacyOverview(kind string, listed bool, environment string) *rest_model_zrok.EnvironmentAndResources {
-+	resources := &rest_model_zrok.EnvironmentAndResources{Environment: &rest_model_zrok.Environment{ZID: environment}}
-+	if listed && kind == "access" {
-+		resources.Frontends = rest_model_zrok.Frontends{{FrontendToken: "known-frontend", ShareToken: "shared"}}
-+	}
-+	if listed && kind == "private share" {
-+		resources.Shares = rest_model_zrok.Shares{{ShareToken: "known"}}
-+	}
-+	return resources
-+}
-+
-+func TestLegacyCleanupRequiresAuthenticatedConfirmedAbsence(t *testing.T) {
-+	for _, kind := range []string{"access", "private share"} {
-+		for _, outcome := range []string{"absent", "present", "other environment token", "missing environment", "overview unauthorized", "overview failure", "delete unauthorized", "generic 404", "delete failure", "successful delete"} {
-+			t.Run(kind+"/"+outcome, func(t *testing.T) {
-+				a := newLifecycleAgent(t)
-+				var overviews atomic.Int32
-+				deletePath := "/api/v2/unaccess"
-+				if kind == "private share" {
-+					deletePath = "/api/v2/unshare"
-+				}
-+				server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-+					w.Header().Set("Content-Type", "application/json")
-+					if req.URL.Path == "/api/v2/clientVersionCheck" {
-+						// a 404 here is not the delete's typed answer; the client never gets as far as the delete.
-+						if outcome == "generic 404" {
-+							w.WriteHeader(404)
-+						}
-+						return
-+					}
-+					require.Equal(t, "original-account", req.Header.Get("X-TOKEN"))
-+					switch req.URL.Path {
-+					case deletePath:
-+						var body map[string]any
-+						require.NoError(t, json.NewDecoder(req.Body).Decode(&body))
-+						require.Equal(t, "original-environment", body["envZId"])
-+						if kind == "access" {
-+							require.Equal(t, "known-frontend", body["frontendToken"])
-+							require.Equal(t, "shared", body["shareToken"])
-+						} else {
-+							require.Equal(t, "known", body["shareToken"])
-+						}
-+						switch outcome {
-+						case "successful delete":
-+						case "delete unauthorized":
-+							w.WriteHeader(401)
-+						case "delete failure":
-+							w.WriteHeader(500)
-+						default:
-+							w.WriteHeader(404)
-+						}
-+					case "/api/v2/overview":
-+						overviews.Add(1)
-+						switch outcome {
-+						case "overview unauthorized":
-+							w.WriteHeader(401)
-+							return
-+						case "overview failure":
-+							w.WriteHeader(500)
-+							return
-+						}
-+						overview := &rest_model_zrok.Overview{Environments: []*rest_model_zrok.EnvironmentAndResources{legacyOverview(kind, outcome == "present", "original-environment")}}
-+						if outcome == "missing environment" {
-+							overview.Environments = nil
-+						}
-+						if outcome == "other environment token" {
-+							overview.Environments = append(overview.Environments, legacyOverview(kind, true, "other"))
-+						}
-+						require.NoError(t, json.NewEncoder(w).Encode(overview))
-+					default:
-+						t.Errorf("unexpected path '%v'", req.URL.Path)
-+						w.WriteHeader(500)
-+					}
-+				}))
-+				defer server.Close()
-+				usePublicHTTPRoot(t, a, server.URL)
-+				ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-+				defer cancel()
-+				var err error
-+				if kind == "access" {
-+					err = a.deleteAccess(ctx, "shared", "known-frontend")
-+				} else {
-+					err = a.deletePrivateShare(ctx, "known")
-+				}
-+				if outcome == "absent" || outcome == "successful delete" {
-+					require.NoError(t, err)
-+				} else {
-+					require.Error(t, err)
-+				}
-+				// only the controller's typed not-found is worth asking the overview about.
-+				switch outcome {
-+				case "delete unauthorized", "generic 404", "delete failure", "successful delete":
-+					require.Zero(t, overviews.Load())
-+				default:
-+					require.EqualValues(t, 1, overviews.Load())
-+				}
-+			})
-+		}
-+	}
-+}
-+
-+// the controller removes every access to a share when the share is torn down, so an access is often gone before
-+// the agent deletes it. such an access must finish cleanup and be releasable; while the overview still lists it,
-+// the cleanup failure stays.
-+func TestAccessRemovedByControllerCanBeReleased(t *testing.T) {
-+	a := newLifecycleAgent(t)
-+	var listed atomic.Bool
-+	var deletes atomic.Int32
-+	firstDelete := make(chan struct{})
-+	listed.Store(true)
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-+		w.Header().Set("Content-Type", "application/json")
-+		switch req.URL.Pa
-```
-
-**File**: `agent/publicCleanup.go` (modified, +25/-11)
-```diff
-@@ -9,34 +9,50 @@ import (
- 	"github.com/openziti/zrok/v2/environment/env_core"
- 	"github.com/openziti/zrok/v2/rest_client_zrok/metadata"
- 	restshare "github.com/openziti/zrok/v2/rest_client_zrok/share"
-+	"github.com/openziti/zrok/v2/rest_model_zrok"
- 	"github.com/openziti/zrok/v2/sdk/golang/sdk"
- )
- 
- func (a *Agent) deletePublicShare(ctx context.Context, token string) error {
-+	return a.deleteShareConfirmingAbsence(ctx, "public share", token)
-+}
-+
-+// deleteShareConfirmingAbsence deletes a share. a typed not-found from the controller counts as deleted only once
-+// the account overview confirms the token is gone; the controller answers not-found for more than absence.
-+func (a *Agent) deleteShareConfirmingAbsence(ctx context.Context, what, token string) error {
- 	err := sdk.DeleteShareContext(ctx, a.root, &sdk.Share{Token: token})
- 	var missing *restshare.UnshareNotFound
- 	if !errors.As(err, &missing) {
- 		return err
- 	}
--	if absenceErr := a.confirmPublicAbsence(ctx, token); absenceErr != nil {
-+	listed := func(resources *rest_model_zrok.EnvironmentAndResources) bool {
-+		for _, shr := range resources.Shares {
-+			if shr != nil && shr.ShareToken == token {
-+				return true
-+			}
-+		}
-+		return false
-+	}
-+	if absenceErr := a.confirmAbsence(ctx, what, token, listed); absenceErr != nil {
- 		return errors.Join(err, absenceErr)
- 	}
- 	return nil
- }
- 
--// confirmPublicAbsence validates both environment visibility and absence across the authenticated account.
--func (a *Agent) confirmPublicAbsence(ctx context.Context, token string) error {
-+// confirmAbsence validates both environment visibility and absence across the authenticated account. listed
-+// reports whether one environment's resources still hold the token.
-+func (a *Agent) confirmAbsence(ctx context.Context, what, token string, listed func(*rest_model_zrok.EnvironmentAndResources) bool) error {
- 	client, err := env_core.ClientContext(ctx, a.root)
- 	if err != nil {
--		return fmt.Errorf("unable to confirm public share absence: %w", err)
-+		return fmt.Errorf("unable to confirm %v absence: %w", what, err)
- 	}
- 	auth := httptransport.APIKeyAuth("X-TOKEN", "header", a.root.Environment().AccountToken)
- 	response, err := client.Metadata.Overview(metadata.NewOverviewParamsWithContext(ctx), auth)
- 	if err != nil {
--		return fmt.Errorf("unable to confirm public share absence: %w", err)
-+		return fmt.Errorf("unable to confirm %v absence: %w", what, err)
- 	}
- 	if response == nil || response.Payload == nil {
--		return errors.New("cannot confirm public share absence without an overview")
-+		return fmt.Errorf("cannot confirm %v absence without an overview", what)
- 	}
- 	foundEnvironment := false
- 	for _, resources := range response.Payload.Environments {
-@@ -46,14 +62,12 @@ func (a *Agent) confirmPublicAbsence(ctx context.Context, token string) error {
- 		if resources.Environment != nil && resources.Environment.ZID == a.root.Environment().ZitiIdentity {
- 			foundEnvironment = true
- 		}
--		for _, shr := range resources.Shares {
--			if shr != nil && shr.ShareToken == token {
--				return fmt.Errorf("public share '%v' is still listed in account overview", token)
--			}
-+		if listed(resources) {
-+			return fmt.Errorf("%v '%v' is still listed in account overview", what, token)
- 		}
- 	}
- 	if !foundEnvironment {
--		return fmt.Errorf("cannot confirm public share absence: environment '%v' is missing from overview", a.root.Environment().ZitiIdentity)
-+		return fmt.Errorf("cannot confirm %v absence: environment '%v' is missing from overview", what, a.root.Environment().ZitiIdentity)
- 	}
- 	return nil
- }
-```
-
-**File**: `docs/current/agent-share-lifecycle.md` (modified, +2/-2)
-```diff
-@@ -42,7 +42,7 @@ Rolling back to an earlier release is therefore a manual edit for everyone. `v2.
- 
- Shutdown closes admission at the operation boundary, cancels startup and retry dispatch, drains registered work concurrently, and saves a final registry snapshot. Local, remote and gateway servers retain their listeners and receive graceful stop with force-stop fallback; a listener created after shutdown begins is closed without registration. Repeated shutdown calls join one shared result. The overall allowance is 120 seconds. Failure or expiry reports incomplete cleanup and known tokens and makes the agent command exit 1; successful joined shutdown exits 0. A fatal startup error follows the same cleanup path.
- 
--After public worker exit is confirmed, the agent deletes every managed public share, including named shares. Reserved names and desired restart requests survive ordinary shutdown. An unconfirmed worker exit retains the token without deleting its resource. Public deletion uses a fresh 30-second context shared by client initialization, version checking, deletion and any absence check. A typed unshare-not-found response is reconciled through the generated authenticated account overview: the original environment must be present and the token must be absent from every environment. Generic errors, a missing environment, a still-listed token or a failed overview retain the cleanup failure. Context-aware SDK entry points require a root with bounded client initialization; legacy SDK entry points keep supporting the original root interface.
-+After public worker exit is confirmed, the agent deletes every managed public share, including named shares. Reserved names and desired restart requests survive ordinary shutdown. An unconfirmed worker exit retains the token without deleting its resource. Every deletion the agent makes, of a public share, a private share or an access, uses a fresh 30-second context shared by client initialization, version checking, deletion and any absence check. A typed not-found response from unshare or unaccess is reconciled through the generated authenticated account overview: the original environment must be present, and the share token, or for an access its frontend token, must be absent from every environment. Generic errors, a missing environment, a still-listed token or a failed overview retain the cleanup failure. The reconciliation matters most for accesses. The controller removes every access to a share when that share is torn down, so an access is routinely gone before the agent deletes it; without the reconciliation such an access stays `failed`, cannot be released, and is cleared only by restarting the agent. The not-found is confirmed and not simply trusted because the controller also answers not-found when its own delete of the access fails. Context-aware SDK entry points require a root with bounded client initialization; legacy SDK entry points keep supporting the original root interface.
- 
- Cleanup failures remain visible with the real token, failed status and a pending-cleanup error. Retry backoff applies to deletion before recreation; cleanup remains retryable after explicit release removes restart intent. Startup errors include any cleanup failure and known token. Shutdown attempts outstanding cleanup and reports unresolved tokens on failure. Pending cleanup identities remain in memory, not in the registry. An agent crash, a lost create response or a restart after failed shutdown can require manual cleanup; existing live-share name conflicts still return the controller's actionable 409 without evicting another share. Native platform validation is recorded below.
- 
-@@ -59,7 +59,7 @@ The ordinary suite uses helper subprocesses, channel barriers and fake controlle
- | Framing, process completion and stop bounds | [Process fixtures](../../agent/proctree/proctree_test.go), [message fixtures](../../cmd/zrok2/subordinate/message_test.go) and [worker fixtures](../../cmd/zrok2/subordinate/worker_test.go) cover split/coalesced messages, separate stderr, failed spawn/activation, EOF before boot, terminal failure, concurrent waiters, blocked output, ignored EOF and forced termination. |
- | Cancellation, worker exit, release and shutdown ordering | [Ownership fixtures](../../agent/publicOwnership_test.go) retain late create responses and prevent recreation before deletion. [Public stop fixtures](../../agent/publicSignals_test.go) exercise worker-first SIGINT and agent-first EOF with deletion held open. [Public verification](../../agent/publicVerification_test.go) joins release, child exit and shutdown on one cleanup attempt and checks the final shutdown attempt after failure. |
- | Controller deadlines cover initialization and subsequent requests | [SDK context tests](../../sdk/golang/sdk/shareContext_test.go) stall version checking and operations. A barrier-delayed successful version check forwards the exact original deadline to the generated transport. [Cleanup fixtures](../../a
-```
-
-**File**: `docs/current/agent-smoke.md` (modified, +11/-5)
-```diff
-@@ -18,11 +18,17 @@ The live scenario passes only when every observation holds and final cleanup suc
- 
- 1. A fresh environment is enabled with the built CLI's headless enable path, and a new unique name is reserved.
- 2. `zrok2 agent start` runs in its own process group (on Windows, its own console process group inside a job object) and reports the exact build identity the job stamped.
--3. `zrok2 share public --force-agent --open -n <namespace>:<name>` against a loopback server produces exactly one active share in structured agent status, the name is bound to its token, and the public endpoint returns the server's per-run random body. Bare endpoint hostnames are fetched over HTTPS; explicit HTTP or HTTPS schemes are preserved.
--4. The row's graceful-stop event ends the agent with exit 0 within 130 seconds. On macOS and Linux that event is SIGINT to the agent's process group, as a terminal Ctrl-C delivers it; on Windows it is `CTRL_BREAK_EVENT`. A forced kill is a failure.
--5. A successful authenticated account overview still lists the environment, no longer mentions the share token anywhere, and the name listing shows the name reserved and unbound.
--6. Restarting the agent with the same environment replays the saved request without another share command: exactly one active share, a new token, the old token still absent, the name bound to the replacement and the random body served through it.
--7. A second interrupt repeats the exit, absence and name checks. Cleanup then removes the name and the environment and proves their absence.
-+3. `zrok2 share private --force-agent` against the loopback server produces exactly one active private share in structured agent status, and the account overview lists it.
-+4. `zrok2 access private --force-agent -b <address>` for that share, with `<address>` a loopback port the harness itself is listening on, leaves the agent able to finish its cleanup. The access worker reports ready before it binds; the bind fails, the worker deletes its own access and exits, and the agent then asks the controller to delete an access that is already gone. The agent must settle with the access awaiting a retry or not held at all. An access left `failed`, holding its frontend token, is the defect this step exists for and fails the run. The command's own exit status is recorded and not required, since it depends on whether the worker reported ready first.
-+5. `zrok2 agent release access <failure id>` succeeds for an access the agent still holds, the agent then lists no access, and the account overview lists no access to the private share. The harness keeps its port until then, so a retry cannot bind it.
-+6. `zrok2 agent release share <token>` succeeds, the agent lists no shares or accesses, and the overview no longer mentions the private share's token.
-+7. `zrok2 share public --force-agent --open -n <namespace>:<name>` against the loopback server produces exactly one active share in structured agent status, the name is bound to its token, and the public endpoint returns the server's per-run random body. Bare endpoint hostnames are fetched over HTTPS; explicit HTTP or HTTPS schemes are preserved.
-+8. The row's graceful-stop event ends the agent with exit 0 within 130 seconds. On macOS and Linux that event is SIGINT to the agent's process group, as a terminal Ctrl-C delivers it; on Windows it is `CTRL_BREAK_EVENT`. A forced kill is a failure.
-+9. A successful authenticated account overview still lists the environment, no longer mentions the share token anywhere, and the name listing shows the name reserved and unbound.
-+10. Restarting the agent with the same environment replays the saved request without another share command: exactly one active share, a new token, the old token still absent, the name bound to the replacement and the random body served through it.
-+11. A second interrupt repeats the exit, absence and name checks. Cleanup then removes the name and the environment and proves their absence.
-+
-+Steps 3 to 6 were added on 2026-11-17. Hosted run [44140599682](https://github.com/openziti/zrok/actions/runs/44140599682) passed on all three rows that day, macOS arm64, Linux amd64 and Windows amd64, at commit `4fea6a2eac643141359539ea85f590a3010cba13`. An earlier run at the same commit, [44121508662](https://github.com/openziti/zrok/actions/runs/44121508662), passed on Linux and Windows and failed on macOS at step 3, on an error answered by the service to the private share request; nothing in the client or the harness changed between the two runs.
- 
- Before the live scenario each row runs the native process and worker fixtures (`./agent/proctree`, `./cmd/zrok2/subordinate`), and the agent package's lifecycle tests and the harness's offline tests under the race detector. The offline tests include the platform's own process fixtures. A helper that installs Go's interrupt handler must acknowledge the graceful-stop event and exit 0, through the same delivery the live scenario uses. Forced terminatio
+ FIX: Usage for a share with more than one connection in a reporting interval was under-reported because each connection's report replaced the one before it. These reports now keep separate points, so totals shown in the console and API will be higher for such shares from the upgrade on. Limits are now enforced against the true totals: an account may reach a warning or limit it did not reach before, and operators may want to review their limit values. Usage recorded before the upgrade is not corrected.
 ```
 
 ---
 
-### Incident Patch 2: `a8c2e714` (2026-11-17)
-**Commit Message**: agent-smoke: verify failure cleanup handling
+### Incident Patch 2: `d40f53b3` (2026-11-19)
+**Commit Message**: changelog
 
-**File**: `docs/current/agent-smoke.md` (modified, +1/-1)
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -28,7 +28,7 @@ The live scenario passes only when every observation holds and final cleanup suc
- 10. Restarting the agent with the same environment replays the saved request without another share command: exactly one active share, a new token, the old token still absent, the name bound to the replacement and the random body served through it.
- 11. A second interrupt repeats the exit, absence and name checks. Cleanup then removes the name and the environment and proves their absence.
+@@ -2,6 +2,8 @@
  
--Steps 3 to 6 have not passed on any hosted row yet. They were added on 2026-11-17 and have run only against the harness's fake controller and fake agent, on Linux.
-+Steps 3 to 6 were added on 2026-11-17. Hosted run [44140599682](https://github.com/openziti/zrok/actions/runs/44140599682) passed on all three rows that day, macOS arm64, Linux amd64 and Windows amd64, at commit `4fea6a2eac643141359539ea85f590a3010cba13`. An earlier run at the same commit, [44121508662](https://github.com/openziti/zrok/actions/runs/44121508662), passed on Linux and Windows and failed on macOS at step 3, on an error answered by the service to the private share request; nothing in the client or the harness changed between the two runs.
+ ## Unreleased
  
- Before the live scenario each row runs the native process and worker fixtures (`./agent/proctree`, `./cmd/zrok2/subordinate`), and the agent package's lifecycle tests and the harness's offline tests under the race detector. The offline tests include the platform's own process fixtures. A helper that installs Go's interrupt handler must acknowledge the graceful-stop event and exit 0, through the same delivery the live scenario uses. Forced termination must also reach a worker started by the agent's own launcher, and on Windows a descendant orphaned by its parent. The POSIX signal fixtures in `./agent` skip Windows with their stated reasons.
- 
-```
-
-**File**: `docs/journal/2026-11-17.md` (modified, +2/-0)
-```diff
-@@ -9,3 +9,5 @@
- - Not fixed, and separate: the access worker reports ready before it has bound (`cmd/zrok2/accessPrivate.go`). The command therefore reports success for an access that never binds, the access gains restart intent, and with the cleanup fix it now retries with backoff until the port frees or it is released. Binding before reporting ready would make the start fail with the bind error.
- - The agent smoke scenario gained four steps between "start agent" and the public share: a private share, an access on a port the harness occupies, release of the access, release of the share. They assert the agent's settled state, never the access command's exit status, which depends on the race above. The offline fake has an `access-stuck` mode that behaves as v2.0.10 did, and the scenario fails on it. These steps have run only against the fake, on Linux.
- - The offline harness suite now takes about twice as long, since most scenario tests run four more child processes; the workflow's bound for it went from 5 to 10 minutes. The fake's private share release uses its own path (`/fake/delete-private`), because `/fake/delete` is where the read-failure tests inject their failures.
-+- The first hosted run of the new smoke steps (macOS, run 44121508662) failed at "private share through agent": `share private --force-agent` exited 1 after 0.7 seconds. The job log did not say why, because a failed command's output went only to the uploaded artifact. A failed command's last output lines are now part of the step failure, redacted with every other detail. The run's report then showed the cause was on the service side, not in the client, the agent or the harness, and not specific to macOS: the Linux and Windows rows of the same run passed every step, the four new ones included. So the cleanup fix is confirmed live on Linux and Windows, and macOS has yet to reach the access steps.
-+- Hosted run 44140599682 at `4fea6a2e` passed on all three rows, so the cleanup fix and the four new smoke steps are confirmed live on macOS, Linux and Windows. It was a re-dispatch of the same commit as the failed run; the earlier macOS failure was the service's answer to one request and did not recur. The change that puts a failed command's last output into the step failure is still uncommitted in the working tree and was not part of either run.
-```
-
-**File**: `tests/agent-smoke/report.go` (modified, +27/-0)
-```diff
-@@ -7,6 +7,7 @@ import (
- 	"fmt"
- 	"os"
- 	"path/filepath"
-+	"regexp"
- 	"runtime"
- 	"slices"
- 	"strings"
-@@ -97,6 +98,32 @@ func (r *report) log(label string) *boundedLog {
- 	return l
- }
- 
-+// lastLines returns the end of a child's captured output on one line, for a failure message: the last few
-+// non-empty lines, without terminal colour codes, shortened to a few hundred bytes. the caller's error passes
-+// through redact with every other step detail before it is logged or written.
-+func (r *report) lastLines(label string) string {
-+	r.mu.Lock()
-+	log := r.logs[label]
-+	r.mu.Unlock()
-+	if log == nil {
-+		return ""
-+	}
-+	var kept []string
-+	lines := strings.Split(ansiCodes.ReplaceAllString(string(log.contents()), ""), "\n")
-+	for i := len(lines) - 1; i >= 0 && len(kept) < 3; i-- {
-+		if line := strings.TrimSpace(lines[i]); line != "" {
-+			kept = append([]string{line}, kept...)
-+		}
-+	}
-+	text := strings.Join(kept, " | ")
-+	if over := len(text) - 600; over > 0 {
-+		text = "..." + text[over:]
-+	}
-+	return text
-+}
++## v2.0.11
 +
-+var ansiCodes = regexp.MustCompile(`\x1b\[[0-9;]*[A-Za-z]`)
-+
- func (r *report) logPath(label string) string {
- 	return filepath.Join(reportDir, "logs", r.mode+"-"+label+".log")
- }
-```
-
-**File**: `tests/agent-smoke/scenario.go` (modified, +4/-0)
-```diff
-@@ -588,6 +588,10 @@ func (h *harness) runCommand(ctx context.Context, label string, bound time.Durat
- 		return err
- 	}
- 	if code != 0 {
-+		// the command's own last words go into the failure, so the job log says why without the artifact.
-+		if said := h.rep.lastLines(label); said != "" {
-+			return fmt.Errorf("'%v' exited with status %d: %v; see '%v'", label, code, said, h.rep.logPath(label))
-+		}
- 		return fmt.Errorf("'%v' exited with status %d; see '%v'", label, code, h.rep.logPath(label))
- 	}
- 	return nil
-```
-
-**File**: `tests/agent-smoke/smoke_test.go` (modified, +6/-1)
-```diff
-@@ -212,7 +212,12 @@ func TestScenarioFailures(t *testing.T) {
- func TestLostEnableIsReconciledByDescription(t *testing.T) {
- 	w := newWorld(t, "enable-lost")
- 	require.Equal(t, 1, w.run())
--	w.requireCleaned(w.requireFailure("enable environment", "exited"))
-+	s := w.requireFailure("enable environment", "exited")
-+	w.requireCleaned(s)
-+	// the failed command's last output is in the failure, with the account token it printed redacted
-+	assert.Contains(t, s.Failure, "lost the enable response")
-+	assert.Contains(t, s.Failure, "account token '[redacted]'")
-+	assert.NotContains(t, s.Failure, testAccountToken)
- 	m := w.manifest()
- 	assert.NotEmpty(t, m.EnvZID)
- 	assert.Contains(t, w.summary("run").Cleanup.Detail, "reconciled environment '"+m.EnvZID+"' by description")
+ FIX: The metrics bridge with a file source could skip usage events, or pass on a partial event that was then discarded, when it read the file while OpenZiti was writing to it. Some usage consequently went unrecorded. The file source now delivers each event once, when its line is complete.
+ 
+ FIX: Usage for a share with more than one connection in a reporting interval was under-reported because each connection's report replaced the one before it. These reports now keep separate points, so totals shown in the console and API will be higher for such shares from the upgrade on. Limits are now enforced against the true totals: an account may reach a warning or limit it did not reach before, and operators may want to review their limit values. Usage recorded before the upgrade is not corrected.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1295** (2026-11-19): v2.0.11 changelog (@michaelquigley)
+- **PR #1294** (2026-11-19): usage-file-tailing (@michaelquigley)
+- **PR #1293** (2026-11-19): high-res-usage (@michaelquigley)
+- **PR #1292** (2026-11-19): usage-lookup-caching (@michaelquigley)
 - **PR #1291** (2026-11-17): v2011-failed (@michaelquigley)
 - **PR #1290** (2026-11-16): v2.0.10 (@michaelquigley)
-- **PR #1289** (2026-11-16): agent smoke workflow fix (@michaelquigley)
-- **PR #1288** (2026-11-16): V2_0_10_basic_auth_file (@michaelquigley)
-- **PR #1287** (2026-11-12): Add --basic-auth-from-stdin to share public (@aaeekaayyyyyy)
-- **PR #1286** (2026-10-30): fixes-209 (@michaelquigley)
 
 ---
 
@@ -1909,31 +1481,32 @@ v2011-failed
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in agent-smoke.yml
+## X. Empirical Invariant Guard in CHANGELOG.md
 
 **RULE**:
-When implementing operations in `.github/workflows/agent-smoke.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openziti/zrok. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openziti/zrok. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1a535cfa`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d8e5316d`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/agent-smoke.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        run: go test -race -tags agent_smoke ./tests/agent-smoke -count=1 -timeout=10m
+## v2.0.11
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-        run: go test -race -tags agent_smoke ./tests/agent-smoke -count=1 -timeout=5m
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1a535cfa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d8e5316d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

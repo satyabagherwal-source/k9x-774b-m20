@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T17:43:23.663Z",
+  "last_updated": "2026-11-19T18:06:30.478Z",
   "total_records": 2008,
   "domains": {
     "A": {
@@ -17187,8 +17187,8 @@
       "title": "Technical Construction Intelligence: google/tcmalloc Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-tcmalloc-technical-construction-intelligence-google-tcmalloc-core-invaria.md",
       "repository": "google/tcmalloc",
-      "content_hash": "da337b4f1b29a664e6ff2de1791d3500465be745f2cb1c07941264bb1746b848",
-      "created_at": "2026-11-17T22:39:51.562Z"
+      "content_hash": "18039c549b55cfecce5829b9954e71c645789277bf226cccdb1acfb7f628cb85",
+      "created_at": "2026-11-19T18:06:15.839Z"
     },
     "domain_intelligence-technical-construction-intelligence-open-ani-animeko-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-open-ani-animeko-core-invariants",
@@ -17205,8 +17205,8 @@
       "title": "Technical Construction Intelligence: google-tcmalloc-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-tcmalloc-learnings-technical-construction-intelligence-google-tcmalloc-le.md",
       "repository": "google-tcmalloc-learnings",
-      "content_hash": "0a31d2697a69debdf0adcf88627e3bd851bffa4f0221566c5fb1092d0bc6851c",
-      "created_at": "2026-11-17T22:40:07.362Z"
+      "content_hash": "f233edadbee417798c7c85f4f2c12f6a8a1d92e350d9b15a3dc1c6fa14389e2d",
+      "created_at": "2026-11-19T18:06:29.375Z"
     },
     "DOM-D-301C83AD": {
       "record_id": "DOM-D-301C83AD",
@@ -19552,8 +19552,8 @@
       "title": "Research & Knowledge Intelligence: nvidia/Qwen3.8-Flash-Next-FP4-Local Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-qwen3-8-flash-next-fp4-local-research-knowledge-intelligence-nvidia-qw.md",
       "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
-      "content_hash": "012173021b2bee27916550703d3e2480b3629e30270f1114f6220e43393e95fc",
-      "created_at": "2026-11-15T04:43:50.280Z"
+      "content_hash": "04dab9c676fb631d1965492ed7967ea56ed46db7bf784f96adf500cb49d3e3fc",
+      "created_at": "2026-11-19T18:06:13.729Z"
     },
     "domain_intelligence-technical-construction-intelligence-microsoft-react-native-windows-core-invarian": {
       "record_id": "domain_intelligence-technical-construction-intelligence-microsoft-react-native-windows-core-invarian",
@@ -19612,8 +19612,8 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-qwen3.8-flash-next-fp4-local-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-qwen3-8-flash-next-fp4-local-learnings-research-knowledge-intelligence.md",
       "repository": "hf-nvidia-qwen3.8-flash-next-fp4-local-learnings",
-      "content_hash": "82ff6c81e561d10ed1deb571b44d150c604dc08a8cb3ab3dae8df725448c3c76",
-      "created_at": "2026-11-15T04:44:29.902Z"
+      "content_hash": "63c95764f266fed17472abc077a60f4a80c0f1b263db1c71372aae5970f541ab",
+      "created_at": "2026-11-19T18:06:29.841Z"
     },
     "DOM-H-E5AA5217": {
       "record_id": "DOM-H-E5AA5217",
@@ -24374,8 +24374,8 @@
       "title": "Architecture Intelligence: openziti/zrok Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-openziti-zrok-architecture-intelligence-openziti-zrok-core-invariants.md",
       "repository": "openziti/zrok",
-      "content_hash": "c849e1595be1d03f57be9c2335a12b17640e4d975bc0a9562d14f1d4c906ecbd",
-      "created_at": "2026-11-18T00:22:47.185Z"
+      "content_hash": "9945f3a0bfb22840f09f606c5be5565e0096881668bed760359d549ad242434a",
+      "created_at": "2026-11-19T18:06:26.013Z"
     },
     "domain_intelligence-technical-construction-intelligence-alibaba-zvec-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-alibaba-zvec-core-invariants",
@@ -31347,8 +31347,8 @@
       "title": "Architecture Intelligence: karmada-io/karmada Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-karmada-io-karmada-architecture-intelligence-karmada-io-karmada-core-invariants.md",
       "repository": "karmada-io/karmada",
-      "content_hash": "9af0c71f7d366e61482fd3e14078be0624a61679bbbc49f446aba48433b3dab4",
-      "created_at": "2026-11-18T14:57:04.349Z"
+      "content_hash": "296093875d8fbd575d19eb39d43d68bb72e9fcbb0b2ca37af8d32fcdc20fa0b7",
+      "created_at": "2026-11-19T18:06:24.412Z"
     },
     "domain_intelligence-architecture-intelligence-karmada-io-karmada-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-karmada-io-karmada-learnings-core-invariants",
@@ -31356,8 +31356,8 @@
       "title": "Architecture Intelligence: karmada-io-karmada-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-karmada-io-karmada-learnings-architecture-intelligence-karmada-io-karmada-learni.md",
       "repository": "karmada-io-karmada-learnings",
-      "content_hash": "30f5718ada17bdbad82386b870f4419aacdba7075d5fda8fc7d60afa6905e610",
-      "created_at": "2026-11-18T14:57:08.829Z"
+      "content_hash": "0164f6c8e616f34b2b8011fdfe902bf0acd85f11302950b96e1cef0074b6c976",
+      "created_at": "2026-11-19T18:06:30.478Z"
     },
     "domain_intelligence-quality-verification-intelligence-software-mansion-react-native-reanimated-core-": {
       "record_id": "domain_intelligence-quality-verification-intelligence-software-mansion-react-native-reanimated-core-",

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T22:40:07.126Z",
+  "timestamp": "2026-11-19T18:06:29.121Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-google-tcmalloc-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [google-tcmalloc-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T22:40:07.126Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T18:06:29.121Z`  
 > **Learning ID**: `LEARN-EVO-google-tcmalloc-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from google-tcmalloc-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source**: github ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
-> **Source Version**: `01b9fd85`  
+> **Source Version**: `f076c560`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T22:39:50.311Z  
+> **Timestamp**: 2026-11-19T18:06:14.560Z  
 > **Learning ID**: `learn-github-google-tcmalloc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/google-tcmalloc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/google/tcmalloc](https://github.com/google/tcmalloc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T22:39:50.306Z  
+> **Harvest Timestamp**: 2026-11-19T18:06:14.555Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5402 stars
+- **Stars / Engagement**: 5405 stars
 
 ---
 
@@ -520,8 +520,8 @@ class HookList final : HookListBase {
 
  private:
   template <typename... Args>
-  ABSL_ATTRIBUTE_COLD ABSL_ATTRIBUTE_NOINLINE
-      ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS void
+  ABSL_ATTRIBUTE_COLD ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS
+      ABSL_ATTRIBUTE_NOINLINE void
       InvokeSlow(Args&&... args) const;
 
   // One more than the index of the last valid element in priv_data.  During
@@ -1275,15 +1275,15 @@ GOOGLE_MALLOC_SECTION_END
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1929** (2026-11-17): **Encode x86-64 rseq signature inside a 7-byte nopl instruction**
-  *Symptoms*: Encode x86-64 rseq signature inside a 7-byte nopl instruction  On x86-64, prefix the 4-byte rseq signature with opcode bytes (`0x0f, 0x1f, 0x05`) to form a 7-byte `nopl disp32(%rip)` instruction, using the signature as the displacement. This prevents raw data bytes from desynchronizing linear disassembly across trampolines in `.text.unlikely`. 
+- **Issue #1944** (2026-11-19): **No public description**
+  *Symptoms*: No public description 
   **Post-Mortem & Fix Analysis**:
-  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1929/checks?check_run_id=133030576615) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
+  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1944/checks?check_run_id=135323843314) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
 
-- **Issue #1928** (2026-11-14): **Avoid KCFI typeid emission in TestAliasedFunctions.**
-  *Symptoms*: Avoid KCFI typeid emission in TestAliasedFunctions.  Co-authored-by: Mike Kruskal <mkruskal@google.com> 
+- **Issue #1943** (2026-11-19): **Revert: Record remote NUMA residency on heap profile samples.**
+  *Symptoms*: Revert: Record remote NUMA residency on heap profile samples.  This reports the bytes resident on NUMA nodes other than the profiler collection thread's home NUMA node via a remote_numa_space sample type on heap profiles. 
   **Post-Mortem & Fix Analysis**:
-  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1928/checks?check_run_id=132481476045) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
+  > Thanks for your pull request! It looks like this may be your first contribution to a Google open source project. Before we can look at your pull request, you'll need to sign a Contributor License Agreement (CLA).  View this [failed invocation](https://github.com/google/tcmalloc/pull/1943/checks?check_run_id=135172913977) of the CLA check for more information.  For the most up to date status, view the checks section at the bottom of the pull request.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1300,456 +1300,324 @@ GOOGLE_MALLOC_SECTION_END
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `01b9fd85` (2026-11-17)
-**Commit Message**: Propagate DeletePolicy alignment to ReportCorruptedFree.
+### Incident Patch 1: `f63e9c75` (2026-11-18)
+**Commit Message**: Use AddOverflow when rounding up sizes in pvalloc.
 
-When a misaligned pointer into a small-object span is passed to aligned `operator delete`, `InvokeHooksAndFreePages` and `handle_sampled_or_illformed_ptrs` reported an expected alignment of `kAlignment` (8 bytes) even when the caller provided a larger alignment.
+This checks for addition overflow before masking to a page boundary, matching
+MultiplyOverflow in calloc and reallocarray.
 
-Pass `std::max(policy.align(), kAlignment)` to `ReportCorruptedFree` so the `InvalidFree` report reflects the caller's alignment.
+Co-authored-by: Chris Kennelly <[REDACTED_EMAIL]>
+PiperOrigin-RevId: 1025023674
 
-PiperOrigin-RevId: 1024037018
-
-**File**: `tcmalloc/tcmalloc.cc` (modified, +4/-2)
+**File**: `tcmalloc/internal/overflow.h` (modified, +9/-0)
 ```diff
-@@ -757,7 +757,8 @@ ABSL_ATTRIBUTE_NOINLINE static void InvokeHooksAndFreePages(
-     // Spans with a size class are never sampled, guarded, or large, so any
-     // pointer into one that reaches here is corrupted.
-     if (absl::bit_cast<uintptr_t>(ptr) & kBadAlignmentMask) {
--      ReportCorruptedFree(tc_globals, kAlignment, ptr);
-+      ReportCorruptedFree(tc_globals, std::max(policy.align(), kAlignment),
-+                          ptr);
-     }
-     ReportCorruptedFree(tc_globals, ptr);
-   }
-@@ -976,7 +977,8 @@ ABSL_ATTRIBUTE_NOINLINE static void handle_sampled_or_illformed_ptrs(
-   // If we get here, the object is small and this is the last line of defense
-   // to report the error.
-   TC_ASSERT_EQ((uptr & kBadAlignmentMask) != 0, true);
--  return ReportCorruptedFree(tc_globals, kAlignment, ptr);
-+  return ReportCorruptedFree(tc_globals, std::max(policy.align(), kAlignment),
-+                             ptr);
- }
+@@ -24,6 +24,15 @@ GOOGLE_MALLOC_SECTION_BEGIN
+ namespace tcmalloc {
+ namespace tcmalloc_internal {
  
- template <typename Policy>
-```
-
-**File**: `tcmalloc/testing/memory_errors_test.cc` (modified, +24/-0)
-```diff
-@@ -1061,6 +1061,30 @@ TEST_F(TcMallocTest, CorruptedPointerEdgeCases) {
-   }
- }
- 
-+TEST_F(TcMallocTest, CorruptedPointerAlignedDelete) {
-+#if defined(ABSL_HAVE_ADDRESS_SANITIZER) || \
-+    defined(ABSL_HAVE_HWADDRESS_SANITIZER)
-+  GTEST_SKIP() << "Skipping under address sanitizer";
++[[nodiscard]] inline bool AddOverflow(size_t a, size_t b, size_t* out) {
++#if ABSL_HAVE_BUILTIN(__builtin_add_overflow)
++  return __builtin_add_overflow(a, b, out);
++#else
++  *out = a + b;
++  return *out < a;
 +#endif
-+  ScopedNeverSample never_sample;
-+  constexpr std::align_val_t kAlign{64};
-+  for (const bool sized : {false, true}) {
-+    SCOPED_TRACE(absl::StrCat("sized=", sized));
-+    EXPECT_DEATH(
-+        {
-+          char* ptr = static_cast<char*>(::operator new(8, kAlign));
-+          if (sized) {
-+            ::operator delete(ptr + 1, 8, kAlign);
-+          } else {
-+            ::operator delete(ptr + 1, kAlign);
-+          }
-+        },
-+        absl::StrCat(
-+            "Attempted to free corrupted pointer"
-+            ));
-+  }
 +}
 +
- TEST_F(TcMallocTest, AllocationDeallocationConfusion) {
- #if defined(ABSL_HAVE_HWADDRESS_SANITIZER)
-   GTEST_SKIP() << "HWASan does not currently detect alloc-dealloc-mismatch.";
+ [[nodiscard]] inline bool MultiplyOverflow(size_t a, size_t b, size_t* out) {
+ #if ABSL_HAVE_BUILTIN(__builtin_mul_overflow)
+   return __builtin_mul_overflow(a, b, out);
+```
+
+**File**: `tcmalloc/tcmalloc.cc` (modified, +5/-4)
+```diff
+@@ -1558,6 +1558,7 @@ void TCMalloc_Internal_SetMadvise(
+ // Exported routines
+ //-------------------------------------------------------------------
+ 
++using tcmalloc::tcmalloc_internal::AddOverflow;
+ using tcmalloc::tcmalloc_internal::BytesToLengthCeil;
+ using tcmalloc::tcmalloc_internal::CorrectAlignment;
+ using tcmalloc::tcmalloc_internal::CorrectSize;
+@@ -2013,10 +2014,10 @@ extern "C" TCMALLOC_INTERNAL_CACHELINE_ALIGNED void* TCMallocInternalPvalloc(
+   if (size == 0) {     // pvalloc(0) should allocate one page, according to
+     size = page_size;  // http://man.free4web.biz/man3/libmpatrol.3.html
+   }
+-  size = (size + page_size - 1) & ~(page_size - 1);
+-  if (ABSL_PREDICT_FALSE(size == 0)) {
++  if (ABSL_PREDICT_FALSE(AddOverflow(size, page_size - 1, &size))) {
+     return MallocPolicy::handle_oom(std::numeric_limits<size_t>::max());
+   }
++  size &= ~(page_size - 1);
+   return fast_alloc(size, MallocPolicy().AlignAs(page_size));
+ }
+ 
+@@ -2374,10 +2375,10 @@ TCMALLOC_INTERNAL_CACHELINE_ALIGNED void* operator new[](
+     if (size == 0) {                                                           \
+       size = page_size;                                                        \
+     }                                                                          \
+-    size = (size + page_size - 1) & ~(page_size - 1);                          \
+-    if (ABSL_PREDICT_FALSE(size == 0)) {                                       \
++    if (ABSL_PREDICT_FALSE(AddOverflow(size, page_size - 1, &size))) {         \
+       return MallocPolicy::handle_oom(std::numeric_limits<size_t>::max());     \
+     }                                                                          \
++    size &= ~(page_size - 1);                                                  \
+     return fast_alloc(                                                         \
+         size,                                                                  \
+         MallocPolicy().WithSecurityToken<TokenId{id}>().AlignAs(page_size));   \
 ```
 
 ---
 
-### Incident Patch 2: `6eb91762` (2026-11-17)
-**Commit Message**: Add NUMA residency helpers to Residency.
+### Incident Patch 2: `9bab4db5` (2026-11-19)
+**Commit Message**: Revert: Record remote NUMA residency on heap profile samples.
 
-This adds GetCurrentNumaNode, ForEachRemoteNumaPage, and
-Residency::GetRemoteNumaBytes to query per-page remote NUMA residency via
-move_pages(2).
-PiperOrigin-RevId: 1024012371
+This reports the bytes resident on NUMA nodes other than the profiler
+collection thread's home NUMA node via a remote_numa_space sample type on heap
+profiles.
 
-**File**: `tcmalloc/internal/BUILD` (modified, +2/-0)
+PiperOrigin-RevId: 1025598004
+
+**File**: `tcmalloc/internal/profile_builder.cc` (modified, +6/-32)
 ```diff
-@@ -636,6 +636,8 @@ cc_library(
-         ":page_size",
-         ":range_tracker",
-         ":util",
-+        "@com_google_absl//absl/algorithm:container",
-+        "@com_google_absl//absl/functional:function_ref",
-         "@com_google_absl//absl/status",
-     ],
- )
-```
-
-**File**: `tcmalloc/internal/CMakeLists.txt` (modified, +4/-0)
-```diff
-@@ -649,6 +649,10 @@ tcmalloc_cc_library(
-   SRCS
-     "residency.cc"
-   DEPS
-+    "absl::flat_hash_map"
-+    "absl::flat_hash_set"
-+    "absl::inlined_vector"
-+    "absl::function_ref"
-     "absl::status"
-     "tcmalloc::internal_config"
-     "tcmalloc::internal_logging"
-```
-
-**File**: `tcmalloc/internal/fake_residency.h` (modified, +5/-0)
-```diff
-@@ -39,6 +39,11 @@ class NoopResidency : public Residency {
-     return kHugePageSize / GetPageSize();
-   }
+@@ -167,7 +167,6 @@ struct SampleMergedData {
+   std::optional<size_t> locked_size;
+   std::optional<size_t> incompressible_size;
+   std::optional<uint64_t> stale_scan_period;
+-  size_t remote_numa_size = 0;
+   size_t compressed_size = 0;
+   size_t zero_size = 0;
  
-+  [[nodiscard]] std::optional<size_t> GetRemoteNumaBytes(
-+      const void* addr, size_t size, int local_node) override {
-+    return std::nullopt;
-+  }
-+
-   [[nodiscard]] SinglePageBitmaps GetUnbackedAndSwappedBitmaps(
-       const void* addr) override {
-     return {{}, {}, absl::StatusCode::kOk};
-```
-
-**File**: `tcmalloc/internal/residency.cc` (modified, +97/-0)
-```diff
-@@ -14,24 +14,88 @@
- 
- #include "tcmalloc/internal/residency.h"
- 
-+#include <errno.h>
- #include <fcntl.h>
- #include <stddef.h>
-+#if defined(__linux__)
-+#include <sys/syscall.h>
-+#endif
- #include <unistd.h>
- 
- #include <algorithm>
- #include <cstdint>
- #include <cstdio>
-+#include <limits>
- #include <optional>
- 
-+#include "absl/algorithm/container.h"
-+#include "absl/functional/function_ref.h"
- #include "absl/status/status.h"
- #include "tcmalloc/internal/config.h"
- #include "tcmalloc/internal/logging.h"
-+#include "tcmalloc/internal/page_size.h"
- #include "tcmalloc/internal/range_tracker.h"
- #include "tcmalloc/internal/util.h"
- 
- GOOGLE_MALLOC_SECTION_BEGIN
- namespace tcmalloc {
- namespace tcmalloc_internal {
-+
-+// TODO(b/585745921): Move to internal/numa.h once :numa no longer pulls in
-+// :percpu's initial-exec TLS globals.
-+int GetCurrentNumaNode() {
-+#if defined(__linux__) && defined(SYS_getcpu)
-+  unsigned int node = 0;
-+  if (syscall(SYS_getcpu, nullptr, &node, nullptr) == 0) {
-+    return node;
-+  }
-+#endif
-+  return 0;
-+}
-+
-+bool ForEachRemoteNumaPage(
-+    const uintptr_t base_page, const size_t num_pages, const int local_node,
-+    const absl::FunctionRef<void(size_t page_index)> on_remote_page) {
-+  const size_t kHardwarePageSize = GetPageSize();
-+  if (local_node < 0 || (base_page % kHardwarePageSize) != 0) {
-+    return false;
-+  }
-+  if (num_pages == 0) {
-+    return true;
-+  }
-+  if (num_pages - 1 >
-+      (std::numeric_limits<uintptr_t>::max() - base_page) / kHardwarePageSize) {
-+    return false;
-+  }
-+#if defined(__linux__) && defined(SYS_move_pages)
-+  constexpr size_t kBatchSize = 64;
-+  const void* pages[kBatchSize];
-+  int status[kBatchSize];
-+
-+  for (size_t page_idx = 0; page_idx < num_pages;) {
-+    const size_t batch = std::min(kBatchSize, num_pages - page_idx);
-+    for (size_t i = 0; i < batch; ++i) {
-+      pages[i] = reinterpret_cast<const void*>(
-+          base_page + static_cast<uintptr_t>(page_idx + i) * kHardwarePageSize);
-+    }
-+    absl::c_fill(status, -1);
-+    if (TCMALLOC_RETRY_ON_TEMP_FAILURE(syscall(SYS_move_pages, 0, batch, pages,
-+                                               nullptr, status, 0)) != 0) {
-+      return false;
-+    }
-+    for (size_t i = 0; i < batch; ++i) {
-+      if (status[i] >= 0 && status[i] != local_node) {
-+        on_remote_page(page_idx + i);
-+      }
-+    }
-+    page_idx += batch;
-+  }
-+  return true;
-+#else
-+  return false;
-+#endif
-+}
-+
- namespace {
- 
- // From fs/proc/task_mmu.c:
-@@ -202,6 +266,39 @@ std::optional<Residency::Info> ResidencyPageMap::Get(const void* const addr,
-   return info;
- }
- 
-+std::optional<size_t> ResidencyPageMap::GetRemoteNumaBytes(
-+    const void* const addr, const size_t size, const int local_node) {
-+  if (fd_ < 0 || addr == nullptr || local_node < 0) {
-+    return std::nullopt;
-+  }
-+  if (size == 0) {
-+    return 0;
-+  }
-+  const uintptr_t uaddr = reinterpret_cast<uintptr_t>(addr);
-+  if (size > std::numeric_limits<uintptr_t>::max() - uaddr) {
-+    return std::nullopt;
-+  }
-+  const uintptr_t end = uaddr + size;
-+  const uintptr_t base_page = uaddr & ~(kHardwarePageSize - 1);
-+  const uintptr_t last_page = (end - 1) & ~(kHardwarePageSize - 1);
-+  const size_t total_pages = (last_page - base_page) / kHardwarePageSize + 1;
-+
-+  size_t remote_bytes = 0;
-+  if (!ForEachRemoteNumaPage(
-+          base_page, total_pages, local_node, [&](size_t page_index) {
-+            const uintptr_t page_start =
-+                base_page +
-+                static_cast<uintptr_t>(page_index) * kHardwarePageSize;
-+            const uintptr_t span_start = std::max(uaddr, page_start);
-+            const size_t page_remaining =
-+                kHardwarePageSize - (span_start - page_start);
-+            remote_bytes += std::min<size_t>(end - span_start, page_remaining);
-+          })) {
-+    return std::nullopt;
-+  }
-+  return remote_bytes;
-+}
-+
- Residency::SinglePageBitmaps ResidencyPageMap::GetUnbackedAndSwappedBitmaps(
-     const void* const addr) {
-   Bitmap<kMaxResidencyBits> page_unbacked;
-```
-
-**File**: `tcmalloc/internal/residency.h` (modified, +26/-0)
-```diff
-@@ -21,6 +21,8 @@
- 
- #include <optional>
- #include <ostream>
-+
-+#include "absl/functional/function_ref.h"
- #include "absl/status/status.h"
- #include "tcmalloc/internal/config.h"
- #include "tcmalloc/internal/page_size.h"
-@@ -30,6 +32,21 @@ GOOGLE_MALLOC_SECTION_BEGIN
- namespace tcmalloc {
- namespace tcmalloc_internal {
- 
-+// Returns the NUMA node of the CPU on which the calling thread is currently
-+// running, or 0 if unavailable.
-+// TODO(b/585745921): Move to internal/numa.h once :numa no longer pulls in
-+// :percpu's initial-exec TLS globals.
-+[[nodiscard]] int GetCurrentNumaNode();
-+
-+// Invokes `on_remote_page(page_index)` for each page in
-+// `[base_page, base_page + num_pages * GetPageSize())` that resides on a NUMA
-+// node other than `local_node` according to move_pages(2). `base_page` must be
-+// aligned to `GetPageSize()`. Returns true on success, or false if NUMA
-+// residency information is unavailable.
-+[[nodiscard]] bool ForEachRemoteNumaPage(
-+    uintptr_t base_page, size_t num_pages, int local_node,
-+    absl::FunctionRef<void(size_t page_index)> on_remote_page);
-+
- // Abstract base class for Residency, which offers information about memory
- // residency: whether or not specific spans of memory are resident in core ("m
- // in core"), swapped, or not present.
-@@ -50,6 +67,12 @@ class Residency {
-                                                 size_t size) = 0;
-   [[nodiscard]] virtual inline size_t GetHardwarePagesInHugePage() const = 0;
- 
-+  // Returns the number of resident bytes in `[addr, addr + size)` that reside
-+  // on a NUMA node other than `local_node`, or std::nullopt if NUMA residency
-+  // information is unavailable.
-+  [[nodiscard]] virtual std::optional<size_t> GetRemoteNumaBytes(
-+      const void* addr, size_t size, int local_node) = 0;
-+
-   // Struct is ordered with bitmaps first to optimize cacheline usage.
-   struct SinglePageBitmaps {
-     Bitmap<kMaxResidencyBits> unbacked;
-@@ -95,6 +118,9 @@ class ResidencyPageMap : public Residency {
-     return kHardwarePagesInHugePage;
-   }
- 
-+  [[nodiscard]] std::optional<size_t> GetRemoteNumaBytes(
-+      const void* addr, size_t size, int local_node) override;
-+
-   // Using a hugepage-aligned address, parse through /proc/self/pagemap
-   // to output two bitmaps - one for pages that are unbacked and one for pages
-   // that are swapped. Hugepage-sized regions are assumed to be 2MiB in size. A
-```
-
-**File**: `tcmalloc/internal/residency_test.cc` (modified, +114/-0)
-```diff
-@@ -31,6 +31,7 @@
- 
- #include <array>
- #include <cstdint>
-+#include <limits>
- #include <optional>
- #include <string>
- #include <utility>
-@@ -71,6 +72,12 @@ class ResidencySpouse {
-     return r_.GetUnbackedAndSwappedBitmaps(addr);
-   }
- 
-+  decltype(auto) GetRemoteNumaBytes(const void* const addr, const size_t size,
-+                                    const int local_node) {
-+    AllocationGuard g;
-+    return r_.GetRemoteNumaBytes(addr, size, local_node);
-+  }
-+
-  private:
-   ResidencyPageMap r_;
+@@ -229,9 +228,6 @@ struct SampleMergeResult {
+   // Collection being enabled does not imply this: analysis is skipped for any
+   // sample lacking residency information, a span address, or a requested size.
+   bool measured_compressibility = false;
+-  // Whether Residency::GetRemoteNumaBytes produced a result for at least one
+-  // sample.
+-  bool measured_numa = false;
  };
-@@ -634,6 +641,113 @@ TEST(PageMapIntegrationTest, GuardPages) {
-   ASSERT_EQ(munmap(raw, 2 * kHugePageSize), 0) << errno;
+ 
+ SampleMergeResult MergeProfileSamplesAndMaybeGetResidencyInfo(
+@@ -244,7 +240,6 @@ SampleMergeResult MergeProfileSamplesAndMaybeGetResidencyInfo(
+     compression_analyzer.emplace();
+   }
+   absl::BitGen rng;
+-  const int local_numa_node = GetCurrentNumaNode();
+ 
+   profile.Iterate([&](const tcmalloc::Profile::Sample& entry) {
+     SampleMergedData& data = map[entry];
+@@ -274,17 +269,6 @@ SampleMergeResult MergeProfileSamplesAndMaybeGetResidencyInfo(
+           data.resident_size.value() += resident_size;
+           data.swapped_size.value() += swapped_size;
+         }
+-        if (residency_info->bytes_resident > 0 &&
+-            entry.span_start_address != nullptr) {
+-          std::optional<size_t> remote_bytes = residency->GetRemoteNumaBytes(
+-              entry.span_start_address, size, local_numa_node);
+-          if (remote_bytes.has_value()) {
+-            result.measured_numa = true;
+-            data.remote_numa_size +=
+-                entry.count *
+-                std::min(*remote_bytes, residency_info->bytes_resident);
+-          }
+-        }
+       }
+     }
+ 
+@@ -1105,9 +1089,6 @@ absl::StatusOr<std::unique_ptr<perftools::profiles::Profile>> MakeProfileProto(
+   // Bytes on pages marked incompressible by kernel pageflags (unit: "bytes").
+   const int incompressible_space_id =
+       builder.InternString("incompressible_space");
+-  // Bytes resident on NUMA nodes other than the profiler collection thread's
+-  // home NUMA node (unit: "bytes").
+-  const int remote_numa_space_id = builder.InternString("remote_numa_space");
+ 
+   // Sample types: content compressibility analysis (`kHeap` profiles).
+   // Estimated ZSTD-compressed size of backed (`resident_space + swapped_space`)
+@@ -1176,18 +1157,14 @@ absl::StatusOr<std::unique_ptr<perftools::profiles::Profile>> MakeProfileProto(
+ 
+   bool collecting_compressibility = false;
+ 
+-  // Only advertise space_compressed/zero_space and remote_numa_space when at
+-  // least one sample was actually measured.  Emitting the columns with a zero
+-  // in every sample is indistinguishable downstream from a genuinely
+-  // incompressible or 100% NUMA-local heap.
+-  const auto [samples, exporting_compressibility, exporting_numa] =
++  // Only advertise space_compressed/zero_space when at least one sample was
++  // actually analyzed.  Emitting the columns with a zero in every sample is
++  // indistinguishable downstream from a genuinely incompressible heap, so a
++  // profile that never ran the analyzer would otherwise be reported as 100%
++  // compressible rather than as having no data.
++  const auto [samples, exporting_compressibility] =
+       MergeProfileSamplesAndMaybeGetResidencyInfo(profile, pageflags, residency,
+                                                   collecting_compressibility);
+-  if (exporting_residency && exporting_numa) {
+-    perftools::profiles::ValueType* sample_type = converted.add_sample_type();
+-    sample_type->set_type(remote_numa_space_id);
+-    sample_type->set_unit(bytes_id);
+-  }
+   if (exporting_compressibility) {
+     perftools::profiles::ValueType* sample_type = nullptr;
+ 
+@@ -1230,9 +1207,6 @@ absl::StatusOr<std::unique_ptr<perftools::profiles::Profile>> MakeProfileProto(
+       sample.add_value(data.stale_size.value_or(0));
+       sample.add_value(data.locked_size.value_or(0));
+       sample.add_value(data.incompressible_size.value_or(0));
+-      if (exporting_numa) {
+-        sample.add_value(data.remote_numa_size);
+-      }
+     }
+     if (exporting_compressibility) {
+       sample.add_value(data.zero_size);
+```
+
+**File**: `tcmalloc/internal/profile_builder_test.cc` (modified, +12/-120)
+```diff
+@@ -72,8 +72,8 @@ using ::testing::IsSupersetOf;
+ using ::testing::Key;
+ using ::testing::Not;
+ using ::testing::Pair;
++using ::testing::SizeIs;
+ using ::testing::UnorderedElementsAre;
+-using ::testing::UnorderedElementsAreArray;
+ 
+ class StubPageFlags final : public PageFlagsBase {
+  public:
+@@ -147,29 +147,13 @@ class StubResidency final : public NoopResidency {
+     return std::nullopt;
+   }
+ 
+-  std::optional<size_t> GetRemoteNumaBytes(const void* addr, size_t size,
+-                                           int local_node) override {
+-    uintptr_t uaddr = reinterpret_cast<uintptr_t>(addr);
+-    auto it = remote_numa_bytes_.find(uaddr);
+-    if (it != remote_numa_bytes_.end()) {
+-      return std::min(it->second, size);
+-    }
+-    return std::nullopt;
+-  }
+-
+   void SetInfo(const void* addr, Info info) {
+     uintptr_t uaddr = reinterpret_cast<uintptr_t>(addr);
+     infos_[uaddr] = info;
+   }
+ 
+-  void SetRemoteNumaBytes(const void* addr, size_t bytes) {
+-    uintptr_t uaddr = reinterpret_cast<uintptr_t>(addr);
+-    remote_numa_bytes_[uaddr] = bytes;
+-  }
+-
+  private:
+   absl::flat_hash_map<uintptr_t, Info> infos_;
+-  absl::flat_hash_map<uintptr_t, size_t> remote_numa_bytes_;
+ };
+ 
+ // Returns the fully resolved path of this program.
+@@ -636,26 +620,20 @@ TEST(ProfileConverterTest, HeapProfile) {
+   // Require that the default_sample_type appeared in sample_type.
+   EXPECT_THAT(sample_types, testing::Contains(converted.default_sample_type()));
+ 
++  constexpr int kNumSampleTypes = 7
++      ;
+   // This is slightly redundant with the next line, but we need to loop over
+   // each of the samples later.
+   constexpr int kNumSamples = 6;
+-  std::vector<std::pair<std::string, std::string>> expected_sample_types = {
+-      {"objects", "count"},
+-      {"space", "bytes"},
+-      {"resident_space", "bytes"},
+-      {"stale_space", "bytes"},
+-      {"locked_space", "bytes"},
+-      {"incompressible_space", "bytes"},
+-      {"swapped_space", "bytes"},
+-  };
+-  if (ResidencyPageMap()
+-          .GetRemoteNumaBytes(&converted, sizeof(converted),
+-                              GetCurrentNumaNode())
+-          .has_value()) {
+-    expected_sample_types.emplace_back("remote_numa_space", "bytes");
+-  }
+-  EXPECT_THAT(extracted_sample_type,
+-              UnorderedElementsAreArray(expected_sample_types));
++  EXPECT_THAT(extracted_sample_type, SizeIs(kNumSampleTypes));
++  EXPECT_THAT(
++      extracted_sample_type,
++      UnorderedElementsAre(
++          Pair("objects", "count"), Pair("space", "bytes"),
++          Pair("resident_space", "bytes"), Pair("stale_space", "bytes"),
++          Pair("locked_space", "bytes"), Pair("incompressible_space", "bytes"),
++          Pair("swapped_space", "bytes")
++          ));
+ 
+   SampleLabels extracted_labels;
+   {
+@@ -1590,7 +1568,6 @@ TEST(ProfileConverterTest, NoCompressibilityColumnsWithoutMeasurements) {
+   EXPECT_THAT(types, Not(Contains("space_compressed")));
+   EXPECT_THAT(types, Not(Contains("zero_space")));
+   EXPECT_THAT(types, Not(Contains("analyzed_compressibility_space")));
+-  EXPECT_THAT(types, Not(Contains("remote_numa_space")));
+ 
+   // Every sample must still agree with the advertised sample types.
+   for (const auto& s : converted.sample()) {
+@@ -1907,91 +1884,6 @@ TEST(ProfileBuilderTest, DisabledSamplingReturnsNotFound) {
+             absl::StatusCode::kNotFound);
  }
  
-+TEST(ResidenceTest, GetRemoteNumaBytes) {
-+  const size_t kHardwarePageSize = GetPageSize();
-+  EXPECT_GE(GetCurrentNumaNode(), 0);
-+  constexpr size_t kNumPages = 70;
-+  constexpr size_t kResidentPages = 66;
-+  void* ptr = mmap(nullptr, kNumPages * kHardwarePageSize,
-+                   PROT_READ | PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
-+  ASSERT_NE(ptr, MAP_FAILED) << errno;
-+
-+  {
-+    AllocationGuard g;
-+    ResidencySpouse bad("/tmp/a667ba48-18ba-4523-a8a7-b49ece3a6c2b");
-+    EXPECT_EQ(bad.GetRemoteNumaBytes(ptr, kHardwarePageSize, 0), std::nullopt);
-+  }
-+
-+  ResidencySpouse r;
-+  EXPECT_EQ(r.GetRemoteNumaBytes(nullptr, kHardwarePageSize, 0), std::nullopt);
-+  EXPECT_EQ(r.GetRemoteNumaBytes(ptr, kHardwarePageSize, -1), std::nullopt);
-+  EXPECT_THAT(r.GetRemoteNumaBytes(ptr, 0, 0), Optional(0));
-+
-+  // Unbacked pages are not resident on any NUMA node.
-+  errno = 0;
-+  std::optional<size_t> unbacked =
-+      r.GetRemoteNumaBytes(ptr, kNumPages * kHardwarePageSize, 0);
-+  if (!unbacked.has_value() && (errno == EPERM || errno == ENOSYS)) {
-+    const int err = errno;
-+    ASSERT_EQ(munmap(ptr, kNumPages * kHardwarePageSize), 0) << errno;
-+    GTEST_SKIP() << "move_pages not supported: " << err;
-+  }
-+  EXPECT_THAT(unbacked, Optional(0));
-+
-+  // Fault in the first kResidentPages pages across multiple batches, leaving
-+  // the remaining pages unbacked.
-+  memset(ptr, 1, kResidentPages * kHardwarePageSize);
-+  ::benchmark::DoNotOptimize(ptr);
-+
-+  int actual_node = -1;
-+  for (int node = 0; node < 64; ++node) {
-+    if (r.GetRemoteNumaBytes(ptr, kHardwarePageSize, node) == size_t{0}) {
-+      actual_node = node;
-+      break;
-+    }
-+  }
-+  ASSERT_GE(actual_node, 0);
-+  EXPECT_THAT(r.GetRemoteNumaBytes(ptr, kHardwarePageSize, actual_node + 1),
-+              Optional(kHardwarePageSize));
-+
-+  // Querying against a node ID that holds none of the pages counts only the
-+  // resident pages and respects sub-page start/end offsets.
-+  constexpr int kOtherNode = 1000;
-+  EXPECT_THAT(
-+      r.GetRemoteNumaBytes(ptr, kNumPages * kHardwarePageSize, kOtherNode),
-+      Optional(kResidentPages * kHardwarePageSize));
-+  EXPECT_THAT(
-+      r.GetRemoteNumaBytes(static_cast<char*>(ptr) + 7,
-+                           kResidentPages * kHardwarePageSize, kOtherNode),
-+      Optional(kResidentPages * kHardwarePageSize - 7));
-+  EXPECT_THAT(r.GetRemoteNumaBytes(static_cast<char*>(ptr) + 7,
-+                                   kHardwarePageSize - 11, kOtherNode),
-+              Optional(kHardwarePageSize - 11));
-+
-+  const uintptr_t base_page = reinterpret_cast<uintptr_t>(ptr);
-+  EXPECT_FALSE(ForEachRemoteNumaPage(base_page + 1, 1, 0, [](size_t) {}));
-+  EXPECT_FALSE(ForEachRemoteNumaPage(base_page, 1, -1, [](size_t) {}));
-+  std::vector<size_t> remote_indices;
-+  ASSERT_TRUE(ForEachRemoteNumaPage(
-+      base_page, kNumPages, kOtherNode,
-+      [&](size_t page_index) { remote_indices.push_back(page_index); }));
-+  ASSERT_EQ(remote_indices.size(), kResidentPages);
-+  for (size_t i = 0; i < kResidentPages; ++i) {
-+    EXPECT_EQ(remote_indices[i], i);
-+  }
-+
-+  ASSERT_EQ(munmap(ptr, kNumPages * kHardwarePageSize), 0) << errno;
-+}
-+
-+TEST(ResidenceTest, GetRemoteNumaBytesOverflow) {
-+  const size_t kHardwarePageSize = GetPageSize();
-+  const uintptr_t last_page =
-+      std::numeric_limits<uintptr_t>::max() & ~(kHardwarePageSize - 1);
-+
-+  EXPECT_FALSE(ForEachRemoteNumaPage(last_page, 2, 0, [](size_t) {}));
-+
-+  ResidencySpouse r;
-+  char c = 0;
-+  const uintptr_t aligned_addr =
-+      reinterpret_cast<uintptr_t>(&c) & ~(kHardwarePageSize - 1);
-+  EXPECT_FALSE(ForEachRemoteNumaPage(
-+      aligned_addr, std::numeric_limits<size_t>::max(), 0, [](size_t) {}));
-+  EXPECT_EQ(r.GetRemoteNumaBytes(reinterpret_cast<const void*>(aligned_addr),
-+                                 std::numeric_limits<size_t>::max(), 0),
-+            std::nullopt);
-+  EXPECT_EQ(r.GetRemoteNumaBytes(reinterpret_cast<const void*>(last_page),
-+                                 kHardwarePageSize, 0),
-+            std::nullopt);
-+  EXPECT_EQ(r.GetRemoteNumaBytes(reinterpret_cast<const void*>(last_page + 1),
-+                                 kHardwarePageSize - 1, 0),
-+            std::nullopt);
-+  errno = 0;
-+  std::optional<size_t> last_page_res = r.GetRemoteNumaBytes(
-+      reinterpret_cast<const void*>(last_page + 1), kH
+-TEST(ProfileConverterTest, HeapProfileRemoteNumaSpace) {
+-  std::vector<char> buf_local(64, 'a');
+-  std::vector<char> buf_remote(64, 'b');
+-  std::vector<char> buf_mixed(64, 'm');
+-  std::vector<char> buf_clamped(64, 'd');
+-  std::vector<char> buf_unbacked(64, 'c');
+-
+-  Profile::Sample sample_local = {};
+-  sample_local.sum = 64;
+-  sample_local.count = 1;
+-  sample_local.requested_size = 64;
+-  sample_local.allocated_size = 64;
+-  sample_local.span_start_address = buf_local.data();
+-  sample_local.depth = 2;
+-  sample_local.stack[0] =
+-      reinterpret_cast<void*>(&ProfileAccessor::MakeProfile);
+-  sample_local.stack[1] = reinterpret_cast<void*>(&RealPath);
+-  sample_local.guarded_status = Profile::Sample::GuardedStatus::NotAttempted;
+-  sample_local.type = AllocationType::Malloc;
+-
+-  Profile::Sample sample_remote = sample_local;
+-  sample_remote.sum = 128;
+-  sample_remote.count = 2;
+-  sample_remote.span_start_address = buf_remote.data();
+-
+-  Profile::Sample sample_mixed = sample_local;
+-  sample_mixed.sum = 128;
+-  sample_mixed.count = 2;
+-  sample_mixed.span_start_address = buf_mixed.data();
+-
+-  Profile::Sample sample_clamped = sample_local;
+-  sample_clamped.sum = 128;
+-  sample_clamped.count = 2;
+-  sample_clamped.span_start_address = buf_clamped.data();
+-
+-  Profile::Sample sample_unbacked = sample_local;
+-  sample_unbacked.sum = 256;
+-  sample_unbacked.count = 4;
+-  sample_unbacked.span_start_address = buf_unbacked.data();
+-
+-  StubPageFlags pageflags;
+-  StubResidency residency;
+-  Residency::Info info;
+-  info.bytes_resident = 64;
+-  info.page_is_resident.SetBit(0);
+-  residency.S
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1944** (closed): No public description (@copybara-service[bot])
+- **PR #1943** (2026-11-19): Revert: Record remote NUMA residency on heap profile samples. (@copybara-service[bot])
+- **PR #1936** (2026-11-19): Automated Code Change (@copybara-service[bot])
+- **PR #1934** (2026-11-18): Migrate ABSL_ATTRIBUTE_SECTION to [[gnu::section(...)]] (@copybara-service[bot])
+- **PR #1931** (2026-11-18): Place ABSL_ATTRIBUTE_NO_SANITIZE_ADDRESS before ABSL_ATTRIBUTE_NOINLINE in HookList::InvokeSlow. (@copybara-service[bot])
 - **PR #1929** (2026-11-17): Encode x86-64 rseq signature inside a 7-byte nopl instruction (@copybara-service[bot])
-- **PR #1928** (2026-11-14): Avoid KCFI typeid emission in TestAliasedFunctions. (@copybara-service[bot])
-- **PR #1925** (2026-11-17): Add NUMA residency helpers to Residency. (@copybara-service[bot])
-- **PR #1921** (2026-11-13): Use small-model RIP-relative addressing for tc_globals on x86-64. (@copybara-service[bot])
-- **PR #1920** (2026-11-13): Automated Code Change (@copybara-service[bot])
-- **PR #1918** (closed): No public description (@copybara-service[bot])
 
 ---
 
@@ -1769,35 +1637,39 @@ PiperOrigin-RevId: 1024012371
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Propagate DeletePolicy alignment to ReportCorruptedFree.
+## X. Use AddOverflow when rounding up sizes in pvalloc.
 
 **RULE**:
-When implementing operations in `tcmalloc/tcmalloc.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tcmalloc/internal/overflow.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/tcmalloc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `01b9fd85`: Propagate DeletePolicy alignment to ReportCorruptedFree.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f63e9c75`: Use AddOverflow when rounding up sizes in pvalloc.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/tcmalloc.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `tcmalloc/internal/overflow.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-      ReportCorruptedFree(tc_globals, std::max(policy.align(), kAlignment),
-                          ptr);
-  return ReportCorruptedFree(tc_globals, std::max(policy.align(), kAlignment),
-                             ptr);
+[[nodiscard]] inline bool AddOverflow(size_t a, size_t b, size_t* out) {
+#if ABSL_HAVE_BUILTIN(__builtin_add_overflow)
+  return __builtin_add_overflow(a, b, out);
+#else
+  *out = a + b;
+  return *out < a;
+#endif
+}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-      ReportCorruptedFree(tc_globals, kAlignment, ptr);
-  return ReportCorruptedFree(tc_globals, kAlignment, ptr);
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `01b9fd85` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f63e9c75` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

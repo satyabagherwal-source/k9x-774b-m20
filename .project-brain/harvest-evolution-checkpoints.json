@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T17:43:23.980Z",
+  "last_updated": "2026-11-19T18:06:30.850Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T12:40:39.625Z",
@@ -153,7 +153,7 @@
       "staged_for_review": 1
     },
     "google-tcmalloc-learnings.md": {
-      "processed_at": "2026-11-17T22:40:06.983Z",
+      "processed_at": "2026-11-19T18:06:28.919Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1583,7 +1583,7 @@
       "staged_for_review": 1
     },
     "karmada-io-karmada-learnings.md": {
-      "processed_at": "2026-11-18T14:57:07.979Z",
+      "processed_at": "2026-11-19T18:06:30.004Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2878,8 +2878,8 @@
       "staged_for_review": 0
     },
     "hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md": {
-      "processed_at": "2026-11-15T04:44:29.707Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T18:06:29.665Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-openmoss-team-moss-image-base-learnings.md": {
@@ -3518,7 +3518,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2292,
+  "total_dossiers_evaluated": 2295,
   "total_canonical_promoted": 391,
-  "total_staged_for_review": 1706
+  "total_staged_for_review": 1708
 }

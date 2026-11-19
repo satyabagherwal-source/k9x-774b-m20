@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T17:43:23.829Z",
+  "last_updated": "2026-11-19T18:06:30.731Z",
   "total_verified_learnings": 9018,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21905,
+  "total_items": 21909,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -219799,13 +219799,13 @@
       "item_id": "candidate_directive-empirical-invariant-guard-in-changelog-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-8ZRY-empirical-invariant-guard-in-changelog-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-38EH-empirical-invariant-guard-in-changelog-md.md",
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "repository": "xerj-org/xerj",
-      "source_version": "dc1a4622",
-      "content_hash": "d097a00a3fb585f543c4c79892961e0e9db10843effa500bf494bd598a0fb5a3",
+      "repository": "openziti/zrok",
+      "source_version": "d8e5316d",
+      "content_hash": "be9d62bad3b21e7a4f373931651f4cddceceb9d5b38c17518a40208fe4460584",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T15:35:16.514Z"
+      "persisted_at": "2026-11-19T18:06:25.868Z"
     },
     "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants",
@@ -234666,8 +234666,8 @@
       "slug": "google-tcmalloc",
       "platform": "github",
       "source_url": "https://github.com/google/tcmalloc",
-      "source_version": "01b9fd85",
-      "content_hash": "a1ab1a814223e50ca3ac8179e5344983801206f0dcbb620afde8360a3b87103c",
+      "source_version": "f076c560",
+      "content_hash": "6c1b379a6793e79a21ed89dbda22ef506f484ff3b14b213d90c98b556de42a12",
       "dossier_path": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
       "promoted_rules": [
@@ -234685,6 +234685,11 @@
           "number": 9077,
           "title": "Propagate DeletePolicy alignment to ReportCorruptedFree.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9422,
+          "title": "Use AddOverflow when rounding up sizes in pvalloc.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234692,7 +234697,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T22:39:51.072Z",
+      "verified_at": "2026-11-19T18:06:15.325Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234734,10 +234739,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-tcmalloc-technical-construction-intelligence-google-tcmalloc-core-invaria.md",
       "title": "Technical Construction Intelligence: google/tcmalloc Core Invariants",
       "repository": "google/tcmalloc",
-      "source_version": "01b9fd85",
-      "content_hash": "da337b4f1b29a664e6ff2de1791d3500465be745f2cb1c07941264bb1746b848",
+      "source_version": "f076c560",
+      "content_hash": "18039c549b55cfecce5829b9954e71c645789277bf226cccdb1acfb7f628cb85",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T22:39:51.562Z"
+      "persisted_at": "2026-11-19T18:06:15.839Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-google-tcmalloc": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-google-tcmalloc",
@@ -234746,10 +234751,10 @@
       "relative_path": "08_VERIFICATION/google-tcmalloc-verification-protocol-empirical-defect-shield-for-google-tcmallo.md",
       "title": "Verification Protocol: Empirical Defect Shield for google/tcmalloc",
       "repository": "google/tcmalloc",
-      "source_version": "01b9fd85",
-      "content_hash": "648e14951108ee4a8df5138671ecdcb80a662ede5af7fa6fd88e4e7192a4f556",
+      "source_version": "f076c560",
+      "content_hash": "d50afbb5da87194efabeadfd766ce1149e9b4f95346cd7001794c58cd0430d68",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T22:39:51.694Z"
+      "persisted_at": "2026-11-19T18:06:15.971Z"
     },
     "learn-github-open-ani-animeko": {
       "learning_id": "learn-github-open-ani-animeko",
@@ -234864,9 +234869,9 @@
       "title": "Technical Construction Intelligence: google-tcmalloc-learnings Core Invariants",
       "repository": "google-tcmalloc-learnings",
       "source_version": "HEAD",
-      "content_hash": "0a31d2697a69debdf0adcf88627e3bd851bffa4f0221566c5fb1092d0bc6851c",
+      "content_hash": "f233edadbee417798c7c85f4f2c12f6a8a1d92e350d9b15a3dc1c6fa14389e2d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T22:40:07.362Z"
+      "persisted_at": "2026-11-19T18:06:29.375Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-google-tcmalloc-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-google-tcmalloc-learnings",
@@ -234876,9 +234881,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for google-tcmalloc-learnings",
       "repository": "google-tcmalloc-learnings",
       "source_version": "HEAD",
-      "content_hash": "976d828d8423ea416b4dfa3b53d5eb289690f9a61593a96811dd4746f889550f",
+      "content_hash": "54785b9591de7cd5d96204b35717627e8f08080e18f0cf97073e73309e84b30d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T22:40:07.498Z"
+      "persisted_at": "2026-11-19T18:06:29.529Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-3b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-d1-3b-learnings-core-invariants",
@@ -242262,7 +242267,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/Qwen3.8-Flash-Next-FP4-Local",
       "source_version": "hf-nvidia-qwen3.8-flash-next-fp4-local",
-      "content_hash": "5129eb1355d9058db0fb2e2ebd86fd913794fada4cb06f0e7abfbc1ffa641051",
+      "content_hash": "ae83d637cc71404086aa474abae54ea475720069dc29234185d64ed89ee7ee7a",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md",
       "promoted_rules": [],
@@ -242271,7 +242276,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T04:43:49.961Z",
+      "verified_at": "2026-11-19T18:06:13.348Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242288,9 +242293,9 @@
       "title": "Research & Knowledge Intelligence: nvidia/Qwen3.8-Flash-Next-FP4-Local Core Invariants",
       "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
       "source_version": "hf-nvidia-qwen3.8-flash-next-fp4-local",
-      "content_hash": "012173021b2bee27916550703d3e2480b3629e30270f1114f6220e43393e95fc",
+      "content_hash": "04dab9c676fb631d1965492ed7967ea56ed46db7bf784f96adf500cb49d3e3fc",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T04:43:50.280Z"
+      "persisted_at": "2026-11-19T18:06:13.729Z"
     },
     "learn-github-microsoft-react-native-windows": {
       "learning_id": "learn-github-microsoft-react-native-windows",
@@ -242388,9 +242393,9 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-qwen3.8-flash-next-fp4-local-learnings Core Invariants",
       "repository": "hf-nvidia-qwen3.8-flash-next-fp4-local-learnings",
       "source_version": "HEAD",
-      "content_hash": "82ff6c81e561d10ed1deb571b44d150c604dc08a8cb3ab3dae8df725448c3c76",
+      "content_hash": "63c95764f266fed17472abc077a60f4a80c0f1b263db1c71372aae5970f541ab",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T04:44:29.902Z"
+      "persisted_at": "2026-11-19T18:06:29.841Z"
     },
     "domain_intelligence-technical-construction-intelligence-microsoft-react-native-windows-learnings-cor": {
       "item_id": "domain_intelligence-technical-construction-intelligence-microsoft-react-native-windows-learnings-cor",
@@ -259146,8 +259151,8 @@
       "slug": "openziti-zrok",
       "platform": "github",
       "source_url": "https://github.com/openziti/zrok",
-      "source_version": "1a535cfa",
-      "content_hash": "64a81af53335c3cedb1a4cf14a142acb275abf0d946040af0076558cbbf33246",
+      "source_version": "d8e5316d",
+      "content_hash": "dabb4604d2657a7ca9ad91de59950f11e692bad43d8d8707cab5636913e888dd",
       "dossier_path": "07_PROJECT_LEARNING/openziti-zrok-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/openziti-zrok-learnings.md",
       "promoted_rules": [
@@ -259167,7 +259172,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T00:22:46.724Z",
+      "verified_at": "2026-11-19T18:06:25.445Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -259209,10 +259214,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-openziti-zrok-architecture-intelligence-openziti-zrok-core-invariants.md",
       "title": "Architecture Intelligence: openziti/zrok Core Invariants",
       "repository": "openziti/zrok",
-      "source_version": "1a535cfa",
-      "content_hash": "c849e1595be1d03f57be9c2335a12b17640e4d975bc0a9562d14f1d4c906ecbd",
+      "source_version": "d8e5316d",
+      "content_hash": "9945f3a0bfb22840f09f606c5be5565e0096881668bed760359d549ad242434a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T00:22:47.185Z"
+      "persisted_at": "2026-11-19T18:06:26.013Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-openziti-zrok": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-openziti-zrok",
@@ -259221,10 +259226,10 @@
       "relative_path": "08_VERIFICATION/openziti-zrok-verification-protocol-empirical-defect-shield-for-openziti-zrok.md",
       "title": "Verification Protocol: Empirical Defect Shield for openziti/zrok",
       "repository": "openziti/zrok",
-      "source_version": "1a535cfa",
-      "content_hash": "1c13bd6f92270105ce9854a594a3b864125cc4447cbbe90c6ff0f552a8f7398e",
+      "source_version": "d8e5316d",
+      "content_hash": "165729a0a44492aa1decc79db00e5230015fcbfcb5b5c73c614eb1b4bf373257",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T00:22:47.310Z"
+      "persisted_at": "2026-11-19T18:06:26.156Z"
     },
     "rule-8778": {
       "learning_id": "rule-8778",
@@ -263171,8 +263176,8 @@
       "slug": "karmada-io-karmada",
       "platform": "github",
       "source_url": "https://github.com/karmada-io/karmada",
-      "source_version": "12a8e01c",
-      "content_hash": "014721c6f6508fbdba8b08792f22c1bad015eca35fd39234fd40b985cf1f05d6",
+      "source_version": "f4c69979",
+      "content_hash": "2616dec24f231a040fef8b8755cf2ff83646a4422f72ecff70abf96da490a0ba",
       "dossier_path": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "promoted_rules": [
@@ -263185,6 +263190,11 @@
           "number": 9248,
           "title": "allow initial cert provisioning on upgrade in auto cert mode",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9423,
+          "title": "Empirical Invariant Guard in helper.go",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -263192,7 +263202,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T14:57:03.709Z",
+      "verified_at": "2026-11-19T18:06:23.916Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -263246,10 +263256,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/karmada-io-karmada-agent-contract-karmada-io-karmada-autonomous-specialist-perso.md",
       "title": "Agent Contract: karmada-io/karmada Autonomous Specialist Persona",
       "repository": "karmada-io/karmada",
-      "source_version": "12a8e01c",
-      "content_hash": "7d00fc640828faf1eeb345d7a2c1148bd26b9c87f4ce27d2785f0f55aa16ff75",
+      "source_version": "f4c69979",
+      "content_hash": "5525051ac3bc9540b46a872048e8f8ceaae329601c2620e03166b937e8b41918",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T14:57:04.523Z"
+      "persisted_at": "2026-11-19T18:06:24.547Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-karmada-io-karmada": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-karmada-io-karmada",
@@ -263258,10 +263268,10 @@
       "relative_path": "08_VERIFICATION/karmada-io-karmada-verification-protocol-empirical-defect-shield-for-karmada-io-.md",
       "title": "Verification Protocol: Empirical Defect Shield for karmada-io/karmada",
       "repository": "karmada-io/karmada",
-      "source_version": "12a8e01c",
-      "content_hash": "3e671952636123042694c2d5de26a9335725c8e088ebfae0d7352670683ae3d9",
+      "source_version": "f4c69979",
+      "content_hash": "7d694de056972b6b3b9fa03cd9a5cdb334a1b7db7115f9322b5dacdf3d27a37a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T14:57:04.678Z"
+      "persisted_at": "2026-11-19T18:06:24.661Z"
     },
     "rule-8831": {
       "learning_id": "rule-8831",
@@ -263309,9 +263319,9 @@
       "title": "Agent Contract: karmada-io-karmada-learnings Autonomous Specialist Persona",
       "repository": "karmada-io-karmada-learnings",
       "source_version": "HEAD",
-      "content_hash": "4bc444b98d1a6bbdd3d6aeeae85423d2dd25212c15c3a348966abb2d5e5760e0",
+      "content_hash": "b55f2becbf0103ae70b26aa312136bfdf88e2dc8e74db54245732dc416ad2b70",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T14:57:09.005Z"
+      "persisted_at": "2026-11-19T18:06:30.615Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-karmada-io-karmada-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-karmada-io-karmada-learnings",
@@ -263321,9 +263331,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for karmada-io-karmada-learnings",
       "repository": "karmada-io-karmada-learnings",
       "source_version": "HEAD",
-      "content_hash": "ba4edb5c8b12b2f67297756b189a1213c09783134eff1c2b8f80dc9fa29cde20",
+      "content_hash": "10e09eecf562c1ea2d47794643e88b6f237767218f3bde387781c9a80d165dc6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T14:57:09.164Z"
+      "persisted_at": "2026-11-19T18:06:30.731Z"
     },
     "learn-github-digitalbazaar-pyld": {
       "learning_id": "learn-github-digitalbazaar-pyld",
@@ -288667,10 +288677,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-karmada-io-karmada-architecture-intelligence-karmada-io-karmada-core-invariants.md",
       "title": "Architecture Intelligence: karmada-io/karmada Core Invariants",
       "repository": "karmada-io/karmada",
-      "source_version": "12a8e01c",
-      "content_hash": "9af0c71f7d366e61482fd3e14078be0624a61679bbbc49f446aba48433b3dab4",
+      "source_version": "f4c69979",
+      "content_hash": "296093875d8fbd575d19eb39d43d68bb72e9fcbb0b2ca37af8d32fcdc20fa0b7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T14:57:04.349Z"
+      "persisted_at": "2026-11-19T18:06:24.412Z"
     },
     "candidate_directive-helm-allow-initial-cert-provisioning-on-upgrade-in-auto-cert-mode": {
       "item_id": "candidate_directive-helm-allow-initial-cert-provisioning-on-upgrade-in-auto-cert-mode",
@@ -288692,9 +288702,9 @@
       "title": "Architecture Intelligence: karmada-io-karmada-learnings Core Invariants",
       "repository": "karmada-io-karmada-learnings",
       "source_version": "HEAD",
-      "content_hash": "30f5718ada17bdbad82386b870f4419aacdba7075d5fda8fc7d60afa6905e610",
+      "content_hash": "0164f6c8e616f34b2b8011fdfe902bf0acd85f11302950b96e1cef0074b6c976",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T14:57:08.829Z"
+      "persisted_at": "2026-11-19T18:06:30.478Z"
     },
     "rule-9249": {
       "learning_id": "rule-9249",
@@ -296238,6 +296248,58 @@
       "content_hash": "7cd6f377f7fb4e1709d139a72a83a4b2de2ed049ed144ef50aeca09a319b7a55",
       "domain_letter": "H",
       "persisted_at": "2026-11-19T17:43:23.663Z"
+    },
+    "rule-9422": {
+      "learning_id": "rule-9422",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9422,
+      "title": "Use AddOverflow when rounding up sizes in pvalloc.",
+      "source_url": "https://github.com/google/tcmalloc",
+      "source_version": "f076c560",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T18:06:15.325Z"
+    },
+    "candidate_directive-use-addoverflow-when-rounding-up-sizes-in-pvalloc": {
+      "item_id": "candidate_directive-use-addoverflow-when-rounding-up-sizes-in-pvalloc",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3AZX-use-addoverflow-when-rounding-up-sizes-in-pvalloc.md",
+      "title": "Use AddOverflow when rounding up sizes in pvalloc.",
+      "repository": "google-tcmalloc-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9c46a5ecb793899c2c62ff74dd4614567d9a7452e789c3f49fcf027955e1803e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T18:06:29.230Z"
+    },
+    "rule-9423": {
+      "learning_id": "rule-9423",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9423,
+      "title": "Empirical Invariant Guard in helper.go",
+      "source_url": "https://github.com/karmada-io/karmada",
+      "source_version": "f4c69979",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T18:06:23.916Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-helper-go": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-helper-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3BUL-empirical-invariant-guard-in-helper-go.md",
+      "title": "Empirical Invariant Guard in helper.go",
+      "repository": "karmada-io-karmada-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7a03b1f37a9ee2b7ed932f1995f024226d83547b5673c637391bb5e5fcf4406e",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T18:06:30.333Z"
     }
   },
   "ai-builder-brain": {

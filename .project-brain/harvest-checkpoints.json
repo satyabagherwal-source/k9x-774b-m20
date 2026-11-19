@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T17:42:49.270Z",
+  "last_updated": "2026-11-19T18:06:25.683Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2631,14 +2631,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-qwen3-8-flash-next-fp4-local",
-      "content_hash": "5129eb1355d9058db0fb2e2ebd86fd913794fada4cb06f0e7abfbc1ffa641051",
-      "verified_at": "2026-11-15T04:43:50.122Z",
+      "content_hash": "ae83d637cc71404086aa474abae54ea475720069dc29234185d64ed89ee7ee7a",
+      "verified_at": "2026-11-19T18:06:13.561Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T04:43:50.122Z"
+      "last_updated": "2026-11-19T18:06:13.561Z"
     },
     "OpenMOSS-Team/MOSS-Image-Base": {
       "repository": "OpenMOSS-Team/MOSS-Image-Base",
@@ -3456,14 +3456,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openziti-zrok",
-      "content_hash": "64a81af53335c3cedb1a4cf14a142acb275abf0d946040af0076558cbbf33246",
-      "verified_at": "2026-11-18T00:22:46.898Z",
+      "content_hash": "dabb4604d2657a7ca9ad91de59950f11e692bad43d8d8707cab5636913e888dd",
+      "verified_at": "2026-11-19T18:06:25.683Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T00:22:46.898Z"
+      "last_updated": "2026-11-19T18:06:25.683Z"
     },
     "crate/crate": {
       "repository": "crate/crate",
@@ -4341,14 +4341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karmada-io-karmada",
-      "content_hash": "014721c6f6508fbdba8b08792f22c1bad015eca35fd39234fd40b985cf1f05d6",
-      "verified_at": "2026-11-18T14:57:03.942Z",
+      "content_hash": "2616dec24f231a040fef8b8755cf2ff83646a4422f72ecff70abf96da490a0ba",
+      "verified_at": "2026-11-19T18:06:24.103Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T14:57:03.942Z"
+      "last_updated": "2026-11-19T18:06:24.103Z"
     },
     "milvus-io/bootcamp": {
       "repository": "milvus-io/bootcamp",
@@ -11571,14 +11571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-google-tcmalloc",
-      "content_hash": "a1ab1a814223e50ca3ac8179e5344983801206f0dcbb620afde8360a3b87103c",
-      "verified_at": "2026-11-17T22:39:51.263Z",
+      "content_hash": "6c1b379a6793e79a21ed89dbda22ef506f484ff3b14b213d90c98b556de42a12",
+      "verified_at": "2026-11-19T18:06:15.522Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T22:39:51.263Z"
+      "last_updated": "2026-11-19T18:06:15.522Z"
     },
     "russhwolf/multiplatform-settings": {
       "repository": "russhwolf/multiplatform-settings",
