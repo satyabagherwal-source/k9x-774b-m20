@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T05:55:02.762Z",
-  "total_records": 1947,
+  "last_updated": "2026-11-19T06:34:04.195Z",
+  "total_records": 1952,
   "domains": {
     "A": {
       "total": 13,
@@ -886,7 +886,7 @@
       ]
     },
     "F": {
-      "total": 59,
+      "total": 60,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -946,7 +946,8 @@
         "DOM-F-8389708E",
         "DOM-F-3AD6D1E9",
         "domain_intelligence-design-intelligence-argoproj-argo-workflows-core-invariants",
-        "domain_intelligence-design-intelligence-argoproj-argo-workflows-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-argoproj-argo-workflows-learnings-core-invariants",
+        "DOM-F-6F26131A"
       ]
     },
     "G": {
@@ -1295,7 +1296,7 @@
       ]
     },
     "H": {
-      "total": 450,
+      "total": 454,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1746,7 +1747,11 @@
         "domain_intelligence-technical-construction-intelligence-octodns-octodns-core-invariants",
         "domain_intelligence-technical-construction-intelligence-genkit-ai-genkit-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-onejs-one-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-onejs-one-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-onejs-one-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-autotrust-autotrust-decider-pro-vision-27b-c",
+        "domain_intelligence-technical-construction-intelligence-prometheus-prometheus-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invar",
+        "domain_intelligence-technical-construction-intelligence-prometheus-prometheus-learnings-core-invaria"
       ]
     },
     "I": {
@@ -7948,8 +7953,8 @@
       "title": "Technical Construction Intelligence: ClickHouse/ClickHouse Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-technical-construction-intelligence-clickhouse-clickhouse-.md",
       "repository": "ClickHouse/ClickHouse",
-      "content_hash": "50403466e5b6bc42182e18e20e0d2e7dff4d00cfa1f9013b0397727307ccc2f5",
-      "created_at": "2026-11-17T14:58:08.046Z"
+      "content_hash": "defc0f26470b8de43c788c469d173c65e1c7e4929c8eed0127fce934c163b1da",
+      "created_at": "2026-11-19T06:30:23.175Z"
     },
     "DOM-D-303E5CE5": {
       "record_id": "DOM-D-303E5CE5",
@@ -18189,8 +18194,8 @@
       "title": "Technical Construction Intelligence: clickhouse-clickhouse-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-learnings-technical-construction-intelligence-clickhouse-c.md",
       "repository": "clickhouse-clickhouse-learnings",
-      "content_hash": "9e1149df65d1de011c37979def2254f578fc3bf9c5801686d6bad25bf312f8d0",
-      "created_at": "2026-11-17T14:58:12.152Z"
+      "content_hash": "3ed52a281b8e09687ae808c012dd42e15efea54c4cbfbc137c892b8b1e7a8a36",
+      "created_at": "2026-11-19T06:34:04.195Z"
     },
     "domain_intelligence-research-knowledge-intelligence-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-atomicchat-qwen-image-2-1-turbo-uncensored-gguf-",
@@ -32665,6 +32670,76 @@
       "repository": "duckdb-duckdb-learnings",
       "content_hash": "4c9b3f43fafc52f5ab1ead572e83cafd36a0e8999fd4521e9ff812b0d0fd35a9",
       "created_at": "2026-11-19T05:55:02.137Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-autotrust-autotrust-decider-pro-vision-27b-c": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-autotrust-autotrust-decider-pro-vision-27b-c",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: autotrust/AutoTrust-Decider-Pro-Vision-27B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-autotrust-jev-27b-vl-technical-construction-intelligence-autotrust-autotrust-.md",
+      "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+      "content_hash": "05982a2bad08bd56750b4394191c683c014b5a3a613e64be144cc190332ddb2d",
+      "created_at": "2026-11-19T06:33:00.667Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-prometheus-prometheus-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-prometheus-prometheus-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: prometheus/prometheus Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-prometheus-prometheus-technical-construction-intelligence-prometheus-prometheus-.md",
+      "repository": "prometheus/prometheus",
+      "content_hash": "6a8a9161e9db57b11b080e72d8df8cad8c4b0e84af715c3ac90c7c9743bf4417",
+      "created_at": "2026-11-19T06:33:34.845Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invar": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invar",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: hf-autotrust-jev-27b-vl-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-autotrust-jev-27b-vl-learnings-technical-construction-intelligence-hf-autotru.md",
+      "repository": "hf-autotrust-jev-27b-vl-learnings",
+      "content_hash": "1db9d88df41e9250f1d8b6428e9bba8e02c0548bb2a4bde12fe0777f1b539a36",
+      "created_at": "2026-11-19T06:33:38.255Z"
+    },
+    "DOM-F-6F26131A": {
+      "record_id": "DOM-F-6F26131A",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "Series Focus Stroke Emphasis & Redraw Optimization in Graph UI (BUG-UI-UPLOT-01)",
+      "content": "High-density canvas renderers must parameterize redraw calls: bypass path and axis recalculation (`u.redraw(false, false)`) when updating pure style properties (e.g., stroke width).",
+      "content_hash": "c4b6004bd3c5293108063a8d006b4e2e6efa7d8620029e952c3f76ddb970d355",
+      "summary": "The chart helper lacked a selective `setSeries` hook that could isolate stroke width mutations from general chart data rebuilds. Mutating se -> High-density canvas renderers must parameterize redraw calls: bypass path and axis recalculation (`u.redraw(false, false)`) when updating pu",
+      "provenance": {
+        "source_uri": "project://prometheus-prometheus/prometheus-prometheus-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T06:33:38.473Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (prometheus-prometheus)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "PR #20470, Commit `21b0d7ea`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T06:34:02.685Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-prometheus-prometheus-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-prometheus-prometheus-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: prometheus-prometheus-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-prometheus-prometheus-learnings-technical-construction-intelligence-prometheus-p.md",
+      "repository": "prometheus-prometheus-learnings",
+      "content_hash": "67c8ec8bab187dc1320281b50621d7bfe24011cbe3f4acdfc8e7691e5d52424a",
+      "created_at": "2026-11-19T06:34:03.331Z"
     }
   }
 }

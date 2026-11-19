@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T05:54:58.174Z",
-  "total_cycles_completed": 10714,
-  "total_learnings_persisted": 10714,
-  "total_rules_promoted": 10107,
+  "last_updated": "2026-11-19T06:33:34.364Z",
+  "total_cycles_completed": 10717,
+  "total_learnings_persisted": 10717,
+  "total_rules_promoted": 10114,
   "history": [
-    {
-      "timestamp": "2026-11-18T13:56:51.405Z",
-      "repository": "fallow-rs/fallow",
-      "learningId": "learn-github-fallow-rs-fallow",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T13:57:03.176Z",
-      "repository": "paradedb/paradedb",
-      "learningId": "learn-github-paradedb-paradedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T14:05:01.687Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T14:08:08.277Z",
       "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -1403,6 +1382,27 @@
       "repository": "duckdb/duckdb",
       "learningId": "learn-github-duckdb-duckdb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T06:30:22.908Z",
+      "repository": "ClickHouse/ClickHouse",
+      "learningId": "learn-github-clickhouse-clickhouse",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T06:33:00.329Z",
+      "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+      "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T06:33:34.364Z",
+      "repository": "prometheus/prometheus",
+      "learningId": "learn-github-prometheus-prometheus",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

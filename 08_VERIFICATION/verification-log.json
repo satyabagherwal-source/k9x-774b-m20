@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-XJL7",
-    "timestamp": "2026-11-17T18:26:39.595Z",
-    "repository": "t8y2/dbx",
-    "learningId": "learn-github-t8y2-dbx",
-    "contentHash": "dcecdebe64f01f4b424fe4e711263b9ebe5a54ae552b554e3c842c2b30d00ec0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-8QVW",
-    "timestamp": "2026-11-17T18:35:22.268Z",
-    "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
-    "learningId": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored",
-    "contentHash": "c0e790dd9f2b8f83b1b3ab17d80f10d146249b19ed131bf6c9eac91da2909810",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-8STN",
-    "timestamp": "2026-11-17T18:35:24.779Z",
-    "repository": "HuggingFaceBio/Carbon-X",
-    "learningId": "learn-huggingface-huggingfacebio-carbon-x",
-    "contentHash": "8703cf17354348dbddbd4a803082e9431b2df475e24e7008e7e128d0af1257ac",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-9190",
     "timestamp": "2026-11-17T18:35:35.700Z",
     "repository": "flux-iac/tofu-controller",
@@ -7492,6 +7447,51 @@
     "contentHash": "a9273eea696a6f56b8fed80d445d16a342ffcb892fc783abd9d48ed70621fe4d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-83W5",
+    "timestamp": "2026-11-19T06:30:22.901Z",
+    "repository": "ClickHouse/ClickHouse",
+    "learningId": "learn-github-clickhouse-clickhouse",
+    "contentHash": "2f4085a8c2a9a3ee0e3ffbf5aba9c961196bd170af7ea7603d7fc603f925669a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-BHCY",
+    "timestamp": "2026-11-19T06:33:00.322Z",
+    "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+    "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+    "contentHash": "61c889413ad5d0b4ff1852d264671acc1154712698d4cf65a91a360409b7831c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-C7MD",
+    "timestamp": "2026-11-19T06:33:34.357Z",
+    "repository": "prometheus/prometheus",
+    "learningId": "learn-github-prometheus-prometheus",
+    "contentHash": "a630cdd4c5129d110cfe32d139cb6a5a71f56f5a479ff69bd7675a1c2e0ce39c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

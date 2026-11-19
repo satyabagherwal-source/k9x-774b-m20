@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T05:55:02.629Z",
+  "last_updated": "2026-11-19T06:34:04.067Z",
   "directives": [
     {
       "id": "CD-001",
@@ -32219,6 +32219,97 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-3F8075-rust-address-the-remaining-issues-in-418.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-CUJA",
+      "directive_title": "Empirical Invariant Guard in llvm-project",
+      "source_repo": "clickhouse-clickhouse-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CUJA-empirical-invariant-guard-in-llvm-project.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-CTNG",
+      "directive_title": "Monotonic Ceiling Inheritance for Dynamic Client Limits",
+      "source_repo": "prometheus-prometheus-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CTNG-monotonic-ceiling-inheritance-for-dynamic-client-limits.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-CTNH",
+      "directive_title": "Asynchronous Ring Buffer Drop-Oldest Saturation Invariant",
+      "source_repo": "prometheus-prometheus-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CTNH-asynchronous-ring-buffer-drop-oldest-saturation-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-7431D2",
+      "directive_title": "KV-Cache Index Desynchronization in Heterogeneous Layer Schedules (BUG-JEV-01)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-autotrust-jev-27b-vl",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-7431D2-kv-cache-index-desynchronization-in-hete.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-0EBC7F",
+      "directive_title": "Premature Termination During Embodied System 2 Thinking Passes (BUG-JEV-02)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-autotrust-jev-27b-vl",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0EBC7F-premature-termination-during-embodied-sy.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-CACV",
+      "directive_title": "Multi-Token Termination Contract Invariant for Chat/Reasoning Decoders",
+      "source_repo": "hf-autotrust-jev-27b-vl-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CACV-multi-token-termination-contract-invariant-for-chat-reasoning-decoders.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-CACW",
+      "directive_title": "Modality-Balanced Softmax Gating for Hybrid Cross-Attention",
+      "source_repo": "hf-autotrust-jev-27b-vl-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CACW-modality-balanced-softmax-gating-for-hybrid-cross-attention.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-37EA19",
+      "directive_title": "Early Compaction Series Tombstone Loss with Exemplars Causing Unknown Series WAL Corruption (BUG-TSDB-TOMB-02)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "prometheus-prometheus",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-37EA19-early-compaction-series-tombstone-loss-w.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-27D68F",
+      "directive_title": "Empirical Invariant Guard in llvm-project",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "clickhouse-clickhouse",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-27D68F-empirical-invariant-guard-in-llvm-projec.md",
       "staged_date": "2026-11-19"
     }
   ]

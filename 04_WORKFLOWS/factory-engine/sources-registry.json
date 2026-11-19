@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T05:55:01.259Z",
-    "lastVerified": "2026-11-19T05:55:01.259Z",
+    "lastChecked": "2026-11-19T06:33:37.617Z",
+    "lastVerified": "2026-11-19T06:33:37.617Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -242,9 +242,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-19T05:06:16.605Z",
+    "lastChecked": "2026-11-19T06:30:13.845Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-19T05:06:16.605Z"
+    "lastVerified": "2026-11-19T06:30:13.845Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1675,12 +1675,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cilium-cilium": {
-    "name": "cilium/cilium",
+    "name": "cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-18T23:18:22.623Z",
-    "lastVerified": "2026-11-18T23:18:22.623Z",
+    "lastChecked": "2026-11-19T06:30:09.180Z",
+    "lastVerified": "2026-11-19T06:30:09.180Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
@@ -1689,7 +1689,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "d65ec42b"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -6399,6 +6400,71 @@
     "contentHash": "a9273eea696a6f56b8fed80d445d16a342ffcb892fc783abd9d48ed70621fe4d",
     "promotedRulesCount": 1,
     "recentFixesCount": 7,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sachaos-viddy": {
+    "name": "viddy",
+    "officialUrl": "https://github.com/sachaos/viddy",
+    "lastChecked": "2026-11-19T06:29:58.894Z",
+    "revisionIdentifier": "b56efe08",
+    "lastVerified": "2026-11-19T06:29:58.894Z"
+  },
+  "hf-autotrust-jev-27b-vl": {
+    "name": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+    "officialUrl": "https://huggingface.co/autotrust/JEV-27B-VL",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T06:30:02.311Z",
+    "lastVerified": "2026-11-19T06:30:02.311Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-autotrust-jev-27b-vl",
+    "contentHash": "61c889413ad5d0b4ff1852d264671acc1154712698d4cf65a91a360409b7831c",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "apollographql-apollo-kotlin": {
+    "name": "apollo-kotlin",
+    "officialUrl": "https://github.com/apollographql/apollo-kotlin",
+    "lastChecked": "2026-11-19T06:30:04.064Z",
+    "revisionIdentifier": "257ec5f0",
+    "lastVerified": "2026-11-19T06:30:04.064Z"
+  },
+  "prometheus-prometheus": {
+    "name": "prometheus/prometheus",
+    "officialUrl": "https://github.com/prometheus/prometheus",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-19T06:30:12.918Z",
+    "lastVerified": "2026-11-19T06:30:12.918Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-prometheus-prometheus",
+    "contentHash": "a630cdd4c5129d110cfe32d139cb6a5a71f56f5a479ff69bd7675a1c2e0ce39c",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "clickhouse-clickhouse": {
+    "name": "ClickHouse/ClickHouse",
+    "officialUrl": "https://github.com/ClickHouse/ClickHouse",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-11-19T06:30:20.784Z",
+    "lastVerified": "2026-11-19T06:30:20.784Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-clickhouse-clickhouse",
+    "contentHash": "2f4085a8c2a9a3ee0e3ffbf5aba9c961196bd170af7ea7603d7fc603f925669a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 17,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

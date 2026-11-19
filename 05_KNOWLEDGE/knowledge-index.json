@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T05:55:03.022Z",
+  "last_updated": "2026-11-19T06:34:04.322Z",
   "total_verified_learnings": 9014,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21648,
+  "total_items": 21667,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -29108,15 +29108,15 @@
       "learning_id": "rule-1335",
       "category": "ENGINEERING_PATTERN",
       "rule_number": 1335,
-      "title": "Hybrid Linear-Quadratic Attention State Retention Invariant (Harvested from TaichuAI/ZDTaichu5.0-9B)",
-      "source_url": "Canonical Pattern in 05_KNOWLEDGE/engineering-patterns.md",
-      "source_version": "HEAD",
+      "title": "Hybrid Linear-Quadratic Attention State Retention Invariant",
+      "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
+      "source_version": "hf-autotrust-jev-27b-vl",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-10-18T11:19:25.819Z"
+      "verified_at": "2026-11-19T06:33:00.091Z"
     },
     "rule-1336": {
       "learning_id": "rule-1336",
@@ -112633,10 +112633,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clickhouse-clickhouse-technical-construction-intelligence-clickhouse-clickhouse-.md",
       "title": "Technical Construction Intelligence: ClickHouse/ClickHouse Core Invariants",
       "repository": "ClickHouse/ClickHouse",
-      "source_version": "67804652",
-      "content_hash": "50403466e5b6bc42182e18e20e0d2e7dff4d00cfa1f9013b0397727307ccc2f5",
+      "source_version": "92fdcb78",
+      "content_hash": "defc0f26470b8de43c788c469d173c65e1c7e4929c8eed0127fce934c163b1da",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T14:58:08.046Z"
+      "persisted_at": "2026-11-19T06:30:23.175Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse",
@@ -112645,10 +112645,10 @@
       "relative_path": "08_VERIFICATION/clickhouse-clickhouse-verification-protocol-empirical-defect-shield-for-clickhou.md",
       "title": "Verification Protocol: Empirical Defect Shield for ClickHouse/ClickHouse",
       "repository": "ClickHouse/ClickHouse",
-      "source_version": "67804652",
-      "content_hash": "e26cce21cc41ebbb92b19c6c397def451eb39b24caec4116963b660def607908",
+      "source_version": "92fdcb78",
+      "content_hash": "ca83f273bdb8261dd8d4b3b935e4d26c59bb6fa9d2dba1463b254e7e9022321f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T14:58:08.168Z"
+      "persisted_at": "2026-11-19T06:30:23.285Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-apple-lensvlm-9b-learnings-core-invariants",
@@ -216422,8 +216422,8 @@
       "slug": "prometheus-prometheus",
       "platform": "github",
       "source_url": "https://github.com/prometheus/prometheus",
-      "source_version": "620819d1",
-      "content_hash": "d1cf5c7cdc4ebb8774b09100a7702edf5e2cedafed1982fb65b99fe3a31789d2",
+      "source_version": "cb4e01dd",
+      "content_hash": "a630cdd4c5129d110cfe32d139cb6a5a71f56f5a479ff69bd7675a1c2e0ce39c",
       "dossier_path": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/prometheus-prometheus-learnings.md",
       "promoted_rules": [
@@ -216441,6 +216441,21 @@
           "number": 9004,
           "title": "Empirical Invariant Guard in write_otlp_handler.go",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9343,
+          "title": "Zero-Allocation Map Lifecycle & Memory Reclamation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9344,
+          "title": "Monotonic Ceiling Inheritance for Dynamic Client Limits",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9345,
+          "title": "Asynchronous Ring Buffer Drop-Oldest Saturation Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216448,7 +216463,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T16:38:47.782Z",
+      "verified_at": "2026-11-19T06:33:34.182Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216502,10 +216517,10 @@
       "relative_path": "08_VERIFICATION/prometheus-prometheus-verification-protocol-empirical-defect-shield-for-promethe.md",
       "title": "Verification Protocol: Empirical Defect Shield for prometheus/prometheus",
       "repository": "prometheus/prometheus",
-      "source_version": "620819d1",
-      "content_hash": "b7e46dd66e2003bdc8f5749e8de78dec584ec7051be51d23871c3e2211a50e59",
+      "source_version": "cb4e01dd",
+      "content_hash": "092aa5d2976609176163146f4b1a84befc124bfb557c2fbbf59bb6b1468c9a40",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:38:48.492Z"
+      "persisted_at": "2026-11-19T06:33:34.957Z"
     },
     "learn-github-lancedb-lancedb": {
       "learning_id": "learn-github-lancedb-lancedb",
@@ -232720,16 +232735,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
       "source_version": "hf-autotrust-jev-27b-vl",
-      "content_hash": "3a005cb391aab9fcb892ae95a29c266a79abc7fbdec01e72dd59605b80f189f7",
+      "content_hash": "61c889413ad5d0b4ff1852d264671acc1154712698d4cf65a91a360409b7831c",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-27b-vl-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 1335,
+          "title": "Hybrid Linear-Quadratic Attention State Retention Invariant",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 9341,
+          "title": "Multi-Token Termination Contract Invariant for Chat/Reasoning Decoders",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9342,
+          "title": "Modality-Balanced Softmax Gating for Hybrid Cross-Attention",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T16:43:18.237Z",
+      "verified_at": "2026-11-19T06:33:00.091Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237706,8 +237737,8 @@
       "slug": "clickhouse-clickhouse",
       "platform": "github",
       "source_url": "https://github.com/ClickHouse/ClickHouse",
-      "source_version": "67804652",
-      "content_hash": "06e2bd229839c159eac737450a1883888cd21599196d488de2a126c0daf6146c",
+      "source_version": "92fdcb78",
+      "content_hash": "2f4085a8c2a9a3ee0e3ffbf5aba9c961196bd170af7ea7603d7fc603f925669a",
       "dossier_path": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
       "promoted_rules": [
@@ -237725,6 +237756,11 @@
           "number": 8980,
           "title": "Empirical Invariant Guard in resolveFunction.cpp",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9340,
+          "title": "Empirical Invariant Guard in llvm-project",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237732,7 +237768,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T14:58:07.582Z",
+      "verified_at": "2026-11-19T06:30:22.761Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237826,9 +237862,9 @@
       "title": "Technical Construction Intelligence: clickhouse-clickhouse-learnings Core Invariants",
       "repository": "clickhouse-clickhouse-learnings",
       "source_version": "HEAD",
-      "content_hash": "9e1149df65d1de011c37979def2254f578fc3bf9c5801686d6bad25bf312f8d0",
+      "content_hash": "3ed52a281b8e09687ae808c012dd42e15efea54c4cbfbc137c892b8b1e7a8a36",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T14:58:12.152Z"
+      "persisted_at": "2026-11-19T06:34:04.195Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clickhouse-clickhouse-learning",
@@ -237838,9 +237874,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for clickhouse-clickhouse-learnings",
       "repository": "clickhouse-clickhouse-learnings",
       "source_version": "HEAD",
-      "content_hash": "1f32c432ff492fcbc4e8571963141bb506fa1d2730a7d7746604941db1849d24",
+      "content_hash": "93414c9ca1ec7330b839fe5bcca6acec829770c04940ca473ece5e74462bde3e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T14:58:12.282Z"
+      "persisted_at": "2026-11-19T06:34:04.322Z"
     },
     "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf": {
       "learning_id": "learn-huggingface-atomicchat-qwen-image-2-1-turbo-uncensored-gguf",
@@ -257213,9 +257249,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for prometheus-prometheus-learnings",
       "repository": "prometheus-prometheus-learnings",
       "source_version": "HEAD",
-      "content_hash": "f0d578bbf20fb2a0f0186c709c53855db0d86f913e48c34970ce6ebc1c06ea3d",
+      "content_hash": "b797de50a8607b6f36bd771a9dff2c2d2e418a6a3aa85ee3470d7d0ed18409a9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:38:58.713Z"
+      "persisted_at": "2026-11-19T06:34:03.462Z"
     },
     "learn-github-stakater-reloader": {
       "learning_id": "learn-github-stakater-reloader",
@@ -292494,6 +292530,246 @@
       "content_hash": "4c9b3f43fafc52f5ab1ead572e83cafd36a0e8999fd4521e9ff812b0d0fd35a9",
       "domain_letter": "K",
       "persisted_at": "2026-11-19T05:55:02.137Z"
+    },
+    "rule-9340": {
+      "learning_id": "rule-9340",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9340,
+      "title": "Empirical Invariant Guard in llvm-project",
+      "source_url": "https://github.com/ClickHouse/ClickHouse",
+      "source_version": "92fdcb78",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T06:30:22.761Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-llvm-project": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-llvm-project",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CUJA-empirical-invariant-guard-in-llvm-project.md",
+      "title": "Empirical Invariant Guard in llvm-project",
+      "repository": "clickhouse-clickhouse-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1b46f7a19c1b715d28cb6aa1f3bd0df37819e56babdb7de8564c04d0e252587b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T06:34:04.067Z"
+    },
+    "rule-9341": {
+      "learning_id": "rule-9341",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9341,
+      "title": "Multi-Token Termination Contract Invariant for Chat/Reasoning Decoders",
+      "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
+      "source_version": "hf-autotrust-jev-27b-vl",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T06:33:00.091Z"
+    },
+    "rule-9342": {
+      "learning_id": "rule-9342",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9342,
+      "title": "Modality-Balanced Softmax Gating for Hybrid Cross-Attention",
+      "source_url": "https://huggingface.co/autotrust/JEV-27B-VL",
+      "source_version": "hf-autotrust-jev-27b-vl",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T06:33:00.091Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-autotrust-autotrust-decider-pro-vision-27b-c": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-autotrust-autotrust-decider-pro-vision-27b-c",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-autotrust-jev-27b-vl-technical-construction-intelligence-autotrust-autotrust-.md",
+      "title": "Technical Construction Intelligence: autotrust/AutoTrust-Decider-Pro-Vision-27B Core Invariants",
+      "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+      "source_version": "hf-autotrust-jev-27b-vl",
+      "content_hash": "05982a2bad08bd56750b4394191c683c014b5a3a613e64be144cc190332ddb2d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T06:33:00.667Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-autotrust-autotrust-decider-pr": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-autotrust-autotrust-decider-pr",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-autotrust-jev-27b-vl-verification-protocol-empirical-defect-shield-for-autotr.md",
+      "title": "Verification Protocol: Empirical Defect Shield for autotrust/AutoTrust-Decider-Pro-Vision-27B",
+      "repository": "autotrust/AutoTrust-Decider-Pro-Vision-27B",
+      "source_version": "hf-autotrust-jev-27b-vl",
+      "content_hash": "be88a2dcf027f49544a4c59c01b805562ebade6075b1f693ed463d310a597c4b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T06:33:00.783Z"
+    },
+    "rule-9343": {
+      "learning_id": "rule-9343",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9343,
+      "title": "Zero-Allocation Map Lifecycle & Memory Reclamation Invariant",
+      "source_url": "https://github.com/prometheus/prometheus",
+      "source_version": "cb4e01dd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T06:33:34.182Z"
+    },
+    "rule-9344": {
+      "learning_id": "rule-9344",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9344,
+      "title": "Monotonic Ceiling Inheritance for Dynamic Client Limits",
+      "source_url": "https://github.com/prometheus/prometheus",
+      "source_version": "cb4e01dd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T06:33:34.182Z"
+    },
+    "rule-9345": {
+      "learning_id": "rule-9345",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9345,
+      "title": "Asynchronous Ring Buffer Drop-Oldest Saturation Invariant",
+      "source_url": "https://github.com/prometheus/prometheus",
+      "source_version": "cb4e01dd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T06:33:34.182Z"
+    },
+    "candidate_directive-zero-allocation-map-lifecycle-memory-reclamation-invariant": {
+      "item_id": "candidate_directive-zero-allocation-map-lifecycle-memory-reclamation-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CTNG-zero-allocation-map-lifecycle-memory-reclamation-invariant.md",
+      "title": "Zero-Allocation Map Lifecycle & Memory Reclamation Invariant",
+      "repository": "prometheus-prometheus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "088167841ddc3303c3dd2dc0df30fc34d47a430b7e4eab7fed4d9ea366daadec",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T06:34:02.909Z"
+    },
+    "candidate_directive-monotonic-ceiling-inheritance-for-dynamic-client-limits": {
+      "item_id": "candidate_directive-monotonic-ceiling-inheritance-for-dynamic-client-limits",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CTNG-monotonic-ceiling-inheritance-for-dynamic-client-limits.md",
+      "title": "Monotonic Ceiling Inheritance for Dynamic Client Limits",
+      "repository": "prometheus-prometheus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c8313558b8b56f75539695223596029d707adbcdb9c3c6128fe1fb1ece686527",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T06:34:03.073Z"
+    },
+    "candidate_directive-asynchronous-ring-buffer-drop-oldest-saturation-invariant": {
+      "item_id": "candidate_directive-asynchronous-ring-buffer-drop-oldest-saturation-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CTNH-asynchronous-ring-buffer-drop-oldest-saturation-invariant.md",
+      "title": "Asynchronous Ring Buffer Drop-Oldest Saturation Invariant",
+      "repository": "prometheus-prometheus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bb5cf9076b1e2e36bf556b746633b5dec84a47225b89efa23730a0fc34a40cd5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T06:34:03.193Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-prometheus-prometheus-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-prometheus-prometheus-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-prometheus-prometheus-technical-construction-intelligence-prometheus-prometheus-.md",
+      "title": "Technical Construction Intelligence: prometheus/prometheus Core Invariants",
+      "repository": "prometheus/prometheus",
+      "source_version": "cb4e01dd",
+      "content_hash": "6a8a9161e9db57b11b080e72d8df8cad8c4b0e84af715c3ac90c7c9743bf4417",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T06:33:34.845Z"
+    },
+    "candidate_directive-hybrid-linear-quadratic-attention-state-retention-invariant": {
+      "item_id": "candidate_directive-hybrid-linear-quadratic-attention-state-retention-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CACV-hybrid-linear-quadratic-attention-state-retention-invariant.md",
+      "title": "Hybrid Linear-Quadratic Attention State Retention Invariant",
+      "repository": "hf-autotrust-jev-27b-vl-learnings",
+      "source_version": "HEAD",
+      "content_hash": "01b3b2e957967aa24257ddf8fcfe7b3005c30627f5bc79efa9f1ba085a2a7b22",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T06:33:37.905Z"
+    },
+    "candidate_directive-multi-token-termination-contract-invariant-for-chat-reasoning-decoders": {
+      "item_id": "candidate_directive-multi-token-termination-contract-invariant-for-chat-reasoning-decoders",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CACV-multi-token-termination-contract-invariant-for-chat-reasoning-decoders.md",
+      "title": "Multi-Token Termination Contract Invariant for Chat/Reasoning Decoders",
+      "repository": "hf-autotrust-jev-27b-vl-learnings",
+      "source_version": "HEAD",
+      "content_hash": "918e1b9d9a9af4d98489e6ccdd9330e8e3b26df34ad7f10f4b7513e1fc567a42",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T06:33:38.021Z"
+    },
+    "candidate_directive-modality-balanced-softmax-gating-for-hybrid-cross-attention": {
+      "item_id": "candidate_directive-modality-balanced-softmax-gating-for-hybrid-cross-attention",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CACW-modality-balanced-softmax-gating-for-hybrid-cross-attention.md",
+      "title": "Modality-Balanced Softmax Gating for Hybrid Cross-Attention",
+      "repository": "hf-autotrust-jev-27b-vl-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d91887afd2a5a1834b9b59b832e46d1e71be80ca731ecc5ab69ac593f1dd5129",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T06:33:38.142Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invar": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-hf-autotrust-jev-27b-vl-learnings-technical-construction-intelligence-hf-autotru.md",
+      "title": "Technical Construction Intelligence: hf-autotrust-jev-27b-vl-learnings Core Invariants",
+      "repository": "hf-autotrust-jev-27b-vl-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1db9d88df41e9250f1d8b6428e9bba8e02c0548bb2a4bde12fe0777f1b539a36",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T06:33:38.255Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-autotrust-jev-27b-vl-learni": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-autotrust-jev-27b-vl-learni",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-autotrust-jev-27b-vl-learnings-verification-protocol-empirical-defect-shield-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-autotrust-jev-27b-vl-learnings",
+      "repository": "hf-autotrust-jev-27b-vl-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d14f3ae0a45b89e2fc392cfa02a1787963d6edac1f8b0eed50a2b88ac84952ca",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T06:33:38.374Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-prometheus-prometheus-learnings-core-invaria": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-prometheus-prometheus-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-prometheus-prometheus-learnings-technical-construction-intelligence-prometheus-p.md",
+      "title": "Technical Construction Intelligence: prometheus-prometheus-learnings Core Invariants",
+      "repository": "prometheus-prometheus-learnings",
+      "source_version": "HEAD",
+      "content_hash": "67c8ec8bab187dc1320281b50621d7bfe24011cbe3f4acdfc8e7691e5d52424a",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T06:34:03.331Z"
     }
   },
   "ai-builder-brain": {

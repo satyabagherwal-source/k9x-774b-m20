@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T05:55:01.817Z",
+  "updated_at": "2026-11-19T06:34:03.823Z",
   "stats": {
-    "total_discovered": 5801,
-    "approved_pending_harvest": 5490,
+    "total_discovered": 5804,
+    "approved_pending_harvest": 5493,
     "harvested_count": 0,
     "rejected_count": 311,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5456,
+      "COMMUNITY_AND_EXPERT": 5459,
       "OFFICIAL_DOCUMENTATION": 186,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -125466,6 +125466,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
         "fileName": "duckdb-duckdb-learnings.md"
+      }
+    },
+    "SRC-402605DEE0E9": {
+      "id": "SRC-402605DEE0E9",
+      "url": "https://github.com/ClickHouse/ClickHouse/blob/7b28c8d6edfea6f7e7667f6a709d8844cd4f77b0/src/Functions/FunctionDateOrDateTimeAddInterval.h",
+      "title": "https://github.com/ClickHouse/ClickHouse/blob/7b28c8d6edfea6f7e7667f6a709d8844cd4f77b0/src/Functions/FunctionDateOrDateTimeAddInterval.h",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T06:34:03.747Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-EF088B6D141A": {
+      "id": "SRC-EF088B6D141A",
+      "url": "https://github.com/ClickHouse/llvm-project/pull/161",
+      "title": "https://github.com/ClickHouse/llvm-project/pull/161",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T06:34:03.778Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-888EDB212D94": {
+      "id": "SRC-888EDB212D94",
+      "url": "https://sourceware.org/glibc/wiki/Glibc%20Timeline",
+      "title": "https://sourceware.org/glibc/wiki/Glibc%20Timeline",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T06:34:03.823Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
+        "fileName": "clickhouse-clickhouse-learnings.md"
       }
     }
   }

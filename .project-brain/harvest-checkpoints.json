@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T05:54:58.177Z",
+  "last_updated": "2026-11-19T06:33:34.367Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -9231,14 +9231,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clickhouse-clickhouse",
-      "content_hash": "06e2bd229839c159eac737450a1883888cd21599196d488de2a126c0daf6146c",
-      "verified_at": "2026-11-17T14:58:07.758Z",
+      "content_hash": "2f4085a8c2a9a3ee0e3ffbf5aba9c961196bd170af7ea7603d7fc603f925669a",
+      "verified_at": "2026-11-19T06:30:22.910Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T14:58:07.758Z"
+      "last_updated": "2026-11-19T06:30:22.910Z"
     },
     "dockview/dockview": {
       "repository": "dockview/dockview",
@@ -9711,14 +9711,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-prometheus-prometheus",
-      "content_hash": "d1cf5c7cdc4ebb8774b09100a7702edf5e2cedafed1982fb65b99fe3a31789d2",
-      "verified_at": "2026-11-17T16:38:47.973Z",
+      "content_hash": "a630cdd4c5129d110cfe32d139cb6a5a71f56f5a479ff69bd7675a1c2e0ce39c",
+      "verified_at": "2026-11-19T06:33:34.366Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T16:38:47.973Z"
+      "last_updated": "2026-11-19T06:33:34.366Z"
     },
     "meilisearch/meilisearch": {
       "repository": "meilisearch/meilisearch",
@@ -18950,15 +18950,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-autotrust-autotrust-decider-pro-vision-27b",
-      "content_hash": "6f41447e0ad2272a92818e9d23efb3a72b8df211149c4d6de3e4b5bebbbd2c45",
-      "verified_at": "2026-11-15T17:03:47.009Z",
+      "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
+      "content_hash": "61c889413ad5d0b4ff1852d264671acc1154712698d4cf65a91a360409b7831c",
+      "verified_at": "2026-11-19T06:33:00.331Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T17:03:47.009Z"
+      "last_updated": "2026-11-19T06:33:00.331Z"
     },
     "autotrust/AutoTrust-Decider-Pro-35B": {
       "repository": "autotrust/AutoTrust-Decider-Pro-35B",

@@ -95,8 +95,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-27B-VL",
     "sourceVersion": "hf-autotrust-jev-27b-vl",
     "license": "Open-Source",
-    "contentHash": "3a005cb391aab9fcb892ae95a29c266a79abc7fbdec01e72dd59605b80f189f7",
-    "lastHarvestedAt": "2026-11-14T16:43:18.388Z",
+    "contentHash": "61c889413ad5d0b4ff1852d264671acc1154712698d4cf65a91a360409b7831c",
+    "lastHarvestedAt": "2026-11-19T06:33:00.325Z",
     "learningId": "learn-huggingface-autotrust-jev-27b-vl"
   },
   "hf-autotrust-gev-26b-decide": {
@@ -6073,10 +6073,10 @@
     "repository": "ClickHouse/ClickHouse",
     "platform": "github",
     "sourceUrl": "https://github.com/ClickHouse/ClickHouse",
-    "sourceVersion": "67804652",
+    "sourceVersion": "92fdcb78",
     "license": "Apache-2.0",
-    "contentHash": "06e2bd229839c159eac737450a1883888cd21599196d488de2a126c0daf6146c",
-    "lastHarvestedAt": "2026-11-17T14:58:07.750Z",
+    "contentHash": "2f4085a8c2a9a3ee0e3ffbf5aba9c961196bd170af7ea7603d7fc603f925669a",
+    "lastHarvestedAt": "2026-11-19T06:30:22.904Z",
     "learningId": "learn-github-clickhouse-clickhouse"
   },
   "dockview-dockview": {
@@ -6413,10 +6413,10 @@
     "repository": "prometheus/prometheus",
     "platform": "github",
     "sourceUrl": "https://github.com/prometheus/prometheus",
-    "sourceVersion": "620819d1",
+    "sourceVersion": "cb4e01dd",
     "license": "Apache-2.0",
-    "contentHash": "d1cf5c7cdc4ebb8774b09100a7702edf5e2cedafed1982fb65b99fe3a31789d2",
-    "lastHarvestedAt": "2026-11-17T16:38:47.964Z",
+    "contentHash": "a630cdd4c5129d110cfe32d139cb6a5a71f56f5a479ff69bd7675a1c2e0ce39c",
+    "lastHarvestedAt": "2026-11-19T06:33:34.360Z",
     "learningId": "learn-github-prometheus-prometheus"
   },
   "meilisearch-meilisearch": {

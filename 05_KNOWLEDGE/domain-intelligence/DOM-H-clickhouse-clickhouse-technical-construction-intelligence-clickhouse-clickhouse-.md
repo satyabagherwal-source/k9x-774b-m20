@@ -4,24 +4,24 @@
 {
   "source_repository": "ClickHouse/ClickHouse",
   "source_url": "https://github.com/ClickHouse/ClickHouse",
-  "source_version": "67804652",
+  "source_version": "92fdcb78",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T14:58:07.929Z",
+  "timestamp": "2026-11-19T06:30:23.057Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-clickhouse-clickhouse",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse) (Revision: `67804652`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T14:58:07.929Z`  
+> **Provenance**: Harvested from [ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse) (Revision: `92fdcb78`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T06:30:23.057Z`  
 > **Learning ID**: `learn-github-clickhouse-clickhouse`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from ClickHouse/ClickHouse:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ClickHouse/ClickHouse](https://github.com/ClickHouse/ClickHouse))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T14:58:06.855Z  
+> **Harvest Timestamp**: 2026-11-19T06:30:20.784Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ClickHouse® is a real-time analytics database management system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 50971 stars
+- **Stars / Engagement**: 51008 stars
 
 ---
 
@@ -1331,11 +1331,11 @@ private:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #132004** (2026-11-17): **`CREATE TEMPORARY VIEW` is allowed with `readonly = 1` while `CREATE TEMPORARY TABLE` is refused**
-  *Symptoms*: **Describe the bug**  With `readonly = 1`, `CREATE TEMPORARY TABLE` is refused, but `CREATE TEMPORARY VIEW` is accepted. The two are session-local objects of the same kind, and the documentation of `readonly` lists temporary tables as needing `readonly = 2`.  **How to reproduce**  ```sql -- as an administrator CREATE USER u IDENTIFIED WITH no_password; GRANT CREATE TEMPORARY TABLE, CREATE TEMPORARY VIEW ON *.* TO u;  -- as u, in one session, with readonly = 1 SET readonly = 1; CREATE TEMPORARY TABLE tt (x UInt8);         -- Code: 164. Cannot execute query in readonly mode. (READONLY) CREATE TEMPORARY VIEW tv AS SELECT 1 AS x;   -- succeeds SELECT * FROM tv;                            -- 1 ```  **Observed** (26.11.1.1, master build)  The temporary view is created in read-only mode.  **Expected**  Either both are refused under `readonly = 1`, or the documentation says temporary views are allowed. The first seems intended.  **Where**  `ContextAccess::checkAccessImplHelper` (`src/Access/ContextAccess.cpp`) builds `not_readonly_1_flags = AccessType::CREATE_TEMPORARY_TABLE` only. `InterpreterCreateQuery::getRequiredAccess` asks for `CREATE_TEMPORARY_VIEW` for a temporary view, and that access type is in neither `not_readonly_flags` nor `not_readonly_1_flags`.  The effect is limited to the session's own scratch objects; I am reporting it as an inconsistency, not as a security problem.   <!-- ch-version-info:start --> ### Version info - Resolved by: #132016 - Merged into: `26.11.1.25
+- **Issue #132344** (2026-11-18): **timeSeriesGroupArrayIf ignores UInt8 conditions greater than 1 for array inputs**
+  *Symptoms*: ### Describe what's wrong  With array-shaped timestamp and value inputs, `timeSeriesGroupArrayIf` treats a raw `UInt8` condition of `2` as false, even though nonzero conditions should be selected by the `If` combinator. This silently omits data from the aggregate. It reproduces on ClickHouse 26.8.10.6 and 26.9.1.1629 on linux/amd64.  ### Does it reproduce on the most recent release?  Yes  ### How to reproduce  Run with `clickhouse-client --multiquery`:  ```sql SET allow_experimental_time_series_aggregate_functions = 1;  DROP TABLE IF EXISTS t SYNC; CREATE TABLE t (     timestamps Array(DateTime64(3, 'UTC')),     values Array(Float64),     condition UInt8 ) ENGINE = Memory;  INSERT INTO t VALUES     ([toDateTime64(100, 3, 'UTC')], [7.0], 1),     ([toDateTime64(200, 3, 'UTC')], [9.0], 2);  SELECT     timeSeriesGroupArrayIf(timestamps, values, condition) AS actual,     timeSeriesGroupArrayIf(timestamps, values, condition != 0) AS normalized,     actual = normalized AS oracle_equal FROM t FORMAT TSVRaw; ```  The query returns:  ```text [('1970-01-01 00:01:40.000',7)]	[('1970-01-01 00:01:40.000',7),('1970-01-01 00:03:20.000',9)]	0 ```  The raw condition omits the row whose condition is `2`, while explicitly normalizing the same condition with `condition != 0` retains both rows.  ### Expected behavior  Both aggregates should return `[('1970-01-01 00:01:40.000',7),('1970-01-01 00:03:20.000',9)]`, and `oracle_equal` should be `1`. The `If` combinator should select every row whose `UI
 
-- **Issue #131875** (2026-11-17): **`SYSTEM SYNC DATABASE REPLICA` does not check its privilege on local execution**
-  *Symptoms*: **Describe the bug**  `SYSTEM SYNC DATABASE REPLICA db` (the local form, without `ON CLUSTER`) runs for a user who has no grants at all.  The privilege exists (`M(SYSTEM_SYNC_DATABASE_REPLICA, "SYNC DATABASE REPLICA", DATABASE, SYSTEM)` in `src/Access/Common/AccessType.h`), and the `ON CLUSTER` form requires it through `getRequiredAccessForDDLOnCluster`. The local handler, `InterpreterSystemQuery::syncReplicatedDatabase`, never calls `checkAccess`. Its sibling `syncReplica` does (`checkAccess(AccessType::SYSTEM_SYNC_REPLICA, table_id)`).  This is the same kind of problem as #112439 (`SYSTEM SYNC TRANSACTION LOG`), fixed by #112441. That issue lists `syncReplicatedDatabase` among the handlers that already check access, but it does not. A review comment on #120661 pointed this out, and that pull request added the check and a test (`05258_system_local_access_checks`), but it was closed without being merged, so `master` still has no check.  **How to reproduce**  ```sql -- as an administrator CREATE DATABASE r ENGINE = Replicated('/clickhouse/databases/r', '{shard}', '{replica}'); CREATE TABLE r.t (x UInt8) ENGINE = ReplicatedMergeTree ORDER BY x; CREATE DATABASE a; CREATE USER u IDENTIFIED WITH no_password;   -- no grants  -- as u SYSTEM SYNC REPLICA r.t;                      -- ACCESS_DENIED (expected) SYSTEM SYNC DATABASE REPLICA r;               -- succeeds SYSTEM SYNC DATABASE REPLICA a;               -- BAD_ARGUMENTS: ... intended to work only with Replicated engine SYSTEM S
+- **Issue #132274** (2026-11-18): **addDays/addMonths/addSeconds/... read a constant UInt64 count >= 2^63 as negative when the date is a column, but throw "Numeric overflow" when the date is a constant**
+  *Symptoms*: ### Company or project name  _No response_  ### Describe what's wrong   The date-arithmetic functions (`addDays`, `addWeeks`, `addMonths`, `addYears`, `addSeconds`, ..., `subtract*`, `date_add`) take a `(U)Int*` count, and `FunctionDateOrDateTimeAddInterval.h` converts it to `Int64` with `checkOverflow()`, which throws `DECIMAL_OVERFLOW` "Numeric overflow" for a `UInt64` that does not fit ([`#L879-L886`](https://github.com/ClickHouse/ClickHouse/blob/7b28c8d6edfea6f7e7667f6a709d8844cd4f77b0/src/Functions/FunctionDateOrDateTimeAddInterval.h#L879-L886)). That works when the date is a constant or the count is a column: `vectorVector` and `constantVector` call `checkOverflow(delta.getData()[i])` on the count in its own type ([`#L888-L955`](https://github.com/ClickHouse/ClickHouse/blob/7b28c8d6edfea6f7e7667f6a709d8844cd4f77b0/src/Functions/FunctionDateOrDateTimeAddInterval.h#L888-L955)).  When the **date is a column and the count a constant**, the constant is first read with `ColumnConst::getInt(0)` ([`#L999-L1000`](https://github.com/ClickHouse/ClickHouse/blob/7b28c8d6edfea6f7e7667f6a709d8844cd4f77b0/src/Functions/FunctionDateOrDateTimeAddInterval.h#L999-L1000)):  ```cpp if (const auto * delta_const_column = typeid_cast<const ColumnConst *>(&delta_column))     processor.template vectorConstant<FromDataType>(*sources, *col_to, delta_const_column->getInt(0), time_zone, scale, input_rows_count); ```  `getInt(0)` turns a `UInt64` >= 2^63 into a negative `Int64`, and `vectorConstant(..
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1352,750 +1352,564 @@ private:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `42a270d5` (2026-11-17)
-**Commit Message**: Merge pull request #119183 from nihalzp/fix-nullable-tuple-set-semantics
+### Incident Patch 1: `92fdcb78` (2026-11-19)
+**Commit Message**: Merge pull request #132795 from ClickHouse/fix-pow-far-overflow-sign
 
-Fix exceptions and wrong results of `IN` when the keys and the set have different types
+Fix `pow` returning -inf or garbage on a far overflow or underflow
 
-**File**: `src/Analyzer/Resolve/resolveFunction.cpp` (modified, +68/-46)
+**File**: `contrib/llvm-project` (modified, +1/-1)
 ```diff
-@@ -1212,6 +1212,52 @@ static void validateInColumnsCountMatch(const QueryTreeNodePtr & in_first_argume
-     }
- }
- 
-+/// Returns whether the `rewrite_in_to_join` rewrite of `x IN (subquery)` into
-+/// `EXISTS (SELECT 1 FROM (subquery) WHERE x = <row> LIMIT 1)` keeps the semantics of regular `IN`: the
-+/// same result or the same error. The left operand has the type `left_type`, and the subquery has the
-+/// columns `subquery_columns`. The caller guarantees that `left_type` is not null and that
-+/// `validateInColumnsCountMatch` accepted both sides.
-+///
-+/// Regular `IN` rejects a left operand with dynamic structure before it builds the set. With
-+/// `transform_null_in = 0`, which the rewrite requires, it returns NULL for a NULL left operand, while
-+/// `NOT EXISTS` returns 1.
-+///
-+/// For any other operand, the set has one key per subquery column. `FunctionIn` compares the whole left
-+/// operand with the only column of a subquery, even when the operand is a tuple. Otherwise it compares
-+/// each element of the left tuple with its own column. `Set::execute` converts each key to the type of
-+/// its column, and a value that the column cannot hold is not a member. For example,
-+/// `(t, 1) IN (SELECT toFloat64(1767225600), 1)` returns 0 for
-+/// `t = fromUnixTimestamp64Nano(1767225600000000001, 'UTC')` because `Float64` cannot hold the nanosecond,
-+/// while `equals` compares in a common supertype and matches. The conversion also parses text as a number,
-+/// where `equals` finds no common type. A key of a `Bool` column is converted even when it has the column's
-+/// type, which turns every byte other than 0 into `true`, while `equals` compares the bytes. The set holds
-+/// NULL as a value of a `Variant` key and NULL fields as values of a tuple key, while `equals` returns NULL
-+/// for them. And the set compares floating-point values by their bits, also inside `Array` and `Map`: a NaN
-+/// is a member of a set that holds it, and `-0.0` is not a member of a set of `0.0`, while `equals` compares
-+/// the numbers. So the rewrite keeps the semantics only when every key has the type of its column, is
-+/// neither a tuple nor a `Variant`, holds no floating-point type, and its column is not `Bool`. A `Nullable`
-+/// element of the left tuple is fine, unlike a `Nullable` left operand: the set never matches a NULL element,
-+/// neither does `equals`, and `IN` of a plain tuple returns 0 rather than NULL.
-+static bool existsRewriteKeepsInSemantics(const DataTypePtr & left_type, const NamesAndTypes & subquery_columns)
-+{
-+    if (left_type->hasDynamicStructure() || isNullableOrLowCardinalityNullable(left_type))
-+        return false;
-+
-+    /// `validateInColumnsCountMatch` made a left operand without dynamic structure a tuple as wide as a
-+    /// subquery with several columns.
-+    const DataTypes key_types = subquery_columns.size() == 1 ? DataTypes{left_type} : getInKeyColumnTypes(left_type);
-+    chassert(key_types.size() == subquery_columns.size());
-+    for (size_t i = 0; i < key_types.size(); ++i)
-+    {
-+        const auto key_type_without_nullable = removeNullable(key_types[i]);
-+        const DataTypePtr & column_type = subquery_columns[i].type;
-+        if (isTuple(key_type_without_nullable) || isVariant(key_type_without_nullable) || !key_types[i]->equals(*column_type)
-+            || hasTypeThatCanContainFloat(column_type) || isBool(removeNullable(removeLowCardinality(column_type))))
-+            return false;
-+    }
-+    return true;
-+}
-+
- /// Builds and resolves `IF(isNull(element), NULL, has(array, element))`
- QueryTreeNodePtr QueryAnalyzer::makeNullSafeHas(
-     QueryTreeNodePtr array_arg,    // [1,2,number]
-@@ -1226,16 +1272,16 @@ QueryTreeNodePtr QueryAnalyzer::makeNullSafeHas(
-     has_fn->getArguments().getNodes().push_back(element_arg);
- 
-     QueryTreeNodePtr in_result = has_fn;
--    /// `has` treats tuple values with equal `NULL` elements as a match, while `IN`
--    /// with `transform_null_in = 0` skips such tuple values. Guard tuple LHS
--    /// elements to preserve `IN` semantics in the row-wise rewrite.
--    if (const auto * tuple_type = typeid_cast<const DataTypeTuple *>(removeNullable(element_arg->getResultType()).get());
--        tuple_type && !tuple_type->getElements().empty())
-+    /// `IN` compares the columns of a multi-column key separately, and with `transform_null_in = 0` a NULL
-+    /// element never matches, while `has` compares the tuples as values, where equal NULL elements match.
-+    /// Guard the elements to preserve the `IN` semantics; a single key needs no guard, its NULL fields are
-+    /// values.
-+    if (const size_t key_column_count = getInKeyColumnTypes(element_arg->getResultType()).size(); key_column_count > 1)
-     {
-         auto and_fn = std::make_shared<FunctionNode>("and");
-         and_fn->getArguments().getNodes() =
-         {
--            makeTupleHasNoNullElementsPredicate(element_arg, tuple_type->getElements().size()),
-+            makeTupleHasNoNullElemen
+@@ -1 +1 @@
+-Subproject commit 6afdc580684c9dbcfc1859bdcc54e1989d1d264c
++Subproject commit 55541575edec2cc4e9dc3fb182e17d77b807e199
 ```
 
-**File**: `src/Analyzer/SetUtils.cpp` (modified, +33/-43)
+**File**: `tests/queries/0_stateless/05830_pow_far_overflow_sign.reference` (added, +4/-0)
 ```diff
-@@ -18,6 +18,8 @@
- 
- #include <Common/assert_cast.h>
- 
-+#include <algorithm>
-+
- namespace DB
- {
- 
-@@ -204,7 +206,8 @@ ColumnsWithTypeAndName createBlockFromCollection(
- 
-         /// For `Nullable(Tuple(...))` we process tuple members element-by-element:
-         /// - to correctly skip unknown enum literals when `validate_enum_literals_in_operators = 0`
--        /// - to implement `transform_null_in = 0` semantics for NULLs inside tuple elements (skip such tuple values)
-+        /// - to skip members with a NULL field that the key's non-nullable field cannot hold; a NULL field
-+        ///   that the key can hold is part of the key value in either `transform_null_in` mode, as in `Set`
-         const auto * lhs_nullable = typeid_cast<const DataTypeNullable *>(lhs_type.get());
-         const auto * lhs_tuple = lhs_nullable ? typeid_cast<const DataTypeTuple *>(lhs_nullable->getNestedType().get()) : nullptr;
- 
-@@ -255,19 +258,14 @@ ColumnsWithTypeAndName createBlockFromCollection(
-                         lhs_tuple_element_types[i],
-                         params.forbid_unknown_enum_values);
- 
-+                    /// `convertColumnToTypeCheckEnum` reports a value that the field cannot hold,
-+                    /// including a NULL in a non-nullable field, as not representable.
-                     if (!converted)
-                     {
-                         skip_tuple_value = true;
-                         break;
-                     }
- 
--                    bool need_insert_null = params.transform_null_in && lhs_tuple_element_types[i]->isNullable();
--                    if ((*converted)->isNullAt(0) && !need_insert_null)
--                    {
--                        skip_tuple_value = true;
--                        break;
--                    }
--
-                     converted_elements.push_back(std::move(*converted));
-                 }
- 
-@@ -643,35 +641,41 @@ bool columnCollectionHasTuple(const ColumnPtr & rhs_column, const DataTypePtr &
- 
- }
- 
-+DataTypes getInKeyColumnTypes(const DataTypePtr & lhs_type)
-+{
-+    if (const auto * tuple_type = typeid_cast<const DataTypeTuple *>(lhs_type.get()); tuple_type && tuple_type->getElements().size() > 1)
-+        return tuple_type->getElements();
-+    return {lhs_type};
-+}
-+
-+bool nullableTupleKeyCanHoldAllNullTuple(const DataTypeTuple & key_tuple_type, size_t rhs_tuple_size)
-+{
-+    const auto & elements = key_tuple_type.getElements();
-+    return elements.size() == rhs_tuple_size
-+        && std::ranges::all_of(elements, [](const auto & element) { return canContainNull(*element); });
-+}
-+
- /// Format: lhs IN rhs
- /// Explanation of the setting: `transform_null_in`. First of all, it is only applicable if the lhs is nullable.
- /// Then if lhs is nullable and `transform_null_in` is true, then NULLs from rhs are inserted into the result set as well.
--/// Whereas, if `transform_null_in` is false, we pretend NULLs are not present in rhs at all (at level 1 or at level 2 for Tuple).
-+/// Whereas, if `transform_null_in` is false, we pretend NULLs are not present in rhs at all: a NULL member,
-+/// or a NULL element of a member of a multi-column key (a plain `Tuple` lhs with several elements is
-+/// unpacked into one key column per element). A NULL field of a `Nullable(Tuple)` or single-element tuple
-+/// key is part of the key value.
- /// If `transform_null_in` is false, then `SELECT NULL IN (NULL, 1)` returns NULL, otherwise it returns true.
- 
- ColumnsWithTypeAndName getSetElementsForConstantValue(
-     const DataTypePtr & lhs_expression_type, const ColumnPtr & rhs_column, const DataTypePtr & rhs_type, GetSetElementParams params)
- {
--    DataTypes lhs_unpacked_types = {lhs_expression_type};
-+    /// A `Nullable(Tuple(...))` stays a single value and is handled in the createBlockFromCollection() fast
-+    /// path.
-+    DataTypes lhs_unpacked_types = getInKeyColumnTypes(lhs_expression_type);
- 
--    /// Unpack `Tuple(...)` into tuple elements.
--    /// For `Nullable(Tuple(...))` we keep it as a single value and handle it in createBlockFromCollection() fast-path.
--    bool lhs_is_tuple = false;
-     const auto * lhs_nullable_type = typeid_cast<const DataTypeNullable *>(lhs_expression_type.get());
-     const auto * lhs_tuple_type
-         = typeid_cast<const DataTypeTuple *>(lhs_nullable_type ? lhs_nullable_type->getNestedType().get() : lhs_expression_type.get());
--
--    if (lhs_tuple_type)
--    {
--        lhs_is_tuple = true;
--
--        /// Do not unpack empty tuple or single element tuple.
--        /// Do not unpack `Nullable(Tuple(...))` because in the end we build a single `Nullable(Tuple(...))` column anyway.
--        if (!lhs_nullable_type && lhs_tuple_type->getElements().size() > 1)
--            lhs_unpacked_types = lhs_tuple_type->getElements();
--    }
--
--    bool lhs_is_nullable = (lhs_nullable_type != nullptr);
-+    const bool lhs_is_tuple = lhs_tuple_type != nullptr;
-+    const bool lhs_is_nullable = lhs_nullable_type != nullptr;
- 
-     for (auto & lhs_element_
+@@ -0,0 +1,4 @@
++inf	inf	inf	inf	inf
++0	0	0	0	0
++0	inf	inf	0
++3000	3000
 ```
 
-**File**: `src/Analyzer/SetUtils.h` (modified, +18/-2)
+**File**: `tests/queries/0_stateless/05830_pow_far_overflow_sign.sql` (added, +9/-0)
 ```diff
-@@ -2,23 +2,39 @@
- 
- #include <Core/ColumnsWithTypeAndName.h>
- #include <Columns/IColumn_fwd.h>
-+#include <DataTypes/IDataType_fwd.h>
- 
- #include <memory>
- 
- namespace DB
- {
- 
--class IDataType;
--using DataTypePtr = std::shared_ptr<const IDataType>;
- class Set;
- using SetPtr = std::shared_ptr<Set>;
-+class DataTypeTuple;
- 
- struct GetSetElementParams
- {
-     bool transform_null_in = true;
-     bool forbid_unknown_enum_values = false;
- };
- 
-+/// The key columns that `IN` compares separately for a left operand of this type. A plain `Tuple` with more
-+/// than one element is unpacked into one key column per element, so a NULL element of a member never matches
-+/// with `transform_null_in = 0`. Anything else is one key whose NULL fields are ordinary values: an empty or
-+/// single-element tuple, and a `Nullable(Tuple(...))`, because the set is built as a single
-+/// `Nullable(Tuple(...))` column anyway.
-+DataTypes getInKeyColumnTypes(const DataTypePtr & lhs_type);
+@@ -0,0 +1,9 @@
++-- `pow` must return inf or 0 with the right sign when the result is far out of the `Float64` range,
++-- not -inf or a finite garbage value.
 +
-+/// Whether a `Nullable(Tuple(...))` key with the tuple type `key_tuple_type` can hold the tuple value of an explicit
-+/// all-NULL right-hand tuple of `rhs_tuple_size` elements: the sizes match and every element can hold NULL (see
-+/// `canContainNull`). For example, `Nullable(Tuple(Nullable(UInt8), Nullable(UInt8)))` and
-+/// `Nullable(Tuple(LowCardinality(Nullable(String)), Variant(UInt8, String)))` can hold `(NULL, NULL)`, and
-+/// `Nullable(Tuple(UInt8, Nullable(UInt8)))` cannot. Every form of `IN` then reads such a right-hand tuple both as
-+/// top-level NULL members and as that tuple value, in either `transform_null_in` mode, because the key is a single key
-+/// column whose NULL fields are values (see `getInKeyColumnTypes`).
-+bool nullableTupleKeyCanHoldAllNullTuple(const DataTypeTuple & key_tuple_type, size_t rhs_tuple_size);
++SELECT pow(10, 1e19), pow(1.5, 1e19), pow(10, 4e15), pow(10, 1.3e16), pow(10, 1e300);
++SELECT pow(10, -1e19), pow(1.5, -1e19), pow(10, -4e15), pow(10, -1.3e16), pow(10, -1e300);
++SELECT pow(0.1, 1e19), pow(0.5, -1e19), pow(-10, 1e19), pow(-10, -1e19);
 +
- /** Get set elements for constant part of IN subquery.
-   * Throws exception if parameters are not valid for IN function.
-   *
-```
-
-**File**: `src/Core/DecimalFunctions.h` (modified, +18/-0)
-```diff
-@@ -1,10 +1,12 @@
- #pragma once
- 
- #include <Core/Types.h>
-+#include <Core/AccurateComparison.h>
- #include <Common/Exception.h>
- #include <Common/intExp.h>
- #include <base/arithmeticOverflow.h>
- 
-+#include <cmath>
- #include <limits>
- #include <type_traits>
- 
-@@ -436,6 +438,22 @@ bool tryConvertTo(const DecimalType & decimal, UInt32 scale, To & result)
-     return convertToImpl<To, DecimalType, bool>(decimal, scale, result);
- }
- 
-+/// Whether the conversion of `decimal` to the floating-point type `To` is exact: rounding the converted value
-+/// back to the nearest tick of `scale` restores `decimal`. All decimals within the resolution of `To` convert
-+/// to the same value, and this holds for exactly one of them. The ticks are restored by rounding rather than
-+/// by the truncation of `convertToDecimal`: the nearest double to `0.29` lies below it, so truncating its
-+/// product with the multiplier would restore `0.28` and reject a conversion that `To` represents as well as
-+/// it can.
-+template <is_floating_point To, typename DecimalType>
-+bool convertsToFloatExactly(const DecimalType & decimal, UInt32 scale)
-+{
-+    using NativeType = typename DecimalType::NativeType;
-+    const Float64 multiplier = static_cast<Float64>(scaleMultiplier<NativeType>(scale));
-+    const Float64 restored_ticks = std::round(static_cast<Float64>(convertTo<To>(decimal, scale)) * multiplier);
-+    NativeType restored{};
-+    return accurate::convertNumeric(restored_ticks, restored) && restored == decimal.value;
-+}
-+
- /// Converts a decimal to another decimal.
- template <is_decimal To, typename DecimalType>
- To convertTo(UInt32 to_scale, const DecimalType & decimal, UInt32 scale)
-```
-
-**File**: `src/DataTypes/NullableUtils.cpp` (modified, +48/-32)
-```diff
-@@ -62,53 +62,69 @@ DataTypePtr makeExtractedSubcolumnsNullableOrLowCardinalityNullableSafe(const Da
-     return makeNullableOrLowCardinalityNullableSafe(type);
- }
- 
--ColumnPtr extractNestedColumnsAndNullMap(ColumnRawPtrs & key_columns, ConstNullMapPtr & null_map)
-+ColumnPtr mergeNullMaps(ColumnPtr lhs, const ColumnPtr & rhs)
- {
--    ColumnPtr null_map_holder;
-+    if (!lhs)
-+        return rhs;
-+    if (!rhs)
-+        return lhs;
- 
--    auto addNullMap = [&](const ColumnNullable * column_nullable)
--    {
--        if (!null_map_holder)
--        {
--            /// First nullable column: just take its null map as the base
--            null_map_holder = column_nullable->getNullMapColumnPtr();
--        }
--        else
--        {
--            /// Subsequent nullable columns: OR their null maps into the accumulated one
--            MutableColumnPtr mutable_null_map_holder = IColumn::mutate(std::move(null_map_holder));
-+    if (lhs->size() != rhs->size())
-+        throw Exception(ErrorCodes::LOGICAL_ERROR, "Cannot merge null maps with different sizes: {} and {}", lhs->size(), rhs->size());
- 
--            PaddedPODArray<UInt8> & mutable_null_map = assert_cast<ColumnUInt8 &>(*mutable_null_map_holder).getData();
--            const PaddedPODArray<UInt8> & other_null_map = column_nullable->getNullMapData();
-+    MutableColumnPtr result = IColumn::mutate(std::move(lhs));
-+    auto & result_null_map = assert_cast<ColumnUInt8 &>(*result).getData();
-+    const auto & rhs_null_map = assert_cast<const ColumnUInt8 &>(*rhs).getData();
- 
--            for (size_t i = 0, size = mutable_null_map.size(); i < size; ++i)
--                mutable_null_map[i] |= other_null_map[i];
-+    for (size_t i = 0, size = result_null_map.size(); i < size; ++i)
-+        result_null_map[i] |= rhs_null_map[i];
- 
--            null_map_holder = std::move(mutable_null_map_holder);
--        }
--    };
-+    return result;
-+}
- 
-+ColumnPtr getOuterNullMap(const IColumn & column)
-+{
-+    if (const auto * column_nullable = checkAndGetColumn<ColumnNullable>(&column))
-+        return column_nullable->getNullMapColumnPtr();
-+    if (const auto * column_dynamic = checkAndGetColumn<ColumnDynamic>(&column))
-+        return column_dynamic->getVariantColumn().createNullMap();
-+    if (const auto * column_variant = checkAndGetColumn<ColumnVariant>(&column))
-+        return column_variant->createNullMap();
-+    if (const auto * column_low_cardinality = checkAndGetColumn<ColumnLowCardinality>(&column);
-+        column_low_cardinality && column_low_cardinality->nestedIsNullable())
-+    {
-+        const size_t null_index = column_low_cardinality->getDictionary().getNullValueIndex();
-+        auto null_map = ColumnUInt8::create(column_low_cardinality->size());
-+        auto & null_map_data = null_map->getData();
-+        for (size_t row = 0; row < null_map_data.size(); ++row)
-+            null_map_data[row] = column_low_cardinality->getIndexAt(row) == null_index;
-+        return null_map;
-+    }
-+    return nullptr;
-+}
-+
-+ColumnPtr extractNestedColumnsAndNullMap(ColumnRawPtrs & key_columns, ConstNullMapPtr & null_map)
-+{
-+    ColumnPtr null_map_holder;
-     for (auto & column : key_columns)
-     {
--        if (const auto * column_nullable = checkAndGetColumn<ColumnNullable>(&*column))
-+        if (const auto * column_nullable = checkAndGetColumn<ColumnNullable>(column))
-         {
--            /// Top-level Nullable(...) always contributes to the combined null map
--            addNullMap(column_nullable);
--
--            /** Only the top-level null map says whether the key of a row is NULL. The null maps of the
--              * elements of a `Nullable(Tuple(Nullable(T), ...))` used to be folded in as well, which
--              * made a row whose tuple merely *contains* a NULL a NULL key: the hash-family joins
--              * dropped it, while the merge algorithms - which compare the nested tuples - kept it, so
--              * the result of a join depended on `join_algorithm`, and `IN` never matched such a row.
--              * The NULLs of the elements are part of the key and are compared as any other value,
--              * exactly as they are for a `Tuple(Nullable(T), ...)` that is not wrapped in `Nullable`.
-+            null_map_holder = mergeNullMaps(std::move(null_map_holder), column_nullable->getNullMapColumnPtr());
-+
-+            /** Only the top-level null map says whether the key of a row is NULL. Folding in the null
-+              * maps of the elements of a `Nullable(Tuple(Nullable(T), ...))` would make a row whose tuple
-+              * merely *contains* a NULL a NULL key: the hash-family joins would drop it, while the merge
-+              * algorithms - which compare the nested tuples - keep it, so the result of a join would depend
-+              * on `join_algorithm`, and `IN` would never match such a row. The NULLs of the elements are
-+              * part of the key and are compared as any other value, exactly as they are for a
-+              * `Tuple(Null
-```
-
-**File**: `src/DataTypes/NullableUtils.h` (modified, +13/-3)
-```diff
-@@ -8,9 +8,19 @@
- namespace DB
- {
- 
--/** Replace Nullable key_columns to corresponding nested columns.
--  * In 'null_map' return a map of positions where at least one column was NULL.
--  * @returns ownership column of null_map.
-+/// Combine two `ColumnUInt8` null maps of equal size. A null pointer represents a map with no NULLs.
-+/// Reuse the first column when it is exclusively owned, or share the other column when one map is absent.
-+ColumnPtr mergeNullMaps(ColumnPtr lhs, const ColumnPtr & rhs);
-+
-+/// The outer null map of a column that can hold NULLs (`ColumnUInt8`, 1 = the value is NULL), or a null
-+/// pointer for a column that cannot. A NULL inside a value, such as a NULL field of a tuple, is not an outer
-+/// NULL. `Variant` and `Dynamic` encode NULLs with the `NULL` discriminator, and `LowCardinality` with the
-+/// index of the NULL in its dictionary, rather than a separate null map, so theirs is reconstructed.
-+ColumnPtr getOuterNullMap(const IColumn & column);
-+
-+/** Replace `Nullable` key columns with their nested columns and combine their outer null maps.
-+  * A NULL field inside a non-null tuple is part of the key value and does not make the key NULL.
-+  * Set `null_map` to the combined map and return the column that owns it.
-   */
- ColumnPtr extractNestedColumnsAndNullMap(ColumnRawPtrs & key_columns, ConstNullMapPtr & null_map);
- 
-```
-
-**File**: `src/Functions/CastOverloadResolver.cpp` (modified, +53/-0)
-```diff
-@@ -10,6 +10,7 @@
- #include <DataTypes/DataTypeString.h>
- #include <DataTypes/DataTypeTuple.h>
- #include <Columns/ColumnString.h>
-+#include <Common/UnorderedMapWithMemoryTracking.h>
- #include <Core/Settings.h>
- #include <Interpreters/parseColumnsListForTableFunction.h>
- #include <Interpreters/Context.h>
-@@ -25,6 +26,7 @@ namespace Setting
- namespace ErrorCodes
- {
-     extern const int ILLEGAL_TYPE_OF_ARGUMENT;
-+    extern const int TYPE_MISMATCH;
- }
- 
- /// accurateCastOrNull wraps the result in Nullable to represent conversion failures.
-@@ -65,6 +67,57 @@ bool canBeAccurateCastOrNullTarget(const DataTypePtr & type)
-     return findUnsupportedTypeForAccurateCastOrNull(type) == nullptr;
- }
- 
-+std::optional<VectorWithMemoryTracking<std::optional<size_t>>> tryGetTupleCastElementPositions(
-+    const DataTypeTuple & from, const DataTypeTuple & to)
-+{
-+    VectorWithMemoryTracking<std::optional<size_t>> positions;
-+    positions.reserve(to.getElements().size());
-+
-+    if (from.hasExplicitNames() && to.hasExplicitNames())
-+    {
-+        const auto & from_names = from.getElementNames();
-+        const auto & to_names = to.getElementNames();
-+        UnorderedMapWithMemoryTracking<String, size_t> from_positions;
-+        from_positions.reserve(from_names.size());
-+        for (size_t i = 0; i < from_names.size(); ++i)
-+            from_positions.emplace(from_names[i], i);
-+
-+        bool has_common_name = false;
-+        for (const auto & name : to_names)
-+        {
-+            auto it = from_positions.find(name);
-+            if (it == from_positions.end())
-+                positions.emplace_back();
-+            else
-+            {
-+                positions.emplace_back(it->second);
-+                has_common_name = true;
-+            }
-+        }
-+
-+        if (has_common_name)
-+            return positions;
-+        positions.clear();
-+    }
-+
-+    if (from.getElements().size() != to.getElements().size())
-+        return std::nullopt;
-+
-+    for (size_t i = 0; i < to.getElements().size(); ++i)
-+        positions.emplace_back(i);
-+    return positions;
-+}
-+
-+VectorWithMemoryTracking<std::optional<size_t>> getTupleCastElementPositions(const DataTypeTuple & from, const DataTypeTuple & to)
-+{
-+    auto positions = tryGetTupleCastElementPositions(from, to);
-+    if (!positions)
-+        throw Exception(ErrorCodes::TYPE_MISMATCH, "CAST AS Tuple can only be performed between tuple types "
-+                        "with the same number of elements or from String.\nLeft type: {}, right type: {}",
-+                        from.getName(), to.getName());
-+    return std::move(*positions);
-+}
-+
- static void validateNestedTypesForAccurateCastOrNull(const DataTypePtr & type)
- {
-     if (auto unsupported = findUnsupportedTypeForAccurateCastOrNull(type))
-```
-
-**File**: `src/Functions/CastOverloadResolver.h` (modified, +17/-0)
-```diff
-@@ -4,11 +4,13 @@
- #include <optional>
- #include <Interpreters/Context_fwd.h>
- #include <Core/ColumnWithTypeAndName.h>
-+#include <Common/VectorWithMemoryTracking.h>
- 
- 
- namespace DB
- {
- 
-+class DataTypeTuple;
- class IFunctionOverloadResolver;
- using FunctionOverloadResolverPtr = std::shared_ptr<IFunctionOverloadResolver>;
- 
-@@ -35,6 +37,21 @@ FunctionBasePtr createInternalCast(ColumnWithTypeAndName from, DataTypePtr to, C
- /// when it can carry a NULL of its own, as Dynamic and Variant do.
- bool canBeAccurateCastOrNullTarget(const DataTypePtr & type);
- 
-+/// Map each destination tuple element to its source position, or no position for a defaulted field. For named
-+/// tuples with at least one element name in common, elements are matched by name: source elements without a
-+/// counterpart are dropped, and target elements without a counterpart are filled by default values (schema
-+/// evolution: adding, dropping and renaming elements of a `Tuple` or a `Nested` column with `ALTER`). For
-+/// named tuples with disjoint sets of element names, matching by name cannot be meant, because it would fill
-+/// the whole result by default values and lose all the data, so elements are matched by position, as for
-+/// unnamed tuples (e.g. the result of function `tuple` with `enable_named_columns_in_function_tuple` inserted
-+/// into a column whose tuple elements are named differently).
-+VectorWithMemoryTracking<std::optional<size_t>> getTupleCastElementPositions(const DataTypeTuple & from, const DataTypeTuple & to);
-+
-+/// The same mapping, or no mapping when the tuples are matched by position and have different numbers of
-+/// elements, where `getTupleCastElementPositions` throws `TYPE_MISMATCH` because `CAST` cannot convert them.
-+std::optional<VectorWithMemoryTracking<std::optional<size_t>>> tryGetTupleCastElementPositions(
-+    const DataTypeTuple & from, const DataTypeTuple & to);
-+
- FunctionOverloadResolverPtr createCastOverloadResolver(ContextPtr context, CastType cast_type, std::optional<CastDiagnostic> diagnostic);
- 
- }
++SELECT countIf(isInfinite(pow(10, y)) AND pow(10, y) > 0), countIf(pow(10, -y) = 0)
++FROM (SELECT exp10(3 + number / 10) AS y FROM numbers(3000));
 ```
 
 ---
 
-### Incident Patch 2: `d5024cf1` (2026-11-17)
-**Commit Message**: Merge pull request #132118 from groeneai/fix-broken-local-disk-skip-130044
+### Incident Patch 2: `b5018731` (2026-11-18)
+**Commit Message**: Merge remote-tracking branch 'origin/master' into fix-pow-far-overflow-sign
 
-Skip broken disks when looking for a table's files on every disk
+Resolve the `contrib/llvm-project` conflict by pinning the submodule to the tip of
+`ClickHouse/release-23.x` (55541575edec), the merge commit of
+https://github.com/ClickHouse/llvm-project/pull/161. It contains both the fix
+from this PR and the commits that master picked up.
 
-**File**: `src/Databases/DatabaseOnDisk.cpp` (modified, +1/-1)
+**File**: `.github/workflows/master.yml` (modified, +0/-53)
 ```diff
-@@ -446,7 +446,7 @@ void DatabaseOnDisk::dropTable(ContextPtr local_context, const String & table_na
+@@ -1204,58 +1204,6 @@ jobs:
+           . ./ci/tmp/praktika_setup_env.sh
+           PYTHONUNBUFFERED=1 python3 -m praktika run 'Build (amd_compat)' --workflow "MasterCI" --ci --timestamp
  
-     for (const auto & [disk_name, disk] : getContext()->getDisksMap())
-     {
--        if (disk->isReadOnly() || !disk->existsDirectory(table_data_path_relative))
-+        if (disk->isBroken() || disk->isReadOnly() || !disk->existsDirectory(table_data_path_relative))
-             continue;
- 
-         LOG_INFO(log, "Removing data directory from disk {} with path {} for dropped table {} ", disk_name, table_data_path_relative, table_name);
+-  build_amd_musl:
+-    runs-on: [self-hosted, arm-medium-cpu]
+-    needs:
+-    - build_amd_asan_ubsan
+-    - build_amd_binary
+-    - build_amd_debug
+-    - build_amd_msan
+-    - build_amd_tsan
+-    - build_arm_asan_ubsan
+-    - build_arm_binary
+-    - build_arm_debug
+-    - build_arm_msan
+-    - build_arm_tidy_1_4
+-    - build_arm_tidy_2_4
+-    - build_arm_tidy_3_4
+-    - build_arm_tidy_4_4
+-    - build_arm_tsan
+-    - config_workflow
+-    - dockers_build_amd
+-    - dockers_build_arm
+-    - dockers_build_multiplatform_manifest
+-    if: ${{ !cancelled() && !contains(needs.*.outputs.pipeline_status, 'failure') && !contains(needs.*.outputs.pipeline_status, 'undefined') && !contains(fromJson(needs.config_workflow.outputs.data).workflow_config.cache_success_base64, 'QnVpbGQgKGFtZF9tdXNsKQ==') }}
+-    name: "Build (amd_musl)"
+-    outputs:
+-      data: ${{ steps.run.outputs.DATA }}
+-      pipeline_status: ${{ steps.run.outputs.pipeline_status || 'undefined' }}
+-    steps:
+-      - name: Checkout code
+-        uses: actions/checkout@v6
+-        with:
+-          ref: ${{ env.CHECKOUT_REF }}
+-      - name: Prepare env script
+-        run: |
+-          rm -rf ./ci/tmp
+-          mkdir -p ./ci/tmp
+-          cat > ./ci/tmp/praktika_setup_env.sh << 'ENV_SETUP_SCRIPT_EOF'
+-          export PYTHONPATH=.:./ci
+-
+-          cat > ./ci/tmp/workflow_job.json << 'EOF'
+-          ${{ toJson(job) }}
+-          EOF
+-          cat > ./ci/tmp/workflow_status.json << 'EOF'
+-          ${{ toJson(needs) }}
+-          EOF
+-          ENV_SETUP_SCRIPT_EOF
+-
+-      - name: Run
+-        id: run
+-        run: |
+-          . ./ci/tmp/praktika_setup_env.sh
+-          PYTHONUNBUFFERED=1 python3 -m praktika run 'Build (amd_musl)' --workflow "MasterCI" --ci --timestamp
+-
+   build_riscv64:
+     runs-on: [self-hosted, arm-medium-cpu]
+     needs:
+@@ -6486,7 +6434,6 @@ jobs:
+     - build_amd_freebsd
+     - build_amd_illumos
+     - build_amd_msan
+-    - build_amd_musl
+     - build_amd_release
+     - build_amd_release_performance_reference
+     - build_amd_tsan
 ```
 
-**File**: `src/Interpreters/DatabaseCatalog.cpp` (modified, +1/-1)
+**File**: `.github/workflows/merge_queue.yml` (modified, +0/-38)
 ```diff
-@@ -1921,7 +1921,7 @@ void DatabaseCatalog::dropTableFinally(const TableMarkedAsDropped & table)
-     ///   or it is better to bypass it e.g. to avoid interactions with a remote storage
-     auto is_disk_eligible_for_search = [](DiskPtr disk, std::shared_ptr<MergeTreeData> storage)
-     {
--        bool is_disk_eligible = !disk->isReadOnly();
-+        bool is_disk_eligible = !disk->isBroken() && !disk->isReadOnly();
+@@ -638,43 +638,6 @@ jobs:
+           . ./ci/tmp/praktika_setup_env.sh
+           PYTHONUNBUFFERED=1 python3 -m praktika run 'Build (amd_compat)' --workflow "MergeQueueCI" --ci --timestamp
  
-         /// Disk is not actually used by MergeTree table
-         if (is_disk_eligible && storage && !storage->getStoragePolicy()->tryGetVolumeIndexByDiskName(disk->getName()).has_value())
+-  build_amd_musl:
+-    runs-on: [self-hosted, arm-medium-cpu]
+-    needs:
+-    - config_workflow
+-    - dockers_build_amd
+-    - dockers_build_arm
+-    if: ${{ !cancelled() && !contains(needs.*.outputs.pipeline_status, 'failure') && !contains(needs.*.outputs.pipeline_status, 'undefined') && !contains(fromJson(needs.config_workflow.outputs.data).workflow_config.cache_success_base64, 'QnVpbGQgKGFtZF9tdXNsKQ==') }}
+-    name: "Build (amd_musl)"
+-    outputs:
+-      data: ${{ steps.run.outputs.DATA }}
+-      pipeline_status: ${{ steps.run.outputs.pipeline_status || 'undefined' }}
+-    steps:
+-      - name: Checkout code
+-        uses: actions/checkout@v6
+-        with:
+-          ref: ${{ env.CHECKOUT_REF }}
+-      - name: Prepare env script
+-        run: |
+-          rm -rf ./ci/tmp
+-          mkdir -p ./ci/tmp
+-          cat > ./ci/tmp/praktika_setup_env.sh << 'ENV_SETUP_SCRIPT_EOF'
+-          export PYTHONPATH=.:./ci
+-
+-          cat > ./ci/tmp/workflow_job.json << 'EOF'
+-          ${{ toJson(job) }}
+-          EOF
+-          cat > ./ci/tmp/workflow_status.json << 'EOF'
+-          ${{ toJson(needs) }}
+-          EOF
+-          ENV_SETUP_SCRIPT_EOF
+-
+-      - name: Run
+-        id: run
+-        run: |
+-          . ./ci/tmp/praktika_setup_env.sh
+-          PYTHONUNBUFFERED=1 python3 -m praktika run 'Build (amd_musl)' --workflow "MergeQueueCI" --ci --timestamp
+-
+   build_riscv64:
+     runs-on: [self-hosted, arm-medium-cpu]
+     needs:
+@@ -794,7 +757,6 @@ jobs:
+     - build_amd_darwin
+     - build_amd_freebsd
+     - build_amd_illumos
+-    - build_amd_musl
+     - build_arm_v80compat
+     - build_loongarch64
+     - build_ppc64le
 ```
 
-**File**: `src/Storages/Freeze.cpp` (modified, +2/-2)
+**File**: `CMakeLists.txt` (modified, +16/-8)
 ```diff
-@@ -147,7 +147,7 @@ BlockIO Unfreezer::systemUnfreeze(const String & backup_name)
-     auto disks_map = local_context->getDisksMap();
-     for (auto & [_, disk] : disks_map)
-     {
--        if (disk->isReadOnly() || disk->isWriteOnce())
-+        if (disk->isBroken() || disk->isReadOnly() || disk->isWriteOnce())
-             continue;
+@@ -257,7 +257,11 @@ option(OMIT_HEAVY_DEBUG_SYMBOLS
+     "Do not generate debugger info for heavy modules (ClickHouse functions and dictionaries, some contrib)"
+     ${OMIT_HEAVY_DEBUG_SYMBOLS_DEFAULT})
  
-         for (const auto & store_path : store_paths)
-@@ -211,7 +211,7 @@ PartitionCommandsResultInfo Unfreezer::unfreezePartitionsFromTableDirectory(Merg
+-option(BUILD_STANDALONE_KEEPER "Build keeper as small standalone binary" OFF)
++option(BUILD_STANDALONE_KEEPER "Deprecated: build keeper as a separate binary instead of a symlink to clickhouse" OFF)
++if (BUILD_STANDALONE_KEEPER)
++    message (WARNING "BUILD_STANDALONE_KEEPER is deprecated and will be removed: `clickhouse-keeper` is a symlink to the `clickhouse` binary, "
++        "which runs Keeper in the same way, and a separate binary costs another full ThinLTO link in every build.")
++endif ()
  
-     for (const auto & disk : disks)
-     {
--        if (!disk->existsDirectory(table_directory))
-+        if (disk->isBroken() || !disk->existsDirectory(table_directory))
-             continue;
+ # Create BuildID when using lld. For other linkers it is created by default.
+ # (NOTE: LINKER_NAME can be either path or name, and in different variants)
+@@ -463,6 +467,9 @@ endif ()
+ # Clang turns a call to `sincos` into the `llvm.sincos` intrinsic, and for a musl target LLVM lowers that intrinsic
+ # to separate `sin` and `cos` calls again (it assumes `sincos` only in glibc, Fuchsia and Android). Our musl links
+ # llvm-libc's `sincos`, which shares one argument reduction between the two, so keep the call as it is written.
++#
++# Under sanitizers compiler-rt intercepts `sincos`; `__real_sincos` is bound to llvm-libc's `sincos` as well
++# (see contrib/libllvmlibc-cmake), so the bits match `sin` and `cos` in every build.
+ if (USE_MUSL)
+     set (COMPILER_FLAGS "${COMPILER_FLAGS} -fno-builtin-sincos")
+ endif ()
+@@ -674,7 +681,9 @@ option(ENABLE_LIBRARIES "Enable all external libraries by default" ON)
+ # Increase stack size on Musl. We need big stack for our recursive-descend parser
+ # and for analyzer passes that recurse on deeply-nested join trees (e.g.
+ # 1000-join queries). Match glibc's 8 MiB default; musl reads this from
+-# PT_GNU_STACK and clamps it to DEFAULT_STACK_MAX (also 8 MiB).
++# PT_GNU_STACK and clamps it to DEFAULT_STACK_MAX (also 8 MiB). Our musl fork,
++# like glibc, uses a finite RLIMIT_STACK soft limit instead, so this only
++# applies when the limit is unlimited.
+ if (USE_MUSL)
+     set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-z,stack-size=8388608")
+ endif ()
+@@ -773,8 +782,8 @@ endif ()
  
-         for (auto it = disk->iterateDirectory(table_directory); it->isValid(); it->next())
+ # Full RELRO (relocation read-only): '-z now' resolves all dynamic relocations at startup and '-z relro'
+ # then maps the global offset table read-only, so an arbitrary write cannot redirect a call through it.
+-# Resolving everything at startup costs nothing here because we link dynamically only against libc
+-# and we forbid dlopen (see programs/main.cpp).
++# Resolving everything at startup costs nothing here because we link statically (musl) or dynamically
++# only against libc, and we forbid dlopen (see programs/main.cpp).
+ # Not on Darwin: ld64 does not accept '-z' options.
+ # The native SunOS linker supports '-z now' but not '-z relro'; LLD supports both.
+ if (NOT OS_DARWIN)
+@@ -964,9 +973,9 @@ if (FUZZER)
+                 # Targets compiled with -fno-sanitize=all must never be instrumented:
+                 # a later -fsanitize=fuzzer-no-link overrides it and re-enables
+                 # SanitizerCoverage. That is fatal for the in-tree libc and sanitizer
+-                # runtimes (musl, clang_rt_*): their startup code (CRT, __init_libc)
+-                # runs before any coverage runtime exists, so every executable would
+-                # crash at startup.
++                # runtimes (musl, clang_rt_*): their startup code (rcrt1 self-relocation,
++                # __init_libc) runs before relocations are applied and before any
++                # coverage runtime exists, so every executable would crash at startup.
+                 #
+                 # The PC table that -fsanitize=fuzzer-no-link implies is left out. `clickhouse_fuzzer`
+                 # links every `src/` library into a single image that keeps outgrowing the 2 GiB reach of
+@@ -1020,7 +1029,6 @@ if (NATIVE_BUILD_TARGETS
+     AND NOT(
+         CMAKE_HOST_SYSTEM_NAME STREQUAL CMAKE_SYSTEM_NAME
+         AND CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL CMAKE_SYSTEM_PROCESSOR
+-        AND NOT USE_MUSL
+     )
+ )
+     message (STATUS "Building native targets: ${NATIVE_BUILD_TARGETS}")
 ```
 
-**File**: `src/Storages/MergeTree/MergeTreeData.cpp` (modified, +2/-2)
+**File**: `ci/defs/defs.py` (modified, +0/-3)
 ```diff
-@@ -12229,7 +12229,7 @@ DetachedPartsInfo MergeTreeData::getDetachedParts() const
-         /// While it is possible to have detached parts on readonly/write-once disks
-         /// (if they were produced on another machine, where it wasn't readonly)
-         /// to avoid wasting resources for slow disks, avoid trying to enumerate them.
--        if (disk->isReadOnly() || disk->isWriteOnce())
-+        if (disk->isBroken() || disk->isReadOnly() || disk->isWriteOnce())
-             continue;
- 
-         String detached_path = fs::path(relative_data_path) / DETACHED_DIR_NAME;
-@@ -14047,7 +14047,7 @@ DiskPtr MergeTreeData::tryGetDiskForDetachedPart(const String & part_name) const
-     const auto disks = getStoragePolicy()->getDisks();
- 
-     for (const DiskPtr & disk : disks)
--        if (disk->existsDirectory(fs::path(relative_data_path) / DETACHED_DIR_NAME / part_name))
-+        if (!disk->isBroken() && disk->existsDirectory(fs::path(relative_data_path) / DETACHED_DIR_NAME / part_name))
-             return disk;
- 
-     return nullptr;
+@@ -432,7 +432,6 @@ class BuildTypes(metaclass=MetaClasses.WithIter):
+     AMD_ILLUMOS = "amd_illumos"
+     PPC64LE = "ppc64le"
+     AMD_COMPAT = "amd_compat"
+-    AMD_MUSL = "amd_musl"
+     RISCV64 = "riscv64"
+     S390X = "s390x"
+     LOONGARCH64 = "loongarch64"
+@@ -569,7 +568,6 @@ class ArtifactNames:
+     CH_AMD_ILLUMOS = "CH_AMD_ILLUMOS_BIN"
+     CH_PPC64LE = "CH_PPC64LE_BIN"
+     CH_AMD_COMPAT = "CH_AMD_COMPAT_BIN"
+-    CH_AMD_MUSL = "CH_AMD_MUSL_BIN"
+     CH_RISCV64 = "CH_RISCV64_BIN"
+     CH_S390X = "CH_S390X_BIN"
+     CH_LOONGARCH64 = "CH_LOONGARCH64_BIN"
+@@ -746,7 +744,6 @@ class ArtifactConfigs:
+             ArtifactNames.CH_AMD_FREEBSD,
+             ArtifactNames.CH_PPC64LE,
+             ArtifactNames.CH_AMD_COMPAT,
+-            ArtifactNames.CH_AMD_MUSL,
+             ArtifactNames.CH_RISCV64,
+             ArtifactNames.CH_S390X,
+             ArtifactNames.CH_LOONGARCH64,
 ```
 
-**File**: `tests/integration/test_disk_checker/test.py` (modified, +87/-0)
+**File**: `ci/defs/job_configs.py` (modified, +0/-6)
 ```diff
-@@ -204,3 +204,90 @@ def test_server_starts_with_unusable_local_disk_path(started_cluster):
+@@ -353,7 +353,6 @@ def dind_containment_env(job_mem):
+     BuildTypes.AMD_ILLUMOS,
+     BuildTypes.PPC64LE,
+     BuildTypes.AMD_COMPAT,
+-    BuildTypes.AMD_MUSL,
+     BuildTypes.RISCV64,
+     BuildTypes.S390X,
+     BuildTypes.LOONGARCH64,
+@@ -694,11 +693,6 @@ class JobConfigs:
+             provides=[ArtifactNames.CH_AMD_COMPAT],
+             runs_on=RunnerLabels.ARM_MEDIUM_CPU,
+         ),
+-        Job.ParamSet(
+-            parameter=BuildTypes.AMD_MUSL,
+-            provides=[ArtifactNames.CH_AMD_MUSL],
+-            runs_on=RunnerLabels.ARM_MEDIUM_CPU,
+-        ),
+         Job.ParamSet(
+             parameter=BuildTypes.RISCV64,
+             provides=[ArtifactNames.CH_RISCV64],
+```
+
+**File**: `ci/jobs/auto_release_job.py` (modified, +3/-0)
+```diff
+@@ -179,12 +179,15 @@ def _release_build_artifacts_ready(release_branch: str, commit_sha: str) -> bool
+     print(f"   signed macOS artifacts expected: {with_signed_macos}")
+     with_illumos = release_packages.commit_has_illumos_build(commit_sha)
+     print(f"   illumos artifacts expected: {with_illumos}")
++    packages = release_packages.commit_packages(commit_sha)
++    print(f"   packages expected: {', '.join(packages)}")
+     return release_packages.release_build_artifacts_ready(
+         S3,
+         os.getenv("S3_BUILDS_BUCKET", Settings.S3_ARTIFACT_BUCKET),
+         release_branch,
+         commit_sha,
+         version,
++        packages,
+         with_signed_macos,
+         with_illumos,
+     )
+```
+
+**File**: `ci/jobs/build_clickhouse.py` (modified, +78/-3)
+```diff
+@@ -2,6 +2,7 @@
+ import hashlib
+ import json
+ import os
++import shlex
+ import shutil
+ import subprocess
  
-     assert node.query("SELECT is_broken FROM system.disks WHERE name = 'unusable'") == "1\n"
-     assert node.contains_in_log("Skip access check for disk unusable (disk is broken)")
+@@ -22,12 +23,12 @@
+ 
+ BUILD_TYPE_TO_CMAKE = {
+     BuildTypes.AMD_DEBUG: f"    cmake --debug-trycompile -DCMAKE_VERBOSE_MAKEFILE=1 -LA -DCMAKE_BUILD_TYPE=Debug -DENABLE_THINLTO=0 -DSANITIZE=          -DENABLE_CHECK_HEAVY_BUILDS=1 -DBUILD_STRIPPED_BINARY=1 -DENABLE_CLICKHOUSE_SELF_EXTRACTING=1 -DCMAKE_C_COMPILER={ToolSet.COMPILER_C} -DCMAKE_CXX_COMPILER={ToolSet.COMPILER_CPP} -DCOMPILER_CACHE={ToolSet.COMPILER_CACHE}        -DCMAKE_TOOLCHAIN_FILE={repo_path_normalized}/cmake/linux/toolchain-x86_64.cmake -DENABLE_BUILD_PROFILING=1 -DENABLE_TESTS=1 -DENABLE_LEXER_TEST=1 -DENABLE_UTILS=0 -DCMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_SYSCONFDIR=/etc -DCMAKE_INSTALL_LOCALSTATEDIR=/var -DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON -DENABLE_BUZZHOUSE=1",
+-    BuildTypes.AMD_RELEASE: f"  cmake --debug-trycompile -DCMAKE_VERBOSE_MAKEFILE=1 -LA -DCMAKE_BUILD_TYPE=None  -DENABLE_THINLTO=1 -DSANITIZE=          -DENABLE_CHECK_HEAVY_BUILDS=1 -DBUILD_STRIPPED_BINARY=1 -DENABLE_CLICKHOUSE_SELF_EXTRACTING=1 -DCMAKE_C_COMPILER={ToolSet.COMPILER_C} -DCMAKE_CXX_COMPILER={ToolSet.COMPILER_CPP} -DCOMPILER_CACHE={ToolSet.COMPILER_CACHE}        -DCMAKE_TOOLCHAIN_FILE={repo_path_normalized}/cmake/linux/toolchain-x86_64.cmake -DENABLE_BUILD_PROFILING=1 -DENABLE_TESTS=0 -DENABLE_LEXER_TEST=0 -DENABLE_UTILS=0 -DCMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_SYSCONFDIR=/etc -DCMAKE_INSTALL_LOCALSTATEDIR=/var -DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON -DSPLIT_DEBUG_SYMBOLS=ON -DSYMBOL_SECTIONS=compact -DBUILD_STANDALONE_KEEPER=1",
++    BuildTypes.AMD_RELEASE: f"  cmake --debug-trycompile -DCMAKE_VERBOSE_MAKEFILE=1 -LA -DCMAKE_BUILD_TYPE=None  -DENABLE_THINLTO=1 -DSANITIZE=          -DENABLE_CHECK_HEAVY_BUILDS=1 -DBUILD_STRIPPED_BINARY=1 -DENABLE_CLICKHOUSE_SELF_EXTRACTING=1 -DCMAKE_C_COMPILER={ToolSet.COMPILER_C} -DCMAKE_CXX_COMPILER={ToolSet.COMPILER_CPP} -DCOMPILER_CACHE={ToolSet.COMPILER_CACHE}        -DCMAKE_TOOLCHAIN_FILE={repo_path_normalized}/cmake/linux/toolchain-x86_64.cmake -DENABLE_BUILD_PROFILING=1 -DENABLE_TESTS=0 -DENABLE_LEXER_TEST=0 -DENABLE_UTILS=0 -DCMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_SYSCONFDIR=/etc -DCMAKE_INSTALL_LOCALSTATEDIR=/var -DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON -DSPLIT_DEBUG_SYMBOLS=ON -DSYMBOL_SECTIONS=compact",
+     BuildTypes.AMD_BINARY: f"   cmake --debug-trycompile -DCMAKE_VERBOSE_MAKEFILE=1 -LA -DCMAKE_BUILD_TYPE=None  -DENABLE_THINLTO=0 -DSANITIZE=          -DENABLE_CHECK_HEAVY_BUILDS=1 -DBUILD_STRIPPED_BINARY=1 -DENABLE_CLICKHOUSE_SELF_EXTRACTING=1 -DCMAKE_C_COMPILER={ToolSet.COMPILER_C} -DCMAKE_CXX_COMPILER={ToolSet.COMPILER_CPP} -DCOMPILER_CACHE={ToolSet.COMPILER_CACHE}        -DCMAKE_TOOLCHAIN_FILE={repo_path_normalized}/cmake/linux/toolchain-x86_64.cmake -DENABLE_BUILD_PROFILING=1 -DENABLE_TESTS=0 -DENABLE_LEXER_TEST=0 -DENABLE_UTILS=0 -DCMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY=ON",
+     BuildTypes.AMD_ASAN_UBSAN: f"  cmake --debug-trycompile -DCMAKE_VERBOSE_MAKEFILE=1 -LA -DCMAKE_BUILD_TYPE=None  -DENABLE_THINLTO=0 -DSANITIZE=address,undefined -DENABLE_CHECK_HEAVY_BUILDS=1 -DBUILD_STRIPPED_BINARY=1 -DENABLE_CLICKHOUSE_SELF_EXTRACTING=1 -DCMAKE_C_COMPILER={ToolSet.COMPILER_C} -DCMAKE_CXX_COMPILER={ToolSet.COMPILER_CPP} -DCOMPILER_CACHE={ToolSet.COMPILER_CACHE}        -DCMAKE_TOOLCHAIN_FILE={repo_path_normalized}/cmake/linux/toolchain-x86_64.cmake -DENABLE_BUILD_PROFILING=1 -DENABLE_TESTS=1 -DENABLE_LEXER_TEST=1 -DENABLE_UTILS=0 -DCMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_SYSCONFDIR=/etc -DCMAKE_INSTALL_LOCALSTATEDIR=/var -DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON -DENABLE_BUZZHOUSE=1",
+     BuildTypes.AMD_TSAN: f"     cmake --debug-trycompile -DCMAKE_VERBOSE_MAKEFILE=1 -LA -DCMAKE_BUILD_TYPE=None  -DENABLE_THINLTO=0 -DSANITIZE=thread    -DENABLE_CHECK_HEAVY_BUILDS=1 -DBUILD_STRIPPED_BINARY=1 -DENABLE_CLICKHOUSE_SELF_EXTRACTING=1 -DCMAKE_C_COMPILER={ToolSet.COMPILER_C} -DCMAKE_CXX_COMPILER={ToolSet.COMPILER_CPP} -DCOMPILER_CACHE={ToolSet.COMPILER_CACHE}        -DCMAKE_TOOLCHAIN_FILE={repo_path_normalized}/cmake/linux/toolchain-x86_64.cmake -DENABLE_BUILD_PROFILING=1 -DENABLE_TESTS=1 -DENABLE_LEXER_TEST=1 -DENABLE_UTILS=0 -DCMAKE_FIND_PACKAGE_NO_PACKAGE_REGISTRY=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_SYSCONFDIR=/etc -DCMAKE_INSTALL_LOCALSTATEDIR=/var -DCMAKE_SKIP_INSTALL_ALL_DEPENDENCY=ON -DENABLE_BUZZHOUSE=1",
+     BuildTypes.AMD_MSAN: f"     cmake --debug-trycompile -DCMAKE_VERBOSE_MAKEFILE=1 -LA -DCMAKE_BUILD_TYPE=None  -DENABLE_THINLTO=0 -DSANITIZE=memory    -DENABLE_CHECK_HEAVY_BUILDS=1 -DBUILD_STRIPPED_BINARY=1 -DENABLE_CLICKHOUSE_SELF_EXTRACTING=1 -DCMAKE_C_COMPILER={ToolSet.COMPILER_C} -DCMAKE_CXX_COMPILER={ToolSet.COMPILER_CPP} -DCOMPILER_CACHE={ToolSet.COMPILER_CACHE}        -DCMAKE_TOOLCHAIN_FILE={repo_path_normalized}/
+```
+
+**File**: `ci/jobs/compatibility_check.py` (modified, +46/-93)
+```diff
+@@ -1,65 +1,48 @@
+ import argparse
++import json
+ import re
+ import struct
+ from pathlib import Path
+ 
+-from pip._vendor.packaging.version import Version
+-
+-from ci.praktika.info import Info
+ from ci.praktika.result import Result
+ from ci.praktika.utils import Shell, Utils
+ 
+-IMAGE_UBUNTU = "clickhouse/test-old-ubuntu"
+-IMAGE_CENTOS = "clickhouse/test-old-centos"
+-DOWNLOAD_RETRIES_COUNT = 5
+-
+ temp_path = Path(f"{Utils.cwd()}/ci/tmp")
+ 
+-
+-def process_glibc_check():
+-    # See https://sourceware.org/glibc/wiki/Glibc%20Timeline
+-    if Utils.is_amd():
+-        max_glibc_version = "2.4"
+-    elif Utils.is_arm():
+-        max_glibc_version = "2.18"  # because of build with newer sysroot?
+-    else:
+-        raise RuntimeError("Can't determine max glibc version")
+-
+-    commands = (
+-        [
+-            f"readelf -s --wide {temp_path}/clickhouse | grep '@GLIBC_' > {temp_path}/glibc.log",
+-            # FIXME: odbc bridge is not present in the deb package
+-            # f"readelf -s --wide {temp_path}/clickhouse-odbc-bridge | grep '@GLIBC_' >> {temp_path}/glibc.log",
+-            # FIXME: library bridge is not present in the deb package
+-            # f"readelf -s --wide {temp_path}/clickhouse-library-bridge | grep '@GLIBC_' >> {temp_path}/glibc.log",
+-        ],
++# The release binary is statically linked against the bundled musl, so the glibc
++# symbol-version audit and the "does it start on an ancient distribution" checks
++# that this job used to run are settled at link time (see the `readelf` assertion
++# in the build job). What remains worth checking at runtime is rseq: the bundled
++# libc registers a per-thread rseq area with the kernel itself, and `sched_getcpu`
++# (hence the per-CPU counters) falls back to a slower path when that fails. The
++# warning in `system.warnings` is the observable signal, so exercise both sides:
++# registration succeeds regardless of the distribution's own libc, and a kernel
++# that refuses the syscall is reported.
++RSEQ_WARNING_QUERY = "select count() as warnings from system.warnings where message like '%rseq%'"
++
++# Docker seccomp profile that makes the `rseq` syscall fail with ENOSYS, which is
++# what a pre-4.18 kernel or a restrictive sandbox looks like to the process.
++SECCOMP_NO_RSEQ = {
++    "defaultAction": "SCMP_ACT_ALLOW",
++    "syscalls": [{"names": ["rseq"], "action": "SCMP_ACT_ERRNO", "errnoRet": 38}],
++}
 +
 +
-+def test_broken_local_disk_is_skipped(started_cluster):
-+    """Operations that look for a table's files on every disk must skip a broken disk."""
-+    node = cluster.instances["test_disk_checker_unusable_path"]
-+
-+    node.exec_in_container(
-+        [
-+            "bash",
-+            "-c",
-+            "ln -sfn loop_b /var/lib/clickhouse/loop_a && ln -sfn loop_a /var/lib/clickhouse/loop_b",
-+        ]
-+    )
-+    node.exec_in_container(
-+        [
-+            "bash",
-+            "-c",
-+            """cat > /etc/clickhouse-server/config.d/looped_disk.xml << 'EOF'
-+<clickhouse>
-+    <enable_system_unfreeze>true</enable_system_unfreeze>
-+    <storage_configuration>
-+        <disks>
-+            <looped>
-+                <type>local</type>
-+                <path>/var/lib/clickhouse/loop_a/disk/</path>
-+            </looped>
-+            <spare>
-+                <type>local</type>
-+                <path>/var/lib/clickhouse/spare_disk/</path>
-+            </spare>
-+        </disks>
-+        <policies>
-+            <with_looped>
-+                <volumes>
-+                    <main><disk>default</disk></main>
-+                    <broken><disk>looped</disk></broken>
-+                    <last><disk>spare</disk></last>
-+                </volumes>
-+                <move_factor>0</move_factor>
-+            </with_looped>
-+        </policies>
-+    </storage_configuration>
-+</clickhouse>
-+EOF""",
-+        ]
-+    )
-+
-+    node.restart_clickhouse()
-+    assert node.query("SELECT is_broken FROM system.disks WHERE name = 'looped'") == "1\n"
-+
-+    node.query("CREATE TABLE t (x UInt8) ENGINE = MergeTree ORDER BY x")
-+    t_uuid = node.query("SELECT uuid FROM system.tables WHERE database = 'default' AND name = 't'").strip()
-+    t_spare = f"/var/lib/clickhouse/spare_disk/store/{t_uuid[:3]}/{t_uuid}"
-+    node.exec_in_container(["bash", "-c", f"mkdir -p {t_spare}/sentinel"])
-+    node.query("DROP TABLE t SYNC", settings={"max_execution_time": 30})
-+    assert node.exec_in_container(["bash", "-c", f"[ -e {t_spare} ] && echo present || echo absent"]) == "absent\n"
-+
-+    node.query(
-+        "CREATE DATABASE ordinary_db ENGINE = Ordinary",
-+        settings={"allow_deprecated_database_ordinary": 1},
-+    )
-+    node.query("CREATE TABLE ordinary_db.t (x UInt8) ENGINE = MergeTree ORDER BY x")
-+    ordinary_spare = "/var/lib/clickhouse/spare_disk/data/ordinary_db/t"
-+    node.exec_in_container(["bash", "-c", f"mkdir -p {ordinary_spare}/sentinel"])
-+    node.query("DROP TABLE ordinary_db.t")
-+    assert node.exec_in_container(["bash", "-c", f"[ -e {ordinary_spare} ] && echo present || echo absent"]) == "absent\n"
-+    node.query("DROP DATABASE ordinary_db")
-+
-+    node.query(
-+        "CREATE TABLE t2 (x UInt8) ENGINE = MergeTree ORDER BY x SETTINGS storage_policy = 'with_looped'"
-+    )
-+    node.query("INSERT INTO t2 VALUES (1)")
-+    part = node.query("SELECT name FROM system.parts WHERE table = 't2' AND active").strip()
-+    node.query(f"ALTER TABLE t2 MOVE PART '{part}' TO DISK 'spare'")
-+    node.query(f"ALTER TABLE t2 DETACH PART '{part}'")
-+    assert node.query("SELECT count() FROM system.detached_parts WHERE table = 't2'") == "1\n"
-+    node.query(f"ALTER TABLE t2 ATTACH PART '{part}'")
-+    assert node.query("SELECT count() FROM t2") == "1\n"
-+
-+    frozen = node.query("SELECT name FROM system.parts WHERE table = 't2' AND active").strip()
-+    node.query("ALTER TABLE t2 FREEZE WITH NAME 'looped_backup'")
-+    node.query("ALTER TABLE t2 FREEZE WITH NAME 'looped_backup_2'")
-+    assert frozen in node.query(
-+        "ALTER TABLE t2 UNFREEZE WITH NAME 'looped_backup'", settings={"alter_partition_verbose_result": 1}
-+    )
-+    assert frozen in node.query("SYSTEM UNFREEZE WITH NAME 'looped_backup_2'")
-+    node.query("DROP TABLE t2 SYNC", settings={"max_execution_time": 30})
++def rseq_check(image: str, expect_rseq: bool, extra_args: str = "") -> str:
++    # The condition is over the column of the one-row subquery: an outer `count()` would count that
++    # row and always be 1.
++    condition = "warnings" if expect_rseq else "not(warnings)"
++    return (
++        f"docker run --rm --volume={temp_path}/clickhouse:/clickhouse {extra_args} {image} "
++        f'/clickhouse local --tmp --query "select throwIf({condition}) from ({RSEQ_WARNING_QUERY})"'
+     )
+ 
+-    for command in commands:
+-        Shell.check(command, verbose=True, strict=True)
+-
+-    ok = True
+-    with open(f"{temp_path}/glibc.log", "r", encoding="utf-8") as log:
+-        for line in log:
+-            if line.strip():
+-                columns = line.strip().split(" ")
+-                symbol_with_glibc = columns[-2]  # sysconf@GLIBC_2.2.5
+-                _, version = symbol_with_glibc.split("@GLIBC_")
+-                if version == "PRIVATE":
+-                    print(f"FAILED: PRIVATE version: {symbol_with_glibc}")
+-                    ok = False
+-                elif Version(version) > Version(max_glibc_version):
+-                    print(
+-                        f"FAILED: version is more than max version [{max_glibc_version}]: [{symbol_with_glibc}]"
+-                    )
+-                    ok = False
+-    return ok
+-
+ 
+ def process_pie_check():
+     # Nothing in the build fails when the binary comes out position dependent: -fPIE only makes the
+     # code relocatable, and whether the executable itself is position independent is the linker's
+-    # decision, so it is checked on the packaged binary instead.
++    # decision, so it is checked on the packaged binary instead. A static-PIE is `DYN` with
++    # `DF_1_PIE` set just like a dynamically linked one, so the check is the same as on glibc.
+     header = Shell.get_output(
+         f"readelf -h --wide {temp_path}/clickhouse", verbose=True, strict=True
+     )
+@@ -132,14 +115,6 @@ def parse_args():
+ def main():
+     stopwatch = Utils.Stopwatch()
+ 
+-    check_name = Info().job_name
+-    assert check_name
+-    check_glibc = True
+-    # currently hardcoded to x86, don't enable for AARCH64
+-    check_old_distributions = (
+-        "aarch64" not in check_name.lower() and "arm" not in check_name.lower()
+-    )
+-
+     for package in temp_path.iterdir():
+         if package.suffix == ".deb":
+             Shell.check(
+@@ -152,17 +127,11 @@ def main():
+         verbose=True,
+         strict=True,
+     )
+-    # Shell.check(f"chmod +x {temp_path}/clickhouse", verbose=True, strict=True)
+ 
+-    test_results = []
++    seccom
 ```
 
 ---
 
-### Incident Patch 3: `ab23bdd4` (2026-11-17)
-**Commit Message**: Merge pull request #132058 from groeneai/fix-scheduler-resourcetest-odr
+### Incident Patch 3: `7f139800` (2026-11-18)
+**Commit Message**: Merge pull request #132221 from groeneai/fix-04659-pool-wait-from-client-logs
 
-Fix ODR violation between the two ResourceTest fixtures of the scheduler unit tests
+Fix flaky `04659_connection_pool_zero_wait_blocks`: count the pool wait lines from the waiter's own server logs, not `text_log`
 
-**File**: `src/Common/Scheduler/Nodes/tests/gtest_time_shared_scheduler.cpp` (modified, +5/-0)
+**File**: `tests/queries/0_stateless/04659_connection_pool_zero_wait_blocks.sh` (modified, +23/-33)
 ```diff
-@@ -14,6 +14,9 @@
+@@ -10,17 +10,16 @@ CURDIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+ # With connection_pool_max_wait_ms = 0 the waiter must block on the pool instead of retrying with a
+ # zero length wait, which is what the "Waiting 0 ms." line below would report.
  
- using namespace DB;
+-# The suffix and the per-call start time below keep one run's log rows out of another's. A test
+-# database is not enough on its own: the stress threads pass a fixed --database, so rows from an
+-# earlier run could satisfy the lower bound without this run ever waiting, and could also push the
+-# upper bound over its limit.
++# The suffix keeps one run's query ids, pool user and log files apart from another's. A test database is not
++# enough on its own: the stress threads pass a fixed --database, so an earlier run's query_log rows would be
++# counted with this run's.
+ QUERY_PREFIX="04659_${CLICKHOUSE_DATABASE}_$(random_str 8)"
  
-+namespace
-+{
-+
- struct ResourceTest : public ResourceTestBase
- {
-     TimeSharedScheduler scheduler;
-@@ -40,6 +43,8 @@ struct ResourceTest : public ResourceTestBase
-     }
- };
+ # The pool is keyed on host, port, user and pool size, so a user of its own keeps concurrent runs out
+ # of each other's pool.
+ POOL_USER="u_${QUERY_PREFIX}"
+ ${CLICKHOUSE_CLIENT} --query "CREATE USER ${POOL_USER} IDENTIFIED WITH no_password"
+-trap '${CLICKHOUSE_CLIENT} --query "DROP USER IF EXISTS ${POOL_USER}"' EXIT
++trap '${CLICKHOUSE_CLIENT} --query "DROP USER IF EXISTS ${POOL_USER}"; rm -f "${CLICKHOUSE_TMP}/${QUERY_PREFIX}"_*_waiter.log' EXIT
  
+ function running() {
+     ${CLICKHOUSE_CLIENT} --query "SELECT count() FROM system.processes WHERE query_id IN (${1})"
+@@ -49,7 +48,13 @@ function wait_holding() {
+     return 1
+ }
+ 
+-# Runs one pair of queries at the given connection_pool_max_wait_ms and leaves the log rows the
++# Counts the pool wait lines of one shape in a waiter's own server logs. These come over its connection,
++# while system.text_log drops lines when the async logger's queue is full.
++function pool_wait_lines() {
++    grep -c -E "ConnectionPool .*: No free connections in pool\. Waiting $2( \(skipped [0-9]+ similar messages\))?\$" "${CLICKHOUSE_TMP}/${QUERY_PREFIX}_$1_waiter.log"
 +}
 +
- struct ResourceHolder
- {
-     ResourceTest & t;
-```
-
-**File**: `src/Common/Scheduler/Nodes/tests/gtest_workload_resource_manager.cpp` (modified, +5/-0)
-```diff
-@@ -219,6 +219,9 @@ class WorkloadEntityTestStorage : public WorkloadEntityStorageBase
-     }
- };
++# Runs one pair of queries at the given connection_pool_max_wait_ms and leaves the waiter's log the
+ # assertion below reads. The holder does not finish on its own: it is killed only once the arm's own
+ # expected event has been observed, so the pool is full for the whole of the waiter's wait and no
+ # attempt has to be repeated to land that overlap.
+@@ -58,10 +63,6 @@ function contend() {
+     local holder="${QUERY_PREFIX}_${label}_holder" waiter="${QUERY_PREFIX}_${label}_waiter"
+     local holder_pid waiter_pid
  
-+namespace
-+{
+-    # Read the clock from the server the log rows come from, so the predicate needs no clock
+-    # alignment.
+-    CONTEND_START=$(${CLICKHOUSE_CLIENT} --query "SELECT toString(now64(6))")
+-
+     # Sleeps far longer than the handshake below needs, so the connection stays held until the kill
+     # frees it. The per block sleep cap is what bounds the row count.
+     timeout 60 ${CLICKHOUSE_CLIENT} --query_id "${holder}" --query "
+@@ -74,7 +75,11 @@ function contend() {
+     # Only the holder can free the connection, so the waiter starts once the holder owns it.
+     wait_holding "${holder}" || echo "the holder never started, so the pool was never full"
+ 
+-    timeout 60 ${CLICKHOUSE_CLIENT} --query_id "${waiter}" --query "
++    # The client creates the file only once a line arrives, so a waiter that logged nothing still leaves one to count.
++    local waiter_log="${CLICKHOUSE_TMP}/${waiter}.log"
++    : > "${waiter_log}"
 +
- struct ResourceTest : ResourceTestManager<WorkloadResourceManager>
- {
-     WorkloadEntityTestStorage storage;
-@@ -343,6 +346,8 @@ struct ResourceTest : ResourceTestManager<WorkloadResourceManager>
-     }
- };
++    timeout 60 ${CLICKHOUSE_CLIENT} --query_id "${waiter}" --send_logs_level=information --server_logs_file="${waiter_log}" --query "
+         SELECT count() FROM remote('127.0.0.1:${CLICKHOUSE_PORT_TCP}', numbers(1), '${POOL_USER}', '') WHERE sleepEachRow(1)
+         SETTINGS prefer_localhost_replica = 0, distributed_connections_pool_size = 1,
+                  connection_pool_max_wait_ms = ${wait_ms}, function_sleep_max_microseconds_per_block = 60000000
+@@ -131,21 +136,14 @@ function contend() {
  
-+}
-+
- using TestGuard = ResourceTest::Guard;
+ contend 0 zero succeeds
  
- TEST(SchedulerWorkloadResourceManager, Smoke)
+-${CLICKHOUSE_CLIENT} --query "SYSTEM FLUSH LOGS text_log"
+-
+ # The waiter has to reach the pool once, and then stay there: a wait that returned immediately and
+ # re-entered the loop would report the same line many times over (measured in the thousands when the
+ # blocking wait is replaced by a short one), so the count is bounded on both sides rather than
+ # reduced to whether it happened at all.
+-${CLICKHOUSE_CLIENT} --query "
+-    SELECT
+-        countIf(message_format_string = 'No free connections in pool. Waiting indefinitely.') BETWEEN 1 AND 20 AS blocked_once,
+-        countIf(message_format_string = 'No free connections in pool. Waiting {} ms.') AS spun
+-    FROM system.text_log
+-    WHERE event_date >= yesterday() AND event_time_microseconds >= toDateTime64('${CONTEND_START}', 6)
+-      AND query_id LIKE '${QUERY_PREFIX}_zero_%'
+-      AND logger_name LIKE 'ConnectionPool%'
+-"
++indefinitely=$(pool_wait_lines zero 'indefinitely\.')
++blocked_once=$(( indefinitely >= 1 &&
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #132370** (2026-11-17): Cherry pick #131893 to 26.3: Check the `SYSTEM SYNC DATABASE REPLICA` grant on local execution (@robot-ch-test-poll4)
-- **PR #132329** (2026-11-17): Backport #126385 to 26.10: Estimate range conditions from all parts of `tdigest` statistics (@robot-clickhouse-ci-1)
-- **PR #132304** (2026-11-17): Backport #129818 to 26.9: Merge tables report rows and sizes only of the tables the user can see (@robot-clickhouse)
-- **PR #132303** (2026-11-17): Backport #129818 to 26.8: Merge tables report rows and sizes only of the tables the user can see (@robot-clickhouse)
-- **PR #132302** (2026-11-17): Backport #129818 to 26.3: Merge tables report rows and sizes only of the tables the user can see (@robot-clickhouse)
-- **PR #132298** (2026-11-17): Backport #132195 to 26.10: Read `system.query_log` in default-size blocks in `05620_read_in_order_virtual_row_fixed_key` (@robot-ch-test-poll2)
+- **PR #132870** (2026-11-19): Backport #128077 to 26.10: Do not let a derived `indexHint` keep `HAVING` above `GROUPING SETS` (@robot-ch-test-poll)
+- **PR #132853** (2026-11-19): Backport #129671 to 26.10: Refactor: share the traversal of ActionsDAG nodes between its walks (@robot-clickhouse-ci-2)
+- **PR #132836** (closed): Update PGO+BOLT toolchain to 1989cbc2 (@clickhouse-gh[bot])
+- **PR #132829** (2026-11-19): Document the musl Rust target in the build guide (@thevar1able)
+- **PR #132828** (2026-11-19): Backport #126176 to 26.8: Do not correct the global memory tracker below jemalloc `stats.allocated` (@robot-clickhouse)
+- **PR #132824** (2026-11-19): Backport #117894 to 26.10: Do not claim injectivity for a function that collapses varying arguments to `Nothing` (@robot-clickhouse-ci-2)
 
 ---
 
@@ -2115,51 +1929,31 @@ Fix ODR violation between the two ResourceTest fixtures of the scheduler unit te
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in resolveFunction.cpp
+## X. Empirical Invariant Guard in llvm-project
 
 **RULE**:
-When implementing operations in `src/Analyzer/Resolve/resolveFunction.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `contrib/llvm-project`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ClickHouse/ClickHouse. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `42a270d5`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `92fdcb78`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/Analyzer/Resolve/resolveFunction.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `contrib/llvm-project`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-/// Returns whether the `rewrite_in_to_join` rewrite of `x IN (subquery)` into
-/// `EXISTS (SELECT 1 FROM (subquery) WHERE x = <row> LIMIT 1)` keeps the semantics of regular `IN`: the
-/// same result or the same error. The left operand has the type `left_type`, and the subquery has the
-/// columns `subquery_columns`. The caller guarantees that `left_type` is not null and that
-/// `validateInColumnsCountMatch` accepted both sides.
-///
-/// Regular `IN` rejects a left operand with dynamic structure before it builds the set. With
-/// `transform_null_in = 0`, which the rewrite requires, it returns NULL for a NULL left operand, while
-/// `NOT EXISTS` returns 1.
-///
-/// For any other operand, the set has one key per subquery column. `FunctionIn` compares the whole left
-/// operand with the only column of a subquery, even when the operand is a tuple. Otherwise it compares
-/// each element of the left tuple with its own column. `Set::execute` converts each key to the type of
-/// its column, and a value that the column cannot hold is not a member. For example,
-/// `(t, 1) IN (SELECT toFloat64(1767225600), 1)` returns 0 for
-/// `t = fromUnixTimestamp64Nano(1767225600000000001, 'UTC')` because
+Subproject commit 55541575edec2cc4e9dc3fb182e17d77b807e199
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-    /// `has` treats tuple values with equal `NULL` elements as a match, while `IN`
-    /// with `transform_null_in = 0` skips such tuple values. Guard tuple LHS
-    /// elements to preserve `IN` semantics in the row-wise rewrite.
-    if (const auto * tuple_type = typeid_cast<const DataTypeTuple *>(removeNullable(element_arg->getResultType()).get());
-        tuple_type && !tuple_type->getElements().empty())
-            makeTupleHasNoNullElementsPredicate(element_arg, tuple_type->getElements().size()),
+Subproject commit 6afdc580684c9dbcfc1859bdcc54e1989d1d264c
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `42a270d5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `92fdcb78` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

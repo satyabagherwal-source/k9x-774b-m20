@@ -11245,3 +11245,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-mudler-locate-anything-cpp-gguf` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-11-19T05:47:13.665Z |
 | `learn-huggingface-jialinyyzz-humanizer` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-11-19T05:54:42.697Z |
 | `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `aa87a115` | Multi-dimensional audit evidence | 2026-11-19T05:54:58.169Z |
+| `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `92fdcb78` | Multi-dimensional audit evidence | 2026-11-19T06:30:22.904Z |
+| `learn-huggingface-autotrust-jev-27b-vl` | `https://huggingface.co/autotrust/JEV-27B-VL` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-19T06:33:00.325Z |
+| `learn-github-prometheus-prometheus` | `https://github.com/prometheus/prometheus` | `cb4e01dd` | Multi-dimensional audit evidence | 2026-11-19T06:33:34.360Z |
+| `learn-dom-f-6f26131a` | `project://prometheus-prometheus` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/prometheus-prometheus-learnings.md` | 2026-11-19T06:34:02.712Z |
