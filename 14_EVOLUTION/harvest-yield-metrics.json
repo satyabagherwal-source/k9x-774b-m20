@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T14:03:33.837Z",
-  "total_cycles_completed": 10774,
-  "total_learnings_persisted": 10774,
-  "total_rules_promoted": 10155,
+  "last_updated": "2026-11-19T14:20:19.766Z",
+  "total_cycles_completed": 10776,
+  "total_learnings_persisted": 10776,
+  "total_rules_promoted": 10156,
   "history": [
-    {
-      "timestamp": "2026-11-18T17:28:15.865Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T17:36:31.058Z",
-      "repository": "mfontanini/presenterm",
-      "learningId": "learn-github-mfontanini-presenterm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T17:36:36.027Z",
       "repository": "BuilderIO/builder",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-19T14:03:33.837Z",
       "repository": "freenet/freenet-core",
       "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T14:20:17.057Z",
+      "repository": "speridlabs/iris-3b",
+      "learningId": "learn-huggingface-speridlabs-iris-3b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T14:20:19.766Z",
+      "repository": "agent-of-empires/agent-of-empires",
+      "learningId": "learn-github-agent-of-empires-agent-of-empires",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

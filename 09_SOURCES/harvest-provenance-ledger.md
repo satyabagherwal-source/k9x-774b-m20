@@ -11314,3 +11314,5 @@ Every entry in this ledger must capture:
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `67748c71` | Multi-dimensional audit evidence | 2026-11-19T14:03:29.959Z |
 | `learn-github-bahdotsh-wrkflw` | `https://github.com/bahdotsh/wrkflw` | `b0fdd8df` | Multi-dimensional audit evidence | 2026-11-19T14:03:30.993Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `a1b7415e` | Multi-dimensional audit evidence | 2026-11-19T14:03:33.832Z |
+| `learn-huggingface-speridlabs-iris-3b` | `https://huggingface.co/speridlabs/iris-3b` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-19T14:20:17.052Z |
+| `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `593655e0` | Multi-dimensional audit evidence | 2026-11-19T14:20:19.761Z |

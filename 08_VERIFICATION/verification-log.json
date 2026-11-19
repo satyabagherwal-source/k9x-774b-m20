@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-VJ0B",
-    "timestamp": "2026-11-17T21:41:02.843Z",
-    "repository": "pola-rs/polars",
-    "learningId": "learn-github-pola-rs-polars",
-    "contentHash": "950edeb95fe3455bf781b8acdd00b577c5d9e35ad1014d5b37e859d6093315ea",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-VOKE",
-    "timestamp": "2026-11-17T21:41:10.046Z",
-    "repository": "nats-io/nats.go",
-    "learningId": "learn-github-nats-io-nats-go",
-    "contentHash": "243da6b64ca184fe7b1e4b2fac7b40c5b6e64aa60415a9a15c4fa48a59e5dc5a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-VTZD",
     "timestamp": "2026-11-17T21:41:17.065Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7490,6 +7460,36 @@
     "repository": "freenet/freenet-core",
     "learningId": "learn-github-freenet-freenet-core",
     "contentHash": "dd8b44420f8c6c58a668b36f9b5f0a9279d8324af5fccc5d5137f40cef57c171",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-0EMW",
+    "timestamp": "2026-11-19T14:20:17.048Z",
+    "repository": "speridlabs/iris-3b",
+    "learningId": "learn-huggingface-speridlabs-iris-3b",
+    "contentHash": "1551b10ad9c9e32455c6cf700007e307be8427224c0d3fa89cd5ec44079925d1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-0GQ5",
+    "timestamp": "2026-11-19T14:20:19.757Z",
+    "repository": "agent-of-empires/agent-of-empires",
+    "learningId": "learn-github-agent-of-empires-agent-of-empires",
+    "contentHash": "a89336514ddc90b72394cc0edb4a35ad97420cc0d59b05966d26b1a1ec64f88a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

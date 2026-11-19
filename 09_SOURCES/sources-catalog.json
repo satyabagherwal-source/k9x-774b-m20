@@ -1025,8 +1025,8 @@
     "sourceUrl": "https://huggingface.co/speridlabs/iris-3b",
     "sourceVersion": "hf-speridlabs-iris-3b",
     "license": "Open-Source",
-    "contentHash": "feca3a3031cc372da7d5f7d89e4d6a04be762577ebb1e0c2a62dd4aff3f85271",
-    "lastHarvestedAt": "2026-11-14T22:57:32.224Z",
+    "contentHash": "1551b10ad9c9e32455c6cf700007e307be8427224c0d3fa89cd5ec44079925d1",
+    "lastHarvestedAt": "2026-11-19T14:20:17.052Z",
     "learningId": "learn-huggingface-speridlabs-iris-3b"
   },
   "hf-qwen-qwen3-4b": {
@@ -7443,10 +7443,10 @@
     "repository": "agent-of-empires/agent-of-empires",
     "platform": "github",
     "sourceUrl": "https://github.com/agent-of-empires/agent-of-empires",
-    "sourceVersion": "3bfd7c01",
+    "sourceVersion": "593655e0",
     "license": "MIT",
-    "contentHash": "8b2dc88d4f9d16543a9a28402459a263c9c8c4e52dbe16a2fa37390f2ceafed6",
-    "lastHarvestedAt": "2026-11-17T19:04:52.031Z",
+    "contentHash": "a89336514ddc90b72394cc0edb4a35ad97420cc0d59b05966d26b1a1ec64f88a",
+    "lastHarvestedAt": "2026-11-19T14:20:19.761Z",
     "learningId": "learn-github-agent-of-empires-agent-of-empires"
   },
   "nativescript-nativescript": {

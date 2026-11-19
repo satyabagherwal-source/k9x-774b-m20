@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T14:03:39.292Z",
+  "last_updated": "2026-11-19T14:20:30.235Z",
   "total_records": 1980,
   "domains": {
     "A": {
@@ -8713,8 +8713,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "b77329d34d5c996699953b7305b222b7dbb24ce1cc6e015bdb8bc509045f3f51",
-      "created_at": "2026-11-19T13:35:31.153Z"
+      "content_hash": "7720f5a8df01cd2c858a5d083647b7831d16a4c8e54ee7c20d227cb28ae18b61",
+      "created_at": "2026-11-19T14:20:30.235Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -18294,8 +18294,8 @@
       "title": "Research & Knowledge Intelligence: speridlabs/iris-3b Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-speridlabs-iris-3b-research-knowledge-intelligence-speridlabs-iris-3b-core-in.md",
       "repository": "speridlabs/iris-3b",
-      "content_hash": "e4951326162e838332f65b4b165d8d284f285e1d5a204cdf5450d004a647dcbe",
-      "created_at": "2026-11-14T22:57:32.432Z"
+      "content_hash": "44b97a2955d07de2ecff49dd96df3cbf7352b023de54f3dbc71d826f1b6753a0",
+      "created_at": "2026-11-19T14:20:17.236Z"
     },
     "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-core-invariants",
@@ -18363,8 +18363,8 @@
       "title": "Research & Knowledge Intelligence: hf-speridlabs-iris-3b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-speridlabs-iris-3b-learnings-research-knowledge-intelligence-hf-speridlabs-ir.md",
       "repository": "hf-speridlabs-iris-3b-learnings",
-      "content_hash": "3482322c6ca5b63841ed9510327b4b09b524db127c816624252af2b1e66730ff",
-      "created_at": "2026-11-14T22:58:30.336Z"
+      "content_hash": "5e4861b75d325e4964c1e62cbac39683dac7fcafdf4fdd88d33d2840500def02",
+      "created_at": "2026-11-19T14:20:29.571Z"
     },
     "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-learnings-core-i": {
       "record_id": "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-learnings-core-i",
@@ -28477,8 +28477,8 @@
       "title": "Technical Construction Intelligence: agent-of-empires/agent-of-empires Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-of-empires-agent-of-empires-technical-construction-intelligence-agent-of-e.md",
       "repository": "agent-of-empires/agent-of-empires",
-      "content_hash": "baa6522f31bcf51a795b1e1f4f56fd9f2410bf044791af7f143a1a3dec98a949",
-      "created_at": "2026-11-17T19:04:52.452Z"
+      "content_hash": "44f50defd1c024b8fd350579ed069b795565ad22c18e3981210e43dfe291475e",
+      "created_at": "2026-11-19T14:20:20.089Z"
     },
     "domain_intelligence-technical-construction-intelligence-agent-of-empires-agent-of-empires-learnings-": {
       "record_id": "domain_intelligence-technical-construction-intelligence-agent-of-empires-agent-of-empires-learnings-",
@@ -28486,8 +28486,8 @@
       "title": "Technical Construction Intelligence: agent-of-empires-agent-of-empires-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-of-empires-agent-of-empires-learnings-technical-construction-intelligence-.md",
       "repository": "agent-of-empires-agent-of-empires-learnings",
-      "content_hash": "dca1a5a1be48eda03ba6bef5fbfa66f116451ae1f80b36ada576575780dea1fe",
-      "created_at": "2026-11-17T19:05:01.369Z"
+      "content_hash": "72ec6e80a6d3eceab540d03976fccde8e7265ab1b2ac9614b01ba2883146eb8c",
+      "created_at": "2026-11-19T14:20:29.123Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xhtoken-spark-x2-6-4b-gguf-learnings-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-xhtoken-spark-x2-6-4b-gguf-learnings-core-inv",

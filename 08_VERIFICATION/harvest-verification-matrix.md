@@ -11281,3 +11281,5 @@
 | `CYCLE-20261119-ETK2` | `2026-11-19T14:03:29.954Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1683` | Yes (`95292329...`) |
 | `CYCLE-20261119-EUCU` | `2026-11-19T14:03:30.990Z` | `bahdotsh/wrkflw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9382` | Yes (`cc34c889...`) |
 | `CYCLE-20261119-EWJO` | `2026-11-19T14:03:33.828Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9383` | Yes (`dd8b4442...`) |
+| `CYCLE-20261119-0EMW` | `2026-11-19T14:20:17.048Z` | `speridlabs/iris-3b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md` | Yes (`1551b10a...`) |
+| `CYCLE-20261119-0GQ5` | `2026-11-19T14:20:19.757Z` | `agent-of-empires/agent-of-empires` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9384` | Yes (`a8933651...`) |

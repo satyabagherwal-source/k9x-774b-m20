@@ -4,24 +4,24 @@
 {
   "source_repository": "agent-of-empires/agent-of-empires",
   "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-  "source_version": "3bfd7c01",
+  "source_version": "593655e0",
   "license": "MIT",
-  "timestamp": "2026-11-17T19:04:52.285Z",
+  "timestamp": "2026-11-19T14:20:19.947Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-agent-of-empires-agent-of-empires",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires) (Revision: `3bfd7c01`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T19:04:52.285Z`  
+> **Provenance**: Harvested from [agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires) (Revision: `593655e0`).  
+> **License**: MIT | **Timestamp**: `2026-11-19T14:20:19.947Z`  
 > **Learning ID**: `learn-github-agent-of-empires-agent-of-empires`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), B (Product Intelligence), E (Creative Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from agent-of-empires/agent-of-empires:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/agent-of-empires/agent-of-empires](https://github.com/agent-of-empires/agent-of-empires))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T19:04:50.851Z  
+> **Harvest Timestamp**: 2026-11-19T14:20:18.800Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Manage multiple Claude Code, OpenCode agents from either TUI or Web for easy access on mobile. Also supports Mistral Vibe, Codex CLI, Gemini CLI, Pi.dev, Copilot CLI, Factory Droid Coding.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4644 stars
+- **Stars / Engagement**: 4636 stars
 
 ---
 
@@ -661,9 +661,8 @@ if __name__ == "__main__":
 
 use crate::acp::state::Event;
 use agent_client_protocol::v1::schema::{
-    CancelNotification, ContentBlock, McpServer, NewSessionRequest, NewSessionResponse,
-    SessionConfigId, SessionConfigOption, SessionConfigValueId, SessionId,
-    SetSessionConfigOptionRequest,
+    CancelNotification, McpServer, NewSessionRequest, NewSessionResponse, SessionConfigId,
+    SessionConfigOption, SessionConfigValueId, SessionId, SetSessionConfigOptionRequest,
 };
 use agent_client_protocol::v1::ConnectionTo;
 use agent_client_protocol::Agent;
@@ -678,7 +677,7 @@ use super::notifications::{now_ms, Shared};
 use crate::acp::acp_client::between_prompt::{
     between_prompt_stop_reason, BETWEEN_PROMPT_IDLE_CHECK_INTERVAL,
 };
-use crate::acp::acp_client::commands::ClientCmd;
+use crate::acp::acp_client::commands::{ClientCmd, PromptInput};
 use crate::acp::acp_client::config_options::{
     config_option_failure_event, config_options_event, dispatch_set_config_option,
     dispatch_set_mode, mode_config_id, model_config_values, model_option, modes_available_event,
@@ -720,7 +719,7 @@ pub(super) struct Session {
     pub(super) lifecycle_rx: mpsc::Receiver<LifecycleEnvelope>,
     /// Steers the adapter handed back unconsumed, run as ordinary turns.
     /// Kept here rather than re-sent on the bounded channel this task drains.
-    pub(super) pending_prompts: VecDeque<Vec<ContentBlock>>,
+    pub(super) pending_prompts: VecDeque<PromptInput>,
 }
 
 impl Session {
@@ -815,7 +814,7 @@ impl Session {
             let cancel_deadline = *shared.cancel_deadline.lock().unwrap();
             // Fallback prompts go first so later messages cannot overtake them.
             let cmd = match self.pending_prompts.pop_front() {
-                Some(blocks) => Some(ClientCmd::Prompt(blocks)),
+                Some(prompt) => Some(ClientCmd::Prompt(prompt)),
                 None => tokio::select! {
                     biased;
                     outcome = async {
@@ -854,8 +853,8 @@ impl Session {
                 },
             };
             match cmd {
-                Some(ClientCmd::Prompt(blocks)) => {
-                    if self.run_prompt(blocks).await? {
+                Some(ClientCmd::Prompt(prompt)) => {
+                    if self.run_prompt(prompt).await? {
                         break;
                     }
                 }
@@ -887,7 +886,7 @@ impl Session {
                     }
                     // The UI thinks a turn is running but none is owned here;
                     // a spurious Stopped while idle is a reducer no-op (#2237).
-                    self.stand_down_
+                    self.stand_down_idle_comp
 ```
 
 ### Core Architecture Module: `src/acp/acp_client/lifecycle.rs`
@@ -1774,11 +1773,14 @@ impl ConfigOptionDescriptor {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5817** (2026-11-17): **ci: Supply Chain fails on main and every PR after two new RustSec advisories**
-  *Symptoms*: ## What happens  The `Supply Chain` job (cargo-deny in `.github/workflows/ci.yml`) has failed on every run since about 10:45 UTC on 2026-11-17, on main as well as on PRs. Main's last green run was on `61894f099`, and the run on `558d95353` failed. No lockfile changed in between. The failures come from two advisories published since then:  1. **RUSTSEC-2026-0544** (vulnerability): heap buffer overflow in zlib's `gz_vacate()`, reached through `libz-sys 1.1.31`, which `libgit2-sys 0.18.8+1.9.7` pulls in via `git2`. The advisory's fix is `libz-sys >= 1.1.33`, published on crates.io on 2026-11-10. Note that 1.1.32 is not enough. 2. **RUSTSEC-2026-0543** (unmaintained): `chrono` is marked unmaintained for all versions, with "No safe upgrade is available". `chrono` is a direct dependency (`Cargo.toml`, with `serde`, plus `schemars`'s `chrono04` feature) used across about 190 Rust files.  `deny.toml` has `ignore = []` under `[advisories]`, so both are errors.  Example failing run: https://github.com/agent-of-empires/agent-of-empires/actions/runs/44067734648  ## Suggested fix  - **libz-sys:** run `cargo update -p libz-sys` to move the lockfile to 1.1.33. This is a lockfile-only change; `libgit2-sys` takes any compatible `libz-sys` 1.x. Not yet tried locally. - **chrono:** there's no upgrade to take. One way to unblock CI is to add `RUSTSEC-2026-0543` to `[advisories].ignore` with a reason, and decide separately whether to migrate off `chrono` (for example to `jiff` or `time`). Given h
+- **Issue #5869** (2026-11-19): **MCP wait_for reports completion when its event-store query fails**
+  *Symptoms*: ### What happened?  When MCP `wait_for` receives `after_seq` and the session still reports `Idle`, it checks the event store for a turn ending after that cursor. If the query fails, `settled` treats the error as a positive result. The call can return `Idle` with `timed_out: false` without confirming that the requested turn ended.  **Expected:** Return a clear query error or keep waiting within the deadline. Report completion only when the event store confirms it. Cover the query-failure branch with a focused regression test.  Follow-up to #5753. [Completion check](https://github.com/agent-of-empires/agent-of-empires/blob/dd7827cbc7800d96bd9db973fbf040d784307ea3/src/server/mcp/wait.rs#L346-L364)  ### aoe version and OS  `main` at `dd7827cbc`. Source-derived scenario. No database fault was injected locally.  ### AI usage  AI drafted the report from a cross-checked source review. 
+  **Post-Mortem & Fix Analysis**:
+  > **Castellan triage**  Applied: - Label `P1` - Label `area:server` - Priority: P1 - Size: M - Status: Ready  Reasons: - priority: Incorrect completion reporting under query failure can cause silent hangs or false success—a regression blocker for MCP reliability. - area: Issue is in server-side MCP wait_for completion logic in event-store query handling. - type: Bug: error handling treats query failure as success instead of propagating or retrying. - size: Multi-file change spanning error handling, completion check logic, and new regression test.  Fit is not set by triage; it stays with maintainers.  <!-- castellan triage 60dab506215f0d76b04724e1da53f08e818d77f8bf20cb9484379fd464fef870 -->
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated issue plan by CodeRabbit --> <details> <summary>🔗 Related PRs</summary> <dl> <dd> <br>  agent-of-empires/agent-of-empires#5753 - feat(mcp): add wait_for, list_approvals and approve tools [closed] </dd> </dl> </details>  --- <details> <summary>📝 Issue Planner</summary> <dl> <dd> <br>  <sub>Check the box below or use the `@coderabbitai plan` command to generate an implementation plan and prompts that you can use with your favorite coding assistant.</sub>  - [ ] <!-- {"checkboxId":"8d4f2b9c-3e1a-4f7c-a9b2-d5e8f1c4a7b9"} --> Create Plan </dd> </dl> </details>   --- <details> <summary> 🧪 Issue enrichment is currently in open beta.</summary> <dl> <dd> <br>   You can configure auto-planning by selecting labels in the issue_enrichment configuration.  To disable automatic issue enrichment, add the following to your `.coderabbit.yaml`: ```yaml issue_enrichment:   auto_enrich:     enabled: false ``` </dd> </dl> </details>  💬 
 
-- **Issue #5765** (2026-11-17): **Web dashboard: Workflow card shows as "other tool call" and stays bare until launch**
-  *Symptoms*: **Note:** Claude handled the investigation and prose via back-and-forth. Idea, decisions, and everything else are mine. — @Seluj78  ## Problem  Claude `Workflow` runs show up badly in the web structured view, in two ways.  1. After launch, the call can render as a generic `OTHER tool call` card (Input `{"_aoe_title":"tool call",...,"_aoe_raw_tool_name":"Workflow"}`, Output "Workflow launched in background...") instead of the workflow card with run name, phases and agent counts. 2. Before launch, the card is a bare `workflow` label for 1.5 to 2.5 minutes with no name, summary or agents. The Background pane fills in only once the run starts, which looks like the workflow UI is broken even though events are in the log.  ## Evidence from the affected sessions  Session `d1380576508e4178`, timestamps from `acp_events.created_at`:  ``` 599|ToolCallStarted  name=Workflow   17:32:09 600|ToolCallUpdated  (script)        17:34:25 603|BackgroundTaskStarted perf-audit 17:34:26 605|BackgroundAgentLaunched find:session-instance ... ```  The adapter emits nothing between seq 599 and 600 while the model generates the script (137s here). Session `5503377fd5bf4581` is the same shape: `ToolCallStarted` at seq 1011 (17:33:26), `BackgroundTaskStarted` at seq 1015 (about 17:34:55). Daemon, DB and reducer are fine; every launch event is recorded.  ## Root cause  Defect 1, name clobbered:  - `src/acp/acp_client/permission_handlers.rs:166` falls back to the title `"tool call"` when a permission reques
+- **Issue #5850** (2026-11-19): **Pane PID lookup fails when tmux runs without a UTF-8 locale, so kills skip the process tree**
+  *Symptoms*:  **Priority:** P2. - **Silent:** nothing is logged above trace level. - **What breaks:** every kill path falls back to killing only the tmux session, so a pane's   descendants that left its process group survive. Status and foreground-PID detection lose the   pane PID too. - **Who:** only hosts where the process running `tmux` has no UTF-8 locale. That's common for   daemons started over `ssh` without `SendEnv LANG`, from cron, under `env -i`, or in stock   Debian or Ubuntu container images, where `LANG` is unset. A desktop terminal is usually fine.  ### Repro (tmux 3.6a, Ubuntu 26.04; the code path is the same in 3.5a) ```sh tmux -f /dev/null -L probe new-session -d -s p 'sleep 30' LC_ALL=C      tmux -L probe display-message -p -t p $'#{pane_dead}\t#{pane_pid}' | od -c   # 0 _ 1 9 4 ... LC_ALL=C.UTF-8 tmux -L probe display-message -p -t p $'#{pane_dead}\t#{pane_pid}' | od -c  # 0 \t 1 9 4 ... tmux -u -L probe display-message -p -t p $'#{pane_dead}\t#{pane_pid}' | od -c              # 0 \t 1 9 4 ... tmux -L probe kill-server ``` - `list-panes -F` behaves the same, and `\x1f` also becomes `_`. - With no config file and a private socket, it isn't caused by user configuration.  ### Cause (tmux source) `server_client_print` (server-client.c, 3.6a :3884, 3.5a :3330) handles output for a client with no session: `if (~c->flags & CLIENT_UTF8) sanitized = utf8_sanitize(msg);`. - `utf8_sanitize` (utf8.c) writes `_` for every byte outside 0x20-0x7e. - `CLIENT_UTF8` is set from the clien
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1795,808 +1797,1480 @@ impl ConfigOptionDescriptor {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c07429c3` (2026-11-16)
-**Commit Message**: fix(plugin): avoid blocking runtime on asset downloads (#5732)
+### Incident Patch 1: `03e54bee` (2026-11-17)
+**Commit Message**: fix(containers): share one sandbox image pull per runtime and image (#5809)
 
-* fix(plugin): avoid blocking runtime on asset downloads
+* fix(containers): share one sandbox image pull per runtime and image
 
-* fix(plugin): retain staging across download cancellation
+Every pull path (the Daemon banner job, create's pull_latest, ensure_image
+and the TUI banner) now joins one flight per (runtime, image) in the
+process. A joiner waits on the same outcome and no second runtime process
+starts. A cancelled caller detaches; the last one kills the pull and waits
+for it to exit.
 
-* fix(plugin): drain asset writes after download failure
+A failed pull carries a coded reason (timeout, network, disk_space, auth,
+other) matched from runtime stderr, with shared wording in user_text().
+The pull now runs in its own process group, so a timeout kill reaps
+anything the runtime CLI forked.
 
-* fix(plugin): preserve download task panic boundary
-
-**File**: `src/plugin/fetch.rs` (modified, +89/-10)
-```diff
-@@ -89,12 +89,23 @@ pub(super) async fn fetch(
-             Some(RuntimeSpec::ReleaseBinary { .. })
-         )
-     {
--        download_release_binary(fetched, operation).await
-+        // Keep staging and the lease until asynchronous file operations finish.
-+        await_asset_download(tokio::spawn(download_release_binary(fetched, operation))).await
-     } else {
-         Ok(fetched)
-     }
- }
- 
-+async fn await_asset_download(
-+    task: tokio::task::JoinHandle<Result<FetchedPlugin>>,
-+) -> Result<FetchedPlugin> {
-+    match task.await {
-+        Ok(result) => result,
-+        Err(error) if error.is_panic() => std::panic::resume_unwind(error.into_panic()),
-+        Err(error) => Err(error).context("plugin asset download task failed"),
-+    }
-+}
-+
- fn stage(
-     source: PluginSource,
-     plugins_root: PathBuf,
-@@ -584,7 +595,7 @@ pub(super) fn render_asset_template<'a>(
- }
- 
- async fn download_asset(url: &str, dest: &Path) -> Result<()> {
--    use std::io::Write;
-+    use tokio::io::AsyncWriteExt;
-     let client = reqwest::Client::builder()
-         .user_agent(DEFAULT_USER_AGENT)
-         .timeout(Duration::from_secs(300))
-@@ -594,14 +605,24 @@ async fn download_asset(url: &str, dest: &Path) -> Result<()> {
-     if !status.is_success() {
-         bail!("downloading {url} failed: HTTP {status}");
-     }
--    let mut file =
--        std::fs::File::create(dest).with_context(|| format!("creating {}", dest.display()))?;
--    while let Some(chunk) = response.chunk().await? {
--        file.write_all(&chunk)
--            .with_context(|| format!("writing {url} to {}", dest.display()))?;
-+    let mut file = tokio::fs::File::create(dest)
-+        .await
-+        .with_context(|| format!("creating {}", dest.display()))?;
-+    let result: Result<()> = async {
-+        while let Some(chunk) = response.chunk().await? {
-+            file.write_all(&chunk)
-+                .await
-+                .with_context(|| format!("writing {url} to {}", dest.display()))?;
-+        }
-+        Ok(())
-     }
--    file.flush()
--        .with_context(|| format!("writing {url} to {}", dest.display()))
-+    .await;
-+    let flush = file
-+        .flush()
-+        .await
-+        .with_context(|| format!("writing {url} to {}", dest.display()));
-+    result?;
-+    flush
- }
- 
- fn sha256_file(path: &Path) -> Result<String> {
-@@ -798,6 +819,18 @@ fn ensure_executable(tree: &Path, rel: &Path) -> Result<()> {
- mod tests {
-     use super::*;
- 
-+    #[tokio::test]
-+    async fn asset_task_panics_reach_the_job_panic_boundary() {
-+        use futures_util::FutureExt;
-+
-+        let task: tokio::task::JoinHandle<Result<FetchedPlugin>> =
-+            tokio::spawn(async { panic!("private-panic-payload") });
-+        let panic = std::panic::AssertUnwindSafe(await_asset_download(task))
-+            .catch_unwind()
-+            .await;
-+        assert!(panic.is_err());
-+    }
-+
-     #[test]
-     fn parse_ls_remote_prefers_the_peeled_tag_and_a_pinned_sha_skips_the_remote() {
-         let peeled = "1111111111111111111111111111111111111111\trefs/tags/v1\n\
-@@ -1018,6 +1051,13 @@ mod tests {
-         run_git(&repo, &["tag", "v1"]);
-         let bytes = Arc::new(Mutex::new(b"#!/bin/sh\nexit 0\n".to_vec()));
-         let download = bytes.clone();
-+        let pause = Arc::new(Mutex::new(
-+            None::<(
-+                tokio::sync::oneshot::Sender<()>,
-+                tokio::sync::oneshot::Receiver<()>,
-+            )>,
-+        ));
-+        let pause_download = pause.clone();
-         let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
-         let base = format!("http://{}", listener.local_addr().unwrap());
-         let release_base = base.clone();
-@@ -1029,7 +1069,14 @@ mod tests {
-             }))
-             .route("/asset", axum::routing::get(move || {
-                 let download = download.clone();
--                async move { download.lock().unwrap().clone() }
-+                let pause = pause_download.lock().unwrap().take();
-+                async move {
-+                    if let Some((entered, release)) = pause {
-+                        let _ = entered.send(());
-+                        let _ = release.await;
-+                    }
-+                    download.lock().unwrap().clone()
-+                }
-             }));
-         let server = tokio::spawn(async move { axum::serve(listener, app).await.unwrap() });
-         let _env = EnvGuard::set(&[
-@@ -1041,6 +1088,38 @@ mod tests {
-         ]);
-         let source = PluginSource::parse("gh:acme/bin@v1").unwrap();
-         let plugins = crate::plugin::plugins_dir().unwrap();
-+        let (entered, waiting) = tokio::sync::oneshot::channel();
-+        let (release, released) = tokio::sync::oneshot::channel();
-+        *pause.lock().unwrap() = Some((entered, released));
-+        let operation = crate::plugin::install::begin_operation().unwrap();
-+        let staged_source = source.clone();
-+        let task = tokio::spawn(async move { fetch(&staged_source, Som
-```
-
----
-
-### Incident Patch 2: `558d9535` (2026-11-17)
-**Commit Message**: fix(send): pace the enter from a plugin's declaration (#5724)
-
-* fix(send): pace the enter from a plugin's declaration
-
-An agent whose composer reads a fast burst as a paste drops the Enter, so the
-host types the message and never submits it, leaving a draft that looks like a
-running session. A declared plugin agent could not state a pause at all, and
-every send path resolved the delay from the built-in table, which does not know
-declared agents, so such an agent was paced at 0 ms.
-
-`launch.send_keys_enter_delay_ms` lets an integration declare the pause, gated
-at api_version 22 and capped at 2000 ms. The resolver, send_keys_enter_delay,
-now asks the active declaration first and falls back to the built-in table, so
-the five send paths and the post-restart wake-up inherit it without each one
-holding a registry of its own.
-
-🤖 Generated with Codebuff
-Co-Authored-By: Codebuff <[REDACTED_EMAIL]>
-
-* fix(send): pace only the program a declaration owns
-
-A declared enter delay resolved by tool name alone, so a custom wrapper, a
-command override or another stored command inherited a plugin's pause. Resolve
-it through the session's effective declaration instead, keeping the built-in
-table as 
-
-**File**: `aoe-plugin-api/src/agent_integration.rs` (modified, +4/-0)
-```diff
-@@ -75,6 +75,10 @@ pub struct AgentLaunchDeclaration {
-     pub install_hint: Option<String>,
-     #[serde(default)]
-     pub host_only: bool,
-+    /// Pause between typing a message into the agent's pane and sending Enter,
-+    /// for an agent whose composer reads a fast burst as a paste and drops it.
-+    #[serde(default, skip_serializing_if = "Option::is_none")]
-+    pub send_keys_enter_delay_ms: Option<u64>,
-     #[serde(default, skip_serializing_if = "Option::is_none")]
-     pub resume: Option<AgentResumeDeclaration>,
-     #[serde(default, skip_serializing_if = "Option::is_none")]
-```
-
-**File**: `aoe-plugin-api/src/manifest.rs` (modified, +18/-0)
-```diff
-@@ -1300,6 +1300,24 @@ impl PluginManifest {
-                 self.api_version >= 22 || integration.session_id.is_none(),
-                 format!("agent_integrations[{i}].session_id requires api_version >= 22"),
-             );
-+            if let Some(delay) = integration
-+                .launch
-+                .as_ref()
-+                .and_then(|launch| launch.send_keys_enter_delay_ms)
-+            {
-+                check(
-+                    self.api_version >= 22,
-+                    format!(
-+                        "agent_integrations[{i}].launch.send_keys_enter_delay_ms requires api_version >= 22"
-+                    ),
-+                );
-+                check(
-+                    delay <= 2_000,
-+                    format!(
-+                        "agent_integrations[{i}].launch.send_keys_enter_delay_ms must be at most 2000"
-+                    ),
-+                );
-+            }
-             check(
-                 if status_integration {
-                     !integration.provider_versions.is_empty()
-```
-
-**File**: `aoe-plugin-api/tests/manifest.rs` (modified, +43/-0)
-```diff
-@@ -432,6 +432,49 @@ fn runtime_requires_worker_capability() {
-     parse(2, "capabilities = [\"runtime.worker\"]\n");
- }
- 
-+#[test]
-+fn send_keys_enter_delay_requires_api_22_and_caps_at_two_seconds() {
-+    let declaration = "[[agent_integrations]]\ntool = \"example\"\ncommand = \"example\"\n\
-+                       [agent_integrations.launch]\n\
-+                       send_keys_enter_delay_ms = 150\n";
-+
-+    let parsed = parse(22, declaration);
-+    assert_eq!(
-+        parsed.agent_integrations[0]
-+            .launch
-+            .as_ref()
-+            .and_then(|launch| launch.send_keys_enter_delay_ms),
-+        Some(150)
-+    );
-+    assert_eq!(
-+        PluginManifest::from_toml_str(&toml::to_string(&parsed).unwrap())
-+            .expect("round-trips")
-+            .agent_integrations[0]
-+            .launch
-+            .as_ref()
-+            .and_then(|launch| launch.send_keys_enter_delay_ms),
-+        Some(150)
-+    );
-+
-+    let errors = invalid(21, declaration);
-+    assert!(
-+        errors
-+            .iter()
-+            .any(|error| error.contains("send_keys_enter_delay_ms requires api_version >= 22")),
-+        "{errors:?}"
-+    );
-+
-+    let errors = invalid(22, &declaration.replace("150", "2001"));
-+    assert!(
-+        errors
-+            .iter()
-+            .any(|error| error.contains("send_keys_enter_delay_ms must be at most 2000")),
-+        "{errors:?}"
-+    );
-+
-+    parse(22, &declaration.replace("150", "2000"));
-+}
-+
- #[test]
- fn session_id_capture_requires_api_22_and_a_worker_runtime() {
-     let runtime = "capabilities = [\"runtime.worker\"]\n\
-```
-
-**File**: `docs/plugin-api.md` (modified, +2/-0)
-```diff
-@@ -93,6 +93,7 @@ instruction_flag = "--prompt={}"
- model_flag = "--model"
- host_only = false
- install_hint = "Install example-agent from its vendor"
-+send_keys_enter_delay_ms = 150
- 
- [agent_integrations.launch.container_env]
- EXAMPLE_HOME = "/state"
-@@ -121,6 +122,7 @@ deny = [{ kind = "literal", value = "n" }]
- The example's `detection` requires `session.integration` in the manifest's capabilities. Every declaration type, `session_id` included, requires a nonblank `command`: the plugin must contribute the tool it captures for, because only the plugin that owns a tool may attribute an id to a session using it.
- 
- - `launch.aliases` are unique lowercase agent ids, distinct from the tool. `oneshot_flag` and `model_flag` are single shell-safe flags. `instruction_flag` has one `{}` placeholder, as a whole argument or after `=`, and otherwise contains shell-safe words.
-+- `launch.send_keys_enter_delay_ms` is the pause, in milliseconds, that the host leaves between typing a message into the agent's pane and sending Enter. Some agents read a fast burst as a paste and drop the Enter, which leaves the message as an unsent draft that looks like a running session. It requires `api_version >= 22` and is capped at 2000. An agent that declares nothing falls back to the host's built-in pause for its tool.
- - `launch.yolo` is `kind = "flag"` with `flag`, `kind = "always"`, or `kind = "env"` with `key` and `value`. An `always` declaration applies while active without changing the session's saved Yolo preference. `container_env` is applied to sandbox launches. Protected environment names are rejected.
- - `launch.resume` is `kind = "flag"` with `flag`, `kind = "flag_pair"` with `existing` and `new_session`, or `kind = "subcommand"` with `command`. Resume and capture require each other. Capture supports only backend `omp`, with `pane_scoped` in at least one of `host` or `sandbox` and `pane_scoped` or `unsupported` in the other.
- - `detection.mode = "native_only"` requires `session.integration`; the integration owns status rather than falling back to pane parsing when a report is missing or invalid.
-```
-
-**File**: `src/agents.rs` (modified, +4/-0)
-```diff
-@@ -1731,6 +1731,10 @@ fn is_safe_agent_name(name: &str) -> bool {
-         && !name.contains('\\')
- }
- 
-+/// The built-in pause for `tool` between typing and Enter.
-+///
-+/// A declared integration paces through `Instance::send_keys_enter_delay`,
-+/// which keeps this table as the fallback for every program it does not own.
- pub fn send_keys_enter_delay(tool: &str) -> u64 {
-     get_agent(tool)
-         .map(|a| a.send_keys_enter_delay_ms)
-```
-
-**File**: `src/cli/session.rs` (modified, +1/-1)
-```diff
-@@ -1402,7 +1402,7 @@ fn send_restart_wake(
-         return Ok(false);
-     }
-     let _input_lock = working.lock_for_input()?;
--    let delay = crate::agents::send_keys_enter_delay(&working.tool);
-+    let delay = working.send_keys_enter_delay();
-     tmux_session.send_keys_with_delay(wake_msg, delay)?;
-     Ok(true)
- }
-```
-
-**File**: `src/plugin/agent_definition.rs` (modified, +1/-1)
-```diff
-@@ -132,7 +132,7 @@ impl<'a> DefinitionData<'a> {
-             session_support: support,
-             fork_strategy: ForkStrategy::Unsupported,
-             host_only: launch.host_only,
--            send_keys_enter_delay_ms: 0,
-+            send_keys_enter_delay_ms: launch.send_keys_enter_delay_ms.unwrap_or(0),
-             ready_marker: None,
-             install_hint: launch.install_hint.as_deref().unwrap_or(&entry.tool),
-             permission_response: entry.reply_fallback.as_ref().map(|_| PermissionResponse {
-```
-
-**File**: `src/plugin/agent_integration.rs` (modified, +118/-3)
-```diff
-@@ -402,6 +402,9 @@ pub fn consent_lines(integration: &AgentIntegrationContribution) -> Vec<String>
-         if !flags.is_empty() {
-             lines.push(format!("  launch flags: {}", flags.join("; ")));
-         }
-+        if let Some(delay) = launch.send_keys_enter_delay_ms {
-+            lines.push(format!("  enter delay: {delay} ms"));
-+        }
-         if !launch.aliases.is_empty() {
-             lines.push(format!(
-                 "  aliases: {}",
-@@ -1386,8 +1389,6 @@ oneshot_flag = "-p"
-     }
- 
-     fn install_test_integration(plugin_id: &str, tool: &str) {
--        use crate::session::{CapabilityGrant, PluginConfig};
--
-         let manifest = format!(
-             r#"
- id = "{plugin_id}"
-@@ -1403,9 +1404,42 @@ provider_versions = ["^18"]
- replies = true
- "#
-         );
-+        install_test_manifest(plugin_id, &manifest);
-+    }
-+
-+    /// A status integration that also declares an Enter delay, so the pace
-+    /// resolves through the same declaration as its other launch fields.
-+    ///
-+    /// Pair it with a tool name no built-in alias matches: `agent` is a cursor
-+    /// alias, so a name containing it resolves as a built-in and keeps the table.
-+    fn install_paced_test_integration(plugin_id: &str, tool: &str, delay_ms: u64) {
-+        let manifest = format!(
-+            r#"
-+id = "{plugin_id}"
-+name = "Integration test"
-+version = "1.0.0"
-+api_version = 22
-+capabilities = ["session.integration"]
-+
-+[[agent_integrations]]
-+tool = "{tool}"
-+command = "{tool}"
-+provider_versions = ["^18"]
-+replies = true
-+
-+[agent_integrations.launch]
-+send_keys_enter_delay_ms = {delay_ms}
-+"#
-+        );
-+        install_test_manifest(plugin_id, &manifest);
-+    }
-+
-+    fn install_test_manifest(plugin_id: &str, manifest: &str) {
-+        use crate::session::{CapabilityGrant, PluginConfig};
-+
-         let dir = super::super::plugins_dir().unwrap().join(plugin_id);
-         std::fs::create_dir_all(&dir).unwrap();
--        std::fs::write(dir.join("aoe-plugin.toml"), &manifest).unwrap();
-+        std::fs::write(dir.join("aoe-plugin.toml"), manifest).unwrap();
-         crate::session::update_config(|config| {
-             config.plugins.insert(
-                 plugin_id.to_string(),
-@@ -2004,6 +2038,64 @@ sandbox = "unsupported"
-         assert!(instance().declared_agent().is_none());
-     }
- 
-+    /// The declared pause belongs to the program the declaration owns, so a
-+    /// custom wrapper, an override or another stored command keeps the built-in
-+    /// table's pace for its tool instead of inheriting that delay.
-+    #[test]
-+    #[serial_test::serial]
-+    fn a_declared_enter_delay_paces_only_the_program_it_declares() {
-+        let temp = tempfile::tempdir().unwrap();
-+        let _reload = super::super::ReloadRegistryOnDrop;
-+        let _env = crate::session::test_support::EnvGuard::set(&[
-+            ("HOME", temp.path()),
-+            ("XDG_CONFIG_HOME", temp.path()),
-+            ("USERPROFILE", temp.path()),
-+        ]);
-+        let _featured = crate::session::test_support::EnvGuard::unset(&["AOE_FEATURED_INDEX_PATH"]);
-+        install_paced_test_integration("acme.paced-provider", "pacer-helper", 150);
-+        super::super::reload_registry();
-+
-+        let instance = |tool: &str, command: &str| {
-+            let mut instance = Instance::new("paced-delay", temp.path().to_str().unwrap());
-+            instance.tool = tool.into();
-+            instance.command = command.into();
-+            instance
-+        };
-+
-+        // The declared program takes the declared pause.
-+        assert_eq!(instance("pacer-helper", "").send_keys_enter_delay(), 150);
-+
-+        // A stored command that is not the declared one is another program.
-+        assert_eq!(
-+            instance("pacer-helper", "/opt/other/paced --serve").send_keys_enter_delay(),
-+            0
-+        );
-+
-+        // A command override replaces the declared program.
-+        crate::session::update_config(|config| {
-+            config
-+                .session
-+                .agent_command_override
-+                .insert("pacer-helper".into(), "/opt/override/paced --serve".into());
-+        })
-+        .unwrap();
-+        assert_eq!(instance("pacer-helper", "").send_keys_enter_delay(), 0);
-+
-+        // So does a custom agent of the same name.
-+        crate::session::update_config(|config| {
-+            config.session.agent_command_override.remove("pacer-helper");
-+            config
-+                .session
-+                .custom_agents
-+                .insert("pacer-helper".into(), "/opt/custom/paced --serve".into());
-+        })
-+        .unwrap();
-+        assert_eq!(instance("pacer-helper", "").send_keys_enter_delay(), 0);
-+
-+        // A built-in keeps the table's pace and gains nothing from the plugin.
-+        assert_eq!(instance("codex", "").send_keys_enter_delay(), 150);
-+    }
-+
-     /// Two approved providers make the own-name claim ambiguous. A readable
-     /// custom selection still owns its program, so
-```
-
----
-
-### Incident Patch 3: `1912a317` (2026-11-16)
-**Commit Message**: fix(server): load plugin icons under passphrase auth (#5735)
-
-* fix(server): serve plugin icons from a login-exempt path
-
-Under --auth passphrase every plugin icon <img> was rejected with a 401
-and a warn line: an image load carries the session cookie but cannot
-send the device binding header, and /api/plugins/{id}/icon is a gated
-machine endpoint. Serve the icon at /plugin-icons/{id} and exempt that
-prefix from the login session check, like the other static assets.
-The token gate and the CityHall block still apply.
-
-A separate prefix avoids colliding with a plugin page whose id is
-"icon" under /plugins/{id}/{page_id}.
-
-Fixes #5095
+Fixes #5748
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(server): keep plugin icons behind the token gate
+* test(containers): scope the unreadable-config pull check to its own image
 
-Review follow-up. The token gate lets anonymous requests through to any
-path that is not a machine endpoint, so /plugin-icons/{id} was public in
-token mode too. Class it as a machine endpoint so a missing token gets a
-401 again. It stays login-exempt, so under passphrase-only auth it is
-public, as the issue proposed; the test now pins both cases.
+The check asserted that no pull ran anywhere in the process. Under plain
+`cargo test` the image_pull tests run as threads beside it and hold
+running flights of their own. Configure an image no other test pulls and
+assert that its pull state stays Idle. `any_running` has no other caller,
+so it goes.
 
-Also point the handler doc at the new path and proxy /plugin-icons in
-the Vite dev server.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Co-Author
 
-**File**: `docs/guides/web-dashboard.md` (modified, +1/-0)
+**File**: `flake.nix` (modified, +1/-0)
 ```diff
-@@ -234,6 +234,7 @@ native clients on the owner-verified Unix API retain the local-owner exemption.
+@@ -55,6 +55,7 @@
+                 ./assets
+                 ./docker
+                 ./tests/fixtures/cli-read
++                ./tests/fixtures/pull-stderr
+                 ./web/tests/helpers/fakeAcpAgent.mjs
+               ];
+             };
+```
+
+**File**: `src/containers/error.rs` (modified, +2/-0)
+```diff
+@@ -32,6 +32,7 @@ pub enum DockerError {
+         runtime: &'static str,
+         image: String,
+         detail: String,
++        reason: super::image_pull::PullFailureReason,
+     },
  
- - **Token auth** (`--auth=token`, default): a random 256-bit token, generated on startup and stored at `~/.config/agent-of-empires/serve.token` (Linux) or `~/.agent-of-empires/serve.token` (macOS). Passed via URL on first visit, then kept as an `HttpOnly; SameSite=Strict` cookie.
- - **Passphrase wall** (`--auth=passphrase`, or combined with token via `--passphrase`): an argon2-hashed passphrase gates `/login`. Sessions bind to a per-device secret in `localStorage`, so a leaked cookie alone is insufficient.
-+- **Plugin icons**: with a passphrase configured, `/plugin-icons/{id}` needs a live login session but not its device binding, because an `<img>` load cannot send that header. Callers without a session get `401`. With token auth alone, the token is required as on any route.
- - **Plaintext refusal**: plain HTTP from a non-loopback peer gets `426` before authentication, so tokens and passphrases never cross a network in the clear. A TLS proxy or tunnel in front of a loopback bind is unaffected. A direct bind to a LAN or tailnet IP needs `--dangerously-allow-plaintext-remote` (per bind, logged at every start). Native clients likewise refuse to send a token or passphrase to a plaintext non-loopback endpoint.
- - **Rate limiting**: 5 failed logins from an IP trigger a 15-minute lockout.
- - **Token rotation**: in `--remote` mode the token rotates every 4 hours with a 5-minute grace period for active sessions.
+     #[error("Failed to create container: {0}")]
+@@ -105,6 +106,7 @@ mod tests {
+                 runtime,
+                 image: "img:1".to_string(),
+                 detail: sanitize_stderr("denied\nretry later"),
++                reason: crate::containers::image_pull::PullFailureReason::Other,
+             }
+             .to_string();
+             assert_eq!(
 ```
 
-**File**: `src/plugin/view.rs` (modified, +1/-1)
+**File**: `src/containers/image_pull.rs` (added, +547/-0)
 ```diff
-@@ -63,7 +63,7 @@ impl LoadedPlugin {
-             description: self.manifest.description.clone(),
-             icon: self.manifest.icon.clone(),
-             icon_asset_url: (self.manifest.icon_asset.is_some() && self.dir.is_some())
--                .then(|| format!("/api/plugins/{}/icon", self.id())),
-+                .then(|| format!("/plugin-icons/{}", self.id())),
-             enabled: self.enabled,
-             builtin: self.builtin(),
-             validation: self.validation.as_str().to_string(),
+@@ -0,0 +1,547 @@
++//! One image pull per Container runtime and image in this process. Every caller waits on the
++//! running pull as a waiter, so a second caller never starts a second runtime process.
++
++use std::collections::HashMap;
++use std::sync::{Arc, Condvar, LazyLock, Mutex, MutexGuard};
++use std::time::Duration;
++
++use serde::Serialize;
++use tokio_util::sync::CancellationToken;
++
++use super::error::{DockerError, Result};
++
++/// How often a waiter checks its own cancellation.
++const CANCEL_POLL: Duration = Duration::from_millis(50);
++
++/// Why a pull failed, read from the runtime's stderr. Only Docker's stderr has been captured
++/// (`tests/fixtures/pull-stderr`), so other runtimes' failures read as `Other` until they are.
++#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
++#[serde(rename_all = "snake_case")]
++pub enum PullFailureReason {
++    Timeout,
++    Network,
++    DiskSpace,
++    Auth,
++    Other,
++}
++
++impl PullFailureReason {
++    /// The wording both clients show.
++    pub fn user_text(self) -> String {
++        let why = match self {
++            Self::Timeout => "it took longer than 10 minutes",
++            Self::Network => "no network connection",
++            Self::DiskSpace => "not enough disk space",
++            Self::Auth => "the registry needs you to sign in",
++            Self::Other => "see aoe logs",
++        };
++        format!("Couldn't download the sandbox image: {why}.")
++    }
++
++    /// Network is checked before auth, so a connection error can't read as a sign-in problem.
++    pub(crate) fn classify(stderr: &str) -> Self {
++        let has = |phrases: &[&str]| phrases.iter().any(|p| stderr.contains(p));
++        if has(&["no space left on device"]) {
++            Self::DiskSpace
++        } else if has(&["no such host", "dial tcp"]) {
++            Self::Network
++        } else if has(&[
++            "pull access denied",
++            "error from registry: denied",
++            "unauthorized",
++        ]) {
++            Self::Auth
++        } else {
++            Self::Other
++        }
++    }
++}
++
++#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
++#[serde(tag = "state", rename_all = "snake_case")]
++pub enum PullState {
++    Idle,
++    Running,
++    Done,
++    /// `message` is `reason`'s shared wording; `error` is the runtime's output, for Details.
++    Failed {
++        reason: PullFailureReason,
++        message: String,
++        error: String,
++    },
++}
++
++#[derive(Debug, Clone, PartialEq, Eq, Hash)]
++pub(crate) struct PullKey {
++    pub runtime: &'static str,
++    pub image: String,
++}
++
++struct Flight {
++    /// Cancelled when the last waiter leaves; kills the runtime process.
++    kill: CancellationToken,
++    state: Mutex<FlightState>,
++    finished: Condvar,
++}
++
++struct FlightState {
++    waiters: usize,
++    outcome: Option<Result<()>>,
++}
++
++impl Flight {
++    /// Gives up one waiter's place; the last one out kills the pull. Returns whether it was last.
++    fn leave(&self, state: &mut FlightState) -> bool {
++        state.waiters -= 1;
++        if state.waiters > 0 {
++            return false;
++        }
++        self.kill.cancel();
++        true
++    }
++}
++
++enum Entry {
++    Running(Arc<Flight>),
++    Finished(PullState),
++}
++
++static FLIGHTS: LazyLock<Mutex<HashMap<PullKey, Entry>>> = LazyLock::new(Mutex::default);
++
++fn lock<T>(mutex: &Mutex<T>) -> MutexGuard<'_, T> {
++    mutex.lock().unwrap_or_else(|e| e.into_inner())
++}
++
++/// A caller's place in a running pull.
++pub(crate) struct Waiter {
++    flight: Arc<Flight>,
++    image: String,
++    /// Still counted in the flight's waiters.
++    joined: bool,
++}
++
++/// Joins `key`'s running pull, or starts `pull` on its own thread when none is running.
++pub(crate) fn join_with<F>(key: PullKey, pull: F) -> Waiter
++where
++    F: FnOnce(&CancellationToken) -> Result<()> + Send + 'static,
++{
++    let mut flights = lock(&FLIGHTS);
++    if let Some(Entry::Running(flight)) = flights.get(&key) {
++        let mut state = lock(&flight.state);
++        // Under the flight's lock, so a pull its last waiter is killing can't gain a waiter.
++        if !flight.kill.is_cancelled() {
++            state.waiters += 1;
++            return Waiter {
++                flight: flight.clone(),
++                image: key.image,
++                joined: true,
++            };
++        }
++    }
++    let flight = Arc::new(Flight {
++        kill: CancellationToken::new(),
++        state: Mutex::new(FlightState {
++            waiters: 1,
++            outcome: None,
++        }),
++        finished: Condvar::new(),
++    });
++    flights.insert(key.clone(), Entry::Running(flight.clone()));
++    drop(flights);
++    let runner = flight.clone();
++    let image = key.image.clone();
++    std::thread::spawn(move || {
++        let started = std::time::Instant::now();
++        // A panic still finishes the flight; otherwise its waiters and every later joiner hang.
++        let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| pull(&ru
 ```
 
-**File**: `src/server/api/plugins.rs` (modified, +57/-1)
+**File**: `src/containers/mod.rs` (modified, +1/-0)
 ```diff
-@@ -143,7 +143,7 @@ fn content_type_for_icon(path: &std::path::Path) -> Option<&'static str> {
+@@ -1,6 +1,7 @@
+ pub mod container_interface;
+ pub mod error;
+ mod execution;
++pub mod image_pull;
+ pub mod image_update;
+ mod runtime;
+ pub(crate) mod runtime_base;
+```
+
+**File**: `src/containers/runtime.rs` (modified, +32/-4)
+```diff
+@@ -8,6 +8,7 @@ use super::container_interface::{
+     ContainerConfig, InspectedContainer, InspectedMount, VolumeMount,
+ };
+ use super::error::{DockerError, Result};
++use super::image_pull;
+ use super::image_update::LocalDigest;
+ use super::runtime_base::RuntimeBase;
+ 
+@@ -115,16 +116,38 @@ impl ContainerRuntime {
+     }
+ 
+     pub fn pull_image(&self, image: &str) -> Result<()> {
+-        self.base.pull_image(image)
++        self.join_pull(image)
++            .wait(&tokio_util::sync::CancellationToken::new())
+     }
+ 
+-    /// [`Self::pull_image`], killed when `cancel` fires.
++    /// [`Self::pull_image`]; when `cancel` fires this caller stops waiting, and the pull is
++    /// killed if no other caller is waiting on it.
+     pub fn pull_image_until_cancelled(
+         &self,
+         image: &str,
+         cancel: &tokio_util::sync::CancellationToken,
+     ) -> Result<()> {
+-        self.base.pull_until_cancelled(image, cancel)
++        self.join_pull(image).wait(cancel)
++    }
++
++    /// Joins this process's running pull of `image`, or starts one.
++    pub(crate) fn join_pull(&self, image: &str) -> image_pull::Waiter {
++        let base = self.base;
++        let pulled = image.to_string();
++        image_pull::join_with(self.pull_key(image), move |kill| {
++            base.pull_until_cancelled(&pulled, kill)
++        })
++    }
++
++    pub(crate) fn pull_state(&self, image: &str) -> image_pull::PullState {
++        image_pull::state(&self.pull_key(image))
++    }
++
++    fn pull_key(&self, image: &str) -> image_pull::PullKey {
++        image_pull::PullKey {
++            runtime: self.display_name(),
++            image: image.to_string(),
++        }
+     }
+ 
+     /// The command [`Self::pull_image`] runs, for a user to copy when the dashboard can't pull.
+@@ -151,7 +174,12 @@ impl ContainerRuntime {
+         image: &str,
+         cancel: &tokio_util::sync::CancellationToken,
+     ) -> Result<()> {
+-        self.base.ensure_image(image, cancel)
++        if self.base.image_exists_locally(image) {
++            tracing::info!(target: "containers.runtime", "Using local {} image '{}'", self.base.name, image);
++            return Ok(());
++        }
++        tracing::info!(target: "containers.runtime", "Pulling {} image '{}'", self.base.name, image);
++        self.pull_image_until_cancelled(image, cancel)
+     }
+ 
+     pub fn default_sandbox_image(&self) -> &'static str {
+```
+
+**File**: `src/containers/runtime_base.rs` (modified, +72/-16)
+```diff
+@@ -2,6 +2,7 @@ use super::container_interface::{
+     docker_env_args, ContainerConfig, RunFlag, TargetEnvFile, CGROUP_PARENT_LABEL,
+ };
+ use super::error::{sanitize_stderr, DockerError, Result};
++use super::image_pull::PullFailureReason;
+ use std::collections::HashSet;
+ use std::process::{Command, Stdio};
+ use std::time::{Duration, Instant};
+@@ -60,6 +61,7 @@ fn joins_user_slice(output: &str, rootless_marker: &str) -> bool {
+         && words.any(|word| word.trim_matches(['[', ']']) == rootless_marker)
+ }
+ 
++#[derive(Clone, Copy)]
+ pub(crate) struct RuntimeBase {
+     pub binary: &'static str,
+     pub name: &'static str,
+@@ -303,18 +305,25 @@ impl RuntimeBase {
+         self.probe_succeeds(&["image", "inspect", image])
+     }
+ 
+-    pub fn pull_image(&self, image: &str) -> Result<()> {
+-        self.pull_until_cancelled(image, &CancellationToken::new())
++    pub fn pull_until_cancelled(&self, image: &str, cancel: &CancellationToken) -> Result<()> {
++        self.pull_with_timeout(image, cancel, PULL_TIMEOUT)
+     }
+ 
+-    pub fn pull_until_cancelled(&self, image: &str, cancel: &CancellationToken) -> Result<()> {
++    fn pull_with_timeout(
++        &self,
++        image: &str,
++        cancel: &CancellationToken,
++        timeout: Duration,
++    ) -> Result<()> {
+         let mut cmd = self.command();
+         cmd.args(self.pull_prefix);
+         cmd.arg(image);
+         cmd.stdin(Stdio::null());
+         let start = Instant::now();
+         tracing::info!(target: "containers.image", runtime = %self.name, %image, "pulling image");
+-        let output = match crate::process::run_until_cancelled(&mut cmd, PULL_TIMEOUT, cancel)? {
++        let output = match crate::process::run_until_cancelled_process_group(
++            &mut cmd, timeout, cancel,
++        )? {
+             Some(output) => output,
+             None if cancel.is_cancelled() => {
+                 tracing::info!(target: "containers.image", runtime = %self.name, %image, "image pull cancelled");
+@@ -327,13 +336,14 @@ impl RuntimeBase {
+                     runtime = %self.name,
+                     %image,
+                     duration_ms = dur_ms,
+-                    timeout_s = PULL_TIMEOUT.as_secs(),
++                    timeout_s = timeout.as_secs(),
+                     "image pull timed out; killed",
+                 );
+                 return Err(DockerError::ImagePullFailed {
+                     runtime: self.name,
+                     image: image.to_string(),
+-                    detail: format!("timed out after {}s", PULL_TIMEOUT.as_secs()),
++                    detail: format!("timed out after {}s", timeout.as_secs()),
++                    reason: PullFailureReason::Timeout,
+                 });
+             }
+         };
+@@ -353,6 +363,7 @@ impl RuntimeBase {
+                 runtime: self.name,
+                 image: image.to_string(),
+                 detail: sanitize_stderr(&stderr),
++                reason: PullFailureReason::classify(&stderr),
+             });
+         }
+ 
+@@ -366,16 +377,6 @@ impl RuntimeBase {
+         Ok(())
+     }
+ 
+-    pub fn ensure_image(&self, image: &str, cancel: &CancellationToken) -> Result<()> {
+-        if self.image_exists_locally(image) {
+-            tracing::info!(target: "containers.runtime", "Using local {} image '{}'", self.name, image);
+-            return Ok(());
+-        }
+-
+-        tracing::info!(target: "containers.runtime", "Pulling {} image '{}'", self.name, image);
+-        self.pull_until_cancelled(image, cancel)
+-    }
+-
+     pub fn default_sandbox_image(&self) -> &'static str {
+         "ghcr.io/agent-of-empires/aoe-sandbox:latest"
+     }
+@@ -1056,6 +1057,61 @@ mod tests {
+         ));
+     }
+ 
++    #[cfg(target_os = "linux")]
++    #[test]
++    #[serial_test::parallel]
++    fn a_pull_timeout_kills_a_runtime_that_ignores_sigterm_and_its_children() {
++        use std::os::unix::fs::PermissionsExt;
++        let _env = crate::session::test_support::EnvGuard::read_lock();
++        let dir = tempfile::tempdir().unwrap();
++        let (shell, child) = (dir.path().join("shell"), dir.path().join("child"));
++        let binary = dir.path().join("docker");
++        std::fs::write(
++            &binary,
++            format!(
++                "#!/bin/sh\ntrap '' TERM\necho $$ > '{}'\nsleep 300 &\necho $! > '{}'\nwait\n",
++                shell.display(),
++                child.display()
++            ),
++        )
++        .unwrap();
++        std::fs::set_permissions(&binary, std::fs::Permissions::from_mode(0o755)).unwrap();
++        let runtime = RuntimeBase {
++            binary: Box::leak(binary.to_string_lossy().into_owned().into_boxed_str()),
++            ..RuntimeBase::DOCKER
++        };
++
++        let result =
++            runtime.pull_with_timeout("img", &CancellationToken::new(), Duration::from_secs(1));
++        assert!(matches!(
++            result,
++            Err(DockerError::ImagePullFailed {
++                reason: PullFailureReason::Timeout,
++                ..
++           
+```
+
+**File**: `src/server/api/sandbox_image.rs` (modified, +90/-89)
+```diff
+@@ -16,6 +16,7 @@ use serde::{Deserialize, Serialize};
+ use tokio::time::Instant;
+ 
+ use super::{api_error, cityhall_block, read_only_block};
++use crate::containers::image_pull::PullState;
+ use crate::containers::image_update::{self, ImageCheck};
+ use crate::containers::ContainerRuntime;
+ use crate::server::AppState;
+@@ -103,6 +104,10 @@ impl StatusCache {
+ }
+ 
+ static STATUS: LazyLock<Mutex<StatusCache>> = LazyLock::new(Mutex::default);
++/// The key's dashboard waiter, by the id its cleanup checks. One per running pull, so repeated
++/// POSTs don't each hold a blocking thread for the whole pull.
++static DASHBOARD_WAITERS: LazyLock<Mutex<HashMap<ImageKey, u64>>> = LazyLock::new(Mutex::default);
++static NEXT_DASHBOARD_WAITER: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+ /// One registry check per image and runtime at a time, so callers arriving together share it.
+ static CHECK_TURNS: LazyLock<Mutex<HashMap<ImageKey, Arc<tokio::sync::Mutex<()>>>>> =
+     LazyLock::new(Mutex::default);
+@@ -159,38 +164,6 @@ where
+     })
+ }
+ 
+-#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
+-#[serde(tag = "state", rename_all = "snake_case")]
+-pub enum PullState {
+-    Idle,
+-    Running,
+-    Done,
+-    /// `error` carries the Container runtime's stderr.
+-    Failed {
+-        error: String,
+-    },
+-}
+-
+-static PULLS: LazyLock<Mutex<HashMap<ImageKey, PullState>>> = LazyLock::new(Mutex::default);
+-
+-/// Marks the image running unless it already is; true when the caller should start the pull.
+-fn claim_pull(pulls: &mut HashMap<ImageKey, PullState>, key: &ImageKey) -> bool {
+-    if pulls.get(key) == Some(&PullState::Running) {
+-        return false;
+-    }
+-    pulls.insert(key.clone(), PullState::Running);
+-    true
+-}
+-
+-fn pull_state(key: &ImageKey) -> PullState {
+-    PULLS
+-        .lock()
+-        .unwrap_or_else(|e| e.into_inner())
+-        .get(key)
+-        .cloned()
+-        .unwrap_or(PullState::Idle)
+-}
+-
+ /// What the Daemon would sandbox with. Only these are checked or pulled, so a request can't
+ /// make the Daemon contact an arbitrary registry or pull an arbitrary image.
+ struct Configured {
+@@ -388,7 +361,7 @@ pub async fn sandbox_image_status(
+             .iter()
+             .any(|i| i.is_sandboxed());
+     Json(ImageStatusResponse {
+-        pull: pull_state(&key),
++        pull: runtime.pull_state(&image),
+         pull_blocked: pull_blocked(&state, &configured),
+         pull_command: runtime.pull_command(&image),
+         runtime: runtime.display_name(),
+@@ -458,44 +431,28 @@ pub async fn sandbox_image_pull(
+         Err(resp) => return resp,
+     };
+     let key = configured.key(image.clone());
+-    let started = claim_pull(&mut PULLS.lock().unwrap_or_else(|e| e.into_inner()), &key);
+-    if started {
+-        let runtime = configured.runtime;
+-        tokio::spawn(async move {
+-            let pulled = key.image.clone();
+-            let started = std::time::Instant::now();
+-            let result = tokio::task::spawn_blocking(move || {
+-                ContainerRuntime::from(runtime).pull_image(&pulled)
+-            })
+-            .await;
+-            let outcome = match result {
+-                Ok(Ok(())) => PullState::Done,
+-                Ok(Err(e)) => PullState::Failed {
+-                    error: e.to_string(),
+-                },
+-                Err(e) => PullState::Failed {
+-                    error: format!("pull task failed: {e}"),
+-                },
+-            };
+-            let duration_ms = started.elapsed().as_millis();
+-            match &outcome {
+-                PullState::Failed { error } => {
+-                    tracing::warn!(target: "containers.image", image = %key.image, ok = false, duration_ms, %error, "image pull finished")
+-                }
+-                _ => {
+-                    tracing::info!(target: "containers.image", image = %key.image, ok = true, duration_ms, "image pull finished")
+-                }
+-            }
++    let runtime = ContainerRuntime::from(configured.runtime);
++    let mut waiters = DASHBOARD_WAITERS.lock().unwrap_or_else(|e| e.into_inner());
++    // Joined under the map's lock, so two POSTs can't both add a waiter to one pull.
++    if !(waiters.contains_key(&key) && runtime.pull_state(&image) == PullState::Running) {
++        // Registered now, so the next status read already sees it running.
++        let waiter = runtime.join_pull(&image);
++        let id = NEXT_DASHBOARD_WAITER.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
++        waiters.insert(key.clone(), id);
++        tokio::task::spawn_blocking(move || {
++            // A pull the dashboard asked for is never cancelled by a create that joined it.
++            let _ = waiter.wait(&tokio_util::sync::CancellationToken::new());
+             STATUS
+                 .lock()
+                 .unwrap_or_else(|e| e.into_inner())
+                 .invalidate(&key);
+-            PULLS
+-                .lock()
+-                .unwrap_or_else(|e| e.into_inner
+```
+
+**File**: `src/server/api/sessions/tests.rs` (modified, +2/-0)
+```diff
+@@ -5817,6 +5817,7 @@ fn public_create_session_error_forwards_typed_causes_as_fixed_templates() {
+                 runtime: "Podman",
+                 image: "ghcr.io/acme/sandbox:1".into(),
+                 detail: format!("denied: token {SECRET} at /root/.docker/config.json"),
++                reason: crate::containers::image_pull::PullFailureReason::Other,
+             })
+             .context("ensure image"),
+             (
+@@ -5922,6 +5923,7 @@ fn public_create_session_error_forwards_typed_causes_as_fixed_templates() {
+                 runtime: "Docker",
+                 image: "x".repeat(2000),
+                 detail: String::new(),
++                reason: crate::containers::image_pull::PullFailureReason::Other,
+             }),
+             "sandbox_image_pull_failed",
+         ),
+```
+
+---
+
+### Incident Patch 2: `b47a466c` (2026-11-19)
+**Commit Message**: fix(acp): keep the connection when the agent rejects a prompt (#5864)
+
+* fix(acp): keep the connection when the agent rejects a prompt
+
+An error answer to session/prompt was returned as a connection error, so
+aoe tore down the ACP connection, respawned the agent and left the
+session in Error. The queue had already retired the prompt, so the
+user's message was lost.
+
+The agent answering with an error now ends only that turn: the error
+surfaces as a PromptRuntimeError and the text comes back as a
+PromptRejected retry pill. A lost transport or runner, and a resumed
+session the agent no longer has, still end the connection as before. An
+error that answers our own cancel ends the turn as cancelled.
+
+Fixes #5662
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(acp): cancel the leftover turn and narrow what counts as rejected
+
+Review follow-ups for #5662:
+
+- A rejection sends session/cancel, so a turn the agent still runs from
+  before a restart no longer rejects every retry.
+- The runner client's duplicate-waiter guard is a local error, not a
+  PromptOutcome::Error, so it is never mistaken for the agent's answer.
+- A session the agent no longer has still tears down for recovery
+
+**File**: `src/acp/acp_client/commands.rs` (modified, +29/-4)
+```diff
+@@ -4,15 +4,40 @@
+ use agent_client_protocol::v1::schema::ContentBlock;
+ use tokio::sync::oneshot;
+ 
++use crate::daemon::PromptAttachmentRef;
++
+ use super::delete::DeleteSessionOutcome;
+ use super::reset::ResetSessionOutcome;
+ 
++/// A user prompt as `send_prompt` built it (#1000): the blocks the agent
++/// receives, and refs to the stored attachments among them, which a refusal
++/// hands back so Retry resends the same payload.
++#[derive(Debug, Clone, Default)]
++pub(super) struct PromptInput {
++    pub(super) blocks: Vec<ContentBlock>,
++    pub(super) attachments: Vec<PromptAttachmentRef>,
++}
++
++impl PromptInput {
++    /// The text the retry pill shows and resends.
++    pub(super) fn text(&self) -> String {
++        super::steer::first_text_block(&self.blocks)
++    }
++}
++
++#[cfg(test)]
++impl From<Vec<ContentBlock>> for PromptInput {
++    fn from(blocks: Vec<ContentBlock>) -> Self {
++        Self {
++            blocks,
++            attachments: Vec::new(),
++        }
++    }
++}
++
+ /// Commands sent from `AcpClient` methods to the background connection task.
+ pub(super) enum ClientCmd {
+-    /// The fully-built prompt content blocks (text first, then any
+-    /// attachments). Built in `send_prompt` so the connection task just
+-    /// forwards them to `session/prompt`. See #1000.
+-    Prompt(Vec<ContentBlock>),
++    Prompt(PromptInput),
+     Cancel,
+     /// `session/cancel` for one subagent session. Answers whether it was sent:
+     /// false when the child is unknown or did not advertise `cancel`.
+```
+
+**File**: `src/acp/acp_client/connection/command_loop.rs` (modified, +9/-8)
+```diff
+@@ -3,9 +3,8 @@
+ 
+ use crate::acp::state::Event;
+ use agent_client_protocol::v1::schema::{
+-    CancelNotification, ContentBlock, McpServer, NewSessionRequest, NewSessionResponse,
+-    SessionConfigId, SessionConfigOption, SessionConfigValueId, SessionId,
+-    SetSessionConfigOptionRequest,
++    CancelNotification, McpServer, NewSessionRequest, NewSessionResponse, SessionConfigId,
++    SessionConfigOption, SessionConfigValueId, SessionId, SetSessionConfigOptionRequest,
+ };
+ use agent_client_protocol::v1::ConnectionTo;
+ use agent_client_protocol::Agent;
+@@ -20,7 +19,7 @@ use super::notifications::{now_ms, Shared};
+ use crate::acp::acp_client::between_prompt::{
+     between_prompt_stop_reason, BETWEEN_PROMPT_IDLE_CHECK_INTERVAL,
+ };
+-use crate::acp::acp_client::commands::ClientCmd;
++use crate::acp::acp_client::commands::{ClientCmd, PromptInput};
+ use crate::acp::acp_client::config_options::{
+     config_option_failure_event, config_options_event, dispatch_set_config_option,
+     dispatch_set_mode, mode_config_id, model_config_values, model_option, modes_available_event,
+@@ -62,7 +61,7 @@ pub(super) struct Session {
+     pub(super) lifecycle_rx: mpsc::Receiver<LifecycleEnvelope>,
+     /// Steers the adapter handed back unconsumed, run as ordinary turns.
+     /// Kept here rather than re-sent on the bounded channel this task drains.
+-    pub(super) pending_prompts: VecDeque<Vec<ContentBlock>>,
++    pub(super) pending_prompts: VecDeque<PromptInput>,
+ }
+ 
+ impl Session {
+@@ -157,7 +156,7 @@ impl Session {
+             let cancel_deadline = *shared.cancel_deadline.lock().unwrap();
+             // Fallback prompts go first so later messages cannot overtake them.
+             let cmd = match self.pending_prompts.pop_front() {
+-                Some(blocks) => Some(ClientCmd::Prompt(blocks)),
++                Some(prompt) => Some(ClientCmd::Prompt(prompt)),
+                 None => tokio::select! {
+                     biased;
+                     outcome = async {
+@@ -196,8 +195,8 @@ impl Session {
+                 },
+             };
+             match cmd {
+-                Some(ClientCmd::Prompt(blocks)) => {
+-                    if self.run_prompt(blocks).await? {
++                Some(ClientCmd::Prompt(prompt)) => {
++                    if self.run_prompt(prompt).await? {
+                         break;
+                     }
+                 }
+@@ -405,6 +404,7 @@ impl Session {
+                 .emit(Event::PromptRejected {
+                     reason: "agent_busy".into(),
+                     text,
++                    attachments: Vec::new(),
+                 })
+                 .await;
+             let _ = respond_to.send(ResetSessionOutcome::Failed {
+@@ -428,6 +428,7 @@ impl Session {
+                 .emit(Event::PromptRejected {
+                     reason: "agent_busy".into(),
+                     text,
++                    attachments: Vec::new(),
+                 })
+                 .await;
+             let _ = respond_to.send(ResetSessionOutcome::Failed {
+```
+
+**File**: `src/acp/acp_client/connection/prompt.rs` (modified, +142/-58)
+```diff
+@@ -17,15 +17,16 @@ use tracing::{debug, info, trace, warn};
+ use super::command_loop::Session;
+ use super::notifications::now_ms;
+ use super::CANCEL_ESCALATION_GRACE;
+-use crate::acp::acp_client::commands::ClientCmd;
++use crate::acp::acp_client::commands::{ClientCmd, PromptInput};
+ use crate::acp::acp_client::control::prompt_outcome_to_response;
+ use crate::acp::acp_client::delete::handle_delete_session_cmd;
+-use crate::acp::acp_client::errors::acp_internal_error;
++use crate::acp::acp_client::errors::{acp_internal_error, is_authentication_failure};
+ use crate::acp::acp_client::lifecycle::{LifecycleSignal, OffProtocolWorkKind};
+ use crate::acp::acp_client::opencode::recover_opencode_prompt_error;
+ use crate::acp::acp_client::rate_limit::{
+-    captured_rate_limit_reset, classify_rate_limit_error, clear_captured_rejections,
+-    is_unsupported_session_error, take_rate_limit_from_captured_rejection,
++    captured_rate_limit_reset, classify_rate_limit_error, classify_rate_limit_from_message,
++    clear_captured_rejections, is_unsupported_session_error,
++    take_rate_limit_from_captured_rejection,
+ };
+ use crate::acp::acp_client::reset::ResetSessionOutcome;
+ use crate::acp::acp_client::steer::{first_text_block, SteerOutcome, SteerRequest};
+@@ -34,11 +35,11 @@ use crate::acp::acp_client::watchdog::{
+     terminal_stop_reason, SilentOrphanWatchdog, SilentOrphanWatchdogConfig,
+     OFF_PROTOCOL_WORK_GRACE_FLOOR,
+ };
++use crate::daemon::PromptAttachmentRef;
+ 
+ type AcpResult<T> = Result<T, agent_client_protocol::Error>;
+-type PromptFut = Pin<Box<dyn Future<Output = AcpResult<PromptResponse>> + Send>>;
+-type SteerFut =
+-    Pin<Box<dyn Future<Output = (Vec<ContentBlock>, AcpResult<serde_json::Value>)> + Send>>;
++type PromptFut = Pin<Box<dyn Future<Output = PromptReply> + Send>>;
++type SteerFut = Pin<Box<dyn Future<Output = (PromptInput, AcpResult<serde_json::Value>)> + Send>>;
+ 
+ #[cfg(test)]
+ pub(super) struct SelectProbe {
+@@ -68,6 +69,13 @@ fn observe_select_win(command: bool) {
+     });
+ }
+ 
++/// `session/prompt`'s result. `rejected` marks an error the agent answered
++/// with, as opposed to a lost transport or runner.
++struct PromptReply {
++    result: AcpResult<PromptResponse>,
++    rejected: bool,
++}
++
+ enum Flow {
+     Continue,
+     Break,
+@@ -87,10 +95,15 @@ struct TurnFlags {
+     cancelling: bool,
+     /// What the adapter reported; `None` when no `PromptResponse` arrived.
+     agent_stop_reason: Option<StopReason>,
++    /// The error the agent answered `session/prompt` with.
++    rejection: Option<String>,
+ }
+ 
+ struct Turn {
+     epoch: u64,
++    /// Handed back on a rejection so the user can retry it.
++    prompt_text: String,
++    prompt_attachments: Vec<PromptAttachmentRef>,
+     flags: TurnFlags,
+     watchdog: SilentOrphanWatchdog,
+     cfg: SilentOrphanWatchdogConfig,
+@@ -101,7 +114,7 @@ struct Turn {
+     /// At most one steer is outstanding so racing steers cannot reorder the
+     /// user's messages; later ones wait in the backlog.
+     steer_fut: Option<SteerFut>,
+-    steer_backlog: VecDeque<Vec<ContentBlock>>,
++    steer_backlog: VecDeque<PromptInput>,
+ }
+ 
+ impl Turn {
+@@ -116,6 +129,12 @@ impl Turn {
      }
  }
  
--/// `GET /api/plugins/{id}/icon`: stream an installed plugin's `icon_asset`
-+/// `GET /plugin-icons/{id}`: stream an installed plugin's `icon_asset`
- /// from its install directory. Mirrors `serve_sound_file`'s allowlist-then-read
- /// shape: the manifest path is re-validated and re-joined against the
- /// plugin's own directory rather than trusted from a cached URL. A builtin
-@@ -2538,6 +2538,62 @@ id = "voice"
++/// The SDK's own error for a connection that ended before the response.
++fn is_lost_response(error: &agent_client_protocol::Error) -> bool {
++    agent_client_protocol::is_connection_terminated(error)
++        || agent_client_protocol::is_incoming_transport_closed(error)
++}
++
+ /// Debug-only fault injection: suppress the prompt response once so the
+ /// silent-orphan watchdog must break the loop (#1240).
+ fn simulate_orphan(session_label: &str) -> bool {
+@@ -139,7 +158,11 @@ fn simulate_orphan(session_label: &str) -> bool {
+ impl Session {
+     /// Runs one turn and always emits its terminal `Stopped`. Returns whether
+     /// the connection should shut down.
+-    pub(super) async fn run_prompt(&mut self, blocks: Vec<ContentBlock>) -> AcpResult<bool> {
++    pub(super) async fn run_prompt(&mut self, prompt: PromptInput) -> AcpResult<bool> {
++        let PromptInput {
++            blocks,
++            attachments,
++        } = prompt;
+         let shared = self.shared.clone();
+         if let Some(control) = self.control.as_ref() {
+             control.supersede_adopted_turn();
+@@ -193,6 +216,8 @@ impl Session {
+         let orphan_check_period = silent_orphan_check_interval();
+         let mut turn = Turn {
+             epoch,
++            prompt_text: first_text_block(&blocks),
++            prompt_attachments: attachments,
+             flags: TurnFlags::default(),
+             watchdog: SilentOrphanWatchdog::default(),
+             cfg: SilentOrphanWatchdogConfig {
+@@ -259,10 +284,10 @@ impl Session {
+                 {
+                     self.on_orphan_check(&mut turn).await
+                 }
+-                (blocks, res) = async {
++                (prompt, res) = async {
+                     turn.steer_fut.as_mut().expect("guarded by the arm condition").await
+            
+```
+
+**File**: `src/acp/acp_client/connection/tests.rs` (modified, +85/-12)
+```diff
+@@ -3,6 +3,7 @@
+ use super::super::pending::{ApprovalResolutionMessage, PendingResolver, PendingResponder};
+ use super::prompt::{SelectProbe, SELECT_PROBE};
+ use super::*;
++use crate::acp::acp_client::commands::PromptInput;
+ use crate::acp::acp_client::reset::ResetSessionOutcome;
+ use crate::acp::approvals::ApprovalDecision;
+ use crate::acp::fs_handler::FsPolicy;
+@@ -161,9 +162,9 @@ async fn cancel_under_flood() {
+         .expect("handshake completes")
+         .expect("handshake ok");
+     cmd_tx
+-        .send(ClientCmd::Prompt(vec![ContentBlock::Text(
+-            TextContent::new("hi"),
+-        )]))
++        .send(ClientCmd::Prompt(PromptInput::from(vec![
++            ContentBlock::Text(TextContent::new("hi")),
++        ])))
+         .await
+         .unwrap();
+ 
+@@ -604,9 +605,9 @@ async fn default_mode_reaches_the_live_mode_option_only_when_configured() {
+             })
+             .await;
+         fake.cmd_tx
+-            .send(ClientCmd::Prompt(vec![ContentBlock::Text(
+-                TextContent::new("hi"),
+-            )]))
++            .send(ClientCmd::Prompt(PromptInput::from(vec![
++                ContentBlock::Text(TextContent::new("hi")),
++            ])))
+             .await
+             .unwrap();
+         tokio::time::timeout(Duration::from_secs(10), prompted_rx.recv())
+@@ -733,9 +734,9 @@ async fn prompted_turn_ending_on_a_rejected_window_parks() {
+         })
+         .await;
+         fake.cmd_tx
+-            .send(ClientCmd::Prompt(vec![ContentBlock::Text(
+-                TextContent::new("hi"),
+-            )]))
++            .send(ClientCmd::Prompt(PromptInput::from(vec![
++                ContentBlock::Text(TextContent::new("hi")),
++            ])))
+             .await
+             .unwrap();
+ 
+@@ -783,6 +784,78 @@ async fn prompted_turn_ending_on_a_rejected_window_parks() {
+     }
+ }
+ 
++/// Sends one prompt and returns the events before its `Stopped`, and its reason.
++async fn prompt_turn(fake: &mut FakeConnection, text: &str) -> (Vec<Event>, String) {
++    fake.cmd_tx
++        .send(ClientCmd::Prompt(PromptInput::from(vec![
++            ContentBlock::Text(TextContent::new(text)),
++        ])))
++        .await
++        .unwrap();
++    let mut seen = Vec::new();
++    tokio::time::timeout(Duration::from_secs(10), async {
++        loop {
++            match fake.event_rx.recv().await.expect("connection remains open") {
++                Event::Stopped { reason } => return (seen, reason),
++                event => seen.push(event),
++            }
++        }
++    })
++    .await
++    .expect("the turn must reach a terminal event")
++}
++
++/// An agent that answers `session/prompt` with an error ends only that turn:
++/// the error and the prompt text come back, and the connection takes the next
++/// prompt (#5662).
++#[tokio::test]
++async fn rejected_prompt_keeps_the_connection_and_returns_the_text() {
++    let prompts = Arc::new(std::sync::atomic::AtomicUsize::new(0));
++    let counter = prompts.clone();
++    let mut fake = spawn_fake_connection("s-rejected", move |id| {
++        vec![if counter.fetch_add(1, Ordering::SeqCst) == 0 {
++            format!(
++                r#"{{"jsonrpc":"2.0","id":{id},"error":{{"code":-32603,"message":"a turn is already running"}}}}"#
++            )
++        } else {
++            format!(r#"{{"jsonrpc":"2.0","id":{id},"result":{{"stopReason":"end_turn"}}}}"#)
++        }]
++    })
++    .await;
++
++    let (seen, reason) = prompt_turn(&mut fake, "retry me").await;
++    assert_eq!(reason, "prompt_rejected", "{seen:?}");
++    assert!(
++        seen.iter().any(|e| matches!(
++            e,
++            Event::PromptRuntimeError { message } if message.contains("a turn is already running")
++        )),
++        "the agent's error must surface on the turn: {seen:?}"
++    );
++    assert!(
++        seen.iter().any(|e| matches!(
++            e,
++            Event::PromptRejected { text, .. } if text == "retry me"
++        )),
++        "the prompt text must come back for a retry: {seen:?}"
++    );
++
++    let (seen, reason) = prompt_turn(&mut fake, "again").await;
++    assert_eq!(reason, "prompt_complete");
++    assert!(
++        !seen.iter().any(|e| matches!(
++            e,
++            Event::PromptRuntimeError { .. } | Event::PromptRejected { .. }
++        )),
++        "{seen:?}"
++    );
++    assert_eq!(prompts.load(Ordering::SeqCst), 2);
++    assert!(!fake.connection.is_finished());
++    fake.connection.abort();
++    fake.agent.abort();
++    let _ = fake.agent.await;
++}
++
+ /// A child cancel reaches the agent addressed to the child and only when the
+ /// child announced `cancel`; the root turn's cancel stays a separate command.
+ #[tokio::test]
+@@ -1045,9 +1118,9 @@ async fn reset_waits_for_a_running_subagent() {
+ 
+     // The agent reports the child idle before it ends the turn.
+     cmd_tx
+-        .send(ClientCmd::Prompt(vec![ContentBlock::Text(
+-            TextContent::new("go"),
+-        )]))
++        .send(ClientCmd::Prompt(PromptInput::from(vec![
++            
+```
+
+**File**: `src/acp/acp_client/control.rs` (modified, +31/-30)
+```diff
+@@ -288,21 +288,20 @@ impl DaemonControlClient {
+         }
+     }
+ 
+-    /// Registers the completion waiter before sending the `Prompt` frame.
++    /// Registers the completion waiter before sending the `Prompt` frame. A
++    /// waiter already pending is refused locally, without a frame.
+     pub(super) async fn prompt(
+         &self,
+         request: serde_json::Value,
+-    ) -> oneshot::Receiver<control_protocol::PromptOutcome> {
++    ) -> Result<oneshot::Receiver<control_protocol::PromptOutcome>, agent_client_protocol::Error>
++    {
+         let (tx, rx) = oneshot::channel();
+         {
+             let mut completion = self.completion.lock().expect("completion mutex poisoned");
+             if matches!(*completion, PromptCompletion::Pending { .. }) {
+-                let _ = tx.send(control_protocol::PromptOutcome::Error {
+-                    code: control_protocol::INTERNAL_ERROR as i32,
+-                    message: "a local prompt is already awaiting completion".into(),
+-                    data: None,
+-                });
+-                return rx;
++                return Err(acp_internal_error(
++                    "a local prompt is already awaiting completion".into(),
++                ));
+             }
+             *completion = PromptCompletion::Pending {
+                 prompt_req_id: None,
+@@ -315,7 +314,7 @@ impl DaemonControlClient {
+             *self.completion.lock().expect("completion mutex poisoned") =
+                 PromptCompletion::LocalIdle;
+         }
+-        rx
++        Ok(rx)
+     }
+ 
+     pub(super) async fn cancel(&self) {
+@@ -975,7 +974,7 @@ mod tests {
+         }
+ 
+         async fn prompt(&mut self) -> oneshot::Receiver<PromptOutcome> {
+-            let rx = self.client.prompt(serde_json::json!({})).await;
++            let rx = self.client.prompt(serde_json::json!({})).await.unwrap();
+             assert!(matches!(
+                 control_protocol::read_frame(&mut self.peer).await.unwrap(),
+                 Some(ControlBody::Prompt { .. })
+@@ -1112,14 +1111,11 @@ mod tests {
+     async fn duplicate_local_prompt_preserves_first_waiter_and_sends_no_prompt() {
+         let mut peer = PromptControlPeer::new().await;
+         let completion = peer.prompt().await;
+-        let mut duplicate = peer
++        let duplicate = peer
+             .client
+             .prompt(serde_json::json!({"duplicate": true}))
+             .await;
+-        assert!(matches!(
+-            duplicate.try_recv().unwrap(),
+-            PromptOutcome::Error { code, .. } if i64::from(code) == control_protocol::INTERNAL_ERROR
+-        ));
++        assert!(duplicate.is_err());
+         // Cancel arriving next proves the duplicate sent no Prompt frame.
+         peer.client.cancel().await;
+         assert!(matches!(
+@@ -1398,7 +1394,7 @@ mod tests {
+         let (client, crate_side) = connect(&control, "eof", Arc::new(TerminalClaim::new()), false)
+             .await
+             .unwrap();
+-        let completion = client.prompt(serde_json::json!({})).await;
++        let completion = client.prompt(serde_json::json!({})).await.unwrap();
+         fake.await.unwrap();
+         assert!(tokio::time::timeout(Duration::from_secs(1), completion)
+             .await
+@@ -1413,13 +1409,16 @@ mod tests {
+     }
+ 
+     #[tokio::test]
+-    async fn attached_session_only_resets_for_missing_session_errors() {
++    async fn attached_session_prompt_errors_reset_tear_down_or_end_the_turn() {
+         use crate::acp::acp_client::AcpClient;
+         use crate::acp::state::AcpSessionId;
+ 
+-        for (message, should_reset) in [
+-            ("Unsupported ACP session", true),
+-            ("Unsupported session mode", false),
++        // -32000 alone is not a login: some adapters use it for any failure.
++        for (message, code, want) in [
++            ("Unsupported ACP session", -32603, &["reset", "stopped"][..]),
++            ("Unsupported session mode", -32603, &["rejected"]),
++            ("Authentication required", -32000, &["startup_error"]),
++            ("model overloaded", -32000, &["rejected"]),
+         ] {
+             let tmp = tempfile::tempdir().unwrap();
+             let socket = tmp.path().join("s.sock");
+@@ -1452,12 +1451,14 @@ mod tests {
+                             ControlBody::PromptCompleted {
+                                 prompt_req_id: 1,
+                                 outcome: PromptOutcome::Error {
+-                                    code: -32603,
++                                    code,
+                                     message: message.into(),
+                                     data: None,
+                                 },
+                             }
+                         }
++                        // Sent after a plain rejection (#5662).
++                        ControlBody::Cancel => continue,
+                         frame => panic!("unexpected resumed-session request: {frame:?}"),
+                     };
+                     control_protocol::write_frame(&mut peer
+```
+
+**File**: `src/acp/acp_client/mod.rs` (modified, +11/-5)
+```diff
+@@ -79,7 +79,7 @@ use tokio::sync::{mpsc, oneshot, Mutex};
+ use tokio_util::compat::{TokioAsyncReadCompatExt, TokioAsyncWriteCompatExt};
+ use tracing::Instrument;
+ 
+-use self::commands::{ClientCmd, ConnectMode};
++use self::commands::{ClientCmd, ConnectMode, PromptInput};
+ use self::connection::{run_connection_task, ConnectionParams, RunnerLink};
+ use self::control::{connect_runner_control_v3, ShutdownControlOnDrop};
+ use self::delete::ACP_SESSION_DELETE_TIMEOUT;
+@@ -841,8 +841,8 @@ impl AcpClient {
+         cmd_tx.send(cmd).await.map_err(|_| AcpError::AgentExited)
+     }
+ 
+-    /// Attachments follow the text block. Callers gate kinds on the agent's
+-    /// prompt capabilities (#1000).
++    /// Attachments follow the text block, which an attachment-only prompt
++    /// omits. Callers gate kinds on the agent's prompt capabilities (#1000).
+     pub async fn send_prompt(
+         &self,
+         text: &str,
+@@ -853,7 +853,9 @@ impl AcpClient {
+             return Err(AcpError::NotRunning);
+         }
+         let mut blocks = Vec::with_capacity(1 + attachments.len());
+-        blocks.push(ContentBlock::Text(TextContent::new(text)));
++        if !text.is_empty() || attachments.is_empty() {
++            blocks.push(ContentBlock::Text(TextContent::new(text)));
++        }
+         for att in attachments {
+             let data = base64::engine::general_purpose::STANDARD.encode(&att.data);
+             let mime = att.mime_type.clone();
+@@ -870,7 +872,11 @@ impl AcpClient {
+                 }
+             });
+         }
+-        self.send_cmd(ClientCmd::Prompt(blocks)).await
++        self.send_cmd(ClientCmd::Prompt(PromptInput {
++            blocks,
++            attachments: attachments.iter().map(AttachmentBlob::to_ref).collect(),
++        }))
++        .await
+     }
+ 
+     /// Best-effort `session/cancel`; Ok even with no turn in flight.
+```
+
+**File**: `src/acp/acp_client/recovery_tests.rs` (modified, +97/-0)
+```diff
+@@ -643,3 +643,100 @@ async fn recovered_completion_orders_updates_and_applies_rate_limit_parking() {
+         }
+     }
+ }
++
++/// The runner relays the agent's error answer to `session/prompt`: the turn
++/// surfaces it, returns the prompt as sent (text and attachment refs) and
++/// cancels any leftover agent turn, unless it answers a cancel. The same
++/// connection runs the next prompt (#5662).
++#[tokio::test]
++async fn rejected_prompt_over_the_runner_keeps_the_connection() {
++    let _env = crate::session::test_support::EnvGuard::read_lock();
++    let image = AttachmentBlob {
++        id: "att-1".into(),
++        kind: PromptAttachmentKind::Image,
++        mime_type: "image/png".into(),
++        name: Some("shot.png".into()),
++        data: b"png".to_vec(),
++    };
++    let image_block = serde_json::json!({"type": "image", "data": "cG5n", "mimeType": "image/png"});
++    let text_block = |text: &str| serde_json::json!({"type": "text", "text": text});
++    for (text, with_image, cancel_first, want_blocks) in [
++        ("retry me", false, false, vec![text_block("retry me")]),
++        (
++            "look at this",
++            true,
++            false,
++            vec![text_block("look at this"), image_block.clone()],
++        ),
++        ("", true, false, vec![image_block.clone()]),
++        ("retry me", false, true, vec![text_block("retry me")]),
++    ] {
++        let attachments: &[AttachmentBlob] = if with_image {
++            std::slice::from_ref(&image)
++        } else {
++            &[]
++        };
++        let mut runner = Runner::new();
++        let mut client = runner.attach(false).await;
++        client.send_prompt(text, attachments).await.unwrap();
++        match runner.frame().await {
++            ControlBody::Prompt { request } => {
++                assert_eq!(
++                    request["prompt"],
++                    serde_json::json!(want_blocks),
++                    "{text:?}"
++                );
++            }
++            other => panic!("expected the prompt: {other:?}"),
++        }
++        if cancel_first {
++            client.cancel_prompt().await.unwrap();
++            assert!(matches!(runner.frame().await, ControlBody::Cancel));
++        }
++        runner
++            .send(ControlBody::PromptCompleted {
++                prompt_req_id: 7,
++                outcome: PromptOutcome::Error {
++                    code: -32603,
++                    message: "a turn is already running".into(),
++                    data: None,
++                },
++            })
++            .await;
++        let (mut surfaced, mut returned) = (false, None);
++        let reason = timeout(Duration::from_secs(5), async {
++            loop {
++                match client.next_event().await.expect("connection remains open") {
++                    Event::PromptRuntimeError { message } => {
++                        surfaced = message.contains("a turn is already running");
++                    }
++                    Event::PromptRejected {
++                        text, attachments, ..
++                    } => returned = Some((text, attachments)),
++                    Event::Stopped { reason } => return reason,
++                    _ => {}
++                }
++            }
++        })
++        .await
++        .unwrap();
++        if cancel_first {
++            assert_eq!(reason, "cancelled");
++            assert!(!surfaced && returned.is_none());
++        } else {
++            assert_eq!(reason, "prompt_rejected");
++            assert!(surfaced);
++            let refs: Vec<_> = attachments.iter().map(AttachmentBlob::to_ref).collect();
++            assert_eq!(returned, Some((text.to_string(), refs)), "{text:?}");
++            // The rejection clears a turn the agent may still be running.
++            assert!(matches!(runner.frame().await, ControlBody::Cancel));
++        }
++
++        client.send_prompt("again", &[]).await.unwrap();
++        assert!(matches!(runner.frame().await, ControlBody::Prompt { .. }));
++        runner.complete("end_turn").await;
++        assert_eq!(stopped(&mut client).await, "prompt_complete");
++        assert!(client.control_loss().is_none());
++        client.shutdown().await.unwrap();
++    }
++}
+```
+
+**File**: `src/acp/acp_client/reset.rs` (modified, +2/-2)
+```diff
+@@ -1162,7 +1162,7 @@ done
+             .await;
+             assert!(matches!(
+                 events.last(),
+-                Some(Event::PromptRejected { reason, text }) if reason == "agent_busy" && text == "/new"
++                Some(Event::PromptRejected { reason, text, .. }) if reason == "agent_busy" && text == "/new"
+             ));
+             assert_eq!(requests(&capture, "session/new"), 1);
+             let _ = client.shutdown().await;
+@@ -1341,7 +1341,7 @@ done
+             events_until(&mut client, |e| matches!(e, Event::PromptRejected { .. })).await;
+         assert!(matches!(
+             rejected.last(),
+-            Some(Event::PromptRejected { reason, text }) if reason == "agent_busy" && text == "/new"
++            Some(Event::PromptRejected { reason, text, .. }) if reason == "agent_busy" && text == "/new"
+         ));
+         std::fs::write(tmp.path().join("capture.ndjson.prompt-release"), "release").unwrap();
+         let rest = events_until(&mut client, |e| matches!(e, Event::Stopped { .. })).await;
+```
+
+---
+
+### Incident Patch 3: `92fedad0` (2026-11-19)
+**Commit Message**: fix(tmux): read tmux queries with the UTF-8 flag (#5852)
+
+* fix(process): read the pane PID with tmux's UTF-8 flag
+
+A tmux client without a UTF-8 locale prints control characters in format
+output as `_`, so the tab in the pane PID query came back as `0_<pid>` and
+the lookup returned nothing. Kills then skipped the pane's process tree. The
+lookup now goes through the query builder, which passes `-u`.
+
+Fixes #5850.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test(tmux): give the locale only to a child test process
+
+The pane PID test set and restored LANG, LC_ALL and LC_CTYPE in the test
+process itself. Under `cargo test`, which runs tests on threads, any
+concurrent test could read or inherit that environment while it was changed.
+The test now re-runs itself as a child of the test binary with the C locale
+set on that child's command, and leaves its own environment alone.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(tmux): read pane titles with tmux's UTF-8 flag
+
+Without a UTF-8 locale, tmux prints every character outside printable ASCII
+in format output as `_`. A pane title such as omp's `π ⠋ working` then read
+as underscores, so omp's working rule never match
+
+**File**: `src/process/mod.rs` (modified, +3/-2)
+```diff
+@@ -897,8 +897,9 @@ fn collect_descendants_from_map(
+ pub fn get_pane_pid(session_name: &str) -> Option<u32> {
+     let pane = crate::tmux::first_pane_id(session_name)?;
+     // The pane id must travel alone: `session:%id` reads as a window
+-    // spec and falls back to the window's active pane (tmux 3.7c).
+-    let output = crate::tmux::tmux_command()
++    // spec and falls back to the window's active pane (tmux 3.7c). A client
++    // without UTF-8 prints the tab as `_`, so the query passes `-u`.
++    let output = crate::tmux::tmux_query_command()
+         .args([
+             "display-message",
+             "-t",
+```
+
+**File**: `src/tmux/mod.rs` (modified, +5/-4)
+```diff
+@@ -230,10 +230,11 @@ pub(crate) fn tmux_command() -> Command {
+ /// non-`ECONNREFUSED` connect failure, and glibc localizes `strerror` by
+ /// `LC_MESSAGES`, so on a non-English host the `(No such file or directory)`
+ /// ENOENT marker for an absent socket (#3337) would not match. `LC_ALL` is
+-/// removed so it cannot override that. Global `-u` forces UTF-8 session names
+-/// even when the caller has `LC_CTYPE=C` or when `LC_ALL` was the only UTF-8
+-/// locale source. Used by the status-query callers (which classify via
+-/// [`tmux_no_server_running`]) and by `kill_session_if_present`. NOT folded into
++/// removed so it cannot override that. Global `-u` keeps format output intact
++/// (separators, session names, pane titles) even when the caller has
++/// `LC_CTYPE=C` or when `LC_ALL` was the only UTF-8 locale source, since tmux
++/// prints anything outside printable ASCII as `_` to a non-UTF-8 client. Used
++/// for every query whose output aoe parses, and by `kill_session_if_present`. NOT folded into
+ /// [`tmux_command`]: the interactive attach/switch-client/capture-pane paths must
+ /// keep the user's locale for UTF-8 and status-bar rendering, and `-u` would
+ /// assert UTF-8 to a terminal that may not be.
+```
+
+**File**: `src/tmux/session.rs` (modified, +71/-0)
+```diff
+@@ -5119,6 +5119,77 @@ mod tests {
          );
      }
  
-+    /// Under passphrase-only auth an `<img>` load of an installed icon needs a live session
-+    /// but not its device binding.
-+    #[tokio::test]
++    /// #5850: a tmux client without a UTF-8 locale prints every byte outside printable ASCII
++    /// as `_`. The locale reaches only a child test process, never this one's environment.
++    #[test]
 +    #[serial_test::serial]
-+    async fn an_installed_icon_loads_on_an_unbound_session_under_passphrase_auth() {
-+        use tower::ServiceExt;
-+        let _app_dir = AppDirEnvGuard::new();
-+        let dir = crate::plugin::plugins_dir().unwrap().join("acme.logo");
-+        std::fs::create_dir_all(dir.join("assets")).unwrap();
-+        std::fs::write(
-+            dir.join("aoe-plugin.toml"),
-+            "id = \"acme.logo\"\nname = \"Logo\"\nversion = \"1.0.0\"\napi_version = 16\nicon_asset = \"assets/icon.png\"\n",
-+        )
-+        .unwrap();
-+        std::fs::write(dir.join("assets/icon.png"), b"png-bytes").unwrap();
-+        crate::plugin::reload_registry();
-+
-+        let login = std::sync::Arc::new(crate::server::login::LoginManager::new(Some("pw")));
-+        let session = login.create_session(&[7u8; 32], "203.0.113.7", "t").await;
-+        let state = crate::server::test_support::build_test_app_state_with_policy_configured(
-+            Vec::new(),
-+            Vec::new(),
-+            Vec::new(),
-+            None,
-+            |state| state.login_manager = std::sync::Arc::clone(&login),
-+        );
-+        let app = crate::server::test_support::build_router_for_test(state);
-+        let get =
-+            |cookie: Option<String>| {
-+                let mut req =
-+                    axum::http::Request::get("/plugin-icons/acme.logo").header("host", "127.0.0.1");
-+                if let Some(cookie) = cookie {
-+                    req = req.header("cookie", cookie);
-+                }
-+                let mut req = req.body(axum::body::Body::empty()).unwrap();
-+                req.extensions_mut().insert(axum::extract::ConnectInfo(
-+                    std::net::SocketAddr::from(([203, 0, 113, 7], 5555)),
-+                ));
-+                app.clone().oneshot(req)
-+            };
-+        let cookie = format!("aoe_session={session}");
-+
-+        let resp = get(None).await.unwrap();
-+        assert_eq!(resp.status(), StatusCode::UNAUTHORIZED, "no session");
-+
-+        let resp = get(Some(cookie.clone())).await.unwrap();
-+        assert_eq!(resp.status(), StatusCode::OK);
-+        assert_eq!(resp.headers()["content-type"], "image/png");
-+        let body = axum::body::to_bytes(resp.into_body(), 1024).await.unwrap();
-+        assert_eq!(&body[..], b"png-bytes");
-+
-+        login.invalidate_session(&session).await;
-+        let resp = get(Some(cookie)).await.unwrap();
-+        assert_eq!(resp.status(), StatusCode::UNAUTHORIZED, "after logout");
++    fn pane_queries_read_intact_without_a_utf8_locale() {
++        const CHILD: &str = "AOE_TEST_PANE_QUERY_LOCALE_CHILD";
++        if !tmux_available() {
++            eprintln!("Skipping test: tmux not available");
++            return;
++        }
++        if std::env::var_os(CHILD).is_none() {
++            let child = std::process::Command::new(std::env::current_exe().unwrap())
++                .args([
++                    "--exact",
++                    "tmux::session::tests::pane_queries_read_intact_without_a_utf8_locale",
++                    "--nocapture",
++                ])
++                .env(CHILD, "1")
++                .env("LANG", "C")
++                .env("LC_ALL", "C")
++                .env("LC_CTYPE", "C")
++                // tmux treats a set TMUX as UTF-8 before it reads the locale.
++                .env_remove("TMUX")
++                .output()
++                .unwrap();
++            let stdout = String::from_utf8_lossy(&child.stdout);
++            assert!(
++                child.status.success() && stdout.contains("1 passed"),
++                "{stdout}{}",
++                String::from_utf8_lossy(&child.stderr)
++            );
++            return;
++        }
++        let guard = TmuxTestSession::new("aoe_test_pane_query_locale");
++        let session_name = guard.name().to_string();
++        let mut args: Vec<String> = ["new-session", "-d", "-s", &session_name, "sleep 30"]
++            .iter()
++            .map(|arg| arg.to_string())
++            .collect();
++        append_pane_base_index_args(&mut args, &session_name);
++        assert!(crate::tmux::tmux_command()
++            .args(&args)
++            .status()
++            .expect("tmux new-session")
++            .success());
++        let pane = only_pane_id(&session_name);
++        wait_for_pane_command(&pane, "sleep");
++        let title = "π ⠋ working";
++        assert!(crate::tmux::tmux_query_command()
++            .args(["select-pane", "-t", &pane, "-T", title])
++            .status()
++            .expect("set pane title")
++            .success());
++        let pid = pane_field(&pane, "#{pane_pid}");
++        let cases = [
++            (
++                "pane PID",
++                crate::process::get_pane_pid(&session_name).map(|pid| pid.to_string()),
++                pid.as_str(),
++            ),
++            (
++                "pane title",
++                crate::tmux::utils::pane_title(&session_name),
++                title,
++            ),
++        ];
++        for (query, read, expected) in cases {
++            assert_eq!(read.as_deref(), Some(expected), "{query}");
++        }
 +    }
 +
      #[test]
      #[serial_test::serial]
-     fn composer_snapshot_forwarding_requires_active_composer_read_capability() {
+     /// Regression test for #488: when a user creates a split pane and makes it
 ```
 
-**File**: `src/server/auth.rs` (modified, +71/-21)
+**File**: `src/tmux/utils.rs` (modified, +3/-3)
 ```diff
-@@ -133,6 +133,8 @@ fn normalize_path(path: &str) -> &str {
- fn is_machine_endpoint(path: &str) -> bool {
-     let path = path.trim_end_matches('/');
-     path.starts_with("/api/")
-+        // Not under `/api/`, but refused with a 401 like it, never passed through.
-+        || path.starts_with("/plugin-icons/")
-         || path.contains("/ws")
-         || (path.starts_with("/sessions/") && path.ends_with("/live-ws"))
-         || is_mcp_path(path)
-@@ -373,11 +375,25 @@ struct PageTicketClaim {
-     tickets: Vec<String>,
- }
+@@ -442,7 +442,7 @@ fn classify_live_panes(succeeded: bool, stdout: &[u8], stderr: &[u8]) -> bool {
  
--/// Set only for a GET of exactly `/api/plugins/{id}/pages/{page_id}`.
--fn page_ticket_claim(request: &Request) -> Option<PageTicketClaim> {
-+/// A GET that cannot send the device binding header and what stands in for it.
-+enum UnboundClaim {
-+    PageTicket(PageTicketClaim),
-+    /// A plugin icon `<img>` load: the live session alone suffices.
-+    PluginIcon,
-+}
-+
-+fn unbound_claim(request: &Request) -> Option<UnboundClaim> {
-     if request.method() != axum::http::Method::GET {
-         return None;
-     }
-+    if let Some(id) = request.uri().path().strip_prefix("/plugin-icons/") {
-+        return (!id.is_empty() && !id.contains('/')).then_some(UnboundClaim::PluginIcon);
-+    }
-+    page_ticket_claim(request).map(UnboundClaim::PageTicket)
-+}
-+
-+/// Set only for exactly `/api/plugins/{id}/pages/{page_id}`.
-+fn page_ticket_claim(request: &Request) -> Option<PageTicketClaim> {
-     let rest = request.uri().path().strip_prefix("/api/plugins/")?;
-     let (plugin_id, rest) = rest.split_once('/')?;
-     let page_id = rest.strip_prefix("pages/")?;
-@@ -392,21 +408,26 @@ fn page_ticket_claim(request: &Request) -> Option<PageTicketClaim> {
- }
- 
- /// A bound session presents its binding. A frame load cannot, so on a plugin page route
--/// a ticket that session minted for that exact page stands in for it.
-+/// a ticket that session minted for that exact page stands in for it; a plugin icon needs
-+/// only the live session.
- async fn session_valid(
-     state: &AppState,
-     session_id: &str,
-     binding: Option<&[u8]>,
--    claim: Option<PageTicketClaim>,
-+    claim: Option<UnboundClaim>,
- ) -> bool {
-     if let Some(binding) = binding {
-         return state
-             .login_manager
-             .validate_session(session_id, binding)
-             .await;
-     }
--    let Some(claim) = claim else {
--        return false;
-+    let claim = match claim {
-+        Some(UnboundClaim::PageTicket(claim)) => claim,
-+        Some(UnboundClaim::PluginIcon) => {
-+            return state.login_manager.session_live(session_id).await
-+        }
-+        None => return false,
+ pub(crate) fn pane_current_command(session_name: &str) -> Option<String> {
+     let first = first_pane_id(session_name)?;
+-    crate::tmux::tmux_command()
++    crate::tmux::tmux_query_command()
+         .args([
+             "display-message",
+             "-t",
+@@ -466,7 +466,7 @@ pub(crate) fn pane_current_command(session_name: &str) -> Option<String> {
+ /// read one way through the poller and another through `aoe session capture`.
+ pub(crate) fn pane_title(session_name: &str) -> Option<String> {
+     let target = format!("={session_name}:^");
+-    crate::tmux::tmux_command()
++    crate::tmux::tmux_query_command()
+         .args(["display-message", "-t", &target, "-p", "#{pane_title}"])
+         .output()
+         .ok()
+@@ -488,7 +488,7 @@ pub(crate) fn pane_start_command_is_protected(session_name: &str) -> bool {
+         return false;
      };
-     for ticket in &claim.tickets {
-         if state
-@@ -439,7 +460,7 @@ async fn run_passphrase_wall(
- 
-     let has_valid_session = match &session_id {
-         Some(id) => {
--            let claim = page_ticket_claim(&request);
-+            let claim = unbound_claim(&request);
-             session_valid(state, id, presented_binding.as_deref(), claim).await
-         }
-         None => false,
-@@ -641,7 +662,7 @@ pub async fn auth_middleware(
-     };
-     let session_valid = match &presented_session_id {
-         Some(id) => {
--            let claim = page_ticket_claim(&request);
-+            let claim = unbound_claim(&request);
-             session_valid(&state, id, presented_binding.as_deref(), claim).await
-         }
-         None => false,
-@@ -1217,6 +1238,7 @@ mod tests {
-             "/api/plugins",
-             "/api/plugins/github/pages/prs",
-             "/pluginsx",
-+            "/plugin-icons/github",
-             "/api/sessions/abc/acp/ws",
-             "/api/settings",
-             "/api/login/elevate",
-@@ -1336,10 +1358,11 @@ mod tests {
-         }
-     }
- 
--    /// Plugin page deep links are document navigations that cannot carry a device binding
--    /// header, so the shell must load on a bare session cookie while APIs stay gated.
-+    /// Plugin page deep links and plugin icon `<img>` loads cannot carry a device binding
-+    /// header: the shell loads on a bare session cookie, an icon on a live session, and
-+    /// APIs stay gated.
-     #[tokio::test]
--    async fn plugin_page_shell_loads_remote_without_binding_header() {
-+    async fn plugin_shell_and_icon_load_remote_without_binding_header() {
-         use crate::server::login::LoginManager;
-         use tower::ServiceExt;
- 
-@@ -1360,13 +1383,12 @@ mod tests {
-                 None => format!("aoe_session={session_id}"),
-             };
- 
--            let get = |uri: &str| {
--                let mut req = Request::builder()
--                    .uri(uri)
--                    .header("host", "localhost")
--                    .header("cookie", &cookie)
--                    .body(axum::body::Body::empty())
--                    .unwrap();
-+            let get = |uri: &str, cookie: Option<&str>| {
-+                let mut req = Request::builder().uri(uri).header("host", "localhost");
-+                if let Some(cookie) = cookie {
-+                    req =
+     let target = first;
+-    crate::tmux::tmux_command()
++    crate::tmux::tmux_query_command()
+         .args([
+             "display-message",
+             "-t",
 ```
 
-**File**: `src/server/login.rs` (modified, +10/-7)
+**File**: `web/scripts/check-env-isolation.mjs` (modified, +1/-0)
 ```diff
-@@ -298,13 +298,16 @@ impl LoginManager {
-                 && t.plugin_id == plugin_id
-                 && t.page_id == page_id
-         });
--        matches
--            && self
--                .sessions
--                .read()
--                .await
--                .get(session_id)
--                .is_some_and(|s| now < s.expires_at)
-+        matches && self.session_live(session_id).await
-+    }
-+
-+    /// Whether `session_id` names an unexpired session, without checking its device binding.
-+    pub async fn session_live(&self, session_id: &str) -> bool {
-+        self.sessions
-+            .read()
-+            .await
-+            .get(session_id)
-+            .is_some_and(|s| Instant::now() < s.expires_at)
-     }
- 
-     /// Mark a session as elevated (passphrase confirmed) for `ELEVATION_LIFETIME`.
-```
-
-**File**: `src/server/router.rs` (modified, +2/-1)
-```diff
-@@ -285,7 +285,8 @@ pub(super) fn build_router(state: Arc<AppState>) -> Router {
-         .route("/api/app-state/tip-seen", post(api::mark_tip_seen))
-         // Plugin management.
-         .route("/api/plugins", get(api::list_plugins))
--        .route("/api/plugins/{id}/icon", get(api::serve_plugin_icon))
-+        // A live login session needs no device binding here; see `auth::UnboundClaim`.
-+        .route("/plugin-icons/{id}", get(api::serve_plugin_icon))
-         .route(
-             "/api/plugins/{id}/pages/{page_id}",
-             get(api::serve_plugin_page),
-```
-
-**File**: `tests/integration/serve_cityhall_lockdown.rs` (modified, +1/-1)
-```diff
-@@ -232,7 +232,7 @@ async fn sensitive_routes_are_blocked() {
-         (Method::GET, "/api/skills/claude-user/review", ""),
-         (Method::GET, "/api/mcp/servers?agent=claude", ""),
-         (Method::GET, "/api/plugins", ""),
--        (Method::GET, "/api/plugins/x/icon", ""),
-+        (Method::GET, "/plugin-icons/x", ""),
-         (Method::GET, "/api/plugins/commands", ""),
-         (Method::GET, "/api/plugins/ui-state", ""),
-         (Method::GET, "/api/plugins/updates", ""),
-```
-
-**File**: `web/src/components/__tests__/PaneIcon.test.tsx` (modified, +2/-2)
-```diff
-@@ -8,11 +8,11 @@ import { PaneIcon } from "../PaneIcon";
- describe("PaneIcon", () => {
-   it("renders the icon_asset image, outranking the resolved fallback icon", async () => {
-     const { findByTestId } = render(
--      <PaneIcon icon={GitBranch} iconAssetUrl="/api/plugins/acme.widget/icon" className="size-4" testId="icon" />,
-+      <PaneIcon icon={GitBranch} iconAssetUrl="/plugin-icons/acme.widget" className="size-4" testId="icon" />,
-     );
-     const icon = await findByTestId("icon");
-     expect(icon.tagName).toBe("IMG");
--    expect(icon.getAttribute("src")).toBe("/api/plugins/acme.widget/icon");
-+    expect(icon.getAttribute("src")).toBe("/plugin-icons/acme.widget");
-   });
- 
-   it("falls back to the resolved icon component when there is no icon_asset", () => {
+@@ -83,6 +83,7 @@ const TEST_BINARY_READS = new Set([
+   "AOE_RECHECK_TEST_CHILD",
+   "AOE_TEST_APP_DIR_UMASK_CHILD",
+   "AOE_TEST_KILL_LAST_PANE_CHILD",
++  "AOE_TEST_PANE_QUERY_LOCALE_CHILD",
+   "AOE_TEST_TMUX_EMPTY_CHILD",
+   "AOE_TEST_TMUX_ABSENCE_CHILD",
+   "AOE_TEST_TMUX_KILL_CHILD",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5828** (2026-11-17): test(tui): keep the settings scroll test independent of SSH (@klubrake)
-- **PR #5820** (2026-11-17): fix(deps): clear cargo-deny advisories RUSTSEC-2026-0544 and -0543 (@Seluj78)
-- **PR #5783** (2026-11-17): fix(tui): keep the request when a trust answer after a setup failure is refused (@cwrau)
-- **PR #5782** (2026-11-17): fix(tui): settings fields cut by the viewport show only their own rows (@klubrake)
-- **PR #5780** (2026-11-17): fix(sandbox): stop hook installers following links planted in the sandbox store (@Seluj78)
-- **PR #5778** (2026-11-17): fix(server): keep the auth failure coalesce window fixed (@Seluj78)
+- **PR #5873** (2026-11-19): test: de-flake two macOS timing tests (transport deadlines, late group child) (@Seluj78)
+- **PR #5872** (2026-11-19): fix(mcp): keep wait_for waiting when the turn-end query fails (@Seluj78)
+- **PR #5871** (2026-11-19): docs: drop the nightly not-published note (@Seluj78)
+- **PR #5864** (2026-11-19): fix(acp): keep the connection when the agent rejects a prompt (@njbrake)
+- **PR #5852** (2026-11-19): fix(tmux): read tmux queries with the UTF-8 flag (@klubrake)
+- **PR #5847** (2026-11-19): test(serve): fix the Funnel fixture backend port (@jerome-benoit)
 
 ---
 
@@ -2616,72 +3290,31 @@ Co-Author
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. plugin): avoid blocking runtime on asset downloads
+## X. containers): share one sandbox image pull per runtime and image
 
 **RULE**:
-When implementing operations in `src/plugin/fetch.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flake.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in agent-of-empires/agent-of-empires. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c07429c3`: plugin): avoid blocking runtime on asset downloads. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `03e54bee`: containers): share one sandbox image pull per runtime and image. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/plugin/fetch.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.nix`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        // Keep staging and the lease until asynchronous file operations finish.
-        await_asset_download(tokio::spawn(download_release_binary(fetched, operation))).await
-async fn await_asset_download(
-    task: tokio::task::JoinHandle<Result<FetchedPlugin>>,
-) -> Result<FetchedPlugin> {
-    match task.await {
-        Ok(result) => result,
-        Err(error) if error.is_panic() => std::panic::resume_unwind(error.into_panic()),
-        Err(error) => Err(error).context("plugin asset download task failed"),
-    }
-}
-
-    use tokio::io::AsyncWriteExt;
-    let mut file = tokio::fs::File::create(dest)
-        .await
-        .with_context(|| format!("creating {}", dest.display()))?;
-    let result: Result<()> = async {
-        while let Some(chunk) = response.chunk().await? {
-            file.write_all(&chunk)
-                .await
-                .with_context(|| format!("writing {url} to {}", dest.display()))?;
-        }
-        Ok(())
-    .await;
-    let flush = file
-        .flush()
-        .await
-        .with_context(|| format!("writing {url} to {}", dest.display()));
-    result?;
-    flush
-    #[tokio::test]
-    async fn asset_task_panics_reach_the_job_panic_boundary() {
-      
+                ./tests/fixtures/pull-stderr
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        download_release_binary(fetched, operation).await
-    use std::io::Write;
-    let mut file =
-        std::fs::File::create(dest).with_context(|| format!("creating {}", dest.display()))?;
-    while let Some(chunk) = response.chunk().await? {
-        file.write_all(&chunk)
-            .with_context(|| format!("writing {url} to {}", dest.display()))?;
-    file.flush()
-        .with_context(|| format!("writing {url} to {}", dest.display()))
-                async move { download.lock().unwrap().clone() }
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c07429c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `03e54bee` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

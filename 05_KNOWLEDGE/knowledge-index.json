@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T14:03:39.444Z",
+  "last_updated": "2026-11-19T14:20:30.369Z",
   "total_verified_learnings": 9018,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21793,
+  "total_items": 21796,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-EU2P-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-0OPB-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1f8139938e729b12105e15dc353b17585b1d55a295815294cd46a38561cba5d7",
+      "content_hash": "509e0204afc916b9981b44d2b505cf2f6b793be3d1bec187801faad0021bc171",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T13:35:31.012Z"
+      "persisted_at": "2026-11-19T14:20:30.098Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b77329d34d5c996699953b7305b222b7dbb24ce1cc6e015bdb8bc509045f3f51",
+      "content_hash": "7720f5a8df01cd2c858a5d083647b7831d16a4c8e54ee7c20d227cb28ae18b61",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T13:35:31.153Z"
+      "persisted_at": "2026-11-19T14:20:30.235Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "380b2d6e9fac774e5dd4eece02c40c1d3fe1e0b49d36e39e4f3e1cb0d3c9c68a",
+      "content_hash": "de626fa656f96335e42cc09d62586fed255713dafdaae4d6d9313b316ffbf926",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T13:35:31.294Z"
+      "persisted_at": "2026-11-19T14:20:30.369Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -229447,8 +229447,8 @@
       "slug": "agent-of-empires-agent-of-empires",
       "platform": "github",
       "source_url": "https://github.com/agent-of-empires/agent-of-empires",
-      "source_version": "3bfd7c01",
-      "content_hash": "8b2dc88d4f9d16543a9a28402459a263c9c8c4e52dbe16a2fa37390f2ceafed6",
+      "source_version": "593655e0",
+      "content_hash": "a89336514ddc90b72394cc0edb4a35ad97420cc0d59b05966d26b1a1ec64f88a",
       "dossier_path": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
       "promoted_rules": [
@@ -229466,6 +229466,11 @@
           "number": 9035,
           "title": "avoid blocking runtime on asset downloads",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9384,
+          "title": "share one sandbox image pull per runtime and image",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229473,7 +229478,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T19:04:51.810Z",
+      "verified_at": "2026-11-19T14:20:19.579Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229528,9 +229533,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for agent-of-empires-agent-of-empires-learnings",
       "repository": "agent-of-empires-agent-of-empires-learnings",
       "source_version": "HEAD",
-      "content_hash": "50b9a8f15159cf1ce328022d238812403abe79c81d53d33c9115cc66cd220bae",
+      "content_hash": "e62d403658b1ba84aae65ad0e4dfebeef4bddb1c4c19bb5f35cf09289898278a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T19:05:01.561Z"
+      "persisted_at": "2026-11-19T14:20:29.271Z"
     },
     "learn-github-koderover-zadig": {
       "learning_id": "learn-github-koderover-zadig",
@@ -238276,7 +238281,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/speridlabs/iris-3b",
       "source_version": "hf-speridlabs-iris-3b",
-      "content_hash": "feca3a3031cc372da7d5f7d89e4d6a04be762577ebb1e0c2a62dd4aff3f85271",
+      "content_hash": "1551b10ad9c9e32455c6cf700007e307be8427224c0d3fa89cd5ec44079925d1",
       "dossier_path": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-speridlabs-iris-3b-learnings.md",
       "promoted_rules": [],
@@ -238285,7 +238290,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T22:57:32.026Z",
+      "verified_at": "2026-11-19T14:20:16.843Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238302,9 +238307,9 @@
       "title": "Research & Knowledge Intelligence: speridlabs/iris-3b Core Invariants",
       "repository": "speridlabs/iris-3b",
       "source_version": "hf-speridlabs-iris-3b",
-      "content_hash": "e4951326162e838332f65b4b165d8d284f285e1d5a204cdf5450d004a647dcbe",
+      "content_hash": "44b97a2955d07de2ecff49dd96df3cbf7352b023de54f3dbc71d826f1b6753a0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T22:57:32.432Z"
+      "persisted_at": "2026-11-19T14:20:17.236Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-codewhale-hq-codewhale": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-codewhale-hq-codewhale",
@@ -238509,9 +238514,9 @@
       "title": "Research & Knowledge Intelligence: hf-speridlabs-iris-3b-learnings Core Invariants",
       "repository": "hf-speridlabs-iris-3b-learnings",
       "source_version": "HEAD",
-      "content_hash": "3482322c6ca5b63841ed9510327b4b09b524db127c816624252af2b1e66730ff",
+      "content_hash": "5e4861b75d325e4964c1e62cbac39683dac7fcafdf4fdd88d33d2840500def02",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T22:58:30.336Z"
+      "persisted_at": "2026-11-19T14:20:29.571Z"
     },
     "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-learnings-core-i": {
       "item_id": "domain_intelligence-technical-construction-intelligence-apollographql-apollo-kotlin-learnings-core-i",
@@ -276992,10 +276997,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-agent-of-empires-agent-of-empires-technical-construction-intelligence-agent-of-e.md",
       "title": "Technical Construction Intelligence: agent-of-empires/agent-of-empires Core Invariants",
       "repository": "agent-of-empires/agent-of-empires",
-      "source_version": "3bfd7c01",
-      "content_hash": "baa6522f31bcf51a795b1e1f4f56fd9f2410bf044791af7f143a1a3dec98a949",
+      "source_version": "593655e0",
+      "content_hash": "44f50defd1c024b8fd350579ed069b795565ad22c18e3981210e43dfe291475e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T19:04:52.452Z"
+      "persisted_at": "2026-11-19T14:20:20.089Z"
     },
     "candidate_directive-plugin-avoid-blocking-runtime-on-asset-downloads": {
       "item_id": "candidate_directive-plugin-avoid-blocking-runtime-on-asset-downloads",
@@ -277017,9 +277022,9 @@
       "title": "Technical Construction Intelligence: agent-of-empires-agent-of-empires-learnings Core Invariants",
       "repository": "agent-of-empires-agent-of-empires-learnings",
       "source_version": "HEAD",
-      "content_hash": "dca1a5a1be48eda03ba6bef5fbfa66f116451ae1f80b36ada576575780dea1fe",
+      "content_hash": "72ec6e80a6d3eceab540d03976fccde8e7265ab1b2ac9614b01ba2883146eb8c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T19:05:01.369Z"
+      "persisted_at": "2026-11-19T14:20:29.123Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xhtoken-spark-x2-6-4b-gguf-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xhtoken-spark-x2-6-4b-gguf-learnings-core-inv",
@@ -294627,6 +294632,44 @@
       "content_hash": "f2faf4a83f44e73b2461c9ccc50a72d630b0f7072e506b58854365adb246b9ff",
       "domain_letter": "A",
       "persisted_at": "2026-11-19T14:03:37.726Z"
+    },
+    "rule-9384": {
+      "learning_id": "rule-9384",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9384,
+      "title": "share one sandbox image pull per runtime and image",
+      "source_url": "https://github.com/agent-of-empires/agent-of-empires",
+      "source_version": "593655e0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T14:20:19.579Z"
+    },
+    "candidate_directive-share-one-sandbox-image-pull-per-runtime-and-image": {
+      "item_id": "candidate_directive-share-one-sandbox-image-pull-per-runtime-and-image",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0GVE-share-one-sandbox-image-pull-per-runtime-and-image.md",
+      "title": "share one sandbox image pull per runtime and image",
+      "repository": "agent-of-empires/agent-of-empires",
+      "source_version": "593655e0",
+      "content_hash": "569307623bf75ab5df96798af4592c2416cc546737d6bd86d6ca0ae240301bdb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T14:20:19.950Z"
+    },
+    "candidate_directive-containers-share-one-sandbox-image-pull-per-runtime-and-image": {
+      "item_id": "candidate_directive-containers-share-one-sandbox-image-pull-per-runtime-and-image",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-0NUG-containers-share-one-sandbox-image-pull-per-runtime-and-image.md",
+      "title": "containers): share one sandbox image pull per runtime and image",
+      "repository": "agent-of-empires-agent-of-empires-learnings",
+      "source_version": "HEAD",
+      "content_hash": "05406193d81f7d92993cd5bc67791cc82432df478fafb0ee7f3caa9ff3c0f7bf",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T14:20:28.987Z"
     }
   },
   "ai-builder-brain": {

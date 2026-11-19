@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T14:03:39.577Z",
+  "last_updated": "2026-11-19T14:20:30.486Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T12:40:39.625Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-19T13:35:30.618Z",
+      "processed_at": "2026-11-19T14:20:29.727Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1378,7 +1378,7 @@
       "staged_for_review": 1
     },
     "agent-of-empires-agent-of-empires-learnings.md": {
-      "processed_at": "2026-11-17T19:05:00.835Z",
+      "processed_at": "2026-11-19T14:20:28.742Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2788,8 +2788,8 @@
       "staged_for_review": 1
     },
     "hf-speridlabs-iris-3b-learnings.md": {
-      "processed_at": "2026-11-14T22:58:30.106Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T14:20:29.402Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "apollographql-apollo-kotlin-learnings.md": {
@@ -3518,7 +3518,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2244,
+  "total_dossiers_evaluated": 2247,
   "total_canonical_promoted": 385,
-  "total_staged_for_review": 1676
+  "total_staged_for_review": 1678
 }

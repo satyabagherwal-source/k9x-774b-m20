@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T14:03:38.936Z",
+  "updated_at": "2026-11-19T14:20:28.781Z",
   "stats": {
-    "total_discovered": 5890,
-    "approved_pending_harvest": 5577,
+    "total_discovered": 5891,
+    "approved_pending_harvest": 5578,
     "harvested_count": 0,
     "rejected_count": 313,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5542,
+      "COMMUNITY_AND_EXPERT": 5543,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -127410,6 +127410,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goharbor-harbor-learnings.md",
         "fileName": "goharbor-harbor-learnings.md"
+      }
+    },
+    "SRC-AFA9E6A03BFA": {
+      "id": "SRC-AFA9E6A03BFA",
+      "url": "https://github.com/agent-of-empires/agent-of-empires/blob/dd7827cbc7800d96bd9db973fbf040d784307ea3/src/server/mcp/wait.rs",
+      "title": "https://github.com/agent-of-empires/agent-of-empires/blob/dd7827cbc7800d96bd9db973fbf040d784307ea3/src/server/mcp/wait.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T14:20:28.781Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/agent-of-empires-agent-of-empires-learnings.md",
+        "fileName": "agent-of-empires-agent-of-empires-learnings.md"
       }
     }
   }
