@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T04:44:49.798Z",
+  "last_updated": "2026-11-19T05:06:24.207Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T02:03:45.340Z",
@@ -198,7 +198,7 @@
       "staged_for_review": 1
     },
     "opentofu-opentofu-learnings.md": {
-      "processed_at": "2026-11-17T16:05:53.240Z",
+      "processed_at": "2026-11-19T05:06:23.005Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -953,7 +953,7 @@
       "staged_for_review": 1
     },
     "genkit-ai-genkit-learnings.md": {
-      "processed_at": "2026-11-13T14:18:06.012Z",
+      "processed_at": "2026-11-19T05:06:23.582Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2633,8 +2633,8 @@
       "staged_for_review": 1
     },
     "hf-baai-bge-large-en-v1.5-learnings.md": {
-      "processed_at": "2026-11-14T15:35:10.336Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T05:06:22.727Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-zai-org-glm-5.3-learnings.md": {
@@ -3498,7 +3498,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2172,
+  "total_dossiers_evaluated": 2175,
   "total_canonical_promoted": 376,
-  "total_staged_for_review": 1625
+  "total_staged_for_review": 1627
 }

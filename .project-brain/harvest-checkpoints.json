@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T04:44:15.857Z",
+  "last_updated": "2026-11-19T05:06:19.617Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1715,14 +1715,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-large-en-v1-5",
-      "content_hash": "95bc9106f553052b8de3111ea2f5103ba232e31a5ab06b6c70f7cdd182db464f",
-      "verified_at": "2026-11-14T15:34:27.675Z",
+      "content_hash": "b134ea78e3082b02d9c0db864f173bbfe5f9f50ea313c4736baa1c752926bdaa",
+      "verified_at": "2026-11-19T05:06:04.700Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T15:34:27.675Z"
+      "last_updated": "2026-11-19T05:06:04.700Z"
     },
     "zai-org/GLM-5.3": {
       "repository": "zai-org/GLM-5.3",
@@ -9081,14 +9081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-genkit-ai-genkit",
-      "content_hash": "5f6536aad6d70f67809f5a02b7159ac023c91479d591011ce4e662207cc7179c",
-      "verified_at": "2026-11-14T21:21:05.058Z",
+      "content_hash": "10280fb4bc3401a8aa63cdb28243e02fda8c7aab1cb1dc5c1164547875ea9253",
+      "verified_at": "2026-11-19T05:06:19.617Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T21:21:05.058Z"
+      "last_updated": "2026-11-19T05:06:19.617Z"
     },
     "guokaigdg/animal-island-ui": {
       "repository": "guokaigdg/animal-island-ui",
@@ -9636,14 +9636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-opentofu-opentofu",
-      "content_hash": "8eb736273935dcc64ce59a0e44af9c90e7cc6d39d664303befd7ff617251ca48",
-      "verified_at": "2026-11-17T16:05:49.438Z",
+      "content_hash": "2b7d87e3e556816d76aab036a68c0ab528e27ba02eea123cb38ae8b36335dc90",
+      "verified_at": "2026-11-19T05:06:14.378Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T16:05:49.438Z"
+      "last_updated": "2026-11-19T05:06:14.378Z"
     },
     "surrealdb/surrealdb": {
       "repository": "surrealdb/surrealdb",

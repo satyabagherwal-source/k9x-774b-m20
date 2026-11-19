@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T04:44:49.505Z",
-  "total_records": 1942,
+  "last_updated": "2026-11-19T05:06:24.008Z",
+  "total_records": 1943,
   "domains": {
     "A": {
       "total": 13,
@@ -1295,7 +1295,7 @@
       ]
     },
     "H": {
-      "total": 447,
+      "total": 448,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1743,7 +1743,8 @@
         "DOM-H-DAFF8DAE",
         "DOM-H-6F9CB66B",
         "domain_intelligence-technical-construction-intelligence-apache-zookeeper-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-octodns-octodns-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-octodns-octodns-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-genkit-ai-genkit-learnings-core-invariants"
       ]
     },
     "I": {
@@ -10253,8 +10254,8 @@
       "title": "Architecture Intelligence: opentofu/opentofu Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-opentofu-opentofu-architecture-intelligence-opentofu-opentofu-core-invariants.md",
       "repository": "opentofu/opentofu",
-      "content_hash": "18fe4648f27b64b02b25a80fb73d34a30d27968094bc53aa80c7c7f820bb691b",
-      "created_at": "2026-11-17T16:05:49.753Z"
+      "content_hash": "e6b9343e47fd011f23116cdfabc2c349865ce5b574e92b5e9c9a32f9505d1b26",
+      "created_at": "2026-11-19T05:06:14.644Z"
     },
     "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-learnings-core-invariants",
@@ -16077,8 +16078,8 @@
       "title": "Research & Knowledge Intelligence: BAAI/bge-large-en-v1.5 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-large-en-v1-5-research-knowledge-intelligence-baai-bge-large-en-v1-5.md",
       "repository": "BAAI/bge-large-en-v1.5",
-      "content_hash": "283f5f8084cca9e32d358a138cbf7006cb67b0fd6143f451d7824305f3cc656f",
-      "created_at": "2026-11-14T15:34:27.803Z"
+      "content_hash": "ceeef73a88ea6e4df0a92786f7de3deb50101bb8d6df6c40d2f6e236b4982184",
+      "created_at": "2026-11-19T05:06:04.850Z"
     },
     "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-core-invariants",
@@ -16155,8 +16156,8 @@
       "title": "Research & Knowledge Intelligence: hf-baai-bge-large-en-v1.5-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-large-en-v1-5-learnings-research-knowledge-intelligence-hf-baai-bge-.md",
       "repository": "hf-baai-bge-large-en-v1.5-learnings",
-      "content_hash": "98599c16a7ad6fd94feb8627de669cd45acc842474956cc1c9f040632555dc03",
-      "created_at": "2026-11-14T15:35:10.484Z"
+      "content_hash": "b6b4244172b5b345ab791cd697ef2f2ac5831b09a988354cb7270270b8fc64d2",
+      "created_at": "2026-11-19T05:06:22.876Z"
     },
     "domain_intelligence-technical-construction-intelligence-arangodb-arangodb-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-arangodb-arangodb-learnings-core-invariants",
@@ -17812,8 +17813,8 @@
       "title": "Technical Construction Intelligence: genkit-ai/genkit Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-genkit-ai-genkit-technical-construction-intelligence-genkit-ai-genkit-core-invar.md",
       "repository": "genkit-ai/genkit",
-      "content_hash": "a4ca7fb00c656c24f426d896b9dbcf5b2ce4cae87a58a70a70c82d477af20635",
-      "created_at": "2026-11-14T21:21:05.281Z"
+      "content_hash": "3ce967fa31e056f8a243d005d5b9b7dec9eb5a439d9d12c86b6f9e82b68002d4",
+      "created_at": "2026-11-19T05:06:19.881Z"
     },
     "domain_intelligence-quality-verification-intelligence-automattic-harper-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-automattic-harper-learnings-core-invariants",
@@ -27859,8 +27860,8 @@
       "title": "Architecture Intelligence: opentofu-opentofu-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-opentofu-opentofu-learnings-architecture-intelligence-opentofu-opentofu-learning.md",
       "repository": "opentofu-opentofu-learnings",
-      "content_hash": "c2fe342adf2ec88efcc5b1b746c02078dd5aefdf93f196e81d038811456bee35",
-      "created_at": "2026-11-17T16:05:53.625Z"
+      "content_hash": "92ddb42ca43ca20b84cfdb8a263a994c61bd561510d504ca481d4b6c918c69d7",
+      "created_at": "2026-11-19T05:06:23.369Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16-core",
@@ -32615,6 +32616,15 @@
       "repository": "hf-lilylilith-qi_2.1_anyangle-learnings",
       "content_hash": "fb70895d501310561758a0a126ca62c6511b4336690c373dd11c75826206cb6f",
       "created_at": "2026-11-19T04:44:48.660Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-genkit-ai-genkit-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-genkit-ai-genkit-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: genkit-ai-genkit-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-genkit-ai-genkit-learnings-technical-construction-intelligence-genkit-ai-genkit-.md",
+      "repository": "genkit-ai-genkit-learnings",
+      "content_hash": "d89351e7f0c91917c9a764fc1a02c29d0b51cbd38516401451a5b4c2f531287d",
+      "created_at": "2026-11-19T05:06:24.008Z"
     }
   }
 }

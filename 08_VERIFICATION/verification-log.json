@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-MHMN",
-    "timestamp": "2026-11-17T17:50:04.223Z",
-    "repository": "BuilderIO/builder",
-    "learningId": "learn-github-builderio-builder",
-    "contentHash": "96230bc3fe5797d5a075b2158fa1ec6f5f0a69acaffd59c371d44e520677e296",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-W966",
-    "timestamp": "2026-11-17T17:57:39.822Z",
-    "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-Coder-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-coder-gguf",
-    "contentHash": "632038690498b863934f5484e4bdc9e241bcefc8f0ea241fbeb5786cc713b834",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-WFTS",
-    "timestamp": "2026-11-17T17:57:48.448Z",
-    "repository": "founded-labs/react-native-reusables",
-    "learningId": "learn-github-founded-labs-react-native-reusables",
-    "contentHash": "033b87b64c7389fcfd5a7a74cf6463f8bb029491f78f15ae3b0fc414200169f3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-WLPG",
     "timestamp": "2026-11-17T17:57:56.068Z",
     "repository": "clockworklabs/SpacetimeDB",
@@ -7490,6 +7445,51 @@
     "repository": "linkerd/linkerd2",
     "learningId": "learn-github-linkerd-linkerd2",
     "contentHash": "b802fcc3386c4f8956952ad81b7e049bd05ce7df01595cfe7066376fc02953f4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-7OY9",
+    "timestamp": "2026-11-19T05:06:04.689Z",
+    "repository": "BAAI/bge-large-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+    "contentHash": "b134ea78e3082b02d9c0db864f173bbfe5f9f50ea313c4736baa1c752926bdaa",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-7WF5",
+    "timestamp": "2026-11-19T05:06:14.369Z",
+    "repository": "opentofu/opentofu",
+    "learningId": "learn-github-opentofu-opentofu",
+    "contentHash": "2b7d87e3e556816d76aab036a68c0ab528e27ba02eea123cb38ae8b36335dc90",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-80GN",
+    "timestamp": "2026-11-19T05:06:19.607Z",
+    "repository": "genkit-ai/genkit",
+    "learningId": "learn-github-genkit-ai-genkit",
+    "contentHash": "10280fb4bc3401a8aa63cdb28243e02fda8c7aab1cb1dc5c1164547875ea9253",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

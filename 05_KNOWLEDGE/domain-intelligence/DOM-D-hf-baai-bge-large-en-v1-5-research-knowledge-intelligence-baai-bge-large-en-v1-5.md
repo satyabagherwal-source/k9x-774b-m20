@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/BAAI/bge-large-en-v1.5",
   "source_version": "hf-baai-bge-large-en-v1.5",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T15:34:27.802Z",
+  "timestamp": "2026-11-19T05:06:04.849Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-baai-bge-large-en-v1-5",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [BAAI/bge-large-en-v1.5](https://huggingface.co/BAAI/bge-large-en-v1.5) (Revision: `hf-baai-bg`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T15:34:27.802Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T05:06:04.849Z`  
 > **Learning ID**: `learn-huggingface-baai-bge-large-en-v1-5`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/BAAI/bge-large-en-v1.5](https://huggingface.co/BAAI/bge-large-en-v1.5))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T15:34:27.211Z  
+> **Harvest Timestamp**: 2026-11-19T05:06:04.162Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: feature-extraction
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 7597006 downloads | 784 likes
+- **Stars / Engagement**: 7052271 downloads | 787 likes
 
 ---
 

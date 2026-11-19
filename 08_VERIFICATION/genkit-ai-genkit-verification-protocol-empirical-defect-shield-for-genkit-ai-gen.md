@@ -4,22 +4,22 @@
 {
   "source_repository": "genkit-ai/genkit",
   "source_url": "https://github.com/genkit-ai/genkit",
-  "source_version": "76130045",
+  "source_version": "56db89eb",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-14T21:21:05.195Z",
+  "timestamp": "2026-11-19T05:06:19.772Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-genkit-ai-genkit",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `76130045`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T21:21:05.195Z`  
+> **Provenance**: Harvested from [genkit-ai/genkit](https://github.com/genkit-ai/genkit) (Revision: `56db89eb`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T05:06:19.772Z`  
 > **Learning ID**: `learn-github-genkit-ai-genkit`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `genkit-ai/genkit` (Commit: `76130045`)
+- **Target Repository**: `genkit-ai/genkit` (Commit: `56db89eb`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T21:21:04.360Z  
+> **Harvest Timestamp**: 2026-11-19T05:06:18.856Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6592 stars
+- **Stars / Engagement**: 6604 stars
 
 ---
 
@@ -47,179 +47,6 @@ PROVENANCE_END -->
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: package.json, README.md.
 - Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `genkit-tools/cli/src/commands/init-ai-tools/utils.ts`
-```
-/**
- * Copyright 2025 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-import { existsSync, readFileSync } from 'fs';
-
-import { Runtime } from '@genkit-ai/tools-common/manager';
-import * as crypto from 'crypto';
-import { writeFile } from 'fs/promises';
-import { GENKIT_CONTEXT as GoContext } from './context/go.js';
-import { GENKIT_CONTEXT as NodeContext } from './context/nodejs.js';
-
-/** Shared location for the GENKIT.md context file */
-export const GENKIT_PROMPT_PATH = 'GENKIT.md';
-
-const GENKIT_TAG_REGEX =
-  /<genkit_prompts(?:\s+hash="([^"]+)")?>([\s\S]*?)<\/genkit_prompts>/;
-/*
- * Deeply compares two JSON-serializable objects. It's a simplified version of a
- * deep equal function, sufficient for comparing the structure of the
- * gemini-extension.json file. It doesn't handle special cases like RegExp,
- * Date, or functions.
- */
-export function deepEqual(a: any, b: any): boolean {
-  if (a === b) {
-    return true;
-  }
-
-  if (
-    typeof a !== 'object' ||
-    a === null ||
-    typeof b !== 'object' ||
-    b === null
-  ) {
-    return false;
-  }
-
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-
-  if (keysA.length !== keysB.length) {
-    return false;
-  }
-
-  for (const key of keysA) {
-    if (!keysB.includes(key) || !deepEqual(a[key], b[key])) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-/**
- * Replace an entire prompt file (no user content to preserve). Used for files
- * we fully own like GENKIT.md.
- */
-export async function initOrReplaceFile(
-  filePath: string,
-  content: string
-): Promise<{ updated: boolean }> {
-  const fileExists = existsSync(filePath);
-  if (fileExists) {
-    const currentConfig = readFileSync(filePath, 'utf-8');
-    if (!deepEqual(currentConfig, content)) {
-      await writeFile(filePath, content);
-      return { updated: true };
-    }
-  } else {
-    await writeFile(filePath, content);
-    return { updated: true };
-  }
-  return { updated: false };
-}
-
-/**
- * Update a file with Genkit prompts section, preserving user content
- * Used for files like CLAUDE.md.
- */
-export async function updateContentInPlace(
-  filePath: string,
-  content: string,
-  options?: { hash: string }
-): Promise<{ updated: boolean }> {
-  const newHash = options?.hash ?? calculateHash(content);
-  const newSection = `<genkit_prompts hash="${newHash}">
-<!-- Genkit Context - Auto-generated, do not edit -->
-${content}
-</genkit_prompts>`;
-
-  let currentContent = '';
-  const fileExists = existsSync(filePath);
-  if (fileExists) {
-    currentContent = readFileSync(filePath, 'utf-8');
-  }
-
-  // Check if section exists and has same hash
-  const match = currentContent.match(GENKIT_TAG_REGEX);
-  if (match && match[1] === newHash) {
-    return { updated: false };
-  }
-
-  // Generate final content
-  let finalContent: string;
-  if (!currentContent) {
-    // New file
-    finalContent = newSection;
-  } else if (match) {
-    // Replace existing section
-    finalContent =
-      currentContent.substring(0, match.index!) +
-      newSection +
-      currentContent.substring(match.index! + match[0].length);
-  } else {
-    // Append to existing file
-    const separator = currentContent.endsWith('\n') ? '\n' : '\n\n';
-    finalContent = currentContent + separator + newSection;
-  }
-
-  await writeFile(filePath, finalContent);
-  return { updated: true };
-}
-
-/**
- * Generate hash for embedded content.
- */
-export function calculateHash(content: string): string {
-  return crypto
-    .createHash('sha256')
-    .update(content.trim())
-    .digest('hex')
-    .substring(0, 8);
-}
-
-/**
- * Get raw prompt content for Genkit
- */
-export function getGenkitContext(runtime: Runtime): string {
-  switch (runtime) {
-    case 'nodejs':
-      return NodeContext;
-    case 'go':
-      return GoContext;
-    default:
-      throw new Error(`Unexpected runtime provided: ${runtime}`);
-  }
-}
-
-/**
- * Initializes the GENKIT.md file
- */
-export async function initGenkitFile(runtime: Runtime) {
-  const genkitContext = getGenkitContext(runtime);
-  const result = await initOrReplaceFile(GENKIT_PROMPT_PATH, genkitContext);
-  return { updated: result.updated, hash: calculateHash(genkitContext) };
-}
-
-```
 
 ### Core Architecture Module: `genkit-tools/cli/src/mcp/utils.ts`
 ```
@@ -402,6 +229,60 @@ export class McpRuntimeManager {
       this.currentProjectRoot = undefined;
       await prev.stop();
     }
+  }
+}
+
+```
+
+### Core Architecture Module: `genkit-tools/cli/src/utils/legacy-context-warning.ts`
+```
+/**
+ * Copyright 2026 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { logger } from '@genkit-ai/tools-common/utils';
+import { existsSync } from 'fs';
+import { readFile } from 'fs/promises';
+import * as path from 'path';
+
+const LEGACY_GENKIT_MD_FILENAME = 'GENKIT.md';
+const LEGACY_BAD_INSTRUCTION_MARKER = 'Do not run Genkit commands';
+
+/**
+ * Logs a read-only warning if the workspace has a legacy `GENKIT.md` file
+ * containing outdated instructions from `genkit init:ai-tools`.
+ */
+export async function warnIfLegacyGenkitContext(
+  projectRoot: string
+): Promise<void> {
+  const genkitMdPath = path.join(projectRoot, LEGACY_GENKIT_MD_FILENAME);
+  if (!existsSync(genkitMdPath)) {
+    return;
+  }
+
+  try {
+    const content = await readFile(genkitMdPath, 'utf-8');
+    if (content.includes(LEGACY_BAD_INSTRUCTION_MARKER)) {
+      logger.warn(
+        'Legacy `GENKIT.md` detected with outdated instructions from deprecated `genkit init:ai-tools`.\n' +
+          'You can delete `GENKIT.md` (and any references to it) and install Genkit Agent Skills instead:\n' +
+          '  npx skills add genkit-ai/skills'
+      );
+    }
+  } catch (e) {
+    logger.debug('Failed to inspect GENKIT.md for legacy instructions', e);
   }
 }
 
@@ -2085,29 +1966,471 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `76130045` (2026-11-13)
-**Commit Message**: fix(tests): install packed telemetry-server tarball in e2e cli harness (#7197)
+### Incident Patch 1: `56db89eb` (2026-11-18)
+**Commit Message**: build(deps-dev): bump the root-dependencies group across 1 directory with 6 updates (#7263)
 
-**File**: `tests/src/utils.ts` (modified, +1/-1)
+**File**: `package.json` (modified, +6/-6)
 ```diff
-@@ -99,7 +99,7 @@ export async function genkitStart(
-   });
-   const distDir = path.resolve(process.cwd(), '../dist');
-   execSync(
--    `npm i --save ${distDir}/genkit-cli-?.?*.?*.tgz ${distDir}/genkit-ai-tools-common-*.tgz`,
-+    `npm i --save ${distDir}/genkit-cli-?.?*.?*.tgz ${distDir}/genkit-ai-tools-common-*.tgz ${distDir}/genkit-ai-telemetry-server-*.tgz`,
-     {
-       stdio: 'inherit',
-       cwd: cliInstallRoot,
+@@ -37,17 +37,17 @@
+   "devDependencies": {
+     "@commitlint/cli": "20.5.3",
+     "@commitlint/config-conventional": "20.5.3",
+-    "@types/node": "22.10.5",
+-    "inquirer": "^8.2.6",
++    "@types/node": "22.20.5",
++    "inquirer": "^8.2.7",
+     "lint-staged": "^17.5.0",
+-    "only-allow": "^1.2.1",
++    "only-allow": "^1.2.2",
+     "prettier": "^3.9.10",
+-    "prettier-plugin-css-order": "2.0.1",
++    "prettier-plugin-css-order": "2.2.0",
+     "prettier-plugin-organize-imports": "^3.2.4",
+-    "rimraf": "^6.0.1",
++    "rimraf": "^6.1.3",
+     "simple-git-hooks": "^2.14.0",
+     "ts-node": "^10.9.2",
+-    "tsx": "^4.20.3"
++    "tsx": "^4.23.15"
+   },
+   "pnpm": {
+     "overrides": {
+```
+
+**File**: `pnpm-lock.yaml` (modified, +236/-379)
+```diff
+@@ -20,43 +20,43 @@ importers:
+     devDependencies:
+       '@commitlint/cli':
+         specifier: 20.5.3
+-        version: 20.5.3(@types/node@22.10.5)(conventional-commits-parser@6.4.0)(typescript@5.4.5)
++        version: 20.5.3(@types/node@22.20.5)(conventional-commits-parser@6.4.0)(typescript@5.4.5)
+       '@commitlint/config-conventional':
+         specifier: 20.5.3
+         version: 20.5.3
+       '@types/node':
+-        specifier: 22.10.5
+-        version: 22.10.5
++        specifier: 22.20.5
++        version: 22.20.5
+       inquirer:
+-        specifier: ^8.2.6
+-        version: 8.2.6
++        specifier: ^8.2.7
++        version: 8.2.7(@types/node@22.20.5)
+       lint-staged:
+         specifier: ^17.5.0
+         version: 17.6.0
+       only-allow:
+-        specifier: ^1.2.1
+-        version: 1.2.1
++        specifier: ^1.2.2
++        version: 1.2.2
+       prettier:
+         specifier: ^3.9.10
+         version: 3.9.10
+       prettier-plugin-css-order:
+-        specifier: 2.0.1
+-        version: 2.0.1(postcss@8.4.38)(prettier@3.9.10)
++        specifier: 2.2.0
++        version: 2.2.0(postcss@8.4.38)(prettier@3.9.10)
+       prettier-plugin-organize-imports:
+         specifier: ^3.2.4
+         version: 3.2.4(prettier@3.9.10)(typescript@5.4.5)
+       rimraf:
+-        specifier: ^6.0.1
+-        version: 6.0.1
++        specifier: ^6.1.3
++        version: 6.1.3
+       simple-git-hooks:
+         specifier: ^2.14.0
+         version: 2.14.0
+       ts-node:
+         specifier: ^10.9.2
+-        version: 10.9.2(@types/node@22.10.5)(typescript@5.4.5)
++        version: 10.9.2(@types/node@22.20.5)(typescript@5.4.5)
+       tsx:
+-        specifier: ^4.20.3
+-        version: 4.20.3
++        specifier: ^4.23.15
++        version: 4.23.15
+ 
+ packages:
+ 
+@@ -153,167 +153,170 @@ packages:
+     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
+     engines: {node: '>=12'}
+ 
+-  '@esbuild/aix-ppc64@0.25.5':
+-    resolution: {integrity: sha512-9o3TMmpmftaCMepOdA5k/yDw8SfInyzWWTjYTFCX3kPSDJMROQTb8jg+h9Cnwnmm1vOzvxN7gIfB5V2ewpjtGA==}
++  '@esbuild/aix-ppc64@0.28.2':
++    resolution: {integrity: sha512-XExcO+dvLKvVtNTibSTBej1NCAbaGhWn9Ww1ZPx80qsahhPFe/8jgWP0IchNe0F3HwkU7n8ejhH8bjonqht8mQ==}
+     engines: {node: '>=18'}
+     cpu: [ppc64]
+     os: [aix]
+ 
+-  '@esbuild/android-arm64@0.25.5':
+-    resolution: {integrity: sha512-VGzGhj4lJO+TVGV1v8ntCZWJktV7SGCs3Pn1GRWI1SBFtRALoomm8k5E9Pmwg3HOAal2VDc2F9+PM/rEY6oIDg==}
++  '@esbuild/android-arm64@0.28.2':
++    resolution: {integrity: sha512-5YfKeeI8qWfBZIX+u2xZC3Zlb3Os/gLS2sbEKM+I4ZOcsWmHS2WLysCcQZDAFRslDUU5Oiq44gf6PYN1vGwG5A==}
+     engines: {node: '>=18'}
+     cpu: [arm64]
+     os: [android]
+ 
+-  '@esbuild/android-arm@0.25.5':
+-    resolution: {integrity: sha512-AdJKSPeEHgi7/ZhuIPtcQKr5RQdo6OO2IL87JkianiMYMPbCtot9fxPbrMiBADOWWm3T2si9stAiVsGbTQFkbA==}
++  '@esbuild/android-arm@0.28.2':
++    resolution: {integrity: sha512-kXXoiPVVGQcnIYGOeaovwOURpniDBpSq4A03qkQ+BMQqtGG6HYap3xne9C1O1yo4TR3qxlCX5IqqmX6fFo2Lqg==}
+     engines: {node: '>=18'}
+     cpu: [arm]
+     os: [android]
+ 
+-  '@esbuild/android-x64@0.25.5':
+-    resolution: {integrity: sha512-D2GyJT1kjvO//drbRT3Hib9XPwQeWd9vZoBJn+bu/lVsOZ13cqNdDeqIF/xQ5/VmWvMduP6AmXvylO/PIc2isw==}
++  '@esbuild/android-x64@0.28.2':
++    resolution: {integrity: sha512-O387ite7SzUyCcy3JQX4P4bLtEA7bLLkx+esve5JHnyYfNTxcVpXZo9jhdB0lTKN44gztELTdU7nS8Nr16Fs1Q==}
+     engines: {node: '>=18'}
+     cpu: [x64]
+     os: [android]
+ 
+-  '@esbuild/darwin-arm64@0.25.5':
+-    resolution: {integrity: sha512-GtaBgammVvdF7aPIgH2jxMDdivezgFu6iKpmT+48+F8Hhg5J/sfnDieg0aeG/jfSvkYQU2/pceFPDKlqZzwnfQ==}
++  '@esbuild/darwin-arm64@0.28.2':
++    resolution: {integrity: sha512-n4KqkOQrraxHJcgjM1RvwbigfQKIKJVpM7xp+KsxiyUSrRdIXnt73VhrPAx0fV44hgfmIVKjxMN9J1t5jySVkw==}
+     engines: {node: '>=18'}
+     cpu: [arm64]
+     os: [darwin]
+ 
+-  '@esbuild/darwin-x64@0.25.5':
+-    resolution: {integrity: sha512-1iT4FVL0dJ76/q1wd7XDsXrSW+oLoquptvh4CLR4kITDtqi2e/xwXwdCVH8hVHU43wgJdsq7Gxuzcs6Iq/7bxQ==}
++  '@esbuild/darwin-x64@0.28.2':
++    resolution: {integrity: sha512-uq6suIWYP37qzGddBKPw5QEQPi6HiLGsO7UmkpfyaYNQ3D+rN6w6WfwH+nuqcGXWvawGwxOEroO4YGnFh95azw==}
+     engines: {node: '>=18'}
+     cpu: [x64]
+     os: [darwin]
+ 
+-  '@esbuild/freebsd-arm64@0.25.5':
+-    resolution: {integrity: sha512-nk4tGP3JThz4La38Uy/gzyXtpkPW8zSAmoUhK9xKKXdBCzKODMc2adkB2+8om9BDYugz+uGV7sLmpTYzvmz6Sw==}
++  '@esbuild/freebsd-arm64@0.28.2':
++    resolution: {integrity: sha512-n+I0BTSRIoy+d6RPKnEVwql5UwBJolytvY4mAOIEJorKlqgPII8ix6slVVrfZ5Tnj7glIZvloylbB/EJPMWEXw==}
+     engines: {node: '>=18'}
+     cpu: [arm64]
+     os: [freebsd]
+ 
+-  '@esbuild/freebsd-x64@0.25.5':
+-    resolution: {integrity: sha512-PrikaNjiXdR2laW6OIjlbeuCPrPaAl0IwPIaRv+SMV8CiM8i2LqVUHFC1+8eORgWyY7yhQY+2U2fA55mBzReaw==}
++  '@esbuild/freebsd-x64@0.28.2':
++    resolution: {integrity: sha512-78XJTJkvPs0kz2w61301PJjXl4g7q3JqiYMZ/M/yVI73EHBrCRTgkhu9oqG7vPqq+a/yadEW8aD+agKlk5xrmg==}
+     engines: {node:
+```
+
+---
+
+### Incident Patch 2: `73277525` (2026-11-18)
+**Commit Message**: build(deps-dev): bump prettier to ^3.9.10 and format (#7259)
+
+**File**: `genkit-tools/cli/tests/mcp/runtime_test.ts` (modified, +1/-2)
+```diff
+@@ -86,8 +86,7 @@ describe('MCP runtime tools', () => {
+ 
+   it('restart_runtime restarts the process and waits for the new runtime to register', async () => {
+     let runtimeEventListener:
+-      | ((event: RuntimeEvent, rt: any) => void)
+-      | undefined;
++      ((event: RuntimeEvent, rt: any) => void) | undefined;
+     const processPromise = new Promise<void>(() => {});
+     const mockRuntimeManager = {
+       listRuntimes: vi.fn().mockReturnValue([{ id: 'old-runtime' }]),
+```
+
+**File**: `js/ai/src/agent-core.ts` (modified, +18/-16)
+```diff
+@@ -511,8 +511,7 @@ async function waitForSnapshotViaTransport<State, Opts extends object>(
+     try {
+       while (true) {
+         const snap = (await transport.waitForSnapshot(snapshotId, opts)) as
+-          | SessionSnapshot<State>
+-          | undefined;
++          SessionSnapshot<State> | undefined;
+         if (!snap || isSettled(snap)) {
+           return snap;
+         }
+@@ -638,9 +637,10 @@ function toolRequestParts(parts?: Part[]): ToolRequestPart[] {
+ // AgentInterrupt
+ // ---------------------------------------------------------------------------
+ 
+-class AgentInterruptImpl<Input = unknown, Output = unknown>
+-  implements AgentInterrupt<Input, Output>
+-{
++class AgentInterruptImpl<
++  Input = unknown,
++  Output = unknown,
++> implements AgentInterrupt<Input, Output> {
+   readonly name: string;
+   readonly ref?: string;
+   readonly input: Input;
+@@ -676,9 +676,10 @@ class AgentInterruptImpl<Input = unknown, Output = unknown>
+ // AgentResponse
+ // ---------------------------------------------------------------------------
+ 
+-class AgentResponseImpl<State = unknown, O = unknown>
+-  implements AgentResponse<State, O>
+-{
++class AgentResponseImpl<State = unknown, O = unknown> implements AgentResponse<
++  State,
++  O
++> {
+   constructor(
+     private readonly _raw: AgentOutput<State>,
+     private readonly _messages: MessageData[],
+@@ -867,9 +868,10 @@ function mergeOpts<B extends object, P extends object>(
+   return Object.assign({}, bound, defined);
+ }
+ 
+-class DetachedTaskImpl<State = unknown, Opts extends object = never>
+-  implements DetachedTask<State, Opts>
+-{
++class DetachedTaskImpl<
++  State = unknown,
++  Opts extends object = never,
++> implements DetachedTask<State, Opts> {
+   constructor(
+     readonly snapshotId: string,
+     private readonly transport: AgentTransport<Opts>,
+@@ -923,9 +925,10 @@ class DetachedTaskImpl<State = unknown, Opts extends object = never>
+ // AgentChat
+ // ---------------------------------------------------------------------------
+ 
+-export class AgentChatImpl<State = unknown, Opts extends object = never>
+-  implements AgentChat<State, Opts>
+-{
++export class AgentChatImpl<
++  State = unknown,
++  Opts extends object = never,
++> implements AgentChat<State, Opts> {
+   snapshotId?: string;
+   sessionId?: string;
+   messages: MessageData[] = [];
+@@ -1410,8 +1413,7 @@ export function createAgentAPI<State = unknown, Opts extends object = never>(
+       opts?: Opts
+     ): Promise<AgentChat<State, Opts>> {
+       const snapshot = (await transport.getSnapshot(lookup, opts)) as
+-        | SessionSnapshot<State>
+-        | undefined;
++        SessionSnapshot<State> | undefined;
+       if (!snapshot) {
+         const id =
+           'snapshotId' in lookup
+```
+
+**File**: `js/ai/src/agent.ts` (modified, +4/-5)
+```diff
+@@ -1511,7 +1511,8 @@ export interface WaitForSnapshotDataInput extends GetSnapshotDataInput {
+  *    to mount next to it.
+  */
+ export interface Agent<State = unknown>
+-  extends BidiAction<
++  extends
++    BidiAction<
+       typeof AgentInputSchema,
+       typeof AgentOutputSchema,
+       typeof AgentStreamChunkSchema,
+@@ -1939,8 +1940,7 @@ export function defineCustomAgent<State = unknown>(
+ 
+       let detachedSnapshotId: string | undefined;
+       let resolveDetach:
+-        | ((value: void | PromiseLike<void>) => void)
+-        | undefined;
++        ((value: void | PromiseLike<void>) => void) | undefined;
+       let rejectDetach: ((reason: any) => void) | undefined;
+       const detachPromise = new Promise<void>((resolve, reject) => {
+         resolveDetach = resolve;
+@@ -2139,8 +2139,7 @@ export function defineCustomAgent<State = unknown>(
+         { result: AgentResult; finalSnapshotId?: string } | undefined
+       > => {
+         let settled:
+-          | { result: AgentResult; finalSnapshotId?: string }
+-          | undefined;
++          { result: AgentResult; finalSnapshotId?: string } | undefined;
+         // An error the agent function threw outside a turn. Attached, it
+         // propagates as the action's own failure; detached, it lands on the
+         // pending row, since there is no longer a caller to throw to.
+```
+
+**File**: `js/ai/src/evaluator.ts` (modified, +8/-8)
+```diff
+@@ -95,8 +95,8 @@ export type EvalResponses = z.infer<typeof EvalResponsesSchema>;
+ 
+ /** Implementation function for an evaluator. Receives a data point and optional config, returns an {@link EvalResponse}. */
+ export type EvaluatorFn<
+-  EvalDataPoint extends
+-    typeof BaseEvalDataPointSchema = typeof BaseEvalDataPointSchema,
++  EvalDataPoint extends typeof BaseEvalDataPointSchema =
++    typeof BaseEvalDataPointSchema,
+   CustomOptions extends z.ZodTypeAny = z.ZodTypeAny,
+ > = (
+   input: z.infer<EvalDataPoint>,
+@@ -161,8 +161,8 @@ export interface EvaluatorOptions<
+  */
+ export function defineEvaluator<
+   DataPoint extends typeof BaseDataPointSchema = typeof BaseDataPointSchema,
+-  EvalDataPoint extends
+-    typeof BaseEvalDataPointSchema = typeof BaseEvalDataPointSchema,
++  EvalDataPoint extends typeof BaseEvalDataPointSchema =
++    typeof BaseEvalDataPointSchema,
+   EvaluatorOpts extends z.ZodTypeAny = z.ZodTypeAny,
+ >(
+   registry: Registry,
+@@ -181,8 +181,8 @@ export function defineEvaluator<
+  */
+ export function evaluator<
+   DataPoint extends typeof BaseDataPointSchema = typeof BaseDataPointSchema,
+-  EvalDataPoint extends
+-    typeof BaseEvalDataPointSchema = typeof BaseEvalDataPointSchema,
++  EvalDataPoint extends typeof BaseEvalDataPointSchema =
++    typeof BaseEvalDataPointSchema,
+   EvaluatorOpts extends z.ZodTypeAny = z.ZodTypeAny,
+ >(
+   options: EvaluatorOptions<DataPoint, EvaluatorOpts>,
+@@ -371,8 +371,8 @@ function getBatchedArray<T extends { testCaseId?: string }>(
+ }
+ 
+ async function runBatch<
+-  EvalDataPoint extends
+-    typeof BaseEvalDataPointSchema = typeof BaseEvalDataPointSchema,
++  EvalDataPoint extends typeof BaseEvalDataPointSchema =
++    typeof BaseEvalDataPointSchema,
+   EvaluatorOpts extends z.ZodTypeAny = z.ZodTypeAny,
+ >(
+   runner: EvaluatorFn<EvalDataPoint, EvaluatorOpts>,
+```
+
+**File**: `js/ai/src/generate.ts` (modified, +1/-3)
+```diff
+@@ -484,9 +484,7 @@ export class GenerationBlockedError extends GenerationResponseError {}
+ export async function normalizeMiddleware(
+   registry: Registry,
+   middlewareList?: (
+-    | ModelMiddlewareArgument
+-    | GenerateMiddleware
+-    | MiddlewareRef
++    ModelMiddlewareArgument | GenerateMiddleware | MiddlewareRef
+   )[]
+ ): Promise<MiddlewareRef[]> {
+   if (!middlewareList || middlewareList.length === 0) {
+```
+
+**File**: `js/ai/src/generate/chunk.ts` (modified, +3/-3)
+```diff
+@@ -31,9 +31,9 @@ export type ChunkParser<T = unknown> = (chunk: GenerateResponseChunk<T>) => T;
+  * accessors for extracting text, media, tool requests, and accumulated output
+  * from the chunk and all preceding chunks in the stream.
+  */
+-export class GenerateResponseChunk<T = unknown>
+-  implements GenerateResponseChunkData
+-{
++export class GenerateResponseChunk<
++  T = unknown,
++> implements GenerateResponseChunkData {
+   /** The index of the message this chunk corresponds to, starting with `0` for the first model response of the generation. */
+   index: number;
+   /** The role of the message this chunk corresponds to. Will always be `model` or `tool`. */
+```
+
+**File**: `js/ai/src/model.ts` (modified, +5/-7)
+```diff
+@@ -136,8 +136,7 @@ export type ModelMiddlewareWithOptions = MiddlewareWithOptions<
+ 
+ /** Union of middleware types accepted by model definitions: either a {@link ModelMiddleware} or {@link ModelMiddlewareWithOptions}. */
+ export type ModelMiddlewareArgument =
+-  | ModelMiddleware
+-  | ModelMiddlewareWithOptions;
++  ModelMiddleware | ModelMiddlewareWithOptions;
+ 
+ /** Options for defining a new model via {@link defineModel} or {@link model}. */
+ export type DefineModelOptions<
+@@ -397,8 +396,9 @@ export const ModelReferenceSchema = z.object({
+  * A reference to a model that includes optional configuration and version info.
+  * Can be passed anywhere a {@link ModelArgument} is accepted.
+  */
+-export interface ModelReference<CustomOptions extends z.ZodTypeAny>
+-  extends z.infer<typeof ModelReferenceSchema> {
++export interface ModelReference<
++  CustomOptions extends z.ZodTypeAny,
++> extends z.infer<typeof ModelReferenceSchema> {
+   name: string;
+   configSchema?: CustomOptions;
+   info?: ModelInfo;
+@@ -540,9 +540,7 @@ function getPartCounts(parts: Part[]): PartCounts {
+  * {@link ModelAction}, or {@link ModelReference}.
+  */
+ export type ModelArgument<CustomOptions extends z.ZodTypeAny = z.ZodTypeAny> =
+-  | ModelAction<CustomOptions>
+-  | ModelReference<CustomOptions>
+-  | string;
++  ModelAction<CustomOptions> | ModelReference<CustomOptions> | string;
+ 
+ /** The result of resolving a {@link ModelArgument} to a concrete action, config, and version. */
+ export interface ResolvedModel<
+```
+
+**File**: `js/ai/src/resource.ts` (modified, +4/-2)
+```diff
+@@ -79,8 +79,10 @@ export type ResourceFn = (
+ /**
+  * A resource action.
+  */
+-export interface ResourceAction
+-  extends Action<typeof ResourceInputSchema, typeof ResourceOutputSchema> {
++export interface ResourceAction extends Action<
++  typeof ResourceInputSchema,
++  typeof ResourceOutputSchema
++> {
+   matches(input: ResourceInput): boolean;
+ }
+ 
+```
+
+---
+
+### Incident Patch 3: `47f9a5ec` (2026-11-18)
+**Commit Message**: fix(go): bump dotprompt to pick up the latest version (#7262)
+
+**File**: `go/go.mod` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@ require (
+ 	github.com/blues/jsonata-go v1.5.4
+ 	github.com/coder/websocket v1.8.14
+ 	github.com/goccy/go-yaml v1.19.2
+-	github.com/google/dotprompt/go v0.0.0-20260708220100-73beb993ac95
++	github.com/google/dotprompt/go v0.0.0-20261118194220-bdc60beb8a17
+ 	github.com/google/go-cmp v0.7.0
+ 	github.com/google/uuid v1.6.0
+ 	github.com/invopop/jsonschema v0.14.0
+```
+
+**File**: `go/go.sum` (modified, +2/-2)
+```diff
+@@ -182,8 +182,8 @@ github.com/golang/protobuf v1.4.3/go.mod h1:oDoupMAO8OvCJWAcko0GGGIgR6R6ocIYbsSw
+ github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
+ github.com/golang/protobuf v1.5.4 h1:i7eJL8qZTpSEXOPTxNKhASYpMn+8e5Q6AdndVa1dWek=
+ github.com/golang/protobuf v1.5.4/go.mod h1:lnTiLA8Wa4RWRcIUkrtSVa5nRhsEGBg48fD6rSs7xps=
+-github.com/google/dotprompt/go v0.0.0-20260708220100-73beb993ac95 h1:SJdnmyOaT+kZNcUR+a1y2+Oa51j2ctCjYbtexaiXN68=
+-github.com/google/dotprompt/go v0.0.0-20260708220100-73beb993ac95/go.mod h1:dnlL7KrFwJ7s8EJdsAp1WdLqOalJq1Sx2jWZnQkhFXs=
++github.com/google/dotprompt/go v0.0.0-20261118194220-bdc60beb8a17 h1:ZLqxco58oRiBLiSEF8/X8Adysw8ZlmlR5s3nTxJFJmE=
++github.com/google/dotprompt/go v0.0.0-20261118194220-bdc60beb8a17/go.mod h1:iXHNbixObmFNZFUYK/FowBLET1msct+SuNxjZiQ0TUg=
+ github.com/google/flatbuffers v23.5.26+incompatible h1:M9dgRyhJemaM4Sw8+66GHBu8ioaQmyPLg1b8VwK5WJg=
+ github.com/google/flatbuffers v23.5.26+incompatible/go.mod h1:1AeVuKshWv4vARoZatz6mlQ0JxURH0Kv5+zNeJKJCa8=
+ github.com/google/go-cmp v0.2.0/go.mod h1:oXzfMopK8JAjlY9xF4vHSVASa0yLyX7SntLO5aqRK0M=
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7205** (closed): chore(py): release Python SDK v0.14.0 (@huangjeff5)
-- **PR #7204** (closed): docs(py): use bare decorators, docstrings, and model refs in README and migration guide (@huangjeff5)
-- **PR #7203** (closed): build(deps): bump opentelemetry-api from 1.44.0 to 1.45.2 in /py (@dependabot[bot])
-- **PR #7199** (closed): chore(ci): standardize Node and pin workflow actions (@yumin2002)
-- **PR #7198** (closed): build(deps): bump hono from 4.13.13 to 4.13.16 in /js (@dependabot[bot])
-- **PR #7197** (2026-11-13): fix(tests): install packed telemetry-server tarball in e2e cli harness (@MichaelDoyle)
+- **PR #7264** (closed): chore(py): dependency bounds policy, floor/newest CI, Dependabot major grouping (@huangjeff5)
+- **PR #7263** (2026-11-18): build(deps-dev): bump the root-dependencies group across 1 directory with 6 updates (@dependabot[bot])
+- **PR #7262** (2026-11-18): fix(go): bump dotprompt to pick up the latest version (@pavelgj)
+- **PR #7259** (2026-11-18): build(deps-dev): bump prettier to ^3.9.10 and format (@MichaelDoyle)
+- **PR #7258** (2026-11-18): ci(workflows): pin GitHub Actions to commit SHAs in remaining workflows (@MichaelDoyle)
+- **PR #7256** (2026-11-18): fix(genkit-tools/cli): skip first-run analytics prompt and update notification for mcp command (@genkit-bot)
 
 ---
 
@@ -2127,31 +2450,41 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tests): install packed telemetry-server tarball in e2e cli harness
+## X. build(deps-dev): bump the root-dependencies group across 1 directory with 6 upda
 
 **RULE**:
-When implementing operations in `tests/src/utils.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `76130045`: tests): install packed telemetry-server tarball in e2e cli harness. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `56db89eb`: build(deps-dev): bump the root-dependencies group across 1 directory with 6 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/src/utils.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    `npm i --save ${distDir}/genkit-cli-?.?*.?*.tgz ${distDir}/genkit-ai-tools-common-*.tgz ${distDir}/genkit-ai-telemetry-server-*.tgz`,
+    "@types/node": "22.20.5",
+    "inquirer": "^8.2.7",
+    "only-allow": "^1.2.2",
+    "prettier-plugin-css-order": "2.2.0",
+    "rimraf": "^6.1.3",
+    "tsx": "^4.23.15"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-    `npm i --save ${distDir}/genkit-cli-?.?*.?*.tgz ${distDir}/genkit-ai-tools-common-*.tgz`,
+    "@types/node": "22.10.5",
+    "inquirer": "^8.2.6",
+    "only-allow": "^1.2.1",
+    "prettier-plugin-css-order": "2.0.1",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.20.3"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `76130045` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `56db89eb` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

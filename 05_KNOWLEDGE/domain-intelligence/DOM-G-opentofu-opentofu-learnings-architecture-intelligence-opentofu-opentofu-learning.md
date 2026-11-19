@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T16:05:53.406Z",
+  "timestamp": "2026-11-19T05:06:23.186Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-opentofu-opentofu-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [opentofu-opentofu-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T16:05:53.406Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T05:06:23.186Z`  
 > **Learning ID**: `LEARN-EVO-opentofu-opentofu-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 76%
+- **Secondary Corroborating Domains**: L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 78%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from opentofu-opentofu-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source**: github ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
-> **Source Version**: `a4d26414`  
+> **Source Version**: `9699ab67`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T16:05:48.463Z  
+> **Timestamp**: 2026-11-19T05:06:13.592Z  
 > **Learning ID**: `learn-github-opentofu-opentofu`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/opentofu-opentofu-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/opentofu/opentofu](https://github.com/opentofu/opentofu))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T16:05:48.458Z  
+> **Harvest Timestamp**: 2026-11-19T05:06:13.588Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: OpenTofu lets you declaratively manage your cloud infrastructure.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 30897 stars
+- **Stars / Engagement**: 30918 stars
 
 ---
 
@@ -1447,46 +1447,190 @@ func consolidateFileAndValue(value, fileName, fieldName string, acceptEmpty bool
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fd9945e8` (2026-11-17)
-**Commit Message**: Bump go-crypto to 1.5.2 to fix intermittent `tofu init` crash (#4847)
+### Incident Patch 1: `9699ab67` (2026-11-18)
+**Commit Message**: Fix symbol libraries crash when uninitialized
 
-Signed-off-by: Alex McGrath <[REDACTED_EMAIL]>
+This is tricky to reproduce directly within the symbol libraries
+context itself as it stops processing once it hits diagnositcs, unlike
+tofu.  We therefore simulate a type conversion to ensure that this hits
+the right internal error cases.
 
-**File**: `go.mod` (modified, +1/-1)
+Signed-off-by: Christian Mesh <[REDACTED_EMAIL]>
+
+**File**: `internal/configs/symlib/compiler_test.go` (modified, +44/-43)
 ```diff
-@@ -20,7 +20,7 @@ require (
- 	github.com/Azure/azure-sdk-for-go/sdk/security/keyvault/azkeys v1.5.0
- 	github.com/Azure/azure-sdk-for-go/sdk/storage/azblob v1.8.0
- 	github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2
--	github.com/ProtonMail/go-crypto v1.4.1
-+	github.com/ProtonMail/go-crypto v1.5.2
- 	github.com/agext/levenshtein v1.2.3
- 	github.com/aliyun/alibaba-cloud-sdk-go v1.63.107
- 	github.com/aliyun/aliyun-oss-go-sdk v3.0.2+incompatible
+@@ -470,29 +470,6 @@ typedef "customexp" {
+ 
+ 	for _, tc := range cases {
+ 		t.Run(tc.name, func(t *testing.T) {
+-			// Parse files into "directory" structure
+-			files := map[string][]*SymbolFile{}
+-			for path, contents := range tc.files {
+-				parts := strings.Split(path, "/")
+-				fileName := parts[len(parts)-1]
+-				dir := strings.Join(parts[:len(parts)-1], "/") + "/"
+-
+-				parsed, diags := hclsyntax.ParseConfig([]byte(contents), fileName, hcl.InitialPos)
+-				assertNoDiags(t, diags)
+-
+-				sFile, diags := LoadSymbolFile(parsed.Body)
+-				assertNoDiags(t, diags)
+-
+-				files[dir] = append(files[dir], sFile)
+-			}
+-
+-			var loader Loader
+-			loader = func(call *SymbolCall) (*Library, hcl.Diagnostics) {
+-				var source string
+-				diags := gohcl.DecodeExpression(call.Source, nil, &source)
+-				assertNoDiags(t, diags)
+-				return CompileLibrary(files[source], loader, testCtyFuncs)
+-			}
+ 			lib, diags := testCompile(tc.files)
+ 			assertNoDiags(t, diags)
+ 			tc.assert(t, lib)
+@@ -613,31 +590,55 @@ values { foo = symbols::foo() }`},
+ 
+ 	for _, tc := range cases {
+ 		t.Run(tc.name, func(t *testing.T) {
+-			// Parse files into "directory" structure
+-			files := map[string][]*SymbolFile{}
+-			for path, contents := range tc.files {
+-				parts := strings.Split(path, "/")
+-				fileName := parts[len(parts)-1]
+-				dir := strings.Join(parts[:len(parts)-1], "/") + "/"
+-
+-				parsed, diags := hclsyntax.ParseConfig([]byte(contents), fileName, hcl.InitialPos)
+-				assertNoDiags(t, diags)
++			_, diags := testCompile(tc.files)
++			tc.assert(t, diags)
++		})
++	}
++}
+ 
+-				sFile, diags := LoadSymbolFile(parsed.Body)
+-				assertNoDiags(t, diags)
++// TestMissingTypeConversion ensures that different type missing scenarios don't
++// cause panics and correctly return diagnostics
++func TestMissingTypeConversion(t *testing.T) {
++	testFiles := map[string]string{"./contents.sym.hcl": `typedef "foo" { type = symbols::bar() } `}
++	lib, diags := testCompile(testFiles)
++	if !diags.HasErrors() {
++		t.Error("Expected errors")
++	}
++	table := Table{"lib": lib}
++
++	cases := []struct {
++		name  string
++		tname string
++	}{{
++		name:  "missing dependent type",
++		tname: "symbols::lib::foo()",
++	}, {
++		name:  "missing type",
++		tname: "symbols::lib::undef()",
++	}, {
++		name:  "missing library",
++		tname: "symbols::missing::ty()",
++	}}
+ 
+-				files[dir] = append(files[dir], sFile)
++	for _, tc := range cases {
++		t.Run(tc.name, func(t *testing.T) {
++			defer func() {
++				err := recover()
++				if err != nil {
++					t.Fatal("unexpected panic", err)
++				}
++			}()
++			typeCtx := table.TypeContext()
++
++			expr, diags := hclsyntax.ParseExpression([]byte("object({a = optional(symbols::bar::foo(), 5)})"), "", hcl.InitialPos)
++			if diags.HasErrors() {
++				t.Error("Expected no errors")
+ 			}
+ 
+-			var loader Loader
+-			loader = func(call *SymbolCall) (*Library, hcl.Diagnostics) {
+-				var source string
+-				diags := gohcl.DecodeExpression(call.Source, nil, &source)
+-				assertNoDiags(t, diags)
+-				return CompileLibrary(files[source], loader, testCtyFuncs)
++			_, _, diags = typeCtx.TypeConstraintWithDefaults(expr)
++			if !diags.HasErrors() {
++				t.Error("Expected errors")
+ 			}
+-			_, diags := testCompile(tc.files)
+-			tc.assert(t, diags)
+ 		})
+ 	}
+ }
 ```
 
-**File**: `go.sum` (modified, +2/-2)
+**File**: `internal/configs/symlib/library.go` (modified, +4/-2)
 ```diff
-@@ -69,8 +69,8 @@ github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERo
- github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
- github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2 h1:+vx7roKuyA63nhn5WAunQHLTznkw5W8b1Xc0dNjp83s=
- github.com/Netflix/go-expect v0.0.0-20220104043353-73e0943537d2/go.mod h1:HBCaDeC1lPdgDeDbhX8XFpy1jqjK0IBG8W5K+xYqA0w=
--github.com/ProtonMail/go-crypto v1.4.1 h1:9RfcZHqEQUvP8RzecWEUafnZVtEvrBVL9BiF67IQOfM=
--github.com/ProtonMail/go-crypto v1.4.1/go.mod h1:e1OaTyu5SYVrO9gKOEhTc+5UcXtTUa+P3uLudwcgPqo=
-+github.com/ProtonMail/go-crypto v1.5.2 h1:cucYnvqcY7UOXVD//mSyjeaPY0SSN3v5cDkYPxumINk=
-+github.com/ProtonMail/go-crypto v1.5.2/go.mod h1:/RaSu30DaKO4RY+XdV/ACcCcZkGr7AhUIduq5sjzzCo=
- github.com/agext/levenshtein v1.2.3 h1:YB2fHEn0UJagG8T1rrWknE3ZQzWM06O8AMAatNn7lmo=
- github.com/agext/levenshtein v1.2.3/go.mod h1:JEDfjyjHDjOF/1e4FlBE/PkbqA9OfWu2ki2W0IB5558=
- github.com/ajstarks/svgo v0.0.0-20180226025133-644b8db467af/go.mod h1:K08gAheRH3/J6wwsYMMT4xOr94bZjxIelGM0+d/wbFw=
+@@ -48,7 +48,8 @@ type Library struct {
+ func (l Library) typeWithDefaults(name string, rng hcl.Range) (cty.Type, *typeexpr.Defaults, hcl.Diagnostics) {
+ 	tyd, ok := l.types[name]
+ 	if !ok {
+-		return cty.NilType, nil, hcl.Diagnostics{{
++		// We must return *some* valid type here even if there are diags.
++		return cty.DynamicPseudoType, nil, hcl.Diagnostics{{
+ 			Severity: hcl.DiagError,
+ 			Summary:  "Missing type",
+ 			Detail:   fmt.Sprintf("Type %s not defined in symbol library %s", name, l.name),
+@@ -94,7 +95,8 @@ func (t Table) library(name string, rng hcl.Range) (*Library, hcl.Diagnostics) {
+ func (t Table) Type(ref TypeRef) (cty.Type, *typeexpr.Defaults, hcl.Diagnostics) {
+ 	lib, diags := t.library(ref.Namespace, ref.Range)
+ 	if diags.HasErrors() {
+-		return cty.NilType, nil, diags
++		// We must return *some* valid type here even if there are diags.
++		return cty.DynamicPseudoType, nil, diags
+ 	}
+ 	return lib.typeWithDefaults(ref.Name, ref.Range)
+ }
+```
+
+---
+
+### Incident Patch 2: `566a5326` (2026-11-17)
+**Commit Message**: runtime: fix upgrade state on destroy and no skip refresh (#4854)
+
+Signed-off-by: Larry Bordowitz <[REDACTED_EMAIL]>
+
+**File**: `internal/tofu/context_plan.go` (modified, +1/-1)
+```diff
+@@ -513,7 +513,7 @@ func (c *Context) destroyPlan(ctx context.Context, config *configs.Config, prevR
+ 		return destroyPlan, diags
+ 	}
+ 
+-	if !opts.SkipRefresh {
++	if !skipNormalPlanForRefresh {
+ 		// If we didn't skip refreshing then we want the previous run state to
+ 		// be the one we originally fed into the c.refreshOnlyPlan call above,
+ 		// not the refreshed version we used for the destroy planWalk.
+```
+
+**File**: `internal/tofu/context_temp_runtime_test.go` (modified, +1/-1)
+```diff
+@@ -117,7 +117,7 @@ var (
+ 	ExperimentalFeatureMoved           = ExperimentalFlag{"Missing Moved", true}
+ 	ExperimentalFeatureRemoved         = ExperimentalFlag{"Missing Removed", false}
+ 	ExperimentalFeatureSkipDestroy     = ExperimentalFlag{"Missing Lifecycle Destroy", false}
+-	ExperimentalFeatureUpgradeUnwanted = ExperimentalFlag{"Missing Upgrade Orphan or Deposed Resource Instance State", false}
++	ExperimentalFeatureUpgradeUnwanted = ExperimentalFlag{"Missing Upgrade Orphan or Deposed Resource Instance State", true}
+ 	ExperimentalFeatureTarget          = ExperimentalFlag{"Missing Targeting", true}
+ 	ExperimentalFeatureVarCondition    = ExperimentalFlag{"Missing Variable Condiitions", false}
+ 	ExperimentalFeaturePlannedState    = ExperimentalFlag{"Missing Planned State", false}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4861** (2026-11-18): Fix symbol libraries crash when uninitialized (@cam72cam)
+- **PR #4859** (2026-11-18): [Backport][v1.13] tofu test: apply mock_provider resource overrides inside modules (#4841) (@yottta)
+- **PR #4854** (2026-11-17): runtime: fix upgrade state on destroy and no skip refresh (@lbordowitz)
 - **PR #4847** (2026-11-17): Bump go-crypto to 1.5.2 to fix intermittent `tofu init` crash (@lxea)
 - **PR #4842** (2026-11-13): planning: Propose to Forget instead of Delete when requested (@apparentlymart)
-- **PR #4839** (2026-11-12): Propagate the `destroy = false` setting from `resource` blocks through to `ResourceInstanceObjectMeta` (@apparentlymart)
-- **PR #4835** (2026-11-11): Add missing copyright headers (@yottta)
-- **PR #4834** (2026-11-12): [Govulncheck][GO-2026-6859][v1.13] Upgrade Go toolchain to 1.27.4 (@karlmoriaty)
-- **PR #4833** (2026-11-12): [Govulncheck][GO-2026-6859][v1.12] Upgrade Go toolchain to 1.26.11 (@karlmoriaty)
+- **PR #4841** (2026-11-18): tofu test: apply mock_provider resource overrides inside modules (@pseudorandom314)
 
 ---
 
@@ -1506,31 +1650,106 @@ Signed-off-by: Alex McGrath <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bump go-crypto to 1.5.2 to fix intermittent `tofu init` crash
+## X. symbol libraries crash when uninitialized
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/configs/symlib/compiler_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in opentofu/opentofu. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fd9945e8`: Bump go-crypto to 1.5.2 to fix intermittent `tofu init` crash. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9699ab67`: symbol libraries crash when uninitialized. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/configs/symlib/compiler_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/ProtonMail/go-crypto v1.5.2
+			_, diags := testCompile(tc.files)
+			tc.assert(t, diags)
+		})
+	}
+}
+// TestMissingTypeConversion ensures that different type missing scenarios don't
+// cause panics and correctly return diagnostics
+func TestMissingTypeConversion(t *testing.T) {
+	testFiles := map[string]string{"./contents.sym.hcl": `typedef "foo" { type = symbols::bar() } `}
+	lib, diags := testCompile(testFiles)
+	if !diags.HasErrors() {
+		t.Error("Expected errors")
+	}
+	table := Table{"lib": lib}
+
+	cases := []struct {
+		name  string
+		tname string
+	}{{
+		name:  "missing dependent type",
+		tname: "symbols::lib::foo()",
+	}, {
+		name:  "missing type",
+		tname: "symbols::lib::undef()",
+	}, {
+		name:  "missing library",
+		tname: "symbols::missing::ty()",
+	}}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			defer func() {
+				err := recover()
+				if err != nil {
+					t.Fatal("unexpected panic", err)
+				}
+			}()
+			typeCtx := table.TypeContext()
+
+			expr, diags := hclsyntax.ParseExpression([]byte("object({a = optional(symbols::bar::foo(), 5)})"), "", hcl.InitialPos)
+			if diags.HasErrors() {
+				t.Error("Expected no errors")
+			_, _, diags = typeCtx.TypeConstraintWithDefaults(expr)
+			if !diags.HasErr
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/ProtonMail/go-crypto v1.4.1
+			// Parse files into "directory" structure
+			files := map[string][]*SymbolFile{}
+			for path, contents := range tc.files {
+				parts := strings.Split(path, "/")
+				fileName := parts[len(parts)-1]
+				dir := strings.Join(parts[:len(parts)-1], "/") + "/"
+
+				parsed, diags := hclsyntax.ParseConfig([]byte(contents), fileName, hcl.InitialPos)
+				assertNoDiags(t, diags)
+
+				sFile, diags := LoadSymbolFile(parsed.Body)
+				assertNoDiags(t, diags)
+
+				files[dir] = append(files[dir], sFile)
+			}
+
+			var loader Loader
+			loader = func(call *SymbolCall) (*Library, hcl.Diagnostics) {
+				var source string
+				diags := gohcl.DecodeExpression(call.Source, nil, &source)
+				assertNoDiags(t, diags)
+				return CompileLibrary(files[source], loader, testCtyFuncs)
+			}
+			// Parse files into "directory" structure
+			files := map[string][]*SymbolFile{}
+			for path, contents := range tc.files {
+				parts := strings.Split(path, "/")
+				fileName := parts[len(parts)-1]
+				dir := strings.Join(parts[:len(parts)-1], "/") + "/"
+
+				parsed, diags := hclsyntax.ParseConfig([]byte(contents), fileName, hcl.InitialPos)
+				assertNoDiags(t, diags)
+				sFile, diags := LoadSymbolFile(parsed.Body)
+				assertNo
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fd9945e8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9699ab67` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

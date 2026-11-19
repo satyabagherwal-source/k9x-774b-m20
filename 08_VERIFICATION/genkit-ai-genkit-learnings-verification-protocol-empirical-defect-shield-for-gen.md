@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:36:01.552Z",
+  "timestamp": "2026-11-19T05:06:23.822Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-genkit-ai-genkit-learnings",
+  "learning_id": "LEARN-EVO-genkit-ai-genkit-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [genkit-ai-genkit-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:36:01.552Z`  
-> **Learning ID**: `LEARN-REEXTRACT-genkit-ai-genkit-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-19T05:06:23.822Z`  
+> **Learning ID**: `LEARN-EVO-genkit-ai-genkit-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source**: github ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
-> **Source Version**: `2e9dbfd6`  
+> **Source Version**: `56db89eb`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T08:06:57.011Z  
+> **Timestamp**: 2026-11-19T05:06:18.860Z  
 > **Learning ID**: `learn-github-genkit-ai-genkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/genkit-ai-genkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/genkit-ai/genkit](https://github.com/genkit-ai/genkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T08:04:37.744Z  
+> **Harvest Timestamp**: 2026-11-19T05:06:18.856Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Open-source framework for building agentic apps in JavaScript, Go, Dart, and Python, built and used in production by Google
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 6581 stars
+- **Stars / Engagement**: 6604 stars
 
 ---
 
@@ -61,179 +61,6 @@ PROVENANCE_END -->
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: package.json, README.md.
 - Evaluated system abstractions and modular contracts.
-
-### Core Architecture Module: `genkit-tools/cli/src/commands/init-ai-tools/utils.ts`
-```
-/**
- * Copyright 2025 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
-import { existsSync, readFileSync } from 'fs';
-
-import { Runtime } from '@genkit-ai/tools-common/manager';
-import * as crypto from 'crypto';
-import { writeFile } from 'fs/promises';
-import { GENKIT_CONTEXT as GoContext } from './context/go.js';
-import { GENKIT_CONTEXT as NodeContext } from './context/nodejs.js';
-
-/** Shared location for the GENKIT.md context file */
-export const GENKIT_PROMPT_PATH = 'GENKIT.md';
-
-const GENKIT_TAG_REGEX =
-  /<genkit_prompts(?:\s+hash="([^"]+)")?>([\s\S]*?)<\/genkit_prompts>/;
-/*
- * Deeply compares two JSON-serializable objects. It's a simplified version of a
- * deep equal function, sufficient for comparing the structure of the
- * gemini-extension.json file. It doesn't handle special cases like RegExp,
- * Date, or functions.
- */
-export function deepEqual(a: any, b: any): boolean {
-  if (a === b) {
-    return true;
-  }
-
-  if (
-    typeof a !== 'object' ||
-    a === null ||
-    typeof b !== 'object' ||
-    b === null
-  ) {
-    return false;
-  }
-
-  const keysA = Object.keys(a);
-  const keysB = Object.keys(b);
-
-  if (keysA.length !== keysB.length) {
-    return false;
-  }
-
-  for (const key of keysA) {
-    if (!keysB.includes(key) || !deepEqual(a[key], b[key])) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-/**
- * Replace an entire prompt file (no user content to preserve). Used for files
- * we fully own like GENKIT.md.
- */
-export async function initOrReplaceFile(
-  filePath: string,
-  content: string
-): Promise<{ updated: boolean }> {
-  const fileExists = existsSync(filePath);
-  if (fileExists) {
-    const currentConfig = readFileSync(filePath, 'utf-8');
-    if (!deepEqual(currentConfig, content)) {
-      await writeFile(filePath, content);
-      return { updated: true };
-    }
-  } else {
-    await writeFile(filePath, content);
-    return { updated: true };
-  }
-  return { updated: false };
-}
-
-/**
- * Update a file with Genkit prompts section, preserving user content
- * Used for files like CLAUDE.md.
- */
-export async function updateContentInPlace(
-  filePath: string,
-  content: string,
-  options?: { hash: string }
-): Promise<{ updated: boolean }> {
-  const newHash = options?.hash ?? calculateHash(content);
-  const newSection = `<genkit_prompts hash="${newHash}">
-<!-- Genkit Context - Auto-generated, do not edit -->
-${content}
-</genkit_prompts>`;
-
-  let currentContent = '';
-  const fileExists = existsSync(filePath);
-  if (fileExists) {
-    currentContent = readFileSync(filePath, 'utf-8');
-  }
-
-  // Check if section exists and has same hash
-  const match = currentContent.match(GENKIT_TAG_REGEX);
-  if (match && match[1] === newHash) {
-    return { updated: false };
-  }
-
-  // Generate final content
-  let finalContent: string;
-  if (!currentContent) {
-    // New file
-    finalContent = newSection;
-  } else if (match) {
-    // Replace existing section
-    finalContent =
-      currentContent.substring(0, match.index!) +
-      newSection +
-      currentContent.substring(match.index! + match[0].length);
-  } else {
-    // Append to existing file
-    const separator = currentContent.endsWith('\n') ? '\n' : '\n\n';
-    finalContent = currentContent + separator + newSection;
-  }
-
-  await writeFile(filePath, finalContent);
-  return { updated: true };
-}
-
-/**
- * Generate hash for embedded content.
- */
-export function calculateHash(content: string): string {
-  return crypto
-    .createHash('sha256')
-    .update(content.trim())
-    .digest('hex')
-    .substring(0, 8);
-}
-
-/**
- * Get raw prompt content for Genkit
- */
-export function getGenkitContext(runtime: Runtime): string {
-  switch (runtime) {
-    case 'nodejs':
-      return NodeContext;
-    case 'go':
-      return GoContext;
-    default:
-      throw new Error(`Unexpected runtime provided: ${runtime}`);
-  }
-}
-
-/**
- * Initializes the GENKIT.md file
- */
-export async function initGenkitFile(runtime: Runtime) {
-  const genkitContext = getGenkitContext(runtime);
-  const result = await initOrReplaceFile(GENKIT_PROMPT_PATH, genkitContext);
-  return { updated: result.updated, hash: calculateHash(genkitContext) };
-}
-
-```
 
 ### Core Architecture Module: `genkit-tools/cli/src/mcp/utils.ts`
 ```
@@ -416,6 +243,60 @@ export class McpRuntimeManager {
       this.currentProjectRoot = undefined;
       await prev.stop();
     }
+  }
+}
+
+```
+
+### Core Architecture Module: `genkit-tools/cli/src/utils/legacy-context-warning.ts`
+```
+/**
+ * Copyright 2026 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { logger } from '@genkit-ai/tools-common/utils';
+import { existsSync } from 'fs';
+import { readFile } from 'fs/promises';
+import * as path from 'path';
+
+const LEGACY_GENKIT_MD_FILENAME = 'GENKIT.md';
+const LEGACY_BAD_INSTRUCTION_MARKER = 'Do not run Genkit commands';
+
+/**
+ * Logs a read-only warning if the workspace has a legacy `GENKIT.md` file
+ * containing outdated instructions from `genkit init:ai-tools`.
+ */
+export async function warnIfLegacyGenkitContext(
+  projectRoot: string
+): Promise<void> {
+  const genkitMdPath = path.join(projectRoot, LEGACY_GENKIT_MD_FILENAME);
+  if (!existsSync(genkitMdPath)) {
+    return;
+  }
+
+  try {
+    const content = await readFile(genkitMdPath, 'utf-8');
+    if (content.includes(LEGACY_BAD_INSTRUCTION_MARKER)) {
+      logger.warn(
+        'Legacy `GENKIT.md` detected with outdated instructions from deprecated `genkit init:ai-tools`.\n' +
+          'You can delete `GENKIT.md` (and any references to it) and install Genkit Agent Skills instead:\n' +
+          '  npx skills add genkit-ai/skills'
+      );
+    }
+  } catch (e) {
+    logger.debug('Failed to inspect GENKIT.md for legacy instructions', e);
   }
 }
 
@@ -2099,459 +1980,471 @@ export function setUserSettings(s: Record<string, string | boolean | number>) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d0d2e7af` (2026-11-10)
-**Commit Message**: fix(py/plugins/mcp): say which server failed and why (#6930)
+### Incident Patch 1: `56db89eb` (2026-11-18)
+**Commit Message**: build(deps-dev): bump the root-dependencies group across 1 directory with 6 updates (#7263)
 
-**File**: `py/packages/genkit-mcp/src/genkit_mcp/_client.py` (modified, +4/-1)
+**File**: `package.json` (modified, +6/-6)
 ```diff
-@@ -107,6 +107,7 @@ def __init__(
-         validate_request_timeout(request_timeout_millis)
-         self._provider = None
-         self._name = name
-+        self._host: str | None = None
-         self._server = McpStdioServerConfig(command=command, args=args, env=env, cwd=cwd)
-         self._request_timeout_millis = request_timeout_millis
-         self._closed = False
-@@ -323,7 +324,9 @@ def _connection(self) -> McpConnection:
-             existing = self._connections.get(loop)
-             if existing is not None and not existing.is_terminal:
-                 return existing
--            connection = McpConnection(self._server, request_timeout_millis=self._request_timeout_millis)
-+            connection = McpConnection(
-+                self._name, self._server, request_timeout_millis=self._request_timeout_millis, host=self._host
-+            )
-             self._connections[loop] = connection
-             return connection
- 
+@@ -37,17 +37,17 @@
+   "devDependencies": {
+     "@commitlint/cli": "20.5.3",
+     "@commitlint/config-conventional": "20.5.3",
+-    "@types/node": "22.10.5",
+-    "inquirer": "^8.2.6",
++    "@types/node": "22.20.5",
++    "inquirer": "^8.2.7",
+     "lint-staged": "^17.5.0",
+-    "only-allow": "^1.2.1",
++    "only-allow": "^1.2.2",
+     "prettier": "^3.9.10",
+-    "prettier-plugin-css-order": "2.0.1",
++    "prettier-plugin-css-order": "2.2.0",
+     "prettier-plugin-organize-imports": "^3.2.4",
+-    "rimraf": "^6.0.1",
++    "rimraf": "^6.1.3",
+     "simple-git-hooks": "^2.14.0",
+     "ts-node": "^10.9.2",
+-    "tsx": "^4.20.3"
++    "tsx": "^4.23.15"
+   },
+   "pnpm": {
+     "overrides": {
 ```
 
-**File**: `py/packages/genkit-mcp/src/genkit_mcp/_connection.py` (modified, +52/-19)
+**File**: `pnpm-lock.yaml` (modified, +236/-379)
 ```diff
-@@ -75,7 +75,7 @@
+@@ -20,43 +20,43 @@ importers:
+     devDependencies:
+       '@commitlint/cli':
+         specifier: 20.5.3
+-        version: 20.5.3(@types/node@22.10.5)(conventional-commits-parser@6.4.0)(typescript@5.4.5)
++        version: 20.5.3(@types/node@22.20.5)(conventional-commits-parser@6.4.0)(typescript@5.4.5)
+       '@commitlint/config-conventional':
+         specifier: 20.5.3
+         version: 20.5.3
+       '@types/node':
+-        specifier: 22.10.5
+-        version: 22.10.5
++        specifier: 22.20.5
++        version: 22.20.5
+       inquirer:
+-        specifier: ^8.2.6
+-        version: 8.2.6
++        specifier: ^8.2.7
++        version: 8.2.7(@types/node@22.20.5)
+       lint-staged:
+         specifier: ^17.5.0
+         version: 17.6.0
+       only-allow:
+-        specifier: ^1.2.1
+-        version: 1.2.1
++        specifier: ^1.2.2
++        version: 1.2.2
+       prettier:
+         specifier: ^3.9.10
+         version: 3.9.10
+       prettier-plugin-css-order:
+-        specifier: 2.0.1
+-        version: 2.0.1(postcss@8.4.38)(prettier@3.9.10)
++        specifier: 2.2.0
++        version: 2.2.0(postcss@8.4.38)(prettier@3.9.10)
+       prettier-plugin-organize-imports:
+         specifier: ^3.2.4
+         version: 3.2.4(prettier@3.9.10)(typescript@5.4.5)
+       rimraf:
+-        specifier: ^6.0.1
+-        version: 6.0.1
++        specifier: ^6.1.3
++        version: 6.1.3
+       simple-git-hooks:
+         specifier: ^2.14.0
+         version: 2.14.0
+       ts-node:
+         specifier: ^10.9.2
+-        version: 10.9.2(@types/node@22.10.5)(typescript@5.4.5)
++        version: 10.9.2(@types/node@22.20.5)(typescript@5.4.5)
+       tsx:
+-        specifier: ^4.20.3
+-        version: 4.20.3
++        specifier: ^4.23.15
++        version: 4.23.15
  
- _PACKAGE = 'genkit-mcp'
+ packages:
  
--MAX_TOOL_PAGES = 1000
-+_MAX_TOOL_PAGES = 1000
- """Ceiling on ``tools/list`` pages followed before a server is called broken."""
+@@ -153,167 +153,170 @@ packages:
+     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
+     engines: {node: '>=12'}
  
- DEFAULT_REQUEST_TIMEOUT_MILLIS = 60_000
-@@ -93,15 +93,15 @@
- }
- """Status for each JSON-RPC error code a server may answer with. Any other code is ``UNKNOWN``."""
+-  '@esbuild/aix-ppc64@0.25.5':
+-    resolution: {integrity: sha512-9o3TMmpmftaCMepOdA5k/yDw8SfInyzWWTjYTFCX3kPSDJMROQTb8jg+h9Cnwnmm1vOzvxN7gIfB5V2ewpjtGA==}
++  '@esbuild/aix-ppc64@0.28.2':
++    resolution: {integrity: sha512-XExcO+dvLKvVtNTibSTBej1NCAbaGhWn9Ww1ZPx80qsahhPFe/8jgWP0IchNe0F3HwkU7n8ejhH8bjonqht8mQ==}
+     engines: {node: '>=18'}
+     cpu: [ppc64]
+     os: [aix]
  
--LIVENESS_PROBE_SECONDS = 5.0
-+_LIVENESS_PROBE_SECONDS = 5.0
- """Bound on the ping that tells a dead transport from a server error reply.
+-  '@esbuild/android-arm64@0.25.5':
+-    resolution: {integrity: sha512-VGzGhj4lJO+TVGV1v8ntCZWJktV7SGCs3Pn1GRWI1SBFtRALoomm8k5E9Pmwg3HOAal2VDc2F9+PM/rEY6oIDg==}
++  '@esbuild/android-arm64@0.28.2':
++    resolution: {integrity: sha512-5YfKeeI8qWfBZIX+u2xZC3Zlb3Os/gLS2sbEKM+I4ZOcsWmHS2WLysCcQZDAFRslDUU5Oiq44gf6PYN1vGwG5A==}
+     engines: {node: '>=18'}
+     cpu: [arm64]
+     os: [android]
  
- A ping which does not return inside this window is read as a slow server, not a
- dead one: the opposite reading tears down a healthy connection over one slow
- reply.
- """
+-  '@esbuild/android-arm@0.25.5':
+-    resolution: {integrity: sha512-AdJKSPeEHgi7/ZhuIPtcQKr5RQdo6OO2IL87JkianiMYMPbCtot9fxPbrMiBADOWWm3T2si9stAiVsGbTQFkbA==}
++  '@esbuild/android-arm@0.28.2':
++    resolution: {integrity: sha512-kXXoiPVVGQcnIYGOeaovwOURpniDBpSq4A03qkQ+BMQqtGG6HYap3xne9C1O1yo4TR3qxlCX5IqqmX6fFo2Lqg==}
+     engines: {node: '>=18'}
+     cpu: [arm]
+     os: [android]
  
--CLOSE_GRACE_SECONDS = 6.0
-+_CLOSE_GRACE_SECONDS = 6.0
- """How long ``close`` lets the SDK's stdio shutdown run before it kills the server outright.
+-  '@esbuild/android-x64@0.25.5':
+-    resolution: {integrity: sha512-D2GyJT1kjvO//drbRT3Hib9XPwQeWd9vZoBJn+bu/lVsOZ13cqNdDeqIF/xQ5/VmWvMduP6AmXvylO/PIc2isw==}
++  '@esbuild/android-x64@0.28.2':
++    resolution: {integrity: sha512-O387ite7SzUyCcy3JQX4P4bLtEA7bLLkx+esve5JHnyYfNTxcVpXZo9jhdB0lTKN44gztELTdU7nS8Nr16Fs1Q==}
+     engines: {node: '>=18'}
+     cpu: [x64]
+     os: [android]
  
- The SDK waits two seconds for the server to exit on stdin EOF, then two more
-@@ -117,7 +117,7 @@ def _client_info() -> Implementation:
-         return Implementation(name=_PACKAGE, version='0.0.0')
+-  '@esbuild/darwin-arm64@0.25.5':
+-    resolution: {integrity: sha512-GtaBgammVvdF7aPIgH2jxMDdivezgFu6iKpmT+48+F8Hhg5J/sfnDieg0aeG/jfSvkYQU2/pceFPDKlqZzwnfQ==}
++  '@esbuild/darwin-arm64@0.28.2':
++    resolution: {integrity: sha512-n4KqkOQrraxHJcgjM1RvwbigfQKIKJVpM7xp+KsxiyUSrRdIXnt73VhrPAx0fV44hgfmIVKjxMN9J1t5jySVkw==}
+     engines: {node: '>=18'}
+     cpu: [arm64]
+     os: [darwin]
  
+-  '@esbuild/darwin-x64@0.25.5':
+-    resolution: {integrity: sha512-1iT4FVL0dJ76/q1wd7XDsXrSW+oLoquptvh4CLR4kITDtqi2e/xwXwdCVH8hVHU43wgJdsq7Gxuzcs6Iq/7bxQ==}
++  '@esbuild/darwin-x64@0.28.2':
++    resolution: {integrity: sha512-uq6suIWYP37qzGddBKPw5QEQPi6HiLGsO7UmkpfyaYNQ3D+rN6w6WfwH+nuqcGXWvawGwxOEroO4YGnFh95azw==}
+     engines: {node: '>=18'}
+     cpu: [x64]
+     os: [darwin]
  
--CLIENT_INFO = _client_info()
-+_CLIENT_INFO = _client_info()
- """What servers see in the ``clientInfo`` of every initialize request."""
+-  '@esbuild/freebsd-arm64@0.25.5':
+-    resolution: {integrity: sha512-nk4tGP3JThz4La38Uy/gzyXtpkPW8zSAmoUhK9xKKXdBCzKODMc2adkB2+8om9BDYugz+uGV7sLmpTYzvmz6Sw==}
++  '@esbuild/freebsd-arm64@0.28.2':
++    resolution: {integrity: sha512-n+I0BTSRIoy+d6RPKnEVwql5UwBJolytvY4mAOIEJorKlqgPII8ix6slVVrfZ5Tnj7glIZvloylbB/EJPMWEXw==}
+     engines: {node: '>=18'}
+     cpu: [arm64]
+     os: [freebsd]
  
- _serving: contextvars.ContextVar['McpConnection | None'] = contextvars.ContextVar('genkit_mcp_serving', default=None)
-@@ -160,7 +160,7 @@ async def _transport_is_dead(session: ClientSession, error: Exception) -> bool:
-     if not isinstance(error, McpError) or error.error.code != CONNECTION_CLOSED:
-         return False
-     try:
--        await asyncio.wait_for(session.send_ping(), timeout=LIVENESS_PROBE_SECONDS)
-+        await asyncio.wait_for(session.send_ping(), timeout=_LIVENESS_PROBE_SECONDS)
-     except McpError as probe:
-         return probe.error.code == CONNECTION_CLOSED
-     except asyncio.TimeoutError:
-@@ -271,21 +271,30 @@ class McpConnection:
- 
-     def __init__(
-         self,
-+        name: str,
-         config: McpStdioServerConfig,
-         request_timeout_millis: int | None = DEFAULT_REQUEST_TIMEOUT_MILLIS,
-+        *,
-+        host: str | None = None,
-     ) -> None:
-         """Prepare a connection. No process starts until the first call.
- 
-         Args:
-+            name: Name of the client, or of the server within a host, that
-+                errors and logs report this connection by.
-             config: How to launch the server.
-             request_timeout_millis: How long one request may take before it
-                 fails. Must be positive. ``None`` is the only way to disable
-                 the timeout.
-+            host: Name of the host serving this server, if any, which errors
-+                and logs report alongside ``name``.
- 
-         Raises:
-             ValueError: If ``request_timeout_millis`` is zero or negative.
-         """
-         validate_request_timeout(request_timeout_millis)
-+        self._name = name
-+        self._host = host
-         self._config = config
-         self._request_timeout = (
-             timedelta(milliseconds=request_timeout_millis) if request_timeout_millis is not None else None
-@@ -317,7 +326,9 @@ async def list_tools(self) -> list[McpTool]:
-             capability.
- 
-         Raises:
--            _ProtocolError: If the server's cursors never terminate.
-+            _ProtocolError: If the server's cursors never terminate, or a page
-+                request fails without a JSON-RPC error, such as on a malformed
-+                reply.
-             _RequestTimeoutError: If the server does not answer a page in time.
-             _ServerError: If the server answers a page with a JSON-RPC error.
-         """
-@@ -329,7 +340,7 @@ async def list_all(session: ClientSession) -> list[McpTool]:
-             tools: list[McpTool] = []
-             cursor: str | None = None
-             seen: set[str] = set()
--            for _ in range(MAX_TOOL_PAGES):
-+            for _ in range(_MAX_TOOL_PAGES):
-                 result = await session.list_tools(
-                     params=PaginatedRequestParams(cursor=cursor) if cursor is not None else None
-                 )
-@@ -338,9 +349,9 @@ async def list_all(session: ClientSession) -> list[McpTool]:
-                 if not cursor:
-                     return tools
-                 if cursor in seen:
--                    raise _ProtocolError(f'{self._config.command!r} repeated the tools/list cursor {cursor!r}')
-+                    raise _ProtocolError(f'MCP server {self._target} repeated the tools/list cursor {cursor!r}')
-                 seen.add(cursor)
--            raise _ProtocolError(f'{self._config.command!r} served over {MAX_TOOL_PAGES} tools/list pages')
-+            raise _ProtocolError(f'MCP server {self._target} served over {_MAX_TOOL_PAGES} tools/list pages')
- 
-         return await self._request(list_all)
- 
-@@ -362,6 +373,8 @@ async def call_tool(
- 
-         Raises:
-             _ToolResultError: If the result violates the tool's declared output schema.
-+            _ProtocolError: If the request fails without a JSON-RPC error, such
-+                as on a malfo
-```
-
-**File**: `py/packages/genkit-mcp/src/genkit_mcp/_errors.py` (modified, +5/-1)
-```diff
-@@ -83,7 +83,11 @@ class _ServerError(_ClientError):
- 
- 
- class _ProtocolError(_ClientError):
--    """The server answered in a way the protocol does not allow. Status ``INTERNAL``."""
-+    """One request failed without a JSON-RPC error, such as on a malformed reply. Status ``INTERNAL``.
-+
-+    This includes a server whose ``tools/list`` cursors never terminate.
-+    ``__cause__`` carries what the MCP SDK raised, when there is one.
-+    """
- 
- 
- class _ToolResultError(_ClientError):
-```
-
-**File**: `py/packages/genkit-mcp/src/genkit_mcp/_host.py` (modified, +3/-1)
-```diff
-@@ -341,14 +341,16 @@ async def _release(self, client: McpClient) -> None:
- 
-     def _build_client(self, server_name: str, config: McpStdioServerConfig) -> McpClient:
-         """Build a client for one server, which serves no provider until it is installed."""
--        return McpClient(
-+        client = McpClient(
-             server_name,
-             command=config.command,
-             args=config.args,
-             env=config.env,
-             cwd=config.cwd,
-             request_timeout_millis=self._request_timeout_millis,
-         )
-+        client._host = self._name
-+        return client
- 
-     def _stdio_config(self, server_name: str, entry: McpServerEntry) -> McpStdioServerConfig:
-         """Validate one server's name and entry, naming the server when it is not a stdio entry."""
-```
-
-**File**: `py/packages/genkit-mcp/src/genkit_mcp/_tools.py` (modified, +7/-7)
-```diff
-@@ -39,15 +39,15 @@
- 
- logger = get_logger(__name__)
- 
--MAX_TOOL_NAME_LENGTH = 64
-+_MAX_TOOL_NAME_LENGTH = 64
- """Longest function declaration name both Gemini and OpenAI accept."""
- 
--TOOL_NAME_PATTERN = re.compile(r'[A-Za-z_][A-Za-z0-9_-]*')
-+_TOOL_NAME_PATTERN = re.compile(r'[A-Za-z_][A-Za-z0-9_-]*')
- """What both Gemini and OpenAI accept in a function declaration name."""
- 
- _TOOL_NAME_REJECTED_CHARS = re.compile(r'[^A-Za-z0-9_-]')
- 
--SELECTOR_SEPARATORS = (':', '/')
-+_SELECTOR_SEPARATORS = (':', '/')
- """Characters a tool selector puts around a provider name, so a name cannot hold them."""
- 
- 
-@@ -63,7 +63,7 @@ def validate_provider_name(name: str) -> None:
-     Raises:
-         ValueError: If ``<name>:tool/<tool>`` would not parse as a selector.
-     """
--    if name and not any(separator in name for separator in SELECTOR_SEPARATORS):
-+    if name and not any(separator in name for separator in _SELECTOR_SEPARATORS):
-         return
-     raise ValueError(
-         f'{name!r} cannot name an MCP provider: its tools are selected as '
-@@ -84,7 +84,7 @@ def validate_tool_prefix(prefix: str) -> None:
-         ValueError: If a name built from this prefix would be rejected by the
-             model providers.
-     """
--    if TOOL_NAME_PATTERN.fullmatch(prefix):
-+    if _TOOL_NAME_PATTERN.fullmatch(prefix):
-         return
-     raise ValueError(
-         f'{prefix!r} cannot prefix an MCP tool name: a function declaration name must start with a '
-@@ -110,7 +110,7 @@ def mcp_tool_name(prefix: str, tool_name: str) -> str:
-         The namespaced name sent to the model.
-     """
-     name = _TOOL_NAME_REJECTED_CHARS.sub('_', f'{prefix}_{tool_name}')
--    if not TOOL_NAME_PATTERN.fullmatch(name):
-+    if not _TOOL_NAME_PATTERN.fullmatch(name):
-         name = f'_{name}'
-     return name
- 
-@@ -214,7 +214,7 @@ def mcp_tool_to_action(
-             tool=tool_name,
-             server_tool=tool.name,
-         )
--    if len(tool_name) > MAX_TOOL_NAME_LENGTH:
-+    if len(tool_name) > _MAX_TOOL_NAME_LENGTH:
-         logger.warning(
-             'MCP tool name is longer than most model providers accept',
-             tool=tool_name,
-```
-
-**File**: `py/packages/genkit-mcp/tests/fake_server.py` (modified, +9/-0)
-```diff
-@@ -20,6 +20,7 @@
-     CONNECTION_CLOSED,
-     CallToolRequest,
-     CallToolResult,
-+    EmptyResult,
-     ErrorData,
-     ListToolsRequest,
-     ListToolsResult,
-@@ -148,6 +149,14 @@ async def failing_call(req: CallToolRequest) -> ServerResult:
- 
-     app.request_handlers[CallToolRequest] = failing_call
- 
-+if os.environ.get('MCP_FAKE_MALFORMED_REPLY'):
-+    # An empty result is valid JSON-RPC but lacks the fields tools/list and tools/call require.
-+    async def empty_reply(req: ListToolsRequest | CallToolRequest) -> ServerResult:
-+        return ServerResult(EmptyResult())
-+
-+    app.request_handlers[ListToolsRequest] = empty_reply
-+    app.request_handlers[CallToolRequest] = empty_reply
-+
- if os.environ.get('MCP_FAKE_NO_TOOLS'):
-     # Without these handlers the server neither advertises tools nor answers tools/list.
-     del app.request_handlers[ListToolsRequest]
-```
-
-**File**: `py/packages/genkit-mcp/tests/mcp_client_test.py` (modified, +3/-3)
-```diff
-@@ -678,9 +678,9 @@ async def test_a_call_cut_off_by_close_fails_as_closed(tmp_path: Path) -> None:
- async def test_restart_reports_a_server_which_cannot_be_started(tmp_path: Path) -> None:
-     """The caller of restart hears about a broken server, not the next generate."""
-     ai = Genkit()
--    client = define_mcp_client(ai, 'fake', command=str(tmp_path / 'no-such-server'))
-+    client = define_mcp_client(ai, 'bookshop', command=str(tmp_path / 'no-such-server'))
-     try:
--        with pytest.raises(GenkitError, match='failed') as raised:
-+        with pytest.raises(GenkitError, match="MCP connection to 'bookshop' .* failed") as raised:
-             await client.restart()
-         assert raised.value.status == 'UNAVAILABLE'
-     finally:
-@@ -907,4 +907,4 @@ def test_define_mcp_client_rejects_a_timeout_that_is_not_positive(timeout: int)
- def test_connection_rejects_a_timeout_that_is_not_positive(timeout: int) -> None:
-     """The connection guards the timeout too, for callers that build one directly."""
-     with pytest.raises(ValueError, match='request_timeout_millis'):
--        McpConnection(McpStdioServerConfig(command='npx'), request_timeout_millis=timeout)
-+        McpConnection('fake', McpStdioServerConfig(command='npx'), request_timeout_millis=timeout)
-```
-
-**File**: `py/packages/genkit-mcp/tests/mcp_connection_test.py` (modified, +150/-60)
-```diff
-@@ -16,6 +16,7 @@
- import threading
- import time
- import traceback
-+from collections.abc import Awaitable, Callable
- from datetime import timedelta
- from importlib import metadata
- from pathlib import Path
-@@ -51,6 +52,8 @@
-     TextContent,
-     Tool as McpTool,
- )
-+from pydantic import ValidationError
-+from structlog.testing import capture_logs
- 
- from genkit import get_logger
- 
-@@ -206,7 +209,7 @@ async def close_with_queued(connection: McpConnection, *requests: _Request[list[
- 
- @pytest.mark.asyncio
- async def test_connect_list_call_and_close_reaps_server(tmp_path: Path) -> None:
--    connection = McpConnection(config(tmp_path))
-+    connection = McpConnection('fake', config(tmp_path))
- 
-     assert [tool.name for tool in await asyncio.wait_for(connection.list_tools(), timeout=LIMIT)] == ALL_TOOLS
-     assert text_of(await asyncio.wait_for(connection.call_tool('echo', {'message': 'hello'}), timeout=LIMIT)) == 'hello'
-@@ -215,13 +218,13 @@ async def test_connect_list_call_and_close_reaps_server(tmp_path: Path) -> None:
-     await asyncio.wait_for(connection.close(), timeout=LIMIT)
-     await asyncio.wait_for(connection.close(), timeout=LIMIT)
-     assert not is_running(pid)
--    with pytest.raises(_ConnectionClosedError, match='closed'):
-+    with pytest.raises(_ConnectionClosedError, match="MCP connection to 'fake' .* is closed"):
-         await asyncio.wait_for(connection.list_tools(), timeout=LIMIT)
- 
- 
- @pytest.mark.asyncio
- async def test_list_tools_follows_pagination_cursors(tmp_path: Path) -> None:
--    connection = McpConnection(config(tmp_path, MCP_FAKE_PAGE_SIZE='1'))
-+    connection = McpConnection('fake', config(tmp_path, MCP_FAKE_PAGE_SIZE='1'))
-     try:
-         assert [tool.name for tool in await asyncio.wait_for(connection.list_tools(), timeout=LIMIT)] == ALL_TOOLS
-         served = await asyncio.wait_for(connection.call_tool('list_requests', {}), timeout=LIMIT)
-@@ -232,7 +235,7 @@ async def test_list_tools_follows_pagination_cursors(tmp_path: Path) -> None:
- 
- @pytest.mark.asyncio
- async def test_list_tools_treats_an_empty_cursor_as_the_last_page(tmp_path: Path) -> None:
--    connection = McpConnection(config(tmp_path, MCP_FAKE_EMPTY_CURSOR='1'))
-+    connection = McpConnection('fake', config(tmp_path, MCP_FAKE_EMPTY_CURSOR='1'))
-     try:
-         assert [tool.name for tool in await asyncio.wait_for(connection.list_tools(), timeout=LIMIT)] == ALL_TOOLS
-         served = await asyncio.wait_for(connection.call_tool('list_requests', {}), timeout=LIMIT)
-@@ -244,7 +247,7 @@ async def test_list_tools_treats_an_empty_cursor_as_the_last_page(tmp_path: Path
- @pytest.mark.asyncio
- async def test_a_server_without_the_tools_capability_lists_no_tools(tmp_path: Path) -> None:
-     """Such a server answers tools/list with method not found, so it must not be asked."""
--    connection = McpConnection(config(tmp_path, MCP_FAKE_NO_TOOLS='1'))
-+    connection = McpConnection('fake', config(tmp_path, MCP_FAKE_NO_TOOLS='1'))
-     try:
-         assert await asyncio.wait_for(connection.list_tools(), timeout=LIMIT) == []
-     finally:
-@@ -253,9 +256,9 @@ async def test_a_server_without_the_tools_capability_lists_no_tools(tmp_path: Pa
- 
- @pytest.mark.asyncio
- async def test_list_tools_rejects_a_non_advancing_cursor(tmp_path: Path) -> None:
--    connection = McpConnection(config(tmp_path, MCP_FAKE_STUCK_CURSOR='1'))
-+    connection = McpConnection('fake', config(tmp_path, MCP_FAKE_STUCK_CURSOR='1'))
-     try:
--        with pytest.raises(_ProtocolError, match='repeated the tools/list cursor'):
-+        with pytest.raises(_ProtocolError, match="MCP server 'fake' .* repeated the tools/list cursor"):
-             await asyncio.wait_for(connection.list_tools(), timeout=LIMIT)
-         alive = await asyncio.wait_for(connection.call_tool('echo', {'message': 'alive'}), timeout=LIMIT)
-         assert text_of(alive) == 'alive'
-@@ -265,7 +268,7 @@ async def test_list_tools_rejects_a_non_advancing_cursor(tmp_path: Path) -> None
- 
- @pytest.mark.asyncio
- async def test_concurrent_requests_each_receive_their_own_result(tmp_path: Path) -> None:
--    connection = McpConnection(config(tmp_path))
-+    connection = McpConnection('fake', config(tmp_path))
-     try:
-         first, tools, second, third = await asyncio.gather(
-             connection.call_tool('echo', {'message': 'one'}),
-@@ -284,7 +287,7 @@ async def test_concurrent_requests_each_receive_their_own_result(tmp_path: Path)
- 
- @pytest.mark.asyncio
- async def test_a_cancelled_caller_is_never_sent_to_the_server(tmp_path: Path) -> None:
--    connection = McpConnection(config(tmp_path))
-+    connection = McpConnection('fake', config(tmp_path))
-     try:
-         await asyncio.wait_for(connection.list_tools(), timeout=LIMIT)
-         started: list[str] = []
-@@ -306,7 +309,7 @@ async def abandoned(session: ClientSession) -> list[McpTool]:
- 
- @pytest.mark.asyncio
- async def test_close_interrupts_an_in_flight_call(tmp_path: Path) -> None:
--    connection = McpConnection(config(t
+-  '@esbuild/freebsd-x64@0.25.5':
+-    resolution: {integrity: sha512-PrikaNjiXdR2laW6OIjlbeuCPrPaAl0IwPIaRv+SMV8CiM8i2LqVUHFC1+8eORgWyY7yhQY+2U2fA55mBzReaw==}
++  '@esbuild/freebsd-x64@0.28.2':
++    resolution: {integrity: sha512-78XJTJkvPs0kz2w61301PJjXl4g7q3JqiYMZ/M/yVI73EHBrCRTgkhu9oqG7vPqq+a/yadEW8aD+agKlk5xrmg==}
+     engines: {node:
 ```
 
 ---
 
-### Incident Patch 2: `494584f1` (2026-11-10)
-**Commit Message**: fix(py/plugins/mcp): stop tests using the removed GenkitError.cause (#7153)
+### Incident Patch 2: `73277525` (2026-11-18)
+**Commit Message**: build(deps-dev): bump prettier to ^3.9.10 and format (#7259)
 
-**File**: `py/packages/genkit-mcp/tests/mcp_connection_test.py` (modified, +6/-5)
+**File**: `genkit-tools/cli/tests/mcp/runtime_test.ts` (modified, +1/-2)
 ```diff
-@@ -56,6 +56,7 @@
- from structlog.testing import capture_logs
+@@ -86,8 +86,7 @@ describe('MCP runtime tools', () => {
  
- from genkit import get_logger
-+from genkit._core._error import attached_cause, get_reflection_json  # noqa: TID251
+   it('restart_runtime restarts the process and waits for the new runtime to register', async () => {
+     let runtimeEventListener:
+-      | ((event: RuntimeEvent, rt: any) => void)
+-      | undefined;
++      ((event: RuntimeEvent, rt: any) => void) | undefined;
+     const processPromise = new Promise<void>(() => {});
+     const mockRuntimeManager = {
+       listRuntimes: vi.fn().mockReturnValue([{ id: 'old-runtime' }]),
+```
+
+**File**: `js/ai/src/agent-core.ts` (modified, +18/-16)
+```diff
+@@ -511,8 +511,7 @@ async function waitForSnapshotViaTransport<State, Opts extends object>(
+     try {
+       while (true) {
+         const snap = (await transport.waitForSnapshot(snapshotId, opts)) as
+-          | SessionSnapshot<State>
+-          | undefined;
++          SessionSnapshot<State> | undefined;
+         if (!snap || isSettled(snap)) {
+           return snap;
+         }
+@@ -638,9 +637,10 @@ function toolRequestParts(parts?: Part[]): ToolRequestPart[] {
+ // AgentInterrupt
+ // ---------------------------------------------------------------------------
  
- ALL_TOOLS = [
-     'echo',
-@@ -753,7 +754,7 @@ async def test_any_other_failure_is_reported_as_a_protocol_error(tmp_path: Path)
+-class AgentInterruptImpl<Input = unknown, Output = unknown>
+-  implements AgentInterrupt<Input, Output>
+-{
++class AgentInterruptImpl<
++  Input = unknown,
++  Output = unknown,
++> implements AgentInterrupt<Input, Output> {
+   readonly name: string;
+   readonly ref?: string;
+   readonly input: Input;
+@@ -676,9 +676,10 @@ class AgentInterruptImpl<Input = unknown, Output = unknown>
+ // AgentResponse
+ // ---------------------------------------------------------------------------
  
-     assert isinstance(error, _ProtocolError)
-     assert error.status == 'INTERNAL'
--    assert error.cause is failure
-+    assert attached_cause(error) is failure
-     assert error.__cause__ is failure
-     assert "MCP request to 'fake' (" in str(error)
-     assert 'failed with RuntimeError' in str(error)
-@@ -780,7 +781,7 @@ async def test_a_malformed_reply_is_a_protocol_error_without_the_server_env(
-             await asyncio.wait_for(send(connection), timeout=LIMIT)
-         assert answered.value.status == 'INTERNAL'
-         assert isinstance(answered.value.__cause__, ValidationError)
--        assert answered.value.cause is answered.value.__cause__
-+        assert attached_cause(answered.value) is answered.value.__cause__
-         assert connection._state is _ConnectionState.OPEN
-         assert is_running(await server_pid(tmp_path / 'server.pid'))
-     finally:
-@@ -1065,9 +1066,9 @@ async def test_startup_failure_is_terminal_and_names_the_server_and_why(tmp_path
-     assert f"MCP connection to 'catalog' ({str(missing)!r}) failed" in str(failure.value)
-     cause = failure.value.__cause__
-     assert isinstance(cause, OSError)
--    assert failure.value.cause is cause
-+    assert attached_cause(failure.value) is cause
-     assert str(cause) in str(failure.value)
--    assert repr(cause) in failure.value.to_serializable().message
-+    assert repr(cause) in get_reflection_json(failure.value).message
-     assert connection._state is _ConnectionState.FAILED
+-class AgentResponseImpl<State = unknown, O = unknown>
+-  implements AgentResponse<State, O>
+-{
++class AgentResponseImpl<State = unknown, O = unknown> implements AgentResponse<
++  State,
++  O
++> {
+   constructor(
+     private readonly _raw: AgentOutput<State>,
+     private readonly _messages: MessageData[],
+@@ -867,9 +868,10 @@ function mergeOpts<B extends object, P extends object>(
+   return Object.assign({}, bound, defined);
+ }
  
-     with pytest.raises(_ConnectionFailedError, match='failed'):
-@@ -1122,7 +1123,7 @@ async def test_a_request_timeout_fails_that_call_alone(tmp_path: Path) -> None:
-         assert timed_out.value.status == 'DEADLINE_EXCEEDED'
-         assert isinstance(timed_out.value.__cause__, McpError)
-         assert timed_out.value.__cause__.error.code == 408
--        assert timed_out.value.cause is timed_out.value.__cause__
-+        assert attached_cause(timed_out.value) is timed_out.value.__cause__
-         assert str(timed_out.value.__cause__) in str(timed_out.value)
+-class DetachedTaskImpl<State = unknown, Opts extends object = never>
+-  implements DetachedTask<State, Opts>
+-{
++class DetachedTaskImpl<
++  State = unknown,
++  Opts extends object = never,
++> implements DetachedTask<State, Opts> {
+   constructor(
+     readonly snapshotId: string,
+     private readonly transport: AgentTransport<Opts>,
+@@ -923,9 +925,10 @@ class DetachedTaskImpl<State = unknown, Opts extends object = never>
+ // AgentChat
+ // ---------------------------------------------------------------------------
  
-         assert connection._state is _ConnectionState.OPEN
+-export class AgentChatImpl<State = unknown, Opts extends object = never>
+-  implements AgentChat<State, Opts>
+-{
++export class AgentChatImpl<
++  State = unknown,
++  Opts extends object = never,
++> implements AgentChat<State, Opts> {
+   snapshotId?: string;
+   sessionId?: string;
+   messages: MessageData[] = [];
+@@ -1410,8 +1413,7 @@ export function createAgentAPI<State = unknown, Opts extends object = never>(
+       opts?: Opts
+     ): Promise<AgentChat<State, Opts>> {
+       const snapshot = (await transport.getSnapshot(lookup, opts)) as
+-        | SessionSnapshot<State>
+-        | undefined;
++        SessionSnapshot<State> | undefined;
+       if (!snapshot) {
+         const id =
+           'snapshotId' in lookup
+```
+
+**File**: `js/ai/src/agent.ts` (modified, +4/-5)
+```diff
+@@ -1511,7 +1511,8 @@ export interface WaitForSnapshotDataInput extends GetSnapshotDataInput {
+  *    to mount next to it.
+  */
+ export interface Agent<State = unknown>
+-  extends BidiAction<
++  extends
++    BidiAction<
+       typeof AgentInputSchema,
+       typeof AgentOutputSchema,
+       typeof AgentStreamChunkSchema,
+@@ -1939,8 +1940,7 @@ export function defineCustomAgent<State = unknown>(
+ 
+       let detachedSnapshotId: string | undefined;
+       let resolveDetach:
+-        | ((value: void | PromiseLike<void>) => void)
+-        | undefined;
++        ((value: void | PromiseLike<void>) => void) | undefined;
+       let rejectDetach: ((reason: any) => void) | undefined;
+       const detachPromise = new Promise<void>((resolve, reject) => {
+         resolveDetach = resolve;
+@@ -2139,8 +2139,7 @@ export function defineCustomAgent<State = unknown>(
+         { result: AgentResult; finalSnapshotId?: string } | undefined
+       > => {
+         let settled:
+-          | { result: AgentResult; finalSnapshotId?: string }
+-          | undefined;
++          { result: AgentResult; finalSnapshotId?: string } | undefined;
+         // An error the agent function threw outside a turn. Attached, it
+         // propagates as the action's own failure; detached, it lands on the
+         // pending row, since there is no longer a caller to throw to.
+```
+
+**File**: `js/ai/src/evaluator.ts` (modified, +8/-8)
+```diff
+@@ -95,8 +95,8 @@ export type EvalResponses = z.infer<typeof EvalResponsesSchema>;
+ 
+ /** Implementation function for an evaluator. Receives a data point and optional config, returns an {@link EvalResponse}. */
+ export type EvaluatorFn<
+-  EvalDataPoint extends
+-    typeof BaseEvalDataPointSchema = typeof BaseEvalDataPointSchema,
++  EvalDataPoint extends typeof BaseEvalDataPointSchema =
++    typeof BaseEvalDataPointSchema,
+   CustomOptions extends z.ZodTypeAny = z.ZodTypeAny,
+ > = (
+   input: z.infer<EvalDataPoint>,
+@@ -161,8 +161,8 @@ export interface EvaluatorOptions<
+  */
+ export function defineEvaluator<
+   DataPoint extends typeof BaseDataPointSchema = typeof BaseDataPointSchema,
+-  EvalDataPoint extends
+-    typeof BaseEvalDataPointSchema = typeof BaseEvalDataPointSchema,
++  EvalDataPoint extends typeof BaseEvalDataPointSchema =
++    typeof BaseEvalDataPointSchema,
+   EvaluatorOpts extends z.ZodTypeAny = z.ZodTypeAny,
+ >(
+   registry: Registry,
+@@ -181,8 +181,8 @@ export function defineEvaluator<
+  */
+ export function evaluator<
+   DataPoint extends typeof BaseDataPointSchema = typeof BaseDataPointSchema,
+-  EvalDataPoint extends
+-    typeof BaseEvalDataPointSchema = typeof BaseEvalDataPointSchema,
++  EvalDataPoint extends typeof BaseEvalDataPointSchema =
++    typeof BaseEvalDataPointSchema,
+   EvaluatorOpts extends z.ZodTypeAny = z.ZodTypeAny,
+ >(
+   options: EvaluatorOptions<DataPoint, EvaluatorOpts>,
+@@ -371,8 +371,8 @@ function getBatchedArray<T extends { testCaseId?: string }>(
+ }
+ 
+ async function runBatch<
+-  EvalDataPoint extends
+-    typeof BaseEvalDataPointSchema = typeof BaseEvalDataPointSchema,
++  EvalDataPoint extends typeof BaseEvalDataPointSchema =
++    typeof BaseEvalDataPointSchema,
+   EvaluatorOpts extends z.ZodTypeAny = z.ZodTypeAny,
+ >(
+   runner: EvaluatorFn<EvalDataPoint, EvaluatorOpts>,
+```
+
+**File**: `js/ai/src/generate.ts` (modified, +1/-3)
+```diff
+@@ -484,9 +484,7 @@ export class GenerationBlockedError extends GenerationResponseError {}
+ export async function normalizeMiddleware(
+   registry: Registry,
+   middlewareList?: (
+-    | ModelMiddlewareArgument
+-    | GenerateMiddleware
+-    | MiddlewareRef
++    ModelMiddlewareArgument | GenerateMiddleware | MiddlewareRef
+   )[]
+ ): Promise<MiddlewareRef[]> {
+   if (!middlewareList || middlewareList.length === 0) {
+```
+
+**File**: `js/ai/src/generate/chunk.ts` (modified, +3/-3)
+```diff
+@@ -31,9 +31,9 @@ export type ChunkParser<T = unknown> = (chunk: GenerateResponseChunk<T>) => T;
+  * accessors for extracting text, media, tool requests, and accumulated output
+  * from the chunk and all preceding chunks in the stream.
+  */
+-export class GenerateResponseChunk<T = unknown>
+-  implements GenerateResponseChunkData
+-{
++export class GenerateResponseChunk<
++  T = unknown,
++> implements GenerateResponseChunkData {
+   /** The index of the message this chunk corresponds to, starting with `0` for the first model response of the generation. */
+   index: number;
+   /** The role of the message this chunk corresponds to. Will always be `model` or `tool`. */
+```
+
+**File**: `js/ai/src/model.ts` (modified, +5/-7)
+```diff
+@@ -136,8 +136,7 @@ export type ModelMiddlewareWithOptions = MiddlewareWithOptions<
+ 
+ /** Union of middleware types accepted by model definitions: either a {@link ModelMiddleware} or {@link ModelMiddlewareWithOptions}. */
+ export type ModelMiddlewareArgument =
+-  | ModelMiddleware
+-  | ModelMiddlewareWithOptions;
++  ModelMiddleware | ModelMiddlewareWithOptions;
+ 
+ /** Options for defining a new model via {@link defineModel} or {@link model}. */
+ export type DefineModelOptions<
+@@ -397,8 +396,9 @@ export const ModelReferenceSchema = z.object({
+  * A reference to a model that includes optional configuration and version info.
+  * Can be passed anywhere a {@link ModelArgument} is accepted.
+  */
+-export interface ModelReference<CustomOptions extends z.ZodTypeAny>
+-  extends z.infer<typeof ModelReferenceSchema> {
++export interface ModelReference<
++  CustomOptions extends z.ZodTypeAny,
++> extends z.infer<typeof ModelReferenceSchema> {
+   name: string;
+   configSchema?: CustomOptions;
+   info?: ModelInfo;
+@@ -540,9 +540,7 @@ function getPartCounts(parts: Part[]): PartCounts {
+  * {@link ModelAction}, or {@link ModelReference}.
+  */
+ export type ModelArgument<CustomOptions extends z.ZodTypeAny = z.ZodTypeAny> =
+-  | ModelAction<CustomOptions>
+-  | ModelReference<CustomOptions>
+-  | string;
++  ModelAction<CustomOptions> | ModelReference<CustomOptions> | string;
+ 
+ /** The result of resolving a {@link ModelArgument} to a concrete action, config, and version. */
+ export interface ResolvedModel<
+```
+
+**File**: `js/ai/src/resource.ts` (modified, +4/-2)
+```diff
+@@ -79,8 +79,10 @@ export type ResourceFn = (
+ /**
+  * A resource action.
+  */
+-export interface ResourceAction
+-  extends Action<typeof ResourceInputSchema, typeof ResourceOutputSchema> {
++export interface ResourceAction extends Action<
++  typeof ResourceInputSchema,
++  typeof ResourceOutputSchema
++> {
+   matches(input: ResourceInput): boolean;
+ }
+ 
+```
+
+---
+
+### Incident Patch 3: `47f9a5ec` (2026-11-18)
+**Commit Message**: fix(go): bump dotprompt to pick up the latest version (#7262)
+
+**File**: `go/go.mod` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@ require (
+ 	github.com/blues/jsonata-go v1.5.4
+ 	github.com/coder/websocket v1.8.14
+ 	github.com/goccy/go-yaml v1.19.2
+-	github.com/google/dotprompt/go v0.0.0-20260708220100-73beb993ac95
++	github.com/google/dotprompt/go v0.0.0-20261118194220-bdc60beb8a17
+ 	github.com/google/go-cmp v0.7.0
+ 	github.com/google/uuid v1.6.0
+ 	github.com/invopop/jsonschema v0.14.0
+```
+
+**File**: `go/go.sum` (modified, +2/-2)
+```diff
+@@ -182,8 +182,8 @@ github.com/golang/protobuf v1.4.3/go.mod h1:oDoupMAO8OvCJWAcko0GGGIgR6R6ocIYbsSw
+ github.com/golang/protobuf v1.5.0/go.mod h1:FsONVRAS9T7sI+LIUmWTfcYkHO4aIWwzhcaSAoJOfIk=
+ github.com/golang/protobuf v1.5.4 h1:i7eJL8qZTpSEXOPTxNKhASYpMn+8e5Q6AdndVa1dWek=
+ github.com/golang/protobuf v1.5.4/go.mod h1:lnTiLA8Wa4RWRcIUkrtSVa5nRhsEGBg48fD6rSs7xps=
+-github.com/google/dotprompt/go v0.0.0-20260708220100-73beb993ac95 h1:SJdnmyOaT+kZNcUR+a1y2+Oa51j2ctCjYbtexaiXN68=
+-github.com/google/dotprompt/go v0.0.0-20260708220100-73beb993ac95/go.mod h1:dnlL7KrFwJ7s8EJdsAp1WdLqOalJq1Sx2jWZnQkhFXs=
++github.com/google/dotprompt/go v0.0.0-20261118194220-bdc60beb8a17 h1:ZLqxco58oRiBLiSEF8/X8Adysw8ZlmlR5s3nTxJFJmE=
++github.com/google/dotprompt/go v0.0.0-20261118194220-bdc60beb8a17/go.mod h1:iXHNbixObmFNZFUYK/FowBLET1msct+SuNxjZiQ0TUg=
+ github.com/google/flatbuffers v23.5.26+incompatible h1:M9dgRyhJemaM4Sw8+66GHBu8ioaQmyPLg1b8VwK5WJg=
+ github.com/google/flatbuffers v23.5.26+incompatible/go.mod h1:1AeVuKshWv4vARoZatz6mlQ0JxURH0Kv5+zNeJKJCa8=
+ github.com/google/go-cmp v0.2.0/go.mod h1:oXzfMopK8JAjlY9xF4vHSVASa0yLyX7SntLO5aqRK0M=
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7183** (closed): build(deps): bump node-forge from 1.3.1 to 1.4.3 in /samples/js-character-generator (@dependabot[bot])
-- **PR #7182** (closed): build(deps): bump node-forge from 1.3.1 to 1.4.3 in /samples/js-angular/server (@dependabot[bot])
-- **PR #7181** (closed): build(deps-dev): bump node-forge from 1.3.1 to 1.4.3 in /samples/js-chatbot/genkit-app (@dependabot[bot])
-- **PR #7180** (closed): build(deps-dev): bump node-forge from 1.3.1 to 1.4.3 in /samples/js-angular/genkit-app (@dependabot[bot])
-- **PR #7179** (closed): chore(py): upgrade dotpromptz requirement to >=1.0.0,<2 (@huangjeff5)
-- **PR #7178** (closed): build(deps): bump node-forge from 1.3.1 to 1.4.3 in /samples/js-chatbot/server (@dependabot[bot])
+- **PR #7264** (closed): chore(py): dependency bounds policy, floor/newest CI, Dependabot major grouping (@huangjeff5)
+- **PR #7263** (2026-11-18): build(deps-dev): bump the root-dependencies group across 1 directory with 6 updates (@dependabot[bot])
+- **PR #7262** (2026-11-18): fix(go): bump dotprompt to pick up the latest version (@pavelgj)
+- **PR #7259** (2026-11-18): build(deps-dev): bump prettier to ^3.9.10 and format (@MichaelDoyle)
+- **PR #7258** (2026-11-18): ci(workflows): pin GitHub Actions to commit SHAs in remaining workflows (@MichaelDoyle)
+- **PR #7256** (2026-11-18): fix(genkit-tools/cli): skip first-run analytics prompt and update notification for mcp command (@genkit-bot)
 
 ---
 
@@ -2571,34 +2464,41 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. py/plugins/mcp): say which server failed and why (#6930)
+## X. build(deps-dev): bump the root-dependencies group across 1 directory with 6 upda
 
 **RULE**:
-When implementing operations in `py/packages/genkit-mcp/src/genkit_mcp/_client.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in genkit-ai/genkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d0d2e7af`: py/plugins/mcp): say which server failed and why (#6930). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `56db89eb`: build(deps-dev): bump the root-dependencies group across 1 directory with 6 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `py/packages/genkit-mcp/src/genkit_mcp/_client.py`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        self._host: str | None = None
-            connection = McpConnection(
-                self._name, self._server, request_timeout_millis=self._request_timeout_millis, host=self._host
-            )
+    "@types/node": "22.20.5",
+    "inquirer": "^8.2.7",
+    "only-allow": "^1.2.2",
+    "prettier-plugin-css-order": "2.2.0",
+    "rimraf": "^6.1.3",
+    "tsx": "^4.23.15"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-            connection = McpConnection(self._server, request_timeout_millis=self._request_timeout_millis)
+// Induced defect failure mode:
+    "@types/node": "22.10.5",
+    "inquirer": "^8.2.6",
+    "only-allow": "^1.2.1",
+    "prettier-plugin-css-order": "2.0.1",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.20.3"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d0d2e7af` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `56db89eb` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

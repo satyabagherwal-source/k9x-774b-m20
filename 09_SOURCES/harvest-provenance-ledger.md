@@ -11233,3 +11233,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-lilylilith-qi_2-1_anyangle` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-11-19T04:44:03.678Z |
 | `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `e8326770` | Multi-dimensional audit evidence | 2026-11-19T04:44:15.849Z |
 | `learn-dom-d-7af79394` | `project://hf-lilylilith-qi_2.1_anyangle` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | 2026-11-19T04:44:48.419Z |
+| `learn-huggingface-baai-bge-large-en-v1-5` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-19T05:06:04.692Z |
+| `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `9699ab67` | Multi-dimensional audit evidence | 2026-11-19T05:06:14.371Z |
+| `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `56db89eb` | Multi-dimensional audit evidence | 2026-11-19T05:06:19.610Z |

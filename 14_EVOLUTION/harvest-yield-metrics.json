@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T04:44:15.854Z",
-  "total_cycles_completed": 10702,
-  "total_learnings_persisted": 10702,
-  "total_rules_promoted": 10099,
+  "last_updated": "2026-11-19T05:06:19.614Z",
+  "total_cycles_completed": 10705,
+  "total_learnings_persisted": 10705,
+  "total_rules_promoted": 10101,
   "history": [
-    {
-      "timestamp": "2026-11-18T13:17:32.247Z",
-      "repository": "lancedb/lancedb",
-      "learningId": "learn-github-lancedb-lancedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T13:25:32.974Z",
-      "repository": "fastino/GLiNER2.5-Decide",
-      "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T13:25:41.460Z",
-      "repository": "callstack/react-native-paper",
-      "learningId": "learn-github-callstack-react-native-paper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T13:25:43.085Z",
       "repository": "higress-group/higress",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-19T04:44:15.854Z",
       "repository": "linkerd/linkerd2",
       "learningId": "learn-github-linkerd-linkerd2",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T05:06:04.697Z",
+      "repository": "BAAI/bge-large-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-large-en-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T05:06:14.375Z",
+      "repository": "opentofu/opentofu",
+      "learningId": "learn-github-opentofu-opentofu",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T05:06:19.614Z",
+      "repository": "genkit-ai/genkit",
+      "learningId": "learn-github-genkit-ai-genkit",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

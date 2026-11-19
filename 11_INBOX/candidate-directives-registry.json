@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T04:44:49.349Z",
+  "last_updated": "2026-11-19T05:06:23.898Z",
   "directives": [
     {
       "id": "CD-001",
@@ -32048,6 +32048,46 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-156FC2-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-83A2",
+      "directive_title": "symbol libraries crash when uninitialized",
+      "source_repo": "opentofu-opentofu-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-83A2-symbol-libraries-crash-when-uninitialized.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-83RP",
+      "directive_title": "build(deps-dev): bump the root-dependencies group across 1 directory with 6 upda",
+      "source_repo": "genkit-ai-genkit-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-83RP-build-deps-dev-bump-the-root-dependencies-group-across-1-directory-with-6-upda.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-8BABF7",
+      "directive_title": "symbol libraries crash when uninitialized",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "opentofu-opentofu",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8BABF7-symbol-libraries-crash-when-uninitialize.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-31294A",
+      "directive_title": "build(deps-dev): bump the root-dependencies group across 1 directory with 6 upda",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "genkit-ai-genkit",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-31294A-build-deps-dev-bump-the-root-dependencie.md",
       "staged_date": "2026-11-19"
     }
   ]

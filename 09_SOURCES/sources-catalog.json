@@ -55,8 +55,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-large-en-v1.5",
     "sourceVersion": "hf-baai-bge-large-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "95bc9106f553052b8de3111ea2f5103ba232e31a5ab06b6c70f7cdd182db464f",
-    "lastHarvestedAt": "2026-11-14T15:34:27.668Z",
+    "contentHash": "b134ea78e3082b02d9c0db864f173bbfe5f9f50ea313c4736baa1c752926bdaa",
+    "lastHarvestedAt": "2026-11-19T05:06:04.692Z",
     "learningId": "learn-huggingface-baai-bge-large-en-v1-5"
   },
   "hf-zai-org-glm-5.3": {
@@ -5973,10 +5973,10 @@
     "repository": "genkit-ai/genkit",
     "platform": "github",
     "sourceUrl": "https://github.com/genkit-ai/genkit",
-    "sourceVersion": "76130045",
+    "sourceVersion": "56db89eb",
     "license": "Apache-2.0",
-    "contentHash": "5f6536aad6d70f67809f5a02b7159ac023c91479d591011ce4e662207cc7179c",
-    "lastHarvestedAt": "2026-11-14T21:21:05.050Z",
+    "contentHash": "10280fb4bc3401a8aa63cdb28243e02fda8c7aab1cb1dc5c1164547875ea9253",
+    "lastHarvestedAt": "2026-11-19T05:06:19.610Z",
     "learningId": "learn-github-genkit-ai-genkit"
   },
   "guokaigdg-animal-island-ui": {
@@ -6363,10 +6363,10 @@
     "repository": "opentofu/opentofu",
     "platform": "github",
     "sourceUrl": "https://github.com/opentofu/opentofu",
-    "sourceVersion": "a4d26414",
+    "sourceVersion": "9699ab67",
     "license": "MPL-2.0",
-    "contentHash": "8eb736273935dcc64ce59a0e44af9c90e7cc6d39d664303befd7ff617251ca48",
-    "lastHarvestedAt": "2026-11-17T16:05:49.430Z",
+    "contentHash": "2b7d87e3e556816d76aab036a68c0ab528e27ba02eea123cb38ae8b36335dc90",
+    "lastHarvestedAt": "2026-11-19T05:06:14.371Z",
     "learningId": "learn-github-opentofu-opentofu"
   },
   "surrealdb-surrealdb": {

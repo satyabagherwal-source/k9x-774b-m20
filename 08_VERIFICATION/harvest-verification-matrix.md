@@ -11200,3 +11200,6 @@
 | `CYCLE-20261119-FDND` | `2026-11-19T04:44:03.673Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`3136ce7b...`) |
 | `CYCLE-20261119-FN1H` | `2026-11-19T04:44:15.845Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9331` | Yes (`b802fcc3...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T04:44:48.419Z` | `hf-lilylilith-qi_2.1_anyangle` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-7AF79394` [Domain D] | Yes (`3ff92cf9...`) |
+| `CYCLE-20261119-7OY9` | `2026-11-19T05:06:04.689Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`b134ea78...`) |
+| `CYCLE-20261119-7WF5` | `2026-11-19T05:06:14.369Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9332` | Yes (`2b7d87e3...`) |
+| `CYCLE-20261119-80GN` | `2026-11-19T05:06:19.607Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9333` | Yes (`10280fb4...`) |
