@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T15:50:58.155Z",
+  "updated_at": "2026-11-19T15:59:27.829Z",
   "stats": {
-    "total_discovered": 5920,
-    "approved_pending_harvest": 5605,
+    "total_discovered": 5922,
+    "approved_pending_harvest": 5607,
     "harvested_count": 0,
     "rejected_count": 315,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5572,
+      "COMMUNITY_AND_EXPERT": 5574,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -128056,6 +128056,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
         "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-E91558F087B2": {
+      "id": "SRC-E91558F087B2",
+      "url": "https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22lint%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%7D&code=type+R+%3D+%7B+run%3A+%28%29+%3D%3E+Promise%3Cnumber%3E+%7D%3B%0Aexport+function+f%28%29%3A+R+%7B%0A++return+%7B%0A++++run%3A+async+%28%29+%3D%3E+%7B%0A++++++return+1%3B%0A++++%7D%2C%0A++%7D%3B%0A%7D%0A&lintRules=typescript%2Fexplicit-function-return-type",
+      "title": "https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22lint%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%7D&code=type+R+%3D+%7B+run%3A+%28%29+%3D%3E+Promise%3Cnumber%3E+%7D%3B%0Aexport+function+f%28%29%3A+R+%7B%0A++return+%7B%0A++++run%3A+async+%28%29+%3D%3E+%7B%0A++++++return+1%3B%0A++++%7D%2C%0A++%7D%3B%0A%7D%0A&lintRules=typescript%2Fexplicit-function-return-type",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:59:27.790Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
+      }
+    },
+    "SRC-9C103ACC04CF": {
+      "id": "SRC-9C103ACC04CF",
+      "url": "https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22compress%22%3Atrue%2C%22whitespace%22%3Atrue%7D%7D&code=export+function+f%28%29%7Btry%7Bx%28%29%3B%7Dcatch%28a%29%7Bvar+a%3B%7D%7D",
+      "title": "https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22compress%22%3Atrue%2C%22whitespace%22%3Atrue%7D%7D&code=export+function+f%28%29%7Btry%7Bx%28%29%3B%7Dcatch%28a%29%7Bvar+a%3B%7D%7D",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:59:27.829Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md",
+        "fileName": "oxc-project-oxc-learnings.md"
       }
     }
   }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-19T11:51:24.558Z",
+  "updated_at": "2026-11-19T15:59:27.672Z",
   "statistics": {
-    "total_nodes": 383,
+    "total_nodes": 384,
     "total_edges": 180,
     "domain_distribution": {
       "D": 255,
       "M": 1,
-      "H": 56,
+      "H": 57,
       "J": 14,
       "K": 22,
       "L": 7,
@@ -8567,6 +8567,28 @@
       ],
       "created_at": "2026-11-19T11:51:24.558Z",
       "updated_at": "2026-11-19T11:51:24.558Z"
+    },
+    "DOM-H-D41DA63C": {
+      "id": "DOM-H-D41DA63C",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "linter/typescript/explicit-function-return-type): check block-bodied arrows in r",
+      "summary": "Prevents defects observed in production commit `35694db4`: linter/typescript/explicit-function-return-type): check block-bodied arrows in re -> When implementing operations in `crates/oxc_linter/src/rules/typescript/explicit_function_return_type.rs`, engineers MUST enforce rigorous b",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://oxc-project-oxc/oxc-project-oxc-learnings.md",
+        "source_version": "c5890024",
+        "observed_at": "2026-11-19T15:58:46.994Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (oxc-project-oxc)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-19T15:59:27.672Z",
+      "updated_at": "2026-11-19T15:59:27.672Z"
     }
   },
   "edges": [

@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T15:50:57.663Z",
-    "lastVerified": "2026-11-19T15:50:57.663Z",
+    "lastChecked": "2026-11-19T15:59:01.404Z",
+    "lastVerified": "2026-11-19T15:59:01.404Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -174,8 +174,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T15:03:31.955Z",
-    "lastVerified": "2026-11-19T15:03:31.955Z",
+    "lastChecked": "2026-11-19T15:58:55.409Z",
+    "lastVerified": "2026-11-19T15:58:55.409Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1519,9 +1519,9 @@
   "memvid-memvid": {
     "name": "memvid",
     "officialUrl": "https://github.com/memvid/memvid",
-    "lastChecked": "2026-11-18T12:42:47.157Z",
+    "lastChecked": "2026-11-19T15:58:53.179Z",
     "revisionIdentifier": "e6bd9f7b",
-    "lastVerified": "2026-11-18T12:42:47.157Z"
+    "lastVerified": "2026-11-19T15:58:53.179Z"
   },
   "googleworkspace-cli": {
     "name": "cli",
@@ -1726,22 +1726,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "cilium-cilium": {
-    "name": "cilium",
+    "name": "cilium/cilium",
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T06:30:09.180Z",
-    "lastVerified": "2026-11-19T06:30:09.180Z",
+    "lastChecked": "2026-11-19T15:58:57.393Z",
+    "lastVerified": "2026-11-19T15:58:57.393Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "33d6eb46953cea14aabe9c25a44246f6c9b63aff39932f592034697081d2a83a",
+    "contentHash": "e01043928efedb765b787308f3448f2488c2513bae47685896030b91b9230cdc",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "d65ec42b"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -1971,9 +1970,9 @@
   "fission-fission": {
     "name": "fission",
     "officialUrl": "https://github.com/fission/fission",
-    "lastChecked": "2026-11-18T13:34:14.321Z",
+    "lastChecked": "2026-11-19T15:58:47.959Z",
     "revisionIdentifier": "8152c961",
-    "lastVerified": "2026-11-18T13:34:14.321Z"
+    "lastVerified": "2026-11-19T15:58:47.959Z"
   },
   "tailscale-tailscale": {
     "name": "tailscale",
@@ -7633,5 +7632,56 @@
     "lastChecked": "2026-11-19T15:50:47.491Z",
     "revisionIdentifier": "3254ff75",
     "lastVerified": "2026-11-19T15:50:47.491Z"
+  },
+  "oxc-project-oxc": {
+    "name": "oxc-project/oxc",
+    "officialUrl": "https://github.com/oxc-project/oxc",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-19T15:58:46.989Z",
+    "lastVerified": "2026-11-19T15:58:46.989Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-oxc-project-oxc",
+    "contentHash": "702a4d08b9e4042edb3db349411ba002b91b0f6d137a2d3419ef215919fcbf51",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 18,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-fishaudio-drama-3": {
+    "name": "fishaudio/drama-3",
+    "officialUrl": "https://huggingface.co/fishaudio/drama-3",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T15:58:43.150Z",
+    "lastVerified": "2026-11-19T15:58:43.150Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-fishaudio-drama-3",
+    "contentHash": "14a6db04ea8eaa363783add77f3901a240f6b53c735ce964258e3002354d12d3",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "meshtastic-meshtastic-android": {
+    "name": "meshtastic/Meshtastic-Android",
+    "officialUrl": "https://github.com/meshtastic/Meshtastic-Android",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-19T15:58:51.139Z",
+    "lastVerified": "2026-11-19T15:58:51.139Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-meshtastic-meshtastic-android",
+    "contentHash": "fee09e94c023447a320d64ea38d6e83bf6741a15d4c2c6c6f27272d3ab8c182f",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

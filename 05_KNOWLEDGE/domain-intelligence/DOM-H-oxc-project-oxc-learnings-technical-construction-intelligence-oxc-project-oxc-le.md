@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T07:45:11.620Z",
+  "timestamp": "2026-11-19T15:59:27.929Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-oxc-project-oxc-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [oxc-project-oxc-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T07:45:11.620Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T15:59:27.929Z`  
 > **Learning ID**: `LEARN-EVO-oxc-project-oxc-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 57%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from oxc-project-oxc-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source**: github ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
-> **Source Version**: `e61ca3a1`  
+> **Source Version**: `c5890024`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T07:45:00.968Z  
+> **Timestamp**: 2026-11-19T15:58:46.994Z  
 > **Learning ID**: `learn-github-oxc-project-oxc`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/oxc-project-oxc-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/oxc-project/oxc](https://github.com/oxc-project/oxc))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T07:45:00.857Z  
+> **Harvest Timestamp**: 2026-11-19T15:58:46.989Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ⚓ A collection of high-performance JavaScript tools.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 23465 stars
+- **Stars / Engagement**: 23506 stars
 
 ---
 
@@ -1076,13 +1076,14 @@ impl ConfigScopes {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #29650** (2026-11-16): **refactor(playground): replace binding patch with source wrapper**
-  *Symptoms*: The playground build rewrites the generated browser loader to provide `Oxc.ast` and copies the WASI declaration into `index.d.ts`. This couples the AST wrapper to the generator's exact output text.  Move the existing AST proxy into a source module and route the package's browser entry and existing browser subpath through it. Generate `index.d.ts` directly with NAPI, which also emits `playground.wasi.d.cts`, and remove `scripts/patch.js`. Keep the existing worker-pool patch in `postbuild-wasm-dev` for cross-origin loading.  AST parsing, BigInt and RegExp restoration, native method binding, and other browser exports are preserved. The WASI declaration is byte-identical; the root declaration changes only NAPI's generated binding-target metadata.  Verified with the actual WASI development build, `just fmt`, `publint`, strict TypeScript checks for both declaration entries, and 18 real-browser assertions. Five fixtures produced identical ASTs, generated code, comments, and diagnostics through the old and new wrappers. The release profile was not built.  AI assistance: Claude. 
-
-- **Issue #29648** (2026-11-16): **feat(playground): expose compression options**
-  *Symptoms*: The playground currently ignores compression fields and always uses `CompressOptions::smallest()`. Expose `dropDebugger`, `dropConsole`, `joinVars`, `sequences`, `unused`, and `keepNames` through the WASM binding so the UI can configure those passes.  All fields are optional and retain the current smallest-preset defaults. `unused` accepts `true`, `false`, or `"keep_assign"`; invalid strings produce a diagnostic. Existing target handling is preserved. Console removal also discards argument evaluation, which is documented in the generated types.  Validation: Rust formatting and Clippy passed; rebuilt the WASM binding on current main; the Playground consumer's type check and production build passed. Browser checks confirmed non-default compression settings affect emitted code.  AI assistance: implementation and review used AI tools. 
+- **Issue #29895** (2026-11-19): **test(parser): cover comment attachment after a right shift**
+  *Symptoms*: The existing trivia-builder test now checks that JavaScript and TypeScript both attach the block comment after `>>` to the unary `+` at byte 23. Before #29847, the test fails because TypeScript reports the comment as trailing. It passes with the fix.  OpenAI Codex (GPT-6) assisted with the test. The exact model version and reasoning effort were unavailable.  closes #29837 
   **Post-Mortem & Fix Analysis**:
-  > ### Merge activity  * **Nov 16, 5:52 AM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Nov 16, 5:55 AM UTC**: `Dunqing` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Nov 16, 5:59 AM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"72b985107141c878d122e1037df9d0042e440268","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":null,"has_any_findings":null,"has_unresolved_findings":null,"status":null}} -->  <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-19T13:22:11.702337Z">2026-11-19T13:22:11.702337Z</relative-time> | `72b9851` | New commits |    <details> <summary>ℹ️ About Codex in GitHub</summary> <br/>  [Your team has set up Codex to review pull requests in this repo](https://chatgpt.com/codex/cloud/settings/general). Reviews are triggered when you - Open a pull request for review - Mark a draft as ready - Co
+  > ### Merge activity  * **Nov 19, 1:21 PM UTC**: The merge label '0-merge' was detected. This PR will be added to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc) once it meets the requirements. * **Nov 19, 1:23 PM UTC**: `camc314` added this pull request to the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). * **Nov 19, 1:27 PM UTC**: Merged by the [Graphite merge queue](https://app.graphite.com/merges?org=oxc-project&repo=oxc). 
+
+- **Issue #29882** (2026-11-19): **fix(linter/unicorn/prefer-logical-operator-over-ternary): parenthesize operands that bind looser than `||` in fixer**
+  *Symptoms*: The `unicorn/prefer-logical-operator-over-ternary` fixer wrote `test || <alternate>` using raw source text, only parenthesizing `??` operands. An alternate (or left operand) binding looser than `||` was emitted bare, so applying the suggestion could change meaning or produce code that no longer parses. For example, `x ? x : y ? 1 : 2` became `x || y ? 1 : 2` (now `(x || y) ? 1 : 2`, different result), and `onSelect ? onSelect : () => {}` became the syntax error `onSelect || () => {}`.  The fixer now parenthesizes any `||` operand that is a conditional, arrow function, assignment, `yield`, sequence, or coalescing `??` expression, on both sides of both rewrite paths, so fixed output stays valid and meaning-preserving, matching the upstream eslint-plugin-unicorn suggestions (e.g. `x || (y ? 1 : 2)`).  Closes #29877  Automated triagebot fix (AI-assisted).
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1099,384 +1100,804 @@ impl ConfigScopes {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `994ddc33` (2026-11-15)
-**Commit Message**: fix(linter/eslint/no-div-regex): offer regex rewrites as suggestions (#29493)
+### Incident Patch 1: `35694db4` (2026-11-18)
+**Commit Message**: fix(linter/typescript/explicit-function-return-type): check block-bodied arrows in returned objects (#29843)
 
-The `/=` to `/[=]` rewrite preserves matching behavior but changes
-`RegExp.prototype.source` and `toString()`. Emit it as a suggestion so
-ordinary `--fix` preserves observable output, while `--fix-suggestions`
-retains the rewrite.
+Oxlint misses block-bodied arrow functions without an explicit return type when they are properties of an object returned by a typed function.
+
+Part of #29822 (item 3).
 
 ### Example
 
-Input (`repro.cjs`):
+Input ([playground for this example](https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22lint%22%3Atrue%7D%2C%22parser%22%3A%7B%22extension%22%3A%22ts%22%7D%7D&code=type+R+%3D+%7B+run%3A+%28%29+%3D%3E+Promise%3Cnumber%3E+%7D%3B%0Aexport+function+f%28%29%3A+R+%7B%0A++return+%7B%0A++++run%3A+async+%28%29+%3D%3E+%7B%0A++++++return+1%3B%0A++++%7D%2C%0A++%7D%3B%0A%7D%0A&lintRules=typescript%2Fexplicit-function-return-type); it runs the released version, not this PR):
 
-```js
-const re = /=x/;
-console.log(re.source);
-console.log(re.toString());
-```
-
-Run these commands on a fresh copy of the input at each revision:
-
-```sh
-oxlint -A all -D eslint/no-div-regex --no-ignore --threads 1 --fix repro.cjs
-node repro.cjs
+```ts
+type R = { run: () => Promise<number> };
+export function f(): R {
+  return {
+    run: async () => {
+      return 1;
+    },
+  };
+}
 ```
 
 Before output:
 
 ```text
-Found 0 warnings and 0 errors.
-[=]x
-/[=]x/
+(no diagnostics)
 ```
 
 After output:
 
 ```text
-x eslint(no-div-regex): A regular expression literal can be confused with '/='.
-   ,-[repro.cjs:1:12]
- 1 | const re = /=x/;
-   :            ^^^^
- 2 | console.log(re.source);
-   `----
-  help: Rewrite `/=` into `/[=]`
+example.ts:4:5: Missing return type on function. [Error/typescript(explicit-function-return-type)]
 
-Found 0 warnings and 1 error.
-=x
-/=x/
+1 problem
 ```
 
-Captured from base `2958ebd2e39f668f891ff2169805f152cca4210b` and PR
-head `928a3aa9c8eb21ce4efdcedb97875214b956f4c0`; timing lines omitted.
-Before, `--fix` rewrites the regex. After, it reports the violation,
-exits 1, and leaves the file unchanged. 
+The rule now reports the block-bodied arrow, matching typescript-eslint. Expression-bodied arrows in
 
-**File**: `crates/oxc_linter/src/rules/eslint/no_div_regex.rs` (modified, +2/-2)
+**File**: `crates/oxc_linter/src/rules/typescript/explicit_function_return_type.rs` (modified, +43/-18)
 ```diff
-@@ -39,7 +39,7 @@ declare_oxc_lint!(
-     NoDivRegex,
-     eslint,
-     restriction,
--    fix,
-+    suggestion,
-     version = "0.4.2",
-     short_description = "Disallow equal signs explicitly at the beginning of regular expressions.",
- );
-@@ -55,7 +55,7 @@ impl Rule for NoDivRegex {
-                 .and_then(|it| it.body.first())
-                 .is_some_and(is_leading_equals)
-             {
--                ctx.diagnostic_with_fix(no_div_regex_diagnostic(lit.span), |fixer| {
-+                ctx.diagnostic_with_suggestion(no_div_regex_diagnostic(lit.span), |fixer| {
-                     let span = Span::sized(lit.span.start + 1, 1);
-                     fixer.replace(span, "[=]")
-                 });
+@@ -489,15 +489,15 @@ fn is_setter(node: &AstNode) -> bool {
+ 
+ fn check_typed_function_expression<'a>(node: &AstNode<'a>, ctx: &LintContext<'a>) -> bool {
+     let Some(parent) = outermost_paren_parent(node, ctx) else { return false };
+-    is_typed_parent(parent, Some(node), ctx)
++    is_typed_parent(parent, Some(node))
+         || is_property_of_object_with_type(parent, ctx)
+         || is_constructor_argument(parent)
+ }
+ 
+-fn is_typed_parent(parent: &AstNode, callee: Option<&AstNode>, ctx: &LintContext) -> bool {
++fn is_typed_parent(parent: &AstNode, callee: Option<&AstNode>) -> bool {
+     is_type_assertion(parent)
+         || is_variable_declarator_with_type_annotation(parent)
+-        || is_default_function_parameter_with_type_annotation(parent, ctx)
++        || is_default_function_parameter_with_type_annotation(parent)
+         || is_property_definition_with_type_annotation(parent)
+         || is_function_argument(parent, callee)
+         || is_typed_jsx(parent)
+@@ -535,13 +535,8 @@ fn is_function_argument(parent: &AstNode, callee: Option<&AstNode>) -> bool {
+ fn is_type_assertion(node: &AstNode) -> bool {
+     matches!(node.kind(), AstKind::TSAsExpression(_) | AstKind::TSTypeAssertion(_))
+ }
+-fn is_default_function_parameter_with_type_annotation(node: &AstNode, ctx: &LintContext) -> bool {
+-    let AstKind::AssignmentPattern(_assign) = node.kind() else { return false };
+-    match ctx.nodes().parent_kind(node.id()) {
+-        AstKind::FormalParameter(f) => f.type_annotation.is_some(),
+-        AstKind::FormalParameterRest(f) => f.type_annotation.is_some(),
+-        _ => false,
+-    }
++fn is_default_function_parameter_with_type_annotation(node: &AstNode) -> bool {
++    matches!(node.kind(), AstKind::FormalParameter(param) if param.type_annotation.is_some())
+ }
+ 
+ /**
+@@ -570,12 +565,17 @@ fn is_typed_jsx(node: &AstNode) -> bool {
+ fn ancestor_has_return_type<'a>(node: &AstNode<'a>, ctx: &LintContext<'a>) -> bool {
+     let Some(parent) = outermost_paren_parent(node, ctx) else { return false };
+ 
+-    if let AstKind::ObjectProperty(prop) = parent.kind()
+-        && let Expression::ArrowFunctionExpression(func) = &prop.value
+-        && func.get_function_body().is_some_and(|body| !body.statements.is_empty())
+-        && func.return_type.is_some()
+-    {
+-        return true;
++    let can_inherit_return_type = match parent.kind() {
++        AstKind::ReturnStatement(_) => true,
++        AstKind::ArrowFunctionExpression(func) => func.get_expression().is_some(),
++        AstKind::ObjectProperty(prop) => matches!(
++            prop.value.without_parentheses(),
++            Expression::ArrowFunctionExpression(func) if func.get_expression().is_some()
++        ),
++        _ => false,
++    };
++    if !can_inherit_return_type {
++        return false;
+     }
+ 
+     for ancestor in ctx.nodes().ancestors(node.id()) {
+@@ -666,8 +666,7 @@ fn is_property_of_object_with_type(node: &AstNode, ctx: &LintContext) -> bool {
+     let Some(obj_expr_parent) = outermost_paren_parent(parent, ctx) else {
+         return false;
+     };
+-    is_typed_parent(obj_expr_parent, None, ctx)
+-        || is_property_of_object_with_type(obj_expr_parent, ctx)
++    is_typed_parent(obj_expr_parent, None) || is_property_of_object_with_type(obj_expr_parent, ctx)
+ }
+ 
+ #[test]
+@@ -1494,6 +1493,17 @@ fn test() {
+             None,
+             None,
+         ),
++        (
++            "
++            type R = { run: () => Promise<number> };
++            export function f(): R {
++              return { run: async () => 1 };
++            }
++            ",
++            None,
++            None,
++            None,
++        ),
+     ];
+ 
+     let fail = vec![
+@@ -2110,6 +2120,21 @@ fn test() {
+             None,
+             None,
+         ),
++        (
++            "
++            type R = { run: () => Promise<number> };
++            export function f(): R {
++              return {
++                run: async () => {
++                  return 1;
++                },
++              };
++            }
++            ",
++            None,
++            None,
++            None,
++        ),
+     ];
+ 
+     Tester::new(ExplicitFunctionReturnType::NAME, ExplicitFunctionReturnType::PLUGIN, pass, fail)
+```
+
+**File**: `crates/oxc_linter/src/snapshots/typescript_explicit_function_return_type.snap` (modified, +9/-0)
+```diff
+@@ -690,3 +690,12 @@ source: crates/oxc_linter/src/tester.rs
+    ·        ────────────────────
+    ╰────
+   help: Require explicit return types on functions and class methods.
++
++  ⚠ typescript(explicit-function-return-type): Missing return type on function.
++   ╭─[explicit_function_return_type.tsx:5:17]
++ 4 │               return {
++ 5 │                 run: async () => {
++   ·                 ───────────
++ 6 │                   return 1;
++   ╰────
++  help: Require explicit return types on functions and class methods.
 ```
 
 ---
 
-### Incident Patch 2: `dc5add70` (2026-11-15)
-**Commit Message**: fix(linter/jsx-a11y/lang): don't report a missing lang attribute (#29441)
+### Incident Patch 2: `c5890024` (2026-11-19)
+**Commit Message**: fix(minifier): drop redeclarations of removed declarations (#29415)
 
-`jsx-a11y/lang` reported an `<html>` element with no `lang` attribute,
-at the same position as `jsx-a11y/html-has-lang`, so enabling both gave
-two diagnostics for one problem. In eslint-plugin-jsx-a11y, `lang` only
-checks the value of a `lang` attribute that is present, and a missing
-one is `html-has-lang`'s job.
+When the minifier removed a declaration of a redeclared symbol, its entry in `Scoping::symbol_redeclarations` stayed. In `catch (a) { var a }` the stale entry kept the catch parameter looking redeclared (and, with #28739, linked to the enclosing var binding), so the catch binding was only removed when the output was minified a second time.
 
-The rule now returns when there is no `lang` attribute. Invalid values
-(`lang="foo"`, `lang={undefined}`, …) are reported as before. The docs
-no longer list a bare `<html>` as incorrect for this rule and point to
-`html-has-lang` instead.
+Closes #27548
 
-Closes #29320
+### Example
 
-AI disclosure: written with Claude Code; I reviewed and tested the
-change.
+Input ([playground for this example](`` https://playground.oxc.rs/?t=codegen&options=%7B%22run%22%3A%7B%22compress%22%3Atrue%2C%22whitespace%22%3Atrue%7D%7D&code=export+function+f%28%29%7Btry%7Bx%28%29%3B%7Dcatch%28a%29%7Bvar+a%3B%7D%7D); `` playground.oxc.rs runs the released Oxc version, so it shows the behavior before this PR):
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+```js
+export function f(){try{x();}catch(a){var a;}}
+```
 
-Follow-up review and comment cleanup assisted by OpenAI Codex.
+`cargo run -p oxc_minifier --example minifier -- input.js --nospace --twice` prints the first run, then a second run on that output.
 
----------
+Before output (parent commit d4c3cbe):
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: Cameron <[REDACTED_EMAIL]>
+```text
+export function f(){try{x()}catch(a){}}
+export function f(){try{x()}catch{}}
+same = false
+```
 
-**File**: `crates/oxc_linter/src/rules/jsx_a11y/lang.rs` (modified, +11/-12)
+After output:
+
+```text
+export function f(){try{x()}catch{}}
+export function f(){try{x()}cat
+
+**File**: `crates/oxc_minifier/src/compression_pass.rs` (modified, +106/-11)
 ```diff
-@@ -5,7 +5,7 @@ use oxc_ast::{
- };
- use oxc_diagnostics::OxcDiagnostic;
- use oxc_macros::declare_oxc_lint;
--use oxc_span::{GetSpan, Span};
+@@ -1,24 +1,28 @@
+ //! Completion of Normalize and peephole compression passes.
+ //!
+-//! AST mutations accumulate removed semantic references and dropped direct
+-//! `eval` calls on [`crate::state::PassChanges`]. Both Normalize and each
+-//! peephole pass cross the same completion boundary: prune those references,
++//! AST mutations accumulate removed semantic references, dropped direct
++//! `eval` calls and dropped declarations of redeclared symbols on
++//! [`crate::state::PassChanges`]. Both Normalize and each peephole pass cross
++//! the same completion boundary: prune those references and declarations,
+ //! refresh direct-eval scope flags, then derive function reachability from the
+ //! settled semantic state.
+ 
+-#[cfg(debug_assertions)]
+-use oxc_ast_visit::Visit;
+-use oxc_ast_visit::{VisitJs, walk_js::walk_call_expression};
++use oxc_ast_visit::{Visit, VisitJs, walk_js::walk_call_expression};
+ use rustc_hash::FxHashSet;
+ 
+ use oxc_allocator::{BitSet, GetAllocator};
+ use oxc_ast::ast::*;
+-use oxc_semantic::Scoping;
++use oxc_semantic::{Scoping, SymbolId};
 +use oxc_span::Span;
+ use oxc_syntax::scope::{ScopeFlags, ScopeId};
  
  use crate::{
-     AstNode,
-@@ -39,10 +39,11 @@ declare_oxc_lint!(
-     ///
-     /// Examples of **incorrect** code for this rule:
-     /// ```jsx
--    /// <html>
-     /// <html lang="foo">
-     /// ```
-     ///
-+    /// A missing `lang` attribute is reported by `jsx-a11y/html-has-lang`.
-+    ///
-     /// Examples of **correct** code for this rule:
-     /// ```jsx
-     /// <html lang="en">
-@@ -72,16 +73,12 @@ impl Rule for Lang {
-             return;
-         }
+-    ReusableTraverseCtx, TraverseCtx, minifier_traverse::traverse_mut_with_ctx,
+-    peephole::PeepholeOptimizations, symbol_liveness, traverse_context::as_direct_eval_call,
++    ReusableTraverseCtx, TraverseCtx,
++    minifier_traverse::traverse_mut_with_ctx,
++    peephole::PeepholeOptimizations,
++    state::PassChanges,
++    symbol_liveness,
++    traverse_context::{RedeclaredBindings, as_direct_eval_call},
+ };
  
--        has_jsx_prop_ignore_case(jsx_el, "lang").map_or_else(
--            || ctx.diagnostic(lang_diagnostic(jsx_el.name.span())),
--            |lang_prop| {
--                if !is_valid_lang_prop(lang_prop)
--                    && let JSXAttributeItem::Attribute(attr) = lang_prop
--                {
--                    ctx.diagnostic(lang_diagnostic(attr.span));
--                }
--            },
--        );
-+        if let Some(lang_prop) = has_jsx_prop_ignore_case(jsx_el, "lang")
-+            && !is_valid_lang_prop(lang_prop)
-+            && let JSXAttributeItem::Attribute(attr) = lang_prop
-+        {
-+            ctx.diagnostic(lang_diagnostic(attr.span));
-+        }
+ /// The fixed-point decision produced by one completed peephole pass.
+@@ -140,6 +144,35 @@ pub fn debug_assert_no_under_prune(
      }
  }
  
-@@ -138,6 +135,8 @@ fn test() {
-         ("<html lang='zh-yue-Hant' />", None, None),
-         ("<html lang='ja-Latn' />", None, None),
-         ("<html lang={foo} />", None, None),
-+        ("<html />", None, None),
-+        ("<html><body /></html>", None, None),
-         ("<HTML lang='foo' />", None, None),
-         ("<Foo lang={undefined} />", None, None),
-         ("<Foo lang='en' />", None, Some(settings())),
++/// Debug-only guard for the walk gate in [`prune_removed_declarations`]: a
++/// declaration dropped this pass must not still be in the program unless
++/// `KeepVar` re-emitted it. A violation means a site moved or cloned a binding
++/// out of a subtree it then dropped; release builds, which skip the walk when
++/// nothing was re-emitted, would then remove a live declaration from
++/// `Scoping::symbol_redeclarations` (the unsafe direction).
++///
++/// This is a separate walk rather than part of the pruning walk, so debug builds
++/// take the same pruning path as release builds.
++///
++/// Allocation-free like the other debug guards: it asserts inline during the walk.
++#[cfg(debug_assertions)]
++fn debug_assert_no_revived_declarations(
++    program: &Program<'_>,
++    scoping: &Scoping,
++    removed: &FxHashSet<(SymbolId, Span)>,
++    reemitted: &FxHashSet<(SymbolId, Span)>,
++) {
++    RedeclaredBindings::new(scoping, |symbol_id, span| {
++        let declaration = (symbol_id, span);
++        assert!(
++            !removed.contains(&declaration) || reemitted.contains(&declaration),
++            "revived declaration: {declaration:?} was dropped and is still in the program, \
++             but `KeepVar` did not re-emit it — see `PassChanges::reemitted_declarations`",
++        );
++    })
++    .visit_program(program);
++}
++
+ /// Debug-only guard for the gated direct-eval refresh: every live direct
+ /// `eval(...)` call must already have `ScopeFlags::DirectEval` on its
+ /// reference's recorded scope and every ancestor (the exact postcondition of
+@@ -199,9 +232,65 @@ fn debug_assert_no_stale_direct_eval(program: &Program<'_>, scoping: &Scoping) {
+     DirectEvalFlagCheck { scoping }.visit_program(program);
+ }
+ 
++/// Whether `span` identifies exactly one recorded declaration of `symbol_id`.
++///
++/// Bindings with synthesized spans (e.g. `SPAN` from a transform) can share one,
++/// and then a span cannot tell which of them a dropped binding was. Such
++/// declarations are never pruned: a stale redeclaration only keeps optimizations
++/// conservative, while pruning the wrong one would drop a live declaration.
++fn has_unique_span(scoping: &Scoping, symbol_id: SymbolId, span: Span) -> bool {
++    let mut matching = scoping
++        .symbol_redeclarations(symbol_id)
++        .iter()
++        .filter(|redeclaration| redeclaration.span == span);
++    matching.next().is_some() && matching.next().is_none()
++}
++
++/// Remove [`PassChanges::removed_declarations`] from
++/// `Scoping::symbol_redeclarations`, so e.g. `catch (a) { var a }` can drop `a`
++/// once the `var` is gone (#27548). A declaration is identified by its symbol
++/// and binding span; keys whose span is shared are skipped (see
++/// [`has_unique_span`]).
++///
++/// Unlike a `ReferenceId`, a dropped binding can reappear: `KeepVar` re-emits
++/// dropped `var`s with their symbol and span, and records them in
++/// [`PassChanges::reemitted_declarations`]. Only when a removed declaration was
++/// re-emitted is the program walked to keep those still present. Skipping the
++/// walk otherwise relies on `KeepVar` being the only site that re-emits a
++/// dropped binding, which debug builds check with a separate walk
++/// (`debug_assert_no_revived_declarations`); the pruning itself takes the sam
+```
+
+**File**: `crates/oxc_minifier/src/keep_var.rs` (modified, +16/-1)
+```diff
+@@ -10,6 +10,8 @@ use oxc_syntax::{
+     symbol::{SymbolFlags, SymbolId},
+ };
+ 
++use crate::traverse_context::redeclared_symbols;
++
+ pub struct KeepVar<'a> {
+     vars: Vec<(Ident<'a>, Span, Option<SymbolId>)>,
+ }
+@@ -80,7 +82,20 @@ impl<'a> KeepVar<'a> {
+ 
+         for (name, span, symbol_id) in &mut self.vars {
+             if let Some(symbol_id) = symbol_id {
+-                *symbol_id = Self::declared_symbol(*name, *span, *symbol_id, scope_id, ctx);
++                let declared_symbol =
++                    Self::declared_symbol(*name, *span, *symbol_id, scope_id, ctx);
++                if declared_symbol != *symbol_id {
++                    // Identity drops skip the drop walk. Retire the old declaration if
++                    // rebinding replaces it; callers can also discard a canonical regeneration.
++                    let declaration = (*symbol_id, *span);
++                    ctx.state.pass_changes.removed_declarations.insert(declaration);
++                    ctx.state.pass_changes.reemitted_declarations.insert(declaration);
++                    *symbol_id = declared_symbol;
++                }
++                // Tell the pass flush these declarations may still be live.
++                for symbol_id in redeclared_symbols(*symbol_id, ctx.scoping.scoping(), false) {
++                    ctx.state.pass_changes.reemitted_declarations.insert((symbol_id, *span));
++                }
+             }
+         }
+ 
+```
+
+**File**: `crates/oxc_minifier/src/peephole/remove_unused_declaration.rs` (modified, +20/-5)
+```diff
+@@ -1,7 +1,10 @@
+ use super::{PeepholeOptimizations, remove_unused_expression::ClassRemovability};
+-use crate::{CompressOptionsUnused, TraverseCtx};
++use crate::{CompressOptionsUnused, TraverseCtx, traverse_context::redeclared_symbols};
+ use oxc_ast::ast::*;
+-use oxc_ecmascript::constant_evaluation::{DetermineValueType, ValueType};
++use oxc_ecmascript::{
++    BoundNames,
++    constant_evaluation::{DetermineValueType, ValueType},
++};
+ use oxc_syntax::symbol::SymbolId;
+ 
+ impl<'a> PeepholeOptimizations {
+@@ -162,10 +165,11 @@ impl<'a> PeepholeOptimizations {
+     /// in the live AST changed this pass, and a spurious mutation spins the
+     /// fixed-point loop past its iteration guard (bluebird.js, monitor-oxc).
+     /// Installing — or declining to install — the filtered statement is the
+-    /// caller's mutation event.
++    /// caller's mutation event. Removed declarations still need journaling:
++    /// identity drops may have skipped the original subtree's drop walk.
+     pub fn remove_unused_variable_declaration(
+         mut stmt: Statement<'a>,
+-        ctx: &TraverseCtx<'a>,
++        ctx: &mut TraverseCtx<'a>,
+     ) -> Option<Statement<'a>> {
+         let Statement::VariableDeclaration(var_decl) = &mut stmt else { return Some(stmt) };
+         if !Self::can_remove_unused_declarators(ctx) {
+@@ -178,7 +182,18 @@ impl<'a> PeepholeOptimizations {
+                 "callers must pass KeepVar output (init-less declarators); a declarator \
+                  with an init would need a `drop_*` walk for its references"
+             );
+-            !Self::should_remove_unused_declarator(decl, kind, ctx)
++            if !Self::should_remove_unused_declarator(decl, kind, ctx) {
++                return true;
++            }
++            let scoping = ctx.scoping.scoping();
++            let removed = &mut ctx.state.pass_changes.removed_declarations;
++            decl.id.bound_names(&mut |ident| {
++                let Some(symbol_id) = ident.symbol_id.get() else { return };
++                for symbol_id in redeclared_symbols(symbol_id, scoping, false) {
++                    removed.insert((symbol_id, ident.span));
++                }
++            });
++            false
+         });
+         if var_decl.declarations.is_empty() {
+             return None;
+```
+
+**File**: `crates/oxc_minifier/src/state.rs` (modified, +15/-2)
+```diff
+@@ -1,9 +1,10 @@
+ use oxc_allocator::{Allocator, BitSet};
+ use oxc_data_structures::stack::NonEmptyStack;
+ use oxc_semantic::Scoping;
+-use oxc_span::SourceType;
++use oxc_span::{SourceType, Span};
+ use oxc_str::{Ident, IdentHashSet};
+-use oxc_syntax::scope::ScopeId;
++use oxc_syntax::{scope::ScopeId, symbol::SymbolId};
++use rustc_hash::FxHashSet;
+ 
+ use crate::{CompressOptions, symbol_state::SymbolState};
+ 
+@@ -59,6 +60,14 @@ pub struct PassChanges<'a> {
+     /// At least one direct `eval(...)` call was dropped this pass. Gates
+     /// the small `LiveDirectEvalCollector` walk at flush time.
+     pub(crate) direct_eval_dropped: bool,
++
++    /// Declarations `(symbol, binding span)` of redeclared symbols found in dropped
++    /// subtrees, to remove from `Scoping::symbol_redeclarations` at flush time.
++    pub(crate) removed_declarations: FxHashSet<(SymbolId, Span)>,
++
++    /// Declarations `(symbol, binding span)` of redeclared symbols that `KeepVar`
++    /// re-emitted. These may be in `removed_declarations` and still be live.
++    pub(crate) reemitted_declarations: FxHashSet<(SymbolId, Span)>,
+ }
+ 
+ impl<'a> PassChanges<'a> {
+@@ -67,6 +76,8 @@ impl<'a> PassChanges<'a> {
+             revisit_requested: false,
+             removed_references: BitSet::new_in(references_len, allocator),
+             direct_eval_dropped: false,
++            removed_declarations: FxHashSet::default(),
++            reemitted_declarations: FxHashSet::default(),
+         }
+     }
+ }
+@@ -183,6 +194,8 @@ impl<'a> MinifierState<'a> {
+         !self.pass_changes.revisit_requested
+             && self.pass_changes.removed_references.is_empty()
+             && !self.pass_changes.direct_eval_dropped
++            && self.pass_changes.removed_declarations.is_empty()
++            && self.pass_changes.reemitted_declarations.is_empty()
+     }
+ }
+ 
+```
+
+**File**: `crates/oxc_minifier/src/traverse_context/dropped_subtree_collector.rs` (modified, +90/-6)
+```diff
+@@ -1,5 +1,11 @@
+ use oxc_ast::ast::*;
+-use oxc_ast_visit::{Visit, walk::walk_call_expression};
++use oxc_ast_visit::{
++    Visit,
++    walk::{walk_call_expression, walk_catch_parameter},
++};
++use oxc_semantic::Scoping;
++use oxc_span::Span;
++use oxc_syntax::symbol::SymbolId;
+ 
+ use crate::state::PassChanges;
+ 
+@@ -17,14 +23,73 @@ pub fn as_direct_eval_call<'a, 'b>(
+     (ident.name == "eval").then_some(ident)
+ }
+ 
++/// The redeclared symbols a binding identifier of `symbol_id` declares: the
++/// symbol itself and, for a `var` redeclaring a catch parameter, the enclosing
++/// var binding (see `Scoping::catch_var_binding`). Only these need to be kept in
++/// sync with `Scoping::symbol_redeclarations`. The catch parameter itself only
++/// declares its own symbol, so pass `is_catch_parameter` for that binding.
++pub fn redeclared_symbols(
++    symbol_id: SymbolId,
++    scoping: &Scoping,
++    is_catch_parameter: bool,
++) -> impl Iterator<Item = SymbolId> + '_ {
++    std::iter::once(symbol_id)
++        .chain((!is_catch_parameter).then(|| scoping.catch_var_binding(symbol_id)).flatten())
++        .filter(|&symbol_id| !scoping.symbol_redeclarations(symbol_id).is_empty())
++}
++
++/// The symbol of a simple catch parameter: the one binding [`redeclared_symbols`]
++/// must be told about, since it does not also declare the enclosing var binding.
++fn catch_parameter_symbol(it: &CatchParameter<'_>) -> Option<SymbolId> {
++    match &it.pattern {
++        BindingPattern::BindingIdentifier(ident) => ident.symbol_id.get(),
++        _ => None,
++    }
++}
++
++/// Calls `on_declaration` with `(symbol, binding span)` for every declaration of
++/// a redeclared symbol in the visited subtree, i.e. for every binding the
++/// [`DroppedSubtreeCollector`] would record in `PassChanges::removed_declarations`.
++/// Used by the pass flush and its debug checks to find the live declarations.
++pub struct RedeclaredBindings<'s, F> {
++    scoping: &'s Scoping,
++    catch_parameter: Option<SymbolId>,
++    on_declaration: F,
++}
++
++impl<'s, F: FnMut(SymbolId, Span)> RedeclaredBindings<'s, F> {
++    pub fn new(scoping: &'s Scoping, on_declaration: F) -> Self {
++        Self { scoping, catch_parameter: None, on_declaration }
++    }
++}
++
++impl<'a, F: FnMut(SymbolId, Span)> Visit<'a> for RedeclaredBindings<'_, F> {
++    fn visit_binding_identifier(&mut self, it: &BindingIdentifier<'a>) {
++        let Some(symbol_id) = it.symbol_id.get() else { return };
++        for symbol_id in
++            redeclared_symbols(symbol_id, self.scoping, self.catch_parameter == Some(symbol_id))
++        {
++            (self.on_declaration)(symbol_id, it.span);
++        }
++    }
++
++    fn visit_catch_parameter(&mut self, it: &CatchParameter<'a>) {
++        let previous = std::mem::replace(&mut self.catch_parameter, catch_parameter_symbol(it));
++        walk_catch_parameter(self, it);
++        self.catch_parameter = previous;
++    }
++}
++
+ /// Walks AST subtrees being dropped or replaced, collecting
+-/// `IdentifierReference`s and direct `eval(...)` calls into the per-pass
++/// `IdentifierReference`s, direct `eval(...)` calls and declarations of
++/// redeclared symbols into the per-pass
+ /// [`PassChanges`] accumulator. Use via the `Visit` entry point matching the
+ /// dropped node (`visit_expression`, `visit_variable_declarator`, ...).
+ ///
+ /// Mark-only semantics: every reference found in a dropped subtree is added
+ /// to `pass_changes.removed_references`; every direct eval call sets
+-/// `pass_changes.direct_eval_dropped = true`. Marks for unresolved references
++/// `pass_changes.direct_eval_dropped = true`; every binding of a redeclared
++/// symbol is added to `pass_changes.removed_declarations`. Marks for unresolved references
+ /// are inert: the flush only filters per-symbol resolved-reference lists,
+ /// which never contain unresolved ids (and `root_unresolved_references` is
+ /// deliberately not pruned — no in-loop optimization consumes it and callers
+@@ -35,14 +100,18 @@ pub fn as_direct_eval_call<'a, 'b>(
+ /// moved out of the old slot into the new value leave id-less `TakeIn` dummies
+ /// behind, so the removed-subtree walk never sees their ids; and replacements
+ /// are built with fresh references, never cloned ids (see
+-/// `substitute_is_object_and_not_null`).
++/// `substitute_is_object_and_not_null`). Bindings are the exception: `KeepVar`
++/// re-emits dropped `var`s with their symbol and span (see
++/// `PassChanges::reemitted_declarations`).
+ pub struct DroppedSubtreeCollector<'a, 's> {
+     pass_changes: &'s mut PassChanges<'a>,
++    scoping: &'s Scoping,
++    catch_parameter: Option<SymbolId>,
+ }
+ 
+ impl<'a, 's> DroppedSubtreeCollector<'a, 's> {
+-    pub(crate) fn new(pass_changes: &'s mut PassChanges<'a>) -> Self {
+-        Self { pass_changes }
++    pub(crate) fn new(pass_changes: &'s mut PassChanges<'a>, scoping: &'s Scoping) -> Self {
++        Self { pass_changes, scoping, catch_parameter: None }
+     }
+ }
+ 
+@@ -63,6 +132,21 @@ impl<'a> Visit<'a> for Drop
+```
+
+**File**: `crates/oxc_minifier/src/traverse_context/ecma_context.rs` (modified, +1/-1)
+```diff
+@@ -433,7 +433,7 @@ impl<'a> TraverseCtx<'a, MinifierState<'a>> {
+     /// Used by the `replace_*` / `drop_*` helpers.
+     #[inline]
+     fn dropped_subtree_collector(&mut self) -> DroppedSubtreeCollector<'a, '_> {
+-        DroppedSubtreeCollector::new(&mut self.state.pass_changes)
++        DroppedSubtreeCollector::new(&mut self.state.pass_changes, self.scoping.scoping())
+     }
+ 
+     /// Replace an expression slot. Marks the pass as having mutated the AST.
+```
+
+**File**: `crates/oxc_minifier/src/traverse_context/mod.rs` (modified, +1/-1)
+```diff
+@@ -30,7 +30,7 @@ mod uid;
+ use ancestry::PopToken;
+ pub use ancestry::TraverseAncestry;
+ pub use bound_identifier::BoundIdentifier;
+-pub use dropped_subtree_collector::as_direct_eval_call;
++pub use dropped_subtree_collector::{RedeclaredBindings, as_direct_eval_call, redeclared_symbols};
+ pub use maybe_bound_identifier::MaybeBoundIdentifier;
+ pub use reusable::ReusableTraverseCtx;
+ pub use scoping::TraverseScoping;
+```
+
+**File**: `crates/oxc_minifier/tests/mod.rs` (modified, +31/-1)
+```diff
+@@ -5,11 +5,13 @@ mod mangler;
+ mod peephole;
+ 
+ use oxc_allocator::Allocator;
++use oxc_ast::ast::BindingIdentifier;
++use oxc_ast_visit::VisitMut;
+ use oxc_codegen::{Codegen, CodegenOptions};
+ use oxc_compat::EngineTargets;
+ use oxc_parser::{ParseOptions, Parser};
+ use oxc_semantic::SemanticBuilder;
+-use oxc_span::SourceType;
++use oxc_span::{SPAN, SourceType};
+ 
+ pub(crate) use oxc_minifier::{
+     CompressOptions, CompressOptionsKeepNames, CompressOptionsUnused, Compressor, TreeShakeOptions,
+@@ -149,6 +151,25 @@ fn run_with_iterations(
+     source_text: &str,
+     source_type: SourceType,
+     options: Option<CompressOptions>,
++) -> (String, u8) {
++    run_with_binding_spans(source_text, source_type, options, false)
++}
++
++/// Like [`test_smallest`], with every binding given the synthesized `SPAN`, so
++/// redeclarations cannot be told apart by span. No idempotency check: such
++/// redeclarations are never pruned, so the output may shrink on a second run.
++#[track_caller]
++pub(crate) fn test_unspanned_bindings(source_text: &str, expected: &str) {
++    let options = CompressOptions::smallest();
++    let output = run_with_binding_spans(source_text, SourceType::mjs(), Some(options), true).0;
++    assert_eq!(output, run(expected, SourceType::mjs(), None), "for source\n{source_text}");
++}
++
++fn run_with_binding_spans(
++    source_text: &str,
++    source_type: SourceType,
++    options: Option<CompressOptions>,
++    unspanned: bool,
+ ) -> (String, u8) {
+     let allocator = Allocator::default();
+     let ret = Parser::new(&allocator, source_text, source_type)
+@@ -157,6 +178,15 @@ fn run_with_iterations(
+     assert!(!ret.fatal_error, "{source_text}");
+     assert!(ret.diagnostics.is_empty(), "{source_text}");
+     let mut program = ret.program;
++    if unspanned {
++        struct UnspanBindings;
++        impl<'a> VisitMut<'a> for UnspanBindings {
++            fn visit_binding_identifier(&mut self, ident: &mut BindingIdentifier<'a>) {
++                ident.span = SPAN;
++            }
++        }
++        UnspanBindings.visit_program(&mut program);
++    }
+     let iterations = options.map_or(0, |options| {
+         let scoping = SemanticBuilder::new().build(&program).semantic.into_scoping();
+         Compressor::new(&allocator).build_with_scoping(&mut program, scoping, options)
 ```
 
 ---
 
-### Incident Patch 3: `5062936d` (2026-11-15)
-**Commit Message**: fix(sprout): support Babel 8 with FBT (#29615)
+### Incident Patch 3: `f1816d8f` (2026-11-19)
+**Commit Message**: fix(formatter_htmlish): count a blank line after unclosed element (#29881)
 
-Restore the Babel 8 upgrade deferred in #29610 by applying a one-line pnpm patch to `babel-plugin-fbt@1.0.0`: use the public `path.scope` API instead of the removed `path.context.scope`. Without this patch, 33 runnable React Compiler fixture transforms fail under Babel 8.
+Fix idempotency issue for cases like:
 
-Update Sprout's TypeScript preset to `ignoreExtensions`, type its preset list with Babel 8's `PresetItem`, and explicitly retain React's classic JSX runtime. The existing FBT + TypeScript + JSX regression fixture covers the patched integration.
-
-Validation:
-- Frozen-lockfile installation with pnpm 12.7.0.
-- All 42 harness tests pass.
-- All 1,357 Sprout runtime fixtures pass in CI.
-- Sprout typed lint and formatting pass.
-- Watched all 7 workflows complete successfully: 22 checks passed, 9 skipped as configured. [CI run](https://github.com/oxc-project/oxc/actions/runs/43748071331).
-
-This follow-up is a single commit on main; #29610 had already merged before its Babel 7 workaround could be replaced.
-
-AI assistance: OpenAI Codex.
-
-**File**: `patches/babel-plugin-fbt@1.0.0.patch` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+diff --git a/dist/FbtNodeChecker.js b/dist/FbtNodeChecker.js
-+--- a/dist/FbtNodeChecker.js
-++++ b/dist/FbtNodeChecker.js
-+@@ -81,3 +81,3 @@
-+   isJSModuleBound(path) {
-+-    const binding = path.context.scope.getBinding(this.moduleName);
-++    const binding = path.scope.getBinding(this.moduleName);
-+     return !!(binding && binding.path.node);
+```html
+<p>
+  ...
+<div>block</div>
 ```
 
-**File**: `pnpm-lock.yaml` (modified, +106/-229)
+We allow `omitted-end-tag`, so need to count differently than Prettier.
+
+**File**: `apps/oxfmt/conformance/snapshots/prettier.snap.md` (modified, +2/-1)
 ```diff
-@@ -213,6 +213,9 @@ overrides:
+@@ -574,8 +574,9 @@
+   - crates/oxc_formatter_htmlish/DIVERGENCES.md#unclosed-at-end
+ - externals/prettier/html/basics/with-colon.html (💥, 98.37%)
+   - crates/oxc_formatter_htmlish/DIVERGENCES.md#prefixed-script-style
+-- externals/prettier/html/prettier_ignore/unclosed2.html (💥, 80.00%)
++- externals/prettier/html/prettier_ignore/unclosed2.html (💥, 66.67%)
+   - crates/oxc_formatter_htmlish/DIVERGENCES.md#unclosed-at-end
++  - crates/oxc_formatter_htmlish/DIVERGENCES.md#omitted-end-tag
+ - externals/prettier/html/tags/tags.html (💥✨✨✨, 99.82%)
+   - crates/oxc_formatter_htmlish/DIVERGENCES.md#script-display-none
+ - externals/prettier/html/tags/tags2.html (💥💥✨✨, 97.17%)
+```
+
+**File**: `crates/oxc_formatter_htmlish/DIVERGENCES.md` (modified, +6/-0)
+```diff
+@@ -562,6 +562,8 @@ Prettier closes it where the fragment ends, which changes the page it is joined
  
- packageExtensionsChecksum: sha256-WlkiKBAt7r2UlrZsFUO1bnxo4IcnuMc2XFz6stV9WiY=
+ - Why: uniform-rule (a normalization is applied only where it is known safe for every reader: `oxc_formatter_css`'s AGENTS.md "Case")
+ - Pin: `tests/fixtures/html/omitted-end-tag.html`
++- Conformance:
++  - `externals/prettier/html/prettier_ignore/unclosed2.html`
  
-+patchedDependencies:
-+  babel-plugin-fbt@1.0.0: e748e7f8d950e1106d80d5b4a4440f76e6465c570a8178450017d12ccd53a491
+ ```html
+ <!-- input -->
+@@ -591,6 +593,10 @@ To a browser reading the page the end tag changes nothing, but in a template the
+ <!-- an end tag added before the second <p> lands in the else branch: a stray </p>, which makes an empty p -->
+ ```
+ 
++A blank line before the next sibling is the source's, counted from where the element's content ends.
++Prettier counts from its start tag, so `<p>⏎  a⏎<div>` gets one (with the `</p>` it adds);
++without the end tag, that would not be a fixpoint: a `<p>` whose content breaks onto lines of its own would get one on the next pass.
 +
- importers:
+ ## pre-content-without-end-tag
  
-   .:
-@@ -754,20 +757,20 @@ importers:
-   tasks/sprout:
-     devDependencies:
-       '@babel/core':
--        specifier: ^7.26.0
--        version: 7.29.13
-+        specifier: ^8.0.0
-+        version: 8.1.0
-       '@babel/parser':
--        specifier: ^7.26.0
--        version: 7.29.13
-+        specifier: ^8.0.0
-+        version: 8.1.2
-       '@babel/plugin-transform-modules-commonjs':
--        specifier: ^7.26.0
--        version: 7.29.7(@babel/core@7.29.13)
-+        specifier: ^8.0.0
-+        version: 8.1.2(@babel/core@8.1.0)
-       '@babel/preset-react':
--        specifier: ^7.26.0
--        version: 7.29.7(@babel/core@7.29.13)
-+        specifier: ^8.0.0
-+        version: 8.0.1(@babel/core@8.1.0)
-       '@babel/preset-typescript':
--        specifier: ^7.26.0
--        version: 7.29.7(@babel/core@7.29.13)
-+        specifier: ^8.0.0
-+        version: 8.0.7(@babel/core@8.1.0)
-       '@sinonjs/fake-timers':
-         specifier: ^15.4.0
-         version: 15.4.0
-@@ -791,7 +794,7 @@ importers:
-         version: 19.3.0
-       babel-plugin-fbt:
-         specifier: ^1.0.0
--        version: 1.0.0(@fbtjs/default-collection-transform@1.0.0)
-+        version: 1.0.0(patch_hash=e748e7f8d950e1106d80d5b4a4440f76e6465c570a8178450017d12ccd53a491)(@fbtjs/default-collection-transform@1.0.0)
-       babel-plugin-fbt-runtime:
-         specifier: ^1.0.0
-         version: 1.0.0(babel-plugin-fbt@1.0.0)
-@@ -1095,18 +1098,10 @@ packages:
-     resolution: {integrity: sha512-T5FRo+RzVHvGjWOuF1Ljc44b+NXAOazodHkGUHp4I3zCkQ4/sNVJm56h1S278LMR0bY5xBhztGziSbli8zObIw==}
-     engines: {node: '>=6.9.0'}
- 
--  '@babel/generator@7.29.14':
--    resolution: {integrity: sha512-qSY56jgW5JnSXzuekLVil6zaOQxOCtOHidr65KkaMBw772IuAY28Qx4ZykAcDn8+FRF15qk80XzKwgSc/RYW6g==}
--    engines: {node: '>=6.9.0'}
--
-   '@babel/generator@8.1.2':
-     resolution: {integrity: sha512-tAjURz1NaCZGtdG3hB6gjaIeTVo4XFD4TnbqIEneADVJ1Jpt2NxhPBAjbhius8ulUG5b/P2b56ec1ClJZa2aBQ==}
-     engines: {node: ^22.18.0 || >=24.11.0}
- 
--  '@babel/helper-annotate-as-pure@7.29.7':
--    resolution: {integrity: sha512-OoK6239jHPuSQOoS0kfTVKn0b/rVTk0seKq4Gd2UMLtmOVLjDC0ki3e+c90Trqv2gMfvJFqkiljrr568+qddiw==}
--    engines: {node: '>=6.9.0'}
--
-   '@babel/helper-annotate-as-pure@8.0.0':
-     resolution: {integrity: sha512-NSpMkMsvvZqzThJ0p1B02cbtA2ObEyfBvq950bmNkyxsxvcxwhvvCB036rKhlEnuBBo30bOrk13u3FzlKSoRrw==}
-     engines: {node: ^22.18.0 || >=24.11.0}
-@@ -1119,12 +1114,6 @@ packages:
-     resolution: {integrity: sha512-ilAZCdOOlOVA7dQbaFNw2f/59p6GW33NxTopc3DvEE3efp3ZXTrGX/yZScaKw8/vd9bq31Ag0EcXiLw32bAgJg==}
-     engines: {node: ^22.18.0 || >=24.11.0}
- 
--  '@babel/helper-create-class-features-plugin@7.29.13':
--    resolution: {integrity: sha512-fo8/Fr44/DMV71FQjk/HA0Npmu3bo5DFoWTCW1dhUR8Vx3NFfAVeEy0TbcBpt4e+hd2QhdmWgmspHo/9iWj8RA==}
--    engines: {node: '>=6.9.0'}
--    peerDependencies:
--      '@babel/core': ^7.0.0
--
-   '@babel/helper-create-class-features-plugin@8.0.6':
-     resolution: {integrity: sha512-Hy7wG2Pk1LnAkFMq0CbBk789XMTYVzYGxR7tKgk+TOpZckQRME3Tdou4mMT/8DFjJFxFZ8R6UsS4DR/duBKlVA==}
-     engines: {node: ^22.18.0 || >=24.11.0}
-@@ -1139,10 +1128,6 @@ packages:
-     resolution: {integrity: sha512-OdnA/N52LhzFpeUuVz5YGuSWjc7TPHiFmVYZbPlSgExocO2GwbxVpSni9MVs5wwW+wZ4kPuwBEBN9pIPDYz1mA==}
-     engines: {node: ^22.18.0 || >=24.11.0}
- 
--  '@babel/helper-member-expression-to-functions@7.29.14':
--    resolution: {integrity: sha512-FuTSn8mXKAP+aHXnbkCYQsQAdlEIJptEutwc2NaPd28hyVqsjRDmBnI2EPJX6HCodKIqOHfayQHqtxQCkqwthA==}
--    engines: {node: '>=6.9.0'}
--
-   '@babel/helper-member-expression-to-functions@8.0.5':
-     resolution: {integrity: sha512-GLe05QD98BkNFTkjaqeqF9QSRoHLKrrB4tpoplyQuuPrQJ72rtmkM4wvqJLX/sjZPqkbK5MUYSsuUTqdJoOVjA==}
-     engines: {node: ^22.18.0 || >=24.11.0}
-@@ -1161,9 +1146,11 @@ packages:
-     peerDependencies:
-       '@babel/core': ^7.0.0
- 
--  '@babel/helper-optimise-call-expression@7.29.7':
--    resolution: {integrity: sha512-+kmGVjcT9RGYzoDwdwEqEvGgKe3BYq+O1iGzjFubaNgZHwYHP6lsF2Yghf4kEuv9BV7tYDZ913aBW9am6YKong==}
--    engines: {node: '>=6.9.0'}
-+  '@babel/helper-module-transforms@8.1.2':
-+    resolution: {integrity: sha512-iSa4SKZHScghjyCDWgrkcb/gt+huMuoZ8ZpY0iQQUG1C41XH9Iy3nQA0vcNDTcALItQ0kZ9cuWzqm76p/kkHJA==}
-+    engines: {node: ^22.18.0 || >=24.11.0}
-+    peerDependencies:
-+      '@babel/core': ^8.0.0
- 
-   '@babel/helper-optimise-call-expression@8.0.0':
-     resolution: {integrity: sha512-3W6satvtPuCUkUx63S2jMoW9EQNYkADgs1HTfufmL7gCmAulHMKupA/12WNz4A0GMMFn/YnWWwqOT9IZrJHQjg==}
-@@ -1185,22 +1172,12 @@ packages:
-     peerDependencies:
-       '@babel/core': ^8.0.0
- 
--  '@babel/helper-replace-supers@7.29.7':
--    resolution: {integrity: sha512-atfGXWSeCiF4DnKZIfmJfQRkSw9b9gNNXR1kqKjbhG4pGYCOnkp8OcTB8E3NXjBu8NpheSnOeNKz8KT7UNFTmQ==}
--    engine
+ - Why: semantics (whitespace in `pre`-like elements is content; prettier/prettier#16205)
 ```
 
-**File**: `pnpm-workspace.yaml` (modified, +4/-0)
+**File**: `crates/oxc_formatter_htmlish/src/print/children.rs` (modified, +4/-1)
 ```diff
-@@ -66,3 +66,7 @@ minimumReleaseAgeExclude:
-   - vite-plus
-   - vitest
-   - prettier@3.10.1
-+
-+patchedDependencies:
-+  # Babel 8 removed the internal traversal context scope used by FBT 1.0.0.
-+  babel-plugin-fbt@1.0.0: patches/babel-plugin-fbt@1.0.0.patch
-```
-
-**File**: `tasks/sprout/package.json` (modified, +5/-5)
-```diff
-@@ -7,11 +7,11 @@
-     "test-harness": "node --test test/*.test.ts"
-   },
-   "devDependencies": {
--    "@babel/core": "^7.26.0",
--    "@babel/parser": "^7.26.0",
--    "@babel/plugin-transform-modules-commonjs": "^7.26.0",
--    "@babel/preset-react": "^7.26.0",
--    "@babel/preset-typescript": "^7.26.0",
-+    "@babel/core": "^8.0.0",
-+    "@babel/parser": "^8.0.0",
-+    "@babel/plugin-transform-modules-commonjs": "^8.0.0",
-+    "@babel/preset-react": "^8.0.0",
-+    "@babel/preset-typescript": "^8.0.0",
-     "@sinonjs/fake-timers": "^15.4.0",
-     "@testing-library/react": "^16.3.0",
-     "@types/babel__core": "^7.20.5",
-```
-
-**File**: `tasks/sprout/src/transform.ts` (modified, +4/-4)
-```diff
-@@ -1,13 +1,13 @@
- import { createRequire } from "node:module";
--import { transformSync } from "@babel/core";
-+import { transformSync, type PresetItem } from "@babel/core";
+@@ -237,8 +237,11 @@ enum Leading {
+     IfPrevFlat(GroupId),
+ }
  
- const require = createRequire(import.meta.url);
--const presets = [
-+const presets: PresetItem[] = [
-   [
-     require.resolve("@babel/preset-typescript"),
--    { allExtensions: true, isTSX: true, onlyRemoveTypeImports: true },
-+    { ignoreExtensions: true, onlyRemoveTypeImports: true },
-   ],
--  [require.resolve("@babel/preset-react"), { throwIfNamespace: false }],
-+  [require.resolve("@babel/preset-react"), { runtime: "classic", throwIfNamespace: false }],
- ];
- const plugins = [
-   require.resolve("babel-plugin-fbt"),
++/// A blank line before the next sibling, from where the node's content ends (`<p>⏎  a⏎<div>` has none).
+ fn force_next_empty_line(t: &Tree<'_>, id: NodeId) -> bool {
+-    t[id].next.is_some_and(|next| t.line_breaks(t.source_end(id), t[next].span.start) >= 2)
++    t[id]
++        .next
++        .is_some_and(|next| t.line_breaks(super::end_with_content(t, id), t[next].span.start) >= 2)
+ }
+ 
+ fn prefer_hard_line_as_leading(t: &Tree<'_>, id: NodeId) -> bool {
+```
+
+**File**: `crates/oxc_formatter_htmlish/src/print/mod.rs` (modified, +4/-4)
+```diff
+@@ -84,7 +84,7 @@ fn write_child<'a>(t: &'a Tree<'a>, id: NodeId, f: &mut HtmlishFormatter<'_, 'a>
+     if opening_start_borrowed(t, id) {
+         start += opening_start_marker(t, id).len();
+     }
+-    let mut end = ignored_end(t, id) as usize;
++    let mut end = end_with_content(t, id) as usize;
+     // Whoever borrows the closing `>` prints it,
+     // the parent included (DIVERGENCES.md#ignored-closing-end-once)
+     if closing_end_borrowed(t, id) {
+@@ -94,12 +94,12 @@ fn write_child<'a>(t: &'a Tree<'a>, id: NodeId, f: &mut HtmlishFormatter<'_, 'a>
+     write!(f, [opening_tag_prefix(t, id), text(raw), closing_tag_suffix(t, id)]);
+ }
+ 
+-/// Where an ignored node's source ends: an unclosed element extends to its last child.
+-fn ignored_end(t: &Tree<'_>, id: NodeId) -> u32 {
++/// Where a node's source ends, its content included: an unclosed element extends to its last child.
++fn end_with_content(t: &Tree<'_>, id: NodeId) -> u32 {
+     let end = t.source_end(id);
+     match t.kind(id) {
+         NodeKind::Element(el) if el.end_tag.is_none() => {
+-            t[id].last_child.map_or(end, |last| end.max(ignored_end(t, last)))
++            t[id].last_child.map_or(end, |last| end.max(end_with_content(t, last)))
+         }
+         _ => end,
+     }
+```
+
+**File**: `crates/oxc_formatter_htmlish/tests/fixtures/html/omitted-end-tag.html` (modified, +3/-0)
+```diff
+@@ -4,3 +4,6 @@
+ </ul>
+ <p>para
+ <div>block</div>
++<p>
++  multi-line para
++<div>block</div>
+```
+
+**File**: `crates/oxc_formatter_htmlish/tests/fixtures/html/omitted-end-tag.html.snap` (modified, +7/-0)
+```diff
+@@ -8,6 +8,9 @@ source: crates/oxc_formatter_htmlish/tests/fixtures/mod.rs
+ </ul>
+ <p>para
+ <div>block</div>
++<p>
++  multi-line para
++<div>block</div>
+ 
+ ==================== Output ====================
+ ------------------
+@@ -19,6 +22,8 @@ source: crates/oxc_formatter_htmlish/tests/fixtures/mod.rs
+ </ul>
+ <p>para
+ <div>block</div>
++<p>multi-line para
++<div>block</div>
+ 
+ -------------------
+ { printWidth: 100 }
+@@ -29,5 +34,7 @@ source: crates/oxc_formatter_htmlish/tests/fixtures/mod.rs
+ </ul>
+ <p>para
+ <div>block</div>
++<p>multi-line para
++<div>block</div>
+ 
+ ===================== End =====================
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #29650** (2026-11-16): refactor(playground): replace binding patch with source wrapper (@Dunqing)
-- **PR #29648** (2026-11-16): feat(playground): expose compression options (@Dunqing)
-- **PR #29642** (closed): feat(ci): migrate issue triage to Oxc Factory (@Boshen)
-- **PR #29641** (2026-11-16): fix(react-compiler): do not report hoisted function declaration initializer as access before declaration (@Boshen)
-- **PR #29639** (2026-11-16): chore(formatter_htmlish): bump oxc-htmlish-parser (@leaysgur)
-- **PR #29638** (2026-11-16): feat(playground): support explicit source types (@Dunqing)
+- **PR #29895** (2026-11-19): test(parser): cover comment attachment after a right shift (@camc314)
+- **PR #29882** (2026-11-19): fix(linter/unicorn/prefer-logical-operator-over-ternary): parenthesize operands that bind looser than `||` in fixer (@oxc-captain[bot])
+- **PR #29881** (2026-11-19): fix(formatter_htmlish): count a blank line after unclosed element (@leaysgur)
+- **PR #29880** (2026-11-19): fix(linter/eslint/no-unneeded-ternary): don't drop side-effecting tests in equal-literal fix (@oxc-captain[bot])
+- **PR #29874** (2026-11-19): fix(formatter_htmlish/angular): do not break a parent for ICU (@leaysgur)
+- **PR #29873** (2026-11-19): fix(formatter_htmlish/angular): break as-written block parameters (@leaysgur)
 
 ---
 
@@ -1496,33 +1917,78 @@ AI assistance: OpenAI Codex.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. linter/eslint/no-div-regex): offer regex rewrites as suggestions
+## X. linter/typescript/explicit-function-return-type): check block-bodied arrows in r
 
 **RULE**:
-When implementing operations in `crates/oxc_linter/src/rules/eslint/no_div_regex.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/oxc_linter/src/rules/typescript/explicit_function_return_type.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in oxc-project/oxc. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `994ddc33`: linter/eslint/no-div-regex): offer regex rewrites as suggestions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `35694db4`: linter/typescript/explicit-function-return-type): check block-bodied arrows in returned objects. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/eslint/no_div_regex.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/oxc_linter/src/rules/typescript/explicit_function_return_type.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    suggestion,
-                ctx.diagnostic_with_suggestion(no_div_regex_diagnostic(lit.span), |fixer| {
+    is_typed_parent(parent, Some(node))
+fn is_typed_parent(parent: &AstNode, callee: Option<&AstNode>) -> bool {
+        || is_default_function_parameter_with_type_annotation(parent)
+fn is_default_function_parameter_with_type_annotation(node: &AstNode) -> bool {
+    matches!(node.kind(), AstKind::FormalParameter(param) if param.type_annotation.is_some())
+    let can_inherit_return_type = match parent.kind() {
+        AstKind::ReturnStatement(_) => true,
+        AstKind::ArrowFunctionExpression(func) => func.get_expression().is_some(),
+        AstKind::ObjectProperty(prop) => matches!(
+            prop.value.without_parentheses(),
+            Expression::ArrowFunctionExpression(func) if func.get_expression().is_some()
+        ),
+        _ => false,
+    };
+    if !can_inherit_return_type {
+        return false;
+    is_typed_parent(obj_expr_parent, None) || is_property_of_object_with_type(obj_expr_parent, ctx)
+        (
+            "
+            type R = { run: () => Promise<number> };
+            export function f(): R {
+              return { run: async () => 1 };
+            }
+            ",
+            None,
+            None,
+            None,
+        ),
+        (
+            "
+  
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    fix,
-                ctx.diagnostic_with_fix(no_div_regex_diagnostic(lit.span), |fixer| {
+    is_typed_parent(parent, Some(node), ctx)
+fn is_typed_parent(parent: &AstNode, callee: Option<&AstNode>, ctx: &LintContext) -> bool {
+        || is_default_function_parameter_with_type_annotation(parent, ctx)
+fn is_default_function_parameter_with_type_annotation(node: &AstNode, ctx: &LintContext) -> bool {
+    let AstKind::AssignmentPattern(_assign) = node.kind() else { return false };
+    match ctx.nodes().parent_kind(node.id()) {
+        AstKind::FormalParameter(f) => f.type_annotation.is_some(),
+        AstKind::FormalParameterRest(f) => f.type_annotation.is_some(),
+        _ => false,
+    }
+    if let AstKind::ObjectProperty(prop) = parent.kind()
+        && let Expression::ArrowFunctionExpression(func) = &prop.value
+        && func.get_function_body().is_some_and(|body| !body.statements.is_empty())
+        && func.return_type.is_some()
+    {
+        return true;
+    is_typed_parent(obj_expr_parent, None, ctx)
+        || is_property_of_object_with_type(obj_expr_parent, ctx)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `994ddc33` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `35694db4` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

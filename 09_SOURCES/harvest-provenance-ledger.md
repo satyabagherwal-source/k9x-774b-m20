@@ -11336,3 +11336,8 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a4304377` | Multi-dimensional audit evidence | 2026-11-19T15:42:39.236Z |
 | `learn-huggingface-liquidai-lfm2-5-24b-a2b` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-19T15:50:46.181Z |
 | `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `ea3b347b` | Multi-dimensional audit evidence | 2026-11-19T15:50:50.593Z |
+| `learn-huggingface-fishaudio-drama-3` | `https://huggingface.co/fishaudio/drama-3` | `hf-fishaud` | Multi-dimensional audit evidence | 2026-11-19T15:58:43.724Z |
+| `learn-github-oxc-project-oxc` | `https://github.com/oxc-project/oxc` | `c5890024` | Multi-dimensional audit evidence | 2026-11-19T15:58:47.914Z |
+| `learn-github-meshtastic-meshtastic-android` | `https://github.com/meshtastic/Meshtastic-Android` | `097f70bc` | Multi-dimensional audit evidence | 2026-11-19T15:58:52.078Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `56ad7d6c` | Multi-dimensional audit evidence | 2026-11-19T15:58:58.311Z |
+| `learn-dom-h-d41da63c` | `project://oxc-project-oxc` | `c5890024` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/oxc-project-oxc-learnings.md` | 2026-11-19T15:59:27.674Z |

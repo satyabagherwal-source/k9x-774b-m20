@@ -11303,3 +11303,8 @@
 | `CYCLE-20261119-YC1S` | `2026-11-19T15:42:39.232Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9396` | Yes (`dade5f3b...`) |
 | `CYCLE-20261119-8RS1` | `2026-11-19T15:50:46.177Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md` | Yes (`1d1721cf...`) |
 | `CYCLE-20261119-8V6L` | `2026-11-19T15:50:50.589Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9397` | Yes (`497c16ae...`) |
+| `CYCLE-20261119-J094` | `2026-11-19T15:58:43.720Z` | `fishaudio/drama-3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fishaudio-drama-3-learnings.md` | Yes (`14a6db04...`) |
+| `CYCLE-20261119-J3HI` | `2026-11-19T15:58:47.910Z` | `oxc-project/oxc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9398` | Yes (`702a4d08...`) |
+| `CYCLE-20261119-J6P6` | `2026-11-19T15:58:52.074Z` | `meshtastic/Meshtastic-Android` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9399` | Yes (`fee09e94...`) |
+| `CYCLE-20261119-JBIC` | `2026-11-19T15:58:58.308Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9400` | Yes (`e0104392...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T15:59:27.674Z` | `oxc-project-oxc` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-D41DA63C` [Domain H] | Yes (`d24df70d...`) |

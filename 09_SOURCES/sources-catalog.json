@@ -1455,8 +1455,8 @@
     "sourceUrl": "https://huggingface.co/fishaudio/drama-3",
     "sourceVersion": "hf-fishaudio-drama-3",
     "license": "Open-Source",
-    "contentHash": "8f006a0ffac309fb28cd5736ce21610c11eb71b93949c7892044d4458bccc6c7",
-    "lastHarvestedAt": "2026-11-15T01:46:37.666Z",
+    "contentHash": "14a6db04ea8eaa363783add77f3901a240f6b53c735ce964258e3002354d12d3",
+    "lastHarvestedAt": "2026-11-19T15:58:43.724Z",
     "learningId": "learn-huggingface-fishaudio-drama-3"
   },
   "hf-dealignai-deepseek-v4.1-flash-uncensored-fp8": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "d65ec42b",
+    "sourceVersion": "56ad7d6c",
     "license": "Apache-2.0",
-    "contentHash": "33d6eb46953cea14aabe9c25a44246f6c9b63aff39932f592034697081d2a83a",
-    "lastHarvestedAt": "2026-11-18T23:18:23.600Z",
+    "contentHash": "e01043928efedb765b787308f3448f2488c2513bae47685896030b91b9230cdc",
+    "lastHarvestedAt": "2026-11-19T15:58:58.311Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -7723,10 +7723,10 @@
     "repository": "oxc-project/oxc",
     "platform": "github",
     "sourceUrl": "https://github.com/oxc-project/oxc",
-    "sourceVersion": "7c39be07",
+    "sourceVersion": "c5890024",
     "license": "MIT",
-    "contentHash": "aeea49b111403c9deb597cd7071a909494cbc31582738b90de8fa1410267f764",
-    "lastHarvestedAt": "2026-11-17T20:17:34.946Z",
+    "contentHash": "702a4d08b9e4042edb3db349411ba002b91b0f6d137a2d3419ef215919fcbf51",
+    "lastHarvestedAt": "2026-11-19T15:58:47.914Z",
     "learningId": "learn-github-oxc-project-oxc"
   },
   "pointfreeco-swift-composable-architecture": {
@@ -7813,10 +7813,10 @@
     "repository": "meshtastic/Meshtastic-Android",
     "platform": "github",
     "sourceUrl": "https://github.com/meshtastic/Meshtastic-Android",
-    "sourceVersion": "fd407372",
+    "sourceVersion": "097f70bc",
     "license": "GPL-3.0",
-    "contentHash": "7d45f78be9227ea7c25d098099ffeacc6943a900ace2f5b0faa063d75802d5c8",
-    "lastHarvestedAt": "2026-11-15T09:26:36.909Z",
+    "contentHash": "fee09e94c023447a320d64ea38d6e83bf6741a15d4c2c6c6f27272d3ab8c182f",
+    "lastHarvestedAt": "2026-11-19T15:58:52.078Z",
     "learningId": "learn-github-meshtastic-meshtastic-android"
   },
   "astral-sh-uv": {

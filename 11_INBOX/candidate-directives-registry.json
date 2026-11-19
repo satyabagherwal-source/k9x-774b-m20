@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T15:50:59.680Z",
+  "last_updated": "2026-11-19T15:59:29.099Z",
   "directives": [
     {
       "id": "CD-001",
@@ -33397,6 +33397,50 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-642015-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-JYG6",
+      "directive_title": "linter/typescript/explicit-function-return-type): check block-bodied arrows in r",
+      "source_repo": "oxc-project-oxc-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-JYG6-linter-typescript-explicit-function-return-type-check-block-bodied-arrows-in-r.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-J6UO",
+      "directive_title": "add a debug-only loopback MCP server for agents",
+      "source_repo": "meshtastic/Meshtastic-Android",
+      "source_commit": "097f70bc",
+      "staged_file": "11_INBOX/candidate-directives/CD-J6UO-add-a-debug-only-loopback-mcp-server-for-agents.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-19",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-JBNP",
+      "directive_title": "Announce probing kernel support in debug log",
+      "source_repo": "cilium/cilium",
+      "source_commit": "56ad7d6c",
+      "staged_file": "11_INBOX/candidate-directives/CD-JBNP-announce-probing-kernel-support-in-debug-log.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-19",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-JZ9H",
+      "directive_title": "desktop): add a debug-only loopback MCP server for agents",
+      "source_repo": "meshtastic-meshtastic-android-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-JZ9H-desktop-add-a-debug-only-loopback-mcp-server-for-agents.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "K"
     }
   ]
 }

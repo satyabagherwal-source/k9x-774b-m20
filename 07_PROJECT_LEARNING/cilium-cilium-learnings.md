@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `d65ec42b`  
+> **Source Version**: `56ad7d6c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T23:18:22.628Z  
+> **Timestamp**: 2026-11-19T15:58:57.397Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T23:18:22.623Z  
+> **Harvest Timestamp**: 2026-11-19T15:58:57.393Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25866 stars
+- **Stars / Engagement**: 25867 stars
 
 ---
 
@@ -1259,17 +1259,15 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #50107** (2026-11-18): **Revert "bpf: migrate ENABLE_IPV6 to runtime config part 5"**
-  *Symptoms*: Reverts cilium/cilium#50017. Edit. Confirmed that this PR was not the cause for the flake, which rather appears to be caused by a change merged and backported into v1.20.
+- **Issue #50147** (2026-11-19): **[CI-WIP: DO-NOT-MERGE] Fix egress gateway excl cidr test**
+  *Symptoms*: I pushed this branch to my own fork: https://github.com/cilium/cilium/pull/47588. Running the tests here so the workflow changes reflect. Will close: DO NOT MERGE
   **Post-Mortem & Fix Analysis**:
-  > Commits be2894b006bdb5fd31cb695880a92ead46f8aef0, 8da848612befb86f14ec866ed48f50baf50ae1a7, 163cf8b6884c0d1b7b244b7bd1372b61808bc5ff, 50bc4b6e7dd06d8e7bab70dcf86454dc70fe81d2 do not match "(?m)^Signed-off-by:".  Please follow instructions provided in https://docs.cilium.io/en/stable/contributing/development/contributing_guide/#developer-s-certificate-of-origin
-  > /ci-clustermesh
+  > /ci-eks
 
-- **Issue #50103** (2026-11-18): **gha/scale: bump cilium/scaffolding commit SHA**
-  *Symptoms*: The image for the previously referenced SHA had not been built correctly due to a GitHub incident, causing the scale tests to fail while trying to pull it. Hence, let's manually bump it, rather than waiting for the next Renovate's run. 
+- **Issue #50139** (2026-11-19): **MAINTAINERS: Add Antony Reynaud**
+  *Symptoms*: The voting period to grant commit access to @Artyop, initiated on 2026-11-12, closed with the following results:      Yes: 27     Nn: 0     Abstain: 0      With the Company Block Vote Limit applied:     Yes: 6 + 1 + 1 + 1 = 9 votes     No: 0 votes
   **Post-Mortem & Fix Analysis**:
   > /test
-  > /scale-clustermesh
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1286,86 +1284,112 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d65ec42b` (2026-09-21)
-**Commit Message**: connectivity test: add support for Gardener Kubernetes clusters
+### Incident Patch 1: `5e1e30cc` (2026-11-17)
+**Commit Message**: bigtcp: Announce probing kernel support in debug log
 
-In [Gardener](https://gardener.cloud/) clusters CoreDNS is listening on port 8053 instead of 53. This is why end-to-end tests (connectivity tests) with DNS-CiliumNetworkPolicies are failing.
+As reported in [1], modprobe geneve can hang in case of a kernel bug,
+and probes.HaveBIGTCPTunnel() hangs subsequently. In order to make this
+sort of an initialization hang diagnosable, log the intention to run the
+probe before running it.
 
-Adding port 8053 to the list of egress ports fixes the following tests:
+[1]: https://github.com/cilium/cilium/issues/50035
 
-- client-egress-l7-named-port
-- client-egress-l7-port-range
-- client-egress-l7
-- client-egress-tls-sni-denied
-- client-egress-tls-sni
-- to-entities-world-port-range
-- to-entities-world
-- to-fqdns-with-proxy
-- to-fqdns
+Signed-off-by: Alice Mikityanska <[REDACTED_EMAIL]>
 
-```release-note
-connectivity test: add support for Gardener Kubernetes clusters
+**File**: `pkg/datapath/linux/bigtcp/bigtcp.go` (modified, +8/-5)
+```diff
+@@ -184,13 +184,19 @@ func supportsBIGTCPIPv6(log *slog.Logger) bool {
+ 
+ // Probes whether the kernel supports BIG TCP for VXLAN and GENEVE.
+ func supportsBIGTCPTunnel(log *slog.Logger) bool {
++	log.Debug("Probing kernel support for BIG TCP for UDP tunnels")
++	result := true
+ 	if err := probes.HaveBIGTCPTunnel(); err != nil {
+ 		if !errors.Is(err, probes.ErrNotSupported) {
+ 			log.Warn("Failed to probe kernel support for BIG TCP for UDP tunnels: " + err.Error())
++			return false
+ 		}
+-		return false
++		result = false
+ 	}
+-	return true
++	log.Info("Probed kernel support for BIG TCP for UDP tunnels",
++		logfields.State, result,
++	)
++	return result
+ }
+ 
+ // Returns the current gso_max_size (IPv6), gso_ipv4_max_size (IPv4) and
+@@ -284,9 +290,6 @@ func validateConfig(cfg UserConfig, daemonCfg *option.DaemonConfig, ipsecCfg ips
+ 
+ func newBIGTCP(lc cell.Lifecycle, p params) (Config, error) {
+ 	bigtcpTunnel := supportsBIGTCPTunnel(p.Log)
+-	p.Log.Info("Probed kernel support for BIG TCP for UDP tunnels",
+-		logfields.State, bigtcpTunnel,
+-	)
+ 
+ 	if err := validateConfig(p.UserConfig, p.DaemonConfig, p.IPsecConfig, p.TunnelConfig, p.LBConfig.DSRDispatch, bigtcpTunnel); err != nil {
+ 		return nil, err
 ```
 
-Fixes: #48794
+---
 
-Signed-off-by: psheichelberg <[REDACTED_EMAIL]>
+### Incident Patch 2: `82c6208e` (2026-11-18)
+**Commit Message**: loadbalancer/redirectpolicy: export LRPServiceNameSuffix via types
 
-**File**: `cilium-cli/connectivity/builder/manifests/client-egress-only-dns.yaml` (modified, +5/-0)
+localRedirectServiceSuffix is declared in the redirectpolicy package
+as an internal constant.
+
+Move it to LRPServiceNameSuffix in the redirectpolicy/types sub-package
+so other packages can import it without pulling the whole redirectpolicy
+package in.
+
+Signed-off-by: Alasdair McWilliam <[REDACTED_EMAIL]>
+
+**File**: `pkg/loadbalancer/redirectpolicy/redirectpolicy.go` (modified, +3/-6)
 ```diff
-@@ -13,6 +13,11 @@ spec:
-         protocol: UDP
-       - port: "53"
-         protocol: TCP
-+      # Gardener <https://gardener.cloud/> uses port 8053 for CoreDNS
-+      - port: "8053"
-+        protocol: UDP
-+      - port: "8053"
-+        protocol: TCP
-       rules:
-         dns:
-         - matchPattern: "*"
+@@ -20,13 +20,10 @@ import (
+ 	policytypes "github.com/cilium/cilium/pkg/policy/types"
+ )
+ 
+-// localRedirectServiceSuffix is the suffix to append to the local redirect policy
+-// name to construct the pseudo-service name to which the matched pods are associated
+-// as backends. ':' is used as separator as that is not an allowed character in k8s.
+-const localRedirectServiceSuffix = ":local-redirect"
+-
++// lrpServiceName returns a new loadbalancer ServiceName, with the LRPServiceNameSuffix
++// appended.
+ func lrpServiceName(lrpID lb.ServiceName) lb.ServiceName {
+-	return lrpID.AppendSuffix(localRedirectServiceSuffix)
++	return lrpID.AppendSuffix(lrpTypes.LRPServiceNameSuffix)
+ }
+ 
+ // LocalRedirectPolicy is the internal representation of Cilium Local Redirect Policy.
 ```
 
-**File**: `cilium-cli/connectivity/builder/manifests/client-egress-to-entities-world-port-range.yaml` (modified, +5/-0)
+**File**: `pkg/loadbalancer/redirectpolicy/types/types.go` (modified, +5/-0)
 ```diff
-@@ -24,6 +24,11 @@ spec:
-         protocol: UDP
-       - port: "53"
-         protocol: TCP
-+      # Gardener <https://gardener.cloud/> uses port 8053 for CoreDNS
-+      - port: "8053"
-+        protocol: UDP
-+      - port: "8053"
-+        protocol: TCP
-   # OpenShift  runs coreDNS in openshift-dns namespace and uses port 5353
-   - toEndpoints:
-     - matchExpressions:
-```
-
-**File**: `cilium-cli/connectivity/builder/manifests/client-egress-to-entities-world.yaml` (modified, +5/-0)
-```diff
-@@ -23,6 +23,11 @@ spec:
-         protocol: UDP
-       - port: "53"
-         protocol: TCP
-+      # Gardener <https://gardener.cloud/> uses port 8053 for CoreDNS
-+      - port: "8053"
-+        protocol: UDP
-+      - port: "8053"
-+        protocol: TCP
-   # OpenShift  runs coreDNS in openshift-dns namespace and uses port 5353
-   - toEndpoints:
-     - matchExpressions:
+@@ -3,6 +3,11 @@
+ 
+ package types
+ 
++// LRPServiceNameSuffix is the suffix to append to the local redirect policy
++// name to construct the pseudo-service name to which the matched pods are associated
++// as backends. ':' is used as separator as that is not an allowed character in k8s.
++const LRPServiceNameSuffix = ":local-redirect"
++
+ // LRPType identifies the matcher used by a Local Redirect Policy.
+ type LRPType int
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #50107** (closed): Revert "bpf: migrate ENABLE_IPV6 to runtime config part 5" (@giorio94)
-- **PR #50103** (2026-11-18): gha/scale: bump cilium/scaffolding commit SHA (@giorio94)
-- **PR #50099** (2026-11-18): v1.18 Backports 2026-11-18 (@mhofstetter)
-- **PR #50097** (2026-11-18): v1.19 Backports 2026-11-18 (@mhofstetter)
-- **PR #50081** (2026-11-17): helm/certgen: enable readOnlyRootFilesystem (@Scrumplex)
-- **PR #50080** (2026-11-17): gha: Don't fail artifact merges on source deletion errors (@aanm)
+- **PR #50147** (closed): [CI-WIP: DO-NOT-MERGE] Fix egress gateway excl cidr test (@tommyp1ckles)
+- **PR #50139** (2026-11-19): MAINTAINERS: Add Antony Reynaud (@pchaigno)
+- **PR #50138** (2026-11-19): [v1.19] Backports 2026-11-19 (@aanm)
+- **PR #50128** (2026-11-19): [v1.20] Revert "bpf: fix ICMP sample checksum accumulation" (@giorio94)
+- **PR #50127** (2026-11-19): daemon: reject IPsec with ENI IPAM mode and IPv6 (@41ks)
+- **PR #50120** (2026-11-19): loadbalancer: do not orphan LRP pseudo-services (@ajmmm)
 
 ---
 
@@ -1385,32 +1409,39 @@ Signed-off-by: psheichelberg <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. connectivity test: add support for Gardener Kubernetes clusters
+## X. bigtcp: Announce probing kernel support in debug log
 
 **RULE**:
-When implementing operations in `cilium-cli/connectivity/builder/manifests/client-egress-only-dns.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/datapath/linux/bigtcp/bigtcp.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d65ec42b`: connectivity test: add support for Gardener Kubernetes clusters. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5e1e30cc`: bigtcp: Announce probing kernel support in debug log. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cilium-cli/connectivity/builder/manifests/client-egress-only-dns.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/datapath/linux/bigtcp/bigtcp.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      # Gardener <https://gardener.cloud/> uses port 8053 for CoreDNS
-      - port: "8053"
-        protocol: UDP
-      - port: "8053"
-        protocol: TCP
+	log.Debug("Probing kernel support for BIG TCP for UDP tunnels")
+	result := true
+			return false
+		result = false
+	log.Info("Probed kernel support for BIG TCP for UDP tunnels",
+		logfields.State, result,
+	)
+	return result
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+		return false
+	return true
+	p.Log.Info("Probed kernel support for BIG TCP for UDP tunnels",
+		logfields.State, bigtcpTunnel,
+	)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d65ec42b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5e1e30cc` are properly handled with clean fallback behavior.
