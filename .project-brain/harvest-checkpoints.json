@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T14:20:19.769Z",
+  "last_updated": "2026-11-19T14:28:37.666Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "9e788b3191342b30ee27cdaa9d8bd0d1f1964465df9ed318351bfd5f366ec892",
-      "verified_at": "2026-11-19T13:22:01.446Z",
+      "content_hash": "4403bc7e30db6fbb6d34199f4dbeeaba83b2bebcca1a88b08e1c432f0ed65679",
+      "verified_at": "2026-11-19T14:28:37.665Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T13:22:01.446Z"
+      "last_updated": "2026-11-19T14:28:37.665Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -10626,14 +10626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-clockworklabs-spacetimedb",
-      "content_hash": "0b7d29fa6e40c61310fce08c56891233a37c2bfbb9de50d7ec72c5f33aab211d",
-      "verified_at": "2026-11-18T11:45:15.874Z",
+      "content_hash": "a9b49bb71bc88a016146086e5324855f7dab9c9621b467f03f4909a299cfb0b4",
+      "verified_at": "2026-11-19T14:28:35.719Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T11:45:15.874Z"
+      "last_updated": "2026-11-19T14:28:35.719Z"
     },
     "apollographql/apollo-kotlin": {
       "repository": "apollographql/apollo-kotlin",
@@ -10941,14 +10941,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-server",
-      "content_hash": "8b1b5086757e389ba78ef06b5aadc3960711a7a21fee2820633d924823dc3863",
-      "verified_at": "2026-11-18T12:42:47.935Z",
+      "content_hash": "f487025058c214a6460c1739bdf95d1d9ab6a34f36987b0d125a5e54c0339515",
+      "verified_at": "2026-11-19T14:28:30.768Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T12:42:47.935Z"
+      "last_updated": "2026-11-19T14:28:30.768Z"
     },
     "str4d/rage": {
       "repository": "str4d/rage",
@@ -17810,15 +17810,15 @@
       "pipeline_mode": "CLOUD_HARVEST",
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
-      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-      "content_hash": "c6266a0e873d799cbd8708bf605ec54271a4657928d00ddbfc9b9babcf5e09e2",
-      "verified_at": "2026-11-18T09:57:11.918Z",
+      "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized",
+      "content_hash": "55aec4fda4864a4799534e3adb1b2ab83a91e614f4274da00891be394d850c45",
+      "verified_at": "2026-11-19T14:28:20.119Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T09:57:11.918Z"
+      "last_updated": "2026-11-19T14:28:20.119Z"
     },
     "agentlas-ai/Agentlas-OS": {
       "repository": "agentlas-ai/Agentlas-OS",

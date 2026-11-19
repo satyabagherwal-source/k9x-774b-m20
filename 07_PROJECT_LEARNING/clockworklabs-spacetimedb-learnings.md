@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source**: github ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
-> **Source Version**: `ab502c61`  
+> **Source Version**: `71fdf1c8`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T11:45:14.642Z  
+> **Timestamp**: 2026-11-19T14:28:34.680Z  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T11:45:14.636Z  
+> **Harvest Timestamp**: 2026-11-19T14:28:34.675Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25565 stars
+- **Stars / Engagement**: 25567 stars
 
 ---
 
@@ -830,335 +830,95 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ab502c61` (2026-11-18)
-**Commit Message**: TS SDK cache: build indexes on first lookup, and use a flat map for unique single-column indexes (#6614)
+### Incident Patch 1: `af4b20db` (2026-11-18)
+**Commit Message**: fix(sdks/rust): invoke on_disconnect when mutation is queued after disconnect (#6329)
 
-# Description of Changes
+## Description
 
-Since #6416 the TypeScript SDK's client cache builds every btree index
-of every subscribed table at insert time, and every index is a tree with
-two `Map`s per node. For a client that subscribes to about 197k rows in
-25 tables with 100 indexes, the cache took 324 MB of heap after the
-initial subscription, against 85 MB with the scan before #6416. A Node
-process with a 256 MB heap limit ran out of memory at start. That
-client's code reads only 4 of the 100 indexes.
+Fixes an issue where `on_disconnect` callbacks were skipped when
+mutations (such as reducers or procedures) were queued immediately after
+calling `disconnect()`, or when the WebSocket sender channel dropped
+unexpectedly.
 
-Three commits, each with its own test:
+### Problem
+1. When `disconnect()` is invoked, `PendingMutation::Disconnect` is
+queued into the message pipeline. Any mutation called prior to the
+mutation queue processing is queued behind `Disconnect`.
+2. When the run loop applies `Disconnect`, it cleans up `send_chan`. The
+subsequent queued mutation then encounters `send_chan == None` and
+returns `Err(Error::Disconnected)`.
+3. The runner loops (`run_async`, `run_threaded`, `run_background_task`)
+caught `Disconnected` via `error_is_normal_disconnect` and returned
+directly without executing `end_connection`. As a result,
+`on_disconnect` callbacks were never triggered, and callers were left
+with silent connection termination.
+4. Additionally, if the WebSocket sender loop dropped its receiving
+channel while `send_chan` was still populated, calling `unbounded_send`
+triggered a panic on `.expect(...)`, poisoning the
 
-1. **`children` on demand.** An index node creates its `children` map on
-its first child. Every node of a single-column index is a leaf, and an
-empty `Map` takes about 192 bytes in V8 (Node 24).
-2. **Build an index on its first lookup.** The first `find` or `filter`
-that needs an index builds it in one pass over the cached rows. After
-that, inserts, updates and deletes keep it current as before. A ranged
-`filter` on the first column still scans the rows and builds nothing.
-Each build logs one line at debug level (table, index, rows, ms), so a
-late memor
-
-**File**: `crates/bindings-typescript/src/sdk/table_cache.ts` (modified, +95/-53)
+**File**: `sdks/rust/src/db_connection.rs` (modified, +11/-6)
 ```diff
-@@ -71,14 +71,21 @@ const inRange = (value: unknown, range: Range<any>): boolean => {
+@@ -362,8 +362,13 @@ impl<M: SpacetimeModule> DbContextImpl<M> {
  
- type IndexNode<Row> = {
-   rows: Map<ComparablePrimitive, Row>;
--  children: Map<ComparablePrimitive, IndexNode<Row>>;
-+  // Created on the first child: the leaves (every node of a single-column
-+  // index) then carry one Map, not two.
-+  children: Map<ComparablePrimitive, IndexNode<Row>> | null;
- };
- 
- const newIndexNode = <Row>(): IndexNode<Row> => ({
-   rows: new Map(),
--  children: new Map(),
-+  children: null,
- });
- 
-+type IndexEntry<Row> = {
-+  add(rowId: ComparablePrimitive, row: Row): void;
-+  remove(rowId: ComparablePrimitive, row: Row): void;
-+};
-+
- export type TableIndexView<
-   RemoteModule extends UntypedRemoteModule,
-   TableName extends TableNamesOf<RemoteModule>,
-@@ -107,16 +114,10 @@ export class TableCacheImpl<
-     [RowType<TableDefForTableName<RemoteModule, TableName>>, number]
-   >;
-   private tableDef: TableDefForTableName<RemoteModule, TableName>;
--  #indexes: {
--    add(
--      rowId: ComparablePrimitive,
--      row: RowType<TableDefForTableName<RemoteModule, TableName>>
--    ): void;
--    remove(
--      rowId: ComparablePrimitive,
--      row: RowType<TableDefForTableName<RemoteModule, TableName>>
--    ): void;
--  }[] = [];
-+  // Only the indexes built so far (see `#makeReadonlyIndex`).
-+  #indexes: IndexEntry<
-+    RowType<TableDefForTableName<RemoteModule, TableName>>
-+  >[] = [];
-   private emitter: EventEmitter<'insert' | 'delete' | 'update'>;
- 
-   /**
-@@ -172,64 +173,105 @@ export class TableCacheImpl<
-     const getCol = (row: RowType<TableDef>, i: number) =>
-       (row as Record<string, unknown>)[columns[i]];
- 
-+    // An index is unique if it shares all columns with a unique constraint
-+    const isUnique = tableDef.constraints.some(constraint => {
-+      if (constraint.constraint !== 'unique') {
-+        return false;
-+      }
-+      return deepEqual(constraint.columns, idx.columns);
-+    });
-+
-+    // A unique single-column index is a flat key -> row map.
-+    const flat =
-+      isUnique && columns.length === 1
-+        ? new Map<ComparablePrimitive, Row>()
-+        : null;
-+
-     // Each level of the tree is keyed by the next index column, and each node
-     // holds every row whose key starts with the path leading to it.
-     const root = newIndexNode<Row>();
- 
-+    const entry: IndexEntry<Row> = flat
-+      ? {
-+          add: (_rowId, row) => {
-+            flat.set(keyFns[0](getCol(row, 0)), row);
-+          },
-+          remove: (_rowId, row) => {
-+            // Within one transaction the cache can add the new row of a key
-+            // before it removes the old one. Remove only the row stored here.
-+            const key = keyFns[0](getCol(row, 0));
-+            if (flat.get(key) === row) flat.delete(key);
-+          },
-+        }
-+      : {
-+          add: (rowId, row) => {
-+            let node = root;
-+            for (let i = 0; i < columns.length; i++) {
-+              const key = keyFns[i](getCol(row, i));
-+              node.children ??= new Map();
-+              let child = node.children.get(key);
-+              if (!child) {
-+                child = newIndexNode();
-+                node.children.set(key, child);
-+              }
-+              child.rows.set(rowId, row);
-+              node = child;
+     /// Apply all queued [`PendingMutation`]s.
+     fn apply_pending_mutations(&self) -> crate::Result<()> {
+-        while let Ok(Some(pending_mutation)) = get_lock_sync(&self.pending_mutations_recv).try_next() {
+-            self.apply_mutation(pending_mutation)?;
++        while let Ok(Some(mutation)) = get_lock_sync(&self.pending_mutations_recv).try_next() {
++            match self.apply_mutation(mutation) {
++                Err(crate::Error::Disconnected) => {
++                    return Err(self.end_connection(None));
++                }
++                result => result?,
 +            }
-+          },
-+          remove: (rowId, row) => {
-+            let node = root;
-+            for (let i = 0; i < columns.length; i++) {
-+              const key = keyFns[i](getCol(row, i));
-+              const child = node.children?.get(key);
-+              if (!child) return;
-+              child.rows.delete(rowId);
-+              if (child.rows.size === 0) {
-+                node.children!.delete(key);
-+                return;
-+              }
-+              node = child;
-+            }
-+          },
-+        };
-+
-+    // The index is built on its first lookup, not at insert time: most
-+    // indexes of a subscribed table are never read, and building all of them
-+    // can take many times the heap of the rows themselves.
-+    let built = false;
-+    const build = () => {
-+      if (built) return;
-+      built = true;
-+      const start = Date.now();
-+      for (const [rowId, [row]] of this.rows) entry.add(rowId, row as Row);
-+      this.#indexes.push(entry as IndexEntry<RowType<TableDef>>);
-+      stdbLogger(
-+        'debug',
-+        () =>
-+          `built index ${tableDef.sourceName}.${idx.name}: ${this.rows.size} rows, ${Date.now() - start} ms`
-+      );
-+    };
-+
-     const lookup = (prefix: readonly unknown[]): IndexNode<Row> | undefined => {
-+      build();
-       let node: IndexNode<Row> | undefined = root;
-       for (let i = 0; i < prefix.length && node; i++) {
--        node = node.children.get(keyFns[i](prefix[i]));
-+        node = node.children?.get(keyFns[i](prefix[i]));
-       }
-       return node;
-     };
+         }
  
--    this.#indexes.push({
--      add: (rowId, row) => {
--        let node = root;
--        for (let i = 0; i < columns.length; i
-```
-
-**File**: `crates/bindings-typescript/tests/table_cache_resolved_indexes.test.ts` (modified, +192/-1)
-```diff
-@@ -1,9 +1,10 @@
--import { describe, expect, it } from 'vitest';
-+import { describe, expect, it, vi } from 'vitest';
- import { ModuleContext, tablesToSchema } from '../src/lib/schema';
- import { table } from '../src/lib/table';
- import { TableCacheImpl } from '../src/sdk/table_cache';
- import { t } from '../src/lib/type_builders';
- import { Range } from '../src/server/range';
-+import { setGlobalLogLevel, getGlobalLogLevel } from '../src/sdk/logger';
+         Ok(())
+@@ -386,7 +391,7 @@ impl<M: SpacetimeModule> DbContextImpl<M> {
+                         .as_mut()
+                         .ok_or(crate::Error::Disconnected)?
+                         .unbounded_send(ws::v2::ClientMessage::Subscribe(msg))
+-                        .expect("Unable to send subscribe message: WS sender loop has dropped its recv channel");
++                        .map_err(|_| crate::Error::Disconnected)?;
+                 }
+                 // else, the handle was already cancelled.
+             }
+@@ -410,7 +415,7 @@ impl<M: SpacetimeModule> DbContextImpl<M> {
+                             .as_mut()
+                             .ok_or(crate::Error::Disconnected)?
+                             .unbounded_send(ws::v2::ClientMessage::Unsubscribe(m))
+-                            .expect("Unable to send unsubscribe message: WS sender loop has dropped its recv channel");
++                            .map_err(|_| crate::Error::Disconnected)?;
+                     }
+                 }
+             }
+@@ -443,7 +448,7 @@ impl<M: SpacetimeModule> DbContextImpl<M> {
+                     .as_mut()
+                     .ok_or(crate::Error::Disconnected)?
+                     .unbounded_send(msg)
+-                    .expect("Unable to send reducer call message: WS sender loop has dropped its recv channel");
++                    .map_err(|_| crate::Error::Disconnected)?;
+             }
  
- describe('table cache resolved indexes', () => {
-   it('builds index accessors from resolvedIndexes (field-level + table-level)', () => {
-@@ -145,4 +146,194 @@ describe('table cache resolved indexes', () => {
-     expect(filter('red')).toEqual([rows[0]]);
-     expect(filter('blue')).toEqual([rows[1], moved]);
-   });
-+
-+  // Indexes are built on their first lookup, and a unique single-column
-+  // index is a flat map.
-+  const makeUser = () => {
-+    const user = table(
-+      {
-+        name: 'user',
-+        indexes: [
-+          {
-+            accessor: 'byTeamAndLevel',
-+            algorithm: 'btree',
-+            columns: ['team', 'level'] as const,
-+          },
-+        ] as const,
-+      },
-+      {
-+        id: t.u32().primaryKey(),
-+        email: t.string().unique(),
-+        team: t.string().index('btree'),
-+        level: t.u32(),
-+      }
-+    );
-+    const def = tablesToSchema(new ModuleContext(), { user }).tables.user;
-+    const cache = new TableCacheImpl<any, string>(def as any);
-+    const tx = (ops: [type: 'insert' | 'delete', row: any][]) =>
-+      cache.applyOperations(
-+        ops.map(([type, row]) => ({ type, rowId: row.id, row })),
-+        {} as any
-+      );
-+    return { cache: cache as any, tx };
-+  };
-+
-+  it('builds an index on its first lookup only, and logs the build', () => {
-+    const { cache, tx } = makeUser();
-+    const level = getGlobalLogLevel();
-+    setGlobalLogLevel('debug');
-+    const log = vi.spyOn(console, 'log').mockImplementation(() => {});
-+    try {
-+      const builds = () =>
-+        log.mock.calls.filter(c => String(c[0]).includes('built index')).length;
-+      tx(
-+        [1, 2, 3].map(i => [
-+          'insert',
-+          { id: i, email: `e${i}`, team: 't', level: i },
-+        ])
-+      );
-+      expect(builds()).toBe(0);
-+
-+      expect(cache.email.find('e2')).toEqual({
-+        id: 2,
-+        email: 'e2',
-+        team: 't',
-+        level: 2,
-+      });
-+      expect(builds()).toBe(1);
-+      expect(String(log.mock.calls.at(-1)![0])).toContain('built index user.');
-+      cache.email.find('e3');
-+      expect(builds()).toBe(1);
-+
-+      // A range on the first column scans the rows; it needs no index.
-+      Array.from(
-+        cache.team.filter(
-+          new Range({ tag: 'included', value: 'a' }, { tag: 'unbounded' })
-+        )
-+      );
-+      expect(builds()).toBe(1);
-+      Array.from(cache.team.filter('t'));
-+      expect(builds()).toBe(2);
-+    } finally {
-+      log.mockRestore();
-+      setGlobalLogLevel(level);
-+    }
-+  });
-+
-+  it('a unique index keeps the new row when a transaction adds it before it removes the old one', () => {
-+    const { cache, tx } = makeUser();
-+    const a = { id: 1, email: 'x', team: 't', level: 1 };
-+    const b = { id: 2, email: 'y', team: 't', level: 2 };
-+    tx([
-+      ['insert', a],
-+      ['insert', b],
-+    ]);
-+    expect(cache.email.find('x')).toEqual(a);
-+
-+    // The cache applies the inserts of a transaction before its deletes.
-+    const c = { id: 3, email: 'x', team: 't', level: 3 };
-+    tx([
-+      ['delete', a],
-+      ['insert', c],
-+    ]);
-+    expect(cache.email.find('x')).toEqual(c);
-+
-+    // Two rows swap their keys in one transaction.
-+    const b2 = { ...b, email: 'x' };
-+    const c2 = { ...c, email: 'y' };
-+    tx([
-+      ['delete', b],
-+      ['insert', b2],
-+      ['delete', c],
-+      ['insert', c2],
-+    ]);
-+    expect(cache.email.find('x')).toEqual(b2);
-+    expect(cache.email.find('y')).toEqual(c2);
-+
-+    tx([['delete', b2]]);
-+    expect(cache.email.find('x')).toBeNull();
-+    expect(cache.email.find('y')).toEqual(c2);
-+  });
-+
-+  it('find and filter return the same rows as a scan, before and after changes', () => {
-+    const { cache, tx } = makeUser();
-+    let seed = 7;
-+    const rand = (n: number) => (seed = (seed * 48271) % 2147483647) % n;
-+    const live = new Map<number, any>();
-+    const randomRow = (id: number) => ({
-+      id,
-+      email: `e${rand(60)}`,
-+      team: `t${rand(4)}`,
-+      level: rand(5),
-+    });
-+    const scan = (pred: (r: any) => boolean) =>
-+      [...live.values()].filter(pred).sort((x, y) => x.id - y.id);
-+    const sorted = (rows: Iterable<any>) =>
-+      [...rows].sort((x, y) => x.id - y.id);
-+    const check = () => {
-+      for (let e = 0; e < 60; e++) {
-+        expect(cache.email.find(`e${e}`)).toEqual(
-+          scan(r => r.email === `e${e}`)[0] ?? null
-+        );
-+      }
-+      for (let tm = 0; tm < 4; tm++) {
-+        expect(sorted(cache.team.filter(`t${tm}`))).toEqu
+             // Invoke a procedure: stash its callback, then send the `CallProcedure` WS message.
+@@ -472,7 +477,7 @@ impl<M: SpacetimeModule> DbContextImpl<M> {
+                     .as_mut()
+                     .ok_or(crate::Error::Disconnected)?
+                     .unbounded_send(msg)
+-                    .expect("Unable to send procedure call message: WS sender loop has dropped its recv channel");
++                    .map_err(|_| crate::Error::Disconnected)?;
+             }
+ 
+             // Disconnect: close the connection.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6636** (2026-11-19): Tiered storage docs (@joshua-spacetime)
+- **PR #6635** (2026-11-19): docs: add OIDC token verification diagram to the authentication overview (@cloutiertyler)
 - **PR #6617** (2026-11-17): Correct docs on restricting scheduled reducers (@JulienLavocat)
 - **PR #6614** (2026-11-18): TS SDK cache: build indexes on first lookup, and use a flat map for unique single-column indexes (@Ludv1gL)
 - **PR #6609** (2026-11-17): More tiered storage metrics (@joshua-spacetime)
 - **PR #6607** (2026-11-16): Database-wide eviction for (some) reads (@joshua-spacetime)
-- **PR #6606** (2026-11-16): Fix the CLI logout endpoint path (@JulienLavocat)
-- **PR #6599** (2026-11-16): Separate namespaces for pages and blobs in disk storage (@kim)
 
 ---
 
@@ -1178,77 +938,43 @@ late memor
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. TS SDK cache: build indexes on first lookup, and use a flat map for unique singl
+## X. sdks/rust): invoke on_disconnect when mutation is queued after disconnect
 
 **RULE**:
-When implementing operations in `crates/bindings-typescript/src/sdk/table_cache.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdks/rust/src/db_connection.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ab502c61`: TS SDK cache: build indexes on first lookup, and use a flat map for unique single-column indexes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `af4b20db`: sdks/rust): invoke on_disconnect when mutation is queued after disconnect. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/bindings-typescript/src/sdk/table_cache.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdks/rust/src/db_connection.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  // Created on the first child: the leaves (every node of a single-column
-  // index) then carry one Map, not two.
-  children: Map<ComparablePrimitive, IndexNode<Row>> | null;
-  children: null,
-type IndexEntry<Row> = {
-  add(rowId: ComparablePrimitive, row: Row): void;
-  remove(rowId: ComparablePrimitive, row: Row): void;
-};
-
-  // Only the indexes built so far (see `#makeReadonlyIndex`).
-  #indexes: IndexEntry<
-    RowType<TableDefForTableName<RemoteModule, TableName>>
-  >[] = [];
-    // An index is unique if it shares all columns with a unique constraint
-    const isUnique = tableDef.constraints.some(constraint => {
-      if (constraint.constraint !== 'unique') {
-        return false;
-      }
-      return deepEqual(constraint.columns, idx.columns);
-    });
-
-    // A unique single-column index is a flat key -> row map.
-    const flat =
-      isUnique && columns.length === 1
-        ? new Map<ComparablePrimitive, Row>()
-        : null;
-
-    const entry: IndexEntry<Row> = flat
-      ? {
-          add: (_rowId, row) => {
-            flat.set(keyFns[0](getCol(row, 0)), row);
-          },
-          remove: (_rowId, row) => {
-            // Within one transaction the cache can add the n
+        while let Ok(Some(mutation)) = get_lock_sync(&self.pending_mutations_recv).try_next() {
+            match self.apply_mutation(mutation) {
+                Err(crate::Error::Disconnected) => {
+                    return Err(self.end_connection(None));
+                }
+                result => result?,
+            }
+                        .map_err(|_| crate::Error::Disconnected)?;
+                            .map_err(|_| crate::Error::Disconnected)?;
+                    .map_err(|_| crate::Error::Disconnected)?;
+                    .map_err(|_| crate::Error::Disconnected)?;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  children: Map<ComparablePrimitive, IndexNode<Row>>;
-  children: new Map(),
-  #indexes: {
-    add(
-      rowId: ComparablePrimitive,
-      row: RowType<TableDefForTableName<RemoteModule, TableName>>
-    ): void;
-    remove(
-      rowId: ComparablePrimitive,
-      row: RowType<TableDefForTableName<RemoteModule, TableName>>
-    ): void;
-  }[] = [];
-        node = node.children.get(keyFns[i](prefix[i]));
-    this.#indexes.push({
-      add: (rowId, row) => {
-        let node = root;
-        for (let i = 0; i < columns.length; i
+        while let Ok(Some(pending_mutation)) = get_lock_sync(&self.pending_mutations_recv).try_next() {
+            self.apply_mutation(pending_mutation)?;
+                        .expect("Unable to send subscribe message: WS sender loop has dropped its recv channel");
+                            .expect("Unable to send unsubscribe message: WS sender loop has dropped its recv channel");
+                    .expect("Unable to send reducer call message: WS sender loop has dropped its recv channel");
+                    .expect("Unable to send procedure call message: WS sender loop has dropped its recv channel");
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ab502c61` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `af4b20db` are properly handled with clean fallback behavior.

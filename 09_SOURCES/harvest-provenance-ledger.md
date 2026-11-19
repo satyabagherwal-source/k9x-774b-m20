@@ -11316,3 +11316,7 @@ Every entry in this ledger must capture:
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `a1b7415e` | Multi-dimensional audit evidence | 2026-11-19T14:03:33.832Z |
 | `learn-huggingface-speridlabs-iris-3b` | `https://huggingface.co/speridlabs/iris-3b` | `hf-speridl` | Multi-dimensional audit evidence | 2026-11-19T14:20:17.052Z |
 | `learn-github-agent-of-empires-agent-of-empires` | `https://github.com/agent-of-empires/agent-of-empires` | `593655e0` | Multi-dimensional audit evidence | 2026-11-19T14:20:19.761Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-quantized` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-19T14:28:20.110Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `ba5c7e53` | Multi-dimensional audit evidence | 2026-11-19T14:28:30.759Z |
+| `learn-github-clockworklabs-spacetimedb` | `https://github.com/clockworklabs/SpacetimeDB` | `71fdf1c8` | Multi-dimensional audit evidence | 2026-11-19T14:28:35.709Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `3aa2775c` | Multi-dimensional audit evidence | 2026-11-19T14:28:37.656Z |

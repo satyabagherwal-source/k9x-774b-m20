@@ -4,24 +4,24 @@
 {
   "source_repository": "clockworklabs/SpacetimeDB",
   "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-  "source_version": "07e99d13",
+  "source_version": "71fdf1c8",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-13T19:27:31.874Z",
+  "timestamp": "2026-11-19T14:28:35.921Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-clockworklabs-spacetimedb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB) (Revision: `07e99d13`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-13T19:27:31.874Z`  
+> **Provenance**: Harvested from [clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB) (Revision: `71fdf1c8`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-19T14:28:35.921Z`  
 > **Learning ID**: `learn-github-clockworklabs-spacetimedb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 52%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 50%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from clockworklabs/SpacetimeDB:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/clockworklabs/SpacetimeDB](https://github.com/clockworklabs/SpacetimeDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T19:27:30.958Z  
+> **Harvest Timestamp**: 2026-11-19T14:28:34.675Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Development at the speed of light
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 25544 stars
+- **Stars / Engagement**: 25567 stars
 
 ---
 
@@ -844,98 +844,95 @@ export type ConnectionState = ManagerConnectionState & {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b3d1ab02` (2026-11-12)
-**Commit Message**: List S3 under storage and fix its types on SDK 2.12 (#6542)
+### Incident Patch 1: `af4b20db` (2026-11-18)
+**Commit Message**: fix(sdks/rust): invoke on_disconnect when mutation is queued after disconnect (#6329)
 
-# Description of Changes
+## Description
 
-- S3 is listed under `storage` on the modules page, next to Files
-- S3's types no longer reference `UnitBuilder`, which SDK 2.12 doesn't
-export
+Fixes an issue where `on_disconnect` callbacks were skipped when
+mutations (such as reducers or procedures) were queued immediately after
+calling `disconnect()`, or when the WebSocket sender channel dropped
+unexpectedly.
 
-# API and ABI breaking changes
+### Problem
+1. When `disconnect()` is invoked, `PendingMutation::Disconnect` is
+queued into the message pipeline. Any mutation called prior to the
+mutation queue processing is queued behind `Disconnect`.
+2. When the run loop applies `Disconnect`, it cleans up `send_chan`. The
+subsequent queued mutation then encounters `send_chan == None` and
+returns `Err(Error::Disconnected)`.
+3. The runner loops (`run_async`, `run_threaded`, `run_background_task`)
+caught `Disconnected` via `error_is_normal_disconnect` and returned
+directly without executing `end_connection`. As a result,
+`on_disconnect` callbacks were never triggered, and callers were left
+with silent connection termination.
+4. Additionally, if the WebSocket sender loop dropped its receiving
+channel while `send_chan` was still populated, calling `unbounded_send`
+triggered a panic on `.expect(...)`, poisoning the
 
-None.
-
-# Rollback safety impact
-
-n/a
-
-# Expected complexity level and risk
-
-1
-
-# Testing
-
-- [x] Typecheck of a fresh project with the built package on SDK 2.12.0
-and 2.14.1 with `skipLibCheck: false`: no errors from `@spacetimedb/s3`
-
-**File**: `modules/spacetime-s3-ts/package.json` (modified, +1/-1)
+**File**: `sdks/rust/src/db_connection.rs` (modified, +11/-6)
 ```diff
-@@ -54,7 +54,7 @@
-     "typescript"
-   ],
-   "submodule": {
--    "category": "integrations"
-+    "category": "storage"
-   },
-   "scripts": {
-     "format": "prettier . --write --ignore-path ../../.prettierignore",
-```
-
-**File**: `modules/spacetime-s3-ts/src/model.ts` (modified, +16/-8)
-```diff
-@@ -1,4 +1,4 @@
--import { table, t } from 'spacetimedb/server';
-+import { table, t, type SumBuilder } from 'spacetimedb/server';
- import type { Infer } from 'spacetimedb';
+@@ -362,8 +362,13 @@ impl<M: SpacetimeModule> DbContextImpl<M> {
  
- const fileOptions = {
-@@ -16,6 +16,20 @@ const fileOptions = {
-     } as const,
-   ],
- };
-+type FileStateBuilder = SumBuilder<
-+  Record<
-+    'Pending' | 'Copying' | 'Ready' | 'Deleting' | 'Deleted',
-+    ReturnType<typeof t.unit>
-+  >
-+>;
-+const fileState: FileStateBuilder = t.enum('FileState', {
-+  Pending: t.unit(),
-+  Copying: t.unit(),
-+  Ready: t.unit(),
-+  Deleting: t.unit(),
-+  Deleted: t.unit(),
-+});
-+
- const fileColumns = {
-   id: t.u64().primaryKey().autoInc(),
-   owner: t.string(),
-@@ -24,13 +38,7 @@ const fileColumns = {
-   contentType: t.string(),
-   size: t.u32(),
-   checksum: t.string(),
--  state: t.enum('FileState', {
--    Pending: t.unit(),
--    Copying: t.unit(),
--    Ready: t.unit(),
--    Deleting: t.unit(),
--    Deleted: t.unit(),
--  }),
-+  state: fileState,
-   createdAt: t.timestamp(),
-   uploadExpiresAt: t.timestamp(),
-   nextAttemptAt: t.timestamp(),
+     /// Apply all queued [`PendingMutation`]s.
+     fn apply_pending_mutations(&self) -> crate::Result<()> {
+-        while let Ok(Some(pending_mutation)) = get_lock_sync(&self.pending_mutations_recv).try_next() {
+-            self.apply_mutation(pending_mutation)?;
++        while let Ok(Some(mutation)) = get_lock_sync(&self.pending_mutations_recv).try_next() {
++            match self.apply_mutation(mutation) {
++                Err(crate::Error::Disconnected) => {
++                    return Err(self.end_connection(None));
++                }
++                result => result?,
++            }
+         }
+ 
+         Ok(())
+@@ -386,7 +391,7 @@ impl<M: SpacetimeModule> DbContextImpl<M> {
+                         .as_mut()
+                         .ok_or(crate::Error::Disconnected)?
+                         .unbounded_send(ws::v2::ClientMessage::Subscribe(msg))
+-                        .expect("Unable to send subscribe message: WS sender loop has dropped its recv channel");
++                        .map_err(|_| crate::Error::Disconnected)?;
+                 }
+                 // else, the handle was already cancelled.
+             }
+@@ -410,7 +415,7 @@ impl<M: SpacetimeModule> DbContextImpl<M> {
+                             .as_mut()
+                             .ok_or(crate::Error::Disconnected)?
+                             .unbounded_send(ws::v2::ClientMessage::Unsubscribe(m))
+-                            .expect("Unable to send unsubscribe message: WS sender loop has dropped its recv channel");
++                            .map_err(|_| crate::Error::Disconnected)?;
+                     }
+                 }
+             }
+@@ -443,7 +448,7 @@ impl<M: SpacetimeModule> DbContextImpl<M> {
+                     .as_mut()
+                     .ok_or(crate::Error::Disconnected)?
+                     .unbounded_send(msg)
+-                    .expect("Unable to send reducer call message: WS sender loop has dropped its recv channel");
++                    .map_err(|_| crate::Error::Disconnected)?;
+             }
+ 
+             // Invoke a procedure: stash its callback, then send the `CallProcedure` WS message.
+@@ -472,7 +477,7 @@ impl<M: SpacetimeModule> DbContextImpl<M> {
+                     .as_mut()
+                     .ok_or(crate::Error::Disconnected)?
+                     .unbounded_send(msg)
+-                    .expect("Unable to send procedure call message: WS sender loop has dropped its recv channel");
++                    .map_err(|_| crate::Error::Disconnected)?;
+             }
+ 
+             // Disconnect: close the connection.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6578** (2026-11-13): Support `NoRequirement` cache policy migrations (@joshua-spacetime)
-- **PR #6572** (2026-11-12): Protect V8 module startup from heap exhaustion (@bfops)
-- **PR #6563** (closed): Local tier pinning and reclamation (@kim)
-- **PR #6557** (2026-11-11): Expand agent guidance for writing pull requests (@bfops)
-- **PR #6552** (2026-11-11): Disable Nagle's algorithm in the Rust SDK (@JulienLavocat)
-- **PR #6551** (closed): fix: update pgwire 0.42.2 (@sunng87)
+- **PR #6636** (2026-11-19): Tiered storage docs (@joshua-spacetime)
+- **PR #6635** (2026-11-19): docs: add OIDC token verification diagram to the authentication overview (@cloutiertyler)
+- **PR #6617** (2026-11-17): Correct docs on restricting scheduled reducers (@JulienLavocat)
+- **PR #6614** (2026-11-18): TS SDK cache: build indexes on first lookup, and use a flat map for unique single-column indexes (@Ludv1gL)
+- **PR #6609** (2026-11-17): More tiered storage metrics (@joshua-spacetime)
+- **PR #6607** (2026-11-16): Database-wide eviction for (some) reads (@joshua-spacetime)
 
 ---
 
@@ -955,31 +952,46 @@ and 2.14.1 with `skipLibCheck: false`: no errors from `@spacetimedb/s3`
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. List S3 under storage and fix its types on SDK 2.12
+## X. sdks/rust): invoke on_disconnect when mutation is queued after disconnect
 
 **RULE**:
-When implementing operations in `modules/spacetime-s3-ts/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdks/rust/src/db_connection.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in clockworklabs/SpacetimeDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b3d1ab02`: List S3 under storage and fix its types on SDK 2.12. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `af4b20db`: sdks/rust): invoke on_disconnect when mutation is queued after disconnect. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `modules/spacetime-s3-ts/package.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdks/rust/src/db_connection.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    "category": "storage"
+        while let Ok(Some(mutation)) = get_lock_sync(&self.pending_mutations_recv).try_next() {
+            match self.apply_mutation(mutation) {
+                Err(crate::Error::Disconnected) => {
+                    return Err(self.end_connection(None));
+                }
+                result => result?,
+            }
+                        .map_err(|_| crate::Error::Disconnected)?;
+                            .map_err(|_| crate::Error::Disconnected)?;
+                    .map_err(|_| crate::Error::Disconnected)?;
+                    .map_err(|_| crate::Error::Disconnected)?;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    "category": "integrations"
+        while let Ok(Some(pending_mutation)) = get_lock_sync(&self.pending_mutations_recv).try_next() {
+            self.apply_mutation(pending_mutation)?;
+                        .expect("Unable to send subscribe message: WS sender loop has dropped its recv channel");
+                            .expect("Unable to send unsubscribe message: WS sender loop has dropped its recv channel");
+                    .expect("Unable to send reducer call message: WS sender loop has dropped its recv channel");
+                    .expect("Unable to send procedure call message: WS sender loop has dropped its recv channel");
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b3d1ab02` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `af4b20db` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

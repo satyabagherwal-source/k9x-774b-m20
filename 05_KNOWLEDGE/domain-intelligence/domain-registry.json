@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T14:20:30.235Z",
-  "total_records": 1980,
+  "last_updated": "2026-11-19T14:28:42.842Z",
+  "total_records": 1981,
   "domains": {
     "A": {
       "total": 15,
@@ -963,7 +963,7 @@
       ]
     },
     "G": {
-      "total": 344,
+      "total": 345,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1308,7 +1308,8 @@
         "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-core-invariants",
         "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",
-        "domain_intelligence-architecture-intelligence-milvus-io-milvus-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-milvus-io-milvus-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-learnings-core-invariants"
       ]
     },
     "H": {
@@ -9757,8 +9758,8 @@
       "title": "Architecture Intelligence: clockworklabs/SpacetimeDB Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clockworklabs-spacetimedb-architecture-intelligence-clockworklabs-spacetimedb-co.md",
       "repository": "clockworklabs/SpacetimeDB",
-      "content_hash": "e3388d3370fce466f08dc2d041d1c393cf9b7405cfff0aeab2d85461ee1b889f",
-      "created_at": "2026-11-13T19:27:31.956Z"
+      "content_hash": "ebd236d3820b291689706432b315446752f1fa6a675e28fac49d4815410de4fe",
+      "created_at": "2026-11-19T14:28:36.080Z"
     },
     "domain_intelligence-architecture-intelligence-grpc-grpc-rust-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-grpc-grpc-rust-learnings-core-invariants",
@@ -12394,8 +12395,8 @@
       "title": "Technical Construction Intelligence: nats-io/nats-server Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-server-technical-construction-intelligence-nats-io-nats-server-core.md",
       "repository": "nats-io/nats-server",
-      "content_hash": "27293dc15df0aed8573dce35a7cc470f0923972853001a7032c0177aa91de368",
-      "created_at": "2026-11-18T12:42:48.254Z"
+      "content_hash": "8428f31afd2325b9fbae97c29b8e41cd59bf09d2b613464d694fb71b88deb0f0",
+      "created_at": "2026-11-19T14:28:31.251Z"
     },
     "DOM-D-3A6226D8": {
       "record_id": "DOM-D-3A6226D8",
@@ -12505,8 +12506,8 @@
       "title": "Technical Construction Intelligence: nats-io-nats-server-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-server-learnings-technical-construction-intelligence-nats-io-nats-s.md",
       "repository": "nats-io-nats-server-learnings",
-      "content_hash": "7d39d7a533aa43b51928175c434e9a22cb28f0d717a818c66ebd6646cc3f072a",
-      "created_at": "2026-11-18T12:43:19.284Z"
+      "content_hash": "15cfd2d6ac2cb5f36c62d689d2a1140ab44e42720f520529c6105e79cc00941f",
+      "created_at": "2026-11-19T14:28:42.095Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-instruct-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-instruct-core-invaria",
@@ -15059,8 +15060,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "11df1e58d1db464e862b5894040f1fe94418d509ff8157ff88fb6931d85dc1f4",
-      "created_at": "2026-11-19T13:22:01.816Z"
+      "content_hash": "6f62bd3d9749daa6aa03cd9572e9aef2890405d4edafb7ce91456d1719eeefa0",
+      "created_at": "2026-11-19T14:28:38.027Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -18379,10 +18380,10 @@
       "record_id": "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in",
       "domain_letter": "D",
       "title": "Research & Knowledge Intelligence: abenzerps/Qwen-Image-2.1-Turbo-Quantized Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-gguf-research-knowledge-intelligence-aben.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-quantized-research-knowledge-intelligence.md",
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "content_hash": "14a294858ac79b0bc419e44af9a497fca99be71cf9c754d7060a97128efcfd4b",
-      "created_at": "2026-11-18T09:57:12.162Z"
+      "content_hash": "d26929ad4c531d6875efcc300da7c7548d662e25e6aeb9aa57e0bab87d963808",
+      "created_at": "2026-11-19T14:28:20.311Z"
     },
     "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants",
@@ -18399,8 +18400,8 @@
       "title": "Research & Knowledge Intelligence: hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-quantized-learnings-research-knowledge-in.md",
       "repository": "hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings",
-      "content_hash": "e9ea3125abc5d8fb403fbeec2be26f532b039279ed03f00f042f43c916338c01",
-      "created_at": "2026-11-14T23:43:17.178Z"
+      "content_hash": "763dfdb0e55872253d1c7bbb0e9aa10e100aedb3e51e304916cccb324303a223",
+      "created_at": "2026-11-19T14:28:41.224Z"
     },
     "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-learnings-core-invariants",
@@ -33244,6 +33245,15 @@
       "repository": "bahdotsh-wrkflw-learnings",
       "content_hash": "f2faf4a83f44e73b2461c9ccc50a72d630b0f7072e506b58854365adb246b9ff",
       "created_at": "2026-11-19T14:03:37.726Z"
+    },
+    "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: clockworklabs-spacetimedb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clockworklabs-spacetimedb-learnings-architecture-intelligence-clockworklabs-spac.md",
+      "repository": "clockworklabs-spacetimedb-learnings",
+      "content_hash": "5161bfb3de4c8507041d73ed7770ca47e1d6071e3f3bc2b3a80de78063bcc796",
+      "created_at": "2026-11-19T14:28:42.842Z"
     }
   }
 }

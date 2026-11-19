@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T14:20:30.369Z",
+  "last_updated": "2026-11-19T14:28:42.992Z",
   "total_verified_learnings": 9018,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21796,
+  "total_items": 21803,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -212838,8 +212838,8 @@
       "slug": "clockworklabs-spacetimedb",
       "platform": "github",
       "source_url": "https://github.com/clockworklabs/SpacetimeDB",
-      "source_version": "ab502c61",
-      "content_hash": "0b7d29fa6e40c61310fce08c56891233a37c2bfbb9de50d7ec72c5f33aab211d",
+      "source_version": "71fdf1c8",
+      "content_hash": "a9b49bb71bc88a016146086e5324855f7dab9c9621b467f03f4909a299cfb0b4",
       "dossier_path": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/clockworklabs-spacetimedb-learnings.md",
       "promoted_rules": [
@@ -212852,6 +212852,11 @@
           "number": 9212,
           "title": "TS SDK cache: build indexes on first lookup, and use a flat map for unique singl",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9386,
+          "title": "sdks/rust): invoke on_disconnect when mutation is queued after disconnect",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -212859,7 +212864,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T11:45:15.601Z",
+      "verified_at": "2026-11-19T14:28:35.510Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212901,10 +212906,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clockworklabs-spacetimedb-architecture-intelligence-clockworklabs-spacetimedb-co.md",
       "title": "Architecture Intelligence: clockworklabs/SpacetimeDB Core Invariants",
       "repository": "clockworklabs/SpacetimeDB",
-      "source_version": "07e99d13",
-      "content_hash": "e3388d3370fce466f08dc2d041d1c393cf9b7405cfff0aeab2d85461ee1b889f",
+      "source_version": "71fdf1c8",
+      "content_hash": "ebd236d3820b291689706432b315446752f1fa6a675e28fac49d4815410de4fe",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T19:27:31.956Z"
+      "persisted_at": "2026-11-19T14:28:36.080Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-clockworklabs-spacetimedb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-clockworklabs-spacetimedb",
@@ -212913,10 +212918,10 @@
       "relative_path": "08_VERIFICATION/clockworklabs-spacetimedb-verification-protocol-empirical-defect-shield-for-cloc.md",
       "title": "Verification Protocol: Empirical Defect Shield for clockworklabs/SpacetimeDB",
       "repository": "clockworklabs/SpacetimeDB",
-      "source_version": "ab502c61",
-      "content_hash": "22412606328a20427ca864b0d89b631e765fb067dd8360868b29abc660cf8f17",
+      "source_version": "71fdf1c8",
+      "content_hash": "f72d709544aee8a33c61b0dbb62c32268acdf30c95ae8dc8b6d40dae9bec1be4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T11:45:16.539Z"
+      "persisted_at": "2026-11-19T14:28:36.233Z"
     },
     "candidate_directive-interop-update-server-rs-to-run-in-the-vanilla-interop-harness": {
       "item_id": "candidate_directive-interop-update-server-rs-to-run-in-the-vanilla-interop-harness",
@@ -221437,8 +221442,8 @@
       "slug": "nats-io-nats-server",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats-server",
-      "source_version": "ea28ae77",
-      "content_hash": "8b1b5086757e389ba78ef06b5aadc3960711a7a21fee2820633d924823dc3863",
+      "source_version": "ba5c7e53",
+      "content_hash": "f487025058c214a6460c1739bdf95d1d9ab6a34f36987b0d125a5e54c0339515",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "promoted_rules": [
@@ -221461,6 +221466,11 @@
           "number": 9220,
           "title": "[IMPROVED] Lock-free JetStream account usage updates",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9385,
+          "title": "(2.16) [FIXED] Send async INFO to clients when max_payload limit changes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221468,7 +221478,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T12:42:47.752Z",
+      "verified_at": "2026-11-19T14:28:30.553Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221510,10 +221520,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-server-technical-construction-intelligence-nats-io-nats-server-core.md",
       "title": "Technical Construction Intelligence: nats-io/nats-server Core Invariants",
       "repository": "nats-io/nats-server",
-      "source_version": "ea28ae77",
-      "content_hash": "27293dc15df0aed8573dce35a7cc470f0923972853001a7032c0177aa91de368",
+      "source_version": "ba5c7e53",
+      "content_hash": "8428f31afd2325b9fbae97c29b8e41cd59bf09d2b613464d694fb71b88deb0f0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T12:42:48.254Z"
+      "persisted_at": "2026-11-19T14:28:31.251Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-server": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-server",
@@ -221522,10 +221532,10 @@
       "relative_path": "08_VERIFICATION/nats-io-nats-server-verification-protocol-empirical-defect-shield-for-nats-io-na.md",
       "title": "Verification Protocol: Empirical Defect Shield for nats-io/nats-server",
       "repository": "nats-io/nats-server",
-      "source_version": "ea28ae77",
-      "content_hash": "1541e45f1105da4b0a8b284d295b1d5dca497a7f78dae82ba40882ecacd28a5b",
+      "source_version": "ba5c7e53",
+      "content_hash": "3f7a2ea08c8b55c4ed2735859d77c5593f3c302fd5b58330e8c7b2a603f38027",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T12:42:48.379Z"
+      "persisted_at": "2026-11-19T14:28:31.406Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-meituan-longcat-longcat-2-5-learnings-core-in": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-meituan-longcat-longcat-2-5-learnings-core-in",
@@ -221559,9 +221569,9 @@
       "title": "Technical Construction Intelligence: nats-io-nats-server-learnings Core Invariants",
       "repository": "nats-io-nats-server-learnings",
       "source_version": "HEAD",
-      "content_hash": "7d39d7a533aa43b51928175c434e9a22cb28f0d717a818c66ebd6646cc3f072a",
+      "content_hash": "15cfd2d6ac2cb5f36c62d689d2a1140ab44e42720f520529c6105e79cc00941f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T12:43:19.284Z"
+      "persisted_at": "2026-11-19T14:28:42.095Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-server-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-server-learnings",
@@ -221571,9 +221581,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nats-io-nats-server-learnings",
       "repository": "nats-io-nats-server-learnings",
       "source_version": "HEAD",
-      "content_hash": "3c15caefd1ae0a98362b61d00950be333cdf78cb9603277bdc0772e071c2e6cc",
+      "content_hash": "9c3aac6960d2e12c3ff9d73464845ead83191e092e8e57b079c7082085ff2d9b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T12:43:19.407Z"
+      "persisted_at": "2026-11-19T14:28:42.280Z"
     },
     "learn-huggingface-meta-llama-meta-llama-3-8b-instruct": {
       "learning_id": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
@@ -228721,8 +228731,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "9631a1dd",
-      "content_hash": "9e788b3191342b30ee27cdaa9d8bd0d1f1964465df9ed318351bfd5f366ec892",
+      "source_version": "3aa2775c",
+      "content_hash": "4403bc7e30db6fbb6d34199f4dbeeaba83b2bebcca1a88b08e1c432f0ed65679",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -228850,6 +228860,11 @@
           "number": 9374,
           "title": "Remove comments from ARC datasets",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9387,
+          "title": "Draft NUC 124 List and Population Quantiles",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228857,7 +228872,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T13:22:01.201Z",
+      "verified_at": "2026-11-19T14:28:37.460Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228899,10 +228914,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "9631a1dd",
-      "content_hash": "11df1e58d1db464e862b5894040f1fe94418d509ff8157ff88fb6931d85dc1f4",
+      "source_version": "3aa2775c",
+      "content_hash": "6f62bd3d9749daa6aa03cd9572e9aef2890405d4edafb7ce91456d1719eeefa0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T13:22:01.816Z"
+      "persisted_at": "2026-11-19T14:28:38.027Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -228911,10 +228926,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "9631a1dd",
-      "content_hash": "d87fb0ab5e667f8062c69fe35c74244e0dc76add27a927c48784cf1f746feeaf",
+      "source_version": "3aa2775c",
+      "content_hash": "275976ff43859bc6d50327449f32d3b952fd44f9a2d96f2fc917311b1cbacda2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T13:22:01.965Z"
+      "persisted_at": "2026-11-19T14:28:38.188Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -238551,7 +238566,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-Quantized",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
-      "content_hash": "cb7b79ae36676659b25d50bed67fd64d549fc82b2f74f65b6399208168d1af53",
+      "content_hash": "55aec4fda4864a4799534e3adb1b2ab83a91e614f4274da00891be394d850c45",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings.md",
       "promoted_rules": [],
@@ -238560,7 +238575,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T23:43:04.455Z",
+      "verified_at": "2026-11-19T14:28:19.887Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238573,13 +238588,13 @@
       "item_id": "domain_intelligence-research-knowledge-intelligence-abenzerps-qwen-image-2-1-turbo-quantized-core-in",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-gguf-research-knowledge-intelligence-aben.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-quantized-research-knowledge-intelligence.md",
       "title": "Research & Knowledge Intelligence: abenzerps/Qwen-Image-2.1-Turbo-Quantized Core Invariants",
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
-      "content_hash": "14a294858ac79b0bc419e44af9a497fca99be71cf9c754d7060a97128efcfd4b",
+      "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-quantized",
+      "content_hash": "d26929ad4c531d6875efcc300da7c7548d662e25e6aeb9aa57e0bab87d963808",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T09:57:12.162Z"
+      "persisted_at": "2026-11-19T14:28:20.311Z"
     },
     "learn-github-dnscontrol-dnscontrol": {
       "learning_id": "learn-github-dnscontrol-dnscontrol",
@@ -238687,9 +238702,9 @@
       "title": "Research & Knowledge Intelligence: hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings Core Invariants",
       "repository": "hf-abenzerps-qwen-image-2.1-uncensored-quantized-learnings",
       "source_version": "HEAD",
-      "content_hash": "e9ea3125abc5d8fb403fbeec2be26f532b039279ed03f00f042f43c916338c01",
+      "content_hash": "763dfdb0e55872253d1c7bbb0e9aa10e100aedb3e51e304916cccb324303a223",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T23:43:17.178Z"
+      "persisted_at": "2026-11-19T14:28:41.224Z"
     },
     "candidate_directive-normalize-move-caa-and-openpgpkey-checks-to-their-makers": {
       "item_id": "candidate_directive-normalize-move-caa-and-openpgpkey-checks-to-their-makers",
@@ -276106,9 +276121,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for clockworklabs-spacetimedb-learnings",
       "repository": "clockworklabs-spacetimedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "ddf01a5565f006ef01758a17dd3e8c0211d03f8fbbae1d3dd814559ba0feff3a",
+      "content_hash": "110757ed808fc2614465a2247f2e110018d09b003b6f8a167ad78fd5ccc0d245",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T11:45:22.300Z"
+      "persisted_at": "2026-11-19T14:28:42.992Z"
     },
     "learn-huggingface-ornith-ai-ornith-1-5-122b": {
       "learning_id": "learn-huggingface-ornith-ai-ornith-1-5-122b",
@@ -294670,6 +294685,96 @@
       "content_hash": "05406193d81f7d92993cd5bc67791cc82432df478fafb0ee7f3caa9ff3c0f7bf",
       "domain_letter": "H",
       "persisted_at": "2026-11-19T14:20:28.987Z"
+    },
+    "rule-9385": {
+      "learning_id": "rule-9385",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9385,
+      "title": "(2.16) [FIXED] Send async INFO to clients when max_payload limit changes",
+      "source_url": "https://github.com/nats-io/nats-server",
+      "source_version": "ba5c7e53",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T14:28:30.553Z"
+    },
+    "candidate_directive-2-16-fixed-send-async-info-to-clients-when-max_payload-limit-changes": {
+      "item_id": "candidate_directive-2-16-fixed-send-async-info-to-clients-when-max_payload-limit-changes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-B87H-2-16-fixed-send-async-info-to-clients-when-max_payload-limit-changes.md",
+      "title": "(2.16) [FIXED] Send async INFO to clients when max_payload limit changes",
+      "repository": "nats-io-nats-server-learnings",
+      "source_version": "HEAD",
+      "content_hash": "394eb09ef49b044120041b68a0f417d0ce4bd98fe0e0c46a73faab761b8b661d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T14:28:41.938Z"
+    },
+    "rule-9386": {
+      "learning_id": "rule-9386",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9386,
+      "title": "sdks/rust): invoke on_disconnect when mutation is queued after disconnect",
+      "source_url": "https://github.com/clockworklabs/SpacetimeDB",
+      "source_version": "71fdf1c8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T14:28:35.510Z"
+    },
+    "candidate_directive-sdks-rust-invoke-on_disconnect-when-mutation-is-queued-after-disconnect": {
+      "item_id": "candidate_directive-sdks-rust-invoke-on_disconnect-when-mutation-is-queued-after-disconnect",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-B8SD-sdks-rust-invoke-on_disconnect-when-mutation-is-queued-after-disconnect.md",
+      "title": "sdks/rust): invoke on_disconnect when mutation is queued after disconnect",
+      "repository": "clockworklabs-spacetimedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b4b9e97bdcb20af59948f66d94a8d4f161d0bc2389ba68ea226df0b6eca1ae46",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T14:28:42.686Z"
+    },
+    "rule-9387": {
+      "learning_id": "rule-9387",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9387,
+      "title": "Draft NUC 124 List and Population Quantiles",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "3aa2775c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T14:28:37.460Z"
+    },
+    "candidate_directive-draft-nuc-124-list-and-population-quantiles": {
+      "item_id": "candidate_directive-draft-nuc-124-list-and-population-quantiles",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-B52J-draft-nuc-124-list-and-population-quantiles.md",
+      "title": "Draft NUC 124 List and Population Quantiles",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "3aa2775c",
+      "content_hash": "e241cb81241df94a9d45b59ae911536889673cf500a7b9c44f3ff661d25ae3a6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T14:28:37.868Z"
+    },
+    "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-clockworklabs-spacetimedb-learnings-architecture-intelligence-clockworklabs-spac.md",
+      "title": "Architecture Intelligence: clockworklabs-spacetimedb-learnings Core Invariants",
+      "repository": "clockworklabs-spacetimedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5161bfb3de4c8507041d73ed7770ca47e1d6071e3f3bc2b3a80de78063bcc796",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T14:28:42.842Z"
     }
   },
   "ai-builder-brain": {

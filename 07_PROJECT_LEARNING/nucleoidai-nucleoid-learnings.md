@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `9631a1dd`  
+> **Source Version**: `3aa2775c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T13:22:00.924Z  
+> **Timestamp**: 2026-11-19T14:28:36.620Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T13:22:00.919Z  
+> **Harvest Timestamp**: 2026-11-19T14:28:36.615Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1563,323 +1563,125 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9631a1dd` (2026-11-19)
-**Commit Message**: NUC 123 List and Population Variances and Standard Deviations
+### Incident Patch 1: `3aa2775c` (2026-11-19)
+**Commit Message**: Draft NUC 124 List and Population Quantiles
 
-Accepted under the automatic acceptance rule, in a continuous
-/nuc-proposal cycle (Utility enhancement, token comparison required):
-the frozen candidate meets every hard criterion and passes every policy
-check, the token non-regression gate included. The cycle found no stale
-Draft, drew Utility enhancement uniformly from the five eligible
-categories, allocated NUC 123 in 52f8bf48, and completed it with fresh
-baselines, candidate, proposer, Rust improvement pass and evaluator.
+Category: Utility enhancement, drawn uniformly at random (index 2 of the
+five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
+continuous /nuc-proposal cycle. Utility enhancement requires the token
+non-regression gate in continuous mode.
 
-Lists and class instance lists gain two read-only queries beside
-median: RECEIVER.variance() is the population variance of the items,
-the mean of their squared deviations from their mean, and
-RECEIVER.stdev() its square root; both take an optional selector. They
-are computed in two passes, the mean exactly as average computes it, so
-the results equal xs.average(x -> (x - xs.average()) * (x - xs.average()))
-and its Math.sqrt bit for bit. A single value gives 0 and an empty
-receiver NaN; NaN and infinite values give NaN, an overflowing square or
-total Infinity, and an undefined value makes both undefined. Values
-convert as sum converts them, receive
+Requested change: lists and class instance lists gain the read-only
+query quantile. RECEIVER.quantile(q) returns the q quantile of the
+items for a number q from 0 to 1, and RECEIVER.quantile(q, selector)
+that of selector(item), interpolating linearly between the two closest
+ranks of the sorted values at rank (n - 1) * q, the default method of
+NumPy's and pandas' quantile, R's type 7 and Excel's PERCENTILE.INC.
+It follows NUC 84's median beside NUC 68's sum, NUC 80's average and
+NUC 123's variance: the same receivers, numeric conversion, selector
+rules, NaN and undefined results, and liveness under NUC 61's shared
+query rules; NUC 84 left quantiles out, and xs.median(0.9) stays an
+error. At the accepted revision these calls raise
+TypeError("<receiver>.quantile is not a function"); only inputs that
+were errors change, and bindings, properties and methods named quantile
+keep their accepte
 
-**File**: `README.md` (modified, +28/-0)
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -2645,6 +2645,34 @@ assert([kitchen, heating], [21, false])
-   estimate. See the
-   [root contract](nucleoid.spec.md#python-style-except-clauses).
- 
-+## List and population variances and standard deviations
-+
-+**Standard deviations keep the scatter of delivery times live as orders change**
-+
-+```nuc
-+class Delivery(minutes):
-+    this.minutes = minutes
-+Delivery(30)
-+Delivery(25)
-+late = Delivery(35)
-+scatter = Delivery.stdev(delivery -> delivery.minutes)
-+assert(scatter, 4.08248290463863)
-+late.minutes = 90
-+Delivery(40)
-+assert(scatter, 25.829972899714782)
-+```
-+
-+- [NUC 123](docs/nuc-0123.md) adds `variance()` and `stdev()`, with and
-+  without a selector, to lists and class instance lists.
-+  `Delivery.stdev(delivery -> delivery.minutes)` is the population standard
-+  deviation of the delivery times: the square root of their mean squared
-+  distance from their mean.
-+- `scatter` is a live declaration, so a slower delivery and a new order both
-+  update it. The distances are taken from the mean, which keeps the spread
-+  of large values where the mean of the squares minus the square of the mean
-+  cancels it, and `variance()` gives the square of the same spread. See the
-+  [root contract](nucleoid.spec.md#list-and-population-variances-and-standard-deviations).
-+
- ## Reactive list flattening
- 
- **Flat turns nested lists into one live list**
-```
-
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +20/-16)
-```diff
-@@ -802,19 +802,23 @@
- {"id":"spec-0802","description":"Nucleoid catches every error with except clauses","code":"indoor = 21\ntry:\n    feels = indoor - outdoor / 2\nexcept:\n    feels = indoor\nassert(feels, 21)\ntry:\n    offset = indoor.calibrate(2)\nexcept Exception:\n    offset = 0\nassert(offset, 0)\ntry:\n    throw \"SENSOR OFFLINE\"\nexcept Exception as fault:\n    status = fault\nassert(status, \"SENSOR OFFLINE\")\ntry:\n    trend = outdoor + 1\nexcept:\n    trend = error\nassert(trend, ReferenceError(\"outdoor is not defined\"))\nindoor = 23\noutdoor = 10\n[feels, offset, status, trend]","return":"[23,0,\"SENSOR OFFLINE\",\"ReferenceError: outdoor is not defined\"]"}
- {"id":"spec-0803","description":"Nucleoid rolls back a failed update before its except clause runs","code":"class Account(owner, balance):\n    this.owner = owner\n    this.balance = balance\nada = Account(\"Ada\", 100)\nlimit = ada.balance * 2\ndef withdraw(account, amount):\n    if amount > account.balance.value:\n        throw \"INSUFFICIENT FUNDS\"\n    account.balance = account.balance - amount\n    return account.balance\ntry:\n    ada.balance = 500\n    withdraw(ada, 900)\nexcept Exception as reason:\n    assert([ada.balance, limit], [100, 200])\n    refusal = reason\nassert(refusal, \"INSUFFICIENT FUNDS\")\ntry:\n    withdraw(ada, 30)\n    ada.owner = missing\nexcept:\n    assert(error, ReferenceError(\"missing is not defined\"))\nassert([ada.balance, limit], [100, 200])\nwithdraw(ada, 40)\nlimit","return":"120"}
- {"id":"spec-0804","description":"Nucleoid reads except clauses in methods, functions and nested try statements","code":"class Gauge(name, limit):\n    this.name = name\n    this.limit = limit\n    def read(value):\n        try:\n            if value > this.limit:\n                throw this.name + \" OVER LIMIT\"\n            return value\n        except Exception as alarm:\n            return alarm\nboiler = Gauge(\"boiler\", 90)\nassert([boiler.read(70), boiler.read(95)], [70, \"boiler OVER LIMIT\"])\ndef check(value):\n    try:\n        try:\n            if value > 100:\n                throw \"HIGH\"\n            return \"OK\"\n        except Exception as inner:\n            throw inner + \" ALARM\"\n    except Exception as outer:\n        return outer\nassert([check(50), check(150)], [\"OK\", \"HIGH ALARM\"])\ntry:\n    seen = alarm\nexcept:\n    seen = error\nassert(seen, ReferenceError(\"alarm is not defined\"))\ncheck(120)","return":"\"HIGH ALARM\""}
--{"id":"spec-0805","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0806","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0807","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0808","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0809","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
--{"id":"spec-0810","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = 
-```
-
-**File**: `dataset/nucleoid.synth.87.jsonl` (added, +12/-0)
-```diff
-@@ -0,0 +1,12 @@
-+{"id":"synth-87-0001","description":"A variance measures how far a list of scores spreads from its mean","code":"scores = [2, 4, 4, 4, 5, 5, 7, 9]\nspread = scores.variance()\nassert(spread, 4)\nscores.push(11)\nspread","return":"7.111111111111111"}
-+{"id":"synth-87-0002","description":"A standard deviation follows a list as readings arrive","code":"readings = [61, 58, 64]\nwobble = readings.stdev()\nassert(wobble, 2.449489742783178)\nreadings.push(57)\nwobble","return":"2.7386127875258306"}
-+{"id":"synth-87-0003","description":"A selector measures the spread of a property over a class population","code":"class Parcel(weight):\n    this.weight = weight\nParcel(3)\nParcel(5)\nheavy = Parcel(10)\nspread = Parcel.variance(parcel -> parcel.weight)\nassert(spread, 8.666666666666666)\nheavy.weight = 4\nspread","return":"0.6666666666666666"}
-+{"id":"synth-87-0004","description":"A single value has no spread, and an empty list has NaN","code":"samples = [7]\nspread = samples.variance()\nassert(spread, 0)\nsamples.pop()\nString(spread)","return":"\"NaN\""}
-+{"id":"synth-87-0005","description":"The deviations of large values keep a spread that two averages cancel","code":"ticks = [1000000001, 1000000002, 1000000003]\njitter = ticks.variance()\nnaive = ticks.average(t -> t * t) - ticks.average() ** 2\n[jitter, naive]","return":"[0.6666666666666666,0]"}
-+{"id":"synth-87-0006","description":"A class-level rule keeps the standard deviation of each machine's readings","code":"class Machine(readings):\n    this.readings = readings\n$Machine.drift = $Machine.readings.stdev()\npress = Machine([50, 54, 46])\nassert(press.drift, 3.265986323710904)\npress.readings.push(50)\npress.drift","return":"2.8284271247461903"}
-+{"id":"synth-87-0007","description":"A standard deviation over a filtered population follows each new instance","code":"class Trip(city, minutes):\n    this.city = city\n    this.minutes = minutes\nTrip(\"oslo\", 30)\nTrip(\"oslo\", 34)\nTrip(\"bergen\", 90)\nlocal = Trip.filter(trip -> trip.city == \"oslo\").stdev(trip -> trip.minutes)\nassert(local, 2)\nTrip(\"oslo\", 26)\nlocal","return":"3.265986323710904"}
-+{"id":"synth-87-0008","description":"A selector that reads another variable follows it","code":"gain = 2\nlevels = [1, 2, 3]\nspread = levels.variance(level -> level * gain)\nassert(spread, 2.6666666666666665)\ngain = 3\nspread","return":"6"}
-+{"id":"synth-87-0009","description":"An undefined value leaves the variance unknown until it is defined","code":"class Sensor(name):\n    this.name = name\na = Sensor(\"a\")\na.level = 4\nb = Sensor(\"b\")\nspread = Sensor.variance(sensor -> sensor.level)\nassert(spread, null)\nb.level = 8\nspread","return":"4"}
-+{"id":"synth-87-0010","description":"A selector that is not a function raises a typed error","code":"xs = [1, 2]\nfailure = \"\"\ntry:\n    xs.variance(2)\ncatch error:\n    failure = error\nfailure","return":"\"TypeError: variance expects a function\""}
-+{"id":"synth-87-0011","description":"A failed selector rolls back the change that triggered it","code":"def checked(level):\n    if level < 0:\n        throw \"NEGATIVE\"\n    return level\nlevels = [3, 5, 10]\nspread = levels.stdev(checked)\ntry:\n    levels.push(-1)\ncatch error:\n    pass\n[levels.length, spread]","return":"[3,2.943920288775949]"}
-+{"id":"synth-87-0012","description":"Bindings and functions named variance and stdev keep their meaning","code":"variance = [1, 3]\ndef stdev(values) => values.length\n[variance.variance(), stdev(variance), variance.stdev()]","return":"[1,2,1]"}
-```
-
-**File**: `docs/README.md` (modified, +57/-1)
-```diff
-@@ -2694,7 +2694,7 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md)
- | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
- | `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), and the case conversion aliases `uppercase()`, `to_uppercase()` and `uppercased()` of `toUpperCase()`, and `lowercase()`, `to_lowercase()` and `lowercased()` of `toLowerCase()` ([NUC 118](nuc-0118.md)) |
- | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
--| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), the size and emptiness aliases `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), and the first and last element aliases `first()`, `last()`, `first(predicate)` and `last(predicate)` ([NUC 117](nuc-0117.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
-+| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), `variance` and `stdev` ([NUC 123](nuc-0123.md)), the size and emptiness aliases `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), and the first and last element aliases `first()`, `last()`, `first(predicate)` and `last(predicate)` ([NUC 117](nuc-0117.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
- | `Class` | the global list of declared types; `Class.length` |
- 
- ```
-@@ -4235,6 +4235,60 @@ volume
-   [list and population products](../nucleoid.spec.md#list-and-population-products)
-   section.
- 
-+### List and population variances and standard deviations
-+
-+```
-+temps = [18, 21, 24]
-+swing = temps.stdev()
-+class Shot(score):
-+    this.score = score
-+Shot(7)
-+Shot(9)
-+spread = Shot.variance(shot -> shot.score)
-+assert([swing, spread], [2.449489742783178, 1])
-+temps.push(17)
-+Shot(5)
-+assert([swing, spread], [2.7386127875258306, 2.6666666666666665])
-+spread
-+```
-+
-+- This is the complete
-+  `Nucleoid measures the spread of lists and populations with variance and stdev`
-+  program in `tests/reference.md`, without its title and expected-return
-+  metadata; it returns `2.6666666666666665`.
-+- [NUC 123](nuc-0123.md) adds `variance()`, `variance(selector)`, `stdev()`
-+  and `stdev(selector)` to lists and class instance lists: the population
-+  variance, the mean of the squared deviations from the mean, and its square
-+  root, the population standard deviation. Both divide by the number of
-+  values, so a single value gives `0`.
-+- The mean is computed as `average` computes it, and the deviations are taken
-+  from it in a second pass, so a list of numbers has exactly the variance that
-+  `xs.average(x -> (x - xs.average()) * (x - xs.average()))` gives, and
-+  exactly `Math.sqrt` of it as its standard deviation. Large values with a
-
-```
-
-**File**: `docs/examples.md` (modified, +28/-0)
-```diff
-@@ -4176,6 +4176,34 @@ transfer(ana, ben, 20)
-   [NUC 122](nuc-0122.md) and the
-   [root contract](../nucleoid.spec.md#python-style-except-clauses).
- 
-+## List and population variances and standard deviations
-+
-+**Standard deviations flag the machines whose readings drift**
-+
-+```nuc
-+class Machine(name, readings):
-+    this.name = name
-+    this.readings = readings
-+$Machine.drift = $Machine.readings.stdev()
-+$Machine.unstable = $Machine.drift > 2
-+press = Machine("press", [50, 54, 46])
-+lathe = Machine("lathe", [30, 31, 29])
-+assert([press.drift, lathe.unstable], [3.265986323710904, false])
-+lathe.readings.push(35)
-+press.readings.push(50)
-+[lathe.unstable, press.drift]
-+# return: [true,2.8284271247461903]
-+```
-+
-+- Each machine keeps the standard deviation of its own readings in a
-+  class-level rule, and a second rule flags the machines whose readings
-+  scatter with a standard deviation above 2.
-+- Both rules follow every reading: a reading of 35 makes the lathe unstable,
-+  and a reading at the press's mean narrows its drift from
-+  `3.265986323710904` to `2.8284271247461903`. See [NUC 123](nuc-0123.md)
-+  and the
-+  [root contract](../nucleoid.spec.md#list-and-population-variances-and-standard-deviations).
-+
- ## Reactive list flattening
- 
- **Flattening keeps the dirty tiles of every room counted**
-```
-
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
-```diff
-@@ -131,7 +131,7 @@ Created: 31-Jul-2026
- | [108](nuc-0108.md) | List and Population Partitions | Accepted |
+@@ -132,6 +132,7 @@ Created: 31-Jul-2026
  | [111](nuc-0111.md) | Reactive String Padding | Accepted |
  | [114](nuc-0114.md) | List and Population Products | Accepted |
--| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Draft |
-+| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Accepted |
+ | [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Accepted |
++| [124](nuc-0124.md) | List and Population Quantiles | Draft |
  
  ### Reasoning enhancement
  
-@@ -300,7 +300,7 @@ Created: 31-Jul-2026
- | [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+@@ -301,6 +302,7 @@ Created: 31-Jul-2026
  | [121](nuc-0121.md) | Held Values of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
  | [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Accepted |
--| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Standards Track | Utility enhancement | Draft |
-+| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Standards Track | Utility enhancement | Accepted |
+ | [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Standards Track | Utility enhancement | Accepted |
++| [124](nuc-0124.md) | List and Population Quantiles | Standards Track | Utility enhancement | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `nucleoid.spec.md` (modified, +148/-0)
+**File**: `docs/nuc-0124.md` (added, +73/-0)
 ```diff
-@@ -6780,6 +6780,77 @@ t.promote(bob)
-   `Nucleoid rolls back failed product updates` specify the executable
-   behavior. `tests/list_products.rs` executes the rest.
- 
-+## List and population variances and standard deviations
+@@ -0,0 +1,73 @@
++# NUC 124 -- List and Population Quantiles
 +
-+- [NUC 123](docs/nuc-0123.md) adds the read-only list queries `variance` and
-+  `stdev` to lists and class instance lists. No syntax, keyword or error type
-+  is added.
-+- `RECEIVER.variance()` returns the population variance of the receiver's
-+  items, the mean of their squared deviations from their mean, and
-+  `RECEIVER.variance(selector)` that of `selector(item)` for every item.
-+  `RECEIVER.stdev()` and `RECEIVER.stdev(selector)` return its square root,
-+  the population standard deviation. Both divide by the number of values, so
-+  `[2, 4, 4, 4, 5, 5, 7, 9].variance()` is `4` and its `stdev()` is `2`.
-+- The values are converted to numbers once and read in two passes, in 64-bit
-+  floating point. The mean is computed as `average` computes it: the values
-+  added in receiver order from `0`, divided by their number. The variance adds
-+  the squares `d * d` of the deviations `d = value - mean` in receiver order
-+  from `0` and divides by the number of values, and the standard deviation is
-+  the square root that `Math.sqrt` gives. A list of numbers therefore has
-+  exactly the variance that
-+  `xs.average(x -> (x - xs.average()) * (x - xs.average()))` gives, and exactly
-+  `Math.sqrt` of it as its standard deviation.
-+- Because the deviations are taken from the mean, large values with a small
-+  spread keep their spread: `[1000000001, 1000000002, 1000000003].variance()`
-+  is `0.6666666666666666`, where the mean of the squares minus the square of
-+  the mean, `xs.average(x -> x * x) - xs.average() ** 2`, cancels to `0`.
-+- A single value gives `0`, and an empty receiver gives `0 / 0`, which is NaN.
-+  A value that converts to NaN makes both results NaN, and so does an infinite
-+  value, whose deviation from the mean, itself infinite or NaN, is NaN. A
-+  square or a total beyond the largest number overflows to `Infinity`, so
-+  `[1e200, -1e200].stdev()` is `Infinity`, and a square below the smallest
-+  positive number underflows to `0`. An undefined value makes both results
-+  undefined, which a declaration stores as `null`, ahead of NaN; every item is
-+  still visited.
-+- The receivers, the numeric conversion and the selector are those of
-+  `median`: a list however it is reached, or a class's instance list in
-+  population order, named by the class or by a variable that holds the class;
-+  `null`, `false`, empty strings and empty lists are `0`, `true` is `1`,
-+  numeric strings and one-item lists are their number, and objects, other
-+  strings and longer lists are NaN. On a class name, `variance` and `stdev` are
-+  the population queries even when the class declares instance methods with
-+  those names; its instances keep calling those methods.
-+- `variance()` and `stdev()` read items, not bindings, so a `null` item counts
-+  `0` without settling a declaration to `null`, while the reads inside a
-+  selector follow the existing rules.
-+- A selector is called once for every item, in order, with only the item;
-+  further parameters are `null`. A supplied first argument that is not a
-+  function, including `null`, raises `TypeError("variance expects a function")`
-+  or `TypeError("stdev expects a function")`, even on an empty receiver.
-+- `variance` and `stdev` follow the shared rules of the list queries: they read
-+  their receiver before their arguments, evaluate every supplied argument once,
-+  left to right, including unused extras, and never write the receiver. A
-+  declaration that uses them depends on the list or population, on their
-+  argument expressions and on whatever the selector reads, so list mutations,
-+  new and deleted instances and property changes re-evaluate it, in
-+  class-level rules too. Selector errors roll back through the existing
-+  transaction. A null or undefined receiver yields undefined without evaluating
-+  the arguments.
-+- A call converts every value once and makes two linear passes over the
-+  numbers, without recursion.
-+- The call keeps its ordinary rendering, so `spread = scores.variance()`
-+  explains as `spread = scores.variance()`, and `why` lists the receiver among
-+  the declaration's dependencies.
-+- `variance of xs` stays `SyntaxError("Unexpected keyword 'of'")`: neither
-+  name is a noun query. Property reads such as `xs.variance` and `xs.stdev`,
-+  bindings and object properties named `variance` or `stdev`, `variance(...)`
-+  without a definition, `Math.variance`, `xs.std()` and instance methods named
-+  `variance` or `stdev` called on an instance keep their accepted results. The
-+  four entries beginning
-+  `Nucleoid measures the spread of lists with variance and stdev` through
-+  `Nucleoid rolls back failed variance updates` specify the executable
-+  behavior. `tests/list_variances.rs` executes the rest.
++```
++NUC: 124
++Title: List and Population Quantiles
++Author: Can Mingir <canmingir@gmail.com>
++Status: Draft
++Type: Standards Track
++Category: Utility enhancement
++Created: 19-Nov-2026
++```
 +
- ## Object entry loops with
-```
-
-**File**: `src/lang/ast/array/aggregate.rs` (modified, +20/-0)
-```diff
-@@ -59,6 +59,23 @@ fn median_value(values: &[Value]) -> Value {
-     Value::Number(median)
- }
- 
-+#[must_use]
-+fn population_variance(values: &[Value]) -> Option<f64> {
-+    if values.iter().any(Value::is_undefined) {
-+        return None;
-+    }
++## Abstract
 +
-+    let numbers: Vec<f64> = values.iter().map(Value::to_number).collect();
-+    let count = number::from_usize(numbers.len());
-+    let mean = numbers.iter().fold(0.0, |total, value| total + value) / count;
-+    let squares = numbers.iter().fold(0.0, |total, value| {
-+        let deviation = value - mean;
-+        total + deviation * deviation
-+    });
++- Lists and class instance lists gain the read-only query `quantile`.
++  `RECEIVER.quantile(q)` returns the `q` quantile of the receiver's items,
++  for a number `q` from `0` to `1`, and `RECEIVER.quantile(q, selector)`
++  that of `selector(item)` for every item: `0` gives the smallest value,
++  `0.5` the median and `1` the largest.
++- It interpolates linearly between the two closest ranks of the sorted
++  values, the default method of NumPy's `quantile` and pandas' `quantile`,
++  R's type 7 and Excel's `PERCENTILE.INC`. The rank is `(n - 1) * q` for
++  `n` values: a whole rank gives its value, and a rank between two values
++  weighs them by how close it lies to each.
++- It follows [NUC 84](nuc-0084.md)'s `median`, beside
++  [NUC 68](nuc-0068.md)'s `sum`, [NUC 80](nuc-0080.md)'s `average` and
++  [NUC 123](nuc-0123.md)'s `variance`: the same receivers, numeric
++  conversion, selector rules, NaN and undefined results, and liveness
++  under [NUC 61](nuc-0061.md)'s shared query rules. NUC 84 left quantiles
++  out, and `xs.median(0.9)` stays an error.
++- At the accepted revision these calls are run-time errors,
++  `TypeError("<receiver>.quantile is not a function")`. Only inputs that
++  were errors change. No syntax, keyword, token or error type is added,
++  and bindings, properties and methods named `quantile` keep their
++  accepted results.
 +
-+    Some(squares / count)
-+}
++## Motivation
 +
- impl Runtime {
-     pub(super) fn aggregate_items(
-         &mut self,
-@@ -81,6 +98,9 @@ impl Runtime {
-             "distinct" => Value::List(self.distinct_values(values)),
-             "mode" => self.mode_value(values),
-             "median" => median_value(&values),
-+            "variance" => population_variance(&values).map_or(Value::Undefined, Value::Number),
-+            "stdev" => population_variance(&values)
-+                .map_or(Value::Undefined, |variance| Value::Number(variance.sqrt())),
-             _ => builtins::math(property, &values)?,
-         })
-     }
++- World models describe their populations by more than a center. A model
++  that asks how high the top tenth of its readings reach, where the
++  quartiles of its prices fall, or which deliveries are slower than nine
++  in ten, needs a quantile. Lists and class populations already have their
++  sums, extremes, averages, medians, modes, variances and standard
++  deviations, but not their quantiles.
++- Written out, a quantile sorts a copy of the values, computes the rank
++  and interpolates between two indexed values: `s = xs.sortBy(x -> x)`,
++  `h = (s.length - 1) * q`, and then `s[Math.floor(h)]` and
++  `s[Math.ceil(h)]` weighed by `h - Math.floor(h)`. That repeats the
++  receiver, is easy to get one rank wrong, and must not sort the receiver
++  itself. `quantile(q)` names the statistic once, as `median()` does.
++
++## Rationale
++
++- Pending: the proposer completes this section.
++
++## Specification
++
++- Pending: the proposer completes this section.
++
++## Errors
++
++- Pending: the proposer completes this section.
++
++## Reference Implementation
++
++- Pending: the proposer completes this section.
++
++## Copyright
++
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
 ```
 
 #### Recent Merged Pull Requests:
@@ -1908,48 +1710,22 @@ convert as sum converts them, receive
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 123 List and Population Variances and Standard Deviations
+## X. Draft NUC 124 List and Population Quantiles
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9631a1dd`: NUC 123 List and Population Variances and Standard Deviations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3aa2775c`: Draft NUC 124 List and Population Quantiles. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## List and population variances and standard deviations
-
-**Standard deviations keep the scatter of delivery times live as orders change**
-
-```nuc
-class Delivery(minutes):
-    this.minutes = minutes
-Delivery(30)
-Delivery(25)
-late = Delivery(35)
-scatter = Delivery.stdev(delivery -> delivery.minutes)
-assert(scatter, 4.08248290463863)
-late.minutes = 90
-Delivery(40)
-assert(scatter, 25.829972899714782)
-```
-
-- [NUC 123](docs/nuc-0123.md) adds `variance()` and `stdev()`, with and
-  without a selector, to lists and class instance lists.
-  `Delivery.stdev(delivery -> delivery.minutes)` is the population standard
-  deviation of the delivery times: the square root of their mean squared
-  distance from their mean.
-- `scatter` is a live declaration, so a slower delivery and a new order both
-  update it. The distances are taken from the mean, which keeps the spread
-  of large values where the mean of the squares minus the square of the mean
-  cancels it, and `variance()` gives the square of the same spread. See the
-  [root contract](nucleoid.spec.md#list-and-population-variances-and-standard-deviations).
-
+| [124](nuc-0124.md) | List and Population Quantiles | Draft |
+| [124](nuc-0124.md) | List and Population Quantiles | Standards Track | Utility enhancement | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1959,4 +1735,4 @@ assert(scatter, 25.829972899714782)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9631a1dd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3aa2775c` are properly handled with clean fallback behavior.
