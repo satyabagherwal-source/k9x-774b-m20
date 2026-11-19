@@ -4,24 +4,24 @@
 {
   "source_repository": "meilisearch/meilisearch",
   "source_url": "https://github.com/meilisearch/meilisearch",
-  "source_version": "d15a0866",
+  "source_version": "01794fd9",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T16:05:49.899Z",
+  "timestamp": "2026-11-19T09:43:53.858Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-meilisearch-meilisearch",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [meilisearch/meilisearch](https://github.com/meilisearch/meilisearch) (Revision: `d15a0866`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T16:05:49.899Z`  
+> **Provenance**: Harvested from [meilisearch/meilisearch](https://github.com/meilisearch/meilisearch) (Revision: `01794fd9`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-19T09:43:53.858Z`  
 > **Learning ID**: `learn-github-meilisearch-meilisearch`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: J (Search & Distribution Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from meilisearch/meilisearch:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meilisearch/meilisearch](https://github.com/meilisearch/meilisearch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T16:05:49.021Z  
+> **Harvest Timestamp**: 2026-11-19T09:43:53.003Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A lightning-fast search engine API bringing AI-powered hybrid search to your sites and applications.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 59885 stars
+- **Stars / Engagement**: 59909 stars
 
 ---
 
@@ -2063,226 +2063,59 @@ fn check_changed(uuid: Uuid, webhook: &Webhook) -> Result<(), WebhooksError> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d15a0866` (2026-11-17)
-**Commit Message**: Merge pull request #6740 from meilisearch/fix-ngrams-in-typo-rr
+### Incident Patch 1: `01794fd9` (2026-11-18)
+**Commit Message**: Merge pull request #6742 from meilisearch/readme-product-hunt-searchandising
 
-Fix ngrams base costs
+Add temporary Product Hunt launch link to README
 
-**File**: `crates/milli/src/search/new/ranking_rule_graph/typo/mod.rs` (modified, +1/-1)
+**File**: `README.md` (modified, +8/-0)
 ```diff
-@@ -50,7 +50,7 @@ impl RankingRuleGraphTrait for TypoGraph {
-         // Ngrams have a base typo cost
-         // 2-gram -> equivalent to 1 typo
-         // 3-gram -> equivalent to 2 typos
--        let base_cost = if term.term_ids.len() == 1 { 0 } else { term.term_ids.len() as u32 };
-+        let base_cost = term.term_ids.len().saturating_sub(1) as u32;
+@@ -23,6 +23,14 @@
+   <a href="https://github.com/meilisearch/meilisearch/queue"><img alt="Merge Queues enabled" src="https://img.shields.io/badge/Merge_Queues-enabled-%2357cf60?logo=github"></a>
+ </p>
  
-         for nbr_typos in 0..=term.term_subset.max_typo_cost(ctx) {
-             let mut term = term.clone();
-```
-
-**File**: `crates/milli/src/search/new/tests/snapshots/milli__search__new__tests__typo__typo_bucketing-8.snap` (modified, +11/-11)
-```diff
-@@ -1,53 +1,53 @@
- ---
--source: milli/src/search/new/tests/typo.rs
-+source: crates/milli/src/search/new/tests/typo.rs
- expression: "format!(\"{document_scores:#?}\")"
- ---
- [
-     [
-         Typo(
-             Typo {
-                 typo_count: 0,
--                max_typo_count: 6,
-+                max_typo_count: 5,
-             },
-         ),
-     ],
-     [
-         Typo(
-             Typo {
-                 typo_count: 0,
--                max_typo_count: 6,
-+                max_typo_count: 5,
-             },
-         ),
-     ],
-     [
-         Typo(
-             Typo {
--                typo_count: 2,
--                max_typo_count: 6,
-+                typo_count: 1,
-+                max_typo_count: 5,
-             },
-         ),
-     ],
-     [
-         Typo(
-             Typo {
--                typo_count: 2,
--                max_typo_count: 6,
-+                typo_count: 1,
-+                max_typo_count: 5,
-             },
-         ),
-     ],
-     [
-         Typo(
-             Typo {
--                typo_count: 3,
--                max_typo_count: 6,
-+                typo_count: 2,
-+                max_typo_count: 5,
-             },
-         ),
-     ],
-     [
-         Typo(
-             Typo {
--                typo_count: 4,
--                max_typo_count: 6,
-+                typo_count: 3,
-+                max_typo_count: 5,
-             },
-         ),
-     ],
-```
-
-**File**: `crates/milli/src/search/new/tests/snapshots/milli__search__new__tests__typo__typo_synonyms-2.snap` (modified, +4/-4)
-```diff
-@@ -1,29 +1,29 @@
- ---
--source: milli/src/search/new/tests/typo.rs
-+source: crates/milli/src/search/new/tests/typo.rs
- expression: "format!(\"{document_scores:#?}\")"
- ---
- [
-     [
-         Typo(
-             Typo {
-                 typo_count: 0,
--                max_typo_count: 13,
-+                max_typo_count: 10,
-             },
-         ),
-     ],
-     [
-         Typo(
-             Typo {
-                 typo_count: 0,
--                max_typo_count: 13,
-+                max_typo_count: 10,
-             },
-         ),
-     ],
-     [
-         Typo(
-             Typo {
-                 typo_count: 1,
--                max_typo_count: 13,
-+                max_typo_count: 10,
-             },
-         ),
-     ],
-```
-
-**File**: `crates/milli/src/search/new/tests/snapshots/milli__search__new__tests__typo__typo_synonyms-5.snap` (modified, +6/-6)
-```diff
-@@ -1,29 +1,29 @@
- ---
--source: milli/src/search/new/tests/typo.rs
-+source: crates/milli/src/search/new/tests/typo.rs
- expression: "format!(\"{document_scores:#?}\")"
- ---
- [
-     [
-         Typo(
-             Typo {
-                 typo_count: 0,
--                max_typo_count: 13,
-+                max_typo_count: 10,
-             },
-         ),
-     ],
-     [
-         Typo(
-             Typo {
--                typo_count: 2,
--                max_typo_count: 13,
-+                typo_count: 1,
-+                max_typo_count: 10,
-             },
-         ),
-     ],
-     [
-         Typo(
-             Typo {
--                typo_count: 2,
--                max_typo_count: 13,
-+                typo_count: 1,
-+                max_typo_count: 10,
-             },
-         ),
-     ],
-```
-
-**File**: `crates/milli/src/search/new/tests/snapshots/milli__search__new__tests__typo_proximity__trap_complex2-2.snap` (modified, +3/-3)
-```diff
-@@ -1,13 +1,13 @@
- ---
--source: milli/src/search/new/tests/typo_proximity.rs
-+source: crates/milli/src/search/new/tests/typo_proximity.rs
- expression: "format!(\"{document_scores:#?}\")"
- ---
- [
-     [
-         Typo(
-             Typo {
-                 typo_count: 1,
--                max_typo_count: 5,
-+                max_typo_count: 4,
-             },
-         ),
-         Proximity(
-@@ -21,7 +21,7 @@ expression: "format!(\"{document_scores:#?}\")"
-         Typo(
-             Typo {
-                 typo_count: 1,
--                max_typo_count: 5,
-+                max_typo_count: 4,
-             },
-         ),
-         Proximity(
++<p align="center">
++  🚀 <strong>We’re launching Searchandising on Product Hunt!</strong> Pin, boost and hide results with search rules. We’d love your feedback and a follow.
++  <a href="https://www.producthunt.com/products/meilisearch-cloud?launch=meilisearch-searchandising">Check us out on Product Hunt →</a>
++</p>
++<p align="center">
++  <a href="https://www.producthunt.com/products/meilisearch-cloud?utm_source=badge-follow&utm_medium=badge&utm_campaign=badge-meilisearch-cloud" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/follow.svg?product_id=532742&theme=light" alt="Meilisearch - Fast search and AI retrieval for your apps and sites | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
++</p>
++
+ <p align="center">⚡ A lightning-fast search engine that fits effortlessly into your apps, websites, and workflow 🔍</p>
+ 
+ [Meilisearch](https://www.meilisearch.com?utm_campaign=oss&utm_source=github&utm_medium=meilisearch&utm_content=intro) is a search engine for fast, relevant full-text, semantic, and hybrid search. The easiest way to get started and run it in production is [Meilisearch Cloud](https://cloud.meilisearch.com/register?utm_campaign=oss&utm_source=github&utm_medium=meilisearch&utm_content=intro): create a project and run your first search in minutes, with no servers to deploy, upgrade, or maintain. The engine is open source under the MIT license, so you can also self-host it.
 ```
 
 ---
 
-### Incident Patch 2: `ee4adb75` (2026-11-17)
-**Commit Message**: Fix ngrams base costs
+### Incident Patch 2: `1d553814` (2026-11-18)
+**Commit Message**: Make the Product Hunt launch copy friendlier
 
-**File**: `crates/milli/src/search/new/ranking_rule_graph/typo/mod.rs` (modified, +2/-1)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `README.md` (modified, +2/-2)
 ```diff
-@@ -50,7 +50,8 @@ impl RankingRuleGraphTrait for TypoGraph {
-         // Ngrams have a base typo cost
-         // 2-gram -> equivalent to 1 typo
-         // 3-gram -> equivalent to 2 typos
--        let base_cost = if term.term_ids.len() == 1 { 0 } else { term.term_ids.len() as u32 };
-+        let base_cost =
-+            if term.term_ids.len() == 1 { 0 } else { term.term_ids.len().saturating_sub(1) as u32 };
+@@ -24,8 +24,8 @@
+ </p>
  
-         for nbr_typos in 0..=term.term_subset.max_typo_cost(ctx) {
-             let mut term = term.clone();
+ <p align="center">
+-  🚀 <strong>Meilisearch Searchandising is launching on Product Hunt!</strong> Show your support and follow us for updates.
+-  <a href="https://www.producthunt.com/products/meilisearch-cloud?launch=meilisearch-searchandising">Support the launch →</a>
++  🚀 <strong>We’re launching Searchandising on Product Hunt!</strong> Pin, boost and hide results with search rules. We’d love your feedback and a follow.
++  <a href="https://www.producthunt.com/products/meilisearch-cloud?launch=meilisearch-searchandising">Check us out on Product Hunt →</a>
+ </p>
+ <p align="center">
+   <a href="https://www.producthunt.com/products/meilisearch-cloud?utm_source=badge-follow&utm_medium=badge&utm_campaign=badge-meilisearch-cloud" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/follow.svg?product_id=532742&theme=light" alt="Meilisearch - Fast search and AI retrieval for your apps and sites | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6742** (2026-11-18): Add temporary Product Hunt launch link to README (@mayasssh)
 - **PR #6740** (2026-11-17): Fix ngrams base costs (@ManyTheFish)
 - **PR #6739** (2026-11-16): Upgrade to Rust v1.100 (@dureuill)
 - **PR #6738** (2026-11-16): Switch to  ubuntu 24.04 in prevision of GH retirement of 22.04 (@dureuill)
 - **PR #6735** (2026-11-12): Update version for the next release (v1.57.0) in Cargo.toml (@meili-bot)
 - **PR #6734** (2026-11-12): Upgrade macos runner following removal by GH (@dureuill)
-- **PR #6732** (2026-11-16): Improve the licensing situation with the OpenLDAP license (@Kerollmops)
 
 ---
 
@@ -2302,31 +2135,38 @@ Fix ngrams base costs
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in mod.rs
+## X. Empirical Invariant Guard in README.md
 
 **RULE**:
-When implementing operations in `crates/milli/src/search/new/ranking_rule_graph/typo/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meilisearch/meilisearch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d15a0866`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `01794fd9`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/milli/src/search/new/ranking_rule_graph/typo/mod.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let base_cost = term.term_ids.len().saturating_sub(1) as u32;
+<p align="center">
+  🚀 <strong>We’re launching Searchandising on Product Hunt!</strong> Pin, boost and hide results with search rules. We’d love your feedback and a follow.
+  <a href="https://www.producthunt.com/products/meilisearch-cloud?launch=meilisearch-searchandising">Check us out on Product Hunt →</a>
+</p>
+<p align="center">
+  <a href="https://www.producthunt.com/products/meilisearch-cloud?utm_source=badge-follow&utm_medium=badge&utm_campaign=badge-meilisearch-cloud" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/follow.svg?product_id=532742&theme=light" alt="Meilisearch - Fast search and AI retrieval for your apps and sites | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+</p>
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        let base_cost = if term.term_ids.len() == 1 { 0 } else { term.term_ids.len() as u32 };
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d15a0866` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `01794fd9` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

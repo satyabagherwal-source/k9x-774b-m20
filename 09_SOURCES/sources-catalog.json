@@ -245,8 +245,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
     "sourceVersion": "hf-autotrust-gev-26b-decide-nvfp4",
     "license": "Open-Source",
-    "contentHash": "cf2f74b334da961cf635512f719f1ef89c1beb3c8329fad97c2cf9407f33a574",
-    "lastHarvestedAt": "2026-11-14T19:20:38.239Z",
+    "contentHash": "c27197bd18f82d24ae9827b1731a8ea029da04ad30f33cbfd74e9d341653a701",
+    "lastHarvestedAt": "2026-11-19T09:43:38.543Z",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide-nvfp4"
   },
   "hf-sc117-qwen3.8-flash-next-gsq-rco-abliterated-gguf": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "259343d1",
+    "sourceVersion": "52f8bf48",
     "license": "Apache-2.0",
-    "contentHash": "873d2f048aa565ae2e3745908d3184a603e2e68f1b38ee5fc732ee72a5737aae",
-    "lastHarvestedAt": "2026-11-19T04:13:29.924Z",
+    "contentHash": "f98bdc43b5f70eb5514845b13b85b26cc7a3e42b119f06d6d2119497ecdd3cb1",
+    "lastHarvestedAt": "2026-11-19T09:43:56.802Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6423,10 +6423,10 @@
     "repository": "meilisearch/meilisearch",
     "platform": "github",
     "sourceUrl": "https://github.com/meilisearch/meilisearch",
-    "sourceVersion": "d15a0866",
+    "sourceVersion": "01794fd9",
     "license": "NOASSERTION",
-    "contentHash": "015f62fc61113d1ec72a3ea7290a96a1e239931feab3e49a8e2d7ff9a586ab4b",
-    "lastHarvestedAt": "2026-11-17T16:05:49.700Z",
+    "contentHash": "6c9e0fd78d37e5911842ce58955eeb0447b0d9f36b4fd968c385ea1cbe54dbf2",
+    "lastHarvestedAt": "2026-11-19T09:43:53.660Z",
     "learningId": "learn-github-meilisearch-meilisearch"
   },
   "pacocoursey-cmdk": {
@@ -6753,10 +6753,10 @@
     "repository": "open-policy-agent/gatekeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/gatekeeper",
-    "sourceVersion": "fbbf865c",
+    "sourceVersion": "207df1ef",
     "license": "Apache-2.0",
-    "contentHash": "3cedc4bf1281daf9216e58d41244d1aa6780ed8de52bf9644bf2259a6bde1ae1",
-    "lastHarvestedAt": "2026-11-18T10:32:36.160Z",
+    "contentHash": "c893eff2055be08b39e25f8d0582de7c3cfa0ca2b7c1882d4f91a6a0337b44b6",
+    "lastHarvestedAt": "2026-11-19T09:43:49.094Z",
     "learningId": "learn-github-open-policy-agent-gatekeeper"
   },
   "chakra-ui-chakra-ui": {
@@ -7343,10 +7343,10 @@
     "repository": "arkivanov/Decompose",
     "platform": "github",
     "sourceUrl": "https://github.com/arkivanov/Decompose",
-    "sourceVersion": "4ab3eaec",
+    "sourceVersion": "361377cb",
     "license": "Apache-2.0",
-    "contentHash": "7606e75778ea55dfa4d809b528b7afe2b58c7a9437ab3d4b637cc67f2a643b1f",
-    "lastHarvestedAt": "2026-11-18T07:05:41.721Z",
+    "contentHash": "ca5c1fee2164b84c239e248740eac4df1b12e3cd890e4cad6bc676007ca41a29",
+    "lastHarvestedAt": "2026-11-19T09:43:47.415Z",
     "learningId": "learn-github-arkivanov-decompose"
   },
   "langchain4j-langchain4j": {
@@ -12948,5 +12948,15 @@
     "contentHash": "1bda1950dbf9aa4623e16cb8be34bc542d0745db8826341c0d3e65bea3dbb4bc",
     "lastHarvestedAt": "2026-11-19T06:52:24.184Z",
     "learningId": "learn-huggingface-reson8-rumble-2-flash"
+  },
+  "vcaesar-riot": {
+    "repository": "vcaesar/riot",
+    "platform": "github",
+    "sourceUrl": "https://github.com/vcaesar/riot",
+    "sourceVersion": "de6bec55",
+    "license": "Apache-2.0",
+    "contentHash": "5b6318c99d555a4da9abbd33822ffa339293bd09f5c26e02e3f76bdd6e993d49",
+    "lastHarvestedAt": "2026-11-19T09:43:41.613Z",
+    "learningId": "learn-github-vcaesar-riot"
   }
 }

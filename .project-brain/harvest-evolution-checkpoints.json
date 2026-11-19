@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T09:18:29.198Z",
+  "last_updated": "2026-11-19T09:44:01.949Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T08:09:21.220Z",
@@ -368,9 +368,9 @@
       "staged_for_review": 1
     },
     "arkivanov-decompose-learnings.md": {
-      "processed_at": "2026-11-18T07:06:16.401Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-19T09:44:01.284Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "doobidoo-mcp-memory-service-learnings.md": {
       "processed_at": "2026-11-17T01:54:52.591Z",
@@ -2713,8 +2713,8 @@
       "staged_for_review": 1
     },
     "hf-autotrust-gev-26b-decide-nvfp4-learnings.md": {
-      "processed_at": "2026-11-14T19:21:23.061Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T09:44:00.951Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "ytsaurus-ytsaurus-learnings.md": {
@@ -3501,9 +3501,14 @@
       "processed_at": "2026-11-19T06:53:05.887Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "vcaesar-riot-learnings.md": {
+      "processed_at": "2026-11-19T09:44:00.048Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2211,
+  "total_dossiers_evaluated": 2214,
   "total_canonical_promoted": 383,
-  "total_staged_for_review": 1652
+  "total_staged_for_review": 1654
 }

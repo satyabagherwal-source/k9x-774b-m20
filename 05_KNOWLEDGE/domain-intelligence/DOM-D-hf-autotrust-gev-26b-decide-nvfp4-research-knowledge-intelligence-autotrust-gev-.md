@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
   "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T19:20:38.411Z",
+  "timestamp": "2026-11-19T09:43:38.715Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-autotrust-gev-26b-decide-nvfp4",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [autotrust/GEV-26B-Decide-NVFP4](https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4) (Revision: `hf-autotru`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T19:20:38.411Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T09:43:38.715Z`  
 > **Learning ID**: `learn-huggingface-autotrust-gev-26b-decide-nvfp4`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4](https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T19:20:33.018Z  
+> **Harvest Timestamp**: 2026-11-19T09:43:37.927Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 113284 downloads | 41 likes
+- **Stars / Engagement**: 101736 downloads | 41 likes
 
 ---
 

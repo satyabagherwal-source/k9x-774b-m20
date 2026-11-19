@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T09:17:04.944Z",
+  "updated_at": "2026-11-19T09:44:00.338Z",
   "stats": {
-    "total_discovered": 5847,
-    "approved_pending_harvest": 5535,
+    "total_discovered": 5854,
+    "approved_pending_harvest": 5541,
     "harvested_count": 0,
-    "rejected_count": 312,
+    "rejected_count": 313,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5499,
+      "COMMUNITY_AND_EXPERT": 5506,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -126471,6 +126471,153 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
         "fileName": "kubernetes-sigs-aws-load-balancer-controller-learnings.md"
+      }
+    },
+    "SRC-5978C87C1026": {
+      "id": "SRC-5978C87C1026",
+      "url": "https://github.com/vcaesar/riot",
+      "title": "https://github.com/vcaesar/riot",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T09:44:00.072Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vcaesar-riot-learnings.md",
+        "fileName": "vcaesar-riot-learnings.md"
+      }
+    },
+    "SRC-B89B20A4AC66": {
+      "id": "SRC-B89B20A4AC66",
+      "url": "https://lucene.apache.org/core/4_0_0/analyzers-common/org/apache/lucene/analysis/miscellaneous/ASCIIFoldingFilter.html",
+      "title": "https://lucene.apache.org/core/4_0_0/analyzers-common/org/apache/lucene/analysis/miscellaneous/ASCIIFoldingFilter.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T09:44:00.129Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vcaesar-riot-learnings.md",
+        "fileName": "vcaesar-riot-learnings.md"
+      }
+    },
+    "SRC-76652EDACB3C": {
+      "id": "SRC-76652EDACB3C",
+      "url": "http://en.wikipedia.org/wiki/Schwa",
+      "title": "http://en.wikipedia.org/wiki/Schwa",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T09:44:00.167Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vcaesar-riot-learnings.md",
+        "fileName": "vcaesar-riot-learnings.md"
+      }
+    },
+    "SRC-864A258E2256": {
+      "id": "SRC-864A258E2256",
+      "url": "https://cla-assistant.io/vcaesar/riot?pullRequest=181",
+      "title": "https://cla-assistant.io/vcaesar/riot?pullRequest=181",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T09:44:00.219Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vcaesar-riot-learnings.md",
+        "fileName": "vcaesar-riot-learnings.md"
+      }
+    },
+    "SRC-57B038FC6085": {
+      "id": "SRC-57B038FC6085",
+      "url": "https://cla-assistant.io/check/vcaesar/riot?pullRequest=181",
+      "title": "https://cla-assistant.io/check/vcaesar/riot?pullRequest=181",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T09:44:00.266Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vcaesar-riot-learnings.md",
+        "fileName": "vcaesar-riot-learnings.md"
+      }
+    },
+    "SRC-3F678005D41D": {
+      "id": "SRC-3F678005D41D",
+      "url": "https://cla-assistant.io/vcaesar/riot?pullRequest=174",
+      "title": "https://cla-assistant.io/vcaesar/riot?pullRequest=174",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T09:44:00.301Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vcaesar-riot-learnings.md",
+        "fileName": "vcaesar-riot-learnings.md"
+      }
+    },
+    "SRC-914C7B9F9958": {
+      "id": "SRC-914C7B9F9958",
+      "url": "https://cla-assistant.io/check/vcaesar/riot?pullRequest=174",
+      "title": "https://cla-assistant.io/check/vcaesar/riot?pullRequest=174",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T09:44:00.338Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vcaesar-riot-learnings.md",
+        "fileName": "vcaesar-riot-learnings.md"
       }
     }
   }

@@ -21619,5 +21619,20 @@
     "downloads": 453,
     "qualityScore": 1513,
     "discoveredAt": "2026-11-19T06:50:09.176Z"
+  },
+  {
+    "name": "riot",
+    "fullName": "vcaesar/riot",
+    "url": "https://github.com/vcaesar/riot",
+    "type": "github",
+    "domain": "database-storage-engines",
+    "description": "Go Open Source, Distributed, Simple and fastest efficient text/vector Search Engine",
+    "stars": 6066,
+    "forks": 469,
+    "openIssues": 0,
+    "language": "Go",
+    "qualityScore": 3424,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-19T09:42:48.307Z"
   }
 ]

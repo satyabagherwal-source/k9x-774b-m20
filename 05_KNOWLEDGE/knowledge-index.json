@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T09:18:29.005Z",
-  "total_verified_learnings": 9015,
+  "last_updated": "2026-11-19T09:44:01.830Z",
+  "total_verified_learnings": 9016,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21717,
+  "total_items": 21732,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113797,10 +113797,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meilisearch-meilisearch-technical-construction-intelligence-meilisearch-meilisea.md",
       "title": "Technical Construction Intelligence: meilisearch/meilisearch Core Invariants",
       "repository": "meilisearch/meilisearch",
-      "source_version": "d15a0866",
-      "content_hash": "f67d265f19ec9f27dd046bdfc71993086966ab2b5cf2225948518a28ca44a7be",
+      "source_version": "01794fd9",
+      "content_hash": "812033f4dbc5a2b79c2b0b1db97c9e844a8b2a453d7daba530a65fcafcde0d4a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T16:05:50.029Z"
+      "persisted_at": "2026-11-19T09:43:53.996Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-meilisearch-meilisearch": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-meilisearch-meilisearch",
@@ -113809,10 +113809,10 @@
       "relative_path": "08_VERIFICATION/meilisearch-meilisearch-verification-protocol-empirical-defect-shield-for-meilis.md",
       "title": "Verification Protocol: Empirical Defect Shield for meilisearch/meilisearch",
       "repository": "meilisearch/meilisearch",
-      "source_version": "d15a0866",
-      "content_hash": "46d11462be43c4d780315a54f73a54ebef6871ec58604c8dc347c1064a8c21a0",
+      "source_version": "01794fd9",
+      "content_hash": "9cde85f4530e9f30f47e794457c0d94f8f57df2c49045866e736dd3c546e8369",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:05:50.163Z"
+      "persisted_at": "2026-11-19T09:43:54.134Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learning",
@@ -228681,8 +228681,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "259343d1",
-      "content_hash": "873d2f048aa565ae2e3745908d3184a603e2e68f1b38ee5fc732ee72a5737aae",
+      "source_version": "52f8bf48",
+      "content_hash": "f98bdc43b5f70eb5514845b13b85b26cc7a3e42b119f06d6d2119497ecdd3cb1",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -228800,6 +228800,11 @@
           "number": 9329,
           "title": "Draft NUC 122 Python-Style Except Clauses",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9367,
+          "title": "Draft NUC 123 List and Population Variances and Standard Deviations",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228807,7 +228812,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T04:13:29.731Z",
+      "verified_at": "2026-11-19T09:43:56.620Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228849,10 +228854,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "9eeb878b",
-      "content_hash": "7212a1c9541b0eedcc97d7e5b322602be3f416e814973354860af01625815f5c",
+      "source_version": "52f8bf48",
+      "content_hash": "697dc67f0f4cbf465318b747585424bc610f0dfb6535eeb4718ee70e86f07579",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T14:05:02.042Z"
+      "persisted_at": "2026-11-19T09:43:57.129Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -228861,10 +228866,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "259343d1",
-      "content_hash": "51a05f8611a13fc8f6e5396427d2c77b85efe69766efc47f2b94d0490a81ca0d",
+      "source_version": "52f8bf48",
+      "content_hash": "9778c996661b52821567541430f4df1d48bf094a854052ea0f8492ed12803592",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T04:13:30.431Z"
+      "persisted_at": "2026-11-19T09:43:57.266Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -235249,7 +235254,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4",
       "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
-      "content_hash": "cf2f74b334da961cf635512f719f1ef89c1beb3c8329fad97c2cf9407f33a574",
+      "content_hash": "c27197bd18f82d24ae9827b1731a8ea029da04ad30f33cbfd74e9d341653a701",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md",
       "promoted_rules": [],
@@ -235258,7 +235263,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T19:20:38.071Z",
+      "verified_at": "2026-11-19T09:43:38.343Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235275,9 +235280,9 @@
       "title": "Research & Knowledge Intelligence: autotrust/GEV-26B-Decide-NVFP4 Core Invariants",
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
       "source_version": "hf-autotrust-gev-26b-decide-nvfp4",
-      "content_hash": "1a42bbac8b9acbfa29f2e59922ac0011e90f5a1ea7d6627dee55dabc1a4099f8",
+      "content_hash": "ebd5a33b2f87d27a665c7fd529ec42000fb510668208c00885798fdefb5467fc",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T19:20:38.412Z"
+      "persisted_at": "2026-11-19T09:43:38.716Z"
     },
     "learn-github-pulumi-pulumi": {
       "learning_id": "learn-github-pulumi-pulumi",
@@ -235483,9 +235488,9 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-gev-26b-decide-nvfp4-learnings Core Invariants",
       "repository": "hf-autotrust-gev-26b-decide-nvfp4-learnings",
       "source_version": "HEAD",
-      "content_hash": "bf13ddc91c82a61ff6eff5fbf232847a48e7e4dda6579993c6ed1efc3632f0be",
+      "content_hash": "512428ada1a1db8355de6794da0cf85084519d113caafa442ae99f829b52d244",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T19:21:23.263Z"
+      "persisted_at": "2026-11-19T09:44:01.118Z"
     },
     "domain_intelligence-content-information-intelligence-pulumi-pulumi-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-pulumi-pulumi-learnings-core-invariants",
@@ -242680,26 +242685,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 7277,
       "title": "Empirical Invariant Guard in README.md",
-      "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-      "source_version": "3f8ab7ff",
+      "source_url": "https://github.com/meilisearch/meilisearch",
+      "source_version": "01794fd9",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-19T09:12:18.049Z"
+      "verified_at": "2026-11-19T09:43:53.475Z"
     },
     "candidate_directive-empirical-invariant-guard-in-readme-md": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-readme-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-6HPV-empirical-invariant-guard-in-readme-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-4YYP-empirical-invariant-guard-in-readme-md.md",
       "title": "Empirical Invariant Guard in README.md",
-      "repository": "kubernetes-sigs-aws-load-balancer-controller-learnings",
-      "source_version": "HEAD",
-      "content_hash": "0f622d40873e86303e22030ce340d4861e07b4dc7e4bfac85fac2eba21bdc719",
+      "repository": "meilisearch/meilisearch",
+      "source_version": "01794fd9",
+      "content_hash": "bc5d4389608071f710adee51f96e172d186befda8d7550a6f196b638f39847bd",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T09:17:05.209Z"
+      "persisted_at": "2026-11-19T09:43:53.861Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-1017-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-1017-learning",
@@ -244774,8 +244779,8 @@
       "slug": "open-policy-agent-gatekeeper",
       "platform": "github",
       "source_url": "https://github.com/open-policy-agent/gatekeeper",
-      "source_version": "fbbf865c",
-      "content_hash": "3cedc4bf1281daf9216e58d41244d1aa6780ed8de52bf9644bf2259a6bde1ae1",
+      "source_version": "207df1ef",
+      "content_hash": "c893eff2055be08b39e25f8d0582de7c3cfa0ca2b7c1882d4f91a6a0337b44b6",
       "dossier_path": "07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md",
       "promoted_rules": [
@@ -244798,6 +244803,11 @@
           "number": 9199,
           "title": "bump the all group across 1 directory with 9 updates",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9366,
+          "title": "bump frameworks/constraint to 45bd390",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -244805,7 +244815,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T10:32:35.985Z",
+      "verified_at": "2026-11-19T09:43:48.918Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244847,10 +244857,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-open-policy-agent-gatekeeper-quality-verification-intelligence-open-policy-agent.md",
       "title": "Quality & Verification Intelligence: open-policy-agent/gatekeeper Core Invariants",
       "repository": "open-policy-agent/gatekeeper",
-      "source_version": "fbbf865c",
-      "content_hash": "48d3f47a375b20789f8c270e670299187c941b7d8defbba37f4068cc80c89d48",
+      "source_version": "207df1ef",
+      "content_hash": "9dcce2f9fa0b85e3c13f0054b3aeee4251ac02beb729b2658f1edcae4e11feac",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T10:32:36.482Z"
+      "persisted_at": "2026-11-19T09:43:49.423Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-gatekeeper": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-policy-agent-gatekeeper",
@@ -244859,10 +244869,10 @@
       "relative_path": "08_VERIFICATION/open-policy-agent-gatekeeper-verification-protocol-empirical-defect-shield-for-o.md",
       "title": "Verification Protocol: Empirical Defect Shield for open-policy-agent/gatekeeper",
       "repository": "open-policy-agent/gatekeeper",
-      "source_version": "fbbf865c",
-      "content_hash": "0be9830b04aa713dcb3e0226809684caf84c1ea6f0b59f8095df9de885fcd521",
+      "source_version": "207df1ef",
+      "content_hash": "5a6d5b67a268726bf06cf30ad634f5755b2a227cdbe9a6795eb8c738d91ab895",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T10:32:36.617Z"
+      "persisted_at": "2026-11-19T09:43:49.560Z"
     },
     "learn-huggingface-liquidai-d1-2b": {
       "learning_id": "learn-huggingface-liquidai-d1-2b",
@@ -255366,11 +255376,16 @@
       "slug": "meilisearch-meilisearch",
       "platform": "github",
       "source_url": "https://github.com/meilisearch/meilisearch",
-      "source_version": "cdd2e6a7",
-      "content_hash": "394a29614c90bd6a5154b8dfea0f96410fc214d481c98394bc82a59e3cb4c6ed",
+      "source_version": "01794fd9",
+      "content_hash": "6c9e0fd78d37e5911842ce58955eeb0447b0d9f36b4fd968c385ea1cbe54dbf2",
       "dossier_path": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/meilisearch-meilisearch-learnings.md",
       "promoted_rules": [
+        {
+          "number": 7277,
+          "title": "Empirical Invariant Guard in README.md",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 8731,
           "title": "Reinstate uuid as a dev feature of meili-snap",
@@ -255382,7 +255397,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T11:45:16.685Z",
+      "verified_at": "2026-11-19T09:43:53.475Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -283915,17 +283930,23 @@
       "slug": "arkivanov-decompose",
       "platform": "github",
       "source_url": "https://github.com/arkivanov/Decompose",
-      "source_version": "4ab3eaec",
-      "content_hash": "7606e75778ea55dfa4d809b528b7afe2b58c7a9437ab3d4b637cc67f2a643b1f",
+      "source_version": "361377cb",
+      "content_hash": "ca5c1fee2164b84c239e248740eac4df1b12e3cd890e4cad6bc676007ca41a29",
       "dossier_path": "07_PROJECT_LEARNING/arkivanov-decompose-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arkivanov-decompose-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 9365,
+          "title": "Empirical Invariant Guard in decompose.api",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T07:05:41.564Z",
+      "verified_at": "2026-11-19T09:43:47.234Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -283941,10 +283962,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-arkivanov-decompose-architecture-intelligence-arkivanov-decompose-core-invariant.md",
       "title": "Architecture Intelligence: arkivanov/Decompose Core Invariants",
       "repository": "arkivanov/Decompose",
-      "source_version": "4ab3eaec",
-      "content_hash": "8c2e5261b56eac70f86f89c1ac856f0916db1600abbd25a0ea0077547c4efa7e",
+      "source_version": "361377cb",
+      "content_hash": "2b27656881b275999ff8dcc3d0d6fdbe82da9945ef7a60e1f49f6f69c58e5bb3",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T07:05:41.896Z"
+      "persisted_at": "2026-11-19T09:43:47.748Z"
     },
     "rule-9149": {
       "learning_id": "rule-9149",
@@ -284004,9 +284025,9 @@
       "title": "Architecture Intelligence: arkivanov-decompose-learnings Core Invariants",
       "repository": "arkivanov-decompose-learnings",
       "source_version": "HEAD",
-      "content_hash": "9651a6ec7c1b8b2b9d1e3534634d0b9e8b26b9bc5658de506055ab70532982dc",
+      "content_hash": "50dee88021b3cb1cba66a48a48f3a7d2669941673430a5d91fa941ce790cd4c0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T07:06:16.735Z"
+      "persisted_at": "2026-11-19T09:44:01.666Z"
     },
     "rule-9150": {
       "learning_id": "rule-9150",
@@ -293516,6 +293537,215 @@
       "content_hash": "5272d4e6cfb2f40c55d0212c7e55d9e883a333404e3e7891c855585c9814cd93",
       "domain_letter": "H",
       "persisted_at": "2026-11-19T09:18:28.810Z"
+    },
+    "learn-github-vcaesar-riot": {
+      "learning_id": "learn-github-vcaesar-riot",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "vcaesar/riot",
+      "repository": "vcaesar/riot",
+      "slug": "vcaesar-riot",
+      "platform": "github",
+      "source_url": "https://github.com/vcaesar/riot",
+      "source_version": "de6bec55",
+      "content_hash": "5b6318c99d555a4da9abbd33822ffa339293bd09f5c26e02e3f76bdd6e993d49",
+      "dossier_path": "07_PROJECT_LEARNING/vcaesar-riot-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/vcaesar-riot-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9364,
+          "title": "macOS CI timeout in TestInt8RecallAndExactScores",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-19T09:43:41.433Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9364": {
+      "learning_id": "rule-9364",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9364,
+      "title": "macOS CI timeout in TestInt8RecallAndExactScores",
+      "source_url": "https://github.com/vcaesar/riot",
+      "source_version": "de6bec55",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T09:43:41.433Z"
+    },
+    "candidate_directive-macos-ci-timeout-in-testint8recallandexactscores": {
+      "item_id": "candidate_directive-macos-ci-timeout-in-testint8recallandexactscores",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5448-macos-ci-timeout-in-testint8recallandexactscores.md",
+      "title": "macOS CI timeout in TestInt8RecallAndExactScores",
+      "repository": "vcaesar-riot-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5296c7f84c34ac81270ab480c2b5bdc75c3ffbdeffad68d25a2dce28281f85a1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T09:44:00.537Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-vcaesar-riot-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-vcaesar-riot-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vcaesar-riot-technical-construction-intelligence-vcaesar-riot-core-invariants.md",
+      "title": "Technical Construction Intelligence: vcaesar/riot Core Invariants",
+      "repository": "vcaesar/riot",
+      "source_version": "de6bec55",
+      "content_hash": "74a925f58cbd79a2b3c0fa33fcefd3d3f4b467aa9acffb0872d678e717315d8f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T09:43:41.945Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-vcaesar-riot": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vcaesar-riot",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/vcaesar-riot-verification-protocol-empirical-defect-shield-for-vcaesar-riot.md",
+      "title": "Verification Protocol: Empirical Defect Shield for vcaesar/riot",
+      "repository": "vcaesar/riot",
+      "source_version": "de6bec55",
+      "content_hash": "9d21e8db447b6a0de02e9c98097a28c23cbe006ca9f7ec775d98da2c8bffc605",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T09:43:42.084Z"
+    },
+    "rule-9365": {
+      "learning_id": "rule-9365",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9365,
+      "title": "Empirical Invariant Guard in decompose.api",
+      "source_url": "https://github.com/arkivanov/Decompose",
+      "source_version": "361377cb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T09:43:47.234Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-decompose-api": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-decompose-api",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-54VS-empirical-invariant-guard-in-decompose-api.md",
+      "title": "Empirical Invariant Guard in decompose.api",
+      "repository": "arkivanov-decompose-learnings",
+      "source_version": "HEAD",
+      "content_hash": "aeb99b50dc9497f3e139be932b93c6cbc54651eec105370f5f220f6e00cb2baf",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T09:44:01.528Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-arkivanov-decompose": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arkivanov-decompose",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/arkivanov-decompose-verification-protocol-empirical-defect-shield-for-arkivanov-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for arkivanov/Decompose",
+      "repository": "arkivanov/Decompose",
+      "source_version": "361377cb",
+      "content_hash": "118a8323155f0ec4b9cbd12186a2e949a4c9ba411465a6b341519aafef0c4448",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T09:43:47.897Z"
+    },
+    "rule-9366": {
+      "learning_id": "rule-9366",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9366,
+      "title": "bump frameworks/constraint to 45bd390",
+      "source_url": "https://github.com/open-policy-agent/gatekeeper",
+      "source_version": "207df1ef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T09:43:48.918Z"
+    },
+    "candidate_directive-bump-frameworks-constraint-to-45bd390": {
+      "item_id": "candidate_directive-bump-frameworks-constraint-to-45bd390",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4VFM-bump-frameworks-constraint-to-45bd390.md",
+      "title": "bump frameworks/constraint to 45bd390",
+      "repository": "open-policy-agent/gatekeeper",
+      "source_version": "207df1ef",
+      "content_hash": "5f19a68e4ce9db9a6ed0e6f1c24088d05e067d4b5e0fceebac95a5a2489a144a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T09:43:49.283Z"
+    },
+    "rule-9367": {
+      "learning_id": "rule-9367",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9367,
+      "title": "Draft NUC 123 List and Population Variances and Standard Deviations",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "52f8bf48",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T09:43:56.620Z"
+    },
+    "candidate_directive-draft-nuc-123-list-and-population-variances-and-standard-deviations": {
+      "item_id": "candidate_directive-draft-nuc-123-list-and-population-variances-and-standard-deviations",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-51DK-draft-nuc-123-list-and-population-variances-and-standard-deviations.md",
+      "title": "Draft NUC 123 List and Population Variances and Standard Deviations",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "52f8bf48",
+      "content_hash": "252054e0f68ca6ee9a41a0877a93510164e146e38df58835ec7c0716a7173cb8",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T09:43:56.987Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-vcaesar-riot-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-vcaesar-riot-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vcaesar-riot-learnings-technical-construction-intelligence-vcaesar-riot-learning.md",
+      "title": "Technical Construction Intelligence: vcaesar-riot-learnings Core Invariants",
+      "repository": "vcaesar-riot-learnings",
+      "source_version": "HEAD",
+      "content_hash": "27d9eec4baa07902ad92193bc505849515a27ca568a0a64b5bfc18f9b8bda4ec",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T09:44:00.681Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-vcaesar-riot-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vcaesar-riot-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/vcaesar-riot-learnings-verification-protocol-empirical-defect-shield-for-vcaesar.md",
+      "title": "Verification Protocol: Empirical Defect Shield for vcaesar-riot-learnings",
+      "repository": "vcaesar-riot-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7c69055f36e92ee47f8453a7b9a3c69b4d4607156c5d4d8a4d2fc52403ece80d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T09:44:00.817Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-arkivanov-decompose-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arkivanov-decompose-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/arkivanov-decompose-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for arkivanov-decompose-learnings",
+      "repository": "arkivanov-decompose-learnings",
+      "source_version": "HEAD",
+      "content_hash": "713cd43207f001e93151d631bc11ac276fc23b0364f50ddd02e3646fdae33f69",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T09:44:01.830Z"
     }
   },
   "ai-builder-brain": {

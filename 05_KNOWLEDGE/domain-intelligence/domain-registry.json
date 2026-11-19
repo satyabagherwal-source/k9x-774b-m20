@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T09:18:28.576Z",
-  "total_records": 1962,
+  "last_updated": "2026-11-19T09:44:01.666Z",
+  "total_records": 1964,
   "domains": {
     "A": {
       "total": 13,
@@ -1300,7 +1300,7 @@
       ]
     },
     "H": {
-      "total": 457,
+      "total": 459,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1758,7 +1758,9 @@
         "domain_intelligence-technical-construction-intelligence-prometheus-prometheus-learnings-core-invaria",
         "DOM-H-50B52106",
         "DOM-H-0D47575C",
-        "DOM-H-91651630"
+        "DOM-H-91651630",
+        "domain_intelligence-technical-construction-intelligence-vcaesar-riot-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-vcaesar-riot-learnings-core-invariants"
       ]
     },
     "I": {
@@ -8722,8 +8724,8 @@
       "title": "Technical Construction Intelligence: meilisearch/meilisearch Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meilisearch-meilisearch-technical-construction-intelligence-meilisearch-meilisea.md",
       "repository": "meilisearch/meilisearch",
-      "content_hash": "f67d265f19ec9f27dd046bdfc71993086966ab2b5cf2225948518a28ca44a7be",
-      "created_at": "2026-11-17T16:05:50.029Z"
+      "content_hash": "812033f4dbc5a2b79c2b0b1db97c9e844a8b2a453d7daba530a65fcafcde0d4a",
+      "created_at": "2026-11-19T09:43:53.996Z"
     },
     "DOM-D-F5004225": {
       "record_id": "DOM-D-F5004225",
@@ -15041,8 +15043,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "7212a1c9541b0eedcc97d7e5b322602be3f416e814973354860af01625815f5c",
-      "created_at": "2026-11-18T14:05:02.042Z"
+      "content_hash": "697dc67f0f4cbf465318b747585424bc610f0dfb6535eeb4718ee70e86f07579",
+      "created_at": "2026-11-19T09:43:57.129Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -17360,8 +17362,8 @@
       "title": "Research & Knowledge Intelligence: autotrust/GEV-26B-Decide-NVFP4 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-gev-26b-decide-nvfp4-research-knowledge-intelligence-autotrust-gev-.md",
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
-      "content_hash": "1a42bbac8b9acbfa29f2e59922ac0011e90f5a1ea7d6627dee55dabc1a4099f8",
-      "created_at": "2026-11-14T19:20:38.412Z"
+      "content_hash": "ebd5a33b2f87d27a665c7fd529ec42000fb510668208c00885798fdefb5467fc",
+      "created_at": "2026-11-19T09:43:38.716Z"
     },
     "domain_intelligence-content-information-intelligence-pulumi-pulumi-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-pulumi-pulumi-core-invariants",
@@ -17429,8 +17431,8 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-gev-26b-decide-nvfp4-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-gev-26b-decide-nvfp4-learnings-research-knowledge-intelligence-hf-a.md",
       "repository": "hf-autotrust-gev-26b-decide-nvfp4-learnings",
-      "content_hash": "bf13ddc91c82a61ff6eff5fbf232847a48e7e4dda6579993c6ed1efc3632f0be",
-      "created_at": "2026-11-14T19:21:23.263Z"
+      "content_hash": "512428ada1a1db8355de6794da0cf85084519d113caafa442ae99f829b52d244",
+      "created_at": "2026-11-19T09:44:01.118Z"
     },
     "domain_intelligence-content-information-intelligence-pulumi-pulumi-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-pulumi-pulumi-learnings-core-invariants",
@@ -20535,8 +20537,8 @@
       "title": "Quality & Verification Intelligence: open-policy-agent/gatekeeper Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-open-policy-agent-gatekeeper-quality-verification-intelligence-open-policy-agent.md",
       "repository": "open-policy-agent/gatekeeper",
-      "content_hash": "48d3f47a375b20789f8c270e670299187c941b7d8defbba37f4068cc80c89d48",
-      "created_at": "2026-11-18T10:32:36.482Z"
+      "content_hash": "9dcce2f9fa0b85e3c13f0054b3aeee4251ac02beb729b2658f1edcae4e11feac",
+      "created_at": "2026-11-19T09:43:49.423Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-d1-2b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-d1-2b-core-invariants",
@@ -29966,8 +29968,8 @@
       "title": "Architecture Intelligence: arkivanov/Decompose Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-arkivanov-decompose-architecture-intelligence-arkivanov-decompose-core-invariant.md",
       "repository": "arkivanov/Decompose",
-      "content_hash": "8c2e5261b56eac70f86f89c1ac856f0916db1600abbd25a0ea0077547c4efa7e",
-      "created_at": "2026-11-18T07:05:41.896Z"
+      "content_hash": "2b27656881b275999ff8dcc3d0d6fdbe82da9945ef7a60e1f49f6f69c58e5bb3",
+      "created_at": "2026-11-19T09:43:47.748Z"
     },
     "domain_intelligence-technical-construction-intelligence-asciinema-asciinema-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-asciinema-asciinema-learnings-core-invariant",
@@ -30026,8 +30028,8 @@
       "title": "Architecture Intelligence: arkivanov-decompose-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-arkivanov-decompose-learnings-architecture-intelligence-arkivanov-decompose-lear.md",
       "repository": "arkivanov-decompose-learnings",
-      "content_hash": "9651a6ec7c1b8b2b9d1e3534634d0b9e8b26b9bc5658de506055ab70532982dc",
-      "created_at": "2026-11-18T07:06:16.735Z"
+      "content_hash": "50dee88021b3cb1cba66a48a48f3a7d2669941673430a5d91fa941ce790cd4c0",
+      "created_at": "2026-11-19T09:44:01.666Z"
     },
     "DOM-H-75FCE7B9": {
       "record_id": "DOM-H-75FCE7B9",
@@ -32998,6 +33000,24 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-19T09:18:27.582Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-vcaesar-riot-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-vcaesar-riot-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: vcaesar/riot Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vcaesar-riot-technical-construction-intelligence-vcaesar-riot-core-invariants.md",
+      "repository": "vcaesar/riot",
+      "content_hash": "74a925f58cbd79a2b3c0fa33fcefd3d3f4b467aa9acffb0872d678e717315d8f",
+      "created_at": "2026-11-19T09:43:41.945Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-vcaesar-riot-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-vcaesar-riot-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: vcaesar-riot-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vcaesar-riot-learnings-technical-construction-intelligence-vcaesar-riot-learning.md",
+      "repository": "vcaesar-riot-learnings",
+      "content_hash": "27d9eec4baa07902ad92193bc505849515a27ca568a0a64b5bfc18f9b8bda4ec",
+      "created_at": "2026-11-19T09:44:00.681Z"
     }
   }
 }

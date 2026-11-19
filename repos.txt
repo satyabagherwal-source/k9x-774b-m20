@@ -5218,3 +5218,7 @@ https://huggingface.co/inworld/voice-isolator
 # --- Automatically Discovered by AI Scout Engine [2026-11-19T06:52:17.467Z] ---
 # [HUGGINGFACE-AI-MODELS] Reson8/Rumble-2-Flash (1513 score) - Verified Hugging Face Model: Reson8/Rumble-2-Flash (106 likes, 453 downloads)
 https://huggingface.co/Reson8/Rumble-2-Flash
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-19T09:43:29.456Z] ---
+# [DATABASE-STORAGE-ENGINES] vcaesar/riot (3424 score) - Go Open Source, Distributed, Simple and fastest efficient text/vector Search Eng
+https://github.com/vcaesar/riot

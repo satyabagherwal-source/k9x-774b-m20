@@ -11244,3 +11244,9 @@
 | `CYCLE-20261119-6EM1` | `2026-11-19T09:17:01.177Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md` | Yes (`1128bbfe...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T09:17:43.186Z` | `mintplex-labs-anything-llm` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-91651630` [Domain H] | Yes (`48ade8bb...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T09:18:27.612Z` | `mintplex-labs-anything-llm` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-C4730BD5` [Domain F] | Yes (`97e1e6ad...`) |
+| `CYCLE-20261119-4N57` | `2026-11-19T09:43:38.540Z` | `autotrust/GEV-26B-Decide-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-nvfp4-learnings.md` | Yes (`c27197bd...`) |
+| `CYCLE-20261119-4PIH` | `2026-11-19T09:43:41.609Z` | `vcaesar/riot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9364` | Yes (`5b6318c9...`) |
+| `CYCLE-20261119-4TZN` | `2026-11-19T09:43:47.411Z` | `arkivanov/Decompose` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9365` | Yes (`ca5c1fee...`) |
+| `CYCLE-20261119-4VAA` | `2026-11-19T09:43:49.090Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9366` | Yes (`c893eff2...`) |
+| `CYCLE-20261119-4YT5` | `2026-11-19T09:43:53.657Z` | `meilisearch/meilisearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7277` | Yes (`6c9e0fd7...`) |
+| `CYCLE-20261119-518E` | `2026-11-19T09:43:56.798Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9367` | Yes (`f98bdc43...`) |

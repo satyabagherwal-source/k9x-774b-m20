@@ -4,22 +4,22 @@
 {
   "source_repository": "open-policy-agent/gatekeeper",
   "source_url": "https://github.com/open-policy-agent/gatekeeper",
-  "source_version": "fbbf865c",
+  "source_version": "207df1ef",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T10:32:36.343Z",
+  "timestamp": "2026-11-19T09:43:49.283Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-open-policy-agent-gatekeeper",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper) (Revision: `fbbf865c`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T10:32:36.343Z`  
+> **Provenance**: Harvested from [open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper) (Revision: `207df1ef`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T09:43:49.283Z`  
 > **Learning ID**: `learn-github-open-policy-agent-gatekeeper`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `open-policy-agent/gatekeeper` (Commit: `fbbf865c`)
+- **Target Repository**: `open-policy-agent/gatekeeper` (Commit: `207df1ef`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T10:32:35.180Z  
+> **Harvest Timestamp**: 2026-11-19T09:43:48.154Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 🐊 Policy Controller for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4303 stars
+- **Stars / Engagement**: 4304 stars
 
 ---
 
@@ -1296,147 +1296,186 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fbbf865c` (2026-11-18)
-**Commit Message**: chore: bump the all group across 1 directory with 9 updates (#4923)
+### Incident Patch 1: `207df1ef` (2026-11-19)
+**Commit Message**: chore: bump frameworks/constraint to 45bd390 (#4927)
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Signed-off-by: Abhishek Sheth <[REDACTED_EMAIL]>
+Co-authored-by: Jaydip Gabani <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/benchmark.yaml` (modified, +1/-1)
+**File**: `go.mod` (modified, +53/-55)
 ```diff
-@@ -17,7 +17,7 @@ jobs:
-       pull-requests: write
-     steps:
-       - name: Harden Runner
--        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-+        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
-         with:
-           egress-policy: audit
+@@ -13,29 +13,29 @@ require (
+ 	github.com/google/cel-go v0.30.0
+ 	github.com/google/go-cmp v0.7.0
+ 	github.com/google/uuid v1.6.0
+-	github.com/onsi/gomega v1.42.1
++	github.com/onsi/gomega v1.44.0
+ 	github.com/open-policy-agent/cert-controller v0.16.1-0.20260608222807-1c492bc2d223
+-	github.com/open-policy-agent/frameworks/constraint v0.0.0-20260616163050-e1eaa1bf6d62
+-	github.com/open-policy-agent/opa v1.17.1
++	github.com/open-policy-agent/frameworks/constraint v0.0.0-20261117233605-c3feac3bb7a6
++	github.com/open-policy-agent/opa v1.22.4
+ 	github.com/pkg/errors v0.9.1
+-	github.com/prometheus/client_golang v1.24.0
++	github.com/prometheus/client_golang v1.25.0
+ 	github.com/spf13/cobra v1.10.2
+ 	github.com/stretchr/testify v1.12.1
+ 	go.opentelemetry.io/contrib/detectors/aws/ec2 v1.21.1
+-	go.opentelemetry.io/contrib/detectors/gcp v1.44.0
++	go.opentelemetry.io/contrib/detectors/gcp v1.45.0
+ 	go.opentelemetry.io/otel v1.47.0
+-	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0
++	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.47.0
+ 	go.opentelemetry.io/otel/exporters/prometheus v0.63.0
+ 	go.opentelemetry.io/otel/metric v1.47.0
+-	go.opentelemetry.io/otel/sdk v1.45.0
+-	go.opentelemetry.io/otel/sdk/metric v1.45.0
++	go.opentelemetry.io/otel/sdk v1.47.0
++	go.opentelemetry.io/otel/sdk/metric v1.47.0
+ 	go.uber.org/zap v1.27.1
+ 	go.yaml.in/yaml/v2 v2.4.4
+ 	go.yaml.in/yaml/v3 v3.0.6
+-	golang.org/x/oauth2 v0.36.0
++	golang.org/x/oauth2 v0.37.0
+ 	golang.org/x/sync v0.24.0
+-	golang.org/x/sys v0.48.0
+-	golang.org/x/time v0.15.0
++	golang.org/x/sys v0.49.0
++	golang.org/x/time v0.16.0
+ 	gopkg.in/yaml.v3 v3.0.1
+ 	k8s.io/api v0.37.2
+ 	k8s.io/apiextensions-apiserver v0.37.2
+@@ -44,21 +44,21 @@ require (
+ 	k8s.io/client-go v0.37.2
+ 	k8s.io/klog/v2 v2.140.0
+ 	k8s.io/utils v0.0.0-20260626114624-be93311217bd
+-	oras.land/oras-go/v2 v2.6.4
++	oras.land/oras-go/v2 v2.7.0
+ 	sigs.k8s.io/controller-runtime v0.25.2
+ 	sigs.k8s.io/release-utils v0.7.7
+ 	sigs.k8s.io/yaml v1.6.0
+ )
  
+ require (
+-	cel.dev/expr v0.25.2 // indirect
++	cel.dev/expr v0.25.3 // indirect
+ 	cloud.google.com/go/auth v0.18.2 // indirect
+ 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
+ 	cloud.google.com/go/compute/metadata v0.9.0 // indirect
+ 	cloud.google.com/go/monitoring v1.24.3 // indirect
+-	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.33.0 // indirect
++	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.35.0 // indirect
+ 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.44.0 // indirect
+-	github.com/agnivade/levenshtein v1.2.1 // indirect
++	github.com/agnivade/levenshtein v1.2.2 // indirect
+ 	github.com/aws/aws-sdk-go v1.47.9 // indirect
+ 	github.com/beorn7/perks v1.0.1 // indirect
+ 	github.com/blang/semver/v4 v4.0.0 // indirect
+@@ -69,84 +69,82 @@ require (
+ 	github.com/emicklei/go-restful/v3 v3.13.0 // indirect
+ 	github.com/evanphx/json-patch v4.12.0+incompatible // indirect
+ 	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
+-	github.com/felixge/httpsnoop v1.0.4 // indirect
++	github.com/felixge/httpsnoop v1.1.0 // indirect
+ 	github.com/fsnotify/fsnotify v1.10.1 // indirect
+ 	github.com/fxamacker/cbor/v2 v2.9.1 // indirect
+ 	github.com/go-logr/stdr v1.2.2 // indirect
+-	github.com/go-openapi/jsonpointer v1.0.0 // indirect
+-	github.com/go-openapi/jsonreference v1.0.0 // indirect
+-	github.com/go-openapi/swag v0.27.1 // indirect
+-	github.com/go-openapi/swag/cmdutils v0.27.1 // indirect
+-	github.com/go-openapi/swag/conv v0.27.1 // indirect
+-	github.com/go-openapi/swag/fileutils v0.27.1 // indirect
+-	github.com/go-openapi/swag/jsonutils v0.27.1 // indirect
+-	github.com/go-openapi/swag/loading v0.27.1 // indirect
+-	github.com/go-openapi/swag/mangling v0.27.1 // indirect
+-	github.com/go-openapi/swag/netutils v0.27.1 // indirect
+-	github.com/go-openapi/swag/pools v0.27.1 // indirect
+-	github.com/go-openapi/swag/stringutils v0.27.1 // indirect
+-	github.com/go-openapi/swag/typeutils v0.27.1 // indirect
+-	github.com/go-openapi/swag/yamlutils v0.27.1 // indirect
+-	github.com/gobwas/glob v0.2.3 // indirect
+-	github.com/goccy/go-json v0.10.6 // indirect
++	github.com/go-openapi/jsonpointer v1.0.1 // indirect
++	github.com/go-openapi/jsonreference v1.0.1 // indirect
++	github.com/go-openapi/swag v0.29.2 // indirect
++	github.com/go-openapi/swag/cmdutils v0.29.2 // indirect
++	github.com/go-openapi/swag/conv v0.29.2 // indirect
++	github.com/go-openapi/swag/fileutils v0.29.2 // indirect
++	github.com/go-openapi/swag/jsonutils v0.29.2 // indirect
++	github.com/go-openapi/swag/loading v0.29.2 // indirect
++	github.com/go-openapi/swag/mangling v0.29.2 // indirect
++	github.com/go-openapi/swag/netutils v0.29.2 // indirect
++	github.com/go-openapi/swag/pools v0.29.2 // indirect
++	github.com/go-openapi/swag/stringutils v0.29.2 // indirect
++	github.com/go-openapi/swag/typeutils v0.29.2 // indirect
++	github.com/go-openapi/swag/yamlutils v0.29.2 // indirect
+
 ```
 
-**File**: `.github/workflows/check-manifest.yaml` (modified, +1/-1)
+**File**: `go.sum` (modified, +128/-136)
 ```diff
-@@ -32,7 +32,7 @@ jobs:
-     timeout-minutes: 10
-     steps:
-       - name: Harden Runner
--        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-+        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
-         with:
-           egress-policy: audit
- 
-```
-
-**File**: `.github/workflows/codeql.yaml` (modified, +4/-4)
-```diff
-@@ -17,20 +17,20 @@ jobs:
- 
-     steps:
-       - name: Harden Runner
--        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-+        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
-         with:
-           egress-policy: audit
- 
-       - name: Checkout repository
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
- 
-       - name: Initialize CodeQL
--        uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370
-+        uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066
-         with:
-           languages: go
- 
-       - name: Autobuild
--        uses: github/codeql-action/autobuild@9b3254085494b55a0f7c4c2b3d2d52cc712ce370
-+        uses: github/codeql-action/autobuild@33d7b85da1a04171e211befe2c739303b9a4c066
- 
-       - name: Perform CodeQL Analysis
--        uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370
-+        uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066
-```
-
-**File**: `.github/workflows/dependency-review.yml` (modified, +1/-1)
-```diff
-@@ -17,7 +17,7 @@ jobs:
-     runs-on: oracle-vm-2cpu-8gb-x86-64
-     steps:
-       - name: Harden Runner
--        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-+        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
-         with:
-           egress-policy: audit
- 
-```
-
-**File**: `.github/workflows/disk-export.yaml` (modified, +1/-1)
-```diff
-@@ -43,7 +43,7 @@ jobs:
-         KUBERNETES_VERSION: ["1.35.8", "1.36.4", "1.37.0"]
-     steps:
-       - name: Harden Runner
--        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-+        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
-         with:
-           egress-policy: audit
- 
-```
-
-**File**: `.github/workflows/helm-lint.yaml` (modified, +1/-1)
-```diff
-@@ -22,7 +22,7 @@ jobs:
-       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-     
-     - name: Set up Helm
--      uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
-+      uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e # v5.1.0
-       with:
-         version: "4.2.3"
-       id: install
-```
-
-**File**: `.github/workflows/license-lint.yaml` (modified, +1/-1)
-```diff
-@@ -23,7 +23,7 @@ jobs:
-       contents: read
-     steps:
-       - name: Harden Runner
--        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-+        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
-         with:
-           egress-policy: audit
- 
-```
-
-**File**: `.github/workflows/lint.yaml` (modified, +2/-2)
-```diff
-@@ -33,7 +33,7 @@ jobs:
-     runs-on: oracle-vm-4cpu-16gb-x86-64
-     steps:
-       - name: Harden Runner
--        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-+        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
-         with:
-           egress-policy: audit
- 
-@@ -46,7 +46,7 @@ jobs:
-     runs-on: oracle-vm-4cpu-16gb-x86-64
-     steps:
-       - name: Harden Runner
--        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
-+        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
-         with:
-           egress-policy: audit
- 
+@@ -1,5 +1,5 @@
+-cel.dev/expr v0.25.2 h1:K6j46C81hXtZQfuX60cVWQFBJahKSE2gfRbNuvr5bFs=
+-cel.dev/expr v0.25.2/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
++cel.dev/expr v0.25.3 h1:A2jO8jwOugrrovveCWfj0KEZOfqiLgAcwjpHPhzIGw0=
++cel.dev/expr v0.25.3/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
+ cloud.google.com/go v0.120.0 h1:wc6bgG9DHyKqF5/vQvX1CiZrtHnxJjBlKUyF9nP6meA=
+ cloud.google.com/go/auth v0.18.2 h1:+Nbt5Ev0xEqxlNjd6c+yYUeosQ5TtEUaNcN/3FozlaM=
+ cloud.google.com/go/auth v0.18.2/go.mod h1:xD+oY7gcahcu7G2SG2DsBerfFxgPAJz17zz2joOFF3M=
+@@ -15,8 +15,8 @@ cloud.google.com/go/monitoring v1.24.3 h1:dde+gMNc0UhPZD1Azu6at2e79bfdztVDS5lvhO
+ cloud.google.com/go/monitoring v1.24.3/go.mod h1:nYP6W0tm3N9H/bOw8am7t62YTzZY+zUeQ+Bi6+2eonI=
+ cloud.google.com/go/trace v1.11.7 h1:kDNDX8JkaAG3R2nq1lIdkb7FCSi1rCmsEtKVsty7p+U=
+ cloud.google.com/go/trace v1.11.7/go.mod h1:TNn9d5V3fQVf6s4SCveVMIBS2LJUqo73GACmq/Tky0s=
+-github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.33.0 h1:l7+6kwRMJNwdCvYdDl7Eax+wzEYHSnNY7zrrfbhDdTA=
+-github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.33.0/go.mod h1:pJTkW8hEUIIi3Pf65lPZOnn4Y81yCllX6IWk2jNXdkM=
++github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.35.0 h1:bN1gA3of5bXtbnLsRPrwfmbbe7A5UWFlcTHseujLnpc=
++github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.35.0/go.mod h1:Yj5vHEz/aAepZGliRJsA6uvHAVAQyEwajq9ORCHPxzM=
+ github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.44.0 h1:TKInLYWIqv/RrPM9IbpbcAxmtAU0+EtrxbZGZn2pzfQ=
+ github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.44.0/go.mod h1:shFWgjEP9WVKRUJbgyp61kOiFAd0AUPUyy16fgyhJ5Q=
+ github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/cloudmock v0.44.0 h1:ew7SfeajMJ3I4iXA1LERYY62fGCKO4TjVPw5QTPt47k=
+@@ -25,10 +25,8 @@ github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapp
+ github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.44.0/go.mod h1:qkFPtMouQjW5ugdHIOthiTbweVHUTqbS0Qsu55KqXks=
+ github.com/Masterminds/semver/v3 v3.4.0 h1:Zog+i5UMtVoCU8oKka5P7i9q9HgrJeGzI9SA1Xbatp0=
+ github.com/Masterminds/semver/v3 v3.4.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
+-github.com/agnivade/levenshtein v1.2.1 h1:EHBY3UOn1gwdy/VbFwgo4cxecRznFk7fKWN1KOX7eoM=
+-github.com/agnivade/levenshtein v1.2.1/go.mod h1:QVVI16kDrtSuwcpd0p1+xMC6Z/VfhtCyDIjcwga4/DU=
+-github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883 h1:bvNMNQO63//z+xNgfBlViaCIJKLlCJ6/fmUseuG0wVQ=
+-github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883/go.mod h1:rCTlJbsFo29Kk6CurOXKm700vrz8f0KW0JNfpkRJY/8=
++github.com/agnivade/levenshtein v1.2.2 h1:fI8RgiztYX1Nn5pBHHqQ9EMCCklhrmXqPRIedFmx5M4=
++github.com/agnivade/levenshtein v1.2.2/go.mod h1:QVVI16kDrtSuwcpd0p1+xMC6Z/VfhtCyDIjcwga4/DU=
+ github.com/antlr4-go/antlr/v4 v4.13.1 h1:SqQKkuVZ+zWkMMNkjy5FZe5mr5WURWnlpmOuzYWrPrQ=
+ github.com/antlr4-go/antlr/v4 v4.13.1/go.mod h1:GKmUxMtwp6ZgGwZSva4eWPC5mS6vUAmOABFgjdkM7Nw=
+ github.com/arbovm/levenshtein v0.0.0-20160628152529-48b4e1c0c4d0 h1:jfIu9sQUG6Ig+0+Ap1h4unLjW6YQJpKZVmUzxsD4E/Q=
+@@ -39,8 +37,6 @@ github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
+ github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
+ github.com/blang/semver/v4 v4.0.0 h1:1PFHFE6yCCTv8C1TeyNNarDzntLi7wMI5i/pzqYIsAM=
+ github.com/blang/semver/v4 v4.0.0/go.mod h1:IbckMUScFkM3pff0VJDNKRiT6TG/YpiHIM2yvyW5YoQ=
+-github.com/bytecodealliance/wasmtime-go/v44 v44.0.0 h1:WRZXnLPIer/TWs5aYPaMlmVcOlzmR6Ur6wjLRIQOhTQ=
+-github.com/bytecodealliance/wasmtime-go/v44 v44.0.0/go.mod h1:GP93piU+39CoFVCQ5xfHrPOUtL0APlMnkbblJ2d3YY0=
+ github.com/cenkalti/backoff/v5 v5.0.3 h1:ZN+IMa753KfX5hd8vVaMixjnqRZ3y8CuJKRKj1xcsSM=
+ github.com/cenkalti/backoff/v5 v5.0.3/go.mod h1:rkhZdG3JZukswDf7f0cwqPNk4K0sa+F97BxZthm/crw=
+ github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
+@@ -60,8 +56,8 @@ github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1
+ github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+ github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.1 h1:5RVFMOWjMyRy8cARdy79nAmgYw3hK/4HUq48LQ6Wwqo=
+ github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.1/go.mod h1:ZXNYxsqcloTdSy/rNShjYzMhyjf0LaoftYK0p+A3h40=
+-github.com/dgraph-io/badger/v4 v4.9.1 h1:DocZXZkg5JJHJPtUErA0ibyHxOVUDVoXLSCV6t8NC8w=
+-github.com/dgraph-io/badger/v4 v4.9.1/go.mod h1:5/MEx97uzdPUHR4KtkNt8asfI2T4JiEiQlV7kWUo8c0=
++github.com/dgraph-io/badger/v4 v4.9.6 h1:IQqMPVGLNCQr1b4Mu8lHkYm/xyqFRsyKaFEtyLi9CCQ=
++github.com/dgraph-io/badger/v4 v4.9.6/go.mod h1:Xa9dAupjbwAacupWFCpa6YEn9E1PjBXkfZYr2I/8aWg=
+ github.com/dgraph-io/ristretto/v2 v2.2.0 h1:bkY3XzJcXoMuELV8F+vS8kzNgicwQFAaGINAEJdWGOM=
+ github.com/dgraph-io/ristretto/v2 v2.2.0/go.mod h1:RZrm63UmcBAaYWC1DotLYBmTvgkrs0+XhBd7Npn7/zI=
+ github.co
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4929** (closed): chore: bump github.com/prometheus/client_golang from 1.24.0 to 1.24.1 (@dependabot[bot])
+- **PR #4927** (2026-11-19): chore: bump frameworks/constraint to 45bd390 (@abhisheksheth28)
 - **PR #4925** (2026-11-17): chore: bump k8s deps to v0.37.2 and controller-runtime to v0.25.2 (@abhisheksheth28)
 - **PR #4923** (2026-11-18): chore: bump the all group across 1 directory with 9 updates (@dependabot[bot])
 - **PR #4921** (2026-11-16): chore: bump js-yaml from 3.14.1 to 3.15.2 in /website (@dependabot[bot])
 - **PR #4920** (2026-11-16): chore: bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0 (@dependabot[bot])
-- **PR #4918** (closed): chore: bump the all group with 7 updates (@dependabot[bot])
-- **PR #4913** (2026-11-16): feat: graduate Connection API and audit disk export to beta (@JaydipGabani)
 
 ---
 
@@ -1456,31 +1495,79 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bump the all group across 1 directory with 9 updates
+## X. bump frameworks/constraint to 45bd390
 
 **RULE**:
-When implementing operations in `.github/workflows/benchmark.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/gatekeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/gatekeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fbbf865c`: bump the all group across 1 directory with 9 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `207df1ef`: bump frameworks/constraint to 45bd390. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/benchmark.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+	github.com/onsi/gomega v1.44.0
+	github.com/open-policy-agent/frameworks/constraint v0.0.0-20261117233605-c3feac3bb7a6
+	github.com/open-policy-agent/opa v1.22.4
+	github.com/prometheus/client_golang v1.25.0
+	go.opentelemetry.io/contrib/detectors/gcp v1.45.0
+	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.47.0
+	go.opentelemetry.io/otel/sdk v1.47.0
+	go.opentelemetry.io/otel/sdk/metric v1.47.0
+	golang.org/x/oauth2 v0.37.0
+	golang.org/x/sys v0.49.0
+	golang.org/x/time v0.16.0
+	oras.land/oras-go/v2 v2.7.0
+	cel.dev/expr v0.25.3 // indirect
+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.35.0 // indirect
+	github.com/agnivade/levenshtein v1.2.2 // indirect
+	github.com/felixge/httpsnoop v1.1.0 // indirect
+	github.com/go-openapi/jsonpointer v1.0.1 // indirect
+	github.com/go-openapi/jsonreference v1.0.1 // indirect
+	github.com/go-openapi/swag v0.29.2 // indirect
+	github.com/go-openapi/swag/cmdutils v0.29.2 // indirect
+	github.com/go-openapi/swag/conv v0.29.2 // indirect
+	github.com/go-openapi/swag/fileutils v0.29.2 // indirect
+	github.com/go-openapi/swag/jsonutils v0.29.2 // indirect
+	github.com/go-openapi/swag/loading v0.29.2 // indirect
+	gith
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
+	github.com/onsi/gomega v1.42.1
+	github.com/open-policy-agent/frameworks/constraint v0.0.0-20260616163050-e1eaa1bf6d62
+	github.com/open-policy-agent/opa v1.17.1
+	github.com/prometheus/client_golang v1.24.0
+	go.opentelemetry.io/contrib/detectors/gcp v1.44.0
+	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0
+	go.opentelemetry.io/otel/sdk v1.45.0
+	go.opentelemetry.io/otel/sdk/metric v1.45.0
+	golang.org/x/oauth2 v0.36.0
+	golang.org/x/sys v0.48.0
+	golang.org/x/time v0.15.0
+	oras.land/oras-go/v2 v2.6.4
+	cel.dev/expr v0.25.2 // indirect
+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.33.0 // indirect
+	github.com/agnivade/levenshtein v1.2.1 // indirect
+	github.com/felixge/httpsnoop v1.0.4 // indirect
+	github.com/go-openapi/jsonpointer v1.0.0 // indirect
+	github.com/go-openapi/jsonreference v1.0.0 // indirect
+	github.com/go-openapi/swag v0.27.1 // indirect
+	github.com/go-openapi/swag/cmdutils v0.27.1 // indirect
+	github.com/go-openapi/swag/conv v0.27.1 // indirect
+	github.com/go-openapi/swag/fileutils v0.27.1 // indirect
+	github.com/go-openapi/swag/jsonutils v0.27.1 // indirect
+	github.com/go-openapi/swag/loading v0.27.1 // indirect
+	gith
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fbbf865c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `207df1ef` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

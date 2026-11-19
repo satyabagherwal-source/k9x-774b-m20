@@ -4,24 +4,24 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "9eeb878b",
+  "source_version": "52f8bf48",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T14:05:01.889Z",
+  "timestamp": "2026-11-19T09:43:56.984Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `9eeb878b`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T14:05:01.889Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `52f8bf48`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T09:43:56.984Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 64%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NucleoidAI/Nucleoid:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T14:05:00.468Z  
+> **Harvest Timestamp**: 2026-11-19T09:43:55.854Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -116,7 +116,7 @@ pub fn generate(statement: &Stmt) -> String {
         } => format!("for {key},{value} of {iterable}"),
         Stmt::While { condition, body } => loop_key("while", condition, body),
         Stmt::Repeat { count, body } => loop_key("repeat", count, body),
-        Stmt::Try { .. } => "try".to_string(),
+        Stmt::Try { .. } | Stmt::TryFinally { .. } => "try".to_string(),
         Stmt::Declaration { name, type_name } => format!("{name}:{type_name}"),
         Stmt::Pass => "pass".to_string(),
         Stmt::Suppose { target, body } => {
@@ -135,6 +135,18 @@ fn loop_key(word: &str, header: &Expr, body: &[Stmt]) -> String {
 
 fn loop_suite(word: &str, header: &Expr, body: &[Stmt]) -> String {
     format!("{word} {header}:\n{}", indent(&source_all(body)))
+}
+
+fn try_suite(body: &[Stmt], parameter: &str, catch: &[Stmt]) -> String {
+    format!(
+        "try:\n{}\ncatch {parameter}:\n{}",
+        indent(&source_all(body)),
+        indent(&source_all(catch))
+    )
+}
+
+fn finally_suite(attempt: &str, finally: &[Stmt]) -> String {
+    format!("{attempt}\nfinally:\n{}", indent(&source_all(finally)))
 }
 
 fn assignment_source(target: &Expr, value: &Expr) -> String {
@@ -252,11 +264,13 @@ fn source(statement: &Stmt) -> String {
             body,
             parameter,
             catch,
-        } => format!(
-            "try:\n{}\ncatch {parameter}:\n{}",
-            indent(&source_all(body)),
-            indent(&source_all(catch))
-        ),
+        } => try_suite(body, parameter, catch),
+        Stmt::TryFinally {
+            body,
+            parameter,
+            catch,
+            finally,
+        } => finally_suite(&try_suite(body, parameter, catch), finally),
         Stmt::Block(body) => format!("{{\n{}\n}}", source_all(body)),
         Stmt::Suppose { target, body } => format!(
             "{}suppose:\n{}",
@@ -1197,7 +1211,7 @@ export async function declarations({ train_dataset }) {
 export async function instances({ train_dataset }) {
   milestone.segmenting_training_objects();
 
-  const { instances } = await llm.generate({
+  const { result: instances } = await llm.generate({
     messages: [
       {
         role: "user",
@@ -1217,7 +1231,7 @@ export async function instances({ train_dataset }) {
           })}
           json_format:
           {
-            "instances": [{
+            "result": [{
               "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
               "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
             }]
@@ -1232,8 +1246,15 @@ export async function instances({ train_dataset }) {
   return { instances };
 }
 
-export async function value({ train_dataset, input_matrix, instance }) {
-  milestone.constructing_instance({ instance_name: instance.instance_name });
+export async function value({
+  instance_name,
+  train_dataset,
+  input_matrix,
+  instance,
+}) {
+  milestone.constructing_instance({ instance_name });
+
+  instance.instance_name = instance_name;
 
   const { x, y, width, height, volume } = Matrix.locate(
     instance.input_instance_matrix
@@ -1252,7 +1273,7 @@ export async function value({ train_dataset, input_matrix, instance }) {
     volume,
   });
 
-  milestone.evaluating_rules({ instance_name: instance.instance_name });
+  milestone.evaluating_rules({ instance_name });
 
   const canvas_width: number = input_matrix[0].length;
   const canvas_height: number = input_matrix.length;
@@ -1266,14 +1287,15 @@ export async function value({ train_dataset, input_matrix, instance }) {
   );
 
   milestone.instance_constructed({
-    instance_name: instance.instance_name,
+    instance_name,
     input_instance_matrix: instance.input_instance_matrix,
     output_instance_matrix: instance.output_instance_matrix,
     implementation,
     input_value,
   });
 
-  return { implementation, input_value };
+  instance.implementation = implementation;
+  instance.input_value = input_value;
 }
 
 export async function state(train_dataset) {
@@ -1321,6 +1343,7 @@ import * as milestone from "./lib/milestone.ts";
 import arc_dataset from "./lib/arc_dataset.ts";
 import fs from "node:fs/promises";
 import synthesizer from "./synthesizer.ts";
+import object from "./object.ts";
 
 // Genesis puzzle_id: 3aa6fb7a
 export async function start(puzzle_id: string = "3aa6fb7a") {
@@ -1365,13 +1388,39 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     });
 
     for (const instance of instances) {
-      instance.instance_name = next_instance_name();
+      await analyzer.value({
+        instance_name: next_instance_name(),
+        train_dataset,
+        input_matrix: dataset.input_matrix,
+        instance,
+      });
     }
 
     dataset.instances = instances;
   }
 
   await analyzer.state(train_dataset);
+
+  const synthesized_dataset = await synthesizer.synthesize({ train_dataset });
+
+  for (const dataset of synthesized_dataset) {
+    for (const instance of dataset.instances) {
+      await analyzer.value({
+        instance_name: next_instance_name(),
+        train_dataset,
+        input_matrix: dataset.input_matrix,
+        instance,
+      });
+    }
+
+    await object.state({
+      declarations,
+      input_matrix: dataset.input_matrix,
+      input_instances: dataset.instances,
+    });
+
+    train_dataset.dataset.push(dataset);
+  }
 
   milestone.visualization();
 
@@ -1380,12 +1429,8 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     test_input_matrix,
   });
 
-  let result_matrix = Matrix.draw(
-    [],
-    test_input_matrix.length,
-    test_input_matrix[0].length,
-    0,
-    0
+  let result_matrix = Array.from({ length: test_input_matrix.length }, () =>
+    Array(test_input_matrix[0].length).fill(0)
   );
 
   const input_instances = [];
@@ -1408,11 +1453,11 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     });
   }
 
-  const synthesized_dataset = await synthesizer.synthesize({ train_dataset });
-
-  milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
-
-  await visualizer.state({ declarations, test_input_matrix, input_instances });
+  await object.state({
+    declarations,
+    input_matrix: test_input_matrix,
+    input_instances,
+  });
 
   for (const input_instance of input_instances) {
     const { output_instance_matrix } = await visualizer.output_instance_matrix({
@@ -1532,110 +1577,101 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9eeb878b` (2026-11-18)
-**Commit Message**: Draft NUC 119 Finally Clauses for Try Statements
+### Incident Patch 1: `52f8bf48` (2026-11-19)
+**Commit Message**: Draft NUC 123 List and Population Variances and Standard Deviations
 
-Category: Runtime features, drawn uniformly at random (index 1 of the
+Category: Utility enhancement, drawn uniformly at random (index 2 of the
 five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
-continuous /nuc-proposal cycle. Runtime applicability: new_feature,
-since no accepted construct runs a suite on every exit of a try
-statement, so the token non-regression gate is skipped as NUC 1's matrix
-requires for a brand-new runtime feature.
+continuous /nuc-proposal cycle. Utility enhancement requires the token
+non-regression gate in continuous mode.
 
-Requested change: a complete try/catch statement may end with a finally
-clause, finally: followed by a suite on its own line, which runs every
-time the statement ends: after the body completes, after the catch suite
-handles a failure, and before a return in either leaves the function or
-the program. The pending outcome stands unless the finally suite returns
-or fails, which replaces it. A failed body's changes are rolled back
-before the catch suite runs, as now, and a failed catch suite's changes
-before the finally suite runs. At the accepted revision each such
-program raises SyntaxError("Unexpected ':'") at the colon after finally;
-finally stays an ordinary name everywhere else, a bare finally line
-followed by an indented block keeps its accepted re
+Requested change: lists and class instance lists gain the read-only
+queries variance and stdev. RECEIVER.variance() returns the population
+variance of the items, the mean of their squared deviations from their
+mean, and RECEIVER.variance(selector) that of selector(item);
+RECEIVER.stdev() and RECEIVER.stdev(selector) return its square root.
+Both divide by the number of values, as numpy's var and std and Python's
+statistics.pvariance and pstdev do, and follow NUC 84's median beside
+NUC 68's sum and NUC 80's average: the same receivers, numeric
+conversion, selector rules, NaN and undefined results, and liveness
+under NUC 61's shared query rules. At the accepted revision these calls
+raise TypeError("<receiver>.variance is not a function") and
+TypeError("<receiver>.stdev is not a function"); only inputs that were
+errors change, and bindings, properties and methods na
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -96,6 +96,7 @@ Created: 31-Jul-2026
- | [85](nuc-0085.md) | Fixed Cross-Property Class Anchors | Automatic-Accepted: independent evaluation rejected it because fixed-only cycles whose rules build fresh objects never settle; `$Pair.a = {v: $Pair.b@first}` with `$Pair.b = {v: $Pair.a@first}` reaches the 100,000-step propagation limit instead of settling as the proposal claims |
- | [90](nuc-0090.md) | Enum Declarations | Accepted |
- | [115](nuc-0115.md) | Count-Controlled Repeat Loops | Accepted |
-+| [119](nuc-0119.md) | Finally Clauses for Try Statements | Draft |
+@@ -131,6 +131,7 @@ Created: 31-Jul-2026
+ | [108](nuc-0108.md) | List and Population Partitions | Accepted |
+ | [111](nuc-0111.md) | Reactive String Padding | Accepted |
+ | [114](nuc-0114.md) | List and Population Products | Accepted |
++| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Draft |
  
- ### Utility enhancement
+ ### Reasoning enhancement
  
-@@ -291,6 +292,7 @@ Created: 31-Jul-2026
- | [116](nuc-0116.md) | Size and Emptiness Method Aliases | Standards Track | Language compatibility | Accepted |
- | [117](nuc-0117.md) | First and Last Element Methods | Standards Track | Language compatibility | Accepted |
- | [118](nuc-0118.md) | Case Conversion Method Aliases | Standards Track | Language compatibility | Accepted |
-+| [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Draft |
+@@ -299,6 +300,7 @@ Created: 31-Jul-2026
+ | [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [121](nuc-0121.md) | Held Values of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Accepted |
++| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Standards Track | Utility enhancement | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0119.md` (added, +82/-0)
+**File**: `docs/nuc-0123.md` (added, +73/-0)
 ```diff
-@@ -0,0 +1,82 @@
-+# NUC 119 -- Finally Clauses for Try Statements
+@@ -0,0 +1,73 @@
++# NUC 123 -- List and Population Variances and Standard Deviations
 +
 +```
-+NUC: 119
-+Title: Finally Clauses for Try Statements
++NUC: 123
++Title: List and Population Variances and Standard Deviations
 +Author: Can Mingir <canmingir@gmail.com>
 +Status: Draft
 +Type: Standards Track
-+Category: Runtime features
-+Created: 18-Nov-2026
++Category: Utility enhancement
++Created: 19-Nov-2026
 +```
 +
 +## Abstract
 +
-+- A complete `try`/`catch` statement may end with a `finally` clause,
-+  `finally:` followed by a suite, which runs every time the statement
-+  ends: after the body completes, after the catch suite handles a
-+  failure, and before a `return` in either of them leaves the function or
-+  the program.
-+- The pending outcome stands unless the `finally` suite changes it: a
-+  value that the body or the catch suite returns is still returned, and
-+  an error that the catch suite raises still propagates afterwards. A
-+  `return` or a failure of the `finally` suite replaces it, as in Python,
-+  JavaScript and Java.
-+- Nucleoid's transactions are kept. A failed body's changes are rolled
-+  back before the catch suite runs, as they are now, and a failed catch
-+  suite's changes before the `finally` suite runs, so no suite runs on the
-+  partial changes of a failed one. When an error leaves the statement, the
-+  enclosing rollback undoes what the `finally` suite changed, with the
-+  rest of the statement.
-+- At the accepted revision each of these programs raises
-+  `SyntaxError("Unexpected ':'")` at the colon after `finally`. Only those
-+  programs change. `finally` stays an ordinary name everywhere else, as a
-+  variable, property, object key, function or parameter, as in
-+  `finally = 4`, `c ? finally : 1` and `{a: 2 finally: 3}`; a bare
-+  `finally` line followed by an indented block keeps its accepted reading;
-+  and `try` without `catch` keeps
-+  `SyntaxError("Expected 'catch' after 'try'")`.
++- Lists and class instance lists gain two read-only queries, `variance`
++  and `stdev`. `RECEIVER.variance()` returns the population variance of the
++  receiver's items, the mean of their squared deviations from their mean,
++  and `RECEIVER.variance(selector)` that of `selector(item)` for every item.
++  `RECEIVER.stdev()` and `RECEIVER.stdev(selector)` return its square root,
++  the population standard deviation.
++- Both divide by the number of values, as numpy's `var` and `std` and
++  Python's `statistics.pvariance` and `statistics.pstdev` do, and as a case
++  of [NUC 80](nuc-0080.md) does when it writes the variance out from two
++  averages. A list or a class population holds every value it describes,
++  so it is the whole population, and a single value has variance `0`.
++- They follow [NUC 84](nuc-0084.md)'s `median`, beside
++  [NUC 68](nuc-0068.md)'s `sum` and [NUC 80](nuc-0080.md)'s `average`:
++  the same receivers, numeric conversion, selector rules, NaN and undefined
++  results, and liveness under [NUC 61](nuc-0061.md)'s shared query rules.
++- At the accepted revision these calls are run-time errors,
++  `TypeError("<receiver>.variance is not a function")` and
++  `TypeError("<receiver>.stdev is not a function")`. Only inputs that were
++  errors change. No syntax, keyword, token or error type is added, and
++  bindings, properties and methods named `variance` or `stdev` keep their
++  accepted results.
 +
 +## Motivation
 +
-+- Mainstream languages with `try`/`catch` have a clause that runs however
-+  the statement ends: `finally` in Python, JavaScript, TypeScript, Java,
-+  Kotlin and C#, `ensure` in Ruby, and `defer` in Swift and Go. Programs
-+  and models written by people and LLMs use it to record that an
-+  operation ran, to count attempts or to log on every path. In Nucleoid
-+  each of them raises `SyntaxError("Unexpected ':'")` at `finally:`.
-+- Without it, a function whose body and catch suite both return has to
-+  repeat the shared work before each `return`, or turn each `return` into
-+  an assignment of a result followed by one `return` after the statement.
-+  Inside a function such an assignment writes state, because a function's
-+  only local names are its parameters and loop variables, so the rewrite
-+  changes the shape of the program and adds a state name the model did
-+  not have.
-+- World models record what happened as well as what holds: an attempt, an
-+  audit entry, a retry count. A `finally` clause states such a record
-+  once, beside the operation it follows, and keeps the statement's
-+  transaction: what the record writes commits with the statement or rolls
-+  back with it.
++- World models summarize their populations. Lists and class populations
++  already have their sums, extremes, averages, medians and modes, but not
++  their spread. A model that asks how far readings, prices or scores
++  scatter must write the variance out from two averages, as a case of
++  NUC 80 does with
++  `team.scores.average(score -> score * score) - team.mean() ** 2`, and a
++  standard deviation wraps that in `Math.sqrt`.
++- The written-out formula repeats the receiver and the selector, is easy
++  to get wrong, and loses precision when large values spread little,
++  because subtracting two close averages cancels their leading digits.
++  `variance()` and `stdev()` name the statistic once, as `average()` and
++  `median()` do, and can compute it from the deviations themselves.
 +
 +## Rationale
 +
@@ -1659,6 +1695,417 @@ followed by an indented block keeps its accepted re
 +
 +This document is licensed under the Apache License, Version 2.0. See
 +[LICENSE](../LICENSE) for the full text.
+```
+
+---
+
+### Incident Patch 2: `8c27bb30` (2026-11-19)
+**Commit Message**: NUC 122 Python-Style Except Clauses
+
+Accepted under the automatic acceptance rule, in a continuous
+/nuc-proposal cycle (Language compatibility, token comparison skipped):
+the frozen candidate meets every hard criterion and passes every policy
+check, and the token check does not apply to continuous Language
+compatibility cycles. The cycle found no stale Draft, drew Language
+compatibility uniformly from the five eligible categories, allocated
+NUC 122 in 259343d1, and completed it with a fresh baseline, candidate,
+proposer, Rust improvement pass and evaluator.
+
+A try statement may spell its catch clause with Python's catch-all
+headers: directly after the body, except: and except Exception: are
+exactly catch:, binding error, and except Exception as NAME: is exactly
+catch NAME:. Each builds the accepted Stmt::Try, or Stmt::TryFinally
+with NUC 119's finally:, so rollback, the binder's scope, returns, loops
+and nesting run as with catch. try_statement reads its clause header
+through the private clause_parameter, which first asks the private
+except_header: it matches the identifier except, optionally Exception,
+optionally as and a name, and then a colon, without consuming tokens,
+and advan
+
+**File**: `README.md` (modified, +28/-0)
+```diff
+@@ -2617,6 +2617,34 @@ assert([readings, moved], [[-1, 3, 4], [2, false]])
+   warning clears. See the
+   [root contract](nucleoid.spec.md#held-values-of-reasoning-selections).
+ 
++## Python-style except clauses
++
++**Except clauses fall back to another sensor when a reading fails**
++
++```nuc
++hall = 19
++try:
++    kitchen = cellar + 1
++except Exception as fault:
++    kitchen = hall - 1
++    note = fault
++heating = kitchen < 20
++assert([kitchen, note, heating], [18, ReferenceError("cellar is not defined"), true])
++hall = 22
++assert([kitchen, heating], [21, false])
++```
++
++- [NUC 122](docs/nuc-0122.md) reads Python's catch-all clause headers:
++  `except:` and `except Exception:` are `catch:`, and
++  `except Exception as fault:` is `catch fault:`, with the same suite, the
++  same rollback of the failed body and the same binding.
++- The kitchen's reading derives from a cellar sensor that has not
++  reported, so reading it fails, and the clause estimates the kitchen from
++  the hall instead and records why. The estimate is a declaration like any
++  other, so it follows the hall's reading, and the heating follows the
++  estimate. See the
++  [root contract](nucleoid.spec.md#python-style-except-clauses).
++
+ ## Reactive list flattening
+ 
+ **Flat turns nested lists into one live list**
+```
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +19/-16)
+```diff
+@@ -799,19 +799,22 @@
+ {"id":"spec-0799","description":"Nucleoid gives the values that a change reaches and the model with holds","code":"rate = 0.2\nprice = 10\nqty = 3\nsubtotal = price * qty\ntax = subtotal * rate\nreach = price |> affects |> holds\nknown = model |> holds\nassert(reach, [30, 6])\nassert(known, [0.2, 10, 3, 30, 6])\ntotal = subtotal + tax\nassert(reach, [30, 6, 36])\nqty = 4\nassert(reach, [40, 8, 48])\ntax = qty * rate\nassert(reach, [40, 40.8])\ndelete total\nassert(known, [0.2, 10, 4, 40, 0.8])\nreach","return":"[40]"}
+ {"id":"spec-0800","description":"Nucleoid gives the values behind class level rules with holds","code":"fee = 2\nclass Order(price, qty):\n    this.price = price\n    this.qty = qty\n$Order.total = $Order.price * $Order.qty\n$Order.basis = $Order.total |> why |> holds\nfirst = Order(10, 2)\nassert(first.basis, [20, 10, 2])\n$Order.total = $Order.price * $Order.qty + fee\nsecond = Order(4, 5)\nreach = fee |> affects |> holds\nassert([first.basis, second.basis], [[22, 10, 2, 2], [22, 4, 5, 2]])\nassert(reach, [22, 22])\nfirst.qty = 3\nfee = 1\nassert([first.basis, second.basis], [[31, 10, 3, 1], [21, 4, 5, 1]])\nassert(reach, [31, 21])\nfirst.total |> why |> stated |> holds","return":"[1]"}
+ {"id":"spec-0801","description":"Nucleoid rolls back failed updates through held values","code":"price = 10\nqty = 3\nsubtotal = price * qty\nvalues = subtotal |> why |> holds\nfailure = \"\"\ntry:\n    values = 1 |> holds\ncatch error:\n    failure = error\nassert(failure, TypeError(\"Cannot explain 1\"))\nassert(values, [30, 10, 3])\ntry:\n    fee = 2\n    subtotal = price * qty + fee\n    assert(values, [32, 10, 3, 2])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert(values, [30, 10, 3])\nqty = 4\ninputs = subtotal |> why |> stated |> holds\n[values, inputs]","return":"[[40,10,4],[10,4]]"}
+-{"id":"spec-0802","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
+-{"id":"spec-0803","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
+-{"id":"spec-0804","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
+-{"id":"spec-0805","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
+-{"id":"spec-0806","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
+-{"id":"spec-0807","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
+-{"id":"spec-0808","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nasse
+```
+
+**File**: `dataset/nucleoid.synth.86.jsonl` (added, +16/-0)
+```diff
+@@ -0,0 +1,16 @@
++{"id":"synth-86-0001","description":"Except catches a failed reading and falls back to a default","code":"reading = 0\ntry:\n    reading = sensor * 2\nexcept:\n    reading = -1\nreading","return":"-1"}
++{"id":"synth-86-0002","description":"A bare except binds the error to error as catch does","code":"try:\n    level = tank + 1\nexcept:\n    level = error\nlevel","return":"\"ReferenceError: tank is not defined\""}
++{"id":"synth-86-0003","description":"Except Exception catches every error","code":"try:\n    size = (4).resize(2)\nexcept Exception:\n    size = 0\nsize","return":"0"}
++{"id":"synth-86-0004","description":"Except Exception as a name binds the thrown value as it was thrown","code":"try:\n    throw 404\nexcept Exception as failure:\n    code = failure + 1\ncode","return":"405"}
++{"id":"synth-86-0005","description":"A failed body rolls back before its except clause runs","code":"stock = 10\nreserved = stock - 2\ntry:\n    stock = 3\n    throw \"SHORT\"\nexcept Exception as reason:\n    note = reason\n[stock, reserved, note]","return":"[10,8,\"SHORT\"]"}
++{"id":"synth-86-0006","description":"Except clauses return from functions","code":"def length_of(text):\n    try:\n        if text == \"\":\n            throw \"EMPTY\"\n        return text.length\n    except Exception as problem:\n        return problem\n[length_of(\"abc\"), length_of(\"\")]","return":"[3,\"EMPTY\"]"}
++{"id":"synth-86-0007","description":"Except clauses return from methods","code":"class Thermostat(limit):\n    this.limit = limit\n    def check(target):\n        try:\n            if target > this.limit:\n                throw \"TOO HOT\"\n            return target\n        except Exception as alarm:\n            return alarm\nhall = Thermostat(28)\n[hall.check(22), hall.check(35)]","return":"[22,\"TOO HOT\"]"}
++{"id":"synth-86-0008","description":"An error raised in an except clause reaches the enclosing one","code":"def probe(depth):\n    try:\n        try:\n            throw depth\n        except Exception as inner:\n            throw inner * 10\n    except Exception as outer:\n        return outer + 1\nprobe(4)","return":"41"}
++{"id":"synth-86-0009","description":"A finally clause runs after an except clause","code":"log = []\ntry:\n    throw \"X\"\nexcept Exception as e:\n    log.push(e)\nfinally:\n    log.push(\"done\")\nlog","return":"[\"X\",\"done\"]"}
++{"id":"synth-86-0010","description":"Except clauses take inline suites","code":"try: total = price * 2\nexcept: total = 0\ntotal","return":"0"}
++{"id":"synth-86-0011","description":"Except follows a colon-free try header","code":"try\n    total = count + 1\nexcept Exception as e:\n    total = 0\ntotal","return":"0"}
++{"id":"synth-86-0012","description":"Declarations in an except clause stay live","code":"base = 4\ntry:\n    value = missing\nexcept:\n    value = base * 2\nbase = 5\nvalue","return":"10"}
++{"id":"synth-86-0013","description":"An except binder shadows an outer name only inside its clause","code":"e = \"outer\"\ntry:\n    throw \"inner\"\nexcept Exception as e:\n    seen = e\n[seen, e]","return":"[\"inner\",\"outer\"]"}
++{"id":"synth-86-0014","description":"Except Exception is a fixed word that a variable named Exception does not change","code":"Exception = \"not a class\"\ntry:\n    x = missing\nexcept Exception:\n    x = Exception\nx","return":"\"not a class\""}
++{"id":"synth-86-0015","description":"Except clauses run inside braced arrow functions","code":"fallback = (v) => {\n    try:\n        return v.calibrate()\n    except:\n        return 0\n}\nfallback(5)","return":"0"}
++{"id":"synth-86-0016","description":"Except clauses run inside if blocks","code":"ready = true\nif ready:\n    try:\n        r = gauge.read()\n    except:\n        r = \"offline\"\nr","return":"\"offline\""}
+```
+
+**File**: `docs/README.md` (modified, +53/-1)
+```diff
+@@ -2509,7 +2509,55 @@ visits.length
+   before a `catch`. See the
+   [root contract](../nucleoid.spec.md#finally-clauses).
+ 
+-Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md).
++### Python-style except clauses
++
++```
++def ratio(part, whole):
++    try:
++        if whole == 0:
++            throw "EMPTY"
++        return part / whole
++    except Exception as reason:
++        return reason
++assert([ratio(3, 4), ratio(1, 0)], [0.75, "EMPTY"])
++try:
++    share = stock / 2
++except Exception:
++    share = 0
++try:
++    level = stock.reorder()
++except:
++    level = error
++assert([share, level], [0, ReferenceError("stock is not defined")])
++stock = 8
++share
++```
++
++- This is the complete
++  `Nucleoid reads Python except clauses as catch clauses` program in
++  `tests/reference.md`, without its title and expected-return metadata; it
++  returns `0`.
++- [NUC 122](nuc-0122.md) reads Python's catch-all clause headers where a
++  `catch` clause belongs: `except:` and `except Exception:` are exactly
++  `catch:`, binding the error to `error`, and `except Exception as NAME:` is
++  exactly `catch NAME:`. Each builds the same statement as its `catch`
++  spelling, so rollback, the binding and its scope, `return`, nested `try`
++  statements and a following `finally:` behave as they do with `catch`.
++- The header takes its colon. `except`, `Exception` and `as` stay ordinary
++  names, and every other header where `catch` belongs, such as `except e:`,
++  `except ValueError:` or a colon-free `except Exception as e`, keeps
++  `SyntaxError("Expected 'catch' after 'try'")`.
++- Differences from Python: typed and filtered clauses, several clauses,
++  `else:`, `except*` and `raise` are not added, and Nucleoid raises with
++  `throw`. The bound value is the error's text, such as
++  `"ReferenceError: stock is not defined"`, or the thrown value, not an
++  exception object. `Exception` catches every error, since Nucleoid has no
++  exits like `SystemExit` that Python's `Exception` leaves out, and an outer
++  name that the clause's binder shadows keeps its value, where Python
++  unbinds it. See the
++  [root contract](../nucleoid.spec.md#python-style-except-clauses).
++
++Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md), [NUC 122](nuc-0122.md).
+ 
+ ---
+ 
+@@ -5063,6 +5111,10 @@ try:                                   run the body; a failure rolls it back
+     statement
+ catch name:                            then runs this suite with the error bound
+     statement
++except Exception as name:              Python's spelling of catch name: (NUC 122)
++    statement
++except:                                Python's spelling of catch:, binding error (NUC 122)
++    statement
+ finally:                               runs however the statement ends (NUC 119)
+     statement
+ return expression                      yield from a block or function
+```
+
+**File**: `docs/examples.md` (modified, +34/-0)
+```diff
+@@ -4142,6 +4142,40 @@ hours = 15
+   [NUC 121](nuc-0121.md) and the
+   [root contract](../nucleoid.spec.md#held-values-of-reasoning-selections).
+ 
++## Python-style except clauses
++
++**Except clauses refuse an overdrawn transfer and keep both wallets whole**
++
++```nuc
++class Wallet(owner, coins):
++    this.owner = owner
++    this.coins = coins
++def transfer(source, target, amount):
++    target.coins = target.coins + amount
++    if amount > source.coins.value:
++        throw source.owner + " LACKS " + amount
++    source.coins = source.coins - amount
++ana = Wallet("Ana", 50)
++ben = Wallet("Ben", 10)
++try:
++    transfer(ana, ben, 80)
++except Exception as refusal:
++    log = refusal
++assert([ana.coins, ben.coins, log], [50, 10, "Ana LACKS 80"])
++transfer(ana, ben, 20)
++[ana.coins, ben.coins]
++# return: [30,30]
++```
++
++- `transfer` credits the target before it finds that the source lacks the
++  coins, so the refused transfer has already changed Ben's wallet when it
++  throws. The failed body is rolled back before the `except` clause runs,
++  so both wallets keep what they had, and the clause records the refusal.
++- `except Exception as refusal:` is exactly `catch refusal:`, so a transfer
++  the source can afford then goes through as before. See
++  [NUC 122](nuc-0122.md) and the
++  [root contract](../nucleoid.spec.md#python-style-except-clauses).
++
+ ## Reactive list flattening
+ 
+ **Flattening keeps the dirty tiles of every room counted**
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
+```diff
+@@ -165,7 +165,7 @@ Created: 31-Jul-2026
+ | [116](nuc-0116.md) | Size and Emptiness Method Aliases | Accepted |
+ | [117](nuc-0117.md) | First and Last Element Methods | Accepted |
+ | [118](nuc-0118.md) | Case Conversion Method Aliases | Accepted |
+-| [122](nuc-0122.md) | Python-Style Except Clauses | Draft |
++| [122](nuc-0122.md) | Python-Style Except Clauses | Accepted |
+ 
+ ### Documentation
+ 
+@@ -298,7 +298,7 @@ Created: 31-Jul-2026
+ | [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Accepted |
+ | [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [121](nuc-0121.md) | Held Values of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+-| [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Draft |
++| [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Accepted |
+ 
+ ## Copyright
+ 
+```
+
+**File**: `docs/nuc-0122.md` (modified, +1154/-28)
+```diff
+@@ -4,57 +4,1183 @@
+ NUC: 122
+ Title: Python-Style Except Clauses
+ Author: Can Mingir <canmingir@gmail.com>
+-Status: Draft
++Status: Accepted
+ Type: Standards Track
+ Category: Language compatibility
+ Created: 18-Nov-2026
++Requires: 9, 46, 119
+ ```
+ 
+ ## Abstract
+ 
+-- A `try` statement may spell its catch clause with Python's `except`.
+-  `except:` and `except Exception:` catch every error, as `catch:` does,
+-  and `except Exception as NAME:` binds the error to `NAME`, as
+-  `catch NAME:` does.
+-- Such a program reads exactly as its `catch` spelling, including a
+-  `finally:` clause of [NUC 119](nuc-0119.md) after the `except` clause.
+-- At the accepted revision each such program is a whole-program parse
+-  error, `SyntaxError("Expected 'catch' after 'try'")`. Only those programs
+-  change.
+-- Every other name after `except`, as in `except e:` or
+-  `except ValueError:`, keeps that error, because Python reads it as a
+-  filter by exception class, which Nucleoid's errors do not have. `except`
+-  stays an ordinary name everywhere else, including the `except` stage of
+-  [NUC 106](nuc-0106.md).
++- A `try` statement may spell its catch clause with Python's catch-all
++  `except` headers. Where a `catch` clause belongs, directly after the
++  body:
++  - `except:` and `except Exception:` are exactly `catch:`, so the error is
++    bound to the name `error`;
++  - `except Exception as NAME:`, where `NAME` is a name, is exactly
++    `catch NAME:`.
++- Each header builds the statement of its `catch` spelling, `Stmt::Try`, or
++  `Stmt::TryFinally` with a `finally:` clause of [NUC 119](nuc-0119.md)
++  after it, with the same parameter and suites. So the clause behaves as
++  `catch` does: the failed body is rolled back first, the bound name is
++  scoped to the clause, and returns, loops, nested `try` statements and the
++  declarations of either suite run as they do with `catch`.
++- The header ends with its colon, as Python requires. Every other header
++  where `catch` belongs keeps the accepted
++  `SyntaxError("Expected 'catch' after 'try'")` at the `except`, byte for
++  byte, among them `except e:`, `except ValueError:`, a parenthesized or
++  comma-separated list, a binder that is not a name and a header without its
++  colon. A `try` statement still takes one clause.
++- `except`, `Exception` and `as` stay ordinary names everywhere else,
++  including the `except` stage of [NUC 106](nuc-0106.md). No keyword, lexer
++  token, syntax-tree node, error type or message is added.
++- Only inputs that were errors at the accepted revision change: programs
++  in which a `try` statement's body is directly followed by a matching
++  header, each of which raised `SyntaxError("Expected 'catch' after 'try'")`
++  at the `except` of such a header. The authoritative contract is
++  [Python-style except clauses](../nucleoid.spec.md#python-style-except-clauses).
+ 
+ ## Motivation
+ 
+ - Nucleoid already reads many of Python's spellings: `def`, `elif`, `None`,
+-  `self`, `lambda`, `not in`, `pass` and, through NUC 119, `finally:`. Its
+-  error handling still knows only `catch`, so a model or a programmer who
+-  writes Python's `try:` and `except Exception as error:` gets a parse
+-  error for the whole program.
+-- The catch-all forms `except:` and `except Exception as error:` are
+-  Python's spellings of a clause that catches every error, which is what
+-  Nucleoid's `catch` does. Reading them lets familiar Python error handling
+-  run unchanged, as the language-superset aspiration of
+-  [NUC 1](nuc-0001.md) asks.
++  `self`, `lambda`, `not in`, `pass` and, through [NUC 119](nuc-0119.md),
++  `finally:`. Its error handling still knows only `catch`, so a model or a
++  programmer who writes Python's `try:` and `except Exception as error:`
++  gets a parse error for the whole program, and nothing in it runs:
++
++  ```
++  def ratio(part, whole):
++      try:
++          if whole == 0:
++              throw "EMPTY"
++          return part / whole
++      except Exception as reason:
++          return reason
++  ratio(1, 0)
++  ```
++
++  The accepted parser rejects it with
++  `SyntaxError("Expected 'catch' after 'try'")` at line 6, column 5.
++  Writing `catch reason:` makes it run and return `"EMPTY"`.
++- The catch-all forms `except:`, `except Exception:` and
++  `except Exception as error:` are Python's spellings of a clause that
++  catches every error, which is what Nucleoid's `catch` does. Reading them
++  lets familiar error handling run unchanged, as the language-superset
++  aspiration of [NUC 1](nuc-0001.md) asks.
++- World models handle readings and updates that can fail: a sensor that has
++  not reported, a transfer that a wallet cannot cover. The `except` clause
++  keeps the Python habit for that handling, and the transaction rollback of
++  Nucleoid's `catch` keeps the model consistent.
+ 
+ ## Rationale
+ 
+-- Pending: the proposer completes this section.
++- **Category and mode.** The allocating continuous cycle drew Language
++  compatibility with one tool-backed uniform
+```
+
+**File**: `docs/nucleoid.g4` (modified, +28/-4)
+```diff
+@@ -310,12 +310,30 @@ repeatStmt
+ 
+ // Without finallyClause a tryStmt is Stmt::Try, with it Stmt::TryFinally.
+ tryStmt
+-    : TRY body lineSeparator* CATCH (LPAREN name RPAREN | name)? body finallyClause?
++    : TRY body lineSeparator* (catchClause | exceptClause) finallyClause?
+     ;
+ 
+-// FINALLY starts the logical line after the catch body, at the tryStmt's
+-// layout level: only NEWLINEs follow the catch body, and the token before
+-// FINALLY is a NEWLINE or the DEDENT that closes it. FINALLY on the catch
++catchClause
++    : CATCH (LPAREN name RPAREN | name)? body
++    ;
++
++// Python's catch-all headers build the tree of their catch spelling (NUC 122):
++// 'EXCEPT COLON' and 'EXCEPT EXCEPTION COLON' are 'CATCH COLON', binding the
++// name error, and 'EXCEPT EXCEPTION AS name COLON' is 'CATCH name COLON'. The
++// whole header, through its COLON, is matched before any of it is consumed,
++// and its suite is the explicit-colon suite of CATCH. Any other EXCEPT where
++// CATCH is expected, a header without its COLON included, keeps
++// SyntaxError("Expected 'catch' after 'try'") at the EXCEPT. On an inline
++// body's line, EXCEPT after ';' begins another statement of the body, and a
++// destructuring, enumLine or predicateSentence ends only before NEWLINE, ';',
++// DEDENT, '}', EOF, ELSE or CATCH, never before EXCEPT.
++exceptClause
++    : EXCEPT (EXCEPTION (AS name)?)? suite
++    ;
++
++// FINALLY starts the logical line after the catch or except body, at the
++// tryStmt's layout level: only NEWLINEs follow that body, and the token before
++// FINALLY is a NEWLINE or the DEDENT that closes it. FINALLY on that
+ // body's line, after ';', or inside '(' and '[', which suppress layout, keeps
+ // its name reading, and so does 'FINALLY COLON name' before NEWLINE, ';',
+ // DEDENT or EOF, which stays a typeDeclaration.
+@@ -911,6 +929,8 @@ enumName
+     | PATH
+     | INTERSECT
+     | EXCEPT
++    | EXCEPTION
++    | AS
+     | UNION
+     | NODES
+     | HOLDS
+@@ -1001,6 +1021,8 @@ DEPTH            : 'depth';
+ PATH             : 'path';
+ INTERSECT        : 'intersect';
+ EXCEPT           : 'except';
++EXCEPTION        : 'Exception';
++AS               : 'as';
+ UNION            : 'union';
+ NODES            : 'nodes';
+ HOLDS            : 'holds';
+@@ -1194,6 +1216,8 @@ fragment REGEX_CHAR
+  * new X(...)               -> X(...).
+  * for xs:                  -> iteration with the item name "it".
+  * catch without a name     -> the binding "error".
++ * except:                  -> catch:, also except Exception:.
++ * except Exception as e:   -> catch e:.
+  * model directly before |> -> Expr::Model.
+  * |> intersect(model)      -> its other selection is Expr::Model; also except
+  *                             and union.
 ```
 
 #### Recent Merged Pull Requests:
@@ -1687,13 +2134,13 @@ followed by an indented block keeps its accepted re
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 119 Finally Clauses for Try Statements
+## X. Draft NUC 123 List and Population Variances and Standard Deviations
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9eeb878b`: Draft NUC 119 Finally Clauses for Try Statements. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `52f8bf48`: Draft NUC 123 List and Population Variances and Standard Deviations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -1701,8 +2148,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [119](nuc-0119.md) | Finally Clauses for Try Statements | Draft |
-| [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Draft |
+| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Draft |
+| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Standards Track | Utility enhancement | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1712,7 +2159,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9eeb878b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `52f8bf48` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

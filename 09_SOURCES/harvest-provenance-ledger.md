@@ -11277,3 +11277,9 @@ Every entry in this ledger must capture:
 | `learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-19T09:17:01.181Z |
 | `learn-dom-h-91651630` | `project://mintplex-labs-anything-llm` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md` | 2026-11-19T09:17:43.186Z |
 | `learn-dom-f-c4730bd5` | `project://mintplex-labs-anything-llm` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md` | 2026-11-19T09:18:27.612Z |
+| `learn-huggingface-autotrust-gev-26b-decide-nvfp4` | `https://huggingface.co/autotrust/GEV-26B-Decide-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-19T09:43:38.543Z |
+| `learn-github-vcaesar-riot` | `https://github.com/vcaesar/riot` | `de6bec55` | Multi-dimensional audit evidence | 2026-11-19T09:43:41.613Z |
+| `learn-github-arkivanov-decompose` | `https://github.com/arkivanov/Decompose` | `361377cb` | Multi-dimensional audit evidence | 2026-11-19T09:43:47.415Z |
+| `learn-github-open-policy-agent-gatekeeper` | `https://github.com/open-policy-agent/gatekeeper` | `207df1ef` | Multi-dimensional audit evidence | 2026-11-19T09:43:49.094Z |
+| `learn-github-meilisearch-meilisearch` | `https://github.com/meilisearch/meilisearch` | `01794fd9` | Multi-dimensional audit evidence | 2026-11-19T09:43:53.660Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `52f8bf48` | Multi-dimensional audit evidence | 2026-11-19T09:43:56.802Z |
