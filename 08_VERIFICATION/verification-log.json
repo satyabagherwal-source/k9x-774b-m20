@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-GEGT",
-    "timestamp": "2026-11-18T04:29:11.357Z",
-    "repository": "kotest/kotest",
-    "learningId": "learn-github-kotest-kotest",
-    "contentHash": "cf3f01300db041e7ea6d5ac3deb0b6f7a5e13a6df5829d4b2a3731a5b46b1215",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-GJM2",
-    "timestamp": "2026-11-18T04:29:18.026Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "0193804985b332e31d24c72d559438b5a6601e70fe9e2394872dfcead5c61be2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-GL2J",
-    "timestamp": "2026-11-18T04:29:19.915Z",
-    "repository": "trailbaseio/trailbase",
-    "learningId": "learn-github-trailbaseio-trailbase",
-    "contentHash": "f88498558ac6860893948a09335a1a0a0c8508317219daf0a577c207f2cfb204",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-QX4D",
     "timestamp": "2026-11-18T04:37:22.093Z",
     "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -7490,6 +7445,51 @@
     "repository": "Ontos-AI/knowhere",
     "learningId": "learn-github-ontos-ai-knowhere",
     "contentHash": "1e310de5cc99ac57f5a58c0875cfc5cabacb3f458477459ae0f7b0a3a156727a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-U0VO",
+    "timestamp": "2026-11-19T19:23:15.060Z",
+    "repository": "tencent/Hy-Memory-30B-A3B",
+    "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b",
+    "contentHash": "06b384aee3f30f62e689a6cba1c9093097c92a6a5b8dc92bee60475d0db89855",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-U2Q0",
+    "timestamp": "2026-11-19T19:23:17.448Z",
+    "repository": "matthart1983/netwatch",
+    "learningId": "learn-github-matthart1983-netwatch",
+    "contentHash": "f7f0375c516225aececaf9f7a26feb0612b17b3d9d7eace1c111b82083123375",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-U6W0",
+    "timestamp": "2026-11-19T19:23:22.848Z",
+    "repository": "momenbasel/PureMac",
+    "learningId": "learn-github-momenbasel-puremac",
+    "contentHash": "cbeddf249c84a6e3a3b61a9255369d1311cf196d393280673eef529bdfaffa02",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

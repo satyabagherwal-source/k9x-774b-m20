@@ -11364,3 +11364,6 @@
 | `CYCLE-20261119-FO5D` | `2026-11-19T19:12:05.377Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9430` | Yes (`18f33b37...`) |
 | `CYCLE-20261119-FOWF` | `2026-11-19T19:12:06.351Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9431` | Yes (`9a9ac3f6...`) |
 | `CYCLE-20261119-FQZ7` | `2026-11-19T19:12:09.043Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7277` | Yes (`1e310de5...`) |
+| `CYCLE-20261119-U0VO` | `2026-11-19T19:23:15.060Z` | `tencent/Hy-Memory-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | Yes (`06b384ae...`) |
+| `CYCLE-20261119-U2Q0` | `2026-11-19T19:23:17.448Z` | `matthart1983/netwatch` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md` | Yes (`f7f0375c...`) |
+| `CYCLE-20261119-U6W0` | `2026-11-19T19:23:22.848Z` | `momenbasel/PureMac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9432` | Yes (`cbeddf24...`) |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T19:12:14.232Z",
+  "last_updated": "2026-11-19T19:23:29.084Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T12:40:39.625Z",
@@ -733,9 +733,9 @@
       "staged_for_review": 0
     },
     "momenbasel-puremac-learnings.md": {
-      "processed_at": "2026-11-15T14:37:12.401Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-19T19:23:28.314Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "okteto-okteto-learnings.md": {
       "processed_at": "2026-11-18T16:41:26.277Z",
@@ -1303,9 +1303,9 @@
       "staged_for_review": 1
     },
     "matthart1983-netwatch-learnings.md": {
-      "processed_at": "2026-11-16T03:06:56.756Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-19T19:23:26.836Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "mikepenz-multiplatform-markdown-renderer-learnings.md": {
       "processed_at": "2026-11-16T04:53:34.715Z",
@@ -2908,8 +2908,8 @@
       "staged_for_review": 0
     },
     "hf-tencent-hy-memory-30b-a3b-learnings.md": {
-      "processed_at": "2026-11-15T06:45:47.843Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T19:23:27.910Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-burner22-numbat-learnings.md": {
@@ -3518,7 +3518,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2307,
+  "total_dossiers_evaluated": 2310,
   "total_canonical_promoted": 392,
-  "total_staged_for_review": 1715
+  "total_staged_for_review": 1717
 }

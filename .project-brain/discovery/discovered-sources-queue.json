@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T19:12:13.513Z",
+  "updated_at": "2026-11-19T19:23:28.388Z",
   "stats": {
-    "total_discovered": 5955,
-    "approved_pending_harvest": 5639,
+    "total_discovered": 5956,
+    "approved_pending_harvest": 5640,
     "harvested_count": 0,
     "rejected_count": 316,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5606,
+      "COMMUNITY_AND_EXPERT": 5607,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 112,
       "ENGINEERING_BLOGS": 4,
@@ -128819,6 +128819,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/beclab-olares-learnings.md",
         "fileName": "beclab-olares-learnings.md"
+      }
+    },
+    "SRC-DF1DEAFB7FE2": {
+      "id": "SRC-DF1DEAFB7FE2",
+      "url": "https://github.com/momenbasel/PureMac/releases/download/v",
+      "title": "https://github.com/momenbasel/PureMac/releases/download/v",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:23:28.388Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
+        "fileName": "momenbasel-puremac-learnings.md"
       }
     }
   }

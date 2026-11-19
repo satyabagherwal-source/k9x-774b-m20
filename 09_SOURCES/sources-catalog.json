@@ -1745,8 +1745,8 @@
     "sourceUrl": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
     "sourceVersion": "hf-tencent-hy-memory-30b-a3b",
     "license": "Open-Source",
-    "contentHash": "950c357f2c1b81bf1c7540611e38f857c390c18f1b8bc055c2530618621682c7",
-    "lastHarvestedAt": "2026-11-15T06:45:03.743Z",
+    "contentHash": "06b384aee3f30f62e689a6cba1c9093097c92a6a5b8dc92bee60475d0db89855",
+    "lastHarvestedAt": "2026-11-19T19:23:15.065Z",
     "learningId": "learn-huggingface-tencent-hy-memory-30b-a3b"
   },
   "addy0-com-free-open-technical-seo-crawler": {
@@ -8003,10 +8003,10 @@
     "repository": "momenbasel/PureMac",
     "platform": "github",
     "sourceUrl": "https://github.com/momenbasel/PureMac",
-    "sourceVersion": "656ec5b1",
+    "sourceVersion": "77ac5633",
     "license": "MIT",
-    "contentHash": "312f9911d44c53f6f1f917af6d30af505412fb12cbf1ff0a297a2c873f4105aa",
-    "lastHarvestedAt": "2026-11-15T14:36:30.716Z",
+    "contentHash": "cbeddf249c84a6e3a3b61a9255369d1311cf196d393280673eef529bdfaffa02",
+    "lastHarvestedAt": "2026-11-19T19:23:22.852Z",
     "learningId": "learn-github-momenbasel-puremac"
   },
   "nalexn-clean-architecture-swiftui": {
@@ -11913,10 +11913,10 @@
     "repository": "matthart1983/netwatch",
     "platform": "github",
     "sourceUrl": "https://github.com/matthart1983/netwatch",
-    "sourceVersion": "e11c8c49",
+    "sourceVersion": "78f85143",
     "license": "MIT",
-    "contentHash": "34a95334c1d3fed718ea61b7f3d6611ce8e1d1a9badfaa71b602948f5689dc76",
-    "lastHarvestedAt": "2026-11-16T03:06:16.058Z",
+    "contentHash": "f7f0375c516225aececaf9f7a26feb0612b17b3d9d7eace1c111b82083123375",
+    "lastHarvestedAt": "2026-11-19T19:23:17.453Z",
     "learningId": "learn-github-matthart1983-netwatch"
   },
   "hf-prunaai-p-h3-image-comfy": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T06:45:47.966Z",
+  "timestamp": "2026-11-19T19:23:28.005Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-tencent-hy-memory-30b-a3b-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-tencent-hy-memory-30b-a3b-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T06:45:47.966Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T19:23:28.005Z`  
 > **Learning ID**: `LEARN-EVO-hf-tencent-hy-memory-30b-a3b-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-tencent-h`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T06:45:03.347Z  
+> **Timestamp**: 2026-11-19T19:23:14.537Z  
 > **Learning ID**: `learn-huggingface-tencent-hy-memory-30b-a3b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/tencent/Hy-Memory-30B-A3B](https://huggingface.co/tencent/Hy-Memory-30B-A3B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T06:45:03.136Z  
+> **Harvest Timestamp**: 2026-11-19T19:23:14.325Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 8033 downloads | 325 likes
+- **Stars / Engagement**: 6195 downloads | 325 likes
 
 ---
 

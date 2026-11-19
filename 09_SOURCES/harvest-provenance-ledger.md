@@ -11397,3 +11397,6 @@ Every entry in this ledger must capture:
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `8c82c544` | Multi-dimensional audit evidence | 2026-11-19T19:12:05.381Z |
 | `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `9830b49b` | Multi-dimensional audit evidence | 2026-11-19T19:12:06.355Z |
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `3352f322` | Multi-dimensional audit evidence | 2026-11-19T19:12:09.048Z |
+| `learn-huggingface-tencent-hy-memory-30b-a3b` | `https://huggingface.co/tencent/Hy-Memory-30B-A3B` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-19T19:23:15.065Z |
+| `learn-github-matthart1983-netwatch` | `https://github.com/matthart1983/netwatch` | `78f85143` | Multi-dimensional audit evidence | 2026-11-19T19:23:17.453Z |
+| `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `77ac5633` | Multi-dimensional audit evidence | 2026-11-19T19:23:22.852Z |

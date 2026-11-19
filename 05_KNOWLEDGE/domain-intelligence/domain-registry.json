@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T19:12:13.842Z",
+  "last_updated": "2026-11-19T19:23:28.790Z",
   "total_records": 2013,
   "domains": {
     "A": {
@@ -14060,8 +14060,8 @@
       "title": "Architecture Intelligence: matthart1983/netwatch Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-matthart1983-netwatch-architecture-intelligence-matthart1983-netwatch-core-invar.md",
       "repository": "matthart1983/netwatch",
-      "content_hash": "321c2a680fc02032d971318ab57c65e2fe127b75b8b2908c467fd8be60ce384e",
-      "created_at": "2026-11-16T03:06:16.693Z"
+      "content_hash": "2264c685aae2d291a54ecd8b2110ee5261a2c16b409a7e916233fb6d5d5e3df0",
+      "created_at": "2026-11-19T19:23:17.878Z"
     },
     "domain_intelligence-quality-verification-intelligence-kgateway-dev-kgateway-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-kgateway-dev-kgateway-core-invariants",
@@ -14129,8 +14129,8 @@
       "title": "Architecture Intelligence: matthart1983-netwatch-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-matthart1983-netwatch-learnings-architecture-intelligence-matthart1983-netwatch-.md",
       "repository": "matthart1983-netwatch-learnings",
-      "content_hash": "968b7ae31e227be39a7024c79e1fc25e468ff62ef53389774b4af6817c418a0f",
-      "created_at": "2026-11-16T03:06:57.470Z"
+      "content_hash": "5c2e0c4e20c7592971c632647f95a7390c2b3bf17f3e2f7f8ac3243f14ab8263",
+      "created_at": "2026-11-19T19:23:27.398Z"
     },
     "DOM-D-4E8F92EB": {
       "record_id": "DOM-D-4E8F92EB",
@@ -20109,8 +20109,8 @@
       "title": "Research & Knowledge Intelligence: tencent/Hy-Memory-30B-A3B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy-memory-30b-a3b-research-knowledge-intelligence-tencent-hy-memory-3.md",
       "repository": "tencent/Hy-Memory-30B-A3B",
-      "content_hash": "c9478ab77b10cd887c885e4c43ea2f74b440b87ad77588ca35fef3932b21fcf3",
-      "created_at": "2026-11-15T06:45:03.922Z"
+      "content_hash": "3984b97ae63c55e4b73261a6ab9bfdab0bb084b2699c3dff07acc52b39f49a7f",
+      "created_at": "2026-11-19T19:23:15.275Z"
     },
     "DOM-H-8C16206C": {
       "record_id": "DOM-H-8C16206C",
@@ -20166,8 +20166,8 @@
       "title": "Research & Knowledge Intelligence: hf-tencent-hy-memory-30b-a3b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy-memory-30b-a3b-learnings-research-knowledge-intelligence-hf-tencen.md",
       "repository": "hf-tencent-hy-memory-30b-a3b-learnings",
-      "content_hash": "5d3b662b1d0434867e9a7ca436f2cf29c14c2eb614a47cb935664c44e78d5a93",
-      "created_at": "2026-11-15T06:45:48.063Z"
+      "content_hash": "8313ec6200cf2e640a12d3255ea6b0de348542bb1025b99ea5b936d20d30cd71",
+      "created_at": "2026-11-19T19:23:28.124Z"
     },
     "domain_intelligence-architecture-intelligence-clementtsang-bottom-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clementtsang-bottom-core-invariants",
@@ -21261,8 +21261,8 @@
       "title": "Architecture Intelligence: momenbasel/PureMac Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-momenbasel-puremac-architecture-intelligence-momenbasel-puremac-core-invariants.md",
       "repository": "momenbasel/PureMac",
-      "content_hash": "9d917468ec76a7ef9a84cd7235fa577746813fb4a52b2b3e11e8e5cd031857bb",
-      "created_at": "2026-11-15T14:36:30.878Z"
+      "content_hash": "9a6b13ef6954ef8ae0347c42c2c3755b12186614710477b088e36e52e37465e1",
+      "created_at": "2026-11-19T19:23:23.230Z"
     },
     "DOM-D-E86C357A": {
       "record_id": "DOM-D-E86C357A",
@@ -21312,8 +21312,8 @@
       "title": "Architecture Intelligence: momenbasel-puremac-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-momenbasel-puremac-learnings-architecture-intelligence-momenbasel-puremac-learni.md",
       "repository": "momenbasel-puremac-learnings",
-      "content_hash": "26e3fd53e1a8b7d46303a5d5ca43fcb11b1740f49898b775a208de7b1629584c",
-      "created_at": "2026-11-15T14:37:12.624Z"
+      "content_hash": "c7b65d246d4fd2e9b138da47ec5cb68eeabd87d8549e49c8a771d804f6c71f64",
+      "created_at": "2026-11-19T19:23:28.790Z"
     },
     "domain_intelligence-quality-verification-intelligence-seo-skills-seo-audit-skill-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-seo-skills-seo-audit-skill-core-invariants",

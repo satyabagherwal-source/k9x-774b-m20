@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T19:12:14.109Z",
+  "last_updated": "2026-11-19T19:23:28.946Z",
   "total_verified_learnings": 9018,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21931,
+  "total_items": 21938,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -226097,8 +226097,8 @@
       "slug": "matthart1983-netwatch",
       "platform": "github",
       "source_url": "https://github.com/matthart1983/netwatch",
-      "source_version": "e11c8c49",
-      "content_hash": "34a95334c1d3fed718ea61b7f3d6611ce8e1d1a9badfaa71b602948f5689dc76",
+      "source_version": "78f85143",
+      "content_hash": "f7f0375c516225aececaf9f7a26feb0612b17b3d9d7eace1c111b82083123375",
       "dossier_path": "07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md",
       "promoted_rules": [
@@ -226128,7 +226128,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T03:06:15.860Z",
+      "verified_at": "2026-11-19T19:23:17.225Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226170,10 +226170,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-matthart1983-netwatch-architecture-intelligence-matthart1983-netwatch-core-invar.md",
       "title": "Architecture Intelligence: matthart1983/netwatch Core Invariants",
       "repository": "matthart1983/netwatch",
-      "source_version": "e11c8c49",
-      "content_hash": "321c2a680fc02032d971318ab57c65e2fe127b75b8b2908c467fd8be60ce384e",
+      "source_version": "78f85143",
+      "content_hash": "2264c685aae2d291a54ecd8b2110ee5261a2c16b409a7e916233fb6d5d5e3df0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T03:06:16.693Z"
+      "persisted_at": "2026-11-19T19:23:17.878Z"
     },
     "agent_contract-agent-contract-matthart1983-netwatch-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-matthart1983-netwatch-autonomous-specialist-persona",
@@ -226182,10 +226182,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/matthart1983-netwatch-agent-contract-matthart1983-netwatch-autonomous-specialist.md",
       "title": "Agent Contract: matthart1983/netwatch Autonomous Specialist Persona",
       "repository": "matthart1983/netwatch",
-      "source_version": "e11c8c49",
-      "content_hash": "2fc9090a2c396fa28a33564eddaabdb8e1fb7025c661a713252b7c4e8252d3cc",
+      "source_version": "78f85143",
+      "content_hash": "39cd5e7b87156f60daacf68b3ed5f87dd1e5748461da99a6d5efc2cd6eeb8379",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T03:06:16.837Z"
+      "persisted_at": "2026-11-19T19:23:18.040Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-matthart1983-netwatch": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-matthart1983-netwatch",
@@ -226194,10 +226194,10 @@
       "relative_path": "08_VERIFICATION/matthart1983-netwatch-verification-protocol-empirical-defect-shield-for-matthart.md",
       "title": "Verification Protocol: Empirical Defect Shield for matthart1983/netwatch",
       "repository": "matthart1983/netwatch",
-      "source_version": "e11c8c49",
-      "content_hash": "7f607143f2d055a276a079be10c23194057075b58954518c3985fa07e8a9ae8d",
+      "source_version": "78f85143",
+      "content_hash": "1b1e220a35bdc05259ee5284e8a78e29b80e8683e9c11470cb7a96e069cfb03c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T03:06:16.971Z"
+      "persisted_at": "2026-11-19T19:23:18.173Z"
     },
     "learn-github-kgateway-dev-kgateway": {
       "learning_id": "learn-github-kgateway-dev-kgateway",
@@ -226422,9 +226422,9 @@
       "title": "Architecture Intelligence: matthart1983-netwatch-learnings Core Invariants",
       "repository": "matthart1983-netwatch-learnings",
       "source_version": "HEAD",
-      "content_hash": "968b7ae31e227be39a7024c79e1fc25e468ff62ef53389774b4af6817c418a0f",
+      "content_hash": "5c2e0c4e20c7592971c632647f95a7390c2b3bf17f3e2f7f8ac3243f14ab8263",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T03:06:57.470Z"
+      "persisted_at": "2026-11-19T19:23:27.398Z"
     },
     "agent_contract-agent-contract-matthart1983-netwatch-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-matthart1983-netwatch-learnings-autonomous-specialist-persona",
@@ -226434,9 +226434,9 @@
       "title": "Agent Contract: matthart1983-netwatch-learnings Autonomous Specialist Persona",
       "repository": "matthart1983-netwatch-learnings",
       "source_version": "HEAD",
-      "content_hash": "29a2a036500b01d3cfc922a0de479cafb425c4506c8a3b819e7b59ef0daada27",
+      "content_hash": "b90a8e4768278d4bf2f531436cd06f8af463c4e8c08b5602c1d6a82479ca2390",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T03:06:57.637Z"
+      "persisted_at": "2026-11-19T19:23:27.607Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-matthart1983-netwatch-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-matthart1983-netwatch-learning",
@@ -226446,9 +226446,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for matthart1983-netwatch-learnings",
       "repository": "matthart1983-netwatch-learnings",
       "source_version": "HEAD",
-      "content_hash": "b47bf081e063ede1263a2a5dae7c84db9a28ae169ced5a1665797ac5bbc13580",
+      "content_hash": "15325ff296b0b513ae6807b7acef6b22f3d743598a68f0f03d1b1b3169a0ff70",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T03:06:57.790Z"
+      "persisted_at": "2026-11-19T19:23:27.752Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-pablodawson-minimax-h3-360-orbit-lora-learnin": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-pablodawson-minimax-h3-360-orbit-lora-learnin",
@@ -243346,7 +243346,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/tencent/Hy-Memory-30B-A3B",
       "source_version": "hf-tencent-hy-memory-30b-a3b",
-      "content_hash": "950c357f2c1b81bf1c7540611e38f857c390c18f1b8bc055c2530618621682c7",
+      "content_hash": "06b384aee3f30f62e689a6cba1c9093097c92a6a5b8dc92bee60475d0db89855",
       "dossier_path": "07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md",
       "promoted_rules": [],
@@ -243355,7 +243355,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T06:45:03.563Z",
+      "verified_at": "2026-11-19T19:23:14.824Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243372,9 +243372,9 @@
       "title": "Research & Knowledge Intelligence: tencent/Hy-Memory-30B-A3B Core Invariants",
       "repository": "tencent/Hy-Memory-30B-A3B",
       "source_version": "hf-tencent-hy-memory-30b-a3b",
-      "content_hash": "c9478ab77b10cd887c885e4c43ea2f74b440b87ad77588ca35fef3932b21fcf3",
+      "content_hash": "3984b97ae63c55e4b73261a6ab9bfdab0bb084b2699c3dff07acc52b39f49a7f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T06:45:03.922Z"
+      "persisted_at": "2026-11-19T19:23:15.275Z"
     },
     "rule-8585": {
       "learning_id": "rule-8585",
@@ -243410,9 +243410,9 @@
       "title": "Research & Knowledge Intelligence: hf-tencent-hy-memory-30b-a3b-learnings Core Invariants",
       "repository": "hf-tencent-hy-memory-30b-a3b-learnings",
       "source_version": "HEAD",
-      "content_hash": "5d3b662b1d0434867e9a7ca436f2cf29c14c2eb614a47cb935664c44e78d5a93",
+      "content_hash": "8313ec6200cf2e640a12d3255ea6b0de348542bb1025b99ea5b936d20d30cd71",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T06:45:48.063Z"
+      "persisted_at": "2026-11-19T19:23:28.124Z"
     },
     "learn-github-clementtsang-bottom": {
       "learning_id": "learn-github-clementtsang-bottom",
@@ -246578,17 +246578,23 @@
       "slug": "momenbasel-puremac",
       "platform": "github",
       "source_url": "https://github.com/momenbasel/PureMac",
-      "source_version": "656ec5b1",
-      "content_hash": "312f9911d44c53f6f1f917af6d30af505412fb12cbf1ff0a297a2c873f4105aa",
+      "source_version": "77ac5633",
+      "content_hash": "cbeddf249c84a6e3a3b61a9255369d1311cf196d393280673eef529bdfaffa02",
       "dossier_path": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 9432,
+          "title": "bump to 3.3.0 (sha256 37a5e421061a)",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T14:36:30.568Z",
+      "verified_at": "2026-11-19T19:23:22.653Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246604,10 +246610,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-momenbasel-puremac-architecture-intelligence-momenbasel-puremac-core-invariants.md",
       "title": "Architecture Intelligence: momenbasel/PureMac Core Invariants",
       "repository": "momenbasel/PureMac",
-      "source_version": "656ec5b1",
-      "content_hash": "9d917468ec76a7ef9a84cd7235fa577746813fb4a52b2b3e11e8e5cd031857bb",
+      "source_version": "77ac5633",
+      "content_hash": "9a6b13ef6954ef8ae0347c42c2c3755b12186614710477b088e36e52e37465e1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T14:36:30.878Z"
+      "persisted_at": "2026-11-19T19:23:23.230Z"
     },
     "rule-8621": {
       "learning_id": "rule-8621",
@@ -246643,9 +246649,9 @@
       "title": "Architecture Intelligence: momenbasel-puremac-learnings Core Invariants",
       "repository": "momenbasel-puremac-learnings",
       "source_version": "HEAD",
-      "content_hash": "26e3fd53e1a8b7d46303a5d5ca43fcb11b1740f49898b775a208de7b1629584c",
+      "content_hash": "c7b65d246d4fd2e9b138da47ec5cb68eeabd87d8549e49c8a771d804f6c71f64",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T14:37:12.624Z"
+      "persisted_at": "2026-11-19T19:23:28.790Z"
     },
     "learn-github-pimalaya-himalaya": {
       "learning_id": "learn-github-pimalaya-himalaya",
@@ -296630,6 +296636,92 @@
       "content_hash": "035004027e7714d15666654974329f798bb73ab7a3b196aae63fd576342991ec",
       "domain_letter": "H",
       "persisted_at": "2026-11-19T19:12:13.700Z"
+    },
+    "candidate_directive-netwatch-v1-0-0-diagnose-with-rule-maturity-and-earned-verdicts-dns": {
+      "item_id": "candidate_directive-netwatch-v1-0-0-diagnose-with-rule-maturity-and-earned-verdicts-dns",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-U2XC-netwatch-v1-0-0-diagnose-with-rule-maturity-and-earned-verdicts-dns.md",
+      "title": "netwatch v1.0.0 — Diagnose with rule maturity and earned verdicts, DNS",
+      "repository": "matthart1983/netwatch",
+      "source_version": "78f85143",
+      "content_hash": "e63a7f57d302676fb08f1a28fdf128b7556fc1d3b6f36f5cd724a12df21fb7bd",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T19:23:17.716Z"
+    },
+    "rule-9432": {
+      "learning_id": "rule-9432",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9432,
+      "title": "bump to 3.3.0 (sha256 37a5e421061a)",
+      "source_url": "https://github.com/momenbasel/PureMac",
+      "source_version": "77ac5633",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T19:23:22.653Z"
+    },
+    "candidate_directive-bump-to-3-3-0-sha256-37a5e421061a": {
+      "item_id": "candidate_directive-bump-to-3-3-0-sha256-37a5e421061a",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-U71V-bump-to-3-3-0-sha256-37a5e421061a.md",
+      "title": "bump to 3.3.0 (sha256 37a5e421061a)",
+      "repository": "momenbasel/PureMac",
+      "source_version": "77ac5633",
+      "content_hash": "60e0c48adc2a08fd155e4cb9546d666ced20a8bbbb1c486a3a98ee0dcea99734",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T19:23:23.062Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-momenbasel-puremac": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-momenbasel-puremac",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/momenbasel-puremac-verification-protocol-empirical-defect-shield-for-momenbasel-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for momenbasel/PureMac",
+      "repository": "momenbasel/PureMac",
+      "source_version": "77ac5633",
+      "content_hash": "0481a1d4eb31b3c4c1b26c3198efeb29fd3a292cf5e430474b6f51e51bcb8e2e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T19:23:23.385Z"
+    },
+    "candidate_directive-release-netwatch-v1-0-0-diagnose-with-rule-maturity-and-earned-verdicts-dns": {
+      "item_id": "candidate_directive-release-netwatch-v1-0-0-diagnose-with-rule-maturity-and-earned-verdicts-dns",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UA8U-release-netwatch-v1-0-0-diagnose-with-rule-maturity-and-earned-verdicts-dns.md",
+      "title": "release: netwatch v1.0.0 — Diagnose with rule maturity and earned verdicts, DNS",
+      "repository": "matthart1983-netwatch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "25968a1398815a8d3f8abb0bca77c8d31206991b566a13189ff040032df5674c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T19:23:27.202Z"
+    },
+    "candidate_directive-homebrew-bump-to-3-3-0-sha256-37a5e421061a": {
+      "item_id": "candidate_directive-homebrew-bump-to-3-3-0-sha256-37a5e421061a",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UBCK-homebrew-bump-to-3-3-0-sha256-37a5e421061a.md",
+      "title": "homebrew: bump to 3.3.0 (sha256 37a5e421061a)",
+      "repository": "momenbasel-puremac-learnings",
+      "source_version": "HEAD",
+      "content_hash": "afc7ce0021172cafe5aaecff6620e7acfeac80a66a838e7e9b58df6a543b8105",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T19:23:28.631Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-momenbasel-puremac-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-momenbasel-puremac-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/momenbasel-puremac-learnings-verification-protocol-empirical-defect-shield-for-m.md",
+      "title": "Verification Protocol: Empirical Defect Shield for momenbasel-puremac-learnings",
+      "repository": "momenbasel-puremac-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eec44a8aef1de03e1cbe56418b30080359d727769f8c0cca3cd2d519605b370b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T19:23:28.946Z"
     }
   },
   "ai-builder-brain": {
