@@ -2,18 +2,18 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T05:24:39.837Z",
+  "updated_at": "2026-11-19T05:47:17.474Z",
   "stats": {
-    "total_discovered": 5793,
-    "approved_pending_harvest": 5482,
+    "total_discovered": 5799,
+    "approved_pending_harvest": 5488,
     "harvested_count": 0,
     "rejected_count": 311,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5452,
+      "COMMUNITY_AND_EXPERT": 5454,
       "OFFICIAL_DOCUMENTATION": 186,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
-      "SECURITY_ADVISORIES": 32,
+      "SECURITY_ADVISORIES": 36,
       "LEGAL_AND_REGULATORY": 2,
       "RESEARCH_AND_ACADEMIA": 6
     }
@@ -125290,6 +125290,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
         "fileName": "temporalio-temporal-learnings.md"
+      }
+    },
+    "SRC-53CD6EDBA001": {
+      "id": "SRC-53CD6EDBA001",
+      "url": "https://github.com/curioswitch/py-envoy-server/actions/runs/43867024431/job/133298099621",
+      "title": "https://github.com/curioswitch/py-envoy-server/actions/runs/43867024431/job/133298099621",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T05:47:17.266Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-1B8A34BF11B0": {
+      "id": "SRC-1B8A34BF11B0",
+      "url": "https://github.com/envoyproxy/envoy/blob/main/api/review_checklist.md",
+      "title": "https://github.com/envoyproxy/envoy/blob/main/api/review_checklist.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T05:47:17.307Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-35A7F9F5EEF1": {
+      "id": "SRC-35A7F9F5EEF1",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2019-15225",
+      "title": "Vulnerability Advisory CVE-2019-15225",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T05:47:17.347Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-DCC64E80E91E": {
+      "id": "SRC-DCC64E80E91E",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2019-15226",
+      "title": "Vulnerability Advisory CVE-2019-15226",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T05:47:17.391Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-76C3F1FA6DED": {
+      "id": "SRC-76C3F1FA6DED",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-45808",
+      "title": "Vulnerability Advisory CVE-2024-45808",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T05:47:17.430Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-6E9966909ABE": {
+      "id": "SRC-6E9966909ABE",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-26309",
+      "title": "Vulnerability Advisory CVE-2026-26309",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T05:47:17.473Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
+        "fileName": "envoyproxy-envoy-learnings.md"
       }
     }
   }

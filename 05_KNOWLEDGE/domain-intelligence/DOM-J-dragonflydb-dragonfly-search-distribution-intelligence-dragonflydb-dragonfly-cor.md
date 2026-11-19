@@ -4,24 +4,24 @@
 {
   "source_repository": "dragonflydb/dragonfly",
   "source_url": "https://github.com/dragonflydb/dragonfly",
-  "source_version": "17d2a726",
+  "source_version": "45a890be",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T14:41:26.717Z",
+  "timestamp": "2026-11-19T05:42:27.394Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dragonflydb-dragonfly",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly) (Revision: `17d2a726`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T14:41:26.717Z`  
+> **Provenance**: Harvested from [dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly) (Revision: `45a890be`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-19T05:42:27.394Z`  
 > **Learning ID**: `learn-github-dragonflydb-dragonfly`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain J (Search & Distribution Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dragonflydb/dragonfly:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dragonflydb-dragonfly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dragonflydb/dragonfly](https://github.com/dragonflydb/dragonfly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T14:41:25.555Z  
+> **Harvest Timestamp**: 2026-11-19T05:42:26.165Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A modern replacement for Redis and Memcached
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 31878 stars
+- **Stars / Engagement**: 31882 stars
 
 ---
 
@@ -2335,873 +2335,649 @@ class Segment {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `515f2d16` (2026-11-17)
-**Commit Message**: fix(search): journal only successful index changes, align FT.* ACL categories (#8821)
+### Incident Patch 1: `406477f2` (2026-11-18)
+**Commit Message**: fix: crash with premature STARTSTABLE (#8824)
 
-* fix(search): re-check FT.* ACL in the hop, journal only successful index changes
-
-Follow-up to #8815: the ACL check ran before the hop, so an index re-created under the same name or
-an alias moved in between could let a restricted user read or change an index over other keys.
-Failed index changes were also journaled and replayed by replicas.
-
-- A restricted read keeps the prefixes it checked; a hop treats an index re-created since over other
-  prefixes as missing and replies "no such index".
-- A restricted index change is checked again on every shard in the first hop of its own transaction,
-  whose lock keeps the index until the change. FT.ALIASUPDATE checks target and alias in one call.
-- FT.CREATE, ALTER, DROPINDEX and SYNUPDATE are journaled only when they succeed, also in MULTI/EXEC
-  and scripts.
-- FT.* ACL categories follow the reference: no @slow on CREATE, ALTER, SYNUPDATE, ALIAS*, INFO,
-  SYNDUMP, SEARCH, AGGREGATE, PROFILE, HYBRID and CONFIG, no @write on CREATE, ALTER, SYNUPDATE and
-  ALIAS*, no @dangerous on CONFIG.
-
-Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
-
-* fix(sea
-
-**File**: `src/server/command_registry.h` (modified, +7/-0)
+**File**: `src/server/dflycmd.cc` (modified, +7/-9)
 ```diff
-@@ -183,6 +183,13 @@ class CommandId : public facade::CommandId {
-     return std::move(*this);
-   }
- 
-+  // Exactly these ACL categories, without the ones the option mask implies.
-+  CommandId&& SetAclCategories(uint32_t mask) && {
-+    acl_categories_ = mask;
-+    kind_mask_ &= ~IMPLICIT_ACL;
-+    return std::move(*this);
-+  }
+@@ -117,6 +117,9 @@ FlowInfo& SetupFlowConnection(CommandContext* cmd_cntx, DflyCmd::ReplicaInfo* re
+   conn_cntx->conn()->SetConnectionMemoryAccounting(false);
+   flow.conn = cmd_cntx->conn();
+   flow.eof_token = *eof_token;
 +
-   bool is_multi_key() const {
-     return (last_key_ != first_key_) || (opt_mask_ & CO::VARIADIC_KEYS);
-   }
-```
-
-**File**: `src/server/search/search_family.cc` (modified, +32/-26)
-```diff
-@@ -150,7 +150,7 @@ bool CheckPrefixAccess(absl::Span<const string> prefixes, acl::KeyOp op, Command
-   return false;
++  // A repeated DFLY FLOW must not inherit the partial sync negotiated by an earlier one.
++  flow.start_partial_sync_at.reset();
+   return flow;
  }
  
--// Call before the first hop, which journals even failed DDL; unknown names fail or set *missing.
-+// Call before any hop, so a denial schedules no transaction; unknown names fail or set *missing.
- bool CheckIndexAccess(absl::Span<const string_view> names, acl::KeyOp op, CommandContext* cmd_cntx,
-                       string_view not_found = {}, bool* missing = nullptr) {
-   if (acl::ArePrefixesAllowed(*cmd_cntx->server_conn_cntx(), {}, op))
-@@ -2881,6 +2881,7 @@ void CmdFtCreate(CmdArgParser parser, CommandContext* cmd_cntx) {
+@@ -462,17 +465,12 @@ void DflyCmd::StartStable(CmdArgParser parser, CommandContext* cmd_cntx) {
+     return;
  
-   auto idx_ptr = make_shared<DocIndex>(std::move(parsed_index).value());
-   const bool is_journal = cmd_cntx->server_conn_cntx()->journal_emulated;
-+  cmd_cntx->tx()->ReviveAutoJournal();
-   cmd_cntx->tx()->Execute(
-       [idx_name, idx_ptr, is_journal](auto* tx, auto* es) {
-         es->search_indices()->InitIndex(tx->GetOpArgs(es), idx_name, idx_ptr, is_journal);
-@@ -2961,6 +2962,7 @@ void CmdFtAlter(CmdArgParser parser, CommandContext* cmd_cntx) {
-                                     std::move(synonyms));
-     return OpStatus::OK;
-   };
-+  cmd_cntx->tx()->ReviveAutoJournal();
-   cmd_cntx->tx()->Execute(upd_cb, true);
+   util::fb2::LockGuard lk{replica_ptr->GetMutex()};
+-  auto repl_state = replica_ptr->GetReplicaState();
+-  if (repl_state != SyncState::FULL_SYNC && repl_state != SyncState::PREPARATION) {
+-    cmd_cntx->SendError(kInvalidState);
+-    return;
+-  }
  
-   builder->SendOk();
-@@ -3017,6 +3019,9 @@ void CmdFtDropIndex(CmdArgParser parser, CommandContext* cmd_cntx) {
-       }
+-  // This might happen if a flow abruptly disconnected before sending the SYNC request.
+-  if (!replica_ptr->AllFlowsConnected()) {
+-    cmd_cntx->SendError(kInvalidState);
++  // DFLY SYNC may be skipped only if every flow syncs partially, as only it starts a full sync.
++  SyncState expected =
++      replica_ptr->AllFlowsPartial() ? SyncState::PREPARATION : SyncState::FULL_SYNC;
++  if (!CheckReplicaStateOrReply(*replica_ptr, expected, cmd_cntx))
+     return;
+-  }
+ 
+   {
+     Transaction::Guard tg{cmd_cntx->tx()};
+```
+
+**File**: `src/server/dflycmd.h` (modified, +6/-0)
+```diff
+@@ -216,6 +216,12 @@ class DflyCmd {
+       return std::ranges::all_of(flows_, [](const FlowInfo& flow) { return flow.conn != nullptr; });
      }
  
-+    if (es->journal())
-+      t->LogJournalOnShard({cmd_cntx->cid()->name(), cmd_cntx->tail_args()});
++    // Returns true if every flow negotiated a partial sync. Caller must hold a lock.
++    bool AllFlowsPartial() const {
++      return std::ranges::all_of(
++          flows_, [](const FlowInfo& flow) { return flow.start_partial_sync_at.has_value(); });
++    }
 +
-     // Defer destruction — will be destroyed on the shard thread after the transaction.
-     dropped[es->shard_id()] = std::move(index);
-     return OpStatus::OK;
-@@ -4698,6 +4703,8 @@ void CmdFtSynUpdate(CmdArgParser parser, CommandContext* cmd_cntx) {
-                    DbContext{&namespaces->GetDefaultNamespace(), 0, GetCurrentTimeMs()}},
-             group_id, terms);
- 
-+        if (es->journal())
-+          t->LogJournalOnShard({cmd_cntx->cid()->name(), cmd_cntx->tail_args()});
-         return OpStatus::OK;
-       },
-       true);
-@@ -4766,38 +4773,37 @@ void SearchFamily::Register(CommandRegistry* registry) {
-   const uint32_t kReadOnlyMask =
-       CO::NO_KEY_TRANSACTIONAL | CO::NO_KEY_TX_SPAN_ALL | CO::NO_AUTOJOURNAL | CO::IDEMPOTENT;
- 
-+  // An index change journals itself only once it succeeds.
-+  const uint32_t kChangeMask = CO::JOURNALED | CO::GLOBAL_TRANS | CO::NO_AUTOJOURNAL;
-+
-+  // As in the reference, without the @write, @slow and @dangerous that the option masks imply.
-+  const uint32_t kSearch = acl::FT_SEARCH, kQuery = acl::FT_SEARCH | acl::READ;
-+
-   registry->StartFamily();
-   *registry
--      << CI{"FT.CREATE", CO::JOURNALED | CO::GLOBAL_TRANS, -2, 0, 0, acl::FT_SEARCH}.HFUNC(FtCreate)
--      << CI{"FT.ALIASADD", CO::JOURNALED | CO::GLOBAL_TRANS | CO::NO_AUTOJOURNAL, 3, 0, 0,
--            acl::FT_SEARCH}
--             .HFUNC(FtAliasAdd)
--      << CI{"FT.ALIASUPDATE", CO::JOURNALED | CO::GLOBAL_TRANS | CO::NO_AUTOJOURNAL, 3, 0, 0,
--            acl::FT_SEARCH}
--             .HFUNC(FtAliasUpdate)
--      << CI{"FT.ALIASDEL", CO::JOURNALED | CO::GLOBAL_TRANS | CO::NO_AUTOJOURNAL, 2, 0, 0,
--            acl::FT_SEARCH}
--             .HFUNC(FtAliasDel)
--      << CI{"FT.ALTER", CO::JOURNALED | CO::GLOBAL_TRANS, -3, 0, 0, acl::FT_SEARCH}.HFUNC(FtAlter)
--      << CI{"FT.DROPINDEX", CO::JOURNALED | CO::GLOBAL_TRANS, -2, 0, 0, acl::kFtDangerous}.HFUNC(
--             FtDropIndex)
--      << CI{"FT.INFO", CO::NO_KEY_TRANSACTIONAL | CO::NO_KEY_TX_SPAN_ALL | CO::NO_AUTOJOURNAL,
--            -2,        0,
--            0,         acl::FT_SEARCH}
-+      << CI{"FT.CREATE", kChangeMask, -2, 0, 0}.SetAclCategories(kSearch).HFUNC(FtCreate)
-+      << CI{"FT.ALIASADD", kChangeMask, 3, 0, 0}.SetAclCategories(kSearch).HFUNC(FtAliasAdd)
-+      << CI{"FT.ALIASUPDATE", kChangeMask, 3, 0, 0}.SetAclCategories(kSearch).HFUNC(FtAliasUpdate)
-+      << CI{"FT.ALIASDEL", kChangeMask, 2, 0, 0}.SetAclCategories(kSearch).HFUNC(FtAliasDel)
-+      << CI{"FT.ALTER", kChangeMask, -3, 0, 0}.SetAclCategories(kSearch).HFUNC(FtAlter)
-+      << CI{"FT.DROPINDEX", kChangeMask, -2, 0, 0, acl::kFtDangerous}.HFUNC(FtDropIndex)
-+      << CI{"FT.INFO", CO::NO_KEY_TRANSACTIONAL | CO::NO_KEY_TX_SPAN_ALL | CO::NO_AUTOJOURNAL, -2,
-+            0, 0}
-+             .SetAclCategories(kSearch)
-              .HFUNC(FtInfo)
--      << CI{"FT.CONFIG", CO::ADMIN | CO::LOADING | CO::DANGEROUS, -3, 0, 0, acl::FT_SEARCH}.HFUNC(
--             FtConfig)
-+      << CI{"FT.CONFIG", CO::ADMIN | CO::LOADING | CO::DANGEROUS, -3, 0, 0}
-+             .SetAclCategories(kSearch | acl::ADMIN)
-+             .HFUNC(FtConfig)
-       // Underscore same as in RediSearch because it's "temporary" (long time already)
-       << CI{"FT._LIST", kReadOnlyMask, 1, 0, 0, acl::FT_SEARCH | acl::ADMIN}.HFUNC(FtList)
--      << CI{"FT.SEARCH", kReadOnlyMask, -3, 0, 0, acl::FT_SEARCH | acl::READ}.HFUNC(FtSearch)
--      << CI{"FT.AGGREGATE", kReadOnlyMask, -3, 0, 0, acl::FT_SEARCH | acl::
+     // Returns the per-replica mutex. Callers acquire it via util::fb2::LockGuard
+     // (exclusive), dfly::SharedLock (shared), or std::shared_lock(..., std::try_to_lock)
+     // (try-shared). Returned by reference rather than a factory-returned scoped lock
 ```
 
-**File**: `src/server/search/search_family_test.cc` (modified, +46/-0)
+**File**: `tests/dragonfly/replication_config_test.py` (modified, +33/-0)
 ```diff
-@@ -4,6 +4,7 @@
+@@ -560,6 +560,39 @@ async def check_encoding(expected):
+     await check_encoding(22)
  
- #include "server/search/search_family.h"
  
-+#include <absl/cleanup/cleanup.h>
- #include <absl/functional/function_ref.h>
- #include <absl/strings/numbers.h>
- #include <absl/strings/str_cat.h>
-@@ -26,6 +27,7 @@
- #include "facade/resp_parser.h"
- #include "server/db_slice.h"
- #include "server/engine_shard_set.h"
-+#include "server/journal/journal.h"
- #include "server/search/doc_index.h"
- #include "server/search/global_hnsw_index.h"
- #include "server/test_utils.h"
-@@ -861,11 +863,55 @@ TEST_F(SearchFamilyTest, AclKeyPatternsPermissionKinds) {
-   for (const auto& [rules, cmd, allowed] : cases)
-     EXPECT_NE(Matches(ErrArg("NOPERM"))(Run(Login(rules), cmd)), allowed) << rules << " " << cmd[0];
- 
-+  // As in the reference, these are neither @slow, @write nor @dangerous.
-+  Login("-@slow -@write -@dangerous");
-+  for (string_view cmd : {"FT.CREATE", "FT.ALTER", "FT.ALIASADD", "FT.ALIASUPDATE", "FT.ALIASDEL",
-+                          "FT.SYNUPDATE", "FT.SYNDUMP", "FT.INFO", "FT.SEARCH", "FT.AGGREGATE",
-+                          "FT.PROFILE", "FT.HYBRID", "FT.CONFIG"})
-+    EXPECT_EQ(Run({"ACL", "DRYRUN", "u", cmd}), "OK") << cmd;
++@pytest.mark.parametrize("partial_flows, renegotiate", [(0, False), (1, False), (2, True)])
++@dfly_args({"proactor_threads": 2, "num_shards": 2})
++async def test_startstable_without_sync(
++    df_factory: DflyInstanceFactory, partial_flows, renegotiate
++):
++    # DFLY STARTSTABLE may skip DFLY SYNC only if every flow negotiated a partial sync.
++    master, _, c_master, _ = await setup_replication(df_factory)
++    lsns = await c_master.execute_command("DFLY REPLICAOFFSET")
++    async with master.client(single_connection_client=True) as control:
++        master_id, sync_id, num_flows, version = (
++            await control.execute_command("REPLCONF", "CAPA", "dragonfly")
++        )[:4]
++        await control.execute_command("REPLCONF", "CLIENT-VERSION", version)
++        flows = [
++            master.client(single_connection_client=True, lib_name=None, lib_version=None)
++            for _ in range(num_flows)
++        ]
++        for i, flow in enumerate(flows):
++            lsn = [lsns[i]] if i < partial_flows else []
++            response = await flow.execute_command("DFLY", "FLOW", master_id, sync_id, i, *lsn)
++            assert response[0] == ("PARTIAL" if lsn else "FULL")
++        if renegotiate:
++            # A repeated DFLY FLOW without an LSN turns the partial flow into a full one.
++            response = await flows[0].execute_command("DFLY", "FLOW", master_id, sync_id, 0)
++            assert response[0] == "FULL"
 +
-   // Indexes hold keys of database 0.
-   Run(Login("~* $3"), {"SELECT", "3"});
-   EXPECT_THAT(Run("~* $3", {"FT.SEARCH", "a", "*"}), ErrArg("NOPERM"));
- }
- 
-+// A replica replays every journaled index change, so only the ones that succeeded are journaled.
-+TEST_F(SearchFamilyTest, IndexChangeJournaledOnlyOnSuccess) {
-+  absl::FlagSaver fs;
-+  SetTestFlag("num_shards", "1");  // where an atomic script runs commands in stub transactions
-+  ResetService();
-+  struct Recorder : journal::JournalConsumerInterface {
-+    void ConsumeJournalChange(const journal::JournalChangeItem& item) override {
-+      cmds.emplace_back(item.cmd);
-+      data += item.journal_item.data;
-+    }
-+    void ThrottleIfNeeded() override {
-+    }
-+    vector<string> cmds;
-+    string data;
-+  } recorder;
-+  const uint32_t id = StartJournalWithConsumer(&recorder, 0);
-+  absl::Cleanup stop = [&] { pp_->at(0)->Await([&] { journal::UnregisterConsumer(id); }); };
++        with pytest.raises(redis.exceptions.ResponseError, match="invalid state"):
++            await control.execute_command("DFLY", "STARTSTABLE", sync_id)
++        assert await c_master.ping()
++        for flow in flows:
++            await flow.aclose()
 +
-+  ASSERT_EQ(Run("FT.CREATE a SCHEMA k TAG"), "OK");
-+  for (string_view cmd : {"FT.CREATE a SCHEMA k TAG", "FT.ALTER x SCHEMA ADD n NUMERIC",
-+                          "FT.SYNUPDATE x g y", "FT.DROPINDEX x"})
-+    EXPECT_THAT(Run(cmd), ArgType(RespExpr::ERROR)) << cmd;
-+  for (string_view cmd :
-+       {"FT.SYNUPDATE a g MKTERM1", "FT.ALTER a SCHEMA ADD n NUMERIC", "FT.DROPINDEX a"})
-+    EXPECT_EQ(Run(cmd), "OK") << cmd;
-+  const auto* script = R"(--!df flags=allow-undeclared-keys
-+redis.call('FT.CREATE', 'c', 'SCHEMA', 'k', 'TAG')
-+redis.call('FT.ALTER', 'c', 'SCHEMA', 'ADD', 'n', 'NUMERIC')
-+redis.call('FT.SYNUPDATE', 'c', 'g', 'w')
-+return redis.call('FT.DROPINDEX', 'c'))";
-+  EXPECT_EQ(Run({"EVAL", script, "0"}), "OK");
-+  EXPECT_THAT(pp_->at(0)->Await([&] { return recorder.cmds; }),
-+              ElementsAre("FT.CREATE", "FT.SYNUPDATE", "FT.ALTER", "FT.DROPINDEX", "FT.CREATE",
-+                          "FT.ALTER", "FT.SYNUPDATE", "FT.DROPINDEX"));
-+  EXPECT_THAT(pp_->at(0)->Await([&] { return recorder.data; }), HasSubstr("MKTERM1"));
-+}
 +
- // Regression for #7953: a zero-field index is a broken state (FT.INFO says "not found" while
- // FT._LIST lists it, and it doesn't survive serialization), so SCHEMA with at least one field
- // must be required unconditionally - not inferred from a heuristic over the skipped tokens.
+ # This Test was intorduced in response to a bug when replicating empty hashmaps (encoded as
+ # ziplists) created with HSET, HSETEX, HDEL and then replicated 2 times.
+ # For more information plz refer to the issue on gh:
 ```
 
 ---
 
-### Incident Patch 2: `a46d6b4f` (2026-11-17)
-**Commit Message**: fix(search): drop an indexed document before any in-place overwrite (#8814)
+### Incident Patch 2: `d2c2fefc` (2026-11-18)
+**Commit Message**: fix(search): keep stored values and normalize numbers in search replies (#8829)
 
-* fix(search): drop an indexed document when BITOP overwrites its key
+* fix(search): keep stored values and normalize numbers in search replies
 
-BITOP stores its result into the destination key whatever type the key had. When the
-destination was an indexed HASH or JSON document, the document stayed in the search
-indices: the key kept matching its old values, it could not be indexed again, HNSW
-searches could read the freed vectors, and later writes to the key could abort the
-server. Remove the document before the overwrite, as SET does.
+Search replies changed stored values and lost data:
+- Full documents re-rendered NUMERIC hash fields from a parsed double (10.50 as 10.5, 007 as 7).
+  They now return the stored text, like every other field.
+- Numbers in returned fields and aggregate rows went out as RESP3 doubles, and in RESP2 in the
+  shortest form with up to 17 digits. Both protocols now send strings: integers without a
+  fraction, others with 12 significant digits.
+- A full document sorted by a SORTABLE field, or by any field in an HNSW vector query, missed the
+  sort field. It is now added under its alias; a stored field with that name keeps its value.
+- JSON booleans read from the document came back as true/false instead of 1/0.
+- WITHSORTKEYS numbers had 6 significant digits, and WITHPAYLOADS left no slot for the payload,
+  which shifts positional parsers.
+- FT.AGGREGATE sent null for a missing SORTABLE field, reduced groups without numbers to 0 or
+  null, and turned division by zero into null. Missing fields are left out now, SUM and AVG
+  without number
 
-Restore num_shards in SynonymScoringMatchesSingleShard with absl::FlagSaver instead of
-setting it to 2, so later tests keep the shard count given on the command line.
-
-Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
-
-* refactor(server): drop indexed documents in DbSlice::PrepareOverwrite
-
-Every command that overwrites a value in place repeated the same steps first: drop an indexed HASH
-or JSON document from the search indices and release an offloaded value. A missed copy left a stale
-document behind, as BITOP did. Rename DbSlice::ReleaseOffloadedValue to PrepareOverwrite, make it
-drop the document too, and call only it from SET, BITOP, t
-
-**File**: `src/server/bitops_family.cc` (modified, +1/-5)
+**File**: `src/server/search/aggregator.cc` (modified, +10/-2)
 ```diff
-@@ -348,15 +348,11 @@ void ElementAccess::Commit(string_view new_value) const {
-     }
-     context_.ns->GetCurrentDbSlice().DelAtomic(context_, updater_.it.GetInnerIt());
-   } else {
--    const bool is_external = IsExternal();
-     // The value is replaced wholesale below, so drop the old heap accounting once.
-     if (!IsNewEntry()) {
-       updater_.post_updater.ReduceHeapUsage();
-     }
--    if (is_external) {
--      EngineShard::tlocal()->tiered_storage()->Delete(context_.db_index, key_,
--                                                      &updater_.it->second);
--    }
-+    context_.ns->GetCurrentDbSlice().PrepareOverwrite(context_, key_, &updater_.it->second);
-     updater_.it->second.SetString(new_value);
-     updater_.post_updater.Run();
+@@ -6,6 +6,7 @@
+ 
+ #include <algorithm>
+ #include <cmath>
++#include <limits>
+ 
+ #include "base/logging.h"
+ #include "server/search/doc_index.h"
+@@ -191,11 +192,14 @@ Reducer::Func FindReducerFunc(ReducerFunc name) {
+         return static_cast<double>(seen.size());
+       };
+     case ReducerFunc::SUM:
+-      return [](ValueIterator it) -> Value { return kSumReducer(it).first; };
++      return [](ValueIterator it) -> Value {
++        auto [sum, count] = kSumReducer(it);
++        return count > 0 ? sum : std::numeric_limits<double>::quiet_NaN();
++      };
+     case ReducerFunc::AVG:
+       return [](ValueIterator it) -> Value {
+         auto [sum, count] = kSumReducer(it);
+-        return count > 0 ? Value{sum / count} : Value{};
++        return count > 0 ? sum / count : std::numeric_limits<double>::quiet_NaN();
+       };
+     case ReducerFunc::MAX:
+       return [](ValueIterator it) -> Value {
+@@ -209,6 +213,8 @@ Reducer::Func FindReducerFunc(ReducerFunc name) {
+           if (std::holds_alternative<std::monostate>(result) || result < v)
+             result = v;
+         }
++        if (std::holds_alternative<std::monostate>(result))
++          return -std::numeric_limits<double>::infinity();
+         return result;
+       };
+     case ReducerFunc::MIN:
+@@ -223,6 +229,8 @@ Reducer::Func FindReducerFunc(ReducerFunc name) {
+           if (std::holds_alternative<std::monostate>(result) || v < result)
+             result = v;
+         }
++        if (std::holds_alternative<std::monostate>(result))
++          return std::numeric_limits<double>::infinity();
+         return result;
+       };
    }
 ```
 
-**File**: `src/server/bloom_family.cc` (modified, +1/-3)
+**File**: `src/server/search/doc_accessors.cc` (modified, +10/-15)
 ```diff
-@@ -127,10 +127,8 @@ OpStatus OpLoadChunk(const OpArgs& op_args, std::string_view blob, std::string_v
- 
-     // LOADCHUNK overwrites existing key
-     if (!op_res->is_new) {
--      // existing key might not necessarily be SBF, it could be HASH/JSON, and indexed
--      RemoveKeyFromIndexesIfNeeded(key, op_args.db_cntx, op_res->it->second, op_args.shard);
-       db_slice.RemoveExpire(op_args.db_cntx.db_index, op_res->it);
--      db_slice.ReleaseOffloadedValue(op_args.db_cntx.db_index, key, &op_res->it->second);
-+      db_slice.PrepareOverwrite(op_args.db_cntx, key, &op_res->it->second);
-     }
- 
-     op_res->it->second.SetSBF(load_result.value());
-```
-
-**File**: `src/server/db_slice.cc` (modified, +5/-3)
-```diff
-@@ -1375,9 +1375,11 @@ uint64_t DbSlice::ExpireParams::TtlSec(uint64_t now_ms) const {
-   return DeadlineSec() - now_ms / 1000;
- }
- 
--void DbSlice::ReleaseOffloadedValue(DbIndex db_ind, std::string_view key, PrimeValue* pv) {
-+void DbSlice::PrepareOverwrite(const Context& cntx, std::string_view key, PrimeValue* pv) {
-+  if (pv->ObjType() == OBJ_HASH || pv->ObjType() == OBJ_JSON)
-+    shard_owner()->search_indices()->RemoveDoc(key, cntx, *pv);
-   if (pv->IsExternal())
--    shard_owner()->tiered_storage()->Delete(db_ind, key, pv);
-+    shard_owner()->tiered_storage()->Delete(cntx.db_index, key, pv);
- }
- 
- OpResult<int64_t> DbSlice::UpdateExpire(const Context& cntx, Iterator prime_it,
-@@ -1446,7 +1448,7 @@ OpResult<DbSlice::ItAndUpdater> DbSlice::AddOrUpdateInternal(const Context& cntx
- 
-   auto& it = res.it;
- 
--  ReleaseOffloadedValue(cntx.db_index, key, &it->second);
-+  PrepareOverwrite(cntx, key, &it->second);
-   it->second = std::move(obj);
- 
-   if (expire_at_ms) {
-```
-
-**File**: `src/server/db_slice.h` (modified, +4/-3)
-```diff
-@@ -382,9 +382,10 @@ class DbSlice {
-   OpResult<ItAndUpdater> AddNew(const Context& cntx, std::string_view key, PrimeValue obj,
-                                 uint64_t expire_at_ms);
- 
--  // Must be called before overwriting a value in place. An offloaded value keeps its data on disk
--  // and reports no heap allocation, so overwriting it drops the only reference to its disk extent.
--  void ReleaseOffloadedValue(DbIndex db_ind, std::string_view key, PrimeValue* pv);
-+  // Must be called before overwriting a value in place. Drops an indexed HASH or JSON document from
-+  // the search indices. An offloaded value keeps its data on disk and reports no heap allocation,
-+  // so overwriting it drops the only reference to its disk extent.
-+  void PrepareOverwrite(const Context& cntx, std::string_view key, PrimeValue* pv);
- 
-   // Update key expiration, clamping TTL to kMaxExpireDeadlineMs. Return the applied absolute
-   // deadline in ms, 0 for PERSIST, -1 if deleted, or OUT_OF_RANGE on overflow.
-```
-
-**File**: `src/server/generic_family.cc` (modified, +1/-12)
-```diff
-@@ -1208,7 +1208,6 @@ OpResult<void> OpRen(const OpArgs& op_args, string_view from_key, string_view to
-         return status;
-     }
- 
--    RemoveKeyFromIndexesIfNeeded(to_key, op_args.db_cntx, to_res.it->second, op_args.shard);
-     is_prior_list = (to_res.it->second.ObjType() == OBJ_LIST);
+@@ -102,6 +102,8 @@ FieldValue ToSortableValueFromJson(search::SchemaField::FieldType type, const Js
+   if (json.is_null()) {
+     return std::monostate{};
    }
++  if (json.is_bool())
++    return string{json.as_bool() ? "1" : "0"};
+   auto json_as_string = json.as_string();
+   return ToSortableValue(type, json_as_string);
+ }
+@@ -188,13 +190,10 @@ std::optional<BaseAccessor::StringList> ListPackAccessor::GetStrings(
+   return it != lw_.end() ? StringList{(*it).second} : StringList{};
+ }
  
-@@ -1235,7 +1234,7 @@ OpResult<void> OpRen(const OpArgs& op_args, string_view from_key, string_view to
- 
-   if (IsValid(to_res.it)) {
-     to_res.post_updater.ReduceHeapUsage();
--    db_slice.ReleaseOffloadedValue(op_args.db_cntx.db_index, to_key, &to_res.it->second);
-+    db_slice.PrepareOverwrite(op_args.db_cntx, to_key, &to_res.it->second);
-     to_res.it->second = std::move(from_obj);
- 
-     if (exp_ts) {
-@@ -1926,16 +1925,6 @@ OpResult<uint32_t> OpStore(const OpArgs& op_args, std::string_view key, Iterator
-                            IteratorEnd&& end_it, bool has_get_patterns) {
-   uint32_t len = 0;
- 
--  // If we are about to overwrite an existing indexed document (HASH/JSON),
--  // remove it from search indices first to avoid duplicate entries.
--  // Use FindMutable (not FindReadOnly) because HNSW preservation may modify the PrimeValue.
--  {
--    auto existing = op_args.GetDbSlice().FindMutable(op_args.db_cntx, key);
--    if (IsValid(existing.it)) {
--      RemoveKeyFromIndexesIfNeeded(key, op_args.db_cntx, existing.it->second, op_args.shard);
+-SearchDocData ListPackAccessor::SerializeAll(const DocFieldTypes& types) const {
++SearchDocData ListPackAccessor::SerializeAll() const {
+   SearchDocData out{};
+-  for (const auto [key, value] : lw_) {
+-    if (auto field_value = ToSortableValue(types.Of(key), value); field_value) {
+-      out[key] = std::move(field_value).value();
 -    }
 -  }
++  for (const auto [key, value] : lw_)
++    out[key] = string{value};
+   return out;
+ }
+ 
+@@ -216,14 +215,10 @@ std::optional<BaseAccessor::StringList> StringMapAccessor::GetStrings(
+   return it != hset_->end() ? StringList{SdsToSafeSv(it->second)} : StringList{};
+ }
+ 
+-SearchDocData StringMapAccessor::SerializeAll(const DocFieldTypes& types) const {
++SearchDocData StringMapAccessor::SerializeAll() const {
+   SearchDocData out{};
+-  for (const auto& [kptr, vptr] : *hset_) {
+-    auto field_value = ToSortableValue(types.Of(SdsToSafeSv(kptr)), SdsToSafeSv(vptr));
+-    if (field_value) {
+-      out[SdsToSafeSv(kptr)] = std::move(field_value).value();
+-    }
+-  }
++  for (const auto& [kptr, vptr] : *hset_)
++    out[SdsToSafeSv(kptr)] = string{SdsToSafeSv(vptr)};
+   return out;
+ }
+ 
+@@ -471,7 +466,7 @@ SearchDocData JsonAccessor::Serialize(absl::Span<const DocField> fields) const {
+   return out;
+ }
+ 
+-SearchDocData JsonAccessor::SerializeAll(const DocFieldTypes&) const {
++SearchDocData JsonAccessor::SerializeAll() const {
+   return {{"$", json_.to_string()}};
+ }
+ 
+@@ -489,7 +484,7 @@ struct EmptyAccessor : public BaseAccessor {
+     return std::optional<StringList>{std::in_place};
+   }
+ 
+-  SearchDocData SerializeAll(const DocFieldTypes&) const override {
++  SearchDocData SerializeAll() const override {
+     return {};
+   }
+ };
+```
+
+**File**: `src/server/search/doc_accessors.h` (modified, +4/-4)
+```diff
+@@ -27,7 +27,7 @@ class StringMap;
+ struct BaseAccessor : public search::DocumentAccessor {
+   // Listed fields are read with GetStrings; whole documents are serialized per type.
+   virtual SearchDocData Serialize(absl::Span<const DocField> fields) const;
+-  virtual SearchDocData SerializeAll(const DocFieldTypes& types) const = 0;
++  virtual SearchDocData SerializeAll() const = 0;
+ 
+   // Default implementation uses GetStrings
+   virtual std::optional<VectorInfo> GetVector(std::string_view active_field, size_t dim,
+@@ -42,7 +42,7 @@ struct ListPackAccessor : public BaseAccessor {
+   }
+ 
+   std::optional<StringList> GetStrings(std::string_view field) const override;
+-  SearchDocData SerializeAll(const DocFieldTypes& types) const override;
++  SearchDocData SerializeAll() const override;
+ 
+  private:
+   detail::ListpackWrap lw_;
+@@ -64,7 +64,7 @@ struct StringMapAccessor : public BaseAccessor {
+   ~StringMapAccessor() override;
+ 
+   std::optional<StringList> GetStrings(std::string_view field) const override;
+-  SearchDocData SerializeAll(const DocFieldTypes& types) const override;
++  SearchDocData SerializeAll() const override;
+ 
+  private:
+   StringMap* hset_;
+@@ -92,7 +92,7 @@ struct JsonAccessor : public BaseAccessor {
+ 
+   // The JsonAccessor works with structured types and not plain strings, so an overload is needed
+   SearchDocData Serialize(absl::Span<const DocField> fields) const override;
+-  SearchDocData SerializeAll(const DocFieldTypes& types) const override;
++  SearchDocData SerializeAll() const override;
+ 
+   static void RemoveFieldFromCache(std::string_view field);
+ 
+```
+
+**File**: `src/server/search/doc_index.cc` (modified, +26/-32)
+```diff
+@@ -96,8 +96,8 @@ class ExpiringValuesAccessor : public BaseAccessor {
+     return live;
+   }
+ 
+-  SearchDocData SerializeAll(const DocFieldTypes& types) const override {
+-    return doc_.SerializeAll(types);
++  SearchDocData SerializeAll() const override {
++    return doc_.SerializeAll();
+   }
+ 
+  private:
+@@ -188,23 +188,6 @@ std::optional<std::vector<DocField>> ResolveFields(
+   return ResolveFields(schema, *fields);
+ }
+ 
+-DocFieldTypes::DocFieldTypes(const search::Schema& schema) {
+-  for (const auto& [_, field] : schema.fields) {
+-    auto [it, inserted] = fields_.try_emplace(field.identifier, &field);
+-    if (!inserted && field.StandsBefore(*it->second))
+-      it->second = &field;
+-  }
+-}
 -
-   QList* ql_v2 = CompactObj::AllocateMR<QList>();
-   QList::Where where = QList::TAIL;
-   std::vector rpush_args{key};
-```
-
-**File**: `src/server/json_family.cc` (modified, +1/-1)
-```diff
-@@ -529,7 +529,7 @@ OpStatus SetFullJson(const OpArgs& op_args, string_view key, string_view json_st
-       VLOG(1) << "got invalid JSON string '" << json_str << "' cannot be saved";
-       return OpStatus::INVALID_JSON;
-     }
--    op_args.GetDbSlice().ReleaseOffloadedValue(op_args.db_cntx.db_index, key, &it_res->it->second);
-+    op_args.GetDbSlice().PrepareOverwrite(op_args.db_cntx, key, &it_res->it->second);
-     it_res->it->second.Reset();
+-search::SchemaField::FieldType DocFieldTypes::Of(std::string_view identifier) const {
+-  auto it = fields_.find(identifier);
+-  return it != fields_.end() ? it->second->type : search::SchemaField::TEXT;
+-}
+-
+-size_t DocFieldTypes::GetNonPmrMemoryUsage() const {
+-  return fields_.bucket_count() * (sizeof(decltype(fields_)::value_type) + 1);
+-}
+-
+ bool SearchParams::ShouldReturnField(std::string_view alias) const {
+   auto cb = [alias](const auto& entry) { return entry.OutputName() == alias; };
+   return !return_fields || any_of(return_fields->begin(), return_fields->end(), cb);
+@@ -475,7 +458,6 @@ bool DocIndex::Matches(string_view key, unsigned obj_code) const {
+ 
+ ShardDocIndex::ShardDocIndex(shared_ptr<const DocIndex> index, unsigned* hash_index_count)
+     : base_{std::move(index)},
+-      field_types_{base_->schema},
+       hash_index_lifetime_{base_->type == DocIndex::HASH ? hash_index_count : nullptr},
+       key_index_{} {
+   DCHECK(base_->type != DocIndex::HASH || hash_index_count);
+@@ -1070,17 +1052,24 @@ void ShardDocIndex::DrainPendingVectorUpdates(const OpArgs& op_args) {
+ 
+ ShardDocIndex::SerializedEntryWithKey ShardDocIndex::SerializeDocWithKey(
+     search::DocId id, const OpArgs& op_args, const std::optional<std::vector<DocField>>& fields,
+-    const DocField* sort_field) {
++    const FieldReference* sort_field) {
+   auto entry = LoadEntry(id, op_args);
+   if (!entry)
+     return std::nullopt;
+   const auto& accessor = entry->second;
+-  SerializedDoc doc{entry->first,
+-                    fields ? accessor->Serialize(*fields) : accessor->SerializeAll(field_types_),
+-                    {}};
++  SerializedDoc doc{
++      entry->first, fields ? accessor->Serialize(*fields) : accessor->SerializeAll(), {}};
+   if (sort_field) {
+-    if (auto values = accessor->Serialize(absl::MakeConstSpan(sort_field, 1)); !values.empty())
+-      doc.sort_value = std::move(values.begin()->second);
++    // As in Search(), a sortable field is sorted and shown by its sort-index value.
++    if (auto r = sort_field->Resolve(base_->schema); r.sortable) {
++      doc.sort_value = indices_->GetSortIndexValue(id, r.alias);
++    } else {
++      const DocField field{sort_field->OutputName(), r.identifier, r.type};
++      if (auto values = accessor->Serialize(absl::MakeConstSpan(&field, 1)); !values.empty())
++        doc.sort_value = std::move(values.begin()->second);
++    }
++    if (!fields && !holds_alternative<monostate>(doc.sort_value))
++      doc.values.try_emplace(sort_field->OutputName(), doc.sort_value);
    }
- 
-```
-
-**File**: `src/server/search/search_family_test.cc` (modified, +30/-1)
-```diff
-@@ -4501,6 +4501,7 @@ TEST_F(SearchFamilyTest, SynonymMultiGroupTermAcrossShardsAndReload) {
- // their stats, including the synonym group tokens of affix queries and phrase terms. Optional
- // affix queries also score documents that only contain another term of a matched group.
- TEST_F(SearchFamilyTest, SynonymScoringMatchesSingleShard) {
-+  absl::FlagSaver fs;
-   auto scores = [this] {
-     EXPECT_EQ(
-         Run({"FT.CREATE", "idx", "ON", "HASH", "PREFIX", "1", "d:", "SCHEMA", "title", "TEXT"}),
-@@ -4557,7 +4558,6 @@ TEST_F(SearchFamilyTest, SynonymScoringMatchesSingleShard) {
-   SetTestFlag("num_shards", "1");
-   ResetService();
-   auto single_shard = scores();
--  SetTestFlag("num_shards", "2");
- 
-   ASSERT_EQ(multi_shard.size(), single_shard.size());
-   EXPECT_GT(single_shard.size(), 15u);
-@@ -5447,6 +5447,7 @@ TEST_F(SearchFamilyTest, SetDoesNotUpdateIndexesBug) {
-   // This should affect the index, the hset value should not be indexed anymore.
-   resp = Run({"SET", "k1", "anothervalue"});
-   EXPECT_EQ(resp, "OK");
-+  EXPECT_THAT(Run({"FT.SEARCH", "index", "value", "NOCONTENT"}), kNoResults);
- 
-   resp = Run({"RENAME", "k1", "anotherkey"});
-   EXPECT_EQ(resp, "OK");
-@@ -5460,6 +5461,31 @@ TEST_F(SearchFamilyTest, SetDoesNotUpdateIndexesBug) {
- 
-   resp = Run({"FT.SEARCH", "index", "*"});
-   EXPECT_THAT(resp, AreDocIds("k1"));
-+
-+  // BITOP overwrites the indexed hash the same way.
-+  Run({"SET", "src", "abc"});
-+  EXPECT_THAT(Run({"BITOP", "OR", "k1", "src"}), IntArg(3));
-+  EXPECT_THAT(Run({"FT.SEARCH", "index", "value", "NOCONTENT"}), kNoResults);
-+
-+  Run({"DEL", "k1"});
-+  Run({"HSET", "k1", "field", "fresh"});
-+  EXPECT_THAT(Run({"FT.SEARCH", "index", "fresh"}), AreDocIds("k1"));
-+
-+  // So does BF.LOADCHUNK.
-+  Run({"BF.RESERVE", "bf", "0.01", "100"});
-+  const string header = Run({"BF.SCANDUMP", "bf", "0"}).GetVec()[1].GetString();
-+  EXPECT_EQ(Run({"BF.LOADCHUNK", "k1", "1", header}), "OK");
-+  EXPECT_THAT(Run({"FT.SEARCH", "index", "fresh", "NOCONTENT"}), kNoResults);
-+
-+  // And RENAME from the same shard, which overwrites the value in place.
-+  Run({"DEL", "k1"});
-+  Run({"HSET", "k1", "field", "other"});
-+  string src = "src";
-+  while (Shard(src, shard_set->size()) != Shard("k1", shard_set->size()))
-+    src += "1";
-+  Run({"SET", src, "abc"});
-+  EXPECT_EQ(Run({"RENAME", src, "k1"}), "OK");
-+  EXPECT_THAT(Run({"FT.SEARCH", "index", "other", "NOCONTENT"}), kNoResults);
+   return doc;
  }
- 
- TEST_F(SearchFamilyTest, SortStoreDoesNotUpdateIndexesBug) {
-@@ -5475,6 +5501,7 @@ TEST_F(SearchFamilyTest, SortStoreDoesNotUpdateIndexesBug) {
-   EXPECT_THAT(Run({"RPUSH", "lst", "b", "a"}), IntArg(2));
-   // SORT lst STORE k1 -> changes type of k1 from HASH to LIST
-   Run({"SORT", "lst", "ALPHA", "STORE", "k1"});
-+  EXPECT_THAT(Run({"FT.SEARCH", "index", "value", "NOCONTENT"}), kNoResults);
- 
-   // Rename away and recreate k1 as HASH again
-   EXPECT_EQ(Run({"RENAME", "k1", "anotherkey"}), "OK");
-@@ -6210,6 +6237,7 @@ TEST_F(SearchFamilyTest, ZsetStoreCommandsOverwriteIndexedHash) {
-   EXPECT_THAT(Run({"HSET", "dest", "field", "value"}), IntArg(1));
-   EXPECT_THAT(Run({"ZUNIONSTORE", "dest", "2", "zset1", "zset2"}), IntArg(3));
-   EXPECT_EQ(Run({"RENAME", "dest", "y"}), "OK");
-+  EXPECT_THAT(Run({"FT.SEARCH", "idx", "value", "NOCONTENT"}), kNoResults);
- }
- 
- TEST_F(SearchFamilyTest, SetStoreCommandsOverwriteIndexedHash) {
-@@ -6231,6 +6259,7 @@ TEST_F(SearchFamilyTest, SetStoreCommandsOverwriteIndexedHash) {
-   EXPECT_THAT(Run({"HSET", "dest", "field", "value"}), IntArg(1));
-   EXPECT_THAT(Run({"SDIFFSTORE", "dest", "set1", "set2"}), IntArg(1));
-   EXPECT_EQ(Run({"RENAME", "dest", "z"}), "OK");
-+  EXPECT_THAT(Run({"FT.SEARCH", "idx", "value", "NOCONTENT"}), kNoResults);
- }
- 
- TEST_F(SearchFamilyTest, HsetOnDifferentDatabasesCrash) {
-```
-
-**File**: `src/server/set_family.cc` (modified, +2/-4)
-```diff
-@@ -538,10 +538,7 @@ OpResult<uint32_t> OpAdd(const OpArgs& op_args, std::string_view key, const NewE
-   }
- 
-   if (add_res.is_new || overwrite) {
--    // If we're overwriting an existing key (not a new one), we need to remove it from
--    // search indexes first. This prevents crashes when the key is indexed (e.g., HASH or JSON).
-     if (!add_res.is_new && overwrite) {
--      RemoveKeyFromIndexesIfNeeded(key, op_args.db_cntx, co, op_args.shard);
-       // Account for the old value's memory under its original type before destroying it,
-       // since InitSet will free the old value and change the type.
-       add_res.post_updater.ReduceHeapUsage();
-@@ -554,9 +551,10 @@ OpResult<uint32_t> OpAdd(const OpArgs& op_args, std::string_view key, const NewE
-       // inside InitSet is reported to the client as OOM and must leave the value readable.
-       PrimeValue replacement;
-       InitSet(vals, &replacement);
--      db_slice.ReleaseOffloadedValue(op_args.db_cntx.db_index, key, &co);
-+      db_slice.PrepareOverwrite(op_args.db_cntx, key, &co);
-       co = std::move(replacement);
-     } else {
-+      db_slice.PrepareOverwrite(op_args.db_cntx, key, &co);
-       InitSet(vals, &co);
+@@ -1223,8 +1212,6 @@ SearchResult ShardDocIndex::Search(const OpArgs& op_args, const SearchParams& pa
+       // trim the rest to avoid out-of-bounds access on sort_scores in the loop below.
+       if (!sort_scores.empty())
+         result.ids.resize(sort_scores.size());
+-      if (params.ShouldReturnAllFields())
+-        return_fields.push_back(so.field);
      }
    }
+ 
+@@ -1317,10 +1304,14 @@ SearchResult ShardDocIndex::Search(const OpArgs& op_args, const SearchParams& pa
+     // Load all specified fields from document
+     SearchDocData fields{};
+     if (params.ShouldReturnAllFields())
+-      fields = accessor->SerializeAll(field_types_);
++      fields = accessor->SerializeAll();
+ 
+     auto more_fields = accessor->Serialize(listed_fields);
+     fields.insert(make_move_iterator(more_fields.begin()), make_move_iterator(more_fields.end()));
++
++    // A whole document may lack the sort alias (JSON has only `$`); add the value it sorted by.
++    if (params.ShouldReturnAllFields() && !holds_alternative<monostate>(sort_score))
++      fields.try_emplace(params.sort_option->field.OutputName(), sort_score);
+     out.push_back(
+         {result.ids[i], string{key}, std::move(fields), knn_score, text_score, sort_score});
+   }
+@@ -1462,8 +1453,11 @@ vector<SearchDocData> ShardDocIndex::LoadDocEntriesWithScores(
+ 
+     SearchDocData extracted_sort_indicies;
+     extracted_sort_indicies.reserve(sort_indicies.size());
+-    for (const auto& [alias, output] : sort_indicies)
+-      extracted_sort_indicies[output] = indices_->GetSortIndexValue(doc, alias);
++    for (const auto& [alias, output] : sort_indicies) {
++      auto value = indices_->GetSortIndexValue(doc, alias);
++      if (!holds_alternative<monostate>(val
+```
+
+**File**: `src/server/search/doc_index.h` (modified, +2/-17)
+```diff
+@@ -152,21 +152,6 @@ std::vector<DocField> ResolveFields(const search::Schema& schema,
+ std::optional<std::vector<DocField>> ResolveFields(
+     const search::Schema& schema, const std::optional<std::vector<FieldReference>>& fields);
+ 
+-// Types of document fields by identifier for whole-document replies, decided as by
+-// Schema::FindByIdentifier. Views the schema it was built from, which has to outlive it.
+-class DocFieldTypes {
+- public:
+-  explicit DocFieldTypes(const search::Schema& schema);
+-
+-  search::SchemaField::FieldType Of(std::string_view identifier) const;  // TEXT when unknown
+-
+-  size_t GetNonPmrMemoryUsage() const;
+-
+- private:
+-  // The attribute standing for each document field.
+-  absl::flat_hash_map<std::string_view, const search::SchemaField*> fields_;
+-};
+-
+ enum class SortOrder { ASC, DESC };
+ 
+ // SORTBY order shared by the shards and the coordinator: docs with a value first, then by value and
+@@ -190,6 +175,7 @@ struct SearchParams {
+   size_t limit_total = 10;
+ 
+   bool with_sortkeys = false;
++  bool with_payloads = false;
+ 
+   /*
+   1. If not set -> return all fields
+@@ -577,7 +563,7 @@ class ShardDocIndex {
+   using SerializedEntryWithKey = std::optional<SerializedDoc>;
+   SerializedEntryWithKey SerializeDocWithKey(search::DocId id, const OpArgs& op_args,
+                                              const std::optional<std::vector<DocField>>& fields,
+-                                             const DocField* sort_field = nullptr);
++                                             const FieldReference* sort_field = nullptr);
+ 
+   search::DefragmentResult Defragment(PageUsage* page_usage) {
+     if (indices_) {
+@@ -680,7 +666,6 @@ class ShardDocIndex {
+ 
+  private:
+   std::shared_ptr<const DocIndex> base_;
+-  DocFieldTypes field_types_;  // derived from base_->schema
+ 
+   // Declared before index resources so its destructor releases the resident gate last.
+   HashIndexLifetime hash_index_lifetime_;
+```
+
+**File**: `src/server/search/filter_eval.cc` (modified, +2/-2)
+```diff
+@@ -92,9 +92,9 @@ Value EvalArith(ArithOp op, const Value& lhs, const Value& rhs) {
+     case ArithOp::MUL:
+       return l * r;
+     case ArithOp::DIV:
+-      return r != 0.0 ? Value{l / r} : Value{};
++      return l / r;
+     case ArithOp::MOD:
+-      return r != 0.0 ? Value{std::fmod(l, r)} : Value{};
++      return std::fmod(l, r);
+     case ArithOp::POW:
+       return std::pow(l, r);
+   }
+```
+
+**File**: `src/server/search/filter_expr_test.cc` (modified, +8/-3)
+```diff
+@@ -264,8 +264,13 @@ TEST(FilterExprTest, UnaryMinus) {
+ 
+ TEST(FilterExprTest, DivisionByZero) {
+   DocValues doc{{"val", 1.0}};
+-  // Division by zero -> monostate -> falsy
++
++  // Division by zero follows IEEE 754: inf, -inf or nan.
+   EXPECT_FALSE(EvalBool("@val / 0 == 1", doc));
++  EXPECT_EQ(Eval("@val / 0", doc), Value{std::numeric_limits<double>::infinity()});
++  EXPECT_EQ(Eval("0 - @val / 0", doc), Value{-std::numeric_limits<double>::infinity()});
++  const Value mod = Eval("@val % 0", doc);
++  EXPECT_TRUE(std::holds_alternative<double>(mod) && std::isnan(std::get<double>(mod)));
+ }
+ 
+ TEST(FilterExprTest, NaNBehavior) {
+@@ -774,12 +779,12 @@ TEST(FilterExprTest, ReducerMaxSkipsNull) {
+ }
+ 
+ TEST(FilterExprTest, ReducerMinAllNull) {
+-  // All values null -> MIN returns null (monostate).
++  // All values null -> MIN returns inf.
+   std::vector<DocValues> values = {DocValues{}, DocValues{}};
+   auto step = MakeGroupStep({}, {Reducer{"val", "r", FindReducerFunc(ReducerFunc::MIN)}});
+   auto result = Process(std::move(values), {"r"}, {step});
+   ASSERT_EQ(result.values.size(), 1);
+-  EXPECT_EQ(result.values[0].at("r"), Value{});
++  EXPECT_EQ(result.values[0].at("r"), Value{std::numeric_limits<double>::infinity()});
+ }
+ 
+ TEST(FilterExprTest, ReducerMinMaxSkipNaN) {
+```
+
+**File**: `src/server/search/search_family.cc` (modified, +33/-18)
+```diff
+@@ -715,6 +715,8 @@ ParseResult<SearchParams> ParseSearchParams(CmdArgParser* parser) {
+         return CreateSyntaxError("bad arguments for FILTER: empty field name"sv);
+     } else if (parser->Check("WITHSORTKEYS")) {
+       params.with_sortkeys = true;
++    } else if (parser->Check("WITHPAYLOADS")) {
++      params.with_payloads = true;
+     } else if (parser->Check("WITHSCORES")) {
+       params.with_scores = true;
+     } else if (parser->Check("SCORER")) {
+@@ -1300,10 +1302,24 @@ std::vector<aggregate::DocValues> MergeJoinedKeysWithData(
+   return merged_data;
+ }
+ 
++// Numbers in fields and rows: integers without a fraction, others with 12 significant digits.
++string FormatNumber(double d) {
++  // The sign of a nan depends on the CPU: x86 makes 0/0 negative.
++  if (std::isnan(d))
++    return "nan";
++  if (d >= -0x1p63 && d < 0x1p63 && std::trunc(d) == d)
++    return absl::StrCat(static_cast<int64_t>(d));
++  return absl::StrFormat("%.12g", d);
++}
++
+ auto SortableValueSender(RedisReplyBuilder* rb) {
+   return Overloaded{
+       [rb](monostate) { rb->SendNull(); },
+-      [rb](double d) { rb->SendDouble(d); },
++      [rb](double d) {
++        // Short enough to be copied inline, so it may die before a reply scope ends.
++        const string number = FormatNumber(d);
++        rb->SendBulkString(string_view{number});
++      },
+       [rb](const string& s) { rb->SendBulkString(s); },
+   };
+ }
+@@ -1417,8 +1433,8 @@ void SearchReply(const SearchParams& params,
+ 
+   const bool reply_with_ids_only = params.IdsOnly();
+   auto* rb = static_cast<RedisReplyBuilder*>(builder);
+-  const size_t items_per_field =
+-      (reply_with_ids_only ? 1 : 2) + params.with_sortkeys + params.with_scores;
++  const size_t items_per_field = (reply_with_ids_only ? 1 : 2) + params.with_sortkeys +
++                                 params.with_scores + params.with_payloads;
+   // Batch the reply so temporary sortkeys are copied into the batching buffer instead of referenced
+   // past their lifetime — a >kMaxInlineSize bulk string enqueued by reference under a reply scope
+   // is copied only when the scope ends, after the "$" + s temporary is gone (use-after-free).
+@@ -1427,7 +1443,7 @@ void SearchReply(const SearchParams& params,
+ 
+   Overloaded sortable_value_sender{
+       [rb](monostate) { rb->SendNull(); },
+-      [rb](double d) { rb->SendBulkString(absl::StrCat("#", d)); },
++      [rb](double d) { rb->SendBulkString(absl::StrFormat("#%.17g", d)); },
+       [rb](const string& s) { rb->SendBulkString(absl::StrCat("$", s)); },
+   };
+ 
+@@ -1437,6 +1453,8 @@ void SearchReply(const SearchParams& params,
+     if (params.with_scores) {
+       rb->SendBulkString(absl::StrCat(docs[i]->text_score));
+     }
++    if (params.with_payloads)  // Documents have no payloads.
++      rb->SendNull();
+     if (params.with_sortkeys) {
+       visit(sortable_value_sender, docs[i]->sort_score);
+     }
+@@ -1468,13 +1486,12 @@ struct HnswSearchOptions {
+   const SearchParams& params;
+ };
+ 
+-// SORTBY by anything but the KNN score needs the sort value loaded from the document.
+-std::optional<DocField> HnswSortField(
+-    const search::Schema& schema, const SearchParams& params,
+-    const std::optional<search::KnnScoreSortOption>& knn_score_option) {
++// SORTBY by anything but the KNN score needs the sort value of each document.
++const FieldReference* HnswSortField(
++    const SearchParams& params, const std::optional<search::KnnScoreSortOption>& knn_score_option) {
+   if (!params.sort_option || (knn_score_option && params.sort_option->IsSame(*knn_score_option)))
+-    return std::nullopt;
+-  return ResolveField(schema, params.sort_option->field);
++    return nullptr;
++  return &params.sort_option->field;
+ }
+ 
+ HnswSearchResult LoadHnswSearchDocs(const HnswSearchOptions& options,
+@@ -1512,8 +1529,7 @@ HnswSearchResult LoadHnswSearchDocs(const HnswSearchOptions& options,
+     }
+ 
+     const auto& schema = index->base().schema;
+-    const std::optional<DocField> sort_field =
+-        HnswSortField(schema, options.params, options.score_sort);
++    const FieldReference* sort_field = HnswSortField(options.params, options.score_sort);
+     const bool ids_only_without_sort_load = options.params.IdsOnly() && !sort_field;
+ 
+     // Resize shard with default `true` value
+@@ -1533,8 +1549,8 @@ HnswSearchResult LoadHnswSearchDocs(const HnswSearchOptions& options,
+         continue;
+       }
+ 
+-      if (auto doc = index->SerializeDocWithKey(shard_doc.id, t->GetOpArgs(es), doc_fields,
+-                                                sort_field ? &*sort_field : nullptr);
++      if (auto doc =
++              index->SerializeDocWithKey(shard_doc.id, t->GetOpArgs(es), doc_fields, sort_field);
+           doc) {
+         shard_doc.key = std::string{doc->key};
+         shard_doc.values = std::move(doc->values);
+@@ -1709,11 +1725,10 @@ HnswSearchResult SearchGlobalHnswIndexRange(const search::AstVectorRangeNode* ra
+       return OpStatus::OK;
+     const auto& schema = idx->base().s
 ```
 
 ---
 
-### Incident Patch 3: `2da27798` (2026-11-16)
-**Commit Message**: fix(search): enforce ACL key patterns on FT.* commands (#8815)
-
-FT.* commands declare no key positions, so ACL key patterns never applied to them: a user limited
-to ~tenant_a:* could query any index and drop or change indexes over other tenants' keys.
-
-- Each index PREFIX must be covered by a single key pattern, one that matches every key starting
-  with that prefix. Queries need the pattern to grant read; changes (CREATE, ALTER, DROPINDEX,
-  SYNUPDATE, ALIASADD/UPDATE/DEL) need read and write. An index without PREFIX holds every key, so
-  only allkeys covers it.
-- DDL is checked before its first hop, so a denied change is never journaled. Queries check the
-  canonical index their hop reads; TAGVALS and SYNDUMP check the index each shard read in the hop.
-  Scripts use the rules from their start, and a user limited to a database other than 0 is denied.
-- Denials reply NOPERM and are recorded in ACL LOG.
-- Categories: @read on the query commands, @dangerous on DROPINDEX, TAGVALS and _DEBUG, @admin
-  on _LIST and _DEBUG.
+### Incident Patch 3: `45a890be` (2026-11-18)
+**Commit Message**: fix(core): pack JsonConsT as a type to remove a misaligned member call (#8834)
 
 Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
-**File**: `src/core/glob_matcher.cc` (modified, +8/-1)
+**File**: `src/core/compact_object.h` (modified, +3/-2)
 ```diff
-@@ -89,7 +89,7 @@ template <bool kCaseSensitive> bool MatchClass(string_view* pattern, char c) {
-   return match != negate;
- }
+@@ -570,12 +570,13 @@ class CompactObj {
+     std::string_view view() const;
+   } __attribute__((packed));
  
--// Consumes the non-'*' token at the front, matched or not: the caller resets pattern on mismatch.
-+// Consumes the token at the front, matched or not: MatchGlobImpl resets pattern on mismatch.
- template <bool kCaseSensitive> bool MatchToken(string_view* pattern, char c) {
-   DCHECK(!pattern->empty());
-   char token = pattern->front();
-@@ -161,6 +161,13 @@ bool GlobMatcher::MatchGlob(string_view pattern, string_view str, bool case_sens
-   return case_sensitive ? MatchGlobImpl<true>(pattern, str) : MatchGlobImpl<false>(pattern, str);
- }
++  // Pack the type so member functions accept the unaligned storage in CompactObj.
+   struct JsonConsT {
+     JsonType* json_ptr;
+     size_t bytes_used;
  
-+bool GlobMatcher::MatchesAllWithPrefix(string_view pattern, string_view prefix) {
-+  bool ends_with_star = false;  // only a real '*': escaped or in a class it matches one byte
-+  for (string_view rest = pattern; !rest.empty(); MatchToken<true>(&rest, '\0'))
-+    ends_with_star = rest.front() == '*';
-+  return ends_with_star && MatchGlob(pattern, prefix, true);
-+}
-+
- string GlobMatcher::Glob2Regex(string_view glob) {
-   string regex;
-   regex.reserve(glob.size());
-```
-
-**File**: `src/core/glob_matcher.h` (modified, +3/-0)
-```diff
-@@ -41,6 +41,9 @@ class GlobMatcher {
-   // Stateless matcher behind Matches(): iterative, no allocation. Exposed for tests and benchmarks.
-   static bool MatchGlob(std::string_view pattern, std::string_view str, bool case_sensitive);
+     bool DefragIfNeeded(PageUsage* page_usage);
+-  };
++  } __attribute__((packed));
  
-+  // Whether every string that starts with prefix matches; needs a pattern that ends with a '*'.
-+  static bool MatchesAllWithPrefix(std::string_view pattern, std::string_view prefix);
-+
-  private:
-   // TODO: we fix the problem of MatchGlob being much
-   // faster when the result is immediately known to be false, for example: "a*" vs "bxxxxx".
-```
-
-**File**: `src/server/acl/validator.cc` (modified, +27/-11)
-```diff
-@@ -140,11 +140,12 @@ KeyPermissions RequiredKeyPermissions(const CommandId& id, const ParsedArgs& tai
- }
+   // Union of different representations
+   union U {
+@@ -584,9 +585,9 @@ class CompactObj {
+     SmallString small_str;
+     detail::RobjWrapper r_obj;
+     detail::LargeString large_str;
++    JsonConsT json_obj;
  
- // Like Valkey, a single pattern must grant every permission the key needs.
--bool IsKeyAllowed(const AclKeys& keys, string_view key, KeyPermissions perms) {
-+bool IsKeyAllowed(const AclKeys& keys, string_view key, KeyPermissions perms, bool prefix = false) {
-   return absl::c_any_of(keys.key_globs, [&](const GlobType& glob) {
-     const auto& [pattern, op] = glob;
-     const bool grants = (!perms.read || op != KeyOp::WRITE) && (!perms.write || op != KeyOp::READ);
--    return grants && Matches(pattern, key);
-+    return grants &&
-+           (prefix ? GlobMatcher::MatchesAllWithPrefix(pattern, key) : Matches(pattern, key));
-   });
- }
- 
-@@ -194,6 +195,14 @@ bool AreKeysAllowed(const AclKeys& keys, const CommandId& id, const ParsedArgs&
-   return true;
- }
- 
-+// While a script runs, its calls are checked against the rules in effect when it started.
-+AclRulesView RulesOf(const ConnectionContext& cntx) {
-+  const auto* sinfo = cntx.conn_state.script_info.get();
-+  return sinfo ? AclRulesView{sinfo->acl_commands, sinfo->acl_keys, sinfo->acl_pub_sub,
-+                              sinfo->acl_db_idx}
-+               : AclRulesView{cntx.acl_commands, cntx.keys, cntx.pub_sub, cntx.acl_db_idx};
-+}
-+
- }  // namespace
- 
- std::optional<AclLog::Reason> CheckCommand(const AclRulesView& rules, size_t db_index,
-@@ -223,20 +232,27 @@ bool IsUserAllowedToInvokeCommand(const ConnectionContext& cntx, const CommandId
-   if (id.IsAlias())
-     return false;
- 
--  // While a script is running, redis.call() must be checked against the
--  // ACL rules that were in effect when the script started.
--  const auto* sinfo = cntx.conn_state.script_info.get();
--  const AclRulesView rules =
--      sinfo ? AclRulesView{sinfo->acl_commands, sinfo->acl_keys, sinfo->acl_pub_sub,
--                           sinfo->acl_db_idx}
--            : AclRulesView{cntx.acl_commands, cntx.keys, cntx.pub_sub, cntx.acl_db_idx};
--
--  const auto denial = CheckCommand(rules, cntx.db_index(), id, tail_args);
-+  const auto denial = CheckCommand(RulesOf(cntx), cntx.db_index(), id, tail_args);
-   if (!denial)
-     return true;
- 
-   ServerState::tlocal()->acl_log.Add(cntx, std::string(id.AclTarget(tail_args).first), *denial);
-   return false;
- }
- 
-+bool ArePrefixesAllowed(const ConnectionContext& cntx, absl::Span<const std::string> prefixes,
-+                        KeyOp op) {
-+  if (cntx.skip_acl_validation)
-+    return true;
-+
-+  const AclRulesView rules = RulesOf(cntx);
-+  if (rules.db != kAllDbs && rules.db != 0)
-+    return false;
-+  if (rules.keys.all_keys)
-+    return true;
-+  return !prefixes.empty() && absl::c_all_of(prefixes, [&](const std::string& prefix) {
-+    return IsKeyAllowed(rules.keys, prefix, {op != KeyOp::WRITE, op != KeyOp::READ}, true);
-+  });
-+}
-+
- }  // namespace dfly::acl
-```
-
-**File**: `src/server/acl/validator.h` (modified, +7/-0)
-```diff
-@@ -4,9 +4,12 @@
- 
- #pragma once
- 
-+#include <absl/types/span.h>
-+
- #include <cstddef>
- #include <cstdint>
- #include <optional>
-+#include <string>
- #include <vector>
- 
- #include "facade/facade_types.h"
-@@ -40,5 +43,9 @@ std::optional<AclLog::Reason> CheckCommand(const AclRulesView& rules, size_t db_
- [[nodiscard]] bool IsUserAllowedToInvokeCommand(const ConnectionContext& cntx, const CommandId& id,
-                                                 const facade::ParsedArgs& tail_args);
- 
-+// Whether the same rules allow op on every key of database 0 under prefixes; "" or none: all keys.
-+[[nodiscard]] bool ArePrefixesAllowed(const ConnectionContext& cntx,
-+                                      absl::Span<const std::string> prefixes, KeyOp op);
-+
- }  // namespace acl
- }  // namespace dfly
-```
-
-**File**: `src/server/search/search_family.cc` (modified, +110/-13)
-```diff
-@@ -5,6 +5,7 @@
- #include "server/search/search_family.h"
- 
- #include <absl/container/flat_hash_map.h>
-+#include <absl/container/inlined_vector.h>
- #include <absl/flags/flag.h>
- #include <absl/functional/function_ref.h>
- #include <absl/strings/match.h>
-@@ -34,6 +35,7 @@
- #include "facade/error.h"
- #include "facade/reply_builder.h"
- #include "server/acl/acl_commands_def.h"
-+#include "server/acl/validator.h"
- #include "server/cluster/coordinator.h"
- #include "server/command_registry.h"
- #include "server/config_registry.h"
-@@ -66,6 +68,9 @@ ABSL_FLAG(size_t, subset_knn_search_threshold, 8192,
-           "instead of HNSW graph search");
- 
- namespace dfly {
-+namespace acl {
-+constexpr uint32_t kFtDangerous = FT_SEARCH | DANGEROUS;
-+}  // namespace acl
- 
- using namespace std;
- using namespace facade;
-@@ -132,6 +137,53 @@ std::vector<std::string> ResolveIndexNames(absl::Span<const string_view> request
-   return canonical_names;
- }
- 
-+// Replies NOPERM unless the ACL rules allow op on every key under prefixes; none: all keys.
-+bool CheckPrefixAccess(absl::Span<const string> prefixes, acl::KeyOp op, CommandContext* cmd_cntx) {
-+  const ConnectionContext& cntx = *cmd_cntx->server_conn_cntx();
-+  if (acl::ArePrefixesAllowed(cntx, prefixes, op))
-+    return true;
-+
-+  ServerState::tlocal()->acl_log.Add(cntx, string{cmd_cntx->cid()->name()},
-+                                     acl::AclLog::Reason::KEY);
-+  cmd_cntx->SendError("-NOPERM User does not have the required permissions to query the index",
-+                      "NOPERM");
-+  return false;
-+}
-+
-+// Call before the first hop, which journals even failed DDL; unknown names fail or set *missing.
-+bool CheckIndexAccess(absl::Span<const string_view> names, acl::KeyOp op, CommandContext* cmd_cntx,
-+                      string_view not_found = {}, bool* missing = nullptr) {
-+  if (acl::ArePrefixesAllowed(*cmd_cntx->server_conn_cntx(), {}, op))
-+    return true;
-+
-+  absl::InlinedVector<string, 2> prefixes;  // "" for an index without PREFIX, which holds every key
-+  optional<string_view> unknown;            // the first name that resolves to no index
-+  auto resolve = [&] {
-+    auto* indices = EngineShard::tlocal()->search_indices();
-+    for (string_view name : names) {
-+      const ShardDocIndex* index = indices->ResolveIndex(name);
-+      if (index == nullptr)
-+        unknown = unknown.value_or(name);
-+      else if (const auto& p = index->base().prefixes; p.empty())
-+        prefixes.emplace_back();
-+      else
-+        prefixes.insert(prefixes.end(), p.begin(), p.end());
-+    }
-+  };
-+  if (EngineShard::tlocal())
-+    resolve();
-+  else
-+    shard_set->Await(0, resolve);
-+
-+  if (unknown && !missing) {
-+    cmd_cntx->SendError(not_found.empty() ? IndexNotFoundMsg(*unknown) : string{not_found});
-+    return false;
-+  }
-+  if (missing)
-+    *missing = unknown.has_value();
-+  return (missing && unknown && prefixes.empty()) || CheckPrefixAccess(prefixes, op, cmd_cntx);
-+}
-+
- // Send error from parser or result
- // Returns false if no errors occured
- template <typename T>
-@@ -2406,6 +2458,8 @@ bool RunHybridSearch(string_view index_name, HybridSearchParams* params, Command
-   apply_return_fields(text_sp);
- 
-   const std::string resolved_name = ResolveIndexName(index_name);
-+  if (!CheckIndexAccess({resolved_name}, acl::KeyOp::READ, cmd_cntx))
-+    return false;
- 
-   const bool use_hnsw =
-       GlobalHnswIndexRegistry::Instance().Exist(resolved_name, params->vsim_field);
-@@ -2686,6 +2740,9 @@ void RenderShardProfileTree(RedisReplyBuilder* rb, const SearchResult& shard_res
-   RenderProfileEvent(rb, shard_result.profile->events, 0, limited);
- }
- 
-+constexpr string_view kUnknownIndexMsg = "Unknown index name or name is alias";
-+constexpr string_view kNoAliasMsg = "Alias does not exist";
-+
- void RunAliasCommand(CommandContext* cmd_cntx, string_view command, string_view alias,
-                      ArgSlice journal_args, absl::FunctionRef<OpStatus(ShardDocIndices*)> mutate) {
-   using enum OpStatus;
-@@ -2714,8 +2771,7 @@ void RunAliasCommand(CommandContext* cmd_cntx, string_view command, string_view
-     case KEY_EXISTS:
-       return cmd_cntx->SendError("Alias already exists");
-     case KEY_NOTFOUND:
--      return cmd_cntx->SendError(command == "FT.ALIASDEL" ? "Alias does not exist"
--                                                          : "Unknown index name or name is alias");
-+      return cmd_cntx->SendError(command == "FT.ALIASDEL" ? kNoAliasMsg : kUnknownIndexMsg);
-     case INVALID_VALUE:
-       return cmd_cntx->SendError("Alias name conflicts with an existing index");
-     default:
-@@ -2726,19 +2782,28 @@ void RunAliasCommand(CommandContext* cmd_cntx, string_view command, string_view
- void CmdFtAliasAdd(CmdArgParser parser, CommandContext* cmd_cntx) {
-   string_view alias = parser.Next();
-   string_view target = parser.Next();
-+  if (!CheckIndexAccess({target}, acl::KeyOp::READ_WRITE, cmd_cntx, kUnknownIndexMsg))
-+    return;
-   RunAliasCommand(cmd_cntx, "
-```
-
-**File**: `src/server/search/search_family_test.cc` (modified, +104/-0)
-```diff
-@@ -229,6 +229,16 @@ class SearchFamilyTest : public BaseFamilyTest {
-   }
- 
-   void CheckGluedWordCommands();
-+
-+  // Logs in on a connection named by the rules; unlike test connections, it checks them.
-+  string_view Login(string_view rules) {
-+    EXPECT_EQ(Run(absl::StrCat("ACL SETUSER u on >MKPASS1 resetkeys +@all ", rules)), "OK");
-+    EXPECT_EQ(Run(rules, {"AUTH", "u", "MKPASS1"}), "OK");
-+    pp_->at(0)->Await([&] {
-+      static_cast<ConnectionContext*>(GetConnection(rules)->cntx())->skip_acl_validation = false;
-+    });
-+    return rules;
-+  }
- };
- 
- const auto kNoResults = RespElementsAre(IntArg(0));
-@@ -762,6 +772,100 @@ TEST_F(SearchFamilyTest, InfoMissingIndexUsesRedisCompatibleError) {
-   EXPECT_THAT(Run({"FT.INFO", "missing-index"}), ErrArg("missing-index: no such index"));
- }
- 
-+// A tenant reads indexes of keys it may read and changes only indexes of keys it may also write.
-+TEST_F(SearchFamilyTest, AclKeyPatternsLimitIndexAccess) {
-+  const string schema = " SCHEMA k TAG v VECTOR HNSW 6 TYPE FLOAT32 DIM 1 DISTANCE_METRIC L2";
-+  for (string_view t : {"a PREFIX 1 tenant_a:", "b PREFIX 2 tenant_a: tenant_b:", "all"})
-+    ASSERT_EQ(Run(absl::StrCat("FT.CREATE ", t, schema)), "OK");
-+  ASSERT_EQ(Run("FT.ALIASADD b_live b"), "OK");
-+  Run({"HSET", "tenant_c:1", "k", "MKSECRET1"});
-+
-+  const string_view tenant = Login("~tenant_a:* %R~tenant_b:* $0");  // reads tenant_b's keys
-+  auto expect = [&](const vector<vector<string_view>>& cmds, const auto& reply) {
-+    for (const auto& cmd : cmds)
-+      EXPECT_THAT(Run(tenant, cmd), reply) << cmd[0] << " " << cmd[1];
-+  };
-+
-+  auto queries = [vec = FloatVec1(1)](string_view idx) -> vector<vector<string_view>> {
-+    return {{"FT.SEARCH", idx, "*"},
-+            {"FT.AGGREGATE", idx, "*"},
-+            {"FT.AGGREGATE", "a", "*", "LOAD_FROM", idx, "AS", "j", "1", "j.k=a.k"},
-+            {"FT.PROFILE", idx, "SEARCH", "QUERY", "*"},
-+            {"FT.HYBRID", idx, "SEARCH", "*", "VSIM", "@v", "$q", "PARAMS", "2", "q", vec},
-+            {"FT.INFO", idx},
-+            {"FT.TAGVALS", idx, "k"},
-+            {"FT.SYNDUMP", idx}};
-+  };
-+  expect(queries("b_live"), Not(ArgType(RespExpr::ERROR)));
-+  auto denied = ErrArg("NOPERM User does not have the required permissions to query the index");
-+  expect(queries("all"), denied);  // all has no PREFIX, so it holds every key
-+  EXPECT_THAT(Run("ACL LOG 1"), RespElementsAre(RespArray(IsSupersetOf({"KEY", "FT.SYNDUMP"}))));
-+  expect(queries("c"), ErrArg("c: no such index"));
-+  expect({{"FT.TAGVALS", "all", "v"}}, denied);  // a field error would reveal a foreign schema
-+
-+  // The check runs when the command executes, also inside a transaction and a script.
-+  Run(tenant, {"MULTI"});
-+  Run(tenant, {"FT.SEARCH", "all", "*"});
-+  EXPECT_THAT(Run(tenant, {"EXEC"}), RespElementsAre(denied));
-+  const auto* script = "--!df flags=disable-atomicity\nreturn redis.pcall('FT.SEARCH', 'all', '*')";
-+  EXPECT_THAT(Run(tenant, {"EVAL", script, "0"}), denied);
-+
-+  expect({{"FT.ALIASUPDATE", "a_live", "a"},
-+          {"FT.SYNUPDATE", "a", "g", "x"},
-+          {"FT.ALTER", "a", "SCHEMA", "ADD", "n", "NUMERIC"},
-+          {"FT.ALIASADD", "x", "a"},
-+          {"FT.ALIASDEL", "x"},
-+          {"FT.CREATE", "a2", "PREFIX", "1", "tenant_a:", "SCHEMA", "k", "TAG"},
-+          {"FT.ALIASUPDATE", "a_live", "a2"},
-+          {"FT.DROPINDEX", "a"}},
-+         "OK");
-+
-+  // A denied change or an unknown index schedules no transaction, so nothing reaches the journal.
-+  const uint64_t txs = GetMetrics().coordinator_stats.tx_global_cnt;
-+  expect({{"FT.CREATE", "x", "PREFIX", "2", "tenant_a:", "tenant_b:", "SCHEMA", "k", "TAG"},
-+          {"FT.ALTER", "b", "SCHEMA", "ADD", "n", "NUMERIC"},
-+          {"FT.SYNUPDATE", "b", "g", "x"},
-+          {"FT.ALIASADD", "x", "b"},
-+          {"FT.ALIASUPDATE", "a_live", "b"},
-+          {"FT.ALIASUPDATE", "b_live", "a2"},
-+          {"FT.ALIASDEL", "b_live"},
-+          {"FT.DROPINDEX", "b"}},
-+         denied);
-+  expect({{"FT.DROPINDEX", "c"}}, ErrArg("c: no such index"));
-+  EXPECT_EQ(GetMetrics().coordinator_stats.tx_global_cnt, txs);
-+
-+  // One hop may see an alias moved or deleted on one shard but not yet on another.
-+  pp_->at(1)->Await([] { EngineShard::tlocal()->search_indices()->UpdateAlias("b_live", "all"); });
-+  expect({{"FT.TAGVALS", "b_live", "k"}, {"FT.SYNDUMP", "b_live"}, {"FT.INFO", "b_live"}}, denied);
-+  pp_->at(1)->Await([] { EngineShard::tlocal()->search_indices()->DeleteAlias("b_live"); });
-+  expect({{"FT.SYNDUMP", "b_live"}}, Not(ArgType(RespExpr::ERROR)));
-+  pp_->at(0)->Await([] { EngineShard::tlocal()->search_indices()->UpdateAlias("b_live", "all"); });
-+  expect({{"FT.TAGVALS", "b_live", "k"}, {"FT.SYNDUMP", "b_live"}}, denied);
-+}
-+
-+// Reading an index needs read access to all its keys; changing it, read and write from one pattern.
-+TEST_F(SearchFamilyTest, AclKeyPatternsPermissionKinds) {
-+  ASSERT_EQ(Run("FT.CREATE a PREFIX 1 tenant_a: SCHEMA k TAG"), "OK
+     // using 'packed' to reduce alignment of U to 1.
+-    JsonConsT json_obj __attribute__((packed));
+     SBF* sbf __attribute__((packed));
+     TOPK* topk __attribute__((packed));
+     CMS* cms __attribute__((packed));
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #8822** (2026-11-17): docs: add oah description (@BorysTheDev)
-- **PR #8821** (2026-11-17): fix(search): journal only successful index changes, align FT.* ACL categories (@vyavdoshenko)
-- **PR #8816** (2026-11-17): fix(search): align the HNSW pointer slot and keep a deleted entry point as a link (@vyavdoshenko)
-- **PR #8815** (2026-11-16): fix(search): enforce ACL key patterns on FT.* commands (@vyavdoshenko)
-- **PR #8814** (2026-11-17): fix(search): drop an indexed document before any in-place overwrite (@vyavdoshenko)
-- **PR #8812** (2026-11-13): fix(search): keep a document indexed when HINCRBY fails (@vyavdoshenko)
+- **PR #8834** (2026-11-18): fix(core): pack JsonConsT as a type to remove a misaligned member call (@vyavdoshenko)
+- **PR #8833** (2026-11-18): fix: double call during error processing (@BorysTheDev)
+- **PR #8832** (2026-11-18): refactor: drop noisy error during replication cancel (@BorysTheDev)
+- **PR #8829** (2026-11-18): fix(search): keep stored values and normalize numbers in search replies (@vyavdoshenko)
+- **PR #8825** (closed): fix(search): own the vectors of expiring fields and free borrowed ones only when unread (@vyavdoshenko)
+- **PR #8824** (2026-11-18): fix: crash with premature STARTSTABLE (@BorysTheDev)
 
 ---
 
@@ -3221,37 +2997,45 @@ Signed-off-by: Volodymyr Yavdoshenko <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. search): journal only successful index changes, align FT.* ACL categories
+## X. crash with premature STARTSTABLE
 
 **RULE**:
-When implementing operations in `src/server/command_registry.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/server/dflycmd.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dragonflydb/dragonfly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `515f2d16`: search): journal only successful index changes, align FT.* ACL categories. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `406477f2`: crash with premature STARTSTABLE. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/command_registry.h`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/server/dflycmd.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  // Exactly these ACL categories, without the ones the option mask implies.
-  CommandId&& SetAclCategories(uint32_t mask) && {
-    acl_categories_ = mask;
-    kind_mask_ &= ~IMPLICIT_ACL;
-    return std::move(*this);
-  }
 
+  // A repeated DFLY FLOW must not inherit the partial sync negotiated by an earlier one.
+  flow.start_partial_sync_at.reset();
+  // DFLY SYNC may be skipped only if every flow syncs partially, as only it starts a full sync.
+  SyncState expected =
+      replica_ptr->AllFlowsPartial() ? SyncState::PREPARATION : SyncState::FULL_SYNC;
+  if (!CheckReplicaStateOrReply(*replica_ptr, expected, cmd_cntx))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+  auto repl_state = replica_ptr->GetReplicaState();
+  if (repl_state != SyncState::FULL_SYNC && repl_state != SyncState::PREPARATION) {
+    cmd_cntx->SendError(kInvalidState);
+    return;
+  }
+  // This might happen if a flow abruptly disconnected before sending the SYNC request.
+  if (!replica_ptr->AllFlowsConnected()) {
+    cmd_cntx->SendError(kInvalidState);
+  }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `515f2d16` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `406477f2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

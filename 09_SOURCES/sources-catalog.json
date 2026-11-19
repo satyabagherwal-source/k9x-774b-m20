@@ -75,8 +75,8 @@
     "sourceUrl": "https://huggingface.co/mudler/locate-anything.cpp-gguf",
     "sourceVersion": "hf-mudler-locate-anything.cpp-gguf",
     "license": "Open-Source",
-    "contentHash": "531710f3247700d62e17f75e89647ea35d00481b5f3adb15f7bd7bba27b03c7a",
-    "lastHarvestedAt": "2026-11-14T15:59:43.302Z",
+    "contentHash": "b889c27d8916264c5119328c709082f16a4637df30640009270a02ee76b715ca",
+    "lastHarvestedAt": "2026-11-19T05:47:13.665Z",
     "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf"
   },
   "hf-jialinyyzz-humanizer": {
@@ -6123,10 +6123,10 @@
     "repository": "dragonflydb/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflydb/dragonfly",
-    "sourceVersion": "17d2a726",
+    "sourceVersion": "45a890be",
     "license": "NOASSERTION",
-    "contentHash": "d220e3d8c5aa9c48413e9c682aa9a78d570ef564dfe96a186c38673dd26ac979",
-    "lastHarvestedAt": "2026-11-17T14:41:26.514Z",
+    "contentHash": "0b600998c97f7519d42d4d1b82ff0c1bd0fa9db712f29036a2d278d2e6e36b16",
+    "lastHarvestedAt": "2026-11-19T05:42:27.183Z",
     "learningId": "learn-github-dragonflydb-dragonfly"
   },
   "danielpetho-fancy": {
@@ -6253,10 +6253,10 @@
     "repository": "envoyproxy/envoy",
     "platform": "github",
     "sourceUrl": "https://github.com/envoyproxy/envoy",
-    "sourceVersion": "f96b2a28",
+    "sourceVersion": "6d870913",
     "license": "Apache-2.0",
-    "contentHash": "accba9fc5ac566076bae0967dc11236820c9a7c876d6fc2496a4316376aba384",
-    "lastHarvestedAt": "2026-11-17T16:21:59.879Z",
+    "contentHash": "a66f6eaa3dd3b4e14ac565715bb233fa833facd19ba0550efab04d5cb3bb6058",
+    "lastHarvestedAt": "2026-11-19T05:42:23.067Z",
     "learningId": "learn-github-envoyproxy-envoy"
   },
   "tursodatabase-limbo": {

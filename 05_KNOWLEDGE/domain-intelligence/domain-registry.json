@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T05:24:40.169Z",
+  "last_updated": "2026-11-19T05:47:18.726Z",
   "total_records": 1945,
   "domains": {
     "A": {
@@ -10397,8 +10397,8 @@
       "title": "Technical Construction Intelligence: envoyproxy/envoy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-technical-construction-intelligence-envoyproxy-envoy-core-invar.md",
       "repository": "envoyproxy/envoy",
-      "content_hash": "4213fb8c619a64fe1a8fcb18abd7abe4e53efd26e95da5e112c78997216f3c3d",
-      "created_at": "2026-11-17T16:22:00.175Z"
+      "content_hash": "fccdac557aac28b4e34b326d39367b4064f4b93c953338a76f70bf50d20c8ee3",
+      "created_at": "2026-11-19T05:42:23.428Z"
     },
     "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-langchain4j-langchain4j-core-invariants",
@@ -10517,8 +10517,8 @@
       "title": "Technical Construction Intelligence: envoyproxy-envoy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-envoyproxy-envoy-learnings-technical-construction-intelligence-envoyproxy-envoy-.md",
       "repository": "envoyproxy-envoy-learnings",
-      "content_hash": "878b8b170b92b8a6a389ee013ba722530e07bafa5dbeea422a7d531537f4ade0",
-      "created_at": "2026-11-17T16:22:04.333Z"
+      "content_hash": "c559be1bcb506a40b992fff2247e054f4284202c26d101cc2dc08cf4b2e9fcc4",
+      "created_at": "2026-11-19T05:47:17.835Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-bert-bert-base-uncased-core-invariants",
@@ -16281,8 +16281,8 @@
       "title": "Research & Knowledge Intelligence: mudler/locate-anything.cpp-gguf Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mudler-locate-anything-cpp-gguf-research-knowledge-intelligence-mudler-locate.md",
       "repository": "mudler/locate-anything.cpp-gguf",
-      "content_hash": "f8813e22f2d0e1c8bdae60786c4eb4bef71c61500354611e817a7936f93cf629",
-      "created_at": "2026-11-14T15:59:43.440Z"
+      "content_hash": "f60c86e2dab022fcca75bdd2c5ba50c43f8753a785bb603727359d519a365f67",
+      "created_at": "2026-11-19T05:47:13.871Z"
     },
     "domain_intelligence-content-information-intelligence-zed-industries-zed-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-zed-industries-zed-core-invariants",
@@ -16350,8 +16350,8 @@
       "title": "Research & Knowledge Intelligence: hf-mudler-locate-anything.cpp-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mudler-locate-anything-cpp-gguf-learnings-research-knowledge-intelligence-hf-.md",
       "repository": "hf-mudler-locate-anything.cpp-gguf-learnings",
-      "content_hash": "70628f3a3a02835a6775b9d18e6f97223136fc5ec973784b6d8743e1a75481d4",
-      "created_at": "2026-11-14T16:00:18.012Z"
+      "content_hash": "0ff3693f01f5555341ba4410ebbeb15841f3460604daa6895416c2320d7c291f",
+      "created_at": "2026-11-19T05:47:16.953Z"
     },
     "domain_intelligence-research-knowledge-intelligence-jialinyyzz-humanizer-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-jialinyyzz-humanizer-core-invariants",
@@ -27532,8 +27532,8 @@
       "title": "Search & Distribution Intelligence: dragonflydb/dragonfly Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-dragonflydb-dragonfly-search-distribution-intelligence-dragonflydb-dragonfly-cor.md",
       "repository": "dragonflydb/dragonfly",
-      "content_hash": "a5a21e14b2e37b0a1a95261e1b8047f121b93a6ed0dfdadee70adb24fc9dc2c8",
-      "created_at": "2026-11-17T14:41:26.879Z"
+      "content_hash": "9633f2a0f25846fa6c9c5d969cc7086a481b852a44f92607801578475f8270c6",
+      "created_at": "2026-11-19T05:42:27.551Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-moss-image-learnings-core-invariant": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-moss-image-learnings-core-invariant",
@@ -27550,8 +27550,8 @@
       "title": "Search & Distribution Intelligence: dragonflydb-dragonfly-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-dragonflydb-dragonfly-learnings-search-distribution-intelligence-dragonflydb-dra.md",
       "repository": "dragonflydb-dragonfly-learnings",
-      "content_hash": "b27bf5dd047580460545fc75e8c89dd2b682b1ce1319b017db85e817c6e38585",
-      "created_at": "2026-11-17T14:41:30.595Z"
+      "content_hash": "76fd047fb4842f33eda3177854536776fcb1cba5244aeca3423dadcc0cb7c176",
+      "created_at": "2026-11-19T05:47:18.726Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-z-image-turbo-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-z-image-turbo-core-invariants",

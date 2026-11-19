@@ -4,22 +4,22 @@
 {
   "source_repository": "envoyproxy/envoy",
   "source_url": "https://github.com/envoyproxy/envoy",
-  "source_version": "f96b2a28",
+  "source_version": "6d870913",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T16:22:00.055Z",
+  "timestamp": "2026-11-19T05:42:23.275Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-envoyproxy-envoy",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [envoyproxy/envoy](https://github.com/envoyproxy/envoy) (Revision: `f96b2a28`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T16:22:00.055Z`  
+> **Provenance**: Harvested from [envoyproxy/envoy](https://github.com/envoyproxy/envoy) (Revision: `6d870913`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T05:42:23.275Z`  
 > **Learning ID**: `learn-github-envoyproxy-envoy`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `envoyproxy/envoy` (Commit: `f96b2a28`)
+- **Target Repository**: `envoyproxy/envoy` (Commit: `6d870913`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/envoyproxy/envoy](https://github.com/envoyproxy/envoy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T16:21:58.960Z  
+> **Harvest Timestamp**: 2026-11-19T05:42:21.661Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Cloud-native high-performance edge/middle/service proxy
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 29250 stars
+- **Stars / Engagement**: 29260 stars
 
 ---
 
@@ -1058,953 +1058,419 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8937718c` (2026-11-16)
-**Commit Message**: test: deflake QuicInplaceLdsIntegrationTest drain waits (#49300)
+### Incident Patch 1: `85f81a08` (2026-11-18)
+**Commit Message**: deps/ci: Fix release dates when a module is updated (#49408)
 
+The dependency bot (`ci/dependency/update.sh`) bumps a `bazel_dep` and
+leaves the `release_date` of the dependency in `deps.yaml` as it was.
+The hook that updated it for the WORKSPACE updater went with WORKSPACE
+(#47217), so every bump since has had a stale date (#49388 needed six
+fixed by hand), and now that the release dates check is back (#48705)
+the `deps` precheck of a bump fails on it.
 
-The in-place LDS tests wait for
-`listener_manager.total_filter_chains_draining` to reach 1 and then 0,
-but the gauge only stays up for the 1s drain time. A test thread
-descheduled for longer than that under tsan never sees it rise and burns
-the whole wait. The next QUIC connection then times out its handshake
-straight away, because `QuicConnection` starts its handshake clock from
-the test dispatcher's cached time, which went stale during that wait.
-The tests now wait for `listener_create_success` to count one creation
-per worker per update, which the main thread only does after
-`inPlaceFilterChainUpdate()` has already started the drain, and then for
-the gauge to reach 0.
+This adds `//tools/dependency:release_dates` (`release_date_updater`,
+envoyproxy/toolshed#5626 and envoyproxy/toolshed#5630), which fixes the
+dates in `bazel/deps.yaml` and `api/bazel/deps.yaml` with the ones that
+the checker (`//tools/dependency:check`) looks up:
 
-Additional Description:
-This hit `EnableAndDisableResumption/IPv4` under tsan. It's the same
-timeout as #31183 (`EnableAndDisableEarlyData`) and #33453
-(`ReloadConfigUpdateDefaultFilterChain`), both closed as stale.
-`listener_in_place_updated` alone isn't enough to wait on, since it's
-bumped when the update is accepted, before the new listener warms.
+```console
+$ bazel run //tools/dependency:release_dates -- gperftools
+Checking the release dates of: gperftools
+bazel/deps.yaml: gperftools 2026-03-06 -> 2026-10-21
+```
 
-AI Disclosure: code change created with AI assistance, fully reviewed by
-me prior to opening.
+`deps.update` (the bot's `bazel` task) and `registry` with named modules
+(its `registry` task) now run it for the modules they update. Only those
+are looked up, as each is a request to GitHub, a module can be named as
+the module (`msgpack-c`) where its metadata key differs (`msgpack-cxx`),
+and a module wi
 
-Ris
-
-**File**: `test/integration/quic_http_integration_test.cc` (modified, +19/-21)
+**File**: `ci/README.md` (modified, +1/-1)
 ```diff
-@@ -1417,6 +1417,19 @@ class QuicInplaceLdsIntegrationTest : public QuicHttpIntegrationTest {
-     QuicHttpIntegrationTest::initialize();
-   }
- 
-+  // Waits for the workers to apply `in_place_updates` in place updates and for the filter chains
-+  // they replaced to finish draining. The main thread starts the drain before it counts any worker
-+  // acknowledging the update, so the drain gauge has already risen once the counter reaches the
-+  // target. Waiting for the gauge itself to rise can miss its drain_time_ window.
-+  void waitForInplaceUpdateDrained(uint32_t in_place_updates) {
-+    test_server_->waitForCounter("listener_manager.listener_in_place_updated",
-+                                 Ge(in_place_updates));
-+    const uint32_t listener_creations = 1 + in_place_updates;
-+    test_server_->waitForCounter("listener_manager.listener_create_success",
-+                                 Ge(listener_creations * concurrency_));
-+    test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
-+  }
+@@ -223,7 +223,7 @@ The `./ci/run_envoy_docker.sh './ci/do_ci.sh <TARGET>'` targets are:
+ * `modules.version` &mdash; set the `module()` version, and the `bazel_dep` versions of in-repo modules (`envoy`, `envoy_api`, `envoy-docs`, `envoy_mobile`, `envoy_build_config`), in all `MODULE.bazel` files to match `VERSION.txt`, then regenerate the lockfiles as `lockfiles` does.
+ * `deps` &mdash; validate dependency metadata ordering, reachability, graph structure, the pinned bazel-registry commit, lockfile sync, release dates/releases (requires `GITHUB_TOKEN`), and dependabot configuration.
+ * `deps.report` &mdash; run the per-workspace bzlmod dependency report targets and print the current/latest version status for each workspace.
+-* `deps.update <name[=version]>` &mdash; run the per-workspace bzlmod dependency updater for the requested module, skipping workspaces where that dependency is not declared, then regenerate the lockfiles as `lockfiles` does.
++* `deps.update <name[=version]>` &mdash; run the per-workspace bzlmod dependency updater for the requested module, skipping workspaces where that dependency is not declared, then regenerate the lockfiles as `lockfiles` does, and fix the release date of the module in the dependency metadata (requires `GITHUB_TOKEN`).
+ * `registry` &mdash; run the per-workspace Bazel registry updater targets for `.bazelrc`, `api/.bazelrc`, and `bazel/tests/external/.bazelrc`, then regenerate the lockfiles as `lockfiles` does. Set `ENVOY_REGISTRY_HASH` to request a specific hash, and set `ENVOY_REGISTRY_ALLOW_UNSAFE` to allow non-ancestor pins for testing.
+ * `registry.check` &mdash; run the per-workspace Bazel registry status targets, verify they all report the same pinned hash, and require a tagged registry pin for non-`-dev` releases.
+ * `docs`&mdash; build documentation tree in `generated/docs`.
+```
+
+**File**: `ci/bazel_fun.sh` (modified, +14/-0)
+```diff
+@@ -331,6 +331,16 @@ deps_update() {
+         run_in_nested_mods _deps_update_mod "$dep"
+     done
+     lockfiles_generate
++    deps_release_dates "$@"
++}
 +
-   void makeRequestAndWaitForResponse(IntegrationCodecClient& codec_client) {
-     IntegrationStreamDecoderPtr response =
-         codec_client.makeHeaderOnlyRequest(default_request_headers_);
-@@ -1449,9 +1462,7 @@ TEST_P(QuicInplaceLdsIntegrationTest, ReloadConfigUpdateNonDefaultFilterChain) {
-       });
- 
-   new_config_helper.setLds("1");
--  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(1));
--  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
--  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
-+  waitForInplaceUpdateDrained(1);
-   makeRequestAndWaitForResponse(*codec_client_0);
-   EXPECT_TRUE(codec_client_1->sawGoAway());
-   codec_client_1->close();
-@@ -1491,10 +1502,7 @@ TEST_P(QuicInplaceLdsIntegrationTest, ReloadConfigUpdateDefaultFilterChain) {
-       });
- 
-   new_config_helper.setLds("1");
--  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(1));
--  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
--
--  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
-+  waitForInplaceUpdateDrained(1);
-   // This connection should pick up the default filter chain.
-   auto codec_client_default =
-       makeHttpConnection(makeClientConnectionWithHost(lookupPort("http"), "lyft.com"));
-@@ -1511,9 +1519,7 @@ TEST_P(QuicInplaceLdsIntegrationTest, ReloadConfigUpdateDefaultFilterChain) {
-   });
- 
-   new_config_helper1.setLds("1");
--  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(2));
--  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
--  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
-+  waitForInplaceUpdateDrained(2);
- 
-   makeRequestAndWaitForResponse(*codec_client_0);
-   EXPECT_TRUE(codec_client_default->sawGoAway());
-@@ -1533,9 +1539,7 @@ TEST_P(QuicInplaceLdsIntegrationTest, ReloadConfigUpdateDefaultFilterChain) {
-       });
- 
-   new_config_helper2.setLds("1");
--  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(3));
--  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
--  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
-+  waitForInplaceUpdateDrained(3);
- 
-   makeRequestAndWaitForResponse(*codec_client_0);
-   codec_client_0->close();
-@@ -1559,10 +1563,7 @@ TEST_P(QuicInplaceLdsIntegrationTest, EnableAndDisableEarlyData) {
-                       &new_config_helper);
- 
-   new_config_helper.setLds("1");
--  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(1));
--  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
--
--  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
-+  waitForInplaceUpdateDrained(1);
-   // The 2nd connection should try to do 0-RTT but get rejected and QUICHE will transparently retry
-   // the request after handshake completes.
-   auto codec_client_2 = makeRawHttp3Connection(
-@@ -1592,10 +1593,7 @@ TEST_P(QuicInplaceLdsIntegrationTest, EnableAndDisableResumption) {
-                       &new_config_helper);
- 
-   new_config_helper.setLds("1");
--  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(1));
--  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
--
--  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
-+  waitForInplaceUpdateDrained(1);
- 
-   auto codec_client_2 = makeRawHttp3Connection(
-       makeClientConnectionWithHost(lookupPort("http"), "www.lyft.com"), std::nullopt,
-```
-
----
-
-### Incident Patch 2: `44a6cec6` (2026-11-17)
-**Commit Message**: release/ci: Build, sign and publish the release of both arches in one job (#49331)
-
-
-With `release-publish-multiarch`, the x64 Publish binary job builds
-everything published for both arches (`release.multiarch`), and uploads
-the same artifacts as the per-arch jobs did (`release.<arch>`,
-`oci.<arch>`, `packages.<arch>`); there is no arm64 job.
-
-`//distribution/publish:publish_<arch>` builds `//distribution/publish`
-for the arch's target platform, from any host. Only the target platform
-changes: everything runs on the build's execution platforms, so the
-arm64 binaries are cross-compiled on x64 (the llvm toolchain has the
-arm64 sysroot and libc++), and the exec tools (eg the Python ones, whose
-pip deps only resolve for the host) stay on the host's arch.
-
-The tools are now `bundled` too (as the container images' are), so they
-are built in the same configuration as the binaries.
-
-`release.publish` builds the host's arch, as before.
-
-The job is named `Server (multiarch)`. It sets `--//bazel:multiarch`, so
-on EngFlow the x86_64 RBE pool pins (`envoy_exec_properties`, via
-`//bazel:engflow_rbe_x86_64`) apply to the arm64 half too, as it is
-built on x86_64 workers. Without it (eg a native ar
-
-**File**: `.github/config.yml` (modified, +3/-0)
-```diff
-@@ -3,6 +3,9 @@ agent-ubuntu: ubuntu-24.04
- # (`release.publish`). Branches without this run `release.server_only`, and the Docker OCI and
- # Packages jobs.
- release-publish: true
-+# With `release-publish`: build both arches in the x64 job (`release.multiarch`), cross-compiling
-+# the arm64 binaries, rather than a job per arch.
-+release-publish-multiarch: true
- build-image:
-   # Authoritative configuration for build image/s
-   repo: docker.io/envoyproxy/envoy-build
-```
-
-**File**: `.github/workflows/_publish_build.yml` (modified, +15/-4)
-```diff
-@@ -8,6 +8,8 @@ on:
-     secrets:
-       dockerhub-token:
-       gcp-key:
-+      gpg-key:
-+      gpg-key-password:
-     inputs:
-       docs:
-         type: boolean
-@@ -37,18 +39,27 @@ jobs:
-     if: inputs.server
-     secrets:
-       dockerhub-token: ${{ secrets.dockerhub-token }}
-+      gpg-key: ${{ secrets.gpg-key }}
-+      gpg-key-password: ${{ secrets.gpg-key-password }}
-     permissions:
-       actions: read
-       contents: read
-       packages: read
--    name: Server
-+    name: >-
-+      ${{ fromJSON(inputs.request).config.release-publish
-+          && fromJSON(inputs.request).config.release-publish-multiarch
-+          && 'Server (multiarch)'
-+          || format('Server ({0})', matrix.arch) }}
-     uses: ./.github/workflows/_publish_build_server.yml
-     strategy:
-       fail-fast: false
-       matrix:
--        arch:
--        - x64
--        - arm64
-+        # With `release-publish-multiarch`, the x64 job builds both arches.
-+        arch: >-
-+          ${{ fromJSON(inputs.request).config.release-publish
-+              && fromJSON(inputs.request).config.release-publish-multiarch
-+              && fromJSON('["x64"]')
-+              || fromJSON('["x64", "arm64"]') }}
-     with:
-       arch: ${{ matrix.arch }}
-       request: ${{ inputs.request }}
-```
-
-**File**: `.github/workflows/_publish_build_server.yml` (modified, +47/-3)
-```diff
-@@ -7,6 +7,8 @@ on:
-   workflow_call:
-     secrets:
-       dockerhub-token:
-+      gpg-key:
-+      gpg-key-password:
-     inputs:
-       arch:
-         type: string
-@@ -32,6 +34,9 @@ jobs:
-   binary:
-     secrets:
-       dockerhub-token: ${{ secrets.dockerhub-token }}
-+      # Only staged when signing (`signing`, below).
-+      gpg-key: ${{ secrets.gpg-key }}
-+      gpg-key-password: ${{ secrets.gpg-key-password }}
-     permissions:
-       actions: read
-       contents: read
-@@ -42,11 +47,34 @@ jobs:
-       arch: ${{ inputs.arch }}
-       bazel-extra: >-
-         --config=rbe
-+        ${{ fromJSON(inputs.request).config.release-publish
-+            && fromJSON(inputs.request).config.release-publish-multiarch
-+            && fromJSON(inputs.request).run.release
-+            && (vars.ENVOY_CI_RELEASE || github.repository == 'envoyproxy/envoy')
-+            && !inputs.trusted
-+            && '--//distribution:signing-key=snakeoil'
-+            || '' }}
-+      # With `release-publish-multiarch`, sign the release of both arches in the same invocation
-+      # (as the release Sign packages job does otherwise).
-+      signing: >-
-+        ${{ fromJSON(inputs.request).config.release-publish
-+            && fromJSON(inputs.request).config.release-publish-multiarch
-+            && fromJSON(inputs.request).run.release
-+            && (vars.ENVOY_CI_RELEASE || github.repository == 'envoyproxy/envoy')
-+            && true
-+            || false }}
-       target: >-
-         ${{ fromJSON(inputs.request).config.release-publish
--            && 'release.publish'
-+            && (fromJSON(inputs.request).config.release-publish-multiarch
-+                && 'release.multiarch'
-+                || 'release.publish')
-             || 'release.server_only' }}
--      target-suffix: ${{ inputs.arch }}
-+      # With `release-publish-multiarch`, it builds every arch (on whichever host).
-+      target-suffix: >-
-+        ${{ !(fromJSON(inputs.request).config.release-publish
-+              && fromJSON(inputs.request).config.release-publish-multiarch)
-+            && inputs.arch
-+            || '' }}
-       cache-build-image: ${{ fromJSON(inputs.request).request.build-image.default }}
-       cache-build-image-key-suffix: ${{ inputs.arch == 'arm64' && '-arm64' || '' }}
-       concurrency-suffix: -${{ inputs.arch }}
-@@ -59,14 +87,30 @@ jobs:
-             || fromJSON(inputs.request).config.ci.agent-publish || fromJSON(inputs.request).config.ci.agent-ubuntu }}
-       timeout-minutes: 120
-       trusted: ${{ inputs.trusted }}
-+      # With `release-publish-multiarch`, only what the pipeline uses: the images of both arches (and
-+      # the signed release, below).
-       uploads: |
--        release.${{ inputs.arch }}: {path: container/envoy/${{ inputs.arch }}/bin/, compression-level: 0}
-+        ${{ !(fromJSON(inputs.request).config.release-publish
-+              && fromJSON(inputs.request).config.release-publish-multiarch)
-+            && format('release.{0}: {{path: container/envoy/{0}/bin/, compression-level: 0}}', inputs.arch)
-+            || '' }}
-         ${{ fromJSON(inputs.request).config.release-publish
-             && format('oci.{0}: {{path: container/envoy/{0}/build_images, compression-level: 0}}', inputs.arch)
-             || '' }}
-         ${{ fromJSON(inputs.request).config.release-publish
-+            && !fromJSON(inputs.request).config.release-publish-multiarch
-             && format('packages.{0}: {{path: container/envoy/{0}/packages, compression-level: 0}}', inputs.arch)
-             || '' }}
-+        ${{ fromJSON(inputs.request).config.release-publish
-+            && fromJSON(inputs.request).config.release-publish-multiarch
-+            && 'oci.arm64: {path: container/envoy/arm64/build_images, compression-level: 0}'
-+            || '' }}
-+        ${{ fromJSON(inputs.request).config.release-publish
-+            && fromJSON(inputs.request).config.release-publish-multiarch
-+            && fromJSON(inputs.request).run.release
-+            && (vars.ENVOY_CI_RELEASE || github.repository == 'envoyproxy/envoy')
-+            && 'release.signed: {path: container/envoy/release.signed.tar.zst, compression-level: 0}'
-+            || '' }}
- 
-   # Branches whose binary jobs do not build the container images and packages (`release-publish`).
-   docker:
-```
-
-**File**: `.github/workflows/_publish_release.yml` (modified, +14/-2)
-```diff
-@@ -89,9 +89,12 @@ jobs:
-       actions: read
-       contents: read
-       packages: read
-+    # With `release-publish-multiarch`, the release is signed in the build (`release.multiarch`).
-     if: >-
-       fromJSON(inputs.request).run.release
-       && (vars.ENVOY_CI_RELEASE || github.repository == 'envoyproxy/envoy')
-+      && !(fromJSON(inputs.request).config.release-publish
-+           && fromJSON(inputs.request).config.release-publish-multiarch)
-     name: Sign packages
-     uses: ./.github/workflows/_run.yml
-     with:
-@@ -203,7 +206,11 @@ jobs:
-       && fromJSON(inputs.request).run.release
-       && !fromJSON(inputs.request).request.version.dev
-       && needs.container.result == 'success'
--      && needs.sign.result == 'success'
-+      && (needs.sign.result == 'success'
-+          || (needs.sign.result == 'skipped'
-+              && (vars.ENVOY_CI_RELEASE || github.repository == 'envoyproxy/envoy')
-+              && fromJSON(inputs.request).config.release-publish
-+              && fromJSON(inputs.request).config.release-publish-multiarch))
-       && needs.docs-archive.result != 'failure'
-     name: ${{ matrix.name || matrix.target }}
-     uses: ./.github/workflows/_run.yml
-@@ -242,7 +249,11 @@ jobs:
-       !cancelled()
-       && fromJSON(inputs.request).run.release
-       && fromJSON(inputs.request).request.version.dev
--      && needs.sign.result == 'success'
-+      && (needs.sign.result == 'success'
-+          || (needs.sign.result == 'skipped'
-+              && (vars.ENVOY_CI_RELEASE || github.repository == 'envoyproxy/envoy')
-+              && fromJSON(inputs.request).config.release-publish
-+              && fromJSON(inputs.request).config.release-publish-multiarch))
-       && needs.docs-archive.result != 'failure'
-     name: github
-     uses: ./.github/workflows/_run.yml
-@@ -253,4 +264,5 @@ jobs:
-       downloads: |
-         release.signed: container/release.signed
-       request: ${{ inputs.request }}
-+      runs-on: ${{ fromJSON(inputs.request).config.ci.agent-publish || fromJSON(inputs.request).config.ci.agent-ubuntu }}
-       trusted: ${{ inputs.trusted }}
-```
-
-**File**: `.github/workflows/envoy-publish.yml` (modified, +11/-0)
-```diff
-@@ -55,6 +55,17 @@ jobs:
-             && fromJSON(needs.load.outputs.trusted)
-             && secrets.GCP_SERVICE_ACCOUNT_KEY_TRUSTED
-             || secrets.GCP_SERVICE_ACCOUNT_KEY }}
-+      # With `release-publish-multiarch`, the release is signed in the build (`release.multiarch`).
-+      gpg-key: >-
-+        ${{ needs.load.outputs.trusted
-+            && fromJSON(needs.load.outputs.trusted)
-+            && secrets.ENVOY_GPG_MAINTAINER_KEY
-+            || secrets.ENVOY_GPG_SNAKEOIL_KEY }}
-+      gpg-key-password: >-
-+        ${{ needs.load.outputs.trusted
-+            && fromJSON(needs.load.outputs.trusted)
-+            && secrets.ENVOY_GPG_MAINTAINER_KEY_PASSWORD
-+            || secrets.ENVOY_GPG_SNAKEOIL_KEY_PASSWORD }}
-     permissions:
-       actions: read
-       contents: read
-```
-
-**File**: `bazel/BUILD` (modified, +32/-1)
-```diff
-@@ -1057,14 +1057,45 @@ config_setting(
-     define_values = {"engflow_rbe": "true"},
- )
- 
-+# Set by `ci/do_ci.sh release.multiarch`, which builds both arches from an x64 host: on EngFlow,
-+# their actions run on x86_64 workers, whichever arch they target.
-+bool_flag(
-+    name = "multiarch",
-+    build_setting_default = False,
-+)
-+
-+config_setting(
-+    name = "multiarch_build",
-+    flag_values = {":multiarch": "true"},
-+)
-+
- selects.config_setting_group(
--    name = "engflow_rbe_x86_64",
-+    name = "engflow_rbe_linux_x86_64",
-     match_all = [
-         ":engflow_rbe",
-         ":linux_x86_64",
-     ],
- )
- 
-+selects.config_setting_group(
-+    name = "engflow_rbe_multiarch",
-+    match_all = [
-+        ":engflow_rbe",
-+        ":multiarch_build",
-+    ],
-+)
-+
-+# EngFlow builds whose actions run on x86_64 workers, which is what the `linux_x64_*` pools are
-+# pinned for (`envoy_exec_properties`): x64 builds, and both arches of a multiarch one. A native
-+# arm64 build keeps its platform's arm pool.
-+selects.config_setting_group(
-+    name = "engflow_rbe_x86_64",
-+    match_any = [
-+        ":engflow_rbe_linux_x86_64",
-+        ":engflow_rbe_multiarch",
-+    ],
-+)
-+
- selects.config_setting_group(
-     name = "engflow_rbe_x86_64_asan",
-     match_all = [
-```
-
-**File**: `ci/do_ci.sh` (modified, +123/-59)
-```diff
-@@ -177,6 +177,40 @@ function collect_build_profile() {
-     ((build_profile_count++))
++# Fix the release dates in the dependency metadata (`deps.yaml`) of the given `name[=version]`
++# modules, which the module updater does not touch. Only these are looked up (it is a request to
++# GitHub for each), and a module with no metadata is skipped.
++deps_release_dates() {
++    echo "Update release dates ..."
++    bazel run "${BAZEL_BUILD_OPTIONS[@]}" //tools/dependency:release_dates \
++          -- --skip-unknown "${@%%=*}"
  }
  
-+# The bazel args that sign with the key and passphrase at `ENVOY_SIGNING_{KEY,PASSPHRASE}_PATH` (host
-+# paths: their bytes never enter the action graph), in `PGP_ARGS`.
-+function pgp_signing_args() {
-+    local key_sha256
-+    if [[ -z "${ENVOY_SIGNING_KEY_PATH}" || -z "${ENVOY_SIGNING_PASSPHRASE_PATH}" ]]; then
-+        echo "FAIL: ENVOY_SIGNING_KEY_PATH and ENVOY_SIGNING_PASSPHRASE_PATH must be set" >&2
-+        exit 1
+ _deps_update_mod() {
+@@ -388,6 +398,10 @@ registry_update() {
+         registry_modules_update "${updates[@]}"
+     fi
+     lockfiles_generate
++    # With `all` the updated modules are not known here: their dates are left to the `deps` check.
++    if (( ${#updates[@]} )) && [[ "${updates[0]}" != "all" && "${updates[0]}" != "*" ]]; then
++        deps_release_dates "${updates[@]}"
 +    fi
-+    key_sha256="$(sha256sum "${ENVOY_SIGNING_KEY_PATH}" | cut -d' ' -f1)"
-+    PGP_ARGS=(
-+        "--@envoy_toolshed//pgp:key_path=${ENVOY_SIGNING_KEY_PATH}#sha256=${key_sha256}"
-+        "--@envoy_toolshed//pgp:passphrase_path=${ENVOY_SIGNING_PASSPHRASE_PATH}"
-+    )
-+}
-+
-+# Audit the signing actions of the aquery (the first arg), with the bazel options given (as built).
-+function pgp_signing_audit() {
-+    local audit_json query="$1"
-+    shift
-+    echo "Auditing signing actions..."
-+    audit_json="$(mktemp)"
-+    bazel aquery \
-+          "$@" \
-+          --output=jsonproto --include_artifacts=true \
-+          "$query" \
-+          > "${audit_json}"
-+    # NB: the passphrase is checked via `--forbid-file` (read from disk by the
-+    # audit tool) so its value never appears in argv here.
-+    bazel run "${BAZEL_BUILD_OPTIONS[@]}" @envoy_toolshed//pgp/audit:audit -- \
-+          --forbid-file "${ENVOY_SIGNING_PASSPHRASE_PATH}" \
-+          --aquery-json "${audit_json}"
-+    rm -f "${audit_json}"
-+}
-+
- function bazel_with_collection() {
-   local failed_logs
-   declare -r BAZEL_OUTPUT="${ENVOY_SRCDIR}"/bazel.output.txt
-@@ -1080,8 +1114,9 @@ case $CI_TARGET in
-         ;;
+ }
  
-     # `release.server`: the release binaries and tools (`release.server_only` is the same).
--    # `release.publish`: as `release.server`, and the container images.
--    release|release.server|release.server_only|release.publish|release.test_only)
-+    # `release.publish`: as `release.server`, and the container images and distro packages.
-+    # `release.multiarch`: as `release.publish`, for each arch (x64 and arm64), from any host.
-+    release|release.server|release.server_only|release.publish|release.multiarch|release.test_only)
-         if [[ "$CI_TARGET" == "release" || "$CI_TARGET" == "release.test_only" ]]; then
-             # When testing memory consumption, we want to test against exact byte-counts
-             # where possible. As these differ between platforms and compile options, we
-@@ -1137,52 +1172,102 @@ case $CI_TARGET in
-         echo "  release options:  ${BAZEL_RELEASE_OPTIONS[*]}"
-         echo "  binary dir:  ${ENVOY_BINARY_DIR}"
- 
--        if [[ "$CI_TARGET" == "release.publish" ]]; then
--            # Everything published for this platform, in one invocation (`//distribution/publish`):
-+        if [[ "$CI_TARGET" == "release.publish" || "$CI_TARGET" == "release.multiarch" ]]; then
-+            # Everything published for an arch, in one invocation (`//distribution/publish:publish_<arch>`):
-             # the release binaries and tools (as `release.server`), the container images (named as
--            # `docker` names them), and the distro packages (as `distribution` builds them).
--            ENVOY_OCI_DIR="${ENVOY_BUILD_DIR}/build_images"
--            ENVOY_PACKAGES_DIR="${ENVOY_BUILD_DIR}/packages"
--            for dir in "$ENVOY_OCI_DIR" "$ENVOY_PACKAGES_DIR"; do
--                if [[ -e "${dir}" ]]; then
--                    rm -rf "${dir}"
--                fi
--                mkdir -p "$dir"
-+            # `docker` names them), and the distro packages (as `distribution` builds them), to
-+            # `<build dir>/envoy/<arch>/{bin,build_images,packages}`. The binaries of another arch are
-+            # cross-compiled.
-+            # `release.multiarch` (`//distribution/publish:publish_multiarch_<arch>`) builds only what
-+            # the pipeline uses from it: the container images (published), and the packages and the
-+            # stripped release binaries (signed in this job), not the release tarball or the tools.
-+            PUBLISH_SET=publish
-+            if [[ "$CI_TARGET" == "release.multiarch" ]]; then
-+                PUBLISH_ARCHES=(x64 arm64)
-+                PUBLISH_SET=publish_multiarch
-+            elif [[ "${ENVOY_BUILD_ARCH}" == "x86_64" ]]; then
-+                PUBLISH_ARCHES=(x64)
-+            else
-+                PUBLISH_ARCHES=(arm64)
-+            fi
-+            PUBLISH_TARGETS=()
-+            for arch in "${PUBLISH_ARCHES[@]}"; do
-+                for dir in bin build_images packages; do
-+                    rm -rf "${BUILD_DIR}/envoy/${arch}/${dir}"
-+                    mkdir -p "${BUILD_DIR}/envoy/${arch}/${dir}"
-+                done
-+                PUBLISH_TARGETS+=("//distribution/publish:${PUBLISH_SET}_${arch}")
-             done
-+            PUBLISH_OPTIONS=()
-+            if [[ "$CI_TARGET" == "release.multiarch" ]]; then
-+                # Both arches
+ registry_modules_update() {
 ```
 
-**File**: `distribution/BUILD` (modified, +84/-8)
+**File**: `tools/dependency/BUILD` (modified, +14/-0)
 ```diff
-@@ -7,8 +7,8 @@ load("@rules_shell//shell:sh_binary.bzl", "sh_binary")
- load("//bazel:envoy_build_system.bzl", "envoy_package")
- load("//bazel:envoy_rbe.bzl", "envoy_exec_properties")
- load("//distribution/binary:debug.bzl", "compressed_debug_parts")
--load(":changes.bzl", "envoy_signed_changes")
--load(":packages.bzl", "MAINTAINER", "envoy_pkg_distros", "release_version_for")
-+load(":changes.bzl", "debian_files", "envoy_signed_changes")
-+load(":packages.bzl", "MAINTAINER", "PUBLISH_PACKAGING_TAGS", "envoy_pkg_distros", "release_version_for")
- 
- licenses(["notice"])  # Apache 2
- 
-@@ -19,7 +19,8 @@ licenses(["notice"])  # Apache 2
- # their bytes never enter the action graph, but the rules force local,
- # uncached execution of the signing actions themselves)
- #
--# All other targets are ordinary, cacheable/remotable actions - no secrets.
-+# All other targets are ordinary actions - no secrets. The ones bundling the
-+# release (which changes with every commit) are local (`PUBLISH_PACKAGING_TAGS`).
- 
- envoy_package()
- 
-@@ -160,6 +161,32 @@ label_flag(
-     build_setting_default = ":placeholder",
+@@ -2,6 +2,7 @@ load("@base_pip3//:requirements.bzl", "requirement")
+ load("@bazel_skylib//rules:build_test.bzl", "build_test")
+ load("@envoy_repo//:path.bzl", "PATH")
+ load("@envoy_toolshed//:utils.bzl", "json_merge")
++load("@envoy_toolshed//dependency:macros.bzl", "release_date_updater")
+ load("@envoy_toolshed//dependency:reachability.bzl", "dependency_reachability")
+ load("@envoy_toolshed//dependency/cve:macros.bzl", "cve_scan")
+ load("@rules_python//python:defs.bzl", "py_test")
+@@ -98,6 +99,19 @@ py_console_script_binary(
+     deps = [requirement("orjson")],
  )
  
-+# The `.deb`/`.changes` files of each arch, signed (with `signing-inputs=debs`) instead of the
-+# packages tarballs, eg when they are built in the same invocation (`ci/do_ci.sh release.multiarch`).
-+label_flag(
-+    name = "x64-debs",
-+    build_setting_default = ":placeholder",
-+)
-+
-+label_flag(
-+    name = "arm64-debs",
-+    build_setting_default = ":placeholder",
-+)
-+
-+string_flag(
-+    name = "signing-inputs",
-+    build_setting_default = "tarballs",
-+    values = [
-+        "debs",
-+        "tarballs",
++# Fix the release dates of dependencies in the metadata (`bazel/deps.yaml`, `api/bazel/deps.yaml`),
++# with the dates that `:check` looks up for them. Requires `GITHUB_TOKEN`.
++#   bazel run //tools/dependency:release_dates -- <name>...
++release_date_updater(
++    name = "release_dates",
++    check = ":check",
++    dependencies = ":check-dependencies",
++    metadata = [
++        "//bazel:deps.yaml",
++        "@envoy_api//bazel:deps.yaml",
 +    ],
 +)
 +
-+config_setting(
-+    name = "signing_inputs_debs",
-+    flag_values = {":signing-inputs": "debs"},
-+)
-+
- # Which committed *public* key is bundled as `signing.key`. Deliberately a
- # constrained string_flag, not a label_flag: an arbitrary file can not be
- # passed in here, so key material can never enter the graph via this path.
-@@ -188,6 +215,10 @@ pgp_public_key(
- 
- SIGNED_CHANGES = envoy_signed_changes(
-     name = "signed_changes",
-+    arch_debs = {
-+        "arm64": ":arm64-debs",
-+        "x64": ":x64-debs",
-+    },
-     arch_packages = {
-         "arm64": ":arm64-packages",
-         "x64": ":x64-packages",
-@@ -204,12 +235,12 @@ _SIGNED_CHANGES_COPY_CMD = "\n    ".join([
- # Bundle the per-arch debs into a single flat debs.tar.gz, replacing unsigned
- # multi-distro `.changes` with signed per-distro `.changes`.
- genrule(
--    name = "multi_arch_debs",
-+    name = "multi_arch_debs_tarballs",
-     srcs = [
-         ":arm64-packages",
-         ":x64-packages",
-     ] + [label for label, _dest in SIGNED_CHANGES],
--    outs = ["debs.tar.gz"],
-+    outs = ["tarballs/debs.tar.gz"],
-     cmd = """
-     tmpdir=$$(mktemp -d)
-     NEEDS_PATH=
-@@ -237,11 +268,55 @@ genrule(
-         --sort=name \
-         -C "$${tmpdir}" .
-     """ % _SIGNED_CHANGES_COPY_CMD,
-+    tags = ["manual"] + PUBLISH_PACKAGING_TAGS,
-+)
-+
-+# With `signing-inputs=debs`: the `.deb`s of both arches and the signed `.changes`, bundled directly
-+# (as `multi_arch_debs_tarballs` does from the packages tarballs).
-+[
-+    debian_files(
-+        name = "%s_debs" % arch,
-+        srcs = [":%s-debs" % arch],
-+        suffix = ".deb",
-+        tags = ["manual"],
-+    )
-+    for arch in [
-+        "arm64",
-+        "x64",
-+    ]
-+]
-+
-+pkg_files(
-+    name = "direct_debs_files",
-+    srcs = [
-+        ":arm64_debs",
-+        ":x64_debs",
-+    ] + [label for label, _dest in SIGNED_CHANGES],
-+    attributes = pkg_attributes(mode = "0644"),
-+    renames = {label: dest for label, dest in SIGNED_CHANGES},
-+    tags = ["manual"],
-+)
-+
-+pkg_tar(
-+    name = "direct/debs",
-+    srcs = [":direct_debs_files"],
-+    compressor = "@envoy_toolshed//pigz",
-+    compressor_args = "-n",
-+    extension = "tar.gz",
-+    tags = ["manual"] + PUBLISH_PACKAGING_TAGS,
-+)
-+
-+alias(
-+    name = "multi_arch_debs",
-+    actual = select({
-+        ":signing_inputs_debs": ":direct/debs",
-+        "//conditions:default": ":multi_arch_debs_tarballs",
-+    }),
-     tags = ["manual"],
- )
- 
- # Extract and rename the release binaries out of the per-arch release
--# tarballs. Ordinary, cacheable/remotable action.
-+# tarballs. No secrets, but local (`PUBLISH_PACKAGING_TAGS`): the release changes with every commit.
- genrule(
-     name = "release_binaries",
-     srcs = [
-@@ -276,6 +351,7 @@ genrule(
-         $(location envoy-%s-linux-aarch_64) \
-         $(location envoy-contrib-%s-linux-aarch_64)
-     """ % (VERSION, VERSION, VERSION, VERSION, VERSION, VERSION, VERSION, VERSION),
-+    tags = PUBLISH_PACKAGING_TAGS,
-     tools = ["@zstd//:zstd_cli"],
- )
- 
-@@ -291,7 +367,7 @@ pgp_sign_checksums(
-         ":release_binaries",
-     ],
-     checksums_out = "checksums.txt",
--    tags = ["manual"],
-+    tags = ["manual"] + PUBLISH_PACKAGING_TAGS,
- )
- 
- # Final release bundle layout contract (matches prior `envoy.gpg.sign` output,
-@@ -342,5 +418,5 @@ pkg_tar(
-     compressor = "@zstd//:zstd_cli"
+ py_console_script_binary(
+     name = "dependatool",
+     args = ["--path=%s" % PATH],
 ```
 
 ---
 
-### Incident Patch 3: `f78f8d2f` (2026-11-17)
-**Commit Message**: wasm: Fix byte order and Rust toolchain selection on s390x (#49316)
+### Incident Patch 2: `0403b537` (2026-11-19)
+**Commit Message**: windows: fix compile failure in stderr_writer (#49340)
 
+#49207 introduced a unix write to stderr_writer. This adds a win32
+branch to fix compilation on it
 
-Envoy previously copied numeric CEL values in host byte order, so Wasm
-plugins on s390x could decode them incorrectly. Pass the consuming VM's
-byte-order requirement to `serializeValue()` so Wasm plugins receive
-little-endian bytes and native/null plugins continue to receive
-host-order bytes.
+Example failure:
+https://github.com/curioswitch/py-envoy-server/actions/runs/43867024431/job/133298099621
 
-Constrain the native s390x Rust toolchain and register s390x-hosted Wasm
-and WASI toolchains so Bazel builds Wasm test plugins for the correct
-target.
+@yanavlasov BTW will you add daily sync / builds to envoy-windows repo?
 
-Additional Description: 
-`htowasm()` swaps numeric bytes only on big-endian hosts when the VM
-requires Wasm byte order.
-(https://github.com/proxy-wasm/proxy-wasm-cpp-host/blob/f2db56af443571e92a31c0b877106d9ea96e19ef/include/proxy-wasm/word.h)
+Risk Level: low
+Testing: none
+Docs Changes: 
+Release Notes:
+Platform Specific Features:
+[Optional Runtime guard:]
+[Optional Fixes #Issue]
+[Optional Fixes commit #PR or SHA]
+[Optional Deprecated:]
+[Optional [API
+Considerations](https://github.com/envoyproxy/envoy/blob/main/api/review_checklist.md):]
 
-Update the connection ID test to derive the expected bytes from the
-64-bit value `4` as represented in the plugin’s memory: host byte order
-for native/null plugins and little-endian for Wasm plugins.
+Signed-off-by: Anuraag Agrawal <[REDACTED_EMAIL]>
 
-Fixes Test-cases:
-```
-//test/extensions/filters/network/wasm:wasm_filter_test
-//test/extensions/filters/http/wasm:wasm_filter_headers_test
-//test/extensions/filters/http/wasm:wasm_filter_body_test
-//test/extensions/filters/http/wasm:wasm
-
-**File**: `MODULE.bazel` (modified, +28/-0)
+**File**: `source/common/common/stderr_writer.h` (modified, +19/-1)
 ```diff
-@@ -482,7 +482,35 @@ rust.repository_set(
-     name = "rust_linux_s390x",
-     edition = "2018",
-     exec_triple = "s390x-unknown-linux-gnu",
-+    exec_compatible_with = [
-+        "@platforms//cpu:s390x",
-+        "@platforms//os:linux",
-+    ],
-     versions = ["1.97.1"],
-+    target_triple = "s390x-unknown-linux-gnu",
-+    target_compatible_with = [
-+        "@platforms//cpu:s390x",
-+        "@platforms//os:linux",
-+    ],
-+)
-+
-+rust.repository_set(
-+    name = "rust_linux_s390x",
-+    target_triple = "wasm32-unknown-unknown",
-+    target_compatible_with = [
-+        "@platforms//cpu:wasm32",
-+        "@rules_rust//rust/platform/os:unknown",
-+    ],
-+)
-+
-+rust.repository_set(
-+    name = "rust_linux_s390x",
-+    target_triple = "wasm32-wasip1",
-+    target_compatible_with = [
-+        "@platforms//cpu:wasm32",
-+        "@platforms//os:wasi",
-+        "@rules_rust//rust/platform:wasi_preview_1",
-+    ],
- )
- rust.toolchain(
-     edition = "2018",
-```
-
-**File**: `source/extensions/common/wasm/context.cc` (modified, +16/-10)
-```diff
-@@ -359,8 +359,14 @@ void Context::onStatsUpdate(Envoy::Stats::MetricSnapshot& snapshot) {
+@@ -1,6 +1,10 @@
+ #pragma once
  
- // Native serializer carrying over bit representation from CEL value to the extension.
- // This implementation assumes that the value type is static and known to the consumer.
--WasmResult serializeValue(Filters::Common::Expr::CelValue value, std::string* result) {
-+// Numeric values use Wasm byte order when requested, otherwise host byte order.
-+WasmResult serializeValue(Filters::Common::Expr::CelValue value, std::string* result,
-+                          bool swap_bytes) {
-   using Filters::Common::Expr::CelValue;
-+#if defined(__BYTE_ORDER__) && defined(__ORDER_BIG_ENDIAN__) &&                                    \
-+    __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-+  using proxy_wasm::bswap;
++#ifdef WIN32
++#include <io.h>
++#else
+ #include <unistd.h>
 +#endif
-   int64_t out_int64;
-   uint64_t out_uint64;
-   double out_double;
-@@ -374,15 +380,15 @@ WasmResult serializeValue(Filters::Common::Expr::CelValue value, std::string* re
-     result->assign(value.BytesOrDie().value().data(), value.BytesOrDie().value().size());
-     return WasmResult::Ok;
-   case CelValue::Type::kInt64:
--    out_int64 = value.Int64OrDie();
-+    out_int64 = htowasm(value.Int64OrDie(), swap_bytes);
-     result->assign(reinterpret_cast<const char*>(&out_int64), sizeof(int64_t));
-     return WasmResult::Ok;
-   case CelValue::Type::kUint64:
--    out_uint64 = value.Uint64OrDie();
-+    out_uint64 = htowasm(value.Uint64OrDie(), swap_bytes);
-     result->assign(reinterpret_cast<const char*>(&out_uint64), sizeof(uint64_t));
-     return WasmResult::Ok;
-   case CelValue::Type::kDouble:
--    out_double = value.DoubleOrDie();
-+    out_double = htowasm(value.DoubleOrDie(), swap_bytes);
-     result->assign(reinterpret_cast<const char*>(&out_double), sizeof(double));
-     return WasmResult::Ok;
-   case CelValue::Type::kBool:
-@@ -391,12 +397,12 @@ WasmResult serializeValue(Filters::Common::Expr::CelValue value, std::string* re
-     return WasmResult::Ok;
-   case CelValue::Type::kDuration:
-     // Warning: loss of precision to nanoseconds
--    out_int64 = absl::ToInt64Nanoseconds(value.DurationOrDie());
-+    out_int64 = htowasm(absl::ToInt64Nanoseconds(value.DurationOrDie()), swap_bytes);
-     result->assign(reinterpret_cast<const char*>(&out_int64), sizeof(int64_t));
-     return WasmResult::Ok;
-   case CelValue::Type::kTimestamp:
-     // Warning: loss of precision to nanoseconds
--    out_int64 = absl::ToUnixNanos(value.TimestampOrDie());
-+    out_int64 = htowasm(absl::ToUnixNanos(value.TimestampOrDie()), swap_bytes);
-     result->assign(reinterpret_cast<const char*>(&out_int64), sizeof(int64_t));
-     return WasmResult::Ok;
-   case CelValue::Type::kMessage:
-@@ -415,10 +421,10 @@ WasmResult serializeValue(Filters::Common::Expr::CelValue value, std::string* re
-     const auto& keys = *keys_list.value();
-     std::vector<std::pair<std::string, std::string>> pairs(map.size(), std::make_pair("", ""));
-     for (auto i = 0; i < map.size(); i++) {
--      if (serializeValue(keys[i], &pairs[i].first) != WasmResult::Ok) {
-+      if (serializeValue(keys[i], &pairs[i].first, swap_bytes) != WasmResult::Ok) {
-         return WasmResult::SerializationFailure;
-       }
--      if (serializeValue(map[keys[i]].value(), &pairs[i].second) != WasmResult::Ok) {
-+      if (serializeValue(map[keys[i]].value(), &pairs[i].second, swap_bytes) != WasmResult::Ok) {
-         return WasmResult::SerializationFailure;
-       }
-     }
-@@ -435,7 +441,7 @@ WasmResult serializeValue(Filters::Common::Expr::CelValue value, std::string* re
-     const auto& list = *value.ListOrDie();
-     std::vector<std::pair<std::string, std::string>> pairs(list.size(), std::make_pair("", ""));
-     for (auto i = 0; i < list.size(); i++) {
--      if (serializeValue(list[i], &pairs[i].first) != WasmResult::Ok) {
-+      if (serializeValue(list[i], &pairs[i].first, swap_bytes) != WasmResult::Ok) {
-         return WasmResult::SerializationFailure;
-       }
-     }
-@@ -619,7 +625,7 @@ WasmResult Context::getProperty(std::string_view path, std::string* result) {
-     }
-   }
  
--  return serializeValue(value, result);
-+  return serializeValue(value, result, wasm_->wasm_vm()->usesWasmByteOrder());
- }
+ #include <algorithm>
+ #include <cerrno>
+@@ -10,6 +14,20 @@
  
- // Header/Trailer/Metadata Maps.
+ namespace Envoy {
+ 
++namespace StderrWriterInternal {
++
++// Raw write to the stderr file descriptor, bypassing stdio buffering.
++inline ptrdiff_t writeRaw(const char* data, size_t size) {
++#ifdef WIN32
++  // `size` never exceeds the stack buffer in `writeStderr()`, so it fits in an unsigned int.
++  return ::_write(2, data, static_cast<unsigned int>(size));
++#else
++  return ::write(STDERR_FILENO, data, size);
++#endif
++}
++
++} // namespace StderrWriterInternal
++
+ /**
+  * Format into a buffer on the stack and write it to stderr with write(2), for use where
+  * neither the logger nor C++ streams can be relied on, in particular in a fatal signal handler.
+@@ -24,7 +42,7 @@ void writeStderr(const absl::FormatSpec<Args...>& format, const Args&... args) {
+   size_t remaining = size > 0 ? std::min<size_t>(size, sizeof(buffer) - 1) : 0;
+   // Short and interrupted writes are continued. There is nowhere to report any other failure.
+   while (remaining > 0) {
+-    const ssize_t rc = ::write(STDERR_FILENO, data, remaining);
++    const ptrdiff_t rc = StderrWriterInternal::writeRaw(data, remaining);
+     if (rc > 0) {
+       data += rc;
+       remaining -= static_cast<size_t>(rc);
 ```
 
-**File**: `source/extensions/common/wasm/context.h` (modified, +2/-1)
+---
+
+### Incident Patch 3: `1375fe7a` (2026-11-18)
+**Commit Message**: release/ci: Remove the Docker and signing builds the release build replaced (#49356)
+
+The release container images and packages are built with Bazel, and the
+release is signed, in the release build
+(`release.publish`/`release.multiarch`, #49259, #49331). The builds that
+did those before only run for the release branches without
+`release-publish`, with those branches' own `ci/do_ci.sh`, so the
+workflows are unchanged.
+
+Removed:
+
+- `distribution/docker/Dockerfile-envoy` and
+`distribution/docker/build.sh`, and the `docker` and `distribution`
+targets of `ci/do_ci.sh` (the Docker OCI and Packages jobs)
+- `ENVOY_OCI_DIR`, `ENVOY_DOCKER_SAVE_IMAGE` and `ENVOY_TARBALL_DIR`
+from the environment `ci/docker-compose.yml` passes through, which only
+those targets read
+- the `release.signed` target (the Sign packages job), and the signing
+of the packages tarballs it did: the `x64-packages`/`arm64-packages` and
+`signing-inputs` flags of `//distribution`, `multi_arch_debs_tarballs`,
+the extraction of the `.changes` from the tarballs
+(`distribution/changes.bzl`), and the `distribution/custom` files the
+job staged. `release.multiarch` signs the `.deb`s and `.changes` built
+in the same invocation, whi
+
+**File**: `.agents/threat_model/THREAT_MODEL.md` (modified, +2/-2)
 ```diff
-@@ -467,7 +467,8 @@ class Context : public proxy_wasm::ContextBase,
- };
- using ContextSharedPtr = std::shared_ptr<Context>;
+@@ -56,7 +56,7 @@ The codebase is ~3k C++ source files plus ~113 vendored dependencies (BoringSSL,
+ | Envoy Mobile upstream ingest | Envoy Mobile (iOS/Android client library) parses responses from arbitrary servers; trust model inverted — server is the attacker (`mobile/library/common/`) | malicious origin server → mobile app process | Mobile app process & on-device user data, Proxied request/response data |
+ | Bazel dependency fetch | ~113 deps resolved via the Envoy Bazel registry, integrity-pinned in `MODULE.bazel.lock` (registry pinned at `.bazelrc`) | upstream maintainer / mirror → compiled binary | Release artifact integrity, Process & host integrity |
+ | GitHub Actions CI pipeline | `pull_request_target` → `workflow_run` chain executes PR code; `trusted` flag computed in `_load.yml` gates secrets (`.github/workflows/_run.yml`) | external contributor → CI runner with org secrets | CI/release secrets, Release artifact integrity |
+-| Release artifact publish | Docker push (no cosign, `--provenance=false`), GPG-signed tarballs, Sonatype/PyPI upload; PyPI action branch-pinned (`distribution/docker/build.sh`, `.github/workflows/mobile-release.yml`) | CI runner → public registries | Release artifact integrity |
++| Release artifact publish | OCI images built with rules_oci (`//distribution/docker:images`) and pushed from CI; release and `.changes` GPG-signed in the release build (`ci/do_ci.sh release.multiarch`, `//distribution:signed`); Sonatype/PyPI upload; PyPI action branch-pinned (`.github/workflows/mobile-release.yml`) | CI runner → public registries | Release artifact integrity |
  
--WasmResult serializeValue(Filters::Common::Expr::CelValue value, std::string* result);
-+WasmResult serializeValue(Filters::Common::Expr::CelValue value, std::string* result,
-+                          bool swap_bytes);
+ ## 4. Threats
  
- } // namespace Wasm
- } // namespace Common
+@@ -81,7 +81,7 @@ The codebase is ~3k C++ source files plus ~113 vendored dependencies (BoringSSL,
+ | T18 | Request/response tampering and auth-verdict forgery via untrusted ext_proc / ext_authz side-call | adjacent_network | ext_proc / ext_authz responses | Proxied request/response data, AuthN/AuthZ verdicts, Internal trust headers | high | likely | partially_mitigated | `mutation_rules` allowlist (opt-in); `allowed_headers`/`disallowed_headers` on ext_authz (opt-in) | |
+ | T27 | Resource exhaustion via unbounded ext_proc body mutation, header-set size, or stream hold-open | adjacent_network | ext_proc / ext_authz responses | Service availability | high | likely | partially_mitigated | `message_timeout`; per-message size limits (partial) | |
+ | T16 | Fleet-wide crash or resource exhaustion via malformed / pathological xDS configuration | insider | xDS control-plane ingestion, Route matching & regex | Service availability, xDS configuration integrity | high | likely | partially_mitigated | PGV proto validation; config-rejection stats; RE2 (linear-time) for regex | a20c0ab8dd, 2bcebccc0d, CVE-2019-15225, CVE-2019-15226 |
+-| T17 | Downstream consumer compromise via tampered OCI image (no signature / no SLSA provenance) | supply_chain | Release artifact publish | Release artifact integrity | high | possible | unmitigated | GPG on tarballs only; `--sbom=false --provenance=false` set; no cosign | |
++| T17 | Downstream consumer compromise via tampered OCI image (no signature / no SLSA provenance) | supply_chain | Release artifact publish | Release artifact integrity | high | possible | unmitigated | GPG on tarballs only; images pushed with no signature or provenance attestation (no cosign) | |
+ | T19 | Traffic redirection or filter-chain injection via compromised xDS management server | insider | xDS control-plane ingestion | xDS configuration integrity, Proxied request/response data, Internal upstream services | high | possible | risk_accepted | upstream threat model declares xDS transport trusted; mTLS to control plane | |
+ | T20 | Build-time code injection via compromised upstream dependency tarball | supply_chain | Bazel dependency fetch | Release artifact integrity, Process & host integrity | high | rare | mitigated | all 113 deps SHA256-pinned; `tools/dependency/` validators; CPE tracking | |
+ | T21 | Log injection / SIEM poisoning via unescaped attacker-controlled fields in access-log output | remote_unauth | Access-log formatter | Access logs & telemetry | medium | likely | partially_mitigated | `json_format` escaping; `JsonEscaper` (itself patched for OOB) | CVE-2024-45808, CVE-2026-26309 |
 ```
 
-**File**: `source/extensions/common/wasm/foreign.cc` (modified, +2/-1)
+**File**: `.github/dependabot.yml` (modified, +0/-7)
 ```diff
-@@ -349,7 +349,8 @@ class EvaluateExpressionFactory : public ExpressionFactory {
-         return WasmResult::InternalFailure;
-       }
-       std::string result;
--      auto serialize_status = serializeValue(value, &result);
-+      auto serialize_status = serializeValue(
-+          value, &result, proxy_wasm::current_context_->wasmVm()->usesWasmByteOrder());
-       if (serialize_status != WasmResult::Ok) {
-         return serialize_status;
-       }
+@@ -47,13 +47,6 @@ updates:
+     interval: daily
+     time: "06:00"
+ 
+-- package-ecosystem: "docker"
+-  directory: "/distribution/docker"
+-  assignees: ["phlax"]
+-  schedule:
+-    interval: daily
+-    time: "06:00"
+-
+ - package-ecosystem: "github-actions"
+   directory: "/"
+   assignees: ["phlax"]
 ```
 
-**File**: `test/extensions/common/wasm/context_test.cc` (modified, +6/-6)
+**File**: `.gitignore` (modified, +0/-1)
 ```diff
-@@ -203,29 +203,29 @@ TEST_F(ContextTest, SerializeValueMapTest) {
-   CelValue value = CelValue::CreateMap(&mock_cel_map_);
-   EXPECT_CALL(mock_cel_map_, ListKeys())
-       .WillOnce(testing::Return(absl::UnimplementedError("CelMap::ListKeys is not implemented")));
--  EXPECT_EQ(serializeValue(value, &result), WasmResult::SerializationFailure);
-+  EXPECT_EQ(serializeValue(value, &result, false), WasmResult::SerializationFailure);
- 
-   EXPECT_CALL(mock_cel_list_, MockIndexOperator(_))
-       .WillOnce(testing::Return(CelValue::CreateNull()));
-   EXPECT_CALL(mock_cel_map_, size()).WillRepeatedly(testing::Return(1));
-   EXPECT_CALL(mock_cel_map_, ListKeys()).WillOnce(testing::Return(&mock_cel_list_));
--  EXPECT_EQ(serializeValue(value, &result), WasmResult::SerializationFailure);
-+  EXPECT_EQ(serializeValue(value, &result, false), WasmResult::SerializationFailure);
- 
-   EXPECT_CALL(mock_cel_list_, MockIndexOperator(_))
-       .Times(2)
-       .WillRepeatedly(testing::Return(CelValue::CreateStringView("test")));
-   EXPECT_CALL(mock_cel_map_, ListKeys()).WillOnce(testing::Return(&mock_cel_list_));
-   EXPECT_CALL(mock_cel_map_, MockIndexOperator(_))
-       .WillOnce(testing::Return(CelValue::CreateNull()));
--  EXPECT_EQ(serializeValue(value, &result), WasmResult::SerializationFailure);
-+  EXPECT_EQ(serializeValue(value, &result, false), WasmResult::SerializationFailure);
- 
-   EXPECT_CALL(mock_cel_list_, MockIndexOperator(_))
-       .Times(2)
-       .WillRepeatedly(testing::Return(CelValue::CreateStringView("test")));
-   EXPECT_CALL(mock_cel_map_, ListKeys()).WillOnce(testing::Return(&mock_cel_list_));
-   EXPECT_CALL(mock_cel_map_, MockIndexOperator(_))
-       .WillOnce(testing::Return(CelValue::CreateStringView("test")));
--  EXPECT_EQ(serializeValue(value, &result), WasmResult::Ok);
-+  EXPECT_EQ(serializeValue(value, &result, false), WasmResult::Ok);
- }
- 
- TEST_F(ContextTest, SerializeValueListTest) {
-@@ -235,12 +235,12 @@ TEST_F(ContextTest, SerializeValueListTest) {
-   EXPECT_CALL(mock_cel_list_, MockIndexOperator(_))
-       .WillOnce(testing::Return(CelValue::CreateNull()));
-   EXPECT_CALL(mock_cel_list_, size()).WillRepeatedly(testing::Return(1));
--  EXPECT_EQ(serializeValue(value, &result), WasmResult::SerializationFailure);
-+  EXPECT_EQ(serializeValue(value, &result, false), WasmResult::SerializationFailure);
- 
-   EXPECT_CALL(mock_cel_list_, MockIndexOperator(_))
-       .Times(1)
-       .WillRepeatedly(testing::Return(CelValue::CreateStringView("test")));
--  EXPECT_EQ(serializeValue(value, &result), WasmResult::Ok);
-+  EXPECT_EQ(serializeValue(value, &result, false), WasmResult::Ok);
- }
- 
- TEST_F(ContextTest, FindValueTest) {
+@@ -113,7 +113,6 @@ yarn-error.log*
+ /devcontainer/devcontainer.env
+ /docs/landing_source/.bundle
+ /linux
+-distribution/custom
+ examples/single-page-app/xds/lds.yml
+ examples/websocket/certs
+ tools/dev/src
 ```
 
-**File**: `test/extensions/filters/http/wasm/test_data/test_cpp.cc` (modified, +5/-1)
+**File**: `MODULE.bazel` (modified, +4/-1)
 ```diff
-@@ -603,10 +603,14 @@ void TestContext::onLog() {
-     }
-     {
-       // Some properties are defined in the stream context.
-+      // The null plugin uses host byte order; a Wasm build uses little-endian memory.
-+      const uint64_t connection_id_val = 4;
-+      const std::string connection_id_bytes(reinterpret_cast<const char*>(&connection_id_val),
-+                                            sizeof(uint64_t));
-       std::vector<std::pair<std::vector<std::string>, std::string>> properties = {
-           {{"plugin_name"}, "plugin_name"},
-           {{"plugin_vm_id"}, "vm_id"},
--          {{"connection_id"}, std::string("\x4\0\0\0\0\0\0\0\0", 8)},
-+          {{"connection_id"}, connection_id_bytes},
-           {{"connection", "requested_server_name"}, "w3.org"},
-           {{"source", "address"}, "127.0.0.1:0"},
-           {{"destination", "address"}, "127.0.0.2:0"},
+@@ -638,10 +638,12 @@ use_repo(envoy_build_config_ext, "envoy_build_config")
+ envoy_module_graph_ext = use_extension("//bazel:extensions.bzl", "envoy_module_graph_extension")
+ use_repo(envoy_module_graph_ext, "envoy_mod_graph")
+ 
+-# Base images for the container images (`//distribution/docker`).
++# Base images for the container images (`//distribution/docker`). Each digest is that of the tag in
++# its `# tag:` comment, and is updated from it by `ci/dependency/release_images.sh`.
+ oci = use_extension("@rules_oci//oci:extensions.bzl", "oci")
+ oci.pull(
+     name = "distroless_base_nossl",
++    # tag: nonroot
+     digest = "sha256:e6b0f82595aa1edde72c8054de7a9dca30f0f8f54820c37a167c0ddfc21c5c67",
+     image = "gcr.io/distroless/base-nossl-debian13",
+     platforms = [
+@@ -651,6 +653,7 @@ oci.pull(
+ )
+ oci.pull(
+     name = "ubuntu_base",
++    # tag: 22.04
+     digest = "sha256:076e7bf82319619f28dd0aa9c02ab34b055ad37100395b4f49a2ffba04fb5e11",
+     image = "mirror.gcr.io/library/ubuntu",
+     platforms = [
+```
+
+**File**: `MODULE.bazel.lock` (modified, +3/-3)
+```diff
+@@ -931,7 +931,7 @@
+   "moduleExtensions": {
+     "//bazel:extensions.bzl%envoy_build_config_ext": {
+       "general": {
+-        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
++        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
+         "usagesDigest": "eA9F7Sp3VWzMPr64I4OqdYTS7aJ/vD1NCUzz0/uIPRU=",
+         "recordedInputs": [
+           "REPO_MAPPING:,bazel_skylib bazel_skylib+",
+@@ -951,7 +951,7 @@
+     },
+     "//bazel:extensions.bzl%envoy_module_graph_extension": {
+       "general": {
+-        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
++        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
+         "usagesDigest": "a20U+l72r//DsxddmI97juCc5OVovDKHTOodwyV6/14=",
+         "recordedInputs": [
+           "REPO_MAPPING:,bazel_skylib bazel_skylib+",
+@@ -973,7 +973,7 @@
+     },
+     "//bazel:extensions.bzl%envoy_repo_extension": {
+       "general": {
+-        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
++        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
+         "usagesDigest": "qNXh2UFb6L5FDqCDmXlJCEwkQwnTEu3pouMvLd9F+7c=",
+         "recordedInputs": [
+           "REPO_MAPPING:,bazel_skylib bazel_skylib+",
+```
+
+**File**: `bazel/repo.bzl` (modified, +0/-11)
+```diff
+@@ -265,17 +265,6 @@ py_console_script_binary(
+     data = [":envoy_repo.py"],
+ )
+ 
+-py_console_script_binary(
+-    name = "trigger",
+-    args = [
+-        "trigger",
+-        PATH,
+-    ],
+-    pkg = "@base_pip3//envoy_base_utils",
+-    script = "envoy.project",
+-    data = [":envoy_repo.py"],
+-)
+-
+ ''' % local_sysroot)
+ 
+ _envoy_repo = repository_rule(
+```
+
+**File**: `bazel/tests/codeql/MODULE.bazel.lock` (modified, +3/-3)
+```diff
+@@ -1268,7 +1268,7 @@
+     },
+     "@@envoy+//bazel:extensions.bzl%envoy_build_config_ext": {
+       "general": {
+-        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
++        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
+         "usagesDigest": "Er3syu+vTabKf6QNCuq+iOq29PoF5QEwbaOozyFkqt8=",
+         "recordedInputs": [
+           "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
+@@ -1288,7 +1288,7 @@
+     },
+     "@@envoy+//bazel:extensions.bzl%envoy_module_graph_extension": {
+       "general": {
+-        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
++        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
+         "usagesDigest": "ymD/bnZhvue8QBxkA+Ac/m/a7viCmw83gRqefjG+JBc=",
+         "recordedInputs": [
+           "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
+@@ -1310,7 +1310,7 @@
+     },
+     "@@envoy+//bazel:extensions.bzl%envoy_repo_extension": {
+       "general": {
+-        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
++        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
+         "usagesDigest": "FAw8Y3mQshR9sd1RHlAiDwpIEJGM2+PMZQFujBl5IUQ=",
+         "recordedInputs": [
+           "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
+```
+
+**File**: `bazel/tests/external/MODULE.bazel.lock` (modified, +4/-4)
+```diff
+@@ -1281,7 +1281,7 @@
+     },
+     "@@envoy+//bazel:extensions.bzl%envoy_build_config_ext": {
+       "general": {
+-        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
++        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
+         "usagesDigest": "iA1seCCxL1JoTeQEGHUPSEc93vO3JA4pM8sK4sMMan4=",
+         "recordedInputs": [
+           "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
+@@ -1301,7 +1301,7 @@
+     },
+     "@@envoy+//bazel:extensions.bzl%envoy_module_graph_extension": {
+       "general": {
+-        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
++        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
+         "usagesDigest": "ymD/bnZhvue8QBxkA+Ac/m/a7viCmw83gRqefjG+JBc=",
+         "recordedInputs": [
+           "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
+@@ -1323,7 +1323,7 @@
+     },
+     "@@envoy+//bazel:extensions.bzl%envoy_repo_extension": {
+       "general": {
+-        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
++        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
+         "usagesDigest": "FAw8Y3mQshR9sd1RHlAiDwpIEJGM2+PMZQFujBl5IUQ=",
+         "recordedInputs": [
+           "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
+@@ -1343,7 +1343,7 @@
+     },
+     "@@envoy+//bazel:extensions.bzl%envoy_toolchains_extension": {
+       "general": {
+-        "bzlTransitiveDigest": "2XdlVYW4iVbE67c2twWypMnbFXZDnhIPDyPK2Yu2yh4=",
++        "bzlTransitiveDigest": "ILMXVVE7rJWGX1XhB3/MzibNqJJGUEi2Y2M911zZk7c=",
+         "usagesDigest": "PAKPVvO8cX+q6rOc94CBj2PuUR0CHcNuCfqfSSrj7Vs=",
+         "recordedInputs": [
+           "REPO_MAPPING:envoy+,bazel_skylib bazel_skylib+",
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #49354** (2026-11-17): distribution/docker: Use the compressed .dwps in the debug images (@phlax)
-- **PR #49350** (2026-11-17): ci/dependency: Update the rules_oci pins with the release images (@phlax)
-- **PR #49346** (closed): [WIP] quic: Respect the cached stream limit when resuming with 0-RTT (@phlax)
-- **PR #49344** (2026-11-17): docs: fix the dead cgo link in the Golang filter warnings (@farisbasha)
-- **PR #49341** (2026-11-17): test: consolidate ai_protocol_manager fuzz tests into fuzz_lib and fuzz.proto (@chentianheng604)
-- **PR #49331** (2026-11-17): release/ci: Build, sign and publish the release of both arches in one job (@phlax)
+- **PR #49411** (2026-11-18): deps: Bump `bazel-registry` -> d7b2089 (+envoy_toolshed) (@dependency-envoy[bot])
+- **PR #49408** (2026-11-18): deps/ci: Fix release dates when a module is updated (@phlax)
+- **PR #49407** (closed): deps: Bump `bazel-registry` -> 2d6df3f (+envoy_toolshed) (@dependency-envoy[bot])
+- **PR #49406** (2026-11-18): [bp/v1.39] Adding adding injectHeadersToFilterChain() API to send headers (#47475) (@jwendell)
+- **PR #49405** (2026-11-18): [bp/v1.38] Adding adding injectHeadersToFilterChain() API to send headers (#47475) (@jwendell)
+- **PR #49404** (2026-11-18): [bp/v1.37] Adding adding injectHeadersToFilterChain() API to send headers (#47475) (@jwendell)
 
 ---
 
@@ -2024,64 +1490,31 @@ Fixes Test-cases:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test: deflake QuicInplaceLdsIntegrationTest drain waits
+## X. deps/ci: Fix release dates when a module is updated
 
 **RULE**:
-When implementing operations in `test/integration/quic_http_integration_test.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ci/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in envoyproxy/envoy. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8937718c`: test: deflake QuicInplaceLdsIntegrationTest drain waits. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `85f81a08`: deps/ci: Fix release dates when a module is updated. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/integration/quic_http_integration_test.cc`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-  // Waits for the workers to apply `in_place_updates` in place updates and for the filter chains
-  // they replaced to finish draining. The main thread starts the drain before it counts any worker
-  // acknowledging the update, so the drain gauge has already risen once the counter reaches the
-  // target. Waiting for the gauge itself to rise can miss its drain_time_ window.
-  void waitForInplaceUpdateDrained(uint32_t in_place_updates) {
-    test_server_->waitForCounter("listener_manager.listener_in_place_updated",
-                                 Ge(in_place_updates));
-    const uint32_t listener_creations = 1 + in_place_updates;
-    test_server_->waitForCounter("listener_manager.listener_create_success",
-                                 Ge(listener_creations * concurrency_));
-    test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
-  }
-
-  waitForInplaceUpdateDrained(1);
-  waitForInplaceUpdateDrained(1);
-  waitForInplaceUpdateDrained(2);
-  waitForInplaceUpdateDrained(3);
-  waitForInplaceUpdateDrained(1);
-  waitForInplaceUpdateDrained(1);
+* `deps.update <name[=version]>` &mdash; run the per-workspace bzlmod dependency updater for the requested module, skipping workspaces where that dependency is not declared, then regenerate the lockfiles as `lockfiles` does, and fix the release date of the module in the dependency metadata (requires `GITHUB_TOKEN`).
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(1));
-  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
-  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
-  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(1));
-  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
-
-  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
-  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(2));
-  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
-  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
-  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(3));
-  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
-  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Eq(0));
-  test_server_->waitForCounter("listener_manager.listener_in_place_updated", Ge(1));
-  test_server_->waitForGauge("listener_manager.total_filter_chains_draining", Ge(1));
-
+* `deps.update <name[=version]>` &mdash; run the per-workspace bzlmod dependency updater for the requested module, skipping workspaces where that dependency is not declared, then regenerate the lockfiles as `lockfiles` does.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8937718c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `85f81a08` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

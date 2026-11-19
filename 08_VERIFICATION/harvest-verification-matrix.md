@@ -11207,3 +11207,6 @@
 | `CYCLE-20261119-VDBY` | `2026-11-19T05:24:29.374Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9334` | Yes (`d5a25b83...`) |
 | `CYCLE-20261119-VF12` | `2026-11-19T05:24:31.574Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9335` | Yes (`582516a7...`) |
 | `CYCLE-20261119-VHUF` | `2026-11-19T05:24:35.223Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9336` | Yes (`3b14c6b4...`) |
+| `CYCLE-20261119-IDSN` | `2026-11-19T05:42:23.063Z` | `envoyproxy/envoy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9337` | Yes (`a66f6eaa...`) |
+| `CYCLE-20261119-IGYZ` | `2026-11-19T05:42:27.179Z` | `dragonflydb/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9338` | Yes (`0b600998...`) |
+| `CYCLE-20261119-OM0T` | `2026-11-19T05:47:13.661Z` | `mudler/locate-anything.cpp-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mudler-locate-anything.cpp-gguf-learnings.md` | Yes (`b889c27d...`) |

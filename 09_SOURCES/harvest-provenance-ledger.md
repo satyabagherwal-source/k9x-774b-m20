@@ -11240,3 +11240,6 @@ Every entry in this ledger must capture:
 | `learn-github-onejs-one` | `https://github.com/onejs/one` | `78627c14` | Multi-dimensional audit evidence | 2026-11-19T05:24:29.378Z |
 | `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `4841d727` | Multi-dimensional audit evidence | 2026-11-19T05:24:31.577Z |
 | `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `495f707d` | Multi-dimensional audit evidence | 2026-11-19T05:24:35.227Z |
+| `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `6d870913` | Multi-dimensional audit evidence | 2026-11-19T05:42:23.067Z |
+| `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `45a890be` | Multi-dimensional audit evidence | 2026-11-19T05:42:27.183Z |
+| `learn-huggingface-mudler-locate-anything-cpp-gguf` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-11-19T05:47:13.665Z |
