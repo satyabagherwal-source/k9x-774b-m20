@@ -11413,3 +11413,6 @@ Every entry in this ledger must capture:
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `cc6aee8f` | Multi-dimensional audit evidence | 2026-11-19T20:55:53.784Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `12f3d096` | Multi-dimensional audit evidence | 2026-11-19T20:55:55.790Z |
 | `learn-dom-d-9d38d4a5` | `project://skyhook-io-radar` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md` | 2026-11-19T20:56:27.465Z |
+| `learn-github-herdrdev-herdr` | `https://github.com/herdrdev/herdr` | `8734523b` | Multi-dimensional audit evidence | 2026-11-19T21:08:10.017Z |
+| `learn-github-jacklandrin-onlyswitch` | `https://github.com/jacklandrin/OnlySwitch` | `dc279316` | Multi-dimensional audit evidence | 2026-11-19T21:08:15.565Z |
+| `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `8c4fae3a` | Multi-dimensional audit evidence | 2026-11-19T21:08:18.407Z |

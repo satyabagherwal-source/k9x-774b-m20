@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T20:56:30.061Z",
-  "total_verified_learnings": 9018,
+  "last_updated": "2026-11-19T21:08:23.956Z",
+  "total_verified_learnings": 9019,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21977,
+  "total_items": 21989,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -228660,8 +228660,8 @@
       "slug": "okteto-okteto",
       "platform": "github",
       "source_url": "https://github.com/okteto/okteto",
-      "source_version": "a23d521e",
-      "content_hash": "6db9d0ac83264405f1d1ac1389911a43f29a05dc564168dbf0b31fbaa0bc96eb",
+      "source_version": "8c4fae3a",
+      "content_hash": "61e12621247893585a2051368227783767cc77792d932d05cdb0ad6017c60caf",
       "dossier_path": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "promoted_rules": [
@@ -228679,6 +228679,11 @@
           "number": 9259,
           "title": "revert go-git to v5.16.5",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9445,
+          "title": "read the git repository with go-git only",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228686,7 +228691,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T16:41:10.231Z",
+      "verified_at": "2026-11-19T21:08:18.213Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228728,10 +228733,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-okteto-okteto-content-information-intelligence-okteto-okteto-core-invariants.md",
       "title": "Content & Information Intelligence: okteto/okteto Core Invariants",
       "repository": "okteto/okteto",
-      "source_version": "a23d521e",
-      "content_hash": "66fd5860d1db52e583b7ba4d4198e70651011d5caad51fd7f155d451514be17a",
+      "source_version": "8c4fae3a",
+      "content_hash": "4536dd8b573625dcc0c4fd6694d3fc495693f52c6b5bf0afb3cb3f79ca3247ee",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T16:41:10.747Z"
+      "persisted_at": "2026-11-19T21:08:18.757Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-okteto-okteto": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-okteto-okteto",
@@ -228740,10 +228745,10 @@
       "relative_path": "08_VERIFICATION/okteto-okteto-verification-protocol-empirical-defect-shield-for-okteto-okteto.md",
       "title": "Verification Protocol: Empirical Defect Shield for okteto/okteto",
       "repository": "okteto/okteto",
-      "source_version": "a23d521e",
-      "content_hash": "bf92e32222d4a319aa983d54838b4d73d7ddf75e8578dba6c555135379e4f612",
+      "source_version": "8c4fae3a",
+      "content_hash": "49bc2f437dc28b2fbd17b31ca502610a340563c687d80b2a05d537f982ad6d0e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T16:41:10.889Z"
+      "persisted_at": "2026-11-19T21:08:18.915Z"
     },
     "learn-github-slatedb-slatedb": {
       "learning_id": "learn-github-slatedb-slatedb",
@@ -229105,9 +229110,9 @@
       "title": "Content & Information Intelligence: okteto-okteto-learnings Core Invariants",
       "repository": "okteto-okteto-learnings",
       "source_version": "HEAD",
-      "content_hash": "fe34ec422dfb5c637b84fc06edcbd925e88043d98f2592e9bb4a11f90131a3d5",
+      "content_hash": "c1948abb27d086a585d0b9b0b3560195f74ca51ffa177f61ebc7eb7766571839",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T16:41:26.997Z"
+      "persisted_at": "2026-11-19T21:08:23.791Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-okteto-okteto-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-okteto-okteto-learnings",
@@ -229117,9 +229122,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for okteto-okteto-learnings",
       "repository": "okteto-okteto-learnings",
       "source_version": "HEAD",
-      "content_hash": "88c53ed795b83d42896cc83ee35394319b16e5566db1634561391e10e7d65b52",
+      "content_hash": "df4c435d74d9e99b98b390c943e119e01ed9273b933c37ee5ba77fbf1f0d69c9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T16:41:27.156Z"
+      "persisted_at": "2026-11-19T21:08:23.956Z"
     },
     "learn-huggingface-nomic-ai-nomic-embed-text-v1-5": {
       "learning_id": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
@@ -247507,14 +247512,19 @@
       "slug": "jacklandrin-onlyswitch",
       "platform": "github",
       "source_url": "https://github.com/jacklandrin/OnlySwitch",
-      "source_version": "ff711c47",
-      "content_hash": "9cc41d8c90ad84a1efea53836204a7a0144436b4caf67c1df0ba56f71d3ac295",
+      "source_version": "dc279316",
+      "content_hash": "185b64a2b7074aa88f696b7df84b3687589be66e0d1fe6ca05f19b08614dc7e5",
       "dossier_path": "07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md",
       "promoted_rules": [
         {
           "number": 8630,
           "title": "post the desktop pet hunger setting change on the main actor",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9444,
+          "title": "menu bar indicator redraw loop",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -247523,7 +247533,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T17:03:57.001Z",
+      "verified_at": "2026-11-19T21:08:15.370Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -247565,10 +247575,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-jacklandrin-onlyswitch-technical-construction-intelligence-jacklandrin-onlyswitc.md",
       "title": "Technical Construction Intelligence: jacklandrin/OnlySwitch Core Invariants",
       "repository": "jacklandrin/OnlySwitch",
-      "source_version": "ff711c47",
-      "content_hash": "34192aa9fe5b513b276c546181ec0f0b6d8c52ee6f8cdada05d45a1ca8f51d32",
+      "source_version": "dc279316",
+      "content_hash": "3ea488583e415fa4b55d9a64b4d115f6129cd199bbded77a4a02be86a734b3f8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T17:03:57.538Z"
+      "persisted_at": "2026-11-19T21:08:15.913Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-jacklandrin-onlyswitch": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-jacklandrin-onlyswitch",
@@ -247577,10 +247587,10 @@
       "relative_path": "08_VERIFICATION/jacklandrin-onlyswitch-verification-protocol-empirical-defect-shield-for-jacklan.md",
       "title": "Verification Protocol: Empirical Defect Shield for jacklandrin/OnlySwitch",
       "repository": "jacklandrin/OnlySwitch",
-      "source_version": "ff711c47",
-      "content_hash": "fe33e454b45166ef342de74bce69d6d07f0b54c0b96c836cab5d77e3952f7dca",
+      "source_version": "dc279316",
+      "content_hash": "26b43fbd3b4c25bd352e533f4a586ed475fca5fca1995198e361c22a6e979ed4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T17:03:57.679Z"
+      "persisted_at": "2026-11-19T21:08:16.064Z"
     },
     "rule-8631": {
       "learning_id": "rule-8631",
@@ -247652,9 +247662,9 @@
       "title": "Technical Construction Intelligence: jacklandrin-onlyswitch-learnings Core Invariants",
       "repository": "jacklandrin-onlyswitch-learnings",
       "source_version": "HEAD",
-      "content_hash": "2758d7f93287fd6a4d634200c3eb0ec8c2bcf4793e89fb6e4ca74d69db4c6960",
+      "content_hash": "3199f63be7efb32bbe452626224cb8de1b1fe0bde4211c7eb33783bc6f8cb538",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T17:04:42.950Z"
+      "persisted_at": "2026-11-19T21:08:22.805Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-jacklandrin-onlyswitch-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-jacklandrin-onlyswitch-learnin",
@@ -247664,9 +247674,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for jacklandrin-onlyswitch-learnings",
       "repository": "jacklandrin-onlyswitch-learnings",
       "source_version": "HEAD",
-      "content_hash": "589b705b9c53f951c8006398fd1204bfa51294b5bf8dbbbb64f382bfe2c38f47",
+      "content_hash": "95f9e2a535674c307a090ec645d48d07c0de0353618ce9673a2daf515f003a60",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T17:04:43.105Z"
+      "persisted_at": "2026-11-19T21:08:22.954Z"
     },
     "learn-github-actix-actix-web": {
       "learning_id": "learn-github-actix-actix-web",
@@ -297260,6 +297270,177 @@
       "content_hash": "7e6c0f54ee6232d9255d6a0615261dbc6075646f3ee49259ca6a6859c58c70e5",
       "domain_letter": "K",
       "persisted_at": "2026-11-19T20:56:30.061Z"
+    },
+    "learn-github-herdrdev-herdr": {
+      "learning_id": "learn-github-herdrdev-herdr",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "herdrdev/herdr",
+      "repository": "herdrdev/herdr",
+      "slug": "herdrdev-herdr",
+      "platform": "github",
+      "source_url": "https://github.com/herdrdev/herdr",
+      "source_version": "8734523b",
+      "content_hash": "e1984438b74ad738167ef692c08f1aa11c235378bad58e5c2bed9e96b83e5d4f",
+      "dossier_path": "07_PROJECT_LEARNING/herdrdev-herdr-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/herdrdev-herdr-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9443,
+          "title": "keep the terminal theme readable on light terminals",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-19T21:08:09.808Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9443": {
+      "learning_id": "rule-9443",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9443,
+      "title": "keep the terminal theme readable on light terminals",
+      "source_url": "https://github.com/herdrdev/herdr",
+      "source_version": "8734523b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T21:08:09.808Z"
+    },
+    "candidate_directive-keep-the-terminal-theme-readable-on-light-terminals": {
+      "item_id": "candidate_directive-keep-the-terminal-theme-readable-on-light-terminals",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-L7A9-keep-the-terminal-theme-readable-on-light-terminals.md",
+      "title": "keep the terminal theme readable on light terminals",
+      "repository": "herdrdev-herdr-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7e1b888a565f614c7545cbcf6f0b96060fffc37221c532e21b95df9cb2502099",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-19T21:08:21.925Z"
+    },
+    "domain_intelligence-design-intelligence-herdrdev-herdr-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-herdrdev-herdr-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-herdrdev-herdr-design-intelligence-herdrdev-herdr-core-invariants.md",
+      "title": "Design Intelligence: herdrdev/herdr Core Invariants",
+      "repository": "herdrdev/herdr",
+      "source_version": "8734523b",
+      "content_hash": "93f90e5d989db1619e2ab9b293cdf60219b963e6b0031ad3bc522a3f81943db0",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-19T21:08:10.376Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-herdrdev-herdr": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-herdrdev-herdr",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/herdrdev-herdr-verification-protocol-empirical-defect-shield-for-herdrdev-herdr.md",
+      "title": "Verification Protocol: Empirical Defect Shield for herdrdev/herdr",
+      "repository": "herdrdev/herdr",
+      "source_version": "8734523b",
+      "content_hash": "86dd77bff7359f6548eb2203f7a084c2ee3324c3c7a0ee6a566b5b2abe87fdff",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T21:08:10.523Z"
+    },
+    "rule-9444": {
+      "learning_id": "rule-9444",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9444,
+      "title": "menu bar indicator redraw loop",
+      "source_url": "https://github.com/jacklandrin/OnlySwitch",
+      "source_version": "dc279316",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T21:08:15.370Z"
+    },
+    "candidate_directive-menu-bar-indicator-redraw-loop": {
+      "item_id": "candidate_directive-menu-bar-indicator-redraw-loop",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-L7UJ-menu-bar-indicator-redraw-loop.md",
+      "title": "menu bar indicator redraw loop",
+      "repository": "jacklandrin-onlyswitch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5c18bb4e57a4c0b89d98843c5c0d81c46b7d75d22418802a5a26a0a346e05872",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T21:08:22.655Z"
+    },
+    "rule-9445": {
+      "learning_id": "rule-9445",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9445,
+      "title": "read the git repository with go-git only",
+      "source_url": "https://github.com/okteto/okteto",
+      "source_version": "8c4fae3a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T21:08:18.213Z"
+    },
+    "candidate_directive-read-the-git-repository-with-go-git-only": {
+      "item_id": "candidate_directive-read-the-git-repository-with-go-git-only",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-L4Q0-read-the-git-repository-with-go-git-only.md",
+      "title": "read the git repository with go-git only",
+      "repository": "okteto/okteto",
+      "source_version": "8c4fae3a",
+      "content_hash": "bf150003ebec7debbd19d870437c4f7e7593b483c6e78a52155663ca98722267",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-19T21:08:18.604Z"
+    },
+    "domain_intelligence-design-intelligence-herdrdev-herdr-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-herdrdev-herdr-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-herdrdev-herdr-learnings-design-intelligence-herdrdev-herdr-learnings-core-invar.md",
+      "title": "Design Intelligence: herdrdev-herdr-learnings Core Invariants",
+      "repository": "herdrdev-herdr-learnings",
+      "source_version": "HEAD",
+      "content_hash": "65ab406c0ceb5b1eb022fe962019ac2741acd4ba52706630fabcbcf2f718ee05",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-19T21:08:22.072Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-herdrdev-herdr-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-herdrdev-herdr-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/herdrdev-herdr-learnings-verification-protocol-empirical-defect-shield-for-herdr.md",
+      "title": "Verification Protocol: Empirical Defect Shield for herdrdev-herdr-learnings",
+      "repository": "herdrdev-herdr-learnings",
+      "source_version": "HEAD",
+      "content_hash": "768e39c3bff804e600cdea99e96e27412e1886f99ef72b15cdb1698af584d5f7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T21:08:22.234Z"
+    },
+    "candidate_directive-revert-read-the-git-repository-with-go-git-only": {
+      "item_id": "candidate_directive-revert-read-the-git-repository-with-go-git-only",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-L8M2-revert-read-the-git-repository-with-go-git-only.md",
+      "title": "revert: read the git repository with go-git only",
+      "repository": "okteto-okteto-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c3a0e4268ffa8b4961577ee0b27e0bbbacb94a008eefaf0e05424badd024a8a5",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-19T21:08:23.645Z"
     }
   },
   "ai-builder-brain": {

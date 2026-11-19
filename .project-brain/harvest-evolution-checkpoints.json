@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T20:56:30.201Z",
+  "last_updated": "2026-11-19T21:08:24.086Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T20:00:31.654Z",
@@ -738,7 +738,7 @@
       "staged_for_review": 1
     },
     "okteto-okteto-learnings.md": {
-      "processed_at": "2026-11-18T16:41:26.277Z",
+      "processed_at": "2026-11-19T21:08:23.098Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -803,7 +803,7 @@
       "staged_for_review": 1
     },
     "jacklandrin-onlyswitch-learnings.md": {
-      "processed_at": "2026-11-15T17:04:42.560Z",
+      "processed_at": "2026-11-19T21:08:22.379Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3516,9 +3516,14 @@
       "processed_at": "2026-11-19T13:08:07.966Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "herdrdev-herdr-learnings.md": {
+      "processed_at": "2026-11-19T21:08:21.696Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2325,
+  "total_dossiers_evaluated": 2328,
   "total_canonical_promoted": 394,
-  "total_staged_for_review": 1731
+  "total_staged_for_review": 1734
 }

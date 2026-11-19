@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-JMA7",
-    "timestamp": "2026-11-18T05:27:40.687Z",
-    "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-    "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-    "contentHash": "fb0c2d4485bcce354ea07941c54b5a2841a70fdd61b0291fb754b8c4afd39a42",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-TLR5",
-    "timestamp": "2026-11-18T05:35:26.561Z",
-    "repository": "fallow-rs/fallow",
-    "learningId": "learn-github-fallow-rs-fallow",
-    "contentHash": "9160c1394a741411f47d59c6b0083fbc0b678df9c48c684a7ef012fa86118f8e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-4Q5K",
-    "timestamp": "2026-11-18T05:44:05.480Z",
-    "repository": "unsloth/Qwen-Image-2.1-GGUF",
-    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-    "contentHash": "b05065a2aa7e08b53b8392ad3e59597aa6fdba5213fd6697adfe6fd60607bb7b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-4RPY",
     "timestamp": "2026-11-18T05:44:07.510Z",
     "repository": "sayanarijit/xplr",
@@ -7492,6 +7447,51 @@
     "contentHash": "639d0dcf56ad0e78636af32e2143928c23aed9fd6fc72ccb2daa772728596161",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-KY3H",
+    "timestamp": "2026-11-19T21:08:10.013Z",
+    "repository": "herdrdev/herdr",
+    "learningId": "learn-github-herdrdev-herdr",
+    "contentHash": "e1984438b74ad738167ef692c08f1aa11c235378bad58e5c2bed9e96b83e5d4f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-L2DL",
+    "timestamp": "2026-11-19T21:08:15.561Z",
+    "repository": "jacklandrin/OnlySwitch",
+    "learningId": "learn-github-jacklandrin-onlyswitch",
+    "contentHash": "185b64a2b7074aa88f696b7df84b3687589be66e0d1fe6ca05f19b08614dc7e5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-L4KJ",
+    "timestamp": "2026-11-19T21:08:18.403Z",
+    "repository": "okteto/okteto",
+    "learningId": "learn-github-okteto-okteto",
+    "contentHash": "61e12621247893585a2051368227783767cc77792d932d05cdb0ad6017c60caf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

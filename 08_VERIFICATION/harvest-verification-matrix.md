@@ -11380,3 +11380,6 @@
 | `CYCLE-20261119-560K` | `2026-11-19T20:55:53.780Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9442` | Yes (`cd1cece9...`) |
 | `CYCLE-20261119-57KA` | `2026-11-19T20:55:55.786Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md` | Yes (`639d0dcf...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T20:56:27.465Z` | `skyhook-io-radar` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9D38D4A5` [Domain D] | Yes (`7e380c97...`) |
+| `CYCLE-20261119-KY3H` | `2026-11-19T21:08:10.013Z` | `herdrdev/herdr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9443` | Yes (`e1984438...`) |
+| `CYCLE-20261119-L2DL` | `2026-11-19T21:08:15.561Z` | `jacklandrin/OnlySwitch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9444` | Yes (`185b64a2...`) |
+| `CYCLE-20261119-L4KJ` | `2026-11-19T21:08:18.403Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9445` | Yes (`61e12621...`) |

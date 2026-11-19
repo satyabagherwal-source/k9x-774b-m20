@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T20:55:55.819Z",
-  "total_cycles_completed": 10864,
-  "total_learnings_persisted": 10864,
-  "total_rules_promoted": 10217,
+  "last_updated": "2026-11-19T21:08:18.412Z",
+  "total_cycles_completed": 10867,
+  "total_learnings_persisted": 10867,
+  "total_rules_promoted": 10220,
   "history": [
-    {
-      "timestamp": "2026-11-19T00:58:07.073Z",
-      "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
-      "learningId": "learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T00:58:18.772Z",
-      "repository": "microsoft/agent-governance-toolkit",
-      "learningId": "learn-github-microsoft-agent-governance-toolkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T00:58:22.935Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T01:05:59.554Z",
       "repository": "FacebookAI/xlm-roberta-base",
@@ -1403,6 +1382,27 @@
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T21:08:10.022Z",
+      "repository": "herdrdev/herdr",
+      "learningId": "learn-github-herdrdev-herdr",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T21:08:15.570Z",
+      "repository": "jacklandrin/OnlySwitch",
+      "learningId": "learn-github-jacklandrin-onlyswitch",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T21:08:18.412Z",
+      "repository": "okteto/okteto",
+      "learningId": "learn-github-okteto-okteto",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

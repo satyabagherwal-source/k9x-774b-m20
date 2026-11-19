@@ -3463,10 +3463,10 @@
     "repository": "okteto/okteto",
     "platform": "github",
     "sourceUrl": "https://github.com/okteto/okteto",
-    "sourceVersion": "a23d521e",
+    "sourceVersion": "8c4fae3a",
     "license": "Apache-2.0",
-    "contentHash": "6db9d0ac83264405f1d1ac1389911a43f29a05dc564168dbf0b31fbaa0bc96eb",
-    "lastHarvestedAt": "2026-11-18T16:41:10.416Z",
+    "contentHash": "61e12621247893585a2051368227783767cc77792d932d05cdb0ad6017c60caf",
+    "lastHarvestedAt": "2026-11-19T21:08:18.407Z",
     "learningId": "learn-github-okteto-okteto"
   },
   "supervc-stack-vectorchord": {
@@ -7883,10 +7883,10 @@
     "repository": "herdrdev/herdr",
     "platform": "github",
     "sourceUrl": "https://github.com/herdrdev/herdr",
-    "sourceVersion": "ee5bfb50",
+    "sourceVersion": "8734523b",
     "license": "Apache-2.0",
-    "contentHash": "807dfe4fdc33d156532c1594ba75123a7ce67556ae32e2dad17b850ee1c8e3cf",
-    "lastHarvestedAt": "2026-10-30T22:27:27.517Z",
+    "contentHash": "e1984438b74ad738167ef692c08f1aa11c235378bad58e5c2bed9e96b83e5d4f",
+    "lastHarvestedAt": "2026-11-19T21:08:10.017Z",
     "learningId": "learn-github-herdrdev-herdr"
   },
   "darrylmorley-whatcable": {
@@ -8063,10 +8063,10 @@
     "repository": "jacklandrin/OnlySwitch",
     "platform": "github",
     "sourceUrl": "https://github.com/jacklandrin/OnlySwitch",
-    "sourceVersion": "ff711c47",
+    "sourceVersion": "dc279316",
     "license": "MIT",
-    "contentHash": "9cc41d8c90ad84a1efea53836204a7a0144436b4caf67c1df0ba56f71d3ac295",
-    "lastHarvestedAt": "2026-11-15T17:03:57.185Z",
+    "contentHash": "185b64a2b7074aa88f696b7df84b3687589be66e0d1fe6ca05f19b08614dc7e5",
+    "lastHarvestedAt": "2026-11-19T21:08:15.565Z",
     "learningId": "learn-github-jacklandrin-onlyswitch"
   },
   "alin23-lunar": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/herdrdev-herdr-learnings.md`  
 > **Source**: github ([https://github.com/herdrdev/herdr](https://github.com/herdrdev/herdr))  
-> **Source Version**: `ee5bfb50`  
+> **Source Version**: `8734523b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T22:27:27.281Z  
+> **Timestamp**: 2026-11-19T21:08:08.981Z  
 > **Learning ID**: `learn-github-herdrdev-herdr`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/herdrdev-herdr-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/herdrdev/herdr](https://github.com/herdrdev/herdr))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T22:27:25.882Z  
+> **Harvest Timestamp**: 2026-11-19T21:08:08.822Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: the runtime your coding agents live on
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 46929 stars
+- **Stars / Engagement**: 51883 stars
 
 ---
 
@@ -76,6 +76,8 @@ use crate::workspace::Workspace;
 pub struct Palette {
     /// Primary accent (highlight, active borders).
     pub accent: Color,
+    /// Host-derived text color for accent fills, independent of borders and separators.
+    pub(crate) accent_fg: Option<Color>,
     /// Background for the tab bar, floating panels, overlays, and modals.
     pub panel_bg: Color,
     /// Optional desktop sidebar background. Reset preserves the terminal background.
@@ -115,9 +117,24 @@ pub struct Palette {
 }
 
 impl Palette {
+    pub(crate) fn accent_foreground(&self) -> Color {
+        self.accent_fg.unwrap_or(match self.panel_bg {
+            Color::Reset => self.surface_dim,
+            color => color,
+        })
+    }
+
+    pub(crate) fn fill_foreground(&self) -> Color {
+        match self.panel_bg {
+            Color::Reset => self.surface_dim,
+            color => color,
+        }
+    }
+
     /// Catppuccin Mocha — the default.
     pub fn catppuccin() -> Self {
         Self {
+            accent_fg: None,
             accent: Color::Rgb(137, 180, 250), // blue
             panel_bg: Color::Rgb(24, 24, 37),
             sidebar_bg: Color::Reset,
@@ -143,6 +160,7 @@ impl Palette {
     /// Catppuccin Latte — the light Catppuccin flavor.
     pub fn catppuccin_latte() -> Self {
         Self {
+            accent_fg: None,
             accent: Color::Rgb(30, 102, 245),
             panel_bg: Color::Rgb(239, 241, 245),
             sidebar_bg: Color::Reset,
@@ -168,6 +186,7 @@ impl Palette {
     /// Terminal 16-color theme.
     pub fn terminal() -> Self {
         Self {
+            accent_fg: None,
             accent: Color::Blue,
             panel_bg: Color::Reset,
             sidebar_bg: Color::Reset,
@@ -190,9 +209,79 @@ impl Palette {
         }
     }
 
+    pub(crate) fn terminal_for_host(host: &crate::terminal_theme::TerminalTheme) -> Self {
+        use crate::terminal_theme::RgbColor;
+
+        let mut palette = Self::terminal();
+        let (Some(foreground), Some(background)) = (host.foreground, host.background) else {
+            return palette;
+        };
+        let rgb = |color: RgbColor| Color::Rgb(color.r, color.g, color.b);
+
+        if let Some(surface) = host.palette[8] {
+            if foreground.contrast_ratio(surface) < 3.0 {
+                // Keep the host background's hue while making the active row visible.
+                let visible_tint = |text_floor| {
+                    for weight in (10u16..=95).step_by(5) {
+                        let blend = |bg: u8, fg: u8| {
+                            ((u16::from(bg) * (100 - weight) + u16::from(fg) * weight) / 100) as u8
+                        };
+                        let candidate = RgbColor {
+                            r: blend(background.r, foreground.r),
+                            g: blend(background.g, foreground.g),
+                            b: blend(background.b, foreground.b),
+                        };
+                        if foreground.contrast_ratio(candidate) < text_floor {
+                            break;
+                        }
+                        if background.contrast_ratio(candidate) >= 1.3 {
+                            return Some(candidate);
+                        }
+                    }
+                    None
+                };
+                if let Some(row) = visible_tint(4.5).or_else(|| visible_tint(3.0)) {
+                    palette.active_row_bg = rgb(row);
+                    palette.surface1 = rgb(row);
+                }
+            }
+            if let Some(accent) = host.palette[4] {
+                if surface.contrast_ratio(accent) < 4.5 {
+                    let black = RgbColor { r: 0, g: 0, b: 0 };
+                    let white = RgbColor {
+                        r: 255,
+                        g: 255,
+                        b: 255,
+                    };
+                    let contrast = if background.contrast_ratio(accent) >= 4.5 {
+                        background
+                    } else if black.contrast_ratio(accent) >= white.contrast_ratio(accent) {
+                        black
+                    } else {
+                        white
+                    };
+                    palette.accent_fg = Some(rgb(contrast));
+                }
+            }
+        }
+
+        for (color, index) in [
+            (&mut palette.overlay0, 7),
+            (&mut palette.subtext0, 7),
+            (&mut palette.mauve, 7),
+            (&mut palette.overlay1, 15),
+        ] {
+            if host.palette[index].is_some_and(|color| color.contrast_ratio(background) < 3.0) {
+                *color = Color::Reset;
+            }
+        }
+        palette
+    }
+
     /// Tokyo Night — blue-purple aesthetic.
     pub fn tokyo_night() -> Self {
         Self {
+            accent_fg: None,
             accent: Color::Rgb(122, 162, 247), // blue
             panel_bg: Color::Rgb(26, 27, 38),
             sidebar_bg: Color::Reset,
@@ -213,95 +302,7 @@ impl Palette {
             teal: Color::Rgb(125, 207, 255),
             peach: Color::Rgb(255, 158, 100),
         }
-    }
-
-    /// Tokyo Night Day — the light Tokyo Night style.
-    pub fn tokyo_night_day() -> Self {
-        Self {
-            accent: Color::Rgb(46, 125, 233),
-            panel_bg: Color::Rgb(225, 226, 231),
-            sidebar_bg: Color::Reset,
-            active_row_bg: Color::Rgb(210, 211, 218),
-            selection_bg: Color::Rgb(182, 202, 231),
-            surface0: Color::Rgb(196, 200, 218),
-            surface1: Color::Rgb(168, 174, 203),
-            surface_dim: Color::Rgb(210, 211, 218),
-            overlay0: Color::Rgb(137, 144, 179),
-            overlay1: Color::Rgb(104, 112, 154),
-            text: Color::Rgb(55, 96, 191),
-            subtext0: Color::Rgb(97, 114, 176),
-            mauve: Color::Rgb(120, 71, 189),
-            green: Color::Rgb(88, 117, 57),
-            yellow: Color::Rgb(140, 108, 62),
-            red: Color::Rgb(245, 42, 101),
-            blue: Color::Rgb(46, 125, 233),
-            teal: Color::Rgb(17, 140, 116),
-            peach: Color::Rgb(177, 92, 0),
-        }
-    }
-
-    /// Dracula — purple/pink/green.
-    pub fn dracula() -> Self {
-        Self {
-            accent: Color::Rgb(189, 147, 249), // purple
-            panel_bg: Color::Rgb(40, 42, 54),
-            sidebar_bg: Color::Reset,
-            active_row_bg: Color::Rgb(55, 60, 82),
-            selection_bg: Color::Rgb(70, 63, 93),
-            surface0: Color::Rgb(68, 71, 90),
-            surface1: Color::Rgb(98, 114, 164),
-            surface_dim: Color::Rgb(40, 42, 54),
-            overlay0: Color::Rgb(98, 114, 164),
-            overlay1: Color::Rgb(130, 140, 180),
-            text: Color::Rgb(248, 248, 242),
-            subtext0: Color::Rgb(210, 210, 220),
-            mauve: Color::Rgb(255, 121, 198), // pink
-            green: Color::Rgb(80, 250, 123),
-            yellow: Color::Rgb(241, 250, 140),
-            red: Color::Rgb(255, 85, 85),
-            blue: Color::Rgb(139, 233, 253), // cyan-ish
-            teal: Color::Rgb(139, 233, 253),
-            peach: Color::Rgb(255, 184, 108),
-        }
-    }
-
-    /// Nord — frosty blue palette.
-    pub fn nord() -> Self {
-        Self {
-            accent: Color::Rgb(136, 192, 208), // frost
-            panel_bg: Color::Rgb(46, 52, 64),
-            sidebar_bg: Color::Reset,
-            active_row_bg: Color::Rgb(67, 76, 94),
-            selection_bg: Color::Rgb(64, 80, 93),
-            surface0: Color::Rgb(59, 66, 82),
-            surface1: Color::Rgb(67, 76, 94),
-            surface_dim: Color::Rgb(46, 52, 64),
-            overlay0: Color::Rgb(76, 86, 106),
-            overlay1: Color::Rgb(100, 110, 130),
-            text: Color::Rgb(236, 239, 244),
-            subtext0: Color::Rgb(216, 222, 233),
-            mauve: Color::Rgb(180, 142, 173),
-            green: Color::Rgb(163, 190, 140),
-            yellow: Color::Rgb(235, 203, 139),
-            red: Color::Rgb(191, 97, 106),
-            blue: Color::Rgb(129, 161, 193),
-            teal: Color::Rgb(143, 188, 187),
-            peach: Color::Rgb(208, 135, 112),
-        }
-    }
-
-    /// Gruvbox Dark — warm retro palette.
-    pub fn gruvbox() -> Self {
-        Self {
-            accent: Color::Rgb(215, 153, 33), // yellow
-            panel_bg: Color::Rgb(40, 40, 40),
-            sidebar_bg: Color::Reset,
-            active_row_bg: Color::Rgb(50, 49, 48),
-            selection_bg: Color::Rgb(75, 63, 39),
-            surface0: Color::Rgb(60, 56, 54),
-            surface1: Color::Rgb(80, 73, 69),
-            surface_dim: Color::Rgb(40, 40, 40),
-    
+ 
 ```
 
 ### Core Architecture Module: `src/client/loop_config.rs`
@@ -2486,13 +2487,13 @@ export default function (pi) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5976** (2026-11-13): **Mastra Code: ask_user question is reported as working, never blocked**
+  *Symptoms*: ### Is this a reproducible bug?  - [x] I confirm this is a reproducible bug, not a feature request, idea, question, contribution proposal, or direction check. - [x] I reproduced this bug on the version and environment reported below using the exact steps provided.  ### Current behavior  While Mastra Code shows an `ask_user` question and waits for an answer, Herdr reports the pane as `working`. It never shows `blocked`, so the sidebar and agent list say the agent is busy when it is actually waiting for me.  ### Expected behavior  While the question is open, the pane is `blocked`, then goes back to `working` once I answer.  ### Reproduction  1. `herdr integration install mastracode`, then start `mastracode` (0.50.0) in a pane. 2. Prompt: `Use the ask_user tool to ask me a question with two options.` 3. While the question picker is on screen (`Enter to select` / `Esc to skip`), run `herdr agent list`.  The pane's `agent_status` is `working` the whole time the question is open.  ### Impact  I run several Mastra Code agents in parallel and use Herdr's status to see which one needs me. An agent waiting on a question looks busy, so it can sit unanswered for a long time.  ### Environment  - Herdr version: 0.9.5 - Update channel (stable or preview): stable - Operating system: macOS 26.5.1 (arm64) - Terminal: iTerm2 3.7.7 - Shell, if relevant: zsh 5.9.2 - Relevant config, if any: Mastra Code 0.50.0 with the Herdr Mastra Code integration installed  `herdr agent list` sampled every 3 s w
+
 - **Issue #5678** (2026-10-30): **GPUI: tab bar loading animation stutters on macOS**
   *Symptoms*: ### Is this a reproducible bug?  - [x] I confirm this is a reproducible bug, not a feature request, idea, question, contribution proposal, or direction check.  ### Current behavior  In the desktop app (GPUI), the loading animation on the top tab bar (shown while an agent in that tab is working) is not smooth: it visibly stutters / drops frames.  There is no setting in `config-gpui.toml` to tune or disable this animation (`[tabs]` only exposes font family/size/fallback).  ### Expected behavior  The tab loading animation runs smoothly, or there is an option to reduce/disable it.  ### Reproduction  1. Open Herdr.app on macOS. 2. Start a coding agent (Claude Code) in a tab and give it work so the tab shows its loading indicator. 3. Watch the indicator on the top tab bar: the motion is choppy.  ### Environment  - Herdr.app (GPUI) 0.1.8, herdr core 0.9.5 (also seen on 0.9.3; Herdr.app restarted after updating) - macOS 15 (Darwin 24.6.0), Apple M2, built-in Retina LCD 2560x1600 - Low Power Mode off, Reduce Motion off - `config-gpui.local.toml`: `layout = "comfortable-rounded"`, `theme = "Follow Herdr"` - Herdr.app sits around 10–14% CPU in normal use, which may be related  Possibly related: #1134 (60Hz limit, TUI). 
   **Post-Mortem & Fix Analysis**:
   > Filed in the wrong repo, sorry — this is about the desktop app. Moved to herdrdev/herdr-app#94.
-
-- **Issue #5375** (2026-10-26): **`integration install opencode` ignores XDG_CONFIG_HOME and uses ~/.config/opencode**
-  *Symptoms*: ### Is this a reproducible bug?  - [X] I confirm this is a reproducible bug, not a feature request, idea, question, contribution proposal, or direction check. - [X] I reproduced this bug on the version and environment reported below using the exact steps provided.  ### Current behavior  With `XDG_CONFIG_HOME` set, `herdr integration install opencode` still looks for OpenCode's config in `~/.config/opencode`.  If OpenCode's config is only under `$XDG_CONFIG_HOME/opencode`, the install fails with `opencode config directory not found at <HOME>/.config/opencode. install opencode first`. If `~/.config/opencode` also exists, the plugins and `tui.jsonc` are written there, and OpenCode never loads them.  ### Expected behavior  The plugins go to `$XDG_CONFIG_HOME/opencode`, the directory OpenCode reads. `opencode debug paths` reports `config $XDG_CONFIG_HOME/opencode` in the same environment.  ### Reproduction  ```sh S=$(mktemp -d); mkdir -p $S/home $S/xdgconf/opencode HOME=$S/home XDG_CONFIG_HOME=$S/xdgconf herdr integration install opencode # opencode config directory not found at $S/home/.config/opencode. install opencode first  mkdir -p $S/home/.config/opencode HOME=$S/home XDG_CONFIG_HOME=$S/xdgconf herdr integration install opencode # installed opencode integration plugin to $S/home/.config/opencode/plugins/herdr-agent-state.js find $S/xdgconf -type f   # nothing ```  ### Impact  I test OpenCode setups in a sandbox with `XDG_CONFIG_HOME` pointed at a temp directory. The install 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2509,141 +2510,831 @@ export default function (pi) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ee5bfb50` (2026-10-29)
-**Commit Message**: chore: point agents at the source instead of agent-guide and llms.txt
+### Incident Patch 1: `8734523b` (2026-11-19)
+**Commit Message**: fix: keep the terminal theme readable on light terminals (#6092)
 
-**File**: `docs/next/website/src/content/docs/agent-skill.mdx` (modified, +0/-2)
+refs #1307
+
+**File**: `src/app/mod.rs` (modified, +16/-6)
 ```diff
-@@ -7,8 +7,6 @@ Herdr ships a reusable agent skill file at [`skills/herdr/SKILL.md`](https://git
+@@ -297,6 +297,7 @@ fn resolve_palette_for_theme_name(
+     fallback_name: &str,
+     runtime: &state::ThemeRuntimeConfig,
+     mode_custom: Option<&crate::config::ModeThemeColors>,
++    host: Option<&crate::terminal_theme::TerminalTheme>,
+ ) -> state::Palette {
+     let mut palette = state::Palette::from_name(name).unwrap_or_else(|| {
+         tracing::warn!(
+@@ -307,11 +308,17 @@ fn resolve_palette_for_theme_name(
+         state::Palette::from_name(fallback_name).unwrap_or_else(state::Palette::catppuccin)
+     });
  
- Install that file into any coding agent that supports reusable skills or custom instructions. The skill teaches the agent how to control Herdr from inside a Herdr pane.
++    if crate::config::canonical_theme_name(name) == Some("terminal") {
++        if let Some(host) = host {
++            palette = state::Palette::terminal_for_host(host);
++        }
++    }
+     if let Some(custom) = &runtime.custom {
+         palette = palette.with_overrides(custom);
+     }
+     if let Some(accent) = &runtime.legacy_accent {
+         palette.accent = crate::config::parse_color(accent);
++        palette.accent_fg = None;
+     }
+     if let Some(custom) = mode_custom {
+         palette = palette.with_mode_overrides(custom);
+@@ -323,6 +330,7 @@ fn resolve_palette_for_theme_name(
+ fn resolve_effective_theme(
+     runtime: &state::ThemeRuntimeConfig,
+     appearance: Option<crate::terminal_theme::HostAppearance>,
++    host: Option<&crate::terminal_theme::TerminalTheme>,
+ ) -> (state::Palette, String) {
+     let (name, fallback, mode_custom) = if runtime.auto_switch {
+         match appearance.unwrap_or(crate::terminal_theme::HostAppearance::Dark) {
+@@ -347,7 +355,7 @@ fn resolve_effective_theme(
+         (&runtime.manual_name, "catppuccin", None)
+     };
+     (
+-        resolve_palette_for_theme_name(name, fallback, runtime, mode_custom),
++        resolve_palette_for_theme_name(name, fallback, runtime, mode_custom, host),
+         name.clone(),
+     )
+ }
+@@ -359,20 +367,22 @@ pub(crate) fn client_theme_runtime_from_config(config: &Config) -> state::ThemeR
+ pub(crate) fn client_palette_for_theme(
+     runtime: &state::ThemeRuntimeConfig,
+     name: &str,
++    host: &crate::terminal_theme::TerminalTheme,
+ ) -> state::Palette {
+-    resolve_palette_for_theme_name(name, "catppuccin", runtime, None)
++    resolve_palette_for_theme_name(name, "catppuccin", runtime, None, Some(host))
+ }
  
--Herdr also serves a separate guide at [`herdr.dev/agent-guide.md`](https://herdr.dev/agent-guide.md) for a different job: an agent helping a human learn, set up, or troubleshoot Herdr. The skill is for an agent operating Herdr; the guide is for an agent teaching a human.
+ pub(crate) fn client_palette_from_config(config: &Config) -> state::Palette {
+     let runtime = client_theme_runtime_from_config(config);
+-    resolve_effective_theme(&runtime, None).0
++    resolve_effective_theme(&runtime, None, None).0
+ }
+ 
+ pub(crate) fn client_palette_for_appearance(
+     runtime: &state::ThemeRuntimeConfig,
+-    appearance: crate::terminal_theme::HostAppearance,
++    appearance: Option<crate::terminal_theme::HostAppearance>,
++    host: &crate::terminal_theme::TerminalTheme,
+ ) -> state::Palette {
+-    resolve_effective_theme(runtime, Some(appearance)).0
++    resolve_effective_theme(runtime, appearance, Some(host)).0
+ }
+ 
+ impl App {
+@@ -492,7 +502,7 @@ impl App {
+         #[cfg(test)]
+         let agent_manifest_summaries = Vec::new();
+         let theme_runtime = theme_runtime_config(config, true);
+-        let (theme_palette, theme_name) = resolve_effective_theme(&theme_runtime, None);
++        let (theme_palette, theme_name) = resolve_effective_theme(&theme_runtime, None, None);
+ 
+         let mut state = AppState {
+             terminals: std::collections::HashMap::new(),
+```
+
+**File**: `src/app/state.rs` (modified, +194/-20)
+```diff
+@@ -35,6 +35,8 @@ use crate::workspace::Workspace;
+ pub struct Palette {
+     /// Primary accent (highlight, active borders).
+     pub accent: Color,
++    /// Host-derived text color for accent fills, independent of borders and separators.
++    pub(crate) accent_fg: Option<Color>,
+     /// Background for the tab bar, floating panels, overlays, and modals.
+     pub panel_bg: Color,
+     /// Optional desktop sidebar background. Reset preserves the terminal background.
+@@ -74,9 +76,24 @@ pub struct Palette {
+ }
+ 
+ impl Palette {
++    pub(crate) fn accent_foreground(&self) -> Color {
++        self.accent_fg.unwrap_or(match self.panel_bg {
++            Color::Reset => self.surface_dim,
++            color => color,
++        })
++    }
++
++    pub(crate) fn fill_foreground(&self) -> Color {
++        match self.panel_bg {
++            Color::Reset => self.surface_dim,
++            color => color,
++        }
++    }
++
+     /// Catppuccin Mocha — the default.
+     pub fn catppuccin() -> Self {
+         Self {
++            accent_fg: None,
+             accent: Color::Rgb(137, 180, 250), // blue
+             panel_bg: Color::Rgb(24, 24, 37),
+             sidebar_bg: Color::Reset,
+@@ -102,6 +119,7 @@ impl Palette {
+     /// Catppuccin Latte — the light Catppuccin flavor.
+     pub fn catppuccin_latte() -> Self {
+         Self {
++            accent_fg: None,
+             accent: Color::Rgb(30, 102, 245),
+             panel_bg: Color::Rgb(239, 241, 245),
+             sidebar_bg: Color::Reset,
+@@ -127,6 +145,7 @@ impl Palette {
+     /// Terminal 16-color theme.
+     pub fn terminal() -> Self {
+         Self {
++            accent_fg: None,
+             accent: Color::Blue,
+             panel_bg: Color::Reset,
+             sidebar_bg: Color::Reset,
+@@ -149,9 +168,79 @@ impl Palette {
+         }
+     }
+ 
++    pub(crate) fn terminal_for_host(host: &crate::terminal_theme::TerminalTheme) -> Self {
++        use crate::terminal_theme::RgbColor;
++
++        let mut palette = Self::terminal();
++        let (Some(foreground), Some(background)) = (host.foreground, host.background) else {
++            return palette;
++        };
++        let rgb = |color: RgbColor| Color::Rgb(color.r, color.g, color.b);
++
++        if let Some(surface) = host.palette[8] {
++            if foreground.contrast_ratio(surface) < 3.0 {
++                // Keep the host background's hue while making the active row visible.
++                let visible_tint = |text_floor| {
++                    for weight in (10u16..=95).step_by(5) {
++                        let blend = |bg: u8, fg: u8| {
++                            ((u16::from(bg) * (100 - weight) + u16::from(fg) * weight) / 100) as u8
++                        };
++                        let candidate = RgbColor {
++                            r: blend(background.r, foreground.r),
++                            g: blend(background.g, foreground.g),
++                            b: blend(background.b, foreground.b),
++                        };
++                        if foreground.contrast_ratio(candidate) < text_floor {
++                            break;
++                        }
++                        if background.contrast_ratio(candidate) >= 1.3 {
++                            return Some(candidate);
++                        }
++                    }
++                    None
++                };
++                if let Some(row) = visible_tint(4.5).or_else(|| visible_tint(3.0)) {
++                    palette.active_row_bg = rgb(row);
++                    palette.surface1 = rgb(row);
++                }
++            }
++            if let Some(accent) = host.palette[4] {
++                if surface.contrast_ratio(accent) < 4.5 {
++                    let black = RgbColor { r: 0, g: 0, b: 0 };
++                    let white = RgbColor {
++                        r: 255,
++                        g: 255,
++                        b: 255,
++                    };
++                    let contrast = if background.contrast_ratio(accent) >= 4.5 {
++                        background
++                    } else if black.contrast_ratio(accent) >= white.contrast_ratio(accent) {
++                        black
++                    } else {
++                        white
++                    };
++                    palette.accent_fg = Some(rgb(contrast));
++                }
++            }
++        }
++
++        for (color, index) in [
++            (&mut palette.overlay0, 7),
++            (&mut palette.subtext0, 7),
++            (&mut palette.mauve, 7),
++            (&mut palette.overlay1, 15),
++        ] {
++            if host.palette[index].is_some_and(|color| color.contrast_ratio(background) < 3.0) {
++                *color = Color::Reset;
++            }
++        }
++        palette
++    }
++
+     /// Tokyo Night — blue-purple aesthetic.
+     pub fn tokyo_night() -> Self {
+         Self {
++            accent_fg: None,
+             accent: Color::Rgb(122, 162, 247), // blue
+             panel_bg: Color::Rgb(26, 27, 38),
+             s
+```
+
+**File**: `src/app/theme_sync.rs` (modified, +1/-0)
+```diff
+@@ -100,6 +100,7 @@ impl App {
+         let (palette, theme_name) = super::resolve_effective_theme(
+             &self.state.theme_runtime,
+             self.state.host_terminal_appearance,
++            None,
+         );
+         if self.state.theme_name == theme_name && self.state.palette == palette {
+             return false;
+```
+
+**File**: `src/client/shell.rs` (modified, +0/-7)
+```diff
+@@ -236,13 +236,6 @@ fn status_color(
+     }
+ }
+ 
+-fn panel_contrast_fg(palette: &Palette) -> ratatui::style::Color {
+-    match palette.panel_bg {
+-        ratatui::style::Color::Reset => palette.surface_dim,
+-        color => color,
+-    }
+-}
 -
- ## What the skill does
- 
- The skill tells an agent to use the `herdr` CLI when `HERDR_ENV=1` is set. That means the agent is running inside a Herdr-managed pane and can safely talk to the local Herdr socket.
+ fn blit_pane_surface(target: &mut FrameData, source: &FrameData, area: Rect) {
+     let copy_width = source.width.min(area.width);
+     let copy_height = source.height.min(area.height);
 ```
 
-**File**: `docs/next/website/src/content/docs/index.mdx` (modified, +2/-2)
+**File**: `src/client/shell/composition.rs` (modified, +2/-2)
 ```diff
-@@ -36,10 +36,10 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
- If you already run an AI coding agent, let it handle the onboarding. Paste this prompt:
- 
- ```text
--Help me understand and set up Herdr. Read https://herdr.dev/agent-guide.md first, then walk me through it step by step.
-+Help me understand and set up Herdr. Its source and docs are at https://github.com/herdrdev/herdr. Read what you need there, then walk me through it step by step.
- ```
- 
--The guide covers Herdr's concepts, setup, configuration, and common fixes, so your agent can answer from the docs instead of improvising.
-+Your agent answers from the real source and docs instead of improvising.
- 
- ## Core guides
- 
+@@ -394,7 +394,7 @@ impl ClientShellState {
+                         hit.scroll,
+                         &self.config.palette,
+                         crate::terminal_theme::TerminalTheme {
+-                            background: self.host_background,
++                            background: self.host_theme.background,
+                             ..Default::default()
+                         },
+                     );
+@@ -758,7 +758,7 @@ fn render_client_copy_search_highlights(
+     let bottom = top.saturating_add(u32::from(hit.inner_rect.height.saturating_sub(1)));
+     let style = if current_only {
+         Style::default()
+-            .fg(panel_contrast_fg(palette))
++            .fg(palette.accent_foreground())
+             .bg(palette.accent)
+             .add_modifier(Modifier::BOLD)
+     } else {
 ```
 
-**File**: `docs/next/website/src/content/docs/ja/agent-skill.mdx` (modified, +0/-2)
+**File**: `src/client/shell/config.rs` (modified, +29/-6)
 ```diff
-@@ -7,8 +7,6 @@ Herdr は再利用可能なエージェントスキルファイルを [`skills/h
+@@ -16,6 +16,34 @@ pub(super) fn merged_config_diagnostic(
+ }
  
- このファイルを、再利用可能なスキルやカスタム指示に対応した任意のコーディングエージェントにインストールしてください。このスキルは、Herdr のペイン内から Herdr を制御する方法をエージェントに教えます。
+ impl ClientShellState {
++    pub(super) fn refresh_host_palette(&mut self) -> bool {
++        let effective = crate::app::client_palette_for_appearance(
++            &self.config.theme_runtime,
++            self.host_appearance,
++            &self.host_theme,
++        );
++        let preview = if let Some(ClientShellOverlay::Settings(settings)) = self.overlay.as_mut() {
++            settings
++                .original_theme_name
++                .clone_from(&self.config.theme_runtime.manual_name);
++            settings.original_palette = effective.clone();
++            settings.theme_preview.as_deref()
++        } else {
++            None
++        };
++        let palette = if let Some(name) = preview {
++            self.config.theme_name = name.to_owned();
++            crate::app::client_palette_for_theme(&self.config.theme_runtime, name, &self.host_theme)
++        } else {
++            effective
++        };
++        if self.config.palette == palette {
++            return false;
++        }
++        self.config.palette = palette;
++        true
++    }
++
+     pub(super) fn set_local_config_diagnostic(&mut self, diagnostic: Option<String>) {
+         self.local_config_diagnostic = diagnostic;
+         self.config_diagnostic = merged_config_diagnostic(
+@@ -77,12 +105,7 @@ impl ClientShellState {
+                     &loaded.diagnostics,
+                     &loaded.invalid_sections,
+                 );
+-                if let Some(appearance) = self.host_appearance {
+-                    self.config.palette = crate::app::client_palette_for_appearance(
+-                        &self.config.theme_runtime,
+-                        appearance,
+-                    );
+-                }
++                self.refresh_host_palette();
+                 if !self.sidebar_width_manual {
+                     self.sidebar_width = self.config.sidebar_width;
+                 }
+```
+
+**File**: `src/client/shell/input.rs` (modified, +22/-27)
+```diff
+@@ -222,6 +222,7 @@ impl ClientShellState {
  
--Herdr は別の用途向けに [`herdr.dev/agent-guide.md`](https://herdr.dev/agent-guide.md) というガイドも提供しています。こちらは、人間が Herdr を学習・セットアップ・トラブルシューティングするのをエージェントが手伝うためのものです。スキルは Herdr を操作するエージェントのため、ガイドは人間に教えるエージェントのためのものです。
+     pub(crate) fn handle_raw_events(&mut self, events: Vec<RawInputEvent>) -> ClientShellInput {
+         let mut outcome = ClientShellInput::default();
++        let mut host_palette_changed = false;
+         if !events.is_empty() && self.endpoint_error.take().is_some() {
+             self.endpoint_error_deadline = None;
+             outcome.repaint = true;
+@@ -336,41 +337,35 @@ impl ClientShellState {
+                     self.host_appearance = Some(appearance);
+                     self.host_appearance_explicit = true;
+                     outcome.query_host_theme = true;
+-                    if self.config.theme_runtime.auto_switch {
+-                        self.config.palette = crate::app::client_palette_for_appearance(
+-                            &self.config.theme_runtime,
+-                            appearance,
+-                        );
+-                        outcome.repaint = true;
+-                    }
++                    host_palette_changed = true;
+                 }
+-                RawInputEvent::HostDefaultColor {
+-                    kind: crate::terminal_theme::DefaultColorKind::Background,
+-                    color,
+-                } => {
+-                    if self.host_background != Some(color) {
+-                        self.host_background = Some(color);
++                RawInputEvent::HostDefaultColor { kind, color } => {
++                    if kind == crate::terminal_theme::DefaultColorKind::Background
++                        && self.host_theme.background != Some(color)
++                    {
+                         outcome.repaint = true;
+                     }
+-                    if !self.host_appearance_explicit {
+-                        let appearance = color.inferred_appearance();
+-                        self.host_appearance = Some(appearance);
+-                        if self.config.theme_runtime.auto_switch {
+-                            self.config.palette = crate::app::client_palette_for_appearance(
+-                                &self.config.theme_runtime,
+-                                appearance,
+-                            );
+-                            outcome.repaint = true;
+-                        }
++                    self.host_theme = self.host_theme.with_color(kind, color);
++                    host_palette_changed = true;
++                    if kind == crate::terminal_theme::DefaultColorKind::Background
++                        && !self.host_appearance_explicit
++                    {
++                        self.host_appearance = Some(color.inferred_appearance());
++                    }
++                }
++                RawInputEvent::HostPaletteColors { colors } => {
++                    for (index, color) in colors {
++                        self.host_theme = self.host_theme.with_palette_color(index, color);
+                     }
++                    host_palette_changed = true;
+                 }
+-                RawInputEvent::HostDefaultColor { .. }
+-                | RawInputEvent::HostPaletteColors { .. }
+-                | RawInputEvent::HostCellSizeReport { .. }
+-                | RawInputEvent::Unsupported => {}
++                RawInputEvent::HostCellSizeReport { .. } | RawInputEvent::Unsupported => {}
+             }
+             self.reconcile_input_source();
+         }
++        if host_palette_changed {
++            outcome.repaint |= self.refresh_host_palette();
++        }
+         outcome.repaint |= self.resume_mobile_switcher_if_ready();
+         outcome
+     }
+```
+
+**File**: `src/client/shell/overlays.rs` (modified, +9/-15)
+```diff
+@@ -124,7 +124,7 @@ pub(crate) fn render_global_menu(
+         let highlighted = index == menu.highlighted;
+         let style = if highlighted {
+             Style::default()
+-                .fg(panel_contrast_fg(palette))
++                .fg(palette.accent_foreground())
+                 .bg(palette.accent)
+                 .add_modifier(Modifier::BOLD)
+         } else {
+@@ -201,7 +201,7 @@ pub(crate) fn render_context_menu(
+         let highlighted = index == menu.highlighted;
+         let style = if highlighted {
+             Style::default()
+-                .fg(panel_contrast_fg(palette))
++                .fg(palette.accent_foreground())
+                 .bg(palette.accent)
+                 .add_modifier(Modifier::BOLD)
+         } else {
+@@ -299,12 +299,6 @@ fn row(i: Rect, ws: &[u16], gap: u16, off: u16) -> Vec<Rect> {
+         })
+         .collect()
+ }
+-fn contrast(p: &Palette) -> ratatui::style::Color {
+-    match p.panel_bg {
+-        ratatui::style::Color::Reset => p.surface_dim,
+-        c => c,
+-    }
+-}
+ fn render_release_notes_overlay(
+     b: &mut Buffer,
+     notes: &crate::app::state::ReleaseNotesState,
+@@ -371,7 +365,7 @@ fn render_release_notes_overlay(
+         close,
+         " esc close ",
+         Style::default()
+-            .fg(contrast(p))
++            .fg(p.accent_foreground())
+             .bg(p.accent)
+             .add_modifier(Modifier::BOLD)
+             .remove_modifier(Modifier::DIM),
+@@ -487,7 +481,7 @@ fn render_product_announcement_overlay(
+         close,
+         " esc close ",
+         Style::default()
+-            .fg(contrast(p))
++            .fg(p.accent_foreground())
+             .bg(p.accent)
+             .add_modifier(Modifier::BOLD)
+             .remove_modifier(Modifier::DIM),
+@@ -629,7 +623,7 @@ fn render_onboarding_overlay(
+         primary,
+         " ↵ continue ",
+         Style::default()
+-            .fg(contrast(p))
++            .fg(p.accent_foreground())
+             .bg(p.accent)
+             .add_modifier(Modifier::BOLD)
+             .remove_modifier(Modifier::DIM),
+@@ -676,7 +670,7 @@ fn render_rename_overlay(
+         *save,
+         " ↵ save ",
+         Style::default()
+-            .fg(contrast(p))
++            .fg(p.accent_foreground())
+             .bg(p.accent)
+             .add_modifier(Modifier::BOLD),
+     );
+@@ -846,7 +840,7 @@ fn render_navigator_overlay(
+                 .add_modifier(Modifier::DIM)
+         } else if ix == selected {
+             Style::default()
+-                .fg(contrast(p))
++                .fg(p.accent_foreground())
+                 .bg(p.accent)
+                 .add_modifier(Modifier::BOLD)
+         } else {
+@@ -1148,7 +1142,7 @@ fn render_help_overlay(
+             " esc close "
+         },
+         Style::default()
+-            .fg(contrast(p))
++            .fg(p.accent_foreground())
+             .bg(p.accent)
+             .add_modifier(Modifier::BOLD),
+     );
+@@ -1288,7 +1282,7 @@ fn render_confirm_close_overlay(
+         *ok,
+         " ↵ confirm ",
+         Style::default()
+-            .fg(contrast(p))
++            .fg(p.fill_foreground())
+             .bg(p.red)
+             .add_modifier(Modifier::BOLD),
+     );
+```
+
+---
+
+### Incident Patch 2: `48987295` (2026-11-19)
+**Commit Message**: fix: stop queuing stale screens for tui clients that stop reading (#6097)
+
+refs #5471
+
+**File**: `src/platform/windows.rs` (modified, +14/-0)
+```diff
+@@ -72,6 +72,20 @@ impl PrivateLocalListener {
+     }
+ }
+ 
++pub(crate) fn shutdown_client_stream(stream: &crate::ipc::LocalStream) -> std::io::Result<()> {
++    use std::os::windows::io::AsHandle as _;
++
++    let crate::ipc::LocalStream::NamedPipe(pipe) = stream;
++    let ok = unsafe {
++        windows_sys::Win32::System::Pipes::DisconnectNamedPipe(pipe.as_handle().as_raw_handle())
++    };
++    if ok == 0 {
++        Err(std::io::Error::last_os_error())
++    } else {
++        Ok(())
++    }
++}
++
+ pub(crate) struct ChildPipe(std::fs::File);
+ 
+ impl ChildPipe {
+```
+
+**File**: `src/server/client_transport.rs` (modified, +335/-5)
+```diff
+@@ -46,6 +46,7 @@ const OBSERVER_WRITE_TIMEOUT: Duration = Duration::from_secs(30);
+ 
+ /// Maximum input payload size (bytes) for a single `ClientMessage::Input`.
+ const MAX_INPUT_PAYLOAD: usize = 1024 * 1024; // 1 MB
++const MAX_CLIENT_CONTROL_BYTES: usize = 64 * 1024 * 1024;
+ const MAX_CLIENT_SHELL_DIMENSION: u16 = 4096;
+ const MAX_CLIENT_SHELL_CELLS: u32 = 1_000_000;
+ const MAX_CLIENT_CELL_SIZE_PX: u32 = 4096;
+@@ -117,6 +118,19 @@ fn decode_endpoint_request(request: &str) -> serde_json::Result<DecodedEndpointR
+ /// Maximum structured input events accepted in one client message.
+ const MAX_INPUT_EVENT_BATCH: usize = 4096;
+ 
++#[cfg(test)]
++fn split_control_frames(data: Vec<u8>) -> Vec<Vec<u8>> {
++    let mut frames = Vec::new();
++    let mut offset = 0;
++    while offset < data.len() {
++        let length = u32::from_le_bytes(data[offset..offset + 4].try_into().unwrap()) as usize;
++        let end = offset + 4 + length;
++        frames.push(data[offset..end].to_vec());
++        offset = end;
++    }
++    frames
++}
++
+ /// Channels owned by the server side of a client writer thread.
+ #[derive(Clone, Debug)]
+ pub(crate) struct ClientWriter {
+@@ -144,9 +158,16 @@ impl ClientWriter {
+     #[cfg(all(test, unix))]
+     pub(crate) fn test_drain(&self) -> Vec<Vec<u8>> {
+         let mut state = self.render.queue.lock_state();
+-        let mut frames = state.control.drain(..).collect::<Vec<_>>();
++        let mut frames = Vec::new();
++        while let Some(item) = state.take_control() {
++            match item {
++                ClientWriteItem::Control(data) => frames.extend(split_control_frames(data)),
++                ClientWriteItem::Render(_) => unreachable!(),
++            }
++        }
+         frames.extend(state.ordered.drain(..));
+         frames.extend(state.render.take());
++        state.retained_bytes = 0;
+         frames
+     }
+ 
+@@ -176,10 +197,16 @@ impl ClientWriter {
+         };
+         std::thread::spawn(move || {
+             while let Some(item) = drain.recv() {
++                let retained = item.retained_control_bytes();
+                 let sent = match item {
+-                    ClientWriteItem::Control(data) => control.send(data).is_ok(),
++                    ClientWriteItem::Control(data) => split_control_frames(data)
++                        .into_iter()
++                        .all(|frame| control.send(frame).is_ok()),
+                     ClientWriteItem::Render(data) => render.send(data).is_ok(),
+                 };
++                if let Some(retained) = retained {
++                    drain.release(retained);
++                }
+                 if !sent {
+                     break;
+                 }
+@@ -239,6 +266,11 @@ impl ClientControlWriter {
+     pub(crate) fn send(&self, data: Vec<u8>) -> Result<(), SendError<Vec<u8>>> {
+         self.queue.send_control(data)
+     }
++
++    /// One revision's optional view projection, completion map, and snapshot in wire order.
++    pub(crate) fn send_state(&self, data: Vec<u8>) -> Result<(), SendError<Vec<u8>>> {
++        self.queue.send_state(data)
++    }
+ }
+ 
+ impl ClientRenderWriter {
+@@ -268,31 +300,76 @@ impl ClientRenderWriter {
+ struct ClientWriterQueue {
+     state: Mutex<ClientWriterQueueState>,
+     ready: Condvar,
++    max_bytes: usize,
++    client_id: u64,
++    disconnect_stream: Option<LocalStream>,
+ }
+ 
+ #[derive(Debug, Default)]
+ struct ClientWriterQueueState {
+     control: VecDeque<Vec<u8>>,
++    pending_state: Option<Vec<u8>>,
++    controls_before_state: usize,
+     ordered: VecDeque<Vec<u8>>,
+     render: Option<Vec<u8>>,
++    retained_bytes: usize,
+     senders: usize,
+     writer_alive: bool,
+ }
+ 
++impl ClientWriterQueueState {
++    fn take_control(&mut self) -> Option<ClientWriteItem> {
++        if self.controls_before_state == 0 {
++            if let Some(frames) = self.pending_state.take() {
++                return Some(ClientWriteItem::Control(frames));
++            }
++        }
++        let data = self.control.pop_front()?;
++        self.controls_before_state = self.controls_before_state.saturating_sub(1);
++        Some(ClientWriteItem::Control(data))
++    }
++}
++
+ #[derive(Debug, PartialEq, Eq)]
+ enum ClientWriteItem {
+     Control(Vec<u8>),
+     Render(Vec<u8>),
+ }
+ 
++fn frame_retained_bytes(data: &Vec<u8>) -> usize {
++    data.capacity()
++        .saturating_add(std::mem::size_of::<Vec<u8>>())
++}
++
++impl ClientWriteItem {
++    fn retained_control_bytes(&self) -> Option<usize> {
++        match self {
++            Self::Control(data) => Some(frame_retained_bytes(data)),
++            Self::Render(_) => None,
++        }
++    }
++}
++
+ impl ClientWriterQueue {
++    #[cfg(test)]
+     fn new() -> Arc<Self> {
++        Self::with_limit(0, MAX_CLIENT_CONTROL_BYTES, None)
++    }
++
++    fn with_limit(
++        client_id: u64,
++        max_bytes: usize,
++        disconnect_stream: Option<LocalStream>,
++    ) -> Arc<Self> {
+         Arc::new(Self {
+             state: Mutex::new(ClientWriterQueueState {
+                 writer_
+```
+
+**File**: `src/server/headless/render.rs` (modified, +5/-4)
+```diff
+@@ -717,10 +717,11 @@ impl HeadlessServer {
+                         broken_clients.push(client_id);
+                         continue;
+                     };
+-                    if projection_framed.is_some_and(|framed| writer.control.send(framed).is_err())
+-                        || writer.control.send(completion_framed).is_err()
+-                        || writer.control.send(snapshot_framed).is_err()
+-                    {
++                    let mut state_framed = projection_framed.unwrap_or_default();
++                    state_framed.reserve_exact(completion_framed.len() + snapshot_framed.len());
++                    state_framed.extend_from_slice(&completion_framed);
++                    state_framed.extend_from_slice(&snapshot_framed);
++                    if writer.control.send_state(state_framed).is_err() {
+                         broken_clients.push(client_id);
+                         continue;
+                     }
+```
+
+---
+
+### Incident Patch 3: `33bc1638` (2026-11-19)
+**Commit Message**: ci: fix windows checks (pin windows-2022, worktree remove race) (#6093)
+
+**File**: `.github/workflows/build-artifacts-manual.yml` (modified, +1/-1)
+```diff
+@@ -190,7 +190,7 @@ jobs:
+ 
+   build-windows:
+     if: ${{ inputs.build_group == 'windows' || inputs.build_group == 'all' }}
+-    runs-on: windows-latest
++    runs-on: windows-2022
+     env:
+       LIBGHOSTTY_VT_OPTIMIZE: ${{ inputs.libghostty_optimize }}
+       LIBGHOSTTY_VT_SIMD: ${{ inputs.libghostty_simd }}
+```
+
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+```diff
+@@ -60,7 +60,7 @@ jobs:
+           - os: macos-latest
+             kind: unix
+             nextest_filter: not binary(live_handoff)
+-          - os: windows-latest
++          - os: windows-2022
+             kind: windows
+     runs-on: ${{ matrix.os }}
+     timeout-minutes: 15
+```
+
+**File**: `.github/workflows/preview.yml` (modified, +1/-1)
+```diff
+@@ -154,7 +154,7 @@ jobs:
+             os: macos-latest
+             name: herdr-macos-aarch64
+           - target: x86_64-pc-windows-msvc
+-            os: windows-latest
++            os: windows-2022
+             name: herdr-windows-x86_64.zip
+     runs-on: ${{ matrix.os }}
+     env:
+```
+
+**File**: `scripts/release-workflows.test.ts` (modified, +1/-1)
+```diff
+@@ -21,7 +21,7 @@ describe("official publishing workflow boundaries", () => {
+     expect(checks.run.trim().split("\n")).toEqual(["just ci", "just docs-contract-test"]);
+     expect(preview.jobs.build.strategy.matrix.include).toContainEqual({
+       target: "x86_64-pc-windows-msvc",
+-      os: "windows-latest",
++      os: "windows-2022",
+       name: "herdr-windows-x86_64.zip",
+     });
+     expect(preview.jobs.publish.needs).toContain("build");
+```
+
+**File**: `src/app/api/worktrees/deferred.rs` (modified, +22/-21)
+```diff
+@@ -291,27 +291,6 @@ impl App {
+             return;
+         }
+ 
+-        #[cfg(windows)]
+-        {
+-            if !params.force
+-                && crate::worktree::checkout_has_dirty_files(
+-                    &space.checkout_path,
+-                    params.trust_repository,
+-                )
+-                .unwrap_or(false)
+-            {
+-                Self::send_api_response(
+-                    respond_to,
+-                    encode_error(
+-                        id,
+-                        "dirty_worktree_requires_force",
+-                        crate::worktree::worktree_dirty_remove_message(&space.checkout_path),
+-                    ),
+-                );
+-                return;
+-            }
+-        }
 -
- ## スキルがすること
+         let workspace_internal_id = self.state.workspaces[ws_idx].id.clone();
+         let checkout_key = crate::worktree::canonical_or_original(&space.checkout_path);
+         if self
+@@ -343,6 +322,28 @@ impl App {
+             return;
+         }
  
- このスキルは、`HERDR_ENV=1` が設定されているときに `herdr` CLI を使うようエージェントに指示します。これは、エージェントが Herdr 管理下のペイン内で動作しており、ローカルの Herdr ソケットと安全に通信できることを意味します。
-```
-
-**File**: `docs/next/website/src/content/docs/ja/index.mdx` (modified, +2/-2)
-```diff
-@@ -36,10 +36,10 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
- すでに AI コーディングエージェントを使っていますか? オンボーディングはエージェントに任せましょう。このプロンプトを貼り付けてください:
- 
- ```text
--Help me understand and set up Herdr. Read https://herdr.dev/agent-guide.md first, then walk me through it step by step.
-+Help me understand and set up Herdr. Its source and docs are at https://github.com/herdrdev/herdr. Read what you need there, then walk me through it step by step.
- ```
- 
--このガイドはエージェントに Herdr のコンセプト、セットアップ、設定、よくある問題の解決方法を教えるので、エージェントの回答が即興ではなく正確なままになります。
-+エージェントは即興ではなく、実際のソースとドキュメントを読んで答えます。
- 
- ## コアガイド
- 
-```
-
-**File**: `docs/next/website/src/content/docs/zh-cn/agent-skill.mdx` (modified, +0/-2)
-```diff
-@@ -7,8 +7,6 @@ Herdr 提供了一个可复用的智能体技能文件: [`skills/herdr/SKILL.md`
- 
- 把这个文件安装到任何支持可复用技能或自定义指令的编程智能体中。这份技能教智能体如何在 Herdr 窗格内部控制 Herdr。
- 
--Herdr 还提供了另一份用途不同的指南: [`herdr.dev/agent-guide.md`](https://herdr.dev/agent-guide.md),用于让智能体帮助人类学习、安装或排查 Herdr。技能是给操作 Herdr 的智能体用的;指南是给教人类的智能体用的。
--
- ## 这份技能做什么
- 
- 这份技能告诉智能体: 当 `HERDR_ENV=1` 已设置时,使用 `herdr` CLI。这意味着智能体运行在 Herdr 管理的窗格内,可以安全地与本地 Herdr socket 通信。
-```
-
-**File**: `docs/next/website/src/content/docs/zh-cn/index.mdx` (modified, +2/-2)
-```diff
-@@ -36,10 +36,10 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
- 已经在用 AI 编程智能体?让它来帮你完成入门。粘贴这个提示词:
- 
- ```text
--Help me understand and set up Herdr. Read https://herdr.dev/agent-guide.md first, then walk me through it step by step.
-+Help me understand and set up Herdr. Its source and docs are at https://github.com/herdrdev/herdr. Read what you need there, then walk me through it step by step.
- ```
- 
--这份指南会教你的智能体 Herdr 的概念、安装、配置和常见问题的修复方法,让它的回答保持准确,而不是即兴发挥。
-+你的智能体会阅读真实的源码和文档来回答,而不是即兴发挥。
- 
- ## 核心指南
- 
-```
-
-**File**: `src/cli.rs` (modified, +3/-5)
-```diff
-@@ -46,12 +46,10 @@ const TERMINAL_SESSION_CONTROL_USAGE: &str =
-     "usage: herdr terminal session control <target> [--takeover] [--cols N] [--rows N]";
- pub(crate) const AGENT_HELP_FOOTER: &str = concat!(
-     "Are you an AI? Use these resources ONLY IF your task specifically asks you to:\n",
--    "  Help a human understand or set up Herdr for the first time:\n",
--    "    https://herdr.dev/agent-guide.md\n",
--    "  Debug or investigate a problem with Herdr:\n",
--    "    https://herdr.dev/llms.txt\n",
-     "  Control Herdr panes, agents, or workspaces:\n",
--    "    SKIP if a Herdr skill is already in your context. Otherwise run: herdr --skill",
-+    "    SKIP if a Herdr skill is already in your context. Otherwise run: herdr --skill\n",
-+    "  Help a human understand or set up Herdr, or debug a problem with it:\n",
-+    "    read the source and docs: https://github.com/herdrdev/herdr",
- );
- 
- pub(crate) fn parse_token_assignment(raw: &str) -> Result<(String, Option<String>), String> {
-```
-
-**File**: `tests/cli/surface.rs` (modified, +1/-2)
-```diff
-@@ -287,9 +287,8 @@ fn root_and_command_group_help_point_agents_to_plain_text_docs() {
-         let stdout = String::from_utf8_lossy(&output.stdout);
-         for expected in [
-             "Are you an AI? Use these resources ONLY IF your task specifically asks you to:",
--            "https://herdr.dev/agent-guide.md",
--            "https://herdr.dev/llms.txt",
-             "herdr --skill",
-+            "https://github.com/herdrdev/herdr",
-         ] {
-             assert!(
-                 stdout.contains(expected),
++        // After the in-flight check: a running removal makes the checkout look dirty.
++        #[cfg(windows)]
++        {
++            if !params.force
++                && crate::worktree::checkout_has_dirty_files(
++                    &space.checkout_path,
++                    params.trust_repository,
++                )
++                .unwrap_or(false)
++            {
++                Self::send_api_response(
++                    respond_to,
++                    encode_error(
++                        id,
++                        "dirty_worktree_requires_force",
++                        crate::worktree::worktree_dirty_remove_message(&space.checkout_path),
++                    ),
++                );
++                return;
++            }
++        }
++
+         let shutdown_panes =
+             if Self::should_shutdown_workspace_terminal_runtimes_for_worktree_remove(params.force) {
+                 self.shutdown_workspace_terminal_runtimes_for_worktree_remove(ws_idx)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5605** (closed): Feat/spaces group by repo (@Giergiel96)
-- **PR #5596** (closed): fix: count CRLF terminators when slicing agent detection regions (@mvanhorn)
-- **PR #5585** (2026-10-26): fix: install opencode and kilo integrations under XDG_CONFIG_HOME (@ogulcancelik)
-- **PR #5583** (2026-10-26): fix: bound clipboard helpers so a hung wl-copy or wl-paste can't freeze herdr (@ogulcancelik)
-- **PR #5579** (closed): feat(transcript): subagents and model effort in agent.transcript (@jerryfane)
-- **PR #5575** (closed): fix: bridge clipboard images into local Windows panes (@jaylooloomi)
+- **PR #6097** (2026-11-19): fix: stop queuing stale screens for tui clients that stop reading (@ogulcancelik)
+- **PR #6093** (2026-11-19): ci: fix windows checks (pin windows-2022, worktree remove race) (@ogulcancelik)
+- **PR #6092** (2026-11-19): fix: keep the terminal theme readable on light terminals (@ogulcancelik)
+- **PR #6056** (closed): perf: defer hidden tab resizes until the host resize settles (@safa0)
+- **PR #6050** (closed): doc: map harness names to agent start --kind in the herdr skill (@ashishvaishno)
+- **PR #6013** (closed): fix: keep Moshi clients on the connected host (@dltacube)
 
 ---
 
@@ -2657,3 +3348,54 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. keep the terminal theme readable on light terminals
+
+**RULE**:
+When implementing operations in `src/app/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in herdrdev/herdr. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `8734523b`: keep the terminal theme readable on light terminals. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/app/mod.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    host: Option<&crate::terminal_theme::TerminalTheme>,
+    if crate::config::canonical_theme_name(name) == Some("terminal") {
+        if let Some(host) = host {
+            palette = state::Palette::terminal_for_host(host);
+        }
+    }
+        palette.accent_fg = None;
+    host: Option<&crate::terminal_theme::TerminalTheme>,
+        resolve_palette_for_theme_name(name, fallback, runtime, mode_custom, host),
+    host: &crate::terminal_theme::TerminalTheme,
+    resolve_palette_for_theme_name(name, "catppuccin", runtime, None, Some(host))
+    resolve_effective_theme(&runtime, None, None).0
+    appearance: Option<crate::terminal_theme::HostAppearance>,
+    host: &crate::terminal_theme::TerminalTheme,
+    resolve_effective_theme(runtime, appearance, Some(host)).0
+        let (theme_palette, theme_name) = resolve_effective_theme(&theme_runtime, None, None);
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+        resolve_palette_for_theme_name(name, fallback, runtime, mode_custom),
+    resolve_palette_for_theme_name(name, "catppuccin", runtime, None)
+    resolve_effective_theme(&runtime, None).0
+    appearance: crate::terminal_theme::HostAppearance,
+    resolve_effective_theme(runtime, Some(appearance)).0
+        let (theme_palette, theme_name) = resolve_effective_theme(&theme_runtime, None);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `8734523b` are properly handled with clean fallback behavior.

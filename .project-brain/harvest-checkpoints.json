@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T20:55:55.822Z",
+  "last_updated": "2026-11-19T21:08:18.415Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5316,14 +5316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-okteto-okteto",
-      "content_hash": "6db9d0ac83264405f1d1ac1389911a43f29a05dc564168dbf0b31fbaa0bc96eb",
-      "verified_at": "2026-11-18T16:41:10.424Z",
+      "content_hash": "61e12621247893585a2051368227783767cc77792d932d05cdb0ad6017c60caf",
+      "verified_at": "2026-11-19T21:08:18.415Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T16:41:10.424Z"
+      "last_updated": "2026-11-19T21:08:18.415Z"
     },
     "supervc-stack/VectorChord": {
       "repository": "supervc-stack/VectorChord",
@@ -11856,14 +11856,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-herdrdev-herdr",
-      "content_hash": "807dfe4fdc33d156532c1594ba75123a7ce67556ae32e2dad17b850ee1c8e3cf",
-      "verified_at": "2026-10-30T22:27:27.529Z",
+      "content_hash": "e1984438b74ad738167ef692c08f1aa11c235378bad58e5c2bed9e96b83e5d4f",
+      "verified_at": "2026-11-19T21:08:10.025Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-30T22:27:27.529Z"
+      "last_updated": "2026-11-19T21:08:10.025Z"
     },
     "darrylmorley/whatcable": {
       "repository": "darrylmorley/whatcable",
@@ -12126,14 +12126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-jacklandrin-onlyswitch",
-      "content_hash": "9cc41d8c90ad84a1efea53836204a7a0144436b4caf67c1df0ba56f71d3ac295",
-      "verified_at": "2026-11-15T17:03:57.194Z",
+      "content_hash": "185b64a2b7074aa88f696b7df84b3687589be66e0d1fe6ca05f19b08614dc7e5",
+      "verified_at": "2026-11-19T21:08:15.573Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T17:03:57.194Z"
+      "last_updated": "2026-11-19T21:08:15.573Z"
     },
     "alin23/Lunar": {
       "repository": "alin23/Lunar",

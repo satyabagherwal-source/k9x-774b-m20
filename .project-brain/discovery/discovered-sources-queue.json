@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T20:56:29.351Z",
+  "updated_at": "2026-11-19T21:08:23.454Z",
   "stats": {
-    "total_discovered": 6018,
-    "approved_pending_harvest": 5687,
+    "total_discovered": 6024,
+    "approved_pending_harvest": 5692,
     "harvested_count": 0,
-    "rejected_count": 331,
+    "rejected_count": 332,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5669,
+      "COMMUNITY_AND_EXPERT": 5675,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 112,
       "ENGINEERING_BLOGS": 4,
@@ -130101,6 +130101,131 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
         "fileName": "xerj-org-xerj-learnings.md"
+      }
+    },
+    "SRC-576C6507CBDD": {
+      "id": "SRC-576C6507CBDD",
+      "url": "https://github.com/herdrdev/herdr",
+      "title": "https://github.com/herdrdev/herdr",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T21:08:21.720Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/herdrdev-herdr-learnings.md",
+        "fileName": "herdrdev-herdr-learnings.md"
+      }
+    },
+    "SRC-84C1BEEB8A84": {
+      "id": "SRC-84C1BEEB8A84",
+      "url": "https://github.com/user-attachments/assets/f45e4b4f-932e-4768-8bfd-845e22fdfff3",
+      "title": "https://github.com/user-attachments/assets/f45e4b4f-932e-4768-8bfd-845e22fdfff3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T21:08:22.453Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md",
+        "fileName": "jacklandrin-onlyswitch-learnings.md"
+      }
+    },
+    "SRC-3BBA2407D974": {
+      "id": "SRC-3BBA2407D974",
+      "url": "https://0.0.0.0:8080/readiness",
+      "title": "https://0.0.0.0:8080/readiness",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T21:08:23.337Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-5BCA9FAC61E2": {
+      "id": "SRC-5BCA9FAC61E2",
+      "url": "http://0.0.0.0:8080/readiness",
+      "title": "http://0.0.0.0:8080/readiness",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T21:08:23.376Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-DC046211D03B": {
+      "id": "SRC-DC046211D03B",
+      "url": "https://localhost:8443/healthz",
+      "title": "https://localhost:8443/healthz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T21:08:23.414Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-2805C28AD981": {
+      "id": "SRC-2805C28AD981",
+      "url": "https://0.0.0.0:8080/readiness/n",
+      "title": "https://0.0.0.0:8080/readiness/n",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T21:08:23.454Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
       }
     }
   }

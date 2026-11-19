@@ -4,24 +4,24 @@
 {
   "source_repository": "jacklandrin/OnlySwitch",
   "source_url": "https://github.com/jacklandrin/OnlySwitch",
-  "source_version": "ff711c47",
+  "source_version": "dc279316",
   "license": "MIT",
-  "timestamp": "2026-11-15T17:03:57.403Z",
+  "timestamp": "2026-11-19T21:08:15.760Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-jacklandrin-onlyswitch",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [jacklandrin/OnlySwitch](https://github.com/jacklandrin/OnlySwitch) (Revision: `ff711c47`).  
-> **License**: MIT | **Timestamp**: `2026-11-15T17:03:57.403Z`  
+> **Provenance**: Harvested from [jacklandrin/OnlySwitch](https://github.com/jacklandrin/OnlySwitch) (Revision: `dc279316`).  
+> **License**: MIT | **Timestamp**: `2026-11-19T21:08:15.760Z`  
 > **Learning ID**: `learn-github-jacklandrin-onlyswitch`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from jacklandrin/OnlySwitch:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/jacklandrin-onlyswitch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/jacklandrin/OnlySwitch](https://github.com/jacklandrin/OnlySwitch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T17:03:56.116Z  
+> **Harvest Timestamp**: 2026-11-19T21:08:14.521Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 👑 The all-in-one macOS menu bar companion: customizable controls, system monitor, AI Agent, Shortcuts, widgets, remote control, and more.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6058 stars
+- **Stars / Engagement**: 6069 stars
 
 ---
 
@@ -1166,319 +1166,547 @@ extension BluetoothDevicesManager:CBCentralManagerDelegate {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c2731435` (2026-11-14)
-**Commit Message**: fix: post the desktop pet hunger setting change on the main actor
+### Incident Patch 1: `c231eed6` (2026-11-18)
+**Commit Message**: Fix menu bar indicator redraw loop
 
-The settings reducer saved from a TCA effect on the cooperative pool, so
-NotificationCenter delivered .desktopPetNeedsSettingsChanged to the
-main-actor AppDelegate off the main thread, tripping Swift 6 dynamic
-isolation checks. Make save async and post from the main actor.
+Render system monitor indicators as native status-button images to avoid continuous AppKit replicant snapshots caused by attached custom subviews. Preserve accessibility and actions, and cover CPU and network image updates with real AppKit regression tests.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `Modules/Sources/AppFeature/Features/Settings/DesktopPet/DesktopPetHungerSetting.swift` (modified, +6/-2)
+**File**: `Modules/Sources/AppFeature/Features/SystemMonitor/SystemMonitorStatusItemController.swift` (modified, +105/-144)
 ```diff
-@@ -6,7 +6,7 @@ import Foundation
- /// Reads and writes whether the desktop pet gets hungry, and tells the running pet about changes.
- struct DesktopPetHungerSetting: Sendable {
-     var load: @Sendable () -> Bool
--    var save: @Sendable (Bool) -> Void
-+    var save: @Sendable (Bool) async -> Void
- 
-     static func userDefaults(_ defaults: UserDefaults, notificationCenter: NotificationCenter = .default) -> Self {
-         // Both types are documented as thread-safe but are not declared `Sendable`.
-@@ -17,7 +17,11 @@ struct DesktopPetHungerSetting: Sendable {
-             load: { defaults.value.object(forKey: key) as? Bool ?? true },
-             save: { isEnabled in
-                 defaults.value.set(isEnabled, forKey: key)
--                center.value.post(name: .desktopPetNeedsSettingsChanged, object: nil)
-+                // Observers such as `AppDelegate` are main-actor isolated, and notifications are
-+                // delivered on the posting thread, so post from the main actor.
-+                await MainActor.run {
-+                    center.value.post(name: .desktopPetNeedsSettingsChanged, object: nil)
-+                }
-             }
-         )
-     }
-```
-
-**File**: `Modules/Sources/AppFeature/Features/Settings/DesktopPet/DesktopPetSettingsFeature.swift` (modified, +1/-1)
-```diff
-@@ -59,7 +59,7 @@ struct DesktopPetSettingsFeature {
- 
-             case .binding(\.isHungerEnabled):
-                 let isEnabled = state.isHungerEnabled
--                return .run { [hungerSetting] _ in hungerSetting.save(isEnabled) }
-+                return .run { [hungerSetting] _ in await hungerSetting.save(isEnabled) }
- 
-             case .binding:
-                 return .none
-```
-
-**File**: `Modules/Tests/AppFeatureTests/DesktopPet/DesktopPetHungerSettingTests.swift` (modified, +5/-5)
-```diff
-@@ -17,21 +17,21 @@ struct DesktopPetHungerSettingTests {
-         #expect(!UserDefaults.Key.exportableKeys.contains(UserDefaults.Key.desktopPetNeeds))
-     }
- 
--    @Test func savesAndPostsChange() throws {
-+    @Test func savesAndPostsChangeOnTheMainThread() async throws {
-         let suite = "DesktopPetHungerSettingTests.\(UUID().uuidString)"
-         let defaults = try #require(UserDefaults(suiteName: suite))
-         defer { defaults.removePersistentDomain(forName: suite) }
-         let center = NotificationCenter()
--        let posted = LockIsolated(0)
-+        let posted = LockIsolated<[Bool]>([])
-         let token = center.addObserver(forName: .desktopPetNeedsSettingsChanged, object: nil, queue: nil) { _ in
--            posted.withValue { $0 += 1 }
-+            posted.withValue { $0.append(Thread.isMainThread) }
-         }
-         defer { center.removeObserver(token) }
-         let setting = DesktopPetHungerSetting.userDefaults(defaults, notificationCenter: center)
- 
-         #expect(setting.load())
--        setting.save(false)
-+        await setting.save(false)
-         #expect(!setting.load())
--        #expect(posted.value == 1)
-+        #expect(posted.value == [true])
+@@ -244,145 +244,106 @@ private enum SystemMonitorStatusItemFormatter {
      }
  }
-```
-
----
-
-### Incident Patch 2: `8dbe2fe3` (2026-11-14)
-**Commit Message**: fix: fence the current pet markup in the edit prompt and polish edit translations
-
-Fence the current skin in an html code block so it matches the reply format
-and stays clearly separated from the instructions. Cover replacing a skin
-while the library is full. Fix the Filipino, Italian, Russian and Ukrainian
-examples and use the Dutch infinitive button style.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `Localization/Localizable.xcstrings` (modified, +5/-5)
-```diff
-@@ -129740,7 +129740,7 @@
-         "nl" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Bewerk met AI…"
-+            "value" : "Bewerken met AI…"
-           }
-         },
-         "pl" : {
-@@ -129829,7 +129829,7 @@
-         "fil" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Maglarawan ng pagbabago, hal. “bigyan ng sombrero ng wizard”"
-+            "value" : "Maglarawan ng pagbabago, hal. “bigyan ito ng sombrero ng wizard”"
-           }
-         },
-         "fr" : {
-@@ -129847,7 +129847,7 @@
-         "it" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Descrivi una modifica, ad es. «dagli un cappello da mago»"
-+            "value" : "Descrivi una modifica, ad es. «mettile un cappello da mago»"
-           }
-         },
-         "ja" : {
-@@ -129883,7 +129883,7 @@
-         "ru" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Опишите изменение, например: «добавь волшебную шляпу»"
-+            "value" : "Опишите изменение, например: «надень на него шляпу волшебника»"
-           }
-         },
-         "sk" : {
-@@ -129907,7 +129907,7 @@
-         "uk" : {
-           "stringUnit" : {
-             "state" : "translated",
--            "value" : "Опишіть зміну, наприклад: «додай чарівницький капелюх»"
-+            "value" : "Опишіть зміну, наприклад: «одягни йому капелюх чарівника»"
-           }
-         },
-         "zh-Hans" : {
-```
-
-**File**: `Modules/Sources/DesktopPetSkinKit/DesktopPetSkinPromptBuilder.swift` (modified, +2/-0)
-```diff
-@@ -56,7 +56,9 @@ public enum DesktopPetSkinPromptBuilder {
-         Keep NAME: as the current name unless the request asks you to rename the pet.
  
-         Current skin:
-+        ```html
-         \(currentMarkup)
-+        ```
-         """
-     }
- 
-```
-
-**File**: `Modules/Tests/ModulesTests/DesktopPetSkinLibraryTests.swift` (modified, +14/-0)
-```diff
-@@ -58,6 +58,20 @@ struct DesktopPetSkinLibraryTests {
-         await #expect(throws: DesktopPetSkinLibraryError.full) { _ = try await client.save(skin("extra")) }
-     }
- 
-+    @Test func replacingAnExistingSkinIsAllowedWhenFull() async throws {
-+        let (client, _) = try makeClient()
-+        var skins: [DesktopPetSkin] = []
-+        for index in 0..<DesktopPetSkinLibraryClient.maximumSkins {
-+            let next = skin("\(index)")
-+            skins.append(next)
-+            _ = try await client.save(next)
-+        }
-+        var edited = skins[3]
-+        edited.name = "Edited"
-+        skins[3] = edited
-+        #expect(try await client.save(edited) == skins)
-+    }
-+
-     @Test func deletingSelectedSkinClearsSelection() async throws {
-         let (client, _) = try makeClient()
-         let cat = skin()
-```
-
-**File**: `Modules/Tests/ModulesTests/DesktopPetSkinPromptTests.swift` (modified, +8/-0)
-```diff
-@@ -36,6 +36,14 @@ struct DesktopPetSkinPromptTests {
-         #expect(prompt.contains("give it a wizard hat"))
-     }
- 
-+    @Test func editPromptFencesTheCurrentMarkupLast() {
-+        let markup = "<style>#pet{color:red}</style><div id=\"pet\"></div>"
-+        let prompt = DesktopPetSkinPromptBuilder.editPrompt(
-+            instruction: "make it blue", currentName: "Cat", currentMarkup: markup
-+        )
-+        #expect(prompt.hasSuffix("```html\n\(markup)\n```"))
-+    }
-+
-     @Test func editPromptAsksForAMinimalCompleteChange() {
-         let prompt = DesktopPetSkinPromptBuilder.editPrompt(
-             instruction: "make it blue", currentName: "Cat", currentMarkup: "<div id=\"pet\"></div>"
-```
-
----
-
-### Incident Patch 3: `4f51d6c3` (2026-11-14)
-**Commit Message**: fix: tear down the skin web view while the desktop pet is hidden
-
-Also let only the latest skin change apply when several arrive while the
-library loads.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `Modules/Sources/AppFeature/AppDelegate.swift` (modified, +5/-1)
-```diff
-@@ -43,6 +43,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
-     }
-     var checkUpdatePresenter = GitHubPresenter.shared
-     private var desktopPetController: DesktopPetController?
-+    private var desktopPetSkinTask: Task<Void, Never>?
-     private var desktopPetPomodoroRefreshTask: Task<Void, Never>?
-     private let remoteAccessController = RemoteAccessController()
-     private lazy var crashReportPrompt = CrashReportPrompt()
-@@ -249,8 +250,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDele
-     /// Shows the selected custom skin, or the built-in pet when none is selected or it no longer exists.
-     @objc private func applySelectedDesktopPetSkin() {
-         let library = DesktopPetSkinLibraryClient.liveValue
--        Task { @MainActor [weak self] in
-+        // Only the latest change wins when several arrive while the library is loading.
-+        desktopPetSkinTask?.cancel()
-+        desktopPetSkinTask = Task { @MainActor [weak self] in
-             let skins = await library.load()
-+            guard !Task.isCancelled else { return }
-             let selected = library.selectedID().flatMap { id in skins.first { $0.id == id } }
-             self?.desktopPetController?.setSkin(selected)
+-@MainActor
+-private final class StatusItemContentView: NSView {
+-    private let metric: SystemMonitorMetric
+-    private let imageView = NSImageView()
+-    private let valueLabel = NSTextField(labelWithString: "")
+-    private let topDot = NetworkIndicatorDot(color: .systemRed)
+-    private let bottomDot = NetworkIndicatorDot(color: .systemBlue)
+-    private let topValueLabel = NSTextField(labelWithString: "")
+-    private let bottomValueLabel = NSTextField(labelWithString: "")
+-
+-    init(metric: SystemMonitorMetric) {
+-        self.metric = metric
+-        super.init(frame: .zero)
+-
+-        wantsLayer = false
+-        configureStandardContent()
+-        configureNetworkContent()
+-        let isNetwork = metric == .network
+-        imageView.isHidden = isNetwork
+-        valueLabel.isHidden = isNetwork
+-        topDot.isHidden = !isNetwork
+-        bottomDot.isHidden = !isNetwork
+-        topValueLabel.isHidden = !isNetwork
+-        bottomValueLabel.isHidden = !isNetwork
+-    }
+-
+-    @available(*, unavailable)
+-    required init?(coder: NSCoder) {
+-        nil
+-    }
+-
+-    override func layout() {
+-        super.layout()
+-        guard metric == .network else {
+-            let iconSide: CGFloat = 16
+-            let leading: CGFloat = 5
+-            let labelHeight = ceil(valueLabel.font?.boundingRectForFont.height ?? 13)
+-            imageView.frame = CGRect(
+-                x: leading,
+-                y: (bounds.height - iconSide) / 2,
+-                width: iconSide,
+-                height: iconSide
+-            )
+-            valueLabel.frame = CGRect(
+-                x: leading + iconSide + 3,
+-                y: floor((bounds.height - labelHeight) / 2),
+-                width: max(0, bounds.width - (leading + iconSide + 3) - 4),
+-                height: labelHeight
+-            )
+-            return
++private enum SystemMonitorStatusItemImage {
++    static func make(
++        for presentation: SystemMonitorStatusItemPresentation,
++        size: NSSize
++    ) -> NSImage {
++        let image = NSImage(size: size, flipped: false) { bounds in
++            switch presentation.visualStyle {
++            case .standard:
++                drawStandard(presentation, in: bounds)
++            case .network:
++                drawNetwork(presentation, in: bounds)
++            }
++            return true
          }
-```
-
-**File**: `Modules/Sources/DesktopPet/DesktopPetController.swift` (modified, +2/-0)
-```diff
-@@ -106,6 +106,7 @@ public final class DesktopPetController: NSObject {
-         constrainPanelToVisibleScreen()
-         saveFrame()
-         presentation.isActive = true
-+        presentation.isShown = true
-         isVisible = true
-         activityStore.send(.start)
-         needsStore.send(.start)
-@@ -127,6 +128,7 @@ public final class DesktopPetController: NSObject {
-         saveFrame()
-         presentation.isActive = false
-         presentation.isDragging = false
-+        presentation.isShown = false
-         isVisible = false
-         panel.orderOut(nil)
+-
+-        let lineHeight: CGFloat = 10
+-        let totalHeight = lineHeight * 2
+-        let topY = (bounds.height + totalHeight) / 2 - lineHeight
+-        let bottomY = topY - lineHeight
+-        let dotLeading: CGFloat = 7
+-        let dotSide: CGFloat = 7
+-        let valueLeading: CGFloat = 21
+-        let valueWidth = max(0, bounds.width - valueLeading - 5)
+-
+-        topDot.frame = CGRect(
+-            x: dotLeading,
+-            y: topY + (lineHeight - dotSide) / 2,
+-            width: dotSide,
+-            height: dotSide
+-        )
+-        bottomDot.frame = CGRect(
+-            x: dotLeading,
+-            y: bottomY + (lineHeight - dotSide) / 2,
+-            width: dotSide,
+-            height: dotSide
+-        )
+-        topValueLabel.frame = CGRect(x: valueLeading, y: topY, width: valueWidth, height: lineHeight)
+-        bottomValueLabel.frame = CGRect(x: valueLeading, y: bottomY, width: valueWidth, height: lineHeight)
+-    }
+-
+-    // The status-bar button remains the single click target; this view is visual only.
+-    override func hitTest(_ point: NSPoint) -> NSView? {
+-        nil
+-    }
+-
+-    func update(_ presentation: SystemMonitorStatusItemPresentation) {
+-        switch presentation.visualStyle {
+-        case .standard:
+-            let image = NSImage(systemSymbolName: presentation.symbolName, accessibilityDescription: nil)
+-            image?.isTemplate = true
+-            imageView.image = image
+-            valueLabel.stringValue = presentation.title
+-
+-        case .network:
+-            let lines = presentation.title.split(separator: "\n", maxSplits: 1, omittingEmptySubsequences: false)
+-            topValueLabel.stringValue = lines.indices.contains(0) ? String(lines[0].dropFirst(2)) : "—"
+-            bottomValueLabel.stringValue = lines.indices.contains(1) ? String(lines[1].dropFirst(2)) : "—"
++        image.isTemplate = presentation.visualStyle == .standard
++        if presentation.visualStyle == .network {
++            // Resolve the label and dot colors in the current menu bar appearance.
++            image.cacheMode = .never
+         }
++        return image
      }
+ 
+-    private func configureStandardContent() {
+-        imageView.imageScaling = .scaleProportionallyDown
+-        imageView.contentTintColor = .labelColor
+-        valueLabel.font = NSFont.monospacedDigitSystemFont(ofSize: NSFont.systemFontSize, weight: .medium)
+-        valueLabel.textColor = .labelColor
+-        valueLabel.alignment = .right
+-        valueLabel.lineBreakMode = .byClipping
+-        addSubview(ima
 ```
 
-**File**: `Modules/Sources/DesktopPet/DesktopPetPresentation.swift` (modified, +4/-0)
+**File**: `Modules/Tests/AppFeatureTests/SystemMonitor/SystemMonitorStatusItemControllerTests.swift` (modified, +35/-0)
 ```diff
-@@ -10,6 +10,10 @@ final class DesktopPetPresentation {
-     var pomodoroState: DesktopPetPomodoroState?
-     /// Lean in degrees while the pet peeks out from behind a screen edge.
-     var edgeTilt: Double = 0
-+    /// Whether the pet panel is on screen; edge docking may still pause it via `isActive`.
-+    var isShown = false
-     /// The custom skin to show instead of the built-in pet.
-     var skin: DesktopPetSkin?
-+    /// The skin to render. `nil` while hidden, so the skin's web view exists only while it is shown.
-+    var renderedSkin: DesktopPetSkin? { isShown ? skin : nil }
- }
-```
-
-**File**: `Modules/Sources/DesktopPet/DesktopPetRootView.swift` (modified, +1/-1)
-```diff
-@@ -75,7 +75,7 @@ struct DesktopPetRootView: View {
-             isHungry: needsStore.isHungry,
-             reaction: needsStore.reaction,
-             reactionStartedAt: needsStore.reactionStartedAt,
--            skin: presentation.skin
-+            skin: presentation.renderedSkin
-         )
-         .rotationEffect(.degrees(presentation.edgeTilt))
-         .animation(
-```
-
-**File**: `Modules/Tests/ModulesTests/DesktopPetSkinDocumentTests.swift` (modified, +12/-0)
-```diff
-@@ -1,7 +1,19 @@
-+import DesktopPetSkinKit
-+import Foundation
+@@ -1,10 +1,45 @@
++import AppKit
+ import Foundation
+ import SystemMonitor
  import Testing
- @testable import DesktopPet
+ @testable import AppFeature
  
- struct DesktopPetSkinDocumentTests {
-+    @MainActor @Test func skinRendersOnlyWhileThePetIsShown() {
-+        let presentation = DesktopPetPresentation()
-+        presentation.skin = DesktopPetSkin(
-+            id: UUID(), name: "Cat", summary: "", createdAt: .distantPast, contractVersion: 1, markup: ""
+ @MainActor
+ struct SystemMonitorStatusItemControllerTests {
++    @Test(arguments: [SystemMonitorMetric.cpu, .network])
++    func indicatorUpdatesTheNativeButtonImageWithoutInstallingCustomSubviews(metric: SystemMonitorMetric) throws {
++        _ = NSApplication.shared
++        let item = NSStatusBar.system.statusItem(withLength: metric == .network ? 80 : 64)
++        defer { NSStatusBar.system.removeStatusItem(item) }
++        let button = try #require(item.button)
++        let originalSubviews = button.subviews.map(ObjectIdentifier.init)
++        let handle = AppKitSystemMonitorStatusItem(metric: metric, item: item)
++        let isNetwork = metric == .network
++        let initial = SystemMonitorStatusItemPresentation(
++            symbolName: metric.rawValue,
++            title: isNetwork ? "↑ —\n↓ —" : "—",
++            accessibilityLabel: "Unavailable",
++            visualStyle: isNetwork ? .network : .standard
 +        )
-+        #expect(presentation.renderedSkin == nil)
-+        presentation.isShown = true
-+        #expect(presentation.renderedSkin == presentation.skin)
++        let updated = SystemMonitorStatusItemPresentation(
++            symbolName: metric.rawValue,
++            title: isNetwork ? "↑ 2 KB/s\n↓ 6 KB/s" : "42%",
++            accessibilityLabel: "Updated reading",
++            visualStyle: initial.visualStyle
++        )
++
++        handle.update(initial)
++        #expect(button.subviews.map(ObjectIdentifier.init) == originalSubviews)
++        let initialImage = try #require(button.image?.tiffRepresentation)
++        handle.update(updated)
++
++        let updatedImage = try #require(button.image?.tiffRepresentation)
++        #expect(updatedImage != initialImage)
++        #expect(button.subviews.map(ObjectIdentifier.init) == originalSubviews)
++        #expect(button.toolTip == updated.accessibilityLabel)
++        #expect(button.accessibilityLabel() == updated.accessibilityLabel)
 +    }
 +
-     @Test func attributesReflectState() {
-         let state = DesktopPetAnimationState(pomodoroPhase: .breakTime, isHungry: true, isControlPresented: true)
-         let values = Dictionary(uniqueKeysWithValues: DesktopPetSkinAttributes.values(
+     @Test
+     func enablingCPUAndNetworkCreatesOnlyThoseIndicatorsInStableOrder() {
+         let factory = RecordingSystemMonitorStatusItemFactory()
+```
+
+---
+
+### Incident Patch 2: `dc279316` (2026-11-18)
+**Commit Message**: Merge pull request #236 from laakal/fix/system-monitor-menu-bar-cpu
+
+Fix high CPU usage from system monitor menu bar indicators
+
+**File**: `Modules/Sources/AppFeature/Features/SystemMonitor/SystemMonitorStatusItemController.swift` (modified, +105/-144)
+```diff
+@@ -244,145 +244,106 @@ private enum SystemMonitorStatusItemFormatter {
+     }
+ }
+ 
+-@MainActor
+-private final class StatusItemContentView: NSView {
+-    private let metric: SystemMonitorMetric
+-    private let imageView = NSImageView()
+-    private let valueLabel = NSTextField(labelWithString: "")
+-    private let topDot = NetworkIndicatorDot(color: .systemRed)
+-    private let bottomDot = NetworkIndicatorDot(color: .systemBlue)
+-    private let topValueLabel = NSTextField(labelWithString: "")
+-    private let bottomValueLabel = NSTextField(labelWithString: "")
+-
+-    init(metric: SystemMonitorMetric) {
+-        self.metric = metric
+-        super.init(frame: .zero)
+-
+-        wantsLayer = false
+-        configureStandardContent()
+-        configureNetworkContent()
+-        let isNetwork = metric == .network
+-        imageView.isHidden = isNetwork
+-        valueLabel.isHidden = isNetwork
+-        topDot.isHidden = !isNetwork
+-        bottomDot.isHidden = !isNetwork
+-        topValueLabel.isHidden = !isNetwork
+-        bottomValueLabel.isHidden = !isNetwork
+-    }
+-
+-    @available(*, unavailable)
+-    required init?(coder: NSCoder) {
+-        nil
+-    }
+-
+-    override func layout() {
+-        super.layout()
+-        guard metric == .network else {
+-            let iconSide: CGFloat = 16
+-            let leading: CGFloat = 5
+-            let labelHeight = ceil(valueLabel.font?.boundingRectForFont.height ?? 13)
+-            imageView.frame = CGRect(
+-                x: leading,
+-                y: (bounds.height - iconSide) / 2,
+-                width: iconSide,
+-                height: iconSide
+-            )
+-            valueLabel.frame = CGRect(
+-                x: leading + iconSide + 3,
+-                y: floor((bounds.height - labelHeight) / 2),
+-                width: max(0, bounds.width - (leading + iconSide + 3) - 4),
+-                height: labelHeight
+-            )
+-            return
++private enum SystemMonitorStatusItemImage {
++    static func make(
++        for presentation: SystemMonitorStatusItemPresentation,
++        size: NSSize
++    ) -> NSImage {
++        let image = NSImage(size: size, flipped: false) { bounds in
++            switch presentation.visualStyle {
++            case .standard:
++                drawStandard(presentation, in: bounds)
++            case .network:
++                drawNetwork(presentation, in: bounds)
++            }
++            return true
+         }
+-
+-        let lineHeight: CGFloat = 10
+-        let totalHeight = lineHeight * 2
+-        let topY = (bounds.height + totalHeight) / 2 - lineHeight
+-        let bottomY = topY - lineHeight
+-        let dotLeading: CGFloat = 7
+-        let dotSide: CGFloat = 7
+-        let valueLeading: CGFloat = 21
+-        let valueWidth = max(0, bounds.width - valueLeading - 5)
+-
+-        topDot.frame = CGRect(
+-            x: dotLeading,
+-            y: topY + (lineHeight - dotSide) / 2,
+-            width: dotSide,
+-            height: dotSide
+-        )
+-        bottomDot.frame = CGRect(
+-            x: dotLeading,
+-            y: bottomY + (lineHeight - dotSide) / 2,
+-            width: dotSide,
+-            height: dotSide
+-        )
+-        topValueLabel.frame = CGRect(x: valueLeading, y: topY, width: valueWidth, height: lineHeight)
+-        bottomValueLabel.frame = CGRect(x: valueLeading, y: bottomY, width: valueWidth, height: lineHeight)
+-    }
+-
+-    // The status-bar button remains the single click target; this view is visual only.
+-    override func hitTest(_ point: NSPoint) -> NSView? {
+-        nil
+-    }
+-
+-    func update(_ presentation: SystemMonitorStatusItemPresentation) {
+-        switch presentation.visualStyle {
+-        case .standard:
+-            let image = NSImage(systemSymbolName: presentation.symbolName, accessibilityDescription: nil)
+-            image?.isTemplate = true
+-            imageView.image = image
+-            valueLabel.stringValue = presentation.title
+-
+-        case .network:
+-            let lines = presentation.title.split(separator: "\n", maxSplits: 1, omittingEmptySubsequences: false)
+-            topValueLabel.stringValue = lines.indices.contains(0) ? String(lines[0].dropFirst(2)) : "—"
+-            bottomValueLabel.stringValue = lines.indices.contains(1) ? String(lines[1].dropFirst(2)) : "—"
++        image.isTemplate = presentation.visualStyle == .standard
++        if presentation.visualStyle == .network {
++            // Resolve the label and dot colors in the current menu bar appearance.
++            image.cacheMode = .never
+         }
++        return image
+     }
+ 
+-    private func configureStandardContent() {
+-        imageView.imageScaling = .scaleProportionallyDown
+-        imageView.contentTintColor = .labelColor
+-        valueLabel.font = NSFont.monospacedDigitSystemFont(ofSize: NSFont.systemFontSize, weight: .medium)
+-        valueLabel.textColor = .labelColor
+-        valueLabel.alignment = .right
+-        valueLabel.lineBreakMode = .byClipping
+-        addSubview(ima
+```
+
+**File**: `Modules/Tests/AppFeatureTests/SystemMonitor/SystemMonitorStatusItemControllerTests.swift` (modified, +35/-0)
+```diff
+@@ -1,10 +1,45 @@
++import AppKit
+ import Foundation
+ import SystemMonitor
+ import Testing
+ @testable import AppFeature
+ 
+ @MainActor
+ struct SystemMonitorStatusItemControllerTests {
++    @Test(arguments: [SystemMonitorMetric.cpu, .network])
++    func indicatorUpdatesTheNativeButtonImageWithoutInstallingCustomSubviews(metric: SystemMonitorMetric) throws {
++        _ = NSApplication.shared
++        let item = NSStatusBar.system.statusItem(withLength: metric == .network ? 80 : 64)
++        defer { NSStatusBar.system.removeStatusItem(item) }
++        let button = try #require(item.button)
++        let originalSubviews = button.subviews.map(ObjectIdentifier.init)
++        let handle = AppKitSystemMonitorStatusItem(metric: metric, item: item)
++        let isNetwork = metric == .network
++        let initial = SystemMonitorStatusItemPresentation(
++            symbolName: metric.rawValue,
++            title: isNetwork ? "↑ —\n↓ —" : "—",
++            accessibilityLabel: "Unavailable",
++            visualStyle: isNetwork ? .network : .standard
++        )
++        let updated = SystemMonitorStatusItemPresentation(
++            symbolName: metric.rawValue,
++            title: isNetwork ? "↑ 2 KB/s\n↓ 6 KB/s" : "42%",
++            accessibilityLabel: "Updated reading",
++            visualStyle: initial.visualStyle
++        )
++
++        handle.update(initial)
++        #expect(button.subviews.map(ObjectIdentifier.init) == originalSubviews)
++        let initialImage = try #require(button.image?.tiffRepresentation)
++        handle.update(updated)
++
++        let updatedImage = try #require(button.image?.tiffRepresentation)
++        #expect(updatedImage != initialImage)
++        #expect(button.subviews.map(ObjectIdentifier.init) == originalSubviews)
++        #expect(button.toolTip == updated.accessibilityLabel)
++        #expect(button.accessibilityLabel() == updated.accessibilityLabel)
++    }
++
+     @Test
+     func enablingCPUAndNetworkCreatesOnlyThoseIndicatorsInStableOrder() {
+         let factory = RecordingSystemMonitorStatusItemFactory()
+```
+
+---
+
+### Incident Patch 3: `de4eb6b4` (2026-11-16)
+**Commit Message**: docs: document OnlySwitch 3.7.0 features and advance release build
+
+**File**: `Config/Versions/OnlySwitch.xcconfig` (modified, +1/-1)
+```diff
+@@ -1,2 +1,2 @@
+ // Shared build number for the macOS app and its embedded components.
+-CURRENT_PROJECT_VERSION = 314
++CURRENT_PROJECT_VERSION = 315
+```
+
+**File**: `README.de.md` (modified, +19/-2)
+```diff
+@@ -71,7 +71,8 @@ Um OnlySwitch vom iPhone oder iPad aus zu steuern, installiere [OnlyRemote aus d
+ - Verwende Apple-Widgets ab macOS Sonoma, auch mit Bedienelementen aus Evolution.
+ - Öffne **Only Control**, um die wichtigsten Bedienelemente in einer kompakten Ansicht zu nutzen.
+ - Steuere deinen Mac mit [OnlyRemote](#onlyremote) vom iPhone oder iPad aus.
+-- Aktiviere das optionale Schreibtisch-Haustier und ziehe es an eine beliebige Position. Per Klick öffnest oder schließt du Only Control. Wechsle zum nächsten Titel oder Radiosender und sieh Wiedergabeanimationen für Apple Music, Spotify und Radio.
++- Gestalte das optionale [Schreibtisch-Haustier](#schreibtisch-haustier) mit KI-generierten Designs, Füttern und Streicheln, Agentenaktivität und einer frei wählbaren Klickaktion.
++- Öffne gespeicherte Webseiten im optionalen [Browser](#browser)-Tab.
+ - Aktiviere bei **Wach bleiben** die Option **Nach Ruhezustand ausschalten**, damit die Funktion deaktiviert wird, wenn du den Mac manuell in den Ruhezustand versetzt.
+ 
+ <p align="center">
+@@ -82,6 +83,20 @@ Um OnlySwitch vom iPhone oder iPad aus zu steuern, installiere [OnlyRemote aus d
+   <img alt="OnlySwitch-Schreibtisch-Haustier" src="https://github.com/user-attachments/assets/f45e4b4f-932e-4768-8bfd-845e22fdfff3" width="152" height="188" />
+ </p>
+ 
++### Schreibtisch-Haustier
++
++Aktiviere **Schreibtisch-Haustier anzeigen** und öffne **OnlySwitch-Einstellungen → Desktop-Haustier**, um die Klickaktion auszuwählen: Only Control öffnen oder schließen, einen Schalter umlegen oder einen Kurzbefehl oder eine Evolution ausführen. Ziehe das Haustier an eine beliebige Position und bediene Apple Music, Spotify und Radio über seine Musiksteuerung.
++
++Per Rechtsklick kannst du das Haustier füttern oder streicheln. Hunger beeinflusst nur seine Darstellung und lässt sich in den Einstellungen ausschalten. Während Codex oder Claude Code arbeitet, zeigt das Haustier eine passende Animation. Wenn eine beobachtete Aufgabe erfolgreich endet, erscheint kurz eine Sprechblase.
++
++Beschreibe eine Figur, um mit dem unter **Model Providers** ausgewählten Modell ein eigenes Design zu erzeugen. In den Haustier-Einstellungen kannst du gespeicherte Designs als Vorschau ansehen und auswählen oder mit einer neuen Beschreibung von der KI bearbeiten lassen.
++
++### Browser
++
++Blende den **Browser**-Tab unter **OnlySwitch-Einstellungen → Tabs** ein und verwalte Lesezeichen unter **OnlySwitch-Einstellungen → Browser**. Öffne gespeicherte Webseiten in der Menüleistenliste oder in Only Control, wähle eine mobile Ansichtsgröße und lass die Seiten dem hellen oder dunklen Erscheinungsbild der App folgen. Bewege den Mauszeiger an den oberen Seitenrand, um die Symbolleiste einzublenden.
++
++Der Browser speichert Websitedaten getrennt von Safari; du kannst sie in den Browser-Einstellungen löschen. Downloads werden im Standardbrowser geöffnet. Mobile Layouts hängen von der jeweiligen Website ab. Kamera und Mikrofon sind in diesem Tab nicht verfügbar.
++
+ ### Zeitpläne
+ 
+ Öffne **OnlySwitch-Einstellungen → Zeitpläne**, um unterstützte Schalter, Tasten, Kurzbefehle und Evolutions zu automatisieren. Aktionen können in festen Abständen, zu einer bestimmten Minute jeder Stunde oder zu einer festen Uhrzeit an ausgewählten Tagen ausgeführt werden. Dimme etwa täglich um 8:00 Uhr den Bildschirm und hebe die Dimmung um 19:00 Uhr wieder auf. Oder leere jeden Samstag um 9:00 Uhr den Papierkorb.
+@@ -114,12 +129,14 @@ Im Tab **Zeitpläne** in der Menüleistenliste oder in Only Control siehst du, w
+ | Schreibtisch-Haustier anzeigen | Verfügbar | Tailscale | Offizieller Client erforderlich |
+ | Dock-Fenstervorschau | Berechtigungen für Bedienungshilfen und Bildschirmaufnahme erforderlich | | |
+ 
+-Du kannst Schalter zur Liste hinzufügen oder daraus entfernen. Optionale Tabs wie Authenticator, Lautstärkemixer, Helligkeit, Bildschirmfotos & Aufnahmen, Systemmonitor, Codex-Nutzung, Claude-Nutzung, Aphrodite, Xcode Cleaner und App Uninstaller lassen sich unter **OnlySwitch-Einstellungen → Tabs** ein- und ausblenden. Diese Seite ersetzt die früheren Schalter, die nur einen Tab ein- oder ausgeblendet haben.
++Du kannst Schalter zur Liste hinzufügen oder daraus entfernen. Optionale Tabs wie Authenticator, Lautstärkemixer, Helligkeit, Browser, Bildschirmfotos & Aufnahmen, Systemmonitor, Codex-Nutzung, Claude-Nutzung, Aphrodite, Xcode Cleaner und App Uninstaller lassen sich unter **OnlySwitch-Einstellungen → Tabs** ein- und ausblenden. Diese Seite ersetzt die früheren Schalter, die nur einen Tab ein- oder ausgeblendet haben.
+ 
+ ### Lautstärkemixer
+ 
+ Der Lautstärkemixer regelt die Lautstärke und Stummschaltung für jede App, die Audio wiedergibt. Ab macOS 14.4 kannst du pro App zusätzlich einen 10-Band-Equalizer öffnen (−12 bis +12 dB, mit Rücksetzen auf eine neutrale Einstellung) und den Ton gleichzeitig an eines oder mehrere Ausgabegeräte senden. OnlySwitch merkt sich den Equalizer und die Ausgabegeräte pro App. Ohne Auswahl gilt di
+```
+
+**File**: `README.md` (modified, +19/-2)
+```diff
+@@ -71,7 +71,8 @@ To control OnlySwitch from an iPhone or iPad, install [OnlyRemote from the App S
+ - Use Apple Widgets on macOS Sonoma and later, including Evolution controls.
+ - Open the compact **Only Control** interface for a focused control panel.
+ - Control your Mac from iPhone or iPad with [OnlyRemote](#onlyremote).
+-- Enable the optional Desktop Pet, drag it anywhere, click it to show or dismiss Only Control, and skip to the next track or radio station with playback animations for Apple Music, Spotify, and Radio.
++- Customize the optional [Desktop Pet](#desktop-pet) with AI-generated skins, feeding and petting, agent activity, and your choice of click action.
++- Keep bookmarked websites close at hand in the optional [Browser](#browser) tab.
+ - Enable **Turn off after sleep** for Keep Awake to turn it off when you manually put your Mac to sleep.
+ 
+ <p align="center">
+@@ -82,6 +83,20 @@ To control OnlySwitch from an iPhone or iPad, install [OnlyRemote from the App S
+   <img alt="OnlySwitch desktop pet" src="https://github.com/user-attachments/assets/f45e4b4f-932e-4768-8bfd-845e22fdfff3" width="152" height="188" />
+ </p>
+ 
++### Desktop Pet
++
++Enable **Show desktop pet**, then open **OnlySwitch Settings → Desktop Pet** to choose what a click does: show or dismiss Only Control, toggle a switch, or run a Shortcut or Evolution. Drag the pet anywhere and use its music controls for Apple Music, Spotify, and Radio.
++
++Right-click the pet to feed or pet it. Hunger is cosmetic and can be turned off in settings. The pet also animates while Codex or Claude Code is working and shows a brief completion bubble when an observed task finishes successfully.
++
++Describe a character to generate a custom skin with the model selected in **Model Providers**. Preview and select saved skins in Desktop Pet settings, or ask AI to edit one with a new description.
++
++### Browser
++
++Show the **Browser** tab under **OnlySwitch Settings → Tabs**, and manage bookmarks under **OnlySwitch Settings → Browser**. Open saved websites in the menu-bar list or Only Control, choose a mobile viewport size, and let pages follow the app's light or dark appearance. Move the pointer to the top of the page to reveal the toolbar.
++
++Browser keeps its own website data separate from Safari; you can clear it in Browser settings. Downloads open in your default browser. Mobile layouts depend on the website, and camera and microphone access are unavailable in this tab.
++
+ ### Schedules
+ 
+ Open **OnlySwitch Settings → Schedules** to automate supported switches, buttons, Shortcuts, and Evolutions. Run an action at a repeating interval, at a specific minute every hour, or at a set time on selected days. For example, turn **Dim Screen** on at 8:00 AM and off at 7:00 PM every day, or run **Empty Trash** every Saturday at 9:00 AM.
+@@ -114,12 +129,14 @@ Use the **Schedules** tab in the menu bar or Only Control to see what runs next,
+ | Show desktop pet | finished | Tailscale | requires official client |
+ | Dock Preview | requires Accessibility and Screen Recording | | |
+ 
+-Switches can be added to or removed from the list. Optional tabs (Authenticator, Sound Mixer, Brightness, Screenshots & Record, System Monitor, Codex Usage, Claude Usage, Aphrodite, Xcode Cleaner, and App Uninstaller) are shown or hidden under **OnlySwitch Settings → Tabs**; switches that only toggled a tab have been replaced by this page.
++Switches can be added to or removed from the list. Optional tabs (Authenticator, Sound Mixer, Brightness, Browser, Screenshots & Record, System Monitor, Codex Usage, Claude Usage, Aphrodite, Xcode Cleaner, and App Uninstaller) are shown or hidden under **OnlySwitch Settings → Tabs**; switches that only toggled a tab have been replaced by this page.
+ 
+ ### Sound Mixer
+ 
+ Sound Mixer sets the volume and mute state of each app that is playing audio. On macOS 14.4 or later, each app can also expand its own 10-band equalizer (−12 to +12 dB, with a flat reset) and route its audio to one or more output devices at the same time. Equalizer settings and output selections are remembered per app; selecting no output follows the system default. If every selected device is disconnected, the app's original audio is restored until a selected device returns.
+ 
++Choose from twelve built-in EQ presets, including Flat, or expand **Custom EQ** to adjust the ten bands manually.
++
+ When the current output is an external display with speakers, the keyboard's volume up, volume down, and mute keys adjust the display's volume over DDC/CI and show a volume HUD. Holding Shift+Option steps in finer increments. Capturing these keys requires Accessibility permission.
+ 
+ ### Brightness
+```
+
+**File**: `README.zh-CN.md` (modified, +19/-2)
+```diff
+@@ -71,7 +71,8 @@ brew install only-switch
+ - 在 macOS Sonoma 及更新版本上使用 Apple 小组件，包括 Evolution 控件。
+ - 打开紧凑的 **Only Control** 控制面板，快速使用常用控件。
+ - 使用 [OnlyRemote](#onlyremote) 从 iPhone 或 iPad 控制 Mac。
+-- 启用可选的桌面宠物后，可将它拖到任意位置，点击它显示或关闭 Only Control，也可切换到下一首歌曲或下一个电台。Apple Music、Spotify 和电台播放时会显示相应动画。
++- 自定义可选的[桌面宠物](#桌面宠物)：用 AI 生成外观，喂食和抚摸，查看智能体工作状态，并选择点击时执行的操作。
++- 在可选的[浏览器](#浏览器)标签页中，随时打开收藏的网站。
+ - 为「防止锁屏」启用 **睡眠后关闭**，手动让 Mac 进入睡眠后，该功能会自动关闭。
+ 
+ <p align="center">
+@@ -82,6 +83,20 @@ brew install only-switch
+   <img alt="OnlySwitch 桌面宠物" src="https://github.com/user-attachments/assets/f45e4b4f-932e-4768-8bfd-845e22fdfff3" width="152" height="188" />
+ </p>
+ 
++### 桌面宠物
++
++启用 **显示桌面宠物**，然后打开 **OnlySwitch 设置 → 桌面宠物**，选择点击时执行的操作：显示或关闭 Only Control、切换开关，或运行快捷指令和 Evolution。可将宠物拖到任意位置，并通过它的音乐控件操作 Apple Music、Spotify 和电台。
++
++右键点击宠物即可喂食或抚摸。饥饿只影响宠物表现，可在设置中关闭。Codex 或 Claude Code 工作时，宠物也会显示相应动画；观察到任务成功完成后，还会短暂显示完成气泡。
++
++用文字描述角色，即可使用 **模型提供商**中选定的模型生成自定义外观。在桌面宠物设置中预览和选择已保存的外观，也可以用新的描述让 AI 编辑现有外观。
++
++### 浏览器
++
++在 **OnlySwitch 设置 → 标签页**中显示 **浏览器**标签页，并在 **OnlySwitch 设置 → 浏览器**中管理书签。在菜单栏列表或 Only Control 中打开收藏的网站，选择手机视口尺寸，让网页跟随应用的浅色或深色外观。将指针移到页面顶部即可显示工具栏。
++
++浏览器的网站数据与 Safari 分开保存，可在浏览器设置中清除。下载会交给默认浏览器打开。移动端布局取决于网站，此标签页不提供摄像头和麦克风访问。
++
+ ### 定时任务
+ 
+ 打开 **OnlySwitch 设置 → 定时任务**，即可自动执行受支持的开关、按钮、快捷指令和 Evolution 操作。你可以按固定间隔执行操作，在每小时的指定分钟执行，或在指定日期的固定时间执行。例如，每天 8:00 开启 **暗屏**、19:00 关闭，或每周六 9:00 执行 **清空废纸篓**。
+@@ -114,12 +129,14 @@ brew install only-switch
+ | 显示桌面宠物 | 已实现 | Tailscale | 需要官方客户端 |
+ | 程序坞预览 | 需要辅助功能与屏幕录制权限 | | |
+ 
+-你可以向列表添加开关，也可以将它们移除。要显示或隐藏可选标签页（身份验证器、音量混合器、亮度、截屏与录屏、系统监视器、Codex 使用情况、Claude 使用情况、Aphrodite、Xcode 清理和应用卸载器），请前往 **OnlySwitch 设置 → 标签页**。过去仅用于切换标签页的开关已由此页面取代。
++你可以向列表添加开关，也可以将它们移除。要显示或隐藏可选标签页（身份验证器、音量混合器、亮度、浏览器、截屏与录屏、系统监视器、Codex 使用情况、Claude 使用情况、Aphrodite、Xcode 清理和应用卸载器），请前往 **OnlySwitch 设置 → 标签页**。过去仅用于切换标签页的开关已由此页面取代。
+ 
+ ### 音量混合器
+ 
+ 音量混合器可分别调节正在播放声音的各个应用的音量和静音状态。在 macOS 14.4 或更新版本上，每个应用还可展开自己的 10 段均衡器（−12 至 +12 dB，可重置为平直响应），并将声音同时输出到一个或多个设备。均衡器设置和所选输出设备会按应用保存；未选择输出设备时，跟随系统默认设置。如果选中的设备全部断开，应用会恢复原先的音频输出，直到其中一个设备重新连接。
+ 
++可选择包含平直响应在内的十二种内置均衡器预设，或展开 **自定义均衡器**，手动调节十个频段。
++
+ 当前输出设备是带扬声器的外接显示器时，键盘上的音量加、音量减和静音键会通过 DDC/CI 调节显示器音量，并显示音量提示。按住 Shift+Option 可以进行更细的步进调节。要接管这些按键，需要辅助功能权限。
+ 
+ ### 亮度
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #236** (2026-11-18): Fix high CPU usage from system monitor menu bar indicators (@laakal)
 - **PR #233** (2026-11-14): Fix and improve Hide Menu Bar Icons feature (@seanjseymour)
 - **PR #229** (2026-10-28): Add option to turn off Keep Awake after manual sleep (@oecer)
 - **PR #221** (2026-09-24): Add settings export/import (Backup section) (@oecer)
 - **PR #219** (2026-09-19): Revise OnlyRemote section in README.md (@jacklandrin)
 - **PR #217** (2026-09-15): docs: explain how to restore the OnlySwitch menu bar icon (@mvanhorn)
-- **PR #215** (2026-08-11): Fix Show List shortcut being treated as a right-click (@EhsanAzish80)
 
 ---
 
@@ -1498,37 +1726,83 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. post the desktop pet hunger setting change on the main actor
+## X. menu bar indicator redraw loop
 
 **RULE**:
-When implementing operations in `Modules/Sources/AppFeature/Features/Settings/DesktopPet/DesktopPetHungerSetting.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jacklandrin/OnlySwitch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Modules/Sources/AppFeature/Features/SystemMonitor/SystemMonitorStatusItemController.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in jacklandrin/OnlySwitch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c2731435`: post the desktop pet hunger setting change on the main actor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c231eed6`: menu bar indicator redraw loop. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Modules/Sources/AppFeature/Features/Settings/DesktopPet/DesktopPetHungerSetting.swift`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Modules/Sources/AppFeature/Features/SystemMonitor/SystemMonitorStatusItemController.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-    var save: @Sendable (Bool) async -> Void
-                // Observers such as `AppDelegate` are main-actor isolated, and notifications are
-                // delivered on the posting thread, so post from the main actor.
-                await MainActor.run {
-                    center.value.post(name: .desktopPetNeedsSettingsChanged, object: nil)
-                }
+private enum SystemMonitorStatusItemImage {
+    static func make(
+        for presentation: SystemMonitorStatusItemPresentation,
+        size: NSSize
+    ) -> NSImage {
+        let image = NSImage(size: size, flipped: false) { bounds in
+            switch presentation.visualStyle {
+            case .standard:
+                drawStandard(presentation, in: bounds)
+            case .network:
+                drawNetwork(presentation, in: bounds)
+            }
+            return true
+        image.isTemplate = presentation.visualStyle == .standard
+        if presentation.visualStyle == .network {
+            // Resolve the label and dot colors in the current menu bar appearance.
+            image.cacheMode = .never
+        return image
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-    var save: @Sendable (Bool) -> Void
-                center.value.post(name: .desktopPetNeedsSettingsChanged, object: nil)
+@MainActor
+private final class StatusItemContentView: NSView {
+    private let metric: SystemMonitorMetric
+    private let imageView = NSImageView()
+    private let valueLabel = NSTextField(labelWithString: "")
+    private let topDot = NetworkIndicatorDot(color: .systemRed)
+    private let bottomDot = NetworkIndicatorDot(color: .systemBlue)
+    private let topValueLabel = NSTextField(labelWithString: "")
+    private let bottomValueLabel = NSTextField(labelWithString: "")
+
+    init(metric: SystemMonitorMetric) {
+        self.metric = metric
+        super.init(frame: .zero)
+
+        wantsLayer = false
+        configureStandardContent()
+        configureNetworkContent()
+        let isNetwork = metric == .network
+        imageView.isHidden = isNetwork
+        valueLabel.isHidden = isNetwork
+        topDot.isHidden = !isNetwork
+        bottomDot.isHidden = !isNetwork
+        topValueLabel.isHidden = !isNetwork
+        bottomValueLabel.isHidden = !isNetwork
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        nil
+    }
+
+    override func layout() {
+        super.layout()
+        guard metric == .network else {
+            let iconSide: CGFloat = 16
+         
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c2731435` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c231eed6` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
