@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-19T18:33:07.360Z",
-    "lastVerified": "2026-11-19T18:33:07.360Z",
+    "lastChecked": "2026-11-19T19:31:12.886Z",
+    "lastVerified": "2026-11-19T19:31:12.886Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T19:23:26.692Z",
-    "lastVerified": "2026-11-19T19:23:26.692Z",
+    "lastChecked": "2026-11-19T19:31:12.894Z",
+    "lastVerified": "2026-11-19T19:31:12.894Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -831,9 +831,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-19T12:40:33.154Z",
+    "lastChecked": "2026-11-19T19:31:07.876Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-19T12:40:33.154Z"
+    "lastVerified": "2026-11-19T19:31:07.876Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate",
@@ -2606,9 +2606,9 @@
   "zilliztech-attu": {
     "name": "attu",
     "officialUrl": "https://github.com/zilliztech/attu",
-    "lastChecked": "2026-11-18T14:57:00.447Z",
+    "lastChecked": "2026-11-19T19:31:10.270Z",
     "revisionIdentifier": "d51e1c78",
-    "lastVerified": "2026-11-18T14:57:00.447Z"
+    "lastVerified": "2026-11-19T19:31:10.270Z"
   },
   "1jehuang-jcode": {
     "name": "1jehuang/jcode",
@@ -2929,9 +2929,9 @@
   "sorintlab-stolon": {
     "name": "stolon",
     "officialUrl": "https://github.com/sorintlab/stolon",
-    "lastChecked": "2026-11-18T15:51:37.165Z",
+    "lastChecked": "2026-11-19T19:31:05.303Z",
     "revisionIdentifier": "bcea7a75",
-    "lastVerified": "2026-11-18T15:51:37.165Z"
+    "lastVerified": "2026-11-19T19:31:05.303Z"
   },
   "lioensky-vcptoolbox": {
     "name": "lioensky/VCPToolBox",
@@ -8338,5 +8338,26 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "yyjeqhc-webcodex": {
+    "name": "webcodex",
+    "officialUrl": "https://github.com/yyjeqhc/webcodex",
+    "lastChecked": "2026-11-19T19:30:57.793Z",
+    "revisionIdentifier": "ea81bd89",
+    "lastVerified": "2026-11-19T19:30:57.793Z"
+  },
+  "addy0-com-free-open-technical-seo-crawler": {
+    "name": "free-open-technical-SEO-crawler",
+    "officialUrl": "https://github.com/Addy0-com/free-open-technical-SEO-crawler",
+    "lastChecked": "2026-11-19T19:31:00.301Z",
+    "revisionIdentifier": "7e5d3c5",
+    "lastVerified": "2026-11-19T19:31:00.301Z"
+  },
+  "nalexn-clean-architecture-swiftui": {
+    "name": "clean-architecture-swiftui",
+    "officialUrl": "https://github.com/nalexn/clean-architecture-swiftui",
+    "lastChecked": "2026-11-19T19:31:02.765Z",
+    "revisionIdentifier": "9eca97b8",
+    "lastVerified": "2026-11-19T19:31:02.765Z"
   }
 }
