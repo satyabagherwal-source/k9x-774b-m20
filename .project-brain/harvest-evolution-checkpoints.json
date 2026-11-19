@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T03:14:43.850Z",
+  "last_updated": "2026-11-19T03:27:29.410Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T02:03:45.340Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-19T02:11:33.888Z",
+      "processed_at": "2026-11-19T03:27:28.403Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -133,7 +133,7 @@
       "staged_for_review": 0
     },
     "rook-rook-learnings.md": {
-      "processed_at": "2026-11-17T15:24:03.174Z",
+      "processed_at": "2026-11-19T03:27:27.358Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2603,8 +2603,8 @@
       "staged_for_review": 1
     },
     "hf-baai-bge-base-en-v1.5-learnings.md": {
-      "processed_at": "2026-11-14T13:57:44.188Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T03:27:26.914Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-google-gemma-4-31b-it-learnings.md": {
@@ -3488,7 +3488,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2157,
+  "total_dossiers_evaluated": 2160,
   "total_canonical_promoted": 374,
-  "total_staged_for_review": 1616
+  "total_staged_for_review": 1618
 }

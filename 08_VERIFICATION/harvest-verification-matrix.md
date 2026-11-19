@@ -11184,3 +11184,5 @@
 | `CYCLE-20261119-LHRY` | `2026-11-19T02:56:50.494Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9324` | Yes (`cb051452...`) |
 | `CYCLE-20261119-25RX` | `2026-11-19T03:09:48.093Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9325` | Yes (`ecac513b...`) |
 | `CYCLE-20261119-8E2W` | `2026-11-19T03:14:38.792Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | Yes (`6fa625f1...`) |
+| `CYCLE-20261119-OKHZ` | `2026-11-19T03:27:13.607Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`206903d6...`) |
+| `CYCLE-20261119-ORYK` | `2026-11-19T03:27:23.276Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9326` | Yes (`702d9dd8...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T03:14:38.805Z",
+  "last_updated": "2026-11-19T03:27:23.291Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1655,14 +1655,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-base-en-v1-5",
-      "content_hash": "5fd29a34c759bfc6cc9dbb64d0f00f1c688bbf03d059a8bb62410f2cc2167a44",
-      "verified_at": "2026-11-14T13:57:11.095Z",
+      "content_hash": "206903d62fcfd5ead8ec8621f28c9556b76128cc843e02567526f9b8757f3bfc",
+      "verified_at": "2026-11-19T03:27:13.621Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T13:57:11.095Z"
+      "last_updated": "2026-11-19T03:27:13.621Z"
     },
     "sentence-transformers/paraphrase-multilingual-mpnet-base-v2": {
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
@@ -9066,14 +9066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rook-rook",
-      "content_hash": "17366e72c534c5be7ae849a48ff58ec8436129258b2c58e878022e4ac30e7209",
-      "verified_at": "2026-11-17T15:23:59.632Z",
+      "content_hash": "702d9dd878f4d39fd6724b69b53091496655e56b27952d15f017012cc75a5c81",
+      "verified_at": "2026-11-19T03:27:23.290Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T15:23:59.632Z"
+      "last_updated": "2026-11-19T03:27:23.290Z"
     },
     "genkit-ai/genkit": {
       "repository": "genkit-ai/genkit",

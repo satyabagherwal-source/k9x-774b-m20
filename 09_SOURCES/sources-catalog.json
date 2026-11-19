@@ -1255,8 +1255,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-base-en-v1.5",
     "sourceVersion": "hf-baai-bge-base-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "5fd29a34c759bfc6cc9dbb64d0f00f1c688bbf03d059a8bb62410f2cc2167a44",
-    "lastHarvestedAt": "2026-11-14T13:57:11.089Z",
+    "contentHash": "206903d62fcfd5ead8ec8621f28c9556b76128cc843e02567526f9b8757f3bfc",
+    "lastHarvestedAt": "2026-11-19T03:27:13.611Z",
     "learningId": "learn-huggingface-baai-bge-base-en-v1-5"
   },
   "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
@@ -5963,10 +5963,10 @@
     "repository": "rook/rook",
     "platform": "github",
     "sourceUrl": "https://github.com/rook/rook",
-    "sourceVersion": "f5fa76ed",
+    "sourceVersion": "695364a0",
     "license": "Apache-2.0",
-    "contentHash": "17366e72c534c5be7ae849a48ff58ec8436129258b2c58e878022e4ac30e7209",
-    "lastHarvestedAt": "2026-11-17T15:23:59.626Z",
+    "contentHash": "702d9dd878f4d39fd6724b69b53091496655e56b27952d15f017012cc75a5c81",
+    "lastHarvestedAt": "2026-11-19T03:27:23.281Z",
     "learningId": "learn-github-rook-rook"
   },
   "genkit-ai-genkit": {

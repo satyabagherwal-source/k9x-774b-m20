@@ -11217,3 +11217,5 @@ Every entry in this ledger must capture:
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `73d41c0a` | Multi-dimensional audit evidence | 2026-11-19T02:56:50.499Z |
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `eab98de8` | Multi-dimensional audit evidence | 2026-11-19T03:09:48.097Z |
 | `learn-huggingface-google-vit-base-patch16-224` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-19T03:14:38.796Z |
+| `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-19T03:27:13.611Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `695364a0` | Multi-dimensional audit evidence | 2026-11-19T03:27:23.281Z |

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T03:14:38.801Z",
-  "total_cycles_completed": 10688,
-  "total_learnings_persisted": 10688,
-  "total_rules_promoted": 10092,
+  "last_updated": "2026-11-19T03:27:23.286Z",
+  "total_cycles_completed": 10690,
+  "total_learnings_persisted": 10690,
+  "total_rules_promoted": 10093,
   "history": [
-    {
-      "timestamp": "2026-11-18T12:43:14.802Z",
-      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-      "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T12:50:50.822Z",
-      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-      "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T12:50:59.422Z",
       "repository": "pubkey/rxdb",
@@ -1403,6 +1389,20 @@
       "repository": "google/vit-base-patch16-224",
       "learningId": "learn-huggingface-google-vit-base-patch16-224",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T03:27:13.617Z",
+      "repository": "BAAI/bge-base-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T03:27:23.286Z",
+      "repository": "rook/rook",
+      "learningId": "learn-github-rook-rook",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T03:14:43.576Z",
+  "last_updated": "2026-11-19T03:27:28.920Z",
   "total_records": 1937,
   "domains": {
     "A": {
@@ -9777,8 +9777,8 @@
       "title": "Architecture Intelligence: rook/rook Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-architecture-intelligence-rook-rook-core-invariants.md",
       "repository": "rook/rook",
-      "content_hash": "11253aa13f16c18ae65314076394db0295a10bacac2adbebf3cd135f5c0ecd18",
-      "created_at": "2026-11-17T15:23:59.892Z"
+      "content_hash": "952e9c40350560d9637bd368cdf1e7ae90aaffd5be54896f78812da903cf0763",
+      "created_at": "2026-11-19T03:27:23.714Z"
     },
     "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants",
@@ -15631,8 +15631,8 @@
       "title": "Research & Knowledge Intelligence: BAAI/bge-base-en-v1.5 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-base-en-v1-5-research-knowledge-intelligence-baai-bge-base-en-v1-5-c.md",
       "repository": "BAAI/bge-base-en-v1.5",
-      "content_hash": "f2b389f83210f3587bda44ac1694eceba7741328fc51d65f858ac67789f9ca92",
-      "created_at": "2026-11-14T13:57:11.214Z"
+      "content_hash": "2646898309daeb534f9dee15551fca768e58a679c80c81476ac996ab38ad825b",
+      "created_at": "2026-11-19T03:27:13.850Z"
     },
     "DOM-D-641F7D27": {
       "record_id": "DOM-D-641F7D27",
@@ -15682,8 +15682,8 @@
       "title": "Research & Knowledge Intelligence: hf-baai-bge-base-en-v1.5-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-base-en-v1-5-learnings-research-knowledge-intelligence-hf-baai-bge-b.md",
       "repository": "hf-baai-bge-base-en-v1.5-learnings",
-      "content_hash": "029d07ef7c9315fa3a0e34cd008333a5a4ced8af44e5560d4ba28ee10a557828",
-      "created_at": "2026-11-14T13:57:44.407Z"
+      "content_hash": "a227086092d60e395b24b7b0076686142c4e13e9a822e9862764057e01dbe7bc",
+      "created_at": "2026-11-19T03:27:27.151Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-gemma-4-31b-it-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-gemma-4-31b-it-core-invariants",
@@ -19358,8 +19358,8 @@
       "title": "Architecture Intelligence: rook-rook-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-learnings-architecture-intelligence-rook-rook-learnings-core-invariant.md",
       "repository": "rook-rook-learnings",
-      "content_hash": "808678b52ef95f74d2e3edb84ceee082b6638a6ef98ff17ee17da66a792929cd",
-      "created_at": "2026-11-17T15:24:03.475Z"
+      "content_hash": "872dca74eb9669b040b227dbcac626a3e49bc82809ba1a35b36770e001121928",
+      "created_at": "2026-11-19T03:27:27.863Z"
     },
     "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-comfy-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-comfy-core-",
@@ -23108,8 +23108,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "67954b77cbde561d32195a6b601a1c84d0eaf8cfc8457282e6f39dfd3de78f5d",
-      "created_at": "2026-11-19T02:11:34.266Z"
+      "content_hash": "34ef319752b3200f3ac9d8764ffc43dec41c3f62333d42bae3392ef32e9fca7d",
+      "created_at": "2026-11-19T03:27:28.920Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",

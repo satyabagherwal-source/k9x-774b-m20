@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-8UVG",
-    "timestamp": "2026-11-17T17:11:28.588Z",
-    "repository": "arxanas/git-branchless",
-    "learningId": "learn-github-arxanas-git-branchless",
-    "contentHash": "c14ab61e542655531371637af9b6e38584bc251b918e6dca79fc2bbfae59efac",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-8X7O",
-    "timestamp": "2026-11-17T17:11:31.620Z",
-    "repository": "unsloth/flint-GGUF",
-    "learningId": "learn-huggingface-unsloth-flint-gguf",
-    "contentHash": "fb3e06e4bebe2196340b8d9658ce79be5ece7cd96d3a5759aa0867a45f8e0e22",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-8Z6Z",
     "timestamp": "2026-11-17T17:11:34.187Z",
     "repository": "berty/berty",
@@ -7492,6 +7462,36 @@
     "contentHash": "6fa625f199858babfae1e54e8860348cbc2d1d952f38a016ef67cc6c1b98b166",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-OKHZ",
+    "timestamp": "2026-11-19T03:27:13.607Z",
+    "repository": "BAAI/bge-base-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
+    "contentHash": "206903d62fcfd5ead8ec8621f28c9556b76128cc843e02567526f9b8757f3bfc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-ORYK",
+    "timestamp": "2026-11-19T03:27:23.276Z",
+    "repository": "rook/rook",
+    "learningId": "learn-github-rook-rook",
+    "contentHash": "702d9dd878f4d39fd6724b69b53091496655e56b27952d15f017012cc75a5c81",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

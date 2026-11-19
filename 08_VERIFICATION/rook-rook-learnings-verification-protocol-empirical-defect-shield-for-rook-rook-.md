@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T15:24:03.297Z",
+  "timestamp": "2026-11-19T03:27:27.563Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-rook-rook-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [rook-rook-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T15:24:03.297Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T03:27:27.563Z`  
 > **Learning ID**: `LEARN-EVO-rook-rook-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source**: github ([https://github.com/rook/rook](https://github.com/rook/rook))  
-> **Source Version**: `f5fa76ed`  
+> **Source Version**: `695364a0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T15:23:58.851Z  
+> **Timestamp**: 2026-11-19T03:27:22.069Z  
 > **Learning ID**: `learn-github-rook-rook`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rook-rook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rook/rook](https://github.com/rook/rook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T15:23:58.846Z  
+> **Harvest Timestamp**: 2026-11-19T03:27:22.062Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Storage Orchestration for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 13709 stars
+- **Stars / Engagement**: 13713 stars
 
 ---
 
@@ -1452,59 +1452,260 @@ func quanityToInt64(qty string) (*int64, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c5877968` (2026-11-16)
-**Commit Message**: Merge pull request #18795 from travisn/fix-assignmons-map-race
+### Incident Patch 1: `695364a0` (2026-11-18)
+**Commit Message**: Merge pull request #18511 from sp98/account-quota-design
 
-mon: fix data race on mon scheduling map in assignMons
+rgw: account storage quota design
 
-**File**: `pkg/operator/ceph/cluster/mon/mon.go` (modified, +7/-2)
+**File**: `design/ceph/object/rgw-user-accounts.md` (modified, +38/-21)
 ```diff
-@@ -978,8 +978,13 @@ func (c *Cluster) assignMons(mons []*monConfig, monsToSkipReconcile sets.Set[str
- 		if c.ClusterInfo.Context.Err() != nil {
- 			return c.ClusterInfo.Context.Err()
- 		}
--		// scheduling for this monitor has already been completed
--		if _, ok := c.mapping.Schedule[mon.DaemonName]; ok {
-+		// scheduling for this monitor has already been completed. Guard the read
-+		// with resultLock since previously-spawned goroutines write to the map
-+		// concurrently below.
-+		resultLock.Lock()
-+		_, alreadyScheduled := c.mapping.Schedule[mon.DaemonName]
-+		resultLock.Unlock()
-+		if alreadyScheduled {
- 			log.NamespacedDebug(c.Namespace, logger, "mon %s already scheduled", mon.DaemonName)
- 			continue
- 		}
+@@ -10,7 +10,7 @@ Now instead of each S3 user operating independently, an account groups users and
+ - *Streamlined management*: Apply IAM policies centrally throughout the account for consistent permissions.
+ 
+ ## Prerequisites
+-- Ceph Squid (v19.0.0) or later
++- Ceph Tentacle v20.2.2 or later. Account storage quotas require v20.2.5 or later, or Umbrella v21.1.1 or later.
+ - RGW/Object Storage Service should be running.
+ 
+ ## API Changes
+@@ -246,9 +246,8 @@ Associating users with pre-existing accounts that were created outside of Rook (
+ ## Account Quotas
+ 
+ ### Overview
+-RGW accounts support two types of quotas that control resource consumption:
++RGW accounts support an account-level storage quota that controls resource consumption:
+ - **Account Quota**: Aggregate storage limit across all users and buckets in the account. Tracks total size and total object count at the account level.
+-- **Bucket Quota**: Per-bucket storage limit applied to every bucket in the account. Each individual bucket is subject to this limit.
+ 
+ Additionally, accounts have **resource limits** that control the number of entities (users, roles, groups, buckets, access keys) that can be created within the account.
+ 
+@@ -266,39 +265,56 @@ metadata:
+   namespace: rook-ceph
+ spec:
+   store: my-store
+-  # [Optional] Quotas for the account
++  # [Optional] Quotas and resource limits for the account. If set, at least one field must be specified.
++  # For every field except maxBuckets, -1 means unlimited and 0 means none allowed.
+   quotas:
+-    # [Optional] Maximum total size of all objects across all buckets in the account.
++    # [Optional] Maximum total size of all objects across all buckets in the account. Accepts any resource quantity unit (e.g. 10Gi, 500Mi, 2Ti). Default: -1.
+     maxSize: 10Gi
+-    # [Optional] Maximum total number of objects across all buckets in the account.
++    # [Optional] Maximum total number of objects across all buckets in the account. Default: -1.
+     maxObjects: 1000000
+-    # [Optional] Maximum total size of objects in any individual bucket in the account.
+-    maxBucketSize: 1Gi
+-    # [Optional] Maximum number of objects in any individual bucket in the account.
+-    maxBucketObjects: 100000
+-    # [Optional] Maximum number of buckets the account can own.
++    # [Optional] Maximum number of buckets the account can own. Must be at least 1. Default: 1000.
+     maxBuckets: 100
+-    # [Optional] Maximum number of users the account can have.
++    # [Optional] Maximum number of users the account can have. Default: 1000.
+     maxUsers: 50
+-    # [Optional] Maximum number of roles the account can have.
++    # [Optional] Maximum number of IAM roles the account can have. Default: 1000.
+     maxRoles: 50
+-    # [Optional] Maximum number of groups the account can have.
++    # [Optional] Maximum number of IAM groups the account can have. Default: 1000.
+     maxGroups: 20
+-    # [Optional] Maximum number of access keys the account can have.
+-    maxAccessKeys: 100
++    # [Optional] Maximum number of access keys each user in the account can have. Default: 4.
++    maxAccessKeys: 10
+   rootUser:
+     displayName: "root-my-account"
+ ```
+ 
+ ### Quota Reconciliation
+ 
+-The account controller reconciles quotas as follows:
++The account controller always manages the account's storage quota and resource limits. On every reconcile it applies the following, whether or not `spec.quotas` is set:
+ 
+-- **Account quota** (`maxSize`, `maxObjects`): enabled when either field is set, disabled when both are removed.
+-- **Bucket quota** (`maxBucketSize`, `maxBucketObjects`): enabled when either field is set, disabled when both are removed.
+-- **Resource limits** (`maxBuckets`, `maxUsers`, `maxRoles`, `maxGroups`, `maxAccessKeys`): set via account modify API. Unset fields default to unlimited (-1).
++- **Storage quota** (`maxSize`, `maxObjects`): applied through the RGW account quota API. The quota is enabled when either field is set. A set field is enforced and an unset field is unlimited. When both are unset, the quota is disabled.
++- **Resource limits** (`maxBuckets`, `maxUsers`, `maxRoles`, `maxGroups`, `maxAccessKeys`): applied through the RGW account create/modify API. A set field is applied. An unset field is reset to the Ceph default (1000, or 4 for `maxAccessKeys`). RGW only updates a limit that is included in the request and has no option to reset a limit, so Rook sends the defaults explicitly. `maxAccessKeys` is a per-user limit. Each limit can be at most `2147483647` because RGW stores it as a 32-bit integer.
+ 
+-**Note**: Account and Bucket quota APIs (`Quota`, `BucketQuota` of type `admin.QuotaSpec)`) in `go-ceph` are not implemented yet.
++**NOTE**: Ceph v20.2.2 to v20.2.4 and v21.1.0 truncate `maxSize` and `maxObjects` to 32 bits. On those versions, the reconcile fails if either field is set.
++
++**NOTE**: For every field except `maxBuckets`, `-1` means unlimited and `0` means none allowed. A `maxSize` of `0` means "allow zero byt
 ```
 
-**File**: `pkg/operator/ceph/cluster/mon/mon_test.go` (modified, +6/-1)
+---
+
+### Incident Patch 2: `d2b7705e` (2026-11-17)
+**Commit Message**: Merge pull request #18806 from subhamkrai/watch-csi-resource-when-csi-op-enabled
+
+csi: skip ClientProfile watches when csi op disabled
+
+**File**: `pkg/operator/ceph/csi/config.go` (modified, +11/-0)
 ```diff
-@@ -1664,10 +1664,15 @@ func TestFloatingMonLabelsAndSchedulingSkip(t *testing.T) {
- 	assert.Equal(t, FloatingMonAppName, floatingDeploy.Spec.Selector.MatchLabels["app"])
- 	assert.Equal(t, AppName, normalDeploy.Labels["app"])
+@@ -24,6 +24,7 @@ import (
  
--	// assignMons must skip the floating mon during canary scheduling
-+	// assignMons must skip the floating mon during canary scheduling.
-+	// assignMons schedules each mon in its own goroutine, so the mock is called
-+	// concurrently; guard the shared slice with a mutex to avoid a data race.
-+	var scheduledMu sync.Mutex
- 	var scheduled []string
- 	waitForMonitorScheduling = func(c *Cluster, d *apps.Deployment) (SchedulingResult, error) {
-+		scheduledMu.Lock()
- 		scheduled = append(scheduled, d.Labels[opcontroller.DaemonIDLabel])
-+		scheduledMu.Unlock()
- 		node, _ := c.context.Clientset.CoreV1().Nodes().Get(c.ClusterInfo.Context, "node0", metav1.GetOptions{})
- 		return SchedulingResult{Node: node}, nil
+ 	cephv1 "github.com/rook/rook/pkg/apis/ceph.rook.io/v1"
+ 	cephclient "github.com/rook/rook/pkg/daemon/ceph/client"
++	opcontroller "github.com/rook/rook/pkg/operator/ceph/controller"
+ 	"github.com/rook/rook/pkg/operator/k8sutil"
+ 
+ 	csiopv1 "github.com/ceph/ceph-csi-operator/api/v1"
+@@ -53,6 +54,11 @@ const (
+ )
+ 
+ func CreateUpdateClientProfileRadosNamespace(ctx context.Context, c client.Client, clusterInfo *cephclient.ClusterInfo, cephBlockPoolRadosNamespaceName, clusterID string) error {
++	if !opcontroller.CSIOperatorResourcesEnabled() {
++		logger.Debug("csi operator resources are disabled, skipping ceph-csi clientProfile CR for rados namespace")
++		return nil
++	}
++
+ 	logger.Info("creating ceph-csi clientProfile CR for rados namespace")
+ 
+ 	rbdProvisionerSecretName, err := getSecretNameByAnnotation(c, ctx, clusterInfo.Namespace, "csi.rook.io/RBDProvisionerSecret", CsiRBDProvisionerSecret)
+@@ -91,6 +97,11 @@ func CreateUpdateClientProfileRadosNamespace(ctx context.Context, c client.Clien
+ }
+ 
+ func CreateUpdateClientProfileSubVolumeGroup(ctx context.Context, c client.Client, clusterInfo *cephclient.ClusterInfo, cephFilesystemSubVolumeGroupName, clusterID string, csiMetadataRadosNamespace string) error {
++	if !opcontroller.CSIOperatorResourcesEnabled() {
++		logger.Debug("csi operator resources are disabled, skipping ceph-csi clientProfile CR for subvolume group")
++		return nil
++	}
++
+ 	logger.Info("Creating ceph-csi clientProfile CR for subvolume group")
+ 
+ 	csiOpClientProfile, err := generateProfileSubVolumeGroupSpec(c, clusterInfo, cephFilesystemSubVolumeGroupName, clusterID, csiMetadataRadosNamespace)
+```
+
+**File**: `pkg/operator/ceph/file/subvolumegroup/controller.go` (modified, +28/-21)
+```diff
+@@ -132,28 +132,35 @@ func add(opManagerContext context.Context, mgr manager.Manager, r reconcile.Reco
+ 		return err
  	}
+ 
+-	// Build handler to map events to CephFilesystemSubVolumeGroup reconcile requests
+-	clientProfileHandler, err := opcontroller.ObjectToCRMapper[*cephv1.CephFilesystemSubVolumeGroupList, *csiopv1.ClientProfile](
+-		opManagerContext,
+-		mgr.GetClient(),
+-		&cephv1.CephFilesystemSubVolumeGroupList{},
+-		mgr.GetScheme(),
+-	)
+-	if err != nil {
+-		return err
+-	}
++	// The ClientProfile CRD is only installed along with the ceph-csi-operator. If Rook is not
++	// creating the csi operator resources, the CRD may not exist and watching it would prevent
++	// the cache from ever syncing, which causes the operator to exit.
++	if opcontroller.CSIOperatorResourcesEnabled() {
++		// Build handler to map events to CephFilesystemSubVolumeGroup reconcile requests
++		clientProfileHandler, err := opcontroller.ObjectToCRMapper[*cephv1.CephFilesystemSubVolumeGroupList, *csiopv1.ClientProfile](
++			opManagerContext,
++			mgr.GetClient(),
++			&cephv1.CephFilesystemSubVolumeGroupList{},
++			mgr.GetScheme(),
++		)
++		if err != nil {
++			return err
++		}
+ 
+-	// Watch for ClientProfile changes
+-	err = c.Watch(
+-		source.Kind(
+-			mgr.GetCache(),
+-			&csiopv1.ClientProfile{TypeMeta: metav1.TypeMeta{Kind: "ClientProfile", APIVersion: fmt.Sprintf("%s/%s", csiopv1.GroupVersion.Group, csiopv1.GroupVersion.Version)}},
+-			handler.TypedEnqueueRequestsFromMapFunc(clientProfileHandler),
+-			opcontroller.WatchControllerPredicate[*csiopv1.ClientProfile](mgr.GetScheme()),
+-		),
+-	)
+-	if err != nil {
+-		return err
++		// Watch for ClientProfile changes
++		err = c.Watch(
++			source.Kind(
++				mgr.GetCache(),
++				&csiopv1.ClientProfile{TypeMeta: metav1.TypeMeta{Kind: "ClientProfile", APIVersion: fmt.Sprintf("%s/%s", csiopv1.GroupVersion.Group, csiopv1.GroupVersion.Version)}},
++				handler.TypedEnqueueRequestsFromMapFunc(clientProfileHandler),
++				opcontroller.WatchControllerPredicate[*csiopv1.ClientProfile](mgr.GetScheme()),
++			),
++		)
++		if err != nil {
++			return err
++		}
++	} else {
++		logger.Debug("csi operator resources are disabled, not watching ClientProfile")
+ 	}
+ 
+ 	// Build handler to map Secret events to CephFilesystemSubVolumeGroup reconcile requests
+```
+
+**File**: `pkg/operator/ceph/pool/radosnamespace/controller.go` (modified, +28/-21)
+```diff
+@@ -142,28 +142,35 @@ func add(opManagerContext context.Context, mgr manager.Manager, r reconcile.Reco
+ 		return err
+ 	}
+ 
+-	// Build handler to map events to CephBlockPoolRadosNamespace reconcile requests
+-	clientProfileHandler, err := opcontroller.ObjectToCRMapper[*cephv1.CephBlockPoolRadosNamespaceList, *csiopv1.ClientProfile](
+-		opManagerContext,
+-		mgr.GetClient(),
+-		&cephv1.CephBlockPoolRadosNamespaceList{},
+-		mgr.GetScheme(),
+-	)
+-	if err != nil {
+-		return err
+-	}
++	// The ClientProfile CRD is only installed along with the ceph-csi-operator. If Rook is not
++	// creating the csi operator resources, the CRD may not exist and watching it would prevent
++	// the cache from ever syncing, which causes the operator to exit.
++	if opcontroller.CSIOperatorResourcesEnabled() {
++		// Build handler to map events to CephBlockPoolRadosNamespace reconcile requests
++		clientProfileHandler, err := opcontroller.ObjectToCRMapper[*cephv1.CephBlockPoolRadosNamespaceList, *csiopv1.ClientProfile](
++			opManagerContext,
++			mgr.GetClient(),
++			&cephv1.CephBlockPoolRadosNamespaceList{},
++			mgr.GetScheme(),
++		)
++		if err != nil {
++			return err
++		}
+ 
+-	// Watch for ClientProfile changes
+-	err = c.Watch(
+-		source.Kind(
+-			mgr.GetCache(),
+-			&csiopv1.ClientProfile{TypeMeta: metav1.TypeMeta{Kind: "ClientProfile", APIVersion: fmt.Sprintf("%s/%s", csiopv1.GroupVersion.Group, csiopv1.GroupVersion.Version)}},
+-			handler.TypedEnqueueRequestsFromMapFunc(clientProfileHandler),
+-			opcontroller.WatchControllerPredicate[*csiopv1.ClientProfile](mgr.GetScheme()),
+-		),
+-	)
+-	if err != nil {
+-		return err
++		// Watch for ClientProfile changes
++		err = c.Watch(
++			source.Kind(
++				mgr.GetCache(),
++				&csiopv1.ClientProfile{TypeMeta: metav1.TypeMeta{Kind: "ClientProfile", APIVersion: fmt.Sprintf("%s/%s", csiopv1.GroupVersion.Group, csiopv1.GroupVersion.Version)}},
++				handler.TypedEnqueueRequestsFromMapFunc(clientProfileHandler),
++				opcontroller.WatchControllerPredicate[*csiopv1.ClientProfile](mgr.GetScheme()),
++			),
++		)
++		if err != nil {
++			return err
++		}
++	} else {
++		logger.Debug("csi operator resources are disabled, not watching ClientProfile")
+ 	}
+ 
+ 	// Build handler to map Secret events to CephBlockPoolRadosNamespace reconcile requests
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #18821** (2026-11-17): csi: skip ClientProfile watches when csi op disabled (backport #18806) (@mergify[bot])
+- **PR #18820** (2026-11-18): csi: skip ClientProfile watches when csi op disabled (backport #18806) (@mergify[bot])
 - **PR #18817** (2026-11-16): exporter: allow skipping monitor configuration fetch (backport #18758) (@mergify[bot])
 - **PR #18816** (2026-11-17): helm: honor allowVolumeExpansion false on pool storage classes (backport #18802) (@mergify[bot])
+- **PR #18815** (2026-11-17): osd: return API errors when checking if OSD migration is complete (backport #18813) (@mergify[bot])
 - **PR #18814** (2026-11-16): object: block realm and zone group deletion with a finalizer (backport #18452) (@mergify[bot])
-- **PR #18813** (2026-11-16): osd: return API errors when checking if OSD migration is complete (@amalsaidov)
-- **PR #18804** (2026-11-16): build(deps): bump go.opentelemetry.io/otel/trace from 1.46.0 to 1.47.0 (@dependabot[bot])
-- **PR #18803** (closed): build(deps): bump go.opentelemetry.io/otel/trace from 1.46.0 to 1.47.0 in /pkg/apis (@dependabot[bot])
 
 ---
 
@@ -1524,38 +1725,61 @@ mon: fix data race on mon scheduling map in assignMons
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in mon.go
+## X. Empirical Invariant Guard in rgw-user-accounts.md
 
 **RULE**:
-When implementing operations in `pkg/operator/ceph/cluster/mon/mon.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `design/ceph/object/rgw-user-accounts.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c5877968`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `695364a0`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/operator/ceph/cluster/mon/mon.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `design/ceph/object/rgw-user-accounts.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		// scheduling for this monitor has already been completed. Guard the read
-		// with resultLock since previously-spawned goroutines write to the map
-		// concurrently below.
-		resultLock.Lock()
-		_, alreadyScheduled := c.mapping.Schedule[mon.DaemonName]
-		resultLock.Unlock()
-		if alreadyScheduled {
+- Ceph Tentacle v20.2.2 or later. Account storage quotas require v20.2.5 or later, or Umbrella v21.1.1 or later.
+RGW accounts support an account-level storage quota that controls resource consumption:
+  # [Optional] Quotas and resource limits for the account. If set, at least one field must be specified.
+  # For every field except maxBuckets, -1 means unlimited and 0 means none allowed.
+    # [Optional] Maximum total size of all objects across all buckets in the account. Accepts any resource quantity unit (e.g. 10Gi, 500Mi, 2Ti). Default: -1.
+    # [Optional] Maximum total number of objects across all buckets in the account. Default: -1.
+    # [Optional] Maximum number of buckets the account can own. Must be at least 1. Default: 1000.
+    # [Optional] Maximum number of users the account can have. Default: 1000.
+    # [Optional] Maximum number of IAM roles the account can have. Default: 1000.
+    # [Optional] Maximum number of IAM groups the account can have. Default: 1000.
+    # [Optional] Maximum number of access keys each user in the account can have. Default: 4.
+    maxAccessKeys: 10
+The account controller always manages the account's storage quota and resource limits. On every 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		// scheduling for this monitor has already been completed
-		if _, ok := c.mapping.Schedule[mon.DaemonName]; ok {
+- Ceph Squid (v19.0.0) or later
+RGW accounts support two types of quotas that control resource consumption:
+- **Bucket Quota**: Per-bucket storage limit applied to every bucket in the account. Each individual bucket is subject to this limit.
+  # [Optional] Quotas for the account
+    # [Optional] Maximum total size of all objects across all buckets in the account.
+    # [Optional] Maximum total number of objects across all buckets in the account.
+    # [Optional] Maximum total size of objects in any individual bucket in the account.
+    maxBucketSize: 1Gi
+    # [Optional] Maximum number of objects in any individual bucket in the account.
+    maxBucketObjects: 100000
+    # [Optional] Maximum number of buckets the account can own.
+    # [Optional] Maximum number of users the account can have.
+    # [Optional] Maximum number of roles the account can have.
+    # [Optional] Maximum number of groups the account can have.
+    # [Optional] Maximum number of access keys the account can have.
+    maxAccessKeys: 100
+The account controller reconciles quotas as follows:
+- **Account quota** (`maxSize`, `maxObjects`): enabled when either field is set, disabled when both are removed.
+- **Bucket quo
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c5877968` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `695364a0` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

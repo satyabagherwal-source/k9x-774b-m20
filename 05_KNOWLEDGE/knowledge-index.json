@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T03:14:43.721Z",
+  "last_updated": "2026-11-19T03:27:29.253Z",
   "total_verified_learnings": 9013,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21605,
+  "total_items": 21607,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9c7bf2d6de6d8d30a500bb55a6820dcf33be6b2485d478d3098b7e6bc147f152",
+      "content_hash": "795f315683a2916e0fa5f3f26083321babe88f612e004aadd43da9ae262b0e2f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T02:11:34.403Z"
+      "persisted_at": "2026-11-19T03:27:29.095Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a9d9aeec1d348dddd8e7d4fcf2a97b1bb2644b21fc3b30c2ecf76e31839402c2",
+      "content_hash": "08ef50af1fdd110d0b36ab27215f1c5c6fc6f96d6f171e273a072d5441e9bb30",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T02:11:34.512Z"
+      "persisted_at": "2026-11-19T03:27:29.253Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -213261,8 +213261,8 @@
       "slug": "rook-rook",
       "platform": "github",
       "source_url": "https://github.com/rook/rook",
-      "source_version": "f5fa76ed",
-      "content_hash": "17366e72c534c5be7ae849a48ff58ec8436129258b2c58e878022e4ac30e7209",
+      "source_version": "695364a0",
+      "content_hash": "702d9dd878f4d39fd6724b69b53091496655e56b27952d15f017012cc75a5c81",
       "dossier_path": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rook-rook-learnings.md",
       "promoted_rules": [
@@ -213285,6 +213285,11 @@
           "number": 8986,
           "title": "Empirical Invariant Guard in mon.go",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9326,
+          "title": "Empirical Invariant Guard in rgw-user-accounts.md",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213292,7 +213297,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T15:23:59.474Z",
+      "verified_at": "2026-11-19T03:27:23.045Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213334,10 +213339,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-architecture-intelligence-rook-rook-core-invariants.md",
       "title": "Architecture Intelligence: rook/rook Core Invariants",
       "repository": "rook/rook",
-      "source_version": "f5fa76ed",
-      "content_hash": "11253aa13f16c18ae65314076394db0295a10bacac2adbebf3cd135f5c0ecd18",
+      "source_version": "695364a0",
+      "content_hash": "952e9c40350560d9637bd368cdf1e7ae90aaffd5be54896f78812da903cf0763",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T15:23:59.892Z"
+      "persisted_at": "2026-11-19T03:27:23.714Z"
     },
     "agent_contract-agent-contract-rook-rook-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-rook-rook-autonomous-specialist-persona",
@@ -213346,10 +213351,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/rook-rook-agent-contract-rook-rook-autonomous-specialist-persona.md",
       "title": "Agent Contract: rook/rook Autonomous Specialist Persona",
       "repository": "rook/rook",
-      "source_version": "f5fa76ed",
-      "content_hash": "ae21ed40fe2bf927d4e78977bd3a1b97f39e60811858a761a5726a86ce3b751b",
+      "source_version": "695364a0",
+      "content_hash": "13299efc80ac24ff1c084227fa56d484b3096be0035a88eb6ce3157e4c0bbe57",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T15:24:00.035Z"
+      "persisted_at": "2026-11-19T03:27:23.890Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook",
@@ -213358,10 +213363,10 @@
       "relative_path": "08_VERIFICATION/rook-rook-verification-protocol-empirical-defect-shield-for-rook-rook.md",
       "title": "Verification Protocol: Empirical Defect Shield for rook/rook",
       "repository": "rook/rook",
-      "source_version": "f5fa76ed",
-      "content_hash": "9f797c02f9e0ab809b5958b4783efc9127ecd3995051ceff0db41193de28aafe",
+      "source_version": "695364a0",
+      "content_hash": "8767f62dd19db6e594a7e0025bb405e4e9a10630bc2e8dc96b7e387423be1bff",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T15:24:00.134Z"
+      "persisted_at": "2026-11-19T03:27:24.044Z"
     },
     "learn-github-zama-ai-tfhe-rs": {
       "learning_id": "learn-github-zama-ai-tfhe-rs",
@@ -230214,7 +230219,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/BAAI/bge-base-en-v1.5",
       "source_version": "hf-baai-bge-base-en-v1.5",
-      "content_hash": "5fd29a34c759bfc6cc9dbb64d0f00f1c688bbf03d059a8bb62410f2cc2167a44",
+      "content_hash": "206903d62fcfd5ead8ec8621f28c9556b76128cc843e02567526f9b8757f3bfc",
       "dossier_path": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md",
       "promoted_rules": [],
@@ -230223,7 +230228,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T13:57:10.953Z",
+      "verified_at": "2026-11-19T03:27:13.365Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230240,9 +230245,9 @@
       "title": "Research & Knowledge Intelligence: BAAI/bge-base-en-v1.5 Core Invariants",
       "repository": "BAAI/bge-base-en-v1.5",
       "source_version": "hf-baai-bge-base-en-v1.5",
-      "content_hash": "f2b389f83210f3587bda44ac1694eceba7741328fc51d65f858ac67789f9ca92",
+      "content_hash": "2646898309daeb534f9dee15551fca768e58a679c80c81476ac996ab38ad825b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T13:57:11.214Z"
+      "persisted_at": "2026-11-19T03:27:13.850Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-base-en-v1-5-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-base-en-v1-5-learnings-core-invarian",
@@ -230252,9 +230257,9 @@
       "title": "Research & Knowledge Intelligence: hf-baai-bge-base-en-v1.5-learnings Core Invariants",
       "repository": "hf-baai-bge-base-en-v1.5-learnings",
       "source_version": "HEAD",
-      "content_hash": "029d07ef7c9315fa3a0e34cd008333a5a4ced8af44e5560d4ba28ee10a557828",
+      "content_hash": "a227086092d60e395b24b7b0076686142c4e13e9a822e9862764057e01dbe7bc",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T13:57:44.407Z"
+      "persisted_at": "2026-11-19T03:27:27.151Z"
     },
     "learn-huggingface-google-gemma-4-31b-it": {
       "learning_id": "learn-huggingface-google-gemma-4-31b-it",
@@ -241349,9 +241354,9 @@
       "title": "Architecture Intelligence: rook-rook-learnings Core Invariants",
       "repository": "rook-rook-learnings",
       "source_version": "HEAD",
-      "content_hash": "808678b52ef95f74d2e3edb84ceee082b6638a6ef98ff17ee17da66a792929cd",
+      "content_hash": "872dca74eb9669b040b227dbcac626a3e49bc82809ba1a35b36770e001121928",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T15:24:03.475Z"
+      "persisted_at": "2026-11-19T03:27:27.863Z"
     },
     "agent_contract-agent-contract-rook-rook-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-rook-rook-learnings-autonomous-specialist-persona",
@@ -241361,9 +241366,9 @@
       "title": "Agent Contract: rook-rook-learnings Autonomous Specialist Persona",
       "repository": "rook-rook-learnings",
       "source_version": "HEAD",
-      "content_hash": "970cfbdb29322992c7811e0909f0ce78c10d583b77a1fca1127519b7e2ec41ce",
+      "content_hash": "22398ac1d4200721be0e263e48324dc676281f4e54d51081feac998e518a3323",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T15:24:03.590Z"
+      "persisted_at": "2026-11-19T03:27:28.062Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rook-rook-learnings",
@@ -241373,9 +241378,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rook-rook-learnings",
       "repository": "rook-rook-learnings",
       "source_version": "HEAD",
-      "content_hash": "371ccc715c328f9ea6da314aebc17fa6b6aebb41b22898772f23de233d238d48",
+      "content_hash": "0d209f122ab96570406dcad882bf976b314c0eae285cef22ea639b65186a2ebc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T15:24:03.687Z"
+      "persisted_at": "2026-11-19T03:27:28.219Z"
     },
     "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy": {
       "learning_id": "learn-huggingface-black-forest-labs-flux-3-image-klein-comfy",
@@ -252692,9 +252697,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "67954b77cbde561d32195a6b601a1c84d0eaf8cfc8457282e6f39dfd3de78f5d",
+      "content_hash": "34ef319752b3200f3ac9d8764ffc43dec41c3f62333d42bae3392ef32e9fca7d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T02:11:34.266Z"
+      "persisted_at": "2026-11-19T03:27:28.920Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -275396,13 +275401,13 @@
       "item_id": "candidate_directive-rust-address-the-remaining-issues-in-418",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-Z9TH-rust-address-the-remaining-issues-in-418.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-OW67-rust-address-the-remaining-issues-in-418.md",
       "title": "rust): address the remaining issues in #418",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "258dbb0bc6d3998d4252fa4dbc2cc1f0ded23ab290d13a089c9b9c896ac8d44d",
+      "content_hash": "fa71a92c3d8c58a26ff94893c41162ab193a1dd182dfae2080c947e0845b0cd9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T02:11:34.135Z"
+      "persisted_at": "2026-11-19T03:27:28.741Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",
@@ -291860,6 +291865,32 @@
       "content_hash": "a463b5013f467925677dfc328a9a2ae4cc548a851403c89a85015f26c9afd787",
       "domain_letter": "G",
       "persisted_at": "2026-11-19T03:14:42.544Z"
+    },
+    "rule-9326": {
+      "learning_id": "rule-9326",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9326,
+      "title": "Empirical Invariant Guard in rgw-user-accounts.md",
+      "source_url": "https://github.com/rook/rook",
+      "source_version": "695364a0",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T03:27:23.045Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-rgw-user-accounts-md": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-rgw-user-accounts-md",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OVCU-empirical-invariant-guard-in-rgw-user-accounts-md.md",
+      "title": "Empirical Invariant Guard in rgw-user-accounts.md",
+      "repository": "rook-rook-learnings",
+      "source_version": "HEAD",
+      "content_hash": "80cede3efff30ccf5c24af1f7dae6e8dd45fe4fe5ff78aa576f1165898e0dcd8",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T03:27:27.683Z"
     }
   },
   "ai-builder-brain": {

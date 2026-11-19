@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T03:14:43.430Z",
+  "last_updated": "2026-11-19T03:27:28.741Z",
   "directives": [
     {
       "id": "CD-001",
@@ -25122,11 +25122,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-Z9TH",
+      "id": "CD-OW67",
       "directive_title": "rust): address the remaining issues in #418",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-Z9TH-rust-address-the-remaining-issues-in-418.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-OW67-rust-address-the-remaining-issues-in-418.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-19",
@@ -31888,6 +31888,35 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-68D0D0-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-OVCU",
+      "directive_title": "Empirical Invariant Guard in rgw-user-accounts.md",
+      "source_repo": "rook-rook-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-OVCU-empirical-invariant-guard-in-rgw-user-accounts-md.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-EA6E4A",
+      "directive_title": "Empirical Invariant Guard in rgw-user-accounts.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rook-rook",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EA6E4A-empirical-invariant-guard-in-rgw-user-ac.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-4152AC",
+      "directive_title": "rust): address the remaining issues in #418",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4152AC-rust-address-the-remaining-issues-in-418.md",
       "staged_date": "2026-11-19"
     }
   ]
