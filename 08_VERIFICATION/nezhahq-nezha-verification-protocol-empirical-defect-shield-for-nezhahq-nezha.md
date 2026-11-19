@@ -4,45 +4,31 @@
 {
   "source_repository": "nezhahq/nezha",
   "source_url": "https://github.com/nezhahq/nezha",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "8bcaf092",
+  "license": "WTFPL",
+  "timestamp": "2026-11-19T01:06:02.984Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-nezhahq-nezha",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nezhahq/nezha](https://github.com/nezhahq/nezha) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [nezhahq/nezha](https://github.com/nezhahq/nezha) (Revision: `8bcaf092`).  
+> **License**: WTFPL | **Timestamp**: `2026-11-19T01:06:02.984Z`  
+> **Learning ID**: `learn-github-nezhahq-nezha`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `nezhahq/nezha` (Commit: `historical`)
+- **Target Repository**: `nezhahq/nezha` (Commit: `8bcaf092`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nezhahq-nezha-learnings.md`  
-> **Source**: github ([https://github.com/nezhahq/nezha](https://github.com/nezhahq/nezha))  
-> **Source Version**: `3e7d9ba6`  
-> **License**: WTFPL  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-30T11:17:21.680Z  
-> **Learning ID**: `learn-github-nezhahq-nezha`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): nezhahq/nezha
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nezhahq-nezha-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nezhahq/nezha](https://github.com/nezhahq/nezha))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-30T11:12:19.576Z  
+> **Harvest Timestamp**: 2026-11-19T01:06:01.885Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: :trollface: Self-hosted, lightweight server and website monitoring and O&M tool
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 10383 stars
+- **Stars / Engagement**: 10420 stars
 
 ---
 
@@ -961,16 +947,17 @@ func GjsonIter(json string) (iter.Seq2[string, string], error) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1246** (2026-10-22): **Let readers deploy Nezha in one click from a new README section**
-  *Symptoms*: I added a One-Click Deploy section to README.md, between User Guide and Contributing, with buttons for RepoCloud and Railway. This gives the community one-click access to deploy Nezha at two hosting providers. Railway: after deploying, copy OWNER_PASSWORD from the nezha service's variables and sign in as admin ([template page](https://railway.com/deploy/nezha)); that template is community-made, not part of this project. 
-  **Post-Mortem & Fix Analysis**:
-  > I don't like PaaS unless they become sponsor😄
-
 - **Issue #1245** (2026-10-24): **perf(dashboard): 压缩并缓存静态资源，为轮询接口增加 ETag**
   *Symptoms*: ## 背景  dashboard 之前以未压缩方式提供静态资源，且没有任何缓存策略，导致每次页面跳转都要重新下载并校验完整资源包。两个前端界面还会定时轮询 `/api/v1/service` 和 `/api/v1/server`，每次轮询都返回完整快照，且不支持条件请求。  ## 改动  - 对静态资源按 `Accept-Encoding` 协商提供 brotli/gzip，编码结果按文件 mtime 缓存（`cmd/dashboard/controller/static_compress.go`）。 - 对带哈希的 `/assets/` 返回 `Cache-Control: immutable`，其余返回 `ETag` + `no-cache`，重复加载变为 304。 - 不再记录静态资源请求日志。 - 用按 viewer 加锁的 singleflight 合并并发的 `/api/v1/server` 快照（`cmd/dashboard/controller/controller.go`）。 - 为 `/api/v1/service` 与 `/api/v1/server` 增加 `ETag`/304 支持。 - 新增 `script/build-frontends.sh`，用于可复现的 dist 构建。  ## 说明  - `go.mod` 新增依赖 `github.com/andybalholm/brotli`。  ## 测试  `go test ./cmd/dashboard/controller/...` 覆盖编码协商以及 ETag / singleflight 路径（`static_compress_test.go`、`api_etag_test.go`）。
   **Post-Mortem & Fix Analysis**:
   > ### Code review  发现 4 个需要在合并前修复的问题：  1. **[P1] singleflight 共享的服务器切片会被权限过滤原地修改。** 合并的请求获得同一底层数组，随后 `filter` 使用 `slices.DeleteFunc` 删除无权限项并清零尾部。同一普通用户或受限 PAT 的并发请求仍持有原长度，可能对尾部 `nil` 调用 `HasPermission`，导致 panic/500；过滤与序列化之间也可能发生数据竞争。建议请求级克隆切片，或将完整的过滤与响应生成放入正确隔离、不可变的共享结果中，并增加真实并发响应测试。  https://github.com/nezhahq/nezha/blob/69c539e59161dae185148460e78284be0968ed45/cmd/dashboard/controller/server.go#L38-L54  2. **[P2] 压缩缓存没有按本地文件版本失效。** 缓存键只有模板根、来源、路径和编码，`modTime` 没有参与。运行期间更新同路径的 `index.html` 后，gzip/br 请求仍可能命中旧正文，响应 ETag 却来自新文件元数据。应将文件版本纳入缓存键，并测试同一路径内容更新后返回新正文。  https://github.com/nezhahq/nezha/blob/69c539e59161dae185148460e78284be0968ed45/cmd/dashboard/controller/static_compress.go#L150-L168  3. **[P2] 嵌入资源等长更新会复用旧 ETag。** 当前验证器只依赖文件名、长度和 mtime，而 `embed.FS` 的 mtime 为零。两次发布仅替换等长 chunk 哈希时，首页 ETag 不变，客户端可能收到错误的 304，继续使用引用旧资源的 HTML。建议采用内容摘要或构建版本，并覆盖同名、同长度、内容不同的升级场景。  https://github.com/nezhahq/nezha/blob/69c539e59161dae185148460e78284be0968ed45/cmd/dashboard/controller/static_compress.go#L177
   > 转向自建二开版本，本 PR 不再提交上游。
+
+- **Issue #1243** (2026-10-16): **feat(server): online session history with configurable stats window (7-3650 days)**
+  *Symptoms*: ## 功能  为每台服务器记录**在线/离线会话历史**,并提供可配置窗口的查询 API,供前端展示在线率、每日在线时段与精确到秒的在线明细:  - agent 每次状态流建立/断开即产生会话(`ReportSystemState` attach/clear),≥30s 节流落盘 `last_active_at` 用于崩溃恢复,dashboard 重启后从 `online_sessions` 表恢复进行中会话,时间线不断裂; - 游客限制与 `getServerMetrics` 语义一致:超过 1 天返回 `unauthorized: only 1d data available for guests`(报错而非 clamp); - 管理员可配置统计窗口 `online_stats_days`(7~3650,默认 7),经 `PATCH /api/v1/setting` 修改,响应中 `max_days` 下发给前端控制可选档位。  ## API  `GET /api/v1/server/{id}/online-history?days={n}`  返回 `window_start/window_end`、`online_rate`、`total_online_seconds`、`currently_online`、`last_active`、逐日聚合 `daily[]`、会话明细 `periods[]`(UTC RFC3339)以及面板时区 `timezone`/`tz_offset`(前端按面板时区拆日渲染)。  ## 持久化与内存数据清单  **持久化(SQLite,经 gorm):** 1. 新表 `online_sessions`:`id`、`created_at`、`updated_at`(内联,对齐 ServiceHistory 先例)、`server_id`、`started_at`、`ended_at`(进行中为零值)、`last_active_at`(≥30s 节流,崩溃恢复用)、`ongoing`;复合索引 `idx_online_sessions_server_started(server_id, started_at)`。保留策略:每日 04:30 分批(1 万行/批)修剪至 `online_stats_days` 窗口,并清理已删服务器的孤儿行。 2. `config.yaml`:`online_stats_days`(dashboard 段,默认 7,合法 7~3650;本 PR 修复后为显式落盘,不再依赖 MCP 过渡块的保存副作用)。  **内存(进程内,不落盘):** 1. `OnlineHistoryRecorder.open map[uint64]*onlineSessionRuntime`(键=服务器 ID,值=会话行 ID + lastPersist 时间戳,`sync.Mutex` 保护;体量与当前在线服务器数线性;启动时由构造器从表恢复)。 2. 上游既有 `Server.LastActive`(`gorm:"-"`):`currently_online` = 距今 ≤30s。 3. 聚合查询按请求实时读表计算,无额外缓存,不依赖 TSDB。  ## 自查与修复(10 项审查发现 + 3 项过程中新发现)  审查报告(含 8 场景压测)发现的问题已全部处理,详见仓库外审查文档;摘要:  - **F1** `DailyOnlineBreakdown` O(时段×天数) → `sort.Search` 
+  **Post-Mortem & Fix Analysis**:
+  > 不要内嵌 html，接到前台或后台前端里，pr描述改成中文，列出持久化或内存数据
+  > ok👌    ---Original--- From: ***@***.***&gt; Date: Wed, Oct 14, 2026 08:47 AM To: ***@***.***&gt;; Cc: ***@***.******@***.***&gt;; Subject: Re: [nezhahq/nezha] feat(server): online session history with configurable stats window (7-3650 days) (PR #1243)   naiba left a comment (nezhahq/nezha#1243)   不要内嵌 html，接到前台或后台前端里，pr描述改成中文，列出持久化或内存数据   — Reply to this email directly, view it on GitHub, or unsubscribe. Triage notifications, keep track of coding agent tasks and review pull requests on the go with GitHub Mobile for iOS and Android. Download it today!  You are receiving this because you authored the thread.Message ID: ***@***.***&gt;
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -987,393 +974,488 @@ func GjsonIter(json string) (iter.Seq2[string, string], error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3e7d9ba6` (2026-10-29)
-**Commit Message**: feat: safely remove inactive custom frontends
+### Incident Patch 1: `8bcaf092` (2026-11-18)
+**Commit Message**: security: bound persisted resource reference collections
 
-Update bundled admin frontend to v2.6.1 and official user frontend to v2.7.0.
+Members could inflate JSON reference collections that are persisted,
+re-parsed in AfterFind, kept in memory, copied on every list request
+and fanned out at runtime (GHSA-8fgr-wx8p-v6q7):
+
+- skip_servers / alert rule ignore: false entries were never checked
+- ddns_profiles, trigger tasks, cron servers: duplicate IDs passed the
+  existence checks, making UpdateDDNS spawn one outbound DNS update per
+  duplicate and SendTriggerTasks fire the same cron repeatedly
+- nonexistent server / cron IDs in allow-sets passed class.CheckPermission
+- override_ddns_domains was not validated at all
+- DDNS domains and alert sub-rules had no count limit
+- /api/v1 request bodies had no size limit
+
+Normalize every collection before permission checks (dedupe, drop false
+entries, drop unknown IDs from allow-sets, keep deny-sets strict), apply
+IDN validation and limits to override domains, cap domains per profile
+and sub-rules per alert rule, limit /api/v1 bodies to 1 MiB, and
+normalize again in AfterFind so already-persisted bloat is collapsed on
+load.
 
 Co-authored-by: naiba/CloudCode <[REDACTED_EMAIL]>
 
-**File**: `cmd/dashboard/controller/frontend.go` (modified, +18/-0)
+**File**: `cmd/dashboard/controller/alertrule.go` (modified, +4/-0)
 ```diff
-@@ -18,6 +18,7 @@ func registerFrontendRoutes(auth *gin.RouterGroup) {
- 	frontends.GET("/releases", adminHandler(listFrontendReleases))
- 	frontends.POST("/install", adminHandler(installFrontend))
- 	frontends.POST("/activate", adminHandler(activateFrontend))
-+	frontends.POST("/remove", adminHandler(removeFrontend))
- }
- 
- type frontendStatus struct {
-@@ -122,3 +123,20 @@ func activateFrontend(c *gin.Context) (any, error) {
+@@ -170,6 +170,10 @@ func validateRule(c *gin.Context, r *model.AlertRule) error {
+ 	if !r.HasPermission(c) {
+ 		return singleton.Localizer.ErrorT("permission denied")
  	}
- 	return nil, errors.New("frontend is not installed for the selected role")
- }
-+
-+// Remove frontend
-+// @Summary Remove an inactive custom frontend and its files
-+// @Security BearerAuth
-+// @Tags admin required
-+// @Accept json
-+// @Param body body frontendActivateForm true "Installed frontend"
-+// @Produce json
-+// @Success 200 {object} model.CommonResponse[any]
-+// @Router /frontend/remove [post]
-+func removeFrontend(c *gin.Context) (any, error) {
-+	var form frontendActivateForm
-+	if err := c.ShouldBindJSON(&form); err != nil {
++	// 规范化必须先于 trigger task 权限校验（GHSA-8fgr-wx8p-v6q7）。
++	if err := normalizeAlertRuleReferences(r); err != nil {
++		return err
++	}
+ 	if len(r.Rules) > 0 {
+ 		for _, rule := range r.Rules {
+ 			if rule == nil {
+```
+
+**File**: `cmd/dashboard/controller/controller.go` (modified, +3/-1)
+```diff
+@@ -85,7 +85,9 @@ func routers(r *gin.Engine, frontendDist fs.FS) {
+ 	r.POST("/mcp/upload/:token", mcpOriginGuard(), transferUploadHandler)
+ 	registerAgentcompatRoutes(r)
+ 
+-	api := r.Group("api/v1")
++	// 所有 /api/v1 请求体统一限长：ShouldBindJSON 会完整读取请求体
++	// （GHSA-8fgr-wx8p-v6q7）。
++	api := r.Group("api/v1", restRequestBodyLimitMiddleware(restAPIRequestMaxBodyBytes))
+ 	api.POST("/login", authMiddleware.LoginHandler)
+ 
+ 	fallbackAuthMw := fallbackAuthMiddleware(authMiddleware)
+```
+
+**File**: `cmd/dashboard/controller/cron.go` (modified, +4/-0)
+```diff
+@@ -55,6 +55,8 @@ func createCron(c *gin.Context) (uint64, error) {
+ 	if err := c.ShouldBindJSON(&cf); err != nil {
+ 		return 0, err
+ 	}
++	// 见 resource_reference_limits.go（GHSA-8fgr-wx8p-v6q7）。
++	cf.Servers = normalizeCronServers(cf.Cover, cf.Servers)
+ 
+ 	if !isValidCronCover(cf.Cover) {
+ 		return 0, singleton.Localizer.ErrorT("permission denied")
+@@ -140,6 +142,8 @@ func updateCron(c *gin.Context) (any, error) {
+ 	if err := c.ShouldBindJSON(&cf); err != nil {
+ 		return 0, err
+ 	}
++	// 见 resource_reference_limits.go（GHSA-8fgr-wx8p-v6q7）。
++	cf.Servers = normalizeCronServers(cf.Cover, cf.Servers)
+ 
+ 	if !isValidCronCover(cf.Cover) {
+ 		return nil, singleton.Localizer.ErrorT("permission denied")
+```
+
+**File**: `cmd/dashboard/controller/ddns.go` (modified, +10/-15)
+```diff
+@@ -6,7 +6,6 @@ import (
+ 
+ 	"github.com/gin-gonic/gin"
+ 	"github.com/jinzhu/copier"
+-	"golang.org/x/net/idna"
+ 
+ 	"github.com/nezhahq/nezha/model"
+ 	"github.com/nezhahq/nezha/service/singleton"
+@@ -82,14 +81,12 @@ func createDDNS(c *gin.Context) (uint64, error) {
+ 	p.WebhookRequestBody = df.WebhookRequestBody
+ 	p.WebhookHeaders = df.WebhookHeaders
+ 
+-	for n, domain := range p.Domains {
+-		// IDN to ASCII
+-		domainValid, domainErr := idna.Lookup.ToASCII(domain)
+-		if domainErr != nil {
+-			return 0, singleton.Localizer.ErrorT("error parsing %s: %v", domain, domainErr)
+-		}
+-		p.Domains[n] = domainValid
++	// IDN→ASCII、去重并限制数量（GHSA-8fgr-wx8p-v6q7）。
++	domains, err := normalizeDDNSDomains(p.Domains)
++	if err != nil {
++		return 0, err
+ 	}
++	p.Domains = domains
+ 
+ 	if err := singleton.DB.Create(&p).Error; err != nil {
+ 		return 0, newGormError("%v", err)
+@@ -163,14 +160,12 @@ func updateDDNS(c *gin.Context) (any, error) {
+ 		p.WebhookRequestBody = df.WebhookRequestBody
+ 	}
+ 
+-	for n, domain := range p.Domains {
+-		// IDN to ASCII
+-		domainValid, domainErr := idna.Lookup.ToASCII(domain)
+-		if domainErr != nil {
+-			return nil, singleton.Localizer.ErrorT("error parsing %s: %v", domain, domainErr)
+-		}
+-		p.Domains[n] = domainValid
++	// IDN→ASCII、去重并限制数量（GHSA-8fgr-wx8p-v6q7）。
++	domains, err := normalizeDDNSDomains(p.Domains)
++	if err != nil {
 +		return nil, err
-+	}
-+	return nil, singleton.Conf.RemoveFrontend(form.Path, form.IsAdmin)
-+}
-```
-
-**File**: `cmd/dashboard/controller/frontend_management_test.go` (modified, +48/-0)
-```diff
-@@ -96,6 +96,7 @@ func TestFrontendManagementRejectsUnauthorizedRolesAndScopes(t *testing.T) {
- 				{"GET", "/api/v1/frontend/releases?repository=https://github.com/owner/site", ""},
- 				{"POST", "/api/v1/frontend/install", `{"repository":"https://github.com/owner/site","tag":"v1"}`},
- 				{"POST", "/api/v1/frontend/activate", `{"path":"installed-user"}`},
-+				{"POST", "/api/v1/frontend/remove", `{"path":"installed-user"}`},
- 			} {
- 				response := frontendManagementRequest(t, router, endpoint.method, endpoint.path, endpoint.body)
- 				var result model.CommonResponse[any]
-@@ -228,6 +229,7 @@ func TestFrontendManagementCSRFRejectsMissingAndForgedTokens(t *testing.T) {
- 	for _, endpoint := range []struct{ path, body string }{
- 		{"/api/v1/frontend/install", `{"repository":"https://github.com/owner/site","tag":"v1"}`},
- 		{"/api/v1/frontend/activate", `{"path":"installed-user"}`},
-+		{"/api/v1/frontend/remove", `{"path":"installed-user"}`},
- 	} {
- 		for _, token := range []string{"", "forged-csrf-token"} {
- 			request := httptest.NewRequest("POST", endpoint.path, strings.NewReader(endpoint.body))
-@@ -374,3 +376,49 @@ func TestFrontendSwitchInvalidatesSameNameAssetCache(t *testing.T) {
- 		})
  	}
- }
++	p.Domains = domains
+ 
+ 	if err = singleton.DB.Save(&p).Error; err != nil {
+ 		return nil, newGormError("%v", err)
+```
+
+**File**: `cmd/dashboard/controller/resource_reference_limits.go` (added, +158/-0)
+```diff
+@@ -0,0 +1,158 @@
++package controller
 +
-+func TestFrontendRemovalProtectsActiveAndBuiltinTemplates(t *testing.T) {
-+	configPath := frontendManagementFixture(t)
-+	router := frontendManagementRouter(&model.User{Role: model.RoleAdmin}, nil)
-+	remove := func(body string, success bool) {
-+		t.Helper()
-+		response := frontendManagementRequest(t, router, "POST", "/api/v1/frontend/remove", body)
-+		var result model.CommonResponse[any]
-+		require.NoError(t, json.Unmarshal(response.Body.Bytes(), &result), response.Body.String())
-+		require.Equal(t, success, result.Success, response.Body.String())
-+		if !success {
-+			require.NotEmpty(t, result.Error)
++import (
++	"net/http"
++
++	"github.com/gin-gonic/gin"
++	"golang.org/x/net/idna"
++
++	"github.com/nezhahq/nezha/model"
++	"github.com/nezhahq/nezha/service/singleton"
++)
++
++// 写入侧的资源引用规范化与上限（GHSA-8fgr-wx8p-v6q7）。
++//
++// 低权限成员曾可以用以下方式把落库 JSON 撑到任意大小：
++//   - 值为 false 的 skip_servers / rule.ignore 条目（权限校验只看 true）
++//   - 重复的 ddns_profiles / trigger task / cron servers ID（存在性校验不去重）
++//   - 不存在的 server / cron ID（通用 class.CheckPermission 跳过缺失 ID）
++//   - 完全未校验的 override_ddns_domains、无数量上限的 domains / rules
++//
++// 规范化必须发生在权限校验之前，后续校验与落库都基于规范化后的集合，
++// 这样集合大小被真实对象数量约束，而不是被请求体大小约束。
++
++const (
++	// restAPIRequestMaxBodyBytes 是 /api/v1 下所有请求体的上限。最大的合法
++	// 请求是管理员的自定义代码设置，远小于该值。
++	restAPIRequestMaxBodyBytes = 1 << 20
++	// maxDomainsPerDDNSProfile 同时约束 DDNS profile 的 domains 与 server 的
++	// 单个 profile 覆盖域名列表；每个域名都会触发一次外部 DNS 更新。
++	maxDomainsPerDDNSProfile = 256
++	// maxRulesPerAlertRule 约束单条告警的子规则数；每个上报样本都会为每条
++	// 子规则保存一份数据并逐条求值。
++	maxRulesPerAlertRule = 64
++)
++
++// restRequestBodyLimitMiddleware 在 handler 解析请求体前装上 MaxBytesReader。
++// 必须挂在路由组上：gin 的 ShouldBindJSON 会完整读取请求体。
++func restRequestBodyLimitMiddleware(maxBytes int64) gin.HandlerFunc {
++	return func(c *gin.Context) {
++		if c.Request.Body != nil && c.Request.Body != http.NoBody {
++			c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxBytes)
 +		}
++		c.Next()
 +	}
-+	for _, body := range []string{`{}`, `{"path":"user-dist"}`, `{"path":"admin-dist","is_admin":true}`, `{"path":"missing"}`, `{"path":"../config.yaml"}`, `{"path":"installed-admin"}`, `{"path":"installed-user","is_admin":true}`} {
-+		remove(body, false)
-+	}
-+	for _, role := range []struct {
-+		path  string
-+		admin bool
-+	}{{"installed-user", false}, {"installed-admin", true}} {
-+		body, err := json.Marshal(frontendActivateForm{Path: role.path, IsAdmin: role.admin})
-+		require.NoError(t, err)
-+		response := frontendManagementRequest(t, router, "POST", "/api/v1/frontend/activate", string(body))
-+		var activation model.CommonResponse[any]
-+		require.NoError(t, json.Unmarshal(response.Body.Bytes(), &activation))
-+		require.True(t, activation.Success)
-+		directory := filepath.Join(filepath.Dir(configPath), "frontends", role.path)
-+		remove(string(body), false)
-+		require.FileExists(t, filepath.Join(directory, "dist", "index.html"))
-+		user, admin := "user-dist", "admin-dist"
-+		require.NoError(t, singleton.Conf.CommitFrontendSelection(&user, &admin, singleton.Conf.Save))
-+		remove(string(body), true)
-+		require.NoDirExists(t, directory)
-+		require.NoError(t, singleton.InitConfigFromPath(configPath))
-+		for _, template := range singleton.Conf.AvailableFrontendTemplates() {
-+			require.NotEqual(t, role.path, template.Path)
-+		}
-+		response = frontendManagementRequest(t, router, "POST", "/api/v1/frontend/activate", string(body))
-+		activation = model.CommonResponse[any]{}
-+		require.NoError(t, json.Unmarshal(response.Body.Bytes(), &activation))
-+		require.False(t, activation.Success)
-+		require.Contains(t, activation.Error, "not installed")
-+	}
-+	require.FileExists(t, configPath)
 +}
-```
-
-**File**: `docs/frontend-releases.md` (modified, +6/-0)
-```diff
-@@ -36,6 +36,12 @@ dist.zip
- 
- 若第三方管理前端无法正常使用，可使用管理员 PAT（`nezha:admin:*` scope）请求 `POST /api/v1/frontend/activate`，JSON 为 `{"path":"admin-dist","is_admin":true}`；也可停止面板，将配置中的 `admin_template` 改回 `admin-dist`，再启动。用户前端对应 `user-dist`。
- 
-+## 删除旧版本
 +
-+安装新版本不会自动删除旧版本。切换成功后，可在前端管理中删除不再需要的自定义版本；确认后同时清理安装目录和列表记录。当前启用的版本与内置前端不可删除，需要先切换到其他版本再删除。删除无法撤销，再次使用需重新安装。
-+
-+管理员也可请求 `POST /api/v1/frontend/remove`，JSON 为 `{"path":"安装记录中的 path","is_admin":false}`；管理前端使用 `is_admin:true`。接口要求管理员权限及 `nezha:admin:*` scope（使用 PAT 时），并与启用操作互斥，防止启用已删除的版本。
-+
- ## 开发与发版
- 
- 此功能需要配套的 `admin-frontend` 页面。正式发版时，先在管理前端仓库创建 tag 触发 release，再更新本仓库 `service/singleton/frontend-templates.yaml` 中管理前端的版本并构建面板。仅发布后端而继续嵌入旧管理前端，不会出现新的管理入口。
-```
-
-**File**: `pkg/frontend/store.go` (modified, +33/-0)
-```diff
-@@ -211,6 +211,39 @@ func (s *Store) Install(ctx context.Context, repository, tag string, admin bool)
- 	return &template, nil
- }
- 
-+// Remove deletes an inactive custom installation; callers must serialize selection
-+// changes with this operation and reject currently selected templates.
-+func (s *Store) Remove(id string, admin bool) error {
-+	s.installMu.Lock()
-+	defer s.installMu.Unlock()
-+	s.mu.Lock()
-+	defer s.mu.Unlock()
-+	// Never interpret caller-controlled paths as filesystem paths before matching
-+	// the catalog and validating a single directory component.
-+	if id == "." || id == ".." || strings.ContainsAny(id, "/\\") || id == "" {
-+		return errors.New("invalid frontend path")
-+	}
-+	for i, template := range s.templates {
-+		if template.Path != id || template.IsAdmin != admin {
-+			continue
-+		}
-+		if !template.Custom || template.IsOfficial {
-+			return errors.New("built-in frontends cannot be removed")
-+		}
-+		root, err := os.OpenRoot(s.root)
-+		if err != nil {
-+			return err
-+		}
-+		defer root.Close()
-+		if err := root.RemoveAll(id); err != nil {
-+			return err
-+		}
-+		s.templates = append(s.templates[:i], s.templates[i+1:]...)
++// existingServerIDs 去重并丢弃不存在的 server。仅用于 allow-set 语义的集合：
++// 不存在的 server 不会被调度，丢弃它们不改变行为。deny-set 语义的集合由
++// denyListOwnedByCaller 严格要求存在，不走这里。
++func existingServerIDs(ids []uint64) []uint64 {
++	ids = model.UniqueIDs(ids)
++	if ids == nil {
 +		return nil
 +	}
-+	return errors.New("frontend is not installed for the selected role")
++	existing := make([]uint64, 0, len(ids))
++	for _, id := range ids {
++		if s, ok := singleton.ServerShared.Get(id); ok && s != nil {
++			existing = append(existing, id)
++		}
++	}
++	return existing
 +}
 +
- func extractDistribution(ctx context.Context, archivePath, destination string) error {
- 	archive, err := zip.OpenReader(archivePath)
- 	if err != nil {
++func existingServerIDSet(set map[uint64]bool) map[uint64]bool {
++	enabled := model.EnabledIDSet(set)
++	for id := range enabled {
++		if s, ok := singleton.ServerShared.Get(id); !ok || s == nil {
++			delete(enabled, id)
++		}
++	}
++	return enabled
++}
++
++// existingCronIDs 去重并丢弃不存在的 cron：SendTriggerTasks 本就跳过缺失 ID。
++func existingCronIDs(ids []uint64) []uint64 {
++	ids = model.UniqueIDs(ids)
++	if ids == nil {
++		return nil
++	}
++	existing := make([]uint64, 0, len(ids))
++	for _, id := range ids {
++		if cr, ok := singleton.CronShared.Get(id); ok && cr != nil {
++			existing = append(existing, id)
++		}
++	}
++	return existing
++}
++
++// normalizeDDNSDomains 做 IDN→ASCII、去重并限制数量。
++func normalizeDDNSDomains(domains []string) ([]string, error) {
++	if len(domains) > maxDomainsPerDDNSProfile {
++		return nil, singleton.Localizer.ErrorT("too many domains, at most %d", maxDomainsPerDDNSProfile)
++	}
++	if domains == nil {
++		return nil, nil
++	}
++	seen := make(map[string]struct{}, len(domains))
++	normalized := make([]string, 0, len(domains))
++	for _, domain := range domains {
++		ascii, err := idna.Lookup.ToASCII(domain)
++		if err != nil {
++			return nil, singleton.Localizer.ErrorT("error parsing %s: %v", domain, err)
++		}
++		if _, ok := seen[ascii]; ok {
++			continue
++		}
++		seen[ascii] = struct{}{}
++		normalized = append(normalized, ascii)
++	}
++	return normalized, nil
++}
++
++// normalizeOverrideDDNSDomains 只保留已绑定 profile 的覆盖域名，并按 profile
++// 域名同样的规则校验。此前该字段完全未校验，绕过了 createDDNS 的 IDN 校验。
++func normalizeOverrideDDNSDomains(overrides map[uint64][]string, profiles []uint64) (map[uint64][]string, error) {
++	pruned := model.PruneOverrideDDNSDomains(overrides, profiles)
++	for id, domains := range pruned {
++		normalized, err := normalizeDDNSDomains(domains)
++		if err != nil {
++			return nil, err
++		}
++		pruned[id] = normalized
++	}
++	return pruned, nil
++}
++
++func normalizeServiceReferences(m *model.Service) {
++	if m.Cover == model.ServiceCoverIgnoreAll {
++		m.SkipServers = existingServerIDSet(m.SkipServers)
++	} else {
++		// CoverAll 的 deny-set 由 denyListOwnedByCaller 要求每个 ID 存在。
++		m.SkipServers = model.EnabledIDSet(m.SkipServers)
++	}
++	m.FailTriggerTasks = existingCronIDs(m.FailTriggerTasks)
++	m.RecoverTriggerTasks = existingCronIDs(m.RecoverTriggerTasks)
++}
++
++func normalizeAlertRuleReferences(r *model.AlertRule) error {
++	if len(r.Rules) > maxRulesPerAlertRule {
++		return singleton.Localizer.ErrorT("too many rules, at most %d", maxRulesPerAlertRule)
++	}
++	for _, rule := range r.Rules {
++		if rule != nil && rule.Ignore != nil {
++			rule.Ignore = existingServerIDSet(rule.Ignore)
++		}
++	}
++	r.FailTriggerTasks = existingCronIDs(r.FailTriggerTasks)
++	r.RecoverTriggerTasks = existingCronIDs(r.RecoverTriggerTasks)
++	return nil
++}
++
++func normalizeCronServers(cover uint8, servers []uint64) []uint64 {
++	if cover == model.CronCoverAll {
++		// deny-set：存在性由 checkCronServerListPermission 严格校验。
++		return model.UniqueIDs(servers)
++	}
++	return existingServerIDs(servers)
++}
 ```
 
-**File**: `pkg/frontend/store_test.go` (modified, +66/-0)
+**File**: `cmd/dashboard/controller/resource_reference_limits_test.go` (added, +253/-0)
 ```diff
-@@ -217,3 +217,69 @@ func TestDistributionCannotWriteThroughExistingEscapingSymlink(t *testing.T) {
- 		t.Errorf("outside file changed: %q %v", data, err)
- 	}
- }
+@@ -0,0 +1,253 @@
++package controller
 +
-+func TestRemoveCustomFrontendConfinesFilesAndAllowsReinstall(t *testing.T) {
-+	store, _ := installationStore(t, distributionZIP(t, "dist/index.html"), "")
-+	template, err := store.Install(context.Background(), "https://github.com/owner/site", "v1.0.0", false)
++import (
++	"bytes"
++	"net/http"
++	"net/http/httptest"
++	"strings"
++	"testing"
++
++	"github.com/gin-gonic/gin"
++	"github.com/stretchr/testify/require"
++
++	"github.com/nezhahq/nezha/model"
++	"github.com/nezhahq/nezha/service/singleton"
++)
++
++// 回归测试：GHSA-8fgr-wx8p-v6q7。低权限成员不能再把落库的引用集合撑到
++// 超出真实对象数量的大小。
++
++func insertTriggerCronForReferenceLimitTest(t *testing.T, id uint64) {
++	t.Helper()
++	cr := &model.Cron{Name: "trigger", TaskType: model.CronTypeTriggerTask, Cover: model.CronCoverAlertTrigger}
++	cr.ID = id
++	cr.UserID = 100
++	singleton.CronShared.Update(cr)
++}
++
++func TestReferenceLimits_ServiceSkipServersDropsFalseAndMissingEntries(t *testing.T) {
++	setupCoverPATFixture(t)
++	skip := map[uint64]bool{1: true, 424242: true}
++	for i := uint64(1000); i < 51000; i++ {
++		skip[i] = false
++	}
++	c := ctxAsMemberWithBody(100, model.ServiceForm{Name: "svc", Target: "example.invalid:443", Type: model.TaskTypeTCPPing, Cover: model.ServiceCoverIgnoreAll, SkipServers: skip, Duration: 30})
++	id, err := createService(c)
++	require.NoError(t, err)
++
++	var row model.Service
++	require.NoError(t, singleton.DB.First(&row, id).Error)
++	require.Equal(t, map[uint64]bool{1: true}, row.SkipServers)
++	require.JSONEq(t, `{"1":true}`, row.SkipServersRaw)
++
++	live, ok := singleton.ServiceSentinelShared.Get(id)
++	require.True(t, ok)
++	require.Equal(t, map[uint64]bool{1: true}, live.SkipServers, "in-memory copy must be normalized too")
++}
++
++func TestReferenceLimits_ServiceCoverAllDenySetKeepsStrictExistenceCheck(t *testing.T) {
++	setupCoverPATFixture(t)
++	c := ctxAsMemberWithBody(100, model.ServiceForm{Name: "svc", Target: "example.invalid:443", Type: model.TaskTypeTCPPing, Cover: model.ServiceCoverAll, SkipServers: map[uint64]bool{1: true, 424242: true}, Duration: 30})
++	_, err := createService(c)
++	require.Error(t, err, "a deny-set must not silently drop unknown servers")
++}
++
++func TestReferenceLimits_ServiceTriggerTasksDeduplicatedAndMissingDropped(t *testing.T) {
++	setupCoverPATFixture(t)
++	insertTriggerCronForReferenceLimitTest(t, 5)
++	tasks := []uint64{5}
++	for i := 0; i < 50000; i++ {
++		tasks = append(tasks, 5, uint64(900000+i))
++	}
++	c := ctxAsMemberWithBody(100, model.ServiceForm{Name: "svc", Target: "example.invalid:443", Type: model.TaskTypeTCPPing, Cover: model.ServiceCoverIgnoreAll, SkipServers: map[uint64]bool{1: true}, Duration: 30, FailTriggerTasks: tasks, RecoverTriggerTasks: tasks})
++	id, err := createService(c)
++	require.NoError(t, err)
++
++	var row model.Service
++	require.NoError(t, singleton.DB.First(&row, id).Error)
++	require.Equal(t, []uint64{5}, row.FailTriggerTasks)
++	require.Equal(t, []uint64{5}, row.RecoverTriggerTasks)
++	require.Equal(t, "[5]", row.FailTriggerTasksRaw)
++}
++
++func setupServerDDNSReferenceTest(t *testing.T) {
++	t.Helper()
++	setupCoverPATFixture(t)
++	require.NoError(t, singleton.DB.AutoMigrate(&model.DDNSProfile{}))
++	originalDDNS := singleton.DDNSShared
++	singleton.DDNSShared = singleton.NewEmptyDDNSClassForTest()
++	t.Cleanup(func() { singleton.DDNSShared = originalDDNS })
++	for _, id := range []uint64{7, 8} {
++		p := &model.DDNSProfile{}
++		p.ID = id
++		p.SetUserID(100)
++		singleton.DDNSShared.InsertForTest(p)
++	}
++	srv := model.Server{Name: "s"}
++	srv.ID = 1
++	srv.UserID = 100
++	require.NoError(t, singleton.DB.Create(&srv).Error)
++}
++
++func updateServerAsMember(t *testing.T, form model.ServerForm) error {
++	t.Helper()
++	c := ctxAsMemberWithBody(100, form)
++	c.Params = gin.Params{{Key: "id", Value: "1"}}
++	_, err := updateServer(c)
++	return err
++}
++
++func TestReferenceLimits_ServerDDNSProfilesDeduplicatedPreservingOrder(t *testing.T) {
++	setupServerDDNSReferenceTest(t)
++	profiles := []uint64{8, 7}
++	for i := 0; i < 100000; i++ {
++		profiles = append(profiles, 7, 8)
++	}
++	unbound := map[uint64][]string{7: {"a.example", "a.example", "b.example"}}
++	for i := uint64(1000); i < 6000; i++ {
++		unbound[i] = []string{"x.example"}
++	}
++	require.NoError(t, updateServerAsMember(t, model.ServerForm{Name: "s", DDNSProfiles: profiles, OverrideDDNSDomains: unbound}))
++
++	var row model.Server
++	require.NoError(t, singleton.DB.First(&row, 1).Error)
++	require.Equal(t, []uint64{8, 7}, row.DDNSProfiles)
++	require.Equal(t, "[8,7]", row.DDNSProfilesRaw)
++	require.Equal(t, map[uint64][]string{7: {"a.example", "b.example"}}, row.OverrideDDNSDomains, "only bound profiles keep overrides")
++
++	live, ok := singleton.ServerShared.Get(1)
++	require.True(t, ok)
++	require.Equal(t, []uint64{8, 7}, live.DDNSProfiles)
++}
++
++func TestReferenceLimits_ServerOverrideDomainsValidated(t *testing.T) {
++	setupServerDDNSReferenceTest(t)
++	err := updateServerAsMember(t, model.ServerForm{Name: "s", DDNSProfiles: []uint64{7}, OverrideDDNSDomains: map[uint64][]string{7: {"bad domain\n"}}})
++	require.Error(t, err, "override domains must pass the same IDN validation as profile domains")
++
++	tooMany := make([]string, maxDomainsPerDDNSProfile+1)
++	for i := range tooMany {
++		tooMany[i] = "d" + itoa(uint64
+```
+
+**File**: `cmd/dashboard/controller/server.go` (modified, +10/-0)
+```diff
+@@ -63,6 +63,14 @@ func updateServer(c *gin.Context) (any, error) {
+ 	if err := c.ShouldBindJSON(&sf); err != nil {
+ 		return nil, err
+ 	}
++	// DDNSShared.CheckPermission 不去重；重复 ID 会让 UpdateDDNS 重复外呼
++	// （GHSA-8fgr-wx8p-v6q7）。必须在权限校验前规范化。
++	sf.DDNSProfiles = model.UniqueIDs(sf.DDNSProfiles)
++	overrideDomains, err := normalizeOverrideDDNSDomains(sf.OverrideDDNSDomains, sf.DDNSProfiles)
 +	if err != nil {
-+		t.Fatal(err)
++		return nil, err
 +	}
-+	outside := t.TempDir()
-+	canary := filepath.Join(outside, "retained.txt")
-+	if err := os.WriteFile(canary, []byte("retained"), 0600); err != nil {
-+		t.Fatal(err)
-+	}
-+	if err := os.Symlink(outside, filepath.Join(store.Directory(template.Path), "outside")); err != nil {
-+		t.Fatal(err)
-+	}
-+	for _, id := range []string{"user-dist", "", ".", "..", "../retained.txt", "/etc", `..\outside`, "missing"} {
-+		if err := store.Remove(id, false); err == nil {
-+			t.Fatalf("removed invalid or built-in path %q", id)
-+		}
-+	}
-+	if err := store.Remove(template.Path, true); err == nil {
-+		t.Fatal("removed wrong role")
-+	}
-+	if err := store.Remove(template.Path, false); err != nil {
-+		t.Fatal(err)
-+	}
-+	if _, err := os.Stat(filepath.Join(store.root, template.Path)); !os.IsNotExist(err) {
-+		t.Fatalf("installation remains: %v", err)
-+	}
-+	if data, err := os.ReadFile(canary); err != nil || string(data) != "retained" {
-+		t.Fatalf("outside file changed: %q %v", data, err)
-+	}
-+	if len(store.Templates()) != 1 {
-+		t.Fatalf("catalog still contains installation: %+v", store.Templates())
-+	}
-+	reinstalled, err := store.Install(context.Background(), "https://github.com/owner/site", "v1.0.0", false)
-+	if err != nil || reinstalled.Path != template.Path {
-+		t.Fatalf("cannot reinstall: %+v %v", reinstalled, err)
-+	}
-+}
-+
-+func TestRemoveFilesystemFailurePreservesCatalog(t *testing.T) {
-+	store, _ := installationStore(t, distributionZIP(t, "dist/index.html"), "")
-+	template, err := store.Install(context.Background(), "https://github.com/owner/site", "v1.0.0", false)
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	// Replace the root with a regular file to force a real error even as root.
-+	saved := store.root + "-unavailable"
-+	if err := os.Rename(store.root, saved); err != nil {
-+		t.Fatal(err)
-+	}
-+	defer os.RemoveAll(saved)
-+	if err := os.WriteFile(store.root, nil, 0600); err != nil {
-+		t.Fatal(err)
-+	}
-+	if err := store.Remove(template.Path, false); err == nil {
-+		t.Fatal("filesystem failure reported as success")
-+	}
-+	if len(store.Templates()) != 2 {
-+		t.Fatal("failed deletion removed catalog entry")
-+	}
-+	if _, err := os.Stat(filepath.Join(saved, template.Path, "dist", "index.html")); err != nil {
-+		t.Fatal(err)
-+	}
-+}
-```
-
-**File**: `service/singleton/config.go` (modified, +37/-1)
-```diff
-@@ -1,6 +1,7 @@
- package singleton
++	sf.OverrideDDNSDomains = overrideDomains
  
- import (
-+	"errors"
- 	"log"
- 	"path/filepath"
- 	"strconv"
-@@ -128,10 +129,32 @@ func (c *ConfigClass) FrontendSelection() (user, admin string) {
- }
- 
- // CommitFrontendSelection publishes the selection only after persistence succeeds.
--// Requests already serving the previous version keep their immutable directory.
-+// Previous versions remain installed until explicitly removed.
- func (c *ConfigClass) CommitFrontendSelection(user, admin *string, persist func() error) error {
- 	c.frontendSelectionMu.Lock()
- 	defer c.frontendSelectionMu.Unlock()
-+	// Revalidate under the same lock as removal: a handler's earlier catalog
-+	// snapshot may refer to a version deleted while it waited for this lock.
-+	if c.FrontendStore != nil {
-+		for _, selection := range []struct {
-+			path  *string
-+			admin bool
-+		}{{user, false}, {admin, true}} {
-+			if selection.path == nil {
-+				continue
-+			}
-+			valid := false
-+			for _, template := range c.FrontendStore.Templates() {
-+				if template.Path == *selection.path && template.IsAdmin == selection.admin {
-+					valid = true
-+					break
-+				}
-+			}
-+			if !valid {
-+				return errors.New("frontend is not installed for the selected role")
-+			}
-+		}
-+	}
- 	previousUser, previousAdmin := c.UserTemplate, c.AdminTemplate
- 	if user != nil {
- 		c.UserTemplate = *user
-@@ -145,3 +168,16 @@ func (c *ConfigClass) CommitFrontendSelection(user, admin *string, persist func(
+ 	if !singleton.DDNSShared.CheckPermission(c, slices.Values(sf.DDNSProfiles)) {
+ 		return nil, singleton.Localizer.ErrorT("permission denied")
+@@ -296,6 +304,8 @@ func setServerConfig(c *gin.Context) (*model.ServerTaskResponse, error) {
+ 	if err := c.ShouldBindJSON(&configForm); err != nil {
+ 		return nil, err
  	}
- 	return nil
- }
-+
-+// RemoveFrontend keeps active-version protection atomic with activation and settings updates.
-+func (c *ConfigClass) RemoveFrontend(path string, admin bool) error {
-+	c.frontendSelectionMu.Lock()
-+	defer c.frontendSelectionMu.Unlock()
-+	if c.FrontendStore == nil {
-+		return errors.New("frontend storage is not initialized")
-+	}
-+	if path == c.UserTemplate || path == c.AdminTemplate {
-+		return errors.New("active frontends cannot be removed")
-+	}
-+	return c.FrontendStore.Remove(path, admin)
-+}
++	// 重复 ID 会向同一 agent 重复下发配置。
++	configForm.Servers = model.UniqueIDs(configForm.Servers)
+ 
+ 	var resp model.ServerTaskResponse
+ 	slist := singleton.ServerShared.GetList()
 ```
 
-**File**: `service/singleton/frontend-templates.yaml` (modified, +2/-2)
+**File**: `cmd/dashboard/controller/service.go` (modified, +2/-0)
 ```diff
-@@ -2,14 +2,14 @@
-   name: "OfficialAdmin"
-   repository: "https://github.com/nezhahq/admin-frontend"
-   author: "nezhahq"
--  version: "v2.6.0"
-+  version: "v2.6.1"
-   is_admin: true
-   is_official: true
- - path: "user-dist"
-   name: "Official"
-   repository: "https://github.com/hamster1963/nezha-dash-v2"
-   author: "hamster1963"
--  version: "v2.6.0"
-+  version: "v2.7.0"
-   is_official: true
- - path: "nezha-pixel-dist"
-   name: "Nezha-Pixel"
-```
-
-**File**: `service/singleton/frontend_selection_test.go` (modified, +36/-0)
-```diff
-@@ -2,6 +2,9 @@ package singleton
+@@ -513,6 +513,7 @@ func createService(c *gin.Context) (uint64, error) {
+ 	m.RecoverTriggerTasks = mf.RecoverTriggerTasks
+ 	m.FailTriggerTasks = mf.FailTriggerTasks
  
- import (
- 	"errors"
-+	"github.com/nezhahq/nezha/pkg/frontend"
-+	"os"
-+	"path/filepath"
- 	"sync"
- 	"testing"
- 
-@@ -37,3 +40,36 @@ func TestFrontendSelectionRollbackAndConcurrentSnapshots(t *testing.T) {
++	normalizeServiceReferences(&m)
+ 	if err := validateServers(c, &m); err != nil {
+ 		return 0, err
  	}
- 	workers.Wait()
- }
-+
-+func TestFrontendRemovalSerializesWithActivation(t *testing.T) {
-+	for iteration := 0; iteration < 30; iteration++ {
-+		root := t.TempDir()
-+		id := "installed-user"
-+		directory := filepath.Join(root, id, "dist")
-+		require.NoError(t, os.MkdirAll(directory, 0750))
-+		require.NoError(t, os.WriteFile(filepath.Join(directory, "index.html"), []byte("frontend"), 0600))
-+		require.NoError(t, os.WriteFile(filepath.Join(root, id, "metadata.json"), []byte(`{"path":"installed-user","custom":true}`), 0600))
-+		store, err := frontend.NewStore(root, []frontend.Template{{Path: "user-dist"}})
-+		require.NoError(t, err)
-+		conf := &ConfigClass{Config: &model.Config{ConfigDashboard: model.ConfigDashboard{UserTemplate: "user-dist"}}, FrontendStore: store}
-+		start := make(chan struct{})
-+		activated, removed := make(chan error, 1), make(chan error, 1)
-+		go func() { <-start; activated <- conf.CommitFrontendSelection(&id, nil, func() error { return nil }) }()
-+		go func() { <-start; removed <- conf.RemoveFrontend(id, false) }()
-+		close(start)
-+		activationErr, removalErr := <-activated, <-removed
-+		selected, _ := conf.FrontendSelection()
-+		if activationErr == nil {
-+			require.Error(t, removalErr)
-+			require.Equal(t, id, selected)
-+			require.FileExists(t, filepath.Join(directory, "index.html"))
-+		} else {
-+			require.NoError(t, removalErr)
-+			require.Equal(t, "user-dist", selected)
-+			require.NoDirExists(t, directory)
-+			persisted := false
-+			require.Error(t, conf.CommitFrontendSelection(&id, nil, func() error { persisted = true; return nil }))
-+			require.False(t, persisted, "deleted selection must be rejected before persistence")
-+		}
-+	}
-+}
+@@ -585,6 +586,7 @@ func updateService(c *gin.Context) (any, error) {
+ 	m.RecoverTriggerTasks = mf.RecoverTriggerTasks
+ 	m.FailTriggerTasks = mf.FailTriggerTasks
+ 
++	normalizeServiceReferences(&m)
+ 	if err := validateServers(c, &m); err != nil {
+ 		return 0, err
+ 	}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1246** (closed): Let readers deploy Nezha in one click from a new README section (@cosark)
 - **PR #1245** (closed): perf(dashboard): 压缩并缓存静态资源，为轮询接口增加 ETag (@CyL-Cly)
 - **PR #1243** (2026-10-16): feat(server): online session history with configurable stats window (7-3650 days) (@Sam5440)
 - **PR #1242** (2026-10-01): fix(alerts): evaluate fresh reports and order notification delivery (@cantoblanco)
 - **PR #1241** (2026-10-01): fix(nat): strip only dashboard-issued Authorization credentials at NAT ingress (@xvkong233)
 - **PR #1238** (closed): Fixed: An issue where deleting DNS records for domains hosted on Cloudflare did not work. (@77-QiQi)
+- **PR #1237** (2026-09-14): Improve: Delete the corresponding DNS record if the IPv4/IPv6 address is empty. (@77-QiQi)
 
 ---
 
@@ -1393,48 +1475,34 @@ Co-authored-by: naiba/CloudCode <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. safely remove inactive custom frontends
+## X. security: bound persisted resource reference collections
 
 **RULE**:
-When implementing operations in `cmd/dashboard/controller/frontend.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nezhahq/nezha. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/dashboard/controller/alertrule.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nezhahq/nezha. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3e7d9ba6`: safely remove inactive custom frontends. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8bcaf092`: security: bound persisted resource reference collections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/dashboard/controller/frontend.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/dashboard/controller/alertrule.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	frontends.POST("/remove", adminHandler(removeFrontend))
-
-// Remove frontend
-// @Summary Remove an inactive custom frontend and its files
-// @Security BearerAuth
-// @Tags admin required
-// @Accept json
-// @Param body body frontendActivateForm true "Installed frontend"
-// @Produce json
-// @Success 200 {object} model.CommonResponse[any]
-// @Router /frontend/remove [post]
-func removeFrontend(c *gin.Context) (any, error) {
-	var form frontendActivateForm
-	if err := c.ShouldBindJSON(&form); err != nil {
-		return nil, err
+	// 规范化必须先于 trigger task 权限校验（GHSA-8fgr-wx8p-v6q7）。
+	if err := normalizeAlertRuleReferences(r); err != nil {
+		return err
 	}
-	return nil, singleton.Conf.RemoveFrontend(form.Path, form.IsAdmin)
-}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
+// Induced defect failure mode:
 // Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3e7d9ba6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8bcaf092` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

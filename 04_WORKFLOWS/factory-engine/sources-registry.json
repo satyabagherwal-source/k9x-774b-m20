@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-19T00:31:33.427Z",
-    "lastVerified": "2026-11-19T00:31:33.427Z",
+    "lastChecked": "2026-11-19T01:06:11.179Z",
+    "lastVerified": "2026-11-19T01:06:11.179Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T00:58:26.025Z",
-    "lastVerified": "2026-11-19T00:58:26.025Z",
+    "lastChecked": "2026-11-19T01:06:11.185Z",
+    "lastVerified": "2026-11-19T01:06:11.185Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -296,9 +296,9 @@
   "openziti-zrok": {
     "name": "zrok",
     "officialUrl": "https://github.com/openziti/zrok",
-    "lastChecked": "2026-11-18T19:34:20.812Z",
+    "lastChecked": "2026-11-19T01:06:06.197Z",
     "revisionIdentifier": "1a535cfa",
-    "lastVerified": "2026-11-18T19:34:20.812Z"
+    "lastVerified": "2026-11-19T01:06:06.197Z"
   },
   "run-llama-llama_index": {
     "name": "llama_index",
@@ -5319,5 +5319,60 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nezhahq-nezha": {
+    "name": "nezhahq/nezha",
+    "officialUrl": "https://github.com/nezhahq/nezha",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-19T01:06:01.885Z",
+    "lastVerified": "2026-11-19T01:06:01.885Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-nezhahq-nezha",
+    "contentHash": "c3c62b0885ed92beab3d1adc404fb934156a76623ba412d4bb12dc65174b4a90",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-facebookai-xlm-roberta-base": {
+    "name": "FacebookAI/xlm-roberta-base",
+    "officialUrl": "https://huggingface.co/FacebookAI/xlm-roberta-base",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T01:05:58.964Z",
+    "lastVerified": "2026-11-19T01:05:58.964Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
+    "contentHash": "7b4c9eb787cbb0e457dff3a11c85f78d7d0c094b910e2acf77556cb8dee56643",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "gitpoint-git-point": {
+    "name": "git-point",
+    "officialUrl": "https://github.com/gitpoint/git-point",
+    "lastChecked": "2026-11-19T01:06:01.291Z",
+    "revisionIdentifier": "3f015344",
+    "lastVerified": "2026-11-19T01:06:01.291Z"
+  },
+  "snyk-driftctl": {
+    "name": "driftctl",
+    "officialUrl": "https://github.com/snyk/driftctl",
+    "lastChecked": "2026-11-19T01:06:03.916Z",
+    "revisionIdentifier": "724f896a",
+    "lastVerified": "2026-11-19T01:06:03.916Z"
+  },
+  "pingcap-talent-plan": {
+    "name": "talent-plan",
+    "officialUrl": "https://github.com/pingcap/talent-plan",
+    "lastChecked": "2026-11-19T01:06:08.765Z",
+    "revisionIdentifier": "8e91311a",
+    "lastVerified": "2026-11-19T01:06:08.765Z"
   }
 }

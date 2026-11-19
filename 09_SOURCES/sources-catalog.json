@@ -1135,8 +1135,8 @@
     "sourceUrl": "https://huggingface.co/FacebookAI/xlm-roberta-base",
     "sourceVersion": "hf-facebookai-xlm-roberta-base",
     "license": "Open-Source",
-    "contentHash": "1c8c1b55fa8f3f0cca7039753627796ca968d1749bf9563744ef9b51aa4c55e6",
-    "lastHarvestedAt": "2026-11-14T09:52:56.702Z",
+    "contentHash": "7b4c9eb787cbb0e457dff3a11c85f78d7d0c094b910e2acf77556cb8dee56643",
+    "lastHarvestedAt": "2026-11-19T01:05:59.549Z",
     "learningId": "learn-huggingface-facebookai-xlm-roberta-base"
   },
   "hf-openai-community-gpt2": {
@@ -5993,10 +5993,10 @@
     "repository": "nezhahq/nezha",
     "platform": "github",
     "sourceUrl": "https://github.com/nezhahq/nezha",
-    "sourceVersion": "3e7d9ba6",
+    "sourceVersion": "8bcaf092",
     "license": "WTFPL",
-    "contentHash": "2e773a0681f7679e1f39f779e914d989323c9dae17bec38c8eb5de206fe1de27",
-    "lastHarvestedAt": "2026-10-30T11:17:22.257Z",
+    "contentHash": "c3c62b0885ed92beab3d1adc404fb934156a76623ba412d4bb12dc65174b4a90",
+    "lastHarvestedAt": "2026-11-19T01:06:02.806Z",
     "learningId": "learn-github-nezhahq-nezha"
   },
   "tiajinsha-jkvideo": {

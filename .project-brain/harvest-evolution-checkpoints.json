@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T00:58:28.213Z",
+  "last_updated": "2026-11-19T01:06:12.745Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-18T22:22:52.966Z",
+      "processed_at": "2026-11-19T01:06:12.357Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2523,8 +2523,8 @@
       "staged_for_review": 1
     },
     "hf-facebookai-xlm-roberta-base-learnings.md": {
-      "processed_at": "2026-11-14T09:53:25.864Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T01:06:12.038Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "onehumanbeing-esp32-iphone-agent-learnings.md": {
@@ -3471,9 +3471,14 @@
       "processed_at": "2026-11-18T20:37:58.256Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "nezhahq-nezha-learnings.md": {
+      "processed_at": "2026-11-19T01:06:11.300Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2130,
+  "total_dossiers_evaluated": 2133,
   "total_canonical_promoted": 372,
-  "total_staged_for_review": 1600
+  "total_staged_for_review": 1602
 }

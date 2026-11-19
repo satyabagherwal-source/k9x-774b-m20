@@ -11194,3 +11194,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-jonatasgrosman-wav2vec2-large-xlsr-53-japanese` | `https://huggingface.co/jonatasgrosman/wav2vec2-large-xlsr-53-japanese` | `hf-jonatas` | Multi-dimensional audit evidence | 2026-11-19T00:58:07.069Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `f85abe1f` | Multi-dimensional audit evidence | 2026-11-19T00:58:18.767Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `01c149aa` | Multi-dimensional audit evidence | 2026-11-19T00:58:22.930Z |
+| `learn-huggingface-facebookai-xlm-roberta-base` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-19T01:05:59.549Z |
+| `learn-github-nezhahq-nezha` | `https://github.com/nezhahq/nezha` | `8bcaf092` | Multi-dimensional audit evidence | 2026-11-19T01:06:02.806Z |

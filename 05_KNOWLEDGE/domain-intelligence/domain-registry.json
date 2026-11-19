@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T00:58:27.972Z",
-  "total_records": 1927,
+  "last_updated": "2026-11-19T01:06:12.607Z",
+  "total_records": 1929,
   "domains": {
     "A": {
       "total": 13,
@@ -940,7 +940,7 @@
       ]
     },
     "G": {
-      "total": 338,
+      "total": 340,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1279,7 +1279,9 @@
         "domain_intelligence-architecture-intelligence-malisper-pgrust-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-aome510-spotify-player-core-invariants",
         "domain_intelligence-architecture-intelligence-aome510-spotify-player-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-pulumi-pulumi-core-invariants"
+        "domain_intelligence-architecture-intelligence-pulumi-pulumi-core-invariants",
+        "domain_intelligence-architecture-intelligence-nezhahq-nezha-core-invariants",
+        "domain_intelligence-architecture-intelligence-nezhahq-nezha-learnings-core-invariants"
       ]
     },
     "H": {
@@ -14658,8 +14660,8 @@
       "title": "Research & Knowledge Intelligence: FacebookAI/xlm-roberta-base Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebookai-xlm-roberta-base-research-knowledge-intelligence-facebookai-xlm-ro.md",
       "repository": "FacebookAI/xlm-roberta-base",
-      "content_hash": "f3d2c5ac961558ed4ae6c446f23ece63d97ecfa3f2717bc65e895653dc645ac9",
-      "created_at": "2026-11-14T09:52:56.836Z"
+      "content_hash": "f67cc5523fabf94ff48e7de684d844f19fdd0f626743263e43a9ff6f2c2fd225",
+      "created_at": "2026-11-19T01:05:59.729Z"
     },
     "DOM-D-F08B07B4": {
       "record_id": "DOM-D-F08B07B4",
@@ -14709,8 +14711,8 @@
       "title": "Research & Knowledge Intelligence: hf-facebookai-xlm-roberta-base-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-facebookai-xlm-roberta-base-learnings-research-knowledge-intelligence-hf-face.md",
       "repository": "hf-facebookai-xlm-roberta-base-learnings",
-      "content_hash": "e4ef2d97941aef8750e1b55752faa7605d189f1726ca1a3c5f4ae62a079844e1",
-      "created_at": "2026-11-14T09:53:26.045Z"
+      "content_hash": "104d39216b9246df42d8d94c4e3f63d109bc46fa0285655999eb47a7c5fe7dbe",
+      "created_at": "2026-11-19T01:06:12.203Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
@@ -31023,8 +31025,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "64fbbf29ad35d9d40ab678d4472dfe6fca7cad861e18a85fd823838fd6d7e4c4",
-      "created_at": "2026-11-18T22:22:53.224Z"
+      "content_hash": "7fd63b8a238426615026f3d5d281a789c9a2ba12dd6541b97de97dd4d9f49880",
+      "created_at": "2026-11-19T01:06:12.607Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
@@ -32327,6 +32329,24 @@
       "repository": "hf-baai-bge-reranker-v2-m3-learnings",
       "content_hash": "a7e95fb3f78e4ac46ceef0d0d6a36727c7e045daca48814bae5623bba3f7f399",
       "created_at": "2026-11-19T00:50:27.730Z"
+    },
+    "domain_intelligence-architecture-intelligence-nezhahq-nezha-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-nezhahq-nezha-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: nezhahq/nezha Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nezhahq-nezha-architecture-intelligence-nezhahq-nezha-core-invariants.md",
+      "repository": "nezhahq/nezha",
+      "content_hash": "b3568c385af6f5f6bc1db3e19a085c37223862d16b45586246f53baf12874bf4",
+      "created_at": "2026-11-19T01:06:03.114Z"
+    },
+    "domain_intelligence-architecture-intelligence-nezhahq-nezha-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-nezhahq-nezha-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: nezhahq-nezha-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nezhahq-nezha-learnings-architecture-intelligence-nezhahq-nezha-learnings-core-i.md",
+      "repository": "nezhahq-nezha-learnings",
+      "content_hash": "912833117d079d5bfa9e361031cc8deb1b9bc6551ceb7ac67c00c40eeedd6f70",
+      "created_at": "2026-11-19T01:06:11.773Z"
     }
   }
 }

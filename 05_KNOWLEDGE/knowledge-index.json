@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T00:58:28.101Z",
-  "total_verified_learnings": 9010,
+  "last_updated": "2026-11-19T01:06:12.607Z",
+  "total_verified_learnings": 9011,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21561,
+  "total_items": 21569,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -227650,7 +227650,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/FacebookAI/xlm-roberta-base",
       "source_version": "hf-facebookai-xlm-roberta-base",
-      "content_hash": "1c8c1b55fa8f3f0cca7039753627796ca968d1749bf9563744ef9b51aa4c55e6",
+      "content_hash": "7b4c9eb787cbb0e457dff3a11c85f78d7d0c094b910e2acf77556cb8dee56643",
       "dossier_path": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md",
       "promoted_rules": [],
@@ -227659,7 +227659,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T09:52:56.540Z",
+      "verified_at": "2026-11-19T01:05:59.370Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227676,9 +227676,9 @@
       "title": "Research & Knowledge Intelligence: FacebookAI/xlm-roberta-base Core Invariants",
       "repository": "FacebookAI/xlm-roberta-base",
       "source_version": "hf-facebookai-xlm-roberta-base",
-      "content_hash": "f3d2c5ac961558ed4ae6c446f23ece63d97ecfa3f2717bc65e895653dc645ac9",
+      "content_hash": "f67cc5523fabf94ff48e7de684d844f19fdd0f626743263e43a9ff6f2c2fd225",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T09:52:56.836Z"
+      "persisted_at": "2026-11-19T01:05:59.729Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-facebookai-xlm-roberta-base-learnings-core-in": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-facebookai-xlm-roberta-base-learnings-core-in",
@@ -227688,9 +227688,9 @@
       "title": "Research & Knowledge Intelligence: hf-facebookai-xlm-roberta-base-learnings Core Invariants",
       "repository": "hf-facebookai-xlm-roberta-base-learnings",
       "source_version": "HEAD",
-      "content_hash": "e4ef2d97941aef8750e1b55752faa7605d189f1726ca1a3c5f4ae62a079844e1",
+      "content_hash": "104d39216b9246df42d8d94c4e3f63d109bc46fa0285655999eb47a7c5fe7dbe",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T09:53:26.045Z"
+      "persisted_at": "2026-11-19T01:06:12.203Z"
     },
     "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12": {
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
@@ -286799,9 +286799,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "64fbbf29ad35d9d40ab678d4472dfe6fca7cad861e18a85fd823838fd6d7e4c4",
+      "content_hash": "7fd63b8a238426615026f3d5d281a789c9a2ba12dd6541b97de97dd4d9f49880",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T22:22:53.224Z"
+      "persisted_at": "2026-11-19T01:06:12.607Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -291208,6 +291208,125 @@
       "content_hash": "d1aa239a2635d6f0f6adcc0fb97f1fa66d38802b77a45205c044a4ed72830241",
       "domain_letter": "G",
       "persisted_at": "2026-11-19T00:58:26.850Z"
+    },
+    "learn-github-nezhahq-nezha": {
+      "learning_id": "learn-github-nezhahq-nezha",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nezhahq/nezha",
+      "repository": "nezhahq/nezha",
+      "slug": "nezhahq-nezha",
+      "platform": "github",
+      "source_url": "https://github.com/nezhahq/nezha",
+      "source_version": "8bcaf092",
+      "content_hash": "c3c62b0885ed92beab3d1adc404fb934156a76623ba412d4bb12dc65174b4a90",
+      "dossier_path": "07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9315,
+          "title": "bound persisted resource reference collections",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-19T01:06:02.637Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9315": {
+      "learning_id": "rule-9315",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9315,
+      "title": "bound persisted resource reference collections",
+      "source_url": "https://github.com/nezhahq/nezha",
+      "source_version": "8bcaf092",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T01:06:02.637Z"
+    },
+    "candidate_directive-bound-persisted-resource-reference-collections": {
+      "item_id": "candidate_directive-bound-persisted-resource-reference-collections",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-N0IW-bound-persisted-resource-reference-collections.md",
+      "title": "bound persisted resource reference collections",
+      "repository": "nezhahq/nezha",
+      "source_version": "8bcaf092",
+      "content_hash": "3e69d22e1121ce4083d13de494f78c0cd4e803610ddc9a7048510ab7ff383859",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T01:06:02.985Z"
+    },
+    "domain_intelligence-architecture-intelligence-nezhahq-nezha-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-nezhahq-nezha-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nezhahq-nezha-architecture-intelligence-nezhahq-nezha-core-invariants.md",
+      "title": "Architecture Intelligence: nezhahq/nezha Core Invariants",
+      "repository": "nezhahq/nezha",
+      "source_version": "8bcaf092",
+      "content_hash": "b3568c385af6f5f6bc1db3e19a085c37223862d16b45586246f53baf12874bf4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T01:06:03.114Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-nezhahq-nezha": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nezhahq-nezha",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/nezhahq-nezha-verification-protocol-empirical-defect-shield-for-nezhahq-nezha.md",
+      "title": "Verification Protocol: Empirical Defect Shield for nezhahq/nezha",
+      "repository": "nezhahq/nezha",
+      "source_version": "8bcaf092",
+      "content_hash": "1898c509dff36c504f1ab38154abcdc64ac124648d32920c674568926921e8a5",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T01:06:03.249Z"
+    },
+    "candidate_directive-security-bound-persisted-resource-reference-collections": {
+      "item_id": "candidate_directive-security-bound-persisted-resource-reference-collections",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-N77D-security-bound-persisted-resource-reference-collections.md",
+      "title": "security: bound persisted resource reference collections",
+      "repository": "nezhahq-nezha-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e8fa164454ad881bbd6ec382f60b53ef9fefdcf406d9639a745b644a65c15ddb",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T01:06:11.642Z"
+    },
+    "domain_intelligence-architecture-intelligence-nezhahq-nezha-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-nezhahq-nezha-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nezhahq-nezha-learnings-architecture-intelligence-nezhahq-nezha-learnings-core-i.md",
+      "title": "Architecture Intelligence: nezhahq-nezha-learnings Core Invariants",
+      "repository": "nezhahq-nezha-learnings",
+      "source_version": "HEAD",
+      "content_hash": "912833117d079d5bfa9e361031cc8deb1b9bc6551ceb7ac67c00c40eeedd6f70",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T01:06:11.773Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-nezhahq-nezha-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nezhahq-nezha-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/nezhahq-nezha-learnings-verification-protocol-empirical-defect-shield-for-nezhah.md",
+      "title": "Verification Protocol: Empirical Defect Shield for nezhahq-nezha-learnings",
+      "repository": "nezhahq-nezha-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3c1fee649a320cfad9b24b39e12c7966723837f50325213095dedecb71906341",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T01:06:11.913Z"
     }
   },
   "ai-builder-brain": {

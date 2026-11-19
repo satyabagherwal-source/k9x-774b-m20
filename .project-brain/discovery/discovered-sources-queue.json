@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T00:58:27.655Z",
+  "updated_at": "2026-11-19T01:06:11.436Z",
   "stats": {
-    "total_discovered": 5738,
-    "approved_pending_harvest": 5429,
+    "total_discovered": 5742,
+    "approved_pending_harvest": 5433,
     "harvested_count": 0,
     "rejected_count": 309,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5404,
+      "COMMUNITY_AND_EXPERT": 5408,
       "OFFICIAL_DOCUMENTATION": 185,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -124094,6 +124094,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
         "fileName": "starrocks-starrocks-learnings.md"
+      }
+    },
+    "SRC-FF2AD6F9AE8F": {
+      "id": "SRC-FF2AD6F9AE8F",
+      "url": "https://github.com/nezhahq/nezha",
+      "title": "https://github.com/nezhahq/nezha",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T01:06:11.320Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
+        "fileName": "nezhahq-nezha-learnings.md"
+      }
+    },
+    "SRC-25F301876BB0": {
+      "id": "SRC-25F301876BB0",
+      "url": "https://github.com/dustin/go-humanize/blob/master/bytes.go",
+      "title": "https://github.com/dustin/go-humanize/blob/master/bytes.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T01:06:11.359Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
+        "fileName": "nezhahq-nezha-learnings.md"
+      }
+    },
+    "SRC-8660E531E9EE": {
+      "id": "SRC-8660E531E9EE",
+      "url": "https://github.com/nezhahq/nezha/blob/69c539e59161dae185148460e78284be0968ed45/cmd/dashboard/controller/server.go",
+      "title": "https://github.com/nezhahq/nezha/blob/69c539e59161dae185148460e78284be0968ed45/cmd/dashboard/controller/server.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T01:06:11.400Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
+        "fileName": "nezhahq-nezha-learnings.md"
+      }
+    },
+    "SRC-D8255E571DA7": {
+      "id": "SRC-D8255E571DA7",
+      "url": "https://github.com/nezhahq/nezha/blob/69c539e59161dae185148460e78284be0968ed45/cmd/dashboard/controller/static_compress.go",
+      "title": "https://github.com/nezhahq/nezha/blob/69c539e59161dae185148460e78284be0968ed45/cmd/dashboard/controller/static_compress.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T01:06:11.436Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nezhahq-nezha-learnings.md",
+        "fileName": "nezhahq-nezha-learnings.md"
       }
     }
   }
