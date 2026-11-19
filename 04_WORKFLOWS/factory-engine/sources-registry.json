@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T23:15:49.844Z",
-    "lastVerified": "2026-11-19T23:15:49.844Z",
+    "lastChecked": "2026-11-19T23:34:50.334Z",
+    "lastVerified": "2026-11-19T23:34:50.335Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-19T22:27:44.014Z",
+    "lastChecked": "2026-11-19T23:34:47.436Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-19T22:27:44.014Z"
+    "lastVerified": "2026-11-19T23:34:47.436Z"
   },
   "herdrdev-herdr": {
     "name": "herdrdev/herdr",
@@ -1276,12 +1276,12 @@
     "lastVerified": "2026-11-19T15:03:29.363Z"
   },
   "sharkdp-fd": {
-    "name": "sharkdp/fd",
+    "name": "fd",
     "officialUrl": "https://github.com/sharkdp/fd",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T12:15:58.950Z",
-    "lastVerified": "2026-11-18T12:15:58.950Z",
+    "lastChecked": "2026-11-19T23:34:32.255Z",
+    "lastVerified": "2026-11-19T23:34:32.255Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-fd",
@@ -1290,7 +1290,8 @@
     "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "b80cd53e"
   },
   "hf-contrastive-lm-clm-v0.1-8b": {
     "name": "Contrastive-LM/CLM-v0.1-8B",
@@ -1973,22 +1974,21 @@
     "revisionIdentifier": "392b64e8"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflehog",
+    "name": "trufflesecurity/trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T16:16:54.439Z",
-    "lastVerified": "2026-11-19T16:16:54.439Z",
+    "lastChecked": "2026-11-19T23:34:45.724Z",
+    "lastVerified": "2026-11-19T23:34:45.724Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
-    "contentHash": "186a5248c3284caea4a040321b4f6942d3db16975e868f7081fd325ab5460e11",
+    "contentHash": "91892fe6f2ce0b66da3d19562a7a4d5e4cfdd9cef0c98664018cf76a1695c6b8",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "9529cc61"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -3465,9 +3465,9 @@
   "seekstorm-seekstorm": {
     "name": "SeekStorm",
     "officialUrl": "https://github.com/SeekStorm/SeekStorm",
-    "lastChecked": "2026-11-18T17:10:24.965Z",
+    "lastChecked": "2026-11-19T23:34:44.757Z",
     "revisionIdentifier": "c4888cbb",
-    "lastVerified": "2026-11-18T17:10:24.965Z"
+    "lastVerified": "2026-11-19T23:34:44.757Z"
   },
   "kuberwastaken-claurst": {
     "name": "claurst",
@@ -3768,9 +3768,9 @@
   "argoproj-argo-events": {
     "name": "argo-events",
     "officialUrl": "https://github.com/argoproj/argo-events",
-    "lastChecked": "2026-11-18T18:09:52.307Z",
+    "lastChecked": "2026-11-19T23:34:39.787Z",
     "revisionIdentifier": "727b3155",
-    "lastVerified": "2026-11-18T18:09:52.307Z"
+    "lastVerified": "2026-11-19T23:34:39.787Z"
   },
   "pixeltable-pixeltable": {
     "name": "pixeltable/pixeltable",
@@ -8704,5 +8704,19 @@
     "lastChecked": "2026-11-19T23:15:34.368Z",
     "revisionIdentifier": "6b13fad1",
     "lastVerified": "2026-11-19T23:15:34.368Z"
+  },
+  "luzikov-codex-seo-skill": {
+    "name": "codex-seo-skill",
+    "officialUrl": "https://github.com/Luzikov/codex-seo-skill",
+    "lastChecked": "2026-11-19T23:34:34.788Z",
+    "revisionIdentifier": "cdbf66bf55",
+    "lastVerified": "2026-11-19T23:34:34.788Z"
+  },
+  "igorescodro-alkaa": {
+    "name": "alkaa",
+    "officialUrl": "https://github.com/igorescodro/alkaa",
+    "lastChecked": "2026-11-19T23:34:37.274Z",
+    "revisionIdentifier": "8524e062",
+    "lastVerified": "2026-11-19T23:34:37.274Z"
   }
 }

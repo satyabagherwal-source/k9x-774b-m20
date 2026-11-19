@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T23:16:19.075Z",
+  "last_updated": "2026-11-19T23:34:53.240Z",
   "total_records": 2041,
   "domains": {
     "A": {
@@ -12755,8 +12755,8 @@
       "title": "Architecture Intelligence: trufflesecurity/trufflehog Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trufflesecurity-trufflehog-architecture-intelligence-trufflesecurity-trufflehog-.md",
       "repository": "trufflesecurity/trufflehog",
-      "content_hash": "f672a35cd84e2c06af95b5e5b3bdd7bf5a49a8ed6cf73906f888795d2002f491",
-      "created_at": "2026-11-18T23:34:53.227Z"
+      "content_hash": "4096bc410f7c774603409b4a0222f8e8d338e0dae2cc06dbce2551cee79e3f81",
+      "created_at": "2026-11-19T23:34:47.443Z"
     },
     "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-matrixorigin-matrixone-core-invariants",
@@ -22499,8 +22499,8 @@
       "title": "Architecture Intelligence: trufflesecurity-trufflehog-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trufflesecurity-trufflehog-learnings-architecture-intelligence-trufflesecurity-t.md",
       "repository": "trufflesecurity-trufflehog-learnings",
-      "content_hash": "04291e7c831c5e61a9102fdbe82d65524a2ff566f26cc21ee282d10527852ad7",
-      "created_at": "2026-11-18T23:35:01.223Z"
+      "content_hash": "2ad2a48ebea120d197bfb287461c687a0397d06262b4caa85f8dbc27b25282b2",
+      "created_at": "2026-11-19T23:34:51.452Z"
     },
     "domain_intelligence-research-knowledge-intelligence-microsoft-florence-2-base-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-microsoft-florence-2-base-core-invariants",
@@ -31137,8 +31137,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "022cc80449b745275cdb975765bed548318a3702e4cb508bdb67f46e8105551b",
-      "created_at": "2026-11-19T21:43:51.837Z"
+      "content_hash": "2d2333c034a37b05a877e687377b54c52fe154479cff373fbadab738003c53a2",
+      "created_at": "2026-11-19T23:34:52.162Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
@@ -33171,8 +33171,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "2ac77ce68e3aae75b62dd9f89d247db7bd1dda4488187b12648ba1a75f624426",
-      "created_at": "2026-11-19T21:43:52.651Z"
+      "content_hash": "2eb0bc95945f061449b22ff87195a5bbe73fb42ab1a06571842efb9b5f1d0a12",
+      "created_at": "2026-11-19T23:34:53.240Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",

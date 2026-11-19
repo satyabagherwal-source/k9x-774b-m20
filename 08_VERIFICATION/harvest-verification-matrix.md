@@ -11404,3 +11404,4 @@
 | `CYCLE-20261119-4ZA0` | `2026-11-19T23:15:43.128Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md` | Yes (`047d377e...`) |
 | `CYCLE-20261119-51XJ` | `2026-11-19T23:15:46.567Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9466` | Yes (`af512c45...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T23:16:16.961Z` | `projectdiscovery-nuclei` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-34CA9B71` [Domain D] | Yes (`9c6b1ff7...`) |
+| `CYCLE-20261119-THVE` | `2026-11-19T23:34:46.970Z` | `trufflesecurity/trufflehog` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9467` | Yes (`91892fe6...`) |

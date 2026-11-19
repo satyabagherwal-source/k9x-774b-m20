@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-6A3M",
-    "timestamp": "2026-11-18T06:41:17.218Z",
-    "repository": "1jehuang/jcode",
-    "learningId": "learn-github-1jehuang-jcode",
-    "contentHash": "622293821c3ff5011de823d90752674844b2c35a6e8d9e5c4d65091eef18228b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-GHKN",
     "timestamp": "2026-11-18T06:49:13.463Z",
     "repository": "pulumi/pulumi",
@@ -7490,6 +7475,21 @@
     "repository": "doobidoo/mcp-memory-service",
     "learningId": "learn-github-doobidoo-mcp-memory-service",
     "contentHash": "af512c456cd655a4382669d5a3054a3a4f8939f8671ef632a46dd32b46e5d5aa",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-THVE",
+    "timestamp": "2026-11-19T23:34:46.970Z",
+    "repository": "trufflesecurity/trufflehog",
+    "learningId": "learn-github-trufflesecurity-trufflehog",
+    "contentHash": "91892fe6f2ce0b66da3d19562a7a4d5e4cfdd9cef0c98664018cf76a1695c6b8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

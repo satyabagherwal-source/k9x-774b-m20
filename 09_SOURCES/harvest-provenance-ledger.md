@@ -11437,3 +11437,4 @@ Every entry in this ledger must capture:
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `b1d47824` | Multi-dimensional audit evidence | 2026-11-19T23:15:43.133Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `bbc14454` | Multi-dimensional audit evidence | 2026-11-19T23:15:46.571Z |
 | `learn-dom-d-34ca9b71` | `project://projectdiscovery-nuclei` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md` | 2026-11-19T23:16:16.961Z |
+| `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `d232362a` | Multi-dimensional audit evidence | 2026-11-19T23:34:46.976Z |

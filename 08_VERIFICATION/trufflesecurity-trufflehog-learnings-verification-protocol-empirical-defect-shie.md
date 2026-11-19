@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T23:35:00.974Z",
+  "timestamp": "2026-11-19T23:34:51.143Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-trufflesecurity-trufflehog-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [trufflesecurity-trufflehog-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T23:35:00.974Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T23:34:51.143Z`  
 > **Learning ID**: `LEARN-EVO-trufflesecurity-trufflehog-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source**: github ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
-> **Source Version**: `9529cc61`  
+> **Source Version**: `d232362a`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T23:34:51.818Z  
+> **Timestamp**: 2026-11-19T23:34:45.832Z  
 > **Learning ID**: `learn-github-trufflesecurity-trufflehog`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trufflesecurity-trufflehog-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trufflesecurity/trufflehog](https://github.com/trufflesecurity/trufflehog))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T23:34:51.812Z  
+> **Harvest Timestamp**: 2026-11-19T23:34:45.724Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Find, verify, and analyze leaked credentials
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 29515 stars
+- **Stars / Engagement**: 29537 stars
 
 ---
 
@@ -1165,539 +1165,307 @@ func (s Scanner) Description() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9529cc61` (2026-11-18)
-**Commit Message**: Make result ordering more deterministic and scope dedupe to the job (#5540)
+### Incident Patch 1: `d232362a` (2026-11-19)
+**Commit Message**: Saucelabs: verify via identity endpoint so proxy 403s aren't reported as live (#5581)
 
-* Make result ordering deterministic and scope dedupe to the job
+* Saucelabs: verify via identity endpoint so proxy 403s aren't reported as live
 
-Detectors and cleaners that build results from a map returned them in
-random order, so which unverified result survived CleanResults, which
-detector kept verification in the overlap stage, and the order results
-were emitted in could all change between scans of identical input.
+* dropped ambiguous 403 test case
 
-- Add detectors.SortResults and sort in CleanResults and around custom
-  cleaners in Engine.filterResults.
-- Sort FindDetectorMatches output by DetectorKey, built-in before
-  custom, so the verification overlap tiebreak is stable and stated.
-- Include JobID in the notifier dedupe key so a later job scanning the
-  same location reports the secret again, and length-prefix each field
-  so adjacent fields cannot collide.
-
-* Drop built-in-before-custom detector ordering tiebreak
-
-Verification overlap should disable verification for all involved
-detectors, so detector order must not encode a winner. Keep the sort for
-stable output order, ordered by type, version, then custom name.
-
-* chore: updating comment
-
-**File**: `pkg/detectors/detectors.go` (modified, +21/-0)
+**File**: `pkg/detectors/saucelabs/saucelabs.go` (modified, +28/-6)
 ```diff
-@@ -1,13 +1,16 @@
- package detectors
+@@ -2,6 +2,7 @@ package saucelabs
  
  import (
-+	"bytes"
-+	"cmp"
  	"context"
- 	"crypto/rand"
- 	"errors"
++	"encoding/json"
  	"fmt"
- 	"math/big"
+ 	"io"
  	"net/http"
- 	"net/url"
-+	"slices"
- 	"strings"
- 	"unicode"
+@@ -14,24 +15,36 @@ import (
+ )
  
-@@ -296,12 +299,29 @@ func CopyMetadata(chunk *sources.Chunk, result Result) ResultWithMetadata {
- 	}
+ type Scanner struct {
++	client *http.Client
+ 	detectors.DefaultMultiPartCredentialProvider
  }
  
-+// SortResults stably orders results by Redacted, then RawV2, then Raw. Detectors that build results from a map return
-+// them in random order; callers that select results by position (CleanResults, and engine.filterResults on behalf of
-+// custom cleaners) sort first so the survivors do not change between scans.
-+// Results that tie on all three fields can still differ in other fields, so the sort is stable: tied results keep
-+// their input order. The output is fully deterministic only if that input order is consistent.
-+func SortResults(results []Result) {
-+	slices.SortStableFunc(results, func(a, b Result) int {
-+		return cmp.Or(
-+			cmp.Compare(a.Redacted, b.Redacted),
-+			bytes.Compare(a.RawV2, b.RawV2),
-+			bytes.Compare(a.Raw, b.Raw),
-+		)
-+	})
+ // Ensure the Scanner satisfies the interface at compile time.
+ var _ detectors.Detector = (*Scanner)(nil)
+ 
+ var (
+-	client = common.SaneHttpClient()
++	defaultClient = common.SaneHttpClient()
+ 
+ 	// Make sure that your group is surrounded in boundary characters such as below to reduce false positives.
+ 	// as per signup page username can be between 2 to 70 characters and must only contain letters, numbers, or characters (_-.)
+ 	usernamePat = regexp.MustCompile(detectors.PrefixRegex([]string{"saucelabs", "username"}) + `\b([a-zA-Z0-9_\.-]{2,70})`)
+ 	keyPat      = regexp.MustCompile(detectors.PrefixRegex([]string{"saucelabs"}) + `\b([a-z0-9]{8}\-[a-z0-9]{4}\-[a-z0-9]{4}\-[a-z0-9]{4}\-[a-z0-9]{12})\b`)
+-	baseUrlPat  = regexp.MustCompile(`\b(api\.(?:us|eu)-(?:west|east|central)-[0-9].saucelabs\.com)\b`)
++	baseUrlPat  = regexp.MustCompile(`\b(api\.(?:us|eu)-(?:west|east|central)-[0-9]\.saucelabs\.com)\b`)
+ 
+ 	fixedBaseURL = "api.us-west-1.saucelabs.com"
+ )
+ 
++type identityResponse struct {
++	Sub string `json:"sub"`
 +}
 +
- // CleanResults returns all verified secrets, and if there are no verified secrets,
- // just one unverified secret if there are any.
- func CleanResults(results []Result, _ bool) []Result {
- 	if len(results) == 0 {
- 		return results
- 	}
-+	// Sort before selecting so that both the single unverified survivor and the verified set come out in a fixed order.
-+	SortResults(results)
++func (s Scanner) getClient() *http.Client {
++	if s.client != nil {
++		return s.client
++	}
++	return defaultClient
++}
++
+ // Keywords are used for efficiently pre-filtering chunks.
+ // Use identifiers in the secret preferably, or the provider name.
+ func (s Scanner) Keywords() []string {
+@@ -79,7 +92,7 @@ func (s Scanner) FromData(ctx context.Context, verify bool, data []byte) (result
+ 				}
  
- 	var cleaned = make(map[string]Result, 0)
- 
-@@ -319,6 +339,7 @@ func CleanResults(results []Result, _ bool) []Result {
- 	for _, r := range cleaned {
- 		results = append(results, r)
- 	}
-+	SortResults(results)
- 
- 	return results
+ 				if verify {
+-					isVerified, verificationErr := verifySauceLabKey(ctx, client, userName, key, baseURL)
++					isVerified, verificationErr := verifySauceLabKey(ctx, s.getClient(), userName, key, baseURL)
+ 					s1.Verified = isVerified
+ 					s1.SetVerificationError(verificationErr, key)
+ 				}
+@@ -100,10 +113,12 @@ func (s Scanner) Description() string {
+ 	return "A service for cross browser testing, API keys can create and access tests from potentially sensitive internal websites"
  }
+ 
++// verifySauceLabKey calls the identity endpoint, which accepts any valid credential regardless of role
++// and is documented to return only 200 or 401. Any other response (e.g. a 403 from a proxy) is indeterminate.
+ func verifySauceLabKey(ctx context.Context, client *http.Client, userName, key, baseURL string) (bool, error) {
+-	apiURL := fmt.Sprintf("https://%s/team-management/v1/teams", baseURL)
++	apiURL := fmt.Sprintf("https://%s/auth/v1/identity", baseURL)
+ 
+-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
++	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, http.NoBody)
+ 	if err != nil {
+ 		return false, err
+ 	}
+@@ -120,7 +135,14 @@ func verifySauceLabKey(ctx context.Context, client *http.Client, userName, key,
+ 	}()
+ 
+ 	switch resp.StatusCode {
+-	case http.StatusOK, http.StatusForbidden:
++	case http.StatusOK:
++		var identity identityResponse
++		if err := json.NewDecoder(resp.Body).Decode(&identity); err != nil {
++			return false, fmt.Errorf("unexpected response body: %w", err)
++		}
++		if identity.Sub == "" {
++			return false, fmt.Errorf("unexpected response body: missing account id")
++		}
+ 		return true, nil
+ 	case http.StatusUnauthorized:
+ 		return false, nil
 ```
 
-**File**: `pkg/detectors/sort_results_test.go` (added, +83/-0)
+**File**: `pkg/detectors/saucelabs/saucelabs_integration_test.go` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,83 @@
-+package detectors
-+
-+import (
-+	"math/rand"
-+	"testing"
-+)
-+
-+func TestSortResults(t *testing.T) {
-+	results := []Result{
-+		{Redacted: "b", RawV2: []byte("b2")},
-+		{Redacted: "a", RawV2: []byte("a2"), Raw: []byte("second")},
-+		{Redacted: "a", RawV2: []byte("a1")},
-+		{Redacted: "a", RawV2: []byte("a2"), Raw: []byte("first")},
-+		{Redacted: ""},
-+	}
-+
-+	SortResults(results)
-+
-+	want := []Result{
-+		{Redacted: ""},
-+		{Redacted: "a", RawV2: []byte("a1")},
-+		{Redacted: "a", RawV2: []byte("a2"), Raw: []byte("first")},
-+		{Redacted: "a", RawV2: []byte("a2"), Raw: []byte("second")},
-+		{Redacted: "b", RawV2: []byte("b2")},
-+	}
-+	if len(results) != len(want) {
-+		t.Fatalf("got %d results, want %d", len(results), len(want))
-+	}
-+	for i := range want {
-+		if results[i].Redacted != want[i].Redacted || string(results[i].RawV2) != string(want[i].RawV2) || string(results[i].Raw) != string(want[i].Raw) {
-+			t.Errorf("results[%d] = %q/%q/%q, want %q/%q/%q", i, results[i].Redacted, results[i].RawV2, results[i].Raw, want[i].Redacted, want[i].RawV2, want[i].Raw)
-+		}
-+	}
-+}
-+
-+func TestCleanResults_VerifiedOutputIsSorted(t *testing.T) {
-+	results := []Result{
-+		{Redacted: "c", Verified: true},
-+		{Redacted: "a", Verified: true},
-+		{Redacted: "x"},
-+		{Redacted: "b", Verified: true},
-+	}
-+	want := []string{"a", "b", "c"}
-+
-+	for i := 0; i < 50; i++ {
-+		in := make([]Result, len(results))
-+		copy(in, results)
-+		out := CleanResults(in, true)
-+
-+		if len(out) != len(want) {
-+			t.Fatalf("iteration %d: got %d results, want %d", i, len(out), len(want))
-+		}
-+		for j := range want {
-+			if out[j].Redacted != want[j] {
-+				t.Fatalf("iteration %d: results[%d].Redacted = %q, want %q", i, j, out[j].Redacted, want[j])
-+			}
-+		}
-+	}
-+}
-+
-+func TestCleanResults_UnverifiedSurvivorIsSorted(t *testing.T) {
-+	candidates := []Result{
-+		{Redacted: "c"},
-+		{Redacted: "a", RawV2: []byte("a2")},
-+		{Redacted: "a", RawV2: []byte("a1")},
-+		{Redacted: "b"},
-+	}
-+
-+	for i := 0; i < 50; i++ {
-+		in := make([]Result, len(candidates))
-+		copy(in, candidates)
-+		rand.Shuffle(len(in), func(x, y int) { in[x], in[y] = in[y], in[x] })
-+
-+		out := CleanResults(in, true)
-+
-+		if len(out) != 1 {
-+			t.Fatalf("iteration %d: got %d results, want 1", i, len(out))
-+		}
-+		if out[0].Redacted != "a" || string(out[0].RawV2) != "a1" {
-+			t.Fatalf("iteration %d: kept %q/%q, want a/a1", i, out[0].Redacted, out[0].RawV2)
-+		}
-+	}
-+}
+@@ -108,6 +108,8 @@ func TestSauceLabs_FromChunk(t *testing.T) {
+ 					t.Fatalf("no raw secret present: \n %+v", got[i])
+ 				}
+ 				got[i].Raw = nil
++				got[i].ExtraData = nil
++				got[i].SecretParts = nil
+ 			}
+ 			if diff := pretty.Compare(got, tt.want); diff != "" {
+ 				t.Errorf("SauceLabs.FromData() %s diff: (-got +want)\n%s", tt.name, diff)
 ```
 
-**File**: `pkg/engine/ahocorasick/ahocorasickcore.go` (modified, +15/-0)
+**File**: `pkg/detectors/saucelabs/saucelabs_test.go` (modified, +138/-1)
 ```diff
-@@ -1,6 +1,8 @@
- package ahocorasick
+@@ -7,6 +7,7 @@ import (
  
- import (
-+	"cmp"
-+	"slices"
- 	"sync"
+ 	"github.com/google/go-cmp/cmp"
  
- 	ahocorasick "github.com/BobuSumisu/aho-corasick"
-@@ -105,6 +107,16 @@ func (k DetectorKey) Loggable() map[string]any {
- // Type returns the detector type of the key.
- func (k DetectorKey) Type() detector_typepb.DetectorType { return k.detectorType }
- 
-+// compare orders keys by detector type, version, and custom detector name so that the result order does not depend on
-+// map iteration. The type order is the protobuf enum value, which is assignment history, not priority.
-+func (k DetectorKey) compare(other DetectorKey) int {
-+	return cmp.Or(
-+		cmp.Compare(k.detectorType, other.detectorType),
-+		cmp.Compare(k.version, other.version),
-+		cmp.Compare(k.customDetectorName, other.customDetectorName),
-+	)
-+}
-+
- // spanCalculator is an interface that defines a method for calculating a match span
- // in the chunk data. This allows for different strategies to be used without changing the core logic.
- type spanCalculator interface {
-@@ -357,6 +369,9 @@ func (ac *Core) FindDetectorMatches(chunkData []byte) []*DetectorMatch {
- 		uniqueDetectors = append(uniqueDetectors, detectorMatch)
- 	}
- 
-+	// Sort so the order of the returned matches does not depend on map iteration.
-+	slices.SortFunc(uniqueDetectors, func(a, b *DetectorMatch) int { return a.Key.compare(b.Key) })
-+
- 	return uniqueDetectors
- }
- 
-```
-
-**File**: `pkg/engine/ahocorasick/ahocorasickcore_test.go` (modified, +62/-0)
-```diff
-@@ -9,6 +9,7 @@ import (
- 	"unicode/utf8"
- 
- 	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
- 	"pgregory.net/rapid"
- 
- 	"github.com/trufflesecurity/trufflehog/v3/pkg/custom_detectors"
-@@ -702,3 +703,64 @@ func BenchmarkLowerBuf(b *testing.B) {
- 		}
- 	})
- }
-+
-+// testDetectorSharedKeyword lets one chunk match several detector types.
-+type testDetectorSharedKeyword struct{ typ detector_typepb.DetectorType }
-+
-+func (testDetectorSharedKeyword) FromData(context.Context, bool, []byte) ([]detectors.Result, error) {
-+	return nil, nil
-+}
-+func (testDetectorSharedKeyword) Keywords() []string                   { return []string{"shared"} }
-+func (d testDetectorSharedKeyword) Type() detector_typepb.DetectorType { return d.typ }
-+func (testDetectorSharedKeyword) Description() string                  { return "" }
-+
-+func TestFindDetectorMatches_OrderIsDeterministic(t *testing.T) {
-+	customZeta, err := custom_detectors.NewWebhookCustomRegex(&custom_detectorspb.CustomRegex{
-+		Name: "zeta", Keywords: []string{"shared"}, Regex: map[string]string{"": ""},
-+	})
-+	assert.Nil(t, err)
-+	customAlpha, err := custom_detectors.NewWebhookCustomRegex(&custom_detectorspb.CustomRegex{
-+		Name: "alpha", Keywords: []string{"shared"}, Regex: map[string]string{"": ""},
-+	})
-+	assert.Nil(t, err)
-+	// An unnamed custom detector must sort deterministically alongside named ones.
-+	customUnnamed, err := custom_detectors.NewWebhookCustomRegex(&custom_detectorspb.CustomRegex{
-+		Keywords: []string{"shared"}, Regex: map[string]string{"": ""},
-+	})
-+	assert.Nil(t, err)
-+
-+	dets := []detectors.Detector{
-+		testDetectorSharedKeyword{detector_typepb.DetectorType_Snowflake},
-+		testDetectorSharedKeyword{detector_typepb.DetectorType_Slack},
-+		testDetectorSharedKeyword{detector_typepb.DetectorType_AWS},
-+		testDetectorV1{},
-+		testDetectorV2{},
-+		testDetectorSharedKeyword{detector_typepb.DetectorType_Github},
-+		customZeta,
-+		customAlpha,
-+		customUnnamed,
-+	}
-+	core := NewAhoCorasickCore(dets)
-+	data := []byte("shared a b")
-+
-+	// Expected order written out by hand so the test does not use compare as its own oracle.
-+	want := []DetectorKey{
-+		{detectorType: -1, version: 1}, // testDetectorV1
-+		{detectorType: -1, version: 2}, // testDetectorV2
-+		{detectorType: detector_typepb.DetectorType_AWS},
-+		{detectorType: detector_typepb.DetectorType_Github},
-+		{detectorType: detector_typepb.DetectorType_Slack},
-+		{detectorType: detector_typepb.DetectorType_CustomRegex, customDetectorName: ""},
-+		{detectorType: detector_typepb.DetectorType_CustomRegex, customDetectorName: "alpha"},
-+		{detectorType: detector_typepb.DetectorType_CustomRegex, customDetectorName: "zeta"},
-+		{detectorType: detector_typepb.DetectorType_Snowflake},
-+	}
-+
-+	for i := 0; i < 200; i++ {
-+		var got []DetectorKey
-+		for _, m := range core.FindDetectorMatches(data) {
-+			got = append(got, m.Key)
-+		}
-+		require.Equal(t, want, got, "iteration %d returned a different detector order", i)
-+	}
-+}
-```
-
-**File**: `pkg/engine/engine.go` (modified, +37/-5)
-```diff
-@@ -6,6 +6,7 @@ package engine
- import (
- 	"bytes"
- 	"crypto/md5"
-+	"encoding/binary"
- 	"errors"
- 	"fmt"
- 	"runtime"
-@@ -1377,8 +1378,13 @@ func (e *Engine) filterResults(
- 		if !e.filterUnverified && ignoreConfig {
- 			reason = "custom_cleaner"
- 		}
-+		// Cleaners keep unverified results by position, so the input order must not vary between scans. Custom cleaners
-+		// (for example aws.CleanResults) also build their output from a map, so the output is sorted again to hand the
-+		// caller a stable slice.
-+		detectors.SortResults(results)
- 		before := len(results)
- 		results = clean(results, e.verify)
-+		detectors.SortResults(results)
- 		if dropped := before - len(results); dropped > 0 {
- 			resultsDropped.WithLabelValues(stage, reason, detectorNameStr).Add(float64(dropped))
- 		}
-@@ -1439,6 +1445,26 @@ func (e *Engine) processResult(
- 	e.results <- secret
- }
- 
-+// dedupeKey hashes the fields that identify one finding at one location within one job. Every field is written
-+// with its byte length first, so fields that contain NUL bytes or share a prefix (JobID 1 + name "2x" versus JobID
-+// 12 + name "x") cannot run together into the same hash input.
-+func dedupeKey(result detectors.ResultWithMetadata) string {
-+	h := md5.New()
-+	var lenBuf [8]byte
-+	write := func(field []byte) {
-+		binary.BigEndian.PutUint64(lenBuf[:], uint64(len(field)))
-+		h.Write(lenBuf[:])
-+		h.Write(field)
-+	}
-+	write([]byte(strconv.FormatInt(int64(result.JobID), 10)))
-+	write([]byte(result.DetectorName))
-+	write([]byte(result.DetectorType.String()))
-+	write(result.Raw)
-+	write(result.RawV2)
-+	write([]byte(fmt.Sprintf("%+v", result.SourceMetadata)))
-+	return string(h.Sum(nil))
-+}
-+
- func (e *Engine) notifierWorker(ctx context.Context) {
- 	for result := range e.ResultsChan() {
- 		startTime := time.Now()
-@@ -1468,24 +1494,30 @@ func (e *Engine) notifierWorker(ctx context.Context) {
- 		}
- 		atomic.AddUint32(&e.numFoundResults, 1)
- 
--		// Dedupe results by comparing the detector type, raw result, and source metadata.
-+		// Dedupe results by comparing the job, detector type, raw result, and source metadata.
- 		// The key includes SourceMetadata (file path, line numbers, etc.) so genuinely
- 		// different occurrences of the same credential at different locations are not
- 		// suppressed. Only exact duplicates — same credential at the same location — are
- 		// filtered, which handles peek-overlap re-scans and cross-decoder duplicates alike.
- 		// The key also include the DetectorName to prevent deduping the results for
- 		// custom detectors which have the same type.
--		// MD5 hash of the key is used to reduce memory usage of the dedupe cache,
--		// since the raw result and source metadata can be large.
-+		//
-+		// The key includes the JobID on purpose: dedupe is scoped to a single job. Each job
-+		// is expected to report every secret it finds, even when an earlier job in the same
-+		// engine run (a long-running engine re-scanning a target, or a CLI run whose sources
-+		// overlap) already reported the same secret at the same location. Without the JobID
-+		// a later job's finding would be silently dropped until the cache evicted the entry.
-+		// See dedupeKey for how the fields are encoded. MD5 hash of the key is used to
-+		// reduce memory usage of the dedupe cache, since the raw result and source
-+		// metadata can be large.
- 		//
- 		// This deduplication only applies to results that are *not*
- 		// from reverification, since we are expected to see the same
- 		// result from reverification and want to Dispatch it below.
- 
- 		// Notifier workers share this cache; the check and insert must be one atomic step.
- 		if e.dedupeCacheEnabled() && result.SecretID == 0 {
--			h := md5.Sum([]byte(fmt.Sprintf("%s%s%s%s%+v", result.DetectorName, result.DetectorType.String(), result.Raw, result.RawV2, result.SourceMetadata)))
--			key := string(h[:])
-+			key := dedupeKey(result)
- 			if found, _ := e.dedupeCache.ContainsOrAdd(key, struct{}{}); found {
- 				resultsDropped.WithLabelValues("notifier", "dedupe_cache_hit", detectorNameStr).Inc()
- 				continue
-```
-
-**File**: `pkg/engine/engine_test.go` (modified, +130/-0)
-```diff
-@@ -1572,6 +1572,49 @@ func TestFilterResults_CustomCleaner(t *testing.T) {
++	"github.com/trufflesecurity/trufflehog/v3/pkg/common"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/detectors"
+ 	"github.com/trufflesecurity/trufflehog/v3/pkg/engine/ahocorasick"
+ )
+@@ -16,7 +17,7 @@ var (
+ 	invalidUsername = "?Bpeh?YF3tjMNmKAUHrDpfXJZJ.ZUhWmObRC735zdh99LeJh4Kcr_2"
+ 	validKey        = "9toqmh6r-g2ly-k3fr-fiyr-5jnnewlxy3u9"
+ 	invalidKey      = "9toqmh6r?g2ly-k3fr-fiyr-5jnnewlxy3u9"
+-	validBaseUrl    = "api.eu-west-0,saucelabs.com"
++	validBaseUrl    = "api.eu-west-0.saucelabs.com"
+ 	invalidBaseUrl  = "?pi.eu-west-0,saucelabs.co?"
+ 	keyword         = "saucelabs"
+ )
+@@ -83,3 +84,139 @@ func TestSauceLabs_Pattern(t *testing.T) {
+ 		})
  	}
  }
- 
-+// positionalCleaner mimics aws.CleanResults: it keeps the first unverified result per Redacted and returns the
-+// survivors in map order.
-+type positionalCleaner struct{ customCleaner }
 +
-+func (positionalCleaner) CleanResults(results []detectors.Result, _ bool) []detectors.Result {
-+	byID := make(map[string]detectors.Result, len(results))
-+	for _, r := range results {
-+		if _, ok := byID[r.Redacted]; !ok {
-+			byID[r.Redacted] = r
-+		}
-+	}
-+	out := make([]detectors.Result, 0, len(byID))
-+	for _, r := range byID {
-+		out = append(out, r)
-+	}
-+	return out
-+}
-+
-+func TestFilterResults_CustomCleanerIsDeterministic(t *testing.T) {
-+	candidates := []detectors.Result{
-+		{Redacted: "id-c", RawV2: []byte("id-c:secret")},
-+		{Redacted: "id-a", RawV2: []byte("id-a:secret-2")},
-+		{Redacted: "id-a", RawV2: []byte("id-a:secret-1")},
-+		{Redacted: "id-b", RawV2: []byte("id-b:secret")},
-+	}
-+	want := []string{"id-a:secret-1", "id-b:secret", "id-c:secret"}
-+	match := ahocorasick.DetectorMatch{Detector: positionalCleaner{customCleaner{ignoreConfig: true}}}
-+	engine := Engine{retainFalsePositives: true, verify: true}
-+
-+	for i := 0; i < 50; i++ {
-+		shuffled := make([]detectors.Result, len(candidates))
-+		copy(shuffled, candidates)
-+		rand.Shuffle(len(shuffled), func(a, b int) { shuffled[a], shuffled[b] = shuffled[b], shuffled[a] })
-+
-+		cleaned := engine.filterResults(context.Background(), "detect", &match, shuffled)
-+
-+		require.Len(t, cleaned, len(want), "iteration %d", i)
-+		for j := range want {
-+			assert.Equal(t, want[j], string(cleaned[j].RawV2), "iteration %d, position %d", i, j)
-+		}
-+	}
-+}
-+
- func BenchmarkPopulateMatchingDetectors(b *testing.B) {
- 	allDetectors := defaults.DefaultDetectors()
- 	ac := ahocorasick.NewAhoCorasickCore(allDetectors)
-@@ -2611,6 +2654,93 @@ func TestNotifierWorker_ReverifiedResultsBypassDedupe(t *testing.T) {
- 	}
- }
- 
-+func TestDedupeKey_FieldBoundariesAreUnambiguous(t *testing.T) {
-+	base := detectors.ResultWithMetadata{
-+		SourceMetadata: &source_metadatapb.MetaData{},
-+		Result:         detectors.Result{DetectorType: detector_typepb.DetectorType(-1)},
-+	}
-+	with := func(mutate func(*detectors.ResultWithMetadata)) detectors.ResultWithMetadata {
-+		r := base
-+		mutate(&r)
-+		return r
-+	}
-+
-+	same := with(func(r *detectors.ResultWithMetadata) { r.Raw = []byte("a") })
-+	assert.Equal(t, dedupeKey(same), dedupeKey(with(func(r *detectors.ResultWithMetadata) { r.Raw = []byte("a") })),
-+		"identical results must share a key")
-+
-+	cases := []struct {
-+		name string
-+		a, b detectors.ResultWithMetadata
++func TestSauceLabs_BaseURL(t *testing.T) {
++	tests := []struct {
++		name    string
++		baseURL string
++		want    string
 +	}{
 +		{
-+			name: "job id runs into detector name",
-+			a:    with(func(r *detectors.ResultWithMetadata) { r.JobID = 1; r.DetectorName = "2x" }),
-+			b:    with(func(r *detectors.ResultWithMetadata) { r.JobID = 12; r.DetectorName = "x" }),
++			name:    "regional host",
++			baseURL: "api.eu-central-1.saucelabs.com",
++			want:    "api.eu-central-1.saucelabs.com",
 +		},
 +		{
-+			name: "NUL inside raw versus field boundary",
-+			a:    with(func(r *detectors.ResultWithMetadata) { r.Raw = []byte("a\x00b"); r.RawV2 = []byte("c") }),
-+			b:    with(func(r *detectors.ResultWithMetadata) { r.Raw = []byte("a"); r.RawV2 = []byte("b\x00c") }),
-+		},
-+		{
-+			name: "raw runs into rawv2",
-+			a:    with(func(r *detectors.ResultWithMetadata) { r.Raw = []byte("ab"); r.RawV2 = []byte("c") }),
-+			b:    with(func(r *detectors.ResultWithMetadata) { r.Raw = []byte("a"); r.RawV2 = []byte("bc") }),
++			name:    "lookalike host falls back to default",
++			baseURL: "api.us-west-1-saucelabs.com",
++			want:    fixedBaseURL,
 +		},
 +	}
-+	for _, tc := range cases {
-+		t.Run(tc.name, func(t *testing.T) {
-+			assert.NotEqual(t, dedupeKey(tc.a), dedupeKey(tc.b))
++
++	for _, test := range tests {
++		t.Run(test.name, func(t *testing.T) {
++			data := fmt.Sprintf("saucelabs_username: john.smith\nsaucelabs_key: %s\nurl: %s\n", validKey, test.baseURL)
++			results, err := Scanner{}.FromData(context.Background(), false, []byte(data))
++			if err != nil {
++				t.Fatalf("error = %v", err)
++			}
++			if len(results) == 0 {
++				t.Fatal("did not receive result")
++			}
++			for _, r := range results {
++				if got := r.ExtraData["Base URL"]; got != test.want {
++					t.Errorf("Base URL = %q, want %q", got, test.want)
++				}
++			}
 +		})
 +	}
 +}
 +
-+func TestNotifierWorker_DedupeIsScopedToJob(t *testing.T) {
-+	cache, err := lru.New[string, struct{}](16)
-+	require.NoError(t, err)
++func TestVerifySauceLabKey(t *testing.T) {
++	const username = "john.smith"
 +
-+	disp := &captureDispatcher{}
-+	e := &Engine{
-+		results:                 make(chan detectors.ResultWithMetadata, 4),
-+		dedupeCache:             cache,
-+		dispatcher:              disp,
-+		notifyVerifiedResults:   true,
-+		notifyUnverifiedResults: true,
-+		notifyUnknownResults:    true,
-+		dedupeCacheSize:         5000,
++	tests := []struct {
++		name         string
++		status       int
++		body         string
++		wantVerified bool
++		wantErr      bool
++	}{
++		{
++			name:         "valid user credential",
++			status:       200,
++			body:         `{"sub":"usr_7c21e3a0","username":"john.smith","organization":"9f3b2a17","auth_method":"basic","credential_id":"cred_7c21e3a0"}`,
++			wantVerified: true,
++		},
++		{
++			name:         "valid service account credential",
++			status:       200,
++			body:         `{"sub":"sa_1234","username":"bot-automation-service-account-d2164","organization":"9f3b2a17","auth_method":"basic","credential_id":"cred_1234"}`,
++			wantVerified: true,
++		},
++		{
++			name:    "200 with HTML body from a proxy",
++			status:  200,
++			body:    "<html><body>Access to this site is blocked</body></html>",
++			wantErr: true,
++		},
++		{
++			name:    "200 with unrelated JSON",
++			status:  200,
++			body:    `{"status":"ok"}`,
++			wantErr: true,
++		},
++		{
++			name:    "200 with empty JSON object",
++			status:  200,
++			body:    `{}`,
++			wantErr: true,
++		},
++		{
++			name:   "invalid credential",
++			status: 401,
++			body:   `{"detail":"Unauthorized"}`,
++		},
++		{
++			name:    "403 from a proxy",
++			status:  403,
++			body:    "<html><body>403 Forbidden</body></html>",
++			wantErr: true,
++		},
++		{
++			name:    "403 with empty body",
++			status:  403,
++			wantErr: true,
++		},
++		{
++			name:    "server error",
++			status:  500,
++			wantErr: true,
++		},
 +	}
 +
-+	result := detectors.ResultWithMetadata{
-+		SourceMetadata: &source_metadatapb.MetaData{
-+			Data: &source_metadatapb.MetaData_Git{
-+				Git: &source_metadatapb.Git{Line: 1},
-+			},
-+		},
-+		SourceType: sourcespb.SourceType_SOURCE_TYPE_GIT,
-+		Result: detectors.Result{
-+			DetectorType: detector_typepb.DetectorType(-1),
-+			Raw:          []byte("a-secret"),
-+			Verified:     true,
-+		},
++	for _, test := range tests {
++		t.Run(test.name, func(t *testing.T) {
++			client := common.ConstantResponseHttpClient(test.status, test.body)
++			verified, err := verifySauceLabKey(context.Background(), client, username, validKey, fixedBaseURL)
++
++			if (err != nil) != test.wantErr {
++				t.Fatalf("error = %v, wantErr %v", err, test.wantErr)
++			}
++			if verified != test.wantVerified {
++				t.Errorf("verified = %v, want %v", verified, test.wantVerified)
++			}
++		})
 +	}
-+
-+	// The same document scanned by two jobs; each job reports it once.
-+	result.JobID = 1
-+	e.results <- result
-+	e.results <- result
-+	result.JobID = 2
-+	e.results <- result
-+	e.results <- result
-+	close(e.results)
-+
-+	e.notifierWorker(context.Background())
-+
-+	require.Len(t, disp.results, 2)
-+	assert.Equal(t, sources.JobID(1), disp.results[0].JobID)
-+	assert.Equal(t, sources.JobID(2), disp.results[1].JobID)
 +}
 +
- // TestNotifierWorker_ConcurrentDuplicatesDispatchedOnce verifies that when many
- // notifier workers share the dedupe cache, identical results are dispa
++func TestSauceLabs_FromData_ProxyForbidden(t *testing.T) {
++	s := Scanner{client: common.ConstantResponseHttpClient(403, "<html><body>403 Forbidden</body></html>")}
++	data := fmt.Sprintf("saucelabs_username: john.smith\nsaucelabs_key: %s\n", validKey)
++
++	results, err := s.FromData(context.Background(), true, []byte(data))
++	if err != nil {
++		t.Fatalf("error = %v", err)
++	}
++	if len(results) == 0 {
++		t.Fatal("did not receive result")
++	}
++	for _, r := range results {
++		if r.Verified {
++			t.Errorf("result %q verified from a proxy 403", r.RawV2)
++		}
++		if r.VerificationError() == nil {
++			t.Errorf("result %q has no verification error for a proxy 403", r.RawV2)
++		}
++	}
++}
+```
+
+---
+
+### Incident Patch 2: `2e641535` (2026-11-19)
+**Commit Message**: [chore] Correct NewWebhookCustomRegex doc comment (#5249)
+
+An unexported type is no longer returned from this function.
+
+**File**: `pkg/custom_detectors/custom_detectors.go` (modified, +1/-3)
+```diff
+@@ -46,9 +46,7 @@ var _ detectors.Detector = (*CustomRegexWebhook)(nil)
+ var _ detectors.CustomFalsePositiveChecker = (*CustomRegexWebhook)(nil)
+ var _ detectors.MaxSecretSizeProvider = (*CustomRegexWebhook)(nil)
+ 
+-// NewWebhookCustomRegex initializes and validates a CustomRegexWebhook. An
+-// unexported type is intentionally returned here to ensure the values have
+-// been validated.
++// NewWebhookCustomRegex initializes and validates a CustomRegexWebhook.
+ func NewWebhookCustomRegex(pb *custom_detectorspb.CustomRegex) (*CustomRegexWebhook, error) {
+ 	// TODO: Return all validation errors.
+ 	if err := ValidateKeywords(pb.Keywords); err != nil {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5582** (2026-11-19): only treat HubSpot MISSING_SCOPES 403s as live tokens (@jordanTunstill)
+- **PR #5581** (2026-11-19): Saucelabs: verify via identity endpoint so proxy 403s aren't reported as live (@jordanTunstill)
 - **PR #5566** (2026-11-16): Add upsert_error to AWSSecretsManager source metadata (@Ahmer-Zuberi)
 - **PR #5560** (closed): Update module go.opentelemetry.io/otel/trace to v1.47.0 [SECURITY] - autoclosed (@renovate[bot])
 - **PR #5559** (2026-11-14): Update module go.opentelemetry.io/otel/sdk to v1.47.0 [SECURITY] (@renovate[bot])
 - **PR #5557** (closed): [DO NOT MERGE] Measure fork-PR timing for #5547 (@bryanbeverly)
-- **PR #5554** (2026-11-14): Clean up JSON enumerator source logging for per-source debug (@kashifkhan0771)
-- **PR #5553** (2026-11-12): Add SOURCE_TYPE_GENERIC source type (@martinlocklear)
 
 ---
 
@@ -1717,51 +1485,63 @@ stable output order, ordered by type, version, then custom name.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Make result ordering more deterministic and scope dedupe to the job
+## X. Saucelabs: verify via identity endpoint so proxy 403s aren't reported as live
 
 **RULE**:
-When implementing operations in `pkg/detectors/detectors.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/detectors/saucelabs/saucelabs.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trufflesecurity/trufflehog. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9529cc61`: Make result ordering more deterministic and scope dedupe to the job. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d232362a`: Saucelabs: verify via identity endpoint so proxy 403s aren't reported as live. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/detectors/detectors.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/detectors/saucelabs/saucelabs.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"bytes"
-	"cmp"
-	"slices"
-// SortResults stably orders results by Redacted, then RawV2, then Raw. Detectors that build results from a map return
-// them in random order; callers that select results by position (CleanResults, and engine.filterResults on behalf of
-// custom cleaners) sort first so the survivors do not change between scans.
-// Results that tie on all three fields can still differ in other fields, so the sort is stable: tied results keep
-// their input order. The output is fully deterministic only if that input order is consistent.
-func SortResults(results []Result) {
-	slices.SortStableFunc(results, func(a, b Result) int {
-		return cmp.Or(
-			cmp.Compare(a.Redacted, b.Redacted),
-			bytes.Compare(a.RawV2, b.RawV2),
-			bytes.Compare(a.Raw, b.Raw),
-		)
-	})
+	"encoding/json"
+	client *http.Client
+	defaultClient = common.SaneHttpClient()
+	baseUrlPat  = regexp.MustCompile(`\b(api\.(?:us|eu)-(?:west|east|central)-[0-9]\.saucelabs\.com)\b`)
+type identityResponse struct {
+	Sub string `json:"sub"`
 }
 
-	// Sort before selecting so that both the single unverified survivor and the verified set come out in a fixed order.
-	SortResults(results)
-	SortResults(results)
+func (s Scanner) getClient() *http.Client {
+	if s.client != nil {
+		return s.client
+	}
+	return defaultClient
+}
+
+					isVerified, verificationErr := verifySauceLabKey(ctx, s.getClient(), userName, key, baseURL)
+// verifySauceLabKey calls the identity endpoint, which accepts any valid credential regardless of role
+// and is documented to return only 200 or 401. Any other response (e.g. a 403 from a proxy) is indeterminate.
+	apiURL := fmt.Sprintf("https://%s/auth/v1/identity", baseURL)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, http.NoBody)
+	case http.StatusOK:
+		var identity identityResponse
+		if err := json.NewDecoder(resp.Body).Decode(&identity); err != nil {
+			return false, fmt.Errorf("unexpected response body: %w", err)
+		}
+		if identity.Sub == "" {
+			return false, fmt.Errorf("unexpected response body: missing account id")
+		}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	client = common.SaneHttpClient()
+	baseUrlPat  = regexp.MustCompile(`\b(api\.(?:us|eu)-(?:west|east|central)-[0-9].saucelabs\.com)\b`)
+					isVerified, verificationErr := verifySauceLabKey(ctx, client, userName, key, baseURL)
+	apiURL := fmt.Sprintf("https://%s/team-management/v1/teams", baseURL)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, apiURL, nil)
+	case http.StatusOK, http.StatusForbidden:
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9529cc61` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d232362a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -3643,10 +3643,10 @@
     "repository": "trufflesecurity/trufflehog",
     "platform": "github",
     "sourceUrl": "https://github.com/trufflesecurity/trufflehog",
-    "sourceVersion": "9529cc61",
+    "sourceVersion": "d232362a",
     "license": "AGPL-3.0",
-    "contentHash": "186a5248c3284caea4a040321b4f6942d3db16975e868f7081fd325ab5460e11",
-    "lastHarvestedAt": "2026-11-18T23:34:52.859Z",
+    "contentHash": "91892fe6f2ce0b66da3d19562a7a4d5e4cfdd9cef0c98664018cf76a1695c6b8",
+    "lastHarvestedAt": "2026-11-19T23:34:46.976Z",
     "learningId": "learn-github-trufflesecurity-trufflehog"
   },
   "neural-maze-ava-whatsapp-agent-course": {

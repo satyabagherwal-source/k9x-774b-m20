@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T23:15:46.577Z",
-  "total_cycles_completed": 10885,
-  "total_learnings_persisted": 10885,
-  "total_rules_promoted": 10241,
+  "last_updated": "2026-11-19T23:34:46.985Z",
+  "total_cycles_completed": 10886,
+  "total_learnings_persisted": 10886,
+  "total_rules_promoted": 10242,
   "history": [
-    {
-      "timestamp": "2026-11-19T02:56:50.505Z",
-      "repository": "argoproj/argo-workflows",
-      "learningId": "learn-github-argoproj-argo-workflows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T03:09:48.102Z",
       "repository": "juicedata/juicefs",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-19T23:15:46.577Z",
       "repository": "doobidoo/mcp-memory-service",
       "learningId": "learn-github-doobidoo-mcp-memory-service",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T23:34:46.985Z",
+      "repository": "trufflesecurity/trufflehog",
+      "learningId": "learn-github-trufflesecurity-trufflehog",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
