@@ -11227,3 +11227,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-19T04:08:17.256Z |
 | `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `674d3362` | Multi-dimensional audit evidence | 2026-11-19T04:08:21.492Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `259343d1` | Multi-dimensional audit evidence | 2026-11-19T04:13:29.924Z |
+| `learn-huggingface-bingsu-adetailer` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-11-19T04:36:20.289Z |
+| `learn-github-graphprotocol-graph-node` | `https://github.com/graphprotocol/graph-node` | `a6ae6e2c` | Multi-dimensional audit evidence | 2026-11-19T04:36:20.788Z |
+| `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `170c7d31` | Multi-dimensional audit evidence | 2026-11-19T04:36:34.935Z |

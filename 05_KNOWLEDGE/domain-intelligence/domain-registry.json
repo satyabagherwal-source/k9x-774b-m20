@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T04:13:34.953Z",
+  "last_updated": "2026-11-19T04:36:39.558Z",
   "total_records": 1940,
   "domains": {
     "A": {
@@ -12180,8 +12180,8 @@
       "title": "Deployment & Operations Intelligence: graphprotocol/graph-node Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-graphprotocol-graph-node-deployment-operations-intelligence-graphprotocol-graph-.md",
       "repository": "graphprotocol/graph-node",
-      "content_hash": "e4c6b2744ea035d7a5291e4fe00e6379b57194fb6d8662ab91ea96a5ab39bfce",
-      "created_at": "2026-11-14T02:06:15.240Z"
+      "content_hash": "e643d8252ad77b8c970d262dc2b1ebc8be67af84fa0281824bdb0797f1fa3f15",
+      "created_at": "2026-11-19T04:36:20.994Z"
     },
     "domain_intelligence-architecture-intelligence-goharbor-harbor-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-goharbor-harbor-core-invariants",
@@ -12207,8 +12207,8 @@
       "title": "Deployment & Operations Intelligence: graphprotocol-graph-node-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-graphprotocol-graph-node-learnings-deployment-operations-intelligence-graphproto.md",
       "repository": "graphprotocol-graph-node-learnings",
-      "content_hash": "f9666f5a96e187a60ed445521ac65bfad2bab8c4f2e1ea50dc00edbdd07ee11d",
-      "created_at": "2026-11-14T02:06:30.507Z"
+      "content_hash": "699844f86f9b3ee26764a9933038bb03cfdaaf60fb6654124209f45ec9ab0bd1",
+      "created_at": "2026-11-19T04:36:38.570Z"
     },
     "DOM-D-53028CD5": {
       "record_id": "DOM-D-53028CD5",
@@ -15799,8 +15799,8 @@
       "title": "Research & Knowledge Intelligence: Bingsu/adetailer Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-bingsu-adetailer-research-knowledge-intelligence-bingsu-adetailer-core-invari.md",
       "repository": "Bingsu/adetailer",
-      "content_hash": "e765e6b8f2a188dce049665c25f4c83b897b60c585736bf4339cb655d5ef9be2",
-      "created_at": "2026-11-14T15:03:42.449Z"
+      "content_hash": "fd44279ee81b2d20959f8d8285f92b154ee06a2e0c7dfe7d0d6cf8774888396c",
+      "created_at": "2026-11-19T04:36:20.519Z"
     },
     "domain_intelligence-architecture-intelligence-argoproj-argo-events-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-argoproj-argo-events-core-invariants",
@@ -15928,8 +15928,8 @@
       "title": "Research & Knowledge Intelligence: hf-bingsu-adetailer-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-bingsu-adetailer-learnings-research-knowledge-intelligence-hf-bingsu-adetaile.md",
       "repository": "hf-bingsu-adetailer-learnings",
-      "content_hash": "4e1159a0871cf07f1f77af58c4ad2fb735f2360018448b17a0317b650c8002ba",
-      "created_at": "2026-11-14T15:09:37.077Z"
+      "content_hash": "c658387937363fcb7d5a1caeba6a551ffeafd8f6841f1a1d0e9814edba220dc0",
+      "created_at": "2026-11-19T04:36:38.980Z"
     },
     "domain_intelligence-architecture-intelligence-argoproj-argo-events-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-argoproj-argo-events-learnings-core-invariants",
@@ -17626,8 +17626,8 @@
       "title": "Architecture Intelligence: vespa-engine/vespa Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-architecture-intelligence-vespa-engine-vespa-core-invariants.md",
       "repository": "vespa-engine/vespa",
-      "content_hash": "3de7e89265aa166a8cb53220bf627322b95eb13ad10e53c356c8265ed4e62a27",
-      "created_at": "2026-11-17T14:01:52.262Z"
+      "content_hash": "53a85929e5a6ec3fc1392240845da61a1168cfaba1af76c2c6cc46233d2d3048",
+      "created_at": "2026-11-19T04:36:35.287Z"
     },
     "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-qwen-qwen-image-2-1-turbo-core-invariants",
@@ -17696,8 +17696,8 @@
       "title": "Architecture Intelligence: vespa-engine-vespa-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-learnings-architecture-intelligence-vespa-engine-vespa-learni.md",
       "repository": "vespa-engine-vespa-learnings",
-      "content_hash": "308b4bc079f44645d703b58f2b6ffc882c19dfeb50a87d520cd6c10148599aad",
-      "created_at": "2026-11-17T14:02:19.817Z"
+      "content_hash": "fcbef968af86c9dc301c5eb06a21e96e356be325714f7018b8a31ffddeb195f2",
+      "created_at": "2026-11-19T04:36:39.558Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-qwen3-8-flash-next-e384-fp4-v2-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-qwen3-8-flash-next-e384-fp4-v2-core-in",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md`  
 > **Source**: github ([https://github.com/graphprotocol/graph-node](https://github.com/graphprotocol/graph-node))  
-> **Source Version**: `796ace3f`  
+> **Source Version**: `a6ae6e2c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T02:06:14.214Z  
+> **Timestamp**: 2026-11-19T04:36:20.230Z  
 > **Learning ID**: `learn-github-graphprotocol-graph-node`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/graphprotocol/graph-node](https://github.com/graphprotocol/graph-node))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T02:06:14.209Z  
+> **Harvest Timestamp**: 2026-11-19T04:36:20.226Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Graph Node indexes data from blockchains such as Ethereum and serves it over GraphQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 3166 stars
+- **Stars / Engagement**: 3168 stars
 
 ---
 
@@ -881,117 +881,264 @@ impl<S> Drop for GraphmanExecutionTracker<S> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `796ace3f` (2026-11-13)
-**Commit Message**: gnd: Don't unset nullable primitive fields set to 0 or false (#6760)
+### Incident Patch 1: `a6ae6e2c` (2026-11-17)
+**Commit Message**: store: Support immutable entities in entity changes (#6742)
 
-`gnd codegen` took an accessor's nullability from the GraphQL field, so a
-nullable `Int`, `Boolean`, `Int8` or `Timestamp` field, or a nullable
-reference to an entity with `id: Int8!`, got a setter that unsets the
-field when it is given 0 or false, and the store held null. graph-cli
-decides from the AssemblyScript type, which `type_from_field` already
-keeps non-nullable for all of these, and generates the non-nullable
-getter and setter. Take nullability from the type expression in both, as
-graph-cli does.
+Select immutable inserts by their creation block and omit immutable
+tables from deletion queries. Cover mixed and immutable-only schemas.
 
-Fixes #6759
+Fixes #4433.
 
-**File**: `gnd/src/codegen/schema.rs` (modified, +66/-8)
+**File**: `store/postgres/src/block_range.rs` (modified, +0/-19)
 ```diff
-@@ -494,7 +494,8 @@ impl SchemaCodeGenerator {
- 
-         let value_type = self.value_type_from_field(field);
-         let return_type = self.type_from_field(field);
--        let nullable = field.is_nullable;
-+        // AS primitives can't be nullable, so take nullability from the AS type.
-+        let nullable = matches!(return_type, TypeExpr::Nullable(_));
- 
-         let primitive_default = match &return_type {
-             TypeExpr::Named(t) => t.get_primitive_default(),
-@@ -575,13 +576,8 @@ impl SchemaCodeGenerator {
-         let safe_name = handle_reserved_word(&field.name);
-         let value_type = self.value_type_from_field(field);
-         let param_type = self.type_from_field(field);
--        let nullable = field.is_nullable;
--
--        let set_code = if nullable {
--            let inner_type = match &param_type {
--                TypeExpr::Nullable(n) => n.inner.to_string(),
--                other => other.to_string(),
--            };
-+        let set_code = if let TypeExpr::Nullable(n) = &param_type {
-+            let inner_type = n.inner.to_string();
-             format!(
-                 r#"
-       if (!value) {{
-@@ -762,6 +758,68 @@ mod tests {
-         assert!(method_names.contains(&"set symbol"));
+@@ -96,25 +96,6 @@ impl ToSql<Range<Integer>, Pg> for BlockRange {
      }
+ }
  
-+    #[test]
-+    fn test_nullable_primitive_fields() {
-+        // Nullable primitives, incl. Int8-id entity refs, get non-nullable accessors.
-+        let schema = r#"
-+            type Example @entity(immutable: true) {
-+                id: ID!
-+                side: Int
-+                flag: Boolean
-+                big: Int8
-+                at: Timestamp
-+                counter: Counter
-+                name: String
-+            }
-+
-+            type Counter @entity(immutable: true) {
-+                id: Int8!
-+            }
-+        "#;
-+        let doc = parse_schema::<String>(schema).unwrap();
-+        let generator = SchemaCodeGenerator::new(&doc).unwrap();
-+
-+        let classes = generator.generate_types(true);
-+        assert_eq!(classes.len(), 2);
-+
-+        let example = &classes[0];
-+        let body = |name: &str| -> String {
-+            example
-+                .methods
-+                .iter()
-+                .find(|m| m.name == name)
-+                .unwrap_or_else(|| panic!("no method `{name}`"))
-+                .body
-+                .clone()
+-#[derive(Debug, Constructor)]
+-pub struct BlockRangeLowerBoundClause<'a> {
+-    _table_prefix: &'a str,
+-    block: BlockNumber,
+-}
+-
+-impl<'a> QueryFragment<Pg> for BlockRangeLowerBoundClause<'a> {
+-    fn walk_ast<'b>(&'b self, mut out: AstPass<'_, 'b, Pg>) -> QueryResult<()> {
+-        out.unsafe_to_cache_prepared();
+-
+-        out.push_sql("lower(");
+-        out.push_identifier(BLOCK_RANGE_COLUMN)?;
+-        out.push_sql(") = ");
+-        out.push_bind_param::<Integer, _>(&self.block)?;
+-
+-        Ok(())
+-    }
+-}
+-
+ #[derive(Debug, Constructor)]
+ pub struct BlockRangeUpperBoundClause<'a> {
+     _table_prefix: &'a str,
+```
+
+**File**: `store/postgres/src/relational.rs` (modified, +9/-3)
+```diff
+@@ -699,9 +699,15 @@ impl Layout {
+         let inserts_or_updates = FindChangesQuery::new(&tables[..], block)
+             .load::<EntityData>(conn)
+             .await?;
+-        let deletions = FindPossibleDeletionsQuery::new(&tables[..], block)
+-            .load::<EntityDeletion>(conn)
+-            .await?;
++        // Immutable entities have no block range and cannot be deleted.
++        tables.retain(|table| !table.immutable);
++        let deletions = if tables.is_empty() {
++            Vec::new()
++        } else {
++            FindPossibleDeletionsQuery::new(&tables[..], block)
++                .load::<EntityDeletion>(conn)
++                .await?
 +        };
+ 
+         let mut processed_entities = HashSet::new();
+         let mut changes = Vec::new();
+```
+
+**File**: `store/postgres/src/relational_queries.rs` (modified, +14/-7)
+```diff
+@@ -50,8 +50,7 @@ use crate::relational::{
+ use crate::{
+     block_range::{
+         BLOCK_COLUMN, BLOCK_RANGE_COLUMN, BLOCK_RANGE_CURRENT, BlockRangeColumn,
+-        BlockRangeLowerBoundClause, BlockRangeUpperBoundClause, BlockRangeValue,
+-        CAUSALITY_REGION_COLUMN,
++        BlockRangeUpperBoundClause, BlockRangeValue, CAUSALITY_REGION_COLUMN,
+     },
+     primary::Site,
+ };
+@@ -2005,17 +2004,17 @@ impl<'a, Conn> RunQueryDsl<Conn> for FindRangeQuery<'a> {}
+ 
+ /// Builds a query over a given set of [`Table`]s in an attempt to find updated
+ /// and/or newly inserted entities at a given block number; i.e. such that the
+-/// block range's lower bound is equal to said block number.
++/// block range's lower bound, or the creation block for immutable entities,
++/// is equal to said block number.
+ #[derive(Debug)]
+ pub struct FindChangesQuery<'a> {
+     pub(crate) tables: &'a [&'a Table],
+-    br_clause: BlockRangeLowerBoundClause<'a>,
++    block: BlockNumber,
+ }
+ 
+ impl<'a> FindChangesQuery<'a> {
+     pub fn new(tables: &'a [&'a Table], block: BlockNumber) -> Self {
+-        let br_clause = BlockRangeLowerBoundClause::new("e.", block);
+-        Self { tables, br_clause }
++        Self { tables, block }
+     }
+ }
+ 
+@@ -2033,7 +2032,15 @@ impl<'a> QueryFragment<Pg> for FindChangesQuery<'a> {
+             out.push_sql("  from ");
+             out.push_sql(table.qualified_name.as_str());
+             out.push_sql(" e\n where ");
+-            self.br_clause.walk_ast(out.reborrow())?;
++            if table.immutable {
++                out.push_identifier(BLOCK_COLUMN)?;
++            } else {
++                out.push_sql("lower(");
++                out.push_identifier(BLOCK_RANGE_COLUMN)?;
++                out.push_sql(")");
++            }
++            out.push_sql(" = ");
++            out.push_bind_param::<Integer, _>(&self.block)?;
+         }
+ 
+         Ok(())
+```
+
+**File**: `store/test-store/tests/postgres/relational.rs` (modified, +141/-1)
+```diff
+@@ -1,5 +1,6 @@
+ //! Test mapping of GraphQL schema to a relational schema
+ use diesel_async::SimpleAsyncConnection;
++use graph::components::store::EntityOperation;
+ use graph::components::store::write::{EntityModification, RowGroup};
+ use graph::data::store::scalar;
+ use graph::entity;
+@@ -505,7 +506,11 @@ async fn insert_pets(conn: &mut AsyncPgConnection, layout: &Layout) {
+ }
+ 
+ async fn create_schema(conn: &mut AsyncPgConnection) -> Layout {
+-    let schema = InputSchema::parse_latest(THINGS_GQL, THINGS_SUBGRAPH_ID.clone()).unwrap();
++    create_schema_from(conn, THINGS_GQL).await
++}
 +
-+        for (field, default) in [
-+            ("side", "0"),
-+            ("flag", "false"),
-+            ("big", "0"),
-+            ("at", "0"),
-+            ("counter", "0"),
-+        ] {
-+            let getter = body(&format!("get {field}"));
-+            assert!(
-+                getter.contains(&format!("return {default}")) && !getter.contains("return null"),
-+                "nullable primitive `{field}` should return its default, got: {getter}"
-+            );
-+
-+            let setter = body(&format!("set {field}"));
-+            assert!(
-+                setter.contains(&format!("this.set('{field}'")) && !setter.contains("unset"),
-+                "nullable primitive `{field}` should always be set, got: {setter}"
-+            );
++async fn create_schema_from(conn: &mut AsyncPgConnection, gql: &str) -> Layout {
++    let schema = InputSchema::parse_latest(gql, THINGS_SUBGRAPH_ID.clone()).unwrap();
+     let site = make_dummy_site(
+         THINGS_SUBGRAPH_ID.clone(),
+         NAMESPACE.clone(),
+@@ -575,6 +580,141 @@ where
+     .await;
+ }
+ 
++async fn assert_changes_at(
++    conn: &mut AsyncPgConnection,
++    layout: &Layout,
++    block: BlockNumber,
++    expected: Vec<EntityOperation>,
++) {
++    let mut changes = layout.find_changes(conn, block).await.unwrap();
++    for change in &mut changes {
++        if let EntityOperation::Set { data, .. } = change {
++            data.remove_null_fields();
 +        }
-+
-+        // A nullable field of a non-primitive type keeps the nullable accessors
-+        let getter = body("get name");
-+        assert!(getter.contains("return null"), "got: {getter}");
-+        let setter = body("set name");
-+        assert!(setter.contains("this.unset('name')"), "got: {setter}");
 +    }
++    assert_eq!(changes.len(), expected.len(), "changes at block {block}");
++    for change in expected {
++        assert!(
++            changes.contains(&change),
++            "missing {change:?} in changes at block {block}: {changes:?}"
++        );
++    }
++}
 +
-     #[test]
-     fn test_id_field_types() {
-         assert_eq!(IdFieldKind::String.type_name(), "string");
++#[graph::test]
++async fn find_changes_with_immutable_entities() {
++    run_test_with_conn(async |conn| {
++        remove_schema(conn).await;
++        let layout = &create_schema_from(
++            conn,
++            "type Ferret @entity { id: ID!, name: String! }
++             type Mink @entity(immutable: true) { id: ID!, order: Int! }",
++        )
++        .await;
++        let ferret_type = layout.input_schema.entity_type("Ferret").unwrap();
++        let mink_type = layout.input_schema.entity_type("Mink").unwrap();
++        let old = entity! { layout.input_schema => id: "changed", name: "old", vid: 0i64 };
++        let removed = entity! { layout.input_schema => id: "removed", name: "gone", vid: 1i64 };
++        let updated = entity! { layout.input_schema => id: "changed", name: "new", vid: 2i64 };
++        let first = entity! { layout.input_schema => id: "first", order: 1, vid: 3i64 };
++        let later = entity! { layout.input_schema => id: "later", order: 2, vid: 4i64 };
++
++        insert_entity_at(
++            conn,
++            layout,
++            &ferret_type,
++            vec![old.clone(), removed.clone()],
++            0,
++        )
++        .await;
++        update_entity_at(conn, layout, &ferret_type, vec![updated.clone()], 1).await;
++        let removed_key = ferret_type.key(removed.id());
++        let group = row_group_delete(&ferret_type, 1, vec![removed_key.clone()]);
++        assert_eq!(
++            layout.delete(conn, &group, &MOCK_STOPWATCH).await.unwrap(),
++            1
++        );
++        insert_entity_at(conn, layout, &mink_type, vec![first.clone()], 1).await;
++        insert_entity_at(conn, layout, &mink_type, vec![later.clone()], 2).await;
++
++        assert_changes_at(
++            conn,
++            layout,
++            0,
++            vec![
++                EntityOperation::Set {
++                    key: ferret_type.key(old.id()),
++                    data: old,
++                },
++                EntityOperation::Set {
++                    key: removed_key.clone(),
++                    data: removed,
++                },
++            ],
++        )
++        .await;
++        assert_changes_at(
++            conn,
++            layout,
++            1,
++            vec![
++                EntityOperation::Set {
++                    key: ferret_type.key(updated.id()),
++                    data: updated,
++                },
++                EntityOperation::Set {
++                    key: mink_type.key(first.id()),
++                    data: first,
++                },
++                EntityOperation::Remove { key: removed_key },
++            ],
++        )
++        .await;
++        assert_changes_at(
++            conn,
++            layout,
++            2,
++            vec![EntityOperation::Set {
++                key: mink_type.key(later.id()),
++                data: later,
++            }],
++        )
++        .await;
++        assert_changes_at(conn, layout, 3, vec![]).await;
++    })
++    .await;
++}
++
++#[graph::test]
++async fn find_changes_with_only_immutable_entities() {
++    run_test_with_conn(async |conn| {
++        remove_schema(conn).await;
++        let layout = create_schema_from(
++            conn,
++            "type Event @entity(immutable: true) { id: ID!, value: Int! }",
++        )
++        .await;
++        let event_type = layout.input_schema.entity_type("Event").unwrap();
++        assert_changes_at(conn, &layout, 0, vec![]).await;
++
++        let event =
 ```
 
 #### Recent Merged Pull Requests:
@@ -1014,74 +1161,3 @@ Fixes #6759
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. gnd: Don't unset nullable primitive fields set to 0 or false
-
-**RULE**:
-When implementing operations in `gnd/src/codegen/schema.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in graphprotocol/graph-node. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `796ace3f`: gnd: Don't unset nullable primitive fields set to 0 or false. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `gnd/src/codegen/schema.rs`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-        // AS primitives can't be nullable, so take nullability from the AS type.
-        let nullable = matches!(return_type, TypeExpr::Nullable(_));
-        let set_code = if let TypeExpr::Nullable(n) = &param_type {
-            let inner_type = n.inner.to_string();
-    #[test]
-    fn test_nullable_primitive_fields() {
-        // Nullable primitives, incl. Int8-id entity refs, get non-nullable accessors.
-        let schema = r#"
-            type Example @entity(immutable: true) {
-                id: ID!
-                side: Int
-                flag: Boolean
-                big: Int8
-                at: Timestamp
-                counter: Counter
-                name: String
-            }
-
-            type Counter @entity(immutable: true) {
-                id: Int8!
-            }
-        "#;
-        let doc = parse_schema::<String>(schema).unwrap();
-        let generator = SchemaCodeGenerator::new(&doc).unwrap();
-
-        let classes = generator.generate_types(true);
-        assert_eq!(classes.len(), 2);
-
-        let example = &classes[0];
-        let body = |name: &str| -> String {
-            example
-                .methods
-                .iter()
-                .find(|m| m.na
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-        let nullable = field.is_nullable;
-        let nullable = field.is_nullable;
-
-        let set_code = if nullable {
-            let inner_type = match &param_type {
-                TypeExpr::Nullable(n) => n.inner.to_string(),
-                other => other.to_string(),
-            };
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `796ace3f` are properly handled with clean fallback behavior.

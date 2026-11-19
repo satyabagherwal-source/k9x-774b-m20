@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T04:13:29.933Z",
+  "last_updated": "2026-11-19T04:36:34.945Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1685,14 +1685,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-bingsu-adetailer",
-      "content_hash": "ca51dce944858e2ec999329484a296b270d8654a493c1aa868fe214a3a12b55f",
-      "verified_at": "2026-11-14T15:03:42.323Z",
+      "content_hash": "45d41e96ef29b646fe39f9f16e249b7c4ef962bb114ded78b5088f7d8eb008e3",
+      "verified_at": "2026-11-19T04:36:20.298Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T15:03:42.323Z"
+      "last_updated": "2026-11-19T04:36:20.298Z"
     },
     "lilylilith/QI_2.1_AnyAngle": {
       "repository": "lilylilith/QI_2.1_AnyAngle",
@@ -8931,14 +8931,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vespa-engine-vespa",
-      "content_hash": "ed8694ce56ce5e85ad3d84dbc8789b3cd6c5b2397612b1744d0d1b2b4f74ca1f",
-      "verified_at": "2026-11-17T14:01:52.109Z",
+      "content_hash": "f53450633a13f1a1a3caf80ce5267e96e4bd6ca4518e9c5df90e25660c29a98b",
+      "verified_at": "2026-11-19T04:36:34.944Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T14:01:52.109Z"
+      "last_updated": "2026-11-19T04:36:34.944Z"
     },
     "radix-ui/themes": {
       "repository": "radix-ui/themes",
@@ -9756,14 +9756,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-graphprotocol-graph-node",
-      "content_hash": "7362ec6ae50c3795bce5247a109e3c554d50d06afb5a77c419ab26839756e8d6",
-      "verified_at": "2026-11-14T02:06:14.995Z",
+      "content_hash": "5c9434c8db3992aa2b42d45612e339432e33514d64147956290abfc108c8c95a",
+      "verified_at": "2026-11-19T04:36:20.796Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T02:06:14.995Z"
+      "last_updated": "2026-11-19T04:36:20.796Z"
     },
     "hungps/flutter_pokedex": {
       "repository": "hungps/flutter_pokedex",

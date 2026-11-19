@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T04:13:35.098Z",
+  "last_updated": "2026-11-19T04:36:39.863Z",
   "total_verified_learnings": 9014,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21618,
+  "total_items": 21620,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -220875,8 +220875,8 @@
       "slug": "graphprotocol-graph-node",
       "platform": "github",
       "source_url": "https://github.com/graphprotocol/graph-node",
-      "source_version": "796ace3f",
-      "content_hash": "7362ec6ae50c3795bce5247a109e3c554d50d06afb5a77c419ab26839756e8d6",
+      "source_version": "a6ae6e2c",
+      "content_hash": "5c9434c8db3992aa2b42d45612e339432e33514d64147956290abfc108c8c95a",
       "dossier_path": "07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md",
       "promoted_rules": [
@@ -220891,7 +220891,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T02:06:14.861Z",
+      "verified_at": "2026-11-19T04:36:20.548Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220933,10 +220933,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-graphprotocol-graph-node-deployment-operations-intelligence-graphprotocol-graph-.md",
       "title": "Deployment & Operations Intelligence: graphprotocol/graph-node Core Invariants",
       "repository": "graphprotocol/graph-node",
-      "source_version": "796ace3f",
-      "content_hash": "e4c6b2744ea035d7a5291e4fe00e6379b57194fb6d8662ab91ea96a5ab39bfce",
+      "source_version": "a6ae6e2c",
+      "content_hash": "e643d8252ad77b8c970d262dc2b1ebc8be67af84fa0281824bdb0797f1fa3f15",
       "domain_letter": "L",
-      "persisted_at": "2026-11-14T02:06:15.240Z"
+      "persisted_at": "2026-11-19T04:36:20.994Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-graphprotocol-graph-node": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-graphprotocol-graph-node",
@@ -221161,9 +221161,9 @@
       "title": "Deployment & Operations Intelligence: graphprotocol-graph-node-learnings Core Invariants",
       "repository": "graphprotocol-graph-node-learnings",
       "source_version": "HEAD",
-      "content_hash": "f9666f5a96e187a60ed445521ac65bfad2bab8c4f2e1ea50dc00edbdd07ee11d",
+      "content_hash": "699844f86f9b3ee26764a9933038bb03cfdaaf60fb6654124209f45ec9ab0bd1",
       "domain_letter": "L",
-      "persisted_at": "2026-11-14T02:06:30.507Z"
+      "persisted_at": "2026-11-19T04:36:38.570Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-graphprotocol-graph-node-learn": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-graphprotocol-graph-node-learn",
@@ -230589,7 +230589,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Bingsu/adetailer",
       "source_version": "hf-bingsu-adetailer",
-      "content_hash": "ca51dce944858e2ec999329484a296b270d8654a493c1aa868fe214a3a12b55f",
+      "content_hash": "45d41e96ef29b646fe39f9f16e249b7c4ef962bb114ded78b5088f7d8eb008e3",
       "dossier_path": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md",
       "promoted_rules": [],
@@ -230598,7 +230598,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T15:03:42.203Z",
+      "verified_at": "2026-11-19T04:36:20.081Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230915,9 +230915,9 @@
       "title": "Research & Knowledge Intelligence: hf-bingsu-adetailer-learnings Core Invariants",
       "repository": "hf-bingsu-adetailer-learnings",
       "source_version": "HEAD",
-      "content_hash": "4e1159a0871cf07f1f77af58c4ad2fb735f2360018448b17a0317b650c8002ba",
+      "content_hash": "c658387937363fcb7d5a1caeba6a551ffeafd8f6841f1a1d0e9814edba220dc0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T15:09:37.077Z"
+      "persisted_at": "2026-11-19T04:36:38.980Z"
     },
     "candidate_directive-deps-update-go-and-crypto-security-baseline": {
       "item_id": "candidate_directive-deps-update-go-and-crypto-security-baseline",
@@ -235905,14 +235905,19 @@
       "slug": "vespa-engine-vespa",
       "platform": "github",
       "source_url": "https://github.com/vespa-engine/vespa",
-      "source_version": "6dfc8f2d",
-      "content_hash": "ed8694ce56ce5e85ad3d84dbc8789b3cd6c5b2397612b1744d0d1b2b4f74ca1f",
+      "source_version": "170c7d31",
+      "content_hash": "f53450633a13f1a1a3caf80ce5267e96e4bd6ca4518e9c5df90e25660c29a98b",
       "dossier_path": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md",
       "promoted_rules": [
         {
           "number": 8529,
           "title": "Empirical Invariant Guard in Gemfile.lock",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9330,
+          "title": "Empirical Invariant Guard in span_attribute_names.cpp",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -235921,7 +235926,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T14:01:51.947Z",
+      "verified_at": "2026-11-19T04:36:34.730Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235963,10 +235968,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vespa-engine-vespa-architecture-intelligence-vespa-engine-vespa-core-invariants.md",
       "title": "Architecture Intelligence: vespa-engine/vespa Core Invariants",
       "repository": "vespa-engine/vespa",
-      "source_version": "6dfc8f2d",
-      "content_hash": "3de7e89265aa166a8cb53220bf627322b95eb13ad10e53c356c8265ed4e62a27",
+      "source_version": "170c7d31",
+      "content_hash": "53a85929e5a6ec3fc1392240845da61a1168cfaba1af76c2c6cc46233d2d3048",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T14:01:52.262Z"
+      "persisted_at": "2026-11-19T04:36:35.287Z"
     },
     "agent_contract-agent-contract-vespa-engine-vespa-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-vespa-engine-vespa-autonomous-specialist-persona",
@@ -235975,10 +235980,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/vespa-engine-vespa-agent-contract-vespa-engine-vespa-autonomous-specialist-perso.md",
       "title": "Agent Contract: vespa-engine/vespa Autonomous Specialist Persona",
       "repository": "vespa-engine/vespa",
-      "source_version": "6dfc8f2d",
-      "content_hash": "3e3c8b1cc9add3245512ec68381873293ae18a082136428a4f64c10528af9520",
+      "source_version": "170c7d31",
+      "content_hash": "06babdcf8fa1a160a0613cae39d9f49318f2a9107a4b2695706c0f1132daccb9",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T14:01:52.376Z"
+      "persisted_at": "2026-11-19T04:36:35.434Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa",
@@ -235987,10 +235992,10 @@
       "relative_path": "08_VERIFICATION/vespa-engine-vespa-verification-protocol-empirical-defect-shield-for-vespa-engin.md",
       "title": "Verification Protocol: Empirical Defect Shield for vespa-engine/vespa",
       "repository": "vespa-engine/vespa",
-      "source_version": "149cd0ad",
-      "content_hash": "9ff84b178092f1ffa484c19f8bd8eb27a89bd184362eb13a03d319f256398b51",
+      "source_version": "170c7d31",
+      "content_hash": "b384312c9a917a7750253df8c0de0c46093f75746c92cb1d76b4ee82ae372bdf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T04:53:31.123Z"
+      "persisted_at": "2026-11-19T04:36:35.562Z"
     },
     "candidate_directive-update-lock-file": {
       "item_id": "candidate_directive-update-lock-file",
@@ -236198,9 +236203,9 @@
       "title": "Architecture Intelligence: vespa-engine-vespa-learnings Core Invariants",
       "repository": "vespa-engine-vespa-learnings",
       "source_version": "HEAD",
-      "content_hash": "308b4bc079f44645d703b58f2b6ffc882c19dfeb50a87d520cd6c10148599aad",
+      "content_hash": "fcbef968af86c9dc301c5eb06a21e96e356be325714f7018b8a31ffddeb195f2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T14:02:19.817Z"
+      "persisted_at": "2026-11-19T04:36:39.558Z"
     },
     "agent_contract-agent-contract-vespa-engine-vespa-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-vespa-engine-vespa-learnings-autonomous-specialist-persona",
@@ -236210,9 +236215,9 @@
       "title": "Agent Contract: vespa-engine-vespa-learnings Autonomous Specialist Persona",
       "repository": "vespa-engine-vespa-learnings",
       "source_version": "HEAD",
-      "content_hash": "42b1e6aefdc784dd0e8224b2d15ac5618937bc21d7e47c7864031da9504909cd",
+      "content_hash": "6f0b43043b46601bb495f9628d4146f6193659b0b7f66d1a3a3c836ec2a97f69",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T14:02:19.951Z"
+      "persisted_at": "2026-11-19T04:36:39.734Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vespa-engine-vespa-learnings",
@@ -236222,9 +236227,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for vespa-engine-vespa-learnings",
       "repository": "vespa-engine-vespa-learnings",
       "source_version": "HEAD",
-      "content_hash": "4e564a3dfcac52e36dd7384cb14eb4d31a1995c36056f6495fcfe86dea8fcfc4",
+      "content_hash": "b5c66fb329ceb63d9b5c4cbb6b26e5f97b35ee5a7d6849848c35e56df2407dbc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T04:53:37.394Z"
+      "persisted_at": "2026-11-19T04:36:39.863Z"
     },
     "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2": {
       "learning_id": "learn-huggingface-autotrust-qwen3-8-flash-next-e384-fp4-v2",
@@ -292064,6 +292069,32 @@
       "content_hash": "1c1887d5d3a2993ed943a7b215f6e7cda4423a0a4071415fbbdf6da3cc56b28a",
       "domain_letter": "H",
       "persisted_at": "2026-11-19T04:13:33.933Z"
+    },
+    "rule-9330": {
+      "learning_id": "rule-9330",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9330,
+      "title": "Empirical Invariant Guard in span_attribute_names.cpp",
+      "source_url": "https://github.com/vespa-engine/vespa",
+      "source_version": "170c7d31",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T04:36:34.730Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-span_attribute_names-cpp": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-span_attribute_names-cpp",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5UUM-empirical-invariant-guard-in-span_attribute_names-cpp.md",
+      "title": "Empirical Invariant Guard in span_attribute_names.cpp",
+      "repository": "vespa-engine-vespa-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cdcd5f62494231d7cadf0b94ddf5dc5d9c89cc4e7f9e36f3bd846a6db8902feb",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T04:36:39.411Z"
     }
   },
   "ai-builder-brain": {

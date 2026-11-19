@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T04:13:29.929Z",
-  "total_cycles_completed": 10697,
-  "total_learnings_persisted": 10697,
-  "total_rules_promoted": 10097,
+  "last_updated": "2026-11-19T04:36:34.941Z",
+  "total_cycles_completed": 10700,
+  "total_learnings_persisted": 10700,
+  "total_rules_promoted": 10098,
   "history": [
-    {
-      "timestamp": "2026-11-18T13:09:04.829Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T13:17:16.897Z",
-      "repository": "apple/LensVLM-9B",
-      "learningId": "learn-huggingface-apple-lensvlm-9b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T13:17:19.867Z",
-      "repository": "FalkorDB/FalkorDB",
-      "learningId": "learn-github-falkordb-falkordb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T13:17:27.911Z",
       "repository": "moby/buildkit",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-19T04:13:29.929Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T04:36:20.294Z",
+      "repository": "Bingsu/adetailer",
+      "learningId": "learn-huggingface-bingsu-adetailer",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T04:36:20.793Z",
+      "repository": "graphprotocol/graph-node",
+      "learningId": "learn-github-graphprotocol-graph-node",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T04:36:34.941Z",
+      "repository": "vespa-engine/vespa",
+      "learningId": "learn-github-vespa-engine-vespa",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

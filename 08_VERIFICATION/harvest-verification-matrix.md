@@ -11194,3 +11194,6 @@
 | `CYCLE-20261119-5DGL` | `2026-11-19T04:08:17.253Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md` | Yes (`c31cb021...`) |
 | `CYCLE-20261119-5GQ7` | `2026-11-19T04:08:21.487Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1683` | Yes (`3b1f6b35...`) |
 | `CYCLE-20261119-C2PS` | `2026-11-19T04:13:29.920Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9329` | Yes (`873d2f04...`) |
+| `CYCLE-20261119-5G3H` | `2026-11-19T04:36:20.285Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | Yes (`45d41e96...`) |
+| `CYCLE-20261119-5GHC` | `2026-11-19T04:36:20.784Z` | `graphprotocol/graph-node` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md` | Yes (`5c9434c8...`) |
+| `CYCLE-20261119-5REC` | `2026-11-19T04:36:34.932Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9330` | Yes (`f5345063...`) |

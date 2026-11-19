@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T04:13:35.226Z",
+  "last_updated": "2026-11-19T04:36:39.993Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T02:03:45.340Z",
@@ -933,9 +933,9 @@
       "staged_for_review": 1
     },
     "vespa-engine-vespa-learnings.md": {
-      "processed_at": "2026-11-17T14:02:19.603Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-19T04:36:39.153Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "nsh07-tomato-learnings.md": {
       "processed_at": "2026-11-15T20:23:09.993Z",
@@ -2313,9 +2313,9 @@
       "staged_for_review": 1
     },
     "graphprotocol-graph-node-learnings.md": {
-      "processed_at": "2026-11-14T02:06:30.258Z",
+      "processed_at": "2026-11-19T04:36:38.358Z",
       "promoted_canonical": 0,
-      "staged_for_review": 1
+      "staged_for_review": 0
     },
     "hf-deepseek-ai-deepseek-v4-pro-learnings.md": {
       "processed_at": "2026-11-18T20:37:59.762Z",
@@ -2623,8 +2623,8 @@
       "staged_for_review": 0
     },
     "hf-bingsu-adetailer-learnings.md": {
-      "processed_at": "2026-11-14T15:09:36.922Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T04:36:38.792Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "jithin-sabu-purge-app-learnings.md": {
@@ -3493,7 +3493,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2166,
+  "total_dossiers_evaluated": 2169,
   "total_canonical_promoted": 375,
-  "total_staged_for_review": 1622
+  "total_staged_for_review": 1623
 }

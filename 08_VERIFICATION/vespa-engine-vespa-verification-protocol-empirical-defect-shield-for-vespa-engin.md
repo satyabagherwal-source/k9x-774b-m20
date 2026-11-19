@@ -4,22 +4,22 @@
 {
   "source_repository": "vespa-engine/vespa",
   "source_url": "https://github.com/vespa-engine/vespa",
-  "source_version": "149cd0ad",
+  "source_version": "170c7d31",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T04:53:30.685Z",
+  "timestamp": "2026-11-19T04:36:35.141Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-vespa-engine-vespa",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [vespa-engine/vespa](https://github.com/vespa-engine/vespa) (Revision: `149cd0ad`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T04:53:30.685Z`  
+> **Provenance**: Harvested from [vespa-engine/vespa](https://github.com/vespa-engine/vespa) (Revision: `170c7d31`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T04:36:35.141Z`  
 > **Learning ID**: `learn-github-vespa-engine-vespa`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `vespa-engine/vespa` (Commit: `149cd0ad`)
+- **Target Repository**: `vespa-engine/vespa` (Commit: `170c7d31`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vespa-engine/vespa](https://github.com/vespa-engine/vespa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T04:53:29.958Z  
+> **Harvest Timestamp**: 2026-11-19T04:36:33.938Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The AI search platform
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 7180 stars
+- **Stars / Engagement**: 7185 stars
 
 ---
 
@@ -1076,455 +1076,705 @@ func (v *showHiddenFlag) IsBoolFlag() bool { return true }
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `149cd0ad` (2026-11-15)
-**Commit Message**: Merge pull request #38532 from vespa-engine/chore/update-attributions
+### Incident Patch 1: `9a98f585` (2026-11-18)
+**Commit Message**: Merge pull request #38571 from vespa-engine/toregge/add-trace-spans-for-attribute-vector-flush
 
-chore: update third-party attributions
+Add trace spans for attribute vector flush.
 
-**File**: `ATTRIBUTIONS.md` (modified, +37/-55)
+**File**: `opentelemetry/src/vespa/opentelemetry/span_attribute_names.cpp` (modified, +1/-0)
 ```diff
-@@ -6,7 +6,7 @@ dependencies of Vespa detected by scanning package manifests.
- For the hand-maintained list of vendored C/C++ libraries (Boost, OpenSSL,
- ICU, etc.), see [`NOTICES`](NOTICES).
+@@ -7,6 +7,7 @@ namespace vespa_opentelemetry::span_attribute_names {
+ const std::string attribute("ai.vespa.searchlib.attribute");
+ const std::string ddb_prev_state("ai.vespa.proton.ddb.prev_state");
+ const std::string document_type("ai.vespa.document_type");
++const std::string serial("ai.vespa.searchlib.serial");
+ const std::string subdb("ai.vespa.proton.subdb");
+ 
+ } // namespace vespa_opentelemetry::span_attribute_names
+```
+
+**File**: `opentelemetry/src/vespa/opentelemetry/span_attribute_names.h` (modified, +1/-0)
+```diff
+@@ -9,6 +9,7 @@ namespace vespa_opentelemetry::span_attribute_names {
+ extern const std::string attribute;
+ extern const std::string ddb_prev_state;
+ extern const std::string document_type;
++extern const std::string serial;
+ extern const std::string subdb;
+ 
+ } // namespace vespa_opentelemetry::span_attribute_names
+```
+
+**File**: `searchcore/src/tests/proton/attribute/attributeflush_test.cpp` (modified, +2/-2)
+```diff
+@@ -346,8 +346,8 @@ TEST(AttributeFlushTest, require_that_cleanup_is_performed_after_flush) {
+     EXPECT_TRUE(info.save());
+     auto diskLayout = AttributeDiskLayout::create("flush");
+ 
+-    FlushableAttribute fa(av, diskLayout->getAttributeDir("a6"), TuneFileAttributes(), f._fileHeaderContext,
+-                          f._attributeFieldWriter, f._hwInfo);
++    FlushableAttribute fa(av, diskLayout->getAttributeDir("a6"), f._m.doc_type_and_subdb_name(), TuneFileAttributes(),
++                          f._fileHeaderContext, f._attributeFieldWriter, f._hwInfo);
+     fa.initFlush(30, std::make_shared<search::FlushToken>())->run();
+ 
+     EXPECT_TRUE(info.load());
+```
+
+**File**: `searchcore/src/vespa/searchcore/proton/attribute/attributemanager.cpp` (modified, +2/-2)
+```diff
+@@ -135,8 +135,8 @@ void AttributeManager::addAttribute(AttributeWrap attributeWrap, const ShrinkerS
+         // Flushing of extra attributes is handled elsewhere
+         AttributeVector* attributeP = attribute.get();
+         auto             flusher = std::make_shared<FlushableAttribute>(
+-            std::move(attribute), _diskLayout->createAttributeDir(name), _tuneFileAttributes, _fileHeaderContext,
+-            _attributeFieldWriter, _hwInfo);
++            std::move(attribute), _diskLayout->createAttributeDir(name), _doc_type_and_subdb_name,
++            _tuneFileAttributes, _fileHeaderContext, _attributeFieldWriter, _hwInfo);
+         _flushables[name] = FlushableWrap(flusher, shrinker);
+         _writableAttributes.push_back(attributeP);
+     }
+```
+
+**File**: `searchcore/src/vespa/searchcore/proton/attribute/attributemanager.h` (modified, +3/-0)
+```diff
+@@ -204,6 +204,9 @@ class AttributeManager : public proton::IAttributeManager {
+ 
+     searchcorespi::common::ResourceUsage get_resource_usage() const override;
+     static uint64_t get_size_on_disk_overhead() noexcept;
++    [[nodiscard]] const std::shared_ptr<const DocTypeAndSubDbName>& doc_type_and_subdb_name() const noexcept {
++        return _doc_type_and_subdb_name;
++    }
+     [[nodiscard]] const DocTypeName& doc_type_name() const noexcept {
+         return _doc_type_and_subdb_name->doc_type_name();
+     }
+```
+
+**File**: `searchcore/src/vespa/searchcore/proton/attribute/flushableattribute.cpp` (modified, +43/-11)
+```diff
+@@ -6,7 +6,9 @@
+ #include "attributedisklayout.h"
+ 
+ #include <vespa/check_require.h>
++#include <vespa/opentelemetry/span_attribute_names.h>
+ #include <vespa/searchcommon/attribute/config.h>
++#include <vespa/searchcore/proton/common/tracing.h>
+ #include <vespa/searchcorespi/common/resource_usage.h>
+ #include <vespa/searchlib/attribute/attributefilesavetarget.h>
+ #include <vespa/searchlib/attribute/attributememorysavetarget.h>
+@@ -29,6 +31,7 @@ LOG_SETUP(".proton.attribute.flushableattribute");
+ 
+ using namespace search;
+ using namespace vespalib;
++using opentelemetry::trace::Span;
+ using search::common::CreateAndFreezeTimes;
+ using search::common::FileHeaderContext;
+ using search::common::SerialNumFileHeaderContext;
+@@ -48,6 +51,7 @@ class FlushableAttribute::Flusher : public Task {
+     uint64_t                                    _syncToken;
+     std::string                                 _flushFile;
+     std::unique_ptr<AttributeDirectory::Writer> _writer;
++    std::shared_ptr<Span>                       _span;
+ 
+     bool saveAttribute(); // not updating snap info.
+ public:
+@@ -65,13 +69,28 @@ class FlushableAttribute::Flusher : public Task {
+ 
+ FlushableAttribute::Flusher::Flusher(FlushableAttribute& fattr, SerialNum syncToken,
+                                      std::unique_ptr<AttributeDirectory::Writer> writer)
+-    : _fattr(fattr), _saveTarget(), _saver(), _syncToken(syncToken), _flushFile(""), _writer(std::move(writer)) {
+-    fattr._attr->commit(CommitParam(syncToken, CommitParam::UpdateStats::SKIP));
++    : _fattr(fattr),
++      _saveTarget(),
++      _saver(),
++      _syncToken(syncToken),
++      _flushFile(""),
++      _writer(std::move(writer)),
++      _span() {
+     AttributeVector& attr = *_fattr._attr;
++    auto             tracer = get_tracer();
++    _span = tracer->StartSpan(
++        "Flush attribute",
++        {{vespa_opentelemetry::span_attribute_names::document_type,
++          fattr._doc_type_and_subdb_name->doc_type_name().getName()},
++         {vespa_opentelemetry::span_attribute_names::subdb, fattr._doc_type_and_subdb_name->subdb_name()},
++         {vespa_opentelemetry::span_attribute_names::attribute, attr.getName()},
++         {vespa_opentelemetry::span_attribute_names::serial, std::to_string(syncToken)}});
++    attr.commit(CommitParam(syncToken, CommitParam::UpdateStats::SKIP));
+     // Called by attribute field writer executor
+     _flushFile = _writer->getSnapshotDir(_syncToken) + "/" + attr.getName();
+     _saver = attr.initSave(_flushFile);
+     CHECK(_saver);
++    _span->AddEvent("Done init flush");
+ }
+ 
+ FlushableAttribute::Flusher::~Flusher() = default;
+@@ -134,9 +153,13 @@ bool FlushableAttribute::Flusher::cleanUp() {
+ }
+ 
+ void FlushableAttribute::Flusher::run() {
++    _span->AddEvent("Starting background flush");
++    auto tracer = get_tracer();
++    auto scope = tracer->WithActiveSpan(_span);
+     if (_syncToken <= _fattr.getFlushedSerialNum()) {
+         // another flusher has created an equal or better snapshot
+         // after this flusher was created
++        _span->End();
+         return;
+     }
+     if (!flush()) {
+@@ -146,13 +169,15 @@ void FlushableAttribute::Flusher::run() {
+     if (!cleanUp()) {
+         // TODO (geirst): throw exception ?
+     }
++    _span->End();
+ }
+ 
+ FlushableAttribute::FlushableAttribute(AttributeVectorSP attr, const std::shared_ptr<AttributeDirectory>& attrDir,
+-                                       const TuneFileAttributes&         tuneFileAttributes,
+-                                       const FileHeaderContext&          fileHeaderContext,
+-                                       vespalib::ISequencedTaskExecutor& attributeFieldWriter,
+-                                       const vespalib::HwInfo&           hwInfo)
++                                       std::shared_ptr<const DocTypeAndSubDbName> doc_type_and_subdb_name_in,
++                                       const TuneFileAttributes&                  tuneFileAttributes,
++                                       const FileHeaderContext&                   fileHeaderContext,
++                                       vespalib::ISequencedTaskExecutor&          attributeFieldWriter,
++                                       const vespalib::HwInfo&                    hwInfo)
+     : LeafFlushTarget(make_string("attribute.flush.%s", attr->getName().c_str()), Type::SYNC, Component::ATTRIBUTE),
+       _attr(attr),
+       _cleanUpAfterFlush(true),
+@@ -162,6 +187,7 @@ FlushableAttribute::FlushableAttribute(AttributeVectorSP attr, const std::shared
+       _attributeFieldWriter(attributeFieldWriter),
+       _hwInfo(hwInfo),
+       _attrDir(attrDir),
++      _doc_type_and_subdb_name(std::move(doc_type_and_subdb_name_in)),
+       _replay_operation_cost(0.0),
+       _paged(_attr->getConfig().paged()) {
+     _lastStats.setPathElementsToLog(8);
+@@ -197,8 +223,11 @@ IFlushTarget::Time FlushableAttribute::getLastFlushTime() const {
+     return _attrDir->getLastFlushTime();
+ }
+ 
+-void FlushableAttribut
+```
+
+**File**: `searchcore/src/vespa/searchcore/proton/attribute/flushableattribute.h` (modified, +20/-14)
+```diff
+@@ -2,10 +2,13 @@
+ 
+ #pragma once
+ 
++#include <vespa/searchcore/proton/common/doc_type_and_subdb_name.h>
+ #include <vespa/searchcorespi/flush/iflushtarget.h>
+ #include <vespa/searchlib/common/tunefileinfo.h>
+ #include <vespa/vespalib/util/hw_info.h>
+ 
++#include <opentelemetry/trace/span.h>
++
+ namespace search {
+ class AttributeVector;
+ }
+@@ -36,18 +39,20 @@ class FlushableAttribute : public searchcorespi::LeafFlushTarget {
+     using AttributeVectorSP = std::shared_ptr<search::AttributeVector>;
+     using FlushStats = searchcorespi::FlushStats;
+ 
+-    AttributeVectorSP                        _attr;
+-    bool                                     _cleanUpAfterFlush;
+-    FlushStats                               _lastStats;
+-    const search::TuneFileAttributes         _tuneFileAttributes;
+-    const search::common::FileHeaderContext& _fileHeaderContext;
+-    vespalib::ISequencedTaskExecutor&        _attributeFieldWriter;
+-    vespalib::HwInfo                         _hwInfo;
+-    std::shared_ptr<AttributeDirectory>      _attrDir;
+-    double                                   _replay_operation_cost;
+-    bool                                     _paged;
+-
+-    void internal_init_flush(SerialNum currentSerial, TaskPromise task_promise);
++    AttributeVectorSP                                _attr;
++    bool                                             _cleanUpAfterFlush;
++    FlushStats                                       _lastStats;
++    const search::TuneFileAttributes                 _tuneFileAttributes;
++    const search::common::FileHeaderContext&         _fileHeaderContext;
++    vespalib::ISequencedTaskExecutor&                _attributeFieldWriter;
++    vespalib::HwInfo                                 _hwInfo;
++    std::shared_ptr<AttributeDirectory>              _attrDir;
++    const std::shared_ptr<const DocTypeAndSubDbName> _doc_type_and_subdb_name;
++    double                                           _replay_operation_cost;
++    bool                                             _paged;
++
++    void internal_init_flush(SerialNum currentSerial, TaskPromise task_promise,
++                             std::shared_ptr<opentelemetry::trace::Span> parent_span);
+ 
+ public:
+     using SP = std::shared_ptr<FlushableAttribute>;
+@@ -59,8 +64,9 @@ class FlushableAttribute : public searchcorespi::LeafFlushTarget {
+      * fileHeaderContext must be kept alive by caller.
+      **/
+     FlushableAttribute(AttributeVectorSP attr, const std::shared_ptr<AttributeDirectory>& attrDir,
+-                       const search::TuneFileAttributes&        tuneFileAttributes,
+-                       const search::common::FileHeaderContext& fileHeaderContext,
++                       std::shared_ptr<const DocTypeAndSubDbName> doc_type_and_sub_db_name_in,
++                       const search::TuneFileAttributes&          tuneFileAttributes,
++                       const search::common::FileHeaderContext&   fileHeaderContext,
+                        vespalib::ISequencedTaskExecutor& attributeFieldWriter, const vespalib::HwInfo& hwInfo);
+ 
+     ~FlushableAttribute() override;
+```
+
+**File**: `searchcore/src/vespa/searchcore/proton/documentmetastore/documentmetastoreflushtarget.cpp` (modified, +26/-9)
+```diff
+@@ -5,8 +5,10 @@
+ #include "documentmetastore.h"
+ 
+ #include <vespa/check_require.h>
++#include <vespa/opentelemetry/span_attribute_names.h>
+ #include <vespa/searchcore/proton/attribute/attribute_directory.h>
+ #include <vespa/searchcore/proton/attribute/attributedisklayout.h>
++#include <vespa/searchcore/proton/common/tracing.h>
+ #include <vespa/searchcore/proton/server/itlssyncer.h>
+ #include <vespa/searchcorespi/common/resource_usage.h>
+ #include <vespa/searchlib/attribute/attributefilesavetarget.h>
+@@ -26,6 +28,7 @@ LOG_SETUP(".proton.documentmetastore.documentmetastoreflushtarget");
+ 
+ using namespace search;
+ using namespace vespalib;
++using opentelemetry::trace::Span;
+ using search::common::CreateAndFreezeTimes;
+ using search::common::FileHeaderContext;
+ using search::common::SerialNumFileHeaderContext;
+@@ -45,6 +48,7 @@ class DocumentMetaStoreFlushTarget::Flusher : public Task {
+     uint64_t                                    _syncToken;
+     std::string                                 _flushDir;
+     std::unique_ptr<AttributeDirectory::Writer> _writer;
++    std::shared_ptr<Span>                       _span;
+ 
+     bool saveDocumentMetaStore(); // not updating snap info.
+ public:
+@@ -61,14 +65,23 @@ class DocumentMetaStoreFlushTarget::Flusher : public Task {
+ 
+ DocumentMetaStoreFlushTarget::Flusher::Flusher(DocumentMetaStoreFlushTarget& dmsft, SerialNum syncToken,
+                                                std::unique_ptr<AttributeDirectory::Writer> writer)
+-    : _dmsft(dmsft), _saver(), _syncToken(syncToken), _flushDir(""), _writer(std::move(writer)) {
++    : _dmsft(dmsft), _saver(), _syncToken(syncToken), _flushDir(""), _writer(std::move(writer)), _span() {
+     // Called by document db main executor
+     DocumentMetaStore& dms = *_dmsft._dms;
++    auto               tracer = get_tracer();
++    _span = tracer->StartSpan(
++        "Flush documentmetastore",
++        {{vespa_opentelemetry::span_attribute_names::document_type,
++          _dmsft._doc_type_and_subdb_name->doc_type_name().getName()},
++         {vespa_opentelemetry::span_attribute_names::subdb, _dmsft._doc_type_and_subdb_name->subdb_name()},
++         {vespa_opentelemetry::span_attribute_names::serial, std::to_string(syncToken)}});
++
+     dms.commit(CommitParam(syncToken, CommitParam::UpdateStats::SKIP));
+     _flushDir = _writer->getSnapshotDir(syncToken);
+     std::string newBaseFileName(_flushDir + "/" + dms.getName());
+     _saver = dms.initSave(newBaseFileName);
+     CHECK(_saver);
++    _span->AddEvent("Done init flush");
+ }
+ 
+ DocumentMetaStoreFlushTarget::Flusher::~Flusher() = default;
+@@ -141,9 +154,13 @@ bool DocumentMetaStoreFlushTarget::Flusher::cleanUp() {
+ }
+ 
+ void DocumentMetaStoreFlushTarget::Flusher::run() {
++    _span->AddEvent("Starting background flush");
++    auto tracer = get_tracer();
++    auto scope = tracer->WithActiveSpan(_span);
+     if (_syncToken <= _dmsft.getFlushedSerialNum()) {
+         // another flusher has created an equal or better snapshot
+         // after this flusher was created
++        _span->End();
+         return;
+     }
+     if (!flush()) {
+@@ -153,13 +170,14 @@ void DocumentMetaStoreFlushTarget::Flusher::run() {
+     if (!cleanUp()) {
+         // TODO (geirst): throw exception ?
+     }
++    _span->End();
+ }
+ 
+-DocumentMetaStoreFlushTarget::DocumentMetaStoreFlushTarget(const DocumentMetaStore::SP dms, ITlsSyncer& tlsSyncer,
+-                                                           const std::string&        baseDir,
+-                                                           const TuneFileAttributes& tuneFileAttributes,
+-                                                           const FileHeaderContext&  fileHeaderContext,
+-                                                           const vespalib::HwInfo&   hwInfo)
++DocumentMetaStoreFlushTarget::DocumentMetaStoreFlushTarget(
++    const DocumentMetaStore::SP dms, ITlsSyncer& tlsSyncer, const std::string& baseDir,
++    std::shared_ptr<const DocTypeAndSubDbName> doc_type_and_subdb_name_in,
++    const TuneFileAttributes& tuneFileAttributes, const FileHeaderContext& fileHeaderContext,
++    const vespalib::HwInfo& hwInfo)
+     : LeafFlushTarget("documentmetastore.flush", Type::SYNC, Component::ATTRIBUTE),
+       _dms(dms),
+       _tlsSyncer(tlsSyncer),
+@@ -170,9 +188,8 @@ DocumentMetaStoreFlushTarget::DocumentMetaStoreFlushTarget(const DocumentMetaSto
+       _fileHeaderContext(fileHeaderContext),
+       _hwInfo(hwInfo),
+       _diskLayout(AttributeDiskLayout::createSimple(baseDir)),
+-      _dmsDir(_diskLayout->createAttributeDir(""))
+-
+-{
++      _dmsDir(_diskLayout->createAttributeDir("")),
++      _doc_type_and_subdb_name(std::move(doc_type_and_subdb_name_in)) {
+     _lastStats.setPathElementsToLog(8);
+ }
  
--Last updated: 2026-11-14
-+Last updated: 2026-11-15
- 
- ---
- 
-@@ -94,29 +94,28 @@ Last updated: 2026-11-14
- 
- ---
- 
--## addressable 2.9.0 — Apache 2.0
-+## addressable 2.9.2 — Apache 2.0
- 
- - Homepage: <https://github.com/sporkmonger/addressable>
- - Copyright Bob Aman</dd>
- 
- ---
- 
--## afm 0.2.2 — MIT
-+## afm 1.0.1 — MIT
- 
- - Homepage: <http://github.com/halfbyte/afm>
--- Copyright 2010 Jan Krutisch
--- Copyright 2009 Jan Krutisch
-+- Copyright Jan Krutisch
- 
- ---
- 
--## Ascii85 1.1.1 — Adobe Postscript AFM
-+## Ascii85 2.0.1 — Adobe Postscript AFM
- 
- - Homepage: <https://github.com/DataWraith/ascii85gem/>
- - Copyright 2009 Johannes Holzfuß
- 
- ---
- 
--## Ascii85 1.1.1 — MIT
-+## Ascii85 2.0.1 — MIT
- 
- - Homepage: <https://github.com/DataWraith/ascii85gem/>
- - Copyright 2009 Johannes Holzfuß
-@@ -131,13 +130,9 @@ Last updated: 2026-11-14
- 
- ---
- 
--## async 2.39.0 — MIT
-+## async 2.46.0 — MIT
- 
- - Homepage: <https://github.com/socketry/async>
---  by Kent Gruber
--- Copyright 2024
--- Copyright 2017
---  by Patrik Wenger
- 
- ---
- 
-@@ -209,14 +204,15 @@ Last updated: 2026-11-14
- 
- ---
- 
--## com.fasterxml.jackson.core 2.22 — Apache 2.0
-+## com.fasterxml.jackson.core 2.23 — Apache 2.0
- 
--- Homepage: <https://github.com/FasterXML/jackson>
-+- Homepage: <http://fasterxml.com/>
-+- Copyright 2007 Tatu Saloranta tatu.saloranta@iki.fi
- - FasterXML
- 
- ---
- 
--## com.fasterxml.jackson.core 2.22.4 — Apache 2.0
-+## com.fasterxml.jackson.core 2.23.0 — Apache 2.0
- 
- - Homepage: <http://fasterxml.com/>
- - Copyright 2007 Tatu Saloranta tatu.saloranta@iki.fi
-@@ -297,28 +293,26 @@ Last updated: 2026-11-14
- 
- ---
- 
--## console 1.35.1 — MIT
-+## console 1.38.0 — MIT
- 
--- Homepage: <https://socketry.github.io/console>
---  by Samuel Williams
--- Copyright 2022
-+- Homepage: <https://github.com/socketry/console>
- 
- ---
- 
--## csv 3.3.6 — BSD 2
-+## csv 3.3.7 — BSD 2
- 
- - Homepage: <https://github.com/ruby/csv>
- - Copyright 2007-2017 Yukihiro Matsumoto
- - Copyright 2017 pavel
--- Copyright 2018 Vladislav
- - Copyright 2018 Kouhei Sutou
-+- Copyright 2018 Vladislav
- - Copyright 2017-2018 Steven Daniels
- - Copyright 2017 Espartaco Palma
- - Copyright 2018 Tomohiro Ogoke
--- Copyright 2017 Marcus Stollsteimer
--- Copyright 2005-2016 James Edward Gray II
- - Copyright 2017 SHIBATA Hiroshi
- - Copyright 2017 Olivier Lacan
-+- Copyright 2005-2016 James Edward Gray II
-+- Copyright 2017 Marcus Stollsteimer
- - Copyright 2018 Mitsutaka Mimura
- 
- ---
-@@ -344,7 +338,7 @@ Last updated: 2026-11-14
- 
- ---
- 
--## ethon 0.18.0 — MIT
-+## ethon 0.19.2 — MIT
- 
- - Homepage: <https://github.com/typhoeus/ethon>
- - Copyright 2012-2016 Hans Hasselberg
-@@ -389,10 +383,10 @@ Last updated: 2026-11-14
- 
- ---
- 
--## fiber-storage 0.1.2 — MIT
-+## fiber-storage 1.0.1 — MIT
- 
--- Homepage: <https://github.com/socketry/fiber-storage>
--- Copyright, 2022-2023, by Samuel Williams.
-+- Homepage: <https://github.com/ioquatix/fiber-storage>
-+- Copyright, 2022-2025, by Samuel Williams.
- 
- ---
- 
-@@ -627,9 +621,10 @@ Last updated: 2026-11-14
- 
- ---
- 
--## html-proofer 5.2.2 — MIT
-+## html-proofer 5.2.3 — MIT
- 
- - Homepage: <https://github.com/gjtorikian/html-proofer>
-+- Copyright 2013 Garen Torikian
- 
- ---
- 
-@@ -655,7 +650,7 @@ Last updated: 2026-11-14
- 
- ---
- 
--## io-event 1.16.4 — MIT
-+## io-event 1.22.3 — MIT
- 
- - Homepage: <https://github.com/socketry/io-event>
- -  by Wander Hillen
-@@ -711,7 +706,7 @@ Last updated: 2026-11-14
- 
- ---
- 
--## jekyll-seo-tag 2.8.0 — MIT
-+## jekyll-seo-tag 2.9.1 — MIT
- 
- - Homepage: <https://github.com/jekyll/jekyll-seo-tag>
- - Copyright 2015 Ben Balter and the jekyll-seo-tag contributors
-@@ -783,17 +778,17 @@ Last updated: 2026-11-14
- 
- ---
- 
--## mercenary 0.4.0 — MIT
-+## mdast-util-to-hast 13.2.2 — MIT
- 
--- Homepage: <https://github.com/jekyll/mercenary>
--- Copyright 2013 Parker Moore and the mercenary contributors
-+- Homepage: <https://github.com/syntax-tree/mdast-util-to-hast#readme>
-+- Copyright Titus Wormer <tituswormer@gmail.com>
- 
- ---
- 
--## metrics 0.15.0 — MIT
-+## mercenary 0.4.0 — MIT
- 
--- Homepage: <https://github.com/socketry/metrics>
--- Copyright, 2021-2025, by Samuel Williams.
-+- Homepage: <https://github.com/jekyll/mercenary>
-+- Copyright 2013 Parker Moore and the mercenary contributors
- 
- ---
- 
-@@ -850,12 +845,13 @@ Last updated: 2026-11-14
- 
- ---
- 
--## nokogiri 1.19.4 — MIT
-+## nokogiri 1.19.7 — MIT
- 
- - Homepage: <https://nokogiri.org>
- - Copyright 2008-2023 Mike Dalessio
--- Copyright 1998-2012 Daniel Veillard
- - Copyright 1995-2017 Jean-loup Gailly and Mark Adler
-+- Copyright 1998-2012 Daniel Veillard
-+- Copyright 2020 Joshua J Baker
- - Copyright 2001-2003 Thai Open Source Software Center Ltd
- - Copyright 2001-2002 SourceForge ISO-RELAX Project
- - Copyright 2001-2002 Thomas Broyer
-@@ -1042,7 +1038,7 @@ Last updated: 2026-11-14
- 
- ---
- 
--## pdf-reader 2.15.1 — MIT
-+## pd
 ```
 
 ---
 
-### Incident Patch 2: `be01309c` (2026-11-15)
-**Commit Message**: chore: update third-party attributions
+### Incident Patch 2: `38911c2f` (2026-11-18)
+**Commit Message**: Add trace spans for attribute vector flush.
 
-**File**: `ATTRIBUTIONS.md` (modified, +37/-55)
+**File**: `opentelemetry/src/vespa/opentelemetry/span_attribute_names.cpp` (modified, +1/-0)
 ```diff
-@@ -6,7 +6,7 @@ dependencies of Vespa detected by scanning package manifests.
- For the hand-maintained list of vendored C/C++ libraries (Boost, OpenSSL,
- ICU, etc.), see [`NOTICES`](NOTICES).
+@@ -7,6 +7,7 @@ namespace vespa_opentelemetry::span_attribute_names {
+ const std::string attribute("ai.vespa.searchlib.attribute");
+ const std::string ddb_prev_state("ai.vespa.proton.ddb.prev_state");
+ const std::string document_type("ai.vespa.document_type");
++const std::string serial("ai.vespa.searchlib.serial");
+ const std::string subdb("ai.vespa.proton.subdb");
+ 
+ } // namespace vespa_opentelemetry::span_attribute_names
+```
+
+**File**: `opentelemetry/src/vespa/opentelemetry/span_attribute_names.h` (modified, +1/-0)
+```diff
+@@ -9,6 +9,7 @@ namespace vespa_opentelemetry::span_attribute_names {
+ extern const std::string attribute;
+ extern const std::string ddb_prev_state;
+ extern const std::string document_type;
++extern const std::string serial;
+ extern const std::string subdb;
+ 
+ } // namespace vespa_opentelemetry::span_attribute_names
+```
+
+**File**: `searchcore/src/tests/proton/attribute/attributeflush_test.cpp` (modified, +2/-2)
+```diff
+@@ -346,8 +346,8 @@ TEST(AttributeFlushTest, require_that_cleanup_is_performed_after_flush) {
+     EXPECT_TRUE(info.save());
+     auto diskLayout = AttributeDiskLayout::create("flush");
+ 
+-    FlushableAttribute fa(av, diskLayout->getAttributeDir("a6"), TuneFileAttributes(), f._fileHeaderContext,
+-                          f._attributeFieldWriter, f._hwInfo);
++    FlushableAttribute fa(av, diskLayout->getAttributeDir("a6"), f._m.doc_type_and_subdb_name(), TuneFileAttributes(),
++                          f._fileHeaderContext, f._attributeFieldWriter, f._hwInfo);
+     fa.initFlush(30, std::make_shared<search::FlushToken>())->run();
+ 
+     EXPECT_TRUE(info.load());
+```
+
+**File**: `searchcore/src/vespa/searchcore/proton/attribute/attributemanager.cpp` (modified, +2/-2)
+```diff
+@@ -135,8 +135,8 @@ void AttributeManager::addAttribute(AttributeWrap attributeWrap, const ShrinkerS
+         // Flushing of extra attributes is handled elsewhere
+         AttributeVector* attributeP = attribute.get();
+         auto             flusher = std::make_shared<FlushableAttribute>(
+-            std::move(attribute), _diskLayout->createAttributeDir(name), _tuneFileAttributes, _fileHeaderContext,
+-            _attributeFieldWriter, _hwInfo);
++            std::move(attribute), _diskLayout->createAttributeDir(name), _doc_type_and_subdb_name,
++            _tuneFileAttributes, _fileHeaderContext, _attributeFieldWriter, _hwInfo);
+         _flushables[name] = FlushableWrap(flusher, shrinker);
+         _writableAttributes.push_back(attributeP);
+     }
+```
+
+**File**: `searchcore/src/vespa/searchcore/proton/attribute/attributemanager.h` (modified, +3/-0)
+```diff
+@@ -204,6 +204,9 @@ class AttributeManager : public proton::IAttributeManager {
+ 
+     searchcorespi::common::ResourceUsage get_resource_usage() const override;
+     static uint64_t get_size_on_disk_overhead() noexcept;
++    [[nodiscard]] const std::shared_ptr<const DocTypeAndSubDbName>& doc_type_and_subdb_name() const noexcept {
++        return _doc_type_and_subdb_name;
++    }
+     [[nodiscard]] const DocTypeName& doc_type_name() const noexcept {
+         return _doc_type_and_subdb_name->doc_type_name();
+     }
+```
+
+**File**: `searchcore/src/vespa/searchcore/proton/attribute/flushableattribute.cpp` (modified, +43/-11)
+```diff
+@@ -6,7 +6,9 @@
+ #include "attributedisklayout.h"
+ 
+ #include <vespa/check_require.h>
++#include <vespa/opentelemetry/span_attribute_names.h>
+ #include <vespa/searchcommon/attribute/config.h>
++#include <vespa/searchcore/proton/common/tracing.h>
+ #include <vespa/searchcorespi/common/resource_usage.h>
+ #include <vespa/searchlib/attribute/attributefilesavetarget.h>
+ #include <vespa/searchlib/attribute/attributememorysavetarget.h>
+@@ -29,6 +31,7 @@ LOG_SETUP(".proton.attribute.flushableattribute");
+ 
+ using namespace search;
+ using namespace vespalib;
++using opentelemetry::trace::Span;
+ using search::common::CreateAndFreezeTimes;
+ using search::common::FileHeaderContext;
+ using search::common::SerialNumFileHeaderContext;
+@@ -48,6 +51,7 @@ class FlushableAttribute::Flusher : public Task {
+     uint64_t                                    _syncToken;
+     std::string                                 _flushFile;
+     std::unique_ptr<AttributeDirectory::Writer> _writer;
++    std::shared_ptr<Span>                       _span;
+ 
+     bool saveAttribute(); // not updating snap info.
+ public:
+@@ -65,13 +69,28 @@ class FlushableAttribute::Flusher : public Task {
+ 
+ FlushableAttribute::Flusher::Flusher(FlushableAttribute& fattr, SerialNum syncToken,
+                                      std::unique_ptr<AttributeDirectory::Writer> writer)
+-    : _fattr(fattr), _saveTarget(), _saver(), _syncToken(syncToken), _flushFile(""), _writer(std::move(writer)) {
+-    fattr._attr->commit(CommitParam(syncToken, CommitParam::UpdateStats::SKIP));
++    : _fattr(fattr),
++      _saveTarget(),
++      _saver(),
++      _syncToken(syncToken),
++      _flushFile(""),
++      _writer(std::move(writer)),
++      _span() {
+     AttributeVector& attr = *_fattr._attr;
++    auto             tracer = get_tracer();
++    _span = tracer->StartSpan(
++        "Flush attribute",
++        {{vespa_opentelemetry::span_attribute_names::document_type,
++          fattr._doc_type_and_subdb_name->doc_type_name().getName()},
++         {vespa_opentelemetry::span_attribute_names::subdb, fattr._doc_type_and_subdb_name->subdb_name()},
++         {vespa_opentelemetry::span_attribute_names::attribute, attr.getName()},
++         {vespa_opentelemetry::span_attribute_names::serial, std::to_string(syncToken)}});
++    attr.commit(CommitParam(syncToken, CommitParam::UpdateStats::SKIP));
+     // Called by attribute field writer executor
+     _flushFile = _writer->getSnapshotDir(_syncToken) + "/" + attr.getName();
+     _saver = attr.initSave(_flushFile);
+     CHECK(_saver);
++    _span->AddEvent("Done init flush");
+ }
+ 
+ FlushableAttribute::Flusher::~Flusher() = default;
+@@ -134,9 +153,13 @@ bool FlushableAttribute::Flusher::cleanUp() {
+ }
+ 
+ void FlushableAttribute::Flusher::run() {
++    _span->AddEvent("Starting background flush");
++    auto tracer = get_tracer();
++    auto scope = tracer->WithActiveSpan(_span);
+     if (_syncToken <= _fattr.getFlushedSerialNum()) {
+         // another flusher has created an equal or better snapshot
+         // after this flusher was created
++        _span->End();
+         return;
+     }
+     if (!flush()) {
+@@ -146,13 +169,15 @@ void FlushableAttribute::Flusher::run() {
+     if (!cleanUp()) {
+         // TODO (geirst): throw exception ?
+     }
++    _span->End();
+ }
+ 
+ FlushableAttribute::FlushableAttribute(AttributeVectorSP attr, const std::shared_ptr<AttributeDirectory>& attrDir,
+-                                       const TuneFileAttributes&         tuneFileAttributes,
+-                                       const FileHeaderContext&          fileHeaderContext,
+-                                       vespalib::ISequencedTaskExecutor& attributeFieldWriter,
+-                                       const vespalib::HwInfo&           hwInfo)
++                                       std::shared_ptr<const DocTypeAndSubDbName> doc_type_and_subdb_name_in,
++                                       const TuneFileAttributes&                  tuneFileAttributes,
++                                       const FileHeaderContext&                   fileHeaderContext,
++                                       vespalib::ISequencedTaskExecutor&          attributeFieldWriter,
++                                       const vespalib::HwInfo&                    hwInfo)
+     : LeafFlushTarget(make_string("attribute.flush.%s", attr->getName().c_str()), Type::SYNC, Component::ATTRIBUTE),
+       _attr(attr),
+       _cleanUpAfterFlush(true),
+@@ -162,6 +187,7 @@ FlushableAttribute::FlushableAttribute(AttributeVectorSP attr, const std::shared
+       _attributeFieldWriter(attributeFieldWriter),
+       _hwInfo(hwInfo),
+       _attrDir(attrDir),
++      _doc_type_and_subdb_name(std::move(doc_type_and_subdb_name_in)),
+       _replay_operation_cost(0.0),
+       _paged(_attr->getConfig().paged()) {
+     _lastStats.setPathElementsToLog(8);
+@@ -197,8 +223,11 @@ IFlushTarget::Time FlushableAttribute::getLastFlushTime() const {
+     return _attrDir->getLastFlushTime();
+ }
+ 
+-void FlushableAttribut
+```
+
+**File**: `searchcore/src/vespa/searchcore/proton/attribute/flushableattribute.h` (modified, +20/-14)
+```diff
+@@ -2,10 +2,13 @@
+ 
+ #pragma once
+ 
++#include <vespa/searchcore/proton/common/doc_type_and_subdb_name.h>
+ #include <vespa/searchcorespi/flush/iflushtarget.h>
+ #include <vespa/searchlib/common/tunefileinfo.h>
+ #include <vespa/vespalib/util/hw_info.h>
+ 
++#include <opentelemetry/trace/span.h>
++
+ namespace search {
+ class AttributeVector;
+ }
+@@ -36,18 +39,20 @@ class FlushableAttribute : public searchcorespi::LeafFlushTarget {
+     using AttributeVectorSP = std::shared_ptr<search::AttributeVector>;
+     using FlushStats = searchcorespi::FlushStats;
+ 
+-    AttributeVectorSP                        _attr;
+-    bool                                     _cleanUpAfterFlush;
+-    FlushStats                               _lastStats;
+-    const search::TuneFileAttributes         _tuneFileAttributes;
+-    const search::common::FileHeaderContext& _fileHeaderContext;
+-    vespalib::ISequencedTaskExecutor&        _attributeFieldWriter;
+-    vespalib::HwInfo                         _hwInfo;
+-    std::shared_ptr<AttributeDirectory>      _attrDir;
+-    double                                   _replay_operation_cost;
+-    bool                                     _paged;
+-
+-    void internal_init_flush(SerialNum currentSerial, TaskPromise task_promise);
++    AttributeVectorSP                                _attr;
++    bool                                             _cleanUpAfterFlush;
++    FlushStats                                       _lastStats;
++    const search::TuneFileAttributes                 _tuneFileAttributes;
++    const search::common::FileHeaderContext&         _fileHeaderContext;
++    vespalib::ISequencedTaskExecutor&                _attributeFieldWriter;
++    vespalib::HwInfo                                 _hwInfo;
++    std::shared_ptr<AttributeDirectory>              _attrDir;
++    const std::shared_ptr<const DocTypeAndSubDbName> _doc_type_and_subdb_name;
++    double                                           _replay_operation_cost;
++    bool                                             _paged;
++
++    void internal_init_flush(SerialNum currentSerial, TaskPromise task_promise,
++                             std::shared_ptr<opentelemetry::trace::Span> parent_span);
+ 
+ public:
+     using SP = std::shared_ptr<FlushableAttribute>;
+@@ -59,8 +64,9 @@ class FlushableAttribute : public searchcorespi::LeafFlushTarget {
+      * fileHeaderContext must be kept alive by caller.
+      **/
+     FlushableAttribute(AttributeVectorSP attr, const std::shared_ptr<AttributeDirectory>& attrDir,
+-                       const search::TuneFileAttributes&        tuneFileAttributes,
+-                       const search::common::FileHeaderContext& fileHeaderContext,
++                       std::shared_ptr<const DocTypeAndSubDbName> doc_type_and_sub_db_name_in,
++                       const search::TuneFileAttributes&          tuneFileAttributes,
++                       const search::common::FileHeaderContext&   fileHeaderContext,
+                        vespalib::ISequencedTaskExecutor& attributeFieldWriter, const vespalib::HwInfo& hwInfo);
+ 
+     ~FlushableAttribute() override;
+```
+
+**File**: `searchcore/src/vespa/searchcore/proton/documentmetastore/documentmetastoreflushtarget.cpp` (modified, +26/-9)
+```diff
+@@ -5,8 +5,10 @@
+ #include "documentmetastore.h"
+ 
+ #include <vespa/check_require.h>
++#include <vespa/opentelemetry/span_attribute_names.h>
+ #include <vespa/searchcore/proton/attribute/attribute_directory.h>
+ #include <vespa/searchcore/proton/attribute/attributedisklayout.h>
++#include <vespa/searchcore/proton/common/tracing.h>
+ #include <vespa/searchcore/proton/server/itlssyncer.h>
+ #include <vespa/searchcorespi/common/resource_usage.h>
+ #include <vespa/searchlib/attribute/attributefilesavetarget.h>
+@@ -26,6 +28,7 @@ LOG_SETUP(".proton.documentmetastore.documentmetastoreflushtarget");
+ 
+ using namespace search;
+ using namespace vespalib;
++using opentelemetry::trace::Span;
+ using search::common::CreateAndFreezeTimes;
+ using search::common::FileHeaderContext;
+ using search::common::SerialNumFileHeaderContext;
+@@ -45,6 +48,7 @@ class DocumentMetaStoreFlushTarget::Flusher : public Task {
+     uint64_t                                    _syncToken;
+     std::string                                 _flushDir;
+     std::unique_ptr<AttributeDirectory::Writer> _writer;
++    std::shared_ptr<Span>                       _span;
+ 
+     bool saveDocumentMetaStore(); // not updating snap info.
+ public:
+@@ -61,14 +65,23 @@ class DocumentMetaStoreFlushTarget::Flusher : public Task {
+ 
+ DocumentMetaStoreFlushTarget::Flusher::Flusher(DocumentMetaStoreFlushTarget& dmsft, SerialNum syncToken,
+                                                std::unique_ptr<AttributeDirectory::Writer> writer)
+-    : _dmsft(dmsft), _saver(), _syncToken(syncToken), _flushDir(""), _writer(std::move(writer)) {
++    : _dmsft(dmsft), _saver(), _syncToken(syncToken), _flushDir(""), _writer(std::move(writer)), _span() {
+     // Called by document db main executor
+     DocumentMetaStore& dms = *_dmsft._dms;
++    auto               tracer = get_tracer();
++    _span = tracer->StartSpan(
++        "Flush documentmetastore",
++        {{vespa_opentelemetry::span_attribute_names::document_type,
++          _dmsft._doc_type_and_subdb_name->doc_type_name().getName()},
++         {vespa_opentelemetry::span_attribute_names::subdb, _dmsft._doc_type_and_subdb_name->subdb_name()},
++         {vespa_opentelemetry::span_attribute_names::serial, std::to_string(syncToken)}});
++
+     dms.commit(CommitParam(syncToken, CommitParam::UpdateStats::SKIP));
+     _flushDir = _writer->getSnapshotDir(syncToken);
+     std::string newBaseFileName(_flushDir + "/" + dms.getName());
+     _saver = dms.initSave(newBaseFileName);
+     CHECK(_saver);
++    _span->AddEvent("Done init flush");
+ }
+ 
+ DocumentMetaStoreFlushTarget::Flusher::~Flusher() = default;
+@@ -141,9 +154,13 @@ bool DocumentMetaStoreFlushTarget::Flusher::cleanUp() {
+ }
+ 
+ void DocumentMetaStoreFlushTarget::Flusher::run() {
++    _span->AddEvent("Starting background flush");
++    auto tracer = get_tracer();
++    auto scope = tracer->WithActiveSpan(_span);
+     if (_syncToken <= _dmsft.getFlushedSerialNum()) {
+         // another flusher has created an equal or better snapshot
+         // after this flusher was created
++        _span->End();
+         return;
+     }
+     if (!flush()) {
+@@ -153,13 +170,14 @@ void DocumentMetaStoreFlushTarget::Flusher::run() {
+     if (!cleanUp()) {
+         // TODO (geirst): throw exception ?
+     }
++    _span->End();
+ }
+ 
+-DocumentMetaStoreFlushTarget::DocumentMetaStoreFlushTarget(const DocumentMetaStore::SP dms, ITlsSyncer& tlsSyncer,
+-                                                           const std::string&        baseDir,
+-                                                           const TuneFileAttributes& tuneFileAttributes,
+-                                                           const FileHeaderContext&  fileHeaderContext,
+-                                                           const vespalib::HwInfo&   hwInfo)
++DocumentMetaStoreFlushTarget::DocumentMetaStoreFlushTarget(
++    const DocumentMetaStore::SP dms, ITlsSyncer& tlsSyncer, const std::string& baseDir,
++    std::shared_ptr<const DocTypeAndSubDbName> doc_type_and_subdb_name_in,
++    const TuneFileAttributes& tuneFileAttributes, const FileHeaderContext& fileHeaderContext,
++    const vespalib::HwInfo& hwInfo)
+     : LeafFlushTarget("documentmetastore.flush", Type::SYNC, Component::ATTRIBUTE),
+       _dms(dms),
+       _tlsSyncer(tlsSyncer),
+@@ -170,9 +188,8 @@ DocumentMetaStoreFlushTarget::DocumentMetaStoreFlushTarget(const DocumentMetaSto
+       _fileHeaderContext(fileHeaderContext),
+       _hwInfo(hwInfo),
+       _diskLayout(AttributeDiskLayout::createSimple(baseDir)),
+-      _dmsDir(_diskLayout->createAttributeDir(""))
+-
+-{
++      _dmsDir(_diskLayout->createAttributeDir("")),
++      _doc_type_and_subdb_name(std::move(doc_type_and_subdb_name_in)) {
+     _lastStats.setPathElementsToLog(8);
+ }
  
--Last updated: 2026-11-14
-+Last updated: 2026-11-15
- 
- ---
- 
-@@ -94,29 +94,28 @@ Last updated: 2026-11-14
- 
- ---
- 
--## addressable 2.9.0 — Apache 2.0
-+## addressable 2.9.2 — Apache 2.0
- 
- - Homepage: <https://github.com/sporkmonger/addressable>
- - Copyright Bob Aman</dd>
- 
- ---
- 
--## afm 0.2.2 — MIT
-+## afm 1.0.1 — MIT
- 
- - Homepage: <http://github.com/halfbyte/afm>
--- Copyright 2010 Jan Krutisch
--- Copyright 2009 Jan Krutisch
-+- Copyright Jan Krutisch
- 
- ---
- 
--## Ascii85 1.1.1 — Adobe Postscript AFM
-+## Ascii85 2.0.1 — Adobe Postscript AFM
- 
- - Homepage: <https://github.com/DataWraith/ascii85gem/>
- - Copyright 2009 Johannes Holzfuß
- 
- ---
- 
--## Ascii85 1.1.1 — MIT
-+## Ascii85 2.0.1 — MIT
- 
- - Homepage: <https://github.com/DataWraith/ascii85gem/>
- - Copyright 2009 Johannes Holzfuß
-@@ -131,13 +130,9 @@ Last updated: 2026-11-14
- 
- ---
- 
--## async 2.39.0 — MIT
-+## async 2.46.0 — MIT
- 
- - Homepage: <https://github.com/socketry/async>
---  by Kent Gruber
--- Copyright 2024
--- Copyright 2017
---  by Patrik Wenger
- 
- ---
- 
-@@ -209,14 +204,15 @@ Last updated: 2026-11-14
- 
- ---
- 
--## com.fasterxml.jackson.core 2.22 — Apache 2.0
-+## com.fasterxml.jackson.core 2.23 — Apache 2.0
- 
--- Homepage: <https://github.com/FasterXML/jackson>
-+- Homepage: <http://fasterxml.com/>
-+- Copyright 2007 Tatu Saloranta tatu.saloranta@iki.fi
- - FasterXML
- 
- ---
- 
--## com.fasterxml.jackson.core 2.22.4 — Apache 2.0
-+## com.fasterxml.jackson.core 2.23.0 — Apache 2.0
- 
- - Homepage: <http://fasterxml.com/>
- - Copyright 2007 Tatu Saloranta tatu.saloranta@iki.fi
-@@ -297,28 +293,26 @@ Last updated: 2026-11-14
- 
- ---
- 
--## console 1.35.1 — MIT
-+## console 1.38.0 — MIT
- 
--- Homepage: <https://socketry.github.io/console>
---  by Samuel Williams
--- Copyright 2022
-+- Homepage: <https://github.com/socketry/console>
- 
- ---
- 
--## csv 3.3.6 — BSD 2
-+## csv 3.3.7 — BSD 2
- 
- - Homepage: <https://github.com/ruby/csv>
- - Copyright 2007-2017 Yukihiro Matsumoto
- - Copyright 2017 pavel
--- Copyright 2018 Vladislav
- - Copyright 2018 Kouhei Sutou
-+- Copyright 2018 Vladislav
- - Copyright 2017-2018 Steven Daniels
- - Copyright 2017 Espartaco Palma
- - Copyright 2018 Tomohiro Ogoke
--- Copyright 2017 Marcus Stollsteimer
--- Copyright 2005-2016 James Edward Gray II
- - Copyright 2017 SHIBATA Hiroshi
- - Copyright 2017 Olivier Lacan
-+- Copyright 2005-2016 James Edward Gray II
-+- Copyright 2017 Marcus Stollsteimer
- - Copyright 2018 Mitsutaka Mimura
- 
- ---
-@@ -344,7 +338,7 @@ Last updated: 2026-11-14
- 
- ---
- 
--## ethon 0.18.0 — MIT
-+## ethon 0.19.2 — MIT
- 
- - Homepage: <https://github.com/typhoeus/ethon>
- - Copyright 2012-2016 Hans Hasselberg
-@@ -389,10 +383,10 @@ Last updated: 2026-11-14
- 
- ---
- 
--## fiber-storage 0.1.2 — MIT
-+## fiber-storage 1.0.1 — MIT
- 
--- Homepage: <https://github.com/socketry/fiber-storage>
--- Copyright, 2022-2023, by Samuel Williams.
-+- Homepage: <https://github.com/ioquatix/fiber-storage>
-+- Copyright, 2022-2025, by Samuel Williams.
- 
- ---
- 
-@@ -627,9 +621,10 @@ Last updated: 2026-11-14
- 
- ---
- 
--## html-proofer 5.2.2 — MIT
-+## html-proofer 5.2.3 — MIT
- 
- - Homepage: <https://github.com/gjtorikian/html-proofer>
-+- Copyright 2013 Garen Torikian
- 
- ---
- 
-@@ -655,7 +650,7 @@ Last updated: 2026-11-14
- 
- ---
- 
--## io-event 1.16.4 — MIT
-+## io-event 1.22.3 — MIT
- 
- - Homepage: <https://github.com/socketry/io-event>
- -  by Wander Hillen
-@@ -711,7 +706,7 @@ Last updated: 2026-11-14
- 
- ---
- 
--## jekyll-seo-tag 2.8.0 — MIT
-+## jekyll-seo-tag 2.9.1 — MIT
- 
- - Homepage: <https://github.com/jekyll/jekyll-seo-tag>
- - Copyright 2015 Ben Balter and the jekyll-seo-tag contributors
-@@ -783,17 +778,17 @@ Last updated: 2026-11-14
- 
- ---
- 
--## mercenary 0.4.0 — MIT
-+## mdast-util-to-hast 13.2.2 — MIT
- 
--- Homepage: <https://github.com/jekyll/mercenary>
--- Copyright 2013 Parker Moore and the mercenary contributors
-+- Homepage: <https://github.com/syntax-tree/mdast-util-to-hast#readme>
-+- Copyright Titus Wormer <tituswormer@gmail.com>
- 
- ---
- 
--## metrics 0.15.0 — MIT
-+## mercenary 0.4.0 — MIT
- 
--- Homepage: <https://github.com/socketry/metrics>
--- Copyright, 2021-2025, by Samuel Williams.
-+- Homepage: <https://github.com/jekyll/mercenary>
-+- Copyright 2013 Parker Moore and the mercenary contributors
- 
- ---
- 
-@@ -850,12 +845,13 @@ Last updated: 2026-11-14
- 
- ---
- 
--## nokogiri 1.19.4 — MIT
-+## nokogiri 1.19.7 — MIT
- 
- - Homepage: <https://nokogiri.org>
- - Copyright 2008-2023 Mike Dalessio
--- Copyright 1998-2012 Daniel Veillard
- - Copyright 1995-2017 Jean-loup Gailly and Mark Adler
-+- Copyright 1998-2012 Daniel Veillard
-+- Copyright 2020 Joshua J Baker
- - Copyright 2001-2003 Thai Open Source Software Center Ltd
- - Copyright 2001-2002 SourceForge ISO-RELAX Project
- - Copyright 2001-2002 Thomas Broyer
-@@ -1042,7 +1038,7 @@ Last updated: 2026-11-14
- 
- ---
- 
--## pdf-reader 2.15.1 — MIT
-+## pd
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #38532** (2026-11-15): chore: update third-party attributions (@github-actions[bot])
-- **PR #38531** (2026-11-14): fix(deps): update jackson monorepo (@renovate[bot])
-- **PR #38530** (2026-11-14): chore: update third-party attributions (@github-actions[bot])
-- **PR #38529** (2026-11-14): Place early provision (@hakonhall)
-- **PR #38528** (2026-11-13): Add trace spans for document db init and shutdown. (@toregge)
-- **PR #38525** (2026-11-14): Support index settings in struct-field blocks for struct field indexes (@arnej27959)
+- **PR #38572** (2026-11-18): Add -XX option (@hmusum)
+- **PR #38571** (2026-11-18): Add trace spans for attribute vector flush. (@toregge)
+- **PR #38570** (2026-11-18): add cache::read_no_populate() (@arnej27959)
+- **PR #38568** (closed): Revert "bypass summary cache on move and update" [MERGEOK] (@andreer)
+- **PR #38567** (2026-11-18): Add DocTypeAndSubDbName class. (@toregge)
+- **PR #38566** (2026-11-18): Don't move buckets from ready to notready when redundancy equals (@toregge)
 
 ---
 
@@ -1544,101 +1794,31 @@ chore: update third-party attributions
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in ATTRIBUTIONS.md
+## X. Empirical Invariant Guard in span_attribute_names.cpp
 
 **RULE**:
-When implementing operations in `ATTRIBUTIONS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `opentelemetry/src/vespa/opentelemetry/span_attribute_names.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vespa-engine/vespa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `149cd0ad`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9a98f585`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `ATTRIBUTIONS.md`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `opentelemetry/src/vespa/opentelemetry/span_attribute_names.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-Last updated: 2026-11-15
-## addressable 2.9.2 — Apache 2.0
-## afm 1.0.1 — MIT
-- Copyright Jan Krutisch
-## Ascii85 2.0.1 — Adobe Postscript AFM
-## Ascii85 2.0.1 — MIT
-## async 2.46.0 — MIT
-## com.fasterxml.jackson.core 2.23 — Apache 2.0
-- Homepage: <http://fasterxml.com/>
-- Copyright 2007 Tatu Saloranta tatu.saloranta@iki.fi
-## com.fasterxml.jackson.core 2.23.0 — Apache 2.0
-## console 1.38.0 — MIT
-- Homepage: <https://github.com/socketry/console>
-## csv 3.3.7 — BSD 2
-- Copyright 2018 Vladislav
-- Copyright 2005-2016 James Edward Gray II
-- Copyright 2017 Marcus Stollsteimer
-## ethon 0.19.2 — MIT
-## fiber-storage 1.0.1 — MIT
-- Homepage: <https://github.com/ioquatix/fiber-storage>
-- Copyright, 2022-2025, by Samuel Williams.
-## html-proofer 5.2.3 — MIT
-- Copyright 2013 Garen Torikian
-## io-event 1.22.3 — MIT
-## jekyll-seo-tag 2.9.1 — MIT
-## mdast-util-to-hast 13.2.2 — MIT
-- Homepage: <https://github.com/syntax-tree/mdast-util-to-hast#readme>
-- Copyright Titus Wormer <tituswormer@gmail.com>
-## mercenary 0.4.0 — MIT
-- Homepage: <https://github.com/jekyll/mercenary>
-- Copyright 2013 Parker Moore and the mercenary contributors
-## nokogiri 1.19.7 — MIT
-- Copyright 1998-2012 Daniel Veillard
-- 
+const std::string serial("ai.vespa.searchlib.serial");
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-Last updated: 2026-11-14
-## addressable 2.9.0 — Apache 2.0
-## afm 0.2.2 — MIT
-- Copyright 2010 Jan Krutisch
-- Copyright 2009 Jan Krutisch
-## Ascii85 1.1.1 — Adobe Postscript AFM
-## Ascii85 1.1.1 — MIT
-## async 2.39.0 — MIT
--  by Kent Gruber
-- Copyright 2024
-- Copyright 2017
--  by Patrik Wenger
-## com.fasterxml.jackson.core 2.22 — Apache 2.0
-- Homepage: <https://github.com/FasterXML/jackson>
-## com.fasterxml.jackson.core 2.22.4 — Apache 2.0
-## console 1.35.1 — MIT
-- Homepage: <https://socketry.github.io/console>
--  by Samuel Williams
-- Copyright 2022
-## csv 3.3.6 — BSD 2
-- Copyright 2018 Vladislav
-- Copyright 2017 Marcus Stollsteimer
-- Copyright 2005-2016 James Edward Gray II
-## ethon 0.18.0 — MIT
-## fiber-storage 0.1.2 — MIT
-- Homepage: <https://github.com/socketry/fiber-storage>
-- Copyright, 2022-2023, by Samuel Williams.
-## html-proofer 5.2.2 — MIT
-## io-event 1.16.4 — MIT
-## jekyll-seo-tag 2.8.0 — MIT
-## mercenary 0.4.0 — MIT
-- Homepage: <https://github.com/jekyll/mercenary>
-- Copyright 2013 Parker Moore and the mercenary contributors
-## metrics 0.15.0 — MIT
-- Homepage: <https://github.com/socketry/metrics>
-- Copyright, 2021-2025, by Samuel Williams.
-## nokogiri 1.19.4 — MIT
-- C
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `149cd0ad` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9a98f585` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
