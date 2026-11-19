@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md`  
 > **Source**: github ([https://github.com/siteline/swiftui-introspect](https://github.com/siteline/swiftui-introspect))  
-> **Source Version**: `4d977db9`  
+> **Source Version**: `cd344bc3`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T15:23:21.496Z  
+> **Timestamp**: 2026-11-19T19:39:03.240Z  
 > **Learning ID**: `learn-github-siteline-swiftui-introspect`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siteline/swiftui-introspect](https://github.com/siteline/swiftui-introspect))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T15:23:14.625Z  
+> **Harvest Timestamp**: 2026-11-19T19:39:03.235Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -751,456 +751,563 @@ struct ScrollViewShowcase: View {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `59370c3c` (2026-11-14)
-**Commit Message**: ci: use the xcode-27 image's xcodes for the Showcase build
+### Incident Patch 1: `cd344bc3` (2026-11-19)
+**Commit Message**: test: add introspection benchmarks (#534)
 
-**File**: `.github/workflows/ci.yml` (modified, +2/-5)
+**File**: `AGENTS.md` (modified, +5/-0)
 ```diff
-@@ -148,11 +148,8 @@ jobs:
-       - name: Git Checkout
-         uses: actions/checkout@v5
- 
--      - name: Install xcodes
--        run: |
--          brew uninstall xcodes
--          brew install xcodesorg/made/xcodes
--
-+      # The xcodesorg/made formula fails to build on macOS 27, so this uses the image's xcodes:
-+      # https://github.com/XcodesOrg/homebrew-made/issues/4
-       - name: Select Xcode
-         run: sudo xcodes select 27.2
- 
-```
-
----
-
-### Incident Patch 2: `d9478992` (2026-11-14)
-**Commit Message**: chore(showcase): convert project to JSON format and build it on Xcode 27
-
-**File**: `.github/workflows/ci.yml` (modified, +33/-7)
-```diff
-@@ -121,21 +121,47 @@ jobs:
-           echo "SIM_UDID=$UDID" >> "$GITHUB_ENV"
-           echo "Created simulator: ${{ matrix.device }} -> $UDID"
- 
--      - name: Build Showcase
-+      - name: Run Tests
-         run: |
-           set -eo pipefail
--          xcodebuild build \
--            -scheme Showcase \
-+          xcodebuild test \
-+            -scheme SwiftUIIntrospectTests \
-             -destination "${{ matrix.destination || format('id={0}', env.SIM_UDID) }}" \
-             -configuration Debug \
-             | xcbeautify
- 
--      - name: Run Tests
-+  showcase:
-+    if: github.event_name != 'pull_request' || !contains(github.event.pull_request.title, '[skip ci]')
-+    name: Build Showcase (${{ matrix.platform }})
-+    # The Showcase project uses the JSON project format, which requires Xcode 27.
-+    runs-on: xcode-27
-+    strategy:
-+      fail-fast: false
-+      matrix:
-+        include:
-+          - { platform: iOS,         destination: "generic/platform=iOS Simulator" }
-+          - { platform: macCatalyst, destination: "generic/platform=macOS,variant=Mac Catalyst" }
-+          - { platform: macOS,       destination: "generic/platform=macOS" }
-+          - { platform: tvOS,        destination: "generic/platform=tvOS Simulator" }
-+          - { platform: visionOS,    destination: "generic/platform=visionOS Simulator" }
-+    steps:
-+      - name: Git Checkout
-+        uses: actions/checkout@v5
+@@ -19,3 +19,8 @@ Version 1 maintenance starts from `1.3.0`. The `1.4.0-beta` tags are not release
+ - Do not backport breaking public API changes, new platform versions, toolchain updates, deployment-target changes, packaging changes, or unrelated CI and documentation work.
+ - If a feature or fix cannot be backported while preserving those compatibility constraints, explain the incompatibility and obtain maintainer approval before changing the maintenance branch.
+ - Run the affected tests on every changed branch. Create version 1 and version 26 releases from their respective maintenance branches. Use minor releases for additive features and patch releases for fixes.
 +
-+      - name: Install xcodes
-+        run: |
-+          brew uninstall xcodes
-+          brew install xcodesorg/made/xcodes
++## Benchmarks
 +
-+      - name: Select Xcode
-+        run: sudo xcodes select 27.2
++- Before opening a pull request that changes how introspection finds or customizes its target, such as selectors, probes, or hierarchy traversal, run `mise run benchmarks <base>` against the pull request's base on an Apple silicon Mac. Investigate every ⚠️ increase before opening it.
++- Include the comparison table the task prints in the description of any pull request it was run for.
+```
+
+**File**: `Tests/Benchmarks/IntrospectionBenchmarks.swift` (added, +183/-0)
+```diff
+@@ -0,0 +1,183 @@
++#if os(iOS)
++import Combine
++import SwiftUI
++import SwiftUIIntrospect
++import XCTest
 +
-+      - name: Build Showcase
-         run: |
-           set -eo pipefail
--          xcodebuild test \
--            -scheme SwiftUIIntrospectTests \
--            -destination "${{ matrix.destination || format('id={0}', env.SIM_UDID) }}" \
-+          xcodebuild build \
-+            -scheme Showcase \
-+            -destination "${{ matrix.destination }}" \
-             -configuration Debug \
-             | xcbeautify
++/// Measures the cost of presenting introspected views, from presentation until every introspection has customized its
++/// target.
++@MainActor
++final class IntrospectionBenchmarks: XCTestCase {
++	fileprivate static let rowCount = 100
++
++	func testNavigationStackReceiver() throws {
++		guard #available(iOS 16, *) else { throw XCTSkip("NavigationStack requires iOS 16") }
++		try measurePresentation(introspections: 1) { spy in
++			NavigationStack {
++				Text("Root")
++			}
++			.introspect(.navigationStack, on: .iOS(.v16, .v17, .v18, .v26, .v27)) { _ in spy(0) }
++		}
++	}
++
++	func testNavigationStackAncestor() throws {
++		guard #available(iOS 16, *) else { throw XCTSkip("NavigationStack requires iOS 16") }
++		try measurePresentation(introspections: 1) { spy in
++			NavigationStack {
++				Text("Root")
++					.introspect(
++						.navigationStack,
++						on: .iOS(.v16, .v17, .v18, .v26, .v27),
++						scope: .ancestor,
++					) { _ in spy(0) }
++			}
++		}
++	}
++
++	func testScrollViewReceiver() throws {
++		try measurePresentation(introspections: 1) { spy in
++			ScrollView {
++				Text("Content")
++			}
++			.introspect(.scrollView, on: .iOS(.v13, .v14, .v15, .v16, .v17, .v18, .v26, .v27)) { _ in spy(0) }
++		}
++	}
++
++	func testTogglesWithoutIntrospection() throws {
++		try measurePresentation(introspections: 0) { _ in
++			Toggles(introspected: false, spy: { _ in })
++		}
++	}
++
++	func testToggles() throws {
++		try measurePresentation(introspections: Self.rowCount) { spy in
++			Toggles(introspected: true, spy: spy)
++		}
++	}
++
++	func testTogglesUpdate() throws {
++		let model = TogglesModel()
++		var customized = 0
++		var target = Self.rowCount
++		let completion = Completion { customized >= target }
++		let window = try presentationWindow()
++		window.rootViewController = UIHostingController(
++			rootView: Toggles(introspected: true, model: model) { _ in
++				customized += 1
++				completion.update()
++			},
++		)
++		completion.wait()
++
++		measure(metrics: Self.metrics, options: Self.options) {
++			// Toggling twice measures both directions in every iteration.
++			for _ in 0..<2 {
++				target = customized + Self.rowCount
++				model.isOn.toggle()
++				completion.wait()
++			}
++		}
++		window.rootViewController = nil
++	}
++
++	/// Presents the view in each iteration and waits until the given number of distinct introspections customize their
++	/// targets. A warm-up presentation runs first, outside of the measurements.
++	private func measurePresentation(
++		introspections: Int,
++		@ViewBuilder _ content: @escaping (_ spy: @escaping (Int) -> Void) -> some View,
++	) throws {
++		let window = try presentationWindow()
++		// Each presentation drains its own pool, so presentations don't accumulate across iterations.
++		let present = {
++			autoreleasepool {
++				var introspected = Set<Int>()
++				let completion = Completion { introspected.count >= introspections }
++				let controller = UIHostingController(
++					rootView: content {
++						introspected.insert($0)
++						completion.update()
++					},
++				)
++				window.rootViewController = controller
++				controller.view.layoutIfNeeded()
++				completion.wait()
++				window.rootViewController = nil
++			}
++		}
++		present()
++		measure(metrics: Self.metrics, options: Self.options, block: present)
++	}
++
++	private static var metrics: [XCTMetric] {
++		[XCTCPUMetric(), XCTClockMetric(), XCTMemoryMetric()]
++	}
++
++	private static var options: XCTMeasureOptions {
++		let options = XCTMeasureOptions()
++		options.iterationCount = 10
++		return options
++	}
++
++	private func presentationWindow() throws -> UIWindow {
++		let window = UIApplication.shared
++			.connectedScenes
++			.compactMap { $0 as? UIWindowScene }
++			.flatMap(\.windows)
++			.first
++		return try XCTUnwrap(window)
++	}
++}
++
++/// Runs the main run loop until a condition holds, without polling, so waiting adds no measured work.
++@MainActor
++private final class Completion {
++	private let isComplete: () -> Bool
++
++	init(_ isComplete: @escaping () -> Bool) {
++		self.isComplete = isComplete
++	}
++
++	/// Stops the run loop once the condition holds. Call it whenever the condition might have changed.
++	func update() {
++		if isComplete() {
++			CFRunLoopStop(CFRunLoopGetMain())
++		}
++	}
++
++	func wait(timeout: TimeInterval = 10) {
++		let deadline = Date().addingTimeInterval(timeout)
++		while !isComplete(), Date() < deadline {
++			CFRunLoopRunInMode(.defaultMode, deadline.timeIntervalSinceNow, false)
++		}
++		XCTAssertTrue(isComplete(), "Introspection didn't finish within \(timeout) seconds")
++	}
++}
++
++@MainActor
++private final class TogglesModel: ObservableObject {
++	@Published var isOn = false
++}
++
++private struct Toggles: View {
++	let introspected: Bool
++	@ObservedObject var model = TogglesModel()
++	let spy: (Int) -> Void
++
++	var body: some View {
++		ScrollView {
++			VStack {
++				ForEach(0..<IntrospectionBenchmarks.rowCount, id: \.self) { index in
++					if introspecte
+```
+
+**File**: `Tests/Tests.xcodeproj/project.pbxproj` (modified, +235/-0)
+```diff
+@@ -9,6 +9,7 @@
+ /* Begin PBXBuildFile section */
+ 		D5CEB5582E84304900A88BA3 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = D5CEB5572E84304900A88BA3 /* SwiftUIIntrospect */; };
+ 		D5E04C312E842584006739F9 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = D5E04C302E842584006739F9 /* SwiftUIIntrospect */; };
++		B0E0C0012F00000000000001 /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = B0E0C0012F0000000000000D /* SwiftUIIntrospect */; };
+ /* End PBXBuildFile section */
  
-```
-
-**File**: `Examples/Showcase/Showcase.xcodeproj/project.pbxproj` (removed, +0/-412)
-```diff
-@@ -1,412 +0,0 @@
--// !$*UTF8*$!
--{
--	archiveVersion = 1;
--	classes = {
--	};
--	objectVersion = 55;
--	objects = {
--
--/* Begin PBXBuildFile section */
--		D53071F729983CEF00F1936C /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53071F629983CEF00F1936C /* App.swift */; };
--		D53071F929983CEF00F1936C /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53071F829983CEF00F1936C /* AppView.swift */; };
--		D5B829752999738200920EBD /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B829742999738200920EBD /* Helpers.swift */; };
--		D5B864E82E72BF0F002F5243 /* ScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B864E72E72BF0F002F5243 /* ScrollView.swift */; };
--		D5B864EA2E72CE71002F5243 /* List.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B864E92E72CE71002F5243 /* List.swift */; };
--		D5B864EC2E72D9E1002F5243 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B864EB2E72D9E1002F5243 /* Navigation.swift */; };
--		D5B864EE2E72DB42002F5243 /* Presentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B864ED2E72DB42002F5243 /* Presentation.swift */; };
--		D5B864F02E72DC75002F5243 /* Controls.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B864EF2E72DC75002F5243 /* Controls.swift */; };
--		D5B864F22E72DCA7002F5243 /* UIViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5B864F12E72DCA7002F5243 /* UIViewRepresentable.swift */; };
--		D5E3180329C132B6005847DC /* SwiftUIIntrospect in Frameworks */ = {isa = PBXBuildFile; productRef = D5E3180229C132B6005847DC /* SwiftUIIntrospect */; };
--/* End PBXBuildFile section */
--
--/* Begin PBXFileReference section */
--		D53071F329983CEF00F1936C /* Showcase.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Showcase.app; sourceTree = BUILT_PRODUCTS_DIR; };
--		D53071F629983CEF00F1936C /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
--		D53071F829983CEF00F1936C /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
--		D530720429983D9300F1936C /* Showcase.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Showcase.entitlements; sourceTree = "<group>"; };
--		D5B829742999738200920EBD /* Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
--		D5B864E72E72BF0F002F5243 /* ScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollView.swift; sourceTree = "<group>"; };
--		D5B864E92E72CE71002F5243 /* List.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = List.swift; sourceTree = "<group>"; };
--		D5B864EB2E72D9E1002F5243 /* Navigation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
--		D5B864ED2E72DB42002F5243 /* Presentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Presentation.swift; sourceTree = "<group>"; };
--		D5B864EF2E72DC75002F5243 /* Controls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controls.swift; sourceTree = "<group>"; };
--		D5B864F12E72DCA7002F5243 /* UIViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewRepresentable.swift; sourceTree = "<group>"; };
--/* End PBXFileReference section */
--
--/* Begin PBXFrameworksBuildPhase section */
--		D53071F029983CEF00F1936C /* Frameworks */ = {
--			isa = PBXFrameworksBuildPhase;
--			buildActionMask = 2147483647;
--			files = (
--				D5E3180329C132B6005847DC /* SwiftUIIntrospect in Frameworks */,
--			);
--			runOnlyForDeploymentPostprocessing = 0;
--		};
--/* End PBXFrameworksBuildPhase section */
--
--/* Begin PBXGroup section */
--		D53071EA29983CEF00F1936C = {
--			isa = PBXGroup;
--			children = (
--				D53071F529983CEF00F1936C /* Showcase */,
--				D53071F429983CEF00F1936C /* Products */,
--				D530720529983DCA00F1936C /* Frameworks */,
--			);
--			sourceTree = "<group>";
--		};
--		D53071F429983CEF00F1936C /* Products */ = {
--			isa = PBXGroup;
--			children = (
--				D53071F329983CEF00F1936C /* Showcase.app */,
--			);
--			name = Products;
--			sourceTree = "<group>";
--		};
--		D53071F529983CEF00F1936C /* Showcase */ = {
--			isa = PBXGroup;
--			children = (
--				D530720429983D9300F1936C /* Showcase.entitlements */,
--				D53071F629983CEF00F1936C /* App.swift */,
--				D53071F829983CEF00F1936C /* AppView.swift */,
--				D5B864E92E72CE71002F5243 /* List.swift */,
--				D5B864E72E72BF0F002F5243 /* ScrollView.swift */,
--				D5B864EB2E72D9E1002F5243 /* Navigation.swift */,
--				D5B864ED2E72DB42002F5243 /* Presentation.swift */,
--				D5B864EF2E72DC75002F5243 /* Controls.swift */,
--				D5B864F12E72DCA7002F5243 /* UIViewRepresentable.swift */,
--				D5B829742999738200
-```
-
-**File**: `Examples/Showcase/Showcase.xcodeproj/project.xcproj` (added, +163/-0)
-```diff
-@@ -0,0 +1,163 @@
-+{
-+  "default-configuration": "Release",
-+  "configurations": [
-+    "Debug",
-+    "Release",
-+  ],
-+  "localizations": {
-+    "development": "en",
-+    "supported": [
-+      "Base",
-+    ],
-+  },
-+  "files": [
-+    {
-+      "kind": "group",
-+      "path": "Showcase",
-+      "children": [
-+        { "path": "Showcase.entitlements" },
-+        { "path": "App.swift", "target-membership": [ "Showcase/compile-sources" ] },
-+        { "path": "AppView.swift", "target-membership": [ "Showcase/compile-sources" ] },
-+        { "path": "List.swift", "target-membership": [ "Showcase/compile-sources" ] },
-+        { "path": "ScrollView.swift", "target-membership": [ "Showcase/compile-sources" ] },
-+        { "path": "Navigation.swift", "target-membership": [ "Showcase/compile-sources" ] },
-+        { "path": "Presentation.swift", "target-membership": [ "Showcase/compile-sources" ] },
-+        { "path": "Controls.swift", "target-membership": [ "Showcase/compile-sources" ] },
-+        { "path": "UIViewRepresentable.swift", "target-membership": [ "Showcase/compile-sources" ] },
-+        { "path": "Helpers.swift", "target-membership": [ "Showcase/compile-sources" ] },
-+      ],
-+    }, {
-+      "kind": "group",
-+      "name": "Products",
-+      "children": [
-+        { "path": "<PRODUCTS>/Showcase.app", "id": "D53071F329983CEF00F1936C", "type": "wrapper.application", "index": false },
-+      ],
-+    },
-+    { "kind": "group", "name": "Frameworks" },
-+  ],
-+  "targets": [
-+    {
-+      "name": "Showcase",
-+      "id": "D53071F229983CEF00F1936C",
-+      "product": "Products/Showcase.app",
-+      "product-type": "application",
-+      "build-phases": [
-+        "compile-sources",
-+        "frameworks",
-+        "resources",
-+      ],
-+      "package-product-members": [
-+        {
-+          "product-name": "SwiftUIIntrospect",
-+          "build-phase": { "build-phase": "frameworks" },
-+        },
-+      ],
-+      "build-settings": {
-+        "ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME": "AccentColor",
-+        "CODE_SIGN_ENTITLEMENTS": "Showcase/Showcase.entitlements",
-+        "CODE_SIGN_IDENTITY[sdk=macosx*]": "-",
-+        "CODE_SIGN_STYLE": "Automatic",
-+        "CURRENT_PROJECT_VERSION": "1",
-+        "ENABLE_APP_SANDBOX": "YES",
-+        "ENABLE_OUTGOING_NETWORK_CONNECTIONS": "YES",
-+        "ENABLE_PREVIEWS": "YES",
-+        "GENERATE_INFOPLIST_FILE": "YES",
-+        "INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents": "YES",
-+        "INFOPLIST_KEY_UILaunchScreen_Generation": "YES",
-+        "INFOPLIST_KEY_UILaunchStoryboardName": "",
-+        "INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad": "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight",
-+        "INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone": "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight",
-+        "INFOPLIST_KEY_UIUserInterfaceStyle": "Light",
-+        "LD_RUNPATH_SEARCH_PATHS": [
-+          "$(inherited)",
-+          "@executable_path/Frameworks",
-+        ],
-+        "MARKETING_VERSION": "1.0",
-+        "PRODUCT_BUNDLE_IDENTIFIER": "com.siteline.Showcase",
-+        "PRODUCT_NAME": "$(TARGET_NAME)",
-+        "SUPPORTED_PLATFORMS": "appletvos appletvsimulator iphoneos iphonesimulator macosx xros xrsimulator",
-+        "SUPPORTS_MACCATALYST": "YES",
-+        "SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD": "NO",
-+        "SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD": "NO",
-+        "SWIFT_EMIT_LOC_STRINGS": "YES",
-+        "TARGETED_DEVICE_FAMILY": "1,2,3,6,7",
-+      },
-+    },
-+  ],
-+  "build-settings": {
-+    "ALLOW_TARGET_PLATFORM_SPECIALIZATION": "YES",
-+    "ALWAYS_SEARCH_USER_PATHS": "NO",
-+    "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
-+    "CLANG_ANALYZER_NONNULL": "YES",
-+    "CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION": "YES_AGGRESSIVE",
-+    "CLANG_CXX_LANGUAGE_STANDARD": "gnu++20",
-+    "CLANG_ENABLE_MODULES": "YES",
-+    "CLANG_ENABLE_OBJC_ARC": "YES",
-+    "CLANG_ENABLE_OBJC_WEAK": "YES",
-+    "CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING": "YES",
-+    "CLANG_WARN_BOOL_CONVERSION": "YES",
-+    "CLANG_WARN_COMMA": "YES",
-+    "CLANG_WARN_CONSTANT_CONVERSION": "YES",
-+    "CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS": "YES",
-+    "CLANG_WARN_DIRECT_OBJC_ISA_USAGE": "YES_ERROR",
-+    "CLANG_WARN_DOCUMENTATION_COMMENTS": "YES",
-+    "CLANG_WARN_EMPTY_BODY": "YES",
-+    "CLANG_WARN_ENUM_CONVERSION": "YES",
-+    "CLANG_WARN_INFINITE_RECURSION": "YES",
-+    "CLANG_WARN_INT_CONVERSION": "YES",
-+    "CLANG_WARN_NON_LITERAL_NULL_CONVERSION": "YES",
-+    "CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF": "YES",
-+    "CLANG_WARN_OBJC_LITERAL_CONVERSION": "YES",
-+    "CLANG_WARN_OBJC_ROOT_CLASS": "YES_ERROR",
-+    "CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER": "YES",
-+    "CLANG_WARN_RANGE_LOOP_ANALYSIS": "YES",
-+    "CLANG_WARN_STRICT_PROTOTYPES": "YES",
-+    "CLANG_WARN
-```
-
----
-
-### Incident Patch 3: `404c0ed9` (2026-11-13)
-**Commit Message**: chore: fix inaccurate docs and remove stale project files (#530)
-
-**File**: `.editorconfig` (modified, +3/-2)
-```diff
-@@ -17,8 +17,9 @@ indent_style = space
- indent_size = 4
+ /* Begin PBXContainerItemProxy section */
+@@ -19,13 +20,21 @@
+ 			remoteGlobalIDString = D5E04C152E8424CD006739F9;
+ 			remoteInfo = TestsHostApp;
+ 		};
++		B0E0C0012F00000000000002 /* PBXContainerItemProxy */ = {
++			isa = PBXContainerItemProxy;
++			containerPortal = D5E04C0C2E842486006739F9 /* Project object */;
++			proxyType = 1;
++			remoteGlobalIDString = D5E04C152E8424CD006739F9;
++			remoteInfo = TestsHostApp;
++		};
+ /* End PBXContainerItemProxy section */
  
- [*.json]
--indent_style = tab
-+indent_style = space
-+indent_size = 2
+ /* Begin PBXFileReference section */
+ 		D5CEB5502E84303E00A88BA3 /* TestFramework.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TestFramework.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		D5CEB6442E8431FB00A88BA3 /* Tests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = Tests.xctestplan; sourceTree = "<group>"; };
+ 		D5E04C162E8424CD006739F9 /* TestsHostApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestsHostApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+ 		D5E04C262E84254D006739F9 /* Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
++		B0E0C0012F00000000000003 /* Benchmarks.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Benchmarks.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+ /* End PBXFileReference section */
  
- [*.yml]
- indent_style = space
--indent_size = 4
-+indent_size = 2
-```
-
-**File**: `.github/ISSUE_TEMPLATE/bug_report.yml` (modified, +1/-1)
-```diff
-@@ -54,7 +54,7 @@ body:
-   attributes:
-     label: Version information
-     description: The version of SwiftUIIntrospect used to reproduce this issue.
--    placeholder: "'0.11.0' for example, or a commit hash"
-+    placeholder: "'27.0.0' for example, or a commit hash"
- - type: input
-   attributes:
-     label: Destination operating system
-```
-
-**File**: `.gitignore` (modified, +3/-10)
-```diff
-@@ -1,13 +1,6 @@
- .DS_Store
- .build/
--/.swiftpm
--/Packages
--/*.xcodeproj
--xcuserdata/
--DerivedData/
- .netrc
--
--fastlane/report.xml
--fastlane/Preview.html
--fastlane/screenshots/**/*.png
--fastlane/test_output
-+.swiftpm/
-+DerivedData/
-+xcuserdata/
-```
-
-**File**: `Examples/.swiftpm/xcode/package.xcworkspace/contents.xcworkspacedata` (removed, +0/-7)
-```diff
-@@ -1,7 +0,0 @@
--<?xml version="1.0" encoding="UTF-8"?>
--<Workspace
--   version = "1.0">
--   <FileRef
--      location = "self:">
--   </FileRef>
--</Workspace>
-```
-
-**File**: `Examples/Showcase/Showcase/AppView.swift` (modified, +2/-2)
-```diff
-@@ -64,8 +64,8 @@ struct ContentView: View {
- 			}
- 		}
- 		#elseif os(macOS)
--		.introspect(.tabView, on: .macOS(.v12, .v13, .v14)) { splitView in
--			splitView.subviews.first?.layer?.backgroundColor = NSColor.green.cgColor
-+		.introspect(.tabView, on: .macOS(.v12, .v13, .v14)) { tabView in
-+			tabView.subviews.first?.layer?.backgroundColor = NSColor.green.cgColor
- 		}
- 		#endif
- 	}
-```
-
-**File**: `Examples/Showcase/Showcase/Controls.swift` (modified, +4/-4)
-```diff
-@@ -165,12 +165,12 @@ struct ControlsShowcase: View {
- 					on: .iOS(.v15, .v16, .v17, .v18, .v26, .v27),
- 					.tvOS(.v15, .v16, .v17, .v18, .v26, .v27),
- 					.visionOS(.v1, .v2, .v26, .v27),
--				) { datePicker in
--					datePicker.backgroundColor = .red
-+				) { segmentedControl in
-+					segmentedControl.backgroundColor = .red
- 				}
- 				#elseif os(macOS)
--				.introspect(.picker(style: .segmented), on: .macOS(.v12, .v13, .v14, .v15, .v26, .v27)) { datePicker in
--					datePicker.layer?.backgroundColor = NSColor.red.cgColor
-+				.introspect(.picker(style: .segmented), on: .macOS(.v12, .v13, .v14, .v15, .v26, .v27)) { segmentedControl in
-+					segmentedControl.layer?.backgroundColor = NSColor.red.cgColor
- 				}
- 				#endif
- 			}
-```
-
-**File**: `README.md` (modified, +9/-9)
-```diff
-@@ -90,7 +90,7 @@ View Types
- - [`DatePicker` with `.wheel` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/datepickerwithwheelstyletype)
- - [`Form`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/formtype)
- - [`Form` with `.grouped` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/formwithgroupedstyletype)
--- [`.fullScreenCover`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/fullScreenCovertype)
-+- [`.fullScreenCover`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/fullscreencovertype)
- - [`List`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/listtype)
- - [`List` with `.bordered` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/listwithborderedstyletype)
- - [`List` with `.grouped` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/listwithgroupedstyletype)
-@@ -101,8 +101,8 @@ View Types
- - [`Map`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/maptype)
- - [`NavigationSplitView`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/navigationsplitviewtype)
- - [`NavigationStack`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/navigationstacktype)
--- [`NavigationView` with `.columns` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/NavigationViewWithColumnsStyleType)
--- [`NavigationView` with `.stack` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/NavigationViewWithStackStyleType)
-+- [`NavigationView` with `.columns` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/navigationviewwithcolumnsstyletype)
-+- [`NavigationView` with `.stack` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/navigationviewwithstackstyletype)
- - [`PageControl`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/pagecontroltype)
- - [`Picker` with `.menu` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/pickerwithmenustyletype)
- - [`Picker` with `.segmented` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/pickerwithsegmentedstyletype)
-@@ -119,14 +119,14 @@ View Types
- - [`Stepper`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/steppertype)
- - [`Table`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/tabletype)
- - [`TabView`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/tabviewtype)
--- [`TabView` with `.page` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/TabViewWithPageStyleType)
-+- [`TabView` with `.page` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/tabviewwithpagestyletype)
- - [`TextEditor`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/texteditortype)
- - [`TextField`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/textfieldtype)
--- [`TextField` with `.vertical` axis](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/TextFieldWithVerticalAxisType)
-+- [`TextField` with `.vertical` axis](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/textfieldwithverticalaxistype)
- - [`Toggle`](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/toggletype)
--- [`Toggle` with `button` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/togglewithbuttonstyletype)
--- [`Toggle` with `checkbox` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/togglewithcheckboxstyletype)
--- [`Toggle` with `switch` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/togglewithswitchstyletype)
-+- [`Toggle` with `.button` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/togglewithbuttonstyletype)
-+- [`Toggle` with `.checkbox` style](https://swiftpackageindex.com/siteline/swiftui-introspect/main/documentation/swiftuiintrospect/togglewithcheckboxstyletype)
-+- [`Toggle` with `.switch` style](https://swiftpac
-```
-
-**File**: `Sources/PlatformViewVersion.swift` (modified, +0/-1)
-```diff
-@@ -106,7 +106,6 @@ public enum PlatformViewVersion<
- 		}
- 	}
+ /* Begin PBXFileSystemSynchronizedRootGroup section */
+@@ -44,6 +53,11 @@
+ 			path = Tests;
+ 			sourceTree = "<group>";
+ 		};
++		B0E0C0012F00000000000004 /* Benchmarks */ = {
++			isa = PBXFileSystemSynchronizedRootGroup;
++			path = Benchmarks;
++			sourceTree = "<group>";
++		};
+ /* End PBXFileSystemSynchronizedRootGroup section */
  
--	@MainActor
- 	fileprivate var selector: IntrospectionSelector<PlatformSpecificEntity>? {
- 		if case let .available(_, selector) = self {
- 			selector
+ /* Begin PBXFrameworksBuildPhase section */
+@@ -70,6 +84,14 @@
+ 			);
+ 			runOnlyForDeploymentPostprocessing = 0;
+ 		};
++		B0E0C0012F00000000000005 /* Frameworks */ = {
++			isa = PBXFrameworksBuildPhase;
++			buildActionMask = 2147483647;
++			files = (
++				B0E0C0012F00000000000001 /* SwiftUIIntrospect in Frameworks */,
++			);
++			runOnlyForDeploymentPostprocessing = 0;
++		};
+ /* End PBXFrameworksBuildPhase section */
+ 
+ /* Begin PBXGroup section */
+@@ -79,6 +101,7 @@
+ 				D5E04C182E8424CD006739F9 /* TestsHostApp */,
+ 				D5E04C272E84254D006739F9 /* Tests */,
+ 				D5CEB6442E8431FB00A88BA3 /* Tests.xctestplan */,
++				B0E0C0012F00000000000004 /* Benchmarks */,
+ 				D5CEB5512E84303E00A88BA3 /* TestFramework */,
+ 				D5E04C2F2E842584006739F9 /* Frameworks */,
+ 				D5E04C172E8424CD006739F9 /* Products */,
+@@ -91,6 +114,7 @@
+ 				D5E04C162E8424CD006739F9 /* TestsHostApp.app */,
+ 				D5E04C262E84254D006739F9 /* Tests.xctest */,
+ 				D5CEB5502E84303E00A88BA3 /* TestFramework.framework */,
++				B0E0C0012F00000000000003 /* Benchmarks.xctest */,
+ 			);
+ 			name = Products;
+ 			sourceTree = "<group>";
+@@ -185,6 +209,30 @@
+ 			productReference = D5E04C262E84254D006739F9 /* Tests.xctest */;
+ 			productType = "com.apple.product-type.bundle.unit-test";
+ 		};
++		B0E0C0012F00000000000008 /* Benchmarks */ = {
++			isa = PBXNativeTarget;
++			buildConfigurationList = B0E0C0012F0000000000000C /* Build configuration list for PBXNativeTarget "Benchmarks" */;
++			buildPhases = (
++				B0E0C0012F00000000000007 /* Sources */,
++				B0E0C0012F00000000000005 /* Frameworks */,
++				B0E0C0012F00000000000006 /* Resources */,
++			);
++			buildRules = (
++			);
++			dependencies = (
++				B0E0C0012F00000000000009 /* PBXTargetDependency */,
++			);
++			fileSystemSynchronizedGroups = (
++				B0E0C0012F00000000000004 /* Benchmarks */,
++			);
++			name = Benchmarks;
++			packageProductDependencies = (
++				B0E0C0012F0000000000000D /* SwiftUIIntrospect */,
++			);
++			productName = Benchmarks;
++			productReference = B0E0C0012F00000000000003 /* Benchmarks.xctest */;
++			productType = "com.apple.product-type.bundle.unit-test";
++		};
+ /* End PBXNativeTarget section */
+ 
+ /* Begin PBXProject section */
+@@ -205,6 +253,10 @@
+ 						CreatedOnToolsVersion = 26.0.1;
+ 						TestTargetID = D5E04C152E8424CD006739F9;
+ 					};
++					B0E0C0012F00000000000008 = {
++						CreatedOnToolsVersion = 27.2;
++						TestTargetID = D5E04C152E8424CD006739F9;
++					};
+ 				};
+ 			};
+ 			buildConfigurationList = D5E04C0F2E842486006739F9 /* Build configuration list for PBXProject "Tests" */;
+@@ -224,6 +276,7 @@
+ 				D5E04C152E8424CD006739F9 /* TestsHostA
+```
+
+**File**: `Tests/Tests.xcodeproj/xcshareddata/xcschemes/SwiftUIIntrospectBenchmarks.xcscheme` (added, +54/-0)
+```diff
+@@ -0,0 +1,54 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<Scheme
++   LastUpgradeVersion = "2700"
++   version = "1.7">
++   <BuildAction
++      parallelizeBuildables = "YES"
++      buildImplicitDependencies = "YES"
++      buildArchitectures = "Automatic">
++   </BuildAction>
++   <TestAction
++      buildConfiguration = "Release"
++      selectedDebuggerIdentifier = ""
++      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.PosixSpawn"
++      shouldUseLaunchSchemeArgsEnv = "YES">
++      <Testables>
++         <TestableReference
++            skipped = "NO"
++            parallelizable = "NO">
++            <BuildableReference
++               BuildableIdentifier = "primary"
++               BlueprintIdentifier = "B0E0C0012F00000000000008"
++               BuildableName = "Benchmarks.xctest"
++               BlueprintName = "Benchmarks"
++               ReferencedContainer = "container:Tests.xcodeproj">
++            </BuildableReference>
++         </TestableReference>
++      </Testables>
++   </TestAction>
++   <LaunchAction
++      buildConfiguration = "Release"
++      selectedDebuggerIdentifier = ""
++      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.PosixSpawn"
++      launchStyle = "0"
++      useCustomWorkingDirectory = "NO"
++      ignoresPersistentStateOnLaunch = "NO"
++      debugDocumentVersioning = "YES"
++      debugServiceExtension = "internal"
++      allowLocationSimulation = "YES">
++   </LaunchAction>
++   <ProfileAction
++      buildConfiguration = "Release"
++      shouldUseLaunchSchemeArgsEnv = "YES"
++      savedToolIdentifier = ""
++      useCustomWorkingDirectory = "NO"
++      debugDocumentVersioning = "YES">
++   </ProfileAction>
++   <AnalyzeAction
++      buildConfiguration = "Release">
++   </AnalyzeAction>
++   <ArchiveAction
++      buildConfiguration = "Release"
++      revealArchiveInOrganizer = "YES">
++   </ArchiveAction>
++</Scheme>
+```
+
+**File**: `mise-tasks/benchmarks` (added, +107/-0)
+```diff
+@@ -0,0 +1,107 @@
++#!/usr/bin/env bash
++#MISE description="Run the benchmarks, and compare them with a base revision when one is given"
++#USAGE arg "[base]" help="Git revision to compare the working copy against, benchmarked in a temporary export"
++#USAGE flag "--destination <destination>" default="platform=iOS Simulator,name=iPhone 17 Pro" help="xcodebuild destination for every run"
++#USAGE flag "--rounds <rounds>" default="2" help="Test runs per revision, alternating their order between rounds"
++#USAGE flag "--output <directory>" help="Directory for the result bundles and exported metrics, a temporary one by default"
++#USAGE flag "--flag-percent <percent>" default="5" help="Mark increases above this percentage"
++#
++# Prints a Markdown table of each benchmark's median instructions retired across
++# all rounds, which requires hardware counters, such as an Apple silicon Mac's.
++# Alternating the revisions' order keeps warm-up and drift from favoring either
++# one. xcodebuild output goes to stderr.
++set -euo pipefail
++
++output=${usage_output:-$(mktemp -d)}
++mkdir -p "$output"
++rm -f "$output"/*.json
++
++metric="com.apple.dt.XCTMetric_CPU.instructions_retired"
++checkouts=(head)
++base_checkout=
++
++if [ -n "${usage_base:-}" ]; then
++	base_checkout=$(mktemp -d)
++	trap 'rm -rf "$base_checkout"' EXIT
++	git archive "$usage_base" | tar -x -C "$base_checkout"
++	if xcodebuild -list -project "$base_checkout/Tests/Tests.xcodeproj" 2> /dev/null | grep -q SwiftUIIntrospectBenchmarks; then
++		checkouts=(base head)
++	fi
++fi
++
++xcodebuild_benchmarks() { # action name [arguments...]
++	local action=$1 directory=.
++	[ "$2" = base ] && directory=$base_checkout
++	shift 2
++	xcodebuild "$action" \
++		-workspace "$directory/SwiftUIIntrospect.xcworkspace" \
++		-scheme SwiftUIIntrospectBenchmarks \
++		-destination "$usage_destination" \
++		"$@" >&2
++}
++
++run() { # name round
++	local bundle="$output/$1-$2.xcresult"
++	rm -rf "$bundle"
++	xcodebuild_benchmarks test-without-building "$1" -resultBundlePath "$bundle"
++	xcrun xcresulttool get test-results metrics --path "$bundle" > "$output/$1-$2.json"
++	if ! jq -e --arg metric "$metric" 'all(.[].testRuns[0].metrics[]; .identifier != $metric or (.measurements | min) > 0)' \
++		"$output/$1-$2.json" > /dev/null; then
++		echo "error: $usage_destination reports no instructions retired, so its runs can't be compared" >&2
++		exit 1
++	fi
++}
++
++for name in "${checkouts[@]}"; do
++	xcodebuild_benchmarks build-for-testing "$name"
++done
++# The first run after the simulator boots pays for its cold start, so it isn't measured.
++rm -rf "$output/warm-up.xcresult"
++xcodebuild_benchmarks test-without-building head -resultBundlePath "$output/warm-up.xcresult"
++for round in $(seq 1 "$usage_rounds"); do
++	order=("${checkouts[@]}")
++	if ((round % 2 == 0)) && [ "${#checkouts[@]}" = 2 ]; then
++		order=(head base)
++	fi
++	for name in "${order[@]}"; do
++		run "$name" "$round"
++	done
++done
++
++medians() { # name
++	local files=("$output/$1"-*.json)
++	[ -e "${files[0]}" ] || { echo "{}"; return; }
++	jq -s --arg metric "$metric" '
++		map(.[] | {
++			key: (.testIdentifier | sub("\\(\\)$"; "")),
++			value: [.testRuns[0].metrics[] | select(.identifier == $metric) | .measurements[]],
++		})
++		| group_by(.key)
++		| map({key: .[0].key, value: (map(.value[]) | sort | .[length / 2 | floor])})
++		| from_entries
++	' "${files[@]}"
++}
++
++jq -n -r \
++	--argjson base "$(medians base)" \
++	--argjson head "$(medians head)" \
++	--argjson flag "$usage_flag_percent" \
++	--argjson rounds "$usage_rounds" '
++	def value: . / 1000 | . * 10 | round / 10 | tostring + "M";
++	def change: (if . > 0 then "+" else "" end) + (. * 10 | round / 10 | tostring) + "%";
++	"| Benchmark | Base | Head | Change |",
++	"| --- | ---: | ---: | ---: |",
++	(
++		$head | keys[] as $name
++		| $head[$name] as $new
++		| $base[$name] as $old
++		| if $old == null then
++			"| \($name) | | \($new | value) | New |"
++		else
++			(($new - $old) / $old * 100) as $delta
++			| "| \($name) | \($old | value) | \($new | value) | \($delta | change)\(if $delta > $flag then " ⚠️" else "" end) |"
++		end
++	),
++	"",
++	"Median instructions retired over \($rounds) rounds of 10 iterations. ⚠️ marks increases above \($flag)%."
++'
+```
+
+**File**: `mise.lock` (modified, +46/-0)
+```diff
+@@ -34,6 +34,52 @@ checksum = "sha256:b5c4de9ec9e83790642564370c572b559f2b4ea38147ee8ea1f5b415967da
+ url = "https://github.com/jdx/hk/releases/download/v1.57.0/hk-x86_64-pc-windows-msvc.zip"
+ url_api = "https://api.github.com/repos/jdx/hk/releases/assets/536864259"
+ 
++[[tools.jq]]
++version = "1.8.2"
++backend = "aqua:jqlang/jq"
++
++[tools.jq."platforms.linux-arm64"]
++checksum = "sha256:8b85c817833814ddca00a144c33705546355afccf0cf39b188f3cdb48b852309"
++url = "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-arm64"
++url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/453012756"
++provenance = "github-attestations"
++
++[tools.jq."platforms.linux-arm64-musl"]
++checksum = "sha256:8b85c817833814ddca00a144c33705546355afccf0cf39b188f3cdb48b852309"
++url = "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-arm64"
++url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/453012756"
++provenance = "github-attestations"
++
++[tools.jq."platforms.linux-x64"]
++checksum = "sha256:b1c22172dd303f3be49e935aa56aa48a8b7a46e0bc838b4997d3bb451495870f"
++url = "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-amd64"
++url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/453012752"
++provenance = "github-attestations"
++
++[tools.jq."platforms.linux-x64-musl"]
++checksum = "sha256:b1c22172dd303f3be49e935aa56aa48a8b7a46e0bc838b4997d3bb451495870f"
++url = "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-amd64"
++url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/453012752"
++provenance = "github-attestations"
++
++[tools.jq."platforms.macos-arm64"]
++checksum = "sha256:2d75340ba57a4b4b4c8708a21c2dc8e958a48aaa8bba13b27f77f6e4c0eca07e"
++url = "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-macos-arm64"
++url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/453012783"
++provenance = "github-attestations"
++
++[tools.jq."platforms.macos-x64"]
++checksum = "sha256:e94b266e3c26690550006abe63152b782280f4e14374accdf04cbde844f00bc0"
++url = "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-macos-amd64"
++url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/453012782"
++provenance = "github-attestations"
++
++[tools.jq."platforms.windows-x64"]
++checksum = "sha256:a6fc67fedaf9128a3309a1e2ebb8b986aeccf70122ee46d2cb4849e423f0c627"
++url = "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-windows-amd64.exe"
++url_api = "https://api.github.com/repos/jqlang/jq/releases/assets/453012788"
++provenance = "github-attestations"
++
+ [[tools.swiftformat]]
+ version = "0.63.0"
+ backend = "github:nicklockwood/SwiftFormat"
+```
+
+**File**: `mise.toml` (modified, +1/-0)
+```diff
+@@ -8,4 +8,5 @@ locked = true
+ 
+ [tools]
+ hk = "1"
++jq = "1"
+ swiftformat = "0"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #534** (2026-11-19): test: add introspection benchmarks (@davdroman)
 - **PR #530** (2026-11-13): chore: fix inaccurate docs and remove stale project files (@davdroman)
 - **PR #529** (2026-11-13): test: run tests that were being silently skipped (@davdroman)
 - **PR #528** (2026-11-13): fix: correct `.sheet` inference on `.v27` and unavailability diagnostics (@davdroman)
 - **PR #527** (2026-10-03): feat: add default indeterminate `ProgressView` introspection (@davdroman)
 - **PR #525** (2026-09-03): CI: run SwiftFormat through hk (@davdroman)
-- **PR #524** (2026-09-03): chore: enforce SwiftFormat configuration (@davdroman)
 
 ---
 
@@ -1220,33 +1327,32 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: use the xcode-27 image's xcodes for the Showcase build
+## X. test: add introspection benchmarks
 
 **RULE**:
-When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siteline/swiftui-introspect. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `AGENTS.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siteline/swiftui-introspect. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `59370c3c`: ci: use the xcode-27 image's xcodes for the Showcase build. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cd344bc3`: test: add introspection benchmarks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `AGENTS.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-      # The xcodesorg/made formula fails to build on macOS 27, so this uses the image's xcodes:
-      # https://github.com/XcodesOrg/homebrew-made/issues/4
+
+## Benchmarks
+
+- Before opening a pull request that changes how introspection finds or customizes its target, such as selectors, probes, or hierarchy traversal, run `mise run benchmarks <base>` against the pull request's base on an Apple silicon Mac. Investigate every ⚠️ increase before opening it.
+- Include the comparison table the task prints in the description of any pull request it was run for.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
 // Induced defect failure mode:
-      - name: Install xcodes
-        run: |
-          brew uninstall xcodes
-          brew install xcodesorg/made/xcodes
-
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `59370c3c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cd344bc3` are properly handled with clean fallback behavior.

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T19:31:14.855Z",
-  "total_records": 2013,
+  "last_updated": "2026-11-19T19:39:12.279Z",
+  "total_records": 2017,
   "domains": {
     "A": {
       "total": 15,
@@ -977,7 +977,7 @@
       ]
     },
     "G": {
-      "total": 350,
+      "total": 352,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1328,7 +1328,9 @@
         "domain_intelligence-architecture-intelligence-thaw-app-thaw-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-crate-crate-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-vercel-labs-agent-desktop-core-invariants",
-        "domain_intelligence-architecture-intelligence-vercel-labs-agent-desktop-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-vercel-labs-agent-desktop-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-siteline-swiftui-introspect-core-invariants",
+        "domain_intelligence-architecture-intelligence-siteline-swiftui-introspect-learnings-core-invariants"
       ]
     },
     "H": {
@@ -1914,7 +1916,7 @@
       ]
     },
     "J": {
-      "total": 26,
+      "total": 28,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -1941,7 +1943,9 @@
         "domain_intelligence-search-distribution-intelligence-dragonflydb-dragonfly-core-invariants",
         "domain_intelligence-search-distribution-intelligence-dragonflydb-dragonfly-learnings-core-invariants",
         "DOM-J-3AB0ED35",
-        "DOM-J-3CA866B9"
+        "DOM-J-3CA866B9",
+        "domain_intelligence-search-distribution-intelligence-melnixdev-seo-crawl-audit-core-invariants",
+        "domain_intelligence-search-distribution-intelligence-melnixdev-seo-crawl-audit-learnings-core-invari"
       ]
     },
     "K": {
@@ -20349,8 +20353,8 @@
       "title": "Architecture Intelligence: tuist/tuist Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-architecture-intelligence-tuist-tuist-core-invariants.md",
       "repository": "tuist/tuist",
-      "content_hash": "fc874b5132095fb8387421f9c10b85893894530aeb0c819e503bb4a74cb70f5c",
-      "created_at": "2026-11-18T07:56:22.607Z"
+      "content_hash": "701141ca0b35163306edbf00aad9c6c22a2c00c2a61e6507aa4d1cd2bc1e6a6c",
+      "created_at": "2026-11-19T19:39:02.436Z"
     },
     "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat": {
       "record_id": "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat",
@@ -20376,8 +20380,8 @@
       "title": "Architecture Intelligence: tuist-tuist-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-learnings-architecture-intelligence-tuist-tuist-learnings-core-invar.md",
       "repository": "tuist-tuist-learnings",
-      "content_hash": "507eff34ad7c7cefa54457c63ea2723521ad9089c0458da42bda84a9c2ca608e",
-      "created_at": "2026-11-18T07:56:37.166Z"
+      "content_hash": "4ace6711d2275a856a6b6ee2a70f82470b8ea02910d3a0b8a639bb0f54d1efdf",
+      "created_at": "2026-11-19T19:39:10.178Z"
     },
     "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite": {
       "record_id": "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite",
@@ -33805,6 +33809,42 @@
       "repository": "vercel-labs-agent-desktop-learnings",
       "content_hash": "0a8962640ab417d8f8c8e7da146a9b909051da39b85832d55672db68b0060531",
       "created_at": "2026-11-19T19:12:12.664Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-melnixdev-seo-crawl-audit-core-invariants": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-melnixdev-seo-crawl-audit-core-invariants",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: MelnixDev/seo-crawl-audit Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-melnixdev-seo-crawl-audit-search-distribution-intelligence-melnixdev-seo-crawl-a.md",
+      "repository": "MelnixDev/seo-crawl-audit",
+      "content_hash": "c5a0f95ca0cca2db6a46c23354eaf78486eaff9349874275b163226894fb6579",
+      "created_at": "2026-11-19T19:39:02.698Z"
+    },
+    "domain_intelligence-architecture-intelligence-siteline-swiftui-introspect-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-siteline-swiftui-introspect-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: siteline/swiftui-introspect Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-siteline-swiftui-introspect-architecture-intelligence-siteline-swiftui-introspec.md",
+      "repository": "siteline/swiftui-introspect",
+      "content_hash": "cc95933ac783b1cba1916152467c6d8b9bdb501eccad7b3d4287d5672c96dcd3",
+      "created_at": "2026-11-19T19:39:04.098Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-melnixdev-seo-crawl-audit-learnings-core-invari": {
+      "record_id": "domain_intelligence-search-distribution-intelligence-melnixdev-seo-crawl-audit-learnings-core-invari",
+      "domain_letter": "J",
+      "title": "Search & Distribution Intelligence: melnixdev-seo-crawl-audit-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-melnixdev-seo-crawl-audit-learnings-search-distribution-intelligence-melnixdev-s.md",
+      "repository": "melnixdev-seo-crawl-audit-learnings",
+      "content_hash": "93c7e2f5ecfb1ee48a20016fbce6b2fac22a3ee89aba6781e3f0b37cf2d0b0e2",
+      "created_at": "2026-11-19T19:39:11.123Z"
+    },
+    "domain_intelligence-architecture-intelligence-siteline-swiftui-introspect-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-siteline-swiftui-introspect-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: siteline-swiftui-introspect-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-siteline-swiftui-introspect-learnings-architecture-intelligence-siteline-swiftui.md",
+      "repository": "siteline-swiftui-introspect-learnings",
+      "content_hash": "299325bd0be4e6443a5f05ed7eb31d30d91b95fe970bfb08d5394554af633698",
+      "created_at": "2026-11-19T19:39:12.279Z"
     }
   }
 }

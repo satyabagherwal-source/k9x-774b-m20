@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T19:31:14.719Z",
+  "last_updated": "2026-11-19T19:39:12.131Z",
   "directives": [
     {
       "id": "CD-001",
@@ -34105,6 +34105,72 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-462C9F-build-download-onnx-runtime-archives-fro.md",
       "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-EBR4",
+      "directive_title": "prelink external packages again so release builds keep Swift metadata",
+      "source_repo": "tuist/tuist",
+      "source_commit": "5679c950",
+      "staged_file": "11_INBOX/candidate-directives/CD-EBR4-prelink-external-packages-again-so-release-builds-keep-swift-metadata.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-19",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-EBYO",
+      "directive_title": "add latest release badge to README",
+      "source_repo": "MelnixDev/seo-crawl-audit",
+      "source_commit": "3e173529",
+      "staged_file": "11_INBOX/candidate-directives/CD-EBYO-add-latest-release-badge-to-readme.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-19",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-ED1R",
+      "directive_title": "add introspection benchmarks",
+      "source_repo": "siteline/swiftui-introspect",
+      "source_commit": "cd344bc3",
+      "staged_file": "11_INBOX/candidate-directives/CD-ED1R-add-introspection-benchmarks.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-19",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-EHQI",
+      "directive_title": "cli): prelink external packages again so release builds keep Swift metadata",
+      "source_repo": "tuist-tuist-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-EHQI-cli-prelink-external-packages-again-so-release-builds-keep-swift-metadata.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-EIGT",
+      "directive_title": "docs: add latest release badge to README",
+      "source_repo": "melnixdev-seo-crawl-audit-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-EIGT-docs-add-latest-release-badge-to-readme.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-EJCY",
+      "directive_title": "test: add introspection benchmarks",
+      "source_repo": "siteline-swiftui-introspect-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-EJCY-test-add-introspection-benchmarks.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "K"
     }
   ]
 }

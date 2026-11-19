@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T19:31:15.203Z",
+  "last_updated": "2026-11-19T19:39:12.550Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T19:31:13.824Z",
@@ -1853,7 +1853,7 @@
       "staged_for_review": 1
     },
     "tuist-tuist-learnings.md": {
-      "processed_at": "2026-11-18T07:56:36.683Z",
+      "processed_at": "2026-11-19T19:39:09.227Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2928,9 +2928,9 @@
       "staged_for_review": 0
     },
     "melnixdev-seo-crawl-audit-learnings.md": {
-      "processed_at": "2026-11-15T08:53:19.661Z",
-      "promoted_canonical": 2,
-      "staged_for_review": 0
+      "processed_at": "2026-11-19T19:39:10.615Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "hf-liquidai-d1-2b-learnings.md": {
       "processed_at": "2026-11-15T09:55:27.966Z",
@@ -3003,7 +3003,7 @@
       "staged_for_review": 1
     },
     "siteline-swiftui-introspect-learnings.md": {
-      "processed_at": "2026-11-15T15:23:28.133Z",
+      "processed_at": "2026-11-19T19:39:11.408Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3518,7 +3518,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2313,
+  "total_dossiers_evaluated": 2316,
   "total_canonical_promoted": 392,
-  "total_staged_for_review": 1720
+  "total_staged_for_review": 1723
 }

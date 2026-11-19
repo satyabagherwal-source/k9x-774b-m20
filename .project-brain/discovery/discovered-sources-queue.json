@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T19:23:28.388Z",
+  "updated_at": "2026-11-19T19:39:11.949Z",
   "stats": {
-    "total_discovered": 5956,
-    "approved_pending_harvest": 5640,
+    "total_discovered": 5986,
+    "approved_pending_harvest": 5669,
     "harvested_count": 0,
-    "rejected_count": 316,
+    "rejected_count": 317,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5607,
+      "COMMUNITY_AND_EXPERT": 5637,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 112,
       "ENGINEERING_BLOGS": 4,
@@ -128841,6 +128841,659 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/momenbasel-puremac-learnings.md",
         "fileName": "momenbasel-puremac-learnings.md"
+      }
+    },
+    "SRC-7F7F8113690D": {
+      "id": "SRC-7F7F8113690D",
+      "url": "https://cursor.com/agents/bc-7e634cae-4cf3-5466-bc7a-5fa1afe4338f?cursor_ref=pr_footer&cursor_cta=open_in_web",
+      "title": "https://cursor.com/agents/bc-7e634cae-4cf3-5466-bc7a-5fa1afe4338f?cursor_ref=pr_footer&cursor_cta=open_in_web",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:09.268Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-2BA1C1A44EE8": {
+      "id": "SRC-2BA1C1A44EE8",
+      "url": "https://cursor.com/assets/images/open-in-web-dark.png",
+      "title": "https://cursor.com/assets/images/open-in-web-dark.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:09.309Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-1D19BE46E644": {
+      "id": "SRC-1D19BE46E644",
+      "url": "https://cursor.com/assets/images/open-in-web-light.png",
+      "title": "https://cursor.com/assets/images/open-in-web-light.png",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:09.351Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-6DCC4848EB6E": {
+      "id": "SRC-6DCC4848EB6E",
+      "url": "https://cursor.com/assets/images/open-in-web-dark",
+      "title": "https://cursor.com/assets/images/open-in-web-dark",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:09.394Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-A6119B552CDE": {
+      "id": "SRC-A6119B552CDE",
+      "url": "https://ampcode.com/threads/T-01a1f0b3-0852-70c0-aaf5-9d10c32bb839",
+      "title": "https://ampcode.com/threads/T-01a1f0b3-0852-70c0-aaf5-9d10c32bb839",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:09.436Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-D81E4F0E066A": {
+      "id": "SRC-D81E4F0E066A",
+      "url": "https://github.com/realm/SwiftLint/releases/download/0.59.1/portable_swif",
+      "title": "https://github.com/realm/SwiftLint/releases/download/0.59.1/portable_swif",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:09.479Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-792E23CB99CE": {
+      "id": "SRC-792E23CB99CE",
+      "url": "https://github.com/realm/SwiftLint/releases/download/0.59.1/portable_swiftlint.zip",
+      "title": "https://github.com/realm/SwiftLint/releases/download/0.59.1/portable_swiftlint.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:09.521Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-F50BE6E3C01A": {
+      "id": "SRC-F50BE6E3C01A",
+      "url": "https://github.com/tuist/tuist/releases/download/4.219.0-canary.34/tuist-linux-aarch64.tar.gz",
+      "title": "https://github.com/tuist/tuist/releases/download/4.219.0-canary.34/tuist-linux-aarch64.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:09.563Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-281EBD30425B": {
+      "id": "SRC-281EBD30425B",
+      "url": "https://github.com/tuist/tuist/releases/download/4.219.0-canary.12/tuist-linux-aarch64.tar.gz",
+      "title": "https://github.com/tuist/tuist/releases/download/4.219.0-canary.12/tuist-linux-aarch64.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:09.607Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-34E6AAAD30A0": {
+      "id": "SRC-34E6AAAD30A0",
+      "url": "https://github.com/tuist/tuist/releases/download/4.219.0-canary.34/tuist-linux-x86_64.tar.gz",
+      "title": "https://github.com/tuist/tuist/releases/download/4.219.0-canary.34/tuist-linux-x86_64.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:09.649Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-6E35C440057C": {
+      "id": "SRC-6E35C440057C",
+      "url": "https://github.com/tuist/tuist/releases/download/4.219.0-canary.12/tuist-linux-x86_64.tar.gz",
+      "title": "https://github.com/tuist/tuist/releases/download/4.219.0-canary.12/tuist-linux-x86_64.tar.gz",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:09.692Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-32B1EBD337F5": {
+      "id": "SRC-32B1EBD337F5",
+      "url": "https://github.com/tuist/tuist/releases/download/4.219.0-canary.34/tuist.zip",
+      "title": "https://github.com/tuist/tuist/releases/download/4.219.0-canary.34/tuist.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:09.734Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-2D97EFC39CD2": {
+      "id": "SRC-2D97EFC39CD2",
+      "url": "https://github.com/tuist/tuist/releases/download/4.219.0-canary.12/tuist.zip",
+      "title": "https://github.com/tuist/tuist/releases/download/4.219.0-canary.12/tuist.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:09.778Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-502A94E5CA50": {
+      "id": "SRC-502A94E5CA50",
+      "url": "https://ampcode.com/threads/T-01a1ef61-c459-7170-9840-a51e65a86eda",
+      "title": "https://ampcode.com/threads/T-01a1ef61-c459-7170-9840-a51e65a86eda",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:09.822Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-60E68C1CA465": {
+      "id": "SRC-60E68C1CA465",
+      "url": "https://github.com/MelnixDev/seo-crawl-audit/blob/main/docs/rules.md",
+      "title": "https://github.com/MelnixDev/seo-crawl-audit/blob/main/docs/rules.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:10.651Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/melnixdev-seo-crawl-audit-learnings.md",
+        "fileName": "melnixdev-seo-crawl-audit-learnings.md"
+      }
+    },
+    "SRC-1ABBE7A48C60": {
+      "id": "SRC-1ABBE7A48C60",
+      "url": "https://github.com/MelnixDev/seo-crawl-audit/releases/tag/v0.17.4",
+      "title": "https://github.com/MelnixDev/seo-crawl-audit/releases/tag/v0.17.4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:10.708Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/melnixdev-seo-crawl-audit-learnings.md",
+        "fileName": "melnixdev-seo-crawl-audit-learnings.md"
+      }
+    },
+    "SRC-F5D0B4F27685": {
+      "id": "SRC-F5D0B4F27685",
+      "url": "https://img.shields.io/github/v/release/MelnixDev/seo-crawl-audit",
+      "title": "https://img.shields.io/github/v/release/MelnixDev/seo-crawl-audit",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:10.747Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/melnixdev-seo-crawl-audit-learnings.md",
+        "fileName": "melnixdev-seo-crawl-audit-learnings.md"
+      }
+    },
+    "SRC-0E2E2FDF04C2": {
+      "id": "SRC-0E2E2FDF04C2",
+      "url": "https://github.com/MelnixDev/seo-crawl-audit/releases/latest",
+      "title": "https://github.com/MelnixDev/seo-crawl-audit/releases/latest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:10.787Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/melnixdev-seo-crawl-audit-learnings.md",
+        "fileName": "melnixdev-seo-crawl-audit-learnings.md"
+      }
+    },
+    "SRC-24B4BEEE2315": {
+      "id": "SRC-24B4BEEE2315",
+      "url": "https://github.com/jdx/hk/releases/download/v1.57.0/hk-x86_64-pc-windows-msvc.zip",
+      "title": "https://github.com/jdx/hk/releases/download/v1.57.0/hk-x86_64-pc-windows-msvc.zip",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:11.511Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md",
+        "fileName": "siteline-swiftui-introspect-learnings.md"
+      }
+    },
+    "SRC-4D1BCC84B293": {
+      "id": "SRC-4D1BCC84B293",
+      "url": "https://api.github.com/repos/jdx/hk/releases/assets/536864259",
+      "title": "https://api.github.com/repos/jdx/hk/releases/assets/536864259",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:11.551Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md",
+        "fileName": "siteline-swiftui-introspect-learnings.md"
+      }
+    },
+    "SRC-45829CCAD4D8": {
+      "id": "SRC-45829CCAD4D8",
+      "url": "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-arm64",
+      "title": "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-arm64",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:11.593Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md",
+        "fileName": "siteline-swiftui-introspect-learnings.md"
+      }
+    },
+    "SRC-EF3276EA039D": {
+      "id": "SRC-EF3276EA039D",
+      "url": "https://api.github.com/repos/jqlang/jq/releases/assets/453012756",
+      "title": "https://api.github.com/repos/jqlang/jq/releases/assets/453012756",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:11.630Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md",
+        "fileName": "siteline-swiftui-introspect-learnings.md"
+      }
+    },
+    "SRC-360477C737DF": {
+      "id": "SRC-360477C737DF",
+      "url": "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-amd64",
+      "title": "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-linux-amd64",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:11.671Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md",
+        "fileName": "siteline-swiftui-introspect-learnings.md"
+      }
+    },
+    "SRC-ED55EBDC0850": {
+      "id": "SRC-ED55EBDC0850",
+      "url": "https://api.github.com/repos/jqlang/jq/releases/assets/453012752",
+      "title": "https://api.github.com/repos/jqlang/jq/releases/assets/453012752",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:11.708Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md",
+        "fileName": "siteline-swiftui-introspect-learnings.md"
+      }
+    },
+    "SRC-D7130AD7BB11": {
+      "id": "SRC-D7130AD7BB11",
+      "url": "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-macos-arm64",
+      "title": "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-macos-arm64",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:11.745Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md",
+        "fileName": "siteline-swiftui-introspect-learnings.md"
+      }
+    },
+    "SRC-81C2E2AA8FAE": {
+      "id": "SRC-81C2E2AA8FAE",
+      "url": "https://api.github.com/repos/jqlang/jq/releases/assets/453012783",
+      "title": "https://api.github.com/repos/jqlang/jq/releases/assets/453012783",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:11.785Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md",
+        "fileName": "siteline-swiftui-introspect-learnings.md"
+      }
+    },
+    "SRC-C005140DF414": {
+      "id": "SRC-C005140DF414",
+      "url": "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-macos-amd64",
+      "title": "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-macos-amd64",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:11.822Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md",
+        "fileName": "siteline-swiftui-introspect-learnings.md"
+      }
+    },
+    "SRC-852459815262": {
+      "id": "SRC-852459815262",
+      "url": "https://api.github.com/repos/jqlang/jq/releases/assets/453012782",
+      "title": "https://api.github.com/repos/jqlang/jq/releases/assets/453012782",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:11.860Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md",
+        "fileName": "siteline-swiftui-introspect-learnings.md"
+      }
+    },
+    "SRC-5B42C55BAE68": {
+      "id": "SRC-5B42C55BAE68",
+      "url": "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-windows-amd64.exe",
+      "title": "https://github.com/jqlang/jq/releases/download/jq-1.8.2/jq-windows-amd64.exe",
+      "status": "REJECTED_BINARY_EXECUTABLE_REJECTED",
+      "rejection_reasons": [
+        "BINARY_EXECUTABLE_REJECTED"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T19:39:11.912Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md",
+        "fileName": "siteline-swiftui-introspect-learnings.md"
+      }
+    },
+    "SRC-29D5ECABA6F1": {
+      "id": "SRC-29D5ECABA6F1",
+      "url": "https://api.github.com/repos/jqlang/jq/releases/assets/453012788",
+      "title": "https://api.github.com/repos/jqlang/jq/releases/assets/453012788",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:39:11.949Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md",
+        "fileName": "siteline-swiftui-introspect-learnings.md"
       }
     }
   }

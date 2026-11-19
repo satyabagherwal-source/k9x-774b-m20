@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T19:23:22.861Z",
+  "last_updated": "2026-11-19T19:39:03.758Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2781,14 +2781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-melnixdev-seo-crawl-audit",
-      "content_hash": "32664a22ec4793b1b8bec6e306b36d81e80c02221ea28f24d341c91c9dd76107",
-      "verified_at": "2026-11-15T08:52:24.060Z",
+      "content_hash": "5e09fbe4b918c54283b2135645d6db4e5d11e208171a32e6034f6c96fceee671",
+      "verified_at": "2026-11-19T19:39:02.349Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T08:52:24.060Z"
+      "last_updated": "2026-11-19T19:39:02.349Z"
     },
     "ISTIFANO/seo-auditor": {
       "repository": "ISTIFANO/seo-auditor",
@@ -12066,14 +12066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siteline-swiftui-introspect",
-      "content_hash": "e686d618a018fa041e7cc62b648a4ea293dee7b999d221b8cf106371b105f172",
-      "verified_at": "2026-11-15T15:23:22.371Z",
+      "content_hash": "69bda98bc5054db79d2b30966a4232215e08801183cdac4c817348c53a7849ed",
+      "verified_at": "2026-11-19T19:39:03.757Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T15:23:22.371Z"
+      "last_updated": "2026-11-19T19:39:03.757Z"
     },
     "github/CopilotForXcode": {
       "repository": "github/CopilotForXcode",
@@ -18741,14 +18741,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tuist-tuist",
-      "content_hash": "032144885ad79350bfa186548a539df3869fd7cf025483784e8da003b1c06c7a",
-      "verified_at": "2026-11-18T07:56:22.310Z",
+      "content_hash": "5271a2aacfa6ef9a57f5a9c4541201d69b5e698efa22cd2375127cee51d6f3af",
+      "verified_at": "2026-11-19T19:39:02.084Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T07:56:22.310Z"
+      "last_updated": "2026-11-19T19:39:02.084Z"
     },
     "mixelpixx/KiCAD-MCP-Server": {
       "repository": "mixelpixx/KiCAD-MCP-Server",

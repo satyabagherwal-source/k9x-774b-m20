@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T07:56:36.938Z",
+  "timestamp": "2026-11-19T19:39:09.918Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tuist-tuist-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tuist-tuist-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T07:56:36.938Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T19:39:09.918Z`  
 > **Learning ID**: `LEARN-EVO-tuist-tuist-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), E (Creative Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 70%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 76%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tuist-tuist-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tuist-tuist-learnings.md`  
 > **Source**: github ([https://github.com/tuist/tuist](https://github.com/tuist/tuist))  
-> **Source Version**: `3a155b20`  
+> **Source Version**: `5679c950`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T07:56:21.427Z  
+> **Timestamp**: 2026-11-19T19:39:01.075Z  
 > **Learning ID**: `learn-github-tuist-tuist`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tuist-tuist-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tuist/tuist](https://github.com/tuist/tuist))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T07:56:21.422Z  
+> **Harvest Timestamp**: 2026-11-19T19:39:00.882Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -53,9 +53,9 @@ The following architectural invariants have been empirically discovered and reco
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `tuist/tuist`
 - **Description**: Tuist builds infrastructure for faster, more reliable build and test workflows across developers, CI, and coding agents. Shared cache, tests, and insights that sit alongside your existing CI.
-- **Primary Language / Ecosystem**: Rust
+- **Primary Language / Ecosystem**: Elixir
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5867 stars
+- **Stars / Engagement**: 5869 stars
 
 ---
 
@@ -463,13 +463,13 @@ struct PreviewsEmptyStateView: View {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15774** (2026-11-18): **feat(server): stop writing coverage run rows to coverage_files**
-  *Symptoms*: Stack: #15771 (31-day retention) → #15772 (write new tables, backfill) → #15773 (read new tables) → #15774 (stop old write). Merge and deploy in that order; #15773 only after both backfill passes completed, #15774 one release after #15773.  Last of four stacked PRs. `Coverage.publish` stops writing run rows to `coverage_files`; they go only to `coverage_run_files` and `coverage_file_layouts`, which every reader reads since the previous PR.  ## What changed  - `publish` writes run rows only to the new tables. Per-test evidence still goes to `coverage_files` (2-day TTL), which test selection reads. - Nothing is dropped or deleted: the run rows already in `coverage_files` expire within 31 days under the retention PR's TTL. The table stays for evidence. - `data-export.md` notes that `coverage_files` holds only evidence for new reports.  ## Rollout order  Deploy one release after the read PR, so no pod still reads run rows from `coverage_files`.  ## Publishing benchmark  A 112,700-file report streamed in 2,000-file chunks through `Coverage.publish/4`, `main` (2 rounds) against this branch (3 rounds):  | Report | `main` wall | This PR wall | Elixir peak (`main` → PR) | ClickHouse peak query (`main` → PR) | |---|---|---|---|---| | No versions stored (first report after rollout) | 18.6–19.3 s | 7.0–7.8 s | +145 → +144 MiB | 44 → 25 MiB | | First report of a day | 18.8–20.5 s | 3.8–4.4 s | +145 → +160 MiB | 44 → 9 MiB | | Every version stored | 18.6–21.9 s | 3.6–3.7 s | +145 → +151 Mi
-  **Post-Mortem & Fix Analysis**:
-  > ### 🛠️ Tuist Run Report 🛠️  #### Tests 🧪  | Test runs | Status | Passed | Failed | Skipped | Commit | |:-:|:-:|:-:|:-:|:-:|:-:| | [clickhouse-current](https://tuist.dev/tuist/server/tests/test-runs/df93631e-c324-4f93-8ac1-599b00713cb9) | ✅ | 15813 | 0 | 0 | [270937d77](https://github.com/tuist/tuist/commit/270937d771dc768d2443d3a8dc3a6ae586f644af) |   <sub>Reported by [Tuist](https://tuist.dev), faster builds and reliable tests for Xcode, Gradle, Bazel, and more.</sub> 
+- **Issue #15805** (2026-11-19): **docs(handbook): manage the Tuist Digest in Atlas**
+  *Symptoms*: <!-- CURSOR_AGENT_PR_BODY_BEGIN --> The Tuist Digest page still told the team to send the newsletter, and to manage subscribers, templates, and campaigns, in Loops. Newsletter and lifecycle email now go through Tuist's self-hosted Atlas, so the handbook should describe the current tool.  This updates the overview in `handbook/handbook/community/tuist-digest.md`:  - The newsletter is sent in Tuist's self-hosted Atlas. - Subscribers, templates, and campaigns are managed in Atlas. - The `app.loops.so` link is removed.  The public subscribe form at tuist.dev/newsletter and the unsubscribe link in each edition are unchanged. This is a docs-only change.  A short historical note that Loops used to send the digest would leave the operating procedure pointing at a tool the team no longer uses, so the page describes Atlas only.  ### How to test locally  From `handbook/`, run `mise run build`. The VitePress build completed successfully, including its dead-link check.  Review requested from @tuist/company.  <!-- CURSOR_AGENT_PR_BODY_END -->  <div><a href="https://cursor.com/agents/bc-7e634cae-4cf3-5466-bc7a-5fa1afe4338f?cursor_ref=pr_footer&cursor_cta=open_in_web"><picture><source media="(prefers-color-scheme: dark)" srcset="https://cursor.com/assets/images/open-in-web-dark.png"><source media="(prefers-color-scheme: light)" srcset="https://cursor.com/assets/images/open-in-web-light.png"><img alt="Open in Web" width="114" height="28" src="https://cursor.com/assets/images/open-in-web-dark.
 
-- **Issue #15773** (2026-11-18): **feat(server): read coverage run rows from coverage_run_files**
-  *Symptoms*: Stack: #15771 (31-day retention) → #15772 (write new tables, backfill) → #15773 (read new tables) → #15774 (stop old write). Merge and deploy in that order; #15773 only after both backfill passes completed, #15774 one release after #15773.  Third of four stacked PRs. Every reader of coverage run rows now reads `coverage_run_files` joined with `coverage_file_layouts`, which the previous PR started writing and backfilling. `publish` still writes `coverage_files` too, so pods of the previous release keep finding the rows they read during the deploy; the next PR stops that write.  ## What changed  - `Coverage.report_files_for_runs/3` (the previous PR's `run_files_for_runs/3`, renamed) replaces the old read of `coverage_files` run rows. Every reader already went through that function: the file pages and line views, the raw-row file lists, the merge of shard reports, the commit fold and the file deltas. It joins the run rows with their layouts on `(project_id, path, epoch, layout_id)` and returns the row shape readers already used, so callers above it didn't change. Readers of paths, targets and counts pass `lines: false` and skip the layouts. - Test selection's snapshot builds (`TestImpactAnalysis.Snapshots`) read a run's report paths and its oldest report time from `coverage_run_files`; the per-test evidence they join stays in `coverage_files`. - `docs/code-coverage.md` and `lib/tuist/AGENTS.md` describe where run rows live now.  ## Rollout order  **Deploy this only after both ba
+- **Issue #15803** (2026-11-19): **feat(infra): move larch-edge-a's BMC to larch-tor-b port 21**
+  *Symptoms*: ## What  Moves larch-edge-a's BMC management link from `larch-tor-b` port 28 to copper port 21, re-rendered: the site file, `cables/larch.md` and the `larch-tor-b` RackSwitch object (port 21 now native VLAN 20, port 28 back to VLAN 1, the port map entry moved).  ## Why  Marek decided on 19 Nov that the planned 10G inter-site link between larch and rack 1 lands on `larch-tor-b` port 28. Port 28 stays empty here; the inter-site port entry and its VLAN come once a carrier is chosen.  Port 21 is free on main. The minis use 1–8 under the 20-Mac plan, and 22–24 are management. The BMC stays on the ToR opposite the one larch-edge-a provisions (larch-tor-a), so the opposite-ToR rule (`fleet_check_management_links`) still holds.  ## Rollout  Physically, edge-a's BMC cable is in tor-b 28 today. After this merges and tor-b converges, port 28 no longer carries the management VLAN, so edge-a's BMC is unreachable until the cable moves to port 21. Nothing uses that BMC yet (edge-a isn't up), so merge it around the next DC visit and recable then. The move is on the visit checklist, along with a replacement label pair.  #15626 also re-renders `k8s/larch/larch-tor-b.yaml`; whichever merges second needs a rebase and `mise run rack:fleet --site larch render`.  ## Validation  - `mise run rack:fleet --site larch render`, then `render --check` clean for all sites. - `mise run rack:fleet-test`: 310 ok, 0 failed, 12 files. 
+  **Post-Mortem & Fix Analysis**:
+  > Closing: the team no longer works through pull requests.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -486,895 +486,326 @@ struct PreviewsEmptyStateView: View {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d5c047d3` (2026-11-18)
-**Commit Message**: fix(infra): stop runner cache volume ratio alerts firing on NaN
+### Incident Patch 1: `33b6cfcd` (2026-11-19)
+**Commit Message**: fix(cli): prelink external packages again so release builds keep Swift metadata
 
-The saves-failing rule paged on 2026-11-18 at 05:25 UTC with 0 counted
-Linux saves: every save that hour was unchanged, so B was 0, the ratio
-$A / $B was NaN, NaN survived the && with $B >= 20, and Grafana fires on
-a NaN condition. No save had failed.
+This reverts c1b88fa4b9. Without GENERATE_MASTER_OBJECT_FILE, the statically
+linked release executable only loads the archive members of external packages
+that some symbol references. Swift looks up protocol conformances and type
+descriptors at runtime, so the ones in unreferenced members were dropped:
+4.219.0-canary.31 has 983 fewer conformance records than canary.30, and
+`tuist generate` and `tuist cache` crash with a segmentation fault from
+canary.31 on. A release build with prelinking restored keeps the metadata and
+generates this repository again.
 
-The saves-failing and attaches-unavailable conditions now compare
-$A > ratio * $B, which is 0 rather than NaN when B is 0. $C stays for the
-annotations. Both live rules were updated to match.
+Prelinking brings back the cache warm skipping external packages, which needs
+a fix that does not change how the release executable links.
 
-Amp-Thread-ID: https://ampcode.com/threads/T-01a1ed1e-6cec-7070-8985-b8935af02337
+Amp-Thread-ID: https://ampcode.com/threads/T-01a1f0b3-0852-70c0-aaf5-9d10c32bb839
 Co-authored-by: Pedro Piñera Buendía <[REDACTED_EMAIL]>
 
-**File**: `infra/helm/k8s-monitoring/alerts.md` (modified, +7/-2)
+**File**: `Package.resolved` (modified, +1/-1)
 ```diff
-@@ -3317,7 +3317,10 @@ count(sum by (use) (count_over_time(
- #    result!~`unchanged|withheld|release_pending|cancelled`
- ```
- 
--- Condition: `$A / $B > 0.3 && $B >= 20`
-+- Condition: `$A > 0.3 * $B && $B >= 20`. `$C = $A / $B` only feeds the
-+  annotations: in an hour with no counted saves on a platform (all
-+  `unchanged` at night) `$A / $B` is NaN, NaN survives `&&`, and Grafana
-+  fires on a NaN condition. That paged at 0 saves on 2026-11-18 at 05:25 UTC.
- - Pending period: 10 minutes; keep firing for 30 minutes, so a quiet hour in
-   the middle of a breakage (17:30 to 19:00 on 2026-10-21 had 4 and 12 saves)
-   does not resolve and re-page
-@@ -7284,7 +7287,9 @@ or failed, so the job ran without its volume:
- - Linux failures: `operation` `acquire` with a result other than `success`,
-   `cancelled` or `execution_pending` (`timeout` and `error`).
- - `execution_pending` is excluded on both sides because it has its own rule.
--- Condition: `$A / $B > 0.25 && $B >= 20`; pending period 10 minutes;
-+- Condition: `$A > 0.25 * $B && $B >= 20` (no division, so an hour with
-+  no counted attaches cannot fire on NaN, as the saves rule did); pending
-+  period 10 minutes;
-   severity warning; no contact point, so the policy tree sends it to
-   `#notifications`. A cold job is slower, not broken, so this does not page.
- 
+@@ -1,5 +1,5 @@
+ {
+-  "originHash" : "b9bc213cbb2a3ea148cc63449b708badce9b1709cc64b00e9c043acae8642e8d",
++  "originHash" : "a07ded586f504de57c8f0e77d86c28a78e9278bb7ec41877ab07e0f3187adcc7",
+   "pins" : [
+     {
+       "identity" : "1024jp.gzipswift",
 ```
 
-**File**: `infra/helm/k8s-monitoring/runner-cache-volume-alert-rules.json` (modified, +2/-2)
+**File**: `Package.swift` (modified, +2/-1)
 ```diff
-@@ -84,7 +84,7 @@
-             "type": "__expr__",
-             "uid": "__expr__"
-           },
--          "expression": "$C > 0.3 && $B >= 20",
-+          "expression": "$A > 0.3 * $B && $B >= 20",
-           "intervalMs": 1000,
-           "maxDataPoints": 43200,
-           "refId": "D",
-@@ -195,7 +195,7 @@
-             "type": "__expr__",
-             "uid": "__expr__"
-           },
--          "expression": "$C > 0.25 && $B >= 20",
-+          "expression": "$A > 0.25 * $B && $B >= 20",
-           "intervalMs": 1000,
-           "maxDataPoints": 43200,
-           "refId": "D",
+@@ -2019,7 +2019,8 @@ targets.append(
+             // references nothing in it; a static framework would be dropped by the linker.
+             "TestCoverageAttribution": .framework,
+             "TestCoverageAttributionObserver": .framework,
+-        ]
++        ],
++        baseSettings: .settings(base: ["GENERATE_MASTER_OBJECT_FILE": "YES"])
+     )
+ #endif
+ 
 ```
 
 ---
 
-### Incident Patch 2: `f1f0120c` (2026-11-18)
-**Commit Message**: feat(guild): add the runner daemon and its macOS settings
+### Incident Patch 2: `6cd85d0f` (2026-11-19)
+**Commit Message**: chore(cli): pin Tuist CLI back to 4.219.0-canary.12
 
-`crates/runner` builds `tuist-guild-runner`, a std-only Rust daemon meant
-for every desktop app; the macOS app bundles it today. It installs as a
-launchd agent (systemd and Windows logon task installers are untested),
-connects to Tuist with the secret Guild registers, and serves file,
-command and display operations confined to the shared folders, never its
-own state directory.
+This reverts 3b65939e60. 4.219.0-canary.31 to .34 segfault in `tuist generate`
+and `tuist cache` because the release link dropped Swift metadata (fixed in
+33b6cfcdaa), so the App workflow and the release bundle, which generate with
+the pinned CLI, fail. The update workflow can bump again once a canary with
+the fix is published.
 
-- A new runner shares one projects folder with terminal, display and
-  portals off. Unreadable settings keep the last ones read, or share
-  nothing; `reset` restores the defaults.
-- Commands run in their own process group (a process tree on Windows) that
-  a timeout kills. Answers are retried until the server takes them while
-  the request stays listed in flight, and a restarted daemon reports what
-  it left unanswered instead of letting it run twice.
-- curl carries the secret from a 0600 config file and ignores ~/.curlrc.
+Amp-Thread-ID: https://ampcode.com/threads/T-01a1f0b3-0852-70c0-aaf5-9d10c32bb839
+Co-authored-by: Pedro Piñera Buendía <[REDACTED_EMAIL]>
 
-The core gains `runners`, `register_runner`, `remove_runner` and
-`runner_id` on `start_thread`, reporting an offline runner distinctly.
-On macOS, Settings ▸ Runner installs and configures the daemon and
-connects it, and Start conv
-
-**File**: `guild/Cargo.lock` (modified, +9/-0)
+**File**: `infra/sandbox-image/Dockerfile` (modified, +2/-2)
 ```diff
-@@ -6181,6 +6181,15 @@ dependencies = [
-  "zed-reqwest",
- ]
- 
-+[[package]]
-+name = "tuist-guild-runner"
-+version = "0.1.0"
-+dependencies = [
-+ "base64 0.22.1",
-+ "serde",
-+ "serde_json",
-+]
-+
- [[package]]
- name = "tuist-jwt"
- version = "0.1.0"
+@@ -37,8 +37,8 @@ ARG CLAUDE_CODE_SHA256=86dc1fcc69498159eaf15f446613e847010f9036bfbbdffd4c49350be
+ # The first release that signs in with the sandbox's workload identity (#15541)
+ # without `tuist auth login`; SHA-256 of tuist-linux-x86_64.tar.gz from the
+ # release's SHASUMS256.txt.
+-ARG TUIST_VERSION=4.219.0-canary.34
+-ARG TUIST_SHA256=c2821c8b4bc7e187105f70e69248e7e9e7048894a050c878f5a64ab6356d679a
++ARG TUIST_VERSION=4.219.0-canary.12
++ARG TUIST_SHA256=51476eeb54fba068a2e47dee79e033c0dbfc7d9fc02d5e6488ed49959637e56d
+ # Struo, which thread agents build and test with first; SHA-256 of
+ # struo-<version>-x86_64-unknown-linux-gnu.tar.gz from the release's .sha256.
+ ARG STRUO_VERSION=1.0.0
 ```
 
-**File**: `guild/README.md` (modified, +11/-1)
+**File**: `luft/mise.toml` (modified, +1/-1)
 ```diff
-@@ -34,7 +34,7 @@ Mise runs `prepare-native.py` before graph loading. When invoking Once directly,
+@@ -11,7 +11,7 @@ kotlin = "2.4.10"
+ # Signed device and macOS preview publication only; CI installs them only in those jobs.
+ "1password-cli" = "2.32.0"
+ # update-tuist-cli.yml keeps tuist in sync with the root mise.toml, which this workspace ignores.
+-tuist = "4.219.0-canary.34"
++tuist = "4.219.0-canary.12"
  
- Every client's signed-out screen copies the shipping app's `LogInView`, titled **Welcome to Tuist Guild** (`../app/Sources/TuistOnboarding/LogInView.swift`, `../android/app/src/main/java/dev/tuist/app/ui/login/LoginScreen.kt`): Sign in with Tuist, Apple, Google and GitHub on Tuist-hosted, then **Self-hosted server**, which asks for an HTTPS server URL and prefills the last self-hosted server used. GPUI shows the social providers only while `https://tuist.dev` is selected, signs in with Tuist to the selected server, and opens its account/server form from **Self-hosted server**. Its artwork and brand assets are copied into `apple/Resources/Assets.xcassets` and `android/res/`; GPUI keeps its theme colors. On iOS, macOS and Android, adding a profile shows the same screen with Cancel; GPUI adds accounts from its account menu. The screen scrolls when a landscape phone or large text leaves too little height. Every client keeps several accounts, on one or more servers, and switches between them without signing in again.
- 
--Signed in, iOS, macOS and GPUI share two destinations from the core's tab catalog: **Threads**, then **Profile**. iOS uses the system tab bar and navigation bars, which adopt Liquid Glass on iOS 26 and later, with the account menu in the Profile tab's navigation bar; conversations hide the tab bar and float the reply field over the messages (in glass on iOS 26 and later). macOS follows the HIG with a `NavigationSplitView` sidebar, a toolbar account menu and a grouped-form Profile; it builds from the same SwiftUI sources as iOS (`apple/Sources`), and only the Info.plist differs. GPUI follows Zed's workspace: a left dock of destinations under the title bar's account menu. On iOS and macOS, Threads lists the person's own threads in the account selected in the account menu, from `/api/accounts/{personal account or organization}/threads`, grouped into In progress, Recent and Archived by the core; GPUI lists the same threads through the core's `Threads` operations. The server answers 404 when threads are off for the user (its `code` flag) or it predates them; the core reports `available: false` and the tab explains it. An organization's threads need admin rights there and the organization's `guild` flag; the server answers 404 without them too. Guild is a first-party app: it signs in as the server's static Tuist Guild OAuth client, which the server trusts as the signed-in user, like the Tuist app, so new features need no new sign-in. Because that client's ID is public, the server asks the person to approve every Guild sign-in on a consent page before it issues a code. The threads API refuses other OAuth clients with 403, which the core reports as `reason: "sign_in_required"`; iOS, macOS and Android offer **Sign In Again**, and GPUI asks to sign out and sign in again; only sessions from before Guild became first-party, which registered their own clients, hit it. Every client keeps what it has seen in a local SQLite store (see `crates/core/README.md`), so threads stay readable offline, and threads and replies written offline are sent when the connection returns. Every client, Android included, starts a conversation with **Start conversation**: it asks only what to talk about, and the conversation runs on the server, with no repository, machine or model to choose. Opening a thread shows its messages, keeps them current while the server answers, and accepts replies. On iOS and macOS, the conversation view follows Atlas: the reply field offers dictation with Apple Speech's on-device recognition only (hold the microphone and release, or tap to start and stop; the transcript is added to the editable reply and never sent automatically, and audio never leaves the device), a Prompts index in the toolbar jumps back to any of the person's earlier messages and loads earlier history on request, and tool calls render as collapsed evidence showing each tool's name, whether it is running, and its result. On iOS, two App Shortcuts (Shortcuts, Siri and the Action button) open **Start conversation** directly by navigating to the core's `/threads/new` route (`/threads/new/dictation` for dictation), which waits for sign-in like any link: **Start Conversation** with the keyboard up, and **Dictate Conversation** with dictation already recording; neither starts the conversation until the person taps Start. Once has no App Intents step, so `modules/appintents.sh` compiles the self-contained `apple/Sources/AppShortcuts.swift` after each iOS build and writes the `Metadata.appintents` that Shortcuts reads. The Developer ID copy is signed with the hardened runtime's microphone exception (`macos/distribution/entitlements.plist`). The account menu (on Android, Profile's **Switch account**) lists the personal accounts and organizations of every saved profile from the core's `accounts` view; choosing one switches to the profile that ow
+ # Desktop tool installation must not run the monorepo's CLI bootstrap hook.
+ [hooks]
 ```
 
-**File**: `guild/apple/Resources/en.lproj/Localizable.strings` (modified, +65/-0)
+**File**: `mise.lock` (modified, +13/-13)
 ```diff
-@@ -154,3 +154,68 @@
- "Opens a new conversation, ready to type." = "Opens a new conversation, ready to type.";
- "Dictate Conversation" = "Dictate Conversation";
- "Opens a new conversation and starts dictation on this device. Nothing is sent until you tap Start." = "Opens a new conversation and starts dictation on this device. Nothing is sent until you tap Start.";
-+"Accessibility" = "Accessibility";
-+"Add Folder" = "Add Folder";
-+"All Runners" = "All Runners";
-+"Allow Terminal Access" = "Allow Terminal Access";
-+"Allowed" = "Allowed";
-+"Anyone who can write to a thread running here can see and control this display. Allow both for tuist-guild-runner." = "Anyone who can write to a thread running here can see and control this display. Allow both for tuist-guild-runner.";
-+"Change…" = "Change…";
-+"Choose" = "Choose";
-+"Choose Folder…" = "Choose Folder…";
-+"Connection" = "Connection";
-+"Folders" = "Folders";
-+"Home Folder" = "Home Folder";
-+"Installed from another copy of Tuist Guild" = "Installed from another copy of Tuist Guild";
-+"Keep This Mac Awake" = "Keep This Mac Awake";
-+"Logs" = "Logs";
-+"New Project Folder" = "New Project Folder";
-+"Not Allowed" = "Not Allowed";
-+"Open System Settings" = "Open System Settings";
-+"Remove" = "Remove";
-+"Request" = "Request";
-+"Run Threads on This Mac" = "Run Threads on This Mac";
-+"Run threads on this Mac, and start and follow them from Tuist Guild on any of your devices." = "Run threads on this Mac, and start and follow them from Tuist Guild on any of your devices.";
-+"Runner" = "Runner";
-+"Runner Name" = "Runner Name";
-+"Running · busy" = "Running · busy";
-+"Running · idle" = "Running · idle";
-+"Screen Recording" = "Screen Recording";
-+"Share This Mac’s Display" = "Share This Mac’s Display";
-+"Show Runner Log" = "Show Runner Log";
-+"Show in Finder" = "Show in Finder";
-+"Starting…" = "Starting…";
-+"Starts when you log in and keeps running when Tuist Guild is closed." = "Starts when you log in and keeps running when Tuist Guild is closed.";
-+"Status" = "Status";
-+"Stopped" = "Stopped";
-+"The runner did not respond." = "The runner did not respond.";
-+"This copy of Tuist Guild does not include the runner." = "This copy of Tuist Guild does not include the runner.";
-+"Threads can run commands in a shell on this Mac." = "Threads can run commands in a shell on this Mac.";
-+"Threads can see and control this Mac’s screen." = "Threads can see and control this Mac’s screen.";
-+"Threads started on any device can work in these." = "Threads started on any device can work in these.";
-+"Unknown" = "Unknown";
-+"Use This Copy" = "Use This Copy";
-+"Use for New Projects" = "Use for New Projects";
-+"Use this copy so the runner updates with the app." = "Use this copy so the runner updates with the app.";
-+"While plugged in and the runner is on." = "While plugged in and the runner is on.";
-+"%@ (offline)" = "%@ (offline)";
-+"Account" = "Account";
-+"Connect" = "Connect";
-+"Connect Again" = "Connect Again";
-+"Connected" = "Connected";
-+"Connecting…" = "Connecting…";
-+"Disconnect" = "Disconnect";
-+"It was removed, or its account lost access to threads." = "It was removed, or its account lost access to threads.";
-+"Not accepted" = "Not accepted";
-+"Offline" = "Offline";
-+"Run on" = "Run on";
-+"Sign in to Tuist Guild to connect this Mac." = "Sign in to Tuist Guild to connect this Mac.";
-+"Threads you start on any device can run on this Mac." = "Threads you start on any device can run on this Mac.";
-+"Tuist" = "Tuist";
-+"Tuist did not register the runner." = "Tuist did not register the runner.";
-+"Tuist no longer accepts this runner" = "Tuist no longer accepts this runner";
-+"Permissions" = "Permissions";
-+"Reset Settings" = "Reset Settings";
-+"The runner’s settings can’t be read" = "The runner’s settings can’t be read";
-+"Until they are fixed, the runner keeps the settings it last read, or shares nothing. Resetting shares only the projects folder, with everything else off." = "Until they are fixed, the runner keeps the settings it last read, or shares nothing. Resetting shares only the projects folder, with everything else off.";
-+"This Mac is disconnected, but Tuist still lists the runner. Remove it while signed in to the account that connected it." = "This Mac is disconnected, but Tuist still lists the runner. Remove it while signed in to the account that connected it.";
-```
-
-**File**: `guild/apple/Sources/AppWorkspace.swift` (modified, +1/-2)
-```diff
-@@ -14,8 +14,7 @@ struct AppWorkspace: View {
-     @State private var startingConversation = false
-     @Environment(\.scenePhase) private var scenePhase
+@@ -680,32 +680,32 @@ url = "https://github.com/realm/SwiftLint/releases/download/0.59.1/portable_swif
+ url = "https://github.com/realm/SwiftLint/releases/download/0.59.1/portable_swiftlint.zip"
  
--    init() {
--        let client = AppClient()
-+    init(client: AppClient) {
-         _client = State(initialValue: client)
-         _updater = State(initialValue: PreviewUpdater(client: client))
-     }
-```
-
-**File**: `guild/apple/Sources/ConversationView.swift` (modified, +35/-3)
-```diff
-@@ -84,14 +84,25 @@ extension AppClient {
-     }
- }
+ [[tools.tuist]]
+-version = "4.219.0-canary.34"
++version = "4.219.0-canary.12"
+ backend = "aqua:tuist/tuist"
  
--/// Asks what to talk about and starts a conversation on the server. There is
--/// no repository, machine or model to choose: the core picks what runs it.
-+/// One of the person's own machines a conversation can run on.
-+struct AppRunner: Decodable, Identifiable, Hashable {
-+    let id: String
-+    let name: String
-+    let platform: String
-+    let online: Bool
-+}
-+
-+/// Asks what to talk about and where it runs: on Tuist, or on one of the
-+/// person's runners. The core picks the model.
- struct StartConversationView: View {
-     /// What the sheet starts with: the keyboard, or dictation from a shortcut.
-     enum Input { case text, voice }
+ [tools.tuist."platforms.linux-arm64"]
+-checksum = "sha256:4165026178bb52e941f74caa97755a6dae570e338f4560eb4df638107504d574"
+-url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.34/tuist-linux-aarch64.tar.gz"
++checksum = "sha256:c6aa40e9c4063a1233037776d015a1e935af6be6f2bf420ef52034d3812ca5f0"
++url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.12/tuist-linux-aarch64.tar.gz"
  
-     let client: AppClient
-     var input = Input.text
-+    @State private var runners: [AppRunner] = []
-+    /// Nil runs the conversation on Tuist.
-+    @State private var runner: String?
-     @State private var content = ""
-     @State private var starting = false
-     @State private var error: String?
-@@ -112,10 +123,29 @@ struct StartConversationView: View {
-             if let message = voice.errorMessage {
-                 Text(verbatim: message).foregroundStyle(Noora.labelDestructive)
-             }
-+            if !runners.isEmpty {
-+                Picker("Run on", selection: $runner) {
-+                    Text("Tuist").tag(String?.none)
-+                    ForEach(runners) { runner in
-+                        Text(verbatim: runner.online
-+                            ? runner.name
-+                            : String(format: String(localized: "%@ (offline)"), runner.name))
-+                            .tag(Optional(runner.id))
-+                    }
-+                }
-+                .disabled(starting || voice.busy)
-+            }
-             if let error {
-                 Text(verbatim: error).foregroundStyle(Noora.labelDestructive)
-             }
-         }
-+        // People without runners see no choice; a failure to list them changes nothing.
-+        .task {
-+            if let data = try? await client.call("runners"),
-+               let list = data["runners"],
-+               let decoded = try? JSONDecoder().decode([AppRunner].self, from: JSONSerialization.data(withJSONObject: list))
-+            { runners = decoded }
-+        }
-         #if os(macOS)
-         .formStyle(.grouped)
-         .frame(width: 480, height: 320)
-@@ -174,7 +204,9 @@ struct StartConversationView: View {
-         let generation = client.view.generation
-         let revision = client.view.navigation.revision
-         do {
--            let thread = try await client.conversation("start_thread", ["content": content])
-+            var args: [String: Any] = ["content": content]
-+            if let runner { args["runner_id"] = runner }
-+            let thread = try await client.conversation("start_thread", args)
-             guard !Task.isCancelled, generation == client.view.generation,
-                   revision == client.view.navigation.revision else { return }
-             // The core also checks these versions when this queued call executes.
-```
-
-**File**: `guild/apple/Sources/RunnerSettings.swift` (added, +595/-0)
-```diff
-@@ -0,0 +1,595 @@
-+#if os(macOS)
-+    import AppKit
-+    import SwiftUI
-+
-+    /// What `tuist-guild-runner status` and its other commands print.
-+    struct RunnerReport: Decodable, Equatable {
-+        struct Config: Decodable, Equatable {
-+            var name: String
-+            var folders: [String]
-+            var newProjectFolder: String
-+            var shareDisplay: Bool
-+            var allowTerminal: Bool
-+            var allowPortals: Bool
-+            var keepAwake: Bool
-+        }
-+
-+        /// The server this runner connects to, when it has one.
-+        struct Link: Decodable, Equatable {
-+            var server: String
-+            var runnerId: String
-+        }
-+
-+        struct Status: Decodable, Equatable {
-+            var activity: String
-+            var connection: String
-+            var server: String?
-+            var keepingAwake: Bool
-+            var screenRecording: Bool?
-+            var accessibility: Bool?
-+        }
-+
-+        var installed: Bool
-+        var loaded: Bool
-+        var current: Bool
-+        var running: Bool
-+        var status: Status?
-+        var config: Config
-+        var connection: Link?
-+        var configError: String?
-+        var displaySupported: Bool
-+        var log: String
-+    }
-+
-+    /// Drives the runner daemon bundled beside the app's executable. The daemon
-+    /// owns its configuration and service installation; this only runs its
-+    /// commands off the main thread and shows what they print.
-+    @MainActor @Observable
-+    final class RunnerController {
-+        private(set) var report: RunnerReport?
-+        var error: String?
-+        private(set) var busy = false
-+
-+        nonisolated static let program = Bundle.main.executableURL?
-+            .deletingLastPathComponent()
-+            .appendingPathComponent("tuist-guild-runner")
-+
-+        /// The pane's periodic refresh: it neither disables the pane nor
-+        /// replaces an error the person hasn't dismissed.
-+        func refresh() async {
-+            await run(["status"], quiet: true)
-+        }
-+
-+        func reset() async {
-+            await run(["reset"])
-+        }
-+
-+        func setEnabled(_ enabled: Bool) async {
-+            await run([enabled ? "install" : "uninstall"])
-+        }
-+
-+        func set(_ key: String, _ value: String) async {
-+            await run(["set", key, value])
-+        }
-+
-+        func set(_ key: String, _ value: Bool) async {
-+            await run(["set", key, value ? "true" : "false"])
-+        }
-+
-+        func requestPermissions() async {
-+            await run(["request-permissions"])
-+        }
-+
-+        /// Hands the runner its server and secret. The secret goes on stdin, so no
-+        /// other process sees it in an argument list; the daemon keeps it private.
-+        /// Returns whether the daemon now holds this runner's connection.
-+        func connect(server: String, runnerId: String, token: String) async -> Bool {
-+            await run(["connect", server, runnerId], input: Data((token + "\n").utf8))
-+            return report?.connection?.runnerId == runnerId
-+        }
-+
-+        func disconnect() async {
-+            await run(["disconnect"])
-+        }
-+
-+        private func run(_ arguments: [String], input: Data? = nil, quiet: Bool = false) async {
-+            guard let program = Self.program, FileManager.default.isExecutableFile(atPath: program.path) else {
-+                if !quiet { error = String(localized: "This copy of Tuist Guild does not include the runner.") }
-+                return
-+            }
-+            if !quiet { busy = true }
-+            defer { if !quiet { busy = false } }
-+            let output = await Task.detached { () -> Data? in
-+                let process = Process()
-+                process.executableURL = program
-+                process.arguments = arguments
-+                let pipe = Pipe()
-+                process.standardOutput = pipe
-+                process.standardError = FileHandle.nullDevice
-+                let stdin = Pipe()
-+                process.standardInput = input == nil ? FileHandle.nullDevice : stdin
-+                do { try process.run() } catch { return nil }
-+                if let input {
-+                    stdin.fileHandleForWriting.write(input)
-+                    try? stdin.fileHandleForWriting.close()
-+                }
-+                let data = pipe.fileHandleForReading.readDataToEndOfFile()
-+                process.waitUntilExit()
-+                return data
-+            }.value
-+            let decoder = JSONDecoder()
-+            decoder.keyDecodingStrategy = .convertFromSnakeCase
-+            // An unreadable config shows inline with Reset, not as an alert.
-+            if let output, let report = try? decoder.decode(RunnerReport.self, from: output) {
-+                self.report = report
-+            } else if quiet {
-+                return
-+            } else if let output, let failure = try? JSONDecoder().decode([String: String].s
-```
-
-**File**: `guild/apple/Sources/TuistGuildApp.swift` (modified, +11/-2)
-```diff
-@@ -10,21 +10,30 @@ struct TuistGuildApp: App {
-         @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
-     #endif
+ [tools.tuist."platforms.linux-arm64-musl"]
+-checksum = "sha256:4165026178bb52e941f74caa97755a6dae570e338f4560eb4df638107504d574"
+-url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.34/tuist-linux-aarch64.tar.gz"
++checksum = "sha256:c6aa40e9c4063a1233037776d015a1e935af6be6f2bf420ef52034d3812ca5f0"
++url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.12/tuist-linux-aarch64.tar.gz"
  
-+    /// One client for the window and, on the Mac, Settings, which registers runners.
-+    @State private var client = AppClient()
-+
-     var body: some Scene {
-         WindowGroup(id: WorkspaceCommands.window) {
-             #if targetEnvironment(simulator)
-                 if ProcessInfo.processInfo.arguments.contains("-GuildCardPreview") {
-                     CardPreview()
-                 } else {
--                    AppWorkspace()
-+                    AppWorkspace(client: client)
-                 }
-             #else
--                AppWorkspace()
-+                AppWorkspace(client: client)
-             #endif
-         }
-         .commands { WorkspaceCommands() }
-         #if os(macOS)
-         .defaultSize(width: 960, height: 640)
-         #endif
-+        #if os(macOS)
-+            // Tuist Guild ▸ Settings… (⌘,): runs threads on this Mac.
-+            Settings { SettingsView(client: client) }
-+                // The window follows the pane: short until the runner is installed.
-+                .windowResizability(.contentSize)
-+        #endif
-     }
- }
+ [tools.tuist."platforms.linux-x64"]
+-checksum = "sha256:c2821c8b4bc7e187105f70e69248e7e9e7048894a050c878f5a64ab6356d679a"
+-url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.34/tuist-linux-x86_64.tar.gz"
++checksum = "sha256:51476eeb54fba068a2e47dee79e033c0dbfc7d9fc02d5e6488ed49959637e56d"
++url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.12/tuist-linux-x86_64.tar.gz"
+ 
+ [tools.tuist."platforms.linux-x64-musl"]
+-checksum = "sha256:c2821c8b4bc7e187105f70e69248e7e9e7048894a050c878f5a64ab6356d679a"
+-url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.34/tuist-linux-x86_64.tar.gz"
++checksum = "sha256:51476eeb54fba068a2e47dee79e033c0dbfc7d9fc02d5e6488ed49959637e56d"
++url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.12/tuist-linux-x86_64.tar.gz"
+ 
+ [tools.tuist."platforms.macos-arm64"]
+-checksum = "sha256:b83452f16b22bf268710c6310fc6c36d65d9ce1e8440a26ee99680e79d6f2b45"
+-url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.34/tuist.zip"
++checksum = "sha256:8d23abca2c56a1516e253f00012c91a066391312f8e6e3ef10241cfc2d0d2815"
++url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.12/tuist.zip"
+ 
+ [tools.tuist."platforms.macos-x64"]
+-checksum = "sha256:b83452f16b22bf268710c6310fc6c36d65d9ce1e8440a26ee99680e79d6f2b45"
+-url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.34/tuist.zip"
++checksum = "sha256:8d23abca2c56a1516e253f00012c91a066391312f8e6e3ef10241cfc2d0d2815"
++url = "https://github.com/tuist/tuist/releases/download/4.219.0-canary.12/tuist.zip"
+ 
+ [[tools.xcodes]]
+ version = "2.1.0"
 ```
 
-**File**: `guild/crates/core/README.md` (modified, +4/-1)
+**File**: `mise.toml` (modified, +1/-1)
 ```diff
-@@ -137,7 +137,10 @@ when an operation reports an error.
- | `cached_threads` | none | the selected account's inbox from the local store, without the network, shaped like `threads` |
- | `cached_thread` | `id` | a conversation from the local store, shaped like `thread` |
- | `flush_outbox` | none | `{sent}`; sends writes queued offline in order with their original `request_id`, stops at the first failure that may clear up (offline, 5xx, a busy thread, credentials) and keeps the rest, and marks writes the server refuses (400, 404, 422) as `failed`. A queued `start_thread` that is sent moves its replies to the server's thread id; the local id keeps working as an alias for `thread`, `cached_thread` and `send_message` |
--| `start_thread` | `content` (nonempty, at most 16,000 bytes) | the created thread, as `thread` returns it; starts a server-side conversation with no repository (its agent checks one out in the thread's workspace when the conversation needs it), using the first model from `/threads/models`. A 404 reports threads unavailable; no available model asks to connect a ChatGPT subscription. A retry of the same text after a failure reuses its `request_id`, so it never creates two threads |
-+| `start_thread` | `content` (nonempty, at most 16,000 bytes), optional `runner_id` | the created thread, as `thread` returns it; starts a server-side conversation with no repository (its agent checks one out in the thread's workspace when the conversation needs it), or on the runner when `runner_id` is set (the server's 409 `runner_offline` reports the runner offline; with no network it fails rather than queueing), using the first model from `/threads/models`. A 404 reports threads unavailable; no available model asks to connect a ChatGPT subscription. A retry of the same text after a failure reuses its `request_id`, so it never creates two threads |
-+| `runners` | none | `{runners:[{id,name,platform,online,capabilities,last_seen_at},…]}` from `/api/me/thread-runners` |
-+| `register_runner` | `name`, `platform` | the runner plus its one-time `token` and the profile's `server`, for `tuist-guild-runner connect` |
-+| `remove_runner` | runner `id` | null; revokes it on the server |
- | `thread` | thread `id` (UUID), optional `before` message position | the server's thread with its latest messages, plus `state`, `section` and `working` (queued or running, and not archived); frontends poll it while `working`. A message's optional `ui` is a card the model wrote: NSH JavaScript `source` and a `size` of `compact`, `medium` or `tall`, to which the core adds the frame `height` in points (120, 240, 400). Edges show the card at that height and its `content` when they can't run it; the core drops a `ui` with an unknown size or an empty or larger than 256 KiB source |
- | `send_message` | thread `id`, `content` | the updated thread; retries reuse the request ID like `start_thread` |
- | `live_wait` | `socket`: a handle the edge picks for one screen's live socket | `{delay_ms}`: how long to wait before the next `live_connect` of that socket. Call it before every attempt: it is 0 at first and after a connection that joined, and backs off to 30 s while attempts fail, whether to connect, to join, or after a socket that stopped answering |
+@@ -4,7 +4,7 @@
+     # config and devDependencies live here rather than in a package.
+     node = "24.11.0"
+     # Auto-bumped to the latest Tuist CLI release (incl. canary) by the update-tuist-cli workflow.
+-    tuist = "4.219.0-canary.34"
++    tuist = "4.219.0-canary.12"
+     swiftlint = "0.59.1"
+     "elixir" = "1.20.2"
+     "erlang" = "29.0.3"
 ```
 
 ---
 
-### Incident Patch 3: `ae9f909e` (2026-11-18)
-**Commit Message**: feat(guild): start conversations from App Shortcuts and the Action button
+### Incident Patch 3: `520abb00` (2026-11-19)
+**Commit Message**: fix(cli): fail fast on an expired workload session that cannot renew
 
-Add two iOS App Shortcuts, usable from Shortcuts, Siri and the Action
-button: Start Conversation opens the Start conversation sheet with the
-keyboard focused, and Dictate Conversation opens it with on-device
-dictation already recording. Dictated text lands in the editable topic;
-nothing is sent until the person taps Start.
+An account session exchanged from a workload identity has no refresh
+token. A process without the identity, such as the cache proxy's agent
+after the sandbox command that minted it ended, retried the refresh 30
+times under the shared lock and timed out after 15 seconds. Commands that
+could renew it, such as tuist setup, waited behind that loop.
 
-Routing lives in the Rust core: new /threads/new and
-/threads/new/dictation destinations set navigation.compose, which any
-other navigation or tab change clears, and signed-out requests wait for
-sign-in like any link. The dictation route is accepted only as an
-internal path, so no other app or web page can open the microphone.
-The Apple edge presents the sheet from AppWorkspace, above the views
-rebuilt for a new generation, and leaves the route when threads are
-unavailable or the sheet is dismissed. The in-app Start buttons use the
-same route.
+Such a lookup now fails at once with workloadSessionExpired without taking
+the lock. It is not treated as signed out, so report publishing cannot
+downgrade to anonymous.
 
-The sheet now observes VoiceInput (@StateObject), starts dictation only
-once the scene is active, follows a switch to dictation while open, and
-stops on audio interruptions.
+Amp-Thread-ID: https://ampcode.com/threads/T-01a1ef61-c459-7170-9840-a51e65a86eda
+Co-authored-by: Marek Fort <[REDACTED_EMAIL]>
 
-Once does not run Xcode's App Intents metadata step, so
-modules/appintent
-
-**File**: `guild/README.md` (modified, +4/-2)
+**File**: `cli/Sources/TuistServer/AGENTS.md` (modified, +1/-1)
 ```diff
-@@ -34,7 +34,7 @@ Mise runs `prepare-native.py` before graph loading. When invoking Once directly,
- 
- Every client's signed-out screen copies the shipping app's `LogInView`, titled **Welcome to Tuist Guild** (`../app/Sources/TuistOnboarding/LogInView.swift`, `../android/app/src/main/java/dev/tuist/app/ui/login/LoginScreen.kt`): Sign in with Tuist, Apple, Google and GitHub on Tuist-hosted, then **Self-hosted server**, which asks for an HTTPS server URL and prefills the last self-hosted server used. GPUI shows the social providers only while `https://tuist.dev` is selected, signs in with Tuist to the selected server, and opens its account/server form from **Self-hosted server**. Its artwork and brand assets are copied into `apple/Resources/Assets.xcassets` and `android/res/`; GPUI keeps its theme colors. On iOS, macOS and Android, adding a profile shows the same screen with Cancel; GPUI adds accounts from its account menu. The screen scrolls when a landscape phone or large text leaves too little height. Every client keeps several accounts, on one or more servers, and switches between them without signing in again.
- 
--Signed in, iOS, macOS and GPUI share two destinations from the core's tab catalog: **Threads**, then **Profile**. iOS uses the system tab bar and navigation bars, which adopt Liquid Glass on iOS 26 and later, with the account menu in the Profile tab's navigation bar; conversations hide the tab bar and float the reply field over the messages (in glass on iOS 26 and later). macOS follows the HIG with a `NavigationSplitView` sidebar, a toolbar account menu and a grouped-form Profile; it builds from the same SwiftUI sources as iOS (`apple/Sources`), and only the Info.plist differs. GPUI follows Zed's workspace: a left dock of destinations under the title bar's account menu. On iOS and macOS, Threads lists the person's own threads in the account selected in the account menu, from `/api/accounts/{personal account or organization}/threads`, grouped into In progress, Recent and Archived by the core; GPUI lists the same threads through the core's `Threads` operations. The server answers 404 when threads are off for the user (its `code` flag) or it predates them; the core reports `available: false` and the tab explains it. An organization's threads need admin rights there and the organization's `guild` flag; the server answers 404 without them too. Guild is a first-party app: it signs in as the server's static Tuist Guild OAuth client, which the server trusts as the signed-in user, like the Tuist app, so new features need no new sign-in. Because that client's ID is public, the server asks the person to approve every Guild sign-in on a consent page before it issues a code. The threads API refuses other OAuth clients with 403, which the core reports as `reason: "sign_in_required"`; iOS, macOS and Android offer **Sign In Again**, and GPUI asks to sign out and sign in again; only sessions from before Guild became first-party, which registered their own clients, hit it. Every client keeps what it has seen in a local SQLite store (see `crates/core/README.md`), so threads stay readable offline, and threads and replies written offline are sent when the connection returns. Every client, Android included, starts a conversation with **Start conversation**: it asks only what to talk about, and the conversation runs on the server, with no repository, machine or model to choose. Opening a thread shows its messages, keeps them current while the server answers, and accepts replies. On iOS and macOS, the conversation view follows Atlas: the reply field offers dictation with Apple Speech's on-device recognition only (hold the microphone and release, or tap to start and stop; the transcript is added to the editable reply and never sent automatically, and audio never leaves the device), a Prompts index in the toolbar jumps back to any of the person's earlier messages and loads earlier history on request, and tool calls render as collapsed evidence showing each tool's name, whether it is running, and its result. The Developer ID copy is signed with the hardened runtime's microphone exception (`macos/distribution/entitlements.plist`). The account menu (on Android, Profile's **Switch account**) lists the personal accounts and organizations of every saved profile from the core's `accounts` view; choosing one switches to the profile that owns it. It also adds a profile and signs out. Profile copies the shipping app's `ProfileView`: identity, email, server, legal and help links, app version, sign-out and confirmed account deletion.
-+Signed in, iOS, macOS and GPUI share two destinations from the core's tab catalog: **Threads**, then **Profile**. iOS uses the system tab bar and navigation bars, which adopt Liquid Glass on iOS 26 and later, with the account menu in the Profile tab's navigation bar; conversations hide the tab bar and float the reply field over the messages (in glass on iOS 26 and later). macOS follows the HIG with a `N
+@@ -16,7 +16,7 @@ Do not edit generated OpenAPI clients. Change the controller schemas in
+ - `BuildMetadata` reuses string-valued custom metadata: explicit entries win, automatic probes fill spare slots, and legacy allowance is 20 unless credential-free, nonredirecting discovery advertises up to 64. No persistent discovery cache, auth forwarding or POST replay. Only live-build callers may supply observations; imports must not probe the upload host. See `server/docs/build-metadata.md`.
+ - `ServerClientActorHeadersMiddleware` sends `x-tuist-actor-id` only on report creation, requiring explicit `TUIST_ACTOR_ID` or a supplied request header. Never infer operating-system usernames; empty/invalid environment values omit the claim. Identifiers are opaque, unverified, 1–128 bytes of printable non-space ASCII and never replace authentication. Actor API fields are optional and evolving provenance values remain open strings for older-server compatibility. `ReportActorCompatibilityTests` covers missing/null actors, future fields and provenance on native/legacy responses and test children; keep numeric legacy run timestamps distinct from ISO 8601 test timestamps. Never attach the claim to cache/read/admin/artifact requests.
+ - `Client.reporting` enables absent-credential publication only for structured build/test creates to a validated self-hosted destination advertising `network_trusted_report_publishing: true` at `GET /.well-known/tuist.json`. No client opt-in is required. Bind the discovered mode used to strip each build/test payload to its reporting client; transport rechecks credentials but must never independently rediscover and downgrade an authenticated payload. Discovery honors runtime proxy/private-CA settings while remaining credential/actor-free, uncached across commands, and never follows redirects; older/disabled/malformed discovery does not grant publishing. Preserve corrupt/rejected credentials in every mode so later commands cannot silently downgrade. Existing credentials and errors must never become anonymous retries; optional cache auth must not suppress report credential errors. Resolve reporting credentials with foreground refresh, independently of the instance policy. Rejected-refresh markers intentionally apply to ordinary authentication too. Blank-token validation is strict for report publication; do not broaden it to ordinary authentication. File credentials normalize hostname case/trailing dots, retain legacy aliases on reads, and explicit logout removes every matching alias. Directory inspection errors fail closed; fresh login replaces the rejected canonical entry.
+-- Workload identities stay provider-neutral here: `ServerAuthenticationController` asks `TuistOIDC` (`CIOIDCAuthenticator.hasWorkloadIdentity`, an environment-only check) and never names a CI provider or Amp. Where one is available and there is no `TUIST_TOKEN` or stored credential, the first token lookup (with or without `refreshIfNeeded`) exchanges it and stores the session, matching `tuist_ex`, so CI and connected Amp workspaces need no `tuist auth login`. A refused exchange is remembered for the process so later lookups do not mint again. OIDC-exchanged account tokens have no refresh token; an expiring (or force-refreshed) one is renewed the same way, and a failed renewal keeps the old session. `TuistOIDC` is a macOS/Linux-only dependency (`#if canImport(TuistOIDC)`); the iOS app builds without it.
++- Workload identities stay provider-neutral here: `ServerAuthenticationController` asks `TuistOIDC` (`CIOIDCAuthenticator.hasWorkloadIdentity`, an environment-only check) and never names a CI provider or Amp. Where one is available and there is no `TUIST_TOKEN` or stored credential, the first token lookup (with or without `refreshIfNeeded`) exchanges it and stores the session, matching `tuist_ex`, so CI and connected Amp workspaces need no `tuist auth login`. A refused exchange is remembered for the process so later lookups do not mint again. OIDC-exchanged account tokens have no refresh token; an expiring (or force-refreshed) one is renewed the same way, and a failed renewal keeps the old session. Without a workload identity, such as in the cache proxy's agent after the identity's command ended, an expired one fails at once with `workloadSessionExpired` instead of retrying under the refresh lock, which held back processes that could renew it; it is not treated as signed out. `TuistOIDC` is a macOS/Linux-only dependency (`#if canImport(TuistOIDC)`); the iOS app builds without it.
+ - Refresh timeouts do not establish credential rejection. Preserve credentials and keep timeout messages free of login/logout advice, including when optional cache authentication reports them as warnings.
+ - `TUIST_URL` overrides config URL and must be a valid URL.
+ - OAuth client ID defaults to a built-in value if not provided. OAuth app credentials may carry an issuing `oauthClientID`; refresh uses that server-scoped value and preserves it when rotating 
 ```
 
-**File**: `guild/apple/Resources/en.lproj/Localizable.strings` (modified, +4/-0)
+**File**: `cli/Sources/TuistServer/Client/ServerAuthenticationController.swift` (modified, +26/-5)
 ```diff
-@@ -144,3 +144,7 @@
- "New Window" = "New Window";
- "%@, online" = "%@, online";
- "You can message up to %lld people at once." = "You can message up to %lld people at once.";
-+"Start Conversation" = "Start Conversation";
-+"Opens a new conversation, ready to type." = "Opens a new conversation, ready to type.";
-+"Dictate Conversation" = "Dictate Conversation";
-+"Opens a new conversation and starts dictation on this device. Nothing is sent until you tap Start." = "Opens a new conversation and starts dictation on this device. Nothing is sent until you tap Start.";
-```
-
-**File**: `guild/apple/Sources/AppClient.swift` (modified, +2/-0)
-```diff
-@@ -27,6 +27,8 @@ struct AppNavigation: Decodable {
-     /// The Halls and DMs tabs' open conversations, kept while another tab is selected.
-     var hall_id: String?
-     var dm_id: String?
-+    /// `text` or `dictation` while Start conversation is open, decided by the Rust core.
-+    var compose: String?
-     var path: String = "/threads"
-     var revision: UInt64 = 0
- }
-```
-
-**File**: `guild/apple/Sources/AppShortcuts.swift` (added, +56/-0)
-```diff
-@@ -0,0 +1,56 @@
-+import Combine
-+
-+/// Hands an App Shortcut's route from App Intents to the workspace, which sends
-+/// it to the core like a link. Only iOS offers shortcuts.
-+/// This file must compile on its own: `modules/appintents.sh` extracts the
-+/// Shortcuts metadata from it, because Once does not run Xcode's App Intents step.
-+@MainActor
-+final class ShortcutInbox: ObservableObject {
-+    static let shared = ShortcutInbox()
-+    @Published var path: String?
-+}
-+
-+#if os(iOS)
-+    import AppIntents
-+
-+    struct StartConversationIntent: AppIntent {
-+        static let title: LocalizedStringResource = "Start Conversation"
-+        static let description = IntentDescription("Opens a new conversation, ready to type.")
-+        static let openAppWhenRun = true
-+
-+        @MainActor func perform() async throws -> some IntentResult {
-+            ShortcutInbox.shared.path = "/threads/new"
-+            return .result()
-+        }
-+    }
-+
-+    struct DictateConversationIntent: AppIntent {
-+        static let title: LocalizedStringResource = "Dictate Conversation"
-+        static let description = IntentDescription(
-+            "Opens a new conversation and starts dictation on this device. Nothing is sent until you tap Start."
-+        )
-+        static let openAppWhenRun = true
-+
-+        @MainActor func perform() async throws -> some IntentResult {
-+            ShortcutInbox.shared.path = "/threads/new/dictation"
-+            return .result()
-+        }
-+    }
-+
-+    struct GuildShortcuts: AppShortcutsProvider {
-+        static var appShortcuts: [AppShortcut] {
-+            AppShortcut(
-+                intent: StartConversationIntent(),
-+                phrases: ["Start a conversation in \(.applicationName)"],
-+                shortTitle: "Start Conversation",
-+                systemImageName: "square.and.pencil"
-+            )
-+            AppShortcut(
-+                intent: DictateConversationIntent(),
-+                phrases: ["Dictate a conversation in \(.applicationName)"],
-+                shortTitle: "Dictate Conversation",
-+                systemImageName: "mic"
-+            )
-+        }
-+    }
-+#endif
-```
-
-**File**: `guild/apple/Sources/AppWorkspace.swift` (modified, +24/-1)
-```diff
-@@ -8,6 +8,10 @@ struct AppWorkspace: View {
-     /// `navigation.tab` stays the source of truth; waiting for its answer
-     /// would make the tab view render the old tab for a frame.
-     @State private var tab = AppNavigation.Tab.threads
-+    @ObservedObject private var shortcuts = ShortcutInbox.shared
-+    /// Whether Start conversation shows. `ThreadsView` decides from the core's `navigation.compose`;
-+    /// the sheet lives here so rebuilding the signed-in views for a new generation keeps it and its draft.
-+    @State private var startingConversation = false
-     @Environment(\.scenePhase) private var scenePhase
+@@ -26,6 +26,7 @@ public enum ServerAuthenticationControllerError: LocalizedError, Equatable {
+     case failToLaunchRefreshProcess(command: String, arguments: [String], serverURL: URL)
+     case timedOut(seconds: Int, serverURL: URL)
+     case cantRefreshWithLockingAndBackground
++    case workloadSessionExpired(serverURL: URL)
  
-     init() {
-@@ -83,6 +87,12 @@ struct AppWorkspace: View {
-         .preferredColorScheme(Themes.shared.selected.appearance)
-         .task { await client.start() }
-         .onOpenURL { url in Task { await client.openURL(url) } }
-+        // App Shortcuts route like links; the core holds them until sign-in.
-+        .onChange(of: shortcuts.path, initial: true) { _, path in
-+            guard let path else { return }
-+            shortcuts.path = nil
-+            Task { await client.perform("navigate", ["url": path]) }
-+        }
-         // Memberships fill the account menu; a failed refresh keeps the saved ones quietly.
-         .task(id: client.view.profiles.map(\.id)) {
-             if !client.view.profiles.isEmpty { _ = try? await client.call("organizations") }
-@@ -116,6 +126,19 @@ struct AppWorkspace: View {
-                 Task { _ = try? await client.call("flush_outbox") }
-             }
-         }
-+        .sheet(isPresented: $startingConversation, onDismiss: {
-+            // Cancel and swipe-down leave the core's Start conversation route.
-+            if client.view.navigation.compose != nil { Task { await client.perform("navigation_back") } }
-+        }) {
-+            NavigationStack {
-+                StartConversationView(
-+                    client: client, input: client.view.navigation.compose == "dictation" ? .voice : .text
-+                )
-+            }
-+            #if os(iOS)
-+            .presentationDetents([.medium, .large])
-+            #endif
-+        }
-         .sheet(isPresented: $addingProfile) {
-             NavigationStack {
-                 LogInView(client: client)
-@@ -173,7 +196,7 @@ struct AppWorkspace: View {
-                 }
-             }
-         )) {
--            ThreadsView(client: client)
-+            ThreadsView(client: client, starting: $startingConversation)
-                 .navigationDestination(for: ThreadRoute.self) { route in
-                     ConversationView(client: client, id: route.id)
-                         .id(route.id)
-```
-
-**File**: `guild/apple/Sources/ConversationView.swift` (modified, +54/-14)
-```diff
-@@ -55,21 +55,31 @@ extension AppClient {
- /// Asks what to talk about and starts a conversation on the server. There is
- /// no repository, machine or model to choose: the core picks what runs it.
- struct StartConversationView: View {
-+    /// What the sheet starts with: the keyboard, or dictation from a shortcut.
-+    enum Input { case text, voice }
-+
-     let client: AppClient
--    let started: () -> Void
-+    var input = Input.text
-     @State private var content = ""
-     @State private var starting = false
-     @State private var error: String?
-     @State private var request: Task<Void, Never>?
-     @FocusState private var focused: Bool
-+    // Observed: the field, Start and the dictation bar follow its phase.
-+    @StateObject private var voice = VoiceInput()
-+    @State private var dictationStarted = false
-     @Environment(\.dismiss) private var dismiss
-+    @Environment(\.scenePhase) private var scenePhase
- 
-     var body: some View {
-         Form {
-             TextField("What do you want to talk about?", text: $content, axis: .vertical)
-                 .lineLimit(4 ... 12)
-                 .focused($focused)
--                .disabled(starting)
-+                .disabled(starting || voice.busy)
-+            if let message = voice.errorMessage {
-+                Text(verbatim: message).foregroundStyle(Noora.labelDestructive)
-+            }
-             if let error {
-                 Text(verbatim: error).foregroundStyle(Noora.labelDestructive)
-             }
-@@ -88,12 +98,42 @@ struct StartConversationView: View {
-                 }
-                 ToolbarItem(placement: .confirmationAction) {
-                     Button("Start") { request = Task { await start() } }
--                        .disabled(starting || content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-+                        .disabled(starting || voice.busy || content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-+                }
-+            }
-+            // Dictation adds editable text to the topic; only Start sends it.
-+            .safeAreaInset(edge: .bottom) {
-+                if voice.busy {
-+                    ReplyComposer(reply: $content, disabled: true, sending: starting, voice: voice) {}
-+                        .padding()
-                 }
-             }
-             .interactiveDismissDisabled(starting)
--            .onAppear { focused = true }
--            .onDisappear { request?.cancel() }
-+            .onAppear { if input == .text { focused = true } }
-+            .onChange(of: voice.busy) { _, busy in if !busy { focused = true } }
-+            // Dictate from a shortcut while the sheet is already open switches it to dictation.
-+            .onChange(of: input) { _, input in
-+                if input == .voice {
-+                    dictationStarted = false
-+                    beginRequestedDictation()
-+                } else if !voice.busy {
-+                    focused = true
-+                }
-+            }
-+            .onChange(of: scenePhase, initial: true) { _, phase in
-+                beginRequestedDictation()
-+                // Permission alerts briefly deactivate the scene before their callbacks return.
-+                if phase == .background || (phase == .inactive && voice.phase != .requesting) { voice.cancel() }
-+            }
-+            .onReceive(NotificationCenter.default.publisher(for: audioInterruption)) { _ in voice.cancel() }
-+            .onDisappear { request?.cancel(); voice.cancel() }
-+    }
-+
-+    /// A shortcut can open the sheet before the app is active; the microphone waits for it.
-+    private func beginRequestedDictation() {
-+        guard input == .voice, scenePhase == .active, !dictationStarted else { return }
-+        dictationStarted = true
-+        voice.begin()
-     }
- 
-     private func start() async {
-@@ -110,7 +150,6 @@ struct StartConversationView: View {
-                 "url": "/threads/\(thread.id)", "if_generation": generation, "if_revision": revision,
-             ])
-             guard !Task.isCancelled else { return }
--            started()
-             dismiss()
-         } catch {
-             guard !Task.isCancelled else { return }
-@@ -252,14 +291,6 @@ struct ConversationView: View {
-             .onDisappear { voice.cancel() }
-     }
- 
--    private var audioInterruption: Notification.Name {
--        #if os(macOS)
--            .AVAudioEngineConfigurationChange
--        #else
--            AVAudioSession.interruptionNotification
--        #endif
--    }
--
-     /// Shows a newer latest page. Once earlier pages are loaded, messages that
-     /// scroll off the latest page join them, so none fall between the two.
-     private func show(_ latest: AppConversation) {
-@@ -517,3 +548,12 @@ struct MessageRow: View {
-         )) ?? AttributedString(text)
-     }
- }
-+
-+/// Calls and other audio sessions end dictation, in replies and in Start conversation.
-+private var audioInterruption: Notification.Name {
-+    #if os(macOS)
-+        .AVAudioEngi
-```
-
-**File**: `guild/apple/Sources/ThreadsView.swift` (modified, +35/-14)
-```diff
-@@ -28,6 +28,8 @@ private struct ThreadPage: Decodable {
- /// The threads inbox: Active and Archived, with running threads first.
- struct ThreadsView: View {
-     let client: AppClient
-+    /// Start conversation, presented by `AppWorkspace`.
-+    @Binding var starting: Bool
-     @State private var threads: [AppThread] = []
-     @State private var nextCursor: String?
-     @State private var loaded = false
-@@ -36,7 +38,6 @@ struct ThreadsView: View {
-     @State private var loading: Task<Void, Never>?
-     @State private var showingArchived = false
-     @State private var error: String?
--    @State private var starting = false
- 
-     var body: some View {
-         List {
-@@ -105,7 +106,7 @@ struct ThreadsView: View {
-                         } description: {
-                             Text("Ask a question, explore an idea, or solve a problem with Tuist.")
-                         } actions: {
--                            Button("Start conversation") { starting = true }.prominentGlassButtonStyle()
-+                            Button("Start conversation") { startConversation() }.prominentGlassButtonStyle()
-                         }
-                     }
-                 }
-@@ -118,22 +119,12 @@ struct ThreadsView: View {
-                     ToolbarItem(placement: .principal) { archivePicker }
-                 #endif
-                 ToolbarItem(placement: .primaryAction) {
--                    Button("Start conversation", systemImage: "square.and.pencil") { starting = true }
-+                    Button("Start conversation", systemImage: "square.and.pencil") { startConversation() }
-                         .keyboardShortcut("n", modifiers: .command)
-                         .help("Start conversation")
-                 }
-             }
-         }
--        .sheet(isPresented: $starting) {
--            NavigationStack {
--                StartConversationView(client: client) {
--                    Task { await reload() }
--                }
--            }
--            #if os(iOS)
--            .presentationDetents([.medium, .large])
--            #endif
--        }
-         #if os(macOS)
-             .toolbar {
-                 // The Mac has no pull-to-refresh.
-@@ -150,13 +141,43 @@ struct ThreadsView: View {
-             await fetch(operation: "cached_threads", cursor: nil)
-             await reload()
-         }
--        .onChange(of: client.view.navigation.revision) { _, _ in starting = false }
-+        // The core opens Start conversation (`navigation.compose`) and closes it on any other navigation.
-+        .onChange(of: client.view.navigation.compose, initial: true) { previous, compose in
-+            showStartConversation()
-+            // Closing it, after starting a thread or not, can change the inbox.
-+            if previous != nil, compose == nil { Task { await reload() } }
-+        }
-+        .onChange(of: available) { _, _ in showStartConversation() }
-         // Signing in again keeps the profile's ID, so reload once the browser closes.
-         .onChange(of: client.signingIn) { _, signingIn in
-             if !signingIn, signInRequired { Task { await reload() } }
-         }
-     }
- 
-+    private func startConversation() {
-+        Task {
-+            // A request the sheet never showed leaves `compose` set; navigating to it again
-+            // would not change it, so leave it first.
-+            if client.view.navigation.compose != nil { await client.perform("navigation_back") }
-+            await client.perform("navigate", ["url": "/threads/new"])
-+        }
-+    }
-+
-+    /// Shows Start conversation while the core asks for it. When threads are unavailable,
-+    /// a request (say, from a shortcut) can't be shown, so it leaves the route instead of keeping it.
-+    private func showStartConversation() {
-+        guard client.view.navigation.compose != nil else {
-+            starting = false
+     public var errorDescription: String? {
+         switch self {
+@@ -39,6 +40,9 @@ public enum ServerAuthenticationControllerError: LocalizedError, Equatable {
+         case .cantRefreshWithLockingAndBackground:
+             return
+                 "The refreshing with background and locking configurations enabled is not a valid configuration (liley a bug)."
++        case let .workloadSessionExpired(serverURL):
 +            return
++                "The session for \(serverURL.absoluteString) came from a workload identity and expired. It has no refresh token, so it renews only where a workload identity is available, such as with TUIST_OIDC_TOKEN set."
+         }
+     }
+ }
+@@ -452,11 +456,14 @@ public struct ServerAuthenticationController: ServerAuthenticationControlling {
+             }
+         }
+ 
+-        switch (
+-            try await tokenStatus(serverURL: serverURL, forceRefresh: forceRefresh),
+-            inBackground,
+-            locking
+-        ) {
++        let status = try await tokenStatus(serverURL: serverURL, forceRefresh: forceRefresh)
++        // Nothing here can renew such a session, so fail at once instead of retrying the refresh under the
++        // shared lock for its full timeout, which made every process that could renew it wait behind this one.
++        if case .expired = status, try await isUnrenewableWorkloadSession(serverURL: serverURL) {
++            throw ServerAuthenticationControllerError.workloadSessionExpired(serverURL: serverURL)
 +        }
-+        if available {
-+            starting = true
-+        } else {
-+            starting = false
-+            Task { await client.perform("navigation_back") }
-+        }
++
++        switch (status, inBackground, locking) {
+         case let (.valid(token), _, _):
+             return token
+         case (.absent, _, _):
+@@ -777,6 +784,20 @@ public struct ServerAuthenticationController: ServerAuthenticationControlling {
+         #endif
+     }
+ 
++    /// An expired account session without a refresh token, such as one exchanged from a workload identity, in an
++    /// environment without a workload identity to exchange again: a process that outlives the identity's command,
++    /// such as the cache proxy's agent. Reads the store again, so a session another process just renewed counts.
++    private func isUnrenewableWorkloadSession(serverURL: URL) async throws -> Bool {
++        guard case let .account(accessToken) = try await fetchTokenFromStore(serverURL: serverURL),
++              accessToken.expiryDate.timeIntervalSince(Date.now()) < 30
++        else { return false }
++        #if canImport(TuistOIDC)
++            return !CIOIDCAuthenticator().hasWorkloadIdentity
++        #else
++            return true
++        #endif
 +    }
 +
-     private var archivePicker: some View {
-         Picker("Threads", selection: $showingArchived) {
-             Text("Active").tag(false)
+     /// Where the environment offers a workload identity (CI providers, Amp orbs, a supplied
+     /// `TUIST_OIDC_TOKEN`), a signed-out CLI signs in on its own by exchanging it, so CI needs no
+     /// `tuist auth login` step. A refused exchange, such as from a repository or workspace no account
 ```
 
-**File**: `guild/crates/core/README.md` (modified, +2/-2)
+**File**: `cli/Tests/TuistServerTests/Utilities/ServerAuthenticationControllerTests.swift` (modified, +35/-19)
 ```diff
-@@ -113,7 +113,7 @@ when an operation reports an error.
- | Operation | Args | Data |
- | --- | --- | --- |
- | `snapshot` | none | null |
--| `routes` | none | `{routes:["/threads","/threads/{id}","/halls","/halls/{id}","/dms","/dms/{id}","/profile"]}`; the shared addressable screen catalog |
-+| `routes` | none | `{routes:["/threads","/threads/new","/threads/new/dictation","/threads/{id}","/halls","/halls/{id}","/dms","/dms/{id}","/profile"]}`; the shared addressable screen catalog |
- | `navigate` | `url`: internal path, `tuist-guild://app/…`, or HTTPS `{server}/guild/…`; optional `if_generation` and `if_revision` | null; updates navigation, or queues a signed-out link until sign-in; a mismatched version makes an async completion a no-op |
- | `select_tab` | `tab`: `threads`, `halls`, `dms` or `profile` | null; each conversation tab keeps its own open conversation across tab changes |
- | `navigation_back` | none | null; returns to the selected tab's list (Threads from Profile) |
-@@ -168,7 +168,7 @@ are rejected when returned rows do not match, never repaired into partial totals
- Track discovery does not derive choices/counts from downloaded previews. An older
- server's missing discovery is an error for that operation; browsing still works.
+@@ -265,31 +265,47 @@ struct ServerAuthenticationControllerTests {
+         }
+     }
  
--Every view also contains `navigation: {tab,thread_id,hall_id,dm_id,path,revision}`. `thread_id`, `hall_id` (the Halls tab's open hall) and `dm_id` (the DMs tab's) are nullable and survive tab selection; `path` describes the visible destination. Revision is process-local and increases on navigation changes; ignore older view revisions within the same session generation. Edges bind native tab/stack controls to this state, send user actions back through the operations above, and fetch conversation data through `thread`, or `hall` for `hall_id` and `dm_id` (DMs use the same hall operations; navigation itself performs no network requests). See the workspace README's Deep links section for URL scoping, launch examples and reserved web URLs. Navigation is in memory only, never in the credential vault.
-+Every view also contains `navigation: {tab,thread_id,hall_id,dm_id,compose,path,revision}`. `thread_id`, `hall_id` (the Halls tab's open hall) and `dm_id` (the DMs tab's) are nullable and survive tab selection; `compose` is `text` or `dictation` while Start conversation is open on the Threads root (`/threads/new` and `/threads/new/dictation`; the dictation route is accepted only as an internal path, never from a scheme or web link), and null otherwise: any other navigation or tab selection clears it. iOS and macOS present the sheet while it is set and send `navigation_back` when the person dismisses it or threads are unavailable; Android and GPUI don't present it yet and show the Threads root; `path` describes the visible destination. Revision is process-local and increases on navigation changes; ignore older view revisions within the same session generation. Edges bind native tab/stack controls to this state, send user actions back through the operations above, and fetch conversation data through `thread`, or `hall` for `hall_id` and `dm_id` (DMs use the same hall operations; navigation itself performs no network requests). See the workspace README's Deep links section for URL scoping, launch examples and reserved web URLs. Navigation is in memory only, never in the credential vault.
+-    @Test(.withMockedEnvironment(), .withMockedDependencies()) func expired_account_token_returns_expired() async throws {
+-        let date = Date()
++    @Test(
++        .withMockedEnvironment(),
++        .withMockedDependencies(),
++        arguments: [false, true]
++    ) func expired_account_token_renews_only_with_a_workload_identity(hasWorkloadIdentity: Bool) async throws {
++        let exchangeOIDCTokenService = MockExchangeOIDCTokenServicing()
++        let subject = ServerAuthenticationController(
++            refreshAuthTokenService: refreshAuthTokenService,
++            refreshOAuthTokenService: refreshOAuthTokenService,
++            exchangeOIDCTokenService: exchangeOIDCTokenService,
++            cachedValueStore: CachedValueStore(backend: .inSystemProcess)
++        )
+         let mockEnvironment = try #require(Environment.mocked)
+-        mockEnvironment.variables = [
+-            "CI": "1",
+-        ]
++        mockEnvironment.variables = hasWorkloadIdentity ? ["TUIST_OIDC_TOKEN": "workload-identity-token"] : ["CI": "1"]
++        let date = Date()
+         try await Date.$now.withValue({ date }) {
+             // Given
+             let serverURL: URL = .test()
+             let serverCredentialsStore = try #require(ServerCredentialsStore.mocked)
+-            let accessToken = try JWT.make(expiryDate: date.addingTimeInterval(-100), typ: "access", type: "account")
+-
+-            let storeCredentials: ServerCredentials = .test(
+-                accessToken: accessToken.token,
+-                refreshToken: ""
+-            )
+-
+-            given(serverCredentialsStore).read(serverURL: .value(serverURL)).willReturn(storeCredentials)
+-            given(cachedValueStore).getValue(key: .any, computeIfNeeded: .any).willReturn(nil as AuthenticationToken?)
+-
+-            // When
+-            let got = try await subject.authenticationToken(serverURL: .test())
++            let expiredToken = try JWT.make(expiryDate: date.addingTimeInterval(-100), typ: "access", type: "account")
++            let renewedToken = try JWT.make(expiryDate: date.addingTimeInterval(+3600), typ: "access", type: "account")
++            let stored = TestStore(ServerCredentials.test(accessToken: expiredToken.token, refreshToken: nil))
++            given(serverCredentialsStore).read(serverURL: .value(serverURL)).willProduce { _ in stored.value }
++            given(serverCredentialsStore).store(credentials: .any, serverURL: .any).willProduce { credentials, _ in
++                stored.value = credentials
++            }
++            given(exchangeOIDCTokenService)
++                .exchangeOIDCToken(oidcToken: .any, serverURL: .any)
++                .willReturn(renewedToken.token)
  
- Sign-in uses the server's static Tuist Guild client, a public PKCE client, with
- the distinct `tuist-guild://oauth-callback` redirect.
+-            // Then
+-            #expect(got == nil)
++            // When / Then
++            if hasWorkloadIdentity {
++                let got = try await subject.authenticationToken(serverURL: serverURL)
++                #expect(got == .account(try JWT.parse(renewedToken.token)))
++            } else {
++                // Nothing can renew it, so the lookup fails at once rather than retrying under the refresh lock.
++                await #expect(throws: ServerAuthenticationControllerError.workloadSessionExpired(serverURL: serverURL)) {
++                    try await subject.authenticationToken(serverURL: serverURL)
++                }
++                verify(exchangeOIDCTokenService).exchangeOIDCToken(oidcToken: .any, serverURL: .any).called(0)
++            }
+         }
+     }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15774** (2026-11-18): feat(server): stop writing coverage run rows to coverage_files (@esnunes)
-- **PR #15773** (2026-11-18): feat(server): read coverage run rows from coverage_run_files (@esnunes)
-- **PR #15772** (2026-11-18): feat(server): write coverage run rows and file layouts to new tables (@esnunes)
-- **PR #15771** (2026-11-18): feat(server): keep coverage line detail for 31 days (@esnunes)
-- **PR #15769** (2026-11-17): chore(server): drop the legacy xcode_coverage tables (@esnunes)
-- **PR #15768** (2026-11-17): feat(noora): redesign the components and document Noora at tuist.dev/noora (@asmitbm)
+- **PR #15805** (2026-11-19): docs(handbook): manage the Tuist Digest in Atlas (@pepicrft)
+- **PR #15803** (closed): feat(infra): move larch-edge-a's BMC to larch-tor-b port 21 (@fortmarek)
+- **PR #15797** (closed): perf(kura): sub-millisecond TTFB buckets and batched BatchReadBlobs lookups (@pepicrft)
+- **PR #15796** (2026-11-19): docs(handbook): send production errors to the self-hosted ingest (@pepicrft)
+- **PR #15794** (2026-11-19): docs(handbook): describe self-managed ClickHouse in the shared responsibility model (@pepicrft)
+- **PR #15793** (closed): docs(atlas): pin the patched ingress-nginx images in the onboarding runbook (@esnunes)
 
 ---
 
@@ -1394,38 +825,31 @@ modules/appintent
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. infra): stop runner cache volume ratio alerts firing on NaN
+## X. cli): prelink external packages again so release builds keep Swift metadata
 
 **RULE**:
-When implementing operations in `infra/helm/k8s-monitoring/alerts.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tuist/tuist. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Package.resolved`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tuist/tuist. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d5c047d3`: infra): stop runner cache volume ratio alerts firing on NaN. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `33b6cfcd`: cli): prelink external packages again so release builds keep Swift metadata. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `infra/helm/k8s-monitoring/alerts.md`.
+Subsystems managing Elixir data structures, boundary deserialization, API parsing, or resource lifecycles matching `Package.resolved`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
-```rust
+```elixir
 // Verified production-grade fix pattern:
-- Condition: `$A > 0.3 * $B && $B >= 20`. `$C = $A / $B` only feeds the
-  annotations: in an hour with no counted saves on a platform (all
-  `unchanged` at night) `$A / $B` is NaN, NaN survives `&&`, and Grafana
-  fires on a NaN condition. That paged at 0 saves on 2026-11-18 at 05:25 UTC.
-- Condition: `$A > 0.25 * $B && $B >= 20` (no division, so an hour with
-  no counted attaches cannot fire on NaN, as the saves rule did); pending
-  period 10 minutes;
+  "originHash" : "a07ded586f504de57c8f0e77d86c28a78e9278bb7ec41877ab07e0f3187adcc7",
 ```
 
 **NEGATIVE CONSTRAINT**:
-```rust
+```elixir
 // Induced defect failure mode:
-- Condition: `$A / $B > 0.3 && $B >= 20`
-- Condition: `$A / $B > 0.25 && $B >= 20`; pending period 10 minutes;
+  "originHash" : "b9bc213cbb2a3ea148cc63449b708badce9b1709cc64b00e9c043acae8642e8d",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d5c047d3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `33b6cfcd` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

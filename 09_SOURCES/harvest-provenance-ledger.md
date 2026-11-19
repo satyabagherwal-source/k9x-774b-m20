@@ -11400,3 +11400,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-tencent-hy-memory-30b-a3b` | `https://huggingface.co/tencent/Hy-Memory-30B-A3B` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-19T19:23:15.065Z |
 | `learn-github-matthart1983-netwatch` | `https://github.com/matthart1983/netwatch` | `78f85143` | Multi-dimensional audit evidence | 2026-11-19T19:23:17.453Z |
 | `learn-github-momenbasel-puremac` | `https://github.com/momenbasel/PureMac` | `77ac5633` | Multi-dimensional audit evidence | 2026-11-19T19:23:22.852Z |
+| `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `5679c950` | Multi-dimensional audit evidence | 2026-11-19T19:39:02.075Z |
+| `learn-github-melnixdev-seo-crawl-audit` | `https://github.com/MelnixDev/seo-crawl-audit` | `3e173529` | Multi-dimensional audit evidence | 2026-11-19T19:39:02.341Z |
+| `learn-github-siteline-swiftui-introspect` | `https://github.com/siteline/swiftui-introspect` | `cd344bc3` | Multi-dimensional audit evidence | 2026-11-19T19:39:03.716Z |

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T19:31:15.092Z",
+  "last_updated": "2026-11-19T19:39:12.424Z",
   "total_verified_learnings": 9018,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21938,
+  "total_items": 21950,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -243894,8 +243894,8 @@
       "slug": "tuist-tuist",
       "platform": "github",
       "source_url": "https://github.com/tuist/tuist",
-      "source_version": "3a155b20",
-      "content_hash": "032144885ad79350bfa186548a539df3869fd7cf025483784e8da003b1c06c7a",
+      "source_version": "5679c950",
+      "content_hash": "5271a2aacfa6ef9a57f5a9c4541201d69b5e698efa22cd2375127cee51d6f3af",
       "dossier_path": "07_PROJECT_LEARNING/tuist-tuist-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tuist-tuist-learnings.md",
       "promoted_rules": [
@@ -243913,6 +243913,11 @@
           "number": 9159,
           "title": "stop runner cache volume ratio alerts firing on NaN",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9433,
+          "title": "prelink external packages again so release builds keep Swift metadata",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -243920,7 +243925,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T07:56:22.121Z",
+      "verified_at": "2026-11-19T19:39:01.876Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243962,10 +243967,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-architecture-intelligence-tuist-tuist-core-invariants.md",
       "title": "Architecture Intelligence: tuist/tuist Core Invariants",
       "repository": "tuist/tuist",
-      "source_version": "3a155b20",
-      "content_hash": "fc874b5132095fb8387421f9c10b85893894530aeb0c819e503bb4a74cb70f5c",
+      "source_version": "5679c950",
+      "content_hash": "701141ca0b35163306edbf00aad9c6c22a2c00c2a61e6507aa4d1cd2bc1e6a6c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T07:56:22.607Z"
+      "persisted_at": "2026-11-19T19:39:02.436Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist",
@@ -243974,10 +243979,10 @@
       "relative_path": "08_VERIFICATION/tuist-tuist-verification-protocol-empirical-defect-shield-for-tuist-tuist.md",
       "title": "Verification Protocol: Empirical Defect Shield for tuist/tuist",
       "repository": "tuist/tuist",
-      "source_version": "3a155b20",
-      "content_hash": "b96e1e6d1d0d4f725a34ea4834065a76590da7e07e1f00f71b0bdfe63d3e8e2e",
+      "source_version": "5679c950",
+      "content_hash": "c2c4beab9f8cc798922498e5201b3a1b6b55dfed0d990807fbec9c6da54b08c7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T07:56:22.731Z"
+      "persisted_at": "2026-11-19T19:39:02.714Z"
     },
     "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated": {
       "learning_id": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
@@ -244270,9 +244275,9 @@
       "title": "Architecture Intelligence: tuist-tuist-learnings Core Invariants",
       "repository": "tuist-tuist-learnings",
       "source_version": "HEAD",
-      "content_hash": "507eff34ad7c7cefa54457c63ea2723521ad9089c0458da42bda84a9c2ca608e",
+      "content_hash": "4ace6711d2275a856a6b6ee2a70f82470b8ea02910d3a0b8a639bb0f54d1efdf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T07:56:37.166Z"
+      "persisted_at": "2026-11-19T19:39:10.178Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist-learnings",
@@ -244282,9 +244287,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tuist-tuist-learnings",
       "repository": "tuist-tuist-learnings",
       "source_version": "HEAD",
-      "content_hash": "806de4190b8e700aff0f59f5137f0fc47553e9d0ac62a6867338d1226c4649ad",
+      "content_hash": "4076d5eae810893fe9cf343a7615cac8246f377c23499f47baf2cbe18852c494",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T07:56:37.280Z"
+      "persisted_at": "2026-11-19T19:39:10.470Z"
     },
     "candidate_directive-orthogonal-weight-projection-invariant-for-activation-ablation": {
       "item_id": "candidate_directive-orthogonal-weight-projection-invariant-for-activation-ablation",
@@ -244496,8 +244501,8 @@
       "slug": "melnixdev-seo-crawl-audit",
       "platform": "github",
       "source_url": "https://github.com/MelnixDev/seo-crawl-audit",
-      "source_version": "abed0505",
-      "content_hash": "32664a22ec4793b1b8bec6e306b36d81e80c02221ea28f24d341c91c9dd76107",
+      "source_version": "3e173529",
+      "content_hash": "5e09fbe4b918c54283b2135645d6db4e5d11e208171a32e6034f6c96fceee671",
       "dossier_path": "07_PROJECT_LEARNING/melnixdev-seo-crawl-audit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/melnixdev-seo-crawl-audit-learnings.md",
       "promoted_rules": [
@@ -244515,6 +244520,11 @@
           "number": 8599,
           "title": "Attempt-Guarded Token Monotonicity for Asynchronous UI Actions",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9434,
+          "title": "add latest release badge to README",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -244522,7 +244532,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T08:52:23.919Z",
+      "verified_at": "2026-11-19T19:39:02.129Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244628,10 +244638,10 @@
       "relative_path": "08_VERIFICATION/melnixdev-seo-crawl-audit-verification-protocol-empirical-defect-shield-for-meln.md",
       "title": "Verification Protocol: Empirical Defect Shield for MelnixDev/seo-crawl-audit",
       "repository": "MelnixDev/seo-crawl-audit",
-      "source_version": "abed0505",
-      "content_hash": "35f371641321136d2ae2c7f4baae90a43fdf20e0bf15fddcf1a45a32d47fed75",
+      "source_version": "3e173529",
+      "content_hash": "8ce2edabe4f2eaddcd13db5d3b94af0adebade2b3154f5977603a921ef744bd1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T08:52:24.557Z"
+      "persisted_at": "2026-11-19T19:39:02.850Z"
     },
     "candidate_directive-gix-config-reject-extra-tokens-after-implicit-values": {
       "item_id": "candidate_directive-gix-config-reject-extra-tokens-after-implicit-values",
@@ -244689,9 +244699,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for melnixdev-seo-crawl-audit-learnings",
       "repository": "melnixdev-seo-crawl-audit-learnings",
       "source_version": "HEAD",
-      "content_hash": "bd0518909f5ae01f621edadc8908a938335e26833eb0be0a9a3aa9d7579723ad",
+      "content_hash": "f8a66eeedb7650ced00ba39a9a981f0d3b613f935c04626b8807429c4775caf9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T08:53:20.296Z"
+      "persisted_at": "2026-11-19T19:39:11.268Z"
     },
     "rule-8600": {
       "learning_id": "rule-8600",
@@ -246802,8 +246812,8 @@
       "slug": "siteline-swiftui-introspect",
       "platform": "github",
       "source_url": "https://github.com/siteline/swiftui-introspect",
-      "source_version": "4d977db9",
-      "content_hash": "e686d618a018fa041e7cc62b648a4ea293dee7b999d221b8cf106371b105f172",
+      "source_version": "cd344bc3",
+      "content_hash": "69bda98bc5054db79d2b30966a4232215e08801183cdac4c817348c53a7849ed",
       "dossier_path": "07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md",
       "promoted_rules": [
@@ -246818,7 +246828,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T15:23:22.219Z",
+      "verified_at": "2026-11-19T19:39:03.494Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -246872,10 +246882,10 @@
       "relative_path": "08_VERIFICATION/siteline-swiftui-introspect-verification-protocol-empirical-defect-shield-for-si.md",
       "title": "Verification Protocol: Empirical Defect Shield for siteline/swiftui-introspect",
       "repository": "siteline/swiftui-introspect",
-      "source_version": "4d977db9",
-      "content_hash": "0d28d1a9420852fb18eee8c1d728dc08a1a00a2df34fff7bfe4c5bf4b4deced9",
+      "source_version": "cd344bc3",
+      "content_hash": "47034e27469a776fe8bc18aff0de2c3cb409d93591c8eb0a8d75ccb67688f74b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T15:23:22.741Z"
+      "persisted_at": "2026-11-19T19:39:04.238Z"
     },
     "rule-8624": {
       "learning_id": "rule-8624",
@@ -246935,9 +246945,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for siteline-swiftui-introspect-learnings",
       "repository": "siteline-swiftui-introspect-learnings",
       "source_version": "HEAD",
-      "content_hash": "d9f5e6e5dc82350326341710d1de5955ffbfd45cd2a94acd30370dac12d93774",
+      "content_hash": "4ca22144f561d503ffee65868077b6d1f830d1c498984591725f0fe25ff1cb89",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T15:23:29.367Z"
+      "persisted_at": "2026-11-19T19:39:12.424Z"
     },
     "candidate_directive-mcp-v29-0-0-release-of-mcp-server-and-claude-cowork-plugin": {
       "item_id": "candidate_directive-mcp-v29-0-0-release-of-mcp-server-and-claude-cowork-plugin",
@@ -296722,6 +296732,154 @@
       "content_hash": "eec44a8aef1de03e1cbe56418b30080359d727769f8c0cca3cd2d519605b370b",
       "domain_letter": "K",
       "persisted_at": "2026-11-19T19:23:28.946Z"
+    },
+    "rule-9433": {
+      "learning_id": "rule-9433",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9433,
+      "title": "prelink external packages again so release builds keep Swift metadata",
+      "source_url": "https://github.com/tuist/tuist",
+      "source_version": "5679c950",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T19:39:01.876Z"
+    },
+    "rule-9434": {
+      "learning_id": "rule-9434",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9434,
+      "title": "add latest release badge to README",
+      "source_url": "https://github.com/MelnixDev/seo-crawl-audit",
+      "source_version": "3e173529",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T19:39:02.129Z"
+    },
+    "candidate_directive-prelink-external-packages-again-so-release-builds-keep-swift-metadata": {
+      "item_id": "candidate_directive-prelink-external-packages-again-so-release-builds-keep-swift-metadata",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EBR4-prelink-external-packages-again-so-release-builds-keep-swift-metadata.md",
+      "title": "prelink external packages again so release builds keep Swift metadata",
+      "repository": "tuist/tuist",
+      "source_version": "5679c950",
+      "content_hash": "7053aabb5f0732b4172ad7dd890eed9fc7f37c4464535f6f438eea2191c18466",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T19:39:02.273Z"
+    },
+    "agent_contract-agent-contract-tuist-tuist-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-tuist-tuist-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/tuist-tuist-agent-contract-tuist-tuist-autonomous-specialist-persona.md",
+      "title": "Agent Contract: tuist/tuist Autonomous Specialist Persona",
+      "repository": "tuist/tuist",
+      "source_version": "5679c950",
+      "content_hash": "ba4cfa4cbcd28a3ca0853867e148ff13f08f36891b10d7cd226c29ea039390a3",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T19:39:02.585Z"
+    },
+    "candidate_directive-add-introspection-benchmarks": {
+      "item_id": "candidate_directive-add-introspection-benchmarks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ED1R-add-introspection-benchmarks.md",
+      "title": "add introspection benchmarks",
+      "repository": "siteline/swiftui-introspect",
+      "source_version": "cd344bc3",
+      "content_hash": "a1688193e55665fabd7e91444b516b2eacae6389aea975fbec3f2c5048809e81",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T19:39:03.954Z"
+    },
+    "domain_intelligence-architecture-intelligence-siteline-swiftui-introspect-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-siteline-swiftui-introspect-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-siteline-swiftui-introspect-architecture-intelligence-siteline-swiftui-introspec.md",
+      "title": "Architecture Intelligence: siteline/swiftui-introspect Core Invariants",
+      "repository": "siteline/swiftui-introspect",
+      "source_version": "cd344bc3",
+      "content_hash": "cc95933ac783b1cba1916152467c6d8b9bdb501eccad7b3d4287d5672c96dcd3",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T19:39:04.098Z"
+    },
+    "candidate_directive-cli-prelink-external-packages-again-so-release-builds-keep-swift-metadata": {
+      "item_id": "candidate_directive-cli-prelink-external-packages-again-so-release-builds-keep-swift-metadata",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EHQI-cli-prelink-external-packages-again-so-release-builds-keep-swift-metadata.md",
+      "title": "cli): prelink external packages again so release builds keep Swift metadata",
+      "repository": "tuist-tuist-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ad9e237d0230dd5c0508eff1ff9582fc53b14caecbdf8f577c2149d68de04c65",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T19:39:10.027Z"
+    },
+    "agent_contract-agent-contract-tuist-tuist-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-tuist-tuist-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/tuist-tuist-learnings-agent-contract-tuist-tuist-learnings-autonomous-specialist.md",
+      "title": "Agent Contract: tuist-tuist-learnings Autonomous Specialist Persona",
+      "repository": "tuist-tuist-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bb6db17f5b5a8a0413a6b7069f7ca790bc8be03ae8d626b99abcc8f46b9710ac",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T19:39:10.345Z"
+    },
+    "candidate_directive-docs-add-latest-release-badge-to-readme": {
+      "item_id": "candidate_directive-docs-add-latest-release-badge-to-readme",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EIGT-docs-add-latest-release-badge-to-readme.md",
+      "title": "docs: add latest release badge to README",
+      "repository": "melnixdev-seo-crawl-audit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eee643cb7f92b29d8dfb634740fc59a8cf1801624bc0f2e98490b4baaacad68c",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-19T19:39:10.976Z"
+    },
+    "domain_intelligence-search-distribution-intelligence-melnixdev-seo-crawl-audit-learnings-core-invari": {
+      "item_id": "domain_intelligence-search-distribution-intelligence-melnixdev-seo-crawl-audit-learnings-core-invari",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-J-melnixdev-seo-crawl-audit-learnings-search-distribution-intelligence-melnixdev-s.md",
+      "title": "Search & Distribution Intelligence: melnixdev-seo-crawl-audit-learnings Core Invariants",
+      "repository": "melnixdev-seo-crawl-audit-learnings",
+      "source_version": "HEAD",
+      "content_hash": "93c7e2f5ecfb1ee48a20016fbce6b2fac22a3ee89aba6781e3f0b37cf2d0b0e2",
+      "domain_letter": "J",
+      "persisted_at": "2026-11-19T19:39:11.123Z"
+    },
+    "candidate_directive-test-add-introspection-benchmarks": {
+      "item_id": "candidate_directive-test-add-introspection-benchmarks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EJCY-test-add-introspection-benchmarks.md",
+      "title": "test: add introspection benchmarks",
+      "repository": "siteline-swiftui-introspect-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f6325df4956e7ca54bb080c5b873164ca5a8baa3b4fa324f4117a29046100824",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T19:39:12.131Z"
+    },
+    "domain_intelligence-architecture-intelligence-siteline-swiftui-introspect-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-siteline-swiftui-introspect-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-siteline-swiftui-introspect-learnings-architecture-intelligence-siteline-swiftui.md",
+      "title": "Architecture Intelligence: siteline-swiftui-introspect-learnings Core Invariants",
+      "repository": "siteline-swiftui-introspect-learnings",
+      "source_version": "HEAD",
+      "content_hash": "299325bd0be4e6443a5f05ed7eb31d30d91b95fe970bfb08d5394554af633698",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T19:39:12.279Z"
     }
   },
   "ai-builder-brain": {

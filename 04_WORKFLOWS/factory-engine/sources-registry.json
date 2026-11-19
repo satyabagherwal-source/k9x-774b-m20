@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T19:31:12.894Z",
-    "lastVerified": "2026-11-19T19:31:12.894Z",
+    "lastChecked": "2026-11-19T19:39:09.100Z",
+    "lastVerified": "2026-11-19T19:39:09.100Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -174,8 +174,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T18:48:59.093Z",
-    "lastVerified": "2026-11-19T18:48:59.093Z",
+    "lastChecked": "2026-11-19T19:39:09.093Z",
+    "lastVerified": "2026-11-19T19:39:09.093Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -896,8 +896,8 @@
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T13:03:03.991Z",
-    "lastVerified": "2026-11-19T13:03:03.991Z",
+    "lastChecked": "2026-11-19T19:39:04.283Z",
+    "lastVerified": "2026-11-19T19:39:04.283Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -2671,9 +2671,9 @@
   "pinecone-io-examples": {
     "name": "examples",
     "officialUrl": "https://github.com/pinecone-io/examples",
-    "lastChecked": "2026-11-18T15:06:11.583Z",
+    "lastChecked": "2026-11-19T19:39:06.563Z",
     "revisionIdentifier": "db002421",
-    "lastVerified": "2026-11-18T15:06:11.583Z"
+    "lastVerified": "2026-11-19T19:39:06.563Z"
   },
   "rigellute-spotify-tui": {
     "name": "spotify-tui",
@@ -2977,9 +2977,9 @@
   "cdk-team-cdk": {
     "name": "CDK",
     "officialUrl": "https://github.com/cdk-team/CDK",
-    "lastChecked": "2026-11-18T15:59:43.776Z",
+    "lastChecked": "2026-11-19T19:39:01.600Z",
     "revisionIdentifier": "69da22ad",
-    "lastVerified": "2026-11-18T15:59:43.776Z"
+    "lastVerified": "2026-11-19T19:39:01.600Z"
   },
   "vearch-vearch": {
     "name": "vearch",
@@ -8359,5 +8359,56 @@
     "lastChecked": "2026-11-19T19:31:02.765Z",
     "revisionIdentifier": "9eca97b8",
     "lastVerified": "2026-11-19T19:31:02.765Z"
+  },
+  "tuist-tuist": {
+    "name": "tuist/tuist",
+    "officialUrl": "https://github.com/tuist/tuist",
+    "sourceType": "github",
+    "technology": "Elixir",
+    "lastChecked": "2026-11-19T19:39:00.882Z",
+    "lastVerified": "2026-11-19T19:39:00.882Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-tuist-tuist",
+    "contentHash": "5271a2aacfa6ef9a57f5a9c4541201d69b5e698efa22cd2375127cee51d6f3af",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 16,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "melnixdev-seo-crawl-audit": {
+    "name": "MelnixDev/seo-crawl-audit",
+    "officialUrl": "https://github.com/MelnixDev/seo-crawl-audit",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-11-19T19:39:01.287Z",
+    "lastVerified": "2026-11-19T19:39:01.287Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-melnixdev-seo-crawl-audit",
+    "contentHash": "5e09fbe4b918c54283b2135645d6db4e5d11e208171a32e6034f6c96fceee671",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "siteline-swiftui-introspect": {
+    "name": "siteline/swiftui-introspect",
+    "officialUrl": "https://github.com/siteline/swiftui-introspect",
+    "sourceType": "github",
+    "technology": "Swift",
+    "lastChecked": "2026-11-19T19:39:03.235Z",
+    "lastVerified": "2026-11-19T19:39:03.235Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-siteline-swiftui-introspect",
+    "contentHash": "69bda98bc5054db79d2b30966a4232215e08801183cdac4c817348c53a7849ed",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -11367,3 +11367,6 @@
 | `CYCLE-20261119-U0VO` | `2026-11-19T19:23:15.060Z` | `tencent/Hy-Memory-30B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-memory-30b-a3b-learnings.md` | Yes (`06b384ae...`) |
 | `CYCLE-20261119-U2Q0` | `2026-11-19T19:23:17.448Z` | `matthart1983/netwatch` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/matthart1983-netwatch-learnings.md` | Yes (`f7f0375c...`) |
 | `CYCLE-20261119-U6W0` | `2026-11-19T19:23:22.848Z` | `momenbasel/PureMac` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9432` | Yes (`cbeddf24...`) |
+| `CYCLE-20261119-EBLJ` | `2026-11-19T19:39:02.071Z` | `tuist/tuist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9433` | Yes (`5271a2aa...`) |
+| `CYCLE-20261119-EBSX` | `2026-11-19T19:39:02.337Z` | `MelnixDev/seo-crawl-audit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9434` | Yes (`5e09fbe4...`) |
+| `CYCLE-20261119-ECV4` | `2026-11-19T19:39:03.712Z` | `siteline/swiftui-introspect` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md` | Yes (`69bda98b...`) |

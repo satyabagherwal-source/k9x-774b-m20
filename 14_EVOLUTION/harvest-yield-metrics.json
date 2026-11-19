@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T19:23:22.858Z",
-  "total_cycles_completed": 10853,
-  "total_learnings_persisted": 10853,
-  "total_rules_promoted": 10207,
+  "last_updated": "2026-11-19T19:39:03.753Z",
+  "total_cycles_completed": 10856,
+  "total_learnings_persisted": 10856,
+  "total_rules_promoted": 10209,
   "history": [
-    {
-      "timestamp": "2026-11-19T00:31:33.757Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T00:31:36.925Z",
-      "repository": "trinodb/trino",
-      "learningId": "learn-github-trinodb-trino",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T00:40:58.678Z",
-      "repository": "ntex-rs/ntex",
-      "learningId": "learn-github-ntex-rs-ntex",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T00:41:06.261Z",
       "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -1403,6 +1382,27 @@
       "repository": "momenbasel/PureMac",
       "learningId": "learn-github-momenbasel-puremac",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T19:39:02.081Z",
+      "repository": "tuist/tuist",
+      "learningId": "learn-github-tuist-tuist",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T19:39:02.346Z",
+      "repository": "MelnixDev/seo-crawl-audit",
+      "learningId": "learn-github-melnixdev-seo-crawl-audit",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T19:39:03.753Z",
+      "repository": "siteline/swiftui-introspect",
+      "learningId": "learn-github-siteline-swiftui-introspect",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-QX4D",
-    "timestamp": "2026-11-18T04:37:22.093Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-    "contentHash": "ff89425170674d3178b4eeb60f076f3c1639fd3f54b3cd7f222f21cd56b264fb",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-R63Q",
-    "timestamp": "2026-11-18T04:37:33.734Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "47697e5c65ae02fa273eaa53f7f6bf22abd296377a83bd1e2fc24c366608b14f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-6TPE",
-    "timestamp": "2026-11-18T04:49:44.162Z",
-    "repository": "inclusionAI/Ming-Image-0.1-Design",
-    "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-    "contentHash": "76aec619b0821df4b375a33f5060787dcf03f9ee9b65c9955ac3481c5a14d9a5",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-6UX4",
     "timestamp": "2026-11-18T04:49:45.736Z",
     "repository": "metalbear-co/mirrord",
@@ -7492,6 +7447,51 @@
     "contentHash": "cbeddf249c84a6e3a3b61a9255369d1311cf196d393280673eef529bdfaffa02",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-EBLJ",
+    "timestamp": "2026-11-19T19:39:02.071Z",
+    "repository": "tuist/tuist",
+    "learningId": "learn-github-tuist-tuist",
+    "contentHash": "5271a2aacfa6ef9a57f5a9c4541201d69b5e698efa22cd2375127cee51d6f3af",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-EBSX",
+    "timestamp": "2026-11-19T19:39:02.337Z",
+    "repository": "MelnixDev/seo-crawl-audit",
+    "learningId": "learn-github-melnixdev-seo-crawl-audit",
+    "contentHash": "5e09fbe4b918c54283b2135645d6db4e5d11e208171a32e6034f6c96fceee671",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-ECV4",
+    "timestamp": "2026-11-19T19:39:03.712Z",
+    "repository": "siteline/swiftui-introspect",
+    "learningId": "learn-github-siteline-swiftui-introspect",
+    "contentHash": "69bda98bc5054db79d2b30966a4232215e08801183cdac4c817348c53a7849ed",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
