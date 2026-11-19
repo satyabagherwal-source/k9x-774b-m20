@@ -697537,3 +697537,734 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `8060a376` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9450. Process Group Signal Isolation and Pipe Drain Invariant (Harvested from iii-hq/iii)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Process Group Signal Isolation and Pipe Drain Invariant",
+  "source": "iii-hq/iii",
+  "source_url": "https://github.com/iii-hq/iii",
+  "source_version": "7fd8bb9f",
+  "license": "PERMISSIVE_OPEN_SOURCE",
+  "extracted_at": "2026-11-19T22:06:51.316Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-iii-hq-iii",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [iii-hq/iii](https://github.com/iii-hq/iii) (Revision: `7fd8bb9f`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When supervising external subprocesses with timeouts or cancellation signals, you MUST spawn the process into a dedicated OS process group (Unix `setpgid`) or Job Object (Windows), simultaneously drain both `stdout` and `stderr` asynchronously using concurrent stream consumers before awaiting process exit, and terminate the entire process group rather than the parent PID alone upon timeout or cancellation.
+
+**WHY**:
+Failing to spawn into an isolated process group leaves background child tasks (forked subprocesses, workers, scripts) running as detached orphans upon supervisor termination. Failing to drain `stdout`/`stderr` asynchronously causes the child process to block indefinitely on write once the OS kernel pipe buffer (typically 64KB) saturates, inducing a synthetic deadlock where the process appears hung and hits the supervisor timeout.
+
+**WHEN TO APPLY**:
+Any language (Rust, Go, C++, Python, Node.js) building supervisors, task runners, test harnesses, CI/CD agents, container runtimes, or hook executors (`pre_run`/`post_run`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified pattern from crates/iii-compose/src/hooks.rs
+use std::process::Stdio;
+use std::time::Duration;
+use tokio::io::AsyncReadExt;
+
+pub struct HookProcess {
+    child: tokio::process::Child,
+}
+
+impl HookProcess {
+    pub fn kill_tree(&mut self) {
+        #[cfg(unix)]
+        if let Some(pid) = self.child.id() {
+            // Signal the entire process group (negative PID in POSIX kill)
+            unsafe {
+                libc::kill(-(pid as libc::pid_t), libc::SIGKILL);
+            }
+        }
+        #[cfg(windows)]
+        {
+            let _ = self.child.start_kill();
+        }
+    }
+}
+
+pub async fn execute_bounded_hook(
+    mut cmd: tokio::process::Command,
+    timeout: Duration,
+) -> Result<std::process::ExitStatus, String> {
+    cmd.stdout(Stdio::piped()).stderr(Stdio::piped());
+    
+    #[cfg(unix)]
+    cmd.process_group(0); // Create a new process group with pgid = pid
+
+    let mut child = cmd.spawn().map_err(|e| format!("Spawn failed: {e}"))?;
+    let mut stdout = child.stdout.take().expect("stdout piped");
+    let mut stderr = child.stderr.take().expect("stderr piped");
+
+    // Concurrently drain pipe buffers to prevent deadlock from saturated kernel buffers
+    let drain_stdout = tokio::spawn(async move {
+        let mut buf = Vec::new();
+        let _ = stdout.read_to_end(&mut buf).await;
+        buf
+    });
+    let drain_stderr = tokio::spawn(async move {
+        let mut buf = Vec::new();
+        let _ = stderr.read_to_end(&mut buf).await;
+        buf
+    });
+
+    let run = async {
+        let status = child.wait().await;
+        let (out, err) = tokio::join!(drain_stdout, drain_stderr);
+        (status, out.unwrap_or_default(), err.unwrap_or_default())
+    };
+
+    tokio::pin!(run);
+    tokio::select! {
+        (status, _out, _err) = &mut run => {
+            status.map_err(|e| e.to_string())
+        }
+        _ = tokio::time::sleep(timeout) => {
+            let mut proc = HookProcess { child };
+            proc.kill_tree();
+            let _ = proc.child.wait().await;
+            Err(format!("Process timed out after {}s", timeout.as_secs()))
+        }
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER DO THIS: Awaiting child.wait() without draining pipes concurrently,
+// and killing only the single child PID.
+async fn run_hook_buggy(mut cmd: tokio::process::Command) {
+    cmd.stdout(Stdio::piped());
+    let mut child = cmd.spawn().unwrap();
+    // DEADLOCK HAZARD: If child produces > 64KB of logs, child blocks on write,
+    // wait() never resolves, and timeout triggers.
+    let status = child.wait().await.unwrap(); 
+    // ORPHAN HAZARD: child.kill() leaves any children spawned by the hook running!
+    let _ = child.kill().await;
+}
+```
+
+**VERIFICATION METHOD**:
+Spawn a child process executing `sh -c 'dd if=/dev/zero bs=1024 count=128; sleep 100'`, set supervisor timeout to 2 seconds. Verify: (1) Process terminates cleanly within 2 seconds without deadlocking on pipe buffer, and (2) No orphaned background worker processes remain running in the process table.
+
+---
+
+
+---
+
+## 9451. Scope-Bound Cryptographic Domain Separation Invariant (Harvested from iii-hq/iii)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Scope-Bound Cryptographic Domain Separation Invariant",
+  "source": "iii-hq/iii",
+  "source_url": "https://github.com/iii-hq/iii",
+  "source_version": "7fd8bb9f",
+  "license": "PERMISSIVE_OPEN_SOURCE",
+  "extracted_at": "2026-11-19T22:06:51.988Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-iii-hq-iii",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [iii-hq/iii](https://github.com/iii-hq/iii) (Revision: `7fd8bb9f`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When issuing security capability tokens derived from a shared master secret, every derived token MUST bind to its specific execution target via HMAC using an explicit, immutable domain separation prefix that includes the protocol version and a null terminator (`b"prefix/v1\0"`). Authorization checks MUST perform validation using constant-time MAC verification.
+
+**WHY**:
+Without domain separation bytes and contextual binding (such as a target `state_key`), an authorization token generated for one resource can be replayed against another resource or subsystem sharing the same root credential. Non-constant-time comparisons introduce timing oracle attacks revealing HMAC bytes sequentially.
+
+**WHEN TO APPLY**:
+Multi-tenant daemon systems, container-to-host adapters, RPC function authorization, token delegation, and micro-VM sandbox control channels.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified pattern from crates/iii-sandbox-contract/src/worker.rs
+use hmac::{Hmac, Mac};
+use sha2::Sha256;
+
+const SCOPED_AUTH_DOMAIN: &[u8] = b"iii-sandbox/worker-scope/v1\0";
+
+pub fn scoped_auth_token(project_token: &str, state_key: &str) -> String {
+    hex::encode(scoped_mac(project_token, state_key).finalize().into_bytes())
+}
+
+pub fn scoped_auth_matches(project_token: &str, state_key: &str, presented: &str) -> bool {
+    // Invariant: Reject empty credentials immediately before computing MAC
+    if project_token.is_empty() || state_key.is_empty() {
+        return false;
+    }
+    let Ok(tag) = hex::decode(presented) else {
+        return false;
+    };
+    // Constant-time verification prevents side-channel timing attacks
+    scoped_mac(project_token, state_key)
+        .verify_slice(&tag)
+        .is_ok()
+}
+
+fn scoped_mac(project_token: &str, state_key: &str) -> Hmac<Sha256> {
+    let mut mac = Hmac::<Sha256>::new_from_slice(project_token.as_bytes())
+        .expect("HMAC-SHA256 accepts variable length keys");
+    mac.update(SCOPED_AUTH_DOMAIN);
+    mac.update(state_key.as_bytes());
+    mac
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER DO THIS: Raw string hashing without domain separation or constant-time check
+fn unsafe_token_check(project_token: &str, state_key: &str, presented: &str) -> bool {
+    // Security flaw: Empty tokens allow forgeability
+    // Security flaw: No domain separator enables cross-protocol token collision
+    let digest = sha256_hash(format!("{project_token}{state_key}"));
+    // Security flaw: Standard string equality is subject to timing attacks!
+    digest == presented 
+}
+```
+
+**VERIFICATION METHOD**:
+Execute property-based testing:
+1. Verify that `scoped_auth_matches(master, "vm-1", scoped_auth_token(master, "vm-2"))` evaluates strictly to `false`.
+2. Verify that `scoped_auth_matches("", "", "")` evaluates to `false`.
+3. Assert that byte comparison uses `subtle::ConstantTimeEq` or `Mac::verify_slice`.
+
+---
+
+
+---
+
+## 9452. Registry Atomic Tear-Down & Re-Homing Invariant (Harvested from iii-hq/iii)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Registry Atomic Tear-Down & Re-Homing Invariant",
+  "source": "iii-hq/iii",
+  "source_url": "https://github.com/iii-hq/iii",
+  "source_version": "7fd8bb9f",
+  "license": "PERMISSIVE_OPEN_SOURCE",
+  "extracted_at": "2026-11-19T22:06:52.699Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-iii-hq-iii",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [iii-hq/iii](https://github.com/iii-hq/iii) (Revision: `7fd8bb9f`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When deregistering dynamic event bindings or triggers from a concurrent registry, the caller MUST teardown the binding against the provider identified by the entry *actually removed* from the atomic concurrent map, and MUST NOT use a pre-deregistration snapshot or stale read reference.
+
+**WHY**:
+In concurrent systems where bindings can be re-homed (e.g., fallback provider $\to$ dedicated provider) while a worker deregistration is in-flight, tearing down the provider stored in a stale snapshot deregisters the binding from the wrong provider (or a no-op target), while the new provider continues firing the trigger forever without any tracking entry in the registry.
+
+**WHEN TO APPLY**:
+Dynamic event buses, trigger registries, worker disconnect loops, pub/sub topic managers, and connection managers using concurrent hash maps (`DashMap`, `RwLock<HashMap>`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified architectural pattern from engine/src/trigger.rs (Incident #2237)
+use dashmap::DashMap;
+use std::sync::Arc;
+
+pub struct TriggerEntry {
+    pub worker_id: String,
+    pub provider_key: String,
+}
+
+pub struct TriggerRegistry {
+    // Key: binding_id, Value: TriggerEntry
+    bindings: Arc<DashMap<String, TriggerEntry>>,
+}
+
+impl TriggerRegistry {
+    pub async fn unregister_worker(&self, worker_id: &str) {
+        // Collect candidate keys
+        let candidate_keys: Vec<String> = self.bindings
+            .iter()
+            .filter(|entry| entry.value().worker_id == worker_id)
+            .map(|entry| entry.key().clone())
+            .collect();
+
+        for key in candidate_keys {
+            // Atomic conditional removal: extract the exact value removed from memory
+            let removed = self.bindings.remove_if(&key, |_, entry| entry.worker_id == worker_id);
+            
+            if let Some((_key, actual_entry)) = removed {
+                // Invariant: Unregister against actual_entry.provider_key, NOT a stale snapshot!
+                self.teardown_provider_trigger(&actual_entry.provider_key, &key).await;
+            }
+        }
+    }
+
+    async fn teardown_provider_trigger(&self, provider_key: &str, binding_id: &str) {
+        // Sends unregister signal to the verified live provider
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// NEVER DO THIS: Snapshotting the collection and acting on the snapshot provider_key
+pub async fn unregister_worker_buggy(&self, worker_id: &str) {
+    let snapshot: Vec<(String, TriggerEntry)> = self.bindings
+        .iter()
+        .filter(|e| e.worker_id == worker_id)
+        .map(|e| (e.key().clone(), e.value().clone()))
+        .collect();
+
+    for (key, snap_entry) in snapshot {
+        self.bindings.remove(&key);
+        // RACE CONDITION: If another task re-homed `key` between snapshot and remove,
+        // snap_entry.provider_key points to the OLD provider.
+        // The NEW provider is never told to unregister and fires orphaned events!
+        self.teardown_provider_trigger(&snap_entry.provider_key, &key).await;
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a multithreaded test spawning concurrent workers that continuously re-home triggers between two mock providers while an unregister loop executes. Assert that upon completion of `unregister_worker`, the active count of triggers registered across all providers is identically zero.
+
+---
+
+
+---
+
+## 9453. Atomic Delta Merge Invariant for Distributed State Write-Backs (Harvested from koderover/zadig)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Atomic Delta Merge Invariant for Distributed State Write-Backs",
+  "source": "koderover/zadig",
+  "source_url": "https://github.com/koderover/zadig",
+  "source_version": "0b80d9e7",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-19T22:07:04.560Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-koderover-zadig",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [koderover/zadig](https://github.com/koderover/zadig) (Revision: `0b80d9e7`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When an asynchronous, long-running orchestrator (such as a Helm release manager or cloud provisioner) updates a sub-entity collection within a persistent document, it **MUST NOT** write back an in-memory snapshot of the collection taken at job invocation. The write-back operation **MUST** acquire a resource-level distributed lock, fetch the latest document state within a transactional session, calculate and apply only the *handled deltas*, and explicitly reconcile deletions.
+
+**WHY**:
+In distributed systems where updates take seconds or minutes (e.g., waiting for Kubernetes deployments or Helm chart releases), concurrent operations (such as a developer adding or editing another service) mutate the underlying collection in MongoDB. If the long-running worker finishes and overwrites the entire document or collection with its stale pre-execution snapshot, any concurrently added services or updated configurations are silently destroyed ("lost updates").
+
+**WHEN TO APPLY**:
+Apply to any long-running workflow, reconciliation loop, or orchestrator in Go/Python/Node/Java where an operation starts with a read of a composite state (e.g., microservices in an environment, nodes in a cluster) and persists mutations upon completion.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// From zadig: pkg/microservice/aslan/core/common/service/helm/helm.go
+func updateEnvServices(productName, envName string, production bool, updateBy string, 
+    mutate func(env *commonmodels.Product, orchestration [][]string)) error {
+    
+    session := mongo.Session()
+    defer session.EndSession(context.TODO())
+
+    if err := mongo.StartTransaction(session); err != nil {
+        return err
+    }
+
+    productColl := commonrepo.NewProductCollWithSession(session)
+
+    // 1. Acquire distributed lock across independent processes
+    envLock := cache.NewRedisLock(fmt.Sprintf("%s:%s:%s", UpdateHelmEnvLockKey, productName, envName))
+    envLock.Lock()
+    defer envLock.Unlock()
+
+    // 2. Fetch fresh orchestrator template and target environment within transaction
+    templateProduct, err := template.NewProductCollWithSess(session).Find(productName)
+    if err != nil {
+        mongo.AbortTransaction(session)
+        return errors.Wrapf(err, "failed to find template product %s", productName)
+    }
+    orchestration := templateProduct.Services
+    if production {
+        orchestration = templateProduct.ProductionServices
+    }
+
+    env, err := productColl.Find(&commonrepo.ProductFindOptions{
+        Name:       productName,
+        EnvName:    envName,
+        Production: &production,
+    })
+    if err != nil {
+        mongo.AbortTransaction(session)
+        return errors.Wrapf(err, "failed to find environment %s/%s", productName, envName)
+    }
+
+    // 3. Mutate only targeted delta records, preserving concurrent insertions
+    mutate(env, orchestration)
+
+    // 4. Commit atomic update
+    if err = productColl.UpdateAllServices(productName, envName, env.Services, updateBy); err != nil {
+        mongo.AbortTransaction(session)
+        return fmt.Errorf("failed to update %s/%s product services, err %s", productName, envName, err)
+    }
+
+    return mongo.CommitTransaction(session)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: NEVER persist an entire stale array snapshot over a shared resource
+func BuggyDeployWriteback(productName, envName string, initialSnapshot []*ProductService) error {
+    // initialSnapshot was read 2 minutes ago before helm install started
+    // Any service added by another user during those 2 minutes is wiped out!
+    return db.Collection("products").UpdateOne(
+        context.TODO(),
+        bson.M{"name": productName, "env_name": envName},
+        bson.M{"$set": bson.M{"services": initialSnapshot}},
+    )
+}
+```
+
+**VERIFICATION METHOD**:
+Run a high-concurrency race integration test:
+1. Initialize an environment with services `[A, B]`.
+2. Trigger long-running Helm update on service `A` (artificially delayed by 2 seconds).
+3. Concurrently invoke API endpoint to insert service `C`.
+4. Allow update of `A` to complete.
+5. Assert document contains `[A, B, C]`. An unhandled overwrite will produce `[A, B]`, failing the test.
+
+---
+
+
+---
+
+## 9454. Disambiguation Guard for Multi-Identity Resource Resolution (Harvested from koderover/zadig)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Disambiguation Guard for Multi-Identity Resource Resolution",
+  "source": "koderover/zadig",
+  "source_url": "https://github.com/koderover/zadig",
+  "source_version": "0b80d9e7",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-19T22:07:05.239Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-koderover-zadig",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [koderover/zadig](https://github.com/koderover/zadig) (Revision: `0b80d9e7`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When an API exposes retrieval or manipulation of a resource by a polymorphic or non-unique identifier (e.g., resolving a service by `ServiceName` OR `ReleaseName`), the lookup **MUST NOT** stop at the first match and **MUST NOT** fallback silently. It **MUST** scan the entire candidate namespace, count total identity collisions, and immediately abort with a 400 Bad Request if the target matches multiple distinct entities.
+
+**WHY**:
+In Kubernetes/Helm management platforms, a service named `api` can coexist with a Helm chart release named `api` backing a completely different service named `chart`. If lookup returns the first match arbitrarily, an update, restart, or delete command intended for the Helm release can silently delete or restart the wrong microservice pod, causing critical production outages.
+
+**WHEN TO APPLY**:
+Any entity lookup routine where queries accept alternative identity keys (e.g., Slug vs UUID, ReleaseName vs ServiceName, DNS name vs Container ID).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// From zadig: pkg/microservice/aslan/core/environment/service/service.go
+func getHelmServiceByName(env *commonmodels.Product, serviceName string, log *zap.SugaredLogger) (*commonservice.SvcResp, error) {
+    var matched *commonmodels.ProductService
+    for _, svc := range env.GetSvcList() {
+        // Evaluate identity criteria across both namespaces
+        if svc.ServiceName != serviceName && (svc.FromZadig() || svc.ReleaseName != serviceName) {
+            continue
+        }
+        // Ambiguity guard: If already matched a previous entity, abort immediately!
+        if matched != nil {
+            return nil, e.ErrInvalidParam.AddDesc(fmt.Sprintf("%s matches multiple Helm services in env %s", serviceName, env.EnvName))
+        }
+        matched = svc
+    }
+    if matched == nil {
+        return nil, fmt.Errorf("failed to find service %s", serviceName)
+    }
+    result, err := getHelmServiceRuntimeResources(env, serviceName, log)
+    if err != nil {
+        return nil, err
+    }
+    result.ReleaseName = matched.ReleaseName
+    result.IsHelmChart = util.GetBoolPointer(!matched.FromZadig())
+    return result, nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: First-match-wins on overlapping namespaces
+func GetAmbiguousService(env *Product, name string) *ProductService {
+    for _, svc := range env.Services {
+        if svc.ServiceName == name || svc.ReleaseName == name {
+            return svc // HAZARD: Silent collision; returns wrong resource if name overlaps!
+        }
+    }
+    return nil
+}
+```
+
+**VERIFICATION METHOD**:
+Table-driven unit test verifying collision handling:
+```go
+func TestAmbiguityRejection(t *testing.T) {
+    env := &Product{
+        Services: []*ProductService{
+            {ServiceName: "api", Type: "helm"},
+            {ServiceName: "chart", ReleaseName: "api", Type: "helmChart"},
+        },
+    }
+    _, err := getHelmServiceByName(env, "api", zap.NewNop().Sugar())
+    require.Error(t, err)
+    require.Contains(t, err.Error(), "matches multiple Helm services")
+}
+```
+
+---
+
+
+---
+
+## 9455. Separation of Infrastructure Inventory vs Project Resource Authorization (Harvested from koderover/zadig)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Separation of Infrastructure Inventory vs Project Resource Authorization",
+  "source": "koderover/zadig",
+  "source_url": "https://github.com/koderover/zadig",
+  "source_version": "0b80d9e7",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-19T22:07:05.951Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-koderover-zadig",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [koderover/zadig](https://github.com/koderover/zadig) (Revision: `0b80d9e7`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Cluster infrastructure inventory permissions (e.g., viewing connected Kubernetes clusters) **MUST NOT** be automatically treated as authorization to view or select cluster namespaces and workload candidates for CI/CD pipelines. Workload and namespace access **MUST** be verified against explicitly assigned project-level scopes (`ProjectActions.Env` or `ProjectActions.Workflow`).
+
+**WHY**:
+In enterprise multi-tenant platforms, infrastructure administrators register clusters globally. Developers or pipeline operators granted read-only visibility into cluster health or names must not inherit the ability to read namespaces, list active deployments, or deploy pipelines into namespaces belonging to unrelated tenants or business units sharing that physical cluster.
+
+**WHEN TO APPLY**:
+Multi-cluster Kubernetes management, multi-tenant cloud consoles, and any access-control system bridging infrastructure-level nodes with project-level runtime assets.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// From zadig: pkg/microservice/aslan/core/multicluster/service/kube_authorization.go
+func CanReadAllKubeResources(resources *user.AuthorizedResources, permission KubeResourcePermission) bool {
+    actions := resources.SystemActions
+    if actions == nil {
+        return false
+    }
+    // Cluster visibility alone ONLY grants inventory list access, NOT workflow/namespace inspection.
+    if permission == KubeClusterInventory &&
+        actions.ClusterManagement != nil && actions.ClusterManagement.View {
+        return true
+    }
+    // Workflow template operations require explicit template system-level authorisations.
+    return permission == KubeWorkflowCandidates &&
+        actions.Template != nil && (actions.Template.Create || actions.Template.Edit)
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Leaking infrastructure-wide resources because user has cluster view access
+func CanSelectNamespaces(user *User) bool {
+    // BROKEN: Anyone with basic cluster view can now enumerate all enterprise namespaces
+    if user.HasSystemPermission("ClusterManagement.View") {
+        return true
+    }
+    return user.HasProjectPermission(...)
+}
+```
+
+**VERIFICATION METHOD**:
+Automated RBAC suite testing identity permutation:
+```go
+func TestClusterViewerDeniedNamespaceSelector(t *testing.T) {
+    ctx := &user.AuthorizedResources{
+        SystemActions: &user.SystemActions{
+            ClusterManagement: &user.ClusterManagementActions{View: true},
+        },
+    }
+    assert.True(t, CanReadAllKubeResources(ctx, KubeClusterInventory))
+    assert.False(t, CanReadAllKubeResources(ctx, KubeNamespaceCandidates))
+    assert.False(t, CanReadAllKubeResources(ctx, KubeWorkflowCandidates))
+}
+```
+
+---

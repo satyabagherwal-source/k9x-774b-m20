@@ -11387,3 +11387,6 @@
 | `CYCLE-20261119-5FGM` | `2026-11-19T21:24:05.638Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9447` | Yes (`edefedb1...`) |
 | `CYCLE-20261119-5JSL` | `2026-11-19T21:24:11.253Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9448` | Yes (`57c36e57...`) |
 | `CYCLE-20261119-URGS` | `2026-11-19T21:43:47.596Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9449` | Yes (`111734d5...`) |
+| `CYCLE-20261119-OGOQ` | `2026-11-19T22:06:53.306Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9450, Rule 9451, Rule 9452` | Yes (`84979399...`) |
+| `CYCLE-20261119-OQWR` | `2026-11-19T22:07:06.555Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9453, Rule 9454, Rule 9455` | Yes (`c40275c7...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T22:07:47.864Z` | `iii-hq-iii` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-L-453B4D1D` [Domain L] | Yes (`170470f0...`) |

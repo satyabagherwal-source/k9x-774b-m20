@@ -41,12 +41,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-19T20:55:55.330Z",
-    "lastVerified": "2026-11-19T20:55:55.330Z",
+    "lastChecked": "2026-11-19T22:05:11.571Z",
+    "lastVerified": "2026-11-19T22:05:11.571Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -55,7 +55,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "12f3d096"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -79,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T21:43:50.733Z",
-    "lastVerified": "2026-11-19T21:43:50.733Z",
+    "lastChecked": "2026-11-19T22:07:10.457Z",
+    "lastVerified": "2026-11-19T22:07:10.457Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -615,11 +616,21 @@
     "lastVerified": "2026-11-19T12:40:35.750Z"
   },
   "iii-hq-iii": {
-    "name": "iii",
+    "name": "iii-hq/iii",
     "officialUrl": "https://github.com/iii-hq/iii",
-    "lastChecked": "2026-11-18T10:44:58.524Z",
-    "revisionIdentifier": "3ffe1122",
-    "lastVerified": "2026-11-18T10:44:58.524Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-19T22:05:01.399Z",
+    "lastVerified": "2026-11-19T22:05:01.399Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-iii-hq-iii",
+    "contentHash": "84979399e4b6d28301edb57f9605588bb6ef9fa28368774bbd68b1e2d53a0e26",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-qwen-qwen3.8-27b": {
     "name": "Qwen/Qwen3.8-27B",
@@ -1463,9 +1474,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-19T15:03:26.866Z",
+    "lastChecked": "2026-11-19T22:05:06.594Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-19T15:03:26.866Z"
+    "lastVerified": "2026-11-19T22:05:06.594Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -3064,9 +3075,9 @@
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
     "officialUrl": "https://github.com/vasu-devs/JustHireMe",
-    "lastChecked": "2026-11-18T16:14:23.254Z",
+    "lastChecked": "2026-11-19T22:05:09.079Z",
     "revisionIdentifier": "accdcdb5",
-    "lastVerified": "2026-11-18T16:14:23.254Z"
+    "lastVerified": "2026-11-19T22:05:09.079Z"
   },
   "o2sh-onefetch": {
     "name": "o2sh/onefetch",
@@ -3419,14 +3430,14 @@
     "officialUrl": "https://github.com/koderover/zadig",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-18T17:10:25.358Z",
-    "lastVerified": "2026-11-18T17:10:25.358Z",
+    "lastChecked": "2026-11-19T22:05:10.066Z",
+    "lastVerified": "2026-11-19T22:05:10.066Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-koderover-zadig",
-    "contentHash": "d07a9983748708a44297f2d71f55e15080e49f76f1e44e223faba3709cf86226",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "contentHash": "c40275c777a502a0d3432be29f270b0b427a0fc7ec9e0f5ad4c5ecb6f0e63ba4",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 9,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -8559,5 +8570,19 @@
     "lastChecked": "2026-11-19T21:43:39.327Z",
     "revisionIdentifier": "abc1d4ce",
     "lastVerified": "2026-11-19T21:43:39.327Z"
+  },
+  "serpapi-google-search-results-python": {
+    "name": "google-search-results-python",
+    "officialUrl": "https://github.com/serpapi/google-search-results-python",
+    "lastChecked": "2026-11-19T22:04:59.036Z",
+    "revisionIdentifier": "345d31a9",
+    "lastVerified": "2026-11-19T22:04:59.036Z"
+  },
+  "apppear-chartview": {
+    "name": "ChartView",
+    "officialUrl": "https://github.com/AppPear/ChartView",
+    "lastChecked": "2026-11-19T22:05:01.596Z",
+    "revisionIdentifier": "df0b2641",
+    "lastVerified": "2026-11-19T22:05:01.596Z"
   }
 }

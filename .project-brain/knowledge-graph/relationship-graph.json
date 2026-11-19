@@ -2,9 +2,9 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-19T20:56:27.463Z",
+  "updated_at": "2026-11-19T22:07:47.861Z",
   "statistics": {
-    "total_nodes": 392,
+    "total_nodes": 393,
     "total_edges": 181,
     "domain_distribution": {
       "D": 261,
@@ -12,7 +12,7 @@
       "H": 59,
       "J": 14,
       "K": 22,
-      "L": 7,
+      "L": 8,
       "G": 1,
       "F": 19,
       "B": 2,
@@ -8766,6 +8766,28 @@
       ],
       "created_at": "2026-11-19T20:56:27.463Z",
       "updated_at": "2026-11-19T20:56:27.463Z"
+    },
+    "DOM-L-453B4D1D": {
+      "id": "DOM-L-453B4D1D",
+      "domain": "L",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Docker Compose Environment Variable Forwarding Hole (BUG-III-02)",
+      "summary": "Docker Compose natively uses `.env` exclusively to substitute variables within the `docker-compose.yml` specification itself; it does *not*  -> Configuration substitution models must distinguish between orchestrator-level templating (Docker Compose preprocessing) and application runt",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://iii-hq-iii/iii-hq-iii-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T22:07:10.621Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (iii-hq-iii)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "L",
+        "Deployment & Operations Intelligence"
+      ],
+      "created_at": "2026-11-19T22:07:47.861Z",
+      "updated_at": "2026-11-19T22:07:47.861Z"
     }
   },
   "edges": [

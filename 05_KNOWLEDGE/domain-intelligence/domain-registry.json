@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T21:43:52.651Z",
-  "total_records": 2030,
+  "last_updated": "2026-11-19T22:07:51.539Z",
+  "total_records": 2033,
   "domains": {
     "A": {
-      "total": 15,
+      "total": 17,
       "record_ids": [
         "DOM-A-DD59FA01",
         "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants",
@@ -21,7 +21,9 @@
         "domain_intelligence-human-need-intelligence-crate-crate-core-invariants",
         "domain_intelligence-human-need-intelligence-crate-crate-learnings-core-invariants",
         "domain_intelligence-human-need-intelligence-bahdotsh-wrkflw-core-invariants",
-        "domain_intelligence-human-need-intelligence-bahdotsh-wrkflw-learnings-core-invariants"
+        "domain_intelligence-human-need-intelligence-bahdotsh-wrkflw-learnings-core-invariants",
+        "domain_intelligence-human-need-intelligence-koderover-zadig-core-invariants",
+        "domain_intelligence-human-need-intelligence-koderover-zadig-learnings-core-invariants"
       ]
     },
     "B": {
@@ -2071,7 +2073,7 @@
       ]
     },
     "L": {
-      "total": 18,
+      "total": 19,
       "record_ids": [
         "DOM-L-1B851132",
         "DOM-L-80D1F65C",
@@ -2090,7 +2092,8 @@
         "DOM-L-902F756C",
         "DOM-L-03EC8831",
         "domain_intelligence-deployment-operations-intelligence-kubearmor-kubearmor-core-invariants",
-        "domain_intelligence-deployment-operations-intelligence-kubearmor-kubearmor-learnings-core-invariants"
+        "domain_intelligence-deployment-operations-intelligence-kubearmor-kubearmor-learnings-core-invariants",
+        "DOM-L-453B4D1D"
       ]
     },
     "M": {
@@ -11421,8 +11424,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "4b2339c27372da0d39baad1be4ab43bd666fc9514bc26f4c2feff6813d34d112",
-      "created_at": "2026-11-19T14:55:41.890Z"
+      "content_hash": "7935306565375d45da4646ca4b63bca31f89a6c5a3ffa737153ad2c1f837c131",
+      "created_at": "2026-11-19T22:07:51.539Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -17804,8 +17807,8 @@
       "title": "Architecture Intelligence: iii-hq/iii Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iii-hq-iii-architecture-intelligence-iii-hq-iii-core-invariants.md",
       "repository": "iii-hq/iii",
-      "content_hash": "50ed9f3682b5e901e42eaf5b1413e3c3fec12edd7989c799f3908d9953eb7ddd",
-      "created_at": "2026-11-18T01:38:29.865Z"
+      "content_hash": "dd6a80e9f94edca4699bf9cf30edf46415abbf69bba2aa91cd2a6638f995cdfa",
+      "created_at": "2026-11-19T22:06:54.133Z"
     },
     "domain_intelligence-architecture-intelligence-iii-hq-iii-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-iii-hq-iii-learnings-core-invariants",
@@ -17813,8 +17816,8 @@
       "title": "Architecture Intelligence: iii-hq-iii-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iii-hq-iii-learnings-architecture-intelligence-iii-hq-iii-learnings-core-invaria.md",
       "repository": "iii-hq-iii-learnings",
-      "content_hash": "6855057460179f9e55969d9a6555f08c92e7358879e1ed021a41559e9503cfd6",
-      "created_at": "2026-11-18T01:38:46.174Z"
+      "content_hash": "33e847f18f325a83c3108d3d5fff94c3f1018c9aac7670c8e6c0c449c6d64295",
+      "created_at": "2026-11-19T22:07:48.841Z"
     },
     "DOM-D-73A9B4FE": {
       "record_id": "DOM-D-73A9B4FE",
@@ -34033,6 +34036,58 @@
       "repository": "lioensky-vcptoolbox-learnings",
       "content_hash": "60beb697546a8f0eec80dc7f2e84f247281b22ef123b352e8c4039c0ef4618f7",
       "created_at": "2026-11-19T21:24:16.833Z"
+    },
+    "domain_intelligence-human-need-intelligence-koderover-zadig-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-koderover-zadig-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: koderover/zadig Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-koderover-zadig-human-need-intelligence-koderover-zadig-core-invariants.md",
+      "repository": "koderover/zadig",
+      "content_hash": "656a9d05da036c2314ff1d24d8a84dad31545ca6157af81197ab0b3a4a1678ae",
+      "created_at": "2026-11-19T22:07:07.369Z"
+    },
+    "DOM-L-453B4D1D": {
+      "record_id": "DOM-L-453B4D1D",
+      "domain_letter": "L",
+      "domain_id": "deployment_operations",
+      "domain_name": "Deployment & Operations Intelligence",
+      "secondary_domains": [],
+      "title": "Docker Compose Environment Variable Forwarding Hole (BUG-III-02)",
+      "content": "Configuration substitution models must distinguish between orchestrator-level templating (Docker Compose preprocessing) and application runtime variable expansion. Generating `.env` files requires explicit container injection directives.",
+      "content_hash": "170470f0e7f78773511811bc3ea60d8c76b86a8d5140ad43e8f3becac4e036e7",
+      "summary": "Docker Compose natively uses `.env` exclusively to substitute variables within the `docker-compose.yml` specification itself; it does *not*  -> Configuration substitution models must distinguish between orchestrator-level templating (Docker Compose preprocessing) and application runt",
+      "provenance": {
+        "source_uri": "project://iii-hq-iii/iii-hq-iii-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T22:07:10.621Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (iii-hq-iii)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Issue #1884 (\"Generated docker-compose .env not forwarded to engine; ${RABBITMQ_USER} unset at runtime\")."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T22:07:47.833Z"
+    },
+    "domain_intelligence-human-need-intelligence-koderover-zadig-learnings-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-koderover-zadig-learnings-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: koderover-zadig-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-koderover-zadig-learnings-human-need-intelligence-koderover-zadig-learnings-core.md",
+      "repository": "koderover-zadig-learnings",
+      "content_hash": "f7bb81b609e2fa5d7b89dd3ae3726bb8bf78d3c7a470e23813da03126cd25832",
+      "created_at": "2026-11-19T22:07:50.380Z"
     }
   }
 }

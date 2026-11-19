@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T21:43:47.605Z",
-  "total_cycles_completed": 10871,
-  "total_learnings_persisted": 10871,
-  "total_rules_promoted": 10224,
+  "last_updated": "2026-11-19T22:07:06.567Z",
+  "total_cycles_completed": 10873,
+  "total_learnings_persisted": 10873,
+  "total_rules_promoted": 10230,
   "history": [
-    {
-      "timestamp": "2026-11-19T01:18:56.474Z",
-      "repository": "yugabyte/yugabyte-db",
-      "learningId": "learn-github-yugabyte-yugabyte-db",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T01:32:34.587Z",
-      "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T01:32:37.435Z",
       "repository": "kubearmor/KubeArmor",
@@ -1403,6 +1389,20 @@
       "repository": "PeerDB-io/peerdb",
       "learningId": "learn-github-peerdb-io-peerdb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T22:06:53.317Z",
+      "repository": "iii-hq/iii",
+      "learningId": "learn-github-iii-hq-iii",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T22:07:06.567Z",
+      "repository": "koderover/zadig",
+      "learningId": "learn-github-koderover-zadig",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

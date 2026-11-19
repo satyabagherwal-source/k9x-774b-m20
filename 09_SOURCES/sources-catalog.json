@@ -2173,10 +2173,10 @@
     "repository": "iii-hq/iii",
     "platform": "github",
     "sourceUrl": "https://github.com/iii-hq/iii",
-    "sourceVersion": "3ffe1122",
+    "sourceVersion": "7fd8bb9f",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "b6f64f96e33779c8c53a0b53d13396b4889bd290f2e523a61f1c20cd5faa70c4",
-    "lastHarvestedAt": "2026-11-18T01:38:29.531Z",
+    "contentHash": "84979399e4b6d28301edb57f9605588bb6ef9fa28368774bbd68b1e2d53a0e26",
+    "lastHarvestedAt": "2026-11-19T22:06:53.311Z",
     "learningId": "learn-github-iii-hq-iii"
   },
   "crawlseo-crawlseo": {
@@ -3633,10 +3633,10 @@
     "repository": "koderover/zadig",
     "platform": "github",
     "sourceUrl": "https://github.com/koderover/zadig",
-    "sourceVersion": "39229c91",
+    "sourceVersion": "0b80d9e7",
     "license": "NOASSERTION",
-    "contentHash": "d07a9983748708a44297f2d71f55e15080e49f76f1e44e223faba3709cf86226",
-    "lastHarvestedAt": "2026-11-18T17:10:26.499Z",
+    "contentHash": "c40275c777a502a0d3432be29f270b0b427a0fc7ec9e0f5ad4c5ecb6f0e63ba4",
+    "lastHarvestedAt": "2026-11-19T22:07:06.560Z",
     "learningId": "learn-github-koderover-zadig"
   },
   "trufflesecurity-trufflehog": {

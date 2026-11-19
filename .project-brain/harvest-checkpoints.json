@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T21:43:47.608Z",
+  "last_updated": "2026-11-19T22:07:06.571Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3396,14 +3396,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iii-hq-iii",
-      "content_hash": "b6f64f96e33779c8c53a0b53d13396b4889bd290f2e523a61f1c20cd5faa70c4",
-      "verified_at": "2026-11-18T01:38:29.539Z",
+      "content_hash": "84979399e4b6d28301edb57f9605588bb6ef9fa28368774bbd68b1e2d53a0e26",
+      "verified_at": "2026-11-19T22:06:53.321Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T01:38:29.539Z"
+      "last_updated": "2026-11-19T22:06:53.321Z"
     },
     "crawlseo/crawlseo": {
       "repository": "crawlseo/crawlseo",
@@ -5571,14 +5571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-koderover-zadig",
-      "content_hash": "d07a9983748708a44297f2d71f55e15080e49f76f1e44e223faba3709cf86226",
-      "verified_at": "2026-11-18T17:10:26.509Z",
+      "content_hash": "c40275c777a502a0d3432be29f270b0b427a0fc7ec9e0f5ad4c5ecb6f0e63ba4",
+      "verified_at": "2026-11-19T22:07:06.570Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T17:10:26.509Z"
+      "last_updated": "2026-11-19T22:07:06.570Z"
     },
     "trufflesecurity/trufflehog": {
       "repository": "trufflesecurity/trufflehog",

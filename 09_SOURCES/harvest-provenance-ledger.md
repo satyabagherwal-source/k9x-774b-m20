@@ -11420,3 +11420,6 @@ Every entry in this ledger must capture:
 | `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `d41be195` | Multi-dimensional audit evidence | 2026-11-19T21:24:05.641Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `a2c33d06` | Multi-dimensional audit evidence | 2026-11-19T21:24:11.257Z |
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `7715b315` | Multi-dimensional audit evidence | 2026-11-19T21:43:47.600Z |
+| `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `7fd8bb9f` | Multi-dimensional audit evidence | 2026-11-19T22:06:53.311Z |
+| `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `0b80d9e7` | Multi-dimensional audit evidence | 2026-11-19T22:07:06.560Z |
+| `learn-dom-l-453b4d1d` | `project://iii-hq-iii` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iii-hq-iii-learnings.md` | 2026-11-19T22:07:47.864Z |

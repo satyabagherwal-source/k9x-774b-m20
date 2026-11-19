@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T21:43:53.107Z",
+  "last_updated": "2026-11-19T22:07:51.932Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T21:43:51.561Z",
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-19T14:55:41.505Z",
+      "processed_at": "2026-11-19T22:07:50.983Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -273,8 +273,8 @@
       "staged_for_review": 1
     },
     "iii-hq-iii-learnings.md": {
-      "processed_at": "2026-11-18T01:38:45.793Z",
-      "promoted_canonical": 0,
+      "processed_at": "2026-11-19T22:07:47.864Z",
+      "promoted_canonical": 1,
       "staged_for_review": 1
     },
     "aquasecurity-trivy-operator-learnings.md": {
@@ -783,9 +783,9 @@
       "staged_for_review": 1
     },
     "koderover-zadig-learnings.md": {
-      "processed_at": "2026-11-18T17:10:30.401Z",
+      "processed_at": "2026-11-19T22:07:49.462Z",
       "promoted_canonical": 0,
-      "staged_for_review": 1
+      "staged_for_review": 2
     },
     "fabio-rovai-open-ontologies-learnings.md": {
       "processed_at": "2026-11-17T04:05:49.511Z",
@@ -3528,7 +3528,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2334,
-  "total_canonical_promoted": 394,
-  "total_staged_for_review": 1740
+  "total_dossiers_evaluated": 2337,
+  "total_canonical_promoted": 395,
+  "total_staged_for_review": 1744
 }
