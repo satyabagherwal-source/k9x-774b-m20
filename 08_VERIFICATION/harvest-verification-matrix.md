@@ -11167,3 +11167,7 @@
 | `CYCLE-20261119-3AS1` | `2026-11-19T01:18:42.769Z` | `u-root/u-root` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9316` | Yes (`9988f43c...`) |
 | `CYCLE-20261119-3LCH` | `2026-11-19T01:18:56.465Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9317` | Yes (`96e0a339...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T01:19:29.179Z` | `yugabyte-yugabyte-db` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-L-03EC8831` [Domain L] | Yes (`f1b2e320...`) |
+| `CYCLE-20261119-L4LS` | `2026-11-19T01:32:34.576Z` | `Qwen/Qwen3-VL-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md` | Yes (`2a71d00f...`) |
+| `CYCLE-20261119-L6SW` | `2026-11-19T01:32:37.424Z` | `kubearmor/KubeArmor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9318` | Yes (`a48b0b5e...`) |
+| `CYCLE-20261119-LA3T` | `2026-11-19T01:32:41.705Z` | `open-ani/animeko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9319` | Yes (`c473607f...`) |
+| `CYCLE-20261119-LHSQ` | `2026-11-19T01:32:51.674Z` | `GreptimeTeam/greptimedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9320` | Yes (`2d229912...`) |

@@ -4,22 +4,22 @@
 {
   "source_repository": "open-ani/animeko",
   "source_url": "https://github.com/open-ani/animeko",
-  "source_version": "42ef5d46",
+  "source_version": "c9064896",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-18T02:28:20.903Z",
+  "timestamp": "2026-11-19T01:32:41.953Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-open-ani-animeko",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [open-ani/animeko](https://github.com/open-ani/animeko) (Revision: `42ef5d46`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-18T02:28:20.903Z`  
+> **Provenance**: Harvested from [open-ani/animeko](https://github.com/open-ani/animeko) (Revision: `c9064896`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-19T01:32:41.953Z`  
 > **Learning ID**: `learn-github-open-ani-animeko`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `open-ani/animeko` (Commit: `42ef5d46`)
+- **Target Repository**: `open-ani/animeko` (Commit: `c9064896`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-ani-animeko-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-ani/animeko](https://github.com/open-ani/animeko))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T02:28:19.713Z  
+> **Harvest Timestamp**: 2026-11-19T01:32:40.458Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 集找番、追番、看番的一站式弹幕追番平台，云收藏同步 (Bangumi)，离线缓存，BitTorrent，弹幕云过滤。100% Kotlin/Compose Multiplatform
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 21826 stars
+- **Stars / Engagement**: 21856 stars
 
 ---
 
@@ -1063,748 +1063,23 @@ class EpisodeFetchSelectPlayState(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `42ef5d46` (2026-11-16)
-**Commit Message**: perf(tv): reduce navigation rail animation overhead (#3712)
+### Incident Patch 1: `c9064896` (2026-11-18)
+**Commit Message**: fix(desktop): 关闭 HotSpot Base64 intrinsic
 
-* perf(tv): reduce navigation rail animation overhead
+桌面端启动参数加上 -XX:-UseBASE64Intrinsics, 让 java.util.Base64 走纯 Java 实现.
 
-Reuse fully measured label rows, isolate blur capture, and fade native Gaussian blur. Read animated values in layout or draw phases and cover clipped pointer targets.
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
-* fix(tv): preserve dim targets and use synthetic test input
-
-**File**: `app/shared/src/androidTv/kotlin/ui/main/TvMainShell.kt` (modified, +47/-20)
+**File**: `app/desktop/build.gradle.kts` (modified, +1/-0)
 ```diff
-@@ -11,6 +11,7 @@ package me.him188.ani.tv.ui.main
- 
- import androidx.activity.compose.BackHandler
- import androidx.compose.animation.AnimatedContent
-+import androidx.compose.animation.core.EaseIn
- import androidx.compose.animation.core.FastOutSlowInEasing
- import androidx.compose.animation.core.animateFloatAsState
- import androidx.compose.animation.core.tween
-@@ -32,6 +33,7 @@ import androidx.compose.material.icons.rounded.TravelExplore
- import androidx.compose.runtime.Composable
- import androidx.compose.runtime.CompositionLocalProvider
- import androidx.compose.runtime.LaunchedEffect
-+import androidx.compose.runtime.derivedStateOf
- import androidx.compose.runtime.getValue
- import androidx.compose.runtime.mutableStateOf
- import androidx.compose.runtime.remember
-@@ -43,14 +45,19 @@ import androidx.compose.runtime.snapshotFlow
- import androidx.compose.ui.Alignment
- import androidx.compose.ui.ExperimentalComposeUiApi
- import androidx.compose.ui.Modifier
-+import androidx.compose.ui.draw.drawBehind
- import androidx.compose.ui.focus.FocusRequester
- import androidx.compose.ui.focus.focusRequester
- import androidx.compose.ui.focus.onFocusChanged
-+import androidx.compose.ui.graphics.Brush
-+import androidx.compose.ui.graphics.Color
-+import androidx.compose.ui.graphics.graphicsLayer
- import androidx.compose.ui.input.key.Key
- import androidx.compose.ui.platform.testTag
- import androidx.compose.ui.semantics.semantics
- import androidx.tv.material3.MaterialTheme
--import dev.chrisbanes.haze.HazeProgressive
-+import dev.chrisbanes.haze.ExperimentalHazeApi
-+import dev.chrisbanes.haze.HazeInputScale
- import dev.chrisbanes.haze.HazeTint
- import dev.chrisbanes.haze.hazeEffect
- import dev.chrisbanes.haze.hazeSource
-@@ -97,7 +104,7 @@ private enum class TvShellFocus : TvFocusKey {
-  * TV 主壳。页面占满屏幕；左侧悬浮导航栏展开时压暗页面，并在左侧以渐进模糊衬托。
-  * [pageContent] 接收收起态导航栏的避让范围，可分别安排背景和前景内容。
-  */
--@OptIn(ExperimentalComposeUiApi::class)
-+@OptIn(ExperimentalComposeUiApi::class, ExperimentalHazeApi::class)
- @Composable
- fun TvMainShell(
-     uiState: TvMainUiState,
-@@ -146,11 +153,13 @@ fun TvMainShell(
-             }
-     }
-     var railHasFocus by remember { mutableStateOf(false) }
--    val railReveal by animateFloatAsState(
--        if (railHasFocus || showLogoutConfirmation || restoreAccountFocus != null) 1f else 0f,
-+    val railRevealTarget = if (railHasFocus || showLogoutConfirmation || restoreAccountFocus != null) 1f else 0f
-+    val railReveal = animateFloatAsState(
-+        railRevealTarget,
-         tween(TvNavigationRailDefaults.ExpandDurationMillis, easing = FastOutSlowInEasing),
-         label = "navigation-rail-backdrop",
-     )
-+    val railBackdropVisible by remember { derivedStateOf { railReveal.value > 0f } }
-     val restoreContentFocus: () -> Unit = remember(focus, memory) {
-         {
-             if (memory.lastId == TvShellFocus.Settings) memory.clear()
-@@ -185,6 +194,8 @@ fun TvMainShell(
-                 Modifier
-                     .fillMaxSize()
-                     .testTag("tv-main-page-content")
-+                    // Sibling focus/dim draws must not re-record an unchanged blur source.
-+                    .graphicsLayer()
-                     .hazeSource(railBackdrop)
-                     .tvFocusAnchor(focus, TvShellFocus.Content),
-             ) {
-@@ -201,39 +212,55 @@ fun TvMainShell(
-                         }
-                     }
-                 }
-+            }
- 
--                val dimAlpha = railReveal * TvNavigationRailDefaults.BackgroundDimAlpha
--                Box(
--                    Modifier.fillMaxSize()
--                        .testTag("tv-main-rail-dim")
--                        .semantics { tvVisualAlpha = dimAlpha }
--                        .background(MaterialTheme.colorScheme.surface.copy(alpha = dimAlpha)),
-+            val surfaceColor = MaterialTheme.colorScheme.surface
-+            val railGradient = remember(surfaceColor) {
-+                Brush.horizontalGradient(
-+                    colorStops = Array(21) { step ->
-+                        val fraction = step / 20f
-+                        fraction to surfaceColor.copy(alpha = 1f - EaseIn.transform(fraction))
-+                    },
-                 )
-             }
--
--            if (railReveal > 0f) {
--                val surfaceColor = MaterialTheme.colorScheme.surface
-+            val railTints = remember { listOf(HazeTint(Color.Transparent)) }
-+            if (railBackdropVisible) {
-                 Box(
-                     Modifier.fillMaxHeight()
-                         .fillMaxWidth(TvNavigationRailDefaults.BackgroundBlurWidthFraction)
-                         .testTag("tv-main-rail-blur")
-+                        .graphicsLayer {
-+                            alpha = railReveal.value
-+                        }
-                         .semantics {
-                             tvBackdropBlur = true
--                            tvVisualAlpha = railReveal
-                         }
-                         .hazeEffect(railBackdr
-```
-
-**File**: `app/shared/src/androidTvDeviceTest/kotlin/ui/main/TvNavigationRailUiTest.kt` (modified, +43/-7)
-```diff
-@@ -16,12 +16,14 @@ import androidx.compose.runtime.mutableStateOf
- import androidx.compose.runtime.setValue
- import androidx.compose.ui.Alignment
- import androidx.compose.ui.Modifier
-+import androidx.compose.ui.geometry.Offset
- import androidx.compose.ui.graphics.Color
- import androidx.compose.ui.input.key.Key
- import androidx.compose.ui.platform.testTag
- import androidx.compose.ui.semantics.SemanticsActions
- import androidx.compose.ui.test.SemanticsNodeInteraction
- import androidx.compose.ui.test.assertIsFocused
-+import androidx.compose.ui.test.click
- import androidx.compose.ui.test.hasAnyAncestor
- import androidx.compose.ui.test.hasAnyDescendant
- import androidx.compose.ui.test.hasContentDescription
-@@ -33,6 +35,7 @@ import androidx.compose.ui.test.onNodeWithTag
- import androidx.compose.ui.test.onNodeWithText
- import androidx.compose.ui.test.performKeyInput
- import androidx.compose.ui.test.performSemanticsAction
-+import androidx.compose.ui.test.performTouchInput
- import androidx.compose.ui.test.pressKey
- import androidx.compose.ui.text.TextLayoutResult
- import androidx.compose.ui.unit.LayoutDirection
-@@ -104,27 +107,54 @@ class TvNavigationRailUiTest {
-     }
- 
-     @Test
--    fun railBlurAndDimFollowRailFocusAndClearOnExit() = runAniComposeUiTest {
-+    fun railBackdropStaysInsideTheLeadingViewportAndFollowsFocus() = runAniComposeUiTest {
-         mount()
-+        assertEquals(0f, dimTargetAlpha())
-         onNodeWithTag("tv-main-rail-blur").assertDoesNotExist()
--        assertEquals(0f, dimAlpha())
-         key(Key.Menu)
-         awaitRailFocus("Explore")
-+        assertEquals(TvNavigationRailDefaults.BackgroundDimAlpha, dimTargetAlpha())
-         settle()
-         val shell = onNodeWithTag("tv-main-shell").fetchSemanticsNode().boundsInRoot
-         val blur = onNodeWithTag("tv-main-rail-blur").fetchSemanticsNode()
--        assertEquals(true, blur.config[TvVisualSemantics.BackdropBlur])
--        assertEquals(1f, blur.config[TvVisualSemantics.Alpha])
-         assertEquals(shell.left, blur.boundsInRoot.left)
-+        assertEquals(shell.top, blur.boundsInRoot.top)
-         assertEquals(shell.height, blur.boundsInRoot.height)
-         assertTrue(abs(blur.boundsInRoot.width - shell.width * TvNavigationRailDefaults.BackgroundBlurWidthFraction) <= 1f,
-             "The blur covers the leading part of the page: ${blur.boundsInRoot} in $shell")
--        assertEquals(TvNavigationRailDefaults.BackgroundDimAlpha, dimAlpha())
-         key(Key.Menu)
-         awaitContentFocus()
-+        assertEquals(0f, dimTargetAlpha())
-         settle()
-         onNodeWithTag("tv-main-rail-blur").assertDoesNotExist()
--        assertEquals(0f, dimAlpha())
-+    }
-+
-+    @Test
-+    fun unrevealedLabelAreaCannotActivateARailItem() = runAniComposeUiTest {
-+        val fixture = mount()
-+        key(Key.Menu)
-+        awaitRailFocus("Explore")
-+        settle()
-+        val expanded = railItem("Search").fetchSemanticsNode().boundsInRoot
-+        key(Key.Menu)
-+        awaitContentFocus()
-+        settle()
-+
-+        key(Key.Menu)
-+        awaitRailFocus("Explore")
-+        mainClock.advanceTimeBy(80)
-+        val revealed = railItem("Search").fetchSemanticsNode().boundsInRoot
-+        assertTrue(revealed.right < expanded.right)
-+        tapAt((revealed.right + expanded.right) / 2f, revealed.center.y)
-+        settle()
-+        assertEquals(TvShellContent.Exploration, fixture.page,
-+            "The clipped part of a measured label must not receive clicks")
-+
-+        val search = railItem("Search").fetchSemanticsNode().boundsInRoot
-+        tapAt(search.left + search.height / 2f, search.center.y)
-+        settle()
-+        assertEquals(TvShellContent.Search, fixture.page,
-+            "The visible icon must remain clickable")
-     }
- 
-     @Test
-@@ -242,6 +272,12 @@ class TvNavigationRailUiTest {
- 
-     private fun AniComposeUiTest.settle() { mainClock.advanceTimeBy(600); waitForIdle() }
- 
--    private fun AniComposeUiTest.dimAlpha(): Float =
-+    private fun AniComposeUiTest.dimTargetAlpha(): Float =
-         onNodeWithTag("tv-main-rail-dim").fetchSemanticsNode().config[TvVisualSemantics.Alpha]
-+
-+    private fun AniComposeUiTest.tapAt(x: Float, y: Float) {
-+        val shell = onNodeWithTag("tv-main-shell")
-+        val bounds = shell.fetchSemanticsNode().boundsInRoot
-+        shell.performTouchInput { click(Offset(x - bounds.left, y - bounds.top)) }
-+    }
- }
-```
-
-**File**: `app/shared/ui-foundation/src/androidTv/kotlin/ui/foundation/widgets/TvNavigationSideRail.kt` (modified, +25/-6)
-```diff
-@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
- import androidx.compose.foundation.layout.height
- import androidx.compose.foundation.layout.padding
- import androidx.compose.foundation.layout.size
--import androidx.compose.foundation.layout.width
- import androidx.compose.foundation.layout.widthIn
- import androidx.compose.foundation.layout.wrapContentWidth
- import androidx.compose.foundation.shape.CircleShape
-@@ -63,6 +62,7 @@ import androidx.compose.ui.input.key.key
- import androidx.compose.ui.input.key.onPreviewKeyEvent
- import androidx.compose.ui.input.key.type
- import androidx.compose.ui.layout.Layout
-+import androidx.compose.ui.layout.layout
- import androidx.compose.ui.platform.LocalDensity
- import androidx.compose.ui.platform.LocalFocusManager
- import androidx.compose.ui.platform.testTag
-@@ -182,11 +182,21 @@ fun TvNavigationSideRail(
-             TvNavigationRailDefaults.LabelEndPadding + with(LocalDensity.current) {
-         longestLabelWidth.toDp().coerceAtMost(TvNavigationRailDefaults.LabelMaxWidth)
-     }
--    val itemWidth by animateDpAsState(
-+    val itemWidth = animateDpAsState(
-         if (railExpanded) expandedWidth else TvNavigationRailDefaults.ItemSize,
-         tween(TvNavigationRailDefaults.ExpandDurationMillis, easing = FastOutSlowInEasing),
-         label = "rail-item-width",
-     )
-+    val itemWidthModifier = remember(itemWidth, expandedWidth) {
-+        Modifier.layout { measurable, constraints ->
-+            val width = itemWidth.value.roundToPx().coerceIn(constraints.minWidth, constraints.maxWidth)
-+            val contentWidth = expandedWidth.roundToPx().coerceIn(constraints.minWidth, constraints.maxWidth)
-+            val placeable = measurable.measure(constraints.copy(minWidth = contentWidth, maxWidth = contentWidth))
-+            layout(width, placeable.height) {
-+                placeable.placeRelative(0, 0)
-+            }
-+        }
-+    }
-     Box(modifier.fillMaxHeight(), contentAlignment = Alignment.CenterStart) {
-         // 进入门控 (统一焦点框架的组件级重载): 只有"按左"或编程式聚焦 (全局菜单键) 能进,
-         // 上/下/右的空间搜索一律取消; 优先恢复路由入口，否则落当前页或默认条目。
-@@ -209,7 +219,8 @@ fun TvNavigationSideRail(
-                     if (showAvatar) {
-                         TvRailAvatar(
-                             selfInfo, isLoggedIn, avatarLabel, railExpanded, onExitFocus, onAvatarClick,
--                            avatarModifier.width(itemWidth).testTag("tv-navigation-avatar").onFocusChanged {
-+                            itemWidthModifier,
-+                            avatarModifier.testTag("tv-navigation-avatar").onFocusChanged {
-                                 if (it.isFocused) accountActionsVisible = true
-                             },
-                         )
-@@ -226,7 +237,8 @@ fun TvNavigationSideRail(
-                             keepFocusOnClick = item.keepFocusOnClick,
-                             returnFocusToContent = returnFocusToContent,
-                             onClick = item.onClick,
--                            modifier = item.modifier.width(itemWidth).onFocusChanged {
-+                            widthModifier = itemWidthModifier,
-+                            modifier = item.modifier.onFocusChanged {
-                                 if (it.isFocused) accountActionsVisible = false
-                             },
-                         )
-@@ -242,7 +254,8 @@ fun TvNavigationSideRail(
-                         keepFocusOnClick = true,
-                         returnFocusToContent = returnFocusToContent,
-                         onClick = onLogoutClick,
--                        modifier = logoutModifier.width(itemWidth).testTag("tv-navigation-logout"),
-+                        widthModifier = itemWidthModifier,
-+                        modifier = logoutModifier.testTag("tv-navigation-logout"),
-                     )
-                 }
-             },
-@@ -289,9 +302,10 @@ private fun TvRailAvatar(
-     expanded: Boolean,
-     onExitFocus: (() -> Unit)?,
-     onClick: () -> Unit,
-+    widthModifier: Modifier,
-     modifier: Modifier = Modifier,
- ) {
--    TvRailItem(label, expanded, { if (!loggedIn) onClick() }, modifier.railExitKeys(onExitFocus)) {
-+    TvRailItem(label, expanded, { if (!loggedIn) onClick() }, widthModifier, modifier.railExitKeys(onExitFocus)) {
-         if (loggedIn && selfInfo?.avatarUrl != null) {
-             AvatarImage(
-                 url = selfInfo.avatarUrl,
-@@ -316,6 +330,7 @@ private fun TvRailIconItem(
-     keepFocusOnClick: Boolean,
-     returnFocusToContent: (() -> Unit)?,
-     onClick: () -> Unit,
-+    widthModifier: Modifier,
-     modifier: Modifier = Modifier,
- ) {
-     val focusManager = LocalFocusManager.current
-@@ -327,6 +342,7 @@ private fun TvRailIconItem(
-                 returnFocusToContent?.invoke() ?: focusManager.moveFocus(FocusDirection.Right)
-             }
-         },
-+        widthModifier = widthModifier,
-         modifier = modifier
-             .then(focusRequester?.let { Modifier.focusRequester(it) } ?: Modifier)
-```
-
-**File**: `docs/contributing/code/android-tv-focus.md` (modified, +16/-1)
-```diff
-@@ -43,8 +43,23 @@ fallback 获焦也不会改写当次请求已捕获的身份。内容 tab 切换
- 页面只准备业务数据与滚动位置，窗口和节点就绪由框架负责。焦点逻辑不依赖页面生命周期；
- 轮播自动播放等后台暂停需求可以单独使用 `RESUMED`。
- 
-+主壳的导航栏宽度动画在测量阶段读取状态，透明度动画在绘制或图层阶段读取状态。
-+逐帧动画只通过模糊层是否可见的布尔阈值影响组合；变暗遮罩的 `TvVisualSemantics.Alpha`
-+暴露过渡目标，不暴露逐帧透明度，以免动画同时触发语义树更新。
-+
-+页面通过独立图层提供 `hazeSource`，变暗遮罩位于模糊输出之后，不进入模糊输入。
-+页面自身变化仍会更新模糊内容，导航栏焦点和遮罩绘制不需要重新录制静态页面。
-+模糊使用固定 48dp 半径的原生高斯滤镜与 `HazeInputScale.Auto`，并以缓入曲线
-+控制模糊输出的不透明度和表面色渐变；展开动画为 260ms。该渐隐效果不等价于
-+逐像素改变模糊半径的渐进滤镜，需要同时检查真机画面、首次展开和连续切换帧时间。
-+导航条目复用完整宽度的内容测量结果，只在布局阶段收缩外层宽度与点击范围；
-+隐藏的标签区域不能接收点击，宽度动画不应逐帧重新测量文字。
-+
- `TvNavigationFocusUiTest` 使用真实 `NavDisplay`、保存状态装饰器和受控动画时钟，记录条目
- 生命周期、组合实例、焦点请求与得失。断言覆盖转场期间提前聚焦、方向键、晚到的旧页请求、
- 快速返回、待附着请求与异步准备的取消、记忆目标重建与迟到，以及嵌套弹层的退场。
- 纯转场用例单独验证条目移除前后的焦点稳定性。`TvNavigationRailUiTest` 另行覆盖主壳切页
--动画期间的焦点归属；`TvAccountNavigationUiTest` 验证弹层关闭后的账号入口恢复。
-+动画期间的焦点归属、模糊层的可见范围、变暗目标随焦点的开关，以及未展开标签区域的点击边界。
-+点击边界使用 `performTouchInput` 的节点局部坐标合成触摸，不向系统窗口注入输入；
-+`TvAccountNavigationUiTest` 验证弹层关闭后的账号入口恢复。模糊、变暗及页面更新的
-+实际视觉效果通过真机截图和录屏核验，设备回归测试不比较截图像素。
-```
-
----
-
-### Incident Patch 2: `9b8d99ac` (2026-11-16)
-**Commit Message**: feat(image-viewer): enhance image viewer controls and dismiss behavior (#3679)
-
-* feat(image-viewer): enhance image viewer controls and dismiss behavior
-
-* test(image-viewer): align subject dismissal test with close button
-
-* refactor(image-viewer): let AnimatedContent retain exiting image
-
-* style(image-viewer): preserve configured import order
-
----------
-
-Co-authored-by: openanibot <[REDACTED_EMAIL]>
-
-**File**: `app/shared/app-lang/src/androidMain/res/values-zh-rCN/strings.xml` (modified, +1/-0)
-```diff
-@@ -1812,6 +1812,7 @@
-     <string name="image_viewer_copy">复制图片</string>
-     <string name="image_viewer_copied">图片已复制</string>
-     <string name="image_viewer_copy_failed">复制图片失败</string>
-+    <string name="image_viewer_more">更多操作</string>
-     <string name="image_viewer_close">关闭</string>
-     <!-- Shared playback captcha messages -->
-     <string name="media_captcha_required_message">需要处理%1$s</string>
-```
-
-**File**: `app/shared/app-lang/src/androidMain/res/values-zh-rHK/strings.xml` (modified, +1/-0)
-```diff
-@@ -1775,6 +1775,7 @@
-     <string name="image_viewer_copy">複製圖片</string>
-     <string name="image_viewer_copied">圖片已複製</string>
-     <string name="image_viewer_copy_failed">複製圖片失敗</string>
-+    <string name="image_viewer_more">更多操作</string>
-     <string name="image_viewer_close">關閉</string>
-     <!-- Shared playback captcha messages -->
-     <string name="media_captcha_required_message">需要處理%1$s</string>
-```
-
-**File**: `app/shared/app-lang/src/androidMain/res/values-zh-rTW/strings.xml` (modified, +1/-0)
-```diff
-@@ -1765,6 +1765,7 @@
-     <string name="image_viewer_copy">複製圖片</string>
-     <string name="image_viewer_copied">圖片已複製</string>
-     <string name="image_viewer_copy_failed">複製圖片失敗</string>
-+    <string name="image_viewer_more">更多操作</string>
-     <string name="image_viewer_close">關閉</string>
-     <!-- Shared playback captcha messages -->
-     <string name="media_captcha_required_message">需要處理%1$s</string>
-```
-
-**File**: `app/shared/app-lang/src/androidMain/res/values/strings.xml` (modified, +1/-0)
-```diff
-@@ -1772,6 +1772,7 @@
-     <string name="image_viewer_copy">Copy image</string>
-     <string name="image_viewer_copied">Image copied</string>
-     <string name="image_viewer_copy_failed">Failed to copy image</string>
-+    <string name="image_viewer_more">More options</string>
-     <string name="image_viewer_close">Close</string>
-     <!-- Shared playback captcha messages -->
-     <string name="media_captcha_required_message">Complete %1$s to continue</string>
-```
-
-**File**: `app/shared/ui-foundation/src/commonMain/kotlin/ui/foundation/ImageViewer.kt` (modified, +20/-15)
-```diff
-@@ -9,6 +9,8 @@
- 
- package me.him188.ani.app.ui.foundation
- 
-+import androidx.compose.animation.AnimatedContent
-+import androidx.compose.animation.togetherWith
- import androidx.compose.foundation.layout.fillMaxSize
- import androidx.compose.runtime.Composable
- import androidx.compose.runtime.MutableState
-@@ -22,7 +24,6 @@ import androidx.compose.ui.Modifier
- import androidx.lifecycle.compose.collectAsStateWithLifecycle
- import kotlinx.coroutines.flow.MutableStateFlow
- import kotlinx.coroutines.flow.StateFlow
--import me.him188.ani.app.ui.foundation.animation.AniAnimatedVisibility
- import me.him188.ani.app.ui.foundation.animation.LocalAniMotionScheme
- import me.him188.ani.app.ui.foundation.imageviewer.ImageViewerContent
- import me.him188.ani.app.ui.foundation.navigation.BackHandler
-@@ -66,7 +67,7 @@ fun rememberImageViewerHandler(): ImageViewerHandler {
-  * 页面级图片查看器. 支持手势/滚轮/键盘缩放, 保存图片; 桌面端还支持把图片文件拖拽到其他应用.
-  *
-  * - 桌面端: 在真实窗口内时用独立窗口显示, 不遮挡页面; 预览/测试环境没有宿主窗口时回退到页面内覆盖层.
-- * - Android/iOS: 覆盖整个页面的全屏层, 单击图片关闭.
-+ * - Android/iOS: 覆盖整个页面的全屏层, 单击图片切换控件显隐.
-  *
-  * 在页面布局的最外层调用, 与 [ImageViewerBackHandler] 配合使用.
-  */
-@@ -80,27 +81,31 @@ expect fun ImageViewer(handler: ImageViewerHandler, onClose: () -> Unit)
- expect fun ImageViewerBackHandler(handler: ImageViewerHandler)
- 
- /**
-- * 覆盖整个页面的全屏查看器, 单击图片关闭.
-+ * 覆盖整个页面的全屏查看器, 单击图片切换控件显隐.
-  */
- @Composable
- internal fun ImageViewerOverlay(
-     handler: ImageViewerHandler,
-     onClose: () -> Unit,
- ) {
-     val model by handler.imageModel.collectAsStateWithLifecycle()
--    AniAnimatedVisibility(
--        visible = handler.viewing.value,
--        enter = LocalAniMotionScheme.current.animatedVisibility.standardEnter,
--        exit = LocalAniMotionScheme.current.animatedVisibility.standardExit,
-+    val animation = LocalAniMotionScheme.current.animatedVisibility
-+    AnimatedContent(
-+        targetState = model.takeIf { handler.viewing.value },
-         modifier = Modifier.fillMaxSize(),
--    ) {
--        ImageViewerContent(
--            model = model,
--            onClose = onClose,
--            modifier = Modifier.fillMaxSize(),
--            closeOnTap = true,
--            showCloseButton = true,
--        )
-+        transitionSpec = { (animation.standardEnter togetherWith animation.standardExit).using(null) },
-+        contentKey = { it != null },
-+        label = "ImageViewerOverlay",
-+    ) { displayedModel ->
-+        // AnimatedContent 在退场结束前保留非空模型; 图片之间的切换复用同一个查看器.
-+        if (displayedModel != null) {
-+            ImageViewerContent(
-+                model = displayedModel,
-+                onClose = onClose,
-+                modifier = Modifier.fillMaxSize(),
-+                showCloseButton = true,
-+            )
-+        }
-     }
- }
- 
-```
-
-**File**: `app/shared/ui-foundation/src/commonMain/kotlin/ui/foundation/imageviewer/ImageViewerContent.kt` (modified, +249/-113)
-```diff
-@@ -13,28 +13,38 @@ import androidx.compose.foundation.background
- import androidx.compose.foundation.focusable
- import androidx.compose.foundation.gestures.awaitEachGesture
- import androidx.compose.foundation.gestures.awaitFirstDown
-+import androidx.compose.foundation.horizontalScroll
- import androidx.compose.foundation.layout.Arrangement
- import androidx.compose.foundation.layout.Box
-+import androidx.compose.foundation.layout.BoxWithConstraints
-+import androidx.compose.foundation.layout.Column
- import androidx.compose.foundation.layout.Row
- import androidx.compose.foundation.layout.WindowInsets
- import androidx.compose.foundation.layout.fillMaxSize
- import androidx.compose.foundation.layout.padding
- import androidx.compose.foundation.layout.safeDrawing
-+import androidx.compose.foundation.layout.size
- import androidx.compose.foundation.layout.windowInsetsPadding
-+import androidx.compose.foundation.rememberScrollState
- import androidx.compose.foundation.shape.CircleShape
-+import androidx.compose.foundation.verticalScroll
- import androidx.compose.material.icons.Icons
- import androidx.compose.material.icons.rounded.Close
- import androidx.compose.material.icons.rounded.ContentCopy
- import androidx.compose.material.icons.rounded.FitScreen
-+import androidx.compose.material.icons.rounded.MoreVert
- import androidx.compose.material.icons.rounded.SaveAlt
- import androidx.compose.material.icons.rounded.ZoomIn
- import androidx.compose.material.icons.rounded.ZoomOut
-+import androidx.compose.material3.DropdownMenu
-+import androidx.compose.material3.DropdownMenuItem
- import androidx.compose.material3.Icon
- import androidx.compose.material3.IconButton
- import androidx.compose.material3.MaterialTheme
- import androidx.compose.material3.Surface
- import androidx.compose.material3.Text
- import androidx.compose.runtime.Composable
-+import androidx.compose.runtime.DisposableEffect
- import androidx.compose.runtime.LaunchedEffect
- import androidx.compose.runtime.getValue
- import androidx.compose.runtime.mutableStateOf
-@@ -44,9 +54,12 @@ import androidx.compose.runtime.rememberUpdatedState
- import androidx.compose.runtime.setValue
- import androidx.compose.ui.Alignment
- import androidx.compose.ui.Modifier
-+import androidx.compose.ui.draw.drawBehind
- import androidx.compose.ui.focus.FocusRequester
- import androidx.compose.ui.focus.focusRequester
- import androidx.compose.ui.graphics.Color
-+import androidx.compose.ui.graphics.graphicsLayer
-+import androidx.compose.ui.graphics.vector.ImageVector
- import androidx.compose.ui.input.key.Key
- import androidx.compose.ui.input.key.KeyEventType
- import androidx.compose.ui.input.key.isCtrlPressed
-@@ -58,6 +71,8 @@ import androidx.compose.ui.input.pointer.PointerEventPass
- import androidx.compose.ui.input.pointer.pointerInput
- import androidx.compose.ui.layout.ContentScale
- import androidx.compose.ui.platform.testTag
-+import androidx.compose.ui.semantics.semantics
-+import androidx.compose.ui.semantics.stateDescription
- import androidx.compose.ui.unit.IntSize
- import androidx.compose.ui.unit.dp
- import com.github.panpf.sketch.LocalPlatformContext
-@@ -67,9 +82,11 @@ import com.github.panpf.sketch.request.ImageRequest
- import com.github.panpf.sketch.request.LoadState
- import com.github.panpf.sketch.resize.Precision
- import com.github.panpf.zoomimage.SketchZoomAsyncImage
-+import com.github.panpf.zoomimage.compose.ZoomState
- import com.github.panpf.zoomimage.compose.zoom.ZoomableState
- import com.github.panpf.zoomimage.rememberSketchZoomState
- import kotlinx.atomicfu.atomic
-+import kotlinx.coroutines.delay
- import kotlinx.coroutines.launch
- import me.him188.ani.app.platform.ContextMP
- import me.him188.ani.app.platform.LocalContext
-@@ -83,6 +100,7 @@ import me.him188.ani.app.ui.lang.image_viewer_copied
- import me.him188.ani.app.ui.lang.image_viewer_copy
- import me.him188.ani.app.ui.lang.image_viewer_copy_failed
- import me.him188.ani.app.ui.lang.image_viewer_load_failed
-+import me.him188.ani.app.ui.lang.image_viewer_more
- import me.him188.ani.app.ui.lang.image_viewer_reset_zoom
- import me.him188.ani.app.ui.lang.image_viewer_save
- import me.him188.ani.app.ui.lang.image_viewer_save_failed
-@@ -95,7 +113,9 @@ import me.him188.ani.utils.io.resolve
- import me.him188.ani.utils.logging.logger
- import me.him188.ani.utils.logging.warn
- import org.jetbrains.compose.resources.stringResource
-+import kotlin.math.abs
- import kotlin.math.roundToInt
-+import kotlin.time.Duration.Companion.milliseconds
- 
- /** 查看器内各控件的 test tag. */
- object ImageViewerTestTags {
-@@ -105,6 +125,8 @@ object ImageViewerTestTags {
-     const val SCALE_TEXT = "ImageViewer.ScaleText"
-     const val COPY = "ImageViewer.Copy"
-     const val SAVE = "ImageViewer.Save"
-+    const val MORE = "ImageViewer.More"
-+    const val TOOLBAR = "ImageViewer.Toolbar"
-     const val CLOSE = "ImageViewer.Close"
- }
- 
-@@ -114,16 +136,16 @@ private const val ZOOM_STEP = 1.5f
- private val logger = logger<ImageViewerTestTags>()
- 
- /**
-- * 图片查看器的内容: 可缩放图片 + 底部工具栏 (缩小 / 缩放
-```
-
-**File**: `app/shared/ui-foundation/src/commonMain/kotlin/ui/foundation/imageviewer/ImageViewerDismissState.kt` (added, +143/-0)
-```diff
-@@ -0,0 +1,143 @@
-+/*
-+ * Copyright (C) 2024-2026 OpenAni and contributors.
-+ *
-+ * 此源代码的使用受 GNU AFFERO GENERAL PUBLIC LICENSE version 3 许可证的约束, 可以在以下链接找到该许可证.
-+ * Use of this source code is governed by the GNU AGPLv3 license, which can be found at the following link.
-+ *
-+ * https://github.com/open-ani/ani/blob/main/LICENSE
-+ */
-+
-+package me.him188.ani.app.ui.foundation.imageviewer
-+
-+import androidx.compose.animation.core.animate
-+import androidx.compose.animation.core.spring
-+import androidx.compose.animation.core.tween
-+import androidx.compose.foundation.gestures.awaitEachGesture
-+import androidx.compose.foundation.gestures.awaitFirstDown
-+import androidx.compose.runtime.Composable
-+import androidx.compose.runtime.getValue
-+import androidx.compose.runtime.mutableStateOf
-+import androidx.compose.runtime.rememberUpdatedState
-+import androidx.compose.runtime.setValue
-+import androidx.compose.ui.Modifier
-+import androidx.compose.ui.geometry.Offset
-+import androidx.compose.ui.input.pointer.PointerEventPass
-+import androidx.compose.ui.input.pointer.PointerType
-+import androidx.compose.ui.input.pointer.pointerInput
-+import androidx.compose.ui.input.pointer.util.VelocityTracker
-+import kotlinx.coroutines.CancellationException
-+import kotlinx.coroutines.CoroutineScope
-+import kotlinx.coroutines.Job
-+import kotlinx.coroutines.launch
-+import kotlin.math.abs
-+import kotlin.math.min
-+import kotlin.math.sign
-+
-+/** 单指纵向退出的位移与回弹. 图片位移使用视口坐标, 与图片自身的缩放、平移独立. */
-+internal class ImageViewerDismissState(private val scope: CoroutineScope) {
-+    var offset by mutableStateOf(Offset.Zero)
-+        private set
-+    var dragging by mutableStateOf(false)
-+        private set
-+    private var animation: Job? = null
-+    private var dismissing = false
-+
-+    val active: Boolean get() = dragging || offset != Offset.Zero
-+
-+    fun cancel() {
-+        animation?.cancel()
-+    }
-+
-+    fun start(): Boolean {
-+        if (dismissing) return false
-+        animation?.cancel()
-+        dragging = true
-+        return true
-+    }
-+
-+    fun drag(delta: Offset) {
-+        offset += delta
-+    }
-+
-+    fun release(height: Float, density: Float, velocityY: Float, cancelled: Boolean, onClose: () -> Unit) {
-+        if (!dragging) return
-+        dragging = false
-+        val distance = abs(offset.y)
-+        val shouldDismiss = !cancelled && (
-+                distance >= min(height * 0.22f, 160f * density) ||
-+                        (distance >= 32f * density && abs(velocityY) >= 1_000f * density && velocityY * offset.y > 0)
-+                )
-+        dismissing = shouldDismiss
-+        val start = offset
-+        val target = if (shouldDismiss) Offset(start.x, sign(start.y) * height) else Offset.Zero
-+        animation = scope.launch {
-+            animate(
-+                initialValue = 0f,
-+                targetValue = 1f,
-+                animationSpec = if (shouldDismiss) tween(180) else spring(stiffness = 500f),
-+            ) { fraction, _ -> offset = start + (target - start) * fraction }
-+            offset = target
-+            if (shouldDismiss) onClose()
-+        }
-+    }
-+}
-+
-+/** 只在适应窗口时接管触屏的纵向拖动. 横向拖动、鼠标输入和多指缩放交给图片查看器. */
-+@Composable
-+internal fun Modifier.imageViewerSwipeToDismiss(
-+    state: ImageViewerDismissState,
-+    canDismiss: () -> Boolean,
-+    onClose: () -> Unit,
-+): Modifier {
-+    val currentCanDismiss by rememberUpdatedState(canDismiss)
-+    val currentOnClose by rememberUpdatedState(onClose)
-+    return pointerInput(state) {
-+        val density = density
-+        awaitEachGesture {
-+            val down = awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
-+            if (down.type != PointerType.Touch || !currentCanDismiss()) return@awaitEachGesture
-+            val velocity = VelocityTracker()
-+            velocity.addPosition(down.uptimeMillis, down.position)
-+            var lastSampleTime = down.uptimeMillis
-+            var releaseTime = down.uptimeMillis
-+            var previous = down.position
-+            var accepted = false
-+            var cancelled = false
-+            try {
-+                while (true) {
-+                    val event = awaitPointerEvent(PointerEventPass.Initial)
-+                    val change = event.changes.singleOrNull()
-+                    if (change == null || change.id != down.id || (!accepted && change.isConsumed)) {
-+                        cancelled = true
-+                        break
-+                    }
-+                    releaseTime = change.uptimeMillis
-+                    if (change.pressed) {
-+                        velocity.addPosition(change.uptimeMillis, change.position)
-+                        lastSampleTime = change.uptimeMillis
-+                    }
-+                    val distance = change.position - down.position
-+                    if (!accepted && distance.getDistance() > viewConfiguration.touchSlop) {
-+                        if (abs(distance.y) <= abs(distance.x) || !currentCanDismiss() || !state.start()) b
-```
-
-**File**: `app/shared/ui-foundation/src/desktopMain/kotlin/ui/foundation/ImageViewer.desktop.kt` (modified, +2/-2)
-```diff
-@@ -217,9 +217,9 @@ private fun ImageViewerWindow(
-                 model = model,
-                 onClose = onClose,
-                 modifier = Modifier.fillMaxSize(),
--                // 独立窗口有自己的关闭按钮, 单击图片不再关闭.
--                closeOnTap = false,
-+                // 独立窗口由系统提供关闭按钮.
-                 showCloseButton = false,
-+                dismissOnSwipe = false,
-                 fileSaver = remember(window, saveDialogTitle) {
-                     // 保存对话框作为查看器窗口的 sheet 弹出
-                     FileKitImageFileSaver(FileKitDialogSettings(title = saveDialogTitle, parentWindow = window))
+@@ -102,6 +102,7 @@ compose.desktop {
+             "-XX:+UseZGC",
+             "-XX:+ZGenerational",
+             "-XX:SoftMaxHeapSize=512m",
++            "-XX:-UseBASE64Intrinsics",
+             "-Dorg.slf4j.simpleLogger.defaultLogLevel=TRACE",
+             "-Dsun.java2d.metal=true",
+             "-Djogamp.debug.JNILibLoader=true", // JCEF 加载 native 库的日志, 方便 debug
 ```
 
 #### Recent Merged Pull Requests:
@@ -1833,66 +1108,31 @@ Co-authored-by: openanibot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tv): reduce navigation rail animation overhead
+## X. desktop): 关闭 HotSpot Base64 intrinsic
 
 **RULE**:
-When implementing operations in `app/shared/src/androidTv/kotlin/ui/main/TvMainShell.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-ani/animeko. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `app/desktop/build.gradle.kts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-ani/animeko. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `42ef5d46`: tv): reduce navigation rail animation overhead. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c9064896`: desktop): 关闭 HotSpot Base64 intrinsic. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/shared/src/androidTv/kotlin/ui/main/TvMainShell.kt`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `app/desktop/build.gradle.kts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-import androidx.compose.animation.core.EaseIn
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import dev.chrisbanes.haze.ExperimentalHazeApi
-import dev.chrisbanes.haze.HazeInputScale
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalHazeApi::class)
-    val railRevealTarget = if (railHasFocus || showLogoutConfirmation || restoreAccountFocus != null) 1f else 0f
-    val railReveal = animateFloatAsState(
-        railRevealTarget,
-    val railBackdropVisible by remember { derivedStateOf { railReveal.value > 0f } }
-                    // Sibling focus/dim draws must not re-record an unchanged blur source.
-                    .graphicsLayer()
-            }
-            val surfaceColor = MaterialTheme.colorScheme.surface
-            val railGradient = remember(surfaceColor) {
-                Brush.horizontalGradient(
-                    colorStops = Array(21) { step ->
-                        val fraction = step / 20f
-                        fraction to surfaceColor.copy(alpha = 1f - EaseIn.transform(fraction))
-   
+            "-XX:-UseBASE64Intrinsics",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-import dev.chrisbanes.haze.HazeProgressive
-@OptIn(ExperimentalComposeUiApi::class)
-    val railReveal by animateFloatAsState(
-        if (railHasFocus || showLogoutConfirmation || restoreAccountFocus != null) 1f else 0f,
-                val dimAlpha = railReveal * TvNavigationRailDefaults.BackgroundDimAlpha
-                Box(
-                    Modifier.fillMaxSize()
-                        .testTag("tv-main-rail-dim")
-                        .semantics { tvVisualAlpha = dimAlpha }
-                        .background(MaterialTheme.colorScheme.surface.copy(alpha = dimAlpha)),
-
-            if (railReveal > 0f) {
-                val surfaceColor = MaterialTheme.colorScheme.surface
-                            tvVisualAlpha = railReveal
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `42ef5d46` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c9064896` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T01:19:30.027Z",
-  "total_records": 1930,
+  "last_updated": "2026-11-19T01:32:57.752Z",
+  "total_records": 1932,
   "domains": {
     "A": {
       "total": 13,
@@ -1973,7 +1973,7 @@
       ]
     },
     "L": {
-      "total": 16,
+      "total": 18,
       "record_ids": [
         "DOM-L-1B851132",
         "DOM-L-80D1F65C",
@@ -1990,7 +1990,9 @@
         "DOM-L-497D3321",
         "DOM-L-9579240F",
         "DOM-L-902F756C",
-        "DOM-L-03EC8831"
+        "DOM-L-03EC8831",
+        "domain_intelligence-deployment-operations-intelligence-kubearmor-kubearmor-core-invariants",
+        "domain_intelligence-deployment-operations-intelligence-kubearmor-kubearmor-learnings-core-invariants"
       ]
     },
     "M": {
@@ -14973,8 +14975,8 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-VL-8B-Instruct Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-vl-8b-instruct-research-knowledge-intelligence-qwen-qwen3-vl-8b-in.md",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
-      "content_hash": "56efd98e06394533aa87200c6e4c41fa493c05d2c4886c3474e330f70633fa3a",
-      "created_at": "2026-11-14T11:04:20.925Z"
+      "content_hash": "6d3e0c763e71ad0a221a718cb0717574ee945ba5acee7541e5320f12a0b5b6cf",
+      "created_at": "2026-11-19T01:32:34.825Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-core-invariants",
@@ -15069,8 +15071,8 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-vl-8b-instruct-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-vl-8b-instruct-learnings-research-knowledge-intelligence-hf-qwen-q.md",
       "repository": "hf-qwen-qwen3-vl-8b-instruct-learnings",
-      "content_hash": "0c808412ba504d413e908550b8548768560ca25e3c78169b805c9b18619dc341",
-      "created_at": "2026-11-14T11:05:15.057Z"
+      "content_hash": "2f72e4a9722e8a0b98f735bfe8070401f5582e5b7ca140f4e7f18b68d2c2339f",
+      "created_at": "2026-11-19T01:32:57.062Z"
     },
     "domain_intelligence-content-information-intelligence-okteto-okteto-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-okteto-okteto-learnings-core-invariants",
@@ -16917,8 +16919,8 @@
       "title": "Architecture Intelligence: GreptimeTeam/greptimedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-architecture-intelligence-greptimeteam-greptimedb-core-i.md",
       "repository": "GreptimeTeam/greptimedb",
-      "content_hash": "fd7c69f0e57481b324540317510ab78990b397403d7d740ddd55a0b222a812e7",
-      "created_at": "2026-11-17T10:51:40.145Z"
+      "content_hash": "c15d9f3fde2f9b6b1d8fe4c3f1e63e1d461ef87680e84d363006c2624c3ab0ee",
+      "created_at": "2026-11-19T01:32:52.120Z"
     },
     "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-apache-arrow-learnings-core-invariants",
@@ -17118,8 +17120,8 @@
       "title": "Technical Construction Intelligence: open-ani/animeko Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-ani-animeko-technical-construction-intelligence-open-ani-animeko-core-invar.md",
       "repository": "open-ani/animeko",
-      "content_hash": "7ba46940a1492243e2f2cbfb3555c74233365258135374f3c4053e4e725de147",
-      "created_at": "2026-11-18T02:28:21.027Z"
+      "content_hash": "9cb75517392f5a01181dc228f75d47cdb93941b75cbdd93fc9f11422202cba3e",
+      "created_at": "2026-11-19T01:32:42.136Z"
     },
     "domain_intelligence-technical-construction-intelligence-google-tcmalloc-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-google-tcmalloc-learnings-core-invariants",
@@ -17187,8 +17189,8 @@
       "title": "Technical Construction Intelligence: open-ani-animeko-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-ani-animeko-learnings-technical-construction-intelligence-open-ani-animeko-.md",
       "repository": "open-ani-animeko-learnings",
-      "content_hash": "6f4776e1f08f18d32b677e735ffdddbca6b4f1fcf6052838a9076127d771aa8b",
-      "created_at": "2026-11-18T02:33:21.643Z"
+      "content_hash": "ee1fe8f58309bac12065ca7601cfb27d1fbc15173809d0e1d7f88123219a18b5",
+      "created_at": "2026-11-19T01:32:57.752Z"
     },
     "domain_intelligence-research-knowledge-intelligence-cactus-compute-whistle-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-cactus-compute-whistle-core-invariants",
@@ -32390,6 +32392,24 @@
       "confidence": 0.9,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-19T01:19:29.148Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-kubearmor-kubearmor-core-invariants": {
+      "record_id": "domain_intelligence-deployment-operations-intelligence-kubearmor-kubearmor-core-invariants",
+      "domain_letter": "L",
+      "title": "Deployment & Operations Intelligence: kubearmor/KubeArmor Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-kubearmor-kubearmor-deployment-operations-intelligence-kubearmor-kubearmor-core-.md",
+      "repository": "kubearmor/KubeArmor",
+      "content_hash": "348b402e551596a2d1bf28d73642bfd87745098ba18fa6f8594a0820683b6091",
+      "created_at": "2026-11-19T01:32:37.880Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-kubearmor-kubearmor-learnings-core-invariants": {
+      "record_id": "domain_intelligence-deployment-operations-intelligence-kubearmor-kubearmor-learnings-core-invariants",
+      "domain_letter": "L",
+      "title": "Deployment & Operations Intelligence: kubearmor-kubearmor-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-kubearmor-kubearmor-learnings-deployment-operations-intelligence-kubearmor-kubea.md",
+      "repository": "kubearmor-kubearmor-learnings",
+      "content_hash": "ad58c42774b3763e2b384c58e921d0bb9c300e64d15622986d6380e825613d51",
+      "created_at": "2026-11-19T01:32:56.159Z"
     }
   }
 }

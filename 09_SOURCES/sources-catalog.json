@@ -1155,8 +1155,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
     "sourceVersion": "hf-qwen-qwen3-vl-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "e486097125cac99d7028f760b9a58e49ca7f3016f38a23e74b0ba34ed305dc6c",
-    "lastHarvestedAt": "2026-11-14T11:04:20.731Z",
+    "contentHash": "2a71d00f27d90d4c3945a2a3ca5928fcc6785d3aa5d1ca3530e2067b913d14ce",
+    "lastHarvestedAt": "2026-11-19T01:32:34.581Z",
     "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct"
   },
   "hf-nomic-ai-nomic-embed-text-v1.5": {
@@ -5373,10 +5373,10 @@
     "repository": "GreptimeTeam/greptimedb",
     "platform": "github",
     "sourceUrl": "https://github.com/GreptimeTeam/greptimedb",
-    "sourceVersion": "48aa0ed3",
+    "sourceVersion": "916acb12",
     "license": "Apache-2.0",
-    "contentHash": "5d7153712acf569c1a45464490a50056e0fc2f962930136efa8e8d765988de0f",
-    "lastHarvestedAt": "2026-11-17T10:51:39.826Z",
+    "contentHash": "2d22991263db765e9204e7e1aab12dd6054327e43fd4873d0da24447f375ca29",
+    "lastHarvestedAt": "2026-11-19T01:32:51.678Z",
     "learningId": "learn-github-greptimeteam-greptimedb"
   },
   "heroui-inc-heroui-native": {
@@ -6093,10 +6093,10 @@
     "repository": "kubearmor/KubeArmor",
     "platform": "github",
     "sourceUrl": "https://github.com/kubearmor/KubeArmor",
-    "sourceVersion": "3b5c8f74",
+    "sourceVersion": "d026c0dc",
     "license": "Apache-2.0",
-    "contentHash": "8b064e874acc248eef5330a4decd55e04cafc3119782dfce53c3d63ee79d8b64",
-    "lastHarvestedAt": "2026-10-28T16:27:16.862Z",
+    "contentHash": "a48b0b5e418b339297b83acda04bd996fd161a012c1a1dec82900bbb414f3798",
+    "lastHarvestedAt": "2026-11-19T01:32:37.428Z",
     "learningId": "learn-github-kubearmor-kubearmor"
   },
   "callstack-agent-device": {
@@ -6303,10 +6303,10 @@
     "repository": "open-ani/animeko",
     "platform": "github",
     "sourceUrl": "https://github.com/open-ani/animeko",
-    "sourceVersion": "42ef5d46",
+    "sourceVersion": "c9064896",
     "license": "AGPL-3.0",
-    "contentHash": "63730082740f96c97cea77b614aaf7f248c420eff5ca21a2a04414f4f0bd95fc",
-    "lastHarvestedAt": "2026-11-18T02:28:20.727Z",
+    "contentHash": "c473607f6a796e1ac3213f19736f303a1089361a10dfcf0abd5fba566a025408",
+    "lastHarvestedAt": "2026-11-19T01:32:41.710Z",
     "learningId": "learn-github-open-ani-animeko"
   },
   "k3s-io-k3s": {

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T01:19:30.189Z",
-  "total_verified_learnings": 9011,
+  "last_updated": "2026-11-19T01:32:57.934Z",
+  "total_verified_learnings": 9012,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21573,
+  "total_items": 21589,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -228284,7 +228284,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct",
       "source_version": "hf-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "e486097125cac99d7028f760b9a58e49ca7f3016f38a23e74b0ba34ed305dc6c",
+      "content_hash": "2a71d00f27d90d4c3945a2a3ca5928fcc6785d3aa5d1ca3530e2067b913d14ce",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-vl-8b-instruct-learnings.md",
       "promoted_rules": [],
@@ -228293,7 +228293,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T11:04:20.563Z",
+      "verified_at": "2026-11-19T01:32:34.339Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228310,9 +228310,9 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-VL-8B-Instruct Core Invariants",
       "repository": "Qwen/Qwen3-VL-8B-Instruct",
       "source_version": "hf-qwen-qwen3-vl-8b-instruct",
-      "content_hash": "56efd98e06394533aa87200c6e4c41fa493c05d2c4886c3474e330f70633fa3a",
+      "content_hash": "6d3e0c763e71ad0a221a718cb0717574ee945ba5acee7541e5320f12a0b5b6cf",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T11:04:20.925Z"
+      "persisted_at": "2026-11-19T01:32:34.825Z"
     },
     "learn-github-zenbu-labs-terminal-browser": {
       "learning_id": "learn-github-zenbu-labs-terminal-browser",
@@ -228813,9 +228813,9 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-vl-8b-instruct-learnings Core Invariants",
       "repository": "hf-qwen-qwen3-vl-8b-instruct-learnings",
       "source_version": "HEAD",
-      "content_hash": "0c808412ba504d413e908550b8548768560ca25e3c78169b805c9b18619dc341",
+      "content_hash": "2f72e4a9722e8a0b98f735bfe8070401f5582e5b7ca140f4e7f18b68d2c2339f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T11:05:15.057Z"
+      "persisted_at": "2026-11-19T01:32:57.062Z"
     },
     "domain_intelligence-content-information-intelligence-okteto-okteto-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-okteto-okteto-learnings-core-invariants",
@@ -233777,8 +233777,8 @@
       "slug": "greptimeteam-greptimedb",
       "platform": "github",
       "source_url": "https://github.com/GreptimeTeam/greptimedb",
-      "source_version": "48aa0ed3",
-      "content_hash": "5d7153712acf569c1a45464490a50056e0fc2f962930136efa8e8d765988de0f",
+      "source_version": "916acb12",
+      "content_hash": "2d22991263db765e9204e7e1aab12dd6054327e43fd4873d0da24447f375ca29",
       "dossier_path": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/greptimeteam-greptimedb-learnings.md",
       "promoted_rules": [
@@ -233796,6 +233796,11 @@
           "number": 8956,
           "title": "wait for a stopped region's checkpoint before reopening it",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9320,
+          "title": "avoid stack overflow on long UNION ALL chains",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233803,7 +233808,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T10:51:39.643Z",
+      "verified_at": "2026-11-19T01:32:51.450Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233845,10 +233850,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-greptimeteam-greptimedb-architecture-intelligence-greptimeteam-greptimedb-core-i.md",
       "title": "Architecture Intelligence: GreptimeTeam/greptimedb Core Invariants",
       "repository": "GreptimeTeam/greptimedb",
-      "source_version": "48aa0ed3",
-      "content_hash": "fd7c69f0e57481b324540317510ab78990b397403d7d740ddd55a0b222a812e7",
+      "source_version": "916acb12",
+      "content_hash": "c15d9f3fde2f9b6b1d8fe4c3f1e63e1d461ef87680e84d363006c2624c3ab0ee",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T10:51:40.145Z"
+      "persisted_at": "2026-11-19T01:32:52.120Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-greptimeteam-greptimedb",
@@ -233857,10 +233862,10 @@
       "relative_path": "08_VERIFICATION/greptimeteam-greptimedb-verification-protocol-empirical-defect-shield-for-grepti.md",
       "title": "Verification Protocol: Empirical Defect Shield for GreptimeTeam/greptimedb",
       "repository": "GreptimeTeam/greptimedb",
-      "source_version": "48aa0ed3",
-      "content_hash": "5f92b0a991306673e5229bdc1964713903c1d82fbe36bd3e23ceb0d2aff31628",
+      "source_version": "916acb12",
+      "content_hash": "727b05e7e6c75cf31f6e4285566e33ea3241ef8f30864614872d5317476123e0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T10:51:40.279Z"
+      "persisted_at": "2026-11-19T01:32:52.298Z"
     },
     "candidate_directive-gh-51043-python-reject-null-required-arrow-objects": {
       "item_id": "candidate_directive-gh-51043-python-reject-null-required-arrow-objects",
@@ -234432,8 +234437,8 @@
       "slug": "open-ani-animeko",
       "platform": "github",
       "source_url": "https://github.com/open-ani/animeko",
-      "source_version": "42ef5d46",
-      "content_hash": "63730082740f96c97cea77b614aaf7f248c420eff5ca21a2a04414f4f0bd95fc",
+      "source_version": "c9064896",
+      "content_hash": "c473607f6a796e1ac3213f19736f303a1089361a10dfcf0abd5fba566a025408",
       "dossier_path": "07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
       "promoted_rules": [
@@ -234446,6 +234451,11 @@
           "number": 9107,
           "title": "reduce navigation rail animation overhead",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9319,
+          "title": "关闭 HotSpot Base64 intrinsic",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234453,7 +234463,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T02:28:20.545Z",
+      "verified_at": "2026-11-19T01:32:41.485Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234495,10 +234505,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-ani-animeko-technical-construction-intelligence-open-ani-animeko-core-invar.md",
       "title": "Technical Construction Intelligence: open-ani/animeko Core Invariants",
       "repository": "open-ani/animeko",
-      "source_version": "42ef5d46",
-      "content_hash": "7ba46940a1492243e2f2cbfb3555c74233365258135374f3c4053e4e725de147",
+      "source_version": "c9064896",
+      "content_hash": "9cb75517392f5a01181dc228f75d47cdb93941b75cbdd93fc9f11422202cba3e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T02:28:21.027Z"
+      "persisted_at": "2026-11-19T01:32:42.136Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-ani-animeko": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-ani-animeko",
@@ -234507,10 +234517,10 @@
       "relative_path": "08_VERIFICATION/open-ani-animeko-verification-protocol-empirical-defect-shield-for-open-ani-anim.md",
       "title": "Verification Protocol: Empirical Defect Shield for open-ani/animeko",
       "repository": "open-ani/animeko",
-      "source_version": "42ef5d46",
-      "content_hash": "347d0a995c6b75ffb10f940feeae8f79152e5256ad3af5301f8ccfa7550fd2ce",
+      "source_version": "c9064896",
+      "content_hash": "8c8d356e1afe2b84bca1c8e1db0b22043b951c6b2f96daad0009bb83239ce84d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T02:28:21.147Z"
+      "persisted_at": "2026-11-19T01:32:42.316Z"
     },
     "candidate_directive-redundant_clone": {
       "item_id": "candidate_directive-redundant_clone",
@@ -234580,9 +234590,9 @@
       "title": "Technical Construction Intelligence: open-ani-animeko-learnings Core Invariants",
       "repository": "open-ani-animeko-learnings",
       "source_version": "HEAD",
-      "content_hash": "6f4776e1f08f18d32b677e735ffdddbca6b4f1fcf6052838a9076127d771aa8b",
+      "content_hash": "ee1fe8f58309bac12065ca7601cfb27d1fbc15173809d0e1d7f88123219a18b5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T02:33:21.643Z"
+      "persisted_at": "2026-11-19T01:32:57.752Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-ani-animeko-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-ani-animeko-learnings",
@@ -234592,9 +234602,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for open-ani-animeko-learnings",
       "repository": "open-ani-animeko-learnings",
       "source_version": "HEAD",
-      "content_hash": "85a64fd2f131e7782b68a987d856104379b052972189f1c736ddb05a4a6c7813",
+      "content_hash": "a201159223e21695b9d156a2996631c97ee9d66cbd81feeff5ba28a5ed6ea910",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T02:33:21.770Z"
+      "persisted_at": "2026-11-19T01:32:57.934Z"
     },
     "learn-huggingface-cactus-compute-whistle": {
       "learning_id": "learn-huggingface-cactus-compute-whistle",
@@ -291389,6 +291399,225 @@
       "content_hash": "46fba08f84daacde0cfb60239b7fc14d6c1b796233ddef96697a58b03b374f2f",
       "domain_letter": "L",
       "persisted_at": "2026-11-19T01:19:29.826Z"
+    },
+    "learn-github-kubearmor-kubearmor": {
+      "learning_id": "learn-github-kubearmor-kubearmor",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "kubearmor/KubeArmor",
+      "repository": "kubearmor/KubeArmor",
+      "slug": "kubearmor-kubearmor",
+      "platform": "github",
+      "source_url": "https://github.com/kubearmor/KubeArmor",
+      "source_version": "d026c0dc",
+      "content_hash": "a48b0b5e418b339297b83acda04bd996fd161a012c1a1dec82900bbb414f3798",
+      "dossier_path": "07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9318,
+          "title": "docs(examples): fix links to the match-expression policy files",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-19T01:32:37.204Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9318": {
+      "learning_id": "rule-9318",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9318,
+      "title": "docs(examples): fix links to the match-expression policy files",
+      "source_url": "https://github.com/kubearmor/KubeArmor",
+      "source_version": "d026c0dc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T01:32:37.204Z"
+    },
+    "candidate_directive-docs-examples-fix-links-to-the-match-expression-policy-files": {
+      "item_id": "candidate_directive-docs-examples-fix-links-to-the-match-expression-policy-files",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LL44-docs-examples-fix-links-to-the-match-expression-policy-files.md",
+      "title": "docs(examples): fix links to the match-expression policy files",
+      "repository": "kubearmor-kubearmor-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5236340642a6c64b1e2f84ddfc4e237875d8a1ff112d18c8cd7e2b988c3eeaa4",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-19T01:32:55.979Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-kubearmor-kubearmor-core-invariants": {
+      "item_id": "domain_intelligence-deployment-operations-intelligence-kubearmor-kubearmor-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-kubearmor-kubearmor-deployment-operations-intelligence-kubearmor-kubearmor-core-.md",
+      "title": "Deployment & Operations Intelligence: kubearmor/KubeArmor Core Invariants",
+      "repository": "kubearmor/KubeArmor",
+      "source_version": "d026c0dc",
+      "content_hash": "348b402e551596a2d1bf28d73642bfd87745098ba18fa6f8594a0820683b6091",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-19T01:32:37.880Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kubearmor-kubearmor": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kubearmor-kubearmor",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-kubearmor-kubearmor-adr-subsystem-boundary-modular-decoupling-in-kubearmor-kubea.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in kubearmor/KubeArmor",
+      "repository": "kubearmor/KubeArmor",
+      "source_version": "d026c0dc",
+      "content_hash": "e511f671183529c3ba92b350721504bfda4812153f00e4a1a2a2bb06ab80f370",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-19T01:32:38.079Z"
+    },
+    "agent_contract-agent-contract-kubearmor-kubearmor-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-kubearmor-kubearmor-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/kubearmor-kubearmor-agent-contract-kubearmor-kubearmor-autonomous-specialist-per.md",
+      "title": "Agent Contract: kubearmor/KubeArmor Autonomous Specialist Persona",
+      "repository": "kubearmor/KubeArmor",
+      "source_version": "d026c0dc",
+      "content_hash": "5f1a19929333e524dfd49f7c78d42b990b4eb7bc4ef2b7883c30b710aaf54a73",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-19T01:32:38.238Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kubearmor-kubearmor": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kubearmor-kubearmor",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kubearmor-kubearmor-verification-protocol-empirical-defect-shield-for-kubearmor-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for kubearmor/KubeArmor",
+      "repository": "kubearmor/KubeArmor",
+      "source_version": "d026c0dc",
+      "content_hash": "acee2a3bc6d66916dbca69adf2157ec4480e391b39da64f3127469b70fce2185",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T01:32:38.400Z"
+    },
+    "rule-9319": {
+      "learning_id": "rule-9319",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9319,
+      "title": "关闭 HotSpot Base64 intrinsic",
+      "source_url": "https://github.com/open-ani/animeko",
+      "source_version": "c9064896",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T01:32:41.485Z"
+    },
+    "candidate_directive-hotspot-base64-intrinsic": {
+      "item_id": "candidate_directive-hotspot-base64-intrinsic",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LAAO-hotspot-base64-intrinsic.md",
+      "title": "关闭 HotSpot Base64 intrinsic",
+      "repository": "open-ani/animeko",
+      "source_version": "c9064896",
+      "content_hash": "d87b7109b5380c4c5ff48d98dacc01b3c7924da6e1753589a6176d1ed290cffa",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T01:32:41.953Z"
+    },
+    "rule-9320": {
+      "learning_id": "rule-9320",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9320,
+      "title": "avoid stack overflow on long UNION ALL chains",
+      "source_url": "https://github.com/GreptimeTeam/greptimedb",
+      "source_version": "916acb12",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T01:32:51.450Z"
+    },
+    "candidate_directive-avoid-stack-overflow-on-long-union-all-chains": {
+      "item_id": "candidate_directive-avoid-stack-overflow-on-long-union-all-chains",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LHZY-avoid-stack-overflow-on-long-union-all-chains.md",
+      "title": "avoid stack overflow on long UNION ALL chains",
+      "repository": "GreptimeTeam/greptimedb",
+      "source_version": "916acb12",
+      "content_hash": "b54e395a43e898f56d8b1b554fc97a867e8b44796fd6b6ce8b803411768b3a65",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T01:32:51.942Z"
+    },
+    "domain_intelligence-deployment-operations-intelligence-kubearmor-kubearmor-learnings-core-invariants": {
+      "item_id": "domain_intelligence-deployment-operations-intelligence-kubearmor-kubearmor-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-L-kubearmor-kubearmor-learnings-deployment-operations-intelligence-kubearmor-kubea.md",
+      "title": "Deployment & Operations Intelligence: kubearmor-kubearmor-learnings Core Invariants",
+      "repository": "kubearmor-kubearmor-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ad58c42774b3763e2b384c58e921d0bb9c300e64d15622986d6380e825613d51",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-19T01:32:56.159Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kubearmor-kubearmor-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-kubearmor-kubearmor-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-kubearmor-kubearmor-learnings-adr-subsystem-boundary-modular-decoupling-in-kubea.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in kubearmor-kubearmor-learnings",
+      "repository": "kubearmor-kubearmor-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c3228cc318a86226161c89c60162e39b0d8a11556db1dd2f16e057f623fdcd16",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-19T01:32:56.337Z"
+    },
+    "agent_contract-agent-contract-kubearmor-kubearmor-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-kubearmor-kubearmor-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/kubearmor-kubearmor-learnings-agent-contract-kubearmor-kubearmor-learnings-auton.md",
+      "title": "Agent Contract: kubearmor-kubearmor-learnings Autonomous Specialist Persona",
+      "repository": "kubearmor-kubearmor-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ae195328695698ed7310e98c60e316e8cd6149eeafac2881af95cc7602013018",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-19T01:32:56.495Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kubearmor-kubearmor-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kubearmor-kubearmor-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kubearmor-kubearmor-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for kubearmor-kubearmor-learnings",
+      "repository": "kubearmor-kubearmor-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4dda1fe8b01979d60b3ca712d4d36ea80a6946b1c1f5990dc5cd01f350c9aae9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T01:32:56.654Z"
+    },
+    "candidate_directive-desktop-hotspot-base64-intrinsic": {
+      "item_id": "candidate_directive-desktop-hotspot-base64-intrinsic",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-LMBV-desktop-hotspot-base64-intrinsic.md",
+      "title": "desktop): 关闭 HotSpot Base64 intrinsic",
+      "repository": "open-ani-animeko-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dbe74ff1e32521ef4cf75fd9db32cf72f622e3cbe4061f140b22fd18c9a5f324",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T01:32:57.548Z"
     }
   },
   "ai-builder-brain": {

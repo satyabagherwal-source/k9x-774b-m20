@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T01:18:56.474Z",
-  "total_cycles_completed": 10672,
-  "total_learnings_persisted": 10672,
-  "total_rules_promoted": 10084,
+  "last_updated": "2026-11-19T01:32:51.685Z",
+  "total_cycles_completed": 10676,
+  "total_learnings_persisted": 10676,
+  "total_rules_promoted": 10087,
   "history": [
-    {
-      "timestamp": "2026-11-18T11:54:52.822Z",
-      "repository": "XingChen-AGI/TeleOCR",
-      "learningId": "learn-huggingface-xingchen-agi-teleocr",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T11:55:00.691Z",
-      "repository": "emberstack/kubernetes-reflector",
-      "learningId": "learn-github-emberstack-kubernetes-reflector",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T11:55:08.326Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T12:03:18.796Z",
-      "repository": "Qwen/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T12:03:29.373Z",
       "repository": "pingcap/tidb",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-19T01:18:56.474Z",
       "repository": "yugabyte/yugabyte-db",
       "learningId": "learn-github-yugabyte-yugabyte-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T01:32:34.587Z",
+      "repository": "Qwen/Qwen3-VL-8B-Instruct",
+      "learningId": "learn-huggingface-qwen-qwen3-vl-8b-instruct",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T01:32:37.435Z",
+      "repository": "kubearmor/KubeArmor",
+      "learningId": "learn-github-kubearmor-kubearmor",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T01:32:41.716Z",
+      "repository": "open-ani/animeko",
+      "learningId": "learn-github-open-ani-animeko",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T01:32:51.685Z",
+      "repository": "GreptimeTeam/greptimedb",
+      "learningId": "learn-github-greptimeteam-greptimedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

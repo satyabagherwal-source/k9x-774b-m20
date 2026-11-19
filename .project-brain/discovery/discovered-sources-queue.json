@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T01:19:29.532Z",
+  "updated_at": "2026-11-19T01:32:55.701Z",
   "stats": {
-    "total_discovered": 5748,
-    "approved_pending_harvest": 5439,
+    "total_discovered": 5758,
+    "approved_pending_harvest": 5449,
     "harvested_count": 0,
     "rejected_count": 309,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5414,
+      "COMMUNITY_AND_EXPERT": 5424,
       "OFFICIAL_DOCUMENTATION": 185,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -124314,6 +124314,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md",
         "fileName": "yugabyte-yugabyte-db-learnings.md"
+      }
+    },
+    "SRC-42B9D75893E7": {
+      "id": "SRC-42B9D75893E7",
+      "url": "https://github.com/kubearmor/KubeArmor",
+      "title": "https://github.com/kubearmor/KubeArmor",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T01:32:55.217Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
+        "fileName": "kubearmor-kubearmor-learnings.md"
+      }
+    },
+    "SRC-7AAFA7CD64D1": {
+      "id": "SRC-7AAFA7CD64D1",
+      "url": "https://github.com/containerd/containerd/blob/main/oci/spec.go",
+      "title": "https://github.com/containerd/containerd/blob/main/oci/spec.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T01:32:55.273Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
+        "fileName": "kubearmor-kubearmor-learnings.md"
+      }
+    },
+    "SRC-3D2BCA6375A3": {
+      "id": "SRC-3D2BCA6375A3",
+      "url": "https://github.com/opencontainers/runtime-spec/blob/master/specs-go/config.go",
+      "title": "https://github.com/opencontainers/runtime-spec/blob/master/specs-go/config.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T01:32:55.328Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
+        "fileName": "kubearmor-kubearmor-learnings.md"
+      }
+    },
+    "SRC-7C4C31C98570": {
+      "id": "SRC-7C4C31C98570",
+      "url": "https://github.com/kubearmor/KubeArmor/discussions",
+      "title": "https://github.com/kubearmor/KubeArmor/discussions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T01:32:55.382Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
+        "fileName": "kubearmor-kubearmor-learnings.md"
+      }
+    },
+    "SRC-0513CE0E9DE3": {
+      "id": "SRC-0513CE0E9DE3",
+      "url": "https://kubearmor.slack.com/",
+      "title": "https://kubearmor.slack.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T01:32:55.446Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
+        "fileName": "kubearmor-kubearmor-learnings.md"
+      }
+    },
+    "SRC-C3DDA75979FA": {
+      "id": "SRC-C3DDA75979FA",
+      "url": "https://github.com/kubearmor/KubeArmor/issues",
+      "title": "https://github.com/kubearmor/KubeArmor/issues",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T01:32:55.494Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
+        "fileName": "kubearmor-kubearmor-learnings.md"
+      }
+    },
+    "SRC-B07E24C54394": {
+      "id": "SRC-B07E24C54394",
+      "url": "https://github.com/kubearmor/KubeArmor/blob/v1.7.4/deployments/helm/KubeArmorOperator/templates/deployment.yaml",
+      "title": "https://github.com/kubearmor/KubeArmor/blob/v1.7.4/deployments/helm/KubeArmorOperator/templates/deployment.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T01:32:55.546Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
+        "fileName": "kubearmor-kubearmor-learnings.md"
+      }
+    },
+    "SRC-740CECD73B7C": {
+      "id": "SRC-740CECD73B7C",
+      "url": "https://github.com/kubearmor/KubeArmor/blob/v1.7.4/pkg/KubeArmorOperator/internal/controller/resources.go",
+      "title": "https://github.com/kubearmor/KubeArmor/blob/v1.7.4/pkg/KubeArmorOperator/internal/controller/resources.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T01:32:55.597Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
+        "fileName": "kubearmor-kubearmor-learnings.md"
+      }
+    },
+    "SRC-B95345F36126": {
+      "id": "SRC-B95345F36126",
+      "url": "https://github.com/kubearmor/KubeArmor/blob/1504ee",
+      "title": "https://github.com/kubearmor/KubeArmor/blob/1504ee",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T01:32:55.649Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
+        "fileName": "kubearmor-kubearmor-learnings.md"
+      }
+    },
+    "SRC-0E8680219570": {
+      "id": "SRC-0E8680219570",
+      "url": "https://github.com/advisories/GHSA-hrxh-6v49-42gf",
+      "title": "https://github.com/advisories/GHSA-hrxh-6v49-42gf",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T01:32:55.701Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
+        "fileName": "kubearmor-kubearmor-learnings.md"
       }
     }
   }

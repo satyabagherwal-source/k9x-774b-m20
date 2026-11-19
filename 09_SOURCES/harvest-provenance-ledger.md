@@ -11200,3 +11200,7 @@ Every entry in this ledger must capture:
 | `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `215adf5d` | Multi-dimensional audit evidence | 2026-11-19T01:18:42.772Z |
 | `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `64f73406` | Multi-dimensional audit evidence | 2026-11-19T01:18:56.469Z |
 | `learn-dom-l-03ec8831` | `project://yugabyte-yugabyte-db` | `64f73406` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md` | 2026-11-19T01:19:29.179Z |
+| `learn-huggingface-qwen-qwen3-vl-8b-instruct` | `https://huggingface.co/Qwen/Qwen3-VL-8B-Instruct` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-19T01:32:34.581Z |
+| `learn-github-kubearmor-kubearmor` | `https://github.com/kubearmor/KubeArmor` | `d026c0dc` | Multi-dimensional audit evidence | 2026-11-19T01:32:37.428Z |
+| `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `c9064896` | Multi-dimensional audit evidence | 2026-11-19T01:32:41.710Z |
+| `learn-github-greptimeteam-greptimedb` | `https://github.com/GreptimeTeam/greptimedb` | `916acb12` | Multi-dimensional audit evidence | 2026-11-19T01:32:51.678Z |
