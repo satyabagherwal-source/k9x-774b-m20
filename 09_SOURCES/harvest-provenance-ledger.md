@@ -11429,3 +11429,6 @@ Every entry in this ledger must capture:
 | `learn-github-seo-skills-seo-audit-skill` | `https://github.com/seo-skills/seo-audit-skill` | `f43ba12d` | Multi-dimensional audit evidence | 2026-11-19T22:27:38.493Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `1352efd8` | Multi-dimensional audit evidence | 2026-11-19T22:27:45.790Z |
 | `learn-dom-j-e0c204d8` | `project://seo-skills-seo-audit-skill` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seo-skills-seo-audit-skill-learnings.md` | 2026-11-19T22:28:14.241Z |
+| `learn-github-vanniktech-gradle-maven-publish-plugin` | `https://github.com/vanniktech/gradle-maven-publish-plugin` | `fc64b6e6` | Multi-dimensional audit evidence | 2026-11-19T22:36:09.010Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `6e895879` | Multi-dimensional audit evidence | 2026-11-19T22:36:14.503Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `3cd5f717` | Multi-dimensional audit evidence | 2026-11-19T22:36:17.989Z |

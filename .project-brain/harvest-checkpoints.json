@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T22:27:45.798Z",
+  "last_updated": "2026-11-19T22:36:17.998Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4881,14 +4881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-matrixorigin-matrixone",
-      "content_hash": "96e52fd9dc045b387d78fb21ae28495340189ec9e2eaa4d32258d7a980d69cb5",
-      "verified_at": "2026-11-18T16:41:21.989Z",
+      "content_hash": "f0a0f1975c65ab6cb4d8779a21d0fd8df6801b869515010ab4dacdcc65b18d3b",
+      "verified_at": "2026-11-19T22:36:17.998Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T16:41:21.989Z"
+      "last_updated": "2026-11-19T22:36:17.998Z"
     },
     "fallow-rs/fallow": {
       "repository": "fallow-rs/fallow",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "49a524d1a6973099f34ec08ab86c2ecb3724ab68bf03cad0319b4c89956848fe",
-      "verified_at": "2026-11-18T04:20:53.641Z",
+      "content_hash": "359c49b767d085bdf91b335d31694c1d119b1e30c1852d079f8158911e6aeea4",
+      "verified_at": "2026-11-19T22:36:14.511Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T04:20:53.641Z"
+      "last_updated": "2026-11-19T22:36:14.511Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -12216,14 +12216,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-vanniktech-gradle-maven-publish-plugin",
-      "content_hash": "c1f8f509eb9a0dcd25b674857a0297a5d4c7a5f12d75e6477a744b6c4cc55c89",
-      "verified_at": "2026-11-12T06:20:20.713Z",
+      "content_hash": "2e3bd503e9293496ac4cd2ffd34f8fbc454723e3894e91392c8f36f278cd3bc3",
+      "verified_at": "2026-11-19T22:36:09.019Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T06:20:20.713Z"
+      "last_updated": "2026-11-19T22:36:09.019Z"
     },
     "MohamedRejeb/Calf": {
       "repository": "MohamedRejeb/Calf",

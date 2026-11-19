@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T01:34:14.026Z",
+  "timestamp": "2026-11-19T22:36:23.239Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-matrixorigin-matrixone-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [matrixorigin-matrixone-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T01:34:14.026Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T22:36:23.239Z`  
 > **Learning ID**: `LEARN-EVO-matrixorigin-matrixone-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 62%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from matrixorigin-matrixone-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `e765c5fd`  
+> **Source Version**: `3cd5f717`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T01:34:08.228Z  
+> **Timestamp**: 2026-11-19T22:36:16.955Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T01:34:08.221Z  
+> **Harvest Timestamp**: 2026-11-19T22:36:16.948Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: AI-native HTAP database with Git-for-Data and built-in vector search, serving as the data and memory backbone for intelligent agents and applications.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2066 stars
+- **Stars / Engagement**: 2068 stars
 
 ---
 
@@ -2377,11 +2377,11 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #32823** (2026-11-17): **[4.2] Fix grouped ENUM and SET numeric conversions**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Fixes #32819  ## What this PR does / why we need it:  On 4.2-dev, numeric operations on a grouped ENUM or SET can attempt to convert its display label instead of using its ordinal or bitmap. For example, grouping `ENUM('a','b')` and selecting `e + 0` fails on the label `a` even though the corresponding row-level expression succeeds.  Adapt the approach from #28751 to 4.2's existing ENUM encoding and provenance rules. Recover the stored numeric value only when the original domain is known and reversible, including numeric casts, scalar comparisons, IN/quantified subqueries, and the correlated scalar and projection forms covered by the regression tests. Keep string comparisons and ambiguous domains on their existing paths. A numeric IN list may contain NULL without losing its numeric comparison semantics.  This reuses existing conversion overloads and does not change persisted formats. Numeric operations on grouped or projected values add conversion work for those expressions only. The general correlated scalar projection path for a subquery with its own FROM remains unsupported by the existing executor; the same query shape also fails with ordinary integer columns on the exact 4.2-dev base. Legacy overload compatibility was checked against the source and serialized plans; mixed-version execution 
+- **Issue #32945** (2026-11-19): **[4.2-dev] Preserve COS GET cancellation identity**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #32389.  ## What this PR does / why we need it:  A COS GET canceled while waiting for response headers can return a singleton SDK RetryError even with SDK retries disabled. It renders as `context canceled`, but standard Go error traversal cannot identify the wrapped cancellation. A normal early stop after IVF sampling reaches its LIMIT can then surface as SQL error 1105.  Restore the request's context error at the COS GET boundary only when the SDK wrapper contains that exact error as its sole child. Independent storage errors and mixed errors retain their identity. The success path incurs no additional checks or allocations.  A local three-CN reproduction on the nightly revision used 250,000 persisted rows and controlled only the response timing of a GET. The same CREATE INDEX failed before normalization and succeeded with it. With disk caching enabled, delaying a bounded-range GET also reproduced the failure. The archived nightly logs contain the same reader and SQL symptoms, but do not record the original Go error type.  The new public Read regression uses a real HTTP request and cancels after the server receives it. It fails with the expected RetryError when normalization is removed. Focused counterexamples cover deadlines, active requests, independent errors and mixed errors. The
 
-- **Issue #32815** (2026-11-16): **perf(malloc): advise huge pages for large MPool mappings**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [x] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #32813  ## What this PR does / why we need it:  Advise fresh Linux MPool mappings of at least 2 MiB with `MADV_HUGEPAGE` before handing the allocation to callers. Under `defer+madvise`, this permits compaction for large query buffers whose first touches would otherwise fall back to many small-page faults when contiguous blocks are scarce.  Treat advice as optional and preserve successful allocation if the hint is unavailable. Keep exact allocation sizes, zeroing, memory accounting, bounded reuse and cleanup. Reused mappings retain their policy without another syscall. Small allocations, the file-service cache allocator and Darwin retain their existing behavior.  ## Validation  Focused SimpleCAllocator tests and the owning malloc/MPool packages pass, including the 2 MiB boundary cases. Convention checks and configured static checks for the changed package pass with repository-pinned tools.  Actual-allocator controls measure available and fragmented backing with serial and 32-worker first touches. The local SF100 disk comparison covers all 22 queries with one process per arm, one excluded cold suite and five profiled warm suites, using identical cache and memory thresholds with spilling and swap disallowed. Per-query results, Q11 I/O tracing, binary/source provenance and measurement lim
+- **Issue #32938** (2026-11-19): **perf(cdc): avoid formatting disabled watermark debug logs**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [x] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #32278 (C28).  ## What this PR does / why we need it:  Buffering a CDC watermark formatted the table key twice and rendered both timestamps before Debug could reject the log event. Reuse the existing metric label and build the structured log fields only when Debug is enabled.  In a local Go 1.27.1 benchmark of repeated accepted updates with Debug disabled, allocation fell from 666 to 72 B/op and from 11 to 4 allocs/op. Median time across three samples fell from 591 to 231 ns/op for that fixture.  Validation: the CDC package under the race detector and incremental SCA. With Debug enabled, the before/after structured records match apart from the wall-clock timestamp. Info emits no buffer-update event. Both levels buffer the same watermark and increment the same commit counter.  A committed CDC regression test verifies Info and Debug behavior, including first and replacement watermark fields, cached values, and the commit counter. In a local coverage run using the CI test tag, both changed coverage blocks are exercised. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2398,8 +2398,8 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7fcd9bdf` (2026-11-16)
-**Commit Message**: fix: publish partitioned CREATE INDEX metadata through ALTER (#32772)
+### Incident Patch 1: `793b62b5` (2026-11-19)
+**Commit Message**: fix(function): reject undefined real-domain POW arguments (#32863)
 
 ## What type of PR is this?
 
@@ -2413,931 +2413,827 @@ Observed empirical fixes and code patches:
 
 ## Which issue(s) this PR fixes:
 
-Fixes #32211
+issue #31155
+
+Fixes #31155
 
 ## What this PR does / why we need it:
 
-Standalone CREATE INDEX could succeed on a partitioned table while SHOW INDEX, SHOW CREATE TABLE and FORCE INDEX could not see the logical parent index.
+POW/POWER with a finite negative base and a finite non-integer exponent
+is mathematically undefined in the real domain, but MatrixOne silently
+returned a row-local NULL. This PR makes the Power operator reject such
+arguments with the typed DOUBLE out-of-range error (MySQL 1690, SQLSTATE
+22003, `data out of range: data type float64, DOUBLE value is out of
+range in 'pow(-2,0.5)'`), keeping the #28375 row-local NULL semantics
+untouched for overflow/NaN-input (EXP/COT) cases.
 
-Route ordinary BTREE CREATE INDEX, including the existing UNIQUE form, through the same existing ALTER TABLE ADD INDEX transactional route used by ALTER. This publishes the logical parent and physical partition children together; it does not add a new partition index mechanism. Preserve quoted identifiers, serializable options, typed duplicate-name errors and existing paths for other index families. Add the CI test-readiness fence for the isolated SQL task-ownership test.
+It also carries a CI fix found by this PR's own required `-race` UT job:
+`gc/v3.buildTableExistenceMap` read each table catalog entry's MVCC
+chain delete timestamp via `GetDeleteAtLocked` without the entry lock,
+racing `DBEntry.DropTableEntryByID` (entry write lock ->
+`DropEntryLocked` -> `DeleteLocked` -> `InsertLocked`), reported three
+times in
+`TestDataBranchDiffAcrossCheckpointGCAndRestart/gc_ch
 
-Validation:
-
-- Three actual native/CGo foreground test invocations passed; current owning-package coverage is 488 packages.
-- Pinned 510-package SCA passed with zero findings: `make static-check-selected STATIC_CHECK_PACKAGES="$(cat /home/mo/.local/share/matr
-
-**File**: `pkg/sql/compile/alter.go` (modified, +12/-2)
+**File**: `pkg/embed/cdc_control_status_test.go` (modified, +111/-1)
 ```diff
-@@ -2745,14 +2745,24 @@ func (s *Scope) AlterTable(c *Compile) (err error) {
- 				return err
- 			}
+@@ -16,12 +16,14 @@ package embed
+ import (
+ 	"bytes"
+ 	"context"
++	"errors"
+ 	"fmt"
+ 	"sync"
+ 	"testing"
+ 	"time"
  
--			st, _ := parsers.ParseOne(
-+			st, err := parsers.ParseOne(
- 				c.proc.Ctx,
- 				dialect.MYSQL,
- 				qry.RawSQL,
- 				c.getLower(),
- 			)
-+			if err != nil {
-+				// Propagate the original parse error instead of dropping
-+				// it and asserting the statement type downstream.
-+				return err
-+			}
-+			alterPartitionStmt, ok := st.(*tree.AlterTable)
-+			if !ok {
-+				return moerr.NewParseError(c.proc.Ctx,
-+					fmt.Sprintf("not an ALTER TABLE statement: %s", qry.RawSQL))
-+			}
- 			return c.alterPartitionTables(
--				st.(*tree.AlterTable),
-+				alterPartitionStmt,
- 				metadata.Partitions,
- 				hasAlterAutoIncrementReset(qry.Actions),
- 				cleanup,
-```
-
-**File**: `pkg/sql/parsers/tree/create.go` (modified, +22/-3)
-```diff
-@@ -2129,6 +2129,11 @@ type IndexOption struct {
+ 	"github.com/google/uuid"
++	dragonboat "github.com/lni/dragonboat/v4"
+ 	"github.com/matrixorigin/matrixone/pkg/catalog"
+ 	"github.com/matrixorigin/matrixone/pkg/cnservice"
+ 	"github.com/matrixorigin/matrixone/pkg/common/runtime"
+@@ -41,6 +43,108 @@ type cdcControlResult struct {
+ 	err error
  }
  
- // Must follow the following sequence when test
-+// IsEmpty reports whether Format renders nothing for this option set: it is
-+// the exact gate Format uses for its leading separator, kept as a single
-+// source of truth so callers can decide whether to serialize an option at
-+// all. The index type (IType) is serialized by the owning index AST, not
-+// here, and the engine attributes have no serialized form at all.
- func (node *IndexOption) Format(ctx *FmtCtx) {
- 	if node.KeyBlockSize != 0 || node.ParserName != "" ||
- 		node.Comment != "" || node.Visible != VISIBLE_TYPE_INVALID ||
-@@ -2158,7 +2163,21 @@ func (node *IndexOption) Format(ctx *FmtCtx) {
- 	}
- 	if node.Comment != "" {
- 		ctx.WriteString("comment ")
--		ctx.WriteString(node.Comment)
-+		if ctx.singleQuoteString {
-+			// Mirror the OP_TYPE serializer's owner semantics (issue #32211):
-+			// escape the backslash-escape mode first so the consumer's
-+			// backslash-aware ParseOne restores the exact comment bytes,
-+			// then single-quote escaping.
-+			value := node.Comment
-+			if !ctx.NoBackslashEscape() {
-+				value = FormatString(value)
-+			}
-+			ctx.WriteByte('\'')
-+			ctx.WriteString(strings.ReplaceAll(value, "'", "''"))
-+			ctx.WriteByte('\'')
-+		} else {
-+			ctx.WriteString(node.Comment)
-+		}
- 		ctx.WriteByte(' ')
- 	}
- 	if node.AlgoParamList != 0 {
-@@ -2398,7 +2417,7 @@ func (node *Index) Format(ctx *FmtCtx) {
- 	}
- 	if node.Name != "" {
- 		ctx.WriteByte(' ')
--		ctx.WriteString(node.Name)
-+		ctx.WriteIdentifier(Identifier(node.Name))
- 	}
- 	if node.KeyType != INDEX_TYPE_INVALID {
- 		ctx.WriteString(" using ")
-@@ -2463,7 +2482,7 @@ func (node *UniqueIndex) Format(ctx *FmtCtx) {
- 	ctx.WriteString("unique key")
- 	if node.Name != "" {
- 		ctx.WriteByte(' ')
--		ctx.WriteString(node.Name)
-+		ctx.WriteIdentifier(Identifier(node.Name))
- 	}
- 	if !node.Empty {
- 		ctx.WriteString(" using none")
-```
-
-**File**: `pkg/sql/parsers/tree/issue_32211_index_option_format_test.go` (added, +131/-0)
-```diff
-@@ -0,0 +1,131 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//      http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package tree
-+
-+import (
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect"
-+)
-+
-+// Issue #32211 review R1: the global IndexOption formatter must keep
-+// rendering ASYNC-only options. The delegated-empty-option normalization
-+// owns only the whitelisted KEY_BLOCK_SIZE/comment/visibility fields and
-+// must never drop unrelated legal option content (previously an ASYNC-only
-+// option still rendered through the caller's leading separator).
-+func TestIssue32211IndexOptionAsyncOnlyStillRenders(t *testing.T) {
-+	opt := &IndexOption{Async: true}
-+
-+	ctx := NewFmtCtx(dialect.MYSQL)
-+	opt.Format(ctx)
-+	require.Contains(t, ctx.String(), "ASYNC",
-+		"an ASYNC-only legal index option must keep its ASYNC render")
-+
-+	wrapped := &Index{
-+		Name:        "idx_async",
-+		KeyType:     INDEX_TYPE_INVALID,
-+		IndexOption: opt,
++// cdcClusterStateWithReadiness bounds the initial, idempotent, read-only
++// GetClusterState readiness probe of the CDC claims subtest: its result only
++// feeds state.TaskTableUser below. The current5711 CI UT (job 135195296776,
++// 2026-11-18 23:30:59) observed exactly one raw dragonboat request timeout on
++// this first probe while the log service reported the same checker-state read
++// timing out on its side in the same window; root36 kept the stall's own
++// origin qualified UNKNOWN. This helper absorbs no more than that observed
++// failure class, deterministically: at most three attempts on the caller's
++// unchanged context, retrying only errors.Is(dragonboat.ErrTimeout) chains,
++// stopping at the first success, never issuing another request once the
++// context is done, and returning any other error after the first failed
++// attempt. The caller's require.NoError still owns the final failure; no
++// deadline is raised anywhere and no claims/heartbeat/write path is retried.
++func cdcClusterStateWithReadiness(
++	t *testing.T,
++	ctx context.Context,
++	getState func(context.Context) (logservicepb.CheckerState, error),
++) (logservicepb.CheckerState, error) {
++	t.Helper()
++	if ctxErr := ctx.Err(); ctxErr != nil {
++		return logservicepb.CheckerState{}, ctxErr
 +	}
-+	serialized := StringWithOpts(wrapped, dialect.MYSQL,
-+		WithQuoteIdentifier(), WithSingleQuoteString())
-+	require.Contains(t, serialized, "ASYNC",
-+		"the serialized index must keep the ASYNC option")
++	const attempts = 3
++	state, lastErr := getState(ctx)
++	for i := 2; lastErr != nil && i <= attempts; i++ {
++		if ctxErr := ctx.Err(); ctxErr != nil {
++			return logservicepb.CheckerState{}, lastErr
++		}
++		if !errors.Is(lastErr, dragonboat.ErrTimeout) {
++			return logservicepb.CheckerState{}, lastErr
++		}
++		t.Logf("initial CDC cluster-state readiness %d/%d: %v", i-1, attempts, lastErr)
++		state, lastErr = getState(ctx)
++	}
++	if lastErr != nil {
++		t.Logf("initial CDC cluster-state readiness failed after at most %d attempts: %v", attempts, lastErr)
++	}
++	return state, lastErr
 +}
 +
-+// Issue #32211 review R2: the single-quote comment branch must reuse the
-+// OP_TYPE owner semantics — FormatString for the consumer's backslash-aware
-+// ParseOne, then single-quote doubling — so the raw-SQL byte loop restores
-+// the exact comment. Expected bytes are pinned per case per mode as an
-+// independent oracle; the default mode keeps writing raw bytes.
-+func TestIssue32211IndexOptionCommentEscapingBytes(t *testing.T) {
-+	cases := []struct {
-+		name string
-+		// default-mode bytes: the raw comment exactly as before
-+		wantDefault string
-+		// singleQuoteString-mode bytes: FormatString + quote doubling
-+		wantSingleQuoted string
-+		// singleQuoteString + NO_BACKSLASH_ESCAPES form: only quote doubling
-+		wantNoBackslash string
++// TestCDCInitialClusterStateReadinessBounds covers every branch of the
++// readiness helper with deterministic pure consumers: scripted results,
++// recorded request contexts, exact error identities and finite call counts.
++// No cluster, no timing assumptions, no retry framework.
++func TestCDCInitialClusterStateReadinessBounds(t *testing.T) {
++	okState := logservicepb.CheckerState{Tick: 42}
++	nonTimeout := errors.New("cdc readiness probe: not a timeout")
++	for _, s := range []struct {
++		name        string
++		preCanceled bool
++		cancelAfter int // 1-based call index whose side effect cancels ctx; 0 = never
++		succeedAt   int // 1-based call index returning success; 0 = never
++		err         error
++		wantCalls   int
++		wantOK      bool
++		wantErrIs   error
 +	}{
-+		{
-+			name:             "real newline",
-+			wantDefault:      " comment line1\nline2 ",
-+			wantSingleQuoted: " comment 'line1\\nline2' ",
-+			wantNoBackslash:  " comment 'line1\nline2' ",
-+		},
-+		{
-+			name:             "real tab",
-+			wantDefault:      " comment col1\tcol2 ",
-+			wantSingleQuoted: " comment 'col1\\tcol2' ",
-+			wantNoBackslash:  " comment 'col1\tcol2' ",
-+		},
-+		{
-+			// value bytes: a backslash b space c
-+			name:             "backslash before letter",
-+			wantDefault:      " comment a\\b c ",
-+			wantSingleQuoted: " comment 'a\\\\b c' ",
-+			wantNoBackslash:  " comment 'a\\b c' ",
-+		},
-+		{
-+			// value bytes: p r e backslash quote p o s t
-+			name:             "backslash before quote",
-+			wantDefault:      " comment pre\\'post ",
-+			wantSingleQuoted: " comment 'pre\\\\''post' ",
-+			wantNoBackslash:  " comment 'pre\\''post' ",
-+		},
-+		{
-+			name:             "utf8",
-+			wantDefault:      " comment 数据库 ✓ ok ",
-+			wantSingleQuoted: " comment '数据库 ✓ ok' ",
-+			wantNoBackslash:  " comment '数据库 ✓ ok' ",
-+		},
-+	}
-+	for _, tc := range cases {
-+		t.Run(tc.name, func(t *testing.T) {
-+			// Restore the exact producing source values for each expected
-+			// byte form (reverse of the escaping the oracle pins).
-+			var comment string
-+			switch tc.name {
-+			case "real newline":
-+				comment = "line1\nline2"
-+			case "real tab":
-+				comment = "col1\tcol2"
-+			case "backslash before letter":
-+				comment = "a\\b c"
-+			case "backslash before quote":
-+				comment = "pre\\'post"
-+			default:
-+				comment = "数据库 ✓ ok"
++		{name: "immediate success", succeedAt: 1, err: nonTimeout, wantCalls: 1, wantOK: true},
++		{name: "timeout then success", succeedAt: 2, err: dragonboat.ErrTimeout, wantCalls: 2, wantOK: true},
++		{name: "wrapped timeout is recognized then succeeds", succeedAt: 2, err: fmt.Errorf("probe: %w", dragonboat.ErrTimeout), wantCalls: 2, wantOK: true},
++		{name: "persistent timeout stays an error after three requests", err: dragonboat.ErrTimeout, wantCalls: 3, wantErrIs: dragonboat.ErrTimeout},
++		{name: "non timeout is returned after one request", err: nonTimeout, wantCalls: 1, wantErrIs: nonTimeout},
++		{name: "pre canceled context issues no request", preCanceled: true, err: nonTimeout, wantCalls: 0, wantErrIs: context.Canceled},
++		{name: "cancellation between attempts stops the probe", cancelAfter: 1, err: dragonboat.ErrTimeout, wantCalls: 1, wantErrIs: dragonboat.ErrTimeout},
++	} {
++		t.Run(s.name, func(t *testing.T) {
++			ctx, cancel := context.WithTimeout(context.Background(), 2*time.Minute)
++			if s.preCanceled {
++				cancel()
 +			}
-+
-+			def := NewFmtCtx(dialect.MYSQL)
-+			(&IndexOption{Comment: comment}).Format(def)
-+			require.Equal(t, tc.wantDefault, def.String(),
-+				"default formatting must keep writing the raw comment bytes")
-+
-+			sq := NewFmtCtx(dialect.MYSQL, WithSingleQuoteString())
-+			(&IndexOption{Comment: comment}).Format(sq)
-+			require.Equal(t, tc.wantSingleQuoted, sq.String(),
-+				"single-quote mode must mirror the OP_TYPE owner bytes")
-+
-+			nb := NewFmtCtx(dialect.MYSQL, WithSingleQuoteString(), WithNoBackslashEscape())
-+			(&IndexOption{Comment: comment}).Format(nb)
-+			require.Equal(t, tc.wantNoBackslash, nb.String(),
-+				"NO_BACKSLASH_ESCAPES form must only double quotes")
++			defer cancel()
++			var seen []context.Context
++			calls := 0
++			get := func(c context.Context) (logservicepb.CheckerState, error) {
++				calls++
++				seen = append(seen, c)
++				if calls == s.cancelAfter {
++					cancel()
++				}
++				if s.succeedAt != 0 && calls >= s.succeedAt {
++					return okState, nil
++				}
++				return logservicepb.CheckerState{}, s.err
++			}
++			state, err := cdcClusterStateWithReadiness(t, ctx, get)
++			require.Equal(t, s.wantCalls, calls, "the probe is bounded")
++			for _, c := range seen {
++				require.Same(t, ctx, c, "every request uses the caller's context unchanged")
++			}
++			if s.wantOK {
++				require.NoError(t, err)
++				require.Equal(t, okState, state)
++				return
++			}
++			require.Error(t, err)
++			if s.wantErrIs != nil {
++				require.ErrorIs(t, err, s.wantErrIs)
++			}
 +		})
 +	}
 +}
++
+ func testCDCControlConcurrentClaims(t *testing.T,
 ```
 
-**File**: `pkg/sql/plan/build_ddl.go` (modified, +129/-1)
+**File**: `pkg/objectio/arena_pool_test.go` (modified, +126/-25)
 ```diff
-@@ -6684,7 +6684,12 @@ func buildCreateIndex(stmt *tree.CreateIndex, ctx CompilerContext) (*Plan, error
- 	switch stmt.IndexCat {
- 	case tree.INDEX_CATEGORY_UNIQUE:
- 		uIdx = &tree.UniqueIndex{
--			Name:        indexName,
-+			Name: indexName,
-+			// Parser-consistent typed construction: ALTER's own AST
-+			// records only whether an explicit USING index type was
-+			// present on a unique index, not which one. Serialize the
-+			// same shape so the delegable default form roundtrips.
-+			Empty:       stmt.IndexOption.IType == tree.INDEX_TYPE_INVALID,
- 			KeyParts:    stmt.KeyParts,
- 			IndexOption: stmt.IndexOption,
- 		}
-@@ -6727,6 +6732,65 @@ func buildCreateIndex(stmt *tree.CreateIndex, ctx CompilerContext) (*Plan, error
- 	default:
- 		return nil, moerr.NewNotSupportedf(ctx.GetContext(), "statement: '%v'", tree.String(stmt, dialect.MYSQL))
+@@ -16,6 +16,7 @@ package objectio
+ 
+ import (
+ 	"testing"
++	"testing/synctest"
+ 	"time"
+ 
+ 	metric "github.com/matrixorigin/matrixone/pkg/util/metric/v2"
+@@ -102,36 +103,136 @@ func TestArenaFreedAfterIdleTTL(t *testing.T) {
+ // After a burst, a workload that keeps reusing one arena keeps exactly that
+ // one warm; the rest of the burst ages out although the pool stays busy.
+ // The global idle timer this replaces never fired while anything was active.
++//
++// Every assertion and the reaper schedule run under testing/synctest's
++// controlled clock: bubble time only advances after every bubble goroutine
++// is durably blocked, so the workload cannot be preempted while it holds
++// the working arena and both schedules below are deterministic in virtual
++// time. One case lets the initial reaper fire normally; the other holds the
++// first fire until well after the old fixed warmup plus the TTL while the
++// workload stays busy. The previous real-time form could not prove either
++// guarantee, because time.Sleep bounds the minimum, not the maximum, pause.
+ func TestArenaBurstReleasedWhileStillActive(t *testing.T) {
+-	ttl := 150 * time.Millisecond
+-	withArenaIdleTTL(t, ttl)
+-	base := arenaMPool.CurrNB()
++	// Go 1.27 forbids t.Run inside a synctest bubble, so each schedule
++	// subtest owns its own bubble below.
++	for _, schedule := range []string{"normal first fire", "delayed first fire"} {
++		t.Run(schedule, func(t *testing.T) {
++			synctest.Test(t, func(t *testing.T) {
++				// Drain the reaper on every exit path, including failed
++				// assertions: this defer runs during Goexit while still
++				// inside the bubble, so the bubble-owned reaper timer is
++				// always stopped in-bubble and the outer cleanup, which
++				// runs outside the bubble, only ever sees reaper == nil.
++				defer drainArenaReaper(ArenaLarge)
++				const ttl = 150 * time.Millisecond
++				withArenaIdleTTL(t, ttl)
++				base := arenaMPool.CurrNB()
++
++				// Within capacity, so perArena below divides by what is actually parked.
++				burst := make([]*WriteArena, min(8, arenaPools[ArenaLarge].maxCount))
++				for i := range burst {
++					burst[i] = GetArena(ArenaLarge)
++				}
++				for _, a := range burst {
++					PutArena(a)
++				}
++				perArena := (arenaMPool.CurrNB() - base) / int64(len(burst))
++
++				pool := &arenaPools[ArenaLarge]
++				holdFirstReaper := schedule != "normal first fire"
++				if holdFirstReaper {
++					// Stop the initial timer but keep its non-nil handle, so
++					// the workload's PutArena (which arms only when the
++					// reaper is nil) cannot re-arm it while the delayed
++					// first fire is held back.
++					pool.mu.Lock()
++					pool.reaper.Stop()
++					pool.mu.Unlock()
++				}
++
++				// borrowed tracks the arena the workload holds out of the
++				// pool. Pool-owned arenas are released by withArenaIdleTTL's
++				// cleanup; releasing the borrowed one here covers a failed
++				// assertion mid-borrow without leaking or double-freeing
++				// off-heap buffers.
++				var borrowed *WriteArena
++				t.Cleanup(func() {
++					if borrowed != nil {
++						borrowed.FreeBuffers()
++					}
++				})
++
++				var steady *WriteArena
++				start := time.Now()
++				deadline := start.Add(5 * time.Second)
++				for time.Now().Before(deadline) {
++					n, _ := parkedLargeSnapshot()
++					if n == 1 {
++						break
++					}
++					if holdFirstReaper && time.Since(start) >= 6*ttl {
++						// Re-arm the held reaper after the old fixed warmup
++						// (4*ttl) plus the TTL has elapsed in bubble time,
++						// with the workload still busy.
++						pool.mu.Lock()
++						pool.reaper = time.AfterFunc(arenaIdleTTL, pool.reap)
++						pool.mu.Unlock()
++						holdFirstReaper = false
++					}
++					borrowed = GetArena(ArenaLarge)
++					if steady == nil {
++						steady = borrowed
++					}
++					require.Same(t, steady, borrowed, "the working arena stays on top of the stack")
++					PutArena(borrowed)
++					borrowed = nil
++					time.Sleep(5 * time.Millisecond)
++				}
++
++				// Join any in-flight reaper callback before observing its
++				// effects: the reap frees the aged arenas' buffers after it
++				// releases the pool lock, so the parked count may already read
++				// one while those frees are still running. synctest.Wait
++				// returns only after every other bubble goroutine is
++				// durably blocked or has exited, which makes this barrier
++				// deterministic for the callback's ownership.
++				synctest.Wait()
+ 
+-	// Within capacity, so perArena below divides by what is actually parked.
+-	burst := make([]*WriteArena, min(8, arenaPools[ArenaLarge].maxCount))
+-	for i := range burst {
+-		burst[i] = GetArena(ArenaLarge)
++				n, survivor := parkedLargeSnapshot()
++				require.Equal(t, 1, n, "the cold burst arenas age out while the pool stays busy")
++				require.Same(t, steady, survivor, "the surviving parked arena is the one the workload kept reusing")
++				require.Equal(t, base+perArena, arenaMPool.CurrNB(), "only the working arena's memory is kept")
++			})
++		})
  	}
-+	// Partitioned tables: the dedicated CREATE INDEX executor publishes each
-+	// physical partition child only and never the logical parent, so SHOW
-+	// INDEX, SHOW CREATE TABLE and index hints — all resolved from the
-+	// logical table id — cannot observe the index even though the statement
-+	// succeeds (issue #32211). MySQL defines CREATE INDEX ON t (...) as
-+	// ALTER TABLE t ADD INDEX (...), so plan the qualified ordinary and
-+	// unique forms through the ALTER route: its executor publishes the
-+	// logical parent and re-runs the same ADD INDEX on every partition child
-+	// child inside one transaction. Eligibility is bounded to the forms whose typed
-+	// AST survives the executor's RawSQL serialize → reparse → per-child
-+	// re-serialize loop losslessly: the default and explicit-BTREE ordinary and
-+	// unique forms, keeping quoted identifiers and the
-+	// serializable KEY_BLOCK_SIZE/comment/visibility options intact. Every
-+	// other family — the vector/plugin and other explicit index algos,
-+	// non-BTREE USING unique indexes, functional, fulltext and spatial forms —
-+	// keeps its dedicated CREATE INDEX planning path and original errors.
-+	if tableDef.Partition != nil || features.IsPartitioned(tableDef.FeatureFlag) {
-+		switch stmt.IndexCat {
-+		case tree.INDEX_CATEGORY_UNIQUE:
-+			if (stmt.IndexOption.IType == tree.INDEX_TYPE_INVALID ||
-+				stmt.IndexOption.IType == tree.INDEX_TYPE_BTREE) &&
-+				indexOptionDelegable(stmt.IndexOption) {
-+				return buildAlterTable(&tree.AlterTable{
-+					Table: stmt.Table,
-+					Options: tree.AlterTableOptions{&tree.AlterOptionAdd{Def: &tree.UniqueIndex{
-+						// Build the delegable form exactly as ALTER's own
-+						// parser carries it: Empty records that no USING
-+						// index type was declared, and the option survives
-+						// only when something renders (KEY_BLOCK_SIZE,
-+						// comment, visibility) — keeping the per-partition
-+						// RawSQL reparse/rewrite loop lossless and
-+						// byte-idempotent.
-+						KeyParts:    stmt.KeyParts,
-+						Name:        indexName,
-+						Empty:       true,
-+						IndexOption: alterNativeIndexOption(stmt.IndexOption),
-+					}}},
-+				}, ctx)
-+			}
-+		case tree.INDEX_CATEGORY_NONE:
-+			if (sIdx.KeyType == tree.INDEX_TYPE_INVALID || sIdx.KeyType == tree.INDEX_TYPE_BTREE) &&
-+				indexOptionDelegable(stmt.IndexOption) {
-+				return buildAlterTable(&tree.AlterTable{
-+					Table: stmt.Table,
-+					Options: tree.AlterTableOptions{&tree.AlterOptionAdd{Def: &tree.Index{
-+						// Same typed data as the parsed CREATE INDEX AST;
-+						// the raw option is normalized to the shape ALTER's
-+						// own parser produces (nil when nothing renders) so
-+						// the per-partition RawSQL reparse/rewrite loop
-+						// stays lossless and byte-idempotent.
-+						Name:        indexName,
-+						KeyParts:    stmt.KeyParts,
-+						KeyType:     sIdx.KeyType,
-+						IndexOption: alterNativeIndexOption(stmt.IndexOption),
-+					}}},
-+				}, ctx)
-+			}
-+		}
-+	}
- 	colMap := make(map[string]*ColDef)
- 	for _, col := range tableDef.Cols {
- 		colMap[col.Name] = col
-@@ -6777,6 +6841,70 @@ func buildCreateIndex(stmt *tree.CreateIndex, ctx CompilerContext) (*Plan, error
- 	}, nil
+
+```
+
+**File**: `pkg/sql/compile/tp_allocation_reuse_test.go` (modified, +63/-0)
+```diff
+@@ -20,6 +20,7 @@ import (
+ 	"fmt"
+ 	"testing"
+ 
++	"github.com/matrixorigin/matrixone/pkg/common/moerr"
+ 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
+ 	"github.com/matrixorigin/matrixone/pkg/container/batch"
+ 	"github.com/matrixorigin/matrixone/pkg/container/types"
+@@ -319,6 +320,68 @@ func TestTPReusablePipelineQueries(t *testing.T) {
+ 	}
  }
  
-+// indexOptionDelegable reports whether an index's parsed options can ride
-+// the partitioned CREATE INDEX → ALTER ADD INDEX delegation losslessly.
-+// KEY_BLOCK_SIZE, comment and visibility serialize through the established
-+// IndexOption formatter and reparse through the index_option grammar. Every
-+// other field — the parser name, the engine attributes, and the vector and
-+// fulltext parameters the CREATE INDEX grammar also accepts — either has no
-+// serialized form or would not reparse as this ALTER option list, so indexes
-+// carrying them keep the dedicated CREATE INDEX planning path.
-+func indexOptionDelegable(option *tree.IndexOption) bool {
-+	if option == nil {
-+		return true
-+	}
-+	return option.ParserName == "" &&
-+		option.EngineAttribute == "" &&
-+		option.SecondaryEngineAttribute == "" &&
-+		option.AlgoParamList == 0 &&
-+		option.AlgoParamVectorOpType == "" &&
-+		option.AlgoParamM == 0 &&
-+		option.HnswEfConstructio
-```
-
-**File**: `pkg/sql/plan/issue_32211_partitioned_create_index_publication_test.go` (added, +298/-0)
-```diff
-@@ -0,0 +1,298 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//      http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package plan
-+
-+import (
-+	"context"
-+	"strings"
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+	"github.com/matrixorigin/matrixone/pkg/container/types"
-+	"github.com/matrixorigin/matrixone/pkg/pb/plan"
-+	"github.com/matrixorigin/matrixone/pkg/sql/features"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect"
-+)
-+
-+// Issue #32211 regression ledger.
-+//
-+// Invariant: a standalone CREATE INDEX / CREATE UNIQUE INDEX on a
-+// partitioned table must publish the index of the logical parent table in
-+// the same statement that propagates each physical partition child, i.e.
-+// it must plan through the very route ALTER TABLE ... ADD INDEX uses.
-+// The dedicated CREATE_INDEX executor publishes only physical children
-+// (one per partition) and writes mo_indexes rows keyed by each child
-+// table id, so SHOW INDEX, SHOW CREATE TABLE and index hints, which all
-+// resolve from the resolved logical table id, never observe the index
-+// even though the statement reports success.
-+//
-+// MySQL treats CREATE INDEX ON t ... as ALTER TABLE t ADD INDEX ..., so
-+// planning the statement into an ALTER TABLE INPLACE plan keeps parent
-+// publication and per-partition propagation on the established
-+// parent-and-children transactional route (Scope.AlterTable runs the
-+// logical parent first, then rewrites the recorded ALTER AST onto every
-+// partition child inside the same transaction).
-+//
-+// Controls proved here together with the desired-success cases, so the
-+// delegation is exactly bounded:
-+//   - non-partitioned tables keep the CREATE_INDEX executor and plan,
-+//   - duplicate index names keep the exact CREATE INDEX admission error
-+//     before any delegation,
-+//   - non-regular index families (RTREE/spatial, fulltext, functional)
-+//     keep their existing planning paths; only the qualified ordinary
-+//     BTREE and lossless-regular UNIQUE forms are routed.
-+
-+func newPartitionedIssue32211Context(t testing.TB) *MockCompilerContext {
-+	t.Helper()
-+	ctx := NewMockCompilerContext(true, newPlanTestProcess(t))
-+	ctx.SetContext(context.Background())
-+	registerIssue32211Table(ctx, newIssue32211TableDef("pp", true))
-+	return ctx
-+}
-+
-+func registerIssue32211Table(ctx *MockCompilerContext, def *TableDef) {
-+	ctx.tables[def.Name] = def
-+	ctx.objects[def.Name] = &ObjectRef{SchemaName: "db", ObjName: def.Name}
-+}
-+
-+// newIssue32211TableDef mirrors what the engine resolves for a CREATE
-+// TABLE ... PARTITION BY planning leaf: both the resolved Partition
-+// state and the durable FeatureFlag partition bit are filled
-+// (build_ddl.go sets features.Partitioned on partitioned creates, and
-+// relation resolution fills TableDef.Partition and TableDef.FeatureFlag).
-+func newIssue32211TableDef(name string, partitioned bool) *TableDef {
-+	intType := plan.Type{Id: int32(types.T_int32)}
-+	def := &TableDef{
-+		Name: name,
-+		Cols: []*ColDef{
-+			{
-+				ColId:   1,
-+				Name:    "c1",
-+				NotNull: false,
-+				Typ:     intType,
-+				Default: &plan.Default{NullAbility: true},
-+			},
-+			{
-+				ColId:   2,
-+				Name:    "c2",
-+				NotNull: false,
-+				Typ:     intType,
-+				Default: &plan.Default{NullAbility: true},
-+			},
-+			{
-+				ColId:   3,
-+				Name:    "c3",
-+				NotNull: false,
-+				Typ:     plan.Type{Id: int32(types.T_geometry), Width: 64},
-+				Default: &plan.Default{NullAbility: true},
-+			},
-+		},
-+	}
-+	def.Pkey = &plan.PrimaryKeyDef{
-+		Names:       []string{"c1"},
-+		PkeyColName: "__mo_fake_pk",
-+		CompPkeyCol: &plan.ColDef{
-+			Name: "__mo_fake_pk",
-+			Typ: plan.Type{
-+				Id:    int32(types.T_varchar),
-+				Width: 64,
-+			},
-+		},
-+	}
-+	if partitioned {
-+		def.Partition = &plan.Partition{
-+			PartitionDefs: []*plan.PartitionDef{
-+				{Def: &plan.Expr{}},
-+				{Def: &plan.Expr{}},
-+			},
-+		}
-+		def.FeatureFlag |= features.Partitioned
-+	}
-+	return def
-+}
-+
-+func runIssue32211Stmt(t testing.TB, ctx *MockCompilerContext, sql string) (*Plan, error) {
-+	t.Helper()
-+	stmt, err := parsers.ParseOne(context.Background(), dialect.MYSQL, sql, 1)
-+	if err != nil {
-+		return nil, err
-+	}
-+	defer stmt.Free()
-+	return BuildPlan(ctx, stmt, false, nil)
-+}
-+
-+// requireIssue32211AlterIndexPlan asserts that the statement plans into
-+// the ALTER TABLE INPLACE ADD INDEX route that publishes the l
-```
-
-**File**: `pkg/sql/plan/issue_32211_partitioned_create_index_roundtrip_test.go` (added, +533/-0)
-```diff
-@@ -0,0 +1,533 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//      http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package plan
-+
-+import (
-+	"context"
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+	"github.com/matrixorigin/matrixone/pkg/container/types"
-+	"github.com/matrixorigin/matrixone/pkg/pb/plan"
-+	"github.com/matrixorigin/matrixone/pkg/sql/features"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers/dialect"
-+	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
-+)
-+
-+// Issue #32211 — consumer-valid RawSQL oracle for the partitioned
-+// CREATE INDEX → ALTER ADD INDEX delegation.
-+//
-+// The delegated plan's RawSQL is a real consumer input: Scope.AlterTable
-+// reparses it to propagate each physical partition child
-+// (compile/alter.go alterPartitionTables), so every qualified form must
-+// survive the full serialize → ParseOne → rewrite-child-table →
-+// serialize → ParseOne loop with the exact index AST bytes and no
-+// semantic loss, including quoted identifiers, explicit btree, prefix,
-+// order, comment and visibility options. The dedicated CREATE INDEX
-+// families excluded from the delegation (vector/plugin/regular-other
-+// algos, explicit-using unique, fulltext) must keep their original
-+// planning route or their original admission error — never the ALTER
-+// route.
-+
-+// newIssue32211RoundtripTableDef mirrors the engine-resolved partition
-+// state (Partition defs + durable features.Partitioned flag) plus the
-+// legal-but-tricky identifier surface the roundtrip must preserve.
-+func newIssue32211RoundtripTableDef(name string, partitioned bool) *TableDef {
-+	def := &TableDef{
-+		Name: name,
-+		Cols: []*ColDef{
-+			{
-+				ColId:   1,
-+				Name:    "c1",
-+				NotNull: true,
-+				Typ:     plan.Type{Id: int32(types.T_int32)},
-+				Default: &plan.Default{NullAbility: false},
-+			},
-+			{
-+				ColId:   2,
-+				Name:    "nm",
-+				NotNull: false,
-+				Typ:     plan.Type{Id: int32(types.T_varchar), Width: 64},
-+				Default: &plan.Default{NullAbility: true},
-+			},
-+			{
-+				ColId:   3,
-+				Name:    "my col",
-+				NotNull: false,
-+				Typ:     plan.Type{Id: int32(types.T_varchar), Width: 64},
-+				Default: &plan.Default{NullAbility: true},
-+			},
-+			{
-+				ColId:   4,
-+				Name:    "select",
-+				NotNull: false,
-+				Typ:     plan.Type{Id: int32(types.T_varchar), Width: 64},
-+				Default: &plan.Default{NullAbility: true},
-+			},
-+		},
-+	}
-+	def.Pkey = &plan.PrimaryKeyDef{
-+		Names:       []string{"c1"},
-+		PkeyColName: "c1",
-+	}
-+	if partitioned {
-+		def.Partition = &plan.Partition{
-+			PartitionDefs: []*plan.PartitionDef{
-+				{Def: &plan.Expr{}},
-+				{Def: &plan.Expr{}},
-+			},
-+		}
-+		def.FeatureFlag |= features.Partitioned
-+	}
-+	return def
-+}
-+
-+func newIssue32211RoundtripContext(t testing.TB) *MockCompilerContext {
-+	t.Helper()
-+	ctx := NewMockCompilerContext(true, newPlanTestProcess(t))
-+	ctx.SetContext(context.Background())
-+	registerIssue32211Table(ctx, newIssue32211RoundtripTableDef("pp", true))
-+	registerIssue32211Table(ctx, newIssue32211RoundtripTableDef("p q", true))
-+	registerIssue32211Table(ctx, newIssue32211RoundtripTableDef("nn", false))
-+	return ctx
-+}
-+
-+type issue32211ExpectedKeyPart struct {
-+	col       string
-+	direction tree.Direction
-+	length    int
-+}
-+
-+type issue32211RoundtripCase struct {
-+	name      string
-+	sql       string
-+	unique    bool
-+	indexName string
-+	keyType   tree.IndexType
-+	keyParts  []issue32211ExpectedKeyPart
-+	comment   string
-+	visible   tree.VisibleType
-+}
-+
-+func parseIssue32211AlterSQL(t testing.TB, sql string, caseSensitive int64, assertMsg string) *tree.AlterTable {
-+	t.Helper()
-+	stmt, err := parsers.ParseOne(context.Background(), dialect.MYSQL, sql, caseSensitive)
-+	require.NoError(t, err, "%s: delegated RawSQL %q must reparse", assertMsg, sql)
-+	alter, ok := stmt.(*tree.AlterTable)
-+	require.True(t, ok, "%s: reparsed statement must stay ALTER TABLE, got %T", assertMsg, stmt)
-+	return alter
-+}
-+
-+// requireIssue32211IndexAST asserts the exact parser-produced index
-+// definition inside an AlterOptionAdd.
-+func requireIssue32211IndexAST(
-+	t testing.TB,
-+	tc issue32211RoundtripCase,
-+	def tree.TableDef,
-+	assertMsg string,
-+) {
-+	t.Helper()
-+	if tc.unique {
-+		ui, ok := def.(*tree.UniqueIndex)
-+		require.True(t, ok, "%s: expected a unique index def, got %T", assertMsg, def)
-+		require.Equal(t, tc.indexName, ui.Name, "
-```
-
-**File**: `pkg/tests/issues/isolated/sql_task_ownership_test.go` (modified, +228/-0)
-```diff
-@@ -233,6 +233,28 @@ func TestSQLTaskRunBarrierAcrossDropAndRecreate(t *testing.T) {
- 		_, _ = gate.ExecContext(cleanupCtx, "select release_lock('task_race_gate')")
- 	}()
- 	execSQLRequire(t, ctx, db, "create task concurrent_task as begin insert into sink select get_lock('task_race_gate', 30); end")
-+	// Fence the exact named+account definition read each racing EXECUTE resolves
-+	// through on its CN (frontend getSQLTaskByName -> CN task storage). Only a
-+	// missing definition may keep waiting inside the bounded window; any read
-+	// error, duplicate row count, wrong name/account, non-positive ID, or
-+	// cross-CN identity mismatch fails immediately with its preserved cause,
-+	// so the racing pair never starts on an unobserved assumption.
-+	racingStorages := make([]taskservice.TaskStorage, 0, 2)
-+	for cnIndex := 0; cnIndex < 2; cnIndex++ {
-+		cnService, err := cluster.GetCNService(cnIndex)
++// TestTPReusePowerProjectionDomainErrorRecovery binds a real Power projection
++// consumer (power(v-2, 0.5)) onto the reused prepared-TP pipeline: the same
++// compiled f.c/f.root must serve repeated executions, surface the typed
++// out-of-range rejection for domain rows WITHOUT publishing the failed batch
++// to the consumer, and recover valid results on the next execution.
++func TestTPReusePowerProjectionDomainErrorRecovery(t *testing.T) {
++	f := newTPReusePipeline(t, plan2.ExecTypeTP, false)
++	keyType := types.T_varchar.ToType()
++	valueType := types.T_int32.ToType()
++	bind := func(name string, args ...*plan.Expr) *plan.Expr {
++		expr, err := plan2.BindFuncExprImplByPlanExpr(f.proc.Ctx, name, args)
 +		require.NoError(t, err)
-+		cnTaskService, ok := cnService.RawService().(testutil.TaskServiceGetter).GetTaskService()
-+		require.True(t, ok)
-+		racingStorages = append(racingStorages, cnTaskService.GetStorage())
++		return expr
 +	}
-+	readyTaskID, err := waitForSQLTaskDefinitions(ctx, func(readCtx context.Context, cnIndex int) ([]taskservice.SQLTask, error) {
-+		return racingStorages[cnIndex].QuerySQLTask(readCtx,
-+			taskservice.WithTaskName(taskservice.EQ, "concurrent_task"),
-+			taskservice.WithAccountID(taskservice.EQ, 0))
-+	}, "concurrent_task", 0, 20*time.Second)
-+	require.NoError(t, err)
-+	require.Positive(t, readyTaskID)
-+	t.Logf("concurrent_task readiness fence converged before the race: task_id=%d", readyTaskID)
- 	startRace := make(chan struct{})
- 	raceResults := make(chan error, 2)
- 	for _, client := range []*sql.DB{db, peerDB} {
-@@ -548,3 +570,209 @@ func TestSQLTaskRunBarrierAcrossDropAndRecreate(t *testing.T) {
- 	require.NoError(t, db.QueryRowContext(ctx, "select count(*) from scheduled_sink where v=2").Scan(&rows))
- 	require.Equal(t, 1, rows)
++	col := func(pos int32, typ types.Type) *plan.Expr {
++		return &plan.Expr{Typ: typ.PlanType(), Expr: &plan.Expr_Col{Col: &plan.ColRef{ColPos: pos}}}
++	}
++	project := f.root.(*projection.Projection)
++	// One-shot real consumer binding: keep the key column and project
++	// power(v-2, 0.5). The reader rows are k=A/B/B with v=1/2/3, so the bases
++	// are -1/0/1 and only the v=1 row is inside the rejected real domain.
++	two := &plan.Expr{Typ: valueType.PlanType(), Expr: &plan.Expr_Lit{Lit: &plan.Literal{Value: &plan.Literal_I32Val{I32Val: 2}}}}
++	half := &plan.Expr{Typ: types.T_float64.ToType().PlanType(), Expr: &plan.Expr_Lit{Lit: &plan.Literal{Value: &plan.Literal_Dval{Dval: 0.5}}}}
++	project.ProjectList = []*plan.Expr{col(0, keyType), bind("power", bind("-", col(1, valueType), two), half)}
++
++	runSelected := func() ([]string, error) {
++		var got []string
++		err := f.execute("A", false, nil, func(b *batch.Batch) {
++			require.False(t, b.HasDictionary(), "root must publish flat results")
++			for row := range b.RowCount() {
++				got = append(got, fmt.Sprintf("%s:%v", b.Vecs[0].GetStringAt(row), vector.GetFixedAtNoTypeCheck[float64](b.Vecs[1], row)))
++			}
++		})
++		return got, err
++	}
++	var warmBytes int64
++	for cycle := range 2 {
++		got, err := runSelected()
++		require.NoError(t, err)
++		require.Equal(t, []string{"B:0", "B:1"}, got)
++		var failedBatchRows []string
++		err = f.execute("", false, nil, func(b *batch.Batch) {
++			for row := range b.RowCount() {
++				failedBatchRows = append(failedBatchRows, b.Vecs[0].GetStringAt(row))
++			}
++		})
++		var moErr *moerr.Error
++		require.True(t, errors.As(err, &moErr) && moerr.IsMoErrCode(moErr, moerr.ErrOutOfRange),
++			"empty-param selection must surface the typed domain rejection, got %v", err)
++		require.Empty(t, failedBatchRows, "the failed batch must not be published to the consumer")
++		got, err = runSelected()
++		require.NoError(t, err)
++		require.Equal(t, []string{"B:0", "B:1"}, got)
++		if cycle == 0 {
++			warmBytes = f.proc.Mp().CurrNB()
++		} else {
++			require.Equal(t, warmBytes, f.proc.Mp().CurrNB(),
++				"prepared TP executor reuse must not retain capacity")
++		}
++	}
++}
++
+ func BenchmarkTPReusablePipelineQueries(b *testing.B) {
+ 	for _, execType := range []plan2.ExecType{plan2.ExecTypeTP, plan2.ExecTypeAP_ONECN} {
+ 		b.Run(fmt.Sprint(execType), func(b *testing.B) {
+```
+
+**File**: `pkg/sql/plan/function/func_binary.go` (modified, +23/-2)
+```diff
+@@ -8954,15 +8954,36 @@ func evalRight(str string, length int64) string {
+ }
+ 
+ func Power(ivecs []*vector.Vector, result vector.FunctionResultWrapper, proc *process.Process, length int, selectList *FunctionSelectList) error {
+-	// MatrixOne treats numeric domain/overflow failures as row-local NULLs.
+-	return opBinaryFixedFixedToFixedWithNullOnError[float64, float64, float64](ivecs, result, proc, length, func(v1, v2 float64) (float64, error) {
++	// Overflow/underflow and NaN/Inf-input results stay row-local NULLs (#28375).
++	// A finite negative base with a finite non-integer exponent has no real
++	// value, so an evaluated row rejects with the DOUBLE out-of-range error
++	// (MySQL 1690, SQLSTATE 22003) instead of a silent NULL: the #28375
++	// contract's domain-shaped exception for the #31155 Expected. NULL
++	// inputs, skipped rows and all other results keep the #28375 contract.
++	// A zero-length batch evaluates no rows: the constant/constant template
++	// shape still invokes the callback once, so the domain check stays off
++	// for length 0 (colexec passes empty-batch row counts).
++	var domainErr error
++	err := opBinaryFixedFixedToFixedWithNullOnError[float64, float64, float64](ivecs, result, proc, length, func(v1, v2 float64) (float64, error) {
++		if length > 0 && v1 < 0 && !math.IsInf(v1, 0) &&
++			!math.IsNaN(v2) && !math.IsInf(v2, 0) && v2 != math.Trunc(v2) {
++			if domainErr == nil {
++				domainErr = moerr.NewOutOfRangeNoCtxf(
++					"float64", "DOUBLE value is out of range in 'pow(%v,%v)'", v1, v2)
++			}
++			return 0, nil
++		}
+ 		res := math.Pow(v1, v2)
+ 		if math.IsNaN(res) || math.IsInf(res, 0) {
+ 			return 0, moerr.NewOutOfRangeNoCtxf(
+ 				"float64", "DOUBLE value is out of range in 'pow(%v,%v)'", v1, v2)
+ 		}
+ 		return res, nil
+ 	}, selectList)
++	if domainErr != nil {
++		return domainErr
++	}
++	return err
+ }
+ 
+ func TimeDiff[T types.Time | types.Datetime](ivecs []*vector.Vector, result vector.FunctionResultWrapper, proc *process.Process, length int, selectList *FunctionSelectList) error {
+```
+
+**File**: `pkg/sql/plan/function/func_binary_test.go` (modified, +141/-35)
+```diff
+@@ -5567,7 +5567,12 @@ func TestPower(t *testing.T) {
+ 	}
+ }
+ 
+-func TestPowerInvalidResultReturnsNull(t *testing.T) {
++// TestPowerNonDomainFailuresReturnNull pins the #28375 row-local NULL
++// contract for everything outside the negative-fractional POW domain:
++// overflow and NaN/Inf input results stay NULL, finite underflow stays a
++// value-0 and input NULLs propagate. The finite negative base / finite
++// non-integer exponent domain is covered separately below.
++func TestPowerNonDomainFailuresReturnNull(t *testing.T) {
+ 	proc := testutil.NewProcess(t)
+ 	testCases := []struct {
+ 		name      string
+@@ -5577,40 +5582,33 @@ func TestPowerInvalidResultReturnsNull(t *testing.T) {
+ 		nulls     []bool
+ 	}{
+ 		{
+-			name:      "vector continues after invalid row",
+-			bases:     NewFunctionTestInput(types.T_float64.ToType(), []float64{2, -2, 4}, nil),
+-			exponents: NewFunctionTestInput(types.T_float64.ToType(), []float64{3, 0.5, 0.5}, nil),
+-			values:    []float64{8, 0, 2},
++			name:      "vector continues after overflow row",
++			bases:     NewFunctionTestInput(types.T_float64.ToType(), []float64{2, 0, 2}, nil),
++			exponents: NewFunctionTestInput(types.T_float64.ToType(), []float64{3, -1, 0.5}, nil),
++			values:    []float64{8, 0, math.Sqrt2},
+ 			nulls:     []bool{false, true, false},
+ 		},
+-		{
+-			name:      "constant base with vector exponent",
+-			bases:     NewFunctionTestConstInput(types.T_float64.ToType(), []float64{-2, -2}, nil),
+-			exponents: NewFunctionTestInput(types.T_float64.ToType(), []float64{2, 0.5}, nil),
+-			values:    []float64{4, 0},
+-			nulls:     []bool{false, true},
+-		},
+ 		{
+ 			name:      "vector base with constant exponent",
+ 			bases:     NewFunctionTestInput(types.T_float64.ToType(), []float64{2, 0}, nil),
+ 			exponents: NewFunctionTestConstInput(types.T_float64.ToType(), []float64{-1, -1}, nil),
+ 			values:    []float64{0.5, 0},
+ 			nulls:     []bool{false, true},
+ 		},
+-		{
+-			name:      "constant invalid result",
+-			bases:     NewFunctionTestConstInput(types.T_float64.ToType(), []float64{-2, -2}, nil),
+-			exponents: NewFunctionTestConstInput(types.T_float64.ToType(), []float64{0.5, 0.5}, nil),
+-			values:    []float64{0, 0},
+-			nulls:     []bool{true, true},
+-		},
+ 		{
+ 			name:      "overflow underflow and input null",
+ 			bases:     NewFunctionTestInput(types.T_float64.ToType(), []float64{2, 2, 2, 0, 0}, []bool{false, false, false, true, false}),
+ 			exponents: NewFunctionTestInput(types.T_float64.ToType(), []float64{1023, 1024, -1075, -1, 0}, nil),
+ 			values:    []float64{math.Ldexp(1, 1023), 0, 0, 0, 1},
+ 			nulls:     []bool{false, true, false, true, false},
+ 		},
++		{
++			name:      "nan and inf inputs stay row-local null",
++			bases:     NewFunctionTestInput(types.T_float64.ToType(), []float64{math.NaN(), -2, math.Inf(1), 0.5}, nil),
++			exponents: NewFunctionTestInput(types.T_float64.ToType(), []float64{2, math.NaN(), 0.5, math.Inf(-1)}, nil),
++			values:    []float64{0, 0, 0, 0},
++			nulls:     []bool{true, true, true, true},
++		},
+ 	}
+ 
+ 	for _, tc := range testCases {
+@@ -5628,37 +5626,144 @@ func TestPowerInvalidResultReturnsNull(t *testing.T) {
+ 	}
+ }
+ 
+-func TestPowerRespectsSelectList(t *testing.T) {
++// TestPowerNegativeFractionalExponentReturnsOutOfRange pins the #31155
++// Expected: a finite negative base with a finite non-integer exponent
++// rejects the statement with moerr.ErrOutOfRange (MySQL 1690, SQLSTATE
++// 22003) across every input shape of the fixed/fixed binary template.
++// This is a proposed compatibility change over merged #28375's row-local
++// NULL decision, not yet an accepted product decision.
++func TestPowerNegativeFractionalExponentReturnsOutOfRange(t *testing.T) {
+ 	proc := testutil.NewProcess(t)
+-	inputs := []FunctionTestInput{
+-		NewFunctionTestInput(types.T_float64.ToType(), []float64{-2, 2}, nil),
+-		NewFunctionTestInput(types.T_float64.ToType(), []float64{0.5, 3}, nil),
++
++	expectOutOfRange := func(t *testing.T, bases, exponents FunctionTestInput) {
++		t.Helper()
++		tcc := NewFunctionTestCase(
++			proc,
++			[]FunctionTestInput{bases, exponents},
++			NewFunctionTestResult(types.T_float64.ToType(), false, nil, nil),
++			Power,
++		)
++		defer tcc.Free()
++		require.NoError(t, tcc.result.PreExtendAndReset(tcc.fnLength))
++		err := Power(tcc.parameters, tcc.result, proc, tcc.fnLength, nil)
++		require.Error(t, err)
++		require.True(t, moerr.IsMoErrCode(err, moerr.ErrOutOfRange),
++			"expected ErrOutOfRange, got %v", err)
+ 	}
++
++	t.Run("constant base with constant exponent", func(t *testing.T) {
++		expectOutOfRange(t,
++			NewFunctionTestConstInput(types.T_float64.ToType(), []float64{-2, -2}, nil),
++			NewFunctionTestConstInput(types.T_float64.ToType(), []float64{0.5, 0.5}, nil),
++		)
++	})
++
++	t.Run("historical pow witness pow(-8, 1/3)", func(t *testing.T) {
++		expectOutOfRange(t,
++			NewFunctionTestConstInput(types.T_float64.ToType(), []float64{-8, -8}, nil),
++			NewFunctionTestConstInput(types.T_float64.ToType(), []float64{1.0 / 3.0, 
+```
+
+**File**: `pkg/tests/issues/issue_31401_scalar_test.go` (modified, +16/-0)
+```diff
+@@ -20,6 +20,7 @@ import (
+ 	"database/sql/driver"
+ 	"fmt"
+ 	"os"
++	"runtime"
+ 	"strings"
+ 	"sync"
+ 	"testing"
+@@ -77,9 +78,24 @@ func TestIssue31401ScalarRefreshProgress(t *testing.T) {
+ 				defer cancel()
+ 				cleanupSQL := func(exec func(context.Context, string, ...any) (sql.Result, error), timeout time.Duration, statement string) error {
+ 					t.Helper()
++					started := time.Now()
+ 					cleanup, stop := context.WithTimeout(context.Background(), timeout)
+ 					defer stop()
+ 					_, err := exec(cleanup, statement)
++					if err != nil {
++						// Test-only error-boundary diagnostic: retain this cleanup
++						// phase's SQL start/end/cause and a bounded snapshot of
++						// goroutine state before the assert, without touching the
++						// budget, the result, the original error or the fixture.
++						ended := time.Now()
++						var waiters [16384]byte
++						n := runtime.Stack(waiters[:], true)
++						t.Logf("issue31401 cleanupSQL error boundary: statement=%q budget=%s start=%s end=%s elapsed=%s err=%v cleanupCtxErr=%v; goroutine snapshot (bounded %d bytes):\n%s",
++							statement, timeout,
++							started.UTC().Format(time.RFC3339Nano),
++							ended.UTC().Format(time.RFC3339Nano),
++							ended.Sub(started), err, cleanup.Err(), n, waiters[:n])
++					}
+ 					assert.NoErrorf(t, err, "cleanup SQL: %s", statement)
+ 					return err
+ 				}
+```
+
+**File**: `pkg/vm/engine/tae/db/gc/v3/exec_v1.go` (modified, +7/-0)
+```diff
+@@ -348,11 +348,18 @@ func buildTableExistenceMap(snapshotMeta *logtail.SnapshotMeta, checkpointCli ch
+ 		itTable := db.MakeTableIt(true)
+ 		for itTable.Valid() {
+ 			table := itTable.Get().GetPayload()
++			// The MVCC chain behind GetDeleteAtLocked is mutated by concurrent
++			// catalog drops (DBEntry.DropTableEntryByID holds the entry write
++			// lock around DropEntryLocked -> DeleteLocked -> InsertLocked), so
++			// the GC reader must hold the same entry's read lock while taking
++			// the delete-at snapshot for this table.
++			table.RLock()
+ 			drop := table.GetDeleteAtLocked()
+ 			if drop.IsEmpty() {
+ 				tableID := table.GetID()
+ 				tableExistenceMap[tableID] = true
+ 			}
++			table.RUnlock()
+ 			itTable.Next()
+ 		}
+ 	}
+```
+
+**File**: `pkg/vm/engine/tae/db/gc/v3/executor_test.go` (modified, +178/-0)
+```diff
+@@ -17,14 +17,20 @@ package gc
+ import (
+ 	"context"
+ 	"errors"
++	"sync"
+ 	"testing"
+ 
+ 	"github.com/matrixorigin/matrixone/pkg/common/mpool"
+ 	"github.com/matrixorigin/matrixone/pkg/container/batch"
+ 	"github.com/matrixorigin/matrixone/pkg/container/types"
+ 	"github.com/matrixorigin/matrixone/pkg/container/vector"
+ 	"github.com/matrixorigin/matrixone/pkg/pb/plan"
++	"github.com/matrixorigin/matrixone/pkg/vm/engine/tae/catalog"
+ 	"github.com/matrixorigin/matrixone/pkg/vm/engine/tae/containers"
++	"github.com/matrixorigin/matrixone/pkg/vm/engine/tae/db/checkpoint"
++	"github.com/matrixorigin/matrixone/pkg/vm/engine/tae/iface/txnif"
++	"github.com/matrixorigin/matrixone/pkg/vm/engine/tae/logtail"
++	"github.com/matrixorigin/matrixone/pkg/vm/engine/tae/txn/txnbase"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+@@ -105,3 +111,175 @@ func TestBuildBloomfilter(t *testing.T) {
+ 		})
+ 	}
  }
 +
-+// waitForSQLTaskDefinitions synchronously bounds one real named+account
-+// readiness condition across the two racing CN storages. Only a missing
-+// (zero-row) observation keeps waiting until the scoped child deadline; a
-+// read error, duplicate row count, wrong expected name/account, non-positive
-+// task ID, or cross-CN identity mismatch is terminal immediately with the
-+// original cause preserved and the first/last observations attached. All
-+// reads run on the child context so cancellation always reaches them; the
-+// ticker, child timer, and the call itself never outlive the caller, and no
-+// callback or worker goroutine is ever detached.
-+func waitForSQLTaskDefinitions(ctx context.Context,
-+	read func(context.Context, int) ([]taskservice.SQLTask, error),
-+	expectName string, expectAccount uint32, window time.Duration) (uint64, error) {
-+	if window <= 0 || window > 20*time.Second {
-+		return 0, fmt.Errorf("readiness window %s outside the allowed bounded range", window)
++// gcTableExistenceRunner hands buildTableExistenceMap the real catalog while
++// letting the rest of the checkpoint.Runner surface stay inert. The racing
++// chain under test is entirely real: catalog entries, their MVCC chains, the
++// published iterators and the drop writer path.
++type gcTableExistenceRunner struct {
++	checkpoint.Runner
++	cat *catalog.Catalog
++}
++
++func (r *gcTableExistenceRunner) GetCatalog() *catalog.Catalog { return r.cat }
++
++// TestBuildTableExistenceMapConcurrentCatalogDrop is the owner
++// regression for the UT race on PR CI job 134540016566: buildTableExistenceMap
++// read each table entry's MVCC chain head / payload / delete TS through
++// GetDeleteAtLocked without the entry lock while DBEntry.DropTableEntryByID
++// (handle DropRelationByID) inserts the delete node under the entry write
++// lock. Live tables must stay present in every concurrent snapshot, committed
++// drops must stop being published, and every transaction this test starts is
++// driven to a real terminal commit or rollback via the mock factory's store
++// registration before the txn manager stops - TxnManager.Stop only parks the
++// manager, it does not finalize anyone's transactions. The bounded concurrent
++// loop exercises the racing window; it is not a claim of a deterministic
++// interleaving, and under -race the pre-fix unlocked read fires on the very
++// chains this test mutates.
++func TestBuildTableExistenceMapConcurrentCatalogDrop(t *testing.T) {
++	cat := catalog.MockCatalog(nil)
++	t.Cleanup(func() { require.NoError(t, cat.Close()) })
++	txnMgr := txnbase.NewTxnManager(
++		catalog.MockTxnStoreFactory(cat),
++		catalog.MockTxnFactory(cat),
++		types.NewMockHLCClock(1),
++	)
++	txnMgr.Start(context.Background())
++	t.Cleanup(txnMgr.Stop)
++
++	var ownedMu sync.Mutex
++	owned := make(map[string]txnif.AsyncTxn)
++	track := func(txn txnif.AsyncTxn) {
++		ownedMu.Lock()
++		owned[txn.GetID()] = txn
++		ownedMu.Unlock()
 +	}
-+	childCtx, cancel := context.WithTimeout(ctx, window)
-+	defer cancel()
-+	ticker := time.NewTicker(50 * time.Millisecond)
-+	defer ticker.Stop()
-+	var first, last string
-+	for iteration := 0; ; iteration++ {
-+		observed := make([]taskservice.SQLTask, 0, 2)
-+		views := make([]string, 0, 2)
-+		var terminal error
-+		for cnIndex := 0; cnIndex < 2 && terminal == nil; cnIndex++ {
-+			definitions, err := read(childCtx, cnIndex)
-+			switch {
-+			case err != nil:
-+				terminal = fmt.Errorf("cn%d definition read failed: %w", cnIndex, err)
-+				views = append(views, fmt.Sprintf("cn%d: read error %v", cnIndex, err))
-+			case len(definitions) > 1:
-+				terminal = fmt.Errorf("cn%d saw %d definitions, want exactly 1", cnIndex, len(definitions))
-+				views = append(views, fmt.Sprintf("cn%d: definitions=%d", cnIndex, len(definitions)))
-+			case len(definitions) == 1:
-+				definition := definitions[0]
-+				views = append(views, fmt.Sprintf("cn%d: task_id=%d account=%d name=%s",
-+					cnIndex, definition.TaskID, definition.AccountID, definition.TaskName))
-+				switch {
-+				case definition.TaskName != expectName:
-+					terminal = fmt.Errorf("cn%d definition name=%q, want %q", cnIndex, definition.TaskName, expectName)
-+				case definition.AccountID != expectAccount:
-+					terminal = fmt.Errorf("cn%d definition account=%d, want %d", cnIndex, definition.AccountID, expectAccount)
-+				case definition.TaskID == 0:
-+					terminal = fmt.Errorf("cn%d definition task_id must be positive", cnIndex)
-+				default:
-+					observed = append(observed, definition)
++	// Safety net before txnMgr.Stop (LIFO cleanup order): every still-active
++	// owned transaction is rolled back so no error or FailNow path can leak
++	// one into the manager.
++	t.Cleanup(func() {
++		ownedMu.Lock()
++		defer ownedMu.Unlock()
++		for _, txn := range owned {
++			if txn.GetTxnState(false) == txnif.TxnStateActive {
++				// Nonfatal reporting: keep the original cause visible while
++				// still letting every remaining owned rollback, manager.Stop
++				// and catalog.Close in the LIFO chain run.
++				if err := txn.Rollback(context.Background()); err != nil {
++					t.Errorf("safety-net rollback of owned txn %s failed: %v", txn.GetID(), err)
 +				}
-+			default:
-+				views = append(views, fmt.Sprintf("cn%d: definitions=0", cnIndex))
 +			}
 +		}
-+		record := fmt.Sprintf("%v", views)
-+		if iteration == 0 {
-+			first = record
-+		}
-+		last = record
-+		if terminal != nil {
-+			return 0, fmt.Errorf("concurrent_task definition readiness ended terminally: %w (first=%s, last=%s)", terminal, first, last)
-+		}
-+		if len(observed) == 2 {
-+			if observed[0].TaskID != observed[1].TaskID {
-+				return 0, fmt.Errorf("concurrent_
-```
-
-**File**: `test/distributed/cases/index/issue_32211_partition_create_index.sql` (added, +31/-0)
-```diff
-@@ -0,0 +1,31 @@
-+-- Issue #32211: standalone CREATE INDEX on a partitioned table must
-+-- publish the logical parent index (consumers resolving the logical table
-+-- id: SHOW INDEX, SHOW CREATE TABLE, index hints) together with the
-+-- physical partition-child maintenance, so the statement result is the
-+-- same operation MySQL defines it as: ALTER TABLE ... ADD INDEX. The
-+-- implicit per-case DB of this harness (issue_32211_partition_create_index)
-+-- is mo-tester Executor-owned and torn down by the harness itself; the
-+-- content DB below is private to this batch and dropped exactly. The
-+-- driver's SQL stage asserts the catalog rows parent/child; this public
-+-- case pins the statement flow through real consumers, including the
-+-- indexed-key query path after DML maintenance. Expected .result is a
-+-- semantic derivation and stays NOT_RUN until the authorized single
-+-- foreground run byte-compares it (baseline must visibly FAIL here; the
-+-- fixed binary must match the derived expected bytes exactly).
-+drop database if exists index32211_bvt;
-+create database index32211_bvt;
-+use index32211_bvt;
-+create table t1 (id int primary key, nm varchar(32), c1 int) partition by range (id) (partition p0 values less than (10), partition p1 values less than (maxvalue));
-+insert into t1 values (1,'k01',1),(5,'k05',5),(20,'k20',20),(30,'k30',30);
-+create index idx_nm on t1 (nm);
-+select id from t1 force index (idx_nm) where nm = 'k20';
-+select id from t1 where nm = 'k05';
-+update t1 set nm = 'k20b' where nm = 'k20';
-+select id from t1 force index (idx_nm) where nm = 'k20b';
-+select id from t1 where nm = 'k20';
-+delete from t1 where id in (1, 20);
-+select id from t1 force index (idx_nm) where nm = 'k30';
-+create index idx_cpx on t1 (c1 desc);
-+create unique index uidx_nm on t1 (nm);
-+create unique index ubt_nm on t1 (nm) using btree;
-+drop database index32211_bvt;
++	})
++
++	createTxn, err := txnMgr.StartTxn(nil)
++	require.NoError(t, err)
++	track(createTxn)
++	dbEntry, err := cat.CreateDBEntry(t.Name(), "", "", createTxn)
++	require.NoError(t, err)
++	// Register the DB entry like mockTxn.CreateDatabase does, so Commit()
++	// applies the DB create node too.
++	createTxn.GetStore().AddTxnEntry(dbEntry)
++
++	liveIDs := []uint64{91001, 91002, 91003}
++	victims := make([]uint64, 0, 12)
++	for id := uint64(92001); id < 92001+12; id++ {
++		victims = append(victims, id)
++	}
++	for _, id := range append(append([]uint64{}, liveIDs...), victims...) {
++		tbl, err := dbEntry.CreateTableEntryWithTableId(catalog.MockSchema(2, 0), createTxn, nil, id)
++		require.NoError(t, err)
++		// Register the entry in the txn store exactly like the catalog mock
++		// handles do, so Commit() applies the create nodes and later drop
++		// txns see committed creators instead of a stale w-w conflict.
++		createTxn.GetStore().AddTxnEntry(tbl)
++	}
++	require.NoError(t, createTxn.Commit(context.Background()))
++
++	runner := &gcTableExistenceRunner{cat: cat}
++	build := func(t *testing.T) (map[uint64]bool, error) {
++		return buildTableExistenceMap(logtail.NewSnapshotMeta(), runner)
++	}
++
++	// Warm boundary: before any drop every live and victim table is present.
++	warm, err := build(t)
++	require.NoError(t, err)
++	for _, id := range append(append([]uint64{}, liveIDs...), victims...) {
++		require.True(t, warm[id], "table %d must be visible before the drop starts", id)
++	}
++
++
 ```
 
 ---
 
-### Incident Patch 2: `4b45e977` (2026-11-15)
-**Commit Message**: fix(ci): retain ownership during batched UT cancellation (#32780)
+### Incident Patch 2: `2e99e997` (2026-11-19)
+**Commit Message**: fix(function): admit integer division by DECIMAL256 (#32757)
 
 ## What type of PR is this?
 
+- [ ] API-change
 - [x] BUG
-- [x] Test and CI
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [ ] Test and CI
+- [ ] Code Refactoring
 
 ## Which issue(s) this PR fixes:
 
-Related to https://github.com/matrixorigin/matrixone/issues/28933 and PR
-#32717. This PR does not claim to fix the already closed issue.
+Fixes #31637
 
 ## What this PR does / why we need it:
 
-When cancellation interrupts batched race-test preparation, an ordinary
-preparation error can currently start a complete fallback `go test`
-after the parent has already requested termination. A controlled
-reproduction using the real parent/helper and a blocked mock `sort` also
-observed a successful helper acknowledgement; the outer job still exited
-143. This PR does not claim an observed false-green CI job.
+Integer columns divided by DECIMAL256 currently fail function binding. Add the missing signed/unsigned integer cast-table entries and the BOOL mirror. Preserve exact extreme values, quotient precision/scale, NULL and zero-divisor behavior. Cover the shared DIV consumer, including signed overflow, with focused unit tests and a distributed SQL case.
 
-Carry the cancellation request through preparation, dispatch and
-completion; prevent a cancelled preparation from starting the fallback;
-and retain ownership of an admitted fallback until it is drained. On
-Linux with Bash 5 or newer, a verified parent-owned process group keeps
-the fallback reachable even if the helper dies before publishing its
-child PID. Non-Linux, older Bash, or unverified ownership retain the
-original foreground fallback. Ordin
+Validation:
 
-**File**: `optools/run_ut.sh` (modified, +277/-12)
+- Rebased linearly onto main `98796a5456d93b26d6051c546f9a168c0085c0ad`. The five delivery files retain their previously reviewed contents and functional evidence.
+- Current local SCA: the unmodified repository selector (`go list -deps -test` inventory) selects 169 packages. Repository-pinned `molint check -mod=readonly <169 explicit packages>` and `golangci-lint run -v -c .golangci.yml <the same 169 packages>` both returned process RC 0. All 169 were checked at current inputs; no earlier SCA result was reused.
+- One matching loca
+
+**File**: `pkg/sql/plan/function/decimal_bool_operand_test.go` (modified, +26/-13)
 ```diff
-@@ -130,6 +130,7 @@ PREBUILT_RACE_TEST_BINARY=""
- LIGHT_RACE_JOB_PID=""
- LIGHT_RACE_REPORT=""
- CURRENT_UT_PID=""
-+CURRENT_UT_BATCHED_OWNER=0
- CURRENT_UT_COMMAND_STAGE=""
- CURRENT_UT_COMMAND_LABEL=""
- CURRENT_UT_STAGE="initializing"
-@@ -172,6 +173,49 @@ if [[ -n "${MO_CL_CUDA:-}" ]] ; then
-     fi
- fi
+@@ -51,9 +51,9 @@ func TestDecimalBoolBinaryOperatorSupportLikeInt64(t *testing.T) {
+ 				_, intErr := GetFunctionByName(ctx, name, intArgs)
+ 				_, boolErr := GetFunctionByName(ctx, name, boolArgs)
+ 				if intErr != nil {
+-					// Pre-existing parity hole (INT64 / DECIMAL256 and
+-					// INT64 div DECIMAL256 are not bound on main): BOOL keeps
+-					// the same contract instead of binding wider than an int.
++					// Parity guard: BOOL never binds wider than an INT64
++					// operand, so any pairing the int row set rejects keeps
++					// rejecting the bool mirror too.
+ 					require.Error(t, boolErr, "%s %s %s", boolArgs[0].Oid, name, boolArgs[1].Oid)
+ 					continue
+ 				}
+@@ -132,15 +132,6 @@ func TestDecimalBoolBinaryTargets(t *testing.T) {
+ 			check(tc.name+" "+name+" bool side", resolved.targetTypes[1],
+ 				rightPlain.Oid, rightPlain.Width, rightPlain.Scale)
  
-+# Keep a prior run's live diagnostic links out of this run's bounded upload
-+# without deleting them. rename(2) is required: a cross-device copy could be
-+# slow and would not preserve the meaning of a link to a still-live writer.
-+function archive_previous_live_prebuilt_diagnostics(){
-+    local directory name archive archive_root="${BUILD_WKSP}/scratch"
-+    for directory in "${UT_DIAGNOSTIC_DIR}"/live-prebuilt-[0-9]*; do
-+        name=${directory##*/}
-+        [[ "${name}" =~ ^live-prebuilt-[0-9]{14}$ ]] || continue
-+        [[ -e "${directory}" || -L "${directory}" ]] || continue
-+        if [[ -L "${directory}" || ! -d "${directory}" ]]; then
-+            echo "invalid previous live diagnostic directory: ${directory}" >&2
-+            return 1
-+        fi
-+        mkdir -p "${archive_root}" || return 1
-+        archive=$(mktemp -d "${archive_root}/archived-live-prebuilt.XXXXXX") || return 1
-+        if ! python3 - "${directory}" "${archive}/${name}" "${UT_DIAGNOSTIC_DIR}" <<'PY'
-+import os
-+import re
-+import sys
-+destination = os.path.realpath(os.path.dirname(sys.argv[2]))
-+diagnostics = os.path.realpath(sys.argv[3])
-+if os.path.commonpath((destination, diagnostics)) == diagnostics:
-+    raise RuntimeError("archive destination is inside the diagnostic directory")
-+for entry in os.scandir(sys.argv[1]):
-+    name_ok = entry.name == "origin.txt" or re.fullmatch(r"live\.(?:base|[0-9]+)\.jsonl", entry.name)
-+    if not name_ok or not entry.is_file(follow_symlinks=False):
-+        raise RuntimeError("unexpected live diagnostic entry: " + entry.name)
-+os.rename(sys.argv[1], sys.argv[2])
-+PY
-+        then
-+            rmdir "${archive}" 2>/dev/null || echo "preserving archive directory: ${archive}" >&2
-+            echo "failed to archive previous live diagnostics: ${directory}" >&2
-+            return 1
-+        fi
-+        echo "archived previous live diagnostics: ${directory} -> ${archive}/${name}" >&2
-+    done
-+}
-+
-+if [[ "${TEST_TYPE}" == UT ]] && ! archive_previous_live_prebuilt_diagnostics; then
-+    echo "refusing to mix diagnostics from different UT runs" >&2
-+    exit 1
-+fi
-+
- if [[ -f $SCA_REPORT ]]; then rm $SCA_REPORT; fi
- if [[ -f $UT_REPORT ]]; then rm $UT_REPORT; fi
- if [[ -f $UT_STDERR ]]; then rm $UT_STDERR; fi
-@@ -261,9 +305,47 @@ function publish_ut_helper_completion(){
+-			if (name == "/" || name == "div") && tc.dec.Oid == types.T_decimal256 {
+-				// BOOL before a DECIMAL256 dividend does not bind for the
+-				// division operators; an INT64 operand in the same position
+-				// does not bind either, so BOOL carries no extra limitation.
+-				_, err = GetFunctionByName(ctx, name,
+-					[]types.Type{types.T_int64.ToType(), tc.dec})
+-				require.Error(t, err, "int64 %s %s", name, tc.name)
+-				continue
+-			}
+ 			resolved, err = GetFunctionByName(ctx, name, []types.Type{boolType, tc.dec})
+ 			require.NoError(t, err, "bool %s %s", name, tc.name)
+ 			require.True(t, resolved.needCast, "bool %s %s", name, tc.name)
+@@ -413,6 +404,9 @@ func TestDecimalBoolDivisionPrecisionDerivation(t *testing.T) {
+ 		{"bool divisor increment 10", 10, []types.Type{d10s2, boolT}, types.New(types.T_decimal128, 20, 12)},
+ 		{"wide quotient promotes", 4, []types.Type{types.New(types.T_decimal128, 38, 0), boolT}, types.New(types.T_decimal256, 42, 4)},
+ 		{"wide divisor scale promotes", 4, []types.Type{boolT, types.New(types.T_decimal128, 38, 38)}, types.New(types.T_decimal256, 43, 4)},
++		{"bool dividend over decimal256", 4, []types.Type{boolT, types.New(types.T_decimal256, 60, 4)}, types.New(types.T_decimal256, 9, 4)},
++		{"bool dividend over wide decimal256", 4, []types.Type{boolT, types.New(types.T_decimal256, 65, 30)}, types.New(types.T_decimal256, 35, 4)},
++		{"decimal256 dividend by bool", 4, []types.Type{types.New(types.T_decimal256, 60, 4), boolT}, types.New(types.T_decimal256, 64, 8)},
+ 	} {
+ 		t.Run(tc.name, func(t *testing.T) {
+ 			resolved, err := GetFunctionByName(
+@@ -423,7 +417,8 @@ func TestDecimalBoolDivisionPrecisionDerivation(t *testing.T) {
+ 	}
  
- function invoke_ut_helper(){
-     local UT_HELPER_COMPLETION="${G_WKSP}/${G_TS}-owner-complete.$1"
-+    local owner_name=$1 helper_name=${2:-}
-+    local batched_owner=0 BATCHED_RACE_INVOKE_TERM_REQUESTED=0 BATCHED_RACE_OWNER_PID="" BATCHED_RACE_OWNER_VERIFIED=0
-+    local owner_group="" owner_candidate=""
-     local helper_status=0
-     shift
-+    if [[ "${owner_name}" == CURRENT_UT_PID && "${helper_name}" == run_race_test_batches ]]; then
-+        batched_owner=1
-+        # The preparation wrapper temporarily replaces this trap. Keep a
-+        # separate latch alive through the return-to-completion handoff.
-+        trap 'BATCHED_RACE_INVOKE_TERM_REQUESTED=1' TERM
-+        if [[ "${BATCHED_RACE_LAUNCHED_FROM_START:-0}" == 1 && -f "${UT_HELPER_COMPLETION}" ]]; then
-+            if [[ -n "${BASHPID:-}" ]]; then
-+                owner_candidate=${BASHPID}
-+            else
-+                owner_candidate=$(exec /bin/sh -c 'printf "%s" "$PPID"') || owner_candidate=""
-+            fi
-+            if [[ "${owner_candidate}" =~ ^[1-9][0-9]*$ ]]; then
-+                owner_group=$(ps -o pgid= -p "${owner_candidate}") || owner_group=""
-+                owner_group=${owner_group//[[:space:]]/}
-+                if [[ "${owner_group}" == "${owner_candidate}" ]]; then
-+                    BATCHED_RACE_OWNER_PID=${owner_candidate}
-+                    BATCHED_RACE_OWNER_VERIFIED=1
-+                fi
-+            fi
-+        fi
-+    fi
-     "$@" || helper_status=$?
-+    if (( batched_owner )); then
-+        if (( helper_status != 0 && helper_status != 125 )); then
-+            logger "ERR" "batched UT owner selected status ${helper_status}" >&2
-+        fi
-+        # The helper has returned from its descendant ownership boundary. A
-+        # TERM from now through completion publication must prevent a success
-+        # acknowledgement; a prior TERM remains in the latch below.
-+        trap 'exit 125' TERM
-+        if (( BATCHED_RACE_INVOKE_TERM_REQUESTED != 0 )) ||
-+            [[ -e "${UT_HELPER_COMPLETION}.cancel" ]]; then
-+            logger "ERR" "batched UT owner canceled after status ${helper_status}; retaining diagnostics" >&2
-+            return 125
-+        fi
-+    fi
-     publish_ut_helper_completion "${helper_status}" || return 125
-     return "${helper_status}"
+ 	// A DECIMAL dividend divides by BOOL with the same result type as by INT64.
+-	for _, side := range []types.Type{d10s2, types.New(types.T_decimal128, 38, 0)} {
++	for _, side := range []types.Type{
++		d10s2, types.New(types.T_decimal128, 38, 0), types.New(types.T_decimal256, 60, 4)} {
+ 		boolDiv, err := GetFunctionByName(context.Background(), "/", []types.Type{side, boolT})
+ 		require.NoError(t, err)
+ 		intDiv, err := GetFunctionByName(context.Background(), "/", []types.Type{side, intT})
+@@ -441,6 +436,7 @@ func TestDecimalBoolModAndIntegerDivMetadata(t *testing.T) {
+ 	intT := types.T_int64.ToType()
+ 	d10s2 := types.New(types.T_decimal64, 10, 2)
+ 	d30s4 := types.New(types.T_decimal128, 30, 4)
++	d60s4 := types.New(types.T_decimal256, 60, 4)
+ 
+ 	// max(decimal width, exact bool width), decimal scale preserved.
+ 	require.Equal(t,
+@@ -453,6 +449,14 @@ func TestDecimalBoolModAndIntegerDivMetadata(t *testing.T) {
+ 	require.Equal(t,
+ 		types.New(types.T_decimal128, 19, 2),
+ 		DecimalModReturnType([]types.Type{d10s2, intT}, types.New(types.T_decimal128, 38, 2)))
++	// The DECIMAL256 mirror repeats the same derivation: the decimal operand
++	// keeps its own width and scale with the exact one-digit BOOL span beside it.
++	require.Equal(t,
++		types.New(types.T_decimal256, 60, 4),
++		DecimalModReturnType([]types.Type{boolT, d60s4}, types.T_decimal256.ToType()))
++	require.Equal(t,
++		types.New(types.T_decimal256, 60, 4),
++		DecimalModReturnType([]types.Type{d60s4, boolT}, types.T_decimal256.ToType()))
+ 
+ 	// Integer-division display derives from the dividend's precision and the
+ 	// divisor's scale, so BOOL and INT64 divisors agree exactly.
+@@ -462,4 +466,13 @@ func TestDecimalBoolModAndIntegerDivMetadata(t *testing.T) {
+ 	require.True(t, ok)
+ 	require.Equal(t, intDiv, boolDiv)
+ 	require.Equal(t, types.New(types.T_int64, 9, 0), boolDiv)
++
++	// A BOOL dividend keeps its exact 0/1 span against a DECIMAL256 divisor,
++	// while a wide DECIMAL256 dividend clamps at the BIGINT display domain.
++	boolDividend, ok := DecimalIntegerDivReturnType([]types.Type{boolT, d60s4})
++	require.True(t, ok)
++	require.Equal(t, types.New(types.T_int64, 6, 0), boolDividend)
++	decimalDividend, ok := DecimalIntegerDivReturnType([]types.Type{d60s4, boolT})
++	require.True(t, ok)
++	require.Equal(t, types.New(types.T_int64, 20, 0), decimalDividend)
  }
-@@ -305,6 +387,12 @@ function join_ut_owner(){
-       
 ```
 
-**File**: `optools/ut_batched_cancel_test.go` (added, +918/-0)
+**File**: `pkg/sql/plan/function/integer_decimal256_division_test.go` (added, +579/-0)
 ```diff
-@@ -0,0 +1,918 @@
+@@ -0,0 +1,579 @@
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -3352,418 +3248,364 @@ original foreground fallback. Ordin
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package optools
++package function
 +
 +import (
-+	"os/exec"
-+	"strconv"
-+	"strings"
++	"context"
++	"math"
++	"math/big"
 +	"testing"
-+	"time"
++
++	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++	"github.com/matrixorigin/matrixone/pkg/container/types"
++	"github.com/matrixorigin/matrixone/pkg/container/vector"
++	"github.com/matrixorigin/matrixone/pkg/testutil"
++	"github.com/stretchr/testify/require"
 +)
 +
-+const batchedOwnerSetup = `source ./run_ut.sh UT
-+function logger() { :; }
-+function checkpoint_ut_event() { :; }
-+UT_TIMEOUT=1
-+LD_LIBRARY_PATH=''; CGO_CFLAGS=''; CGO_LDFLAGS=''
-+UT_REPORT="$CASE_DIR/authoritative.out"
-+UT_STDERR="$CASE_DIR/stderr.log"
-+PREBUILT_RACE_REPORT="$CASE_DIR/issues-report"
-+PREBUILT_RACE_TEST_BINARY="$CASE_DIR/issues.test"
-+: > "$UT_REPORT"; : > "$UT_STDERR"
-+: > "$CASE_DIR/fixture_test.go"
-+completion="$G_WKSP/$G_TS-owner-complete.CURRENT_UT_PID"
-+`
++// The "/" admission table (fixedBinaryCastRule2) binds DECIMAL256 dividends
++// with integer divisors, but its integer-dividend mirror was missing: every
++// integer LEFT x DECIMAL256 RIGHT pair errored with an invalid-argument
++// operator message while d / u executed. These cases pin the admitted rows,
++// the implicit-cast targets, MySQL division return typing derived from the
++// ORIGINAL integer operand, real column producer/consumer values through the
++// public binding, and the unchanged neighbor cells.
 +
-+func injectBatchedHook(t *testing.T, text, anchor, replacement string) string {
++func decimal256AtScaleTestHelper(t *testing.T, digits string, scale int32) types.Decimal256 {
 +	t.Helper()
-+	if count := strings.Count(text, anchor); count != 1 {
-+		t.Fatalf("batched test hook anchor count = %d, want 1", count)
++	z, ok := new(big.Int).SetString(digits, 10)
++	require.True(t, ok, "bad decimal literal %q", digits)
++	if scale > 0 {
++		z.Mul(z, new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(scale)), nil))
 +	}
-+	return strings.Replace(text, anchor, replacement, 1)
++	return decimal256FromBigWideTest(z)
 +}
 +
-+// These synthetic children exercise the same parent drain/KILL path with a
-+// shorter grace. Existing ownership tests retain the production grace value.
-+func shortenBatchedOwnerGrace(t *testing.T, text string) string {
++func decimal256FromUint64TestHelper(v uint64) types.Decimal256 {
++	return decimal256FromBigWideTest(new(big.Int).SetUint64(v))
++}
++
++func parseDecimal256LiteralTestHelper(t *testing.T, literal string) types.Decimal256 {
 +	t.Helper()
-+	const anchor = "        wait_for_ut_process_group \"${!pid_name}\" 20 || join_status=125\n"
-+	return injectBatchedHook(t, text, anchor, "        wait_for_ut_process_group \"${!pid_name}\" 4 || join_status=125\n")
++	value, _, err := types.Parse256(literal)
++	require.NoError(t, err)
++	return value
 +}
 +
-+// The real owner cancels while the inventory partitioner's sort is running.
-+// A failed partition is normally allowed to fall back to the complete go test,
-+// but that fallback must not start after the owner requested cancellation.
-+func TestBatchedPreparationCancellationDoesNotStartFallback(t *testing.T) {
-+	t.Parallel()
-+	mock := `#!/bin/bash
-+case "${1:-}" in
-+ version|env) exit 0 ;;
-+ list) printf '%s\texample/package\nfixture_test.go\n' "$CASE_DIR"; exit 0 ;;
-+ test)
-+  shift; compile=0; out=''
-+  while (( $# )); do
-+   [[ "$1" == -c ]] && compile=1
-+   if [[ "$1" == -o ]]; then out=$2; shift; fi
-+   shift
-+  done
-+  if (( compile )); then
-+   printf '#!/bin/bash\nprintf "TestOne\\nTestTwo\\n"\n' > "$out"
-+   chmod +x "$out"
-+   exit 0
-+  fi
-+  : > "$CASE_DIR/fallback-ran"
-+  printf '%s\n' '{"Action":"pass","Package":"example/package"}'
-+  exit 0 ;;
-+esac
-+exit 81
-+`
-+	script := `source ./run_ut.sh UT
-+function logger() { :; }
-+function checkpoint_ut_event() { :; }
-+function stop_ut_heartbeat() { :; }
-+function snapshot_ut_diagnostics() { :; }
-+function report_slow_ut_cases() { :; }
-+function report_active_ut_cases() { :; }
-+cat > "$CASE_DIR/sort" <<'EOF'
-+#!/bin/bash
-+: > "$CASE_DIR/sort-ready"
-+exec sleep 30
-+EOF
-+chmod +x "$CASE_DIR/sort"
-+export PATH="$CASE_DIR:$PATH"
-+UT_TIMEOUT=1
-+LD_LIBRARY_PATH=''; CGO_CFLAGS=''; CGO_LDFLAGS=''
-+UT_REPORT="$CASE_DIR/authoritative.out"
-+UT_STDERR="$CASE_DIR/stderr.log"
-+UT_CHECKPOINT="$CASE_DIR/checkpoint.log"
-+LOG="$CASE_DIR/runner.log"
-+PREBUILT_RACE_REPORT="$CASE_DIR/issues-report"
-+PREBUILT_RACE_TEST_BINARY="$CASE_DIR/issues.test"
-+mkdir -p "$UT_DIAGNOSTIC_DIR"
-+: > "$UT_REPORT"; : > "$UT_STDERR"; : > "$UT_CHECKPOINT"
-+: > "$CASE_DIR/fixture_test.go"
-+cleanup() {
-+ status=$?
-+ [[ "$status" == 143 || "$status" == 125 ]] || status=90
-+ [[ ! -e "$CASE_DIR/fallback-ran" ]] || status=91
-+ exit "$status"
-+}
-+trap cleanup EXIT
-+trap handle_ut_termination TERM
-+start_ut_command embedded 'batched mock' run_race_test_batches example/package "$PREBUILT_RACE_TEST_BINARY" 4 4 2 independent || exit 92
-+for ((i=0; i<200; i++)); do
-+ [[ -e "$CASE_DIR/sort-ready" ]] && break
-+ kill -0 "$CURRENT_UT_PID" 2>/dev/null || break
-+ sleep .025
-+done
-+[[ -e "$CASE_DIR/sort-ready" ]] || exit 93
-+kill -TERM "$$"
-+exit 94
-+`
-+	out, err := scheduleHarnessWithMock(t, script, mock)
-+	exit, ok := err.(*exec.ExitError)
-+	if !ok || (exit.ExitCode() != 143 && exit.ExitCode() != 125) {
-+		t.Fatalf("canceled preparation must not run the ordinary fallback: %v\n%s", err, out)
++// boundDecimal256SlashExecution binds "/" publicly and returns the overload
++// execution fabric the colexec expression executor obtains for the same
++// overload id, so the consumer path is the production one.
++func boundDecimal256SlashExecution(
++	t *testing.T, name string, args []types.Type,
++) (types.Type, executeLogicOfOverload) {
++	t.Helper()
++	bound, err := GetFunctionByName(context.Background(), name, args)
++	require.NoError(t, err)
++	overload, err := GetFunctionById(context.Background(), bound.GetEncodedOverloadID())
++	require.NoError(t, err)
++	if overload.newOpWithFree != nil {
++		exec, reset, free, retained := overload.newOpWithFree()
++		t.Cleanup(func() { _ = free() })
++		t.Cleanup(func() { _ = reset() })
++		_ = retained
++		return bound.GetReturnType(), exec
 +	}
++	return bound.GetReturnType(), overload.newOp()
 +}
 +
-+// A persistent request must stop discovery even when TERM did not reach its
-+// shell. The inventory child has its own process group and must be drained.
-+func TestBatchedMarkerOnlyCancelsInventory(t *testing.T) {
-+	t.Parallel()
-+	mock := `#!/bin/bash
-+case "${1:-}" in
-+ version|env) exit 0 ;;
-+ list) printf '%s\texample/package\nfixture_test.go\n' "$CASE_DIR"; exit 0 ;;
-+ test)
-+  if [[ " $* " != *' -c '* ]]; then : > "$CASE_DIR/fallback"; exit 0; fi
-+  while (( $# )); do
-+   if [[ "$1" == -o ]]; then out=$2; br
-```
-
-**File**: `optools/ut_batched_signal_linux_test.go` (added, +445/-0)
-```diff
-@@ -0,0 +1,445 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package optools
-+
-+import (
-+	"fmt"
-+	"os"
-+	"os/exec"
-+	"os/signal"
-+	"path/filepath"
-+	"runtime/debug"
-+	"strconv"
-+	"strings"
-+	"syscall"
-+	"testing"
-+	"time"
-+)
-+
-+// Compare an actual Go test process (race-instrumented when enabled) against
-+// the original foreground invocation, before and after cmd/go-style Notify.
-+func TestBatchedFallbackSignalDisposition(t *testing.T) {
-+	if os.Getenv("MO_BATCHED_SIGNAL_PROBE") == "1" {
-+		readBits := func() string {
-+			data, err := os.ReadFile("/proc/self/status")
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			bits := make(map[string]uint64)
-+			for _, line := range strings.Split(string(data), "\n") {
-+				key, value, ok := strings.Cut(line, ":")
-+				if !ok || (key != "SigIgn" && key != "SigCgt") {
-+					continue
-+				}
-+				bits[key], err = strconv.ParseUint(strings.TrimSpace(value), 16, 64)
-+				if err != nil {
-+					t.Fatal(err)
-+				}
-+			}
-+			if len(bits) != 2 {
-+				t.Fatal("missing signal disposition")
-+			}
-+			return fmt.Sprintf("%d/%d", (bits["SigIgn"]>>1)&3, (bits["SigCgt"]>>1)&3)
-+		}
-+		before := readBits()
-+		signals := make(chan os.Signal, 1)
-+		signal.Notify(signals, syscall.SIGINT, syscall.SIGQUIT)
-+		after := readBits()
-+		signal.Stop(signals)
-+		if err := os.WriteFile(os.Getenv("MO_BATCHED_SIGNAL_OUTPUT"), []byte(before+" "+after+"\n"), 0600); err != nil {
-+			t.Fatal(err)
-+		}
-+		return
-+	}
-+
-+	t.Parallel()
-+	program, err := os.Executable()
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	mock := `#!/bin/bash
-+case "${1:-}" in
-+ version) exit 0 ;;
-+ env) exit 1 ;;
-+ test) exec "$TEST_BINARY" -test.run '^TestBatchedFallbackSignalDisposition$' ;;
-+esac
-+exit 81
-+`
-+	for _, mode := range []string{"default", "ignore", "custom"} {
-+		t.Run(mode, func(t *testing.T) {
-+			transform := func(text string) string {
-+				const foreground = "    if (( use_owned_group == 0 )); then\n"
-+				text = injectBatchedHook(t, text, foreground, "    MO_BATCHED_SIGNAL_OUTPUT=\"$CASE_DIR/foreground-signals\" \"$TEST_BINARY\" -test.run '^TestBatchedFallbackSignalDisposition$' > /dev/null || return 125\n"+foreground)
-+				const anchor = "    ) 0<&0 &\n    pid=$!\n"
-+				return injectBatchedHook(t, text, anchor, anchor+"    : > \"$CASE_DIR/async-fallback\"\n")
-+			}
-+			script := batchedOwnerSetup + `
-+trap - INT QUIT
-+case "$SIGNAL_MODE" in
-+ ignore) trap '' INT QUIT ;;
-+ custom) trap ':' INT QUIT ;;
-+esac
-+export MO_BATCHED_SIGNAL_PROBE=1 GORACE=atexit_sleep_ms=0
-+export MO_BATCHED_SIGNAL_OUTPUT="$CASE_DIR/fallback-signals"
-+status=0
-+run_ut_command embedded batched run_race_test_batches example/package "$PREBUILT_RACE_TEST_BINARY" 4 || status=$?
-+[[ "$status" == 0 ]] || exit 91
-+if (( BASH_VERSINFO[0] >= 5 )); then [[ -e "$CASE_DIR/async-fallback" ]] || exit 93; fi
-+cmp "$CASE_DIR/foreground-signals" "$CASE_DIR/fallback-signals" || exit 92
-+`
-+			out, err := scheduleHarnessWithMockTransform(t, script, mock, transform, "SIGNAL_MODE="+mode, "TEST_BINARY="+program)
-+			if err != nil {
-+				t.Fatalf("Go signal disposition (%s): %v\n%s", mode, err, out)
-+			}
++func TestIntegerOverDecimal256DivisionBinding(t *testing.T) {
++	divisor := types.New(types.T_decimal256, 65, 30)
++	for _, tc := range []struct {
++		name      string
++		left      types.T
++		precision int32
++	}{
++		{"int8", types.T_int8, 37},
++		{"int16", types.T_int16, 39},
++		{"int32", types.T_int32, 44},
++		{"int64", types.T_int64, 53},
++		{"uint8", types.T_uint8, 37},
++		{"uint16", types.T_uint16, 39},
++		{"uint32", types.T_uint32, 44},
++		{"uint64", types.T_uint64, 54},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			bound, err := GetFunctionByName(
++				context.Background(), "/", []types.Type{tc.left.ToType(), divisor})
++			require.NoError(t, err)
++			require.Equal(t,
++				types.New(types.T_decimal256, tc.precision, 4), bound.GetReturnType())
++			targets, cast := bound.ShouldDoImplicitTypeCast()
++			require.True(t, cast)
++			// The integer operand casts through the DECIMAL256 default physical
++			// type at scale zero, mirroring the legacy reverse rows; the
++			// DECIMAL256 divisor keeps its declared width and scale.
++			require.Equal(t, types.T_decimal256.ToType(), targets[0])
++			require.Equal(t, types.New(types.T_decimal256, 65, 30), targets[1])
 +		})
 +	}
 +}
 +
-+// Exercise the actual go test driver as well as its test process. The probe
-+// records INT/QUIT dispositions in both processes without sending a signal.
-+func TestBatchedFallbackRealGoDriverSignals(t *testing.T) {
-+	t.Parallel()
-+	info, ok := debug.ReadBuildInfo()
-+	if !ok {
-+		t.Fatal("missing test binary build information")
-+	}
-+	raceFlag := ""
-+	for _, setting := range info.Settings {
-+		if setting.Key == "-race" && setting.Value == "true" {
-+			raceFlag = "-race"
++func TestIntegerOverDecimal256DivisionBindingControls(t *testing.T) {
++	divisor := types.New(types.T_decimal256, 65, 30)
++
++	t.Run("decimal256 dividend over integers keeps the reverse contract", func(t *testing.T) {
++		for _, right := range []types.Type{
++			types.T_int64.ToType(), types.T_uint8.ToType(),
++		} {
++			bound, err := GetFunctionByName(
++				context.Background(), "/", []types.Type{divisor, right})
++			require.NoError(t, err)
++			require.Equal(t, types.T_decimal256, bound.GetReturnType().Oid)
++			targets, cast := bound.ShouldDoImplicitTypeCast()
++			require.True(t, cast)
++			require.Equal(t, types.T_decimal256, targets[0].Oid)
++			require.Equal(t, types.T_decimal256, targets[1].Oid)
 +		}
-+	}
-+	t.Logf("nested go test race enabled: %t", raceFlag != "")
-+	goTool, err := exec.LookPath("go")
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	root := t.TempDir()
-+	if err := os.WriteFile(filepath.Join(root, "go.mod"), []byte("module example.com/signalprobe\n\ngo 1.27.0\n"), 0600); err != nil {
-+		t.Fatal(err)
-+	}
-+	const source = `package signalprobe
-+import (
-+ "fmt"
-+ "os"
-+ "strconv"
-+ "strings"
-+ "testing"
-+)
-+func bits(t *testing.T, pid string) string {
-+ data, err := os.ReadFile("/proc/"+pid+"/status"); if err != nil { t.Fatal(err) }
-+ found := map[string]uint64{}
-+ for _, line := range strings.Split(string(data), "\n") {
-+  key, value, ok := strings.Cut(line, ":")
-+  if !ok || (key != "SigIgn" && key != "SigCgt") { continue }
-+  n, err := strconv.ParseUint(strings.TrimSpace(value), 16, 64); if err != nil { t.Fatal(err) }
++	})
++
++	t.Run("integer over decimal128 stays on the decimal128 cast", func(t *testing.T) {
++		bou
 ```
 
-**File**: `optools/ut_schedule_cleanup_test.go` (modified, +2/-2)
+**File**: `pkg/sql/plan/function/type_check.go` (modified, +9/-0)
 ```diff
-@@ -636,8 +636,8 @@ func TestHelperFailedDrainKeepsParentOwnership(t *testing.T) {
- 						hook = "            ut_test_publication \"$!\" ''\n"
- 					}
- 					if helper == "inventory" {
--						anchor = "    pid=$!\n    set +m\n"
--						hook = "    pid=$!\n    ut_test_publication \"$pid\" \"\"\n    set +m\n"
-+						anchor = "    ) > \"${inventory}\" 2>&1 &\n    pid=$!\n    set +m\n"
-+						hook = "    ) > \"${inventory}\" 2>&1 &\n    pid=$!\n    ut_test_publication \"$pid\" \"\"\n    set +m\n"
- 					}
- 					if strings.Count(text, anchor) != 1 {
- 						t.Fatal("missing unique helper publication")
+@@ -2329,6 +2329,7 @@ func initFixed2() {
+ 		// same contract instead of binding wider than an integer.
+ 		{types.T_bool, types.T_decimal64, types.T_decimal128, types.T_decimal128},
+ 		{types.T_bool, types.T_decimal128, types.T_decimal128, types.T_decimal128},
++		{types.T_bool, types.T_decimal256, types.T_decimal256, types.T_decimal256},
+ 		{types.T_decimal64, types.T_bool, types.T_decimal128, types.T_decimal128},
+ 		{types.T_decimal128, types.T_bool, types.T_decimal128, types.T_decimal128},
+ 		{types.T_decimal256, types.T_bool, types.T_decimal256, types.T_decimal256},
+@@ -2346,6 +2347,7 @@ func initFixed2() {
+ 		{types.T_int8, types.T_float64, types.T_float64, types.T_float64},
+ 		{types.T_int8, types.T_decimal64, types.T_decimal128, types.T_decimal128},
+ 		{types.T_int8, types.T_decimal128, types.T_decimal128, types.T_decimal128},
++		{types.T_int8, types.T_decimal256, types.T_decimal256, types.T_decimal256},
+ 		{types.T_int8, types.T_date, types.T_int64, types.T_int64},
+ 		{types.T_int8, types.T_time, types.T_decimal64, types.T_decimal64},
+ 		{types.T_int8, types.T_datetime, types.T_decimal128, types.T_decimal128},
+@@ -2370,6 +2372,7 @@ func initFixed2() {
+ 		{types.T_int16, types.T_float64, types.T_float64, types.T_float64},
+ 		{types.T_int16, types.T_decimal64, types.T_decimal128, types.T_decimal128},
+ 		{types.T_int16, types.T_decimal128, types.T_decimal128, types.T_decimal128},
++		{types.T_int16, types.T_decimal256, types.T_decimal256, types.T_decimal256},
+ 		{types.T_int16, types.T_date, types.T_int64, types.T_int64},
+ 		{types.T_int16, types.T_time, types.T_decimal64, types.T_decimal64},
+ 		{types.T_int16, types.T_datetime, types.T_decimal128, types.T_decimal128},
+@@ -2394,6 +2397,7 @@ func initFixed2() {
+ 		{types.T_int32, types.T_float64, types.T_float64, types.T_float64},
+ 		{types.T_int32, types.T_decimal64, types.T_decimal128, types.T_decimal128},
+ 		{types.T_int32, types.T_decimal128, types.T_decimal128, types.T_decimal128},
++		{types.T_int32, types.T_decimal256, types.T_decimal256, types.T_decimal256},
+ 		{types.T_int32, types.T_date, types.T_int64, types.T_int64},
+ 		{types.T_int32, types.T_time, types.T_decimal64, types.T_decimal64},
+ 		{types.T_int32, types.T_datetime, types.T_decimal128, types.T_decimal128},
+@@ -2418,6 +2422,7 @@ func initFixed2() {
+ 		{types.T_int64, types.T_float64, types.T_float64, types.T_float64},
+ 		{types.T_int64, types.T_decimal64, types.T_decimal128, types.T_decimal128},
+ 		{types.T_int64, types.T_decimal128, types.T_decimal128, types.T_decimal128},
++		{types.T_int64, types.T_decimal256, types.T_decimal256, types.T_decimal256},
+ 		{types.T_int64, types.T_date, types.T_int64, types.T_int64},
+ 		{types.T_int64, types.T_year, types.T_int64, types.T_int64},
+ 		{types.T_int64, types.T_time, types.T_decimal64, types.T_decimal64},
+@@ -2443,6 +2448,7 @@ func initFixed2() {
+ 		{types.T_uint8, types.T_float64, types.T_float64, types.T_float64},
+ 		{types.T_uint8, types.T_decimal64, types.T_decimal128, types.T_decimal128},
+ 		{types.T_uint8, types.T_decimal128, types.T_decimal128, types.T_decimal128},
++		{types.T_uint8, types.T_decimal256, types.T_decimal256, types.T_decimal256},
+ 		{types.T_uint8, types.T_date, types.T_int64, types.T_int64},
+ 		{types.T_uint8, types.T_time, types.T_decimal64, types.T_decimal64},
+ 		{types.T_uint8, types.T_datetime, types.T_decimal128, types.T_decimal128},
+@@ -2467,6 +2473,7 @@ func initFixed2() {
+ 		{types.T_uint16, types.T_float64, types.T_float64, types.T_float64},
+ 		{types.T_uint16, types.T_decimal64, types.T_decimal128, types.T_decimal128},
+ 		{types.T_uint16, types.T_decimal128, types.T_decimal128, types.T_decimal128},
++		{types.T_uint16, types.T_decimal256, types.T_decimal256, types.T_decimal256},
+ 		{types.T_uint16, types.T_date, types.T_int64, types.T_int64},
+ 		{types.T_uint16, types.T_time, types.T_decimal64, types.T_decimal64},
+ 		{types.T_uint16, types.T_datetime, types.T_decimal128, types.T_decimal128},
+@@ -2491,6 +2498,7 @@ func initFixed2() {
+ 		{types.T_uint32, types.T_float64, types.T_float64, types.T_float64},
+ 		{types.T_uint32, types.T_decimal64, types.T_decimal128, types.T_decimal128},
+ 		{types.T_uint32, types.T_decimal128, types.T_decimal128, types.T_decimal128},
++		{types.T_uint32, types.T_decimal256, types.T_decimal256, types.T_decimal256},
+ 		{types.T_uint32, types.T_date, types.T_int64, types.T_int64},
+ 		{types.T_uint32, types.T_time, types.T_decimal64, types.T_decimal64},
+ 		{types.T_uint32, types.T_datetime, types.T_decimal128, types.T_decimal128},
+@@ -2515,6 +2523,7 @@ func initFixed2() {
+ 		{types.T_uint64, types.T_float64, types.T_float64, types.T_float64},
+ 		{types.T_uint64, types.T_decimal64, types.T_decimal128, types.T_decimal128},
+ 		{types.T_uint64, types.T_decimal128, types.T_decimal128, types.T_decimal128},
++		{types.T_uint64, types.T_decimal256, types.T_decimal256, types.T_decimal256},
+ 		{types.T_uint64, types.T_date, types.T_int64, types.T_int64},
+ 		{types.T_uint64, types.T_time, types.T_decima
+```
+
+**File**: `test/distributed/cases/operator/integer_decimal256_division.result` (added, +57/-0)
+```diff
+@@ -0,0 +1,57 @@
++drop database if exists int_d256_div;
++create database int_d256_div;
++use int_d256_div;
++create table src(id int primary key, u bigint unsigned, s bigint, d decimal(65, 30));
++insert into src values (1,10,10,2),(2,18446744073709551615,-9223372036854775808,1),(3,null,null,2),(4,1,1,null);
++select id, u / d from src order by id;
++➤ id[4,32,0]  ¦  u / d[3,54,4]  𝄀
++1  ¦  5.0000  𝄀
++2  ¦  18446744073709551615.0000  𝄀
++3  ¦  null  𝄀
++4  ¦  null
++select id, s / d from src order by id;
++➤ id[4,32,0]  ¦  s / d[3,53,4]  𝄀
++1  ¦  5.0000  𝄀
++2  ¦  -9223372036854775808.0000  𝄀
++3  ¦  null  𝄀
++4  ¦  null
++create table iw(t8 tinyint, t16 smallint, t32 int, t64 bigint, u8 tinyint unsigned, u16 smallint unsigned, u32 int unsigned, u64 bigint unsigned, d decimal(65, 30));
++insert into iw values (127,32767,2147483647,-9223372036854775808,255,65535,4294967295,18446744073709551615,2);
++select t8 / d, t16 / d, t32 / d, t64 / d from iw;
++➤ t8 / d[3,37,4]  ¦  t16 / d[3,39,4]  ¦  t32 / d[3,44,4]  ¦  t64 / d[3,53,4]  𝄀
++63.5000  ¦  16383.5000  ¦  1073741823.5000  ¦  -4611686018427387904.0000
++select u8 / d, u16 / d, u32 / d, u64 / d from iw;
++➤ u8 / d[3,37,4]  ¦  u16 / d[3,39,4]  ¦  u32 / d[3,44,4]  ¦  u64 / d[3,54,4]  𝄀
++127.5000  ¦  32767.5000  ¦  2147483647.5000  ¦  9223372036854775807.5000
++select id, d / u from src where id = 1;
++➤ id[4,32,0]  ¦  d / u[3,65,30]  𝄀
++1  ¦  0.200000000000000000000000000000
++select id, u / cast(d as decimal(38, 10)) as q from src where id <= 2 order by id;
++➤ id[4,32,0]  ¦  q[3,34,4]  𝄀
++1  ¦  5.0000  𝄀
++2  ¦  18446744073709551615.0000
++select id, cast(u as decimal(65, 0)) / d as q from src order by id;
++➤ id[4,32,0]  ¦  q[3,65,4]  𝄀
++1  ¦  5.0000  𝄀
++2  ¦  18446744073709551615.0000  𝄀
++3  ¦  null  𝄀
++4  ¦  null
++select id, u div d from src order by id;
++➤ id[4,32,0]  ¦  u div d[-5,64,0]  𝄀
++1  ¦  5  𝄀
++2  ¦  18446744073709551615  𝄀
++3  ¦  null  𝄀
++4  ¦  null
++insert into src values (5, 7, 7, 0);
++select id, u / d from src where id = 5;
++➤ id[4,32,0]  ¦  u / d[3,54,4]  𝄀
++5  ¦  null
++create table dst(id int primary key, v decimal(65, 30));
++insert into dst values (99, 9);
++insert into dst select id, u / d from src where id <= 2;
++select id, v from dst order by id;
++➤ id[4,32,0]  ¦  v[3,65,30]  𝄀
++1  ¦  5.000000000000000000000000000000  𝄀
++2  ¦  18446744073709551615.000000000000000000000000000000  𝄀
++99  ¦  9.000000000000000000000000000000
++drop database int_d256_div;
+```
+
+**File**: `test/distributed/cases/operator/integer_decimal256_division.sql` (added, +49/-0)
+```diff
+@@ -0,0 +1,49 @@
++-- @suite
++
++-- @case
++-- @desc: integer dividends with a DECIMAL256 divisor bind the division operator; reverse,
++-- narrower decimal, typed-cast, DIV-by-DECIMAL256 and division-by-zero neighbors stay on their
++-- existing contracts (issue 31637)
++-- @label:bvt
++
++drop database if exists int_d256_div;
++create database int_d256_div;
++use int_d256_div;
++
++-- unsigned and signed extremes, NULL dividends and NULL divisors
++create table src(id int primary key, u bigint unsigned, s bigint, d decimal(65, 30));
++insert into src values (1,10,10,2),(2,18446744073709551615,-9223372036854775808,1),(3,null,null,2),(4,1,1,null);
++
++select id, u / d from src order by id;
++select id, s / d from src order by id;
++
++-- every integer storage width binds, exact cast values through the scale-0 widening
++create table iw(t8 tinyint, t16 smallint, t32 int, t64 bigint, u8 tinyint unsigned, u16 smallint unsigned, u32 int unsigned, u64 bigint unsigned, d decimal(65, 30));
++insert into iw values (127,32767,2147483647,-9223372036854775808,255,65535,4294967295,18446744073709551615,2);
++
++select t8 / d, t16 / d, t32 / d, t64 / d from iw;
++select u8 / d, u16 / d, u32 / d, u64 / d from iw;
++
++-- reverse rows keep the DECIMAL256 dividend side unchanged
++select id, d / u from src where id = 1;
++
++-- a cast into narrow decimal keeps the DECIMAL128-domain typing
++select id, u / cast(d as decimal(38, 10)) as q from src where id <= 2 order by id;
++
++-- explicitly typed same-physical-type operands stay on decimal256 division
++select id, cast(u as decimal(65, 0)) / d as q from src order by id;
++
++-- unsigned DIV with a DECIMAL256 divisor keeps the unsigned-mixed quotient
++select id, u div d from src order by id;
++
++-- a zero divisor stays NULL on the SELECT path
++insert into src values (5, 7, 7, 0);
++select id, u / d from src where id = 5;
++
++-- INSERT ... SELECT consumer widens the scale-4 quotient into the destination scale
++create table dst(id int primary key, v decimal(65, 30));
++insert into dst values (99, 9);
++insert into dst select id, u / d from src where id <= 2;
++select id, v from dst order by id;
++
++drop database int_d256_div;
 ```
 
 ---
 
-### Incident Patch 3: `f491aaab` (2026-11-16)
-**Commit Message**: [Bug] hash JSON text bytes in CRC32 (#28935)
-
-### Rebase update — 2026-11-16
-
-Rebased and pushed onto upstream `main`
-`8e8708a8d306a69512d140b40bfcfebc1d404a32`; current head:
-`031557350606c2826c564a1dda70af13186db1fd`. `git diff --check` passes
-and GitHub reports the PR mergeable. Exact-head run
-[43871964993](https://github.com/matrixorigin/matrixone/actions/runs/43871964993)
-completed with 13 success, 14 skipped, 2 neutral and no failures. Shared
-Build, Ubuntu/x86 UT, coverage UT, arm64 SCA, PROXY and pessimistic
-multi-CN BVT, CI preflight, Iceberg adapter tidy and Summary passed.
-Local PASS on darwin/arm64 with Go 1.27.1: `mo-cgo-test` ran 7 focused
-CRC32 compatibility tests across `pkg/sql/plan` and
-`pkg/sql/plan/function`.
-
-Remaining gates: fresh review on this head; the dedicated 188-statement
-`func_crc32.sql` BVT remains NOT_RUN because the shared-host lock has no
-verifiable owner; compatible `mo_br` backup/restore and deployed QA
-remain open. No unresolved inline review threads remain.
----
+### Incident Patch 3: `035af996` (2026-11-18)
+**Commit Message**: fix(frontend): handle missing subscriber accounts in SHOW PUBLICATIONS (#32901)
 
 ## What type of PR is this?
 
+- [ ] API-change
 - [x] BUG
+- [ ] Improvement
+- [ ] Documentation
+- [ ] Feature
+- [x] Test and CI
+- [ ] Code Refactoring
 
-## Which issue(s) this PR relates to
+## Which issue(s) this PR fixes:
 
-Partially addresses #28910; the issue remains open pending QA and the
-gaps below.
+issue #32899
 
-## What this PR changes
+## What this PR does / why we need it:
 
+`SHOW PUBLICATIONS` dereferences the account-ID lookup for every subscribed
+account without checking that it exists. A persisted subscription referencing a
+deleted account makes the whole statement panic, including unrelated healthy
+publications owned by the same publisher. MOI's Sample Data startup can therefore
+fail with Error 20101.
 
+Keep each selected publication and its metadata, but omit subscriber IDs absent
+from the account lookup from `subscribed_accounts`. Keep the existing sorted
+names for live accounts and emit one diagnostic warning per affected publication.
+Do not fall back to the stored account name: a recreated same-name account has
+a different identity and must not inherit the old subscription.
 
-**File**: `docs/design/pr-28935-crc32-json-compatibility.md` (added, +61/-0)
+This is a read-side resilience fix only. It does not mutate `mo_subs`, change
+publication authorization, mask catalog query errors, or fix orphan creation
+trac
+
+**File**: `pkg/embed/show_publications_accounts_test.go` (added, +148/-0)
 ```diff
-@@ -0,0 +1,61 @@
-+# CRC32(JSON) compatibility
-+
-+New SQL binds `CRC32(j)` for JSON `j` as the existing CRC32 byte function over
-+an explicit JSON-to-TEXT expression. Explicit conversion preserves the quotes
-+and escapes of a JSON string; the TEXT expression does not impose a VARCHAR
-+width on the JSON document. SQL NULL remains NULL, while JSON `null` is text.
-+Other input domains continue to use their existing CRC32 behavior.
-+
-+A supported-release catalog expression that already calls CRC32 on binary JSON
-+retains its original function and argument. Its materialized values and index
-+entries are not rewritten. Thus an old generated column can differ from a new
-+query's `CRC32(j)` for the same row; later supported writes must continue to
-+use the stored expression. Parameter rebinding must preserve the old argument,
-+while a newly bound untyped parameter specializes to its actual input domain.
-+
-+Internal ALTER COPY and LIKE carry the old bound expressions when replaying
-+unchanged definitions. Referenced column types and positions must remain valid;
-+a changed expression or incompatible input is not an implicit lossless change.
-+An explicitly changed generated expression binds with current semantics and
-+COPY rebuilds its values and dependent indexes; it is not presented as
-+preserving the old expression.
-+Existing folded defaults without source expressions keep their stored values.
-+The existing JSON text feature guard keeps new CRC32 JSON default expressions
-+visible through ordinary constant folding and catalog serialization.
-+
-+The legacy DML planner does not calculate generated columns. The current
-+candidate retains its rejection for a legacy CRC32 generated expression on
-+that fallback path; this is an unresolved availability gap, not evidence that
-+all old-table writes are supported.
-+
-+## Approaches considered
-+
-+| Approach | Benefit | Evidence or cost still required |
-+| --- | --- | --- |
-+| Existing CRC32 with a newly bound JSON-to-TEXT expression | No new CRC32 signature; matches the SQL conversion contract | Rebinding, folding and DDL must retain old expression behavior; the candidate remains under validation. |
-+| Separate new and old CRC32 execution identities | Directly distinguishes the two algorithms | Adds a durable function identity and its compatibility maintenance; the reviewer requested avoiding this extra signature. |
-+| Apply the new algorithm to every expression and rebuild old data | One final semantic value | Must recompute rows, indexes and constraints with recoverable failure handling; this changes the selected old-data contract. |
-+
-+## Connection migration and protocol
-+
-+Ordinary prepared-statement migration uses the existing SQL replay,
-+authorization, session-state and target-failure lifecycle. It adds no CRC32
-+proof messages, connection-migration preflight or CRC32-specific RPC version.
-+Existing protocol checks remain: in particular, the existing JSON-to-text CAST
-+contract can require version 129, and the CRC32 UINT64 result contract can
-+require version 80. The stopped-upgrade contract does not promise mixed-version
-+CN operation or downgrade.
-+
-+## Validation required
-+
-+Compare fixed JSON text bytes against an independent CRC32 oracle, including
-+quotes, escapes, long and multibyte strings, SQL NULL and JSON null. Exercise
-+prepared binding and rebind, selection and executor reuse, non-JSON domains,
-+legacy and new generated values, indexes, ALTER/LIKE, defaults and checks, and
-+ordinary and CRC32 prepared connection migration. Validate actual supported
-+release-created rows and indexes through shutdown upgrade, subsequent writes,
-+restart and restoration of a backup made by the old release.
-+
-+The earlier v4.2.5-to-`533cf11915cf` upgrade and same-head CI evidence applies
-+only to that published candidate. This edited candidate requires its own
-+validation, and its legacy fallback gap remains open.
-```
-
-**File**: `pkg/embed/crc32_json_prepared_test.go` (added, +261/-0)
-```diff
-@@ -0,0 +1,261 @@
+@@ -0,0 +1,148 @@
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
 +// you may not use this file except in compliance with the License.
 +// You may obtain a copy of the License at
 +//
-+//      http://www.apache.org/licenses/LICENSE-2.0
++//     http://www.apache.org/licenses/LICENSE-2.0
 +//
 +// Unless required by applicable law or agreed to in writing, software
 +// distributed under the License is distributed on an "AS IS" BASIS,
@@ -3777,144 +3619,120 @@ gaps below.
 +	"context"
 +	"database/sql"
 +	"fmt"
++	"strings"
 +	"testing"
 +	"time"
 +
-+	"github.com/go-sql-driver/mysql"
-+	"github.com/matrixorigin/matrixone/pkg/clusterservice"
-+	moruntime "github.com/matrixorigin/matrixone/pkg/common/runtime"
-+	"github.com/matrixorigin/matrixone/pkg/defines"
-+	"github.com/matrixorigin/matrixone/pkg/pb/metadata"
-+	"github.com/matrixorigin/matrixone/pkg/pb/query"
-+	qclient "github.com/matrixorigin/matrixone/pkg/queryservice/client"
++	_ "github.com/go-sql-driver/mysql"
++	"github.com/matrixorigin/matrixone/pkg/cnservice"
++	"github.com/matrixorigin/matrixone/pkg/util/executor"
 +	"github.com/stretchr/testify/require"
 +)
 +
-+// Reuse the package's single-CN fixture; two rows distinguish runtime JSON
-+// evaluation from folding and one schema change exercises prepared reprepare.
-+func TestCRC32JSONBinaryPrepared(t *testing.T) {
++// Reuse the shared SQL fixture. Only the orphan catalog precondition is seeded
++// internally: all SHOWs and healthy publication/subscription setup use MySQL.
++// This does not attempt to reproduce the separate DROP ACCOUNT lifecycle bug.
++func TestShowPublicationsMissingAccountsSQL(t *testing.T) {
 +	RunSingleCNBaseClusterTests(t, func(c Cluster) {
-+		ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
-+		defer cancel()
 +		cn, err := c.GetCNService(0)
 +		require.NoError(t, err)
-+		cfg := mysql.NewConfig()
-+		cfg.User = "dump"
-+		cfg.Passwd = "111"
-+		cfg.Net = "tcp"
-+		cfg.Addr = fmt.Sprintf("127.0.0.1:%d", cn.GetServiceConfig().CN.Frontend.Port)
-+		db, err := sql.Open("mysql", cfg.FormatDSN())
++		sys, err := sql.Open("mysql", fmt.Sprintf("dump:111@tcp(127.0.0.1:%d)/", cn.GetServiceConfig().CN.Frontend.Port))
 +		require.NoError(t, err)
-+		defer db.Close()
-+		db.SetMaxOpenConns(1)
-+		conn, err := db.Conn(ctx)
-+		require.NoError(t, err)
-+		defer conn.Close()
-+		exec := func(query string) { t.Helper(); _, err := conn.ExecContext(ctx, query); require.NoError(t, err) }
-+		exec("create database crc32_prepared_contract")
-+		defer func() {
-+			cleanup, stop := context.WithTimeout(context.Background(), 5*time.Second)
-+			defer stop()
-+			_, _ = conn.ExecContext(cleanup, "drop database crc32_prepared_contract")
-+		}()
-+		exec("use crc32_prepared_contract")
-+		exec("create table t(id int primary key,j json)")
-+		exec(`insert into t values(1,'{"t1":"a"}'),(2,'{"t1":"b"}')`)
-+		stmt, err := conn.PrepareContext(ctx, "select crc32(j) from t where id=?")
-+		require.NoError(t, err)
-+		defer stmt.Close()
-+		check := func(id int, want uint64) {
-+			t.Helper()
-+			var got uint64
-+			require.NoError(t, stmt.QueryRowContext(ctx, id).Scan(&got))
-+			require.Equal(t, want, got)
-+		}
-+		check(1, 4012824821)
-+		check(2, 3983042220)
-+		exec("alter table t add column other int")
-+		check(1, 4012824821)
-+
-+		// Exercise the added function BVT's generated value and index contract
-+		// through the same live SQL frontend, including every mutation form.
-+		// The embedded cluster becomes query-ready before the durable catalog
-+		// barrier finishes. Observe the existing JSON-to-text admission; do not
-+		// set a runtime version or floor to manufacture authoring permission.
-+		require.Eventually(t, func() bool {
-+			rt := moruntime.ServiceRuntime(cn.ServiceID())
-+			if rt == nil {
-+				return false
++		defer sys.Close()
++		internal := cn.RawService().(cnservice.Service).GetSQLExecutor()
++		internalSQL := func(ctx context.Context, statement string) error {
++			result, err := internal.Exec(ctx, statement, executor.Options{}.WithAccountID(0).WithWaitCommittedLogApplied())
++			if err == nil {
++				result.Close()
 +			}
-+			value, ok := rt.GetGlobalVariables(moruntime.PersistedExpressionProtocolAuthoringFloor)
-+			floor, valid := value.(int64)
-+			return ok && valid && floor >= defines.MORPCVersion129
-+		}, 90*time.Second, 100*time.Millisecond, "existing result-type authoring admission did not complete")
-+		exec(`create table crc32_constant_default(id int primary key,c bigint unsigned default (crc32(cast('{"t1":"a"}' as json))))`)
-+		exec("insert into crc32_constant_default(id) values(1)")
-+		var constantDefaultCRC uint64
-+		require.NoError(t, conn.QueryRowContext(ctx, "select c from crc32_constant_default where id=1").Scan(&constantDefaultCRC))
-+		require.Equal(t, uint64(4012824821), constantDefaultCRC)
-+		exec("create table generated_crc(id int primary key,j json,c bigint unsigned generated always as (crc32(j)) stored,index idx_crc(c))")
-+		exec(`insert into generated_crc(id,j) values(1,'{"t1":"a"}')`)
-+		exec("insert into generated_crc(id,j) select 2,j from generated_crc where id=1")
-+		exec(`update generated_crc set j='{"t1":"b"}' where id=2`)
-+		exec(`replace into generated_crc(id,j) values(1,'{"t1":"c"}')`)
-+		exec(`insert into generated_crc(id,j) values(2,'{"t1":"a"}') on duplicate key update j=values(j)`)
-+		checkGenerated := func() {
-+			t.Helper()
-+			for id, want := range map[int]uint64{1: 3970567323, 2: 4012824821} {
-+				var stored, fresh uint64
-+				require.NoError(t, conn.QueryRowContext(ctx, "select c,crc32(j) from generated_crc where id=?", id).Scan(&stored, &fresh))
-+				require.Equal(t, want, stored)
-+				require.Equal(t, want, fresh)
-+			}
++			return err
 +		}
-+		checkGenerated()
-+		exec("prepare crc32_read from 'select
++		const account = "showpub_live"
++		const database = "showpub_source"
++		const orphanID = 2000000000
++		const orphanPredicate = "sub_account_id=2000000000 and pub_account_id=0 and pub_name in ('showpub_mixed','showpub_orphan')"
++		for pass := 0; pass < 2; pass++ {
++			if !t.Run(fmt.Sprintf("pass_%d", pass), func(t *testing.T) {
++				ctx, cancel := context.WithTimeout(t.Context(), 120*time.Second)
++				defer cancel()
++				exec := func(statement string) {
++					t.Helper()
++					_, err := sys.ExecContext(ctx, statement)
++					require.NoError(t, err, statement)
++				}
++				count := func(ctx context.Context, statement string) int {
++					t.Helper()
++					var n int
++					require.NoError(t, sys.QueryRowContext(ctx, statement).Scan(&n))
++					return n
++				}
++				// Assert the prior pass's cleanup; entry DROP IF EXISTS would mask it.
++				require.Zero(t, count(ctx, "select count(*) from mo_catalog.mo_account where account_name='showpub_live' or account_id=2000000000"))
++				require.Zero(t, count(ctx, "select count(*) from mo_catalog.mo_pubs where account_id=0 and pub_name in ('showpub_mixed','showpub_orphan')"))
++				require.Zero(t, count(ctx, "select count(*) from mo_catalog.mo_database where account_id=0 and datname='showpub_source'"))
++				defer func() {
++					cleanup, stop := context.WithTimeout(context.Background(), 90*time.Second)
++					defer stop()
++					if err := internalSQL(cleanup, "delete from mo_catalog.mo_subs where "+orphanPredicate); err != nil {
++						t.Errorf("cleanup orphan subscriptions: %v", err)
++					}
++					for _, statement := range []string{
++						"drop account if exists " + account,
++						"drop publication if exists showpub_mixed",
++						"drop publication if exists showpub_orphan",
++						"drop database if exists " + database,
++					} {
++						_, err := sys.ExecContext(cleanup, statement)
++						if err != nil {
++							t.Errorf("cleanup %q: %v", statement, err)
++						}
++					}
++					require.Zero(t, count(cleanup, "select count(*) from mo_catalog.mo_subs where pub_account_id=0 and pub_name in ('showpub_mixed','showpub_orphan')"))
++					require.Zero(t, count(cleanup, "select count(*) from mo_catalog.mo_account where account_name='showpub_live'"))
++					require.Zero(t, count(cleanup, "select count(*) from mo_catalog.mo_pubs where account_id=0 and pub_name in ('showpub_mixed','showpub_orphan')"))
++					require.Zero(t, count(cleanup, "select count(*) from mo_catalog.mo_database where account_id=0 and datname='showpub_source'"))
++				}()
++				exec("create account " + account + " admin_name 'admin' identified by '111'")
++				exec("create database " + database)
++				exec("create table " + database + ".t (id int primary key)")
++				exec("insert into " + database + ".t values (7)")
++				for _, pub := range []string{"showpub_mixed", "showpub_orphan"} {
++					exec("create publication " + pub + " database " + database + " account " + account)
++				}
++				subscriber, err := sql.Open("mysql", fmt.Sprintf("%s#admin#accountadmin:111@tcp(127.0.0.1:%d)/", account, cn.GetServiceConfig().CN.Frontend.Port))
++				require.NoError(t, err)
++				defer subscriber.Close()
++				_, err = subscriber.ExecContext(ctx, "create database live_sub 
 ```
 
-**File**: `pkg/pb/plan/string_literal_form_test.go` (modified, +29/-0)
+**File**: `pkg/frontend/publication_subscription.go` (modified, +12/-1)
 ```diff
-@@ -1023,6 +1023,35 @@ func TestRequiredRemoteExpressionFeaturesDecimalLiteralSemantics(t *testing.T) {
- 	require.False(t, features.DecimalLiteralSemantics)
- }
+@@ -1987,8 +1987,19 @@ func doShowPublications(ctx context.Context, ses *Session, sp *tree.ShowPublicat
+ 		if err != nil {
+ 			return err
+ 		}
++		missingAccounts := 0
+ 		for _, subInfo := range subscribedInfos {
+-			subscribedAccountNames = append(subscribedAccountNames, accIdInfoMap[subInfo.SubAccountId].Name)
++			accountInfo := accIdInfoMap[subInfo.SubAccountId]
++			if accountInfo == nil {
++				// A stale subscription must not hide this or other publications.
++				// Do not fall back to the stored name: it may belong to a new ID.
++				missingAccounts++
++				continue
++			}
++			subscribedAccountNames = append(subscribedAccountNames, accountInfo.Name)
++		}
++		if missingAccounts > 0 {
++			ses.Warnf(ctx, "SHOW PUBLICATIONS: publication %q has %d subscribed account IDs absent from the account lookup; omitted from subscribed_accounts", pubInfo.PubName, missingAccounts)
+ 		}
+ 		slices.Sort(subscribedAccountNames)
  
-+func TestCRC32ExecutionIdentityRoundTrip(t *testing.T) {
-+	for _, tc := range []struct {
-+		typ      int32
-+		textCast bool
-+	}{
-+		{planJSONTypeID, false}, {planAnyTypeID, false}, {61, false}, {planJSONTypeID, true},
-+	} {
-+		arg := &Expr{Typ: Type{Id: tc.typ}, Expr: &Expr_Col{Col: &ColRef{ColPos: 0}}}
-+		if tc.textCast {
-+			arg = &Expr{Typ: Type{Id: planTextTypeID}, Expr: &Expr_F{F: &Function{
-+				Func: &ObjectRef{Obj: int64(21)<<32 | 1, ObjName: "cast"}, Args: []*Expr{arg},
-+			}}}
-+		}
-+		expr := &Expr{Typ: Type{Id: 28}, Expr: &Expr_F{F: &Function{Func: &ObjectRef{Obj: int64(crc32FunctionID) << 32, ObjName: "crc32"}, Args: []*Expr{arg}}}}
-+		owner := &TableDef{Cols: []*ColDef{{GeneratedCol: &GeneratedCol{Expr: expr, IsStored: true}}}}
-+		data, err := owner.Marshal()
-+		require.NoError(t, err)
-+		decoded := &TableDef{}
-+		require.NoError(t, decoded.Unmarshal(data))
-+		features, err := RequiredRemoteExpressionFeatures(decoded)
-+		require.NoError(t, err)
-+		require.Equal(t, tc.textCast, features.JSONOpaqueTextContracts)
-+		folded := &Expr{Expr: &Expr_Lit{Lit: &Literal{Src: expr}}}
-+		features, err = RequiredRemoteExpressionFeatures(folded)
-+		require.NoError(t, err)
-+		require.Equal(t, tc.textCast, features.JSONOpaqueTextContracts)
-+	}
-+}
-+
- func TestTemporalConversionProtocolSourceMatrix(t *testing.T) {
- 	column := func(id int32) *Expr {
- 		return &Expr{Typ: Type{Id: id}, Expr: &Expr_Col{Col: &ColRef{ColPos: 0}}}
 ```
 
-**File**: `pkg/sql/compile/crc32_protocol_test.go` (added, +164/-0)
+**File**: `pkg/frontend/show_publications_accounts_test.go` (added, +110/-0)
 ```diff
-@@ -0,0 +1,164 @@
+@@ -0,0 +1,110 @@
 +// Copyright 2026 Matrix Origin
 +//
 +// Licensed under the Apache License, Version 2.0 (the "License");
@@ -3929,309 +3747,111 @@ gaps below.
 +// See the License for the specific language governing permissions and
 +// limitations under the License.
 +
-+package compile
++package frontend
 +
 +import (
 +	"context"
++	"errors"
 +	"fmt"
 +	"testing"
 +
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+	moruntime "github.com/matrixorigin/matrixone/pkg/common/runtime"
-+	"github.com/matrixorigin/matrixone/pkg/container/types"
++	"github.com/golang/mock/gomock"
 +	"github.com/matrixorigin/matrixone/pkg/defines"
-+	"github.com/matrixorigin/matrixone/pkg/pb/pipeline"
-+	planpb "github.com/matrixorigin/matrixone/pkg/pb/plan"
-+	"github.com/matrixorigin/matrixone/pkg/sql/colexec/projection"
-+	"github.com/matrixorigin/matrixone/pkg/sql/colexec/vectorscan"
-+	plan2 "github.com/matrixorigin/matrixone/pkg/sql/plan"
-+	"github.com/matrixorigin/matrixone/pkg/sql/plan/function"
-+	"github.com/matrixorigin/matrixone/pkg/vm/engine"
++	mock_frontend "github.com/matrixorigin/matrixone/pkg/frontend/test"
++	"github.com/matrixorigin/matrixone/pkg/sql/parsers/tree"
++	"github.com/prashantv/gostub"
++	"github.com/stretchr/testify/require"
 +)
 +
-+func crc32JSONTextProtocolExpr(t *testing.T, pos int32) *planpb.Expr {
-+	t.Helper()
-+	arg := &planpb.Expr{Typ: planpb.Type{Id: int32(types.T_json)}, Expr: &planpb.Expr_Col{Col: &planpb.ColRef{ColPos: pos}}}
-+	expr, err := plan2.BindFuncExprImplByPlanExpr(context.Background(), "crc32", []*planpb.Expr{arg})
-+	require.NoError(t, err)
-+	return expr
-+}
-+
-+func TestCRC32JSONProtocolIncludesMergedMediumIntBounds(t *testing.T) {
-+	mediumInt := &planpb.Expr{
-+		Typ: planpb.Type{Id: int32(types.T_int32), Width: 24},
-+		Expr: &planpb.Expr_F{F: &planpb.Function{
-+			Func: &planpb.ObjectRef{Obj: function.EncodeOverloadID(function.CAST_ASSIGN, 0), ObjName: "cast_assign"},
-+			Args: []*planpb.Expr{
-+				{Typ: planpb.Type{Id: int32(types.T_int32)}, Expr: &planpb.Expr_Col{Col: &planpb.ColRef{ColPos: 0}}},
-+				{Typ: planpb.Type{Id: int32(types.T_int32), Width: 24}, Expr: &planpb.Expr_T{T: &planpb.TargetType{}}},
-+			},
-+		}},
-+	}
-+	// Preserve actual main's widened-result/width-24 assignment-target contract.
-+	mediumInt.Typ.Width = 32
-+	crc32JSON := crc32JSONTextProtocolExpr(t, 1)
-+	floatCast := floatConversionProtocolExpr(function.CAST, types.T_varchar, types.T_float64)
++func TestShowPublicationsAccountResolution(t *testing.T) {
++	queryErr := errors.New("catalog read failed")
 +	for _, tc := range []struct {
-+		name            string
-+		exprs           []*planpb.Expr
-+		mediumInt       bool
-+		crc32JSON       bool
-+		floatConversion bool
-+		version         int64
++		name       string
++		subs       []int64
++		want       string
++		failQuery  int
++		queryError error
 +	}{
-+		{"mediumint_only", []*planpb.Expr{mediumInt}, true, false, false, defines.MORPCVersion110},
-+		{"crc32_only", []*planpb.Expr{crc32JSON}, false, true, false, defines.MORPCVersion129},
-+		{"mediumint_then_crc32", []*planpb.Expr{mediumInt, crc32JSON}, true, true, false, defines.MORPCVersion129},
-+		{"crc32_then_mediumint", []*planpb.Expr{crc32JSON, mediumInt}, true, true, false, defines.MORPCVersion129},
-+		{"float_only", []*planpb.Expr{floatCast}, false, false, true, defines.MORPCVersion132},
-+		{"float_then_crc32", []*planpb.Expr{floatCast, crc32JSON}, false, true, true, defines.MORPCVersion132},
-+		{"crc32_then_float", []*planpb.Expr{crc32JSON, floatCast}, false, true, true, defines.MORPCVersion132},
++		{name: "healthy_sorted", subs: []int64{2, 1}, want: "alpha,zeta"},
++		{name: "no_subscribers"},
++		{name: "missing_only", subs: []int64{99}},
++		{name: "mixed", subs: []int64{2, 99, 1}, want: "alpha,zeta"},
++		{name: "publication_read_error", failQuery: 0, queryError: queryErr},
++		{name: "account_read_error", failQuery: 1, queryError: queryErr},
++		{name: "subscription_read_error", failQuery: 2, queryError: queryErr},
++		{name: "subscription_canceled", failQuery: 2, queryError: context.Canceled},
 +	} {
 +		t.Run(tc.name, func(t *testing.T) {
-+			c, client := expressionProtocolTestCompile(t)
-+			qry := &planpb.Query{Nodes: []*planpb.Node{{ProjectList: tc.exprs}}, Steps: []int32{0}}
-+			features, err := planpb.RequiredRemoteExpressionFeatures(qry)
-+			require.NoError(t, err)
-+			require.Equal(t, tc.mediumInt, features.MediumIntAssignmentBounds)
-+			require.Equal(t, tc.crc32JSON, features.JSONOpaqueTextContracts)
-+			require.Equal(t, tc.floatConversion, features.FloatConversionSemantics)
-+			require.Equal(t, tc.version, remoteExpressionProtocolVersion(features))
-+			owner := &planpb.TableDef{}
-+			for _, expr := range tc.exprs {
-+				owner.Cols = append(owner.Cols, &planpb.ColDef{GeneratedCol: &planpb.GeneratedCol{Expr: expr}})
++			ctrl := gomock.NewController(t)
++			ses := newSes(nil, ctrl)
++			t.Cleanup(ses.Close)
++			ctx := defines.AttachAccount(t.Context(), sysAccountID, rootID, moAdminRoleID)
++			const timestamp = "2026-01-01 00:00:00"
++			pubs := &MysqlResultSet{Columns: make([]Column, 12), Data: [][]interface{}{
++				{int64(0), "sys", "affected", "db1", uint64(1), "*", "all", timestamp, nil, uint64(0), uint64(0), "keep comment"},
++				{int64(0), "sys", "healthy", "db2", uint64(2), "t", "alpha", timestamp, timestamp, uint64(0), uint64(0), ""},
++			}}
++			accounts := &MysqlResultSet{Columns: make([]Column, 5), Data: [][]interface{}{
++				{int64(1), "alpha", "open", uint64(1), nil},
++				{int64(2), "zeta", "open", uint64(1), nil},
++				// A recreated account must not inherit the missing ID's subscription.
++				{int64(100), "reused_name", "open", uint64(1), nil},
++			}}
++			subs := &MysqlResultSet{Columns: make([]Column, 12)}
++			for _, id := range tc.subs {
++				subs.AddRow([]interface{}{id, "reused_name", "sub_db", timestamp, int64(0), "sys", "affected", "db1", "*", timestamp, "", int64(1)})
 +			}
-+			persisted, err := plan2.RequiredPersistedExpressionProtocolVersion(owner)
++			healthy := &MysqlResultSet{Columns: make([]Column, 12), Data: [][]interface{}{
++				{int64(1), "alpha", "sub_other", timestamp, int64(0), "sys", "healthy", "db2", "t", timestamp, "", int64(0)},
++			}}
++			queries := []string{
++				fmt.Sprintf(getPubInfoSql, sysAccountID) + " order by update_time desc, created_time desc",
++				getAccountIdNamesSql,
++				getSubsSql + " and pub_account_name = 'sys' and pub_name = 'affected' and sub_name is not null",
++				getSubsSql + " and pub_account_name = 'sys' and pub_name = 'healthy' and sub_name is not null",
++			}
++			results := []*MysqlResultSet{pubs, accounts, subs, healthy}
++			bh := mock_frontend.NewMockBackgroundExec(ctrl)
++			stub := gostub.StubFunc(&NewBackgroundExec, bh)
++			t.Cleanup(stub.Reset)
++			bh.EXPECT().Close()
++			var calls []*gomock.Call
++			for i, query := range queries {
++				calls = append(calls, bh.EXPECT().ClearExecResultSet())
++				if tc.queryError != nil && i == tc.failQuery {
++					calls = append(calls, bh.EXPECT().Exec(gomock.Any(), query).Return(tc.queryError))
++					break
++				}
++				calls = append(calls,
++					bh.EXPECT().Exec(gomock.Any(), query).Return(nil),
++					bh.EXPECT().GetExecResultSet().Return([]interface{}{results[i]}),
++				)
++			}
++			// Only these reads are allowed; unexpected cleanup writes fail the test.
++			gomock.InOrder(calls...)
++			err := doShowPublications(ctx, ses, &tree.ShowPublications{})
++			if tc.queryError != nil {
++				require.ErrorIs(t, err, tc.queryError)
++				return
++			}
 +			require.NoError(t, err)
-+			require.Equal(t, tc.version, persisted)
-+
-+			op := projection.NewArgument()
-+			defer op.Release()
-+			op.ProjectList = tc.exprs
-+			scope := &Scope{Magic: Remote, Proc: c.proc, NodeInfo: engine.Node{Id: "old-worker", Addr: "remote:6001"}, RootOp: op}
-+			client.version = tc.version - 1
-+			c.execType = plan2.ExecTypeAP_MULTICN
-+			c.cnList = engine.Nodes{{Id: "old-worker", Addr: "remote:6001", Mcpu: 4}}
-+			require.NoError(t, c.constrainRemoteExpressionWorkers(qry))
-+			require.Equal(t, plan2.ExecTypeAP_ONECN, c.execType)
-+			_, err = encodeRemoteScope(scope, c.proc)
-+			require.ErrorContains(t, err, "remote destination")
-+			require.ErrorContains(t, err, fmt.Sprintf("MORPC ver
-```
-
-**File**: `pkg/sql/compile/remoterun_test.go` (modified, +39/-0)
-```diff
-@@ -1653,6 +1653,17 @@ func TestRemoteExpressionProtocolValidation(t *testing.T) {
- 		require.NoError(t, validateRemoteExpressionPipelineProtocol(proc, remotePipeline))
- 	})
- 
-+	t.Run("CRC32 JSON text retains existing cast gate", func(t *testing.T) {
-+		crc := crc32JSONTextProtocolExpr(t, 0)
-+		pipeline := &pipeline.Pipeline{InstructionList: []*pipeline.Instruction{{ProjectList: []*planpb.Expr{crc}}}}
-+		rt.SetGlobalVariables(moruntime.MOProtocolVersion, defines.MORPCVersion128)
-+		require.ErrorContains(t, validateRemoteExpressionPipelineProtocol(proc, pipeline), "protocol version 129")
-+		for _, version := range []int64{defines.MORPCVersion129, defines.MORPCVersion134} {
-+			rt.SetGlobalVariables(moruntime.MOProtocolVersion, version)
-+			require.NoError(t, validateRemoteExpressionPipelineProtocol(proc, pipeline))
-+		}
-+	})
-+
- 	t.Run("typed BIN/CONV sender and receiver boundary", func(t *testing.T) {
- 		cases := []struct {
- 			name       string
-@@ -1892,6 +1903,34 @@ func TestRemoteExpressionProtocolValidation(t *testing.T) {
- 	})
- }
- 
-+func TestCRC32JSONTextBytesKeepsExistingStreamMinimum(t *testing.T) {
-+	c, client := expressionProtocolTestCompile(t)
-+	client.version = defines.MORPCVersion134
-+	crc := crc32JSONTextProtocolExpr(t, 0)
-+	floatCast := floatConversionProtocolExpr(planfunction.CAST, types.T_varchar, types.T_float64)
-+	for _, tc := range []struct {
-+		name  string
-+		exprs []*planpb.Expr
-+		want  int64
-+	}{
-+		{"crc only", []*planpb.Expr{crc}, defines.MORPCVersion129},
-+		{"crc then float", []*planpb.Expr{crc, floatCast}, defines.MORPCVersion132},
-+		{"float then crc", []*planpb.Expr{floatCast, crc}, defines.MORPCVersion132},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			root := projection.NewArgument()
-+			defer root.Release()
-+			root.ProjectList = tc.exprs
-+			scope := &Scope{Magic: Remote, Proc: c.proc, NodeInfo: engine.Node{Id: "old-worker", Addr: "remote:6001"}, RootOp: root}
-+			minimum := defines.MORPCVersion134
-+			data, err := encodeRemoteScopeWithProtocol(scope, c.proc, &minimum)
-+			require.NoError(t, err)
-+			require.NotEmpty(t, data)
-+			require.Equal(t, tc.want, minimum)
++			require.Len(t, ses.mrs.Columns, 8)
++			require.Equal(t, [][]interface{}{
++				{"affected", "db1", "*", "*", tc.want, timestamp, nil, "keep comment"},
++				{"healthy", "db2", "t", "alpha", "alpha", timestamp, timestamp, ""},
++			}, ses.mrs.Data)
 +		})
 +	}
 +}
-+
- func TestRemoteASCIIResultProtocolValidation(t *testing.T) {
- 	proc := testutil.NewProcess(t)
- 	proc.Ctx = context.WithValue(proc.Ctx, defines.TenantIDKey{}, uint32(0))
-```
-
-**File**: `pkg/sql/plan/base_binder.go` (modified, +14/-0)
-```diff
-@@ -7928,6 +7928,20 @@ func bindFuncExprImplByPlanExpr(
- 			}
- 		}
- 	}
-+	if strings.EqualFold(name, "crc32") && len(args) == 1 && args[0] != nil &&
-+		types.T(args[0].Typ.Id) == types.T_json {
-+		// New JSON bindings hash the visible JSON document. Keep CRC32's
-+		// original execution identity so old persisted calls still hash their
-+		// original binary argument. An explicit TEXT cast preserves JSON string
-+		// quoting and does not impose VARCHAR's expression-width limit.
-+		target := types.T_text.ToType()
-+		cast, castErr := appendExplicitCastBeforeExpr(ctx, args[0], makePlan2Type(&target))
-+		if castErr != nil {
-+			return nil, castErr
-+		}
-+		args = append([]*Expr(nil), args...)
-+		args[0] = cast
-+	}
- 	if name == "between" && len(args) == 3 &&
- 		(preparedBetweenHasMixedNumericText(ctx, args) || types.T(args[0].Typ.Id).IsLowPrecisionFloat()) &&
- 		(!containsVolatileFunction(args[0]) || args[0].AuxId < 0) {
-```
-
-**File**: `pkg/sql/plan/build_alter_change_column.go` (modified, +56/-2)
-```diff
-@@ -158,6 +158,11 @@ func buildColumnAndConstraint(
- 			defaultScope[i] = col
- 		}
- 	}
-+	for _, col := range targetTableDef.Cols {
-+		if err := validateLegacyCRC32GeneratedInputs(ctx.GetContext(), col.GetGeneratedCol().GetExpr(), defaultScope); err != nil {
-+			return nil, err
-+		}
-+	}
- 
- 	preserved, err := charsetConversionExpressions(ctx, targetTableDef.Name, newColName, colType)
- 	if err != nil {
-@@ -167,7 +172,18 @@ func buildColumnAndConstraint(
- 		if preserved != nil && preserved.defaultExpr != nil {
- 			return preserved.defaultExpr, nil
- 		}
--		return buildDefaultExprWithColumns(ddlExpressionContext(ctx, ctx.GetProcess().Ctx), specNewColumn, colType, ctx.GetProcess(), defaultScope)
-+		unchanged, err := unchangedCRC32ColumnClauses(ctx.GetContext(), oldCol, specNewColumn, colType, ctx.GetProcess())
-+		if err != nil {
-+			return nil, err
-+		}
-+		return buildDefaultExprWithColumns(
-+			ddlExpressionContext(ctx, ctx.GetProcess().Ctx),
-+			specNewColumn,
-+			colType,
-+			ctx.GetProcess(),
-+			defaultScope,
-+			unchanged,
-+		)
- 	}
- 
- 	// If the column null property is not specified, it defaults to allowing null
-@@ -241,11 +257,25 @@ func buildColumnAndConstraint(
- 				}
- 			}
- 		case *tree.AttributeGeneratedAlways:
-+			if err := validateGeneratedColumnAttributes(ctx.GetContext(), specNewColumn); err != nil {
-+				return nil, err
-+			}
- 			var generatedCol *plan.GeneratedCol
- 			if preserved != nil && preserved.generated != nil {
- 				generatedCol = preserved.generated
-+			} else if crc32Preserved, handled, preserveErr := preserveLegacyCRC32Generated(ctx.GetContext(), oldCol, attribute, colType); handled {
-+				if preserveErr != nil {
-+					return nil, preserveErr
-+				}
-+				generatedCol = crc32Preserved
- 			} else {
--				generatedCol, err = buildGeneratedExpr(ddlExpressionContext(ctx, ctx.GetProcess().Ctx), specNewColumn, colType, targetTableDef.Cols, ctx.GetProcess())
-+				generatedCol, err = buildGeneratedExpr(
-+					ddlExpressionContext(ctx, ctx.GetProcess().Ctx),
-+					specNewColumn,
-+					colType,
-+					targetTableDef.Cols,
-+					ctx.GetProcess(),
-+				)
- 			}
- 			if err != nil {
- 				return nil, err
-@@ -261,6 +291,30 @@ func buildColumnAndConstraint(
- 			return nil, moerr.NewNotSupportedf(ctx.GetContext(), "unsupport column definition %v", attribute)
- 		}
- 	}
-+	// Attribute parsing above finalizes AutoIncr. Preserve the early representation
-+	// check before binding, but do not let COPY retain an illegal final dependency.
-+	for _, col := range targetTableDef.Cols {
-+		for _, owner := range []struct {
-+			subject string
-+			expr    *plan.Expr
-+		}{
-+			{"generated column", col.GetGeneratedCol().GetExpr()},
-+			{"default expression", col.GetDefault().GetExpr()},
-+		} {
-+			expr := owner.expr
-+			if !containsLegacyCRC32(expr) {
-+				continue
-+			}
-+			if err := validateLegacyCRC32ExprInputs(ctx.GetContext(), expr, defaultScope, owner.subject); err != nil {
-+				return nil, err
-+			}
-+			if owner.subject == "generated column" {
-+				if err := checkGeneratedExprReferences(ctx.GetContext(), expr, col.GetOriginCaseName(), defaultScope, make(map[int32]bool)); err != nil {
-+					return nil, err
-+				}
-+			}
-+		}
-+	}
- 	if newCol.GeneratedCol != nil {
- 		// Reject VIRTUAL generated columns as PRIMARY KEY
- 		if newCol.Primary && !newCol.GeneratedCol.IsStored {
-```
-
-**File**: `pkg/sql/plan/build_alter_table.go` (modified, +17/-0)
-```diff
-@@ -526,6 +526,23 @@ func buildAlterTableCopy(stmt *tree.AlterTable, cctx CompilerContext, bindings a
- 			"Table '%s' does not have an AUTO_INCREMENT column", tableDef.Name)
- 	}
- 
-+	// CHECK expressions retain the original catalog coordinates throughout the
-+	// schema clauses. Validate them only against the final source-to-target
-+	// replay, never against a reordered intermediate column slice. The same
-+	// replay will preserve their bound identity in the internal CREATE.
-+	var checkReplay *persistedDDLReplay
-+	for _, check := range copyTableDef.Checks {
-+		if !containsLegacyCRC32(check.GetCheck()) {
-+			continue
-+		}
-+		if checkReplay == nil {
-+			checkReplay = ddlReplayForTable(WithPersistedDDLReplay(ctx, tableDef, copyTableDef), copyTableDef.Name)
-+		}
-+		if checkReplay == nil || checkReplay.checks[strings.ToLower(check.Name)] == nil {
-+			return nil, moerr.NewNotSupported(ctx, "changing a legacy CRC32 JSON check constraint requires an explicit table rebuild")
-+		}
-+	}
-+
- 	// Generated values are recomputed from the original table rows under the
- 	// final schema. Rebuild indexes on every generated dependent, not just the
- 	// directly modified column; otherwise COPY could clone stale index entries.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #32823** (2026-11-17): [4.2] Fix grouped ENUM and SET numeric conversions (@XuPeng-SH)
-- **PR #32815** (2026-11-16): perf(malloc): advise huge pages for large MPool mappings (@aunjgr)
-- **PR #32809** (2026-11-16): Revert "perf(fileservice): keep IVF-Flat entries objects in the index-file cache (#32697)" (@cpegeric)
-- **PR #32808** (2026-11-16): [4.2-dev] fix DISTINCT inserts for ENUM and SET (@XuPeng-SH)
-- **PR #32807** (2026-11-16): perf(plan): preaggregate outer-join counts on unique keys (@aunjgr)
-- **PR #32803** (2026-11-16): [4.2] fix: preserve empty saved results and result_scan projections (@XuPeng-SH)
+- **PR #32945** (2026-11-19): [4.2-dev] Preserve COS GET cancellation identity (@XuPeng-SH)
+- **PR #32938** (closed): perf(cdc): avoid formatting disabled watermark debug logs (@XuPeng-SH)
+- **PR #32937** (2026-11-19): [4.2-dev] fix(frontend): prevent publication grants from recreating dropped subscriber IDs (@LeftHandCold)
+- **PR #32931** (2026-11-19): [4.2-dev] docs: share one change map across Claude review checks (@XuPeng-SH)
+- **PR #32932** (2026-11-19): docs: share one change map across Claude review checks (@XuPeng-SH)
+- **PR #32929** (2026-11-19): [4.2-dev] docs: backport review skills with maintenance compatibility rules (@XuPeng-SH)
 
 ---
 
@@ -4251,43 +3871,50 @@ gaps below.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. publish partitioned CREATE INDEX metadata through ALTER
+## X. function): reject undefined real-domain POW arguments
 
 **RULE**:
-When implementing operations in `pkg/sql/compile/alter.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/embed/cdc_control_status_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7fcd9bdf`: publish partitioned CREATE INDEX metadata through ALTER. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `793b62b5`: function): reject undefined real-domain POW arguments. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/sql/compile/alter.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/embed/cdc_control_status_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-			st, err := parsers.ParseOne(
-			if err != nil {
-				// Propagate the original parse error instead of dropping
-				// it and asserting the statement type downstream.
-				return err
-			}
-			alterPartitionStmt, ok := st.(*tree.AlterTable)
-			if !ok {
-				return moerr.NewParseError(c.proc.Ctx,
-					fmt.Sprintf("not an ALTER TABLE statement: %s", qry.RawSQL))
-			}
-				alterPartitionStmt,
+	"errors"
+	dragonboat "github.com/lni/dragonboat/v4"
+// cdcClusterStateWithReadiness bounds the initial, idempotent, read-only
+// GetClusterState readiness probe of the CDC claims subtest: its result only
+// feeds state.TaskTableUser below. The current5711 CI UT (job 135195296776,
+// 2026-11-18 23:30:59) observed exactly one raw dragonboat request timeout on
+// this first probe while the log service reported the same checker-state read
+// timing out on its side in the same window; root36 kept the stall's own
+// origin qualified UNKNOWN. This helper absorbs no more than that observed
+// failure class, deterministically: at most three attempts on the caller's
+// unchanged context, retrying only errors.Is(dragonboat.ErrTimeout) chains,
+// stopping at the first success, never issuing another request once the
+// context is done, and returning any other error after the first failed
+// attempt. The caller's require.NoError still owns the final failure; no
+// deadline is raised anywhere and no claims/heartbeat/write path is retried.
+func cdcClusterStateWithReadiness(
+	t *testing.T,
+	ctx context.Context,
+	getState func(context.Context) (logservicepb.CheckerState, error),
+) (logservicepb.Che
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-			st, _ := parsers.ParseOne(
-				st.(*tree.AlterTable),
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7fcd9bdf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `793b62b5` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

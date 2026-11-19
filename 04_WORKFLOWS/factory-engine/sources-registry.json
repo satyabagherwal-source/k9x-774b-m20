@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T22:27:48.868Z",
-    "lastVerified": "2026-11-19T22:27:48.868Z",
+    "lastChecked": "2026-11-19T22:36:21.157Z",
+    "lastVerified": "2026-11-19T22:36:21.157Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -344,8 +344,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T21:43:49.348Z",
-    "lastVerified": "2026-11-19T21:43:49.348Z",
+    "lastChecked": "2026-11-19T22:36:13.169Z",
+    "lastVerified": "2026-11-19T22:36:13.169Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -886,9 +886,9 @@
   "ducaale-xh": {
     "name": "xh",
     "officialUrl": "https://github.com/ducaale/xh",
-    "lastChecked": "2026-11-18T11:22:27.343Z",
+    "lastChecked": "2026-11-19T22:35:58.334Z",
     "revisionIdentifier": "8b21cc07",
-    "lastVerified": "2026-11-18T11:22:27.343Z"
+    "lastVerified": "2026-11-19T22:35:58.334Z"
   },
   "hf-moonshotai-kimi-k3": {
     "name": "moonshotai/Kimi-K3",
@@ -1706,11 +1706,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sigstore-cosign": {
-    "name": "cosign",
+    "name": "sigstore/cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
-    "lastChecked": "2026-11-19T15:50:52.503Z",
-    "revisionIdentifier": "0743bfcf",
-    "lastVerified": "2026-11-19T15:50:52.503Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-19T22:36:13.464Z",
+    "lastVerified": "2026-11-19T22:36:13.464Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-sigstore-cosign",
+    "contentHash": "359c49b767d085bdf91b335d31694c1d119b1e30c1852d079f8158911e6aeea4",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j/langchain4j",
@@ -3262,14 +3272,14 @@
     "officialUrl": "https://github.com/matrixorigin/matrixone",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-18T16:41:21.491Z",
-    "lastVerified": "2026-11-18T16:41:21.491Z",
+    "lastChecked": "2026-11-19T22:36:16.948Z",
+    "lastVerified": "2026-11-19T22:36:16.948Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-matrixorigin-matrixone",
-    "contentHash": "96e52fd9dc045b387d78fb21ae28495340189ec9e2eaa4d32258d7a980d69cb5",
-    "promotedRulesCount": 0,
-    "recentFixesCount": 2,
+    "contentHash": "f0a0f1975c65ab6cb4d8779a21d0fd8df6801b869515010ab4dacdcc65b18d3b",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 5,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3603,9 +3613,9 @@
   "go-dev-frame-sponge": {
     "name": "sponge",
     "officialUrl": "https://github.com/go-dev-frame/sponge",
-    "lastChecked": "2026-11-18T17:36:32.552Z",
+    "lastChecked": "2026-11-19T22:36:05.693Z",
     "revisionIdentifier": "beef9eec",
-    "lastVerified": "2026-11-18T17:36:32.552Z"
+    "lastVerified": "2026-11-19T22:36:05.693Z"
   },
   "llphant-llphant": {
     "name": "LLPhant",
@@ -8632,5 +8642,29 @@
     "lastChecked": "2026-11-19T22:27:34.058Z",
     "revisionIdentifier": "39c6fd17",
     "lastVerified": "2026-11-19T22:27:34.058Z"
+  },
+  "bourd-dev-seo-skills": {
+    "name": "seo-skills",
+    "officialUrl": "https://github.com/bourd-dev/seo-skills",
+    "lastChecked": "2026-11-19T22:36:00.719Z",
+    "revisionIdentifier": "4b0005f6e6",
+    "lastVerified": "2026-11-19T22:36:00.719Z"
+  },
+  "vanniktech-gradle-maven-publish-plugin": {
+    "name": "vanniktech/gradle-maven-publish-plugin",
+    "officialUrl": "https://github.com/vanniktech/gradle-maven-publish-plugin",
+    "sourceType": "github",
+    "technology": "Kotlin",
+    "lastChecked": "2026-11-19T22:36:07.767Z",
+    "lastVerified": "2026-11-19T22:36:07.767Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
+    "contentHash": "2e3bd503e9293496ac4cd2ffd34f8fbc454723e3894e91392c8f36f278cd3bc3",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

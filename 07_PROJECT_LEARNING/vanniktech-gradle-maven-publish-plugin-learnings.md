@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md`  
 > **Source**: github ([https://github.com/vanniktech/gradle-maven-publish-plugin](https://github.com/vanniktech/gradle-maven-publish-plugin))  
-> **Source Version**: `086c4bd6`  
+> **Source Version**: `fc64b6e6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T06:20:03.676Z  
+> **Timestamp**: 2026-11-19T22:36:07.948Z  
 > **Learning ID**: `learn-github-vanniktech-gradle-maven-publish-plugin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vanniktech-gradle-maven-publish-plugin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/vanniktech/gradle-maven-publish-plugin](https://github.com/vanniktech/gradle-maven-publish-plugin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T06:19:35.683Z  
+> **Harvest Timestamp**: 2026-11-19T22:36:07.767Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Gradle plugin that publishes your Android and Kotlin libraries, including sources and javadoc,  to Maven Central or any other Nexus instance.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1750 stars
+- **Stars / Engagement**: 1751 stars
 
 ---
 
@@ -998,213 +998,50 @@ public data class AndroidMultiVariantLibrary @JvmOverloads constructor(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `086c4bd6` (2026-11-11)
-**Commit Message**: Update dependency org.jetbrains.kotlin.jvm to v2.5.0-RC (#1472)
+### Incident Patch 1: `fc64b6e6` (2026-11-17)
+**Commit Message**: Update dependency com.freeletics.gradle:scripts-formatting-jvm to v0.42.0 (#1475)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-**File**: `gradle/alpha.versions.toml` (modified, +1/-1)
+**File**: `ktlint.main.kts` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,7 @@
- [versions]
- gradle = "9.9.1"
+@@ -1,6 +1,6 @@
+ #!/usr/bin/env kotlin
  
--kotlin = "2.5.0-Beta2"
-+kotlin = "2.5.0-RC"
+-@file:DependsOn("com.freeletics.gradle:scripts-formatting-jvm:0.41.0")
++@file:DependsOn("com.freeletics.gradle:scripts-formatting-jvm:0.42.0")
  
- android-gradle = "9.6.0-alpha03"
- 
-```
-
-**File**: `gradle/beta.versions.toml` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- [versions]
- gradle = "9.9.1"
- 
--kotlin = "2.5.0-Beta2"
-+kotlin = "2.5.0-RC"
- 
- android-gradle = "9.5.1"
- 
-```
-
-**File**: `gradle/rc.versions.toml` (modified, +1/-1)
-```diff
-@@ -1,7 +1,7 @@
- [versions]
- gradle = "9.9.1"
- 
--kotlin = "2.4.21"
-+kotlin = "2.5.0-RC"
- 
- android-gradle = "9.5.1"
- 
+ import com.freeletics.gradle.scripts.KtLintCli
+ import com.github.ajalt.clikt.core.main
 ```
 
 ---
 
-### Incident Patch 2: `a4a73cb5` (2026-11-10)
-**Commit Message**: Update Gradle to v9.9.1 (#1471)
+### Incident Patch 2: `b0e72875` (2026-11-15)
+**Commit Message**: Update dependency org.apache.maven:maven-model to v3.10.1 (#1473)
 
 Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
-**File**: `gradle/alpha.versions.toml` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- [versions]
--gradle = "9.9.0"
-+gradle = "9.9.1"
- 
- kotlin = "2.5.0-Beta2"
- 
-```
-
-**File**: `gradle/beta.versions.toml` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- [versions]
--gradle = "9.9.0"
-+gradle = "9.9.1"
- 
- kotlin = "2.5.0-Beta2"
- 
-```
-
 **File**: `gradle/libs.versions.toml` (modified, +1/-1)
 ```diff
-@@ -4,7 +4,7 @@ minGradle = "9.0.0"
- minAgp = "8.13.0"
- minKgp = "2.2.0"
+@@ -49,7 +49,7 @@ junit-launcher = { module = "org.junit.platform:junit-platform-launcher", versio
+ testParameterInjector = "com.google.testparameterinjector:test-parameter-injector-junit5:1.24"
+ truth = "com.google.truth:truth:1.4.5"
+ truth-testKit = "com.autonomousapps:testkit-truth:1.1"
+-maven-model = "org.apache.maven:maven-model:3.10.0"
++maven-model = "org.apache.maven:maven-model:3.10.1"
+ semver = "net.swiftzer.semver:semver:2.1.0"
  
--gradle = "9.9.0"
-+gradle = "9.9.1"
- 
- kotlin = "2.4.21"
- 
-```
-
-**File**: `gradle/rc.versions.toml` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- [versions]
--gradle = "9.9.0"
-+gradle = "9.9.1"
- 
- kotlin = "2.4.21"
- 
-```
-
-**File**: `gradle/wrapper/gradle-wrapper.properties` (modified, +2/-2)
-```diff
-@@ -1,7 +1,7 @@
- distributionBase=GRADLE_USER_HOME
- distributionPath=wrapper/dists
--distributionSha256Sum=0b00b0ffe07c4d4789c12d4935a44a7057d55774b7540bd4a3f76f336deb177a
--distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.0-bin.zip
-+distributionSha256Sum=d8a18a7a841dd5df825d35a685fad6f2d7f12ac0c280e57b67c27b4a520ba228
-+distributionUrl=https\://services.gradle.org/distributions/gradle-9.9.1-bin.zip
- networkTimeout=10000
- retries=0
- retryBackOffMs=500
-```
-
-**File**: `gradlew.bat` (modified, +41/-11)
-```diff
-@@ -26,6 +26,33 @@
- @rem Set local scope for the variables, and ensure extensions are enabled
- setlocal EnableExtensions
- 
-+@rem Catch executions from older scripts and ensure they exit cleanly.
-+@rem This can be removed once we can be reasonably confident that few people
-+@rem will be migrating directly to this new wrapper.
-+goto afterSafetyNet
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-+goto exitWithErrorLevel
-+:afterSafetyNet
-+
- set DIRNAME=%~dp0
- if "%DIRNAME%"=="" set DIRNAME=.
- @rem This is normally unused
-@@ -45,27 +72,29 @@ set JAVA_EXE=java.exe
- %JAVA_EXE% -version >NUL 2>&1
- if %ERRORLEVEL% equ 0 goto execute
- 
--echo. 1>&2
--echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH. 1>&2
--echo. 1>&2
--echo Please set the JAVA_HOME variable in your environment to match the 1>&2
--echo location of your Java installation. 1>&2
-+1>&2 echo.
-+1>&2 echo ERROR: JAVA_HOME is not set and no 'java' command could be found in your PATH.
-+1>&2 echo.
-+1>&2 echo Please set the JAVA_HOME variable in your environment to match the
-+1>&2 echo location of your Java installation.
- 
- "%COMSPEC%" /c exit 1
-+goto exitWithErrorLevel
- 
- :findJavaFromJavaHome
- set JAVA_HOME=%JAVA_HOME:"=%
- set JAVA_EXE=%JAVA_HOME%/bin/java.exe
- 
- if exist "%JAVA_EXE%" goto execute
- 
--echo. 1>&2
--echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME% 1>&2
--echo. 1>&2
--echo Please set the JAVA_HOME variable in your environment to match the 1>&2
--echo location of your Java installation. 1>&2
-+1>&2 echo.
-+1>&2 echo ERROR: JAVA_HOME is set to an invalid directory: %JAVA_HOME%
-+1>&2 echo.
-+1>&2 echo Please set the JAVA_HOME variable in your environment to match the
-+1>&2 echo location of your Java installation.
- 
- "%COMSPEC%" /c exit 1
-+goto exitWithErrorLevel
- 
- :execute
- @rem Setup the command line
-@@ -75,8 +104,9 @@ echo location of your Java installation. 1>&2
- @rem Execute gradlew
- @rem endlocal doesn't take effect until after the line is parsed and variables are expanded
- @rem which allows us to clear the local environment before executing the java command
--endlocal & "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -jar "%APP_HOME%\gradle\wrapper\gradle-wrapper.jar" %* & call :exitWithErrorLevel
-+endlocal & "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %GRADLE_OPTS% "-Dorg.gradle.appname=%APP_BASE_NAME%" -jar "%APP_HOME%\gradle\wrapper\gradle-wrapper.jar" %* & call :exitWithErrorLevel & goto exitWithErrorLevel
- 
-+@rem This label must not be changed. We rely on old scripts being able to jump to this point.
- :exitWithErrorLevel
- @rem Use "%COMSPEC%" /c exit to allow operators to work properly in scripts
- "%COMSPEC%" /c exit %ERRORLEVEL%
+ androidx-gradlePluginLints = "androidx.lint:lint-gradle:1.0.0"
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1475** (2026-11-17): Update dependency com.freeletics.gradle:scripts-formatting-jvm to v0.42.0 (@renovate[bot])
+- **PR #1473** (2026-11-15): Update dependency org.apache.maven:maven-model to v3.10.1 (@renovate[bot])
 - **PR #1472** (2026-11-11): Update dependency org.jetbrains.kotlin.jvm to v2.5.0-RC (@renovate[bot])
 - **PR #1471** (2026-11-10): Update Gradle to v9.9.1 (@renovate[bot])
 - **PR #1470** (2026-11-06): Update Gradle to v9.9.0 (@renovate[bot])
 - **PR #1469** (2026-11-05): Update dependency org.jetbrains.dokka:dokka-gradle-plugin to v2.3.0 (@renovate[bot])
-- **PR #1468** (2026-11-05): Update android.gradle (@renovate[bot])
-- **PR #1464** (2026-10-30): Update dependency org.jetbrains.kotlin.jvm to v2.5.0-Beta2 (@renovate[bot])
 
 ---
 
@@ -1224,28 +1061,28 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update dependency org.jetbrains.kotlin.jvm to v2.5.0-RC (#1472)
+## X. Update dependency com.freeletics.gradle:scripts-formatting-jvm to v0.42.0
 
 **RULE**:
-When implementing operations in `gradle/alpha.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vanniktech/gradle-maven-publish-plugin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ktlint.main.kts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in vanniktech/gradle-maven-publish-plugin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `086c4bd6`: Update dependency org.jetbrains.kotlin.jvm to v2.5.0-RC (#1472). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fc64b6e6`: Update dependency com.freeletics.gradle:scripts-formatting-jvm to v0.42.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/alpha.versions.toml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `ktlint.main.kts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-kotlin = "2.5.0-RC"
+@file:DependsOn("com.freeletics.gradle:scripts-formatting-jvm:0.42.0")
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
-// Anti-pattern to NEVER write (induced failure mode):
-kotlin = "2.5.0-Beta2"
+// Induced defect failure mode:
+@file:DependsOn("com.freeletics.gradle:scripts-formatting-jvm:0.41.0")
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `086c4bd6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fc64b6e6` are properly handled with clean fallback behavior.

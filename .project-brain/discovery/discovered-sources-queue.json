@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T22:28:14.367Z",
+  "updated_at": "2026-11-19T22:36:22.472Z",
   "stats": {
-    "total_discovered": 6043,
-    "approved_pending_harvest": 5711,
+    "total_discovered": 6049,
+    "approved_pending_harvest": 5717,
     "harvested_count": 0,
     "rejected_count": 332,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5694,
+      "COMMUNITY_AND_EXPERT": 5699,
       "OFFICIAL_DOCUMENTATION": 189,
-      "STANDARDS_AND_SPECIFICATIONS": 112,
+      "STANDARDS_AND_SPECIFICATIONS": 113,
       "ENGINEERING_BLOGS": 4,
       "SECURITY_ADVISORIES": 36,
       "LEGAL_AND_REGULATORY": 2,
@@ -130644,6 +130644,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/seo-skills-seo-audit-skill-learnings.md",
         "fileName": "seo-skills-seo-audit-skill-learnings.md"
+      }
+    },
+    "SRC-EB78964681DB": {
+      "id": "SRC-EB78964681DB",
+      "url": "https://github.com/sigstore/root-signing/blob/main/targets/trusted_root.json",
+      "title": "https://github.com/sigstore/root-signing/blob/main/targets/trusted_root.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T22:36:22.243Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-6D16B9E558B9": {
+      "id": "SRC-6D16B9E558B9",
+      "url": "https://fulcio.sigstore.dev/",
+      "title": "https://fulcio.sigstore.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T22:36:22.285Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-E2152A9C28FC": {
+      "id": "SRC-E2152A9C28FC",
+      "url": "https://pkg.go.dev/crypto/tls",
+      "title": "https://pkg.go.dev/crypto/tls",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T22:36:22.330Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-631C2CFFC67C": {
+      "id": "SRC-631C2CFFC67C",
+      "url": "https://pkg.go.dev/github.com/sigstore/cosign/v3/cmd/cosign/cli/fulcio",
+      "title": "https://pkg.go.dev/github.com/sigstore/cosign/v3/cmd/cosign/cli/fulcio",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T22:36:22.370Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-054994BD5B7B": {
+      "id": "SRC-054994BD5B7B",
+      "url": "https://oauth2.sigstore.dev/auth",
+      "title": "https://oauth2.sigstore.dev/auth",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T22:36:22.411Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-51848D51623E": {
+      "id": "SRC-51848D51623E",
+      "url": "https://www.rfc-editor.org/rfc/rfc6962",
+      "title": "IETF RFC 6962",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T22:36:22.472Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
+        "fileName": "sigstore-cosign-learnings.md"
       }
     }
   }

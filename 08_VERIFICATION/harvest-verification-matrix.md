@@ -11396,3 +11396,6 @@
 | `CYCLE-20261119-F5H5` | `2026-11-19T22:27:38.489Z` | `seo-skills/seo-audit-skill` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9459` | Yes (`9431c5e4...`) |
 | `CYCLE-20261119-FB3V` | `2026-11-19T22:27:45.787Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9460` | Yes (`2440176c...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T22:28:14.241Z` | `seo-skills-seo-audit-skill` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-E0C204D8` [Domain J] | Yes (`db83363c...`) |
+| `CYCLE-20261119-Q3E5` | `2026-11-19T22:36:09.005Z` | `vanniktech/gradle-maven-publish-plugin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9461` | Yes (`2e3bd503...`) |
+| `CYCLE-20261119-Q7MQ` | `2026-11-19T22:36:14.498Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9462` | Yes (`359c49b7...`) |
+| `CYCLE-20261119-QABL` | `2026-11-19T22:36:17.985Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9463` | Yes (`f0a0f197...`) |

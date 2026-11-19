@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T22:27:45.795Z",
-  "total_cycles_completed": 10878,
-  "total_learnings_persisted": 10878,
-  "total_rules_promoted": 10235,
+  "last_updated": "2026-11-19T22:36:17.995Z",
+  "total_cycles_completed": 10881,
+  "total_learnings_persisted": 10881,
+  "total_rules_promoted": 10238,
   "history": [
-    {
-      "timestamp": "2026-11-19T01:47:28.260Z",
-      "repository": "nomic-ai/nomic-embed-text-v1.5",
-      "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T01:54:57.668Z",
-      "repository": "akhaliq/MiniMax-H3-Image-Character-Swap",
-      "learningId": "learn-huggingface-akhaliq-minimax-h3-image-character-swap",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T01:55:00.155Z",
-      "repository": "google/gemma-4-26B-A4B-it",
-      "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T02:03:33.374Z",
       "repository": "intfloat/multilingual-e5-small",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-19T22:27:45.795Z",
       "repository": "zama-ai/tfhe-rs",
       "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T22:36:09.016Z",
+      "repository": "vanniktech/gradle-maven-publish-plugin",
+      "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T22:36:14.508Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T22:36:17.995Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

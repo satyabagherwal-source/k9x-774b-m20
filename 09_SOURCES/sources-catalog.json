@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "87c44445",
+    "sourceVersion": "3cd5f717",
     "license": "Apache-2.0",
-    "contentHash": "96e52fd9dc045b387d78fb21ae28495340189ec9e2eaa4d32258d7a980d69cb5",
-    "lastHarvestedAt": "2026-11-18T16:41:21.957Z",
+    "contentHash": "f0a0f1975c65ab6cb4d8779a21d0fd8df6801b869515010ab4dacdcc65b18d3b",
+    "lastHarvestedAt": "2026-11-19T22:36:17.989Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "0743bfcf",
+    "sourceVersion": "6e895879",
     "license": "Apache-2.0",
-    "contentHash": "49a524d1a6973099f34ec08ab86c2ecb3724ab68bf03cad0319b4c89956848fe",
-    "lastHarvestedAt": "2026-11-18T04:20:53.634Z",
+    "contentHash": "359c49b767d085bdf91b335d31694c1d119b1e30c1852d079f8158911e6aeea4",
+    "lastHarvestedAt": "2026-11-19T22:36:14.503Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -8123,10 +8123,10 @@
     "repository": "vanniktech/gradle-maven-publish-plugin",
     "platform": "github",
     "sourceUrl": "https://github.com/vanniktech/gradle-maven-publish-plugin",
-    "sourceVersion": "086c4bd6",
+    "sourceVersion": "fc64b6e6",
     "license": "Apache-2.0",
-    "contentHash": "c1f8f509eb9a0dcd25b674857a0297a5d4c7a5f12d75e6477a744b6c4cc55c89",
-    "lastHarvestedAt": "2026-11-12T06:20:20.688Z",
+    "contentHash": "2e3bd503e9293496ac4cd2ffd34f8fbc454723e3894e91392c8f36f278cd3bc3",
+    "lastHarvestedAt": "2026-11-19T22:36:09.010Z",
     "learningId": "learn-github-vanniktech-gradle-maven-publish-plugin"
   },
   "mohamedrejeb-calf": {

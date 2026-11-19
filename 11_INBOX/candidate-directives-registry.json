@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T22:28:15.285Z",
+  "last_updated": "2026-11-19T22:36:23.362Z",
   "directives": [
     {
       "id": "CD-001",
@@ -34729,6 +34729,68 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-19",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-QD4H",
+      "directive_title": "Update dependency com.freeletics.gradle:scripts-formatting-jvm to v0.42.0",
+      "source_repo": "vanniktech-gradle-maven-publish-plugin-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-QD4H-update-dependency-com-freeletics-gradle-scripts-formatting-jvm-to-v0-42-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-QDY9",
+      "directive_title": "Update README offline verification example",
+      "source_repo": "sigstore-cosign-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-QDY9-update-readme-offline-verification-example.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-QAHG",
+      "directive_title": "reject undefined real-domain POW arguments",
+      "source_repo": "matrixorigin/matrixone",
+      "source_commit": "3cd5f717",
+      "staged_file": "11_INBOX/candidate-directives/CD-QAHG-reject-undefined-real-domain-pow-arguments.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-19",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-167B06",
+      "directive_title": "Update dependency com.freeletics.gradle:scripts-formatting-jvm to v0.42.0",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "vanniktech-gradle-maven-publish-plugin",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-167B06-update-dependency-com-freeletics-gradle-.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-62A1D4",
+      "directive_title": "Update README offline verification example",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "sigstore-cosign",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-62A1D4-update-readme-offline-verification-examp.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-QEGU",
+      "directive_title": "function): reject undefined real-domain POW arguments",
+      "source_repo": "matrixorigin-matrixone-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-QEGU-function-reject-undefined-real-domain-pow-arguments.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "K"
     }
   ]
 }
