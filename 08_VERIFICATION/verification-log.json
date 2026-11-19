@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-NA1G",
-    "timestamp": "2026-11-17T16:54:41.812Z",
-    "repository": "Qwen/Qwen3-14B",
-    "learningId": "learn-huggingface-qwen-qwen3-14b",
-    "contentHash": "927eaa62ae03f17fe5a2f67373e1c36b5e19c4e7c6cef06a63303cb462ebedb2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-NGJ3",
     "timestamp": "2026-11-17T16:54:50.223Z",
     "repository": "margelo/react-native-vision-camera",
@@ -7490,6 +7475,21 @@
     "repository": "intfloat/multilingual-e5-small",
     "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
     "contentHash": "dfc96ea9d7ceab467359fc046733fbb2212b7012b1da088df39a29df3b538913",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-Z09R",
+    "timestamp": "2026-11-19T02:11:21.760Z",
+    "repository": "argmaxinc/whisperkit-coreml",
+    "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
+    "contentHash": "a3e803011225106ea4d967c5de04470922dfa29ca5e0f28b258a1a7226f7da50",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

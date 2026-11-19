@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T02:03:46.457Z",
+  "last_updated": "2026-11-19T02:11:35.075Z",
   "total_verified_learnings": 9013,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "14e5d8f87d6b89347b95fc47c886c3d5eddb4010c5cfb0690d2eb7f6ed14955c",
+      "content_hash": "9c7bf2d6de6d8d30a500bb55a6820dcf33be6b2485d478d3098b7e6bc147f152",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T02:03:46.335Z"
+      "persisted_at": "2026-11-19T02:11:34.403Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ee29590076ad2cb3c5f8e1bd210e4558ac21f2984c72803e52c84aedaee09f23",
+      "content_hash": "a9d9aeec1d348dddd8e7d4fcf2a97b1bb2644b21fc3b30c2ecf76e31839402c2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T02:03:46.457Z"
+      "persisted_at": "2026-11-19T02:11:34.512Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -218454,13 +218454,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-JJLI-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ZACO-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "0ce1743442fa8ef4b7f2734a9dd7e99f6d65919b82db8abbcfd22c930730e8e1",
+      "content_hash": "c3b62f86f25f06b517de751284c926854e7ee28b89078d91b78b77841f2f0857",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T06:23:36.439Z"
+      "persisted_at": "2026-11-19T02:11:34.824Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218470,9 +218470,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "cdb581b3d0e15e7436e4c2b91dd05a50c70f85b20542ce375046b65051592f53",
+      "content_hash": "d89e47e6b67df1132db245a7194a8b8f6e73eb8324914fbbf1783fdb64994b99",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T06:23:36.591Z"
+      "persisted_at": "2026-11-19T02:11:34.948Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218482,9 +218482,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "4dddb2587c691ab8b1274a47ee80f37265c913a59b1a4cc458f3065d88e8dde1",
+      "content_hash": "8d310ed60f416ed446f6372cb75bf7cc1e2c7ee5e824a3050cc5220badf0a5c1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:23:36.745Z"
+      "persisted_at": "2026-11-19T02:11:35.075Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -229705,7 +229705,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/argmaxinc/whisperkit-coreml",
       "source_version": "hf-argmaxinc-whisperkit-coreml",
-      "content_hash": "fcf117ebda5172f8ce1b3424857d184876c972103a33bceae9ba3d5820d6deb4",
+      "content_hash": "a3e803011225106ea4d967c5de04470922dfa29ca5e0f28b258a1a7226f7da50",
       "dossier_path": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md",
       "promoted_rules": [],
@@ -229714,7 +229714,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T12:57:27.151Z",
+      "verified_at": "2026-11-19T02:11:21.580Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229731,9 +229731,9 @@
       "title": "Research & Knowledge Intelligence: argmaxinc/whisperkit-coreml Core Invariants",
       "repository": "argmaxinc/whisperkit-coreml",
       "source_version": "hf-argmaxinc-whisperkit-coreml",
-      "content_hash": "b05b1633acbaa60ec8bb31213502710eb11001654fcfe5ce42b3dd0bc6a890bb",
+      "content_hash": "734b2bec61556709bf9c36d45c1545b8ec80677ac3b741121d8cc37b360a1d1b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T12:57:27.468Z"
+      "persisted_at": "2026-11-19T02:11:21.927Z"
     },
     "candidate_directive-clean-up-json-enumerator-source-logging-for-per-source-debug": {
       "item_id": "candidate_directive-clean-up-json-enumerator-source-logging-for-per-source-debug",
@@ -229779,9 +229779,9 @@
       "title": "Research & Knowledge Intelligence: hf-argmaxinc-whisperkit-coreml-learnings Core Invariants",
       "repository": "hf-argmaxinc-whisperkit-coreml-learnings",
       "source_version": "HEAD",
-      "content_hash": "5a426f305d3a92f112d1d58c93e8ed276d3917f22da41eca5de6439c32deec42",
+      "content_hash": "ad47d773ee557dd9e8b4ee017f0b0653b793f80b6f5ba17fbc93562b38810a67",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T12:58:14.577Z"
+      "persisted_at": "2026-11-19T02:11:33.733Z"
     },
     "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-nucleoidai-nucleoid-learnings-core-invariants",
@@ -252677,9 +252677,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "f5d7c3856b63d670cfbf883815656eb5c9c4cccba439de27ee70948c17a69136",
+      "content_hash": "67954b77cbde561d32195a6b601a1c84d0eaf8cfc8457282e6f39dfd3de78f5d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T02:03:46.193Z"
+      "persisted_at": "2026-11-19T02:11:34.266Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -275381,13 +275381,13 @@
       "item_id": "candidate_directive-rust-address-the-remaining-issues-in-418",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-P8N1-rust-address-the-remaining-issues-in-418.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-Z9TH-rust-address-the-remaining-issues-in-418.md",
       "title": "rust): address the remaining issues in #418",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "64c99aca5321c4ec125c7b20ab89476295545f89382cd4d233df4dd80bc3c1d6",
+      "content_hash": "258dbb0bc6d3998d4252fa4dbc2cc1f0ded23ab290d13a089c9b9c896ac8d44d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T02:03:46.048Z"
+      "persisted_at": "2026-11-19T02:11:34.135Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",

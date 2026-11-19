@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T02:03:33.374Z",
-  "total_cycles_completed": 10682,
-  "total_learnings_persisted": 10682,
+  "last_updated": "2026-11-19T02:11:21.768Z",
+  "total_cycles_completed": 10683,
+  "total_learnings_persisted": 10683,
   "total_rules_promoted": 10089,
   "history": [
-    {
-      "timestamp": "2026-11-18T12:23:57.455Z",
-      "repository": "zulip/zulip",
-      "learningId": "learn-github-zulip-zulip",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T12:24:00.645Z",
       "repository": "goharbor/harbor",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-19T02:03:33.374Z",
       "repository": "intfloat/multilingual-e5-small",
       "learningId": "learn-huggingface-intfloat-multilingual-e5-small",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T02:11:21.768Z",
+      "repository": "argmaxinc/whisperkit-coreml",
+      "learningId": "learn-huggingface-argmaxinc-whisperkit-coreml",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

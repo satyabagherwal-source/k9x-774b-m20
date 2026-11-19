@@ -11178,3 +11178,4 @@
 | `CYCLE-20261119-DYUQ` | `2026-11-19T01:55:00.146Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md` | Yes (`210ef14d...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T01:55:42.494Z` | `hf-akhaliq-minimax-h3-image-character-swap` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C41D220B` [Domain D] | Yes (`f80ac589...`) |
 | `CYCLE-20261119-OYUS` | `2026-11-19T02:03:33.364Z` | `intfloat/multilingual-e5-small` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-intfloat-multilingual-e5-small-learnings.md` | Yes (`dfc96ea9...`) |
+| `CYCLE-20261119-Z09R` | `2026-11-19T02:11:21.760Z` | `argmaxinc/whisperkit-coreml` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-argmaxinc-whisperkit-coreml-learnings.md` | Yes (`a3e80301...`) |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T02:03:46.585Z",
+  "last_updated": "2026-11-19T02:11:35.187Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T02:03:45.340Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-19T02:03:45.780Z",
+      "processed_at": "2026-11-19T02:11:33.888Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -43,7 +43,7 @@
       "staged_for_review": 0
     },
     "zoontek-react-native-permissions-learnings.md": {
-      "processed_at": "2026-11-18T06:23:36.208Z",
+      "processed_at": "2026-11-19T02:11:34.631Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2578,8 +2578,8 @@
       "staged_for_review": 0
     },
     "hf-argmaxinc-whisperkit-coreml-learnings.md": {
-      "processed_at": "2026-11-14T12:58:14.379Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T02:11:33.564Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-qwen-qwen3-8b-learnings.md": {
@@ -3488,7 +3488,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2148,
+  "total_dossiers_evaluated": 2151,
   "total_canonical_promoted": 374,
-  "total_staged_for_review": 1610
+  "total_staged_for_review": 1612
 }
