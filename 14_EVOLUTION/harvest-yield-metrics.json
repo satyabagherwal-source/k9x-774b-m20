@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T21:08:18.412Z",
-  "total_cycles_completed": 10867,
-  "total_learnings_persisted": 10867,
-  "total_rules_promoted": 10220,
+  "last_updated": "2026-11-19T21:24:11.262Z",
+  "total_cycles_completed": 10870,
+  "total_learnings_persisted": 10870,
+  "total_rules_promoted": 10223,
   "history": [
-    {
-      "timestamp": "2026-11-19T01:05:59.554Z",
-      "repository": "FacebookAI/xlm-roberta-base",
-      "learningId": "learn-huggingface-facebookai-xlm-roberta-base",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T01:06:02.811Z",
-      "repository": "nezhahq/nezha",
-      "learningId": "learn-github-nezhahq-nezha",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T01:18:41.217Z",
-      "repository": "openai-community/gpt2",
-      "learningId": "learn-huggingface-openai-community-gpt2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T01:18:42.777Z",
       "repository": "u-root/u-root",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-19T21:08:18.412Z",
       "repository": "okteto/okteto",
       "learningId": "learn-github-okteto-okteto",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T21:23:58.473Z",
+      "repository": "lapce/lapce",
+      "learningId": "learn-github-lapce-lapce",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T21:24:05.647Z",
+      "repository": "dragonflyoss/dragonfly",
+      "learningId": "learn-github-dragonflyoss-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T21:24:11.262Z",
+      "repository": "lioensky/VCPToolBox",
+      "learningId": "learn-github-lioensky-vcptoolbox",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

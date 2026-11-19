@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-4RPY",
-    "timestamp": "2026-11-18T05:44:07.510Z",
-    "repository": "sayanarijit/xplr",
-    "learningId": "learn-github-sayanarijit-xplr",
-    "contentHash": "8c819de374f9b45b7063f38642c83931c051e84c97cb05ebcc267fc623af423e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-4YCC",
-    "timestamp": "2026-11-18T05:44:16.092Z",
-    "repository": "zarf-dev/zarf",
-    "learningId": "learn-github-zarf-dev-zarf",
-    "contentHash": "355630c8eba1069c50ecc75aed37018e666782ccbb715c66f2402b4e9b8773ce",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-FG8G",
-    "timestamp": "2026-11-18T05:52:25.840Z",
-    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-    "contentHash": "0480348388e0a3242399dada683ece5c8ccf2625889b015321ac1216fa03e0e4",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-FHJ2",
     "timestamp": "2026-11-18T05:52:27.518Z",
     "repository": "flox/flox",
@@ -7490,6 +7445,51 @@
     "repository": "okteto/okteto",
     "learningId": "learn-github-okteto-okteto",
     "contentHash": "61e12621247893585a2051368227783767cc77792d932d05cdb0ad6017c60caf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-59XB",
+    "timestamp": "2026-11-19T21:23:58.463Z",
+    "repository": "lapce/lapce",
+    "learningId": "learn-github-lapce-lapce",
+    "contentHash": "57f1919f4bf96d16635785f0f970accb62c4caf96c2cc4deb8f1f2e34ef68589",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-5FGM",
+    "timestamp": "2026-11-19T21:24:05.638Z",
+    "repository": "dragonflyoss/dragonfly",
+    "learningId": "learn-github-dragonflyoss-dragonfly",
+    "contentHash": "edefedb1733c2d33b402498b0cc0ce9b13299d9c33c02ed2da42d333b7d7cd13",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-5JSL",
+    "timestamp": "2026-11-19T21:24:11.253Z",
+    "repository": "lioensky/VCPToolBox",
+    "learningId": "learn-github-lioensky-vcptoolbox",
+    "contentHash": "57c36e57f7e7d10c815fbe2b94996191e91c2c5fca58c8f0649c1dd2e3004b4b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

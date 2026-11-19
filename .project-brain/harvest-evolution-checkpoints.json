@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T21:08:24.086Z",
+  "last_updated": "2026-11-19T21:24:17.124Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T20:00:31.654Z",
@@ -753,7 +753,7 @@
       "staged_for_review": 1
     },
     "dragonflyoss-dragonfly-learnings.md": {
-      "processed_at": "2026-11-18T02:33:21.894Z",
+      "processed_at": "2026-11-19T21:24:15.601Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1398,7 +1398,7 @@
       "staged_for_review": 1
     },
     "lioensky-vcptoolbox-learnings.md": {
-      "processed_at": "2026-11-18T15:51:55.902Z",
+      "processed_at": "2026-11-19T21:24:16.473Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3521,9 +3521,14 @@
       "processed_at": "2026-11-19T21:08:21.696Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "lapce-lapce-learnings.md": {
+      "processed_at": "2026-11-19T21:24:14.629Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2328,
+  "total_dossiers_evaluated": 2331,
   "total_canonical_promoted": 394,
-  "total_staged_for_review": 1734
+  "total_staged_for_review": 1737
 }

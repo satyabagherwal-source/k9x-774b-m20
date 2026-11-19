@@ -11416,3 +11416,6 @@ Every entry in this ledger must capture:
 | `learn-github-herdrdev-herdr` | `https://github.com/herdrdev/herdr` | `8734523b` | Multi-dimensional audit evidence | 2026-11-19T21:08:10.017Z |
 | `learn-github-jacklandrin-onlyswitch` | `https://github.com/jacklandrin/OnlySwitch` | `dc279316` | Multi-dimensional audit evidence | 2026-11-19T21:08:15.565Z |
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `8c4fae3a` | Multi-dimensional audit evidence | 2026-11-19T21:08:18.407Z |
+| `learn-github-lapce-lapce` | `https://github.com/lapce/lapce` | `9e8317c8` | Multi-dimensional audit evidence | 2026-11-19T21:23:58.467Z |
+| `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `d41be195` | Multi-dimensional audit evidence | 2026-11-19T21:24:05.641Z |
+| `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `a2c33d06` | Multi-dimensional audit evidence | 2026-11-19T21:24:11.257Z |

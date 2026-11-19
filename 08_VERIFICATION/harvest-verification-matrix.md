@@ -11383,3 +11383,6 @@
 | `CYCLE-20261119-KY3H` | `2026-11-19T21:08:10.013Z` | `herdrdev/herdr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9443` | Yes (`e1984438...`) |
 | `CYCLE-20261119-L2DL` | `2026-11-19T21:08:15.561Z` | `jacklandrin/OnlySwitch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9444` | Yes (`185b64a2...`) |
 | `CYCLE-20261119-L4KJ` | `2026-11-19T21:08:18.403Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9445` | Yes (`61e12621...`) |
+| `CYCLE-20261119-59XB` | `2026-11-19T21:23:58.463Z` | `lapce/lapce` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9446` | Yes (`57f1919f...`) |
+| `CYCLE-20261119-5FGM` | `2026-11-19T21:24:05.638Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9447` | Yes (`edefedb1...`) |
+| `CYCLE-20261119-5JSL` | `2026-11-19T21:24:11.253Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9448` | Yes (`57c36e57...`) |

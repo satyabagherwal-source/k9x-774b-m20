@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T21:08:23.956Z",
-  "total_verified_learnings": 9019,
+  "last_updated": "2026-11-19T21:24:16.987Z",
+  "total_verified_learnings": 9020,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21989,
+  "total_items": 22003,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -221206,8 +221206,8 @@
       "slug": "lioensky-vcptoolbox",
       "platform": "github",
       "source_url": "https://github.com/lioensky/VCPToolBox",
-      "source_version": "ec435c0e",
-      "content_hash": "5de0fd7a43dd29a63ad39deff50fcba7ef3716cf9a3f953a6f3563927e996d84",
+      "source_version": "a2c33d06",
+      "content_hash": "57c36e57f7e7d10c815fbe2b94996191e91c2c5fca58c8f0649c1dd2e3004b4b",
       "dossier_path": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
       "promoted_rules": [
@@ -221235,6 +221235,11 @@
           "number": 9253,
           "title": "出站请求中降级无法投递的 Markdown data: 图片",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9448,
+          "title": "Empirical Invariant Guard in global_chunks.rs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221242,7 +221247,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T15:51:50.820Z",
+      "verified_at": "2026-11-19T21:24:11.061Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221296,10 +221301,10 @@
       "relative_path": "08_VERIFICATION/lioensky-vcptoolbox-verification-protocol-empirical-defect-shield-for-lioensky-v.md",
       "title": "Verification Protocol: Empirical Defect Shield for lioensky/VCPToolBox",
       "repository": "lioensky/VCPToolBox",
-      "source_version": "ec435c0e",
-      "content_hash": "bf96b1fa65ab6576c741fa92e206046329fc1784ddbc282ab5058e8b21490907",
+      "source_version": "a2c33d06",
+      "content_hash": "873f1722dbc9d41d930a493b3125535fe964abdc4d9908601a29122759b6203f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T15:51:51.653Z"
+      "persisted_at": "2026-11-19T21:24:11.815Z"
     },
     "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false": {
       "item_id": "candidate_directive-gnd-don-t-unset-nullable-primitive-fields-set-to-0-or-false",
@@ -247034,9 +247039,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for lioensky-vcptoolbox-learnings",
       "repository": "lioensky-vcptoolbox-learnings",
       "source_version": "HEAD",
-      "content_hash": "603f331a0ed30eb9a5bfaa4dd546b65447d4e934aa519d023c11fb83a4968a79",
+      "content_hash": "777ecf87459ba2dc7ba053895f80dda257fcb6ef0825b9e734336f06193624ba",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T15:51:56.718Z"
+      "persisted_at": "2026-11-19T21:24:16.987Z"
     },
     "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf": {
       "learning_id": "learn-huggingface-unsloth-nvidia-nemotron-3-5-bolt-e4b-gguf",
@@ -281436,14 +281441,19 @@
       "slug": "dragonflyoss-dragonfly",
       "platform": "github",
       "source_url": "https://github.com/dragonflyoss/dragonfly",
-      "source_version": "1ce4dd87",
-      "content_hash": "56f1b37e6696167de6d0e41490b156a9275a3912dee76be86f61bc93c3757a4e",
+      "source_version": "d41be195",
+      "content_hash": "edefedb1733c2d33b402498b0cc0ce9b13299d9c33c02ed2da42d333b7d7cd13",
       "dossier_path": "07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
       "promoted_rules": [
         {
           "number": 9108,
           "title": "bump github.com/bits-and-blooms/bitset from 1.24.6 to 1.29.0",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9447,
+          "title": "add ListPeers and paginate ListPeers and ListHosts",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -281452,7 +281462,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T02:28:22.673Z",
+      "verified_at": "2026-11-19T21:24:05.420Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -281494,10 +281504,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dragonflyoss-dragonfly-content-information-intelligence-dragonflyoss-dragonfly-c.md",
       "title": "Content & Information Intelligence: dragonflyoss/dragonfly Core Invariants",
       "repository": "dragonflyoss/dragonfly",
-      "source_version": "1ce4dd87",
-      "content_hash": "fae4d1a421059aa93ea79a8c1a6962cd421ecaef59e7480ef6305cc3e4ed40fd",
+      "source_version": "d41be195",
+      "content_hash": "60ae1ed2dd47b0339cbdcd664bd30a782dd623029875f6ac0e8c48e971a27ce7",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T02:28:23.153Z"
+      "persisted_at": "2026-11-19T21:24:06.067Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflyoss-dragonfly": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflyoss-dragonfly",
@@ -281506,10 +281516,10 @@
       "relative_path": "08_VERIFICATION/dragonflyoss-dragonfly-verification-protocol-empirical-defect-shield-for-dragonf.md",
       "title": "Verification Protocol: Empirical Defect Shield for dragonflyoss/dragonfly",
       "repository": "dragonflyoss/dragonfly",
-      "source_version": "1ce4dd87",
-      "content_hash": "862415b7f93fd3782091cd440db5564b8bbdad4d7ad5afce9c2ee6ad306b44d6",
+      "source_version": "d41be195",
+      "content_hash": "cf0cb5a8f1eee1215422463c9b2a8256d8cbee39b02b4d1e292fa959ecb8dfae",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T02:28:23.298Z"
+      "persisted_at": "2026-11-19T21:24:06.222Z"
     },
     "learn-huggingface-xingchen-agi-xing4-0-29b-a4b": {
       "learning_id": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
@@ -281570,9 +281580,9 @@
       "title": "Content & Information Intelligence: dragonflyoss-dragonfly-learnings Core Invariants",
       "repository": "dragonflyoss-dragonfly-learnings",
       "source_version": "HEAD",
-      "content_hash": "cba5903ed51feafc71011f20ecab5d1cfee53b135d06492003891767bc6b4921",
+      "content_hash": "0a0d60e8efdb3af32f451b58c7c23dc9f742f3a3f2056555de027fc3a38f3060",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T02:33:22.396Z"
+      "persisted_at": "2026-11-19T21:24:16.168Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflyoss-dragonfly-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflyoss-dragonfly-learnin",
@@ -281582,9 +281592,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dragonflyoss-dragonfly-learnings",
       "repository": "dragonflyoss-dragonfly-learnings",
       "source_version": "HEAD",
-      "content_hash": "9f0607310c3a802571b100cc2f51b67cd7dbaacaadfa2c5db23c592c6e8b9745",
+      "content_hash": "87f6fa7856daf3fab01594ea26454a5339ed05b3d15ae736cea4599dd5187438",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T02:33:22.525Z"
+      "persisted_at": "2026-11-19T21:24:16.321Z"
     },
     "learn-huggingface-supersoniclabs-julia-1": {
       "learning_id": "learn-huggingface-supersoniclabs-julia-1",
@@ -297441,6 +297451,201 @@
       "content_hash": "c3a0e4268ffa8b4961577ee0b27e0bbbacb94a008eefaf0e05424badd024a8a5",
       "domain_letter": "I",
       "persisted_at": "2026-11-19T21:08:23.645Z"
+    },
+    "learn-github-lapce-lapce": {
+      "learning_id": "learn-github-lapce-lapce",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "lapce/lapce",
+      "repository": "lapce/lapce",
+      "slug": "lapce-lapce",
+      "platform": "github",
+      "source_url": "https://github.com/lapce/lapce",
+      "source_version": "9e8317c8",
+      "content_hash": "57f1919f4bf96d16635785f0f970accb62c4caf96c2cc4deb8f1f2e34ef68589",
+      "dossier_path": "07_PROJECT_LEARNING/lapce-lapce-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/lapce-lapce-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9446,
+          "title": "reset diff views when swapping documents",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-19T21:23:58.266Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9446": {
+      "learning_id": "rule-9446",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9446,
+      "title": "reset diff views when swapping documents",
+      "source_url": "https://github.com/lapce/lapce",
+      "source_version": "9e8317c8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T21:23:58.266Z"
+    },
+    "candidate_directive-reset-diff-views-when-swapping-documents": {
+      "item_id": "candidate_directive-reset-diff-views-when-swapping-documents",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5MPX-reset-diff-views-when-swapping-documents.md",
+      "title": "reset diff views when swapping documents",
+      "repository": "lapce-lapce-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7eb254395ca6231998a421e1f9667205c0ed8a61e6ab2ee5c0462ab71dfa1fe0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T21:24:15.046Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lapce-lapce-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-lapce-lapce-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lapce-lapce-technical-construction-intelligence-lapce-lapce-core-invariants.md",
+      "title": "Technical Construction Intelligence: lapce/lapce Core Invariants",
+      "repository": "lapce/lapce",
+      "source_version": "9e8317c8",
+      "content_hash": "ead54fdf5a88ac39ed91bed421b299363c4e870d070baf397ce714c80e929b69",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T21:23:58.870Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-lapce-lapce": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lapce-lapce",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/lapce-lapce-verification-protocol-empirical-defect-shield-for-lapce-lapce.md",
+      "title": "Verification Protocol: Empirical Defect Shield for lapce/lapce",
+      "repository": "lapce/lapce",
+      "source_version": "9e8317c8",
+      "content_hash": "17ca49764fec66271e0053c3c398a4ecbb4d0761f25d621a9ee8f777310d07bf",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T21:23:59.026Z"
+    },
+    "rule-9447": {
+      "learning_id": "rule-9447",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9447,
+      "title": "add ListPeers and paginate ListPeers and ListHosts",
+      "source_url": "https://github.com/dragonflyoss/dragonfly",
+      "source_version": "d41be195",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T21:24:05.420Z"
+    },
+    "candidate_directive-add-listpeers-and-paginate-listpeers-and-listhosts": {
+      "item_id": "candidate_directive-add-listpeers-and-paginate-listpeers-and-listhosts",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5FMX-add-listpeers-and-paginate-listpeers-and-listhosts.md",
+      "title": "add ListPeers and paginate ListPeers and ListHosts",
+      "repository": "dragonflyoss/dragonfly",
+      "source_version": "d41be195",
+      "content_hash": "01da26ecf3ceeef04349b44aac0d2d844527ae8a2cc7aa47255081a2480aa548",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-19T21:24:05.867Z"
+    },
+    "rule-9448": {
+      "learning_id": "rule-9448",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9448,
+      "title": "Empirical Invariant Guard in global_chunks.rs",
+      "source_url": "https://github.com/lioensky/VCPToolBox",
+      "source_version": "a2c33d06",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T21:24:11.061Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-global_chunks-rs": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-global_chunks-rs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5NZ6-empirical-invariant-guard-in-global_chunks-rs.md",
+      "title": "Empirical Invariant Guard in global_chunks.rs",
+      "repository": "lioensky-vcptoolbox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dcfb84dbcb67653855584c86769f4dc3ce442a70440ffdcad41294c876175ea6",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T21:24:16.679Z"
+    },
+    "domain_intelligence-architecture-intelligence-lioensky-vcptoolbox-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-lioensky-vcptoolbox-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-lioensky-vcptoolbox-architecture-intelligence-lioensky-vcptoolbox-core-invariant.md",
+      "title": "Architecture Intelligence: lioensky/VCPToolBox Core Invariants",
+      "repository": "lioensky/VCPToolBox",
+      "source_version": "a2c33d06",
+      "content_hash": "fda1998493b214b1c63b656f8b3bf378847c11db7369b07ebba59405bac6f986",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T21:24:11.661Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lapce-lapce-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-lapce-lapce-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lapce-lapce-learnings-technical-construction-intelligence-lapce-lapce-learnings-.md",
+      "title": "Technical Construction Intelligence: lapce-lapce-learnings Core Invariants",
+      "repository": "lapce-lapce-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4ec33b2f43f8bb7b7d20e8d14fd0b0d2fd7c39972bd6c4aa7f3a2c2011531de1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T21:24:15.227Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-lapce-lapce-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-lapce-lapce-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/lapce-lapce-learnings-verification-protocol-empirical-defect-shield-for-lapce-la.md",
+      "title": "Verification Protocol: Empirical Defect Shield for lapce-lapce-learnings",
+      "repository": "lapce-lapce-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d10b7bf5e6be3cee3c157a87844005412f212b522792ed4cd988dbabccfab865",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T21:24:15.442Z"
+    },
+    "candidate_directive-scheduler-add-listpeers-and-paginate-listpeers-and-listhosts": {
+      "item_id": "candidate_directive-scheduler-add-listpeers-and-paginate-listpeers-and-listhosts",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5NG1-scheduler-add-listpeers-and-paginate-listpeers-and-listhosts.md",
+      "title": "scheduler): add ListPeers and paginate ListPeers and ListHosts",
+      "repository": "dragonflyoss-dragonfly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9afd85097bdf769a1dc9e29ed459680b0d33b30aa90b10ac83a9b20d1cfba114",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-19T21:24:15.985Z"
+    },
+    "domain_intelligence-architecture-intelligence-lioensky-vcptoolbox-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-lioensky-vcptoolbox-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-lioensky-vcptoolbox-learnings-architecture-intelligence-lioensky-vcptoolbox-lear.md",
+      "title": "Architecture Intelligence: lioensky-vcptoolbox-learnings Core Invariants",
+      "repository": "lioensky-vcptoolbox-learnings",
+      "source_version": "HEAD",
+      "content_hash": "60beb697546a8f0eec80dc7f2e84f247281b22ef123b352e8c4039c0ef4618f7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T21:24:16.833Z"
     }
   },
   "ai-builder-brain": {

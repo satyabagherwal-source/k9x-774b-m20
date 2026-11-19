@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T21:08:23.791Z",
-  "total_records": 2026,
+  "last_updated": "2026-11-19T21:24:16.833Z",
+  "total_records": 2030,
   "domains": {
     "A": {
       "total": 15,
@@ -980,7 +980,7 @@
       ]
     },
     "G": {
-      "total": 352,
+      "total": 354,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1333,11 +1333,13 @@
         "domain_intelligence-architecture-intelligence-vercel-labs-agent-desktop-core-invariants",
         "domain_intelligence-architecture-intelligence-vercel-labs-agent-desktop-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-siteline-swiftui-introspect-core-invariants",
-        "domain_intelligence-architecture-intelligence-siteline-swiftui-introspect-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-siteline-swiftui-introspect-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-lioensky-vcptoolbox-core-invariants",
+        "domain_intelligence-architecture-intelligence-lioensky-vcptoolbox-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 478,
+      "total": 480,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1816,7 +1818,9 @@
         "domain_intelligence-technical-construction-intelligence-rtk-ai-rtk-core-invariants",
         "DOM-H-E8006564",
         "domain_intelligence-technical-construction-intelligence-rtk-ai-rtk-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-tableproapp-tablepro-learnings-core-invarian"
+        "domain_intelligence-technical-construction-intelligence-tableproapp-tablepro-learnings-core-invarian",
+        "domain_intelligence-technical-construction-intelligence-lapce-lapce-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-lapce-lapce-learnings-core-invariants"
       ]
     },
     "I": {
@@ -29546,8 +29550,8 @@
       "title": "Content & Information Intelligence: dragonflyoss/dragonfly Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dragonflyoss-dragonfly-content-information-intelligence-dragonflyoss-dragonfly-c.md",
       "repository": "dragonflyoss/dragonfly",
-      "content_hash": "fae4d1a421059aa93ea79a8c1a6962cd421ecaef59e7480ef6305cc3e4ed40fd",
-      "created_at": "2026-11-18T02:28:23.153Z"
+      "content_hash": "60ae1ed2dd47b0339cbdcd664bd30a782dd623029875f6ac0e8c48e971a27ce7",
+      "created_at": "2026-11-19T21:24:06.067Z"
     },
     "domain_intelligence-content-information-intelligence-dragonflyoss-dragonfly-learnings-core-invariant": {
       "record_id": "domain_intelligence-content-information-intelligence-dragonflyoss-dragonfly-learnings-core-invariant",
@@ -29555,8 +29559,8 @@
       "title": "Content & Information Intelligence: dragonflyoss-dragonfly-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dragonflyoss-dragonfly-learnings-content-information-intelligence-dragonflyoss-d.md",
       "repository": "dragonflyoss-dragonfly-learnings",
-      "content_hash": "cba5903ed51feafc71011f20ecab5d1cfee53b135d06492003891767bc6b4921",
-      "created_at": "2026-11-18T02:33:22.396Z"
+      "content_hash": "0a0d60e8efdb3af32f451b58c7c23dc9f742f3a3f2056555de027fc3a38f3060",
+      "created_at": "2026-11-19T21:24:16.168Z"
     },
     "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-core-invariants",
@@ -33993,6 +33997,42 @@
       "repository": "herdrdev-herdr-learnings",
       "content_hash": "65ab406c0ceb5b1eb022fe962019ac2741acd4ba52706630fabcbcf2f718ee05",
       "created_at": "2026-11-19T21:08:22.072Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lapce-lapce-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-lapce-lapce-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: lapce/lapce Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lapce-lapce-technical-construction-intelligence-lapce-lapce-core-invariants.md",
+      "repository": "lapce/lapce",
+      "content_hash": "ead54fdf5a88ac39ed91bed421b299363c4e870d070baf397ce714c80e929b69",
+      "created_at": "2026-11-19T21:23:58.870Z"
+    },
+    "domain_intelligence-architecture-intelligence-lioensky-vcptoolbox-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-lioensky-vcptoolbox-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: lioensky/VCPToolBox Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-lioensky-vcptoolbox-architecture-intelligence-lioensky-vcptoolbox-core-invariant.md",
+      "repository": "lioensky/VCPToolBox",
+      "content_hash": "fda1998493b214b1c63b656f8b3bf378847c11db7369b07ebba59405bac6f986",
+      "created_at": "2026-11-19T21:24:11.661Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-lapce-lapce-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-lapce-lapce-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: lapce-lapce-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-lapce-lapce-learnings-technical-construction-intelligence-lapce-lapce-learnings-.md",
+      "repository": "lapce-lapce-learnings",
+      "content_hash": "4ec33b2f43f8bb7b7d20e8d14fd0b0d2fd7c39972bd6c4aa7f3a2c2011531de1",
+      "created_at": "2026-11-19T21:24:15.227Z"
+    },
+    "domain_intelligence-architecture-intelligence-lioensky-vcptoolbox-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-lioensky-vcptoolbox-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: lioensky-vcptoolbox-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-lioensky-vcptoolbox-learnings-architecture-intelligence-lioensky-vcptoolbox-lear.md",
+      "repository": "lioensky-vcptoolbox-learnings",
+      "content_hash": "60beb697546a8f0eec80dc7f2e84f247281b22ef123b352e8c4039c0ef4618f7",
+      "created_at": "2026-11-19T21:24:16.833Z"
     }
   }
 }
