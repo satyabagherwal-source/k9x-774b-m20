@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T20:00:29.596Z",
+  "updated_at": "2026-11-19T20:34:31.192Z",
   "stats": {
-    "total_discovered": 6002,
-    "approved_pending_harvest": 5685,
+    "total_discovered": 6003,
+    "approved_pending_harvest": 5686,
     "harvested_count": 0,
     "rejected_count": 317,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5653,
+      "COMMUNITY_AND_EXPERT": 5654,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 112,
       "ENGINEERING_BLOGS": 4,
@@ -129846,6 +129846,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
         "fileName": "folkbench-folkbench-learnings.md"
+      }
+    },
+    "SRC-EB484845A183": {
+      "id": "SRC-EB484845A183",
+      "url": "https://claude.ai/code/session_01UYfmmLpEstoRCMNsPhVpwB",
+      "title": "https://claude.ai/code/session_01UYfmmLpEstoRCMNsPhVpwB",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T20:34:31.192Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+        "fileName": "provablehq-snarkos-learnings.md"
       }
     }
   }

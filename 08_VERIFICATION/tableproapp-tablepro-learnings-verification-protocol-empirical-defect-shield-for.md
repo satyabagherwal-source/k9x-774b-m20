@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T16:07:37.947Z",
+  "timestamp": "2026-11-19T20:34:30.468Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tableproapp-tablepro-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tableproapp-tablepro-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T16:07:37.947Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T20:34:30.468Z`  
 > **Learning ID**: `LEARN-EVO-tableproapp-tablepro-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source**: github ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
-> **Source Version**: `e3ca8837`  
+> **Source Version**: `0b0c7243`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T16:07:06.983Z  
+> **Timestamp**: 2026-11-19T20:24:19.716Z  
 > **Learning ID**: `learn-github-tableproapp-tablepro`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tableproapp-tablepro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/TableProApp/TablePro](https://github.com/TableProApp/TablePro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T16:07:06.977Z  
+> **Harvest Timestamp**: 2026-11-19T20:24:19.579Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Free, open-source native database client for macOS, Linux, iPhone and iPad.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 6471 stars
+- **Stars / Engagement**: 6491 stars
 
 ---
 
@@ -419,6 +419,7 @@ let package = Package(
         .library(name: "TableProR2SQLCore", targets: ["TableProR2SQLCore"]),
         .library(name: "TableProConnectionLibrary", targets: ["TableProConnectionLibrary"]),
         .library(name: "TableProSQLGrammar", targets: ["TableProSQLGrammar"]),
+        .library(name: "TableProSQLFile", targets: ["TableProSQLFile"]),
         .library(name: "TableProSQLQuoting", targets: ["TableProSQLQuoting"]),
         .library(name: "TableProProcess", targets: ["TableProProcess"]),
         .library(name: "TableProSQLVocabulary", targets: ["TableProSQLVocabulary"]),
@@ -440,6 +441,7 @@ let package = Package(
         .library(name: "TableProKafkaCore", targets: ["TableProKafkaCore"]),
         .library(name: "TableProCassandraCore", targets: ["TableProCassandraCore"]),
         .library(name: "TableProEtcdCore", targets: ["TableProEtcdCore"]),
+        .library(name: "TableProElasticsearchCore", targets: ["TableProElasticsearchCore"]),
         .library(name: "TableProDuckDBCore", targets: ["TableProDuckDBCore"])
     ],
     // Kafka brokers hand back whatever codec the producer stored, and macOS has no zstd.
@@ -578,12 +580,7 @@ let package = Package(
         ),
         // Only the plugin links this; the app tiers statements with TableProWeaviateCore alone.
         .target(
-            name: "TableProWeaviateClient",
-            dependencies: ["TableProWeaviateCore"],
-            path: "Sources/TableProWeaviateClient"
-        ),
-        .target(
-   
+            
 ```
 
 ### Core Architecture Module: `apple/Packages/TableProCore/Sources/CSQLite/include/sqlite3.h`
@@ -1839,1150 +1836,1624 @@ public enum MongoVocabulary {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2aca62ea` (2026-11-15)
-**Commit Message**: fix(duckdb): keep DuckDB's expression recursion within the stacks it runs on (#4293)
+### Incident Patch 1: `68da8db7` (2026-11-19)
+**Commit Message**: fix(duckdb): run DuckDB's tasks on 8 MiB threads so a deep ATTACH cannot overflow (#4354)
 
-**File**: `.github/workflows/core.yml` (modified, +3/-0)
+**File**: `apple/Plugins/DuckDBDriverPlugin/DuckDBConnection.swift` (modified, +13/-0)
 ```diff
-@@ -99,6 +99,9 @@ jobs:
-       # The sign-in's loopback listener and the token's file on each platform.
-       - name: Account unit tests
-         run: cargo test --locked --target "$TARGET" -p tablepro-account --lib
-+      # DuckDB recurses on threads whose stack each platform sizes (core/docs/decisions/0031-duckdb-expression-depth.md).
-+      - name: DuckDB's deepest expressions
-+        run: cargo test --locked --target "$TARGET" -p tablepro-driver-duckdb --test deep_expressions
-       # The Arm64 image has no OpenSSH Server, and installing it takes about 20 minutes, so Arm64 runs these nightly.
-       - name: Start Windows' OpenSSH Server
-         id: sshd
-```
-
-**File**: `apple/Plugins/DuckDBDriverPlugin/DuckDBConnection.swift` (modified, +12/-0)
-```diff
-@@ -38,6 +38,9 @@ enum DuckDBReleaseOutcome: Equatable {
- actor DuckDBConnectionActor {
-     private static let logger = Logger(subsystem: "com.TablePro", category: "DuckDBConnectionActor")
+@@ -42,6 +42,7 @@ actor DuckDBConnectionActor {
+     nonisolated var unownedExecutor: UnownedSerialExecutor { executor.asUnownedSerialExecutor() }
  
-+    private let executor = DuckDBStackExecutor(name: "com.TablePro.duckdb")
-+    nonisolated var unownedExecutor: UnownedSerialExecutor { executor.asUnownedSerialExecutor() }
-+
      private var database: duckdb_database?
++    private var taskThreads: DuckDBTaskThreads?
      private var connection: duckdb_connection?
      // Renders the rows of a result the session's own connection is still producing.
-@@ -279,6 +282,15 @@ actor DuckDBConnectionActor {
-                 String(localized: "This build of DuckDB does not accept the storage version that keeps files readable by DuckDB 1.x")
+     private var renderConnection: duckdb_connection?
+@@ -291,6 +292,12 @@ actor DuckDBConnectionActor {
+                 String(localized: "This build of DuckDB does not accept a limit on how deep an expression nests")
              )
          }
-+        guard duckdb_set_config(
-+            config,
-+            DuckDBExpressionDepth.configurationOption,
-+            DuckDBExpressionDepth.limit
-+        ) != DuckDBError else {
++        for option in DuckDBTaskThreads.sessionOptions
++            where duckdb_set_config(config, option.name, option.value) == DuckDBError {
 +            throw DuckDBPluginError.connectionFailed(
-+                String(localized: "This build of DuckDB does not accept a limit on how deep an expression nests")
++                String(localized: "This build of DuckDB does not accept running its tasks on threads TablePro starts")
 +            )
 +        }
          if !spec.allowsPersistentSecrets {
              guard duckdb_set_config(config, "allow_persistent_secrets", "false") != DuckDBError else {
                  throw DuckDBPluginError.connectionFailed(
+@@ -365,6 +372,7 @@ actor DuckDBConnectionActor {
+             throw error
+         }
+         database = db
++        taskThreads = DuckDBTaskThreads(database: openedDB)
+         connection = conn
+         renderConnection = renderConn
+         renderSettings = [:]
+@@ -382,6 +390,8 @@ actor DuckDBConnectionActor {
+             duckdb_disconnect(&connection)
+             connection = nil
+         }
++        taskThreads?.close()
++        taskThreads = nil
+         if database != nil {
+             duckdb_close(&database)
+             database = nil
+@@ -559,6 +569,9 @@ actor DuckDBConnectionActor {
+ 
+         var result = duckdb_result()
+         let state = streams ? duckdb_execute_prepared_streaming(stmt, &result) : duckdb_execute_prepared(stmt, &result)
++        if !DuckDBTaskThreads.keepsCount(statementType) {
++            taskThreads?.followCount()
++        }
+         guard state != DuckDBError else {
+             let message = Self.errorMessage(from: &result)
+             duckdb_destroy_result(&result)
 ```
 
-**File**: `apple/Plugins/DuckDBDriverPlugin/DuckDBExpressionDepth.swift` (added, +117/-0)
+**File**: `apple/Plugins/DuckDBDriverPlugin/DuckDBExpressionDepth.swift` (modified, +150/-0)
 ```diff
-@@ -0,0 +1,117 @@
-+//
-+//  DuckDBExpressionDepth.swift
-+//  DuckDBDriverPlugin
-+//
+@@ -52,6 +52,156 @@ nonisolated enum DuckDBExpressionDepth {
+     }
+ }
+ 
++// DuckDB runs a statement's tasks on the caller and on threads of its own, which get 512 KiB on macOS and iOS, and an
++// ATTACH or read_duckdb() reads the other file's expressions inside one. With external_threads at the thread count
++// DuckDB starts none, and these run its tasks with its command line's stack instead.
++nonisolated final class DuckDBTaskThreads {
++    // DuckDB's own default, std::thread::hardware_concurrency().
++    static let count = max(ProcessInfo.processInfo.processorCount, 1)
++    static let openOptions: [(name: String, value: String)] = [
++        (name: "threads", value: String(count)),
++        (name: "external_threads", value: String(count)),
++    ]
++    // A statement that raises the count and locks the configuration, as IMPORT DATABASE can, still lets these take
++    // DuckDB's threads over.
++    static let sessionOptions = openOptions + [(name: "allowed_configs", value: "[external_threads]")]
 +
-+import CDuckDB
-+import Foundation
++    private let database: duckdb_database
++    // Its own, so a cancel or an aborted transaction on a session cannot stop a change of the count halfway.
++    private var connection: duckdb_connection?
++    private var state: duckdb_task_state?
++    private var workers = 0
++    // threads and external_threads as these last set them; nil once DuckDB keeps threads of its own.
++    private var pinned: Int? = DuckDBTaskThreads.count
++    private let running = DispatchGroup()
 +
-+// DuckDB binds about 1 KiB of stack per level of an expression, also on threads of its own that get 512 KiB on macOS
-+// and iOS, where its default limit of 1,000 overflows them (core/docs/decisions/0031-duckdb-expression-depth.md).
-+nonisolated enum DuckDBExpressionDepth {
-+    static let configurationOption = "max_expression_depth"
-+    static let limit = "250"
-+
-+    // DuckDB reads a file's expressions at open and ATTACH, prints them and writes them back with no limit of its
-+    // own, about 0.84 KiB a level: the stack its command line runs on, where a cooperative thread has 512 KiB.
-+    static let stackSize = 8 << 20
-+
-+    static func open(
-+        _ path: String,
-+        config: duckdb_config?
-+    ) -> (state: duckdb_state, database: duckdb_database?, error: UnsafeMutablePointer<CChar>?) {
-+        nonisolated(unsafe) let config = config
-+        return onStack {
-+            var database: duckdb_database?
-+            var error: UnsafeMutablePointer<CChar>?
-+            let state = duckdb_open_ext(path, &database, config, &error)
-+            return (state: state, database: database, error: error)
-+        } ?? (state: DuckDBError, database: nil, error: nil)
-+    }
-+
-+    static func close(_ database: inout duckdb_database?) {
-+        nonisolated(unsafe) let closing = database
-+        _ = onStack {
-+            var closed = closing
-+            duckdb_close(&closed)
++    // Without its connection it starts no thread, and every task runs on the caller's.
++    init(database: duckdb_database) {
++        self.database = database
++        guard duckdb_connect(database, &connection) != DuckDBError else {
++            connection = nil
++            return
 +        }
-+        database = nil
++        start(Self.count - 1)
 +    }
 +
-+    static func onStack<Value>(_ body: @escaping @Sendable () -> Value) -> Value? {
-+        nonisolated(unsafe) var value: Value?
-+        let finished = DispatchSemaphore(value: 0)
-+        let thread = Thread {
-+            value = body()
-+            finished.signal()
-+        }
-+        thread.stackSize = stackSize
-+        thread.start()
-+        finished.wait()
-+        return value
-+    }
-+}
-+
-+// An actor's jobs, in order, on one thread of its own with DuckDB's stack.
-+nonisolated final class DuckDBStackExecutor: SerialExecutor, @unchecked Sendable {
-+    private let pending = DuckDBPendingJobs()
-+
-+    init(name: String) {
-+        let pending = pending
-+        let thread = Thread { pending.run() }
-+        thread.name = name
-+        thread.stackSize = DuckDBExpressionDepth.stackSize
-+        thread.qualityOfService = .userInitiated
-+        thread.start()
-+    }
-+
-+    deinit {
-+        pending.stop()
-+    }
-+
-+    // The ExecutorJob form needs macOS 14 and the app runs on 13.
-+    func enqueue(_ job: UnownedJob) {
-+        pending.add(job, on: asUnownedSerialExecutor())
-+    }
-+
-+    func asUnownedSerialExecutor() -> UnownedSerialExecutor {
-+        UnownedSerialExecutor(ordinary: self)
-+    }
-+}
-+
-+private nonisolated final class DuckDBPendingJobs: @unchecked Sendable {
-+    private let condition = NSCondition()
-+    private var jobs: [(job: UnownedJob, executor: UnownedSerialExecutor)] = []
-+    private var stopped = false
-+
-+    func add(_ job: UnownedJob, on executor: UnownedSerialExecutor) {
-+        condition.lock()
-+        jobs.append((job: job, executor: executor))
-+        condition.signal()
-+        condition.unlock()
-+    }
-+
-+    // The executor goes with its actor, which has no job left by then.
-+    func stop() {
-+        condition.lock()
-+        stopped = true
-+        condition.signal()
-+        condition.unlock()
-+    }
-+
-+    func run() {
-+        while true {
-+            condition.lock()
-+            while jobs.isEmpty && !stopped {
-+                condition.wait()
-+            }
-+            guard !jobs.isEmpty else {
-+                condition.unlock()
-+                return
-+            }
-+            let next = jobs.removeFirst()
-+            condition.unlock()
-+            next.job.runSynchronously(on: next.executor)
++    // Before duckdb_close: a connection left open keeps the file.
++    func close() {
++        stop()
++        if connection != nil {
++            duckdb_disconnect(&connection)
 +        }
 +    }
-+}
++
++    // DuckDB refuses a count below external_threads. One above it makes DuckDB start threads of its own, which these
++    // take over before anything else runs: a later change ends them with one wake-up each through the semaphore these
++    // wait on too, and a wake-up one of these took leaves DuckDB's join waiting for good (measured).
++    func followCount() {
++        guard !pinnedStillHolds() else { return }
++        retake()
++    }
++
++    static func keepsCount(_ type: duckdb_statement_type) -> Bool {
++        switch type {
++        case DUCKDB_STATEMENT_TYPE_SELECT, DUCKDB_STATEMENT_TYPE_INSERT, DUCKDB_STATEMENT_TYPE_UPDATE,
++             DUCKDB_STATEMENT_TYPE_DELETE, DUCKDB_STATEMENT_TYPE_TRANSACTION:
++            return true
++        default:
++            return false
++        }
++    }
++
++    private func pinnedStillHolds() -> Bool {
++        guard let pinned, let connection, let counts = Self.counts(on: connection) else { return false }
++        return counts.threads == pinned && counts.external == pinned
++    }
++
++    private func retake() {
++        stop()
++        pinned = nil
++        guard let connection, let threads = Self.counts(on: connection)?.threads,
++              Self.run("SET external_threads = \(threads)", on: connection) else { return }
++        pinned = threads
++        start(threads - 1)
++    }
++
++    private func stop() {
++        guard let state else { return }
++        // A thread DuckDB started itself, after a statement raised the count, can take the wake-up meant for one of these.
++        repeat {
++            duckdb_finish_execution(state)
++        } while running.wait(timeout: .now() + .milliseconds(10)) == .timedOut
++        duckdb_destroy_task_state(state)
++        self.state = nil
++        workers = 0
++    }
++
++    private func start(_ count: Int) {
++        guard count > 0, let state = duckdb_create_task_state(database) else { return }
++        self.state = state
++        var attributes = pthread_attr_t()
++        pthread_attr_init(&attributes)
++        defer { pthread_attr_destroy(&attributes) }
++        pthread_attr_setstacksize(&attributes, DuckDBExpressionDepth.stackSize)
++        pthread_attr_setdetachstate(&attributes, PTHREAD_CREATE_DETACHED)
++        pthread_attr_set_qos_class_np(&attributes, QOS_CLASS_USER_INITIATED, 0)
++        for _ in 0..<count {
++            let worker = Unmanaged.passRetained(DuckDBTaskWorker(state: state, running: running)).toOpaque()
++            running.enter()
++            var thread: pthread_t?
++            let created = pthread_create(&thread, &attributes, { context in
++                let worker = Unmanaged<DuckDBTaskWorker>.fromOpaque(context).takeRetainedValue()
++                pthread_setname_np("com.TablePro.duckdb.task")
++                duckdb_execute_tasks_state(worker.state)
++                worker.running.leave()
++                return nil
++            }, worker)
++            // DuckDB stops starting threads at the system's li
 ```
 
-**File**: `apple/Plugins/DuckDBDriverPlugin/DuckDBIsolatedImport.swift` (modified, +22/-13)
+**File**: `apple/Plugins/DuckDBDriverPlugin/DuckDBIsolatedImport.swift` (modified, +3/-1)
 ```diff
-@@ -13,6 +13,7 @@ enum DuckDBIsolatedImport {
-         ("autoinstall_known_extensions", "false"),
+@@ -14,7 +14,7 @@ enum DuckDBIsolatedImport {
          ("autoload_known_extensions", "false"),
          ("allow_community_extensions", "false"),
-+        (DuckDBExpressionDepth.configurationOption, DuckDBExpressionDepth.limit),
-     ]
+         (DuckDBExpressionDepth.configurationOption, DuckDBExpressionDepth.limit),
+-    ]
++    ] + DuckDBTaskThreads.openOptions
  
      // duckdb_set_config rejects allowed_directories, and DuckDB refuses to change it once external access is off.
-@@ -47,14 +48,14 @@ enum DuckDBIsolatedImport {
-             throw DuckDBPluginError.connectionFailed("DuckDB rejected \(option.name) = \(option.value)")
-         }
- 
--        var database: duckdb_database?
--        var openError: UnsafeMutablePointer<CChar>?
--        guard duckdb_open_ext(file, &database, config, &openError) != DuckDBError else {
--            let detail = openError.map { String(cString: $0) } ?? "unknown error"
--            duckdb_free(openError)
-+        let opened = DuckDBExpressionDepth.open(file, config: config)
-+        var database = opened.database
-+        guard opened.state != DuckDBError else {
-+            let detail = opened.error.map { String(cString: $0) } ?? "unknown error"
-+            duckdb_free(opened.error)
+     static func lockdownStatements(allowing folder: String) -> [String] {
+@@ -56,6 +56,8 @@ enum DuckDBIsolatedImport {
              throw DuckDBPluginError.connectionFailed("Failed to open DuckDB database at '\(file)': \(detail)")
          }
--        defer { duckdb_close(&database) }
-+        defer { DuckDBExpressionDepth.close(&database) }
+         defer { DuckDBExpressionDepth.close(&database) }
++        let taskThreads = database.map { DuckDBTaskThreads(database: $0) }
++        defer { taskThreads?.close() }
  
          var handle: duckdb_connection?
          guard duckdb_connect(database, &handle) != DuckDBError, let connection = handle else {
-@@ -67,14 +68,22 @@ enum DuckDBIsolatedImport {
-         }
-         if Task.isCancelled { throw CancellationError() }
- 
--        // IMPORT DATABASE expands into the folder's statements, which duckdb_prepare refuses.
--        for statement in lockdownStatements(allowing: folder) + [importStatement(folder: folder)] {
--            var result = duckdb_result()
--            defer { duckdb_destroy_result(&result) }
--            guard duckdb_query(connection, statement, &result) != DuckDBError else {
--                let message = duckdb_result_error(&result).map { String(cString: $0) } ?? "Unknown DuckDB error"
--                throw DuckDBPluginError.queryFailed(message)
-+        // IMPORT DATABASE expands into the folder's statements, which duckdb_prepare refuses. An ATTACH among them
-+        // reads that file's expressions too.
-+        nonisolated(unsafe) let importing = connection
-+        let statements = lockdownStatements(allowing: folder) + [importStatement(folder: folder)]
-+        let failure = DuckDBExpressionDepth.onStack { () -> String? in
-+            for statement in statements {
-+                var result = duckdb_result()
-+                defer { duckdb_destroy_result(&result) }
-+                guard duckdb_query(importing, statement, &result) != DuckDBError else {
-+                    return duckdb_result_error(&result).map { String(cString: $0) } ?? "Unknown DuckDB error"
-+                }
-             }
-+            return nil
-+        } ?? "DuckDB did not run the import"
-+        if let failure {
-+            throw DuckDBPluginError.queryFailed(failure)
-         }
-     }
- }
 ```
 
 **File**: `apple/TablePro/Resources/Localizable.xcstrings` (modified, +4/-0)
 ```diff
-@@ -201485,6 +201485,10 @@
-       "extractionState" : "manual",
-       "generatesSymbol" : false
+@@ -201534,6 +201534,10 @@
+         }
+       }
      },
-+    "This build of DuckDB does not accept a limit on how deep an expression nests" : {
++    "This build of DuckDB does not accept running its tasks on threads TablePro starts" : {
 +      "extractionState" : "manual",
 +      "generatesSymbol" : false
 +    },
-     "This build of DuckDB does not accept a read-only access mode" : {
+     "This build of DuckDB does not accept the storage version that keeps files readable by DuckDB 1.x" : {
        "extractionState" : "manual",
-       "generatesSymbol" : false,
+       "generatesSymbol" : false
 ```
 
-**File**: `apple/TableProMobile/TableProMobile/Drivers/DuckDBDriver.swift` (modified, +3/-2)
+**File**: `apple/TableProMobile/TableProMobile/Drivers/DuckDBDriver+Transfer.swift` (modified, +4/-3)
 ```diff
-@@ -168,9 +168,9 @@ nonisolated final class DuckDBInterruptHandle: @unchecked Sendable {
- actor DuckDBActor {
-     static let maxRows = 100_000
+@@ -189,8 +189,7 @@ extension DuckDBActor {
+         }
+         var result = duckdb_result()
+         guard !parameters.isEmpty else {
+-            if duckdb_query(connection, sql, &result) == DuckDBError {
+-                let message = duckdb_result_error(&result).map { String(cString: $0) } ?? "Unknown DuckDB error"
++            if let message = run(sql, on: connection, into: &result) {
+                 duckdb_destroy_result(&result)
+                 throw DuckDBDriverError.queryFailed(message)
+             }
+@@ -204,7 +203,9 @@ extension DuckDBActor {
+         }
+         defer { duckdb_destroy_prepare(&statement) }
+         try Self.bind(parameters, to: prepared)
+-        if duckdb_execute_prepared(prepared, &result) == DuckDBError {
++        let state = duckdb_execute_prepared(prepared, &result)
++        followThreadCount(after: duckdb_prepared_statement_type(prepared))
++        if state == DuckDBError {
+             let message = duckdb_result_error(&result).map { String(cString: $0) } ?? "Unknown DuckDB error"
+             duckdb_destroy_result(&result)
+             throw DuckDBDriverError.queryFailed(message)
+```
+
+**File**: `apple/TableProMobile/TableProMobile/Drivers/DuckDBDriver.swift` (modified, +72/-3)
+```diff
+@@ -3,6 +3,7 @@ import Dispatch
+ import Foundation
+ import TableProDatabase
+ import TableProModels
++import TableProSQLGrammar
+ import TableProSQLQuoting
  
--    private let queue = DispatchSerialQueue(label: "com.TablePro.duckdb")
-+    private let executor = DuckDBStackExecutor(name: "com.TablePro.duckdb")
- 
--    nonisolated var unownedExecutor: UnownedSerialExecutor { queue.asUnownedSerialExecutor() }
-+    nonisolated var unownedExecutor: UnownedSerialExecutor { executor.asUnownedSerialExecutor() }
- 
+ nonisolated final class DuckDBDriver: DatabaseDriver, CatalogQuerying, ExportRowStreaming,
+@@ -196,6 +197,7 @@ actor DuckDBActor {
      nonisolated let interruptHandle = DuckDBInterruptHandle()
-     private var database: duckdb_database?
-@@ -191,6 +191,7 @@ actor DuckDBActor {
-         ("storage_compatibility_version", "v0.10.2"),
+     private(set) var database: duckdb_database?
+     var connection: duckdb_connection?
++    private var taskThreads: DuckDBTaskThreads?
+     // The transfer connections on `database`, which `close()` ends before the database.
+     var transferLanes: [UInt64: DuckDBTransferLane] = [:]
+     var lastTransferLane: UInt64 = 0
+@@ -216,7 +218,7 @@ actor DuckDBActor {
          ("autoinstall_known_extensions", "false"),
          ("autoload_known_extensions", "false"),
-+        (DuckDBExpressionDepth.configurationOption, DuckDBExpressionDepth.limit),
-     ]
+         (DuckDBExpressionDepth.configurationOption, DuckDBExpressionDepth.limit),
+-    ]
++    ] + DuckDBTaskThreads.sessionOptions
  
      func open(path: String) throws {
+         _ = Self.registeredExtensions
+@@ -256,6 +258,7 @@ actor DuckDBActor {
+ 
+         database = db
+         connection = conn
++        if let db { taskThreads = DuckDBTaskThreads(database: db) }
+         if let conn { interruptHandle.attach(conn) }
+     }
+ 
+@@ -275,6 +278,8 @@ actor DuckDBActor {
+             duckdb_disconnect(&connection)
+             connection = nil
+         }
++        taskThreads?.close()
++        taskThreads = nil
+         if database != nil {
+             duckdb_close(&database)
+             database = nil
+@@ -294,8 +299,7 @@ actor DuckDBActor {
+         let startTime = Date()
+         var result = duckdb_result()
+ 
+-        if duckdb_query(connection, sql, &result) == DuckDBError {
+-            let message = duckdb_result_error(&result).map { String(cString: $0) } ?? "Unknown DuckDB error"
++        if let message = run(sql, on: connection, into: &result) {
+             duckdb_destroy_result(&result)
+             throw DuckDBDriverError.queryFailed(message)
+         }
+@@ -342,6 +346,71 @@ actor DuckDBActor {
+         return Self.decodeMaterialized(&result, plan: plan, rowsChanged: rowsChanged, startTime: startTime)
+     }
+ 
++    // Several statements run one at a time, split as the editor splits them, so a count one raises is taken over
++    // before the next runs, and a text DuckDB cannot parse runs none of them. The result is the one duckdb_query
++    // gives: the first with rows, else the last. Returns the error.
++    func run(_ sql: String, on connection: duckdb_connection, into result: inout duckdb_result) -> String? {
++        guard let taskThreads else {
++            return duckdb_query(connection, sql, &result) == DuckDBError ? Self.error(of: &result) : nil
++        }
++        var extracted: duckdb_extracted_statements?
++        defer { duckdb_destroy_extracted(&extracted) }
++        let count = duckdb_extract_statements(connection, sql, &extracted)
++        if let error = duckdb_extract_statements_error(extracted) {
++            return String(cString: error)
++        }
++        guard count > 1 else { return Self.run(sql, on: connection, taskThreads, into: &result) }
++        let statements = SQLStatementScanner.executableStatements(in: sql, grammar: Self.grammar)
++        guard statements.count == count else {
++            return "DuckDB reads \(count) statements here where TablePro splits \(statements.count); run them one at a time"
++        }
++        var kept: duckdb_result?
++        var keptHasRows = false
++        for statement in statements {
++            var current = duckdb_result()
++            if let failure = Self.run(statement.sql, on: connection, taskThreads, into: &current) {
++                duckdb_destroy_result(&current)
++                if var kept { duckdb_destroy_result(&kept) }
++                return failure
++            }
++            if kept != nil, keptHasRows {
++                duckdb_destroy_result(&current)
++                continue
++            }
++            if var earlier = kept { duckdb_destroy_result(&earlier) }
++            keptHasRows = duckdb_result_return_type(current) == DUCKDB_RESULT_TYPE_QUERY_RESULT
++            kept = current
++        }
++        if let kept { result = kept }
++        return nil
++    }
++
++    func followThreadCount(after type: duckdb_statement_type) {
++        guard !DuckDBTaskThreads.keepsCount(type) else { return }
++        taskThreads?.followCount()
++    }
++
++    private static let grammar = SQLLexicalReadings.resolve(
++        databaseTypeId: DatabaseType.duckdb.rawValue, declared: nil, session: nil
++    ).execution
++
++    private static func run(
++        _ sql: String,
++        on connection: duckdb_connection,
++        _ taskThreads: DuckDBTaskThreads,
++        into result: inout duckdb_result
++    ) -> String? {
++        let state = duckdb_query(connection, sql, &result)
++        if !DuckDBTaskThreads.keepsCount(duckdb_result_statement_type(result)) {
++            taskThreads.followCount()
++        }
++        return state == DuckDBErro
 ```
 
-**File**: `apple/TableProMobile/TableProMobileTests/Drivers/DuckDBDriverTests.swift` (modified, +71/-0)
+**File**: `apple/TableProMobile/TableProMobileTests/Drivers/DuckDBDriverTests.swift` (modified, +185/-0)
 ```diff
-@@ -1,3 +1,5 @@
-+import CDuckDB
-+import Foundation
- import TableProDatabase
- @testable import TableProMobile
- import TableProModels
-@@ -532,3 +534,72 @@ struct DuckDBNulTextTests {
-         #expect(after.rows == [["k", "other"], [key, "x\u{0}y"]])
+@@ -602,4 +602,189 @@ struct DuckDBDeepExpressionTests {
+ 
+         #expect(tables.rows == [["t"]])
      }
- }
 +
-+// Built past DuckDB's default limit on a stack that holds it, as another program could.
-+private actor DeepDuckDBFileWriter {
-+    private let executor = DuckDBStackExecutor(name: "DeepDuckDBFileWriter")
-+    nonisolated var unownedExecutor: UnownedSerialExecutor { executor.asUnownedSerialExecutor() }
-+
-+    func create(_ path: String, check: String) -> Bool {
-+        var config: duckdb_config?
-+        var database: duckdb_database?
-+        var connection: duckdb_connection?
-+        defer {
-+            duckdb_disconnect(&connection)
-+            duckdb_close(&database)
-+            duckdb_destroy_config(&config)
-+        }
-+        guard duckdb_create_config(&config) != DuckDBError,
-+              duckdb_set_config(config, "max_expression_depth", "100000") != DuckDBError,
-+              duckdb_open_ext(path, &database, config, nil) != DuckDBError,
-+              duckdb_connect(database, &connection) != DuckDBError
-+        else { return false }
-+        var result = duckdb_result()
-+        defer { duckdb_destroy_result(&result) }
-+        return duckdb_query(connection, "CREATE TABLE t (a INTEGER CHECK (\(check) > 0)); CHECKPOINT", &result)
-+            != DuckDBError
-+    }
-+}
-+
-+struct DuckDBDeepExpressionTests {
-+    private func deepFile(in directory: URL) async throws -> URL {
-+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-+        let file = directory.appendingPathComponent("deep.duckdb")
-+        let check = String(repeating: "(", count: 900) + "a" + String(repeating: " + 1)", count: 900)
-+        #expect(await DeepDuckDBFileWriter().create(file.path, check: check))
-+        return file
-+    }
-+
-+    @Test("A CHECK nested 900 deep opens, and reading its table's keys fails at the depth limit instead of overflowing")
-+    func deepCheckOpensAndItsKeysAreRefused() async throws {
++    @Test("A file nested 900 deep attaches a hundred times, each read on a thread with DuckDB's stack")
++    func deepFileAttachesRepeatedly() async throws {
 +        let directory = FileManager.default.temporaryDirectory
-+            .appendingPathComponent("duckdb-deep-\(UUID().uuidString)", isDirectory: true)
-+        defer { try? FileManager.default.removeItem(at: directory) }
-+        let file = try await deepFile(in: directory)
-+
-+        let driver = DuckDBDriver(source: .file(file))
-+        try await driver.connect()
-+        let refusal = await #expect(throws: DuckDBDriverError.self) {
-+            try await driver.fetchColumns(table: "t", schema: nil)
-+        }
-+        try await driver.disconnect()
-+
-+        #expect(refusal?.localizedDescription.contains("Max expression depth limit of 250 exceeded") == true)
-+    }
-+
-+    @Test("An ATTACH of a file nested 900 deep reads its catalog without overflowing")
-+    func deepFileAttaches() async throws {
-+        let directory = FileManager.default.temporaryDirectory
-+            .appendingPathComponent("duckdb-deep-attach-\(UUID().uuidString)", isDirectory: true)
++            .appendingPathComponent("duckdb-deep-reattach-\(UUID().uuidString)", isDirectory: true)
 +        defer { try? FileManager.default.removeItem(at: directory) }
 +        let file = try await deepFile(in: directory)
 +
 +        let driver = DuckDBDriver(source: .inMemory)
 +        try await driver.connect()
-+        _ = try await driver.execute(query: "ATTACH '\(file.path)' AS deep (READ_ONLY)")
-+        let tables = try await driver.execute(query: "SELECT table_name FROM duckdb_tables() WHERE database_name = 'deep'")
++        for _ in 0..<100 {
++            _ = try await driver.execute(query: "ATTACH '\(file.path)' AS deep (READ_ONLY)")
++            _ = try await driver.execute(query: "DETACH deep")
++        }
++        let threads = try await driver.execute(query: "SELECT current_setting('threads'), current_setting('external_threads')")
 +        try await driver.disconnect()
 +
-+        #expect(tables.rows == [["t"]])
-+    }
-+}
-```
-
-**File**: `apple/TableProMobile/project.yml` (modified, +2/-0)
-```diff
-@@ -77,6 +77,8 @@ targets:
-       # The socket key a Mac connection stores, so iOS refuses exactly what the Mac driver dials
-       # through a socket.
-       - ../Plugins/MySQLDriverPlugin/MySQLLocalSocket.swift
-+      # The expression depth limit and the open's stack both apps open a DuckDB file with.
-+      - ../Plugins/DuckDBDriverPlugin/DuckDBExpressionDepth.swift
-       - ../Plugins/Shared/PluginQueryTimeout.swift
-       # The toolbar glyph rule both apps follow on and before the 26 releases.
-       - ../TablePro/Core/Services/Infrastructure/Toolbar/ToolbarSymbols.swift
-```
-
----
-
-### Incident Patch 2: `1c03bcd7` (2026-11-15)
-**Commit Message**: fix(core): bound what a SQLite or DuckDB catalog read holds (#4287)
-
-**File**: `core/ARCHITECTURE.md` (modified, +1/-1)
-```diff
-@@ -128,7 +128,7 @@ How an app reaches a database: the contract in `tablepro-core`, a transport that
- 
- ### The contract
- 
--`DatabaseDriver` describes an engine before any connection exists, through `DriverCapabilities`, and opens a `Connection`. The `Connection` serves the workspace from a pool; every call takes `CallOptions` (a deadline and a cancel token) and runs on a task the connection owns (`OwnedCalls`), so a stop reaches the server instead of leaving the statement running. Saves report what they left in the database through a `WriteLedger`. Each editor tab gets an `EditorSession` of its own that streams results into a `ResultSink`, and the `Session` that opens it puts a `ByteLimitSink` in front of that sink, so a run stops keeping rows once they pass `RunOptions::byte_limit` bytes across its results, the row that crosses it kept whole ([ADR 0020](docs/decisions/0020-a-run-keeps-a-byte-limit-of-rows.md)). [docs/adding-drivers.md](../linux/docs/adding-drivers.md) is the full contract, [ADR 0016](../linux/docs/decisions/0016-driver-contract-v2.md) the reasons for it, and the engine pages say how each driver meets it: [PostgreSQL](../linux/docs/drivers/postgresql.md), [MySQL and MariaDB](../linux/docs/drivers/mysql.md), [SQLite](../linux/docs/drivers/sqlite.md), [DuckDB](../linux/docs/drivers/duckdb.md), [SQL Server](../linux/docs/drivers/sql-server.md), [ClickHouse](../linux/docs/drivers/clickhouse.md), [Cassandra and ScyllaDB](../linux/docs/drivers/cassandra.md), [Redis](../linux/docs/drivers/redis.md), [MongoDB](../linux/docs/drivers/mongodb.md). An engine without SQL says so through `DriverCapabilities::data_model`: the workspace lists a key-value engine's keys and opens them in key tabs ([ADR 0021](../linux/docs/decisions/0021-engines-without-sql.md)), and opens a document engine's collections in table tabs whose statements are the engine's shell calls ([ADR 0026](../linux/docs/decisions/0026-documents-in-the-table-tab.md)).
-+`DatabaseDriver` describes an engine before any connection exists, through `DriverCapabilities`, and opens a `Connection`. The `Connection` serves the workspace from a pool; every call takes `CallOptions` (a deadline and a cancel token) and runs on a task the connection owns (`OwnedCalls`), so a stop reaches the server instead of leaving the statement running. Saves report what they left in the database through a `WriteLedger`. Each editor tab gets an `EditorSession` of its own that streams results into a `ResultSink`, and the `Session` that opens it puts a `ByteLimitSink` in front of that sink, so a run stops keeping rows once they pass `RunOptions::byte_limit` bytes across its results, the row that crosses it kept whole ([ADR 0020](docs/decisions/0020-a-run-keeps-a-byte-limit-of-rows.md)). A file engine's catalog read holds at most `ByteLimit::CATALOG_DEFAULT` bytes of names and definitions through `CatalogBudget`, and fails `DriverError::CatalogTooLarge` past it ([ADR 0029](docs/decisions/0029-a-catalog-read-keeps-a-byte-budget.md)). [docs/adding-drivers.md](../linux/docs/adding-drivers.md) is the full contract, [ADR 0016](../linux/docs/decisions/0016-driver-contract-v2.md) the reasons for it, and the engine pages say how each driver meets it: [PostgreSQL](../linux/docs/drivers/postgresql.md), [MySQL and MariaDB](../linux/docs/drivers/mysql.md), [SQLite](../linux/docs/drivers/sqlite.md), [DuckDB](../linux/docs/drivers/duckdb.md), [SQL Server](../linux/docs/drivers/sql-server.md), [ClickHouse](../linux/docs/drivers/clickhouse.md), [Cassandra and ScyllaDB](../linux/docs/drivers/cassandra.md), [Redis](../linux/docs/drivers/redis.md), [MongoDB](../linux/docs/drivers/mongodb.md). An engine without SQL says so through `DriverCapabilities::data_model`: the workspace lists a key-value engine's keys and opens them in key tabs ([ADR 0021](../linux/docs/decisions/0021-engines-without-sql.md)), and opens a document engine's collections in table tabs whose statements are the engine's shell calls ([ADR 0026](../linux/docs/decisions/0026-documents-in-the-table-tab.md)).
- 
- ### SQL scripts
- 
-```
-
-**File**: `core/crates/core/src/byte_limit.rs` (modified, +2/-0)
-```diff
-@@ -9,6 +9,8 @@ pub struct ByteLimit(NonZeroU64);
- impl ByteLimit {
-     // SI bytes, as the Linux banner prints them: "256.0 MB".
-     pub const EDITOR_DEFAULT: Self = Self(NonZeroU64::new(256_000_000).expect("256 MB is not zero"));
-+    // About a thousand times the largest real table's columns, keys and indexes, and a million table names.
-+    pub const CATALOG_DEFAULT: Self = Self(NonZeroU64::new(64_000_000).expect("64 MB is not zero"));
- 
-     pub fn new(bytes: u64) -> Option<Self> {
-         NonZeroU64::new(bytes).map(Self)
-```
-
-**File**: `core/crates/core/src/catalog_budget.rs` (added, +142/-0)
-```diff
-@@ -0,0 +1,142 @@
-+use crate::byte_limit::ByteLimit;
-+use crate::error::DriverError;
-+
-+// A file's catalog can repeat one long name across thousands of keys; counted as `retained_bytes` counts text.
-+#[derive(Debug)]
-+pub struct CatalogBudget {
-+    limit: u64,
-+    held: u64,
-+}
-+
-+impl CatalogBudget {
-+    pub fn new(limit: ByteLimit) -> Self {
-+        Self {
-+            limit: limit.get(),
-+            held: 0,
-+        }
++        let count = String(ProcessInfo.processInfo.processorCount)
++        #expect(threads.rows == [[count, count]])
 +    }
 +
-+    pub fn charge(&mut self, bytes: usize) -> Result<(), DriverError> {
-+        self.held = self.held.saturating_add(u64::try_from(bytes).unwrap_or(u64::MAX));
-+        match self.held > self.limit {
-+            true => Err(DriverError::CatalogTooLarge {
-+                limit_bytes: self.limit,
-+            }),
-+            false => Ok(()),
-+        }
-+    }
-+
-+    // For work the engine does and lets go of within the read, such as a statement it compiles: it has to fit beside
-+    // what the read holds, and holds nothing after.
-+    pub fn fits(&self, bytes: usize) -> Result<(), DriverError> {
-+        match self.held.saturating_add(u64::try_from(bytes).unwrap_or(u64::MAX)) > self.limit {
-+            true => Err(DriverError::CatalogTooLarge {
-+                limit_bytes: self.limit,
-+            }),
-+            false => Ok(()),
-+        }
-+    }
-+
-+    pub fn charge_text(&mut self, text: &str) -> Result<(), DriverError> {
-+        self.charge(text_bytes(text))
-+    }
-+
-+    pub fn keep(&mut self, text: String) -> Result<String, DriverError> {
-+        self.charge_text(&text)?;
-+        Ok(text)
-+    }
-+
-+    pub fn keep_optional(&mut self, text: Option<String>) -> Result<Option<String>, DriverError> {
-+        text.map(|text| self.keep(text)).transpose()
-+    }
-+
-+    pub fn charge_texts<'a>(&mut self, texts: impl IntoIterator<Item = &'a String>) -> Result<(), DriverError> {
-+        texts.into_iter().try_for_each(|text| self.charge_text(text))
-+    }
-+
-+    // For what the read drops before it reads the next, such as each child's CREATE TABLE.
-+    pub fn release(&mut self, bytes: usize) {
-+        self.held = self.held.saturating_sub(u64::try_from(bytes).unwrap_or(u64::MAX));
-+    }
-+
-+    pub fn release_text(&mut self, text: &str) {
-+        self.release(text_bytes(text));
-+    }
-+}
-+
-+impl Default for CatalogBudget {
-+    fn default() -> Self {
-+        Self::new(ByteLimit::CATALOG_DEFAULT)
-+    }
-+}
-+
-+fn text_bytes(text: &str) -> usize {
-+    size_of::<String>().saturating_add(text.len())
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    const SLOT: usize = size_of::<String>();
-+
-+    fn budget(bytes: u64) -> CatalogBudget {
-+        CatalogBudget::new(ByteLimit::new(bytes).unwrap())
-+    }
-+
-+    #[test]
-+    fn a_text_costs_its_slot_and_its_length() {
-+        let mut budget = budget((SLOT + 5) as u64);
-+
-+        assert_eq!(budget.keep("héll".to_owned()).as_deref(), Ok("héll"));
-+        assert_eq!(
-+            budget.charge_text("x"),
-+            Err(DriverError::CatalogTooLarge {
-+                limit_bytes: (SLOT + 5) as u64
-+            })
-+        );
-+    }
-+
-+    #[test]
-+    fn the_limit_itself_still_fits() {
-+        let mut budget = budget(100);
-+
-+        assert_eq!(budget.charge(100), Ok(()));
-+        assert!(budget.charge(1).is_err());
-+    }
-+
-+    #[test]
-+    fn a_released_text_makes_room_again() {
-+        let mut budget = budget((SLOT * 2 + 8) as u64);
-+        let text = "a".repeat(8);
-+
-+        budget.charge_text(&text).unwrap();
-+        budget.release_text(&text);
-+        budget.charge_text(&text).unwrap();
-+        assert_eq!(budget.keep_optional(Some(String::new())), Ok(Some(String::new())));
-+        assert!(budget.charge_texts([&"b".to_owned()]).is_err());
-+    }
-+
-+    #[test]
-+    fn work_that_fits_beside_what_is_held_holds_nothing_after() {
-+        let mut budget = budget(100);
-+        budget.charge(60).unwrap();
-+
-+        assert_eq!(budget.fits(40), Ok(()));
-+        assert!(budget.fits(41).is_err());
-+        assert_eq!(budget.charge(40), Ok(()), "fits charged nothing");
-+    }
-+
-+    #[test]
-+    fn the_default_is_the_catalog_limit() {
-+        let mut budget = CatalogBudget::default();
-+
-+        assert_eq!(budget.charge(64_000_000), Ok(()));
-+        assert_eq!(
-+            budget.charge(1),
-+            Err(DriverError::CatalogTooLarge {
-+                limit_bytes: 64_000_000
-+            })
-+        );
-+    }
-+}
-```
-
-**File**: `core/crates/core/src/error.rs` (modified, +12/-1)
-```diff
-@@ -143,6 +143,10 @@ pub enum DriverError {
- 
-     #[error("this engine has no {feature}")]
-     Unsupported { feature: UnsupportedFeature },
-+
-+    // A crafted file can repeat a long name across thousands of keys, so a catalog read stops at a byte budget.
-+    #[error("the catalog read would hold more than {limit_bytes} bytes")]
-+    CatalogTooLarge { limit_bytes: u64 },
- }
- 
- impl DriverError {
-@@ -176,6 +180,7 @@ impl DriverError {
-             Self::Decode { .. } => "driver.decode",
-             Self::Protocol(..) => "driver.protocol",
-             Self::Unsupported { .. } => "driver.unsupported",
-+            Self::CatalogTooLarge { .. } => "driver.catalog_too_large",
-         }
-     }
- }
-@@ -216,7 +221,9 @@ impl DriverError {
-             | Self::FileIo { .. } => ErrorCategory::File,
-             Self::Busy(_) | Self::EditorSessionBusy => ErrorCategory::Busy,
-             Self::Config(_) | Self::Unsupported { .. } | Self::DatabaseNotFound { .. } => ErrorCategory::Configuration,
--            Self::GuardUnsupported { .. } | Self::Decode { .. } | Self::Protocol(_) => ErrorCategory::Internal,
-+            Self::GuardUnsupported { .. } | Self::Decode { .. } | Self::Protocol(_) | Self::CatalogTooLarge { .. } => {
-+                ErrorCategory::Internal
-+            }
-         }
-     }
- 
-@@ -366,6 +373,10 @@ mod tests {
-             (DriverError::Cancelled.code(), "driver.cancelled"),
-             (DriverError::auth(None).code(), "driver.auth"),
-             (DriverError::server("no such table").code(), "driver.server"),
-+            (
-+                DriverError::CatalogTooLarge { limit_bytes: 1 }.code(),
-+                "driver.catalog_too_large",
-+            ),
-             (DriverError::Config(ConfigError::EmptyHost).code(), "driver.config"),
-             (ConfigError::EmptyHost.code(), "config.empty_host"),
-             (
-```
-
-**File**: `core/crates/core/src/lib.rs` (modified, +2/-0)
-```diff
-@@ -7,6 +7,7 @@ mod byte_limit;
- mod byte_limited_sink;
- mod call_options;
- mod capabilities;
-+mod catalog_budget;
- mod certificate_file_problem;
- mod client_identity;
- pub mod column;
-@@ -114,6 +115,7 @@ pub use capabilities::{
-     CommitResolutionSupport, DataModel, DriverCapabilities, EndpointKind, EstimateQuality, ReadOnlyEnforcement,
-     ScriptExecution, StatementStop,
- };
-+pub use catalog_budget::CatalogBudget;
- pub use certificate_file_problem::CertificateFileProblem;
- pub use client_identity::ClientIdentity;
- pub use column::ColumnInfo;
-```
-
-**File**: `core/crates/drivers/duckdb/src/catalog/mod.rs` (modified, +280/-98)
-```diff
-@@ -6,7 +6,7 @@
- 
- mod declared_columns;
- 
--use std::collections::HashSet;
-+use std::collections::{HashMap, HashSet};
- 
- use tablepro_core::column::{ColumnDefault, ColumnInfo, ColumnType, SqlExpression};
- use tablepro_core::ddl::{
-@@ -21,7 +21,7 @@ use tablepro_core::meta::{
- };
- use tablepro_core::sql_syntax::{LiteralToken, MAX_EXPRESSION_LEN, SqlGrammar, parse_expression};
- use tablepro_core::value::Value;
--use tablepro_core::{DriverError, ForeignKeyInfo};
-+use tablepro_core::{CatalogBudget, DriverError, ForeignKeyInfo};
- 
- use self::declared_columns::declared_columns;
- use crate::duck_type::column_type_from_text;
-@@ -40,7 +40,12 @@ fn schema_of(table: &TableRef) -> &str {
- }
- 
- /// Rows of a catalogue query whose columns are all text or NULL.
--fn text_rows(link: &Link, sql: &str, params: &[&str]) -> Result<Vec<Vec<Option<String>>>, DriverError> {
-+fn text_rows(
-+    link: &Link,
-+    sql: &str,
-+    params: &[&str],
-+    budget: &mut CatalogBudget,
-+) -> Result<Vec<Vec<Option<String>>>, DriverError> {
-     let mut statement = link.connection.prepare(sql).map_err(map_error)?;
-     let mut rows = statement
-         .query(duckdb::params_from_iter(params.iter()))
-@@ -50,17 +55,88 @@ fn text_rows(link: &Link, sql: &str, params: &[&str]) -> Result<Vec<Vec<Option<S
-     while let Some(row) = rows.next().map_err(map_error)? {
-         let mut values = Vec::with_capacity(width);
-         for index in 0..width {
--            values.push(row.get::<_, Option<String>>(index).map_err(map_error)?);
-+            values.push(budget.keep_optional(row.get::<_, Option<String>>(index).map_err(map_error)?)?);
-         }
-         read.push(values);
-     }
-     Ok(read)
- }
- 
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+enum Constraints {
-+    Own,
-+    Referencing,
-+}
-+
-+// A table's constraints: REFERENCES, CHECK, UNIQUE and PRIMARY in its text, and a NOT NULL per column. DOUBLE, since
-+// the file chooses the numbers.
-+const CONSTRAINT_COUNT: &str = "CAST((strlen(lower(t.sql)) - strlen(replace(lower(t.sql), 'references', ''))) / 10 \
-+       + (strlen(lower(t.sql)) - strlen(replace(lower(t.sql), 'check', ''))) / 5 \
-+       + (strlen(lower(t.sql)) - strlen(replace(lower(t.sql), 'unique', ''))) / 6 \
-+       + (strlen(lower(t.sql)) - strlen(replace(lower(t.sql), 'primary', ''))) / 7 + t.column_count + 1 AS DOUBLE)";
-+
-+// Beside its table's name, a constraint row's own words. Not `duckdb_columns()`, which repeats each table's name on
-+// every column row it builds, for every table, before a filter.
-+const ROW_BYTES: &str = "512";
-+
-+// DuckDB builds every table's constraint rows, 2,048 to a chunk across tables, before a query filters them, and holds
-+// the whole result before its first row; it names each constraint after its table. A read runs only once the result,
-+// its table's name `names` times a row and four copies of the text, and the costliest 2,048 rows of any tables fit.
-+fn constraint_bounds(names: &str, tables: &str) -> String {
-+    format!(
-+        "SELECT \
-+           (SELECT sum({CONSTRAINT_COUNT} * ({names} * strlen(t.table_name) + {ROW_BYTES}) + 4 * strlen(t.sql)) \
-+            FROM duckdb_tables() t WHERE {tables}), \
-+           (SELECT coalesce(sum(bytes * greatest(0, least(rows, 2048 - (upto - rows)))), 0) FROM \
-+             (SELECT rows, bytes, sum(rows) OVER (ORDER BY bytes DESC ROWS UNBOUNDED PRECEDING) AS upto FROM \
-+               (SELECT least({CONSTRAINT_COUNT}, 2048) AS rows, 2 * strlen(t.table_name) + {ROW_BYTES} AS bytes \
-+                FROM duckdb_tables() t))) \
-+           + 3 * coalesce((SELECT sum(b) FROM (SELECT CAST(strlen(sql) AS DOUBLE) AS b FROM duckdb_tables() \
-+             ORDER BY b DESC LIMIT 2048)), 0)"
++    @Test(
++        "A raised thread count is taken over, a deep file still attaches, and a count below it is refused",
++        .timeLimit(.minutes(1))
 +    )
-+}
++    func raisedThreadCountIsTakenOver() async throws {
++        let directory = FileManager.default.temporaryDirectory
++            .appendingPathComponent("duckdb-deep-threads-\(UUID().uuidString)", isDirectory: true)
++        defer { try? FileManager.default.removeItem(at: directory) }
++        let file = try await deepFile(in: directory)
 +
-+fn constraints_fit(
-+    link: &Link,
-+    catalog: &str,
-+    table: &TableRef,
-+    from: Constraints,
-+    budget: &CatalogBudget,
-+) -> Result<(), DriverError> {
-+    // A constraint's name holds its table's, and the keys into a table also read the child's name.
-+    let (names, tables) = match from {
-+        Constraints::Own => ("1", "t.database_name = ? AND t.schema_name = ? AND t.table_name = ?"),
-+        Constraints::Referencing => (
-+            "2",
-+            "t.table_oid IN (SELECT d.refobjid FROM duckdb_dependencies() d \
-+             JOIN duckdb_tables() p ON d.objid = p.table_oid \
-+             WHERE p.database_name = ? AND p.schema_name = ? AND p.table_name = ?)",
-+        ),
-+    };
-+    let (kept, built): (Option<f64>, Option<f64>) = link
-+        .connection
-+        .query_row(
-+            &constraint_bounds(names, tables),
-+            duckdb::params![catalog, schema_of(table), table.name],
-+            |row| Ok((row.get(0)?, row.get(1)?)),
-+        )
-+        .map_err(map_error)?;
-+    let bytes = kept.unwrap_or(0.0) + built.unwrap_or(0.0);
-+    budget.fits(match bytes < usize::MAX as f64 {
-+        true => bytes as usize,
-+        false => usize::MAX,
-+    })
-+}
++        let driver = DuckDBDriver(source: .inMemory)
++        try await driver.connect()
++        let base = ProcessInfo.processInfo.processorCount
++        var counts: [[String?]] = []
++        for statement in [
++            "SET threads = \(base + 8)", "PRAGMA threads = \(base + 16)", "EXPLAIN ANALYZE SET threads = \(base + 24)",
++        ] {
++            _ = try await driver.execute(query: statement)
++            for _ in 0..<20 {
++                _ = try await driver.execute(query: "ATTACH '\(file.path)' AS deep (READ_ONLY)")
++                _ = try await driver.execute(query: "DETACH deep")
++            }
++            counts += try await driver.execute(
++                query: "SELECT current_setting('threads'), current_setting('external_threads')"
++            ).rows
++        }
++        let lowering = await #expect(throws: DuckDBDriverError.self) {
++            try await driver.execute(query: "SET threads = \(base)")
++        }
++        try await driver.disconnect()
 +
- fn text(row: &[Option<String>], index: usize) -> String {
-  
-```
-
-**File**: `core/crates/drivers/duckdb/src/connection.rs` (modified, +9/-9)
-```diff
-@@ -8,7 +8,7 @@ use tablepro_core::dump::{DumpCatalog, DumpScope};
- use tablepro_core::meta::{IndexInfo, ObjectInfo, ObjectScope, RowIdentity, SchemaInfo, TableEstimate, TableRef};
- use tablepro_core::statement::Statement;
- use tablepro_core::{
--    CallOptions, ColumnInfo, CommitResolution, CommitToken, Connection, DriverError, EditorSession,
-+    CallOptions, CatalogBudget, ColumnInfo, CommitResolution, CommitToken, Connection, DriverError, EditorSession,
-     EditorSessionOptions, FileEndpoint, ForeignKeyInfo, LinkState, LinkWatch, LivenessPolicy, LossPhase, OwnedCalls,
-     QueryResult, ReadOnlyRefusal, ReadStatement, ResultSink, RowLimit, ServerInfo, SinkFlow, StopRequest,
-     StreamSummary, TimeoutPhase, WorkspaceSettings, WriteAtomicity, WriteBatch, WriteKind, WriteLedger, WriteReport,
-@@ -269,23 +269,23 @@ impl Connection for DuckDbConnection {
-     async fn list_objects(&self, scope: &ObjectScope, options: CallOptions) -> Result<Vec<ObjectInfo>, DriverError> {
-         let scope = scope.clone();
-         self.read(options, move |link, catalog| {
--            catalog::list_objects(link, catalog, &scope)
-+            catalog::list_objects(link, catalog, &scope, &mut CatalogBudget::default())
-         })
-         .await
-     }
- 
-     async fn fetch_columns(&self, table: &TableRef, options: CallOptions) -> Result<Vec<ColumnInfo>, DriverError> {
-         let table = table.clone();
-         self.read(options, move |link, catalog| {
--            catalog::fetch_columns(link, catalog, &table)
-+            catalog::fetch_columns(link, catalog, &table, &mut CatalogBudget::default())
-         })
-         .await
-     }
- 
-     async fn fetch_indexes(&self, table: &TableRef, options: CallOptions) -> Result<Vec<IndexInfo>, DriverError> {
-         let table = table.clone();
-         self.read(options, move |link, catalog| {
--            catalog::fetch_indexes(link, catalog, &table)
-+            catalog::fetch_indexes(link, catalog, &table, &mut CatalogBudget::default())
-         })
-         .await
-     }
-@@ -297,7 +297,7 @@ impl Connection for DuckDbConnection {
-     ) -> Result<Vec<ForeignKeyInfo>, DriverError> {
-         let table = table.clone();
-         self.read(options, move |link, catalog| {
--            catalog::fetch_foreign_keys(link, catalog, &table)
-+            catalog::fetch_foreign_keys(link, catalog, &table, &mut CatalogBudget::default())
-         })
-         .await
-     }
-@@ -309,7 +309,7 @@ impl Connection for DuckDbConnection {
-     ) -> Result<Vec<OutboundForeignKey>, DriverError> {
-         let table = table.clone();
-         self.read(options, move |link, catalog| {
--            catalog::outbound_foreign_keys(link, catalog, &table)
-+            catalog::outbound_foreign_keys(link, catalog, &table, &mut CatalogBudget::default())
-         })
-         .await
-     }
-@@ -321,7 +321,7 @@ impl Connection for DuckDbConnection {
-     ) -> Result<Vec<InboundForeignKey>, DriverError> {
-         let table = table.clone();
-         self.read(options, move |link, catalog| {
--            catalog::inbound_foreign_keys(link, catalog, &table)
-+            catalog::inbound_foreign_keys(link, catalog, &table, &mut CatalogBudget::default())
-         })
-         .await
-     }
-@@ -335,7 +335,7 @@ impl Connection for DuckDbConnection {
-         // One transaction, so the parts come from the same moment.
-         self.read(options, move |link, catalog| {
-             batch(link, "BEGIN TRANSACTION READ ONLY")?;
--            let definition = catalog::fetch_table_definition(link, catalog, &table);
-+            let definition = catalog::fetch_table_definition(link, catalog, &table, &mut CatalogBudget::default());
-             link.hold_stops();
-             batch(link, "ROLLBACK")?;
-             definition
-@@ -359,7 +359,7 @@ impl Connection for DuckDbConnection {
-     async fn row_identity(&self, table: &TableRef, options: CallOptions) -> Result<RowIdentity, DriverError> {
-         let table = table.clone();
-         self.read(options, move |link, catalog| {
--            catalog::row_identity(link, catalog, &table)
-+            catalog::row_identity(link, catalog, &table, &mut CatalogBudget::default())
-         })
-         .await
-     }
-```
-
-**File**: `core/crates/drivers/duckdb/src/dump.rs` (modified, +35/-21)
-```diff
-@@ -4,6 +4,8 @@
- //! triggers EXPORT leaves out. Names carry their schema and never the
- //! catalog, which is the file's own name.
- 
-+use std::collections::HashMap;
-+
- use duckdb::types::Value as DuckValue;
- use tablepro_core::DriverError;
- use tablepro_core::dialect::SqlDialect;
-@@ -61,9 +63,12 @@ const TABLES_SQL: &str = "SELECT schema_name, table_name, sql FROM duckdb_tables
-      ORDER BY schema_name, table_name";
- 
- /// DuckDB keeps a foreign key's parent in the child's schema.
--const FOREIGN_KEYS_SQL: &str = "SELECT schema_name, table_name, referenced_table FROM duckdb_constraints() \
-+// One row per child: one per key would repeat the child's name.
-+const FOREIGN_KEYS_SQL: &str = "SELECT schema_name, table_name, \
-+            list(referenced_table ORDER BY constraint_index) \
-+     FROM duckdb_constraints() \
-      WHERE database_name = ? AND (? IS NULL OR schema_name = ?) AND constraint_type = 'FOREIGN KEY' \
--     ORDER BY schema_name, table_name, constraint_index";
-+     GROUP BY schema_name, table_name ORDER BY schema_name, table_name";
- 
- /// The index behind a PRIMARY KEY or UNIQUE has no text: its table's
- /// CREATE makes it.
-@@ -321,7 +326,7 @@ fn add_tables(reader: &Reader<'_>, dump: &mut DumpCatalog) -> Result<(), DriverE
-         Ok((
-             row.get::<_, String>(0)?,
-             row.get::<_, String>(1)?,
--            row.get::<_, Option<String>>(2)?,
-+            texts(row.get(2)?).into_iter().flatten().collect(),
-         ))
-     })?;
-     let listed: Vec<&Named> = tables.iter().filter(|table| table.text().is_some()).collect();
-@@ -341,22 +346,31 @@ fn add_tables(reader: &Reader<'_>, dump: &mut DumpCatalog) -> Result<(), DriverE
- /// DuckDB checks a foreign key as each statement ends, and has no way
- /// to add one after the rows, so a table's rows follow its parents', and
- /// a table whose key points at itself takes a row per statement.
--fn dump_tables(tables: &[&Named], keys: &[(String, String, Option<String>)]) -> Vec<DumpTable> {
-+fn dump_tables(tables: &[&Named], keys: &[(String, String, Vec<String>)]) -> Vec<DumpTable> {
-+    let parents_of: HashMap<(&str, &str), &[String]> = keys
-+        .iter()
-+        .map(|(schema, child, parents)| ((schema.as_str(), child.as_str()), parents.as_slice()))
-+        .collect();
-+    // A key keeps its parent as the CREATE spelled it, and DuckDB folds the case of names.
-+    let mut declared_names: HashMap<(&str, String), &str> = HashMap::new();
-+    for table in tables {
-+        declared_names
-+            .entry((table.schema.as_str(), table.name.to_ascii_lowercase()))
-+            .or_insert(table.name.as_str());
++        let raised = [base + 8, base + 16, base + 24].map { [String($0), String($0)] as [String?] }
++        #expect(counts == raised)
++        #expect(lowering?.localizedDescription.contains("external threads") == true)
 +    }
-     tables
-         .iter()
-         .map(|table| {
-             let mut dumped = DumpTable::new(TableRef::new(Some(table.schema.clone()), table.name.clone()));
--            let parents = keys
--                .iter()
--                .filter(|(schema, child, _)| *schema == table.schema && *child == table.name)
--                .filter_map(|(_, _, parent)| parent.as_deref());
-+            let parents = parents_of
-+                .get(&(table.schema.as_str(), table.name.as_str()))
-+                .copied()
-+                .unwrap_or_default();
-             for parent in parents {
--                // A key keeps its parent as the CREATE spelled it, and
--                // DuckDB folds the case of names.
--                let declared = tables
--                    .iter()
--                    .find(|other| other.schema == table.schema && other.name.eq_ignore_ascii_case(parent))
--                    .map_or(parent, |other| other.name.as_str());
-+                let declared = declared_names
-+                    .get(&(table.schema.as_str(), parent.to_ascii_lowercase()))
-+                    .copied()
-+                    .unwrap_or(parent.as_str());
-                 if declared == table.name {
-                     dumped.one_row_per_insert = true;
-                     continue;
-@@ -503,8 +517,12 @@ mod tests {
-         }
-     }
- 
--    fn key(schema: &str, child: &str, parent: &str) -> (String, String, Option<String>) {
--        (schema.to_owned(), child.to_owned(), Some(parent.to_owned()))
-+    fn key(schema: &str, child: &str, parents: &[&str]) -> (String, String, Vec<String>) {
-+        (
-+            schema.to_owned(),
-+            child.to_owned(),
-+            parents.iter().map(|parent| (*parent).to_owned()).collect(),
++
++    @Test(
++        "A text of several statements takes each raised count over before the next statement reads a deep file",
++        .timeLimit(.minutes(1))
++    )
++    func threadCountFollowsSetsInOneText() async throws {
++        let directory = FileManager.default.temporaryDirectory
++            .appendingPathComponent("duckdb-deep-text-\(UUID().uuidString)", isDirectory: true)
++        defer { try? FileManager.default.removeItem(at: directory) }
++        let file = try await deepFile(in: directory)
++
++        let driver = DuckDBDriver(source: .inMemory)
++        try await driver.connect()
++        let base = ProcessInfo.processInfo.processorCount
++        let selected = try await driver.execute(
++            query: "SET threads = \(base + 8); SET threads = \(base + 16); SELECT 42"
 +        )
-     }
- 
-     #[test]
-@@ -544,11 +562,7 @@ mod tests {
-     fn a_table_follows_its_parents_and_a_self_reference_loads_a_row_at_a_time() {
-         let (parent, child, other) = (named("app", "parent"), named("app", "child"), named("main", "parent"));
-         let tables = [&child, &parent, &other];
--        let keys = [
--            key("app", "child", "Parent"),
--            key("app", "child", "parent"),
--            key("app", "child", "child"),
--        ];
-+        let keys = [key("app", "child", &["Parent", "parent", "child"])];
- 
-         let dumped = dump_tables(&tables, &keys);
- 
++        var threads = base + 16
++        for _ in 0..<20 {
++            threads += 1
++            _ = try await driver.execute(
++                query: "SET threads = \(threads); ATTACH '\(file.path)' AS deep (READ_ONLY); DETACH deep"
++            )
++        }
++        _ = try await driver.execute(query: "SET threads = \(base + 48); SET lock_configuration = true")
++        for _ in 0..<20 {
++            _ = try await driver.execute(query: "ATTACH '\(file.path)' AS deep (READ_ONLY); DETACH deep")
++        }
++        let counts = try await driver.execute(query: "SELECT current_setting('threads'), current_setting('external_threads')")
++        try await driver.disconnect()
++
++        #expect(selected.rows == [["42"]])
++        #expect(counts.rows == [[String(base + 48), String(base + 48)]])
++    }
++
++    @Test("A text DuckDB cannot parse runs none of its statements")
++    func unparsedTextRunsNothing() async throws {
++        let driver = DuckDBDriver(source: .inMemory)
++        try await driver.connect()
++        await #expect(throws: DuckDBDriverError.self) {
++            try await driver.execute(query: "SET threads = 64; CREATE TABLE never (i INTEGER); SELEC 1")
++        }
++        let counts = try await driver.execute(query: "SELECT current_setting('threads'), current_setting('external_threads'
+```
+
+**File**: `apple/changelog.d/4354.changed.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++DuckDB connections now refuse SET threads below the number of processors.
 ```
 
 ---
 
-### Incident Patch 3: `1b1ad094` (2026-11-15)
-**Commit Message**: fix(windows): ask a question that comes while the last dialog is still closing (#4290)
+### Incident Patch 2: `7c310aed` (2026-11-19)
+**Commit Message**: fix(sync): apply changes and deletions to library records a build cannot read by id and standing (#4345)
 
-**File**: `windows/docs/decisions/0004-app-shell.md` (modified, +2/-1)
+**File**: `.claude/rules/data-sync-storage.md` (modified, +5/-1)
 ```diff
-@@ -128,7 +128,7 @@ On 2026-11-14 the roadmap's Phase 2 added a production cue (W-08), a database sw
- - Table tabs page as macOS pages a table: a page is the default page size long (Settings, Pagination: 100, 500, 1,000, 5,000 or 10,000 rows, 1,000 unless changed, as macOS); First, Previous, Next and Last sit in the tab's `CommandBar`, and its one status words the page as the macOS status bar does, with the run's time: "1,001-2,000 of 3,503 rows · 15 ms", or "Rows 1,001-2,000 · 15 ms" until the count lands. A table that fits one page keeps "Rows: 347 · 12 ms". The core writes each page (`table_query` takes an offset, over `build_page`'s `PagePosition::Offset`) and counts the table (`table_row_count`, `build_count` as the Linux pager counts), in the background after the first full page; until the count lands, Next stays while pages come back full. Before it counts, it reads the engine's estimate (`table_row_estimate`, over `Connection::table_estimate`, as the Linux pager does), and decides as macOS does: an exact count the engine keeps is the total; under the threshold (Settings, Pagination, Count rows if estimate less than: 1,000, 10,000, 100,000, 1,000,000 or Always count, 100,000 unless changed, as macOS), or with no estimate, the server counts; from the threshold on nothing is counted, the status says "1-1,000 of about 2,000,000 rows" (no total under a filter), and Count rows in the command bar counts on request. Last page, Go to page and All rows wait for an exact count. A sort or a refresh goes back to the first page, and a refresh counts again. An engine that pages on the server (Cassandra) cannot seek by offset: Next resumes from the paging state the page before handed back (`TablePageRead::next_page`), Previous from the one kept for that page, and a page with none kept is read through the rows before it, as the Linux pager does; the server saying no row follows ends Next even on a full page. Count rows, Last page, Go to page and All rows stay off there, since each reads through the whole table. A sort, a filter, a page size or a refresh drops the kept states (`core/docs/decisions/0022-browsing-through-the-ffi.md`).
- - Rows per page: a "1,000 rows" button before First page opens the macOS sizes, 5, 10, 20, 100, 500 and 1,000, as `RadioMenuFlyoutItem`s, then All rows..., which asks first and needs the count, and Custom..., up to 1,000,000. A new size keeps the page that holds the first row shown, as macOS does. The size belongs to the tab: `session.json` keeps it with the tab's page, and Reopen closed tab brings both back.
- - Go to page: between Previous and Next, "Page 3 of 36" opens a flyout with a `NumberBox` from 1 to the page count, as macOS asks in a popover. It is offered once the table is counted, as on macOS, and the box keeps a typed number inside that range (`InvalidInputOverwritten`).
--- An open transaction: each run's `Finished` event carries the transaction the editor's connection is left in (the core's `RunSummary.transaction_state`). The tab that holds one shows a Warning `InfoBar` above its results, "Transaction open", with Roll back, which asks first, and Commit, hidden on a read-only connection; a failed one is an Error bar with Roll back only. Both send COMMIT or ROLLBACK as typed SQL, EXEC or DISCARD for a key-value engine, as the Linux app does. Over the tabs, a bar names another tab that holds one, with Show; macOS shows its bar above every tab of the connection, and here the owning tab carries the actions, since the transaction lives on that tab's own connection. Closing a tab that holds one asks first, since closing rolls it back. Window close and Exit confirm every affected held transaction before closing any tabs; cancelling keeps them open. Then one dialog lists every query tab still running, as macOS asks before it quits, and says closing rolls back a transaction a run has open; a table tab loading a page is not asked about. Exit then hides the windows and closes every connection, each tab stopping its run, for up to 5 seconds before the process ends. While any tab holds a transaction or unsaved changes, the primary window registers a reason with `ShutdownBlockReasonCreate` ("Table changes are not saved.", "A transaction is open.") and answers `WM_QUERYENDSESSION` with FALSE once it has written the session file: a sign-out or a restart then lists TablePro with its reason and the user can cancel and save, and a Restart Manager request, as from an installer, is cancelled ([Application Shutdown Changes in Windows Vista](https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ms700677(v=vs.85)); Restart Manager, [Guidelines for Applications](https://learn.microsoft.com/en-us/windows/win32/rstmgr/guidelines-for-applications)). A running query does not hold it, since stopping it is the default. A forced end cannot be held: "Sign out anyway" (`ENDSESSION_CRITICAL`) goes on to `WM_ENDSESSION`, which writes the session file again, and a forced Restart Manager close, as 
+@@ -147,6 +147,7 @@ This path holds user data. A silent wrong answer here looks exactly like an empt
+ 
+ - **A synced CKRecord type or field reaches CloudKit Production before anything writes it.** Both apps pin the container to Production, where nothing is auto-created, and CloudKit rejects a whole record that carries an undeclared field. Write fields only through `record.fields(SomeSyncField.self)`, never `record["..."]`. To ship one: add it in Development, deploy to Production in the Console, run `apple/scripts/export-cloudkit-schema.sh`, commit `apple/CloudKit/production-schema.ckdb`, then add it to the matching `verifiedInProduction`. `ProductionSchemaParityTests` checks code against the snapshot in both directions, not against the server, so never edit the snapshot by hand: `apple/scripts/export-cloudkit-schema.sh --check` compares it with Production. A tag's `app` job runs `--check-deployed` instead, which fails only on a record type, field, field type, index, role or grant the tag's snapshot has and Production lacks.
+ - **A storage format stays readable by the previous stable.** Sparkle never downgrades, and a beta user can turn betas off (`apple/RELEASING.md`, Storage check). The one exception is a value the previous stable has no field for, such as a theme color in a slot added after it: that file and its synced record are written at the oldest schema that holds it, and everything else keeps the old format (`.claude/rules/theme.md`, Model and Sync).
++- **A record this build cannot read meets sync by its id and its standing, never by its payload.** CloudKit hands a deletion over as a record ID and type alone, and a save starts from the last known server record, so a field this build does not know survives on the server. Here: a library record that does not decode is never re-encoded or written over (a save carrying its id is refused); a pulled change to it is held and kept out of the record cache (a Local only one takes none), and a build that reads the copy fetches that record by id, never by resetting the change token, which would drop the deletions a delta still carries; a deletion removes it by id when its standing says it syncs, with the device-only Keychain items its id owns (macOS finds them by the id they end with), leaves a Local only one, and waits for a build that reads it when no standing was recorded; its dirty mark is held, not dropped; an import treats its id as taken. Standing is written by id whenever the store reads a record, because a Local only connection keeps its iCloud copy and cached server record. Profiles, groups and tags always sync, except that a profile's deletion waits for a build that reads it, since unlinking its connections needs it.
+ - **Persist, then notify.** `SyncChangeTracker.markDeleted()` runs after the storage write, because its notification can start a sync that re-uploads the record from the stale file.
+ - **Concurrent schema loads await the one in-flight `loadTask`** in `SQLSchemaProvider`; never guard with a flag that returns without data.
+ - **Every metadata read goes through `DatabaseManager.withMetadataDriver`**, never `MetadataConnectionPool.shared` directly, so an embedded engine with `supportsConnectionPooling = false` (DuckDB, PGlite) stays on its session driver; a second connection to it is a different, empty database.
+@@ -188,7 +189,10 @@ This path holds user data. A silent wrong answer here looks exactly like an empt
+ | `connections.json` and `credentialProfiles.json` as last saved, copied with the tag after each save, restored when the file no longer parses. A save that moves secrets out first drops the old copy and the damaged file, or writes nothing | `<file>.backup` and `<file>.backup.hmac` beside the file, device-local, never synced | `IntegrityStampedFileStore` |
+ | A `connections.json` or `credentialProfiles.json` that no longer parsed, set aside when its backup was restored; the next one replaces it | `<file>.unreadable` beside the file, device-local, never synced | `IntegrityStampedFileStore` |
+ | Records this build cannot read from a file changed outside TablePro, which a save would otherwise sign; added to, never replaced | `<file>.unreadable-records` beside the file, device-local, never synced | `IntegrityStampedFileStore` |
+-| iOS: `connections.json`, `groups.json` and `tags.json` as last saved, copied after each save, restored when the file no longer parses; the damaged file is kept and the next one replaces it. A save that moves secrets out first drops the old copy and the damaged file, or writes nothing. Records the build cannot read stay in the file until a save writes a record with their id, and their ids keep their Keychain items, files and preferences, and keep what they own off iCloud | `<file>.backup` and `<file>.unreadable` beside the file, device-local, never synced | `LibraryFile` |
++| iOS: `connections.json`, `groups.json` and `tags.json` as last saved, copied after each save, restored when the file no longer parses; th
 ```
 
-**File**: `windows/src/TablePro.App/Services/CredentialDialogs.cs` (modified, +1/-1)
+**File**: `apple/Packages/TableProCore/Sources/TableProConnectionLibrary/LibraryFileRecords.swift` (modified, +13/-6)
 ```diff
-@@ -137,7 +137,7 @@ internal async Task<bool> RecoverHostKeyAsync(
-                 DefaultButton = trust ? ContentDialogButton.Close : ContentDialogButton.Primary,
-             };
-             AutomationProperties.SetAutomationId(dialog, "CredentialDialog");
--            var shown = WindowDialogs.ShowAsync(dialog, owner);
-+            var shown = WindowDialogs.ShowAsync(dialog, owner, cancellationToken);
-             using var registration = cancellationToken.Register(() => owner.DispatcherQueue.TryEnqueue(dialog.Hide));
-             var result = await shown;
-             cancellationToken.ThrowIfCancellationRequested();
+@@ -27,19 +27,26 @@ public struct LibraryFileRecords<Element: Decodable> {
+     }
+ }
+ 
++public enum LibraryFileError: Error, Equatable {
++    case idHeldByUnreadableRecord(UUID)
++}
++
+ public extension LibraryFileRecords where Element: Encodable {
+-    // A kept record gives way to a saved one with its id, such as the same connection pulled again by sync,
+-    // so the file never holds two records for one id.
++    // A kept record is never written over, since this build would re-encode it without what it cannot read: a save
++    // carrying its id is refused. `removing` drops kept records by id, as a deletion another device made does.
+     static func encoded(
+         _ elements: [Element],
+         keeping unreadable: [UnreadableLibraryRecord],
++        removing removedIds: Set<UUID> = [],
+         using encoder: JSONEncoder = JSONEncoder()
+     ) throws -> (data: Data, kept: [UnreadableLibraryRecord]) {
+-        var kept = unreadable
+-        if !kept.isEmpty {
++        let kept = unreadable.filter { record in record.id.map { !removedIds.contains($0) } ?? true }
++        let keptIds = Set(kept.compactMap(\.id))
++        if !keptIds.isEmpty {
+             let saved = try JSONDecoder().decode([UnreadableLibraryRecord].self, from: encoder.encode(elements))
+-            let savedIds = Set(saved.compactMap(\.id))
+-            kept.removeAll { $0.id.map(savedIds.contains) ?? false }
++            if let taken = saved.lazy.compactMap(\.id).first(where: keptIds.contains) {
++                throw LibraryFileError.idHeldByUnreadableRecord(taken)
++            }
+         }
+         let data = try encoder.encode(elements.map(LibraryFileEntry.decoded) + kept.map(LibraryFileEntry.unreadable))
+         return (data, kept)
 ```
 
-**File**: `windows/src/TablePro.App/Services/WindowDialogs.cs` (modified, +73/-10)
+**File**: `apple/Packages/TableProCore/Sources/TableProSyncTransport/CloudKitSyncEngine.swift` (modified, +19/-3)
 ```diff
-@@ -8,8 +8,12 @@ namespace TablePro.App.Services;
- internal static class WindowDialogs
- {
-     private static readonly HashSet<XamlRoot> OpenRoots = [];
--    private static TaskCompletionSource? _free;
-+    // Answered dialogs still playing their closing transition, and questions asked during one.
-+    private static int _closing;
-+    private static int _waiting;
-+    private static TaskCompletionSource? _changed;
- 
-+    // An answered dialog no longer counts as open, though it still plays its closing transition.
-     public static bool IsOpen(XamlRoot? root) => root is not null && OpenRoots.Contains(root);
- 
-     // A dialog nobody asked for just then, as a link from another launch, waits for the window and any open dialog.
-@@ -23,14 +27,13 @@ public static async Task<ContentDialogResult> ShowWhenFreeAsync(ContentDialog di
-             {
-                 await LoadedAsync(owner).ConfigureAwait(true);
-             }
--            else if (OpenRoots.Count > 0)
-+            else if (OpenRoots.Count > 0 || _closing > 0 || _waiting > 0)
-             {
--                await (_free ??= new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously)).Task
--                    .ConfigureAwait(true);
-+                await ChangedAsync().ConfigureAwait(true);
-             }
-             else
-             {
--                return await ShowAsync(dialog, owner).ConfigureAwait(true);
-+                return await ShowNowAsync(dialog, owner).ConfigureAwait(true);
-             }
-         }
-     }
-@@ -48,16 +51,59 @@ void OnLoaded(object sender, RoutedEventArgs args)
-         return loaded.Task;
-     }
- 
--    public static async Task<ContentDialogResult> ShowAsync(ContentDialog dialog, FrameworkElement owner)
-+    // A question asked during the last answer's closing transition, as a click right after Cancel, waits its turn.
-+    public static async Task<ContentDialogResult> ShowAsync(
-+        ContentDialog dialog, FrameworkElement owner, CancellationToken cancellationToken = default)
-+    {
-+        if (OpenRoots.Count == 0 && _closing > 0)
-+        {
-+            _waiting++;
-+            try
-+            {
-+                while (OpenRoots.Count > 0 || _closing > 0)
-+                {
-+                    await ChangedAsync().WaitAsync(cancellationToken).ConfigureAwait(true);
-+                }
-+            }
-+            catch (OperationCanceledException)
-+            {
-+                return ContentDialogResult.None;
-+            }
-+            finally
-+            {
-+                _waiting--;
-+                Changed();
-+            }
+@@ -242,10 +242,26 @@ public actor CloudKitSyncEngine {
+     public func fetch(recordIDs: [CKRecord.ID]) async throws -> [CKRecord.ID: CKRecord] {
+         guard !recordIDs.isEmpty else { return [:] }
+         guard let database else { throw Self.unavailable }
+-        let results = try await withRetry {
+-            try await database.records(for: recordIDs)
++        var records: [CKRecord.ID: CKRecord] = [:]
++        for start in stride(from: 0, to: recordIDs.count, by: Self.refetchBatchSize) {
++            let batch = Array(recordIDs[start..<min(start + Self.refetchBatchSize, recordIDs.count)])
++            records.merge(try await fetch(batch, from: database)) { _, last in last }
 +        }
-+
-+        return cancellationToken.IsCancellationRequested
-+            ? ContentDialogResult.None
-+            : await ShowNowAsync(dialog, owner).ConfigureAwait(true);
++        return records
 +    }
 +
-+    private static async Task<ContentDialogResult> ShowNowAsync(ContentDialog dialog, FrameworkElement owner)
-     {
-         if (owner.XamlRoot is not { } root || OpenRoots.Count > 0)
-         {
-             return ContentDialogResult.None;
++    // CloudKit asks a request it finds too large to be split in half and sent again.
++    private func fetch(_ batch: [CKRecord.ID], from database: CKDatabase) async throws -> [CKRecord.ID: CKRecord] {
++        do {
++            let results = try await withRetry {
++                try await database.records(for: batch)
++            }
++            return results.compactMapValues { try? $0.get() }
++        } catch let error as CKError where error.code == .limitExceeded && batch.count > 1 {
++            let middle = batch.count / 2
++            let first = try await fetch(Array(batch[..<middle]), from: database)
++            return first.merging(try await fetch(Array(batch[middle...]), from: database)) { _, last in last }
          }
+-        return results.compactMapValues { try? $0.get() }
+     }
  
-         OpenRoots.Add(root);
-+        var answered = false;
-+        void OnClosing(ContentDialog sender, ContentDialogClosingEventArgs args)
-+        {
-+            if (!args.Cancel && !answered)
-+            {
-+                answered = true;
-+                _closing++;
-+                OpenRoots.Remove(root);
-+                Changed();
-+            }
-+        }
+     public func pull(since token: CKServerChangeToken?) async throws -> PullResult {
+```
+
+**File**: `apple/Packages/TableProCore/Sources/TableProSyncTransport/SyncMetadataStorage.swift` (modified, +116/-0)
+```diff
+@@ -14,6 +14,13 @@ public struct Tombstone: Codable, Equatable, Sendable {
+     }
+ }
+ 
++// A record's part in sync as this device last read it, for a copy it can no longer read.
++public enum SyncStanding: Equatable, Sendable {
++    case syncs
++    case keptOff
++    case unknown
++}
 +
-         // Closing or moving the owner must dismiss its prompt before that root is gone.
-         void OnUnloaded(object sender, RoutedEventArgs args) => dialog.Hide();
-+        dialog.Closing += OnClosing;
-         owner.Unloaded += OnUnloaded;
-         try
-         {
-@@ -71,13 +117,30 @@ public static async Task<ContentDialogResult> ShowAsync(ContentDialog dialog, Fr
-         }
-         finally
-         {
-+            dialog.Closing -= OnClosing;
-             owner.Unloaded -= OnUnloaded;
--            OpenRoots.Remove(root);
--            if (OpenRoots.Count == 0 && _free is { } free)
-+            if (answered)
-             {
--                _free = null;
--                free.TrySetResult();
-+                _closing--;
-             }
-+            else
-+            {
-+                OpenRoots.Remove(root);
-+            }
-+
-+            Changed();
-+        }
-+    }
-+
-+    private static Task ChangedAsync() =>
-+        (_changed ??= new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously)).Task;
-+
-+    private static void Changed()
-+    {
-+        if (_changed is { } changed)
-+        {
-+            _changed = null;
-+            changed.TrySetResult();
+ public enum SyncAccountChange: Equatable, Sendable {
+     case firstSeen
+     case unchanged
+@@ -209,6 +216,97 @@ public final class SyncMetadataStorage: @unchecked Sendable {
          }
      }
+ 
++    // MARK: - Copies This Device Cannot Read
++
++    // Record names a pull changed while this device's copy could not be read. Not applied, since a re-encode by
++    // this build would drop what it cannot read, so a build that reads the copy fetches those records by id.
++    public var changesHeldForUnreadableCopies: Set<String> {
++        get { stringSet("changesHeldForUnreadableCopies") }
++        set { saveStringSet(newValue, key: "changesHeldForUnreadableCopies") }
++    }
++
++    // Record names of unread copies a pull deleted, removed by the next save of their file; the account that sent
++    // the deletion owns it, like the rest of the server position.
++    public var removalsPendingForUnreadableCopies: Set<String> {
++        get { stringSet("removalsPendingForUnreadableCopies") }
++        set { saveStringSet(newValue, key: "removalsPendingForUnreadableCopies") }
++    }
++
++    // Record names a pull deleted while this device could not tell whether its unreadable copy syncs.
++    public var deletionsHeldForUnreadableCopies: Set<String> {
++        get { stringSet("deletionsHeldForUnreadableCopies") }
++        set { saveStringSet(newValue, key: "deletionsHeldForUnreadableCopies") }
++    }
++
++    // The held changes to fetch by id, since a delta never resends them: those whose copy reads now. One whose copy is
++    // gone, or no longer syncs, is dropped. `syncing` names every stored copy that syncs, read or not.
++    public func readableHeldChanges(syncing: Set<String>, unreadable: Set<String>) -> Set<String> {
++        let held = changesHeldForUnreadableCopies.intersection(syncing)
++        if held != changesHeldForUnreadableCopies {
++            changesHeldForUnreadableCopies = held
++        }
++        return held.subtracting(unreadable)
++    }
++
++    // A held deletion is due once its copy reads; one whose record the server sent again was saved after it, so it
++    // settles without applying. The caller removes what it settled once the pull is saved.
++    public func heldDeletions(live: Set<String>, unreadable: Set<String>) -> (due: Set<String>, settled: Set<String>) {
++        let held = deletionsHeldForUnreadableCopies
++        guard !held.isEmpty else { return ([], []) }
++        let due = held.subtracting(live).subtracting(unreadable)
++        return (due, due.union(held.intersection(live)))
++    }
++
++    // MARK: - Connection Standing
++
++    // Whether each connection takes part in sync, by id and outside the record, so one the store can no longer read
++    // keeps the standing it last had: a Local only copy shares its id with a record iCloud may still hold.
++    public func connectionsKnownToSync() -> Set<UUID> {
++        Set(stringSet("connectionsKnownToSync").compactMap(UUID.init(uuidString:)))
++    }
++
++    public func connectionsKeptOffSync() -> Set<UUID> {
++        Set(stringSet("connectionsKeptOffSync").compactMap(UUID.init(uuidString:)))
++    }
++
++    public func standing(ofConnection id: UUID) -> SyncStanding {
++        if connectionsKeptOffSync().contains(id) { return .keptOff }
++        return connectionsKnownToSync().contains(id) ? .syncs : .unknown
++    }
++
++    // Of the unread copies a deletion names, the ones to remove: those that sync. A Local only one stays, and one with
++    // no standing recorded waits in the held deletions for a build that reads it.
++    public func unreadableConnectionsRemoved(byDeletionOf ids: Set<UUID>) -> Set<UUID> {
++        var removed: Set<UUID> = []
++        var held: Set<String> = []
++        for id in ids {
++            switch standing(ofConnection: id) {
++            case .syncs:
++                removed.insert(id)
++            case .keptOff:
++                continue
++            case .unknown:
++                held.insert(SyncRecordType.connection.recordName(for: id.uuidString))
++            }
++        }
++        if !held.isEmpty {
++            deletionsHeldForUnreadableCopies.formUnion(held)
++        }
++        return removed
++    }
++
++    // Read records set their standing, an unread one keeps its last, and one no longer stored loses it.
++    public func recordConnectionStanding(syncing: Set<UUID>, keptOff: Set<UUID>, unreadable: Set<UUID>) {
++        let known = syncing.union(connectionsKnownToSync().intersection(unreadable))
++        let off = keptOff.union(connectionsKeptOffSync().intersection(unreadable))
++        if known != connectionsKnownToSync() {
++            saveStringSet(Set(known.map(\.uuidString)), key: "connectionsKnownToSync")
++        }
++        if o
+```
+
+**File**: `apple/Packages/TableProCore/Tests/TableProConnectionLibraryTests/LibraryFileRecordsTests.swift` (modified, +11/-8)
+```diff
+@@ -32,22 +32,25 @@ struct LibraryFileRecordsTests {
+         #expect(try LibraryFileRecords<Row>(decoding: written).elements == [Row(id: 1, name: "One")])
+     }
+ 
+-    @Test("A kept record gives way to a saved record with its id")
+-    func savedRecordSupersedesKeptOne() throws {
++    @Test("A save never writes over a kept record: one carrying its id is refused, and removing it by id is how it goes")
++    func keptRecordKeepsItsId() throws {
+         struct Named: Codable, Equatable {
+             let id: UUID
+             let name: String
+         }
+-        let superseded = UUID()
++        let held = UUID()
+         let other = UUID()
+-        let data = Data(#"[{"id":"\#(superseded.uuidString)","name":7},{"id":"\#(other.uuidString)","name":8}]"#.utf8)
++        let data = Data(#"[{"id":"\#(held.uuidString)","name":7},{"id":"\#(other.uuidString)","name":8}]"#.utf8)
+         let records = try LibraryFileRecords<Named>(decoding: data)
+-        #expect(records.unreadable.map(\.id) == [superseded, other])
++        #expect(records.unreadable.map(\.id) == [held, other])
+ 
+-        let saved = try LibraryFileRecords.encoded([Named(id: superseded, name: "Pulled")], keeping: records.unreadable)
++        #expect(throws: LibraryFileError.idHeldByUnreadableRecord(held)) {
++            try LibraryFileRecords.encoded([Named(id: held, name: "Pulled")], keeping: records.unreadable)
++        }
+ 
+-        #expect(saved.kept.map(\.id) == [other])
+-        let rows = try #require(try JSONSerialization.jsonObject(with: saved.data) as? [NSDictionary])
++        let removed = try LibraryFileRecords.encoded([Named(id: held, name: "Pulled")], keeping: records.unreadable, removing: [held])
++        #expect(removed.kept.map(\.id) == [other])
++        let rows = try #require(try JSONSerialization.jsonObject(with: removed.data) as? [NSDictionary])
+         #expect(rows.count == 2)
+         #expect(rows.first?["name"] as? String == "Pulled")
+         #expect(rows.last?["name"] as? Int == 8)
+```
+
+**File**: `apple/Packages/TableProCore/Tests/TableProSyncTests/SyncMetadataStorageTests.swift` (modified, +72/-0)
+```diff
+@@ -302,4 +302,76 @@ struct SyncMetadataStorageTests {
+         #expect(defaults.data(forKey: "com.TablePro.sync.tombstones.Connection") != nil)
+         #expect(defaults.string(forKey: "com.TablePro.sync.lastAccountId") == "account")
+     }
++
++    // MARK: - Copies this device cannot read
++
++    @Test("A connection's standing follows the last read of it, is kept while it cannot be read, and goes with it")
++    func connectionStandingFollowsReads() throws {
++        let storage = makeStorage()
++        let synced = UUID()
++        let localOnly = UUID()
++        let never = UUID()
++        storage.recordConnectionStanding(syncing: [synced], keptOff: [localOnly], unreadable: [])
++
++        storage.recordConnectionStanding(syncing: [], keptOff: [], unreadable: [synced, localOnly, never])
++
++        #expect(storage.standing(ofConnection: synced) == .syncs)
++        #expect(storage.standing(ofConnection: localOnly) == .keptOff)
++        #expect(storage.standing(ofConnection: never) == .unknown)
++
++        storage.recordConnectionStanding(syncing: [], keptOff: [], unreadable: [])
++        #expect(storage.standing(ofConnection: synced) == .unknown)
++        #expect(storage.standing(ofConnection: localOnly) == .unknown)
++    }
++
++    @Test("A deletion removes an unread copy that syncs, leaves a Local only one, and holds one with no standing")
++    func deletionOfUnreadCopiesFollowsStanding() {
++        let storage = makeStorage()
++        let synced = UUID()
++        let localOnly = UUID()
++        let unknown = UUID()
++        storage.recordConnectionStanding(syncing: [synced], keptOff: [localOnly], unreadable: [])
++
++        let removed = storage.unreadableConnectionsRemoved(byDeletionOf: [synced, localOnly, unknown])
++
++        #expect(removed == [synced])
++        #expect(storage.deletionsHeldForUnreadableCopies == [SyncRecordType.connection.recordName(for: unknown.uuidString)])
++    }
++
++    @Test("A held change is fetched once its copy reads, and dropped once its copy is gone or no longer syncs")
++    func heldChangesWaitForAReadableCopy() {
++        let storage = makeStorage()
++        storage.changesHeldForUnreadableCopies = ["Connection_A", "Connection_B", "Connection_C"]
++
++        let readable = storage.readableHeldChanges(syncing: ["Connection_A", "Connection_B"], unreadable: ["Connection_B"])
++
++        #expect(readable == ["Connection_A"])
++        #expect(storage.changesHeldForUnreadableCopies == ["Connection_A", "Connection_B"])
++    }
++
++    @Test("Records held for unread copies belong to the account that sent them, so switching accounts drops them")
++    func heldRecordsGoWithTheAccount() {
++        let storage = makeStorage()
++        _ = storage.adoptAccount("first")
++        storage.changesHeldForUnreadableCopies = ["Connection_A"]
++        storage.deletionsHeldForUnreadableCopies = ["Connection_B"]
++        storage.removalsPendingForUnreadableCopies = ["Connection_C"]
++
++        _ = storage.adoptAccount("second")
++
++        #expect(storage.changesHeldForUnreadableCopies.isEmpty)
++        #expect(storage.deletionsHeldForUnreadableCopies.isEmpty)
++        #expect(storage.removalsPendingForUnreadableCopies.isEmpty)
++    }
++
++    @Test("A held deletion falls due once its copy reads, and settles unapplied when the server sent the record again")
++    func heldDeletionsFallDueWhenReadable() {
++        let storage = makeStorage()
++        storage.deletionsHeldForUnreadableCopies = ["Connection_A", "Connection_B", "Connection_C"]
++
++        let held = storage.heldDeletions(live: ["Connection_C"], unreadable: ["Connection_B"])
++
++        #expect(held.due == ["Connection_A"])
++        #expect(held.settled == ["Connection_A", "Connection_C"])
++    }
  }
 ```
 
-**File**: `windows/tests/TablePro.App.UITests/AppSession.cs` (modified, +5/-3)
+**File**: `apple/TablePro/Core/Services/Import/MacImportLibraryStore.swift` (modified, +2/-1)
 ```diff
-@@ -268,11 +268,13 @@ public void Check(AutomationElement row, bool isChecked = true)
-         row.Click();
+@@ -103,8 +103,9 @@ internal struct MacImportLibraryStore: ImportLibraryStore {
+         return write
      }
  
--    // The ContentDialog template names its primary button PrimaryButton.
--    public void PressDialogButton()
-+    // The ContentDialog template names its primary button PrimaryButton; a name tells it from a dialog still closing.
-+    public void PressDialogButton(string? name = null)
-     {
-         var button = Retry.WhileNull(
--                () => Window.FindFirstDescendant(condition => condition.ByAutomationId("PrimaryButton")),
-+                () => Window.FindFirstDescendant(condition => name is null
-+                    ? condition.ByAutomationId("PrimaryButton")
-+                    : condition.ByAutomationId("PrimaryButton").And(condition.ByName(name))),
-                 Wait,
-                 throwOnTimeout: false).Result
-             ?? throw Failure("No dialog opened.", screen: true);
++    // With the records this build cannot read, which keep their ids.
+     func existingConnectionIds() -> Set<UUID> {
+-        Set(connections.loadConnections().map(\.id))
++        Set(connections.loadConnections().map(\.id)).union(connections.unreadableConnectionIds)
+     }
+ 
+     // A file's credential is the secret itself: a key document given as a path would read a key file on this Mac.
 ```
 
-**File**: `windows/tests/TablePro.App.UITests/TabWindowTests.cs` (modified, +27/-0)
+**File**: `apple/TablePro/Core/Storage/ConnectionStorage.swift` (modified, +42/-5)
 ```diff
-@@ -245,6 +245,33 @@ public void CancellingCloseSelectsTheConnectionWhoseTransactionWasShown(string t
-         app.PressDialogButton();
+@@ -108,6 +108,11 @@ final class ConnectionStorage {
+         let connections = storedConnections.map { stored in
+             stored.toConnection()
+         }
++        syncTracker.recordConnectionStanding(
++            syncing: Set(connections.filter(\.participatesInSync).map(\.id)),
++            keptOff: Set(connections.filter { !$0.participatesInSync }.map(\.id)),
++            unreadable: file.unreadableIds
++        )
+ 
+         let migrated = Self.numberingUnrankedGroups(connections)
+         if migrated != connections, storeIsTrusted {
+@@ -129,21 +134,39 @@ final class ConnectionStorage {
+ 
+     // False refuses dependent writes (sync marks, keychain items), or a password goes while its record stays.
+     // `byUser` false is a write the app makes itself, which never clears a failed integrity check.
++    // `removingUnreadable` drops records this build cannot read, by id, as a deletion another device made does.
+     @discardableResult
+-    func saveConnections(_ connections: [DatabaseConnection], byUser: Bool = true, removingSecrets: Bool = false) -> Bool {
++    func saveConnections(
++        _ connections: [DatabaseConnection],
++        byUser: Bool = true,
++        removingSecrets: Bool = false,
++        removingUnreadable removedIds: Set<UUID> = []
++    ) -> Bool {
+         let previous = loadConnections()
+         guard !lastLoadFailed else {
+             Self.logger.error("Refused to save over connections.json: it could not be read")
+             return false
+         }
+-        guard persist(connections, byUser: byUser, removingSecrets: removingSecrets) else { return false }
++        guard persist(connections, byUser: byUser, removingSecrets: removingSecrets, removingUnreadable: removedIds) else {
++            return false
++        }
+         moveSecretsWhoseScopeChanged(from: previous, to: connections)
+         return true
      }
  
-+    // The cancelled prompt is still playing its closing transition when Roll back asks.
-+    [Theory]
-+    [MemberData(nameof(Themes))]
-+    public void RollBackRightAfterCancellingCloseStillAsks(string theme)
-+    {
-+        var folder = AppSession.NewDataFolder(theme);
-+        var state = new
-+        {
-+            connections = new[]
-+            {
-+                new { filePath = AppSession.SampleDatabase(folder), name = "First", engineId = "sqlite",
-+                    tabs = new[] { new { kind = "Query", title = "Query 1", sql = "BEGIN" } } },
-+            },
-+            front = 0,
-+        };
-+        File.WriteAllText(Path.Combine(folder, "session.json"), JsonSerializer.Serialize(state));
-+        using var app = AppSession.Relaunch(folder, theme);
-+        app.Find("SqlEditor");
-+        app.Chord(() => app.TryFind("CommitButton") is { IsOffscreen: false }, VirtualKeyShort.CONTROL, VirtualKeyShort.ENTER);
-+        app.Chord(() => app.TryFind("PrimaryButton") is not null, VirtualKeyShort.ALT, VirtualKeyShort.F4);
-+        app.CloseDialog();
-+        app.Find("RollBackButton").AsButton().Invoke();
-+        app.PressDialogButton("Roll back");
-+        Assert.True(Retry.WhileFalse(() => app.TryFind("CommitButton") is null or { IsOffscreen: true },
-+            AppSession.Wait, throwOnTimeout: false).Success);
+     @discardableResult
+-    private func persist(_ connections: [DatabaseConnection], byUser: Bool = true, removingSecrets: Bool = false) -> Bool {
+-        guard file.save(connections.map { StoredConnection(from: $0) }, byUser: byUser, removingSecrets: removingSecrets) else {
++    private func persist(
++        _ connections: [DatabaseConnection],
++        byUser: Bool = true,
++        removingSecrets: Bool = false,
++        removingUnreadable removedIds: Set<UUID> = []
++    ) -> Bool {
++        guard file.save(
++            connections.map { StoredConnection(from: $0) },
++            byUser: byUser,
++            removingSecrets: removingSecrets,
++            removingUnreadable: removedIds
++        ) else {
+             return false
+         }
+         fileWriteCount += 1
+@@ -211,7 +234,8 @@ final class ConnectionStorage {
+             replaced.append(updated)
+         }
+ 
+-        var knownIds = Set(connections.map(\.id))
++        // A record this build cannot read keeps its id, so the import leaves it alone.
++        var knownIds = Set(connections.map(\.id)).union(file.unreadableIds)
+         var added: [DatabaseConnection] = []
+         for incoming in adding {
+             guard knownIds.insert(incoming.id).inserted else { continue }
+@@ -805,6 +829,19 @@ final class ConnectionStorage {
+             + fieldIds.map { "com.TablePro.plugin.\($0).\(id)" }
+     }
+ 
++    // Found by the id they end with: naming a plugin's secure fields needs the type the record no longer gives, and
++    // one left behind would reach whatever later saves a record with that id. Device-only, as for a remote delete.
++    func deleteSecrets(ofUnreadable ids: Set<UUID>) {
++        for id in ids {
++            let keys = keychain.deviceOnlyKeys(endingWith: ".\(id.uuidString)").filter { key in
++                key.hasPrefix("com.TablePro.") && !key.hasPrefix(CredentialProfileStorage.secretKeyPrefix)
++            }
++            for key in keys {
++                keychain.delete(forKey: key, deviceOnly: true)
++            }
++        }
 +    }
 +
-     private static void OpenTrack(AppSession app)
-     {
-         app.Click(app.Find("SampleCard"), () => app.TryFind("Rail_Chinook (Sample)") is not null);
+     // Removing an iCloud Keychain item removes it from every device, so only a delete the other devices follow does.
+     // One from another device leaves it to that device. A Local only delete cannot tell whether another device still
+     // syncs the row, so it keeps it.
+```
+
+---
+
+### Incident Patch 3: `e4a09da3` (2026-11-19)
+**Commit Message**: fix(macos): make Vim mode's operators, motions, paste and marks match Vim (#4347)
+
+**File**: `apple/TablePro/Core/Vim/VimEngine+Characters.swift` (modified, +11/-0)
+```diff
+@@ -29,4 +29,15 @@ extension VimEngine {
+         }
+         return max(position, limit)
+     }
++
++    // A character's class is its first scalar's, so a variation selector or mark never splits it.
++    func wordClass(at offset: Int, in buffer: VimTextBuffer) -> VimWordScanner.CharacterClass {
++        let base = characterStart(at: offset, in: buffer)
++        let trail = base + 1 < buffer.length ? buffer.character(at: base + 1) : nil
++        return VimWordScanner.characterClass(lead: buffer.character(at: base), trail: trail)
++    }
++
++    func isWordCharacter(at offset: Int, in buffer: VimTextBuffer) -> Bool {
++        wordClass(at: offset, in: buffer) == .word
++    }
+ }
+```
+
+**File**: `apple/TablePro/Core/Vim/VimEngine+InsertReplace.swift` (modified, +12/-4)
+```diff
+@@ -94,25 +94,33 @@ extension VimEngine {
+ 
+     func processCommandLine(_ char: Character, buffer commandBuffer: String) -> Bool {
+         switch char {
++        // Leaving the command line ends the command it is part of, an operator typed before it included.
+         case "\u{1B}":
++            cancelPendingCommand()
+             setMode(.normal)
+             return true
+         case "\r", "\n":
+             let prefix = commandBuffer.first
+             let body = String(commandBuffer.dropFirst())
+             setMode(.normal)
+-            if prefix == "/" {
+-                runSearch(pattern: body, forward: true)
+-            } else if prefix == "?" {
+-                runSearch(pattern: body, forward: false)
++            if prefix == "/" || prefix == "?" {
++                // A search after an operator is its motion, as `d/foo` deletes up to foo.
++                if pendingOperator != nil, let buffer {
++                    let target = searchTarget(pattern: body, forward: prefix == "/", count: searchCount, in: buffer)
++                    applyMotion(to: target, kind: .exclusive, in: buffer)
++                } else {
++                    runSearch(pattern: body, forward: prefix == "/", count: searchCount)
++                }
+             } else {
+                 onCommand?(body)
+             }
++            cancelPendingCommand()
+             return true
+         case "\u{7F}", "\u{08}":
+             if (commandBuffer as NSString).length > 1 {
+                 setMode(.commandLine(buffer: String(commandBuffer.dropLast())))
+             } else {
++                cancelPendingCommand()
+                 setMode(.normal)
+             }
+             return true
+```
+
+**File**: `apple/TablePro/Core/Vim/VimEngine+Motions.swift` (modified, +124/-120)
+```diff
+@@ -34,47 +34,29 @@ extension VimEngine {
+     }
+ 
+     func moveDown(_ count: Int, in buffer: VimTextBuffer) {
+-        let pos = buffer.selectedRange().location
+-        let (line, col) = buffer.lineAndColumn(forOffset: pos)
+-        if goalColumn == nil { goalColumn = col }
+-        let targetLine = min(buffer.lineCount - 1, line + count)
+-        let newPos = buffer.offset(forLine: targetLine, column: goalColumn ?? col)
+-        if let op = pendingOperator {
+-            let startLineRange = buffer.lineRange(forOffset: pos)
+-            let endLineRange = buffer.lineRange(forOffset: newPos)
+-            let rangeStart = min(startLineRange.location, endLineRange.location)
+-            let rangeEnd = max(
+-                startLineRange.location + startLineRange.length,
+-                endLineRange.location + endLineRange.length
+-            )
+-            let opRange = NSRange(location: rangeStart, length: rangeEnd - rangeStart)
+-            executeOperatorOnRange(op, range: opRange, linewise: true, in: buffer)
+-            pendingOperator = nil
+-        } else {
+-            buffer.setSelectedRange(NSRange(location: newPos, length: 0))
+-        }
++        moveVertically(by: count, in: buffer)
+     }
+ 
+     func moveUp(_ count: Int, in buffer: VimTextBuffer) {
++        moveVertically(by: -count, in: buffer)
++    }
++
++    // An operator takes the lines whole; on the first or last line it has nothing to take and the command ends.
++    private func moveVertically(by delta: Int, in buffer: VimTextBuffer) {
+         let pos = buffer.selectedRange().location
+         let (line, col) = buffer.lineAndColumn(forOffset: pos)
+         if goalColumn == nil { goalColumn = col }
+-        let targetLine = max(0, line - count)
++        let targetLine = min(max(0, line + delta), buffer.lineCount - 1)
+         let newPos = buffer.offset(forLine: targetLine, column: goalColumn ?? col)
+-        if let op = pendingOperator {
+-            let startLineRange = buffer.lineRange(forOffset: newPos)
+-            let endLineRange = buffer.lineRange(forOffset: pos)
+-            let rangeStart = min(startLineRange.location, endLineRange.location)
+-            let rangeEnd = max(
+-                startLineRange.location + startLineRange.length,
+-                endLineRange.location + endLineRange.length
+-            )
+-            let opRange = NSRange(location: rangeStart, length: rangeEnd - rangeStart)
+-            executeOperatorOnRange(op, range: opRange, linewise: true, in: buffer)
+-            pendingOperator = nil
+-        } else {
++        guard let op = pendingOperator else {
+             buffer.setSelectedRange(NSRange(location: newPos, length: 0))
++            return
++        }
++        guard targetLine != line else {
++            cancelPendingCommand()
++            return
+         }
++        operate(op, from: pos, to: newPos, kind: .linewise, in: buffer)
+     }
+ 
+     func moveToLineStart(in buffer: VimTextBuffer) {
+@@ -118,28 +100,51 @@ extension VimEngine {
+         buffer.setSelectedRange(NSRange(location: offset, length: 0))
+     }
+ 
+-    func wordForward(_ count: Int, in buffer: VimTextBuffer) {
++    // `cw` on a word changes to its end, as `ce` does; elsewhere `w` and `W` go to the next word's start.
++    func wordMotion(_ count: Int, bigWord: Bool, in buffer: VimTextBuffer) {
++        let pos = buffer.selectedRange().location
++        if pendingOperator == .change, pos < buffer.length, !isBlank(buffer.character(at: pos)) {
++            let end: (Int) -> Int = { bigWord ? buffer.bigWordEnd(from: $0) : buffer.wordEnd(from: $0) }
++            var target = end(pos - 1)
++            for _ in 1..<max(1, count) { target = end(target) }
++            applyMotion(to: target, kind: .inclusive, in: buffer)
++            return
++        }
++        applyMotion(to: wordForwardTarget(count, bigWord: bigWord, in: buffer), kind: .exclusive, in: buffer)
++    }
++
++    // After an operator the last word stops at the end of its line, and from an empty line at the next line's
++    // start, which `:help exclusive` turns into the empty line.
++    func wordForwardTarget(_ count: Int, bigWord: Bool, in buffer: VimTextBuffer) -> Int? {
+         var pos = buffer.selectedRange().location
+         let isOperator = pendingOperator != nil
+         for i in 0..<count {
+-            let prev = pos
+-            let next = buffer.wordBoundary(forward: true, from: pos)
++            let next = bigWord
++                ? buffer.bigWordBoundary(forward: true, from: pos)
++                : buffer.wordBoundary(forward: true, from: pos)
+             if isOperator && i == count - 1 {
+-                let prevLineRange = buffer.lineRange(forOffset: prev)
+-                let nextLineRange = buffer.lineRange(forOffset: min(next, buffer.length))
+-                if prevLineRange.location != nextLineRange.location {
+-                    let lineEnd = prevLineRange.location + prevLineRange.length
+-                    let contentEnd = lineEnd > prevLineRange.locat
+```
+
+**File**: `apple/TablePro/Core/Vim/VimEngine+NormalMode.swift` (modified, +150/-94)
+```diff
+@@ -6,72 +6,81 @@
+ import Foundation
+ 
+ extension VimEngine {
+-    func processNormal(_ char: Character, shift: Bool) -> Bool { // swiftlint:disable:this function_body_length cyclomatic_complexity
++    func processNormal(_ char: Character, shift: Bool) -> Bool {
+         guard let buffer else { return false }
++        if char == "\u{1B}" {
++            cancelPendingCommand()
++            return true
++        }
++        if pendingRegisterSelect {
++            pendingRegisterSelect = false
++            // `""` names the unnamed register.
++            selectedRegister = char == "\"" ? nil : char
++            return true
++        }
++        if !takesCharacterArgument, char.isASCII, let digit = char.wholeNumberValue, countPrefix > 0 || digit > 0 {
++            if countPrefix <= 99_999 { countPrefix = countPrefix * 10 + digit }
++            return true
++        }
++        let consumed = processNormalCommand(char, shift: shift, in: buffer)
++        // A finished command drops the count and register typed for it, used or not.
++        if !hasPendingCommand {
++            countPrefix = 0
++            operatorCount = 0
++            selectedRegister = nil
++        }
++        return consumed
++    }
++
++    private var takesCharacterArgument: Bool {
++        pendingFindChar != nil || pendingReplaceChar || pendingMarkSet || pendingMarkJumpExact != nil || pendingZ
++            || pendingTextObject || pendingMacroTarget != nil || pendingBracket != nil
++    }
+ 
++    private func processNormalCommand(_ char: Character, shift: Bool, in buffer: VimTextBuffer) -> Bool { // swiftlint:disable:this function_body_length
+         if let req = pendingFindChar {
+             pendingFindChar = nil
+-            if char == "\u{1B}" { return true }
+             return executeFindChar(char, request: req, in: buffer)
+         }
+         if pendingReplaceChar {
+             pendingReplaceChar = false
+-            if char == "\u{1B}" { return true }
+             return executeReplaceChar(char, in: buffer)
+         }
+         if pendingMarkSet {
+             pendingMarkSet = false
+-            if char == "\u{1B}" { return true }
+-            marks[char] = buffer.selectedRange().location
++            setMark(char, at: buffer.selectedRange().location, in: buffer)
+             return true
+         }
+         if let exact = pendingMarkJumpExact {
+             pendingMarkJumpExact = nil
+-            if char == "\u{1B}" { return true }
+             jumpToMark(char, exact: exact, in: buffer)
+             return true
+         }
+-        if pendingRegisterSelect {
+-            pendingRegisterSelect = false
+-            if char == "\u{1B}" { return true }
+-            selectedRegister = char
+-            return true
+-        }
+         if pendingZ {
+             pendingZ = false
+             return true
+         }
+         if pendingTextObject {
+             pendingTextObject = false
+-            if char == "\u{1B}" {
+-                pendingOperator = nil
+-                return true
+-            }
+             return executeTextObject(char, around: pendingTextObjectAround, in: buffer)
+         }
+         if let kind = pendingMacroTarget {
+             pendingMacroTarget = nil
+-            if char == "\u{1B}" { return true }
+             handleMacroTarget(kind: kind, register: char)
+             return true
+         }
+         if let bracketKind = pendingBracket {
+             pendingBracket = nil
+-            if char == "\u{1B}" { return true }
++            let count = consumeCount()
+             switch (bracketKind, char) {
+-            case (.openBracket, "["): sectionBackward(in: buffer); return true
+-            case (.closeBracket, "]"): sectionForward(in: buffer); return true
+-            default: return true
+-            }
+-        }
+-
+-        if char.isNumber {
+-            let digit = char.wholeNumberValue ?? 0
+-            if countPrefix > 0 || digit > 0 {
+-                guard countPrefix <= 99_999 else { return true }
+-                countPrefix = countPrefix * 10 + digit
+-                return true
++            case (.openBracket, "["):
++                applyMotion(to: sectionTarget(forward: false, count: count, in: buffer), kind: .exclusive, jump: true, in: buffer)
++            case (.closeBracket, "]"):
++                applyMotion(to: sectionTarget(forward: true, count: count, in: buffer), kind: .exclusive, jump: true, in: buffer)
++            default:
++                cancelPendingCommand()
+             }
++            return true
+         }
+ 
+         if pendingG {
+@@ -83,6 +92,13 @@ extension VimEngine {
+             return true
+         }
+ 
++        // A key that is not a motion, a text object or the operator doubled ends the command, as Vim's operators
++        // accept nothing else.
++        if let op = pendingOperator, !acceptsAfterOperator(char, op) {
++            cancelPendingCommand()
++            return true
++        }
++
+         switch char {
+         case "h":
+             let count = consumeCount()
+@@ -101,13 +117,14 @
+```
+
+**File**: `apple/TablePro/Core/Vim/VimEngine+Operators.swift` (modified, +98/-46)
+```diff
+@@ -16,16 +16,73 @@ extension VimEngine {
+         let startPos = buffer.selectedRange().location
+         motion()
+         let endPos = buffer.selectedRange().location
++        operate(op, from: startPos, to: endPos, kind: inclusive ? .inclusive : .exclusive, in: buffer)
++    }
+ 
+-        let rangeStart = min(startPos, endPos)
+-        var rangeEnd = max(startPos, endPos)
+-        if inclusive && rangeEnd < buffer.length && buffer.character(at: rangeEnd) != 0x0A {
+-            rangeEnd = characterEnd(at: rangeEnd, in: buffer)
++    func operate(_ op: VimOperator, from origin: Int, to target: Int, kind: VimMotionKind, in buffer: VimTextBuffer) {
++        pendingOperator = nil
++        let start = min(origin, target)
++        let end = max(origin, target)
++        if kind == .linewise {
++            executeOperatorOnRange(op, range: wholeLines(from: start, through: end, in: buffer), linewise: true, in: buffer)
++            return
++        }
++        var rangeEnd = end
++        if kind == .inclusive, end < buffer.length, buffer.character(at: end) != 0x0A {
++            rangeEnd = characterEnd(at: end, in: buffer)
++        }
++        let startsInIndent = isInIndent(start, in: buffer)
++        // `:help exclusive`: an exclusive motion that ends at the start of a later line stops at the end of the line
++        // before, and takes whole lines when it starts in the indent.
++        if kind == .exclusive, end > start, buffer.lineRange(forOffset: end).location == end {
++            if startsInIndent {
++                executeOperatorOnRange(op, range: wholeLines(from: start, through: end - 1, in: buffer), linewise: true, in: buffer)
++                return
++            }
++            rangeEnd = characterStart(at: end - 1, in: buffer)
++        }
++        // `>` and `<` shift the lines the motion covers whatever its kind.
++        if op == .indent || op == .outdent {
++            let lines = wholeLines(from: start, through: max(start, rangeEnd - 1), in: buffer)
++            executeOperatorOnRange(op, range: lines, linewise: true, in: buffer)
++            return
+         }
+-        let range = NSRange(location: rangeStart, length: rangeEnd - rangeStart)
++        // A delete over several lines from the indent to the end of a line takes the lines, as Vim's `d` does.
++        if op == .delete, startsInIndent, rangeEnd > start,
++           buffer.lineRange(forOffset: start).location != buffer.lineRange(forOffset: rangeEnd - 1).location,
++           isBlankToLineEnd(from: rangeEnd, in: buffer) {
++            executeOperatorOnRange(op, range: wholeLines(from: start, through: rangeEnd - 1, in: buffer), linewise: true, in: buffer)
++            return
++        }
++        executeOperatorOnRange(op, range: NSRange(location: start, length: rangeEnd - start), linewise: false, in: buffer)
++    }
+ 
+-        executeOperatorOnRange(op, range: range, linewise: false, in: buffer)
+-        pendingOperator = nil
++    func wholeLines(from start: Int, through end: Int, in buffer: VimTextBuffer) -> NSRange {
++        let first = buffer.lineRange(forOffset: start).location
++        let last = NSMaxRange(buffer.lineRange(forOffset: max(start, end)))
++        return NSRange(location: first, length: last - first)
++    }
++
++    // Only blanks come before `offset` on its line.
++    func isInIndent(_ offset: Int, in buffer: VimTextBuffer) -> Bool {
++        var scan = buffer.lineRange(forOffset: offset).location
++        while scan < offset {
++            let ch = buffer.character(at: scan)
++            guard ch == 0x20 || ch == 0x09 else { return false }
++            scan += 1
++        }
++        return true
++    }
++
++    func isBlankToLineEnd(from offset: Int, in buffer: VimTextBuffer) -> Bool {
++        let lineEnd = contentEnd(ofLineAt: offset, in: buffer)
++        var scan = offset
++        while scan < lineEnd {
++            let ch = buffer.character(at: scan)
++            guard ch == 0x20 || ch == 0x09 || ch == 0x0D else { return false }
++            scan += 1
++        }
++        return true
+     }
+ 
+     func executeOperatorOnRange(_ op: VimOperator, range proposed: NSRange, linewise: Bool, in buffer: VimTextBuffer) {
+@@ -39,17 +96,20 @@ extension VimEngine {
+             let text = buffer.string(in: range)
+             writeToActiveRegister(text: text, linewise: linewise, asDelete: true)
+             buffer.replaceCharacters(in: range, with: "")
+-            adjustMarksForEdit(in: range, replacementLength: 0)
+-            buffer.setSelectedRange(NSRange(location: clampToContentPosition(range.location, in: buffer), length: 0))
++            let landing = linewise ? firstNonBlankOffset(from: range.location, in: buffer) : range.location
++            buffer.setSelectedRange(NSRange(location: clampToContentPosition(landing, in: buffer), length: 0))
+         case .yank:
+             let text = buffer.string(in: range)
+             writeToActiveRegister(text: text, linewise: linewise, asDelete: false)
+             buffer.setSelectedRange(NSRange(
+```
+
+**File**: `apple/TablePro/Core/Vim/VimEngine+RegistersMarks.swift` (modified, +274/-33)
+```diff
+@@ -13,9 +13,12 @@ struct VimDocumentMarks {
+     var lastVisualLinewise = false
+     var lastJumpOrigin: Int?
+     var lastInsertOffset: Int?
++    var markColumns: [Character: Int] = [:]
++    var editJournal: [VimEditRecord] = []
+ 
+     var isEmpty: Bool {
+         marks.isEmpty && lastVisualStart == nil && lastVisualEnd == nil && lastJumpOrigin == nil && lastInsertOffset == nil
++            && editJournal.isEmpty
+     }
+ }
+ 
+@@ -27,12 +30,17 @@ extension VimEngine {
+             lastVisualEnd: lastVisualEnd,
+             lastVisualLinewise: lastVisualLinewise,
+             lastJumpOrigin: lastJumpOrigin,
+-            lastInsertOffset: lastInsertOffset
++            lastInsertOffset: lastInsertOffset,
++            markColumns: markColumns,
++            editJournal: editJournal
+         )
+     }
+ 
+     func restoreDocumentMarks(_ saved: VimDocumentMarks) {
+         marks = saved.marks
++        markColumns = saved.markColumns
++        editJournal = saved.editJournal
++        editJournalTextLength = saved.editJournal.reduce(0) { $0 + $1.textLength }
+         lastVisualStart = saved.lastVisualStart
+         lastVisualEnd = saved.lastVisualEnd
+         lastVisualLinewise = saved.lastVisualLinewise
+@@ -81,39 +89,32 @@ extension VimEngine {
+         return register
+     }
+ 
++    // `'` goes to the first non-blank of the mark's line and takes whole lines after an operator; `` ` `` goes to
++    // the mark itself. An unset mark ends the command.
+     func jumpToMark(_ name: Character, exact: Bool, in buffer: VimTextBuffer) {
+-        if name == "'" || name == "`" {
+-            if let origin = lastJumpOrigin {
+-                let originPos = buffer.selectedRange().location
+-                let clamped = min(max(0, origin), buffer.length)
+-                buffer.setSelectedRange(NSRange(location: clamped, length: 0))
+-                lastJumpOrigin = originPos
+-            }
+-            return
++        let offset: Int?
++        switch name {
++        case "'", "`": offset = lastJumpOrigin
++        case "<": offset = lastVisualStart
++        case ">": offset = lastVisualEnd
++        default: offset = marks[name]
+         }
+-        if name == "<", let start = lastVisualStart {
+-            let originPos = buffer.selectedRange().location
+-            buffer.setSelectedRange(NSRange(location: min(max(0, start), buffer.length), length: 0))
+-            lastJumpOrigin = originPos
++        guard let offset else {
++            applyMotion(to: nil, kind: .exclusive, in: buffer)
+             return
+         }
+-        if name == ">", let end = lastVisualEnd {
+-            let originPos = buffer.selectedRange().location
+-            buffer.setSelectedRange(NSRange(location: min(max(0, end), buffer.length), length: 0))
+-            lastJumpOrigin = originPos
+-            return
++        var clamped = min(max(0, offset), buffer.length)
++        if let column = markColumns[name] {
++            let lineStart = buffer.lineRange(forOffset: clamped).location
++            let lastCharacter = max(lineStart, contentEnd(ofLineAt: clamped, in: buffer) - 1)
++            clamped = min(lineStart + column, lastCharacter)
+         }
+-        guard let offset = marks[name] else { return }
+-        let originPos = buffer.selectedRange().location
+-        let clamped = min(max(0, offset), buffer.length)
+         if exact {
+-            buffer.setSelectedRange(NSRange(location: clamped, length: 0))
++            applyMotion(to: clamped, kind: .exclusive, jump: true, in: buffer)
+         } else {
+             let lineStart = buffer.lineRange(forOffset: clamped).location
+-            let target = firstNonBlankOffset(from: lineStart, in: buffer)
+-            buffer.setSelectedRange(NSRange(location: target, length: 0))
++            applyMotion(to: firstNonBlankOffset(from: lineStart, in: buffer), kind: .linewise, jump: true, in: buffer)
+         }
+-        lastJumpOrigin = originPos
+     }
+ 
+     func recordVisualSelection(linewise: Bool, in buffer: VimTextBuffer) {
+@@ -144,15 +145,255 @@ extension VimEngine {
+         }
+     }
+ 
+-    func adjustMarksForEdit(in editRange: NSRange, replacementLength: Int) {
+-        let delta = replacementLength - editRange.length
+-        guard delta != 0 else { return }
+-        for (key, offset) in marks {
+-            if offset >= editRange.location + editRange.length {
+-                marks[key] = offset + delta
+-            } else if offset >= editRange.location {
+-                marks[key] = editRange.location
++    func setMark(_ name: Character, at offset: Int, in buffer: VimTextBuffer) {
++        marks[name] = offset
++        markColumns[name] = offset - buffer.lineRange(forOffset: offset).location
++    }
++
++    var positionSnapshot: VimPositionSnapshot {
++        VimPositionSnapshot(
++            marks: marks,
++            markColumns: markColumns,
++            lastJumpOrigin: lastJumpOrigin,
++            lastInsertOffset: lastInsertOffset,
++            lastVisualStart: lastVisualStart,
++            lastV
+```
+
+**File**: `apple/TablePro/Core/Vim/VimEngine+Search.swift` (modified, +41/-28)
+```diff
+@@ -6,43 +6,62 @@
+ import Foundation
+ 
+ extension VimEngine {
+-    func runSearch(pattern: String, forward: Bool) {
+-        guard !pattern.isEmpty, let buffer else { return }
+-        lastSearchPattern = pattern
+-        lastSearchForward = forward
++    func runSearch(pattern: String, forward: Bool, count: Int = 1) {
++        guard let buffer else { return }
+         let origin = buffer.selectedRange().location
+-        if let target = findPattern(pattern, from: origin, forward: forward, wholeWord: false, in: buffer) {
++        if let target = searchTarget(pattern: pattern, forward: forward, count: count, in: buffer) {
+             buffer.setSelectedRange(NSRange(location: target, length: 0))
+             lastJumpOrigin = origin
+         }
+     }
+ 
+-    func searchNext(in buffer: VimTextBuffer, reverseDirection: Bool) {
+-        guard let pattern = lastSearchPattern else { return }
++    // Remembers the pattern for `n` and `N`, as a search does even when nothing matches.
++    func searchTarget(pattern: String, forward: Bool, count: Int = 1, in buffer: VimTextBuffer) -> Int? {
++        guard !pattern.isEmpty else { return nil }
++        lastSearchPattern = pattern
++        lastSearchForward = forward
++        var position = buffer.selectedRange().location
++        for _ in 0..<max(1, count) {
++            guard let next = findPattern(pattern, from: position, forward: forward, wholeWord: false, in: buffer) else {
++                return nil
++            }
++            position = next
++        }
++        return position
++    }
++
++    func searchNextTarget(count: Int, reverseDirection: Bool, in buffer: VimTextBuffer) -> Int? {
++        guard let pattern = lastSearchPattern else { return nil }
+         let forward = reverseDirection ? !lastSearchForward : lastSearchForward
+-        let origin = buffer.selectedRange().location
+-        if let target = findPattern(pattern, from: origin, forward: forward, wholeWord: false, in: buffer) {
+-            buffer.setSelectedRange(NSRange(location: target, length: 0))
+-            lastJumpOrigin = origin
++        var position = buffer.selectedRange().location
++        for _ in 0..<max(1, count) {
++            guard let next = findPattern(pattern, from: position, forward: forward, wholeWord: false, in: buffer) else {
++                return nil
++            }
++            position = next
+         }
++        return position
+     }
+ 
+-    func searchWordUnderCursor(forward: Bool, in buffer: VimTextBuffer) {
++    func searchWordUnderCursorTarget(forward: Bool, count: Int, in buffer: VimTextBuffer) -> Int? {
+         let pos = buffer.selectedRange().location
+-        guard pos < buffer.length else { return }
++        guard pos < buffer.length else { return nil }
+         var start = pos
+-        while start > 0 && isWordChar(buffer.character(at: start - 1)) { start -= 1 }
++        while start > 0 && isWordCharacter(at: start - 1, in: buffer) { start -= 1 }
+         var end = pos
+-        while end < buffer.length && isWordChar(buffer.character(at: end)) { end += 1 }
+-        guard end > start else { return }
++        while end < buffer.length && isWordCharacter(at: end, in: buffer) { end += 1 }
++        guard end > start else { return nil }
+         let word = buffer.string(in: NSRange(location: start, length: end - start))
+         lastSearchPattern = word
+         lastSearchForward = forward
+-        let origin = pos
+-        if let target = findPattern(word, from: origin, forward: forward, wholeWord: true, in: buffer) {
+-            buffer.setSelectedRange(NSRange(location: target, length: 0))
+-            lastJumpOrigin = origin
++        var position = pos
++        for _ in 0..<max(1, count) {
++            guard let next = findPattern(word, from: position, forward: forward, wholeWord: true, in: buffer) else {
++                return nil
++            }
++            position = next
+         }
++        return position
+     }
+ 
+     func findPattern(
+@@ -62,9 +81,9 @@ extension VimEngine {
+             let candidate = nsBuffer.substring(with: NSRange(location: idx, length: needle.length))
+             guard candidate == pattern else { return false }
+             if !wholeWord { return true }
+-            let beforeOk = idx == 0 || !self.isWordChar(nsBuffer.character(at: idx - 1))
++            let beforeOk = idx == 0 || VimWordScanner.characterClass(at: idx - 1, in: nsBuffer) != .word
+             let afterIdx = idx + needle.length
+-            let afterOk = afterIdx >= total || !self.isWordChar(nsBuffer.character(at: afterIdx))
++            let afterOk = afterIdx >= total || VimWordScanner.characterClass(at: afterIdx, in: nsBuffer) != .word
+             return beforeOk && afterOk
+         }
+ 
+@@ -95,10 +114,4 @@ extension VimEngine {
+         }
+         return nil
+     }
+-
+-    func isWordChar(_ ch: unichar) -> Bool {
+-        if ch == 0x5F { return true }
+-        guard let scalar = UnicodeScalar(ch) else { return false }
+-        return CharacterSet.alphanumerics.contains(sc
+```
+
+**File**: `apple/TablePro/Core/Vim/VimEngine+TextObjects.swift` (modified, +37/-34)
+```diff
+@@ -12,12 +12,18 @@ extension VimEngine {
+             pendingOperator = nil
+             return true
+         }
++        // A paragraph is whole lines, every other object characters, and Visual mode takes the object's kind.
++        let linewise = key == "p"
+         if mode.isVisual {
+-            buffer.setSelectedRange(range)
++            // The object's start becomes Visual's anchor and its end the cursor, so the next motion extends it.
++            guard range.length > 0 else { return true }
++            if linewise != mode.isVisualLinewise { setMode(.visual(linewise: linewise)) }
++            visualAnchor = range.location
++            updateVisualSelection(cursorPos: NSMaxRange(range) - 1, linewise: linewise, in: buffer)
+             return true
+         }
+         if let op = pendingOperator {
+-            executeOperatorOnRange(op, range: range, linewise: false, in: buffer)
++            executeOperatorOnRange(op, range: range, linewise: linewise, in: buffer)
+             pendingOperator = nil
+         }
+         return true
+@@ -41,20 +47,22 @@ extension VimEngine {
+ 
+     func wordObject(at cursor: Int, bigWord: Bool, around: Bool, in buffer: VimTextBuffer) -> NSRange? {
+         guard buffer.length > 0 else { return nil }
+-        let pos = min(max(0, cursor), buffer.length - 1)
+-        let classifier: (unichar) -> Int = { ch in
+-            if ch == 0x20 || ch == 0x09 || ch == 0x0A || ch == 0x0D { return 0 }
+-            if bigWord { return 1 }
+-            if ch == 0x5F { return 1 }
+-            if let scalar = UnicodeScalar(ch), CharacterSet.alphanumerics.contains(scalar) { return 1 }
+-            return 2
++        let pos = characterStart(at: min(max(0, cursor), buffer.length - 1), in: buffer)
++        let classOf: (Int) -> VimWordScanner.CharacterClass = { offset in
++            let cls = self.wordClass(at: offset, in: buffer)
++            return bigWord && cls != .whitespace ? .word : cls
+         }
+-        let startClass = classifier(buffer.character(at: pos))
++        let startClass = classOf(pos)
+         var start = pos
+-        while start > 0 && classifier(buffer.character(at: start - 1)) == startClass { start -= 1 }
+-        var end = pos
+-        while end < buffer.length - 1 && classifier(buffer.character(at: end + 1)) == startClass { end += 1 }
+-        var rangeEnd = end + 1
++        while start > 0 {
++            let previous = characterStart(at: start - 1, in: buffer)
++            guard classOf(previous) == startClass else { break }
++            start = previous
++        }
++        var rangeEnd = characterEnd(at: pos, in: buffer)
++        while rangeEnd < buffer.length && classOf(rangeEnd) == startClass {
++            rangeEnd = characterEnd(at: rangeEnd, in: buffer)
++        }
+         if around {
+             var trail = rangeEnd
+             while trail < buffer.length {
+@@ -219,32 +227,27 @@ extension VimEngine {
+         return NSRange(location: oe + 1, length: closeStart - oe - 1)
+     }
+ 
++    // Whole lines: the run of paragraph or blank lines at the cursor. `ap` adds the blank lines after a paragraph,
++    // or the paragraph after blank lines, and with nothing after it the blank lines before.
+     func paragraphObject(at cursor: Int, around: Bool, in buffer: VimTextBuffer) -> NSRange? {
+-        let (currentLine, _) = buffer.lineAndColumn(forOffset: cursor)
++        let lineCount = buffer.lineCount
++        let currentLine = buffer.lineAndColumn(forOffset: cursor).line
++        let blank = lineIsWhite(currentLine, in: buffer)
+         var startLine = currentLine
+-        while startLine > 0 && !lineIsBlank(startLine - 1, in: buffer) {
+-            startLine -= 1
+-        }
++        while startLine > 0 && lineIsWhite(startLine - 1, in: buffer) == blank { startLine -= 1 }
+         var endLine = currentLine
+-        while endLine < buffer.lineCount - 1 && !lineIsBlank(endLine + 1, in: buffer) {
+-            endLine += 1
+-        }
+-        let start = buffer.offset(forLine: startLine, column: 0)
+-        let lastContentLineRange = buffer.lineRange(forOffset: buffer.offset(forLine: endLine, column: 0))
+-        var end = lastContentLineRange.location + lastContentLineRange.length
+-        if !around && end > start {
+-            end -= 1
+-        }
++        while endLine < lineCount - 1 && lineIsWhite(endLine + 1, in: buffer) == blank { endLine += 1 }
+         if around {
+-            var trailing = endLine
+-            while trailing < buffer.lineCount - 1 && lineIsBlank(trailing + 1, in: buffer) {
+-                trailing += 1
+-            }
+-            if trailing > endLine {
+-                let trailingRange = buffer.lineRange(forOffset: buffer.offset(forLine: trailing, column: 0))
+-                end = trailingRange.location + trailingRange.length
++            var next = endLine
++            while next < lineCount - 1 && lineIsWhite(next + 1, in: buffer) != blank { next += 1 }
++            if next > endLine {
++                endLine = next
++            } else i
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4296** (2026-11-15): ci: run the jobs that need Python 3.9 on ubuntu-24.04 (@datlechin)
-- **PR #4294** (2026-11-15): refactor(macos): pass the caller's schema to DDL generators, drop the driver adapter downcasts and move the parts pane behind a plugin capability (@datlechin)
-- **PR #4293** (2026-11-15): fix(duckdb): keep DuckDB's expression recursion within the stacks it runs on (@datlechin)
-- **PR #4292** (2026-11-15): docs(roadmap): tick the Windows items #4282, #4285 and #4288 shipped (@datlechin)
-- **PR #4290** (2026-11-15): fix(windows): ask a question that comes while the last dialog is still closing (@datlechin)
-- **PR #4289** (2026-11-15): refactor(sql): read every SQL span through SQLNonCodeSpan and run one shared script corpus against the core (@datlechin)
+- **PR #4358** (2026-11-19): docs(roadmap): tick the items #4326 shipped (@datlechin)
+- **PR #4357** (2026-11-19): perf(schema): open a table from the shared column catalog (@datlechin)
+- **PR #4356** (2026-11-19): perf(import): send a SQL import's writes to PostgreSQL in pipelined batches (@datlechin)
+- **PR #4355** (2026-11-19): perf(export): read a PostgreSQL dump's index, comment, sequence and enum DDL once per schema (@datlechin)
+- **PR #4354** (2026-11-19): fix(duckdb): run DuckDB's tasks on 8 MiB threads so a deep ATTACH cannot overflow (@datlechin)
+- **PR #4353** (2026-11-19): ci(deps): bump taiki-e/install-action from 2.90.1 to 2.90.3 in the actions group across 1 directory (@dependabot[bot])
 
 ---
 
@@ -3002,23 +3473,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. duckdb): keep DuckDB's expression recursion within the stacks it runs on
+## X. duckdb): run DuckDB's tasks on 8 MiB threads so a deep ATTACH cannot overflow
 
 **RULE**:
-When implementing operations in `.github/workflows/core.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apple/Plugins/DuckDBDriverPlugin/DuckDBConnection.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in TableProApp/TablePro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2aca62ea`: duckdb): keep DuckDB's expression recursion within the stacks it runs on. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `68da8db7`: duckdb): run DuckDB's tasks on 8 MiB threads so a deep ATTACH cannot overflow. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/core.yml`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `apple/Plugins/DuckDBDriverPlugin/DuckDBConnection.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-      # DuckDB recurses on threads whose stack each platform sizes (core/docs/decisions/0031-duckdb-expression-depth.md).
-      - name: DuckDB's deepest expressions
-        run: cargo test --locked --target "$TARGET" -p tablepro-driver-duckdb --test deep_expressions
+    private var taskThreads: DuckDBTaskThreads?
+        for option in DuckDBTaskThreads.sessionOptions
+            where duckdb_set_config(config, option.name, option.value) == DuckDBError {
+            throw DuckDBPluginError.connectionFailed(
+                String(localized: "This build of DuckDB does not accept running its tasks on threads TablePro starts")
+            )
+        }
+        taskThreads = DuckDBTaskThreads(database: openedDB)
+        taskThreads?.close()
+        taskThreads = nil
+        if !DuckDBTaskThreads.keepsCount(statementType) {
+            taskThreads?.followCount()
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3028,7 +3509,7 @@ Subsystems managing Swift data structures, boundary deserialization, API parsing
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2aca62ea` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `68da8db7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

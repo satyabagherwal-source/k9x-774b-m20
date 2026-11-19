@@ -11404,3 +11404,7 @@ Every entry in this ledger must capture:
 | `learn-github-melnixdev-seo-crawl-audit` | `https://github.com/MelnixDev/seo-crawl-audit` | `3e173529` | Multi-dimensional audit evidence | 2026-11-19T19:39:02.341Z |
 | `learn-github-siteline-swiftui-introspect` | `https://github.com/siteline/swiftui-introspect` | `cd344bc3` | Multi-dimensional audit evidence | 2026-11-19T19:39:03.716Z |
 | `learn-github-folkbench-folkbench` | `https://github.com/Folkbench/folkbench` | `c39cf173` | Multi-dimensional audit evidence | 2026-11-19T20:00:18.822Z |
+| `learn-github-tableproapp-tablepro` | `https://github.com/TableProApp/TablePro` | `0b0c7243` | Multi-dimensional audit evidence | 2026-11-19T20:24:20.721Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `590bfc1f` | Multi-dimensional audit evidence | 2026-11-19T20:24:26.529Z |
+| `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `5f81080f` | Multi-dimensional audit evidence | 2026-11-19T20:33:56.720Z |
+| `learn-dom-h-e8006564` | `project://rtk-ai-rtk` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md` | 2026-11-19T20:34:29.192Z |

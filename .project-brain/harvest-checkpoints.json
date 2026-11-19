@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T20:00:18.835Z",
+  "last_updated": "2026-11-19T20:33:56.729Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "6ea93397e4c295ff033df3f3c8de99a95802050e53c887c5cb6d9e6010546d0d",
-      "verified_at": "2026-11-19T16:41:06.968Z",
+      "content_hash": "9caa662250bd70b1eacb6d24713393a12056f0e8266de229bc387cddf67bd1a3",
+      "verified_at": "2026-11-19T20:24:26.537Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T16:41:06.968Z"
+      "last_updated": "2026-11-19T20:24:26.537Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -11796,14 +11796,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rtk-ai-rtk",
-      "content_hash": "3d4e7ab290d51e15ceb9c406b92af79b930e520a6a097a4542768db60f2f5461",
-      "verified_at": "2026-11-18T09:28:27.442Z",
+      "content_hash": "7866f4e6dfa710362738b149ae75f8b0777b2269d3ac6d65629b51190c2c7d4c",
+      "verified_at": "2026-11-19T20:33:56.728Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T09:28:27.442Z"
+      "last_updated": "2026-11-19T20:33:56.728Z"
     },
     "gao-sun/eul": {
       "repository": "gao-sun/eul",
@@ -12096,14 +12096,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tableproapp-tablepro",
-      "content_hash": "3eebd6309c39c324212cd5d5b7135ef8230f932b5f421fb41e040ed4da6413d1",
-      "verified_at": "2026-11-15T16:07:07.783Z",
+      "content_hash": "792d8525e75b9f28bd89bdccbdb9c429528986a5ac57495178f8dc3f8772f963",
+      "verified_at": "2026-11-19T20:24:20.728Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T16:07:07.783Z"
+      "last_updated": "2026-11-19T20:24:20.728Z"
     },
     "twostraws/ControlRoom": {
       "repository": "twostraws/ControlRoom",

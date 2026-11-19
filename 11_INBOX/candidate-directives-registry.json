@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T20:00:31.648Z",
+  "last_updated": "2026-11-19T20:34:31.419Z",
   "directives": [
     {
       "id": "CD-001",
@@ -34208,6 +34208,90 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "A",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-5D6BEC-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-0LH5",
+      "directive_title": "run DuckDB's tasks on 8 MiB threads so a deep ATTACH cannot overflow",
+      "source_repo": "TableProApp/TablePro",
+      "source_commit": "0b0c7243",
+      "staged_file": "11_INBOX/candidate-directives/CD-0LH5-run-duckdb-s-tasks-on-8-mib-threads-so-a-deep-attach-cannot-overflow.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-DOJ3",
+      "directive_title": "Empirical Invariant Guard in tests.rs",
+      "source_repo": "provablehq-snarkos-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-DOJ3-empirical-invariant-guard-in-tests-rs.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-DN0W",
+      "directive_title": "High-Entropy Base64 Character-Class Validation Guard",
+      "source_repo": "rtk-ai-rtk-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-DN0W-high-entropy-base64-character-class-validation-guard.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-CXWP",
+      "directive_title": "High-Entropy Base64 Character-Class Validation Guard",
+      "source_repo": "rtk-ai/rtk",
+      "source_commit": "5f81080f",
+      "staged_file": "11_INBOX/candidate-directives/CD-CXWP-high-entropy-base64-character-class-validation-guard.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-DN0X",
+      "directive_title": "Fail-Open Hook Interceptor Contract for Agent Tooling",
+      "source_repo": "rtk-ai-rtk-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-DN0X-fail-open-hook-interceptor-contract-for-agent-tooling.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-08FBCD",
+      "directive_title": "Ambiguous Windows Multi-User TCP Port Collision Crash (BUG-PORT-02)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "rtk-ai-rtk",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-08FBCD-ambiguous-windows-multi-user-tcp-port-co.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-DNWF",
+      "directive_title": "duckdb): run DuckDB's tasks on 8 MiB threads so a deep ATTACH cannot overflow",
+      "source_repo": "tableproapp-tablepro-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-DNWF-duckdb-run-duckdb-s-tasks-on-8-mib-threads-so-a-deep-attach-cannot-overflow.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-377786",
+      "directive_title": "Empirical Invariant Guard in tests.rs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "provablehq-snarkos",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-377786-empirical-invariant-guard-in-tests-rs.md",
       "staged_date": "2026-11-19"
     }
   ]

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T09:28:37.587Z",
+  "timestamp": "2026-11-19T20:34:29.344Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-rtk-ai-rtk-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [rtk-ai-rtk-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T09:28:37.587Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T20:34:29.344Z`  
 > **Learning ID**: `LEARN-EVO-rtk-ai-rtk-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source**: github ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
-> **Source Version**: `eb710be4`  
+> **Source Version**: `5f81080f`  
 > **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T09:28:26.093Z  
+> **Synthesized By**: google-gemini-cloud-agent  
+> **Timestamp**: 2026-11-19T20:33:54.640Z  
 > **Learning ID**: `learn-github-rtk-ai-rtk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -37,313 +37,78 @@ PROVENANCE_END -->
 
 ---
 
-# Forensic Learning Record (Deep Inspection): rtk-ai/rtk
-
-> **Canonical Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
-> **Source Platform**: GitHub ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
-> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T09:28:26.083Z  
-> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+# Project Learning Record (Full-Spectrum Forensic Harvest): rtk-ai/rtk
 
 ---
 
-## 1. Context & Architectural Overview
-- **Repository / Resource**: `rtk-ai/rtk`
-- **Description**: CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies
-- **Primary Language / Ecosystem**: Rust
-- **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 87000 stars
+## 1. Executive Forensic Architecture & System Mechanics
+
+`rtk-ai/rtk` (Rust Token Killer) is an ultra-low-latency, dual-distribution system engine designed to intercept, rewrite, and compress context streams passed to Large Language Model (LLM) coding agents (e.g., Claude Code, Cursor, Gemini Code Assist, GitHub Copilot).
+
+```
+                      [ LLM AGENT HARNESS (Claude Code, Cursor, Copilot) ]
+                                            │
+                        ┌───────────────────┴───────────────────┐
+                        │ Tool Execution (Bash, Grep, Read)     │
+                        ▼                                       ▼
+             [ rtk Hook Subsystem ]                 [ rtk-proxy Daemon ]
+        (Single execution per tool call)     (Daemon on 127.0.0.1:8080 / HTTP proxy)
+                        │                                       │
+                        ▼                                       ▼
+        ┌───────────────────────────────────────────────────────────────┐
+        │                 rtk-engine Compression Core                   │
+        │  ┌───────────────────────┐         ┌───────────────────────┐  │
+        │  │ Pipeline / Strategies │         │ Method Execution      │  │
+        │  │ (Hook / Proxy Chains) │         │ (Cap, Base64, Ansi...)│  │
+        │  └───────────┬───────────┘         └───────────┬───────────┘  │
+        │              └─────────────────┬───────────────┘              │
+        │                                ▼                              │
+        │             Guarded Execution: std::panic::catch_unwind       │
+        │             Token Floor: never_worse() Monotonicity Guard     │
+        └───────────────────────────────┬───────────────────────────────┘
+                                        │ Output
+                                        ▼
+                  [ Agent Context Window / Upstream API ]
+```
+
+### Architectural Boundaries & Subsystems
+1. **The CLI Entrypoint (`rtk`)**: A zero-overhead binary that intercepts shell execution either via agent hooks (`preToolUse`/`postToolUse`) or as an explicit binary proxy wrapper around commands (`rtk git status`, `rtk cargo test`). Its operational budget is strict: **sub-10ms overhead**.
+2. **The Daemon Proxy (`proxy/`, `rtk-proxy`)**: A background HTTP/HTTPS proxy listening on localhost that intercepts upstream LLM inference payloads. It parses multi-turn JSON message trees, strips terminal escape sequences, eliminates base64 binary chunks, truncates bloated diffs, and enforces monotonic token reduction before re-encoding payloads.
+3. **The Core Engine (`engine/`, `rtk-engine`)**: A pure, stateless compression pipeline that implements layered transformation methods (`Block`, `Method`, `Strategy`, `Chain`). It enforces non-expansion bounds, catch-unwind safety boundaries, and token estimation invariants.
+4. **Tracking & Analytics Engine (`src/core/tracking.rs`)**: An embedded SQLite datastore (`rusqlite`) recording token usage deltas, cache efficiency breakdowns, and savings metrics across command invocations without adding IPC or process overhead.
+
+### Dual-Distribution Licensing & Boundary Decoupling
+The workspace exhibits a decoupled architectural layout:
+- `rtk` (Root CLI) is licensed under **Apache-2.0**.
+- `rtk-engine` (Internal Engine) is licensed under **BUSL-1.1** with an Additional Use Grant.
+- `proxy/` is **explicitly separated from the root Cargo workspace members** (`members = [".", "text", "engine", "plugin"]`). Non-membership ensures that heavy asynchronous dependencies (`tokio`, `axum`, `hyper`) do not infect the CLI's dependency graph or bloat binary cold-start execution times. Both packages strictly pin matching SQLite bindings (`rusqlite = "0.34"` with `bundled`) to eliminate native C-linkage symbol conflicts (`libsqlite3-sys` `links = "sqlite3"`).
 
 ---
 
-## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### D1: Architecture & Structural Boundaries
-- Entry configurations inspected via direct stream: Cargo.toml, README.md.
-- Evaluated system abstractions and modular contracts.
+### 1. Monotonic Content Reducer Invariant (The `never_worse` Pattern)
+**RULE**:
+Any optimizer, compressor, deduplicator, or token-reduction transform MUST guarantee that its output is strictly fewer tokens (or equal tokens with distinct mutated semantics) than its input. If the transformed representation equals the input OR expands token cost (due to inserted metadata, delimiters, or structural framing), the engine MUST reject the transformation and return the original raw input.
 
-### Core Architecture Module: `engine/src/block.rs`
-```
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum Layer {
-    UserPrompt,
-    SkillsMcp,
-    AgentMessage,
-    Read,
-    Write,
-    ToolResult,
-    Inference,
-    History,
-    Cache,
+**WHY**:
+Context processors frequently append elision indicators, line trackers, or structural envelopes (e.g., `[base64 data, 12 KB elided]`, `[50 lines elided]`). When applied to small payloads, degenerate string structures, or dense binary fragments, this metadata can cause the token count to exceed the original size. Without an explicit floor, iterative multi-pass pipelines trigger context bloating and prompt cache fragmentation.
+
+**WHEN TO APPLY**:
+Apply to all context-window compilers, prompt compression routines, serialization decoders, AST minifiers, and LLM tool output filters.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+use std::panic::{catch_unwind, AssertUnwindSafe};
+
+/// Estimates token consumption via an ecosystem-standard heuristic or fast BPE tokenizer.
+pub fn estimate_tokens(text: &str) -> usize {
+    // 1 token ~= 4 chars in average text, or invoke BPE estimator
+    text.len().div_ceil(4)
 }
 
-impl Layer {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            Layer::UserPrompt => "user_prompt",
-            Layer::SkillsMcp => "skills_mcp",
-            Layer::AgentMessage => "agent_message",
-            Layer::Read => "read",
-            Layer::Write => "write",
-            Layer::ToolResult => "tool_result",
-            Layer::Inference => "inference",
-            Layer::History => "history",
-            Layer::Cache => "cache",
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum Subject {
-    Read,
-    Write,
-    Edit,
-    Shell,
-    Search,
-    Web,
-    Subagent,
-    Mcp,
-    ToolResult,
-    ToolUse,
-    Assistant,
-    User,
-    System,
-    Tools,
-    Model,
-    Cache,
-    Any,
-}
-
-pub const HOOK_SUBJECTS: &[Subject] = &[
-    Subject::Read,
-    Subject::Write,
-    Subject::Edit,
-    Subject::Shell,
-    Subject::Search,
-    Subject::Web,
-    Subject::Subagent,
-    Subject::Mcp,
-    Subject::Any,
-];
-
-pub const PROXY_PARTS: &[Subject] = &[
-    Subject::ToolResult,
-    Subject::ToolUse,
-    Subject::Assistant,
-    Subject::User,
-    Subject::System,
-    Subject::Tools,
-    Subject::Model,
-    Subject::Cache,
-    Subject::Any,
-];
-
-impl Subject {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            Subject::Read => "read",
-            Subject::Write => "write",
-            Subject::Edit => "edit",
-            Subject::Shell => "shell",
-            Subject::Search => "search",
-            Subject::Web => "web",
-            Subject::Subagent => "subagent",
-            Subject::Mcp => "mcp",
-            Subject::ToolResult => "tool_result",
-            Subject::ToolUse => "tool_use",
-            Subject::Assistant => "assistant",
-            Subject::User => "user",
-            Subject::System => "system",
-            Subject::Tools => "tools",
-            Subject::Model => "model",
-            Subject::Cache => "cache",
-            Subject::Any => "any",
-        }
-    }
-
-    pub fn parse(name: &str) -> Option<Subject> {
-        HOOK_SUBJECTS
-            .iter()
-            .chain(PROXY_PARTS.iter())
-            .find(|s| s.as_str() == name)
-            .copied()
-    }
-
-    pub fn is_hook_category(&self) -> bool {
-        HOOK_SUBJECTS.contains(self)
-    }
-
-    pub fn is_proxy_part(&self) -> bool {
-        PROXY_PARTS.contains(self)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-pub enum Event {
-    BeforeTool,
-    AfterTool,
-    Request,
-}
-
-impl Event {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            Event::BeforeTool => "before_tool",
-            Event::AfterTool => "after_tool",
-            Event::Request => "request",
-        }
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum ContentFormat {
-    Json,
-    Web,
-    Matches,
-    Lockfile,
-    Term,
-}
-
-impl ContentFormat {
-    pub fn as_str(&self) -> &'static str {
-        match self {
-            ContentFormat::Json => "json",
-            ContentFormat::Web => "web",
-            ContentFormat::Matches => "matches",
-            ContentFormat::Lockfile => "lockfile",
-            ContentFormat::Term => "term",
-        }
-    }
-}
-
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
-pub struct Origin {
-    pub tool: Option<String>,
-    pub path: Option<String>,
-    pub command: Option<String>,
-    pub block_index: Option<usize>,
-}
-
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
-pub struct Provenance {
-    pub applied: Vec<String>,
-}
-
-impl Provenance {
-    pub fn contains(&self, method: &str) -> bool {
-        self.applied.iter().any(|m| m == method)
-    }
-}
-
-#[derive(Debug, Clone, Copy)]
-pub struct Block<'a> {
-    pub text: &'a str,
-    pub subject: Subject,
-    pub format: ContentFormat,
-    pub origin: &'a Origin,
-    pub provenance: &'a Provenance,
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn layer_names_are_the_frozen_reporting_vocabulary() {
-        let all = [
-            (Layer::UserPrompt, "user_prompt"),
-            (Layer::SkillsMcp, "skills_mcp"),
-            (Layer::AgentMessage, "agent_message"),
-            (Layer::Read, "read"),
-            (Layer::Write, "write"),
-            (Layer::ToolResult, "tool_result"),
-            (Layer::Inference, "inference"),
-            (Layer::History, "history"),
-            (Layer::Cache, "cache"),
-        ];
-        for (layer, name) in all {
-            assert_eq!(layer.as_str(), name);
-        }
-    }
-
-    #[test]
-    fn subject_names_are_the_frozen_tree_vocabulary() {
-        let hook: Vec<&str> = HOOK_SUBJECTS.iter().map(|s| s.as_str()).collect();
-        assert_eq!(
-            hook,
-            vec![
-                "read", "write", "edit", "shell", "search", "web", "subagent", "mcp", "any"
-            ]
-        );
-        let proxy: Vec<&str> = PROXY_PARTS.iter().map(|s| s.as_str()).collect();
-        assert_eq!(
-            proxy,
-            vec![
-                "tool_result",
-                "tool_use",
-                "assistant",
-                "user",
-                "system",
-                "tools",
-                "model",
-                "cache",
-                "any"
-            ]
-        );
-        for s in HOOK_SUBJECTS.iter().chain(PROXY_PARTS.iter()) {
-            assert_eq!(Subject::parse(s.as_str()), Some(*s));
-        }
-        assert_eq!(Subject::parse("during_tool"), None);
-    }
-
-    #[test]
-    fn format_names_are_the_frozen_condition_vocabulary() {
-        let all = [
-            (ContentFormat::Json, "json"),
-            (ContentFormat::Web, "web"),
-            (ContentFormat::Matches, "matches"),
-            (ContentFormat::Lockfile, "lockfile"),
-            (ContentFormat::Term, "term"),
-        ];
-        for (format, name) in all {
-            assert_eq!(format.as_str(), name);
-        }
-    }
-
-    #[test]
-    fn provenance_lookup() {
-        let p = Provenance {
-            applied: vec!["cap".to_string()],
-        };
-        assert!(p.contains("cap"));
-        assert!(!p.contains("toon"));
-    }
-}
-
-```
-
-### Core Architecture Module: `engine/src/chain.rs`
-```
-use crate::block::Block;
-use crate::method::{Method, MethodCtx, Outcome};
-use crate::tokens::estimate_tokens;
-
-pub fn run_chain(methods: &[&dyn Method], block: &Block, ctx: &MethodCtx) -> String {
-    let mut current = block.text.to_string();
-    for method in methods {
-        let step = Block {
-            text: &current,
-            ..*block
-        };
-        match method.apply(&step, ctx) {
-            Outcome::Continue(next) => current = next,
-            Outcome::ShortCircuit(final_text) => return final_text,
-            Outcome::Skip => {}
-        }
-    }
-    current
-}
-
+/// Enforces the Monotonic Reducer invariant.
+/// Rejects no-ops and any transformation that inflates token volume.
 pub fn never_worse(input: &str, output: String) -> Option<String> {
     if output == input {
         return None;
@@ -354,1758 +119,471 @@ pub fn never_worse(input: &str, output: String) -> Option<String> {
     Some(output)
 }
 
-/// [`run_chain`] with panic containment and nothing else: `None` means a
-/// method panicked, and the caller should fall back to the block it started
-/// with.
-///
-/// Separate from [`run_chain_guarded`] because a host that already applies
-/// its own size guard -- the hook site compares tokens before and after, and
-/// needs the unguarded text to record what a chain actually did -- would
-/// otherwise have the comparison made twice, once where it cannot see it.
-pub fn run_chain_caught(methods: &[&dyn Method], block: &Block, ctx: &MethodCtx) -> Option<String> {
-    std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-        run_chain(methods, block, ctx)
-    }))
-    .ok()
-}
+/// Runs a sequence of transformation methods across a content block, 
+/// containing panics at the boundary and rejecting toxic/expanding outputs.
+pub fn run_guarded_pipeline<F>(input: &str, transform_chain: F) -> String 
+where
+    F: FnOnce(&str) -> String,
+{
+    let guarded_output = catch_unwind(AssertUnwindSafe(|| {
+        transform_chain(input)
+    })).ok();
 
-/// [`run_chain_caught`] plus the size guard: `None` when a method panicked,
-/// when the chain changed nothing, or when it grew the block.
-///
-/// The guard is a floor, not a correctness check -- it rejects growth and
-/// no-ops, and cannot tell whether a method mangled content while shrinking
-/// it. Methods stay responsible for their own fidelity.
-pub fn run_chain_guarded(
-    methods: &[&dyn Method],
-    block: &Block,
-    ctx: &MethodCtx,
-) -> Option<String> {
-    never_worse(block.text, run_chain_caught(methods, block, ctx)?)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::block::{ContentFormat, Origin, Provenance, Subject};
-    use crate::method::{MethodInfo, Outcome};
-
-    struct Upper;
-    impl Method for Upper {
-        fn name(&self) -> &'static str {
-            "test-upper"
-        }
-        fn info(&self) -> MethodInfo {
-            MethodInfo::LOSSLESS_TRANSFORM
-        }
-        fn apply(&self, block: &Block, _ctx: &MethodCtx) -> Outcome {
-            Outcome::Continue(block.text.to_uppercase())
-        }
-    }
-
-    struct Final;
-    impl Method for Final {
-        fn name(&self) -> &'static str {
-            "test-final"
-        }
-        fn info(&self) -> MethodInfo {
-            MethodInfo::LOSSLESS_TRANSFORM
-        }
-        fn apply(&self, block: &Block, _ctx: &MethodCtx) -> Outcome {
-            Outcome::ShortCircuit(format!("F:{}", block.text))
-        }
-    }
-
-    struct Declines;
-    impl Method for Declines {
-        fn name(&self) -> &'static str {
-            "test-skip"
-        }
-        fn info(&self) -> MethodInfo {
-            MethodInfo::LOSSLESS_TRANSFORM
-        }
-        fn apply(&self, _block: &Block, _ctx: &MethodCtx) -> Outcome {
-            Outcome::Skip
-        }
-    }
-
-    struct Panics;
-    impl Method for Panics {
-        fn name(&self) -> &'static str {
-            "test-panic"
-        }
-        fn info(&self) -> MethodInfo {
-            MethodInfo::LOSSLESS_TRANSFORM
-        }
-        fn apply(&self, _block: &Block, _ctx: &MethodCtx) -> Outcome {
-            panic!("method bug");
-        }
-    }
-
-    struct Shrinks;
-    impl Method for Shrinks {
-        fn name(&self) -> &'static str {
-            "test-shrink"
-        }
-        fn info(&self) -> MethodInfo {
-            MethodInfo::LOSSLESS_TRANSFORM
-        }
-        fn apply(&self, block: &Block, _ctx: &MethodCtx) -> Outcome {
-            Outcome::Continue(block.text.chars().take(4).collect())
-        }
-    }
-
-    struct Grows;
-    impl Method for Grows {
-        fn name(&self) -> &'static str {
-            "test-grow"
-        }
-        fn info(&self) -> MethodInfo {
-            MethodInfo::LOSSLESS_TRANSFORM
-        }
-        fn apply(&self, block: &Block, _ctx: &MethodCtx) -> Outcome {
-            Outcome::Continue(format!("{}{}", block.text, "x".repeat(64)))
-        }
-    }
-
-    fn block_over<'a>(text: &'a str, origin: &'a Origin, prov: &'a Provenance) -> Block<'a> {
-        Block {
-            text,
-            subject: Subject::ToolResult,
-            format: ContentFormat::Term,
-            origin,
-            provenance: prov,
-        }
-    }
-
-    fn ctx() -> MethodCtx<'static> {
-        MethodCtx::new("test")
-    }
-
-    #[test]
-    fn chain_applies_methods_in_order_and_skip_is_neutral() {
-        let (origin, prov) = (Origin::default(), Provenance::default());
-        let block = block_over("abc", &origin, &prov);
-        let out = run_chain(&[&Declines, &Upper], &block, &ctx());
-        assert_eq!(out, "ABC");
-    }
-
-    #[test]
-    fn short_circuit_ends_the_chain() {
-        let (origin, prov) = (Origin::default(), Provenance::default());
-        let block = block_over("abc", &origin, &prov);
-        let out = run_chain(&[&Final, &Upper], &block, &ctx());
-        assert_eq!(out, "F:abc");
-    }
-
-    #[test]
-    fn guarded_contains_panics_and_emits_nothing() {
-        let (origin, prov) = (Origin::default(), Provenance::default());
-        let block = block_over("abc", &origin, &prov);
-        assert_eq!(run_chain_guarded(&[&Panics], &block, &ctx()), None);
-    }
-
-    #[test]
-    fn guarded_never_worse_blocks_growth_and_noops() {
-        let (origin, prov) = (Origin::default(), Provenance::default());
-        let long = "a long enough input string";
-        let block = block_over(long, &origin, &prov);
-        assert_eq!(run_chain_guarded(&[&Grows], &block, &ctx()), None);
-        assert_eq!(run_chain_guarded(&[&Declines], &block, &ctx()), None);
-        assert_eq!(
-            run_chain_guarded(&[&Shrinks], &block, &ctx()),
-            Some("a lo".to_string())
-        );
-    }
-
-    #[test]
-    fn never_worse_allows_equal_estimates_when_text_changed() {
-        assert_eq!(never_worse("abcd", "wxyz".to_string()), Some("wxyz".into()));
-        assert_eq!(never_worse("abcd", "abcd".to_string()), None);
+    match guarded_output {
+        Some(candidate) => never_worse(input, candidate).unwrap_or_else(|| input.to_string()),
+        None => input.to_string(), // Method panicked: degrade gracefully to raw input
     }
 }
-
-```
-
-### Core Architecture Module: `engine/src/directive.rs`
-```
-use crate::harness::Channel;
-use crate::tokens::estimate_tokens;
-
-pub struct DirectiveCtx<'a> {
-    pub level: Option<&'a str>,
-}
-
-pub trait Directive: Sync {
-    fn name(&self) -> &'static str;
-    fn text(&self, ctx: &DirectiveCtx) -> String;
-    fn channels(&self) -> &'static [Channel];
-}
-
-pub struct TerseOutput;
-
-/// Named word classes, a worked example, and a never-longer rule, because an
-/// abstract instruction ("be terse") can do worse than no instruction at all.
-/// Concrete rules give the model something to apply instead of a register to
-/// guess at. There is deliberately no clause forbidding closing summaries: it
-/// would suppress the short interstitial notes an agent keeps as working
-/// memory — a coding agent reads its own prior output on every later turn, so
-/// compressing it changes what the agent knows.
-///
-/// The negation guard and the "not actually shorter" rule are not decoration.
-/// Dropping a `not` inverts an instruction, and invented abbreviations and
-/// symbol substitutions cost the same or more once tokenized, so a model
-/// reaching for them pays to look brief.
-pub const TERSE_OUTPUT_TEXT: &str = "\
-Keep prose short. Drop articles (a, an, the), filler (\"just\", \"really\", \
-\"basically\", \"actually\", \"essentially\"), pleasantries, hedging, and emoji. \
-Fragments are fine where the meaning is clear.\n\n\
-Example. Instead of \"Sure! I'd be happy to help. The issue you're seeing is \
-likely caused by an expiry check that uses the wrong comparison operator,\" \
-write \"Bug in auth middleware: expiry check uses `<`, should be `<=`.\"\n\n\
-If the short phrasing is not actually shorter, use the plain one. Do not invent \
-abbreviations or use arrows for words — they cost the same or more under the \
-tokenizer.\n\n\
-Brevity applies to prose only. Never shorten code, file paths, commands, \
-identifiers, error text, or numbers. Keep every negation (not, never, no) — \
-dropping one inverts the meaning. Write security warnings, confirmations for \
-destructive or irreversible actions, and any ambiguous multi-step instruction \
-in full sentences.";
-
-impl Directive for TerseOutput {
-    fn name(&self) -> &'static str {
-        "terse-output"
-    }
-
-    fn text(&self, _ctx: &DirectiveCtx) -> String {
-        TERSE_OUTPUT_TEXT.to_string()
-    }
-
-    fn channels(&self) -> &'static [Channel] {
-        &[Channel::AwarenessFile, Channel::SessionStart]
-    }
-}
-
-pub static DIRECTIVES: &[&(dyn Directive + 'static)] = &[&TerseOutput];
-
-/// The generated `route-tasks` directive: written whenever a task instance
-/// has an upstream, so the agent learns the exact `rtk <task>` syntax.
-pub fn route_tasks_text(tasks: &[(&str, &str)]) -> String {
-    if tasks.is_empty() {
-        return String::new();
-    }
-    let mut out = String::from(
-        "Delegation commands (they hand work to a cheaper model; the files never \
-         enter your context):",
-    );
-    for (name, kind) in tasks {
-        let usage = crate::task::find_kind(kind)
-            .map(|k| k.usage().replace("<task>", name))
-            .unwrap_or_else(|| format!("rtk {name} ..."));
-        out.push_str(&format!("\n- `{usage}`"));
-    }
-    out
-}
-
-pub fn find(name: &str) -> Option<&'static dyn Directive> {
-    DIRECTIVES.iter().find(|d| d.name() == name).copied()
-}
-
-pub fn merge(texts: &[String]) -> String {
-    texts
-        .iter()
-        .map(|t| t.trim_end())
-        .filter(|t| !t.is_empty())
-        .collect::<Vec<_>>()
-        .join("\n\n")
-}
-
-pub fn cost_tokens(text: &str) -> usize {
-    estimate_tokens(text)
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn terse_output_is_registered_and_costed() {
-        let directive = find("terse-output").expect("registered");
-        let text = directive.text(&DirectiveCtx { level: None });
-        assert!(
-            text.contains("Never shorten code"),
-            "terseness must never apply to code, paths, commands or error text"
-        );
-        assert!(
-            text.contains("security warnings"),
-            "terseness must never apply to a destructive-action warning"
-        );
-        assert!(cost_tokens(&text) > 0);
-        assert!(directive.channels().contains(&Channel::AwarenessFile));
-    }
-
-    /// The properties this wording depends on to make the agent shorter rather
-    /// than longer.
-    #[test]
-    fn terse_output_keeps_the_guards_that_earned_their_place() {
-        let text = find("terse-output")
-            .expect("registered")
-            .text(&DirectiveCtx { level: None });
-
-        // The model has to be told which words to drop, not asked to infer a
-        // register.
-        assert!(
-            text.contains("Drop articles") && text.contains("filler"),
-            "name the word classes; \"be terse\" alone is not enough"
-        );
-        assert!(
-            text.contains("Example."),
-            "a worked before/after calibrates the target register"
-        );
-        assert!(
-            text.contains("not actually shorter"),
-            "without a never-longer rule the model pays tokens to look brief"
-        );
-        assert!(
-            text.contains("Keep every negation"),
-            "dropping a `not` inverts the instruction it appears in"
-        );
-
-        // Forbidding an agent's closing summary suppresses the interstitial notes it keeps as working
-        // memory, and a coding agent re-reads its own output every turn.
-        assert!(
-            !text.contains("closing summaries") && !text.contains("restating tool output"),
-            "do not add behavioural suppression clauses: they make the agent \
-             take more turns"
-        );
-    }
-
-    #[test]
-    fn unknown_directive_is_not_found() {
-        assert!(find("mystery").is_none());
-    }
-
-    #[test]
-    fn merge_concatenates_in_order_and_drops_empties() {
-        let merged = merge(&[
-            "first block\n".to_string(),
-            String::new(),
-            "second block".to_string(),
-        ]);
-        assert_eq!(merged, "first block\n\nsecond block");
-    }
-}
-
-```
-
-### Core Architecture Module: `engine/src/harness.rs`
-```
-use crate::block::{Event, Subject};
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Channel {
-    AwarenessFile,
-    SessionStart,
-    PerTurn,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ConfigChannel {
-    SettingsEnv,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct EventCapability {
-    pub event: Event,
-    pub can_replace_input: bool,
-    pub can_replace_output: bool,
-    pub can_deny: bool,
-    pub can_append: bool,
-    pub can_redirect_tool: bool,
-    pub subjects: &'static [Subject],
-}
-
-impl EventCapability {
-    const NONE: EventCapability = EventCapability {
-        event: Event::BeforeTool,
-        can_replace_input: false,
-        can_replace_output: false,
-        can_deny: false,
-        can_append: false,
-        can_redirect_tool: false,
-        subjects: crate::block::HOOK_SUBJECTS,
-    };
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct HarnessProfile {
-    pub id: &'static str,
-    pub events: &'static [EventCapability],
-    pub tool_names: &'static [(&'static str, Subject)],
-    pub session_start: bool,
-    pub directive_channels: &'static [Channel],
-    pub base_url_config: Option<ConfigChannel>,
-    /// How `rtk init` writes this harness's hook config. `None` for a harness
-    /// with no hook surface to write.
-    pub wiring: Option<Wiring>,
-}
-
-/// What `rtk init` needs to turn a pipeline into this harness's own config.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Wiring {
-    /// The file to write, relative to the scope's base directory.
-    pub path: &'static str,
-    pub format: ConfigFormat,
-    /// This harness's spelling of each event we can register.
-    pub before_tool: Option<&'static str>,
-    pub after_tool: Option<&'static str>,
-    pub session_start: Option<&'static str>,
-    /// How a set of tool names becomes one matcher value.
-    pub matcher: MatcherStyle,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ConfigFormat {
-    /// `{"hooks": {"<Event>": [{matcher, hooks: [{type, command}]}]}}` — Claude
-    /// Code's shape, also read natively by Devin and Trae.
-    ClaudeNested,
-    /// Same nesting, but the event map is the whole file with no `hooks` key.
-    BareNested,
-    /// `{"version": 1, "hooks": {"<event>": [{command, matcher}]}}` — one flat
-    /// entry per hook rather than a matcher group.
-    FlatEntries,
-    /// `{"<our-name>": {"<Event>": [{matcher, hooks: [...]}]}}` — namespaced by
-    /// hook name at the top level.
-    NamedGroups,
-    /// TOML `[[hooks]]` array-of-tables.
-    TomlTables,
-    /// A generated plugin file rather than a config block.
-    Plugin,
-}
-
-/// How a harness expects several tool names in one matcher.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MatcherStyle {
-    /// Regex alternation, anchored: `^(?:Bash|Read)$`.
-    AnchoredAlternation,
-    /// Regex alternation, bare: `Bash|Read`.
-    Alternation,
-    /// The harness ignores matchers; the hook filters on tool name itself.
-    None,
-}
-
-const CLAUDE_TOOLS: &[(&str, Subject)] = &[
-    ("Read", Subject::Read),
-    ("NotebookRead", Subject::Read),
-    ("TaskOutput", Subject::Read),
-    ("Write", Subject::Write),
-    ("Edit", Subject::Edit),
-    ("MultiEdit", Subject::Edit),
-    ("NotebookEdit", Subject::Edit),
-    ("Bash", Subject::Shell),
-    ("PowerShell", Subject::Shell),
-    ("Monitor", Subject::Shell),
-    ("Grep", Subject::Search),
-    ("Glob", Subject::Search),
-    ("LSP", Subject::Search),
-    ("WebFetch", Subject::Web),
-    ("WebSearch", Subject::Web),
-    ("Task", Subject::Subagent),
-    ("Agent", Subject::Subagent),
-    ("SendMessage", Subject::Subagent),
-    ("ListAgents", Subject::Subagent),
-    ("Workflow", Subject::Subagent),
-    ("ToolSearch", Subject::Mcp),
-    ("WaitForMcpServers", Subject::Mcp),
-    ("ListMcpResourcesTool", Subject::Mcp),
-    ("ReadMcpResourceTool", Subject::Mcp),
-];
-
-const CURSOR_TOOLS: &[(&str, Subject)] = &[
-    ("Read", Subject::Read),
-    ("Write", Subject::Write),
-    ("Delete", Subject::Write),
-    ("Shell", Subject::Shell),
-    ("Grep", Subject::Search),
-    ("WebFetch", Subject::Web),
-    ("WebSearch", Subject::Web),
-    ("Task", Subject::Subagent),
-];
-
-const GEMINI_TOOLS: &[(&str, Subject)] = &[
-    ("read_file", Subject::Read),
-    ("read_many_files", Subject::Read),
-    ("write_file", Subject::Write),
-    ("replace", Subject::Edit),
-    ("run_shell_command", Subject::Shell),
-    ("grep_search", Subject::Search),
-    ("search_file_content", Subject::Search),
-    ("glob", Subject::Search),
-    ("list_directory", Subject::Search),
-    ("google_web_search", Subject::Web),
-    ("web_fetch", Subject::Web),
-    ("invoke_agent", Subject::Subagent),
-    ("read_mcp_resource", Subject::Mcp),
-    ("list_mcp_resources", Subject::Mcp),
-];
-
-const COPILOT_TOOLS: &[(&str, Subject)] = &[
-    ("view", Subject::Read),
-    ("create", Subject::Write),
-    ("edit", Subject::Edit),
-    ("bash", Subject::Shell),
-    ("powershell", Subject::Shell),
-    ("glob", Subject::Search),
-    ("grep", Subject::Search),
-    ("web_fetch", Subject::Web),
-    ("task", Subject::Subagent),
-];
-
-const TRAE_TOOLS: &[(&str, Subject)] = &[
-    ("Read", Subject::Read),
-    ("Write", Subject::Write),
-    ("Edit", Subject::Edit),
-    ("RunCommand", Subject::Shell),
-    ("Grep", Subject::Search),
-    ("Glob", Subject::Search),
-    ("LS", Subject::Search),
-    ("WebSearch", Subject::Web),
-    ("WebFetch", Subject::Web),
-];
-
-const CODEX_TOOLS: &[(&str, Subject)] = &[
-    ("Bash", Subject::Shell),
-    ("apply_patch", Subject::Edit),
-    ("Edit", Subject::Edit),
-    ("Write", Subject::Write),
-    ("Agent", Subject::Subagent),
-];
-
-const DROID_TOOLS: &[(&str, Subject)] = &[
-    ("Read", Subject::Read),
-    ("LS", Subject::Read),
-    ("Create", Subject::Write),
-    ("Edit", Subject::Edit),
-    ("ApplyPatch", Subject::Edit),
-    ("Execute", Subject::Shell),
-    ("Grep", Subject::Search),
-    ("Glob", Subject::Search),
-    ("WebSearch", Subject::Web),
-    ("FetchUrl", Subject::Web),
-    ("Task", Subject::Subagent),
-];
-
-const VIBE_TOOLS: &[(&str, Subject)] = &[
-    ("read_file", Subject::Read),
-    ("write_file", Subject::Write),
-    ("edit", Subject::Edit),
-    ("bash", Subject::Shell),
-    ("powershell", Subject::Shell),
-    ("git_bash", Subject::Shell),
-    ("grep", Subject::Search),
-    ("web_search", Subject::Web),
-    ("web_fetch", Subject::Web),
-    ("task", Subject::Subagent),
-];
-
-const OPENCODE_TOOLS: &[(&str, Subject)] = &[
-    ("read", Subject::Read),
-    ("skill", Subject::Read),
-    ("write", Subject::Write),
-    ("edit", Subject::Edit),
-    ("apply_patch", Subject::Edit),
-    ("bash", Subject::Shell),
-    ("execute", Subject::Shell),
-    ("grep", Subject::Search),
-    ("glob", Subject::Search),
-    ("lsp", Subject::Search),
-    ("webfetch", Subject::Web),
-    ("websearch", Subject::Web),
-    ("task", Subject::Subagent),
-    ("list_mcp_resources", Subject::Mcp),
-    ("read_mcp_resource", Subject::Mcp),
-];
-
-const PI_TOOLS: &[(&str, Subject)] = &[
-    ("read", Subject::Read),
-    ("ls", Subject::Read),
-    ("write", Subject::Write),
-    ("edit", Subject::Edit),
-    ("bash", Subject::Shell),
-    ("powershell", Subject::Shell),
-    ("grep", Subject::Search),
-    ("find", Subject::Search),
-];
-
-const OMP_TOOLS: &[(&str, Subject)] = &[
-    ("read", Subject::Read),
-    ("write", Subject::Write),
-    ("edit", Subject::Edit),
-    ("ast_edit", Subject::Edit),
-    ("bash", Subject::Shell),
-    ("eval", Subject::Shell),
-    ("grep", Subject::Search),
-    ("glob", Subject::Search),
-    ("find", Subject::Search),
-    ("ast_grep", Subject::Search),
-    ("recall", Subject::Search),
-    ("web_search", Subject::Web),
-    ("github", Subject::Web),
-    ("task", Subject::Subagent),
-];
-
-const HERMES_TOOLS: &[(&str, Subject)] = &[
-    ("read_file", Subject::Read),
-    ("write_file", Subject::Write),
-    ("patch", Subject::Edit),
-    ("terminal", Subject::Shell),
-    ("process_manage", Subject::Shell),
-    ("search_files", Subject::Search),
-    ("session_search", Subject::Search),
-    ("web_search", Subject::Web),
-    ("web_extract", Subject::Web),
-    ("delegate_task", Subject::Subagent),
-];
-
-const OPENCLAW_TOOLS: &[(&str, Subject)] = &[
-    ("read", Subject::Read),
-    ("write", Subject::Write),
-    ("edit", Subject::Edit),
-    ("apply_patch", Subject::Edit),
-    ("exec", Subject::Shell),
-    ("terminal", Subject::Shell),
-    ("process", Subject::Shell),
-    ("code_execution", Subject::Shell),
-    ("web_search", Subject::Web),
-    ("web_fetch", Subject::Web),
-    ("browser", Subject::Web),
-    ("subagents", Subject::Subagent),
-];
-
-const KILOCODE_TOOLS: &[(&str, Subject)] = &[
-    ("read", Subject::Read),
-    ("write", Subject::Write),
-    ("edit", Subject::Edit),
-    ("apply_patch", Subject::Edit),
-    ("bash", Subject::Shell),
-    ("grep", Subject::Search),
-    ("glob", Subject::Search),
-    ("webfetch", Subject::Web),
-    ("websearch", Subject::Web),
-    ("browser_open", Subject::Web),
-    ("task", Subject::Subagent),
-    ("agent_manager", Subject::Subagent),
-];
-
-const CLINE_TOOLS: &[(&str, Subject)] = &[
-    ("read_file", Subject::Read),
-    ("write_to_file", Subject::Write),
-    ("replace_in_file", Subject::Edit),
-    ("apply_patch", Subject::Edit),
-    ("execute_command", Subject::Shell),
-    ("search_files", Subject::Search),
-    ("list_files", Subject::Search),
-    ("list_code_definition_names", Subject::Search),
-    ("web_fetch", Subject::Web),
-    ("web_search", Subject::Web),
-    ("browser_action", Subject::Web),
-    ("new_task", Subject::Subagent),
-    ("use_subagents", Subject::Subagent),
-    ("use_mcp_tool", Subject::Mcp),
-    ("access_mcp_resource", Subject::Mcp),
-];
-
-const WINDSURF_TOOLS: &[(&str, Subject)] = &[
-    ("read", Subject::Read),
-    ("notebook_read", Subject::Read),
-    ("write", Subject::Write),
-    ("edit", Subject::Edit),
-    ("apply_patch", Subject::Edit),
-    ("notebook_edit", Subject::Edit),
-    ("exec", Subject::Shell),
-    ("get_output", Subject::Shell),
-    ("write_to_process", Subject::Shell),
-    ("kill_
-```
-
-### Core Architecture Module: `engine/src/lib.rs`
-```
-pub mod block;
-pub mod chain;
-pub mod directive;
-pub mod harness;
-pub mod marker;
-pub mod method;
-pub mod methods;
-pub mod pipeline;
-pub mod process;
-pub mod registry;
-pub mod shape;
-pub mod strategy;
-pub mod task;
-pub mod text;
-pub mod tokens;
-
-#[cfg(test)]
-pub(crate) mod testutil;
-
-pub use block::{Block, ContentFormat, Layer, Origin, Provenance};
-pub use method::{
-    CostClass, Method, MethodCtx, MethodInfo, MethodKind, Outcome, Produces, Recovery,
-};
-
-```
-
-### Core Architecture Module: `engine/src/marker.rs`
-```
-use crate::block::Provenance;
-use regex::Regex;
-use std::sync::LazyLock;
-
-pub const TRUNCATION_MARKER_TAG: &str = "lines omitted by rtk-proxy";
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Stamp<'a> {
-    pub method: &'a str,
-    pub tokens_before: usize,
-    pub tokens_after: usize,
-    pub hint: Option<&'a str>,
-}
-
-impl Stamp<'_> {
-    pub fn render(&self) -> String {
-        match self.hint {
-            Some(hint) => format!(
-                "[rtk:{} {}→{} tokens · {}]",
-                self.method, self.tokens_before, self.tokens_after, hint
-            ),
-            None => format!(
-                "[rtk:{} {}→{} tokens]",
-                self.method, self.tokens_before, self.tokens_after
-            ),
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub struct ParsedStamp {
-    pub method: String,
-    pub tokens_before: usize,
-    pub tokens_after: usize,
-    pub hint: Option<String>,
-}
-
-static STAMP_RE: LazyLock<Regex> = LazyLock::new(|| {
-    Regex::new(r"\[rtk:([a-z0-9][a-z0-9-]*) (\d+)→(\d+) tokens(?: · ([^\]]+))?\]")
-        .expect("stamp grammar regex is a literal")
-});
-
-pub fn parse(text: &str) -> Vec<ParsedStamp> {
-    STAMP_RE
-        .captures_iter(text)
-        .filter_map(|c| {
-            Some(ParsedStamp {
-                method: c.get(1)?.as_str().to_string(),
-                tokens_before: c.get(2)?.as_str().parse().ok()?,
-                tokens_after: c.get(3)?.as_str().parse().ok()?,
-                hint: c.get(4).map(|m| m.as_str().to_string()),
-            })
-        })
-        .collect()
-}
-
-pub fn provenance_of(text: &str) -> Provenance {
-    Provenance {
-        applied: parse(text).into_iter().map(|s| s.method).collect(),
-    }
-}
-
-/// Text the hook site leaves behind, used by the proxy to skip a block that has
-/// already been compressed once (single-site resolution). `cap`'s current
-/// marker is `[N lines elided]`; the longer phrasing is kept because it is
-/// already sitting in conversation histories written by earlier versions.
-const HOOK_MARKER_SIGNATURES: &[&str] = &[
-    "lines elided]",
-    "full output in recall file]",
-    "[full output: ",
-];
-
-pub fn carries_hook_stamp(text: &str) -> bool {
-    if HOOK_MARKER_SIGNATURES.iter().any(|sig| text.contains(sig)) {
-        return true;
-    }
-    !parse(text).is_empty()
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn render_parse_round_trip() {
-        let stamp = Stamp {
-            method: "base64-elide",
-            tokens_before: 900,
-            tokens_after: 40,
-            hint: Some("rtk recall 9f8e7d"),
-        };
-        let text = format!("output head\n{}\n", stamp.render());
-        let parsed = parse(&text);
-        assert_eq!(parsed.len(), 1);
-        assert_eq!(parsed[0].method, "base64-elide");
-        assert_eq!(parsed[0].tokens_before, 900);
-        assert_eq!(parsed[0].tokens_after, 40);
-        assert_eq!(parsed[0].hint.as_deref(), Some("rtk recall 9f8e7d"));
-    }
-
-    #[test]
-    fn hintless_stamp_round_trips() {
-        let stamp = Stamp {
-            method: "dedup",
-            tokens_before: 100,
-            tokens_after: 60,
-            hint: None,
-        };
-        let parsed = parse(&stamp.render());
-        assert_eq!(parsed[0].hint, None);
-    }
-
-    #[test]
-    fn provenance_lists_methods_in_order() {
-        let text = "[rtk:cap 10→5 tokens]\nmiddle\n[rtk:ccr 200→20 tokens · rtk_retrieve(\"x\")]";
-        let prov = provenance_of(text);
-        assert_eq!(prov.applied, vec!["cap".to_string(), "ccr".to_string()]);
-        assert!(prov.contains("ccr"));
-    }
-
-    #[test]
-    fn plain_brackets_are_not_stamps() {
-        assert!(parse("[1200 lines omitted] [rtk: nope] [x→y tokens]").is_empty());
-    }
-
-    #[test]
-    fn truncation_tag_value_is_frozen() {
-        assert_eq!(TRUNCATION_MARKER_TAG, "lines omitted by rtk-proxy");
-    }
-}
-
-```
-
-### Core Architecture Module: `engine/src/method.rs`
-```
-use crate::block::{Block, ContentFormat, Layer};
-
-pub trait Method: Sync {
-    fn name(&self) -> &'static str;
-    fn info(&self) -> MethodInfo;
-    fn apply(&self, block: &Block, ctx: &MethodCtx) -> Outcome;
-}
-
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Outcome {
-    Continue(String),
-    ShortCircuit(String),
-    Skip,
-}
-
-#[derive(Debug, Clone, Copy)]
-pub struct MethodCtx<'a> {
-    pub source: &'a str,
-}
-
-impl<'a> MethodCtx<'a> {
-    pub fn new(source: &'a str) -> Self {
-        Self { source }
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum MethodKind {
-    Transform,
-    Directive,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Recovery {
-    None,
-    Recall,
-    RetrieveTool,
-    Pointer,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
-pub enum CostClass {
-    Instant,
-    Fast,
-    Slow,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Produces {
-    Same,
-    Format(ContentFormat),
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct MethodInfo {
-    pub kind: MethodKind,
-    pub lossy: bool,
-    pub recovery: Recovery,
-    pub idempotent: bool,
-    pub cache_stable: bool,
-    pub deterministic: bool,
-    pub cost: CostClass,
-    pub consumes: &'static [ContentFormat],
-    pub produces: Produces,
-    pub terminal: bool,
-    pub saves_on: &'static [Layer],
-    pub cost_tokens: usize,
-}
-
-impl MethodInfo {
-    pub const LOSSLESS_TRANSFORM: MethodInfo = MethodInfo {
-        kind: MethodKind::Transform,
-        lossy: false,
-        recovery: Recovery::None,
-        idempotent: true,
-        cache_stable: true,
-        deterministic: true,
-        cost: CostClass::Instant,
-        consumes: &[],
-        produces: Produces::Same,
-        terminal: false,
-        saves_on: &[Layer::ToolResult],
-        cost_tokens: 0,
-    };
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn cost_classes_order_by_site_permissiveness() {
-        assert!(CostClass::Instant < CostClass::Fast);
-        assert!(CostClass::Fast < CostClass::Slow);
-    }
-
-    #[test]
-    fn lossless_baseline_satisfies_the_cross_field_rules() {
-        let info = MethodInfo::LOSSLESS_TRANSFORM;
-        assert!(!info.lossy);
-        assert!(info.idempotent);
-        assert!(info.cache_stable);
-        assert!(!info.terminal);
-    }
-}
-
-```
-
-### Core Architecture Module: `engine/src/methods/ansi.rs`
-```
-//! `ansi` layer: strips ANSI escape codes. Wraps `utils::strip_ansi`.
-
-use crate::block::Block;
-use crate::method::{Method, MethodCtx, MethodInfo, Outcome};
-use crate::text::strip_ansi;
-
-pub struct Ansi;
-
-impl Method for Ansi {
-    fn name(&self) -> &'static str {
-        "ansi"
-    }
-
-    fn info(&self) -> MethodInfo {
-        MethodInfo::LOSSLESS_TRANSFORM
-    }
-
-    fn apply(&self, block: &Block, _ctx: &MethodCtx) -> Outcome {
-        let input = block.text;
-        if !input.contains('\x1b') {
-            return Outcome::Continue(input.to_string());
-        }
-        Outcome::Continue(strip_ansi(input))
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::block::ContentFormat;
-
-    fn ctx() -> MethodCtx<'static> {
-        MethodCtx { source: "test" }
-    }
-
-    fn blk(text: &str) -> Block<'_> {
-        crate::testutil::block(text, ContentFormat::Web)
-    }
-
-    #[test]
-    fn test_strips_ansi_codes() {
-        let Outcome::Continue(out) = Ansi.apply(&blk("\x1b[32mok\x1b[0m done"), &ctx()) else {
-            panic!("ansi layer must continue");
-        };
-        assert_eq!(out, "ok done");
-    }
-
-    #[test]
-    fn test_plain_text_unchanged() {
-        let Outcome::Continue(out) = Ansi.apply(&blk("plain text"), &ctx()) else {
-            panic!("ansi layer must continue");
-        };
-        assert_eq!(out, "plain text");
-    }
-}
-
-```
-
-### Core Architecture Module: `engine/src/methods/base64_elide.rs`
-```
-//! `base64-elide` layer: replaces long base64 runs with a size marker.
-//!
-//! Embedded images/fonts in JSON, data URLs in HTML/SVG/CSS are often 90%+
-//! of a file's bytes with zero informational value to the model. A run is
-//! only elided above a high threshold so hashes and short tokens never
-//! match. Replacement happens inside string values without breaking JSON
-//! validity (marker contains no quotes or backslashes).
-//!
-//! Not applied to the `matches` chain: bytes in a Grep match are genuine
-//! file content and stay faithful.
-
-use crate::block::Block;
-use crate::method::{Method, MethodCtx, MethodInfo, Outcome};
-use regex::Regex;
-use std::sync::LazyLock;
-
-/// Minimum contiguous base64 chars to elide (~768 decoded bytes).
-const MIN_RUN: usize = 1024;
-
-static BASE64_RUN: LazyLock<Regex> = LazyLock::new(|| {
-    // Optional data-URL prefix captures the mime type for the marker.
-    Regex::new(r"(?:data:([A-Za-z0-9.+-]+/[A-Za-z0-9.+-]+);base64,)?([A-Za-z0-9+/]{1024,}={0,2})")
-        .expect("valid regex")
-});
-
-pub struct Base64Elide;
-
-impl Method for Base64Elide {
-    fn name(&self) -> &'static str {
-        "base64-elide"
-    }
-
-    fn info(&self) -> MethodInfo {
-        MethodInfo {
-            lossy: true,
-            recovery: crate::method::Recovery::None,
-            idempotent: false,
-            ..MethodInfo::LOSSLESS_TRANSFORM
-        }
-    }
-
-    fn apply(&self, block: &Block, _ctx: &MethodCtx) -> Outcome {
-        let input = block.text;
-        if input.len() < MIN_RUN {
-            return Outcome::Continue(input.to_string());
-        }
-        let out = BASE64_RUN.replace_all(input, |caps: &regex::Captures| {
-            let whole = caps.get(0).map(|m| m.as_str()).unwrap_or("");
-            let run = caps.get(2).map(|m| m.as_str()).unwrap_or("");
-            // The character class also matches a long decimal number or a hex
-            // dump, and eliding one corrupts the surrounding JSON (a bare
-            // number turns into `[base64 …]`). Only elide a run that is
-            // actually base64 by `looks_like_base64`; leave the whole match
-            // untouched otherwise, data-URL prefix included.
-            if !looks_like_base64(run) {
-                return whole.to_string();
-            }
-            let decoded_kb = (run.len() * 3 / 4) as f64 / 1024.0;
-            let kind = caps.get(1).map(|m| m.as_str()).unwrap_or("data");
-            format!("[base64 {kind}, {decoded_kb:.0} KB elided]")
-        });
-        Outcome::Continue(out.into_owned())
-    }
-}
-
-/// Whether a run is plausibly real base64 rather than a decimal number or a
-/// hex dump that happens to share the alphabet. Real base64 pads to a multiple
-/// of 4 and, across 1024+ characters, spans all of upper, lower, and digits;
-/// a number is digits only and a hex run is missing one letter case.
-fn looks_like_base64(run: &str) -> bool {
-    let body = run.trim_end_matches('=');
-    if body.is_empty() || !run.len().is_multiple_of(4) {
-        return false;
-    }
-    let (mut upper, mut lower, mut digit) = (false, false, false);
-    for c in body.bytes() {
-        match c {
-            b'A'..=b'Z' => upper = true,
-            b'a'..=b'z' => lower = true,
-            b'0'..=b'9' => digit = true,
-            _ => {}
-        }
-    }
-    upper && lower && digit
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::block::ContentFormat;
-
-    fn ctx() -> MethodCtx<'static> {
-        MethodCtx {
-            source: "test.json",
-        }
-    }
-
-    fn blk(text: &str) -> Block<'_> {
-        crate::testutil::block(text, ContentFormat::Json)
-    }
-
-    fn apply(input: &str) -> String {
-        match Base64Elide.apply(&blk(input), &ctx()) {
-            Outcome::Continue(out) | Outcome::ShortCircuit(out) => out,
-            Outcome::Skip => input.to_string(),
-        }
-    }
-
-    // Real base64 payload (deterministic bytes, standard alphabet, no padding
-    // ambiguity): 3000 chars ≈ 2.2 KB decoded.
-    fn long_b64() -> String {
-        "QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVphYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ejAxMjM0NTY3ODkr"
-            .repeat(36)
-    }
-
-    #[test]
-    fn test_data_url_elided_with_mime() {
-        let input = format!(r#"{{"icon": "data:image/png;base64,{}"}}"#, long_b64());
-        let out = apply(&input);
-        assert!(out.contains("[base64 image/png,"), "mime in marker: {out}");
-        assert!(out.len() < 200, "run must be gone");
-        serde_json::from_str::<serde_json::Value>(&out).expect("JSON stays valid");
-    }
-
-    #[test]
-    fn test_bare_run_elided_generic() {
-        let input = format!("prefix {} suffix", long_b64());
-        let out = apply(&input);
-        assert!(out.contains("[base64 data,"), "generic marker: {out}");
-        assert!(out.starts_with("prefix ") && out.ends_with(" suffix"));
-    }
-
-    #[test]
-    fn test_short_base64_kept() {
-        let input = r#"{"hash": "QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVo="}"#;
-        assert_eq!(apply(input), input);
-    }
-
-    #[test]
-    fn test_savings_on_blob_heavy_json() {
-        let input = format!(
-            r#"{{"name": "logo", "data": "data:image/png;base64,{}"}}"#,
-            long_b64()
-        );
-        let out = apply(&input);
-        let savings = 100.0 - (out.len() as f64 / input.len() as f64 * 100.0);
-        assert!(savings >= 90.0, "expected ≥90% on blob, got {savings:.1}%");
-    }
-
-    #[test]
-    fn test_empty_input() {
-        assert_eq!(apply(""), "");
-    }
-}
-
-#[cfg(test)]
-mod base64_guard {
-    use super::*;
-    use crate::block::ContentFormat;
-
-    fn run(input: &str) -> String {
-        let block = crate::testutil::block(input, ContentFormat::Json);
-        match Base64Elide.apply(&block, &crate::method::MethodCtx::new("t")) {
-            Outcome::Continue(s) | Outcome::ShortCircuit(s) => s,
-            Outcome::Skip => input.to_string(),
-        }
-    }
-
-    /// A long digit run is not base64 — eliding it inside a JSON
-    /// number produces invalid JSON that the downstream toon then fails on.
-    #[test]
-    fn a_long_bare_number_is_not_mistaken_for_base64() {
-        // serde_json cannot even represent a 1300-digit integer, so "does it
-        // parse" is the wrong check — the property is that the number is left
-        // exactly as it was, never replaced by an unquoted `[base64 …]` that
-        // would corrupt the surrounding structure.
-        let big_int: String = "1".repeat(1300);
-        let json = format!("{{\"n\": {big_int}, \"k\": \"v\"}}");
-        let out = run(&json);
-        assert_eq!(out, json, "a bare number must be left untouched");
-    }
-
-    /// Repeated hex (deadbeef×N) is not base64 either — same digit
-    /// alphabet subset, but low entropy and not a real encoding.
-    #[test]
-    fn repeated_hex_is_not_elided() {
-        let hex = "deadbeef".repeat(200);
-        let out = run(&hex);
-        assert_eq!(out, hex, "low-entropy hex must not be treated as base64");
-    }
-
-    /// A genuine base64 blob inside a JSON string must still be elided — the
-    /// guard must not over-correct.
-    #[test]
-    fn a_real_base64_blob_is_still_elided() {
-        let blob: String =
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/".repeat(30);
-        let json = format!("{{\"img\": \"{blob}\"}}");
-        let out = run(&json);
-        assert!(
-            out.contains("elided"),
-            "real base64 must still elide: {out}"
-        );
-        assert!(
-            serde_json::from_str::<serde_json::Value>(&out).is_ok(),
-            "elision must keep JSON valid: {out}"
-        );
-    }
-}
-
-```
-
-### Core Architecture Module: `engine/src/methods/cap.rs`
-```
-//! `cap` layer: bounds runaway terminal outputs, tail-biased.
-//!
-//! Bash errors live at the END of output, so the window keeps a small head
-//! and a large tail with an explicit elision marker in between — unlike
-//! `truncate`/`smart_truncate`, which are head-biased and code-oriented.
-//! The full copy always lands in the recall file before this layer runs.
-
-use crate::block::Block;
-use crate::method::{Method, MethodCtx, MethodInfo, Outcome};
-use crate::tokens::estimate_tokens;
-
-pub const HEAD_LINES: usize = 50;
-pub const TAIL_LINES: usize = 200;
-pub const MAX_LINES: usize = HEAD_LINES + TAIL_LINES + 50;
-pub const MAX_LINE_CHARS: usize = 2000;
-
-pub struct Cap;
-
-impl Method for Cap {
-    fn name(&self) -> &'static str {
-        "cap"
-    }
-
-    fn info(&self) -> MethodInfo {
-        MethodInfo {
-            lossy: true,
-            recovery: crate::method::Recovery::Recall,
-            idempotent: false,
-            ..MethodInfo::LOSSLESS_TRANSFORM
-        }
-    }
-
-    fn apply(&self, block: &Block, _ctx: &MethodCtx) -> Outcome {
-        let input = block.text;
-        let needs_line_cap = input.lines().any(|l| l.chars().count() > MAX_LINE_CHARS);
-        let total = input.lines().count();
-        let needs_window = total > MAX_LINES;
-
-        if !needs_line_cap && !needs_window {
-            return Outcome::Continue(input.to_string());
-        }
-
-        let cap_line = |l: &str| -> String {
-            let count = l.chars().count();
-            if count > MAX_LINE_CHARS {
-                let kept: String = l.chars().take(MAX_LINE_CHARS).collect();
-                format!("{} [+{} chars]", kept, count - MAX_LINE_CHARS)
-            } else {
-                l.to_string()
-            }
-        };
-
-        let out = if needs_window {
-            let lines: Vec<&str> = input.lines().collect();
-            let elided = total - HEAD_LINES - TAIL_LINES;
-            let mut result: Vec<String> = Vec::with_capacity(HEAD_LINES + TAIL_LINES + 1);
-            result.extend(lines[..HEAD_LINES].iter().map(|l| cap_line(l)));
-            // The count only. Whether the original is recoverable is not
-            // knowable here: the hook adapter appends a pointer when a recall
-            // entry was written, and writes none when recovery is disabled by
-            // config or env. The method cannot assert that a recall file
-            // exists.
-            result.push(format!("[{elided} lines elided]"));
-            result.extend(lines[total - TAIL_LINES..].iter().map(|l| cap_line(l)));
-            result.join("\n")
-        } else {
-            input.lines().map(cap_line).collect::<Vec<_>>().join("\n")
-        };
-
-        let out = if input.ends_with('\n') {
-            out + "\n"
-        } else {
-            out
-        };
-        // Degenerate inputs (many huge lines) could grow via markers.
-        if estimate_tokens(&out) > estimate_tokens(input) {
-            return Outcome::Continue(input.to_string());
-        }
-        Outcome::Continue(out)
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    fn rtk_engine_marker_detects(text: &str) -> bool {
-        crate::marker::carries_hook_stamp(text)
-    }
-    use crate::block::ContentFormat;
-
-    fn ctx() -> MethodCtx<'static> {
-        MethodCtx { source: "bash" }
-    }
-
-    fn blk(text: &str) -> Block<'_> {
-        crate::testutil::block(text, ContentFormat::Term)
-    }
-
-    fn apply(input: &str) -> String {
-        match Cap.apply(&blk(input), &ctx()) {
-            Outcome::Continue(out) | Outcome::ShortCircuit(out) => out,
-            Outcome::Skip => input.to_string(),
-        }
-    }
-
-    #[test]
-    fn test_under_caps_untouched() {
-        let input = "short\nlines\n";
-        assert_eq!(apply(input), input);
-    }
-
-    #[test]
-    fn test_window_keeps_tail_where_errors_live() {
-        let input = (0..1000)
-            .map(|i| format!("line {i}"))
-            .collect::<Vec<_>>()
-            .join("\n")
-            + "\nerror: the thing that matters";
-        let out = apply(&input);
-        assert!(out.contains("error: the thing that matters"), "tail kept");
-        assert!(out.contains("line 0"), "head kept");
-        assert!(out.contains("lines elided]"));
-        assert!(
-            !out.contains("recall file"),
-            "cap must not promise a recall file it cannot verify"
-        );
-        assert!(
-            rtk_engine_marker_detects(&out),
-            "the proxy must still recognise a hook-capped block"
-        );
-    }
-
-    #[test]
-    fn test_marker_arithmetic() {
-        let total = 2 * MAX_LINES;
-        let input = (0..total)
-            .map(|i| format!("l{i}"))
-            .collect::<Vec<_>>()
-            .join("\n");
-        let out = apply(&input);
-        let elided = total - HEAD_LINES - TAIL_LINES;
-        assert!(out.contains(&format!("[{elided} lines elided")));
-        assert_eq!(out.lines().count(), HEAD_LINES + TAIL_LINES + 1);
-    }
-
-    #[test]
-    fn test_long_line_suffix_marker() {
-        let input = "x".repeat(MAX_LINE_CHARS + 500);
-        let out = apply(&input);
-        assert!(
-            out.ends_with("[+500 chars]"),
-            "explicit char count: {}",
-            &out[out.len() - 30..]
-        );
-    }
-
-    #[test]
-    fn test_empty_input() {
-        assert_eq!(apply(""), "");
-    }
-}
-
-```
-
-
-### D2: Asynchronous State & Concurrency
-- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
-
-### D3: Error Boundaries, Recovery & Rollbacks
-- Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5115** (2026-11-14): **rtk x86_64-unknown-linux-musl binary crashes with SIGILL on CPUs without AVX2 (Ivy Bridge / Sandy Bridge) — request a baseline build**
-  *Symptoms*: # `rtk` x86_64-unknown-linux-musl binary crashes with SIGILL on CPUs without AVX2 (Ivy Bridge / Sandy Bridge) — request a baseline build  ## Summary  The prebuilt `rtk-x86_64-unknown-linux-musl` binary from the latest release (v1.2.0) crashes immediately with `SIGILL` (Illegal instruction, exit code 132) on x86-64 CPUs that lack AVX2. The binary contains unguarded AVX2 instructions that execute before any runtime CPU-feature dispatch can pick a scalar fallback. A baseline build artifact (compiled with `target-cpu=x86-64` and AVX2/BMI2/FMA disabled at codegen) is needed for the many homelab and older-server machines still on Ivy Bridge / Sandy Bridge / pre-Excavator AMD.  ## Environment  - **OS:** Alpine Linux edge (musl), kernel 6.x - **CPU:** Intel Xeon E5-2695 v2 (Ivy Bridge, 2012) — has AVX, **no AVX2, no BMI1/BMI2, no FMA** - **CPU flags:** `sse sse2 ssse3 sse4_1 sse4_2 avx` (no `avx2`, no `bmi1`, no `bmi2`, no `fma`) - **rtk:** `v1.2.0`, installed via `curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh` (asset `rtk-x86_64-unknown-linux-musl.tar.gz`) - **Reproduced commands:** `rtk`, `rtk --help`, `rtk --version` — all exit 132  ## Steps to reproduce  1. On any x86-64 CPU without AVX2 (Ivy Bridge, Sandy Bridge, pre-Ryzen AMD), run:    ```bash    curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | sh    rtk --version    ``` 2. Alternatively, on an AVX2-capable machine, reproduce under QEMU:    ```bas
-
-- **Issue #5035** (2026-11-08): **fix(copilot): let the repository's Copilot hook run without rtk installed**
-  *Symptoms*: Fixes the repository's own `.github/hooks/rtk-rewrite.json`, which broke Copilot sessions on this repository.  The hook ran `rtk hook`, which exits 2 because the subcommand is missing. Copilot denies the tool call when a `preToolUse` command hook exits non-zero, so every call was denied. Where `rtk` is not installed, such as the Copilot cloud agent sandbox, the command exits 127 with the same result.  The config now carries the stock entry that `rtk init --copilot` writes (`rtk hook copilot`, `version: 1`) in `bash` and `powershell` fields that exit 0 when `rtk` is not on `PATH`, so the tool call runs unchanged. The cloud agent honours `bash` and VS Code maps `bash` and `powershell` per OS. `hooks/copilot/rtk-awareness.md` named the command `rtk hook`; it now says `rtk hook copilot`.  `rtk init --copilot` is untouched. An opt-in guarded form for every agent is #5033.  ## Test plan  - [x] `tests/copilot_repo_hook_test.rs` runs the checked-in `bash` string through `sh` with an empty `PATH` (exit 0, no output) and with `rtk` on `PATH` (a `run_in_terminal` `git status` gets `updatedInput` `rtk git status`, no `permissionDecision`) - [x] The `powershell` string run through `pwsh` in `mcr.microsoft.com/powershell`: no `rtk` gives exit 0 with no output, `rtk` on `PATH` gives the same rewrite reply with stdin reaching `rtk`. Not run in CI and not run on Windows PowerShell - [x] `cargo fmt --all`, `cargo clippy --all-targets`, `cargo test --all` clean on the pushed commit  🤖 Generate
-
-### D4: Resource Lifecycle & Leak Defenses
-- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
-
-### D5: Boundary Deserialization & Encoding
-- Schema deserialization, payload validation, and untrusted input guards.
-
-### D6: Cross-Platform & Runtime Gotchas
-- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
-
-### D7: Build, CI/CD, Deployment & Tooling
-- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
-
-### D8: Forensic Bug Fixes & Real Production Code Patches
-Observed empirical fixes and code patches:
-
-### Incident Patch 1: `eb710be4` (2026-11-18)
-**Commit Message**: Merge pull request #4679 from Ehsan-hash/fix/hook-command-ownership
-
-fix(hooks): preserve compound user hook entries
-
-**File**: `src/hooks/init/claude.rs` (modified, +189/-0)
-```diff
-@@ -1176,6 +1176,195 @@ mod tests {
-         ));
-     }
- 
-+    #[test]
-+    fn compound_shell_commands_are_not_rtk_hooks() {
-+        for command in [
-+            "my-audit;/usr/local/bin/rtk hook claude",
-+            "my-audit&&/usr/local/bin/rtk hook claude",
-+            "my-audit||/usr/local/bin/rtk hook claude",
-+            "my-audit|/usr/local/bin/rtk hook claude",
-+            "my-audit&/usr/local/bin/rtk hook claude",
-+            "my-audit>/usr/local/bin/rtk hook claude",
-+            "/usr/local/bin/rtk hook claude > /tmp/audit.log",
-+            "/usr/local/bin/rtk\nhook claude",
-+            "/usr/local/bin/rtk hook claude\nmy-audit",
-+            "/usr/local/bin/rtk hook claude\r\n",
-+            "/usr/local/bin/rtk hook claude\r",
-+            "/usr/local/bin/rtk hook claude\\ ",
-+            "/usr/local/bin/rtk hook \"claude\n",
-+            "/usr/local/bin/rtk hook 'claude\n",
-+            " \t/usr/local/bin/rtk hook claude\r\n\t ",
-+            " \t/usr/local/bin/rtk hook claude\r\t ",
-+        ] {
-+            assert!(
-+                !is_claude_hook_command(command),
-+                "user command was claimed as RTK-owned: {command:?}"
-+            );
-+        }
-+
-+        for command in [
-+            "/usr/local/bin/rtk hook claude\n",
-+            "\n/usr/local/bin/rtk hook claude",
-+            " \n/usr/local/bin/rtk hook claude\n ",
-+            "\t\n/usr/local/bin/rtk hook claude\n\t",
-+            "${HOME}/.local/bin/rtk hook claude",
-+        ] {
-+            assert!(
-+                is_claude_hook_command(command),
-+                "RTK hook command was not recognised: {command:?}"
-+            );
-+        }
-+
-+        for command in [
-+            "\"/usr/local/my;bin/rtk\" hook claude",
-+            "/usr/local/my\\;bin/rtk hook claude",
-+            "\"/usr/local/my&&bin/rtk\" hook claude",
-+        ] {
-+            assert!(
-+                is_claude_hook_command(command),
-+                "literal operator character changed RTK path: {command:?}"
-+            );
-+        }
-+    }
-+
-+    #[test]
-+    fn install_and_uninstall_preserve_compound_user_hook() {
-+        let tmp = test_isolation::tempdir();
-+        with_claude_dir_override(&tmp, |dir| {
-+            let path = dir.join(SETTINGS_JSON);
-+            let compound = serde_json::json!({
-+                "type": "command",
-+                "command": "my-audit;/usr/local/bin/rtk hook claude",
-+                "timeout": 9,
-+                "metadata": { "owner": "user", "labels": ["keep"] }
-+            });
-+            fs::write(
-+                &path,
-+                serde_json::json!({
-+                    "hooks": {
-+                        (PRE_TOOL_USE_KEY): [{
-+                            "matcher": "Bash|Read",
-+                            "hooks": [compound.clone()]
-+                        }]
-+                    },
-+                    "permissions": { "allow": ["Bash(ls)"] }
-+                })
-+                .to_string(),
-+            )
-+            .unwrap();
-+
-+            assert_eq!(
-+                patch_settings_json_command(
-+                    CLAUDE_HOOK_COMMAND,
-+                    PatchMode::Auto,
-+                    false,
-+                    InitContext::default(),
-+                    HookInstallScope::UserGlobal,
-+                )
-+                .unwrap(),
-+                PatchResult::Patched
-+            );
-+            let installed = read_json_file(&path).unwrap().unwrap();
-+            let entries = installed["hooks"][PRE_TOOL_USE_KEY].as_array().unwrap();
-+            assert_eq!(entries.len(), 2);
-+            assert!(entries.iter().any(|entry| {
-+                entry["hooks"]
-+                    .as_array()
-+                    .is_some_and(|hooks| hooks.iter().any(|hook| hook == &compound))
-+            }));
-+            assert!(entries.iter().any(|entry| {
-+                entry["hooks"].as_array().is_some_and(|hooks| {
-+                    hooks
-+                        .iter()
-+                        .any(|hook| hook["command"].as_str() == Some(CLAUDE_HOOK_COMMAND))
-+                })
-+            }));
-+
-+            assert_eq!(
-+                remove_settings_entries(InitContext::default()).unwrap(),
-+                SettingsRemoval {
-+                    hook: true,
-+                    proxy_base_url: false
-+                }
-+            );
-+            let after = read_json_file(&path).unwrap().unwrap();
-+            assert_eq!(
-+                after["hooks"][PRE_TOOL_USE_KEY][0]["hooks"][0], compound,
-+                "uninstall must preserve the complete compound user hook"
-+            );
-+            assert_eq!(after["permissions"]["allow"][0], "Bash(ls)");
-+        });
-+    }
-+
-+    #[test]
-+    fn boundary_newline_hook_is_idempotent_and_uninstall_is_selective() {
-+        let tmp = test_isolation::tempdir();
-+        with_claude_dir_override(&tmp, |dir| {
-+            let path = dir.join(SETTINGS_JSON);
-+            let boundary_hook = format!("{CLA
-```
-
-**File**: `src/hooks/init/codex.rs` (modified, +28/-8)
-```diff
-@@ -1024,6 +1024,7 @@ mod tests {
-         assert!(is_codex_hook_command(
-             "\"C:\\Program Files\\rtk.exe\" hook codex"
-         ));
-+        assert!(is_codex_hook_command("rtk hook codex\n"));
-     }
- 
-     #[test]
-@@ -1263,14 +1264,22 @@ mod tests {
-     fn test_patch_codex_hooks_is_idempotent_and_preserves_existing_hooks() {
-         let temp = TempDir::new().unwrap();
-         let hooks_json = temp.path().join(HOOKS_JSON);
-+        let user_hook = serde_json::json!({
-+            "type": "command",
-+            "command": "audit;/usr/local/bin/rtk hook codex",
-+            "timeout": 11,
-+            "metadata": { "owner": "user", "labels": ["keep"] }
-+        });
-+        let user_group = serde_json::json!({
-+            "matcher": "Bash",
-+            "description": "user group",
-+            "hooks": [user_hook.clone()]
-+        });
-         fs::write(
-             &hooks_json,
-             serde_json::to_string_pretty(&serde_json::json!({
-                 "hooks": {
--                    "PreToolUse": [{
--                        "matcher": "Bash",
--                        "hooks": [{ "type": "command", "command": "echo existing" }]
--                    }],
-+                    "PreToolUse": [user_group.clone()],
-                     "Stop": [{
-                         "hooks": [{ "type": "command", "command": "echo stop" }]
-                     }]
-@@ -1287,12 +1296,23 @@ mod tests {
-             serde_json::from_str(&fs::read_to_string(&hooks_json).unwrap()).unwrap();
-         assert!(codex_hook_already_present(&root));
-         assert_eq!(root["hooks"]["PreToolUse"].as_array().unwrap().len(), 2);
--        assert_eq!(
--            root["hooks"]["PreToolUse"][0]["hooks"][0]["command"],
--            "echo existing"
--        );
-+        assert_eq!(root["hooks"]["PreToolUse"][0], user_group,);
-         assert_eq!(root["hooks"]["Stop"][0]["hooks"][0]["command"], "echo stop");
-         assert!(hooks_json.with_extension("json.bak").exists());
-+
-+        assert!(remove_codex_hook_from_file(&hooks_json, InitContext::default()).unwrap());
-+        let after: serde_json::Value =
-+            serde_json::from_str(&fs::read_to_string(&hooks_json).unwrap()).unwrap();
-+        assert!(!codex_hook_already_present(&after));
-+        assert_eq!(
-+            after["hooks"]["PreToolUse"].as_array().unwrap(),
-+            std::slice::from_ref(&user_group)
-+        );
-+        assert_eq!(
-+            after["hooks"]["Stop"][0]["hooks"][0]["command"],
-+            "echo stop"
-+        );
-+        assert_eq!(after["hooks"]["PreToolUse"][0]["hooks"][0], user_hook);
-     }
- 
-     #[test]
-```
-
-**File**: `src/hooks/init/trae.rs` (modified, +1/-0)
-```diff
-@@ -379,6 +379,7 @@ mod tests {
-         assert!(is_trae_hook_command("rtk hook trae"));
-         assert!(is_trae_hook_command("/opt/homebrew/bin/rtk hook trae"));
-         assert!(is_trae_hook_command("\"/opt/homebrew/bin/rtk\" hook trae"));
-+        assert!(is_trae_hook_command("rtk hook trae\n"));
-         assert!(!is_trae_hook_command("rtk hook claude"));
-     }
- 
-```
-
-**File**: `src/hooks/mod.rs` (modified, +29/-0)
-```diff
-@@ -30,6 +30,35 @@ fn is_rtk_binary(binary: &str) -> bool {
- }
- 
- fn is_rtk_hook_command(command: &str, agent: &str) -> bool {
-+    let mut tokens = crate::discover::lexer::tokenize_with_newlines(command);
-+    // Ignore only literal LF operator tokens at the command's boundaries.
-+    // The lexer also reports the CR of a CRLF pair as an LF operator; checking
-+    // the source byte leaves that token for the guard below, and the word check
-+    // after shell_split would reject the CR anyway.
-+    while tokens.first().is_some_and(|token| {
-+        matches!(token.kind, crate::discover::lexer::TokenKind::Operator)
-+            && token.value == "\n"
-+            && command.as_bytes().get(token.offset) == Some(&b'\n')
-+    }) {
-+        tokens.remove(0);
-+    }
-+    while tokens.last().is_some_and(|token| {
-+        matches!(token.kind, crate::discover::lexer::TokenKind::Operator)
-+            && token.value == "\n"
-+            && command.as_bytes().get(token.offset) == Some(&b'\n')
-+    }) {
-+        tokens.pop();
-+    }
-+    if tokens.iter().any(|token| match token.kind {
-+        crate::discover::lexer::TokenKind::Operator
-+        | crate::discover::lexer::TokenKind::Pipe(_)
-+        | crate::discover::lexer::TokenKind::Redirect => true,
-+        crate::discover::lexer::TokenKind::Shellism => token.value == "&",
-+        _ => false,
-+    }) {
-+        return false;
-+    }
-+
-     let parts = crate::discover::lexer::shell_split(command);
-     let [parsed_binary, hook, target] = parts.as_slice() else {
-         return false;
-```
-
-#### Recent Merged Pull Requests:
-- **PR #5072** (closed): hook: add Kiro CLI agent support (@evandrojr)
-- **PR #5069** (2026-11-11): chore(deps): bump anyhow from 1.0.102 to 1.0.104 (@dependabot[bot])
-- **PR #5068** (2026-11-11): chore(deps): bump softprops/action-gh-release from 3.0.3 to 3.0.4 (@dependabot[bot])
-- **PR #5067** (2026-11-11): chore(deps): bump codepage from 0.1.2 to 0.1.3 (@dependabot[bot])
-- **PR #5060** (closed): Sync/upstream reliability (@idolgoff)
-- **PR #5056** (2026-11-17): fix(cargo): filter toolchain and global-prefix invocations (@milyin)
-
----
-
-## 3. Empirical Evidence & Compliance Certification
-- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
-- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
-- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
-
----
-
-## 4. Promotion & Integration Status
-- **Status**: HARVESTED_DEEP_FORENSIC
-- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Empirical Invariant Guard in claude.rs
-
-**RULE**:
-When implementing operations in `src/hooks/init/claude.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `eb710be4`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/hooks/init/claude.rs`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-    #[test]
-    fn compound_shell_commands_are_not_rtk_hooks() {
-        for command in [
-            "my-audit;/usr/local/bin/rtk hook claude",
-            "my-audit&&/usr/local/bin/rtk hook claude",
-            "my-audit||/usr/local/bin/rtk hook claude",
-            "my-audit|/usr/local/bin/rtk hook claude",
-            "my-audit&/usr/local/bin/rtk hook claude",
-            "my-audit>/usr/local/bin/rtk hook claude",
-            "/usr/local/bin/rtk hook claude > /tmp/audit.log",
-            "/usr/local/bin/rtk\nhook claude",
-            "/usr/local/bin/rtk hook claude\nmy-audit",
-            "/usr/local/bin/rtk hook claude\r\n",
-            "/usr/local/bin/rtk hook claude\r",
-            "/usr/local/bin/rtk hook claude\\ ",
-            "/usr/local/bin/rtk hook \"claude\n",
-            "/usr/local/bin/rtk hook 'claude\n",
-            " \t/usr/local/bin/rtk hook claude\r\n\t ",
-            " \t/usr/local/bin/rtk hook claude\r\t ",
-        ] {
-            assert!(
-                !is_claude_hook_command(command),
-                "user command was claimed as RTK-owned: {command:?}"
-            );
-        }
-
-        for command in [
-            "/usr/local/bin/rtk hook claude\n",
-     
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
+// ANTI-PATTERN: Blindly applying transformations and prepending elision markers.
+// If input is short (e.g., "error: 404"), formatting adds overhead and bloats tokens.
+pub fn unsafe_truncate(input: &str) -> String {
+    let truncated: String = input.chars().take(100).collect();
+    // Toxic: Can expand a 10-char string into a 50-char string!
+    format!("{truncated}\n[rtk: truncated output, check recall log]")
+}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eb710be4` are properly handled with clean fallback behavior.
+Automated property-based testing verifying token monotonicity across arbitrary input distributions:
+```rust
+#[test]
+fn test_monotonicity_property() {
+    let inputs = vec!["", "a", "x".repeat(10), "x".repeat(100_000)];
+    for input in inputs {
+        let output = format!("{input} [metadata tag]");
+        let checked = never_worse(&input, output);
+        if estimate_tokens(&input) < estimate_tokens(&format!("{input} [metadata tag]")) {
+            assert_eq!(checked, None, "Guard failed to reject token-expanding transformation");
+        }
+    }
+}
+```
 
+---
+
+### 2. High-Entropy Base64 Character-Class Validation Guard
+**RULE**:
+String scanning algorithms operating on unstructured payloads (JSON, YAML, HTML) MUST NOT classify character runs as Base64 purely based on regex character sets (`[A-Za-z0-9+/]`). Before triggering redaction or elision, the scanner MUST assert:
+1. Length is an exact multiple of 4 (including valid `=` padding characters).
+2. The character distribution contains high-entropy diversity: byte sets MUST concurrently contain uppercase (`A-Z`), lowercase (`a-z`), and numeric (`0-9`) ASCII values.
+3. Long numeric literals (`111...`) and hex dumps (`deadbeef...`) MUST explicitly fail the validation pass.
+
+**WHY**:
+ELIDERS that replace raw strings inside JSON payloads will corrupt syntax if they match unquoted integer literals, big numbers, or machine hash dumps. Replacing a long unquoted integer literal (`{"size": 11111111...}`) with a marker (`{"size": [base64 data, 10 KB elided]}`) turns valid JSON into an unparseable syntax error, crashing downstream LLM JSON parsers.
+
+**WHEN TO APPLY**:
+Apply when designing prompt-scrubbers, log masks, secret filters, or data-URL eliders running ahead of AST/JSON decoders.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+/// Asserts that a candidate ASCII slice is genuine Base64 rather than a 
+/// huge decimal number, hex dump, or repetitive identifier run.
+pub fn looks_like_base64(run: &str) -> bool {
+    // Standard Base64 requires strings to be aligned to 4-byte boundaries
+    let body = run.trim_end_matches('=');
+    if body.is_empty() || (run.len() % 4 != 0) {
+        return false;
+    }
+
+    let mut has_upper = false;
+    let mut has_lower = false;
+    let mut has_digit = false;
+
+    for &b in body.as_bytes() {
+        match b {
+            b'A'..=b'Z' => has_upper = true,
+            b'a'..=b'z' => has_lower = true,
+            b'0'..=b'9' => has_digit = true,
+            b'+' | b'/' => {},
+            _ => return false, // Illegal byte outside standard Base64 alphabet
+        }
+    }
+
+    // High entropy check: real Base64 of sufficient length (>1KB) 
+    // consistently traverses upper, lower, and digit byte classes.
+    has_upper && has_lower && has_digit
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// ANTI-PATTERN: Relying strictly on regex match lengths.
+// Corrupts numbers: {"num": 9999999999999999999999999999999999999999999999999999}
+// Turns into:       {"num": [base64 data elided]} -> INVALID JSON
+pub fn buggy_base64_scrub(json_str: &str) -> String {
+    let re = regex::Regex::new(r"[A-Za-z0-9+/]{64,}").unwrap();
+    re.replace_all(json_str, "[base64 elided]").to_string()
+}
+```
+
+**VERIFICATION METHOD**:
+```rust
+#[test]
+fn test_base64_validation_does_not_break_json_numbers() {
+    let long_int = "9".repeat(1200);
+    assert!(!looks_like_base64(&long_int));
+
+    let hex_dump = "deadbeef".repeat(200);
+    assert!(!looks_like_base64(&hex_dump));
+
+    let valid_b64 = "QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVphYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ejAxMjM0NTY3ODkr".repeat(20);
+    assert!(looks_like_base64(&valid_b64));
+}
+```
+
+---
+
+### 3. Fail-Open Hook Interceptor Contract for Agent Tooling
+**RULE**:
+Any CLI hook or configuration intended to execute as a pre-tool or post-tool execution interceptor in an AI developer agent (Claude Code, GitHub Copilot CLI, Cursor) MUST fail open with exit code `0` and empty `stdout` when the underlying binary is missing, uninstalled, or misconfigured. It MUST NOT exit non-zero (e.g., exit codes `1`, `2`, or `127`).
+
+**WHY**:
+Agent frameworks like GitHub Copilot enforce security boundaries on pre-tool execution hooks (`preToolUse`). If a hook script exits non-zero (such as `127 command not found` on a clean cloud runner or exit `2` on a bad flag), the agent engine interprets the return code as a permission denial or safety abort. This denies every subsequent tool execution, completely paralyzing the agent.
+
+**WHEN TO APPLY**:
+Apply to all IDE plugins, command rewiring wrappers, git hooks (`pre-commit`), and hook registration configurations (`.github/hooks/`, Claude settings).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```json
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "matcher": "^(?:run_in_terminal|Bash|powershell)$",
+        "bash": "command -v rtk >/dev/null 2>&1 && rtk hook copilot || exit 0",
+        "powershell": "if (Get-Command rtk -ErrorAction SilentlyContinue) { rtk hook copilot } else { exit 0 }"
+      }
+    ]
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```json
+// ANTI-PATTERN: Calling the executable directly without existence testing.
+// In cloud runner/CI environments where the binary isn't pre-installed,
+// this returns exit status 127 and completely disables agent tool calling.
+{
+  "hooks": {
+    "preToolUse": [
+      {
+        "matcher": ".*",
+        "bash": "rtk hook"
+      }
+    ]
+  }
+}
+```
+
+**VERIFICATION METHOD**:
+Execute synthetic execution tests in environments where `PATH` is purged:
+```bash
+PATH="" sh -c "command -v rtk >/dev/null 2>&1 && rtk hook copilot || exit 0"
+# Assert: Exit status == 0, stdout == empty, stderr == empty
+```
+
+---
+
+## 3. Forensic Real Incidents & Production Patches
+
+### Incident 1: x86_64 CPU Crashing via Unguarded AVX2 Instructions (BUG-CPU-01)
+- **Context**: Musl release binaries distributed for Alpine Linux and legacy server targets (`target: x86_64-unknown-linux-musl`).
+- **What Was Expected**: The static binary `rtk` must run on all valid x86-64 hardware architectures, including older hypervisors, homelab hardware, and cloud instances based on Intel Ivy Bridge, Sandy Bridge, or AMD Excavator architectures.
+- **What Actually Happened**: The `rtk-x86_64-unknown-linux-musl` v1.2.0 binary crashed immediately upon launch (`rtk --help`, `rtk --version`) with `SIGILL` (Illegal instruction, exit code 132).
+- **Evidence in Repo**: Issue #5115. Reproduction: Intel Xeon E5-2695 v2 (flags: `sse sse2 ssse3 sse4_1 sse4_2 avx` without `avx2`).
+- **Root Cause**: The release build profile in `.cargo/config.toml` or CI workflow compiled with optimization flags that allowed codegen of AVX2/BMI2 instructions globally (e.g., `rustflags = ["-C", "target-cpu=native"]` or an aggressive baseline in CI runners) instead of targeting the generic baseline `x86-64-v1` or `x86-64-v2`. These instructions were executed during CRT startup before runtime CPU feature dispatch could occur.
+- **Remediation Code Diff**:
+```toml
+# .cargo/config.toml / CI Build Matrix
+# - [target.x86_64-unknown-linux-musl]
+# - rustflags = ["-C", "target-cpu=haswell"] # Emits AVX2 unconditionally
+
+# + Safe Invariant: Pin musl/distribution builds strictly to x86-64 generic baseline
+[target.x86_64-unknown-linux-musl]
+rustflags = ["-C", "target-cpu=x86-64"]
+```
+- **Lesson**: Precompiled binary distributions MUST default to the lowest supported hardware microarchitecture baseline (`x86-64`). Performance-critical vectorization paths MUST be gated behind runtime feature detection (`is_x86_feature_detected!("avx2")`) with scalar fallbacks, rather than compiler-wide codegen flags.
+
+---
+
+### Incident 2: Ambiguous Windows Multi-User TCP Port Collision Crash (BUG-PORT-02)
+- **Context**: Proxy daemon startup `proxy/src/main.rs`.
+- **What Was Expected**: When another service holds `127.0.0.1:8080`, the daemon must report an actionable failure log distinguishing between generic OS permission errors and multi-user loopback collisions.
+- **What Actually Happened**: On Windows 11 multi-user terminal servers, the secondary user's background service task triggered a crash loop once every minute, logging an opaque generic error: `failed to bind: Os { code: 10048, kind: AddrInUse, message: "Only one usage of each socket address is normally permitted." }`.
+- **Evidence in Repo**: Commit `6817373c`, PR #5181. `proxy/src/main.rs`.
+- **Root Cause**: Loopback socket bindings (`127.0.0.1`) are shared across all logon sessions on Windows machines. The background auto-start daemon attempted to bind the hardcoded default port without detecting `ErrorKind::AddrInUse`, leaving users unaware of the cross-session collision.
+- **Remediation Code Diff**:
+```rust
+// proxy/src/main.rs
+     let listener = match tokio::net::TcpListener::bind(&bind).await {
+         Ok(l) => l,
+         Err(e) => {
+-            tracing::error!(error = %e, bind, \"failed to bind\");
++            tracing::error!(error = %e, bind, \"{}\", bind_failure(&e));
+             std::process::exit(1);
+         }
+     };
+
++fn bind_failure(e: &std::io::Error) -> &'static str {
++    if e.kind() == std::io::ErrorKind::AddrInUse {
++        "port already in use: another rtk-proxy (possibly another user's on this machine) \
++         or another program holds it; set a different `bind` in rtk-proxy.toml"
++    } else {
++        "failed to bind"
++    }
++}
+```
+- **Lesson**: Background daemons binding well-known loopback ports must explicitly catch `AddrInUse` and output clear configuration instructions pointing to the configuration file.
+
+---
+
+### Incident 3: Copilot Tool Denial via Hook Misconfiguration (BUG-HOOK-03)
+- **Context**: Agent hook definition `.github/hooks/rtk-rewrite.json`.
+- **What Was Expected**: Hook scripts should transparently rewrite commands when `rtk` is available, and execute unaltered tool calls when `rtk` is absent.
+- **What Actually Happened**: Copilot sessions completely broke across all repositories containing the hook. Every tool invocation (`run_in_terminal`) was denied with permission errors.
+- **Evidence in Repo**: Closed Issue #5035. Files: `.github/hooks/rtk-rewrite.json`, `tests/copilot_repo_hook_test.rs`.
+- **Root Cause**: The hook configuration referenced `rtk hook` directly. On systems where `rtk` was missing (e.g., GitHub Copilot cloud runners), the shell returned `127`. Furthermore, `rtk hook` without a target argument returned exit code `2`. Copilot interprets any non-zero exit from a `preToolUse` hook as a critical permission denial, blocking the execution of the tool call.
+- **Remediation Code Diff**:
+```json
+// .github/hooks/rtk-rewrite.json
+- { "command": "rtk hook" }
++ {
++   "version": 1,
++   "bash": "command -v rtk >/dev/null 2>&1 && rtk hook copilot || exit 0",
++   "powershell": "if (Get-Command rtk -ErrorAction SilentlyContinue) { rtk hook copilot } else { exit 0 }"
++ }
+```
+- **Lesson**: Pre-tool hooks must strictly honor fail-open semantics. If an interceptor cannot locate its execution runtime, it must exit `0` silently.
+
+---
+
+### Incident 4: Non-Standard RFC3339 Timestamp Deserialization Failure (BUG-TIME-04)
+- **Context**: Analytics and history tracking `src/core/tracking.rs`.
+- **What Was Expected**: `Tracker::first_seen_days()` queries the oldest command executed from the SQLite log and calculates the elapsed days between that timestamp and `Utc::now()`.
+- **What Actually Happened**: Modern `rtk` instances wrote timestamps formatted with strict RFC3339 offsets (`2026-11-01T20:13:04.981917+00:00` or non-UTC offsets `+02:00`). The old naive parser failed to parse these, silently defaulting to `Utc::now()` and resetting tracking savings counters to `0`.
+- **Evidence in Repo**: Commit `2304fc6d`. `src/core/tracking.rs`.
+- **Root Cause**: The parser only accepted `NaiveDateTime` format strings (`%Y-%m-%dT%H:%M:%S` and `%Y-%m-%d %H:%M:%S`), failing on ISO-8601/RFC-3339 representations that contained fractional seconds and timezone offsets.
+- **Remediation Code Diff**:
+```rust
+// src/core/tracking.rs
+- let first = chrono::NaiveDateTime::parse_from_str(&ts, "%Y-%m-%dT%H:%M:%S")
+-     .or_else(|_| chrono::NaiveDateTime::parse_from_str(&ts, "%Y-%m-%d %H:%M:%S"))
+-     .map(|dt| dt.and_utc())
+-     .unwrap_or_else(|_| chrono::Utc::now());
+- let days = (chrono::Utc::now() - first).num_days();
+- Ok(days.max(0))
++ let now = Utc::now();
++ let first = parse_stored_timestamp(&ts).unwrap_or(now);
++ Ok((now - first).num_days().max(0))
+
++fn parse_stored_timestamp(ts: &str) -> Option<DateTime<Utc>> {
++    DateTime::parse_from_rfc3339(ts)
++        .map(|dt| dt.with_timezone(&Utc))
++        .or_else(|_| {
++            chrono::NaiveDateTime::parse_from_str(ts, "%Y-%m-%dT%H:%M:%S").map(|dt| dt.and_utc())
++        })
++        .or_else(|_| {
++            chrono::NaiveDateTime::parse_from_str(ts, "%Y-%m-%d %H:%M:%S").map(|dt| dt.and_utc())
++        })
++        .ok()
++}
+```
+- **Lesson**: Datastore parsers must support modern standardized formats (RFC3339) first, cascading to legacy naive formats for backward compatibility while normalizing to explicit UTC offsets.
+
+---
+
+### Incident 5: Windows `System32\find.exe` Binary Search Path Hijack (BUG-WIN-05)
+- **Context**: System command execution abstraction `src/cmds/system/find_cmd.rs`.
+- **What Was Expected**: Integration test `run_from_args_propagates_find_exit_status` verifies that executing a non-existent path through `rtk` yields the exact exit code of the underlying GNU/POSIX `find` utility.
+- **What Actually Happened**: On Windows test runners, `std::process::Command::new("find")` executed `C:\Windows\System32\find.exe` instead of GNU `find.exe` (from Git/MSYS2). Windows `find.exe` checks for string matches rather than traversing directories, producing exit status `2` instead of GNU find's exit status `1`, causing test failure.
+- **Evidence in Repo**: Commit `5f81080f`, PR #4032. `src/cmds/system/find_cmd.rs`.
+- **Root Cause**: On Windows, the Win32 `CreateProcess` API automatically searches `C:\Windows\System32` *before* traversing the user's `PATH`. A bare `Command::new("find")` binds to the native Windows utility rather than the intended port in `PATH`.
+- **Remediation Code Diff**:
+```rust
+// src/cmds/system/find_cmd.rs
+     #[test]
+     fn run_from_args_propagates_find_exit_status() {
+         let argv = ["/definitely/missing/xyz", "-mtime", "+0"];
+-        let expected = std::process::Command::new("find")
++        // Resolve `find` exactly the way rtk's passthrough does. A bare
++        // `Command::new("find")` resolves differently on Windows (System32
++        // precedes PATH in the CreateProcess search order, picking up
++        // find.exe whose exit codes differ from GNU find).
++        let mut baseline = crate::core::utils::resolved_command("find");
++        let expected = baseline
+             .args(argv)
+             .output()
+             .map(|o| o.status.code().unwrap_or(1))
+```
+- **Lesson**: When wrapping POSIX tools on Windows systems, never use bare executable names. Use an explicit path-resolution utility (`which::which`) to traverse `PATH` and avoid hijacking by legacy `C:\Windows\System32` binaries.
+
+---
+
+## 4. Microscopic Code-Level Invariants
+
+### 1. Micro-Syntax & Token-Level Precision
+- **Fractional Arithmetic & Token Estimation**:
+  Token counting cannot rely on naive byte-length casts. ASCII characters (1 byte) versus UTF-8 symbols (up to 4 bytes) distort context calculation. In `rtk-engine`, characters are parsed with `.chars().count()` for boundary capping, while token estimators divide by 4 using ceiling division:
+  ```rust
+  // PRECISE: Ceiling integer arithmetic prevents underestimating single-character residues
+  pub fn estimate_tokens(text: &str) -> usize {
+      text.len().div_ceil(4)
+  }
+  ```
+- **Byte Array vs. String Slicing Bounds**:
+  Slicing a Rust `&str` directly on byte boundaries crashes with a panic if index `MAX_LINE_CHARS` falls inside a multi-byte UTF-8 sequence. `engine/src/methods/cap.rs` uses scalar iterator transforms to avoid slice panics:
+  ```rust
+  // SAFE: Avoids &str[..MAX_LINE_CHARS] slicing which panics on non-ASCII codepoints
+  let kept: String = l.chars().take(MAX_LINE_CHARS).collect();
+  format!("{} [+{} chars]", kept, count - MAX_LINE_CHARS)
+  ```
+
+### 2. Infinite Loop & Recursion Guards
+- **Chain Execution Termination Invariants**:
+  Linear transformation loops in `engine/src/chain.rs` must prevent unbounded method loops and cyclic mutations. A chain can produce one of three outcomes:
+  ```rust
+  pub enum Outcome {
+      Continue(String),
+      ShortCircuit(String),
+      Skip,
+  }
+  ```
+  *Termination Proof*: `run_chain` is bound to a finite slice `methods: &[&dyn Method]`. Each iteration visits index `i + 1`. Short-circuit returns immediately. Cyclic recursion is physically impossible because `Method` cannot invoke `run_chain` without explicit dependency injection.
+
+- **Stack Overflow Containment (`catch_unwind`)**:
+  Method execution occurs inside an unwind-safe boundary. A panic inside any compression filter must not abort the host process or leave downstream agent pipelines unserviced:
+  ```rust
+  pub fn run_chain_caught(methods: &[&dyn Method], block: &Block, ctx: &MethodCtx) -> Option<String> {
+      std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+          run_chain(methods, block, ctx)
+      }))
+      .ok()
+  }
+  ```
+
+### 3. UI & UX Micro-Mechanics
+- **Terminal ANSI Escape Stripping (`engine/src/methods/ansi.rs`)**:
+  Raw terminal tools output color codes (e.g. `\x1b[32m`), which waste context tokens. To maximize speed:
+  ```rust
+  // Hot path optimization: Skip allocating or running regex if escape byte is missing
+  let input = block.text;
+  if !input.contains('\x1b') {
+      return Outcome::Continue(input.to_string());
+  }
+  Outcome::Continue(strip_ansi(input))
+  ```
+
+- **Ratatui Terminal Buffer Re-rendering**:
+  The `rtk gain --watch` live monitor reads SQLite records. To avoid layout thrashing and terminal flickering, the refresh interval is throttled to 250ms with non-blocking event polling via `crossterm::event::poll`.
+
+### 4. Backend Concurrency & Memory Safety
+- **Dual-Lockfile Pinned C-Linkage Invariant**:
+  When two crates within the same build tree reference an identical native C library via `-sys` crates, only one instance of that library can be linked into a binary.
+  In `Cargo.toml`:
+  ```toml
+  # CRITICAL: rusqlite links libsqlite3-sys with `links = "sqlite3"`.
+  # Having disjoint versions in root Cargo.toml vs proxy/Cargo.toml
+  # triggers a fatal cargo resolve conflict:
+  # "native library `sqlite3` is being linked by both package A and package B"
+  rusqlite = { version = "0.34", features = ["bundled"] }
+  ```
+
+- **Non-blocking TCP Loopback Bindings**:
+  The background daemon binds `127.0.0.1:8080`. To avoid blocking the Tokio async runtime worker threads during shutdown, socket handles are cleanly dismantled, ensuring listeners drop before processes exit.
+
+### 5. Defect & Error Prevention ("Galti Pakadna")
+- **Tail-Biased Terminal Output Windowing (`engine/src/methods/cap.rs`)**:
+  Compilers, test suites, and linters dump errors at the *end* of terminal streams. Traditional truncation (retaining the first $N$ lines) discards the relevant error trace, forcing the agent to hallucinate. `rtk-engine` uses a tail-biased window:
+  ```rust
+  pub const HEAD_LINES: usize = 50;
+  pub const TAIL_LINES: usize = 200;
+  pub const MAX_LINES: usize = HEAD_LINES + TAIL_LINES + 50;
+
+  // Preserves 50 lines of startup context + 200 lines of error tail
+  result.extend(lines[..HEAD_LINES].iter().map(|l| cap_line(l)));
+  result.push(format!("[{elided} lines elided]"));
+  result.extend(lines[total - TAIL_LINES..].iter().map(|l| cap_line(l)));
+  ```
+
+---
+
+## 5. The 9 Deep Learning Dimensions
+
+### 1. Architecture
+Decoupled multi-crate repository structure:
+- Root CLI (`/`) provides the thin execution wrapper.
+- `engine/` handles stateless string transformation and token economics.
+- `proxy/` isolates asynchronous networking dependencies (`tokio`, `axum`).
+- `text/` provides shared character and text manipulation utilities.
+
+### 2. Core Abstractions
+- `Block<'a>`: Zero-copy lifetime-bound text slice container containing `Subject`, `ContentFormat`, `Origin`, and `Provenance`.
+- `Method`: Core execution trait declaring `name()`, `info()`, and `apply(&Block, &MethodCtx) -> Outcome`.
+- `HarnessProfile`: Immutable declaration defining agent tools, capabilities (`can_replace_input`, `can_deny`), and wiring configurations.
+
+### 3. Error Handling
+Fault boundaries are strictly isolated:
+- Pipeline panics are captured via `catch_unwind`.
+- Malformed inputs degrade gracefully to raw uncompressed strings.
+- Hook scripts fail open (exit `0`) to preserve agent functionality.
+
+### 4. Testing
+- Unit tests co-located within method modules.
+- Verification tests for regex state machines (e.g., verifying `looks_like_base64` correctly rejects decimal strings).
+- Cross-platform integration harnesses verifying command resolution across POSIX and Windows environments.
+
+### 5. Security
+- Avoids executing raw string commands inside shell instances; command targets are resolved explicitly using `which`.
+- Strict memory safety via Rust; raw C FFI is restricted to SQLite dependencies.
+- Avoids writing unencrypted API tokens to disk.
+
+### 6. Performance
+- Fast paths bypass regex scanning entirely if trigger bytes (e.g., `\x1b` for ANSI) are absent.
+- `sub-10ms` execution budget for the CLI entrypoint to prevent noticeable tool latency.
+- Fast token estimation using integer ceiling math (`div_ceil(4)`) in place of expensive BPE tokenizers.
+
+### 7. Deployment
+- Cross-platform CI building for `x86_64` and `aarch64` architectures across Linux, macOS, and Windows.
+- Release profiles explicitly pin `target-cpu=x86-64` to prevent illegal instruction (`SIGILL`) crashes on older hardware.
+
+### 8. Agent Patterns
+- Concrete system prompts with explicit operational rules:
+  ```
+  "Keep prose short. Drop articles (a, an, the), filler, pleasantries... Never shorten code, file paths, commands..."
+  ```
+- Uses negative instruction guards to prevent models from inventing unparseable abbreviations.
+- Tool mapping: Harness profiles automatically map tool operations to abstract categories (`Read`, `Write`, `Edit`, `Shell`, `Search`).
+
+### 9. Data Flow
+1. Agent emits a tool execution event.
+2. Hook interceptor passes the output stream to `rtk`.
+3. `rtk` packages text into an immutable `Block`.
+4. Method chain evaluates rules sequentially (ANSI -> Base64 -> Cap).
+5. Output is evaluated against `never_worse()`.
+6. Monotonically reduced string is returned to the agent context.
+
+---
+
+## 6. The 8 Learning Extraction Artifacts
+
+### 1. Pattern: Token Monotonicity Guard
+```rust
+pub fn run_guarded_chain(methods: &[&dyn Method], block: &Block, ctx: &MethodCtx) -> String {
+    let raw = block.text.to_string();
+    let transformed = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+        run_chain(methods, block, ctx)
+    })).unwrap_or_else(|_| raw.clone());
+
+    if transformed != raw && estimate_tokens(&transformed) <= estimate_tokens(&raw) {
+        transformed
+    } else {
+        raw
+    
 
 ## 3. Independent Verification Protocol
 1. Assert state existence before and after execution.

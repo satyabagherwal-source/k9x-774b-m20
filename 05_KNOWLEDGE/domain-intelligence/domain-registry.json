@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T20:00:32.047Z",
-  "total_records": 2017,
+  "last_updated": "2026-11-19T20:34:31.581Z",
+  "total_records": 2022,
   "domains": {
     "A": {
       "total": 15,
@@ -1334,7 +1334,7 @@
       ]
     },
     "H": {
-      "total": 473,
+      "total": 478,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1808,7 +1808,12 @@
         "domain_intelligence-technical-construction-intelligence-meta-folly-core-invariants",
         "domain_intelligence-technical-construction-intelligence-facebook-folly-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-infiniflow-infinity-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-infiniflow-infinity-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-tableproapp-tablepro-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-rtk-ai-rtk-core-invariants",
+        "DOM-H-E8006564",
+        "domain_intelligence-technical-construction-intelligence-rtk-ai-rtk-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-tableproapp-tablepro-learnings-core-invarian"
       ]
     },
     "I": {
@@ -8121,10 +8126,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "d5b1c983b7a1516ba0195a907776dccd5ca8037347a4ca7157161985935f1ae8",
-      "created_at": "2026-11-19T16:41:07.291Z"
+      "content_hash": "21f5d7aa762f38d5e47a8220e17cbbaf0cdd958e2804cc1846c1cf42273b4e61",
+      "created_at": "2026-11-19T20:24:26.877Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -9356,8 +9361,8 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-learnings-architecture-intelligence-provablehq-snarkos-learni.md",
       "repository": "provablehq-snarkos-learnings",
-      "content_hash": "371365c3d494a947924c96bb740e12e62486c605f9673ad5030482df813ec2b2",
-      "created_at": "2026-11-18T21:34:24.271Z"
+      "content_hash": "ad7408e6c13a3f83ed56ef00b4bdb0ded99a4560580b054b7430e1b8fb3c580a",
+      "created_at": "2026-11-19T20:34:31.581Z"
     },
     "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
@@ -33845,6 +33850,76 @@
       "repository": "siteline-swiftui-introspect-learnings",
       "content_hash": "299325bd0be4e6443a5f05ed7eb31d30d91b95fe970bfb08d5394554af633698",
       "created_at": "2026-11-19T19:39:12.279Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tableproapp-tablepro-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tableproapp-tablepro-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: TableProApp/TablePro Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tableproapp-tablepro-technical-construction-intelligence-tableproapp-tablepro-co.md",
+      "repository": "TableProApp/TablePro",
+      "content_hash": "52a186000102db4597f7759fef9e0015068dcc7d0670c4de49925d3b99cad35a",
+      "created_at": "2026-11-19T20:24:21.071Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rtk-ai-rtk-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-rtk-ai-rtk-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: rtk-ai/rtk Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rtk-ai-rtk-technical-construction-intelligence-rtk-ai-rtk-core-invariants.md",
+      "repository": "rtk-ai/rtk",
+      "content_hash": "23cdcb3ae6e308e81eaf0272a69e6da22ec862f951ede9c3d85880fe6a43d1e0",
+      "created_at": "2026-11-19T20:33:57.341Z"
+    },
+    "DOM-H-E8006564": {
+      "record_id": "DOM-H-E8006564",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "x86_64 CPU Crashing via Unguarded AVX2 Instructions (BUG-CPU-01)",
+      "content": "Precompiled binary distributions MUST default to the lowest supported hardware microarchitecture baseline (`x86-64`). Performance-critical vectorization paths MUST be gated behind runtime feature detection (`is_x86_feature_detected!(\"avx2\")`) with scalar fallbacks, rather than compiler-wide codegen flags.",
+      "content_hash": "1f898ab4803cda5a751f6da8be338dc0e4a0db10f84f94df12b94a3f0f218bcb",
+      "summary": "The release build profile in `.cargo/config.toml` or CI workflow compiled with optimization flags that allowed codegen of AVX2/BMI2 instruct -> Precompiled binary distributions MUST default to the lowest supported hardware microarchitecture baseline (`x86-64`). Performance-critical v",
+      "provenance": {
+        "source_uri": "project://rtk-ai-rtk/rtk-ai-rtk-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T20:34:00.276Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (rtk-ai-rtk)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Issue #5115. Reproduction: Intel Xeon E5-2695 v2 (flags: `sse sse2 ssse3 sse4_1 sse4_2 avx` without `avx2`)."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.86,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T20:34:29.168Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rtk-ai-rtk-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-rtk-ai-rtk-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: rtk-ai-rtk-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rtk-ai-rtk-learnings-technical-construction-intelligence-rtk-ai-rtk-learnings-co.md",
+      "repository": "rtk-ai-rtk-learnings",
+      "content_hash": "da816d202aeb0eac83153df2434563373a274d75e4f4ccca9413276a00efd164",
+      "created_at": "2026-11-19T20:34:29.970Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tableproapp-tablepro-learnings-core-invarian": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tableproapp-tablepro-learnings-core-invarian",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: tableproapp-tablepro-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tableproapp-tablepro-learnings-technical-construction-intelligence-tableproapp-t.md",
+      "repository": "tableproapp-tablepro-learnings",
+      "content_hash": "64b7afbfa5ffd43f1b2de0982efa50da62e1596647f60dea3e3f68fcf859e9d5",
+      "created_at": "2026-11-19T20:34:30.765Z"
     }
   }
 }

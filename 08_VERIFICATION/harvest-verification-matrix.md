@@ -11371,3 +11371,7 @@
 | `CYCLE-20261119-EBSX` | `2026-11-19T19:39:02.337Z` | `MelnixDev/seo-crawl-audit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9434` | Yes (`5e09fbe4...`) |
 | `CYCLE-20261119-ECV4` | `2026-11-19T19:39:03.712Z` | `siteline/swiftui-introspect` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/siteline-swiftui-introspect-learnings.md` | Yes (`69bda98b...`) |
 | `CYCLE-20261119-5OQP` | `2026-11-19T20:00:18.817Z` | `Folkbench/folkbench` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9435` | Yes (`6b3d96ac...`) |
+| `CYCLE-20261119-0LBG` | `2026-11-19T20:24:20.716Z` | `TableProApp/TablePro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9436` | Yes (`792d8525...`) |
+| `CYCLE-20261119-0PST` | `2026-11-19T20:24:26.525Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9437` | Yes (`9caa6622...`) |
+| `CYCLE-20261119-CXRF` | `2026-11-19T20:33:56.716Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9438, Rule 9439, Rule 9440` | Yes (`7866f4e6...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T20:34:29.192Z` | `rtk-ai-rtk` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-E8006564` [Domain H] | Yes (`1f898ab4...`) |
