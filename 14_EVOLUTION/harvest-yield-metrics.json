@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T00:41:13.958Z",
-  "total_cycles_completed": 10659,
-  "total_learnings_persisted": 10659,
-  "total_rules_promoted": 10075,
+  "last_updated": "2026-11-19T00:49:54.941Z",
+  "total_cycles_completed": 10664,
+  "total_learnings_persisted": 10664,
+  "total_rules_promoted": 10079,
   "history": [
-    {
-      "timestamp": "2026-11-18T11:06:41.480Z",
-      "repository": "max-sixty/worktrunk",
-      "learningId": "learn-github-max-sixty-worktrunk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T11:06:46.659Z",
-      "repository": "react-hook-form/react-hook-form",
-      "learningId": "learn-github-react-hook-form-react-hook-form",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T11:06:50.234Z",
-      "repository": "gardener/gardener",
-      "learningId": "learn-github-gardener-gardener",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T11:06:54.207Z",
-      "repository": "weaviate/weaviate",
-      "learningId": "learn-github-weaviate-weaviate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T11:22:31.041Z",
-      "repository": "moonshotai/Kimi-K3",
-      "learningId": "learn-huggingface-moonshotai-kimi-k3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T11:22:44.128Z",
       "repository": "rustls/rustls",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-19T00:41:13.958Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T00:49:39.644Z",
+      "repository": "BAAI/bge-reranker-v2-m3",
+      "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T00:49:41.308Z",
+      "repository": "Xudong-Huang/may",
+      "learningId": "learn-github-xudong-huang-may",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T00:49:47.663Z",
+      "repository": "callstack/agent-device",
+      "learningId": "learn-github-callstack-agent-device",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T00:49:49.403Z",
+      "repository": "octodns/octodns",
+      "learningId": "learn-github-octodns-octodns",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T00:49:54.941Z",
+      "repository": "citusdata/citus",
+      "learningId": "learn-github-citusdata-citus",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -11152,3 +11152,9 @@
 | `CYCLE-20261119-R1Z6` | `2026-11-19T00:41:11.874Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9308` | Yes (`1a63ac3c...`) |
 | `CYCLE-20261119-R3KT` | `2026-11-19T00:41:13.949Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9309` | Yes (`05841c51...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T00:41:46.092Z` | `ntex-rs-ntex` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-6F9CB66B` [Domain H] | Yes (`72bb5269...`) |
+| `CYCLE-20261119-1XRM` | `2026-11-19T00:49:39.634Z` | `BAAI/bge-reranker-v2-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | Yes (`ef3f1848...`) |
+| `CYCLE-20261119-1Z1V` | `2026-11-19T00:49:41.299Z` | `Xudong-Huang/may` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9310` | Yes (`cb9590db...`) |
+| `CYCLE-20261119-23YE` | `2026-11-19T00:49:47.654Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9311` | Yes (`cbd705d7...`) |
+| `CYCLE-20261119-25AQ` | `2026-11-19T00:49:49.394Z` | `octodns/octodns` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9312` | Yes (`606b7e87...`) |
+| `CYCLE-20261119-29KK` | `2026-11-19T00:49:54.932Z` | `citusdata/citus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9313` | Yes (`76b11299...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T00:50:27.525Z` | `hf-baai-bge-reranker-v2-m3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9B951EAF` [Domain D] | Yes (`2a839bd5...`) |

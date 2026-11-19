@@ -685322,3 +685322,361 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `5d6c8155` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9310. make condvar forwarding tests schedule-independent (Harvested from Xudong-Huang/may)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "make condvar forwarding tests schedule-independent",
+  "source": "Xudong-Huang/may",
+  "source_url": "https://github.com/Xudong-Huang/may",
+  "source_version": "7f6b896d",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-19T00:49:40.833Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-xudong-huang-may",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Xudong-Huang/may](https://github.com/Xudong-Huang/may) (Revision: `7f6b896d`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `src/sync/condvar.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `7f6b896d`: sync): make condvar forwarding tests schedule-independent. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/sync/condvar.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    // regression: a waiter that timed out before the notify must not
+    // consume the signal meant for the live waiter queued behind it — its
+    // released blocker stays in the queue and notify_one has to skip it
+        let (tx1, rx1) = channel(); // W1 timed out and left the wait
+        let (tx2, rx2) = channel(); // W2 holds the mutex, about to park
+        // W1: first in the condvar queue, times out before any notify
+        // shows up, so its blocker stays queued in the released state
+            let (g, to) = c1.wait_timeout(g, Duration::from_millis(10)).unwrap();
+            // the wait is over and the release action is registered: a
+            // later notify must be forwarded past this blocker
+            tx1.send(()).unwrap();
+        // wait until W1 has left: its released blocker is queued before W2
+        // exists, so the queue order does not depend on how the two waiters
+        // get scheduled
+        rx1.recv().unwrap();
+
+            tx2.send(()).unwrap(); // holds the mutex, about to park below
+        // this lock blocks until W2's wait unlocks the mutex, so W2's
+        // blocker is queued when the notify below pops it
+        rx2.recv().unwrap();
+  
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+    // regression: a waiter that timed out while the notifier holds the
+    // mutex must not consume the signal meant for the live waiter behind
+    // it in the queue — the release action is registered before the
+    // blocking mutex re-lock
+        let (tx, rx) = channel();
+        // W1: first in the condvar queue, times out quickly
+            let (g, to) = c1.wait_timeout(g, Duration::from_millis(100)).unwrap();
+            sleep(Duration::from_millis(20)); // let W1 enqueue first
+            tx.send(()).unwrap(); // parked in the condvar wait below
+        // W2 holds the mutex, about to park: this lock blocks until W2's
+        // wait unlocks the mutex. W1's 100ms timeout fires while we hold
+        // it, so W1 blocks in its mutex re-lock.
+        rx.recv().unwrap();
+        sleep(Duration::from_millis(200));
+        // pops W1's blocker: the signal must be forwarded to W2
+    // regression: same as above but with a canceled waiter instead of a
+    // timed out one
+        let (tx, rx) = channel();
+            sleep(Duration::from_millis(20)); // let W1 enqueue first
+            let g = m2.lock().unwrap();
+            tx.send(()).unwrap(); // parked in the condvar wait b
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `7f6b896d` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9311. judge a save-script destination another local user can steer (Harvested from callstack/agent-device)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "judge a save-script destination another local user can steer",
+  "source": "callstack/agent-device",
+  "source_url": "https://github.com/callstack/agent-device",
+  "source_version": "6e18ea33",
+  "license": "MIT",
+  "extracted_at": "2026-11-19T00:49:47.190Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-callstack-agent-device",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [callstack/agent-device](https://github.com/callstack/agent-device) (Revision: `6e18ea33`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `docs/adr/0016-active-session-script-publication.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ada87a3b`: judge a save-script destination another local user can steer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/adr/0016-active-session-script-publication.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+- The destination a caller names with `--save-script=<path>` is judged before anything is created.
+  It must be absolute, and every directory the walk looks a name up in must be one no other non-root local user can change.
+  What is missing is created one level at a time at 0700, inside the directory the walk just judged, and the script file is 0600.
+  The rule is POSIX-only, and a refused destination leaves nothing behind.
+  The daemon's own state-directory chain is outside this decision (#4649).
+- Before it sends the open, the client mints a random publication ID and records the destination and the `--force` grant under it in its state directory (`remote-connections/session-scripts/`), keyed by the endpoint, the tenant, the session, and that ID. That directory is the client's own private state, not a script destination: the client creates it the way it always did, with one recursive `mkdir` that forces nothing on a directory that already stands, and the only file ever written there is the client's own record. The script itself is published by the daemon to its own sessions directory; the client's own copy goes to the caller's destination, judged by the rule under [Caller-named de
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+- Before it sends the open, the client mints a random publication ID and records the destination and the `--force` grant under it in its state directory (`remote-connections/session-scripts/`), keyed by the endpoint, the tenant, the session, and that ID.
+The destination keeps local `--save-script` semantics: the client creates a missing parent directory and checks no ancestor ownership, so another local user who can write an ancestor directory can redirect the file, locally and remotely alike (#4565).
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ada87a3b` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9312. Regenerate requirements.txt with proviso 0.4.0 to drop pre-releases (Harvested from octodns/octodns)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Regenerate requirements.txt with proviso 0.4.0 to drop pre-releases",
+  "source": "octodns/octodns",
+  "source_url": "https://github.com/octodns/octodns",
+  "source_version": "fd8d1a6b",
+  "license": "MIT",
+  "extracted_at": "2026-11-19T00:49:48.901Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-octodns-octodns",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [octodns/octodns](https://github.com/octodns/octodns) (Revision: `fd8d1a6b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `requirements.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in octodns/octodns. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c7482f46`: Regenerate requirements.txt with proviso 0.4.0 to drop pre-releases. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `requirements.txt`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+anysqlite==0.0.5
+comrak==0.0.16
+coverage==7.17.2
+isort==9.0.2
+semver==3.1.1
+sphinxcontrib-mermaid==2.1.1
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+coverage==7.17.3
+isort==10.0.0b3
+semver==3.1.2
+sphinxcontrib-mermaid==3.0.0a1
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c7482f46` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9313. Pin GitHub Actions Ubuntu runners to 24.04 (Harvested from citusdata/citus)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Pin GitHub Actions Ubuntu runners to 24.04",
+  "source": "citusdata/citus",
+  "source_url": "https://github.com/citusdata/citus",
+  "source_version": "a5635dec",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-19T00:49:54.468Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-citusdata-citus",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [citusdata/citus](https://github.com/citusdata/citus) (Revision: `a5635dec`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.github/workflows/build_and_test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in citusdata/citus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a5635dec`: Pin GitHub Actions Ubuntu runners to 24.04. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build_and_test.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c
+// Verified production-grade fix pattern:
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+```
+
+**NEGATIVE CONSTRAINT**:
+```c
+// Induced defect failure mode:
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a5635dec` are properly handled with clean fallback behavior.

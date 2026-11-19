@@ -1115,8 +1115,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-reranker-v2-m3",
     "sourceVersion": "hf-baai-bge-reranker-v2-m3",
     "license": "Open-Source",
-    "contentHash": "f9932d8d415ad9ae6cfc05e1a4b895e2848d739e72e01bcbb27c01fb1ab2d3c1",
-    "lastHarvestedAt": "2026-11-14T08:53:29.429Z",
+    "contentHash": "ef3f1848c52a2dfe01b3cbc0b4b7971e3d5772341e58a521b25ee533603757ab",
+    "lastHarvestedAt": "2026-11-19T00:49:39.639Z",
     "learningId": "learn-huggingface-baai-bge-reranker-v2-m3"
   },
   "hf-jonatasgrosman-wav2vec2-large-xlsr-53-japanese": {
@@ -5173,10 +5173,10 @@
     "repository": "citusdata/citus",
     "platform": "github",
     "sourceUrl": "https://github.com/citusdata/citus",
-    "sourceVersion": "1c614e7d",
+    "sourceVersion": "a5635dec",
     "license": "AGPL-3.0",
-    "contentHash": "e250e023b1f6726f5f3f5667217e6a8ddea93780f7b09155ad39c82fbc666d46",
-    "lastHarvestedAt": "2026-11-17T09:22:25.882Z",
+    "contentHash": "76b1129927c248809eada1ab0447d6a62c2bacfb9f1a8dee62e0427a924d062b",
+    "lastHarvestedAt": "2026-11-19T00:49:54.936Z",
     "learningId": "learn-github-citusdata-citus"
   },
   "reshaped-ui-reshaped": {
@@ -5463,10 +5463,10 @@
     "repository": "octodns/octodns",
     "platform": "github",
     "sourceUrl": "https://github.com/octodns/octodns",
-    "sourceVersion": "439ea266",
+    "sourceVersion": "fd8d1a6b",
     "license": "MIT",
-    "contentHash": "7aa5e24771b5465c97c15623e80d8e712ca997984689db47e9248fca6323cc03",
-    "lastHarvestedAt": "2026-11-07T03:14:21.802Z",
+    "contentHash": "606b7e87f9b2ffbb4e44158997088b41460d8b288a3048c8322b07ab4027253a",
+    "lastHarvestedAt": "2026-11-19T00:49:49.398Z",
     "learningId": "learn-github-octodns-octodns"
   },
   "netflix-dynomite": {
@@ -5893,10 +5893,10 @@
     "repository": "Xudong-Huang/may",
     "platform": "github",
     "sourceUrl": "https://github.com/Xudong-Huang/may",
-    "sourceVersion": "9b1e3604",
+    "sourceVersion": "7f6b896d",
     "license": "Apache-2.0",
-    "contentHash": "738843afbf4d489e8a78d74cff68fb57a42fd8260e4b1bfbaefd7dd7ab6bf840",
-    "lastHarvestedAt": "2026-11-17T11:40:33.418Z",
+    "contentHash": "cb9590db2667dbccdf987e8cc652e493e5be9a8891ce815aea1d70a2f5a05de5",
+    "lastHarvestedAt": "2026-11-19T00:49:41.303Z",
     "learningId": "learn-github-xudong-huang-may"
   },
   "rcbyr-keen-slider": {
@@ -6103,10 +6103,10 @@
     "repository": "callstack/agent-device",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/agent-device",
-    "sourceVersion": "655ede27",
+    "sourceVersion": "6e18ea33",
     "license": "MIT",
-    "contentHash": "3c5e71ac4fc5d8bb6e9305253992b6ae3fb2e789c5f522a7453e563ba4e9762a",
-    "lastHarvestedAt": "2026-11-18T01:18:53.628Z",
+    "contentHash": "cbd705d794d94682c6cfd82bdd3477bdc21f655e269213a53d2457a8dc7b7edb",
+    "lastHarvestedAt": "2026-11-19T00:49:47.658Z",
     "learningId": "learn-github-callstack-agent-device"
   },
   "open-policy-agent-opa": {

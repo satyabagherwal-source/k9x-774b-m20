@@ -11185,3 +11185,9 @@ Every entry in this ledger must capture:
 | `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `7f4ebb35` | Multi-dimensional audit evidence | 2026-11-19T00:41:11.878Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `5d6c8155` | Multi-dimensional audit evidence | 2026-11-19T00:41:13.953Z |
 | `learn-dom-h-6f9cb66b` | `project://ntex-rs-ntex` | `abcff08d` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md` | 2026-11-19T00:41:46.092Z |
+| `learn-huggingface-baai-bge-reranker-v2-m3` | `https://huggingface.co/BAAI/bge-reranker-v2-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-19T00:49:39.639Z |
+| `learn-github-xudong-huang-may` | `https://github.com/Xudong-Huang/may` | `7f6b896d` | Multi-dimensional audit evidence | 2026-11-19T00:49:41.303Z |
+| `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `6e18ea33` | Multi-dimensional audit evidence | 2026-11-19T00:49:47.658Z |
+| `learn-github-octodns-octodns` | `https://github.com/octodns/octodns` | `fd8d1a6b` | Multi-dimensional audit evidence | 2026-11-19T00:49:49.398Z |
+| `learn-github-citusdata-citus` | `https://github.com/citusdata/citus` | `a5635dec` | Multi-dimensional audit evidence | 2026-11-19T00:49:54.936Z |
+| `learn-dom-d-9b951eaf` | `project://hf-baai-bge-reranker-v2-m3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md` | 2026-11-19T00:50:27.525Z |

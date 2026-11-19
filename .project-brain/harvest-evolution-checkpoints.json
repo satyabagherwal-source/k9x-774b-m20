@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T00:41:48.174Z",
+  "last_updated": "2026-11-19T00:50:28.875Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T22:22:52.966Z",
@@ -53,7 +53,7 @@
       "staged_for_review": 0
     },
     "callstack-agent-device-learnings.md": {
-      "processed_at": "2026-11-18T01:18:59.318Z",
+      "processed_at": "2026-11-19T00:50:27.919Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1038,7 +1038,7 @@
       "staged_for_review": 1
     },
     "xudong-huang-may-learnings.md": {
-      "processed_at": "2026-11-17T11:40:46.299Z",
+      "processed_at": "2026-11-19T00:49:58.205Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2503,9 +2503,9 @@
       "staged_for_review": 1
     },
     "hf-baai-bge-reranker-v2-m3-learnings.md": {
-      "processed_at": "2026-11-14T08:54:37.318Z",
+      "processed_at": "2026-11-19T00:50:27.525Z",
       "promoted_canonical": 1,
-      "staged_for_review": 1
+      "staged_for_review": 0
     },
     "wix-react-native-ui-lib-learnings.md": {
       "processed_at": "2026-11-14T08:54:38.065Z",
@@ -3473,7 +3473,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2124,
-  "total_canonical_promoted": 371,
-  "total_staged_for_review": 1595
+  "total_dossiers_evaluated": 2127,
+  "total_canonical_promoted": 372,
+  "total_staged_for_review": 1597
 }

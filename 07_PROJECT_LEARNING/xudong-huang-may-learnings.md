@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xudong-huang-may-learnings.md`  
 > **Source**: github ([https://github.com/Xudong-Huang/may](https://github.com/Xudong-Huang/may))  
-> **Source Version**: `9b1e3604`  
+> **Source Version**: `7f6b896d`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T11:40:32.501Z  
+> **Timestamp**: 2026-11-19T00:49:40.315Z  
 > **Learning ID**: `learn-github-xudong-huang-may`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xudong-huang-may-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Xudong-Huang/may](https://github.com/Xudong-Huang/may))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T11:40:32.149Z  
+> **Harvest Timestamp**: 2026-11-19T00:49:40.309Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: rust stackful coroutine library
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2447 stars
+- **Stars / Engagement**: 2448 stars
 
 ---
 
@@ -2065,163 +2065,139 @@ impl<T> Queue<T> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2e43c632` (2026-11-16)
-**Commit Message**: fix(sync): make the SyncBlocker hand-off one-shot and lock-free
+### Incident Patch 1: `7f6b896d` (2026-11-18)
+**Commit Message**: fix(sync): make condvar forwarding tests schedule-independent
 
-Replace the spin-lock/release-flag protocol with a single CAS claim
-word (0 -> UNPARKED / CANCELLED), and stop `park` from resetting it.
-A producer's hand-off can land after the waiter queued itself but
-before it parks; clearing the claim there lost the resource, which
-could deadlock Mutex/RwLock and drop Condvar/Semaphore signal
-forwarding.
+The waiter-ordering sleeps in the release-forwarding tests were racy:
+W2 could enqueue before W1 if W1 had not been scheduled yet, leaving the
+forwarding path unexercised. The timed-out test additionally raced W1's
+100ms timeout against the notifier's fixed hold; under the full test
+suite, timer latency reaches ~500ms, so W1's wait could be claimed by
+the notify before it ever timed out.
 
-- document the one-shot claim protocol and update the condvar
-  retention note to use the CANCELLED state
-- add unit tests for hand-off-before-park, waiter-leaves-first, and
-  timed-out-park orderings
+Order the queue with the mutex itself: W1 signals while holding the
+guard, and W2 is only spawned after that, so its lock can only succeed
+once W1's blocker is queued. The timeout test now waits for W1's real
+timeout completion and leaves its released blocker in front of the live
+waiter, and the release-chain test spawns its live waiter after all
+timed-out waiters have exited, since released blockers stay queued.
 
-**File**: `src/sync/blocking.rs` (modified, +89/-69)
+Co-Authored-By: Claude Code <[REDACTED_EMAIL]>
+
+**File**: `src/sync/condvar.rs` (modified, +47/-27)
 ```diff
-@@ -10,7 +10,7 @@
- 
- use parking_lot::{Condvar, Mutex};
- 
--use std::sync::atomic::{AtomicBool, Ordering};
-+use std::sync::atomic::{AtomicUsize, Ordering};
- use std::sync::Arc;
- use std::time::{Duration, Instant};
- 
-@@ -227,38 +227,44 @@ impl FastBlocker {
+@@ -528,10 +528,9 @@ mod tests {
+         drop(g);
      }
- }
  
-+const UNPARKED: usize = 1;
-+const CANCELLED: usize = 2;
+-    // regression: a waiter that timed out while the notifier holds the
+-    // mutex must not consume the signal meant for the live waiter behind
+-    // it in the queue — the release action is registered before the
+-    // blocking mutex re-lock
++    // regression: a waiter that timed out before the notify must not
++    // consume the signal meant for the live waiter queued behind it — its
++    // released blocker stays in the queue and notify_one has to skip it
+     #[test]
+     fn test_timed_out_waiter_forwards_notify() {
+         let m = Arc::new(Mutex::new(()));
+@@ -542,41 +541,50 @@ mod tests {
+         let c1 = c.clone();
+         let c2 = c.clone();
+         let c3 = c.clone();
+-        let (tx, rx) = channel();
++        let (tx1, rx1) = channel(); // W1 timed out and left the wait
++        let (tx2, rx2) = channel(); // W2 holds the mutex, about to park
+ 
+-        // W1: first in the condvar queue, times out quickly
++        // W1: first in the condvar queue, times out before any notify
++        // shows up, so its blocker stays queued in the released state
+         let h1 = go!(move || {
+             let g = m1.lock().unwrap();
+-            let (g, to) = c1.wait_timeout(g, Duration::from_millis(100)).unwrap();
++            let (g, to) = c1.wait_timeout(g, Duration::from_millis(10)).unwrap();
+             assert!(to.timed_out());
+             drop(g);
++            // the wait is over and the release action is registered: a
++            // later notify must be forwarded past this blocker
++            tx1.send(()).unwrap();
+         });
+ 
++        // wait until W1 has left: its released blocker is queued before W2
++        // exists, so the queue order does not depend on how the two waiters
++        // get scheduled
++        rx1.recv().unwrap();
 +
- /// A one-shot blocker with an asynchronous release hand-off.
- ///
- /// The parker ignores cancellation; the caller checks it. When the wait ends
- /// without consuming the resource (timeout or cancel), the waiter and a
- /// producer that wants to hand the resource over must agree on which of them
- /// forwards it, and exactly one of them must.
- ///
--/// Both halves of that handshake run under `spin_lock`, so the decision is
--/// made with mutual exclusion:
-+/// The decision is a single compare-exchange on `status`, so exactly one side
-+/// wins without a lock:
- ///
--/// 1. `park` returns `Err`, so the waiter calls [`leave_wait`];
--/// 2. `leave_wait` returns `true` if the resource arrived anyway and the
--///    caller must forward it;
--/// 3. a producer calls [`try_hand_off`], which returns `false` if the waiter
--///    had already left and the caller must forward to the next waiter.
-+/// * `0`: no decision yet — the wait is in progress;
-+/// * `UNPARKED`: a producer claimed the hand-off; the waiter is (or is about
-+///   to be) woken and must take the resource as its own;
-+/// * `CANCELLED`: the waiter left without the resource, so a producer that
-+///   pops this blocker must forward the resource to the next waiter.
- ///
--/// A lock-free version of this handshake cannot work here: it would require
--/// both sides to publish their own flag before reading the other's, but the
--/// producer has to read `release` before deciding whether to set `unparked`,
--/// so both sides can miss each other and lose the resource.
-+/// 1. A producer calls [`try_hand_off`], which CASes `0` -> `UNPARKED`. It
-+///    returns `true` if the waiter took the resource (and has been unparked)
-+///    and `false` if the waiter had already left — then the caller must
-+///    forward the resource to the next waiter.
-+/// 2. A waiter whose `park` returned an error calls [`leave_wait`], which
-+///    CASes `0` -> `CANCELLED`. It returns `false` if the waiter left first
-+///    and `true` if a producer had already claimed the hand-off — then the
-+///    caller must forward the resource, because the waiter is unwinding and
-+///    can no longer use it.
- ///
--/// A `SyncBlocker` is used for a single wait only; the flags are never reset.
-+/// A `SyncBlocker` is used for a single wait only. The claim word starts at
-+/// `0` and is set at most once; it must never be reset (in particular, `park`
-+/// must not clear it), because a producer's CAS can land before the waiter
-+/// parks.
- #[derive(Debug)]
- pub(crate) struct SyncBlocker {
--    // set once by `unpark` and never reset: a SyncBlocker is used for a
--    // single wait only, so the flag only ever needs to be checked once
--    unparked: AtomicBool,
--    // used to register the release action
--    release: AtomicBool,
-+    status: AtomicUsize,
-+    // coroutine/thread blocker
-     blocker: Blocker,
--    // a spin lock to protect cancellation handling and release flag updates
--    spin_lock: AtomicBool,
- }
+         // W2: second in the queue, must receive the forwarded signal
+         let h2 = go!(move || {
+-            sleep(Duration::from_millis(20)); // let W1 enqueue first
+             let g = m2.lock().unwrap();
+-            tx.send(()).unwrap(); // parked in the condvar wait below
++            tx2.send(()).unwrap(); // holds the mutex, about to park below
+             let (g, to) = c2.wait_timeout(g, Duration::from_secs(2)).unwrap();
+             assert!(!to.timed_out());
+             drop(g);
+         });
  
- impl SyncBlocker {
-@@ -268,43 +274,35 @@ impl SyncBlocker {
-         let blocker = Blocker::new(true);
- 
-         Arc::new(SyncBlocker {
--            unparked: AtomicBool::new(false),
--            release: AtomicBool::new(false),
-+            status: AtomicUsize::new(0),
-             blocker,
--            spin_lock: AtomicBool::new(false),
-         })
+-        // W2 holds the mutex, about to park: this lock blocks until W2's
+-        // wait unlocks the mutex. W1's 100ms timeout fires while we hold
+-        // it, so W1 blocks in its mutex re-lock.
+-        rx.recv().unwrap();
++        // this lock blocks until W2's wait unlocks the mutex, so W2's
++        // blocker is queued when the notify below pops it
++        rx2.recv().unwrap();
+         let g = m3.lock().unwrap();
+-        sleep(Duration::from_millis(200));
+-        // pops W1's blocker: the signal must be forwarded to W2
++        // pops W1's released blocker first: it must forward to W2
+         c3.notify_one();
+         drop(g);
+         h1.join().unwrap();
+         h2.join().unwrap();
      }
  
--    /// Whether [`unpark`](Self::unpark) has already been called.
-+    /// Whether a producer has already claimed the hand-off and will wake this
-+    /// waiter (see the type-level docs).
-+    ///
-+    /// Returns `false` once the waiter itself has left via [`leave_wait`].
-     #[inline]
-     pub fn is_unparked(&self) -> bool {
--        self.unparked.load(Ordering::SeqCst)
--    }
--
--    /// Record that the waiter is leaving without consuming the resource.
--    #[inline]
--    fn set_release(&self) {
--        self.release.store(true, Ordering::SeqCst);
--    }
--
--    /// Take the release flag. Returns true exactly once if it was set.
--    #[inline]
--    fn take_release(&self) -> bool {
--        self.release.swap(false, Ordering::SeqCst)
-+        self.status.load(Ordering::Acquire) == UNPARKED
-     }
+-    // regression: same as above but with a canceled waiter instead of a
+-    // timed out one
++    // regression: a waiter that was canceled while the notifier holds the
++    // mutex must not consume the signal meant for the live waiter behind it
++    // in the queue — the release action is registered before the blocking
++    // mutex re-lock
+     #[test]
+     fn test_canceled_waiter_forwards_notify() {
+         let m = Arc::new(Mutex::new(()));
+@@ -587,20 +595,27 @@ mod tests {
+         let c1 = c.clone();
+         let c2 = c.clone();
+         let c3 = c.clone();
+-        let (tx, rx) = channel();
++        let (tx1, rx1) = channel();
++        let (tx2, rx2) = channel();
  
-     #[inline]
-     pub fn park(&self, timeout: Option<Duration>) -> Result<(), ParkError> {
-+        // the claim word must not be reset here: a producer's `try_hand_off`
-+        // can land after the waiter queued itself but before it parks (see
-+        // the type-level docs)
-         self.blocker.park(timeout)
-     }
+         // W1: first in the condvar queue, will be canceled
+         let h1 = go!(move || {
+             let g = m1.lock().unwrap();
++            // signal while holding the mutex: W2's lock below can only
++            // succeed after W1's wait has queued its blocker and released
++            // the mutex, so no scheduling delay can move W1 behind W2
++            tx1.send(()).unwrap();
+             let _ = c1.wait(g).unwrap(); // cancel panic propagates
+             unreachable!();
+         });
  
--    /// Wake the waiter.
-+    /// Wake the waiter after the hand-off claim has been published.
-     ///
--    /// `unparked` is stored *before* waking so that the woken waiter observes
--    
-```
-
-**File**: `src/sync/condvar.rs` (modified, +4/-4)
-```diff
-@@ -38,10 +38,10 @@ impl WaitTimeoutResult {
- pub struct Condvar {
-     // the waiting blocker list
-     // NOTE: a blocker that exits the wait via timeout/cancel without being
--    // notified stays in the queue (with the release flag set) until a
--    // notify pops it, so the signal can be forwarded to the next live
--    // waiter. If a condvar is never notified again, those blockers are
--    // retained for the lifetime of the condvar.
-+    // notified stays in the queue (leave_wait has marked its status
-+    // `CANCELLED`) until a notify pops it, so the signal can be forwarded to
-+    // the next live waiter. If a condvar is never notified again, those
-+    // blockers are retained for the lifetime of the condvar.
-     to_wake: SegQueue<Arc<SyncBlocker>>,
-     // used to verify the same mutex instance
-     mutex: AtomicUsize,
++        // W1 holds the mutex and is about to enqueue: only now let W2 in
++        rx1.recv().unwrap();
++
+         // W2: second in the queue, must receive the forwarded signal
+         let h2 = go!(move || {
+-            sleep(Duration::from_millis(20)); // let W1 enqueue first
+-            let g = m2.lock().unwrap();
+-            tx.send(()).unwrap(); // parked in the condvar wait below
++            let g = m2.lock().unwrap(); // blocks until W1's wait unlocks
++            tx2.send(()).unwrap(); // holds the mutex, about to park below
+             let (g, to) = c2.wait_timeout(g, Duration::from_secs(2)).unwrap();
+             assert!(!to.timed_out());
+             drop(g);
+@@ -609,9 +624,12 @@ mod tests {
+         /
 ```
 
 #### Recent Merged Pull Requests:
@@ -2250,68 +2226,68 @@ forwarding.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sync): make the SyncBlocker hand-off one-shot and lock-free
+## X. sync): make condvar forwarding tests schedule-independent
 
 **RULE**:
-When implementing operations in `src/sync/blocking.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/sync/condvar.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Xudong-Huang/may. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2e43c632`: sync): make the SyncBlocker hand-off one-shot and lock-free. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7f6b896d`: sync): make condvar forwarding tests schedule-independent. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/sync/blocking.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/sync/condvar.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use std::sync::atomic::{AtomicUsize, Ordering};
-const UNPARKED: usize = 1;
-const CANCELLED: usize = 2;
+    // regression: a waiter that timed out before the notify must not
+    // consume the signal meant for the live waiter queued behind it — its
+    // released blocker stays in the queue and notify_one has to skip it
+        let (tx1, rx1) = channel(); // W1 timed out and left the wait
+        let (tx2, rx2) = channel(); // W2 holds the mutex, about to park
+        // W1: first in the condvar queue, times out before any notify
+        // shows up, so its blocker stays queued in the released state
+            let (g, to) = c1.wait_timeout(g, Duration::from_millis(10)).unwrap();
+            // the wait is over and the release action is registered: a
+            // later notify must be forwarded past this blocker
+            tx1.send(()).unwrap();
+        // wait until W1 has left: its released blocker is queued before W2
+        // exists, so the queue order does not depend on how the two waiters
+        // get scheduled
+        rx1.recv().unwrap();
 
-/// The decision is a single compare-exchange on `status`, so exactly one side
-/// wins without a lock:
-/// * `0`: no decision yet — the wait is in progress;
-/// * `UNPARKED`: a producer claimed the hand-off; the waiter is (or is about
-///   to be) woken and must take the resource as its own;
-/// * `CANCELLED`: the waiter left without the resource, so a producer that
-///   pops this blocker must forward the resource to the next waiter.
-/// 1. A producer calls [`try_hand_off`], which CASes `0` -> `UNPARKED`. It
-///    returns `true` if the waiter took the resource (and has been unparked)
-///    and `false` if the waiter had already left — then the caller must
-///    forward the resource to the next waiter.
-/// 2. A waiter whose `park` returned an error calls [`leave_wait`], which
-///    CASes `0` -> `CANCELLED`. It returns `false` if the waiter left first
-///    and `true` if a producer had already claimed the hand-off — then the
-///    caller must forward the resource, because the waiter is unwinding and
-///    can no longer use it.
-/// A `SyncBlocker` is used for a single wait o
+            tx2.send(()).unwrap(); // holds the mutex, about to park below
+        // this lock blocks until W2's wait unlocks the mutex, so W2's
+        // blocker is queued when the notify below pops it
+        rx2.recv().unwrap();
+  
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-use std::sync::atomic::{AtomicBool, Ordering};
-/// Both halves of that handshake run under `spin_lock`, so the decision is
-/// made with mutual exclusion:
-/// 1. `park` returns `Err`, so the waiter calls [`leave_wait`];
-/// 2. `leave_wait` returns `true` if the resource arrived anyway and the
-///    caller must forward it;
-/// 3. a producer calls [`try_hand_off`], which returns `false` if the waiter
-///    had already left and the caller must forward to the next waiter.
-/// A lock-free version of this handshake cannot work here: it would require
-/// both sides to publish their own flag before reading the other's, but the
-/// producer has to read `release` before deciding whether to set `unparked`,
-/// so both sides can miss each other and lose the resource.
-/// A `SyncBlocker` is used for a single wait only; the flags are never reset.
-    // set once by `unpark` and never reset: a SyncBlocker is used for a
-    // single wait only, so the flag only ever needs to be checked once
-    unparked: AtomicBool,
-    // used to register the release action
-    release: AtomicBool,
-    // a spin lock to protect cancellation handling and release flag updates
-    spin_lock: AtomicBool,
-          
+    // regression: a waiter that timed out while the notifier holds the
+    // mutex must not consume the signal meant for the live waiter behind
+    // it in the queue — the release action is registered before the
+    // blocking mutex re-lock
+        let (tx, rx) = channel();
+        // W1: first in the condvar queue, times out quickly
+            let (g, to) = c1.wait_timeout(g, Duration::from_millis(100)).unwrap();
+            sleep(Duration::from_millis(20)); // let W1 enqueue first
+            tx.send(()).unwrap(); // parked in the condvar wait below
+        // W2 holds the mutex, about to park: this lock blocks until W2's
+        // wait unlocks the mutex. W1's 100ms timeout fires while we hold
+        // it, so W1 blocks in its mutex re-lock.
+        rx.recv().unwrap();
+        sleep(Duration::from_millis(200));
+        // pops W1's blocker: the signal must be forwarded to W2
+    // regression: same as above but with a canceled waiter instead of a
+    // timed out one
+        let (tx, rx) = channel();
+            sleep(Duration::from_millis(20)); // let W1 enqueue first
+            let g = m2.lock().unwrap();
+            tx.send(()).unwrap(); // parked in the condvar wait b
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2e43c632` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7f6b896d` are properly handled with clean fallback behavior.

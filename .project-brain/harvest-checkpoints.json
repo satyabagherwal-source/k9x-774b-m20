@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T00:41:13.961Z",
+  "last_updated": "2026-11-19T00:49:54.945Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1475,14 +1475,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-reranker-v2-m3",
-      "content_hash": "f9932d8d415ad9ae6cfc05e1a4b895e2848d739e72e01bcbb27c01fb1ab2d3c1",
-      "verified_at": "2026-11-14T08:53:29.438Z",
+      "content_hash": "ef3f1848c52a2dfe01b3cbc0b4b7971e3d5772341e58a521b25ee533603757ab",
+      "verified_at": "2026-11-19T00:49:39.647Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T08:53:29.438Z"
+      "last_updated": "2026-11-19T00:49:39.647Z"
     },
     "jonatasgrosman/wav2vec2-large-xlsr-53-japanese": {
       "repository": "jonatasgrosman/wav2vec2-large-xlsr-53-japanese",
@@ -7881,14 +7881,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-citusdata-citus",
-      "content_hash": "e250e023b1f6726f5f3f5667217e6a8ddea93780f7b09155ad39c82fbc666d46",
-      "verified_at": "2026-11-17T09:22:25.893Z",
+      "content_hash": "76b1129927c248809eada1ab0447d6a62c2bacfb9f1a8dee62e0427a924d062b",
+      "verified_at": "2026-11-19T00:49:54.944Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T09:22:25.893Z"
+      "last_updated": "2026-11-19T00:49:54.944Z"
     },
     "reshaped-ui/reshaped": {
       "repository": "reshaped-ui/reshaped",
@@ -8316,14 +8316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-octodns-octodns",
-      "content_hash": "7aa5e24771b5465c97c15623e80d8e712ca997984689db47e9248fca6323cc03",
-      "verified_at": "2026-11-07T03:14:21.810Z",
+      "content_hash": "606b7e87f9b2ffbb4e44158997088b41460d8b288a3048c8322b07ab4027253a",
+      "verified_at": "2026-11-19T00:49:49.406Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T03:14:21.810Z"
+      "last_updated": "2026-11-19T00:49:49.406Z"
     },
     "Netflix/dynomite": {
       "repository": "Netflix/dynomite",
@@ -8961,14 +8961,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-xudong-huang-may",
-      "content_hash": "738843afbf4d489e8a78d74cff68fb57a42fd8260e4b1bfbaefd7dd7ab6bf840",
-      "verified_at": "2026-11-17T11:40:33.425Z",
+      "content_hash": "cb9590db2667dbccdf987e8cc652e493e5be9a8891ce815aea1d70a2f5a05de5",
+      "verified_at": "2026-11-19T00:49:41.311Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T11:40:33.425Z"
+      "last_updated": "2026-11-19T00:49:41.311Z"
     },
     "rcbyr/keen-slider": {
       "repository": "rcbyr/keen-slider",
@@ -9276,14 +9276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-agent-device",
-      "content_hash": "3c5e71ac4fc5d8bb6e9305253992b6ae3fb2e789c5f522a7453e563ba4e9762a",
-      "verified_at": "2026-11-18T01:18:53.636Z",
+      "content_hash": "cbd705d794d94682c6cfd82bdd3477bdc21f655e269213a53d2457a8dc7b7edb",
+      "verified_at": "2026-11-19T00:49:47.666Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T01:18:53.636Z"
+      "last_updated": "2026-11-19T00:49:47.666Z"
     },
     "open-policy-agent/opa": {
       "repository": "open-policy-agent/opa",

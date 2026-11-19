@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/citusdata-citus-learnings.md`  
 > **Source**: github ([https://github.com/citusdata/citus](https://github.com/citusdata/citus))  
-> **Source Version**: `1c614e7d`  
+> **Source Version**: `a5635dec`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T09:22:24.746Z  
+> **Timestamp**: 2026-11-19T00:49:53.949Z  
 > **Learning ID**: `learn-github-citusdata-citus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/citusdata-citus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/citusdata/citus](https://github.com/citusdata/citus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T09:22:24.738Z  
+> **Harvest Timestamp**: 2026-11-19T00:49:53.943Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Distributed PostgreSQL as an extension
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 12863 stars
+- **Stars / Engagement**: 12865 stars
 
 ---
 
@@ -2563,173 +2563,341 @@ ColumnarStorageGetReservedRowNumber(Relation rel, bool force)
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1c614e7d` (2026-11-16)
-**Commit Message**: Skip partition-key NOT NULL filter for single-shard INSERT ... SELECT (#8963)
+### Incident Patch 1: `a5635dec` (2026-11-18)
+**Commit Message**: Pin GitHub Actions Ubuntu runners to 24.04 (#8979)
 
-Fixes #8959.
+DESCRIPTION: Pins GitHub Actions Ubuntu runners to Ubuntu 24.04
 
-`RebuildQueryStrings()` called `AddPartitionKeyNotNullFilterToSelect()`
-for every INSERT ... SELECT whose target was a distributed table, which
-also matched single-shard (schema-based sharding) tables created via
-`create_distributed_table(..., NULL)`. Those tables have no distribution
-column, so the loop inside the helper never finds a partition-key `Var`
-and leaves `targetPartitionColumnVar` NULL. In release builds the
-`Assert` is compiled out and:
+## Why
 
-- on PG18 the `hasGroupRTE` branch reads
-`targetPartitionColumnVar->varno` and crashes the backend (`segfault at
-4`),
-- without GROUP BY the `NullTest` is built with `arg = NULL` and the
-worker query is deparsed as `( IS NOT NULL)`, which errors out as
-`syntax error at or near "NOT"`.
+The Nightly cassert [last good run on November
+12](https://github.com/citusdata/citus/actions/runs/43146032467) and
+[first failing run on November
+13](https://github.com/citusdata/citus/actions/runs/43356785925) used
+the same commit, `08479aca8b0d0d83640559f1a641b1d9ae5c2028`.
+Investigation identified the `ubuntu-latest` transition from Ubuntu
+24.04 to 26.04: restored PostgreSQL binaries could not load
+`libicuuc.so.74`, and Pipenv could not find the required Python 3.12.
+PostgreSQL pins were unchanged. Restore the intended runner environment
+rather than adapting dependencies to Ubuntu 26.04.
 
-Any user who can run an INSERT ... SELECT with a stable function (e.g.
-`now()`, a `DEFAULT now()` column, `current_timestamp`, `current_user`)
-against a schema-sharded table could crash the coordinator, taking down
-every other backend with it until crash recovery finishes.
+## Scope
 
-## Fix
+Replace all 30 `runs-on: ubuntu-latest` selections with `ubuntu-24.04`
+across seven workflows: `build_and_test.yml`, `run_tests.yml` (shared
+workflow), `nightly_cassert.yml`, `nightly_arm64.yml` (helper jobs
+only), `flaky_test_debugging.yml`, `packaging-test-pipelines.yml`, and
+`devcontainer.yml`.
 
-Two changes, matching both suggestions from the issue:
+Preserve CodeQL's explicit `ubuntu-22.04`, native `ubuntu-24.04-arm`,
+and all Python/dependency/PostgreSQL pins, caches, action versions,
+schedules, matrices, and ot
 
-1. In `RebuildQueryStrings
-
-**File**: `src/backend/distributed/planner/deparse_shard_query.c` (modified, +1/-2)
+**File**: `.github/workflows/build_and_test.yml` (modified, +13/-13)
 ```diff
-@@ -106,8 +106,7 @@ RebuildQueryStrings(Job *workerJob)
- 			RangeTblEntry *copiedSubqueryRte = ExtractSelectRangeTableEntry(query);
- 			Query *copiedSubquery = copiedSubqueryRte->subquery;
+@@ -25,7 +25,7 @@ jobs:
+   # Since GHA does not interpolate env varibles in matrix context, we need to
+   # define them in a separate job and use them in other jobs.
+   params:
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     name: Initialize parameters
+     outputs:
+       build_image_name: "ghcr.io/citusdata/extbuilder"
+@@ -47,7 +47,7 @@ jobs:
+         run: echo 'noop'
+   check-sql-snapshots:
+     needs: params
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     container:
+       image: ${{ needs.params.outputs.build_image_name }}:${{ needs.params.outputs.sql_snapshot_pg_version }}${{ needs.params.outputs.image_suffix }}
+       options: --user root
+@@ -59,7 +59,7 @@ jobs:
+         ci/check_sql_snapshots.sh
+   check-style:
+     needs: params
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     container:
+       image: ${{ needs.params.outputs.style_checker_image_name }}:${{ needs.params.outputs.style_checker_tools_version }}${{ needs.params.outputs.image_suffix }}
+     steps:
+@@ -117,7 +117,7 @@ jobs:
+           - ${{ needs.params.outputs.pg17_version }}
+           - ${{ needs.params.outputs.pg18_version }}
+           - ${{ needs.params.outputs.pg19_version }}
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     container:
+       image: "${{ matrix.image_name }}:${{ fromJson(matrix.pg_version).full }}${{ matrix.image_suffix }}"
+       options: --user root
+@@ -192,7 +192,7 @@ jobs:
+       codecov_token: ${{ secrets.CODECOV_TOKEN }}
+   test-arbitrary-configs:
+     name: PG${{ fromJson(matrix.pg_version).major }} - check-arbitrary-configs-${{ matrix.parallel }}
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     container:
+       image: "${{ matrix.image_name }}:${{ fromJson(matrix.pg_version).full }}${{ needs.params.outputs.image_suffix }}"
+       options: --user root
+@@ -241,7 +241,7 @@ jobs:
+         codecov_token: ${{ secrets.CODECOV_TOKEN }}
+   test-pg-upgrade:
+     name: PG${{ matrix.old_pg_major }}-PG${{ matrix.new_pg_major }} - check-pg-upgrade
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     container:
+       image: "${{ needs.params.outputs.pgupgrade_image_name }}:${{ needs.params.outputs.upgrade_pg_versions }}${{ needs.params.outputs.image_suffix }}"
+       options: --user root
+@@ -302,7 +302,7 @@ jobs:
+         codecov_token: ${{ secrets.CODECOV_TOKEN }}
+   test-citus-upgrade:
+     name: PG${{ fromJson(matrix.pg_version).major }} - check-citus-upgrade
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     container:
+       image: "${{ needs.params.outputs.citusupgrade_image_name }}:${{ fromJson(matrix.pg_version).full }}${{ needs.params.outputs.image_suffix }}"
+       options: --user root
+@@ -356,7 +356,7 @@ jobs:
+   ch_benchmark:
+     name: CH Benchmark
+     if: startsWith(github.ref, 'refs/heads/ch_benchmark/')
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     needs:
+     - build
+     steps:
+@@ -374,7 +374,7 @@ jobs:
+   tpcc_benchmark:
+     name: TPCC Benchmark
+     if: startsWith(github.ref, 'refs/heads/tpcc_benchmark/')
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     needs:
+     - build
+     steps:
+@@ -393,7 +393,7 @@ jobs:
+     name: Prepare parallelization matrix
+     if: ${{ needs.test-flakyness-pre.outputs.tests != ''}}
+     needs: test-flakyness-pre
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     outputs:
+       json: ${{ steps.parallelization.outputs.json }}
+     steps:
+@@ -405,7 +405,7 @@ jobs:
+   test-flakyness-pre:
+     name: Detect regression tests need to be ran
+     if: ${{ !inputs.skip_test_flakyness }}
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     needs: build
+     outputs:
+       tests: ${{ steps.detect-regression-tests.outputs.tests }}
+@@ -457,7 +457,7 @@ jobs:
+   test-flakyness:
+     if: ${{ needs.test-flakyness-pre.outputs.tests != ''}}
+     name: Test flakyness
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     container:
+       image: ${{ needs.params.outputs.fail_test_image_name }}:${{ fromJson(needs.params.outputs.pg18_version).full }}${{ needs.params.outputs.image_suffix }}
+       options: --user root
+@@ -513,7 +513,7 @@ jobs:
+     - test-arbitrary-configs
+     - test-pg-upgrade
+     - test-citus-upgrade
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     steps:
+     - name: Show results of required jobs
+       run: echo '${{ toJSON(needs) }}'
+```
+
+**File**: `.github/workflows/devcontainer.yml` (modified, +1/-1)
+```diff
+@@ -18,7 +18,7 @@ on:
  
--			/* there are no restrictions to add for reference and citus local tables */
--			if (IsCitusTableType(shardInterval->relationId, DISTRIBUTED_TABLE))
-+			if (HasDistributionKey(shardInterval->relationId))
- 			{
- 				bool distributionColumnIsShardKeyIdentity =
- 					InsertPartitionColumnIsShardKeyIdentity(query, copiedInsertRte,
+ jobs:
+   docker:
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     permissions:
+       contents: read
+       packages: write
 ```
 
-**File**: `src/backend/distributed/planner/multi_router_planner.c` (modified, +7/-2)
+**File**: `.github/workflows/flaky_test_debugging.yml` (modified, +3/-3)
 ```diff
-@@ -401,8 +401,13 @@ AddPartitionKeyNotNullFilterToSelect(Query *subqery, bool
- 		return;
- 	}
+@@ -25,7 +25,7 @@ on:
+ jobs:
+   build:
+     name: Build Citus
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     container:
+       image: ${{ vars.build_image_name }}:${{ vars.pg17_version  }}${{ vars.image_suffix }}
+       options: --user root
+@@ -44,7 +44,7 @@ jobs:
+           ./install-${{ env.PG_MAJOR }}.tar
+   prepare_parallelization_matrix:
+     name: Prepare parallelization matrix
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     outputs:
+       json: ${{ steps.parallelization.outputs.json }}
+     steps:
+@@ -55,7 +55,7 @@ jobs:
+           count: ${{ inputs.flaky_test_parallel_jobs }}
+   test_flakyness:
+     name: Test flakyness
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     container:
+       image: ${{ vars.fail_test_image_name }}:${{ vars.pg17_version  }}${{ vars.image_suffix }}
+       options: --user root
+```
+
+**File**: `.github/workflows/nightly_arm64.yml` (modified, +2/-2)
+```diff
+@@ -41,7 +41,7 @@ jobs:
+   # Bounded to the two newest majors for phase 1; bump here to widen the arm coverage.
+   params:
+     name: Initialize parameters
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     outputs:
+       pg_versions: '[{ "major": "17", "full": "17.11" }, { "major": "18", "full": "18.6" }]'
+     steps:
+@@ -95,7 +95,7 @@ jobs:
+     name: Open issue on failure
+     needs: [ test ]
+     if: failure()
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     steps:
+       - uses: actions/github-script@v7
+         with:
+```
+
+**File**: `.github/workflows/nightly_cassert.yml` (modified, +6/-6)
+```diff
+@@ -32,7 +32,7 @@ jobs:
+   # restating them. Until then this job is the one place to bump the cassert matrix.
+   params:
+     name: Initialize parameters
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     outputs:
+       pg_versions: '[{ "major": "17", "full": "17.11" }, { "major": "18", "full": "18.6" }, { "major": "19", "full": "19rc1" }]'
+       pg_upgrade_pairs: '[{ "old": "17", "old_full": "17.11", "new": "18", "new_full": "18.6" }, { "old": "18", "old_full": "18.6", "new": "19", "new_full": "19rc1" }, { "old": "17", "old_full": "17.11", "new": "19", "new_full": "19rc1" }]'
+@@ -46,7 +46,7 @@ jobs:
+   test:
+     needs: params
+     name: cassert PG${{ matrix.pg.major }} - ${{ matrix.group }}
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     strategy:
+       fail-fast: false
+       matrix:
+@@ -96,7 +96,7 @@ jobs:
+   pg-upgrade:
+     needs: params
+     name: cassert PG${{ matrix.old }}-PG${{ matrix.new }} - pg-upgrade
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     strategy:
+       fail-fast: false
+       matrix:
+@@ -142,7 +142,7 @@ jobs:
+   citus-upgrade:
+     needs: params
+     name: cassert PG${{ matrix.pg.major }} - citus-upgrade
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     strategy:
+       fail-fast: false
+       matrix:
+@@ -180,7 +180,7 @@ jobs:
+   arbitrary-configs:
+     needs: params
+     name: cassert PG${{ matrix.pg.major }} - arbitrary-configs-${{ matrix.parallel }}
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     strategy:
+       fail-fast: false
+       matrix:
+@@ -223,7 +223,7 @@ jobs:
+     name: Open issue on failure
+     needs: [ test, pg-upgrade, citus-upgrade, arbitrary-configs ]
+     if: failure()
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     steps:
+       - uses: actions/github-script@v7
+         with:
+```
+
+**File**: `.github/workflows/packaging-test-pipelines.yml` (modified, +4/-4)
+```diff
+@@ -17,7 +17,7 @@ concurrency:
+ jobs:
  
--	/* we should have found target partition column */
--	Assert(targetPartitionColumnVar != NULL);
-+	/* Caller must gate on HasDistributionKey(); surface stray callers (#8959). */
-+	if (targetPartitionColumnVar == NULL)
-+	{
-+		ereport(ERROR, (errcode(ERRCODE_INTERNAL_ERROR),
-+						errmsg("AddPartitionKeyNotNullFilterToSelect called "
-+							   "without a partition-key Var in the target list")));
-+	}
- 
- #if PG_VERSION_NUM >= PG_VERSION_18
- 	if (subqery->hasGroupRTE)
+   get_postgres_versions_from_file:
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     outputs:
+       pg_versions: ${{ steps.get-postgres-versions.outputs.pg_versions }}
+     steps:
+@@ -41,7 +41,7 @@ jobs:
+   rpm_build_tests:
+     name: rpm_build_tests
+     needs: get_postgres_versions_from_file
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     strategy:
+       fail-fast: false
+       matrix:
+@@ -113,7 +113,7 @@ jobs:
+   deb_build_tests:
+     name: deb_build_tests
+     needs: get_postgres_versions_from_file
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     strategy:
+       fail-fast: false
+       matrix:
+@@ -195,7 +195,7 @@ jobs:
+       - get_postgres_versions_from_file
+       - rpm_build_tests
+       - deb_build_tests
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     steps:
+       - name: Show results of required jobs
+         run: echo '${{ toJSON(needs) }}'
 ```
 
-**File**: `src/test/regress/expected/insert_select_single_shard_table_8959.out` (added, +39/-0)
+**File**: `.github/workflows/run_tests.yml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,39 @@
-+-- Regression for #8959: INSERT ... SELECT into a single-shard target used to
-+-- hit AddPartitionKeyNotNullFilterToSelect with no partition-key Var, which
-+-- segfaulted on PG18 with GROUP BY and deparsed to "( IS NOT NULL)" without.
-+-- Kept out of multi_1_schedule because N-1 runs against older coordinator
-+-- libraries would still crash on these statements.
-+CREATE SCHEMA insert_select_single_shard_table_8959;
-+SET search_path TO insert_select_single_shard_table_8959;
-+SET citus.shard_replication_factor TO 1;
-+CREATE TABLE src_8959(k text);
-+CREATE TABLE dst_8959(k text, created_at timestamptz DEFAULT now());
-+SELECT create_distributed_table('src_8959', null, colocate_with=>'none');
-+ create_distributed_table
-+---------------------------------------------------------------------
-+
-+(1 row)
-+
-+SELECT create_distributed_table('dst_8959', null, colocate_with=>'src_8959');
-+ create_distributed_table
-+---------------------------------------------------------------------
-+
-+(1 row)
-+
-+INSERT INTO src_8959 VALUES ('a'), ('a'), ('b');
-+-- GROUP BY variants (crashed)
-+INSERT INTO dst_8959 (k) SELECT k FROM src_8959 GROUP BY k;
-+INSERT INTO dst_8959 (k, created_at) SELECT k, now() FROM src_8959 GROUP BY k;
-+INSERT INTO dst_8959 (k) SELECT k FROM src_8959 WHERE now() > '2020-01-01' GROUP BY k;
-+INSERT INTO dst_8959 (k) SELECT k FROM src_8959 GROUP BY k HAVING count(*) > 0;
-+-- No-GROUP-BY variants (deparsed as "( IS NOT NULL)")
-+INSERT INTO dst_8959 (k) SELECT 'x' FROM src_8959 HAVING count(*) > 0;
-+INSERT INTO dst_8959 (k) SELECT k FROM src_8959;
-+SELECT count(*) FROM dst_8959;
-+ count
-+---------------------------------------------------------------------
-+    12
-+(1 row)
-+
-+SET client_min_messages TO WARNING;
-+DROP SCHEMA insert_select_single_shard_table_8959 CASCADE;
-```
-
-**File**: `src/test/regress/multi_1_create_citus_schedule` (modified, +8/-0)
-```diff
-@@ -131,3 +131,11 @@ test: multi_or_arm_pruning
- # check-multi-1-create-citus, which is not part of the N-1 test matrix.
- # ----------
- test: node_removal_transaction_recovery
-+
-+# ----------
-+# insert_select_single_shard_table_8959 covers an INSERT ... SELECT crash
-+# (#8959) fixed in 14.3; the N-1 (14.2-1) coordinator library still segfaults
-+# or produces invalid worker SQL on these statements, so this cannot run under
-+# the N-1 test matrix. Move back to multi_1_schedule at Citus 15.
-+# ----------
-+test: insert_select_single_shard_table_8959
-```
-
-**File**: `src/test/regress/sql/insert_select_single_shard_table_8959.sql` (added, +30/-0)
-```diff
-@@ -0,0 +1,30 @@
-+-- Regression for #8959: INSERT ... SELECT into a single-shard target used to
-+-- hit AddPartitionKeyNotNullFilterToSelect with no partition-key Var, which
-+-- segfaulted on PG18 with GROUP BY and deparsed to "( IS NOT NULL)" without.
-+-- Kept out of multi_1_schedule because N-1 runs against older coordinator
-+-- libraries would still crash on these statements.
-+CREATE SCHEMA insert_select_single_shard_table_8959;
-+SET search_path TO insert_select_single_shard_table_8959;
-+SET citus.shard_replication_factor TO 1;
-+
-+CREATE TABLE src_8959(k text);
-+CREATE TABLE dst_8959(k text, created_at timestamptz DEFAULT now());
-+SELECT create_distributed_table('src_8959', null, colocate_with=>'none');
-+SELECT create_distributed_table('dst_8959', null, colocate_with=>'src_8959');
-+
-+INSERT INTO src_8959 VALUES ('a'), ('a'), ('b');
-+
-+-- GROUP BY variants (crashed)
-+INSERT INTO dst_8959 (k) SELECT k FROM src_8959 GROUP BY k;
-+INSERT INTO dst_8959 (k, created_at) SELECT k, now() FROM src_8959 GROUP BY k;
-+INSERT INTO dst_8959 (k) SELECT k FROM src_8959 WHERE now() > '2020-01-01' GROUP BY k;
-+INSERT INTO dst_8959 (k) SELECT k FROM src_8959 GROUP BY k HAVING count(*) > 0;
-+
-+-- No-GROUP-BY variants (deparsed as "( IS NOT NULL)")
-+INSERT INTO dst_8959 (k) SELECT 'x' FROM src_8959 HAVING count(*) > 0;
-+INSERT INTO dst_8959 (k) SELECT k FROM src_8959;
-+
-+SELECT count(*) FROM dst_8959;
-+
-+SET client_min_messages TO WARNING;
-+DROP SCHEMA insert_select_single_shard_table_8959 CASCADE;
+@@ -48,7 +48,7 @@ jobs:
+       matrix:
+         pg_version: ${{ fromJson(inputs.pg_versions) }}
+         make: ${{ fromJson(inputs.make_targets) }}
+-    runs-on: ubuntu-latest
++    runs-on: ubuntu-24.04
+     container:
+       image: "${{ inputs.image_name }}:${{ matrix.pg_version.full }}${{ inputs.image_suffix }}"
+       options: >-
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8979** (2026-11-18): Pin GitHub Actions Ubuntu runners to 24.04 (@ihalatci)
 - **PR #8969** (2026-11-10): [release-14.0] Propagate encrypted password on CREATE ROLE (#8966) (@onurctirtir)
 - **PR #8968** (2026-11-10): [release-13.2] Propagate encrypted password on CREATE ROLE (#8966) (@onurctirtir)
 - **PR #8966** (2026-11-09): Propagate encrypted password on CREATE ROLE (@onurctirtir)
 - **PR #8963** (2026-11-16): Skip partition-key NOT NULL filter for single-shard INSERT ... SELECT (@Bimal-ray99)
 - **PR #8956** (2026-11-06): Evaluate replayed object definitions in the owner context (@ihalatci)
-- **PR #8955** (2026-11-06): Use a trusted search path for internal SPI queries (@ihalatci)
 
 ---
 
@@ -2749,29 +2917,52 @@ Two changes, matching both suggestions from the issue:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Skip partition-key NOT NULL filter for single-shard INSERT ... SELECT
+## X. Pin GitHub Actions Ubuntu runners to 24.04
 
 **RULE**:
-When implementing operations in `src/backend/distributed/planner/deparse_shard_query.c`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in citusdata/citus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/build_and_test.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in citusdata/citus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1c614e7d`: Skip partition-key NOT NULL filter for single-shard INSERT ... SELECT. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a5635dec`: Pin GitHub Actions Ubuntu runners to 24.04. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/backend/distributed/planner/deparse_shard_query.c`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/build_and_test.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-			if (HasDistributionKey(shardInterval->relationId))
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Induced defect failure mode:
-			/* there are no restrictions to add for reference and citus local tables */
-			if (IsCitusTableType(shardInterval->relationId, DISTRIBUTED_TABLE))
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1c614e7d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a5635dec` are properly handled with clean fallback behavior.

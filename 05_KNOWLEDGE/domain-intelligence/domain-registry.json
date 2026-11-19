@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T00:41:47.881Z",
-  "total_records": 1923,
+  "last_updated": "2026-11-19T00:50:28.303Z",
+  "total_records": 1927,
   "domains": {
     "A": {
       "total": 13,
@@ -53,7 +53,7 @@
       ]
     },
     "D": {
-      "total": 810,
+      "total": 813,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -864,7 +864,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-2-7b-learnings-core-invarian",
         "domain_intelligence-research-knowledge-intelligence-naiveai-naive-n0-5-flash-core-invariants",
         "DOM-D-0BC48FAB",
-        "domain_intelligence-research-knowledge-intelligence-hf-naiveai-naive-n0-5-flash-learnings-core-invar"
+        "domain_intelligence-research-knowledge-intelligence-hf-naiveai-naive-n0-5-flash-learnings-core-invar",
+        "domain_intelligence-research-knowledge-intelligence-baai-bge-reranker-v2-m3-core-invariants",
+        "DOM-D-9B951EAF",
+        "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-reranker-v2-m3-learnings-core-invari"
       ]
     },
     "E": {
@@ -1280,7 +1283,7 @@
       ]
     },
     "H": {
-      "total": 446,
+      "total": 447,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1727,7 +1730,8 @@
         "DOM-H-26FD692A",
         "DOM-H-DAFF8DAE",
         "DOM-H-6F9CB66B",
-        "domain_intelligence-technical-construction-intelligence-apache-zookeeper-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-apache-zookeeper-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-octodns-octodns-core-invariants"
       ]
     },
     "I": {
@@ -10999,8 +11003,8 @@
       "title": "Architecture Intelligence: Xudong-Huang/may Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xudong-huang-may-architecture-intelligence-xudong-huang-may-core-invariants.md",
       "repository": "Xudong-Huang/may",
-      "content_hash": "fdd50b191c897c079b9e70ce85d1a0c1258d42ac1cb4148ffd437f399f80e404",
-      "created_at": "2026-11-17T11:40:33.710Z"
+      "content_hash": "8cfd24a393022be99fa41b80ebbc28bc79b5ee46306954f954663c59e6c3dcfa",
+      "created_at": "2026-11-19T00:49:41.665Z"
     },
     "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-core-inva": {
       "record_id": "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-core-inva",
@@ -11035,8 +11039,8 @@
       "title": "Architecture Intelligence: xudong-huang-may-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-xudong-huang-may-learnings-architecture-intelligence-xudong-huang-may-learnings-.md",
       "repository": "xudong-huang-may-learnings",
-      "content_hash": "ce3361f107c3ad6cfddfff9e453d9d3dd4aa43551f0b9365a5bea8842f546f38",
-      "created_at": "2026-11-17T11:40:46.610Z"
+      "content_hash": "8b7e20e697730c2fc84217f03c33cc7022eaace4378e3bdd42093077bbfbf4e0",
+      "created_at": "2026-11-19T00:49:58.554Z"
     },
     "DOM-D-6F87F39B": {
       "record_id": "DOM-D-6F87F39B",
@@ -16709,8 +16713,8 @@
       "title": "Technical Construction Intelligence: callstack/agent-device Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-callstack-agent-device-technical-construction-intelligence-callstack-agent-devic.md",
       "repository": "callstack/agent-device",
-      "content_hash": "b88f45860bbca6a1e4dafb13ccc5111b845a542b00d8f75875476aa35d46bb9f",
-      "created_at": "2026-11-18T01:18:53.964Z"
+      "content_hash": "ac07298327f3783bb08794b169c85b9265cd70c0ac5b2a2f31547dd661dee1e4",
+      "created_at": "2026-11-19T00:49:48.011Z"
     },
     "domain_intelligence-content-information-intelligence-apache-pinot-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-apache-pinot-core-invariants",
@@ -16787,8 +16791,8 @@
       "title": "Technical Construction Intelligence: callstack-agent-device-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-callstack-agent-device-learnings-technical-construction-intelligence-callstack-a.md",
       "repository": "callstack-agent-device-learnings",
-      "content_hash": "1ea352397120494a7019cb53630c2c02546e1d7937a46910d2a227a571403112",
-      "created_at": "2026-11-18T01:18:59.867Z"
+      "content_hash": "f082f87604bddef80ae33b2c98d87d48db8d0a011343273e22acd41f0e7a2bb9",
+      "created_at": "2026-11-19T00:50:28.303Z"
     },
     "domain_intelligence-research-knowledge-intelligence-canberkkkkkk-ema-lightning-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-canberkkkkkk-ema-lightning-core-invariants",
@@ -26804,8 +26808,8 @@
       "title": "Architecture Intelligence: citusdata/citus Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-citusdata-citus-architecture-intelligence-citusdata-citus-core-invariants.md",
       "repository": "citusdata/citus",
-      "content_hash": "eacba3d5b4fd3c662f9a6d125ea1fbaf82594be6985d8faf6e3a0399c4cfeeec",
-      "created_at": "2026-11-17T09:22:26.270Z"
+      "content_hash": "e1cf8d8854808bf862801deba719166c174e9d7d81dd91876f597300ce51e197",
+      "created_at": "2026-11-19T00:49:55.274Z"
     },
     "DOM-H-13452896": {
       "record_id": "DOM-H-13452896",
@@ -32254,6 +32258,75 @@
       "repository": "apache-zookeeper-learnings",
       "content_hash": "e2388fb88d20bf61ac86c1336bae55f35de1f429b30e3d5d9c95065f10b64721",
       "created_at": "2026-11-19T00:41:47.881Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-baai-bge-reranker-v2-m3-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-baai-bge-reranker-v2-m3-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: BAAI/bge-reranker-v2-m3 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-reranker-v2-m3-research-knowledge-intelligence-baai-bge-reranker-v2-.md",
+      "repository": "BAAI/bge-reranker-v2-m3",
+      "content_hash": "1c186510663e1d5a2d231d2f16fac329e18eff5df43f2a91c24ef4fde0892c0c",
+      "created_at": "2026-11-19T00:49:39.816Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-octodns-octodns-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-octodns-octodns-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: octodns/octodns Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-octodns-octodns-technical-construction-intelligence-octodns-octodns-core-invaria.md",
+      "repository": "octodns/octodns",
+      "content_hash": "a04db80fdd56d904d95082832184ce2066a0be8851fa148a10aa27b289917ec7",
+      "created_at": "2026-11-19T00:49:49.743Z"
+    },
+    "DOM-D-9B951EAF": {
+      "record_id": "DOM-D-9B951EAF",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): BAAI/bge-reranker-v2-m3",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/BAAI/bge-reranker-v2-m3](https://huggingface.co/BAAI/bge-reranker-v2-m3))  \n> **Source Version**: `hf-baai-bge-`  \n> **License**: Open-Source  \n> **Sy",
+      "content_hash": "2a839bd5ef3b0c71c6755d618968165e645c24249c84d08240954ff3446df229",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-baai-bge-reranker-v2-m3-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "provenance": {
+        "source_uri": "project://hf-baai-bge-reranker-v2-m3/hf-baai-bge-reranker-v2-m3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T00:49:58.836Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-baai-bge-reranker-v2-m3)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-baai-bge-reranker-v2-m3"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T00:50:27.503Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-reranker-v2-m3-learnings-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-reranker-v2-m3-learnings-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-baai-bge-reranker-v2-m3-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-reranker-v2-m3-learnings-research-knowledge-intelligence-hf-baai-bge.md",
+      "repository": "hf-baai-bge-reranker-v2-m3-learnings",
+      "content_hash": "a7e95fb3f78e4ac46ceef0d0d6a36727c7e045daca48814bae5623bba3f7f399",
+      "created_at": "2026-11-19T00:50:27.730Z"
     }
   }
 }

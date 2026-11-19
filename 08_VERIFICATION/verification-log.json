@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-WFLS",
-    "timestamp": "2026-11-17T16:05:49.696Z",
-    "repository": "meilisearch/meilisearch",
-    "learningId": "learn-github-meilisearch-meilisearch",
-    "contentHash": "015f62fc61113d1ec72a3ea7290a96a1e239931feab3e49a8e2d7ff9a586ab4b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-6XS2",
-    "timestamp": "2026-11-17T16:13:59.810Z",
-    "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
-    "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
-    "contentHash": "fc71952aaeccab5c08f178e316a2fe0dc7ed4b1f9b5c88e48828c45aeb423a54",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-70A6",
-    "timestamp": "2026-11-17T16:14:03.054Z",
-    "repository": "domcyrus/rustnet",
-    "learningId": "learn-github-domcyrus-rustnet",
-    "contentHash": "f1b51596a49bf1746097c92d3e6ca1e225b98b3c6fab8a7b64f6e87a21c5b6fc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-75W2",
-    "timestamp": "2026-11-17T16:14:10.322Z",
-    "repository": "temporalio/temporal",
-    "learningId": "learn-github-temporalio-temporal",
-    "contentHash": "5ec636e839dda6afa871872737502490bd155e86b2036e58fcc0ac547df3399e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-7B1X",
-    "timestamp": "2026-11-17T16:14:17.013Z",
-    "repository": "SynaLinks/synalinks-skills",
-    "learningId": "learn-github-synalinks-synalinks-skills",
-    "contentHash": "918569d412663992b80a9544730ec5c4b7f15032b9fb86ff52c4f074b4255d8b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-GZFE",
     "timestamp": "2026-11-17T16:21:48.506Z",
     "repository": "orcarouter/OrcaCyber-Nano-1.0",
@@ -7490,6 +7415,81 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "05841c51130e0e74ca8cd085e6fdac450fc8382e97d5684a58dfa52c183e15c8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-1XRM",
+    "timestamp": "2026-11-19T00:49:39.634Z",
+    "repository": "BAAI/bge-reranker-v2-m3",
+    "learningId": "learn-huggingface-baai-bge-reranker-v2-m3",
+    "contentHash": "ef3f1848c52a2dfe01b3cbc0b4b7971e3d5772341e58a521b25ee533603757ab",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-1Z1V",
+    "timestamp": "2026-11-19T00:49:41.299Z",
+    "repository": "Xudong-Huang/may",
+    "learningId": "learn-github-xudong-huang-may",
+    "contentHash": "cb9590db2667dbccdf987e8cc652e493e5be9a8891ce815aea1d70a2f5a05de5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-23YE",
+    "timestamp": "2026-11-19T00:49:47.654Z",
+    "repository": "callstack/agent-device",
+    "learningId": "learn-github-callstack-agent-device",
+    "contentHash": "cbd705d794d94682c6cfd82bdd3477bdc21f655e269213a53d2457a8dc7b7edb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-25AQ",
+    "timestamp": "2026-11-19T00:49:49.394Z",
+    "repository": "octodns/octodns",
+    "learningId": "learn-github-octodns-octodns",
+    "contentHash": "606b7e87f9b2ffbb4e44158997088b41460d8b288a3048c8322b07ab4027253a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-29KK",
+    "timestamp": "2026-11-19T00:49:54.932Z",
+    "repository": "citusdata/citus",
+    "learningId": "learn-github-citusdata-citus",
+    "contentHash": "76b1129927c248809eada1ab0447d6a62c2bacfb9f1a8dee62e0427a924d062b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T01:18:59.622Z",
+  "timestamp": "2026-11-19T00:50:28.023Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-callstack-agent-device-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [callstack-agent-device-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T01:18:59.622Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T00:50:28.023Z`  
 > **Learning ID**: `LEARN-EVO-callstack-agent-device-learnings`
 
 
@@ -26,10 +26,10 @@ PROVENANCE_END -->
 ## 2. Operational Capabilities
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/callstack-agent-device-learnings.md`  
 > **Source**: github ([https://github.com/callstack/agent-device](https://github.com/callstack/agent-device))  
-> **Source Version**: `655ede27`  
+> **Source Version**: `6e18ea33`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T01:18:52.700Z  
+> **Timestamp**: 2026-11-19T00:49:46.688Z  
 > **Learning ID**: `learn-github-callstack-agent-device`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -43,7 +43,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/callstack-agent-device-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/callstack/agent-device](https://github.com/callstack/agent-device))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T01:18:52.693Z  
+> **Harvest Timestamp**: 2026-11-19T00:49:46.681Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -53,7 +53,7 @@ PROVENANCE_END -->
 - **Description**: Open source device layer for AI coding agents: a CLI, MCP server, and typed Node.js API to control mobile, web, TV, and desktop apps on devices and simulators, locally or in the cloud.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5427 stars
+- **Stars / Engagement**: 5443 stars
 
 ---
 
@@ -1494,6 +1494,7 @@ type DifferentialCase = Readonly<{
   scope: string | null;
   foldPolicy: 'cursor-projected' | 'plain-viewport';
   viewport: Rect;
+  regularTreePolicy?: 'fullBounds' | 'originOnly' | 'tvOS';
   nodes: readonly RawSnapshotNode[];
   requiredLabels?: readonly string[];
   absentLabels?: readonly string[];
@@ -1551,7 +1552,7 @@ export function compareDifferentialCases(
 /* c8 ignore stop */
 
 /* c8 ignore start */
-function runSwiftCases(cases: readonly DifferentialCase[]): DifferentialOutcome[] {
+export function runSwiftCases(cases: readonly DifferentialCase[]): DifferentialOutcome[] {
   const stdout = execFileSync(swiftConformanceExecutable(), [], {
     cwd: REPO_ROOT,
     encoding: 'utf8',
@@ -1765,8 +1766,7 @@ function representativesAreValid(
   const outputIndexes = new Set(presentation.nodes.map((node) => node.index));
   if (sources.some((node) => !presentation.presentedIndexesBySourceIndex.has(node.index)))
     return false;
-  return [...presentation.presentedIndexesBySourceIndex.values()].every((indexes) =>
-    indexes.every((index) => outpu
+  return [...presentation.presentedIndexesBySourceIn
 ```
 
 
@@ -1775,11 +1775,13 @@ function representativesAreValid(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4595** (2026-11-17): **Remote script recordings: deliver batch step scripts through one daemon-side delivery receipt**
-  *Symptoms*: ## Purpose  A remote `batch` delivers no script versions from its steps. To keep the final script from being lost silently, a batch that would close an armed remote recording is refused with `remote_script_batch_close_unsupported`. Users run `close` on its own after the batch.  #4582 first delivered batch-step scripts by having the client read the daemon's batch answer: the step entries, `partialResults` and the failure position. Six review rounds kept finding new ways a daemon answer could make the client deliver the wrong version, retire a recording that never closed, or drop a failure. That approach was removed from #4582, which now carries only the result fields.  ## Required behavior  - The daemon's request owner collects script delivery effects for the outer request, including nested batch steps, and attaches **one delivery receipt** to the outer response. This applies to successful and failed batches. - The receipt names, for each publication:   - the newest full-script version (`scriptRevision` and its artifact);   - an explicit close receipt when a step closed the recording, including when the final script could not be written;   - the typed `scriptDeliveryFailure` that applies, if any, with its paired warning. - The client never reconstructs delivery from step results. It:   - validates the receipt's publication against its own record (exact ID, tenant, session, endpoint);   - validates a close receipt against the batch plan it submitted;   - downloads at most one v
+- **Issue #4643** (2026-11-17): **An explicit --udid re-reads the simulator inventory on every command (~256 ms)**
+  *Symptoms*: ## Purpose  A command that names its device with `--udid` (or `--serial`) pays about 256 ms on every call, because the daemon re-reads the simulator inventory to resolve the device, even when the session is already bound to that device. `snapshot` skips this cost; other commands do not. Callers that always pass an explicit device, such as Expo Explore against a local simulator, pay it on every command of a run.  ## Observed (while measuring #4641; iPhone 17e simulator, iOS 27.0, warm daemon, n=8, wall-clock medians)  | Command | With `--udid` | Session only | | --- | --- | --- | | `keyboard status` (branch of #4642) | 476 ms | 232 ms | | `snapshot` | 320 ms | 300 ms |  The 256 ms comes from `resolveCommandDevice` (`packages/daemon/src/resources/session-device-resolution.ts`) re-reading the inventory.  ## Required behavior  - When an explicit selector matches the device the session is already bound to, resolve it from the session without an inventory read. This is what `snapshot` effectively gets today; find out why it differs and use one path. - Keep today's refusals: a selector that names a different device than the session's still refuses as it does now, and the device-claim rules stay unchanged. - Re-read the inventory only when the selector does not match the bound device, or when there is no session.  ## Done when  - Per-command timings with and without `--udid` are within noise of each other for a bound session, measured on a simulator for at least `keyboard status`, `p
 
-- **Issue #4574** (2026-11-17): **Main CI: always-loaded MCP tool payload exceeds its 22 KiB budget**
-  *Symptoms*: ## Purpose  Track the repeated main CI Coverage failure in `command-tools-loading-meta.test.ts`. Existing PR #4572 owns the correction; do not dispatch a duplicate implementation.  ## Evidence  Two consecutive main CI runs fail the same assertion at `src/mcp/__tests__/command-tools-loading-meta.test.ts:46`:  - [43758267032](https://github.com/callstack/agent-device/actions/runs/43758267032/job/132947067804), head `82819f8f224a76d4f34767c7e7788a6d6459136f`. - [43762301747](https://github.com/callstack/agent-device/actions/runs/43762301747/job/132959570817), head `26a8a1b301193a2a592f60e577d15dc6413afdc3`.  Both check annotations report always-loaded tools at 22,862 bytes, above the existing 22 KiB budget. Other main platform lanes passed. This is a named payload-budget regression, separate from #4558's host-process identity fixture and #4247's historical failure-reporting investigation.  ## Required behavior  - Restore the always-loaded payload to the existing budget without raising the limit, skipping the guard or dropping required command semantics. - Retain concise, accurate multi-ref press guidance and consistent interval metadata. - Validate the actual tool JSON, not only source-string lengths.  ## Completion  - The budget guard and affected checks pass at the published fix head. - Main CI passes after the fix merges. - Current covering PR: #4572, head `0bb051e1dd4a99c03cfc93b55f751e82209bb754`. All fetched checks are now success/skipped. Its small remaining byte margin i
+- **Issue #4641** (2026-11-17): **iOS keyboard status takes ~1.4 s, about 5x a snapshot**
+  *Symptoms*: ## Purpose  `keyboard status` on iOS takes about 1.4 s per call, roughly 5× a full `snapshot` of the same screen. Callers that want to ask "is the keyboard up, and what is its return key" before acting pay more than a snapshot would cost them. Expo Explore kept its accessibility-tree heuristics for this reason.  ## Observed (0.21.39, iPhone Air simulator, iOS 27.0, warm daemon, keyboard up, wall clock per CLI call including node start)  - `keyboard status`: median 1397 ms, range 1367–1539 ms (n=8). - `snapshot`: median 260 ms, range 241–331 ms (n=8).  ## Required behavior  - Find where the time goes: runner query strategy, extra settle or idle waits, repeated tree reads. Include a timing breakdown in the PR. - Bring `keyboard status` to at most snapshot cost on the same screen, or explain the floor with evidence. - Keep the output contract (`visible`, `returnKey`, `returnKeyLabel`) unchanged.  ## Done when  Before/after timings at the same n on a simulator are recorded in the PR, and the iOS keyboard tests pass. 
+  **Post-Mortem & Fix Analysis**:
+  > ## Apex Sentinel · Issue review  **Suggested label:** `bug`  It reports existing CLI performance as too slow with concrete timings, environment, and a measurable target, making it an actionable performance defect rather than a new capability request.  ### Required sections - [ ] Steps to reproduce (missing) - [ ] Expected and actual behavior (missing) - [ ] Version or environment (missing)  <!-- apex-sentinel:issue-review -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1796,1674 +1798,1166 @@ function representativesAreValid(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c0ef6b24` (2026-11-17)
-**Commit Message**: fix(android): dispatch helper taps and keys without the global animation wait (#4609)
+### Incident Patch 1: `ada87a3b` (2026-11-18)
+**Commit Message**: fix: judge a save-script destination another local user can steer (#4584)
 
-* fix(android): dispatch helper taps and keys without the global animation wait
+* fix(host-kit): refuse a script destination another local user can steer
 
-The helper's input-tap and key actions injected through the public
-UiAutomation.injectInputEvent(event, sync) overload, which syncs window
-animations before DOWN and after UP for up to five seconds each. While a
-window animation or transition stays pending, every plain press paid up to
-ten seconds even though dispatch itself was immediate (#4590). Touch plans
-already avoided this since #1356.
+A publish resolved the destination by name, so a second local user who
+could write any directory on the way to it could replace that component,
+or leave a symbolic link there before the entry was created, and move the
+saved script wherever they chose.
 
-Taps and keys now inject through UiAutomationInputDispatcher without the
-animation wait. A DOWN the framework refuses reached no window, so it is
-cancelled and injected once more with a fresh down time after the
-framework's animation sync.
+`publishScriptFileSync` now asks first: `assertPrivateScriptDestination`
+walks each component with `lstat` and refuses the chain under
+`script_ancestor_untrusted` when a directory is writable by other, or by
+a group that is not this user's own private group, unless the sticky bit
+cancels the exposure. A symbolic link whose own directory others can
+create entries in is refused whatever it points at. Ubuntu and Debian set
+up every home directory as group-writable and owned by the user's private
+group, so that shape is admitted, and `privateGroupIds` is exported so
+the membership rule is testable on its own.
 
-Refs #4590
+The caller also captures the parent's `dev:ino` before staging, and the
+publish compares it before the link or rename, so a parent swapped out by
+name while the file was written refus
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* test(android): scan the whole helper source tree for direct input injection
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(android): report an unavailable animation sync apart from a refused press
-
-Tap and key presses now share PressSequence, an Android-free policy that the
-helper's JVM suite tests with a fake inje
-
-**File**: `android/snapshot-helper/src/main/java/com/callstack/agentdevice/snapshothelper/AutomationCommandHandler.java` (modified, +135/-28)
+**File**: `docs/adr/0016-active-session-script-publication.md` (modified, +38/-2)
 ```diff
-@@ -57,59 +57,165 @@ private static final class InputDispatch {
-     boolean attempted;
-   }
+@@ -24,6 +24,11 @@ This section is a normative summary.
+ - Publication requires exactly one initial recorded `open`, a portable selector-`wait` destination guard after the last descriptor-classified mutating action, and no unresolved session-local `@ref`.
+   Since #1349, the `target-v1` annotation of the guard must be `verification: "verified"`.
+   Every refusal happens before filesystem work and names its recovery.
++- The destination a caller names with `--save-script=<path>` is judged before anything is created.
++  It must be absolute, and every directory the walk looks a name up in must be one no other non-root local user can change.
++  What is missing is created one level at a time at 0700, inside the directory the walk just judged, and the script file is 0600.
++  The rule is POSIX-only, and a refused destination leaves nothing behind.
++  The daemon's own state-directory chain is outside this decision (#4649).
+ - Repair transactions (ADR 0012) are disjoint from this lifecycle.
+   A session with `saveScriptBoundary` set refuses this action without a change to repair state.
+ - A remote recording is delivered, not published (#4511 amendment).
+@@ -179,7 +184,7 @@ A change to that answer is a behavior change, not a derivation.
+ **Amendment (#4511, shipped).** A remote caller cannot read the daemon target, so a remote `open --save-script=<path>` delivers its recording to the caller.
+ It adds no state name, command, or flag:
  
-+  /**
-+   * The budget of a host that sends none: a provider-supplied helper can be newer than its host, and
-+   * an older host waits 30 s for input, less the 5 s answer margin. It never affords a retry.
-+   */
-+  private static final long OLDER_HOST_BUDGET_MS = 25_000;
-+
-+  /** The framework's accessibility interaction timeout, AccessibilityInteractionClient. */
-+  private static final long TEXT_ENTRY_RESERVE_MS = 5_000;
-+
-+  /** The command deadline left too little time for the next step, so it was not started. */
-+  static final class InputBudgetExhausted extends IllegalStateException {
-+    InputBudgetExhausted(String message) {
-+      super(message);
-+    }
-+  }
-+
-+  /** Refuses text entry the deadline cannot fit, after a focus tap that may have used the budget. */
-+  static void requireTextEntryTime(long deadline, long now) {
-+    if (deadline - now < TEXT_ENTRY_RESERVE_MS) {
-+      throw new InputBudgetExhausted("Fill text was not entered: too little time left after focus");
-+    }
-+  }
-+
-   private static void input(UiAutomation automation, JSONObject input, InputDispatch dispatch) throws Exception {
-+    // The host's remaining time for this command bounds every retry decision.
-+    long deadline =
-+        SystemClock.uptimeMillis() + input.optLong("budgetMs", OLDER_HOST_BUDGET_MS);
-     switch (input.getString("kind")) {
-       case "tap":
--        tap(automation, input.getDouble("x"), input.getDouble("y"), dispatch);
-+        tap(automation, input.getDouble("x"), input.getDouble("y"), dispatch, deadline);
-         return;
-       case "key":
--        key(automation, input.getInt("keyCode"), dispatch);
-+        key(automation, input.getInt("keyCode"), dispatch, deadline);
-         return;
-       case "fill":
--        fill(automation, input.getInt("x"), input.getInt("y"), input.getString("text"), dispatch);
-+        fill(automation, input.getInt("x"), input.getInt("y"), input.getString("text"), dispatch,
-+            deadline);
-         return;
-       default:
-         throw new IllegalArgumentException("Unknown input kind");
-     }
-   }
- 
--  private static void tap(UiAutomation automation, double x, double y, InputDispatch dispatch) {
-+  private static void tap(
-+      UiAutomation automation, double x, double y, InputDispatch dispatch, long deadline) {
-     if (Double.isNaN(x) || Double.isInfinite(x) || Double.isNaN(y) || Double.isInfinite(y)
-         || x < 0 || y < 0) {
-       throw new IllegalArgumentException("Invalid tap coordinates");
-     }
--    long down = SystemClock.uptimeMillis();
--    touch(automation, down, MotionEvent.ACTION_DOWN, (float) x, (float) y, dispatch);
--    touch(automation, down, MotionEvent.ACTION_UP, (float) x, (float) y, dispatch);
-+    dispatch.attempted = true;
-+    PressSequence.requireDispatched(PressSequence.run(new TouchPress(automation, (float) x, (float) y), deadline), "Touch");
-   }
- 
--  private static void touch(UiAutomation automation, long down, int action, float x, float y, InputDispatch dispatch) {
--    MotionEvent event = MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, x, y, 0);
--    event.setSource(InputDevice.SOURCE_TOUCHSCREEN);
--    try {
--      dispatch.attempted = true;
--      if (!automation.injectInputEvent(event, true)) {
--        throw new IllegalStateException("Touch injection was refused");
--      }
--    } finally {
--      event.recycle();
-+  private static void key(UiAutomation automation, int code, InputDispatch dispatch, long deadline) {
-+    if (code < 0 || code > KeyEvent.getMaxKeyCode()) throw new IllegalArgumentException("Invalid key code");
-+    dispatch.attempted = true;
-+    PressSequence.requireDispatched(PressSequence.run(new KeyPress(automation, code), deadline), "Key");
-+  }
-+
-+  private abstract static class Press implements PressSequence.Injections {
-+    final UiAutomation automation;
-+
-+    Press(UiAutomation automation) {
-+      this.automation = automation;
-+    }
-+
-+    @Override
-+    public long now() {
-+      return SystemClock.uptimeMillis();
-+    }
-+
-+    @Override
-+    public boolean skipsAnimationWait() {
-+      return UiAutomationInputDispatcher.skipsAnimationWait();
-+    }
-+
-+    @Override
-+    public boolean awaitAnimations() {
-+      return UiAutomationInputDispatcher.awaitAnimations(automation);
-     }
-   }
- 
--  private static void key(UiAutomation automation, int code, InputDispatch dispatch) {
--    if (code < 0 || code > KeyEvent.getMaxKeyCode()) throw new IllegalArgumentException("Invalid key code");
--    long down = SystemClock.uptimeMillis();
--    for (int action : new int[] {KeyEvent.ACTION_DOWN, KeyEvent.ACTION_UP}) {
--      KeyEvent event = new KeyEvent(down, SystemClock.uptimeMillis(), action, code, 0, 0,
--          KeyCharacterMap.VIRTUAL_KEYBOARD, 0, 0, InputDevice.SOURCE_KEYBOARD);
--      dispatch.attempted = true;
--      if (!automation.injectInputEvent(event, true)) {
--        throw new I
-```
-
-**File**: `android/snapshot-helper/src/main/java/com/callstack/agentdevice/snapshothelper/PressSequence.java` (added, +94/-0)
-```diff
-@@ -0,0 +1,94 @@
-+package com.callstack.agentdevice.snapshothelper;
-+
-+/**
-+ * Sequences one tap or key press: a start event, then an end event with the same down time.
-+ *
-+ * <p>Every refused start is released before anything else is decided: the verifier and the policy
-+ * record a start even when the dispatcher drops it, and a start refused by the injection timeout
-+ * was delivered. Without the framework's animation wait, a start is often refused only because a
-+ * transition leaves nothing able to receive it, so it is retried once after the animation sync,
-+ * with a fresh down time, when the host's deadline still has room for that retry.
-+ */
-+final class PressSequence {
-+  /**
-+   * The room a retry decision reserves: the framework's animation-sync cap
-+   * ({@code WindowManagerService.ANIMATION_COMPLETED_TIMEOUT_MS}) plus the retried start's injection
-+   * deadline ({@code InputManagerService.INJECTION_TIMEOUT_MILLIS}). The end is not reserved: it
-+   * blocks only while the app does not finish handling it, which a press without a retry meets the
-+   * same way, and a 60 s press request could never reserve a second 30 s deadline.
-+   */
-+  static final long RETRY_WORST_CASE_MS = 5_000 + 30_000;
-+
-+  /** Builds and injects the platform events of one press. */
-+  interface Injections {
-+    long now();
-+
-+    /** Whether {@link #start} skips the framework's animation wait on this runtime. */
-+    boolean skipsAnimationWait();
-+
-+    boolean start(long downTime);
-+
-+    boolean end(long downTime);
-+
-+    /** Releases a refused start that has this down time; the receiver may hold it. */
-+    void releaseRefusedStart(long downTime);
-+
-+    /** Waits for the framework's animation sync; false when the runtime cannot wait separately. */
-+    boolean awaitAnimations();
-+  }
-+
-+  enum Outcome {
-+    DISPATCHED,
-+    START_REFUSED,
-+    END_REFUSED,
-+    ANIMATION_SYNC_UNAVAILABLE,
-+  }
-+
-+  private PressSequence() {}
-+
-+  /** Runs one press that must answer by {@code deadline}, on the {@link Injections#now} clock. */
-+  static Outcome run(Injections injections, long deadline) {
-+    long downTime = injections.now();
-+    if (!injections.start(downTime)) {
-+      release(injections, downTime);
-+      if (!injections.skipsAnimationWait()
-+          || deadline - injections.now() < RETRY_WORST_CASE_MS) {
-+        return Outcome.START_REFUSED;
-+      }
-+      if (!injections.awaitAnimations()) return Outcome.ANIMATION_SYNC_UNAVAILABLE;
-+      downTime = injections.now();
-+      if (!injections.start(downTime)) {
-+        release(injections, downTime);
-+        return Outcome.START_REFUSED;
-+      }
-+    }
-+    // A refused end gets no cancel. The verifier records an event before the dispatcher drops it,
-+    // so the press is closed there and a cancel would be inconsistent. The dispatcher drops an end
-+    // only when no pointer or focus is still down, after it cancelled the receiving window itself
-+    // ("touched window was removed", "focus left window"). A timed-out end was already enqueued,
-+    // so the live window still receives it.
-+    return injections.end(downTime) ? Outcome.DISPATCHED : Outcome.END_REFUSED;
-+  }
-+
-+  /** Turns an outcome into the helper's response: a typed exception for each failed press. */
-+  static void requireDispatched(Outcome outcome, String kind) {
-+    switch (outcome) {
-+      case DISPATCHED:
-+        return;
-+      case ANIMATION_SYNC_UNAVAILABLE:
-+        throw new UnsupportedOperationException(
-+            kind + " injection was refused and this runtime cannot wait for animations to retry it");
-+      case START_REFUSED:
-+      case END_REFUSED:
-+        throw new IllegalStateException(kind + " injection was refused");
-+    }
-+  }
-+
-+  private static void release(Injections injections, long downTime) {
-+    try {
-+      injections.releaseRefusedStart(downTime);
-+    } catch (RuntimeException ignored) {
-+      // The refused start stays the reported outcome.
-+    }
-+  }
-+}
-```
-
-**File**: `android/snapshot-helper/src/main/java/com/callstack/agentdevice/snapshothelper/TouchEvents.java` (added, +31/-0)
-```diff
-@@ -0,0 +1,31 @@
-+package com.callstack.agentdevice.snapshothelper;
-+
-+import android.view.InputDevice;
-+import android.view.MotionEvent;
-+
-+/** Builds the touchscreen finger events that taps and touch plans inject. */
-+final class TouchEvents {
-+  private TouchEvents() {}
-+
-+  /** One pointer per coordinate pair; pointer ids follow the array order. */
-+  static MotionEvent obtain(
-+      long downTime, long eventTime, int action, float[] x, float[] y, int flags) {
-+    int count = x.length;
-+    MotionEvent.PointerProperties[] properties = new MotionEvent.PointerProperties[count];
-+    MotionEvent.PointerCoords[] coords = new MotionEvent.PointerCoords[count];
-+    for (int index = 0; index < count; index += 1) {
-+      properties[index] = new MotionEvent.PointerProperties();
-+      properties[index].id = index;
-+      properties[index].toolType = MotionEvent.TOOL_TYPE_FINGER;
-+      coords[index] = new MotionEvent.PointerCoords();
-+      coords[index].x = x[index];
-+      coords[index].y = y[index];
-+      coords[index].pressure = 1.0f;
-+      coords[index].size = 1.0f;
-+    }
-+    MotionEvent event = MotionEvent.obtain(downTime, eventTime, action, count, properties, coords,
-+        0, 0, 1.0f, 1.0f, 0, 0, InputDevice.SOURCE_TOUCHSCREEN, flags);
-+    event.setSource(InputDevice.SOURCE_TOUCHSCREEN);
-+    return event;
-+  }
-+}
-```
-
-**File**: `android/snapshot-helper/src/main/java/com/callstack/agentdevice/snapshothelper/TouchPlanInjector.java` (modified, +1/-32)
-```diff
-@@ -2,7 +2,6 @@
- 
- import android.app.UiAutomation;
- import android.os.SystemClock;
--import android.view.InputDevice;
- import android.view.MotionEvent;
- 
- /** Injects a validated touch plan through UiAutomation with real-time sample pacing. */
-@@ -104,37 +103,7 @@ private static void injectCancel(
- 
-   private static MotionEvent motionEvent(
-       long downTime, long eventTime, int action, PointerState pointers) {
--    MotionEvent.PointerProperties[] properties =
--        new MotionEvent.PointerProperties[pointers.count];
--    MotionEvent.PointerCoords[] coords = new MotionEvent.PointerCoords[pointers.count];
--    for (int index = 0; index < pointers.count; index += 1) {
--      properties[index] = new MotionEvent.PointerProperties();
--      properties[index].id = index;
--      properties[index].toolType = MotionEvent.TOOL_TYPE_FINGER;
--      coords[index] = new MotionEvent.PointerCoords();
--      coords[index].x = pointers.x[index];
--      coords[index].y = pointers.y[index];
--      coords[index].pressure = 1.0f;
--      coords[index].size = 1.0f;
--    }
--    MotionEvent event =
--        MotionEvent.obtain(
--            downTime,
--            eventTime,
--            action,
--            pointers.count,
--            properties,
--            coords,
--            0,
--            0,
--            1.0f,
--            1.0f,
--            0,
--            0,
--            InputDevice.SOURCE_TOUCHSCREEN,
--            0);
--    event.setSource(InputDevice.SOURCE_TOUCHSCREEN);
--    return event;
-+    return TouchEvents.obtain(downTime, eventTime, action, pointers.x, pointers.y, 0);
-   }
- 
-   private static final class PointerState {
-```
-
-**File**: `android/snapshot-helper/src/main/java/com/callstack/agentdevice/snapshothelper/UiAutomationInputDispatcher.java` (modified, +38/-4)
-```diff
-@@ -6,14 +6,16 @@
- import java.lang.reflect.Method;
- 
- /**
-- * Dispatches planned input without the framework's global animation synchronization.
-+ * Dispatches input without the framework's global animation synchronization.
-  *
-- * <p>The public two-argument overload waits for global animations before every event. Android's
-- * three-argument test API separates that policy from synchronous input dispatch, but the SDK stub
-- * hides the method, so the helper resolves it from the runtime framework.
-+ * <p>The public two-argument overload waits for global animations before a gesture's first event
-+ * and after its last one, up to five seconds each. Android's three-argument test API separates that
-+ * policy from synchronous input dispatch, but the SDK stub hides the method, so the helper resolves
-+ * it from the runtime framework.
-  */
- final class UiAutomationInputDispatcher {
-   private static volatile Method injectWithoutAnimationWait = findInjectWithoutAnimationWait();
-+  private static volatile Method syncInputTransactions = findSyncInputTransactions();
- 
-   private UiAutomationInputDispatcher() {}
- 
-@@ -32,6 +34,30 @@ static boolean inject(UiAutomation automation, InputEvent event, boolean waitFor
-     }
-   }
- 
-+  /** Whether injection skips the framework's animation wait on this runtime. */
-+  static boolean skipsAnimationWait() {
-+    return injectWithoutAnimationWait != null;
-+  }
-+
-+  /**
-+   * Waits for the framework's animation sync. Returns false when the runtime does not expose or
-+   * permit the separate sync.
-+   */
-+  static boolean awaitAnimations(UiAutomation automation) {
-+    Method method = syncInputTransactions;
-+    if (method == null) return false;
-+    try {
-+      method.invoke(automation);
-+      return true;
-+    } catch (IllegalAccessException | IllegalArgumentException error) {
-+      syncInputTransactions = null;
-+      return false;
-+    } catch (InvocationTargetException error) {
-+      rethrowCause(error.getCause());
-+      throw new AssertionError("Unreachable");
-+    }
-+  }
-+
-   private static Method findInjectWithoutAnimationWait() {
-     try {
-       return UiAutomation.class.getMethod(
-@@ -41,6 +67,14 @@ private static Method findInjectWithoutAnimationWait() {
-     }
-   }
- 
-+  private static Method findSyncInputTransactions() {
-+    try {
-+      return UiAutomation.class.getMethod("syncInputTransactions");
-+    } catch (NoSuchMethodException | SecurityException error) {
-+      return null;
-+    }
-+  }
-+
-   private static void rethrowCause(Throwable cause) {
-     if (cause instanceof RuntimeException) throw (RuntimeException) cause;
-     if (cause instanceof Error) throw (Error) cause;
-```
-
-**File**: `android/snapshot-helper/src/test/java/com/callstack/agentdevice/snapshothelper/FillTextEntryTimeTest.java` (added, +27/-0)
-```diff
-@@ -0,0 +1,27 @@
-+package com.callstack.agentdevice.snapshothelper;
-+
-+public final class FillTextEntryTimeTest {
-+  private FillTextEntryTimeTest() {}
-+
-+  static void run() {
-+    entersTextWhenTheAccessibilityTimeoutStillFits();
-+    refusesTextEntryWithATypedBudgetRefusalWhenItNoLongerFits();
-+  }
-+
-+  private static void entersTextWhenTheAccessibilityTimeoutStillFits() {
-+    AutomationCommandHandler.requireTextEntryTime(15_000, 10_000);
-+  }
-+
-+  private static void refusesTextEntryWithATypedBudgetRefusalWhenItNoLongerFits() {
-+    try {
-+      AutomationCommandHandler.requireTextEntryTime(14_999, 10_000);
-+    } catch (AutomationCommandHandler.InputBudgetExhausted refusal) {
-+      String expected = "Fill text was not entered: too little time left after focus";
-+      if (!expected.equals(refusal.getMessage())) {
-+        throw new AssertionError("Expected " + expected + ", got " + refusal.getMessage());
-+      }
-+      return;
-+    }
-+    throw new AssertionError("Expected the text entry to be refused");
-+  }
-+}
-```
-
-**File**: `android/snapshot-helper/src/test/java/com/callstack/agentdevice/snapshothelper/PressSequenceTest.java` (added, +190/-0)
-```diff
-@@ -0,0 +1,190 @@
-+package com.callstack.agentdevice.snapshothelper;
-+
-+import java.util.ArrayList;
-+import java.util.Arrays;
-+import java.util.List;
-+
-+public final class PressSequenceTest {
-+  private static final long ROOM = PressSequence.RETRY_WORST_CASE_MS;
-+  /** A deadline far enough away that it never limits the press. */
-+  private static final long OPEN = Long.MAX_VALUE / 2;
-+
-+  private PressSequenceTest() {}
-+
-+  static void run() {
-+    endsWithTheStartDownTime();
-+    releasesARefusedStartAndRetriesItAfterTheSyncWithAFreshDownTime();
-+    retriesWhenTheDeadlineLeavesExactlyRoomForTheRetry();
-+    releasesWithoutRetryingWhenTheDeadlineLeavesNoRoomForTheRetry();
-+    releasesWithoutRetryingAStartRefusedLateInTheBudget();
-+    releasesAStartRefusedAgainAfterTheSync();
-+    doesNotCancelARefusedEnd();
-+    releasesAndFailsADroppedStartAtOnceWhenInjectionWaitsForAnimations();
-+    reportsAnUnavailableAnimationSyncApartFromARefusal();
-+    retriesWhenTheReleaseThrows();
-+    failsARefusedPressAsARefusal();
-+    failsAnUnavailableSyncAsUnsupported();
-+  }
-+
-+  private static void endsWithTheStartDownTime() {
-+    FakeInjections injections = new FakeInjections(accepted());
-+    expect(PressSequence.run(injections, OPEN), PressSequence.Outcome.DISPATCHED);
-+    expect(injections.calls, "start 1", "end 1");
-+  }
-+
-+  private static void releasesARefusedStartAndRetriesItAfterTheSyncWithAFreshDownTime() {
-+    FakeInjections injections = new FakeInjections(refusedAfter(0), accepted());
-+    expect(PressSequence.run(injections, OPEN), PressSequence.Outcome.DISPATCHED);
-+    expect(injections.calls, "start 1", "release 1", "sync", "start 3", "end 3");
-+  }
-+
-+  private static void retriesWhenTheDeadlineLeavesExactlyRoomForTheRetry() {
-+    FakeInjections injections = new FakeInjections(refusedAfter(0), accepted());
-+    expect(PressSequence.run(injections, 2 + ROOM), PressSequence.Outcome.DISPATCHED);
-+    expect(injections.calls, "start 1", "release 1", "sync", "start 3", "end 3");
-+  }
-+
-+  private static void releasesWithoutRetryingWhenTheDeadlineLeavesNoRoomForTheRetry() {
-+    FakeInjections injections = new FakeInjections(refusedAfter(0), accepted());
-+    expect(PressSequence.run(injections, 1 + ROOM), PressSequence.Outcome.START_REFUSED);
-+    expect(injections.calls, "start 1", "release 1");
-+  }
-+
-+  private static void releasesWithoutRetryingAStartRefusedLateInTheBudget() {
-+    FakeInjections injections = new FakeInjections(refusedAfter(30_000), accepted());
-+    expect(PressSequence.run(injections, 40_000), PressSequence.Outcome.START_REFUSED);
-+    expect(injections.calls, "start 1", "release 1");
-+  }
-+
-+  private static void releasesAStartRefusedAgainAfterTheSync() {
-+    FakeInjections injections = new FakeInjections(refusedAfter(0), refusedAfter(0));
-+    expect(PressSequence.run(injections, OPEN), PressSequence.Outcome.START_REFUSED);
-+    expect(injections.calls, "start 1", "release 1", "sync", "start 3", "release 3");
-+  }
-+
-+  private static void doesNotCancelARefusedEnd() {
-+    FakeInjections injections = new FakeInjections(accepted());
-+    injections.endAccepted = false;
-+    expect(PressSequence.run(injections, OPEN), PressSequence.Outcome.END_REFUSED);
-+    expect(injections.calls, "start 1", "end 1");
-+  }
-+
-+  private static void releasesAndFailsADroppedStartAtOnceWhenInjectionWaitsForAnimations() {
-+    FakeInjections injections = new FakeInjections(refusedAfter(0), accepted());
-+    injections.skipsAnimationWait = false;
-+    expect(PressSequence.run(injections, OPEN), PressSequence.Outcome.START_REFUSED);
-+    expect(injections.calls, "start 1", "release 1");
-+  }
-+
-+  private static void reportsAnUnavailableAnimationSyncApartFromARefusal() {
-+    FakeInjections injections = new FakeInjections(refusedAfter(0), accepted());
-+    injections.syncAvailable = false;
-+    expect(PressSequence.run(injections, OPEN), PressSequence.Outcome.ANIMATION_SYNC_UNAVAILABLE);
-+    expect(injections.calls, "start 1", "release 1", "sync");
-+  }
-+
-+  private static void retriesWhenTheReleaseThrows() {
-+    FakeInjections injections = new FakeInjections(refusedAfter(0), accepted());
-+    injections.releaseThrows = true;
-+    expect(PressSequence.run(injections, OPEN), PressSequence.Outcome.DISPATCHED);
-+    expect(injections.calls, "start 1", "release 1", "sync", "start 3", "end 3");
-+  }
-+
-+  private static void failsARefusedPressAsARefusal() {
-+    FakeInjections injections = new FakeInjections(refusedAfter(0), refusedAfter(0));
-+    expectFailure(injections, IllegalStateException.class, "Key injection was refused");
-+  }
-+
-+  private static void failsAnUnavailableSyncAsUnsupported() {
-+    FakeInjections injections = new FakeInjections(refusedAfter(0), accepted());
-+    injections.syncAvailable = false;
-+    expectFailure(injections, UnsupportedOperationException.class,
-+        "Key injection was refused and this runtime cannot wait for animations to retry it");
-+  }
-+
-+  private static void
-```
-
-**File**: `android/snapshot-helper/src/test/java/com/callstack/agentdevice/snapshothelper/SnapshotHelperTestSuite.java` (modified, +2/-0)
-```diff
-@@ -5,6 +5,8 @@ private SnapshotHelperTestSuite() {}
- 
-   public static void main(String[] args) throws Exception {
-     PointerEventScheduleTest.run();
-+    PressSequenceTest.run();
-+    FillTextEntryTimeTest.run();
-     AccessibilityCaptureStabilizerTest.run();
-     AccessibilityReadBatchTest.run();
-     AccessibilityTreeXmlTest.run();
-```
-
----
-
-### Incident Patch 2: `7f69fe3d` (2026-11-17)
-**Commit Message**: fix(remote): deliver batch recordings through one request receipt (#4627)
-
-* fix(remote): deliver batch recordings through one request receipt
-
-* docs(remote): describe batch recording delivery
-
-* refactor(remote): name receipt authorization checks
-
-* perf(remote): load receipt owners only for batch delivery
-
-* chore(gates): require receipt-aware RPC peers and retire the old export
-
-* fix(remote): disclose receipt failures after client record cleanup
-
-* docs(remote): correct batch recording delivery through proxies
-
-* docs(remote): describe batch receipts for RPC callers
-
-* fix(remote): deliver receipt versions when a batch names no step
-
-A batch that fails with no step position the plan can reconcile, or whose
-close sits at or past the failure, proves no close. Its receipt's version
-and typed failures are still facts the daemon answered about this client's
-own publication, so they settle and disclose instead of being dropped:
-silently losing them left the caller file stale with no warning. Only the
-retirement is dropped. An answer that cannot be reconciled with the plan
-authorizes nothing at all.
-
-Drop the batch-policy re-export of normalizeBatchCommandName so both peers
-read the 
-
-**File**: `docs/adr/0016-active-session-script-publication.md` (modified, +6/-2)
-```diff
-@@ -204,12 +204,16 @@ It adds no state name, command, or flag:
- - Teardown without `close` writes no daemon file; the caller keeps the version from the last recorded action.
- - At the public HTTP boundary, `saveScript` is accepted only as `true` on `open` with a well-formed publication ID.
-   `session save-script` refuses a remote recording (`remote_script_publication_unsupported`), and remote `close --save-script`, `replay --save-script`, and `--save-script` in batch steps stay refused.
--  A batch whose steps would close an armed remote recording is refused before any step runs (`remote_script_batch_close_unsupported`), because a batch delivers no script versions from its steps.
-+  A batch whose steps record or close an armed remote recording is not refused. The daemon collects the versions and the close that the batch's steps wrote, and delivers them on the batch response as one `scriptDeliveryReceipt` (#4595).
+-- Before it sends the open, the client mints a random publication ID and records the destination and the `--force` grant under it in its state directory (`remote-connections/session-scripts/`), keyed by the endpoint, the tenant, the session, and that ID.
++- Before it sends the open, the client mints a random publication ID and records the destination and the `--force` grant under it in its state directory (`remote-connections/session-scripts/`), keyed by the endpoint, the tenant, the session, and that ID. That directory is the client's own private state, not a script destination: the client creates it the way it always did, with one recursive `mkdir` that forces nothing on a directory that already stands, and the only file ever written there is the client's own record. The script itself is published by the daemon to its own sessions directory; the client's own copy goes to the caller's destination, judged by the rule under [Caller-named destination](#caller-named-destination).
+   The open carries the ID in `meta.scriptPublicationId` and never the caller path.
+   A daemon answer that does not name the ID removes the record.
+   A failed open may still have armed the recording, so it keeps its record.
+@@ -207,7 +212,35 @@ It adds no state name, command, or flag:
+   A batch whose steps record or close an armed remote recording is not refused. The daemon collects the versions and the close that the batch's steps wrote, and delivers them on the batch response as one `scriptDeliveryReceipt` (#4595).
  - The daemon reports the `script-artifacts` capability in `/health`, through a proxy in its upstream health; the client refuses a remote `--save-script` before dispatch without it.
  
- The destination keeps local `--save-script` semantics: the client creates a missing parent directory and checks no ancestor ownership, so another local user who can write an ancestor directory can redirect the file, locally and remotely alike (#4565).
- Every result that can carry a script version discloses a failed delivery: the SDK result, the CLI human output and `--json`, and the MCP tool result each carry `scriptDeliveryFailure` and the warning, so no caller reads a stale file as current.
--Known limitation (#4595): a batch delivers no script versions from its steps, so closing an armed remote recording inside a batch stays refused.
-+A batch delivers through one receipt the daemon's request owner answers on the batch reply, successful or failed (#4595). The daemon collects each executed step's script effects as the batch runner reports them, because a step's own reply travels inside a result entry a client must not read. The receipt names the newest full-script version of the recording, the plan position of a step that closed it, and the typed failures; it is answered only for a request whose nested steps fed it, so every single-command reply keeps the shape it had before. A client validates the receipt against its own record and its submitted plan, downloads at most its one version, and treats a receipt it cannot fully account for as authorizing nothing.
-+A failed batch distinguishes what its error omits from what it gets wrong. An answer that names no failing step, or one whose close sits at or past a step the plan confirms never reached, proves no close: the version and the failures still settle, because the daemon answered them about that client's own publication, and only the retirement is dropped. Silently dropping them would leave the caller's file stale with no warning. An answer that names a step, or a command at that step, the submitted plan does not carry is a malformed answer and authorizes nothing at all.
-+A response artifact may write only a field it creates. `savedScript`, `artifacts`, `scriptDeliveryFailure` and `warnings` belong to the client: an invalid artifact that names one as its `field` leaves that field untouched, so a peer can neither replace the destination the client chose nor erase the disclosure of a delivery it just failed.
-+This receipt requires RPC protocol 3: protocol-2 clients ignore it, so admitting a batch close for them could leave the caller's final script undelivered. The health compatibility gate rejects those skewed peers before dispatch (ADR 0006).
-+Rejected: deriving delivery effects by interpreting the batch's step entries, partial results and failure position, because six review rounds kept finding answers that made a client deliver the wrong version, retire a recording that never closed, or drop a failure (#4582).
- Rejected: a remote `session save-script` download, because it added a second publication path and a retry protocol.
- Rejected: delivery only at close, because a session that an external owner closes would lose its recording.
- Rejected: daemon-minted recording IDs bound through per-request claims, because the claim, binding, and tombstone protocol cost more than a client-minted ID that only its own client can match.
-```
-
-**File**: `packages/command-registry/src/batch-policy.ts` (modified, +3/-4)
-```diff
-@@ -1,6 +1,9 @@
- import { deriveStructuredBatchCommandNames } from './derive.ts';
- import { commandDescriptors } from './registry.ts';
- import { AppError } from '@agent-device/kernel/errors';
-+import { normalizeBatchCommandName } from '@agent-device/contracts/input-validation';
+-The destination keeps local `--save-script` semantics: the client creates a missing parent directory and checks no ancestor ownership, so another local user who can write an ancestor directory can redirect the file, locally and remotely alike (#4565).
++### Caller-named destination
 +
-+export { normalizeBatchCommandName };
- 
- /**
-  * The exact set of command names exposed through `batch`, as a narrow union.
-@@ -71,10 +74,6 @@ function isStructuredBatchCommandName(command: string): command is StructuredBat
-   return structuredBatchCommandNames.has(command);
- }
- 
--export function normalizeBatchCommandName(command: unknown): string {
--  return typeof command === 'string' ? command.trim().toLowerCase() : '';
--}
--
- /**
-  * The command a raw step value will RUN as, or undefined.
-  *
++A destination a caller names — `--save-script=<path>` on the local route, or the same path in the remote client's publication record (#4511 amendment) — is judged before anything is created. Both routes expand the caller's path to an absolute one before asking host-kit, and host-kit refuses a relative one at its entry (`relative_destination`) on every platform. Walking a relative name would put the process's working directory in the judged chain, and Node answers that name from the first query after the last `chdir`, so it can be stale while the process stands elsewhere. Host-kit owns the whole sequence as ONE call — walk, refuse, create what is missing at 0700 inside the judged directory, judge again, answer with the judged directory and its identity — and both publishers make that one call before staging. The rule closes the window with PERMISSIONS, not with timing. It is POSIX-only: on Windows the walk does not run, owners, mode bits and link shape are not read, `chmod` toggles only the read-only bit, creation is a recursive `mkdir`, and access there is the ACL of the directory the operator chose.
++A destination is accepted only when no other non-root local user can modify any directory the publish traverses. Each directory must be owned by the current user or by root, and its mode must keep its contents closed to others. Once that holds, nobody can swap a component out or plant one, so the path that was judged is the path the publish reaches, and nothing depends on when a directory was judged.
++The walk emulates the kernel's own path
 ```
 
-**File**: `packages/contracts/src/daemon-http.ts` (modified, +1/-1)
+**File**: `packages/daemon/src/__tests__/support/script-staging-failure.ts` (added, +27/-0)
 ```diff
-@@ -123,7 +123,7 @@ export function buildDaemonHttpLeaseHeaders(leaseId: string | undefined): Record
- // Enforced, not just documented: `test/wire-compat/` digests the declarations
- // that cross this boundary and fails when one changes shape without a bump or
- // an acknowledged-compatible entry (#1432).
--export const DAEMON_RPC_PROTOCOL_VERSION = 2;
-+export const DAEMON_RPC_PROTOCOL_VERSION = 3;
- 
- /**
-  * The largest serialized daemon request, in UTF-8 bytes, that any transport reads: the socket
-```
-
-**File**: `packages/contracts/src/facades/command.ts` (modified, +1/-0)
-```diff
-@@ -15,6 +15,7 @@ export type { DaemonWireRequest, DaemonWireRequestMeta } from '../daemon-wire-re
- export type { DispatchedCommand } from '../dispatched-command.ts';
- export {
-   ANDROID_SHELL_TEXT_UNSUPPORTED_REASON,
-+  normalizeBatchCommandName,
-   readOptionalInteger,
-   readOptionalNumber,
- } from '../input-validation.ts';
-```
-
-**File**: `packages/contracts/src/input-validation.ts` (modified, +5/-0)
-```diff
-@@ -46,3 +46,8 @@ export function readOptionalNumber(
-  * because every producer and consumer of the reason already evaluates this module.
-  */
- export const ANDROID_SHELL_TEXT_UNSUPPORTED_REASON = 'android_shell_text_unsupported' as const;
+@@ -0,0 +1,27 @@
++import fs from 'node:fs';
++import { vi } from 'vitest';
++import { isPublishTemporarySiblingOf } from '@agent-device/test-kit';
 +
-+/** Resolves a batch step command with the same whitespace and case rules on both peers. */
-+export function normalizeBatchCommandName(command: unknown): string {
-+  return typeof command === 'string' ? command.trim().toLowerCase() : '';
++/**
++ * Makes the staging write of a script publication fail, and only that write.
++ *
++ * A publication stages the recording in a private temp sibling of the destination and moves it into place,
++ * so the seam where the filesystem can refuse a script is that one write. `test-kit`'s temp-path predicate
++ * says which write it is, so the fixture does not have to know how the name is built.
++ *
++ * This replaces a fixture that made the destination's directory `0500`. That one asked the HOST whether a
++ * write into it is allowed, and a caller the mode bits do not bind — root — writes straight through it, so
++ * the write succeeded and the test that expected a failure failed with it. The failure injected here is the
++ * fixture's own, which makes the outcome the same for every caller.
++ */
++export function failScriptStagingWrite(destination: string): void {
++  const failure: NodeJS.ErrnoException = Object.assign(
++    new Error(`EACCES: permission denied, open '${destination}'`),
++    { code: 'EACCES', errno: -13, syscall: 'open', path: destination },
++  );
++  const realWriteFileSync = fs.writeFileSync;
++  vi.spyOn(fs, 'writeFileSync').mockImplementation(((file: fs.PathLike | number, ...rest) => {
++    if (isPublishTemporarySiblingOf(file, destination)) throw failure;
++    return (realWriteFileSync as (...args: unknown[]) => unknown)(file, ...rest);
++  }) as typeof fs.writeFileSync);
 +}
 ```
 
-**File**: `packages/daemon-client/src/__tests__/daemon-client-transport-health-compat.test.ts` (modified, +20/-0)
+**File**: `packages/daemon/src/core/__tests__/session-script-writer-ancestry.test.ts` (added, +494/-0)
 ```diff
-@@ -102,3 +102,23 @@ test('a daemon health payload without an upstream link or host arch parses as be
+@@ -0,0 +1,494 @@
++import { afterEach, expect, test, vi } from 'vitest';
++import fs from 'node:fs';
++import path from 'node:path';
++import {
++  FOREIGN_UID,
++  createLiveTestHostEnvironment,
++  mkdtempForTestSync,
++  serveHostOwnership,
++} from '@agent-device/test-kit';
++import { SessionScriptWriter } from '../session-script-writer.ts';
++import { makeAuthoringSession } from '../../__tests__/support/session-factories.ts';
++
++const hostCwd = createLiveTestHostEnvironment().cwd;
++const skipOnWindows = process.platform === 'win32' ? test.skip : test;
++
++/** This process's ids. Windows has neither, and every test that uses them is skipped there. */
++const currentUid = process.getuid?.() ?? -1;
++const currentGid = process.getgid?.() ?? -1;
++
++afterEach(() => {
++  vi.restoreAllMocks();
++});
++
++function action(command: string): {
++  ts: number;
++  command: string;
++  positionals: string[];
++  flags: Record<string, unknown>;
++} {
++  return { ts: Date.now(), command, positionals: ['Demo'], flags: {} };
++}
++
++function recordingTo(destination: string) {
++  return makeAuthoringSession('journey', {
++    scriptPublication: {
++      kind: 'authoring',
++      status: 'armed',
++      target: { kind: 'explicit', path: destination, force: false },
++    },
++    actions: [action('open')],
++  });
++}
++
++function root(): string {
++  return fs.realpathSync(mkdtempForTestSync('agent-device-script-ancestry-'));
++}
++
++function sharedDirectory(directory: string, mode: number): string {
++  fs.mkdirSync(directory);
++  fs.chmodSync(directory, mode);
++  return directory;
++}
++
++/** A scratch directory in this host's own primary group, at `mode`. */
++function homeDirectory(directory: string, mode: number): string {
++  fs.mkdirSync(directory);
++  fs.chownSync(directory, currentUid, currentGid);
++  fs.chmodSync(directory, mode);
++  return directory;
++}
++
++function writerFor(directory: string): SessionScriptWriter {
++  return new SessionScriptWriter(path.join(directory, 'sessions'), hostCwd);
++}
++
++function refusal(result: ReturnType<SessionScriptWriter['write']>): Record<string, unknown> {
++  expect(result.written).toBe(false);
++  if (result.written || !result.error) throw new Error('expected a refused write');
++  return result.error.details as Record<string, unknown>;
++}
++
++skipOnWindows('an ordinary recording saves under a chain only this user can write', () => {
++  const directory = root();
++  const destination = path.join(directory, 'workflows', 'journey.ad');
++
++  const result = writerFor(directory).write(recordingTo(destination));
++
++  expect(result.written).toBe(true);
++  expect(fs.readFileSync(destination, 'utf8')).toContain('open');
++});
++
++skipOnWindows('a recording saves a script no other local user can read', () => {
++  const directory = root();
++  const destination = path.join(directory, 'workflows', 'journey.ad');
++
++  const result = writerFor(directory).write(recordingTo(destination));
++
++  expect(result.written).toBe(true);
++  expect(fs.lstatSync(destination).mode & 0o777).toBe(0o600);
++});
++
++skipOnWindows('a recording refuses a destination under a world-writable directory', () => {
++  const directory = root();
++  const shared = sharedDirectory(path.join(directory, 'shared'), 0o777);
++  const destination = path.join(shared, 'journey.ad');
++
++  const details = refusal(writerFor(directory).write(recordingTo(destination)));
++
++  expect(details).toMatchObject({
++    reason: 'script_ancestor_untrusted',
++    exposure: 'world_writable',
++  });
++  expect(fs.existsSync(destination)).toBe(false);
++});
++
++skipOnWindows('a refused destination with a missing parent leaves no directories behind', () => {
++  // `close --save-script /shared/recordings/journey.ad` where `recordings` is absent. Creating the missing
++  // parent is what the caller asked for, so it cannot be judged only once it exists: a `mkdir -p` that runs
++  // first leaves `recordings` standing in the open directory after the publish refuses, which is a
++  // directory this user made in ground another local user owns the naming of. The chain that exists is
++  // therefore asked about BEFORE anything is created, and again afterwards.
++  const directory = root();
++  const shared = sharedDirectory(path.join(directory, 'shared'), 0o777);
++  const destination = path.join(shared, 'recordings', 'journey.ad');
++
++  const details = refusal(writerFor(directory).write(recordingTo(destination)));
++
++  expect(details).toMatchObject({
++    reason: 'script_ancestor_untrusted',
++    exposure: 'world_writable',
++    ancestor: shared,
++  });
++  expect(fs.readdirSync(shared)).toEqual([]);
++});
++
++skipOnWindows(
++  'a recording that steps back out of a missing directory leaves no directories behind',
++  () => {
++    // `<private>/missing/../../shared/recordings/journey.ad`. The walk ends at `missing`, so `shared` is
++    // never judged, and the `mkdir -p` this route runs resolves the two steps up as TEXT and builds
++    // `<root>/shared/recordings` — the entry would be created in a world-writa
+```
+
+**File**: `packages/daemon/src/core/__tests__/session-script-writer.test.ts` (modified, +11/-4)
+```diff
+@@ -15,6 +15,7 @@ import { markRepairTransactionComplete } from '../session-replay-transaction.ts'
+ import { NO_SCRIPT_PUBLICATION, scriptTargetPath } from '../session-script-publication-state.ts';
+ import { parseReplayScriptDetailed, resolveReplayAction } from '@agent-device/ad-script';
+ import { createLiveTestHostEnvironment, mkdtempForTestSync } from '@agent-device/test-kit';
++import { failScriptStagingWrite } from '../../__tests__/support/script-staging-failure.ts';
+ 
+ const hostCwd = createLiveTestHostEnvironment().cwd;
+ 
+@@ -554,7 +555,10 @@ test('write(session) without { force: true } still refuses, even when a prior wr
+ // concurrent race correctly without any lock — first writer wins, the loser
+ // sees `EEXIST` and is refused.
+ test('two writers racing on the SAME ABSENT target: exactly one linkSync wins, the other is refused (no lock involved)', () => {
+-  const root = mkdtempForTestSync('agent-device-script-writer-race-');
++  // Realpath'ed because the publish creates the entry in the directory the ancestry walk ANSWERED, and on
++  // macOS `mkdtemp` spells the scratch root through the `/var` alias: this spy compares the entry's path
++  // with the one it expects to see.
++  const root = fs.realpathSync(mkdtempForTestSync('agent-device-script-writer-race-'));
+   const writer = new SessionScriptWriter(path.join(root, 'sessions'), hostCwd);
+   const healedPath = path.join(root, 'flows', 'login.healed.ad');
+   fs.mkdirSync(path.dirname(healedPath), { recursive: true });
+@@ -696,9 +700,12 @@ test('an ordinary (non-repair) recording now refuses an existing target too (beh
+ test('an ordinary recording returns a filesystem write failure as a typed error, never a quiet skip', () => {
+   const root = mkdtempForTestSync('agent-device-script-writer-ordinary-fs-failure-');
+   const writer = new SessionScriptWriter(path.join(root, 'sessions'), hostCwd);
+-  const blocker = path.join(root, 'blocker');
+-  fs.writeFileSync(blocker, '');
+-  const outPath = path.join(blocker, 'flow.ad');
++  // The staging write of the publication is made to fail, so the failure the caller sees is the
++  // filesystem's own and not an ancestry verdict. A directory the mode bits deny this user is not used
++  // for that: mode bits do not bind root, so under a root caller the write would succeed and this test
++  // would be reporting the host's permission model instead of the writer's error handling.
++  const outPath = path.join(root, 'flow.ad');
++  failScriptStagingWrite(outPath);
+   const session = makeAuthoringSession('default', {
+     scriptPublication: authoringPublication('armed', { path: outPath }),
+     actions: [action({ command: 'click', positionals: ['id="new"'] })],
+```
+
+**File**: `packages/daemon/src/core/__tests__/session-store-teardown-script.test.ts` (modified, +3/-2)
+```diff
+@@ -81,7 +81,8 @@ test.skipIf(process.platform === 'win32')(
+       expect(fs.statSync(result.path).mode & 0o777).toBe(0o600);
+     }
+     expect(localWrite).toMatchObject({ written: true, path: local });
+-    const umask = process.umask();
+-    expect(fs.statSync(local).mode & 0o777).toBe(0o666 & ~umask);
++    // A target the caller names is published by host-kit's destination rule, which SAYS 0600 on the file
++    // rather than asking for it, so the recording opens to nobody but its owner whatever the umask says.
++    expect(fs.statSync(local).mode & 0o777).toBe(0o600);
+   },
+ );
+```
+
+**File**: `packages/daemon/src/core/session-script-writer.ts` (modified, +25/-5)
+```diff
+@@ -19,7 +19,7 @@ import {
+   stripRecordedRefGeneration,
+ } from '@agent-device/ad-script';
+ import { expandSessionPath, safeSessionName } from '@agent-device/host-kit/session-paths';
+-import { publishFileSync } from '@agent-device/host-kit/file';
++import { publishFileSync, publishScriptFileSync } from '@agent-device/host-kit/file';
+ import type { SessionState } from './session-state.ts';
+ import {
+   NO_SCRIPT_PUBLICATION,
+@@ -133,8 +133,16 @@ export class SessionScriptWriter {
+       const remote =
+         session.scriptPublication?.kind === 'authoring' && session.scriptPublication.remoteDelivery;
+       scriptPath = remote ? this.remoteScriptPath() : this.resolveScriptPath(session);
+-      const scriptDir = path.dirname(scriptPath);
+-      if (!fs.existsSync(scriptDir)) fs.mkdirSync(scriptDir, { recursive: true });
++      // A destination the CALLER named is the caller's own, and host-kit's destination rule is what judges it:
++      // that route walks the chain, creates nothing outside what it judged, and writes the file at 0600. A path
++      // of this daemon's own is made the way it has always been made (#4565).
++      const callerOwnsDestination =
++        !remote &&
++        scriptTargetPath(session.scriptPublication ?? NO_SCRIPT_PUBLICATION) !== undefined;
++      if (!callerOwnsDestination) {
++        const scriptDir = path.dirname(scriptPath);
++        if (!fs.existsSync(scriptDir)) fs.mkdirSync(scriptDir, { recursive: true });
++      }
+       // #1258: `options.force` is the caller's already-merged decision
+       // (`effectiveWriteForce` — a live flag or the per-target grant), not
+       // read from `session` directly here, so this stays a pure
+@@ -143,6 +151,7 @@ export class SessionScriptWriter {
+         scriptPath,
+         script: prepared.script,
+         force: options?.force,
++        callerOwnsDestination,
+         ...(remote ? { mode: 0o600 } : {}),
+       });
+       // COMMITTED: idempotent guard above + teardown's abort/tombstone routing.
+@@ -264,7 +273,6 @@ function toRepairCommitFailure(error: unknown, scriptPath: string | undefined):
      },
    );
- });
-+
-+test.each(['daemon', 'upstream'] as const)(
-+  'released protocol-2 %s cannot silently omit batch receipt delivery',
-+  async (link) => {
-+    const payload =
-+      link === 'upstream' ? proxyHealth(2) : { ...DAEMON_LINK, rpcProtocolVersion: 2 };
-+    await withHealthServer(payload, async (baseUrl) => {
-+      await assert.rejects(
-+        readRemoteDaemonHealth({ baseUrl, token: 't', pid: 0 }),
-+        (error: unknown) => {
-+          const failure = error as { code?: string; details?: Record<string, unknown> };
-+          assert.equal(failure.code, 'COMMAND_FAILED');
-+          assert.equal(failure.details?.remoteRpcProtocolVersion, 2);
-+          assert.equal(failure.details?.supportedRpcProtocolVersion, DAEMON_RPC_PROTOCOL_VERSION);
-+          return true;
-+        },
-+      );
-+    });
-+  },
-+);
-```
-
-**File**: `packages/daemon-client/src/daemon-client-rpc.ts` (modified, +36/-2)
-```diff
-@@ -10,7 +10,11 @@ import {
- } from '@agent-device/kernel/errors';
- import { sanitizeErrorCause } from '@agent-device/kernel/redaction';
- import { createRequestId } from '@agent-device/host-kit/diagnostics';
--import { materializeRemoteArtifacts } from '@agent-device/remote/daemon-artifacts';
-+import {
-+  downloadRemoteArtifact,
-+  materializeRemoteArtifacts,
-+  settleScriptDeliveryReceiptOfFailure,
-+} from '@agent-device/remote/daemon-artifacts';
- import { localizeRemoteDaemonError } from '@agent-device/remote/remote-request-diagnostics';
- import type { DaemonInfo } from './daemon-client-metadata.ts';
- import { DAEMON_REQUEST_MAX_BYTES } from '@agent-device/contracts/daemon-http';
-@@ -102,7 +106,37 @@ async function rejectDaemonHttpRpcError(
-     stateDir,
-     requestId,
-   });
--  reject(appErrorFromDaemonError(localized, requestId));
-+  reject(
-+    appErrorFromDaemonError(
-+      await settleFailedDeliveryReceipt(info, req, stateDir, localized),
-+      requestId,
-+    ),
-+  );
-+}
-+
-+/**
-+ * Settles the batch delivery receipt (#4595) a failed remote answer names: a batch that stopped
-+ * mid-plan still delivers what its completed steps wrote, and the disclosure rides the error the
-+ * caller receives. Never throws, so a receipt that cannot settle still leaves the original failure.
-+ */
-+async function settleFailedDeliveryReceipt(
-+  info: DaemonInfo,
-+  req: DaemonWireRequest,
-+  stateDir: string,
-+  error: DaemonError,
-+): Promise<DaemonError> {
-+  if (!info.baseUrl) return error;
-+  try {
-+    return await settleScriptDeliveryReceiptOfFailure(
-+      { baseUrl: info.baseUrl, token: info.token },
-+      req,
-+      error,
-+      stateDir,
-+      downloadRemoteArtifact,
-+    );
-+  } catch {
-+    return error;
-+  }
  }
- 
- function toDaemonHttpRpcError(error: {
+-
+ /**
+  * ADR 0012 decision 6, no-clobber (maintainer-approved simplification):
+  * publishes `script` to `scriptPath` atomically, refusing ANY pre-existing
+@@ -302,9 +310,21 @@ function publishHealedScriptAtomically(params: {
+   script: string;
+   force?: boolean;
+   mode?: number;
++  callerOwnsDestination: boolean;
+ }): void {
+-  const { scriptPath, script, force, mode } = params;
++  const { scriptPath, script, force, mode, callerOwnsDestination } = params;
+   try {
++    if (callerOwnsDestination) {
++      // host-kit owns this route's whole sequence (#4565): it walks the destination's chain, refuses a
++      // destination another local user can steer BEFORE creating anything, creates what is missing one level
++      // at a time at 0700 inside the directory it judged, and writes the script itself at 0600.
++      publishScriptFileSync({
++        destination: scriptPath,
++        contents: script,
++        publish: force ? 'replace' : 'link-exclusive',
++      });
++      return;
++    }
+     publishFileSync({
+       destination: scriptPath,
+       contents: script,
 ```
 
-**File**: `packages/daemon/src/core/__tests__/request-script-delivery-ledger.test.ts` (added, +388/-0)
+**File**: `packages/daemon/src/server/__tests__/atomic-publish-ownership.test.ts` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,388 @@
-+import { expect, test } from 'vitest';
-+import type { DaemonArtifact, DaemonResponse } from '@agent-device/kernel/contracts';
-+import { readScriptDeliveryReceipt } from '@agent-device/kernel/contracts';
-+import type { DaemonRequest } from '../daemon-request.ts';
-+import {
-+  collectBatchStepDelivery,
-+  type ScriptDeliveryLedger,
-+  reportScriptDelivery,
-+} from '../request-script-delivery-ledger.ts';
-+
-+/**
-+ * The batch delivery receipt's daemon owner (ADR 0016, #4595). Each case answers step replies the
-+ * way a batch runner reports them and asserts what the ONE outer receipt says, because a client may
-+ * act only on that receipt.
-+ */
-+
-+const ID = '3f2a1b0c-0000-4000-8000-000000000001';
-+const OTHER = '9a8b7c6d-0000-4000-8000-000000000002';
-+
-+/** The batch request an outermost client sends: its ledger is the one the request owner creates. */
-+function batchRequest(steps: number): DaemonRequest {
-+  return {
-+    token: 't',
-+    session: 'journey',
-+    command: 'batch',
-+    positionals: [],
-+    flags: { batchSteps: Array.from({ length: steps }, () => ({ command: 'wait' })) },
-+  };
-+}
-+
-+/** The ledger the request owner created for `outer`, as the batch runner sees it. */
-+function ledgerOf(outer: DaemonRequest): ScriptDeliveryLedger {
-+  const scriptDelivery = outer.internal?.scriptDelivery;
-+  if (!scriptDelivery) throw new Error('the request owner answers its handlers on a ledger');
-+  return scriptDelivery;
-+}
-+
-+function script(artifactId: string, revision: number, publicationId = ID): DaemonArtifact {
-+  return {
-+    field: 'savedScript',
-+    artifactType: 'session-script',
-+    artifactId,
-+    scriptPublicationId: publicationId,
-+    scriptRevision: revision,
-+  };
-+}
-+
-+function failure(publicationId = ID) {
-+  return {
-+    reason: 'script_delivery_failed' as const,
-+    publicationId,
-+    message: 'The action succeeded, but the daemon could not write the remote recording.',
-+    hint: 'The next recorded action delivers the full recording again.',
-+  };
-+}
-+
-+test('a request whose steps delivered nothing answers no receipt', async () => {
-+  const response = await reportScriptDelivery(batchRequest(1), async () => ({
-+    ok: true,
-+    data: { results: [] },
-+  }));
-+
-+  expect(response).toEqual({ ok: true, data: { results: [] } });
-+});
-+
-+test('a reply no nested step fed answers no receipt, even when it names script artifacts', async () => {
-+  // A single command's own reply already delivers through its artifacts; a receipt on it would
-+  // change every recorded action's shape. Only a request whose ledger its nested steps fed — a
-+  // composite — answers one.
-+  const response = await reportScriptDelivery(batchRequest(1), async () => ({
-+    ok: true,
-+    data: { artifacts: [script('v2', 2)], scriptDeliveryFailure: failure() },
-+  }));
-+
-+  expect(response).toEqual({
-+    ok: true,
-+    data: { artifacts: [script('v2', 2)], scriptDeliveryFailure: failure() },
-+  });
-+});
-+
-+test('the versions, the failure and the close the steps answered become one receipt on the outer reply', async () => {
-+  let scriptDelivery: ScriptDeliveryLedger | undefined;
-+  const response = await reportScriptDelivery(batchRequest(2), async (outer) => {
-+    scriptDelivery = ledgerOf(outer);
-+    collectBatchStepDelivery(
-+      outer,
-+      { number: 1, command: 'wait' },
-+      {
-+        ok: true,
-+        data: { artifacts: [script('v2', 2)] },
-+      },
-+    );
-+    collectBatchStepDelivery(
-+      outer,
-+      { number: 2, command: ' CLOSE ' },
-+      {
-+        ok: true,
-+        data: {
-+          scriptPublicationId: ID,
-+          artifacts: [script('v3', 3)],
-+          scriptDeliveryFailure: failure(),
-+        },
-+      },
-+    );
-+    return { ok: true, data: { results: [{ ok: true }, { ok: true }] } };
-+  });
-+
-+  expect(response).toMatchObject({
-+    ok: true,
-+    data: {
-+      scriptDeliveryReceipt: {
-+        publicationId: ID,
-+        version: { artifactId: 'v3', scriptRevision: 3 },
-+        close: { step: 2 },
-+        failures: [{ message: failure().message }],
-+      },
-+    },
-+  });
-+  expect(scriptDelivery?.nested).toBe(true);
-+});
-+
-+test('a failed batch answers the receipt in the error details and keeps the original error', async () => {
-+  const original: DaemonResponse = {
-+    ok: false,
-+    error: { code: 'COMMAND_FAILED', message: 'step 2 failed' },
-+  };
-+
-+  const response = await reportScriptDelivery(batchRequest(2), async (outer) => {
-+    collectBatchStepDelivery(
-+      outer,
-+      { number: 1, command: 'wait' },
-+      {
-+        ok: true,
-+        data: { artifacts: [script('v2', 2)] },
-+      },
-+    );
-+    collectBatchStepDelivery(outer, { number: 2, command: 'tap' }, original);
-+    return original;
-+  });
-+
-+  if (!response.ok) {
-+    expect(response.error.code).toBe('COMMAND_FAILED');
-+    expect(response.error.message).toBe('step 2 failed');
-+    expect(response.error.details).toMatchObject({
-+      scriptDeliveryReceipt: { publi
+@@ -23,7 +23,7 @@ const PROCESS_LOCK_SOURCE = new URL(
+ test('simple same-directory publishers use the shared atomic publish owner', () => {
+   for (const sourcePath of SIMPLE_PUBLISHERS) {
+     const source = fs.readFileSync(sourcePath, 'utf8');
+-    assert.match(source, /publishFileSync/);
++    assert.match(source, /publish(?:Script)?FileSync/);
+     assert.doesNotMatch(source, /fs\.(?:writeFileSync|renameSync)\s*\(/);
+   }
+ });
+```
+
+**File**: `packages/daemon/src/sessions/session-lifecycle/internal/__tests__/session-close-script.test.ts` (modified, +7/-4)
+```diff
+@@ -16,6 +16,7 @@ import {
+ } from '../session-close-script.ts';
+ import { createLiveTestHostEnvironment, mkdtempForTestSync } from '@agent-device/test-kit';
+ import { flushSessionEventLogWrites } from '@agent-device/session-journal/session-event-log';
++import { failScriptStagingWrite } from '../../../../__tests__/support/script-staging-failure.ts';
+ 
+ const roots: string[] = [];
+ 
+@@ -195,10 +196,12 @@ test('#1533: an ordinary armed authoring session still publishes on bare close',
+ test('ordinary close reports a filesystem failure of its script write instead of a quiet success', () => {
+   const root = mkdtempForTestSync('agent-device-session-close-script-fs-');
+   roots.push(root);
+-  // A regular file where the target directory must be: publishing into it fails with ENOTDIR.
+-  const blocker = path.join(root, 'blocker');
+-  fs.writeFileSync(blocker, '');
+-  const targetPath = path.join(blocker, 'flow.ad');
++  // The publication's staging write is made to fail, so the caller sees the filesystem's own failure and
++  // not an ancestry refusal. A directory whose mode denies this user is not used for that: mode bits do
++  // not bind root, so under a root caller the write would succeed and this test would be measuring the
++  // host's permission model instead of what close does with a failure.
++  const targetPath = path.join(root, 'flow.ad');
++  failScriptStagingWrite(targetPath);
+   const { req, ref, sessionStore } = setup(
+     'fs-failure',
+     makeIosSession('fs-failure', {
 ```
 
 ---
 
-### Incident Patch 3: `ad147101` (2026-11-17)
-**Commit Message**: fix(proxy): bound transfer phases and join owned cleanup (#4613)
+### Incident Patch 2: `aa600e98` (2026-11-18)
+**Commit Message**: docs: write down trust boundaries, security review scope, and startup-path gates (#4679)
 
-* fix(proxy): bound transfer phases and join owned cleanup
+* docs(agents): drop duplicated guidance
 
-* test(proxy): require reset evidence and clarify forwarding limits
+Each removed line is already owned elsewhere: the AGENTS.md task router,
+another agent doc, code comments, type declarations, tests, or
+CONTRIBUTING.md. This makes room for security guidance within the
+agent-docs byte budget.
 
-* fix(proxy): centralize bounded transfer route ownership
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-Keep transfer selection with proxy admission and load transfer mechanics only for transfer routes. Preserve the first classified failure while owned cleanup joins. Keep the independent foreign-preflight null-body repair outside this layer.
+* docs(agents): add security boundaries and a trust-boundary review trigger
 
-* test(proxy): assert the lazy-loader refusal premise
+Write down who is trusted for which filesystem decision, the rules for
+a file written at a path another party chooses, and the destination
+classes. Add a design-review trigger and a scope rule to the review
+guide, and the startup-path and wire checks to the gates guide.
 
-Verify transfer mechanics cannot load in the lazy-boundary control and restore the wire ledger byte-for-byte to base after splitting the independent preflight repair.
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `packages/daemon/src/server/http/http-server-proxy-rollback.test.ts` (added, +166/-0)
+* docs(adr): shorten ADR 0016's caller-named destination section
+
+Group the walk into labeled rules, move the path-shape examples into one
+case table with owning tests, and list the rejected alternatives. Record
+that the local file is exactly 0600 while the remote client requests
+0600 under the umask, and that resolveUserPath folds relative and ~/
+spellings before the walk. Point #4649
+
+**File**: `AGENTS.md` (modified, +13/-12)
 ```diff
-@@ -0,0 +1,166 @@
-+import assert from 'node:assert/strict';
-+import crypto from 'node:crypto';
-+import fs from 'node:fs';
-+import http from 'node:http';
-+import { expect, onTestFinished, test, vi } from 'vitest';
-+import { createDaemonProxyServer } from '@agent-device/proxy';
-+import {
-+  closeLoopbackServer,
-+  createTestRuntimeStateHandle,
-+  listenOnLoopback,
-+  skipWhenLoopbackUnavailable,
-+} from '@agent-device/test-kit';
-+import {
-+  cleanupUploadedArtifact,
-+  prepareUploadedArtifact,
-+} from '../../resources/artifact-tracking.ts';
-+import { createDaemonHttpServer } from './http-server.ts';
-+
-+function deferred<T>() {
-+  let resolve!: (value: T) => void;
-+  let reject!: (error: unknown) => void;
-+  const promise = new Promise<T>((yes, no) => {
-+    resolve = yes;
-+    reject = no;
-+  });
-+  return { promise, resolve, reject };
-+}
-+
-+test.for(['disconnect and resume', 'uninterrupted'] as const)(
-+  'an actual proxy-to-daemon upload handles %s and verifies finalized bytes',
-+  async (mode, t) => {
-+    if (await skipWhenLoopbackUnavailable(t, 'proxy-to-daemon upload coverage')) return;
-+    const runtime = createTestRuntimeStateHandle();
-+    try {
-+      await runtime.run(async () => {
-+        const daemon = await createDaemonHttpServer({
-+          token: 'daemon-secret',
-+          handleRequest: async () => ({ ok: true, data: {} }),
-+          env: process.env,
-+          cwd: process.cwd(),
-+        });
-+        const daemonPort = await listenOnLoopback(daemon);
-+        const proxy = createDaemonProxyServer({
-+          upstreamBaseUrl: `http://127.0.0.1:${daemonPort}`,
-+          upstreamToken: 'daemon-secret',
-+          clientToken: 'client-secret',
-+        });
-+        let tracked = '';
-+        try {
-+          const origin = `http://127.0.0.1:${await listenOnLoopback(proxy)}`;
-+          const content = Buffer.from('ABCDEF');
-+          const headers = {
-+            authorization: 'Bearer client-secret',
-+            'content-type': 'application/json',
-+          };
-+          const preflight = await fetch(`${origin}/upload/preflight`, {
-+            method: 'POST',
-+            headers,
-+            body: JSON.stringify({
-+              uploadAttemptId: crypto.randomUUID(),
-+              sha256: crypto.createHash('sha256').update(content).digest('hex'),
-+              fileName: 'demo.apk',
-+              sizeBytes: content.length,
-+              artifactType: 'file',
-+              platform: 'android',
-+            }),
-+          });
-+          expect(preflight.status).toBe(200);
-+          const ticket = (await preflight.json()) as {
-+            uploadId: string;
-+            upload: { url: string; headers: Record<string, string> };
-+          };
-+          expect(new URL(ticket.upload.url).origin).toBe(origin);
-+          expect(ticket.upload.headers.authorization).toBe('Bearer client-secret');
-+          const put = (range: string, body: string) =>
-+            fetch(ticket.upload.url, {
-+              method: 'PUT',
-+              headers: { ...ticket.upload.headers, 'content-range': range },
-+              body,
-+            });
-+          const first = await put('bytes 0-1/6', 'AB');
-+          expect(first.status).toBe(308);
-+          expect(first.headers.get('x-upload-offset')).toBe('2');
-+          await first.text();
-+          if (mode === 'disconnect and resume') {
-+            const prefix = deferred<string>();
-+            const rolledBack = deferred<void>();
-+            let payload = '';
-+            let watcher: fs.FSWatcher | undefined;
-+            const createWriter = fs.createWriteStream;
-+            const writerSpy = vi.spyOn(fs, 'createWriteStream').mockImplementation((...args) => {
-+              const writer = Reflect.apply(createWriter, fs, args) as fs.WriteStream;
-+              payload = String(args[0]);
-+              writer.once('open', () => {
-+                watcher = fs.watch(payload, () => {
-+                  void fs.promises.readFile(payload, 'utf8').then((bytes) => {
-+                    if (bytes === 'ABCD') prefix.resolve(bytes);
-+                  }, prefix.reject);
-+                });
-+              });
-+              return writer;
-+            });
-+            const truncate = fs.promises.truncate;
-+            const rollbackSpy = vi
-+              .spyOn(fs.promises, 'truncate')
-+              .mockImplementation(async (path, length) => {
-+                await truncate(path, length);
-+                if (String(path) === payload && length === 2) rolledBack.resolve();
-+              });
-+            onTestFinished(() => {
-+              watcher?.close();
-+              writerSpy.mockRestore();
-+              rollbackSpy.mockRestore();
-+            });
-+            const client = http.request(ticket.upload.url, {
-+              method: 'PUT',
-+              headers: { ...ticket.upload.headers, 'content-range': 'bytes 2-5/6' },
-+            });
-+            const errors: Error[] = [];
-+            client.on('error', (error) => errors.push(
+@@ -5,12 +5,12 @@ The daemon owns sessions. Registry declarations route commands to platform runti
+ 
+ ## Task routing
+ 
+-Read each applicable row. Follow other links only when they apply.
++Read each applicable row. Follow other links only as needed.
+ 
+ | When the task involves | Read |
+ | --- | --- |
+ | Domain vocabulary | `CONTEXT.md` |
+-| Read architecture decisions | `docs/adr/README.md` |
++| Architecture decisions | `docs/adr/README.md` |
+ | Write or amend an ADR | `docs/adr/FORMAT.md` |
+ | Source, package boundaries, routing, diagnostics, CI | `docs/agents/code-ownership.md` |
+ | Checks or a failed gate | `docs/agents/testing.md` |
+@@ -22,42 +22,43 @@ Read each applicable row. Follow other links only when they apply.
+ | A new or changed CLI flag | `docs/agents/cli-flags.md` |
+ | A PR to open or update | `docs/agents/pull-requests.md` |
+ | A change to review | `docs/agents/review.md` |
++| Trust boundaries, untrusted paths, security review | `docs/agents/security.md` |
+ | Device-facing changes or manual device verification | `docs/agents/device-verification.md` |
+ | Issues, PRDs, or triage labels | `docs/agents/issue-tracker.md`, `docs/agents/triage-labels.md` |
+ | Web backend setup or diagnostics | `docs/agents/web-backend.md` |
+ 
+ A device-facing change affects live device behavior: dispatch, capture, interaction, app lifecycle, or native execution.
+-If a daemon edit changes none of these, a device run is not required.
++A daemon edit that changes none of these needs no device run.
+ 
+ The versioned CLI help owns command semantics. To drive an app, start with the skill's routing card.
+ 
+ ## Working rules
+ 
+-- Keep edits in the requested command family or module group. Examine other platforms only when the task requires it.
++- Keep edits in the requested command family or module group. Examine other platforms only when the task needs it.
+ - Fix a recurring failure at the owning type, registry, or construction path. Do not rebuild another owner's state.
+ - Use typed reasons and details for behavior. Do not match error text.
+ - Add compatibility or fallback behavior only on explicit request or approval. During a migration, remove superseded paths.
+ - Encode invariants in names, types, and boundaries. Write comments only for public APIs, tool directives, or constraints that code cannot show.
+ - Resolve a gate failure at the reported invariant. Do not suppress it. Do not add an allowlist to get a pass.
+ - Use `@agent-device/selectors` to parse and match selectors. For other shared owners, see `docs/agents/code-ownership.md`.
+-- Keep skills as routing cards. Keep `CONTEXT.md` as a glossary only. When behavior changes, update the owning help and user docs.
++- Keep skills as routing cards. Keep `CONTEXT.md` a glossary only. When behavior changes, update the owning help and user docs.
+ 
+ ## Worktree setup
+ 
+ - Use `pnpm`. Use OXC to lint and format. Run `pnpm format` on the full repository.
+-- In a new worktree, run `pnpm install --frozen-lockfile && pnpm build` before you test.
++- In a new worktree, run `pnpm install --frozen-lockfile && pnpm build` before testing.
+ - Do not change other worktrees, devices, sessions, dirty files, or experiments. Do not use `git stash`; all worktrees share it.
+-- Do not copy `.env` into a worktree. For host credentials, source the main checkout's file by its absolute path.
+-- Give each parallel worker different files and a different device. `pnpm check:affected --run`, `pnpm check`, and heavy `pnpm gate` ids share one lock.
++- Do not copy `.env` into a worktree. For host credentials, source the main checkout's file by absolute path.
++- Give each parallel worker different files and devices. `pnpm check:affected --run`, `pnpm check`, and heavy `pnpm gate` ids share one lock.
+ - The layering scan reads only tracked files. Stage new modules before you trust its result.
+ - When you rename a file, move its Fallow baseline entry. Do not regenerate unrelated baselines.
+ 
+-The validation lock automatically reclaims provably dead owners. An unknown owner continues to block.
+-If the wait times out, report the printed owner and the lock state. Do not remove the lock manually.
++The validation lock reclaims provably dead owners. An unknown owner blocks.
++If the wait times out, report the printed owner and lock state. Do not remove the lock manually.
+ 
+ ## Agent docs
+ 
+-Write agent docs in ASD-STE100. Write one instruction in each sentence.
++Write agent docs in ASD-STE100. Write one instruction per sentence.
+ Put the condition before the instruction. Use one term for one concept.
+-Keep commands and domain terms exact. Put specialized rules and new shared constraints in the owning task document, not in agent memory.
++Keep commands and domain terms exact. Put specialized rules and new shared constraints in the owning task document, not agent memory.
+ Before you add a reminder, delete duplicate or enforced rules.
 ```
 
-**File**: `packages/host-kit/src/internal/transport-phases.test.ts` (modified, +32/-0)
+**File**: `docs/adr/0016-active-session-script-publication.md` (modified, +53/-23)
 ```diff
-@@ -207,6 +207,38 @@ test('disposing the phase observer removes only its own listeners', () => {
-   assert.equal(fake.listenerCount('response'), 0);
- });
+@@ -25,9 +25,11 @@ This section is a normative summary.
+   Since #1349, the `target-v1` annotation of the guard must be `verification: "verified"`.
+   Every refusal happens before filesystem work and names its recovery.
+ - The destination a caller names with `--save-script=<path>` is judged before anything is created.
+-  It must be absolute, and every directory the walk looks a name up in must be one no other non-root local user can change.
+-  What is missing is created one level at a time at 0700, inside the directory the walk just judged, and the script file is 0600.
+-  The rule is POSIX-only, and a refused destination leaves nothing behind.
++  Host-kit requires it absolute; `resolveUserPath` folds a relative or `~/` spelling lexically before that.
++  Every directory the walk looks a name up in must be owned by the current user or root, and must be either closed to entries from others or sticky.
++  What is missing is created one level at a time at 0700, inside the directory the walk just judged.
++  The local file is exactly 0600. The remote client requests 0600, and the umask can narrow it.
++  The rule is POSIX-only. A refusal before creation leaves nothing behind; a refusal after creation starts can leave the empty directories already created.
+   The daemon's own state-directory chain is outside this decision (#4649).
+ - Repair transactions (ADR 0012) are disjoint from this lifecycle.
+   A session with `saveScriptBoundary` set refuses this action without a change to repair state.
+@@ -191,12 +193,12 @@ It adds no state name, command, or flag:
+ - The daemon arms the recording under that ID, which `open` and `close` name in `scriptPublicationId`.
+   After each successful request that records into the ARMED recording, the daemon writes the recording so far, without a terminal `close`, and returns it as a `session-script` artifact with the ID and a growing `scriptRevision`.
+   The close-time write is the final version and has the highest revision; close takes it from the close-time write itself, so a capture that close stops first never hides recorded actions.
+-  Each version, the final one included, is a fresh 0600 file in a 0700 directory under the daemon's sessions directory, and is downloaded once.
++  Each version, the final one included, is a fresh file, requested at 0600 through the generic publisher, in a 0700 directory under the daemon's sessions directory, and is downloaded once.
+   It registers for download for the tenant that opened the recording, whatever the tenant, capture filters, or network marker of the request that recorded it.
+ - The client writes a version only to the destination of a record that matches its ID and scope, and only when its revision is newer than the last published one.
+   The `savedScript` field and the `session-script` type are reserved for this path, so a script artifact under another field writes nothing.
+   Thus, a daemon response never establishes a destination, and another publication's or another session's version writes nothing.
+-  The download streams, capped at 8 MiB, into a new 0600 file, created exclusively and never through a symbolic link, in a 0700 staging directory beside the destination.
++  The download streams, capped at 8 MiB, into a new file requested at 0600, created exclusively and never through a symbolic link, in a staging directory beside the destination that is requested at 0700; the umask can narrow both modes.
+   Under the record lock, the record names the version and the staged file's device and inode before the rename or link, and the next version settles that entry from the destination's identity.
+   A second name keeps the staged inode, and its staging directory, on disk while the record may name it, so no later file can reuse that inode; settling or retiring the entry removes the staging directory.
+   The record lists each staging directory before a download writes to it, so retiring or sweeping the record also removes the staging that a crashed download left behind.
+@@ -214,32 +216,60 @@ It adds no state name, command, or flag:
  
-+test('suspend resumes counting when the same phase is armed again', async () => {
-+  const watchdog = watchPhases();
-+  watchdog.arm('response-body', TRANSFER_BODY_INACTIVITY_TIMEOUT_MS);
-+  await vi.advanceTimersByTimeAsync(TRANSFER_BODY_INACTIVITY_TIMEOUT_MS - 10_000);
-+  watchdog.suspend();
-+  await vi.advanceTimersByTimeAsync(TRANSFER_BODY_INACTIVITY_TIMEOUT_MS * 3);
-+  assert.equal(watchdog.signal.aborted, false);
-+  watchdog.arm('response-body', TRANSFER_BODY_INACTIVITY_TIMEOUT_MS);
-+  await vi.advanceTimersByTimeAsync(TRANSFER_BODY_INACTIVITY_TIMEOUT_MS + 1);
-+  assertPhaseDetails(watchdog.signal.reason, 'response-body', 120_000);
-+});
-+
-+test('body progress during a suspend cannot restart the stopped ceiling', async () => {
-+  const watchdog = watchPhases();
-+  watchdog.arm('response-body', TRANSFER_BODY_INACTIVITY_TIMEOUT_MS);
-+  watchdog.suspend();
-+  watchdog.touchBody();
-+  await vi.advanceTimersByTimeAsync(TRANSFER_BODY_INACTIVITY_TIMEOUT_MS * 2);
-+  assert.equal(watchdog.signal.aborted, false);
-+});
-+
-+test('caller cancellation still binds an exchange whose idle ceiling is suspended', async () => {
-+  const caller = new AbortController();
-+  const watchdog = watchPhases(caller.signal);
-+  watchdog.arm('response-body', TRANSFER_BODY_INACTIVITY_TIMEOUT_MS);
-+  watchdog.suspend();
-+  const cancellation = new Error('caller went away');
-+  caller.abort(cancellation);
-+  assert.equal(watchdog.signal.aborted, true);
-+  assert.equal(watchdog.signal.reason, cancellation);
-+});
-+
- function assertPhaseDetails(reason: unknown, phase: string, timeoutMs: number): void {
-   assert.ok(reason instanceof AppError, `phase expiry must be an AppError, got ${String(reason)}`);
-   assert.equal(isTransferPhaseTimeoutError(reason), true);
+ ### Caller-named destination
+ 
+-A destination a caller names — `--save-script=<path>` on the local route, or the same path in the remote client's publication record (#4511 amendment) — is judged before anything is created. Both routes expand the caller's path to an absolute one before asking host-kit, and host-kit refuses a relative one at its entry (`relative_destination`) on every platform. Walking a relative name would put the process's working directory in the judged chain, and Node answers that name from the first query after the last `chdir`, so it can be stale while the process stands elsewhere. Host-kit owns the whole sequence as ONE call — walk, refuse, create what is missing at 0700 inside the judged directory, judge again, answer with the judged directory and its identity — and both publishers make that one call before staging. The rule closes the window with PERMISSIONS, not with timing. It is POSIX-o
 ```
 
-**File**: `packages/host-kit/src/internal/transport.ts` (modified, +11/-1)
+**File**: `docs/adr/0027-descriptor-root-vs-eager-closure-budget.md` (modified, +1/-0)
 ```diff
-@@ -160,6 +160,9 @@ export type TransferPhaseWatchdog = {
-   signal: AbortSignal;
-   arm(phase: TransferPhase, timeoutMs: number): void;
-   touchBody(): void;
-+  /** Stops counting an idle ceiling while the holder waits on demand, keeping its armed phase. */
-+  suspend(): void;
-+  /** Stops observing this attempt. A suspended phase stays suspended. */
-   dispose(): void;
- };
+@@ -14,6 +14,7 @@ Rename canonicalization preserves a `git mv` of a module already inside the base
+ It does not exempt a pre-existing external module moved into the closure.
+ `scripts/__tests__/closure-growth-rule.ts` owns the rule.
+ `scripts/__tests__/closure-growth-rule.test.ts` plants violations in every failing direction.
++To check a change, stage new entry files, fetch `origin/main`, and run `pnpm exec vitest run --project unit-core scripts/__tests__/eager-closure-budgets.test.ts`.
+ The hard ADR-0019 checks remain unchanged: façade exactness and no platform implementation before binding.
+ The tolerance relaxes the module-count proxy, never the loading property.
  
-@@ -168,11 +171,12 @@ export function createTransferPhaseWatchdog(callerSignal?: AbortSignal): Transfe
-   const signal = callerSignal ? AbortSignal.any([callerSignal, phase.signal]) : phase.signal;
-   let armed: { phase: TransferPhase; timeoutMs: number } | undefined;
-   let timer: ReturnType<typeof setTimeout> | undefined;
-+  let suspended = false;
-   const rearm = () => {
-     if (timer !== undefined) clearTimeout(timer);
-     timer = undefined;
-     const current = armed;
--    if (!current) return;
-+    if (!current || suspended) return;
-     timer = setTimeout(() => {
-       timer = undefined;
-       phase.abort(createTransferPhaseTimeoutError(current.phase, current.timeoutMs));
-@@ -183,13 +187,19 @@ export function createTransferPhaseWatchdog(callerSignal?: AbortSignal): Transfe
-     signal,
-     arm(nextPhase, timeoutMs) {
-       if (signal.aborted) return;
-+      suspended = false;
-       armed = { phase: nextPhase, timeoutMs };
-       rearm();
-     },
-     touchBody() {
-       if (!armed || !BODY_PHASES.has(armed.phase)) return;
-       rearm();
-     },
-+    suspend() {
-+      suspended = true;
-+      if (timer !== undefined) clearTimeout(timer);
-+      timer = undefined;
-+    },
-     dispose() {
-       armed = undefined;
-       if (timer !== undefined) clearTimeout(timer);
 ```
 
-**File**: `packages/host-kit/src/transport.ts` (modified, +3/-0)
+**File**: `docs/agents/cli-flags.md` (modified, +0/-5)
 ```diff
-@@ -8,6 +8,9 @@ export {
-   readNodeHttpRequestBody,
-   readNodeHttpResponseBody,
-   timingSafeStringEqual,
-+  TRANSFER_BODY_INACTIVITY_TIMEOUT_MS,
-   TRANSFER_CONNECT_TIMEOUT_MS,
-+  TRANSFER_RESPONSE_HEADER_TIMEOUT_MS,
-+  type TransferPhaseWatchdog,
-   type NodeHttpRequester,
- } from './internal/transport.ts';
+@@ -8,9 +8,6 @@ Pass a flag only through layers that consume it:
+    Update the command family metadata/schema that exposes the flag.
+    To find the owner, run `rg -n "<command>|helpDescription|summary|supportedFlags|allowedFlags" packages/command-surface/src src/commands src/cli/parser`.
+    For schema-only CLI commands, use `SCHEMA_ONLY_CLI_COMMAND_SCHEMAS` in `packages/command-surface/src/schema/command-overrides.ts`.
+-   Each flag declaration requires `projectConfig` and `recorded`.
+-   `projectConfig` permits a project `agent-device.json` to set the flag.
+-   `recorded` makes the session recorder copy it into `SessionAction.flags`.
+    Only when repository control is safe, set `projectConfig: true`. Otherwise, a new flag is operator-only.
+    Only when a `.ad` recording must carry the flag, set `recorded: true`.
+ 2. In `packages/command-surface/src/cli-grammar/*`, read the CLI flag into command input.
+@@ -31,7 +28,6 @@ Pass a flag only through layers that consume it:
+ ## Where CLI help and schema live
+ 
+ - Long help prose is in `src/commands/schema/cli-help.ts`.
+-  CLI input readers are in `packages/command-surface/src/cli-grammar/`.
+ - `src/commands/schema/usage.ts` generates the synopsis `[label]` flag tail from `allowedFlags`.
+   Only when the command synopsis names fewer options, declare `usageFlags`.
+   For pure grammar or grammar with its own mutually-exclusive brackets, use `[]`.
+@@ -45,4 +41,3 @@ Pass a flag only through layers that consume it:
+   The parser rejects only options in rows. If it rejected `--json`, it would reject the command.
+ - Keep command-specific usage/flag metadata with the command family metadata that owns the command.
+ - Keep argument parsing in `src/cli/parser/`. Keep help rendering in `src/commands/schema/`.
+-  Command schema metadata derives from command metadata, family declarations, and the schema-only merge in `packages/command-surface/src/schema/command-overrides.ts`.
 ```
 
-**File**: `packages/proxy/README.md` (modified, +53/-4)
+**File**: `docs/agents/gates.md` (modified, +2/-2)
 ```diff
-@@ -94,10 +94,49 @@ Your Node HTTP client must send exactly one valid `Host` header on every request
- configured. Configure raw-socket and HTTP/1.0 health probes to send `Host: localhost` (or your
- deployment's host and port).
+@@ -1,7 +1,5 @@
+ # Maintain gates
  
-+### How the proxy reaches the daemon
+-For execution, read [validation](testing.md).
+-
+ `CHECK_CATALOG` in `scripts/check-affected/checks.ts` owns checks and commands.
+ CI declares ownership through the shared `run-gate` action with a literal gate id.
+ For a new check, update the catalog and executable model.
+@@ -28,3 +26,5 @@ Generate it or fetch evidence artifacts.
+ Versioned corpora, schemas, fixtures, and golden tables remain source inputs.
+ If TypeScript helpers cannot load, plain `.mjs` packaging fixtures keep child-process use local.
+ Prefer `execFile`.
 +
-+On artifact transfer routes — `POST /upload`, `/upload/preflight` and `/upload/finalize`,
-+`PUT /upload/direct/*` and `GET /artifacts*` — the proxy forwards with `node:http` / `node:https`.
-+Each transfer has a connect limit of 30 seconds, a response-header wait of 30 seconds that
-+starts only once its own outgoing body has finished and the connection is established, and a
-+120-second limit on body inactivity. For downloads, that limit counts time spent waiting for
-+upstream bytes while you read the response; it pauses when you stop reading. Every forwarded
-+exchange also ends at 600 seconds regardless of how steadily its bytes move. Your `upstreamTimeoutMs`
-+is an additional cap. The earliest caller cancellation, operator cap, phase limit or aggregate expiry
-+ends the exchange. A transfer does not retry or restart its aggregate.
-+
-+Transfer phase and aggregate timeout error responses use HTTP 500 and include `reason`,
-+`transferPhase` and `timeoutMs`. These fields appear only for `COMMAND_FAILED` with
-+`reason: transfer_phase_timeout` and the matching connect/header (30000ms) or body (120000ms)
-+phase budget, or `reason: transfer_forwarding_deadline_exceeded` with
-+`transferPhase: forwarding` and `timeoutMs: 600000`. Other errors omit these fields.
-+After the proxy returns a response, a timeout while you consume it fails the body read instead of
-+replacing its status. Preflight bodies are consumed before ticket rewriting; a timeout there returns
-+HTTP 500.
-+
-+On these routes:
-+
-+- Redirects are returned without being followed. The daemon's `308` resume response keeps its
-+  `Range` and `x-upload-offset` headers.
-+- Default request headers added by `fetch`, such as `accept` and `user-agent`, are not sent.
-+- A patched global `fetch` or an `undici` global dispatcher no longer intercepts the request.
-+
-+Supply `upstreamFetch` if you need those Fetch behaviors or your own routing.
-+
-+Environment-proxy routing depends on your runtime. In loopback checks, Node 22.12 ignores
-+`HTTP_PROXY` and `HTTPS_PROXY` for both transports. Node 26.11.1 uses them when
-+`NODE_USE_ENV_PROXY=1`. Bun 1.4.2 Fetch uses them without that opt-in, while the default transfer
-+transport requires it. On Node 26.11.1 and Bun 1.4.2, `NO_PROXY=127.0.0.1` bypasses the proxy.
-+If your Bun deployment needs proxy routing for transfers, set `NODE_USE_ENV_PROXY=1` or supply
-+`upstreamFetch`.
-+
-+By default, `/rpc`, `/health` and request diagnostics use global `fetch`.
-+
- ### Reach the daemon over your own transport
- 
--By default the proxy calls the daemon with the global `fetch`. Pass `upstreamFetch` when the daemon
--is only reachable some other way, such as a tunnel the device host opened to your gateway:
-+Pass `upstreamFetch` when the daemon is only reachable some other way, such as a tunnel the device
-+host opened to your gateway:
- 
- ```ts
- const proxy = createDaemonProxy({
-@@ -111,6 +150,16 @@ const proxy = createDaemonProxy({
- `upstreamFetch` receives a `Request` addressed to `upstreamBaseUrl` and must resolve with the
- daemon's `Response`. Abort the exchange when `request.signal` aborts.
- 
-+On transfer routes, the proxy bounds its wait for your transport and response body. It settles on
-+your abort, your `upstreamTimeoutMs`, its 600-second aggregate and its demand-aware response-body
-+inactivity limit. Work your transport starts can keep running if it ignores `request.signal`. The
-+proxy does not wait for that work or for a cancellation callback that never settles. It cannot
-+measure a connect or a header wait it does not own, so on transfer routes your transport keeps those
-+obligations. Bound connection establishment to 30 seconds and the response-header wait to 30 seconds
-+once the connection is established and the outgoing body has finished. Stream `request.body` with
-+120-second body inactivity limits. Stop your request and response sources on cancellation. A body
-+pull alone does not confirm that an outgoing byte was sent.
-+
- ### Authenticate each client yourself
- 
- One `clientToken` is shared by every client. To give each client its own credential, pass
-@@ -158,9 +207,9 @@ authenticate: async (request) => {
- | `upstreamToken` | required | The daemon's auth token. |
- | `clientToken` | required without `authenticate` | Token clients must send as their daemon auth token. |
- | `authenticate` | none | Authenticates each client and names its tenant; replaces `clientToken`. |
--| `upstreamFetch` | global `fetch` | Sends one request to the daemon. |
-+| `upstreamFetch` | none | Sends one request to the daemon. Without it, transfer routes use `node:http(s)` and every other route uses the global `fetch`. |
- | `maxRpcBodyBytes` | 64 MiB, the daemon's own request limit | Larger `/rpc`
++For a startup-path import, follow ADR 0027. For a wire change, follow `test/wire-compat/README.md`.
 ```
 
-**File**: `packages/proxy/src/daemon-proxy-transfer.test.ts` (added, +468/-0)
+**File**: `docs/agents/issue-tracker.md` (modified, +0/-2)
 ```diff
-@@ -0,0 +1,468 @@
-+import assert from 'node:assert/strict';
-+import { once } from 'node:events';
-+import http from 'node:http';
-+import type { AddressInfo } from 'node:net';
-+import { expect, onTestFinished, test, vi } from 'vitest';
-+import { AppError } from '@agent-device/kernel/errors';
-+import {
-+  createDaemonProxy,
-+  createDaemonProxyServer,
-+  type DaemonProxyOptions,
-+} from './daemon-proxy.ts';
-+
-+const options = {
-+  upstreamBaseUrl: 'http://daemon.internal:4310',
-+  upstreamToken: 'daemon-secret',
-+  clientToken: 'client-secret',
-+};
-+
-+const rpcBody = JSON.stringify({
-+  jsonrpc: '2.0',
-+  id: 1,
-+  method: 'agent-device.command',
-+  params: { token: 'client-secret', command: 'version' },
-+});
-+
-+async function listen(server: http.Server): Promise<string> {
-+  server.listen(0, '127.0.0.1');
-+  await once(server, 'listening');
-+  onTestFinished(async () => {
-+    server.closeAllConnections();
-+    await new Promise<void>((resolve) => server.close(() => resolve()));
-+  });
-+  return `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
-+}
-+
-+function requestThroughProxy(origin: string, path: string, method = 'POST') {
-+  return new Promise<{ status: number; body: Record<string, unknown> }>((resolve, reject) => {
-+    const req = http.request(
-+      `${origin}${path}`,
-+      {
-+        method,
-+        headers: { authorization: 'Bearer client-secret', 'content-type': 'application/json' },
-+      },
-+      (res) => {
-+        let text = '';
-+        res.setEncoding('utf8');
-+        res.on('data', (chunk: string) => {
-+          text += chunk;
-+        });
-+        res.on('error', reject);
-+        res.on('end', () =>
-+          resolve({ status: res.statusCode!, body: text ? JSON.parse(text) : {} }),
-+        );
-+      },
-+    );
-+    req.on('error', reject);
-+    req.end(method === 'POST' ? '{}' : undefined);
-+  });
-+}
-+
-+test('the actual proxy HTTP response exposes a header timeout as 500 with exactly three transfer details', async () => {
-+  let entered!: () => void;
-+  const uploaded = new Promise<void>((resolve) => {
-+    entered = resolve;
-+  });
-+  const daemon = await listen(
-+    http.createServer((req) => {
-+      req.resume();
-+      req.once('end', entered);
-+    }),
-+  );
-+  const origin = await listen(createDaemonProxyServer({ ...options, upstreamBaseUrl: daemon }));
-+  vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
-+  onTestFinished(() => {
-+    vi.useRealTimers();
-+  });
-+  const original = http.request;
-+  let flushed!: (request: http.ClientRequest) => void;
-+  const finished = new Promise<http.ClientRequest>((resolve) => {
-+    flushed = resolve;
-+  });
-+  const observer = vi.spyOn(http, 'request').mockImplementation((...args) => {
-+    const req = Reflect.apply(original, http, args) as http.ClientRequest;
-+    if (req.getHeader('authorization') === 'Bearer daemon-secret') {
-+      req.once('finish', () => flushed(req));
-+    }
-+    return req;
-+  });
-+  onTestFinished(() => observer.mockRestore());
-+  const response = requestThroughProxy(origin, '/upload/preflight');
-+  await uploaded;
-+  expect((await finished).writableFinished).toBe(true);
-+  await vi.advanceTimersByTimeAsync(30_000);
-+  expect(await response).toEqual({
-+    status: 500,
-+    body: {
-+      ok: false,
-+      error: 'Artifact transfer response-headers timed out',
-+      code: 'COMMAND_FAILED',
-+      reason: 'transfer_phase_timeout',
-+      transferPhase: 'response-headers',
-+      timeoutMs: 30_000,
-+    },
-+  });
-+});
-+
-+test('the actual HTTP response exposes the forwarding aggregate when a custom transport ignores cancellation', async () => {
-+  let entered!: () => void;
-+  const started = new Promise<void>((resolve) => {
-+    entered = resolve;
-+  });
-+  const origin = await listen(
-+    createDaemonProxyServer({
-+      ...options,
-+      upstreamFetch: () => {
-+        entered();
-+        return new Promise<Response>(() => undefined);
-+      },
-+    }),
-+  );
-+  vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
-+  onTestFinished(() => {
-+    vi.useRealTimers();
-+  });
-+  const response = requestThroughProxy(origin, '/upload/preflight');
-+  await started;
-+  await vi.advanceTimersByTimeAsync(600_000);
-+  expect(await response).toEqual({
-+    status: 500,
-+    body: {
-+      ok: false,
-+      error: 'Proxy transfer forwarding deadline exceeded',
-+      code: 'COMMAND_FAILED',
-+      reason: 'transfer_forwarding_deadline_exceeded',
-+      transferPhase: 'forwarding',
-+      timeoutMs: 600_000,
-+    },
-+  });
-+});
-+
-+test.each([
-+  {
-+    code: 'INVALID_ARGS',
-+    status: 400,
-+    phase: 'response-body',
-+    budget: 120_000,
-+    reason: 'transfer_phase_timeout',
-+  },
-+  {
-+    code: 'COMMAND_FAILED',
-+    status: 500,
-+    phase: 'unknown-phase',
-+    budget: 120_000,
-+    reason: 'transfer_phase_timeout',
-+  },
-+  {
-+    code: 'COMMAND_FAILED',
-+    status: 500,
-+    phase: 'response-headers',
-+    budget: 120_000,
-+    reason: 'transfer_phase_timeout',
-+  },
-+  {
-+  
+@@ -15,8 +15,6 @@ conditions, and dependencies. For a boundary change, include an API, data shape,
+ If sandboxed `gh` fails with an authentication error, run the same command with host access, if permitted.
+ Do not reconfigure credentials. If it fails again, report the command and blocker.
+ 
+-For label meanings and state flow, see `docs/agents/triage-labels.md`.
+-
+ ## Current state
+ 
+ When you change a decision or the scope of your issue, post a comment that starts with `Decision: <topic>:`.
 ```
 
-**File**: `packages/proxy/src/daemon-proxy.ts` (modified, +45/-17)
+**File**: `docs/agents/review.md` (modified, +5/-1)
 ```diff
-@@ -25,9 +25,14 @@ import {
- } from './install-source-admission.ts';
+@@ -18,7 +18,6 @@ Reopen a resolved concern only when new evidence changes the conclusion.
+ - Routing and surfaces: trace through daemon and backend to the affected entrypoints.
+   Helper tests that bypass the router do not prove dispatch.
+ - Typed errors: follow reasons from producers through normalization, transport, and consumers.
+-  Never replace them with text matching.
+ - Interaction paths: verify the claims in `packages/contracts/src/interaction-guarantees.ts` against native code.
+   Error-path delegation does not prove success-path parity.
+   Before you compare performance, prove that both paths are reachable.
+@@ -33,6 +32,11 @@ Reopen a resolved concern only when new evidence changes the conclusion.
+ - Changed code: flag dead code, redundant guards, casts, narrating comments, and competing owners.
+ - Help and user docs: trace changed behavior claims to code paths.
+   Block unsupported claims.
++- New trust boundary: before you write code, get a rule and a case table reviewed.
++  The table names who chooses the path, what the kernel resolves, what can change between checks, where bytes are first written, which failures keep the action result, and the accepted cases.
++  If prose, tests, configuration, or dependencies change the security contract, review again.
++  Fix a regression that this change introduces at every entry point.
++  For an unrelated finding, link an existing independent issue.
+ - Bulk prose rewrites (docs, ADRs, help): get a review from another model provider.
+   The reviewer compares each changed sentence with the base. A self-review is not evidence.
  
- /**
-- * Carries one request to the upstream daemon and resolves with its response. The default is the
-- * global `fetch`; supply your own to reach the daemon over another transport, such as a
-- * WebSocket tunnel. Abort the exchange when `request.signal` aborts.
-+ * Carries one request to the upstream daemon and resolves with its response. Without `upstreamFetch`
-+ * the proxy reaches the daemon over `node:http(s)` on artifact transfer routes and over the global
-+ * `fetch` on `/rpc`, health and diagnostics. Supply your own to reach the daemon over another
-+ * transport, such as a WebSocket tunnel. Abort the exchange when `request.signal` aborts.
-+ *
-+ * A custom transport owns its phase guarantees and must observe `request.signal` on every route.
-+ * On transfer routes, the proxy bounds its own response and body waits, even if the transport
-+ * ignores cancellation. It cannot forcibly join work started by that transport.
-  */
- export type DaemonProxyUpstreamFetch = (request: Request) => Promise<Response>;
+```
+
+**File**: `docs/agents/security.md` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++# Security boundaries
++
++The CLI client trusts its caller to choose local destinations.
++The client trusts a remote daemon for data and validated identifiers.
++Script publication takes no path from the daemon. Capture delivery still can (#4518).
++The daemon trusts its state directory. Nobody trusts the network or other local users.
++Out of scope: same uid, hostile root, ACLs, mounts, untrusted filesystems.
++
++## Applied today
++
++ADR 0016 judges caller-named script destinations on POSIX against the writing process's uid.
++Both script publishers stage and commit inside the judged directory.
++Remote script delivery caps bytes as they arrive.
++
++## Proposed in #4669; applies once approved
++
++- For caller output, judge each directory as ADR 0016 does.
++- For a peer-named entry under a local root, validate the single-entry name before filesystem work.
++
++ADR 0016's staging and byte-cap rules are candidates for that migration.
++Screenshot `--out`, contact sheets, the JUnit reporter, trace and recording outputs, client state, and daemon state do not follow these rules yet (#4669).
+```
+
+---
+
+### Incident Patch 3: `6e18ea33` (2026-11-18)
+**Commit Message**: fix(replay): verify recorded targets through the request's own capture (#4705)
+
+* refactor(daemon): name the observation capture owner for every route, not just settle
+
+The capture a post-action observation polls is admitted for any route whose own action
+binding carries none. `--settle` was the first such route and the owner was named after
+it; the owner is the route's, not the flag's. Renamed to `observation-capture.ts` with
+`resolveObservationCapture` and the `observation_capture_unavailable` phase.
+
+No behavior change: same plan, same admit-once/bind-once, same degradation and disclosure.
+
+* fix(replay): verify recorded targets through the request's own capture
+
+Replay captured its target-verification tree through the legacy interactor, while the
+commands the replay dispatches, and so the recording itself, capture through the request-
+bound runtime. On an iOS simulator those are two projections of one screen: the XCTest
+runner's tree wraps the screen's content in an `other "<screen title>"` node the
+Simulator AX bridge's tree does not have. `target-v1` ancestry therefore disagreed with
+itself and an unchanged screen replayed as `identity-mismatch` on `ancestry[...]`.
+
+Replay no
+
+**File**: `packages/daemon/src/__tests__/support/handlers/session-command-harness.ts` (modified, +3/-1)
+```diff
+@@ -76,6 +76,7 @@ export const mockBindDeviceRuntime = vi.fn(
+   async (
+     device: DeviceInfo,
+     use,
++    _cache?: 'bypass',
+     loadLifecycleOperations: LifecycleOperationsLoader = applicationLifecycleRuntimeFixture,
+   ) => narrowDeviceBinding(await readinessBinding(device, loadLifecycleOperations), use),
+ );
+@@ -128,7 +129,8 @@ export async function handleSessionCommands(
+       params.bindDevice ??
+       (lifecycleOperationsLoader === undefined
+         ? mockBindDeviceRuntime
+-        : (device, use) => mockBindDeviceRuntime(device, use, lifecycleOperationsLoader)),
++        : (device, use, cache) =>
++            mockBindDeviceRuntime(device, use, cache, lifecycleOperationsLoader)),
+     platformResourceCleanup: params.platformResourceCleanup ?? platformResourceCleanupFixture(),
+     reconcileOrphanedDeviceClaim: async () => ({
+       status: 'retained',
+```
+
+**File**: `packages/daemon/src/core/__tests__/observation-capture.test.ts` (renamed, +64/-22)
+```diff
+@@ -3,7 +3,7 @@ import { IOS_SIMULATOR } from '@agent-device/test-kit';
+ import { makeIosSession } from '../../__tests__/support/session-factories.ts';
+ import { daemonPlatformServicesFixture } from '../../__tests__/support/platform-services-fixture.ts';
+ import { selectorCaptureFixture } from '../../__tests__/support/selector-capture-fixture.ts';
+-import { resolveSettleObservationCapture } from '../settle-observation-capture.ts';
++import { resolveObservationCapture } from '../observation-capture.ts';
+ import { emitDiagnostic } from '@agent-device/host-kit/diagnostics';
  
-@@ -60,10 +65,12 @@ export type DaemonProxyOptions = {
-   publicOrigin?: string;
-   maxRpcBodyBytes?: number;
-   /**
--   * Longest time one daemon request may take, including its body. Unset, an exchange lasts as long
--   * as its client request: the client's command envelope bounds it.
-+   * Independent cap on one upstream request, including its response body. Transfers also observe
-+   * their phase limits and 600-second aggregate. When unset, other requests use the client's
-+   * command envelope. The health probe keeps its separate five-second limit.
-    */
-   upstreamTimeoutMs?: number;
-+  /** Overrides the transport for every upstream route. See `DaemonProxyUpstreamFetch`. */
-   upstreamFetch?: DaemonProxyUpstreamFetch;
- } & (
-   | {
-@@ -102,6 +109,7 @@ type NormalizedProxyOptions = {
-   maxRpcBodyBytes: number;
-   upstreamTimeoutMs: number | undefined;
-   upstreamFetch: DaemonProxyUpstreamFetch;
-+  upstreamTransport: (route: string, request: Request) => Promise<Response>;
- };
+ vi.mock('@agent-device/host-kit/diagnostics', async (importOriginal) => {
+@@ -14,18 +14,20 @@ vi.mock('@agent-device/host-kit/diagnostics', async (importOriginal) => {
+ // #3510: the capture a `--settle` observation polls on a route whose action runtime use carries
+ // none. The guarantee it owes is producer identity with the command the caller runs next; the one it
+ // must not break is that settling never fails the action it follows. These pin which plan gets
+-// admitted, how often, and that every way an observation capture goes away degrades to no capture
+-// while disclosing its typed reason.
++// admitted, how often, and that the owner itself discloses each of its three outcomes: a bound
++// capture (admitted + bound), a declared refusal, or a retryable failure of its own machinery.
  
- /** The client a request was authenticated as; `tenantId` is set only by `authenticate`. */
-@@ -141,7 +149,7 @@ export function createDaemonProxy(options: DaemonProxyOptions): DaemonProxy {
-       try {
-         return await handleProxyRequest(request, normalized, instanceId);
-       } catch (error) {
--        return proxyErrorResponse(error);
-+        return proxyErrorResponse(error, request);
-       }
-     },
-   };
-@@ -349,7 +357,8 @@ async function forwardProxyRequest(params: {
- }): Promise<Response> {
-   const { request, route, options, rpcBody, caller } = params;
-   const body = resolveUpstreamBody(request, route, rpcBody, options.upstreamToken, caller.tenantId);
--  const upstreamResponse = await options.upstreamFetch(
-+  const upstreamResponse = await options.upstreamTransport(
-+    route,
-     new Request(buildUpstreamUrl(options.upstreamBaseUrl, route, request.url), {
-       method: request.method,
-       headers: buildUpstreamHeaders(request.headers, options.upstreamToken, route, caller.tenantId),
-@@ -371,10 +380,6 @@ async function forwardProxyRequest(params: {
-   return new Response(upstreamResponse.body, { status: upstreamResponse.status, headers });
+-const unavailablePhase = ['settle_observation_capture_unavailable'];
+-
+-/** Level included: a degrade the caller cannot see must not be info-only, which success drops. */
+-function disclosures(): { level: string | undefined; data: Record<string, unknown> }[] {
++/** Everything the owner discloses, with level: a loss on an ok-answering route must not be info-only. */
++function disclosures(): {
++  level: string | undefined;
++  phase: string;
++  data: Record<string, unknown>;
++}[] {
+   return vi
+     .mocked(emitDiagnostic)
+     .mock.calls.flatMap(([event]) =>
+-      event.phase === unavailablePhase[0] && event.data
+-        ? [{ level: event.level, data: event.data }]
++      event.phase?.startsWith('observation_capture_') && event.data
++        ? [{ level: event.level, phase: event.phase, data: event.data }]
+         : [],
+     );
  }
+@@ -37,20 +39,34 @@ beforeEach(() => {
+ test('an available plan inspects once and binds once for the whole observation', async () => {
+   const fixture = selectorCaptureFixture();
  
--/**
-- * An upstream exchange lives exactly as long as the client keeps waiting for it: the daemon
-- * turns a dropped upstream request into cancellation of in-flight runner work.
-- */
- function upstreamSignal(request: Request, options: NormalizedProxyOptions): AbortSignal {
-   if (options.upstreamTimeoutMs === undefined) return request.signal;
-   return AbortSignal.any([request.signal, AbortSignal.timeout(options.upstreamTimeoutMs)]);
-@@ -516,6 +521,8 @@ function normalizeProxyOptions(options: DaemonProxyOptions): NormalizedProxyOpti
-   const clientToken = options.authenticate
-     ? undefined
-     : normalizeToken(options.clientToken ?? '', 'clientToken');
-+  const upstreamFetch = options.upstreamFetch ?? ((request) => fetch(request));
-+  const customUpstreamFetch = options.upstreamFetch;
-   return {
-     upstreamBaseUrl,
-     publicOrigin:
-@@ -527,7 +534,15 @@ function normalizeProxyOptions(options: DaemonProxyOptions): NormalizedProxyOpti
-     authenticate: options.authenticate,
-     maxRpcBodyBytes: options.maxRpcBodyBytes ?? DEFAULT_MAX_RPC_BODY_BYTES,
-     upstreamTimeoutMs: options.upstreamTimeoutMs,
--    upstreamFetch: options.upstreamFetch ?? ((request) => fetch(request)),
-+    upstreamFetch,
-+    upstreamTransport: async (route, request) => {
-+      if (!isTransferRoute(route, request.method)) return upstreamFetch(request);
-+      const { createNodeTransferFetch, settleUpstreamFetch } =
-+        await import('./transfer-transport.ts');
-+      return customUpstreamFetch
-+        ? settleUpstreamFetch(customUpstreamFetch, request)
-+        : createNodeTransferFetch()(request);
-+    },
-   };
- }
+-  const capture = await resolveSettleObservationCapture({
++  const outcome = await resolveObservationCapture({
+     command: 'back',
+     session: makeIosSession('settle', { appBundleId: 'com.example.app' }),
+     inspectFacts: fixture.inspectFacts,
+     platformServices: daemonPlatformServicesFixture(),
+     bindDevice: fixture.bindDevice,
+   });
+-  if (!capture) throw new Error('expected an admitted capture');
++  if (outcome.kind !== 'captured') throw new Error('expected an admitted capture');
  
-@@ -562,9 +577,7 @@ function resolveProxyRoute(requestUrl: string): string {
- 
- funct
-```
-
-**File**: `packages/proxy/src/transfer-transport-lifetime.test.ts` (added, +850/-0)
-```diff
-@@ -0,0 +1,850 @@
-+import assert from 'node:assert/strict';
-+import { once } from 'node:events';
-+import http, { type ClientRequest, type ServerResponse } from 'node:http';
-+import net, { type AddressInfo } from 'node:net';
-+import { expect, onTestFinished, test, vi } from 'vitest';
-+import { AppError } from '@agent-device/kernel/errors';
-+import { createNodeTransferFetch, settleUpstreamFetch } from './transfer-transport.ts';
-+
-+function deferred<T>() {
-+  let resolve!: (value: T) => void;
-+  let reject!: (error: unknown) => void;
-+  const promise = new Promise<T>((yes, no) => {
-+    resolve = yes;
-+    reject = no;
-+  });
-+  return { promise, resolve, reject };
-+}
-+
-+function controlledClock() {
-+  vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
-+  onTestFinished(() => {
-+    vi.useRealTimers();
-+  });
-+}
-+
-+async function upstream(handler: http.RequestListener) {
-+  const server = http.createServer(handler);
-+  server.listen(0, '127.0.0.1');
-+  await once(server, 'listening');
-+  onTestFinished(async () => {
-+    server.closeAllConnections();
-+    await new Promise<void>((resolve) => server.close(() => resolve()));
-+  });
-+  return `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
-+}
-+
-+function observeRequest(inspect?: (request: ClientRequest) => void) {
-+  const original = http.request;
-+  const made = deferred<ClientRequest>();
-+  const closed = deferred<void>();
-+  const spy = vi.spyOn(http, 'request').mockImplementation((...args) => {
-+    const req = Reflect.apply(original, http, args) as ClientRequest;
-+    req.once('close', () => closed.resolve());
-+    inspect?.(req);
-+    made.resolve(req);
-+    return req;
-+  });
-+  onTestFinished(() => spy.mockRestore());
-+  return { made: made.promise, closed: closed.promise };
-+}
-+
-+function phaseFailure(error: unknown, phase: string, timeoutMs: number) {
-+  assert.ok(error instanceof AppError);
-+  expect(error.details).toEqual({
-+    reason: 'transfer_phase_timeout',
-+    transferPhase: phase,
-+    timeoutMs,
-+  });
-+}
-+
-+function emptyChunkFlood(caller: AbortController, reason: Error) {
-+  const limit = 1_024;
-+  let reads = 0;
-+  let readsAtAbort = limit;
-+  let timer: ReturnType<typeof setTimeout> | undefined;
-+  const body = new ReadableStream<Uint8Array>(
+   expect(fixture.inspections).toEqual([IOS_SIMULATOR]);
+   expect(fixture.binds).toEqual([IOS_SIMULATOR]);
++  // The success path is observable on the request's own record: one admitted and one bound entry
++  // name the cell that reached a runtime capture, so a live trace counts binds without a fake.
++  expect(disclosures()).toEqual([
 +    {
-+      pull(controller) {
-+        if (reads === 0) {
-+          timer = setTimeout(() => {
-+            readsAtAbort = reads;
-+            caller.abort(reason);
-+          }, 0);
-+        }
-+        if (reads === limit) controller.close();
-+        else {
-+          reads += 1;
-+          controller.enqueue(new Uint8Array());
-+        }
-+      },
++      level: 'info',
++      phase: 'observation_capture_admitted',
++      data: { command: 'back', plan: 'selector-active-app', deviceId: IOS_SIMULATOR.id },
 +    },
-+    { highWaterMark: 0 },
-+  );
-+  onTestFinished(() => clearTimeout(timer));
-+  return { body, limit, readsAtAbort: () => readsAtAbort };
++    {
++      level: 'info',
++      phase: 'observation_capture_bound',
++      data: { command: 'back', plan: 'selector-active-app', deviceId: IOS_SIMULATOR.id },
++    },
++  ]);
+ 
+-  await capture({});
+-  await capture({});
++  await outcome.capture({});
++  await outcome.capture({});
+   expect(fixture.binds).toEqual([IOS_SIMULATOR]);
+   expect(fixture.captures).toHaveLength(2);
+ });
+@@ -79,25 +95,33 @@ test.each([
+   async ({ refusal, session, operation, reason }) => {
+     const fixture = selectorCaptureFixture(refusal);
+ 
+-    const capture = await resolveSettleObservationCapture({
++    const outcome = await resolveObservationCapture({
+       command: 'back',
+       session: session(),
+       inspectFacts: fixture.inspectFacts,
+       platformServices: daemonPlatformServicesFixture(),
+       bindDevice: fixture.bindDevice,
+     });
+ 
+-    expect(capture).toBeUndefined();
++    // The discriminated kind is all a caching caller reads: `refused` is stable until its plan
++    // changes, and the owner discloses why.
++    expect(outcome).toEqual({ kind: 'refused' });
+     expect(fixture.binds).toEqual([]);
+     expect(disclosures()).toEqual([
+-      { level: 'warn', data: { command: 'back', outcome: 'refused', operation, reason } },
++      {
++        level: 'warn',
++        phase: 'observation_capture_unavailable',
++        data: { command: 'back', outcome: 'refused', operation, reason },
++      },
+     ]);
+   },
+ );
+ 
+-// The two ways the owner's own machinery can fail the observation after a valid plan. Both are
+-// best-effort by contract: the command
+```
+
+**File**: `packages/daemon/src/core/observation-capture.ts` (added, +127/-0)
+```diff
+@@ -0,0 +1,127 @@
++import type { BoundSnapshotCapture } from './snapshot-runtime-binding.ts';
++import { bindAdmittedSnapshotCapture } from './snapshot-runtime-binding.ts';
++import { admitRuntimePlan } from './session-runtime-admission.ts';
++import {
++  resolveSelectorCaptureRuntimePlan,
++  type SelectorCaptureRuntimePlan,
++} from '@agent-device/contracts/platform-runtime-operations';
++import { emitDiagnostic } from '@agent-device/host-kit/diagnostics';
++import type { RuntimeOperationUnavailability } from '@agent-device/contracts/platform-runtime';
++import type { RuntimeAdmissionBindings } from './request-runtime-binding.ts';
++import type { SessionState } from './session-state.ts';
++
++/**
++ * The request-bound capture for an internal observation, on a request whose own action binding
++ * carries none: a coordinate-targeted `press`/`fill` (whose point use declares none) or a
++ * generic-route action (#3510). Those routes polled the legacy interactor while the commands the
++ * caller runs next read the request-bound runtime, and on an iOS simulator those are two projections
++ * of one tree.
++ *
++ * Admitting the `capture-only` plan the selector family polls under closes the split; where both
++ * paths already reached the same tree, the admitted operation resolves to the implementation used
++ * before. Observing is best-effort by contract, so nothing here may fail or cancel the work it
++ * follows: the result is one of three mutually exclusive kinds — a bound `capture`, a `refused`
++ * fact about the owner's declared support, or a `retryable` probe or bind failure. A caller that
++ * reuses the answer across observations keeps `refused` until its plan changes and re-probes only
++ * on `retryable`; it never restates what a probe or bind cost the observation. Every kind is
++ * disclosed where it is decided: `admitted` and `bound` at info, so a request's own record shows
++ * which cells reached a runtime capture, and the loss kinds at `warn` — an info-only degrade on a
++ * route that answers `ok: true` is dropped on the success path, which is the passing-unnoticed the
++ * loss disclosures guard against. Admitting through the side-effect-free facts probe and binding
++ * only on admission keeps an optional observation from building a command-facing refusal response,
++ * whose Apple branch live-probes the booted simulator set for a hint nothing shows.
++ */
++export async function resolveObservationCapture(
++  params: Readonly<{ command: string; session: SessionState }> & RuntimeAdmissionBindings,
++): Promise<ObservationCaptureOutcome> {
++  const plan = resolveSelectorCaptureRuntimePlan({
++    hasActiveApp: params.session.appBundleId !== undefined,
++    intent: 'capture-only',
++  });
++  const admission = await admitObservationCapturePlan(params, plan);
++  if (admission === undefined) return { kind: 'retryable' };
++  if (!admission.admitted) {
++    return refused({
++      command: params.command,
++      operation: admission.operation,
++      reason: admission.fact.reason,
++    });
++  }
++  emitDiagnostic({
++    level: 'info',
++    phase: 'observation_capture_admitted',
++    data: { command: params.command, plan: plan.kind, deviceId: params.session.device.id },
++  });
++  try {
++    const capture = await bindAdmittedSnapshotCapture({
++      admission,
++      bindDevice: params.bindDevice,
++      platformServices: params.platformServices,
++    });
++    emitDiagnostic({
++      level: 'info',
++      phase: 'observation_capture_bound',
++      data: { command: params.command, plan: plan.kind, deviceId: params.session.device.id },
++    });
++    return { kind: 'captured', capture };
++  } catch (error) {
++    return retryable({ command: params.command, failure: 'bind-failed', error });
++  }
 +}
 +
-+test('empty upload chunks yield to caller cancellation before the bounded flood ends', async () => {
-+  const origin = await upstream((req) => req.resume());
-+  const observed = observeRequest();
-+  const caller = new AbortController();
-+  const reason = new Error('cancel upload while empty chunks are ready');
-+  const flood = emptyChunkFlood(caller, reason);
-+  const pending = createNodeTransferFetch()(
-+    new Request(`${origin}/upload/direct/ticket`, {
-+      method: 'PUT',
-+      body: flood.body,
-+      signal: caller.signal,
-+      duplex: 'half',
-+    } as RequestInit),
-+  );
-+  await expect(pending).rejects.toBe(reason);
-+  await observed.closed;
-+  expect(flood.readsAtAbort()).toBeLessThan(flood.limit);
-+  expect(flood.body.locked).toBe(false);
-+});
-+
-+test('empty custom response chunks yield to caller cancellation before the bounded flood ends', async () => {
-+  const caller = new AbortController();
-+  const reason = new Error('cancel response while empty chunks are ready');
-+  const flood = emptyChunkFlood(caller, reason);
-+  const response = await settleUpstreamFetch(
-+    async () => new Response(flood.body),
-+    new Request('http://daemon.internal/artifacts/build', { signal: caller.signal }),
-+  );
-+  await expect(response.arrayBuffer()).rejects.toBe(reason);
-+  expect(flood.readsAtAbort()).toBeLessThan(flood.limit);
-+  expect(flood.body.locked).toBe(false);
-+});
-+
-+test('finite empty chunks preserve the following upload and custom response bytes', async () => {
-+  const emptyPrefix = () =>
-+    new ReadableStream<Uint8Array>({
-+      start(controller) {
-+        controller.enqueue(new Uint8Array());
-+        controller.enqueue(new Uint8Array());
-+        controller.enqueue(new TextEncoder().encode('payload intact'));
-+        controller.close();
-+      },
++/** A failed facts probe is the owner's own machinery failing: the retryable kind, disclosed once here. */
++async function admitObservationCapturePlan(
++  params: Readonly<{ command: string; session: SessionState }> & RuntimeAdmissionBindings,
++  plan: SelectorCaptureRuntimePlan,
++) {
++  try {
++    return await admitRuntimePlan({
++      device: params.session.device,
++      plan,
++      inspectFacts: params.inspectFacts,
 +    });
-+  const origin = await upstream((req, res) => {
-+    let text = '';
-+    req.setEncoding('utf8');
-+    req.on('data', (chunk: string) => {
-+      text += chunk;
-+    });
-+    req.on('end', () => res.end(text));
++  } catch (error) {
++    retryable({ command: params.command, failure: 'admission-probe-failed', error });
++    return undefined;
++  }
++}
++
++/** The three mutually exclusive answers; each carries only what its own branch decided. */
++export type ObservationCaptureOutcome =
++  | Readonly<{ kind: 'captured'; capture: BoundSnapshotCapture }>
++  | Readonly<{ kind: 'refused' }>
++  | Readonly<{ kind: 'retryable' }>;
++
++/** Discloses the declared refusal; the caller keeps it while its plan is unchanged. */
++function refused(detail: {
++  command: string;
++  operation: string;
++  reason: RuntimeOperationUnavailability['reason'];
++}): Readonly<{ kind: 'refused' }> {
++  emitDiagnostic({
++    level: 'warn',
++    phase: 'observation_capture_unavailable',
++    data: { ...detail, outcome: 'refused' },
 +  });
-+  const uploaded = await createNodeTransferFetch()(
-+    new Request(`${origin}/upload/direct/ticket`, {
-+      method: 'PUT',
-+      body: emptyPrefix(),
-+      duplex: 'half',
-+  
++  return { kind: '
+```
+
+**File**: `packages/daemon/src/core/request-runtime-binding.ts` (modified, +15/-6)
+```diff
+@@ -32,6 +32,7 @@ export type BindDeviceRuntime = <
+ >(
+   device: DeviceInfo,
+   use: RuntimeUse<PlatformRuntimeOperations, Required, Preferred, Conditional>,
++  cache?: 'bypass',
+ ) => Promise<
+   BoundDeviceRuntime<RuntimeUse<PlatformRuntimeOperations, Required, Preferred, Conditional>>
+ >;
+@@ -125,16 +126,24 @@ export function createRequestRuntimeBindings(params: {
+     return binding;
+   };
+ 
+-  const bindDevice: BindDeviceRuntime = async (device, use) => {
++  const bindOrdinary = (device: DeviceInfo) =>
++    params.gateway
++      .bind({ device, intent: { kind: 'ordinary' }, scope: params.scope })
++      .then(async (binding) => await adoptBinding(cleanups, binding, params.scope))
++      .then(admitBinding);
++
++  const bindDevice: BindDeviceRuntime = async (device, use, cache) => {
+     params.admitDevice?.(device);
++    if (cache === 'bypass') {
++      return recordBoundMutations(
++        narrowDeviceBinding(await bindOrdinary(device), use),
++        params.dispatchLedger,
++      );
++    }
+     const key = JSON.stringify([deviceIdentityKey(deviceIdentity(device)), device.booted === true]);
+     let bindingPromise = bindings.get(key);
+     if (!bindingPromise) {
+-      const intent: DeviceBindingIntent = { kind: 'ordinary' };
+-      bindingPromise = params.gateway
+-        .bind({ device, intent, scope: params.scope })
+-        .then(async (binding) => await adoptBinding(cleanups, binding, params.scope))
+-        .then(admitBinding);
++      bindingPromise = bindOrdinary(device);
+       bindings.set(key, bindingPromise);
+       void bindingPromise.catch(() => {
+         if (bindings.get(key) === bindingPromise) bindings.delete(key);
+```
+
+**File**: `packages/daemon/src/core/settle-observation-capture.ts` (removed, +0/-100)
+```diff
+@@ -1,100 +0,0 @@
+-import type { BoundSnapshotCapture } from './snapshot-runtime-binding.ts';
+-import { bindAdmittedSnapshotCapture } from './snapshot-runtime-binding.ts';
+-import { admitRuntimePlan } from './session-runtime-admission.ts';
+-import {
+-  resolveSelectorCaptureRuntimePlan,
+-  type SelectorCaptureRuntimePlan,
+-} from '@agent-device/contracts/platform-runtime-operations';
+-import { emitDiagnostic } from '@agent-device/host-kit/diagnostics';
+-import type { RuntimeOperationUnavailability } from '@agent-device/contracts/platform-runtime';
+-import type { RuntimeAdmissionBindings } from './request-runtime-binding.ts';
+-import type { SessionState } from './session-state.ts';
+-
+-/**
+- * The capture a post-action observation (`--settle`) polls, for a request whose own action binding
+- * carries none: a coordinate-targeted `press`/`fill` (whose point use declares none) or a
+- * generic-route action (#3510). Those routes polled the legacy interactor while the commands the
+- * caller runs next read the request-bound runtime, and on an iOS simulator those are two projections
+- * of one tree.
+- *
+- * Admitting the `capture-only` plan the selector family polls under closes the split; where both
+- * paths already reached the same tree, the admitted operation resolves to the implementation used
+- * before. Settling is best-effort by contract, so nothing here may fail or cancel the action it
+- * follows: every unavailability degrades to `undefined`, leaving the observation on the owner's own
+- * snapshot path, and discloses its typed reason. Admitting through the side-effect-free facts probe
+- * and binding only on admission keeps an optional observation from building a command-facing refusal
+- * response, whose Apple branch live-probes the booted simulator set for a hint nothing shows.
+- */
+-export async function resolveSettleObservationCapture(
+-  params: Readonly<{ command: string; session: SessionState }> & RuntimeAdmissionBindings,
+-): Promise<BoundSnapshotCapture | undefined> {
+-  const plan = resolveSelectorCaptureRuntimePlan({
+-    hasActiveApp: params.session.appBundleId !== undefined,
+-    intent: 'capture-only',
+-  });
+-  const admission = await admitObservationCapturePlan(params, plan);
+-  if (admission === undefined) return undefined;
+-  if (!admission.admitted) {
+-    return unavailable({
+-      command: params.command,
+-      outcome: 'refused',
+-      operation: admission.operation,
+-      reason: admission.fact.reason,
+-    });
+-  }
+-  try {
+-    return await bindAdmittedSnapshotCapture({
+-      admission,
+-      bindDevice: params.bindDevice,
+-      platformServices: params.platformServices,
+-    });
+-  } catch (error) {
+-    return unavailable({ command: params.command, outcome: 'bind-failed', error });
+-  }
+-}
+-
+-/** `undefined` means the owner's facts probe failed: the caller degrades like any other refusal. */
+-async function admitObservationCapturePlan(
+-  params: Readonly<{ command: string; session: SessionState }> & RuntimeAdmissionBindings,
+-  plan: SelectorCaptureRuntimePlan,
+-) {
+-  try {
+-    return await admitRuntimePlan({
+-      device: params.session.device,
+-      plan,
+-      inspectFacts: params.inspectFacts,
+-    });
+-  } catch (error) {
+-    return unavailable({ command: params.command, outcome: 'admission-probe-failed', error });
+-  }
+-}
+-
+-/** Why the observation has to go without a capture, as one typed fact the caller can read. */
+-type ObservationCaptureUnavailable = Readonly<{ command: string }> &
+-  (
+-    | Readonly<{
+-        outcome: 'refused';
+-        operation: string;
+-        reason: RuntimeOperationUnavailability['reason'];
+-      }>
+-    | Readonly<{ outcome: 'admission-probe-failed' | 'bind-failed'; error: unknown }>
+-  );
+-
+-function unavailable(detail: ObservationCaptureUnavailable): undefined {
+-  emitDiagnostic({
+-    // `warn`, not the default `info`: a degrade that answers `ok: true` is dropped at info level on
+-    // the success path, which is the passing-unnoticed this discloses against.
+-    level: 'warn',
+-    phase: 'settle_observation_capture_unavailable',
+-    // The error's name travels, never its message: request diagnostics keep user input out.
+-    data:
+-      detail.outcome === 'refused'
+-        ? { ...detail }
+-        : {
+-            command: detail.command,
+-            outcome: detail.outcome,
+-            errorName: (detail.error as Error | undefined)?.name,
+-          },
+-  });
+-  return undefined;
+-}
+```
+
+**File**: `packages/daemon/src/execution/generic-settle.ts` (modified, +3/-3)
+```diff
+@@ -20,7 +20,7 @@ import {
+ import type { BoundContextFromFlags } from '../core/context.ts';
+ import type { RuntimeAdmissionBindings } from '../core/request-runtime-binding.ts';
+ import type { DaemonPlatformServices } from '../core/platform-services.ts';
+-import { resolveSettleObservationCapture } from '../core/settle-observation-capture.ts';
++import { resolveObservationCapture } from '../core/observation-capture.ts';
+ import { isOutdatedObservation, refFrameTree } from '../core/ref-frame.ts';
+ import { issueSettleRefs } from './session-snapshot.ts';
+ import type { SessionStore } from '../core/session-store.ts';
+@@ -156,7 +156,7 @@ async function createGenericSettleRuntime(
+   context: GenericSettleContext,
+ ): Promise<Awaited<ReturnType<typeof createInteractionRuntime>> | undefined> {
+   try {
+-    const boundCapture = await resolveSettleObservationCapture({
++    const outcome = await resolveObservationCapture({
+       command: context.req.command,
+       session: context.session,
+       inspectFacts: context.inspectFacts,
+@@ -173,7 +173,7 @@ async function createGenericSettleRuntime(
+       contextFromFlags: context.contextFromFlags,
+       platformServices: context.platformServices,
+       captureSnapshotForSession,
+-      settleObservationCapture: boundCapture,
++      settleObservationCapture: outcome.kind === 'captured' ? outcome.capture : undefined,
+     });
+   } catch {
+     return undefined;
+```
+
+**File**: `packages/daemon/src/execution/interaction/internal/interaction-runtime.ts` (modified, +1/-1)
+```diff
+@@ -192,7 +192,7 @@ export function finalizeTouchInteraction(params: FinalizeTouchInteractionInput):
+ /**
+  * The capture implementation every observation on this request reads the screen through: the action
+  * binding's own capture when its runtime use carries one, otherwise the capture the request admitted
+- * for its observations (`settle-observation-capture.ts`). Resolved once, at construction, so a route
++ * for its observations (`observation-capture.ts`). Resolved once, at construction, so a route
+  * cannot answer one capture from the request-bound runtime and the next from the legacy path. Which
+  * backend a bound capture presents stays per-capture: the settle loop pins it once it sees a
+  * `private-ax` verdict.
+```
+
+**File**: `packages/daemon/src/execution/interaction/internal/interaction-touch-prepare.ts` (modified, +5/-4)
+```diff
+@@ -7,7 +7,7 @@ import {
+ } from '../../../core/touch-runtime.ts';
+ import { readSettleRequest } from './interaction-flags.ts';
+ import type { BoundSnapshotCapture } from '../../../core/snapshot-runtime-binding.ts';
+-import { resolveSettleObservationCapture } from '../../../core/settle-observation-capture.ts';
++import { resolveObservationCapture } from '../../../core/observation-capture.ts';
+ import type { InteractionRouteInput } from '../../../core/interaction/internal/types.ts';
+ import type { DaemonFailureResponse } from '@agent-device/kernel/contracts';
+ import { refusedBeforeDispatch } from '../../request-dispatch-disclosure.ts';
+@@ -51,8 +51,8 @@ export async function prepareTouchDispatch(
+   const owesObservationCapture =
+     touchExecutor.captureSnapshot === undefined &&
+     readSettleRequest(params.req.flags) !== undefined;
+-  const settleObservationCapture = owesObservationCapture
+-    ? await resolveSettleObservationCapture({
++  const settleObservationOutcome = owesObservationCapture
++    ? await resolveObservationCapture({
+         command: params.req.command,
+         session,
+         inspectFacts: params.inspectFacts,
+@@ -63,6 +63,7 @@ export async function prepareTouchDispatch(
+   return {
+     ok: true,
+     touchExecutor,
+-    settleObservationCapture,
++    settleObservationCapture:
++      settleObservationOutcome?.kind === 'captured' ? settleObservationOutcome.capture : undefined,
+   };
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4658** (closed): ci(coverage): measure the Coverage lane across runner classes (@thymikee)
-- **PR #4648** (2026-11-17): test(android): retain original helper diagnostics (@thymikee)
-- **PR #4645** (2026-11-17): fix(daemon): resolve an explicit selector for the bound device from the session (@thymikee)
-- **PR #4642** (2026-11-17): perf(ios): read keyboard status from one keyboard snapshot (@thymikee)
-- **PR #4639** (2026-11-17): feat(screenshot): draw TV overlay refs at the page's capture scale (@alimek)
-- **PR #4638** (2026-11-17): test(test-app): add a Settle lab of single- and multi-stage effects (@thymikee)
+- **PR #4712** (closed): revert(ci): run the Android smoke lane on four vCPU again (@thymikee)
+- **PR #4711** (2026-11-18): fix(test-app): handle sign-in cancellation and duplicate taps (@thymikee)
+- **PR #4708** (2026-11-18): test(test-app): add a sign-in sheet lab for the hosted web auth surface (@thymikee)
+- **PR #4707** (2026-11-18): chore(contracts): remove dead exports (@thymikee)
+- **PR #4706** (2026-11-18): chore(scripts): wire check-provider-plugin into package.json scripts (@thymikee)
+- **PR #4705** (2026-11-18): fix(replay): verify recorded targets through the request's own capture (@thymikee)
 
 ---
 
@@ -3483,75 +2977,37 @@ Verify transfer mechanics cannot load in the lazy-boundary control and restore t
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. android): dispatch helper taps and keys without the global animation wait
+## X. judge a save-script destination another local user can steer
 
 **RULE**:
-When implementing operations in `android/snapshot-helper/src/main/java/com/callstack/agentdevice/snapshothelper/AutomationCommandHandler.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/adr/0016-active-session-script-publication.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c0ef6b24`: android): dispatch helper taps and keys without the global animation wait. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ada87a3b`: judge a save-script destination another local user can steer. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/snapshot-helper/src/main/java/com/callstack/agentdevice/snapshothelper/AutomationCommandHandler.java`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/adr/0016-active-session-script-publication.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  /**
-   * The budget of a host that sends none: a provider-supplied helper can be newer than its host, and
-   * an older host waits 30 s for input, less the 5 s answer margin. It never affords a retry.
-   */
-  private static final long OLDER_HOST_BUDGET_MS = 25_000;
-
-  /** The framework's accessibility interaction timeout, AccessibilityInteractionClient. */
-  private static final long TEXT_ENTRY_RESERVE_MS = 5_000;
-
-  /** The command deadline left too little time for the next step, so it was not started. */
-  static final class InputBudgetExhausted extends IllegalStateException {
-    InputBudgetExhausted(String message) {
-      super(message);
-    }
-  }
-
-  /** Refuses text entry the deadline cannot fit, after a focus tap that may have used the budget. */
-  static void requireTextEntryTime(long deadline, long now) {
-    if (deadline - now < TEXT_ENTRY_RESERVE_MS) {
-      throw new InputBudgetExhausted("Fill text was not entered: too little time left after focus");
-    }
-  }
-
-    // The host's remaining time for this command bounds every retry decision.
-    long deadline =
-        SystemClock.uptimeMillis() + input.optLong("budgetMs", OLDER_HOST_BUDGET_MS);
-        tap(automation, i
+- The destination a caller names with `--save-script=<path>` is judged before anything is created.
+  It must be absolute, and every directory the walk looks a name up in must be one no other non-root local user can change.
+  What is missing is created one level at a time at 0700, inside the directory the walk just judged, and the script file is 0600.
+  The rule is POSIX-only, and a refused destination leaves nothing behind.
+  The daemon's own state-directory chain is outside this decision (#4649).
+- Before it sends the open, the client mints a random publication ID and records the destination and the `--force` grant under it in its state directory (`remote-connections/session-scripts/`), keyed by the endpoint, the tenant, the session, and that ID. That directory is the client's own private state, not a script destination: the client creates it the way it always did, with one recursive `mkdir` that forces nothing on a directory that already stands, and the only file ever written there is the client's own record. The script itself is published by the daemon to its own sessions directory; the client's own copy goes to the caller's destination, judged by the rule under [Caller-named de
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-        tap(automation, input.getDouble("x"), input.getDouble("y"), dispatch);
-        key(automation, input.getInt("keyCode"), dispatch);
-        fill(automation, input.getInt("x"), input.getInt("y"), input.getString("text"), dispatch);
-  private static void tap(UiAutomation automation, double x, double y, InputDispatch dispatch) {
-    long down = SystemClock.uptimeMillis();
-    touch(automation, down, MotionEvent.ACTION_DOWN, (float) x, (float) y, dispatch);
-    touch(automation, down, MotionEvent.ACTION_UP, (float) x, (float) y, dispatch);
-  private static void touch(UiAutomation automation, long down, int action, float x, float y, InputDispatch dispatch) {
-    MotionEvent event = MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, x, y, 0);
-    event.setSource(InputDevice.SOURCE_TOUCHSCREEN);
-    try {
-      dispatch.attempted = true;
-      if (!automation.injectInputEvent(event, true)) {
-        throw new IllegalStateException("Touch injection was refused");
-      }
-    } finally {
-      event.recycle();
-  private static void key(UiAutomation automation, int code, InputDispatch dispatch) {
-    if (code < 0 || code > KeyEvent.getMaxKeyCode()) throw new IllegalArgumentE
+- Before it sends the open, the client mints a random publication ID and records the destination and the `--force` grant under it in its state directory (`remote-connections/session-scripts/`), keyed by the endpoint, the tenant, the session, and that ID.
+The destination keeps local `--save-script` semantics: the client creates a missing parent directory and checks no ancestor ownership, so another local user who can write an ancestor directory can redirect the file, locally and remotely alike (#4565).
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c0ef6b24` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ada87a3b` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions
