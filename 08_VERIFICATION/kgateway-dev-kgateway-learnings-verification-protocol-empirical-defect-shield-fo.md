@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T07:20:03.328Z",
+  "timestamp": "2026-11-19T18:20:39.186Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-kgateway-dev-kgateway-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [kgateway-dev-kgateway-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T07:20:03.328Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T18:20:39.186Z`  
 > **Learning ID**: `LEARN-EVO-kgateway-dev-kgateway-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source**: github ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
-> **Source Version**: `74f2e098`  
+> **Source Version**: `2cd623a3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T07:17:59.948Z  
+> **Timestamp**: 2026-11-19T18:19:59.582Z  
 > **Learning ID**: `learn-github-kgateway-dev-kgateway`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kgateway-dev-kgateway-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T07:17:59.943Z  
+> **Harvest Timestamp**: 2026-11-19T18:19:59.577Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The Cloud-Native API Gateway and AI Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5736 stars
+- **Stars / Engagement**: 5747 stars
 
 ---
 
@@ -1145,11 +1145,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15042** (2026-11-13): **test(e2e): check ConsistentlyObjectsNotExist objects in one window**
-  *Symptoms*: # Description  **Motivation:** `TestKgateway/Deployer/TestSelfManagedGateway` takes ~31s on every run (cluster-one and cluster-ipv6), but its Gateway is Accepted within about a second. The other 30s is `ConsistentlyObjectsNotExist`, which ran a separate 10s `Consistently` for each of the three objects (Deployment, Service, ServiceAccount), one after another.  **What changed:** `ConsistentlyObjectsNotExist` now checks every object on each 1s poll within a single 10s window. Each object is still confirmed absent for the full 10s, so coverage is unchanged, and the test should drop to ~11s. This is the helper's only caller.  Failure messages now name the object's Go type (e.g. `*v1.Deployment`), since typed objects usually carry an empty GVK and the old message printed a blank kind.  **Related issues:** part of #12981  # Change Type  /kind test  # Changelog  ```release-note NONE ```  # Additional Notes  Build, vet and lint pass with `-tags e2e`. Not run locally against a cluster; this PR's e2e run should show `TestSelfManagedGateway` at ~11s and the Deployer suite ~20s shorter. 
+- **Issue #15056** (2026-11-19): **backendconfigpolicy: require exactly one TLS trust source again**
+  *Symptoms*: # Description  **Motivation:** #14780 relaxed `BackendConfigPolicy.tls` from `ExactlyOneOf` to `AtMostOneOf` so a policy that names no trust source defaults to the system CA certificates. To keep that default from validating the chain only, it also required `sni` whenever no trust source is set. The default is only a shorthand for `wellKnownCACertificates: System`, and the `sni` rule it needs is hard to explain: `sni` is not needed for a TLS handshake, and dynamic forward proxy backends replace the policy's `sni` with each request's host anyway.  **What changed:** - **API:** the TLS rule is back to `ExactlyOneOf=secretRef;files;insecureSkipVerify;wellKnownCACertificates`, and the `sni`-required CEL rule is removed. To validate against the system CAs, set `wellKnownCACertificates: System`. - **Kept from #14780:** `insecureSkipVerify: false` and `wellKnownCACertificates` values other than `System` are still rejected by CEL, and validating against the system CAs with `sni` set and no `verifySubjectAltNames` still pins the certificate to the SNI. - **Translator:** unchanged. A policy stored without a trust source (for example `insecureSkipVerify: false` from an older release, or a policy created on a build that had #14780) is still validated against the system CAs rather than skipping verification. - **Tests:** CEL cases updated to the `ExactlyOneOf` message. The `tls-default-system-ca` translator golden is removed because its input is now rejected by CEL; the stored-policy defau
 
-- **Issue #15041** (2026-11-13): **test(e2e): pre-pull suite images in parallel and poll every 100ms**
-  *Symptoms*: # Description  **Motivation:** suites pre-pull their images through a helper pod before applying manifests. The pulls ran one image at a time and checked the pod every 2s, so every pull reported as 4.0s or 6.0s, however long it really took. In #15040's CI run that was 42 pulls and 175s across the shards, with up to 9 pulls on one shard (cluster-four).  **What changed:** - A suite's images are pulled in parallel. - Each puller pod is checked every 100ms instead of every 2s. - A failed pull is returned as an error and fails the suite on the test goroutine once all pulls finish (calling `FailNow` from another goroutine isn't allowed). - The 5-minute timeout and the retrying of transient API errors are unchanged. The timeout error now includes the pod's last phase and the last API error.  **Related issues:** part of #12981  # Change Type  /kind test  # Changelog  ```release-note NONE ``` 
+- **Issue #15050** (2026-11-19): **fix(krtcollections): require selected labels to be present in apiKeyAuth secretSelector**
+  *Symptoms*: # Description  `SecretIndex.GetSecretsBySelector`, which resolves `apiKeyAuth.secretSelector` on a TrafficPolicy, compared labels with a map lookup (`objLabels[key] != value`). A label the Secret does not carry reads as `""`, so a `matchLabels` entry with an empty value (a marker label such as `keys.example.com/gold: ""`) also matched labelled Secrets that lack that label, and their entries were configured as valid API keys for the route. `kubectl get secrets -l keys.example.com/gold=` lists only the intended Secrets, so the mismatch was not visible.  **What changed:** - Build a `labels.Selector` with `labels.SelectorFromSet(matchLabels)` and match with `selector.Matches(labels.Set(objLabels))`, the same semantics as the API server and as the namespace selector matching already in this package. The nil-labels early return and the ReferenceGrant filtering are unchanged; selectors with non-empty values select the same Secrets as before. - Add `TestSecretsBySelectorLabelMatch` covering value labels, empty-valued marker labels, a marker label no Secret carries, and multi-label selectors.  This is the minimal fix, independent of #14757 (matchExpressions support for `secretSelector`), which also rewrites this function.  # Change Type  /kind fix  # Changelog  ```release-note Fixed `apiKeyAuth.secretSelector` matching Secrets that do not carry a selected label when that label's value is empty; selectors now require every label to be present, matching Kubernetes label selector semanti
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1166,121 +1166,921 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba3b23fa` (2026-11-13)
-**Commit Message**: test(e2e): pre-pull suite images in parallel and poll every 100ms (#15041)
+### Incident Patch 1: `2cd623a3` (2026-11-19)
+**Commit Message**: fix(krtcollections): require selected labels to be present in apiKeyAuth secretSelector (#15050)
 
 Signed-off-by: omar <[REDACTED_EMAIL]>
 
-**File**: `test/e2e/tests/base/base_suite.go` (modified, +39/-13)
+**File**: `pkg/krtcollections/refgrant_source_test.go` (modified, +60/-0)
 ```diff
-@@ -17,7 +17,6 @@ import (
- 	"time"
- 
- 	"github.com/Masterminds/semver/v3"
--	"github.com/onsi/gomega"
- 	"github.com/stretchr/testify/suite"
- 	"istio.io/istio/pkg/test/util/assert"
- 	"istio.io/istio/pkg/test/util/yml"
-@@ -30,6 +29,7 @@ import (
- 	"k8s.io/apimachinery/pkg/runtime"
- 	"k8s.io/apimachinery/pkg/runtime/schema"
- 	"k8s.io/apimachinery/pkg/runtime/serializer/yaml"
-+	"k8s.io/apimachinery/pkg/util/wait"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
- 	gwv1 "sigs.k8s.io/gateway-api/apis/v1"
- 
-@@ -510,23 +510,39 @@ func (s *BaseTestingSuite) prePullImages(testCase *TestCase) {
- 		return
+@@ -235,3 +235,63 @@ func TestSecretsBySelectorSearchScope(t *testing.T) {
+ 		})
  	}
- 
--	// Create temporary pods to pull images
-+	// Pull the images in parallel: each pull is mostly waiting on the node, and a suite can need
-+	// several (redis and ratelimit, keycloak and httpbin). Failures are reported back here, on the
-+	// test goroutine, because FailNow must not be called from another goroutine.
-+	var wg sync.WaitGroup
-+	errs := make([]error, 0, len(images))
-+	var errsMu sync.Mutex
- 	for image := range images {
--		s.pullImage(image)
-+		wg.Go(func() {
-+			if err := s.pullImage(image); err != nil {
-+				errsMu.Lock()
-+				errs = append(errs, err)
-+				errsMu.Unlock()
+ }
++
++// TestSecretsBySelectorLabelMatch pins that a selector matches the way the API server
++// matches it: every label has to be present on the secret with the selected value. A
++// marker label has an empty value, and a secret without that label must not pass for
++// one that carries it.
++func TestSecretsBySelectorLabelMatch(t *testing.T) {
++	labeled := func(name string, labels map[string]string) *corev1.Secret {
++		sec := testSecret()
++		sec.Namespace, sec.Name, sec.Labels = "app-ns", name, labels
++		return sec
++	}
++	objs := []any{
++		labeled("gold", map[string]string{"keys.example.com/gold": "", "tier": "gold"}),
++		labeled("free", map[string]string{"keys.example.com/free": "", "tier": "free"}),
++		labeled("gold-valued", map[string]string{"keys.example.com/gold": "true"}),
++		labeled("unlabeled", nil),
++	}
++
++	tests := []struct {
++		name     string
++		selector map[string]string
++		want     []string
++	}{
++		{
++			name:     "value",
++			selector: map[string]string{"tier": "gold"},
++			want:     []string{"gold"},
++		},
++		{
++			name:     "empty value needs the label to be present",
++			selector: map[string]string{"keys.example.com/gold": ""},
++			want:     []string{"gold"},
++		},
++		{
++			name:     "empty value of a label no secret has",
++			selector: map[string]string{"keys.example.com/platinum": ""},
++		},
++		{
++			name:     "all labels have to match",
++			selector: map[string]string{"keys.example.com/gold": "", "tier": "free"},
++		},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			secrets, err := newTestSecretIndex(t, objs...).GetSecretsBySelector(krt.TestingDummyContext{},
++				From{GroupKind: sourceGK, Namespace: "app-ns"}, secretGK, tt.selector)
++			if err != nil {
++				t.Fatalf("GetSecretsBySelector() = %v, want no error", err)
++			}
++			var got []string
++			for _, sec := range secrets {
++				got = append(got, sec.Name)
++			}
++			slices.Sort(got)
++			if !slices.Equal(got, tt.want) {
++				t.Errorf("GetSecretsBySelector() = %v, want %v", got, tt.want)
 +			}
 +		})
- 	}
-+	wg.Wait()
-+	s.Require().NoError(errors.Join(errs...), "pre-pull images")
- }
- 
- // pullImage creates a temporary pod to pull the given image with a long timeout.
- // Images this process already pulled to the cluster are skipped. The pod gets
- // a generated name so concurrent pulls, including from other test processes
- // against the same cluster, never share or delete each other's puller pod.
--func (s *BaseTestingSuite) pullImage(image string) {
-+//
-+// It is safe to call from several goroutines: it reports a failed pull as an error instead of
-+// failing the test, and only logs otherwise.
-+func (s *BaseTestingSuite) pullImage(image string) error {
- 	cluster := s.TestInstallation.ClusterContext
- 	entry := pulledImages.entry(cluster.KubeContext, image)
- 	entry.mu.Lock()
- 	defer entry.mu.Unlock()
- 	if entry.pulled {
--		return
-+		return nil
- 	}
- 
- 	start := time.Now()
-@@ -547,20 +563,30 @@ func (s *BaseTestingSuite) pullImage(image string) {
- 	}, metav1.CreateOptions{})
- 	if err != nil {
- 		s.T().Logf("Warning: failed to create image puller pod for %s: %v", image, err)
--		return
-+		return nil
- 	}
- 	podName := pullerPod.Name
- 	defer func() { _ = pods.Delete(s.Ctx, podName, metav1.DeleteOptions{}) }()
- 
--	// Wait for the pod to complete (image pulled) with a long timeout (5 minutes)
--	s.TestInstallation.AssertionsT(s.T()).Gomega.Eventually(func(g gomega.Gomega) {
--		pod, err := pods.Get(s.Ctx, podName, metav1.GetOptions{})
--		g.Expect(err).NotTo(gomega.HaveOccurred())
--		// Pod should be Succeeded (completed) or Running (image pulled, command ran)
--		g.Expect(pod.Status.Phase).To(gomega.BeElementOf(corev1.PodSucceeded, corev1.PodRunning, corev1.PodFailed))
--	}).WithTimeout(5*time.Minute).WithPolling(2*time.Second).Should(gomega.Succeed(), "waiting for image %s to be pulled", image)
-+	// Wait for the pod to start or finish, which means the image is on the node. Pulls usually
-+	// take a second or two, so poll often: a coarse interval rounds every pull up to it.
-+	var phase corev1.PodPhase
-+	var lastGetErr error
-+	err = wait.PollUntilContextTimeout(s.Ctx, 100*time.Millisecond, 5*time.Minute, true, func(ctx context.Context) (bool, error) {
-+		pod, getErr := pods.Get(ctx, podName, metav1.GetOptions{})
-+		// Retry transient API errors until the timeout, as before; the last one goes in the error.
-+		lastGetErr = getErr
-+		if getErr == nil {
-+			phase = pod.Status.Phase
-+		}
-+		return phase == corev1.PodSucceeded || phase == corev1.PodRunning || phase == corev1.PodFailed, nil
-+	})
-+	if err != nil {
-+		return fmt.Errorf("waiting for image %s to be pulled (pod phase %q): %w", image, phase, errors.Join(err, lastGetErr))
 +	}
- 	entry.pulled = true
- 	s.T().Logf("Pre-pulled image %s in %s", image, time.Since(start).Round(time.Millisecond))
-+	return nil
++}
+```
+
+**File**: `pkg/krtcollections/secrets.go` (modified, +6/-7)
+```diff
+@@ -4,6 +4,7 @@ import (
+ 	"fmt"
+ 
+ 	"istio.io/istio/pkg/kube/krt"
++	"k8s.io/apimachinery/pkg/labels"
+ 	"k8s.io/apimachinery/pkg/runtime/schema"
+ 	gwv1 "sigs.k8s.io/gateway-api/apis/v1"
+ 
+@@ -109,6 +110,7 @@ func (s *SecretIndex) GetSecretsBySelector(
+ 	}
+ 
+ 	// First, fetch all secrets matching the label selector
++	selector := labels.SelectorFromSet(matchLabels)
+ 	labelMatchedSecrets := krt.Fetch(kctx, col,
+ 		krt.FilterGeneric(func(obj any) bool {
+ 			secret := obj.(ir.Secret)
+@@ -121,13 +123,10 @@ func (s *SecretIndex) GetSecretsBySelector(
+ 			if objLabels == nil {
+ 				return false
+ 			}
+-			// Check if all matchLabels are present and match
+-			for key, value := range matchLabels {
+-				if objLabels[key] != value {
+-					return false
+-				}
+-			}
+-			return true
++			// Check if all matchLabels are present and match, the way the API server does:
++			// an empty value is a valid label value, so a label the secret does not carry
++			// must not pass for one that is set to "".
++			return selector.Matches(labels.Set(objLabels))
+ 		}),
+ 	)
+ 
+```
+
+---
+
+### Incident Patch 2: `5e86dff8` (2026-11-18)
+**Commit Message**: backendconfigpolicy: require exactly one TLS trust source again (#15056)
+
+Signed-off-by: omar <[REDACTED_EMAIL]>
+
+**File**: `api/tests/testdata/backendconfigpolicy-tls.yaml` (modified, +4/-3)
+```diff
+@@ -1,3 +1,4 @@
++_err: exactly one of the fields in [secretRef files insecureSkipVerify wellKnownCACertificates] must be set
+ apiVersion: gateway.kgateway.dev/v1alpha1
+ kind: BackendConfigPolicy
+ metadata:
+@@ -49,7 +50,7 @@ spec:
+   tls:
+     insecureSkipVerify: true
+ ---
+-_err: sni is required when no trust source is set
++_err: exactly one of the fields in [secretRef files insecureSkipVerify wellKnownCACertificates] must be set
+ apiVersion: gateway.kgateway.dev/v1alpha1
+ kind: BackendConfigPolicy
+ metadata:
+@@ -74,7 +75,7 @@ spec:
+   tls:
+     insecureSkipVerify: false
+ ---
+-_err: sni is required when no trust source is set
++_err: exactly one of the fields in [secretRef files insecureSkipVerify wellKnownCACertificates] must be set
+ apiVersion: gateway.kgateway.dev/v1alpha1
+ kind: BackendConfigPolicy
+ metadata:
+@@ -88,7 +89,7 @@ spec:
+     parameters:
+       minVersion: "1.2"
+ ---
+-_err: at most one of the fields in [secretRef files insecureSkipVerify wellKnownCACertificates] may be set
++_err: exactly one of the fields in [secretRef files insecureSkipVerify wellKnownCACertificates] must be set
+ apiVersion: gateway.kgateway.dev/v1alpha1
+ kind: BackendConfigPolicy
+ metadata:
+```
+
+**File**: `api/v1alpha1/kgateway/backend_config_policy_types.go` (modified, +14/-9)
+```diff
+@@ -578,13 +578,11 @@ type TCPKeepalive struct {
+ 
+ // TLS configures TLS origination to the backend.
+ //
+-// At most one trust source may be set: secretRef, files, wellKnownCACertificates,
+-// or insecureSkipVerify. If none is set, the backend's certificate is validated
+-// against the system CA certificates, as if wellKnownCACertificates were System,
+-// and sni is required so the certificate can be checked against a hostname.
++// Exactly one trust source must be set: secretRef, files, wellKnownCACertificates,
++// or insecureSkipVerify. To validate the backend against the system CA certificates,
++// set wellKnownCACertificates to System.
+ //
+-// +kubebuilder:validation:AtMostOneOf=secretRef;files;insecureSkipVerify;wellKnownCACertificates
+-// +kubebuilder:validation:XValidation:rule="has(self.secretRef) || has(self.files) || has(self.wellKnownCACertificates) || has(self.insecureSkipVerify) || has(self.sni)",message="sni is required when no trust source is set; set sni, provide secretRef, files, or wellKnownCACertificates, or set insecureSkipVerify to true"
++// +kubebuilder:validation:ExactlyOneOf=secretRef;files;insecureSkipVerify;wellKnownCACertificates
+ type TLS struct {
+ 	// Reference to a Secret in the same namespace as the policy. The following data keys are read:
+ 	//   - tls.crt: the client certificate chain, used for mTLS.
+@@ -602,8 +600,12 @@ type TLS struct {
+ 	// WellKnownCACertificates specifies whether to use a well-known set of CA
+ 	// certificates for validating the backend's certificate chain. Currently,
+ 	// only the system certificate pool is supported via SDS.
+-	// This is the default when no other trust source is set. When sni is set and
+-	// verifySubjectAltNames is empty, the certificate must also be valid for the sni.
++	// When sni is set and verifySubjectAltNames is empty, the certificate must also
++	// be valid for the sni.
++	// WARNING: If neither sni nor verifySubjectAltNames is set, only the certificate
++	// chain is checked, so any certificate issued by a publicly trusted CA is accepted,
++	// whatever name it was issued for. Dynamic forward proxy backends are the exception:
++	// they always check the certificate against the request's host.
+ 	// +optional
+ 	// +kubebuilder:validation:XValidation:rule="self == 'System'",message="wellKnownCACertificates only supports System"
+ 	WellKnownCACertificates *gwv1.WellKnownCACertificatesType `json:"wellKnownCACertificates,omitempty"`
+@@ -615,7 +617,10 @@ type TLS struct {
+ 	// +kubebuilder:validation:XValidation:rule="self",message="insecureSkipVerify can only be set to true; remove it to verify the backend certificate"
+ 	InsecureSkipVerify *bool `json:"insecureSkipVerify,omitempty"`
+ 
+-	// The SNI domains that should be considered for TLS connection
++	// Sni is the server name sent in the TLS handshake (Server Name Indication).
++	// When wellKnownCACertificates is System and verifySubjectAltNames is empty,
++	// the backend's certificate must also be valid for this name.
++	// For dynamic forward proxy backends, the request's host is sent instead.
+ 	// +optional
+ 	// +kubebuilder:validation:MinLength=1
+ 	Sni *string `json:"sni,omitempty"`
+```
+
+**File**: `install/helm/kgateway-crds/templates/gateway.kgateway.dev_backendconfigpolicies.yaml` (modified, +14/-12)
+```diff
+@@ -1339,8 +1339,11 @@ spec:
+                       If unset, defaults to false.
+                     type: boolean
+                   sni:
+-                    description: The SNI domains that should be considered for TLS
+-                      connection
++                    description: |-
++                      Sni is the server name sent in the TLS handshake (Server Name Indication).
++                      When wellKnownCACertificates is System and verifySubjectAltNames is empty,
++                      the backend's certificate must also be valid for this name.
++                      For dynamic forward proxy backends, the request's host is sent instead.
+                     minLength: 1
+                     type: string
+                   verifySubjectAltNames:
+@@ -1356,8 +1359,12 @@ spec:
+                       WellKnownCACertificates specifies whether to use a well-known set of CA
+                       certificates for validating the backend's certificate chain. Currently,
+                       only the system certificate pool is supported via SDS.
+-                      This is the default when no other trust source is set. When sni is set and
+-                      verifySubjectAltNames is empty, the certificate must also be valid for the sni.
++                      When sni is set and verifySubjectAltNames is empty, the certificate must also
++                      be valid for the sni.
++                      WARNING: If neither sni nor verifySubjectAltNames is set, only the certificate
++                      chain is checked, so any certificate issued by a publicly trusted CA is accepted,
++                      whatever name it was issued for. Dynamic forward proxy backends are the exception:
++                      they always check the certificate against the request's host.
+                     maxLength: 253
+                     minLength: 1
+                     pattern: ^(System|([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/([A-Za-z0-9][-A-Za-z0-9_.]{0,61})?[A-Za-z0-9]))$
+@@ -1367,15 +1374,10 @@ spec:
+                       rule: self == 'System'
+                 type: object
+                 x-kubernetes-validations:
+-                - message: sni is required when no trust source is set; set sni, provide
+-                    secretRef, files, or wellKnownCACertificates, or set insecureSkipVerify
+-                    to true
+-                  rule: has(self.secretRef) || has(self.files) || has(self.wellKnownCACertificates)
+-                    || has(self.insecureSkipVerify) || has(self.sni)
+-                - message: at most one of the fields in [secretRef files insecureSkipVerify
+-                    wellKnownCACertificates] may be set
++                - message: exactly one of the fields in [secretRef files insecureSkipVerify
++                    wellKnownCACertificates] must be set
+                   rule: '[has(self.secretRef),has(self.files),has(self.insecureSkipVerify),has(self.wellKnownCACertificates)].filter(x,x==true).size()
+-                    <= 1'
++                    == 1'
+               tunnel:
+                 description: |-
+                   Tunnel sends Backend connections through an HTTP CONNECT proxy.
+```
+
+**File**: `pkg/kgateway/extensions2/plugins/backendconfigpolicy/tls.go` (modified, +3/-2)
+```diff
+@@ -207,8 +207,9 @@ func buildValidationContext(tlsData *tlsData, tlsConfig *kgateway.TLS, tlsContex
  }
  
- func imagePullerPodName(image string) string {
+ // effectiveWellKnownCACertificates returns the well-known CA set to validate the
+-// backend against. When the policy names no trust source (no secretRef, files, or
+-// wellKnownCACertificates), it defaults to the system CA set rather than skipping
++// backend against. The CRD requires exactly one trust source, but a policy stored
++// before that was enforced (such as one with insecureSkipVerify: false) can name
++// none. Such a policy is validated against the system CA set rather than skipping
+ // validation. Callers handle insecureSkipVerify: true before reaching here.
+ func effectiveWellKnownCACertificates(tlsConfig *kgateway.TLS) *gwv1.WellKnownCACertificatesType {
+ 	if tlsConfig.WellKnownCACertificates != nil {
+```
+
+**File**: `pkg/kgateway/extensions2/plugins/backendconfigpolicy/tls_test.go` (modified, +3/-3)
+```diff
+@@ -487,14 +487,14 @@ func TestTranslateTLSConfig(t *testing.T) {
+ 			},
+ 		},
+ 		{
+-			name:      "TLS config with no trust source and no SNI, stored before CEL required SNI, defaults to system ca",
++			name:      "stored TLS config with no trust source and no SNI defaults to system ca",
+ 			tlsConfig: &kgateway.TLS{},
+ 			expected: &envoytlsv3.UpstreamTlsContext{
+ 				CommonTlsContext: systemCAContext(),
+ 			},
+ 		},
+ 		{
+-			name: "TLS config with only SNI defaults to system ca pinned to SNI",
++			name: "stored TLS config with only SNI defaults to system ca pinned to SNI",
+ 			tlsConfig: &kgateway.TLS{
+ 				Sni:       new("test.example.com"),
+ 				SimpleTLS: new(true),
+@@ -505,7 +505,7 @@ func TestTranslateTLSConfig(t *testing.T) {
+ 			},
+ 		},
+ 		{
+-			name: "TLS config with insecure skip verify false defaults to system ca",
++			name: "stored TLS config with insecure skip verify false defaults to system ca",
+ 			tlsConfig: &kgateway.TLS{
+ 				InsecureSkipVerify: new(false),
+ 				Sni:                new("test.example.com"),
+```
+
+**File**: `pkg/kgateway/translator/gateway/gateway_translator_test.go` (modified, +0/-11)
+```diff
+@@ -2988,17 +2988,6 @@ func TestBasic(t *testing.T) {
+ 		})
+ 	})
+ 
+-	t.Run("Backend Config Policy with TLS and no trust source defaults to system ca", func(t *testing.T) {
+-		test(t, translatorTestCase{
+-			inputFiles: []string{"backendconfigpolicy/tls-default-system-ca.yaml"},
+-			outputFile: "backendconfigpolicy/tls-default-system-ca.yaml",
+-			gwNN: types.NamespacedName{
+-				Namespace: "default",
+-				Name:      "example-gateway",
+-			},
+-		})
+-	})
+-
+ 	t.Run("Backend Config Policy with Circuit Breakers minimal", func(t *testing.T) {
+ 		test(t, translatorTestCase{
+ 			inputFiles: []string{"backendconfigpolicy/circuitbreakers-minimal.yaml"},
+```
+
+**File**: `pkg/kgateway/translator/gateway/testutils/inputs/backendconfigpolicy/tls-default-system-ca.yaml` (removed, +0/-60)
+```diff
+@@ -1,60 +0,0 @@
+-kind: Gateway
+-apiVersion: gateway.networking.k8s.io/v1
+-metadata:
+-  name: example-gateway
+-spec:
+-  gatewayClassName: kgateway
+-  listeners:
+-  - protocol: HTTP
+-    port: 8080
+-    name: http
+-    allowedRoutes:
+-      namespaces:
+-        from: All
+----
+-apiVersion: v1
+-kind: Service
+-metadata:
+-  name: backend-service
+-  labels:
+-    app: backend
+-    service: backend
+-spec:
+-  ports:
+-    - name: https
+-      port: 443
+-      targetPort: 8443
+-      appProtocol: https
+-  selector:
+-    app: backend
+----
+-kind: BackendConfigPolicy
+-apiVersion: gateway.kgateway.dev/v1alpha1
+-metadata:
+-  name: default-ca
+-spec:
+-  targetRefs:
+-    - name: backend-service
+-      group: ""
+-      kind: Service
+-  tls:
+-    sni: test.example.com
+-    simpleTLS: true
+----
+-apiVersion: gateway.networking.k8s.io/v1
+-kind: HTTPRoute
+-metadata:
+-  name: backend-route
+-spec:
+-  parentRefs:
+-    - name: example-gateway
+-  hostnames:
+-    - "example.com"
+-  rules:
+-    - matches:
+-        - path:
+-            type: PathPrefix
+-            value: /
+-      backendRefs:
+-        - name: backend-service
+-          port: 443
+\ No newline at end of file
+```
+
+**File**: `pkg/kgateway/translator/gateway/testutils/outputs/backendconfigpolicy/tls-default-system-ca.yaml` (removed, +0/-157)
+```diff
+@@ -1,157 +0,0 @@
+-Clusters:
+-- commonLbConfig:
+-    localityWeightedLbConfig: {}
+-  connectTimeout: 5s
+-  edsClusterConfig:
+-    edsConfig:
+-      ads: {}
+-      resourceApiVersion: V3
+-  ignoreHealthOnHostRemoval: true
+-  name: kube_default_backend-service_443
+-  transportSocket:
+-    name: envoy.transport_sockets.tls
+-    typedConfig:
+-      '@type': type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+-      commonTlsContext:
+-        combinedValidationContext:
+-          defaultValidationContext:
+-            matchTypedSubjectAltNames:
+-            - matcher:
+-                exact: test.example.com
+-              sanType: DNS
+-          validationContextSdsSecretConfig:
+-            name: SYSTEM_CA_CERT
+-      sni: test.example.com
+-  type: EDS
+-Listeners:
+-- address:
+-    socketAddress:
+-      address: '::'
+-      ipv4Compat: true
+-      portValue: 8080
+-  filterChains:
+-  - filters:
+-    - name: envoy.filters.network.http_connection_manager
+-      typedConfig:
+-        '@type': type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+-        httpFilters:
+-        - name: envoy.filters.http.router
+-          typedConfig:
+-            '@type': type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+-        mergeSlashes: true
+-        normalizePath: true
+-        rds:
+-          configSource:
+-            ads: {}
+-            resourceApiVersion: V3
+-          routeConfigName: listener~8080
+-        statPrefix: http_8080
+-        useRemoteAddress: true
+-    name: listener~8080
+-  name: listener~8080
+-Routes:
+-- ignorePortInHostMatching: true
+-  name: listener~8080
+-  virtualHosts:
+-  - domains:
+-    - example.com
+-    name: listener~8080~example_com
+-    routes:
+-    - match:
+-        prefix: /
+-      name: listener~8080~example_com-route-0-httproute-backend-route-default-0-0-matcher-0
+-      route:
+-        cluster: kube_default_backend-service_443
+-        clusterNotFoundResponseCode: INTERNAL_SERVER_ERROR
+-Statuses:
+-  gateways:
+-    default/example-gateway:
+-      conditions:
+-      - lastTransitionTime: null
+-        message: Successfully accepted Gateway
+-        reason: Accepted
+-        status: "True"
+-        type: Accepted
+-      - lastTransitionTime: null
+-        message: Successfully programmed Gateway
+-        reason: Programmed
+-        status: "True"
+-        type: Programmed
+-      - lastTransitionTime: null
+-        message: Successfully resolved all Gateway references
+-        reason: ResolvedRefs
+-        status: "True"
+-        type: ResolvedRefs
+-      listeners:
+-      - attachedRoutes: 1
+-        conditions:
+-        - lastTransitionTime: null
+-          message: Successfully accepted Listener
+-          reason: Accepted
+-          status: "True"
+-          type: Accepted
+-        - lastTransitionTime: null
+-          message: Successfully verified that Listener has no conflicts
+-          reason: NoConflicts
+-          status: "False"
+-          type: Conflicted
+-        - lastTransitionTime: null
+-          message: Successfully resolved all references
+-          reason: ResolvedRefs
+-          status: "True"
+-          type: ResolvedRefs
+-        - lastTransitionTime: null
+-          message: Successfully programmed Listener
+-          reason: Programmed
+-          status: "True"
+-          type: Programmed
+-        name: http
+-        supportedKinds:
+-        - group: gateway.networking.k8s.io
+-          kind: HTTPRoute
+-        - group: gateway.networking.k8s.io
+-          kind: GRPCRoute
+-  httpRoutes:
+-    default/backend-route:
+-      parents:
+-      - conditions:
+-        - lastTransitionTime: null
+-          message: Successfully accepted Route
+-          reason: Accepted
+-          status: "True"
+-          type: Accepted
+-        - lastTransitionTime: null
+-          message: Successfully resolved all references
+-          reason: ResolvedRefs
+-          status: "True"
+-          type: ResolvedRefs
+-        - lastTransitionTime: null
+-          message: Successfully programmed Route
+-          reason: Programmed
+-          status: "True"
+-          type: kgateway.dev/Programmed
+-        controllerName: kgateway
+-        parentRef:
+-          group: ""
+-          kind: ""
+-          name: example-gateway
+-  policies:
+-    BackendConfigPolicy/default/default-ca:
+-      ancestors:
+-      - ancestorRef:
+-          group: ""
+-          kind: Service
+-          name: backend-service
+-          namespace: default
+-        conditions:
+-        - lastTransitionTime: null
+-          message: Policy accepted
+-          reason: Valid
+-          status: "True"
+-          type: Accepted
+-        - lastTransitionTime: null
+-          message: Attached to all targets
+-          reason: Attached
+-          status: "True"
+-          type: Attached
+-        controllerName: kgateway.dev/kgateway
+```
+
+---
+
+### Incident Patch 3: `8739b375` (2026-11-18)
+**Commit Message**: fix(delegation): scope delegated children to each backendRef (#14914)
+
+Signed-off-by: omar <[REDACTED_EMAIL]>
+
+**File**: `pkg/kgateway/query/route.go` (modified, +1/-1)
+```diff
+@@ -249,13 +249,13 @@ func (r *gatewayQueries) getDelegatedChildren(
+ 
+ 	children := NewBackendMap[[]*RouteInfo]()
+ 	for _, parentRule := range parent.Rules {
+-		var refChildren []*RouteInfo
+ 		for _, backendRef := range parentRule.Backends {
+ 			// Check if the backend reference is an HTTPRoute
+ 			if backendRef.Delegate == nil {
+ 				continue
+ 			}
+ 			ref := *backendRef.Delegate
++			var refChildren []*RouteInfo
+ 			// Fetch child routes based on the backend reference
+ 			referencedRoutes, err := r.fetchRoutesByRef(kctx, backendRef)
+ 			if err != nil {
+```
+
+**File**: `pkg/kgateway/query/route_test.go` (modified, +36/-0)
+```diff
+@@ -264,3 +264,39 @@ func TestGetRouteChain(t *testing.T) {
+ 		})
+ 	}
+ }
++
++// TestGetRouteChainMultipleDelegatesInRule verifies that each delegate backendRef in a rule
++// maps to only its own children, not to the children of the refs listed before it.
++func TestGetRouteChainMultipleDelegatesInRule(t *testing.T) {
++	a := assert.New(t)
++
++	refA := ir.ObjectSource{Group: "gateway.networking.k8s.io", Kind: "HTTPRoute", Name: "child-a", Namespace: "default"}
++	refB := ir.ObjectSource{Group: "gateway.networking.k8s.io", Kind: "HTTPRoute", Name: "child-b", Namespace: "default"}
++	parent := &ir.HttpRouteIR{
++		ObjectSource: ir.ObjectSource{Name: "parent", Namespace: "default"},
++		Rules: []ir.HttpRouteRuleIR{
++			{
++				Backends: []ir.HttpBackendOrDelegate{
++					{Delegate: &refA},
++					{Delegate: &refB},
++				},
++			},
++		},
++	}
++	routes := []client.Object{
++		&gwv1.HTTPRoute{ObjectMeta: metav1.ObjectMeta{Name: "child-a", Namespace: "default"}},
++		&gwv1.HTTPRoute{ObjectMeta: metav1.ObjectMeta{Name: "child-b", Namespace: "default"}},
++	}
++
++	q := newQueries(t, routes...)
++	routeInfo := q.GetRouteChain(krt.TestingDummyContext{}, context.TODO(), parent, nil, gwv1.ParentReference{})
++	a.NotNil(routeInfo)
++
++	for _, ref := range []ir.ObjectSource{refA, refB} {
++		children, err := routeInfo.GetChildrenForRef(ref)
++		a.NoError(err)
++		if a.Len(children, 1, "ref %s should only resolve its own child", ref.Name) {
++			a.Equal(ref.Name, children[0].Object.GetName())
++		}
++	}
++}
+```
+
+**File**: `pkg/kgateway/translator/gateway/gateway_translator_test.go` (modified, +4/-0)
+```diff
+@@ -4618,6 +4618,10 @@ func TestRouteDelegation(t *testing.T) {
+ 		test(t, "multiple_children.yaml")
+ 	})
+ 
++	t.Run("Parent rule delegates to multiple backendRefs", func(t *testing.T) {
++		test(t, "multiple_delegates_per_rule.yaml")
++	})
++
+ 	t.Run("Child is invalid as it is delegatee and specifies hostnames", func(t *testing.T) {
+ 		test(t, "basic_invalid_hostname.yaml")
+ 	})
+```
+
+**File**: `pkg/kgateway/translator/gateway/testutils/inputs/delegation/multiple_delegates_per_rule.yaml` (added, +97/-0)
+```diff
+@@ -0,0 +1,97 @@
++# This test contains a parent route with a rule that delegates to two namespaces, one of which
++# is also delegated to exclusively by another rule. The routes resolved for one backendRef must
++# not be attached via another backendRef, so a child in namespace "b" cannot claim a path under
++# the prefix that is only delegated to namespace "a".
++#
++# Input:
++# - Parent infra/example-route:
++#   - Delegate /a to routes in "a" namespace
++#   - Delegate /shared to routes in "b" and "a" namespaces
++# - Child a/route-a:
++#   - /a goes to a/svc-a
++#   - /shared/a goes to a/svc-a
++# - Child b/route-b:
++#   - /shared/b goes to b/svc-b
++#   - /a/1 goes to b/svc-b
++#
++# Expected output routes:
++# - /a -> a/svc-a
++# - /shared/a -> a/svc-a
++# - /shared/b -> b/svc-b
++apiVersion: gateway.networking.k8s.io/v1
++kind: HTTPRoute
++metadata:
++  name: example-route
++  namespace: infra
++spec:
++  parentRefs:
++  - name: example-gateway
++  hostnames:
++  - "example.com"
++  rules:
++  - matches:
++    - path:
++        type: PathPrefix
++        value: /a
++    backendRefs:
++    - group: gateway.networking.k8s.io
++      kind: HTTPRoute
++      name: "*"
++      namespace: a
++  - matches:
++    - path:
++        type: PathPrefix
++        value: /shared
++    backendRefs:
++    - group: gateway.networking.k8s.io
++      kind: HTTPRoute
++      name: "*"
++      namespace: b
++    - group: gateway.networking.k8s.io
++      kind: HTTPRoute
++      name: "*"
++      namespace: a
++---
++apiVersion: gateway.networking.k8s.io/v1
++kind: HTTPRoute
++metadata:
++  name: route-a
++  namespace: a
++spec:
++  rules:
++  - matches:
++    - path:
++        type: PathPrefix
++        value: /a
++    backendRefs:
++    - name: svc-a
++      port: 8080
++  - matches:
++    - path:
++        type: PathPrefix
++        value: /shared/a
++    backendRefs:
++    - name: svc-a
++      port: 8080
++---
++apiVersion: gateway.networking.k8s.io/v1
++kind: HTTPRoute
++metadata:
++  name: route-b
++  namespace: b
++spec:
++  rules:
++  - matches:
++    - path:
++        type: PathPrefix
++        value: /shared/b
++    backendRefs:
++    - name: svc-b
++      port: 8080
++  - matches:
++    - path:
++        type: PathPrefix
++        value: /a/1
++    backendRefs:
++    - name: svc-b
++      port: 8080
+```
+
+**File**: `pkg/kgateway/translator/gateway/testutils/outputs/delegation/multiple_delegates_per_rule.yaml` (added, +203/-0)
+```diff
+@@ -0,0 +1,203 @@
++Clusters:
++- commonLbConfig:
++    localityWeightedLbConfig: {}
++  connectTimeout: 5s
++  edsClusterConfig:
++    edsConfig:
++      ads: {}
++      resourceApiVersion: V3
++  ignoreHealthOnHostRemoval: true
++  name: kube_a_svc-a_8080
++  type: EDS
++- commonLbConfig:
++    localityWeightedLbConfig: {}
++  connectTimeout: 5s
++  edsClusterConfig:
++    edsConfig:
++      ads: {}
++      resourceApiVersion: V3
++  ignoreHealthOnHostRemoval: true
++  name: kube_b_svc-b_8080
++  type: EDS
++- commonLbConfig:
++    localityWeightedLbConfig: {}
++  connectTimeout: 5s
++  edsClusterConfig:
++    edsConfig:
++      ads: {}
++      resourceApiVersion: V3
++  ignoreHealthOnHostRemoval: true
++  name: kube_infra_example-svc_80
++  type: EDS
++Listeners:
++- address:
++    socketAddress:
++      address: '::'
++      ipv4Compat: true
++      portValue: 80
++  filterChains:
++  - filters:
++    - name: envoy.filters.network.http_connection_manager
++      typedConfig:
++        '@type': type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
++        httpFilters:
++        - name: envoy.filters.http.router
++          typedConfig:
++            '@type': type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
++        mergeSlashes: true
++        normalizePath: true
++        rds:
++          configSource:
++            ads: {}
++            resourceApiVersion: V3
++          routeConfigName: listener~80
++        statPrefix: http_80
++        useRemoteAddress: true
++    name: listener~80
++  name: listener~80
++Routes:
++- ignorePortInHostMatching: true
++  name: listener~80
++  virtualHosts:
++  - domains:
++    - example.com
++    name: listener~80~example_com
++    routes:
++    - match:
++        pathSeparatedPrefix: /shared/a
++      name: listener~80~example_com-route-0-httproute-route-a-a-0-0-matcher-0
++      route:
++        cluster: kube_a_svc-a_8080
++        clusterNotFoundResponseCode: INTERNAL_SERVER_ERROR
++    - match:
++        pathSeparatedPrefix: /shared/b
++      name: listener~80~example_com-route-1-httproute-route-b-b-0-0-matcher-0
++      route:
++        cluster: kube_b_svc-b_8080
++        clusterNotFoundResponseCode: INTERNAL_SERVER_ERROR
++    - match:
++        pathSeparatedPrefix: /a
++      name: listener~80~example_com-route-4-httproute-route-a-a-0-0-matcher-0
++      route:
++        cluster: kube_a_svc-a_8080
++        clusterNotFoundResponseCode: INTERNAL_SERVER_ERROR
++Statuses:
++  gateways:
++    infra/example-gateway:
++      conditions:
++      - lastTransitionTime: null
++        message: Successfully accepted Gateway
++        reason: Accepted
++        status: "True"
++        type: Accepted
++      - lastTransitionTime: null
++        message: Successfully programmed Gateway
++        reason: Programmed
++        status: "True"
++        type: Programmed
++      - lastTransitionTime: null
++        message: Successfully resolved all Gateway references
++        reason: ResolvedRefs
++        status: "True"
++        type: ResolvedRefs
++      listeners:
++      - attachedRoutes: 1
++        conditions:
++        - lastTransitionTime: null
++          message: Successfully accepted Listener
++          reason: Accepted
++          status: "True"
++          type: Accepted
++        - lastTransitionTime: null
++          message: Successfully verified that Listener has no conflicts
++          reason: NoConflicts
++          status: "False"
++          type: Conflicted
++        - lastTransitionTime: null
++          message: Successfully resolved all references
++          reason: ResolvedRefs
++          status: "True"
++          type: ResolvedRefs
++        - lastTransitionTime: null
++          message: Successfully programmed Listener
++          reason: Programmed
++          status: "True"
++          type: Programmed
++        name: http
++        supportedKinds:
++        - group: gateway.networking.k8s.io
++          kind: HTTPRoute
++        - group: gateway.networking.k8s.io
++          kind: GRPCRoute
++  httpRoutes:
++    a/route-a:
++      parents:
++      - conditions:
++        - lastTransitionTime: null
++          message: Successfully accepted Route
++          reason: Accepted
++          status: "True"
++          type: Accepted
++        - lastTransitionTime: null
++          message: Successfully resolved all references
++          reason: ResolvedRefs
++          status: "True"
++          type: ResolvedRefs
++        - lastTransitionTime: null
++          message: Successfully programmed Route
++          reason: Programmed
++          status: "True"
++          type: kgateway.dev/Programmed
++        controllerName: kgateway
++        parentRef:
++          group: gateway.networking.k8s.io
++          kind: HTTPRoute
++          name: example-route
++          namespace: infra
++    b/route-b:
++      parents:
++      - conditions:
++        - lastTransitionTime: null
++          message: Successfully accepted Route
++          reason: Accepted
++          status: "True"
++          type: Accepted
++        - lastTransitionTime: nu
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #15056** (2026-11-19): backendconfigpolicy: require exactly one TLS trust source again (@puertomontt)
+- **PR #15050** (2026-11-19): fix(krtcollections): require selected labels to be present in apiKeyAuth secretSelector (@puertomontt)
 - **PR #15042** (2026-11-13): test(e2e): check ConsistentlyObjectsNotExist objects in one window (@puertomontt)
 - **PR #15041** (2026-11-13): test(e2e): pre-pull suite images in parallel and poll every 100ms (@puertomontt)
 - **PR #15040** (2026-11-13): test(e2e): wait for terminating base namespaces at setup, not teardown (@puertomontt)
 - **PR #15039** (closed): [2.4] fix(trafficpolicy): allow retry.perTryTimeout with timeouts.request 0s (#15016) (@DuncanDoyle)
-- **PR #15038** (2026-11-13): [2.5] fix(trafficpolicy): allow retry.perTryTimeout with timeouts.request 0s (#15016) (@DuncanDoyle)
-- **PR #15037** (2026-11-12): docs(api): document BackendConfigPolicy tls.secretRef data keys (@puertomontt)
 
 ---
 
@@ -1300,70 +2100,65 @@ Signed-off-by: omar <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(e2e): pre-pull suite images in parallel and poll every 100ms
+## X. krtcollections): require selected labels to be present in apiKeyAuth secretSelec
 
 **RULE**:
-When implementing operations in `test/e2e/tests/base/base_suite.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/krtcollections/refgrant_source_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba3b23fa`: test(e2e): pre-pull suite images in parallel and poll every 100ms. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2cd623a3`: krtcollections): require selected labels to be present in apiKeyAuth secretSelector. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/e2e/tests/base/base_suite.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/krtcollections/refgrant_source_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"k8s.io/apimachinery/pkg/util/wait"
-	// Pull the images in parallel: each pull is mostly waiting on the node, and a suite can need
-	// several (redis and ratelimit, keycloak and httpbin). Failures are reported back here, on the
-	// test goroutine, because FailNow must not be called from another goroutine.
-	var wg sync.WaitGroup
-	errs := make([]error, 0, len(images))
-	var errsMu sync.Mutex
-		wg.Go(func() {
-			if err := s.pullImage(image); err != nil {
-				errsMu.Lock()
-				errs = append(errs, err)
-				errsMu.Unlock()
-			}
-		})
-	wg.Wait()
-	s.Require().NoError(errors.Join(errs...), "pre-pull images")
-//
-// It is safe to call from several goroutines: it reports a failed pull as an error instead of
-// failing the test, and only logs otherwise.
-func (s *BaseTestingSuite) pullImage(image string) error {
-		return nil
-		return nil
-	// Wait for the pod to start or finish, which means the image is on the node. Pulls usually
-	// take a second or two, so poll often: a coarse interval rounds every pull up to it.
-	var phase corev1.PodPhase
-	var lastGetErr error
-	err = wait.PollUntilContextTimeout(s.Ctx, 100*time.Millisecond, 5*time.Minute, true, func(ctx context.Context) (bool, error) {
-		pod, g
+
+// TestSecretsBySelectorLabelMatch pins that a selector matches the way the API server
+// matches it: every label has to be present on the secret with the selected value. A
+// marker label has an empty value, and a secret without that label must not pass for
+// one that carries it.
+func TestSecretsBySelectorLabelMatch(t *testing.T) {
+	labeled := func(name string, labels map[string]string) *corev1.Secret {
+		sec := testSecret()
+		sec.Namespace, sec.Name, sec.Labels = "app-ns", name, labels
+		return sec
+	}
+	objs := []any{
+		labeled("gold", map[string]string{"keys.example.com/gold": "", "tier": "gold"}),
+		labeled("free", map[string]string{"keys.example.com/free": "", "tier": "free"}),
+		labeled("gold-valued", map[string]string{"keys.example.com/gold": "true"}),
+		labeled("unlabeled", nil),
+	}
+
+	tests := []struct {
+		name     string
+		selector map[string]string
+		want     []string
+	}{
+		{
+			name:     "value",
+			selector: map[string]string{"tier": "gold"},
+			want:     []string{"gold"},
+		},
+		{
+			name:     "empty value needs the label to be present",
+			selector: map[string]string{"keys.example.com/gold": ""},
+			want:     []string{"gold"},
+		},
+		{
+			name:     "empty value of a 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	"github.com/onsi/gomega"
-	// Create temporary pods to pull images
-		s.pullImage(image)
-func (s *BaseTestingSuite) pullImage(image string) {
-		return
-		return
-	// Wait for the pod to complete (image pulled) with a long timeout (5 minutes)
-	s.TestInstallation.AssertionsT(s.T()).Gomega.Eventually(func(g gomega.Gomega) {
-		pod, err := pods.Get(s.Ctx, podName, metav1.GetOptions{})
-		g.Expect(err).NotTo(gomega.HaveOccurred())
-		// Pod should be Succeeded (completed) or Running (image pulled, command ran)
-		g.Expect(pod.Status.Phase).To(gomega.BeElementOf(corev1.PodSucceeded, corev1.PodRunning, corev1.PodFailed))
-	}).WithTimeout(5*time.Minute).WithPolling(2*time.Second).Should(gomega.Succeed(), "waiting for image %s to be pulled", image)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba3b23fa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2cd623a3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

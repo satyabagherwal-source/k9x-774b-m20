@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T18:06:30.850Z",
+  "last_updated": "2026-11-19T18:20:39.764Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T12:40:39.625Z",
@@ -168,9 +168,9 @@
       "staged_for_review": 0
     },
     "nguyenphutrong-quotio-learnings.md": {
-      "processed_at": "2026-11-16T15:33:26.609Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-19T18:20:38.076Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "sqldelight-sqldelight-learnings.md": {
       "processed_at": "2026-11-19T03:39:52.457Z",
@@ -638,9 +638,9 @@
       "staged_for_review": 1
     },
     "kgateway-dev-kgateway-learnings.md": {
-      "processed_at": "2026-11-14T07:20:03.215Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-19T18:20:39.051Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "gitoxidelabs-gitoxide-learnings.md": {
       "processed_at": "2026-11-18T16:41:25.244Z",
@@ -2883,8 +2883,8 @@
       "staged_for_review": 0
     },
     "hf-openmoss-team-moss-image-base-learnings.md": {
-      "processed_at": "2026-11-15T04:53:52.300Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T18:20:38.658Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-openmoss-team-moss-image-sft-learnings.md": {
@@ -3518,7 +3518,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2295,
-  "total_canonical_promoted": 391,
-  "total_staged_for_review": 1708
+  "total_dossiers_evaluated": 2298,
+  "total_canonical_promoted": 392,
+  "total_staged_for_review": 1709
 }

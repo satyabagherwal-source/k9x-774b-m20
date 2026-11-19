@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-19T17:43:22.589Z",
+  "updated_at": "2026-11-19T18:20:38.074Z",
   "statistics": {
-    "total_nodes": 389,
+    "total_nodes": 390,
     "total_edges": 181,
     "domain_distribution": {
-      "D": 259,
+      "D": 260,
       "M": 1,
       "H": 58,
       "J": 14,
@@ -8700,6 +8700,28 @@
       ],
       "created_at": "2026-11-19T17:43:22.589Z",
       "updated_at": "2026-11-19T17:43:22.589Z"
+    },
+    "DOM-D-2BF9F19D": {
+      "id": "DOM-D-2BF9F19D",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): nguyenphutrong/quotio",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  \n> **Source**: github ([https://github.com/nguy -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  \n> **Source**: github ([https://github.com/nguy",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://nguyenphutrong-quotio/nguyenphutrong-quotio-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T18:20:11.100Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (nguyenphutrong-quotio)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-19T18:20:38.074Z",
+      "updated_at": "2026-11-19T18:20:38.074Z"
     }
   },
   "edges": [

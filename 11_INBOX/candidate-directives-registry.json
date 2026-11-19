@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T18:06:30.333Z",
+  "last_updated": "2026-11-19T18:20:39.313Z",
   "directives": [
     {
       "id": "CD-001",
@@ -33879,6 +33879,50 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-D5E3A7-empirical-invariant-guard-in-helper-go.md",
       "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-KP5G",
+      "directive_title": "require selected labels to be present in apiKeyAuth secretSelec",
+      "source_repo": "kgateway-dev/kgateway",
+      "source_commit": "2cd623a3",
+      "staged_file": "11_INBOX/candidate-directives/CD-KP5G-require-selected-labels-to-be-present-in-apikeyauth-secretselec.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-19",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-KSZE",
+      "directive_title": "bound process memory; read vectors in place",
+      "source_repo": "infiniflow/infinity",
+      "source_commit": "22c627e7",
+      "staged_file": "11_INBOX/candidate-directives/CD-KSZE-bound-process-memory-read-vectors-in-place.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-KUSU",
+      "directive_title": "Group ARC milestone panels side by side",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "64f9b9ba",
+      "staged_file": "11_INBOX/candidate-directives/CD-KUSU-group-arc-milestone-panels-side-by-side.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-19",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-LIX2",
+      "directive_title": "krtcollections): require selected labels to be present in apiKeyAuth secretSelec",
+      "source_repo": "kgateway-dev-kgateway-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-LIX2-krtcollections-require-selected-labels-to-be-present-in-apikeyauth-secretselec.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "K"
     }
   ]
 }

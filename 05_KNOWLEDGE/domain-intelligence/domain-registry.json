@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T18:06:30.478Z",
-  "total_records": 2008,
+  "last_updated": "2026-11-19T18:20:39.471Z",
+  "total_records": 2010,
   "domains": {
     "A": {
       "total": 15,
@@ -55,7 +55,7 @@
       ]
     },
     "D": {
-      "total": 838,
+      "total": 839,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -894,7 +894,8 @@
         "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-core-i",
         "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-invarian",
         "DOM-D-6FA503EE",
-        "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learnings-"
+        "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learnings-",
+        "DOM-D-2BF9F19D"
       ]
     },
     "E": {
@@ -1328,7 +1329,7 @@
       ]
     },
     "H": {
-      "total": 472,
+      "total": 473,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1801,7 +1802,8 @@
         "domain_intelligence-technical-construction-intelligence-pola-rs-polars-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-meta-folly-core-invariants",
         "domain_intelligence-technical-construction-intelligence-facebook-folly-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-infiniflow-infinity-core-invariants"
       ]
     },
     "I": {
@@ -14064,8 +14066,8 @@
       "title": "Quality & Verification Intelligence: kgateway-dev/kgateway Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-kgateway-dev-kgateway-quality-verification-intelligence-kgateway-dev-kgateway-co.md",
       "repository": "kgateway-dev/kgateway",
-      "content_hash": "60554eca1f2027fa2724e4875a17257637a79cb547089c6faa1062462e86a800",
-      "created_at": "2026-11-14T07:18:01.128Z"
+      "content_hash": "e90499bdea6a159ea8a3e5c0919bc9f5e6708ec8d7b85272a66d743bc9a232de",
+      "created_at": "2026-11-19T18:20:00.870Z"
     },
     "domain_intelligence-architecture-intelligence-materializeinc-materialize-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-materializeinc-materialize-core-invariants",
@@ -14226,8 +14228,8 @@
       "title": "Quality & Verification Intelligence: kgateway-dev-kgateway-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-kgateway-dev-kgateway-learnings-quality-verification-intelligence-kgateway-dev-k.md",
       "repository": "kgateway-dev-kgateway-learnings",
-      "content_hash": "de163233636209861ba7e69f338bd1c5f8e91e2da8869eb028443741559189ff",
-      "created_at": "2026-11-14T07:20:03.594Z"
+      "content_hash": "f3f4251149dc13ff5e722337159e82d45cf16f78380f0569fd40fb7a09098423",
+      "created_at": "2026-11-19T18:20:39.471Z"
     },
     "domain_intelligence-research-knowledge-intelligence-venastine-research-xing4-0-29b-a4b-gguf-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-venastine-research-xing4-0-29b-a4b-gguf-core-inv",
@@ -15087,8 +15089,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "1cbc5c896314adbd6e076f6be565020e9cfebd38a68a3f6c9b8c8c0e839f7b57",
-      "created_at": "2026-11-19T17:06:58.847Z"
+      "content_hash": "8fbc6f23d95f267084783645d3221c598b9208168d97e0b7773143a0c132b083",
+      "created_at": "2026-11-19T18:20:08.191Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -19672,8 +19674,8 @@
       "title": "Research & Knowledge Intelligence: OpenMOSS-Team/MOSS-Image-Base Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openmoss-team-moss-image-base-research-knowledge-intelligence-openmoss-team-m.md",
       "repository": "OpenMOSS-Team/MOSS-Image-Base",
-      "content_hash": "53834231e1716fbac5c0611c92fd30734ec27a48adc974d7fd131e0a5f30fcfd",
-      "created_at": "2026-11-15T04:53:13.403Z"
+      "content_hash": "4352518291df9bf3da2a8d3fe5561d6df6518189418750ae08237132b4bfed49",
+      "created_at": "2026-11-19T18:19:49.526Z"
     },
     "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-core-invariants",
@@ -19732,8 +19734,8 @@
       "title": "Research & Knowledge Intelligence: hf-openmoss-team-moss-image-base-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openmoss-team-moss-image-base-learnings-research-knowledge-intelligence-hf-op.md",
       "repository": "hf-openmoss-team-moss-image-base-learnings",
-      "content_hash": "472111da960dbc39f7ed910f0a4fb94f1a703223e1a93a05787447b5aa7457ad",
-      "created_at": "2026-11-15T04:53:52.485Z"
+      "content_hash": "8a79b24994f570d1260fbac816b3821f2bac2116073bfa6485d04213150d89f2",
+      "created_at": "2026-11-19T18:20:38.855Z"
     },
     "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariants",
@@ -23947,8 +23949,8 @@
       "title": "Technical Construction Intelligence: nguyenphutrong/quotio Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nguyenphutrong-quotio-technical-construction-intelligence-nguyenphutrong-quotio-.md",
       "repository": "nguyenphutrong/quotio",
-      "content_hash": "8b802e1d6101354b570ecd9ab67504d7f356a3c46b544a68c67d290d63efb959",
-      "created_at": "2026-11-16T15:33:14.487Z"
+      "content_hash": "9b430daffa2bc3429d959c513c6a1b48d7ee32a1c7b3111d45ff8f14d79c96df",
+      "created_at": "2026-11-19T18:19:51.511Z"
     },
     "domain_intelligence-technical-construction-intelligence-nguyenphutrong-quotio-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nguyenphutrong-quotio-learnings-core-invaria",
@@ -23956,8 +23958,8 @@
       "title": "Technical Construction Intelligence: nguyenphutrong-quotio-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nguyenphutrong-quotio-learnings-technical-construction-intelligence-nguyenphutro.md",
       "repository": "nguyenphutrong-quotio-learnings",
-      "content_hash": "4a73a493304f83a903c7bf006ee843c4d98322a5fd301cbb818b1176c4b5f519",
-      "created_at": "2026-11-16T15:33:27.003Z"
+      "content_hash": "f8a2ca12deb4d60176c0d0fdd5d9d975e9a8685dd337b04cfb3e9953575cf7ec",
+      "created_at": "2026-11-19T18:20:38.466Z"
     },
     "domain_intelligence-technical-construction-intelligence-webrecorder-pywb-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-webrecorder-pywb-core-invariants",
@@ -33722,6 +33724,57 @@
       "repository": "paradedb-paradedb-learnings",
       "content_hash": "7cd6f377f7fb4e1709d139a72a83a4b2de2ed049ed144ef50aeca09a319b7a55",
       "created_at": "2026-11-19T17:43:23.663Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-infiniflow-infinity-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-infiniflow-infinity-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: infiniflow/infinity Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-infiniflow-infinity-technical-construction-intelligence-infiniflow-infinity-core.md",
+      "repository": "infiniflow/infinity",
+      "content_hash": "770e68d8c037f7a86466ca751a19c3ae476fea246f9681239fdfbb5013154825",
+      "created_at": "2026-11-19T18:20:05.828Z"
+    },
+    "DOM-D-2BF9F19D": {
+      "record_id": "DOM-D-2BF9F19D",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): nguyenphutrong/quotio",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  \n> **Source**: github ([https://github.com/nguyenphutrong/quotio](https://github.com/nguyenphutrong/quotio))  \n> **Source Version**: `474bc2af`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-structu",
+      "content_hash": "118f42c3c0a9cc7ab890e78847bbd21f0f3e0d6d22bf8d70035e528727ef0107",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  \n> **Source**: github ([https://github.com/nguy -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  \n> **Source**: github ([https://github.com/nguy",
+      "provenance": {
+        "source_uri": "project://nguyenphutrong-quotio/nguyenphutrong-quotio-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T18:20:11.100Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (nguyenphutrong-quotio)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of nguyenphutrong-quotio"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T18:20:38.045Z"
     }
   }
 }

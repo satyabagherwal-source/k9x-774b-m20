@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T15:33:26.783Z",
+  "timestamp": "2026-11-19T18:20:38.364Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nguyenphutrong-quotio-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nguyenphutrong-quotio-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T15:33:26.783Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T18:20:38.364Z`  
 > **Learning ID**: `LEARN-EVO-nguyenphutrong-quotio-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 79%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), E (Creative Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 83%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nguyenphutrong-quotio-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  
 > **Source**: github ([https://github.com/nguyenphutrong/quotio](https://github.com/nguyenphutrong/quotio))  
-> **Source Version**: `2b007740`  
+> **Source Version**: `474bc2af`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T15:33:13.176Z  
+> **Timestamp**: 2026-11-19T18:19:50.871Z  
 > **Learning ID**: `learn-github-nguyenphutrong-quotio`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nguyenphutrong/quotio](https://github.com/nguyenphutrong/quotio))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T15:33:12.981Z  
+> **Harvest Timestamp**: 2026-11-19T18:19:50.867Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Stop juggling AI accounts. Quotio is a beautiful native macOS menu bar app that unifies your Claude, Gemini, OpenAI, Qwen, and Antigravity subscriptions – with real-time quota tracking and smart auto-failover for AI coding tools like Claude Code, OpenCode, and Droid.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4917 stars
+- **Stars / Engagement**: 4913 stars
 
 ---
 
@@ -1074,252 +1074,247 @@ public struct ProviderSettingsState: Sendable {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2b007740` (2026-11-16)
-**Commit Message**: feat(desktop): add manual-update core Preview candidate
+### Incident Patch 1: `474bc2af` (2026-11-18)
+**Commit Message**: chore: remove 88API and PatewayAI from sponsors
 
-**File**: `.github/workflows/desktop-ci.yml` (modified, +4/-0)
+**File**: `README.fr.md` (modified, +0/-20)
 ```diff
-@@ -60,3 +60,7 @@ jobs:
-         run: cargo +stable clippy --locked --all-targets -- -D warnings
-       - name: Test
-         run: cargo +stable test --locked
-+      - name: Check core Preview
-+        run: |
-+          cargo +stable clippy --locked --all-targets --features preview -- -D warnings
-+          cargo +stable test --locked --features preview
-```
-
-**File**: `apps/desktop/Cargo.toml` (modified, +3/-0)
-```diff
-@@ -5,6 +5,9 @@ edition = "2024"
- license = "MIT"
- publish = false
+@@ -36,26 +36,6 @@ Quotio est une application macOS native pour gérer **CLIProxyAPI** - un serveur
+ ### Standard Sponsors
  
-+[features]
-+preview = []
-+
- [[bin]]
- name = "quotio-desktop"
- path = "src/main.rs"
+ <table>
+-  <tr>
+-    <td width="180" align="center">
+-      <a href="https://88api.ai/sign-up?aff=OMpN">
+-        <img src=".github/assets/sponsors/88api.jpg" alt="88API logo" width="160" />
+-      </a>
+-    </td>
+-    <td>
+-      <a href="https://88api.ai/sign-up?aff=OMpN">88API</a> is a Hong Kong-operated
+-      multi-model AI API platform for developers, creators, and AI applications. It
+-      provides a unified API for text, image, audio, and video models, supporting common
+-      workflows such as AI coding, translation, content creation, voice generation, image
+-      generation, and video generation. 88API can be added and switched directly in CC
+-      Switch. It supports major international payment methods, can provide invoices, and
+-      offers stable service for teams and individual developers. Users who register
+-      through <a href="https://88api.ai/sign-up?aff=OMpN">this dedicated link</a> may
+-      receive complimentary credits.
+-      <br />
+-      <a href="https://88api.ai/sign-up?aff=OMpN">Explore 88API →</a>
+-    </td>
+-  </tr>
+   <tr>
+     <td width="180" align="center">
+       <a href="https://proxy-seller.com/?partner=442060D973F44C90">
 ```
 
-**File**: `apps/desktop/PACKAGING.md` (modified, +49/-0)
+**File**: `README.md` (modified, +0/-20)
 ```diff
-@@ -4,6 +4,55 @@ Run these commands from the repository root. Use Python 3.11 or newer and the
- Rust stable toolchain. The packager creates a new output directory and never
- publishes a release, uploads a feed, or changes a tag.
+@@ -69,26 +69,6 @@ service.
+ ### Standard Sponsors
  
-+## Prepare the core Preview candidate
-+
-+Use `--preview` to build with the `preview` Cargo feature. This candidate exposes
-+accounts, quota, refresh, history, and local preferences in English. It hides
-+proxy, iPhone sharing, launch-at-login, and self-update controls. Saved proxy or
-+sharing preferences do not start those services. It does not import Swift
-+preferences or pins. Existing GPUI preferences are retained; this is not a data
-+reset or an isolated vault.
-+
-+The acceptance targets are Apple Silicon on macOS 15 or newer, Ubuntu 24.04
-+x86_64 on Wayland, and Windows 11 x86_64. Intel, macOS 14, Linux X11, other
-+distributions, Windows ARM, and PIV migration are outside this Preview's scope.
-+The universal Mac packager still includes an Intel slice and targets macOS 14
-+at the binary level; that does not extend the supported Preview matrix.
-+
-+```sh
-+python3 apps/desktop/scripts/package.py --preview \
-+  --target x86_64-unknown-linux-gnu --output dist/preview-linux
-+```
-+
-+On Windows, use `--target x86_64-pc-windows-msvc`. On a Mac, use:
-+
-+```sh
-+python3 apps/desktop/scripts/package.py --preview \
-+  --target universal-apple-darwin --output dist/preview-macos \
-+  --build-number 1 --sign-identity 'Developer ID Application: YOUR IDENTITY'
-+```
-+
-+Core Preview bundles contain no Sparkle framework, update feed, or update key.
-+Do not supply those options. The default separate bundle ID and URL scheme are
-+required; do not replace the installed Swift app. Developer ID Preview builds
-+still use the shared account vault, as described below. `--binary` accepts only
-+a matching executable whose `--version` reports `quotio-desktop 0.1.0 preview`
-+(with the selected version). `--version` does not start the host or UI.
-+
-+Updates are manual: quit Quotio, retain the previous package and a backup of
-+the data, and replace only the app with the verified newer Preview. Do not run
-+two versions against the same store. Test the manual upgrade and recovery path
-+with synthetic populated data before distribution; do not assume an older
-+binary can read a newer database schema. Never delete the data directory to
-+recover an app launch failure.
-+
-+Packaging is not acceptance or publishing. Before distributing, verify core
-+flows, credential errors, accounts and populated-history persistence, and
-+manual upgrade/recovery on each target above. macOS also needs authorized
-+notarization and quarantine first-launch checks. Keep bridge89 available with
-+migration instructions. Swift remains the default download until a separate
-+cutover approval.
-+
- ## Package Linux or Windows
+ <table>
+-  <tr>
+-    <td width="180" align="center">
+-      <a href="https://88api.ai/sign-up?aff=OMpN">
+-        <img src=".github/assets/sponsors/88api.jpg" alt="88API logo" width="160" />
+-      </a>
+-    </td>
+-    <td>
+-      <a href="https://88api.ai/sign-up?aff=OMpN">88API</a> is a Hong Kong-operated
+-      multi-model AI API platform for developers, creators, and AI applications. It
+-      provides a unified API for text, image, audio, and video models, supporting common
+-      workflows such as AI coding, translation, content creation, voice generation, image
+-      generation, and video generation. 88API can be added and switched directly in CC
+-      Switch. It supports major international payment methods, can provide invoices, and
+-      offers stable service for teams and individual developers. Users who register
+-      through <a href="https://88api.ai/sign-up?aff=OMpN">this dedicated link</a> may
+-      receive complimentary credits.
+-      <br />
+-      <a href="https://88api.ai/sign-up?aff=OMpN">Explore 88API →</a>
+-    </td>
+-  </tr>
+   <tr>
+     <td width="180" align="center">
+       <a href="https://proxy-seller.com/?partner=442060D973F44C90">
+```
+
+**File**: `README.vi.md` (modified, +0/-20)
+```diff
+@@ -36,26 +36,6 @@ Quotio là ứng dụng macOS để quản lý **CLIProxyAPI** - máy chủ prox
+ ### Standard Sponsors
  
- Build on the target OS. On Linux, install the development libraries listed in
+ <table>
+-  <tr>
+-    <td width="180" align="center">
+-      <a href="https://88api.ai/sign-up?aff=OMpN">
+-        <img src=".github/assets/sponsors/88api.jpg" alt="88API logo" width="160" />
+-      </a>
+-    </td>
+-    <td>
+-      <a href="https://88api.ai/sign-up?aff=OMpN">88API</a> is a Hong Kong-operated
+-      multi-model AI API platform for developers, creators, and AI applications. It
+-      provides a unified API for text, image, audio, and video models, supporting common
+-      workflows such as AI coding, translation, content creation, voice generation, image
+-      generation, and video generation. 88API can be added and switched directly in CC
+-      Switch. It supports major international payment methods, can provide invoices, and
+-      offers stable service for teams and individual developers. Users who register
+-      through <a href="https://88api.ai/sign-up?aff=OMpN">this dedicated link</a> may
+-      receive complimentary credits.
+-      <br />
+-      <a href="https://88api.ai/sign-up?aff=OMpN">Explore 88API →</a>
+-    </td>
+-  </tr>
+   <tr>
+     <td width="180" align="center">
+       <a href="https://proxy-seller.com/?partner=442060D973F44C90">
 ```
 
-**File**: `apps/desktop/scripts/package.py` (modified, +44/-22)
+**File**: `README.zh.md` (modified, +0/-15)
 ```diff
-@@ -33,41 +33,48 @@ def macos(args, binary, output):
-     minimums = re.findall(r"\bminos\s+(\S+)", build)
-     if len(minimums) != 2 or any(version not in ("14.0", "14.0.0") for version in minimums):
-         raise ValueError("Both binary slices must target macOS 14.0; rebuild with MACOSX_DEPLOYMENT_TARGET=14.0")
--    if not args.sparkle_framework or not args.feed_url or not args.public_key or not args.build_number:
--        raise ValueError("macOS requires --sparkle-framework, --feed-url, --public-key and --build-number")
--    if not re.fullmatch(r"[1-9][0-9]*", args.build_number):
-+    if not args.build_number or not re.fullmatch(r"[1-9][0-9]*", args.build_number):
-         raise ValueError("Build number must be a positive integer, greater than the last installed Swift build")
--    if len(base64.b64decode(args.public_key, validate=True)) != 32:
--        raise ValueError("Sparkle requires a 32-byte base64 Ed25519 public key")
--    feed = urlparse(args.feed_url)
--    local_feed = args.allow_local_feed and args.bundle_id.endswith(".preview") and feed.scheme == "http" and feed.hostname in ("localhost", "127.0.0.1", "::1")
--    if not (feed.scheme == "https" and feed.hostname and not feed.username and not feed.password) and not local_feed:
--        raise ValueError("Use an HTTPS feed, or explicitly allow a loopback test feed for a .preview bundle")
--    framework = args.sparkle_framework.resolve()
--    with (framework / "Resources/Info.plist").open("rb") as file:
--        if plistlib.load(file).get("CFBundleShortVersionString") != "2.8.1":
--            raise ValueError("Use the verified Sparkle 2.8.1 framework")
--    run("codesign", "--verify", "--deep", "--strict", framework)
-+    local_feed = False
-+    framework = None
-+    if not args.preview:
-+        if not args.sparkle_framework or not args.feed_url or not args.public_key:
-+            raise ValueError("macOS requires --sparkle-framework, --feed-url and --public-key unless --preview is set")
-+        if len(base64.b64decode(args.public_key, validate=True)) != 32:
-+            raise ValueError("Sparkle requires a 32-byte base64 Ed25519 public key")
-+        feed = urlparse(args.feed_url)
-+        local_feed = args.allow_local_feed and args.bundle_id.endswith(".preview") and feed.scheme == "http" and feed.hostname in ("localhost", "127.0.0.1", "::1")
-+        if not (feed.scheme == "https" and feed.hostname and not feed.username and not feed.password) and not local_feed:
-+            raise ValueError("Use an HTTPS feed, or explicitly allow a loopback test feed for a .preview bundle")
-+        framework = args.sparkle_framework.resolve()
-+        with (framework / "Resources/Info.plist").open("rb") as file:
-+            if plistlib.load(file).get("CFBundleShortVersionString") != "2.8.1":
-+                raise ValueError("Use the verified Sparkle 2.8.1 framework")
-+        run("codesign", "--verify", "--deep", "--strict", framework)
-     bundle = output / f"{args.name}.app"
-     contents = bundle / "Contents"
-     (contents / "MacOS").mkdir(parents=True)
-     resources = contents / "Resources"
-     resources.mkdir()
-     shutil.copy2(binary, contents / "MacOS/quotio-desktop")
--    shutil.copytree(framework, contents / "Frameworks/Sparkle.framework", symlinks=True)
-+    if framework:
-+        shutil.copytree(framework, contents / "Frameworks/Sparkle.framework", symlinks=True)
-     info = {
-         "CFBundleIdentifier": args.bundle_id, "CFBundleName": args.name,
-         "CFBundleDisplayName": args.name, "CFBundleExecutable": "quotio-desktop",
-         "CFBundlePackageType": "APPL", "CFBundleIconFile": "AppIcon",
-         "CFBundleShortVersionString": args.version, "CFBundleVersion": args.build_number,
-         "LSMinimumSystemVersion": "14.0", "LSUIElement": True,
-         "NSHighResolutionCapable": True, "LSApplicationCategoryType": "public.app-category.developer-tools",
--        "NSLocalNetworkUsageDescription": "Share quota with devices you pair on your local network.",
-         "CFBundleURLTypes": [{"CFBundleURLName": args.bundle_id, "CFBundleURLSchemes": [args.url_scheme]}],
--        "SUFeedURL": args.feed_url, "SUPublicEDKey": args.public_key,
--        "QuotioUpdateChannel": args.update_channel,
--        "SUEnableAutomaticChecks": False, "SUScheduledCheckInterval": 86400,
-     }
-+    if not args.preview:
-+        info.update({
-+            "NSLocalNetworkUsageDescription": "Share quota with devices you pair on your local network.",
-+            "SUFeedURL": args.feed_url, "SUPublicEDKey": args.public_key,
-+            "QuotioUpdateChannel": args.update_channel,
-+            "SUEnableAutomaticChecks": False, "SUScheduledCheckInterval": 86400,
-+        })
-     if local_feed:
-         info["NSAppTransportSecurity"] = {"NSAllowsLocalNetworking": True}
-     with (contents / "Info.plist").open("wb") as file:
-@@ -146,11 +153,17 @@ def portable(args, binary, output):
-         shutil.copy2(ROOT / "LICENSE", package / "LICENSE")
-         shutil.copy2(APP / "a
-```
-
-**File**: `apps/desktop/src/host.rs` (modified, +2/-1)
-```diff
-@@ -203,7 +203,8 @@ fn serve_args(options: &HostOptions) -> Result<ServeArgs> {
-         adopt_data_dir: swift.as_ref().map(|swift| swift.data_dir.clone()),
-         adopt_vault_namespace: swift.map(|swift| swift.namespace),
-         cli_proxy_auth_dir: None,
--        cli_proxy_config: (!options.demo).then(crate::proxy::config_path),
-+        cli_proxy_config: (!cfg!(feature = "preview") && !options.demo)
-+            .then(crate::proxy::config_path),
-         manage: true,
-         public_url: None,
-         allow_origin: Vec::new(),
-```
-
-**File**: `apps/desktop/src/main.rs` (modified, +15/-2)
-```diff
-@@ -41,7 +41,8 @@ Usage: quotio-desktop [--demo | --fixture <snapshot.json>] [--show-menu] [--show
-   --demo            Run the host with the deterministic mock provider only
-   --fixture <path>  Render a saved /v2 snapshot without starting the host
-   --show-menu       Open the quota popup at startup
--  --show-settings   Open the settings window at startup";
-+  --show-settings   Open the settings window at startup
-+  --version         Print the version and Preview build marker, then exit";
+@@ -36,21 +36,6 @@ Quotio 是一款原生 macOS 应用，用于管理 **CLIProxyAPI** ——为你
+ ### Standard Sponsors
  
- #[derive(Default)]
- struct Options {
-@@ -60,6 +61,18 @@ fn parse_args() -> Result<Options> {
-             "--fixture" => options.fixture = Some(args.next().context(USAGE)?.into()),
-             "--show-menu" => options.show_menu = true,
-             "--show-settings" => options.show_settings = true,
-+            "--version" => {
-+                println!(
-+                    "quotio-desktop {}{}",
-+                    env!("CARGO_PKG_VERSION"),
-+                    if cfg!(feature = "preview") {
-+                        " preview"
-+                    } else {
-+                        ""
-+                    }
-+                );
-+                std::process::exit(0);
-+            }
-             "-h" | "--help" => {
-                 println!("{USAGE}");
-                 std::process::exit(0);
-@@ -132,7 +145,7 @@ fn main() -> Result<()> {
-             options.fixture.is_none() && !options.demo,
-             cx,
-         );
--        if options.fixture.is_none() && !options.demo {
-+        if !cfg!(feature = "preview") && options.fixture.is_none() && !options.demo {
-             let host = store.read(cx).host();
-             let saved = prefs::get(cx).sharing.clone();
-             cx.background_spawn(sharing::restore(host, saved)).detach();
+ <table>
+-  <tr>
+-    <td width="180" align="center">
+-      <a href="https://88api.ai/sign-up?aff=OMpN">
+-        <img src=".github/assets/sponsors/88api.jpg" alt="88API logo" width="160" />
+-      </a>
+-    </td>
+-    <td>
+-      感谢 <a href="https://88api.ai/sign-up?aff=OMpN">88API Token聚合平台</a>赞助了本项目！88API
+-      是一家由香港企业运营并且主要面向开发者、创作者与 AI 应用用户的一站式多模型 API
+-      平台，通过统一接口接入文本、图片、语音和视频模型，覆盖 AI 编程、智能翻译、内容创作、配音、图像生成、视频生成等常见工作流。可以直接在
+-      CC Switch 中完成 Provider 添加并切换，支持国际主流付款方式，可提供发票，提供企业级稳定服务。<a href="https://88api.ai/sign-up?aff=OMpN">通过此链接注册</a>可以获取专属赠送额度！
+-      <br />
+-      <a href="https://88api.ai/sign-up?aff=OMpN">Explore 88API →</a>
+-    </td>
+-  </tr>
+   <tr>
+     <td width="180" align="center">
+       <a href="https://proxy-seller.com/?partner=442060D973F44C90">
 ```
 
-**File**: `apps/desktop/src/migration.rs` (modified, +3/-0)
+---
+
+### Incident Patch 2: `6333ce4a` (2026-11-18)
+**Commit Message**: chore: remove Swiftproxy from sponsors
+
+**File**: `README.fr.md` (modified, +0/-18)
 ```diff
-@@ -104,6 +104,9 @@ pub fn import_proxy(cx: &mut App) {
- }
+@@ -36,24 +36,6 @@ Quotio est une application macOS native pour gérer **CLIProxyAPI** - un serveur
+ ### Standard Sponsors
  
- pub fn restore_pins(snapshot: &Snapshot, cx: &mut App) {
-+    if cfg!(feature = "preview") {
-+        return;
-+    }
-     let Some(pins) = crate::prefs::get(cx).migration.pending_pins.as_ref() else {
-         return;
-     };
+ <table>
+-  <tr>
+-    <td width="180" align="center">
+-      <a href="https://www.swiftproxy.net/?ref=quotio">
+-        <img src=".github/assets/sponsors/swiftproxy.png" alt="Swiftproxy logo" width="160" />
+-      </a>
+-    </td>
+-    <td>
+-      Power your AI-powered workflows with
+-      <a href="https://www.swiftproxy.net/?ref=quotio">Swiftproxy</a>, a residential
+-      proxy provider offering rotating and static residential proxies for reliable web
+-      access and data collection. Access 90M+ residential IPs across 220+ locations,
+-      with HTTP(S), SOCKS5, and flexible rotating and sticky sessions. Try it for free
+-      and get started with residential proxies from just $0.7/GB. Use code
+-      <strong>PROXY90</strong> for an additional 10% off.
+-      <br />
+-      <a href="https://www.swiftproxy.net/?ref=quotio">Explore Swiftproxy →</a>
+-    </td>
+-  </tr>
+   <tr>
+     <td width="180" align="center">
+       <a href="https://88api.ai/sign-up?aff=OMpN">
 ```
 
-**File**: `apps/desktop/src/prefs.rs` (modified, +2/-1)
+**File**: `README.md` (modified, +0/-18)
 ```diff
-@@ -156,7 +156,8 @@ impl Store {
-             .map_err(|error| eprintln!("Preferences will not be saved: {error:#}"))
-             .ok();
-         #[cfg(target_os = "macos")]
--        if persist
-+        if !cfg!(feature = "preview")
-+            && persist
-             && path.as_ref().is_some_and(|path| {
-                 std::fs::symlink_metadata(path)
-                     .is_err_and(|error| error.kind() == std::io::ErrorKind::NotFound)
+@@ -69,24 +69,6 @@ service.
+ ### Standard Sponsors
+ 
+ <table>
+-  <tr>
+-    <td width="180" align="center">
+-      <a href="https://www.swiftproxy.net/?ref=quotio">
+-        <img src=".github/assets/sponsors/swiftproxy.png" alt="Swiftproxy logo" width="160" />
+-      </a>
+-    </td>
+-    <td>
+-      Power your AI-powered workflows with
+-      <a href="https://www.swiftproxy.net/?ref=quotio">Swiftproxy</a>, a residential
+-      proxy provider offering rotating and static residential proxies for reliable web
+-      access and data collection. Access 90M+ residential IPs across 220+ locations,
+-      with HTTP(S), SOCKS5, and flexible rotating and sticky sessions. Try it for free
+-      and get started with residential proxies from just $0.7/GB. Use code
+-      <strong>PROXY90</strong> for an additional 10% off.
+-      <br />
+-      <a href="https://www.swiftproxy.net/?ref=quotio">Explore Swiftproxy →</a>
+-    </td>
+-  </tr>
+   <tr>
+     <td width="180" align="center">
+       <a href="https://88api.ai/sign-up?aff=OMpN">
+```
+
+**File**: `README.vi.md` (modified, +0/-18)
+```diff
+@@ -36,24 +36,6 @@ Quotio là ứng dụng macOS để quản lý **CLIProxyAPI** - máy chủ prox
+ ### Standard Sponsors
+ 
+ <table>
+-  <tr>
+-    <td width="180" align="center">
+-      <a href="https://www.swiftproxy.net/?ref=quotio">
+-        <img src=".github/assets/sponsors/swiftproxy.png" alt="Swiftproxy logo" width="160" />
+-      </a>
+-    </td>
+-    <td>
+-      Power your AI-powered workflows with
+-      <a href="https://www.swiftproxy.net/?ref=quotio">Swiftproxy</a>, a residential
+-      proxy provider offering rotating and static residential proxies for reliable web
+-      access and data collection. Access 90M+ residential IPs across 220+ locations,
+-      with HTTP(S), SOCKS5, and flexible rotating and sticky sessions. Try it for free
+-      and get started with residential proxies from just $0.7/GB. Use code
+-      <strong>PROXY90</strong> for an additional 10% off.
+-      <br />
+-      <a href="https://www.swiftproxy.net/?ref=quotio">Explore Swiftproxy →</a>
+-    </td>
+-  </tr>
+   <tr>
+     <td width="180" align="center">
+       <a href="https://88api.ai/sign-up?aff=OMpN">
+```
+
+**File**: `README.zh.md` (modified, +0/-18)
+```diff
+@@ -36,24 +36,6 @@ Quotio 是一款原生 macOS 应用，用于管理 **CLIProxyAPI** ——为你
+ ### Standard Sponsors
+ 
+ <table>
+-  <tr>
+-    <td width="180" align="center">
+-      <a href="https://www.swiftproxy.net/?ref=quotio">
+-        <img src=".github/assets/sponsors/swiftproxy.png" alt="Swiftproxy logo" width="160" />
+-      </a>
+-    </td>
+-    <td>
+-      Power your AI-powered workflows with
+-      <a href="https://www.swiftproxy.net/?ref=quotio">Swiftproxy</a>, a residential
+-      proxy provider offering rotating and static residential proxies for reliable web
+-      access and data collection. Access 90M+ residential IPs across 220+ locations,
+-      with HTTP(S), SOCKS5, and flexible rotating and sticky sessions. Try it for free
+-      and get started with residential proxies from just $0.7/GB. Use code
+-      <strong>PROXY90</strong> for an additional 10% off.
+-      <br />
+-      <a href="https://www.swiftproxy.net/?ref=quotio">Explore Swiftproxy →</a>
+-    </td>
+-  </tr>
+   <tr>
+     <td width="180" align="center">
+       <a href="https://88api.ai/sign-up?aff=OMpN">
 ```
 
 #### Recent Merged Pull Requests:
@@ -1342,40 +1337,6 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. desktop): add manual-update core Preview candidate
-
-**RULE**:
-When implementing operations in `.github/workflows/desktop-ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nguyenphutrong/quotio. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `2b007740`: desktop): add manual-update core Preview candidate. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/desktop-ci.yml`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-      - name: Check core Preview
-        run: |
-          cargo +stable clippy --locked --all-targets --features preview -- -D warnings
-          cargo +stable test --locked --features preview
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-// Defect-prone omission of boundary validation
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2b007740` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

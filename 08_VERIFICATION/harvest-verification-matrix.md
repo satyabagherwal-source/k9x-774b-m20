@@ -11348,3 +11348,9 @@
 | `CYCLE-20261119-30EV` | `2026-11-19T18:06:15.511Z` | `google/tcmalloc` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9422` | Yes (`6c1b379a...`) |
 | `CYCLE-20261119-3718` | `2026-11-19T18:06:24.092Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9423` | Yes (`2616dec2...`) |
 | `CYCLE-20261119-388D` | `2026-11-19T18:06:25.645Z` | `openziti/zrok` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/openziti-zrok-learnings.md` | Yes (`dabb4604...`) |
+| `CYCLE-20261119-KGDG` | `2026-11-19T18:19:49.348Z` | `OpenMOSS-Team/MOSS-Image-Base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openmoss-team-moss-image-base-learnings.md` | Yes (`181733b3...`) |
+| `CYCLE-20261119-KHW6` | `2026-11-19T18:19:51.318Z` | `nguyenphutrong/quotio` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md` | Yes (`9069090e...`) |
+| `CYCLE-20261119-KOZN` | `2026-11-19T18:20:00.515Z` | `kgateway-dev/kgateway` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9424` | Yes (`8b9ad65e...`) |
+| `CYCLE-20261119-KSU4` | `2026-11-19T18:20:05.500Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9425` | Yes (`9e0f5919...`) |
+| `CYCLE-20261119-KUNR` | `2026-11-19T18:20:07.863Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9426` | Yes (`994d4b6a...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T18:20:38.076Z` | `nguyenphutrong-quotio` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-2BF9F19D` [Domain D] | Yes (`118f42c3...`) |

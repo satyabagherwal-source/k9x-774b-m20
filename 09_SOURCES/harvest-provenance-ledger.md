@@ -11381,3 +11381,9 @@ Every entry in this ledger must capture:
 | `learn-github-google-tcmalloc` | `https://github.com/google/tcmalloc` | `f076c560` | Multi-dimensional audit evidence | 2026-11-19T18:06:15.515Z |
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `f4c69979` | Multi-dimensional audit evidence | 2026-11-19T18:06:24.096Z |
 | `learn-github-openziti-zrok` | `https://github.com/openziti/zrok` | `d8e5316d` | Multi-dimensional audit evidence | 2026-11-19T18:06:25.650Z |
+| `learn-huggingface-openmoss-team-moss-image-base` | `https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base` | `hf-openmos` | Multi-dimensional audit evidence | 2026-11-19T18:19:49.352Z |
+| `learn-github-nguyenphutrong-quotio` | `https://github.com/nguyenphutrong/quotio` | `474bc2af` | Multi-dimensional audit evidence | 2026-11-19T18:19:51.322Z |
+| `learn-github-kgateway-dev-kgateway` | `https://github.com/kgateway-dev/kgateway` | `2cd623a3` | Multi-dimensional audit evidence | 2026-11-19T18:20:00.519Z |
+| `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `22c627e7` | Multi-dimensional audit evidence | 2026-11-19T18:20:05.503Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `64f9b9ba` | Multi-dimensional audit evidence | 2026-11-19T18:20:07.867Z |
+| `learn-dom-d-2bf9f19d` | `project://nguyenphutrong-quotio` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md` | 2026-11-19T18:20:38.076Z |

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T18:06:29.015Z",
+  "updated_at": "2026-11-19T18:20:38.254Z",
   "stats": {
-    "total_discovered": 5948,
-    "approved_pending_harvest": 5632,
+    "total_discovered": 5951,
+    "approved_pending_harvest": 5635,
     "harvested_count": 0,
     "rejected_count": 316,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5599,
+      "COMMUNITY_AND_EXPERT": 5602,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 112,
       "ENGINEERING_BLOGS": 4,
@@ -128665,6 +128665,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-tcmalloc-learnings.md",
         "fileName": "google-tcmalloc-learnings.md"
+      }
+    },
+    "SRC-56885F8183D6": {
+      "id": "SRC-56885F8183D6",
+      "url": "https://88api.ai/sign-up?aff=OMpN",
+      "title": "https://88api.ai/sign-up?aff=OMpN",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T18:20:38.162Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
+        "fileName": "nguyenphutrong-quotio-learnings.md"
+      }
+    },
+    "SRC-24CBEDC333B4": {
+      "id": "SRC-24CBEDC333B4",
+      "url": "https://proxy-seller.com/?partner=442060D973F44C90",
+      "title": "https://proxy-seller.com/?partner=442060D973F44C90",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T18:20:38.206Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
+        "fileName": "nguyenphutrong-quotio-learnings.md"
+      }
+    },
+    "SRC-B5BB0CE75CEB": {
+      "id": "SRC-B5BB0CE75CEB",
+      "url": "https://www.swiftproxy.net/",
+      "title": "https://www.swiftproxy.net/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T18:20:38.254Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nguyenphutrong-quotio-learnings.md",
+        "fileName": "nguyenphutrong-quotio-learnings.md"
       }
     }
   }

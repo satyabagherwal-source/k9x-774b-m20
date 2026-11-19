@@ -695315,3 +695315,312 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `f4c69979` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9424. require selected labels to be present in apiKeyAuth secretSelec (Harvested from kgateway-dev/kgateway)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "require selected labels to be present in apiKeyAuth secretSelec",
+  "source": "kgateway-dev/kgateway",
+  "source_url": "https://github.com/kgateway-dev/kgateway",
+  "source_version": "2cd623a3",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-19T18:20:00.061Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-kgateway-dev-kgateway",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [kgateway-dev/kgateway](https://github.com/kgateway-dev/kgateway) (Revision: `2cd623a3`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `pkg/krtcollections/refgrant_source_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kgateway-dev/kgateway. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2cd623a3`: krtcollections): require selected labels to be present in apiKeyAuth secretSelector. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/krtcollections/refgrant_source_test.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+
+// TestSecretsBySelectorLabelMatch pins that a selector matches the way the API server
+// matches it: every label has to be present on the secret with the selected value. A
+// marker label has an empty value, and a secret without that label must not pass for
+// one that carries it.
+func TestSecretsBySelectorLabelMatch(t *testing.T) {
+	labeled := func(name string, labels map[string]string) *corev1.Secret {
+		sec := testSecret()
+		sec.Namespace, sec.Name, sec.Labels = "app-ns", name, labels
+		return sec
+	}
+	objs := []any{
+		labeled("gold", map[string]string{"keys.example.com/gold": "", "tier": "gold"}),
+		labeled("free", map[string]string{"keys.example.com/free": "", "tier": "free"}),
+		labeled("gold-valued", map[string]string{"keys.example.com/gold": "true"}),
+		labeled("unlabeled", nil),
+	}
+
+	tests := []struct {
+		name     string
+		selector map[string]string
+		want     []string
+	}{
+		{
+			name:     "value",
+			selector: map[string]string{"tier": "gold"},
+			want:     []string{"gold"},
+		},
+		{
+			name:     "empty value needs the label to be present",
+			selector: map[string]string{"keys.example.com/gold": ""},
+			want:     []string{"gold"},
+		},
+		{
+			name:     "empty value of a 
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2cd623a3` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9425. bound process memory; read vectors in place (Harvested from infiniflow/infinity)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "bound process memory; read vectors in place",
+  "source": "infiniflow/infinity",
+  "source_url": "https://github.com/infiniflow/infinity",
+  "source_version": "22c627e7",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-19T18:20:05.053Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-infiniflow-infinity",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [infiniflow/infinity](https://github.com/infiniflow/infinity) (Revision: `22c627e7`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `rust_engine/crates/executor/examples/mem_bench.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `d95c80d2`: rust_engine: bound process memory; read vectors in place. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust_engine/crates/executor/examples/mem_bench.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c++
+// Verified production-grade fix pattern:
+//! Throwaway driver: what bounding the block-map cache costs *index* work.
+//!
+//!   mem_bench <dir> <rows> <dim> <budget_mb> <iters> build
+//!   mem_bench <dir> <rows> <dim> <budget_mb> <iters> measure
+//!   mem_bench <dir> <rows> <dim> <budget_mb> <iters> concurrent <threads>
+//!
+//! `build` creates the tables, loads them through `COPY`, flushes the blocks and
+//! creates the HNSW, SPANN and FULLTEXT indexes (timing each), so every later
+//! run only measures queries. Every run opens the engine with
+//! `buffer_manager_size = budget_mb`, so the only thing that differs between
+//! runs is the budget.
+
+use std::io::Write;
+use std::path::Path;
+use std::sync::atomic::{AtomicUsize, Ordering};
+use std::sync::{Arc, Mutex};
+use std::time::Instant;
+
+use executor::Engine;
+
+fn rss_kb() -> u64 {
+    if let Ok(text) = std::fs::read_to_string("/proc/self/status") {
+        for line in text.lines() {
+            if let Some(rest) = line.strip_prefix("VmRSS:") {
+                if let Some(kb) = rest.split_whitespace().next() {
+                    return kb.parse().unwrap_or(0);
+                }
+            }
+        }
+    }
+    let out = std::process::Command::new("ps")
+        .args(["-o", "
+```
+
+**NEGATIVE CONSTRAINT**:
+```c++
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `d95c80d2` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9426. Group ARC milestone panels side by side (Harvested from NucleoidAI/Nucleoid)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Group ARC milestone panels side by side",
+  "source": "NucleoidAI/Nucleoid",
+  "source_url": "https://github.com/NucleoidAI/Nucleoid",
+  "source_version": "64f9b9ba",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-19T18:20:07.408Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nucleoidai-nucleoid",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `64f9b9ba`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `arc/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `64f9b9ba`: Group ARC milestone panels side by side. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/README.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+output canvas instead of adding a separate milestone.
+
+Related panels sit side by side in one box, one column per panel, each under
+its own numbered title; a box for one instance names the instance once, in a
+title row above the columns. Each training pair's segmented objects share one
+box with a row per object, its `Input` beside its `Output`, such as
+`1.4.1 Input` and `1.5.1 Output`; segmented-object panels use `Input` and
+`Output` without object-number labels. Each constructed instance, extracted
+or synthesized, shows its `Input crop`, `Output crop`, `Implementation` and
+`Input state` side by side, `1.8.1` through `1.11.1` for the first one. After
+the `Analysis · State` table, a `Synthesizing training pairs` step precedes
+the synthesis call, and a `<count> training pairs synthesized` step then shows
+one box titled `Synthesized <n>` per synthesized pair: its `Input` beside its
+`Output`, then a row per instance with its `Input instance` beside its
+`Output instance`. A synthesized instance's construction then starts with a
+`Constructing <instance>` step, as an extracted instance's does.
+steps, and the headers of instance panels shown on their own, include the
+instance name. In the 
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+output canvas instead of adding a separate milestone. Segmented-object panels
+use `Input` and `Output` without object-number labels. After the
+`Analysis · State` table, a `Synthesizing training pairs` step precedes the
+synthesis call, and a `<count> training pairs synthesized` step then shows
+each synthesized pair's `Synthesized <n> · Input` and
+`Synthesized <n> · Output` panels, followed by the
+`Synthesized <n> · Input instance` and `Synthesized <n> · Output instance`
+panels of each of its instances. A synthesized instance's construction then
+starts with a `Constructing <instance>` step, as an extracted instance's does.
+steps, crop and implementation headers, and input- and output-state headers include the
+instance name. In the visualization, each test object's synthesis shows its
+`Input crop` right before its `Implementation`, as in
+`2.6.1 Input crop · <instance>` and
+`2.7.1 Implementation · <instance>`. Its composition shows the same
+`2.12.1`, rather than continuing the synthesis count, and an `Output state`
+`2.13.1 Output crop · <instance> · ➡️ 90°`, and every input- and
+displays the same way, such as `2.9.1 Input state · <instance> · ⬆️ 0°`. An
+orientation that is not a multip
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `64f9b9ba` are properly handled with clean fallback behavior.

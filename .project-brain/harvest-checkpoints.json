@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T18:06:25.683Z",
+  "last_updated": "2026-11-19T18:20:07.876Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2316,14 +2316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nguyenphutrong-quotio",
-      "content_hash": "8cf905111d40d62f44b62280e4ad9de37b4a58f8f9c2848f1ca4efd8b113c161",
-      "verified_at": "2026-11-16T15:33:14.143Z",
+      "content_hash": "9069090e5ad6d21bb4aec7f0b8eccea5c8e06cd2727f60efa030939322dfdff7",
+      "verified_at": "2026-11-19T18:19:51.329Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T15:33:14.143Z"
+      "last_updated": "2026-11-19T18:19:51.329Z"
     },
     "pathwaycom/serviette": {
       "repository": "pathwaycom/serviette",
@@ -2646,14 +2646,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openmoss-team-moss-image-base",
-      "content_hash": "474e1c1498c4d659d0100a94664fa9382fd45e6ddba941b9c779634738bef909",
-      "verified_at": "2026-11-15T04:53:13.251Z",
+      "content_hash": "181733b38ce03a0f19f30b3172dc4ab3ff9ff3d40fa3a4de2d6196b2633574ce",
+      "verified_at": "2026-11-19T18:19:49.360Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T04:53:13.251Z"
+      "last_updated": "2026-11-19T18:19:49.360Z"
     },
     "OpenMOSS-Team/MOSS-Image-SFT": {
       "repository": "OpenMOSS-Team/MOSS-Image-SFT",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "a7c096ddc4c131ec51ed0aa269a0fee136edfdd508279b4f6f0d7534191d1f60",
-      "verified_at": "2026-11-19T17:06:58.411Z",
+      "content_hash": "994d4b6aa04d594bd5cb32de3b6a916f832a9dd4780a39e13e5ced4d945aedd4",
+      "verified_at": "2026-11-19T18:20:07.875Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T17:06:58.411Z"
+      "last_updated": "2026-11-19T18:20:07.875Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4401,14 +4401,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kgateway-dev-kgateway",
-      "content_hash": "46a129a2a73a2736f4bfc1f7c8b17e89ec19fa2e673440b81518ae8680edfd71",
-      "verified_at": "2026-11-14T07:18:00.854Z",
+      "content_hash": "8b9ad65e2f0b33ad5ce10923ea7102f0c52f1ac70a5b24b27321772cff1832b7",
+      "verified_at": "2026-11-19T18:20:00.527Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T07:18:00.854Z"
+      "last_updated": "2026-11-19T18:20:00.527Z"
     },
     "freenet/freenet-core": {
       "repository": "freenet/freenet-core",
@@ -11466,14 +11466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-infiniflow-infinity",
-      "content_hash": "b823806aa857d013c921c19b82ac0b4f3b40da2f72d9d2deaf3268ac060650f0",
-      "verified_at": "2026-11-18T14:15:59.002Z",
+      "content_hash": "9e0f5919dbe82c706baa9632557fe3c2b029749eb6571b5ccd1167097e5ff1bd",
+      "verified_at": "2026-11-19T18:20:05.510Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T14:15:59.002Z"
+      "last_updated": "2026-11-19T18:20:05.510Z"
     },
     "astral-sh/ruff": {
       "repository": "astral-sh/ruff",

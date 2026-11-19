@@ -1493,10 +1493,10 @@
     "repository": "nguyenphutrong/quotio",
     "platform": "github",
     "sourceUrl": "https://github.com/nguyenphutrong/quotio",
-    "sourceVersion": "2b007740",
+    "sourceVersion": "474bc2af",
     "license": "MIT",
-    "contentHash": "8cf905111d40d62f44b62280e4ad9de37b4a58f8f9c2848f1ca4efd8b113c161",
-    "lastHarvestedAt": "2026-11-16T15:33:14.133Z",
+    "contentHash": "9069090e5ad6d21bb4aec7f0b8eccea5c8e06cd2727f60efa030939322dfdff7",
+    "lastHarvestedAt": "2026-11-19T18:19:51.322Z",
     "learningId": "learn-github-nguyenphutrong-quotio"
   },
   "pathwaycom-serviette": {
@@ -1675,8 +1675,8 @@
     "sourceUrl": "https://huggingface.co/OpenMOSS-Team/MOSS-Image-Base",
     "sourceVersion": "hf-openmoss-team-moss-image-base",
     "license": "Open-Source",
-    "contentHash": "474e1c1498c4d659d0100a94664fa9382fd45e6ddba941b9c779634738bef909",
-    "lastHarvestedAt": "2026-11-15T04:53:13.243Z",
+    "contentHash": "181733b38ce03a0f19f30b3172dc4ab3ff9ff3d40fa3a4de2d6196b2633574ce",
+    "lastHarvestedAt": "2026-11-19T18:19:49.352Z",
     "learningId": "learn-huggingface-openmoss-team-moss-image-base"
   },
   "hf-openmoss-team-moss-image-sft": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "e737db35",
+    "sourceVersion": "64f9b9ba",
     "license": "Apache-2.0",
-    "contentHash": "a7c096ddc4c131ec51ed0aa269a0fee136edfdd508279b4f6f0d7534191d1f60",
-    "lastHarvestedAt": "2026-11-19T17:06:58.401Z",
+    "contentHash": "994d4b6aa04d594bd5cb32de3b6a916f832a9dd4780a39e13e5ced4d945aedd4",
+    "lastHarvestedAt": "2026-11-19T18:20:07.867Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -2843,10 +2843,10 @@
     "repository": "kgateway-dev/kgateway",
     "platform": "github",
     "sourceUrl": "https://github.com/kgateway-dev/kgateway",
-    "sourceVersion": "74f2e098",
+    "sourceVersion": "2cd623a3",
     "license": "Apache-2.0",
-    "contentHash": "46a129a2a73a2736f4bfc1f7c8b17e89ec19fa2e673440b81518ae8680edfd71",
-    "lastHarvestedAt": "2026-11-14T07:18:00.845Z",
+    "contentHash": "8b9ad65e2f0b33ad5ce10923ea7102f0c52f1ac70a5b24b27321772cff1832b7",
+    "lastHarvestedAt": "2026-11-19T18:20:00.519Z",
     "learningId": "learn-github-kgateway-dev-kgateway"
   },
   "freenet-freenet-core": {
@@ -7613,10 +7613,10 @@
     "repository": "infiniflow/infinity",
     "platform": "github",
     "sourceUrl": "https://github.com/infiniflow/infinity",
-    "sourceVersion": "583c8505",
+    "sourceVersion": "22c627e7",
     "license": "Apache-2.0",
-    "contentHash": "b823806aa857d013c921c19b82ac0b4f3b40da2f72d9d2deaf3268ac060650f0",
-    "lastHarvestedAt": "2026-11-18T14:15:58.994Z",
+    "contentHash": "9e0f5919dbe82c706baa9632557fe3c2b029749eb6571b5ccd1167097e5ff1bd",
+    "lastHarvestedAt": "2026-11-19T18:20:05.503Z",
     "learningId": "learn-github-infiniflow-infinity"
   },
   "astral-sh-ruff": {
