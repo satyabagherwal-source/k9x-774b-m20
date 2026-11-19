@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T23:43:37.621Z",
+  "last_updated": "2026-11-19T23:54:26.598Z",
   "total_verified_learnings": 9022,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112063,9 +112063,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "de87a78fd3f57428a65ad37ebf342ada51d4d573b7cee7429764419eacd019c3",
+      "content_hash": "307d6339bc061c19075b9a7ad8544c7ffd2aca1e89719d709401b53dfa700341",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T23:34:53.419Z"
+      "persisted_at": "2026-11-19T23:54:26.435Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112075,9 +112075,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6c0aa7c12f814653ef5e4e71e1bf4ca3ff595f3c3a421cfabc5ac3cbdcd52611",
+      "content_hash": "920cdb7c1ac558e3e8850aa6c6acabc953f39d9053fd79bb70572eaac9e0acd1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T23:34:53.577Z"
+      "persisted_at": "2026-11-19T23:54:26.598Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -113691,13 +113691,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-5QVQ-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-IQ77-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e2ef68ebd0bf44ba9d11edf940ad31ac20711490068a2705433b6d7b0c51a8a8",
+      "content_hash": "c58c876ca95e21ca8d2193e210e8ab8e7d4d37532d3e40986142d59dbad076ce",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T23:16:18.914Z"
+      "persisted_at": "2026-11-19T23:54:24.169Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113707,9 +113707,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "820f2766d02b775f1c4581c6a846630efdbe8b19b788fb49c7e3927b7cbb2646",
+      "content_hash": "c7c29208475cff4d7157892fc9314d5c443c16e89ba7b0e1e46cc85c2cb22550",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T23:16:19.075Z"
+      "persisted_at": "2026-11-19T23:54:24.352Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113719,9 +113719,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "3d01b814f52d7549fb6178a1da246b1f8bb8ff0a8bb8e096ddbd43d4ee7cf962",
+      "content_hash": "060c49f0cf74a9675133c0f704231665f787fa395fbf685a7a316f333e8a519e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T23:16:19.231Z"
+      "persisted_at": "2026-11-19T23:54:24.558Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -287574,9 +287574,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "2d2333c034a37b05a877e687377b54c52fe154479cff373fbadab738003c53a2",
+      "content_hash": "63b329c59417d170e0ef1841cb7b35d4be55e2339177474b2c3c16390bad52fb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T23:34:52.162Z"
+      "persisted_at": "2026-11-19T23:54:25.118Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -294395,13 +294395,13 @@
       "item_id": "candidate_directive-build-download-onnx-runtime-archives-from-npmmirror",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-TMKD-build-download-onnx-runtime-archives-from-npmmirror.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-IRMJ-build-download-onnx-runtime-archives-from-npmmirror.md",
       "title": "build): download ONNX Runtime archives from npmmirror",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "45d8afc4acf90d81fe71d79ef4434d5e47051686c8c1f393f0a129d4c1d0ab99",
+      "content_hash": "e79775e260ab4898dd233993fa2343e50326f4f557f736977f32839c224940bd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T23:34:53.054Z"
+      "persisted_at": "2026-11-19T23:54:26.011Z"
     },
     "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -294411,9 +294411,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "2eb0bc95945f061449b22ff87195a5bbe73fb42ab1a06571842efb9b5f1d0a12",
+      "content_hash": "6e9937eb9bf87600950ea75ca7a4fe6b0d38239764519238db1ae69a1fa7a0b6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T23:34:53.240Z"
+      "persisted_at": "2026-11-19T23:54:26.225Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T23:43:37.154Z",
+  "last_updated": "2026-11-19T23:54:26.011Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-5QVQ",
+      "id": "CD-IQ77",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-5QVQ-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-IQ77-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-19",
@@ -32756,11 +32756,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-TMKD",
+      "id": "CD-IRMJ",
       "directive_title": "build): download ONNX Runtime archives from npmmirror",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-TMKD-build-download-onnx-runtime-archives-from-npmmirror.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-IRMJ-build-download-onnx-runtime-archives-from-npmmirror.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-19",
@@ -34948,6 +34948,33 @@
       "source_repo": "tailscale-tailscale",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-623D44-util-linuxfw-run-without-ipv6-rules-when.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-EF150C",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-EF150C-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-0B6EAD",
+      "directive_title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0B6EAD-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-E27C40",
+      "directive_title": "build): download ONNX Runtime archives from npmmirror",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E27C40-build-download-onnx-runtime-archives-fro.md",
       "staged_date": "2026-11-19"
     }
   ]
