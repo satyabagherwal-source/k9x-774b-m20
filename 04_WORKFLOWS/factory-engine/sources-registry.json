@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T13:08:07.827Z",
-    "lastVerified": "2026-11-19T13:08:07.827Z",
+    "lastChecked": "2026-11-19T13:22:04.631Z",
+    "lastVerified": "2026-11-19T13:22:04.631Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -324,13 +324,13 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T11:50:43.327Z",
-    "lastVerified": "2026-11-19T11:50:43.327Z",
+    "lastChecked": "2026-11-19T13:22:00.919Z",
+    "lastVerified": "2026-11-19T13:22:00.919Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "37d22bf1540a9e13f70f84a8570f1181171c21c532709946852dc28ef195a70f",
-    "promotedRulesCount": 1,
+    "contentHash": "9e788b3191342b30ee27cdaa9d8bd0d1f1964465df9ed318351bfd5f366ec892",
+    "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
@@ -734,9 +734,9 @@
   "nirdiamant-rag_techniques": {
     "name": "RAG_Techniques",
     "officialUrl": "https://github.com/NirDiamant/RAG_Techniques",
-    "lastChecked": "2026-11-18T10:55:17.322Z",
+    "lastChecked": "2026-11-19T13:21:54.451Z",
     "revisionIdentifier": "2fd7bd0f",
-    "lastVerified": "2026-11-18T10:55:17.322Z"
+    "lastVerified": "2026-11-19T13:21:54.451Z"
   },
   "max-sixty-worktrunk": {
     "name": "max-sixty/worktrunk",
@@ -954,9 +954,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-19T03:09:44.592Z",
+    "lastChecked": "2026-11-19T13:21:51.966Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-19T03:09:44.592Z"
+    "lastVerified": "2026-11-19T13:21:51.966Z"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -1187,14 +1187,14 @@
     "officialUrl": "https://github.com/pingcap/tidb",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-18T12:03:28.464Z",
-    "lastVerified": "2026-11-18T12:03:28.464Z",
+    "lastChecked": "2026-11-19T13:21:54.589Z",
+    "lastVerified": "2026-11-19T13:21:54.589Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-pingcap-tidb",
-    "contentHash": "f4372e656cbf8f58a24b5aa6adf63b1f4f26c551a7712aa5059bc2b2f014ac2f",
+    "contentHash": "8b203522e4218e916b67ad71c1feb67d89d8bd6b985ca57ab41c4f5e00512937",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -7232,5 +7232,46 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "zenbu-labs-terminal-browser": {
+    "name": "zenbu-labs/terminal-browser",
+    "officialUrl": "https://github.com/zenbu-labs/terminal-browser",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-19T13:21:45.745Z",
+    "lastVerified": "2026-11-19T13:21:45.745Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-zenbu-labs-terminal-browser",
+    "contentHash": "7158d7d3ed33ae41f88681a136225be0e8e21e8475bb3bb4e29268a39d8d855d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2": {
+    "name": "nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+    "officialUrl": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T13:21:44.486Z",
+    "lastVerified": "2026-11-19T13:21:44.486Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2",
+    "contentHash": "d8165b052b7c000a72a4844bcabfc8a8ace47fd45927a76259a05004bf36f514",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "louiscad-splitties": {
+    "name": "Splitties",
+    "officialUrl": "https://github.com/LouisCAD/Splitties",
+    "lastChecked": "2026-11-19T13:21:46.975Z",
+    "revisionIdentifier": "1ed56ba2",
+    "lastVerified": "2026-11-19T13:21:46.975Z"
   }
 }

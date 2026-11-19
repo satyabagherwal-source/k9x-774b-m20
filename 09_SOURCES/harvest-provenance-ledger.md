@@ -11304,3 +11304,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-francisring-prism` | `https://huggingface.co/FrancisRing/Prism` | `hf-francis` | Multi-dimensional audit evidence | 2026-11-19T13:07:57.628Z |
 | `learn-github-xevrion-hatchzip` | `https://github.com/xevrion/hatchzip` | `b1d4a640` | Multi-dimensional audit evidence | 2026-11-19T13:07:59.538Z |
 | `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `5023ba50` | Multi-dimensional audit evidence | 2026-11-19T13:08:04.604Z |
+| `learn-github-zenbu-labs-terminal-browser` | `https://github.com/zenbu-labs/terminal-browser` | `f7c51579` | Multi-dimensional audit evidence | 2026-11-19T13:21:46.887Z |
+| `learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2` | `https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | `hf-nerkyor` | Multi-dimensional audit evidence | 2026-11-19T13:21:47.434Z |
+| `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `e35413c6` | Multi-dimensional audit evidence | 2026-11-19T13:21:55.641Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `9631a1dd` | Multi-dimensional audit evidence | 2026-11-19T13:22:01.411Z |

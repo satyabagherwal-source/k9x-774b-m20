@@ -4,24 +4,24 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "52f8bf48",
+  "source_version": "9631a1dd",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T09:43:56.984Z",
+  "timestamp": "2026-11-19T13:22:01.661Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `52f8bf48`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T09:43:56.984Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `9631a1dd`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T13:22:01.661Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NucleoidAI/Nucleoid:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T09:43:55.854Z  
+> **Harvest Timestamp**: 2026-11-19T13:22:00.919Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1577,337 +1577,179 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `52f8bf48` (2026-11-19)
-**Commit Message**: Draft NUC 123 List and Population Variances and Standard Deviations
-
-Category: Utility enhancement, drawn uniformly at random (index 2 of the
-five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
-continuous /nuc-proposal cycle. Utility enhancement requires the token
-non-regression gate in continuous mode.
-
-Requested change: lists and class instance lists gain the read-only
-queries variance and stdev. RECEIVER.variance() returns the population
-variance of the items, the mean of their squared deviations from their
-mean, and RECEIVER.variance(selector) that of selector(item);
-RECEIVER.stdev() and RECEIVER.stdev(selector) return its square root.
-Both divide by the number of values, as numpy's var and std and Python's
-statistics.pvariance and pstdev do, and follow NUC 84's median beside
-NUC 68's sum and NUC 80's average: the same receivers, numeric
-conversion, selector rules, NaN and undefined results, and liveness
-under NUC 61's shared query rules. At the accepted revision these calls
-raise TypeError("<receiver>.variance is not a function") and
-TypeError("<receiver>.stdev is not a function"); only inputs that were
-errors change, and bindings, properties and methods na
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
-```diff
-@@ -131,6 +131,7 @@ Created: 31-Jul-2026
- | [108](nuc-0108.md) | List and Population Partitions | Accepted |
- | [111](nuc-0111.md) | Reactive String Padding | Accepted |
- | [114](nuc-0114.md) | List and Population Products | Accepted |
-+| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Draft |
- 
- ### Reasoning enhancement
- 
-@@ -299,6 +300,7 @@ Created: 31-Jul-2026
- | [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [121](nuc-0121.md) | Held Values of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Accepted |
-+| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Standards Track | Utility enhancement | Draft |
- 
- ## Copyright
- 
-```
-
-**File**: `docs/nuc-0123.md` (added, +73/-0)
-```diff
-@@ -0,0 +1,73 @@
-+# NUC 123 -- List and Population Variances and Standard Deviations
-+
-+```
-+NUC: 123
-+Title: List and Population Variances and Standard Deviations
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Utility enhancement
-+Created: 19-Nov-2026
-+```
-+
-+## Abstract
-+
-+- Lists and class instance lists gain two read-only queries, `variance`
-+  and `stdev`. `RECEIVER.variance()` returns the population variance of the
-+  receiver's items, the mean of their squared deviations from their mean,
-+  and `RECEIVER.variance(selector)` that of `selector(item)` for every item.
-+  `RECEIVER.stdev()` and `RECEIVER.stdev(selector)` return its square root,
-+  the population standard deviation.
-+- Both divide by the number of values, as numpy's `var` and `std` and
-+  Python's `statistics.pvariance` and `statistics.pstdev` do, and as a case
-+  of [NUC 80](nuc-0080.md) does when it writes the variance out from two
-+  averages. A list or a class population holds every value it describes,
-+  so it is the whole population, and a single value has variance `0`.
-+- They follow [NUC 84](nuc-0084.md)'s `median`, beside
-+  [NUC 68](nuc-0068.md)'s `sum` and [NUC 80](nuc-0080.md)'s `average`:
-+  the same receivers, numeric conversion, selector rules, NaN and undefined
-+  results, and liveness under [NUC 61](nuc-0061.md)'s shared query rules.
-+- At the accepted revision these calls are run-time errors,
-+  `TypeError("<receiver>.variance is not a function")` and
-+  `TypeError("<receiver>.stdev is not a function")`. Only inputs that were
-+  errors change. No syntax, keyword, token or error type is added, and
-+  bindings, properties and methods named `variance` or `stdev` keep their
-+  accepted results.
-+
-+## Motivation
-+
-+- World models summarize their populations. Lists and class populations
-+  already have their sums, extremes, averages, medians and modes, but not
-+  their spread. A model that asks how far readings, prices or scores
-+  scatter must write the variance out from two averages, as a case of
-+  NUC 80 does with
-+  `team.scores.average(score -> score * score) - team.mean() ** 2`, and a
-+  standard deviation wraps that in `Math.sqrt`.
-+- The written-out formula repeats the receiver and the selector, is easy
-+  to get wrong, and loses precision when large values spread little,
-+  because subtracting two close averages cancels their leading digits.
-+  `variance()` and `stdev()` name the statistic once, as `average()` and
-+  `median()` do, and can compute it from the deviations themselves.
-+
-+## Rationale
-+
-+- Pending: the proposer completes this section.
-+
-+## Specification
-+
-+- Pending: the proposer completes this section.
-+
-+## Errors
-+
-+- Pending: the proposer completes this section.
-+
-+## Reference Implementation
-+
-+- Pending: the proposer completes this section.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
-```
-
----
-
-### Incident Patch 2: `8c27bb30` (2026-11-19)
-**Commit Message**: NUC 122 Python-Style Except Clauses
+### Incident Patch 1: `9631a1dd` (2026-11-19)
+**Commit Message**: NUC 123 List and Population Variances and Standard Deviations
 
 Accepted under the automatic acceptance rule, in a continuous
-/nuc-proposal cycle (Language compatibility, token comparison skipped):
+/nuc-proposal cycle (Utility enhancement, token comparison required):
 the frozen candidate meets every hard criterion and passes every policy
-check, and the token check does not apply to continuous Language
-compatibility cycles. The cycle found no stale Draft, drew Language
-compatibility uniformly from the five eligible categories, allocated
-NUC 122 in 259343d1, and completed it with a fresh baseline, candidate,
-proposer, Rust improvement pass and evaluator.
+check, the token non-regression gate included. The cycle found no stale
+Draft, drew Utility enhancement uniformly from the five eligible
+categories, allocated NUC 123 in 52f8bf48, and completed it with fresh
+baselines, candidate, proposer, Rust improvement pass and evaluator.
 
-A try statement may spell its catch clause with Python's catch-all
-headers: directly after the body, except: and except Exception: are
-exactly catch:, binding error, and except Exception as NAME: is exactly
-catch NAME:. Each builds the accepted Stmt::Try, or Stmt::TryFinally
-with NUC 119's finally:, so rollback, the binder's scope, returns, loops
-and nesting run as with catch. try_statement reads its clause header
-through the private clause_parameter, which first asks the private
-except_header: it matches the identifier except, optionally Exception,
-optionally as and a name, and then a colon, without consuming tokens,
-and advan
+Lists and class instance lists gain two read-only queries beside
+median: RECEIVER.variance() is the population variance of the items,
+the mean of their squared deviations from their mean, and
+RECEIVER.stdev() its square root; both take an optional selector. They
+are computed in two passes, the mean exactly as average computes it, so
+the results equal xs.average(x -> (x - xs.average()) * (x - xs.average()))
+and its Math.sqrt bit for bit. A single value gives 0 and an empty
+receiver NaN; NaN and infinite values give NaN, an overflowing square or
+total Infinity, and an undefined value makes both undefined. Values
+convert as sum converts them, receive
 
 **File**: `README.md` (modified, +28/-0)
 ```diff
-@@ -2617,6 +2617,34 @@ assert([readings, moved], [[-1, 3, 4], [2, false]])
-   warning clears. See the
-   [root contract](nucleoid.spec.md#held-values-of-reasoning-selections).
+@@ -2645,6 +2645,34 @@ assert([kitchen, heating], [21, false])
+   estimate. See the
+   [root contract](nucleoid.spec.md#python-style-except-clauses).
  
-+## Python-style except clauses
++## List and population variances and standard deviations
 +
-+**Except clauses fall back to another sensor when a reading fails**
++**Standard deviations keep the scatter of delivery times live as orders change**
 +
 +```nuc
-+hall = 19
-+try:
-+    kitchen = cellar + 1
-+except Exception as fault:
-+    kitchen = hall - 1
-+    note = fault
-+heating = kitchen < 20
-+assert([kitchen, note, heating], [18, ReferenceError("cellar is not defined"), true])
-+hall = 22
-+assert([kitchen, heating], [21, false])
++class Delivery(minutes):
++    this.minutes = minutes
++Delivery(30)
++Delivery(25)
++late = Delivery(35)
++scatter = Delivery.stdev(delivery -> delivery.minutes)
++assert(scatter, 4.08248290463863)
++late.minutes = 90
++Delivery(40)
++assert(scatter, 25.829972899714782)
 +```
 +
-+- [NUC 122](docs/nuc-0122.md) reads Python's catch-all clause headers:
-+  `except:` and `except Exception:` are `catch:`, and
-+  `except Exception as fault:` is `catch fault:`, with the same suite, the
-+  same rollback of the failed body and the same binding.
-+- The kitchen's reading derives from a cellar sensor that has not
-+  reported, so reading it fails, and the clause estimates the kitchen from
-+  the hall instead and records why. The estimate is a declaration like any
-+  other, so it follows the hall's reading, and the heating follows the
-+  estimate. See the
-+  [root contract](nucleoid.spec.md#python-style-except-clauses).
++- [NUC 123](docs/nuc-0123.md) adds `variance()` and `stdev()`, with and
++  without a selector, to lists and class instance lists.
++  `Delivery.stdev(delivery -> delivery.minutes)` is the population standard
++  deviation of the delivery times: the square root of their mean squared
++  distance from their mean.
++- `scatter` is a live declaration, so a slower delivery and a new order both
++  update it. The distances are taken from the mean, which keeps the spread
++  of large values where the mean of the squares minus the square of the mean
++  cancels it, and `variance()` gives the square of the same spread. See the
++  [root contract](nucleoid.spec.md#list-and-population-variances-and-standard-deviations).
 +
  ## Reactive list flattening
  
  **Flat turns nested lists into one live list**
 ```
 
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +19/-16)
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +20/-16)
 ```diff
-@@ -799,19 +799,22 @@
- {"id":"spec-0799","description":"Nucleoid gives the values that a change reaches and the model with holds","code":"rate = 0.2\nprice = 10\nqty = 3\nsubtotal = price * qty\ntax = subtotal * rate\nreach = price |> affects |> holds\nknown = model |> holds\nassert(reach, [30, 6])\nassert(known, [0.2, 10, 3, 30, 6])\ntotal = subtotal + tax\nassert(reach, [30, 6, 36])\nqty = 4\nassert(reach, [40, 8, 48])\ntax = qty * rate\nassert(reach, [40, 40.8])\ndelete total\nassert(known, [0.2, 10, 4, 40, 0.8])\nreach","return":"[40]"}
- {"id":"spec-0800","description":"Nucleoid gives the values behind class level rules with holds","code":"fee = 2\nclass Order(price, qty):\n    this.price = price\n    this.qty = qty\n$Order.total = $Order.price * $Order.qty\n$Order.basis = $Order.total |> why |> holds\nfirst = Order(10, 2)\nassert(first.basis, [20, 10, 2])\n$Order.total = $Order.price * $Order.qty + fee\nsecond = Order(4, 5)\nreach = fee |> affects |> holds\nassert([first.basis, second.basis], [[22, 10, 2, 2], [22, 4, 5, 2]])\nassert(reach, [22, 22])\nfirst.qty = 3\nfee = 1\nassert([first.basis, second.basis], [[31, 10, 3, 1], [21, 4, 5, 1]])\nassert(reach, [31, 21])\nfirst.total |> why |> stated |> holds","return":"[1]"}
- {"id":"spec-0801","description":"Nucleoid rolls back failed updates through held values","code":"price = 10\nqty = 3\nsubtotal = price * qty\nvalues = subtotal |> why |> holds\nfailure = \"\"\ntry:\n    values = 1 |> holds\ncatch error:\n    failure = error\nassert(failure, TypeError(\"Cannot explain 1\"))\nassert(values, [30, 10, 3])\ntry:\n    fee = 2\n    subtotal = price * qty + fee\n    assert(values, [32, 10, 3, 2])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert(values, [30, 10, 3])\nqty = 4\ninputs = subtotal |> why |> stated |> holds\n[values, inputs]","return":"[[40,10,4],[10,4]]"}
--{"id":"spec-0802","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0803","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0804","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0805","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0806","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
--{"id":"spec-0807","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
--{"id":"spec-0808","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nasse
+@@ -802,19 +802,23 @@
+ {"id":"spec-0802","description":"Nucleoid catches every error with except clauses","code":"indoor = 21\ntry:\n    feels = indoor - outdoor / 2\nexcept:\n    feels = indoor\nassert(feels, 21)\ntry:\n    offset = indoor.calibrate(2)\nexcept Exception:\n    offset = 0\nassert(offset, 0)\ntry:\n    throw \"SENSOR OFFLINE\"\nexcept Exception as fault:\n    status = fault\nassert(status, \"SENSOR OFFLINE\")\ntry:\n    trend = outdoor + 1\nexcept:\n    trend = error\nassert(trend, ReferenceError(\"outdoor is not defined\"))\nindoor = 23\noutdoor = 10\n[feels, offset, status, trend]","return":"[23,0,\"SENSOR OFFLINE\",\"ReferenceError: outdoor is not defined\"]"}
+ {"id":"spec-0803","description":"Nucleoid rolls back a failed update before its except clause runs","code":"class Account(owner, balance):\n    this.owner = owner\n    this.balance = balance\nada = Account(\"Ada\", 100)\nlimit = ada.balance * 2\ndef withdraw(account, amount):\n    if amount > account.balance.value:\n        throw \"INSUFFICIENT FUNDS\"\n    account.balance = account.balance - amount\n    return account.balance\ntry:\n    ada.balance = 500\n    withdraw(ada, 900)\nexcept Exception as reason:\n    assert([ada.balance, limit], [100, 200])\n    refusal = reason\nassert(refusal, \"INSUFFICIENT FUNDS\")\ntry:\n    withdraw(ada, 30)\n    ada.owner = missing\nexcept:\n    assert(error, ReferenceError(\"missing is not defined\"))\nassert([ada.balance, limit], [100, 200])\nwithdraw(ada, 40)\nlimit","return":"120"}
+ {"id":"spec-0804","description":"Nucleoid reads except clauses in methods, functions and nested try statements","code":"class Gauge(name, limit):\n    this.name = name\n    this.limit = limit\n    def read(value):\n        try:\n            if value > this.limit:\n                throw this.name + \" OVER LIMIT\"\n            return value\n        except Exception as alarm:\n            return alarm\nboiler = Gauge(\"boiler\", 90)\nassert([boiler.read(70), boiler.read(95)], [70, \"boiler OVER LIMIT\"])\ndef check(value):\n    try:\n        try:\n            if value > 100:\n                throw \"HIGH\"\n            return \"OK\"\n        except Exception as inner:\n            throw inner + \" ALARM\"\n    except Exception as outer:\n        return outer\nassert([check(50), check(150)], [\"OK\", \"HIGH ALARM\"])\ntry:\n    seen = alarm\nexcept:\n    seen = error\nassert(seen, ReferenceError(\"alarm is not defined\"))\ncheck(120)","return":"\"HIGH ALARM\""}
+-{"id":"spec-0805","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
+-{"id":"spec-0806","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
+-{"id":"spec-0807","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
+-{"id":"spec-0808","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
+-{"id":"spec-0809","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
+-{"id":"spec-0810","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = 
 ```
 
-**File**: `dataset/nucleoid.synth.86.jsonl` (added, +16/-0)
+**File**: `dataset/nucleoid.synth.87.jsonl` (added, +12/-0)
 ```diff
-@@ -0,0 +1,16 @@
-+{"id":"synth-86-0001","description":"Except catches a failed reading and falls back to a default","code":"reading = 0\ntry:\n    reading = sensor * 2\nexcept:\n    reading = -1\nreading","return":"-1"}
-+{"id":"synth-86-0002","description":"A bare except binds the error to error as catch does","code":"try:\n    level = tank + 1\nexcept:\n    level = error\nlevel","return":"\"ReferenceError: tank is not defined\""}
-+{"id":"synth-86-0003","description":"Except Exception catches every error","code":"try:\n    size = (4).resize(2)\nexcept Exception:\n    size = 0\nsize","return":"0"}
-+{"id":"synth-86-0004","description":"Except Exception as a name binds the thrown value as it was thrown","code":"try:\n    throw 404\nexcept Exception as failure:\n    code = failure + 1\ncode","return":"405"}
-+{"id":"synth-86-0005","description":"A failed body rolls back before its except clause runs","code":"stock = 10\nreserved = stock - 2\ntry:\n    stock = 3\n    throw \"SHORT\"\nexcept Exception as reason:\n    note = reason\n[stock, reserved, note]","return":"[10,8,\"SHORT\"]"}
-+{"id":"synth-86-0006","description":"Except clauses return from functions","code":"def length_of(text):\n    try:\n        if text == \"\":\n            throw \"EMPTY\"\n        return text.length\n    except Exception as problem:\n        return problem\n[length_of(\"abc\"), length_of(\"\")]","return":"[3,\"EMPTY\"]"}
-+{"id":"synth-86-0007","description":"Except clauses return from methods","code":"class Thermostat(limit):\n    this.limit = limit\n    def check(target):\n        try:\n            if target > this.limit:\n                throw \"TOO HOT\"\n            return target\n        except Exception as alarm:\n            return alarm\nhall = Thermostat(28)\n[hall.check(22), hall.check(35)]","return":"[22,\"TOO HOT\"]"}
-+{"id":"synth-86-0008","description":"An error raised in an except clause reaches the enclosing one","code":"def probe(depth):\n    try:\n        try:\n            throw depth\n        except Exception as inner:\n            throw inner * 10\n    except Exception as outer:\n        return outer + 1\nprobe(4)","return":"41"}
-+{"id":"synth-86-0009","description":"A finally clause runs after an except clause","code":"log = []\ntry:\n    throw \"X\"\nexcept Exception as e:\n    log.push(e)\nfinally:\n    log.push(\"done\")\nlog","return":"[\"X\",\"done\"]"}
-+{"id":"synth-86-0010","description":"Except clauses take inline suites","code":"try: total = price * 2\nexcept: total = 0\ntotal","return":"0"}
-+{"id":"synth-86-0011","description":"Except follows a colon-free try header","code":"try\n    total = count + 1\nexcept Exception as e:\n    total = 0\ntotal","return":"0"}
-+{"id":"synth-86-0012","description":"Declarations in an except clause stay live","code":"base = 4\ntry:\n    value = missing\nexcept:\n    value = base * 2\nbase = 5\nvalue","return":"10"}
-+{"id":"synth-86-0013","description":"An except binder shadows an outer name only inside its clause","code":"e = \"outer\"\ntry:\n    throw \"inner\"\nexcept Exception as e:\n    seen = e\n[seen, e]","return":"[\"inner\",\"outer\"]"}
-+{"id":"synth-86-0014","description":"Except Exception is a fixed word that a variable named Exception does not change","code":"Exception = \"not a class\"\ntry:\n    x = missing\nexcept Exception:\n    x = Exception\nx","return":"\"not a class\""}
-+{"id":"synth-86-0015","description":"Except clauses run inside braced arrow functions","code":"fallback = (v) => {\n    try:\n        return v.calibrate()\n    except:\n        return 0\n}\nfallback(5)","return":"0"}
-+{"id":"synth-86-0016","description":"Except clauses run inside if blocks","code":"ready = true\nif ready:\n    try:\n        r = gauge.read()\n    except:\n        r = \"offline\"\nr","return":"\"offline\""}
+@@ -0,0 +1,12 @@
++{"id":"synth-87-0001","description":"A variance measures how far a list of scores spreads from its mean","code":"scores = [2, 4, 4, 4, 5, 5, 7, 9]\nspread = scores.variance()\nassert(spread, 4)\nscores.push(11)\nspread","return":"7.111111111111111"}
++{"id":"synth-87-0002","description":"A standard deviation follows a list as readings arrive","code":"readings = [61, 58, 64]\nwobble = readings.stdev()\nassert(wobble, 2.449489742783178)\nreadings.push(57)\nwobble","return":"2.7386127875258306"}
++{"id":"synth-87-0003","description":"A selector measures the spread of a property over a class population","code":"class Parcel(weight):\n    this.weight = weight\nParcel(3)\nParcel(5)\nheavy = Parcel(10)\nspread = Parcel.variance(parcel -> parcel.weight)\nassert(spread, 8.666666666666666)\nheavy.weight = 4\nspread","return":"0.6666666666666666"}
++{"id":"synth-87-0004","description":"A single value has no spread, and an empty list has NaN","code":"samples = [7]\nspread = samples.variance()\nassert(spread, 0)\nsamples.pop()\nString(spread)","return":"\"NaN\""}
++{"id":"synth-87-0005","description":"The deviations of large values keep a spread that two averages cancel","code":"ticks = [1000000001, 1000000002, 1000000003]\njitter = ticks.variance()\nnaive = ticks.average(t -> t * t) - ticks.average() ** 2\n[jitter, naive]","return":"[0.6666666666666666,0]"}
++{"id":"synth-87-0006","description":"A class-level rule keeps the standard deviation of each machine's readings","code":"class Machine(readings):\n    this.readings = readings\n$Machine.drift = $Machine.readings.stdev()\npress = Machine([50, 54, 46])\nassert(press.drift, 3.265986323710904)\npress.readings.push(50)\npress.drift","return":"2.8284271247461903"}
++{"id":"synth-87-0007","description":"A standard deviation over a filtered population follows each new instance","code":"class Trip(city, minutes):\n    this.city = city\n    this.minutes = minutes\nTrip(\"oslo\", 30)\nTrip(\"oslo\", 34)\nTrip(\"bergen\", 90)\nlocal = Trip.filter(trip -> trip.city == \"oslo\").stdev(trip -> trip.minutes)\nassert(local, 2)\nTrip(\"oslo\", 26)\nlocal","return":"3.265986323710904"}
++{"id":"synth-87-0008","description":"A selector that reads another variable follows it","code":"gain = 2\nlevels = [1, 2, 3]\nspread = levels.variance(level -> level * gain)\nassert(spread, 2.6666666666666665)\ngain = 3\nspread","return":"6"}
++{"id":"synth-87-0009","description":"An undefined value leaves the variance unknown until it is defined","code":"class Sensor(name):\n    this.name = name\na = Sensor(\"a\")\na.level = 4\nb = Sensor(\"b\")\nspread = Sensor.variance(sensor -> sensor.level)\nassert(spread, null)\nb.level = 8\nspread","return":"4"}
++{"id":"synth-87-0010","description":"A selector that is not a function raises a typed error","code":"xs = [1, 2]\nfailure = \"\"\ntry:\n    xs.variance(2)\ncatch error:\n    failure = error\nfailure","return":"\"TypeError: variance expects a function\""}
++{"id":"synth-87-0011","description":"A failed selector rolls back the change that triggered it","code":"def checked(level):\n    if level < 0:\n        throw \"NEGATIVE\"\n    return level\nlevels = [3, 5, 10]\nspread = levels.stdev(checked)\ntry:\n    levels.push(-1)\ncatch error:\n    pass\n[levels.length, spread]","return":"[3,2.943920288775949]"}
++{"id":"synth-87-0012","description":"Bindings and functions named variance and stdev keep their meaning","code":"variance = [1, 3]\ndef stdev(values) => values.length\n[variance.variance(), stdev(variance), variance.stdev()]","return":"[1,2,1]"}
 ```
 
-**File**: `docs/README.md` (modified, +53/-1)
+**File**: `docs/README.md` (modified, +57/-1)
 ```diff
-@@ -2509,7 +2509,55 @@ visits.length
-   before a `catch`. See the
-   [root contract](../nucleoid.spec.md#finally-clauses).
+@@ -2694,7 +2694,7 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md)
+ | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
+ | `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), and the case conversion aliases `uppercase()`, `to_uppercase()` and `uppercased()` of `toUpperCase()`, and `lowercase()`, `to_lowercase()` and `lowercased()` of `toLowerCase()` ([NUC 118](nuc-0118.md)) |
+ | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
+-| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), the size and emptiness aliases `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), and the first and last element aliases `first()`, `last()`, `first(predicate)` and `last(predicate)` ([NUC 117](nuc-0117.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
++| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), `variance` and `stdev` ([NUC 123](nuc-0123.md)), the size and emptiness aliases `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), and the first and last element aliases `first()`, `last()`, `first(predicate)` and `last(predicate)` ([NUC 117](nuc-0117.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
+ | `Class` | the global list of declared types; `Class.length` |
  
--Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md).
-+### Python-style except clauses
+ ```
+@@ -4235,6 +4235,60 @@ volume
+   [list and population products](../nucleoid.spec.md#list-and-population-products)
+   section.
+ 
++### List and population variances and standard deviations
 +
 +```
-+def ratio(part, whole):
-+    try:
-+        if whole == 0:
-+            throw "EMPTY"
-+        return part / whole
-+    except Exception as reason:
-+        return reason
-+assert([ratio(3, 4), ratio(1, 0)], [0.75, "EMPTY"])
-+try:
-+    share = stock / 2
-+except Exception:
-+    share = 0
-+try:
-+    level = stock.reorder()
-+except:
-+    level = error
-+assert([share, level], [0, ReferenceError("stock is not defined")])
-+stock = 8
-+share
++temps = [18, 21, 24]
++swing = temps.stdev()
++class Shot(score):
++    this.score = score
++Shot(7)
++Shot(9)
++spread = Shot.variance(shot -> shot.score)
++assert([swing, spread], [2.449489742783178, 1])
++temps.push(17)
++Shot(5)
++assert([swing, spread], [2.7386127875258306, 2.6666666666666665])
++spread
 +```
 +
 +- This is the complete
-+  `Nucleoid reads Python except clauses as catch clauses` program in
-+  `tests/reference.md`, without its title and expected-return metadata; it
-+  returns `0`.
-+- [NUC 122](nuc-0122.md) reads Python's catch-all clause headers where a
-+  `catch` clause belongs: `except:` and `except Exception:` are exactly
-+  `catch:`, binding the error to `error`, and `except Exception as NAME:` is
-+  exactly `catch NAME:`. Each builds the same statement as its `catch`
-+  spelling, so rollback, the binding and its scope, `return`, nested `try`
-+  statements and a following `finally:` behave as they do with `catch`.
-+- The header takes its colon. `except`, `Exception` and `as` stay ordinary
-+  names, and every other header where `catch` belongs, such as `except e:`,
-+  `except ValueError:` or a colon-free `except Exception as e`, keeps
-+  `SyntaxError("Expected 'catch' after 'try'")`.
-+- Differences from Python: typed and filtered clauses, several clauses,
-+  `else:`, `except*` and `raise` are not added, and Nucleoid raises with
-+  `throw`. The bound value is the error's text, such as
-+  `"ReferenceError: stock is not defined"`, or the thrown value, not an
-+  exception object. `Exception` catches every error, since Nucleoid has no
-+  exits like `SystemExit` that Python's `Exception` leaves out, and an outer
-+  name that the clause's binder shadows keeps its value, where Python
-+  unbinds it. See the
-+  [root contract](../nucleoid.spec.md#python-style-except-clauses).
-+
-+Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md), [NUC 122](nuc-0122.md).
- 
- ---
- 
-@@ -5063,6 +5111,10 @@ try:                                   run the body; a failure rolls it back
-     statement
- catch name:                            then runs this suite with the error bound
-     statement
-+except Exception as name:              Python's spelling of catch name: (NUC 122)
-+    statement
-+except:                                Python's spelling of catch:, binding error (NUC 122)
-+    statement
- finally:                               runs however the statement ends (NUC 119)
-     statement
- return expression                      yield from a block or function
++  `Nucleoid measures the spread of lists and populations with variance and stdev`
++  program in `tests/reference.md`, without its title and expected-return
++  metadata; it returns `2.6666666666666665`.
++- [NUC 123](nuc-0123.md) adds `variance()`, `variance(selector)`, `stdev()`
++  and `stdev(selector)` to lists and class instance lists: the population
++  variance, the mean of the squared deviations from the mean, and its square
++  root, the population standard deviation. Both divide by the number of
++  values, so a single value gives `0`.
++- The mean is computed as `average` computes it, and the deviations are taken
++  from it in a second pass, so a list of numbers has exactly the variance that
++  `xs.average(x -> (x - xs.average()) * (x - xs.average()))` gives, and
++  exactly `Math.sqrt` of it as its standard deviation. Large values with a
+
 ```
 
-**File**: `docs/examples.md` (modified, +34/-0)
+**File**: `docs/examples.md` (modified, +28/-0)
 ```diff
-@@ -4142,6 +4142,40 @@ hours = 15
-   [NUC 121](nuc-0121.md) and the
-   [root contract](../nucleoid.spec.md#held-values-of-reasoning-selections).
+@@ -4176,6 +4176,34 @@ transfer(ana, ben, 20)
+   [NUC 122](nuc-0122.md) and the
+   [root contract](../nucleoid.spec.md#python-style-except-clauses).
  
-+## Python-style except clauses
++## List and population variances and standard deviations
 +
-+**Except clauses refuse an overdrawn transfer and keep both wallets whole**
++**Standard deviations flag the machines whose readings drift**
 +
 +```nuc
-+class Wallet(owner, coins):
-+    this.owner = owner
-+    this.coins = coins
-+def transfer(source, target, amount):
-+    target.coins = target.coins + amount
-+    if amount > source.coins.value:
-+        throw source.owner + " LACKS " + amount
-+    source.coins = source.coins - amount
-+ana = Wallet("Ana", 50)
-+ben = Wallet("Ben", 10)
-+try:
-+    transfer(ana, ben, 80)
-+except Exception as refusal:
-+    log = refusal
-+assert([ana.coins, ben.coins, log], [50, 10, "Ana LACKS 80"])
-+transfer(ana, ben, 20)
-+[ana.coins, ben.coins]
-+# return: [30,30]
++class Machine(name, readings):
++    this.name = name
++    this.readings = readings
++$Machine.drift = $Machine.readings.stdev()
++$Machine.unstable = $Machine.drift > 2
++press = Machine("press", [50, 54, 46])
++lathe = Machine("lathe", [30, 31, 29])
++assert([press.drift, lathe.unstable], [3.265986323710904, false])
++lathe.readings.push(35)
++press.readings.push(50)
++[lathe.unstable, press.drift]
++# return: [true,2.8284271247461903]
 +```
 +
-+- `transfer` credits the target before it finds that the source lacks the
-+  coins, so the refused transfer has already changed Ben's wallet when it
-+  throws. The failed body is rolled back before the `except` clause runs,
-+  so both wallets keep what they had, and the clause records the refusal.
-+- `except Exception as refusal:` is exactly `catch refusal:`, so a transfer
-+  the source can afford then goes through as before. See
-+  [NUC 122](nuc-0122.md) and the
-+  [root contract](../nucleoid.spec.md#python-style-except-clauses).
++- Each machine keeps the standard deviation of its own readings in a
++  class-level rule, and a second rule flags the machines whose readings
++  scatter with a standard deviation above 2.
++- Both rules follow every reading: a reading of 35 makes the lathe unstable,
++  and a reading at the press's mean narrows its drift from
++  `3.265986323710904` to `2.8284271247461903`. See [NUC 123](nuc-0123.md)
++  and the
++  [root contract](../nucleoid.spec.md#list-and-population-variances-and-standard-deviations).
 +
  ## Reactive list flattening
  
@@ -1916,196 +1758,142 @@ and advan
 
 **File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -165,7 +165,7 @@ Created: 31-Jul-2026
- | [116](nuc-0116.md) | Size and Emptiness Method Aliases | Accepted |
- | [117](nuc-0117.md) | First and Last Element Methods | Accepted |
- | [118](nuc-0118.md) | Case Conversion Method Aliases | Accepted |
--| [122](nuc-0122.md) | Python-Style Except Clauses | Draft |
-+| [122](nuc-0122.md) | Python-Style Except Clauses | Accepted |
+@@ -131,7 +131,7 @@ Created: 31-Jul-2026
+ | [108](nuc-0108.md) | List and Population Partitions | Accepted |
+ | [111](nuc-0111.md) | Reactive String Padding | Accepted |
+ | [114](nuc-0114.md) | List and Population Products | Accepted |
+-| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Draft |
++| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Accepted |
  
- ### Documentation
+ ### Reasoning enhancement
  
-@@ -298,7 +298,7 @@ Created: 31-Jul-2026
- | [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Accepted |
+@@ -300,7 +300,7 @@ Created: 31-Jul-2026
  | [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
  | [121](nuc-0121.md) | Held Values of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
--| [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Draft |
-+| [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Accepted |
+ | [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Accepted |
+-| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Standards Track | Utility enhancement | Draft |
++| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Standards Track | Utility enhancement | Accepted |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0122.md` (modified, +1154/-28)
+**File**: `nucleoid.spec.md` (modified, +148/-0)
 ```diff
-@@ -4,57 +4,1183 @@
- NUC: 122
- Title: Python-Style Except Clauses
- Author: Can Mingir <canmingir@gmail.com>
--Status: Draft
-+Status: Accepted
- Type: Standards Track
- Category: Language compatibility
- Created: 18-Nov-2026
-+Requires: 9, 46, 119
- ```
+@@ -6780,6 +6780,77 @@ t.promote(bob)
+   `Nucleoid rolls back failed product updates` specify the executable
+   behavior. `tests/list_products.rs` executes the rest.
  
- ## Abstract
- 
--- A `try` statement may spell its catch clause with Python's `except`.
--  `except:` and `except Exception:` catch every error, as `catch:` does,
--  and `except Exception as NAME:` binds the error to `NAME`, as
--  `catch NAME:` does.
--- Such a program reads exactly as its `catch` spelling, including a
--  `finally:` clause of [NUC 119](nuc-0119.md) after the `except` clause.
--- At the accepted revision each such program is a whole-program parse
--  error, `SyntaxError("Expected 'catch' after 'try'")`. Only those programs
--  change.
--- Every other name after `except`, as in `except e:` or
--  `except ValueError:`, keeps that error, because Python reads it as a
--  filter by exception class, which Nucleoid's errors do not have. `except`
--  stays an ordinary name everywhere else, including the `except` stage of
--  [NUC 106](nuc-0106.md).
-+- A `try` statement may spell its catch clause with Python's catch-all
-+  `except` headers. Where a `catch` clause belongs, directly after the
-+  body:
-+  - `except:` and `except Exception:` are exactly `catch:`, so the error is
-+    bound to the name `error`;
-+  - `except Exception as NAME:`, where `NAME` is a name, is exactly
-+    `catch NAME:`.
-+- Each header builds the statement of its `catch` spelling, `Stmt::Try`, or
-+  `Stmt::TryFinally` with a `finally:` clause of [NUC 119](nuc-0119.md)
-+  after it, with the same parameter and suites. So the clause behaves as
-+  `catch` does: the failed body is rolled back first, the bound name is
-+  scoped to the clause, and returns, loops, nested `try` statements and the
-+  declarations of either suite run as they do with `catch`.
-+- The header ends with its colon, as Python requires. Every other header
-+  where `catch` belongs keeps the accepted
-+  `SyntaxError("Expected 'catch' after 'try'")` at the `except`, byte for
-+  byte, among them `except e:`, `except ValueError:`, a parenthesized or
-+  comma-separated list, a binder that is not a name and a header without its
-+  colon. A `try` statement still takes one clause.
-+- `except`, `Exception` and `as` stay ordinary names everywhere else,
-+  including the `except` stage of [NUC 106](nuc-0106.md). No keyword, lexer
-+  token, syntax-tree node, error type or message is added.
-+- Only inputs that were errors at the accepted revision change: programs
-+  in which a `try` statement's body is directly followed by a matching
-+  header, each of which raised `SyntaxError("Expected 'catch' after 'try'")`
-+  at the `except` of such a header. The authoritative contract is
-+  [Python-style except clauses](../nucleoid.spec.md#python-style-except-clauses).
- 
- ## Motivation
- 
- - Nucleoid already reads many of Python's spellings: `def`, `elif`, `None`,
--  `self`, `lambda`, `not in`, `pass` and, through NUC 119, `finally:`. Its
--  error handling still knows only `catch`, so a model or a programmer who
--  writes Python's `try:` and `except Exception as error:` gets a parse
--  error for the whole program.
--- The catch-all forms `except:` and `except Exception as error:` are
--  Python's spellings of a clause that catches every error, which is what
--  Nucleoid's `catch` does. Reading them lets familiar Python error handling
--  run unchanged, as the language-superset aspiration of
--  [NUC 1](nuc-0001.md) asks.
-+  `self`, `lambda`, `not in`, `pass` and, through [NUC 119](nuc-0119.md),
-+  `finally:`. Its error handling still knows only `catch`, so a model or a
-+  programmer who writes Python's `try:` and `except Exception as error:`
-+  gets a parse error for the whole program, and nothing in it runs:
++## List and population variances and standard deviations
 +
-+  ```
-+  def ratio(part, whole):
-+      try:
-+          if whole == 0:
-+              throw "EMPTY"
-+          return part / whole
-+      except Exception as reason:
-+          return reason
-+  ratio(1, 0)
-+  ```
++- [NUC 123](docs/nuc-0123.md) adds the read-only list queries `variance` and
++  `stdev` to lists and class instance lists. No syntax, keyword or error type
++  is added.
++- `RECEIVER.variance()` returns the population variance of the receiver's
++  items, the mean of their squared deviations from their mean, and
++  `RECEIVER.variance(selector)` that of `selector(item)` for every item.
++  `RECEIVER.stdev()` and `RECEIVER.stdev(selector)` return its square root,
++  the population standard deviation. Both divide by the number of values, so
++  `[2, 4, 4, 4, 5, 5, 7, 9].variance()` is `4` and its `stdev()` is `2`.
++- The values are converted to numbers once and read in two passes, in 64-bit
++  floating point. The mean is computed as `average` computes it: the values
++  added in receiver order from `0`, divided by their number. The variance adds
++  the squares `d * d` of the deviations `d = value - mean` in receiver order
++  from `0` and divides by the number of values, and the standard deviation is
++  the square root that `Math.sqrt` gives. A list of numbers therefore has
++  exactly the variance that
++  `xs.average(x -> (x - xs.average()) * (x - xs.average()))` gives, and exactly
++  `Math.sqrt` of it as its standard deviation.
++- Because the deviations are taken from the mean, large values with a small
++  spread keep their spread: `[1000000001, 1000000002, 1000000003].variance()`
++  is `0.6666666666666666`, where the mean of the squares minus the square of
++  the mean, `xs.average(x -> x * x) - xs.average() ** 2`, cancels to `0`.
++- A single value gives `0`, and an empty receiver gives `0 / 0`, which is NaN.
++  A value that converts to NaN makes both results NaN, and so does an infinite
++  value, whose deviation from the mean, itself infinite or NaN, is NaN. A
++  square or a total beyond the largest number overflows to `Infinity`, so
++  `[1e200, -1e200].stdev()` is `Infinity`, and a square below the smallest
++  positive number underflows to `0`. An undefined value makes both results
++  undefined, which a declaration stores as `null`, ahead of NaN; every item is
++  still visited.
++- The receivers, the numeric conversion and the selector are those of
++  `median`: a list however it is reached, or a class's instance list in
++  population order, named by the class or by a variable that holds the class;
++  `null`, `false`, empty strings and empty lists are `0`, `true` is `1`,
++  numeric strings and one-item lists are their number, and objects, other
++  strings and longer lists are NaN. On a class name, `variance` and `stdev` are
++  the population queries even when the class declares instance methods with
++  those names; its instances keep calling those methods.
++- `variance()` and `stdev()` read items, not bindings, so a `null` item counts
++  `0` without settling a declaration to `null`, while the reads inside a
++  selector follow the existing rules.
++- A selector is called once for every item, in order, with only the item;
++  further parameters are `null`. A supplied first argument that is not a
++  function, including `null`, raises `TypeError("variance expects a function")`
++  or `TypeError("stdev expects a function")`, even on an empty receiver.
++- `variance` and `stdev` follow the shared rules of the list queries: they read
++  their receiver before their arguments, evaluate every supplied argument once,
++  left to right, including unused extras, and never write the receiver. A
++  declaration that uses them depends on the list or population, on their
++  argument expressions and on whatever the selector reads, so list mutations,
++  new and deleted instances and property changes re-evaluate it, in
++  class-level rules too. Selector errors roll back through the existing
++  transaction. A null or undefined receiver yields undefined without evaluating
++  the arguments.
++- A call converts every value once and makes two linear passes over the
++  numbers, without recursion.
++- The call keeps its ordinary rendering, so `spread = scores.variance()`
++  explains as `spread = scores.variance()`, and `why` lists the receiver among
++  the declaration's dependencies.
++- `variance of xs` stays `SyntaxError("Unexpected keyword 'of'")`: neither
++  name is a noun query. Property reads such as `xs.variance` and `xs.stdev`,
++  bindings and object properties named `variance` or `stdev`, `variance(...)`
++  without a definition, `Math.variance`, `xs.std()` and instance methods named
++  `variance` or `stdev` called on an instance keep their accepted results. The
++  four entries beginning
++  `Nucleoid measures the spread of lists with variance and stdev` through
++  `Nucleoid rolls back failed variance updates` specify the executable
++  behavior. `tests/list_variances.rs` executes the rest.
 +
-+  The accepted parser rejects it with
-+  `SyntaxError("Expected 'catch' after 'try'")` at line 6, column 5.
-+  Writing `catch reason:` makes it run and return `"EMPTY"`.
-+- The catch-all forms `except:`, `except Exception:` and
-+  `except Exception as error:` are Python's spellings of a clause that
-+  catches every error, which is what Nucleoid's `catch` does. Reading them
-+  lets familiar error handling run unchanged, as the language-superset
-+  aspiration of [NUC 1](nuc-0001.md) asks.
-+- World models handle readings and updates that can fail: a sensor that has
-+  not reported, a transfer that a wallet cannot cover. The `except` clause
-+  keeps the Python habit for that handling, and the transaction rollback of
-+  Nucleoid's `catch` keeps the model consistent.
- 
- ## Rationale
- 
--- Pending: the proposer completes this section.
-+- **Category and mode.** The allocating continuous cycle drew Language
-+  compatibility with one tool-backed uniform
+ ## Object entry loops with
 ```
 
-**File**: `docs/nucleoid.g4` (modified, +28/-4)
+**File**: `src/lang/ast/array/aggregate.rs` (modified, +20/-0)
 ```diff
-@@ -310,12 +310,30 @@ repeatStmt
+@@ -59,6 +59,23 @@ fn median_value(values: &[Value]) -> Value {
+     Value::Number(median)
+ }
  
- // Without finallyClause a tryStmt is Stmt::Try, with it Stmt::TryFinally.
- tryStmt
--    : TRY body lineSeparator* CATCH (LPAREN name RPAREN | name)? body finallyClause?
-+    : TRY body lineSeparator* (catchClause | exceptClause) finallyClause?
-     ;
- 
--// FINALLY starts the logical line after the catch body, at the tryStmt's
--// layout level: only NEWLINEs follow the catch body, and the token before
--// FINALLY is a NEWLINE or the DEDENT that closes it. FINALLY on the catch
-+catchClause
-+    : CATCH (LPAREN name RPAREN | name)? body
-+    ;
++#[must_use]
++fn population_variance(values: &[Value]) -> Option<f64> {
++    if values.iter().any(Value::is_undefined) {
++        return None;
++    }
 +
-+// Python's catch-all headers build the tree of their catch spelling (NUC 122):
-+// 'EXCEPT COLON' and 'EXCEPT EXCEPTION COLON' are 'CATCH COLON', binding the
-+// name error, and 'EXCEPT EXCEPTION AS name COLON' is 'CATCH name COLON'. The
-+// whole header, through its COLON, is matched before any of it is consumed,
-+// and its suite is the explicit-colon suite of CATCH. Any other EXCEPT where
-+// CATCH is expected, a header without its COLON included, keeps
-+// SyntaxError("Expected 'catch' after 'try'") at the EXCEPT. On an inline
-+// body's line, EXCEPT after ';' begins another statement of the body, and a
-+// destructuring, enumLine or predicateSentence ends only before NEWLINE, ';',
-+// DEDENT, '}', EOF, ELSE or CATCH, never before EXCEPT.
-+exceptClause
-+    : EXCEPT (EXCEPTION (AS name)?)? suite
-+    ;
++    let numbers: Vec<f64> = values.iter().map(Value::to_number).collect();
++    let count = number::from_usize(numbers.len());
++    let mean = numbers.iter().fold(0.0, |total, value| total + value) / count;
++    let squares = numbers.iter().fold(0.0, |total, value| {
++        let deviation = value - mean;
++        total + deviation * deviation
++    });
 +
-+// FINALLY starts the logical line after the catch or except body, at the
-+// tryStmt's layout level: only NEWLINEs follow that body, and the token before
-+// FINALLY is a NEWLINE or the DEDENT that closes it. FINALLY on that
- // body's line, after ';', or inside '(' and '[', which suppress layout, keeps
- // its name reading, and so does 'FINALLY COLON name' before NEWLINE, ';',
- // DEDENT or EOF, which stays a typeDeclaration.
-@@ -911,6 +929,8 @@ enumName
-     | PATH
-     | INTERSECT
-     | EXCEPT
-+    | EXCEPTION
-+    | AS
-     | UNION
-     | NODES
-     | HOLDS
-@@ -1001,6 +1021,8 @@ DEPTH            : 'depth';
- PATH             : 'path';
- INTERSECT        : 'intersect';
- EXCEPT           : 'except';
-+EXCEPTION        : 'Exception';
-+AS               : 'as';
- UNION            : 'union';
- NODES            : 'nodes';
- HOLDS            : 'holds';
-@@ -1194,6 +1216,8 @@ fragment REGEX_CHAR
-  * new X(...)               -> X(...).
-  * for xs:                  -> iteration with the item name "it".
-  * catch without a name     -> the binding "error".
-+ * except:                  -> catch:, also except Exception:.
-+ * except Exception as e:   -> catch e:.
-  * model directly before |> -> Expr::Model.
-  * |> intersect(model)      -> its other selection is Expr::Model; also except
-  *                             and union.
++    Some(squares / count)
++}
++
+ impl Runtime {
+     pub(super) fn aggregate_items(
+         &mut self,
+@@ -81,6 +98,9 @@ impl Runtime {
+             "distinct" => Value::List(self.distinct_values(values)),
+             "mode" => self.mode_value(values),
+             "median" => median_value(&values),
++            "variance" => population_variance(&values).map_or(Value::Undefined, Value::Number),
++            "stdev" => population_variance(&values)
++                .map_or(Value::Undefined, |variance| Value::Number(variance.sqrt())),
+             _ => builtins::math(property, &values)?,
+         })
+     }
 ```
 
 #### Recent Merged Pull Requests:
@@ -2134,22 +1922,48 @@ and advan
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 123 List and Population Variances and Standard Deviations
+## X. NUC 123 List and Population Variances and Standard Deviations
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `52f8bf48`: Draft NUC 123 List and Population Variances and Standard Deviations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9631a1dd`: NUC 123 List and Population Variances and Standard Deviations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Draft |
-| [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Standards Track | Utility enhancement | Draft |
+## List and population variances and standard deviations
+
+**Standard deviations keep the scatter of delivery times live as orders change**
+
+```nuc
+class Delivery(minutes):
+    this.minutes = minutes
+Delivery(30)
+Delivery(25)
+late = Delivery(35)
+scatter = Delivery.stdev(delivery -> delivery.minutes)
+assert(scatter, 4.08248290463863)
+late.minutes = 90
+Delivery(40)
+assert(scatter, 25.829972899714782)
+```
+
+- [NUC 123](docs/nuc-0123.md) adds `variance()` and `stdev()`, with and
+  without a selector, to lists and class instance lists.
+  `Delivery.stdev(delivery -> delivery.minutes)` is the population standard
+  deviation of the delivery times: the square root of their mean squared
+  distance from their mean.
+- `scatter` is a live declaration, so a slower delivery and a new order both
+  update it. The distances are taken from the mean, which keeps the spread
+  of large values where the mean of the squares minus the square of the mean
+  cancels it, and `variance()` gives the square of the same spread. See the
+  [root contract](nucleoid.spec.md#list-and-population-variances-and-standard-deviations).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2159,7 +1973,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `52f8bf48` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9631a1dd` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -585,8 +585,8 @@
     "sourceUrl": "https://huggingface.co/nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2",
     "sourceVersion": "hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2",
     "license": "Open-Source",
-    "contentHash": "6f07474fa387533dbadb621e1e9a1a9a5e14f0756eba21058c7a105c175b5641",
-    "lastHarvestedAt": "2026-11-14T21:50:27.410Z",
+    "contentHash": "d8165b052b7c000a72a4844bcabfc8a8ace47fd45927a76259a05004bf36f514",
+    "lastHarvestedAt": "2026-11-19T13:21:47.434Z",
     "learningId": "learn-huggingface-nerkyor-qwen3-8-27b-coder390-efficientthink-opus5-5-gpt6astra-grok4-7-dsv4pro-k3-sft-rloo-mtp-dflash2"
   },
   "hf-psrben-visionhope": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "08c6985f",
+    "sourceVersion": "9631a1dd",
     "license": "Apache-2.0",
-    "contentHash": "37d22bf1540a9e13f70f84a8570f1181171c21c532709946852dc28ef195a70f",
-    "lastHarvestedAt": "2026-11-19T11:50:44.610Z",
+    "contentHash": "9e788b3191342b30ee27cdaa9d8bd0d1f1964465df9ed318351bfd5f366ec892",
+    "lastHarvestedAt": "2026-11-19T13:22:01.411Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -7103,10 +7103,10 @@
     "repository": "pingcap/tidb",
     "platform": "github",
     "sourceUrl": "https://github.com/pingcap/tidb",
-    "sourceVersion": "5f929142",
+    "sourceVersion": "e35413c6",
     "license": "Apache-2.0",
-    "contentHash": "f4372e656cbf8f58a24b5aa6adf63b1f4f26c551a7712aa5059bc2b2f014ac2f",
-    "lastHarvestedAt": "2026-11-18T12:03:29.368Z",
+    "contentHash": "8b203522e4218e916b67ad71c1feb67d89d8bd6b985ca57ab41c4f5e00512937",
+    "lastHarvestedAt": "2026-11-19T13:21:55.641Z",
     "learningId": "learn-github-pingcap-tidb"
   },
   "neondatabase-neon": {
@@ -7303,10 +7303,10 @@
     "repository": "zenbu-labs/terminal-browser",
     "platform": "github",
     "sourceUrl": "https://github.com/zenbu-labs/terminal-browser",
-    "sourceVersion": "77abba97",
+    "sourceVersion": "f7c51579",
     "license": "MIT",
-    "contentHash": "509372e2f3a16f1c095839e3623b9dbe81552efa7004d2c8a50b54bde2fe2fee",
-    "lastHarvestedAt": "2026-11-17T18:26:25.978Z",
+    "contentHash": "7158d7d3ed33ae41f88681a136225be0e8e21e8475bb3bb4e29268a39d8d855d",
+    "lastHarvestedAt": "2026-11-19T13:21:46.887Z",
     "learningId": "learn-github-zenbu-labs-terminal-browser"
   },
   "kosi-libs-kodein": {

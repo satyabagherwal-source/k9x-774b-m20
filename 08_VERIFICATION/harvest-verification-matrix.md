@@ -11271,3 +11271,7 @@
 | `CYCLE-20261119-FEBC` | `2026-11-19T13:07:57.624Z` | `FrancisRing/Prism` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-francisring-prism-learnings.md` | Yes (`e585a0b2...`) |
 | `CYCLE-20261119-FFSE` | `2026-11-19T13:07:59.534Z` | `xevrion/hatchzip` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9377` | Yes (`2ca6466a...`) |
 | `CYCLE-20261119-FJP4` | `2026-11-19T13:08:04.600Z` | `CrossPaste/crosspaste-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9378` | Yes (`422b6c3c...`) |
+| `CYCLE-20261119-X66B` | `2026-11-19T13:21:46.883Z` | `zenbu-labs/terminal-browser` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9379` | Yes (`7158d7d3...`) |
+| `CYCLE-20261119-X6LI` | `2026-11-19T13:21:47.430Z` | `nerkyor/Qwen3.8-27B-Coder390-EfficientThink-Opus5.5-GPT6Astra-Grok4.7-DSV4Pro-K3-SFT-RLOO-MTP-DFlash2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nerkyor-qwen3.8-27b-coder390-efficientthink-opus5.5-gpt6astra-grok4.7-dsv4pro-k3-sft-rloo-mtp-dflash2-learnings.md` | Yes (`d8165b05...`) |
+| `CYCLE-20261119-XCXH` | `2026-11-19T13:21:55.637Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9380` | Yes (`8b203522...`) |
+| `CYCLE-20261119-XHDR` | `2026-11-19T13:22:01.407Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`9e788b31...`) |

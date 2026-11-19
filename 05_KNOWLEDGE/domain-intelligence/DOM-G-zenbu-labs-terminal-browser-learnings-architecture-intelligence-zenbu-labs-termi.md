@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T18:26:42.933Z",
+  "timestamp": "2026-11-19T13:22:04.962Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zenbu-labs-terminal-browser-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zenbu-labs-terminal-browser-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T18:26:42.933Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T13:22:04.962Z`  
 > **Learning ID**: `LEARN-EVO-zenbu-labs-terminal-browser-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 63%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), A (Human & Need Intelligence), B (Product Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zenbu-labs-terminal-browser-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source**: github ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
-> **Source Version**: `77abba97`  
+> **Source Version**: `f7c51579`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T18:26:25.053Z  
+> **Timestamp**: 2026-11-19T13:21:45.856Z  
 > **Learning ID**: `learn-github-zenbu-labs-terminal-browser`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zenbu-labs-terminal-browser-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zenbu-labs/terminal-browser](https://github.com/zenbu-labs/terminal-browser))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T18:26:25.048Z  
+> **Harvest Timestamp**: 2026-11-19T13:21:45.745Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A real browser inside your terminal
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4697 stars
+- **Stars / Engagement**: 4719 stars
 
 ---
 
@@ -1578,165 +1578,270 @@ impl Bridge {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `77abba97` (2026-11-16)
-**Commit Message**: add flag for no agent indicator (#299)
+### Incident Patch 1: `f7c51579` (2026-11-19)
+**Commit Message**: Add setting for tiled image transmission (#308)
 
-**File**: `browser/src/session/session.tsx` (modified, +5/-1)
+**File**: `browser/src/session/session.tsx` (modified, +1/-0)
 ```diff
-@@ -548,7 +548,11 @@ class Session {
-         layout={this.layout}
-         colors={this.root.info.colors}
-         findOpen={this.findOpen}
--        tabs={this.tabs.view()}
-+        tabs={
-+          this.ctx.env.TERMINAL_BROWSER_NO_AGENT_INDICATOR === "1"
-+            ? this.tabs.view().map((tab) => ({ ...tab, agentControlled: false }))
-+            : this.tabs.view()
-+        }
-         newTab={
-           this.newTab
-             ? { suggestions: this.newTabRows(), index: this.newTab.index }
+@@ -1114,6 +1114,7 @@ class Session {
+       maxFps: maxFps(this.settings.get("render.fps"), displayHz()),
+       highlightTransmits: this.settings.get("render.transmitOutlines") === "on",
+       frameEvents: this.settings.get("render.frameEvents") === "on",
++      tiles: this.settings.get("render.tiles"),
+     };
+     root.setRender(render);
+     root.setLogFile(this.settings.get("debug.logFile") === "on" ? ENGINE_LOG_FILE : null);
+```
+
+**File**: `pixel/AGENT-DOCS.md` (modified, +1/-1)
+```diff
+@@ -137,7 +137,7 @@ function createRoot(options?: RootOptions): Root
+ | `setKeyCapture(keys: string[])` | listed unmodified keys (`"enter"`, `"escape"`, `"a"`) go to `onKey` even while an `Input` is focused; keys with ctrl/alt/shift/super never match |
+ | `registerFont(face: FontFace): Promise<void>` | adds a font file to a family after startup; text laid out afterwards can use it |
+ | `createSurface(): Surface` | creates a pixel surface for `<Box surface>` |
+-| `setRender({ maxFps?, highlightTransmits?, frameEvents? })` | frame rate cap and render debug options |
++| `setRender({ maxFps?, highlightTransmits?, frameEvents?, tiles? })` | frame rate cap and render debug options; `tiles` (`"auto"`, `"on"`, `"off"`) sends image updates as non overlapping tiles instead of overlaid patches; `"auto"` tiles in rex |
+ | `openDevtools(tab?)` / `closeDevtools()` | built in devtools for the React UI |
+ | `startProfile()` / `stopProfile(): Promise<string \| null>` | records a profile, returns its path |
+ | `setLogFile(path \| null)` | writes engine logs to a file |
+```
+
+**File**: `pixel/engine/crates/pixel-kitty/src/lib.rs` (modified, +6/-0)
+```diff
+@@ -97,6 +97,7 @@ pub struct Kitty {
+     patches: present::Patched,
+     animation: present::Animation,
+     highlight_transmits: bool,
++    force_tiles: Option<bool>,
+     present_at: Option<Instant>,
+     ready_at: Option<Instant>,
+     shm_pool: Option<shm_pool::ShmPool>,
+@@ -187,6 +188,7 @@ impl Kitty {
+             patches: present::Patched::default(),
+             animation: present::Animation::default(),
+             highlight_transmits: false,
++            force_tiles: None,
+             present_at: None,
+             ready_at: None,
+             shm_pool: None,
+@@ -415,6 +417,10 @@ impl Kitty {
+         self.highlight_transmits = on;
+     }
+ 
++    pub fn set_force_tiles(&mut self, on: Option<bool>) {
++        self.force_tiles = on;
++    }
++
+     pub fn holds_a_frame(&self) -> bool {
+         self.patches.holds_a_frame()
+     }
+```
+
+**File**: `pixel/engine/crates/pixel-kitty/src/present/mod.rs` (modified, +12/-0)
+```diff
+@@ -58,6 +58,10 @@ impl Identity {
+             Identity::Unknown => false,
+         }
+     }
++    fn prefers_tiles(self) -> bool {
++        matches!(self, Identity::Rex)
++    }
++
+     pub(crate) fn is_ghostty(self) -> bool {
+         matches!(self, Identity::Ghostty { .. })
+     }
+@@ -312,6 +316,14 @@ impl Kitty {
+ mod tests {
+     use super::*;
+ 
++    #[test]
++    fn only_rex_prefers_tiles() {
++        assert!(Identity::Rex.prefers_tiles());
++        assert!(!Identity::Ghostty { version: (1, 3, 2) }.prefers_tiles());
++        assert!(!Identity::Kitty { version: (0, 48, 0) }.prefers_tiles());
++        assert!(!Identity::Unknown.prefers_tiles());
++    }
++
+     #[test]
+     fn xtversion_replies_identify_ghostty_kitty_and_rex() {
+         assert_eq!(
+```
+
+**File**: `pixel/engine/crates/pixel-kitty/src/present/patched.rs` (modified, +3/-1)
+```diff
+@@ -60,7 +60,9 @@ impl Kitty {
+         let canvas = frame.canvas;
+         let size = (canvas.width, canvas.height);
+         let on_screen = std::mem::take(&mut self.patches.opaque);
+-        self.patches.opaque.extend(frame.opaque.iter().filter_map(|area| {
++        let tiled = self.force_tiles.unwrap_or(self.identity.prefers_tiles());
++        let opaque = if tiled { &[][..] } else { frame.opaque };
++        self.patches.opaque.extend(opaque.iter().filter_map(|area| {
+             let rect = area.rect.clamped(size.0, size.1);
+             (!rect.is_empty()).then_some(OpaqueArea { surface: area.surface, rect }) // im not entirely sure why we are passing area.surface here? hm
+         }));
+```
+
+**File**: `pixel/engine/crates/pixel-node/src/terminal_ops.rs` (modified, +21/-2)
+```diff
+@@ -27,9 +27,19 @@ enum TerminalOp {
+         highlight_transmits: Option<bool>,
+         #[serde(default)]
+         frame_events: Option<bool>,
++        #[serde(default)]
++        tiles: Option<Tiles>,
+     },
+ }
+ 
++#[derive(Deserialize)]
++#[serde(rename_all = "camelCase")]
++enum Tiles {
++    Auto,
++    On,
++    Off,
++}
++
+ pub struct TerminalOps;
+ 
+ impl HostOps for TerminalOps {
+@@ -38,12 +48,21 @@ impl HostOps for TerminalOps {
+             return false;
+         };
+         match op {
+-            TerminalOp::Presenter { highlight_transmits, frame_events } => {
++            TerminalOp::Presenter { highlight_transmits, frame_events, tiles } => {
+                 if let Some(on) = highlight_transmits
+                     && let Some(terminal) = terminal(engine)
+                 {
+                     terminal.set_highlight_transmits(on);
+                 }
++                if let Some(tiles) = tiles
++                    && let Some(terminal) = terminal(engine)
++                {
++                    terminal.set_force_tiles(match tiles {
++                        Tiles::Auto => None,
++                        Tiles::On => Some(true),
++                        Tiles::Off => Some(false),
++                    });
++                }
+                 if let Some(on) = frame_events {
+                     let font = on.then(|| engine.fonts[0].clone());
+                     if let Some(terminal) = terminal(engine) {
+@@ -81,7 +100,7 @@ mod tests {
+     #[test]
+     fn presenter_reads_camel_cased_fields_and_leaves_missing_ones_unset() {
+         let op: TerminalOp = serde_json::from_str(r#"{"op":"presenter","highlightTransmits":true}"#).unwrap();
+-        let TerminalOp::Presenter { highlight_transmits, frame_events } = op else {
++        let TerminalOp::Presenter { highlight_transmits, frame_events, .. } = op else {
+             panic!("parsed as another op");
+         };
+         assert_eq!(highlight_transmits, Some(true));
+```
+
+**File**: `pixel/engine/crates/pixel-terminal/src/backend.rs` (modified, +4/-0)
+```diff
+@@ -147,6 +147,10 @@ impl TerminalBackend {
+         self.presenter.highlight_transmits(on);
+     }
+ 
++    pub fn set_force_tiles(&mut self, on: Option<bool>) {
++        self.presenter.force_tiles(on);
++    }
++
+     pub fn note(&mut self, text: String) {
+         self.presenter.note(text);
+     }
+```
+
+**File**: `pixel/engine/crates/pixel-terminal/src/presenter.rs` (modified, +5/-0)
+```diff
+@@ -77,6 +77,7 @@ pub(crate) trait Presenter: Send {
+         Ok(())
+     }
+     fn highlight_transmits(&mut self, _on: bool) {}
++    fn force_tiles(&mut self, _on: Option<bool>) {}
+ }
+ 
+ pub(crate) struct KittyPresenter {
+@@ -239,6 +240,10 @@ impl Presenter for KittyPresenter {
+     fn highlight_transmits(&mut self, on: bool) {
+         self.kitty.set_highlight_transmits(on);
+     }
++
++    fn force_tiles(&mut self, on: Option<bool>) {
++        self.kitty.set_force_tiles(on);
++    }
+ }
+ 
+ pub(crate) struct CellsPresenter {
 ```
 
 ---
 
-### Incident Patch 2: `b7706599` (2026-11-16)
-**Commit Message**: update site
+### Incident Patch 2: `e3153d33` (2026-11-18)
+**Commit Message**: read rects from layout instead of queued state (#304)
 
-**File**: `pixel/website/app/components/wordmark.tsx` (modified, +8/-8)
+**File**: `pixel/packages/pixel/src/layout.ts` (modified, +11/-26)
 ```diff
-@@ -13,15 +13,15 @@ const LETTERS = [
-   { letter: "x" },
-   { letter: "e" },
-   { letter: "l" },
--  { letter: "g", color: "var(--r)" },
--  { letter: "u", color: "var(--g)" },
--  { letter: "i", color: "var(--b)" },
-+  { letter: "g", color: "r" },
-+  { letter: "u", color: "g" },
-+  { letter: "i", color: "b" },
- ];
--const ROWS = 9;
--const CELL = 15;
--const GAP = 1;
-+export const ROWS = 9;
-+export const CELL = 15;
-+export const GAP = 1;
+@@ -1,8 +1,6 @@
+-import { useContext, useEffect, useLayoutEffect, useState } from "react";
++import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useSyncExternalStore } from "react";
+ import type { RefObject } from "react";
  
--function layout() {
-+export function layout() {
-   let width = 0;
-   const cells: { x: number; y: number; color?: string }[] = [];
-   for (const { letter, color } of LETTERS) {
-@@ -46,7 +46,7 @@ export default function Wordmark() {
-       viewBox={`0 0 ${width * CELL} ${ROWS * CELL}`}
-     >
-       {cells.map(({ x, y, color }) => (
--        <rect key={`${x}-${y}`} x={x * CELL} y={y * CELL} width={CELL - GAP} height={CELL - GAP} fill={color} />
-+        <rect key={`${x}-${y}`} x={x * CELL} y={y * CELL} width={CELL - GAP} height={CELL - GAP} fill={color && `var(--${color})`} />
-       ))}
-     </svg>
-   );
-```
-
-**File**: `pixel/website/app/layout.tsx` (modified, +4/-4)
-```diff
-@@ -14,18 +14,18 @@ const DESCRIPTION = "Build graphical applications in the terminal";
+-import { debug } from "./debug";
+-import type { LayoutSnapshot } from "./react";
+ import type { NodeHandle } from "./react";
+ import { RootContext } from "./registry";
+ import type { ViewRegistry } from "./registry";
+@@ -18,29 +16,16 @@ export function useRect(node: RefObject<NodeHandle | null>): Rect | null {
  
- export const metadata: Metadata = {
-   metadataBase: new URL("https://pixelgui.com"),
--  title: "pixel",
-+  title: "pixelgui",
-   description: DESCRIPTION,
-   openGraph: {
--    title: "Pixel",
-+    title: "pixelgui",
-     description: DESCRIPTION,
-     url: "/",
--    siteName: "Pixel",
-+    siteName: "pixelgui",
-     type: "website",
-   },
-   twitter: {
-     card: "summary_large_image",
--    title: "Pixel",
-+    title: "pixelgui",
-     description: DESCRIPTION,
-   },
- };
-```
-
-**File**: `pixel/website/app/opengraph-image.tsx` (modified, +24/-15)
-```diff
-@@ -1,20 +1,34 @@
- import { ImageResponse } from "next/og";
- import { readFile } from "node:fs/promises";
- import { join } from "node:path";
-+import { CELL, GAP, ROWS, layout } from "./components/wordmark";
  
--export const alt = "Pixel · Build graphical applications in the terminal";
-+export const alt = "pixelgui · Build graphical applications in the terminal";
- export const size = { width: 1200, height: 630 };
- export const contentType = "image/png";
- 
--const TITLE_PX = 110;
--const LOGO_PX = 90;
-+const WORDMARK_WIDTH_PX = 760;
-+const COLORS: Record<string, string> = { r: "#ff4d5e", g: "#3ddc84", b: "#4d9fff" };
- 
--function Logo() {
-+function Wordmark() {
-+  const { cells, width } = layout();
-   return (
--    <svg width={LOGO_PX} height={LOGO_PX} viewBox="0 0 32 32" shapeRendering="crispEdges">
--      <rect x="9" y="2" width="14" height="14" fill="#ff4d5e" />
--      <rect x="1" y="17" width="14" height="14" fill="#3ddc84" />
--      <rect x="17" y="17" width="14" height="14" fill="#4d9fff" />
-+    <svg
-+      width={WORDMARK_WIDTH_PX}
-+      height={(WORDMARK_WIDTH_PX * ROWS) / width}
-+      viewBox={`0 0 ${width * CELL} ${ROWS * CELL}`}
-+      shapeRendering="crispEdges"
-+    >
-+      {cells.map(({ x, y, color }) => (
-+        <rect
-+          key={`${x}-${y}`}
-+          x={x * CELL}
-+          y={y * CELL}
-+          width={CELL - GAP}
-+          height={CELL - GAP}
-+          fill={color ? COLORS[color] : "#eeeeee"}
-+        />
-+      ))}
-     </svg>
-   );
- }
-@@ -40,14 +54,9 @@ export default async function OpengraphImage() {
-           fontFamily: "JetBrains Mono",
-         }}
-       >
--        <div style={{ display: "flex", alignItems: "center", gap: 34 }}>
--          <span style={{ fontSize: TITLE_PX, fontWeight: 600, letterSpacing: -1, color: "#eeeeee", lineHeight: 1 }}>
--            Pixel
--          </span>
--          <Logo />
--        </div>
-+        <Wordmark />
-         {/* fixme: placeholder copy */}
--        <div style={{ marginTop: 40, fontSize: 36, color: "#8c8c8c" }}>Build graphical applications in the terminal</div>
-+        <div style={{ marginTop: 56, fontSize: 36, color: "#8c8c8c" }}>Build graphical applications in the terminal</div>
-       </div>
-     ),
-     {
+ export function useNodeRect(node: RefObject<NodeHandle | null>, registry: ViewRegistry): Rect | null {
+-  const [rect, setRect] = useState<Rect | null>(null);
+-  // subscribed before the query below goes out, or the reply can land first and be missed
+-  useLayoutEffect(
+-    () =>
+-      registry.layout.subscribe(() => {
+-        const id = node.current?.id;
+-        const snapshot = registry.layout.get();
+-        debug("layout reply", { id, nodes: snapshot.rects.size, found: id != null ? snapshot.rects.get(id) : null });
+-        if (id == null) return;
+-        const found = snapshot.rects.get(id);
+-        if (!found) return;
+-        setRect((prev) =>
+-          prev &&
+-          prev.x === found.x &&
+-          prev.y === found.y &&
+-          prev.width === found.w &&
+-          prev.height === found.h
+-            ? prev
+-            : { x: found.x, y: found.y, width: found.w, height: found.h },
+-        );
+-      }),
+-    [node, registry],
+-  );
++  const last = useRef<Rect | null>(null);
++  const read = useCallback(() => {
++    const id = node.current?.id;
++    const found = id != null ? registry.layout.get().rects.get(id) : undefined;
++    const prev = last.current;
++    if (!found || (prev && prev.x === found.x && prev.y === found.y && prev.width === found.w && prev.height === found.h)) return prev;
++    last.current = { x: found.x, y: found.y, width: found.w, height: found.h };
++    return last.current;
++  }, [node, registry]);
++  const rect = useSyncExternalStore(registry.layout.subscribe, read);
+   useLayoutEffect(() => {
+     const watcher = () => node.current?.id;
+     registry.rectWatchers.add(watcher);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #308** (2026-11-19): Add setting for tiled image transmission (@RobPruzan)
+- **PR #304** (2026-11-18): read rects from layout instead of queued state (@RobPruzan)
+- **PR #303** (2026-11-17): don't auto show scrollbar (@RobPruzan)
 - **PR #299** (2026-11-16): add flag for no agent indicator (@RobPruzan)
 - **PR #298** (2026-11-16): in-memory webview partitions (@RobPruzan)
 - **PR #297** (2026-11-15): change pixel hero (@RobPruzan)
-- **PR #294** (2026-11-15): code block copy button (@RobPruzan)
-- **PR #293** (2026-11-15): improve ssh scroll perf (@RobPruzan)
-- **PR #286** (2026-11-13): fix phone crashes from reserved address space (@RobPruzan)
 
 ---
 
@@ -1756,13 +1861,13 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. add flag for no agent indicator
+## X. Add setting for tiled image transmission
 
 **RULE**:
 When implementing operations in `browser/src/session/session.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zenbu-labs/terminal-browser. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `77abba97`: add flag for no agent indicator. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f7c51579`: Add setting for tiled image transmission. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `browser/src/session/session.tsx`.
@@ -1770,21 +1875,17 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-        tabs={
-          this.ctx.env.TERMINAL_BROWSER_NO_AGENT_INDICATOR === "1"
-            ? this.tabs.view().map((tab) => ({ ...tab, agentControlled: false }))
-            : this.tabs.view()
-        }
+      tiles: this.settings.get("render.tiles"),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-        tabs={this.tabs.view()}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `77abba97` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f7c51579` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
