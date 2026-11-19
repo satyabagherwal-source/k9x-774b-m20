@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T07:51:15.369Z",
+  "last_updated": "2026-11-19T08:09:21.546Z",
   "total_verified_learnings": 9015,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21697,
+  "total_items": 21705,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113521,10 +113521,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-volcengine-openviking-technical-construction-intelligence-volcengine-openviking-.md",
       "title": "Technical Construction Intelligence: volcengine/OpenViking Core Invariants",
       "repository": "volcengine/OpenViking",
-      "source_version": "8f113dc5",
-      "content_hash": "a2461bf1f53ee965c162587aefd651bfeb7f076f18b0df7558ed3a9af76350ce",
+      "source_version": "15845c2a",
+      "content_hash": "8bb19b8abb9f350ae3d19eb8ee0dba8588a1b4d77dee9a74930f3ed8ee17b702",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T15:51:35.734Z"
+      "persisted_at": "2026-11-19T08:08:46.204Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking",
@@ -113533,10 +113533,10 @@
       "relative_path": "08_VERIFICATION/volcengine-openviking-verification-protocol-empirical-defect-shield-for-volcengi.md",
       "title": "Verification Protocol: Empirical Defect Shield for volcengine/OpenViking",
       "repository": "volcengine/OpenViking",
-      "source_version": "8f113dc5",
-      "content_hash": "e7da007cabe0cbe4089ba36286fe2fd2cd75f68e86808947dc2b64d9e6ad0f2b",
+      "source_version": "15845c2a",
+      "content_hash": "5a8bba67174b45c70779b64b44d37e3f63e112a44c7bc30b12f60e888d8e1cbf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T15:51:35.873Z"
+      "persisted_at": "2026-11-19T08:08:46.478Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-qwen-image-2-1-learnings-core-invar",
@@ -113582,9 +113582,9 @@
       "title": "Technical Construction Intelligence: volcengine-openviking-learnings Core Invariants",
       "repository": "volcengine-openviking-learnings",
       "source_version": "HEAD",
-      "content_hash": "132cf7fc9bceb97d3861ee2ccd27a312c4980e5aca032f0089c0d160b19cda31",
+      "content_hash": "843ce197672be08f580bdf6b09fd2cce7c680edf695b2f96414ae1388b8380f0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T15:51:42.054Z"
+      "persisted_at": "2026-11-19T08:09:20.751Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-volcengine-openviking-learning",
@@ -113594,9 +113594,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for volcengine-openviking-learnings",
       "repository": "volcengine-openviking-learnings",
       "source_version": "HEAD",
-      "content_hash": "d9eacb872af7629e0f8d89a6be7da451164aa24112423793054d995fc3393e85",
+      "content_hash": "5ba3844cdbd96e6229bd5c3cc32052bed421e0ec5d16be147989535783a38a1d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T15:51:42.196Z"
+      "persisted_at": "2026-11-19T08:09:21.050Z"
     },
     "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-akhilaaa3-jev-omni-core-invariants",
@@ -234407,7 +234407,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/d1-3B",
       "source_version": "hf-liquidai-d1-3b",
-      "content_hash": "1b4f6565e67037ac6c56ae90bf85a8368170e29f33d88e17fe3a1a9c9f54e56d",
+      "content_hash": "79ea85b7271e5445b29b3ab8a04a1c8cdd51c7a764279754557d7f9a750807db",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md",
       "promoted_rules": [],
@@ -234416,7 +234416,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T18:26:19.817Z",
+      "verified_at": "2026-11-19T08:03:00.190Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234433,9 +234433,9 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/d1-3B Core Invariants",
       "repository": "LiquidAI/d1-3B",
       "source_version": "hf-liquidai-d1-3b",
-      "content_hash": "7cba17b48c205e199e0b0dbfc924aa9f007e9b064fa3a94863f69e21368036c8",
+      "content_hash": "150ff4e8832613b33f8408ac91ab39d7707432c6cb43ca5a5354616179b8b97f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T18:26:20.186Z"
+      "persisted_at": "2026-11-19T08:03:00.568Z"
     },
     "learn-github-google-tcmalloc": {
       "learning_id": "learn-github-google-tcmalloc",
@@ -234667,9 +234667,9 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-d1-3b-learnings Core Invariants",
       "repository": "hf-liquidai-d1-3b-learnings",
       "source_version": "HEAD",
-      "content_hash": "1f14fae2176fa974d98a3907b25aece889a55ef8e1c56aafb4be055cbb20b84b",
+      "content_hash": "ec1618b932c904b396240521c4eb5e83520f687fa70d8555b9b70fb1759dc5e9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T18:27:16.486Z"
+      "persisted_at": "2026-11-19T08:08:49.482Z"
     },
     "candidate_directive-player-prevent-ios-video-enhancement-menu-crash": {
       "item_id": "candidate_directive-player-prevent-ios-video-enhancement-menu-crash",
@@ -239250,14 +239250,29 @@
       "slug": "volcengine-openviking",
       "platform": "github",
       "source_url": "https://github.com/volcengine/OpenViking",
-      "source_version": "8f113dc5",
-      "content_hash": "768823d74f7a6487881d222fc2e8d74e4c3919ad27d996403eecf677188d9f6d",
+      "source_version": "15845c2a",
+      "content_hash": "3f413a38770f4826b557634992221f2c531ce5339e140cdb5168e6a8790c80ee",
       "dossier_path": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/volcengine-openviking-learnings.md",
       "promoted_rules": [
         {
           "number": 8727,
           "title": "route Linux API jobs and wheel builds to dedicated runner",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9356,
+          "title": "The Asynchronous Commit Queue Barrier Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9357,
+          "title": "Multi-Tier Policy Inheritance Overwrite Guard",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9358,
+          "title": "File System URI Segment Idempotent Decoding Invariant",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -239266,7 +239281,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T15:51:35.190Z",
+      "verified_at": "2026-11-19T08:08:45.366Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -287005,9 +287020,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "2563c5bd6db6e447c68d4c92c8fb3ef0d9a7d22549afbf71597541d3f28be886",
+      "content_hash": "edc28850c3090d016db92304f06179e6b88eb9e57046ae94c478af6927643c19",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T02:03:45.609Z"
+      "persisted_at": "2026-11-19T08:09:21.546Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -293215,6 +293230,108 @@
       "content_hash": "06bcb49902dbd5a6e085eaef9e5e171260d2cdce0651e838f026b4cd21918039",
       "domain_letter": "G",
       "persisted_at": "2026-11-19T07:51:15.088Z"
+    },
+    "rule-9356": {
+      "learning_id": "rule-9356",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9356,
+      "title": "The Asynchronous Commit Queue Barrier Invariant",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "15845c2a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T08:08:45.366Z"
+    },
+    "rule-9357": {
+      "learning_id": "rule-9357",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9357,
+      "title": "Multi-Tier Policy Inheritance Overwrite Guard",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "15845c2a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T08:08:45.366Z"
+    },
+    "rule-9358": {
+      "learning_id": "rule-9358",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9358,
+      "title": "File System URI Segment Idempotent Decoding Invariant",
+      "source_url": "https://github.com/volcengine/OpenViking",
+      "source_version": "15845c2a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T08:08:45.366Z"
+    },
+    "candidate_directive-the-asynchronous-commit-queue-barrier-invariant": {
+      "item_id": "candidate_directive-the-asynchronous-commit-queue-barrier-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RD6K-the-asynchronous-commit-queue-barrier-invariant.md",
+      "title": "The Asynchronous Commit Queue Barrier Invariant",
+      "repository": "volcengine-openviking-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ee2e5cce9981bbb3267d22f13002c3aea2b6db2f74281d771879404c3239461f",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T08:09:20.254Z"
+    },
+    "candidate_directive-multi-tier-policy-inheritance-overwrite-guard": {
+      "item_id": "candidate_directive-multi-tier-policy-inheritance-overwrite-guard",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RD6L-multi-tier-policy-inheritance-overwrite-guard.md",
+      "title": "Multi-Tier Policy Inheritance Overwrite Guard",
+      "repository": "volcengine-openviking-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e23cf44a459914a855c469ce3f5679a8c6ce708c52dea191ee0bc897fa9e43c2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T08:09:20.426Z"
+    },
+    "candidate_directive-file-system-uri-segment-idempotent-decoding-invariant": {
+      "item_id": "candidate_directive-file-system-uri-segment-idempotent-decoding-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RD6M-file-system-uri-segment-idempotent-decoding-invariant.md",
+      "title": "File System URI Segment Idempotent Decoding Invariant",
+      "repository": "volcengine-openviking-learnings",
+      "source_version": "HEAD",
+      "content_hash": "721df2467914f6b57beafdb05e172b8f078b166574b55a4cabdec1f0b6a60a3b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T08:09:20.580Z"
+    },
+    "agent_contract-agent-contract-volcengine-openviking-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-volcengine-openviking-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/volcengine-openviking-agent-contract-volcengine-openviking-autonomous-specialist.md",
+      "title": "Agent Contract: volcengine/OpenViking Autonomous Specialist Persona",
+      "repository": "volcengine/OpenViking",
+      "source_version": "15845c2a",
+      "content_hash": "f9f3aec2791aa8a7ff66fcf2677bf4dcab62e4d1f5de2321792301e950fcebaf",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T08:08:46.349Z"
+    },
+    "agent_contract-agent-contract-volcengine-openviking-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-volcengine-openviking-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/volcengine-openviking-learnings-agent-contract-volcengine-openviking-learnings-a.md",
+      "title": "Agent Contract: volcengine-openviking-learnings Autonomous Specialist Persona",
+      "repository": "volcengine-openviking-learnings",
+      "source_version": "HEAD",
+      "content_hash": "912b103262694d19b60551cdc47b480f660fffa3d49caf3219f034557d3a15b5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T08:09:20.907Z"
     }
   },
   "ai-builder-brain": {

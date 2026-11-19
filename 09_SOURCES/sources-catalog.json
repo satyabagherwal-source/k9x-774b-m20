@@ -185,8 +185,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/d1-3B",
     "sourceVersion": "hf-liquidai-d1-3b",
     "license": "Open-Source",
-    "contentHash": "1b4f6565e67037ac6c56ae90bf85a8368170e29f33d88e17fe3a1a9c9f54e56d",
-    "lastHarvestedAt": "2026-11-14T18:26:19.993Z",
+    "contentHash": "79ea85b7271e5445b29b3ab8a04a1c8cdd51c7a764279754557d7f9a750807db",
+    "lastHarvestedAt": "2026-11-19T08:03:00.379Z",
     "learningId": "learn-huggingface-liquidai-d1-3b"
   },
   "hf-cactus-compute-whistle": {
@@ -1603,10 +1603,10 @@
     "repository": "volcengine/OpenViking",
     "platform": "github",
     "sourceUrl": "https://github.com/volcengine/OpenViking",
-    "sourceVersion": "8f113dc5",
+    "sourceVersion": "15845c2a",
     "license": "AGPL-3.0",
-    "contentHash": "768823d74f7a6487881d222fc2e8d74e4c3919ad27d996403eecf677188d9f6d",
-    "lastHarvestedAt": "2026-11-17T15:51:35.382Z",
+    "contentHash": "3f413a38770f4826b557634992221f2c531ce5339e140cdb5168e6a8790c80ee",
+    "lastHarvestedAt": "2026-11-19T08:08:45.572Z",
     "learningId": "learn-github-volcengine-openviking"
   },
   "saffsanity-sill": {

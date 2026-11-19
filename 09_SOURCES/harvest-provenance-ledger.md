@@ -11266,3 +11266,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark` | `https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-19T07:51:02.038Z |
 | `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `7e9a3b23` | Multi-dimensional audit evidence | 2026-11-19T07:51:04.996Z |
 | `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `2ac8003f` | Multi-dimensional audit evidence | 2026-11-19T07:51:10.373Z |
+| `learn-huggingface-liquidai-d1-3b` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-19T08:03:00.379Z |
+| `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `15845c2a` | Multi-dimensional audit evidence | 2026-11-19T08:08:45.572Z |
+| `learn-dom-h-0d47575c` | `project://volcengine-openviking` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md` | 2026-11-19T08:09:20.017Z |

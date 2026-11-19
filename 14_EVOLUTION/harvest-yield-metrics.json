@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T07:51:10.378Z",
-  "total_cycles_completed": 10731,
-  "total_learnings_persisted": 10731,
-  "total_rules_promoted": 10124,
+  "last_updated": "2026-11-19T08:08:45.577Z",
+  "total_cycles_completed": 10733,
+  "total_learnings_persisted": 10733,
+  "total_rules_promoted": 10127,
   "history": [
-    {
-      "timestamp": "2026-11-18T14:40:45.184Z",
-      "repository": "Ontos-AI/knowhere",
-      "learningId": "learn-github-ontos-ai-knowhere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T14:48:30.013Z",
-      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T14:48:38.348Z",
       "repository": "invertase/react-native-firebase",
@@ -1403,6 +1389,20 @@
       "repository": "Tencent-TDS/KuiklyUI",
       "learningId": "learn-github-tencent-tds-kuiklyui",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T08:03:00.385Z",
+      "repository": "LiquidAI/d1-3B",
+      "learningId": "learn-huggingface-liquidai-d1-3b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T08:08:45.577Z",
+      "repository": "volcengine/OpenViking",
+      "learningId": "learn-github-volcengine-openviking",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

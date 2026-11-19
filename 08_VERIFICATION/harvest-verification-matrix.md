@@ -11233,3 +11233,6 @@
 | `CYCLE-20261119-3TSI` | `2026-11-19T07:51:02.034Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | Yes (`1aa3303a...`) |
 | `CYCLE-20261119-3W2N` | `2026-11-19T07:51:04.991Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9354` | Yes (`96568a1a...`) |
 | `CYCLE-20261119-4082` | `2026-11-19T07:51:10.370Z` | `Tencent-TDS/KuiklyUI` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9355` | Yes (`a6e87919...`) |
+| `CYCLE-20261119-J82F` | `2026-11-19T08:03:00.375Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`79ea85b7...`) |
+| `CYCLE-20261119-QMF4` | `2026-11-19T08:08:45.568Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9356, Rule 9357, Rule 9358` | Yes (`3f413a38...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T08:09:20.017Z` | `volcengine-openviking` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-0D47575C` [Domain H] | Yes (`b5fb0df1...`) |

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-3N2I",
-    "timestamp": "2026-11-17T19:27:23.274Z",
-    "repository": "yyjeqhc/webcodex",
-    "learningId": "learn-github-yyjeqhc-webcodex",
-    "contentHash": "262f70187b726a8dd0e7aa03923f3f4154ecb4bfc5366c3e912bca3e8c921f86",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-3SRR",
-    "timestamp": "2026-11-17T19:27:30.663Z",
-    "repository": "nats-io/nats-server",
-    "learningId": "learn-github-nats-io-nats-server",
-    "contentHash": "462f2d59ef9b46f969f3203798665769e716b72cf38702932cebeac233be57c9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-3WVB",
     "timestamp": "2026-11-17T19:27:35.975Z",
     "repository": "lancedb/lancedb",
@@ -7492,6 +7462,36 @@
     "contentHash": "a6e8791994d1daafdfe9d16b8e75c858774f51abd71e0f440e56072e6f4c05b2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-J82F",
+    "timestamp": "2026-11-19T08:03:00.375Z",
+    "repository": "LiquidAI/d1-3B",
+    "learningId": "learn-huggingface-liquidai-d1-3b",
+    "contentHash": "79ea85b7271e5445b29b3ab8a04a1c8cdd51c7a764279754557d7f9a750807db",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-QMF4",
+    "timestamp": "2026-11-19T08:08:45.568Z",
+    "repository": "volcengine/OpenViking",
+    "learningId": "learn-github-volcengine-openviking",
+    "contentHash": "3f413a38770f4826b557634992221f2c531ce5339e140cdb5168e6a8790c80ee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

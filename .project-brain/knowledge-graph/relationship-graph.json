@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-19T07:43:16.186Z",
+  "updated_at": "2026-11-19T08:09:20.015Z",
   "statistics": {
-    "total_nodes": 378,
+    "total_nodes": 379,
     "total_edges": 178,
     "domain_distribution": {
       "D": 253,
       "M": 1,
-      "H": 54,
+      "H": 55,
       "J": 14,
       "K": 22,
       "L": 7,
@@ -8455,6 +8455,28 @@
       ],
       "created_at": "2026-11-19T07:43:16.186Z",
       "updated_at": "2026-11-19T07:43:16.186Z"
+    },
+    "DOM-H-0D47575C": {
+      "id": "DOM-H-0D47575C",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Session Commit Overtaking Pending Offline Queue Messages",
+      "summary": "Architectural separation between the asynchronous retry queue and the synchronous session-termination handler without a logical sequence bar -> Atomic termination operations must be sequenced in the same execution pipeline as the data mutations they terminate.",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://volcengine-openviking/volcengine-openviking-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T08:08:49.633Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (volcengine-openviking)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-19T08:09:20.015Z",
+      "updated_at": "2026-11-19T08:09:20.015Z"
     }
   },
   "edges": [

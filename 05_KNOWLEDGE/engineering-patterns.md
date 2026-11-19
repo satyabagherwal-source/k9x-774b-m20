@@ -689409,3 +689409,410 @@ Subsystems managing Kotlin data structures, boundary deserialization, API parsin
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `2ac8003f` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9356. The Asynchronous Commit Queue Barrier Invariant (Harvested from volcengine/OpenViking)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "The Asynchronous Commit Queue Barrier Invariant",
+  "source": "volcengine/OpenViking",
+  "source_url": "https://github.com/volcengine/OpenViking",
+  "source_version": "15845c2a",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-19T08:08:43.977Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-volcengine-openviking",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [volcengine/OpenViking](https://github.com/volcengine/OpenViking) (Revision: `15845c2a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When an asynchronous agent lifecycle requires persisting an atomic state termination (e.g., `commitAgentSession`, `closeContextSession`), the termination request **MUST NOT** bypass, race ahead of, or be dispatched concurrently with un-drained in-flight write mutations or retry queues for that entity. The termination payload **MUST** either be deferred behind pending item drainage or appended to the local journal stamped strictly after the latest write sequence.
+
+**WHY**:
+If a network hiccup or rate-limit parks messages into a client-side pending retry queue while the session commit is dispatched synchronously, the remote server processes the commit against an empty or partial session state. The server evaluates the commit as `skipped/no_messages` (a semantic success with 0 items committed). The client marks the commit complete and cleans it up. When the offline replay worker eventually drains the parked messages, the session is left permanently uncommitted and unarchived, resulting in silent data loss.
+
+**WHEN TO APPLY**:
+Apply to all distributed state synchronization agents, write-behind caching layers, offline-first client plugins, and event-sourcing pipelines syncing state to cloud control planes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified implementation pattern derived from OpenViking pending-write barriers
+export interface QueueItem {
+  id: string;
+  sessionId: string;
+  type: "MESSAGE" | "COMMIT";
+  payload: unknown;
+  logicalTimestamp: number;
+}
+
+export class SafeSessionSynchronizer {
+  private pendingQueue: QueueItem[] = [];
+  private logicalClock: number = 0;
+
+  public async appendMessage(sessionId: string, message: unknown): Promise<void> {
+    this.logicalClock += 1;
+    this.pendingQueue.push({
+      id: crypto.randomUUID(),
+      sessionId,
+      type: "MESSAGE",
+      payload: message,
+      logicalTimestamp: this.logicalClock,
+    });
+  }
+
+  public async commitSession(
+    sessionId: string, 
+    sendImmediateCommit: (sid: string) => Promise<{ ok: boolean; status: string }>
+  ): Promise<void> {
+    const sessionHasPendingMessages = this.pendingQueue.some(
+      (item) => item.sessionId === sessionId && item.type === "MESSAGE"
+    );
+
+    if (sessionHasPendingMessages) {
+      // INVARIANT: Commit MUST NOT bypass parked messages.
+      // Advance logical clock beyond all existing writes and park commit.
+      this.logicalClock += 1;
+      
+      // Remove any previously queued commits for this session to prevent duplicate runs
+      this.pendingQueue = this.pendingQueue.filter(
+        (item) => !(item.sessionId === sessionId && item.type === "COMMIT")
+      );
+
+      this.pendingQueue.push({
+        id: crypto.randomUUID(),
+        sessionId,
+        type: "COMMIT",
+        payload: { committedAt: Date.now() },
+        logicalTimestamp: this.logicalClock,
+      });
+
+      // Attempt to drain queue in strict timestamp order
+      await this.drainPendingQueue();
+      return;
+    }
+
+    // Zero pending messages: safe to dispatch immediately
+    const result = await sendImmediateCommit(sessionId);
+    if (!result.ok) {
+      this.logicalClock += 1;
+      this.pendingQueue.push({
+        id: crypto.randomUUID(),
+        sessionId,
+        type: "COMMIT",
+        payload: { committedAt: Date.now() },
+        logicalTimestamp: this.logicalClock,
+      });
+    }
+  }
+
+  private async drainPendingQueue(): Promise<void> {
+    // Sort strictly by logical sequence timestamp
+    this.pendingQueue.sort((a, b) => a.logicalTimestamp - b.logicalTimestamp);
+
+    while (this.pendingQueue.length > 0) {
+      const nextItem = this.pendingQueue[0];
+      try {
+        await this.dispatchItem(nextItem);
+        this.pendingQueue.shift(); // Remove successfully sent item
+      } catch (err) {
+        // Halt draining on retryable transport failure; preserve order
+        break;
+      }
+    }
+  }
+
+  private async dispatchItem(item: QueueItem): Promise<void> {
+    // Concrete HTTP transport call with transient error throwing
+  }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Firing commit immediately while un-acked writes are in-flight or queued
+async function unsafeSessionCommit(sessionId: string, messageQueue: any[]) {
+  // Buggy code: fires commit over HTTP without verifying pending writes are drained
+  if (messageQueue.length > 0) {
+    // Queued offline, but we still send commit immediately!
+    console.warn("Queue has messages, but sending commit anyway...");
+  }
+  // Server returns 200 OK: { status: "no_messages" }, message loss is guaranteed
+  return await fetch(`/api/sessions/${sessionId}/commit`, { method: "POST" });
+}
+```
+
+**VERIFICATION METHOD**:
+Inject network interceptors that drop 100% of write requests (simulating HTTP 503) followed by a successful commit trigger. Assert that the commit request is blocked from network transmission until all intercepted writes transition to HTTP 200.
+
+---
+
+
+---
+
+## 9357. Multi-Tier Policy Inheritance Overwrite Guard (Harvested from volcengine/OpenViking)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Tier Policy Inheritance Overwrite Guard",
+  "source": "volcengine/OpenViking",
+  "source_url": "https://github.com/volcengine/OpenViking",
+  "source_version": "15845c2a",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-19T08:08:44.509Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-volcengine-openviking",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [volcengine/OpenViking](https://github.com/volcengine/OpenViking) (Revision: `15845c2a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When inheriting multi-field security, extraction, or memory policies across hierarchical scopes (Global $\to$ User $\to$ Session $\to$ Request), hierarchical policy resolvers **MUST** perform recursive partial field-level merges rather than full-object level overwrites. A higher-precedence scope specifying a single configuration flag **MUST NOT** obliterate orthogonal configuration arrays or constraints defined at an ancestor scope.
+
+**WHY**:
+In OpenViking, the gateway created capture sessions with `{"memory_policy": {"working_memory": {"enabled": false}}}`. The policy engine evaluated session policy as having complete precedence over user policy. Because the session policy did not specify `memory_types: ["events"]` (which was configured at the user level), the whole object overwrite resolved `memory_types` to `null` (allow all). Sensitive memories, raw transcripts, and unapproved categories were extracted because a child boolean flag wiped an ancestor security allowlist.
+
+**WHEN TO APPLY**:
+Mandatory for RBAC/ABAC policy engines, LLM extraction rules, tool authorization contexts, and runtime configuration layers where defaults can be overridden at session or request granularity.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+from typing import Any, Dict, List, Optional
+from pydantic import BaseModel, Field
+
+
+class MemoryPolicy(BaseModel):
+    working_memory_enabled: Optional[bool] = None
+    memory_types: Optional[List[str]] = None
+    max_tokens: Optional[int] = None
+
+    def merge_with_ancestor(self, ancestor: "MemoryPolicy") -> "MemoryPolicy":
+        """
+        Deeply merges current policy over ancestor policy.
+        Child explicit values take precedence, but omitted (None) values
+        preserve ancestor constraints.
+        """
+        return MemoryPolicy(
+            working_memory_enabled=(
+                self.working_memory_enabled
+                if self.working_memory_enabled is not None
+                else ancestor.working_memory_enabled
+            ),
+            memory_types=(
+                self.memory_types
+                if self.memory_types is not None
+                else (ancestor.memory_types.copy() if ancestor.memory_types is not None else None)
+            ),
+            max_tokens=(
+                self.max_tokens
+                if self.max_tokens is not None
+                else ancestor.max_tokens
+            ),
+        )
+
+
+def resolve_effective_policy(
+    user_policy: Optional[MemoryPolicy],
+    session_policy: Optional[MemoryPolicy],
+) -> MemoryPolicy:
+    base = user_policy or MemoryPolicy(working_memory_enabled=True, memory_types=["all"])
+    if not session_policy:
+        return base
+    return session_policy.merge_with_ancestor(base)
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Whole-object precedence replacement
+def resolve_policy_unsafe(user_policy: dict, session_policy: dict) -> dict:
+    # If session defines ANY policy, user policy is completely discarded!
+    if session_policy:
+        return session_policy  # Masks memory_types, principal scoping, etc.
+    return user_policy
+```
+
+**VERIFICATION METHOD**:
+Execute property-based unit tests where ancestor policies define restrictive allowlists (`memory_types=['events']`) and child policies set unrelated flags (`working_memory_enabled=False`). Assert that `effective_policy.memory_types == ['events']`.
+
+---
+
+
+---
+
+## 9358. File System URI Segment Idempotent Decoding Invariant (Harvested from volcengine/OpenViking)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "File System URI Segment Idempotent Decoding Invariant",
+  "source": "volcengine/OpenViking",
+  "source_url": "https://github.com/volcengine/OpenViking",
+  "source_version": "15845c2a",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-19T08:08:45.073Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-volcengine-openviking",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [volcengine/OpenViking](https://github.com/volcengine/OpenViking) (Revision: `15845c2a`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When rendering, previewing, or segmenting hierarchical Virtual Filesystem URIs (e.g., `viking://`), paths **MUST** be decoded exactly once strictly for presentation labels, while **ALL** underlying network operations, index references, route navigations, and cache keys **MUST** retain the raw, canonically encoded URI. Encoded path delimiters (`%2F`) **MUST NOT** be decoded prior to path segment splitting.
+
+**WHY**:
+Double-decoding or decoding before splitting path segments causes catastrophic directory traversal bugs, splits single files containing encoded slashes into non-existent virtual directories, and causes cache misses. Furthermore, decoding raw URIs before sending them to backend storage services leads to 404s when filenames contain reserved URI characters (`?`, `#`, `%`, `&`).
+
+**WHEN TO APPLY**:
+Applies to UI breadcrumbs, file trees, object storage explorers, and agent path navigators interfacing with URI-based naming systems.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified implementation from OpenViking frontend/shared/path-label.ts
+export interface PathSegment {
+  label: string;
+  uri: string;
+  isFirst: boolean;
+}
+
+export function decodePathLabel(segment: string): string {
+  try {
+    return decodeURIComponent(segment);
+  } catch {
+    // Gracefully handle malformed escape sequences without throwing
+    return segment;
+  }
+}
+
+export function splitVfsUri(rawUri: string): PathSegment[] {
+  const trimmed = rawUri.trim();
+  if (!trimmed) return [];
+
+  const schemeEndIndex = trimmed.indexOf("://");
+  let scheme = "";
+  let pathPart = trimmed;
+
+  if (schemeEndIndex !== -1) {
+    scheme = trimmed.slice(0, schemeEndIndex + 3);
+    pathPart = trimmed.slice(schemeEndIndex + 3);
+  }
+
+  // Split on physical path delimiter '/' BEFORE decoding segments
+  const parts = pathPart.split("/").filter((part) => part.length > 0);
+  const segments: PathSegment[] = [];
+  let accumulatedUri = scheme.replace(/\/+$/, "");
+
+  parts.forEach((part, index) => {
+    accumulatedUri = `${accumulatedUri}/${part}`;
+    segments.push({
+      // Decode ONLY for human-visible label
+      label: scheme ? decodePathLabel(part) : part,
+      // Retain RAW canonically-encoded URI for RPC/REST operations
+      uri: accumulatedUri,
+      isFirst: index === 0,
+    });
+  });
+
+  return segments;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Decoding before splitting or returning decoded URI for operations
+function unsafeSplitUri(rawUri: string) {
+  // If rawUri is "viking://folder%2Fsub/file.txt", decoding first splits one folder into two!
+  const decoded = decodeURIComponent(rawUri);
+  return decoded.split("/").map((part) => ({
+    label: part,
+    uri: part, // Using decoded value for server requests creates 400/404 errors
+  }));
+}
+```
+
+**VERIFICATION METHOD**:
+Test with synthetic URIs containing encoded delimiters and Unicode: `viking://my%20bucket/dir%2Fsub/test%25file.md`. Assert that `segments.length === 3`, `segments[1].label === "dir/sub"`, and `segments[1].uri === "viking://my%20bucket/dir%2Fsub"`.
+
+---

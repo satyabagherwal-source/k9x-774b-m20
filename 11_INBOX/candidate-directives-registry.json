@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T07:51:15.088Z",
+  "last_updated": "2026-11-19T08:09:21.204Z",
   "directives": [
     {
       "id": "CD-001",
@@ -32499,6 +32499,57 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-19",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-RD6K",
+      "directive_title": "The Asynchronous Commit Queue Barrier Invariant",
+      "source_repo": "volcengine-openviking-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-RD6K-the-asynchronous-commit-queue-barrier-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-RD6M",
+      "directive_title": "File System URI Segment Idempotent Decoding Invariant",
+      "source_repo": "volcengine-openviking-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-RD6M-file-system-uri-segment-idempotent-decoding-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-8942E3",
+      "directive_title": "Host CLI Ownership Transport ID Leakage",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "volcengine-openviking",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8942E3-host-cli-ownership-transport-id-leakage.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-RD6L",
+      "directive_title": "Multi-Tier Policy Inheritance Overwrite Guard",
+      "source_repo": "volcengine-openviking-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-RD6L-multi-tier-policy-inheritance-overwrite-guard.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-6111DF",
+      "directive_title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6111DF-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-19"
     }
   ]
 }
