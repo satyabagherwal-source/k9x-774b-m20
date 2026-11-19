@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-YOGL",
-    "timestamp": "2026-11-18T02:51:25.653Z",
-    "repository": "koderover/zadig",
-    "learningId": "learn-github-koderover-zadig",
-    "contentHash": "57a58c4c06f9b0539dbe6b9d3c8890e3d0f72f5052b45faf16bb1a466d63481b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-YPYT",
-    "timestamp": "2026-11-18T02:51:27.605Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "e86717841c864daf12d2385ff22f41ebe445981ec34519dc8f3a88c452b63cbe",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-VR7R",
-    "timestamp": "2026-11-18T03:17:08.871Z",
-    "repository": "apple/LensVLM-9B",
-    "learningId": "learn-huggingface-apple-lensvlm-9b",
-    "contentHash": "39fcf5d730426699279996addfadaf15b4d7b163ab3fdfc69ec683331377ebda",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-OARP",
-    "timestamp": "2026-11-18T03:39:20.581Z",
-    "repository": "fastino/GLiNER2.5-Decide",
-    "learningId": "learn-huggingface-fastino-gliner2-5-decide",
-    "contentHash": "dfdc2f8ffe7f740f2f43b1a7479bf9415494333a8c6766d6b299b182f29f63c0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-ODR2",
     "timestamp": "2026-11-18T03:39:24.446Z",
     "repository": "codewhale-hq/Codewhale",
@@ -7492,6 +7432,66 @@
     "contentHash": "06b460af33ffe84487f705da73d847fa0cea81ac7088f7dcd43ada47da9dd2bc",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-2KKK",
+    "timestamp": "2026-11-19T17:37:55.364Z",
+    "repository": "meta/folly",
+    "learningId": "learn-github-meta-folly",
+    "contentHash": "041697beb775b508d0b820041df4d6edb3b8973d7076a578807bc2f59dbfbf77",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-2RX4",
+    "timestamp": "2026-11-19T17:38:04.888Z",
+    "repository": "paradedb/paradedb",
+    "learningId": "learn-github-paradedb-paradedb",
+    "contentHash": "afa63e0bf85de391fa857cf55773626d6f7baab0f510a7dd7fbd4f3a61c556a7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-2V8Y",
+    "timestamp": "2026-11-19T17:38:09.202Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "88eaf3ea946867da74ad5252cc8250a2da01c13b8fc81bdb1cd50ee244c024ff",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-8VC9",
+    "timestamp": "2026-11-19T17:42:49.257Z",
+    "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+    "contentHash": "1e56cb9eeb722c83ace7145ce4f33540e6a4d36db3572c4dfb7a05b2b0da4c03",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

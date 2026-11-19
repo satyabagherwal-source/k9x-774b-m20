@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T17:23:30.908Z",
+  "last_updated": "2026-11-19T17:42:49.270Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2616,14 +2616,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
-      "content_hash": "cc4ef726b77d09864ee80a85d6e0e724315971fcc78e1416ab038c5a0e636ed3",
-      "verified_at": "2026-11-15T04:19:24.560Z",
+      "content_hash": "1e56cb9eeb722c83ace7145ce4f33540e6a4d36db3572c4dfb7a05b2b0da4c03",
+      "verified_at": "2026-11-19T17:42:49.269Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T04:19:24.560Z"
+      "last_updated": "2026-11-19T17:42:49.269Z"
     },
     "nvidia/Qwen3.8-Flash-Next-FP4-Local": {
       "repository": "nvidia/Qwen3.8-Flash-Next-FP4-Local",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "05841c51130e0e74ca8cd085e6fdac450fc8382e97d5684a58dfa52c183e15c8",
-      "verified_at": "2026-11-19T00:41:13.961Z",
+      "content_hash": "88eaf3ea946867da74ad5252cc8250a2da01c13b8fc81bdb1cd50ee244c024ff",
+      "verified_at": "2026-11-19T17:38:09.215Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T00:41:13.961Z"
+      "last_updated": "2026-11-19T17:38:09.215Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -11361,14 +11361,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-paradedb-paradedb",
-      "content_hash": "312a6755f6456901cb6ecedc70379dddc0bfcccc07da2cb8a4f060272872722c",
-      "verified_at": "2026-11-18T13:57:03.179Z",
+      "content_hash": "afa63e0bf85de391fa857cf55773626d6f7baab0f510a7dd7fbd4f3a61c556a7",
+      "verified_at": "2026-11-19T17:38:04.901Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T13:57:03.179Z"
+      "last_updated": "2026-11-19T17:38:04.901Z"
     },
     "imsnif/diskonaut": {
       "repository": "imsnif/diskonaut",
@@ -17181,14 +17181,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meta-folly",
-      "content_hash": "5c94cdb4cbed2893091319ff761980656ef653c9a805d4cecc3ebf2b76127716",
-      "verified_at": "2026-11-16T15:00:35.791Z",
+      "content_hash": "041697beb775b508d0b820041df4d6edb3b8973d7076a578807bc2f59dbfbf77",
+      "verified_at": "2026-11-19T17:37:55.380Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T15:00:35.792Z"
+      "last_updated": "2026-11-19T17:37:55.380Z"
     },
     "LiquidAI/LFM3-Omni-2B": {
       "repository": "LiquidAI/LFM3-Omni-2B",

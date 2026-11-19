@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T17:23:37.225Z",
+  "last_updated": "2026-11-19T17:43:23.980Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T12:40:39.625Z",
@@ -138,9 +138,9 @@
       "staged_for_review": 1
     },
     "facebook-folly-learnings.md": {
-      "processed_at": "2026-11-16T15:00:50.226Z",
+      "processed_at": "2026-11-19T17:42:52.309Z",
       "promoted_canonical": 0,
-      "staged_for_review": 0
+      "staged_for_review": 1
     },
     "hf-unsloth-qwen3.8-flash-next-gguf-learnings.md": {
       "processed_at": "2026-11-16T00:36:58.054Z",
@@ -1298,7 +1298,7 @@
       "staged_for_review": 1
     },
     "paradedb-paradedb-learnings.md": {
-      "processed_at": "2026-11-18T13:57:08.206Z",
+      "processed_at": "2026-11-19T17:43:23.035Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2873,8 +2873,8 @@
       "staged_for_review": 0
     },
     "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md": {
-      "processed_at": "2026-11-15T04:19:28.955Z",
-      "promoted_canonical": 0,
+      "processed_at": "2026-11-19T17:43:22.592Z",
+      "promoted_canonical": 1,
       "staged_for_review": 0
     },
     "hf-nvidia-qwen3.8-flash-next-fp4-local-learnings.md": {
@@ -3518,7 +3518,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2289,
-  "total_canonical_promoted": 390,
-  "total_staged_for_review": 1704
+  "total_dossiers_evaluated": 2292,
+  "total_canonical_promoted": 391,
+  "total_staged_for_review": 1706
 }

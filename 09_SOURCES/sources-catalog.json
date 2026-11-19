@@ -1655,8 +1655,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf",
     "license": "Open-Source",
-    "contentHash": "cc4ef726b77d09864ee80a85d6e0e724315971fcc78e1416ab038c5a0e636ed3",
-    "lastHarvestedAt": "2026-11-15T04:19:24.549Z",
+    "contentHash": "1e56cb9eeb722c83ace7145ce4f33540e6a4d36db3572c4dfb7a05b2b0da4c03",
+    "lastHarvestedAt": "2026-11-19T17:42:49.261Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf"
   },
   "hf-nvidia-qwen3.8-flash-next-fp4-local": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "5d6c8155",
+    "sourceVersion": "17861239",
     "license": "NOASSERTION",
-    "contentHash": "05841c51130e0e74ca8cd085e6fdac450fc8382e97d5684a58dfa52c183e15c8",
-    "lastHarvestedAt": "2026-11-19T00:41:13.953Z",
+    "contentHash": "88eaf3ea946867da74ad5252cc8250a2da01c13b8fc81bdb1cd50ee244c024ff",
+    "lastHarvestedAt": "2026-11-19T17:38:09.206Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "b2eb4729",
+    "sourceVersion": "98188786",
     "license": "AGPL-3.0",
-    "contentHash": "312a6755f6456901cb6ecedc70379dddc0bfcccc07da2cb8a4f060272872722c",
-    "lastHarvestedAt": "2026-11-18T13:57:03.169Z",
+    "contentHash": "afa63e0bf85de391fa857cf55773626d6f7baab0f510a7dd7fbd4f3a61c556a7",
+    "lastHarvestedAt": "2026-11-19T17:38:04.892Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {
@@ -7663,10 +7663,10 @@
     "repository": "meta/folly",
     "platform": "github",
     "sourceUrl": "https://github.com/facebook/folly",
-    "sourceVersion": "f416c5d1",
+    "sourceVersion": "24e09e96",
     "license": "Apache-2.0",
-    "contentHash": "5c94cdb4cbed2893091319ff761980656ef653c9a805d4cecc3ebf2b76127716",
-    "lastHarvestedAt": "2026-11-16T15:00:35.784Z",
+    "contentHash": "041697beb775b508d0b820041df4d6edb3b8973d7076a578807bc2f59dbfbf77",
+    "lastHarvestedAt": "2026-11-19T17:37:55.368Z",
     "learningId": "learn-github-meta-folly"
   },
   "kotlin-kmp-production-sample": {

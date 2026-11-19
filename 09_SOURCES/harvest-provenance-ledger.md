@@ -11372,3 +11372,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-black-forest-labs-flux-3-image-klein-comfy` | `https://huggingface.co/black-forest-labs/flux-3-image-klein-comfy` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-19T17:23:14.977Z |
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `ac7d3fab` | Multi-dimensional audit evidence | 2026-11-19T17:23:18.495Z |
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `a83eaead` | Multi-dimensional audit evidence | 2026-11-19T17:23:30.897Z |
+| `learn-github-meta-folly` | `https://github.com/facebook/folly` | `24e09e96` | Multi-dimensional audit evidence | 2026-11-19T17:37:55.368Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `98188786` | Multi-dimensional audit evidence | 2026-11-19T17:38:04.892Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `17861239` | Multi-dimensional audit evidence | 2026-11-19T17:38:09.206Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-19T17:42:49.261Z |
+| `learn-dom-d-6fa503ee` | `project://hf-openbmb-minicpm-v-4.7-35b-a3b-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md` | 2026-11-19T17:43:22.591Z |

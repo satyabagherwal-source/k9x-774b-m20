@@ -4,22 +4,22 @@
 {
   "source_repository": "meta/folly",
   "source_url": "https://github.com/facebook/folly",
-  "source_version": "f416c5d1",
+  "source_version": "24e09e96",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T15:00:35.952Z",
+  "timestamp": "2026-11-19T17:37:55.594Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-meta-folly",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [meta/folly](https://github.com/facebook/folly) (Revision: `f416c5d1`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T15:00:35.952Z`  
+> **Provenance**: Harvested from [meta/folly](https://github.com/facebook/folly) (Revision: `24e09e96`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T17:37:55.594Z`  
 > **Learning ID**: `learn-github-meta-folly`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `meta/folly` (Commit: `f416c5d1`)
+- **Target Repository**: `meta/folly` (Commit: `24e09e96`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-folly-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/folly](https://github.com/facebook/folly))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T15:00:34.760Z  
+> **Harvest Timestamp**: 2026-11-19T17:37:54.068Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: An open-source C++ library developed and used at Facebook.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 30562 stars
+- **Stars / Engagement**: 30565 stars
 
 ---
 
@@ -71,11 +71,14 @@ PROVENANCE_END -->
 #include <array> // @manual
 #include <filesystem>
 #include <fstream>
+#include <limits>
+#include <stdexcept>
 #include <string>
 
 #include <fmt/format.h>
 
 #include <folly/lang/Align.h>
+#include <folly/lang/Exception.h>
 #include <folly/portability/Sched.h>
 #include <folly/portability/Windows.h>
 #include <folly/system/arch/x86.h>
@@ -176,25 +179,36 @@ size_t bm_llc_size() {
 }
 
 void bm_llc_evict(size_t value) {
-  constexpr auto step =
-      folly::hardware_constructive_interference_size / sizeof(size_t);
-
   constexpr auto words_per_line =
-      folly::hardware_constructive_interference_size / step;
+      folly::hardware_constructive_interference_size / sizeof(size_t);
+  static_assert(words_per_line > 0);
 
-  static auto const llc_size = bm_llc_size();
-
-  auto const llc_lines =
-      llc_size / folly::hardware_constructive_interference_size;
-
-  static std::unique_ptr<size_t volatile[]> const vec{
-      new size_t[llc_lines * words_per_line]};
-
-  // do N passes over the region, each time touching one word per line
-  for (size_t j = 0; j < step; ++j) {
-    for (size_t i = 0; i < llc_lines; i += step) {
-      vec[i * words_per_line + j] = value;
+  static auto const word_count = [] {
+    auto const llc_size = bm_llc_size();
+    if (llc_size == 0) {
+      throw_exception<std::runtime_error>("Unable to determine LLC size");
     }
+    auto const max_llc_bytes =
+        align_floor(std::numeric_limits<size_t>::max() / 2, sizeof(size_t));
+    if (llc_size > max_llc_bytes) {
+      throw_exception<std::length_error>("LLC eviction region is too large");
+    }
+    auto const llc_words =
+        align_ceil(llc_size, sizeof(size_t)) / sizeof(size_t);
+    return 2 * llc_words;
+  }();
+  static std::unique_ptr<size_t volatile[]> const region{
+      new size_t[word_count]};
+  detail::bm_llc_evict_touch({region.get(), word_count}, words_per_line, value);
+}
+
+void detail::bm_llc_evict_touch(
+    std::span<size_t volatile> region, size_t words_per_line, size_t value) {
+  for (size_t i = 0; i < region.size(); i += words_per_line) {
+    region[i] = value;
+  }
+  if (!region.empty()) {
+    region.back() = value;
   }
 }
 
@@ -221,6 +235,8 @@ void bm_llc_evict(size_t value) {
  */
 
 #pragma once
+
+#include <span>
 
 #include <folly/Portability.h>
 #include <folly/lang/Hint.h>
@@ -252,7 +268,14 @@ FOLLY_ALWAYS_INLINE void makeUnpredictable(T& datum) {
 
 namespace detail {
 size_t bm_llc_size_fallback();
-}
+
+/// bm_llc_evict_touch
+///
+/// Writes the first word of each stride and the last word of the region.
+/// words_per_line must be positive.
+void bm_llc_evict_touch(
+    std::span<size_t volatile> region, size_t words_per_line, size_t value);
+} // namespace detail
 
 /// bm_llc_size
 ///
@@ -261,8 +284,9 @@ size_t bm_llc_size();
 
 /// bm_llc_evict
 ///
-/// Write to a large block of memory and evict whatever cache lines might
-/// currently be resident in any levels of cache.
+/// Applies cache pressure with a region twice the detected LLC size.
+/// Eviction is best effort, not a guarantee that subsequent accesses reach
+/// DRAM.
 void bm_llc_evict(size_t value);
 
 } // namespace folly
@@ -2375,267 +2399,767 @@ class WriteFileAtomicOptions {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f416c5d1` (2026-11-14)
-**Commit Message**: AsyncIoUringSocket: resend without zero copy when a zero copy write fails
+### Incident Patch 1: `da724490` (2026-11-19)
+**Commit Message**: add fixed-work F14 cache-locality profiles
 
 Summary:
-Retry an `IORING_OP_SENDMSG_ZC` write with a copying send on `ENOMEM` or
-`EOPNOTSUPP`, rather than failing the write and tearing down the connection.
-Suspend zero copy after the failure, preserving the caller's enable callback.
-`setZeroCopyReenableThreshold()` retries zero copy after the configured number
-of writes; the default of 0 keeps it suspended. Existing notification-CQE
-reference accounting also covers the failed send.
+[🤖 Metamate] Extend `HashMapsBench` with an opt-in `--map_locality` matrix for Value/Node/Vector maps, uint64 keys, and 1/17-byte values. Hot and eviction cases share fixtures and shuffled traces. Large cases traverse the complete trace over a table sized so its allocated header-line arena exceeds LLC, rather than repeatedly warming a small query subset.
 
-This follows AsyncSocket's copying fallback and re-enable policy. Its
-`MSG_ZEROCOPY` path falls back on `ENOBUFS`; `SENDMSG_ZC` supplies `msg_ubuf`,
-so this diff handles `ENOMEM` and `EOPNOTSUPP` instead. AsyncSocket's io_uring
-send path still needs equivalent fallback handling before migration.
+Cover hits, misses, exact 50/50 mixes, forced no-tag/false-tag misses, and multi-chunk overflow misses/last hits. A shared noinline lookup kernel keeps ordinary hashing in the timed region; compiler-ordering barriers and consumed checksums keep repeated work observable. Check membership, values, candidate counts and overflow shapes outside timing without adding instrumentation or private seams to F14.
 
-HyperClient production PUTs hit zero-copy `ENOMEM`, causing connection resets
-and retries. A BET canary resent the failed writes successfully: P2520733030.
+Use fixed-work Folly profiling and the actual returned operation count, with checked rounding. Report seeds, traces and allocation footprints; reserve the retained eviction buffer in all memory estimates. Separate wrapper controls are diagnostic, not additionally subtracted. Eviction remains best-effort cache pressure, and a single profile does not establish confidence intervals 
 
-Reviewed By: jlhe97
-
-Differential Revision: D121689002
-
-fbshipit-source-id: 37c9fe72cf62019df12783cca43f214e4d0b24cc
-
-**File**: `folly/io/async/AsyncIoUringSocket.cpp` (modified, +37/-1)
+**File**: `folly/container/test/BUCK` (modified, +3/-0)
 ```diff
-@@ -1519,6 +1519,23 @@ void AsyncIoUringSocket::WriteSqe::callbackCancelled(
+@@ -683,6 +683,7 @@ fb_dirsync_cpp_unittest(
+ fb_dirsync_cpp_binary(
+     name = "hash_maps_bench",
+     srcs = ["HashMapsBench.cpp"],
++    labels = _F14_FALLBACK_CI_LABELS,
+     deps = [
+         "fbsource//third-party/fmt:fmt",
+         "fbsource//third-party/glog:glog",
+@@ -694,6 +695,8 @@ fb_dirsync_cpp_binary(
+         "//folly/container:f14_hash",
+         "//folly/hash:hash",
+         "//folly/init:init",
++        "//folly/lang:align",
++        "//folly/lang:exception",
+         "//folly/portability:gflags",
+     ],
+ )
+```
+
+**File**: `folly/container/test/HashMapsBench.cpp` (modified, +487/-0)
+```diff
+@@ -15,12 +15,19 @@
+  */
+ 
+ #include <array>
++#include <atomic>
+ #include <cstddef>
+ #include <functional>
++#include <limits>
+ #include <map>
+ #include <random>
++#include <stdexcept>
+ #include <string>
++#include <string_view>
++#include <type_traits>
+ #include <unordered_map>
++#include <utility>
++#include <vector>
+ 
+ #include <fmt/format.h>
+ #include <glog/logging.h>
+@@ -31,6 +38,8 @@
+ #include <folly/Random.h>
+ #include <folly/hash/Hash.h>
+ #include <folly/init/Init.h>
++#include <folly/lang/Align.h>
++#include <folly/lang/Exception.h>
+ #include <folly/portability/GFlags.h>
+ 
+ #include <folly/container/F14Map.h>
+@@ -52,6 +61,28 @@ DEFINE_int32(
+ DEFINE_int32(
+     map_size_step, 32, "multiplier for each benchmark between iterations");
+ 
++DEFINE_bool(
++    map_locality, false, "Run the fixed-work F14 locality matrix instead.");
++DEFINE_uint32(
++    map_locality_small_entries,
++    128,
++    "Entries for non-collision hot/eviction fixtures; collisions use fixed 6/64.");
++DEFINE_uint32(
++    map_locality_evict_iters,
++    128,
++    "Eviction lookups, a positive multiple of 128.");
++DEFINE_uint32(map_locality_seed, 42, "Fixed locality query-shuffle seed.");
++DEFINE_uint32(
++    map_locality_large_llc_factor,
++    2,
++    "Minimum large header-line footprint / LLC.");
++DEFINE_uint64(
++    map_locality_hot_max_bytes, 16384, "Hot map+query allocation budget.");
++DEFINE_uint64(
++    map_locality_max_bytes,
++    uint64_t{8} << 30,
++    "Per-process active map+query+reserved eviction-buffer budget, not RSS.");
++
+ //////// Key related preparation ////////
+ 
+ namespace {
+@@ -453,6 +484,452 @@ void runAllHashMapTests() {
    }
  }
  
 +namespace {
 +
-+// Errors from a zero copy send that a copying send of the same data would
-+// not necessarily hit, e.g. failing to pin the pages or allocate zero copy
-+// state, or the socket not supporting zero copy at all.
-+bool isZeroCopySendError(int err) {
-+  switch (err) {
-+    case ENOMEM:
-+    case EOPNOTSUPP:
-+      return true;
-+    default:
-+      return false;
-+  }
-+}
++#if FOLLY_F14_VECTOR_INTRINSICS_AVAILABLE
 +
-+} // namespace
++using std::literals::operator""sv;
 +
- void AsyncIoUringSocket::WriteSqe::callback(const io_uring_cqe* cqe) noexcept {
-   auto res = cqe->res;
-   auto flags = cqe->flags;
-@@ -1596,6 +1613,19 @@ void AsyncIoUringSocket::WriteSqe::callback(const io_uring_cqe* cqe) noexcept {
- 
-     // partial write
-     parent_->doReSubmitWrite();
-+  } else if (res < 0 && zcOptions_.zeroCopy && isZeroCopySendError(-res)) {
-+    // a failed send transmits nothing, so resend the whole message without
-+    // zero copy rather than failing the write. The notification for the
-+    // failed send still arrives and is accounted for in refs_.
-+    VLOG(2) << "zero copy write failed, retrying without zero copy: "
-+            << folly::errnoStr(-res) << " (" << res << ")";
-+    zcOptions_.zeroCopy = false;
-+    parent_->zeroCopySuspended_ = true;
-+    parent_->zeroCopyReenableCounter_ = parent_->zeroCopyReenableThreshold_;
-+
-+    // must make inflight false even if MORE is set
-+    prepareForReuse();
-+    parent_->doReSubmitWrite();
-   } else {
-     if (callback_) {
-       if (res >= 0) {
-@@ -1652,7 +1682,13 @@ void AsyncIoUringSocket::writev(
-   writeChain(callback, std::move(first), wf);
- }
- 
--bool AsyncIoUringSocket::canZC(std::unique_ptr<IOBuf> const& buf) const {
-+bool AsyncIoUringSocket::canZC(std::unique_ptr<IOBuf> const& buf) {
-+  if (zeroCopySuspended_) {
-+    if (zeroCopyReenableCounter_ == 0 || --zeroCopyReenableCounter_ > 0) {
-+      return false;
-+    }
-+    zeroCopySuspended_ = false;
-+  }
-   if (!options_.zeroCopyEnable) {
-     return false;
-   }
-```
-
-**File**: `folly/io/async/AsyncIoUringSocket.h` (modified, +13/-1)
-```diff
-@@ -129,7 +129,16 @@ class AsyncIoUringSocket : public AsyncSocketTransport {
-       WriteCallback* callback,
-       std::unique_ptr<IOBuf>&& buf,
-       WriteFlags flags) override;
--  bool canZC(std::unique_ptr<IOBuf> const& buf) const;
-+  bool canZC(std::unique_ptr<IOBuf> const& buf);
-+
-+  // Retry zero copy after this many writes following ENOMEM or EOPNOTSUPP.
-+  // 0 (the default) keeps zero copy suspended.
-+  void setZeroCopyReenableThreshold(size_t threshold) {
-+    zeroCopyReenableThreshold_ = threshold;
-+  }
-+  size_t getZeroCopyReenableThreshold() const {
-+    return zeroCopyReenableThreshold_;
-+  }
- 
-   // AsyncTransport
-   void close() override;
-@@ -494,6 +503,9 @@ class AsyncIoUringSocket : public AsyncSocketTransport {
-   WriteSqe* writeSqeActive_ = nullptr;
-   WriteSqeList writeSqeQueue_;
-   size_t bytesWritten_{0};
-+  bool zeroCopySuspended_{false};
-+  size_t zeroCopyReenableThreshold_{0};
-+  size_t zeroCopyReenableCounter_{0};
- 
-   // connect
-   std::unique_ptr<ConnectSqe> connectSqe_;
-```
-
-**File**: `folly/io/async/test/AsyncIoUringSocketTest.cpp` (modified, +95/-21)
-```diff
-@@ -870,6 +870,101 @@ INSTANTIATE_TEST_SUITE_P(
-       return info.param.testName();
-     });
- 
-+class AsyncIoUringSocketZeroCopyFallbackTest : public ::testing::Test {
-+ protected:
-+  void SetUp() override {
-+    if (!IoUringBackend::isAvailable()) {
-+      GTEST_SKIP() << "io_uring not available";
-+    }
-+    evb = std::make_unique<EventBase>(EventBase::Options{}.setBackendFactory(
-+        []() -> std::unique_ptr<EventBaseBackendBase> {
-+          IoUringBackend::Options options;
-+          options.setUseRegisteredFds(64)
-+              .setInitialProvidedBuffers(64, 8)
-+              .setDeferTaskRun(true);
-+          return std::make_unique<IoUringBackend>(std::move(options));
-+        }));
-+    // init delayed bits (like the buffer provider) as this is the only thread
-+    dynamic_cast<IoUringBackend*>(evb->getBackend())->loopPoll();
-+
-+    // zero copy sends are not supported on unix sockets, so every zero copy
-+    // write fails with EOPNOTSUPP without sending anything
-+    std::array<int, 2> fds;
-+    ASSERT_EQ(0, ::socketpair(AF_UNIX, SOCK_STREAM, 0, fds.data()));
-+    peerFd = fds[1];
-+
-+    AsyncIoUringSocket::Options socketOptions;
-+    socketOptions.zeroCopyEnable = [this](auto&&) {
-+      ++zeroCopyAttempts;
-+      return true;
-+    };
-+    socket.reset(new AsyncIoUringSocket(
-+        evb.get(), NetworkSocket::fromFd(fds[0]), std::move(socketOptions)));
-+  }
-+
-+  void TearDown() override {
-+    socket.reset();
-+    if (peerFd >= 0) {
-+      ::close(peerFd);
-+    }
-+  }
-+
-+  FutureWriteCallback::TResult write(std::string const& data) {
-+    FutureWriteCallback cb;
-+    socket->writeChain(&cb, IOBuf::copyBuffer(data), WriteFlags::NONE);
-+    auto& [promise, future] = cb.promiseContract;
-+    return std::move(future).within(kTimeout).via(evb.get()).getVia(evb.get());
-+  }
-+
-+  std::string readPeer(size_t n) {
-+    std::string ret(n, '\0');
-+    EXPECT_EQ(n, folly::readFull(peerFd, ret.data(), n));
-+    return ret;
-+  }
-+
-+  std::unique_ptr<EventBase> evb;
-+  AsyncIoUringSocket::UniquePtr socket;
-+  int peerFd = -1;
-+  int zeroCopyAttempts = 0;
++enum class LookupLocality { hot, eviction, large };
++enum class LookupPattern {
++  hit,
++  miss,
++  mixed,
++  no_tag,
++  false_tag,
++  overflow_no_tag,
++  overflow_false_tag,
++  overflow_last_hit,
 +};
 +
-+TEST_F(AsyncIoUringSocketZeroCopyFallbackTest, WriteSucceedsWithoutZeroCopy) {
-+  auto res = write("hello");
-+  ASSERT_TRUE(res.hasValue()) << res.error().second;
-+  EXPECT_EQ("hello", readPeer(5));
-+  EXPECT_EQ(1, zeroCopyAttempts);
++struct LookupConfig {
++  std::string name;
++  LookupLocality locality;
++  LookupPattern pattern;
++};
++
++constexpr std::array kLookupLocalities{
++    std::pair{LookupLocality::hot, "Hot"sv},
++    std::pair{LookupLocality::eviction, "Eviction"sv},
++    std::pair{LookupLocality::large, "Large"sv},
++};
++constexpr std::array kLookupPatterns{
++    std::pair{LookupPattern::hit, "hit"sv},
++    std::pair{LookupPattern::miss, "miss"sv},
++    std::pair{LookupPattern::mixed, "mixed"sv},
++    std::pair{LookupPattern::no_tag, "no_tag"sv},
++    std::pair{LookupPattern::false_tag, "false_tag"sv},
++    std::pair{LookupPattern::overflow_no_tag, "overflow_no_tag"sv},
++    std::pair{LookupPattern::overflow_false_tag, "overflow_false_tag"sv},
++    std::pair{LookupPattern::overflow_last_hit, "overflow_last_hit"sv},
++};
++
++bool noTagPattern(LookupPattern pattern) {
++  return pattern == LookupPattern::no_tag ||
++      pattern == LookupPattern::overflow_no_tag;
 +}
 +
-+TEST_F(AsyncIoUringSocketZeroCopyFallbackTest, StaysSuspendedByDefault) {
-+  for (int i = 0; i < 5; i++) {
-+    auto res = write("hello");
-+    ASSERT_TRUE(res.hasValue()) << res.error().second;
-+    EXPECT_EQ("hello", readPeer(5));
++bool overflowPattern(LookupPattern pattern) {
++  return pattern == LookupPattern::overflow_no_tag ||
++      pattern == LookupPattern::overflow_false_tag ||
++      pattern == LookupPattern::overflow_last_hit;
++}
++
++bool collisionPattern(LookupPattern pattern) {
++  return noTagPattern(pattern) || pattern == LookupPattern::false_tag ||
++      overflowPattern(pattern);
++}
++
++size_t maxProbe(std::vector<size_t> const& histo) {
++  for (size_t i = histo.size(); i != 0; --i) {
++    if (histo[i - 1] != 0) {
++      return i - 1;
++    }
 +  }
-+  EXPECT_EQ(1, zeroCopyAttempts);
++  return 0;
 +}
 +
-+TEST_F(AsyncIoUringSocketZeroCopyFallbackTest, ReenabledAfterThreshold) {
-+  socket->setZeroCopyReenableThreshold(3);
-+  std::vector<int> attempts;
-+  for (int i = 0; i < 7; i++) {
-+    auto res = write("hello");
-+    ASSERT_TRUE(res.hasValue()) << res.error().second;
-+    EXPECT_EQ("hello", readPeer(5));
-+    attempts.push_back(zeroCopyAttempts);
++struct LookupCollisionHash {
++  // Intentionally non-avalanching; opt out of remixing to preserve fixture
++  // tags.
++  using folly_is_avalanching = std::true_type;
++  size_t operator()(uint64_t key) const {
++    return static_cast<size_t>(key & 255) << (sizeof(size_t) * 8 - 8);
 +  }
-+  // zero copy is tried on the first write and then on every third write
-+  // after each failure
-+  EXPECT_EQ((std::vector<int>{1, 1, 1, 2, 2, 2, 3}), attempts);
++};
++
++struct LookupCountEqual {
++  size_t* calls;
++  bool operator()(uint64_t a, uint64_t b) const {
++    ++*calls;
++    return a == b;
++  }
++};
++
++size_t localityEntries(LookupConfig const& config, size_t llc) {
++  if (collisionPattern(config.pattern)) {
++    return overflowPattern(config.pattern) ? 64 : 6;
++  }
++  if (config.locality != LookupLocality::large) {
++    return FLAGS_map_locality_small_entries;
++  }
++  auto const factor = FLAGS_map_locality_large_llc_factor;
++  if (llc == 0 || llc > std::numeric_limits<size_t>::max() / factor) {
++    throw_exception<std::length_error>("Invalid large locality footprint");
++  }
++  auto const bytes = llc * factor;
++  auto const lines = bytes / hardware_constructive_interference_size +
++      (bytes % hardware_constructive_interference_size != 0);
++  if (lines > std::numeric_limits<uint32_t>::max() / 32) {
++    throw_exception<std::length_error>("Too many locality entries");
++  }
++  // At most 16 slots per chunk; size the allocated header-line arena beyond
++  // LLC.
++  return lines * 16;
 +}
 +
-+TEST_F(AsyncIoUringSocketZeroCopyFallbackTest, WriteErrorReportsErrno) {
-+  ::close(std::exchange(peerFd, -1));
-+  auto res = write("hello");
-+  ASSERT_TRUE(res.hasError());
-+  EXPECT_EQ(EPIPE, res.error().second.getErrno()) << res.error().second;
++uint64_t localityKey(size_t id, bool collision, uint8_t tag = 17) {
++  return collision
++      ? (uint64_t{id} << 8) | tag
++      : keyGen<uint64_t>(static_cast<uint32_t>(id));
 +}
 +
- TEST(AsyncIoUringSocketTest, RemoveNonBlockFlag) {
-   Promise<NetworkSocket> fdPromise;
-   test::TestAcceptCallback acceptCallback;
-@@ -939,27 +1034,6 @@ FutureWriteCallback::TResult writeAndWait(
++template <typena
+```
+
+---
+
+### Incident Patch 2: `e5ca9de6` (2026-11-19)
+**Commit Message**: Fix Over-Aligned Element Types in `ProducerConsumerQueue` (#2733)
+
+Summary:
+`ProducerConsumerQueue` allocates its ring with `std::malloc`, which only guarantees `alignof(std::max_align_t)`. A `T` with a stricter `alignas` is then constructed on misaligned storage. This is undefined behavior, may crash: an `alignas(32)` `__m256d` struct built with `-mavx2` segfaults on an aligned `vmovapd` store.
+
+The ring is now always allocated with `folly::operator_new` and released with `folly::operator_delete`, passing `std::align_val_t{alignof(T)}` in both cases. There is no change to the public API or object layout.
+
+Pull Request resolved: https://github.com/meta/folly/pull/2733
+
+Reviewed By: r-barnes
+
+Differential Revision: D132984650
+
+Pulled By: yfeldblum
+
+fbshipit-source-id: 96adc5dcb0b156c2f7e7164c6c6a016eb305e90d
+
+**File**: `folly/BUCK` (modified, +1/-0)
+```diff
+@@ -2167,6 +2167,7 @@ fb_dirsync_cpp_library(
+     exported_deps = [
+         "//folly/concurrency:cache_locality",
+         "//folly/lang:bits",
++        "//folly/lang:new",
+     ],
+ )
+ 
+```
+
+**File**: `folly/CMakeLists.txt` (modified, +1/-0)
+```diff
+@@ -1009,6 +1009,7 @@ folly_add_library(
+   EXPORTED_DEPS
+     folly_concurrency_cache_locality
+     folly_lang_bits
++    folly_lang_new
+ )
+ 
+ folly_add_library(
+```
+
+**File**: `folly/ProducerConsumerQueue.h` (modified, +19/-9)
+```diff
+@@ -18,7 +18,6 @@
+ 
+ #include <atomic>
+ #include <cassert>
+-#include <cstdlib>
+ #include <limits>
+ #include <memory>
+ #include <stdexcept>
+@@ -27,6 +26,7 @@
+ 
+ #include <folly/concurrency/CacheLocality.h>
+ #include <folly/lang/Bits.h>
++#include <folly/lang/New.h>
+ 
+ namespace folly {
+ 
+@@ -75,7 +75,7 @@ struct alignas(hardware_destructive_interference_size) ProducerConsumerQueue {
+       }
+     }
+ 
+-    std::free(producer_.records);
++    deallocate(producer_.records);
+   }
+ 
+   //  Checks a private, unsynchronized cache of the other side's cursor
+@@ -211,7 +211,7 @@ struct alignas(hardware_destructive_interference_size) ProducerConsumerQueue {
+ 
+   //  Bundles the three values makeState() computes, so the delegating
+   //  constructor below can initialize both producer_ and consumer_ from a
+-  //  single malloc() call rather than validating/allocating twice.
++  //  single allocation rather than validating/allocating twice.
+   struct State {
+     T* records{};
+     uint32_t mask{};
+@@ -240,7 +240,7 @@ struct alignas(hardware_destructive_interference_size) ProducerConsumerQueue {
+ 
+   //  Computed in 64 bits and checked against size_t's actual range before
+   //  narrowing: sizeof(T) * (mask + 1) can legally exceed the 32-bit size_t
+-  //  that std::malloc() takes on a 32-bit platform, even though mask itself
++  //  that the allocator takes on a 32-bit platform, even though mask itself
+   //  always fits in uint32_t. Silently truncating that byte count would
+   //  allocate a smaller buffer than record indices (computed mod mask+1 in
+   //  the wider sense) are entitled to touch.
+@@ -253,14 +253,24 @@ struct alignas(hardware_destructive_interference_size) ProducerConsumerQueue {
+     return static_cast<size_t>(bytes);
+   }
+ 
++  //  std::malloc() only guarantees alignof(std::max_align_t), so storage is
++  //  always drawn from the aligned allocator to support a T with a stricter
++  //  alignas; constructing using storage allocated with malloc() would be
++  //  misaligned, and can fault on the aligned SIMD instructions the compiler
++  //  is then entitled to use.
++  static T* allocate(uint32_t mask) {
++    size_t const bytes = allocationSize(mask);
++    return static_cast<T*>(operator_new(bytes, std::align_val_t{alignof(T)}));
++  }
++
++  static void deallocate(T* records) noexcept {
++    operator_delete(records, std::align_val_t{alignof(T)});
++  }
++
+   static State makeState(uint32_t size) {
+     uint32_t const validSize = validateSize(size); // in [1, 1 << 31]
+     uint32_t const mask = nextPowTwo(validSize) - 1; // in [1, 1 << 31)
+-    auto* const records = static_cast<T*>(std::malloc(allocationSize(mask)));
+-    if (!records) {
+-      throw std::bad_alloc();
+-    }
+-    return State{records, mask, validSize};
++    return State{allocate(mask), mask, validSize};
+   }
+ 
+   explicit ProducerConsumerQueue(State st) noexcept
+```
+
+**File**: `folly/test/BUCK` (modified, +1/-0)
+```diff
+@@ -1238,6 +1238,7 @@ fb_dirsync_cpp_unittest(
+     deps = [
+         "fbsource//third-party/glog:glog",
+         "//folly:producer_consumer_queue",
++        "//folly/lang:align",
+         "//folly/portability:gtest",
+     ],
+ )
+```
+
+**File**: `folly/test/ProducerConsumerQueueTest.cpp` (modified, +28/-0)
+```diff
+@@ -24,6 +24,7 @@
+ 
+ #include <glog/logging.h>
+ 
++#include <folly/lang/Align.h>
+ #include <folly/portability/GTest.h>
+ 
+ //////////////////////////////////////////////////////////////////////
+@@ -213,6 +214,26 @@ struct DtorChecker {
+ 
+ unsigned int DtorChecker::numInstances = 0;
+ 
++template <size_t Align>
++struct alignas(Align) OverAligned {};
++
++template <class T>
++void checkOverAlignedStorage() {
++  // Keep every queue alive such that each ring is a separate allocation. If
++  // they were freed, malloc() could return the same block on each iteration,
++  // and one block whose address is a multiple of alignof(T) would pass every
++  // check.
++  std::vector<std::unique_ptr<folly::ProducerConsumerQueue<T>>> queues;
++
++  for (int i = 0; i < 32; ++i) {
++    queues.push_back(std::make_unique<folly::ProducerConsumerQueue<T>>(2));
++    EXPECT_TRUE(queues.back()->write());
++
++    auto* const front = queues.back()->frontPtr();
++    EXPECT_EQ(front, folly::align_floor(front, alignof(T)));
++  }
++}
++
+ } // namespace
+ 
+ //////////////////////////////////////////////////////////////////////
+@@ -317,3 +338,10 @@ TEST(PCQ, MinimumSize) {
+   EXPECT_TRUE(queue.read(value));
+   EXPECT_EQ(value, 3);
+ }
++
++TEST(PCQ, OverAlignedStorage) {
++  // 32 bytes is the first alignment malloc() does not guarantee, and 256
++  // exceeds the cache-line-sized alignment an implementation may hardcode.
++  checkOverAlignedStorage<OverAligned<32>>();
++  checkOverAlignedStorage<OverAligned<256>>();
++}
+```
+
+---
+
+### Incident Patch 3: `96786bdf` (2026-11-18)
+**Commit Message**: Recover truncated .debug_info.dwo offsets in .dwp index
+
+Summary:
+`llvm-dwp --continue-on-cu-index-overflow`, which fbcode's `dwp` build wrapper passes by default, keeps packaging after `.debug_info.dwo` passes 4 GiB and writes each unit's offset into `.debug_cu_index` modulo 2^32. LLVM tools rebuild the index in that case. The symbolizer parsed whatever unit sat at the truncated offset without checking its DWO ID, and could not address `.debug_info.dwo` beyond 4 GiB at all, so stack traces symbolized against such packages (Unicorn: D63291887, D81615968) lose their inlined frames, or can take them from the wrong unit.
+
+The recovery is similar to gimli, the Rust DWARF library used by the blazesym symbolizer: `DwarfPackage::find_unit` also steps from the truncated offset in 4 GiB increments and accepts the unit whose ID matches (gimli-rs/gimli#903, pinned in fbsource by D122577485). Unlike gimli, this also recovers DWARF 4 split units, whose DWO ID is in the root DIE, and checks the DWO ID in packages under 4 GiB.
+
+Reviewed By: yfeldblum
+
+Differential Revision: D132680644
+
+fbshipit-source-id: 9a9508b5a5ea845db3777348e067eaa61e004ac4
+
+**File**: `folly/debugging/symbolizer/DwarfCursor.h` (modified, +1/-1)
+```diff
+@@ -38,7 +38,7 @@ enum class DwarfParseErrorCode : uint8_t {
+ 
+ struct DwarfParseError {
+   DwarfParseErrorCode code;
+-  size_t offset;
++  uint64_t offset;
+ 
+   friend bool operator==(const DwarfParseError&, const DwarfParseError&) =
+       default;
+```
+
+**File**: `folly/debugging/symbolizer/DwarfImpl.cpp` (modified, +4/-6)
+```diff
+@@ -35,12 +35,10 @@ namespace symbolizer {
+ namespace {
+ 
+ template <typename Size = size_t>
+-DwarfParseResult<Size> incrementDieOffset(uint32_t offset) {
+-  if constexpr (sizeof(Size) <= sizeof(uint32_t)) {
+-    if (offset >= std::numeric_limits<Size>::max()) {
+-      return makeUnexpected(
+-          DwarfParseError{DwarfParseErrorCode::integer_overflow, offset});
+-    }
++DwarfParseResult<Size> incrementDieOffset(uint64_t offset) {
++  if (offset >= std::numeric_limits<Size>::max()) {
++    return makeUnexpected(
++        DwarfParseError{DwarfParseErrorCode::integer_overflow, offset});
+   }
+   return static_cast<Size>(offset) + 1;
+ }
+```
+
+**File**: `folly/debugging/symbolizer/DwarfUtil.cpp` (modified, +23/-23)
+```diff
+@@ -261,7 +261,7 @@ DwarfParseResult<DIEAbbreviation> getAbbreviation(
+ }
+ 
+ template <typename T>
+-DwarfParseResult<T> parseError(DwarfParseErrorCode code, size_t offset) {
++DwarfParseResult<T> parseError(DwarfParseErrorCode code, uint64_t offset) {
+   return makeUnexpected(DwarfParseError{code, offset});
+ }
+ 
+@@ -287,10 +287,6 @@ DwarfParseResult<CompilationUnitHeader> parseCompilationUnitHeader(
+     return parseError<CompilationUnitHeader>(
+         DwarfParseErrorCode::invalid_offset, offset);
+   }
+-  if (offset > std::numeric_limits<uint32_t>::max()) {
+-    return parseError<CompilationUnitHeader>(
+-        DwarfParseErrorCode::integer_overflow, offset);
+-  }
+ 
+   DwarfCursor lengthCursor(debugInfo.subspan(offset), offset);
+   auto initialLength = lengthCursor.read<uint32_t>();
+@@ -318,8 +314,7 @@ DwarfParseResult<CompilationUnitHeader> parseCompilationUnitHeader(
+         DwarfParseErrorCode::truncated, lengthCursor.offset());
+   }
+   const auto unitSize = lengthFieldSize + static_cast<size_t>(unitLength);
+-  if (unitSize > std::numeric_limits<uint32_t>::max() ||
+-      offset > std::numeric_limits<uint32_t>::max() - unitSize) {
++  if (unitSize > std::numeric_limits<uint32_t>::max()) {
+     return parseError<CompilationUnitHeader>(
+         DwarfParseErrorCode::integer_overflow, offset);
+   }
+@@ -353,7 +348,7 @@ DwarfParseResult<CompilationUnitHeader> parseCompilationUnitHeader(
+     }
+     header.unitType = *unitType;
+     if (!isSupportedCompilationUnitType(header.unitType)) {
+-      header.firstDie = static_cast<uint32_t>(cursor.offset());
++      header.firstDie = cursor.offset();
+       return header;
+     }
+ 
+@@ -401,7 +396,7 @@ DwarfParseResult<CompilationUnitHeader> parseCompilationUnitHeader(
+     header.addrSize = *addrSize;
+   }
+ 
+-  header.firstDie = static_cast<uint32_t>(cursor.offset());
++  header.firstDie = cursor.offset();
+   return header;
+ }
+ 
+@@ -591,7 +586,7 @@ DwarfParseResult<bool> parseCompilationUnitMetadata(
+     return makeUnexpected(header.error());
+   }
+ 
+-  cu.offset = static_cast<uint32_t>(offset);
++  cu.offset = offset;
+   cu.is64Bit = header->is64Bit;
+   cu.strOffsetsIs64Bit = header->is64Bit;
+   cu.size = header->size;
+@@ -699,6 +694,21 @@ DwarfParseResult<bool> parseCompilationUnitMetadata(
  
  } // namespace
  
--TEST(AsyncIoUringSocketTest, ZeroCopyWriteErrorKeepsErrno) {
--  if (!IoUringBackend::isAvailable()) {
--    GTEST_SKIP() << "io_uring not available";
++bool parseDwpCompilationUnit(CompilationUnit& cu, uint64_t dwoId) {
++  const uint64_t infoSize = cu.debugSections.debugInfo.size();
++  for (uint64_t offset = cu.offset; offset < infoSize;
++       offset += uint64_t{1} << 32) {
++    CompilationUnit candidate = cu;
++    auto result =
++        parseCompilationUnitMetadata(candidate, folly::to_narrow(offset), true);
++    if (result.hasValue() && *result && candidate.dwoId == dwoId) {
++      cu = candidate;
++      return true;
++    }
++  }
++  return false;
++}
++
+ CompilationUnits getCompilationUnits(
+     ElfCacheBase* elfCache,
+     const DebugSections& debugSections,
+@@ -811,12 +821,8 @@ CompilationUnits getCompilationUnits(
+         splitCU.debugSections.debugCuIndex,
+         *cu.mainCompilationUnit.dwoId,
+         splitCU);
+-    if (indexResult.hasError() || !*indexResult) {
+-      return cu;
+-    }
+-    auto splitResult =
+-        parseCompilationUnitMetadata(splitCU, splitCU.offset, true);
+-    if (splitResult.hasError() || !*splitResult) {
++    if (indexResult.hasError() || !*indexResult ||
++        !parseDwpCompilationUnit(splitCU, *cu.mainCompilationUnit.dwoId)) {
+       return cu;
+     }
+     // 3.1.3 Split Full Compilation Unit Entries
+@@ -1263,19 +1269,13 @@ DwarfParseResult<Die> getDieAtOffset(
+         DwarfParseError{
+             DwarfParseErrorCode::invalid_offset, toErrorOffset(offset)});
+   }
+-  if (offset > std::numeric_limits<uint32_t>::max()) {
+-    return makeUnexpected(
+-        DwarfParseError{
+-            DwarfParseErrorCode::integer_overflow,
+-            static_cast<size_t>(offset)});
 -  }
--  auto evb = makeIoUringEventBase();
--  // AF_UNIX sockets don't support zc, returning EOPNOTSUPP or EINVAL
--  std::array<int, 2> fds{};
--  ASSERT_EQ(0, ::socketpair(AF_UNIX, SOCK_STREAM, 0, fds.data()));
--  AsyncIoUringSocket::Options options;
--  options.zeroCopyEnable = [](auto&&) { return true; };
--  FutureWriteCallback cb;
--  AsyncIoUringSocket::UniquePtr socket(new AsyncIoUringSocket(
--      evb.get(), NetworkSocket::fromFd(fds[0]), std::move(options)));
--
--  auto res = writeAndWait(*evb, *socket, cb, "hello");
--
--  ASSERT_TRUE(res.hasError());
--  EXPECT_NE(0, res.error().second.getErrno()) << res.error().second.what();
--  ::close(fds[1]);
--}
--
- TEST(AsyncIoUringSocketTest, WriteErrorKeepsErrno) {
-   if (!IoUringBackend::isAvailable()) {
-     GTEST_SKIP() << "io_uring not available";
+ 
+   Die die;
+   DwarfCursor cursor(
+       debugInfo.subspan(
+           static_cast<size_t>(offset), static_cast<size_t>(unitEnd - offset)),
+       static_cast<size_t>(offset));
+-  die.offset = static_cast<uint32_t>(offset);
++  die.offset = offset;
+   die.is64Bit = cu.is64Bit;
+   auto code = cursor.readULEB();
+   if (code.hasError()) {
+```
+
+**File**: `folly/debugging/symbolizer/DwarfUtil.h` (modified, +8/-4)
+```diff
+@@ -79,10 +79,10 @@ struct CompilationUnit {
+   uint8_t unitType = DW_UT_compile;
+   uint8_t addrSize = 0;
+   // Offset in .debug_info of this compilation unit.
+-  uint32_t offset = 0;
++  uint64_t offset = 0;
+   uint32_t size = 0;
+   // Offset in .debug_info for the first DIE in this compilation unit.
+-  uint32_t firstDie = 0;
++  uint64_t firstDie = 0;
+   folly::Optional<uint64_t> abbrevOffset;
+ 
+   // Compilation directory.
+@@ -119,7 +119,7 @@ struct CompilationUnitHeader {
+   uint8_t version = 0;
+   uint8_t unitType = DW_UT_compile;
+   uint8_t addrSize = 0;
+-  uint32_t firstDie = 0;
++  uint64_t firstDie = 0;
+   uint64_t abbrevOffset = 0;
+   folly::Optional<uint64_t> dwoId;
+ };
+@@ -147,7 +147,7 @@ struct Die {
+   // Offset from start to first attribute
+   uint8_t attrOffset = 0;
+   // Offset within debug info.
+-  uint32_t offset = 0;
++  uint64_t offset = 0;
+   uint64_t code = 0;
+   DIEAbbreviation abbr;
+ };
+@@ -227,6 +227,10 @@ DwarfParseResult<CompilationUnitHeader> parseCompilationUnitHeader(
+ DwarfParseResult<bool> findDwpCompilationUnit(
+     std::span<const uint8_t> debugCuIndex, uint64_t dwoId, CompilationUnit& cu);
+ 
++// Parse the split unit for dwoId at the offset from findDwpCompilationUnit,
++// which llvm-dwp --continue-on-cu-index-overflow may have truncated to 32 bits.
++bool parseDwpCompilationUnit(CompilationUnit& cu, uint64_t dwoId);
++
+ // Advance cu.strOffsetsBase from the start of its .dwp contribution to the
+ // first entry, taking the offset size from the contribution's own header.
+ void setDwpStrOffsetsBase(CompilationUnit& cu);
+```
+
+**File**: `folly/debugging/symbolizer/test/BUCK` (modified, +1/-0)
+```diff
+@@ -265,6 +265,7 @@ fb_dirsync_cpp_unittest(
+         "//folly:varint",
+         "//folly/debugging/symbolizer:dwarf",
+         "//folly/portability:gtest",
++        "//folly/portability:sys_mman",
+     ],
+ )
+ 
+```
+
+**File**: `folly/debugging/symbolizer/test/DwarfUtilTest.cpp` (modified, +111/-0)
+```diff
+@@ -26,6 +26,7 @@
+ #include <folly/Utility.h>
+ #include <folly/Varint.h>
+ #include <folly/portability/GTest.h>
++#include <folly/portability/SysMman.h>
+ 
+ #if FOLLY_HAVE_DWARF && FOLLY_HAVE_ELF
+ 
+@@ -119,6 +120,74 @@ std::vector<uint8_t> abbreviation() {
+   };
+ }
+ 
++// DWARF 4 split units carry their DWO ID in DW_AT_GNU_dwo_id, DWARF 5 in the
++// unit header.
++std::vector<uint8_t> splitUnitAbbreviation(uint16_t version) {
++  if (version == 5) {
++    return abbreviation();
++  }
++  std::vector<uint8_t> bytes{1, DW_TAG_compile_unit, DW_CHILDREN_yes};
++  appendULEB(bytes, DW_AT_GNU_dwo_id);
++  appendULEB(bytes, DW_FORM_data8);
++  bytes.insert(bytes.end(), {0, 0, 0});
++  return bytes;
++}
++
++std::vector<uint8_t> splitUnit(uint16_t version, uint64_t dwoId) {
++  std::vector<uint8_t> bytes;
++  append<uint32_t>(bytes, 0);
++  append<uint16_t>(bytes, version);
++  if (version == 5) {
++    append<uint8_t>(bytes, DW_UT_split_compile);
++    append<uint8_t>(bytes, sizeof(uintptr_t));
++    append<uint32_t>(bytes, 0);
++    append<uint64_t>(bytes, dwoId);
++    appendULEB(bytes, 1);
++    bytes.insert(bytes.end(), {'x', 0});
++  } else {
++    append<uint32_t>(bytes, 0);
++    append<uint8_t>(bytes, sizeof(uintptr_t));
++    appendULEB(bytes, 1);
++    append<uint64_t>(bytes, dwoId);
++  }
++  bytes.push_back(0);
++  overwrite<uint32_t>(bytes, 0, folly::to_narrow(bytes.size() - 4));
++  return bytes;
++}
++
++class SparseSection {
++ public:
++  explicit SparseSection(size_t size)
++      : size_(size),
++        data_(mmap(
++            nullptr,
++            size,
++            PROT_READ | PROT_WRITE,
++            MAP_PRIVATE | MAP_ANONYMOUS | MAP_NORESERVE,
++            -1,
++            0)) {}
++  SparseSection(const SparseSection&) = delete;
++  SparseSection& operator=(const SparseSection&) = delete;
++  ~SparseSection() {
++    if (valid()) {
++      munmap(data_, size_);
++    }
++  }
++
++  bool valid() const { return data_ != MAP_FAILED; }
++  void write(size_t offset, std::span<const uint8_t> bytes) {
++    std::memcpy(
++        static_cast<uint8_t*>(data_) + offset, bytes.data(), bytes.size());
++  }
++  std::span<const uint8_t> bytes() const {
++    return {static_cast<const uint8_t*>(data_), size_};
++  }
++
++ private:
++  size_t size_;
++  void* data_;
++};
++
+ TEST(DwarfUtil, ParsesDwarf4CompilationUnitHeader) {
+   const auto bytes = dwarf4Header();
+ 
+@@ -309,6 +378,48 @@ TEST(DwarfUtil, RejectsOverflowingDwpDimensions) {
+   EXPECT_EQ(DwarfParseErrorCode::integer_overflow, result.error().code);
+ }
+ 
++TEST(DwarfUtil, FindsDwpUnitPastTruncatedInfoOffset) {
++  if (sizeof(size_t) < sizeof(uint64_t)) {
++    GTEST_SKIP() << "requires a 64-bit address space";
++  }
++  constexpr uint64_t kTruncatedOffset = 0x10;
++  constexpr uint64_t kOffset = (uint64_t{1} << 32) + kTruncatedOffset;
++  constexpr uint64_t kDwoId = 0x123456789abcdef0;
++  SparseSection info(folly::to_narrow(kOffset + 0x1000));
++  if (!info.valid()) {
++    GTEST_SKIP() << "cannot map a section larger than 4 GiB";
++  }
++  for (uint16_t version : {4, 5}) {
++    SCOPED_TRACE(version);
++    const auto abbrev = splitUnitAbbreviation(version);
++    info.write(kTruncatedOffset, splitUnit(version, kDwoId + 1));
++    info.write(folly::to_narrow(kOffset), splitUnit(version, kDwoId));
++    CompilationUnit cu{};
++    cu.debugSections.debugInfo = info.bytes();
++    cu.debugSections.debugAbbrev = abbrev;
++    cu.offset = kTruncatedOffset;
++
++    EXPECT_TRUE(parseDwpCompilationUnit(cu, kDwoId));
++
++    EXPECT_EQ(kOffset, cu.offset);
++    ASSERT_TRUE(cu.dwoId.hasValue());
++    EXPECT_EQ(kDwoId, *cu.dwoId);
++  }
++}
++
++TEST(DwarfUtil, RejectsDwpUnitWithMismatchedDwoIdWithoutModifyingOutput) {
++  const auto info = splitUnit(5, 0x1234);
++  const auto abbrev = splitUnitAbbreviation(5);
++  CompilationUnit cu{};
++  cu.debugSections.debugInfo = info;
++  cu.debugSections.debugAbbrev = abbrev;
++
++  EXPECT_FALSE(parseDwpCompilationUnit(cu, 0x4321));
++
++  EXPECT_EQ(uint32_t{0}, cu.size);
++  EXPECT_FALSE(cu.dwoId.hasValue());
++}
++
+ TEST(DwarfUtil, ResolvesStrxThroughDwarf64DwpContributionOfDwarf32Unit) {
+   const std::vector<uint8_t> strings{'a', 0, 'b', 0};
+   std::vector<uint8_t> stringOffsets(4);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2756** (2026-11-18): Re-sync with internal repository (@meta-codesync[bot])
+- **PR #2755** (closed): Fix dead fmt format-syntax link in logging docs (@farisbasha)
+- **PR #2747** (closed): Reject multi-character labels in `IPAddressV6::fromInverseArpaName` (@0z5a)
+- **PR #2746** (closed): Reject `\x` without hex digits in `cUnescape` (@0z5a)
 - **PR #2741** (closed): Split the chunk header into F14ChunkHeader; the empty chunk is a real header object (#2741) (@DenisYaroshevskiy)
 - **PR #2740** (2026-11-09): Re-sync with internal repository (@meta-codesync[bot])
-- **PR #2739** (2026-11-06): Re-sync with internal repository (@meta-codesync[bot])
-- **PR #2737** (closed): Move fbcode_builder to tool/ and stop exporting .buckconfig.d (@vitaut)
-- **PR #2735** (2026-11-04): Re-sync with internal repository (@meta-codesync[bot])
-- **PR #2731** (closed): Work around GCC < 13 TBAA miscompile in InlineFunctionRef (@Nicoshev)
 
 ---
 
@@ -2655,63 +3179,33 @@ fbshipit-source-id: 37c9fe72cf62019df12783cca43f214e4d0b24cc
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. AsyncIoUringSocket: resend without zero copy when a zero copy write fails
+## X. add fixed-work F14 cache-locality profiles
 
 **RULE**:
-When implementing operations in `folly/io/async/AsyncIoUringSocket.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `folly/container/test/BUCK`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/folly. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f416c5d1`: AsyncIoUringSocket: resend without zero copy when a zero copy write fails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `da724490`: add fixed-work F14 cache-locality profiles. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/io/async/AsyncIoUringSocket.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `folly/container/test/BUCK`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-namespace {
-
-// Errors from a zero copy send that a copying send of the same data would
-// not necessarily hit, e.g. failing to pin the pages or allocate zero copy
-// state, or the socket not supporting zero copy at all.
-bool isZeroCopySendError(int err) {
-  switch (err) {
-    case ENOMEM:
-    case EOPNOTSUPP:
-      return true;
-    default:
-      return false;
-  }
-}
-
-} // namespace
-
-  } else if (res < 0 && zcOptions_.zeroCopy && isZeroCopySendError(-res)) {
-    // a failed send transmits nothing, so resend the whole message without
-    // zero copy rather than failing the write. The notification for the
-    // failed send still arrives and is accounted for in refs_.
-    VLOG(2) << "zero copy write failed, retrying without zero copy: "
-            << folly::errnoStr(-res) << " (" << res << ")";
-    zcOptions_.zeroCopy = false;
-    parent_->zeroCopySuspended_ = true;
-    parent_->zeroCopyReenableCounter_ = parent_->zeroCopyReenableThreshold_;
-
-    // must make inflight false even if MORE is set
-    prepareForReuse();
-    parent_->doReSubmitWrite();
-bool AsyncIoUringSocket::canZC(std::unique_ptr<IOBuf> const& buf) {
-  if (zeroCopySuspended_) {
-    if (zeroCopyReenableCounter_ == 0 ||
+    labels = _F14_FALLBACK_CI_LABELS,
+        "//folly/lang:align",
+        "//folly/lang:exception",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-bool AsyncIoUringSocket::canZC(std::unique_ptr<IOBuf> const& buf) const {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f416c5d1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `da724490` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

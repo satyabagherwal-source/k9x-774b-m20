@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-19T17:07:53.119Z",
+  "updated_at": "2026-11-19T17:43:22.589Z",
   "statistics": {
-    "total_nodes": 388,
+    "total_nodes": 389,
     "total_edges": 181,
     "domain_distribution": {
-      "D": 258,
+      "D": 259,
       "M": 1,
       "H": 58,
       "J": 14,
@@ -8678,6 +8678,28 @@
       ],
       "created_at": "2026-11-19T17:07:53.118Z",
       "updated_at": "2026-11-19T17:07:53.118Z"
+    },
+    "DOM-D-6FA503EE": {
+      "id": "DOM-D-6FA503EE",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md`  \n> **Source**: huggingface ([ht -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md`  \n> **Source**: huggingface ([ht",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-openbmb-minicpm-v-4.7-35b-a3b-gguf/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T17:42:53.162Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openbmb-minicpm-v-4.7-35b-a3b-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-19T17:43:22.589Z",
+      "updated_at": "2026-11-19T17:43:22.589Z"
     }
   },
   "edges": [

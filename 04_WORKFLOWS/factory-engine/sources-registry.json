@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T17:23:34.239Z",
-    "lastVerified": "2026-11-19T17:23:34.239Z",
+    "lastChecked": "2026-11-19T17:42:52.157Z",
+    "lastVerified": "2026-11-19T17:42:52.157Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -170,22 +170,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T16:33:25.831Z",
-    "lastVerified": "2026-11-19T16:33:25.831Z",
+    "lastChecked": "2026-11-19T17:38:08.158Z",
+    "lastVerified": "2026-11-19T17:38:08.158Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "05841c51130e0e74ca8cd085e6fdac450fc8382e97d5684a58dfa52c183e15c8",
+    "contentHash": "88eaf3ea946867da74ad5252cc8250a2da01c13b8fc81bdb1cd50ee244c024ff",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "5d6c8155"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -230,8 +229,8 @@
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-19T09:07:11.222Z",
-    "lastVerified": "2026-11-19T09:07:11.222Z",
+    "lastChecked": "2026-11-19T17:37:55.329Z",
+    "lastVerified": "2026-11-19T17:37:55.329Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -2160,14 +2159,14 @@
     "officialUrl": "https://github.com/paradedb/paradedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T13:57:01.986Z",
-    "lastVerified": "2026-11-18T13:57:01.986Z",
+    "lastChecked": "2026-11-19T17:38:03.891Z",
+    "lastVerified": "2026-11-19T17:38:03.891Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-paradedb-paradedb",
-    "contentHash": "312a6755f6456901cb6ecedc70379dddc0bfcccc07da2cb8a4f060272872722c",
+    "contentHash": "afa63e0bf85de391fa857cf55773626d6f7baab0f510a7dd7fbd4f3a61c556a7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 10,
+    "recentFixesCount": 15,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2522,9 +2521,9 @@
   "easegress-io-easegress": {
     "name": "easegress",
     "officialUrl": "https://github.com/easegress-io/easegress",
-    "lastChecked": "2026-11-18T14:48:34.182Z",
+    "lastChecked": "2026-11-19T17:37:52.739Z",
     "revisionIdentifier": "b8d95290",
-    "lastVerified": "2026-11-18T14:48:34.182Z"
+    "lastVerified": "2026-11-19T17:37:52.739Z"
   },
   "giancarloerra-socraticode": {
     "name": "SocratiCode",
@@ -8009,5 +8008,46 @@
     "lastChecked": "2026-11-19T17:23:15.318Z",
     "revisionIdentifier": "3a99044b",
     "lastVerified": "2026-11-19T17:23:15.318Z"
+  },
+  "facebook-folly": {
+    "name": "meta/folly",
+    "officialUrl": "https://github.com/facebook/folly",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-11-19T17:37:54.068Z",
+    "lastVerified": "2026-11-19T17:37:54.068Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-meta-folly",
+    "contentHash": "041697beb775b508d0b820041df4d6edb3b8973d7076a578807bc2f59dbfbf77",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf": {
+    "name": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+    "officialUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T17:37:47.880Z",
+    "lastVerified": "2026-11-19T17:37:47.880Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b-gguf",
+    "contentHash": "1e56cb9eeb722c83ace7145ce4f33540e6a4d36db3572c4dfb7a05b2b0da4c03",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mochidiffusion-mochidiffusion": {
+    "name": "MochiDiffusion",
+    "officialUrl": "https://github.com/MochiDiffusion/MochiDiffusion",
+    "lastChecked": "2026-11-19T17:37:50.211Z",
+    "revisionIdentifier": "e9e0d755",
+    "lastVerified": "2026-11-19T17:37:50.211Z"
   }
 }

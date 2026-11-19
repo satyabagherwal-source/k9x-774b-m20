@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T13:57:08.518Z",
+  "timestamp": "2026-11-19T17:43:23.336Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-paradedb-paradedb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [paradedb-paradedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T13:57:08.518Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T17:43:23.336Z`  
 > **Learning ID**: `LEARN-EVO-paradedb-paradedb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `b2eb4729`  
+> **Source Version**: `98188786`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T13:57:01.993Z  
+> **Timestamp**: 2026-11-19T17:38:03.897Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T13:57:01.986Z  
+> **Harvest Timestamp**: 2026-11-19T17:38:03.891Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9539 stars
+- **Stars / Engagement**: 9541 stars
 
 ---
 
@@ -2047,9 +2047,8 @@ use crate::postgres::customscan::aggregatescan::pdb_agg::PdbAggPlan;
 use crate::postgres::customscan::aggregatescan::privdat::{DataFusionTopK, FilterExpr};
 use crate::postgres::customscan::bitmap_intersection::BitmapExec;
 use crate::postgres::customscan::joinscan::build::RelNode;
-use crate::postgres::customscan::mpp::glue::MppLaunchTiming;
+use crate::postgres::customscan::mpp::glue::{MppLaunchTiming, MppLifecycle};
 use crate::postgres::customscan::mpp::interrupt::PgTokioRuntime;
-use crate::postgres::customscan::mpp::launch::MppLifecycle;
 use crate::postgres::customscan::projections::{PlaceholderColumn, PlaceholderProjection};
 use crate::postgres::customscan::solve_expr::SolvePostgresExpressions;
 use crate::postgres::heap::VisibilityStats;
@@ -2081,11 +2080,9 @@ pub struct DataFusionAggState {
     /// The executed physical plan, kept so EXPLAIN ANALYZE can merge the worker metrics that
     /// arrive over `coordinator_channel` into its display.
     pub physical_plan: Option<std::sync::Arc<dyn datafusion::physical_plan::ExecutionPlan>>,
-    /// Where MPP sits in its launch lifecycle for this scan: marked pending at begin, launched
-    /// on first exec once the built plan's stages are committed (#5667: the plan comes first;
-    /// workers spawn only after it exists). Stays `Inactive` on the serial path.
-    /// Applies only when parallel execution is enabled and the query qualifies (binary join +
-    /// supported aggregate).
+    /// Runtime MPP lifecycle for this scan (#5667: the plan comes first; workers spawn only after
+    /// it exists). Initialized from `PrivateData.parallel_mode_ok` and transitions to `Disabled`
+    /// on budget rejection, launch fallback, or `EndCustomScan`.
     pub mpp: MppLifecycle,
     /// Tokio runtime for async DataFusion execution (dropped after `stream`, `physical_plan`,
     /// and `mpp` so background tasks are quiesced and deferred drops are drained first).
@@ -2119,9 +2116,6 @@ pub struct DataFusionAggState {
     /// Assembled `pdb.agg()` documents for each row of `current_batch`, which then
     /// holds the SQL-level rows only.
     pub pdb_agg_json: Option<Vec<Vec<serde_json::Value>>>,
-    /// Captured from PostgreSQL's statement-wide `PlannerGlobal.parallelModeOK`. When false, this
-    /// scan may still use DataFusion, but it must never launch MPP producer workers.
-    pub parallel_mode_ok: bool,
     /// Per-phase launch timing for `EXPLAIN ANALYZE`'s `MPP Launch` line. Set only when the
     /// query launched distributed.
     pub launch_timing: Option<MppLaunchTiming>,
@@ -2216,7 +2210,19 @@ impl AggregateScanState {
             .expect("BaseScanState: indexrel should be initialized")
     }
 
-    /// Returns true if
+    /// Returns true if the DataFusion backend is active.
+    pub fn is_datafusion_backend(&self) -> bool {
+        self.datafusion_state.is_some()
+    }
+
+    pub fn precomputed_index_info(&self) -> Option<&AggIndexInfo> {
+        self.precomputed_index_info.as_ref()
+    }
+}
+
+impl CustomScanState for AggregateScanState {
+    fn init_exec_method(&mut self, _cstate: *mut pg_sys::CustomScanState) {
+        // TODO: Unu
 ```
 
 
@@ -2228,8 +2234,8 @@ impl AggregateScanState {
 - **Issue #7433** (2026-11-12): **CI: Citus 13 build fails on PostgreSQL 15.20 with a redeclared `have_createdb_privilege`**
   *Symptoms*: # What happens?  Since PostgreSQL 15.20 reached `apt.postgresql.org` on 2026-11-12, the `Build & install Citus 13 (PG 15)` step of `Test pg_search` fails.  ``` citus/src/include/pg_version_compat.h:604:1: error: static declaration of ‘have_createdb_privilege’ follows non-static declaration /usr/include/postgresql/15/server/commands/dbcommands.h:33:13: note: previous declaration of ‘have_createdb_privilege’ with type ‘_Bool(void)’ ```  PostgreSQL 15.20 exports `have_createdb_privilege` from `commands/dbcommands.h` (postgres/postgres@98ec97f673). Citus 13 has a `static inline` copy of it for PostgreSQL versions before 16 in `src/include/pg_version_compat.h`, so the two declarations collide. `v13.4.0` and `v13.5.0` have the same copy, so a newer 13.x tag doesn't help.  The last green run of this job installed `postgresql-server-dev-15` `15.19-1.pgdg26.04+2`. The red runs install `15.20-1.pgdg26.04+1`. PostgreSQL 16 to 18 aren't affected, because those jobs build Citus 14.  These runs fail at the same step.  - https://github.com/paradedb/paradedb/actions/runs/43280487148/job/131400357675 (#7430) - https://github.com/paradedb/paradedb/actions/runs/43272838607 - https://github.com/paradedb/paradedb/actions/runs/43267298415 - https://github.com/paradedb/paradedb/actions/runs/43266693756  ## To Reproduce  Run this on Ubuntu with the PGDG apt repository.  ```bash sudo apt-get install -y postgresql-15 postgresql-server-dev-15 git clone --depth 1 --branch v13.3.0 https://github.com/citu
 
-- **Issue #7313** (2026-11-08): **JoinScan segfaults when a projected expression contains a scalar subquery**
-  *Symptoms*: ### What happens?  ParadeDB Join Scan crashes the server (segmentation fault) when an expression in the SELECT list contains a scalar subquery, such as `a.q + (SELECT 1)`. Postgres then restarts all connections. A prepared statement parameter in the same place, with a generic plan, fails with ERROR: no value found for parameter 1.  ### To Reproduce  ```sql CREATE EXTENSION IF NOT EXISTS pg_search;  CREATE TABLE a (id int PRIMARY KEY, q int); CREATE TABLE b (id int PRIMARY KEY, a_id int);  INSERT INTO a VALUES (1, 5); INSERT INTO b VALUES (1, 1);  CREATE INDEX a_idx ON a USING paradedb (id, q); CREATE INDEX b_idx ON b USING paradedb (id, a_id);  SELECT a.id, a.q + (SELECT 1) FROM a JOIN b ON b.a_id = a.id WHERE a.id @@@ pdb.all() ORDER BY a.id LIMIT 1; ```  The server crashes with "terminated by signal 11: Segmentation fault". Expected 1 | 6. With SET paradedb.enable_join_custom_scan = off; it returns 1 | 6.  The parameter case:  ```sql SET plan_cache_mode = force_generic_plan; PREPARE s(int) AS   SELECT a.id, a.q + $1 FROM a JOIN b ON b.a_id = a.id   WHERE a.id @@@ pdb.all() ORDER BY a.id LIMIT 1; EXECUTE s(1); ```  Returns ERROR: no value found for parameter 1. Expected 1 | 6.  ### OS:  macOS  ### ParadeDB Version (e.g. output of `SELECT * FROM paradedb.version_info();`):  e80cf37  ### Are you using ParadeDB Docker, Helm, or the extension(s) standalone?  ParadeDB pg_search Extension  ### Full Name:  Niladri Adhikary  ### Affiliation:  N/A  ### Did you include all relevant da
+- **Issue #7428** (2026-11-19): **Aggregate Scan with MPP misses a concurrent insert under SERIALIZABLE**
+  *Symptoms*: ### What happens?  Under `SERIALIZABLE`, an Aggregate Scan that runs with MPP can miss a concurrent insert, and both transactions commit. The same steps without MPP abort one of them with 40001.  The scan pins its view of the index when the plan starts (`prepare_mpp` in `begin_custom_scan`), but takes its SIREAD lock only at the first exec. If a writer inserts and commits in between, the writer's conflict checks find no lock, and the reader reads the old view, so it never sees the new row. No conflict is recorded.  ### To Reproduce  ```sql CREATE EXTENSION IF NOT EXISTS pg_search CASCADE; CREATE TABLE authors (id int PRIMARY KEY, name text); CREATE TABLE posts (id int PRIMARY KEY, author_id int, title text); CREATE TABLE flags (id int PRIMARY KEY, v int); CREATE INDEX authors_idx ON authors USING paradedb (id, name); CREATE INDEX posts_idx ON posts USING paradedb (id, author_id, title);  -- two segments per index, so MPP can launch SET paradedb.global_mutable_segment_rows = 0; INSERT INTO authors VALUES (1, 'a1'), (2, 'a2'); INSERT INTO authors VALUES (3, 'a3'), (4, 'a4'); INSERT INTO posts VALUES (10, 1, 'rust'), (20, 2, 'rust'); INSERT INTO posts VALUES (30, 3, 'rust'), (40, 4, 'rust'); INSERT INTO flags VALUES (1, 0);  -- Session 1 (reader) SET paradedb.mpp_min_rows = 0; SET max_parallel_workers_per_gather = 3; SET parallel_setup_cost = 0; SET parallel_tuple_cost = 0; BEGIN ISOLATION LEVEL SERIALIZABLE; -- pg_sleep holds the scan between begin and exec SELECT pg_sleep(3), 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2246,507 +2252,1294 @@ impl AggregateScanState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6f893812` (2026-11-18)
-**Commit Message**: fix: prioritize background mergers over foreground backpressure (#7522)
+### Incident Patch 1: `534617a6` (2026-11-19)
+**Commit Message**: fix: retry background merges without blocking the sweep or VACUUM (#7276)
 
 ## What
 
-Give successfully launched background mergers priority over foreground
-backpressure.
-
-## Why
-
-Above four times `target_segment_count`, an inserting backend currently
-reserves a foreground merge even after launching a background worker. It
-still holds `MergeLock`, so the new worker cannot claim those segments
-first. This can stall inserts and logical replication on large merges
-despite available background capacity.
+Retry background merges from the periodic sweep when an index exceeds
+twice its target segment count, even after writes stop. Make optional
+background-merge scheduling from both the sweep and VACUUM skip busy
+indexes instead of waiting.
 
 ## How
 
-Return after a successful background launch, releasing the merge lock
-and pins. Keep the existing foreground fallback when a worker cannot be
-launched. Configure the existing reservation test to exercise foreground
-merging explicitly. Wait for older snapshots before vacuuming the
-index-only scan regression fixture so background merger timing does not
-change its expected plan.
+- Count visible segments during the existing metadata walk and attempt
+sweep merge selection only when background merging is enabled and the
+count exceeds twice `target_segment_count`. Keep the existing
+four-times-target foreground backpressure threshold unchanged.
+- Apply the 30-second per-index sweep cooldown only when selection finds
+no candidates. Busy slots, locks, temporary merge/VACUUM exclusions, and
+successful launches remain retryable on the configured sweep interval.
+Mutable flushing, write scheduling, and VACUUM scheduling are
+unaffected.
+- Give mutable flushing priority within each sweep. Schedule background
+work only when there are no idle mutable segments to flush.
+- Use one `MergeStyle::Background` for VACUUM cleanup and the sweep.
+Conditionally acquire merge admission and the merge lock, skipping busy
+indexes. Preserve required VACUUM cleanu
 
-## Tests
-
-- The index-only scan regression passed three consecutive PostgreSQL 18
-runs. A controlled older-snapshot reproduction confirms the fixture
-waits until the snapshot is released, then produces an index-only scan.
-- All five backpressure merge-policy SQL tests pass, including
-reserved-segment exclusio
-
-**File**: `docs/project/changelog/unreleased/7522.performance.mdx` (added, +5/-0)
+**File**: `index_write/src/postgres/merge.rs` (modified, +27/-8)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+header: performance
-+---
-+
-+- Writes now skip foreground merges after successfully launching a background merger. Foreground merging remains the fallback when a background merger cannot be launched.
-```
-
-**File**: `index_write/src/postgres/merge.rs` (modified, +7/-9)
-```diff
-@@ -325,7 +325,7 @@ fn backpressure(
+@@ -98,8 +98,8 @@ pub enum MergeStyle {
+         current_xid: pg_sys::FullTransactionId,
+         next_xid: pg_sys::FullTransactionId,
+     },
+-    /// VACUUM finished; only a background merge may follow.
+-    Vacuum,
++    /// Only schedule a background merge; skip busy indexes.
++    Background,
+ }
  
+ /// Who runs a merge, which decides what happens between candidates.
+@@ -326,32 +326,51 @@ fn backpressure(
  /// Kick off a merge of the index, if needed.
  ///
--/// Launch background work when possible; overfull indexes also need one eligible foreground merge.
-+/// Prefer a background worker; help with one eligible merge when workers are busy or unavailable.
- pub unsafe fn do_merge(index: &PgSearchRelation, style: MergeStyle) -> anyhow::Result<()> {
+ /// Prefer a background worker; help with one eligible merge when workers are busy or unavailable.
+-pub unsafe fn do_merge(index: &PgSearchRelation, style: MergeStyle) -> anyhow::Result<()> {
++/// Returns true only for an empty background selection with no temporary exclusions.
++pub unsafe fn do_merge(index: &PgSearchRelation, style: MergeStyle) -> anyhow::Result<bool> {
      // don't kick off merges for invalid indexes
      if !index.is_valid() {
-@@ -348,7 +348,11 @@ pub unsafe fn do_merge(index: &PgSearchRelation, style: MergeStyle) -> anyhow::R
+-        return Ok(());
++        return Ok(false);
+     }
+ 
++    if matches!(style, MergeStyle::Background)
++        && index.options().background_layer_sizes().is_empty()
++    {
++        return Ok(false);
++    }
+     let layer_sizes = IndexLayerSizes::from(index);
+     let target_segment_count = index.target_segment_count();
+     let metadata = MetaPage::open(index);
+-    let merge_pins = metadata.pin_merge();
+-    let merge_lock = metadata.acquire_merge_lock();
++    let (merge_pins, merge_lock) = if matches!(style, MergeStyle::Background) {
++        if VacuumSignal::new(index.oid()).wants_cancel() {
++            return Ok(false);
++        }
++        let Some(locks) = metadata.try_pin_and_lock_merge() else {
++            return Ok(false);
++        };
++        locks
++    } else {
++        (metadata.pin_merge(), metadata.acquire_merge_lock())
++    };
+     let merger = SearchIndexMerger::open(index, MvccSatisfies::Mergeable)?;
+     let mut merge_policy = LayeredMergePolicy::new(layer_sizes.combined());
+     #[cfg(feature = "pg_test")]
+     crate::postgres::storage::coordination_test::selection_pause();
+     merge_policy.set_mergeable_segment_entries(&metadata, &merge_lock, &merger);
+     let (candidates, largest_layer_size, skipped) = merge_policy.simulate_supported(&merger)?;
+     warn_unsupported_vector_merge(index, skipped);
++    let no_candidates = matches!(style, MergeStyle::Background)
++        && candidates.is_empty()
++        && merge_lock.merge_list().list_segment_ids().next().is_none()
++        && metadata.vacuum_list().read_list().is_empty();
+     let needs_background_merge =
          layer_sizes.user_configured_background_layers() && !candidates.is_empty();
      let background_launched =
          needs_background_merge && try_launch_background_merger(index, largest_layer_size);
--
-+    // If a background merger launched successfully, exit before applying more backpressure
-+    // so foreground backpressure does not race with it to claim segments.
-+    if background_launched {
-+        return Ok(());
-+    }
+     // If a background merger launched successfully, exit before applying more backpressure
+     // so foreground backpressure does not race with it to claim segments.
+     if background_launched {
+-        return Ok(());
++        return Ok(false);
+     }
      if let MergeStyle::Insert {
          current_xid,
-         next_xid,
-@@ -366,11 +370,6 @@ pub unsafe fn do_merge(index: &PgSearchRelation, style: MergeStyle) -> anyhow::R
+@@ -398,7 +417,7 @@ pub unsafe fn do_merge(index: &PgSearchRelation, style: MergeStyle) -> anyhow::R
              );
-             None
+         }
+     }
+-    Ok(())
++    Ok(no_candidates)
+ }
+ 
+ /// Try to launch a background process to merge down the index.
+```
+
+**File**: `index_write/src/postgres/mutable_sweep.rs` (modified, +43/-18)
+```diff
+@@ -25,10 +25,11 @@ use crate::postgres::delete::VacuumSignal;
+ use crate::postgres::index::free_leaf_partition_indexes;
+ use crate::postgres::locks::AdvisoryLock;
+ use crate::postgres::merge::{
+-    MergeMode, MergeSlot, MergeSlotVariant, merge_crash_details, merge_index,
++    MergeMode, MergeSlot, MergeSlotVariant, MergeStyle, do_merge, merge_crash_details, merge_index,
+     warn_unsupported_vector_merge,
+ };
+ use crate::postgres::ps_status::{MERGING, set_ps_display_suffix};
++use crate::postgres::storage::block::MVCCEntry;
+ use crate::postgres::storage::metadata::MetaPage;
+ use pgrx::bgworkers::{BackgroundWorker, BackgroundWorkerBuilder, SignalWakeFlags};
+ use pgrx::{
+@@ -40,6 +41,8 @@ use std::panic::AssertUnwindSafe;
+ use std::time::{Duration, Instant};
+ 
+ static INTERVAL_MS: GucSetting<i32> = GucSetting::<i32>::new(1000);
++const SWEEP_MERGE_MULTIPLIER: usize = 2;
++const BACKGROUND_MERGE_COOLDOWN: Duration = Duration::from_secs(30);
+ 
+ // Check for missing workers and new databases independently of the sweep interval.
+ const WORKER_CHECK_INTERVAL: Duration = Duration::from_secs(30);
+@@ -193,12 +196,14 @@ unsafe extern "C-unwind" fn mutable_sweep_database(database: pg_sys::Datum) {
+     let mut next_sweep = Instant::now();
+     let mut interval = INTERVAL_MS.get();
+     let mut previous_counts = HashMap::default();
++    let mut merge_retry_after = HashMap::default();
+     loop {
+         reload();
+         if INTERVAL_MS.get() != interval {
+             interval = INTERVAL_MS.get();
+             next_sweep = Instant::now();
+             previous_counts.clear();
++            merge_retry_after.clear();
+         }
+         if interval == 0 {
+             return;
+@@ -233,6 +238,7 @@ unsafe extern "C-unwind" fn mutable_sweep_database(database: pg_sys::Datum) {
+             return;
+         }
+         if sweeping {
++            merge_retry_after.retain(|_, deadline| *deadline > Instant::now());
+             let observed_counts = pass_context.switch_to(|_| {
+                 let indexes = BackgroundWorker::transaction(|| {
+                     if lookup_extension_version(c"pg_search").as_deref()
+@@ -248,52 +254,68 @@ unsafe extern "C-unwind" fn mutable_sweep_database(database: pg_sys::Datum) {
+                             if !(*index.rd_rel).relam.is_paradedb_am() || !index.is_valid() {
+                                 return None;
+                             }
+-                            let mut idle_segments = HashMap::default();
++                            let mut idle_mutable_segments = HashMap::default();
++                            let mut visible_segment_count = 0;
+                             MetaPage::open(&index).segment_metas().for_each(|_, entry| {
++                                if entry.visible() {
++                                    visible_segment_count += 1;
++                                }
+                                 if entry.is_mutable()
+                                     && entry.xmax() == pg_sys::InvalidTransactionId
+                                 {
+                                     let key = (index.oid(), entry.segment_id());
+                                     let count = entry.num_docs();
+                                     current_counts.insert(key, count);
+                                     if previous_counts.get(&key) == Some(&count) {
+-                                        idle_segments.insert(entry.segment_id(), count);
++                                        idle_mutable_segments.insert(entry.segment_id(), count);
+                                     }
+                                 }
+                             });
+-                            (!idle_segments.is_empty()).then_some((index.oid(), idle_segments))
++                            let needs_merge = visible_segment_count
++                                > SWEEP_MERGE_MULTIPLIER * index.target_segment_count()
++                                && !index.options().background_layer_sizes().is_empty()
++                                && !merge_retry_after.contains_key(&index.oid());
++                            (!idle_mutable_segments.is_empty() || needs_merge)
++                                .then_some((index.oid(), idle_mutable_segments))
+                         })
+                         .collect::<Vec<_>>();
+                     Some((indexes, current_counts))
+                 });
+                 let (indexes, current_counts) = indexes?;
+                 pg_sys::pgstat_report_appname(c"pg_search mutable sweep".as_ptr());
+-                for (index, idle_segments) in indexes {
++                for (index, idle_mutable_segments) in indexes {
+                     reload();
+                     if INTERVAL_MS.get() == 0 {
+                         break;
+                     }
+-                    BackgroundWorker::transaction(|| {
++                    let mut no_candidates = false;
++                    BackgroundWorker::transaction(AssertUnwindSafe(|| {
+                         let Some(index) =
+```
+
+**File**: `index_write/src/postgres/vacuum.rs` (modified, +1/-1)
+```diff
+@@ -32,7 +32,7 @@ pub unsafe extern "C-unwind" fn amvacuumcleanup(
+         let next_xid = pg_sys::ReadNextFullTransactionId();
+         garbage_collect_index(&index, next_xid, next_xid);
+     }
+-    do_merge(&index, MergeStyle::Vacuum).expect("should be able to merge");
++    do_merge(&index, MergeStyle::Background).expect("should be able to merge");
+     // Names the index to a standby cloned after the build; see
+     // `PgSearchRelation::blocked_after_promotion`.
+     custom_rmgr::emit_init_record(&index);
+```
+
+**File**: `pg_search/tests/merge_cleanup.rs` (modified, +243/-6)
+```diff
+@@ -24,6 +24,12 @@ use std::time::{Duration, Instant};
+ /// Keep other schedules' write transactions out of VACUUM's snapshot horizon.
+ static SCHEDULE: Mutex<()> = Mutex::new(());
+ 
++const SWEEP_INTERVAL_MS: i32 = 1000;
++const SWEEP_MERGE_THRESHOLD: i32 = 2;
++const SWEEP_PRESSURE_SEGMENT_COUNT: i32 = SWEEP_MERGE_THRESHOLD + 1;
++const IMMUTABLE_SEGMENT_ROWS: i32 = 250;
++const WAIT_TIMEOUT: Duration = Duration::from_secs(10);
++
+ fn connect() -> Client {
+     let mut client = if let Ok(url) = std::env::var("PG_SEARCH_TEST_DATABASE_URL") {
+         Client::connect(&url, NoTls).unwrap()
+@@ -47,7 +53,7 @@ fn connect() -> Client {
+ }
+ 
+ fn wait_until(description: &str, mut condition: impl FnMut() -> bool) {
+-    let deadline = Instant::now() + Duration::from_secs(10);
++    let deadline = Instant::now() + WAIT_TIMEOUT;
+     while !condition() {
+         assert!(
+             Instant::now() < deadline,
+@@ -163,12 +169,23 @@ impl Fixture {
+     }
+ 
+     fn segments_with_rows(&mut self, rows: i32) {
++        let batches = if self.mutable { 6 } else { 4 };
++        self.segments_with_batches(rows, batches);
++    }
++
++    fn segments_with_batches(&mut self, rows: i32, batches: i32) {
++        self.insert_segments(rows, batches);
++        self.controller
++            .batch_execute(&format!("DELETE FROM {} WHERE id % 2=0", self.table))
++            .unwrap();
++    }
++
++    fn insert_segments(&mut self, rows: i32, batches: i32) {
+         let body = if self.mutable {
+             "'alpha beta'"
          } else {
--            let needs_foreground_backpressure =
--                layer_sizes.visible_segment_count > BACKPRESSURE_MULTIPLIER * target_segment_count;
--            if background_launched && !needs_foreground_backpressure {
--                return Ok(());
--            }
-             candidates
-                 .iter()
-                 .filter(|(layer, _)| layer_sizes.foreground_layer_sizes.contains(layer))
-@@ -956,7 +955,7 @@ mod tests {
-             .collect::<Vec<_>>();
-         drop(index);
-         Spi::run(&format!(
--            "ALTER INDEX backpressure_idx SET (background_layer_sizes='{bytes} bytes')"
-+            "ALTER INDEX backpressure_idx SET (layer_sizes='{bytes} bytes')"
-         ))
+             "'alpha beta ' || md5(id::text)"
+         };
+-        let batches = if self.mutable { 6 } else { 4 };
+         for batch in 0..batches {
+             self.controller
+                 .batch_execute(&format!(
+@@ -179,8 +196,16 @@ impl Fixture {
+                 ))
+                 .unwrap();
+         }
++    }
++
++    fn start_sweep(&mut self) {
+         self.controller
+-            .batch_execute(&format!("DELETE FROM {} WHERE id % 2=0", self.table))
++            .batch_execute(&format!(
++                "ALTER SYSTEM SET paradedb.mutable_sweep_interval = {SWEEP_INTERVAL_MS}"
++            ))
++            .unwrap();
++        self.controller
++            .simple_query("SELECT pg_reload_conf()")
+             .unwrap();
+     }
+ 
+@@ -929,15 +954,220 @@ fn periodic_sweep_waits_for_unchanged_document_counts() {
          .unwrap();
-         let index = PgSearchRelation::open(oid);
-@@ -992,7 +991,6 @@ mod tests {
-         assert!(candidates.len() > 1);
-         drop(merger);
-         drop(merge_lock);
--        assert!(MergeSlot::for_layer_size(oid, bytes).is_available());
-         do_merge(
-             &index,
-             MergeStyle::Insert {
+ }
+ 
++#[test]
++fn vacuum_cleanup_skips_busy_merge_scheduling() {
++    const SCHEDULING_DEADLINE: Duration = Duration::from_secs(2);
++    const POLL_INTERVAL: Duration = Duration::from_millis(10);
++    let _schedule = SCHEDULE.lock().unwrap_or_else(|error| error.into_inner());
++    for (table, phase, function) in [
++        ("vacuum_busy_selection", "selection", "test_merge_index"),
++        (
++            "vacuum_busy_admission",
++            "merge",
++            "test_hold_cleanup_admission",
++        ),
++    ] {
++        let mut fixture = Fixture::new(table, false);
++        fixture.insert_segments(IMMUTABLE_SEGMENT_ROWS, SWEEP_PRESSURE_SEGMENT_COUNT);
++        fixture
++            .controller
++            .batch_execute(&format!(
++                "ALTER INDEX {} SET (background_layer_sizes='1mb')",
++                fixture.index,
++            ))
++            .unwrap();
++        let holder = fixture.actor(
++            phase,
++            format!("SELECT paradedb.{function}('{}')", fixture.index),
++        );
++        fixture.stage(&holder);
++        let mut vacuum = connect();
++        let query = format!("VACUUM {table}");
++        let vacuum = spawn(move || vacuum.batch_execute(&query));
++        let deadline = Instant::now() + SCHEDULING_DEADLINE;
++        while !vacuum.is_finished() && Instant::now() < deadline {
++            sleep(POLL_INTERVAL);
++        }
++        let completed_while_busy = vacuum.is_finished();
++        fixture.release(&holder);
++        holder.finish().1.unwrap();
++        vacuum.join().unwrap().unwrap();
++        assert!(completed_while_busy, "VACUUM waited for merge scheduling");
++        fixture.assert_rows(i64::from(
++            SWEEP_PRESSURE_SEGMENT_COUNT * IMMUTABLE_SEGMENT_ROWS,
++        ));
++        assert!(fixture.value::<bool>(&format!(
++            "SELECT bool_and(passed) FROM pdb.verify_index('{}', heapallindexed=>true)",
++            fixture.index,
++        )));
++    }
++}
++
++#[test]
++fn periodic_sweep_retries_background_merges_without_new_writes() {
++    let _schedule = SCHEDULE.lock().unwrap_or_else(|error| error.into_inner());
++    let mut disabled = Fixture::new("sweep_disabled", false);
++    disabled.segments_with_batches(IMMUTABLE_SEGMENT_ROWS, SWEEP_PRESSURE_SEGMENT_COUNT);
++    let mut at_threshold = Fixture::new("sweep_at_threshold", false);
++    at_threshold.segments_with_batches(IMMUTABLE_SEGMENT_ROWS, SWEEP_MERGE_THRESHOLD);
++    at_threshold
++        .controller
++        .batch_execute("ALTER INDEX sweep_at_threshold_idx SET (background_layer_sizes='1mb')")
++        .unwrap();
++    let mut fixture = Fixture::new("sweep_immuta
 ```
 
-**File**: `pg_search/tests/pg_regress/expected/index_only_scan.out` (modified, +22/-0)
+**File**: `storage/src/postgres/storage/merge.rs` (modified, +9/-0)
 ```diff
-@@ -357,6 +357,28 @@ BEGIN
-     );
- END;
- $$;
-+-- Older background-worker snapshots can prevent VACUUM from marking pages all-visible.
-+DO $$
-+DECLARE
-+    snapshot_wait_timeout CONSTANT interval := interval '2 minutes';
-+    snapshot_poll_interval CONSTANT double precision := 0.1;
-+    deadline timestamptz := clock_timestamp() + snapshot_wait_timeout;
-+BEGIN
-+    LOOP
-+        PERFORM pg_stat_clear_snapshot();
-+        EXIT WHEN NOT EXISTS (
-+            SELECT FROM pg_stat_activity
-+            WHERE pid <> pg_backend_pid()
-+              AND backend_xmin IS NOT NULL
-+              AND (datname = current_database() OR datname IS NULL)
-+        );
-+        IF clock_timestamp() >= deadline THEN
-+            RAISE EXCEPTION 'timed out waiting for older snapshots before index-only scan VACUUM';
-+        END IF;
-+        PERFORM pg_sleep(snapshot_poll_interval);
-+    END LOOP;
-+END;
-+$$;
- VACUUM (FREEZE, ANALYZE) index_only_max_keys;
- SELECT bool_and(pg_index_column_has_property('index_only_max_keys_idx', i, 'returnable')
-                 IS NOT DISTINCT FROM (i = current_setting('max_index_keys')::int)) AS correct_capabilities
+@@ -55,6 +55,15 @@ impl MergeLock {
+         Self::from_buffer(bman, buffer)
+     }
+ 
++    pub unsafe fn try_acquire(
++        indexrel: &PgSearchRelation,
++        block_number: pg_sys::BlockNumber,
++    ) -> Option<Self> {
++        let mut bman = BufferManager::new(indexrel);
++        let buffer = bman.get_buffer_conditional(block_number)?;
++        Some(Self::from_buffer(bman, buffer))
++    }
++
+     /// Like `acquire`, but first waits for every other pin on the merge page (`LockBufferForCleanup`).
+     pub unsafe fn acquire_for_cleanup(
+         indexrel: &PgSearchRelation,
 ```
 
-**File**: `pg_search/tests/pg_regress/sql/index_only_scan.sql` (modified, +22/-0)
+**File**: `storage/src/postgres/storage/metadata.rs` (modified, +8/-2)
 ```diff
-@@ -152,6 +152,28 @@ BEGIN
-     );
- END;
- $$;
-+-- Older background-worker snapshots can prevent VACUUM from marking pages all-visible.
-+DO $$
-+DECLARE
-+    snapshot_wait_timeout CONSTANT interval := interval '2 minutes';
-+    snapshot_poll_interval CONSTANT double precision := 0.1;
-+    deadline timestamptz := clock_timestamp() + snapshot_wait_timeout;
-+BEGIN
-+    LOOP
-+        PERFORM pg_stat_clear_snapshot();
-+        EXIT WHEN NOT EXISTS (
-+            SELECT FROM pg_stat_activity
-+            WHERE pid <> pg_backend_pid()
-+              AND backend_xmin IS NOT NULL
-+              AND (datname = current_database() OR datname IS NULL)
-+        );
-+        IF clock_timestamp() >= deadline THEN
-+            RAISE EXCEPTION 'timed out waiting for older snapshots before index-only scan VACUUM';
-+        END IF;
-+        PERFORM pg_sleep(snapshot_poll_interval);
-+    END LOOP;
-+END;
-+$$;
- VACUUM (FREEZE, ANALYZE) index_only_max_keys;
- SELECT bool_and(pg_index_column_has_property('index_only_max_keys_idx', i, 'returnable')
-                 IS NOT DISTINCT FROM (i = current_setting('max_index_keys')::int)) AS correct_capabilities
+@@ -307,8 +307,8 @@ impl MetaPage {
+         }
+     }
+ 
+-    /// Returns `None` if VACUUM blocks merge admission, so the sweep can try other indexes.
+-    pub fn try_pin_merge(&self) -> Option<MergePins> {
++    /// Returns `None` if VACUUM blocks merge admission.
++    fn try_pin_merge(&self) -> Option<MergePins> {
+         unsafe {
+             let relation = self.bman.buffer_access().rel().as_ptr();
+             let blockno = self.cleanup_lock_blockno();
+@@ -322,6 +322,12 @@ impl MetaPage {
+         }
+     }
+ 
++    pub unsafe fn try_pin_and_lock_merge(&self) -> Option<(MergePins, MergeLock)> {
++        let pins = self.try_pin_merge()?;
++        let lock = MergeLock::try_acquire(self.bman.buffer_access().rel(), self.data.merge_lock)?;
++        Some((pins, lock))
++    }
++
+     pub fn vacuum_list(&self) -> VacuumList {
+         assert!(block_number_is_valid(self.data.active_vacuum_list));
+         VacuumList::open(
 ```
 
 ---
 
-### Incident Patch 2: `6718494c` (2026-11-18)
-**Commit Message**: fix: stop auto_explain from crashing Aggregate Scan and Join Scan queries (#7426)
+### Incident Patch 2: `08b5a731` (2026-11-19)
+**Commit Message**: fix: Keep a Community standby replaying past ParadeDB index creation, and refuse replicated indexes after promotion (#7386)
 
 # Ticket(s) Closed
 
-- Closes #6906
+- Closes #6007
 
 ## What
 
-With `auto_explain` loaded and `log_analyze` off, a query that runs as
-an Aggregate Scan or Join Scan no longer crashes its backend with a
-segfault when auto_explain logs the plan.
+1. A ParadeDB Community standby no longer shuts down when it replays the
+creation of a ParadeDB index.
+2. On the standby, only a query that uses a ParadeDB index fails
+(`0A000`); every other query on the same table works.
+3. After the standby is promoted, the indexes it received through
+replication refuse queries with `0A000` and a `REINDEX INDEX` hint until
+rebuilt. The table, its writes and its other indexes keep working.
 
 ## Why
 
-auto_explain prints plans from its `ExecutorEnd` hook. For a top-level
-query, PostgreSQL calls that hook when it drops the portal, or at
-`COMMIT` for cursors and extended-protocol portals, and no snapshot is
-active at that point. Without ANALYZE, both scans rebuild their
-DataFusion plan to print it. The rebuild calls `GetActiveSnapshot()`,
-which dereferences the NULL active snapshot. Plain `EXPLAIN` works
-because the EXPLAIN command runs with a snapshot.
+`ambuild` emits the custom rmgr's `INIT_INDEX` record after logging the
+index pages, and `rm_redo` raised ERROR on it on a standby. The startup
+process has no exception stack, so the ERROR was FATAL and the standby
+shut down; every restart replayed the same record. Separately,
+`amcanreturn` opened the metapage, which refuses on a standby, so
+planning any query on the table failed there.
 
 ## How
 
-The shared `explain_custom_scan` callback in
-`planner/src/postgres/customscan/exec.rs` now holds
-`ActiveSnapshotGuard::ensure()` while the scan prints its plan. The
-guard pushes the transaction snapshot only when no snapshot is active,
-and pops it when the callback returns. Plain `EXPLAIN`, `EXPLAIN
-ANALYZE`, and auto_explain with `log_analyze` already run with a
-snapshot, so they behave as before.
+- `rm_redo` no longer errors.
+- On a hot standby `rel_get_bm25_index`, which the planner hooks and the
+search operators all call, answers "no index", and `amcanreturn` answers
+false, so PostgreS
+
+**File**: `common/src/postgres/utils.rs` (modified, +32/-0)
+```diff
+@@ -1034,6 +1034,38 @@ pub fn pg_search_extension_installed() -> bool {
+     unsafe { pg_sys::get_extension_oid(c"pg_search".as_ptr(), true) != pg_sys::InvalidOid }
+ }
+ 
++/// True in a backend of a hot standby that is still replaying WAL. ParadeDB Community does not
++/// serve its indexes there: `rel_get_bm25_index` and `amcanreturn` answer "no index" so the
++/// planner never opens one for a query that does not need it, and `RelationBufferAccess::open`
++/// refuses for the statements that do.
++pub fn in_hot_standby() -> bool {
++    // `RecoveryInProgress` latches `LocalRecoveryInProgress` false on a primary without a lock.
++    unsafe { pg_sys::RecoveryInProgress() }
++}
++
++/// The error a statement that needs a ParadeDB index gets on a hot standby.
++pub fn report_hot_standby() -> ! {
++    report_community_limit(
++        "Serving reads from a standby requires write-ahead log (WAL) integration, which is supported on ParadeDB Enterprise, not ParadeDB Community".into(),
++        None,
++    )
++}
++
++/// Raises `0A000` for something ParadeDB Community does not do, with the Enterprise detail.
++pub fn report_community_limit(message: String, hint: Option<String>) -> ! {
++    let mut report = pg_sys::panic::ErrorReport::new(
++        PgSqlErrorCode::ERRCODE_FEATURE_NOT_SUPPORTED,
++        message,
++        function_name!(),
++    )
++    .set_detail("ParadeDB Enterprise is commercially licensed and included with ParadeDB Cloud. To self-host ParadeDB Enterprise, contact sales@paradedb.com.");
++    if let Some(hint) = hint {
++        report = report.set_hint(hint);
++    }
++    report.report(PgLogLevel::ERROR);
++    unreachable!("ErrorReport::report at ERROR level does not return")
++}
++
+ /// RAII wrapper for `pg_sys::List` that automatically frees the list on drop.
+ ///
+ /// This is useful when you need to create a temporary PostgreSQL list for use with
+```
+
+**File**: `docs/concepts/guarantees.mdx` (modified, +1/-1)
+```diff
+@@ -31,7 +31,7 @@ Physical replication refers to running ParadeDB itself in a multi-node, high-ava
+ [ParadeDB Community](https://github.com/paradedb/paradedb) supports logical replication, but not physical replication:
+ 
+ - It can act as a logical replica, ingesting changes from a Postgres primary and indexing them transactionally.
+-- The ParadeDB index does not get physically replicated and won't be available on other nodes in a high availability setup.
++- The ParadeDB index does not get physically replicated and won't be available on other nodes in a high availability setup. After a failover, the promoted server needs a `REINDEX` before the index can be queried.
+ 
+ [ParadeDB Enterprise](/operate/deploy/enterprise) supports both:
+ 
+```
+
+**File**: `docs/project/changelog/unreleased/7386.breaking.mdx` (added, +8/-0)
+```diff
+@@ -0,0 +1,8 @@
++---
++header: breaking
++title: Physical replication and failover on ParadeDB Community
++---
++
++High availability and read replicas have always been ParadeDB Enterprise features, but previously spinning up a physical standby on ParadeDB Community stopped WAL replay entirely when a ParadeDB index was created (#6007). Physical replication is now allowed to continue: non-ParadeDB queries work normally, queries that use a ParadeDB index on a read replica return an error, and if a standby fails over to become a primary (or a server is restored from a base backup taken on a standby) its replicated ParadeDB indexes emit an error and require `REINDEX INDEX`. Backups taken from the primary are unaffected.
++
++Upgrade standbys before the primary: the primary now writes a ParadeDB WAL record during `CREATE INDEX`, `VACUUM`, and `ANALYZE` on indexed tables, and a standby running an earlier release shuts down when replaying that record.
+```
+
+**File**: `index_read/src/postgres/mod.rs` (modified, +55/-8)
+```diff
+@@ -64,18 +64,65 @@ impl TryFrom<pg_sys::StrategyNumber> for ScanStrategy {
+     }
+ }
+ 
+-/// Finds and returns the `USING paradedb` index on the specified relation, along with the heap
+-/// relation. Returns [`None`] if there isn't one. [`PgSearchRelation::bm25_index`] picks the index.
++/// Outcome of looking up the usable `USING paradedb` search index on a relation.
++#[derive(Debug)]
++pub enum Bm25IndexLookup {
++    Found {
++        table: PgSearchRelation,
++        index: PgSearchRelation,
++    },
++    /// The table has no valid `USING paradedb` search index.
++    Missing,
++    /// This backend runs on a hot standby, where ParadeDB Community serves no index.
++    HotStandby,
++    /// The index reached this server through replication before it was promoted.
++    BlockedAfterPromotion(PgSearchRelation),
++}
++
++impl Bm25IndexLookup {
++    /// Returns `(table, index)` when usable, or raises the error for this outcome (`missing`
++    /// supplies the caller's message for [`Bm25IndexLookup::Missing`]).
++    pub fn unwrap_or_report(
++        self,
++        missing: impl FnOnce() -> String,
++    ) -> (PgSearchRelation, PgSearchRelation) {
++        match self {
++            Self::Found { table, index } => (table, index),
++            Self::Missing => pgrx::error!("{}", missing()),
++            Self::HotStandby => crate::postgres::utils::report_hot_standby(),
++            Self::BlockedAfterPromotion(index) => index.report_blocked_after_promotion(),
++        }
++    }
++}
++
++/// Looks up the `USING paradedb` search index on `relid`, along with its heap relation.
++/// [`PgSearchRelation::bm25_index`] picks the index.
++pub fn lookup_bm25_index(relid: pg_sys::Oid) -> Bm25IndexLookup {
++    if relid == pg_sys::Oid::INVALID {
++        return Bm25IndexLookup::Missing;
++    }
++    if crate::postgres::utils::in_hot_standby() {
++        return Bm25IndexLookup::HotStandby;
++    }
++
++    let table = PgSearchRelation::with_lock(relid, pg_sys::AccessShareLock as _);
++    match table.bm25_index() {
++        Some(index) if index.blocked_after_promotion() => {
++            Bm25IndexLookup::BlockedAfterPromotion(index)
++        }
++        Some(index) => Bm25IndexLookup::Found { table, index },
++        None => Bm25IndexLookup::Missing,
++    }
++}
++
++/// [`lookup_bm25_index`] for callers that plan without the index when there is none.
+ pub fn rel_get_bm25_index(
+     relid: pg_sys::Oid,
+ ) -> Option<(rel::PgSearchRelation, rel::PgSearchRelation)> {
+-    if relid == pg_sys::Oid::INVALID {
+-        return None;
++    match lookup_bm25_index(relid) {
++        Bm25IndexLookup::Found { table, index } => Some((table, index)),
++        _ => None,
+     }
+-
+-    let rel = PgSearchRelation::with_lock(relid, pg_sys::AccessShareLock as _);
+-    let index = rel.bm25_index()?;
+-    Some((rel, index))
+ }
+ 
+ // 16 bytes for segment UUID
+```
+
+**File**: `index_write/src/postgres/build.rs` (modified, +3/-3)
+```diff
+@@ -89,9 +89,9 @@ pub extern "C-unwind" fn ambuild(
+         };
+     }
+ 
+-    if needs_wal {
+-        custom_rmgr::emit_init_record();
+-    }
++    // `emit_init_record` checks `need_wal`; restore the flag suppressed above.
++    index_relation.set_need_wal(needs_wal);
++    custom_rmgr::emit_init_record(&index_relation);
+ 
+     let mut result = unsafe { PgBox::<pg_sys::IndexBuildResult>::alloc0() };
+     result.heap_tuples = heap_tuples;
+```
+
+**File**: `index_write/src/postgres/vacuum.rs` (modified, +4/-0)
+```diff
+@@ -20,6 +20,7 @@ use pgrx::*;
+ 
+ use crate::postgres::merge::{MergeStyle, do_merge, garbage_collect_index};
+ use crate::postgres::rel::PgSearchRelation;
++use crate::postgres::storage::custom_rmgr;
+ 
+ #[pg_guard]
+ pub unsafe extern "C-unwind" fn amvacuumcleanup(
+@@ -32,5 +33,8 @@ pub unsafe extern "C-unwind" fn amvacuumcleanup(
+         garbage_collect_index(&index, next_xid, next_xid);
+     }
+     do_merge(&index, MergeStyle::Vacuum).expect("should be able to merge");
++    // Names the index to a standby cloned after the build; see
++    // `PgSearchRelation::blocked_after_promotion`.
++    custom_rmgr::emit_init_record(&index);
+     stats
+ }
+```
+
+**File**: `joinscan/src/postgres/customscan/aggregatescan/mod.rs` (modified, +10/-6)
+```diff
+@@ -120,12 +120,12 @@ use crate::postgres::customscan::{
+ use crate::postgres::datetime::PostgresDateTime;
+ use crate::postgres::pdb_owned_value::PdbOwnedValue;
+ use crate::postgres::pgstat::count_index_scan;
+-use crate::postgres::rel_get_bm25_index;
+ use crate::postgres::serializable::predicate_lock_read_oid;
+ use crate::postgres::types::{TantivyValue, is_datetime_type};
+ use crate::postgres::utils::{
+     ExprContextGuard, add_vars_to_tlist, is_unnest_func, make_text_const,
+ };
++use crate::postgres::{lookup_bm25_index, rel_get_bm25_index};
+ use crate::query::SearchQueryInput;
+ use arrow_array::cast::AsArray;
+ use arrow_array::{BooleanArray, RecordBatch};
+@@ -1588,11 +1588,15 @@ impl AggregateScan {
+             return Vec::new();
+         };
+ 
+-        let Some((_table, index)) = rel_get_bm25_index(heap_relid) else {
+-            if has_paradedb_agg {
+-                pgrx::error!("Cannot execute pdb.agg: table must have a ParadeDB index");
+-            }
+-            return Vec::new();
++        let (_table, index) = if has_paradedb_agg {
++            lookup_bm25_index(heap_relid).unwrap_or_report(|| {
++                "Cannot execute pdb.agg: table must have a ParadeDB index".to_string()
++            })
++        } else {
++            let Some(found) = rel_get_bm25_index(heap_relid) else {
++                return Vec::new();
++            };
++            found
+         };
+ 
+         // Such a `pdb.agg()` query comes here only when the DataFusion backend
+```
+
+**File**: `pg_search/src/postgres/index_only.rs` (modified, +35/-39)
+```diff
+@@ -20,8 +20,8 @@ use crate::index::fast_fields_helper::{FFHelper, WhichFastField};
+ use crate::index::reader::index::SearchIndexReader;
+ use crate::postgres::catalog::OidExt;
+ use crate::postgres::index::is_partitioned_index;
+-use crate::postgres::rel::PgSearchRelation;
+-use crate::postgres::utils::{FieldSource, pg_search_extension_installed};
++use crate::postgres::rel::{AmCache, PgSearchRelation, Returnable};
++use crate::postgres::utils::{FieldSource, in_hot_standby, pg_search_extension_installed};
+ use crate::schema::SearchIndexSchema;
+ use pgrx::{PgList, PgMemoryContexts, PgOid, pg_guard, pg_sys};
+ use std::ptr::null_mut;
+@@ -40,7 +40,8 @@ pub(crate) fn register_hook() {
+             if let Some(previous_hook) = PREV_HOOK {
+                 previous_hook(root, rel, rti, rte);
+             }
+-            if !pg_sys::enable_indexonlyscan || !pg_search_extension_installed() {
++            if !pg_sys::enable_indexonlyscan || in_hot_standby() || !pg_search_extension_installed()
++            {
+                 return;
+             }
+ 
+@@ -56,7 +57,10 @@ pub(crate) fn register_hook() {
+                 }
+                 let path = &*path.cast::<pg_sys::IndexPath>();
+                 let index = &*path.indexinfo;
+-                if index.hypothetical || !index.relam.is_paradedb_am() {
++                if index.hypothetical
++                    || !index.relam.is_paradedb_am()
++                    || PgSearchRelation::open(index.indexoid).blocked_after_promotion()
++                {
+                     continue;
+                 }
+                 let Some(target) = index_only_target(root, path) else {
+@@ -279,7 +283,17 @@ pub(super) extern "C-unwind" fn amcanreturn(indexrel: pg_sys::Relation, attno: i
+             return false;
+         }
+ 
+-        AmCanReturnCache::get_or_init(indexrel.as_ptr()).can_return((attno - 1) as usize)
++        // Planning any query on the table asks every index this question; on a standby the
++        // schema read would refuse and fail the whole statement, and a promoted server must not
++        // offer index-only scans on a tainted index.
++        if in_hot_standby() || indexrel.blocked_after_promotion() {
++            return false;
++        }
++
++        returnable_columns(indexrel.as_ptr())
++            .get((attno - 1) as usize)
++            .copied()
++            .unwrap_or(false)
+     }
+ }
+ 
+@@ -334,42 +348,24 @@ impl IndexOnlyField {
+     }
+ }
+ 
+-#[repr(C)]
+-struct AmCanReturnCache {
+-    returnable: [bool; pg_sys::INDEX_MAX_KEYS as usize],
+-}
+-
+-impl AmCanReturnCache {
+-    unsafe fn get_or_init(indexrel: pg_sys::Relation) -> &'static Self {
+-        if (*indexrel).rd_amcache.is_null() {
+-            let relation = PgSearchRelation::from_pg(indexrel);
+-            let mut returnable = [false; pg_sys::INDEX_MAX_KEYS as usize];
+-
+-            if let Ok(schema) = relation.schema() {
+-                let natts = relation.tuple_desc().len();
+-                for (tuple_index, can_return) in returnable.iter_mut().enumerate().take(natts) {
+-                    *can_return =
+-                        IndexOnlyField::from_schema(&relation, &schema, tuple_index).is_some();
+-                }
+-            }
+-
+-            // PostgreSQL may call amcanreturn once per index attribute. Keep the capability
+-            // array in the relation's AM cache so those probes share one metadata read.
+-            let cache = pg_sys::MemoryContextAllocZero(
+-                (*indexrel).rd_indexcxt,
+-                std::mem::size_of::<Self>(),
+-            )
+-            .cast::<Self>();
+-            (*cache).returnable = returnable;
+-            (*indexrel).rd_amcache = cache.cast();
+-        }
+-
+-        &*(*indexrel).rd_amcache.cast::<Self>()
++// PostgreSQL may call amcanreturn once per index attribute. Keep the capability array in the
++// relation's AM cache so those probes share one metadata read.
++unsafe fn returnable_columns(
++    indexrel: pg_sys::Relation,
++) -> [bool; pg_sys::INDEX_MAX_KEYS as usize] {
++    if let Returnable::Known(columns) = (*AmCache::get(indexrel)).returnable {
++        return columns;
+     }
+-
+-    fn can_return(&self, tuple_index: usize) -> bool {
+-        self.returnable.get(tuple_index).copied().unwrap_or(false)
++    let relation = PgSearchRelation::from_pg(indexrel);
++    let mut columns = [false; pg_sys::INDEX_MAX_KEYS as usize];
++    if let Ok(schema) = relation.schema() {
++        let natts = relation.tuple_desc().len();
++        for (tuple_index, can_return) in columns.iter_mut().enumerate().take(natts) {
++            *can_return = IndexOnlyField::from_schema(&relation, &schema, tuple_index).is_some();
++        }
+     }
++    (*AmCache::get(indexrel)).returnable = Returnable::Known(columns);
++    columns
+ }
+ 
+ pub(super) struct IndexOnlyScanState {
+```
+
+---
+
+### Incident Patch 3: `52b48727` (2026-11-18)
+**Commit Message**: fix: bound Stressgres worker I/O and shutdown (#7547)
+
+## What
+
+Give fault-tolerant Stressgres workers five seconds to drain after
+sending native cancellation, then close any remaining in-flight
+connections. The shutdown deadline also applies to workers still opening
+a connection. Add an opt-in per-operation timeout and set it to 10
+seconds in the Antithesis driver. Reconnecting no longer resets the
+recovery clock until a workload iteration completes.
+
+Preserve completed SQL and assertion failures, including when another
+destination loses its connection. Log a lost COMMIT response as an
+unknown outcome. The recurring workload can still repeat writes after
+transport loss.
+
+Follow-up to #7546. Related to #6531, which proposes injecting random
+cancellation during ordinary workload execution.
 
 ## Tests
 
--
+- Local PostgreSQL proxy accepted cancel requests while withholding the
+original response. The previous driver exited 1 after 62.45 seconds and
+this build exited 0 after 7.73 seconds.
+- The proxy also verified recovery after a stalled query, a lost COMMIT
+acknowledgement with the row committed once during shutdown, and a SQL
+error delivered during shutdown that still failed the run.
+- 2
 
-**File**: `docs/project/changelog/unreleased/7426.bugfix.mdx` (added, +5/-0)
+**File**: `stressgres/src/cli.rs` (modified, +11/-1)
 ```diff
-@@ -0,0 +1,5 @@
-+---
-+header: stability
-+---
+@@ -26,7 +26,7 @@ use std::time::Duration;
+ pub struct ReconnectGraceArgs {
+     /// How long (in milliseconds) to tolerate one continuous transient database fault
+     /// (dropped/refused sockets, server restarting) by reconnecting before failing the
+-    /// run. The window restarts after a successful reconnect. Defaults to 0, i.e. any
++    /// run. A completed workload iteration resets the window. Defaults to 0, i.e. any
+     /// error fails the run immediately.
+     ///
+     /// Under fault injection set this longer than `--runtime`, so a connectivity fault
+@@ -45,6 +45,11 @@ pub struct ReconnectGraceArgs {
+     /// this from their recovery-liveness command.
+     #[arg(long)]
+     pub reconnect_grace_file: Option<PathBuf>,
 +
-+- Queries that run as an Aggregate Scan or Join Scan no longer crash the backend when `auto_explain` logs their plan without `log_analyze`.
-```
-
-**File**: `pg_search/tests/pg_regress/expected/issue_6906.out` (added, +74/-0)
-```diff
-@@ -0,0 +1,74 @@
-+-- auto_explain prints plans from its ExecutorEnd hook, where no snapshot is
-+-- active. Without ANALYZE, the Aggregate Scan and Join Scan rebuild their
-+-- DataFusion plans to print them, and that rebuild needs a snapshot.
-+-- https://github.com/paradedb/paradedb/issues/6906
-+CREATE EXTENSION IF NOT EXISTS pg_search;
-+SET max_parallel_workers_per_gather = 0;
-+CREATE TABLE issue_6906_t (id bigint PRIMARY KEY, cik bigint, body text);
-+INSERT INTO issue_6906_t SELECT g, g % 7, 'letter of intent ' || g FROM generate_series(1, 100) g;
-+CREATE INDEX issue_6906_t_idx ON issue_6906_t USING paradedb (id, body, cik);
-+CREATE TABLE issue_6906_f (cik bigint PRIMARY KEY, name text);
-+INSERT INTO issue_6906_f SELECT g, 'n' || g FROM generate_series(0, 6) g;
-+CREATE INDEX issue_6906_f_idx ON issue_6906_f USING paradedb (cik, name);
-+EXPLAIN (COSTS OFF)
-+SELECT cik, count(*) FROM issue_6906_t GROUP BY cik ORDER BY 2 DESC, 1 LIMIT 1;
-+                                                  QUERY PLAN                                                   
-+---------------------------------------------------------------------------------------------------------------
-+ Limit
-+   ->  Custom Scan (ParadeDB Aggregate Scan)
-+         Backend: DataFusion
-+         Indexes: issue_6906_t_idx (issue_6906_t)
-+         Group By: cik
-+         Aggregates: COUNT(*)
-+         DataFusion Physical Plan: 
-+           : SortExec: TopK(fetch=1), expr=[agg_0@1 DESC, cik@0 ASC NULLS LAST], preserve_partitioning=[false]
-+           :   AggregateExec: mode=Single, gby=[cik@0 as cik], aggr=[count(1) as agg_0]
-+           :     CooperativeExec
-+           :       PgSearchScan: table=issue_6906_t, segments=1, visibility=eager, query="all"
-+(11 rows)
-+
-+EXPLAIN (COSTS OFF)
-+SELECT t.id, f.name FROM issue_6906_t t JOIN issue_6906_f f ON f.cik = t.cik
-+WHERE t.body @@@ 'intent' AND f.name @@@ 'n1'
-+ORDER BY t.id LIMIT 5;
-+                                                                                                QUERY PLAN                                                                                                 
-+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Custom Scan (ParadeDB Join Scan)
-+   Relation Tree: t INNER f
-+   Join Cond: f.cik = t.cik
-+   Limit: 5
-+   Order By: t.id asc
-+   DataFusion Physical Plan: 
-+     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, ctid_0@0 as ctid_0, ctid_1@2 as ctid_1]
-+     :   SortExec: TopK(fetch=5), expr=[id@1 ASC NULLS LAST], preserve_partitioning=[false]
-+     :     VisibilityFilterExec: tables=[t, f]
-+     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(cik@1, cik@1)], projection=[ctid_0@2, id@4, ctid_1@0]
-+     :         CooperativeExec
-+     :           PgSearchScan: table=f, segments=1, query={"with_index":{"query":{"parse_with_field":{"field":"name","query_string":"n1","lenient":null,"conjunction_mode":null}}}}
-+     :         CooperativeExec
-+     :           PgSearchScan: table=t, segments=1, dynamic_filters=2, query={"with_index":{"query":{"parse_with_field":{"field":"body","query_string":"intent","lenient":null,"conjunction_mode":null}}}}
-+(14 rows)
-+
-+LOAD 'auto_explain';
-+SET auto_explain.log_min_duration = 0;
-+SELECT cik, count(*) FROM issue_6906_t GROUP BY cik ORDER BY 2 DESC, 1 LIMIT 1;
-+ cik | count 
-+-----+-------
-+   1 |    15
-+(1 row)
-+
-+SELECT t.id, f.name FROM issue_6906_t t JOIN issue_6906_f f ON f.cik = t.cik
-+WHERE t.body @@@ 'intent' AND f.name @@@ 'n1'
-+ORDER BY t.id LIMIT 5;
-+ id | name 
-+----+------
-+  1 | n1
-+  8 | n1
-+ 15 | n1
-+ 22 | n1
-+ 29 | n1
-+(5 rows)
-+
-+RESET auto_explain.log_min_duration;
-+RESET max_parallel_workers_per_gather;
-+DROP TABLE issue_6906_t, issue_6906_f;
-```
-
-**File**: `pg_search/tests/pg_regress/sql/issue_6906.sql` (added, +36/-0)
-```diff
-@@ -0,0 +1,36 @@
-+-- auto_explain prints plans from its ExecutorEnd hook, where no snapshot is
-+-- active. Without ANALYZE, the Aggregate Scan and Join Scan rebuild their
-+-- DataFusion plans to print them, and that rebuild needs a snapshot.
-+-- https://github.com/paradedb/paradedb/issues/6906
-+
-+CREATE EXTENSION IF NOT EXISTS pg_search;
-+SET max_parallel_workers_per_gather = 0;
-+
-+CREATE TABLE issue_6906_t (id bigint PRIMARY KEY, cik bigint, body text);
-+INSERT INTO issue_6906_t SELECT g, g % 7, 'letter of intent ' || g FROM generate_series(1, 100) g;
-+CREATE INDEX issue_6906_t_idx ON issue_6906_t USING paradedb (id, body, cik);
-+
-+CREATE TABLE issue_6906_f (cik bigint PRIMARY KEY, name text);
-+INSERT INTO issue_6906_f SELECT g, 'n' || g FROM generate_series(0, 6) g;
-+CREATE INDEX issue_6906_f_idx ON issue_6906_f USING paradedb (cik, name);
-+
-+EXPLAIN (COSTS OFF)
-+SELECT cik, count(*) FROM issue_6906_t GROUP BY cik ORDER BY 2 DESC, 1 LIMIT 1;
-+
-+EXPLAIN (COSTS OFF)
-+SELECT t.id, f.name FROM issue_6906_t t JOIN issue_6906_f f ON f.cik = t.cik
-+WHERE t.body @@@ 'intent' AND f.name @@@ 'n1'
-+ORDER BY t.id LIMIT 5;
-+
-+LOAD 'auto_explain';
-+SET auto_explain.log_min_duration = 0;
-+
-+SELECT cik, count(*) FROM issue_6906_t GROUP BY cik ORDER BY 2 DESC, 1 LIMIT 1;
-+
-+SELECT t.id, f.name FROM issue_6906_t t JOIN issue_6906_f f ON f.cik = t.cik
-+WHERE t.body @@@ 'intent' AND f.name @@@ 'n1'
-+ORDER BY t.id LIMIT 5;
-+
-+RESET auto_explain.log_min_duration;
-+RESET max_parallel_workers_per_gather;
-+DROP TABLE issue_6906_t, issue_6906_f;
-```
-
-**File**: `planner/src/postgres/customscan/exec.rs` (modified, +4/-0)
-```diff
-@@ -17,6 +17,7 @@
- 
- use crate::postgres::customscan::explainer::Explainer;
- use crate::postgres::customscan::{CustomScan, MarkRestoreCapable, wrap_custom_scan_state};
-+use crate::postgres::utils::ActiveSnapshotGuard;
- use pgrx::{pg_guard, pg_sys};
- 
- /// Complete initialization of the supplied CustomScanState. Standard fields have been initialized
-@@ -125,6 +126,9 @@ pub extern "C-unwind" fn explain_custom_scan<CS: CustomScan>(
-     es: *mut pg_sys::ExplainState,
- ) {
-     let custom_state = wrap_custom_scan_state::<CS>(node);
-+    // auto_explain calls this from its ExecutorEnd hook, where no snapshot is active, and the
-+    // Aggregate and Join Scans rebuild their DataFusion plans here, which needs one.
-+    let _snapshot = ActiveSnapshotGuard::ensure();
-     unsafe {
-         let plan = (*node).ss.ps.plan;
-         if !es.is_null() && !(*es).deparse_cxt.is_null() && !plan.is_null() {
-```
-
----
-
-### Incident Patch 3: `4a86c256` (2026-11-18)
-**Commit Message**: fix: remove stopwords before stemming and ASCII folding (#7343)
-
-# Ticket(s) Closed
-
-- Closes #7342
-
-## What
-
-Stopwords (`stopwords_language` and `stopwords`) are now removed right
-after lowercasing, before `stemmer` and `ascii_folding`.
-
-## Why
-
-Stopword lists hold whole, accented words. Filtering after stemming or
-folding lets through every stopword those filters change:
-
-```sql
-SELECT 'silla para niño'::pdb.simple('stemmer=spanish', 'stopwords_language=spanish')::text[];
--- before: {sill,par,niñ}   after: {sill,niñ}
-```
-
-Lucene applies the stop filter before stemming, and before folding too:
-`GermanAnalyzer` runs `StopFilter` ahead of `GermanNormalizationFilter`.
-
-## How
-
-`add_filters!` now runs trim, length, lowercase and the stopword
-filters, then stemmer, ASCII folding, any extra filters and
-alphanumeric-only. The filters after the language stopwords stay static,
-so the chain costs what it did before.
-
-Indexes that combine stopwords with `stemmer` or `ascii_folding` should
-be reindexed to drop the stopword tokens they already hold; the
-changelog entry says so.
-
-## Performance
-
-Wikipedia text in Spanish, English and German, median of 31 passes,
-release build:
-
-| config | chang
-
-**File**: `docs/project/changelog/unreleased/7343.bugfix.mdx` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+header: stability
-+---
-+
-+- Stopwords (`stopwords_language` and `stopwords`) are now removed before stemming and ASCII folding. Previously, a transformed stopword could be indexed, such as Spanish `para` stemmed to `par`. Existing indexes that combine stopwords with stemming or ASCII folding remain usable, but searches can miss matches or return extra matches because older rows were indexed with the previous filter order. Run `REINDEX` on affected indexes to make results consistent across existing rows and new writes.
-```
-
-**File**: `docs/reference/token-filters/stopwords.mdx` (modified, +3/-0)
-```diff
-@@ -15,6 +15,9 @@ CREATE INDEX search_idx ON mock_items
- USING paradedb (id, (description::pdb.simple('stopwords_language=english')));
- ```
- 
-+Stopwords are removed right after lowercasing, before [stemming](/reference/token-filters/stemming) and
-+[ASCII folding](/reference/token-filters/ascii-folding), so a stopword such as Spanish "para" is removed even when a stemmer would turn it into "par".
-+
- Valid languages are `Czech`, `Danish`, `Dutch`, `English`, `Finnish`, `French`, `German`, `Hungarian`, `Italian`, `Norwegian`, `Polish`, `Portuguese`, `Russian`, `Spanish`, and `Swedish`. Language names are case-insensitive.
- 
- ## Multiple Languages
-```
-
-**File**: `tokenizers/src/manager.rs` (modified, +35/-8)
-```diff
-@@ -333,25 +333,27 @@ impl SearchTokenizerFilters {
- 
- macro_rules! add_filters {
-     ($tokenizer:expr, $filters:expr $(, $extra_filter:expr )* $(,)?) => {{
--        // Build the analyzer with static filters first
-+        // Stopwords go right after lowercasing: their lists hold whole, accented words, which stemming and
-+        // folding would change, so "para" stemmed to "par" or "más" folded to "mas" would no longer match.
-         let mut builder = tantivy::tokenizer::TextAnalyzer::builder($tokenizer)
-             .filter($filters.trim_filter())
-             .filter($filters.token_length_filter())
-             .filter($filters.lower_caser())
--            .filter($filters.stemmer())
-             .filter($filters.stopwords())
--            .filter($filters.ascii_folding())
--            $(
--                .filter($extra_filter)
--            )*
--            .filter($filters.alpha_num_only())
-             // Convert to type-erased builder for dynamic filter application
-             .dynamic();
-         // Apply stopword language filters dynamically in a for loop
-         for stopword_filter in $filters.stopwords_languages() {
-             builder = builder.filter_dynamic(stopword_filter);
-         }
--        builder.build()
-+        builder
-+            .filter($filters.stemmer())
-+            .filter($filters.ascii_folding())
-+            $(
-+                .filter($extra_filter)
-+            )*
-+            .filter($filters.alpha_num_only())
-+            .build()
-     }};
++    /// Maximum time in milliseconds to wait for a database operation. On expiry,
++    /// close the connection and apply the reconnect policy. Defaults to no timeout.
++    #[arg(long)]
++    pub operation_timeout: Option<std::num::NonZeroU64>,
  }
  
-@@ -1850,4 +1852,29 @@ mod tests {
-             "tokenizer (name={tokenizer_name}) whitespace did not keep/remove whitespace as expected"
-         );
+ impl ReconnectGraceArgs {
+@@ -56,6 +61,11 @@ impl ReconnectGraceArgs {
+             None => GraceWindow::fixed(baseline),
+         }
      }
 +
-+    #[rstest]
-+    #[case::spanish(r#"{"type": "default", "stemmer": "Spanish", "stopwords_language": "Spanish"}"#, "silla para más madera", &["sill", "mader"])]
-+    #[case::french(r#"{"type": "default", "stemmer": "French", "stopwords_language": "French"}"#, "nous avons mangé des pommes", &["mang", "pomm"])]
-+    #[case::german(r#"{"type": "default", "stemmer": "German", "stopwords_language": "German"}"#, "welches Haus hatte er", &["haus"])]
-+    #[case::custom(r#"{"type": "default", "stemmer": "English", "stopwords": ["running"]}"#, "she was running home", &["she", "was", "home"])]
-+    #[case::folded(r#"{"type": "default", "ascii_folding": true, "stopwords_language": "German"}"#, "Stuhl für Kinder", &["stuhl", "kinder"])]
-+    fn test_stopwords_removed_before_stemming_and_folding(
-+        #[case] json: &str,
-+        #[case] text: &str,
-+        #[case] expected: &[&str],
-+    ) {
-+        use tantivy::tokenizer::TokenStream;
-+
-+        // Stopword lists hold whole words: "para" stems to "par" and "für" folds to "fur", which no list holds.
-+        let tokenizer =
-+            SearchTokenizer::from_json_value(&serde_json::from_str(json).unwrap()).unwrap();
-+        let mut analyzer = tokenizer.to_tantivy_tokenizer().unwrap();
-+        let mut token_stream = analyzer.token_stream(text);
-+        let mut tokens = Vec::new();
-+        while token_stream.advance() {
-+            tokens.push(token_stream.token().text.clone());
-+        }
-+        assert_eq!(tokens, expected);
++    pub fn operation_timeout(&self) -> Option<Duration> {
++        self.operation_timeout
++            .map(|ms| Duration::from_millis(ms.get()))
 +    }
  }
+ 
+ /// Stress testing for ParadeDB/PostgreSQL
+```
+
+**File**: `stressgres/src/fault_tolerance.rs` (modified, +27/-69)
+```diff
+@@ -155,11 +155,10 @@ fn message_looks_transient(msg: &str) -> bool {
+ /// keys off the transport-vs-server distinction rather than string-matching each new
+ /// libpq/driver phrasing (e.g. "error performing TLS handshake", which has no
+ /// SQLSTATE and no `is_closed()` signal, so needle matching alone would miss it).
+-fn is_transient_connection_error(e: &postgres::Error) -> bool {
++pub(crate) fn is_transient_connection_error(e: &postgres::Error) -> bool {
+     match e.as_db_error() {
+         Some(db) => dst::is_connection_lost_sqlstate(db.code().code()),
+-        // Client-side/transport failure: no answer from the server, so it never got
+-        // far enough to be a logical bug. Treat it as transient.
++        // The client did not receive a SQLSTATE. The operation's outcome can be unknown.
+         None => true,
+     }
+ }
+@@ -192,46 +191,32 @@ fn interruptible_sleep(alive: &AtomicBool, dur: Duration) {
+     }
+ }
+ 
+-#[derive(Default)]
+-pub(crate) struct TransientProgress {
+-    recovered: bool,
+-}
+-
+-impl TransientProgress {
+-    /// Mark that this retry attempt reached the database. If the attempt later
+-    /// fails with another transient error, it starts a fresh grace window.
+-    pub(crate) fn mark_recovered(&mut self) {
+-        self.recovered = true;
+-    }
+-}
+-
+ /// Runs `op`, tolerating transient connectivity faults for as long as `grace` allows:
+ /// while `op` keeps failing with a transient error (a dropped/refused socket, server
+ /// restarting, etc.) it is retried with capped backoff. A real (non-transient) error is
+ /// returned immediately. The fault is only surfaced once the connection has stayed
+ /// broken for the whole grace window continuously.
+ ///
+ /// The window is re-read on every failed attempt, and the clock restarts whenever it
+-/// changes or `op` calls [`TransientProgress::mark_recovered`]. That reset is what lets
++/// changes. A completed operation ends the retry loop. The reset lets
+ /// an external poke narrow the window mid-fault: it asks "can you reconnect within N
+ /// seconds of now", not "were you already down N seconds ago".
+ ///
+-/// Reopening a dead connection is the caller's job inside `op`; re-running the whole
+-/// `op` is what keeps this safe for transactional work — a lost transaction is replayed.
++/// The caller reopens dead connections. A lost response can leave the outcome of
++/// a write unknown, so another workload iteration can repeat work that committed.
+ ///
+ /// Returns `Ok(None)` if `alive` went false while we were waiting out a fault.
+ pub(crate) fn tolerate_transient<T>(
+     alive: &AtomicBool,
+     grace: &GraceWindow,
+-    mut op: impl FnMut(&mut TransientProgress) -> Result<T>,
++    mut op: impl FnMut() -> Result<T>,
+ ) -> Result<Option<T>> {
+     let mut backoff = INITIAL_RECONNECT_BACKOFF;
+     let mut down_since: Option<Instant> = None;
+     let mut last_grace: Option<Duration> = None;
+     let mut rode_out_fault = false;
+     loop {
+-        let mut progress = TransientProgress::default();
+-        match op(&mut progress) {
++        match op() {
+             Ok(value) => {
+                 dst::assert_reachable!("stressgres: completed a database operation");
+                 if rode_out_fault {
+@@ -267,7 +252,7 @@ pub(crate) fn tolerate_transient<T>(
+                 // supervisor restoring the baseline, which happens deep in the healed quiet
+                 // period with no active fault to observe it. That path is pinned by the
+                 // `widening_the_window_also_restarts_the_clock` test instead.
+-                if progress.recovered || last_grace.is_some_and(|last| last != grace) {
++                if last_grace.is_some_and(|last| last != grace) {
+                     down_since = None;
+                     backoff = INITIAL_RECONNECT_BACKOFF;
+                 }
+@@ -286,6 +271,9 @@ pub(crate) fn tolerate_transient<T>(
+                 rode_out_fault = true;
+                 eprintln!("stressgres: transient database fault, retrying: {e:#}");
+                 interruptible_sleep(alive, backoff);
++                if !alive.load(Ordering::Relaxed) {
++                    return Ok(None);
++                }
+                 backoff = (backoff * 2).min(MAX_RECONNECT_BACKOFF);
+             }
+         }
+@@ -299,7 +287,7 @@ mod tests {
+     use std::io;
+ 
+     #[test]
+-    fn message_matching_flags_connectivity_faults() {
++    fn string_errors_are_classified() {
+         for msg in [
+             "error connecting to server: Network is unreachable (os error 101)",
+             "server closed the connection unexpectedly",
+@@ -310,68 +298,38 @@ mod tests {
+             // marks this as connectivity noise (server down/restarting mid-handshake).
+             "error performing TLS handshake: unexpected EOF",
+         ] {
+-            assert!(message_looks_transient(msg), "should be transient: {msg}");
++            assert!(
++                is_transient_error(&anyhow!("{msg}")),
++                "should be transient: {msg}"
++            )
+```
+
+**File**: `stressgres/src/headless.rs` (modified, +1/-3)
+```diff
+@@ -170,9 +170,7 @@ pub fn run(
+         let finished = finished.clone();
+         let suite_runner = suite_runner.clone();
+         std::thread::spawn(move || {
+-            let errors = suite_runner
+-                .wait_for_finish()
+-                .expect("wait_for_finish() should not fail");
++            let errors = suite_runner.wait_for_finish();
+ 
+             let mut reported_errors = 0;
+             for error in errors {
+```
+
+**File**: `stressgres/src/main.rs` (modified, +15/-3)
+```diff
+@@ -64,8 +64,13 @@ fn main() -> anyhow::Result<()> {
+         // When using the "ui" subcommand.
+         Command::Ui(args) => {
+             let suite = load_suite(&args.suite_path, args.pgversion, None)?;
+-            let suite_runner =
+-                SuiteRunner::new(suite, args.paused, args.grace.window(), SetupMode::Full)?;
++            let suite_runner = SuiteRunner::new(
++                suite,
++                args.paused,
++                args.grace.window(),
++                args.grace.operation_timeout(),
++                SetupMode::Full,
++            )?;
+             tui::run(suite_runner)?;
+         }
+ 
+@@ -79,7 +84,13 @@ fn main() -> anyhow::Result<()> {
+             } else {
+                 SetupMode::Full
+             };
+-            let suite_runner = SuiteRunner::new(suite, false, args.grace.window(), setup_mode)?;
++            let suite_runner = SuiteRunner::new(
++                suite,
++                false,
++                args.grace.window(),
++                args.grace.operation_timeout(),
++                setup_mode,
++            )?;
+             // `--setup-only` has built the schema and is done; the workload runs later in a
+             // separate `--skip-setup` process.
+             if setup_mode == SetupMode::SetupOnly {
+@@ -111,6 +122,7 @@ fn main() -> anyhow::Result<()> {
+                 suite,
+                 false,
+                 GraceWindow::fixed(Duration::ZERO),
++                None,
+                 SetupMode::Full,
+             )?;
+             headless::run(
+```
+
+**File**: `stressgres/src/runner.rs` (modified, +229/-133)
+```diff
+@@ -15,7 +15,7 @@
+ // You should have received a copy of the GNU Affero General Public License
+ // along with this program. If not, see <http://www.gnu.org/licenses/>.
+ 
+-use crate::fault_tolerance::{GraceWindow, tolerate_transient};
++use crate::fault_tolerance::{GraceWindow, is_transient_connection_error, tolerate_transient};
+ use crate::sqlscanner::StatementDestination;
+ use crate::suite::{Job, Server, ServerStyle, Suite};
+ use anyhow::{Result, anyhow};
+@@ -35,6 +35,8 @@ use sysinfo::{Pid, ProcessesToUpdate, System};
+ use tokio::runtime::{Builder, Runtime};
+ use tokio::task::AbortHandle;
+ 
++const CANCELLATION_TIMEOUT: Duration = Duration::from_secs(5);
++
+ type PostgresResult<T> = std::result::Result<T, Arc<postgres::Error>>;
+ 
+ pub type BackendPid = i32;
+@@ -149,7 +151,7 @@ pub struct MultiTransaction<'a> {
+     server_lookup: Arc<HashMap<String, Server>>,
+     transactions: Vec<(
+         tokio_postgres::Transaction<'a>,
+-        &'a Runtime,
++        &'a ConnectionIo,
+         &'a Server,
+         BackendPid,
+     )>,
+@@ -189,27 +191,30 @@ impl Conn {
+             .collect::<Vec<_>>()
+     }
+ 
+-    pub fn open(suite: &Suite, job: &Job) -> Result<Self> {
++    fn open(suite: &Suite, job: &Job, policy: &IoPolicy) -> Result<Self> {
+         let clients = job
+             .destinations()
+             .iter()
+             .map(|destination| match destination {
+                 StatementDestination::DefaultServer => {
+                     let server = suite.default_server();
+-                    Ok(vec![(Conn::_open_conn(server, job)?, server.clone())])
++                    Ok(vec![(
++                        Conn::open_client(server, job, policy)?,
++                        server.clone(),
++                    )])
+                 }
+                 StatementDestination::SpecificServers(server_names) => server_names
+                     .iter()
+                     .map(|name| {
+                         let server = suite
+                             .server(name)
+                             .ok_or_else(|| anyhow!("No such server named `{name}`"))?;
+-                        Ok((Conn::_open_conn(server, job)?, server.clone()))
++                        Ok((Conn::open_client(server, job, policy)?, server.clone()))
+                     })
+                     .collect::<Result<Vec<_>>>(),
+                 StatementDestination::AllServers => suite
+                     .all_servers()
+-                    .map(|server| Ok((Conn::_open_conn(server, job)?, server.clone())))
++                    .map(|server| Ok((Conn::open_client(server, job, policy)?, server.clone())))
+                     .collect::<Result<Vec<_>>>(),
+             })
+             .collect::<Result<Vec<_>>>()?
+@@ -239,19 +244,17 @@ impl Conn {
+             transactions: Vec::with_capacity(self.clients.len()),
+         };
+         for (client, server, pid) in &mut self.clients {
+-            let xact = client.runtime.block_on(client.client.transaction())?;
++            let xact = client.io.run(client.client.transaction())?;
+             transaction
+                 .transactions
+-                .push((xact, &client.runtime, server, *pid));
++                .push((xact, &client.io, server, *pid));
+         }
+         Ok(transaction)
+     }
+ 
+     fn rollback_best_effort(&mut self) {
+         for (client, ..) in &mut self.clients {
+-            let _ = client
+-                .runtime
+-                .block_on(client.client.batch_execute("ROLLBACK"));
++            let _ = client.io.run(client.client.batch_execute("ROLLBACK"));
+         }
+     }
+ 
+@@ -266,8 +269,8 @@ impl Conn {
+         for (id, (client, server, pid)) in self.clients.iter_mut().enumerate() {
+             let start = Instant::now();
+             let result = client
+-                .runtime
+-                .block_on(client.client.query(&query, params))
++                .io
++                .run(client.client.query(&query, params))
+                 .map_err(Arc::new);
+             let duration = start.elapsed();
+             results.push((result, duration, ConnInfo::new(id, server, *pid)));
+@@ -286,17 +289,21 @@ impl Conn {
+ 
+     #[doc(hidden)]
+     pub(crate) fn _open_conn(server: &Server, job: &Job) -> Result<WorkerClient> {
++        Self::open_client(server, job, &IoPolicy::default())
++    }
++
++    fn open_client(server: &Server, job: &Job, policy: &IoPolicy) -> Result<WorkerClient> {
+         let sanitized = job.title().replace(|c: char| !c.is_alphanumeric(), "_");
+         let connstr = match server.style {
+             // For ServerStyle::With, the connection string is expected to already
+             // include the application_name if needed, so it is not appended here.
+             ServerStyle::With { .. } => server.connstr(),
+             _ => format!("{} application_name={}", server.connstr(), sanitized),
+         };
+-        let conn = WorkerClient::connect(&connstr)?;
++        let conn = WorkerClient::connect(&connstr, policy)?;
+ 
+         for query in job.on_connect() {
+- 
+```
+
+**File**: `stressgres/src/runner/shutdown_test.rs` (added, +114/-0)
+```diff
+@@ -0,0 +1,114 @@
++// Copyright (c) 2023-2026 ParadeDB, Inc.
++//
++// This file is part of ParadeDB - Postgres for Search and Analytics
++//
++// This program is free software: you can redistribute it and/or modify
++// it under the terms of the GNU Affero General Public License as published by
++// the Free Software Foundation, either version 3 of the License, or
++// (at your option) any later version.
++//
++// This program is distributed in the hope that it will be useful
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
++// GNU Affero General Public License for more details.
++//
++// You should have received a copy of the GNU Affero General Public License
++// along with this program. If not, see <http://www.gnu.org/licenses/>.
++
++use super::{Conn, IoPolicy, WorkerClient};
++use std::io::{Read, Write};
++use std::net::{TcpListener, TcpStream};
++use std::sync::mpsc;
++use std::time::{Duration, Instant};
++
++const TEST_TIMEOUT: Duration = Duration::from_secs(10);
++
++fn read_packet(stream: &mut TcpStream) -> Vec<u8> {
++    stream.set_read_timeout(Some(TEST_TIMEOUT)).unwrap();
++    let mut length = [0; 4];
++    stream.read_exact(&mut length).unwrap();
++    let mut body = vec![0; u32::from_be_bytes(length) as usize - length.len()];
++    stream.read_exact(&mut body).unwrap();
++    body
++}
++
++#[test]
++fn shutdown_closes_query_socket_after_cancel_request_is_sent() {
++    let listener = TcpListener::bind(("127.0.0.1", 0)).unwrap();
++    let addr = listener.local_addr().unwrap();
++    let (query_seen, wait_for_query) = mpsc::channel();
++    let (cancel_seen, wait_for_cancel) = mpsc::channel();
++    let proxy = std::thread::spawn(move || {
++        let (mut query, _) = listener.accept().unwrap();
++        assert!(read_packet(&mut query).starts_with(&[0, 3, 0, 0]));
++        // AuthenticationOk, BackendKeyData (PID 42, key 99), ReadyForQuery.
++        query
++            .write_all(b"R\0\0\0\x08\0\0\0\0K\0\0\0\x0c\0\0\0\x2a\0\0\0\x63Z\0\0\0\x05I")
++            .unwrap();
++        let mut tag = [0];
++        query.read_exact(&mut tag).unwrap();
++        assert_eq!(tag, *b"Q");
++        assert_eq!(read_packet(&mut query), b"SELECT 1\0");
++        query_seen.send(()).unwrap();
++
++        // Read the complete cancellation request but keep the query socket open
++        // without sending a response, as a proxy can during a partition.
++        let (mut cancel, _) = listener.accept().unwrap();
++        assert_eq!(
++            read_packet(&mut cancel),
++            [0x04, 0xd2, 0x16, 0x2e, 0, 0, 0, 42, 0, 0, 0, 99]
++        );
++        drop(cancel);
++        cancel_seen.send(()).unwrap();
++        assert_eq!(
++            query.read(&mut tag).unwrap(),
++            0,
++            "client must close the socket"
++        );
++    });
++
++    let policy = IoPolicy {
++        interrupt_shutdown: true,
++        ..IoPolicy::default()
++    };
++    let client = WorkerClient::connect(
++        &format!(
++            "host=127.0.0.1 port={} user=test sslmode=disable",
++            addr.port()
++        ),
++        &policy,
++    )
++    .unwrap();
++    let token = client.client.cancel_token();
++    let (query_finished, wait_for_result) = mpsc::channel();
++    let worker = std::thread::spawn(move || {
++        let error = client
++            .io
++            .run(client.client.batch_execute("SELECT 1"))
++            .unwrap_err();
++        assert!(error.is_closed(), "{error}");
++        query_finished.send(()).unwrap();
++    });
++
++    wait_for_query.recv_timeout(TEST_TIMEOUT).unwrap();
++    let runtime = tokio::runtime::Builder::new_current_thread()
++        .enable_all()
++        .build()
++        .unwrap();
++    runtime.block_on(async {
++        tokio::time::timeout(TEST_TIMEOUT, token.cancel_query(Conn::tls_connector()))
++            .await
++            .unwrap()
++            .unwrap();
++    });
++    wait_for_cancel.recv_timeout(TEST_TIMEOUT).unwrap();
++    assert!(matches!(
++        wait_for_result.try_recv(),
++        Err(mpsc::TryRecvError::Empty)
++    ));
++
++    *policy.shutdown.write() = Some(Instant::now());
++    wait_for_result.recv_timeout(TEST_TIMEOUT).unwrap();
++    worker.join().unwrap();
++    proxy.join().unwrap();
++}
+```
+
+**File**: `stressgres/suites/antithesis/anytime_recovery_liveness.sh` (modified, +4/-1)
+```diff
+@@ -24,6 +24,9 @@ LOCK_FILE=/tmp/stressgres-recovery-liveness.lock
+ # the liveness check itself becomes the flake.
+ QUIET_SECONDS=90
+ RECOVER_SECONDS=50
++# Keep the shorter grace in force while a worker notices the poke, finishes a
++# bounded I/O attempt, and reports expiry. The driver polls on retry boundaries.
++OBSERVE_SECONDS=30
+ 
+ # Antithesis schedules anytime commands aggressively, and a quiet period suppresses
+ # exactly the faults this test exists to inject. Fire on a small fraction of
+@@ -67,7 +70,7 @@ echo "Recovery liveness: pausing faults for ${QUIET_SECONDS}s; Stressgres must r
+ "${ANTITHESIS_STOP_FAULTS}" "${QUIET_SECONDS}"
+ 
+ poke "$((RECOVER_SECONDS * 1000))"
+-sleep "${RECOVER_SECONDS}"
++sleep "$((RECOVER_SECONDS + OBSERVE_SECONDS))"
+ restore
+ 
+ echo "Recovery liveness: Stressgres survived the quiet period"
+```
+
+**File**: `stressgres/suites/antithesis/singleton_driver_stressgres.sh` (modified, +1/-1)
+```diff
+@@ -15,7 +15,7 @@ source "$(dirname "$(readlink -f "$0")")/helper_suite_setup.sh"
+ # the run; the liveness assertions judge recovery.
+ echo ""
+ echo "Running Stressgres workload from ${WORKLOAD_LINK}..."
+-"${STRESSGRES}" headless "${WORKLOAD_LINK}" --skip-setup --runtime 100000 --log-interval-ms 10000 --reconnect-grace 200000 --reconnect-grace-file /tmp/stressgres-reconnect-grace
++"${STRESSGRES}" headless "${WORKLOAD_LINK}" --skip-setup --runtime 100000 --log-interval-ms 10000 --operation-timeout 10000 --reconnect-grace 200000 --reconnect-grace-file /tmp/stressgres-reconnect-grace
+ 
+ echo ""
+ echo "Stressgres workload complete!"
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7528** (2026-11-18): chore: Generate Dockerfiles for v0.26.8 (@paradedb-github-bot[bot])
-- **PR #7527** (2026-11-18): chore: Generate Dockerfiles for v0.26.8 (@paradedb-github-bot[bot])
-- **PR #7525** (2026-11-18): fix: prioritize background mergers over foreground backpressure (@paradedb-github-bot[bot])
-- **PR #7524** (2026-11-18): chore: set default target leaf size to 400 (@RuchirRaj)
-- **PR #7523** (2026-11-18): fix: skip foreground immutable merges in logical apply workers (@paradedb-github-bot[bot])
-- **PR #7522** (2026-11-18): fix: prioritize background mergers over foreground backpressure (@rebasedming)
+- **PR #7572** (2026-11-19): fix: Restore Postgres.app publishing (@paradedb-github-bot[bot])
+- **PR #7571** (2026-11-19): fix: Restore Postgres.app publishing (@paradedb-github-bot[bot])
+- **PR #7570** (2026-11-19): fix: Restore Postgres.app publishing (@philippemnoel)
+- **PR #7569** (2026-11-19): chore: Upgrade Cosign for ParadeDB Docker releases (@paradedb-github-bot[bot])
+- **PR #7568** (2026-11-19): chore: Generate Dockerfiles for v0.27.0 (@paradedb-github-bot[bot])
+- **PR #7567** (2026-11-19): chore: Generate Dockerfiles for v0.27.0 (@paradedb-github-bot[bot])
 
 ---
 
@@ -2766,35 +3559,64 @@ release build:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. prioritize background mergers over foreground backpressure
+## X. retry background merges without blocking the sweep or VACUUM
 
 **RULE**:
-When implementing operations in `docs/project/changelog/unreleased/7522.performance.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `index_write/src/postgres/merge.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6f893812`: prioritize background mergers over foreground backpressure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `534617a6`: retry background merges without blocking the sweep or VACUUM. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/project/changelog/unreleased/7522.performance.mdx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `index_write/src/postgres/merge.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
----
-header: performance
----
-
-- Writes now skip foreground merges after successfully launching a background merger. Foreground merging remains the fallback when a background merger cannot be launched.
+    /// Only schedule a background merge; skip busy indexes.
+    Background,
+/// Returns true only for an empty background selection with no temporary exclusions.
+pub unsafe fn do_merge(index: &PgSearchRelation, style: MergeStyle) -> anyhow::Result<bool> {
+        return Ok(false);
+    if matches!(style, MergeStyle::Background)
+        && index.options().background_layer_sizes().is_empty()
+    {
+        return Ok(false);
+    }
+    let (merge_pins, merge_lock) = if matches!(style, MergeStyle::Background) {
+        if VacuumSignal::new(index.oid()).wants_cancel() {
+            return Ok(false);
+        }
+        let Some(locks) = metadata.try_pin_and_lock_merge() else {
+            return Ok(false);
+        };
+        locks
+    } else {
+        (metadata.pin_merge(), metadata.acquire_merge_lock())
+    };
+    let no_candidates = matches!(style, MergeStyle::Background)
+        && candidates.is_empty()
+        && merge_lock.merge_list().list_segment_ids().next().is_none()
+        && metadata.vacuum_list().read_list().is_empty();
+        return Ok(false);
+    Ok(no_candidates)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    /// VACUUM finished; only a background merge may follow.
+    Vacuum,
+pub unsafe fn do_merge(index: &PgSearchRelation, style: MergeStyle) -> anyhow::Result<()> {
+        return Ok(());
+    let merge_pins = metadata.pin_merge();
+    let merge_lock = metadata.acquire_merge_lock();
+        return Ok(());
+    Ok(())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6f893812` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `534617a6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

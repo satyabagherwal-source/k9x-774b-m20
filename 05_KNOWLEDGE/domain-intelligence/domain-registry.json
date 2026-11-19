@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T17:23:36.870Z",
-  "total_records": 2002,
+  "last_updated": "2026-11-19T17:43:23.663Z",
+  "total_records": 2008,
   "domains": {
     "A": {
       "total": 15,
@@ -55,7 +55,7 @@
       ]
     },
     "D": {
-      "total": 835,
+      "total": 838,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -891,7 +891,10 @@
         "DOM-D-FFFC1DD3",
         "domain_intelligence-research-knowledge-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants",
         "DOM-D-B8ECD4B4",
-        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-core-i"
+        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-core-i",
+        "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-invarian",
+        "DOM-D-6FA503EE",
+        "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learnings-"
       ]
     },
     "E": {
@@ -1325,7 +1328,7 @@
       ]
     },
     "H": {
-      "total": 469,
+      "total": 472,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1795,7 +1798,10 @@
         "DOM-H-D41DA63C",
         "domain_intelligence-technical-construction-intelligence-pola-rs-polars-core-invariants",
         "DOM-H-2A9142C7",
-        "domain_intelligence-technical-construction-intelligence-pola-rs-polars-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-pola-rs-polars-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-meta-folly-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-facebook-folly-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-learnings-core-invariants"
       ]
     },
     "I": {
@@ -11096,8 +11102,8 @@
       "title": "Technical Construction Intelligence: paradedb/paradedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-paradedb-paradedb-technical-construction-intelligence-paradedb-paradedb-core-inv.md",
       "repository": "paradedb/paradedb",
-      "content_hash": "4afd8b18a63cfc7dce700806853ec57481b0e61d3cf3d71082a2fdea47c67bc1",
-      "created_at": "2026-11-13T21:58:48.606Z"
+      "content_hash": "86618b71f49dd0713f785b80778ebf66e4f144e9093e721a072549353f00f9dd",
+      "created_at": "2026-11-19T17:38:05.261Z"
     },
     "domain_intelligence-research-knowledge-intelligence-amazon-chronos-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-amazon-chronos-2-core-invariants",
@@ -18037,8 +18043,8 @@
       "title": "Technical Construction Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dathere-qsv-technical-construction-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "a4e23169c384c8af6aee808a11d4280e7bc616058d64b9fa59d767acb87f01ed",
-      "created_at": "2026-11-15T20:51:05.676Z"
+      "content_hash": "617dbb4f859e2a7dc994ce7b9ddc2ee04f03d47dc1305b16f253c6dd0dcd7a7c",
+      "created_at": "2026-11-19T17:38:09.578Z"
     },
     "DOM-D-11540386": {
       "record_id": "DOM-D-11540386",
@@ -33629,6 +33635,93 @@
       "repository": "pola-rs-polars-learnings",
       "content_hash": "bd464b7218cdfe29d4e221d045bf91ece6254d2f07798d0f854f9a56888d529f",
       "created_at": "2026-11-19T17:07:53.740Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-meta-folly-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-meta-folly-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: meta/folly Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-facebook-folly-technical-construction-intelligence-meta-folly-core-invariants.md",
+      "repository": "meta/folly",
+      "content_hash": "563eadc596b6e3c1d1727d7308656f80c5af0d5f458cee21bbdc076453275a76",
+      "created_at": "2026-11-19T17:37:55.797Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-invarian": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-invarian",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: openbmb/MiniCPM-V-4.7-35B-A3B-gguf Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-research-knowledge-intelligence-openbmb-mi.md",
+      "repository": "openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "content_hash": "d79479ca40799de64577236563de5ee71978c471cb64e1d5ae138c1316165d82",
+      "created_at": "2026-11-19T17:42:49.466Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-facebook-folly-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-facebook-folly-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: facebook-folly-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-facebook-folly-learnings-technical-construction-intelligence-facebook-folly-lear.md",
+      "repository": "facebook-folly-learnings",
+      "content_hash": "f0a2a9c9a9ebc586258260e242f877b0b3d526d1e29b1561cb25f17d8267ff9b",
+      "created_at": "2026-11-19T17:42:52.831Z"
+    },
+    "DOM-D-6FA503EE": {
+      "record_id": "DOM-D-6FA503EE",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): openbmb/MiniCPM-V-4.7-35B-A3B-gguf",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf](https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B-gguf))  \n> **Source Version**: `hf-openbmb-m`  \n>",
+      "content_hash": "732540a4dd1fd769140b13a2e4fe07fd44873274c1e44bbe8f94cc53e1ee8c1d",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md`  \n> **Source**: huggingface ([ht -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md`  \n> **Source**: huggingface ([ht",
+      "provenance": {
+        "source_uri": "project://hf-openbmb-minicpm-v-4.7-35b-a3b-gguf/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T17:42:53.162Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openbmb-minicpm-v-4.7-35b-a3b-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-openbmb-minicpm-v-4.7-35b-a3b-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T17:43:22.450Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learnings-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learnings-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learnings-research-knowledge-intelligence-.md",
+      "repository": "hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings",
+      "content_hash": "65042910b5862c01be742e445f2b79a4cf8637a45c6583e568b55687439b5f8f",
+      "created_at": "2026-11-19T17:43:22.822Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: paradedb-paradedb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-paradedb-paradedb-learnings-technical-construction-intelligence-paradedb-paraded.md",
+      "repository": "paradedb-paradedb-learnings",
+      "content_hash": "7cd6f377f7fb4e1709d139a72a83a4b2de2ed049ed144ef50aeca09a319b7a55",
+      "created_at": "2026-11-19T17:43:23.663Z"
     }
   }
 }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T17:23:36.423Z",
+  "updated_at": "2026-11-19T17:42:52.444Z",
   "stats": {
-    "total_discovered": 5945,
-    "approved_pending_harvest": 5629,
+    "total_discovered": 5946,
+    "approved_pending_harvest": 5630,
     "harvested_count": 0,
     "rejected_count": 316,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5596,
+      "COMMUNITY_AND_EXPERT": 5597,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 112,
       "ENGINEERING_BLOGS": 4,
@@ -128599,6 +128599,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
         "fileName": "databendlabs-databend-learnings.md"
+      }
+    },
+    "SRC-30EB41A1A823": {
+      "id": "SRC-30EB41A1A823",
+      "url": "https://github.com/meta/folly/pull/2733",
+      "title": "https://github.com/meta/folly/pull/2733",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T17:42:52.444Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-folly-learnings.md",
+        "fileName": "facebook-folly-learnings.md"
       }
     }
   }

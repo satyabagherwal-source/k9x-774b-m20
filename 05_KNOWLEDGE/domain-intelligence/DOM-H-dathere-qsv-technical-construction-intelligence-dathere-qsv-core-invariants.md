@@ -4,24 +4,24 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "3af21c2b",
+  "source_version": "17861239",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-15T20:51:05.559Z",
+  "timestamp": "2026-11-19T17:38:09.422Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `3af21c2b`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-15T20:51:05.559Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `17861239`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-19T17:38:09.422Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from dathere/qsv:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T20:51:04.504Z  
+> **Harvest Timestamp**: 2026-11-19T17:38:08.158Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3824 stars
+- **Stars / Engagement**: 3831 stars
 
 ---
 
@@ -2215,63 +2215,499 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3af21c2b` (2026-11-15)
-**Commit Message**: docs(changelog): link the SARIF example, wiki walk-through and sample repo
+### Incident Patch 1: `17861239` (2026-11-19)
+**Commit Message**: feat(synthesize): --format csv|jsonl|parquet with typed columns (#5075)
 
-Same links as the 29.0.0 release notes: the example workflow, the wiki's
-#sarif walk-through, and jqnatividad/qsv-sarif-test with its PR #1.
+* feat(synthesize): --format csv|jsonl|parquet with typed columns
 
-[skip ci]
+JSONL and Parquet keep each column's type (integers, floats, booleans,
+Parquet dates, nulls). Types are decided once at fit time and saved in the
+model: from the generator where it carries one, else a pooled column keeps
+its stats type only if every value converts unchanged (zero-padded codes
+stay text), and a date format that can't read its own output back is
+written as text. Output is byte-identical at any --jobs and from --model;
+Parquet row groups end at fixed 65,536-row boundaries. Parquet needs
+--output and the polars feature. Model format bumped to version 2.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +1/-1)
+* docs(changelog): cite #5075 [skip ci]
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(synthesize): stricter typed-pool checks, bounded Parquet groups, -o -
+
+- Float pools stay typed only if every value keeps its decimal value
+  through f64 (2^53 + 1 is text); Date pools must be whole days and
+  DateTime pools must fit in microseconds; stats-inferred Boolean pools
+  of true/false are written as booleans.
+- A Parquet ro
+
+**File**: `.claude/skills/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ ## [Unreleased]
  
- ~104 commits since 28.0.0, and the theme is **correctness**. We develop qsv with the latest models from Anthropic and review every change adversarially with OpenAI's. [Codacy](https://www.codacy.com) adds one more layer of correctness review on top of that. Thanks to their generosity, we have free access to their platform. With all three, we swept several core commands for correctness: `stats` and `moarstats`, `luau`, `profile`, `scoresql`, `sqlp --format avro`, and every command that reads piped stdin. Thank you, Codacy!
- 
--- **`validate --sarif` writes JSON Schema errors as a [SARIF 2.1.0](https://www.oasis-open.org/standard/sarif-v2-1-0/) log** ([#5031](https://github.com/dathere/qsv/pull/5031)). Though SARIF is typically used for static analysis of code, we're now using it to report validation errors in a standardized format, with an example GitHub Actions workflow that uploads them to GitHub code scanning. This sets the stage for integrating qsv's validation capabilities into Datapusher+, CI/CD pipelines and other automated workflows.
-+- **`validate --sarif` writes JSON Schema errors as a [SARIF 2.1.0](https://www.oasis-open.org/standard/sarif-v2-1-0/) log** ([#5031](https://github.com/dathere/qsv/pull/5031)). Though SARIF is typically used for static analysis of code, we're now using it to report validation errors in a standardized format, with an [example GitHub Actions workflow](https://github.com/dathere/qsv/tree/master/resources/examples/validate-sarif) that uploads them to GitHub code scanning. See the [wiki walk-through](https://github.com/dathere/qsv/wiki/Validation-and-Schema#sarif) and the [sample repo](https://github.com/jqnatividad/qsv-sarif-test) where the workflow raised code scanning alerts, including on a [pull request](https://github.com/jqnatividad/qsv-sarif-test/pull/1). This sets the stage for integrating qsv's validation capabilities into Datapusher+, CI/CD pipelines and other automated workflows.
- - **`stats` no longer crashes on `NaN` cells** ([#5053](https://github.com/dathere/qsv/pull/5053)). If you run `stats` on data written by pandas or numpy, upgrade. In qsv 28.0.0 and 27.0.1, `stats --median`, `--quartiles` or `--everything` panicked on a float column of a few hundred rows or more that holds a `NaN`, `nan` or `NAN` cell, which is how pandas and numpy write missing values. So did `moarstats`, which runs `stats`. On smaller columns, the `sum` came out empty and the quartiles, MAD, IQR, fences and percentiles were empty or shifted. Every numeric statistic now skips `NaN` cells, as the mean and `--quantile-method approx` already did. A `NaN` cell still counts as a value for `nullcount`, `sparsity` and `cardinality`.
- 
- Also in this release:
+ ### Added
++- **`qsv-synthesize --format csv|jsonl|parquet`**: typed JSONL and Parquet output (integers, floats, Parquet dates, nulls; booleans when `--stats-options=--infer-boolean` types the column Boolean and its values are `true`/`false`); zero-padded codes stay text. Parquet needs `--output`. Skill regenerated from the USAGE text. ([#5075](https://github.com/dathere/qsv/pull/5075))
+ - **`qsv-synthesize --save-model <file>` / `--model <file>`**: save the fitted model once, then generate from it without the source (`<input>` is now optional, and omitted with `--model`). Same `--rows` and `--seed` give the same rows as the fitting run, including across `--shard` slices. Skill regenerated from the USAGE text. ([#5074](https://github.com/dathere/qsv/pull/5074))
+ - **`qsv-synthesize --shard <k/N>`**: generate slice k of N of a seeded dataset (needs `--seed`; refuses `--infer-content-type` without a shared `--dictionary`); slices joined in order with `qsv-cat rows` equal one unsharded run, unless `stats` or `frequency` on some slice warns that it switched to approximate estimators for lack of memory. Skill regenerated from the USAGE text. ([#5073](https://github.com/dathere/qsv/pull/5073))
+ - **`qsv-synthesize --report <file>`**: JSON report with the exact-match rate of synthetic rows against the source and what `--min-count` suppressed. Skill regenerated from the USAGE text. ([#5068](https://github.com/dathere/qsv/pull/5068))
 ```
 
----
-
-### Incident Patch 2: `3b7b3f04` (2026-11-15)
-**Commit Message**: docs(validate): --fail-fast still writes the SARIF log
-
-The SARIF notes said any run that stops early writes no SARIF file.
-Only a run that stops with an error does (a CSV read error, or a ragged
-row without --split-ragged). --fail-fast breaks out of the batch loop
-and still writes the results for the rows it validated. roborev 6531.
-
-[skip ci]
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `docs/Validate.md` (modified, +1/-1)
+**File**: `.claude/skills/qsv/qsv-synthesize.json` (modified, +11/-1)
 ```diff
-@@ -163,7 +163,7 @@ The usual `sales.csv.validation-errors.tsv` report is still written. The SARIF l
- * `startLine` is the file line where the row starts, not the row number. Row 2's quoted `notes` field spans two lines, so row 3 starts on line 5.
- * `uri` is relative to the root of the git checkout the CSV is in (here, the qsv repo), so results point at the right file wherever qsv runs. Outside a checkout, it is relative to the current directory.
- * The log is written even when every row is valid (with no results), so a CI run clears earlier alerts.
--* A run that stops early writes no SARIF file, and removes one left by an earlier run. Without `--split-ragged`, a row with the wrong number of fields stops validation, which is why the example uses it.
-+* A run that stops with an error writes no SARIF file, and removes one left by an earlier run. That happens on a CSV read error, or on a row with the wrong number of fields when `--split-ragged` isn't set, which is why the example uses it. `--fail-fast` is different: it stops after the first batch with an invalid row, but still writes the results for the rows it validated.
- * Output stops at 25,000 results by default, GitHub code scanning's limit per run. `--sarif-max-results <n>` sets another cap, and 0 means no limit.
- * `--sarif` works only in JSON Schema mode with a file input. RFC 4180 mode and stdin reject it.
+@@ -35,6 +35,12 @@
+         "type": "string",
+         "description": "Data Dictionary JSON file produced by `describegpt --dictionary --infer-content-type --format JSON`. Layers semantic Content Types onto generation. If omitted, generation is purely type/frequency-based."
+       },
++      {
++        "flag": "--format",
++        "type": "string",
++        "description": "Output format: csv, jsonl or parquet. JSONL and Parquet keep each column's type: integers and floats as such, dates as Parquet dates (JSONL writes them as strings), empty values as null. A true/false column is written as booleans only if stats types it Boolean (pass it the option `--infer-boolean` via --stats-options); else it is text. A column sampled from real values keeps the type stats gave it only if every value converts unchanged, so a zero-padded code stays text. Parquet needs --output and a qsv built with the polars feature.",
++        "default": "csv"
++      },
+       {
+         "flag": "--freq-limit",
+         "type": "number",
+@@ -103,7 +109,7 @@
+       {
+         "flag": "--shard",
+         "type": "string",
+-        "description": "Generate only slice k of N (k from 1 to N) of the rows --rows asks for. Requires --seed. Each slice is a run of whole 8192-row blocks, and slices 1 to N joined in order (with `qsv cat rows`) are the same as one unsharded run. Every slice must use the same <input>, options, qsv version and dictionary file, if any (--infer-content-type without --dictionary is refused). Each slice still profiles all of <input> itself, so if stats or frequency warns on one machine that it switched to approximate estimators for lack of memory, that slice comes from a different fit and the joined rows won't match one run. Generating the slices from one model saved with --save-model avoids this. Each slice gets a header row even when it has no rows (when N exceeds the number of blocks). With --report, the counts are for this slice only."
++        "description": "Generate only slice k of N (k from 1 to N) of the rows --rows asks for. Requires --seed. Each slice is a run of whole 8192-row blocks, and slices 1 to N joined in order are the same as one unsharded run: CSV slices with `qsv cat rows`, JSONL slices by plain concatenation, while Parquet slices are separate files to read together as one dataset. Every slice must use the same <input>, options, qsv version and dictionary file, if any (--infer-content-type without --dictionary is refused). Each slice still profiles all of <input> itself, so if stats or frequency warns on one machine that it switched to approximate estimators for lack of memory, that slice comes from a different fit and the joined rows won't match one run. Generating the slices from one model saved with --save-model avoids this. Each CSV slice gets a header row (and each Parquet slice its schema) even when it has no rows (when N exceeds the number of blocks). The counts of --report are for this slice only."
+       },
+       {
+         "flag": "--stats-options",
+@@ -161,6 +167,10 @@
+     {
+       "description": "The same, profiling data.csv only once: the first slice saves the fitted model, and the other slices generate from it without data.csv",
+       "command": "qsv synthesize --model model.json -n 1000000000 --seed 42 --shard 2/4 -o part2.csv"
++    },
++    {
++      "description": "Typed training data: Parquet keeps integers, floats, dates and nulls",
++      "command": "qsv synthesize data.csv -n 1000000 --seed 42 --format parquet -o synthetic.parquet"
+     }
+   ]
+ }
+```
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ ## [Unreleased]
  
+ ### Added
++- `synthesize`: new `--format csv|jsonl|parquet`. JSONL and Parquet keep each column's type: integers and floats as such, dates as Parquet `Date`/`Datetime` (JSONL writes them as strings), and empty values as null. A `true`/`false` column is written as booleans only when `stats` types it Boolean (`--stats-options --infer-boolean`); otherwise it is text. Types are decided once when the model is fitted, from the generator where it has one; a column sampled from real values keeps its `stats` type only if every value converts unchanged, so a zero-padded code such as a ZIP stays text, and a date format that can't read its own output back (`%Y-%m`, `%y`) is written as text. Output is the same bytes at any `--jobs` and from a `--model` run; Parquet row groups hold at most 65,536 rows (fewer for very wide rows, to bound memory) and split at the same points whatever `--jobs`. Parquet needs `--output` and the `polars` feature. Saved models now record the column types, so the model format is version 2 and models saved before this change must be fitted again. ([#5075](https://github.com/dathere/qsv/pull/5075))
+ - `synthesize`: new `--save-model <file>` saves the fitted model (the per-column generators and relationship groups) as JSON, and `--model <file>` generates from it without the source, so a dataset can be profiled once and generated anywhere. A `--model` run with the same `--rows` and `--seed` writes the same bytes as the run that saved the model, and slices made with `--shard` from one model join to that output whatever memory each machine has. The model holds real values from the source (such as enumerated values, quartile boundaries and range ends), including some the output may never show, so share it at least as carefully as the output. Its format is internal to qsv and versioned: a model of another version is refused with a message to fit it again, and a malformed model is refused before generating. Options that shape the fit or read the source (`--dictionary`, `--stats-options`, `--report`, …) are refused with `--model`; defaulted ones such as `--locale` are ignored. `serde_json`'s `float_roundtrip` feature is now declared directly, since model runs depend on exact float round-trips (it was already enabled through other dependencies). ([#5074](https://github.com/dathere/qsv/pull/5074))
+ - `synthesize`: new `--shard <k/N>` generates only slice k of N of the rows `--rows` asks for, so several machines can each produce part of one dataset. It requires `--seed`. Each slice is a run of whole 8,192-row blocks, and slices 1 to N joined in order with `qsv cat rows` are byte-identical to one unsharded run. Every slice still profiles the whole source, so they must all use the same input, options, qsv version and dictionary file (`--infer-content-type` without `--dictionary` is refused, since each slice would make its own LLM call), and none may hit the automatic switch of `stats` or `frequency` to approximate estimators for lack of memory. `synthesize` now passes on the warnings of its internal `stats` and `frequency` runs, which it used to discard, so that switch is visible. With `--report`, row counts and matches are for the slice, and the report records the `shard`. ([#5073](https://github.com/dathere/qsv/pull/5073))
+ - `synthesize`: new `--report <file>` writes a JSON report of how much of the source a run reproduced: source and synthetic row counts, the `--min-count` used, how many synthetic rows exactly match a source row (and the rate), and the values and `joint` tuples `--min-count` dropped per column or group. Numbers and dates are compared by value, so `2020-01-05` matches a source `01/05/2020`; other columns are compared as text. A row with a float, free-text or faker column rarely matches exactly, so a low rate alone does not show the output is private. Takes one extra pass over the input and holds one hash per distinct source row; output is unchanged with or without it. ([#5068](https://github.com/dathere/qsv/pull/5068))
+```
+
+**File**: `docs/help/synthesize.md` (modified, +8/-1)
+```diff
+@@ -169,6 +169,12 @@ qsv synthesize --model model.json -n 1000000000 --seed 42 --shard 2/4 -o part2.c
+ ```
+ 
+ ...
++> Typed training data: Parquet keeps integers, floats, dates and nulls
++
++```console
++qsv synthesize data.csv -n 1000000 --seed 42 --format parquet -o synthetic.parquet
++```
++
+ For more examples, see [tests](https://github.com/dathere/qsv/blob/master/tests/test_synthesize.rs).
+ 
+ See also <https://github.com/dathere/qsv/wiki/AI-and-Documentation#synthesize>
+@@ -201,7 +207,8 @@ qsv synthesize --help
+ | &nbsp;`‑‑infer‑content‑type`&nbsp; | flag | Generate the Data Dictionary on the fly by invoking `describegpt --dictionary --infer-content-type` on <input>. Requires an LLM API key (QSV_LLM_APIKEY). Ignored if --dictionary is given. |  |
+ | &nbsp;`‑n,`<br>`‑‑rows`&nbsp; | integer | Number of synthetic rows to generate. | `100` |
+ | &nbsp;`‑‑seed`&nbsp; | integer | RNG seed for fully reproducible output. The same seed gives the same rows at any --jobs, unless stats uses approximate estimators: either asked for via --stats-options (e.g. `--quantile-method approx`), or switched on by stats itself (with a warning) when the input won't fit in memory. |  |
+-| &nbsp;`‑‑shard`&nbsp; | string | Generate only slice k of N (k from 1 to N) of the rows --rows asks for. Requires --seed. Each slice is a run of whole 8192-row blocks, and slices 1 to N joined in order (with `qsv cat rows`) are the same as one unsharded run. Every slice must use the same <input>, options, qsv version and dictionary file, if any (--infer-content-type without --dictionary is refused). Each slice still profiles all of <input> itself, so if stats or frequency warns on one machine that it switched to approximate estimators for lack of memory, that slice comes from a different fit and the joined rows won't match one run. Generating the slices from one model saved with --save-model avoids this. Each slice gets a header row even when it has no rows (when N exceeds the number of blocks). With --report, the counts are for this slice only. |  |
++| &nbsp;`‑‑format`&nbsp; | string | Output format: csv, jsonl or parquet. JSONL and Parquet keep each column's type: integers and floats as such, dates as Parquet dates (JSONL writes them as strings), empty values as null. A true/false column is written as booleans only if stats types it Boolean (pass it the option `--infer-boolean` via --stats-options); else it is text. A column sampled from real values keeps the type stats gave it only if every value converts unchanged, so a zero-padded code stays text. Parquet needs --output and a qsv built with the polars feature. | `csv` |
++| &nbsp;`‑‑shard`&nbsp; | string | Generate only slice k of N (k from 1 to N) of the rows --rows asks for. Requires --seed. Each slice is a run of whole 8192-row blocks, and slices 1 to N joined in order are the same as one unsharded run: CSV slices with `qsv cat rows`, JSONL slices by plain concatenation, while Parquet slices are separate files to read together as one dataset. Every slice must use the same <input>, options, qsv version and dictionary file, if any (--infer-content-type without --dictionary is refused). Each slice still profiles all of <input> itself, so if stats or frequency warns on one machine that it switched to approximate estimators for lack of memory, that slice comes from a different fit and the joined rows won't match one run. Generating the slices from one model saved with --save-model avoids this. Each CSV slice gets a header row (and each Parquet slice its schema) even when it has no rows (when N exceeds the number of blocks). The counts of --report are for this slice only. |  |
+ | &nbsp;`‑‑save‑model`&nbsp; | string | Also save the fitted model to <file>, so later runs can generate from it with --model without reading <input> again. A --model run with the same --rows and --seed writes the same rows as this run (pools of fake values are sized for this run's --rows). The model holds real values from <input>, some of which the output may never show (see the privacy note above), so share it at least as carefully as the output. Its format is internal to qsv and versioned: a qsv that reads another model version refuses it, and it must be fitted again. |  |
+ | &nbsp;`‑‑model`&nbsp; | string | Generate from a model saved with --save-model instead of profiling an input, which must then be omitted. The model fixes everything fitted from the input, so options that shape the fit or read the input are refused when they have no default (for example the --dictionary, --stats-options, the --report and --delimiter options) and ignored when they do (for example the --locale, the --min-count and the frequency limit). |  |
+ | &nbsp;`‑‑locale`&nbsp; | string | Locale for faker-backed columns. Case-insensitive. Supported: en, fr_fr, de_de, it_it, pt_br, pt_pt, ja_jp, zh_cn, zh_tw, ar_sa, cy_gb, fa_ir, nl_nl, tr_tr. Sparse locales (those without per-category data in fake-rs) silently fall back to en data for the missing c
+```
+
+**File**: `src/cmd/synthesize/mod.rs` (modified, +103/-36)
+```diff
+@@ -123,6 +123,9 @@ Examples:
+   $ qsv synthesize --model model.json -n 1000000000 --seed 42 --shard 2/4 -o part2.csv
+   ...
+ 
++  # Typed training data: Parquet keeps integers, floats, dates and nulls
++  $ qsv synthesize data.csv -n 1000000 --seed 42 --format parquet -o synthetic.parquet
++
+ For more examples, see https://github.com/dathere/qsv/blob/master/tests/test_synthesize.rs.
+ See also https://github.com/dathere/qsv/wiki/AI-and-Documentation#synthesize
+ 
+@@ -151,11 +154,26 @@ synthesize options:
+                            for via --stats-options (e.g. `--quantile-method
+                            approx`), or switched on by stats itself (with a warning)
+                            when the input won't fit in memory.
++    --format <fmt>         Output format: csv, jsonl or parquet. JSONL
++                           and Parquet keep each column's type: integers
++                           and floats as such, dates as Parquet dates (JSONL
++                           writes them as strings), empty values as null.
++                           A true/false column is written as booleans only
++                           if stats types it Boolean (pass it the option
++                           `--infer-boolean` via --stats-options); else it
++                           is text. A column sampled from real values
++                           keeps the type stats gave it only if every value
++                           converts unchanged, so a zero-padded code stays
++                           text. Parquet needs --output and a qsv built with
++                           the polars feature. [default: csv]
+     --shard <k/N>          Generate only slice k of N (k from 1 to N) of the
+                            rows --rows asks for. Requires --seed. Each slice
+                            is a run of whole 8192-row blocks, and slices 1 to
+-                           N joined in order (with `qsv cat rows`) are the
+-                           same as one unsharded run. Every slice must use the
++                           N joined in order are the same as one unsharded
++                           run: CSV slices with `qsv cat rows`, JSONL slices
++                           by plain concatenation, while Parquet slices are
++                           separate files to read together as one dataset.
++                           Every slice must use the
+                            same <input>, options, qsv version and
+                            dictionary file, if any (--infer-content-type
+                            without --dictionary is refused). Each slice still
+@@ -165,10 +183,10 @@ synthesize options:
+                            slice comes from a different fit and the joined
+                            rows won't match one run. Generating the slices
+                            from one model saved with --save-model avoids
+-                           this. Each slice gets a header
+-                           row even when it has no rows (when N exceeds the
+-                           number of blocks). With --report, the counts are
+-                           for this slice only.
++                           this. Each CSV slice gets a header row (and each
++                           Parquet slice its schema) even when it has no rows
++                           (when N exceeds the number of blocks). The counts
++                           of --report are for this slice only.
+     --save-model <file>    Also save the fitted model to <file>, so later
+                            runs can generate from it with --model without
+                            reading <input> again. A --model run with the
+@@ -286,7 +304,6 @@ Common options:
+ use std::{
+     cell::RefCell,
+     collections::{HashMap, HashSet},
+-    io::Write,
+     path::Path,
+ };
+ 
+@@ -306,6 +323,7 @@ mod faker_map;
+ mod generator;
+ mod group_generator;
+ mod model;
++mod output;
+ mod range_trim;
+ mod relationships;
+ mod report;
+@@ -323,6 +341,7 @@ struct Args {
+     flag_rows:                  u64,
+     flag_seed:                  Option<u64>,
+     flag_shard:                 Option<String>,
++    flag_format:                String,
+     flag_locale:                String,
+     flag_freq_limit:            usize,
+     flag_stats_options:         Option<String>,
+@@ -361,6 +380,13 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+         Some(spec) => Some(parse_shard(spec)?),
+         None => None,
+     };
++    let format = output::Format::parse(&args.flag_format)?;
++    // Config treats `-o -` as stdout too.
++    if format == output::Format::Parquet && args.flag_output.as_deref().is_none_or(|o| o == "-") {
++        return fail_incorrectusage_clierror!(
++            "--format parquet needs --output: Parquet can't be written to stdout."
++        );
++    }
+     if args.flag_model.is_some() {
+         // These only shape the fit, which the model already fixed. Options with
+         // a default (--locale, --min-count, …) can't be told apart from unset,
+@@ -451,14 +477,55 @@ 
+```
+
+**File**: `src/cmd/synthesize/model.rs` (modified, +29/-8)
+```diff
+@@ -7,18 +7,25 @@
+ 
+ use serde::{Deserialize, Serialize};
+ 
+-use super::{generator::ColumnGenerator, group_generator::GroupGenerator, relationships::EmitUnit};
++use super::{
++    generator::ColumnGenerator, group_generator::GroupGenerator, output::OutType,
++    relationships::EmitUnit,
++};
+ use crate::{CliError, CliResult, cmd::describegpt::dictionary::is_valid_strftime};
+ 
+-const FORMAT_VERSION: u32 = 1;
++const FORMAT_VERSION: u32 = 2;
+ 
+ #[derive(Serialize, Deserialize)]
+ pub(crate) struct Model {
+-    qsv_synthesize_model: u32,
+-    qsv_version:          String,
+-    fit:                  FitInfo,
+-    pub(crate) columns:   Vec<String>,
+-    pub(crate) schedule:  Vec<EmitUnit>,
++    qsv_synthesize_model:  u32,
++    qsv_version:           String,
++    fit:                   FitInfo,
++    pub(crate) columns:    Vec<String>,
++    /// Each column's output type, for `--format jsonl|parquet`.
++    pub(crate) types:      Vec<OutType>,
++    /// The source's day-first preference, for reading sampled real dates.
++    pub(crate) prefer_dmy: bool,
++    pub(crate) schedule:   Vec<EmitUnit>,
+ }
+ 
+ /// How the model was fitted. Informational only: generation never reads it.
+@@ -31,12 +38,20 @@ pub(crate) struct FitInfo {
+ }
+ 
+ impl Model {
+-    pub(crate) fn new(columns: Vec<String>, schedule: Vec<EmitUnit>, fit: FitInfo) -> Self {
++    pub(crate) fn new(
++        columns: Vec<String>,
++        types: Vec<OutType>,
++        prefer_dmy: bool,
++        schedule: Vec<EmitUnit>,
++        fit: FitInfo,
++    ) -> Self {
+         Self {
+             qsv_synthesize_model: FORMAT_VERSION,
+             qsv_version: env!("CARGO_PKG_VERSION").to_string(),
+             fit,
+             columns,
++            types,
++            prefer_dmy,
+             schedule,
+         }
+     }
+@@ -88,6 +103,12 @@ impl Model {
+         if ncols == 0 {
+             return Err("it has no columns.".to_string());
+         }
++        if self.types.len() != ncols {
++            return bad("a type list that doesn't match its columns");
++        }
++        for ty in &self.types {
++            check_date_format(ty.date_format())?;
++        }
+         let mut filled = vec![false; ncols];
+         for unit in &self.schedule {
+             let cols: &[usize] = match unit {
+```
+
+**File**: `src/cmd/synthesize/output.rs` (added, +726/-0)
+```diff
+@@ -0,0 +1,726 @@
++//! Output formats (`--format`): column types and per-chunk encoding.
++//!
++//! Each column's output type is decided once, at fit time, and saved in the
++//! model, so typed output never fails partway through a run. A generator that
++//! carries its own type (quartile numbers, dates, booleans) decides it; a
++//! column sampled from a pool of real values takes its `stats` type only when
++//! every value in the pool converts without changing, and is text otherwise.
++
++use std::io::Write;
++
++use serde::{Deserialize, Serialize};
++
++use super::{
++    generator::ColumnGenerator,
++    group_generator::{GroupGenerator, OrderedKind},
++    relationships::EmitUnit,
++    report::parse_date,
++};
++use crate::{CliError, CliResult};
++
++#[derive(Clone, Copy, PartialEq, Eq)]
++pub(crate) enum Format {
++    Csv,
++    Jsonl,
++    Parquet,
++}
++
++impl Format {
++    pub(crate) fn parse(s: &str) -> CliResult<Self> {
++        match s.to_ascii_lowercase().as_str() {
++            "csv" => Ok(Self::Csv),
++            "jsonl" => Ok(Self::Jsonl),
++            "parquet" if cfg!(feature = "polars") => Ok(Self::Parquet),
++            "parquet" => Err(CliError::Other(
++                "--format parquet needs a qsv built with the polars feature.".to_string(),
++            )),
++            other => Err(CliError::Other(format!(
++                "--format must be csv, jsonl or parquet, not '{other}'."
++            ))),
++        }
++    }
++}
++
++/// A column's output type. Dates carry the format the generator writes them
++/// in (`None`: read with the date parser `stats` uses).
++#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
++pub(crate) enum OutType {
++    Integer,
++    Float,
++    Boolean,
++    Date { format: Option<String> },
++    DateTime { format: Option<String> },
++    String,
++}
++
++impl OutType {
++    pub(crate) fn date_format(&self) -> Option<&String> {
++        match self {
++            Self::Date { format } | Self::DateTime { format } => format.as_ref(),
++            _ => None,
++        }
++    }
++}
++
++/// The output type of every column. `stats_types` are the source columns'
++/// `stats` types, indexed like the output columns.
++pub(crate) fn resolve_types(
++    schedule: &[EmitUnit],
++    stats_types: &[&str],
++    prefer_dmy: bool,
++) -> Vec<OutType> {
++    let mut types = vec![OutType::String; stats_types.len()];
++    for unit in schedule {
++        match unit {
++            EmitUnit::Independent { col_idx, generator } => {
++                types[*col_idx] = match generator {
++                    ColumnGenerator::NumericQuantile { is_int, .. } => number_type(*is_int),
++                    ColumnGenerator::DateQuantile {
++                        is_datetime,
++                        date_format,
++                        ..
++                    } => date_type(*is_datetime, date_format.as_ref()),
++                    ColumnGenerator::Boolean { .. } => OutType::Boolean,
++                    ColumnGenerator::FrequencyWeighted { values, .. } => pooled_type(
++                        stats_types[*col_idx],
++                        values.iter().map(String::as_str),
++                        prefer_dmy,
++                    ),
++                    _ => OutType::String,
++                };
++            },
++            EmitUnit::Group(GroupGenerator::Joint {
++                col_indices,
++                tuples,
++                ..
++            }) => {
++                for (k, &col) in col_indices.iter().enumerate() {
++                    types[col] = pooled_type(
++                        stats_types[col],
++                        tuples.iter().map(|t| t[k].as_str()),
++                        prefer_dmy,
++                    );
++                }
++            },
++            EmitUnit::Group(GroupGenerator::Ordered {
++                member_cols,
++                kind,
++                is_int,
++                date_format,
++                ..
++            }) => {
++                for (k, &col) in member_cols.iter().enumerate() {
++                    types[col] = match kind {
++                        OrderedKind::Numeric => number_type(is_int[k]),
++                        OrderedKind::Date => date_type(false, date_format.as_ref()),
++                        OrderedKind::DateTime => date_type(true, date_format.as_ref()),
++                    };
++                }
++            },
++            EmitUnit::Group(GroupGenerator::Correlated {
++                col_indices,
++                is_int,
++                ..
++            }) => {
++                for (k, &col) in col_indices.iter().enumerate() {
++                    types[col] = number_type(is_int[k]);
++                }
++            },
++        }
++    }
++    types
++}
++
++const fn number_type(is_int: bool) -> OutType {
++    if is_int {
++        OutType::Integer
++    } else {
++        OutType::Float
++    }
++}
++
++/// A generated date column's type. A custom format is kept only if it reads
++/// back the value it wrote: `%Y-%m` loses the day and `%y` the century, so
++/// su
+```
+
+**File**: `src/cmd/synthesize/report.rs` (modified, +23/-13)
+```diff
+@@ -156,24 +156,34 @@ fn value_key(
+             Some((1, (v + 0.0).to_bits().cast_signed(), 0))
+         },
+         RangeKind::Date | RangeKind::DateTime => {
+-            let formatted = date_format.and_then(|fmt| {
+-                chrono::NaiveDateTime::parse_from_str(s, fmt)
+-                    .or_else(|_| {
+-                        chrono::NaiveDate::parse_from_str(s, fmt)
+-                            .map(|d| d.and_time(NaiveTime::MIN))
+-                    })
+-                    .ok()
+-                    .map(|dt| dt.and_utc())
+-            });
+-            let dt = match formatted {
+-                Some(dt) => dt,
+-                None => qsv_dateparser::parse_with_preference(s, prefer_dmy).ok()?,
+-            };
++            let dt = parse_date(s, date_format, prefer_dmy)?;
+             Some((3, dt.timestamp(), i64::from(dt.timestamp_subsec_nanos())))
+         },
+     }
+ }
+ 
++/// Reads a date with the column's output format first, falling back to the
++/// date parser `stats` uses, so a generated `03/02/2020` under
++/// `date:%d/%m/%Y` is February 3 whatever the source's DMY preference.
++pub(crate) fn parse_date(
++    s: &str,
++    date_format: Option<&str>,
++    prefer_dmy: bool,
++) -> Option<chrono::DateTime<chrono::Utc>> {
++    let formatted = date_format.and_then(|fmt| {
++        chrono::NaiveDateTime::parse_from_str(s, fmt)
++            .or_else(|_| {
++                chrono::NaiveDate::parse_from_str(s, fmt).map(|d| d.and_time(NaiveTime::MIN))
++            })
++            .ok()
++            .map(|dt| dt.and_utc())
++    });
++    match formatted {
++        Some(dt) => Some(dt),
++        None => qsv_dateparser::parse_with_preference(s, prefer_dmy).ok(),
++    }
++}
++
+ /// One pass over the source: the set of row keys. Reads bytes, so a cell that
+ /// is not UTF-8 is hashed as-is instead of failing the run.
+ pub(crate) fn source_row_keys(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5061** (2026-11-15): bench: use the long-view chart as the wiki hero image (@jqnatividad)
-- **PR #5060** (2026-11-15): bench: regenerate Benchmarks Data Schematic for the 29.0.0 run (@jqnatividad)
-- **PR #5058** (2026-11-15): fix(ci): enable trim_prefix_suffix on the Polars-pinned nightly (@jqnatividad)
-- **PR #5057** (2026-11-15): deps(viz): driver.js 1.14.0 for the Data Schematic Tour (@jqnatividad)
-- **PR #5056** (2026-11-15): fix(stats): a column of only NaN cells has no sum, not 0 (@jqnatividad)
-- **PR #5055** (2026-11-15): deps: bump Polars to upstream rev 2d9938d; EXPLAIN takes queries only (@jqnatividad)
+- **PR #5075** (2026-11-19): feat(synthesize): --format csv|jsonl|parquet with typed columns (@jqnatividad)
+- **PR #5074** (2026-11-19): feat(synthesize): --save-model / --model to fit once and generate from the model (@jqnatividad)
+- **PR #5073** (2026-11-18): feat(synthesize): add --shard k/N to generate one slice of a seeded dataset (@jqnatividad)
+- **PR #5069** (2026-11-18): feat(synthesize): generate rows in parallel, seed-stable across --jobs (@jqnatividad)
+- **PR #5068** (2026-11-18): feat(synthesize): add --report privacy summary (exact matches, suppression) (@jqnatividad)
+- **PR #5067** (2026-11-17): feat(synthesize): trim numeric/date ranges and ordered gaps by --min-count (@jqnatividad)
 
 ---
 
@@ -2291,31 +2727,31 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(changelog): link the SARIF example, wiki walk-through and sample repo
+## X. synthesize): --format csv|jsonl|parquet with typed columns
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3af21c2b`: docs(changelog): link the SARIF example, wiki walk-through and sample repo. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `17861239`: synthesize): --format csv|jsonl|parquet with typed columns. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`validate --sarif` writes JSON Schema errors as a [SARIF 2.1.0](https://www.oasis-open.org/standard/sarif-v2-1-0/) log** ([#5031](https://github.com/dathere/qsv/pull/5031)). Though SARIF is typically used for static analysis of code, we're now using it to report validation errors in a standardized format, with an [example GitHub Actions workflow](https://github.com/dathere/qsv/tree/master/resources/examples/validate-sarif) that uploads them to GitHub code scanning. See the [wiki walk-through](https://github.com/dathere/qsv/wiki/Validation-and-Schema#sarif) and the [sample repo](https://github.com/jqnatividad/qsv-sarif-test) where the workflow raised code scanning alerts, including on a [pull request](https://github.com/jqnatividad/qsv-sarif-test/pull/1). This sets the stage for integrating qsv's validation capabilities into Datapusher+, CI/CD pipelines and other automated workflows.
+- **`qsv-synthesize --format csv|jsonl|parquet`**: typed JSONL and Parquet output (integers, floats, Parquet dates, nulls; booleans when `--stats-options=--infer-boolean` types the column Boolean and its values are `true`/`false`); zero-padded codes stay text. Parquet needs `--output`. Skill regenerated from the USAGE text. ([#5075](https://github.com/dathere/qsv/pull/5075))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- **`validate --sarif` writes JSON Schema errors as a [SARIF 2.1.0](https://www.oasis-open.org/standard/sarif-v2-1-0/) log** ([#5031](https://github.com/dathere/qsv/pull/5031)). Though SARIF is typically used for static analysis of code, we're now using it to report validation errors in a standardized format, with an example GitHub Actions workflow that uploads them to GitHub code scanning. This sets the stage for integrating qsv's validation capabilities into Datapusher+, CI/CD pipelines and other automated workflows.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3af21c2b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `17861239` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

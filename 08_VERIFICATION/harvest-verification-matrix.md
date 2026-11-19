@@ -11339,3 +11339,8 @@
 | `CYCLE-20261119-JP98` | `2026-11-19T17:23:14.972Z` | `black-forest-labs/flux-3-image-klein-comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux-3-image-klein-comfy-learnings.md` | Yes (`f2d87d9f...`) |
 | `CYCLE-20261119-JRYY` | `2026-11-19T17:23:18.490Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9417` | Yes (`5970ec9b...`) |
 | `CYCLE-20261119-K1JH` | `2026-11-19T17:23:30.893Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9418` | Yes (`06b460af...`) |
+| `CYCLE-20261119-2KKK` | `2026-11-19T17:37:55.364Z` | `meta/folly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9419` | Yes (`041697be...`) |
+| `CYCLE-20261119-2RX4` | `2026-11-19T17:38:04.888Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9420` | Yes (`afa63e0b...`) |
+| `CYCLE-20261119-2V8Y` | `2026-11-19T17:38:09.202Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9421` | Yes (`88eaf3ea...`) |
+| `CYCLE-20261119-8VC9` | `2026-11-19T17:42:49.257Z` | `openbmb/MiniCPM-V-4.7-35B-A3B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-gguf-learnings.md` | Yes (`1e56cb9e...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T17:43:22.591Z` | `hf-openbmb-minicpm-v-4.7-35b-a3b-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-6FA503EE` [Domain D] | Yes (`732540a4...`) |
