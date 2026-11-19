@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-XD45",
-    "timestamp": "2026-11-17T17:02:32.357Z",
-    "repository": "aws-amplify/amplify-js",
-    "learningId": "learn-github-aws-amplify-amplify-js",
-    "contentHash": "d4285a5484733f883970f085a335c33073e8dfd321cc081a67fc9ac8f325ebe5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-XHU0",
-    "timestamp": "2026-11-17T17:02:38.472Z",
-    "repository": "projectdiscovery/nuclei",
-    "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "af0f74cdd3c0aba6e0c002f7da77dc5bdcbd8f655330694bb1fb3abe6f0dce94",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-8UVG",
     "timestamp": "2026-11-17T17:11:28.588Z",
     "repository": "arxanas/git-branchless",
@@ -7492,6 +7462,36 @@
     "contentHash": "cb051452fb527d8dd8b0edc5feac957a616a89ec75e0c96fee72f9250842e911",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-25RX",
+    "timestamp": "2026-11-19T03:09:48.093Z",
+    "repository": "juicedata/juicefs",
+    "learningId": "learn-github-juicedata-juicefs",
+    "contentHash": "ecac513b4fe6486f988be309d174e04a71d633490aa015cb492ae2db2d71064c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-8E2W",
+    "timestamp": "2026-11-19T03:14:38.792Z",
+    "repository": "google/vit-base-patch16-224",
+    "learningId": "learn-huggingface-google-vit-base-patch16-224",
+    "contentHash": "6fa625f199858babfae1e54e8860348cbc2d1d952f38a016ef67cc6c1b98b166",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

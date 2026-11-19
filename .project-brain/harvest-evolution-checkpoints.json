@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T02:56:56.592Z",
+  "last_updated": "2026-11-19T03:14:43.850Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T02:03:45.340Z",
@@ -113,7 +113,7 @@
       "staged_for_review": 1
     },
     "juicedata-juicefs-learnings.md": {
-      "processed_at": "2026-11-17T15:16:57.648Z",
+      "processed_at": "2026-11-19T03:14:42.275Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-18T22:22:52.163Z",
+      "processed_at": "2026-11-19T03:14:42.985Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2593,8 +2593,8 @@
       "staged_for_review": 1
     },
     "hf-google-vit-base-patch16-224-learnings.md": {
-      "processed_at": "2026-11-14T13:39:24.436Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T03:14:41.863Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "react-metro-learnings.md": {
@@ -3488,7 +3488,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2154,
+  "total_dossiers_evaluated": 2157,
   "total_canonical_promoted": 374,
-  "total_staged_for_review": 1614
+  "total_staged_for_review": 1616
 }

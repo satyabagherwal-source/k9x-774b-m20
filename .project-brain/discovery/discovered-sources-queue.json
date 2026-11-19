@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T02:56:55.762Z",
+  "updated_at": "2026-11-19T03:14:42.342Z",
   "stats": {
-    "total_discovered": 5766,
-    "approved_pending_harvest": 5457,
+    "total_discovered": 5767,
+    "approved_pending_harvest": 5458,
     "harvested_count": 0,
     "rejected_count": 309,
     "category_distribution": {
       "COMMUNITY_AND_EXPERT": 5432,
-      "OFFICIAL_DOCUMENTATION": 185,
+      "OFFICIAL_DOCUMENTATION": 186,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
       "SECURITY_ADVISORIES": 26,
@@ -124710,6 +124710,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ytsaurus-ytsaurus-learnings.md",
         "fileName": "ytsaurus-ytsaurus-learnings.md"
+      }
+    },
+    "SRC-7C294CFF3BCC": {
+      "id": "SRC-7C294CFF3BCC",
+      "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/directory-bucket-naming-rules.html",
+      "title": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/directory-bucket-naming-rules.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T03:14:42.342Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/juicedata-juicefs-learnings.md",
+        "fileName": "juicedata-juicefs-learnings.md"
       }
     }
   }

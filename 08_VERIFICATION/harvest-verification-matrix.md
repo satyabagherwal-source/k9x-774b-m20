@@ -11182,3 +11182,5 @@
 | `CYCLE-20261119-KJMG` | `2026-11-19T02:56:06.232Z` | `Qwen/Qwen3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-8b-learnings.md` | Yes (`b88a9e24...`) |
 | `CYCLE-20261119-KNIR` | `2026-11-19T02:56:11.283Z` | `ytsaurus/ytsaurus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9323` | Yes (`1494f499...`) |
 | `CYCLE-20261119-LHRY` | `2026-11-19T02:56:50.494Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9324` | Yes (`cb051452...`) |
+| `CYCLE-20261119-25RX` | `2026-11-19T03:09:48.093Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9325` | Yes (`ecac513b...`) |
+| `CYCLE-20261119-8E2W` | `2026-11-19T03:14:38.792Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | Yes (`6fa625f1...`) |

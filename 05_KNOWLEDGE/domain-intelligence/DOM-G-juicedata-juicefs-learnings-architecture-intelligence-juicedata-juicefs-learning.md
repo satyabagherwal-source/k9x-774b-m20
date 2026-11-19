@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T15:16:57.733Z",
+  "timestamp": "2026-11-19T03:14:42.442Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-juicedata-juicefs-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [juicedata-juicefs-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T15:16:57.733Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T03:14:42.442Z`  
 > **Learning ID**: `LEARN-EVO-juicedata-juicefs-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence)
-- **Confidence Rating**: 81%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence)
+- **Confidence Rating**: 77%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from juicedata-juicefs-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source**: github ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
-> **Source Version**: `194da2ab`  
+> **Source Version**: `eab98de8`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T15:16:33.805Z  
+> **Timestamp**: 2026-11-19T03:09:47.091Z  
 > **Learning ID**: `learn-github-juicedata-juicefs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/juicedata-juicefs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/juicedata/juicefs](https://github.com/juicedata/juicefs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T15:16:33.670Z  
+> **Harvest Timestamp**: 2026-11-19T03:09:46.912Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: JuiceFS is a distributed POSIX file system built on top of Redis and S3.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md
-- **Stars / Engagement**: 14746 stars
+- **Stars / Engagement**: 14753 stars
 
 ---
 
@@ -1189,11 +1189,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7867** (2026-11-17): **gateway: fix DeleteObjects losing keys and errors from multi-delete responses**
-  *Symptoms*: ## What  `jfsObjects.DeleteObjects` never fills the `objs` return slice, so every entry stays zero-value. This PR fills `ObjectName`/`VersionID` for every request key up front, on both success and failure paths.  ## Why it's broken  The minio handler (`DeleteMultipleObjectsHandler` in `cmd/bucket-handlers.go`) maps each result back to its request index by rebuilding an `ObjectToDelete` from the returned `dObjects[i]` and looking it up in the request map:  ```go objToDel := ObjectToDelete{     ObjectName:                    dObjects[i].ObjectName,     VersionID:                     dObjects[i].VersionID,     VersionPurgeStatus:            dObjects[i].VersionPurgeStatus,     DeleteMarkerReplicationStatus: dObjects[i].DeleteMarkerReplicationStatus,     PurgeTransitioned:             dObjects[i].PurgeTransitioned, } dindex := objectsToDelete[objToDel] if errs[i] == nil || isErrObjectNotFound(errs[i]) || isErrVersionNotFound(errs[i]) {     deletedObjects[dindex] = dObjects[i]     continue } dErrs[dindex] = DeleteError{ ... } ```  When `dObjects[i]` (i.e. our `objs[i]`) is zero-value, the lookup misses and Go's map returns the zero value, so `dindex` is **always 0**. Every result is written to slot 0 and the remaining slots are never touched:  - **Errors collapse**: each failure overwrites `dErrs[0]`, so only the *last* failed key survives in `<Error>`; the other failed keys silently vanish from the response. - **Deleted list is garbage**: successes overwrite `deletedObjects[0]`, a
+- **Issue #7875** (2026-11-18): **fs: stop background goroutines on Close**
+  *Symptoms*: ## Problem  `FileSystem.Close` does not stop the attr/entry cache cleanup goroutines, so each closed `FileSystem` (e.g. via libjfs `jfs_term`) leaks them and keeps its caches alive. It also returns without waiting for the access log goroutine, so the last log lines may not be written before the process exits.  ## Change  Close a `done` channel in `Close` to stop the cleanup goroutines, and wait for them and the access log goroutine to exit. `closeOnce` keeps repeated `Close` calls safe.  ## Validation  - Added `TestCloseStopsGoroutines`: checks that the background goroutines are gone after `Close` and the last access log line is flushed. Before the fix it fails with the 2 cache cleanup goroutines left; after the fix it passes (20 runs). - `go test ./pkg/fs/...` passes.  ## Risks and open questions  - `dataReader.checkReadBuffer` and `dataWriter.flushAll` are still not stopped on `Close`; that needs `DataReader`/`DataWriter` interface changes and is left out of this PR. They do not reference `FileSystem`, so it can still be collected. - Existing issues in the access log close path, not addressed here: if `flushLog` exits on a write error, `Flush` can block on a full `logBuffer` and hang `Close`; `log()` may send on the closed `logBuffer` if an operation runs concurrently with `Close`.  
 
-- **Issue #7860** (2026-11-17): **utils: backport Cond wakeup fix and channel reuse to ee-5.4**
-  *Symptoms*: Backport two Cond changes to ee-5.4:  - #7820: fix lost wakeups when Signal runs before a waiter starts receiving, including regression tests. - #7845: reuse buffered notification channels to avoid one allocation per wait. 
+- **Issue #7871** (2026-11-18): **test/gateway: run the cross-gateway complete test on separate meta clients**
+  *Symptoms*: Follow-up to #7870.  `TestCompleteMultipartUploadAcrossGateways` previously let both gateways share one `fs.FileSystem` and meta client, and paused them by a global `CopyFileRange` call counter. This change:  - uses two independent meta clients (each with its own session) and file systems on a shared SQLite volume, like `TestBucketLifecycleLockAcrossGateways`; - pauses each gateway with its own hook, so the interleaving no longer depends on how many meta calls one copy makes; - trims the test helpers (`GetObjectNInfo` for reads, a single `wait` helper).  With separate clients the pre-#7870 code fails at the first complete (`Invalid upload id`); with #7870 the test passes 20 consecutive runs under `-race`, and `go test ./pkg/gateway` passes.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1210,76 +1210,329 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `194da2ab` (2026-11-17)
-**Commit Message**: gateway: fix DeleteObjects losing keys and errors from multi-delete responses (#7867)
+### Incident Patch 1: `33592a30` (2026-11-19)
+**Commit Message**: fix: list S3 Express directory buckets without StartAfter (#7866)
 
-**File**: `pkg/gateway/gateway.go` (modified, +6/-0)
+Co-authored-by: Matt Van Horn <[REDACTED_EMAIL]>
+Co-authored-by: Xuhui zhang <[REDACTED_EMAIL]>
+
+**File**: `cmd/destroy.go` (modified, +1/-1)
 ```diff
-@@ -625,6 +625,12 @@ func (n *jfsObjects) delObj(bucket string, object string) error {
- func (n *jfsObjects) DeleteObjects(ctx context.Context, bucket string, objects []minio.ObjectToDelete, options minio.ObjectOptions) (objs []minio.DeletedObject, errs []error) {
- 	objs = make([]minio.DeletedObject, len(objects))
- 	errs = make([]error, len(objects))
-+	// objs must be filled even on error: the minio handler maps each result
-+	// back to its request index via the fields of objs[idx], so a zero-value
-+	// entry makes the lookup miss and collapses every result onto index 0.
-+	for idx, object := range objects {
-+		objs[idx] = minio.DeletedObject{ObjectName: object.ObjectName, VersionID: object.VersionID}
-+	}
- 	if err := n.checkBucket(ctx, bucket); err != nil {
- 		for idx := range objects {
- 			errs[idx] = minio.BucketNotFound{Bucket: bucket}
+@@ -158,7 +158,7 @@ func destroy(ctx *cli.Context) error {
+ 		}
+ 	}
+ 
+-	objs, err := object.ListAll(ctx.Context, blob, "", "", true, false)
++	objs, err := object.ListAll(object.WithUnorderedList(ctx.Context), blob, "", "", true)
+ 	if err != nil && strings.Contains(err.Error(), "NoSuchBucket") {
+ 		if !ctx.Bool("force") {
+ 			logger.Fatalf("data storage %s does not exist (error: %v); retry with \"--force\" to skip object deletion", blob, err)
 ```
 
-**File**: `pkg/gateway/gateway_test.go` (modified, +34/-0)
+**File**: `cmd/format.go` (modified, +1/-1)
 ```diff
-@@ -975,4 +975,38 @@ func TestDeleteObjects(t *testing.T) {
- 			t.Fatalf("sibling bucket dir /jmrqfoo must not be pruned, got: %s", eno)
+@@ -607,7 +607,7 @@ func format(c *cli.Context) error {
+ 			logger.Fatalf("Storage %s is not configured correctly: %s", blob, err)
  		}
- 	})
-+
-+	t.Run("fill deleted object for every key", func(t *testing.T) {
-+		jfsObj, jfs, _ := newTestGateway(t, Config{MultiBucket: true})
-+		bucket := "bkt3"
-+		if eno := jfs.Mkdir(mctx, "/"+bucket, 0777, 022); eno != 0 {
-+			t.Fatalf("mkdir bucket: %s", eno)
-+		}
-+		createTestFile(t, jfs, "/"+bucket+"/ok1")
-+		createTestFile(t, jfs, "/"+bucket+"/ok2")
-+
-+		reqs := []minio.ObjectToDelete{
-+			{ObjectName: "ok1"},
-+			{ObjectName: "missing-dir/child"}, // parent was never created, so this one fails
-+			{ObjectName: "ok2"},
-+		}
-+		objs, errs := jfsObj.DeleteObjects(context.Background(), bucket, reqs, minio.ObjectOptions{})
-+		if len(objs) != len(reqs) {
-+			t.Fatalf("got %d objs, want %d", len(objs), len(reqs))
-+		}
-+		// The minio handler maps each result back to its request index via the
-+		// fields of objs[idx], so every entry must carry its key even when the
-+		// delete fails.
-+		for i, req := range reqs {
-+			if objs[i].ObjectName != req.ObjectName {
-+				t.Fatalf("objs[%d].ObjectName = %q, want %q", i, objs[i].ObjectName, req.ObjectName)
-+			}
-+		}
-+		if errs[0] != nil || errs[2] != nil {
-+			t.Fatalf("ok keys should succeed: errs[0]=%v, errs[2]=%v", errs[0], errs[2])
-+		}
-+		if errs[1] == nil {
-+			t.Fatalf("key under missing parent should fail")
-+		}
-+	})
+ 		if create {
+-			if objs, err := object.ListAll(c.Context, blob, "", "", true, false); err == nil {
++			if objs, err := object.ListAll(object.WithUnorderedList(c.Context), blob, "", "", true); err == nil {
+ 				for o := range objs {
+ 					if o == nil {
+ 						logger.Warnf("List storage %s failed", blob)
+```
+
+**File**: `cmd/fsck.go` (modified, +1/-1)
+```diff
+@@ -138,7 +138,7 @@ func fsck(ctx *cli.Context) error {
+ 	blockDSpin := progress.AddDoubleSpinner("Found blocks")
+ 	var blocks = make(map[string]int64)
+ 	if path == "" {
+-		objs, err := object.ListAll(ctx.Context, blob, "", "", true, false)
++		objs, err := object.ListAll(object.WithUnorderedList(ctx.Context), blob, "", "", true)
+ 		if err != nil {
+ 			logger.Fatalf("list all blocks: %s", err)
+ 		}
+```
+
+**File**: `cmd/gc.go` (modified, +3/-1)
+```diff
+@@ -484,6 +484,8 @@ const gcObjectListBatch = 10000
+ 
+ func scanGcChunkObjects(ctx context.Context, blob object.ObjectStorage, threads int, hashPrefix bool, prefixSpin *utils.Bar, handle func(object.Object) error) error {
+ 	defer prefixSpin.Done()
++	// Each object is checked on its own, so keys may come in any order.
++	ctx = object.WithUnorderedList(ctx)
+ 	prefixes := make(chan string, threads)
+ 	eg, scanCtx := errgroup.WithContext(ctx)
+ 	eg.Go(func() error {
+@@ -580,7 +582,7 @@ func walkGcChunkObjectPrefixes(ctx context.Context, blob object.ObjectStorage, p
  }
+ 
+ func scanGcChunkObjectsPrefix(ctx context.Context, blob object.ObjectStorage, prefix string, handle func(object.Object) error) error {
+-	objs, err := object.ListAll(ctx, blob, prefix, "", true, false)
++	objs, err := object.ListAll(object.WithUnorderedList(ctx), blob, prefix, "", true)
+ 	if err != nil {
+ 		return errors.Errorf("list chunk prefix %s: %s", prefix, err)
+ 	}
+```
+
+**File**: `cmd/objbench.go` (modified, +1/-1)
+```diff
+@@ -669,7 +669,7 @@ func (bm *benchMarkObj) chtimes(ctx context.Context, key string, startKey int) e
+ }
+ 
+ func listAll(ctx context.Context, s object.ObjectStorage, prefix, marker string, limit int64) ([]object.Object, error) {
+-	ch, err := object.ListAll(ctx, s, prefix, marker, true, true)
++	ch, err := object.ListAll(ctx, s, prefix, marker, true)
+ 	if err == nil {
+ 		objs := make([]object.Object, 0)
+ 		for obj := range ch {
+```
+
+**File**: `pkg/object/object_storage_test.go` (modified, +18/-7)
+```diff
+@@ -92,7 +92,7 @@ func TestTierStorageInitTiersIsolatesRuntimeState(t *testing.T) {
+ }
+ 
+ func listAll(ctx context.Context, s ObjectStorage, prefix, marker string, limit int64, followLink bool) ([]Object, error) {
+-	ch, err := ListAll(ctx, s, prefix, marker, followLink, true)
++	ch, err := ListAll(ctx, s, prefix, marker, followLink)
+ 	if err == nil {
+ 		objs := make([]Object, 0)
+ 		for obj := range ch {
+@@ -1107,7 +1107,7 @@ func TestListAllRetryLimit(t *testing.T) {
+ 		{maxListRetries + 1, keys[:2], true},
+ 	} {
+ 		t.Run(fmt.Sprintf("failures=%d", c.failures), func(t *testing.T) {
+-			ch, err := ListAll(context.Background(), &tokenPagedStore{ObjectStorage: mem, keys: keys, failures: c.failures}, "", "", false, true)
++			ch, err := ListAll(context.Background(), &tokenPagedStore{ObjectStorage: mem, keys: keys, failures: c.failures}, "", "", false)
+ 			if err != nil {
+ 				t.Fatalf("list all: %s", err)
+ 			}
+@@ -1167,20 +1167,31 @@ func TestShardingListFailedShard(t *testing.T) {
+ 		goodKeys = append(goodKeys, fmt.Sprintf("k%03d", i))
+ 	}
+ 	cases := []struct {
+-		name    string
+-		badKeys []string
+-		wantErr bool
+-		want    []string
++		name      string
++		unordered bool
++		badFirst  bool
++		badKeys   []string
++		wantErr   bool
++		want      []string
+ 	}{
+ 		{name: "first", wantErr: true},
+ 		{name: "merging", badKeys: []string{"a"}, want: []string{"a"}},
++		{name: "unordered-first", unordered: true, wantErr: true},
++		{name: "unordered-midway", unordered: true, badFirst: true, badKeys: []string{"a"}, want: []string{"a"}},
+ 	}
+ 	for _, c := range cases {
+ 		t.Run(c.name, func(t *testing.T) {
+ 			bad := &listStub{keys: c.badKeys, fail: true, done: make(chan struct{})}
+ 			good := &listStub{keys: goodKeys, done: make(chan struct{})}
+ 			s := &sharded{stores: []ObjectStorage{good, bad}}
+-			ch, err := s.ListAll(context.Background(), "", "", false)
++			if c.badFirst {
++				s.stores = []ObjectStorage{bad, good}
++			}
++			ctx := context.Background()
++			if c.unordered {
++				ctx = WithUnorderedList(ctx)
++			}
++			ch, err := s.ListAll(ctx, "", "", false)
+ 			if c.wantErr {
+ 				if err == nil {
+ 					t.Fatal("expect error for a failed shard")
+```
+
+**File**: `pkg/object/s3.go` (modified, +20/-2)
+```diff
+@@ -80,7 +80,7 @@ func (s *s3client) Limits() Limits {
+ }
+ 
+ func (s *s3client) Create(ctx context.Context) error {
+-	if _, _, _, err := s.List(ctx, "", "", "", "", 1, true); err == nil {
++	if _, _, _, err := s.List(WithUnorderedList(ctx), "", "", "", "", 1, true); err == nil {
+ 		return nil
+ 	}
+ 	_, err := s.s3.CreateBucket(ctx, &s3.CreateBucketInput{
+@@ -234,18 +234,36 @@ func (s *s3client) Delete(ctx context.Context, key string, getters ...AttrGetter
+ 	return err
+ }
+ 
++// s3DirectoryBucketSuffix is the name suffix of S3 Express One Zone directory buckets
++// (<base>--<zone-id>--x-s3). See
++// https://docs.aws.amazon.com/AmazonS3/latest/userguide/directory-bucket-naming-rules.html
++const s3DirectoryBucketSuffix = "--x-s3"
++
+ func (s *s3client) List(ctx context.Context, prefix, start, token, delimiter string, limit int64, followLink bool) ([]Object, bool, string, error) {
+ 	if limit > 1000 {
+ 		limit = 1000
+ 	}
++	// S3 Express directory buckets don't list keys in lexicographic order, reject
++	// a non-empty start-after and page only with ContinuationToken.
++	directoryBucket := strings.HasSuffix(s.bucket, s3DirectoryBucketSuffix)
++	if directoryBucket {
++		if !isUnorderedList(ctx) {
++			return nil, false, "", fmt.Errorf("directory bucket %s can't list keys in order", s.bucket)
++		}
++		if start != "" && token == "" {
++			return nil, false, "", fmt.Errorf("directory bucket %s can't list after %q", s.bucket, start)
++		}
++	}
+ 	param := s3.ListObjectsV2Input{
+ 		Bucket:       &s.bucket,
+ 		Prefix:       &prefix,
+ 		MaxKeys:      aws.Int32(int32(limit)),
+ 		EncodingType: types.EncodingTypeUrl,
+-		StartAfter:   aws.String(start),
+ 		Delimiter:    aws.String(delimiter),
+ 	}
++	if !directoryBucket {
++		param.StartAfter = aws.String(start)
++	}
+ 	if token != "" {
+ 		param.ContinuationToken = aws.String(token)
+ 	}
+```
+
+**File**: `pkg/object/s3_test.go` (modified, +111/-0)
+```diff
+@@ -23,6 +23,8 @@ import (
+ 	"context"
+ 	"net/http"
+ 	"net/http/httptest"
++	"strings"
++	"sync/atomic"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/assert"
+@@ -141,3 +143,112 @@ func Test_s3client_copy_source_encoding(t *testing.T) {
+ 		})
+ 	}
+ }
++
++const s3NotSupportedListXML = `<Error><Code>NotSupported</Code><Message>This bucket does not support start-after query parameter for ListObjectsV2 API.</Message></Error>`
++
++func writeS3ListPage(w http.ResponseWriter, key string, truncated bool, token string) {
++	w.Header().Set("Content-Type", "application/xml")
++	next := ""
++	trunc := "false"
++	if truncated {
++		trunc = "true"
++		next = "<NextContinuationToken>" + token + "</NextContinuationToken>"
++	}
++	_, _ = w.Write([]byte(`<ListBucketResult><IsTruncated>` + trunc + `</IsTruncated>` + next +
++		`<Contents><Key>` + key + `</Key><Size>1</Size></Contents></ListBucketResult>`))
++}
++
++func TestS3DirectoryBucketList(t *testing.T) {
++	var dirLists, badStartAfter atomic.Int32
++	var generalStartAfter string
++	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		q := r.URL.Query()
++		// Directory-bucket clients take a session before ListObjectsV2.
++		if _, ok := q["session"]; ok {
++			w.Header().Set("Content-Type", "application/xml")
++			_, _ = w.Write([]byte(`<CreateSessionResult><Credentials><AccessKeyId>ak</AccessKeyId><SecretAccessKey>sk</SecretAccessKey><SessionToken>token</SessionToken><Expiration>2099-01-01T00:00:00Z</Expiration></Credentials></CreateSessionResult>`))
++			return
++		}
++		if q.Get("list-type") != "2" {
++			http.Error(w, "expected ListObjectsV2", http.StatusBadRequest)
++			return
++		}
++		bucket := strings.Trim(r.URL.Path, "/")
++		startAfter := q.Get("start-after")
++		if bucket == "general" {
++			generalStartAfter = startAfter
++			if startAfter == "" {
++				w.Header().Set("Content-Type", "application/xml")
++				w.WriteHeader(http.StatusNotImplemented)
++				_, _ = w.Write([]byte(s3NotSupportedListXML))
++				return
++			}
++			writeS3ListPage(w, "chunks/z", false, "")
++			return
++		}
++		dirLists.Add(1)
++		if startAfter != "" {
++			badStartAfter.Add(1)
++			w.Header().Set("Content-Type", "application/xml")
++			w.WriteHeader(http.StatusNotImplemented)
++			_, _ = w.Write([]byte(s3NotSupportedListXML))
++			return
++		}
++		if q.Get("continuation-token") == "t2" {
++			writeS3ListPage(w, "chunks/a", false, "")
++			return
++		}
++		writeS3ListPage(w, "chunks/m", true, "t2")
++	}))
++	defer srv.Close()
++
++	ctx := context.Background()
++	stor, err := newS3(srv.URL+"/vol--use1-az4--x-s3", "ak", "sk", "")
++	require.NoError(t, err)
++
++	stor2, err := newS3(srv.URL+"/vol2--use1-az4--x-s3", "ak", "sk", "")
++	require.NoError(t, err)
++	shards := WithPrefix(&sharded{stores: []ObjectStorage{stor, stor2}}, "chunks/")
++
++	// Directory buckets don't list keys in order, so ordered listings fail before any request.
++	_, err = ListAll(ctx, WithPrefix(stor, "chunks/"), "", "", true)
++	require.ErrorContains(t, err, "can't list keys in order")
++	_, err = ListAll(ctx, shards, "", "", true)
++	require.ErrorContains(t, err, "can't list keys in order")
++	_, _, _, err = stor.List(ctx, "chunks/", "chunks/m", "t2", "", 1000, true)
++	require.ErrorContains(t, err, "can't list keys in order")
++	assert.Zero(t, dirLists.Load())
++
++	listAll := func(store ObjectStorage) []string {
++		ch, err := ListAll(WithUnorderedList(ctx), store, "", "", true)
++		require.NoError(t, err)
++		var keys []string
++		for o := range ch {
++			require.NotNil(t, o)
++			keys = append(keys, o.Key())
++		}
++		return keys
++	}
++	assert.Equal(t, []string{"m", "a"}, listAll(WithPrefix(stor, "chunks/")))
++	// Merging unordered shards keeps every key, though not in order.
++	assert.ElementsMatch(t, []string{"m", "a", "m", "a"}, listAll(shards))
++
++	objs, _, _, err := stor.List(WithUnorderedList(ctx), "chunks/", "chunks/m", "t2", "", 1000, true)
++	require.NoError(t, err)
++	require.Len(t, objs, 1)
++	assert.Equal(t, "chunks/a", objs[0].Key())
++
++	// A listing can't start after a key, so it fails instead of listing from the beginning.
++	_, _, _, err = stor.List(WithUnorderedList(ctx), "chunks/", "chunks/z", "", "", 1000, true)
++	require.ErrorContains(t, err, "can't list after")
++	assert.Zero(t, badStartAfter.Load())
++
++	general, err := newS3(srv.URL+"/general", "ak", "sk", "")
++	require.NoError(t, err)
++	objs, _, _, err = general.List(ctx, "chunks/", "chunks/m", "", "", 1000, true)
++	require.NoError(t, err)
++	require.Len(t, objs, 1)
++	assert.Equal(t, "chunks/z", objs[0].Key())
++	assert.Equal(t, "chunks/m", generalStartAfter)
++	assert.Zero(t, badStartAfter.Load())
++}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7875** (2026-11-18): fs: stop background goroutines on Close (@jiefenghuang)
+- **PR #7871** (2026-11-18): test/gateway: run the cross-gateway complete test on separate meta clients (@jiefenghuang)
+- **PR #7870** (2026-11-18): gateway: use a unique temp file per CompleteMultipartUpload (@raghavs6)
+- **PR #7868** (2026-11-18): gateway: report per-key results when batch delete fails (@jiefenghuang)
 - **PR #7867** (2026-11-17): gateway: fix DeleteObjects losing keys and errors from multi-delete responses (@sjp00556)
-- **PR #7860** (2026-11-17): utils: backport Cond wakeup fix and channel reuse to ee-5.4 (@myangitzh)
-- **PR #7859** (2026-11-17): sdk/python: validate seek offsets and truncate sizes (@adenzhou1350)
-- **PR #7857** (2026-11-16): docs: clarify routing and concurrency for multiple gateways (@myangitzh)
-- **PR #7855** (2026-11-16): object/sharding: do not format the endpoint query (@jiefenghuang)
-- **PR #7854** (2026-11-16): CI: delete the per-run tier test bucket after tier.sh (@mt5225)
+- **PR #7866** (2026-11-19): fix: list S3 Express directory buckets without StartAfter (@mvanhorn)
 
 ---
 
@@ -1299,36 +1552,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gateway: fix DeleteObjects losing keys and errors from multi-delete responses
+## X. list S3 Express directory buckets without StartAfter
 
 **RULE**:
-When implementing operations in `pkg/gateway/gateway.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/destroy.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in juicedata/juicefs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `194da2ab`: gateway: fix DeleteObjects losing keys and errors from multi-delete responses. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `33592a30`: list S3 Express directory buckets without StartAfter. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/gateway/gateway.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/destroy.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// objs must be filled even on error: the minio handler maps each result
-	// back to its request index via the fields of objs[idx], so a zero-value
-	// entry makes the lookup miss and collapses every result onto index 0.
-	for idx, object := range objects {
-		objs[idx] = minio.DeletedObject{ObjectName: object.ObjectName, VersionID: object.VersionID}
-	}
+	objs, err := object.ListAll(object.WithUnorderedList(ctx.Context), blob, "", "", true)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	objs, err := object.ListAll(ctx.Context, blob, "", "", true, false)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `194da2ab` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `33592a30` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

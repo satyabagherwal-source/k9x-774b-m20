@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T02:56:56.034Z",
+  "last_updated": "2026-11-19T03:14:43.430Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,14 +4835,14 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-T66N",
+      "id": "CD-8HNL",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-T66N-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-8HNL-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-18",
+      "date_staged": "2026-11-19",
       "domain_letter": "H"
     },
     {
@@ -31860,6 +31860,35 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-19",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-8GZ3",
+      "directive_title": "list S3 Express directory buckets without StartAfter",
+      "source_repo": "juicedata-juicefs-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8GZ3-list-s3-express-directory-buckets-without-startafter.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-0EE631",
+      "directive_title": "list S3 Express directory buckets without StartAfter",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "juicedata-juicefs",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0EE631-list-s3-express-directory-buckets-withou.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-68D0D0",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-68D0D0-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-19"
     }
   ]
 }

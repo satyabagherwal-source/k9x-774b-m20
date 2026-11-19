@@ -1235,8 +1235,8 @@
     "sourceUrl": "https://huggingface.co/google/vit-base-patch16-224",
     "sourceVersion": "hf-google-vit-base-patch16-224",
     "license": "Open-Source",
-    "contentHash": "db15ee4d8901500b51b44dd27dc67a430dad11c86856c9ec168c742535d3e022",
-    "lastHarvestedAt": "2026-11-14T13:38:46.598Z",
+    "contentHash": "6fa625f199858babfae1e54e8860348cbc2d1d952f38a016ef67cc6c1b98b166",
+    "lastHarvestedAt": "2026-11-19T03:14:38.796Z",
     "learningId": "learn-huggingface-google-vit-base-patch16-224"
   },
   "hf-google-gemma-4-31b-it": {
@@ -6013,10 +6013,10 @@
     "repository": "juicedata/juicefs",
     "platform": "github",
     "sourceUrl": "https://github.com/juicedata/juicefs",
-    "sourceVersion": "194da2ab",
+    "sourceVersion": "eab98de8",
     "license": "Apache-2.0",
-    "contentHash": "4ca1d6ad94c6874585507489b786a8558b205069a8d1380abd57e99f3f2f0f2b",
-    "lastHarvestedAt": "2026-11-17T15:16:34.728Z",
+    "contentHash": "ecac513b4fe6486f988be309d174e04a71d633490aa015cb492ae2db2d71064c",
+    "lastHarvestedAt": "2026-11-19T03:09:48.097Z",
     "learningId": "learn-github-juicedata-juicefs"
   },
   "redisearch-redisearch": {

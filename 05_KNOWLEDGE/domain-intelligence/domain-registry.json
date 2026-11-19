@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T02:56:56.216Z",
+  "last_updated": "2026-11-19T03:14:43.576Z",
   "total_records": 1937,
   "domains": {
     "A": {
@@ -8670,8 +8670,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "1100685dc7378fc0606843704f9059a5182e4e518a65cb2976fea0515212de3a",
-      "created_at": "2026-11-18T22:22:52.697Z"
+      "content_hash": "ab305f8f8ec626c232c9ebde5f86605f76d2a99503c44ccee19f519c2648f8ea",
+      "created_at": "2026-11-19T03:14:43.576Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -9705,8 +9705,8 @@
       "title": "Architecture Intelligence: juicedata/juicefs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juicedata-juicefs-architecture-intelligence-juicedata-juicefs-core-invariants.md",
       "repository": "juicedata/juicefs",
-      "content_hash": "56432419f437b067d9429787c03966006967e1b27320932f422c7ea7011590fa",
-      "created_at": "2026-11-17T15:16:35.045Z"
+      "content_hash": "094b0f26c795077625345d94959ada596b5cde1a9e98483b34d7da98af03277f",
+      "created_at": "2026-11-19T03:09:48.464Z"
     },
     "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-clockworklabs-spacetimedb-core-invariants",
@@ -15562,8 +15562,8 @@
       "title": "Research & Knowledge Intelligence: google/vit-base-patch16-224 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-vit-base-patch16-224-research-knowledge-intelligence-google-vit-base-p.md",
       "repository": "google/vit-base-patch16-224",
-      "content_hash": "df243aefc0eadccf21b224090e3786bc4e2549a168aa3b4dd3ee8654532a4d77",
-      "created_at": "2026-11-14T13:38:46.775Z"
+      "content_hash": "cd6d349c3b5e5f5f67e29ed90a4c6f766671cd4c4dd2f021351e0ae28697aafe",
+      "created_at": "2026-11-19T03:14:39.000Z"
     },
     "DOM-D-D7AD2A79": {
       "record_id": "DOM-D-D7AD2A79",
@@ -15613,8 +15613,8 @@
       "title": "Research & Knowledge Intelligence: hf-google-vit-base-patch16-224-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-vit-base-patch16-224-learnings-research-knowledge-intelligence-hf-goog.md",
       "repository": "hf-google-vit-base-patch16-224-learnings",
-      "content_hash": "0d2003dce8781161ce55c2614f9c5319aff6f2f92655f10c7f4c82281067f2fb",
-      "created_at": "2026-11-14T13:39:24.633Z"
+      "content_hash": "9db799f79b103b13e34ec948da1bec3ac9b50c226be7dcee510b38f8936dcff2",
+      "created_at": "2026-11-19T03:14:42.072Z"
     },
     "domain_intelligence-technical-construction-intelligence-react-metro-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-react-metro-learnings-core-invariants",
@@ -23672,8 +23672,8 @@
       "title": "Architecture Intelligence: juicedata-juicefs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-juicedata-juicefs-learnings-architecture-intelligence-juicedata-juicefs-learning.md",
       "repository": "juicedata-juicefs-learnings",
-      "content_hash": "2139fb607dac61134ba44c8f6bb86c40d4330798be3c0886b562d2caab36462d",
-      "created_at": "2026-11-17T15:16:57.960Z"
+      "content_hash": "b061401488e6a98e2d488a9b7d0d734c85a6f1d9eb8d0a42f35e6392dcc0a37a",
+      "created_at": "2026-11-19T03:14:42.695Z"
     },
     "domain_intelligence-research-knowledge-intelligence-pika-labs-pika-h3-flex-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-pika-labs-pika-h3-flex-core-invariants",

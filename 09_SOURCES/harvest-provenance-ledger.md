@@ -11215,3 +11215,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-8b` | `https://huggingface.co/Qwen/Qwen3-8B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-19T02:56:06.237Z |
 | `learn-github-ytsaurus-ytsaurus` | `https://github.com/ytsaurus/ytsaurus` | `6f9fb9d6` | Multi-dimensional audit evidence | 2026-11-19T02:56:11.287Z |
 | `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `73d41c0a` | Multi-dimensional audit evidence | 2026-11-19T02:56:50.499Z |
+| `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `eab98de8` | Multi-dimensional audit evidence | 2026-11-19T03:09:48.097Z |
+| `learn-huggingface-google-vit-base-patch16-224` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-19T03:14:38.796Z |
