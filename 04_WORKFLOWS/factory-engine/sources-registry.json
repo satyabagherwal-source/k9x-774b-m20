@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T00:00:28.068Z",
-    "lastVerified": "2026-11-19T00:00:28.068Z",
+    "lastChecked": "2026-11-19T00:22:59.545Z",
+    "lastVerified": "2026-11-19T00:22:59.545Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -299,12 +299,12 @@
     "lastVerified": "2026-11-18T09:57:21.136Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T23:18:26.370Z",
-    "lastVerified": "2026-11-18T23:18:26.370Z",
+    "lastChecked": "2026-11-19T00:22:53.041Z",
+    "lastVerified": "2026-11-19T00:22:53.041Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -313,7 +313,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "226268f4"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1982,9 +1983,9 @@
   "mitmproxy-mitmproxy": {
     "name": "mitmproxy",
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
-    "lastChecked": "2026-11-18T18:00:25.680Z",
+    "lastChecked": "2026-11-19T00:22:48.100Z",
     "revisionIdentifier": "f7701d5f",
-    "lastVerified": "2026-11-18T18:00:25.680Z"
+    "lastVerified": "2026-11-19T00:22:48.100Z"
   },
   "databendlabs-databend": {
     "name": "databendlabs/databend",
@@ -4981,6 +4982,71 @@
     "contentHash": "335aab112d218418ff523d8dd01a2e80a7b6df89fe8af25e42b95e892ad434d4",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mlua-rs-mlua": {
+    "name": "mlua-rs/mlua",
+    "officialUrl": "https://github.com/mlua-rs/mlua",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-19T00:22:42.149Z",
+    "lastVerified": "2026-11-19T00:22:42.149Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-mlua-rs-mlua",
+    "contentHash": "f471bca865e2eb135b58f6387ae098e1f8556fc5537ca294b4ecc7796ef24179",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 1,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-naiveai-naive-n0.5-flash": {
+    "name": "NaiveAI/Naive-N0.5-Flash",
+    "officialUrl": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T00:22:40.651Z",
+    "lastVerified": "2026-11-19T00:22:40.651Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
+    "contentHash": "d74702c27481021edccbb2a0e7046ff0b6ca639c54daf49f5876da00ef967e2f",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "react-native-webrtc-react-native-webrtc": {
+    "name": "react-native-webrtc",
+    "officialUrl": "https://github.com/react-native-webrtc/react-native-webrtc",
+    "lastChecked": "2026-11-19T00:22:43.234Z",
+    "revisionIdentifier": "7b9b451b",
+    "lastVerified": "2026-11-19T00:22:43.234Z"
+  },
+  "goss-org-goss": {
+    "name": "goss",
+    "officialUrl": "https://github.com/goss-org/goss",
+    "lastChecked": "2026-11-19T00:22:45.687Z",
+    "revisionIdentifier": "dcd065d9",
+    "lastVerified": "2026-11-19T00:22:45.687Z"
+  },
+  "arangodb-arangodb": {
+    "name": "arangodb/arangodb",
+    "officialUrl": "https://github.com/arangodb/arangodb",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-11-19T00:22:54.942Z",
+    "lastVerified": "2026-11-19T00:22:54.942Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "85843f61dd13ba459c7907b073c98284dd101f9c6a825ffc752a6e3e7b5b66b4",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

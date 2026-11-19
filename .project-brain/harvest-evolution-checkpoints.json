@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T00:00:30.508Z",
+  "last_updated": "2026-11-19T00:23:37.056Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T22:22:52.966Z",
@@ -743,7 +743,7 @@
       "staged_for_review": 1
     },
     "arangodb-arangodb-learnings.md": {
-      "processed_at": "2026-11-17T08:32:20.164Z",
+      "processed_at": "2026-11-19T00:23:36.054Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2483,7 +2483,7 @@
       "staged_for_review": 1
     },
     "hf-naiveai-naive-n0.5-flash-learnings.md": {
-      "processed_at": "2026-11-14T07:41:29.773Z",
+      "processed_at": "2026-11-19T00:23:35.539Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
     },
@@ -3063,7 +3063,7 @@
       "staged_for_review": 0
     },
     "mlua-rs-mlua-learnings.md": {
-      "processed_at": "2026-11-17T10:41:17.361Z",
+      "processed_at": "2026-11-19T00:22:59.707Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3473,7 +3473,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2115,
-  "total_canonical_promoted": 369,
-  "total_staged_for_review": 1590
+  "total_dossiers_evaluated": 2118,
+  "total_canonical_promoted": 370,
+  "total_staged_for_review": 1592
 }

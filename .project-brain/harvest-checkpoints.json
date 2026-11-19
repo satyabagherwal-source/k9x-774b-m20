@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T00:00:24.732Z",
+  "last_updated": "2026-11-19T00:22:56.213Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1430,14 +1430,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-naiveai-naive-n0-5-flash",
-      "content_hash": "c4e811c5ba05978cb2cb571fec6687e42dbc82335081e233194a89112bcf4f64",
-      "verified_at": "2026-11-14T07:41:00.920Z",
+      "content_hash": "d74702c27481021edccbb2a0e7046ff0b6ca639c54daf49f5876da00ef967e2f",
+      "verified_at": "2026-11-19T00:22:41.464Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T07:41:00.920Z"
+      "last_updated": "2026-11-19T00:22:41.464Z"
     },
     "openai/clip-vit-base-patch32": {
       "repository": "openai/clip-vit-base-patch32",
@@ -7641,14 +7641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arangodb-arangodb",
-      "content_hash": "b44c29a8a60f079d0b9ba63254a02a360bbc3c30b663ab759be2a965211600a6",
-      "verified_at": "2026-11-18T07:39:08.818Z",
+      "content_hash": "85843f61dd13ba459c7907b073c98284dd101f9c6a825ffc752a6e3e7b5b66b4",
+      "verified_at": "2026-11-19T00:22:56.212Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T07:39:08.818Z"
+      "last_updated": "2026-11-19T00:22:56.212Z"
     },
     "chakra-ui/ark": {
       "repository": "chakra-ui/ark",
@@ -8661,14 +8661,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mlua-rs-mlua",
-      "content_hash": "a9d8cd26740afb9c57873e1dce414810164b569a65299152ac734ab1b8af0e60",
-      "verified_at": "2026-11-17T10:41:00.153Z",
+      "content_hash": "f471bca865e2eb135b58f6387ae098e1f8556fc5537ca294b4ecc7796ef24179",
+      "verified_at": "2026-11-19T00:22:43.437Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T10:41:00.153Z"
+      "last_updated": "2026-11-19T00:22:43.437Z"
     },
     "APSL/react-native-keyboard-aware-scroll-view": {
       "repository": "APSL/react-native-keyboard-aware-scroll-view",

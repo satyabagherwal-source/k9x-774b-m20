@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T00:00:24.727Z",
-  "total_cycles_completed": 10649,
-  "total_learnings_persisted": 10649,
-  "total_rules_promoted": 10069,
+  "last_updated": "2026-11-19T00:22:56.208Z",
+  "total_cycles_completed": 10652,
+  "total_learnings_persisted": 10652,
+  "total_rules_promoted": 10071,
   "history": [
-    {
-      "timestamp": "2026-11-18T10:32:26.758Z",
-      "repository": "BAAI/bge-small-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T10:32:34.873Z",
-      "repository": "laurent22/joplin",
-      "learningId": "learn-github-laurent22-joplin",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T10:32:36.165Z",
-      "repository": "open-policy-agent/gatekeeper",
-      "learningId": "learn-github-open-policy-agent-gatekeeper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T10:45:02.148Z",
       "repository": "Qwen/Qwen3.8-27B",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-19T00:00:24.727Z",
       "repository": "apple/foundationdb",
       "learningId": "learn-github-apple-foundationdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T00:22:41.460Z",
+      "repository": "NaiveAI/Naive-N0.5-Flash",
+      "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T00:22:43.433Z",
+      "repository": "mlua-rs/mlua",
+      "learningId": "learn-github-mlua-rs-mlua",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T00:22:56.208Z",
+      "repository": "arangodb/arangodb",
+      "learningId": "learn-github-arangodb-arangodb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

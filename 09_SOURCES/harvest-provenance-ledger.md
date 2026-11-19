@@ -11173,3 +11173,7 @@ Every entry in this ledger must capture:
 | `learn-github-nvidia-cuda-rust` | `https://github.com/NVIDIA/cuda-rust` | `85ddf6c2` | Multi-dimensional audit evidence | 2026-11-19T00:00:13.025Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `c4d689ce` | Multi-dimensional audit evidence | 2026-11-19T00:00:22.861Z |
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `39fb2391` | Multi-dimensional audit evidence | 2026-11-19T00:00:24.721Z |
+| `learn-huggingface-naiveai-naive-n0-5-flash` | `https://huggingface.co/NaiveAI/Naive-N0.5-Flash` | `hf-naiveai` | Multi-dimensional audit evidence | 2026-11-19T00:22:41.454Z |
+| `learn-github-mlua-rs-mlua` | `https://github.com/mlua-rs/mlua` | `3c0fd858` | Multi-dimensional audit evidence | 2026-11-19T00:22:43.426Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `387bbd5b` | Multi-dimensional audit evidence | 2026-11-19T00:22:56.202Z |
+| `learn-dom-d-0bc48fab` | `project://hf-naiveai-naive-n0.5-flash` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | 2026-11-19T00:23:35.539Z |

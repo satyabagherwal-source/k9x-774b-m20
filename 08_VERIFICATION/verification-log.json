@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-44GV",
-    "timestamp": "2026-11-17T15:43:48.895Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "8a3555644631603c742361cd7460e2fd1853076d79078e95f52f0b06766937e2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-DRLP",
-    "timestamp": "2026-11-17T15:51:18.781Z",
-    "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
-    "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-    "contentHash": "9803d9f70efa2f151352b8bee2acc5052cc432d3748d5f6256e73463b05f6454",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-E2PM",
-    "timestamp": "2026-11-17T15:51:33.178Z",
-    "repository": "freenet/freenet-core",
-    "learningId": "learn-github-freenet-freenet-core",
-    "contentHash": "79f4da1cd84d6cd9a3e3cdea451bf06385e072e191f25ecd26c95166c4037dbf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-E4EQ",
     "timestamp": "2026-11-17T15:51:35.378Z",
     "repository": "volcengine/OpenViking",
@@ -7490,6 +7445,51 @@
     "repository": "apple/foundationdb",
     "learningId": "learn-github-apple-foundationdb",
     "contentHash": "335aab112d218418ff523d8dd01a2e80a7b6df89fe8af25e42b95e892ad434d4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-3961",
+    "timestamp": "2026-11-19T00:22:41.449Z",
+    "repository": "NaiveAI/Naive-N0.5-Flash",
+    "learningId": "learn-huggingface-naiveai-naive-n0-5-flash",
+    "contentHash": "d74702c27481021edccbb2a0e7046ff0b6ca639c54daf49f5876da00ef967e2f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-3AOT",
+    "timestamp": "2026-11-19T00:22:43.421Z",
+    "repository": "mlua-rs/mlua",
+    "learningId": "learn-github-mlua-rs-mlua",
+    "contentHash": "f471bca865e2eb135b58f6387ae098e1f8556fc5537ca294b4ecc7796ef24179",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-3KJP",
+    "timestamp": "2026-11-19T00:22:56.197Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "85843f61dd13ba459c7907b073c98284dd101f9c6a825ffc752a6e3e7b5b66b4",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1085,8 +1085,8 @@
     "sourceUrl": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
     "sourceVersion": "hf-naiveai-naive-n0.5-flash",
     "license": "Open-Source",
-    "contentHash": "c4e811c5ba05978cb2cb571fec6687e42dbc82335081e233194a89112bcf4f64",
-    "lastHarvestedAt": "2026-11-14T07:41:00.913Z",
+    "contentHash": "d74702c27481021edccbb2a0e7046ff0b6ca639c54daf49f5876da00ef967e2f",
+    "lastHarvestedAt": "2026-11-19T00:22:41.454Z",
     "learningId": "learn-huggingface-naiveai-naive-n0-5-flash"
   },
   "hf-openai-clip-vit-base-patch32": {
@@ -5013,10 +5013,10 @@
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "38d9d57c",
+    "sourceVersion": "387bbd5b",
     "license": "NOASSERTION",
-    "contentHash": "b44c29a8a60f079d0b9ba63254a02a360bbc3c30b663ab759be2a965211600a6",
-    "lastHarvestedAt": "2026-11-18T07:39:08.809Z",
+    "contentHash": "85843f61dd13ba459c7907b073c98284dd101f9c6a825ffc752a6e3e7b5b66b4",
+    "lastHarvestedAt": "2026-11-19T00:22:56.202Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {
@@ -5693,10 +5693,10 @@
     "repository": "mlua-rs/mlua",
     "platform": "github",
     "sourceUrl": "https://github.com/mlua-rs/mlua",
-    "sourceVersion": "6308bb38",
+    "sourceVersion": "3c0fd858",
     "license": "NOASSERTION",
-    "contentHash": "a9d8cd26740afb9c57873e1dce414810164b569a65299152ac734ab1b8af0e60",
-    "lastHarvestedAt": "2026-11-17T10:41:00.145Z",
+    "contentHash": "f471bca865e2eb135b58f6387ae098e1f8556fc5537ca294b4ecc7796ef24179",
+    "lastHarvestedAt": "2026-11-19T00:22:43.426Z",
     "learningId": "learn-github-mlua-rs-mlua"
   },
   "apsl-react-native-keyboard-aware-scroll-view": {

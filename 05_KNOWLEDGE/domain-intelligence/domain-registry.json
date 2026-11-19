@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T00:00:30.132Z",
-  "total_records": 1918,
+  "last_updated": "2026-11-19T00:23:36.683Z",
+  "total_records": 1921,
   "domains": {
     "A": {
       "total": 13,
@@ -53,7 +53,7 @@
       ]
     },
     "D": {
-      "total": 807,
+      "total": 810,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -861,7 +861,10 @@
         "DOM-D-AE671E2B",
         "domain_intelligence-research-knowledge-intelligence-hf-openai-gpt-oss-20b-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-2-7b-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-2-7b-learnings-core-invarian"
+        "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-2-7b-learnings-core-invarian",
+        "domain_intelligence-research-knowledge-intelligence-naiveai-naive-n0-5-flash-core-invariants",
+        "DOM-D-0BC48FAB",
+        "domain_intelligence-research-knowledge-intelligence-hf-naiveai-naive-n0-5-flash-learnings-core-invar"
       ]
     },
     "E": {
@@ -16071,8 +16074,8 @@
       "title": "Technical Construction Intelligence: arangodb/arangodb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-technical-construction-intelligence-arangodb-arangodb-core-inv.md",
       "repository": "arangodb/arangodb",
-      "content_hash": "d4771048045b5119af09ad8e3ea1fbb26e54479a9d72b520779653158b2fbbdf",
-      "created_at": "2026-11-18T07:39:09.232Z"
+      "content_hash": "a31dabcfc6dd7b22423ee804adafe53b3b124897a73546498194b07c76613f3e",
+      "created_at": "2026-11-19T00:22:56.650Z"
     },
     "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
@@ -16140,8 +16143,8 @@
       "title": "Technical Construction Intelligence: arangodb-arangodb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-learnings-technical-construction-intelligence-arangodb-arangod.md",
       "repository": "arangodb-arangodb-learnings",
-      "content_hash": "50d8190cdc4ea299db500d386818d1106bed728c65427d9a2a4c213078d5feda",
-      "created_at": "2026-11-17T08:32:20.798Z"
+      "content_hash": "50e3e17f89f6d9f1580f12c53340acbe68e52689d0aed3857123cad26a5bcad6",
+      "created_at": "2026-11-19T00:23:36.683Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-3-core-invariants",
@@ -21977,8 +21980,8 @@
       "title": "Architecture Intelligence: mlua-rs/mlua Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mlua-rs-mlua-architecture-intelligence-mlua-rs-mlua-core-invariants.md",
       "repository": "mlua-rs/mlua",
-      "content_hash": "6b41e413bcd8337639b6b0dfa49fd5a4557210bfda4ff4aa9bee801acf477092",
-      "created_at": "2026-11-17T10:41:00.469Z"
+      "content_hash": "165f090d2720fa882b9ad17943c0894cd3f7b9d3bced1acfb664ba4fac0f0ec1",
+      "created_at": "2026-11-19T00:22:43.875Z"
     },
     "domain_intelligence-architecture-intelligence-mlua-rs-mlua-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mlua-rs-mlua-learnings-core-invariants",
@@ -21986,8 +21989,8 @@
       "title": "Architecture Intelligence: mlua-rs-mlua-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mlua-rs-mlua-learnings-architecture-intelligence-mlua-rs-mlua-learnings-core-inv.md",
       "repository": "mlua-rs-mlua-learnings",
-      "content_hash": "0350a7b6498a70e0b6790b5c70201c22fc2faec6724b197048483a343d0e38b6",
-      "created_at": "2026-11-17T10:41:17.695Z"
+      "content_hash": "8f19d6ab12c705a7441e97bb8268151e9181e4fe5015f9ced73dbd579ad08ca7",
+      "created_at": "2026-11-19T00:23:00.228Z"
     },
     "DOM-K-9BB3D64B": {
       "record_id": "DOM-K-9BB3D64B",
@@ -32138,6 +32141,66 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-18T23:26:56.274Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-naiveai-naive-n0-5-flash-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-naiveai-naive-n0-5-flash-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: NaiveAI/Naive-N0.5-Flash Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-naiveai-naive-n0-5-flash-research-knowledge-intelligence-naiveai-naive-n0-5-f.md",
+      "repository": "NaiveAI/Naive-N0.5-Flash",
+      "content_hash": "659a77c96d9192f303b672b16585f6bd7278689a95728d8c3fb9572a3d7f4a61",
+      "created_at": "2026-11-19T00:22:41.706Z"
+    },
+    "DOM-D-0BC48FAB": {
+      "record_id": "DOM-D-0BC48FAB",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): NaiveAI/Naive-N0.5-Flash",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/NaiveAI/Naive-N0.5-Flash](https://huggingface.co/NaiveAI/Naive-N0.5-Flash))  \n> **Source Version**: `hf-naiveai-n`  \n> **License**: Open-Source  \n> *",
+      "content_hash": "6ec8c250ccb70fe8a10052900e2278240c7ba1334b72c90ac45dfdf87fe436ef",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md`  \n> **Source**: huggingface ([https://hugg -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md`  \n> **Source**: huggingface ([https://hugg",
+      "provenance": {
+        "source_uri": "project://hf-naiveai-naive-n0.5-flash/hf-naiveai-naive-n0.5-flash-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T00:23:00.586Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-naiveai-naive-n0.5-flash)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-naiveai-naive-n0.5-flash"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T00:23:35.508Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-naiveai-naive-n0-5-flash-learnings-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-naiveai-naive-n0-5-flash-learnings-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-naiveai-naive-n0.5-flash-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-naiveai-naive-n0-5-flash-learnings-research-knowledge-intelligence-hf-naiveai.md",
+      "repository": "hf-naiveai-naive-n0.5-flash-learnings",
+      "content_hash": "bc8d668206d5d55421a1e6bc15e288451505a8e0cb1fdb5e9c795b89aaee1061",
+      "created_at": "2026-11-19T00:23:35.807Z"
     }
   }
 }

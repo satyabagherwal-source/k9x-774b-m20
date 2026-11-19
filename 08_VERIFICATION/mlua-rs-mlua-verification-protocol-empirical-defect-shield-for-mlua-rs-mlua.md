@@ -4,22 +4,22 @@
 {
   "source_repository": "mlua-rs/mlua",
   "source_url": "https://github.com/mlua-rs/mlua",
-  "source_version": "6308bb38",
+  "source_version": "3c0fd858",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T10:41:00.346Z",
+  "timestamp": "2026-11-19T00:22:43.691Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-mlua-rs-mlua",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [mlua-rs/mlua](https://github.com/mlua-rs/mlua) (Revision: `6308bb38`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T10:41:00.346Z`  
+> **Provenance**: Harvested from [mlua-rs/mlua](https://github.com/mlua-rs/mlua) (Revision: `3c0fd858`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-19T00:22:43.691Z`  
 > **Learning ID**: `learn-github-mlua-rs-mlua`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `mlua-rs/mlua` (Commit: `6308bb38`)
+- **Target Repository**: `mlua-rs/mlua` (Commit: `3c0fd858`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mlua-rs/mlua](https://github.com/mlua-rs/mlua))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T10:40:59.253Z  
+> **Harvest Timestamp**: 2026-11-19T00:22:42.149Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: High level Lua 5.5/5.4/5.3/5.2/5.1 (including LuaJIT) and Luau bindings to Rust with async/await support
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 2951 stars
+- **Stars / Engagement**: 2956 stars
 
 ---
 
@@ -2383,274 +2383,28 @@ impl TypeKey for Option<std::task::Waker> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1bda8eb3` (2026-11-15)
-**Commit Message**: Fix stale argument count in Thread::resume
+### Incident Patch 1: `3c0fd858` (2026-11-18)
+**Commit Message**: ci: Don't try and generate documentation github-pages on forks. (#767)
 
-Closes #758
-
-**File**: `src/thread.rs` (modified, +3/-1)
+**File**: `.github/workflows/docs.yml` (modified, +1/-0)
 ```diff
-@@ -340,7 +340,9 @@ impl Thread {
- 
-             if !hook_yielded {
-                 let nargs = args.push_into_stack_multi(&lua)?;
--                if nargs > 0 {
-+                // Argument conversion may change this thread, so re-read its state
-+                (pushed_nargs, hook_yielded) = self.resumable_state(&lua)?;
-+                if !hook_yielded && nargs > 0 {
-                     check_stack(thread_state, nargs)?;
-                     ffi::lua_xmove(state, thread_state, nargs);
-                     pushed_nargs += nargs;
-```
-
-**File**: `tests/thread.rs` (modified, +22/-0)
-```diff
-@@ -317,6 +317,28 @@ fn test_thread_resume_bad_arg() -> Result<()> {
-     Ok(())
- }
- 
-+#[cfg(feature = "async")]
-+#[test]
-+fn test_thread_resume_reentrant_arg_conversion() -> Result<()> {
-+    struct ReplaceArgs(Thread);
-+
-+    impl IntoLua for ReplaceArgs {
-+        fn into_lua(self, lua: &Lua) -> Result<Value> {
-+            self.0
-+                .reset(lua.load("return select('#', ...)").into_function()?)?;
-+            drop(self.0.clone().into_async::<()>((1, 2))?);
-+            Ok(Value::Nil)
-+        }
-+    }
-+
-+    let lua = Lua::new();
-+    let thread = lua.create_thread(lua.load("return").into_function()?)?;
-+    drop(thread.clone().into_async::<()>(0)?);
-+    assert_eq!(thread.resume::<i32>(ReplaceArgs(thread.clone()))?, 3);
-+
-+    Ok(())
-+}
-+
- #[test]
- fn test_thread_event_create() -> Result<()> {
-     let lua = Lua::new();
-```
-
----
-
-### Incident Patch 2: `7f4d8275` (2026-11-15)
-**Commit Message**: Fix userdata serde type erasure safety
-
-**File**: `src/userdata.rs` (modified, +5/-4)
-```diff
-@@ -24,6 +24,7 @@ use std::future::Future;
- 
- #[cfg(feature = "serde")]
- use {
-+    cell::SerializeHeader,
-     serde::ser::{self, Serialize, Serializer},
-     std::result::Result as StdResult,
- };
-@@ -1091,8 +1092,8 @@ impl AnyUserData {
-         let is_serializable = || unsafe {
-             // Userdata must be registered and not destructed
-             let _ = lua.get_userdata_ref_type_id(&self.0)?;
--            let ud = &*get_userdata::<UserDataStorage<()>>(lua.ref_thread(), self.0.index);
--            Ok::<_, Error>(ud.is_serializable())
-+            let header = &*get_userdata::<SerializeHeader>(lua.ref_thread(), self.0.index);
-+            Ok::<_, Error>(header.is_serializable())
-         };
-         is_serializable().unwrap_or(false)
-     }
-@@ -1222,8 +1223,8 @@ impl Serialize for AnyUserData {
-             let _ = lua
-                 .get_userdata_ref_type_id(&self.0)
-                 .map_err(ser::Error::custom)?;
--            let ud = &*get_userdata::<UserDataStorage<()>>(lua.ref_thread(), self.0.index);
--            ud.serialize(serializer)
-+            let header = &*get_userdata::<SerializeHeader>(lua.ref_thread(), self.0.index);
-+            header.serialize(serializer)
-         }
-     }
- }
-```
-
-**File**: `src/userdata/cell.rs` (modified, +144/-56)
-```diff
-@@ -6,6 +6,8 @@ use serde::ser::{Serialize, Serializer};
- 
- use crate::error::{Error, Result};
- use crate::types::XRc;
-+#[cfg(feature = "serde")]
-+use crate::types::XWeak;
- 
- use super::lock::{RawLock, RwLock, UserDataLock};
- use super::r#ref::{UserDataRef, UserDataRefMut};
-@@ -16,7 +18,14 @@ type DynSerialize = dyn erased_serde::Serialize;
- #[cfg(all(feature = "serde", feature = "send"))]
- type DynSerialize = dyn erased_serde::Serialize + Send + Sync;
- 
--pub(crate) enum UserDataStorage<T> {
-+#[cfg_attr(feature = "serde", repr(C))]
-+pub(crate) struct UserDataStorage<T> {
-+    #[cfg(feature = "serde")]
-+    header: SerializeHeader, // Must remain first for erased access.
-+    inner: UserDataStorageInner<T>,
-+}
-+
-+enum UserDataStorageInner<T> {
-     Owned(UserDataVariant<T>),
-     Scoped(ScopedUserDataVariant<T>),
- }
-@@ -58,7 +67,7 @@ impl<T> UserDataVariant<T> {
-     fn try_borrow_scoped_mut<R>(&self, f: impl FnOnce(&mut T) -> R) -> Result<R> {
-         let _guard =
-             (self.raw_lock().try_lock_exclusive_guarded()).map_err(|_| Error::UserDataBorrowMutError)?;
--        Ok(f(unsafe { &mut *self.as_ptr() }))
-+        Ok(f(unsafe { &mut *self.as_mut_ptr() }))
-     }
- 
-     // Immutably borrows the wrapped value and returns an owned reference.
-@@ -114,7 +123,16 @@ impl<T> UserDataVariant<T> {
-     }
- 
-     #[inline(always)]
--    pub(super) fn as_ptr(&self) -> *mut T {
-+    pub(super) unsafe fn as_ptr(&self) -> *const T {
-+        match self {
-+            Self::Default(inner) => inner.data_ptr(),
-+            #[cfg(feature = "serde")]
-+            Self::Serializable(inner) => unsafe { (&**inner.data_ptr()) as *const DynSerialize as *const T },
-+        }
-+    }
-+
-+    #[inline(always)]
-+    pub(super) unsafe fn as_mut_ptr(&self) -> *mut T {
-         match self {
-             Self::Default(inner) => inner.data_ptr(),
-             #[cfg(feature = "serde")]
-@@ -124,17 +142,37 @@ impl<T> UserDataVariant<T> {
- }
- 
- #[cfg(feature = "serde")]
--impl Serialize for UserDataStorage<()> {
--    fn serialize<S: Serializer>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error> {
--        match self {
--            Self::Owned(variant @ UserDataVariant::Serializable(inner)) => unsafe {
--                let _guard = (variant.raw_lock().try_lock_shared_guarded())
--                    .map_err(|_| serde::ser::Error::custom(Error::UserDataBorrowError))?;
--                (*inner.data_ptr()).serialize(serializer)
--            },
--            _ => Err(serde::ser::Error::custom("cannot serialize <userdata>")),
-+#[derive(Default)]
-+pub(super) struct SerializeHeader {
-+    inner: Option<XWeak<RwLock<Box<DynSerialize>>>>,
-+}
-+
-+#[cfg(feature = "serde")]
-+impl SerializeHeader {
-+    #[inline]
-+    fn new(inner: &XRc<RwLock<Box<DynSerialize>>>) -> Self {
-+        Self {
-+            inner: Some(XRc::downgrade(inner)),
-         }
-     }
-+
-+    #[inline]
-+    pub(super) fn is_serializable(&self) -> bool {
-+        self.inner.is_some()
-+    }
-+}
-+
-+#[cfg(feature = "serde")]
-+impl Serialize for SerializeHeader {
-+    fn serialize<S: Serializer>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error> {
-+        let inner = (self.inner)
-+            .as_ref()
-+            .and_then(XWeak::upgrade)
-+            .ok_or_else(|| serde::ser::Error::custom("cannot serialize <userdata>"))?;
-+        let _guard = (unsafe { inner.raw() }.try_lock_shared_guarded())
-+            .map_err(|_| serde::ser::Error::custom(Error::UserDataBorrowError))?;
-+        unsafe { (*inner.data_ptr()).serialize(serializer) }
-+    }
- }
- 
- pub(crate) enum ScopedUserDataVariant<T> {
-@@ -157,17 +195,21 @@ impl<T> Drop for ScopedUserDataVariant<T> {
- impl<T: 'static> UserDataStorage<T> {
-     #[inline(always)]
-     pub(crate) fn new(data: T) -> Self {
--        Self::Owned(UserDataVariant::Default(XRc::new(RwLock::new(data))))
-+        Self::from_inner(UserDataStorageInner::Owned(UserDataVariant::Default(XRc::new(
-+            RwLock::new(data),
-+        ))))
-     }
- 
-     #[inline(always)]
-     pub(crate) fn new_ref(data: &T) -> Self {
--        Self::Scoped(ScopedUserDataVariant::Ref(data))
-+        Self::from_inner(UserDataStorageInner::Scoped(ScopedUserDataVariant::Ref(data)))
-     }
- 
-     #[inline(always)]
-     pub(crate) fn new_ref_mut(data: &mut T) -> Self {
--        Self::Scoped(ScopedUserDataVariant::RefMut(RefCell::new(data)))
-+        Self::from_inner(UserDataStorageInner::Scoped(ScopedUserDataVariant::RefMut(
-+            RefCell::new(data),
-+        )))
-     }
- 
-     #[cfg(feature = "serde")]
-@@ -177,89 +219,102 @@ impl<T: 'static> UserDataStorage<T> {
-         T: Serialize + crate::types::MaybeSend + crate::types::MaybeSync,
-     {
-         let data = Box::new(data) as Box<DynSerialize>;
--        let variant = UserDataVariant::Serializable(XRc::new(RwLock::new(data)));
--        Self::Owned(variant)
--    }
--
--    #[cfg(feature = "serde")]
--    #[inline(always)]
--    pub(crate) fn is_serializable(&self) -> bool {
--        matches!(self, Self::Ow
-```
-
-**File**: `src/userdata/ref.rs` (modified, +8/-3)
-```diff
-@@ -70,8 +70,13 @@ impl<T> UserDataGuard<T> {
-     }
- 
-     #[inline(always)]
--    fn as_ptr(&self) -> *mut T {
--        self.variant.as_ptr()
-+    fn as_ptr(&self) -> *const T {
-+        unsafe { self.variant.as_ptr() }
-+    }
-+
-+    #[inline(always)]
-+    unsafe fn as_mut_ptr(&mut self) -> *mut T {
-+        unsafe { self.variant.as_mut_ptr() }
-     }
- 
-     #[inline(always)]
-@@ -480,7 +485,7 @@ impl<T> DerefMut for UserDataRefMutInner<T> {
-     #[inline]
-     fn deref_mut(&mut self) -> &mut T {
-         match self {
--            Self::Default(inner) => unsafe { &mut *inner.as_ptr() },
-+            Self::Default(inner) => unsafe { &mut *inner.as_mut_ptr() },
- 
-             #[cfg(all(feature = "userdata-wrappers", not(feature = "send")))]
-             Self::RcRefCell(x, ..) => x,
+@@ -19,6 +19,7 @@ concurrency:
+ jobs:
+   build:
+     name: Build Documentation
++    if: github.repository == 'mlua-rs/mlua'
+     runs-on: ubuntu-latest
+     steps:
+       - uses: actions/checkout@main
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #767** (2026-11-18): ci: Don't generate documentation github-pages on forks (@notpeter)
 - **PR #752** (2026-11-15): Add one-shot Luau interrupts (@khvzak)
 - **PR #743** (closed): Compile `luau` for `wasm32-unknown-unknown`: skip stdio heap dump there (@nikolchaa)
 - **PR #732** (closed): Clippy fixes (@notpeter)
 - **PR #727** (closed): Allow `#[mlua::userdata_impl]` in a different module than the type (@teddytennant)
 - **PR #719** (closed): Expose `ValueRef` via trait. (@Renderthegreat)
-- **PR #712** (2026-07-05): mlua-sys: separate compile error when no Lua feature is enabled (@mrcjkb)
 
 ---
 
@@ -2670,33 +2424,31 @@ Closes #758
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stale argument count in Thread::resume
+## X. ci: Don't try and generate documentation github-pages on forks.
 
 **RULE**:
-When implementing operations in `src/thread.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mlua-rs/mlua. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/docs.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mlua-rs/mlua. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1bda8eb3`: stale argument count in Thread::resume. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3c0fd858`: ci: Don't try and generate documentation github-pages on forks.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/thread.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/docs.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-                // Argument conversion may change this thread, so re-read its state
-                (pushed_nargs, hook_yielded) = self.resumable_state(&lua)?;
-                if !hook_yielded && nargs > 0 {
+    if: github.repository == 'mlua-rs/mlua'
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-                if nargs > 0 {
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1bda8eb3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3c0fd858` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

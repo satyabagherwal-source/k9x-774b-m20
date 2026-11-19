@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T00:00:30.348Z",
+  "last_updated": "2026-11-19T00:23:36.879Z",
   "total_verified_learnings": 9009,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21525,
+  "total_items": 21532,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -226518,7 +226518,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/NaiveAI/Naive-N0.5-Flash",
       "source_version": "hf-naiveai-naive-n0.5-flash",
-      "content_hash": "c4e811c5ba05978cb2cb571fec6687e42dbc82335081e233194a89112bcf4f64",
+      "content_hash": "d74702c27481021edccbb2a0e7046ff0b6ca639c54daf49f5876da00ef967e2f",
       "dossier_path": "07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md",
       "promoted_rules": [
@@ -226543,7 +226543,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T07:41:00.783Z",
+      "verified_at": "2026-11-19T00:22:41.201Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231383,8 +231383,8 @@
       "slug": "arangodb-arangodb",
       "platform": "github",
       "source_url": "https://github.com/arangodb/arangodb",
-      "source_version": "38d9d57c",
-      "content_hash": "b44c29a8a60f079d0b9ba63254a02a360bbc3c30b663ab759be2a965211600a6",
+      "source_version": "387bbd5b",
+      "content_hash": "85843f61dd13ba459c7907b073c98284dd101f9c6a825ffc752a6e3e7b5b66b4",
       "dossier_path": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
       "promoted_rules": [
@@ -231412,6 +231412,11 @@
           "number": 8927,
           "title": "IEEE 754 Big-Endian / Little-Endian Union Casting Safety",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9307,
+          "title": "Empirical Invariant Guard in base_config.yml",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231419,7 +231424,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T07:39:08.585Z",
+      "verified_at": "2026-11-19T00:22:55.974Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231461,10 +231466,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-technical-construction-intelligence-arangodb-arangodb-core-inv.md",
       "title": "Technical Construction Intelligence: arangodb/arangodb Core Invariants",
       "repository": "arangodb/arangodb",
-      "source_version": "38d9d57c",
-      "content_hash": "d4771048045b5119af09ad8e3ea1fbb26e54479a9d72b520779653158b2fbbdf",
+      "source_version": "387bbd5b",
+      "content_hash": "a31dabcfc6dd7b22423ee804adafe53b3b124897a73546498194b07c76613f3e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T07:39:09.232Z"
+      "persisted_at": "2026-11-19T00:22:56.650Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb",
@@ -231473,10 +231478,10 @@
       "relative_path": "08_VERIFICATION/arangodb-arangodb-verification-protocol-empirical-defect-shield-for-arangodb-ara.md",
       "title": "Verification Protocol: Empirical Defect Shield for arangodb/arangodb",
       "repository": "arangodb/arangodb",
-      "source_version": "38d9d57c",
-      "content_hash": "600a1a8d571decaaf7bc223270a009deb2d1c505116311bb5b0207a9b595f2a5",
+      "source_version": "387bbd5b",
+      "content_hash": "a0494de53ea2447ba0c8fc4f2323ea308b74976f383458bde09eccfbf58ed213",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T07:39:09.406Z"
+      "persisted_at": "2026-11-19T00:22:56.831Z"
     },
     "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
@@ -231522,9 +231527,9 @@
       "title": "Technical Construction Intelligence: arangodb-arangodb-learnings Core Invariants",
       "repository": "arangodb-arangodb-learnings",
       "source_version": "HEAD",
-      "content_hash": "50d8190cdc4ea299db500d386818d1106bed728c65427d9a2a4c213078d5feda",
+      "content_hash": "50e3e17f89f6d9f1580f12c53340acbe68e52689d0aed3857123cad26a5bcad6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T08:32:20.798Z"
+      "persisted_at": "2026-11-19T00:23:36.683Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-arangodb-arangodb-learnings",
@@ -231534,9 +231539,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for arangodb-arangodb-learnings",
       "repository": "arangodb-arangodb-learnings",
       "source_version": "HEAD",
-      "content_hash": "816dc1dea36a278ebeaa4d9d4e02aedb4c5cdf1e599b23c93da0f48b3ba5c88e",
+      "content_hash": "5371bab6f9d824c195f79eb4f64acc3dffa4d90dc1c18ab28c28ff7864794630",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T08:32:20.967Z"
+      "persisted_at": "2026-11-19T00:23:36.879Z"
     },
     "learn-huggingface-zai-org-glm-5-3": {
       "learning_id": "learn-huggingface-zai-org-glm-5-3",
@@ -248682,8 +248687,8 @@
       "slug": "mlua-rs-mlua",
       "platform": "github",
       "source_url": "https://github.com/mlua-rs/mlua",
-      "source_version": "6308bb38",
-      "content_hash": "a9d8cd26740afb9c57873e1dce414810164b569a65299152ac734ab1b8af0e60",
+      "source_version": "3c0fd858",
+      "content_hash": "f471bca865e2eb135b58f6387ae098e1f8556fc5537ca294b4ecc7796ef24179",
       "dossier_path": "07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mlua-rs-mlua-learnings.md",
       "promoted_rules": [
@@ -248696,6 +248701,11 @@
           "number": 8952,
           "title": "stale argument count in Thread::resume",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9306,
+          "title": "Don't try and generate documentation github-pages on forks.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -248703,7 +248713,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T10:40:59.979Z",
+      "verified_at": "2026-11-19T00:22:43.190Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -248745,10 +248755,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mlua-rs-mlua-architecture-intelligence-mlua-rs-mlua-core-invariants.md",
       "title": "Architecture Intelligence: mlua-rs/mlua Core Invariants",
       "repository": "mlua-rs/mlua",
-      "source_version": "6308bb38",
-      "content_hash": "6b41e413bcd8337639b6b0dfa49fd5a4557210bfda4ff4aa9bee801acf477092",
+      "source_version": "3c0fd858",
+      "content_hash": "165f090d2720fa882b9ad17943c0894cd3f7b9d3bced1acfb664ba4fac0f0ec1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T10:41:00.469Z"
+      "persisted_at": "2026-11-19T00:22:43.875Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mlua-rs-mlua": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mlua-rs-mlua",
@@ -248757,10 +248767,10 @@
       "relative_path": "08_VERIFICATION/mlua-rs-mlua-verification-protocol-empirical-defect-shield-for-mlua-rs-mlua.md",
       "title": "Verification Protocol: Empirical Defect Shield for mlua-rs/mlua",
       "repository": "mlua-rs/mlua",
-      "source_version": "6308bb38",
-      "content_hash": "45803f7c84fd157abd055d5139b8145367886e2c894252ca7552ae8acc88db75",
+      "source_version": "3c0fd858",
+      "content_hash": "f41e7f13caeb202049e918159cb534fd605f2e899b1a7d38b8286053230928cb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T10:41:00.593Z"
+      "persisted_at": "2026-11-19T00:22:44.055Z"
     },
     "rule-8649": {
       "learning_id": "rule-8649",
@@ -248848,9 +248858,9 @@
       "title": "Architecture Intelligence: mlua-rs-mlua-learnings Core Invariants",
       "repository": "mlua-rs-mlua-learnings",
       "source_version": "HEAD",
-      "content_hash": "0350a7b6498a70e0b6790b5c70201c22fc2faec6724b197048483a343d0e38b6",
+      "content_hash": "8f19d6ab12c705a7441e97bb8268151e9181e4fe5015f9ced73dbd579ad08ca7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T10:41:17.695Z"
+      "persisted_at": "2026-11-19T00:23:00.228Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mlua-rs-mlua-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mlua-rs-mlua-learnings",
@@ -248860,9 +248870,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for mlua-rs-mlua-learnings",
       "repository": "mlua-rs-mlua-learnings",
       "source_version": "HEAD",
-      "content_hash": "d992a1796f06cf332dc4328cf606e7f7ec763abf665b0abc124a3c43d54c86cd",
+      "content_hash": "79053f2339815d06591791e961a858c1721980eed901c29d6b40f0728ee11229",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T10:41:17.818Z"
+      "persisted_at": "2026-11-19T00:23:00.426Z"
     },
     "candidate_directive-ci-fix-macos-service-unit-timeouts-reuse-e2e-build-warm-cache": {
       "item_id": "candidate_directive-ci-fix-macos-service-unit-timeouts-reuse-e2e-build-warm-cache",
@@ -290687,6 +290697,94 @@
       "content_hash": "15fb96a86bb3cadd226415cf8e55955e2478b7b0a49283414847efea733fc9bb",
       "domain_letter": "H",
       "persisted_at": "2026-11-19T00:00:28.647Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-naiveai-naive-n0-5-flash-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-naiveai-naive-n0-5-flash-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-naiveai-naive-n0-5-flash-research-knowledge-intelligence-naiveai-naive-n0-5-f.md",
+      "title": "Research & Knowledge Intelligence: NaiveAI/Naive-N0.5-Flash Core Invariants",
+      "repository": "NaiveAI/Naive-N0.5-Flash",
+      "source_version": "hf-naiveai-naive-n0.5-flash",
+      "content_hash": "659a77c96d9192f303b672b16585f6bd7278689a95728d8c3fb9572a3d7f4a61",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T00:22:41.706Z"
+    },
+    "rule-9306": {
+      "learning_id": "rule-9306",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9306,
+      "title": "Don't try and generate documentation github-pages on forks.",
+      "source_url": "https://github.com/mlua-rs/mlua",
+      "source_version": "3c0fd858",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T00:22:43.190Z"
+    },
+    "candidate_directive-don-t-try-and-generate-documentation-github-pages-on-forks": {
+      "item_id": "candidate_directive-don-t-try-and-generate-documentation-github-pages-on-forks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3AW6-don-t-try-and-generate-documentation-github-pages-on-forks.md",
+      "title": "Don't try and generate documentation github-pages on forks.",
+      "repository": "mlua-rs/mlua",
+      "source_version": "3c0fd858",
+      "content_hash": "a4fd30474b6806315a64691c0dd8cfa29d4e45451267fd9f9632c4b128cebadb",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-19T00:22:43.692Z"
+    },
+    "rule-9307": {
+      "learning_id": "rule-9307",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9307,
+      "title": "Empirical Invariant Guard in base_config.yml",
+      "source_url": "https://github.com/arangodb/arangodb",
+      "source_version": "387bbd5b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T00:22:55.974Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-base_config-yml": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-base_config-yml",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4FME-empirical-invariant-guard-in-base_config-yml.md",
+      "title": "Empirical Invariant Guard in base_config.yml",
+      "repository": "arangodb-arangodb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a11040cd6edc08c022abc7e2868d303a38437f0662fc27c01d923834eed29306",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T00:23:36.470Z"
+    },
+    "candidate_directive-ci-don-t-try-and-generate-documentation-github-pages-on-forks": {
+      "item_id": "candidate_directive-ci-don-t-try-and-generate-documentation-github-pages-on-forks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3NII-ci-don-t-try-and-generate-documentation-github-pages-on-forks.md",
+      "title": "ci: Don't try and generate documentation github-pages on forks.",
+      "repository": "mlua-rs-mlua-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fbb61510dd1eeb041cd10cf7b60464a8376f48be8b88e0099b2f7693be0b2275",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-19T00:23:00.048Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-naiveai-naive-n0-5-flash-learnings-core-invar": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-naiveai-naive-n0-5-flash-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-naiveai-naive-n0-5-flash-learnings-research-knowledge-intelligence-hf-naiveai.md",
+      "title": "Research & Knowledge Intelligence: hf-naiveai-naive-n0.5-flash-learnings Core Invariants",
+      "repository": "hf-naiveai-naive-n0.5-flash-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bc8d668206d5d55421a1e6bc15e288451505a8e0cb1fdb5e9c795b89aaee1061",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T00:23:35.807Z"
     }
   },
   "ai-builder-brain": {

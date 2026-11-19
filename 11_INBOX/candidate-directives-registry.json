@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T00:00:29.944Z",
+  "last_updated": "2026-11-19T00:23:36.470Z",
   "directives": [
     {
       "id": "CD-001",
@@ -31387,6 +31387,48 @@
       "source_repo": "tailscale-tailscale",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-6BE067-tstest-natlab-fix-typo-in-readme-sample-.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-3AW6",
+      "directive_title": "Don't try and generate documentation github-pages on forks.",
+      "source_repo": "mlua-rs/mlua",
+      "source_commit": "3c0fd858",
+      "staged_file": "11_INBOX/candidate-directives/CD-3AW6-don-t-try-and-generate-documentation-github-pages-on-forks.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-19",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-4FME",
+      "directive_title": "Empirical Invariant Guard in base_config.yml",
+      "source_repo": "arangodb-arangodb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-4FME-empirical-invariant-guard-in-base_config-yml.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-3NII",
+      "directive_title": "ci: Don't try and generate documentation github-pages on forks.",
+      "source_repo": "mlua-rs-mlua-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3NII-ci-don-t-try-and-generate-documentation-github-pages-on-forks.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-9BFC5A",
+      "directive_title": "Empirical Invariant Guard in base_config.yml",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "arangodb-arangodb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9BFC5A-empirical-invariant-guard-in-base-config.md",
       "staged_date": "2026-11-19"
     }
   ]
