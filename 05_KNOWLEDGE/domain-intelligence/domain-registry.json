@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T15:42:45.817Z",
-  "total_records": 1985,
+  "last_updated": "2026-11-19T15:50:59.829Z",
+  "total_records": 1987,
   "domains": {
     "A": {
       "total": 15,
@@ -897,7 +897,7 @@
       ]
     },
     "F": {
-      "total": 63,
+      "total": 65,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -961,7 +961,9 @@
         "DOM-F-6F26131A",
         "DOM-F-C4730BD5",
         "domain_intelligence-design-intelligence-mrkai77-loop-core-invariants",
-        "domain_intelligence-design-intelligence-mrkai77-loop-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-mrkai77-loop-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-biomejs-biome-core-invariants",
+        "domain_intelligence-design-intelligence-biomejs-biome-learnings-core-invariants"
       ]
     },
     "G": {
@@ -8718,8 +8720,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "7720f5a8df01cd2c858a5d083647b7831d16a4c8e54ee7c20d227cb28ae18b61",
-      "created_at": "2026-11-19T14:20:30.235Z"
+      "content_hash": "b0d531eb137f92e98214255135d29269eefb4abc96f78ea33e2d690a1a7025a7",
+      "created_at": "2026-11-19T15:50:59.829Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -18800,8 +18802,8 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM2.5-24B-A2B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm2-5-24b-a2b-research-knowledge-intelligence-liquidai-lfm2-5-24b-a.md",
       "repository": "LiquidAI/LFM2.5-24B-A2B",
-      "content_hash": "1b8dc0c42d859369729c21b25895077e36a78160300874f95cf3eae42a1c9fef",
-      "created_at": "2026-11-15T01:32:38.849Z"
+      "content_hash": "1f3f4c7ec98715cce622845f0dfe42ce8c76616ae9182064001609fc478e2dae",
+      "created_at": "2026-11-19T15:50:46.380Z"
     },
     "domain_intelligence-technical-construction-intelligence-falkordb-falkordb-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-falkordb-falkordb-core-invariants",
@@ -18878,8 +18880,8 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm2.5-24b-a2b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm2-5-24b-a2b-learnings-research-knowledge-intelligence-hf-liquidai.md",
       "repository": "hf-liquidai-lfm2.5-24b-a2b-learnings",
-      "content_hash": "d97f1475fcf568fa11a81e82eff5e9409b0884a59ead35addc2297ba61bb9371",
-      "created_at": "2026-11-15T01:33:20.849Z"
+      "content_hash": "51b50fabe294648754102a0d03deeb7e089e49d1a4b30197ef37920c3864c801",
+      "created_at": "2026-11-19T15:50:59.055Z"
     },
     "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-tencent-tds-kuiklyui-learnings-core-invariants",
@@ -33294,6 +33296,24 @@
       "repository": "simonschubert-linuxcommandlibrary-learnings",
       "content_hash": "c08040411da58e3a52ef0b1da30ccc3a35193105e93421efe805d0a7c7a653ee",
       "created_at": "2026-11-19T15:42:45.817Z"
+    },
+    "domain_intelligence-design-intelligence-biomejs-biome-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-biomejs-biome-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: biomejs/biome Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-biomejs-biome-design-intelligence-biomejs-biome-core-invariants.md",
+      "repository": "biomejs/biome",
+      "content_hash": "c95cc47603f32dcac044a46430a0163b91f67b8a9ab1e72475826e3683b246d6",
+      "created_at": "2026-11-19T15:50:50.954Z"
+    },
+    "domain_intelligence-design-intelligence-biomejs-biome-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-biomejs-biome-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: biomejs-biome-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-biomejs-biome-learnings-design-intelligence-biomejs-biome-learnings-core-invaria.md",
+      "repository": "biomejs-biome-learnings",
+      "content_hash": "f3aed1e4fb868f089b38d3f765bde16c7007a50904e27b3155441ee38dcf77e2",
+      "created_at": "2026-11-19T15:50:58.547Z"
     }
   }
 }

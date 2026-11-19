@@ -11301,3 +11301,5 @@
 | `CYCLE-20261119-Y78X` | `2026-11-19T15:42:33.009Z` | `SimonSchubert/LinuxCommandLibrary` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9394` | Yes (`cd106945...`) |
 | `CYCLE-20261119-Y90T` | `2026-11-19T15:42:35.309Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9395` | Yes (`5cb08fe6...`) |
 | `CYCLE-20261119-YC1S` | `2026-11-19T15:42:39.232Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9396` | Yes (`dade5f3b...`) |
+| `CYCLE-20261119-8RS1` | `2026-11-19T15:50:46.177Z` | `LiquidAI/LFM2.5-24B-A2B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md` | Yes (`1d1721cf...`) |
+| `CYCLE-20261119-8V6L` | `2026-11-19T15:50:50.589Z` | `biomejs/biome` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9397` | Yes (`497c16ae...`) |

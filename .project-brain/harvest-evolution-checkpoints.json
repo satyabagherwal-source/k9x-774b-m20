@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T15:42:46.353Z",
+  "last_updated": "2026-11-19T15:51:00.107Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T12:40:39.625Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-19T14:20:29.727Z",
+      "processed_at": "2026-11-19T15:50:59.233Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1423,7 +1423,7 @@
       "staged_for_review": 0
     },
     "biomejs-biome-learnings.md": {
-      "processed_at": "2026-11-17T20:03:44.963Z",
+      "processed_at": "2026-11-19T15:50:57.797Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2828,8 +2828,8 @@
       "staged_for_review": 0
     },
     "hf-liquidai-lfm2.5-24b-a2b-learnings.md": {
-      "processed_at": "2026-11-15T01:33:20.677Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T15:50:58.861Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-fishaudio-drama-3-learnings.md": {
@@ -3518,7 +3518,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2262,
+  "total_dossiers_evaluated": 2265,
   "total_canonical_promoted": 385,
-  "total_staged_for_review": 1689
+  "total_staged_for_review": 1691
 }

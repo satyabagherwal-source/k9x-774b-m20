@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T15:42:39.242Z",
-  "total_cycles_completed": 10794,
-  "total_learnings_persisted": 10794,
-  "total_rules_promoted": 10169,
+  "last_updated": "2026-11-19T15:50:50.598Z",
+  "total_cycles_completed": 10796,
+  "total_learnings_persisted": 10796,
+  "total_rules_promoted": 10170,
   "history": [
-    {
-      "timestamp": "2026-11-18T19:44:20.014Z",
-      "repository": "black-forest-labs/FLUX.1-schnell",
-      "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T19:51:56.214Z",
-      "repository": "MiniMaxAI/MiniMax-H3",
-      "learningId": "learn-huggingface-minimaxai-minimax-h3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T19:51:58.422Z",
       "repository": "pimalaya/himalaya",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-19T15:42:39.242Z",
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T15:50:46.186Z",
+      "repository": "LiquidAI/LFM2.5-24B-A2B",
+      "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T15:50:50.598Z",
+      "repository": "biomejs/biome",
+      "learningId": "learn-github-biomejs-biome",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

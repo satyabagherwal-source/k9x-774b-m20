@@ -1445,8 +1445,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
     "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b",
     "license": "Open-Source",
-    "contentHash": "77487a5d72db50f68312a01f1dbaf6ca1b7b70a2768e1ff4c4c65f01f5a4c61b",
-    "lastHarvestedAt": "2026-11-15T01:32:38.669Z",
+    "contentHash": "1d1721cf6a37eb47aaa43bf4872fbf641ae2eef259cf8a75ab830d902734478d",
+    "lastHarvestedAt": "2026-11-19T15:50:46.181Z",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b"
   },
   "hf-fishaudio-drama-3": {
@@ -7643,10 +7643,10 @@
     "repository": "biomejs/biome",
     "platform": "github",
     "sourceUrl": "https://github.com/biomejs/biome",
-    "sourceVersion": "7c3aa0dd",
+    "sourceVersion": "ea3b347b",
     "license": "Apache-2.0",
-    "contentHash": "40be3ab1f3094ed5e831de943aec08adeea9ecaa6ba67f9e41c99e17f5a4a033",
-    "lastHarvestedAt": "2026-11-17T20:03:27.990Z",
+    "contentHash": "497c16ae1e702f9144ed77803c0530a7cfe498028b42da6164542cc3ba18f726",
+    "lastHarvestedAt": "2026-11-19T15:50:50.593Z",
     "learningId": "learn-github-biomejs-biome"
   },
   "msasikanth-twine": {

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T15:42:45.367Z",
+  "updated_at": "2026-11-19T15:50:58.155Z",
   "stats": {
-    "total_discovered": 5914,
-    "approved_pending_harvest": 5599,
+    "total_discovered": 5920,
+    "approved_pending_harvest": 5605,
     "harvested_count": 0,
     "rejected_count": 315,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5566,
+      "COMMUNITY_AND_EXPERT": 5572,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -127924,6 +127924,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
         "fileName": "simonschubert-linuxcommandlibrary-learnings.md"
+      }
+    },
+    "SRC-DDC1C63C17B1": {
+      "id": "SRC-DDC1C63C17B1",
+      "url": "https://www.convex.dev/",
+      "title": "https://www.convex.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:50:57.884Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-28DBFE7018F5": {
+      "id": "SRC-28DBFE7018F5",
+      "url": "https://github.com/biomejs/biome/new/dyc3/add-convex-eslint-docs-to-rule-sources-thr_mtyds8vbgd?filename=.changeset%2Fwarm-drinks-joke.md&value=---%0A%22%40biomejs%2Fbackend-jsonrpc%22%3A+patch%0A%22%40biomejs%2Fbiome%22%3A+patch%0A---%0A%0Afeat%28lint",
+      "title": "https://github.com/biomejs/biome/new/dyc3/add-convex-eslint-docs-to-rule-sources-thr_mtyds8vbgd?filename=.changeset%2Fwarm-drinks-joke.md&value=---%0A%22%40biomejs%2Fbackend-jsonrpc%22%3A+patch%0A%22%40biomejs%2Fbiome%22%3A+patch%0A---%0A%0Afeat%28lint",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:50:57.951Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-05E0A9FF1600": {
+      "id": "SRC-05E0A9FF1600",
+      "url": "https://app.coderabbit.ai/change-stack/biomejs/biome/pull/13284?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "title": "https://app.coderabbit.ai/change-stack/biomejs/biome/pull/13284?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:50:57.994Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-F4BCBAB7E127": {
+      "id": "SRC-F4BCBAB7E127",
+      "url": "https://github.com/biomejs/biome/issues/13268",
+      "title": "https://github.com/biomejs/biome/issues/13268",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:50:58.074Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-863C2F26E5DB": {
+      "id": "SRC-863C2F26E5DB",
+      "url": "https://github.com/biomejs/biome/issues/9768",
+      "title": "https://github.com/biomejs/biome/issues/9768",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:50:58.114Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
+      }
+    },
+    "SRC-DCE0814B2AF9": {
+      "id": "SRC-DCE0814B2AF9",
+      "url": "https://biomejs.dev/linter/rules/no-descending-specificity",
+      "title": "https://biomejs.dev/linter/rules/no-descending-specificity",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:50:58.155Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/biomejs-biome-learnings.md",
+        "fileName": "biomejs-biome-learnings.md"
       }
     }
   }

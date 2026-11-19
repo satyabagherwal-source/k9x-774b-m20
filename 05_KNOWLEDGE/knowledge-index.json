@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T15:42:46.187Z",
+  "last_updated": "2026-11-19T15:50:59.977Z",
   "total_verified_learnings": 9018,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21828,
+  "total_items": 21833,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-0OPB-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-926Z-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "509e0204afc916b9981b44d2b505cf2f6b793be3d1bec187801faad0021bc171",
+      "content_hash": "3a137df9f293704cf88a83475aa338cf46089f95eb40d4433623199b31d7ba4e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T14:20:30.098Z"
+      "persisted_at": "2026-11-19T15:50:59.680Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "7720f5a8df01cd2c858a5d083647b7831d16a4c8e54ee7c20d227cb28ae18b61",
+      "content_hash": "b0d531eb137f92e98214255135d29269eefb4abc96f78ea33e2d690a1a7025a7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T14:20:30.235Z"
+      "persisted_at": "2026-11-19T15:50:59.829Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "de626fa656f96335e42cc09d62586fed255713dafdaae4d6d9313b316ffbf926",
+      "content_hash": "258a353c1efa7ffdcabfebce8a474d1cc4e4b012d4de09730c0f18c2037e6b3d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T14:20:30.369Z"
+      "persisted_at": "2026-11-19T15:50:59.977Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -231168,8 +231168,8 @@
       "slug": "biomejs-biome",
       "platform": "github",
       "source_url": "https://github.com/biomejs/biome",
-      "source_version": "7c3aa0dd",
-      "content_hash": "40be3ab1f3094ed5e831de943aec08adeea9ecaa6ba67f9e41c99e17f5a4a033",
+      "source_version": "ea3b347b",
+      "content_hash": "497c16ae1e702f9144ed77803c0530a7cfe498028b42da6164542cc3ba18f726",
       "dossier_path": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/biomejs-biome-learnings.md",
       "promoted_rules": [
@@ -231187,6 +231187,11 @@
           "number": 9049,
           "title": "parse/html): don't panic on a second CDATA start marker",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9397,
+          "title": "don't pair emphasis across paragraphs in a blockquote",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231194,7 +231199,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T20:03:27.809Z",
+      "verified_at": "2026-11-19T15:50:50.404Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231248,10 +231253,10 @@
       "relative_path": "08_VERIFICATION/biomejs-biome-verification-protocol-empirical-defect-shield-for-biomejs-biome.md",
       "title": "Verification Protocol: Empirical Defect Shield for biomejs/biome",
       "repository": "biomejs/biome",
-      "source_version": "103dc4ef",
-      "content_hash": "db75d9e89143d5bcd41a2a9a1c011045a30d646afe1346834b37ccda65278d52",
+      "source_version": "ea3b347b",
+      "content_hash": "676ce5c330990873c510a23e841e4b03fc58b335e188a4cc6f63f1d22e4de9f5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T07:37:16.172Z"
+      "persisted_at": "2026-11-19T15:50:51.101Z"
     },
     "rule-8497": {
       "learning_id": "rule-8497",
@@ -231424,9 +231429,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for biomejs-biome-learnings",
       "repository": "biomejs-biome-learnings",
       "source_version": "HEAD",
-      "content_hash": "33b8a7bbcd7bbacc3e2694cc1e6f60d63bab9c66dfcd8eb55a3753f1d2c6194c",
+      "content_hash": "a6fb7ed24b418c3075d1d2968e409c5f058b090068983588708185f7f812580c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T20:03:45.653Z"
+      "persisted_at": "2026-11-19T15:50:58.712Z"
     },
     "candidate_directive-deps-bump-aiohttp": {
       "item_id": "candidate_directive-deps-bump-aiohttp",
@@ -239777,7 +239782,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
       "source_version": "hf-liquidai-lfm2.5-24b-a2b",
-      "content_hash": "77487a5d72db50f68312a01f1dbaf6ca1b7b70a2768e1ff4c4c65f01f5a4c61b",
+      "content_hash": "1d1721cf6a37eb47aaa43bf4872fbf641ae2eef259cf8a75ab830d902734478d",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-learnings.md",
       "promoted_rules": [],
@@ -239786,7 +239791,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T01:32:38.511Z",
+      "verified_at": "2026-11-19T15:50:45.967Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239803,9 +239808,9 @@
       "title": "Research & Knowledge Intelligence: LiquidAI/LFM2.5-24B-A2B Core Invariants",
       "repository": "LiquidAI/LFM2.5-24B-A2B",
       "source_version": "hf-liquidai-lfm2.5-24b-a2b",
-      "content_hash": "1b8dc0c42d859369729c21b25895077e36a78160300874f95cf3eae42a1c9fef",
+      "content_hash": "1f3f4c7ec98715cce622845f0dfe42ce8c76616ae9182064001609fc478e2dae",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T01:32:38.849Z"
+      "persisted_at": "2026-11-19T15:50:46.380Z"
     },
     "learn-github-falkordb-falkordb": {
       "learning_id": "learn-github-falkordb-falkordb",
@@ -240023,9 +240028,9 @@
       "title": "Research & Knowledge Intelligence: hf-liquidai-lfm2.5-24b-a2b-learnings Core Invariants",
       "repository": "hf-liquidai-lfm2.5-24b-a2b-learnings",
       "source_version": "HEAD",
-      "content_hash": "d97f1475fcf568fa11a81e82eff5e9409b0884a59ead35addc2297ba61bb9371",
+      "content_hash": "51b50fabe294648754102a0d03deeb7e089e49d1a4b30197ef37920c3864c801",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T01:33:20.849Z"
+      "persisted_at": "2026-11-19T15:50:59.055Z"
     },
     "candidate_directive-docs-add-compose-dsl-coroutine-and-thread-switching-guide": {
       "item_id": "candidate_directive-docs-add-compose-dsl-coroutine-and-thread-switching-guide",
@@ -295138,6 +295143,68 @@
       "content_hash": "d1417ba74adac9a9dd59b8f655ca0e6079b83d6255d2735429a322461d6f40de",
       "domain_letter": "H",
       "persisted_at": "2026-11-19T15:42:46.024Z"
+    },
+    "rule-9397": {
+      "learning_id": "rule-9397",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9397,
+      "title": "don't pair emphasis across paragraphs in a blockquote",
+      "source_url": "https://github.com/biomejs/biome",
+      "source_version": "ea3b347b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T15:50:50.404Z"
+    },
+    "candidate_directive-don-t-pair-emphasis-across-paragraphs-in-a-blockquote": {
+      "item_id": "candidate_directive-don-t-pair-emphasis-across-paragraphs-in-a-blockquote",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8VCE-don-t-pair-emphasis-across-paragraphs-in-a-blockquote.md",
+      "title": "don't pair emphasis across paragraphs in a blockquote",
+      "repository": "biomejs/biome",
+      "source_version": "ea3b347b",
+      "content_hash": "ff314213958ff1adf7790ea58b2deff7a266da979158a759c7edd31d49828fab",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-19T15:50:50.803Z"
+    },
+    "domain_intelligence-design-intelligence-biomejs-biome-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-biomejs-biome-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-biomejs-biome-design-intelligence-biomejs-biome-core-invariants.md",
+      "title": "Design Intelligence: biomejs/biome Core Invariants",
+      "repository": "biomejs/biome",
+      "source_version": "ea3b347b",
+      "content_hash": "c95cc47603f32dcac044a46430a0163b91f67b8a9ab1e72475826e3683b246d6",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-19T15:50:50.954Z"
+    },
+    "candidate_directive-markdown_parser-don-t-pair-emphasis-across-paragraphs-in-a-blockquote": {
+      "item_id": "candidate_directive-markdown_parser-don-t-pair-emphasis-across-paragraphs-in-a-blockquote",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-917C-markdown_parser-don-t-pair-emphasis-across-paragraphs-in-a-blockquote.md",
+      "title": "markdown_parser): don't pair emphasis across paragraphs in a blockquote",
+      "repository": "biomejs-biome-learnings",
+      "source_version": "HEAD",
+      "content_hash": "97226908c8a6d53b9c1007af1c167f7ecb6c106360f0945c9e04a45c7a298e36",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-19T15:50:58.397Z"
+    },
+    "domain_intelligence-design-intelligence-biomejs-biome-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-biomejs-biome-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-biomejs-biome-learnings-design-intelligence-biomejs-biome-learnings-core-invaria.md",
+      "title": "Design Intelligence: biomejs-biome-learnings Core Invariants",
+      "repository": "biomejs-biome-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f3aed1e4fb868f089b38d3f765bde16c7007a50904e27b3155441ee38dcf77e2",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-19T15:50:58.547Z"
     }
   },
   "ai-builder-brain": {

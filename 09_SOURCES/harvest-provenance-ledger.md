@@ -11334,3 +11334,5 @@ Every entry in this ledger must capture:
 | `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `a7aadf0e` | Multi-dimensional audit evidence | 2026-11-19T15:42:33.013Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `cd105ed8` | Multi-dimensional audit evidence | 2026-11-19T15:42:35.313Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a4304377` | Multi-dimensional audit evidence | 2026-11-19T15:42:39.236Z |
+| `learn-huggingface-liquidai-lfm2-5-24b-a2b` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-19T15:50:46.181Z |
+| `learn-github-biomejs-biome` | `https://github.com/biomejs/biome` | `ea3b347b` | Multi-dimensional audit evidence | 2026-11-19T15:50:50.593Z |

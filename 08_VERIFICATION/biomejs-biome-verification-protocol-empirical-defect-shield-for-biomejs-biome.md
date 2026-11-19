@@ -4,22 +4,22 @@
 {
   "source_repository": "biomejs/biome",
   "source_url": "https://github.com/biomejs/biome",
-  "source_version": "7c3aa0dd",
+  "source_version": "ea3b347b",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T20:03:28.171Z",
+  "timestamp": "2026-11-19T15:50:50.802Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-biomejs-biome",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [biomejs/biome](https://github.com/biomejs/biome) (Revision: `7c3aa0dd`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T20:03:28.171Z`  
+> **Provenance**: Harvested from [biomejs/biome](https://github.com/biomejs/biome) (Revision: `ea3b347b`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T15:50:50.802Z`  
 > **Learning ID**: `learn-github-biomejs-biome`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `biomejs/biome` (Commit: `7c3aa0dd`)
+- **Target Repository**: `biomejs/biome` (Commit: `ea3b347b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/biomejs-biome-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/biomejs/biome](https://github.com/biomejs/biome))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T20:03:26.979Z  
+> **Harvest Timestamp**: 2026-11-19T15:50:49.569Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A toolchain for web projects, aimed to provide functionalities to maintain them. Biome offers formatter and linter, usable via CLI and LSP.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 26125 stars
+- **Stars / Engagement**: 26151 stars
 
 ---
 
@@ -952,14 +952,14 @@ impl FormatNodeRule<CssContainerScrollStateInParens> for FormatCssContainerScrol
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #13275** (2026-11-17): **fix(tools): allow recent crate dependencies when publishing**
-  *Symptoms*: <!--   IMPORTANT!!   If you generated this PR with the help of any AI assistance, please disclose it in the PR.   https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md#ai-assistance-notice -->  <!-- 	Thanks for submitting a Pull Request! We appreciate you spending the time to work on these changes. 	Please provide enough information so that others can review your PR. 	Once created, your PR will be automatically labeled according to changed files. 	Learn more about contributing: https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md -->  ## Summary  Adding this environment variable should allow to publish the crates  https://github.com/biomejs/biome/actions/runs/44082200506/job/134035677888  <!-- Explain the **motivation** for making this change. What existing problem does the pull request solve?-->  <!-- Link any relevant issues if necessary or include a transcript of any Discord discussion. -->  <!-- If you create a user-facing change, please write a changeset: https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md#writing-a-changeset (your changeset is often a good starting point for this summary as well) -->  ## Test Plan  Merge and trigger the workflows again  <!-- What demonstrates that your implementation is correct? -->  ## Docs  <!-- If you're submitting a new rule or action (or an option for them), the documentation is part of the code. Make sure rules and actions have example usages, and that all options are documented. 
-  **Post-Mortem & Fix Analysis**:
-  > ### ⚠️ No Changeset found  Latest commit: 61a20023d648ff7fd90765a983747216eacefa4f  Merging this PR will not cause a version bump for any packages. If these changes should not result in a new version, you're good to go. **If these changes should result in a version bump, you need to add a changeset.**  <details><summary>This PR includes no changesets</summary>    When changesets are added to this PR, you'll see the packages that this PR includes changesets for and the associated semver types  </details>  [Click here to learn what changesets are, and how to add one](https://changesets.dev/faq).  [Click here if you're a maintainer who wants to add a changeset to this PR](https://github.com/biomejs/biome/new/fix/crate-publish-age?filename=.changeset/swift-heads-wish.md&value=---%0A%0A---%0A%0Afix(tools)%3A%20allow%20recent%20crate%20dependencies%20when%20publishing%0A)  
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/biomejs/biome/pull/13275?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_status_start -->  No actionable comments were generated in the recent review.  <!-- recent_review_status_end --> <!-- walkthrough_start -->  ### Walkthrough  The publi
+- **Issue #13307** (2026-11-19): **fix(biome_glob): match config globs for backslash paths in the JS API**
+  *Symptoms*: Fixes #13303 (backslash part only — see the note at the end)  ### Summary  On Windows, `formatContent()` from `@biomejs/js-api` did not match `overrides[].includes: ["src/**"]` when the `filePath` used backslashes (e.g. `src\a.js`, which is what `path.relative()` returns natively), while the same path with forward slashes matched, and the CLI matched both spellings.  ### Root cause  Override matching goes through `biome_glob::CandidatePath` into `globset::Candidate`, and globs only treat `/` as a separator. On native Windows targets `globset` normalizes `\`, but the WebAssembly build used by the JS API follows Unix path semantics, so `src\a.js` is a single segment that never matches `src/**`.  ### Note  This fixes only the backslash half of #13303. The issue also mentions absolute paths not matching in the JS API while matching in the CLI; I could not verify that sub-issue on Linux and it is intentionally not covered here.  ### AI assistance disclosure  This PR was prepared with AI assistance (Muse): the fix, the regression test, and the verification runs were drafted with AI help and reviewed by me before submission.
 
-- **Issue #13266** (2026-11-17): **chore(deps): fix advisories**
-  *Symptoms*: <!--   IMPORTANT!!   If you generated this PR with the help of any AI assistance, please disclose it in the PR.   https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md#ai-assistance-notice -->  <!-- 	Thanks for submitting a Pull Request! We appreciate you spending the time to work on these changes. 	Please provide enough information so that others can review your PR. 	Once created, your PR will be automatically labeled according to changed files. 	Learn more about contributing: https://github.com/biomejs/biome/blob/main/CONTRIBUTING.md -->  ## Summary  Updated `libz-sys` from 1.1.31 to 1.1.33 in Cargo.lock to fix RUSTSEC-2026-0544.  This PR was generated by an AI agent (Codex, GPT-6.1-Sol).  ## Test Plan  Green CI  ## Docs 
+- **Issue #13284** (2026-11-18): **feat(lint): add convex rule source and domain**
+  *Symptoms*: ## Summary Adding this rule source to avoid merge conflicts and get it in my tooling. Adding the domain too.  context: https://www.convex.dev/  implemented by Opus 5.5  ## Test Plan snapshots  ## Docs
+  **Post-Mortem & Fix Analysis**:
+  > ### ⚠️ No Changeset found  Latest commit: 867f1fca5a753a7ae923ce1435264d97e70b08d3  Merging this PR will not cause a version bump for any packages. If these changes should not result in a new version, you're good to go. **If these changes should result in a version bump, you need to add a changeset.**  <details><summary>This PR includes no changesets</summary>    When changesets are added to this PR, you'll see the packages that this PR includes changesets for and the associated semver types  </details>  [Click here to learn what changesets are, and how to add one](https://changesets.dev/faq).  [Click here if you're a maintainer who wants to add a changeset to this PR](https://github.com/biomejs/biome/new/dyc3/add-convex-eslint-docs-to-rule-sources-thr_mtyds8vbgd?filename=.changeset/warm-drinks-joke.md&value=---%0A%22%40biomejs%2Fbackend-jsonrpc%22%3A%20patch%0A%22%40biomejs%2Fbiome%22%3A%20patch%0A---%0A%0Afeat(lint)%3A%20add%20convex%20rule%20source%20and%20domain%0A)  
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/biomejs/biome/pull/13284?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- recent_review_status_start -->  No actionable comments were generated in the recent review.  <!-- recent_review_status_end --> <!-- walkthrough_start -->  ### Walkthrough  The rule 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -976,93 +976,207 @@ impl FormatNodeRule<CssContainerScrollStateInParens> for FormatCssContainerScrol
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b359a583` (2026-11-17)
-**Commit Message**: fix(parse/html): don't panic on a second CDATA start marker (#13262)
+### Incident Patch 1: `b6e7d37e` (2026-11-18)
+**Commit Message**: fix(markdown_parser): don't pair emphasis across paragraphs in a blockquote (#13269)
 
-**File**: `.changeset/fix-html-second-cdata-marker-panic.md` (added, +5/-0)
+**File**: `.changeset/fix-markdown-emphasis-quote-paragraphs.md` (added, +13/-0)
 ```diff
-@@ -0,0 +1,5 @@
+@@ -0,0 +1,13 @@
 +---
 +"@biomejs/biome": patch
 +---
 +
-+Fixed [#13258](https://github.com/biomejs/biome/issues/13258): the HTML parser no longer panics when a CDATA section starts with a second `<![CDATA[` marker. The marker is kept as literal text.
-```
-
-**File**: `crates/biome_html_parser/src/lexer/mod.rs` (modified, +0/-1)
-```diff
-@@ -940,7 +940,6 @@ impl<'src> HtmlLexer<'src> {
-         let dispatched = lookup_byte(current);
- 
-         match dispatched {
--            LSS if self.at_start_cdata() => self.consume_cdata_start(),
-             BTC if self.at_end_cdata() => self.consume_cdata_end(),
-             _ => {
-                 while let Some(char) = self.current_byte() {
-```
-
-**File**: `crates/biome_html_parser/src/lexer/tests.rs` (modified, +23/-3)
-```diff
-@@ -396,16 +396,36 @@ fn unquoted_attribute_value_invalid_chars() {
- }
- 
- #[test]
--fn cdata_full() {
-+fn cdata_start_in_regular_context() {
-     assert_lex! {
--        HtmlLexContext::CdataSection,
--        "<![CDATA[1]]>",
-+        HtmlLexContext::Regular {
-+            framework: HtmlFramework::Plain,
-+        },
-+        "<![CDATA[",
-         CDATA_START: 9,
-+    }
-+}
++Fixed [#13268](https://github.com/biomejs/biome/issues/13268): the Markdown formatter no longer pairs emphasis markers across paragraphs of a blockquote.
 +
-+#[test]
-+fn cdata_content() {
-+    assert_lex! {
-+        HtmlLexContext::CdataSection,
-+        "1]]>",
-         HTML_LITERAL: 1,
-         CDATA_END: 3,
-     }
- }
- 
-+#[test]
-+fn cdata_start_in_content_is_literal() {
-+    assert_lex! {
-+        HtmlLexContext::CdataSection,
-+        "<![CDATA[x]]>",
-+        HTML_LITERAL: 10,
-+        CDATA_END: 3,
-+    }
-+}
++```diff
++-> a _**, b
+++> a ___, b
++ >
++-> c 20**.
+++> c 20__.
++```
+```
+
+**File**: `crates/biome_markdown_formatter/tests/specs/markdown/blockquote_emphasis_across_paragraphs.md` (added, +14/-0)
+```diff
+@@ -0,0 +1,14 @@
++> a ___, b
++>
++> c 20__.
 +
- #[test]
- fn svelte_openings() {
-     assert_lex! {
++> > a ___, b
++> >
++> > c 20__.
++
++> - a ___, b
++>
++>   c 20__.
++
++> a ___, b
++> c 20__.
 ```
 
-**File**: `crates/biome_html_parser/tests/html_specs/error/cdata.html` (added, +1/-0)
+**File**: `crates/biome_markdown_formatter/tests/specs/markdown/blockquote_emphasis_across_paragraphs.md.snap` (added, +45/-0)
 ```diff
-@@ -0,0 +1 @@
-+<![CDATA[<![CDATA[
-```
-
-**File**: `crates/biome_html_parser/tests/html_specs/error/cdata.html.snap` (added, +67/-0)
-```diff
-@@ -0,0 +1,67 @@
+@@ -0,0 +1,45 @@
 +---
-+source: crates/biome_html_parser/tests/spec_test.rs
++source: crates/biome_formatter_test/src/snapshot_builder.rs
++info: markdown/blockquote_emphasis_across_paragraphs.md
++---
++
++# Input
++
++```md
++> a ___, b
++>
++> c 20__.
++
++> > a ___, b
++> >
++> > c 20__.
++
++> - a ___, b
++>
++>   c 20__.
++
++> a ___, b
++> c 20__.
++
++```
++
++
++# Formatted
++
++```md
++> a ___, b
++>
++> c 20__.
++
++> > a ___, b
++> >
++> > c 20__.
++
++> - a ___, b
++>
++>   c 20__.
++
++> a _**, b
++> c 20**.
++
++```
+```
+
+**File**: `crates/biome_markdown_parser/src/syntax/mod.rs` (modified, +4/-2)
+```diff
+@@ -1779,7 +1779,10 @@ fn inline_list_source_len(p: &mut MarkdownParser) -> usize {
+ /// Returns `true` if the scan should stop (paragraph boundary reached),
+ /// `false` if scanning should continue to the next line.
+ fn scan_newline_in_inline_list(p: &mut MarkdownParser, has_content: bool) -> bool {
+-    if p.is_at_blank_line() {
++    // Stop where `handle_inline_newline` ends the paragraph: at a blank line
++    // or at a quote line holding only `>` markers and whitespace.
++    let quote_depth = p.state().block_quote_depth;
++    if p.is_at_blank_line() || is_quote_blank_line_after_newline(p, quote_depth) {
+         p.bump(NEWLINE);
+         return true;
+     }
+@@ -1790,7 +1793,6 @@ fn scan_newline_in_inline_list(p: &mut MarkdownParser, has_content: bool) -> boo
+         return true;
+     }
+ 
+-    let quote_depth = p.state().block_quote_depth;
+     if quote_depth > 0 && has_quote_prefix(p, quote_depth) {
+         let break_kind = classify_quote_break_after_newline(p, quote_depth);
+         if !matches!(break_kind, QuoteBreakKind::None) {
+```
+
+**File**: `crates/biome_markdown_parser/tests/md_test_suite/ok/blockquote_emphasis_across_paragraphs.html` (added, +30/-0)
+```diff
+@@ -0,0 +1,30 @@
++<blockquote>
++<p>a ___, b</p>
++<p>c 20__.</p>
++</blockquote>
++<blockquote>
++<blockquote>
++<p>a ___, b</p>
++<p>c 20__.</p>
++</blockquote>
++</blockquote>
++<blockquote>
++<ul>
++<li>
++<p>a ___, b</p>
++<p>c 20__.</p>
++</li>
++</ul>
++</blockquote>
++<blockquote>
++<blockquote>
++<p>a ___, b</p>
++</blockquote>
++<blockquote>
++<p>c 20__.</p>
++</blockquote>
++</blockquote>
++<blockquote>
++<p>a _<strong>, b
++c 20</strong>.</p>
++</blockquote>
+```
+
+**File**: `crates/biome_markdown_parser/tests/md_test_suite/ok/blockquote_emphasis_across_paragraphs.md` (added, +18/-0)
+```diff
+@@ -0,0 +1,18 @@
++> a ___, b
++>
++> c 20__.
++
++> > a ___, b
++> >
++> > c 20__.
++
++> - a ___, b
++>
++>   c 20__.
++
++> > a ___, b
++>
++> > c 20__.
++
++> a ___, b
++> c 20__.
+```
+
+**File**: `crates/biome_markdown_parser/tests/md_test_suite/ok/blockquote_emphasis_across_paragraphs.md.snap` (added, +615/-0)
+```diff
+@@ -0,0 +1,615 @@
++---
++source: crates/biome_markdown_parser/tests/spec_test.rs
 +expression: snapshot
 +---
 +
 +## Input
 +
-+```html
-+<![CDATA[<![CDATA[
++```
++> a ___, b
++>
++> c 20__.
++
++> > a ___, b
++> >
++> > c 20__.
++
++> - a ___, b
++>
++>   c 20__.
++
++> > a ___, b
++>
++> > c 20__.
++
++> a ___, b
++> c 20__.
 +
 +```
 +
@@ -1070,183 +1184,1004 @@ Observed empirical fixes and code patches:
 +## AST
 +
 +```
-+HtmlRoot {
++MdRoot {
 +    bom_token: missing (optional),
 +    frontmatter: missing (optional),
-+    processing_instruction: missing (optional),
-+    directive: missing (optional),
-+    html: HtmlElementList [
-+        HtmlCdataSection {
-+            cdata_start_token: CDATA_START@0..9 "<![CDATA[" [] [],
-+            content_token: HTML_LITERAL@9..19 "<![CDATA[\n" [] [],
-+            cdata_end_token: missing (required),
++    value: MdBlockList [
++        MdQuote {
++            prefix: MdQuotePrefix {
++                pre_marker_indent: MdQuoteIndentList [],
++                marker_token: R_ANGLE@0..1 ">" [] [],
++                post_marker_space_token: MD_QUOTE_POST_MARKER_SPACE@1..2 " " [] [],
++            },
++            content: MdBlockList [
++                MdParagraph {
++                    list: MdInlineItemList [
++                        MdTextual {
++                            value_token: MD_TEXTUAL_LITERAL@2..4 "a " [] [],
++                        },
++                        MdTextual {
++                            value_token: MD_TEXTUAL_LITERAL@4..5 "_" [] [],
++                        },
++                        MdTextual {
++                            value_token: MD_TEXTUAL_LITERAL@5..6 "_" [] [],
++                        },
++                        MdTextual {
++                            value_token: MD_TEXTUAL_LITERAL@6..10 "_, b" [] [],
++                        },
++                        MdTextual {
++                            value_token: MD_TEXTUAL_LITERAL@10..11 "\n" [] [],
++                        },
++                    ],
++                },
++                MdQuotePrefix {
++                    pre_marker_indent: MdQuoteIndentList [],
++                    marker_token: R_ANGLE@11..12 ">" [] [],
++                    post_marker_space_token: missing (optional),
++                },
++                MdNewline {
++                    value_token: NEWLINE@12..13 "\n" [] [],
++                },
++                MdQuotePrefix {
++                    pre_marker_indent: MdQuoteIndentList [],
++                    marker_token: R_ANGLE@13..14 ">" [] [],
++                    post_marker_space_token: MD_QUOTE_POST_MARKER_SPACE@14..15 " " [] [],
++                },
++                MdParagraph {
++                    list: MdInlineItemList [
++                        MdTextual {
++                            value_token: MD_TEXTUAL_LITERAL@15..19 "c 20" [] [],
++                        },
++                        MdTextual {
++                            value_token: MD_TEXTUAL_LITERAL@19..20 "_" [] [],
++                        },
++                        MdTextual {
++                            value_token: MD_TEXTUAL_LITERAL@20..22 "_." [] [],
++                        },
++                        MdTextual {
++                            value_token: MD_TEXTUAL_LITERAL@22..23 "\n" [] [],
++                        },
++                    ],
++                },
++            ],
 +        },
-+    ],
-+    eof_token: EOF@19..19 "" [] [],
++        MdNewline {
++            value_token: NEWLINE@23..24 "\n" [] [],
++        },
++        MdQuote {
++            prefix: MdQuotePrefix {
++                pre_marker_indent: MdQuoteIndentList [],
++                marker_token: R_ANGLE@24..25 ">" [] [],
++                post_marker_space_token: MD_QUOTE_POST_MARKER_SPACE@25..26 " " [] [],
++            },
++            content: MdBlockList [
++                MdQuote {
++                    prefix: MdQuotePrefix {
++                        pre_marker_indent: MdQuoteIndentList [],
++                        marker_token: R_ANGLE@26..27 ">" [] [],
++                        post_marker_space_token: MD_QUOTE_POST_MARKER_SPACE@27..28 " " [] [],
++                    },
++                    content: MdBlockList [
++                        MdParagraph {
++                            list: MdInlineItemList [
++                                MdTextual {
++                                    value_token: MD_TEXTUAL_LITERAL@28..30 "a " [] [],
++                                },
++                                MdTextual {
++                                    value_token: MD_TEXTUAL_LITERAL@30..31 "_" [] [],
++                                },
++                                MdTextual {
++                                    value_token: MD_TEXTUAL_LITERAL@31..32 "_" [] [],
++                                },
++                                MdTextual {
++                                    value_token: MD_TEXTUAL_LITERAL@32..36 "_, b" [] [],
++                                },
++                                MdTextual {
++                                    value_token: MD_TEXTUAL_LITERAL@36..37 "\n" [] [],
++                                },
++                            ],
++                        },
++                        MdQuotePrefix {
++                            pre_marker_indent: MdQuoteIndentList [],
++                            marker_token: R_ANGLE@37..38 ">" [] [],
++                            post_marker_space_token: MD_QUOTE_POST_MARKER_SPACE@38..39 " " [] [],
++                        },
++                        MdQ
+```
+
+---
+
+### Incident Patch 2: `ea3b347b` (2026-11-19)
+**Commit Message**: perf(service): don't build an empty project layout for every analyzed file (#12941)
+
+**File**: `.changeset/skip-project-layout-per-file.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++"@biomejs/biome": patch
++---
++
++Improved the performance of `biome lint`, `biome check`, and `biome ci` on Linux. Biome now spends less time in the operating system for each file it analyzes, so linting large projects is faster.
+```
+
+**File**: `crates/biome_cli/tests/cases/javascript.rs` (modified, +55/-2)
+```diff
+@@ -2,10 +2,10 @@ use crate::TestArgs as Args;
+ use camino::Utf8Path;
+ 
+ use biome_console::BufferConsole;
+-use biome_fs::MemoryFileSystem;
++use biome_fs::{MemoryFileSystem, TemporaryFs};
+ 
+-use crate::run_cli;
+ use crate::snap_test::{SnapshotPayload, assert_cli_snapshot};
++use crate::{run_cli, run_cli_with_dyn_fs};
+ 
+ #[test]
+ fn should_pull_diagnostics_from_embedded_languages_when_formatting() {
+@@ -301,3 +301,56 @@ const Baz = styled.div`background-color: red !important; align: center; padding:
+         result,
+     ));
+ }
++
++#[test]
++fn lint_reads_jsx_factory_from_tsconfig() {
++    let mut console = BufferConsole::default();
++    let mut fs = TemporaryFs::new("lint_reads_jsx_factory_from_tsconfig");
++    fs.create_file(
++        "biome.json",
++        r#"{
++    "javascript": {
++        "jsxRuntime": "reactClassic"
++    }
++}"#,
++    );
++    fs.create_file(
++        "tsconfig.json",
++        r#"{
++    "compilerOptions": {
++        "jsx": "react",
++        "jsxFactory": "h",
++        "jsxFragmentFactory": "Fragment"
++    }
++}"#,
++    );
++    // `h` and `Fragment` are only used by the JSX, so they are reported as
++    // unused unless the factories are read from `tsconfig.json`.
++    fs.create_file(
++        "file.jsx",
++        r#"import { h, Fragment } from "preact";
++
++export const App = () => (
++    <>
++        <div>Hello</div>
++    </>
++);
++"#,
++    );
++
++    let result = run_cli_with_dyn_fs(
++        Box::new(fs.create_os()),
++        &mut console,
++        Args::from(["lint", "--only=correctness/noUnusedImports", fs.cli_path()].as_slice()),
++    );
++
++    assert!(result.is_ok(), "run_cli returned {result:?}");
++
++    assert_cli_snapshot(SnapshotPayload::new(
++        module_path!(),
++        "lint_reads_jsx_factory_from_tsconfig",
++        fs.create_mem(),
++        console,
++        result,
++    ));
++}
+```
+
+**File**: `crates/biome_cli/tests/snapshots/main_cases_javascript/lint_reads_jsx_factory_from_tsconfig.snap` (added, +50/-0)
+```diff
+@@ -0,0 +1,50 @@
++---
++source: crates/biome_cli/tests/snap_test.rs
++expression: redactor(content)
++---
++## Command
++
++```shell
++biome lint --only=correctness/noUnusedImports '<TEMP_DIR>/lint_reads_jsx_factory_from_tsconfig'
++```
++
++## `biome.json`
++
++```json
++{
++  "javascript": {
++    "jsxRuntime": "reactClassic"
++  }
 +}
 +```
 +
-+## CST
++## `file.jsx`
 +
-+```
-+0: HTML_ROOT@0..19
-+  0: (empty)
-+  1: (empty)
-+  2: (empty)
-+  3: (empty)
-+  4: HTML_ELEMENT_LIST@0..19
-+    0: HTML_CDATA_SECTION@0..19
-+      0: CDATA_START@0..9 "<![CDATA[" [] []
-+      1: HTML_LITERAL@9..19 "<![CDATA[\n" [] []
-+      2: (empty)
-+  5: EOF@19..19 "" [] []
++```jsx
++import { h, Fragment } from "preact";
++
++export const App = () => (
++    <>
++        <div>Hello</div>
++    </>
++);
 +
 +```
 +
-+## Diagnostics
++## `tsconfig.json`
 +
++```json
++{
++    "compilerOptions": {
++        "jsx": "react",
++        "jsxFactory": "h",
++        "jsxFragmentFactory": "Fragment"
++    }
++}
 +```
-+cdata.html:2:1 parse ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 +
-+  × expected `]]>` but instead the file ends
-+  
-+    1 │ <![CDATA[<![CDATA[
-+  > 2 │ 
-+      │ 
-+  
-+  i the file ends here
-+  
-+    1 │ <![CDATA[<![CDATA[
-+  > 2 │ 
-+      │ 
-+  
++# Emitted Messages
++
++```block
++Checked 3 files in <TIME>. No fixes applied.
 +```
 ```
 
-**File**: `crates/biome_html_parser/tests/html_specs/ok/cdata.html` (modified, +2/-0)
+**File**: `crates/biome_service/src/file_handlers/mod.rs` (modified, +15/-8)
 ```diff
-@@ -2,3 +2,5 @@
- <![CDATA[1<3]]>
- <![CDATA[lorem ipsum dolar 33 bottles of beer on the wall, 33 bottles of beer! Take one down, pass it around ...]]>
- <![CDATA[<div attributes="some-attribute"></div>]]>
-+<![CDATA[<![CDATA[x]]>
-+<![CDATA[<![CDATA[]]>
-```
-
-**File**: `crates/biome_html_parser/tests/html_specs/ok/cdata.html.snap` (modified, +24/-4)
-```diff
-@@ -10,6 +10,8 @@ expression: snapshot
- <![CDATA[1<3]]>
- <![CDATA[lorem ipsum dolar 33 bottles of beer on the wall, 33 bottles of beer! Take one down, pass it around ...]]>
- <![CDATA[<div attributes="some-attribute"></div>]]>
-+<![CDATA[<![CDATA[x]]>
-+<![CDATA[<![CDATA[]]>
- 
- ```
- 
-@@ -43,20 +45,30 @@ HtmlRoot {
-             content_token: HTML_LITERAL@161..200 "<div attributes=\"some-attribute\"></div>" [] [],
-             cdata_end_token: CDATA_END@200..203 "]]>" [] [],
-         },
-+        HtmlCdataSection {
-+            cdata_start_token: CDATA_START@203..213 "<![CDATA[" [Newline("\n")] [],
-+            content_token: HTML_LITERAL@213..223 "<![CDATA[x" [] [],
-+            cdata_end_token: CDATA_END@223..226 "]]>" [] [],
-+        },
-+        HtmlCdataSection {
-+            cdata_start_token: CDATA_START@226..236 "<![CDATA[" [Newline("\n")] [],
-+            content_token: HTML_LITERAL@236..245 "<![CDATA[" [] [],
-+            cdata_end_token: CDATA_END@245..248 "]]>" [] [],
-+        },
-     ],
--    eof_token: EOF@203..204 "" [Newline("\n")] [],
-+    eof_token: EOF@248..249 "" [Newline("\n")] [],
+@@ -2555,7 +2555,14 @@ pub(crate) struct AnalyzerVisitorBuilder<'a, 'settings> {
+     skip: Option<&'a [AnalyzerSelector]>,
+     path: Option<&'a Utf8Path>,
+     enabled_selectors: Option<&'a [AnalyzerSelector]>,
+-    project_layout: Arc<ProjectLayout>,
++    /// The layout used to find the `package.json` and `tsconfig.json` of
++    /// `path`. `None` finds neither, like an empty layout.
++    ///
++    /// The default isn't an empty [ProjectLayout] because this builder runs
++    /// for every analyzed file, and creating a layout is not cheap: its
++    /// concurrent map asks for the number of available CPUs, which on Linux
++    /// reads several cgroup files.
++    project_layout: Option<Arc<ProjectLayout>>,
+     analyzer_options: AnalyzerOptions,
  }
- ```
  
- ## CST
+@@ -2572,7 +2579,7 @@ impl<'a, 'settings> AnalyzerVisitorBuilder<'a, 'settings> {
+             skip: None,
+             path: None,
+             enabled_selectors: None,
+-            project_layout: Default::default(),
++            project_layout: None,
+             analyzer_options,
+         }
+     }
+@@ -2603,7 +2610,7 @@ impl<'a, 'settings> AnalyzerVisitorBuilder<'a, 'settings> {
  
- ```
--0: HTML_ROOT@0..204
-+0: HTML_ROOT@0..249
-   0: (empty)
-   1: (empty)
-   2: (empty)
-   3: (empty)
--  4: HTML_ELEMENT_LIST@0..203
-+  4: HTML_ELEMENT_LIST@0..248
-     0: HTML_CDATA_SECTION@0..19
-       0: CDATA_START@0..9 "<![CDATA[" [] []
-       1: HTML_LITERAL@9..16 "example" [] []
-@@ -73,6 +85,14 @@ HtmlRoot {
-       0: CDATA_START@151..161 "<![CDATA[" [Newline("\n")] []
-       1: HTML_LITERAL@161..200 "<div attributes=\"some-attribute\"></div>" [] []
-       2: CDATA_END@200..203 "]]>" [] []
--  5: EOF@203..204 "" [Newline("\n")] []
-+    4: HTML_CDATA_SECTION@203..226
-+      0: CDATA_START@203..213 "<![CDATA[" [Newline("\n")] []
-+      1: HTML_LITERAL@213..223 "<![CDATA[x" [] []
-+      2: CDATA_END@223..226 "]]>" [] []
-+    5: HTML_CDATA_SECTION@226..248
-+      0: CDATA_START@226..236 "<![CDATA[" [Newline("\n")] []
-+      1: HTML_LITERAL@236..245 "<![CDATA[" [] []
-+      2: CDATA_END@245..248 "]]>" [] []
-+  5: EOF@248..249 "" [Newline("\n")] []
+     #[must_use]
+     pub(crate) fn with_project_layout(mut self, project_layout: Arc<ProjectLayout>) -> Self {
+-        self.project_layout = project_layout;
++        self.project_layout = Some(project_layout);
+         self
+     }
  
- ```
-```
-
-**File**: `crates/biome_html_parser/tests/html_specs/ok/svg/cdata-second-marker.svg` (added, +1/-0)
-```diff
-@@ -0,0 +1 @@
-+<svg><![CDATA[<![CDATA[x]]></svg>
+@@ -2667,7 +2674,8 @@ impl<'a, 'settings> AnalyzerVisitorBuilder<'a, 'settings> {
+         if use_configured_rules
+             && let Some((_, manifest)) = self
+                 .path
+-                .and_then(|path| self.project_layout.find_node_manifest_for_path(path))
++                .zip(self.project_layout.as_deref())
++                .and_then(|(path, project_layout)| project_layout.find_node_manifest_for_path(path))
+         {
+             let manifest = ManifestDependencies(manifest);
+             let manifest_result = if let Some(query_db) = &query_db {
+@@ -2699,20 +2707,19 @@ impl<'a, 'settings> AnalyzerVisitorBuilder<'a, 'settings> {
+         analyzer_options.push_globals(globals);
+ 
+         if let Some(path) = self.path
++            && let Some(project_layout) = self.project_layout.as_deref()
+             && analyzer_options.jsx_runtime() == Some(JsxRuntime::ReactClassic)
+         {
+             if analyzer_options.jsx_factory().is_none() {
+-                let factory = self
+-                    .project_layout
++                let factory = project_layout
+                     .query_tsconfig_for_path(path, |tsconfig| {
+                         tsconfig.jsx_factory_identifier().map(|s| s.to_string())
+                     })
+                     .flatten();
+                 analyzer_options.set_jsx_factory(factory.map(Into::into));
+             }
+             if analyzer_options.jsx_fragment_factory().is_none() {
+-                let fragment_factory = self
+-                    .project_layout
++                let fragment_factory = project_layout
+                     .query_tsconfig_for_path(path, |tsconfig| {
+                         tsconfig
+                             .jsx_fragment_factory_identifier()
 ```
 
 ---
 
-### Incident Patch 2: `7c3aa0dd` (2026-11-17)
-**Commit Message**: fix(tools): allow recent crate dependencies when publishing (#13275)
+### Incident Patch 3: `03b0eddf` (2026-11-19)
+**Commit Message**: fix(lint): compare resolved subjects in noDescendingSpecificity (#12419)
 
-**File**: `xtask/publish_crates/src/cargo.rs` (modified, +1/-0)
+**File**: `.changeset/fix-descending-specificity-subject.md` (added, +21/-0)
 ```diff
-@@ -89,6 +89,7 @@ impl CargoRunner for SystemCargo {
- 
-     fn publish(&mut self, workspace: &Workspace, package: &PublishPackage) -> Result<bool> {
-         self.command(&workspace.root)
-+            .env("CARGO_RESOLVER_INCOMPATIBLE_PUBLISH_AGE", "allow")
-             .args([
-                 "publish",
-                 "--package",
+@@ -0,0 +1,21 @@
++---
++"@biomejs/biome": patch
++---
++
++Fixed [#9768](https://github.com/biomejs/biome/issues/9768): [`noDescendingSpecificity`](https://biomejs.dev/linter/rules/no-descending-specificity/) no longer reports nested selectors that style different elements. The following code is now valid:
++
++```scss
++.aaa {
++  ul li {
++    &:hover { color: #1684fc; }
++  }
++}
++
++.bbb {
++  a {
++    &:hover { background: #fff; }
++  }
++}
++```
++
++The rule now reports `a:hover { color: red; }` followed by `a { color: blue; }`, as Stylelint does, and ignores rules without declarations.
 ```
 
----
-
-### Incident Patch 3: `74e546ab` (2026-11-17)
-**Commit Message**: chore(deps): fix advisories (#13266)
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `.changeset/fix-duplicate-selectors-pseudo-class-functions.md` (added, +13/-0)
 ```diff
-@@ -4642,9 +4642,9 @@ dependencies = [
+@@ -0,0 +1,13 @@
++---
++"@biomejs/biome": patch
++---
++
++Fixed [`noDuplicateSelectors`](https://biomejs.dev/linter/rules/no-duplicate-selectors/) missing some duplicates. The rule now reports these selectors:
++
++```css
++.c:is(.a .b) {}
++:is(.a .b).c {}
++
++[data-progress="50%"] {}
++[data-progress="50%"] {}
++```
+```
+
+**File**: `crates/biome_css_analyze/src/lint/style/no_descending_specificity.rs` (modified, +107/-55)
+```diff
+@@ -4,18 +4,23 @@ use rustc_hash::{FxHashMap, FxHashSet};
  
- [[package]]
- name = "libz-sys"
--version = "1.1.31"
-+version = "1.1.33"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
-+checksum = "fee3f59f4321dab0c78d828942e7aa09d0bd8ad6e78a501977e6bf3d02938045"
- dependencies = [
-  "cc",
-  "libc",
+ use biome_analyze::{Rule, RuleDiagnostic, RuleSource, context::RuleContext, declare_lint_rule};
+ use biome_console::markup;
+-use biome_css_semantic::model::{ResolvedSelector, Rule as CssSemanticRule, RuleId, Specificity};
++use biome_css_semantic::model::{
++    AnyRuleStart, ResolvedSelector, Rule as CssSemanticRule, RuleId, SimpleSelector,
++    SimpleSelectorKind, Specificity,
++};
+ use biome_css_syntax::{
+-    AnyCssRoot, CssContainerAtRule, CssLanguage, CssLayerAtRule, CssMediaAtRule, CssScopeAtRule,
+-    CssStartingStyleAtRule, CssSupportsAtRule, CssSyntaxKind, ScssAtRootAtRule, ScssEachAtRule,
++    AnyCssRoot, CssContainerAtRule, CssDeclaration, CssLanguage, CssLayerAtRule, CssMediaAtRule,
++    CssRelativeSelectorList, CssScopeAtRule, CssSelectorList, CssStartingStyleAtRule,
++    CssSupportsAtRule, CssSupportsFeatureDeclaration, ScssAtRootAtRule, ScssEachAtRule,
+     ScssElseClause, ScssForAtRule, ScssFunctionAtRule, ScssIfAtRule, ScssIncludeAtRule,
+     ScssMixinAtRule, ScssWhileAtRule,
+ };
+ use biome_diagnostics::Severity;
+-use biome_rowan::{AstNode, SyntaxKindSet, TextRange, TokenText};
++use biome_rowan::{AstNode, SyntaxKindSet, TextRange, WalkEvent};
+ use biome_rule_options::no_descending_specificity::NoDescendingSpecificityOptions;
+ 
+ use crate::services::semantic::Semantic;
++use crate::utils::is_pseudo_elements;
+ 
+ const INDEPENDENT_AT_RULE_KINDS: SyntaxKindSet<CssLanguage> = CssContainerAtRule::KIND_SET
+     .union(CssMediaAtRule::KIND_SET)
+@@ -46,7 +51,11 @@ declare_lint_rule! {
+     ///
+     /// The rule reports likely conflicts between selectors that end with the same target under the
+     /// same surrounding rules, such as `@media` or `@layer`. It cannot determine every case where
+-    /// two selectors match the same element.
++    /// two selectors match the same element. Nested selectors are combined with their parent
++    /// selectors before comparison, so `nav { a { &:hover {} } }` behaves like `nav a:hover {}`.
++    ///
++    /// Rules without declarations, such as a rule that only contains a comment or nested rules,
++    /// are ignored. These rules set no styles, so their position doesn't matter.
+     ///
+     /// ## SCSS limitations
+     ///
+@@ -55,6 +64,10 @@ declare_lint_rule! {
+     /// control-flow branches. Selectors containing interpolation or placeholders are ignored because
+     /// their emitted selector and specificity depend on SCSS evaluation.
+     ///
++    /// In SCSS, an `@include` inserts the contents of a mixin. The rule can't see what the mixin
++    /// contains, so it treats every `@include` as a declaration. Stylelint does this only for an
++    /// `@include` with a `{ ... }` block, so this rule can report selectors that Stylelint doesn't.
++    ///
+     /// ## Examples
+     ///
+     /// ### Invalid
+@@ -110,8 +123,8 @@ declare_lint_rule! {
+     /// ```
+     ///
+     /// ```css
+-    /// a:hover { color: red; }
+     /// a { color: red; }
++    /// a:hover { color: red; }
+     /// ```
+     ///
+     /// ```css
+@@ -168,6 +181,7 @@ impl Rule for NoDescendingSpecificity {
+         let mut visited_rules = FxHashSet::default();
+         let mut visited_selectors = SelectorContexts::default();
+         let mut descending_selectors = BTreeMap::new();
++        let mut key = String::new();
+ 
+         let mut rules = model
+             .rules()
+@@ -181,6 +195,21 @@ impl Rule for NoDescendingSpecificity {
+             }
+ 
+             let rule_node = rule.node(&root);
++            let child_at_rule_context =
++                if INDEPENDENT_AT_RULE_KINDS.matches(rule_node.syntax().kind()) {
++                    Some(rule.id())
++                } else {
++                    at_rule_context
++                };
++            for child_id in rule.child_ids().iter().rev() {
++                if let Some(child_rule) = model.get_rule_by_id(child_id) {
++                    rules.push((child_rule, child_at_rule_context));
++                }
++            }
++
++            if rule.selectors().is_empty() || !has_declarations(&rule, &rule_node) {
++                continue;
++            }
+             find_descending_selector(
+                 &rule,
+                 SelectorContext {
+@@ -198,20 +227,8 @@ impl Rule for NoDescendingSpecificity {
+                 },
+                 &mut visited_selectors,
+                 &mut descending_selectors,
++                &mut key,
+             );
+-
+-            let child_at_rule_context = if INDEPENDENT_AT_RULE_KINDS
+-                .matches(rule_node.syntax().kind())
+-            {
+-                Some(rule.id())
+-            } else {
+-                at_rule_context
+-            };
+-            for child_id in rule.child_ids().iter().rev() {
+-                if let Some(child_rule) = model.get_rule_by_id(child_id) {
+-                    rules.push((child_rule, child_at_rule_context));
+-                }
+-            }
+         }
+         descending_selectors
+             .into_values()
+@@ -254
+```
+
+**File**: `crates/biome_css_analyze/src/lint/suspicious/no_duplicate_selectors.rs` (modified, +6/-6)
+```diff
+@@ -171,8 +171,7 @@ impl Rule for NoDuplicateSelectors {
+                     }
+ 
+                     let rule_node = rule.node(&root);
+-                    let is_at_rule =
+-                        INDEPENDENT_AT_RULE_KINDS.matches(rule_node.syntax().kind());
++                    let is_at_rule = INDEPENDENT_AT_RULE_KINDS.matches(rule_node.syntax().kind());
+ 
+                     if is_at_rule {
+                         let parent_hash = *context_hash_stack.last().unwrap();
+@@ -190,10 +189,11 @@ impl Rule for NoDuplicateSelectors {
+ 
+                     // For qualified rules with selectors, check for duplicates.
+                     if !is_at_rule && !rule.selectors().is_empty() {
+-                        if rule.selectors().iter().any(|selector| {
+-                            let selector = selector.resolved().to_string();
+-                            selector.contains('%') || selector.contains("#{")
+-                        }) {
++                        if rule
++                            .selectors()
++                            .iter()
++                            .any(|selector| selector.resolved().requires_scss_evaluation())
++                        {
+                             continue;
+                         }
+                         let mut normalized_selectors: Vec<String> = rule
+```
+
+**File**: `crates/biome_css_analyze/tests/specs/style/noDescendingSpecificity/invalid_issue_9768.scss` (added, +114/-0)
+```diff
+@@ -0,0 +1,114 @@
++/* should generate diagnostics */
++// Different parents resolve to different subjects: `li` and `a`.
++.c1a {
++  ul li {
++    &:hover { color: red; }
++  }
++}
++
++.c1b {
++  a {
++    &:hover { color: blue; }
++  }
++}
++
++// BEM suffixes resolve to different classes.
++.c2 {
++  &--x + &--y { color: red; }
++
++  &--z { color: blue; }
++}
++
++// Pseudo-elements under different parents.
++.c3a .x {
++  &::after { color: red; }
++}
++
++.c3b {
++  &::after { color: blue; }
++}
++
++// Pseudo-classes don't change the subject, so `.c5` is reported.
++.c5a .c5:hover { color: red; }
++
++.c5 { color: blue; }
++
++// A legacy single-colon pseudo-element is a different subject.
++.c7a .c7:before { color: red; }
++
++.c7 { color: blue; }
++
++// A descending pair through BEM nesting, so `.c8i` is reported.
++.c8 {
++  &--x .c8i { color: red; }
++}
++
++.c8i { color: blue; }
++
++// A rule without declarations can't lose the cascade.
++.c4a .c4 { color: red; }
++
++.c4 {
++  /* note */
++}
++
++// Declarations inside a nested `@media` still count, so `.c6` is reported.
++.c6a .c6 { color: red; }
++
++.c6 {
++  @media (min-width: 1px) {
++    color: blue;
++  }
++}
++
++// An `@include` can emit declarations, so `.c9` is reported.
++.c9a .c9 { color: red; }
++
++.c9 {
++  @include theme;
++}
++
++// An `@include` inside control flow still counts, so `.c10` is reported.
++.c10a .c10 { color: red; }
++
++.c10 {
++  @if $condition {
++    @include theme;
++  }
++}
++
++// Nested selectors are compared as written out in full, like `nav label:hover {}`, so
++// `aside label` is reported.
++nav {
++  label {
++    color: green;
++
++    &:hover { background: #ccc; }
++  }
++}
++
++aside {
++  label { color: blue; }
++}
++
++// The order of simple selectors doesn't change the subject, so `.baz.bar` is reported.
++#foo .bar.baz { color: red; }
++
++.baz.bar { color: blue; }
++
++// Type selectors are case-insensitive, so `span` is reported.
++.c11 SPAN:hover { color: red; }
++
++span { color: blue; }
++
++// A suffix added through nesting matches the class written out, so `.c12--x` is reported.
++.c12 {
++  .c12a &--x { color: red; }
++}
++
++.c12--x { color: blue; }
++
++// A `%` inside a quoted attribute value isn't a placeholder, so `[data-c13="50%"]` is reported.
++.c13 [data-c13="50%"] { color: red; }
++
++[data-c13="50%"] { color: blue; }
+```
+
+**File**: `crates/biome_css_analyze/tests/specs/style/noDescendingSpecificity/invalid_issue_9768.scss.snap` (added, +374/-0)
+```diff
+@@ -0,0 +1,374 @@
++---
++source: crates/biome_css_analyze/tests/spec_tests.rs
++expression: invalid_issue_9768.scss
++---
++# Input
++```css
++/* should generate diagnostics */
++// Different parents resolve to different subjects: `li` and `a`.
++.c1a {
++  ul li {
++    &:hover { color: red; }
++  }
++}
++
++.c1b {
++  a {
++    &:hover { color: blue; }
++  }
++}
++
++// BEM suffixes resolve to different classes.
++.c2 {
++  &--x + &--y { color: red; }
++
++  &--z { color: blue; }
++}
++
++// Pseudo-elements under different parents.
++.c3a .x {
++  &::after { color: red; }
++}
++
++.c3b {
++  &::after { color: blue; }
++}
++
++// Pseudo-classes don't change the subject, so `.c5` is reported.
++.c5a .c5:hover { color: red; }
++
++.c5 { color: blue; }
++
++// A legacy single-colon pseudo-element is a different subject.
++.c7a .c7:before { color: red; }
++
++.c7 { color: blue; }
++
++// A descending pair through BEM nesting, so `.c8i` is reported.
++.c8 {
++  &--x .c8i { color: red; }
++}
++
++.c8i { color: blue; }
++
++// A rule without declarations can't lose the cascade.
++.c4a .c4 { color: red; }
++
++.c4 {
++  /* note */
++}
++
++// Declarations inside a nested `@media` still count, so `.c6` is reported.
++.c6a .c6 { color: red; }
++
++.c6 {
++  @media (min-width: 1px) {
++    color: blue;
++  }
++}
++
++// An `@include` can emit declarations, so `.c9` is reported.
++.c9a .c9 { color: red; }
++
++.c9 {
++  @include theme;
++}
++
++// An `@include` inside control flow still counts, so `.c10` is reported.
++.c10a .c10 { color: red; }
++
++.c10 {
++  @if $condition {
++    @include theme;
++  }
++}
++
++// Nested selectors are compared as written out in full, like `nav label:hover {}`, so
++// `aside label` is reported.
++nav {
++  label {
++    color: green;
++
++    &:hover { background: #ccc; }
++  }
++}
++
++aside {
++  label { color: blue; }
++}
++
++// The order of simple selectors doesn't change the subject, so `.baz.bar` is reported.
++#foo .bar.baz { color: red; }
++
++.baz.bar { color: blue; }
++
++// Type selectors are case-insensitive, so `span` is reported.
++.c11 SPAN:hover { color: red; }
++
++span { color: blue; }
++
++// A suffix added through nesting matches the class written out, so `.c12--x` is reported.
++.c12 {
++  .c12a &--x { color: red; }
++}
++
++.c12--x { color: blue; }
++
++// A `%` inside a quoted attribute value isn't a placeholder, so `[data-c13="50%"]` is reported.
++.c13 [data-c13="50%"] { color: red; }
++
++[data-c13="50%"] { color: blue; }
++
++```
++
++# Diagnostics
++```
++invalid_issue_9768.scss:34:1 lint/style/noDescendingSpecificity ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++
++  ! Descending specificity selector found. This selector specificity is (0, 1, 0)
++  
++    32 │ .c5a .c5:hover { color: red; }
++    33 │ 
++  > 34 │ .c5 { color: blue; }
++       │ ^^^
++    35 │ 
++    36 │ // A legacy single-colon pseudo-element is a different subject.
++  
++  i This selector specificity is (0, 3, 0)
++  
++    31 │ // Pseudo-classes don't change the subject, so `.c5` is reported.
++  > 32 │ .c5a .c5:hover { color: red; }
++       │ ^^^^^^^^^^^^^^
++    33 │ 
++    34 │ .c5 { color: blue; }
++  
++  i Descending specificity selector may not be applied. Consider rearranging the order of the selectors. See MDN web docs for more details.
++  
++
++```
++
++```
++invalid_issue_9768.scss:46:1 lint/style/noDescendingSpecificity ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++
++  ! Descending specificity selector found. This selector specificity is (0, 1, 0)
++  
++    44 │ }
++    45 │ 
++  > 46 │ .c8i { color: blue; }
++       │ ^^^^
++    47 │ 
++    48 │ // A rule without declarations can't lose the cascade.
++  
++  i This selector specificity is (0, 2, 0)
++  
++    41 │ // A descending pair through BEM nesting, so `.c8i` is reported.
++    42 │ .c8 {
++  > 43 │   &--x .c8i { color: red; }
++       │   ^^^^^^^^^
++    44 │ }
++    45 │ 
++  
++  i Descending specificity selector may not be applied. Consider rearranging the order of the selectors. See MDN web docs for more details.
++  
++
++```
++
++```
++invalid_issue_9768.scss:58:1 lint/style/noDescendingSpecificity ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++
++  ! Descending specificity selector found. This selector specificity is (0, 1, 0)
++  
++    56 │ .c6a .c6 { color: red; }
++    57 │ 
++  > 58 │ .c6 {
++       │ ^^^
++    59 │   @media (min-width: 1px) {
++    60 │     color: blue;
++  
++  i This selector specificity is (0, 2, 0)
++  
++    55 │ // Declarations inside a nested `@media` still count, so `.c6` is reported.
++  > 56 │ .c6a .c6 { color: red; }
++       │ ^^^^^^^^
++    57 │ 
++    58 │ .c6 {
++  
++  i Descending specificity selector may not be applied. Consider rearranging the order of the selectors. See MDN web docs for more details.
++  
++
++```
++
++```
++invalid_issue_9768.scss:67:1 lint/style/noDescendingSpecificity ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
++
++  ! Descending specificity selector found. This selector specificity is (0, 1, 0)
++  
++    65 │ .c9a .c9 { color: red; }
++    66 │ 
++  > 67 │ .c9 {
++       │ ^^^
++    68 │   @include theme;
++    69 │ }
++  
++  i This selector specificity is (0, 2, 0)
++  
+
+```
+
+**File**: `crates/biome_css_analyze/tests/specs/style/noDescendingSpecificity/nested_specificity.invalid.css` (modified, +6/-6)
+```diff
+@@ -3,23 +3,23 @@
+ /* The `&` resolves to `.x .y`, so `html body & .d` is (0,3,2), more specific than `.x .y .d` */
+ .x {
+   .y {
+-    html body & .d {}
++    html body & .d { color: red; }
+   }
+ }
+-.x .y .d {}
++.x .y .d { color: red; }
+ 
+ /* Selectors nested inside `@container` are compared with each other */
+ .a {
+   @container (min-width: 1px) {
+-    & .b .c {}
+-    & .c {}
++    & .b .c { color: red; }
++    & .c { color: red; }
+   }
+ }
+ 
+ /* Selectors nested inside `@starting-style` are compared with each other */
+ .e {
+   @starting-style {
+-    & .f .g {}
+-    & .g {}
++    & .f .g { color: red; }
++    & .g { color: red; }
+   }
+ }
+```
+
+**File**: `crates/biome_css_analyze/tests/specs/style/noDescendingSpecificity/nested_specificity.invalid.css.snap` (modified, +16/-16)
+```diff
+@@ -9,24 +9,24 @@ expression: nested_specificity.invalid.css
+ /* The `&` resolves to `.x .y`, so `html body & .d` is (0,3,2), more specific than `.x .y .d` */
+ .x {
+   .y {
+-    html body & .d {}
++    html body & .d { color: red; }
+   }
+ }
+-.x .y .d {}
++.x .y .d { color: red; }
+ 
+ /* Selectors nested inside `@container` are compared with each other */
+ .a {
+   @container (min-width: 1px) {
+-    & .b .c {}
+-    & .c {}
++    & .b .c { color: red; }
++    & .c { color: red; }
+   }
+ }
+ 
+ /* Selectors nested inside `@starting-style` are compared with each other */
+ .e {
+   @starting-style {
+-    & .f .g {}
+-    & .g {}
++    & .f .g { color: red; }
++    & .g { color: red; }
+   }
+ }
+ 
+@@ -40,7 +40,7 @@ nested_specificity.invalid.css:9:1 lint/style/noDescendingSpecificity ━━━
+   
+      7 │   }
+      8 │ }
+-   > 9 │ .x .y .d {}
++   > 9 │ .x .y .d { color: red; }
+        │ ^^^^^^^^
+     10 │ 
+     11 │ /* Selectors nested inside `@container` are compared with each other */
+@@ -49,7 +49,7 @@ nested_specificity.invalid.css:9:1 lint/style/noDescendingSpecificity ━━━
+   
+     4 │ .x {
+     5 │   .y {
+-  > 6 │     html body & .d {}
++  > 6 │     html body & .d { color: red; }
+       │     ^^^^^^^^^^^^^^
+     7 │   }
+     8 │ }
+@@ -65,8 +65,8 @@ nested_specificity.invalid.css:15:5 lint/style/noDescendingSpecificity ━━━
+   ! Descending specificity selector found. This selector specificity is (0, 2, 0)
+   
+     13 │   @container (min-width: 1px) {
+-    14 │     & .b .c {}
+-  > 15 │     & .c {}
++    14 │     & .b .c { color: red; }
++  > 15 │     & .c { color: red; }
+        │     ^^^^
+     16 │   }
+     17 │ }
+@@ -75,9 +75,9 @@ nested_specificity.invalid.css:15:5 lint/style/noDescendingSpecificity ━━━
+   
+     12 │ .a {
+     13 │   @container (min-width: 1px) {
+-  > 14 │     & .b .c {}
++  > 14 │     & .b .c { color: red; }
+        │     ^^^^^^^
+-    15 │     & .c {}
++    15 │     & .c { color: red; }
+     16 │   }
+   
+   i Descending specificity selector may not be applied. Consider rearranging the order of the selectors. See MDN web docs for more details.
+@@ -91,8 +91,8 @@ nested_specificity.invalid.css:23:5 lint/style/noDescendingSpecificity ━━━
+   ! Descending specificity selector found. This selector specificity is (0, 2, 0)
+   
+     21 │   @starting-style {
+-    22 │     & .f .g {}
+-  > 23 │     & .g {}
++    22 │     & .f .g { color: red; }
++  > 23 │     & .g { color: red; }
+        │     ^^^^
+     24 │   }
+     25 │ }
+@@ -101,9 +101,9 @@ nested_specificity.invalid.css:23:5 lint/style/noDescendingSpecificity ━━━
+   
+     20 │ .e {
+     21 │   @starting-style {
+-  > 22 │     & .f .g {}
++  > 22 │     & .f .g { color: red; }
+        │     ^^^^^^^
+-    23 │     & .g {}
++    23 │     & .g { color: red; }
+     24 │   }
+   
+   i Descending specificity selector may not be applied. Consider rearranging the order of the selectors. See MDN web docs for more details.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #13307** (closed): fix(biome_glob): match config globs for backslash paths in the JS API (@Ultroncn)
+- **PR #13284** (2026-11-18): feat(lint): add convex rule source and domain (@dyc3)
+- **PR #13276** (2026-11-18): release: crates v0.7.3 (@github-actions[bot])
 - **PR #13275** (2026-11-17): fix(tools): allow recent crate dependencies when publishing (@ematipico)
-- **PR #13266** (2026-11-17): chore(deps): fix advisories (@dyc3)
-- **PR #13265** (2026-11-17): release: crates v0.7.2 (@github-actions[bot])
-- **PR #13264** (2026-11-17): release: crates v0.7.1 (@github-actions[bot])
-- **PR #13262** (2026-11-17): fix(parse/html): don't panic on a second CDATA start marker (@GBra-4-669)
-- **PR #13250** (2026-11-16): docs(rowan): clarify the red-node pool docs and changeset (@dyc3)
+- **PR #13273** (2026-11-18): fix(cli): enable Markdown frontmatter when migrating Prettier (@tats-u)
+- **PR #13269** (2026-11-18): fix(markdown_parser): don't pair emphasis across paragraphs in a blockquote (@andrew-hesse)
 
 ---
 
@@ -1266,16 +2201,16 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. parse/html): don't panic on a second CDATA start marker
+## X. markdown_parser): don't pair emphasis across paragraphs in a blockquote
 
 **RULE**:
-When implementing operations in `.changeset/fix-html-second-cdata-marker-panic.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in biomejs/biome. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.changeset/fix-markdown-emphasis-quote-paragraphs.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in biomejs/biome. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b359a583`: parse/html): don't panic on a second CDATA start marker. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b6e7d37e`: markdown_parser): don't pair emphasis across paragraphs in a blockquote. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/fix-html-second-cdata-marker-panic.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/fix-markdown-emphasis-quote-paragraphs.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
@@ -1284,7 +2219,15 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 "@biomejs/biome": patch
 ---
 
-Fixed [#13258](https://github.com/biomejs/biome/issues/13258): the HTML parser no longer panics when a CDATA section starts with a second `<![CDATA[` marker. The marker is kept as literal text.
+Fixed [#13268](https://github.com/biomejs/biome/issues/13268): the Markdown formatter no longer pairs emphasis markers across paragraphs of a blockquote.
+
+```diff
+-> a _**, b
++> a ___, b
+ >
+-> c 20**.
++> c 20__.
+```
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1294,7 +2237,7 @@ Fixed [#13258](https://github.com/biomejs/biome/issues/13258): the HTML parser n
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b359a583` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b6e7d37e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

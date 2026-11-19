@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-19T14:52:33.547Z",
-    "lastVerified": "2026-11-19T14:52:33.547Z",
+    "lastChecked": "2026-11-19T15:50:57.653Z",
+    "lastVerified": "2026-11-19T15:50:57.653Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T15:42:42.572Z",
-    "lastVerified": "2026-11-19T15:42:42.572Z",
+    "lastChecked": "2026-11-19T15:50:57.663Z",
+    "lastVerified": "2026-11-19T15:50:57.663Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1430,9 +1430,9 @@
   "seaql-sea-orm": {
     "name": "sea-orm",
     "officialUrl": "https://github.com/SeaQL/sea-orm",
-    "lastChecked": "2026-11-18T12:33:11.534Z",
+    "lastChecked": "2026-11-19T15:50:54.907Z",
     "revisionIdentifier": "c453c64e",
-    "lastVerified": "2026-11-18T12:33:11.534Z"
+    "lastVerified": "2026-11-19T15:50:54.907Z"
   },
   "software-mansion-argent": {
     "name": "software-mansion/argent",
@@ -1656,9 +1656,9 @@
   "sigstore-cosign": {
     "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
-    "lastChecked": "2026-11-19T05:54:49.230Z",
+    "lastChecked": "2026-11-19T15:50:52.503Z",
     "revisionIdentifier": "0743bfcf",
-    "lastVerified": "2026-11-19T05:54:49.230Z"
+    "lastVerified": "2026-11-19T15:50:52.503Z"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j/langchain4j",
@@ -1885,12 +1885,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "higress-group-higress": {
-    "name": "higress-group/higress",
+    "name": "higress",
     "officialUrl": "https://github.com/higress-group/higress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-18T13:25:42.155Z",
-    "lastVerified": "2026-11-18T13:25:42.155Z",
+    "lastChecked": "2026-11-19T15:50:50.462Z",
+    "lastVerified": "2026-11-19T15:50:50.462Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-higress-group-higress",
@@ -1899,7 +1899,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "392b64e8"
   },
   "trufflesecurity-trufflehog": {
     "name": "trufflehog",
@@ -7591,5 +7592,46 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "biomejs-biome": {
+    "name": "biomejs/biome",
+    "officialUrl": "https://github.com/biomejs/biome",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-19T15:50:49.569Z",
+    "lastVerified": "2026-11-19T15:50:49.569Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-biomejs-biome",
+    "contentHash": "497c16ae1e702f9144ed77803c0530a7cfe498028b42da6164542cc3ba18f726",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-liquidai-lfm2.5-24b-a2b": {
+    "name": "LiquidAI/LFM2.5-24B-A2B",
+    "officialUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T15:50:45.341Z",
+    "lastVerified": "2026-11-19T15:50:45.341Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b",
+    "contentHash": "1d1721cf6a37eb47aaa43bf4872fbf641ae2eef259cf8a75ab830d902734478d",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mohamedrejeb-compose-rich-editor": {
+    "name": "compose-rich-editor",
+    "officialUrl": "https://github.com/MohamedRejeb/compose-rich-editor",
+    "lastChecked": "2026-11-19T15:50:47.491Z",
+    "revisionIdentifier": "3254ff75",
+    "lastVerified": "2026-11-19T15:50:47.491Z"
   }
 }
