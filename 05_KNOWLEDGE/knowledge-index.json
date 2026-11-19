@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T08:37:50.933Z",
+  "last_updated": "2026-11-19T09:18:29.005Z",
   "total_verified_learnings": 9015,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21709,
+  "total_items": 21717,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113629,10 +113629,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mintplex-labs-anything-llm-technical-construction-intelligence-mintplex-labs-any.md",
       "title": "Technical Construction Intelligence: Mintplex-Labs/anything-llm Core Invariants",
       "repository": "Mintplex-Labs/anything-llm",
-      "source_version": "64b599fc",
-      "content_hash": "5a718f4bdf1e2eb76c90fee0aad698bc8bab52259ba5718f30374963f1c62eea",
+      "source_version": "2f6a451f",
+      "content_hash": "d3c002f94aa422b15cbbe2af9ea025bdeb8d51de4a01707e1fceaf6726db008a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T09:14:50.614Z"
+      "persisted_at": "2026-11-19T09:08:54.708Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm",
@@ -113641,10 +113641,10 @@
       "relative_path": "08_VERIFICATION/mintplex-labs-anything-llm-verification-protocol-empirical-defect-shield-for-min.md",
       "title": "Verification Protocol: Empirical Defect Shield for Mintplex-Labs/anything-llm",
       "repository": "Mintplex-Labs/anything-llm",
-      "source_version": "64b599fc",
-      "content_hash": "7cb14d26ff5971ee53b87250c0609ca01c11c98b5e5a5365c7cd025eeb9b2a17",
+      "source_version": "2f6a451f",
+      "content_hash": "d4321f859f5776f138347bf8550605408e8dcb0b41217179316c7e15638abec3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T09:14:50.746Z"
+      "persisted_at": "2026-11-19T09:08:55.049Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-akhilaaa3-jev-omni-learnings-core-invariants",
@@ -113666,9 +113666,9 @@
       "title": "Technical Construction Intelligence: mintplex-labs-anything-llm-learnings Core Invariants",
       "repository": "mintplex-labs-anything-llm-learnings",
       "source_version": "HEAD",
-      "content_hash": "07f61dbf071466d1cb239a0dd782db7e91c09d69e4fa283685a83f497a7d232d",
+      "content_hash": "eded072256df44643a6c93bb2464ff25bf6f76a6aaf8332421666351f5962fcc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T16:00:02.172Z"
+      "persisted_at": "2026-11-19T09:18:28.576Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mintplex-labs-anything-llm-lea",
@@ -113678,9 +113678,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for mintplex-labs-anything-llm-learnings",
       "repository": "mintplex-labs-anything-llm-learnings",
       "source_version": "HEAD",
-      "content_hash": "9d2a8b334aa84858b5683bfbfa0d3e5e7a9d7250e95703f286bc340071a9b614",
+      "content_hash": "3750e49513d6c948cb98e3974fcaa0ce592f980a424e590bc4320d28646cf10f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:00:02.350Z"
+      "persisted_at": "2026-11-19T09:18:29.005Z"
     },
     "candidate_directive-editor-add-scoped-ios-account-deletion": {
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
@@ -234904,7 +234904,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
-      "content_hash": "97f66e1e56fa1cb298418a2c6962387a2c0a8b6d9fb2587ccb8d6ae79fb0ed19",
+      "content_hash": "1128bbfe641bf302f697399e1246d2941fc951506785325b50da2f0d43ac2622",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md",
       "promoted_rules": [],
@@ -234913,7 +234913,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T19:03:09.911Z",
+      "verified_at": "2026-11-19T09:17:00.919Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234930,9 +234930,9 @@
       "title": "Research & Knowledge Intelligence: orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF Core Invariants",
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
       "source_version": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
-      "content_hash": "d259cb8b84bfd05c98c6bff803b08d2b3e4b2d9513c59b677e83b918a1a0f3c7",
+      "content_hash": "6703c1132ce2cf71b2e2edabc0e1a6d1ffdc7f7118cd784757b2d06193dc900d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T19:03:10.255Z"
+      "persisted_at": "2026-11-19T09:17:01.446Z"
     },
     "learn-github-tw93-pake": {
       "learning_id": "learn-github-tw93-pake",
@@ -235200,9 +235200,9 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings Core Invariants",
       "repository": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "7074f431a46dc00c1bf36c2f127141c646636855a2dbac77a387637e39cf9a43",
+      "content_hash": "d38a235bc70bb15787b94a3de329c62cdbc8ffca51c91ec675b93aa98f9e1932",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T19:03:30.833Z"
+      "persisted_at": "2026-11-19T09:17:04.617Z"
     },
     "candidate_directive-misconf-use-tls_1_2-as-the-default-security-policy-for-api-gateway-domain-name": {
       "item_id": "candidate_directive-misconf-use-tls_1_2-as-the-default-security-policy-for-api-gateway-domain-name",
@@ -239540,8 +239540,8 @@
       "slug": "mintplex-labs-anything-llm",
       "platform": "github",
       "source_url": "https://github.com/Mintplex-Labs/anything-llm",
-      "source_version": "64b599fc",
-      "content_hash": "b47312902d433f5226aa0eed4881f5b60748841fc75d7470f922044b2fcd1ba2",
+      "source_version": "2f6a451f",
+      "content_hash": "b2e913eabef9155fe7aafeded6fb29a05363fee6471de4b63c410454868250df",
       "dossier_path": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md",
       "promoted_rules": [
@@ -239559,6 +239559,21 @@
           "number": 9185,
           "title": "misleading Model Router delete confirmation and surface workspac...",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9361,
+          "title": "Non-Blocking Streaming Process Spawning In Node.js Daemons",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9362,
+          "title": "Multi-Turn Reasoning Tag Stripping In Model Conversations",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9363,
+          "title": "Dynamic Credential Permission Invalidation For Subordinate Tokens",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -239566,7 +239581,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T09:14:50.126Z",
+      "verified_at": "2026-11-19T09:08:53.678Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242665,26 +242680,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 7277,
       "title": "Empirical Invariant Guard in README.md",
-      "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "fe3421e7",
+      "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+      "source_version": "3f8ab7ff",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-15T06:00:11.845Z"
+      "verified_at": "2026-11-19T09:12:18.049Z"
     },
     "candidate_directive-empirical-invariant-guard-in-readme-md": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-readme-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-EPO8-empirical-invariant-guard-in-readme-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-6HPV-empirical-invariant-guard-in-readme-md.md",
       "title": "Empirical Invariant Guard in README.md",
-      "repository": "projectdiscovery-nuclei-learnings",
+      "repository": "kubernetes-sigs-aws-load-balancer-controller-learnings",
       "source_version": "HEAD",
-      "content_hash": "34423c682c399362a3f9e1047fb50d1dc32809e119c8915ef7db11eabc7e318d",
+      "content_hash": "0f622d40873e86303e22030ce340d4861e07b4dc7e4bfac85fac2eba21bdc719",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T06:00:50.568Z"
+      "persisted_at": "2026-11-19T09:17:05.209Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-1017-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-1017-learning",
@@ -285726,11 +285741,16 @@
       "slug": "kubernetes-sigs-aws-load-balancer-controller",
       "platform": "github",
       "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-      "source_version": "6de51a66",
-      "content_hash": "19fe20183b5db04683acb424b60db54b7956767455a9ae4ad106b7156b8ced82",
+      "source_version": "3f8ab7ff",
+      "content_hash": "f748fae690d3f3fde83365843af02db789a451902079fb2fc62bbc17537b138e",
       "dossier_path": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
       "promoted_rules": [
+        {
+          "number": 7277,
+          "title": "Empirical Invariant Guard in README.md",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 9193,
           "title": "Empirical Invariant Guard in group_loader.go",
@@ -285742,7 +285762,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T10:18:50.251Z",
+      "verified_at": "2026-11-19T09:12:18.049Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -285784,10 +285804,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubernetes-sigs-aws-load-balancer-controller-architecture-intelligence-kubernete.md",
       "title": "Architecture Intelligence: kubernetes-sigs/aws-load-balancer-controller Core Invariants",
       "repository": "kubernetes-sigs/aws-load-balancer-controller",
-      "source_version": "6de51a66",
-      "content_hash": "69c91a8512843d3beb443ecdb840ff175a93a5ea59046cfc7c7a3f628c9e88bf",
+      "source_version": "3f8ab7ff",
+      "content_hash": "bb5e3e90548c8d5405844b4b67823cc83783a98a6aff8ab032eb4955b5d1704f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T10:18:50.737Z"
+      "persisted_at": "2026-11-19T09:12:18.726Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kubernetes-sigs-aws-load-balan": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kubernetes-sigs-aws-load-balan",
@@ -285797,9 +285817,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kubernetes-sigs-aws-load-balancer-controller-learnings",
       "repository": "kubernetes-sigs-aws-load-balancer-controller-learnings",
       "source_version": "HEAD",
-      "content_hash": "daa3f36c4031280a83ac4200892596d9523a63b2389f6fdeb7c6f4c047e22eb7",
+      "content_hash": "0043053b739e2aadab2f86d74e315aa15b408abbb1feba6dcc5b46071de554f0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T10:22:57.606Z"
+      "persisted_at": "2026-11-19T09:17:05.579Z"
     },
     "rule-9194": {
       "learning_id": "rule-9194",
@@ -285973,9 +285993,9 @@
       "title": "Architecture Intelligence: kubernetes-sigs-aws-load-balancer-controller-learnings Core Invariants",
       "repository": "kubernetes-sigs-aws-load-balancer-controller-learnings",
       "source_version": "HEAD",
-      "content_hash": "541a5dafd980675ab63b0e494f2bcdcd06ed9d8017a1cb51047b94fe3453e49e",
+      "content_hash": "ef9be54f3c50f776a35cd64371db516add9b5f8f8d56aa3b49bab7442562bb79",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T10:22:57.474Z"
+      "persisted_at": "2026-11-19T09:17:05.396Z"
     },
     "rule-9198": {
       "learning_id": "rule-9198",
@@ -293394,6 +293414,108 @@
       "content_hash": "c53feaaf54d011814425845a80f2333e11cfedece8da5b5ae3e65f52c3877728",
       "domain_letter": "G",
       "persisted_at": "2026-11-19T08:37:49.201Z"
+    },
+    "rule-9361": {
+      "learning_id": "rule-9361",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9361,
+      "title": "Non-Blocking Streaming Process Spawning In Node.js Daemons",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "2f6a451f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T09:08:53.678Z"
+    },
+    "rule-9362": {
+      "learning_id": "rule-9362",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9362,
+      "title": "Multi-Turn Reasoning Tag Stripping In Model Conversations",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "2f6a451f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T09:08:53.678Z"
+    },
+    "rule-9363": {
+      "learning_id": "rule-9363",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9363,
+      "title": "Dynamic Credential Permission Invalidation For Subordinate Tokens",
+      "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+      "source_version": "2f6a451f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T09:08:53.678Z"
+    },
+    "candidate_directive-non-blocking-streaming-process-spawning-in-node-js-daemons": {
+      "item_id": "candidate_directive-non-blocking-streaming-process-spawning-in-node-js-daemons",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-89J7-non-blocking-streaming-process-spawning-in-node-js-daemons.md",
+      "title": "Non-Blocking Streaming Process Spawning In Node.js Daemons",
+      "repository": "mintplex-labs-anything-llm-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d2875b960496b6ac5700d8daf559810145ecc80d59a774313a1046fd566eab48",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T09:18:27.909Z"
+    },
+    "candidate_directive-multi-turn-reasoning-tag-stripping-in-model-conversations": {
+      "item_id": "candidate_directive-multi-turn-reasoning-tag-stripping-in-model-conversations",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-89J8-multi-turn-reasoning-tag-stripping-in-model-conversations.md",
+      "title": "Multi-Turn Reasoning Tag Stripping In Model Conversations",
+      "repository": "mintplex-labs-anything-llm-learnings",
+      "source_version": "HEAD",
+      "content_hash": "37cc1f4246dc8cc57f1746cf3261dc6dddd57cb56c2067328daf1317b4b7cf38",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T09:18:28.126Z"
+    },
+    "candidate_directive-dynamic-credential-permission-invalidation-for-subordinate-tokens": {
+      "item_id": "candidate_directive-dynamic-credential-permission-invalidation-for-subordinate-tokens",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-89J9-dynamic-credential-permission-invalidation-for-subordinate-tokens.md",
+      "title": "Dynamic Credential Permission Invalidation For Subordinate Tokens",
+      "repository": "mintplex-labs-anything-llm-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b2bc8de4c5745c7358794ba23af0bdae0138f544b92c0a772de0686eb9f4844a",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-19T09:18:28.367Z"
+    },
+    "agent_contract-agent-contract-mintplex-labs-anything-llm-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-mintplex-labs-anything-llm-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/mintplex-labs-anything-llm-agent-contract-mintplex-labs-anything-llm-autonomous-.md",
+      "title": "Agent Contract: Mintplex-Labs/anything-llm Autonomous Specialist Persona",
+      "repository": "Mintplex-Labs/anything-llm",
+      "source_version": "2f6a451f",
+      "content_hash": "21a3dea98d957050ace43ea027b7358002bf2d05461c000cb955f09eea665622",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T09:08:54.889Z"
+    },
+    "agent_contract-agent-contract-mintplex-labs-anything-llm-learnings-autonomous-specialist-person": {
+      "item_id": "agent_contract-agent-contract-mintplex-labs-anything-llm-learnings-autonomous-specialist-person",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/mintplex-labs-anything-llm-learnings-agent-contract-mintplex-labs-anything-llm-l.md",
+      "title": "Agent Contract: mintplex-labs-anything-llm-learnings Autonomous Specialist Persona",
+      "repository": "mintplex-labs-anything-llm-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5272d4e6cfb2f40c55d0212c7e55d9e883a333404e3e7891c855585c9814cd93",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T09:18:28.810Z"
     }
   },
   "ai-builder-brain": {

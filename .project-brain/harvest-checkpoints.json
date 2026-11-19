@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T08:37:44.628Z",
+  "last_updated": "2026-11-19T09:17:01.192Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -245,14 +245,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
-      "content_hash": "97f66e1e56fa1cb298418a2c6962387a2c0a8b6d9fb2587ccb8d6ae79fb0ed19",
-      "verified_at": "2026-11-14T19:03:10.086Z",
+      "content_hash": "1128bbfe641bf302f697399e1246d2941fc951506785325b50da2f0d43ac2622",
+      "verified_at": "2026-11-19T09:17:01.191Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T19:03:10.086Z"
+      "last_updated": "2026-11-19T09:17:01.191Z"
     },
     "autotrust/GEV-26B-Decide-NVFP4": {
       "repository": "autotrust/GEV-26B-Decide-NVFP4",
@@ -9801,14 +9801,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mintplex-labs-anything-llm",
-      "content_hash": "b47312902d433f5226aa0eed4881f5b60748841fc75d7470f922044b2fcd1ba2",
-      "verified_at": "2026-11-18T09:14:50.304Z",
+      "content_hash": "b2e913eabef9155fe7aafeded6fb29a05363fee6471de4b63c410454868250df",
+      "verified_at": "2026-11-19T09:08:53.918Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T09:14:50.304Z"
+      "last_updated": "2026-11-19T09:08:53.918Z"
     },
     "shadcn-ui/taxonomy": {
       "repository": "shadcn-ui/taxonomy",
@@ -10116,14 +10116,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
-      "content_hash": "19fe20183b5db04683acb424b60db54b7956767455a9ae4ad106b7156b8ced82",
-      "verified_at": "2026-11-18T10:18:50.426Z",
+      "content_hash": "f748fae690d3f3fde83365843af02db789a451902079fb2fc62bbc17537b138e",
+      "verified_at": "2026-11-19T09:12:18.280Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T10:18:50.426Z"
+      "last_updated": "2026-11-19T09:12:18.280Z"
     },
     "qdrant/qdrant": {
       "repository": "qdrant/qdrant",

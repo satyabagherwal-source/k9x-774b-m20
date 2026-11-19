@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T08:37:50.570Z",
+  "last_updated": "2026-11-19T09:18:28.367Z",
   "directives": [
     {
       "id": "CD-001",
@@ -1885,14 +1885,14 @@
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop"
     },
     {
-      "id": "CD-EPO8",
+      "id": "CD-6HPV",
       "directive_title": "Empirical Invariant Guard in README.md",
-      "source_repo": "projectdiscovery-nuclei-learnings",
+      "source_repo": "kubernetes-sigs-aws-load-balancer-controller-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-EPO8-empirical-invariant-guard-in-readme-md.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-6HPV-empirical-invariant-guard-in-readme-md.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-15",
+      "date_staged": "2026-11-19",
       "domain_letter": "D"
     },
     {
@@ -32589,6 +32589,57 @@
       "source_repo": "apache-pinot",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-006ED7-prevent-lucene-class-initialization-dead.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-89J7",
+      "directive_title": "Non-Blocking Streaming Process Spawning In Node.js Daemons",
+      "source_repo": "mintplex-labs-anything-llm-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-89J7-non-blocking-streaming-process-spawning-in-node-js-daemons.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-89J8",
+      "directive_title": "Multi-Turn Reasoning Tag Stripping In Model Conversations",
+      "source_repo": "mintplex-labs-anything-llm-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-89J8-multi-turn-reasoning-tag-stripping-in-model-conversations.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-89J9",
+      "directive_title": "Dynamic Credential Permission Invalidation For Subordinate Tokens",
+      "source_repo": "mintplex-labs-anything-llm-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-89J9-dynamic-credential-permission-invalidation-for-subordinate-tokens.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "F"
+    },
+    {
+      "id": "CD-REV-B86FDD",
+      "directive_title": "Forensic Learning Record (Deep Inspection): orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B86FDD-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-E3255A",
+      "directive_title": "Empirical Invariant Guard in README.md",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "kubernetes-sigs-aws-load-balancer-controller",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E3255A-empirical-invariant-guard-in-readme-md.md",
       "staged_date": "2026-11-19"
     }
   ]

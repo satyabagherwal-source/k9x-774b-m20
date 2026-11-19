@@ -690003,3 +690003,419 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `4e153561` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9361. Non-Blocking Streaming Process Spawning In Node.js Daemons (Harvested from Mintplex-Labs/anything-llm)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Non-Blocking Streaming Process Spawning In Node.js Daemons",
+  "source": "Mintplex-Labs/anything-llm",
+  "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+  "source_version": "2f6a451f",
+  "license": "MIT",
+  "extracted_at": "2026-11-19T09:08:51.941Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mintplex-labs-anything-llm",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm) (Revision: `2f6a451f`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Daemons handling asynchronous I/O MUST NEVER execute long-running CLI tools, transcoders, or search binaries using `child_process.spawnSync` or `child_process.execSync`. External binaries with non-deterministic runtimes MUST be executed via `child_process.spawn`, wrapped in an event-driven `Promise`, streaming chunks via stdout/stderr, bounded by strict byte buffers, and aborted via explicit process signal propagation (`SIGTERM`/`SIGKILL`).
+
+**WHY**:
+Node.js runs on a single-threaded libuv event loop. Executing `spawnSync` for operations like FFmpeg audio transcode or Ripgrep search blocks the entire V8 thread. During process execution, zero network packets, HTTP requests, timer callbacks, or WebSocket/SSE heartbeats can be processed, causing cluster-wide connection dropouts, reverse-proxy gateway timeouts (HTTP 504), and false health-check probe terminations.
+
+**WHEN TO APPLY**:
+Any Node.js/TypeScript backend service executing system-level binaries (FFmpeg, Ripgrep, Pandoc, ImageMagick, Git, LibreOffice) where target data sizes or process runtimes exceed 5 milliseconds.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// collector/utils/process/safeSpawn.js
+const { spawn } = require("child_process");
+
+/**
+ * Spawns an external binary asynchronously without stalling the libuv event loop.
+ * Implements strict byte caps, line streaming, and resource cleanup.
+ *
+ * @param {string} binary Path to executable
+ * @param {string[]} args CLI arguments array
+ * @param {Object} options Options object
+ * @param {number} [options.maxBytes=10485760] Stdout buffer threshold (10MB default)
+ * @param {(line: string) => boolean|void} [options.onLine] Stream consumer; return true to abort early
+ * @returns {Promise<{stdout: string, stderr: string, exitCode: number|null}>}
+ */
+function safeSpawnBinary(binary, args, { maxBytes = 10 * 1024 * 1024, onLine = null } = {}) {
+  return new Promise((resolve, reject) => {
+    let child;
+    try {
+      child = spawn(binary, args, {
+        windowsHide: true,
+        stdio: ["ignore", "pipe", "pipe"],
+      });
+    } catch (err) {
+      return reject(new Error(`Failed to spawn binary ${binary}: ${err.message}`));
+    }
+
+    let stdoutAcc = "";
+    let stderrAcc = "";
+    let stdoutBytes = 0;
+    let pendingLine = "";
+    let isTerminated = false;
+
+    const terminate = () => {
+      if (isTerminated) return;
+      isTerminated = true;
+      child.kill("SIGTERM");
+      // Fallback force-kill if binary ignores SIGTERM
+      setTimeout(() => {
+        if (!child.killed) child.kill("SIGKILL");
+      }, 250);
+    };
+
+    child.stdout.setEncoding("utf8");
+    child.stdout.on("data", (chunk) => {
+      if (isTerminated) return;
+      stdoutBytes += Buffer.byteLength(chunk);
+      if (stdoutBytes > maxBytes) {
+        terminate();
+        return;
+      }
+
+      if (typeof onLine === "function") {
+        const lines = (pendingLine + chunk).split("\n");
+        pendingLine = lines.pop(); // Keep uncompleted trailing chunk
+        for (const line of lines) {
+          const cleanLine = line.replace(/\r$/, "");
+          if (cleanLine && onLine(cleanLine) === true) {
+            terminate();
+            return;
+          }
+        }
+      } else {
+        stdoutAcc += chunk;
+      }
+    });
+
+    child.stderr.setEncoding("utf8");
+    child.stderr.on("data", (chunk) => {
+      if (stderrAcc.length < 4096) stderrAcc += chunk;
+    });
+
+    child.on("error", (err) => {
+      isTerminated = true;
+      reject(err);
+    });
+
+    child.on("close", (code) => {
+      if (isTerminated) {
+        return resolve({ stdout: stdoutAcc, stderr: stderrAcc, exitCode: code });
+      }
+      if (code !== 0 && code !== null) {
+        return reject(
+          new Error(`Process ${binary} exited with code ${code}: ${stderrAcc.trim()}`)
+        );
+      }
+      if (pendingLine && typeof onLine === "function") {
+        onLine(pendingLine.replace(/\r$/, ""));
+      }
+      resolve({ stdout: stdoutAcc, stderr: stderrAcc, exitCode: code });
+    });
+  });
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// CRITICAL DEFECT: NEVER BLOCK EVENT LOOP IN BACKEND DAEMON
+const { spawnSync } = require("child_process");
+
+function convertAudio(input, output) {
+  // Freezes node server for minutes on 50MB audio files!
+  const result = spawnSync("ffmpeg", ["-i", input, output], { encoding: "utf8" });
+  if (result.status !== 0) throw new Error("FFmpeg failed");
+  return true;
+}
+```
+
+**VERIFICATION METHOD**:
+Execute an automated concurrency test: Run an HTTP server providing a `/ping` endpoint and a `/transcode` endpoint. Fire continuous `/ping` requests on a 10ms interval using an autonomous test runner while triggering a 50MB audio file conversion on `/transcode`. Assert that `/ping` latency P99 remains `< 15ms` throughout process execution.
+
+---
+
+
+---
+
+## 9362. Multi-Turn Reasoning Tag Stripping In Model Conversations (Harvested from Mintplex-Labs/anything-llm)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Multi-Turn Reasoning Tag Stripping In Model Conversations",
+  "source": "Mintplex-Labs/anything-llm",
+  "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+  "source_version": "2f6a451f",
+  "license": "MIT",
+  "extracted_at": "2026-11-19T09:08:52.607Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mintplex-labs-anything-llm",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm) (Revision: `2f6a451f`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Before submitting chat history arrays to local or open-source reasoning models (e.g., DeepSeek-R1, Gemma-4, Qwen-2.5-Coder via Ollama/vLLM), the ingestion layer MUST sanitize all previous assistant responses by stripping inline internal reasoning blocks (`<think>[\s\S]*?(?:<\/think>|$)`). Unterminated or stream-truncated `<think>` blocks MUST be cleanly sliced to the end of the content string.
+
+**WHY**:
+Modern chain-of-thought models rely on prompt formats where thought tokens indicate internal cognitive scratchpads. When previous turns replay raw `<think>` content inside the `assistant` conversation turn, models with proprietary reasoning templates mimic the replayed textual tokens rather than invoking their true native thinking mode. This leads to models hallucinating answers *inside* simulated think tags, emitting malformed agent outputs, bypassing tool-calling loops, and exhausting model output token context limits.
+
+**WHEN TO APPLY**:
+All chat completions, tool execution loops, and autonomous agent history builders interfacing with reasoning-capable models (DeepSeek R1, Gemma, QwQ, etc.) where reasoning content is captured during streaming.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// server/utils/AiProviders/sanitizer.js
+
+/**
+ * Sanitizes chat history prior to LLM submission.
+ * Removes replayed <think> tokens, handling multiline and unterminated tags.
+ *
+ * @param {Array<{role: string, content: any}>} messages
+ * @returns {Array<{role: string, content: any}>}
+ */
+function stripHistoryReasoning(messages = []) {
+  if (!Array.isArray(messages)) return [];
+
+  return messages.map((message) => {
+    // Invariant: Only sanitize assistant text messages
+    if (!message || message.role !== "assistant" || typeof message.content !== "string") {
+      return message;
+    }
+
+    // RegEx Invariant: Matches opening <think>, all characters non-greedily,
+    // and terminates at EITHER explicit </think> OR end of input ($) for incomplete streams.
+    const cleanContent = message.content
+      .replace(/<think>[\s\S]*?(?:<\/think>|$)/gi, "")
+      .trim();
+
+    return {
+      ...message,
+      content: cleanContent,
+    };
+  });
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// CRITICAL FAILURE: Passing raw history back to LLM context
+function constructPrompt({ chatHistory, userPrompt }) {
+  return [
+    { role: "system", content: "You are a helpful assistant." },
+    // DANGER: chatHistory contains "<think>I need to search db...</think> Here is the answer."
+    // Model confuses previous thought tags with current turn scratchpad!
+    ...chatHistory,
+    { role: "user", content: userPrompt }
+  ];
+}
+```
+
+**VERIFICATION METHOD**:
+Jest unit test evaluating both balanced and unclosed reasoning blocks:
+```javascript
+test("stripHistoryReasoning handles closed and unclosed tags", () => {
+  const input = [
+    { role: "user", content: "Hello" },
+    { role: "assistant", content: "<think>Hidden steps</think>Real Answer" },
+    { role: "assistant", content: "<think>Unterminated step that crashed" }
+  ];
+  const output = stripHistoryReasoning(input);
+  expect(output[1].content).toBe("Real Answer");
+  expect(output[2].content).toBe("");
+});
+```
+
+---
+
+
+---
+
+## 9363. Dynamic Credential Permission Invalidation For Subordinate Tokens (Harvested from Mintplex-Labs/anything-llm)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dynamic Credential Permission Invalidation For Subordinate Tokens",
+  "source": "Mintplex-Labs/anything-llm",
+  "source_url": "https://github.com/Mintplex-Labs/anything-llm",
+  "source_version": "2f6a451f",
+  "license": "MIT",
+  "extracted_at": "2026-11-19T09:08:53.311Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-mintplex-labs-anything-llm",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Mintplex-Labs/anything-llm](https://github.com/Mintplex-Labs/anything-llm) (Revision: `2f6a451f`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Security authorization middleware verifying scoped credentials (API keys, browser extension tokens, microservice bearer secrets) MUST validate the active, current permissions and roles of the *issuing principal entity* on EVERY privileged request, rather than solely checking token existence, expiry, or passive suspension status.
+
+**WHY**:
+Decoupling token verification from role checks creates an elevation-of-privilege window. When an administrator demotes an account from `admin` or `manager` down to `default` (unprivileged), pre-existing API keys or subordinate extension tokens remain in circulation. If the authorization gate checks only `key.userId === user.id && !user.suspended`, demoted users retain full administrative write access across workspaces through their orphaned keys.
+
+**WHEN TO APPLY**:
+All multi-tenant and multi-user authentication systems issuing auxiliary access tokens (CLI keys, Webhook secrets, Browser Extension tokens, OAuth refresh tokens).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// server/utils/middleware/authorization.js
+
+const ALLOWED_ROLES_FOR_EXTENSIONS = ["admin", "manager"];
+
+/**
+ * Validates browser extension API key and proves principal retains valid issuance role.
+ */
+async function validBrowserExtensionApiKey(req, res, next) {
+  const authHeader = req.header("Authorization");
+  const token = authHeader?.replace(/^Bearer\s+/i, "")?.trim();
+
+  if (!token) {
+    return res.status(401).json({ error: "Missing authorization token." });
+  }
+
+  const apiKeyRecord = await prisma.browser_extension_api_keys.findUnique({
+    where: { key: token },
+    include: { user: true },
+  });
+
+  if (!apiKeyRecord || !apiKeyRecord.user) {
+    return res.status(403).json({ error: "Invalid API key." });
+  }
+
+  const { user } = apiKeyRecord;
+
+  // Invariant 1: Check account suspension
+  if (user.suspended === 1 || user.suspended === true) {
+    return res.status(403).json({ error: "User account suspended." });
+  }
+
+  // Invariant 2: Dynamic Role Validation
+  // Token validity must be dynamically tied to the creator's current authorization role
+  if (!ALLOWED_ROLES_FOR_EXTENSIONS.includes(user.role)) {
+    return res.status(403).json({
+      error: "Principal no longer possesses permissions required to invoke this endpoint.",
+    });
+  }
+
+  req.user = user;
+  req.apiKey = apiKeyRecord;
+  next();
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// CRITICAL SECURITY HOLE: Checking existence and suspension while ignoring role demotion
+async function insecureApiKeyCheck(req, res, next) {
+  const key = await prisma.api_keys.findUnique({
+    where: { key: req.header("X-API-KEY") },
+    include: { user: true }
+  });
+  // Demoted manager retains admin powers indefinitely!
+  if (key && !key.user.suspended) return next();
+  return res.status(403).send("Forbidden");
+}
+```
+
+**VERIFICATION METHOD**:
+Run an automated integration test with the following sequence:
+1. Seed test database with a user in role `manager`.
+2. Generate a browser extension API key for the user.
+3. Assert `POST /api/browser-extension/embed-content` succeeds with HTTP 200.
+4. Update user role in database to `default`.
+5. Re-run identical `POST` request with identical key.
+6. Assert request fails with HTTP 403 Forbidden.
+
+---

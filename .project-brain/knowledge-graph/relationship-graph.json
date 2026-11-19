@@ -2,19 +2,19 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-19T08:09:20.015Z",
+  "updated_at": "2026-11-19T09:18:27.609Z",
   "statistics": {
-    "total_nodes": 379,
+    "total_nodes": 381,
     "total_edges": 178,
     "domain_distribution": {
       "D": 253,
       "M": 1,
-      "H": 55,
+      "H": 56,
       "J": 14,
       "K": 22,
       "L": 7,
       "G": 1,
-      "F": 18,
+      "F": 19,
       "B": 2,
       "E": 2,
       "I": 4
@@ -8477,6 +8477,50 @@
       ],
       "created_at": "2026-11-19T08:09:20.015Z",
       "updated_at": "2026-11-19T08:09:20.015Z"
+    },
+    "DOM-H-91651630": {
+      "id": "DOM-H-91651630",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Event Loop Starvation In Document Audio Processing (BUG-ASYNC-FFMPEG-01)",
+      "summary": "Use of synchronous child process execution (`spawnSync`) in an I/O server. -> Synchronous system calls in I/O servers are architectural defects. Asynchronous wrappers with event listeners (`child.on(\"close\")`) are mand",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://mintplex-labs-anything-llm/mintplex-labs-anything-llm-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T09:17:05.742Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (mintplex-labs-anything-llm)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-19T09:17:43.183Z",
+      "updated_at": "2026-11-19T09:17:43.183Z"
+    },
+    "DOM-F-C4730BD5": {
+      "id": "DOM-F-C4730BD5",
+      "domain": "F",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Recursive Agent Hallucination Induced By Reasoning Echo (BUG-REASONING-ECHO-02)",
+      "summary": "Lack of input sanitation on historic conversational turns prior to prompt compilation, coupled with missing handlers for Ollama native `chun -> LLM prompt compilers must explicitly maintain state hygiene between streaming outputs and conversational inputs. What is output to the user ",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://mintplex-labs-anything-llm/mintplex-labs-anything-llm-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T09:17:05.742Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (mintplex-labs-anything-llm)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "F",
+        "Design Intelligence"
+      ],
+      "created_at": "2026-11-19T09:18:27.609Z",
+      "updated_at": "2026-11-19T09:18:27.609Z"
     }
   },
   "edges": [

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T08:37:50.752Z",
-  "total_records": 1960,
+  "last_updated": "2026-11-19T09:18:28.576Z",
+  "total_records": 1962,
   "domains": {
     "A": {
       "total": 13,
@@ -889,7 +889,7 @@
       ]
     },
     "F": {
-      "total": 60,
+      "total": 61,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -950,7 +950,8 @@
         "DOM-F-3AD6D1E9",
         "domain_intelligence-design-intelligence-argoproj-argo-workflows-core-invariants",
         "domain_intelligence-design-intelligence-argoproj-argo-workflows-learnings-core-invariants",
-        "DOM-F-6F26131A"
+        "DOM-F-6F26131A",
+        "DOM-F-C4730BD5"
       ]
     },
     "G": {
@@ -1299,7 +1300,7 @@
       ]
     },
     "H": {
-      "total": 456,
+      "total": 457,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1756,7 +1757,8 @@
         "domain_intelligence-technical-construction-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invar",
         "domain_intelligence-technical-construction-intelligence-prometheus-prometheus-learnings-core-invaria",
         "DOM-H-50B52106",
-        "DOM-H-0D47575C"
+        "DOM-H-0D47575C",
+        "DOM-H-91651630"
       ]
     },
     "I": {
@@ -8624,8 +8626,8 @@
       "title": "Technical Construction Intelligence: Mintplex-Labs/anything-llm Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mintplex-labs-anything-llm-technical-construction-intelligence-mintplex-labs-any.md",
       "repository": "Mintplex-Labs/anything-llm",
-      "content_hash": "5a718f4bdf1e2eb76c90fee0aad698bc8bab52259ba5718f30374963f1c62eea",
-      "created_at": "2026-11-18T09:14:50.614Z"
+      "content_hash": "d3c002f94aa422b15cbbe2af9ea025bdeb8d51de4a01707e1fceaf6726db008a",
+      "created_at": "2026-11-19T09:08:54.708Z"
     },
     "DOM-D-AFA4F352": {
       "record_id": "DOM-D-AFA4F352",
@@ -8684,8 +8686,8 @@
       "title": "Technical Construction Intelligence: mintplex-labs-anything-llm-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-mintplex-labs-anything-llm-learnings-technical-construction-intelligence-mintple.md",
       "repository": "mintplex-labs-anything-llm-learnings",
-      "content_hash": "07f61dbf071466d1cb239a0dd782db7e91c09d69e4fa283685a83f497a7d232d",
-      "created_at": "2026-11-17T16:00:02.172Z"
+      "content_hash": "eded072256df44643a6c93bb2464ff25bf6f76a6aaf8332421666351f5962fcc",
+      "created_at": "2026-11-19T09:18:28.576Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -17304,8 +17306,8 @@
       "title": "Research & Knowledge Intelligence: orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-research-knowledge-intelligence.md",
       "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
-      "content_hash": "d259cb8b84bfd05c98c6bff803b08d2b3e4b2d9513c59b677e83b918a1a0f3c7",
-      "created_at": "2026-11-14T19:03:10.255Z"
+      "content_hash": "6703c1132ce2cf71b2e2edabc0e1a6d1ffdc7f7118cd784757b2d06193dc900d",
+      "created_at": "2026-11-19T09:17:01.446Z"
     },
     "domain_intelligence-technical-construction-intelligence-tw93-pake-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-tw93-pake-core-invariants",
@@ -17340,8 +17342,8 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-qwen3-8-flash-next-uncensored-gguf-learnings-research-knowledge-in.md",
       "repository": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings",
-      "content_hash": "7074f431a46dc00c1bf36c2f127141c646636855a2dbac77a387637e39cf9a43",
-      "created_at": "2026-11-14T19:03:30.833Z"
+      "content_hash": "d38a235bc70bb15787b94a3de329c62cdbc8ffca51c91ec675b93aa98f9e1932",
+      "created_at": "2026-11-19T09:17:04.617Z"
     },
     "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aquasecurity-trivy-learnings-core-invariants",
@@ -30694,8 +30696,8 @@
       "title": "Architecture Intelligence: kubernetes-sigs/aws-load-balancer-controller Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubernetes-sigs-aws-load-balancer-controller-architecture-intelligence-kubernete.md",
       "repository": "kubernetes-sigs/aws-load-balancer-controller",
-      "content_hash": "69c91a8512843d3beb443ecdb840ff175a93a5ea59046cfc7c7a3f628c9e88bf",
-      "created_at": "2026-11-18T10:18:50.737Z"
+      "content_hash": "bb5e3e90548c8d5405844b4b67823cc83783a98a6aff8ab032eb4955b5d1704f",
+      "created_at": "2026-11-19T09:12:18.726Z"
     },
     "domain_intelligence-quality-verification-intelligence-cross-encoder-ms-marco-minilm-l6-v2-core-invar": {
       "record_id": "domain_intelligence-quality-verification-intelligence-cross-encoder-ms-marco-minilm-l6-v2-core-invar",
@@ -30798,8 +30800,8 @@
       "title": "Architecture Intelligence: kubernetes-sigs-aws-load-balancer-controller-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubernetes-sigs-aws-load-balancer-controller-learnings-architecture-intelligence.md",
       "repository": "kubernetes-sigs-aws-load-balancer-controller-learnings",
-      "content_hash": "541a5dafd980675ab63b0e494f2bcdcd06ed9d8017a1cb51047b94fe3453e49e",
-      "created_at": "2026-11-18T10:22:57.474Z"
+      "content_hash": "ef9be54f3c50f776a35cd64371db516add9b5f8f8d56aa3b49bab7442562bb79",
+      "created_at": "2026-11-19T09:17:05.396Z"
     },
     "domain_intelligence-content-information-intelligence-projectcontour-contour-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-projectcontour-contour-core-invariants",
@@ -32928,6 +32930,74 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-19T08:09:19.993Z"
+    },
+    "DOM-H-91651630": {
+      "record_id": "DOM-H-91651630",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Event Loop Starvation In Document Audio Processing (BUG-ASYNC-FFMPEG-01)",
+      "content": "Synchronous system calls in I/O servers are architectural defects. Asynchronous wrappers with event listeners (`child.on(\"close\")`) are mandatory.",
+      "content_hash": "48ade8bb95395a72dc22b0710b610226833fffdddeece4dc6cd1ca06feb05d6c",
+      "summary": "Use of synchronous child process execution (`spawnSync`) in an I/O server. -> Synchronous system calls in I/O servers are architectural defects. Asynchronous wrappers with event listeners (`child.on(\"close\")`) are mand",
+      "provenance": {
+        "source_uri": "project://mintplex-labs-anything-llm/mintplex-labs-anything-llm-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T09:17:05.742Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (mintplex-labs-anything-llm)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `40ec73a5`, Issue `#7268`, PR `#7269`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T09:17:43.156Z"
+    },
+    "DOM-F-C4730BD5": {
+      "record_id": "DOM-F-C4730BD5",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "Recursive Agent Hallucination Induced By Reasoning Echo (BUG-REASONING-ECHO-02)",
+      "content": "LLM prompt compilers must explicitly maintain state hygiene between streaming outputs and conversational inputs. What is output to the user UI (thought traces) must not be blindly mirrored back into the model's forward context.",
+      "content_hash": "97e1e6ad8088825a3c8084076de5adb29f1f7ff5eb20e4c37f3d82ee3f89af97",
+      "summary": "Lack of input sanitation on historic conversational turns prior to prompt compilation, coupled with missing handlers for Ollama native `chun -> LLM prompt compilers must explicitly maintain state hygiene between streaming outputs and conversational inputs. What is output to the user ",
+      "provenance": {
+        "source_uri": "project://mintplex-labs-anything-llm/mintplex-labs-anything-llm-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T09:17:05.742Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (mintplex-labs-anything-llm)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `1046dc06`, Issue `#7261`, PR `#7271`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T09:18:27.582Z"
     }
   }
 }

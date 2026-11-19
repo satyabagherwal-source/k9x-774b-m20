@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T08:37:50.329Z",
+  "updated_at": "2026-11-19T09:17:04.944Z",
   "stats": {
-    "total_discovered": 5845,
-    "approved_pending_harvest": 5533,
+    "total_discovered": 5847,
+    "approved_pending_harvest": 5535,
     "harvested_count": 0,
     "rejected_count": 312,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5497,
+      "COMMUNITY_AND_EXPERT": 5499,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -126427,6 +126427,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
         "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-48B83971E59A": {
+      "id": "SRC-48B83971E59A",
+      "url": "https://aws-load-balancer-webhook-service.kube-system.svc/mutate-v1-service?timeout=10s",
+      "title": "https://aws-load-balancer-webhook-service.kube-system.svc/mutate-v1-service?timeout=10s",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T09:17:04.894Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
+        "fileName": "kubernetes-sigs-aws-load-balancer-controller-learnings.md"
+      }
+    },
+    "SRC-9060C17090FC": {
+      "id": "SRC-9060C17090FC",
+      "url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/e8491dea5e67f678c13347d1a2b46a5afc6dc538/helm/aws-load-balancer-controller/templates/deployment.yaml",
+      "title": "https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/e8491dea5e67f678c13347d1a2b46a5afc6dc538/helm/aws-load-balancer-controller/templates/deployment.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T09:17:04.944Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
+        "fileName": "kubernetes-sigs-aws-load-balancer-controller-learnings.md"
       }
     }
   }

@@ -11239,3 +11239,8 @@
 | `CYCLE-20261119-G79J` | `2026-11-19T08:28:38.983Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md` | Yes (`c626cf4b...`) |
 | `CYCLE-20261119-GOGE` | `2026-11-19T08:29:01.262Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9359` | Yes (`90e35960...`) |
 | `CYCLE-20261119-RW9X` | `2026-11-19T08:37:44.613Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9360` | Yes (`409b5fda...`) |
+| `CYCLE-20261119-VYMO` | `2026-11-19T09:08:53.904Z` | `Mintplex-Labs/anything-llm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9361, Rule 9362, Rule 9363` | Yes (`b2e913ea...`) |
+| `CYCLE-20261119-0CBD` | `2026-11-19T09:12:18.265Z` | `kubernetes-sigs/aws-load-balancer-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7277` | Yes (`f748fae6...`) |
+| `CYCLE-20261119-6EM1` | `2026-11-19T09:17:01.177Z` | `orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-qwen3.8-flash-next-uncensored-gguf-learnings.md` | Yes (`1128bbfe...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T09:17:43.186Z` | `mintplex-labs-anything-llm` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-91651630` [Domain H] | Yes (`48ade8bb...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T09:18:27.612Z` | `mintplex-labs-anything-llm` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-C4730BD5` [Domain F] | Yes (`97e1e6ad...`) |

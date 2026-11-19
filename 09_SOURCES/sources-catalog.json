@@ -235,8 +235,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "97f66e1e56fa1cb298418a2c6962387a2c0a8b6d9fb2587ccb8d6ae79fb0ed19",
-    "lastHarvestedAt": "2026-11-14T19:03:10.077Z",
+    "contentHash": "1128bbfe641bf302f697399e1246d2941fc951506785325b50da2f0d43ac2622",
+    "lastHarvestedAt": "2026-11-19T09:17:01.181Z",
     "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf"
   },
   "hf-autotrust-gev-26b-decide-nvfp4": {
@@ -6473,10 +6473,10 @@
     "repository": "Mintplex-Labs/anything-llm",
     "platform": "github",
     "sourceUrl": "https://github.com/Mintplex-Labs/anything-llm",
-    "sourceVersion": "64b599fc",
+    "sourceVersion": "2f6a451f",
     "license": "MIT",
-    "contentHash": "b47312902d433f5226aa0eed4881f5b60748841fc75d7470f922044b2fcd1ba2",
-    "lastHarvestedAt": "2026-11-18T09:14:50.296Z",
+    "contentHash": "b2e913eabef9155fe7aafeded6fb29a05363fee6471de4b63c410454868250df",
+    "lastHarvestedAt": "2026-11-19T09:08:53.908Z",
     "learningId": "learn-github-mintplex-labs-anything-llm"
   },
   "shadcn-ui-taxonomy": {
@@ -6703,10 +6703,10 @@
     "repository": "kubernetes-sigs/aws-load-balancer-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-    "sourceVersion": "6de51a66",
+    "sourceVersion": "3f8ab7ff",
     "license": "Apache-2.0",
-    "contentHash": "19fe20183b5db04683acb424b60db54b7956767455a9ae4ad106b7156b8ced82",
-    "lastHarvestedAt": "2026-11-18T10:18:50.419Z",
+    "contentHash": "f748fae690d3f3fde83365843af02db789a451902079fb2fc62bbc17537b138e",
+    "lastHarvestedAt": "2026-11-19T09:12:18.270Z",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller"
   },
   "qdrant-qdrant": {

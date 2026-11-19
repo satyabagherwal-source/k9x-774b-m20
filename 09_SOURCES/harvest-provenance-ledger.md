@@ -11272,3 +11272,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-cactus-compute-whistle` | `https://huggingface.co/Cactus-Compute/whistle` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-11-19T08:28:38.987Z |
 | `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `85417d1a` | Multi-dimensional audit evidence | 2026-11-19T08:29:01.266Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `3077890f` | Multi-dimensional audit evidence | 2026-11-19T08:37:44.618Z |
+| `learn-github-mintplex-labs-anything-llm` | `https://github.com/Mintplex-Labs/anything-llm` | `2f6a451f` | Multi-dimensional audit evidence | 2026-11-19T09:08:53.908Z |
+| `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `3f8ab7ff` | Multi-dimensional audit evidence | 2026-11-19T09:12:18.270Z |
+| `learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf` | `https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-19T09:17:01.181Z |
+| `learn-dom-h-91651630` | `project://mintplex-labs-anything-llm` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md` | 2026-11-19T09:17:43.186Z |
+| `learn-dom-f-c4730bd5` | `project://mintplex-labs-anything-llm` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mintplex-labs-anything-llm-learnings.md` | 2026-11-19T09:18:27.612Z |

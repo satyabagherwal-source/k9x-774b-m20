@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T08:37:44.624Z",
-  "total_cycles_completed": 10736,
-  "total_learnings_persisted": 10736,
-  "total_rules_promoted": 10129,
+  "last_updated": "2026-11-19T09:17:01.187Z",
+  "total_cycles_completed": 10739,
+  "total_learnings_persisted": 10739,
+  "total_rules_promoted": 10133,
   "history": [
-    {
-      "timestamp": "2026-11-18T14:57:03.938Z",
-      "repository": "karmada-io/karmada",
-      "learningId": "learn-github-karmada-io-karmada",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T15:06:02.209Z",
-      "repository": "unsloth/Qwen-Image-2.1-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T15:06:04.300Z",
-      "repository": "1jehuang/jcode",
-      "learningId": "learn-github-1jehuang-jcode",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T15:14:13.856Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -1403,6 +1382,27 @@
       "repository": "nginx/kubernetes-ingress",
       "learningId": "learn-github-nginx-kubernetes-ingress",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T09:08:53.914Z",
+      "repository": "Mintplex-Labs/anything-llm",
+      "learningId": "learn-github-mintplex-labs-anything-llm",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T09:12:18.276Z",
+      "repository": "kubernetes-sigs/aws-load-balancer-controller",
+      "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T09:17:01.187Z",
+      "repository": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+      "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

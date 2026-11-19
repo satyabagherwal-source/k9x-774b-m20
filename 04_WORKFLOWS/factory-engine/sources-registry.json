@@ -28,14 +28,14 @@
     "officialUrl": "https://github.com/Mintplex-Labs/anything-llm",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-18T09:14:49.374Z",
-    "lastVerified": "2026-11-18T09:14:49.374Z",
+    "lastChecked": "2026-11-19T09:07:19.196Z",
+    "lastVerified": "2026-11-19T09:07:19.196Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mintplex-labs-anything-llm",
-    "contentHash": "b47312902d433f5226aa0eed4881f5b60748841fc75d7470f922044b2fcd1ba2",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "contentHash": "b2e913eabef9155fe7aafeded6fb29a05363fee6471de4b63c410454868250df",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T08:37:47.944Z",
-    "lastVerified": "2026-11-19T08:37:47.944Z",
+    "lastChecked": "2026-11-19T09:17:04.167Z",
+    "lastVerified": "2026-11-19T09:17:04.167Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -216,12 +216,12 @@
     "lastVerified": "2026-11-19T07:51:06.185Z"
   },
   "microsoft-agent-governance-toolkit": {
-    "name": "microsoft/agent-governance-toolkit",
+    "name": "agent-governance-toolkit",
     "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-19T00:58:18.120Z",
-    "lastVerified": "2026-11-19T00:58:18.120Z",
+    "lastChecked": "2026-11-19T09:07:11.222Z",
+    "lastVerified": "2026-11-19T09:07:11.222Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-microsoft-agent-governance-toolkit",
@@ -230,7 +230,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f85abe1f"
   },
   "pathwaycom-llm-app": {
     "name": "llm-app",
@@ -242,9 +243,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-19T07:37:31.347Z",
+    "lastChecked": "2026-11-19T09:07:16.027Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-19T07:37:31.347Z"
+    "lastVerified": "2026-11-19T09:07:16.027Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -455,14 +456,14 @@
     "officialUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-18T10:18:49.490Z",
-    "lastVerified": "2026-11-18T10:18:49.490Z",
+    "lastChecked": "2026-11-19T09:07:14.364Z",
+    "lastVerified": "2026-11-19T09:07:14.364Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
-    "contentHash": "19fe20183b5db04683acb424b60db54b7956767455a9ae4ad106b7156b8ced82",
+    "contentHash": "f748fae690d3f3fde83365843af02db789a451902079fb2fc62bbc17537b138e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 1,
+    "recentFixesCount": 3,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -6852,5 +6853,36 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "arxanas-git-branchless": {
+    "name": "git-branchless",
+    "officialUrl": "https://github.com/arxanas/git-branchless",
+    "lastChecked": "2026-11-19T09:07:01.114Z",
+    "revisionIdentifier": "d0eceb7e",
+    "lastVerified": "2026-11-19T09:07:01.114Z"
+  },
+  "hf-orcarouter-qwen3.8-flash-next-uncensored-gguf": {
+    "name": "orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+    "officialUrl": "https://huggingface.co/orcarouter/Qwen3.8-Flash-Next-Uncensored-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T09:07:03.753Z",
+    "lastVerified": "2026-11-19T09:07:03.753Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-orcarouter-qwen3-8-flash-next-uncensored-gguf",
+    "contentHash": "1128bbfe641bf302f697399e1246d2941fc951506785325b50da2f0d43ac2622",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kosi-libs-kodein": {
+    "name": "Kodein",
+    "officialUrl": "https://github.com/kosi-libs/Kodein",
+    "lastChecked": "2026-11-19T09:07:06.047Z",
+    "revisionIdentifier": "8ef0da27",
+    "lastVerified": "2026-11-19T09:07:06.047Z"
   }
 }
