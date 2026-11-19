@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T00:23:36.192Z",
+  "updated_at": "2026-11-19T00:31:41.613Z",
   "stats": {
-    "total_discovered": 5727,
-    "approved_pending_harvest": 5418,
+    "total_discovered": 5731,
+    "approved_pending_harvest": 5422,
     "harvested_count": 0,
     "rejected_count": 309,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5395,
+      "COMMUNITY_AND_EXPERT": 5399,
       "OFFICIAL_DOCUMENTATION": 185,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -123852,6 +123852,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arangodb-arangodb-learnings.md",
         "fileName": "arangodb-arangodb-learnings.md"
+      }
+    },
+    "SRC-352FB124A8F2": {
+      "id": "SRC-352FB124A8F2",
+      "url": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa",
+      "title": "https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T00:31:40.640Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+        "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-4E702CEF5B32": {
+      "id": "SRC-4E702CEF5B32",
+      "url": "https://github.com/babel/babel/tree/HEAD/packages/babel-helper-compilation-targets",
+      "title": "https://github.com/babel/babel/tree/HEAD/packages/babel-helper-compilation-targets",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T00:31:41.537Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-3C2F2DFE479A": {
+      "id": "SRC-3C2F2DFE479A",
+      "url": "https://github.com/babel/babel/tree/HEAD/packages/babel-helper-module-transforms",
+      "title": "https://github.com/babel/babel/tree/HEAD/packages/babel-helper-module-transforms",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T00:31:41.575Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-B9265BEABBCC": {
+      "id": "SRC-B9265BEABBCC",
+      "url": "https://github.com/babel/babel/t",
+      "title": "https://github.com/babel/babel/t",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T00:31:41.613Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
+        "fileName": "trinodb-trino-learnings.md"
       }
     }
   }

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `5b9767ab`  
+> **Source Version**: `47745104`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T07:48:07.662Z  
+> **Timestamp**: 2026-11-19T00:31:36.293Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T07:48:07.656Z  
+> **Harvest Timestamp**: 2026-11-19T00:31:36.289Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13523 stars
+- **Stars / Engagement**: 13528 stars
 
 ---
 
@@ -1854,489 +1854,132 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2ccbcc61` (2026-11-17)
-**Commit Message**: Fix Parquet column index with only null pages
+### Incident Patch 1: `85cd787b` (2026-11-18)
+**Commit Message**: Bump the web-ui-dependencies group
 
-Null counts are optional, so such an index failed as corrupted.
+Bumps the web-ui-dependencies group in /core/trino-web-ui/src/main/resources/webapp with 23 updates:
 
-**File**: `lib/trino-parquet/src/main/java/io/trino/parquet/predicate/TupleDomainParquetPredicate.java` (modified, +4/-0)
+| Package | From | To |
+| --- | --- | --- |
+| [axios](https://github.com/axios/axios) | `1.20.0` | `1.21.0` |
+| [sass](https://github.com/sass/dart-sass) | `1.106.0` | `1.106.1` |
+| [@typescript-eslint/eslint-plugin](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/eslint-plugin) | `8.72.0` | `8.72.2` |
+| [@typescript-eslint/parser](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/parser) | `8.72.0` | `8.72.2` |
+| [typescript-eslint](https://github.com/typescript-eslint/typescript-eslint/tree/HEAD/packages/typescript-eslint) | `8.72.0` | `8.72.2` |
+| [@babel/core](https://github.com/babel/babel/tree/HEAD/packages/babel-core) | `7.29.7` | `7.29.13` |
+| [@babel/helper-compilation-targets](https://github.com/babel/babel/tree/HEAD/packages/babel-helper-compilation-targets) | `7.29.7` | `7.29.13` |
+| [@babel/helper-module-transforms](https://github.com/babel/babel/tree/HEAD/packages/babel-helper-module-transforms) | `7.29.7` | `7.29.14` |
+| [@babel/helper-string-parser](https://github.com/babel/babel/t
+
+**File**: `core/trino-web-ui/src/main/resources/webapp/bun.lock` (modified, +48/-42)
 ```diff
-@@ -592,6 +592,10 @@ public static Domain getDomain(
-         if (maxValues.isEmpty()) {
-             return Domain.all(type);
-         }
-+        if (nullPages.stream().allMatch(isNullPage -> isNullPage)) {
-+            // Null counts are optional, so only null pages tell that every value is null
-+            return Domain.onlyNull(type);
-+        }
+@@ -14,14 +14,14 @@
+         "@mui/material": "^9.5.0",
+         "@mui/x-charts": "^9.16.0",
+         "@xyflow/react": "^12.12.1",
+-        "axios": "^1.20.0",
++        "axios": "^1.21.0",
+         "lodash": "^4.18.1",
+         "monaco-editor": "^0.57.0",
+         "react": "^19.3.1",
+         "react-calendar-timeline": "^0.30.0-beta.4",
+         "react-dom": "^19.3.1",
+         "react-router-dom": "^7.18.5",
+-        "sass": "^1.106.0",
++        "sass": "^1.106.1",
+         "zustand": "^5.0.16",
+       },
+       "devDependencies": {
+@@ -30,8 +30,8 @@
+         "@types/lodash.merge": "^4.6.9",
+         "@types/react": "^19.3.0",
+         "@types/react-dom": "^19.3.0",
+-        "@typescript-eslint/eslint-plugin": "^8.72.0",
+-        "@typescript-eslint/parser": "^8.72.0",
++        "@typescript-eslint/eslint-plugin": "^8.72.2",
++        "@typescript-eslint/parser": "^8.72.2",
+         "@vitejs/plugin-react": "^5.2.0",
+         "eslint": "^9.39.5",
+         "eslint-plugin-react": "^7.37.5",
+@@ -40,7 +40,7 @@
+         "globals": "^16.5.0",
+         "prettier": "^3.9.10",
+         "typescript": "^6.0.3",
+-        "typescript-eslint": "^8.72.0",
++        "typescript-eslint": "^8.72.2",
+         "vite": "npm:rolldown-vite@^7.3.1",
+       },
+     },
+@@ -53,35 +53,35 @@
  
-         boolean hasNullValue = true;
-         if (nullCounts.isPresent()) {
+     "@babel/compat-data": ["@babel/compat-data@7.29.7", "", {}, "sha512-locTkQyKvwIEgBzVrn8693ebc97F2U8ZHjbXwDXJ5Fn2TCpNwTlKcaKLkdHop5c/icOFE7qt7Q9JC5hnKNa6Gg=="],
+ 
+-    "@babel/core": ["@babel/core@7.29.7", "", { "dependencies": { "@babel/code-frame": "^7.29.7", "@babel/generator": "^7.29.7", "@babel/helper-compilation-targets": "^7.29.7", "@babel/helper-module-transforms": "^7.29.7", "@babel/helpers": "^7.29.7", "@babel/parser": "^7.29.7", "@babel/template": "^7.29.7", "@babel/traverse": "^7.29.7", "@babel/types": "^7.29.7", "@jridgewell/remapping": "^2.3.5", "convert-source-map": "^2.0.0", "debug": "^4.1.0", "gensync": "^1.0.0-beta.2", "json5": "^2.2.3", "semver": "^6.3.1" } }, "sha512-RgHBCvtjbOK2gXSNBNIkNoEc9qoVEtau3hj8gEqKQuL3HZAibKarWFEI3Lfm6EYKkLalOh8eSrj9b+ch9H/VBA=="],
++    "@babel/core": ["@babel/core@7.29.13", "", { "dependencies": { "@babel/code-frame": "^7.29.7", "@babel/generator": "^7.29.13", "@babel/helper-compilation-targets": "^7.29.13", "@babel/helper-module-transforms": "^7.29.13", "@babel/helpers": "^7.29.13", "@babel/parser": "^7.29.13", "@babel/template": "^7.29.7", "@babel/traverse": "^7.29.13", "@babel/types": "^7.29.11", "@jridgewell/remapping": "^2.3.5", "convert-source-map": "^2.0.0", "debug": "^4.1.0", "gensync": "^1.0.0-beta.2", "json5": "^2.2.3", "semver": "^6.3.1" } }, "sha512-j1nvOQCZYSgp7HLmisnCXFTpVvFODiijQ9QHkORfGKWH6YDtskTEeCJS7eV545GZ9UBzrq0e2xsOd5QQ5PjIqw=="],
+ 
+     "@babel/generator": ["@babel/generator@7.29.13", "", { "dependencies": { "@babel/parser": "^7.29.13", "@babel/types": "^7.29.11", "@jridgewell/gen-mapping": "^0.3.12", "@jridgewell/trace-mapping": "^0.3.28", "jsesc": "^3.0.2" } }, "sha512-T5FRo+RzVHvGjWOuF1Ljc44b+NXAOazodHkGUHp4I3zCkQ4/sNVJm56h1S278LMR0bY5xBhztGziSbli8zObIw=="],
+ 
+-    "@babel/helper-compilation-targets": ["@babel/helper-compilation-targets@7.29.7", "", { "dependencies": { "@babel/compat-data": "^7.29.7", "@babel/helper-validator-option": "^7.29.7", "browserslist": "^4.24.0", "lru-cache": "^5.1.1", "semver": "^6.3.1" } }, "sha512-wem6WaBj4NaVYVdNhLPPVacES6ZJ+KBBfSkTMD3YZxbP3rm3Di85tJU5ljaUNhaOynt+Aj0xruhYuzQBt8n71g=="],
++    "@babel/helper-compilation-targets": ["@babel/helper-compilation-targets@7.29.13", "", { "dependencies": { "@babel/compat-data": "^7.29.7", "@babel/helper-validator-option": "^7.29.7", "browserslist": "^4.24.0", "lru-cache": "^5.1.1", "semver": "^6.3.1" } }, "sha512-8WxJ4/Vmes3ghacj8VOJy3NW8eyHiFY/4thU/LSBuBE470+igjR/j1ZTNn8fV5VdNrLx6iXUwig526UdOvfP0w=="],
+ 
+     "@babel/helper-globals": ["@babel/helper-globals@7.29.7", "", {}, "sha512-3nQVUAtvkKH9zahfWgw96Jc/uFOmjACE1kQz82E2lqWmHBgjzbNlsC22nuQTfahmWeQtTq5nQ/4Nnd2A1wj4zA=="],
+ 
+     "@babel/helper-module-imports": ["@babel/helper-module-imports@7.29.7", "", { "dependencies": { "@babel/traverse": "^7.29.7", "@babel/types": "^7.29.7" } }, "sha512-ejHwrQQYcm9xnTivShn2IDOlIzInN34AXskvq9QicvCtEzq1Vzclu/tKF8Jq1Cg8JG2GL6/EmjgsCT7lXepE3g=="],
+ 
+-    "@babel/helper-module-transforms": ["@babel/helper-module-transforms@7.29.7", "", { "dependencies": { "@babel/helper-module-imports": "^7.29.7", "@babel/helper-validator-identifier": "^7.29.7", "@babel/traverse": "^7.29.7" }, "peerDependencies": { "@babel/core": "^7.0.0" } }, "sha512-UPUVSyXbOh627KiCIGQSgwWzGeBKLkaJ9PJEdrngIwMSzxLR4jS4+f1f1jb7VzBbg8nFLaYotvVPFCTqdrmTAg=="],
++    "@babel/helper-module-transforms": ["@babel/helper-module-transforms@7.29.14", "", { "dependencies": { "@babel/helper-module-imports": "^7.29.7", "@babel/helper-validator-identifier": "^7.29.7", "@babel/traverse": "^7.29.14" }, "peerDependencies": { "@babel/core": "^7.0.0" } }, "sha512-2XDvQVd9JESaOgGc4jT2/jquTAO7ppA5noTZQqH+MmZ89yjCzScLwtCPbWtkPZylL+TLWR49IwWmk+QkRR4GsA=="],
+ 
+     "@babel/helper
 ```
 
-**File**: `lib/trino-parquet/src/test/java/io/trino/parquet/TestTupleDomainParquetPredicate.java` (modified, +16/-0)
+**File**: `core/trino-web-ui/src/main/resources/webapp/package.json` (modified, +5/-5)
 ```diff
-@@ -929,6 +929,22 @@ public void testColumnIndexWithNoNullsCount()
-                         true));
-     }
- 
-+    @Test
-+    public void testColumnIndexWithOnlyNullPagesAndNoNullsCount()
-+            throws Exception
-+    {
-+        ColumnIndex columnIndex = ColumnIndexBuilder.build(
-+                Types.required(INT64).named("test_int64"),
-+                BoundaryOrder.UNORDERED,
-+                asList(true, true, true),
-+                null,
-+                toByteBufferList(null, null, null),
-+                toByteBufferList(null, null, null));
-+        ColumnDescriptor column = new ColumnDescriptor(new String[] {"path"}, Types.optional(INT64).named("Test column"), 0, 0);
-+        assertThat(getDomain(BIGINT, 200, columnIndex, new ParquetDataSourceId("test"), column, UTC))
-+                .isEqualTo(Domain.onlyNull(BIGINT));
-+    }
-+
-     private ColumnDescriptor createColumnDescriptor(PrimitiveTypeName typeName, String columnName)
-     {
-         return new ColumnDescriptor(new String[] {}, new PrimitiveType(REQUIRED, typeName, columnName), 0, 0);
-```
-
----
-
-### Incident Patch 2: `d54888f4` (2026-11-17)
-**Commit Message**: Fix caching of expressions with trim characters
-
-**File**: `core/trino-main/src/main/java/io/trino/operator/scalar/StringFunctions.java` (modified, +14/-13)
-```diff
-@@ -34,6 +34,7 @@
- import io.trino.spi.function.SqlType;
- import io.trino.spi.type.Chars;
- import io.trino.spi.type.StandardTypes;
-+import io.trino.type.CodePoints;
- import io.trino.type.CodePointsType;
- import io.trino.util.Soundex;
- import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
-@@ -575,17 +576,17 @@ public static Slice charTrim(@SqlType("char(x)") Slice slice)
-     @ScalarFunction(value = "ltrim", neverFails = true)
-     @LiteralParameters("x")
-     @SqlType("varchar(x)")
--    public static Slice leftTrim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) int[] codePointsToTrim)
-+    public static Slice leftTrim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) CodePoints codePointsToTrim)
-     {
--        return SliceUtf8.leftTrim(slice, codePointsToTrim);
-+        return SliceUtf8.leftTrim(slice, codePointsToTrim.codePoints());
-     }
- 
-     // TODO remove once legacy_varchar_to_char_coercion is gone https://github.com/trinodb/trino/issues/31297
-     @Description("Remove the longest string containing only given characters from the beginning of a string")
-     @ScalarFunction(value = "ltrim", neverFails = true)
-     @LiteralParameters("x")
-     @SqlType("varchar(x)")
--    public static Slice charLeftTrim(@SqlType("char(x)") Slice slice, @SqlType(CodePointsType.NAME) int[] codePointsToTrim)
-+    public static Slice charLeftTrim(@SqlType("char(x)") Slice slice, @SqlType(CodePointsType.NAME) CodePoints codePointsToTrim)
-     {
-         return leftTrim(slice, codePointsToTrim);
-     }
-@@ -594,17 +595,17 @@ public static Slice charLeftTrim(@SqlType("char(x)") Slice slice, @SqlType(CodeP
-     @ScalarFunction(value = "rtrim", neverFails = true)
-     @LiteralParameters("x")
-     @SqlType("varchar(x)")
--    public static Slice rightTrim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) int[] codePointsToTrim)
-+    public static Slice rightTrim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) CodePoints codePointsToTrim)
-     {
--        return SliceUtf8.rightTrim(slice, codePointsToTrim);
-+        return SliceUtf8.rightTrim(slice, codePointsToTrim.codePoints());
-     }
- 
-     // TODO remove once legacy_varchar_to_char_coercion is gone https://github.com/trinodb/trino/issues/31297
-     @Description("Remove the longest string containing only given characters from the end of a string")
-     @ScalarFunction(value = "rtrim", neverFails = true)
-     @LiteralParameters("x")
-     @SqlType("varchar(x)")
--    public static Slice charRightTrim(@SqlType("char(x)") Slice slice, @SqlType(CodePointsType.NAME) int[] codePointsToTrim)
-+    public static Slice charRightTrim(@SqlType("char(x)") Slice slice, @SqlType(CodePointsType.NAME) CodePoints codePointsToTrim)
-     {
-         return rightTrim(slice, codePointsToTrim);
-     }
-@@ -613,35 +614,35 @@ public static Slice charRightTrim(@SqlType("char(x)") Slice slice, @SqlType(Code
-     @ScalarFunction(value = "trim", neverFails = true)
-     @LiteralParameters("x")
-     @SqlType("varchar(x)")
--    public static Slice trim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) int[] codePointsToTrim)
-+    public static Slice trim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) CodePoints codePointsToTrim)
-     {
--        return SliceUtf8.trim(slice, codePointsToTrim);
-+        return SliceUtf8.trim(slice, codePointsToTrim.codePoints());
-     }
- 
-     // TODO remove once legacy_varchar_to_char_coercion is gone https://github.com/trinodb/trino/issues/31297
-     @Description("Remove the longest string containing only given characters from the beginning and end of a string")
-     @ScalarFunction(value = "trim", neverFails = true)
-     @LiteralParameters("x")
-     @SqlType("varchar(x)")
--    public static Slice charTrim(@SqlType("char(x)") Slice slice, @SqlType(CodePointsType.NAME) int[] codePointsToTrim)
-+    public static Slice charTrim(@SqlType("char(x)") Slice slice, @SqlType(CodePointsType.NAME) CodePoints codePointsToTrim)
-     {
-         return trim(slice, codePointsToTrim);
-     }
- 
-     @ScalarOperator(OperatorType.CAST)
-     @LiteralParameters("x")
-     @SqlType(CodePointsType.NAME)
--    public static int[] castVarcharToCodePoints(@SqlType("varchar(x)") Slice slice)
-+    public static CodePoints castVarcharToCodePoints(@SqlType("varchar(x)") Slice slice)
-     {
--        return castToCodePoints(slice);
-+        return new CodePoints(castToCodePoints(slice));
-     }
- 
-     @ScalarOperator(OperatorType.CAST)
-     @SqlType(CodePointsType.NAME)
-     @LiteralParameters("x")
--    public static int[] castCharToCodePoints(@LiteralParameter("x") int x, @SqlType("char(x)") Slice slice)
-+    public static CodePoints castCharToCodePoints(@LiteralParameter("x") int x, @SqlType("char(x)") Slice slice)
-     {
--        return castToCodePoints(padSpaces(slice, x));
-+        return new CodePoints(castToCodePoints(padSpaces(slice, x)));
-     }
- 
-     private static int[] castToCodePoints(Slice slice)
-```
-
-**File**: `core/trino-main/src/main/java/io/trino/operator/scalar/VarcharMethods.java` (modified, +4/-3)
-```diff
-@@ -23,6 +23,7 @@
- import io.trino.spi.function.SqlType;
- import io.trino.spi.function.StaticMethod;
- import io.trino.spi.type.StandardTypes;
-+import io.trino.type.CodePoints;
- import io.trino.type.CodePointsType;
- 
- public final class VarcharMethods
-@@ -143,7 +144,7 @@ public static Slice trim(@SqlType("varchar(x)") Slice slice)
-     @InstanceMethod
-     @LiteralParameters("x")
-     @SqlType("varchar(x)")
--    public static Slice trim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) int[] codePointsToTrim)
-+    public static Slice trim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) CodePoints codePointsToTrim)
-     {
-         return StringFunctions.trim(slice, codePointsToTrim);
-     }
-@@ -163,7 +164,7 @@ public static Slice leftTrim(@SqlType("varchar(x)") Slice slice)
-     @InstanceMethod
-     @LiteralParameters("x")
-     @SqlType("varchar(x)")
--    public static Slice leftTrim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) int[] codePointsToTrim)
-+    public static Slice leftTrim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) CodePoints codePointsToTrim)
-     {
-         return StringFunctions.leftTrim(slice, codePointsToTrim);
-     }
-@@ -183,7 +184,7 @@ public static Slice rightTrim(@SqlType("varchar(x)") Slice slice)
-     @InstanceMethod
-     @LiteralParameters("x")
-     @SqlType("varchar(x)")
--    public static Slice rightTrim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) int[] codePointsToTrim)
-+    public static Slice rightTrim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) CodePoints codePointsToTrim)
-     {
-         return StringFunctions.rightTrim(slice, codePointsToTrim);
-     }
-```
-
-**File**: `core/trino-main/src/main/java/io/trino/type/CodePoints.java` (added, +58/-0)
-```diff
-@@ -0,0 +1,58 @@
-+/*
-+ * Licensed under the Apache License, Version 2.0 (the "License");
-+ * you may not use this file except in compliance with the License.
-+ * You may obtain a copy of the License at
-+ *
-+ *     http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing, software
-+ * distributed under the License is distributed on an "AS IS" BASIS,
-+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+ * See the License for the specific language governing permissions and
-+ * limitations under the License.
-+ */
-+package io.trino.type;
-+
-+import java.util.Arrays;
-+
-+import static java.util.Objects.requireNonNull;
-+
-+public final class CodePoints
-+{
-+    private final int[] codePoints;
-+
-+    public CodePoints(int[] codePoints)
-+    {
-+        this.codePoints = requireNonNull(codePoints, "codePoints is null");
-+    }
-+
-+    public int[] codePoints()
-+    {
-+        return codePoints;
-+    }
-+
-+    @Override
-+    public boolean equals(Object obj)
-+    {
-+        if (this == obj) {
-+            return true;
-+        }
-+        if (obj == null || getClass() != obj.getClass()) {
-+            return false;
-+        }
-+        CodePoints other = (CodePoints) obj;
-+        return Arrays.equals(codePoints, other.codePoints);
-+    }
-+
-+    @Override
-+    public int hashCode()
-+    {
-+        return Arrays.hashCode(codePoints);
-+    }
-+
-+    @Override
-+    public String toString()
-+    {
-+        return new String(codePoints, 0, codePoints.length);
-+    }
-+}
-```
-
-**File**: `core/trino-main/src/main/java/io/trino/type/CodePointsType.java` (modified, +3/-3)
-```diff
-@@ -30,7 +30,7 @@ public class CodePointsType
- 
-     private CodePointsType()
-     {
--        super(new TypeDescriptor(NAME), int[].class);
-+        super(new TypeDescriptor(NAME), CodePoints.class);
-     }
- 
-     @Override
-@@ -57,13 +57,13 @@ public Object getObject(Block block, int position)
-         Slice slice = valueBlock.getSlice(valuePosition);
-         int[] codePoints = new int[slice.length() / Integer.BYTES];
-         slice.getInts(0, codePoints);
--        return codePoints;
-+        return new CodePoints(codePoints);
-     }
- 
-     @Override
-     public void writeObject(BlockBuilder blockBuilder, Object value)
-     {
--        int[] codePoints = (int[]) value;
-+        int[] codePoints = ((CodePoints) value).codePoints();
-         Slice slice = Slices.allocate(codePoints.length * Integer.BYTES);
-         slice.setInts(0, codePoints);
-         ((VariableWidthBlockBuilder) blockBuilder).writeEntry(slice);
-```
-
-**File**: `core/trino-main/src/test/java/io/trino/sql/gen/TestPageFunctionCompiler.java` (modified, +14/-0)
-```diff
-@@ -97,6 +97,7 @@
- import static io.trino.block.BlockAssertions.createStringsBlock;
- import static io.trino.operator.scalar.ArrayTransformFunction.ARRAY_TRANSFORM_NAME;
- import static io.trino.operator.scalar.JoniRegexpCasts.joniRegexp;
-+import static io.trino.operator.scalar.StringFunctions.castVarcharToCodePoints;
- import static io.trino.spi.StandardErrorCode.NUMERIC_VALUE_OUT_OF_RANGE;
- import static io.trino.spi.function.InvocationConvention.InvocationArgumentConvention.NEVER_NULL;
- import static io.trino.spi.function.InvocationConvention.InvocationReturnConvention.FAIL_ON_NULL;
-@@ -115,6 +116,7 @@
- import static io.trino.testing.assertions.TrinoExceptionAssert.assertTrinoExceptionThrownBy;
- import static io.trino.transaction.InMemoryTransactionManager.createTestTransactionManager;
- import static io.trino.type.CharVarcharCoercion.SQL_STANDARD;
-+import static io.trino.type.CodePointsType.CODE_POINTS;
- import static io.trino.type.JoniRegexpType.JONI_REGEXP;
- import static io.trino.type.JsonPathType.JSON_PATH;
- import static io.trino.type.JsonType.JSON;
-@@ -653,6 +655,7 @@ public void testProjectionCacheWithConstant()
-         PageFunctionCompiler cacheCompiler = FUNCTION_RESOLUTION.getPageFunctionCompiler(100);
-         ResolvedFunction jsonExtractScalar = FUNCTION_RESOLUTION.resolveFunction("json_extract_scalar", fromTypes(VARCHAR, JSON_PATH));
-         ResolvedFunction joniRegexpLike = FUNCTION_RESOLUTION.resolveFunction("regexp_like", fromTypes(VARCHAR, JONI_REGEXP));
-+        ResolvedFunction leftTrim = FUNCTION_RESOLUTION.resolveFunction("ltrim", fromTypes(VARCHAR, CODE_POINTS));
-         Reference input = new Reference(VARCHAR, "c");
-         Map<Symbol, Integer> layout = ImmutableMap.of(new Symbol(VARCHAR, "c"), 0);
- 
-@@ -677,6 +680,17 @@ public void testProjectionCacheWithConstant()
-         cacheCompiler.compileProjection(call(joniRegexpLike, input, new Constant(JONI_REGEXP, joniRegexp(utf8Slice("b.*")))), layout, SQL_STANDARD, Optional.empty());
-         assertThat(cacheCompiler.getProjectionCache().getRequestCount()).isEqualTo(6);
-         assertThat(cacheCompiler.getProjectionCache().getLoadCount()).isEqualTo(4);
-+
-+        // Separately created code points with the same content: cache hit
-+        cacheCompiler.compileProjection(call(leftTrim, input, new Constant(CODE_POINTS, castVarcharToCodePoints(utf8Slice("ab")))), layout, SQL_STANDARD, Optional.empty());
-+        cacheCompiler.compileProjection(call(leftTrim, input, new Constant(CODE_POINTS, castVarcharToCodePoints(utf8Slice("ab")))), layout, SQL_STANDARD, Optional.empty());
-+        assertThat(cacheCompiler.getProjectionCache().getRequestCount()).isEqualTo(8);
-+        assertThat(cacheCompiler.getProjectionCache().getLoadCount()).isEqualTo(5);
-+
-+        // Different code points: cache miss
-+        cacheCompiler.compileProjection(call(leftTrim, input, new Constant(CODE_POINTS, castVarcharToCodePoints(utf8Slice("ac")))), layout, SQL_STANDARD, Optional.empty());
-+        assertThat(cacheCompiler.getProjectionCache().getRequestCount()).isEqualTo(9);
-+        assertThat(cacheCompiler.getProjectionCache().getLoadCount()).isEqualTo(6);
-     }
- 
-     @Test
-```
-
----
-
-### Incident Patch 3: `5e25d2a1` (2026-11-16)
-**Commit Message**: Fix caching of expressions with JSON path or regexp
-
-Compare JsonPath and JoniRegexp by pattern, so equal patterns share
-PageFunctionCompiler cache entries.
-
-**File**: `core/trino-main/src/main/java/io/trino/operator/scalar/JsonPath.java` (modified, +19/-0)
-```diff
-@@ -90,6 +90,25 @@ public JsonExtract.JsonExtractor<Long> getSizeExtractor()
-         return sizeExtractor;
-     }
- 
-+    @Override
-+    public boolean equals(Object obj)
-+    {
-+        if (this == obj) {
-+            return true;
-+        }
-+        if (obj == null || getClass() != obj.getClass()) {
-+            return false;
-+        }
-+        JsonPath other = (JsonPath) obj;
-+        return pattern.equals(other.pattern);
-+    }
-+
-+    @Override
-+    public int hashCode()
-+    {
-+        return pattern.hashCode();
-+    }
-+
-     @Override
-     public String toString()
-     {
-```
-
-**File**: `core/trino-main/src/main/java/io/trino/type/JoniRegexp.java` (modified, +20/-0)
-```diff
-@@ -45,6 +45,26 @@ public Matcher matcher(byte[] bytes)
-         return regex.matcher(bytes);
-     }
- 
-+    // regex is always compiled from pattern with the same options (see JoniRegexpCasts), so the pattern identifies it
-+    @Override
-+    public boolean equals(Object obj)
-+    {
-+        if (this == obj) {
-+            return true;
-+        }
-+        if (obj == null || getClass() != obj.getClass()) {
-+            return false;
-+        }
-+        JoniRegexp other = (JoniRegexp) obj;
-+        return pattern.equals(other.pattern);
-+    }
-+
-+    @Override
-+    public int hashCode()
-+    {
-+        return pattern.hashCode();
-+    }
-+
-     @Override
-     public String toString()
-     {
-```
-
-**File**: `core/trino-main/src/main/java/io/trino/type/Re2JRegexp.java` (modified, +2/-0)
-```diff
-@@ -29,6 +29,8 @@
- import static java.lang.Math.toIntExact;
- import static java.lang.String.format;
- 
-+// Identity equality is deliberate: RE2 keeps mutable matching state (NFA fallback, DFA state cache), so an
-+// instance must not be reused across queries by a cache keyed on expression equality
- public final class Re2JRegexp
- {
-     private static final Logger log = Logger.get(Re2JRegexp.class);
-```
-
-**File**: `core/trino-main/src/test/java/io/trino/sql/gen/TestPageFunctionCompiler.java` (modified, +36/-0)
-```diff
-@@ -31,6 +31,7 @@
- import io.trino.operator.project.PageProjection;
- import io.trino.operator.project.SelectedPositions;
- import io.trino.operator.scalar.ChoicesSpecializedSqlScalarFunction;
-+import io.trino.operator.scalar.JsonPath;
- import io.trino.operator.scalar.SpecializedSqlScalarFunction;
- import io.trino.spi.Page;
- import io.trino.spi.block.ArrayBlockBuilder;
-@@ -95,6 +96,7 @@
- import static io.trino.block.BlockAssertions.createRepeatedValuesBlock;
- import static io.trino.block.BlockAssertions.createStringsBlock;
- import static io.trino.operator.scalar.ArrayTransformFunction.ARRAY_TRANSFORM_NAME;
-+import static io.trino.operator.scalar.JoniRegexpCasts.joniRegexp;
- import static io.trino.spi.StandardErrorCode.NUMERIC_VALUE_OUT_OF_RANGE;
- import static io.trino.spi.function.InvocationConvention.InvocationArgumentConvention.NEVER_NULL;
- import static io.trino.spi.function.InvocationConvention.InvocationReturnConvention.FAIL_ON_NULL;
-@@ -113,6 +115,8 @@
- import static io.trino.testing.assertions.TrinoExceptionAssert.assertTrinoExceptionThrownBy;
- import static io.trino.transaction.InMemoryTransactionManager.createTestTransactionManager;
- import static io.trino.type.CharVarcharCoercion.SQL_STANDARD;
-+import static io.trino.type.JoniRegexpType.JONI_REGEXP;
-+import static io.trino.type.JsonPathType.JSON_PATH;
- import static io.trino.type.JsonType.JSON;
- import static io.trino.util.CompilerUtils.makeClassName;
- import static io.trino.util.Reflection.constructorMethodHandle;
-@@ -643,6 +647,38 @@ public void testJsonProjectionCache()
-         assertThat(compiler.getProjectionTemplateCache().getHitRate()).isEqualTo(0.5);
-     }
- 
-+    @Test
-+    public void testProjectionCacheWithConstant()
-+    {
-+        PageFunctionCompiler cacheCompiler = FUNCTION_RESOLUTION.getPageFunctionCompiler(100);
-+        ResolvedFunction jsonExtractScalar = FUNCTION_RESOLUTION.resolveFunction("json_extract_scalar", fromTypes(VARCHAR, JSON_PATH));
-+        ResolvedFunction joniRegexpLike = FUNCTION_RESOLUTION.resolveFunction("regexp_like", fromTypes(VARCHAR, JONI_REGEXP));
-+        Reference input = new Reference(VARCHAR, "c");
-+        Map<Symbol, Integer> layout = ImmutableMap.of(new Symbol(VARCHAR, "c"), 0);
-+
-+        // Separately created JSON paths with the same pattern: cache hit
-+        cacheCompiler.compileProjection(call(jsonExtractScalar, input, new Constant(JSON_PATH, new JsonPath("$.a"))), layout, SQL_STANDARD, Optional.empty());
-+        cacheCompiler.compileProjection(call(jsonExtractScalar, input, new Constant(JSON_PATH, new JsonPath("$.a"))), layout, SQL_STANDARD, Optional.empty());
-+        assertThat(cacheCompiler.getProjectionCache().getRequestCount()).isEqualTo(2);
-+        assertThat(cacheCompiler.getProjectionCache().getLoadCount()).isEqualTo(1);
-+
-+        // Different JSON path: cache miss
-+        cacheCompiler.compileProjection(call(jsonExtractScalar, input, new Constant(JSON_PATH, new JsonPath("$.b"))), layout, SQL_STANDARD, Optional.empty());
-+        assertThat(cacheCompiler.getProjectionCache().getRequestCount()).isEqualTo(3);
-+        assertThat(cacheCompiler.getProjectionCache().getLoadCount()).isEqualTo(2);
-+
-+        // Separately created Joni regexps with the same pattern: cache hit
-+        cacheCompiler.compileProjection(call(joniRegexpLike, input, new Constant(JONI_REGEXP, joniRegexp(utf8Slice("a.*")))), layout, SQL_STANDARD, Optional.empty());
-+        cacheCompiler.compileProjection(call(joniRegexpLike, input, new Constant(JONI_REGEXP, joniRegexp(utf8Slice("a.*")))), layout, SQL_STANDARD, Optional.empty());
-+        assertThat(cacheCompiler.getProjectionCache().getRequestCount()).isEqualTo(5);
-+        assertThat(cacheCompiler.getProjectionCache().getLoadCount()).isEqualTo(3);
-+
-+        // Different Joni regexp: cache miss
-+        cacheCompiler.compileProjection(call(joniRegexpLike, input, new Constant(JONI_REGEXP, joniRegexp(utf8Slice("b.*")))), layout, SQL_STANDARD, Optional.empty());
-+        assertThat(cacheCompiler.getProjectionCache().getRequestCount()).isEqualTo(6);
-+        assertThat(cacheCompiler.getProjectionCache().getLoadCount()).isEqualTo(4);
-+    }
-+
-     @Test
-     public void testJsonTemplateAliasedLiterals()
-     {
+@@ -26,14 +26,14 @@
+     "@mui/material": "^9.5.0",
+     "@mui/x-charts": "^9.16.0",
+     "@xyflow/react": "^12.12.1",
+-    "axios": "^1.20.0",
++    "axios": "^1.21.0",
+     "lodash": "^4.18.1",
+     "monaco-editor": "^0.57.0",
+     "react": "^19.3.1",
+     "react-calendar-timeline": "^0.30.0-beta.4",
+     "react-dom": "^19.3.1",
+     "react-router-dom": "^7.18.5",
+-    "sass": "^1.106.0",
++    "sass": "^1.106.1",
+     "zustand": "^5.0.16"
+   },
+   "devDependencies": {
+@@ -42,8 +42,8 @@
+     "@types/lodash.merge": "^4.6.9",
+     "@types/react": "^19.3.0",
+     "@types/react-dom": "^19.3.0",
+-    "@typescript-eslint/eslint-plugin": "^8.72.0",
+-    "@typescript-eslint/parser": "^8.72.0",
++    "@typescript-eslint/eslint-plugin": "^8.72.2",
++    "@typescript-eslint/parser": "^8.72.2",
+     "@vitejs/plugin-react": "^5.2.0",
+     "eslint": "^9.39.5",
+     "eslint-plugin-react": "^7.37.5",
+@@ -52,7 +52,7 @@
+     "globals": "^16.5.0",
+     "prettier": "^3.9.10",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.72.0",
++    "typescript-eslint": "^8.72.2",
+     "vite": "npm:rolldown-vite@^7.3.1"
+   },
+   "overrides": {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #32201** (2026-11-18): Bump the web-ui-dependencies group in /core/trino-web-ui/src/main/resources/webapp with 23 updates (@dependabot[bot])
 - **PR #32199** (2026-11-18): Bump software.amazon.awssdk:bom from 2.57.12 to 2.57.13 (@dependabot[bot])
 - **PR #32196** (2026-11-18): Use Amazon Corretto in the Trino Docker image (@electrum)
 - **PR #32188** (2026-11-18): Fix Parquet column index with only null pages (@nanjeshramesh)
 - **PR #32187** (2026-11-17): Test JWT signing key file lookup (@chenjian2664)
 - **PR #32186** (2026-11-17): Bump software.amazon.awssdk:bom from 2.57.11 to 2.57.12 (@dependabot[bot])
-- **PR #32184** (closed): Add Iceberg GPU connector (@foosekis4j)
 
 ---
 
@@ -2356,31 +1999,42 @@ PageFunctionCompiler cache entries.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Parquet column index with only null pages
+## X. Bump the web-ui-dependencies group
 
 **RULE**:
-When implementing operations in `lib/trino-parquet/src/main/java/io/trino/parquet/predicate/TupleDomainParquetPredicate.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/trino-web-ui/src/main/resources/webapp/bun.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2ccbcc61`: Parquet column index with only null pages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `85cd787b`: Bump the web-ui-dependencies group. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/trino-parquet/src/main/java/io/trino/parquet/predicate/TupleDomainParquetPredicate.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-web-ui/src/main/resources/webapp/bun.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        if (nullPages.stream().allMatch(isNullPage -> isNullPage)) {
-            // Null counts are optional, so only null pages tell that every value is null
-            return Domain.onlyNull(type);
-        }
+        "axios": "^1.21.0",
+        "sass": "^1.106.1",
+        "@typescript-eslint/eslint-plugin": "^8.72.2",
+        "@typescript-eslint/parser": "^8.72.2",
+        "typescript-eslint": "^8.72.2",
+    "@babel/core": ["@babel/core@7.29.13", "", { "dependencies": { "@babel/code-frame": "^7.29.7", "@babel/generator": "^7.29.13", "@babel/helper-compilation-targets": "^7.29.13", "@babel/helper-module-transforms": "^7.29.13", "@babel/helpers": "^7.29.13", "@babel/parser": "^7.29.13", "@babel/template": "^7.29.7", "@babel/traverse": "^7.29.13", "@babel/types": "^7.29.11", "@jridgewell/remapping": "^2.3.5", "convert-source-map": "^2.0.0", "debug": "^4.1.0", "gensync": "^1.0.0-beta.2", "json5": "^2.2.3", "semver": "^6.3.1" } }, "sha512-j1nvOQCZYSgp7HLmisnCXFTpVvFODiijQ9QHkORfGKWH6YDtskTEeCJS7eV545GZ9UBzrq0e2xsOd5QQ5PjIqw=="],
+    "@babel/helper-compilation-targets": ["@babel/helper-compilation-targets@7.29.13", "", { "dependencies": { "@babel/compat-data": "^7.29.7", "@babel/helper-validator-option": "^7.29.7", "browserslist": "^4.24.0", "lru-cache": "^5.1.1", "semver": "^6.3.1" } }, "sha512-8WxJ4/Vmes3ghacj8VOJy3NW8eyHiFY/4thU/LSBuBE470+igjR/j1ZTNn8fV5VdNrLx6iXUwig526UdOvfP0w=="],
+    "@
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        "axios": "^1.20.0",
+        "sass": "^1.106.0",
+        "@typescript-eslint/eslint-plugin": "^8.72.0",
+        "@typescript-eslint/parser": "^8.72.0",
+        "typescript-eslint": "^8.72.0",
+    "@babel/core": ["@babel/core@7.29.7", "", { "dependencies": { "@babel/code-frame": "^7.29.7", "@babel/generator": "^7.29.7", "@babel/helper-compilation-targets": "^7.29.7", "@babel/helper-module-transforms": "^7.29.7", "@babel/helpers": "^7.29.7", "@babel/parser": "^7.29.7", "@babel/template": "^7.29.7", "@babel/traverse": "^7.29.7", "@babel/types": "^7.29.7", "@jridgewell/remapping": "^2.3.5", "convert-source-map": "^2.0.0", "debug": "^4.1.0", "gensync": "^1.0.0-beta.2", "json5": "^2.2.3", "semver": "^6.3.1" } }, "sha512-RgHBCvtjbOK2gXSNBNIkNoEc9qoVEtau3hj8gEqKQuL3HZAibKarWFEI3Lfm6EYKkLalOh8eSrj9b+ch9H/VBA=="],
+    "@babel/helper-compilation-targets": ["@babel/helper-compilation-targets@7.29.7", "", { "dependencies": { "@babel/compat-data": "^7.29.7", "@babel/helper-validator-option": "^7.29.7", "browserslist": "^4.24.0", "lru-cache": "^5.1.1", "semver": "^6.3.1" } }, "sha512-wem6WaBj4NaVYVdNhLPPVacES6ZJ+KBBfSkTMD3YZxbP3rm3Di85tJU5ljaUNhaOynt+Aj0xruhYuzQBt8n71g=="],
+    "@babel/hel
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2ccbcc61` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `85cd787b` are properly handled with clean fallback behavior.

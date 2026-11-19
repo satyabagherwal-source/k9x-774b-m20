@@ -11144,3 +11144,6 @@
 | `CYCLE-20261119-3AOT` | `2026-11-19T00:22:43.421Z` | `mlua-rs/mlua` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9306` | Yes (`f471bca8...`) |
 | `CYCLE-20261119-3KJP` | `2026-11-19T00:22:56.197Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9307` | Yes (`85843f61...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T00:23:35.539Z` | `hf-naiveai-naive-n0.5-flash` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-0BC48FAB` [Domain D] | Yes (`6ec8c250...`) |
+| `CYCLE-20261119-EEPS` | `2026-11-19T00:31:21.856Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`bb4f2572...`) |
+| `CYCLE-20261119-ENW4` | `2026-11-19T00:31:33.748Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`f7d2811c...`) |
+| `CYCLE-20261119-EQC3` | `2026-11-19T00:31:36.915Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2047` | Yes (`794e7980...`) |

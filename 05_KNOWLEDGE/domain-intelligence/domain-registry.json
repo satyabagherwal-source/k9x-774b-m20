@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T00:23:36.683Z",
+  "last_updated": "2026-11-19T00:31:41.952Z",
   "total_records": 1921,
   "domains": {
     "A": {
@@ -8025,10 +8025,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "e0f1644261cc5d79169255bac326ff54de74bc48e9eafbdc07bc3a2324dca034",
-      "created_at": "2026-11-18T21:33:56.504Z"
+      "content_hash": "026dc9cdc1c7b2483c60633e81586e4945c070c5f44f1b50e2ce498b4c4b7fe4",
+      "created_at": "2026-11-19T00:31:34.097Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -14296,8 +14296,8 @@
       "title": "Research & Knowledge Intelligence: openai/clip-vit-base-patch32 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-clip-vit-base-patch32-research-knowledge-intelligence-openai-clip-vit-.md",
       "repository": "openai/clip-vit-base-patch32",
-      "content_hash": "d77b47cf7a50b5c74c257115aba884a05cc6e3b88b4fd9d4af4febfcfde6f9e0",
-      "created_at": "2026-11-14T07:53:22.245Z"
+      "content_hash": "ce3c69c7d6edcba974c01685028fb5a416127116eddcabb514420478b7e80b8b",
+      "created_at": "2026-11-19T00:31:22.048Z"
     },
     "domain_intelligence-technical-construction-intelligence-beclab-olares-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-beclab-olares-core-invariants",
@@ -14356,8 +14356,8 @@
       "title": "Research & Knowledge Intelligence: hf-openai-clip-vit-base-patch32-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-clip-vit-base-patch32-learnings-research-knowledge-intelligence-hf-ope.md",
       "repository": "hf-openai-clip-vit-base-patch32-learnings",
-      "content_hash": "a3770c3afa9f7deb04592659326d4edad3f751a3f9ab45df5e214989a21a69e7",
-      "created_at": "2026-11-14T07:54:02.026Z"
+      "content_hash": "8bb874aa3d19342f9daefb64629bc9362075854462cf41500d2ec6dbbd000dd8",
+      "created_at": "2026-11-19T00:31:40.363Z"
     },
     "domain_intelligence-technical-construction-intelligence-beclab-olares-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-beclab-olares-learnings-core-invariants",
@@ -16179,8 +16179,8 @@
       "title": "Architecture Intelligence: trinodb/trino Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-architecture-intelligence-trinodb-trino-core-invariants.md",
       "repository": "trinodb/trino",
-      "content_hash": "26d19c8aa2cf4c05b7b88aef2aa4a04b27e74bae0bf491572ca4e55f30aa98a0",
-      "created_at": "2026-11-18T07:48:09.073Z"
+      "content_hash": "a9629275d678fe1ff6e622cacf43a8b274ab7115b8fc971503ae992fbbc0e2f7",
+      "created_at": "2026-11-19T00:31:37.253Z"
     },
     "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants",
@@ -22861,8 +22861,8 @@
       "title": "Architecture Intelligence: trinodb-trino-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-learnings-architecture-intelligence-trinodb-trino-learnings-core-i.md",
       "repository": "trinodb-trino-learnings",
-      "content_hash": "32863553eb0e92c33d3799d40fe34934131b9b8597aa36d8f6d8f0a585a0f6bf",
-      "created_at": "2026-11-18T07:48:43.452Z"
+      "content_hash": "6e30b6749bf245735066c543a257d23ec8cfce7b8c0fb08af7701aa6eb0cccd0",
+      "created_at": "2026-11-19T00:31:41.952Z"
     },
     "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-core-invariants",
@@ -23443,8 +23443,8 @@
       "title": "Architecture Intelligence: aleo-labs-protocol-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-learnings-architecture-intelligence-aleo-labs-protoco.md",
       "repository": "aleo-labs-protocol-snarkos-learnings",
-      "content_hash": "a1fd22e027a7fd0f0f60a6ba87fd13d649fe76e7d70eecde606d0bd4d84d2465",
-      "created_at": "2026-11-18T18:14:53.782Z"
+      "content_hash": "943d36b4714ac5a732f73d546b39c2670e5e62b827a52b3de8a83f4f67bb6b36",
+      "created_at": "2026-11-19T00:31:41.003Z"
     },
     "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-chrisbanes-skills-core-invariants",

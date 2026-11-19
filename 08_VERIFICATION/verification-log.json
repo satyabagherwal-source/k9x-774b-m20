@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-E4EQ",
-    "timestamp": "2026-11-17T15:51:35.378Z",
-    "repository": "volcengine/OpenViking",
-    "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "768823d74f7a6487881d222fc2e8d74e4c3919ad27d996403eecf677188d9f6d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-E5XS",
-    "timestamp": "2026-11-17T15:51:37.360Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "98439934243fc01e2973880e2c76305f356fe9c2f989933c3203ba062b1fb70f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-OION",
-    "timestamp": "2026-11-17T15:59:40.439Z",
-    "repository": "dealignai/DeepSeek-V4.1-Flash-1017-UNCENSORED-FP8",
-    "learningId": "learn-huggingface-dealignai-deepseek-v4-1-flash-1017-uncensored-fp8",
-    "contentHash": "aade05491f2f5ec8eddb84e28ef3df4abb2308eeb3481972bdd13376846052de",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-OU4Z",
     "timestamp": "2026-11-17T15:59:55.283Z",
     "repository": "Mintplex-Labs/anything-llm",
@@ -7490,6 +7445,51 @@
     "repository": "arangodb/arangodb",
     "learningId": "learn-github-arangodb-arangodb",
     "contentHash": "85843f61dd13ba459c7907b073c98284dd101f9c6a825ffc752a6e3e7b5b66b4",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-EEPS",
+    "timestamp": "2026-11-19T00:31:21.856Z",
+    "repository": "openai/clip-vit-base-patch32",
+    "learningId": "learn-huggingface-openai-clip-vit-base-patch32",
+    "contentHash": "bb4f2572ed21e1c4409b49d1a4e9cbd6fc40f79903c5ad7aa1a12bcd03697205",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-ENW4",
+    "timestamp": "2026-11-19T00:31:33.748Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "f7d2811c23a207770094824e2db6756d4fa812d42a3242a1bb6cf4e502eb36cc",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-EQC3",
+    "timestamp": "2026-11-19T00:31:36.915Z",
+    "repository": "trinodb/trino",
+    "learningId": "learn-github-trinodb-trino",
+    "contentHash": "794e7980bb2933e2b65a8a9b6d2cb9878eee642579c0598fb389298e59e5223f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

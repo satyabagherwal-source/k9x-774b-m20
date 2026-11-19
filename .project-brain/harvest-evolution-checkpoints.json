@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T00:23:37.056Z",
+  "last_updated": "2026-11-19T00:31:42.212Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T22:22:52.966Z",
@@ -148,7 +148,7 @@
       "staged_for_review": 0
     },
     "aleo-labs-protocol-snarkos-learnings.md": {
-      "processed_at": "2026-11-18T18:14:53.271Z",
+      "processed_at": "2026-11-19T00:31:40.534Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -758,7 +758,7 @@
       "staged_for_review": 1
     },
     "trinodb-trino-learnings.md": {
-      "processed_at": "2026-11-18T07:48:42.862Z",
+      "processed_at": "2026-11-19T00:31:41.310Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2488,8 +2488,8 @@
       "staged_for_review": 0
     },
     "hf-openai-clip-vit-base-patch32-learnings.md": {
-      "processed_at": "2026-11-14T07:54:01.819Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T00:31:40.169Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-sentence-transformers-all-mpnet-base-v2-learnings.md": {
@@ -3473,7 +3473,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2118,
+  "total_dossiers_evaluated": 2121,
   "total_canonical_promoted": 370,
-  "total_staged_for_review": 1592
+  "total_staged_for_review": 1594
 }

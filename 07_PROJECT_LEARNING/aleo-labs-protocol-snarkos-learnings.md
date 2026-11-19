@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
-> **Source Version**: `7e65929d`  
+> **Source Version**: `f5adbe87`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T18:09:59.619Z  
+> **Timestamp**: 2026-11-19T00:31:33.078Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T18:09:59.612Z  
+> **Harvest Timestamp**: 2026-11-19T00:31:33.071Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1992,393 +1992,285 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5eb614f3` (2026-11-17)
-**Commit Message**: Quiet expected committee-lookback failures while the ledger is behind
+### Incident Patch 1: `f5adbe87` (2026-11-18)
+**Commit Message**: Merge pull request #4703 from aleo-labs-protocol/ci/bump-snarkvm
 
-A validator in block sync still receives every live batch proposal and
-batch certificate. Its ledger has no committee for their lookback round
-yet, so each one fails and was logged at WARN: about 1,350 lines per
-minute on a mainnet validator catching up after a restart. The lines are
-expected and harmless, and they bury the ones that matter when
-diagnosing a slow sync.
+Bump snarkVM to aleo-labs-protocol/snarkVM@cfa4fd8f2
 
-The ledger service now reports the missing committee as a typed error,
-CommitteeNotFound, with unchanged message text, so the primary can
-recognise it without matching on strings. The proposed-batch and
-certified-batch handlers log a failure at TRACE, and count it towards an
-INFO summary emitted at most every 30 seconds, only when the error is
-CommitteeNotFound, the node is not block synced, and the missing round
-is ahead of the ledger. Every other failure, including a missing
-committee on a synced node, stays at WARN.
-
-This changes logging only. The messages are processed exactly as before;
-the is_synced() gates removed from these handlers in 168bf5e7a are not
-reintroduced.
-
-Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `node/bft/ledger-service/src/ledger.rs` (modified, +2/-1)
+**File**: `Cargo.lock` (modified, +122/-123)
 ```diff
-@@ -15,6 +15,7 @@
+@@ -5865,11 +5865,10 @@ dependencies = [
  
- use crate::{
-     BeginLedgerUpdateError,
-+    CommitteeNotFound,
-     LedgerService,
-     LedgerUpdateService,
-     deserialize_solution_strict,
-@@ -337,7 +338,7 @@ impl<N: Network, C: ConsensusStorage<N>> LedgerService<N> for CoreLedgerService<
-     fn get_committee_for_round(&self, round: u64) -> Result<Committee<N>> {
-         match self.ledger.get_committee_for_round(round)? {
-             Some(committee) => Ok(committee),
--            None => bail!("No committee found for round {round} in the ledger"),
-+            None => Err(CommitteeNotFound { round }.into()),
-         }
-     }
+ [[package]]
+ name = "snarkvm"
+-version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
++version = "4.13.1"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+ dependencies = [
+  "anyhow",
+- "dotenvy",
+  "rand 0.10.3",
+  "serde_json",
+  "snarkvm-algorithms",
+@@ -5887,8 +5886,8 @@ dependencies = [
  
+ [[package]]
+ name = "snarkvm-algorithms"
+-version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
++version = "4.13.1"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+ dependencies = [
+  "ahash",
+  "anyhow",
+@@ -5914,8 +5913,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkvm-algorithms-cuda"
+-version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
++version = "4.13.1"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+ dependencies = [
+  "blst",
+  "cc",
+@@ -5927,8 +5926,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkvm-circuit"
+-version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
++version = "4.13.1"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+ dependencies = [
+  "snarkvm-circuit-account",
+  "snarkvm-circuit-algorithms",
+@@ -5941,8 +5940,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkvm-circuit-account"
+-version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
++version = "4.13.1"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+ dependencies = [
+  "snarkvm-circuit-network",
+  "snarkvm-circuit-types",
+@@ -5951,8 +5950,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkvm-circuit-algorithms"
+-version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
++version = "4.13.1"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+ dependencies = [
+  "snarkvm-circuit-types",
+  "snarkvm-console-algorithms",
+@@ -5961,8 +5960,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkvm-circuit-collections"
+-version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
++version = "4.13.1"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+ dependencies = [
+  "snarkvm-circuit-algorithms",
+  "snarkvm-circuit-types",
+@@ -5971,8 +5970,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkvm-circuit-environment"
+-version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
++version = "4.13.1"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+ dependencies = [
+  "anyhow",
+  "indexmap 2.14.2",
+@@ -5991,13 +5990,13 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkvm-circuit-environment-witness"
+-version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
++version = "4.13.1"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+ 
+ [[package]]
+ name = "snarkvm-circuit-network"
+-version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
++version = "4.13.1"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+ dependencies = [
+  "snarkvm-circuit-algorithms",
+  "snarkvm-circuit-collections",
+@@ -6007,8 +6006,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkvm-circuit-program"
+-version = "4.1
 ```
 
-**File**: `node/bft/ledger-service/src/traits.rs` (modified, +9/-0)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -38,6 +38,15 @@ pub enum BeginLedgerUpdateError {
-     NotSupportedForProver,
- }
- 
-+/// The ledger holds no committee for the given round.
-+///
-+/// A ledger that has not yet advanced to `round` returns this error for it.
-+#[derive(Clone, Copy, Debug, PartialEq, Eq, thiserror::Error)]
-+#[error("No committee found for round {round} in the ledger")]
-+pub struct CommitteeNotFound {
-+    pub round: u64,
-+}
-+
- /// Allows performing updates to the ledger and prevents concurrent updates while the object is alive.
- #[cfg(feature = "ledger-write")]
- pub trait LedgerUpdateService<N: Network> {
-```
-
-**File**: `node/bft/src/helpers/mod.rs` (modified, +3/-0)
-```diff
-@@ -43,6 +43,9 @@ pub use signed_proposals::*;
- pub mod storage;
- pub use storage::*;
- 
-+pub mod sync_skips;
-+pub use sync_skips::*;
-+
- #[cfg(feature = "metrics")]
- pub mod telemetry;
- #[cfg(feature = "metrics")]
-```
-
-**File**: `node/bft/src/helpers/sync_skips.rs` (added, +181/-0)
-```diff
-@@ -0,0 +1,181 @@
-+// Copyright (c) 2019-2026 Provable Inc.
-+// This file is part of the snarkOS library.
-+
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at:
-+
-+// http://www.apache.org/licenses/LICENSE-2.0
-+
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+use snarkos_node_bft_ledger_service::CommitteeNotFound;
-+
-+#[cfg(feature = "locktick")]
-+use locktick::parking_lot::Mutex;
-+#[cfg(not(feature = "locktick"))]
-+use parking_lot::Mutex;
-+use std::{
-+    fmt,
-+    time::{Duration, Instant},
-+};
-+
-+/// The minimum time between two summaries of the peer messages skipped while the ledger is behind.
-+const SKIP_SUMMARY_INTERVAL: Duration = Duration::from_secs(30);
-+
-+/// Returns `true` if `error` is the failure every live batch proposal and batch certificate runs
-+/// into while this node is catching up: the ledger has not reached the round whose committee
-+/// validates the message.
-+///
-+/// A missing committee on a synced node, or for a round the ledger has already reached, is an
-+/// anomaly and returns `false`.
-+pub fn is_awaiting_ledger_sync(error: &anyhow::Error, is_synced: bool, latest_ledger_round: u64) -> bool {
-+    !is_synced && error.downcast_ref::<CommitteeNotFound>().is_some_and(|error| error.round > latest_ledger_round)
-+}
-+
-+/// A kind of peer message that cannot be validated while the ledger is behind.
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+pub enum SkippedMessage {
-+    BatchProposal,
-+    BatchCertificate,
-+}
-+
-+/// The peer messages skipped over one summary interval.
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+pub struct SkipSummary {
-+    pub proposals: u64,
-+    pub certificates: u64,
-+    pub elapsed: Duration,
-+}
-+
-+impl fmt::Display for SkipSummary {
-+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-+        let Self { proposals, certificates, elapsed } = self;
-+        write!(
-+            f,
-+            "Skipped {proposals} batch proposals and {certificates} batch certificates from peers in the last {}s",
-+            elapsed.as_secs()
-+        )
-+    }
-+}
-+
-+/// The counts accumulated since the first skipped message that no summary has covered yet.
-+struct SkipWindow {
-+    start: Instant,
-+    proposals: u64,
-+    certificates: u64,
-+}
-+
-+/// Counts the peer messages skipped while the ledger is behind, so that they are reported as a
-+/// periodic summary instead of one log line each.
-+#[derive(Default)]
-+pub struct SkippedWhileSyncing {
-+    window: Mutex<Option<SkipWindow>>,
-+}
-+
-+impl SkippedWhileSyncing {
-+    /// Counts a skipped message observed at `now`.
-+    ///
-+    /// Returns the summary to log once [`SKIP_SUMMARY_INTERVAL`] has passed since the first
-+    /// message it covers. Messages are only counted here, so a summary is not emitted until the
-+    /// next skipped message arrives, and the counts of a final, shorter window are never reported.
-+    pub fn record(&self, message: SkippedMessage, now: Instant) -> Option<SkipSummary> {
-+        let mut window = self.window.lock();
-+        let current = window.get_or_insert(SkipWindow { start: now, proposals: 0, certificates: 0 });
-+        match message {
-+            SkippedMessage::BatchProposal => current.proposals += 1,
-+            SkippedMessage::BatchCertificate => current.certificates += 1,
-+        }
-+
-+        let elapsed = now.saturating_duration_since(current.start);
-+        if elapsed < SKIP_SUMMARY_INTERVAL {
-+            return None;
-+        }
-+        window.take().map(|SkipWindow { proposals, certificates, .. }| SkipSummary { proposals, certificates, elapsed })
-+    }
-+}
-+
-+#[cfg(test)]
-+mod tests {
-+    use super::*;
-+
-+    use anyhow::anyhow;
-+
-+    #[test]
-+    fn missing_committee_ahead_of_the_ledger_is_expected_while_syncing() {
-+        let error = anyhow::Error::from(CommitteeNotFound { round: 101 });
-+        assert!(is_awaiting_ledger_sync(&error, false, 100));
-+    }
-+
-+    #[test]
-+    fn missing_committee_is_recognised_through_added_context() {
-+        let error = anyhow::Error::from(CommitteeNotFound { round: 101 })
-+            .context("Failed to fetch missing transmissions and previous certificates")
-+            .context("Cannot sign a batch at round 203 from '127.0.0.1:5000'");
-+        assert!(is_awaiting_ledger_sync(&error, false, 100));
-+    }
-+
-+    #[test]
-+    fn missing_committee_on_a_synced_node_is_an_anomaly() {
-+        let error = anyhow::Error::from(CommitteeNotFound { round: 101 });
-+        assert!(!is_awaiting_ledger_sync(&error, true, 100));
-+    }
-+
-+    #[test]
-+    fn missing_committee_for_a_round_the_ledger_reached_is_an_anomaly() {
-+  
-```
-
-**File**: `node/bft/src/primary.rs` (modified, +37/-7)
-```diff
-@@ -34,12 +34,15 @@ use crate::{
-         Proposal,
-         ProposalCache,
-         SignedProposals,
-+        SkippedMessage,
-+        SkippedWhileSyncing,
-         Storage,
-         assign_to_worker,
-         assign_to_workers,
-         fmt_id,
-         init_sync_channels,
-         init_worker_channels,
-+        is_awaiting_ledger_sync,
-         now,
-     },
-     spawn_blocking,
-@@ -185,6 +188,10 @@ pub struct Primary<N: Network> {
-     /// Replaced (and the old one cancelled) on every recheck, so at most one set of resends is in flight.
-     resend_token: Arc<Mutex<CancellationToken>>,
- 
-+    /// The batch proposals and batch certificates from peers that could not be validated
-+    /// because the ledger is behind, pending their next summary in the log.
-+    skipped_while_syncing: Arc<SkippedWhileSyncing>,
-+
-     /// The handles for all background tasks spawned by this primary.
-     handles: Arc<Mutex<Vec<JoinHandle<()>>>>,
- 
-@@ -251,6 +258,7 @@ impl<N: Network> Primary<N> {
-             latest_proposal_timestamp: Default::default(),
-             signed_proposals: Default::default(),
-             resend_token: Default::default(),
-+            skipped_while_syncing: Default::default(),
-             handles: Default::default(),
-             proposal_task: Default::default(),
-             round_increment_notify: Default::default(),
-@@ -1324,6 +1332,31 @@ impl<N: Network> Primary<N> {
-         Ok(())
-     }
- 
-+    /// Logs a failure to process a batch proposal or batch certificate from a peer.
-+    ///
-+    /// A failure that is expected because the ledger is behind is logged at TRACE and counted
-+    /// towards a periodic summary; every live message from every validator fails this way until
-+    /// the ledger catches up. Any other failure is logged at WARN.
-+    fn log_peer_message_failure(&self, message: SkippedMessage, error: anyhow::Error) {
-+        if !is_awaiting_ledger_sync(&error, self.sync.is_synced(), self.ledger.latest_round()) {
-+            warn!("{}", flatten_error(error));
-+            return;
-+        }
-+
-+        trace!("{}", flatten_error(error));
-+        if let Some(summary) = self.skipped_while_syncing.record(message, Instant::now()) {
-+            let ledger_round = self.ledger.latest_round();
-+            match self.sync.num_blocks_behind() {
-+                Some(num_blocks_behind) => info!(
-+                    "{summary} - the ledger is {num_blocks_behind} blocks behind (at round {ledger_round}) and has no committee for their rounds yet"
-+                ),
-+                None => info!(
-+                    "{summary} - the ledger is behind (at round {ledger_round}) and has no committee for their rounds yet"
-+                ),
-+            }
-+        }
-+    }
-+
-     /// Processes a batch certificate from a peer.
-     ///
-     /// This method performs the following steps:
-@@ -1549,7 +1582,7 @@ impl<N: Network> Primary<N> {
-                     let round = batch_propose.round;
-                     if let Err(err) = self__.process_batch_propose_from_peer(peer_ip, batch_propose).await {
-                         let err = err.context(format!("Cannot sign a batch at round {round} from '{peer_ip}'"));
--                        warn!("{}", flatten_error(err));
-+                        self__.log_peer_message_failure(SkippedMessage::BatchProposal, err);
-                     }
-                 });
-             }
-@@ -1588,12 +1621,9 @@ impl<N: Network> Primary<N> {
-                     let id = fmt_id(batch_certificate.id());
-                     let round = batch_certificate.round();
-                     if let Err(err) = self__.process_batch_certificate_from_peer(peer_ip, batch_certificate).await {
--                        warn!(
--                            "{}",
--                            flatten_error(err.context(format!(
--                                "Cannot store a certificate '{id}' for round {round} from '{peer_ip}'"
--                            )))
--                        );
-+                        let err = err
-+                            .context(format!("Cannot store a certificate '{id}' for round {round} from '{peer_ip}'"));
-+                        self__.log_peer_message_failure(SkippedMessage::BatchCertificate, err);
-                     }
-                 });
-             }
-```
-
----
-
-### Incident Patch 2: `b19d9215` (2026-11-18)
-**Commit Message**: Merge pull request #4700 from aleo-labs-protocol/chore/quiet-is-block-synced-trace
-
-Drop the per-update is_block_synced trace
-
-**File**: `node/sync/src/block_sync/sync_state.rs` (modified, +2/-7)
-```diff
-@@ -146,6 +146,8 @@ impl SyncState {
-                 Ordering::Greater => warn!("Greatest peer height reduced from {old_height} to {peer_height}"),
-                 Ordering::Less => trace!("Greatest peer height increased from {old_height} to {peer_height}"),
-             }
-+        } else {
-+            trace!("Greatest peer height set to {peer_height}");
-         }
- 
-         self.greatest_peer_height = Some(peer_height);
-@@ -165,13 +167,6 @@ impl SyncState {
- 
-     /// Updates the state of `is_block_synced` for the sync module.
-     fn update_is_block_synced(&mut self) {
--        trace!(
--            "Updating is_block_synced: greatest_peer_height={greatest_peer:?}, current_height={current}, status={status:?}",
--            greatest_peer = self.greatest_peer_height,
--            current = self.sync_height,
--            status = self.status,
--        );
--
-         let num_blocks_behind = self.num_blocks_behind();
-         let old_status = self.status;
+@@ -49,7 +49,7 @@ default-features = false
+ [workspace.dependencies.snarkvm]
+ #path = "../snarkVM"
+ git = "https://github.com/aleo-labs-protocol/snarkVM.git"
+-rev = "de20fd4ea81a87452c24826757c14f30e7f7c6b6" #staging
++rev = "cfa4fd8f2a2a20cd175fd2c888721e650d5154fa" #staging
+ #version = "=4.12.0"
+ default-features = false
  
 ```
 
 ---
 
-### Incident Patch 3: `d921e76a` (2026-11-18)
-**Commit Message**: Drop the per-update is_block_synced trace and log the first greatest peer height
+### Incident Patch 2: `295a63dd` (2026-11-18)
+**Commit Message**: Bump snarkVM to aleo-labs-protocol/snarkVM@cfa4fd8f2
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmNguQv7Z8sMQsuFM3o
-
-**File**: `node/sync/src/block_sync/sync_state.rs` (modified, +2/-7)
+**File**: `Cargo.lock` (modified, +122/-123)
 ```diff
-@@ -146,6 +146,8 @@ impl SyncState {
-                 Ordering::Greater => warn!("Greatest peer height reduced from {old_height} to {peer_height}"),
-                 Ordering::Less => trace!("Greatest peer height increased from {old_height} to {peer_height}"),
-             }
-+        } else {
-+            trace!("Greatest peer height set to {peer_height}");
-         }
+@@ -5865,11 +5865,10 @@ dependencies = [
  
-         self.greatest_peer_height = Some(peer_height);
-@@ -165,13 +167,6 @@ impl SyncState {
+ [[package]]
+ name = "snarkvm"
+-version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
++version = "4.13.1"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+ dependencies = [
+  "anyhow",
+- "dotenvy",
+  "rand 0.10.3",
+  "serde_json",
+  "snarkvm-algorithms",
+@@ -5887,8 +5886,8 @@ dependencies = [
  
-     /// Updates the state of `is_block_synced` for the sync module.
-     fn update_is_block_synced(&mut self) {
--        trace!(
--            "Updating is_block_synced: greatest_peer_height={greatest_peer:?}, current_height={current}, status={status:?}",
--            greatest_peer = self.greatest_peer_height,
--            current = self.sync_height,
--            status = self.status,
--        );
--
-         let num_blocks_behind = self.num_blocks_behind();
-         let old_status = self.status;
+ [[package]]
+ name = "snarkvm-algorithms"
+-version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
++version = "4.13.1"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+ dependencies = [
+  "ahash",
+  "anyhow",
+@@ -5914,8 +5913,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkvm-algorithms-cuda"
+-version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
++version = "4.13.1"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+ dependencies = [
+  "blst",
+  "cc",
+@@ -5927,8 +5926,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkvm-circuit"
+-version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
++version = "4.13.1"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+ dependencies = [
+  "snarkvm-circuit-account",
+  "snarkvm-circuit-algorithms",
+@@ -5941,8 +5940,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkvm-circuit-account"
+-version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
++version = "4.13.1"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+ dependencies = [
+  "snarkvm-circuit-network",
+  "snarkvm-circuit-types",
+@@ -5951,8 +5950,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkvm-circuit-algorithms"
+-version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
++version = "4.13.1"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+ dependencies = [
+  "snarkvm-circuit-types",
+  "snarkvm-console-algorithms",
+@@ -5961,8 +5960,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkvm-circuit-collections"
+-version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
++version = "4.13.1"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+ dependencies = [
+  "snarkvm-circuit-algorithms",
+  "snarkvm-circuit-types",
+@@ -5971,8 +5970,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkvm-circuit-environment"
+-version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
++version = "4.13.1"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+ dependencies = [
+  "anyhow",
+  "indexmap 2.14.2",
+@@ -5991,13 +5990,13 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkvm-circuit-environment-witness"
+-version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
++version = "4.13.1"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+ 
+ [[package]]
+ name = "snarkvm-circuit-network"
+-version = "4.13.0"
+-source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
++version = "4.13.1"
++source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+ dependencies = [
+  "snarkvm-circuit-algorithms",
+  "snarkvm-circuit-collections",
+@@ -6007,8 +6006,8 @@ dependencies = [
+ 
+ [[package]]
+ name = "snarkvm-circuit-program"
+-version = "4.1
+```
+
+**File**: `Cargo.toml` (modified, +1/-1)
+```diff
+@@ -49,7 +49,7 @@ default-features = false
+ [workspace.dependencies.snarkvm]
+ #path = "../snarkVM"
+ git = "https://github.com/aleo-labs-protocol/snarkVM.git"
+-rev = "de20fd4ea81a87452c24826757c14f30e7f7c6b6" #staging
++rev = "cfa4fd8f2a2a20cd175fd2c888721e650d5154fa" #staging
+ #version = "=4.12.0"
+ default-features = false
  
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4703** (2026-11-18): Bump snarkVM to aleo-labs-protocol/snarkVM@cfa4fd8f2 (@aleo-labs-merge-bot[bot])
 - **PR #4701** (2026-11-18): ci: make an old node dial an upgraded node in the full upgrade test (@cbeck88)
 - **PR #4700** (2026-11-18): Drop the per-update is_block_synced trace (@cbeck88)
 - **PR #4699** (2026-11-18): Turn off the snarkVM timing log targets at every verbosity (@cbeck88)
+- **PR #4698** (closed): [Perf] Skip the storage read for committee lookups above the latest committee (@cbeck88)
 - **PR #4697** (2026-11-18): [Fix] Stop a syncing validator from logging a WARN per unvalidatable peer batch (@cbeck88)
-- **PR #4695** (closed): Merge testnet into staging (@aleo-labs-merge-bot[bot])
-- **PR #4694** (2026-11-17): Merge mainnet into staging (@aleo-labs-merge-bot[bot])
 
 ---
 
@@ -2398,29 +2290,56 @@ Claude-Session: https://claude.ai/code/session_01UYfmmNguQv7Z8sMQsuFM3o
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Quiet expected committee-lookback failures while the ledger is behind
+## X. Empirical Invariant Guard in Cargo.lock
 
 **RULE**:
-When implementing operations in `node/bft/ledger-service/src/ledger.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5eb614f3`: Quiet expected committee-lookback failures while the ledger is behind. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f5adbe87`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/bft/ledger-service/src/ledger.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    CommitteeNotFound,
-            None => Err(CommitteeNotFound { round }.into()),
+version = "4.13.1"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+version = "4.13.1"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+version = "4.13.1"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+version = "4.13.1"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+version = "4.13.1"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+version = "4.13.1"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+version = "4.13.1"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=cfa4fd8f2a2a20cd175fd2c888721e650d5154fa#cfa4fd8f2a2a20cd175fd2c888721e650d5154fa"
+version = 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            None => bail!("No committee found for round {round} in the ledger"),
+version = "4.13.0"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+ "dotenvy",
+version = "4.13.0"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+version = "4.13.0"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+version = "4.13.0"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+version = "4.13.0"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+version = "4.13.0"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6"
+version = "4.13.0"
+source = "git+https://github.com/aleo-labs-protocol/snarkVM.git?rev=de20fd4ea81a87452c24826757c14f30e7f7c6b6#de20fd4ea81a87452c24826757c14f30e7f7c6b6
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5eb614f3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f5adbe87` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T00:22:56.213Z",
+  "last_updated": "2026-11-19T00:31:36.928Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1445,14 +1445,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openai-clip-vit-base-patch32",
-      "content_hash": "dd81e331e74fabe42c76419f76b1d1c6898408a3ffe2d7e3c7272bf2bd511580",
-      "verified_at": "2026-11-14T07:53:22.088Z",
+      "content_hash": "bb4f2572ed21e1c4409b49d1a4e9cbd6fc40f79903c5ad7aa1a12bcd03697205",
+      "verified_at": "2026-11-19T00:31:21.868Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T07:53:22.088Z"
+      "last_updated": "2026-11-19T00:31:21.868Z"
     },
     "sentence-transformers/all-mpnet-base-v2": {
       "repository": "sentence-transformers/all-mpnet-base-v2",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "42462144ff1cb4122fc573c517bdee707bcf0dc18d4b7f329d9602ca2595eb3e",
-      "verified_at": "2026-11-18T21:33:56.230Z",
+      "content_hash": "f7d2811c23a207770094824e2db6756d4fa812d42a3242a1bb6cf4e502eb36cc",
+      "verified_at": "2026-11-19T00:31:33.760Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T21:33:56.230Z"
+      "last_updated": "2026-11-19T00:31:33.760Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -7731,14 +7731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trinodb-trino",
-      "content_hash": "5c6100d4e4b9daf6ef60c257029905aa9c5d1abf601662799b87114c2753722c",
-      "verified_at": "2026-11-18T07:48:08.678Z",
+      "content_hash": "794e7980bb2933e2b65a8a9b6d2cb9878eee642579c0598fb389298e59e5223f",
+      "verified_at": "2026-11-19T00:31:36.927Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T07:48:08.678Z"
+      "last_updated": "2026-11-19T00:31:36.927Z"
     },
     "pinterest/gestalt": {
       "repository": "pinterest/gestalt",

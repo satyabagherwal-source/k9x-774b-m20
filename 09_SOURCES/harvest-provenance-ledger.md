@@ -11177,3 +11177,6 @@ Every entry in this ledger must capture:
 | `learn-github-mlua-rs-mlua` | `https://github.com/mlua-rs/mlua` | `3c0fd858` | Multi-dimensional audit evidence | 2026-11-19T00:22:43.426Z |
 | `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `387bbd5b` | Multi-dimensional audit evidence | 2026-11-19T00:22:56.202Z |
 | `learn-dom-d-0bc48fab` | `project://hf-naiveai-naive-n0.5-flash` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-naiveai-naive-n0.5-flash-learnings.md` | 2026-11-19T00:23:35.539Z |
+| `learn-huggingface-openai-clip-vit-base-patch32` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-19T00:31:21.861Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `f5adbe87` | Multi-dimensional audit evidence | 2026-11-19T00:31:33.752Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `47745104` | Multi-dimensional audit evidence | 2026-11-19T00:31:36.920Z |

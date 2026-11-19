@@ -1095,8 +1095,8 @@
     "sourceUrl": "https://huggingface.co/openai/clip-vit-base-patch32",
     "sourceVersion": "hf-openai-clip-vit-base-patch32",
     "license": "Open-Source",
-    "contentHash": "dd81e331e74fabe42c76419f76b1d1c6898408a3ffe2d7e3c7272bf2bd511580",
-    "lastHarvestedAt": "2026-11-14T07:53:22.080Z",
+    "contentHash": "bb4f2572ed21e1c4409b49d1a4e9cbd6fc40f79903c5ad7aa1a12bcd03697205",
+    "lastHarvestedAt": "2026-11-19T00:31:21.861Z",
     "learningId": "learn-huggingface-openai-clip-vit-base-patch32"
   },
   "hf-sentence-transformers-all-mpnet-base-v2": {
@@ -1593,10 +1593,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/aleo-labs-protocol/snarkOS",
-    "sourceVersion": "7e65929d",
+    "sourceVersion": "f5adbe87",
     "license": "Apache-2.0",
-    "contentHash": "472e72c44eee914e8404f908c5d5117c8238a50c1bac0e950985a02345cdb026",
-    "lastHarvestedAt": "2026-11-18T18:10:00.825Z",
+    "contentHash": "f7d2811c23a207770094824e2db6756d4fa812d42a3242a1bb6cf4e502eb36cc",
+    "lastHarvestedAt": "2026-11-19T00:31:33.752Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "volcengine-openviking": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "5b9767ab",
+    "sourceVersion": "47745104",
     "license": "Apache-2.0",
-    "contentHash": "5c6100d4e4b9daf6ef60c257029905aa9c5d1abf601662799b87114c2753722c",
-    "lastHarvestedAt": "2026-11-18T07:48:08.669Z",
+    "contentHash": "794e7980bb2933e2b65a8a9b6d2cb9878eee642579c0598fb389298e59e5223f",
+    "lastHarvestedAt": "2026-11-19T00:31:36.920Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
