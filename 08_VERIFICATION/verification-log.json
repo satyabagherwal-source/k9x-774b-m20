@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-G7RS",
-    "timestamp": "2026-11-17T20:33:09.208Z",
-    "repository": "astral-sh/ruff",
-    "learningId": "learn-github-astral-sh-ruff",
-    "contentHash": "eaa5e4975db478481a7bfc45f5db6f57703972ea7aab1664fb02af627b57f7f8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-GIFF",
-    "timestamp": "2026-11-17T20:33:23.019Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "cc17dc76580146147fde6e27e5c45caf07a9d0d47662157da41ad5e796195e6d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-W1UY",
     "timestamp": "2026-11-17T20:45:28.042Z",
     "repository": "tokio-rs/tokio",
@@ -7492,6 +7462,36 @@
     "contentHash": "e4b57f4ac5bf51536c1d3839905642acd1e8f14dbccc44d66630f3dfac4ae3b2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-G03X",
+    "timestamp": "2026-11-19T12:40:26.253Z",
+    "repository": "microsoft/FrogNano-4B-2609",
+    "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
+    "contentHash": "e6e90b545a91846a49ef8ccec7ab2a2e8e99f0ab2a71efe4bad7d042bae22586",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-G75O",
+    "timestamp": "2026-11-19T12:40:35.388Z",
+    "repository": "flux-iac/tofu-controller",
+    "learningId": "learn-github-flux-iac-tofu-controller",
+    "contentHash": "9dd96374a82c8e249a114980960ad6050a09fb7e9aa927ede852e7e25cdfcea8",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

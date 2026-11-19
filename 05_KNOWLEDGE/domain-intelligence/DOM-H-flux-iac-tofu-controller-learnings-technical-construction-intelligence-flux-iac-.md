@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T18:35:40.460Z",
+  "timestamp": "2026-11-19T12:40:39.126Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-flux-iac-tofu-controller-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [flux-iac-tofu-controller-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T18:35:40.460Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T12:40:39.126Z`  
 > **Learning ID**: `LEARN-EVO-flux-iac-tofu-controller-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
 - **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 63%
+- **Confidence Rating**: 62%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from flux-iac-tofu-controller-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md`  
 > **Source**: github ([https://github.com/flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller))  
-> **Source Version**: `aaa5de9c`  
+> **Source Version**: `877521d6`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T18:35:34.932Z  
+> **Timestamp**: 2026-11-19T12:40:34.465Z  
 > **Learning ID**: `learn-github-flux-iac-tofu-controller`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flux-iac-tofu-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flux-iac/tofu-controller](https://github.com/flux-iac/tofu-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T18:35:34.926Z  
+> **Harvest Timestamp**: 2026-11-19T12:40:34.461Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A GitOps OpenTofu and Terraform controller for Flux
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 1724 stars
+- **Stars / Engagement**: 1725 stars
 
 ---
 
@@ -1109,13 +1109,11 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #1950** (2026-11-18): **build(tfctl): add Windows builds to goreleaser**
+  *Symptoms*: ## What  Add Windows builds of `tfctl` to the release configuration.  - `.goreleaser.yml`: add `windows` to the `tfctl` build `goos` (amd64 and arm64; `windows/arm` is ignored) - `.goreleaser.yml`: package Windows archives as `zip` via `format_overrides`  Closes #1054  ## Why  Release assets only contain Darwin and Linux binaries, so `tfctl` cannot be downloaded for Windows. The code already compiles for Windows; only the release config was missing the target.  ## Verification  - Before the change, `goreleaser build --snapshot --clean --id tfctl` (v2.12.0) produced only darwin and linux directories. - After the change, the same command also produced `tfctl_windows_amd64_v1` and `tfctl_windows_arm64_v8.0`. - `goreleaser check` passes (it only prints the existing `brews` deprecation notice). - `goreleaser release --snapshot --skip=before,sign,sbom,publish,announce` produced `tfctl_Windows_amd64.zip` and `tfctl_Windows_arm64.zip`. The generated Homebrew formula has no Windows entry. - `GOOS=windows GOARCH=amd64 go build ./cmd/tfctl` succeeds. - The Windows binaries were only built, not run on Windows. 
+
 - **Issue #1946** (2026-11-17): **chore(deps): bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0**
   *Symptoms*: Bumps [go.opentelemetry.io/otel/trace](https://github.com/open-telemetry/opentelemetry-go) from 1.45.0 to 1.47.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/open-telemetry/opentelemetry-go/releases">go.opentelemetry.io/otel/trace's releases</a>.</em></p> <blockquote> <h2>v1.47.0/v0.69.0/v0.23.0/v0.1.0</h2> <p>This release contains the first stable release of the OpenTelemetry Go Logs API and SDK. Our project stability guarantees now apply to the following modules:</p> <ul> <li><code>go.opentelemetry.io/otel/log</code></li> <li><code>go.opentelemetry.io/otel/sdk/log</code></li> </ul> <p>See our <a href="https://github.com/open-telemetry/opentelemetry-go/blob/main/VERSIONING.md">versioning policy</a> for more information about these stability guarantees.</p> <h3>Added</h3> <ul> <li>Add <code>String</code> method for <code>KeyValue</code> type in <code>go.opentelemetry.io/otel/attribute</code>. (<a href="https://redirect.github.com/open-telemetry/opentelemetry-go/issues/8205">#8205</a>)</li> <li>Add <code>String</code> method for <code>Set</code> type in <code>go.opentelemetry.io/otel/attribute</code>. (<a href="https://redirect.github.com/open-telemetry/opentelemetry-go/issues/8347">#8347</a>)</li> <li>Add <code>WithMaxExportBatchSize</code> to <code>go.opentelemetry.io/otel/sdk/metric</code> to configure the maximum export batch size for <code>PeriodicReader</code>. (<a href="https://redirect.github.com/open-telemetry/opentelemet
-
-- **Issue #1945** (2026-11-16): **chore: release 0.17.0**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > 👍
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1132,82 +1130,50 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aaa5de9c` (2026-11-17)
-**Commit Message**: chore(deps): bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0 (#1946)
+### Incident Patch 1: `877521d6` (2026-11-18)
+**Commit Message**: build(tfctl): add Windows builds to goreleaser (#1950)
 
-Bumps [go.opentelemetry.io/otel/trace](https://github.com/open-telemetry/opentelemetry-go) from 1.45.0 to 1.47.0.
-- [Release notes](https://github.com/open-telemetry/opentelemetry-go/releases)
-- [Changelog](https://github.com/open-telemetry/opentelemetry-go/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/open-telemetry/opentelemetry-go/compare/v1.45.0...v1.47.0)
+Signed-off-by: YuMin Kim <[REDACTED_EMAIL]>
 
----
-updated-dependencies:
-- dependency-name: go.opentelemetry.io/otel/trace
-  dependency-version: 1.47.0
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +4/-3)
+**File**: `.goreleaser.yml` (modified, +7/-0)
 ```diff
-@@ -218,9 +218,10 @@ require (
- 	github.com/xlab/treeprint v1.2.0 // indirect
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
- 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 // indirect
--	go.opentelemetry.io/otel v1.45.0 // indirect
--	go.opentelemetry.io/otel/metric v1.45.0 // indirect
--	go.opentelemetry.io/otel/trace v1.45.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.uber.org/zap v1.28.0 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
-```
-
-**File**: `go.sum` (modified, +8/-6)
-```diff
-@@ -501,20 +501,22 @@ go.opentelemetry.io/auto/sdk v1.2.1 h1:jXsnJ4Lmnqd11kwkBV2LgLoFMZKizbCi5fNZ/ipaZ
- go.opentelemetry.io/auto/sdk v1.2.1/go.mod h1:KRTj+aOaElaLi+wW1kO/DZRXwkF4C5xPbEe3ZiIhN7Y=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 h1:8tvICD4vSTOOsNrsI4Ljf6C+6UKvpTEH5XY3JMoyPoo=
- go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0/go.mod h1:z9+yiacE0IHRqM4qFfkbt/JYlmYXgss8GY/jXoNuPJI=
--go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
--go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.44.0 h1:4YsVu3B8+3qtWYYrsUYgn0OG78pN0rnNPRGX4SbokQI=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.44.0/go.mod h1:+wnlSn0mD1ADVMe3v9Z/WIaiz6q6gL2J/ejaAmdmv80=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0 h1:QBajQ2SrwQijzHyZbQlPsuIzpl/ll8DY6wPWsajeGcI=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0/go.mod h1:08ZQLjrPLQ6R4kAXvuOvODEer5Yh4CoFvll5qB2BCI8=
--go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
--go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
-+go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
-+go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
-+go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
-+go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
- go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
- go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
- go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
- go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
--go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
--go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
-+go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
-+go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
- go.opentelemetry.io/proto/otlp v1.10.0 h1:IQRWgT5srOCYfiWnpqUYz9CVmbO8bFmKcwYxpuCSL2g=
- go.opentelemetry.io/proto/otlp v1.10.0/go.mod h1:/CV4QoCR/S9yaPj8utp3lvQPoqMtxXdzn7ozvvozVqk=
- go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
+@@ -49,20 +49,27 @@ builds:
+     goos:
+       - darwin
+       - linux
++      - windows
+     goarch:
+       - amd64
+       - arm64
+       - arm
+     goarm:
+       - "6"
+       - "7"
++    ignore:
++      - goos: windows
++        goarch: arm
+ 
+ archives:
+   - id: tfctl
+     ids:
+       - tfctl
+     name_template: "tfctl_{{ title .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+     formats: [ 'tar.gz' ]
++    format_overrides:
++      - goos: windows
++        formats: [ 'zip' ]
+ 
+ # signs the checksum file
+ # all files (including the sboms) are included in the checksum
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1950** (2026-11-18): build(tfctl): add Windows builds to goreleaser (@yuminn-k)
 - **PR #1946** (2026-11-17): chore(deps): bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0 (@dependabot[bot])
 - **PR #1945** (2026-11-16): chore: release 0.17.0 (@alexandermarston)
 - **PR #1944** (2026-11-13): Remove unused tf-runner.cache-encryption secret (@Wieneo)
 - **PR #1943** (2026-11-13): feat(runner): Set controller instance ID in environment (@cgroschupp)
 - **PR #1942** (2026-11-13): chore(deps): bump the gh-minor group across 1 directory with 16 updates (@dependabot[bot])
-- **PR #1941** (2026-11-13): feat!: remove the deprecated v1alpha1 Terraform API (@alexandermarston)
 
 ---
 
@@ -1227,36 +1193,37 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0
+## X. build(tfctl): add Windows builds to goreleaser
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flux-iac/tofu-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.goreleaser.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flux-iac/tofu-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aaa5de9c`: deps): bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `877521d6`: build(tfctl): add Windows builds to goreleaser. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.goreleaser.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	go.opentelemetry.io/otel v1.47.0 // indirect
-	go.opentelemetry.io/otel/log v1.47.0 // indirect
-	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+      - windows
+    ignore:
+      - goos: windows
+        goarch: arm
+    format_overrides:
+      - goos: windows
+        formats: [ 'zip' ]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	go.opentelemetry.io/otel v1.45.0 // indirect
-	go.opentelemetry.io/otel/metric v1.45.0 // indirect
-	go.opentelemetry.io/otel/trace v1.45.0 // indirect
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aaa5de9c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `877521d6` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

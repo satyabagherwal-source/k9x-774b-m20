@@ -825,8 +825,8 @@
     "sourceUrl": "https://huggingface.co/microsoft/FrogNano-4B-2609",
     "sourceVersion": "hf-microsoft-frognano-4b-2609",
     "license": "Open-Source",
-    "contentHash": "0eee8fabff0dd015dfce6a76b61e6c769669f267d79ba053c4d843871451342b",
-    "lastHarvestedAt": "2026-11-14T21:29:20.450Z",
+    "contentHash": "e6e90b545a91846a49ef8ccec7ab2a2e8e99f0ab2a71efe4bad7d042bae22586",
+    "lastHarvestedAt": "2026-11-19T12:40:26.257Z",
     "learningId": "learn-huggingface-microsoft-frognano-4b-2609"
   },
   "hf-hexgrad-kokoro-82m": {
@@ -7043,10 +7043,10 @@
     "repository": "flux-iac/tofu-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/flux-iac/tofu-controller",
-    "sourceVersion": "aaa5de9c",
+    "sourceVersion": "877521d6",
     "license": "Apache-2.0",
-    "contentHash": "8acc18560681ec72135f7298af5ad10f46a0fe1800db6bb1830adf4591aeb6f2",
-    "lastHarvestedAt": "2026-11-17T18:35:35.705Z",
+    "contentHash": "9dd96374a82c8e249a114980960ad6050a09fb7e9aa927ede852e7e25cdfcea8",
+    "lastHarvestedAt": "2026-11-19T12:40:35.391Z",
     "learningId": "learn-github-flux-iac-tofu-controller"
   },
   "clockworklabs-spacetimedb": {

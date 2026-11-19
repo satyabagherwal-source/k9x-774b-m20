@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T12:20:13.024Z",
+  "last_updated": "2026-11-19T12:40:39.866Z",
   "total_records": 1975,
   "domains": {
     "A": {
@@ -17923,8 +17923,8 @@
       "title": "Research & Knowledge Intelligence: microsoft/FrogNano-4B-2609 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-frognano-4b-2609-research-knowledge-intelligence-microsoft-frognano.md",
       "repository": "microsoft/FrogNano-4B-2609",
-      "content_hash": "a23dc84f17a2da1100b11cea827f181093350bc460eeac9cb086f87d730880cc",
-      "created_at": "2026-11-14T21:29:20.657Z"
+      "content_hash": "b50f09eaef747ec53b88265bb6b7d65477404639929ec1af23a66d26719614c4",
+      "created_at": "2026-11-19T12:40:26.428Z"
     },
     "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-core-invariants",
@@ -17992,8 +17992,8 @@
       "title": "Research & Knowledge Intelligence: hf-microsoft-frognano-4b-2609-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-microsoft-frognano-4b-2609-learnings-research-knowledge-intelligence-hf-micro.md",
       "repository": "hf-microsoft-frognano-4b-2609-learnings",
-      "content_hash": "8833f5a5b1196fa543bc4c2f70442747e6878d6b3bd1a9c2baf3e17f98dee783",
-      "created_at": "2026-11-14T21:30:06.359Z"
+      "content_hash": "fa7f88fb466f2f2bb84f8e022976b5079aada789943dbdfd708f8861be27fa08",
+      "created_at": "2026-11-19T12:40:38.775Z"
     },
     "domain_intelligence-research-knowledge-intelligence-francisring-prism-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-francisring-prism-core-invariants",
@@ -28339,8 +28339,8 @@
       "title": "Technical Construction Intelligence: flux-iac/tofu-controller Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-flux-iac-tofu-controller-technical-construction-intelligence-flux-iac-tofu-contr.md",
       "repository": "flux-iac/tofu-controller",
-      "content_hash": "0055f36b2016bc84c4726355a1d74c86f43fa5801661ce9ca0df1334b341f7f5",
-      "created_at": "2026-11-17T18:35:36.152Z"
+      "content_hash": "8cb0eacae506705f09739cdd8e432b5e2bf639153ed912e5d804533b83629343",
+      "created_at": "2026-11-19T12:40:35.728Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensor": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-moonmath-ai-deepseek-v4-1-flash-1017-uncensor",
@@ -28366,8 +28366,8 @@
       "title": "Technical Construction Intelligence: flux-iac-tofu-controller-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-flux-iac-tofu-controller-learnings-technical-construction-intelligence-flux-iac-.md",
       "repository": "flux-iac-tofu-controller-learnings",
-      "content_hash": "ffed364d75f3d0d57b99566cf54ed1d7d3289a556f8a462dcf4e49b86f368e00",
-      "created_at": "2026-11-17T18:35:40.747Z"
+      "content_hash": "03b7436f8f7821428fc8b9bd032e7238e58087cccc6ce224883264ba2219bdef",
+      "created_at": "2026-11-19T12:40:39.365Z"
     },
     "domain_intelligence-architecture-intelligence-emberstack-kubernetes-reflector-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-emberstack-kubernetes-reflector-core-invariants",
@@ -31071,8 +31071,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "5a5a86689a98f99481c68e5645d39984608b287c4303925f00c7cdff3a7cbdc4",
-      "created_at": "2026-11-19T12:20:12.219Z"
+      "content_hash": "d6717921773ce1d32ab135d90047b632121d06b0cab134ad4f2c6b9d121c8526",
+      "created_at": "2026-11-19T12:40:39.866Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T12:20:08.641Z",
+  "last_updated": "2026-11-19T12:40:35.401Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1850,14 +1850,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-microsoft-frognano-4b-2609",
-      "content_hash": "0eee8fabff0dd015dfce6a76b61e6c769669f267d79ba053c4d843871451342b",
-      "verified_at": "2026-11-14T21:29:20.460Z",
+      "content_hash": "e6e90b545a91846a49ef8ccec7ab2a2e8e99f0ab2a71efe4bad7d042bae22586",
+      "verified_at": "2026-11-19T12:40:26.265Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T21:29:20.460Z"
+      "last_updated": "2026-11-19T12:40:26.265Z"
     },
     "FrancisRing/Prism": {
       "repository": "FrancisRing/Prism",
@@ -10611,14 +10611,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-flux-iac-tofu-controller",
-      "content_hash": "8acc18560681ec72135f7298af5ad10f46a0fe1800db6bb1830adf4591aeb6f2",
-      "verified_at": "2026-11-17T18:35:35.715Z",
+      "content_hash": "9dd96374a82c8e249a114980960ad6050a09fb7e9aa927ede852e7e25cdfcea8",
+      "verified_at": "2026-11-19T12:40:35.401Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T18:35:35.715Z"
+      "last_updated": "2026-11-19T12:40:35.401Z"
     },
     "clockworklabs/SpacetimeDB": {
       "repository": "clockworklabs/SpacetimeDB",

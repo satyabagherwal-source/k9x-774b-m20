@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/microsoft/FrogNano-4B-2609",
   "source_version": "hf-microsoft-frognano-4b-2609",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T21:29:20.656Z",
+  "timestamp": "2026-11-19T12:40:26.427Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-microsoft-frognano-4b-2609",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [microsoft/FrogNano-4B-2609](https://huggingface.co/microsoft/FrogNano-4B-2609) (Revision: `hf-microso`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T21:29:20.656Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T12:40:26.427Z`  
 > **Learning ID**: `learn-huggingface-microsoft-frognano-4b-2609`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-microsoft-frognano-4b-2609-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/microsoft/FrogNano-4B-2609](https://huggingface.co/microsoft/FrogNano-4B-2609))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T21:29:19.795Z  
+> **Harvest Timestamp**: 2026-11-19T12:40:25.725Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2224 downloads | 182 likes
+- **Stars / Engagement**: 2197 downloads | 187 likes
 
 ---
 

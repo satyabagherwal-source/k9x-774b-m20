@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T12:20:11.474Z",
-    "lastVerified": "2026-11-19T12:20:11.474Z",
+    "lastChecked": "2026-11-19T12:40:38.493Z",
+    "lastVerified": "2026-11-19T12:40:38.493Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -174,8 +174,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T10:47:21.656Z",
-    "lastVerified": "2026-11-19T10:47:21.656Z",
+    "lastChecked": "2026-11-19T12:40:38.273Z",
+    "lastVerified": "2026-11-19T12:40:38.273Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -579,9 +579,9 @@
   "qdrant-qdrant": {
     "name": "qdrant",
     "officialUrl": "https://github.com/qdrant/qdrant",
-    "lastChecked": "2026-11-18T10:32:36.102Z",
+    "lastChecked": "2026-11-19T12:40:35.750Z",
     "revisionIdentifier": "23065a0b",
-    "lastVerified": "2026-11-18T10:32:36.102Z"
+    "lastVerified": "2026-11-19T12:40:35.750Z"
   },
   "iii-hq-iii": {
     "name": "iii",
@@ -799,9 +799,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-19T02:11:28.466Z",
+    "lastChecked": "2026-11-19T12:40:33.154Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-19T02:11:28.466Z"
+    "lastVerified": "2026-11-19T12:40:33.154Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate/weaviate",
@@ -997,11 +997,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "flux-iac-tofu-controller": {
-    "name": "tofu-controller",
+    "name": "flux-iac/tofu-controller",
     "officialUrl": "https://github.com/flux-iac/tofu-controller",
-    "lastChecked": "2026-11-18T11:45:04.270Z",
-    "revisionIdentifier": "aaa5de9c",
-    "lastVerified": "2026-11-18T11:45:04.270Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-19T12:40:34.461Z",
+    "lastVerified": "2026-11-19T12:40:34.461Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-flux-iac-tofu-controller",
+    "contentHash": "9dd96374a82c8e249a114980960ad6050a09fb7e9aa927ede852e7e25cdfcea8",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "provablehq-snarkos": {
     "name": "snarkOS",
@@ -7129,5 +7139,36 @@
     "lastChecked": "2026-11-19T12:15:09.433Z",
     "revisionIdentifier": "666a7437",
     "lastVerified": "2026-11-19T12:15:09.433Z"
+  },
+  "railwayapp-nixpacks": {
+    "name": "nixpacks",
+    "officialUrl": "https://github.com/railwayapp/nixpacks",
+    "lastChecked": "2026-11-19T12:40:23.172Z",
+    "revisionIdentifier": "144b4f9a",
+    "lastVerified": "2026-11-19T12:40:23.172Z"
+  },
+  "hf-microsoft-frognano-4b-2609": {
+    "name": "microsoft/FrogNano-4B-2609",
+    "officialUrl": "https://huggingface.co/microsoft/FrogNano-4B-2609",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T12:40:25.725Z",
+    "lastVerified": "2026-11-19T12:40:25.725Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-microsoft-frognano-4b-2609",
+    "contentHash": "e6e90b545a91846a49ef8ccec7ab2a2e8e99f0ab2a71efe4bad7d042bae22586",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "microsoft-react-native-windows": {
+    "name": "react-native-windows",
+    "officialUrl": "https://github.com/microsoft/react-native-windows",
+    "lastChecked": "2026-11-19T12:40:28.267Z",
+    "revisionIdentifier": "1ed932d5",
+    "lastVerified": "2026-11-19T12:40:28.267Z"
   }
 }

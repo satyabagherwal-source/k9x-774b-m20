@@ -11298,3 +11298,5 @@ Every entry in this ledger must capture:
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `08c6985f` | Multi-dimensional audit evidence | 2026-11-19T11:50:44.610Z |
 | `learn-dom-d-8c81e436` | `project://hf-qwen-qwen-image-2.1-turbo` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-turbo-learnings.md` | 2026-11-19T11:51:24.561Z |
 | `learn-huggingface-phocinae-phocinae-largha-150m-v1` | `https://huggingface.co/Phocinae/Phocinae-Largha-150M-v1` | `hf-phocina` | Multi-dimensional audit evidence | 2026-11-19T12:20:08.633Z |
+| `learn-huggingface-microsoft-frognano-4b-2609` | `https://huggingface.co/microsoft/FrogNano-4B-2609` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-19T12:40:26.257Z |
+| `learn-github-flux-iac-tofu-controller` | `https://github.com/flux-iac/tofu-controller` | `877521d6` | Multi-dimensional audit evidence | 2026-11-19T12:40:35.391Z |
