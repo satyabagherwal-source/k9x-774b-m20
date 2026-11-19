@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T13:38:38.504Z",
+  "timestamp": "2026-11-19T04:13:33.822Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-open-policy-agent-opa-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [open-policy-agent-opa-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T13:38:38.504Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T04:13:33.822Z`  
 > **Learning ID**: `LEARN-EVO-open-policy-agent-opa-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 76%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 69%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from open-policy-agent-opa-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source**: github ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
-> **Source Version**: `caa6e120`  
+> **Source Version**: `674d3362`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T13:38:26.096Z  
+> **Timestamp**: 2026-11-19T04:08:20.851Z  
 > **Learning ID**: `learn-github-open-policy-agent-opa`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T13:38:26.092Z  
+> **Harvest Timestamp**: 2026-11-19T04:03:19.973Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open Policy Agent (OPA) is an open source, general-purpose policy engine.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12474 stars
+- **Stars / Engagement**: 12492 stars
 
 ---
 
@@ -995,229 +995,210 @@ func BuildTLSConfig(scheme string, skipVerify bool, cert *tls.Certificate, pool 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dea4670c` (2026-11-13)
-**Commit Message**: build: Stop marking release binaries as dirty
+### Incident Patch 1: `674d3362` (2026-11-18)
+**Commit Message**: docs: fix typos (#9594)
 
-Release binaries since v1.13.0 report a build commit with a "-dirty"
-suffix. Go sets vcs.modified=true when "git status --porcelain" is not
-empty at build time, and the release job leaves an untracked file in
-the checkout: jdx/mise-action writes mise.toml to the repository root.
-(Between v1.13.0 and v1.16.x, this had another cause: mlugg/setup-zig
-put its Zig cache in .zig-cache in the workspace.)
+Fixes spelling mistakes found with codespell (documentation only; no
+functional change).
 
-Add mise.toml to .gitignore, so the release builds are clean again.
+AI assistance disclosure: this change was found and drafted with Claude
+Code; the diff was reviewed line by line.
 
-To keep this from coming back with another file, check the working
-copy after the build:
+Signed-off-by: Adham Kiwan <[REDACTED_EMAIL]>
 
-- pull-request.yaml: after each PR build. This catches the issue
-    early - today it only appears on the Windows build but in the
-    future who knows.
-- post-merge.yaml: after the edge release build - this prevents
-    regressions.
-- post-tag.yaml: read vcs.modified from every release binary before
-    it is uploaded, and fail if it is not false. Unlike the two checks
-    above, this one has no exceptions for regenerated Wasm files.
-
-Fixes #9552
-
-Signed-off-by: Nedim Srndic <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/post-merge.yaml` (modified, +5/-0)
+**File**: `docs/docs/policy-language.md` (modified, +1/-1)
 ```diff
-@@ -127,6 +127,11 @@ jobs:
-         env:
-           GOARCH: arm64
+@@ -3431,7 +3431,7 @@ organized into many sub-packages, it is useful to declare schemas recursively
+ for them using the `subpackages` scope. For example:
  
-+      - name: Check working copy is clean
-+        # Anything untracked or modified here ends up as "-dirty" in the
-+        # build commit of the binaries built above.
-+        run: ./build/check-working-copy.sh
-+
-       - name: Upload binaries
-         uses: actions/upload-artifact@v7.0.2
-         if: always()
+ ```rego
+-# METADTA
++# METADATA
+ # scope: subpackages
+ # schemas:
+ # - input: schema.input
 ```
 
-**File**: `.github/workflows/post-tag.yaml` (modified, +15/-0)
+**File**: `docs/projects/regal/custom-rules/roast.md` (modified, +1/-1)
 ```diff
-@@ -62,6 +62,21 @@ jobs:
-         env:
-           GOARCH: arm64
+@@ -237,7 +237,7 @@ on template string nodes is only present when `true`.
+ ### Module comments represented as arrays of location strings
  
-+      - name: Check binaries are not marked dirty
-+        run: |
-+          fail=0
-+          for bin in _release/*/opa_*; do
-+            case "$bin" in *.sha256) continue ;; esac
-+            if ! go version -m "$bin" | grep -q 'vcs.modified=false'; then
-+              echo "::error::$bin was built from a modified working tree"
-+              fail=1
-+            fi
-+          done
-+          if [ "$fail" -ne 0 ]; then
-+            git status --porcelain --untracked-files=all
-+            exit 1
-+          fi
-+
-       - name: Upload binaries
-         uses: actions/upload-artifact@v7.0.2
-         if: always()
+ Since a comment is simply text at a given location, they are simply represented as location strings. OPA's AST format
+-adds a redundant extra text atttribute only to strip off the leading `#` from the comment text, and is additionally
++adds a redundant extra text attribute only to strip off the leading `#` from the comment text, and is additionally
+ inconsistent with the rest if its format, as both the `text` and `location` attributes are title-cased.
+ 
+ ## Performance
 ```
 
-**File**: `.github/workflows/pull-request.yaml` (modified, +6/-0)
+**File**: `docs/projects/regal/rules/bugs/import-shadows-rule.md` (modified, +1/-1)
 ```diff
-@@ -170,6 +170,12 @@ jobs:
-         GOARCH: ${{ matrix.arch }}
-       timeout-minutes: 30
+@@ -43,7 +43,7 @@ resources contains resource if {
  
-+    - name: Check working copy is clean
-+      # A file left behind in the checkout (the windows build installs mise,
-+      # which writes mise.toml) would mark release binaries as built from a
-+      # dirty tree.
-+      run: ./build/check-working-copy.sh
-+
-     - name: Upload binaries - No Go tags
-       uses: actions/upload-artifact@v7.0.2
-       if: ${{ matrix.go_tags == '' }}
+ ## Rationale
+ 
+-Imported identifers like `bar` in `import data.foo.bar` has higher precedence than a rule named `bar` in the same
++Imported identifiers like `bar` in `import data.foo.bar` has higher precedence than a rule named `bar` in the same
+ package. This means that any rule that is shadowed by an import is effectively unreachable inside of the module.
+ Avoid shadowing either by renaming your rule or by using an alias for the imported identifier.
+ 
 ```
 
-**File**: `.gitignore` (modified, +4/-0)
+**File**: `docs/projects/regal/rules/idiomatic/prefer-equals-comparison.md` (modified, +1/-1)
 ```diff
-@@ -42,6 +42,10 @@ docs/website/data/versions
- # generated when building windows binary to add icon and product version
- resource.syso
+@@ -32,7 +32,7 @@ The unification operator (`=`) can be used for both assignment and equality comp
+ powerful feature where appropriate, but when the intent is to perform either assignment (`:=`) **or** an equality
+ comparison (`==`), using the operators designed for those specific purposes helps communicate that intent much more
+ clearly, and avoid some behaviors of the unification operator that may potentially be surprising (like in which order
+-expresions are evaluated). This is not a general recommendation against using the unification operator, mind you! But to
++expressions are evaluated). This is not a general recommendation against using the unification operator, mind you! But to
+ use the operators specifically for what they are designed for: `:=` for assignment, `==` for equality comparison, and
+ `=` for unification.
  
-+# written by jdx/mise-action in CI; an untracked file in the checkout makes
-+# Go stamp release binaries with vcs.modified=true ("-dirty")
-+mise.toml
-+
- # generated when building proto codegen plugin (see Makefile generate-proto)
- build/tools/bin/
+```
+
+**File**: `internal/gojsonschema/README.md` (modified, +2/-2)
+```diff
+@@ -212,7 +212,7 @@ schema, err := sl.Compile(gojsonschema.NewReferenceLoader("http://some_host.com/
+ Schemas added by `AddSchema` and `AddSchemas` are only validated when the entire schema is compiled, unless meta-schema validation is used.
+ 
+ ## Using a specific draft
+-By default `gojsonschema` will try to detect the draft of a schema by using the `$schema` keyword and parse it in a strict draft-04, draft-06 or draft-07 mode. If `$schema` is missing, or the draft version is not explicitely set, a hybrid mode is used which merges together functionality of all drafts into one mode.
++By default `gojsonschema` will try to detect the draft of a schema by using the `$schema` keyword and parse it in a strict draft-04, draft-06 or draft-07 mode. If `$schema` is missing, or the draft version is not explicitly set, a hybrid mode is used which merges together functionality of all drafts into one mode.
+ 
+ Autodectection can be turned off with the `AutoDetect` property. Specific draft versions can be specified with the `Draft` property.
+ 
+@@ -222,7 +222,7 @@ sl.Draft = gojsonschema.Draft7
+ sl.AutoDetect = false
+ ```
+ 
+-If autodetection is on (default), a draft-07 schema can savely reference draft-04 schemas and vice-versa, as long as `$schema` is specified in all schemas.
++If autodetection is on (default), a draft-07 schema can safely reference draft-04 schemas and vice-versa, as long as `$schema` is specified in all schemas.
+ 
+ ## Meta-schema validation
+ Schemas that are added using the `AddSchema`, `AddSchemas` and `Compile` can be validated against their meta-schema by setting the `Validate` property.
+```
+
+**File**: `v1/debug/README.md` (modified, +1/-1)
+```diff
+@@ -75,7 +75,7 @@ if err != nil {
+ 
+ ## Stepping Through Policy Evaluation
+ 
+-When evaluation execution is paused, either immidiately after launching a session or when a breakpoint is hit, the session can be stepped through.
++When evaluation execution is paused, either immediately after launching a session or when a breakpoint is hit, the session can be stepped through.
+ 
+ ### Step Over
  
 ```
 
 ---
 
-### Incident Patch 2: `78f9b94a` (2026-11-13)
-**Commit Message**: topdown: fix ceil and floor of negative fractions above -1
+### Incident Patch 2: `43bb521c` (2026-11-17)
+**Commit Message**: ast: Value only built-in type env (#9586)
 
-big.Float.Int truncates toward zero, so a negative fraction between -1
-and 0 became +0 and lost its sign. ceil(-0.5) returned 1 and floor(-0.5)
-returned 0. Use the accuracy reported by Int to decide the adjustment.
+Env() saves the details of built ins to the type tree using Ref(). Ref
+allocates for the name but only the value is needed.
 
-Signed-off-by: Kurt Roekle <[REDACTED_EMAIL]>
+This runs once per compile, for each built-in function (~200). Instead
+Env can manually insert nodes using the namespacing heirarchy for
+function names reducing wasted allocations.
 
-**File**: `v1/test/cases/testdata/v1/arithmetic/test-arithmetic-ceil-floor-negative.yaml` (added, +60/-0)
+This matters most for small / frequent compile jobs such as opa eval.
+
+```
+           │ /tmp/wv-before.txt │         /tmp/wv-after.txt         │
+                      │       sec/op       │   sec/op     vs base              │
+CompileModules/1-16            124.7µ ± 3%   118.8µ ± 2%  -4.73% (p=0.001 n=8)
+CompileModules/10-16           626.7µ ± 2%   625.4µ ± 3%       ~ (p=0.574 n=8)
+CompileModules/100-16          6.231m ± 2%   6.208m ± 2%       ~ (p=0.574 n=8)
+geomean                        786.8µ        772.7µ       -1.79%
+
+                      │ /tmp/wv-before.txt │         /tmp/wv-after.txt          │
+                      │        B/op        │     B/op      vs base              │
+CompileModules/1-16          101.79Ki ± 0%   94.01Ki ± 0%  -7.64% (p=0.000 n=8)
+CompileModules/10-16          448.8Ki ± 0%   441.0Ki ± 0%  -1.73% (p=0.000 n=
+
+**File**: `v1/ast/check.go` (modified, +9/-1)
 ```diff
-@@ -0,0 +1,60 @@
-+---
-+cases:
-+  # Integer-valued results beyond int64 are rendered with sprintf because the
-+  # golden-case loader parses expected numbers as float64.
-+  - note: "arithmetic/ceil of fractions and integers around zero"
-+    query: data.test.p = x
-+    modules:
-+      - |
-+        package test
-+
-+        p := {
-+        	"neg_half": ceil(-0.5),
-+        	"neg_tenth": ceil(-0.1),
-+        	"neg_fraction": ceil(-1.5),
-+        	"pos_half": ceil(0.5),
-+        	"pos_fraction": ceil(1.5),
-+        	"neg_integer": ceil(-2),
-+        	"neg_integer_float": ceil(-2.0),
-+        	"zero": ceil(0),
-+        	"neg_beyond_int64": sprintf("%v", [ceil(-9223372036854775809)]),
-+        }
-+    want_result:
-+      - x:
-+          neg_half: 0
-+          neg_tenth: 0
-+          neg_fraction: -1
-+          pos_half: 1
-+          pos_fraction: 2
-+          neg_integer: -2
-+          neg_integer_float: -2
-+          zero: 0
-+          neg_beyond_int64: "-9223372036854775809"
-+  - note: "arithmetic/floor of fractions and integers around zero"
-+    query: data.test.p = x
-+    modules:
-+      - |
-+        package test
-+
-+        p := {
-+        	"neg_half": floor(-0.5),
-+        	"neg_seven_tenths": floor(-0.7),
-+        	"neg_fraction": floor(-1.5),
-+        	"pos_half": floor(0.5),
-+        	"pos_fraction": floor(1.5),
-+        	"neg_integer": floor(-2),
-+        	"neg_integer_float": floor(-2.0),
-+        	"zero": floor(0),
-+        	"neg_beyond_int64": sprintf("%v", [floor(-9223372036854775809)]),
-+        }
-+    want_result:
-+      - x:
-+          neg_half: -1
-+          neg_seven_tenths: -1
-+          neg_fraction: -2
-+          pos_half: 0
-+          pos_fraction: 1
-+          neg_integer: -2
-+          neg_integer_float: -2
-+          zero: 0
-+          neg_beyond_int64: "-9223372036854775809"
+@@ -158,7 +158,15 @@ func (tc *typeChecker) WithAllowUndefinedFunctionCalls(allow bool) *typeChecker
+ func (tc *typeChecker) Env(builtins map[string]*Builtin) *TypeEnv {
+ 	env := tc.newEnv(nil)
+ 	for _, bi := range builtins {
+-		env.tree.Put(bi.Ref(), bi.Decl)
++		// The tree only keeps the Values, so skip building a Ref and its Terms
++		// (bi.Ref()) for every builtin on every compile.
++		part, rest, dotted := strings.Cut(bi.Name, ".")
++		node := env.tree.childOrNew(InternedVarValue(part))
++		for dotted {
++			part, rest, dotted = strings.Cut(rest, ".")
++			node = node.childOrNew(InternedValue(part))
++		}
++		node.value = bi.Decl
+ 	}
+ 	return env
+ }
 ```
 
-**File**: `v1/topdown/arithmetic.go` (modified, +8/-14)
+**File**: `v1/ast/check_test.go` (modified, +9/-0)
 ```diff
-@@ -210,25 +210,19 @@ func arithRound(a *big.Float) *big.Float {
- }
- 
- func arithCeil(a *big.Float) *big.Float {
--	i, _ := a.Int(nil)
--	f := new(big.Float).SetInt(i)
--
--	if f.Signbit() || a.Cmp(f) == 0 {
--		return f
-+	i, acc := a.Int(nil)
-+	if acc == big.Below {
-+		i.Add(i, big.NewInt(1))
+@@ -3541,3 +3541,12 @@ func TestCheckWithModifiers(t *testing.T) {
+ 		})
  	}
--
--	return new(big.Float).Add(f, big.NewFloat(1.0))
-+	return new(big.Float).SetInt(i)
  }
- 
- func arithFloor(a *big.Float) *big.Float {
--	i, _ := a.Int(nil)
--	f := new(big.Float).SetInt(i)
++
++func TestTypeCheckerEnvResolvesBuiltins(t *testing.T) {
++	env := newTypeChecker().Env(BuiltinMap)
++	for _, bi := range BuiltinMap {
++		if tpe := env.GetByRef(bi.Ref()); tpe == nil || types.Compare(tpe, bi.Decl) != 0 {
++			t.Errorf("builtin %v: got %v, want %v", bi.Name, tpe, bi.Decl)
++		}
++	}
++}
+```
+
+**File**: `v1/ast/env.go` (modified, +11/-8)
+```diff
+@@ -305,18 +305,21 @@ func (n *typeTreeNode) PutOne(key Value, tpe types.Type) {
+ func (n *typeTreeNode) Put(path Ref, tpe types.Type) {
+ 	curr := n
+ 	for _, term := range path {
+-		child, ok := curr.children.Get(term.Value)
+-		if !ok {
+-			child = newTypeTree()
+-			child.key = term.Value
+-			curr.putChild(child)
+-		}
 -
--	if !f.Signbit() || a.Cmp(f) == 0 {
--		return f
-+	i, acc := a.Int(nil)
-+	if acc == big.Above {
-+		i.Sub(i, big.NewInt(1))
+-		curr = child
++		curr = curr.childOrNew(term.Value)
  	}
--
--	return new(big.Float).Sub(f, big.NewFloat(1.0))
-+	return new(big.Float).SetInt(i)
+ 	curr.value = tpe
  }
  
- func builtinMinus(_ BuiltinContext, operands []*ast.Term, iter func(*ast.Term) error) error {
++func (n *typeTreeNode) childOrNew(key Value) *typeTreeNode {
++	child, ok := n.children.Get(key)
++	if !ok {
++		child = newTypeTree()
++		child.key = key
++		n.putChild(child)
++	}
++	return child
++}
++
+ // Insert inserts tpe at path in the tree, but also merges the value into any types.Object present along that path.
+ // If a types.Object is inserted, any leafs already present further down the tree are merged into the inserted object.
+ // path must be ground.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9571** (2026-11-16): topdown: Remove stale comment re sync.Pool (@charlieegan3)
-- **PR #9568** (2026-11-16): Releng: Integrate v1.22.4 (@srenatus)
-- **PR #9563** (2026-11-16): topdown: fix ceil and floor of negative fractions above -1 (@kroekle)
-- **PR #9561** (2026-11-16): build: Stop marking release binaries as dirty (@srndic)
-- **PR #9558** (2026-11-13): ast: fix negative number location text (for issue #9531) (@devjoshi2005)
-- **PR #9557** (2026-11-13): build(deps): bump the dependencies group across 2 directories with 2 updates (@dependabot[bot])
+- **PR #9594** (2026-11-18): docs: fix typos (@Adham-Kiwan)
+- **PR #9590** (2026-11-18): topdown: allocate less in replace and replace_n (@charlieegan3)
+- **PR #9589** (2026-11-18): ci: extend release vulnerability check to OCP and opa-envoy-plugin (@srenatus)
+- **PR #9586** (2026-11-17): ast: Value only built-in type env (@charlieegan3)
+- **PR #9585** (2026-11-17): ast: allocate each parser term cache entry once (@charlieegan3)
+- **PR #9583** (2026-11-17): ast: Set scan opts when needed to reduce allocs (@charlieegan3)
 
 ---
 
@@ -1237,35 +1218,31 @@ Signed-off-by: Kurt Roekle <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build: Stop marking release binaries as dirty
+## X. docs: fix typos
 
 **RULE**:
-When implementing operations in `.github/workflows/post-merge.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/docs/policy-language.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dea4670c`: build: Stop marking release binaries as dirty. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `674d3362`: docs: fix typos. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/post-merge.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/policy-language.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-      - name: Check working copy is clean
-        # Anything untracked or modified here ends up as "-dirty" in the
-        # build commit of the binaries built above.
-        run: ./build/check-working-copy.sh
-
+# METADATA
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+# METADTA
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dea4670c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `674d3362` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

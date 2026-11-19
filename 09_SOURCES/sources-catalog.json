@@ -1265,8 +1265,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
     "license": "Open-Source",
-    "contentHash": "bce3a10f6dfa7cb5a9e43b3ae4f30034f712b97d477f9b632b2691be2b4afc93",
-    "lastHarvestedAt": "2026-11-14T14:40:07.661Z",
+    "contentHash": "c31cb02178dcb7953dacf3eb4004c4f047219021b3185483ba7b3c4bfe7e4061",
+    "lastHarvestedAt": "2026-11-19T04:08:17.256Z",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2"
   },
   "autonomous-ai-openharness": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "226268f4",
+    "sourceVersion": "259343d1",
     "license": "Apache-2.0",
-    "contentHash": "4696a2526d71de6f363c0e5729dbef93a5d60872adb6e8aeeaa1d94a63b6a51a",
-    "lastHarvestedAt": "2026-11-18T23:18:27.391Z",
+    "contentHash": "873d2f048aa565ae2e3745908d3184a603e2e68f1b38ee5fc732ee72a5737aae",
+    "lastHarvestedAt": "2026-11-19T04:13:29.924Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -6113,10 +6113,10 @@
     "repository": "open-policy-agent/opa",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/opa",
-    "sourceVersion": "ee945380",
+    "sourceVersion": "674d3362",
     "license": "Apache-2.0",
-    "contentHash": "6ab7bfe11063ac260aeddce35fe23a09c5af89d92e5e868de1e86f93bb2ceefb",
-    "lastHarvestedAt": "2026-11-17T15:43:45.645Z",
+    "contentHash": "3b1f6b3510aa4d37979797566c59dd027df54977e4e6460de98dbbbc8ae3e5f6",
+    "lastHarvestedAt": "2026-11-19T04:08:21.492Z",
     "learningId": "learn-github-open-policy-agent-opa"
   },
   "dragonflydb-dragonfly": {

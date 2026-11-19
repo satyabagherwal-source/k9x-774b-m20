@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
   "source_version": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T14:40:07.813Z",
+  "timestamp": "2026-11-19T04:08:17.424Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [sentence-transformers/paraphrase-multilingual-mpnet-base-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2) (Revision: `hf-sentenc`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T14:40:07.813Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T04:08:17.424Z`  
 > **Learning ID**: `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T14:40:07.113Z  
+> **Harvest Timestamp**: 2026-11-19T04:03:11.285Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: sentence-similarity
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 9170819 downloads | 554 likes
+- **Stars / Engagement**: 9376882 downloads | 557 likes
 
 ---
 

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-KAW9",
-    "timestamp": "2026-11-17T17:20:22.569Z",
-    "repository": "nginx/kubernetes-ingress",
-    "learningId": "learn-github-nginx-kubernetes-ingress",
-    "contentHash": "b1f0df368ba81c36ae79e9e0d566ce5ac7af06323c92462c17ed6d8f15be370c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-KCIZ",
-    "timestamp": "2026-11-17T17:20:24.683Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "1469bf05681a671c7988712054b5fe59d7659e7e214575c7800cbcedbc0dab5d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-U0VS",
-    "timestamp": "2026-11-17T17:27:56.152Z",
-    "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
-    "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
-    "contentHash": "e2c93e84da26f55d63bb88d8b12afb73a42674c92652454760ffd812f27b91c1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-UAVZ",
     "timestamp": "2026-11-17T17:28:09.119Z",
     "repository": "weaviate/weaviate",
@@ -7490,6 +7445,51 @@
     "repository": "freenet/freenet-core",
     "learningId": "learn-github-freenet-freenet-core",
     "contentHash": "23ab74fcce81b4bd8659f1576afaba50310ce5e2ef82a5704eadca50f05e849f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-5DGL",
+    "timestamp": "2026-11-19T04:08:17.253Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+    "contentHash": "c31cb02178dcb7953dacf3eb4004c4f047219021b3185483ba7b3c4bfe7e4061",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-5GQ7",
+    "timestamp": "2026-11-19T04:08:21.487Z",
+    "repository": "open-policy-agent/opa",
+    "learningId": "learn-github-open-policy-agent-opa",
+    "contentHash": "3b1f6b3510aa4d37979797566c59dd027df54977e4e6460de98dbbbc8ae3e5f6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-C2PS",
+    "timestamp": "2026-11-19T04:13:29.920Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "873d2f048aa565ae2e3745908d3184a603e2e68f1b38ee5fc732ee72a5737aae",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

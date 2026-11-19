@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T23:18:31.956Z",
+  "timestamp": "2026-11-19T04:13:34.687Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T23:18:31.956Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T04:13:34.687Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nucleoidai-nucleoid-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `226268f4`  
+> **Source Version**: `259343d1`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T23:18:26.376Z  
+> **Timestamp**: 2026-11-19T04:13:28.911Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T23:18:26.370Z  
+> **Harvest Timestamp**: 2026-11-19T04:03:27.332Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1591,99 +1591,92 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `226268f4` (2026-11-18)
-**Commit Message**: Draft NUC 121 Held Values of Reasoning Selections
+### Incident Patch 1: `259343d1` (2026-11-19)
+**Commit Message**: Draft NUC 122 Python-Style Except Clauses
 
-Category: Reasoning enhancement, drawn uniformly at random (index 3 of
+Category: Language compatibility, drawn uniformly at random (index 4 of
 the five eligible categories in NUC 1's registry, p = 1/5, no redraw)
-for a continuous /nuc-proposal cycle. The token non-regression gate is
-required for this category in continuous mode, so each new case gets an
-accepted-syntax counterpart.
+for a continuous /nuc-proposal cycle. Language compatibility skips token
+comparison entirely; every other check still applies.
 
-Requested change: a final reasoning stage selection |> holds that gives
-the values that the steps of a selection hold, as a list in the
-selection's order, exactly the accepted (selection).map(step =>
-step.holds), where a reference alone denotes its own one-step selection,
-as for NUC 112's nodes. It ends the pipeline, as nodes does. At the
-accepted revision each such pipeline raises the parse-time
-TypeError("holds is not an operation"); holds stays an ordinary name
-everywhere else, and a binding named holds shadows the stage as bindings
-shadow the other stages. NUC 112 left the projections of the other step
-fields out; this completes the one for holds, which the documents and
-datasets spell 38 times.
+Requested change: a try statement may spell its catch clause with
+Python's except. except: and except Exception: catch every error as
+catch: does, and except Exception as NAME: binds the error to NAME as
+catch NAME: does, also with a finally: clause of NUC 119 after it. At
+the accepted revision each such program is a whole-program parse error,
+SyntaxError("Expected 'catch' after 'try'"); only those programs change.
+Every other name after except, as in except e: or except ValueError:,
+keeps that error, because Python reads it as a filter by exception
+class, and except stays an ordinary name everywhere else, including
+NUC 106's except stage.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -148,6 +148,7 @@ Created: 31-Jul-2026
- | [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Accepted |
- | [112](nuc-0112.md) | Node Names of Reasoning Selections | Accepted |
- | [120](nuc-0120.md) | Union Reasoning Selections | Accepted |
-+| [121](nuc-0121.md) | Held Values of Reasoning Selections | Draft |
+@@ -165,6 +165,7 @@ Created: 31-Jul-2026
+ | [116](nuc-0116.md) | Size and Emptiness Method Aliases | Accepted |
+ | [117](nuc-0117.md) | First and Last Element Methods | Accepted |
+ | [118](nuc-0118.md) | Case Conversion Method Aliases | Accepted |
++| [122](nuc-0122.md) | Python-Style Except Clauses | Draft |
  
- ### Language compatibility
+ ### Documentation
  
-@@ -295,6 +296,7 @@ Created: 31-Jul-2026
- | [118](nuc-0118.md) | Case Conversion Method Aliases | Standards Track | Language compatibility | Accepted |
+@@ -297,6 +298,7 @@ Created: 31-Jul-2026
  | [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Accepted |
  | [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
-+| [121](nuc-0121.md) | Held Values of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+ | [121](nuc-0121.md) | Held Values of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
++| [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0121.md` (added, +69/-0)
+**File**: `docs/nuc-0122.md` (added, +64/-0)
 ```diff
-@@ -0,0 +1,69 @@
-+# NUC 121 -- Held Values of Reasoning Selections
+@@ -0,0 +1,64 @@
++# NUC 122 -- Python-Style Except Clauses
 +
 +```
-+NUC: 121
-+Title: Held Values of Reasoning Selections
++NUC: 122
++Title: Python-Style Except Clauses
 +Author: Can Mingir <canmingir@gmail.com>
 +Status: Draft
 +Type: Standards Track
-+Category: Reasoning enhancement
++Category: Language compatibility
 +Created: 18-Nov-2026
 +```
 +
 +## Abstract
 +
-+- `selection |> holds` gives the values that the steps of a reasoning
-+  selection hold, as a list in the selection's order. So
-+  `tax |> why |> stated |> holds` is the values of the facts the tax rests
-+  on, and `price |> affects |> holds` the values that a change of the price
-+  reaches.
-+- It completes [NUC 112](nuc-0112.md)'s projection: `nodes` names the
-+  steps of a selection, and `holds` gives what they hold. It is exactly the
-+  accepted `(selection).map(step => step.holds)`, where a reference alone
-+  denotes its own one-step selection, as for `nodes`.
-+- The stage ends the pipeline, as `nodes` does: its result is a list of
-+  values, not a selection.
-+- At the accepted revision each such pipeline raises the parse-time
-+  `TypeError("holds is not an operation")`. Only those programs change.
-+  `holds` stays an ordinary name everywhere else, as a variable, function,
-+  property or object key, and a binding named `holds` shadows the stage,
-+  as bindings shadow the other stages.
++- A `try` statement may spell its catch clause with Python's `except`.
++  `except:` and `except Exception:` catch every error, as `catch:` does,
++  and `except Exception as NAME:` binds the error to `NAME`, as
++  `catch NAME:` does.
++- Such a program reads exactly as its `catch` spelling, including a
++  `finally:` clause of [NUC 119](nuc-0119.md) after the `except` clause.
++- At the accepted revision each such program is a whole-program parse
++  error, `SyntaxError("Expected 'catch' after 'try'")`. Only those programs
++  change.
++- Every other name after `except`, as in `except e:` or
++  `except ValueError:`, keeps that error, because Python reads it as a
++  filter by exception class, which Nucleoid's errors do not have. `except`
++  stays an ordinary name everywhere else, including the `except` stage of
++  [NUC 106](nuc-0106.md).
 +
 +## Motivation
 +
-+- A world model explains a conclusion by what it rests on, and often needs
-+  the values themselves: the figures behind a total, the readings behind an
-+  alarm, or the values a change moves. `why`, `affects` and their stages
-+  select the steps, and NUC 112's `nodes` names them; their values have no
-+  stage.
-+- Today the values are spelled
-+  `(tax |> why |> stated).map(step => step.holds)`, or with the selector of
-+  [NUC 79](nuc-0079.md), `(stated why tax).map(.holds)`, which wraps the
-+  pipeline in parentheses and adds a call: six lexer tokens more than
-+  `stated why tax |> holds`. The specification, the language reference, the
-+  README, the examples and the synthesized records spell it 38 times.
-+- A stage keeps the question one pipeline that reads left to right, as
-+  `nodes` does for the names.
++- Nucleoid already reads many of Python's spellings: `def`, `elif`, `None`,
++  `self`, `lambda`, `not in`, `pass` and, through NUC 119, `finally:`. Its
++  error handling still knows only `catch`, so a model or a programmer who
++  writes Python's `try:` and `except Exception as error:` gets a parse
++  error for the whole program.
++- The catch-all forms `except:` and `except Exception as error:` are
++  Python's spellings of a clause that catches every error, which is what
++  Nucleoid's `catch` does. Reading them lets familiar Python error handling
++  run unchanged, as the language-superset aspiration of
++  [NUC 1](nuc-0001.md) asks.
 +
 +## Rationale
 +
@@ -1711,61 +1704,63 @@ Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
 
 ---
 
-### Incident Patch 2: `9da0bd15` (2026-11-18)
-**Commit Message**: NUC 120 Union Reasoning Selections
+### Incident Patch 2: `c4802b50` (2026-11-19)
+**Commit Message**: NUC 121 Held Values of Reasoning Selections
 
 Accepted under the automatic acceptance rule, in a continuous
 /nuc-proposal cycle (Reasoning enhancement, token comparison required):
 the frozen candidate meets every hard criterion and passes every policy
 check, including the token non-regression gate. The cycle found no stale
 Draft, drew Reasoning enhancement uniformly from the five eligible
-categories, allocated NUC 120 in 22d7c31d, and completed it with fresh
+categories, allocated NUC 121 in 226268f4, and completed it with fresh
 baselines, candidate, proposer, Rust improvement pass and evaluator.
 
-A pipeline stage, selection |> union(other), selects the selection's
-steps in their order followed by the steps of other whose node the
-selection does not select, in other's order, compared by graph node:
-exactly the accepted (selection).concat(other |> except(selection)),
-except that an other that depth(null) makes undefined makes the whole
-selection undefined, as for intersect and except. The result stays a
-selection, so every later stage applies to it; each step keeps the NUC
-82 distance of the walk that selected it, and the union keeps the
-selection's walk direction for a later path. other is written as a
-pipeline source is and evaluated in place each time the stag
+A final pipeline stage, selection |> holds, gives the values that the
+steps of a reasoning selection hold, as a list in the selection's order:
+exactly the accepted (selection).map(step => step.holds), where a
+reference alone denotes its own one-step selection, as for NUC 112's
+nodes. It shares the final-stage path of nodes: the parser maps holds
+after |> to the new public variant Stage::Holds, the crate-private
+Stage::projection and StepField choose the step field that a final
+stage projects, and Runtime::projected builds the same step records, so
+later anonymous objects are numbered as under the accepted spelling, but
+records no read of them, so a standing de
 
-**File**: `README.md` (modified, +28/-0)
+**File**: `README.md` (modified, +30/-0)
 ```diff
-@@ -2559,6 +2559,34 @@ assert(attempts, [1111, 1234])
-   the pending result. See the
-   [root contract](nucleoid.spec.md#finally-clauses).
+@@ -2587,6 +2587,36 @@ assert(inspect.map(step -> step.node), ["flow", "pressure", "valve", "temperatur
+   valve joins them. See the
+   [root contract](nucleoid.spec.md#union-reasoning-selections).
  
-+## Union reasoning selections
++## Held values of reasoning selections
 +
-+**Union lists every fact behind either of two alarms**
++**Holds lists the readings behind a frost warning and what the wind moves**
 +
 +```nuc
-+pressure = 5
-+flow = 3
-+temperature = 70
-+strain = pressure * flow
-+leak = flow > 2 && pressure > 4
-+overheat = temperature + strain > 80
-+inspect = why leak |> union(why overheat) |> stated
-+assert(inspect.map(step -> step.node), ["flow", "pressure", "temperature"])
-+valve = 1
-+leak = flow > 2 && pressure > 4 && valve == 1
-+assert(inspect.map(step -> step.node), ["flow", "pressure", "valve", "temperature"])
++air = 3
++ground = -1
++wind = 12
++chill = air - wind / 4
++frost = chill + ground < 1
++readings = frost |> why |> stated |> holds
++moved = wind |> affects |> holds
++assert(readings, [-1, 3, 12])
++assert(moved, [0, true])
++wind = 4
++assert([readings, moved], [[-1, 3, 4], [2, false]])
 +```
 +
-+- [NUC 120](docs/nuc-0120.md) adds the reasoning stage `|> union(OTHER)`.
-+  `why leak |> union(why overheat)` keeps the steps of the leak's
-+  explanation and adds the steps of the overheat's explanation that it does
-+  not hold yet, so every node that either alarm rests on appears once: the
-+  flow and the pressure behind both alarms are listed with the leak's.
-+- The union is still a selection, so `|> stated` narrows it to the facts to
-+  inspect, and it stays live: once the leak rule also checks the valve, the
-+  valve joins them. See the
-+  [root contract](nucleoid.spec.md#union-reasoning-selections).
++- [NUC 121](docs/nuc-0121.md) adds the final reasoning stage `|> holds`,
++  which gives the values of a selection's steps in their order.
++  `frost |> why |> stated |> holds` lists the readings the frost warning
++  rests on, and `wind |> affects |> holds` the values that a change of the
++  wind reaches: the chill and the warning itself.
++- Both lists are the values that
++  `(frost |> why |> stated).map(step => step.holds)` and
++  `(wind |> affects).map(step => step.holds)` give, and they stay live the
++  same way: once the wind drops, the readings show its new speed and the
++  warning clears. See the
++  [root contract](nucleoid.spec.md#held-values-of-reasoning-selections).
 +
  ## Reactive list flattening
  
@@ -1774,166 +1769,170 @@ pipeline source is and evaluated in place each time the stag
 
 **File**: `dataset/nucleoid.spec.jsonl` (modified, +20/-16)
 ```diff
-@@ -791,19 +791,23 @@
- {"id":"spec-0791","description":"Nucleoid runs a finally clause however a try statement ends","code":"attempts = []\ndef charge(balance, amount):\n    try:\n        if amount > balance:\n            throw \"DECLINED\"\n        return balance - amount\n    catch reason:\n        return reason\n    finally:\n        attempts.push(amount)\nassert(charge(50, 30), 20)\nassert(charge(20, 40), \"DECLINED\")\nassert(attempts, [30, 40])\nlog = []\ntry:\n    log.push(\"body\")\ncatch:\n    log.push(\"catch\")\nfinally:\n    log.push(\"finally\")\ntry: log.push(1)\ncatch: log.push(2)\nfinally: log.push(3); log.push(4)\nassert(log, [\"body\", \"finally\", 1, 3, 4])\nattempts.length","return":"2"}
- {"id":"spec-0792","description":"Nucleoid rolls back a failed try body before its finally clause runs","code":"class Tank(level):\n    this.level = level\ntank = Tank(80)\nreading = tank.level * 2\naudit = []\nentries = audit.length\ntry:\n    tank.level = 120\n    assert(reading, 240)\n    throw \"OVERFLOW\"\ncatch alarm:\n    audit.push(alarm)\nfinally:\n    audit.push(tank.level)\nassert([tank.level, reading], [80, 160])\nassert([audit, entries], [[\"OVERFLOW\", 80], 2])\ntank.level = 90\nreading","return":"180"}
- {"id":"spec-0793","description":"Nucleoid runs a finally clause before an error or a return leaves","code":"log = []\ntry:\n    try:\n        log.push(\"read\")\n        throw \"SENSOR\"\n    catch fault:\n        log.push(\"retry\")\n        throw fault + \" DOWN\"\n    finally:\n        assert(log, [])\n        log.push(\"cleanup\")\ncatch outage:\n    assert([outage, log], [\"SENSOR DOWN\", []])\n    log.push(outage)\nassert(log, [\"SENSOR DOWN\"])\ndef settle(order):\n    try:\n        order.state = \"paid\"\n        return order.state\n    catch:\n        return \"failed\"\n    finally:\n        order.state = \"closed\"\ncart = {state: \"open\"}\nassert([settle(cart), cart.state], [\"paid\", \"closed\"])\ndef recover(order):\n    try:\n        throw \"LOST\"\n    catch problem:\n        order.state = problem\n        throw problem\n    finally:\n        return order.state\nassert(recover(cart), \"closed\")\ncart.state","return":"\"closed\""}
--{"id":"spec-0794","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0795","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0796","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0797","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0798","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
--{"id":"spec-0799","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    a
+@@ -795,19 +795,23 @@
+ {"id":"spec-0795","description":"Nucleoid narrows a union of explanations to its facts and conclusions","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\nfacts = why tax |> union(why shipping) |> stated\nrules = why tax |> union(why shipping) |> derived\nassert(facts.map(s -> s.node), [\"rate\", \"price\", \"quantity\"])\nassert(rules.map(s -> s.node), [\"tax\", \"subtotal\", \"shipping\"])\nfee = 2\nshipping = quantity * 2 + fee\nassert(facts.map(s -> s.node), [\"rate\", \"price\", \"quantity\", \"fee\"])\nsubtotal = 25\nassert(facts.map(s -> s.node), [\"subtotal\", \"rate\", \"quantity\", \"fee\"])\nassert(rules.map(s -> s.node), [\"tax\", \"shipping\"])","return":null}
+ {"id":"spec-0796","description":"Nucleoid joins what two changes of each instance reach with union","code":"class Part(cost, weight):\n    this.cost = cost\n    this.weight = weight\n$Part.price = $Part.cost * 2\n$Part.freight = $Part.weight * 3\n$Part.charge = $Part.price + $Part.freight\n$Part.reach = $Part.cost |> affects |> union($Part.weight |> affects)\nbolt = Part(4, 1)\nnut = Part(2, 5)\nassert(bolt.reach.map(s -> s.node), [\"bolt.price\", \"bolt.charge\", \"bolt.freight\"])\nassert(nut.reach.map(s -> s.node), [\"nut.price\", \"nut.charge\", \"nut.freight\"])\n$Part.duty = $Part.weight * 0.1\nassert(nut.reach.map(s -> s.node), [\"nut.price\", \"nut.charge\", \"nut.freight\", \"nut.duty\"])\nbolt.weight = 10\nassert(bolt.reach.map(s -> s.holds), [8, 38, 30, 1])\nnut.reach.length","return":"4"}
+ {"id":"spec-0797","description":"Nucleoid restores unions after failed changes","code":"price = 10\nquantity = 3\nsubtotal = price * quantity\nshipping = quantity * 2\neither = why subtotal |> union(why shipping)\nfailure = \"\"\ntry:\n    either = why subtotal |> union(1)\ncatch error:\n    failure = error\nassert(failure, TypeError(\"Cannot explain 1\"))\nassert(either.map(s -> s.node), [\"subtotal\", \"price\", \"quantity\", \"shipping\"])\ntry:\n    fee = 2\n    shipping = quantity * 2 + fee\n    assert(either.map(s -> s.node), [\"subtotal\", \"price\", \"quantity\", \"shipping\", \"fee\"])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert(either.map(s -> s.node), [\"subtotal\", \"price\", \"quantity\", \"shipping\"])\nquantity = 6\nassert(either.map(s -> s.holds), [60, 10, 6, 12])","return":null}
+-{"id":"spec-0798","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
+-{"id":"spec-0799","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
+-{"id":"spec-0800","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
+-{"id":"spec-0801","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
+-{"id":"spec-0802","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
+-{"id":"spec-0803","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4
 ```
 
-**File**: `dataset/nucleoid.synth.84.jsonl` (added, +12/-0)
+**File**: `dataset/nucleoid.synth.85.jsonl` (added, +12/-0)
 ```diff
 @@ -0,0 +1,12 @@
-+{"id":"synth-84-0001","description":"Union keeps the steps of an explanation and adds the steps of another explanation whose node it does not select, in that explanation's order","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\n(why tax |> union(why shipping)).map(step -> step.node)","return":"[\"tax\",\"subtotal\",\"rate\",\"price\",\"quantity\",\"shipping\"]"}
-+{"id":"synth-84-0002","description":"A union begins with its own selection, so swapping the two explanations reorders the same nodes","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\n[(why shipping |> union(why tax)).map(step -> step.node), (why tax |> union(why shipping)).length]","return":"[[\"shipping\",\"quantity\",\"tax\",\"subtotal\",\"rate\",\"price\"],6]"}
-+{"id":"synth-84-0003","description":"A union of two impact selections lists what a change of either input reaches, each node once","code":"price = 10\nrate = 0.2\nsubtotal = price * 3\ntax = subtotal * rate\ntotal = subtotal + tax\nfee = rate * 5\n(affects price |> union(affects rate)).map(step -> step.node)","return":"[\"subtotal\",\"tax\",\"total\",\"fee\"]"}
-+{"id":"synth-84-0004","description":"A state filter after a union keeps the facts behind either explanation","code":"fan = 2\nload = 40\nspeed = 3\ncurrent = load * 2\nheat = current + fan\nnoise = fan * speed\n(why heat |> union(why noise) |> stated).map(step -> step.node)","return":"[\"fan\",\"load\",\"speed\"]"}
-+{"id":"synth-84-0005","description":"A depth stage after a union measures each side from where its own walk began, so a node both sides select keeps its distance in the first","code":"a = 1\nb = a + 1\nc = b * 2\nd = a + 3\n[(why c |> union(why d) |> depth(1)).map(step -> step.node), (why c |> depth(1) |> union(why d |> depth(1))).map(step -> step.node)]","return":"[[\"c\",\"b\",\"d\"],[\"c\",\"b\",\"d\",\"a\"]]"}
-+{"id":"synth-84-0006","description":"A walk after a union starts from every step of the union","code":"a = 1\nb = a + 1\nc = b * 2\nd = a + 3\nf = d + 1\n(b |> union(d) |> affects).map(step -> step.node)","return":"[\"f\",\"c\"]"}
-+{"id":"synth-84-0007","description":"A standing union follows a rule rewired on the other side","code":"a = 1\nb = 2\nleft = a + 1\nright = b + 1\neither = why left |> union(why right)\nc = 5\nright = b + c\neither.map(step -> step.node)","return":"[\"left\",\"a\",\"right\",\"b\",\"c\"]"}
-+{"id":"synth-84-0008","description":"A union with model adds every other node in model order, and the union of a selection with itself is the selection","code":"a = 1\nb = a + 1\nc = 4\n[(why b |> union(model)).map(step -> step.node), (why b |> union(why b)).length]","return":"[[\"b\",\"a\",\"c\"],2]"}
-+{"id":"synth-84-0009","description":"A name that holds a selection is a reasoning observer, so it adds nothing as the other selection; the pipeline is written in place","code":"price = 10\ntax = price * 2\nshipping = price + 1\ncauses = why shipping\n[(why tax |> union(causes)).length, (why tax |> union(why shipping)).length]","return":"[2,3]"}
-+{"id":"synth-84-0010","description":"A class-level rule gives every instance its own union","code":"class Item(price, qty, fee):\n    this.price = price\n    this.qty = qty\n    this.fee = fee\n$Item.total = $Item.price * $Item.qty\n$Item.cost = $Item.qty + $Item.fee\n$Item.basis = why $Item.total |> union(why $Item.cost)\npen = Item(2, 5, 1)\ncup = Item(3, 1, 4)\n[pen.basis.map(step -> step.node), cup.basis.map(step -> step.node)]","return":"[[\"pen.total\",\"pen.price\",\"pen.qty\",\"pen.cost\",\"pen.fee\"],[\"cup.total\",\"cup.price\",\"cup.qty\",\"cup.cost\",\"cup.fee\"]]"}
-+{"id":"synth-84-0011","description":"Nodes names the steps of a union, and an other selection that a depth with a null limit makes undefined makes the union undefined","code":"a = 1\nb = a + 1\nc = b * 2\nd = a + 3\nn = null\n[c |> why |> union(d |> why) |> nodes, c |> why |> union(d |> why |> depth(n))]","return":"[[\"c\",\"b\",\"a\",\"d\"],null]"}
-+{"id":"synth-84-0012","description":"A binding named union shadows the stage when the pipeline runs, so a try statement can catch the error","code":"a = 1\nb = a + 1\nunion = 0\nresult = \"\"\ntry:\n    result = why b |> union(why a)\ncatch error:\n    result = error\n[union, result]","return":"[0,\"TypeError: union is not an operation\"]"}
++{"id":"synth-85-0001","description":"Holds gives the values of every step of an explanation, in the explanation's order","code":"price = 10\nqty = 3\nshipping = 5\nsubtotal = price * qty\ntotal = subtotal + shipping\ntotal |> why |> holds","return":"[35,30,5,10,3]"}
++{"id":"synth-85-0002","description":"Holds after stated gives the values of the facts that a conclusion rests on","code":"seed = 2\nmiddle = seed + 3\nresult = middle * 2\nresult |> why |> stated |> holds","return":"[2]"}
++{"id":"synth-85-0003","description":"Holds after derived gives the values of the conclusions on the way to a value","code":"seed = 2\nmiddle = seed + 3\nresult = middle * 2\nresult |> why |> derived |> holds","return":"[10,5]"}
++{"id":"synth-85-0004","description":"Holds after affects gives the values that a change of one fact reaches","code":"rate = 0.5\nprice = 10\nsubtotal = price * 3\ntax = subtotal * rate\ntotal = subtotal + tax\nprice |> affects |> holds","return":"[30,15,45]"}
++{"id":"synth-85-0005","description":"Holds of the model gives the value of every node, without the declarations that hold a stage","code":"a = 1\nb = a + 1\nvalues = b |> why |> holds\nmodel |> holds","return":"[1,2]"}
++{"id":"synth-85-0006","description":"Holds gives strings and booleans as the steps hold them","code":"name = \"Ada\"\ntitle = \"Dr\"\nlabel = title + \" \" + name\nlong = label.length > 5\nlong |> why |> holds","return":"[true,\"Dr Ada\",\"Dr\",\"Ada\"]"}
++{"id":"synth-85-0007","description":"A reference alone gives its own value as a list of one","code":"price = 10\nqty = 3\ntotal = price * qty\n[total |> holds, price |> holds]","return":"[[30],[10]]"}
++{"id":"synth-85-0008","description":"A prefix stage and depth before holds give the values within one step","code":"price = 10\nqty = 3\nshipping = 5\nsubtotal = price * qty\ntotal = subtotal + shipping\nwhy total |> depth(1) |> holds","return":"[35,30,5]"}
++{"id":"synth-85-0009","description":"Holds after union gives the values behind either of two results, each node once","code":"price = 10\nquantity = 3\nrate = 0.5\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntax |> why |> union(shipping |> why) |> holds","return":"[15,30,0.5,10,3,6]"}
++{"id":"synth-85-0010","description":"Holds after intersect gives the values of the causes that two results share","code":"price = 10\nquantity = 3\nrate = 0.5\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\ntax |> why |> intersect(shipping |> why) |> holds","return":"[3]"}
++{"id":"synth-85-0011","description":"A standing declaration of held values follows a rewiring and a change of value","code":"a = 1\nb = a + 2\nc = b * 2\nvalues = c |> why |> holds\nx = 5\nb = x + 1\nx = 7\nvalues","return":"[16,8,7]"}
++{"id":"synth-85-0012","description":"A class-level rule holds the values behind each instance's own total","code":"class Order(price, qty):\n    this.price = price\n    this.qty = qty\n$Order.total = $Order.price * $Order.qty\n$Order.basis = $Order.total |> why |> holds\nfirst = Order(10, 2)\nsecond = Order(4, 5)\nfirst.qty = 3\n[first.basis, second.basis]","return":"[[30,10,3],[20,4,5]]"}
 ```
 
-**File**: `docs/README.md` (modified, +69/-7)
+**File**: `docs/README.md` (modified, +69/-3)
 ```diff
-@@ -4412,6 +4412,63 @@ common.map(step => step.node)
-   [intersect and except reasoning selections](../nucleoid.spec.md#intersect-and-except-reasoning-selections)
+@@ -4201,6 +4201,9 @@ volume
+ - `selection |> nodes` lists the steps' `node` names, as
+   `(selection).map(step => step.node)` does for the selection the pipeline
+   denotes ([NUC 112](nuc-0112.md)).
++- `selection |> holds` lists the steps' `holds` values, as
++  `(selection).map(step => step.holds)` does for the selection the pipeline
++  denotes ([NUC 121](nuc-0121.md)).
+ 
+ ```
+ a = 1
+@@ -4521,6 +4524,62 @@ facts
+   [node names of reasoning selections](../nucleoid.spec.md#node-names-of-reasoning-selections)
    section.
  
-+### Union selections
++### Held values of reasoning selections
 +
 +```
 +price = 10
-+quantity = 3
-+rate = 0.2
-+subtotal = price * quantity
-+tax = subtotal * rate
-+shipping = quantity * 2
-+either = tax |> why |> union(shipping |> why)
-+facts = tax |> why |> union(shipping |> why) |> stated
-+assert(either.map(step => step.node), ["tax", "subtotal", "rate", "price", "quantity", "shipping"])
-+assert(facts.map(step => step.node), ["rate", "price", "quantity"])
-+fee = 2
-+shipping = quantity * 2 + fee
-+facts.map(step => step.node)
++qty = 3
++shipping = 5
++subtotal = price * qty
++total = subtotal + shipping
++facts = total |> why |> stated |> holds
++reach = price |> affects |> holds
++assert(facts, [5, 10, 3])
++assert(reach, [30, 35])
++base = 4
++shipping = base + 1
++price = 20
++[facts, reach]
 +```
 +
-+- This is the complete `Nucleoid joins two explanations with union` program
-+  in `tests/reference.md`, without its title and expected-return metadata;
-+  it returns `["rate","price","quantity","fee"]`.
-+- [NUC 120](nuc-0120.md) adds the stage `selection |> union(other)`. It
-+  selects the steps of `selection` in their order, followed by the steps of
-+  `other` whose node `selection` does not select, in `other`'s order, with
-+  their fields unchanged, so `tax |> why |> union(shipping |> why)` is
-+  everything the tax or the shipping rests on, each node once. It is exactly
-+  `(selection).concat(other |> except(selection))`, which names the
-+  selection twice and gives a list rather than a selection.
-+- `other` is written and evaluated as for `intersect` and `except`: a
-+  reference, `model`, a prefix stage such as `why shipping` or a pipeline,
-+  evaluated in place each time the stage applies, with steps compared by
-+  their node, whatever they hold.
-+- The result is a selection. `stated`, `derived`, `diff`, `intersect` and
-+  `except` after it keep what they keep of each side, so
-+  `tax |> why |> union(shipping |> why) |> stated` is the facts behind
-+  either value, and a later `why` or `affects` walks from every step of the
-+  union. Each step keeps the distance of the walk that selected it, so a
-+  later `depth(n)` measures each side from its own walk, and the union keeps
-+  the direction of the selection's most recent walk, which a later `path`
-+  uses for every step.
-+- An `other` that is undefined, because a `depth` in it has a `null` limit,
-+  makes the selection undefined, where the accepted spelling appends
-+  undefined as an element. An invalid `other` keeps the diagnostics of a
-+  pipeline source, such as `TypeError("Cannot explain 1")`.
-+- Only `|>` followed by `union` and `(` is the stage; `union` stays an
-+  ordinary name everywhere else, and a bare `|> union` keeps its parse-time
-+  `TypeError("union is not an operation")`. A local or parameter, variable,
-+  function or class named `union` shadows the stage, as bindings shadow the
-+  other stages: the stage then raises `TypeError("union is not an operation")`
-+  before selecting its source.
-+- The selection stays live through every observation of both selections,
-+  including the steps each one drops. It renders as
-+  `selection|>union(other)`.
++- This is the complete `Nucleoid gives the values of selections with holds`
++  program in `tests/reference.md`, without its title and expected-return
++  metadata; it returns `[[4,20,3],[60,65]]`.
++- [NUC 121](nuc-0121.md) adds the final stage `selection |> holds`. It gives
++  the `holds` values of the selection's steps as a list, in their order, so
++  `total |> why |> stated |> holds` gives the values of the facts the total
++  rests on and `price |> affects |> holds` the values that a change of the
++  price reaches. It is exactly `(selection).map(step => step.holds)`, where
++  `selection` is the selection that the pipeline before `holds` denotes,
++  read as the stages read their source, and each value is the one its step
++  holds, unchanged.
++- The selection is written as for `nodes`: a reference, which denotes its
++  own one-step selection rather than its value, `model`, a prefix stage such
++  as `why total`, or a pipeline of any of the stages above but `nodes`. So
++  `total |> holds` is a list of the total's value, as
++  `(total |> why |> depth(0)).map(step => step.holds)` is. An empty
++  selection gives `[]`, and a selection that a `depth(null)` makes undefined
++  gives undefined.
++- The stage ends the pipeline, as `nodes` does: a stage after it, `nodes`
++  included, or an `intersect`, `except`, `union` or `path` argument that
++  ends with it, has a list of values rather than a selection and raises
++  `TypeError("Cannot explain <source>")`, as it does after the accepted
++  spelling.
++- Only `|>` followed by `holds` is the stage; `holds` stays an ordinary name
++  everywhere else, the `holds` field of a step record included, and there
++  is no prefix form. A local or parameter, variable, function or class named
++  `holds` shadows the stage, as bindings shadow the other stages: the
++  pipeline then raises `TypeError("holds is not an operation")` before
++  selecting its source.
++- The list stays live through every observation its selection made, the
++  values it gives included, and a declaration that holds it is a reasoning
++  observer. A stored declaration whose stage gives a `null` value settles
++  to `null`, as one that reads a null property does. It renders as
++  `selection|>holds`.
 +- The authoritative contract is the
-+  [union reasoning selections](../nucleoid.spec.md#union-reasoning-selections)
++  [held values of reasoning selections](../nucleoid.spec.md#held-values-of-reasoning-selections)
 +  section.
 +
- ### Node names of reasoning selections
+ ### Live structure
  
- ```
-@@ -4447,10 +4504,10 @@ facts
-   `(total).map(step => step.node)` raises
-   `TypeError("number.map is not a function")`. An empty selection gives `[]`,
-   and a selection that a `depth(null)` makes undefined gives undefined.
--- The stage ends the pipeline: a stage after it, or an `intersect`, `except`
--  or `path` argument that ends with it, has a list of names rather than a
--  selection and raises `TypeError("Cannot explain <source>")`, as it does
--  after the accepted spelling.
-+- The stage ends the pipeline: a stage after it, or an `intersect`, `except`,
-+  `union` or `path` argument that ends with it, has a list of names rather
-+  than a selection and raises `TypeError("Cannot explain <source>")`, as it
-+  does after the accepted spelling.
- - Only `|>` followed by `nodes` is the stage; `nodes` stays an ordinary name
-   everywhere else, and there is no prefix form. A local or parameter,
-   variable, function or class named `nodes` shadows the stage, as bindings
-@@ -4502,11 +4559,12 @@ c = b * 2
-   and its `before` and `after` fields, the [NUC 88](nuc-0088.md)
-   candidate adds a `path(target)` stage that NUC 11 does not plan, and the
-   [NUC 106](nuc-0106.md) candidate adds `intersect(other)` and
--  `except(other)` stages, which NUC 11 does not plan either, and the
-+  `except(other)` stages, which NUC 11 does not plan either, the
+ - A reasoning assignment follows both values and graph structure.
+@@ -4562,9 +4621,11 @@ c = b * 2
+   `except(other)` stages, which NUC 11 does not plan either, the
    [NUC 112](nuc-0112.md) candidate adds a final `nodes` stage, which names
    the nodes of a selection and, unlike NUC 11's operations, returns a list
--  rather than a selection. Other NUC 11 operations remain proposals, not
--  dependencies.
-+  rather than a selection, and the [NUC 120](nuc-0120.md) candidate adds a
-+  `union(other)` stage, which NUC 11 does not plan either. Other NUC 11
-+  operations remain proposals, not dependencies.
+-  rather than a selection, and the [NUC 120](nuc-0120.md) candidate adds a
+-  `union(other)` stage, which NUC 11 does not plan either. Other NUC 11
+-  operations remain proposals, not dependencies.
++  rather than a selection, the [NUC 120](nuc-0120.md) candidate adds a
++  `union(other)` stage, which NUC 11 does not plan either, and the
++  [NUC 121](nuc-0121.md) candidate adds a final `holds` stage, which gives
++  the values of a selection's steps and, like `nodes`, returns a list. Other
++  NUC 11 operations remain proposals, not dependencies.
  
+ ### Quantifiers
+ 
+@@ -5075,6 +5136,11 @@ reference |> why |> stated |> nodes   the names of the facts an explanation rest
+ reference |> affects |> nodes         the names of what a change of the reference reaches (NUC 112)
+ model |> nodes                        the names of the current model's nodes (NUC 112)
+ selection |> nodes                    the list (selection).map(step => step.node); ends the pipeline (NUC 112)
++reference |> why |> holds             the values of an explanation's steps, in its order (NUC 121)
++reference |> why |> stated |> holds   the values of the facts an explanation rests on (NUC 121)
++reference |> affects |> holds         the values of what a change of the reference reaches (NUC 121)
++model |> holds                        the values of the current model's nodes (NUC 121)
++selection |> holds                    the list (selection).map(
 ```
 
 **File**: `docs/examples.md` (modified, +29/-0)
 ```diff
-@@ -4084,6 +4084,35 @@ ana.busy
-   Ana busy. See [NUC 119](nuc-0119.md) and the
-   [root contract](../nucleoid.spec.md#finally-clauses).
+@@ -4113,6 +4113,35 @@ wages = 3500
+   [NUC 120](nuc-0120.md) and the
+   [root contract](../nucleoid.spec.md#union-reasoning-selections).
  
-+## Union reasoning selections
++## Held values of reasoning selections
 +
-+**Union shows every figure that a change of rent or of wages moves**
++**Holds shows the figures behind an invoice and the totals on the way**
 +
 +```nuc
-+rent = 1200
-+wages = 3000
-+power = 150
-+overhead = rent + power
-+payroll = wages * 1.2
-+costs = overhead + payroll
-+price = costs / 100
-+moved = affects rent |> union(affects wages)
-+assert(moved.map(step -> step.node), ["overhead", "costs", "price", "payroll"])
-+power = rent / 8
-+wages = 3500
-+[moved.map(step -> step.node), price]
-+# return: [["overhead","power","costs","price","payroll"],55.5]
++hours = 12
++rate = 80
++travel = 150
++labor = hours * rate
++invoice = labor + travel
++inputs = invoice |> why |> stated |> holds
++totals = invoice |> why |> derived |> holds
++assert([inputs, totals], [[150, 12, 80], [1110, 960]])
++discount = 100
++invoice = labor + travel - discount
++hours = 15
++[inputs, totals]
++# return: [[150,100,15,80],[1250,1200]]
 +```
 +
-+- `affects rent |> union(affects wages)` is everything a change of the rent
-+  or of the wages moves: what the rent moves, in its order, then what only
-+  the wages move, here the payroll. The costs and the price, which both move,
-+  appear once.
-+- The union follows the model: once the power bill is a share of the rent,
-+  it joins what the rent moves, and the price follows the new wages. See
-+  [NUC 120](nuc-0120.md) and the
-+  [root contract](../nucleoid.spec.md#union-reasoning-selections).
++- `invoice |> why |> stated |> holds` gives the figures the invoice rests
++  on, the travel cost, the hours and the rate, and
++  `invoice |> why |> derived |> holds` the totals on the way to it, the
++  invoice and the labor, each in the order of the explanation.
++- The values follow the model: once the invoice takes off a discount, the
++  discount joins the figures, and more hours raise both totals. See
++  [NUC 121](nuc-0121.md) and the
++  [root contract](../nucleoid.spec.md#held-values-of-reasoning-selections).
 +
  ## Reactive list flattening
  
@@ -1942,163 +1941,146 @@ pipeline source is and evaluated in place each time the stag
 
 **File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -147,7 +147,7 @@ Created: 31-Jul-2026
- | [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Rejected: existing selector-case audit fails |
+@@ -148,7 +148,7 @@ Created: 31-Jul-2026
  | [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Accepted |
  | [112](nuc-0112.md) | Node Names of Reasoning Selections | Accepted |
--| [120](nuc-0120.md) | Union Reasoning Selections | Draft |
-+| [120](nuc-0120.md) | Union Reasoning Selections | Accepted |
+ | [120](nuc-0120.md) | Union Reasoning Selections | Accepted |
+-| [121](nuc-0121.md) | Held Values of Reasoning Selections | Draft |
++| [121](nuc-0121.md) | Held Values of Reasoning Selections | Accepted |
  
  ### Language compatibility
  
-@@ -294,7 +294,7 @@ Created: 31-Jul-2026
- | [117](nuc-0117.md) | First and Last Element Methods | Standards Track | Language compatibility | Accepted |
+@@ -296,7 +296,7 @@ Created: 31-Jul-2026
  | [118](nuc-0118.md) | Case Conversion Method Aliases | Standards Track | Language compatibility | Accepted |
  | [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Accepted |
--| [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
-+| [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+ | [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
+-| [121](nuc-0121.md) | Held Values of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
++| [121](nuc-0121.md) | Held Values of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0120.md` (modified, +1431/-17)
+**File**: `docs/nucleoid.g4` (modified, +8/-1)
 ```diff
-@@ -4,10 +4,11 @@
- NUC: 120
- Title: Union Reasoning Selections
- Author: Can Mingir <canmingir@gmail.com>
--Status: Draft
-+Status: Accepted
- Type: Standards Track
- Category: Reasoning enhancement
- Created: 18-Nov-2026
-+Requires: 48, 82, 83, 88, 106, 112
- ```
- 
- ## Abstract
-@@ -23,47 +24,1460 @@ Created: 18-Nov-2026
-   and `union` gives what either selects. `other` is written as a
-   pipeline's source is, evaluated in place each time the stage applies,
-   and steps are compared by their node.
--- The result is a selection, so further stages follow it, and it stays
--  live through every observation of both selections.
-+- For every source and stage the pipeline accepts, the stage selects
-+  exactly what the accepted `(selection).concat(other |> except(selection))`
-+  gives, except that an `other` that a `depth(null)` makes undefined makes
-+  the whole selection undefined, as for `intersect` and `except`, where the
-+  accepted spelling appends undefined as an element.
-+- The result is a selection, so further stages follow it: `stated`,
-+  `derived`, `diff`, `intersect` and `except` keep what they keep of each
-+  side, a later `why` or `affects` walks from every step, each step keeps the
-+  [NUC 82](nuc-0082.md) distance of the walk that selected it, and the union
-+  keeps the direction of the selection's most recent walk for a later
-+  [NUC 88](nuc-0088.md) `path`. It stays live through every observation of
-+  both selections and renders as `selection|>union(other)`.
- - At the accepted revision each such pipeline raises the parse-time
--  `TypeError("union is not an operation")`. Only those programs change.
-+  `TypeError("union is not an operation")`, or, where the statement parser
-+  backtracks, another parse error first. Only those programs change.
-   `union` stays an ordinary name everywhere else, as a variable, function,
--  property or object key, and a binding named `union` shadows the stage,
--  as bindings shadow the other stages.
-+  property or object key, and a binding named `union` shadows the stage, as
-+  bindings shadow the other stages.
-+- No keyword, lexer token, error type or message is added. The public `Expr`
-+  enum gains one variant, `Expr::Union`, which needs human SemVer review. No
-+  project version is changed. The authoritative contract is
-+  [Union reasoning selections](../nucleoid.spec.md#union-reasoning-selections).
- 
- ## Motivation
- 
- - World models answer questions about several conclusions at once: what
-   an order's tax or its shipping rests on, which facts a decision or its
--  audit depends on. NUC 106 answers the shared and the distinct parts of
--  two explanations with `intersect` and `except`; their combined part has
--  no stage.
-+  audit depends on, and what a change of either of two inputs reaches. NUC
-+  106 answers the shared and the distinct parts of two explanations with
-+  `intersect` and `except`; their combined part has no stage.
- - Today the combined part is spelled
-   `(tax |> why).concat(shipping |> why |> except(tax |> why))`, which names
-   the first explanation twice. The plain
-   `(tax |> why).concat(shipping |> why)` lists a shared cause such as the
--  quantity twice. Either result is a list rather than a selection, so no
--  stage can follow it: `|> stated` after it raises
--  `TypeError("Cannot explain ...")`.
-+  quantity twice: with the order of [Selection](#selection) it gives
-+  `["tax", "subtotal", "rate", "price", "quantity", "shipping", "quantity"]`.
-+  Removing the repeats with [NUC 71](nuc-0071.md)'s `distinct`, as in
-+  `(tax |> why).concat(shipping |> why).distinct()`, compares the step
-+  records by value instead of by node, so a step whose value is NaN, which
-+  equals nothing, stays twice: with `x = 0 / 0`, `y = x + 1` and
-+  `z = x * 2`, `(why y).concat(why z).distinct()` lists `x` twice.
-+- Every such result is a list rather than a selection, so no stage can
-+  follow it: `((tax |> why).concat(shipping |> why |> except(tax |> why))) |> stated`
-+  raises
-+  `TypeError("Cannot explain tax|>why.concat(shipping|>why|>except(tax|>why))")`.
-+  Narrowing the combined part to its facts takes another spelling with the
-+  filter written into both parts, such as
-+  `(tax |> why |> stated).concat(shipping |> why |> stated).distinct()`.
- - A union stage states the question once, keeps each node once, and keeps
-   the answer a selection that `stated`, `derived` and the other stages can
--  narrow further.
-+  narrow further. `why tax |> union(why shipping)` is 8 lexer tokens against
-+  14 for the most compact accepted spelling,
-+  `(why tax).concat(why shipping).distinct()`, and 16 for the spelling that
-+  compares by node, `(why tax).concat(why shipping |> except(why tax))`;
-+  `why tax |> union(why shipping) |> stated` is 10 against 18 and 20.
-+- Prior art: SQL's `UNION`, Bazel query's `union` and `+` operators over
-+  target sets, as in `deps(//a) union deps(//b)`, C# LINQ's `Union`,
-+  Kotlin's `union`, Python's set `|` and `set.union`, and JavaScript's
-+  `Set.p
-```
-
-**File**: `docs/nucleoid.g4` (modified, +11/-2)
-```diff
-@@ -512,6 +512,7 @@ stage
+@@ -508,7 +508,8 @@ stage
+     | STATED
+     | DERIVED
+     | DIFF
+-    | NODES                                               // Expr::Reason
++    | NODES
++    | HOLDS                                               // Expr::Reason
      | DEPTH LPAREN expression RPAREN                       // Expr::Depth
      | PATH LPAREN expression RPAREN                        // Expr::Path
      | (INTERSECT | EXCEPT) LPAREN expression RPAREN        // Expr::Combine
-+    | UNION LPAREN expression RPAREN                       // Expr::Union
-     ;
- 
- logicalOr
-@@ -909,6 +910,7 @@ enumName
-     | PATH
-     | INTERSECT
+@@ -912,6 +913,7 @@ enumName
      | EXCEPT
-+    | UNION
+     | UNION
      | NODES
++    | HOLDS
      | MODEL
      | FIRST
-@@ -997,6 +999,7 @@ DEPTH            : 'depth';
- PATH             : 'path';
- INTERSECT        : 'intersect';
+     | LAST
+@@ -1001,6 +1003,7 @@ INTERSECT        : 'intersect';
  EXCEPT           : 'except';
-+UNION            : 'union';
+ UNION            : 'union';
  NODES            : 'nodes';
++HOLDS            : 'holds';
  MODEL            : 'model';
  FIRST            : 'first';
-@@ -1189,10 +1192,16 @@ fragment REGEX_CHAR
-  * for xs:                  -> iteration with the item name "it".
-  * catch without a name     -> the binding "error".
-  * model directly before |> -> Expr::Model.
-- * |> intersect(model)      -> its other selection is Expr::Model; also except.
-+ * |> intersect(model)      -> its other selection is Expr::Model; also except
-+ *                             and union.
-+ * s |> union(o)            -> Expr::Union: the steps of s, then the steps of o
-+ *                             whose node s does not select, in o's order. A
-+ *                             binding named union shadows it at run time, and
-+ *                             a bare |> union stays the parse-time
-+ *                             TypeError("union is not an operation").
-  * s |> nodes               -> Expr::Reason with Stage::Nodes, the node names of
-  *                             s's selection. It ends the pipeline: a stage
-- *                             after it, or an intersect, except or path
-+ *                             after it, or an intersect, except, union or path
+ LAST             : 'last';
+@@ -1204,6 +1207,10 @@ fragment REGEX_CHAR
+  *                             after it, or an intersect, except, union or path
   *                             argument that ends with it, parses and then
   *                             raises TypeError("Cannot explain <source>").
++ * s |> holds               -> Expr::Reason with Stage::Holds, the values that
++ *                             s's steps hold. It ends the pipeline as nodes
++ *                             does, and a binding named holds shadows it at
++ *                             run time.
   * An object containing spread uses Expr::SpreadObject, with later entries
+  * winning; otherwise it uses Expr::ObjectLiteral. Numeric keys become text.
+  *
+```
+
+**File**: `nucleoid.spec.md` (modified, +197/-2)
+```diff
+@@ -3029,8 +3029,8 @@ statement positions; caught values and transaction recovery are unchanged.
+   `derived`, `diff`, `intersect` and `except` keep a step by a property of its
+   node, so after a union they keep what they keep of each side:
+   `S |> union(O) |> stated` is `(S |> stated).concat(O |> except(S) |> stated)`.
+-  A later `why` or `affects` walks from every step of the union, and `nodes`
+-  names them.
++  A later `why` or `affects` walks from every step of the union, `nodes`
++  names them and `holds` gives their values.
+ - Each step keeps the distance of the walk that selected it: the steps of
+   `SELECTION` their own, and the steps added from `OTHER` the distances they
+   have in `OTHER`'s own selection. So `S |> union(O) |> depth(n)` is
+@@ -3187,6 +3187,110 @@ statement positions; caught values and transaction recovery are unchanged.
+   `Nucleoid rolls back failed updates through node names` specify the
+   executable behavior. `tests/reasoning_node_names.rs` executes the rest.
+ 
++## Held values of reasoning selections
++
++- [NUC 121](docs/nuc-0121.md) adds the final pipeline stage
++  `SELECTION |> holds`. It gives the `holds` values of the steps that
++  `SELECTION` selects, as a list in the selection's order. It is exactly
++  `(SELECTION).map(step => step.holds)`, where `SELECTION` is the selection
++  that the pipeline before `holds` denotes, read as the accepted stages read
++  their source: `total |> why |> holds` is
++  `(why total).map(step => step.holds)` and
++  `total |> why |> stated |> holds` is
++  `(total |> why |> stated).map(step => step.holds)`.
++- Each element is the value that the step's record holds in its `holds`
++  field, unchanged: a number, string, boolean, list, object or `null`. An
++  instance's own step gives the instance itself, a variable that holds a
++  function gives the function, and the step of a class, a function
++  declaration or an `if` block gives `null`, as their records do.
++- A reference alone denotes its own one-step selection, not its value, so
++  `total |> holds` is a list that holds the total's value, as
++  `(total |> why |> depth(0)).map(step => step.holds)` is, while the value
++  `(total).map(step => step.holds)` of a number raises
++  `TypeError("number.map is not a function")`.
++- So `total |> why |> stated |> holds` gives the values of the facts a
++  conclusion rests on, `total |> why |> derived |> holds` the values of the
++  conclusions on the way to it, `price |> affects |> holds` the values that
++  a change of the price reaches, and `model |> holds` the value of every
++  node of the model in model order, without pending nodes and reasoning
++  observers.
++- `SELECTION` is written as the source of a pipeline is: a reference, which
++  selects its own step; `model`; a prefix stage, as in `why total |> holds`;
++  or a pipeline of the stages `why`, `affects`, `stated`, `derived`,
++  `depth`, `path`, `intersect`, `except`, `union` and `diff`. An empty
++  selection gives `[]`. A selection that a `depth` stage with a `null` or
++  undefined limit makes undefined gives undefined, which a declaration
++  stores as `null`, as a read from that selection does.
++- The stage ends the pipeline, as `nodes` does: its result is a list of
++  values, not a selection. A stage written after it has that list as its
++  source, which is neither a reference nor a selection, so
++  `total |> why |> holds |> why` and `total |> why |> holds |> nodes` raise
++  `TypeError("Cannot explain total|>why|>holds")`, as the same stages after
++  `(why total).map(step => step.holds)` raise for that source, and
++  `total |> why |> nodes |> holds` raises
++  `TypeError("Cannot explain total|>why|>nodes")`. An `intersect`,
++  `except`, `union` or `path` argument that ends with `holds` raises
++  `TypeError("Cannot explain <argument>")`, such as
++  `TypeError("Cannot explain shipping|>why|>holds")` for
++  `intersect(shipping |> why |> holds)`. A name that holds the list is a
++  reasoning observer, which no selection holds, so after
++  `values = shipping |> why |> holds`, `intersect(values)` keeps nothing.
++- Only `|>` followed by the name `holds` is the stage. `holds` remains an
++  ordinary lexer identifier: variables, parameters, properties, keys,
++  functions and methods named `holds` keep their accepted meanings, and so
++  does the `holds` field of a step record. There is no prefix form, so
++  `holds total` remains the two statements `holds` and `total`. `|> Holds`
++  and `|> hold` keep their parse-time
++  `TypeError("<name> is not an operation")`, and a line break after `|>`
++  keeps `SyntaxError("Expected an operation")`.
++- A local or parameter, state variable, function or class named `holds`
++  shadows the stage, as for `stated`, `derived`, `depth`, `diff`, `path`,
++  `intersect`, `except`, `union` and `nodes`: the pipeline then raises
++  `TypeError("holds is not an operation")` at the running statement, before
++  its source is selected. A binding declared after a standing declaration
++  makes it
 ```
 
 #### Recent Merged Pull Requests:
@@ -2127,13 +2109,13 @@ pipeline source is and evaluated in place each time the stag
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 121 Held Values of Reasoning Selections
+## X. Draft NUC 122 Python-Style Except Clauses
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `226268f4`: Draft NUC 121 Held Values of Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `259343d1`: Draft NUC 122 Python-Style Except Clauses. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -2141,8 +2123,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [121](nuc-0121.md) | Held Values of Reasoning Selections | Draft |
-| [121](nuc-0121.md) | Held Values of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+| [122](nuc-0122.md) | Python-Style Except Clauses | Draft |
+| [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2152,7 +2134,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `226268f4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `259343d1` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

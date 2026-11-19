@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T03:39:53.002Z",
+  "updated_at": "2026-11-19T04:13:33.741Z",
   "stats": {
-    "total_discovered": 5774,
+    "total_discovered": 5775,
     "approved_pending_harvest": 5465,
     "harvested_count": 0,
-    "rejected_count": 309,
+    "rejected_count": 310,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5439,
+      "COMMUNITY_AND_EXPERT": 5440,
       "OFFICIAL_DOCUMENTATION": 186,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -124886,6 +124886,21 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md",
         "fileName": "sqldelight-sqldelight-learnings.md"
+      }
+    },
+    "SRC-FE8D57F4716F": {
+      "id": "SRC-FE8D57F4716F",
+      "url": "http://some_host.com/",
+      "title": "http://some_host.com/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T04:13:33.741Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
+        "fileName": "open-policy-agent-opa-learnings.md"
       }
     }
   }

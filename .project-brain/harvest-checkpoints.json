@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T03:39:19.915Z",
+  "last_updated": "2026-11-19T04:13:29.933Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1670,14 +1670,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "bce3a10f6dfa7cb5a9e43b3ae4f30034f712b97d477f9b632b2691be2b4afc93",
-      "verified_at": "2026-11-14T14:40:07.668Z",
+      "content_hash": "c31cb02178dcb7953dacf3eb4004c4f047219021b3185483ba7b3c4bfe7e4061",
+      "verified_at": "2026-11-19T04:08:17.264Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T14:40:07.668Z"
+      "last_updated": "2026-11-19T04:08:17.264Z"
     },
     "Bingsu/adetailer": {
       "repository": "Bingsu/adetailer",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "4696a2526d71de6f363c0e5729dbef93a5d60872adb6e8aeeaa1d94a63b6a51a",
-      "verified_at": "2026-11-18T23:18:27.399Z",
+      "content_hash": "873d2f048aa565ae2e3745908d3184a603e2e68f1b38ee5fc732ee72a5737aae",
+      "verified_at": "2026-11-19T04:13:29.932Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T23:18:27.399Z"
+      "last_updated": "2026-11-19T04:13:29.932Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -9291,14 +9291,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-opa",
-      "content_hash": "6ab7bfe11063ac260aeddce35fe23a09c5af89d92e5e868de1e86f93bb2ceefb",
-      "verified_at": "2026-11-17T15:43:45.656Z",
+      "content_hash": "3b1f6b3510aa4d37979797566c59dd027df54977e4e6460de98dbbbc8ae3e5f6",
+      "verified_at": "2026-11-19T04:08:21.499Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T15:43:45.656Z"
+      "last_updated": "2026-11-19T04:08:21.499Z"
     },
     "dragonflydb/dragonfly": {
       "repository": "dragonflydb/dragonfly",

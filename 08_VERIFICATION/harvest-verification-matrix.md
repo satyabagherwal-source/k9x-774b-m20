@@ -11191,3 +11191,6 @@
 | `CYCLE-20261119-40SQ` | `2026-11-19T03:39:14.570Z` | `sqldelight/sqldelight` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9327` | Yes (`a51a42f9...`) |
 | `CYCLE-20261119-44WU` | `2026-11-19T03:39:19.902Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9328` | Yes (`23ab74fc...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T03:39:51.501Z` | `hf-inworld-voice-isolator` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-E-DB6AB3E1` [Domain E] | Yes (`a5578486...`) |
+| `CYCLE-20261119-5DGL` | `2026-11-19T04:08:17.253Z` | `sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings.md` | Yes (`c31cb021...`) |
+| `CYCLE-20261119-5GQ7` | `2026-11-19T04:08:21.487Z` | `open-policy-agent/opa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1683` | Yes (`3b1f6b35...`) |
+| `CYCLE-20261119-C2PS` | `2026-11-19T04:13:29.920Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9329` | Yes (`873d2f04...`) |

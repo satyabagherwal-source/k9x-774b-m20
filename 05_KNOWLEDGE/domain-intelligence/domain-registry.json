@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T03:39:53.385Z",
+  "last_updated": "2026-11-19T04:13:34.953Z",
   "total_records": 1940,
   "domains": {
     "A": {
@@ -9972,8 +9972,8 @@
       "title": "Technical Construction Intelligence: open-policy-agent/opa Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-technical-construction-intelligence-open-policy-agent-opa-.md",
       "repository": "open-policy-agent/opa",
-      "content_hash": "177478aff1eedb4853b636a1b66efcd39016e5dcbe978eb031d036723489ae41",
-      "created_at": "2026-11-17T15:43:46.045Z"
+      "content_hash": "5459c87ba3e722a7b26863d08437d1523e7822957bc760ee862a6517ca93a44e",
+      "created_at": "2026-11-19T04:08:21.821Z"
     },
     "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-t8y2-dbx-core-invariants",
@@ -10041,8 +10041,8 @@
       "title": "Technical Construction Intelligence: open-policy-agent-opa-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-policy-agent-opa-learnings-technical-construction-intelligence-open-policy-.md",
       "repository": "open-policy-agent-opa-learnings",
-      "content_hash": "d53c07be87fdfc7bed31ec199c9ef06f3b80752fd6de63b29cf8ab4abb0f4ba9",
-      "created_at": "2026-11-16T13:38:38.710Z"
+      "content_hash": "f7e91d2bd9a25da60ed27d92dd5aadb3f274f21c08d22f3081d46bb47f292257",
+      "created_at": "2026-11-19T04:13:34.087Z"
     },
     "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-",
@@ -10344,11 +10344,11 @@
     "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual",
       "domain_letter": "D",
-      "title": "Research & Knowledge Intelligence: hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings-researc.md",
-      "repository": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings",
-      "content_hash": "90da0145632b85b80a7b4b55313ed63139c22757fd7da2112d3d159c4a4a9cc8",
-      "created_at": "2026-11-18T17:01:59.525Z"
+      "title": "Research & Knowledge Intelligence: hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings-researc.md",
+      "repository": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings",
+      "content_hash": "cedbfb790e854072a5ce45c340f4841cdc4dceb77da192dd1aeff375c935c420",
+      "created_at": "2026-11-19T04:13:33.422Z"
     },
     "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants",
@@ -15703,8 +15703,8 @@
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "cdaa9776b7a0929ea032d3c2343698b4aecbe3d13b7fa8dba5677b9859acff01",
-      "created_at": "2026-11-18T23:18:27.727Z"
+      "content_hash": "af53df535b206738b830343491332911cf84eea66371730115c75543c654af35",
+      "created_at": "2026-11-19T04:13:30.281Z"
     },
     "DOM-D-C603EFBB": {
       "record_id": "DOM-D-C603EFBB",
@@ -15763,8 +15763,8 @@
       "title": "Technical Construction Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-learnings-technical-construction-intelligence-nucleoidai-nuc.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "7858bb6e626db5799601b1afae1535aba9d8a5bb35a96b021ad551d7ef3f0d59",
-      "created_at": "2026-11-18T23:18:32.211Z"
+      "content_hash": "847f1a4a3702b59edf4efd4043a72f035dbdb33f9963277d7045beaf50470a4d",
+      "created_at": "2026-11-19T04:13:34.953Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp",
@@ -15772,8 +15772,8 @@
       "title": "Research & Knowledge Intelligence: sentence-transformers/paraphrase-multilingual-mpnet-base-v2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-research-knowledg.md",
       "repository": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
-      "content_hash": "a7cc452943e6469e8a210eff48aae5e75db0dfa45ab388cf1c88a91ba771cf22",
-      "created_at": "2026-11-14T14:40:07.814Z"
+      "content_hash": "7b1e4ee6a34f96b3068f6480e81870e592b7ce32b88fc106753cc82ee9441c68",
+      "created_at": "2026-11-19T04:08:17.425Z"
     },
     "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",

@@ -11224,3 +11224,6 @@ Every entry in this ledger must capture:
 | `learn-github-sqldelight-sqldelight` | `https://github.com/sqldelight/sqldelight` | `74b446bc` | Multi-dimensional audit evidence | 2026-11-19T03:39:14.573Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `9d143719` | Multi-dimensional audit evidence | 2026-11-19T03:39:19.906Z |
 | `learn-dom-e-db6ab3e1` | `project://hf-inworld-voice-isolator` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-inworld-voice-isolator-learnings.md` | 2026-11-19T03:39:51.501Z |
+| `learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-19T04:08:17.256Z |
+| `learn-github-open-policy-agent-opa` | `https://github.com/open-policy-agent/opa` | `674d3362` | Multi-dimensional audit evidence | 2026-11-19T04:08:21.492Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `259343d1` | Multi-dimensional audit evidence | 2026-11-19T04:13:29.924Z |

@@ -4,24 +4,24 @@
 {
   "source_repository": "open-policy-agent/opa",
   "source_url": "https://github.com/open-policy-agent/opa",
-  "source_version": "ee945380",
+  "source_version": "674d3362",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T15:43:45.871Z",
+  "timestamp": "2026-11-19T04:08:21.682Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-open-policy-agent-opa",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [open-policy-agent/opa](https://github.com/open-policy-agent/opa) (Revision: `ee945380`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T15:43:45.871Z`  
+> **Provenance**: Harvested from [open-policy-agent/opa](https://github.com/open-policy-agent/opa) (Revision: `674d3362`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T04:08:21.682Z`  
 > **Learning ID**: `learn-github-open-policy-agent-opa`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 79%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 69%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from open-policy-agent/opa:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T15:43:44.522Z  
+> **Harvest Timestamp**: 2026-11-19T04:03:19.973Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open Policy Agent (OPA) is an open source, general-purpose policy engine.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 12482 stars
+- **Stars / Engagement**: 12492 stars
 
 ---
 
@@ -981,474 +981,210 @@ func BuildTLSConfig(scheme string, skipVerify bool, cert *tls.Certificate, pool 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cb47e885` (2026-11-17)
-**Commit Message**: util/test: don't panic in MakeTempFS when creating files fails (#9578)
+### Incident Patch 1: `674d3362` (2026-11-18)
+**Commit Message**: docs: fix typos (#9594)
 
-The deferred cleanup called the named result, which the error return had
-already set to nil, and the file handles it opened were never closed.
+Fixes spelling mistakes found with codespell (documentation only; no
+functional change).
 
-Signed-off-by: Sebastian Spaink <[REDACTED_EMAIL]>
+AI assistance disclosure: this change was found and drafted with Claude
+Code; the diff was reviewed line by line.
 
-**File**: `v1/util/test/tempfs.go` (modified, +10/-12)
+Signed-off-by: Adham Kiwan <[REDACTED_EMAIL]>
+
+**File**: `docs/docs/policy-language.md` (modified, +1/-1)
 ```diff
-@@ -63,43 +63,41 @@ func WithTempFS(files map[string]string, f func(string)) {
- // If the creation fails, cleanup is nil and the caller does not have to invoke it. If
- // creation succeeds, the caller should invoke cleanup when they are done.
- func MakeTempFS(root, prefix string, files map[string]string) (rootDir string, cleanup func(), err error) {
--	if rootDir, err = os.MkdirTemp(root, prefix); err != nil {
-+	dir, err := os.MkdirTemp(root, prefix)
-+	if err != nil {
- 		return "", nil, err
- 	}
+@@ -3431,7 +3431,7 @@ organized into many sub-packages, it is useful to declare schemas recursively
+ for them using the `subpackages` scope. For example:
  
--	cleanup = func() {
--		_ = os.RemoveAll(rootDir)
-+	// Use locals rather than the named results: returning an error resets those,
-+	// which would leave the deferred cleanup nil and pointed at the wrong dir.
-+	remove := func() {
-+		_ = os.RemoveAll(dir)
- 	}
- 
- 	skipCleanup := false
- 
- 	// Cleanup unless flag is unset. It will be unset if we succeed.
- 	defer func() {
- 		if !skipCleanup {
--			cleanup()
-+			remove()
- 		}
- 	}()
- 
- 	for path, content := range files {
- 		dirname, filename := filepath.Split(path)
--		dirPath := filepath.Join(rootDir, dirname)
-+		dirPath := filepath.Join(dir, dirname)
- 		if err := os.MkdirAll(dirPath, 0777); err != nil {
- 			return "", nil, err
- 		}
- 
--		f, err := os.Create(filepath.Join(dirPath, filename))
--		if err != nil {
--			return "", nil, err
--		}
--
--		if _, err := f.WriteString(content); err != nil {
-+		if err := os.WriteFile(filepath.Join(dirPath, filename), []byte(content), 0666); err != nil {
- 			return "", nil, err
- 		}
- 	}
- 
- 	skipCleanup = true
- 
--	return rootDir, cleanup, nil
-+	return dir, remove, nil
- }
- 
- // WithTestFS creates a temporary file system of `files` in memory
+ ```rego
+-# METADTA
++# METADATA
+ # scope: subpackages
+ # schemas:
+ # - input: schema.input
 ```
 
-**File**: `v1/util/test/tempfs_test.go` (added, +53/-0)
+**File**: `docs/projects/regal/custom-rules/roast.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,53 @@
-+package test
-+
-+import (
-+	"os"
-+	"path/filepath"
-+	"testing"
-+)
-+
-+func TestMakeTempFS(t *testing.T) {
-+	t.Run("creates files and cleanup removes them", func(t *testing.T) {
-+		root := t.TempDir()
-+
-+		dir, cleanup, err := MakeTempFS(root, "opa_test", map[string]string{"a/b.txt": "hello"})
-+		if err != nil {
-+			t.Fatal(err)
-+		}
-+
-+		bs, err := os.ReadFile(filepath.Join(dir, "a", "b.txt"))
-+		if err != nil {
-+			t.Fatal(err)
-+		}
-+		if string(bs) != "hello" {
-+			t.Fatalf("unexpected content %q", bs)
-+		}
-+
-+		cleanup()
-+
-+		if _, err := os.Stat(dir); !os.IsNotExist(err) {
-+			t.Fatalf("expected %v to be removed, got: %v", dir, err)
-+		}
-+	})
-+
-+	t.Run("failure removes the directory and returns no cleanup", func(t *testing.T) {
-+		root := t.TempDir()
-+
-+		// "a" is a file in one entry and a directory in the other, so whichever is created second fails.
-+		_, cleanup, err := MakeTempFS(root, "opa_test", map[string]string{"a": "1", "a/b": "2"})
-+		if err == nil {
-+			t.Fatal("expected error")
-+		}
-+		if cleanup != nil {
-+			t.Fatal("expected nil cleanup on error")
-+		}
-+
-+		entries, err := os.ReadDir(root)
-+		if err != nil {
-+			t.Fatal(err)
-+		}
-+		if len(entries) != 0 {
-+			t.Fatalf("expected temp dir to be removed, found %v", entries)
-+		}
-+	})
-+}
+@@ -237,7 +237,7 @@ on template string nodes is only present when `true`.
+ ### Module comments represented as arrays of location strings
+ 
+ Since a comment is simply text at a given location, they are simply represented as location strings. OPA's AST format
+-adds a redundant extra text atttribute only to strip off the leading `#` from the comment text, and is additionally
++adds a redundant extra text attribute only to strip off the leading `#` from the comment text, and is additionally
+ inconsistent with the rest if its format, as both the `text` and `location` attributes are title-cased.
+ 
+ ## Performance
+```
+
+**File**: `docs/projects/regal/rules/bugs/import-shadows-rule.md` (modified, +1/-1)
+```diff
+@@ -43,7 +43,7 @@ resources contains resource if {
+ 
+ ## Rationale
+ 
+-Imported identifers like `bar` in `import data.foo.bar` has higher precedence than a rule named `bar` in the same
++Imported identifiers like `bar` in `import data.foo.bar` has higher precedence than a rule named `bar` in the same
+ package. This means that any rule that is shadowed by an import is effectively unreachable inside of the module.
+ Avoid shadowing either by renaming your rule or by using an alias for the imported identifier.
+ 
+```
+
+**File**: `docs/projects/regal/rules/idiomatic/prefer-equals-comparison.md` (modified, +1/-1)
+```diff
+@@ -32,7 +32,7 @@ The unification operator (`=`) can be used for both assignment and equality comp
+ powerful feature where appropriate, but when the intent is to perform either assignment (`:=`) **or** an equality
+ comparison (`==`), using the operators designed for those specific purposes helps communicate that intent much more
+ clearly, and avoid some behaviors of the unification operator that may potentially be surprising (like in which order
+-expresions are evaluated). This is not a general recommendation against using the unification operator, mind you! But to
++expressions are evaluated). This is not a general recommendation against using the unification operator, mind you! But to
+ use the operators specifically for what they are designed for: `:=` for assignment, `==` for equality comparison, and
+ `=` for unification.
+ 
+```
+
+**File**: `internal/gojsonschema/README.md` (modified, +2/-2)
+```diff
+@@ -212,7 +212,7 @@ schema, err := sl.Compile(gojsonschema.NewReferenceLoader("http://some_host.com/
+ Schemas added by `AddSchema` and `AddSchemas` are only validated when the entire schema is compiled, unless meta-schema validation is used.
+ 
+ ## Using a specific draft
+-By default `gojsonschema` will try to detect the draft of a schema by using the `$schema` keyword and parse it in a strict draft-04, draft-06 or draft-07 mode. If `$schema` is missing, or the draft version is not explicitely set, a hybrid mode is used which merges together functionality of all drafts into one mode.
++By default `gojsonschema` will try to detect the draft of a schema by using the `$schema` keyword and parse it in a strict draft-04, draft-06 or draft-07 mode. If `$schema` is missing, or the draft version is not explicitly set, a hybrid mode is used which merges together functionality of all drafts into one mode.
+ 
+ Autodectection can be turned off with the `AutoDetect` property. Specific draft versions can be specified with the `Draft` property.
+ 
+@@ -222,7 +222,7 @@ sl.Draft = gojsonschema.Draft7
+ sl.AutoDetect = false
+ ```
+ 
+-If autodetection is on (default), a draft-07 schema can savely reference draft-04 schemas and vice-versa, as long as `$schema` is specified in all schemas.
++If autodetection is on (default), a draft-07 schema can safely reference draft-04 schemas and vice-versa, as long as `$schema` is specified in all schemas.
+ 
+ ## Meta-schema validation
+ Schemas that are added using the `AddSchema`, `AddSchemas` and `Compile` can be validated against their meta-schema by setting the `Validate` property.
+```
+
+**File**: `v1/debug/README.md` (modified, +1/-1)
+```diff
+@@ -75,7 +75,7 @@ if err != nil {
+ 
+ ## Stepping Through Policy Evaluation
+ 
+-When evaluation execution is paused, either immidiately after launching a session or when a breakpoint is hit, the session can be stepped through.
++When evaluation execution is paused, either immediately after launching a session or when a breakpoint is hit, the session can be stepped through.
+ 
+ ### Step Over
+ 
 ```
 
 ---
 
-### Incident Patch 2: `5eaae667` (2026-11-16)
-**Commit Message**: server: Fix oversized request body status in v2-compatible mode (#9497)
+### Incident Patch 2: `43bb521c` (2026-11-17)
+**Commit Message**: ast: Value only built-in type env (#9586)
 
-### Why the changes in this PR are needed?
+Env() saves the details of built ins to the type tree using Ref(). Ref
+allocates for the name but only the value is needed.
 
-Currently, requests exceeding the configured body-size limit return HTTP
-400, even when v2-compatible mode is enabled.
+This runs once per compile, for each built-in function (~200). Instead
+Env can manually insert nodes using the namespacing heirarchy for
+function names reducing wasted allocations.
 
-This change makes the server return HTTP 413 (Content Too Large) in
-v2-compatible mode, while keeping the existing HTTP 400 behavior in
-default mode. The error response body remains unchanged.
+This matters most for small / frequent compile jobs such as opa eval.
 
-### Pointers and Further Information
-
-- Added a shared helper to handle the response status based on the
-compatibility mode.
-- Updated the relevant server handlers to use the correct status code.
-- Added regression tests at the server and runtime levels to cover both
-modes.
-- Updated the configuration docs to explain the behavior.
-
-**Validation:**
-- `make check` passed.
-- Added server and runtime regression tests covering HTTP 400
-  in default mode and HTTP 413 in v2-compatible mode.
-- Docker lint passed with 0 issues.
-
-Related issue: #9445
-
----------
-
-Signed-off-by: darshpatel1052 <[REDACTED_EMAIL]>
-
-**File**: `docs/docs/configuration.md` (modified, +7/-0)
-```diff
-@@ -1083,6 +1083,13 @@ The `server` configuration sets:
-   The gzip compression settings are used when the client sends `Accept-Encoding: gzip`
- - buckets for `http_request_duration_seconds` histogram
- 
-+Requests that exceed a body-size limit return HTTP 400 by default. When v2
-+compatibility is enabled (`--v2-compatible`), they return HTTP 413; the error
-+response body is unchanged.
-+
-+Go integrations constructing an authorizer directly can enable this behavior with
-+the `authorizer.V2Compatible(true)` option to `authorizer.NewBasic`.
-+
- | Field                                                       | Type        | Required                                                                 | Description                                                                                                                                                                                                                          |
- | ----------------------------------------------------------- | ----------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
- | `server.decoding.max_length`                                | `int`       | No, (default: 268435456)                                                 | Specifies the maximum allowed number of bytes to read from a request body.                                                                                                                                                           |
 ```
+           │ /tmp/wv-before.txt │         /tmp/wv-after.txt         │
+                      │       sec/op       │   sec/op     vs base              │
+CompileModules/1-16            124.7µ ± 3%   118.8µ ± 2%  -4.73% (p=0.001 n=8)
+CompileModules/10-16           626.7µ ± 2%   625.4µ ± 3%       ~ (p=0.574 n=8)
+CompileModules/100-16          6.231m ± 2%   6.208m ± 2%       ~ (p=0.574 n=8)
+geomean                        786.8µ        772.7µ       -1.79%
 
-**File**: `internal/server/bodylimit/decoding.go` (added, +72/-0)
-```diff
-@@ -0,0 +1,72 @@
-+// Copyright 2026 The OPA Authors.  All rights reserved.
-+// Use of this source code is governed by an Apache2
-+// license that can be found in the LICENSE file.
-+
-+package bodylimit
-+
-+import (
-+	"errors"
-+	"net/http"
-+	"strings"
-+
-+	"github.com/open-policy-agent/opa/v1/server/types"
-+	"github.com/open-policy-agent/opa/v1/server/writer"
-+	"github.com/open-policy-agent/opa/v1/util"
-+	util_decoding "github.com/open-policy-agent/opa/v1/util/decoding"
-+)
-+
-+// Handler provides hard limits on the size of the request body, for both
-+// the raw body content, and also for the decompressed size when gzip
-+// compression is used.
-+//
-+// The Content-Length restriction happens here in the handler, but the
-+// decompressed size limit is enforced later, in `util.ReadMaybeCompressedBody`.
-+// The handler passes the gzip size limits down to that function through the
-+// request context whenever gzip encoding is present.
-+func Handler(handler http.Handler, maxLength, gzipMaxLength int64, v2Compatible bool) http.Handler {
-+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		// Reject too-large requests before doing any further processing.
-+		// Note(philipc): This does nothing in the case of "chunked"
-+		// requests, since those should report a ContentLength of -1.
-+		if r.ContentLength > maxLength {
-+			err := &util.BodyTooLargeError{Limit: maxLength, Size: r.ContentLength}
-+			writer.Error(w, ErrorStatus(v2Compatible, err), types.NewErrorV1(types.CodeInvalidParameter, "%v", err))
-+			return
-+		}
-+		// For requests where full size is not known in advance (such as chunked
-+		// requests), pass server.decoding.max_length down, using the request
-+		// context.
-+
-+		// Note(philipc): Unknown request body size is signaled to the server
-+		// handler by net/http setting the Request.ContentLength field to -1. We
-+		// don't check for the `Transfer-Encoding: chunked` header explicitly,
-+		// because net/http will strip it out from requests automatically.
-+		// Ref: https://pkg.go.dev/net/http#Request
-+		if r.ContentLength < 0 {
-+			ctx := util_decoding.AddServerDecodingMaxLen(r.Context(), maxLength)
-+			r = r.WithContext(ctx)
-+		}
-+		// Pass server.decoding.gzip.max_length down, using the request context.
-+		if strings.Contains(r.Header.Get("Content-Encoding"), "gzip") {
-+			ctx := util_decoding.AddServerDecodingGzipMaxLen(r.Context(), gzipMaxLength)
-+			r = r.WithContext(ctx)
-+		}
-+
-+		// Copied over from the net/http package; enforces max body read limits.
-+		r2 := *r
-+		r2.Body = http.MaxBytesReader(w, r.Body, maxLength)
-+		handler.ServeHTTP(w, &r2)
-+	})
-+}
-+
-+// ErrorStatus returns the status for a request-body error.
-+func ErrorStatus(v2Compatible bool, err error) int {
-+	if v2Compatible {
-+		_, bodyTooLarge := errors.AsType[*util.BodyTooLargeError](err)
-+		_, maxBytes := errors.AsType[*http.MaxBytesError](err)
-+		if bodyTooLarge || maxBytes {
-+			return http.StatusRequestEntityTooLarge
-+		}
-+	}
-+	return http.StatusBadRequest
-+}
-```
+                      │ /tmp/wv-before.txt │         /tmp/wv-after.txt          │
+                      │        B/op        │     B/op      vs base              │
+CompileModules/1-16          101.79Ki ± 0%   94.01Ki ± 0%  -7.64% (p=0.000 n=8)
+CompileModules/10-16          448.8Ki ± 0%   441.0Ki ± 0%  -1.73% (p=0.000 n=
 
-**File**: `server/authorizer/authorizer.go` (modified, +6/-0)
+**File**: `v1/ast/check.go` (modified, +9/-1)
 ```diff
-@@ -28,6 +28,12 @@ func Runtime(term *ast.Term) func(*Basic) {
- 	return v1.Runtime(term)
- }
- 
-+// V2Compatible enables v2-compatible request-body error responses on the authorizer.
-+// Oversized request bodies return HTTP 413 instead of HTTP 400.
-+func V2Compatible(yes bool) func(*Basic) {
-+	return v1.V2Compatible(yes)
-+}
-+
- // Decision returns an argument that sets the path of the authorization decision
- // to query.
- func Decision(ref func() ast.Ref) func(*Basic) {
-```
-
-**File**: `server/handlers/handlers.go` (modified, +2/-0)
-```diff
-@@ -34,6 +34,8 @@ func CompressHandler(handler http.Handler, gzipMinLength int, gzipCompressionLev
- // decompressed size limit is enforced later, in `util.ReadMaybeCompressedBody`.
- // The handler passes the gzip size limits down to that function through the
- // request context whenever gzip encoding is present.
-+//
-+// Deprecated: Configure request-body limits through the server decoding configuration instead.
- func DecodingLimitsHandler(handler http.Handler, maxLength, gzipMaxLength int64) http.Handler {
- 	return v1.DecodingLimitsHandler(handler, maxLength, gzipMaxLength)
+@@ -158,7 +158,15 @@ func (tc *typeChecker) WithAllowUndefinedFunctionCalls(allow bool) *typeChecker
+ func (tc *typeChecker) Env(builtins map[string]*Builtin) *TypeEnv {
+ 	env := tc.newEnv(nil)
+ 	for _, bi := range builtins {
+-		env.tree.Put(bi.Ref(), bi.Decl)
++		// The tree only keeps the Values, so skip building a Ref and its Terms
++		// (bi.Ref()) for every builtin on every compile.
++		part, rest, dotted := strings.Cut(bi.Name, ".")
++		node := env.tree.childOrNew(InternedVarValue(part))
++		for dotted {
++			part, rest, dotted = strings.Cut(rest, ".")
++			node = node.childOrNew(InternedValue(part))
++		}
++		node.value = bi.Decl
+ 	}
+ 	return env
  }
 ```
 
-**File**: `v1/runtime/request_body_status_test.go` (added, +47/-0)
+**File**: `v1/ast/check_test.go` (modified, +9/-0)
 ```diff
-@@ -0,0 +1,47 @@
-+// Copyright 2026 The OPA Authors.  All rights reserved.
-+// Use of this source code is governed by an Apache2
-+// license that can be found in the LICENSE file.
+@@ -3541,3 +3541,12 @@ func TestCheckWithModifiers(t *testing.T) {
+ 		})
+ 	}
+ }
 +
-+package runtime
-+
-+import (
-+	"net/http"
-+	"net/http/httptest"
-+	"strings"
-+	"testing"
-+)
-+
-+func TestRequestBodyLimitCompatibility(t *testing.T) {
-+	for _, tc := range []struct {
-+		name       string
-+		v0, v1, v2 bool
-+		status     int
-+	}{
-+		{"default", false, false, false, http.StatusBadRequest},
-+		{"v0", true, false, false, http.StatusBadRequest},
-+		{"v1", false, true, false, http.StatusBadRequest},
-+		{"v2", false, false, true, http.StatusRequestEntityTooLarge},
-+		{"v2 over v1", false, true, true, http.StatusRequestEntityTooLarge},
-+		{"v0 over v2", true, false, true, http.StatusBadRequest},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			params := NewParams()
-+			params.Addrs = &[]string{"localhost:0"}
-+			params.V0Compatible, params.V1Compatible, params.V2Compatible = tc.v0, tc.v1, tc.v2
-+			params.ConfigOverrides = []string{"server.decoding.max_length=16"}
-+			rt, err := NewRuntime(t.Context(), params)
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			srv, err := rt.buildServer(t.Context())
-+			if err != nil {
-+				t.Fatal(err)
-+			}
-+			recorder := httptest.NewRecorder()
-+			srv.Handler.ServeHTTP(recorder, httptest.NewRequest(http.MethodPost, "/v1/data/test", strings.NewReader(strings.Repeat(" ", 17))))
-+			if recorder.Code != tc.status {
-+				t.Fatalf("got %d, want %d: %s", recorder.Code, tc.status, recorder.Body.String())
-+			}
-+		})
++func TestTypeCheckerEnvResolvesBuiltins(t *testing.T) {
++	env := newTypeChecker().Env(BuiltinMap)
++	for _, bi := range BuiltinMap {
++		if tpe := env.GetByRef(bi.Ref()); tpe == nil || types.Compare(tpe, bi.Decl) != 0 {
++			t.Errorf("builtin %v: got %v, want %v", bi.Name, tpe, bi.Decl)
++		}
 +	}
 +}
 ```
 
-**File**: `v1/server/authorizer/authorizer.go` (modified, +11/-1)
+**File**: `v1/ast/env.go` (modified, +11/-8)
 ```diff
-@@ -11,6 +11,7 @@ import (
- 	"net/url"
- 	"strings"
- 
-+	"github.com/open-policy-agent/opa/internal/server/bodylimit"
- 	"github.com/open-policy-agent/opa/v1/ast"
- 	"github.com/open-policy-agent/opa/v1/rego"
- 	"github.com/open-policy-agent/opa/v1/server/identifier"
-@@ -28,6 +29,7 @@ type Basic struct {
- 	compiler               func() *ast.Compiler
- 	store                  storage.Store
- 	runtime                *ast.Term
-+	v2Compatible           bool
- 	decision               func() ast.Ref
- 	printHook              print.Hook
- 	enablePrintStatements  bool
-@@ -43,6 +45,14 @@ func Runtime(term *ast.Term) func(*Basic) {
- 	}
- }
- 
-+// V2Compatible enables v2-compatible request-body error responses on the authorizer.
-+// Oversized request bodies return HTTP 413 instead of HTTP 400.
-+func V2Compatible(yes bool) func(*Basic) {
-+	return func(b *Basic) {
-+		b.v2Compatible = yes
-+	}
-+}
-+
- // Decision returns an argument that sets the path of the authorization decision
- // to query.
- func Decision(ref func() ast.Ref) func(*Basic) {
-@@ -109,7 +119,7 @@ func (b *Basic) ServeHTTP(w http.ResponseWriter, r *http.Request) {
- 	// conversions.
- 	r, input, err := makeInput(r, b.urlPathExpectsBodyFunc)
- 	if err != nil {
--		writer.ErrorString(w, http.StatusBadRequest, types.CodeInvalidParameter, err)
-+		writer.ErrorString(w, bodylimit.ErrorStatus(b.v2Compatible, err), types.CodeInvalidParameter, err)
- 		return
- 	}
- 
-```
-
-**File**: `v1/server/compile_handler.go` (modified, +2/-1)
-```diff
-@@ -13,6 +13,7 @@ import (
- 	"strings"
- 
- 	"github.com/open-policy-agent/opa/internal/compile"
-+	"github.com/open-policy-agent/opa/internal/server/bodylimit"
- 	"github.com/open-policy-agent/opa/v1/ast"
- 	"github.com/open-policy-agent/opa/v1/metrics"
- 	"github.com/open-policy-agent/opa/v1/rego"
-@@ -151,7 +152,7 @@ func (s *Server) v1CompileFilters(w http.ResponseWriter, r *http.Request) {
- 	m.Timer(metrics.RegoQueryParse).Start()
- 	req, err := readRequest(r, compileFiltersRequestFromMap)
- 	if err != nil && !isEmptyBody(err) {
--		writer.Error(w, http.StatusBadRequest, types.NewErrorV1(types.CodeInvalidParameter, "%v", err))
-+		writer.Error(w, bodylimit.ErrorStatus(s.v2Compatible, err), types.NewErrorV1(types.CodeInvalidParameter, "%v", err))
- 		return
- 	}
- 
-```
-
-**File**: `v1/server/handlers/decoding.go` (modified, +4/-38)
-```diff
-@@ -2,12 +2,8 @@ package handlers
- 
- import (
- 	"net/http"
--	"strings"
- 
--	"github.com/open-policy-agent/opa/v1/server/types"
--	"github.com/open-policy-agent/opa/v1/server/writer"
--	"github.com/open-policy-agent/opa/v1/util"
--	util_decoding "github.com/open-policy-agent/opa/v1/util/decoding"
-+	"github.com/open-policy-agent/opa/internal/server/bodylimit"
- )
- 
- // This handler provides hard limits on the size of the request body, for both
-@@ -18,38 +14,8 @@ import (
- // decompressed size limit is enforced later, in `util.ReadMaybeCompressedBody`.
- // The handler passes the gzip size limits down to that function through the
- // request context whenever gzip encoding is present.
-+//
-+// Deprecated: Configure request-body limits through the server decoding configuration instead.
- func DecodingLimitsHandler(handler http.Handler, maxLength, gzipMaxLength int64) http.Handler {
--	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
--		// Reject too-large requests before doing any further processing.
--		// Note(philipc): This does nothing in the case of "chunked"
--		// requests, since those should report a ContentLength of -1.
--		if r.ContentLength > maxLength {
--			err := &util.BodyTooLargeError{Limit: maxLength, Size: r.ContentLength}
--			writer.Error(w, http.StatusBadRequest, types.NewErrorV1(types.CodeInvalidParameter, "%v", err))
--			return
--		}
--		// For requests where full size is not known in advance (such as chunked
--		// requests), pass server.decoding.max_length down, using the request
--		// context.
--
--		// Note(philipc): Unknown request body size is signaled to the server
--		// handler by net/http setting the Request.ContentLength field to -1. We
--		// don't check for the `Transfer-Encoding: chunked` header explicitly,
--		// because net/http will strip it out from requests automatically.
--		// Ref: https://pkg.go.dev/net/http#Request
--		if r.ContentLength < 0 {
--			ctx := util_decoding.AddServerDecodingMaxLen(r.Context(), maxLength)
--			r = r.WithContext(ctx)
--		}
--		// Pass server.decoding.gzip.max_length down, using the request context.
--		if strings.Contains(r.Header.Get("Content-Encoding"), "gzip") {
--			ctx := util_decoding.AddServerDecodingGzipMaxLen(r.Context(), gzipMaxLength)
--			r = r.WithContext(ctx)
+@@ -305,18 +305,21 @@ func (n *typeTreeNode) PutOne(key Value, tpe types.Type) {
+ func (n *typeTreeNode) Put(path Ref, tpe types.Type) {
+ 	curr := n
+ 	for _, term := range path {
+-		child, ok := curr.children.Get(term.Value)
+-		if !ok {
+-			child = newTypeTree()
+-			child.key = term.Value
+-			curr.putChild(child)
 -		}
 -
--		// Copied over from the net/http package; enforces max body read limits.
--		r2 := *r
--		r2.Body = http.MaxBytesReader(w, r.Body, maxLength)
--		handler.ServeHTTP(w, &r2)
--	})
-+	return bodylimit.Handler(handler, maxLength, gzipMaxLength, false)
+-		curr = child
++		curr = curr.childOrNew(term.Value)
+ 	}
+ 	curr.value = tpe
  }
+ 
++func (n *typeTreeNode) childOrNew(key Value) *typeTreeNode {
++	child, ok := n.children.Get(key)
++	if !ok {
++		child = newTypeTree()
++		child.key = key
++		n.putChild(child)
++	}
++	return child
++}
++
+ // Insert inserts tpe at path in the tree, but also merges the value into any types.Object present along that path.
+ // If a types.Object is inserted, any leafs already present further down the tree are merged into the inserted object.
+ // path must be ground.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #9594** (2026-11-18): docs: fix typos (@Adham-Kiwan)
+- **PR #9590** (2026-11-18): topdown: allocate less in replace and replace_n (@charlieegan3)
+- **PR #9589** (2026-11-18): ci: extend release vulnerability check to OCP and opa-envoy-plugin (@srenatus)
+- **PR #9586** (2026-11-17): ast: Value only built-in type env (@charlieegan3)
+- **PR #9585** (2026-11-17): ast: allocate each parser term cache entry once (@charlieegan3)
 - **PR #9583** (2026-11-17): ast: Set scan opts when needed to reduce allocs (@charlieegan3)
-- **PR #9582** (2026-11-17): ast: Skip per-rule recursion check when graph sorts (@charlieegan3)
-- **PR #9580** (2026-11-17): ast: don't copy expressions before rewriting (@anderseknert)
-- **PR #9579** (2026-11-17): ast: give a function without a body the location of its whole statement (@srenatus)
-- **PR #9578** (2026-11-17): util/test: don't panic in MakeTempFS when creating files fails (@sspaink)
-- **PR #9576** (2026-11-17): plugins/logs: Copy JSON-shaped values natively for console logs (@sspaink)
 
 ---
 
@@ -1468,51 +1204,31 @@ Signed-off-by: darshpatel1052 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. util/test: don't panic in MakeTempFS when creating files fails
+## X. docs: fix typos
 
 **RULE**:
-When implementing operations in `v1/util/test/tempfs.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/docs/policy-language.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/opa. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cb47e885`: util/test: don't panic in MakeTempFS when creating files fails. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `674d3362`: docs: fix typos. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `v1/util/test/tempfs.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/docs/policy-language.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	dir, err := os.MkdirTemp(root, prefix)
-	if err != nil {
-	// Use locals rather than the named results: returning an error resets those,
-	// which would leave the deferred cleanup nil and pointed at the wrong dir.
-	remove := func() {
-		_ = os.RemoveAll(dir)
-			remove()
-		dirPath := filepath.Join(dir, dirname)
-		if err := os.WriteFile(filepath.Join(dirPath, filename), []byte(content), 0666); err != nil {
-	return dir, remove, nil
+# METADATA
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	if rootDir, err = os.MkdirTemp(root, prefix); err != nil {
-	cleanup = func() {
-		_ = os.RemoveAll(rootDir)
-			cleanup()
-		dirPath := filepath.Join(rootDir, dirname)
-		f, err := os.Create(filepath.Join(dirPath, filename))
-		if err != nil {
-			return "", nil, err
-		}
-
-		if _, err := f.WriteString(content); err != nil {
-	return rootDir, cleanup, nil
+# METADTA
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cb47e885` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `674d3362` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

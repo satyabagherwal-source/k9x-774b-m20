@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T03:39:23.083Z",
-    "lastVerified": "2026-11-19T03:39:23.083Z",
+    "lastChecked": "2026-11-19T04:13:33.086Z",
+    "lastVerified": "2026-11-19T04:13:33.086Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -309,22 +309,21 @@
     "lastVerified": "2026-11-18T09:57:21.136Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "Nucleoid",
+    "name": "NucleoidAI/Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T02:56:05.338Z",
-    "lastVerified": "2026-11-19T02:56:05.338Z",
+    "lastChecked": "2026-11-19T04:03:27.332Z",
+    "lastVerified": "2026-11-19T04:03:27.332Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "4696a2526d71de6f363c0e5729dbef93a5d60872adb6e8aeeaa1d94a63b6a51a",
+    "contentHash": "873d2f048aa565ae2e3745908d3184a603e2e68f1b38ee5fc732ee72a5737aae",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "226268f4"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1171,9 +1170,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-11-18T21:50:13.203Z",
+    "lastChecked": "2026-11-19T04:03:18.780Z",
     "revisionIdentifier": "e2da97b1",
-    "lastVerified": "2026-11-18T21:50:13.203Z"
+    "lastVerified": "2026-11-19T04:03:18.780Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -5966,5 +5965,60 @@
     "lastChecked": "2026-11-19T03:39:16.430Z",
     "revisionIdentifier": "f432041f",
     "lastVerified": "2026-11-19T03:39:16.430Z"
+  },
+  "silasmarvin-lsp-ai": {
+    "name": "lsp-ai",
+    "officialUrl": "https://github.com/SilasMarvin/lsp-ai",
+    "lastChecked": "2026-11-19T04:03:08.806Z",
+    "revisionIdentifier": "1e910a8c",
+    "lastVerified": "2026-11-19T04:03:08.806Z"
+  },
+  "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2": {
+    "name": "sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    "officialUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T04:03:11.285Z",
+    "lastVerified": "2026-11-19T04:03:11.285Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-mpnet-base-v2",
+    "contentHash": "c31cb02178dcb7953dacf3eb4004c4f047219021b3185483ba7b3c4bfe7e4061",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kizitonwose-calendar": {
+    "name": "Calendar",
+    "officialUrl": "https://github.com/kizitonwose/Calendar",
+    "lastChecked": "2026-11-19T04:03:13.774Z",
+    "revisionIdentifier": "c2711b3c",
+    "lastVerified": "2026-11-19T04:03:13.774Z"
+  },
+  "open-policy-agent-opa": {
+    "name": "open-policy-agent/opa",
+    "officialUrl": "https://github.com/open-policy-agent/opa",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-19T04:03:19.973Z",
+    "lastVerified": "2026-11-19T04:03:19.973Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-open-policy-agent-opa",
+    "contentHash": "3b1f6b3510aa4d37979797566c59dd027df54977e4e6460de98dbbbc8ae3e5f6",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mariadb-server": {
+    "name": "server",
+    "officialUrl": "https://github.com/MariaDB/server",
+    "lastChecked": "2026-11-19T04:03:21.308Z",
+    "revisionIdentifier": "39281811",
+    "lastVerified": "2026-11-19T04:03:21.308Z"
   }
 }
