@@ -693791,3 +693791,186 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `802c4d10` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9406. reject frames shorter than their length field in `LengthDelimitedCodec` (Harvested from tokio-rs/tokio)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "reject frames shorter than their length field in `LengthDelimitedCodec`",
+  "source": "tokio-rs/tokio",
+  "source_url": "https://github.com/tokio-rs/tokio",
+  "source_version": "3f0ffc85",
+  "license": "MIT",
+  "extracted_at": "2026-11-19T16:24:50.445Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tokio-rs-tokio",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tokio-rs/tokio](https://github.com/tokio-rs/tokio) (Revision: `3f0ffc85`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `tokio-util/src/codec/length_delimited.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tokio-rs/tokio. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `3f0ffc85`: codec: reject frames shorter than their length field in `LengthDelimitedCodec`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tokio-util/src/codec/length_delimited.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        // Reject the frame if the frame ends before its own length field.
+        //
+        // In the worst case, this can lead to infinite loops if not
+        // rejected.
+        if n.saturating_add(self.builder.get_num_skip()) < head_len {
+            return Err(io::Error::new(
+                io::ErrorKind::InvalidData,
+                "the frame is shorter than its own length field",
+            ));
+        }
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `3f0ffc85` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9407. cmd/k8s-operator: test ProxyGroup StatefulSet Pod management policy (Harvested from tailscale/tailscale)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "cmd/k8s-operator: test ProxyGroup StatefulSet Pod management policy",
+  "source": "tailscale/tailscale",
+  "source_url": "https://github.com/tailscale/tailscale",
+  "source_version": "93ba239f",
+  "license": "BSD-3-Clause",
+  "extracted_at": "2026-11-19T16:25:00.776Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tailscale-tailscale",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [tailscale/tailscale](https://github.com/tailscale/tailscale) (Revision: `93ba239f`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `cmd/k8s-operator/proxygroup_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `93ba239f`: cmd/k8s-operator: test ProxyGroup StatefulSet Pod management policy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/k8s-operator/proxygroup_test.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+		if sts.Spec.PodManagementPolicy != appsv1.ParallelPodManagement {
+			t.Errorf("unexpected PodManagementPolicy %q, want %q", sts.Spec.PodManagementPolicy, appsv1.ParallelPodManagement)
+		}
+func TestProxyGroupReplacesStatefulSetForPodManagementPolicy(t *testing.T) {
+	pg := &tsapi.ProxyGroup{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:       "test",
+			Finalizers: []string{FinalizerName},
+			Generation: 1,
+		},
+		Spec: tsapi.ProxyGroupSpec{
+			Type:     tsapi.ProxyGroupTypeEgress,
+			Replicas: new(int32(1)),
+		},
+	}
+	fc := fake.NewClientBuilder().
+		WithScheme(tsapi.GlobalScheme).
+		WithObjects(pg).
+		WithStatusSubresource(pg).
+		Build()
+	r := &ProxyGroupReconciler{
+		tsNamespace:  tsNamespace,
+		tsProxyImage: testProxyImage,
+		Client:       fc,
+		log:          zap.Must(zap.NewDevelopment()).Sugar(),
+		clients:      tsclient.NewProvider(&fakeTSClient{}),
+		clock:        tstest.NewClock(tstest.ClockOpts{}),
+		reissuer:     tailscaled.NewReissuer(),
+	}
+	key := client.ObjectKey{Namespace: tsNamespace, Name: pg.Name}
+	getPolicy := func() (appsv1.PodManagementPolicyType, bool) {
+		t.Helper()
+		ss := new(appsv1.StatefulSet)
+		if err := fc.Get(t.Context(), key, ss); apierrors.IsNotFound(err)
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `93ba239f` are properly handled with clean fallback behavior.

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T16:17:07.787Z",
-  "total_records": 1996,
+  "last_updated": "2026-11-19T16:25:31.523Z",
+  "total_records": 1999,
   "domains": {
     "A": {
       "total": 15,
@@ -55,7 +55,7 @@
       ]
     },
     "D": {
-      "total": 832,
+      "total": 835,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -888,7 +888,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen-image-2-1-turbo-learnings-core-inva",
         "domain_intelligence-research-knowledge-intelligence-dealignai-deepseek-v4-1-flash-uncensored-fp8-cor",
         "DOM-D-66709892",
-        "DOM-D-FFFC1DD3"
+        "DOM-D-FFFC1DD3",
+        "domain_intelligence-research-knowledge-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants",
+        "DOM-D-B8ECD4B4",
+        "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-core-i"
       ]
     },
     "E": {
@@ -7883,8 +7886,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "7bfb9bb54a507e5e9bf325ef4913af30957646c3f1b54ae3569b4adfea2de056",
-      "created_at": "2026-11-19T00:00:23.279Z"
+      "content_hash": "d21b1e67291f13b616c973454994d7020fe083c9cd0e7bf97469cab4dc9ed9fa",
+      "created_at": "2026-11-19T16:25:01.527Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -12910,8 +12913,8 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-learnings-architecture-intelligence-tailscale-tailscale-lear.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "fa84d41aeffec9bf25b6d4795adb4073d003e85ffbbaa6f5f3da9a1c9bceb43a",
-      "created_at": "2026-11-19T00:00:30.132Z"
+      "content_hash": "7df8727bc02cf1f2702f8fb223f35aa38572acb8a537a01fc84e2b79c7c3b619",
+      "created_at": "2026-11-19T16:25:31.523Z"
     },
     "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",
@@ -16548,8 +16551,8 @@
       "title": "Technical Construction Intelligence: tokio-rs/tokio Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tokio-rs-tokio-technical-construction-intelligence-tokio-rs-tokio-core-invariant.md",
       "repository": "tokio-rs/tokio",
-      "content_hash": "ed0826acbb327f83244fb5662fa043af558d5ab44d845ec656c8fa951e5e3489",
-      "created_at": "2026-11-17T20:45:28.376Z"
+      "content_hash": "bff9199e455fd05436d4aa0a0f72c6863114516c63005d7a1de693693a31a62a",
+      "created_at": "2026-11-19T16:24:51.218Z"
     },
     "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-starrocks-starrocks-core-invariants",
@@ -16575,8 +16578,8 @@
       "title": "Technical Construction Intelligence: tokio-rs-tokio-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tokio-rs-tokio-learnings-technical-construction-intelligence-tokio-rs-tokio-lear.md",
       "repository": "tokio-rs-tokio-learnings",
-      "content_hash": "0341cbec9c7c51d2ebe6c22f35267f27637dbab9c4b6a4792ce8fc43f56708b2",
-      "created_at": "2026-11-17T20:45:44.137Z"
+      "content_hash": "3e9208ec5604fc49443f748e34d7e004508eb03f7c5cca4cf02e404e7b7ceff7",
+      "created_at": "2026-11-19T16:25:04.810Z"
     },
     "DOM-D-65E545AD": {
       "record_id": "DOM-D-65E545AD",
@@ -33503,6 +33506,66 @@
       "repository": "thaw-app-thaw-learnings",
       "content_hash": "0ee864f2d2dabc8c0630df6133714e76cbcbfadc1326c6eaa62bc8aec8b9fa43",
       "created_at": "2026-11-19T16:08:33.975Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: LiquidAI/LFM2.5-24B-A2B-GGUF Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm2-5-24b-a2b-gguf-research-knowledge-intelligence-liquidai-lfm2-5-.md",
+      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "content_hash": "ea76b07aef2d5dedb1025dfac25c7ab7e2efd270d5fc96f369d9258dba11b5e7",
+      "created_at": "2026-11-19T16:24:48.287Z"
+    },
+    "DOM-D-B8ECD4B4": {
+      "record_id": "DOM-D-B8ECD4B4",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF](https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF))  \n> **Source Version**: `hf-liquidai-`  \n> **License**: Open-",
+      "content_hash": "60f340c0be957682ed5d0b64878038645a32e6648e636131c412df33d9b655fc",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md`  \n> **Source**: huggingface ([https:// -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md`  \n> **Source**: huggingface ([https://",
+      "provenance": {
+        "source_uri": "project://hf-liquidai-lfm2.5-24b-a2b-gguf/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T16:25:05.074Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-liquidai-lfm2.5-24b-a2b-gguf)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-liquidai-lfm2.5-24b-a2b-gguf"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T16:25:30.713Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-core-i": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-core-i",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-liquidai-lfm2.5-24b-a2b-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-research-knowledge-intelligence-hf-liq.md",
+      "repository": "hf-liquidai-lfm2.5-24b-a2b-gguf-learnings",
+      "content_hash": "abe9602c250cb521b8535a69e03625989f1ae4847a12db71071cc417825aaac0",
+      "created_at": "2026-11-19T16:25:30.950Z"
     }
   }
 }

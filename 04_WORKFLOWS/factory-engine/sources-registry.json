@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-19T15:50:57.653Z",
-    "lastVerified": "2026-11-19T15:50:57.653Z",
+    "lastChecked": "2026-11-19T16:24:59.791Z",
+    "lastVerified": "2026-11-19T16:24:59.791Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T16:17:06.053Z",
-    "lastVerified": "2026-11-19T16:17:06.053Z",
+    "lastChecked": "2026-11-19T16:25:04.307Z",
+    "lastVerified": "2026-11-19T16:25:04.307Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1747,9 +1747,9 @@
   "zilliztech-claude-context": {
     "name": "claude-context",
     "officialUrl": "https://github.com/zilliztech/claude-context",
-    "lastChecked": "2026-11-18T13:08:59.345Z",
+    "lastChecked": "2026-11-19T16:24:57.200Z",
     "revisionIdentifier": "64a87f9b",
-    "lastVerified": "2026-11-18T13:08:59.345Z"
+    "lastVerified": "2026-11-19T16:24:57.200Z"
   },
   "falkordb-falkordb": {
     "name": "FalkorDB/FalkorDB",
@@ -1976,22 +1976,21 @@
     "lastVerified": "2026-11-19T15:58:47.959Z"
   },
   "tailscale-tailscale": {
-    "name": "tailscale",
+    "name": "tailscale/tailscale",
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T07:14:19.606Z",
-    "lastVerified": "2026-11-19T07:14:19.606Z",
+    "lastChecked": "2026-11-19T16:25:00.289Z",
+    "lastVerified": "2026-11-19T16:25:00.289Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "cdcd0eaee00a4e8642b3c16f0d91062b082986cc180ef38bb5297e4e309ccb86",
+    "contentHash": "f809030f51254b31bf92b1d69806f02fbdb558ee11a64f0d237701046b4ce822",
     "promotedRulesCount": 1,
-    "recentFixesCount": 3,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "c4d689ce"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "oceanbase-oceanbase": {
     "name": "oceanbase",
@@ -2199,9 +2198,9 @@
   "alexellis-k3sup": {
     "name": "k3sup",
     "officialUrl": "https://github.com/alexellis/k3sup",
-    "lastChecked": "2026-11-18T14:04:48.681Z",
+    "lastChecked": "2026-11-19T16:24:52.418Z",
     "revisionIdentifier": "07ee3911",
-    "lastVerified": "2026-11-18T14:04:48.681Z"
+    "lastVerified": "2026-11-19T16:24:52.418Z"
   },
   "volcengine-minecontext": {
     "name": "MineContext",
@@ -7786,5 +7785,46 @@
     "lastChecked": "2026-11-19T16:16:49.506Z",
     "revisionIdentifier": "b5c3bd0a",
     "lastVerified": "2026-11-19T16:16:49.506Z"
+  },
+  "tokio-rs-tokio": {
+    "name": "tokio-rs/tokio",
+    "officialUrl": "https://github.com/tokio-rs/tokio",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-19T16:24:49.955Z",
+    "lastVerified": "2026-11-19T16:24:49.955Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-tokio-rs-tokio",
+    "contentHash": "ea3224ce522b1dbad0367898d0dbcbe2db4756b153ee235414402c7a340ec583",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-liquidai-lfm2.5-24b-a2b-gguf": {
+    "name": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+    "officialUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T16:24:47.524Z",
+    "lastVerified": "2026-11-19T16:24:47.524Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+    "contentHash": "32f1a04a9bea3383eebec80fed3055599da91d9786cb46aba33922a623ff50bb",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ronitsingh10-finetune": {
+    "name": "FineTune",
+    "officialUrl": "https://github.com/ronitsingh10/FineTune",
+    "lastChecked": "2026-11-19T16:24:49.832Z",
+    "revisionIdentifier": "2285279d",
+    "lastVerified": "2026-11-19T16:24:49.832Z"
   }
 }

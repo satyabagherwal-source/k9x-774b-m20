@@ -11352,3 +11352,7 @@ Every entry in this ledger must capture:
 | `learn-github-astral-sh-ruff` | `https://github.com/astral-sh/ruff` | `a7ba68b4` | Multi-dimensional audit evidence | 2026-11-19T16:16:50.555Z |
 | `learn-github-kubeedge-kubeedge` | `https://github.com/kubeedge/kubeedge` | `61e2bda5` | Multi-dimensional audit evidence | 2026-11-19T16:16:58.026Z |
 | `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `802c4d10` | Multi-dimensional audit evidence | 2026-11-19T16:17:02.937Z |
+| `learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf` | `https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-19T16:24:48.109Z |
+| `learn-github-tokio-rs-tokio` | `https://github.com/tokio-rs/tokio` | `3f0ffc85` | Multi-dimensional audit evidence | 2026-11-19T16:24:50.885Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `93ba239f` | Multi-dimensional audit evidence | 2026-11-19T16:25:01.209Z |
+| `learn-dom-d-b8ecd4b4` | `project://hf-liquidai-lfm2.5-24b-a2b-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md` | 2026-11-19T16:25:30.743Z |

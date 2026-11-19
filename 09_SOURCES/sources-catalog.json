@@ -1525,8 +1525,8 @@
     "sourceUrl": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
     "sourceVersion": "hf-liquidai-lfm2.5-24b-a2b-gguf",
     "license": "Open-Source",
-    "contentHash": "4263d69c8d9a9df20bf1903032c44fefb73de34740e56c7658af1bbe0da96ecc",
-    "lastHarvestedAt": "2026-11-15T02:58:54.910Z",
+    "contentHash": "32f1a04a9bea3383eebec80fed3055599da91d9786cb46aba33922a623ff50bb",
+    "lastHarvestedAt": "2026-11-19T16:24:48.109Z",
     "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf"
   },
   "amplifthq-openmeld": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "c4d689ce",
+    "sourceVersion": "93ba239f",
     "license": "BSD-3-Clause",
-    "contentHash": "cdcd0eaee00a4e8642b3c16f0d91062b082986cc180ef38bb5297e4e309ccb86",
-    "lastHarvestedAt": "2026-11-19T00:00:22.861Z",
+    "contentHash": "f809030f51254b31bf92b1d69806f02fbdb558ee11a64f0d237701046b4ce822",
+    "lastHarvestedAt": "2026-11-19T16:25:01.209Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -7763,10 +7763,10 @@
     "repository": "tokio-rs/tokio",
     "platform": "github",
     "sourceUrl": "https://github.com/tokio-rs/tokio",
-    "sourceVersion": "1f5eac54",
+    "sourceVersion": "3f0ffc85",
     "license": "MIT",
-    "contentHash": "94ec51dfda37d7129cdbeabc726243d1e6dde6fa74026d5d8b99c2a4521a89c8",
-    "lastHarvestedAt": "2026-11-17T20:45:28.045Z",
+    "contentHash": "ea3224ce522b1dbad0367898d0dbcbe2db4756b153ee235414402c7a340ec583",
+    "lastHarvestedAt": "2026-11-19T16:24:50.885Z",
     "learningId": "learn-github-tokio-rs-tokio"
   },
   "simonschubert-linuxcommandlibrary": {

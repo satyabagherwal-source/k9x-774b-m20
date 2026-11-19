@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T16:17:07.929Z",
+  "last_updated": "2026-11-19T16:25:31.674Z",
   "total_verified_learnings": 9018,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21858,
+  "total_items": 21865,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112393,10 +112393,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "c4d689ce",
-      "content_hash": "7bfb9bb54a507e5e9bf325ef4913af30957646c3f1b54ae3569b4adfea2de056",
+      "source_version": "93ba239f",
+      "content_hash": "d21b1e67291f13b616c973454994d7020fe083c9cd0e7bf97469cab4dc9ed9fa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T00:00:23.279Z"
+      "persisted_at": "2026-11-19T16:25:01.527Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale",
@@ -112405,10 +112405,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "c4d689ce",
-      "content_hash": "fcbd1830bb8cefc79cef3435bcc7f23fab2cb93c240cea43e8895bbd3ce55c21",
+      "source_version": "93ba239f",
+      "content_hash": "7fa8b35cd7bda6581f336ce1a95f52036a960ddc6e6f1b1193d2bb35db02b5ff",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:00:23.468Z"
+      "persisted_at": "2026-11-19T16:25:01.663Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -222731,8 +222731,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "c4d689ce",
-      "content_hash": "cdcd0eaee00a4e8642b3c16f0d91062b082986cc180ef38bb5297e4e309ccb86",
+      "source_version": "93ba239f",
+      "content_hash": "f809030f51254b31bf92b1d69806f02fbdb558ee11a64f0d237701046b4ce822",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -222795,6 +222795,11 @@
           "number": 9304,
           "title": "tstest/natlab: Fix typo in README sample command",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9407,
+          "title": "cmd/k8s-operator: test ProxyGroup StatefulSet Pod management policy",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222802,7 +222807,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T00:00:22.619Z",
+      "verified_at": "2026-11-19T16:25:01.039Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222893,9 +222898,9 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "fa84d41aeffec9bf25b6d4795adb4073d003e85ffbbaa6f5f3da9a1c9bceb43a",
+      "content_hash": "7df8727bc02cf1f2702f8fb223f35aa38572acb8a537a01fc84e2b79c7c3b619",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T00:00:30.132Z"
+      "persisted_at": "2026-11-19T16:25:31.523Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings",
@@ -222905,9 +222910,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tailscale-tailscale-learnings",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "3ecd537190a8fb1b7f691d4a7707b9935030e909f138248229dfba92fedcda03",
+      "content_hash": "2083ebf4254f644d573592a1fbc5f1534048a35815ecd881a76cd96fa6dc5b77",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T00:00:30.348Z"
+      "persisted_at": "2026-11-19T16:25:31.674Z"
     },
     "learn-huggingface-stabilityai-stable-diffusion-3-medium": {
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
@@ -232684,8 +232689,8 @@
       "slug": "tokio-rs-tokio",
       "platform": "github",
       "source_url": "https://github.com/tokio-rs/tokio",
-      "source_version": "1f5eac54",
-      "content_hash": "94ec51dfda37d7129cdbeabc726243d1e6dde6fa74026d5d8b99c2a4521a89c8",
+      "source_version": "3f0ffc85",
+      "content_hash": "ea3224ce522b1dbad0367898d0dbcbe2db4756b153ee235414402c7a340ec583",
       "dossier_path": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tokio-rs-tokio-learnings.md",
       "promoted_rules": [
@@ -232698,6 +232703,11 @@
           "number": 9062,
           "title": "update the dead H2 histogram link",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9406,
+          "title": "reject frames shorter than their length field in `LengthDelimitedCodec`",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232705,7 +232715,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T20:45:27.820Z",
+      "verified_at": "2026-11-19T16:24:50.708Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232747,10 +232757,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tokio-rs-tokio-technical-construction-intelligence-tokio-rs-tokio-core-invariant.md",
       "title": "Technical Construction Intelligence: tokio-rs/tokio Core Invariants",
       "repository": "tokio-rs/tokio",
-      "source_version": "1f5eac54",
-      "content_hash": "ed0826acbb327f83244fb5662fa043af558d5ab44d845ec656c8fa951e5e3489",
+      "source_version": "3f0ffc85",
+      "content_hash": "bff9199e455fd05436d4aa0a0f72c6863114516c63005d7a1de693693a31a62a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T20:45:28.376Z"
+      "persisted_at": "2026-11-19T16:24:51.218Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio",
@@ -232759,10 +232769,10 @@
       "relative_path": "08_VERIFICATION/tokio-rs-tokio-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio.md",
       "title": "Verification Protocol: Empirical Defect Shield for tokio-rs/tokio",
       "repository": "tokio-rs/tokio",
-      "source_version": "1f5eac54",
-      "content_hash": "6b8c4f2250f2a44f7dde0c9367b9425d8224b709771e3e4cccc27abcddf6e080",
+      "source_version": "3f0ffc85",
+      "content_hash": "78fe93a26a367d4cc81401806d33e7aa0c122f00b6917d157be6bb862469b73c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T20:45:28.532Z"
+      "persisted_at": "2026-11-19T16:24:51.356Z"
     },
     "learn-github-starrocks-starrocks": {
       "learning_id": "learn-github-starrocks-starrocks",
@@ -232957,9 +232967,9 @@
       "title": "Technical Construction Intelligence: tokio-rs-tokio-learnings Core Invariants",
       "repository": "tokio-rs-tokio-learnings",
       "source_version": "HEAD",
-      "content_hash": "0341cbec9c7c51d2ebe6c22f35267f27637dbab9c4b6a4792ce8fc43f56708b2",
+      "content_hash": "3e9208ec5604fc49443f748e34d7e004508eb03f7c5cca4cf02e404e7b7ceff7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T20:45:44.137Z"
+      "persisted_at": "2026-11-19T16:25:04.810Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tokio-rs-tokio-learnings",
@@ -232969,9 +232979,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tokio-rs-tokio-learnings",
       "repository": "tokio-rs-tokio-learnings",
       "source_version": "HEAD",
-      "content_hash": "4bf79bf936672831dfa924e233a955cdb22d45dbbd23fe1942c32dfe978a5984",
+      "content_hash": "2738f67438abf538efed9f52161971a715faf40924d6be2ecb91fc9ae8b79afe",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T20:45:44.281Z"
+      "persisted_at": "2026-11-19T16:25:04.958Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-jev-27b-vl-learnings-core-invariant",
@@ -240756,7 +240766,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/LiquidAI/LFM2.5-24B-A2B-GGUF",
       "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
-      "content_hash": "4263d69c8d9a9df20bf1903032c44fefb73de34740e56c7658af1bbe0da96ecc",
+      "content_hash": "32f1a04a9bea3383eebec80fed3055599da91d9786cb46aba33922a623ff50bb",
       "dossier_path": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md",
       "promoted_rules": [
@@ -240776,7 +240786,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T02:58:54.761Z",
+      "verified_at": "2026-11-19T16:24:47.910Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -295561,6 +295571,94 @@
       "content_hash": "2937cac21aec775975d793bc4da0c68514bf630db958b93dcc5c3d605dbce56a",
       "domain_letter": "H",
       "persisted_at": "2026-11-19T16:17:03.117Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm2-5-24b-a2b-gguf-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm2-5-24b-a2b-gguf-research-knowledge-intelligence-liquidai-lfm2-5-.md",
+      "title": "Research & Knowledge Intelligence: LiquidAI/LFM2.5-24B-A2B-GGUF Core Invariants",
+      "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+      "source_version": "hf-liquidai-lfm2.5-24b-a2b-gguf",
+      "content_hash": "ea76b07aef2d5dedb1025dfac25c7ab7e2efd270d5fc96f369d9258dba11b5e7",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T16:24:48.287Z"
+    },
+    "rule-9406": {
+      "learning_id": "rule-9406",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9406,
+      "title": "reject frames shorter than their length field in `LengthDelimitedCodec`",
+      "source_url": "https://github.com/tokio-rs/tokio",
+      "source_version": "3f0ffc85",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T16:24:50.708Z"
+    },
+    "candidate_directive-reject-frames-shorter-than-their-length-field-in-lengthdelimitedcodec": {
+      "item_id": "candidate_directive-reject-frames-shorter-than-their-length-field-in-lengthdelimitedcodec",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GLMS-reject-frames-shorter-than-their-length-field-in-lengthdelimitedcodec.md",
+      "title": "reject frames shorter than their length field in `LengthDelimitedCodec`",
+      "repository": "tokio-rs/tokio",
+      "source_version": "3f0ffc85",
+      "content_hash": "5ebd910000c015c2b8722ec843c20928b1a10914aa4bc454091b3813cd5f3640",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T16:24:51.079Z"
+    },
+    "rule-9407": {
+      "learning_id": "rule-9407",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9407,
+      "title": "cmd/k8s-operator: test ProxyGroup StatefulSet Pod management policy",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "93ba239f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T16:25:01.039Z"
+    },
+    "candidate_directive-cmd-k8s-operator-test-proxygroup-statefulset-pod-management-policy": {
+      "item_id": "candidate_directive-cmd-k8s-operator-test-proxygroup-statefulset-pod-management-policy",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-HGPO-cmd-k8s-operator-test-proxygroup-statefulset-pod-management-policy.md",
+      "title": "cmd/k8s-operator: test ProxyGroup StatefulSet Pod management policy",
+      "repository": "tailscale-tailscale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1b53043469892af1d8a1d6aecfe350c9e222ac0705d27f6e70b2f12ca24418c8",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T16:25:31.357Z"
+    },
+    "candidate_directive-codec-reject-frames-shorter-than-their-length-field-in-lengthdelimitedcodec": {
+      "item_id": "candidate_directive-codec-reject-frames-shorter-than-their-length-field-in-lengthdelimitedcodec",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GW4G-codec-reject-frames-shorter-than-their-length-field-in-lengthdelimitedcodec.md",
+      "title": "codec: reject frames shorter than their length field in `LengthDelimitedCodec`",
+      "repository": "tokio-rs-tokio-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ac19a4b114f20e1b25c99b52fcd94e78d7e9c58dac2d721304a582892763778b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T16:25:04.675Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-core-i": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-core-i",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-liquidai-lfm2-5-24b-a2b-gguf-learnings-research-knowledge-intelligence-hf-liq.md",
+      "title": "Research & Knowledge Intelligence: hf-liquidai-lfm2.5-24b-a2b-gguf-learnings Core Invariants",
+      "repository": "hf-liquidai-lfm2.5-24b-a2b-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "abe9602c250cb521b8535a69e03625989f1ae4847a12db71071cc417825aaac0",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T16:25:30.950Z"
     }
   },
   "ai-builder-brain": {

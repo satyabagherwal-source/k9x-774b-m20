@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-NOHL",
-    "timestamp": "2026-11-18T01:18:53.625Z",
-    "repository": "callstack/agent-device",
-    "learningId": "learn-github-callstack-agent-device",
-    "contentHash": "3c5e71ac4fc5d8bb6e9305253992b6ae3fb2e789c5f522a7453e563ba4e9762a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-CULA",
-    "timestamp": "2026-11-18T01:38:27.934Z",
-    "repository": "Lightricks/LTX-2.5",
-    "learningId": "learn-huggingface-lightricks-ltx-2-5",
-    "contentHash": "e12a0af0311053f893919f04bb1574ca760edda72fca9e84ed42e4b414b6a978",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-CVTJ",
-    "timestamp": "2026-11-18T01:38:29.527Z",
-    "repository": "iii-hq/iii",
-    "learningId": "learn-github-iii-hq-iii",
-    "contentHash": "b6f64f96e33779c8c53a0b53d13396b4889bd290f2e523a61f1c20cd5faa70c4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-D1N5",
     "timestamp": "2026-11-18T01:38:37.073Z",
     "repository": "kumahq/kuma",
@@ -7490,6 +7445,51 @@
     "repository": "langchain4j/langchain4j",
     "learningId": "learn-github-langchain4j-langchain4j",
     "contentHash": "0aa6debbd14f964cde53a4339f64815d57e88a06dcf2a1a5546ba926fe5c6a88",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-GJC9",
+    "timestamp": "2026-11-19T16:24:48.105Z",
+    "repository": "LiquidAI/LFM2.5-24B-A2B-GGUF",
+    "learningId": "learn-huggingface-liquidai-lfm2-5-24b-a2b-gguf",
+    "contentHash": "32f1a04a9bea3383eebec80fed3055599da91d9786cb46aba33922a623ff50bb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-GLHD",
+    "timestamp": "2026-11-19T16:24:50.882Z",
+    "repository": "tokio-rs/tokio",
+    "learningId": "learn-github-tokio-rs-tokio",
+    "contentHash": "ea3224ce522b1dbad0367898d0dbcbe2db4756b153ee235414402c7a340ec583",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-GTG6",
+    "timestamp": "2026-11-19T16:25:01.206Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "f809030f51254b31bf92b1d69806f02fbdb558ee11a64f0d237701046b4ce822",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

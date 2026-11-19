@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `c4d689ce`  
+> **Source Version**: `93ba239f`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T00:00:21.669Z  
+> **Timestamp**: 2026-11-19T16:25:00.294Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T00:00:21.663Z  
+> **Harvest Timestamp**: 2026-11-19T16:25:00.289Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39298 stars
+- **Stars / Engagement**: 39320 stars
 
 ---
 
@@ -823,147 +823,202 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `019902a6` (2026-11-18)
-**Commit Message**: tstest/natlab: Fix typo in README sample command
+### Incident Patch 1: `93ba239f` (2026-11-17)
+**Commit Message**: cmd/k8s-operator: test ProxyGroup StatefulSet Pod management policy
 
-The current command fails with:
+Covers a new ProxyGroup getting a Parallel StatefulSet, and an existing
+OrderedReady one being deleted and then recreated as Parallel.
 
-    invalid value "15" for flag -timeout: parse error
+Updates tailscale/corp#38175
 
-because the timeout flag wants a time.Duration value.
+Signed-off-by: chaosinthecrd <[REDACTED_EMAIL]>
 
-Updates #cleanup
-
-Change-Id: I645974078ce60c42b9d5d7bd227226de5fff26ad
-Signed-off-by: Francois Marier <[REDACTED_EMAIL]>
-
-**File**: `tstest/natlab/README.md` (modified, +1/-1)
+**File**: `cmd/k8s-operator/proxygroup_test.go` (modified, +61/-0)
 ```diff
-@@ -18,7 +18,7 @@ yourself to the `kvm` group to avoid QEMU falling back to software emulation.
- ## Running locally
- 
- ```
--go test ./tstest/natlab/vmtest/ --run-vm-tests -v -timeout=15
-+go test ./tstest/natlab/vmtest/ --run-vm-tests -v -timeout=15m
- ```
- 
- `go test`'s default timeout (10 min) is likely not enough to cover the whole
-```
-
----
-
-### Incident Patch 2: `c4d689ce` (2026-11-18)
-**Commit Message**: util/syspolicy, docs/windows: add HideWindowedUI system policy (#22447)
-
-This device policy hides entry points to the new windowed UI and uses the legacy tray based menu instead
-
-Updates tailscale/corp#50029
-
-Signed-off-by: kari-ts <[REDACTED_EMAIL]>
-
-**File**: `docs/windows/policy/en-US/tailscale.adml` (modified, +10/-0)
-```diff
-@@ -219,6 +219,16 @@ If you enable this policy setting, you can specify which categories of network d
- If you disable or do not configure this policy setting, all devices will be displayed.
- 
- Hiding a device from the UI does not remove it from the tailnet or block network connectivity.]]></string>
-+            <string id="HideWindowedUI">Hide the windowed user interface</string>
-+            <string id="HideWindowedUI_Help"><![CDATA[This policy controls whether the client's windowed interface is available during its rollout.
-+
-+If you enable this policy, Tailscale uses the legacy tray-based interface instead of the windowed UI. This removes the "Open Tailscale" menu item and device navigation actions, and restores the legacy Preferences submenu is used instead of opening the windowed Settings page.
-+
-+If you disable or do not configure this policy, the windowed user interface is available on supported devices.
-+
-+Changes to this policy require restarting the Tailscale GUI application to take effect.
-+
-+This policy is intended as a temporary option during the transition to the windowed user interface and may be deprecated or removed in a future release.]]></string>
-             <string id="TestMenu">Show the "Debug" submenu</string>
-             <string id="TestMenu_Help"><![CDATA[This policy can be used to show or hide the Debug submenu of the Tailscale menu.
- 
-```
-
-**File**: `docs/windows/policy/tailscale.admx` (modified, +10/-0)
-```diff
-@@ -351,6 +351,16 @@
-         </boolean>
-       </elements>
-     </policy>
-+    <policy name="HideWindowedUI" class="Both" displayName="$(string.HideWindowedUI)" explainText="$(string.HideWindowedUI_Help)" key="Software\Policies\Tailscale" valueName="HideWindowedUI">
-+      <parentCategory ref="UI_Category" />
-+      <supportedOn ref="SINCE_V1_106" />
-+      <enabledValue>
-+        <decimal value="1" />
-+      </enabledValue>
-+      <disabledValue>
-+        <decimal value="0" />
-+      </disabledValue>
-+    </policy>
-     <policy name="TestMenu" class="Both" displayName="$(string.TestMenu)" explainText="$(string.TestMenu_Help)" key="Software\Policies\Tailscale" valueName="TestMenu">
-       <parentCategory ref="UI_Category" />
-       <supportedOn ref="SINCE_V1_22" />
-```
-
-**File**: `util/syspolicy/pkey/pkey.go` (modified, +3/-0)
-```diff
-@@ -135,6 +135,9 @@ const (
- 	LogSCMInteractions      Key = "LogSCMInteractions"
- 	FlushDNSOnSessionUnlock Key = "FlushDNSOnSessionUnlock"
- 
-+	// HideWindowedUI is a boolean policy that hides the Windows windowed UI.
-+	// It does not close an already-open window.
-+	HideWindowedUI Key = "HideWindowedUI"
- 	// EncryptState is a boolean setting that specifies whether to encrypt the
- 	// tailscaled state file.
- 	// Windows and Linux use a TPM device, Apple uses the Keychain.
-```
-
-**File**: `util/syspolicy/policy_keys.go` (modified, +1/-0)
-```diff
-@@ -62,6 +62,7 @@ var implicitDefinitions = []*setting.Definition{
- 	setting.NewDefinition(pkey.TestMenuVisibility, setting.UserSetting, setting.VisibilityValue),
- 	setting.NewDefinition(pkey.UpdateMenuVisibility, setting.UserSetting, setting.VisibilityValue),
- 	setting.NewDefinition(pkey.OnboardingFlowVisibility, setting.UserSetting, setting.VisibilityValue),
-+	setting.NewDefinition(pkey.HideWindowedUI, setting.UserSetting, setting.BooleanValue),
+@@ -1586,6 +1586,9 @@ func TestProxyGroupTypes(t *testing.T) {
+ 		if sts.Spec.Template.Spec.Containers[0].Ports[0].Name != "k8s-proxy" {
+ 			t.Errorf("unexpected port name %s, want k8s-proxy", sts.Spec.Template.Spec.Containers[0].Ports[0].Name)
+ 		}
++		if sts.Spec.PodManagementPolicy != appsv1.ParallelPodManagement {
++			t.Errorf("unexpected PodManagementPolicy %q, want %q", sts.Spec.PodManagementPolicy, appsv1.ParallelPodManagement)
++		}
+ 	})
  }
  
- func init() {
+@@ -1663,6 +1666,64 @@ func TestKubeAPIServerStatusConditionFlow(t *testing.T) {
+ 	expectEqual(t, fc, pg, omitPGStatusConditionMessages)
+ }
+ 
++func TestProxyGroupReplacesStatefulSetForPodManagementPolicy(t *testing.T) {
++	pg := &tsapi.ProxyGroup{
++		ObjectMeta: metav1.ObjectMeta{
++			Name:       "test",
++			Finalizers: []string{FinalizerName},
++			Generation: 1,
++		},
++		Spec: tsapi.ProxyGroupSpec{
++			Type:     tsapi.ProxyGroupTypeEgress,
++			Replicas: new(int32(1)),
++		},
++	}
++	fc := fake.NewClientBuilder().
++		WithScheme(tsapi.GlobalScheme).
++		WithObjects(pg).
++		WithStatusSubresource(pg).
++		Build()
++	r := &ProxyGroupReconciler{
++		tsNamespace:  tsNamespace,
++		tsProxyImage: testProxyImage,
++		Client:       fc,
++		log:          zap.Must(zap.NewDevelopment()).Sugar(),
++		clients:      tsclient.NewProvider(&fakeTSClient{}),
++		clock:        tstest.NewClock(tstest.ClockOpts{}),
++		reissuer:     tailscaled.NewReissuer(),
++	}
++	key := client.ObjectKey{Namespace: tsNamespace, Name: pg.Name}
++	getPolicy := func() (appsv1.PodManagementPolicyType, bool) {
++		t.Helper()
++		ss := new(appsv1.StatefulSet)
++		if err := fc.Get(t.Context(), key, ss); apierrors.IsNotFound(err) {
++			return "", false
++		} else if err != nil {
++			t.Fatalf("getting StatefulSet: %v", err)
++		}
++		return ss.Spec.PodManagementPolicy, true
++	}
++
++	expectReconciled(t, r, "", pg.Name)
++	if got, _ := getPolicy(); got != appsv1.ParallelPodManagement {
++		t.Fatalf("PodManagementPolicy = %q, want %q", got, appsv1.ParallelPodManagement)
++	}
++
++	// Simulate a StatefulSet created by an older operator version.
++	mustUpdate(t, fc, tsNamespace, pg.Name, func(ss *appsv1.StatefulSet) {
++		ss.Spec.PodManagementPolicy = appsv1.OrderedReadyPodManagement
++	})
++	expectReconciled(t, r, "", pg.Name)
++	if _, ok := getPolicy(); ok {
++		t.Fatal("StatefulSet with OrderedReady policy not deleted")
++	}
++
++	expectReconciled(t, r, "", pg.Name)
++	if got, _ := getPolicy(); got != appsv1.ParallelPodManagement {
++		t.Fatalf("PodManagementPolicy after replacement = %q, want %q", got, appsv1.ParallelPodManagement)
++	}
++}
++
+ func TestKubeAPIServerType_DoesNotOverwriteServicesConfig(t *testing.T) {
+ 	fc := fake.NewClientBuilder().
+ 		WithScheme(tsapi.GlobalScheme).
 ```
 
 ---
 
-### Incident Patch 3: `055a07bf` (2026-11-17)
-**Commit Message**: .github: stop using direct proxy for webclient prebuilt
+### Incident Patch 2: `1af2fa9e` (2026-10-09)
+**Commit Message**: cmd/k8s-operator: start ProxyGroup Pods in parallel
 
-Stop using the direct proxy for webclient prebuilt as this is preventing
-some packages that are no longer available on GitHub from installing
-properly during the build.
+With a readiness probe and the default OrderedReady policy, one unready
+ProxyGroup Pod stops the rest from starting, so ProxyGroup StatefulSets now
+use Parallel. The policy can't change in place, so an existing StatefulSet is
+deleted with its Pods orphaned and recreated, adopting them.
 
-Fixes https://github.com/tailscale/tailscale/issues/22488
+Updates tailscale/corp#38175
 
-Signed-off-by: Mario Minardi <[REDACTED_EMAIL]>
+Signed-off-by: chaosinthecrd <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/update-webclient-prebuilt.yml` (modified, +2/-2)
+**File**: `cmd/k8s-operator/proxygroup.go` (modified, +37/-0)
 ```diff
-@@ -18,8 +18,8 @@ jobs:
+@@ -6,6 +6,7 @@
+ package main
  
-       - name: Run go get
-         run: |
--          ./tool/go version # build gocross if needed using regular GOPROXY
--          GOPROXY=direct ./tool/go get github.com/tailscale/web-client-prebuilt
-+          ./tool/go version 
-+          ./tool/go get github.com/tailscale/web-client-prebuilt
-           ./tool/go mod tidy
+ import (
++	"cmp"
+ 	"context"
+ 	"encoding/json"
+ 	"errors"
+@@ -464,6 +465,12 @@ func (r *ProxyGroupReconciler) maybeProvision(ctx context.Context, tsClient tscl
+ 		applyHealthzProbes(proxyClass, ss)
+ 	}
  
-       - name: Get access token
++	if replaced, err := r.maybeReplaceStatefulSet(ctx, ss, logger); err != nil {
++		return r.notReadyErrf(pg, logger, "failed to replace StatefulSet: %w", err)
++	} else if replaced {
++		return notReady(reasonProxyGroupCreating, "waiting for StatefulSet to be replaced to update its Pod management policy")
++	}
++
+ 	if _, err := createOrUpdate(ctx, r.Client, r.tsNamespace, ss, func(s *appsv1.StatefulSet) {
+ 		s.Spec = ss.Spec
+ 		s.ObjectMeta.Labels = ss.ObjectMeta.Labels
+@@ -554,6 +561,36 @@ func (r *ProxyGroupReconciler) maybeUpdateStatus(ctx context.Context, logger *za
+ 	return nil
+ }
+ 
++// maybeReplaceStatefulSet deletes the ProxyGroup's existing StatefulSet if its
++// Pod management policy differs from the one in ss. Kubernetes doesn't allow
++// that field to change on an existing StatefulSet, so it has to be deleted and
++// created again. The Pods are orphaned rather than deleted, so they keep
++// serving until a later reconcile creates the new StatefulSet, which adopts
++// them. It reports whether the StatefulSet is being replaced.
++func (r *ProxyGroupReconciler) maybeReplaceStatefulSet(ctx context.Context, ss *appsv1.StatefulSet, logger *zap.SugaredLogger) (bool, error) {
++	existing := new(appsv1.StatefulSet)
++	err := r.Get(ctx, client.ObjectKeyFromObject(ss), existing)
++	switch {
++	case apierrors.IsNotFound(err):
++		return false, nil
++	case err != nil:
++		return false, fmt.Errorf("failed to get StatefulSet: %w", err)
++	case !existing.DeletionTimestamp.IsZero():
++		return true, nil
++	}
++	// The API server defaults an unset policy to OrderedReady.
++	current := cmp.Or(existing.Spec.PodManagementPolicy, appsv1.OrderedReadyPodManagement)
++	desired := cmp.Or(ss.Spec.PodManagementPolicy, appsv1.OrderedReadyPodManagement)
++	if current == desired {
++		return false, nil
++	}
++	logger.Infof("Deleting StatefulSet %q, keeping its Pods, to change its Pod management policy from %q to %q; it is recreated on the next reconcile", existing.Name, current, desired)
++	if err := r.Delete(ctx, existing, client.PropagationPolicy(metav1.DeletePropagationOrphan)); err != nil && !apierrors.IsNotFound(err) {
++		return false, fmt.Errorf("failed to delete StatefulSet: %w", err)
++	}
++	return true, nil
++}
++
+ func (r *ProxyGroupReconciler) ensureNodePortServiceCreated(ctx context.Context, pg *tsapi.ProxyGroup, pc *tsapi.ProxyClass) (map[string]uint16, *uint16, error) {
+ 	return staticendpoints.EnsureNodePortServices(ctx, r.Client, staticendpoints.Config{
+ 		Namespace:      r.tsNamespace,
+```
+
+**File**: `cmd/k8s-operator/proxygroup_specs.go` (modified, +5/-1)
+```diff
+@@ -89,6 +89,9 @@ func pgStatefulSet(pg *tsapi.ProxyGroup, namespace, image, tsFirewallMode string
+ 		OwnerReferences: pgOwnerReference(pg),
+ 	}
+ 	ss.Spec.Replicas = new(pgReplicas(pg))
++	// Start Pods in parallel so one that isn't ready yet, e.g. while its
++	// device awaits approval, doesn't hold back the others.
++	ss.Spec.PodManagementPolicy = appsv1.ParallelPodManagement
+ 	ss.Spec.Selector = &metav1.LabelSelector{
+ 		MatchLabels: pgLabels(pg.Name, nil),
+ 	}
+@@ -326,7 +329,8 @@ func kubeAPIServerStatefulSet(pg *tsapi.ProxyGroup, namespace, image string, por
+ 			OwnerReferences: pgOwnerReference(pg),
+ 		},
+ 		Spec: appsv1.StatefulSetSpec{
+-			Replicas: new(pgReplicas(pg)),
++			Replicas:            new(pgReplicas(pg)),
++			PodManagementPolicy: appsv1.ParallelPodManagement,
+ 			Selector: &metav1.LabelSelector{
+ 				MatchLabels: pgLabels(pg.Name, nil),
+ 			},
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #22506** (2026-11-18): tstest/natlab: Fix typo in README sample command (@fmarier)
 - **PR #22505** (closed): tstest/natlab: Fix invalid example command in README (@fmarier)
+- **PR #22503** (2026-11-19): go.toolchain.rev: bump Go toolchain [release-branch] (@bradfitz)
 - **PR #22501** (2026-11-18): go.toolchain.rev: bump Go toolchain (@tailscale-code-updater[bot])
 - **PR #22500** (2026-11-18): wgengine/magicsock: remove logging from zero discokey to nonzero (@cmol)
 - **PR #22491** (2026-11-18): tstest/natlab/vmtest: make ssh tests run across Linux test matrix (@cmol)
-- **PR #22489** (2026-11-18): feature/linuxdnsfight, go.mod: replace gonotify with direct inotify calls (@bradfitz)
 
 ---
 
@@ -983,28 +1038,61 @@ Signed-off-by: Mario Minardi <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tstest/natlab: Fix typo in README sample command
+## X. cmd/k8s-operator: test ProxyGroup StatefulSet Pod management policy
 
 **RULE**:
-When implementing operations in `tstest/natlab/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/k8s-operator/proxygroup_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `019902a6`: tstest/natlab: Fix typo in README sample command. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `93ba239f`: cmd/k8s-operator: test ProxyGroup StatefulSet Pod management policy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tstest/natlab/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/k8s-operator/proxygroup_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-go test ./tstest/natlab/vmtest/ --run-vm-tests -v -timeout=15m
+		if sts.Spec.PodManagementPolicy != appsv1.ParallelPodManagement {
+			t.Errorf("unexpected PodManagementPolicy %q, want %q", sts.Spec.PodManagementPolicy, appsv1.ParallelPodManagement)
+		}
+func TestProxyGroupReplacesStatefulSetForPodManagementPolicy(t *testing.T) {
+	pg := &tsapi.ProxyGroup{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:       "test",
+			Finalizers: []string{FinalizerName},
+			Generation: 1,
+		},
+		Spec: tsapi.ProxyGroupSpec{
+			Type:     tsapi.ProxyGroupTypeEgress,
+			Replicas: new(int32(1)),
+		},
+	}
+	fc := fake.NewClientBuilder().
+		WithScheme(tsapi.GlobalScheme).
+		WithObjects(pg).
+		WithStatusSubresource(pg).
+		Build()
+	r := &ProxyGroupReconciler{
+		tsNamespace:  tsNamespace,
+		tsProxyImage: testProxyImage,
+		Client:       fc,
+		log:          zap.Must(zap.NewDevelopment()).Sugar(),
+		clients:      tsclient.NewProvider(&fakeTSClient{}),
+		clock:        tstest.NewClock(tstest.ClockOpts{}),
+		reissuer:     tailscaled.NewReissuer(),
+	}
+	key := client.ObjectKey{Namespace: tsNamespace, Name: pg.Name}
+	getPolicy := func() (appsv1.PodManagementPolicyType, bool) {
+		t.Helper()
+		ss := new(appsv1.StatefulSet)
+		if err := fc.Get(t.Context(), key, ss); apierrors.IsNotFound(err)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-go test ./tstest/natlab/vmtest/ --run-vm-tests -v -timeout=15
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `019902a6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `93ba239f` are properly handled with clean fallback behavior.

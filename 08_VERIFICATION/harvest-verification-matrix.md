@@ -11319,3 +11319,7 @@
 | `CYCLE-20261119-6AUV` | `2026-11-19T16:16:50.551Z` | `astral-sh/ruff` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/astral-sh-ruff-learnings.md` | Yes (`609f07e9...`) |
 | `CYCLE-20261119-6GME` | `2026-11-19T16:16:58.022Z` | `kubeedge/kubeedge` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9404` | Yes (`ae2e607b...`) |
 | `CYCLE-20261119-6KET` | `2026-11-19T16:17:02.933Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9405` | Yes (`0aa6debb...`) |
+| `CYCLE-20261119-GJC9` | `2026-11-19T16:24:48.105Z` | `LiquidAI/LFM2.5-24B-A2B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm2.5-24b-a2b-gguf-learnings.md` | Yes (`32f1a04a...`) |
+| `CYCLE-20261119-GLHD` | `2026-11-19T16:24:50.882Z` | `tokio-rs/tokio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9406` | Yes (`ea3224ce...`) |
+| `CYCLE-20261119-GTG6` | `2026-11-19T16:25:01.206Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9407` | Yes (`f809030f...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T16:25:30.743Z` | `hf-liquidai-lfm2.5-24b-a2b-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-B8ECD4B4` [Domain D] | Yes (`60f340c0...`) |
