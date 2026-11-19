@@ -5210,3 +5210,7 @@ https://github.com/erkamyaman/rust-anything
 # --- Automatically Discovered by AI Scout Engine [2026-11-19T01:54:50.985Z] ---
 # [HUGGINGFACE-AI-MODELS] akhaliq/MiniMax-H3-Image-Character-Swap (1189 score) - Verified Hugging Face Model: akhaliq/MiniMax-H3-Image-Character-Swap (90 likes, 
 https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-19T03:38:58.048Z] ---
+# [HUGGINGFACE-AI-MODELS] inworld/voice-isolator (830 score) - Verified Hugging Face Model: inworld/voice-isolator (83 likes, 0 downloads)
+https://huggingface.co/inworld/voice-isolator

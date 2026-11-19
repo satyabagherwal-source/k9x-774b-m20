@@ -2,10 +2,10 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-19T01:55:42.491Z",
+  "updated_at": "2026-11-19T03:39:51.499Z",
   "statistics": {
-    "total_nodes": 372,
-    "total_edges": 174,
+    "total_nodes": 373,
+    "total_edges": 176,
     "domain_distribution": {
       "D": 251,
       "M": 1,
@@ -16,11 +16,11 @@
       "G": 1,
       "F": 17,
       "B": 2,
-      "E": 1,
+      "E": 2,
       "I": 4
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 173,
+      "CONSTRAINED_BY_ARCHITECTURE": 175,
       "VERIFIED_BY_TEST": 1
     }
   },
@@ -8319,6 +8319,30 @@
       ],
       "created_at": "2026-11-19T01:55:42.491Z",
       "updated_at": "2026-11-19T01:55:42.491Z"
+    },
+    "DOM-E-DB6AB3E1": {
+      "id": "DOM-E-DB6AB3E1",
+      "domain": "E",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): inworld/voice-isolator",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inworld-voice-isolator-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inworld-voice-isolator-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "confidence": 0.64,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-inworld-voice-isolator/hf-inworld-voice-isolator-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T03:39:23.200Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-inworld-voice-isolator)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "E",
+        "Creative Intelligence",
+        "D",
+        "M"
+      ],
+      "created_at": "2026-11-19T03:39:51.499Z",
+      "updated_at": "2026-11-19T03:39:51.499Z"
     }
   },
   "edges": [
@@ -10061,6 +10085,26 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-L-03EC8831 [L] with Domain G",
       "created_at": "2026-11-19T01:19:29.177Z"
+    },
+    {
+      "id": "EDGE-6695D512BB7B",
+      "sourceId": "DOM-E-DB6AB3E1",
+      "targetId": "NODE-D-domain-bridge-d",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-E-DB6AB3E1 [E] with Domain D",
+      "created_at": "2026-11-19T03:39:51.499Z"
+    },
+    {
+      "id": "EDGE-927D280C245A",
+      "sourceId": "DOM-E-DB6AB3E1",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-E-DB6AB3E1 [E] with Domain M",
+      "created_at": "2026-11-19T03:39:51.499Z"
     }
   ]
 }

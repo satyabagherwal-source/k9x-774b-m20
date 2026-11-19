@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T03:27:28.920Z",
-  "total_records": 1937,
+  "last_updated": "2026-11-19T03:39:53.385Z",
+  "total_records": 1940,
   "domains": {
     "A": {
       "total": 13,
@@ -53,7 +53,7 @@
       ]
     },
     "D": {
-      "total": 816,
+      "total": 818,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -870,14 +870,17 @@
         "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-reranker-v2-m3-learnings-core-invari",
         "domain_intelligence-research-knowledge-intelligence-akhaliq-minimax-h3-image-character-swap-core-inv",
         "DOM-D-C41D220B",
-        "domain_intelligence-research-knowledge-intelligence-hf-akhaliq-minimax-h3-image-character-swap-learn"
+        "domain_intelligence-research-knowledge-intelligence-hf-akhaliq-minimax-h3-image-character-swap-learn",
+        "domain_intelligence-research-knowledge-intelligence-inworld-voice-isolator-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-inworld-voice-isolator-learnings-core-invaria"
       ]
     },
     "E": {
-      "total": 2,
+      "total": 3,
       "record_ids": [
         "DOM-E-D288C96D",
-        "DOM-E-5B37AC18"
+        "DOM-E-5B37AC18",
+        "DOM-E-DB6AB3E1"
       ]
     },
     "F": {
@@ -9303,8 +9306,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "0f75fa7d032ef90fdd2ddc42771d72ea24144237f14a1089629b65f55c513d0a",
-      "created_at": "2026-11-18T21:42:23.061Z"
+      "content_hash": "f1cddc876f1adb646eb91efa77069e89ebf15f6ab4974fca2d62ba856a16c659",
+      "created_at": "2026-11-19T03:39:20.267Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -15691,8 +15694,8 @@
       "title": "Research & Knowledge Intelligence: google/gemma-4-31B-it Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-gemma-4-31b-it-research-knowledge-intelligence-google-gemma-4-31b-it-c.md",
       "repository": "google/gemma-4-31B-it",
-      "content_hash": "069859e5bc62386c4e7d2f1172c0b1eae2e0be91386fac247eca2527b3025814",
-      "created_at": "2026-11-14T14:23:04.523Z"
+      "content_hash": "b270349c6f87d220d61d563bed13a7e2fe37099300e1296dc54302983ba0424e",
+      "created_at": "2026-11-19T03:39:07.430Z"
     },
     "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-core-invariants",
@@ -15751,8 +15754,8 @@
       "title": "Research & Knowledge Intelligence: hf-google-gemma-4-31b-it-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-gemma-4-31b-it-learnings-research-knowledge-intelligence-hf-google-gem.md",
       "repository": "hf-google-gemma-4-31b-it-learnings",
-      "content_hash": "640b8ce28910a09cc3591905988d846e6300c0fc85943d3b2db3c30e3a4dc2c5",
-      "created_at": "2026-11-14T14:28:35.684Z"
+      "content_hash": "2080e2fea6c64f3a0dfd4e5c625b8a137dd54ff62781ab51a9a15f8e736935ac",
+      "created_at": "2026-11-19T03:39:52.253Z"
     },
     "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-learnings-core-invariant",
@@ -17614,8 +17617,8 @@
       "title": "Architecture Intelligence: sqldelight/sqldelight Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sqldelight-sqldelight-architecture-intelligence-sqldelight-sqldelight-core-invar.md",
       "repository": "sqldelight/sqldelight",
-      "content_hash": "3f48a9e141169046be5800248394416cb824c99602126f54318a48a55d8aba41",
-      "created_at": "2026-11-14T20:32:30.020Z"
+      "content_hash": "f4518f5c1c5ce82d9b384a85c03301eebe76f4b9136a10f183abba76cff65684",
+      "created_at": "2026-11-19T03:39:14.998Z"
     },
     "domain_intelligence-architecture-intelligence-vespa-engine-vespa-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-vespa-engine-vespa-core-invariants",
@@ -17684,8 +17687,8 @@
       "title": "Architecture Intelligence: sqldelight-sqldelight-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sqldelight-sqldelight-learnings-architecture-intelligence-sqldelight-sqldelight-.md",
       "repository": "sqldelight-sqldelight-learnings",
-      "content_hash": "d97177192f622c0872ce29727b84d59ac8d6dadfc8169e55ff9fbcafd9047f5d",
-      "created_at": "2026-11-14T20:36:23.462Z"
+      "content_hash": "2e235938c9a5368c1c89ef7ab1b1eeeb2163e38ab3158f7b9ad47b8c0749bb38",
+      "created_at": "2026-11-19T03:39:53.385Z"
     },
     "domain_intelligence-architecture-intelligence-vespa-engine-vespa-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-vespa-engine-vespa-learnings-core-invariants",
@@ -32493,6 +32496,72 @@
       "repository": "argoproj-argo-workflows-learnings",
       "content_hash": "533ca999d33fbdc70adaf13e20f057bc80621fc676f400f9e8abace8a32937c6",
       "created_at": "2026-11-19T02:56:55.129Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-inworld-voice-isolator-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-inworld-voice-isolator-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: inworld/voice-isolator Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inworld-voice-isolator-research-knowledge-intelligence-inworld-voice-isolator.md",
+      "repository": "inworld/voice-isolator",
+      "content_hash": "8ea8926adba6fab3d7f4e027b8142b90682134c6a6c48163252adfccfa2923c1",
+      "created_at": "2026-11-19T03:39:04.919Z"
+    },
+    "DOM-E-DB6AB3E1": {
+      "record_id": "DOM-E-DB6AB3E1",
+      "domain_letter": "E",
+      "domain_id": "creative",
+      "domain_name": "Creative Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        },
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): inworld/voice-isolator",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inworld-voice-isolator-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/inworld/voice-isolator](https://huggingface.co/inworld/voice-isolator))  \n> **Source Version**: `hf-inworld-v`  \n> **License**: Open-Source  \n> **Synth",
+      "content_hash": "a557848621af118083b1d6c627826bffc6e30a6ef21322015f7ae2993ab446aa",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inworld-voice-isolator-learnings.md`  \n> **Source**: huggingface ([https://huggin -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-inworld-voice-isolator-learnings.md`  \n> **Source**: huggingface ([https://huggin",
+      "provenance": {
+        "source_uri": "project://hf-inworld-voice-isolator/hf-inworld-voice-isolator-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T03:39:23.200Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-inworld-voice-isolator)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-inworld-voice-isolator"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D",
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T03:39:51.479Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-inworld-voice-isolator-learnings-core-invaria": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-inworld-voice-isolator-learnings-core-invaria",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-inworld-voice-isolator-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inworld-voice-isolator-learnings-research-knowledge-intelligence-hf-inworld-v.md",
+      "repository": "hf-inworld-voice-isolator-learnings",
+      "content_hash": "1e16c7417d328de8dae15e6dbe200c907be47734423643058a0472269229b1f0",
+      "created_at": "2026-11-19T03:39:51.801Z"
     }
   }
 }

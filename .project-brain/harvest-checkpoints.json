@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T03:27:23.291Z",
+  "last_updated": "2026-11-19T03:39:19.915Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1640,14 +1640,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-gemma-4-31b-it",
-      "content_hash": "6ecfb0d407720f475dfefd261a17981a45076c9237ff12853c7b5ebfbb3b3fd4",
-      "verified_at": "2026-11-14T14:23:04.329Z",
+      "content_hash": "e3ca4cf708b0c24a53b715014764d8353a87b2707ff5f38bb09aa62acb93d023",
+      "verified_at": "2026-11-19T03:39:07.236Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T14:23:04.329Z"
+      "last_updated": "2026-11-19T03:39:07.236Z"
     },
     "BAAI/bge-base-en-v1.5": {
       "repository": "BAAI/bge-base-en-v1.5",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "00cf6fc5e2e525c644a6de493c517cd9d72b4eda94870068e3f15481374dfa44",
-      "verified_at": "2026-11-18T21:42:22.735Z",
+      "content_hash": "23ab74fcce81b4bd8659f1576afaba50310ce5e2ef82a5704eadca50f05e849f",
+      "verified_at": "2026-11-19T03:39:19.914Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T21:42:22.735Z"
+      "last_updated": "2026-11-19T03:39:19.914Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -10101,14 +10101,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sqldelight-sqldelight",
-      "content_hash": "e8558f709349d6bb4bbf8d8d27d98b87112bad933cf4b75451c39fa7867a4533",
-      "verified_at": "2026-11-14T20:32:29.786Z",
+      "content_hash": "a51a42f9744370526533ce80abcddcbeba14d5c0c3b8d519a459a91741e1ef22",
+      "verified_at": "2026-11-19T03:39:14.582Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T20:32:29.786Z"
+      "last_updated": "2026-11-19T03:39:14.582Z"
     },
     "kubernetes-sigs/aws-load-balancer-controller": {
       "repository": "kubernetes-sigs/aws-load-balancer-controller",
@@ -19484,6 +19484,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-19T01:54:57.671Z"
+    },
+    "inworld/voice-isolator": {
+      "repository": "inworld/voice-isolator",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-inworld-voice-isolator",
+      "content_hash": "63fe08c80341da6fbb710bc4a0076474e30b6d196109c228f9989ae89f2370ba",
+      "verified_at": "2026-11-19T03:39:04.730Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-19T03:39:04.730Z"
     }
   },
   "repos": {

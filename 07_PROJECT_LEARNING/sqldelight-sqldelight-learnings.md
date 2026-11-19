@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md`  
 > **Source**: github ([https://github.com/sqldelight/sqldelight](https://github.com/sqldelight/sqldelight))  
-> **Source Version**: `25cc64a6`  
+> **Source Version**: `74b446bc`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T20:32:28.984Z  
+> **Timestamp**: 2026-11-19T03:39:13.557Z  
 > **Learning ID**: `learn-github-sqldelight-sqldelight`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sqldelight/sqldelight](https://github.com/sqldelight/sqldelight))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T20:32:28.871Z  
+> **Harvest Timestamp**: 2026-11-19T03:39:13.553Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: SQLDelight - Generates typesafe Kotlin APIs from SQL
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6906 stars
+- **Stars / Engagement**: 6905 stars
 
 ---
 
@@ -509,124 +509,337 @@ expect fun createDefaultWebWorkerDriver(): SqlDriver
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `25cc64a6` (2026-11-12)
-**Commit Message**: is column same instance must check the source table (#6398)
+### Incident Patch 1: `74b446bc` (2026-11-18)
+**Commit Message**: Ensure JDBC connections are always closed (#6401)
 
-isColumnSameAs add missing instance checks on columns to determine if from same source.
+* Ensure JDBC connections are always closed
+
+If commit or rollback failed for any reason, the connection was never
+closed which results in pool starvation when using hikaricp or similar
+pooling. This change mitigates that by ensuring closeConnection is
+always called.
+
+* Add changelog entry
+
+* Avoid AutoCloseable allocation while maintaining suppression
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -14,6 +14,7 @@
- 
+@@ -15,6 +15,7 @@
  - [Runtime] Keep the transaction body's exception when ending the transaction or a post-rollback hook also fails, for example with `cannot rollback - no transaction is active` after SQLite rolled the transaction back on its own. The second exception is added as suppressed, and the Android driver now clears its current transaction even when `endTransaction()` throws (#6387 by @pyricau)
  - [Gradle Plugin] Configuration.visible property no longer has any effect. The property is now deprecated and will be removed in Gradle 11 (#6394 by @griffio)
-+- [IntelliJ Plugin] Fixes join inspection showing a false positive (#6398 by @griffio)
+ - [IntelliJ Plugin] Fixes join inspection showing a false positive (#6398 by @griffio)
++- [JDBC Driver] Fix leaking connections on commit/rollback failure (#6401 by @tKe)
  
  ## [2.4.1] - 2026-10-06
  [2.4.1]: https://github.com/sqldelight/sqldelight/releases/tag/2.4.1
 ```
 
-**File**: `sqldelight-compiler/src/main/kotlin/app/cash/sqldelight/core/lang/psi/TypedColumn.kt` (modified, +25/-1)
+**File**: `drivers/jdbc-driver/build.gradle` (modified, +3/-0)
 ```diff
-@@ -17,7 +17,9 @@ package app.cash.sqldelight.core.lang.psi
+@@ -12,6 +12,9 @@ base {
  
- import app.cash.sqldelight.core.lang.util.type
- import app.cash.sqldelight.dialect.api.IntermediateType
-+import com.alecstrong.sql.psi.core.psi.SqlColumnExpr
- import com.alecstrong.sql.psi.core.psi.SqlColumnName
-+import com.intellij.psi.PsiNamedElement
- import com.squareup.kotlinpoet.PropertySpec
- 
- internal interface TypedColumn {
-@@ -33,5 +35,27 @@ internal interface TypedColumn {
-   fun adapter(): PropertySpec?
+ dependencies {
+   api projects.runtime
++
++  testImplementation libs.kotlin.test.junit
++  testImplementation libs.sqliteJdbc
  }
  
--fun SqlColumnName.isColumnSameAs(other: SqlColumnName) = type().let { it.column != null && it.column == other.type().column }
-+/**
-+ * @return true if both column names refer to the same column of the same table instance in the
-+ * query. Two references to the same column definition through different table instances e.g a self
-+ * join or a view joined to the table it selects from are not the same column instance.
-+ */
-+fun SqlColumnName.isColumnSameAs(other: SqlColumnName): Boolean {
-+  val column = type().column ?: return false
-+  if (column != other.type().column) return false
-+  return sourceTable() == other.sourceTable()
-+}
-+
-+/**
-+ * The table, alias or view this column name is selected from or null if it cannot be determined.
-+ */
-+private fun SqlColumnName.sourceTable(): PsiNamedElement? {
-+  val resolved = reference?.resolve() ?: return null
-+  val tableName = (parent as? SqlColumnExpr)?.tableName
-+  return queryAvailable(this)
-+    .filter { tableName == null || it.table?.name == tableName.name }
-+    .firstOrNull { result -> result.columns.any { it.element == resolved } }
-+    ?.table
-+}
-+
- fun SqlColumnName.isTypeSameAs(other: SqlColumnName) = type().asNonNullable().javaType == other.type().asNonNullable().javaType
+ apply from: "$rootDir/gradle/gradle-mvn-push.gradle"
 ```
 
-**File**: `sqldelight-idea-plugin/testData/join-inspections/expected.xml` (modified, +5/-0)
+**File**: `drivers/jdbc-driver/src/main/kotlin/app/cash/sqldelight/driver/jdbc/JdbcDriver.kt` (modified, +61/-9)
 ```diff
-@@ -10,4 +10,9 @@
-     <line>4</line>
-     <description>Join compares two columns of different types</description>
-   </problem>
-+  <problem>
-+    <file>SelfJoin.sq</file>
-+    <line>32</line>
-+    <description>Join condition always evaluates to true</description>
-+  </problem>
- </problems>
+@@ -85,15 +85,34 @@ abstract class JdbcDriver :
+   }
+ 
+   override fun Connection.endTransaction() {
+-    commit()
+-    autoCommit = true
+-    closeConnection(this)
++    finishWith({ closeConnection(this) }) {
++      try {
++        commit()
++      } catch (commitException: Throwable) {
++        try {
++          // From the JDBC docs:
++          //   > If [setAutoCommit] method is called during a transaction and the
++          //   > auto-commit mode is changed, the transaction is committed.
++          // Given we don't know the current state of the transaction after a failed commit, we attempt a rollback
++          // _before_ autoCommit=true to ensure we don't subsequently commit something we're reporting as failed.
++          rollback()
++          // rollback succeeded after commit failure, safe to reset
++          autoCommit = true
++        } catch (ex: Throwable) {
++          commitException.addSuppressed(ex)
++        }
++        throw commitException
++      }
++      // commit was successful, safe to reset
++      autoCommit = true
++    }
+   }
+ 
+   override fun Connection.rollbackTransaction() {
+-    rollback()
+-    autoCommit = true
+-    closeConnection(this)
++    finishWith({ closeConnection(this) }) {
++      rollback()
++      autoCommit = true
++    }
+   }
+ 
+   override fun Connection.beginTransaction() {
+@@ -167,13 +186,23 @@ abstract class JdbcDriver :
+   override fun newTransaction(): QueryResult<Transacter.Transaction> {
+     val enclosing = transaction
+     val connection = enclosing?.connection ?: getConnection()
+-    val transaction = Transaction(enclosing, this, connection)
+-    this.transaction = transaction
+ 
++    // open any new transaction before setting it so we don't leak a failed transaction on failure
+     if (enclosing == null) {
+-      connection.beginTransaction()
++      try {
++        connection.beginTransaction()
++      } catch (ex: Throwable) {
++        try {
++          closeConnection(connection)
++        } catch (closeEx: Throwable) {
++          ex.addSuppressed(closeEx)
++        }
++        throw ex
++      }
+     }
+ 
++    val transaction = Transaction(enclosing, this, connection)
++    this.transaction = transaction
+     return QueryResult.Value(transaction)
+   }
+ 
+@@ -329,3 +358,26 @@ class JdbcCursor(val resultSet: ResultSet) : SqlCursor {
+ 
+   override fun next(): QueryResult.Value<Boolean> = QueryResult.Value(resultSet.next())
+ }
++
++/**
++ * Equivalent of running `AutoCloseable { finish() }.use { block() }` with matching suppression semantics
++ */
++private inline fun finishWith(finish: () -> Unit, block: () -> Unit) {
++  var thrown: Throwable? = null
++  try {
++    block()
++  } catch (ex: Throwable) {
++    thrown = ex
++    throw ex
++  } finally {
++    try {
++      finish()
++    } catch (finishEx: Throwable) {
++      if (thrown != null) {
++        thrown.addSuppressed(finishEx)
++      } else {
++        throw finishEx
++      }
++    }
++  }
++}
 ```
 
-**File**: `sqldelight-idea-plugin/testData/join-inspections/src/SelfJoin.sq` (added, +32/-0)
+**File**: `drivers/jdbc-driver/src/test/kotlin/app/cash/sqldelight/driver/jdbc/JdbcDriverTransactionFailureTest.kt` (added, +192/-0)
 ```diff
-@@ -0,0 +1,32 @@
-+CREATE TABLE MyTable (
-+  id TEXT PRIMARY KEY,
-+  name TEXT
-+);
+@@ -0,0 +1,192 @@
++package app.cash.sqldelight.driver.jdbc
 +
-+CREATE VIEW MyView AS
-+SELECT t.id, t.name FROM MyTable t;
++import app.cash.sqldelight.Query
++import app.cash.sqldelight.TransacterImpl
++import java.sql.Connection
++import java.sql.DriverManager
++import java.sql.SQLException
++import java.util.*
++import kotlin.test.AfterTest
++import kotlin.test.Test
++import kotlin.test.assertEquals
++import kotlin.test.assertFailsWith
 +
-+selfJoin:
-+SELECT t1.name, t2.name
-+FROM MyTable t1
-+JOIN MyTable t2 ON t2.id = t1.id;
++class JdbcDriverTransactionFailureTest {
 +
-+selfJoinUnaliasedTable:
-+SELECT MyTable.name, t2.name
-+FROM MyTable
-+JOIN MyTable t2 ON t2.id = MyTable.id;
++  private val driver = ConnectionTrackingJdbcDriver()
++  private val transacter = object : TransacterImpl(driver) {}
 +
-+viewToOwnTable:
-+SELECT v.name, t.name
-+FROM MyView v
-+JOIN MyTable t ON t.id = v.id;
++  @AfterTest
++  fun checkConnectionsClosedAndClear() {
++    try {
++      assertEquals(0, driver.connectionCount, "connection was left open")
++    } finally {
++      driver.closeConnections()
++      driver.configureNewConnections { }
++    }
++  }
 +
-+viewToOwnTableUnaliased:
-+SELECT MyView.name, MyTable.name
-+FROM MyView
-+JOIN MyTable ON MyTable.id = MyView.id;
++  @Test
++  fun `connection closed and autoCommit not reset on rollback failure`() {
++    driver.configureNewConnections {
++      beforeRollback = { throw SQLException("rollback failed") }
++    }
 +
-+sameAliasedColumn:
-+SELECT t1.name, t2.name
-+FROM MyTable t1
-+JOIN MyTable t2 ON t1.id = t1.id;
++    val failure = assertFailsWith<SQLException> {
++      transacter.transaction { throw SQLException("failure in transaction") }
++    }
++    assertEquals("failure in transaction", failure.message)
++    assertEquals("rollback failed", failure.suppressed.single().message)
++
++    assertEquals(
++      listOf("setAutoCommit(false)", "rollback", "close"),
++      driver.lastConnection.calls,
++    )
++  }
++
++  @Test
++  fun `connection closed on autoCommit reset failure`() {
++    driver.configureNewConnections {
++      onAutoCommit = { autoCommit -> if (autoCommit) throw SQLException("reset autoCommit failed") }
++    }
++
++    val failure = assertFailsWith<SQLException> { transacter.transaction { } }
++    assertEquals("reset autoCommit failed", failure.message)
++
++    assertEquals(
++      listOf("setAutoCommit(false)", "commit", "setAutoCommit(true)", "close"),
++      driver.lastConnection.calls,
++    )
++  }
++
++  @Test
++  fun `connection closed on beginTransaction failure`() {
++    driver.configureNewConnections {
++      onAutoCommit = { autoCommit ->
++        // autoCommit is set to false in beginTransaction
++        if (!autoCommit) throw SQLException("unset autoCommit failed")
++      }
++    }
++
++    val failure = assertFailsWith<SQLException> { transacter.transaction { } }
++    assertEquals("unset autoCommit failed", failure.message)
++
++    assertEquals(
++      listOf("setAutoCommit(false)", "close"),
++      driver.lastConnection.calls,
++    )
++
++    // subsequent transaction succeeds
++    driver.configureNewConnections { /* defaults */ }
++    transacter.transaction { } // succeeds
++    assertEquals(
++      listOf("setAutoCommit(false)", "commit", "setAutoCommit(true)", "close"),
++      driver.lastConnection.calls,
++    )
++  }
++
++  @Test
++  fun `connection closed and autoCommit not restored when commit and rollback both fail`() {
++    driver.configureNewConnections {
++      beforeCommit = { throw SQLException("commit failed") }
++      beforeRollback = { throw SQLException("rollback failed") }
++    }
++    val failure = assertFailsWith<SQLException> { transacter.transaction { } }
++    assertEquals("commit failed", failure.message)
++    assertEquals("rollback failed", failure.suppressed.single().message)
++
++    assertEquals(
++      listOf("setAutoCommit(false)", "commit", "rollback", "close"),
++      driver.lastConnection.calls,
++    )
++  }
++
++  @Test
++  fun `connection closed and autoCommit restored when commit fails but rollback succeeds`() {
++    driver.configureNewConnections {
++      beforeCommit = { throw SQLException("commit failed") }
++    }
++
++    val failure =
++      assertFailsWith<SQLException> { transacter.transaction { } }
++    assertEquals("commit failed", failure.message)
++
++    assertEquals(
++      listOf("setAutoCommit(false)", "commit", "rollback", "setAutoCommit(true)", "close"),
++      driver.lastConnection.calls,
++    )
++  }
++}
++
++@Suppress("JavaDefaultMethodsNotOverriddenByDelegation")
++private class FailableConnection(val delegate: Connection) : Connection by delegate {
++  var beforeCommit: () -> Unit = { }
++  var beforeRollback: () -> Unit = { }
++  var onAutoCommit: (Boolean) -> Unit = { }
++  var lastAutoCommit: Boolean? = null
++  val calls = mutableListOf<String>()
++
++  override fun commit() {
++    calls += "commit"
++    beforeCommit()
++    delegate.commit()
++  }
++
++  override fun rollback() {
++    calls += "rollback"
++    beforeRollback()
++    delegate.rollback()
++  }
++
++  override fun setAutoCommit(autoCommit: Boolean) {
++    calls += "setAutoCommit($autoCommit)"
++    lastAutoCommit = autoCommit
++    onAutoCommit(autoCommit)
++    delegate.autoCommit = autoCommit
++  }
++
++  override fun close() {
++    calls += "close"
++    delegate.close()
++  }
++}
++
++private class ConnectionTrackingJdbcDriver : JdbcDriver() {
++  private val openConnections: MutableSet<FailableConnection> = Collections.newSetFromMap(IdentityHashMap())
++  val connectionCount get() = openConnections.size
++  lateinit var lastConnection: FailableConnection
++    priv
+```
+
+---
+
+### Incident Patch 2: `df815f4d` (2026-11-18)
+**Commit Message**: Use https://packages.jetbrains.team/maven/p/kt (#6402)
+
+`maven.pkg.jetbrains.space` has been finally retired.
+
+Use new  `https://packages.jetbrains.team/maven/p/kt`
+
+**File**: `build.gradle` (modified, +1/-1)
+```diff
+@@ -45,7 +45,7 @@ allprojects {
+     maven { url 'https://www.jetbrains.com/intellij-repository/releases' }
+     maven { url "https://cache-redirector.jetbrains.com/intellij-dependencies" }
+     // Repo for the backported Android IntelliJ Plugin by Jetbrains used in Ultimate
+-    maven { url "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-ide-plugin-dependencies/" }
++    maven { url "https://packages.jetbrains.team/maven/p/kt/kotlin-ide-plugin-dependencies/" }
+   }
+ 
+   tasks.withType(Test).configureEach {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6402** (2026-11-18): Use https://packages.jetbrains.team/maven/p/kt (@griffio)
+- **PR #6401** (2026-11-18): Ensure JDBC connections are always closed (@tKe)
 - **PR #6400** (closed): Report ':' or '{' when a statement label is followed by neither (@wangkangmao)
 - **PR #6399** (closed): Point JdbcSqliteDriver.IN_MEMORY at jdbc:sqlite::memory: (@mvanhorn)
 - **PR #6398** (2026-11-12): is column same instance must check the source table (@griffio)
 - **PR #6395** (2026-11-10): Update CI Runner to use macOS-15 (@griffio)
-- **PR #6394** (2026-11-10): Remove isVisible from configurations (@griffio)
-- **PR #6389** (2026-10-25): Update Gradle to v9.8.1 (@renovate[bot])
 
 ---
 
@@ -646,13 +859,13 @@ isColumnSameAs add missing instance checks on columns to determine if from same 
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. is column same instance must check the source table
+## X. Ensure JDBC connections are always closed
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sqldelight/sqldelight. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `25cc64a6`: is column same instance must check the source table. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `74b446bc`: Ensure JDBC connections are always closed. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -660,7 +873,7 @@ Subsystems managing Kotlin data structures, boundary deserialization, API parsin
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-- [IntelliJ Plugin] Fixes join inspection showing a false positive (#6398 by @griffio)
+- [JDBC Driver] Fix leaking connections on commit/rollback failure (#6401 by @tKe)
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -670,4 +883,4 @@ Subsystems managing Kotlin data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `25cc64a6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `74b446bc` are properly handled with clean fallback behavior.

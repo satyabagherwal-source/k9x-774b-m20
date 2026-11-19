@@ -11186,3 +11186,8 @@
 | `CYCLE-20261119-8E2W` | `2026-11-19T03:14:38.792Z` | `google/vit-base-patch16-224` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-vit-base-patch16-224-learnings.md` | Yes (`6fa625f1...`) |
 | `CYCLE-20261119-OKHZ` | `2026-11-19T03:27:13.607Z` | `BAAI/bge-base-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-base-en-v1.5-learnings.md` | Yes (`206903d6...`) |
 | `CYCLE-20261119-ORYK` | `2026-11-19T03:27:23.276Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9326` | Yes (`702d9dd8...`) |
+| `CYCLE-20261119-3T71` | `2026-11-19T03:39:04.717Z` | `inworld/voice-isolator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inworld-voice-isolator-learnings.md` | Yes (`63fe08c8...`) |
+| `CYCLE-20261119-3V4O` | `2026-11-19T03:39:07.224Z` | `google/gemma-4-31B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md` | Yes (`e3ca4cf7...`) |
+| `CYCLE-20261119-40SQ` | `2026-11-19T03:39:14.570Z` | `sqldelight/sqldelight` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9327` | Yes (`a51a42f9...`) |
+| `CYCLE-20261119-44WU` | `2026-11-19T03:39:19.902Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9328` | Yes (`23ab74fc...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T03:39:51.501Z` | `hf-inworld-voice-isolator` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-E-DB6AB3E1` [Domain E] | Yes (`a5578486...`) |

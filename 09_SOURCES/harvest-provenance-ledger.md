@@ -11219,3 +11219,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-google-vit-base-patch16-224` | `https://huggingface.co/google/vit-base-patch16-224` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-19T03:14:38.796Z |
 | `learn-huggingface-baai-bge-base-en-v1-5` | `https://huggingface.co/BAAI/bge-base-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-19T03:27:13.611Z |
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `695364a0` | Multi-dimensional audit evidence | 2026-11-19T03:27:23.281Z |
+| `learn-huggingface-inworld-voice-isolator` | `https://huggingface.co/inworld/voice-isolator` | `hf-inworld` | Multi-dimensional audit evidence | 2026-11-19T03:39:04.721Z |
+| `learn-huggingface-google-gemma-4-31b-it` | `https://huggingface.co/google/gemma-4-31B-it` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-19T03:39:07.228Z |
+| `learn-github-sqldelight-sqldelight` | `https://github.com/sqldelight/sqldelight` | `74b446bc` | Multi-dimensional audit evidence | 2026-11-19T03:39:14.573Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `9d143719` | Multi-dimensional audit evidence | 2026-11-19T03:39:19.906Z |
+| `learn-dom-e-db6ab3e1` | `project://hf-inworld-voice-isolator` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-inworld-voice-isolator-learnings.md` | 2026-11-19T03:39:51.501Z |

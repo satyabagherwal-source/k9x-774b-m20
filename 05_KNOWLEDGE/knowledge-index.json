@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T03:27:29.253Z",
-  "total_verified_learnings": 9013,
+  "last_updated": "2026-11-19T03:39:53.549Z",
+  "total_verified_learnings": 9014,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21607,
+  "total_items": 21614,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114637,10 +114637,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "b7ba2671",
-      "content_hash": "0f75fa7d032ef90fdd2ddc42771d72ea24144237f14a1089629b65f55c513d0a",
+      "source_version": "9d143719",
+      "content_hash": "f1cddc876f1adb646eb91efa77069e89ebf15f6ab4974fca2d62ba856a16c659",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T21:42:23.061Z"
+      "persisted_at": "2026-11-19T03:39:20.267Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114649,10 +114649,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "b7ba2671",
-      "content_hash": "1c047996c5ad603d15f168d20abe7ac3a2f208672a35ac8ae50badade58827e8",
+      "source_version": "9d143719",
+      "content_hash": "3ea0197d95c187cb668fca10298dd1023b9c764a3fb3b78f45a75bb8d780a1f6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T21:42:23.307Z"
+      "persisted_at": "2026-11-19T03:39:20.413Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -219829,8 +219829,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "b7ba2671",
-      "content_hash": "00cf6fc5e2e525c644a6de493c517cd9d72b4eda94870068e3f15481374dfa44",
+      "source_version": "9d143719",
+      "content_hash": "23ab74fcce81b4bd8659f1576afaba50310ce5e2ef82a5704eadca50f05e849f",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -219903,6 +219903,11 @@
           "number": 9286,
           "title": "the peer crash-breaker action for when UDP is removed, switched off",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9328,
+          "title": "give a node's threads one stream-id counter",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219910,7 +219915,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T21:42:22.547Z",
+      "verified_at": "2026-11-19T03:39:19.690Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230270,7 +230275,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/gemma-4-31B-it",
       "source_version": "hf-google-gemma-4-31b-it",
-      "content_hash": "6ecfb0d407720f475dfefd261a17981a45076c9237ff12853c7b5ebfbb3b3fd4",
+      "content_hash": "e3ca4cf708b0c24a53b715014764d8353a87b2707ff5f38bb09aa62acb93d023",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-gemma-4-31b-it-learnings.md",
       "promoted_rules": [],
@@ -230279,7 +230284,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T14:23:04.141Z",
+      "verified_at": "2026-11-19T03:39:06.978Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230296,9 +230301,9 @@
       "title": "Research & Knowledge Intelligence: google/gemma-4-31B-it Core Invariants",
       "repository": "google/gemma-4-31B-it",
       "source_version": "hf-google-gemma-4-31b-it",
-      "content_hash": "069859e5bc62386c4e7d2f1172c0b1eae2e0be91386fac247eca2527b3025814",
+      "content_hash": "b270349c6f87d220d61d563bed13a7e2fe37099300e1296dc54302983ba0424e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T14:23:04.523Z"
+      "persisted_at": "2026-11-19T03:39:07.430Z"
     },
     "candidate_directive-nuc-105-list-and-population-sorting-by-key": {
       "item_id": "candidate_directive-nuc-105-list-and-population-sorting-by-key",
@@ -230332,9 +230337,9 @@
       "title": "Research & Knowledge Intelligence: hf-google-gemma-4-31b-it-learnings Core Invariants",
       "repository": "hf-google-gemma-4-31b-it-learnings",
       "source_version": "HEAD",
-      "content_hash": "640b8ce28910a09cc3591905988d846e6300c0fc85943d3b2db3c30e3a4dc2c5",
+      "content_hash": "2080e2fea6c64f3a0dfd4e5c625b8a137dd54ff62781ab51a9a15f8e736935ac",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T14:28:35.684Z"
+      "persisted_at": "2026-11-19T03:39:52.253Z"
     },
     "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-nucleoidai-nucleoid-learnings-core-invariant",
@@ -235802,14 +235807,19 @@
       "slug": "sqldelight-sqldelight",
       "platform": "github",
       "source_url": "https://github.com/sqldelight/sqldelight",
-      "source_version": "25cc64a6",
-      "content_hash": "e8558f709349d6bb4bbf8d8d27d98b87112bad933cf4b75451c39fa7867a4533",
+      "source_version": "74b446bc",
+      "content_hash": "a51a42f9744370526533ce80abcddcbeba14d5c0c3b8d519a459a91741e1ef22",
       "dossier_path": "07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sqldelight-sqldelight-learnings.md",
       "promoted_rules": [
         {
           "number": 8528,
           "title": "is column same instance must check the source table",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9327,
+          "title": "Ensure JDBC connections are always closed",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -235818,7 +235828,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T20:32:29.639Z",
+      "verified_at": "2026-11-19T03:39:14.385Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235860,10 +235870,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-sqldelight-sqldelight-architecture-intelligence-sqldelight-sqldelight-core-invar.md",
       "title": "Architecture Intelligence: sqldelight/sqldelight Core Invariants",
       "repository": "sqldelight/sqldelight",
-      "source_version": "25cc64a6",
-      "content_hash": "3f48a9e141169046be5800248394416cb824c99602126f54318a48a55d8aba41",
+      "source_version": "74b446bc",
+      "content_hash": "f4518f5c1c5ce82d9b384a85c03301eebe76f4b9136a10f183abba76cff65684",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T20:32:30.020Z"
+      "persisted_at": "2026-11-19T03:39:14.998Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sqldelight-sqldelight": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sqldelight-sqldelight",
@@ -235872,10 +235882,10 @@
       "relative_path": "08_VERIFICATION/sqldelight-sqldelight-verification-protocol-empirical-defect-shield-for-sqldelig.md",
       "title": "Verification Protocol: Empirical Defect Shield for sqldelight/sqldelight",
       "repository": "sqldelight/sqldelight",
-      "source_version": "25cc64a6",
-      "content_hash": "40433a5926b08d66fab23188b313c2a9bc41dd6c6f8f865a160ca16575d1f5ae",
+      "source_version": "74b446bc",
+      "content_hash": "3086ec2445466ccf75e63a1b27cafde31e83dea0ccda0742e38fcc4f442b314c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T20:32:30.126Z"
+      "persisted_at": "2026-11-19T03:39:15.144Z"
     },
     "learn-github-vespa-engine-vespa": {
       "learning_id": "learn-github-vespa-engine-vespa",
@@ -236154,9 +236164,9 @@
       "title": "Architecture Intelligence: sqldelight-sqldelight-learnings Core Invariants",
       "repository": "sqldelight-sqldelight-learnings",
       "source_version": "HEAD",
-      "content_hash": "d97177192f622c0872ce29727b84d59ac8d6dadfc8169e55ff9fbcafd9047f5d",
+      "content_hash": "2e235938c9a5368c1c89ef7ab1b1eeeb2163e38ab3158f7b9ad47b8c0749bb38",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T20:36:23.462Z"
+      "persisted_at": "2026-11-19T03:39:53.385Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-sqldelight-sqldelight-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-sqldelight-sqldelight-learning",
@@ -236166,9 +236176,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for sqldelight-sqldelight-learnings",
       "repository": "sqldelight-sqldelight-learnings",
       "source_version": "HEAD",
-      "content_hash": "146425e74970e9490ceb1b474ef20f6efa876ebcda49e0f87e734263a9863f04",
+      "content_hash": "cbce9b9e36c79b4fbe8fac8ded2848a034e31aa5af5e40030d9c1a4779132ba3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T20:36:23.576Z"
+      "persisted_at": "2026-11-19T03:39:53.549Z"
     },
     "domain_intelligence-architecture-intelligence-vespa-engine-vespa-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-vespa-engine-vespa-learnings-core-invariants",
@@ -291891,6 +291901,109 @@
       "content_hash": "80cede3efff30ccf5c24af1f7dae6e8dd45fe4fe5ff78aa576f1165898e0dcd8",
       "domain_letter": "D",
       "persisted_at": "2026-11-19T03:27:27.683Z"
+    },
+    "learn-huggingface-inworld-voice-isolator": {
+      "learning_id": "learn-huggingface-inworld-voice-isolator",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "inworld/voice-isolator",
+      "repository": "inworld/voice-isolator",
+      "slug": "hf-inworld-voice-isolator",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/inworld/voice-isolator",
+      "source_version": "hf-inworld-voice-isolator",
+      "content_hash": "63fe08c80341da6fbb710bc4a0076474e30b6d196109c228f9989ae89f2370ba",
+      "dossier_path": "07_PROJECT_LEARNING/hf-inworld-voice-isolator-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-inworld-voice-isolator-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-19T03:39:04.506Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-inworld-voice-isolator-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-inworld-voice-isolator-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inworld-voice-isolator-research-knowledge-intelligence-inworld-voice-isolator.md",
+      "title": "Research & Knowledge Intelligence: inworld/voice-isolator Core Invariants",
+      "repository": "inworld/voice-isolator",
+      "source_version": "hf-inworld-voice-isolator",
+      "content_hash": "8ea8926adba6fab3d7f4e027b8142b90682134c6a6c48163252adfccfa2923c1",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T03:39:04.919Z"
+    },
+    "rule-9327": {
+      "learning_id": "rule-9327",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9327,
+      "title": "Ensure JDBC connections are always closed",
+      "source_url": "https://github.com/sqldelight/sqldelight",
+      "source_version": "74b446bc",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T03:39:14.385Z"
+    },
+    "candidate_directive-ensure-jdbc-connections-are-always-closed": {
+      "item_id": "candidate_directive-ensure-jdbc-connections-are-always-closed",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4UMH-ensure-jdbc-connections-are-always-closed.md",
+      "title": "Ensure JDBC connections are always closed",
+      "repository": "sqldelight-sqldelight-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a85b76c2af3add6f3301d40cfed42c78bbc694692f175a7c363fc9ca0286479a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T03:39:53.225Z"
+    },
+    "rule-9328": {
+      "learning_id": "rule-9328",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9328,
+      "title": "give a node's threads one stream-id counter",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "9d143719",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T03:39:19.690Z"
+    },
+    "candidate_directive-give-a-node-s-threads-one-stream-id-counter": {
+      "item_id": "candidate_directive-give-a-node-s-threads-one-stream-id-counter",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-452Q-give-a-node-s-threads-one-stream-id-counter.md",
+      "title": "give a node's threads one stream-id counter",
+      "repository": "freenet/freenet-core",
+      "source_version": "9d143719",
+      "content_hash": "e4c021542eac1706dd38d6b3acae6f89755f605c938b5660ef3d00d3785a94fb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T03:39:20.119Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-inworld-voice-isolator-learnings-core-invaria": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-inworld-voice-isolator-learnings-core-invaria",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-inworld-voice-isolator-learnings-research-knowledge-intelligence-hf-inworld-v.md",
+      "title": "Research & Knowledge Intelligence: hf-inworld-voice-isolator-learnings Core Invariants",
+      "repository": "hf-inworld-voice-isolator-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1e16c7417d328de8dae15e6dbe200c907be47734423643058a0472269229b1f0",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T03:39:51.801Z"
     }
   },
   "ai-builder-brain": {

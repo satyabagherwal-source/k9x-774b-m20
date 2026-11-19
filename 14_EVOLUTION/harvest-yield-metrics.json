@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T03:27:23.286Z",
-  "total_cycles_completed": 10690,
-  "total_learnings_persisted": 10690,
-  "total_rules_promoted": 10093,
+  "last_updated": "2026-11-19T03:39:19.911Z",
+  "total_cycles_completed": 10694,
+  "total_learnings_persisted": 10694,
+  "total_rules_promoted": 10095,
   "history": [
-    {
-      "timestamp": "2026-11-18T12:50:59.422Z",
-      "repository": "pubkey/rxdb",
-      "learningId": "learn-github-pubkey-rxdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T12:51:04.104Z",
-      "repository": "zama-ai/tfhe-rs",
-      "learningId": "learn-github-zama-ai-tfhe-rs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T12:51:06.597Z",
-      "repository": "alibaba/zvec",
-      "learningId": "learn-github-alibaba-zvec",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T12:58:20.281Z",
-      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T12:58:34.900Z",
       "repository": "langchain4j/langchain4j",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-19T03:27:23.286Z",
       "repository": "rook/rook",
       "learningId": "learn-github-rook-rook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T03:39:04.727Z",
+      "repository": "inworld/voice-isolator",
+      "learningId": "learn-huggingface-inworld-voice-isolator",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T03:39:07.233Z",
+      "repository": "google/gemma-4-31B-it",
+      "learningId": "learn-huggingface-google-gemma-4-31b-it",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T03:39:14.579Z",
+      "repository": "sqldelight/sqldelight",
+      "learningId": "learn-github-sqldelight-sqldelight",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T03:39:19.911Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-8Z6Z",
-    "timestamp": "2026-11-17T17:11:34.187Z",
-    "repository": "berty/berty",
-    "learningId": "learn-github-berty-berty",
-    "contentHash": "43db151d324bd5fcbf424519aff51b22bba9b2909bf988b7dd56fe08f9b1ea1b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-K2CX",
-    "timestamp": "2026-11-17T17:20:11.505Z",
-    "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
-    "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
-    "contentHash": "f1050e030f337b984a71f5d06f6b0be61a06534f75569719fb88e9514fa1dc2d",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-K4JL",
-    "timestamp": "2026-11-17T17:20:14.337Z",
-    "repository": "zvec-ai/zvec-grep",
-    "learningId": "learn-github-zvec-ai-zvec-grep",
-    "contentHash": "41f4f1538515e4df527482fe01324090b031410a52a3f9d6f97f1a01d9a45c69",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-K9O5",
-    "timestamp": "2026-11-17T17:20:20.981Z",
-    "repository": "keybase/client",
-    "learningId": "learn-github-keybase-client",
-    "contentHash": "3827cef6d5e3a8e77f6bb2fe65252b380c11665e44307a739a8fc232c18bbf12",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-KAW9",
     "timestamp": "2026-11-17T17:20:22.569Z",
     "repository": "nginx/kubernetes-ingress",
@@ -7490,6 +7430,66 @@
     "repository": "rook/rook",
     "learningId": "learn-github-rook-rook",
     "contentHash": "702d9dd878f4d39fd6724b69b53091496655e56b27952d15f017012cc75a5c81",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-3T71",
+    "timestamp": "2026-11-19T03:39:04.717Z",
+    "repository": "inworld/voice-isolator",
+    "learningId": "learn-huggingface-inworld-voice-isolator",
+    "contentHash": "63fe08c80341da6fbb710bc4a0076474e30b6d196109c228f9989ae89f2370ba",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-3V4O",
+    "timestamp": "2026-11-19T03:39:07.224Z",
+    "repository": "google/gemma-4-31B-it",
+    "learningId": "learn-huggingface-google-gemma-4-31b-it",
+    "contentHash": "e3ca4cf708b0c24a53b715014764d8353a87b2707ff5f38bb09aa62acb93d023",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-40SQ",
+    "timestamp": "2026-11-19T03:39:14.570Z",
+    "repository": "sqldelight/sqldelight",
+    "learningId": "learn-github-sqldelight-sqldelight",
+    "contentHash": "a51a42f9744370526533ce80abcddcbeba14d5c0c3b8d519a459a91741e1ef22",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-44WU",
+    "timestamp": "2026-11-19T03:39:19.902Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "23ab74fcce81b4bd8659f1576afaba50310ce5e2ef82a5704eadca50f05e849f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
