@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T22:36:23.516Z",
-  "total_records": 2038,
+  "last_updated": "2026-11-19T23:02:12.502Z",
+  "total_records": 2040,
   "domains": {
     "A": {
       "total": 17,
@@ -982,7 +982,7 @@
       ]
     },
     "G": {
-      "total": 354,
+      "total": 356,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1337,7 +1337,9 @@
         "domain_intelligence-architecture-intelligence-siteline-swiftui-introspect-core-invariants",
         "domain_intelligence-architecture-intelligence-siteline-swiftui-introspect-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-lioensky-vcptoolbox-core-invariants",
-        "domain_intelligence-architecture-intelligence-lioensky-vcptoolbox-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-lioensky-vcptoolbox-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-core-invariants",
+        "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-learnings-core-invariants"
       ]
     },
     "H": {
@@ -7781,8 +7783,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "f973bba15531e5c2d0ba072c9746dd8570ff9bc6ade946e6480fd18a23376ed6",
-      "created_at": "2026-11-19T15:58:58.636Z"
+      "content_hash": "899c7a44a7d14e55422c8bc73c654aabadc63d165b2dbb30da65a64b0bd798c8",
+      "created_at": "2026-11-19T23:02:06.995Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -7799,8 +7801,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "8807f366ad1075fbff4b2f896a953787a68cc2a8739dcdefe00aebbbe4743237",
-      "created_at": "2026-11-18T23:18:31.420Z"
+      "content_hash": "d07ce9c22e7f4c66dc398daa22ecf4aea7b4a053db62d41c8d84cb1af917d3ca",
+      "created_at": "2026-11-19T23:02:11.669Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -11429,8 +11431,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-permissions-learnings-technical-construction-intelligence-z.md",
       "repository": "zoontek-react-native-permissions-learnings",
-      "content_hash": "7935306565375d45da4646ca4b63bca31f89a6c5a3ffa737153ad2c1f837c131",
-      "created_at": "2026-11-19T22:07:51.539Z"
+      "content_hash": "a0d9444af8f0d7bd81a425f3f6c38e2d310c93b2330e775ba3c2d3761ff13bfd",
+      "created_at": "2026-11-19T23:02:12.502Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hexgrad-kokoro-82m-core-invariants",
@@ -34163,6 +34165,24 @@
       "repository": "sigstore-cosign-learnings",
       "content_hash": "5abb356b77f8ab08752c07c4c5f01982333bf3bbafeb64914791c336069d7d5c",
       "created_at": "2026-11-19T22:36:22.842Z"
+    },
+    "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: BurntSushi/ripgrep Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-burntsushi-ripgrep-architecture-intelligence-burntsushi-ripgrep-core-invariants.md",
+      "repository": "BurntSushi/ripgrep",
+      "content_hash": "e210bd20a24182f89dfc8f770f19b08af99cbef1d4da16fdd1fa19fb21cc9859",
+      "created_at": "2026-11-19T22:56:58.776Z"
+    },
+    "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: burntsushi-ripgrep-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-burntsushi-ripgrep-learnings-architecture-intelligence-burntsushi-ripgrep-learni.md",
+      "repository": "burntsushi-ripgrep-learnings",
+      "content_hash": "abb66cc2ca087b117e3153f4d9adc2dae5b952e44f2decf60c79057bc51f0d87",
+      "created_at": "2026-11-19T23:02:10.636Z"
     }
   }
 }

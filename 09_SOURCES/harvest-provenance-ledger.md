@@ -11432,3 +11432,5 @@ Every entry in this ledger must capture:
 | `learn-github-vanniktech-gradle-maven-publish-plugin` | `https://github.com/vanniktech/gradle-maven-publish-plugin` | `fc64b6e6` | Multi-dimensional audit evidence | 2026-11-19T22:36:09.010Z |
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `6e895879` | Multi-dimensional audit evidence | 2026-11-19T22:36:14.503Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `3cd5f717` | Multi-dimensional audit evidence | 2026-11-19T22:36:17.989Z |
+| `learn-github-burntsushi-ripgrep` | `https://github.com/BurntSushi/ripgrep` | `6670aede` | Multi-dimensional audit evidence | 2026-11-19T22:56:58.341Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `f752313f` | Multi-dimensional audit evidence | 2026-11-19T23:02:06.551Z |

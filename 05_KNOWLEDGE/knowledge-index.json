@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T22:36:23.690Z",
-  "total_verified_learnings": 9021,
+  "last_updated": "2026-11-19T23:02:12.688Z",
+  "total_verified_learnings": 9022,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22046,
+  "total_items": 22055,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111978,10 +111978,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "56ad7d6c",
-      "content_hash": "f973bba15531e5c2d0ba072c9746dd8570ff9bc6ade946e6480fd18a23376ed6",
+      "source_version": "f752313f",
+      "content_hash": "899c7a44a7d14e55422c8bc73c654aabadc63d165b2dbb30da65a64b0bd798c8",
       "domain_letter": "B",
-      "persisted_at": "2026-11-19T15:58:58.636Z"
+      "persisted_at": "2026-11-19T23:02:06.995Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -111990,10 +111990,10 @@
       "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
       "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
       "repository": "cilium/cilium",
-      "source_version": "56ad7d6c",
-      "content_hash": "647fe4ed51c952ed31b2e7a14dafdd90f61fcfe9d80b343b4d525a6274239c0c",
+      "source_version": "f752313f",
+      "content_hash": "a5bdc91a0efa2bb2004379bc3f785c7f9d197f682271d470295e6ff64eef2433",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T15:58:58.765Z"
+      "persisted_at": "2026-11-19T23:02:07.186Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -112015,9 +112015,9 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "8807f366ad1075fbff4b2f896a953787a68cc2a8739dcdefe00aebbbe4743237",
+      "content_hash": "d07ce9c22e7f4c66dc398daa22ecf4aea7b4a053db62d41c8d84cb1af917d3ca",
       "domain_letter": "B",
-      "persisted_at": "2026-11-18T23:18:31.420Z"
+      "persisted_at": "2026-11-19T23:02:11.669Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium-learnings",
@@ -112027,9 +112027,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cilium-cilium-learnings",
       "repository": "cilium-cilium-learnings",
       "source_version": "HEAD",
-      "content_hash": "d549b86e1e60cf9c05d5dd00b96b1dccbd3d5a525d28b94ded6835508aea6615",
+      "content_hash": "0e790f040d346648a52a805c7eb870fb7d9b92726a37fe266038756a1e3d7e1b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T23:18:31.565Z"
+      "persisted_at": "2026-11-19T23:02:11.853Z"
     },
     "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394": {
       "item_id": "candidate_directive-engine-restore-text-fallback-for-unknown-file-extensions-394",
@@ -214116,8 +214116,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "56ad7d6c",
-      "content_hash": "e01043928efedb765b787308f3448f2488c2513bae47685896030b91b9230cdc",
+      "source_version": "f752313f",
+      "content_hash": "015eb68ce81b83e375ddb9b0cc32b83545ee57743e93f3821db15ad53e87fbc8",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -214190,6 +214190,11 @@
           "number": 9400,
           "title": "Announce probing kernel support in debug log",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9465,
+          "title": "Update security policy to use GHSA form for vulnerability reporting",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214197,7 +214202,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T15:58:58.137Z",
+      "verified_at": "2026-11-19T23:02:06.318Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218594,13 +218599,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-PPG4-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-NLNA-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "d72c6e73e3c53e54e8eca597bb0c14a3a761e121fd947bef772a5cc2663e7368",
+      "content_hash": "badb2c572c39167e2b582935edd6297b982c0991202692c6b7eec6eb0718ed83",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T22:07:51.317Z"
+      "persisted_at": "2026-11-19T23:02:12.311Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218610,9 +218615,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "7935306565375d45da4646ca4b63bca31f89a6c5a3ffa737153ad2c1f837c131",
+      "content_hash": "a0d9444af8f0d7bd81a425f3f6c38e2d310c93b2330e775ba3c2d3761ff13bfd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T22:07:51.539Z"
+      "persisted_at": "2026-11-19T23:02:12.502Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218622,9 +218627,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "50b2932aafdf9062a8161101133451f817b1f927afec5f0a4c8d53455d3f6e47",
+      "content_hash": "e842c82659b6f593ff1569487855ce4966ba6f32995b909f5245f0c840619542",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T22:07:51.749Z"
+      "persisted_at": "2026-11-19T23:02:12.688Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -298283,6 +298288,139 @@
       "content_hash": "32593d8d75dc4c1e6927114d2d1a78966d8a1a31b05ce123a94c2310205a7df7",
       "domain_letter": "K",
       "persisted_at": "2026-11-19T22:36:23.362Z"
+    },
+    "learn-github-burntsushi-ripgrep": {
+      "learning_id": "learn-github-burntsushi-ripgrep",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "BurntSushi/ripgrep",
+      "repository": "BurntSushi/ripgrep",
+      "slug": "burntsushi-ripgrep",
+      "platform": "github",
+      "source_url": "https://github.com/BurntSushi/ripgrep",
+      "source_version": "6670aede",
+      "content_hash": "5c2a5c0bf38727478972298812fc346736dd1d4f75a49d1bc654927f2372ba32",
+      "dossier_path": "07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9464,
+          "title": "statically link binary on Windows ARM64/MSVC",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-19T22:56:58.108Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9464": {
+      "learning_id": "rule-9464",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9464,
+      "title": "statically link binary on Windows ARM64/MSVC",
+      "source_url": "https://github.com/BurntSushi/ripgrep",
+      "source_version": "6670aede",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T22:56:58.108Z"
+    },
+    "candidate_directive-statically-link-binary-on-windows-arm64-msvc": {
+      "item_id": "candidate_directive-statically-link-binary-on-windows-arm64-msvc",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NK7G-statically-link-binary-on-windows-arm64-msvc.md",
+      "title": "statically link binary on Windows ARM64/MSVC",
+      "repository": "burntsushi-ripgrep-learnings",
+      "source_version": "HEAD",
+      "content_hash": "62ff3a0be173853a74e8fbce95487ea013b845da10d5a696b1668505a02f07ed",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T23:02:10.446Z"
+    },
+    "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-burntsushi-ripgrep-architecture-intelligence-burntsushi-ripgrep-core-invariants.md",
+      "title": "Architecture Intelligence: BurntSushi/ripgrep Core Invariants",
+      "repository": "BurntSushi/ripgrep",
+      "source_version": "6670aede",
+      "content_hash": "e210bd20a24182f89dfc8f770f19b08af99cbef1d4da16fdd1fa19fb21cc9859",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T22:56:58.776Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-burntsushi-ripgrep": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-burntsushi-ripgrep",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/burntsushi-ripgrep-verification-protocol-empirical-defect-shield-for-burntsushi-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for BurntSushi/ripgrep",
+      "repository": "BurntSushi/ripgrep",
+      "source_version": "6670aede",
+      "content_hash": "2029ba94f5e12b8c5d8caf92ff430eb1e2e9696bfded30c0f09439aa8d7e3a0d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T22:56:58.961Z"
+    },
+    "rule-9465": {
+      "learning_id": "rule-9465",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9465,
+      "title": "Update security policy to use GHSA form for vulnerability reporting",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "f752313f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T23:02:06.318Z"
+    },
+    "candidate_directive-update-security-policy-to-use-ghsa-form-for-vulnerability-reporting": {
+      "item_id": "candidate_directive-update-security-policy-to-use-ghsa-form-for-vulnerability-reporting",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NL04-update-security-policy-to-use-ghsa-form-for-vulnerability-reporting.md",
+      "title": "Update security policy to use GHSA form for vulnerability reporting",
+      "repository": "cilium-cilium-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b8eec1c0a5b180329053af14f4f33faa514d70927bbaeab94f34d695cc7294b8",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-19T23:02:11.477Z"
+    },
+    "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-burntsushi-ripgrep-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-burntsushi-ripgrep-learnings-architecture-intelligence-burntsushi-ripgrep-learni.md",
+      "title": "Architecture Intelligence: burntsushi-ripgrep-learnings Core Invariants",
+      "repository": "burntsushi-ripgrep-learnings",
+      "source_version": "HEAD",
+      "content_hash": "abb66cc2ca087b117e3153f4d9adc2dae5b952e44f2decf60c79057bc51f0d87",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T23:02:10.636Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-burntsushi-ripgrep-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-burntsushi-ripgrep-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/burntsushi-ripgrep-learnings-verification-protocol-empirical-defect-shield-for-b.md",
+      "title": "Verification Protocol: Empirical Defect Shield for burntsushi-ripgrep-learnings",
+      "repository": "burntsushi-ripgrep-learnings",
+      "source_version": "HEAD",
+      "content_hash": "782d10bc15f31dfa1ef4727ec805f229bbde147f5c4b81468589f2992457bf82",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T23:02:10.842Z"
     }
   },
   "ai-builder-brain": {

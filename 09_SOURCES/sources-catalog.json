@@ -2463,10 +2463,10 @@
     "repository": "BurntSushi/ripgrep",
     "platform": "github",
     "sourceUrl": "https://github.com/BurntSushi/ripgrep",
-    "sourceVersion": "178cc027",
+    "sourceVersion": "6670aede",
     "license": "Unlicense",
-    "contentHash": "c2941fb97d55f727f365befd454cb970f6ee03d494f2acb3573260003df2e6c2",
-    "lastHarvestedAt": "2026-11-11T14:09:40.564Z",
+    "contentHash": "5c2a5c0bf38727478972298812fc346736dd1d4f75a49d1bc654927f2372ba32",
+    "lastHarvestedAt": "2026-11-19T22:56:58.341Z",
     "learningId": "learn-github-burntsushi-ripgrep"
   },
   "cosscom-coss": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "56ad7d6c",
+    "sourceVersion": "f752313f",
     "license": "Apache-2.0",
-    "contentHash": "e01043928efedb765b787308f3448f2488c2513bae47685896030b91b9230cdc",
-    "lastHarvestedAt": "2026-11-19T15:58:58.311Z",
+    "contentHash": "015eb68ce81b83e375ddb9b0cc32b83545ee57743e93f3821db15ad53e87fbc8",
+    "lastHarvestedAt": "2026-11-19T23:02:06.551Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {

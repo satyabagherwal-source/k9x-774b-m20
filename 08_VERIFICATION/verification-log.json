@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-UZST",
-    "timestamp": "2026-11-18T06:32:30.653Z",
-    "repository": "ratatui/ratatui",
-    "learningId": "learn-github-ratatui-ratatui",
-    "contentHash": "a573b9326afc57b84dfb0b82f23b93e7b56ad8efbc7186418812c9d9f804250b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261118-V4SK",
-    "timestamp": "2026-11-18T06:32:37.124Z",
-    "repository": "Tencent-TDS/KuiklyUI",
-    "learningId": "learn-github-tencent-tds-kuiklyui",
-    "contentHash": "2541646c38047d421af0e11ca652d5f8430867af18c4ca17c75210c7b29d6057",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-V5Z3",
     "timestamp": "2026-11-18T06:32:38.655Z",
     "repository": "hashicorp/terraform",
@@ -7490,6 +7460,36 @@
     "repository": "matrixorigin/matrixone",
     "learningId": "learn-github-matrixorigin-matrixone",
     "contentHash": "f0a0f1975c65ab6cb4d8779a21d0fd8df6801b869515010ab4dacdcc65b18d3b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-GVDS",
+    "timestamp": "2026-11-19T22:56:58.336Z",
+    "repository": "BurntSushi/ripgrep",
+    "learningId": "learn-github-burntsushi-ripgrep",
+    "contentHash": "5c2a5c0bf38727478972298812fc346736dd1d4f75a49d1bc654927f2372ba32",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-NH77",
+    "timestamp": "2026-11-19T23:02:06.547Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "015eb68ce81b83e375ddb9b0cc32b83545ee57743e93f3821db15ad53e87fbc8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

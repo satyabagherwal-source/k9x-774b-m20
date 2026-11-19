@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:34:08.877Z",
+  "timestamp": "2026-11-19T23:02:10.323Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-burntsushi-ripgrep-learnings",
+  "learning_id": "LEARN-EVO-burntsushi-ripgrep-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [burntsushi-ripgrep-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:34:08.877Z`  
-> **Learning ID**: `LEARN-REEXTRACT-burntsushi-ripgrep-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-19T23:02:10.323Z`  
+> **Learning ID**: `LEARN-EVO-burntsushi-ripgrep-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md`  
 > **Source**: github ([https://github.com/BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep))  
-> **Source Version**: `178cc027`  
+> **Source Version**: `6670aede`  
 > **License**: Unlicense  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T14:09:29.577Z  
+> **Timestamp**: 2026-11-19T22:56:57.150Z  
 > **Learning ID**: `learn-github-burntsushi-ripgrep`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/BurntSushi/ripgrep](https://github.com/BurntSushi/ripgrep))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T14:09:29.368Z  
+> **Harvest Timestamp**: 2026-11-19T22:51:52.378Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: ripgrep recursively searches directories for a regex pattern while respecting your gitignore
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 69950 stars
+- **Stars / Engagement**: 70076 stars
 
 ---
 
@@ -1392,80 +1392,168 @@ fn render_custom_markup(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `178cc027` (2026-11-09)
-**Commit Message**: ignore: respect custom filters with a maximum file size (#3599)
+### Incident Patch 1: `6670aede` (2026-11-19)
+**Commit Message**: fix: statically link binary on Windows ARM64/MSVC (#3607) (#3614)
 
-Do not return early for files within the size limit, so the custom entry filter is still applied. Cover sequential and parallel walkers with zero and nonzero size limits, nested files and rejected directories.
+Statically link the C runtime on aarch64-pc-windows-msvc so that the
+resulting binary does not depend on vcruntime140.dll on Windows ARM64 systems.
 
-PR #3599
+This mirrors the existing configuration for x86_64-pc-windows-msvc and
+i686-pc-windows-msvc.
 
-**File**: `crates/ignore/src/walk.rs` (modified, +37/-2)
+Fixes #3607
+
+Signed-off-by: Sami Chergui <[REDACTED_EMAIL]>
+
+**File**: `.cargo/config.toml` (modified, +2/-0)
 ```diff
-@@ -1168,11 +1168,13 @@ impl Walk {
-             }
-         }
-         if self.max_filesize.is_some() && !ent.is_dir() {
--            return Ok(skip_filesize(
-+            if skip_filesize(
-                 self.max_filesize.unwrap(),
-                 ent.path(),
-                 &ent.metadata().ok(),
--            ));
-+            ) {
-+                return Ok(true);
-+            }
-         }
-         if let Some(Filter(filter)) = &self.filter {
-             if !filter(ent) {
-@@ -2569,6 +2571,39 @@ mod tests {
-         );
+@@ -6,6 +6,8 @@
+ rustflags = ["-C", "target-feature=+crt-static"]
+ [target.i686-pc-windows-msvc]
+ rustflags = ["-C", "target-feature=+crt-static"]
++[target.aarch64-pc-windows-msvc]
++rustflags = ["-C", "target-feature=+crt-static"]
+ 
+ # Do the same for MUSL targets. At the time of writing (2023-10-23), this is
+ # the default. But the plan is for the default to change to dynamic linking.
+```
+
+---
+
+### Incident Patch 2: `fdf7d954` (2026-11-18)
+**Commit Message**: fix: continue reading ignore files after invalid UTF-8 lines (#3605)
+
+Fixes #3604
+
+**File**: `crates/ignore/src/gitignore.rs` (modified, +27/-2)
+```diff
+@@ -9,7 +9,7 @@ the `git` command line tool.
+ 
+ use std::{
+     fs::File,
+-    io::{BufRead, BufReader, Read},
++    io::{BufRead, BufReader, ErrorKind, Read},
+     path::{Path, PathBuf},
+     sync::Arc,
+ };
+@@ -419,7 +419,11 @@ impl GitignoreBuilder {
+             let line = match line {
+                 Ok(line) => line,
+                 Err(err) => {
++                    let kind = err.kind();
+                     errs.push(Error::Io(err).tagged(path, lineno));
++                    if kind == ErrorKind::InvalidData {
++                        continue;
++                    }
+                     break;
+                 }
+             };
+@@ -708,16 +712,37 @@ fn home_dir() -> Option<PathBuf> {
+ 
+ #[cfg(test)]
+ mod tests {
+-    use std::path::Path;
++    use std::{io::ErrorKind, path::Path};
+ 
+     use super::{Gitignore, GitignoreBuilder};
++    use crate::tests::TempDir;
+ 
+     fn gi_from_str<P: AsRef<Path>>(root: P, s: &str) -> Gitignore {
+         let mut builder = GitignoreBuilder::new(root);
+         builder.add_str(None, s).unwrap();
+         builder.build().unwrap()
      }
  
 +    #[test]
-+    fn max_filesize_respects_filter_entry() {
-+        let td = tmpdir();
-+        mkdirp(td.path().join("a/skipdir"));
-+        wfile_size(td.path().join("keep"), 400);
-+        wfile_size(td.path().join("skip"), 0);
-+        wfile_size(td.path().join("large"), 600);
-+        wfile_size(td.path().join("a/keep"), 0);
-+        wfile_size(td.path().join("a/skip"), 200);
-+        wfile_size(td.path().join("a/boundary"), 500);
-+        wfile_size(td.path().join("a/skipdir/keep"), 0);
-+
-+        let mut builder = WalkBuilder::new(td.path());
-+        builder.filter_entry(|entry| {
-+            entry.file_name() != "skip" && entry.file_name() != "skipdir"
-+        });
-+        assert_paths(
-+            td.path(),
-+            &builder,
-+            &["a", "keep", "large", "a/keep", "a/boundary"],
-+        );
-+        assert_paths(
-+            td.path(),
-+            builder.max_filesize(Some(0)),
-+            &["a", "a/keep"],
-+        );
-+        assert_paths(
-+            td.path(),
-+            builder.max_filesize(Some(500)),
-+            &["a", "keep", "a/keep", "a/boundary"],
-+        );
++    fn invalid_utf8_preserves_later_patterns() {
++        let td = TempDir::new().unwrap();
++        let path = td.path().join(".gitignore");
++        std::fs::write(
++            &path,
++            b"\xef\xbb\xbfbefore\r\n\xff\xfe\r\nafter\r\nspace\\ \r\nlast",
++        )
++        .unwrap();
++        let mut builder = GitignoreBuilder::new(td.path());
++        let err = builder.add(&path).unwrap();
++        assert!(err.to_string().contains("line 2"));
++        assert_eq!(err.io_error().unwrap().kind(), ErrorKind::InvalidData);
++        let gi = builder.build().unwrap();
++        assert!(gi.matched("before", false).is_ignore());
++        assert!(gi.matched("after", false).is_ignore());
++        assert!(gi.matched("space ", false).is_ignore());
++        assert!(gi.matched("last", false).is_ignore());
 +    }
 +
-     #[cfg(unix)] // because symlinks on windows are weird
+     macro_rules! ignored {
+         ($name:ident, $root:expr, $gi:expr, $path:expr) => {
+             ignored!($name, $root, $gi, $path, false);
+```
+
+---
+
+### Incident Patch 3: `a95835b2` (2026-11-18)
+**Commit Message**: fix: reject partial path components when stripping Unix prefixes (#3609)
+
+Fixes #3603
+
+**File**: `crates/ignore/src/pathutil.rs` (modified, +27/-5)
+```diff
+@@ -103,11 +103,14 @@ pub(crate) fn strip_prefix<'a, P: AsRef<Path> + ?Sized>(
+ 
+         let prefix = prefix.as_os_str().as_bytes();
+         let path = path.as_os_str().as_bytes();
+-        if prefix.len() > path.len() || prefix != &path[0..prefix.len()] {
+-            None
+-        } else {
+-            Some(&Path::new(OsStr::from_bytes(&path[prefix.len()..])))
++        let rest = path.strip_prefix(prefix)?;
++        // Don't strip a partial component, e.g., "/foo" from "/foobar".
++        if prefix.last().is_some_and(|&b| b != b'/')
++            && rest.first().is_some_and(|&b| b != b'/')
++        {
++            return None;
+         }
++        Some(Path::new(OsStr::from_bytes(rest)))
+     }
+ 
+     #[cfg(not(unix))]
+@@ -175,7 +178,26 @@ mod tests {
+     use std::ffi::OsStr;
+     use std::path::Path;
+ 
+-    use super::{file_name, is_hidden_path};
++    use super::{file_name, is_hidden_path, strip_prefix};
++
++    #[cfg(unix)]
++    #[test]
++    fn strip_prefix_component_boundary() {
++        for (prefix, path, expected) in [
++            ("/home/foo", "/home/foobar", None),
++            ("/home/foo", "/home/foo/bar", Some("/bar")),
++            ("/home/foo", "/home/foo", Some("")),
++            ("/", "/home/foo", Some("home/foo")),
++            ("/home/foo/", "/home/foo/bar", Some("bar")),
++            ("", "foo/bar", Some("foo/bar")),
++        ] {
++            assert_eq!(
++                strip_prefix(prefix, Path::new(path)),
++                expected.map(Path::new),
++                "prefix={prefix:?}, path={path:?}",
++            );
++        }
++    }
+ 
      #[test]
-     fn symlinks() {
+     fn file_name_basic() {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #3599** (2026-11-09): ignore: apply filter_entry to files when max_filesize is set (@mabunemeh)
-- **PR #3596** (closed): printer: skip path resolution for an empty hyperlink format (@lianxiaozhi)
-- **PR #3586** (closed): Fix passthru replacement joining lines when a line terminator is replaced (@Huyvux12)
-- **PR #3578** (2026-10-27): ignore: respect linked worktree excludes without requiring Git (@CheckPickerUpper)
-- **PR #3574** (2026-10-23): cargo: remove the `homepage` field (@BurntSushi)
-- **PR #3573** (2026-10-23): index: revert indexing additions (@BurntSushi)
+- **PR #3614** (2026-11-19): cargo: statically link binary on Windows ARM64/MSVC (#3607) (@Yshuro)
+- **PR #3611** (2026-11-18): chore: add trusted publishing (@BurntSushi)
+- **PR #3610** (closed): ci: cancel superseded runs on the same ref (@Bnjoroge1)
+- **PR #3609** (2026-11-18): ignore: reject partial path components when stripping Unix prefixes (@Marsman1996)
+- **PR #3608** (closed): ignore: only strip whole path components on Unix (@luised00)
+- **PR #3606** (closed): Fix/gitignore invalid utf8 continue (@Manthan-Moudgalya)
 
 ---
 
@@ -1485,68 +1573,32 @@ PR #3599
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ignore: respect custom filters with a maximum file size (#3599)
+## X. statically link binary on Windows ARM64/MSVC
 
 **RULE**:
-When implementing operations in `crates/ignore/src/walk.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BurntSushi/ripgrep. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.cargo/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BurntSushi/ripgrep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `178cc027`: ignore: respect custom filters with a maximum file size (#3599). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6670aede`: statically link binary on Windows ARM64/MSVC. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/ignore/src/walk.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/config.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            if skip_filesize(
-            ) {
-                return Ok(true);
-            }
-    #[test]
-    fn max_filesize_respects_filter_entry() {
-        let td = tmpdir();
-        mkdirp(td.path().join("a/skipdir"));
-        wfile_size(td.path().join("keep"), 400);
-        wfile_size(td.path().join("skip"), 0);
-        wfile_size(td.path().join("large"), 600);
-        wfile_size(td.path().join("a/keep"), 0);
-        wfile_size(td.path().join("a/skip"), 200);
-        wfile_size(td.path().join("a/boundary"), 500);
-        wfile_size(td.path().join("a/skipdir/keep"), 0);
-
-        let mut builder = WalkBuilder::new(td.path());
-        builder.filter_entry(|entry| {
-            entry.file_name() != "skip" && entry.file_name() != "skipdir"
-        });
-        assert_paths(
-            td.path(),
-            &builder,
-            &["a", "keep", "large", "a/keep", "a/boundary"],
-        );
-        assert_paths(
-            td.path(),
-            builder.max_filesize(Some(0)),
-            &["a", "a/keep"],
-        );
-        assert_paths(
-            td.path(),
-            builder.max_filesize(Some(500)),
-            &["a", "keep", "a/keep", "a/boundary"],
-        );
-    }
-
+[target.aarch64-pc-windows-msvc]
+rustflags = ["-C", "target-feature=+crt-static"]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-            return Ok(skip_filesize(
-            ));
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `178cc027` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6670aede` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

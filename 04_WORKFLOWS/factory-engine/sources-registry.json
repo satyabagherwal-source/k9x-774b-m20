@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-19T22:05:11.571Z",
-    "lastVerified": "2026-11-19T22:05:11.571Z",
+    "lastChecked": "2026-11-19T22:52:04.020Z",
+    "lastVerified": "2026-11-19T22:52:04.020Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T22:36:21.157Z",
-    "lastVerified": "2026-11-19T22:36:21.157Z",
+    "lastChecked": "2026-11-19T23:02:09.903Z",
+    "lastVerified": "2026-11-19T23:02:09.903Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1019,11 +1019,21 @@
     "lastVerified": "2026-11-19T14:20:26.247Z"
   },
   "burntsushi-ripgrep": {
-    "name": "ripgrep",
+    "name": "BurntSushi/ripgrep",
     "officialUrl": "https://github.com/BurntSushi/ripgrep",
-    "lastChecked": "2026-11-18T11:44:56.847Z",
-    "revisionIdentifier": "178cc027",
-    "lastVerified": "2026-11-18T11:44:56.847Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-19T22:51:52.378Z",
+    "lastVerified": "2026-11-19T22:51:52.378Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-burntsushi-ripgrep",
+    "contentHash": "5c2a5c0bf38727478972298812fc346736dd1d4f75a49d1bc654927f2372ba32",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-meta-llama-llama-3.1-8b-instruct": {
     "name": "meta-llama/Llama-3.1-8B-Instruct",
@@ -1792,14 +1802,14 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T15:58:57.393Z",
-    "lastVerified": "2026-11-19T15:58:57.393Z",
+    "lastChecked": "2026-11-19T22:52:03.841Z",
+    "lastVerified": "2026-11-19T22:52:03.841Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "e01043928efedb765b787308f3448f2488c2513bae47685896030b91b9230cdc",
+    "contentHash": "015eb68ce81b83e375ddb9b0cc32b83545ee57743e93f3821db15ad53e87fbc8",
     "promotedRulesCount": 1,
-    "recentFixesCount": 2,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3335,9 +3345,9 @@
   "featureform-featureform": {
     "name": "featureform",
     "officialUrl": "https://github.com/featureform/featureform",
-    "lastChecked": "2026-11-18T16:49:37.442Z",
+    "lastChecked": "2026-11-19T22:52:01.533Z",
     "revisionIdentifier": "dc8b9fca",
-    "lastVerified": "2026-11-18T16:49:37.442Z"
+    "lastVerified": "2026-11-19T22:52:01.533Z"
   },
   "ekzhang-bore": {
     "name": "bore",
@@ -3658,9 +3668,9 @@
   "liftbridge-io-liftbridge": {
     "name": "liftbridge",
     "officialUrl": "https://github.com/liftbridge-io/liftbridge",
-    "lastChecked": "2026-11-18T17:51:10.202Z",
+    "lastChecked": "2026-11-19T22:51:56.526Z",
     "revisionIdentifier": "af2a6626",
-    "lastVerified": "2026-11-18T17:51:10.202Z"
+    "lastVerified": "2026-11-19T22:51:56.526Z"
   },
   "dingodb-dingo": {
     "name": "dingo",
@@ -8666,5 +8676,19 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "jeffli1993-seo-audit-skill": {
+    "name": "seo-audit-skill",
+    "officialUrl": "https://github.com/JeffLi1993/seo-audit-skill",
+    "lastChecked": "2026-11-19T22:51:51.524Z",
+    "revisionIdentifier": "523bdfb2",
+    "lastVerified": "2026-11-19T22:51:51.524Z"
+  },
+  "gitliveapp-firebase-kotlin-sdk": {
+    "name": "firebase-kotlin-sdk",
+    "officialUrl": "https://github.com/GitLiveApp/firebase-kotlin-sdk",
+    "lastChecked": "2026-11-19T22:51:54.045Z",
+    "revisionIdentifier": "888384d7",
+    "lastVerified": "2026-11-19T22:51:54.045Z"
   }
 }

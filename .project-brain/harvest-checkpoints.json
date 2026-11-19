@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T22:36:17.998Z",
+  "last_updated": "2026-11-19T23:02:06.562Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3831,14 +3831,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-burntsushi-ripgrep",
-      "content_hash": "c2941fb97d55f727f365befd454cb970f6ee03d494f2acb3573260003df2e6c2",
-      "verified_at": "2026-11-11T14:09:40.573Z",
+      "content_hash": "5c2a5c0bf38727478972298812fc346736dd1d4f75a49d1bc654927f2372ba32",
+      "verified_at": "2026-11-19T22:56:58.351Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T14:09:40.573Z"
+      "last_updated": "2026-11-19T22:56:58.351Z"
     },
     "cosscom/coss": {
       "repository": "cosscom/coss",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "e01043928efedb765b787308f3448f2488c2513bae47685896030b91b9230cdc",
-      "verified_at": "2026-11-19T15:58:58.319Z",
+      "content_hash": "015eb68ce81b83e375ddb9b0cc32b83545ee57743e93f3821db15ad53e87fbc8",
+      "verified_at": "2026-11-19T23:02:06.561Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T15:58:58.319Z"
+      "last_updated": "2026-11-19T23:02:06.561Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",

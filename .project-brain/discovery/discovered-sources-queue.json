@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T22:36:22.472Z",
+  "updated_at": "2026-11-19T23:02:11.232Z",
   "stats": {
-    "total_discovered": 6049,
-    "approved_pending_harvest": 5717,
+    "total_discovered": 6055,
+    "approved_pending_harvest": 5723,
     "harvested_count": 0,
     "rejected_count": 332,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5699,
+      "COMMUNITY_AND_EXPERT": 5705,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 113,
       "ENGINEERING_BLOGS": 4,
@@ -130776,6 +130776,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/sigstore-cosign-learnings.md",
         "fileName": "sigstore-cosign-learnings.md"
+      }
+    },
+    "SRC-CBBBC0EE0E72": {
+      "id": "SRC-CBBBC0EE0E72",
+      "url": "https://github.com/BurntSushi/ripgrep",
+      "title": "https://github.com/BurntSushi/ripgrep",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T23:02:10.115Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-1BF46E6F46A7": {
+      "id": "SRC-1BF46E6F46A7",
+      "url": "https://fishshell.com/docs/current/completions.html",
+      "title": "https://fishshell.com/docs/current/completions.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T23:02:10.173Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/burntsushi-ripgrep-learnings.md",
+        "fileName": "burntsushi-ripgrep-learnings.md"
+      }
+    },
+    "SRC-9E42C6B6F1FC": {
+      "id": "SRC-9E42C6B6F1FC",
+      "url": "https://github.com/cilium/cilium/pull/49996",
+      "title": "https://github.com/cilium/cilium/pull/49996",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T23:02:11.078Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-B776C2D6E386": {
+      "id": "SRC-B776C2D6E386",
+      "url": "https://github.com/cilium/cilium/pull/47588",
+      "title": "https://github.com/cilium/cilium/pull/47588",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T23:02:11.132Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-393EEBF10489": {
+      "id": "SRC-393EEBF10489",
+      "url": "https://github.com/cilium/cilium/security/advisories/new",
+      "title": "https://github.com/cilium/cilium/security/advisories/new",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T23:02:11.182Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-122C4A255A3F": {
+      "id": "SRC-122C4A255A3F",
+      "url": "https://github.com/cilium/community/blob/main/roles/Security-Team.md",
+      "title": "https://github.com/cilium/community/blob/main/roles/Security-Team.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T23:02:11.232Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
       }
     }
   }

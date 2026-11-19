@@ -11399,3 +11399,5 @@
 | `CYCLE-20261119-Q3E5` | `2026-11-19T22:36:09.005Z` | `vanniktech/gradle-maven-publish-plugin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9461` | Yes (`2e3bd503...`) |
 | `CYCLE-20261119-Q7MQ` | `2026-11-19T22:36:14.498Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9462` | Yes (`359c49b7...`) |
 | `CYCLE-20261119-QABL` | `2026-11-19T22:36:17.985Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9463` | Yes (`f0a0f197...`) |
+| `CYCLE-20261119-GVDS` | `2026-11-19T22:56:58.336Z` | `BurntSushi/ripgrep` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9464` | Yes (`5c2a5c0b...`) |
+| `CYCLE-20261119-NH77` | `2026-11-19T23:02:06.547Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9465` | Yes (`015eb68c...`) |
