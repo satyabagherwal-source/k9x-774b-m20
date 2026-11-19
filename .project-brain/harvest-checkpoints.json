@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T15:21:28.411Z",
+  "last_updated": "2026-11-19T15:42:39.247Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3306,14 +3306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-moby-buildkit",
-      "content_hash": "03ffaaa4d2803d18df5f7b497f690e0a730ce605f48f2d808387b16ee01c27c0",
-      "verified_at": "2026-11-18T13:17:27.915Z",
+      "content_hash": "2af2b9aebc60f1a4449e04d3d665a63d13c160a51efaeaaf6c65a60f1912a692",
+      "verified_at": "2026-11-19T15:42:33.008Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T13:17:27.915Z"
+      "last_updated": "2026-11-19T15:42:33.008Z"
     },
     "microsoft/agent-governance-toolkit": {
       "repository": "microsoft/agent-governance-toolkit",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "4403bc7e30db6fbb6d34199f4dbeeaba83b2bebcca1a88b08e1c432f0ed65679",
-      "verified_at": "2026-11-19T14:28:37.665Z",
+      "content_hash": "dade5f3be01e570c5df0444750bb9a78a19a57956ff2757b0f91dc385b637cc1",
+      "verified_at": "2026-11-19T15:42:39.246Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T14:28:37.665Z"
+      "last_updated": "2026-11-19T15:42:39.246Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "a8f016f40877b6558d68e7c64d0e47e5e4118d961cc751ed9a8297364c032ac0",
-      "verified_at": "2026-11-18T12:23:54.202Z",
+      "content_hash": "9e58a3e45cddc2c8c8902d0d1f2b482f3e7960f1586a24d36aa235bf06684215",
+      "verified_at": "2026-11-19T15:42:25.333Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T12:23:54.202Z"
+      "last_updated": "2026-11-19T15:42:25.333Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "7f4067d99a9e8519dbc7aa5360388f34638de25be84a3c7beffb7dab993ae0e5",
-      "verified_at": "2026-11-18T22:57:59.263Z",
+      "content_hash": "5cb08fe69155aba9daff4604809fab8b59024091b8b57f909a5b66fe2f0cfd6f",
+      "verified_at": "2026-11-19T15:42:35.323Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T22:57:59.263Z"
+      "last_updated": "2026-11-19T15:42:35.323Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -11706,14 +11706,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-simonschubert-linuxcommandlibrary",
-      "content_hash": "34e584f07e24e7dbb0bf127ae7a9333f0861e79c7291af03fea2760146a65996",
-      "verified_at": "2026-11-15T08:09:26.285Z",
+      "content_hash": "cd1069458d85c8a2a5a557245e9ea631dc1edfa488c62ddb2e91a4a829941350",
+      "verified_at": "2026-11-19T15:42:33.024Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T08:09:26.285Z"
+      "last_updated": "2026-11-19T15:42:33.024Z"
     },
     "zed-industries/zed": {
       "repository": "zed-industries/zed",
@@ -18996,14 +18996,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-jev-35b-nvfp4",
-      "content_hash": "c390b87d0dd7669dd9dd56c1504dec0a5f8f6da94f30cb31cbbf2ec45ed31859",
-      "verified_at": "2026-11-15T01:03:20.414Z",
+      "content_hash": "546faaffafd8d8e6537b97b503114926d47ec7912728250ced241f8308a2da7e",
+      "verified_at": "2026-11-19T15:42:31.441Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T01:03:20.414Z"
+      "last_updated": "2026-11-19T15:42:31.441Z"
     },
     "Abiray/MiniMax-H3-Image-GGUF": {
       "repository": "Abiray/MiniMax-H3-Image-GGUF",

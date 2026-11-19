@@ -11295,3 +11295,9 @@
 | `CYCLE-20261119-0W46` | `2026-11-19T15:16:38.934Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9391` | Yes (`daddcc3e...`) |
 | `CYCLE-20261119-0ZVT` | `2026-11-19T15:16:43.817Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9392` | Yes (`9611920f...`) |
 | `CYCLE-20261119-73GU` | `2026-11-19T15:21:28.398Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md` | Yes (`55b542c5...`) |
+| `CYCLE-20261119-Y1BA` | `2026-11-19T15:42:25.318Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9393` | Yes (`9e58a3e4...`) |
+| `CYCLE-20261119-Y60U` | `2026-11-19T15:42:31.422Z` | `autotrust/AutoTrust-Decider-Pro-35B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md` | Yes (`546faaff...`) |
+| `CYCLE-20261119-Y78H` | `2026-11-19T15:42:32.993Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9394` | Yes (`2af2b9ae...`) |
+| `CYCLE-20261119-Y78X` | `2026-11-19T15:42:33.009Z` | `SimonSchubert/LinuxCommandLibrary` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9394` | Yes (`cd106945...`) |
+| `CYCLE-20261119-Y90T` | `2026-11-19T15:42:35.309Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9395` | Yes (`5cb08fe6...`) |
+| `CYCLE-20261119-YC1S` | `2026-11-19T15:42:39.232Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9396` | Yes (`dade5f3b...`) |

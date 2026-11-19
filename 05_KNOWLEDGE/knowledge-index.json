@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T15:21:33.368Z",
+  "last_updated": "2026-11-19T15:42:46.187Z",
   "total_verified_learnings": 9018,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21816,
+  "total_items": 21828,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -213381,8 +213381,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "fbc8b20d",
-      "content_hash": "7f4067d99a9e8519dbc7aa5360388f34638de25be84a3c7beffb7dab993ae0e5",
+      "source_version": "cd105ed8",
+      "content_hash": "5cb08fe69155aba9daff4604809fab8b59024091b8b57f909a5b66fe2f0cfd6f",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -213420,6 +213420,11 @@
           "number": 9293,
           "title": "python tooling is subpar, call the right pre-installed python",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9395,
+          "title": "use merge commit parent as backward compat base",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213427,7 +213432,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T22:57:59.111Z",
+      "verified_at": "2026-11-19T15:42:35.064Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213469,10 +213474,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "fbc8b20d",
-      "content_hash": "9741b6c0ed25d7796cbef11b2b1c5e329fa5ba771e79328d4da088354b18d5ac",
+      "source_version": "cd105ed8",
+      "content_hash": "31a783aa0f45186c7103b7ec097bf02eafef6968bb2489ed44c8f4dfca1b8ef7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T22:57:59.570Z"
+      "persisted_at": "2026-11-19T15:42:35.757Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs",
@@ -213481,10 +213486,10 @@
       "relative_path": "08_VERIFICATION/zama-ai-tfhe-rs-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-r.md",
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai/tfhe-rs",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "fbc8b20d",
-      "content_hash": "59b4f20743c07a2d9ff66683a80c5b212369c266fb98906f5250f7ae6535da5c",
+      "source_version": "cd105ed8",
+      "content_hash": "b0f83e367c68ed00908af0be1eef1aa0b02b473041f7cd13d71b70b64c2476df",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T22:57:59.715Z"
+      "persisted_at": "2026-11-19T15:42:35.950Z"
     },
     "learn-github-tursodatabase-turso": {
       "learning_id": "learn-github-tursodatabase-turso",
@@ -228751,8 +228756,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "3aa2775c",
-      "content_hash": "4403bc7e30db6fbb6d34199f4dbeeaba83b2bebcca1a88b08e1c432f0ed65679",
+      "source_version": "a4304377",
+      "content_hash": "dade5f3be01e570c5df0444750bb9a78a19a57956ff2757b0f91dc385b637cc1",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -228885,6 +228890,11 @@
           "number": 9387,
           "title": "Draft NUC 124 List and Population Quantiles",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9396,
+          "title": "Enable grammar for implementation generation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228892,7 +228902,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-19T14:28:37.460Z",
+      "verified_at": "2026-11-19T15:42:38.988Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228934,10 +228944,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "3aa2775c",
-      "content_hash": "6f62bd3d9749daa6aa03cd9572e9aef2890405d4edafb7ce91456d1719eeefa0",
+      "source_version": "a4304377",
+      "content_hash": "6f56fcc3862c1d50f62183d09d5735df37baedb0f24a3aae0c1ba7815c2b84a6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T14:28:38.027Z"
+      "persisted_at": "2026-11-19T15:42:39.685Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -228946,10 +228956,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "3aa2775c",
-      "content_hash": "275976ff43859bc6d50327449f32d3b952fd44f9a2d96f2fc917311b1cbacda2",
+      "source_version": "a4304377",
+      "content_hash": "04df80515e4348649941090740cb6c3cc0a75139925f7f6916ce724df061e2ed",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T14:28:38.188Z"
+      "persisted_at": "2026-11-19T15:42:39.874Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -230558,13 +230568,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "hmbown-codewhale",
+      "slug": "codewhale-hq-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/Hmbown/Codewhale",
-      "source_version": "1ad8da62",
-      "content_hash": "a8f016f40877b6558d68e7c64d0e47e5e4118d961cc751ed9a8297364c032ac0",
-      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "b274f161",
+      "content_hash": "9e58a3e45cddc2c8c8902d0d1f2b482f3e7960f1586a24d36aa235bf06684215",
+      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 8492,
@@ -230605,6 +230615,11 @@
           "number": 9216,
           "title": "resolve correctness review findings B1, B2 and non-blocking 1-5",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9393,
+          "title": "0.10.3 lane 8: execpolicy launcher panic and payload-hiding fixes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230612,7 +230627,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T12:23:54.011Z",
+      "verified_at": "2026-11-19T15:42:25.073Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230651,37 +230666,37 @@
       "item_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "af6fc33a",
-      "content_hash": "627bb814a1600982f113c030a8ed95c96930602913ec406d8d00060a4651593e",
+      "source_version": "b274f161",
+      "content_hash": "e1c58aa167419d1aa233fcc92ddd7485366318996000fa93a47e4eaae357b365",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T03:39:24.885Z"
+      "persisted_at": "2026-11-19T15:42:25.787Z"
     },
     "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/hmbown-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-specialist-per.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/codewhale-hq-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-speciali.md",
       "title": "Agent Contract: codewhale-hq/Codewhale Autonomous Specialist Persona",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "1ad8da62",
-      "content_hash": "dcd0d701a2a8ced9ecf05fe10ab5a11ff0b0b7c3b1d30f8a4669d9bfa3d40d50",
-      "domain_letter": "I",
-      "persisted_at": "2026-11-18T12:23:54.668Z"
+      "source_version": "b274f161",
+      "content_hash": "758d56212dbaac3da4b9e423fbad13dca780343adfc64cd903e539dd7e6f5291",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T15:42:25.978Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/hmbown-codewhale-verification-protocol-empirical-defect-shield-for-codewhale-hq-.md",
+      "relative_path": "08_VERIFICATION/codewhale-hq-codewhale-verification-protocol-empirical-defect-shield-for-codewha.md",
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "1ad8da62",
-      "content_hash": "6c474686e7eed98752d1fea77f41a563e4357f1c1be83f9b0fbe58f68af12885",
+      "source_version": "b274f161",
+      "content_hash": "caea82cd7b62cd5893ec695b722ac49d9b1dc8312ad41708b46192880c52ddbe",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T12:23:54.787Z"
+      "persisted_at": "2026-11-19T15:42:26.149Z"
     },
     "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model": {
       "item_id": "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model",
@@ -230703,9 +230718,9 @@
       "title": "Architecture Intelligence: codewhale-hq-codewhale-learnings Core Invariants",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "e77794285e524c0a3ce0272c7087adfe3c5e24c9e311c56c34959b0c27c0e898",
+      "content_hash": "03aa891b3148940878a8a91d990f3447c7e78cc7b0963680c8134ee0a66e572f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T07:19:58.764Z"
+      "persisted_at": "2026-11-19T15:42:43.784Z"
     },
     "agent_contract-agent-contract-codewhale-hq-codewhale-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-codewhale-hq-codewhale-learnings-autonomous-specialist-persona",
@@ -230715,9 +230730,9 @@
       "title": "Agent Contract: codewhale-hq-codewhale-learnings Autonomous Specialist Persona",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "34941223a827fd1e254b64edef52541de15c50206092ebe7e339b9577e48ff62",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-17T19:54:47.192Z"
+      "content_hash": "3047ae8576209b3ed8ebedc6ee8cf35a7f773cd66c4624de7c55c909a52e8931",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T15:42:43.971Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale-learnin",
@@ -230727,9 +230742,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq-codewhale-learnings",
       "repository": "codewhale-hq-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "9781f598e1628ee8659272da2c68c0491436bfaba2560de10100e68a9122f1fb",
+      "content_hash": "a912789579a01e8d1bccf5bf96058b492f26fd5127fd9d69d0c6b6fb72f8442e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T19:54:47.325Z"
+      "persisted_at": "2026-11-19T15:42:44.135Z"
     },
     "learn-huggingface-bingsu-adetailer": {
       "learning_id": "learn-huggingface-bingsu-adetailer",
@@ -239520,7 +239535,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
       "source_version": "hf-autotrust-jev-35b-nvfp4",
-      "content_hash": "c390b87d0dd7669dd9dd56c1504dec0a5f8f6da94f30cb31cbbf2ec45ed31859",
+      "content_hash": "546faaffafd8d8e6537b97b503114926d47ec7912728250ced241f8308a2da7e",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-jev-35b-nvfp4-learnings.md",
       "promoted_rules": [],
@@ -239529,7 +239544,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T01:03:20.292Z",
+      "verified_at": "2026-11-19T15:42:31.117Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239546,9 +239561,9 @@
       "title": "Research & Knowledge Intelligence: autotrust/AutoTrust-Decider-Pro-35B-NVFP4 Core Invariants",
       "repository": "autotrust/AutoTrust-Decider-Pro-35B-NVFP4",
       "source_version": "hf-autotrust-jev-35b-nvfp4",
-      "content_hash": "265bed0f73e92fe3935c349a9bd90e4d40546f6b827069fc91d570d3d8dbc4bf",
+      "content_hash": "d4bc4ab16a95628fff5779023a10bdead07e9af63ba70de19a1538edd924365d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T01:03:20.541Z"
+      "persisted_at": "2026-11-19T15:42:31.788Z"
     },
     "learn-github-jetbrains-kotlinconf-app": {
       "learning_id": "learn-github-jetbrains-kotlinconf-app",
@@ -239725,9 +239740,9 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-jev-35b-nvfp4-learnings Core Invariants",
       "repository": "hf-autotrust-jev-35b-nvfp4-learnings",
       "source_version": "HEAD",
-      "content_hash": "6078d8813c5a2e722a1e5ef8d34f922b9054414dbf422cf33c3da57da025e615",
+      "content_hash": "e277c3095d19a655fc44271be6ce77aa4eb5320a9a4e6df49a4fdc53475d2cda",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T01:04:02.256Z"
+      "persisted_at": "2026-11-19T15:42:44.607Z"
     },
     "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-learnings-core-invariants",
@@ -243936,8 +243951,8 @@
       "slug": "simonschubert-linuxcommandlibrary",
       "platform": "github",
       "source_url": "https://github.com/SimonSchubert/LinuxCommandLibrary",
-      "source_version": "6641ebf0",
-      "content_hash": "34e584f07e24e7dbb0bf127ae7a9333f0861e79c7291af03fea2760146a65996",
+      "source_version": "a7aadf0e",
+      "content_hash": "cd1069458d85c8a2a5a557245e9ea631dc1edfa488c62ddb2e91a4a829941350",
       "dossier_path": "07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
       "promoted_rules": [
@@ -243955,6 +243970,11 @@
           "number": 8595,
           "title": "Printable ANSI Visual Column Boundary Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9394,
+          "title": "markup on new command pages",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -243962,7 +243982,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T08:09:26.090Z",
+      "verified_at": "2026-11-19T15:42:32.758Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -244081,9 +244101,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for simonschubert-linuxcommandlibrary-learnings",
       "repository": "simonschubert-linuxcommandlibrary-learnings",
       "source_version": "HEAD",
-      "content_hash": "da7780d8aef35b8536cb8426b49ca073472e687d04e83cf37b0942dc838122b0",
+      "content_hash": "04689e28049e5426df815515d8bb2b7474fc014f16f8230ad47e9c56538384d6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T08:09:32.279Z"
+      "persisted_at": "2026-11-19T15:42:46.187Z"
     },
     "candidate_directive-server-add-mcp-tools-to-explore-pulse-metrics-logs-and-traces": {
       "item_id": "candidate_directive-server-add-mcp-tools-to-explore-pulse-metrics-logs-and-traces",
@@ -294966,6 +294986,158 @@
       "content_hash": "3522c30caf81357ed73741c9c407cbe9f82b6d07a1528d4b308fea8a3f8c8bb6",
       "domain_letter": "F",
       "persisted_at": "2026-11-19T15:21:32.430Z"
+    },
+    "rule-9393": {
+      "learning_id": "rule-9393",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9393,
+      "title": "0.10.3 lane 8: execpolicy launcher panic and payload-hiding fixes",
+      "source_url": "https://github.com/codewhale-hq/Codewhale",
+      "source_version": "b274f161",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T15:42:25.073Z"
+    },
+    "candidate_directive-0-10-3-lane-8-execpolicy-launcher-panic-and-payload-hiding-fixes": {
+      "item_id": "candidate_directive-0-10-3-lane-8-execpolicy-launcher-panic-and-payload-hiding-fixes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YFET-0-10-3-lane-8-execpolicy-launcher-panic-and-payload-hiding-fixes.md",
+      "title": "0.10.3 lane 8: execpolicy launcher panic and payload-hiding fixes",
+      "repository": "codewhale-hq-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5b25c5f8db7464466a2903c7616bde9068e2fe64af8d7cf15f70b3db2c2184d0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T15:42:43.595Z"
+    },
+    "rule-9394": {
+      "learning_id": "rule-9394",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9394,
+      "title": "markup on new command pages",
+      "source_url": "https://github.com/SimonSchubert/LinuxCommandLibrary",
+      "source_version": "a7aadf0e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T15:42:32.758Z"
+    },
+    "candidate_directive-markup-on-new-command-pages": {
+      "item_id": "candidate_directive-markup-on-new-command-pages",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YGZD-markup-on-new-command-pages.md",
+      "title": "markup on new command pages",
+      "repository": "simonschubert-linuxcommandlibrary-learnings",
+      "source_version": "HEAD",
+      "content_hash": "132310ffe0c65e347880113dd14855e0346d1de821dacaf817439c7a7e956c4b",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-19T15:42:45.628Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-simonschubert-linuxcommandlibrary-core-invar": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-simonschubert-linuxcommandlibrary-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-simonschubert-linuxcommandlibrary-technical-construction-intelligence-simonschub.md",
+      "title": "Technical Construction Intelligence: SimonSchubert/LinuxCommandLibrary Core Invariants",
+      "repository": "SimonSchubert/LinuxCommandLibrary",
+      "source_version": "a7aadf0e",
+      "content_hash": "c0ac94b6328594482dd2bf27a2278d95cda86130b7cceec5f4d9905e001b9b81",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T15:42:33.529Z"
+    },
+    "agent_contract-agent-contract-simonschubert-linuxcommandlibrary-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-simonschubert-linuxcommandlibrary-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/simonschubert-linuxcommandlibrary-agent-contract-simonschubert-linuxcommandlibra.md",
+      "title": "Agent Contract: SimonSchubert/LinuxCommandLibrary Autonomous Specialist Persona",
+      "repository": "SimonSchubert/LinuxCommandLibrary",
+      "source_version": "a7aadf0e",
+      "content_hash": "85730baad29756c0072cd609bfe792932a069a07ceb2df363612477899a759f0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T15:42:33.723Z"
+    },
+    "rule-9395": {
+      "learning_id": "rule-9395",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9395,
+      "title": "use merge commit parent as backward compat base",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "cd105ed8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T15:42:35.064Z"
+    },
+    "candidate_directive-use-merge-commit-parent-as-backward-compat-base": {
+      "item_id": "candidate_directive-use-merge-commit-parent-as-backward-compat-base",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y97Z-use-merge-commit-parent-as-backward-compat-base.md",
+      "title": "use merge commit parent as backward compat base",
+      "repository": "zama-ai/tfhe-rs",
+      "source_version": "cd105ed8",
+      "content_hash": "f7e2cd0041a2abc38108c1ef3dd90dd27079a62afeb3281faad7dcfab39292f5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T15:42:35.571Z"
+    },
+    "rule-9396": {
+      "learning_id": "rule-9396",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9396,
+      "title": "Enable grammar for implementation generation",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "a4304377",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T15:42:38.988Z"
+    },
+    "candidate_directive-enable-grammar-for-implementation-generation": {
+      "item_id": "candidate_directive-enable-grammar-for-implementation-generation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YC93-enable-grammar-for-implementation-generation.md",
+      "title": "Enable grammar for implementation generation",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "a4304377",
+      "content_hash": "d3afc5957aafaef26e58bb15c317bd760830a8d51552b14e3e253dbfb4f7f504",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T15:42:39.496Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-simonschubert-linuxcommandlibrary-learnings-": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-simonschubert-linuxcommandlibrary-learnings-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-simonschubert-linuxcommandlibrary-learnings-technical-construction-intelligence-.md",
+      "title": "Technical Construction Intelligence: simonschubert-linuxcommandlibrary-learnings Core Invariants",
+      "repository": "simonschubert-linuxcommandlibrary-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c08040411da58e3a52ef0b1da30ccc3a35193105e93421efe805d0a7c7a653ee",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T15:42:45.817Z"
+    },
+    "agent_contract-agent-contract-simonschubert-linuxcommandlibrary-learnings-autonomous-specialist": {
+      "item_id": "agent_contract-agent-contract-simonschubert-linuxcommandlibrary-learnings-autonomous-specialist",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/simonschubert-linuxcommandlibrary-learnings-agent-contract-simonschubert-linuxco.md",
+      "title": "Agent Contract: simonschubert-linuxcommandlibrary-learnings Autonomous Specialist Persona",
+      "repository": "simonschubert-linuxcommandlibrary-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d1417ba74adac9a9dd59b8f655ca0e6079b83d6255d2735429a322461d6f40de",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T15:42:46.024Z"
     }
   },
   "ai-builder-brain": {

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T15:21:32.833Z",
+  "updated_at": "2026-11-19T15:42:45.367Z",
   "stats": {
-    "total_discovered": 5899,
-    "approved_pending_harvest": 5586,
+    "total_discovered": 5914,
+    "approved_pending_harvest": 5599,
     "harvested_count": 0,
-    "rejected_count": 313,
+    "rejected_count": 315,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5551,
+      "COMMUNITY_AND_EXPERT": 5566,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -127608,6 +127608,322 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
         "fileName": "siderolabs-talos-learnings.md"
+      }
+    },
+    "SRC-7411B1CA1F24": {
+      "id": "SRC-7411B1CA1F24",
+      "url": "https://app.devin.ai/api/presigned_proxy?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjpudWxsLCJidWNrZXRfbmFtZSI6ImRldmluYXR0YWNobWVudHMiLCJidWNrZXRfa2V5IjoiYXR0YWNobWVudHNfcHJpdmF0ZS9vcmctMTg2NDJhNWVmM2Y1NDE1MzkxN",
+      "title": "https://app.devin.ai/api/presigned_proxy?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjpudWxsLCJidWNrZXRfbmFtZSI6ImRldmluYXR0YWNobWVudHMiLCJidWNrZXRfa2V5IjoiYXR0YWNobWVudHNfcHJpdmF0ZS9vcmctMTg2NDJhNWVmM2Y1NDE1MzkxN",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:42:42.829Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-0B4BFE7C58FE": {
+      "id": "SRC-0B4BFE7C58FE",
+      "url": "https://codewhale.net/api/facts/v1/registry%60",
+      "title": "https://codewhale.net/api/facts/v1/registry%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:42:42.915Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-1C634DEB7F04": {
+      "id": "SRC-1C634DEB7F04",
+      "url": "https://api.acme-cloud.example./v1/chat/completions",
+      "title": "https://api.acme-cloud.example./v1/chat/completions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:42:42.986Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-4EBC3192CDD8": {
+      "id": "SRC-4EBC3192CDD8",
+      "url": "https://api.other.example/v1",
+      "title": "https://api.other.example/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:42:43.038Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-5FF08A1F1D77": {
+      "id": "SRC-5FF08A1F1D77",
+      "url": "https://api.acme-cloud.example/v1",
+      "title": "https://api.acme-cloud.example/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:42:43.121Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-9C7E565D280F": {
+      "id": "SRC-9C7E565D280F",
+      "url": "http://localhost:{port",
+      "title": "http://localhost:{port",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T15:42:43.183Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-1ADF5732923B": {
+      "id": "SRC-1ADF5732923B",
+      "url": "https://api.acme-rebind.example/v1",
+      "title": "https://api.acme-rebind.example/v1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:42:43.238Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-19D4821FF0AF": {
+      "id": "SRC-19D4821FF0AF",
+      "url": "https://github.com/luochen211",
+      "title": "https://github.com/luochen211",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:42:43.320Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+        "fileName": "codewhale-hq-codewhale-learnings.md"
+      }
+    },
+    "SRC-B40245519AF3": {
+      "id": "SRC-B40245519AF3",
+      "url": "https://agav.dev/install.sh%60",
+      "title": "https://agav.dev/install.sh%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:42:45.035Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
+        "fileName": "simonschubert-linuxcommandlibrary-learnings.md"
+      }
+    },
+    "SRC-E44337F71CE5": {
+      "id": "SRC-E44337F71CE5",
+      "url": "https://agav.dev/install.sh**",
+      "title": "https://agav.dev/install.sh**",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:42:45.086Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
+        "fileName": "simonschubert-linuxcommandlibrary-learnings.md"
+      }
+    },
+    "SRC-D5A2459AF364": {
+      "id": "SRC-D5A2459AF364",
+      "url": "http://localhost:8080**",
+      "title": "http://localhost:8080**",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T15:42:45.164Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
+        "fileName": "simonschubert-linuxcommandlibrary-learnings.md"
+      }
+    },
+    "SRC-2E2E4FC973A0": {
+      "id": "SRC-2E2E4FC973A0",
+      "url": "https://apt.cerulion.com`/",
+      "title": "https://apt.cerulion.com`/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:42:45.214Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
+        "fileName": "simonschubert-linuxcommandlibrary-learnings.md"
+      }
+    },
+    "SRC-95550758B97D": {
+      "id": "SRC-95550758B97D",
+      "url": "https://apt.cerulion.com**/",
+      "title": "https://apt.cerulion.com**/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:42:45.266Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
+        "fileName": "simonschubert-linuxcommandlibrary-learnings.md"
+      }
+    },
+    "SRC-22065EEA2FA3": {
+      "id": "SRC-22065EEA2FA3",
+      "url": "https://apt.db-branch.com`/",
+      "title": "https://apt.db-branch.com`/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:42:45.316Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
+        "fileName": "simonschubert-linuxcommandlibrary-learnings.md"
+      }
+    },
+    "SRC-4392DA99CB7C": {
+      "id": "SRC-4392DA99CB7C",
+      "url": "https://apt.db-branch.com**/",
+      "title": "https://apt.db-branch.com**/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:42:45.367Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/simonschubert-linuxcommandlibrary-learnings.md",
+        "fileName": "simonschubert-linuxcommandlibrary-learnings.md"
       }
     }
   }

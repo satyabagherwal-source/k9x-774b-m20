@@ -4,24 +4,24 @@
 {
   "source_repository": "codewhale-hq/Codewhale",
   "source_url": "https://github.com/codewhale-hq/Codewhale",
-  "source_version": "336cd8a4",
+  "source_version": "b274f161",
   "license": "MIT",
-  "timestamp": "2026-11-16T07:19:49.112Z",
+  "timestamp": "2026-11-19T15:42:25.596Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-codewhale-hq-codewhale",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale) (Revision: `336cd8a4`).  
-> **License**: MIT | **Timestamp**: `2026-11-16T07:19:49.112Z`  
+> **Provenance**: Harvested from [codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale) (Revision: `b274f161`).  
+> **License**: MIT | **Timestamp**: `2026-11-19T15:42:25.596Z`  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 76%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), C (Market & Business Intelligence)
+- **Confidence Rating**: 63%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from codewhale-hq/Codewhale:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/codewhale-hq/Codewhale](https://github.com/codewhale-hq/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T07:19:48.030Z  
+> **Harvest Timestamp**: 2026-11-19T15:42:23.772Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1980,11 +1980,11 @@ pub use codewhale_protocol::request::*;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7323** (2026-11-12): **fix(app-server): read the original path of a worktree-side rename**
-  *Symptoms*: ## What and why  `parse_porcelain` in `crates/app-server/src/runtime_api/git.rs` read the extra original-path record of a rename/copy only when the **index** column was `R` or `C`.  Git reports a rename in either column, and since 2.18 the worktree column carries one when only the working tree moved — for example `git mv` followed by `git reset` and `git add -N`, which reports `" R new.md\0old.md\0"`. The original-path record was then parsed as a status row of its own:  - With a non-ASCII source (`ab说明.md`), `record[3..]` sliced at byte 3, inside `说` (`E8 AF B4`), and panicked. The panic happens inside `spawn_blocking`, so every `GET /v1/git` and `GET /v1/changes` returned 500 `git status failed` until the worktree changed. - With an ASCII source, a phantom row appeared (`index = 'a'`, `worktree = '.'`, `path = "xt"`), corrupting the file list, the staged/unstaged counts and the row revision tokens.  The parser now reads the original path when either column reports a rename or copy, and slices the path through `get` before consuming the next field, so a malformed record is skipped instead of panicking and the record stream stays in sync.  ## Where this came from  Refs #7309  ## How I tested it  Two new tests in the existing `runtime_api::git::tests` module. Both use a real temporary repository and drive the same sequence the issue describes (`git mv`, `git reset`, `git add -N`), so neither mocks the parser input.  `cargo test -p codewhale-app-server --lib -- worktree_column_r
+- **Issue #7379** (2026-11-19): **[CI only, do not merge] fix(sanitize,config,engine): fast-path secret redaction and retire OpenCode Zen free rows (CW-8225, CW-8257)**
+  *Symptoms*: ## Summary 0.10.3 slice `ci/redact-and-opencode-zen-0103-v1` (CURRENT_DECISIONS §235, ops gap map codewhale-hq/codewhale-ops#20). **Stacked on `ci/release-prep-0103-v2` (`25e73276b5`)**: only the commits after `25e73276b5` belong to this slice; the 16 commits below it are the reviewed release-prep stack, which lands first. Opened to get hosted `ci.yml` on this exact head (`workflow_dispatch` is not available to this session); lands through the designated lander after 2x exact-SHA `VERDICT: LAND`, not by merging this PR.  Slice commit message:  ``` fix(sanitize,config,engine): add fast-path secret redaction and retire dead-end OpenCode Zen free rows (CW-8225, CW-8257)  - CW-8225 (#7347): Add byte-identical fast-path pre-scans in crates/sanitize/src/redact.rs   so ordinary text without secret indicators skips regex/tokenization passes on every   model request, covered by fast_path_is_byte_identical_to_unoptimized_reference_across_corpus. - CW-8257 (#7365): Remove the 11 OpenCode Zen `*-free` rows from the curated catalog   (catalog_corrections.json, bundled Models.dev seed, model_resolution.golden.tsv,   reviewed.rs transport count) because OpenCode restricts them to its own client with   HTTP 429 FreeUsageLimitError and Codewhale does not spoof OpenCode's client. Document   the boundary in docs/PROVIDERS.md and docs/zh_hans/PROVIDERS.md and surface a clear   client-restriction hint in opencode_go_hint. ```   <!-- devin-bot-banner-begin --> ---  <p><picture><source srcset="http
 
-- **Issue #7322** (2026-11-12): **fix(tui): count characters, not bytes, for the session title limit**
-  *Symptoms*: ## What and why  Renaming a session in the session picker rejected a 36-character Chinese title as too long ("1–100 characters").  - **Root cause**: `SessionPickerView::rename_selected` checked `new_title.len() > 100`, which counts bytes. A CJK character is three bytes in UTF-8, so a Chinese title over 33 characters failed the check. The engine's own rename validation already counts characters against `MAX_SESSION_TITLE_CHARS`. - **Fix**: the picker counts characters and uses `MAX_SESSION_TITLE_CHARS` instead of the literal `100`, so it matches the engine and the message.  ## Where this came from  Bug fix, no issue.  ## How I tested it  - New regression test `rename_selected_limits_title_by_characters` (36 Chinese characters, 108 bytes). It fails on `main` (the rename is rejected) and passes with the fix. - With the branch merged onto current `main`: `RUST_MIN_STACK=16777216 cargo test --locked -p codewhale-tui --lib -- session_picker::tests::rename_selected`: 2 passed, 0 failed. With the old byte check put back: 1 passed, 1 failed (`rename_selected_limits_title_by_characters`). - `cargo fmt --all -- --check`: clean  ## Checklist  - [x] One focused change, started from current `main` (no need to rebase when `main` moves) - [x] `cargo fmt --all` passes, and tests cover new or changed behavior - [ ] If this adds or changes a user-facing feature, I updated its docs and its row in `docs/features.toml` (not applicable: bug fix only) 
+- **Issue #7378** (2026-11-19): **[CI only, do not merge] fix(tui,engine): typed error codes on error cards and turn outcomes in exports (CW-8136)**
+  *Symptoms*: ## Summary 0.10.3 slice `ci/export-error-diagnostics-0103-v1` (CURRENT_DECISIONS §235, ops gap map codewhale-hq/codewhale-ops#20). **Stacked on `ci/release-prep-0103-v2` (`25e73276b5`)**: only the commits after `25e73276b5` belong to this slice; the 16 commits below it are the reviewed release-prep stack, which lands first. Opened to get hosted `ci.yml` on this exact head (`workflow_dispatch` is not available to this session); lands through the designated lander after 2x exact-SHA `VERDICT: LAND`, not by merging this PR.  Slice commit message:  ``` fix(tui,engine): show typed error code on error cards and export persisted turn outcomes (CW-8136)  - Preserve normalized ErrorEnvelope::code on HistoryCell::Error and SavedTurnOutcome,   rendering a muted [code] badge on TUI error cards without duplicating codes already   present in the message text. - Project persisted session turn_outcomes (with secret redaction and chronological   message-position interleaving, including under --no-tools) into Markdown, HTML,   JSON, and /copy clipboard exports. - Update the export redaction unit test assertion to match sanitize_text's full   Authorization header redaction (`Authorization: [redacted]`). ```   <!-- devin-bot-banner-begin --> ---  <p><picture><source srcset="https://app.devin.ai/api/presigned_proxy?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjpudWxsLCJidWNrZXRfbmFtZSI6ImRldmluYXR0YWNobWVudHMiLCJidWNrZXRfa2V5IjoiYXR0YWNobWVudHNfcHJpdmF0ZS9vcmctMTg2NDJhNWVmM2Y1NDE1MzkxN
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2001,1066 +2001,641 @@ pub use codewhale_protocol::request::*;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `336cd8a4` (2026-11-16)
-**Commit Message**: tui: show exact, estimated, or unknown cost labels and update changelog
+### Incident Patch 1: `bacf9dea` (2026-11-19)
+**Commit Message**: 0.10.3 lane 8: execpolicy launcher panic and payload-hiding fixes (#7385)
 
-Unifies App::session_cost_label and config_policy cost_label through App::status_cost_label so subscription plans and local routes display localized unknown rather than plan names, local tags, or a zero fallback, while preserving frame footer behavior and pruning stale missing-outcome reasons on late usage.
+* fix(execpolicy): guard launcher verb index on flag-only commands
 
-Verified (CW-7892 stack):
-- cargo fmt --all -- --check && cargo clippy -p codewhale-config -p codewhale-engine -p codewhale-app-server -p codewhale-tui -p codewhale-cli --lib --tests -- -D warnings
-- codewhale-engine: 1696 passed (usage|cost_status|accounting|purge|model_routing|subagent|rlm|review|receipt), 186 passed (-- usage cost_status), 10/10 regressions + saved-session load test, 7/7 dsh_llm
-- codewhale-tui: 263 passed (cost|usage|auto_route|dispatch), 6/6 terminal + label regressions
-- codewhale-app-server: 34 passed (runtime_threads|receipt|usage|cost|catalog_parity)
-- codewhale-cli: 427 passed
-- check-facts, check-runtime-contract-budget, preflight --check: OK
+Expander::record_launcher_commands indexed tokens[verb_idx] unchecked in the nix, npm, launchctl, and VERB_LAUNCHERS arms when resolve_wrapper_targets appended tokens.len() after scanning global flags with no subcommand (e.g. docker --version, npm --version). Guard all four arms with tokens.get(verb_idx) and add launcher_flag_only_commands_do_not_panic.
+
+Restacked onto ci/release-prep-0103-v2 25e73276b5 from 03aee41843 (PR #7375, 2x LAND); source patch identical, changelog entry placed under [0.10.3] ### Fixed and crates/tui/CHANGELOG.md resynced. rustfmt applied to the is_container_run line.
+
+Checks on Linux x86_64: cargo test --locked -p codewhale-execpolicy (268 passed on this tip: 246 unit, 1 authorization_order, 11 redirection_policy, 9 shell_parse_policy, 1 doctest; 0 failed); without the shell_expand.rs guards the new test fails (0 passed; 1 failed: index out of bounds: the len is 2 but the index is 2); cargo clippy --locked -p codewhale-execpolicy --all-targets -- -D warnings; cargo fmt -p codewhale-execpolicy -- --check; scripts/syn
 
 **File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -169,6 +169,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Changed
- 
-+- The cost label shows an exact cost, an estimate or unknown.
- - **Docs for agents match the release:** `/llms-full.txt` and `/docs-markdown/*` now serve the documents as they were at the published release tag, from a committed snapshot that is checked against the published release.
- - **Extension host (experimental): trusted plugins ask for review once more.** With `extension_host` turned on, plugins you already trusted are shown for review again after this update, because the capability table they were reviewed against gained the `remote` service. No plugin can use that service yet: none is granted it.
- - **Website text for agents:** llms.txt now gives agents the install steps for the released version, the current release and the state of each part of Codewhale, from the same content as the pages. `/docs-markdown/install.md` serves those install steps as a page, and the main-branch documents beside it now say which release they can run ahead of.
-@@ -188,6 +189,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -591,6 +591,8 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
  
  ### Fixed
  
-+- Cost tracking can no longer fail your work: a turn, a review, an Auto-Review check, a purge, a sub-agent or an Auto routing decision finishes even when Codewhale cannot record its cost, and the cost then shows as unknown.
- - **Credential redaction:** text, JSON, and workflow-disclosure redaction now masks multi-line private-key blocks across PGP armor headers (including `Comment:` URLs), longer preambles, and 16-character wrapped lines; masks credential values inside nested or escaped JSON assignments, escaped quotes, `\u003c`/`\u003e` delimiters, and spaced or nested JSON objects and arrays; and treats plural token keys (`API_TOKENS`, `ACCESS_TOKENS`) and credential-shaped `tokens` values as credentials while keeping model and tokenizer metric names (`max_tokens`, `tokenizer`, `token_limit`, `tokens=5`) visible.
- - Child processes now inherit only the standard locale variables (`LC_ALL`, `LC_CTYPE` and the other locale categories, plus `LC_TERMINAL` and `LC_TERMINAL_VERSION`) and a listed set of `DOTNET_` host, SDK and runtime settings. Other `DOTNET_` variables, including application configuration keys, are no longer passed to child processes or MCP servers.
- - **Deny rules and command safety:** a command whose command word is not a plain literal, or that redefines a command name earlier in the same call, is now refused while a deny rule is configured; the background destroyer hold reads commands the shell tokenizer rejects, decodes ANSI-C escapes inside shell payloads, and holds Windows drive, UNC, and backslash recursive delete targets; and `sed`, `find`, `sort`, `rg`, `fd`, `uniq`, `env`, `less`, `more`, `ag`, `info` and `git` count as read-only only when their words are literal and use read-only flags, with `codewhale --version` and Windows trailing-backslash paths normalized before checking.
++- **Flag-only launcher commands no longer crash the turn:** running `npm --version`, `nix --version`, `launchctl --help`, `docker --version`, `podman --version`, or another launcher command with global flags and no subcommand no longer panics with an out-of-bounds index during command policy expansion.
++- **Command policy sees payloads behind empty words and `--entrypoint`:** command policy now also checks the nested command in launcher lines with empty-string words before the subcommand (`npm '' exec -c 'rm -rf /'`, `docker '' -D run alpine rm -rf /`) and checks `docker run --entrypoint rm alpine -rf /` as the entrypoint plus the arguments after the image, checking every `--entrypoint` value before the image, so deny rules and approval review match them. A launcher line with so many options that the option walk hits its state limit is now treated like other commands whose words are only known at run time: while deny rules are in force it asks for approval, or is refused where approval is unavailable, instead of dropping the nested command.
+ - **File search in very large folders returns results instead of timing out:** `file_search` (shown as `find`) no longer fails with "operation timed out after 30s" in a huge folder that is not a git repository. It now walks the tree in parallel, searches the top four levels first so shallow files are found even when the rest of the tree is too large, also skips `.venv`, `__pycache__`, `.next`, `.turbo` and `.gradle` by default alongside `target`, `node_modules`, `.git` and build output, and, if the tree is still too large to finish in 20 seconds, returns the best matches found so far marked `partial` with a note to narrow `path` or the query. Results in an ordinary repository are unchanged apart from those newly skipped folders. (CW-8265)
+ - **Auto-Review on the desktop app sees what you asked for:** the Auto-Review reviewer refused every command started from the desktop composer with "No person request provided (person_messages is empty)", because the desktop reaches its Engine with the local runtime token, which counted as an automation caller. A runtime-token caller that names the owner surface (`"client": "desktop"`) on `POST /v1/threads/{id}/turns` or `.../steer` now records the typed prompt as your message, the same way the signed-in web composer and the terminal already do; a paired device or phone that claims `desktop` is refused with 403, and a runtime-token caller that names no owner surface, a tokenless local server, scheduled work, automations and agent-created threads still record nothing. The reviewer still blocks actions your messages do not cover. (CW-8270)
+ - **Scheduled catalog refresh pushes with a branch-tip lease:** the Catalog refresh workflow now resolves the remote `catalog-refresh` branch tip before pushing, aborts if `catalog-refresh` has commits outside `origin/main` not committed by `codewhale-agent[bot]`, and passes that resolved tip (empty when absent) to `--force-with-lease` so pushes no longer fail with `stale info`. (CW-8266)
+```
+
+**File**: `crates/execpolicy/src/shell_expand.rs` (modified, +211/-30)
+```diff
+@@ -2048,10 +2048,15 @@ impl Expander {
+         depth: usize,
+     ) {
+         let tokens = &line.words;
++        let mut truncated = false;
+         match name {
+             "nix" => {
+-                for verb_idx in resolve_wrapper_targets(tokens, head + 1, &NIX_GLOBAL_SPEC) {
+-                    let verb = tokens[verb_idx].as_str();
++                for verb_idx in
++                    launcher_verb_targets(tokens, head + 1, &NIX_GLOBAL_SPEC, &mut truncated)
++                {
++                    let Some(verb) = tokens.get(verb_idx).map(String::as_str) else {
++                        continue;
++                    };
+                     if matches!(verb, "develop" | "shell")
+                         && let Some(at) = (verb_idx + 1..tokens.len())
+                             .take_while(|&i| tokens[i] != "--")
+@@ -2086,8 +2091,13 @@ impl Expander {
+                         self.code_payload(&payload, payload_dynamic, depth);
+                     }
+                 } else {
+-                    for verb_idx in resolve_wrapper_targets(tokens, head + 1, &EMPTY_WRAPPER_SPEC) {
+-                        if matches!(tokens[verb_idx].as_str(), "exec" | "x") {
++                    for verb_idx in
++                        launcher_verb_targets(tokens, head + 1, &EMPTY_WRAPPER_SPEC, &mut truncated)
++                    {
++                        if tokens
++                            .get(verb_idx)
++                            .is_some_and(|verb| matches!(verb.as_str(), "exec" | "x"))
++                        {
+                             for (payload, payload_dynamic) in option_payloads(
+                                 tokens,
+                                 verb_idx,
+@@ -2106,7 +2116,8 @@ impl Expander {
+                 if ssh_skips_remote_command(&tokens[head + 1..]) {
+                     return;
+                 }
+-                for landing in resolve_wrapper_targets(tokens, head + 1, &SSH_SPEC) {
++                for landing in resolve_wrapper_targets(tokens, head + 1, &SSH_SPEC, &mut truncated)
++                {
+                     if landing < tokens.len() {
+                         let rest = &tokens[landing..];
+                         let rest_dynamic = dynamic[landing..].iter().any(|d| *d);
+@@ -2121,7 +2132,9 @@ impl Expander {
+                 if screen_attaches_only(&tokens[head + 1..]) {
+                     return;
+                 }
+-                for landing in resolve_wrapper_targets(tokens, head + 1, &SCREEN_SPEC) {
++                for landing in
++                    resolve_wrapper_targets(tokens, head + 1, &SCREEN_SPEC, &mut truncated)
++                {
+                     if landing < tokens.len() {
+                         self.record(&slice_line(line, landing), depth + 1);
+                     }
+@@ -2132,8 +2145,10 @@ impl Expander {
+             }
+             _ => {
+                 if name == "launchctl" {
+-                    for verb_idx in resolve_wrapper_targets(tokens, head + 1, &EMPTY_WRAPPER_SPEC) {
+-                        if tokens[verb_idx] == "submit" {
++                    for verb_idx in
++                        launcher_verb_targets(tokens, head + 1, &EMPTY_WRAPPER_SPEC, &mut truncated)
++                    {
++                        if tokens.get(verb_idx).map(String::as_str) == Some("submit") {
+                             self.record_exec_flag_command(line, verb_idx, &['p'], &[], depth);
+                         }
+                     }
+@@ -2142,24 +2157,55 @@ impl Expander {
+                     if launcher.program != name {
+                         continue;
+                     }
+-                    for verb_idx in resolve_wrapper_targets(tokens, head + 1, launcher.global) {
+-                        if !launcher.verbs.contains(&tokens[verb_idx].as_str()) {
++                    for verb_idx in
++                        launcher_verb_targets(tokens, head + 1, launcher.global, &mut truncated)
++                    {
++                        let Some(verb) = tokens.get(verb_idx).map(String::as_str) else {
++                            continue;
++                        };
++                        if !launcher.verbs.contains(&verb) {
+                             continue;
+                         }
+-                        let is_container_run =
+-                            matches!(name, "docker" | "podman") && tokens[verb_idx] == "run";
+-                        let entrypoint = if is_container_run {
+-                            find_entrypoint(&tokens[verb_idx + 1..], verb_idx + 1)
+-                        } else {
+-                            None
++                        let is_container_run = matches!(name, "docker" | "podman") && verb == "run";
++                        let entrypoints_before = |end: usize| {
++                            if !is_container_run {
++                                return Vec::new();
++                            }
++                            let end = end.min(tokens.len()).max(verb_idx + 1);
++                            l
 ```
 
 **File**: `crates/tui/CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -169,6 +169,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ### Changed
- 
-+- The cost label shows an exact cost, an estimate or unknown.
- - **Docs for agents match the release:** `/llms-full.txt` and `/docs-markdown/*` now serve the documents as they were at the published release tag, from a committed snapshot that is checked against the published release.
- - **Extension host (experimental): trusted plugins ask for review once more.** With `extension_host` turned on, plugins you already trusted are shown for review again after this update, because the capability table they were reviewed against gained the `remote` service. No plugin can use that service yet: none is granted it.
- - **Website text for agents:** llms.txt now gives agents the install steps for the released version, the current release and the state of each part of Codewhale, from the same content as the pages. `/docs-markdown/install.md` serves those install steps as a page, and the main-branch documents beside it now say which release they can run ahead of.
-@@ -188,6 +189,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -591,6 +591,8 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
  
  ### Fixed
  
-+- Cost tracking can no longer fail your work: a turn, a review, an Auto-Review check, a purge, a sub-agent or an Auto routing decision finishes even when Codewhale cannot record its cost, and the cost then shows as unknown.
- - **Credential redaction:** text, JSON, and workflow-disclosure redaction now masks multi-line private-key blocks across PGP armor headers (including `Comment:` URLs), longer preambles, and 16-character wrapped lines; masks credential values inside nested or escaped JSON assignments, escaped quotes, `\u003c`/`\u003e` delimiters, and spaced or nested JSON objects and arrays; and treats plural token keys (`API_TOKENS`, `ACCESS_TOKENS`) and credential-shaped `tokens` values as credentials while keeping model and tokenizer metric names (`max_tokens`, `tokenizer`, `token_limit`, `tokens=5`) visible.
- - Child processes now inherit only the standard locale variables (`LC_ALL`, `LC_CTYPE` and the other locale categories, plus `LC_TERMINAL` and `LC_TERMINAL_VERSION`) and a listed set of `DOTNET_` host, SDK and runtime settings. Other `DOTNET_` variables, including application configuration keys, are no longer passed to child processes or MCP servers.
- - **Deny rules and command safety:** a command whose command word is not a plain literal, or that redefines a command name earlier in the same call, is now refused while a deny rule is configured; the background destroyer hold reads commands the shell tokenizer rejects, decodes ANSI-C escapes inside shell payloads, and holds Windows drive, UNC, and backslash recursive delete targets; and `sed`, `find`, `sort`, `rg`, `fd`, `uniq`, `env`, `less`, `more`, `ag`, `info` and `git` count as read-only only when their words are literal and use read-only flags, with `codewhale --version` and Windows trailing-backslash paths normalized before checking.
++- **Flag-only launcher commands no longer crash the turn:** running `npm --version`, `nix --version`, `launchctl --help`, `docker --version`, `podman --version`, or another launcher command with global flags and no subcommand no longer panics with an out-of-bounds index during command policy expansion.
++- **Command policy sees payloads behind empty words and `--entrypoint`:** command policy now also checks the nested command in launcher lines with empty-string words before the subcommand (`npm '' exec -c 'rm -rf /'`, `docker '' -D run alpine rm -rf /`) and checks `docker run --entrypoint rm alpine -rf /` as the entrypoint plus the arguments after the image, checking every `--entrypoint` value before the image, so deny rules and approval review match them. A launcher line with so many options that the option walk hits its state limit is now treated like other commands whose words are only known at run time: while deny rules are in force it asks for approval, or is refused where approval is unavailable, instead of dropping the nested command.
+ - **File search in very large folders returns results instead of timing out:** `file_search` (shown as `find`) no longer fails with "operation timed out after 30s" in a huge folder that is not a git repository. It now walks the tree in parallel, searches the top four levels first so shallow files are found even when the rest of the tree is too large, also skips `.venv`, `__pycache__`, `.next`, `.turbo` and `.gradle` by default alongside `target`, `node_modules`, `.git` and build output, and, if the tree is still too large to finish in 20 seconds, returns the best matches found so far marked `partial` with a note to narrow `path` or the query. Results in an ordinary repository are unchanged apart from those newly skipped folders. (CW-8265)
+ - **Auto-Review on the desktop app sees what you asked for:** the Auto-Review reviewer refused every command started from the desktop composer with "No person request provided (person_messages is empty)", because the desktop reaches its Engine with the local runtime token, which counted as an automation caller. A runtime-token caller that names the owner surface (`"client": "desktop"`) on `POST /v1/threads/{id}/turns` or `.../steer` now records the typed prompt as your message, the same way the signed-in web composer and the terminal already do; a paired device or phone that claims `desktop` is refused with 403, and a runtime-token caller that names no owner surface, a tokenless local server, scheduled work, automations and agent-created threads still record nothing. The reviewer still blocks actions your messages do not cover. (CW-8270)
+ - **Scheduled catalog refresh pushes with a branch-tip lease:** the Catalog refresh workflow now resolves the remote `catalog-refresh` branch tip before pushing, aborts if `catalog-refresh` has commits outside `origin/main` not committed by `codewhale-agent[bot]`, and passes that resolved tip (empty when absent) to `--force-with-lease` so pushes no longer fail with `stale info`. (CW-8266)
 ```
 
-**File**: `crates/tui/src/commands/config_policy_status_tests.rs` (modified, +29/-0)
+**File**: `docs/MODES.md` (modified, +3/-1)
 ```diff
-@@ -643,6 +643,35 @@ mod tests {
-             Some("  Project docs:    no project docs")
-         );
-     }
-+
-+    #[test]
-+    fn status_cost_row_uses_unknown_for_subscription_and_local_routes() {
-+        let tmpdir = TempDir::new().expect("temp dir");
-+        let mut app = create_test_app(tmpdir.path().to_path_buf());
-+        app.billing_presentation =
-+            codewhale_engine::route_billing::BillingPresentation::Subscription("Codex OAuth quota");
-+        let sub_report = format_status(&mut app);
-+        let sub_cost_line = sub_report
-+            .lines()
-+            .find(|line| line.trim_start().starts_with("Session cost:"))
-+            .expect("subscription Session cost line");
-+        assert!(sub_cost_line.ends_with("unknown"), "{sub_cost_line}");
-+        assert!(
-+            !sub_cost_line.contains("Codex OAuth quota"),
-+            "{sub_cost_line}"
-+        );
-+        assert!(!sub_cost_line.contains('$'), "{sub_cost_line}");
-+
-+        app.billing_presentation = codewhale_engine::route_billing::BillingPresentation::Local;
-+        let local_report = format_status(&mut app);
-+        let local_cost_line = local_report
-+            .lines()
-+            .find(|line| line.trim_start().starts_with("Session cost:"))
-+            .expect("local Session cost line");
-+        assert!(local_cost_line.ends_with("unknown"), "{local_cost_line}");
-+        assert!(!local_cost_line.contains("local"), "{local_cost_line}");
-+        assert!(!local_cost_line.contains('$'), "{local_cost_line}");
-+    }
- }
- 
- fn safety_id(flag: Option<bool>) -> MessageId {
-```
-
-**File**: `crates/tui/src/commands/contract/config_policy.rs` (modified, +1/-13)
-```diff
-@@ -214,19 +214,7 @@ fn project_status(app: &App) -> ConfigStatusView {
-         cache_miss_tokens: app.session.displayed_total_cache_miss_tokens(),
-         cost: app.session_cost_for_currency(app.cost_currency),
-         currency: to_command_currency(app.cost_display_currency(app.cost_currency)),
--        cost_label: match app.cumulative_usage_chip() {
--            chip @ codewhale_engine::route_billing::UsageChip::PricedSubtotal { .. } => {
--                codewhale_engine::route_billing::format_usage_chip(&chip, app.ui_locale)
--            }
--            codewhale_engine::route_billing::UsageChip::Unknown(_) => Some(
--                codewhale_localization::tr(
--                    app.ui_locale,
--                    codewhale_localization::MessageId::CmdCostUnknownValue,
--                )
--                .into_owned(),
--            ),
--            _ => None,
--        },
-+        cost_label: app.status_cost_label(),
-         metrics,
-         ascii_safe: crate::tui::color_compat::ascii_safe_enabled(),
-         tool_outputs: outputs,
-```
-
-**File**: `crates/tui/src/tui/app.rs` (modified, +20/-17)
-```diff
-@@ -5402,27 +5402,30 @@ impl App {
-     }
- 
-     /// Price is one number, everywhere (design §2.11 item 5): the session
--    /// cost as the footer chip, the price view, and the roster print it.
--    /// Money routes print the amount; subscription and local routes print the
--    /// same words the chip uses; a metered route that has not spent yet prints
--    /// `$0.00`; a session with no confirmed price says `unknown` rather than
--    /// inventing a zero.
--    #[must_use]
--    pub fn session_cost_label(&self) -> String {
--        let chip = self.cumulative_usage_chip();
--        if matches!(chip, codewhale_engine::route_billing::UsageChip::Hidden) {
--            return self
--                .format_cost_amount(self.displayed_session_cost_for_currency(self.cost_currency));
--        }
--        codewhale_engine::route_billing::format_usage_chip(&chip, self.ui_locale).unwrap_or_else(
--            || {
-+    /// cost as the price view and status surface print it — money routes print
-+    /// exact or estimated dollars (or `$0.00` before spending), while
-+    /// subscription, local, and unpriced sessions say `unknown` rather than
-+    /// printing plan names, `"local"`, or an invented zero.
-+    pub(crate) fn status_cost_label(&self) -> Option<String> {
-+        use codewhale_engine::route_billing::UsageChip;
-+        match self.cumulative_usage_chip() {
-+            UsageChip::Money(_) | UsageChip::Hidden => None,
-+            UsageChip::PricedSubtotal { amount, .. } => Some(amount),
-+            UsageChip::Allowance { .. } | UsageChip::Local | UsageChip::Unknown(_) => Some(
-                 codewhale_localization::tr(
-                     self.ui_locale,
-                     codewhale_localization::MessageId::CmdCostUnknownValue,
-                 )
--                .into_owned()
--            },
--        )
-+                .into_owned(),
-+            ),
-+        }
-+    }
-+
-+    #[must_use]
-+    pub fn session_cost_label(&self) -> String {
-+        self.status_cost_label().unwrap_or_else(|| {
-+            self.format_cost_amount(self.displayed_session_cost_for_currency(self.cost_currency))
-+        })
-     }
- 
-     pub(crate) fn cost_display_currency(&self, currency: CostCurrency) -> CostCurrency {
-```
-
-**File**: `crates/tui/src/tui/app/tests.rs` (modified, +90/-0)
-```diff
-@@ -2402,6 +2402,96 @@ fn subscription_route_hides_stale_session_dollars_in_footer() {
-     assert!(rendered.contains("Codex OAuth quota"), "{rendered}");
- }
- 
-+#[test]
-+fn session_cost_label_renders_money_or_unknown_without_plan_names_or_local() {
-+    let unknown = codewhale_localization::tr(
-+        codewhale_localization::Locale::En,
-+        codewhale_localization::MessageId::CmdCostUnknownValue,
-+    )
-+    .into_owned();
-+
-+    let mut sub = App::new(test_options(false), &Config::default());
-+    sub.billing_presentation =
-+        codewhale_engine::route_billing::BillingPresentation::Subscription("Codex OAuth quota");
-+    assert_eq!(sub.session_cost_label(), unknown);
-+    assert_eq!(sub.status_cost_label().as_deref(), Some(unknown.as_str()));
-+
-+    let mut local = App::new(test_options(false), &Config::default());
-+    local.billing_presentation = codewhale_engine::route_billing::BillingPresentation::Local;
-+    assert_eq!(local.session_cost_label(), unknown);
-+    assert_eq!(local.status_cost_label().as_deref(), Some(unknown.as_str()));
-+
-+    let mut metered = App::new(test_options(false), &Config::default());
-+    metered.api_provider = ProviderKind::Deepseek;
-+    metered.model = "deepseek-v4-flash".to_string();
-+    metered.billing_presentation = codewhale_engine::route_billing::BillingPresentation::Metered;
-+    assert_eq!(metered.session_cost_label(), "$0.00");
-+    assert_eq!(metered.status_cost_label(), None);
-+
-+    metered.session.cost_priced_turns = 1;
-+    metered.accrue_session_cost_estimate(CostEstimate::usd_only(0.42));
-+    assert_eq!(metered.session_cost_label(), "$0.42");
-+    assert_eq!(metered.status_cost_label(), None);
-+
-+    metered.session.cost_unpriced_turns = 1;
-+    assert_eq!(metered.session_cost_label(), "$0.42");
-+    assert_eq!(metered.status_cost_label().as_deref(), Some("$0.42"));
-+}
-+
-+#[test]
-+fn late_reported_usage_prunes_stale_request_outcome_unknown_reason() {
-+    let mut app = App::new(test_options(false), &Config::default());
-+    let route = codewhale_engine::cost_status::EffectiveRouteEnvelope::capture(
-+        None,
-+        ProviderKind::Deepseek,
-+        "deepseek",
-+        "deepseek-v4-flash",
-+        Some(ProviderKind::Deepseek.provider().default_base_url()),
-+        chrono::Utc::now(),
-+    );
-+    let drop_pool = codewhale_engine::cost_status::background_cost_for_runtime_drop(
-+        &codewhale_engine::cost_status::RuntimeUsageDropRecord {
-+            reason: codewhale_engine::cost_status::RuntimeUsageMissingReason::RequestOutcomeUnknown,
-+            source_id: "cw-7882-late-source".to_string(),
-+            route: route.clone(),
-+        },
-+    );
-+    app.absorb_pending_background_cost(&drop_pool);
-+    assert_eq!(app.session.cost_unpriced_turns, 1);
-+    assert!(
-+        app.session
-+            .cost_unpriced_reasons
-+            .contains("request_outcome_unknown")
-+    );
-+
-+    let settled = codewhale_engine::cost_status::NativeUsageSource::capture(
-+        "cw-7882-late-source",
-+        codewhale_engine::cost_status::UsageSpendOwner::Auxiliary,
-+    )
-+    .reported(
-+        &route,
-+        &codewhale_models::Usage {
-+            input_tokens: 1_000,
-+            output_tokens: 200,
-+            ..Default::default()
-+        },
-+    );
-+    let settled_pool = codewhale_engine::cost_status::background_cost_for_runtime_usage(&settled);
-+    app.absorb_pending_background_cost(&settled_pool);
-+    assert_eq!(app.session.cost_priced_turns, 1);
-+    assert_eq!(app.session.cost_unpriced_turns, 0);
-+    assert!(
-+        !app.session
-+            .cost_unpriced_reasons
-+            .contains("request_outcome_unknown")
-+    );
-+    assert!(
-+        !app.session
-+            .cost_cny_unpriced_reasons
-+            .contains("request_outcome_unknown")
-+    );
-+}
-+
- #[test]
- fn provider_switch_keeps_audited_cumulative_spend_visible() {
-     let mut app = App::new(test_options(false), &Config::default());
+@@ -27,7 +27,9 @@ the saved `role`/`profile` assignment. An Exact Fleet fixes each member's route.
+ One dial says how much Codewhale may do without asking. Press `Shift+Tab` to
+ step it: **Ask → Accept Edits → Plan → Auto-Review → Full Access → Ask**. Plan
+ is the Plan mode; every other stop is Work with that permission posture. The
+-footer shows the current stop and `Shift+Tab to change`. New installs start on
++footer shows the current stop and `Shift+Tab to change`; after you have pressed
++it twice the hint stands down, except on Auto-Review and Full Access, where it
++stays while the footer has room. New installs start on
+ Accept Edits when no permission posture is saved. An explicit saved choice,
+ including Ask from an earlier version, stays in control.
+ `Tab` only completes composer menus, commands, file mentions and suggestions;
 ```
 
 ---
 
-### Incident Patch 2: `2b7a3770` (2026-11-16)
-**Commit Message**: fix(app-server): wait for settled live turn events in remote pairing test
+### Incident Patch 2: `7041117f` (2026-11-18)
+**Commit Message**: fix(engine): refuse private addresses for registry-admitted providers at connect time (CW-8246)
 
-NodeRemoteHarness::wait_thread_idle returned as soon as turn.status and
-workspace.state left pending, which raced emit_turn_completed_if_missing and the
-background turn.artifacts emission from settle_turn_workspace in
-an_open_sse_stream_ends_cleanly_on_withdrawal_archive_and_plugin_revoke (making
-last_seq reach 55 after the test expected 54). Wait for replay_events to include
-turn.completed and, when workspace settled or failed delta, turn.artifacts on
-live turns identified by turn.started or non-null workspace state so hydrated
-saved-session turns do not hang.
+Model traffic to a provider admitted from the signed registry went through
+platform_client_builder, which only installs the loopback proxy fallback.
+Admission checks base_url statically (https, public multi-label domain, no
+IP literal), so a public host name that resolves, or later rebinds, to
+10.x, 169.254.169.254 or ::1 was connected to.
 
-Checks (macOS, sccache, hermetic test home, CODEWHALE_EXT_HOST_TESTS=1):
-- cargo fmt --all -- --check: PASS
-- cargo clippy -p codewhale-app-server --lib --tests --locked -- -D warnings: PASS (18.46s)
-- nextest -p codewhale-app-server --lib -E 'test(remote_pairing)': 17 passed, 865 skipped
-- 5x soak an_open_sse_stream_ends_cleanly_on_withdrawal_archive_and_plugin_revoke: 5/5 passed
-- sh scripts/preflight.sh --check --base origin/main: OK
+codewhale_net::guard gains PublicAddressResolver, a reqwest DNS resolver
+that resolves on every connection and refuses an answer containing any
+is_restricted_ip address, and public_address_reqwest_client_builder, the
+guarded transport (ambient proxies off, as guarded_reqwest_client_builder)
+with that resolver. codewhale_config::descriptors gains
+is_registry_admitted_base_url, true when a URL's host equals the host of a
+provider in the active verified registry. http_client_builder_with_auth_mode
+builds a `custom` route on the guarded transport when its base_url passes
+that check, so the chat, HTTP/1.1 fallback and /models clients of a pulled
+provider are all guarded. Built-in providers (including Ollama, vLLM and
+SGLang) and custom endpoints on any ot
 
-**File**: `crates/app-server/src/runtime_api/tests/remote_pairing.rs` (modified, +39/-3)
+**File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -298,16 +298,52 @@ impl NodeRemoteHarness {
-                 .error_for_status()?
-                 .json()
-                 .await?;
--            let all_terminal = detail["turns"].as_array().is_some_and(|turns| {
-+            let turns = detail["turns"].as_array();
-+            let all_terminal = turns.is_some_and(|turns| {
-                 turns.iter().all(|turn| {
-                     matches!(
-                         turn["status"].as_str(),
-                         Some("completed" | "failed" | "interrupted" | "canceled")
--                    )
-+                    ) && turn["workspace"]["state"].as_str() != Some("pending")
-                 })
-             });
-             if all_terminal {
--                return Ok(());
-+                let mut replay = self
-+                    .state
-+                    .runtime_threads
-+                    .replay_events(thread_id, None, None)
-+                    .await?;
-+                let mut events = Vec::new();
-+                while let Some(batch) = replay.batches.recv().await {
-+                    events.extend(batch.map_err(anyhow::Error::msg)?);
-+                }
-+                let all_events_settled = turns.is_some_and(|turns| {
-+                    turns.iter().all(|turn| {
-+                        let Some(id) = turn["id"].as_str() else {
-+                            return false;
-+                        };
-+                        let ran_live = events.iter().any(|ev| {
-+                            ev.event == "turn.started" && ev.turn_id.as_deref() == Some(id)
-+                        }) || turn.get("workspace").is_some_and(|w| !w.is_null());
-+                        if !ran_live {
-+                            return true;
-+                        }
-+                        let has_completed = events.iter().any(|ev| {
-+                            ev.event == "turn.completed" && ev.turn_id.as_deref() == Some(id)
-+                        });
-+                        let needs_artifacts = turn["workspace"]["state"].as_str()
-+                            == Some("settled")
-+                            || turn["workspace"]["reason"].as_str() == Some("delta_failed");
-+                        let has_artifacts = !needs_artifacts
-+                            || events.iter().any(|ev| {
-+                                ev.event == "turn.artifacts" && ev.turn_id.as_deref() == Some(id)
-+                            });
-+                        has_completed && has_artifacts
-+                    })
-+                });
-+                if all_events_settled {
-+                    return Ok(());
-+                }
-             }
-             if Instant::now() >= deadline {
-                 anyhow::bail!("timed out waiting for thread {thread_id} to go idle: {detail}");
+@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **One configured-model selection chain:** a model id that a provider does not accept now gives the same clear error in every command (`codewhale model resolve`, the terminal UI, and the app-server) instead of being sent anyway by some of them, and configured default models resolve through one shared chain across every surface. (CW-8250)
+ - **Model limits, capabilities and prices follow the resolved route:** context windows, output limits, thinking support, request wire selection, Google thought-signature and reasoning controls, and turn prices now come from the same catalog entry the request uses, so they match the model actually sent. (CW-8251)
+ - **Standing-instruction receipt over the Runtime API:** `GET /v1/threads/{id}/context/standing` (capability `thread_standing_context`) returns the receipt the Engine already computes for a live thread: per-item estimated tokens kept and dropped, the action taken (kept, trimmed, skipped, refused) and the limit that caused it, scope budgets and totals, relative paths only, the 65,536-byte delivery cap with whether the delivered message was truncated, and a `not_measured` list (skills, agents, MCP tool schemas, memory) so a client does not show zero. Read-only; prompts and the cached prefix are unchanged.
+-- **Signed model and provider registry wired into resolution and discovery (off by default):** when `[cloud_facts]` is enabled (`CODEWHALE_CLOUD_FACTS=1` or `enabled = true`), Codewhale fetches the signed models-and-providers list (`registry.json`, `codewhale.registry.v1`) from `https://codewhale.net/api/facts/v1/registry` by default (or `CODEWHALE_REGISTRY_URL` / `CODEWHALE_REGISTRY_PATH`, or `CODEWHALE_CLOUD_FACTS_URL` when it contains `{channel}`), verifies it against the pinned keys, caches the last good copy at `$CODEWHALE_HOME/facts/registry-cache.json`, and applies verified models, offerings, aliases and admitted providers across `resolve_model`, `RouteResolver`, catalog lookups and `/provider` discovery. Scheduled `automation` signatures with a non-expired `not_after` within seven days of `generated_at` may update models, offerings and bundled-provider naming aliases, while adding a new OpenAI-compatible HTTPS provider requires a `founder` signature and can never change a built-in provider's address, key or protocol or reuse another product or provider `*_API_KEY` variable. Disabling cloud facts, expiry past `not_after`, `CODEWHALE_DISABLE_CLOUD_FACTS=1`, or a failed/rejected pull leaves or restores the copy already in use (or the bundled seed) without delaying startup; CI suppresses network pulls. Source only: cloud facts remain off by default and publication is separate. See `docs/CLOUD_FACTS.md`. (CW-8246)
++- **Signed model and provider registry wired into resolution and discovery (off by default):** when `[cloud_facts]` is enabled (`CODEWHALE_CLOUD_FACTS=1` or `enabled = true`), Codewhale fetches the signed models-and-providers list (`registry.json`, `codewhale.registry.v1`) from `https://codewhale.net/api/facts/v1/registry` by default (or `CODEWHALE_REGISTRY_URL` / `CODEWHALE_REGISTRY_PATH`, or `CODEWHALE_CLOUD_FACTS_URL` when it contains `{channel}`), verifies it against the pinned keys, caches the last good copy at `$CODEWHALE_HOME/facts/registry-cache.json`, and applies verified models, offerings, aliases and admitted providers across `resolve_model`, `RouteResolver`, catalog lookups and `/provider` discovery. Model requests to a custom provider whose host a verified registry admitted resolve that host on every connection, without an ambient proxy, and are refused when it answers with a private, loopback, link-local or cloud-metadata address; built-in providers (including local Ollama, vLLM and SGLang) and custom endpoints on any other host are unchanged. Scheduled `automation` signatures with a non-expired `not_after` within seven days of `generated_at` may update models, offerings and bundled-provider naming aliases, while adding a new OpenAI-compatible HTTPS provider requires a `founder` signature and can never change a built-in provider's address, key or protocol or reuse another product or provider `*_API_KEY` variable. Disabling cloud facts, expiry past `not_after`, `CODEWHALE_DISABLE_CLOUD_FACTS=1`, or a failed/rejected pull leaves or restores the copy already in use (or the bundled seed) without delaying startup; CI suppresses network pulls. Source only: cloud facts remain off by default and publication is separate. See `docs/CLOUD_FACTS.md`. (CW-8246)
+ - **Gemini 4 Hydrogen:** Google's `gemini-4-hydrogen` is in the catalog and the Google model list, with a 1,048,576-token context window and 65,536 output tokens. The shut-down `gemini-3-pro-preview` leaves the Google list.
+ - **Model shorthands work the same everywhere:** short names that previously worked only in `/provider <name> <model>` or `codewhale model resolve` — such as `flash`, `pr
 ```
 
----
-
-### Incident Patch 3: `b62308f1` (2026-11-15)
-**Commit Message**: feat(extension-host,plugins,tui): implement plugins arm install, remove, enable, disable (CR-03, CW-8080)
-
-Implement the CR-03 plugins arm mutation surface (`install`, `remove`,
-`enable`, `disable`) across `codewhale-plugins`, `codewhale-engine`, and
-`codewhale-tui`, record plugin approval provenance (`installed_by_the_agent` /
-`approved_by`), gate DSH npm transitive resolution and remote tarball
-installs on `BrokerEffect::Reach` / `Write`, enforce atomic review+enable via
-`PluginRegistry::trust_and_enable_by`, synchronously revoke stale/removed
-extension-host owners on `plugins_changed`, and bind `observe_native_activation`
-to `(plugin_id, authority)` via `owner_report_for_authority`:
-
-- `crates/plugins/src/install.rs`, `npm_deps.rs`, `host_services.rs`,
-  `registry.rs`: add shared `installed_by_the_agent`, regular
-  `.installed-from` marker validation (`has_regular_install_marker`),
-  `PreparedSource::Remote` ephemeral staging (`prepare_remote_install`) and
-  `InstallRemoteExact`, `trust_and_enable_by`, `sync_user_plugins_from`, and
-  named `UnresolvedSeed`/`UnresolvedSeeds` aliases for clippy cleanliness.
-- `crates/engine/src/extension_host/dsh_plugins.rs`, `mod.rs`, `registry.r
-
-**File**: `CHANGELOG.md` (modified, +3/-1)
+**File**: `crates/config/src/cloud_facts/registry/tests.rs` (modified, +12/-0)
 ```diff
-@@ -24,6 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Creator mode inspection tools:** wire DeepSeek Harness's unmodified `tool-cordis` in the built-in creator module (`cordis_inspect_list` and `cordis_inspect_query`), serving live host services, events, plugin config schemas, caller-accessible tools, and plugin seats as approval-free Auto inspection tools in Creator mode. (CW-8077)
+@@ -820,8 +820,20 @@ fn founder_signed_registry_admits_new_provider_discovers_it_and_clears_on_disabl
+             .any(|row| row.provider == "tavily" || row.wire_model_id == "tavily-leaked-offering")
+     );
+     assert!(intrinsic_model("acme-sonnet").is_some());
++    assert!(crate::descriptors::is_registry_admitted_base_url(
++        "https://API.acme-cloud.example./v1/chat/completions"
++    ));
++    assert!(!crate::descriptors::is_registry_admitted_base_url(
++        "https://api.other.example/v1"
++    ));
++    assert!(!crate::descriptors::is_registry_admitted_base_url(
++        "http://localhost:11434/v1"
++    ));
  
- - **Plugin creator:** a new built-in row on the Plugins page and a `[features] plugin_creator` key, on by default. It hosts DeepSeek Harness's own `plugin_manager` tool, unmodified, in Codewhale's built-in host process, which runs with the extension-host switch off. It reports "not ready in this build" until the install path behind it lands. (CW-8091)
-+- **Plugin manager mutations (`plugin_manager`):** Creator's built-in `plugins` broker arm now supports `install`, `remove`, `enable`, and `disable` with atomic review-and-enable transitions, agent/person provenance tracking, resolved-reach gating for remote and npm sources, and synchronous revocation across open sessions on disable or removal. (CW-8080)
-+- **Plugin install symlink and reparse guard (Windows):** Plugin install on Windows refuses a source folder that contains a junction or another reparse point, as it already refused symbolic links.
- - **Unmodified DSH plugin compatibility (`CW-8020`):** Admitted unmodified `@deepseek-ai/dsh-*` plugins end-to-end with grant-gated host-service bridges (`workspace`, `llm`, `credentials`, `settings`, `pluginManager`, `deepseekAccount`, `terminal`, `remote`), 9 `host-spine` row bridges, inert/mixed `@deepseek-ai/dsh-agent-presets` handling alongside executable composition rows, duplicate-key `package.json` parsing, sanitized manifest descriptions, a `16,384`-file / `256 MiB` bundle budget, and reviewed `registry.npmjs.org` transitive dependency staging during conversion.
- - **Receipt edit line counts:** `/receipts` and session summaries now count `edit_file` additions and deletions using a line diff of each search/replace pair instead of counting every line of both texts, matching `git diff --stat` and edit cards (with multi-edit calls summed per pair). (CW-8147)
- - **Featured provider disclosure line:** `/provider` and the model picker now show the localized referral disclosure directly below the featured OrcaRouter row across widths (and hide the row when both cannot fit above the list), while keeping `zh-Hans` and mainland China sessions hidden. (CW-8149)
-@@ -171,7 +173,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - ACP: editors can start, list, load, prompt and cancel Codewhale sessions and approve or reject tool permissions through the Runtime; prompts with image or audio blocks and relative session directories are now refused instead of ignored, and edit and read tools report the right kind. Sessions an editor drives now run the plugin tools (TypeScript and DSH, when the extension host is on) and the MCP servers configured in Codewhale; their calls show as ACP tool calls and ask through the session's permission setting, and `initialize` reports the state under `agentCapabilities._meta.codewhale`. MCP servers an editor passes in `mcpServers` and configured shell hooks still do not run in ACP sessions. A real-editor journey is not yet proved.
- - Extension host: the `sessions` and `systemPrompt` services now come from a reviewed DSH adapter instead of inline shims, and `sessions.flush` refuses an empty checkpoint ticket. Session reads and events and the `agent/pre-step` hook are still not available to plugins. (CW-7959)
- - Extension host: DSH service adapters now have one ticketed `dsh/broker` request to the core, each ticket is bound to the plugin, the service and the session, and every service (workspace, llm, network, settings, catalog, terminal and remote) refuses with a typed `not_available` until its broker lands. Nothing new is offered to plugins yet. (CW-8012)
--- **Plugin host services and who approved:** a plugin can now be granted a Codewhale host service, and only by a review that shows it. The review names each service and the plugins it is shared with, and every review records who approved it: you, the agent (in Full Access, in Auto-Review, or from a shell command carrying the agent's mark), or the command line with `--yes`; who turned the plugin on is recorded too. Reviewed plugins share one process while a plugin the agent approved runs in its own host process for that project, so a service works in a host process only while every plugin loaded in it holds the same grant. A plugin the agent approved is active only in its own project and its code never runs beside the plugins you reviewed until you review it. No service is offered yet, and a plugin reviewed before this release holds no grant until it is reviewed again. Once a plugin has been reviewed or turned on in this release, Codewhale 0.10.2 and earlier cannot read the p
+     overlay::clear();
++    assert!(!crate::descriptors::is_registry_admitted_base_url(
++        "https://api.acme-cloud.example/v1"
++    ));
+     assert!(provider_descriptor("acme-cloud").is_none());
+     assert!(provider_descriptor("acme-ai").is_none());
+     assert_eq!(
 ```
 
-**File**: `crates/engine/src/extension_host/composition_review.rs` (modified, +12/-5)
+**File**: `crates/config/src/descriptors.rs` (modified, +19/-0)
 ```diff
-@@ -59,11 +59,18 @@ pub fn review(input: &Value) -> Result<Value, String> {
-         &[],
-     )?;
-     // A bounded process runner, not another Engine or session runtime.
--    tokio::runtime::Builder::new_current_thread()
--        .enable_all()
--        .build()
--        .map_err(|_| "composition review worker is unavailable")?
--        .block_on(run(launch, input))
-+    std::thread::Builder::new()
-+        .name("dsh-composition-review".to_string())
-+        .spawn(move || {
-+            tokio::runtime::Builder::new_current_thread()
-+                .enable_all()
-+                .build()
-+                .map_err(|_| "composition review worker is unavailable".to_string())?
-+                .block_on(run(launch, input))
-+        })
-+        .map_err(|_| "composition review worker is unavailable".to_string())?
-+        .join()
-+        .map_err(|_| "composition review worker failed".to_string())?
+@@ -247,6 +247,25 @@ pub fn active_provider_descriptors() -> Vec<ProviderDescriptor> {
+     out
  }
  
- async fn bounded_read(pipe: impl AsyncRead + Unpin, limit: usize) -> Result<Vec<u8>, String> {
++#[must_use]
++pub fn is_registry_admitted_base_url(base_url: &str) -> bool {
++    fn host(raw: &str) -> Option<String> {
++        url::Url::parse(raw.trim()).ok().and_then(|url| {
++            url.host_str()
++                .map(|host| host.trim_end_matches('.').to_ascii_lowercase())
++        })
++    }
++    let Some(target) = host(base_url) else {
++        return false;
++    };
++    crate::cloud_facts::overlay::pulled_registry().is_some_and(|admitted| {
++        admitted
++            .providers
++            .iter()
++            .any(|provider| host(&provider.base_url).as_deref() == Some(target.as_str()))
++    })
++}
++
+ #[must_use]
+ pub fn provider_descriptor(id: &str) -> Option<ProviderDescriptor> {
+     active_provider_descriptors()
 ```
 
-**File**: `crates/engine/src/extension_host/mod.rs` (modified, +153/-45)
+**File**: `crates/engine/src/client.rs` (modified, +8/-1)
 ```diff
-@@ -165,7 +165,7 @@ pub mod test_support;
- #[cfg(test)]
- mod tests;
- 
--use std::collections::{BTreeMap, BTreeSet, HashSet, VecDeque};
-+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque};
- use std::fmt;
- use std::path::{Path, PathBuf};
- use std::sync::atomic::{AtomicU64, Ordering};
-@@ -185,8 +185,8 @@ use self::supervisor::{HostEvents, HostProcess, HostRequestContext};
- use self::tier::{BuiltinModule, HostCohort, HostTier, PluginCohort};
- use codewhale_config::PluginAuthority;
- use codewhale_config::{EntryRef, OwnerRef};
--use codewhale_plugins::PluginRegistry;
- use codewhale_plugins::activation::{self, PluginActivationCapability};
-+use codewhale_plugins::{PluginRegistry, types::LoadedPlugin};
- 
- /// The host bundle, embedded so every distribution channel carries it.
- const BUNDLE: &[u8] = include_bytes!("../../extension-host/dist/codewhale-extension-host.mjs");
-@@ -886,6 +886,13 @@ impl ManagerShared {
-         }
-     }
- 
-+    fn clear_plugin_diagnostics(&self, plugin_id: &str) {
-+        self.diagnostics
-+            .lock()
-+            .expect("diagnostics lock")
-+            .retain(|entry| entry.plugin_id.as_deref() != Some(plugin_id));
-+    }
-+
-     /// The shared fast liveness guard: current policy, running host, exact
-     /// owner generation/tier and its reviewed authority. `live_host` follows
-     /// with Native receipt validation and another host check; root admission
-@@ -1772,28 +1779,43 @@ impl ExtensionHostManager {
-     /// log. The command renderer escapes each field before displaying it.
-     #[must_use]
-     pub fn owner_report(&self, plugin_id: &str) -> Option<OwnerReport> {
-+        self.owner_report_for(plugin_id, None)
-+    }
-+
-+    #[must_use]
-+    pub(super) fn owner_report_for(
-+        &self,
-+        plugin_id: &str,
-+        expected_authority: Option<&PluginAuthority>,
-+    ) -> Option<OwnerReport> {
-         let registry = self.shared.registry.lock().expect("registry lock");
--        let (state, cohort) = registry
--            .owner(plugin_id)
--            .map(|entry| {
--                let state = match &entry.state {
--                    OwnerState::Failed(reason) => {
--                        OwnerState::Failed(bounded_diagnostic(reason.clone()))
--                    }
--                    OwnerState::Faulted(reason) => {
--                        OwnerState::Faulted(bounded_diagnostic(reason.clone()))
--                    }
--                    state => state.clone(),
--                };
--                (Some(state), Some(entry.cohort.clone()))
-+        let matching_entry = registry.owner(plugin_id).filter(|entry| {
-+            expected_authority.is_none_or(|expected| {
-+                entry.authority.as_ref().is_some_and(|auth| {
-+                    auth.plugin_id == expected.plugin_id
-+                        && auth.content_hash == expected.content_hash
-+                        && auth.capability_hash == expected.capability_hash
-+                        && auth.state_generation == expected.state_generation
-+                        && auth.state_path == expected.state_path
-+                })
-             })
--            .unwrap_or((None, None));
--        let tools = registry
--            .live_tools()
--            .into_iter()
--            .filter(|tool| tool.owner.plugin_id == plugin_id)
--            .map(|tool| tool.name)
--            .collect();
-+        });
-+        let cohort = matching_entry.map(|entry| entry.cohort.clone());
-+        let state = matching_entry.map(|entry| match &entry.state {
-+            OwnerState::Failed(reason) => OwnerState::Failed(bounded_diagnostic(reason.clone())),
-+            OwnerState::Faulted(reason) => OwnerState::Faulted(bounded_diagnostic(reason.clone())),
-+            state => state.clone(),
-+        });
-+        let tools = if state.is_some() {
-+            registry
-+                .live_tools()
-+                .into_iter()
-+                .filter(|tool| tool.owner.plugin_id == plugin_id)
-+                .map(|tool| tool.name)
-+                .collect()
+@@ -2593,7 +2593,14 @@ impl CodewhaleClient {
+             auth_disabled,
+             surface,
+         )?;
+-        let mut builder = crate::platform_client_builder()
++        let transport = if api_provider == ProviderKind::Custom
++            && codewhale_config::descriptors::is_registry_admitted_base_url(base_url)
++        {
++            codewhale_net::guard::public_address_reqwest_client_builder()
 +        } else {
-+            Vec::new()
++            crate::platform_client_builder()
 +        };
-         drop(registry);
-         let mut diagnostics: Vec<_> = self
-             .shared
-@@ -2050,48 +2072,123 @@ impl ExtensionHostManager {
-     /// Replace the snapshot of every engine attached to `plugins`'s
-     /// workspace: a plugin was enabled, disabled, trusted or revoked there.
-     fn refresh_workspace(&self, plugins: &Arc<PluginRegistry>) {
--        let ids: Vec<_> = self
--            .shared
--            .attachments
--            .lock()
--            .expect("attachments lock")
--            .iter()
--            .filter(|(_, state)| state.plugins.workspace() == plugins.workspace())
--            .map(|(id, _)| *id)
--            .collect();
--        for id in ids {
--            self.shared.core_calls.revoke_attachment(id);
--        }
--        for state in self
--            .shared
--            .attachments
--            .lock()
--            .expect("attachments lock")
--            .valu
++        let mut builder = transport
+             .default_headers(headers)
+             .user_agent(client_user_agent(api_provider))
+             .connect_timeout(config.connect_timeout())
 ```
 
-**File**: `crates/plugins/src/discovery.rs` (modified, +50/-0)
+**File**: `crates/engine/src/client/test_cases_04.rs` (modified, +90/-0)
 ```diff
-@@ -410,6 +410,22 @@ fn load_plugin(
+@@ -1623,3 +1623,93 @@
+             );
+         }
      }
-     let validated = refreshed;
- 
-+    let install_nonce = match read_install_nonce(&validated.canonical_root) {
-+        Ok(nonce) => nonce,
-+        Err(error) => {
-+            diagnostics.push(PluginDiagnostic::warning(
-+                "install-record-invalid",
-+                error,
-+                Some(
-+                    validated
-+                        .canonical_root
-+                        .join(codewhale_skill_install::install::INSTALLED_FROM_MARKER),
-+                ),
-+            ));
-+            None
-+        }
-+    };
 +
-     Ok(LoadedPlugin {
-         id,
-         manifest: validated.manifest,
-@@ -430,11 +446,45 @@ fn load_plugin(
-         enabled_by: None,
-         host_services: Vec::new(),
-         outside_reach: false,
-+        install_nonce,
-         skill_snapshots,
-         diagnostics,
-     })
++    #[tokio::test]
++    async fn registry_admitted_custom_hosts_refuse_private_addresses_at_connect_time() {
++        use codewhale_config::cloud_facts::{
++            BuiltinNames, KeyRole, REGISTRY_SCHEMA, Registry, VerifiedRegistry, admit_registry,
++            overlay,
++        };
++        use tokio::io::{AsyncReadExt as _, AsyncWriteExt as _};
++
++        let listener = tokio::net::TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 0))
++            .await
++            .expect("bind");
++        let port = listener.local_addr().expect("addr").port();
++        tokio::spawn(async move {
++            while let Ok((mut socket, _)) = listener.accept().await {
++                tokio::spawn(async move {
++                    let mut buf = [0u8; 2048];
++                    let _ = socket.read(&mut buf).await;
++                    let _ = socket
++                        .write_all(b"HTTP/1.1 200 OK\r\ncontent-length: 2\r\nconnection: close\r\n\r\nok")
++                        .await;
++                });
++            }
++        });
++        let base_url = format!("http://localhost:{port}/v1");
++        let probe = |provider: ProviderKind| {
++            let client =
++                CodewhaleClient::build_http_client("sk-test", &HashMap::new(), provider, &base_url)
++                    .expect("client");
++            let url = format!("{base_url}/models");
++            async move { client.get(url).send().await }
++        };
++
++        overlay::clear();
++        assert!(probe(ProviderKind::Custom).await.is_ok());
++
++        let registry: Registry = serde_json::from_value(json!({
++            "schema": REGISTRY_SCHEMA,
++            "revision": overlay::highest_seen(REGISTRY_SCHEMA).unwrap_or(0) + 1,
++            "generated_at": "2026-11-17T00:00:00Z",
++            "providers": [{
++                "id": "acme-rebind",
++                "label": "Acme Rebind",
++                "wire_policy": "openai-compatible",
++                "base_url": "https://api.acme-rebind.example/v1",
++                "admission": {"founder_signature": "required"}
++            }],
++            "models": [],
++            "offerings": [],
++            "dialects": {}
++        }))
++        .expect("registry");
++        let mut admitted = admit_registry(
++            VerifiedRegistry {
++                registry,
++                key_id: "engine-guard-test".to_string(),
++                key_role: KeyRole::Founder,
++                sha256: String::new(),
++                generated_at_unix: 0,
++                not_after: None,
++            },
++            &BuiltinNames::bundled(),
++        );
++        assert_eq!(admitted.providers.len(), 1, "{:?}", admitted.refused);
++        admitted.providers[0].base_url.clone_from(&base_url);
++        let ticket = overlay::configure(true, "engine-pulled-guard-test").expect("ticket");
++        assert!(overlay::publish_registry(
++            &ticket,
++            Some(std::sync::Arc::new(admitted)),
++            |_| {}
++        ));
++
++        let refused = probe(ProviderKind::Custom).await.expect_err("guarded");
++        let chain = format!("{:?}", anyhow::Error::from(refused));
++        assert!(chain.contains("restricted address"), "{chain}");
++        assert!(probe(ProviderKind::Ollama).await.is_ok());
++        assert!(probe(ProviderKind::Vllm).await.is_ok());
++        assert!(
++            CodewhaleClient::build_http_client(
++                "sk-test",
++                &HashMap::new(),
++                ProviderKind::Custom,
++                "http://127.0.0.1:1/v1",
++            )
++            .is_ok()
++        );
++
++        overlay::clear();
++        assert!(probe(ProviderKind::Custom).await.is_ok());
++    }
+```
+
+**File**: `crates/engine/src/lib.rs` (modified, +2/-1)
+```diff
+@@ -91,7 +91,8 @@ pub mod work_graph;
+ /// environment at build time, so one builder decides the route for the whole
+ /// process lifetime. Installing the loopback fallback here, rather than at
+ /// selected call sites, keeps those clients on the same proxy rules. Reviewed
+-/// plugin remotes and guarded fetches do not come through here: they use
++/// plugin remotes, guarded fetches and model clients for registry-admitted
++/// custom providers do not come through here: they use
+ /// `codewhale_net::guard::guarded_reqwest_client_builder`, which disables
+ /// ambient proxies on purpose.
+ pub(crate) fn platform_client_builder() -> reqwest::ClientBuilder {
+```
+
+**File**: `crates/net/src/guard.rs` (modified, +52/-0)
+```diff
+@@ -29,6 +29,41 @@ pub fn guarded_reqwest_client_builder() -> reqwest::ClientBuilder {
+     codewhale_release::tls::reqwest_client_builder().no_proxy()
  }
  
-+pub(crate) fn read_install_nonce(root: &Path) -> Result<Option<String>, String> {
-+    use std::io::Read as _;
++#[derive(Clone, Copy, Debug, Default)]
++pub struct PublicAddressResolver;
 +
-+    let path = root.join(codewhale_skill_install::install::INSTALLED_FROM_MARKER);
-+    let metadata = match fs::symlink_metadata(&path) {
-+        Ok(metadata) => metadata,
-+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(None),
-+        Err(error) => {
-+            return Err(format!("failed to inspect {}: {error}", path.display()));
-+        }
-+    };
-+    if metadata_is_link_or_reparse(&metadata) || !metadata.file_type().is_file() {
-+        return Err(format!(
-+            "{} is not an ordinary regular file",
-+            path.display()
-+        ));
++impl reqwest::dns::Resolve for PublicAddressResolver {
++    fn resolve(&self, name: reqwest::dns::Name) -> reqwest::dns::Resolving {
++        let host = name.as_str().to_string();
++        Box::pin(async move {
++            let addrs: Vec<SocketAddr> = tokio::time::timeout(
++                DNS_PREFLIGHT_TIMEOUT,
++                tokio::net::lookup_host((host.as_str(), 0u16)),
++            )
++            .await
++            .map_err(|_| format!("timed out resolving {host}"))?
++            .map_err(|error| format!("could not resolve {host}: {error}"))?
++            .collect();
++            if let Some(addr) = addrs.iter().find(|addr| is_restricted_ip(&addr.ip())) {
++                return Err(format!(
++                    "{host} resolved to restricted address {} (private/loopback/link-local/metadata); registry-admitted providers must resolve to public addresses",
++                    addr.ip()
++                )
++                .into());
++            }
++            if addrs.is_empty() {
++                return Err(format!("{host} resolved to no addresses").into());
++            }
++            let addrs: reqwest::dns::Addrs = Box::new(addrs.into_iter());
++            Ok(addrs)
++        })
 +    }
-+    let file = codewhale_util::bundle_file::open_bundle_file(&path)
-+        .map_err(|error| format!("failed to open {}: {error}", path.display()))?;
-+    let mut raw = String::new();
-+    file.take(64 * 1024 + 1)
-+        .read_to_string(&mut raw)
-+        .map_err(|error| format!("failed to read {}: {error}", path.display()))?;
-+    if raw.len() > 64 * 1024 {
-+        return Err(format!("{} exceeds maximum marker size", path.display()));
-+    }
-+    Ok(
-+        serde_json::from_str::<codewhale_skill_install::install::InstalledFromMarker>(&raw)
-+            .ok()
-+            .and_then(|marker| marker.install_nonce().map(str::to_string)),
-+    )
 +}
 +
- fn parse_skill_snapshots(
-     validated: &ValidatedManifest,
- ) -> Result<(Vec<PluginSkillSnapshot>, Vec<PluginDiagnostic>), String> {
++pub fn public_address_reqwest_client_builder() -> reqwest::ClientBuilder {
++    guarded_reqwest_client_builder().dns_resolver(PublicAddressResolver)
++}
++
+ const CLOUD_METADATA_V4: [Ipv4Addr; 4] = [
+     Ipv4Addr::new(169, 254, 169, 254),
+     Ipv4Addr::new(100, 100, 100, 200),
+@@ -522,6 +557,23 @@ impl<'a> GuardedGet<'a> {
+ #[cfg(test)]
+ mod tests {
+     use super::*;
++
++    #[tokio::test]
++    async fn public_address_resolver_refuses_names_that_resolve_to_loopback() {
++        use reqwest::dns::Resolve as _;
++        use std::str::FromStr as _;
++        let error = match PublicAddressResolver
++            .resolve(reqwest::dns::Name::from_str("localhost").expect("name"))
++            .await
++        {
++            Ok(addrs) => panic!(
++                "localhost admitted: {:?}",
++                addrs.collect::<Vec<SocketAddr>>()
++            ),
++            Err(error) => error.to_string(),
++        };
++        assert!(error.contains("restricted address"), "{error}");
++    }
+     #[cfg(not(windows))]
+     use std::io::{Read, Write};
+     #[cfg(not(windows))]
 ```
 
-**File**: `crates/plugins/src/host_service_tests.rs` (modified, +194/-0)
+**File**: `crates/tui/CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -1203,3 +1203,197 @@ fn v0_10_2_reads_this_state_file_until_a_plugin_is_reviewed_or_turned_on_here()
-     let refused = older(&config).unwrap_err().to_string();
-     assert!(refused.contains("unknown field `version`"), "{refused}");
+@@ -17,7 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **One configured-model selection chain:** a model id that a provider does not accept now gives the same clear error in every command (`codewhale model resolve`, the terminal UI, and the app-server) instead of being sent anyway by some of them, and configured default models resolve through one shared chain across every surface. (CW-8250)
+ - **Model limits, capabilities and prices follow the resolved route:** context windows, output limits, thinking support, request wire selection, Google thought-signature and reasoning controls, and turn prices now come from the same catalog entry the request uses, so they match the model actually sent. (CW-8251)
+ - **Standing-instruction receipt over the Runtime API:** `GET /v1/threads/{id}/context/standing` (capability `thread_standing_context`) returns the receipt the Engine already computes for a live thread: per-item estimated tokens kept and dropped, the action taken (kept, trimmed, skipped, refused) and the limit that caused it, scope budgets and totals, relative paths only, the 65,536-byte delivery cap with whether the delivered message was truncated, and a `not_measured` list (skills, agents, MCP tool schemas, memory) so a client does not show zero. Read-only; prompts and the cached prefix are unchanged.
+-- **Signed model and provider registry wired into resolution and discovery (off by default):** when `[cloud_facts]` is enabled (`CODEWHALE_CLOUD_FACTS=1` or `enabled = true`), Codewhale fetches the signed models-and-providers list (`registry.json`, `codewhale.registry.v1`) from `https://codewhale.net/api/facts/v1/registry` by default (or `CODEWHALE_REGISTRY_URL` / `CODEWHALE_REGISTRY_PATH`, or `CODEWHALE_CLOUD_FACTS_URL` when it contains `{channel}`), verifies it against the pinned keys, caches the last good copy at `$CODEWHALE_HOME/facts/registry-cache.json`, and applies verified models, offerings, aliases and admitted providers across `resolve_model`, `RouteResolver`, catalog lookups and `/provider` discovery. Scheduled `automation` signatures with a non-expired `not_after` within seven days of `generated_at` may update models, offerings and bundled-provider naming aliases, while adding a new OpenAI-compatible HTTPS provider requires a `founder` signature and can never change a built-in provider's address, key or protocol or reuse another product or provider `*_API_KEY` variable. Disabling cloud facts, expiry past `not_after`, `CODEWHALE_DISABLE_CLOUD_FACTS=1`, or a failed/rejected pull leaves or restores the copy already in use (or the bundled seed) without delaying startup; CI suppresses network pulls. Source only: cloud facts remain off by default and publication is separate. See `docs/CLOUD_FACTS.md`. (CW-8246)
++- **Signed model and provider registry wired into resolution and discovery (off by default):** when `[cloud_facts]` is enabled (`CODEWHALE_CLOUD_FACTS=1` or `enabled = true`), Codewhale fetches the signed models-and-providers list (`registry.json`, `codewhale.registry.v1`) from `https://codewhale.net/api/facts/v1/registry` by default (or `CODEWHALE_REGISTRY_URL` / `CODEWHALE_REGISTRY_PATH`, or `CODEWHALE_CLOUD_FACTS_URL` when it contains `{channel}`), verifies it against the pinned keys, caches the last good copy at `$CODEWHALE_HOME/facts/registry-cache.json`, and applies verified models, offerings, aliases and admitted providers across `resolve_model`, `RouteResolver`, catalog lookups and `/provider` discovery. Model requests to a custom provider whose host a verified registry admitted resolve that host on every connection, without an ambient proxy, and are refused when it answers with a private, loopback, link-local or cloud-metadata address; built-in providers (including local Ollama, vLLM and SGLang) and custom endpoints on any other host are unchanged. Scheduled `automation` signatures with a non-expired `not_after` within seven days of `generated_at` may update models, offerings and bundled-provider naming aliases, while adding a new OpenAI-compatible HTTPS provider requires a `founder` signature and can never change a built-in provider's address, key or protocol or reuse another product or provider `*_API_KEY` variable. Disabling cloud facts, expiry past `not_after`, `CODEWHALE_DISABLE_CLOUD_FACTS=1`, or a failed/rejected pull leaves or restores the copy already in use (or the bundled seed) without delaying startup; CI suppresses network pulls. Source only: cloud facts remain off by default and publication is separate. See `docs/CLOUD_FACTS.md`. (CW-8246)
+ - **Gemini 4 Hydrogen:** Google's `gemini-4-hydrogen` is in the catalog and the Google model list, with a 1,048,576-token context window and 65,536 output tokens. The shut-down `gemini-3-pro-preview` leaves the Google list.
+ - **Model shorthands work the same everywhere:** short names that previously worked only in `/provider <name> <model>` or `codewhale model resolve` — such as `flash`, `pr
+```
+
+---
+
+### Incident Patch 3: `8cc2b95b` (2026-11-18)
+**Commit Message**: fix(config): every config load refuses a user-layer tool_launcher (CW-8021)
+
+The Boat qualification step "user-layer tool_launcher was not rejected"
+failed because `codewhale model resolve` exited 0 with tool_launcher in
+the user's config.toml. The refusal lived only in the runtime's
+Config::load_with. The CLI dispatcher, and the app-server config and
+secrets RPCs, load the same file through codewhale_config::ConfigStore,
+which parsed the key into extras and carried on.
+
+No tool ever ran through that path: every command that executes tools
+loads the runtime Config, which already refused the file, and the managed
+launcher is read separately from the sealed managed file. So this was an
+inconsistent answer at the trust boundary, not a bypass. The decision is
+refuse, not confine: a launcher is a privilege-changing prefix and is
+read only from the managed layer, so any user-layer copy is an error on
+every surface.
+
+The check now lives in codewhale_config (reject_unmanaged_tool_launcher,
+tool_launcher_in_profiles) and both ConfigStore::load and the runtime
+loader call it, so the CLI, desktop RPCs and Engine give the same error.
+The runtime's managed_tool_launcher reuses the shared profil
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -254,6 +254,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **Withdrawn desktop account plugins connector removed on upgrade:** the old desktop app's `codewhale-desktop-account-plugins` bundle, whose one connector (shown as `plugin-…-codewhale-desktop-account-plugins-codewhale-plugins`) failed on every session start, is now removed at startup together with its plugin record, and a `plugin.retired` line is written to `audit.log`. Only an installed copy whose single connector still points at the retired account endpoint is removed; other plugins, and a bundle of that name you changed or placed by hand, are left alone.
+ - **Linked AGENTS.md inside the workspace:** a project `AGENTS.md`, `CLAUDE.md`, `.codewhale/instructions.md` or rules file that is a symlink to another file in the same directory tree now loads instead of being refused with `Refusing symlinked file` and leaving the session without project instructions. Every link in the chain is resolved first and the file is still refused, with a visible skip notice, when it resolves outside the workspace through `..`, an absolute target, a chain of links or a Windows junction. (CW-8266)
+ - **A connector tool switched Off leaves conversations that already used it:** turning off a tool such as `close_issue` in Settings or with `PATCH /v1/apps/mcp/servers/{name}` now takes it out of the next turn of a conversation that had already found it through tool search, not only out of new conversations. The Engine rereads the connector configuration when it gathers a turn's tools and reconnects the changed server under the new settings.
++- **`tool_launcher` in a user config is refused by every command:** `codewhale model resolve`, `codewhale config`, the other CLI subcommands and the desktop's config and secrets calls now stop with the same error the Engine gives when `config.toml` sets `tool_launcher` at the top level or in a profile, instead of loading the file and exiting 0. The key is still read only from the managed configuration. (CW-8021)
+ - **CJK text in terminal columns:** the command palette, the hotbar setup rows, the `/config` detail labels, the workflow history lanes, the approval card intent and parameter lines and the elevation prompt now pad and cut text by the columns it takes on screen, so Chinese, Japanese and Korean labels no longer push later columns right or get cut to a third of their space. Thanks [@luochen211](https://github.com/luochen211) (#7273).
+ - **Slash-command arguments after any whitespace:** `/config` splits its key from its value, and finds a trailing `--save`, after a tab or a full-width space (U+3000) from a CJK input method, not only after an ASCII space, and a user command's `$ARGUMENTS` and `$N` are filled in one pass, so `$1` or `$10` written inside your own argument is not expanded again. Thanks [@luochen211](https://github.com/luochen211) (#7269).
+ - **Negative retry delays:** a `[retry]` setting with a negative or non-finite `initial_delay`, `max_delay` or `exponential_base` is now refused when the configuration loads, where `jitter = false` with `max_delay = -1` made the first transport retry panic. Thanks [@luochen211](https://github.com/luochen211) (#7275).
+```
+
+**File**: `crates/config/src/config_store.rs` (modified, +22/-0)
+```diff
+@@ -127,6 +127,27 @@ pub fn parse_config_toml(contents: &str) -> Result<ConfigToml, toml::de::Error>
+     parse_config_toml_str(contents)
+ }
+ 
++pub fn tool_launcher_in_profiles(document: &toml::Value) -> bool {
++    document
++        .get("profiles")
++        .and_then(toml::Value::as_table)
++        .is_some_and(|profiles| {
++            profiles
++                .values()
++                .any(|profile| profile.get("tool_launcher").is_some())
++        })
++}
++
++pub fn reject_unmanaged_tool_launcher(document: &toml::Value, path: &Path) -> Result<()> {
++    if document.get("tool_launcher").is_some() || tool_launcher_in_profiles(document) {
++        bail!(
++            "`tool_launcher` in {} is not accepted: it is read only from the managed configuration (CODEWHALE_MANAGED_CONFIG_PATH, or the default managed path), in a file the Engine cannot write",
++            quote_os_path(path)
++        );
++    }
++    Ok(())
++}
++
+ impl ConfigStore {
+     /// The validated file snapshot captured by the last load or successful
+     /// save. This read-only view preserves literal provider identities that a
+@@ -154,6 +175,7 @@ impl ConfigStore {
+                     toml_error_location(Some(&raw), &err)
+                 )
+             })?;
++            reject_unmanaged_tool_launcher(&raw_document, &path)?;
+             if let Some(provider_id) = raw_document.get("provider").and_then(toml::Value::as_str) {
+                 parsed
+                     .bind_persisted_provider_id(provider_id)
+```
+
+**File**: `crates/config/src/tests.rs` (modified, +17/-0)
+```diff
+@@ -11145,3 +11145,20 @@ id = "account-model"
+     assert!(resolved.model_error.is_none());
+     assert!(resolved.route.is_ok());
  }
 +
 +#[test]
-+fn an_identical_reinstall_cannot_match_a_registry_read_before_the_removal() {
-+    let _policy = TestPolicyGuard::extension_host(true);
-+    let tmp = tempfile::tempdir().unwrap();
-+    let config = config(tmp.path());
-+
-+    write_plugin(&config, "alpha", &[], "export function apply() {}\n");
-+    let by_agent = agent(&config, AgentPosture::FullAccess);
-+    let mut first = discover_with_config(&config);
-+    approve(&mut first, "alpha", by_agent.clone());
-+
-+    let stale = discover_with_config(&config);
-+    let stale_staged = stale.get("alpha").unwrap().staged_root.clone().unwrap();
-+    assert!(stale_staged.is_dir());
-+
-+    discover_with_config(&config)
-+        .prune_state_entry("alpha")
-+        .unwrap();
-+    let mut fresh = discover_with_config(&config);
-+    approve(&mut fresh, "alpha", person());
-+    assert!(stale_staged.is_dir());
-+
-+    let before_state = fs::read(&config.state_path).unwrap();
-+    let mut stale_review = stale.clone();
-+    let shown = stale_review
-+        .host_service_review_for("alpha", &by_agent)
-+        .map(|review| review.token);
-+    let review_refused = stale_review
-+        .trust_reviewed(
-+            "alpha",
-+            ReviewApproval {
-+                approved_by: by_agent.clone(),
-+                host_services: shown,
-+            },
-+        )
-+        .unwrap_err();
-+    assert!(
-+        review_refused.contains("state or review changed"),
-+        "{review_refused}"
-+    );
-+    assert_eq!(fs::read(&config.state_path).unwrap(), before_state);
-+
-+    let mut stale_enable = stale;
-+    let enable_refused = stale_enable
-+        .enable_by("alpha", by_agent.clone())
-+        .unwrap_err();
-+    assert!(
-+        enable_refused.contains("state or review changed"),
-+        "{enable_refused}"
-+    );
-+    assert_eq!(fs::read(&config.state_path).unwrap(), before_state);
-+
-+    let install_tmp = tempfile::tempdir().unwrap();
-+    let source = install_tmp.path().join("beta-src");
-+    fs::create_dir_all(source.join("native")).unwrap();
-+    fs::write(
-+        source.join("native/index.mjs"),
-+        "export function apply() {}\n",
-+    )
-+    .unwrap();
-+    fs::write(
-+        source.join("plugin.toml"),
-+        "schema_version = 1\n[plugin]\nname = \"beta\"\nversion = \"1.0.0\"\n[native]\npath = \"native/index.mjs\"\n",
-+    )
-+    .unwrap();
-+    let install_config = super::discovery::DiscoveryConfig {
-+        workspace: install_tmp.path().join("project"),
-+        user_plugins_dir: install_tmp.path().join("user"),
-+        workspace_plugins_dir: install_tmp.path().join("workspace"),
-+        builtin_plugin_dirs: Vec::new(),
-+        state_path: install_tmp.path().join("state/plugin-state.json"),
-+    };
-+    fs::create_dir_all(&install_config.workspace).unwrap();
-+    fs::create_dir_all(&install_config.user_plugins_dir).unwrap();
-+    fs::create_dir_all(&install_config.workspace_plugins_dir).unwrap();
-+
-+    let runtime = tokio::runtime::Builder::new_current_thread()
-+        .enable_all()
-+        .build()
-+        .unwrap();
-+    let network = codewhale_net::network_policy::NetworkPolicy::default();
-+    let mut reg = discover_with_config(&install_config);
-+    let installed_first = runtime
-+        .block_on(super::mutation::execute(
-+            super::mutation::PluginMutationRequest::Install {
-+                source: super::install::PluginInstallSource::parse(source.to_str().unwrap())
-+                    .unwrap(),
-+            },
-+            &super::mutation::PluginMutationContext {
-+                network: &network,
-+                max_size: super::install::DEFAULT_MAX_SIZE_BYTES,
-+            },
-+            &mut reg,
-+        ))
-+        .unwrap();
-+    assert_eq!(
-+        installed_first.outcome,
-+        super::mutation::PluginMutationOutcome::Installed
-+    );
-+    let same_agent = agent(&install_config, AgentPosture::FullAccess);
-+    let mut reg = discover_with_config(&install_config);
-+    approve(&mut reg, "beta", same_agent.clone());
-+
-+    let pre_removal = discover_with_config(&install_config);
-+    let first_nonce = pre_removal.get("beta").unwrap().install_nonce.clone();
-+    assert!(first_nonce.is_some());
-+    let first_staged = pre_removal
-+        .get("beta")
-+        .unwrap()
-+        .staged_root
-+        .clone()
-+        .unwrap();
-+    assert!(first_staged.is_dir());
-+
-+    let mut deleter = discover_with_config(&install_config);
-+    deleter.disable("beta").unwrap();
-+    let mut deleter = discover_with_config(&install_config);
-+    runtime
-+        .block_on(super::mutation::execute(
-+            super::mutation::PluginMutationRequest::Uninstall {
-+                selector: "beta".to_string(),
-+            },
-+            &super::mutation::PluginMutationContext {
-+ 
-```
-
-**File**: `crates/plugins/src/install/dsh.rs` (modified, +12/-0)
-```diff
-@@ -3485,6 +3485,18 @@ pub fn plan_npm_install(
- // Entry point
- // ─────────────────────────────────────────────────────────────────────────────
- 
-+/// Return whether a DSH package imports declared external npm dependencies not bundled in `node_modules`.
-+pub fn has_unresolved_npm_dependencies(package: &Path) -> Result<bool> {
-+    let package = Package::open(package)?;
-+    let loaded = load_bundle(&package)?;
-+    let (_, seeds) = super::npm_deps::collect_unresolved_seeds(
-+        &package.root,
-+        &loaded.manifest,
-+        &loaded.entries,
-+    )?;
-+    Ok(!seeds.is_empty())
++fn config_store_refuses_a_user_layer_tool_launcher() {
++    let dir = tempfile::tempdir().expect("tempdir");
++    let config_path = dir.path().join("config.toml");
++    for body in [
++        "tool_launcher = [\"/usr/bin/sudo\", \"-n\", \"-u\", \"agent\", \"--\"]\n",
++        "[profiles.work]\ntool_launcher = [\"/usr/bin/sudo\"]\n",
++    ] {
++        fs::write(&config_path, body).expect("write config");
++        let error = ConfigStore::load(Some(config_path.clone()))
++            .expect_err("a user-layer tool_launcher is a load error");
++        assert!(error.to_string().contains("`tool_launcher`"), "{error}");
++    }
++    fs::write(&config_path, "model = \"deepseek-v4-flash\"\n").expect("write config");
++    ConfigStore::load(Some(config_path)).expect("a config without a launcher loads");
 +}
-+
- /// Convert the DSH bundle package at `package` into a fresh native bundle at
- /// `output`. `output` must not exist; nothing is written unless every
- /// component validated, and a failed write removes what it created.
 ```
 
-**File**: `crates/plugins/src/install/mod.rs` (modified, +395/-14)
+**File**: `crates/runtime/src/config.rs` (modified, +4/-30)
 ```diff
-@@ -93,6 +93,7 @@ mod tarball;
- #[cfg(test)]
- mod tests;
- 
-+pub use npm_deps::NpmDepsNetworkError;
- use place::{ensure_target_within_plugins_dir, finalize_install, plugin_target_path};
- use stage::stage_local_copy;
- pub use summary::{PluginSummary, PreviousInstall, SummaryClause, SummaryInput, build_summary};
-@@ -130,6 +131,14 @@ impl PluginInstallSource {
-     ///   (via [`InstallSource::parse`]; registry names are unreachable here)
-     /// * `path:<dir>` or any other value → [`PluginInstallSource::LocalPath`]
-     pub fn parse(spec: &str) -> Result<Self> {
-+        Self::parse_inner(spec, true)
-+    }
-+
-+    pub fn parse_syntax(spec: &str) -> Result<Self> {
-+        Self::parse_inner(spec, false)
-+    }
-+
-+    fn parse_inner(spec: &str, inspect_fs: bool) -> Result<Self> {
-         let trimmed = spec.trim();
-         if trimmed.is_empty() {
-             bail!("install source must not be empty");
-@@ -197,7 +206,7 @@ impl PluginInstallSource {
-             ))));
-         }
-         if let Some(path) = trimmed.strip_prefix("path:") {
--            return Self::local(path);
-+            return Self::local(path, inspect_fs);
-         }
-         if let Some(path) = trimmed.strip_prefix("dsh:") {
-             let path = path.trim();
-@@ -221,16 +230,16 @@ impl PluginInstallSource {
+@@ -3684,7 +3684,9 @@ impl Config {
+                 if let Some(msg) = warn_on_misplaced_top_level_keys(&contents) {
+                     tracing::warn!("{msg}");
                  }
-             };
-         }
--        Self::local(trimmed)
-+        Self::local(trimmed, inspect_fs)
-     }
- 
--    fn local(spec: &str) -> Result<Self> {
-+    fn local(spec: &str, inspect_fs: bool) -> Result<Self> {
-         let trimmed = spec.trim();
-         if trimmed.is_empty() {
-             bail!("local install path must not be empty");
-         }
-         let path = PathBuf::from(trimmed);
--        if dsh::try_is_dsh_package(&path)? {
-+        if inspect_fs && dsh::try_is_dsh_package(&path)? {
-             return Ok(Self::Dsh(path));
-         }
-         Ok(Self::LocalPath(path))
-@@ -479,7 +488,22 @@ async fn install_inner(
-             )
-         }
-         PluginInstallSource::Dsh(package) => {
--            let converted = convert_dsh_off_runtime(package.clone(), network.clone()).await?;
-+            let converted = match convert_dsh_off_runtime(package.clone(), network.clone()).await {
-+                Ok(converted) => converted,
-+                Err(err) => {
-+                    if let Some(net_err) = err.downcast_ref::<NpmDepsNetworkError>() {
-+                        return Ok(match net_err {
-+                            NpmDepsNetworkError::NeedsApproval(host) => {
-+                                PluginInstallOutcome::NeedsApproval((*host).to_string())
-+                            }
-+                            NpmDepsNetworkError::Denied(host) => {
-+                                PluginInstallOutcome::NetworkDenied((*host).to_string())
-+                            }
-+                        });
-+                    }
-+                    return Err(err);
+-                reject_unmanaged_tool_launcher(&contents, path)?;
++                if let Ok(document) = toml::from_str::<toml::Value>(&contents) {
++                    codewhale_config::reject_unmanaged_tool_launcher(&document, path)?;
 +                }
-+            };
-             install_converted_dsh(
-                 converted,
-                 user_plugins_dir,
-@@ -621,6 +645,174 @@ fn verify_expected_content_hash(
-     .into())
+                 parsed
+             } else {
+                 apply_profile(ConfigFile::default(), profile)?;
+@@ -10375,41 +10377,13 @@ fn apply_managed_overrides(config: &mut Config) -> Result<()> {
+     Ok(())
  }
  
-+#[derive(Debug, Clone)]
-+pub struct DownloadedRemote {
-+    pub remote: InstallSource,
-+    pub resolved_url: String,
-+    pub bytes: Vec<u8>,
-+}
-+
-+#[derive(Debug)]
-+pub enum RemoteDownloadOutcome {
-+    Downloaded {
-+        archive: DownloadedRemote,
-+        has_npm_deps: bool,
-+    },
-+    NeedsApproval(String),
-+    NetworkDenied(String),
-+}
-+
-+#[derive(Debug, Clone)]
-+pub struct PreparedRemote {
-+    pub remote: InstallSource,
-+    pub resolved_url: String,
-+    pub bytes: Vec<u8>,
-+    pub name: String,
-+    pub content_hash: String,
-+}
-+
-+#[derive(Debug)]
-+pub enum RemotePreviewOutcome {
-+    Ready(PreparedRemote),
-+    NeedsApproval(String),
-+    NetworkDenied(String),
-+}
-+
-+pub async fn download_remote_install_archive(
-+    remote: InstallSource,
-+    max_size: u64,
-+    network: &NetworkPolicy,
-+) -> Result<RemoteDownloadOutcome> {
-+    let (bytes, url) = match fetch_tarball(&remote, network, max_size).await? {
-+        FetchOutcome::Bytes { bytes, url } => (bytes, url),
-+        FetchOutcome::NeedsApproval(host) => {
-+            return Ok(RemoteDownloadOutcome::NeedsApproval(host));
-+        }
-+        FetchOutcome::Denied(host) => {
-+            return Ok(RemoteDownloadOutcome::NetworkDenied(host));
-+        }
-+    };
-+    let checksum = sha256_hex(&bytes);
-+    let (bundle_path, pinned_sha256) = remote_fragment(&remote)?;
-+    if let Some(pinned) = pinned_sha256
-+        && pinned != checksum
-+    {
-+        return Err(PluginArchiveMismatch {
-+            url,
-+            expected: pinned,
-+            actual: checksum,
-+        }
-+        .into());
-+    }
-+    let bytes_clone = bytes.clone();
-+    #[cfg(any(test, feature = "test-support"))]
-+    let env_scope = codewhale_runtime::test_support::env_scope_ticket();
-+    let has_npm_deps = tokio::task::spawn_blocking(move || -> Result<bool> {
-+        #[cfg(any(test, feature = "test-
+-fn tool_launcher_layer_error(path: &Path) -> anyhow::Error {
+-    anyhow::anyhow!(
+-        "`tool_launcher` in {} is not accepted: it is read only from the managed configuration (CODEWHALE_MANAGED_CONFIG_PATH, or the default managed path), in a file the Engine cannot write",
+-        codewhale_config::quote_os_path(path)
+-    )
+-}
+-
+-fn tool_launcher_in_profiles(document: &toml::Value) -> bool {
+-    document
+-        .get("profiles")
+-        .and_then(toml::Value::as_table)
+-        .is_some_and(|profiles| {
+-            profiles
+-                .values()
+-                .any(|profile| profile.get("tool_launcher").is_some())
+-        })
+-}
+-
+-fn reject_unmanaged_tool_launcher(raw: &str, path: &Path) -> Result<()> {
+-    let Ok(document) = toml::from_str::<toml::Value>(raw) else {
+-        return Ok(());
+-    };
+-    if document.get("tool_launcher").is_some() || tool_launcher_in_profiles(&document) {
+-        return Err(tool_launcher_layer_error(path));
+-    }
+-    Ok(())
+-}
+-
+ fn managed_tool_launcher(path: &Path) -> Result<Option<Vec<String>>> {
+     let raw = fs::read_to_string(path)
+         .with_context(|| format!("Failed to read config file: {}", path.display()))?;
+     let Ok(document) = toml::from_str::<toml::Value>(&raw) else {
+         return Ok(None);
+     };
+-    if tool_launcher_in_profiles(&document) {
++    if codewhale_config::tool_launcher_in_profiles(&document) {
+         anyhow::bail!(
+             "`tool_launcher` in {} belongs at the top level of the managed configuration, not in a profile",
+             codewhale_config::quote_os_path(path)
 ```
 
-**File**: `crates/plugins/src/install/npm_deps.rs` (modified, +415/-228)
+**File**: `crates/tui/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -1,4 +1,5 @@
- use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque};
-+use std::fmt;
- use std::fs::{self, File};
- use std::io::Write;
- use std::path::{Component, Path, PathBuf};
-@@ -8,7 +9,7 @@ use std::time::Duration;
- use anyhow::{Context, Result, bail};
- use base64::Engine as _;
- use codewhale_net::guard::{GuardedGet, PrivateTargets};
--use codewhale_net::network_policy::NetworkPolicy;
-+use codewhale_net::network_policy::{Decision, NetworkPolicy};
- use codewhale_skill_install::bounded_tar::{
-     entry_names_within_bound, map_stream_limit, open_bounded_tarball,
- };
-@@ -22,12 +23,43 @@ use sha2::{Digest, Sha512};
- use super::dsh::{Value, presets};
- 
- const NPM_REGISTRY: &str = "https://registry.npmjs.org";
-+const NPM_REGISTRY_HOST: &str = "registry.npmjs.org";
-+
-+#[derive(Debug, Clone, PartialEq, Eq)]
-+pub enum NpmDepsNetworkError {
-+    NeedsApproval(&'static str),
-+    Denied(&'static str),
-+}
-+
-+impl fmt::Display for NpmDepsNetworkError {
-+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-+        match self {
-+            Self::NeedsApproval(host) => write!(
-+                f,
-+                "Network approval required for {host}; use /network allow {host}, then retry"
-+            ),
-+            Self::Denied(host) => write!(f, "Network access denied for {host}"),
-+        }
-+    }
-+}
-+
-+impl std::error::Error for NpmDepsNetworkError {}
-+
-+fn ensure_registry_allowed(network: &NetworkPolicy) -> Result<()> {
-+    match network.decide(NPM_REGISTRY_HOST) {
-+        Decision::Allow => Ok(()),
-+        Decision::Prompt => Err(NpmDepsNetworkError::NeedsApproval(NPM_REGISTRY_HOST).into()),
-+        Decision::Deny => Err(NpmDepsNetworkError::Denied(NPM_REGISTRY_HOST).into()),
-+    }
-+}
- const NPM_ACCEPT_HEADER: &str = "application/vnd.npm.install-v1+json, application/json";
- const MAX_PACKUMENT_BYTES: usize = 32 * 1024 * 1024;
- const MAX_TARBALL_BYTES: usize = 64 * 1024 * 1024;
- const MAX_UNPACKED_PACKAGES: usize = 256;
- const MAX_UNPACKED_FILES: usize = 14_000;
- const MAX_UNPACKED_BYTES: u64 = 220 * 1024 * 1024;
-+const MAX_SCAN_DEPTH: usize = 32;
-+const MAX_SCAN_FILE_BYTES: usize = 2 * 1024 * 1024;
- 
- type CachedTarballs = HashMap<(String, String), Arc<Vec<u8>>>;
- 
-@@ -368,6 +400,7 @@ fn strip_tar_package_prefix(raw_path: &Path) -> Option<PathBuf> {
- }
- 
- async fn fetch_packument(package_name: &str, network: &NetworkPolicy) -> Result<Arc<Packument>> {
-+    ensure_registry_allowed(network)?;
-     if !is_valid_npm_name(package_name) {
-         bail!("invalid npm package name `{package_name}`");
-     }
-@@ -412,6 +445,7 @@ async fn fetch_verified_tarball(
-     dist: &PackumentDist,
-     network: &NetworkPolicy,
- ) -> Result<Arc<Vec<u8>>> {
-+    ensure_registry_allowed(network)?;
-     let key = (package_name.to_string(), version.to_string());
-     if let Ok(guard) = tarball_cache().lock()
-         && let Some(cached) = guard.get(&key)
-@@ -450,248 +484,373 @@ async fn fetch_verified_tarball(
-     Ok(arc)
- }
- 
--pub(crate) fn maybe_stage_with_dependencies(
--    package_root: &Path,
--    manifest: &Value,
--    entries: &[Value],
--    network: &NetworkPolicy,
--) -> Result<Option<tempfile::TempDir>> {
--    let declared = declared_dependencies(manifest);
--    if declared.is_empty() {
--        return Ok(None);
-+fn read_capped_scan_text(path: &Path, max_bytes: usize) -> Result<Option<String>> {
-+    let file = codewhale_util::bundle_file::open_bundle_file(path)
-+        .with_context(|| format!("failed to open DSH file `{}`", path.display()))?;
-+    let mut buf = Vec::new();
-+    let mut limited = std::io::Read::take(file, (max_bytes + 1) as u64);
-+    std::io::Read::read_to_end(&mut limited, &mut buf)?;
-+    if buf.len() > max_bytes {
-+        bail!(
-+            "DSH source file `{}` exceeds {max_bytes} byte scan limit",
-+            path.display()
-+        );
-     }
--    let root = package_root.to_path_buf();
--    let entries = entries.to_vec();
--    let network = network.clone();
--    std::thread::spawn(move || -> Result<Option<tempfile::TempDir>> {
--        fn scan_dir(
--            base: &Path,
--            cur: &Path,
--            declared: &BTreeMap<String, String>,
--            has_roster: bool,
--            import_re: &Regex,
--            referenced: &mut BTreeSet<String>,
--        ) -> Result<()> {
--            for entry in fs::read_dir(cur)? {
--                let entry = entry?;
--                let path = entry.path();
--                let meta = fs::symlink_metadata(&path)?;
--                if meta.file_type().is_symlink() {
--                    continue;
--                }
--                let Ok(rel) = path.strip_prefix(base) else {
--                    continue;
--                };
--                if meta.is_dir() {
--                    if let Some(name) = path.file_name().and_then(|s| s.to_str())
--                        && matches!(
--                            name,
--                            "node_modules"
--                                | "artifacts"
--          
+@@ -254,6 +254,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **Withdrawn desktop account plugins connector removed on upgrade:** the old desktop app's `codewhale-desktop-account-plugins` bundle, whose one connector (shown as `plugin-…-codewhale-desktop-account-plugins-codewhale-plugins`) failed on every session start, is now removed at startup together with its plugin record, and a `plugin.retired` line is written to `audit.log`. Only an installed copy whose single connector still points at the retired account endpoint is removed; other plugins, and a bundle of that name you changed or placed by hand, are left alone.
+ - **Linked AGENTS.md inside the workspace:** a project `AGENTS.md`, `CLAUDE.md`, `.codewhale/instructions.md` or rules file that is a symlink to another file in the same directory tree now loads instead of being refused with `Refusing symlinked file` and leaving the session without project instructions. Every link in the chain is resolved first and the file is still refused, with a visible skip notice, when it resolves outside the workspace through `..`, an absolute target, a chain of links or a Windows junction. (CW-8266)
+ - **A connector tool switched Off leaves conversations that already used it:** turning off a tool such as `close_issue` in Settings or with `PATCH /v1/apps/mcp/servers/{name}` now takes it out of the next turn of a conversation that had already found it through tool search, not only out of new conversations. The Engine rereads the connector configuration when it gathers a turn's tools and reconnects the changed server under the new settings.
++- **`tool_launcher` in a user config is refused by every command:** `codewhale model resolve`, `codewhale config`, the other CLI subcommands and the desktop's config and secrets calls now stop with the same error the Engine gives when `config.toml` sets `tool_launcher` at the top level or in a profile, instead of loading the file and exiting 0. The key is still read only from the managed configuration. (CW-8021)
+ - **CJK text in terminal columns:** the command palette, the hotbar setup rows, the `/config` detail labels, the workflow history lanes, the approval card intent and parameter lines and the elevation prompt now pad and cut text by the columns it takes on screen, so Chinese, Japanese and Korean labels no longer push later columns right or get cut to a third of their space. Thanks [@luochen211](https://github.com/luochen211) (#7273).
+ - **Slash-command arguments after any whitespace:** `/config` splits its key from its value, and finds a trailing `--save`, after a tab or a full-width space (U+3000) from a CJK input method, not only after an ASCII space, and a user command's `$ARGUMENTS` and `$N` are filled in one pass, so `$1` or `$10` written inside your own argument is not expanded again. Thanks [@luochen211](https://github.com/luochen211) (#7269).
+ - **Negative retry delays:** a `[retry]` setting with a negative or non-finite `initial_delay`, `max_delay` or `exponential_base` is now refused when the configuration loads, where `jitter = false` with `max_delay = -1` made the first transport retry panic. Thanks [@luochen211](https://github.com/luochen211) (#7275).
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7323** (closed): fix(app-server): read the original path of a worktree-side rename (@SparkofSpike)
-- **PR #7322** (2026-11-12): fix(tui): count characters, not bytes, for the session title limit (@luochen211)
-- **PR #7319** (2026-11-12): fix(mcp,lsp): answer server requests instead of taking them as replies (@luochen211)
-- **PR #7317** (2026-11-12): fix: show non-ASCII paths as written in /diff and git mentions (@luochen211)
-- **PR #7316** (2026-11-12): fix(state,snapshot): keep index entries after a torn line and clamp prune age (@luochen211)
-- **PR #7315** (2026-11-12): fix(config): read every env alias chain through env_non_blank (@luochen211)
+- **PR #7395** (2026-11-19): ci: defer unreachable heapless RUSTSEC batch to unblock advisories gate (@Hmbown)
+- **PR #7390** (2026-11-19): 0.10.3 ergonomics and truth batch: pricing, codemode-js, export error codes, redaction/Zen (@Hmbown)
+- **PR #7386** (2026-11-19): release(0.10.3): land ci/release-prep-0103-v2 on main (@Hmbown)
+- **PR #7385** (2026-11-19): 0.10.3 lane 8: execpolicy launcher panic and payload-hiding fixes (@Hmbown)
+- **PR #7382** (closed): [CI only, do not merge] 0.10.3 ergonomics and truth batch: pricing, codemode-js, export errors, redaction/Zen (@Hmbown)
+- **PR #7381** (closed): test(app-server): scale the SSE session TTL in the TTL-expiry test for CI (release-prep port) (@Hmbown)
 
 ---
 
@@ -3080,13 +2655,13 @@ to `(plugin_id, authority)` via `owner_report_for_authority`:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tui: show exact, estimated, or unknown cost labels and update changelog
+## X. 0.10.3 lane 8: execpolicy launcher panic and payload-hiding fixes
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `336cd8a4`: tui: show exact, estimated, or unknown cost labels and update changelog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bacf9dea`: 0.10.3 lane 8: execpolicy launcher panic and payload-hiding fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -3094,8 +2669,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- The cost label shows an exact cost, an estimate or unknown.
-- Cost tracking can no longer fail your work: a turn, a review, an Auto-Review check, a purge, a sub-agent or an Auto routing decision finishes even when Codewhale cannot record its cost, and the cost then shows as unknown.
+- **Flag-only launcher commands no longer crash the turn:** running `npm --version`, `nix --version`, `launchctl --help`, `docker --version`, `podman --version`, or another launcher command with global flags and no subcommand no longer panics with an out-of-bounds index during command policy expansion.
+- **Command policy sees payloads behind empty words and `--entrypoint`:** command policy now also checks the nested command in launcher lines with empty-string words before the subcommand (`npm '' exec -c 'rm -rf /'`, `docker '' -D run alpine rm -rf /`) and checks `docker run --entrypoint rm alpine -rf /` as the entrypoint plus the arguments after the image, checking every `--entrypoint` value before the image, so deny rules and approval review match them. A launcher line with so many options that the option walk hits its state limit is now treated like other commands whose words are only known at run time: while deny rules are in force it asks for approval, or is refused where approval is unavailable, instead of dropping the nested command.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3105,7 +2680,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `336cd8a4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bacf9dea` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

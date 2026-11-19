@@ -1425,8 +1425,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/JEV-35B-NVFP4",
     "sourceVersion": "hf-autotrust-jev-35b-nvfp4",
     "license": "Open-Source",
-    "contentHash": "c390b87d0dd7669dd9dd56c1504dec0a5f8f6da94f30cb31cbbf2ec45ed31859",
-    "lastHarvestedAt": "2026-11-15T01:03:20.407Z",
+    "contentHash": "546faaffafd8d8e6537b97b503114926d47ec7912728250ced241f8308a2da7e",
+    "lastHarvestedAt": "2026-11-19T15:42:31.428Z",
     "learningId": "learn-huggingface-autotrust-jev-35b-nvfp4"
   },
   "leonxlnx-taste-skill": {
@@ -2113,10 +2113,10 @@
     "repository": "moby/buildkit",
     "platform": "github",
     "sourceUrl": "https://github.com/moby/buildkit",
-    "sourceVersion": "bfe7dac5",
+    "sourceVersion": "a02a51ac",
     "license": "Apache-2.0",
-    "contentHash": "03ffaaa4d2803d18df5f7b497f690e0a730ce605f48f2d808387b16ee01c27c0",
-    "lastHarvestedAt": "2026-11-18T13:17:27.905Z",
+    "contentHash": "2af2b9aebc60f1a4449e04d3d665a63d13c160a51efaeaaf6c65a60f1912a692",
+    "lastHarvestedAt": "2026-11-19T15:42:32.997Z",
     "learningId": "learn-github-moby-buildkit"
   },
   "microsoft-agent-governance-toolkit": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "3aa2775c",
+    "sourceVersion": "a4304377",
     "license": "Apache-2.0",
-    "contentHash": "4403bc7e30db6fbb6d34199f4dbeeaba83b2bebcca1a88b08e1c432f0ed65679",
-    "lastHarvestedAt": "2026-11-19T14:28:37.656Z",
+    "contentHash": "dade5f3be01e570c5df0444750bb9a78a19a57956ff2757b0f91dc385b637cc1",
+    "lastHarvestedAt": "2026-11-19T15:42:39.236Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "fbc8b20d",
+    "sourceVersion": "cd105ed8",
     "license": "NOASSERTION",
-    "contentHash": "7f4067d99a9e8519dbc7aa5360388f34638de25be84a3c7beffb7dab993ae0e5",
-    "lastHarvestedAt": "2026-11-18T22:57:59.256Z",
+    "contentHash": "5cb08fe69155aba9daff4604809fab8b59024091b8b57f909a5b66fe2f0cfd6f",
+    "lastHarvestedAt": "2026-11-19T15:42:35.313Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -7773,10 +7773,10 @@
     "repository": "SimonSchubert/LinuxCommandLibrary",
     "platform": "github",
     "sourceUrl": "https://github.com/SimonSchubert/LinuxCommandLibrary",
-    "sourceVersion": "6641ebf0",
+    "sourceVersion": "a7aadf0e",
     "license": "Apache-2.0",
-    "contentHash": "34e584f07e24e7dbb0bf127ae7a9333f0861e79c7291af03fea2760146a65996",
-    "lastHarvestedAt": "2026-11-15T08:09:26.274Z",
+    "contentHash": "cd1069458d85c8a2a5a557245e9ea631dc1edfa488c62ddb2e91a4a829941350",
+    "lastHarvestedAt": "2026-11-19T15:42:33.013Z",
     "learningId": "learn-github-simonschubert-linuxcommandlibrary"
   },
   "zed-industries-zed": {
@@ -7803,10 +7803,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/codewhale-hq/Codewhale",
-    "sourceVersion": "9c7cb976",
+    "sourceVersion": "b274f161",
     "license": "MIT",
-    "contentHash": "21a5665e7451f82569e44ffe06d682e90adba0fce494dbd826227174fb63fbc4",
-    "lastHarvestedAt": "2026-11-17T19:54:42.892Z",
+    "contentHash": "9e58a3e45cddc2c8c8902d0d1f2b482f3e7960f1586a24d36aa235bf06684215",
+    "lastHarvestedAt": "2026-11-19T15:42:25.323Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "meshtastic-meshtastic-android": {

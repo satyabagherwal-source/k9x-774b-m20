@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T15:21:33.195Z",
-  "total_records": 1983,
+  "last_updated": "2026-11-19T15:42:45.817Z",
+  "total_records": 1985,
   "domains": {
     "A": {
       "total": 15,
@@ -1315,7 +1315,7 @@
       ]
     },
     "H": {
-      "total": 463,
+      "total": 465,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1779,7 +1779,9 @@
         "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-learnings-core-invariant",
         "domain_intelligence-technical-construction-intelligence-topoteretes-cognee-core-invariants",
         "domain_intelligence-technical-construction-intelligence-xevrion-hatchzip-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-xevrion-hatchzip-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-xevrion-hatchzip-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-simonschubert-linuxcommandlibrary-core-invar",
+        "domain_intelligence-technical-construction-intelligence-simonschubert-linuxcommandlibrary-learnings-"
       ]
     },
     "I": {
@@ -9832,8 +9834,8 @@
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "repository": "zama-ai/tfhe-rs",
-      "content_hash": "9741b6c0ed25d7796cbef11b2b1c5e329fa5ba771e79328d4da088354b18d5ac",
-      "created_at": "2026-11-18T22:57:59.570Z"
+      "content_hash": "31a783aa0f45186c7103b7ec097bf02eafef6968bb2489ed44c8f4dfca1b8ef7",
+      "created_at": "2026-11-19T15:42:35.757Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
@@ -15062,8 +15064,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "6f62bd3d9749daa6aa03cd9572e9aef2890405d4edafb7ce91456d1719eeefa0",
-      "created_at": "2026-11-19T14:28:38.027Z"
+      "content_hash": "6f56fcc3862c1d50f62183d09d5735df37baedb0f24a3aae0c1ba7815c2b84a6",
+      "created_at": "2026-11-19T15:42:39.685Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15822,10 +15824,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
       "repository": "codewhale-hq/Codewhale",
-      "content_hash": "627bb814a1600982f113c030a8ed95c96930602913ec406d8d00060a4651593e",
-      "created_at": "2026-11-18T03:39:24.885Z"
+      "content_hash": "e1c58aa167419d1aa233fcc92ddd7485366318996000fa93a47e4eaae357b365",
+      "created_at": "2026-11-19T15:42:25.787Z"
     },
     "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants",
@@ -15833,8 +15835,8 @@
       "title": "Architecture Intelligence: codewhale-hq-codewhale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-learnings-architecture-intelligence-codewhale-hq-codewhal.md",
       "repository": "codewhale-hq-codewhale-learnings",
-      "content_hash": "e77794285e524c0a3ce0272c7087adfe3c5e24c9e311c56c34959b0c27c0e898",
-      "created_at": "2026-11-16T07:19:58.764Z"
+      "content_hash": "03aa891b3148940878a8a91d990f3447c7e78cc7b0963680c8134ee0a66e572f",
+      "created_at": "2026-11-19T15:42:43.784Z"
     },
     "domain_intelligence-research-knowledge-intelligence-bingsu-adetailer-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-bingsu-adetailer-core-invariants",
@@ -18720,8 +18722,8 @@
       "title": "Research & Knowledge Intelligence: autotrust/AutoTrust-Decider-Pro-35B-NVFP4 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-35b-nvfp4-research-knowledge-intelligence-autotrust-autotrust-d.md",
       "repository": "autotrust/AutoTrust-Decider-Pro-35B-NVFP4",
-      "content_hash": "265bed0f73e92fe3935c349a9bd90e4d40546f6b827069fc91d570d3d8dbc4bf",
-      "created_at": "2026-11-15T01:03:20.541Z"
+      "content_hash": "d4bc4ab16a95628fff5779023a10bdead07e9af63ba70de19a1538edd924365d",
+      "created_at": "2026-11-19T15:42:31.788Z"
     },
     "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-core-invariants",
@@ -18780,8 +18782,8 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-jev-35b-nvfp4-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-jev-35b-nvfp4-learnings-research-knowledge-intelligence-hf-autotrus.md",
       "repository": "hf-autotrust-jev-35b-nvfp4-learnings",
-      "content_hash": "6078d8813c5a2e722a1e5ef8d34f922b9054414dbf422cf33c3da57da025e615",
-      "created_at": "2026-11-15T01:04:02.256Z"
+      "content_hash": "e277c3095d19a655fc44271be6ce77aa4eb5320a9a4e6df49a4fdc53475d2cda",
+      "created_at": "2026-11-19T15:42:44.607Z"
     },
     "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-jetbrains-kotlinconf-app-learnings-core-invariants",
@@ -33274,6 +33276,24 @@
       "repository": "mrkai77-loop-learnings",
       "content_hash": "3522c30caf81357ed73741c9c407cbe9f82b6d07a1528d4b308fea8a3f8c8bb6",
       "created_at": "2026-11-19T15:21:32.430Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-simonschubert-linuxcommandlibrary-core-invar": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-simonschubert-linuxcommandlibrary-core-invar",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: SimonSchubert/LinuxCommandLibrary Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-simonschubert-linuxcommandlibrary-technical-construction-intelligence-simonschub.md",
+      "repository": "SimonSchubert/LinuxCommandLibrary",
+      "content_hash": "c0ac94b6328594482dd2bf27a2278d95cda86130b7cceec5f4d9905e001b9b81",
+      "created_at": "2026-11-19T15:42:33.529Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-simonschubert-linuxcommandlibrary-learnings-": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-simonschubert-linuxcommandlibrary-learnings-",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: simonschubert-linuxcommandlibrary-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-simonschubert-linuxcommandlibrary-learnings-technical-construction-intelligence-.md",
+      "repository": "simonschubert-linuxcommandlibrary-learnings",
+      "content_hash": "c08040411da58e3a52ef0b1da30ccc3a35193105e93421efe805d0a7c7a653ee",
+      "created_at": "2026-11-19T15:42:45.817Z"
     }
   }
 }

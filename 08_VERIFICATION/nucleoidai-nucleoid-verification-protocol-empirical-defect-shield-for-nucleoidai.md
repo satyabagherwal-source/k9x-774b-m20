@@ -4,22 +4,22 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "3aa2775c",
+  "source_version": "a4304377",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-19T14:28:37.867Z",
+  "timestamp": "2026-11-19T15:42:39.495Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `3aa2775c`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T14:28:37.867Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `a4304377`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T15:42:39.495Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `3aa2775c`)
+- **Target Repository**: `NucleoidAI/Nucleoid` (Commit: `a4304377`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T14:28:36.615Z  
+> **Harvest Timestamp**: 2026-11-19T15:42:37.904Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1181,7 +1181,9 @@ import object from "./object.ts";
 export async function declarations({ train_dataset }) {
   milestone.inferring_declarations();
 
-  const { declarations, output_canvas } = await llm.generate({
+  const {
+    result: { declarations, output_canvas },
+  } = await llm.generate({
     grammar: true,
     messages: [
       {
@@ -1194,7 +1196,12 @@ export async function declarations({ train_dataset }) {
             output_canvas: "<OUTPUT_CANVAS>",
           })}
           json_format:
-          { "declarations": <DECLARATIONS>, "output_canvas": <OUTPUT_CANVAS> }
+          {
+            "result": {
+              "declarations": <DECLARATIONS>,
+              "output_canvas": <OUTPUT_CANVAS>
+            }
+          }
         `,
       },
     ],
@@ -1398,7 +1405,11 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
 
   await analyzer.state(train_dataset);
 
+  milestone.synthesizing_training_dataset();
+
   const synthesized_dataset = await synthesizer.synthesize({ train_dataset });
+
+  milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
 
   for (const dataset of synthesized_dataset) {
     for (const instance of dataset.instances) {
@@ -1574,125 +1585,40 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3aa2775c` (2026-11-19)
-**Commit Message**: Draft NUC 124 List and Population Quantiles
+### Incident Patch 1: `a4304377` (2026-11-19)
+**Commit Message**: Enable grammar for implementation generation
 
-Category: Utility enhancement, drawn uniformly at random (index 2 of the
-five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
-continuous /nuc-proposal cycle. Utility enhancement requires the token
-non-regression gate in continuous mode.
+Request grammar-constrained output when generating ARC implementations.
 
-Requested change: lists and class instance lists gain the read-only
-query quantile. RECEIVER.quantile(q) returns the q quantile of the
-items for a number q from 0 to 1, and RECEIVER.quantile(q, selector)
-that of selector(item), interpolating linearly between the two closest
-ranks of the sorted values at rank (n - 1) * q, the default method of
-NumPy's and pandas' quantile, R's type 7 and Excel's PERCENTILE.INC.
-It follows NUC 84's median beside NUC 68's sum, NUC 80's average and
-NUC 123's variance: the same receivers, numeric conversion, selector
-rules, NaN and undefined results, and liveness under NUC 61's shared
-query rules; NUC 84 left quantiles out, and xs.median(0.9) stays an
-error. At the accepted revision these calls raise
-TypeError("<receiver>.quantile is not a function"); only inputs that
-were errors change, and bindings, properties and methods named quantile
-keep their accepte
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `arc/src/object.ts` (modified, +1/-0)
 ```diff
-@@ -132,6 +132,7 @@ Created: 31-Jul-2026
- | [111](nuc-0111.md) | Reactive String Padding | Accepted |
- | [114](nuc-0114.md) | List and Population Products | Accepted |
- | [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Accepted |
-+| [124](nuc-0124.md) | List and Population Quantiles | Draft |
- 
- ### Reasoning enhancement
- 
-@@ -301,6 +302,7 @@ Created: 31-Jul-2026
- | [121](nuc-0121.md) | Held Values of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
- | [122](nuc-0122.md) | Python-Style Except Clauses | Standards Track | Language compatibility | Accepted |
- | [123](nuc-0123.md) | List and Population Variances and Standard Deviations | Standards Track | Utility enhancement | Accepted |
-+| [124](nuc-0124.md) | List and Population Quantiles | Standards Track | Utility enhancement | Draft |
- 
- ## Copyright
- 
+@@ -77,6 +77,7 @@ async function implementation({
+   });
+   const { implementation } = await llm.generate({
+     few_shot: few_shot && few_shot_function,
++    grammar: true,
+     messages: [
+       {
+         role: "assistant",
 ```
 
-**File**: `docs/nuc-0124.md` (added, +73/-0)
+---
+
+### Incident Patch 2: `37670c62` (2026-11-19)
+**Commit Message**: Enable grammar for instance generation
+
+Request grammar-constrained output when generating visualizer instances.
+
+**File**: `arc/src/visualizer.ts` (modified, +1/-0)
 ```diff
-@@ -0,0 +1,73 @@
-+# NUC 124 -- List and Population Quantiles
-+
-+```
-+NUC: 124
-+Title: List and Population Quantiles
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Utility enhancement
-+Created: 19-Nov-2026
-+```
-+
-+## Abstract
-+
-+- Lists and class instance lists gain the read-only query `quantile`.
-+  `RECEIVER.quantile(q)` returns the `q` quantile of the receiver's items,
-+  for a number `q` from `0` to `1`, and `RECEIVER.quantile(q, selector)`
-+  that of `selector(item)` for every item: `0` gives the smallest value,
-+  `0.5` the median and `1` the largest.
-+- It interpolates linearly between the two closest ranks of the sorted
-+  values, the default method of NumPy's `quantile` and pandas' `quantile`,
-+  R's type 7 and Excel's `PERCENTILE.INC`. The rank is `(n - 1) * q` for
-+  `n` values: a whole rank gives its value, and a rank between two values
-+  weighs them by how close it lies to each.
-+- It follows [NUC 84](nuc-0084.md)'s `median`, beside
-+  [NUC 68](nuc-0068.md)'s `sum`, [NUC 80](nuc-0080.md)'s `average` and
-+  [NUC 123](nuc-0123.md)'s `variance`: the same receivers, numeric
-+  conversion, selector rules, NaN and undefined results, and liveness
-+  under [NUC 61](nuc-0061.md)'s shared query rules. NUC 84 left quantiles
-+  out, and `xs.median(0.9)` stays an error.
-+- At the accepted revision these calls are run-time errors,
-+  `TypeError("<receiver>.quantile is not a function")`. Only inputs that
-+  were errors change. No syntax, keyword, token or error type is added,
-+  and bindings, properties and methods named `quantile` keep their
-+  accepted results.
-+
-+## Motivation
-+
-+- World models describe their populations by more than a center. A model
-+  that asks how high the top tenth of its readings reach, where the
-+  quartiles of its prices fall, or which deliveries are slower than nine
-+  in ten, needs a quantile. Lists and class populations already have their
-+  sums, extremes, averages, medians, modes, variances and standard
-+  deviations, but not their quantiles.
-+- Written out, a quantile sorts a copy of the values, computes the rank
-+  and interpolates between two indexed values: `s = xs.sortBy(x -> x)`,
-+  `h = (s.length - 1) * q`, and then `s[Math.floor(h)]` and
-+  `s[Math.ceil(h)]` weighed by `h - Math.floor(h)`. That repeats the
-+  receiver, is easy to get one rank wrong, and must not sort the receiver
-+  itself. `quantile(q)` names the statistic once, as `median()` does.
-+
-+## Rationale
-+
-+- Pending: the proposer completes this section.
-+
-+## Specification
-+
-+- Pending: the proposer completes this section.
-+
-+## Errors
-+
-+- Pending: the proposer completes this section.
-+
-+## Reference Implementation
-+
-+- Pending: the proposer completes this section.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
+@@ -11,6 +11,7 @@ export async function instances({ train_dataset, test_input_matrix }) {
+     result: { instances },
+   } = await llm.generate({
+     few_shot: null,
++    grammar: true,
+     messages: [
+       {
+         role: "assistant",
 ```
 
 #### Recent Merged Pull Requests:
@@ -1721,22 +1647,21 @@ keep their accepte
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 124 List and Population Quantiles
+## X. Enable grammar for implementation generation
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `arc/src/object.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3aa2775c`: Draft NUC 124 List and Population Quantiles. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a4304377`: Enable grammar for implementation generation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `arc/src/object.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [124](nuc-0124.md) | List and Population Quantiles | Draft |
-| [124](nuc-0124.md) | List and Population Quantiles | Standards Track | Utility enhancement | Draft |
+    grammar: true,
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1746,7 +1671,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3aa2775c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a4304377` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

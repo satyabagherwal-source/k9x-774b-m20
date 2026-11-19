@@ -11328,3 +11328,9 @@ Every entry in this ledger must capture:
 | `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `31957c52` | Multi-dimensional audit evidence | 2026-11-19T15:16:38.938Z |
 | `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `b10159ea` | Multi-dimensional audit evidence | 2026-11-19T15:16:43.821Z |
 | `learn-huggingface-openbmb-minicpm-v-4-7-1b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-1B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-19T15:21:28.402Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/codewhale-hq/Codewhale` | `b274f161` | Multi-dimensional audit evidence | 2026-11-19T15:42:25.323Z |
+| `learn-huggingface-autotrust-jev-35b-nvfp4` | `https://huggingface.co/autotrust/JEV-35B-NVFP4` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-19T15:42:31.428Z |
+| `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `a02a51ac` | Multi-dimensional audit evidence | 2026-11-19T15:42:32.997Z |
+| `learn-github-simonschubert-linuxcommandlibrary` | `https://github.com/SimonSchubert/LinuxCommandLibrary` | `a7aadf0e` | Multi-dimensional audit evidence | 2026-11-19T15:42:33.013Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `cd105ed8` | Multi-dimensional audit evidence | 2026-11-19T15:42:35.313Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `a4304377` | Multi-dimensional audit evidence | 2026-11-19T15:42:39.236Z |
