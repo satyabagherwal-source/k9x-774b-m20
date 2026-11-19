@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T23:34:46.985Z",
-  "total_cycles_completed": 10886,
-  "total_learnings_persisted": 10886,
-  "total_rules_promoted": 10242,
+  "last_updated": "2026-11-19T23:43:30.213Z",
+  "total_cycles_completed": 10889,
+  "total_learnings_persisted": 10889,
+  "total_rules_promoted": 10245,
   "history": [
-    {
-      "timestamp": "2026-11-19T03:09:48.102Z",
-      "repository": "juicedata/juicefs",
-      "learningId": "learn-github-juicedata-juicefs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T03:14:38.801Z",
-      "repository": "google/vit-base-patch16-224",
-      "learningId": "learn-huggingface-google-vit-base-patch16-224",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T03:27:13.617Z",
-      "repository": "BAAI/bge-base-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-base-en-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T03:27:23.286Z",
       "repository": "rook/rook",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-19T23:34:46.985Z",
       "repository": "trufflesecurity/trufflehog",
       "learningId": "learn-github-trufflesecurity-trufflehog",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T23:43:21.137Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T23:43:27.178Z",
+      "repository": "krakend/krakend-ce",
+      "learningId": "learn-github-krakend-krakend-ce",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T23:43:30.213Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

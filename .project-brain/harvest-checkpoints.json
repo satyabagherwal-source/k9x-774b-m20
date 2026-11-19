@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T23:34:46.992Z",
+  "last_updated": "2026-11-19T23:43:30.217Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "9e58a3e45cddc2c8c8902d0d1f2b482f3e7960f1586a24d36aa235bf06684215",
-      "verified_at": "2026-11-19T15:42:25.333Z",
+      "content_hash": "dbe136b4b70ab5708f4921cd5a53d2599d96435d3a29f36ba136d0c5e8d6e410",
+      "verified_at": "2026-11-19T23:43:21.141Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T15:42:25.333Z"
+      "last_updated": "2026-11-19T23:43:21.141Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "f809030f51254b31bf92b1d69806f02fbdb558ee11a64f0d237701046b4ce822",
-      "verified_at": "2026-11-19T16:25:01.216Z",
+      "content_hash": "00869492f11257255c8c18e102a7e64e9e6eca8d091f1332aa7e5389eef6817e",
+      "verified_at": "2026-11-19T23:43:30.216Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-19T16:25:01.216Z"
+      "last_updated": "2026-11-19T23:43:30.216Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -6141,14 +6141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-krakend-krakend-ce",
-      "content_hash": "24eaddd6a0c3fc8511caf7fc624a7522b0aa7f1d414e22c8ea59277256a81748",
-      "verified_at": "2026-11-17T05:58:12.435Z",
+      "content_hash": "d1f2d02ea81de209641bc5580bc09beadc3dd367dcc257fdb2c51346eaa3d8bd",
+      "verified_at": "2026-11-19T23:43:27.182Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T05:58:12.435Z"
+      "last_updated": "2026-11-19T23:43:27.182Z"
     },
     "trailbaseio/trailbase": {
       "repository": "trailbaseio/trailbase",

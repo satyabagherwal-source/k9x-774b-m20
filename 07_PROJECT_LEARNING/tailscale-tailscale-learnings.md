@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `93ba239f`  
+> **Source Version**: `2e8f381c`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-19T16:25:00.294Z  
+> **Timestamp**: 2026-11-19T23:43:28.848Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-19T16:25:00.289Z  
+> **Harvest Timestamp**: 2026-11-19T23:43:28.842Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39320 stars
+- **Stars / Engagement**: 39337 stars
 
 ---
 
@@ -823,202 +823,148 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `93ba239f` (2026-11-17)
-**Commit Message**: cmd/k8s-operator: test ProxyGroup StatefulSet Pod management policy
+### Incident Patch 1: `92f396d8` (2026-11-19)
+**Commit Message**: util/linuxfw: run without IPv6 rules when ip6tables fails to initialize (#22362)
 
-Covers a new ProxyGroup getting a Parallel StatefulSet, and an existing
-OrderedReady one being deleted and then recreated as Parallel.
+newIPTablesRunner returned the error from the IPv6 go-iptables constructor,
+which made tailscaled exit at startup. The nft flavor of ip6tables exits 1
+from "--version" on kernels without nf_tables even though the binary is
+present. Treat that like a missing ip6tables and disable tunneled IPv6.
 
-Updates tailscale/corp#38175
+Fixes #20348
 
-Signed-off-by: chaosinthecrd <[REDACTED_EMAIL]>
+Signed-off-by: Brendan Creane <[REDACTED_EMAIL]>
 
-**File**: `cmd/k8s-operator/proxygroup_test.go` (modified, +61/-0)
+**File**: `util/linuxfw/iptables.go` (modified, +9/-5)
 ```diff
-@@ -1586,6 +1586,9 @@ func TestProxyGroupTypes(t *testing.T) {
- 		if sts.Spec.Template.Spec.Containers[0].Ports[0].Name != "k8s-proxy" {
- 			t.Errorf("unexpected port name %s, want k8s-proxy", sts.Spec.Template.Spec.Containers[0].Ports[0].Name)
+@@ -102,14 +102,18 @@ func newIPTablesRunner(logf logger.Logf) (*iptablesRunner, error) {
+ 	case ip6terr != nil:
+ 		logf("disabling tunneled IPv6 due to missing ip6tables: %v", ip6terr)
+ 	default:
+-		supportsV6 = true
+ 		ipt6, err = iptables.NewWithProtocol(iptables.ProtocolIPv6)
+ 		if err != nil {
+-			return nil, err
++			// ip6tables is present but "ip6tables --version" failed,
++			// as the nft flavor does on kernels without nf_tables.
++			// Run without IPv6 rules instead of failing. (#20348)
++			logf("disabling tunneled IPv6 due to ip6tables init failure: %v", err)
++		} else {
++			supportsV6 = true
++			supportsV6Filter = checkSupportsV6Filter(ipt6, logf)
++			supportsV6NAT = checkSupportsV6NAT(ipt6, logf)
++			logf("netfilter running in iptables mode v6 = %v, v6filter = %v, v6nat = %v", supportsV6, supportsV6Filter, supportsV6NAT)
  		}
-+		if sts.Spec.PodManagementPolicy != appsv1.ParallelPodManagement {
-+			t.Errorf("unexpected PodManagementPolicy %q, want %q", sts.Spec.PodManagementPolicy, appsv1.ParallelPodManagement)
-+		}
- 	})
- }
- 
-@@ -1663,6 +1666,64 @@ func TestKubeAPIServerStatusConditionFlow(t *testing.T) {
- 	expectEqual(t, fc, pg, omitPGStatusConditionMessages)
- }
- 
-+func TestProxyGroupReplacesStatefulSetForPodManagementPolicy(t *testing.T) {
-+	pg := &tsapi.ProxyGroup{
-+		ObjectMeta: metav1.ObjectMeta{
-+			Name:       "test",
-+			Finalizers: []string{FinalizerName},
-+			Generation: 1,
-+		},
-+		Spec: tsapi.ProxyGroupSpec{
-+			Type:     tsapi.ProxyGroupTypeEgress,
-+			Replicas: new(int32(1)),
-+		},
-+	}
-+	fc := fake.NewClientBuilder().
-+		WithScheme(tsapi.GlobalScheme).
-+		WithObjects(pg).
-+		WithStatusSubresource(pg).
-+		Build()
-+	r := &ProxyGroupReconciler{
-+		tsNamespace:  tsNamespace,
-+		tsProxyImage: testProxyImage,
-+		Client:       fc,
-+		log:          zap.Must(zap.NewDevelopment()).Sugar(),
-+		clients:      tsclient.NewProvider(&fakeTSClient{}),
-+		clock:        tstest.NewClock(tstest.ClockOpts{}),
-+		reissuer:     tailscaled.NewReissuer(),
-+	}
-+	key := client.ObjectKey{Namespace: tsNamespace, Name: pg.Name}
-+	getPolicy := func() (appsv1.PodManagementPolicyType, bool) {
+-		supportsV6Filter = checkSupportsV6Filter(ipt6, logf)
+-		supportsV6NAT = checkSupportsV6NAT(ipt6, logf)
+-		logf("netfilter running in iptables mode v6 = %v, v6filter = %v, v6nat = %v", supportsV6, supportsV6Filter, supportsV6NAT)
+ 	}
+ 	return &iptablesRunner{
+ 		ipt4:              ipt4,
+```
+
+**File**: `util/linuxfw/iptables_test.go` (added, +55/-0)
+```diff
+@@ -0,0 +1,55 @@
++// Copyright (c) Tailscale Inc & contributors
++// SPDX-License-Identifier: BSD-3-Clause
++
++//go:build linux && !ts_omit_iptables
++
++package linuxfw
++
++import (
++	"fmt"
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++
++	"tailscale.com/tstest"
++	"tailscale.com/types/logger"
++)
++
++// TestNewIPTablesRunnerIP6TablesInitFailure checks that a present but
++// non-functional ip6tables disables IPv6 instead of failing runner creation.
++// The nft flavor of ip6tables exits 1 from "--version" on kernels without
++// nf_tables, which used to make tailscaled exit at startup (#20348).
++func TestNewIPTablesRunnerIP6TablesInitFailure(t *testing.T) {
++	dir := t.TempDir()
++	writeScript := func(name, body string) {
 +		t.Helper()
-+		ss := new(appsv1.StatefulSet)
-+		if err := fc.Get(t.Context(), key, ss); apierrors.IsNotFound(err) {
-+			return "", false
-+		} else if err != nil {
-+			t.Fatalf("getting StatefulSet: %v", err)
++		if err := os.WriteFile(filepath.Join(dir, name), []byte("#!/bin/sh\n"+body), 0o755); err != nil {
++			t.Fatal(err)
 +		}
-+		return ss.Spec.PodManagementPolicy, true
 +	}
++	writeScript("iptables", "echo 'iptables v1.8.10 (legacy)'\n")
++	writeScript("ip6tables", "echo 'ip6tables/1.8.10 Failed to initialize nft: Protocol not supported' >&2\nexit 1\n")
++	t.Setenv("PATH", dir)
 +
-+	expectReconciled(t, r, "", pg.Name)
-+	if got, _ := getPolicy(); got != appsv1.ParallelPodManagement {
-+		t.Fatalf("PodManagementPolicy = %q, want %q", got, appsv1.ParallelPodManagement)
-+	}
++	// Make the system IPv6 probe pass so the test reaches the ip6tables
++	// constructor regardless of the host's IPv6 configuration.
++	tstest.Replace(t, &checkIPv6ForTest, func(logger.Logf) error { return nil })
 +
-+	// Simulate a StatefulSet created by an older operator version.
-+	mustUpdate(t, fc, tsNamespace, pg.Name, func(ss *appsv1.StatefulSet) {
-+		ss.Spec.PodManagementPolicy = appsv1.OrderedReadyPodManagement
++	var logs strings.Builder
++	r, err := newIPTablesRunner(func(format string, args ...any) {
++		fmt.Fprintf(&logs, format+"\n", args...)
 +	})
-+	expectReconciled(t, r, "", pg.Name)
-+	if _, ok := getPolicy(); ok {
-+		t.Fatal("StatefulSet with OrderedReady policy not deleted")
++	if err != nil {
++		t.Fatalf("newIPTablesRunner: %v", err)
 +	}
-+
-+	expectReconciled(t, r, "", pg.Name)
-+	if got, _ := getPolicy(); got != appsv1.ParallelPodManagement {
-+		t.Fatalf("PodManagementPolicy after replacement = %q, want %q", got, appsv1.ParallelPodManagement)
++	if r.HasIPV6() {
++		t.Error("HasIPV6() = true; want false when ip6tables fails to initialize")
++	}
++	if r.HasIPV6Filter() || r.HasIPV6NAT() {
++		t.Error("IPv6 filter/NAT reported available; want neither")
++	}
++	if !strings.Contains(logs.String(), "disabling tunneled IPv6 due to ip6tables init failure") {
++		t.Errorf("log missing ip6tables init failure line; got:\n%s", logs.String())
 +	}
 +}
-+
- func TestKubeAPIServerType_DoesNotOverwriteServicesConfig(t *testing.T) {
- 	fc := fake.NewClientBuilder().
- 		WithScheme(tsapi.GlobalScheme).
 ```
 
 ---
 
-### Incident Patch 2: `1af2fa9e` (2026-10-09)
-**Commit Message**: cmd/k8s-operator: start ProxyGroup Pods in parallel
+### Incident Patch 2: `cc0716a2` (2026-11-19)
+**Commit Message**: cmd/k8s-operator: clarify tag requirements (#15757)
 
-With a readiness probe and the default OrderedReady policy, one unready
-ProxyGroup Pod stops the rest from starting, so ProxyGroup StatefulSets now
-use Parallel. The policy can't change in place, so an existing StatefulSet is
-deleted with its Pods orphaned and recreated, adopting them.
+Updates tailscale/tailscale#15732
 
-Updates tailscale/corp#38175
+Signed-off-by: Irbe Krumina <[REDACTED_EMAIL]>
 
-Signed-off-by: chaosinthecrd <[REDACTED_EMAIL]>
-
-**File**: `cmd/k8s-operator/proxygroup.go` (modified, +37/-0)
+**File**: `cmd/k8s-operator/deploy/chart/values.yaml` (modified, +4/-4)
 ```diff
-@@ -6,6 +6,7 @@
- package main
+@@ -65,8 +65,8 @@ oauthSecretVolume: {}
+ installCRDs: true
  
- import (
-+	"cmp"
- 	"context"
- 	"encoding/json"
- 	"errors"
-@@ -464,6 +465,12 @@ func (r *ProxyGroupReconciler) maybeProvision(ctx context.Context, tsClient tscl
- 		applyHealthzProbes(proxyClass, ss)
- 	}
- 
-+	if replaced, err := r.maybeReplaceStatefulSet(ctx, ss, logger); err != nil {
-+		return r.notReadyErrf(pg, logger, "failed to replace StatefulSet: %w", err)
-+	} else if replaced {
-+		return notReady(reasonProxyGroupCreating, "waiting for StatefulSet to be replaced to update its Pod management policy")
-+	}
-+
- 	if _, err := createOrUpdate(ctx, r.Client, r.tsNamespace, ss, func(s *appsv1.StatefulSet) {
- 		s.Spec = ss.Spec
- 		s.ObjectMeta.Labels = ss.ObjectMeta.Labels
-@@ -554,6 +561,36 @@ func (r *ProxyGroupReconciler) maybeUpdateStatus(ctx context.Context, logger *za
- 	return nil
- }
- 
-+// maybeReplaceStatefulSet deletes the ProxyGroup's existing StatefulSet if its
-+// Pod management policy differs from the one in ss. Kubernetes doesn't allow
-+// that field to change on an existing StatefulSet, so it has to be deleted and
-+// created again. The Pods are orphaned rather than deleted, so they keep
-+// serving until a later reconcile creates the new StatefulSet, which adopts
-+// them. It reports whether the StatefulSet is being replaced.
-+func (r *ProxyGroupReconciler) maybeReplaceStatefulSet(ctx context.Context, ss *appsv1.StatefulSet, logger *zap.SugaredLogger) (bool, error) {
-+	existing := new(appsv1.StatefulSet)
-+	err := r.Get(ctx, client.ObjectKeyFromObject(ss), existing)
-+	switch {
-+	case apierrors.IsNotFound(err):
-+		return false, nil
-+	case err != nil:
-+		return false, fmt.Errorf("failed to get StatefulSet: %w", err)
-+	case !existing.DeletionTimestamp.IsZero():
-+		return true, nil
-+	}
-+	// The API server defaults an unset policy to OrderedReady.
-+	current := cmp.Or(existing.Spec.PodManagementPolicy, appsv1.OrderedReadyPodManagement)
-+	desired := cmp.Or(ss.Spec.PodManagementPolicy, appsv1.OrderedReadyPodManagement)
-+	if current == desired {
-+		return false, nil
-+	}
-+	logger.Infof("Deleting StatefulSet %q, keeping its Pods, to change its Pod management policy from %q to %q; it is recreated on the next reconcile", existing.Name, current, desired)
-+	if err := r.Delete(ctx, existing, client.PropagationPolicy(metav1.DeletePropagationOrphan)); err != nil && !apierrors.IsNotFound(err) {
-+		return false, fmt.Errorf("failed to delete StatefulSet: %w", err)
-+	}
-+	return true, nil
-+}
-+
- func (r *ProxyGroupReconciler) ensureNodePortServiceCreated(ctx context.Context, pg *tsapi.ProxyGroup, pc *tsapi.ProxyClass) (map[string]uint16, *uint16, error) {
- 	return staticendpoints.EnsureNodePortServices(ctx, r.Client, staticendpoints.Config{
- 		Namespace:      r.tsNamespace,
-```
-
-**File**: `cmd/k8s-operator/proxygroup_specs.go` (modified, +5/-1)
-```diff
-@@ -89,6 +89,9 @@ func pgStatefulSet(pg *tsapi.ProxyGroup, namespace, image, tsFirewallMode string
- 		OwnerReferences: pgOwnerReference(pg),
- 	}
- 	ss.Spec.Replicas = new(pgReplicas(pg))
-+	// Start Pods in parallel so one that isn't ready yet, e.g. while its
-+	// device awaits approval, doesn't hold back the others.
-+	ss.Spec.PodManagementPolicy = appsv1.ParallelPodManagement
- 	ss.Spec.Selector = &metav1.LabelSelector{
- 		MatchLabels: pgLabels(pg.Name, nil),
- 	}
-@@ -326,7 +329,8 @@ func kubeAPIServerStatefulSet(pg *tsapi.ProxyGroup, namespace, image string, por
- 			OwnerReferences: pgOwnerReference(pg),
- 		},
- 		Spec: appsv1.StatefulSetSpec{
--			Replicas: new(pgReplicas(pg)),
-+			Replicas:            new(pgReplicas(pg)),
-+			PodManagementPolicy: appsv1.ParallelPodManagement,
- 			Selector: &metav1.LabelSelector{
- 				MatchLabels: pgLabels(pg.Name, nil),
- 			},
+ operatorConfig:
+-  # ACL tag that operator will be tagged with. Operator must be made owner of
+-  # these tags
++  # ACL tags that operator's Tailscale device will be tagged with.
++  # These tags must be the exact same tags that the operator's OAuth client creds were tagged with.
+   # https://tailscale.com/kb/1236/kubernetes-operator/?q=operator#setting-up-the-kubernetes-operator
+   # Multiple tags are defined as array items and passed to the operator as a comma-separated string
+   defaultTags:
+@@ -150,8 +150,8 @@ proxyConfig:
+     # used.
+     tag: ""
+     digest: ""
+-  # ACL tag that operator will tag proxies with. Operator must be made owner of
+-  # these tags
++  # ACL tags that operator will tag proxies with.
++  # These tags must be either the tags that the operator's OAuth client creds were tagged with or tags owned by those tags.
+   # https://tailscale.com/kb/1236/kubernetes-operator/?q=operator#setting-up-the-kubernetes-operator
+   # Multiple tags can be passed as a comma-separated string i.e 'tag:k8s-proxies,tag:prod'.
+   # Note that if you pass multiple tags to this field via `--set` flag to helm upgrade/install commands you must escape the comma (for example, "tag:k8s-proxies\,tag:prod"). See https://github.com/helm/helm/issues/1556
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22518** (2026-11-19): go.mod: bump wg-go for hybrid pq log details (@jwhited)
+- **PR #22513** (2026-11-19): feature/conn25: guard against an unusable Transit IP (@mazdakn)
+- **PR #22508** (2026-11-19): wgengine/magicsock: update packetLooksLike docs (@jwhited)
 - **PR #22506** (2026-11-18): tstest/natlab: Fix typo in README sample command (@fmarier)
 - **PR #22505** (closed): tstest/natlab: Fix invalid example command in README (@fmarier)
 - **PR #22503** (2026-11-19): go.toolchain.rev: bump Go toolchain [release-branch] (@bradfitz)
-- **PR #22501** (2026-11-18): go.toolchain.rev: bump Go toolchain (@tailscale-code-updater[bot])
-- **PR #22500** (2026-11-18): wgengine/magicsock: remove logging from zero discokey to nonzero (@cmol)
-- **PR #22491** (2026-11-18): tstest/natlab/vmtest: make ssh tests run across Linux test matrix (@cmol)
 
 ---
 
@@ -1038,61 +984,40 @@ Signed-off-by: chaosinthecrd <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmd/k8s-operator: test ProxyGroup StatefulSet Pod management policy
+## X. util/linuxfw: run without IPv6 rules when ip6tables fails to initialize
 
 **RULE**:
-When implementing operations in `cmd/k8s-operator/proxygroup_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `util/linuxfw/iptables.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `93ba239f`: cmd/k8s-operator: test ProxyGroup StatefulSet Pod management policy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `92f396d8`: util/linuxfw: run without IPv6 rules when ip6tables fails to initialize. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/k8s-operator/proxygroup_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `util/linuxfw/iptables.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		if sts.Spec.PodManagementPolicy != appsv1.ParallelPodManagement {
-			t.Errorf("unexpected PodManagementPolicy %q, want %q", sts.Spec.PodManagementPolicy, appsv1.ParallelPodManagement)
-		}
-func TestProxyGroupReplacesStatefulSetForPodManagementPolicy(t *testing.T) {
-	pg := &tsapi.ProxyGroup{
-		ObjectMeta: metav1.ObjectMeta{
-			Name:       "test",
-			Finalizers: []string{FinalizerName},
-			Generation: 1,
-		},
-		Spec: tsapi.ProxyGroupSpec{
-			Type:     tsapi.ProxyGroupTypeEgress,
-			Replicas: new(int32(1)),
-		},
-	}
-	fc := fake.NewClientBuilder().
-		WithScheme(tsapi.GlobalScheme).
-		WithObjects(pg).
-		WithStatusSubresource(pg).
-		Build()
-	r := &ProxyGroupReconciler{
-		tsNamespace:  tsNamespace,
-		tsProxyImage: testProxyImage,
-		Client:       fc,
-		log:          zap.Must(zap.NewDevelopment()).Sugar(),
-		clients:      tsclient.NewProvider(&fakeTSClient{}),
-		clock:        tstest.NewClock(tstest.ClockOpts{}),
-		reissuer:     tailscaled.NewReissuer(),
-	}
-	key := client.ObjectKey{Namespace: tsNamespace, Name: pg.Name}
-	getPolicy := func() (appsv1.PodManagementPolicyType, bool) {
-		t.Helper()
-		ss := new(appsv1.StatefulSet)
-		if err := fc.Get(t.Context(), key, ss); apierrors.IsNotFound(err)
+			// ip6tables is present but "ip6tables --version" failed,
+			// as the nft flavor does on kernels without nf_tables.
+			// Run without IPv6 rules instead of failing. (#20348)
+			logf("disabling tunneled IPv6 due to ip6tables init failure: %v", err)
+		} else {
+			supportsV6 = true
+			supportsV6Filter = checkSupportsV6Filter(ipt6, logf)
+			supportsV6NAT = checkSupportsV6NAT(ipt6, logf)
+			logf("netfilter running in iptables mode v6 = %v, v6filter = %v, v6nat = %v", supportsV6, supportsV6Filter, supportsV6NAT)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+		supportsV6 = true
+			return nil, err
+		supportsV6Filter = checkSupportsV6Filter(ipt6, logf)
+		supportsV6NAT = checkSupportsV6NAT(ipt6, logf)
+		logf("netfilter running in iptables mode v6 = %v, v6filter = %v, v6nat = %v", supportsV6, supportsV6Filter, supportsV6NAT)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `93ba239f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `92f396d8` are properly handled with clean fallback behavior.

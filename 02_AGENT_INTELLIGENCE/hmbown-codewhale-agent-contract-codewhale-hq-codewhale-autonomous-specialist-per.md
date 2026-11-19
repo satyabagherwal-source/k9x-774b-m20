@@ -4,17 +4,17 @@
 {
   "source_repository": "codewhale-hq/Codewhale",
   "source_url": "https://github.com/Hmbown/Codewhale",
-  "source_version": "1ad8da62",
+  "source_version": "3c8dcd7f",
   "license": "MIT",
-  "timestamp": "2026-11-18T12:23:54.396Z",
+  "timestamp": "2026-11-19T23:43:21.379Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-codewhale-hq-codewhale",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [codewhale-hq/Codewhale](https://github.com/Hmbown/Codewhale) (Revision: `1ad8da62`).  
-> **License**: MIT | **Timestamp**: `2026-11-18T12:23:54.396Z`  
+> **Provenance**: Harvested from [codewhale-hq/Codewhale](https://github.com/Hmbown/Codewhale) (Revision: `3c8dcd7f`).  
+> **License**: MIT | **Timestamp**: `2026-11-19T23:43:21.379Z`  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`
 
 
@@ -29,7 +29,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T12:23:53.204Z  
+> **Harvest Timestamp**: 2026-11-19T23:43:19.909Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -39,7 +39,7 @@ PROVENANCE_END -->
 - **Description**: An open-source coding agent for your terminal, written in Rust. It works with any model, can split one task across several agents, and every line of it is yours to read.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41183 stars
+- **Stars / Engagement**: 41182 stars
 
 ---
 
@@ -1978,11 +1978,11 @@ pub use codewhale_protocol::request::*;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7367** (2026-11-18): **fix(tui): translate tool labels, /help, /diff, composer and /status catalog text**
-  *Symptoms*: ## What and why  The six remaining hard-coded English strings from #7304 now come from the locale packs. All 15 packs get the new keys, and English output is unchanged byte for byte. zh-Hans uses full-width punctuation as in #7299 / #7314. (The `/status` label column from the same issue already shipped in #7314.)  | # | Surface | zh-Hans before | zh-Hans after | |---|---------|----------------|---------------| | 1 | Tool cell subtitle (`exploring_label`, `tool_routing.rs`) | `读取 完成 · Reading src/foo.rs` | `读取 完成 · 正在读取 src/foo.rs` | | 2 | Collapsed activity row (`tool_run.rs`) | `浏览了2个文件, 1次搜索: read file, search` | `浏览了2个文件、1次搜索：read file、search` | | 3 | `/help` count and aliases (`views/help.rs`) | `216 entries`, `  (aliases: /qingping)` | `216 个条目`, `  （别名：/qingping）` | | 3 | Command palette (`command_palette.rs`, `traits.rs`) | `aliases: image, media, fujian`, `1 shown / 1 entries`, `3 / 9 matches` | `别名：image、media、fujian`, `显示 1 个 / 共 1 个条目`, `3 / 9 个匹配` | | 4 | `/diff` pager and edit cards (`diff_render.rs`) | `summary: 2 files, +3 -1, 2 hunks`, per file `1 hunk` | `摘要：2个文件，+3 -1，2处改动`, per file `1处改动` | | 5 | Composer context preview (`file_mention.rs`) | `[git] git status · resolved on send` | `[git] git status · 发送时解析` | | 6 | `/status` window source row (`status.rs`) | `目录: models.dev live · 9070 offerings · fetched 2m ago · 云端事实: off` | `目录: models.dev 实时 · 9070 个可用模型 · 2 分钟前获取 · 云端事实: 关闭` |  Notes per item:  1. `exploring_label` takes the UI locale. The card picke
+- **Issue #7399** (2026-11-19): **fix(engine): unique fallback ids for non-streaming parallel tool calls**
+  *Symptoms*: ## Summary - **Audit V3 (verified):** non-streaming `parse_chat_message` used the constant `"tool_call"` for every tool call missing an `id`, so two id-less parallel calls collided and `validate_tool_call_ids_for_protocol` failed the whole turn with "duplicate tool call pairing ids". - Now `.enumerate()` + `call_{index}` — mirroring the streaming decoder fix. Regression twin test added; 84/84 fallback tests pass.  Found by the overnight 0.10.3 audit.  ## Test plan - [x] `cargo test -p codewhale-engine --lib fallback` — 84 pass - [x] fmt clean  Generated with [Devin](https://devin.ai) <!-- devin-review-badge-begin -->  ---  <a href="https://app.devin.ai/review/codewhale-hq/codewhale/pull/7399" target="_blank"><picture><source media="(prefers-color-scheme: dark)" srcset="https://static.devin.ai/assets/gh-devin-review-dark.svg?v=4"><img src="https://static.devin.ai/assets/gh-devin-review-light.svg?v=4" alt="Devin Review"></picture></a> <!-- devin-review-badge-end -->
 
-- **Issue #7366** (2026-11-18): **fix(snapshot): roll back partial file-scoped restores**
-  *Symptoms*: ## What and why  When a file-scoped restore fails after earlier checkouts or removals, undo can report failure while leaving those changes in the workspace. This PR uses the existing safety snapshot to roll back attempted checkout batches and completed removals. Recovery stays within those paths and preserves newer contents it detects. The error identifies any incomplete recovery and includes the safety snapshot ID. Directory pruning, when requested, runs after a successful restore. A failed checkout can still leave empty parent directories it created.  ## Where this came from  Refs #6559 (F02-10). Thanks to @7jrxt42BxFZo4iAnN4CX for reporting partial restores, and to the maintainers for identifying the remaining file-scoped case.  ## How I tested it  - `CODEWHALE_DEV_NEXTEST=0 bash scripts/dev-test.sh snapshot restore` — 20 passed, 0 failed, including a late removal failure and a Git checkout that failed after writing part of a batch. - Ran the new regression on the unpatched base and confirmed it failed because a file remained overwritten after the restore returned an error. - `bash scripts/preflight.sh --check` — passed.
+- **Issue #7379** (2026-11-19): **[CI only, do not merge] fix(sanitize,config,engine): fast-path secret redaction and retire OpenCode Zen free rows (CW-8225, CW-8257)**
+  *Symptoms*: ## Summary 0.10.3 slice `ci/redact-and-opencode-zen-0103-v1` (CURRENT_DECISIONS §235, ops gap map codewhale-hq/codewhale-ops#20). **Stacked on `ci/release-prep-0103-v2` (`25e73276b5`)**: only the commits after `25e73276b5` belong to this slice; the 16 commits below it are the reviewed release-prep stack, which lands first. Opened to get hosted `ci.yml` on this exact head (`workflow_dispatch` is not available to this session); lands through the designated lander after 2x exact-SHA `VERDICT: LAND`, not by merging this PR.  Slice commit message:  ``` fix(sanitize,config,engine): add fast-path secret redaction and retire dead-end OpenCode Zen free rows (CW-8225, CW-8257)  - CW-8225 (#7347): Add byte-identical fast-path pre-scans in crates/sanitize/src/redact.rs   so ordinary text without secret indicators skips regex/tokenization passes on every   model request, covered by fast_path_is_byte_identical_to_unoptimized_reference_across_corpus. - CW-8257 (#7365): Remove the 11 OpenCode Zen `*-free` rows from the curated catalog   (catalog_corrections.json, bundled Models.dev seed, model_resolution.golden.tsv,   reviewed.rs transport count) because OpenCode restricts them to its own client with   HTTP 429 FreeUsageLimitError and Codewhale does not spoof OpenCode's client. Document   the boundary in docs/PROVIDERS.md and docs/zh_hans/PROVIDERS.md and surface a clear   client-restriction hint in opencode_go_hint. ```   <!-- devin-bot-banner-begin --> ---  <p><picture><source srcset="http
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1999,654 +1999,525 @@ pub use codewhale_protocol::request::*;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c10b6c5e` (2026-11-18)
-**Commit Message**: fix(web): resolve correctness review findings B1, B2 and non-blocking 1-5
+### Incident Patch 1: `bacf9dea` (2026-11-19)
+**Commit Message**: 0.10.3 lane 8: execpolicy launcher panic and payload-hiding fixes (#7385)
 
-- B1 (docs/guide): state in web/lib/content/native-terminal.ts (en/zh,
-  fallback for other locales) that the terminal views come from a
-  development build of 0.10.3 that is not released yet.
-- B2 (/plugins): crop the plugins desktop capture in desktop-media.json
-  (576,470 2304x1330) below the auto-enable sentence, regenerate the 8
-  plugins AVIF/WebP assets via npm run media:desktop, and align
-  PLUGINS_COPY.desktopAlt with the cropped view.
-- NB1/NB2 (home & /app): switch the home desktop shot from review to
-  approval, update directionShotAlt and directionShotCaption across all
-  18 site dictionaries (plus gt-catalog/{en,zh}.json) to describe the
-  approval card and say 'locally through Ollama' instead of 'on this
-  computer', and update APP_COPY.shotsScope the same way.
-- NB3/NB4/NB5: merge the stale /app captures line in CHANGELOG.md into
-  the real-sessions entry and sync crates/tui/CHANGELOG.md, update
-  web/maintainer/README.md to name released-capture.generated.ts, and
-  remove the internal CW/artifacts evidence path from desktop-media.json.
+* fix(execpolicy): guard launcher verb index on flag-only commands
 
-Checks:
-- web npm test: 7 dependency-security tests pas
+Expander::record_launcher_commands indexed tokens[verb_idx] unchecked in the nix, npm, launchctl, and VERB_LAUNCHERS arms when resolve_wrapper_targets appended tokens.len() after scanning global flags with no subcommand (e.g. docker --version, npm --version). Guard all four arms with tokens.get(verb_idx) and add launcher_flag_only_commands_do_not_panic.
 
-**File**: `CHANGELOG.md` (modified, +1/-2)
+Restacked onto ci/release-prep-0103-v2 25e73276b5 from 03aee41843 (PR #7375, 2x LAND); source patch identical, changelog entry placed under [0.10.3] ### Fixed and crates/tui/CHANGELOG.md resynced. rustfmt applied to the is_container_run line.
+
+Checks on Linux x86_64: cargo test --locked -p codewhale-execpolicy (268 passed on this tip: 246 unit, 1 authorization_order, 11 redirection_policy, 9 shell_parse_policy, 1 doctest; 0 failed); without the shell_expand.rs guards the new test fails (0 passed; 1 failed: index out of bounds: the len is 2 but the index is 2); cargo clippy --locked -p codewhale-execpolicy --all-targets -- -D warnings; cargo fmt -p codewhale-execpolicy -- --check; scripts/syn
+
+**File**: `CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -161,7 +161,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Document conversion, speech output, and workspace Fleet rosters:** `pandoc_convert` and `speech` now replace their output path atomically instead of writing through a symbolic link; `pandoc_convert` rejects unknown input fields, and its write-scope checks follow `output_path`; and repository Fleet and Reasoning Router files (including `--fleet` on the CLI) that are symbolic links are refused as I/O errors rather than being followed or treated as absent.
- - **README and contributor credit:** the repository front page now opens the way the website does: the line "The model can be anyone's. The agent should be yours.", one sentence on what Codewhale is, the install command and one picture, with reference detail moved into the linked guides; the 18 translated READMEs follow the same structure and say they are machine-drafted. The contributor wall and the website now count the same 433 people (407 GitHub accounts and the commit authors whose email is not linked to an account), where the website had counted accounts only. `DEPENDENCY_SECURITY.md` moved into `docs/dependency-maintenance.md`, and `.github/SUPPORT.md` says where to ask for help.
- - **Website Plugins page:** The website's Plugins page now describes what the released version does, and a labelled section says what 0.10.3 adds: one Plugins place, Standard and Creator mode, and the Permissions control.
--- **Website `/app` captures:** the `/app` page's desktop build screenshots (`conversation.webp`, `approval.webp`, `model-picker.webp`) and their alt and caption text have been refreshed from the current 0.10.3 desktop UI.
- - **First-time guide on the website:** a new docs page, "Use Codewhale for the first time" (`/docs/first-time`, English and Simplified Chinese), walks someone who has never used a terminal through opening one, installing, choosing the folder Codewhale works in and when that choice matters, opening a terminal in a folder from Finder or File Explorer, connecting a model, a first task, and stopping, undoing and quitting. The install page gains a short "New to the terminal?" block for macOS and Windows that links to it, and `llms.txt` carries the same steps.
- - **Plugin docs and plugin-creator:** Docs now say everything you add is a plugin. The bundled plugin-creator skill no longer tells an agent never to trust or enable a plugin (in Full Access it may, for one it wrote and installed from its project), points code and screen plugins at cordis-plugin-development, and an untouched copy from 0.10.2 now upgrades. The Chinese extension and Runtime API docs now say editor ACP sessions get plugin tools and configured MCP servers.
- - **Model thinking:** New installs show model thinking by default: it streams live in the transcript and collapses under a "Thought for …" header when the answer starts. Existing installs keep their saved setting; turn it on under Model reasoning in chat in /config.
-@@ -224,7 +223,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ### Changed
+@@ -591,6 +591,8 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
  
- - **Website terminal frames recorded with a real model:** the home page's session, model and receipt frames are now real captures of Codewhale 0.10.3 (development build) working with `gemini-4-hydrogen` through Google's API on a small `ls.py --json` task, replacing frames recorded against a scripted local model. The provider frame is now the model picker, the captions and frame descriptions in all 19 site languages name the real model, and the provenance file records how the frames were grabbed.
--- **Website shows only real sessions:** the docs guide terminal tour and the README image now use the same real `gemini-4-hydrogen` session as the home page, and the scripted demo captures are gone. `/app`, `/plugins`, `/models` and the home page show real screenshots of the desktop development build (real engine, `qwen3:4b` through Ollama) in light and dark. The home page has its multi-agent section back, Plugins and the desktop page are in the top navigation, and `/desktop` opens the desktop page.
-+- **Website shows only real sessions:** the docs guide terminal tour and the README image now use the same real `gemini-4-hydrogen` session as the home page (with the guide noting it is an unreleased 0.10.3 development build), and the scripted demo captures are gone. On `/app`, `/plugins`, `/models` and the home page, the earlier `/app` captures (`conversation.webp`, `approval.webp`, `model-picker.webp`) are replaced by real screenshots of the desktop development build (real engine, `qwen3:4b` locally through Ollama) in light and dark, with the home page showing the approval card and `/plugins` cropped below the development build's auto-enable sentence. The home page has its multi-agent section back, Plugins and the desktop page are in the top navigation, and `/desktop` opens the desktop page.
- - The cost label shows an exact cost, an estimate or unkn
-```
-
-**File**: `crates/tui/CHANGELOG.md` (modified, +1/-2)
-```diff
-@@ -161,7 +161,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - **Document conversion, speech output, and workspace Fleet rosters:** `pandoc_convert` and `speech` now replace their output path atomically instead of writing through a symbolic link; `pandoc_convert` rejects unknown input fields, and its write-scope checks follow `output_path`; and repository Fleet and Reasoning Router files (including `--fleet` on the CLI) that are symbolic links are refused as I/O errors rather than being followed or treated as absent.
- - **README and contributor credit:** the repository front page now opens the way the website does: the line "The model can be anyone's. The agent should be yours.", one sentence on what Codewhale is, the install command and one picture, with reference detail moved into the linked guides; the 18 translated READMEs follow the same structure and say they are machine-drafted. The contributor wall and the website now count the same 433 people (407 GitHub accounts and the commit authors whose email is not linked to an account), where the website had counted accounts only. `DEPENDENCY_SECURITY.md` moved into `docs/dependency-maintenance.md`, and `.github/SUPPORT.md` says where to ask for help.
- - **Website Plugins page:** The website's Plugins page now describes what the released version does, and a labelled section says what 0.10.3 adds: one Plugins place, Standard and Creator mode, and the Permissions control.
--- **Website `/app` captures:** the `/app` page's desktop build screenshots (`conversation.webp`, `approval.webp`, `model-picker.webp`) and their alt and caption text have been refreshed from the current 0.10.3 desktop UI.
- - **First-time guide on the website:** a new docs page, "Use Codewhale for the first time" (`/docs/first-time`, English and Simplified Chinese), walks someone who has never used a terminal through opening one, installing, choosing the folder Codewhale works in and when that choice matters, opening a terminal in a folder from Finder or File Explorer, connecting a model, a first task, and stopping, undoing and quitting. The install page gains a short "New to the terminal?" block for macOS and Windows that links to it, and `llms.txt` carries the same steps.
- - **Plugin docs and plugin-creator:** Docs now say everything you add is a plugin. The bundled plugin-creator skill no longer tells an agent never to trust or enable a plugin (in Full Access it may, for one it wrote and installed from its project), points code and screen plugins at cordis-plugin-development, and an untouched copy from 0.10.2 now upgrades. The Chinese extension and Runtime API docs now say editor ACP sessions get plugin tools and configured MCP servers.
- - **Model thinking:** New installs show model thinking by default: it streams live in the transcript and collapses under a "Thought for …" header when the answer starts. Existing installs keep their saved setting; turn it on under Model reasoning in chat in /config.
-@@ -224,7 +223,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ### Changed
+ ### Fixed
  
- - **Website terminal frames recorded with a real model:** the home page's session, model and receipt frames are now real captures of Codewhale 0.10.3 (development build) working with `gemini-4-hydrogen` through Google's API on a small `ls.py --json` task, replacing frames recorded against a scripted local model. The provider frame is now the model picker, the captions and frame descriptions in all 19 site languages name the real model, and the provenance file records how the frames were grabbed.
--- **Website shows only real sessions:** the docs guide terminal tour and the README image now use the same real `gemini-4-hydrogen` session as the home page, and the scripted demo captures are gone. `/app`, `/plugins`, `/models` and the home page show real screenshots of the desktop development build (real engine, `qwen3:4b` through Ollama) in light and dark. The home page has its multi-agent section back, Plugins and the desktop page are in the top navigation, and `/desktop` opens the desktop page.
-+- **Website shows only real sessions:** the docs guide terminal tour and the README image now use the same real `gemini-4-hydrogen` session as the home page (with the guide noting it is an unreleased 0.10.3 development build), and the scripted demo captures are gone. On `/app`, `/plugins`, `/models` and the home page, the earlier `/app` captures (`conversation.webp`, `approval.webp`, `model-picker.webp`) are replaced by real screenshots of the desktop development build (real engine, `qwen3:4b` locally through Ollama) in light and dark, with the home page showing the approval card and `/plugins` cropped below the development build's auto-enable sentence. The home page has its multi-agent section back, Plugins and the desktop page are in the top navigation, and `/desktop` opens the desktop page.
- - The cost label shows an exact cost, an estimate or unkn
++- **Flag-only launcher commands no longer crash the turn:** running `npm --version`, `nix --version`, `launchctl --help`, `docker --version`, `podman --version`, or another launcher command with global flags and no subcommand no longer panics with an out-of-bounds index during command policy expansion.
++- **Command policy sees payloads behind empty words and `--entrypoint`:** command policy now also checks the nested command in launcher lines with empty-string words before the subcommand (`npm '' exec -c 'rm -rf /'`, `docker '' -D run alpine rm -rf /`) and checks `docker run --entrypoint rm alpine -rf /` as the entrypoint plus the arguments after the image, checking every `--entrypoint` value before the image, so deny rules and approval review match them. A launcher line with so many options that the option walk hits its state limit is now treated like other commands whose words are only known at run time: while deny rules are in force it asks for approval, or is refused where approval is unavailable, instead of dropping the nested command.
+ - **File search in very large folders returns results instead of timing out:** `file_search` (shown as `find`) no longer fails with "operation timed out after 30s" in a huge folder that is not a git repository. It now walks the tree in parallel, searches the top four levels first so shallow files are found even when the rest of the tree is too large, also skips `.venv`, `__pycache__`, `.next`, `.turbo` and `.gradle` by default alongside `target`, `node_modules`, `.git` and build output, and, if the tree is still too large to finish in 20 seconds, returns the best matches found so far marked `partial` with a note to narrow `path` or the query. Results in an ordinary repository are unchanged apart from those newly skipped folders. (CW-8265)
+ - **Auto-Review on the desktop app sees what you asked for:** the Auto-Review reviewer refused every command started from the desktop composer with "No person request provided (person_messages is empty)", because the desktop reaches its Engine with the local runtime token, which counted as an automation caller. A runtime-token caller that names the owner surface (`"client": "desktop"`) on `POST /v1/threads/{id}/turns` or `.../steer` now records the typed prompt as your message, the same way the signed-in web composer and the terminal already do; a paired device or phone that claims `desktop` is refused with 403, and a runtime-token caller that names no owner surface, a tokenless local server, scheduled work, automations and agent-created threads still record nothing. The reviewer still blocks actions your messages do not cover. (CW-8270)
+ - **Scheduled catalog refresh pushes with a branch-tip lease:** the Catalog refresh workflow now resolves the remote `catalog-refresh` branch tip before pushing, aborts if `catalog-refresh` has commits outside `origin/main` not committed by `codewhale-agent[bot]`, and passes that resolved tip (empty when absent) to `--force-with-lease` so pushes no longer fail with `stale info`. (CW-8266)
 ```
 
-**File**: `web/app/[locale]/page.tsx` (modified, +1/-1)
+**File**: `crates/execpolicy/src/shell_expand.rs` (modified, +211/-30)
 ```diff
-@@ -274,7 +274,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
-         <RouteMap parts={parts} engine={d.mapHeading} label={d.sectionDirectionHeading} locale={locale} />
-         <figure className="home-desktop">
-           <div className="figure-frame home-desktop-frame">
--            <DesktopShot id="review" alt={d.directionShotAlt} sizes="(max-width: 64rem) 100vw, 64rem" />
-+            <DesktopShot id="approval" alt={d.directionShotAlt} sizes="(max-width: 64rem) 100vw, 64rem" />
-           </div>
-           <figcaption className="home-desktop-caption">
-             {desktopPart ? <Status tone={STATE_TONE[desktopState]}>{desktopPart.name}: {desktopPart.stateWord}</Status> : null}
+@@ -2048,10 +2048,15 @@ impl Expander {
+         depth: usize,
+     ) {
+         let tokens = &line.words;
++        let mut truncated = false;
+         match name {
+             "nix" => {
+-                for verb_idx in resolve_wrapper_targets(tokens, head + 1, &NIX_GLOBAL_SPEC) {
+-                    let verb = tokens[verb_idx].as_str();
++                for verb_idx in
++                    launcher_verb_targets(tokens, head + 1, &NIX_GLOBAL_SPEC, &mut truncated)
++                {
++                    let Some(verb) = tokens.get(verb_idx).map(String::as_str) else {
++                        continue;
++                    };
+                     if matches!(verb, "develop" | "shell")
+                         && let Some(at) = (verb_idx + 1..tokens.len())
+                             .take_while(|&i| tokens[i] != "--")
+@@ -2086,8 +2091,13 @@ impl Expander {
+                         self.code_payload(&payload, payload_dynamic, depth);
+                     }
+                 } else {
+-                    for verb_idx in resolve_wrapper_targets(tokens, head + 1, &EMPTY_WRAPPER_SPEC) {
+-                        if matches!(tokens[verb_idx].as_str(), "exec" | "x") {
++                    for verb_idx in
++                        launcher_verb_targets(tokens, head + 1, &EMPTY_WRAPPER_SPEC, &mut truncated)
++                    {
++                        if tokens
++                            .get(verb_idx)
++                            .is_some_and(|verb| matches!(verb.as_str(), "exec" | "x"))
++                        {
+                             for (payload, payload_dynamic) in option_payloads(
+                                 tokens,
+                                 verb_idx,
+@@ -2106,7 +2116,8 @@ impl Expander {
+                 if ssh_skips_remote_command(&tokens[head + 1..]) {
+                     return;
+                 }
+-                for landing in resolve_wrapper_targets(tokens, head + 1, &SSH_SPEC) {
++                for landing in resolve_wrapper_targets(tokens, head + 1, &SSH_SPEC, &mut truncated)
++                {
+                     if landing < tokens.len() {
+                         let rest = &tokens[landing..];
+                         let rest_dynamic = dynamic[landing..].iter().any(|d| *d);
+@@ -2121,7 +2132,9 @@ impl Expander {
+                 if screen_attaches_only(&tokens[head + 1..]) {
+                     return;
+                 }
+-                for landing in resolve_wrapper_targets(tokens, head + 1, &SCREEN_SPEC) {
++                for landing in
++                    resolve_wrapper_targets(tokens, head + 1, &SCREEN_SPEC, &mut truncated)
++                {
+                     if landing < tokens.len() {
+                         self.record(&slice_line(line, landing), depth + 1);
+                     }
+@@ -2132,8 +2145,10 @@ impl Expander {
+             }
+             _ => {
+                 if name == "launchctl" {
+-                    for verb_idx in resolve_wrapper_targets(tokens, head + 1, &EMPTY_WRAPPER_SPEC) {
+-                        if tokens[verb_idx] == "submit" {
++                    for verb_idx in
++                        launcher_verb_targets(tokens, head + 1, &EMPTY_WRAPPER_SPEC, &mut truncated)
++                    {
++                        if tokens.get(verb_idx).map(String::as_str) == Some("submit") {
+                             self.record_exec_flag_command(line, verb_idx, &['p'], &[], depth);
+                         }
+                     }
+@@ -2142,24 +2157,55 @@ impl Expander {
+                     if launcher.program != name {
+                         continue;
+                     }
+-                    for verb_idx in resolve_wrapper_targets(tokens, head + 1, launcher.global) {
+-                        if !launcher.verbs.contains(&tokens[verb_idx].as_str()) {
++                    for verb_idx in
++                        launcher_verb_targets(tokens, head + 1, launcher.global, &mut truncated)
++                    {
++                        let Some(verb) = tokens.get(verb_idx).map(String::as_str) else {
++                            continue;
++                        };
++                        if !launcher.verbs.contains(&verb) {
+                             continue;
+                         }
+-                        let is_container_run =
+-                            matches!(name, "docker" | "podman") && tokens[verb_idx] == "run";
+-                        let entrypoint = if is_container_run {
+-                            find_entrypoint(&tokens[verb_idx + 1..], verb_idx + 1)
+-                        } else {
+-                            None
++                        let is_container_run = matches!(name, "docker" | "podman") && verb == "run";
++                        let entrypoints_before = |end: usize| {
++                            if !is_container_run {
++                                return Vec::new();
++                            }
++                            let end = end.min(tokens.len()).max(verb_idx + 1);
++                            l
 ```
 
-**File**: `web/data/desktop-media.json` (modified, +32/-27)
+**File**: `crates/tui/CHANGELOG.md` (modified, +2/-0)
 ```diff
-@@ -7,8 +7,7 @@
-     "model": "qwen3:4b",
-     "simulator": false,
-     "captured": "2026-11-18",
--    "window": "1440x900 at device scale factor 2",
--    "evidence": "CW/artifacts/website-real-media-20261118/desktop/INDEX.md"
-+    "window": "1440x900 at device scale factor 2"
-   },
-   "widths": [
-     1600,
-@@ -49,7 +48,13 @@
-     },
-     {
-       "id": "plugins",
--      "source": "08b-plugins-discover"
-+      "source": "08b-plugins-discover",
-+      "crop": {
-+        "left": 576,
-+        "top": 470,
-+        "width": 2304,
-+        "height": 1330
-+      }
-     }
-   ],
-   "outputs": {
-@@ -295,51 +300,51 @@
-     },
-     "plugins-light-1600.avif": {
-       "width": 1600,
--      "height": 1000,
--      "bytes": 59362,
--      "sha256": "fb3849aa765dda60e35892a7feb663087b279922fb7da48401feefa62da69911"
-+      "height": 924,
-+      "bytes": 64148,
-+      "sha256": "245bebf0f46b8cc0f9bca3b892e1870333170dd08b3ae5d047170e827798144a"
-     },
-     "plugins-light-1600.webp": {
-       "width": 1600,
--      "height": 1000,
--      "bytes": 80244,
--      "sha256": "fa7b47d194015f6997823b6b209dc1426947651957da5a307a66297d2cff52e7"
-+      "height": 924,
-+      "bytes": 87348,
-+      "sha256": "531ba49c890d4ae750e27315cc8a884f38751af2aea044e10f9c7430adb951b7"
-     },
-     "plugins-light-800.avif": {
-       "width": 800,
--      "height": 500,
--      "bytes": 20994,
--      "sha256": "4ab81026bc75a16cd22402d7c976edeb6f3a0531a9effdc125380b7a300c9d61"
-+      "height": 462,
-+      "bytes": 24268,
-+      "sha256": "1427a2c3dad900c57d3a77171add31312d596c206364e0afd24175226e48be90"
-     },
-     "plugins-light-800.webp": {
-       "width": 800,
--      "height": 500,
--      "bytes": 26824,
--      "sha256": "6314fcfd783e275f14c96e8f775454b3ec6f5bbb3c4728e151728d2742adebb7"
-+      "height": 462,
-+      "bytes": 31050,
-+      "sha256": "9b2d48740190545ddf479ce03d59824f37b948a0d3d124a1f6a2f6ea92463f82"
-     },
-     "plugins-dark-1600.avif": {
-       "width": 1600,
--      "height": 1000,
--      "bytes": 64383,
--      "sha256": "e849efebda1215f6501e362ca6576582aed96786dcdcf9b0f4c7cc59e6719869"
-+      "height": 924,
-+      "bytes": 67212,
-+      "sha256": "4b8b63ef8259a9ffac714ca52f7a511a64b85cf43423e7c78a83e41bc60ba6ec"
-     },
-     "plugins-dark-1600.webp": {
-       "width": 1600,
--      "height": 1000,
--      "bytes": 80246,
--      "sha256": "df9f5c07e7516312b4eab7e3818fc6c94cb502fc49ac2f0af7bc272402d5213b"
-+      "height": 924,
-+      "bytes": 86734,
-+      "sha256": "e57dc8e7dc448235c5bb797fd4c572fdf4ffa437a3853cd3adda72a3b59c39e8"
-     },
-     "plugins-dark-800.avif": {
-       "width": 800,
--      "height": 500,
--      "bytes": 22408,
--      "sha256": "28952ca49c3d74131cbcbdae442a04d812b4dd7c1773a28e2f9f13f85f29bf1c"
-+      "height": 462,
-+      "bytes": 25909,
-+      "sha256": "ee4d2ce87d6a0f335037c43b32269589f1f5a77100b0dfd299df584e6ab2cf00"
-     },
-     "plugins-dark-800.webp": {
-       "width": 800,
--      "height": 500,
--      "bytes": 26618,
--      "sha256": "49f45c43a20c73f39de8a181b00da49f1b6204e88e0f1f69778c948113f60855"
-+      "height": 462,
-+      "bytes": 31352,
-+      "sha256": "67a094ff3659cd6a0f4d3012fea6925ffdc2fe13664892e5037839080a88b070"
-     }
-   }
- }
-```
-
-**File**: `web/gt-catalog/en.json` (modified, +2/-2)
-```diff
-@@ -346,8 +346,8 @@
-     "agentRoleImplement": "Makes one specific change with the smallest edit.",
-     "agentRoleReviewer": "Reads a change and grades what it finds by severity, without changing files.",
-     "agentsLink": "Read how sub-agents work",
--    "directionShotAlt": "The Codewhale desktop app. On the left is the session list, in the middle a finished task that ran python3 -m pytest -q with 3 tests passed, and on the right the review panel with the change to core.py.",
--    "directionShotCaption": "The desktop app in development runs on the same engine. Here it finished a real task with qwen3:4b, a model running on this computer, and shows the change for review.",
-+    "directionShotAlt": "The Codewhale desktop app. On the left is the session list; in the middle it edited tally/core.py and asks “Run a command?” for python3 -m pytest -q, with Allow once, Allow for this session and Don't allow.",
-+    "directionShotCaption": "The desktop app in development runs on the same engine. Here, running qwen3:4b locally through Ollama, it applied the edit in Accept Edits and asks before running the test command.",
-     "directionShotLink": "See the desktop app",
-     "sectionDirectionHeading": "Here is where your agent is going.",
-     "sectionDirectionBody": "Codewhale is becoming one environment across your terminal, a desktop app, the browser and cloud computers, all run by one engine, so your work can move between them and stay yours. Each part below says where it stands today.",
-```
-
-**File**: `web/gt-catalog/zh.json` (modified, +2/-2)
-```diff
-@@ -348,8 +348,8 @@
-     "agentRoleImplement": "用最小的改动完成一项具体修改。",
-     "agentRoleReviewer": "阅读一处修改，并按严重程度评定发现的问题，不修改文件。",
-     "agentsLink": "了解子智能体如何工作",
--    "directionShotAlt": "Codewhale 桌面应用。左侧是会话列表，中间是一项已完成的任务，它运行了 python3 -m pytest -q，3 个测试通过；右侧是审阅面板，显示对 core.py 的修改。",
--    "directionShotCaption": "开发中的桌面应用运行在同一个引擎上。这里它用 qwen3:4b（一个在这台电脑上运行的模型）完成了一项真实任务，并展示修改供你审阅。",
-+    "directionShotAlt": "Codewhale 桌面应用。左侧是会话列表；中间已经编辑了 tally/core.py，并针对 python3 -m pytest -q 询问“Run a command?”，提供 Allow once、Allow for this session 和 Don't allow 按钮。",
-+    "directionShotCaption": "开发中的桌面应用运行在同一个引擎上。这里它通过 Ollama 在本地运行 qwen3:4b，在 Accept Edits 模式下应用了修改，并在运行测试命令前先询问你的意见。",
-     "directionShotLink": "查看桌面应用",
-     "sectionDirectionHeading": "这是你的智能体将要去的地方。",
-     "sectionDirectionBody": "Codewhale 正在成为横跨你的终端、桌面应用、浏览器和云端计算机的统一环境，全部由同一个引擎驱动，所以你的工作可以在它们之间转移，并始终属于你。下面每个部分都说明了它今天所处的状态。",
-```
-
-**File**: `web/lib/content/app-page.ts` (modified, +2/-2)
-```diff
-@@ -52,8 +52,8 @@ export const APP_COPY = {
+@@ -591,6 +591,8 @@ Codewhale v0.10.3 brings a unified Plugins surface with Creator mode (`[features
  
-   shotsHeading: { en: "What the development build looks like", zh: "开发版本长什么样" },
-   shotsScope: {
--    en: "These screens come from the desktop development build running the real engine and a real model, qwen3:4b, on this computer through Ollama. Details will change before a release.",
--    zh: "以下画面来自桌面开发版本，运行的是真实引擎和真实模型：通过 Ollama 在本机运行的 qwen3:4b。发布前细节仍会变化。",
-+    en: "These screens come from the desktop development build running the real engine and a real model, qwen3:4b, locally through Ollama. Details will change before a release.",
-+    zh: "以下画面来自桌面开发版本，运行的是真实引擎和真实模型：通过 Ollama 在本地运行的 qwen3:4b。发布前细节仍会变化。",
-   },
-   shots: [
-     {
+ ### Fixed
+ 
++- **Flag-only launcher commands no longer crash the turn:** running `npm --version`, `nix --version`, `launchctl --help`, `docker --version`, `podman --version`, or another launcher command with global flags and no subcommand no longer panics with an out-of-bounds index during command policy expansion.
++- **Command policy sees payloads behind empty words and `--entrypoint`:** command policy now also checks the nested command in launcher lines with empty-string words before the subcommand (`npm '' exec -c 'rm -rf /'`, `docker '' -D run alpine rm -rf /`) and checks `docker run --entrypoint rm alpine -rf /` as the entrypoint plus the arguments after the image, checking every `--entrypoint` value before the image, so deny rules and approval review match them. A launcher line with so many options that the option walk hits its state limit is now treated like other commands whose words are only known at run time: while deny rules are in force it asks for approval, or is refused where approval is unavailable, instead of dropping the nested command.
+ - **File search in very large folders returns results instead of timing out:** `file_search` (shown as `find`) no longer fails with "operation timed out after 30s" in a huge folder that is not a git repository. It now walks the tree in parallel, searches the top four levels first so shallow files are found even when the rest of the tree is too large, also skips `.venv`, `__pycache__`, `.next`, `.turbo` and `.gradle` by default alongside `target`, `node_modules`, `.git` and build output, and, if the tree is still too large to finish in 20 seconds, returns the best matches found so far marked `partial` with a note to narrow `path` or the query. Results in an ordinary repository are unchanged apart from those newly skipped folders. (CW-8265)
+ - **Auto-Review on the desktop app sees what you asked for:** the Auto-Review reviewer refused every command started from the desktop composer with "No person request provided (person_messages is empty)", because the desktop reaches its Engine with the local runtime token, which counted as an automation caller. A runtime-token caller that names the owner surface (`"client": "desktop"`) on `POST /v1/threads/{id}/turns` or `.../steer` now records the typed prompt as your message, the same way the signed-in web composer and the terminal already do; a paired device or phone that claims `desktop` is refused with 403, and a runtime-token caller that names no owner surface, a tokenless local server, scheduled work, automations and agent-created threads still record nothing. The reviewer still blocks actions your messages do not cover. (CW-8270)
+ - **Scheduled catalog refresh pushes with a branch-tip lease:** the Catalog refresh workflow now resolves the remote `catalog-refresh` branch tip before pushing, aborts if `catalog-refresh` has commits outside `origin/main` not committed by `codewhale-agent[bot]`, and passes that resolved tip (empty when absent) to `--force-with-lease` so pushes no longer fail with `stale info`. (CW-8266)
 ```
 
-**File**: `web/lib/content/native-terminal.ts` (modified, +2/-2)
+**File**: `docs/MODES.md` (modified, +3/-1)
 ```diff
-@@ -80,8 +80,8 @@ export const NATIVE_TERMINAL_VIEWS = [
- export const NATIVE_TERMINAL_COPY = {
-   title: { en: "Explore the terminal", zh: "探索终端界面" },
-   description: {
--    en: "These views come from one real session: Codewhale 0.10.3 on gemini-4-hydrogen through Google's API, in Accept Edits.",
--    zh: "这些画面来自一次真实会话：Codewhale 0.10.3 通过 Google API 使用 gemini-4-hydrogen，处于 Accept Edits 模式。",
-+    en: "These views come from one real session on a development build of 0.10.3, which is not released yet: gemini-4-hydrogen through Google's API, in Accept Edits.",
-+    zh: "这些画面来自一次真实会话，运行在尚未发布的 0.10.3 开发版本上：通过 Google API 使用 gemini-4-hydrogen，处于 Accept Edits 模式。",
-   },
-   viewsLabel: { en: "Terminal views", zh: "终端视图" },
- } satisfies Record<string, LocalizedText>;
+@@ -27,7 +27,9 @@ the saved `role`/`profile` assignment. An Exact Fleet fixes each member's route.
+ One dial says how much Codewhale may do without asking. Press `Shift+Tab` to
+ step it: **Ask → Accept Edits → Plan → Auto-Review → Full Access → Ask**. Plan
+ is the Plan mode; every other stop is Work with that permission posture. The
+-footer shows the current stop and `Shift+Tab to change`. New installs start on
++footer shows the current stop and `Shift+Tab to change`; after you have pressed
++it twice the hint stands down, except on Auto-Review and Full Access, where it
++stays while the footer has room. New installs start on
+ Accept Edits when no permission posture is saved. An explicit saved choice,
+ including Ask from an earlier version, stays in control.
+ `Tab` only completes composer menus, commands, file mentions and suggestions;
 ```
 
 ---
 
-### Incident Patch 2: `3d0b93e3` (2026-11-18)
-**Commit Message**: feat(web): rebuild the home sections and /app, /plugins, /models around real media; Plugins and the desktop page join the nav
+### Incident Patch 2: `b46101ca` (2026-11-18)
+**Commit Message**: fix(app-server): Claude organization availability cache survives sign-out and probe panics (CW-8258)
 
-Home (MESSAGING's six sections under the version B first screen, §153/§156):
-- Hero: unchanged line and subhead; the session opens on Result (tests
-  passed, accept edits, gemini-4-hydrogen) instead of the approval card with
-  the cursor on Don't allow.
-- Any model: the stray "Prompt and Result frames" figcaption under the model
-  picker is gone; that section has no such frames.
-- Several agents can share one task with you: restored from MESSAGING §3,
-  with the explore, implement and reviewer roles from docs/SUBAGENTS.md and a
-  link to /docs/subagents. No capture is shown because no real multi-agent
-  capture exists yet.
-- Direction: under the One engine map, the real desktop review screenshot
-  (theme-matched), badged with the desktop's typed state (In development, no
-  download), captioned with the model it ran (qwen3:4b, local), linking /app.
-- The OrcaRouter strip loads a 128x72 thumbnail (3.5 KB) instead of the
-  1440x810 image for its 64x36 slot.
+Both LAND reviews of 65f0149749 flagged the availability cache:
 
-/app: the three simulator screenshots (Replay button, "Not available yet",
-"State unknown", duplicate a
+- A signed-out or revoked session cleared the cache to unknown with no
+  timestamp, so every GET /v1/providers started another probe; the
+  10-minute TTL no longer applied. Not signed in (and no account
+  client) now caches false with a timestamp.
+- Sign-in (import, claim) and sign-out now forget the cached value, so
+  the option follows the account instead of lingering for 10 minutes.
+- A panic inside the probe left the refreshing flag set forever; a drop
+  guard now resets it.
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+New test anthropic_browser_connect_follows_control_plane_availability:
+the option is hidden until the background probe lands, then shown, and
+repeated provider lists within the TTL make exactly one probe.
+
+Checks: dev-cargo test -p codewhale-app-server --lib -- anthropic_:
+6 passed; 0 failed; clippy -p codewhale-app-server --tests -D warnings
+clean; blocking-call budget within budget; fmt clean.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `crates/app-server/src/runtime_api/account.rs` (modified, +3/-0)
 ```diff
-@@ -224,6 +224,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- ### Changed
- 
- - **Website terminal frames recorded with a real model:** the home page's session, model and receipt frames are now real captures of Codewhale 0.10.3 (development build) working with `gemini-4-hydrogen` through Google's API on a small `ls.py --json` task, replacing frames recorded against a scripted local model. The provider frame is now the model picker, the captions and frame descriptions in all 19 site languages name the real model, and the provenance file records how the frames were grabbed.
-+- **Website shows only real sessions:** the docs guide terminal tour and the README image now use the same real `gemini-4-hydrogen` session as the home page, and the scripted demo captures are gone. `/app`, `/plugins`, `/models` and the home page show real screenshots of the desktop development build (real engine, `qwen3:4b` through Ollama) in light and dark. The home page has its multi-agent section back, Plugins and the desktop page are in the top navigation, and `/desktop` opens the desktop page.
- - The cost label shows an exact cost, an estimate or unknown.
- - **Docs for agents match the release:** `/llms-full.txt` and `/docs-markdown/*` now serve the documents as they were at the published release tag, from a committed snapshot that is checked against the published release.
- - **Extension host (experimental): trusted plugins ask for review once more.** With `extension_host` turned on, plugins you already trusted are shown for review again after this update, because the capability table they were reviewed against gained the `remote` service. No plugin can use that service yet: none is granted it.
+@@ -187,6 +187,7 @@ async fn import(
+             import_allowed: false,
+         });
+         status["committedRevision"] = json!(revision);
++        state.provider_connect.forget_claude_org_availability();
+         Ok(status)
+     })
+     .await
+@@ -208,6 +209,7 @@ async fn claim(
+                 "The Codewhale account changed; try again",
+             ));
+         }
++        state.provider_connect.forget_claude_org_availability();
+         Ok(status)
+     })
+     .await
+@@ -272,6 +274,7 @@ async fn logout(
+                 access.take();
+             }
+         }
++        state.provider_connect.forget_claude_org_availability();
+         let mut status = read_status(&client)?;
+         status["remoteRevoked"] = json!(revoked);
+         Ok(status)
 ```
 
-**File**: `web/COPY_STYLE.md` (modified, +1/-1)
+**File**: `crates/app-server/src/runtime_api/secrets.rs` (modified, +23/-11)
 ```diff
-@@ -14,7 +14,7 @@ Sources: UT Dallas JSOM Business Communication Center guides
- 7. **Parallel structure.** List items share a grammatical form (all verbs, or all nouns).
- 8. **"You", not "we" or "users".** Address the reader directly. "We" is allowed in the belief and in sentences about direction. "We are building" is the honest form for what is not released; "you will get" reads as availability and is not used.
- 9. **Plain English.** Read it aloud; rewrite anything that doesn't parse on the first pass.
--10. **Exact product vocabulary.** Plan / Work / Operate, Ask / Auto-Review / Full Access, Fleet, Runtime, `codewhale exec`, `/provider`, `/model`.
-+10. **Exact product vocabulary.** The Permissions control: Ask / Accept Edits / Plan / Auto-Review / Full Access. The conversation mode: Standard mode / Creator mode. Fleet, Runtime, `codewhale exec`, `/provider`, `/model`.
- 11. **No public pricing. No desktop download offer until the desktop release object is true.** Placeholders (`{brand}`, `{version}`, `{tag}`) stay verbatim.
- 
- 12. **Write whole sentences.** No short, choppy fragments or stacked two-word slogans ("Any model. Your machine."), in headlines or body. A heading may be a plain noun phrase; a slogan built from fragments is not. (Founder, 2026-11-10.)
-```
-
-**File**: `web/MESSAGING.md` (modified, +7/-3)
-```diff
-@@ -10,9 +10,13 @@ rewrite them. Every locale carries the same words through the dictionary spine
- 
- ## The subhead
- 
--Codewhale is becoming the open environment where you build software with many
--agents, on any model, on your own computer and in the cloud. It starts today in
--your terminal and your browser, open source and yours to read.
-+Codewhale is an open-source coding agent for your terminal, written in Rust. It
-+works with any model, can split one task across several agents, and every line
-+of it is yours to read.
+@@ -491,6 +491,20 @@ impl ProviderConnect {
+     fn record_claude_org_availability(&self, available: Option<bool>) {
+         *self.1.cached.lock() = available.map(|available| (available, Instant::now()));
+     }
 +
-+This is the plain sentence the founder chose under the line (home page version
-+B, CURRENT_DECISIONS §153 and §156). Where Codewhale is going is said lower on
-+the page, in section 4 and the map.
- 
- The line under the install box reads "Version {version} is released, and it
- needs no account." The version comes from the published release.
-```
-
-**File**: `web/app/[locale]/app/page.tsx` (modified, +7/-17)
-```diff
-@@ -1,9 +1,8 @@
--import Image from "next/image";
- import Link from "next/link";
--import { Icon } from "@/components/icon";
- import { PageHeader, Section } from "@/components/page-header";
- import { Status } from "@/components/status-badge";
- import { DesktopDownloadBlock } from "@/components/desktop-download";
-+import { DesktopShot } from "@/components/desktop-shot";
- import { AVAILABILITY_ROWS, describeRow } from "@/lib/content/availability";
- import { APP_COPY } from "@/lib/content/app-page";
- import { pickText } from "@/lib/i18n/dictionaries";
-@@ -52,10 +51,9 @@ export default async function AppPage({ params }: { params: Promise<{ locale: st
-             <Link href={`/${locale}/install`} className="btn btn-primary btn-lg">
-               {t(APP_COPY.actions.install)}
-             </Link>
--            <a href={APP_COPY.guideUrl} className="btn btn-secondary btn-lg">
-+            <Link href={`/${locale}${APP_COPY.guidePath}`} className="btn btn-secondary btn-lg">
-               {t(APP_COPY.actions.guide)}
--              <Icon name="external" className="icon" />
--            </a>
-+            </Link>
-             <Link href={`/${locale}/docs/account`} className="btn btn-ghost btn-lg">
-               {t(APP_COPY.actions.signIn)}
-             </Link>
-@@ -66,17 +64,10 @@ export default async function AppPage({ params }: { params: Promise<{ locale: st
-       <div className="page-body">
-         <Section id="app-shots" title={t(APP_COPY.shotsHeading)} scope={t(APP_COPY.shotsScope)}>
-           <div className="app-shots">
--            {APP_COPY.shots.map((shot) => (
-+            {APP_COPY.shots.map((shot, index) => (
-               <figure className="figure" key={shot.file}>
-                 <div className="figure-frame">
--                  <Image
--                    src={`/app/${shot.file}.webp`}
--                    alt={t(shot.alt)}
--                    width={shot.width}
--                    height={shot.height}
--                    sizes="(max-width: 900px) 100vw, 1100px"
--                    unoptimized
--                  />
-+                  <DesktopShot id={shot.file} alt={t(shot.alt)} eager={index === 0} />
-                 </div>
-                 <figcaption className="figure-caption">{t(shot.caption)}</figcaption>
-               </figure>
-@@ -162,10 +153,9 @@ export default async function AppPage({ params }: { params: Promise<{ locale: st
-             <p>{t(APP_COPY.closingBody)}</p>
-             <div className="actions">
-               <Link href={`/${locale}/install`} className="btn btn-primary">{t(APP_COPY.actions.install)}</Link>
--              <a href={APP_COPY.guideUrl} className="btn btn-secondary">
-+              <Link href={`/${locale}${APP_COPY.guidePath}`} className="btn btn-secondary">
-                 {t(APP_COPY.actions.guide)}
--                <Icon name="external" className="icon" />
--              </a>
-+              </Link>
-             </div>
-           </div>
-         </section>
-```
-
-**File**: `web/app/[locale]/models/page.tsx` (modified, +23/-0)
-```diff
-@@ -11,7 +11,10 @@ import {
-   splitCode,
-   sortProvidersFirstPartyFirst,
- } from "@/lib/content/models";
-+import { DesktopShot } from "@/components/desktop-shot";
- import { Icon } from "@/components/icon";
-+import { TerminalCapture } from "@/components/terminal-capture";
-+import { RELEASED_CAPTURE_FRAMES } from "@/lib/released-capture.generated";
- import { ModelBadge, ModelsCatalog } from "@/components/models-catalog";
- import { PageHeader, Section } from "@/components/page-header";
- import type { LocalizedText } from "@/lib/content/vocabulary";
-@@ -78,6 +81,26 @@ export default async function ModelsPage({ params }: { params: Promise<{ locale:
-           </Section>
-         ) : null}
- 
-+        <Section id="models-picker" title={t(MODELS_COPY.pickerTitle)} scope={t(MODELS_COPY.pickerLead)}>
-+          <div className="models-picker">
-+            <figure className="figure">
-+              <div className="home-frame home-only-wide">
-+                <TerminalCapture data={RELEASED_CAPTURE_FRAMES["cols100/01-model-picker"]} label={t(MODELS_COPY.pickerTerminalLabel)} regionLabel={t(MODELS_COPY.pickerTerminalCaption)} rows={[6, 16]} />
-+              </div>
-+              <div className="home-frame home-only-narrow">
-+                <TerminalCapture data={RELEASED_CAPTURE_FRAMES["cols48/01-model-picker"]} label={t(MODELS_COPY.pickerTerminalLabel)} regionLabel={t(MODELS_COPY.pickerTerminalCaption)} rows={[7, 17]} />
-+              </div>
-+              <figcaption className="figure-caption">{t(MODELS_COPY.pickerTerminalCaption)}</figcaption>
-+            </figure>
-+            <figure className="figure">
-+              <div className="figure-frame">
-+                <DesktopShot id="models" alt={t(MODELS_COPY.pickerDesktopAlt)} />
-+              </div>
-+              <figcaption className="figure-caption">{t(MODELS_COPY.pickerDesktopCaption)}</figcaption>
-+            </figure>
-+          </div>
-+        </Section>
++    pub(super) fn forget_claude_org_availability(&self) {
++        self.record_claude_org_availability(None);
++    }
++}
 +
-         <Section
-           id="models-setup"
-           title={t(MODELS_COPY.setupTitle)}
-```
-
-**File**: `web/app/[locale]/page.tsx` (modified, +40/-4)
-```diff
-@@ -1,14 +1,17 @@
- import { Fragment } from "react";
- import Image from "next/image";
- import Link from "next/link";
-+import { DesktopShot } from "@/components/desktop-shot";
- import { HeroInstall } from "@/components/hero-install";
- import { Icon } from "@/components/icon";
- import { readAsOf } from "@/components/project-pulse";
- import { InlineCode } from "@/components/route/inline-code";
- import { RouteMap, type RoutePart } from "@/components/route/product-route";
- import { SessionFrames, type SessionFrame } from "@/components/route/session-frames";
-+import { Status } from "@/components/status-badge";
- import { TerminalCapture } from "@/components/terminal-capture";
- import { releaseView, runtimeCapabilityContext } from "@/lib/capabilities";
-+import { STATE_TONE, surfaceState } from "@/lib/surface-states";
- import { captureCaption, frameNote } from "@/lib/capture-caption";
- import { PARTNER_PROMO } from "@/lib/content/partner-promo";
- import { PROJECT_COPY } from "@/lib/content/project";
-@@ -37,11 +40,16 @@ const SESSION_STEPS = [
-   { key: "04-task-approval", name: "frameLabelApproval", summary: "frameSummaryApproval" },
-   { key: "05-task-result", name: "frameLabelResult", summary: "frameSummaryResult" },
- ] as const satisfies readonly { key: string; name: keyof HomeDict; summary: keyof HomeDict }[];
--const SESSION_OPENS_ON = 2;
-+const SESSION_OPENS_ON = 3;
- const PROVIDER_ROWS = [7, 17] as const;
- const RECEIPT_ROWS_WIDE = [6, 37] as const;
- const RECEIPT_ROWS_NARROW = [2, 34] as const;
- const MERGED_ROWS = 8;
-+const AGENT_ROLES = [
-+  { name: "explore", text: "agentRoleExplore" },
-+  { name: "implement", text: "agentRoleImplement" },
-+  { name: "reviewer", text: "agentRoleReviewer" },
-+] as const satisfies readonly { name: string; text: keyof HomeDict }[];
- 
- const avatar = (url: string, size: number) => `${url}${url.includes("?") ? "&" : "?"}s=${size}`;
- 
-@@ -107,8 +115,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
-     narrow: frame(`cols48/${step.key}`, d[step.summary]),
-     note: frameNote(sessionWide[index]).needsPostureNote,
-   }));
--  const providerNote = frameNote(RELEASED_CAPTURE_FRAMES["cols56/01-model-picker"]).needsPostureNote;
- 
-+  const desktopState = surfaceState("desktop");
-+  const desktopPart = parts.find((part) => part.id === "desktop");
-   const released = releaseView(facts);
-   const counted = (key: string, forms: HomeDict["factModels"], n: number, href: string): Fact => {
-     const number = numbers.format(n);
-@@ -205,14 +214,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
-           <figure className="home-figure">
-             <div className="home-frame home-only-wide">{frame("cols56/01-model-picker", d.frameSummaryProvider, PROVIDER_ROWS)}</div>
-             <div className="home-frame home-only-narrow">{frame("cols48/01-model-picker", d.frameSummaryProvider, PROVIDER_ROWS)}</div>
--            {providerNote ? <figcaption className="home-caption">{d.captureFrameNoPosture}</figcaption> : null}
-           </figure>
-         </section>
- 
-         {showPromo && (
-           <aside className="home-promo-bar home-promo-inline" aria-label={PARTNER_PROMO.title}>
-             <div className="home-promo-bar-inner">
--              <Image src={PARTNER_PROMO.image.src} alt="" width={64} height={36} className="home-promo-bar-art" unoptimized />
-+              <Image src={PARTNER_PROMO.thumb.src} alt="" width={64} height={36} className="home-promo-bar-art" unoptimized />
-               <p>
-                 <strong>{PARTNER_PROMO.title}</strong>
-                 <span>{pickText(PARTNER_PROMO.bar, locale)}</span>
-@@ -238,6 +246,24 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
-             <div className="home-frame home-only-narrow">{frame("cols48/06b-receipt-tall", d.frameSummaryReceipt, RECEIPT_ROWS_NARROW)}</div>
-           </figure>
-         </section>
++struct AvailabilityRefresh(Arc<ClaudeOrgAvailability>);
 +
-+        <section className="home-section home-split" aria-labelledby="home-agents">
-+          <div className="home-text">
-+            <h2 id="home-agents" className="home-h2">{d.sectionAgentsHeading}</h2>
-+            <p className="home-body"><InlineCode text={d.sectionAgentsBody} /></p>
-+            <p className="home-more">
-+              <Link href={`/${locale}/docs/subagents`} className="link">{d.agentsLink}</Link>
-+            </p>
-+          </div>
-+          <dl className="home-figure home-roles" aria-label={d.agentsRolesLabel}>
-+            {AGENT_ROLES.map((role) => (
-+              <div key={role.name}>
-+                <dt><code>{role.name}</code></dt>
-+                <dd>{d[role.text]}</dd>
-+              </div>
-+            ))}
-+          </dl>
-+        </section>
-       </div>
- 
-       <section className="home-direction" aria-labelledby="home-direction">
-@@ -246,6 +272,16 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
-           <p className="home-body"><InlineCode text=
-```
-
-**File**: `web/app/[locale]/plugins/page.tsx` (modified, +10/-0)
-```diff
-@@ -1,4 +1,5 @@
- import Link from "next/link";
-+import { DesktopShot } from "@/components/desktop-shot";
- import { Icon } from "@/components/icon";
- import { PageHeader, Section } from "@/components/page-header";
- import { buildPageMetadata } from "@/lib/page-meta";
-@@ -80,6 +81,15 @@ export default async function PluginsPage({ params }: { params: Promise<{ locale
-           </div>
-         </Section>
- 
-+        <Section id="plugins-desktop" title={t(PLUGINS_COPY.desktopTitle)} scope={t(PLUGINS_COPY.desktopLead)}>
-+          <figure className="figure">
-+            <div className="figure-frame">
-+              <DesktopShot id="plugins" alt={t(PLUGINS_COPY.desktopAlt)} />
-+            </div>
-+            <figcaption className="figure-caption">{t(PLUGINS_COPY.desktopCaption)}</figcaption>
-+          </figure>
-+        </Section>
-+
-         {showComing ? (
-           <Section id="coming-title" title={t(PLUGINS_COPY.comingTitle)} scope={t(PLUGINS_COPY.comingLead)}>
-             <ul className="plugin-kinds plugin-kinds-coming" role="list" data-release-scope="coming">
-```
-
-**File**: `web/app/styles/home.css` (modified, +12/-0)
-```diff
-@@ -491,3 +491,15 @@ a.road-name:hover { text-decoration-color: currentColor; }
-   .home-promo-bar-inner { gap: var(--space-2) var(--space-3); padding-block: var(--space-2); }
-   .home-promo-bar p { flex-basis: 100%; }
++impl Drop for AvailabilityRefresh {
++    fn drop(&mut self) {
++        self.0
++            .refreshing
++            .store(false, std::sync::atomic::Ordering::Release);
++    }
  }
+ 
+ pub(super) fn refresh_claude_org_availability_if_stale(state: &RuntimeApiState) {
+@@ -509,7 +523,9 @@ pub(super) fn refresh_claude_org_availability_if_stale(state: &RuntimeApiState)
+     #[cfg(any(test, feature = "test-support"))]
+     let env_ticket = codewhale_engine::test_support::env_scope_ticket();
+     let state = state.clone();
++    let refresh = AvailabilityRefresh(Arc::clone(availability));
+     drop(tokio::task::spawn_blocking(move || {
++        let _refresh = refresh;
+         #[cfg(any(test, feature = "test-support"))]
+         let _membership = codewhale_engine::test_support::join_env_scope(env_ticket);
+         let observed = super::account::client(&state)
+@@ -518,25 +534,21 @@ pub(super) fn refresh_claude_org_availability_if_stale(state: &RuntimeApiState)
+         let connect = &state.provider_connect;
+         match observed {
+             Some(Ok(link)) => connect.record_claude_org_availability(Some(link.available)),
++            None => connect.record_claude_org_availability(Some(false)),
+             Some(Err(error))
+-                if error.kind == codewhale_account_cli::ClaudeOrgErrorKind::Disabled =>
++                if matches!(
++                    error.kind,
++                    codewhale_account_cli::ClaudeOrgErrorKind::Disabled
++                        | codewhale_account_cli::ClaudeOrgErrorKind::NotSignedIn
++                ) =>
+             {
+                 connect.record_claude_org_availability(Some(false));
+             }
+-            Some(Err(error))
+-                if error.kind == codewhale_account_cli::ClaudeOrgErrorKind::NotSignedIn =>
+-            {
+-                connect.record_claude_org_availability(None);
+-            }
+-            _ => {
++            Some(Err(_)) => {
+                 let previous = connect.claude_org_available();
+                 connect.record_claude_org_availability(Some(previous));
+             }
+         }
+-        connect
+-            .1
+-            .refreshing
+-            .store(false, std::sync::atomic::Ordering::Release);
+     }));
+ }
+ 
+```
+
+**File**: `crates/app-server/src/runtime_api/tests.rs` (modified, +65/-0)
+```diff
+@@ -29749,6 +29749,71 @@ async fn anthropic_connect_cancel_and_key_clear_stop_a_waiting_attempt() -> Resu
+     Ok(())
+ }
+ 
++#[tokio::test]
++async fn anthropic_browser_connect_follows_control_plane_availability() -> Result<()> {
++    let _env_lock = lock_test_env();
++    let tmp = tempfile::tempdir()?;
++    let control = wiremock::MockServer::start().await;
++    let _env = claude_org_test_env(&tmp, &control.uri())?;
++    seed_claude_org_session(&control.uri())?;
++    mount_claude_org_status(&control, unlinked(), None).await;
++    let config_path = tmp.path().join("config.toml");
++    fs::write(&config_path, "provider = \"deepseek\"\n")?;
++    let live_config = Arc::new(parking_lot::RwLock::new(Config::default()));
++    let (addr, handle) = spawn_claude_org_server(&tmp, &config_path, live_config).await?;
++    let client = codewhale_release::tls::reqwest_client();
++    let base = format!("http://{addr}");
++    let anthropic_offers_connect = || async {
++        let providers: Value = client
++            .get(format!("{base}/v1/providers"))
++            .bearer_auth("keys-token")
++            .send()
++            .await?
++            .error_for_status()?
++            .json()
++            .await?;
++        let offered = providers["providers"]
++            .as_array()
++            .context("providers")?
++            .iter()
++            .find(|entry| entry["id"] == "anthropic")
++            .context("anthropic row")?["browserConnect"]
++            == true;
++        anyhow::Ok(offered)
++    };
 +
-+/* ---------- several agents ---------- */
-+.home-more { margin-top: var(--space-4); }
-+.home-roles { margin-bottom: 0; border-top: 1px solid var(--line); }
-+.home-roles > div { display: grid; gap: var(--space-1); padding-block: var(--space-3); border-bottom: 1px solid var(--line); }
-+.home-roles dt code { color: var(--text); font-family: var(--font-mono); font-size: var(--text-mono); font-weight: 600; }
-+.home-roles dd { margin: 0; color: var(--muted); font-size: 1rem; line-height: 1.5; }
++    assert!(!anthropic_offers_connect().await?);
++    let deadline = std::time::Instant::now() + Duration::from_secs(10);
++    while !anthropic_offers_connect().await? {
++        anyhow::ensure!(
++            std::time::Instant::now() < deadline,
++            "availability probe never landed"
++        );
++        tokio::time::sleep(Duration::from_millis(50)).await;
++    }
++    let probes = control
++        .received_requests()
++        .await
++        .unwrap_or_default()
++        .iter()
++        .filter(|request| request.url.path() == "/api/claude-billing")
++        .count();
++    for _ in 0..5 {
++        assert!(anthropic_offers_connect().await?);
++    }
++    let after = control
++        .received_requests()
++        .await
++        .unwrap_or_default()
++        .iter()
++        .filter(|request| request.url.path() == "/api/claude-billing")
++        .count();
++    assert_eq!(probes, 1);
++    assert_eq!(after, probes);
++    handle.abort();
++    Ok(())
++}
 +
-+/* ---------- the desktop app beneath the map ---------- */
-+.home-desktop { width: var(--container); max-width: 64rem; margin: clamp(2.5rem, 5vw, 3.5rem) auto 0; display: grid; gap: var(--space-3); }
-+.home-desktop-caption { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); }
-+.home-desktop-caption .home-caption { flex: 1 1 24rem; margin: 0; }
+ #[tokio::test]
+ async fn anthropic_connect_reports_a_declined_link() -> Result<()> {
+     let _env_lock = lock_test_env();
 ```
 
 ---
 
-### Incident Patch 3: `e6e16b36` (2026-11-18)
-**Commit Message**: fix(release): app-server smoke asserts the advertised goal read method (CW-8269)
+### Incident Patch 3: `fc2d391a` (2026-11-19)
+**Commit Message**: fix(release): qualify cosf and IsProcessorFeaturePresent Windows static imports for 0.10.3 (#7371)
 
-scripts/release/app-server-smoke.sh failed 1 of 6 against a 0.10.3 build of
-main because it still required "thread/goal/set" in thread/capabilities.
-daae24cdd4b (CW-7704) deliberately stopped advertising the refused
-compatibility goal setter while goal_execution is false, keeping goal
-get/clear advertised and the setter dispatchable for an actionable refusal
-(docs/RUNTIME_API.md).
+Release candidate run 44379943827 on 7616799f09 stopped the Windows import guard
+on api-ms-win-crt-math-l1-1-0.dll!cosf on both 64-bit targets (from f32::cos()
+in 5.4.0 live motion) and kernel32.dll!IsProcessorFeaturePresent on x64 (from
+the windows-2025-vs2026 runner's MSVC 14.52 / Visual Studio 18.12 toolchain
+update; already qualified on ARM64) across codewhale, codew and codewhale-tui.
 
-Update the smoke script, its self-test fixture, and the remaining stale
-docs reference:
-- scripts/release/app-server-smoke.sh: assert "thread/goal/get" instead of
-  "thread/goal/set".
-- scripts/release/app-server-smoke.test.sh: advertise "thread/goal/get" in
-  the fake codewhale stdio response (paired with a0edb076bcc's HOME env fix
-  from origin/main).
-- docs/MODES.md and docs/zh_hans/MODES.md: state that clients should not
-  call thread/goal/set (omitted from discovery while goal_execution is
-  false and refused with interactive_execution_unsupported) and direct
-  goal creation to the full Runtime HTTP API.
-- web/data/agent-docs.generated.json (plus web/data/features.generated.json
-  for origin/main's claude-org-billing r
+ARM64: windows-arm64-export-probe.yml run 44417404125 on Windows 11 ARM64
+10.0.26200.0 (build 26200.9974) resolved 449/449 imports of that candidate's
+executables (binary sha256 e8493084..., import receipt sha256 8fdf650e...,
+probe receipt sha256 94f44b2d..., 25/25 system modules loadError=0). Added
+api-ms-win-crt-math-l1-1-0.dll!cosf (475 -> 476 allowed pairs) and moved probe
+43330905781 under supersedes.
 
-**File**: `docs/MODES.md` (modified, +8/-5)
+x64: no native x64 export probe exists. Recorded both pairs as
+namedApiContracts (17 -> 19) with live-verified Microsoft Learn sources
+(10.0.10240 UCRT API-set minimum for cosf; Windows 2000 Professional minimum
+for IsProcessorFeaturePresent), below the unchanged 14393 floor and labelled
+apart 
+
+**File**: `docs/ENVIRONMENTS.md` (modified, +11/-0)
 ```diff
-@@ -156,11 +156,14 @@ working, while Workflow supplies the repeatable workflow/progress surface for
- large fanout. In the UI, a Workflow run should be shown as an overlay on the
- main screen, not as another mode beside Plan and Work.
+@@ -181,6 +181,17 @@ executables. For x64 the 2 pairs are documented Microsoft API contracts
+ (Windows XP minimum on each function's reference page); the x64 profile now
+ allows 473 pairs and the ARM64 profile 475, with the same limits as above.
  
--App-server clients can persist a thread-scoped goal with `thread/goal/set`, read
--it with `thread/goal/get`, and clear it with `thread/goal/clear`. That persisted
--record carries `active`, `paused`, `blocked`, `usage_limited`, `budget_limited`,
--or `complete` status plus token/time accounting fields for clients that need
--thread resume semantics.
-+App-server clients can read an existing thread-scoped goal with `thread/goal/get`
-+and clear it with `thread/goal/clear`. Clients should not call `thread/goal/set`:
-+it is omitted from capability discovery while `goal_execution` is `false` and is
-+refused with a typed `interactive_execution_unsupported` error before changing
-+the goal; starting goals uses the full Runtime HTTP API (`docs/RUNTIME_API.md`).
-+That persisted record carries `active`, `paused`, `blocked`, `usage_limited`,
-+`budget_limited`, or `complete` status plus token/time accounting fields for
-+clients that need thread resume semantics.
- 
- ## Mode Persistence
- 
++Release candidate run 44379943827 on source `7616799f09` stopped the check on
++`api-ms-win-crt-math-l1-1-0.dll!cosf` on both 64-bit targets (from `f32::cos()`
++in 5.4.0 live motion) and `kernel32.dll!IsProcessorFeaturePresent` on x64 (from
++the `windows-2025-vs2026` runner's MSVC 14.52 CRT/toolchain update, already
++qualified on ARM64). Probe run 44417404125 (Windows 11 ARM64 build 26200.9974)
++resolved all 449 imports of that candidate's ARM64 executables, and `cosf` was
++added. For x64 the 2 pairs are documented Microsoft API contracts (10.0.10240
++UCRT API-set minimum for `cosf` and Windows 2000 Professional minimum for
++`IsProcessorFeaturePresent`); the x64 profile now allows 475 pairs and the
++ARM64 profile 476, with the same limits as above.
++
+ At this snapshot, startup/installation of the final release bytes on an actual
+ 1607 machine and the candidate's generated uninstaller were still unqualified.
+ The final frozen source, release import dumps, archive/native/npm installation,
 ```
 
-**File**: `docs/zh_hans/MODES.md` (modified, +1/-1)
+**File**: `docs/zh_hans/ENVIRONMENTS.md` (modified, +2/-0)
 ```diff
-@@ -68,7 +68,7 @@ Workflow 通过同一个子智能体运行时执行命名步骤；Fleet 管理
+@@ -134,6 +134,8 @@ x64 的这 3 对作为微软文档 API 契约记录（各函数参考页的最
  
- 工作流建立在同样的分离之上：目标可以让智能体持续工作，而 Workflow 为大规模扇出提供可重复的工作流和进度界面。在 UI 中，Workflow 运行应该作为主屏幕上的覆盖层显示，而不是作为 Plan 和 Work 旁边的另一个模式。
+ 候选运行 43320217667 在稳定工具链升级到 Rust 1.100.0 后，又在 kernel32.dll 的 `GetLogicalDrives` 与 `QueryDosDeviceW` 两对上停止；它们来自 Rust 1.100.0 标准库的 Windows 文件系统代码。探测运行 43330905781（Windows 11 ARM64 build 26200.9725）解析了该候选 ARM64 可执行文件的全部 449 个导入。x64 的这 2 对作为微软文档 API 契约记录（各函数参考页的最低客户端为 Windows XP）；x64 允许列表现为 473 对，ARM64 为 475 对，限制同上。
  
--应用服务器（App-server）客户端可以用 `thread/goal/set` 持久化线程范围的目标，用 `thread/goal/get` 读取，用 `thread/goal/clear` 清除。该持久化记录携带 `active`、`paused`、`blocked`、`usage_limited`、`budget_limited` 或 `complete` 状态，外加供需要线程恢复语义的客户端使用的 token/时间计量字段。
-+应用服务器（App-server）客户端可以用 `thread/goal/get` 读取现有的线程范围目标，用 `thread/goal/clear` 清除。客户端不应调用 `thread/goal/set`：在 `goal_execution` 为 `false` 时，它不会出现在能力发现列表中，且会在修改目标前以类型化的 `interactive_execution_unsupported` 错误拒绝；启动目标请使用完整 Runtime HTTP API（`docs/zh_hans/RUNTIME_API.md`）。该持久化记录携带 `active`、`paused`、`blocked`、`usage_limited`、`budget_limited` 或 `complete` 状态，外加供需要线程恢复语义的客户端使用的 token/时间计量字段。
- 
- ## 模式持久化
- 
++源 `7616799f09` 的发布候选运行 44379943827 在两个 64 位目标上停止于 `api-ms-win-crt-math-l1-1-0.dll!cosf`（来自 5.4.0 实时动效中的 `f32::cos()`），并在 x64 上额外停止于 `kernel32.dll!IsProcessorFeaturePresent`（来自 `windows-2025-vs2026` 运行器的 MSVC 14.52 CRT/工具链更新，该符号此前已在 ARM64 上通过验收）。探测运行 44417404125（Windows 11 ARM64 内部版本 26200.9974）解析了该候选 ARM64 可执行文件的全部 449 个导入，`cosf` 已加入基线。x64 的这 2 对作为微软文档 API 契约记录（`cosf` 为 10.0.10240 UCRT API 集最低版本，`IsProcessorFeaturePresent` 为 Windows 2000 Professional 最低客户端）；x64 允许列表现为 475 对，ARM64 为 476 对，限制同上。
++
+ 此快照中，最终发布文件在真实 1607 上启动/安装及候选程序生成的卸载器仍未验收。
+ 最终冻结源码、发布导入记录、各安装途径、打包/原生应用崩溃恢复和最低 OS 回执应
+ 进入发布验收记录，见[英文发布检查单](../RELEASE_CHECKLIST.md)。
 ```
 
-**File**: `scripts/release/app-server-smoke.sh` (modified, +1/-1)
+**File**: `scripts/release/windows-import-floor.json` (modified, +165/-84)
 ```diff
-@@ -168,7 +168,7 @@ PY
-     probe_assert "$out" '"prompt/run"'         "capabilities advertise prompt/run"
-     probe_assert "$out" '"transport":"stdio+http"' "app/capabilities reports transport"
-     probe_assert "$out" '"prompt/request"'     "prompt/capabilities lists prompt/request"
--    probe_assert "$out" '"thread/goal/set"'    "thread/capabilities lists goal methods"
-+    probe_assert "$out" '"thread/goal/get"'    "thread/capabilities lists goal read methods"
- }
- 
- probe_assert() {
-```
-
-**File**: `scripts/release/app-server-smoke.test.sh` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@ if [[ "${1:-}" == "app-server" ]]; then
-     printf '%s\n' \
-         '{"id":0,"result":{"userAgent":"fixture","codexHome":"/tmp","platformFamily":"unix","platformOs":"macos"}}' \
-         '{"id":1,"result":{"status":"ok","service":"deepseek-app-server","transport":"stdio"}}' \
--        '{"id":2,"result":{"methods":["thread/request","prompt/run","prompt/request","thread/goal/set"]}}' \
-+        '{"id":2,"result":{"methods":["thread/request","prompt/run","prompt/request","thread/goal/get"]}}' \
-         '{"id":3,"result":{"ok":true,"data":{"transport":"stdio+http"}}}' \
-         '{"id":4,"result":{}}' \
-         '{"id":5,"result":{}}' \
+@@ -6,7 +6,7 @@
+       "osArchitecture": "x64",
+       "qualification": {
+         "result": "PASS",
+-        "kind": "reporter exact-OS export resolution plus 17 documented Microsoft named API minima",
++        "kind": "reporter exact-OS export resolution plus 19 documented Microsoft named API minima",
+         "evidence": {
+           "issue": "https://github.com/codewhale-hq/Codewhale/issues/6953",
+           "binary": "https://github.com/codewhale-hq/Codewhale/releases/download/v0.10.1/codewhale-windows-x64.exe",
+@@ -16,7 +16,7 @@
+           "previous_sha256": "f7b35a1e928f67884637f36b01fc72854f50690130f191bac3bcf62ece3c1d84"
+         },
+         "runtimeAcceptance": "Final 0.10.2 release bytes on 14393 not run",
+-        "qualifiedPairs": 473,
++        "qualifiedPairs": 475,
+         "namedApiContracts": [
+           {
+             "dll": "advapi32.dll",
+@@ -119,6 +119,18 @@
+             "symbol": "QueryDosDeviceW",
+             "minimumClient": "Windows XP",
+             "source": "https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-querydosdevicew"
++          },
++          {
++            "dll": "api-ms-win-crt-math-l1-1-0.dll",
++            "symbol": "cosf",
++            "minimumClient": "Exact API-set pair introduced in 10.0.10240",
++            "source": "https://learn.microsoft.com/en-us/uwp/win32-and-com/win32-extension-apis"
++          },
++          {
++            "dll": "kernel32.dll",
++            "symbol": "IsProcessorFeaturePresent",
++            "minimumClient": "Windows 2000 Professional",
++            "source": "https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-isprocessorfeaturepresent"
+           }
+         ],
+         "namedApiContractEvidence": {
+@@ -151,6 +163,17 @@
+                 "kernel32.dll!QueryDosDeviceW"
+               ],
+               "scope": "Two pairs that the Rust 1.100.0 standard library's Windows file system code imports (the toolchain, not a Codewhale call site); documentation-backed static contracts, same limits as above"
++            },
++            {
++              "candidateRun": "https://github.com/codewhale-hq/Codewhale/actions/runs/44379943827",
++              "source": "7616799f09302544d09b112c33b5e8468b33e5ce",
++              "binarySha256": "e4a9fb5d237c5e32cdad0e5cec06401447a3dfb39349e203d1a148a3322d99e8",
++              "importReceiptSha256": "d2165db684c9bdebcda027336987a04e31b040db1f23ab6a355f74c189441474",
++              "pairs": [
++                "api-ms-win-crt-math-l1-1-0.dll!cosf",
++                "kernel32.dll!IsProcessorFeaturePresent"
++              ],
++              "scope": "api-ms-win-crt-math-l1-1-0.dll!cosf from f32::cos() in TUI/ratatui 5.4.0 live motion and kernel32.dll!IsProcessorFeaturePresent from the windows-2025-vs2026 runner's MSVC 14.52 / Visual Studio 18.12 toolchain update (not a Codewhale call site); documentation-backed static contracts, same limits as above"
+             }
+           ]
+         }
+@@ -241,6 +264,7 @@
+           "ceilf",
+           "copysign",
+           "cos",
++          "cosf",
+           "cosh",
+           "exp",
+           "exp2",
+@@ -493,6 +517,7 @@
+           "InitializeProcThreadAttributeList",
+           "InitializeSListHead",
+           "InitializeSRWLock",
++          "IsProcessorFeaturePresent",
+           "IsThreadAFiber",
+           "LeaveCriticalSection",
+           "LoadLibraryA",
+@@ -691,31 +716,33 @@
+       "qualification": {
+         "result": "PASS",
+         "kind": "exact native system export resolution",
+-        "time": "2026-11-12T23:41:18.0140691Z",
++        "time": "2026-11-18T23:04:14.6447268Z",
+         "osVersion": "10.0.26200.0",
+-        "osBuild": "26200.9725",
++        "osBuild": "26200.9974",
+         "processArchitecture": "ARM64",
+         "runner": "GitHub-hosted windows-11-arm; its registry ProductName reads \"Windows 10 Enterprise\", as Windows 11 reports it",
+-        "source": "b97e38645f13f9f5828fd8a013f414955f46d528",
+-        "sourceUrl": "https://github.com/codewhale-hq/Codewhale/commit/b97e38645f13f9f5828fd8a013f414955f46d528",
+-        "binarySha256": "4d7dfba5955681c0e0d7cb6076a7e1e2ecf253711dcfb2931618ee97ccfdb470",
++        "source": "7616799f09302544d09b112c33b5e8468b33e5ce",
++        "sourceUrl": "https://github.com/codewhale-hq/Codewhale/commit/7616799f09302544d09b112c33b5e8468b33e5ce",
++        "binarySha256": "e84930843d628ed23fa7befa0f5cfc4d04a11d0f833f273f683429435756d85f",
++        "importReceiptSha256": "8fdf650e3065392538ff342bbee0c3fe454c38f5ffc6a502aa677bdb8a19d3ba",
++        "probeReceiptSha256": "94f44b2d3329730aeded9c88d04f364174a810be07a4971629dc957dfda6b70e",
+         "binaries": [
+           "codewhale-windows-arm64.exe",
+           "codew-windows-arm64.exe",
+           "codewhale-tui-windows-arm64.exe"
+         ],
+         "resolved": 449,
+         "unresolved": 0,
+-        "buildRun": "https://github.com/codewhale-hq/Codewhale/actions/runs/43320217667",
+-        "probeRun": "https:/
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7367** (2026-11-18): fix(tui): translate tool labels, /help, /diff, composer and /status catalog text (@luochen211)
-- **PR #7366** (2026-11-18): fix(snapshot): roll back partial file-scoped restores (@laozidabo)
-- **PR #7364** (2026-11-18): fix(models): keep MCP tools with null-default optionals on the Moonshot route (@ruanchaves)
-- **PR #7363** (2026-11-18): fix(tui): recapture focus without erasing the viewport (@laozidabo)
-- **PR #7362** (2026-11-18): fix(engine): avoid rereading history for named-turn undo (@laozidabo)
-- **PR #7361** (closed): fix(tui): bound completed-turn session snapshot waits (@laozidabo)
+- **PR #7399** (2026-11-19): fix(engine): unique fallback ids for non-streaming parallel tool calls (@Hmbown)
+- **PR #7395** (2026-11-19): ci: defer unreachable heapless RUSTSEC batch to unblock advisories gate (@Hmbown)
+- **PR #7390** (2026-11-19): 0.10.3 ergonomics and truth batch: pricing, codemode-js, export error codes, redaction/Zen (@Hmbown)
+- **PR #7386** (2026-11-19): release(0.10.3): land ci/release-prep-0103-v2 on main (@Hmbown)
+- **PR #7385** (2026-11-19): 0.10.3 lane 8: execpolicy launcher panic and payload-hiding fixes (@Hmbown)
+- **PR #7382** (closed): [CI only, do not merge] 0.10.3 ergonomics and truth batch: pricing, codemode-js, export errors, redaction/Zen (@Hmbown)
 
 ---
 
@@ -2666,13 +2537,13 @@ docs reference:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. web): resolve correctness review findings B1, B2 and non-blocking 1-5
+## X. 0.10.3 lane 8: execpolicy launcher panic and payload-hiding fixes
 
 **RULE**:
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c10b6c5e`: web): resolve correctness review findings B1, B2 and non-blocking 1-5. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bacf9dea`: 0.10.3 lane 8: execpolicy launcher panic and payload-hiding fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2680,18 +2551,18 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **Website shows only real sessions:** the docs guide terminal tour and the README image now use the same real `gemini-4-hydrogen` session as the home page (with the guide noting it is an unreleased 0.10.3 development build), and the scripted demo captures are gone. On `/app`, `/plugins`, `/models` and the home page, the earlier `/app` captures (`conversation.webp`, `approval.webp`, `model-picker.webp`) are replaced by real screenshots of the desktop development build (real engine, `qwen3:4b` locally through Ollama) in light and dark, with the home page showing the approval card and `/plugins` cropped below the development build's auto-enable sentence. The home page has its multi-agent section back, Plugins and the desktop page are in the top navigation, and `/desktop` opens the desktop page.
+- **Flag-only launcher commands no longer crash the turn:** running `npm --version`, `nix --version`, `launchctl --help`, `docker --version`, `podman --version`, or another launcher command with global flags and no subcommand no longer panics with an out-of-bounds index during command policy expansion.
+- **Command policy sees payloads behind empty words and `--entrypoint`:** command policy now also checks the nested command in launcher lines with empty-string words before the subcommand (`npm '' exec -c 'rm -rf /'`, `docker '' -D run alpine rm -rf /`) and checks `docker run --entrypoint rm alpine -rf /` as the entrypoint plus the arguments after the image, checking every `--entrypoint` value before the image, so deny rules and approval review match them. A launcher line with so many options that the option walk hits its state limit is now treated like other commands whose words are only known at run time: while deny rules are in force it asks for approval, or is refused where approval is unavailable, instead of dropping the nested command.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- **Website `/app` captures:** the `/app` page's desktop build screenshots (`conversation.webp`, `approval.webp`, `model-picker.webp`) and their alt and caption text have been refreshed from the current 0.10.3 desktop UI.
-- **Website shows only real sessions:** the docs guide terminal tour and the README image now use the same real `gemini-4-hydrogen` session as the home page, and the scripted demo captures are gone. `/app`, `/plugins`, `/models` and the home page show real screenshots of the desktop development build (real engine, `qwen3:4b` through Ollama) in light and dark. The home page has its multi-agent section back, Plugins and the desktop page are in the top navigation, and `/desktop` opens the desktop page.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c10b6c5e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bacf9dea` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

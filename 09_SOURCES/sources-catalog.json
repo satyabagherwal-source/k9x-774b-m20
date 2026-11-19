@@ -2603,10 +2603,10 @@
     "repository": "codewhale-hq/Codewhale",
     "platform": "github",
     "sourceUrl": "https://github.com/Hmbown/Codewhale",
-    "sourceVersion": "1ad8da62",
+    "sourceVersion": "3c8dcd7f",
     "license": "MIT",
-    "contentHash": "a8f016f40877b6558d68e7c64d0e47e5e4118d961cc751ed9a8297364c032ac0",
-    "lastHarvestedAt": "2026-11-18T12:23:54.194Z",
+    "contentHash": "dbe136b4b70ab5708f4921cd5a53d2599d96435d3a29f36ba136d0c5e8d6e410",
+    "lastHarvestedAt": "2026-11-19T23:43:21.131Z",
     "learningId": "learn-github-codewhale-hq-codewhale"
   },
   "zulip-zulip": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "93ba239f",
+    "sourceVersion": "2e8f381c",
     "license": "BSD-3-Clause",
-    "contentHash": "f809030f51254b31bf92b1d69806f02fbdb558ee11a64f0d237701046b4ce822",
-    "lastHarvestedAt": "2026-11-19T16:25:01.209Z",
+    "contentHash": "00869492f11257255c8c18e102a7e64e9e6eca8d091f1332aa7e5389eef6817e",
+    "lastHarvestedAt": "2026-11-19T23:43:30.206Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -4013,10 +4013,10 @@
     "repository": "krakend/krakend-ce",
     "platform": "github",
     "sourceUrl": "https://github.com/krakend/krakend-ce",
-    "sourceVersion": "b2187c50",
+    "sourceVersion": "3beb4d3b",
     "license": "Apache-2.0",
-    "contentHash": "24eaddd6a0c3fc8511caf7fc624a7522b0aa7f1d414e22c8ea59277256a81748",
-    "lastHarvestedAt": "2026-11-17T05:58:12.427Z",
+    "contentHash": "d1f2d02ea81de209641bc5580bc09beadc3dd367dcc257fdb2c51346eaa3d8bd",
+    "lastHarvestedAt": "2026-11-19T23:43:27.172Z",
     "learningId": "learn-github-krakend-krakend-ce"
   },
   "trailbaseio-trailbase": {

@@ -4,22 +4,22 @@
 {
   "source_repository": "krakend/krakend-ce",
   "source_url": "https://github.com/krakend/krakend-ce",
-  "source_version": "b2187c50",
+  "source_version": "3beb4d3b",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T05:58:12.594Z",
+  "timestamp": "2026-11-19T23:43:27.437Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-krakend-krakend-ce",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [krakend/krakend-ce](https://github.com/krakend/krakend-ce) (Revision: `b2187c50`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T05:58:12.594Z`  
+> **Provenance**: Harvested from [krakend/krakend-ce](https://github.com/krakend/krakend-ce) (Revision: `3beb4d3b`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T23:43:27.437Z`  
 > **Learning ID**: `learn-github-krakend-krakend-ce`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `krakend/krakend-ce` (Commit: `b2187c50`)
+- **Target Repository**: `krakend/krakend-ce` (Commit: `3beb4d3b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/krakend-krakend-ce-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/krakend/krakend-ce](https://github.com/krakend/krakend-ce))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T05:58:11.564Z  
+> **Harvest Timestamp**: 2026-11-19T23:43:26.225Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: KrakenD Community Edition: High-performance, stateless, declarative, API Gateway written in Go.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2704 stars
+- **Stars / Engagement**: 2703 stars
 
 ---
 
@@ -805,227 +805,243 @@ func (registerSubscriberFactories) Register(ctx context.Context, cfg config.Serv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b2187c50` (2026-11-16)
-**Commit Message**: Merge pull request #1138 from krakend/dependabot/go_modules/go.opentelemetry.io/otel/sdk-1.47.0
+### Incident Patch 1: `3beb4d3b` (2026-11-19)
+**Commit Message**: Merge pull request #1140 from krakend/dev-3.0.5
 
-Bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0
+CE patch release 3.0.5
 
-**File**: `go.mod` (modified, +7/-6)
+**File**: `Makefile` (modified, +1/-1)
 ```diff
-@@ -35,7 +35,6 @@ require (
- 	github.com/krakend/krakend-xml/v3 v3.0.0
- 	github.com/luraproject/lura/v3 v3.0.1
- 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2
--	go.opentelemetry.io/otel v1.45.0
- 	golang.org/x/sync v0.24.0
- )
- 
-@@ -217,19 +216,21 @@ require (
- 	go.opentelemetry.io/contrib/propagators/b3 v1.44.0 // indirect
- 	go.opentelemetry.io/contrib/propagators/jaeger v1.44.0 // indirect
- 	go.opentelemetry.io/contrib/propagators/ot v1.44.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0 // indirect
- 	go.opentelemetry.io/otel/exporters/prometheus v0.66.0 // indirect
--	go.opentelemetry.io/otel/metric v1.45.0 // indirect
--	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
--	go.opentelemetry.io/otel/sdk/metric v1.45.0 // indirect
--	go.opentelemetry.io/otel/trace v1.45.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
- 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
--	go.yaml.in/yaml/v3 v3.0.4 // indirect
-+	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	gocloud.dev v0.46.0 // indirect
- 	gocloud.dev/pubsub/kafkapubsub v0.46.0 // indirect
- 	gocloud.dev/pubsub/natspubsub v0.46.0 // indirect
+@@ -7,7 +7,7 @@
+ BIN_NAME :=krakend
+ OS := $(shell uname | tr '[:upper:]' '[:lower:]')
+ MODULE := github.com/krakend/krakend-ce/v3
+-VERSION := 3.0.4
++VERSION := 3.0.5
+ SCHEMA_VERSION := $(shell echo "${VERSION}" | cut -d '.' -f 1,2)
+ GIT_COMMIT := $(shell git rev-parse --short=7 HEAD)
+ PKGNAME := krakend
 ```
 
-**File**: `go.sum` (modified, +18/-16)
+**File**: `tests/fixtures/specs/backend_301.json` (modified, +1/-1)
 ```diff
-@@ -489,8 +489,8 @@ github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO
- github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
- github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
- github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
--github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
--github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
-+github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
-+github.com/stretchr/testify v1.12.1/go.mod h1:MDEgiDPPsNp5cuIrHPPCyornHKgEVbtFUmoNlxoYthg=
- github.com/tmthrgd/atomics v0.0.0-20190904060638-dc7a5fcc7e0d h1:2QXSQjy/gDm0QeP9G9NaO9Hm2Cl1LAle4ZV0JeYK7XY=
- github.com/tmthrgd/atomics v0.0.0-20190904060638-dc7a5fcc7e0d/go.mod h1:J2+dTgaX/1g3PkyL6sLBglBWfaLmAp5bQbRhSfKw9XI=
- github.com/tmthrgd/go-bitset v0.0.0-20190904054048-394d9a556c05 h1:5jOF3BEex8XyBKMbaDUN1SiPQJRAKVuP24/sbwC2aWA=
-@@ -534,8 +534,8 @@ go.opentelemetry.io/contrib/propagators/jaeger v1.44.0 h1:OyzvsAMc/zHt0DRPcfstn0
- go.opentelemetry.io/contrib/propagators/jaeger v1.44.0/go.mod h1:44kghcGX+BNxy9UTiWtd6VDt8Nd4EypGBkH2+v2Dqrc=
- go.opentelemetry.io/contrib/propagators/ot v1.44.0 h1:JLTPenzmPtLp5ODPntAA5JhxVu1i3pAFUvXcAORMZAk=
- go.opentelemetry.io/contrib/propagators/ot v1.44.0/go.mod h1:8zr0bHgwkoQXucBK39/H4QphmLf1lSen1Z7FPDZD5Uc=
--go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
--go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
- go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0 h1:SUplec5dp06reu1zaXmOXdvqH398taqrDXqUl99jxSc=
- go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0/go.mod h1:ho2g4N+ane+swq5I/VBkKWnRDY4kUINH3FuqyZqX/Ug=
- go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0 h1:RuynHbfU8JUEw7DyONgkVYg2SVtsoF28y0LGIr69jgA=
-@@ -548,16 +548,18 @@ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0 h1:QBajQ
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0/go.mod h1:08ZQLjrPLQ6R4kAXvuOvODEer5Yh4CoFvll5qB2BCI8=
- go.opentelemetry.io/otel/exporters/prometheus v0.66.0 h1:vkrK8PAznv2NKt2r+kdu252ccGzkEqLc2aSXbQIALYQ=
- go.opentelemetry.io/otel/exporters/prometheus v0.66.0/go.mod h1:V/UB6D3vMF/UBOL5igAsAYnk1nG/bzYYTzvsB16cy7o=
--go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
--go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
--go.opentelemetry.io/otel/metric/x v0.67.0 h1:PcicCNZFkZ4bXfSooXdo3WN7RBOVOtjVdo1wD358Uns=
--go.opentelemetry.io/otel/metric/x v0.67.0/go.mod h1:FBjCWZe6wgcqxcMtjdGiClDKXb2YxxXii0CXftE4QtI=
--go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
--go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
--go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
--go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
--go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
--go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
-+go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
-+go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
-+go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
-+go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
-+go.opentelemetry.io/otel/metric/x v0.69.0 h1:DjRLr15H83v+hCW7JA9NoJvOkYTtmq5YoDRbe9deYpM=
-+go.opentelemetry.io/otel/metric/x v0.69.0/go.mod h1:uVvsMPMFFyj/HUQfrUnH3JjnOQ1dwFDorgFLRBasM0k=
-+go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
-+go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0/go.mod h1:ypLp+mW1Nt2x+Szt3b5/i1syodyts49lMOwxpDI3VGw=
-+go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
-+go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
- go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
- go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
- go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
-@@ -568,8 +570,8 @@ go.uber.org/multierr v1.11.0 h1:b
+@@ -5,7 +5,7 @@
+ 	},
+ 	"out": {
+ 		"status_code": 200,
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=301\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"301\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=301\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"301\"]}}",
+ 		"header": {
+ 			"content-type": ["application/json; charset=utf-8"],
+ 			"Cache-Control": ["public, max-age=3600"],
+```
+
+**File**: `tests/fixtures/specs/backend_302.json` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@
+ 	},
+ 	"out": {
+ 		"status_code": 200,
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=302\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"302\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=302\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"302\"]}}",
+ 		"header": {
+ 			"content-type": ["application/json; charset=utf-8"],
+ 			"Cache-Control": ["public, max-age=3600"],
+```
+
+**File**: `tests/fixtures/specs/backend_303.json` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@
+ 	},
+ 	"out": {
+ 		"status_code": 200,
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=303\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"303\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=303\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"303\"]}}",
+ 		"header": {
+ 			"content-type": ["application/json; charset=utf-8"],
+ 			"Cache-Control": ["public, max-age=3600"],
+```
+
+**File**: `tests/fixtures/specs/backend_307.json` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@
+ 	},
+ 	"out": {
+ 		"status_code": 200,
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=307\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"307\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=307\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"307\"]}}",
+ 		"header": {
+ 			"content-type": ["application/json; charset=utf-8"],
+ 			"Cache-Control": ["public, max-age=3600"],
+```
+
+**File**: `tests/fixtures/specs/cel-7.json` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@
+ 			"foo":42,
+ 			"headers":{
+ 				"Accept-Encoding":["gzip"],
+-				"User-Agent":["KrakenD Version 3.0.4"],
++				"User-Agent":["KrakenD Version 3.0.5"],
+ 				"X-Forwarded-Host":["localhost:8080"]
+ 			},
+ 			"path":"/param_forwarding/ok/1234567890qwertyuio/foobar",
+```
+
+**File**: `tests/fixtures/specs/cors_5.json` (modified, +2/-2)
+```diff
+@@ -9,12 +9,12 @@
+ 	},
+ 	"out": {
+ 		"status_code": 200,
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/bar\",\"query\":{\"foo\":[\"foo\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/bar\",\"query\":{\"foo\":[\"foo\"]}}",
+ 		"header": {
+ 			"content-type": ["application/json; charset=utf-8"],
+ 			"Cache-Control": ["public, max-age=3600"],
+ 			"X-Krakend-Completed": ["true"],
+-			"X-Krakend": ["Version 3.0.4"],
++			"X-Krakend": ["Version 3.0.5"],
+ 			"Vary": ["Origin"],
+ 			"Access-Control-Allow-Origin": ["*"],
+ 			"Access-Control-Expose-Headers": ["Content-Length"]
+```
+
+**File**: `tests/fixtures/specs/detail_error.json` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@
+           "foo": 42,
+           "headers": {
+             "Accept-Encoding": ["gzip"],
+-            "User-Agent": ["KrakenD Version 3.0.4"],
++            "User-Agent": ["KrakenD Version 3.0.5"],
+             "X-Forwarded-Host": ["localhost:8080"]
+           },
+           "path": "/param_forwarding/",
 ```
 
 ---
 
-### Incident Patch 2: `750fb01c` (2026-11-14)
-**Commit Message**: Bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0
+### Incident Patch 2: `9dbda689` (2026-11-19)
+**Commit Message**: CE patch release 3.0.5
 
-Bumps [go.opentelemetry.io/otel/sdk](https://github.com/open-telemetry/opentelemetry-go) from 1.45.0 to 1.47.0.
-- [Release notes](https://github.com/open-telemetry/opentelemetry-go/releases)
-- [Changelog](https://github.com/open-telemetry/opentelemetry-go/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/open-telemetry/opentelemetry-go/compare/v1.45.0...v1.47.0)
-
----
-updated-dependencies:
-- dependency-name: go.opentelemetry.io/otel/sdk
-  dependency-version: 1.47.0
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `go.mod` (modified, +7/-6)
+**File**: `Makefile` (modified, +1/-1)
 ```diff
-@@ -35,7 +35,6 @@ require (
- 	github.com/krakend/krakend-xml/v3 v3.0.0
- 	github.com/luraproject/lura/v3 v3.0.1
- 	github.com/santhosh-tekuri/jsonschema/v6 v6.0.2
--	go.opentelemetry.io/otel v1.45.0
- 	golang.org/x/sync v0.24.0
- )
- 
-@@ -217,19 +216,21 @@ require (
- 	go.opentelemetry.io/contrib/propagators/b3 v1.44.0 // indirect
- 	go.opentelemetry.io/contrib/propagators/jaeger v1.44.0 // indirect
- 	go.opentelemetry.io/contrib/propagators/ot v1.44.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0 // indirect
- 	go.opentelemetry.io/otel/exporters/prometheus v0.66.0 // indirect
--	go.opentelemetry.io/otel/metric v1.45.0 // indirect
--	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
--	go.opentelemetry.io/otel/sdk/metric v1.45.0 // indirect
--	go.opentelemetry.io/otel/trace v1.45.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
- 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
--	go.yaml.in/yaml/v3 v3.0.4 // indirect
-+	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	gocloud.dev v0.46.0 // indirect
- 	gocloud.dev/pubsub/kafkapubsub v0.46.0 // indirect
- 	gocloud.dev/pubsub/natspubsub v0.46.0 // indirect
+@@ -7,7 +7,7 @@
+ BIN_NAME :=krakend
+ OS := $(shell uname | tr '[:upper:]' '[:lower:]')
+ MODULE := github.com/krakend/krakend-ce/v3
+-VERSION := 3.0.4
++VERSION := 3.0.5
+ SCHEMA_VERSION := $(shell echo "${VERSION}" | cut -d '.' -f 1,2)
+ GIT_COMMIT := $(shell git rev-parse --short=7 HEAD)
+ PKGNAME := krakend
 ```
 
-**File**: `go.sum` (modified, +18/-16)
+**File**: `tests/fixtures/specs/backend_301.json` (modified, +1/-1)
 ```diff
-@@ -489,8 +489,8 @@ github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO
- github.com/stretchr/testify v1.8.1/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
- github.com/stretchr/testify v1.8.4/go.mod h1:sz/lmYIOXD/1dqDmKjjqLyZ2RngseejIcXlSw2iwfAo=
- github.com/stretchr/testify v1.10.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
--github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
--github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
-+github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
-+github.com/stretchr/testify v1.12.1/go.mod h1:MDEgiDPPsNp5cuIrHPPCyornHKgEVbtFUmoNlxoYthg=
- github.com/tmthrgd/atomics v0.0.0-20190904060638-dc7a5fcc7e0d h1:2QXSQjy/gDm0QeP9G9NaO9Hm2Cl1LAle4ZV0JeYK7XY=
- github.com/tmthrgd/atomics v0.0.0-20190904060638-dc7a5fcc7e0d/go.mod h1:J2+dTgaX/1g3PkyL6sLBglBWfaLmAp5bQbRhSfKw9XI=
- github.com/tmthrgd/go-bitset v0.0.0-20190904054048-394d9a556c05 h1:5jOF3BEex8XyBKMbaDUN1SiPQJRAKVuP24/sbwC2aWA=
-@@ -534,8 +534,8 @@ go.opentelemetry.io/contrib/propagators/jaeger v1.44.0 h1:OyzvsAMc/zHt0DRPcfstn0
- go.opentelemetry.io/contrib/propagators/jaeger v1.44.0/go.mod h1:44kghcGX+BNxy9UTiWtd6VDt8Nd4EypGBkH2+v2Dqrc=
- go.opentelemetry.io/contrib/propagators/ot v1.44.0 h1:JLTPenzmPtLp5ODPntAA5JhxVu1i3pAFUvXcAORMZAk=
- go.opentelemetry.io/contrib/propagators/ot v1.44.0/go.mod h1:8zr0bHgwkoQXucBK39/H4QphmLf1lSen1Z7FPDZD5Uc=
--go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
--go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
- go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0 h1:SUplec5dp06reu1zaXmOXdvqH398taqrDXqUl99jxSc=
- go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.44.0/go.mod h1:ho2g4N+ane+swq5I/VBkKWnRDY4kUINH3FuqyZqX/Ug=
- go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetrichttp v1.44.0 h1:RuynHbfU8JUEw7DyONgkVYg2SVtsoF28y0LGIr69jgA=
-@@ -548,16 +548,18 @@ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0 h1:QBajQ
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.45.0/go.mod h1:08ZQLjrPLQ6R4kAXvuOvODEer5Yh4CoFvll5qB2BCI8=
- go.opentelemetry.io/otel/exporters/prometheus v0.66.0 h1:vkrK8PAznv2NKt2r+kdu252ccGzkEqLc2aSXbQIALYQ=
- go.opentelemetry.io/otel/exporters/prometheus v0.66.0/go.mod h1:V/UB6D3vMF/UBOL5igAsAYnk1nG/bzYYTzvsB16cy7o=
--go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
--go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
--go.opentelemetry.io/otel/metric/x v0.67.0 h1:PcicCNZFkZ4bXfSooXdo3WN7RBOVOtjVdo1wD358Uns=
--go.opentelemetry.io/otel/metric/x v0.67.0/go.mod h1:FBjCWZe6wgcqxcMtjdGiClDKXb2YxxXii0CXftE4QtI=
--go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
--go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
--go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
--go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
--go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
--go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
-+go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
-+go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
-+go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
-+go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
-+go.opentelemetry.io/otel/metric/x v0.69.0 h1:DjRLr15H83v+hCW7JA9NoJvOkYTtmq5YoDRbe9deYpM=
-+go.opentelemetry.io/otel/metric/x v0.69.0/go.mod h1:uVvsMPMFFyj/HUQfrUnH3JjnOQ1dwFDorgFLRBasM0k=
-+go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
-+go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0/go.mod h1:ypLp+mW1Nt2x+Szt3b5/i1syodyts49lMOwxpDI3VGw=
-+go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
-+go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
- go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
- go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
- go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
-@@ -568,8 +570,8 @@ go.uber.org/multierr v1.11.0 h1:b
+@@ -5,7 +5,7 @@
+ 	},
+ 	"out": {
+ 		"status_code": 200,
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=301\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"301\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=301\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"301\"]}}",
+ 		"header": {
+ 			"content-type": ["application/json; charset=utf-8"],
+ 			"Cache-Control": ["public, max-age=3600"],
+```
+
+**File**: `tests/fixtures/specs/backend_302.json` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@
+ 	},
+ 	"out": {
+ 		"status_code": 200,
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=302\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"302\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=302\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"302\"]}}",
+ 		"header": {
+ 			"content-type": ["application/json; charset=utf-8"],
+ 			"Cache-Control": ["public, max-age=3600"],
+```
+
+**File**: `tests/fixtures/specs/backend_303.json` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@
+ 	},
+ 	"out": {
+ 		"status_code": 200,
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=303\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"303\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=303\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"303\"]}}",
+ 		"header": {
+ 			"content-type": ["application/json; charset=utf-8"],
+ 			"Cache-Control": ["public, max-age=3600"],
+```
+
+**File**: `tests/fixtures/specs/backend_307.json` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@
+ 	},
+ 	"out": {
+ 		"status_code": 200,
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=307\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"307\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"Referer\":[\"http://127.0.0.1:8081/redirect/?status=307\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/\",\"query\":{\"status\":[\"307\"]}}",
+ 		"header": {
+ 			"content-type": ["application/json; charset=utf-8"],
+ 			"Cache-Control": ["public, max-age=3600"],
+```
+
+**File**: `tests/fixtures/specs/cel-7.json` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@
+ 			"foo":42,
+ 			"headers":{
+ 				"Accept-Encoding":["gzip"],
+-				"User-Agent":["KrakenD Version 3.0.4"],
++				"User-Agent":["KrakenD Version 3.0.5"],
+ 				"X-Forwarded-Host":["localhost:8080"]
+ 			},
+ 			"path":"/param_forwarding/ok/1234567890qwertyuio/foobar",
+```
+
+**File**: `tests/fixtures/specs/cors_5.json` (modified, +2/-2)
+```diff
+@@ -9,12 +9,12 @@
+ 	},
+ 	"out": {
+ 		"status_code": 200,
+-		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"User-Agent\":[\"KrakenD Version 3.0.4\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/bar\",\"query\":{\"foo\":[\"foo\"]}}",
++		"body": "{\"foo\":42,\"headers\":{\"Accept-Encoding\":[\"gzip\"],\"User-Agent\":[\"KrakenD Version 3.0.5\"],\"X-Forwarded-Host\":[\"localhost:8080\"]},\"path\":\"/param_forwarding/bar\",\"query\":{\"foo\":[\"foo\"]}}",
+ 		"header": {
+ 			"content-type": ["application/json; charset=utf-8"],
+ 			"Cache-Control": ["public, max-age=3600"],
+ 			"X-Krakend-Completed": ["true"],
+-			"X-Krakend": ["Version 3.0.4"],
++			"X-Krakend": ["Version 3.0.5"],
+ 			"Vary": ["Origin"],
+ 			"Access-Control-Allow-Origin": ["*"],
+ 			"Access-Control-Expose-Headers": ["Content-Length"]
+```
+
+**File**: `tests/fixtures/specs/detail_error.json` (modified, +1/-1)
+```diff
+@@ -14,7 +14,7 @@
+           "foo": 42,
+           "headers": {
+             "Accept-Encoding": ["gzip"],
+-            "User-Agent": ["KrakenD Version 3.0.4"],
++            "User-Agent": ["KrakenD Version 3.0.5"],
+             "X-Forwarded-Host": ["localhost:8080"]
+           },
+           "path": "/param_forwarding/",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1140** (2026-11-19): CE patch release 3.0.5 (@thedae)
 - **PR #1139** (closed): Bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0 (@dependabot[bot])
 - **PR #1138** (2026-11-16): Bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 (@dependabot[bot])
 - **PR #1137** (2026-11-11): cel pkg upgraded (@kpacha)
 - **PR #1136** (2026-11-12): CE patch release 3.0.4 (@thedae)
 - **PR #1135** (2026-11-02): Bump more deps for 3.0.3 (@thedae)
-- **PR #1134** (2026-10-30): Bump krakend-jose and krakend-otel (@thedae)
 
 ---
 
@@ -1045,42 +1061,31 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in go.mod
+## X. Empirical Invariant Guard in Makefile
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in krakend/krakend-ce. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in krakend/krakend-ce. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b2187c50`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3beb4d3b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	go.opentelemetry.io/otel v1.47.0 // indirect
-	go.opentelemetry.io/otel/log v1.47.0 // indirect
-	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-	go.opentelemetry.io/otel/sdk/metric v1.47.0 // indirect
-	go.opentelemetry.io/otel/trace v1.47.0 // indirect
-	go.yaml.in/yaml/v3 v3.0.5 // indirect
+VERSION := 3.0.5
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	go.opentelemetry.io/otel v1.45.0
-	go.opentelemetry.io/otel/metric v1.45.0 // indirect
-	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
-	go.opentelemetry.io/otel/sdk/metric v1.45.0 // indirect
-	go.opentelemetry.io/otel/trace v1.45.0 // indirect
-	go.yaml.in/yaml/v3 v3.0.4 // indirect
+VERSION := 3.0.4
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b2187c50` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3beb4d3b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

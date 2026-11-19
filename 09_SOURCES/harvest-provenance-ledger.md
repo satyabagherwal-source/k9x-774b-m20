@@ -11438,3 +11438,6 @@ Every entry in this ledger must capture:
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `bbc14454` | Multi-dimensional audit evidence | 2026-11-19T23:15:46.571Z |
 | `learn-dom-d-34ca9b71` | `project://projectdiscovery-nuclei` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md` | 2026-11-19T23:16:16.961Z |
 | `learn-github-trufflesecurity-trufflehog` | `https://github.com/trufflesecurity/trufflehog` | `d232362a` | Multi-dimensional audit evidence | 2026-11-19T23:34:46.976Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `3c8dcd7f` | Multi-dimensional audit evidence | 2026-11-19T23:43:21.131Z |
+| `learn-github-krakend-krakend-ce` | `https://github.com/krakend/krakend-ce` | `3beb4d3b` | Multi-dimensional audit evidence | 2026-11-19T23:43:27.172Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `2e8f381c` | Multi-dimensional audit evidence | 2026-11-19T23:43:30.206Z |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T23:34:53.240Z",
+  "last_updated": "2026-11-19T23:43:37.384Z",
   "total_records": 2041,
   "domains": {
     "A": {
@@ -7928,8 +7928,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "d21b1e67291f13b616c973454994d7020fe083c9cd0e7bf97469cab4dc9ed9fa",
-      "created_at": "2026-11-19T16:25:01.527Z"
+      "content_hash": "94e3cbcad700a69f012b926d021f2fe479507d9c825d2e39824db2513fa72448",
+      "created_at": "2026-11-19T23:43:30.678Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -12955,8 +12955,8 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-learnings-architecture-intelligence-tailscale-tailscale-lear.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "7df8727bc02cf1f2702f8fb223f35aa38572acb8a537a01fc84e2b79c7c3b619",
-      "created_at": "2026-11-19T16:25:31.523Z"
+      "content_hash": "fd3dccf3177fde3f3ac079b36fb1f1803a4a3c61f6eec06adacce9fa85de7827",
+      "created_at": "2026-11-19T23:43:37.384Z"
     },
     "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",
@@ -15880,10 +15880,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-codewhale-hq-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
       "repository": "codewhale-hq/Codewhale",
-      "content_hash": "e1c58aa167419d1aa233fcc92ddd7485366318996000fa93a47e4eaae357b365",
-      "created_at": "2026-11-19T15:42:25.787Z"
+      "content_hash": "8d2f87eb9e1f0d98bd38ab3aec7e4090bef0f67cf4d44730a0b57e7ca3359e0c",
+      "created_at": "2026-11-19T23:43:21.636Z"
     },
     "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants",
@@ -18373,8 +18373,8 @@
       "title": "Architecture Intelligence: hmbown-codewhale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-learnings-architecture-intelligence-hmbown-codewhale-learnings-.md",
       "repository": "hmbown-codewhale-learnings",
-      "content_hash": "9195b29e7314557ff548409d8436c638793a4838217a88773c303a91c2f5dc6c",
-      "created_at": "2026-11-18T03:39:41.403Z"
+      "content_hash": "bacfdfcfa374603df59c3dc35c1f02b324882c36133ea978dbe207f90486c03e",
+      "created_at": "2026-11-19T23:43:35.101Z"
     },
     "DOM-D-D6B073D5": {
       "record_id": "DOM-D-D6B073D5",
@@ -25906,8 +25906,8 @@
       "title": "Architecture Intelligence: krakend/krakend-ce Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-krakend-krakend-ce-architecture-intelligence-krakend-krakend-ce-core-invariants.md",
       "repository": "krakend/krakend-ce",
-      "content_hash": "bb654acfc0bfaebf6147810712ba6ec701188f19f4a2947474729ebfbaee21f1",
-      "created_at": "2026-11-17T05:58:12.705Z"
+      "content_hash": "03f6ee3eec459e870bacc12bf996e787fb808de7576a0c1f628d5f84b0dc2bee",
+      "created_at": "2026-11-19T23:43:27.680Z"
     },
     "domain_intelligence-architecture-intelligence-preactjs-preact-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-preactjs-preact-learnings-core-invariants",
@@ -25924,8 +25924,8 @@
       "title": "Architecture Intelligence: krakend-krakend-ce-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-krakend-krakend-ce-learnings-architecture-intelligence-krakend-krakend-ce-learni.md",
       "repository": "krakend-krakend-ce-learnings",
-      "content_hash": "b94284c17e2fec437ebec86189158837045829506841ff063a1e35905ff33600",
-      "created_at": "2026-11-17T05:58:19.132Z"
+      "content_hash": "321d9bc07ea49654542b5b04449ffa7fb7698becbf20d9359d18d90b58f74f73",
+      "created_at": "2026-11-19T23:43:36.331Z"
     },
     "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-core-invariants",

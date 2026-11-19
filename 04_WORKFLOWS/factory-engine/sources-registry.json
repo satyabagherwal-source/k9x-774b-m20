@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T23:34:50.334Z",
-    "lastVerified": "2026-11-19T23:34:50.335Z",
+    "lastChecked": "2026-11-19T23:43:33.641Z",
+    "lastVerified": "2026-11-19T23:43:33.641Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -344,8 +344,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T22:36:13.169Z",
-    "lastVerified": "2026-11-19T22:36:13.169Z",
+    "lastChecked": "2026-11-19T23:43:28.914Z",
+    "lastVerified": "2026-11-19T23:43:28.914Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1374,14 +1374,14 @@
     "officialUrl": "https://github.com/Hmbown/Codewhale",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T12:23:53.204Z",
-    "lastVerified": "2026-11-18T12:23:53.204Z",
+    "lastChecked": "2026-11-19T23:43:19.909Z",
+    "lastVerified": "2026-11-19T23:43:19.909Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "a8f016f40877b6558d68e7c64d0e47e5e4118d961cc751ed9a8297364c032ac0",
+    "contentHash": "dbe136b4b70ab5708f4921cd5a53d2599d96435d3a29f36ba136d0c5e8d6e410",
     "promotedRulesCount": 1,
-    "recentFixesCount": 16,
+    "recentFixesCount": 11,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -2050,14 +2050,14 @@
     "officialUrl": "https://github.com/tailscale/tailscale",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-19T16:25:00.289Z",
-    "lastVerified": "2026-11-19T16:25:00.289Z",
+    "lastChecked": "2026-11-19T23:43:28.842Z",
+    "lastVerified": "2026-11-19T23:43:28.842Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "f809030f51254b31bf92b1d69806f02fbdb558ee11a64f0d237701046b4ce822",
+    "contentHash": "00869492f11257255c8c18e102a7e64e9e6eca8d091f1332aa7e5389eef6817e",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3520,9 +3520,9 @@
   "supervc-stack-vectorchord": {
     "name": "VectorChord",
     "officialUrl": "https://github.com/supervc-stack/VectorChord",
-    "lastChecked": "2026-11-18T17:18:31.976Z",
+    "lastChecked": "2026-11-19T23:43:26.225Z",
     "revisionIdentifier": "0768657e",
-    "lastVerified": "2026-11-18T17:18:31.976Z"
+    "lastVerified": "2026-11-19T23:43:26.225Z"
   },
   "nasiko-labs-nasiko": {
     "name": "nasiko",
@@ -3831,11 +3831,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "krakend-krakend-ce": {
-    "name": "krakend-ce",
+    "name": "krakend/krakend-ce",
     "officialUrl": "https://github.com/krakend/krakend-ce",
-    "lastChecked": "2026-11-18T18:38:10.164Z",
-    "revisionIdentifier": "b2187c50",
-    "lastVerified": "2026-11-18T18:38:10.164Z"
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-19T23:43:26.225Z",
+    "lastVerified": "2026-11-19T23:43:26.225Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-krakend-krakend-ce",
+    "contentHash": "d1f2d02ea81de209641bc5580bc09beadc3dd367dcc257fdb2c51346eaa3d8bd",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "risingwavelabs-risingwave": {
     "name": "risingwavelabs/risingwave",
@@ -8718,5 +8728,19 @@
     "lastChecked": "2026-11-19T23:34:37.274Z",
     "revisionIdentifier": "8524e062",
     "lastVerified": "2026-11-19T23:34:37.274Z"
+  },
+  "sarfrz-novacrawl": {
+    "name": "NovaCrawl",
+    "officialUrl": "https://github.com/SArfrz/NovaCrawl",
+    "lastChecked": "2026-11-19T23:43:16.218Z",
+    "revisionIdentifier": "68c95079df",
+    "lastVerified": "2026-11-19T23:43:16.218Z"
+  },
+  "vanniktech-emoji": {
+    "name": "Emoji",
+    "officialUrl": "https://github.com/vanniktech/Emoji",
+    "lastChecked": "2026-11-19T23:43:18.754Z",
+    "revisionIdentifier": "69e998da",
+    "lastVerified": "2026-11-19T23:43:18.754Z"
   }
 }
