@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T04:36:39.558Z",
-  "total_records": 1940,
+  "last_updated": "2026-11-19T04:44:49.505Z",
+  "total_records": 1942,
   "domains": {
     "A": {
       "total": 13,
@@ -53,7 +53,7 @@
       ]
     },
     "D": {
-      "total": 818,
+      "total": 820,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -872,7 +872,9 @@
         "DOM-D-C41D220B",
         "domain_intelligence-research-knowledge-intelligence-hf-akhaliq-minimax-h3-image-character-swap-learn",
         "domain_intelligence-research-knowledge-intelligence-inworld-voice-isolator-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-inworld-voice-isolator-learnings-core-invaria"
+        "domain_intelligence-research-knowledge-intelligence-hf-inworld-voice-isolator-learnings-core-invaria",
+        "DOM-D-7AF79394",
+        "domain_intelligence-research-knowledge-intelligence-hf-lilylilith-qi_2-1_anyangle-learnings-core-inv"
       ]
     },
     "E": {
@@ -8673,8 +8675,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "ab305f8f8ec626c232c9ebde5f86605f76d2a99503c44ccee19f519c2648f8ea",
-      "created_at": "2026-11-19T03:14:43.576Z"
+      "content_hash": "34257c757f7fe0bf15e0718a4edb6bfa6850068cede8bac3de00dc9968370a92",
+      "created_at": "2026-11-19T04:44:49.505Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10104,8 +10106,8 @@
       "title": "Architecture Intelligence: linkerd/linkerd2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-linkerd-linkerd2-architecture-intelligence-linkerd-linkerd2-core-invariants.md",
       "repository": "linkerd/linkerd2",
-      "content_hash": "e68bf73630409a3e9d0ea7de3c358019d935d4b989e7b9706085c7a6ea3428a7",
-      "created_at": "2026-11-13T20:27:08.657Z"
+      "content_hash": "cd4866c96365d8450dc73d528120e7fc07ab00f078bc01d4f34fa76ef4a6c454",
+      "created_at": "2026-11-19T04:44:16.184Z"
     },
     "DOM-D-43004423": {
       "record_id": "DOM-D-43004423",
@@ -10164,8 +10166,8 @@
       "title": "Architecture Intelligence: linkerd-linkerd2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-linkerd-linkerd2-learnings-architecture-intelligence-linkerd-linkerd2-learnings-.md",
       "repository": "linkerd-linkerd2-learnings",
-      "content_hash": "6a372f24108ae07375bfbbb17f1a32ef54d206aed35d501e4b088480ad7161a0",
-      "created_at": "2026-11-13T20:27:43.733Z"
+      "content_hash": "0af9ac99e7bd269a1b1ca5bfc6cc1a2a7da51598b9f497e2a366454d72be64e6",
+      "created_at": "2026-11-19T04:44:19.969Z"
     },
     "DOM-D-4CA3BD2A": {
       "record_id": "DOM-D-4CA3BD2A",
@@ -15946,8 +15948,8 @@
       "title": "Research & Knowledge Intelligence: lilylilith/QI_2.1_AnyAngle Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lilylilith-qi_2-1_anyangle-research-knowledge-intelligence-lilylilith-qi_2-1_.md",
       "repository": "lilylilith/QI_2.1_AnyAngle",
-      "content_hash": "2612ed45b47310d311496153037e5794badf170ac1f44802926f90231b8d60b6",
-      "created_at": "2026-11-14T15:25:36.996Z"
+      "content_hash": "ccdb38b2b030dd44402b59057ed49b557e9ae7160a95c19b0ccf26551e6a4cee",
+      "created_at": "2026-11-19T04:44:03.869Z"
     },
     "domain_intelligence-architecture-intelligence-biomejs-biome-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-biomejs-biome-core-invariants",
@@ -32562,6 +32564,57 @@
       "repository": "hf-inworld-voice-isolator-learnings",
       "content_hash": "1e16c7417d328de8dae15e6dbe200c907be47734423643058a0472269229b1f0",
       "created_at": "2026-11-19T03:39:51.801Z"
+    },
+    "DOM-D-7AF79394": {
+      "record_id": "DOM-D-7AF79394",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): lilylilith/QI_2.1_AnyAngle",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/lilylilith/QI_2.1_AnyAngle](https://huggingface.co/lilylilith/QI_2.1_AnyAngle))  \n> **Source Version**: `hf-lilylilit`  \n> **License**: Open-Source",
+      "content_hash": "3ff92cf95d22ecef79c2d261705bf6997a3914011ff5fcbf8b3c14b793cca417",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md`  \n> **Source**: huggingface ([https://hu -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md`  \n> **Source**: huggingface ([https://hu",
+      "provenance": {
+        "source_uri": "project://hf-lilylilith-qi_2.1_anyangle/hf-lilylilith-qi_2.1_anyangle-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T04:44:20.247Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-lilylilith-qi_2.1_anyangle)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-lilylilith-qi_2.1_anyangle"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T04:44:48.396Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-lilylilith-qi_2-1_anyangle-learnings-core-inv": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-lilylilith-qi_2-1_anyangle-learnings-core-inv",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-lilylilith-qi_2.1_anyangle-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lilylilith-qi_2-1_anyangle-learnings-research-knowledge-intelligence-hf-lilyl.md",
+      "repository": "hf-lilylilith-qi_2.1_anyangle-learnings",
+      "content_hash": "fb70895d501310561758a0a126ca62c6511b4336690c373dd11c75826206cb6f",
+      "created_at": "2026-11-19T04:44:48.660Z"
     }
   }
 }

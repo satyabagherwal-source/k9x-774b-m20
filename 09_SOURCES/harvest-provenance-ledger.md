@@ -11230,3 +11230,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-bingsu-adetailer` | `https://huggingface.co/Bingsu/adetailer` | `hf-bingsu-` | Multi-dimensional audit evidence | 2026-11-19T04:36:20.289Z |
 | `learn-github-graphprotocol-graph-node` | `https://github.com/graphprotocol/graph-node` | `a6ae6e2c` | Multi-dimensional audit evidence | 2026-11-19T04:36:20.788Z |
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `170c7d31` | Multi-dimensional audit evidence | 2026-11-19T04:36:34.935Z |
+| `learn-huggingface-lilylilith-qi_2-1_anyangle` | `https://huggingface.co/lilylilith/QI_2.1_AnyAngle` | `hf-lilylil` | Multi-dimensional audit evidence | 2026-11-19T04:44:03.678Z |
+| `learn-github-linkerd-linkerd2` | `https://github.com/linkerd/linkerd2` | `e8326770` | Multi-dimensional audit evidence | 2026-11-19T04:44:15.849Z |
+| `learn-dom-d-7af79394` | `project://hf-lilylilith-qi_2.1_anyangle` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | 2026-11-19T04:44:48.419Z |

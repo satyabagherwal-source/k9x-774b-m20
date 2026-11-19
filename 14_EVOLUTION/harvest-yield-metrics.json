@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T04:36:34.941Z",
-  "total_cycles_completed": 10700,
-  "total_learnings_persisted": 10700,
-  "total_rules_promoted": 10098,
+  "last_updated": "2026-11-19T04:44:15.854Z",
+  "total_cycles_completed": 10702,
+  "total_learnings_persisted": 10702,
+  "total_rules_promoted": 10099,
   "history": [
-    {
-      "timestamp": "2026-11-18T13:17:27.911Z",
-      "repository": "moby/buildkit",
-      "learningId": "learn-github-moby-buildkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T13:17:29.510Z",
-      "repository": "projectdiscovery/nuclei",
-      "learningId": "learn-github-projectdiscovery-nuclei",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T13:17:32.247Z",
       "repository": "lancedb/lancedb",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-19T04:36:34.941Z",
       "repository": "vespa-engine/vespa",
       "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T04:44:03.683Z",
+      "repository": "lilylilith/QI_2.1_AnyAngle",
+      "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T04:44:15.854Z",
+      "repository": "linkerd/linkerd2",
+      "learningId": "learn-github-linkerd-linkerd2",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

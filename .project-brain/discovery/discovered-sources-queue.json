@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T04:13:33.741Z",
+  "updated_at": "2026-11-19T04:44:48.451Z",
   "stats": {
-    "total_discovered": 5775,
-    "approved_pending_harvest": 5465,
+    "total_discovered": 5786,
+    "approved_pending_harvest": 5476,
     "harvested_count": 0,
     "rejected_count": 310,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5440,
+      "COMMUNITY_AND_EXPERT": 5451,
       "OFFICIAL_DOCUMENTATION": 186,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -124901,6 +124901,248 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/open-policy-agent-opa-learnings.md",
         "fileName": "open-policy-agent-opa-learnings.md"
+      }
+    },
+    "SRC-2BCE28568399": {
+      "id": "SRC-2BCE28568399",
+      "url": "https://github.com/BurntSushi/jiff",
+      "title": "https://github.com/BurntSushi/jiff",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T04:44:19.262Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
+        "fileName": "linkerd-linkerd2-learnings.md"
+      }
+    },
+    "SRC-43ABC4BF9415": {
+      "id": "SRC-43ABC4BF9415",
+      "url": "https://github.com/BurntSushi/jiff/blob/master/CHANGELOG.md",
+      "title": "https://github.com/BurntSushi/jiff/blob/master/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T04:44:19.303Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
+        "fileName": "linkerd-linkerd2-learnings.md"
+      }
+    },
+    "SRC-E6F0B2205A0B": {
+      "id": "SRC-E6F0B2205A0B",
+      "url": "https://github.com/BurntSushi/jiff/compare/jiff-static-0.2.35...0.2.46",
+      "title": "https://github.com/BurntSushi/jiff/compare/jiff-static-0.2.35...0.2.46",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T04:44:19.344Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
+        "fileName": "linkerd-linkerd2-learnings.md"
+      }
+    },
+    "SRC-E8E4F3760BB4": {
+      "id": "SRC-E8E4F3760BB4",
+      "url": "https://github.com/indexmap-rs/indexmap",
+      "title": "https://github.com/indexmap-rs/indexmap",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T04:44:19.402Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
+        "fileName": "linkerd-linkerd2-learnings.md"
+      }
+    },
+    "SRC-FF163C46858E": {
+      "id": "SRC-FF163C46858E",
+      "url": "https://github.com/indexmap-rs/indexmap/blob/main/RELEASES.md",
+      "title": "https://github.com/indexmap-rs/indexmap/blob/main/RELEASES.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T04:44:19.437Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
+        "fileName": "linkerd-linkerd2-learnings.md"
+      }
+    },
+    "SRC-0B6C7369BFC4": {
+      "id": "SRC-0B6C7369BFC4",
+      "url": "https://github.com/indexmap-rs/indexmap/compare/2.14.0...2.14.2",
+      "title": "https://github.com/indexmap-rs/indexmap/compare/2.14.0...2.14.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T04:44:19.476Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
+        "fileName": "linkerd-linkerd2-learnings.md"
+      }
+    },
+    "SRC-1938ECB9E76F": {
+      "id": "SRC-1938ECB9E76F",
+      "url": "https://github.com/rust-lang/cc-rs",
+      "title": "https://github.com/rust-lang/cc-rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T04:44:19.510Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
+        "fileName": "linkerd-linkerd2-learnings.md"
+      }
+    },
+    "SRC-95C0858545CD": {
+      "id": "SRC-95C0858545CD",
+      "url": "https://github.com/rust-lang/cc-rs/releases",
+      "title": "https://github.com/rust-lang/cc-rs/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T04:44:19.546Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
+        "fileName": "linkerd-linkerd2-learnings.md"
+      }
+    },
+    "SRC-CD1D884CE6D3": {
+      "id": "SRC-CD1D884CE6D3",
+      "url": "https://github.com/rust-lang/cc-rs/blob/main/CHANGELOG.md",
+      "title": "https://github.com/rust-lang/cc-rs/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T04:44:19.582Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
+        "fileName": "linkerd-linkerd2-learnings.md"
+      }
+    },
+    "SRC-E0B62BC53721": {
+      "id": "SRC-E0B62BC53721",
+      "url": "https://github.com/rust-lang/cc-rs/compare/find-msvc-tools-v0.1.12...find-msvc-tools-v0.1.15",
+      "title": "https://github.com/rust-lang/cc-rs/compare/find-msvc-tools-v0.1.12...find-msvc-tools-v0.1.15",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T04:44:19.617Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md",
+        "fileName": "linkerd-linkerd2-learnings.md"
+      }
+    },
+    "SRC-B7CC83252DDB": {
+      "id": "SRC-B7CC83252DDB",
+      "url": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+      "title": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T04:44:48.451Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
+        "fileName": "hf-lilylilith-qi_2.1_anyangle-learnings.md"
       }
     }
   }

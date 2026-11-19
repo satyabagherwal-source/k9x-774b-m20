@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T04:36:34.945Z",
+  "last_updated": "2026-11-19T04:44:15.857Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1700,14 +1700,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lilylilith-qi_2-1_anyangle",
-      "content_hash": "e3a8951752a7b06470178298093b3b7fbd36a3a91445a999c581754a4eb0cd34",
-      "verified_at": "2026-11-14T15:25:36.817Z",
+      "content_hash": "3136ce7bed5dd2532f161abdeed5ac917db753909354aa4e2dc1d65c3baf3575",
+      "verified_at": "2026-11-19T04:44:03.686Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T15:25:36.817Z"
+      "last_updated": "2026-11-19T04:44:03.686Z"
     },
     "BAAI/bge-large-en-v1.5": {
       "repository": "BAAI/bge-large-en-v1.5",
@@ -9441,14 +9441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-linkerd-linkerd2",
-      "content_hash": "a21edee86d890d7d55e2c6f02320468d81a3bdab177b3d9ea6ddd0e6671e0e6e",
-      "verified_at": "2026-11-13T20:27:08.329Z",
+      "content_hash": "b802fcc3386c4f8956952ad81b7e049bd05ce7df01595cfe7066376fc02953f4",
+      "verified_at": "2026-11-19T04:44:15.856Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T20:27:08.329Z"
+      "last_updated": "2026-11-19T04:44:15.856Z"
     },
     "tursodatabase/libsql": {
       "repository": "tursodatabase/libsql",

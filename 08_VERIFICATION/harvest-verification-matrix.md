@@ -11197,3 +11197,6 @@
 | `CYCLE-20261119-5G3H` | `2026-11-19T04:36:20.285Z` | `Bingsu/adetailer` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-bingsu-adetailer-learnings.md` | Yes (`45d41e96...`) |
 | `CYCLE-20261119-5GHC` | `2026-11-19T04:36:20.784Z` | `graphprotocol/graph-node` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/graphprotocol-graph-node-learnings.md` | Yes (`5c9434c8...`) |
 | `CYCLE-20261119-5REC` | `2026-11-19T04:36:34.932Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9330` | Yes (`f5345063...`) |
+| `CYCLE-20261119-FDND` | `2026-11-19T04:44:03.673Z` | `lilylilith/QI_2.1_AnyAngle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md` | Yes (`3136ce7b...`) |
+| `CYCLE-20261119-FN1H` | `2026-11-19T04:44:15.845Z` | `linkerd/linkerd2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9331` | Yes (`b802fcc3...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T04:44:48.419Z` | `hf-lilylilith-qi_2.1_anyangle` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-7AF79394` [Domain D] | Yes (`3ff92cf9...`) |

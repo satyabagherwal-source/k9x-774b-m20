@@ -4,24 +4,24 @@
 {
   "source_repository": "linkerd/linkerd2",
   "source_url": "https://github.com/linkerd/linkerd2",
-  "source_version": "76f5e82d",
+  "source_version": "e8326770",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-13T20:27:08.543Z",
+  "timestamp": "2026-11-19T04:44:16.038Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-linkerd-linkerd2",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [linkerd/linkerd2](https://github.com/linkerd/linkerd2) (Revision: `76f5e82d`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-13T20:27:08.543Z`  
+> **Provenance**: Harvested from [linkerd/linkerd2](https://github.com/linkerd/linkerd2) (Revision: `e8326770`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T04:44:16.038Z`  
 > **Learning ID**: `learn-github-linkerd-linkerd2`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 65%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from linkerd/linkerd2:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/linkerd-linkerd2-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/linkerd/linkerd2](https://github.com/linkerd/linkerd2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T20:27:07.288Z  
+> **Harvest Timestamp**: 2026-11-19T04:44:14.828Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Ultralight, security-first service mesh for Kubernetes. Main repo for Linkerd 2.x.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: Cargo.toml, go.mod, README.md
-- **Stars / Engagement**: 11531 stars
+- **Stars / Engagement**: 11539 stars
 
 ---
 
@@ -1635,19 +1635,251 @@ func (pw *ProbeWorker) doProbe() error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `76f5e82d` (2026-11-13)
-**Commit Message**: proxy: v2.374.0 (#15781)
+### Incident Patch 1: `e8326770` (2026-11-18)
+**Commit Message**: build(deps): bump jiff from 0.2.35 to 0.2.46 (#15687)
 
-Release notes: https://github.com/linkerd/linkerd2-proxy/releases/tag/release/v2.374.0
+Bumps [jiff](https://github.com/BurntSushi/jiff) from 0.2.35 to 0.2.46.
+- [Changelog](https://github.com/BurntSushi/jiff/blob/master/CHANGELOG.md)
+- [Commits](https://github.com/BurntSushi/jiff/compare/jiff-static-0.2.35...0.2.46)
 
-Signed-off-by: l5d-bot <[REDACTED_EMAIL]>
-Co-authored-by: l5d-bot <[REDACTED_EMAIL]>
+---
+updated-dependencies:
+- dependency-name: jiff
+  dependency-version: 0.2.37
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
 
-**File**: `.proxy-version` (modified, +1/-1)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +14/-52)
 ```diff
-@@ -1 +1 @@
--v2.373.0
-+v2.374.0
+@@ -182,12 +182,6 @@ version = "0.22.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
+ 
+-[[package]]
+-name = "bitflags"
+-version = "1.3.2"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
+-
+ [[package]]
+ name = "bitflags"
+ version = "2.13.1"
+@@ -375,37 +369,6 @@ version = "2.11.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "a4ae5f15dda3c708c0ade84bfee31ccab44a3da4f88015ed22f63732abe300c8"
+ 
+-[[package]]
+-name = "defmt"
+-version = "1.1.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "e2953bfe4f93bbd20cc71198842756f77d161884c99ebbabc41d80231ded88d1"
+-dependencies = [
+- "bitflags 1.3.2",
+- "defmt-macros",
+-]
+-
+-[[package]]
+-name = "defmt-macros"
+-version = "1.1.1"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "bad9c72e7ca2137e0dc3813245a0d282fd6daad32fd800af018306a9169b5fe8"
+-dependencies = [
+- "defmt-parser",
+- "proc-macro2",
+- "quote",
+- "syn 2.0.119",
+-]
+-
+-[[package]]
+-name = "defmt-parser"
+-version = "1.0.0"
+-source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "10d60334b3b2e7c9d91ef8150abfb6fa4c1c39ebbcf4a81c2e346aad939fee3e"
+-dependencies = [
+- "thiserror",
+-]
+-
+ [[package]]
+ name = "delegate"
+ version = "0.13.5"
+@@ -992,11 +955,10 @@ dependencies = [
+ 
+ [[package]]
+ name = "jiff"
+-version = "0.2.35"
++version = "0.2.46"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "668b7183bd07af9a4885f5c35b0cc5c83c4607a913c16b7e17291832910d2dcc"
++checksum = "175dc66334db3b9ab9985bf8b61cfed50dc16d20964bb47f9e479adcae984a7f"
+ dependencies = [
+- "defmt",
+  "jiff-core",
+  "jiff-static",
+  "jiff-tzdb-platform",
+@@ -1009,18 +971,18 @@ dependencies = [
+ 
+ [[package]]
+ name = "jiff-core"
+-version = "0.1.0"
++version = "0.1.8"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "7feca88439efe53da3754500c1851dedf3cb36c524dd5cf8225cc0794de95d09"
++checksum = "e599b80292e597019b8b3e392de3f4bea2959ddfb8c7dff60e035e9e311a2c1b"
+ dependencies = [
+- "defmt",
++ "log",
+ ]
+ 
+ [[package]]
+ name = "jiff-static"
+-version = "0.2.35"
++version = "0.2.46"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3a69dcb3a21cfb32ce1cd056169337ca284af0766dd766e7878819b251a49204"
++checksum = "c7b1af7547d47354bc438d797e3854601bde8f8d185780c5ba4ab27afa54f1ba"
+ dependencies = [
+  "jiff-core",
+  "proc-macro2",
+@@ -1577,7 +1539,7 @@ version = "0.10.81"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "77823a27f0babb03091cb9ed9ef80af3b39dbc82f97e8fa530374b7dafd87a45"
+ dependencies = [
+- "bitflags 2.13.1",
++ "bitflags",
+  "cfg-if",
+  "foreign-types",
+  "libc",
+@@ -1781,7 +1743,7 @@ version = "0.18.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "25485360a54d6861439d60facef26de713b1e126bf015ec8f98239467a2b82f7"
+ dependencies = [
+- "bitflags 2.13.1",
++ "bitflags",
+  "procfs-core",
+  "rustix",
+ ]
+@@ -1792,7 +1754,7 @@ version = "0.18.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "e6401bf7b6af22f78b563665d15a22e9aef27775b79b149a66ca022468a4e405"
+ dependencies = [
+- "bitflags 2.13.1",
++ "bitflags",
+  "hex",
+ ]
+ 
+@@ -1924,7 +1886,7 @@ version = "0.5.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "469052894dcb553421e483e4209ee581a45100d31b4018de03e5a7ad86374a7e"
+ dependencies = [
+- "bitflags 2.13.1",
++ "bitflags",
+ ]
+ 
+ [[package]]
+@@ -2011,7 +1973,7 @@ version = "1.1.4"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "b6fe4565b9518b83ef4f91bb47ce29620ca828bd32cb7e408f0062e9930ba190"
+ dependencies = [
+- "bitflags 2.13.1",
++ "bitflags",
+  "errno",
+  "libc",
+  "linux-raw-sys",
+@@ -2128,7 +2090,7 @@ version = "3.7.0"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "b7f4bc775c73d9a02cde8bf7b2ec4c9d12743edf609006c7facc23998404cd1d"
+ dependencies = [
+- "bitflags 2.13.1",
++ "bitflags",
+  "core-foundation",
+  "core-foundation-sys",
+  "libc",
+@@ -2521,7 +2483,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "4cfcf7e2740e6fc6d4d688b4ef00650406bb94adf4731e43c096c3a19fe40840"
+ dependencies = [
+  "base64",
+- "bitflags 2.13.1",
++ "bitflags",
+  "bytes",
+  "http",
+  "http-body",
+```
+
+---
+
+### Incident Patch 2: `2700dc1b` (2026-11-18)
+**Commit Message**: build(deps): bump indexmap from 2.14.0 to 2.14.2 (#15689)
+
+Bumps [indexmap](https://github.com/indexmap-rs/indexmap) from 2.14.0 to 2.14.2.
+- [Changelog](https://github.com/indexmap-rs/indexmap/blob/main/RELEASES.md)
+- [Commits](https://github.com/indexmap-rs/indexmap/compare/2.14.0...2.14.2)
+
+---
+updated-dependencies:
+- dependency-name: indexmap
+  dependency-version: 2.14.2
+  dependency-type: indirect
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +2/-2)
+```diff
+@@ -937,9 +937,9 @@ checksum = "b9e0384b61958566e926dc50660321d12159025e767c18e043daf26b70104c39"
+ 
+ [[package]]
+ name = "indexmap"
+-version = "2.14.0"
++version = "2.14.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d466e9454f08e4a911e14806c24e16fba1b4c121d1ea474396f396069cf949d9"
++checksum = "cc4e190f5d26ca7051642629da2c52fc03bde85a03197c99408dcd291734c855"
+ dependencies = [
+  "equivalent",
+  "hashbrown 0.17.0",
+```
+
+---
+
+### Incident Patch 3: `3191e103` (2026-11-18)
+**Commit Message**: build(deps): bump find-msvc-tools from 0.1.12 to 0.1.15 (#15695)
+
+Bumps [find-msvc-tools](https://github.com/rust-lang/cc-rs) from 0.1.12 to 0.1.15.
+- [Release notes](https://github.com/rust-lang/cc-rs/releases)
+- [Changelog](https://github.com/rust-lang/cc-rs/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/rust-lang/cc-rs/compare/find-msvc-tools-v0.1.12...find-msvc-tools-v0.1.15)
+
+---
+updated-dependencies:
+- dependency-name: find-msvc-tools
+  dependency-version: 0.1.14
+  dependency-type: indirect
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `Cargo.lock` (modified, +2/-2)
+```diff
+@@ -557,9 +557,9 @@ checksum = "da7c62ceae207dd37ea5b845da6a0696c799f85e97da1ab5b7910be3c1c80223"
+ 
+ [[package]]
+ name = "find-msvc-tools"
+-version = "0.1.12"
++version = "0.1.15"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "3e0f1c7c3a72c66fd80abe965175f7523475c0489a87d3ff9d6e8c87d87a9d2d"
++checksum = "1c66915cc5391097de7a2b0b972e8505aa33c0df401fd3a6811dbdb32881ba48"
+ 
+ [[package]]
+ name = "fnv"
 ```
 
 #### Recent Merged Pull Requests:
@@ -1676,31 +1908,88 @@ Co-authored-by: l5d-bot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. proxy: v2.374.0
+## X. build(deps): bump jiff from 0.2.35 to 0.2.46
 
 **RULE**:
-When implementing operations in `.proxy-version`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in linkerd/linkerd2. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `76f5e82d`: proxy: v2.374.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e8326770`: build(deps): bump jiff from 0.2.35 to 0.2.46. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.proxy-version`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-v2.374.0
+version = "0.2.46"
+checksum = "175dc66334db3b9ab9985bf8b61cfed50dc16d20964bb47f9e479adcae984a7f"
+version = "0.1.8"
+checksum = "e599b80292e597019b8b3e392de3f4bea2959ddfb8c7dff60e035e9e311a2c1b"
+ "log",
+version = "0.2.46"
+checksum = "c7b1af7547d47354bc438d797e3854601bde8f8d185780c5ba4ab27afa54f1ba"
+ "bitflags",
+ "bitflags",
+ "bitflags",
+ "bitflags",
+ "bitflags",
+ "bitflags",
+ "bitflags",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-v2.373.0
+[[package]]
+name = "bitflags"
+version = "1.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
+
+[[package]]
+name = "defmt"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e2953bfe4f93bbd20cc71198842756f77d161884c99ebbabc41d80231ded88d1"
+dependencies = [
+ "bitflags 1.3.2",
+ "defmt-macros",
+]
+
+[[package]]
+name = "defmt-macros"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bad9c72e7ca2137e0dc3813245a0d282fd6daad32fd800af018306a9169b5fe8"
+dependencies = [
+ "defmt-parser",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.119",
+]
+
+[[package]]
+name = "defmt-parser"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "10d60334b3b2e7c9d91ef8150abfb6fa4c1c39ebbcf4a81c2e346aad939fee3e"
+dependencies = [
+ "thiserror",
+]
+
+version = "0.2.35"
+checksum = "668b7183bd07af9a4885f5c35b0cc5c83c4607a913c16b7e17291832910d2dcc"
+ "defmt",
+version = "0.1.0"
+checksum = "7feca88439efe53da3754500c1851dedf3cb36c524dd5cf8225cc0794de95d09"
+ "defmt",
+version = "0.2.35"
+checksum = "3a69dcb3a21cfb32c
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `76f5e82d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e8326770` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

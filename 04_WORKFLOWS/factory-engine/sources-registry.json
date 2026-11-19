@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T04:36:38.232Z",
-    "lastVerified": "2026-11-19T04:36:38.232Z",
+    "lastChecked": "2026-11-19T04:44:18.975Z",
+    "lastVerified": "2026-11-19T04:44:18.975Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -164,8 +164,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T03:27:24.996Z",
-    "lastVerified": "2026-11-19T03:27:24.996Z",
+    "lastChecked": "2026-11-19T04:44:15.232Z",
+    "lastVerified": "2026-11-19T04:44:15.232Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1335,9 +1335,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-18T22:14:35.346Z",
+    "lastChecked": "2026-11-19T04:44:10.336Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-18T22:14:35.346Z"
+    "lastVerified": "2026-11-19T04:44:10.336Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -6085,5 +6085,60 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vercel-labs-opensrc": {
+    "name": "opensrc",
+    "officialUrl": "https://github.com/vercel-labs/opensrc",
+    "lastChecked": "2026-11-19T04:44:00.211Z",
+    "revisionIdentifier": "b51de608",
+    "lastVerified": "2026-11-19T04:44:00.211Z"
+  },
+  "hf-lilylilith-qi_2.1_anyangle": {
+    "name": "lilylilith/QI_2.1_AnyAngle",
+    "officialUrl": "https://huggingface.co/lilylilith/QI_2.1_AnyAngle",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T04:44:03.035Z",
+    "lastVerified": "2026-11-19T04:44:03.035Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-lilylilith-qi_2-1_anyangle",
+    "contentHash": "3136ce7bed5dd2532f161abdeed5ac917db753909354aa4e2dc1d65c3baf3575",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "futurice-pepperoni-app-kit": {
+    "name": "pepperoni-app-kit",
+    "officialUrl": "https://github.com/futurice/pepperoni-app-kit",
+    "lastChecked": "2026-11-19T04:44:05.343Z",
+    "revisionIdentifier": "f58c1410",
+    "lastVerified": "2026-11-19T04:44:05.343Z"
+  },
+  "linkerd-linkerd2": {
+    "name": "linkerd/linkerd2",
+    "officialUrl": "https://github.com/linkerd/linkerd2",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-19T04:44:14.828Z",
+    "lastVerified": "2026-11-19T04:44:14.828Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-linkerd-linkerd2",
+    "contentHash": "b802fcc3386c4f8956952ad81b7e049bd05ce7df01595cfe7066376fc02953f4",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "postgresml-postgresml": {
+    "name": "postgresml",
+    "officialUrl": "https://github.com/postgresml/postgresml",
+    "lastChecked": "2026-11-19T04:44:12.713Z",
+    "revisionIdentifier": "caf2b6cc",
+    "lastVerified": "2026-11-19T04:44:12.713Z"
   }
 }

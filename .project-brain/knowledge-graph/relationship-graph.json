@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-19T03:39:51.499Z",
+  "updated_at": "2026-11-19T04:44:48.417Z",
   "statistics": {
-    "total_nodes": 373,
-    "total_edges": 176,
+    "total_nodes": 374,
+    "total_edges": 177,
     "domain_distribution": {
-      "D": 251,
+      "D": 252,
       "M": 1,
       "H": 53,
       "J": 14,
@@ -20,7 +20,7 @@
       "I": 4
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 175,
+      "CONSTRAINED_BY_ARCHITECTURE": 176,
       "VERIFIED_BY_TEST": 1
     }
   },
@@ -8343,6 +8343,29 @@
       ],
       "created_at": "2026-11-19T03:39:51.499Z",
       "updated_at": "2026-11-19T03:39:51.499Z"
+    },
+    "DOM-D-7AF79394": {
+      "id": "DOM-D-7AF79394",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): lilylilith/QI_2.1_AnyAngle",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md`  \n> **Source**: huggingface ([https://hu -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md`  \n> **Source**: huggingface ([https://hu",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-lilylilith-qi_2.1_anyangle/hf-lilylilith-qi_2.1_anyangle-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T04:44:20.247Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-lilylilith-qi_2.1_anyangle)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-19T04:44:48.417Z",
+      "updated_at": "2026-11-19T04:44:48.417Z"
     }
   },
   "edges": [
@@ -10105,6 +10128,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-E-DB6AB3E1 [E] with Domain M",
       "created_at": "2026-11-19T03:39:51.499Z"
+    },
+    {
+      "id": "EDGE-B6FB33365016",
+      "sourceId": "DOM-D-7AF79394",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-7AF79394 [D] with Domain M",
+      "created_at": "2026-11-19T04:44:48.417Z"
     }
   ]
 }
