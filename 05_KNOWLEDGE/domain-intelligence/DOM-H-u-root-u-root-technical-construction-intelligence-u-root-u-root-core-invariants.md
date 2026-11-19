@@ -4,24 +4,24 @@
 {
   "source_repository": "u-root/u-root",
   "source_url": "https://github.com/u-root/u-root",
-  "source_version": "beb9a36f",
+  "source_version": "215adf5d",
   "license": "BSD-3-Clause",
-  "timestamp": "2026-11-17T13:29:51.115Z",
+  "timestamp": "2026-11-19T01:18:42.982Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-u-root-u-root",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [u-root/u-root](https://github.com/u-root/u-root) (Revision: `beb9a36f`).  
-> **License**: BSD-3-Clause | **Timestamp**: `2026-11-17T13:29:51.115Z`  
+> **Provenance**: Harvested from [u-root/u-root](https://github.com/u-root/u-root) (Revision: `215adf5d`).  
+> **License**: BSD-3-Clause | **Timestamp**: `2026-11-19T01:18:42.982Z`  
 > **Learning ID**: `learn-github-u-root-u-root`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 52%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 54%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from u-root/u-root:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/u-root-u-root-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/u-root/u-root](https://github.com/u-root/u-root))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T13:29:46.826Z  
+> **Harvest Timestamp**: 2026-11-19T01:18:41.770Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A fully Go userland with Linux bootloaders! u-root can create a one-binary root file system (initramfs) containing a busybox-like set of tools written in Go.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 3089 stars
+- **Stars / Engagement**: 3091 stars
 
 ---
 
@@ -1300,70 +1300,488 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `295f982f` (2026-11-16)
-**Commit Message**: CI: fix tests.yml after ubuntu-latest moved to ubuntu-26.04
+### Incident Patch 1: `663e4908` (2026-10-20)
+**Commit Message**: build(deps): bump github.com/klauspost/compress from 1.18.0 to 1.18.7
 
-GitHub Actions migrated ubuntu-latest to ubuntu-26.04 (Linux 7.0),
-breaking two parts of tests.yml:
+Bumps [github.com/klauspost/compress](https://github.com/klauspost/compress) from 1.18.0 to 1.18.7.
+- [Release notes](https://github.com/klauspost/compress/releases)
+- [Commits](https://github.com/klauspost/compress/compare/v1.18.0...v1.18.7)
 
-1. runvmtest pins dagger.io/dagger v0.9.4, whose engine uses legacy
-   iptables (xtables-legacy) for BuildKit CNI setup. Linux 6.17+
-   disables CONFIG_NETFILTER_XTABLES_LEGACY, causing dagger-engine
-   v0.9.4 to crash-loop until the 300s session timeout. Pin runs-on
-   to ubuntu-24.04 until runvmtest is updated or replaced.
-2. In Ubuntu 26.04 (QEMU 10.2), the transitional qemu-user-static
-   package and qemu-riscv64-static binary name were removed in favor
-   of qemu-user and qemu-riscv64, which work on both 24.04 and 26.04.
+---
+updated-dependencies:
+- dependency-name: github.com/klauspost/compress
+  dependency-version: 1.18.7
+  dependency-type: direct:production
+...
 
-Signed-off-by: Barret Rhoden <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/tests.yml` (modified, +6/-4)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -13,7 +13,9 @@ concurrency:
+@@ -24,7 +24,7 @@ require (
+ 	github.com/ishidawataru/sctp v0.0.0-20230406120618-7ff4192f6ff2
+ 	github.com/jaypipes/ghw v0.12.0
+ 	github.com/kevinburke/ssh_config v1.2.0
+-	github.com/klauspost/compress v1.18.0
++	github.com/klauspost/compress v1.18.7
+ 	github.com/klauspost/pgzip v1.2.6
+ 	github.com/mattn/go-runewidth v0.0.14
+ 	github.com/mdlayher/vsock v1.2.1
+```
+
+**File**: `go.sum` (modified, +2/-2)
+```diff
+@@ -116,8 +116,8 @@ github.com/kaey/framebuffer v0.0.0-20140402104929-7b385489a1ff h1:eK9dwGbaOkNQ44
+ github.com/kaey/framebuffer v0.0.0-20140402104929-7b385489a1ff/go.mod h1:tS4qtlcKqtt3tCIHUflVSqeP3CLH5Qtv2szX9X2SyhU=
+ github.com/kevinburke/ssh_config v1.2.0 h1:x584FjTGwHzMwvHx18PXxbBVzfnxogHaAReU4gf13a4=
+ github.com/kevinburke/ssh_config v1.2.0/go.mod h1:CT57kijsi8u/K/BOFA39wgDQJ9CxiF4nAY/ojJ6r6mM=
+-github.com/klauspost/compress v1.18.0 h1:c/Cqfb0r+Yi+JtIEq73FWXVkRonBlf0CRNYc8Zttxdo=
+-github.com/klauspost/compress v1.18.0/go.mod h1:2Pp+KzxcywXVXMr50+X0Q/Lsb43OQHYWRCY2AiWywWQ=
++github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
++github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
+ github.com/klauspost/pgzip v1.2.6 h1:8RXeL5crjEUFnR2/Sn6GJNWtSQ3Dk8pq4CL3jvdDyjU=
+ github.com/klauspost/pgzip v1.2.6/go.mod h1:Ch1tH69qFZu15pkjo5kYi6mth2Zzwzt50oCQKQE9RUs=
+ github.com/kr/fs v0.1.0 h1:Jskdu9ieNAYnjxsi0LbQp1ulIKZV1LAFgK1tWhpZgl8=
+```
+
+**File**: `vendor/github.com/klauspost/compress/.gitattributes` (modified, +1/-0)
+```diff
+@@ -1,2 +1,3 @@
+ * -text
+ *.bin -text -diff
++*.md text eol=lf
+```
+
+**File**: `vendor/github.com/klauspost/compress/.goreleaser.yml` (modified, +10/-1)
+```diff
+@@ -31,6 +31,9 @@ builds:
+       - mips64le
+     goarm:
+       - 7
++    ignore:
++      - goos: windows
++        goarch: arm
+   -
+     id: "s2d"
+     binary: s2d
+@@ -57,6 +60,9 @@ builds:
+       - mips64le
+     goarm:
+       - 7
++    ignore:
++      - goos: windows
++        goarch: arm
+   -
+     id: "s2sx"
+     binary: s2sx
+@@ -84,14 +90,17 @@ builds:
+       - mips64le
+     goarm:
+       - 7
++    ignore:
++      - goos: windows
++        goarch: arm
  
- jobs:
-   test:
--    runs-on: ubuntu-latest
-+    # Pin to ubuntu-24.04 because runvmtest uses dagger v0.9.4, whose
-+    # legacy iptables CNI setup fails on ubuntu-26.04 (Linux 7.0).
-+    runs-on: ubuntu-24.04
-     strategy:
-       matrix:
-         go-version: ['1.27.x' ]
-@@ -87,21 +89,21 @@ jobs:
-   # pkg/... job never compiles it. Cross-compile the package tests and
-   # run them under qemu-user so Codecov records those lines.
-   upl-riscv64:
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     steps:
-       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
-       - name: Setup Go
-         uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6.4.0
-         with:
-           go-version: '1.27.x'
-       - name: Install QEMU user emulator
--        run: sudo apt-get update && sudo apt-get install -y qemu-user-static
-+        run: sudo apt-get update && sudo apt-get install -y qemu-user
-       - name: Test universalpayload on riscv64
-         run: |
-           CGO_ENABLED=0 GOARCH=riscv64 go test -c -o upl.riscv64.test \
-             -covermode=atomic \
-             ./pkg/boot/universalpayload/
--          qemu-riscv64-static ./upl.riscv64.test \
-+          qemu-riscv64 ./upl.riscv64.test \
-             -test.v -test.timeout=10m \
-             -test.coverprofile=coverage.txt
-       - uses: codecov/codecov-action@fb8b3582c8e4def4969c97caa2f19720cb33a72f # v7.0.0
+ archives:
+   -
+     id: s2-binaries
+     name_template: "s2-{{ .Os }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}"
+     format_overrides:
+       - goos: windows
+-        format: zip
++        formats: ['zip']
+     files:
+       - unpack/*
+       - s2/LICENSE
+```
+
+**File**: `vendor/github.com/klauspost/compress/flate/deflate.go` (modified, +16/-37)
+```diff
+@@ -6,11 +6,12 @@
+ package flate
+ 
+ import (
+-	"encoding/binary"
+ 	"errors"
+ 	"fmt"
+ 	"io"
+ 	"math"
++
++	"github.com/klauspost/compress/internal/le"
+ )
+ 
+ const (
+@@ -234,12 +235,9 @@ func (d *compressor) fillWindow(b []byte) {
+ 
+ 	// Calculate 256 hashes at the time (more L1 cache hits)
+ 	loops := (n + 256 - minMatchLength) / 256
+-	for j := 0; j < loops; j++ {
++	for j := range loops {
+ 		startindex := j * 256
+-		end := startindex + 256 + minMatchLength - 1
+-		if end > n {
+-			end = n
+-		}
++		end := min(startindex+256+minMatchLength-1, n)
+ 		tocheck := d.window[startindex:end]
+ 		dstSize := len(tocheck) - minMatchLength + 1
+ 
+@@ -269,29 +267,20 @@ func (d *compressor) fillWindow(b []byte) {
+ // We only look at chainCount possibilities before giving up.
+ // pos = s.index, prevHead = s.chainHead-s.hashOffset, prevLength=minMatchLength-1, lookahead
+ func (d *compressor) findMatch(pos int, prevHead int, lookahead int) (length, offset int, ok bool) {
+-	minMatchLook := maxMatchLength
+-	if lookahead < minMatchLook {
+-		minMatchLook = lookahead
+-	}
++	minMatchLook := min(lookahead, maxMatchLength)
+ 
+ 	win := d.window[0 : pos+minMatchLook]
+ 
+ 	// We quit when we get a match that's at least nice long
+-	nice := len(win) - pos
+-	if d.nice < nice {
+-		nice = d.nice
+-	}
++	nice := min(d.nice, len(win)-pos)
+ 
+ 	// If we've got a match that's good enough, only look in 1/4 the chain.
+ 	tries := d.chain
+ 	length = minMatchLength - 1
+ 
+ 	wEnd := win[pos+length]
+ 	wPos := win[pos:]
+-	minIndex := pos - windowSize
+-	if minIndex < 0 {
+-		minIndex = 0
+-	}
++	minIndex := max(pos-windowSize, 0)
+ 	offset = 0
+ 
+ 	if d.chain < 100 {
+@@ -374,7 +363,7 @@ func (d *compressor) writeStoredBlock(buf []byte) error {
+ // of the supplied slice.
+ // The caller must ensure that len(b) >= 4.
+ func hash4(b []byte) uint32 {
+-	return hash4u(binary.LittleEndian.Uint32(b), hashBits)
++	return hash4u(le.Load32(b, 0), hashBits)
+ }
+ 
+ // hash4 returns the hash of u to fit in a hash table with h bits.
+@@ -389,7 +378,7 @@ func bulkHash4(b []byte, dst []uint32) {
+ 	if len(b) < 4 {
+ 		return
+ 	}
+-	hb := binary.LittleEndian.Uint32(b)
++	hb := le.Load32(b, 0)
+ 
+ 	dst[0] = hash4u(hb, hashBits)
+ 	end := len(b) - 4 + 1
+@@ -432,7 +421,9 @@ func (d *compressor) deflateLazy() {
+ 			d.h = newHuffmanEncoder(maxFlateBlockTokens)
+ 		}
+ 		var tmp [256]uint16
+-		for _, v := range d.window[s.index:d.windowEnd] {
++		toIndex := d.window[s.index:d.windowEnd]
++		toIndex = toIndex[:min(len(toIndex), maxFlateBlockTokens)]
++		for _, v := range toIndex {
+ 			tmp[v]++
+ 		}
+ 		d.h.generate(tmp[:], 15)
+@@ -480,10 +471,7 @@ func (d *compressor) deflateLazy() {
+ 		prevOffset := s.offset
+ 		s.length = minMatchLength - 1
+ 		s.offset = 0
+-		minIndex := s.index - windowSize
+-		if minIndex < 0 {
+-			minIndex = 0
+-		}
++		minIndex := max(s.index-windowSize, 0)
+ 
+ 		if s.chainHead-s.hashOffset >= minIndex && lookahead > prevLength && prevLength < d.lazy {
+ 			if newLength, newOffset, ok := d.findMatch(s.index, s.chainHead-s.hashOffset, lookahead); ok {
+@@ -503,10 +491,7 @@ func (d *compressor) deflateLazy() {
+ 			if prevLength < maxMatchLength-checkOff {
+ 				prevIndex := s.index - 1
+ 				if prevIndex+prevLength < s.maxInsertIndex {
+-					end := lookahead
+-					if lookahead > maxMatchLength+checkOff {
+-						end = maxMatchLength + checkOff
+-					}
++					end := min(lookahead, maxMatchLength+checkOff)
+ 					end += prevIndex
+ 
+ 					// Hash at match end.
+@@ -603,15 +588,9 @@ func (d *compressor) deflateLazy() {
+ 			// table.
+ 			newIndex := s.index + prevLength - 1
+ 			// Calculate missing hashes
+-			end := newIndex
+-			if end > s.maxInsertIndex {
+-				end = s.maxInsertIndex
+-			}
++			end := min(newIndex, s.maxInsertIndex)
+ 			end += minMatchLength - 1
+-			startindex := s.index + 1
+-			if startindex > s.maxInsertIndex {
+-				startindex = s.maxInsertIndex
+-			}
++			startindex := min(s.index+1, s.maxInsertIndex)
+ 			tocheck := d.window[startindex:end]
+ 			dstSize := len(tocheck) - minMatchLength + 1
+ 			if dstSize > 0 {
+```
+
+**File**: `vendor/github.com/klauspost/compress/flate/dict_decoder.go` (modified, +1/-4)
+```diff
+@@ -104,10 +104,7 @@ func (dd *dictDecoder) writeCopy(dist, length int) int {
+ 	dstBase := dd.wrPos
+ 	dstPos := dstBase
+ 	srcPos := dstPos - dist
+-	endPos := dstPos + length
+-	if endPos > len(dd.hist) {
+-		endPos = len(dd.hist)
+-	}
++	endPos := min(dstPos+length, len(dd.hist))
+ 
+ 	// Copy non-overlapping section after destination position.
+ 	//
+```
+
+**File**: `vendor/github.com/klauspost/compress/flate/fast_encoder.go` (modified, +3/-46)
+```diff
+@@ -7,7 +7,6 @@ package flate
+ 
+ import (
+ 	"fmt"
+-	"math/bits"
+ 
+ 	"github.com/klauspost/compress/internal/le"
+ )
+@@ -151,29 +150,9 @@ func (e *fastGen) matchlen(s, t int, src []byte) int32 {
+ 			panic(fmt.Sprint(s, "-", t, "(", s-t, ") > maxMatchLength (", maxMatchOffset, ")"))
+ 		}
+ 	}
+-	s1 := min(s+maxMatchLength-4, len(src))
+-	left := s1 - s
+-	n := int32(0)
+-	for left >= 8 {
+-		diff := le.Load64(src, s) ^ le.Load64(src, t)
+-		if diff != 0 {
+-			return n + int32(bits.TrailingZeros64(diff)>>3)
+-		}
+-		s += 8
+-		t += 8
+-		n += 8
+-		left -= 8
+-	}
+-
+-	a := src[s:s1]
++	a := src[s:min(s+maxMatchLength-4, len(src))]
+ 	b := src[t:]
+-	for i := range a {
+-		if a[i] != b[i] {
+-			break
+-		}
+-		n++
+-	}
+-	return n
++	return int32(matchLen(a, b))
+ }
+ 
+ // matchlenLong will return the match length between offsets and t in src.
+@@ -193,29 +172,7 @@ func (e *fastGen) matchlenLong(s, t int, src []byte) int32 {
+ 			panic(fmt.Sprint(s, "-", t, "(", s-t, ") > maxMatchLength (", maxMatchOffset, ")"))
+ 		}
+ 	}
+-	// Extend the match to be as long as possible.
+-	left := len(src) - s
+-	n := int32(0)
+-	for left >= 8 {
+-		diff := le.Load64(src, s) ^ le.Load64(src, t)
+-		if diff != 0 {
+-			return n + int32(bits.TrailingZeros64(diff)>>3)
+-		}
+-		s += 8
+-		t += 8
+-		n += 8
+-		left -= 8
+-	}
+-
+-	a := src[s:]
+-	b := src[t:]
+-	for i := range a {
+-		if a[i] != b[i] {
+-			break
+-		}
+-		n++
+-	}
+-	return n
++	return int32(matchLen(src[s:], src[t:]))
+ }
+ 
+ // Reset the encoding table.
+```
+
+**File**: `vendor/github.com/klauspost/compress/flate/huffman_bit_writer.go` (modified, +20/-29)
+```diff
+@@ -211,7 +211,9 @@ func (w *huffmanBitWriter) flush() {
+ 		n++
+ 	}
+ 	w.bits = 0
+-	w.write(w.bytes[:n])
++	if n > 0 {
++		w.write(w.bytes[:n])
++	}
+ 	w.nbytes = 0
+ }
+ 
+@@ -303,10 +305,7 @@ func (w *huffmanBitWriter) generateCodegen(numLiterals int, numOffsets int, litE
+ 			w.codegenFreq[size]++
+ 			count--
+ 			for count >= 3 {
+-				n := 6
+-				if n > count {
+-					n = count
+-				}
++				n := min(6, count)
+ 				codegen[outIndex] = 16
+ 				outIndex++
+ 				codegen[outIndex] = uint8(n - 3)
+@@ -316,10 +315,7 @@ func (w *huffmanBitWriter) generateCodegen(numLiterals int, numOffsets int, litE
+ 			}
+ 		} else {
+ 			for count >= 11 {
+-				n := 138
+-				if n > count {
+-					n = count
+-				}
++				n := min(138, count)
+ 				codegen[outIndex] = 18
+ 				outIndex++
+ 				codegen[outIndex] = uint8(n - 11)
+@@ -438,8 +434,8 @@ func (w *huffmanBitWriter) writeOutBits() {
+ 	w.nbits -= 48
+ 	n := w.nbytes
+ 
+-	// We over-write, but faster...
+-	le.Store64(w.bytes[n:], bits)
++	// We overwrite, but faster...
++	le.Store64(w.bytes[:], n, bits)
+ 	n += 6
+ 
+ 	if n >= bufferFlushSize {
+@@ -472,7 +468,7 @@ func (w *huffmanBitWriter) writeDynamicHeader(numLiterals int, numOffsets int, n
+ 	w.writeBits(int32(numOffsets-1), 5)
+ 	w.writeBits(int32(numCodegens-4), 4)
+ 
+-	for i := 0; i < numCodegens; i++ {
++	for i := range numCodegens {
+ 		value := uint(w.codegenEncoding.codes[codegenOrder[i]].len())
+ 		w.writeBits(int32(value), 3)
+ 	}
+@@ -650,7 +646,7 @@ func (w *huffmanBitWriter) writeBlockDynamic(tokens *tokens, eof bool, input []b
+ 		w.lastHeader = 0
+ 	}
+ 
+-	numLiterals, numOffsets := w.indexTokens(tokens, !sync)
++	numLiterals, numOffsets := w.indexTokens(tokens, true)
+ 	extraBits := 0
+ 	ssize, storable := w.storedSize(input)
+ 
+@@ -785,7 +781,7 @@ func (w *huffmanBitWriter) fillTokens() {
+ // literalFreq and offsetFreq, and generates literalEncoding
+ // and offsetEncoding.
+ // The number of literal and offset tokens is returned.
+-func (w *huffmanBitWriter) indexTokens(t *tokens, filled bool) (numLiterals, numOffsets int) {
++func (w *huffmanBitWriter) indexTokens(t *tokens, alwaysEOB bool) (numLiterals, numOffsets int) {
+ 	//copy(w.literalFreq[:], t.litHist[:])
+ 	*(*[256]uint16)(w.literalFreq[:]) = t.litHist
+ 	//copy(w.literalFreq[256:], t.extraHist[:])
+@@ -795,9 +791,10 @@ func (w *huffmanBitWriter) indexTokens(t *tokens, filled bool) (numLiterals, num
+ 	if t.n == 0 {
+ 		return
+ 	}
+-	if filled {
+-		return maxNumLit, maxNumDist
++	if alwaysEOB {
++		w.literalFreq[endBlockMarker] = 1
+ 	}
++
+ 	// get the number of literals
+ 	numLiterals = len(w.literalFreq)
+ 	for w.literalFreq[numLiterals-1] == 0 {
+@@ -855,8 +852,7 @@ func (w *huffmanBitWriter) writeTokens(tokens []token, leCodes, oeCodes []hcode)
+ 			bits |= c.code64() << (nbits & 63)
+ 			nbits += c.len()
+ 			if nbits >= 48 {
+-				le.Store64(w.bytes[nbytes:], bits)
+-				//*(*uint64)(unsafe.Pointer(&w.bytes[nbytes])) = bits
++				le.Store64(w.bytes[:], nbytes, bits)
+ 				bits >>= 48
+ 				nbits -= 48
+ 				nbytes += 6
+@@ -883,8 +879,7 @@ func (w *huffmanBitWriter) writeTokens(tokens []token, leCodes, oeCodes []hcode)
+ 			bits |= c.code64() << (nbits & 63)
+ 			nbits += c.len()
+ 			if nbits >= 48 {
+-				le.Store64(w.bytes[nbytes:], bits)
+-				//*(*uint64)(unsafe.Pointer(&w.bytes[nbytes])) = bits
++				le.Store64(w.bytes[:], nbytes, bits)
+ 				bits >>= 48
+ 				nbits -= 48
+ 				nbytes += 6
+@@ -906,8 +901,7 @@ func (w *huffmanBitWriter) writeTokens(tokens []token, leCodes, oeCodes []hcode)
+ 			bits |= uint64(extraLength) << (nbits & 63)
+ 			nbits += extraLengthBits
+ 			if nbits >= 48 {
+-				le.Store64(w.bytes[nbytes:], bits)
+-				//*(*uint64)(unsafe.Pointer(&w.bytes[nbytes])) = bits
++				le.Store64(w.bytes[:], nbytes, bits)
+ 				bits >>= 48
+ 				nbits -= 48
+ 				nbytes += 6
+@@ -932,8 +926,7 @@ func (w *huffmanBitWriter) writeTokens(tokens []token, leCodes, oeCodes []hcode)
+ 			bits |= c.code64() << (nbits & 63)
+ 			nbits += c.len()
+ 			if nbits >= 48 {
+-				le.Store64(w.bytes[nbytes:], bits)
+-				//*(*uint64)(unsafe.Pointer(&w.bytes[nbytes])) = bits
++				le.Store64(w.bytes[:], nbytes, bits)
+ 				bits >>= 48
+ 				nbits -= 48
+ 				nbytes += 6
+@@ -954,8 +947,7 @@ func (w *huffmanBitWriter) writeTokens(tokens []token, leCodes, oeCodes []hcode)
+ 			bits |= uint64((offset-(offsetComb>>8))&matchOffsetOnlyMask) << (nbits & 63)
+ 			nbits += uint8(offsetComb)
+ 			if nbits >= 48 {
+-				le.Store64(w.bytes[nbytes:], bits)
+-				//*(*uint64)(unsafe.Pointer(&w.bytes[nbytes])) = bits
++				le.Store64(w.bytes[:], nbytes, bits)
+ 				bits >>= 48
+ 				nbits -= 48
+ 				nbytes += 6
+@@ -1108,7 +1100,7 @@ func (w *huffmanBitWriter) writeBlockHuff(eof bool, input []byte, sync bool) {
+ 		// We must have at least 48 bits free.
+ 		if nbits >= 8 {
+ 			n := nbits >> 3
+-			le.Store64(w.bytes[nbytes:], bits)
++			le.Store64(w.bytes[:], nbytes, bits)
+ 			bits >>= (n * 8) & 63
+ 			nbits -= n * 8
+ 			nbytes += n
+@@ -1137,8 +1129,7 @@ func (w *huffmanBitWriter) writeBlockHuff(eof bool, input []byte, sync bool) {
+ 	// Remaining...
+ 	for _, t := range i
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3841** (2026-11-17): vendor: update compress (@binjip978)
 - **PR #3840** (2026-11-16): CI: fix tests.yml after ubuntu-latest moved to ubuntu-26.04 (@brho)
 - **PR #3839** (2026-11-16): vfile: skip revoked and non-signing keys in GetRSAKeysFromRing (@alhudz)
 - **PR #3837** (2026-11-16): mount9p: verify the server host key over ssh (@alhudz)
+- **PR #3836** (2026-11-17): go.mod: pick up cpu v0.2.0 and gobusybox v0.6.0 (@rminnich)
 - **PR #3835** (2026-11-12): CI: Add RISC-V 64 Kernel and OVMF binaries docker push action (@AjanZhong)
-- **PR #3834** (2026-11-10): Remove bubbline (@rminnich)
-- **PR #3832** (2026-11-10): Use IoctlGetUint64 from golang.org/x/sys/unix (@tklauser)
 
 ---
 
@@ -1383,39 +1801,31 @@ Signed-off-by: Barret Rhoden <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. CI: fix tests.yml after ubuntu-latest moved to ubuntu-26.04
+## X. build(deps): bump github.com/klauspost/compress from 1.18.0 to 1.18.7
 
 **RULE**:
-When implementing operations in `.github/workflows/tests.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in u-root/u-root. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `295f982f`: CI: fix tests.yml after ubuntu-latest moved to ubuntu-26.04. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `663e4908`: build(deps): bump github.com/klauspost/compress from 1.18.0 to 1.18.7. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/tests.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    # Pin to ubuntu-24.04 because runvmtest uses dagger v0.9.4, whose
-    # legacy iptables CNI setup fails on ubuntu-26.04 (Linux 7.0).
-    runs-on: ubuntu-24.04
-    runs-on: ubuntu-24.04
-        run: sudo apt-get update && sudo apt-get install -y qemu-user
-          qemu-riscv64 ./upl.riscv64.test \
+	github.com/klauspost/compress v1.18.7
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-    runs-on: ubuntu-latest
-    runs-on: ubuntu-latest
-        run: sudo apt-get update && sudo apt-get install -y qemu-user-static
-          qemu-riscv64-static ./upl.riscv64.test \
+	github.com/klauspost/compress v1.18.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `295f982f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `663e4908` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

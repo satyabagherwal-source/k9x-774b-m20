@@ -11196,3 +11196,7 @@ Every entry in this ledger must capture:
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `01c149aa` | Multi-dimensional audit evidence | 2026-11-19T00:58:22.930Z |
 | `learn-huggingface-facebookai-xlm-roberta-base` | `https://huggingface.co/FacebookAI/xlm-roberta-base` | `hf-faceboo` | Multi-dimensional audit evidence | 2026-11-19T01:05:59.549Z |
 | `learn-github-nezhahq-nezha` | `https://github.com/nezhahq/nezha` | `8bcaf092` | Multi-dimensional audit evidence | 2026-11-19T01:06:02.806Z |
+| `learn-huggingface-openai-community-gpt2` | `https://huggingface.co/openai-community/gpt2` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-19T01:18:41.211Z |
+| `learn-github-u-root-u-root` | `https://github.com/u-root/u-root` | `215adf5d` | Multi-dimensional audit evidence | 2026-11-19T01:18:42.772Z |
+| `learn-github-yugabyte-yugabyte-db` | `https://github.com/yugabyte/yugabyte-db` | `64f73406` | Multi-dimensional audit evidence | 2026-11-19T01:18:56.469Z |
+| `learn-dom-l-03ec8831` | `project://yugabyte-yugabyte-db` | `64f73406` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md` | 2026-11-19T01:19:29.179Z |

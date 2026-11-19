@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T01:06:12.353Z",
+  "last_updated": "2026-11-19T01:19:29.826Z",
   "directives": [
     {
       "id": "CD-001",
@@ -31648,6 +31648,37 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "A",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-FBDD51-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-3O7A",
+      "directive_title": "build(deps): bump github.com/klauspost/compress from 1.18.0 to 1.18.7",
+      "source_repo": "u-root-u-root-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-3O7A-build-deps-bump-github-com-klauspost-compress-from-1-18-0-to-1-18-7.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-4B36",
+      "directive_title": "[PLAT-22930] YBA: Fix yba-ctl backup and restore against a password-protected ex",
+      "source_repo": "yugabyte-yugabyte-db-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-4B36-plat-22930-yba-fix-yba-ctl-backup-and-restore-against-a-password-protected-ex.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-REV-8BDBE6",
+      "directive_title": "build(deps): bump github.com/klauspost/compress from 1.18.0 to 1.18.7",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "u-root-u-root",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8BDBE6-build-deps-bump-github-com-klauspost-com.md",
       "staged_date": "2026-11-19"
     }
   ]

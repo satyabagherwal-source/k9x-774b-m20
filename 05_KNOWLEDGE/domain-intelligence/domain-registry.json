@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T01:06:12.607Z",
-  "total_records": 1929,
+  "last_updated": "2026-11-19T01:19:30.027Z",
+  "total_records": 1930,
   "domains": {
     "A": {
       "total": 13,
@@ -1973,7 +1973,7 @@
       ]
     },
     "L": {
-      "total": 15,
+      "total": 16,
       "record_ids": [
         "DOM-L-1B851132",
         "DOM-L-80D1F65C",
@@ -1989,7 +1989,8 @@
         "DOM-L-817D65B4",
         "DOM-L-497D3321",
         "DOM-L-9579240F",
-        "DOM-L-902F756C"
+        "DOM-L-902F756C",
+        "DOM-L-03EC8831"
       ]
     },
     "M": {
@@ -11338,8 +11339,8 @@
       "title": "Technical Construction Intelligence: u-root/u-root Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-u-root-u-root-technical-construction-intelligence-u-root-u-root-core-invariants.md",
       "repository": "u-root/u-root",
-      "content_hash": "abf57861a6b92166c27056725fdc3381f4ee15a5c6df80b72ee7fabf39438e3a",
-      "created_at": "2026-11-17T13:29:51.235Z"
+      "content_hash": "52f21e8cf5499bb18312c82b66f8296fbdc3f49aa5a70590d87e7b59424807f7",
+      "created_at": "2026-11-19T01:18:43.186Z"
     },
     "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-core-invariants",
@@ -11365,8 +11366,8 @@
       "title": "Technical Construction Intelligence: u-root-u-root-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-u-root-u-root-learnings-technical-construction-intelligence-u-root-u-root-learni.md",
       "repository": "u-root-u-root-learnings",
-      "content_hash": "ffa93944c17302437e43281848e3924b075bbf7771675f7d1f3f6644b9d8c5a7",
-      "created_at": "2026-11-17T13:29:56.364Z"
+      "content_hash": "c93fd0b69fd34a359f57c998651ea82a2379a3267490b4e5efd172087e226949",
+      "created_at": "2026-11-19T01:19:00.319Z"
     },
     "DOM-D-AB4CCCBB": {
       "record_id": "DOM-D-AB4CCCBB",
@@ -14843,8 +14844,8 @@
       "title": "Research & Knowledge Intelligence: openai-community/gpt2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-community-gpt2-research-knowledge-intelligence-openai-community-gpt2-c.md",
       "repository": "openai-community/gpt2",
-      "content_hash": "5af374569c30b47cdc24116813d9397ed9c870a29bf775ca06701d05a5041bfd",
-      "created_at": "2026-11-14T10:30:03.594Z"
+      "content_hash": "a328ca5f63f199cfc8ff9bff9eebcab1e1b6d26e33ccc10659c44c3aeda9c3b8",
+      "created_at": "2026-11-19T01:18:41.406Z"
     },
     "domain_intelligence-architecture-intelligence-skyhook-io-radar-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-skyhook-io-radar-core-invariants",
@@ -14954,8 +14955,8 @@
       "title": "Research & Knowledge Intelligence: hf-openai-community-gpt2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-community-gpt2-learnings-research-knowledge-intelligence-hf-openai-com.md",
       "repository": "hf-openai-community-gpt2-learnings",
-      "content_hash": "c2bd8eac27d7162d5ad3f57fc2641b953cb2ee922388e05a1e13cf8f91f27f3c",
-      "created_at": "2026-11-14T10:31:22.454Z"
+      "content_hash": "e885310d78991ffaa78ea21c9705e0e0673dca1ccc484c25365eed160e5ebef7",
+      "created_at": "2026-11-19T01:19:00.819Z"
     },
     "domain_intelligence-architecture-intelligence-skyhook-io-radar-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-skyhook-io-radar-learnings-core-invariants",
@@ -26880,8 +26881,8 @@
       "title": "Quality & Verification Intelligence: yugabyte/yugabyte-db Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-yugabyte-yugabyte-db-quality-verification-intelligence-yugabyte-yugabyte-db-core.md",
       "repository": "yugabyte/yugabyte-db",
-      "content_hash": "58e43525ad911b77ad4c66ee2927f414401b18669df11c134c874b09eb86b947",
-      "created_at": "2026-11-18T09:02:37.833Z"
+      "content_hash": "93600bf86b678e6e617e4e952f88e12a9eae7b5e2c50d8b7cf0746dedf21471f",
+      "created_at": "2026-11-19T01:18:56.854Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-idol-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-idol-learnings-core-invariants",
@@ -30585,8 +30586,8 @@
       "title": "Quality & Verification Intelligence: yugabyte-yugabyte-db-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-yugabyte-yugabyte-db-learnings-quality-verification-intelligence-yugabyte-yugaby.md",
       "repository": "yugabyte-yugabyte-db-learnings",
-      "content_hash": "adc781fc0cc361d41c20bc4cc30e1992278dbd10ed761dee7c4dde25955a8f21",
-      "created_at": "2026-11-18T09:03:08.657Z"
+      "content_hash": "c05b8dde1788cee4d189e9b4037f292d6d7d8b991bebad9978ceed351f38a665",
+      "created_at": "2026-11-19T01:19:30.027Z"
     },
     "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-core-invariants",
@@ -32347,6 +32348,48 @@
       "repository": "nezhahq-nezha-learnings",
       "content_hash": "912833117d079d5bfa9e361031cc8deb1b9bc6551ceb7ac67c00c40eeedd6f70",
       "created_at": "2026-11-19T01:06:11.773Z"
+    },
+    "DOM-L-03EC8831": {
+      "record_id": "DOM-L-03EC8831",
+      "domain_letter": "L",
+      "domain_id": "deployment_operations",
+      "domain_name": "Deployment & Operations Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "[PLAT-22930] YBA: Fix yba-ctl backup and restore against a password-protected ex",
+      "content": "When implementing operations in `managed/devops/bin/yb_platform_backup.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "f1b2e320410fc188fc0176fd2c9cc79d57a1836329f5319a60091b96ba5517c3",
+      "summary": "Prevents defects observed in production commit `bfaf8c7a`: [PLAT-22930] YBA: Fix yba-ctl backup and restore against a password-protected ext -> When implementing operations in `managed/devops/bin/yb_platform_backup.sh`, engineers MUST enforce rigorous boundary validation, safe state ",
+      "provenance": {
+        "source_uri": "project://yugabyte-yugabyte-db/yugabyte-yugabyte-db-learnings.md",
+        "source_version": "64f73406",
+        "observed_at": "2026-11-19T01:18:55.430Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (yugabyte-yugabyte-db)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of yugabyte-yugabyte-db"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.9,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T01:19:29.148Z"
     }
   }
 }

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T02:06:37.910Z",
+  "timestamp": "2026-11-19T01:19:29.710Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-yugabyte-yugabyte-db-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [yugabyte-yugabyte-db-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T02:06:37.910Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T01:19:29.710Z`  
 > **Learning ID**: `LEARN-EVO-yugabyte-yugabyte-db-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `0a3328bd`  
+> **Source Version**: `64f73406`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T02:06:23.741Z  
+> **Timestamp**: 2026-11-19T01:18:55.430Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T02:06:23.736Z  
+> **Harvest Timestamp**: 2026-11-19T01:18:55.424Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10664 stars
+- **Stars / Engagement**: 10669 stars
 
 ---
 
@@ -1550,6 +1550,10 @@ DEFAULT_BOOT_VOLUME_SIZE_GB = 50
 MIN_BOOT_VOLUME_SIZE_GB = 50
 BOOT_VOLUME_REPLACEMENT_TIMEOUT_SECONDS = 600
 OCI_WORK_REQUEST_TERMINAL_STATES = ("SUCCEEDED", "FAILED", "CANCELED")
+# Instance tags replace_boot_volume copies to the boot volume it keeps.
+NODE_TAG_KEYS = ("universe-uuid", "node-uuid")
+# VPUs/GB OCI gives a boot volume when none is set, as on a replacement.
+OCI_DEFAULT_BOOT_VOLUME_VPUS_PER_GB = 10
 
 AARCH64_ARCHITECTURES = ("aarch64", "arm64")
 
@@ -1693,14 +1697,7 @@ class OciCloudAdmin:
     @property
     def blockstorage_client(self):
         if self._blockstorage_client is None:
-            self._blockstorage_client = self._build_client(BlockstorageClient)
-        return self._blockstorage_client
-
-    @property
-    def dns_client(self):
-        if self._dns_client is None:
-            self._dns_client = self._build_client(DnsClient)
-        
+            self._blockstorage_cli
 ```
 
 ### Core Architecture Module: `managed/devops/opscli/ybops/utils/__init__.py`
@@ -2273,14 +2270,11 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #37989** (2026-11-16): **YSQL: Range index scan on an int2vector column returns wrong rows for < and >**
-  *Symptoms*: A range (lsm) index on an int2vector column returns wrong rows for `<` and `>`. The cause is `yb_type.c:890`, which declares INT2VECTOROID as a key type (`allow_for_primary_key = true`). Its converter, `YbDatumToBinary` (yb_type.c:287-292), passes DocDB the raw array body: header fields including the element count, then the int16 elements in little-endian order. DocDB compares binary keys with memcmp, so keys sort by element count first and then by little-endian bytes. PG's btree on int2vector uses `array_ops`/`array_cmp`, which compares elements as signed int16 first and count second. So the index order is `''`, `'0'`, `'1'`, `'10'`, `'-1'`, `'1 2'`, `'2 1'`, `'1 2 3'`. This puts `'10'` below `'1 2'`, and `a < '1 2'` returns it.  The callers of this flag read it as "DocDB ordering matches PG": - the key-type checks for indexes and primary keys (`YbCheckKeyColumnType` in yb_cmds.c, see below) - `yb_agg_pushdown_supported` (nodeAgg.c:2264, :2357) - `yb_hash_code` (pg_yb_utils.c), which hashes only key types. It keeps accepting int2vector (see below).  int2vector has had `true` since the type framework commit f8a54015950, in the same table edit as OIDVECTOROID. OIDVECTOROID needs it for `pg_proc_proname_args_nsp_index`. No catalog index keys on int2vector. INT2ARRAYOID uses the same converter on the same array body and already has `false` (yb_type.c:1327).  The fix sets int2vector's flag to `false`, the same as int2[]. User-visible effects: - `CREATE INDEX` with an int2vector k
+- **Issue #38467** (2026-11-18): **Build 40789405 on master: 2 lane(s) failed in the PGO workload (no cause recognised in its log)**
+  *Symptoms*: _Filed automatically by [Grissom](https://github.com/yugabyte/agent-k/blob/main/bots/grissom/README.md) (internal docs), which watches YugabyteDB's scheduled builds on `master` and the supported release branches for builds where a lane breaks or many tests fail the same way. Everything below is measured from those builds; how it decides, and how to stop it, is at the end._  ## Summary  The scheduled build of `master` at 40789405 failed in the PGO profiling workload on 2 lane(s): no cause recognised in its log. That workload builds the profile the release lanes' binaries are optimized with, so its failure stops the build before any test runs on the lane. A commit can trigger it, so the range below is ranked (the Suspected RCA comment), but its fix usually lies in the workload: this issue is for whoever keeps the PGO workload working.  - Failing lanes: `alma8-clang21-release`, `arm-alma8-clang21-release` - Failing build types: release  ## Urgency  S2 lane broken / cluster (`priority/high`).  ## What is being tested  Every lane of the scheduled build (build types release, tsan, fastdebug, asan, debug).  ## What is the failure  - `alma8-clang21-release`: build step failed in the PGO profiling workload (no cause recognised in its log); no tests ran ([CSI launch 192665](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/192665), [build log](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/192665/931559190/931559192/log), [Jenkins console](https://jenkins.dev.yugabyte.com/job/gith
 
-- **Issue #37980** (2026-11-15): **README: fix dead links (2 verified 404)**
-  *Symptoms*: Link audit found 2 dead URL(s) in the README, each verified HTTP 404 (re-checked 3x):  - `https://communityinviter.com/apps/yugabyte-db/register` - `https://docs.yugabyte.com/stable/stable/explore/transactions/explicit-locking/#table-level-locks`  Fixes applied: - remove_badge_chunk: removed - prose_to_text: → `Table-level locking for concurrent DDL and DML` (verified 200)  All replacement URLs were live-checked (HTTP 200) before this PR. Happy to adjust if a different replacement is preferred.
-  **Post-Mortem & Fix Analysis**:
-  > [![CLA assistant check](https://cla-assistant.io/pull/badge/not_signed)](https://cla-assistant.io/yugabyte/yugabyte-db?pullRequest=37980) <br/>Thank you for your submission! We really appreciate it. Like many open source projects, we ask that you sign our [Contributor License Agreement](https://cla-assistant.io/yugabyte/yugabyte-db?pullRequest=37980) before we can accept your contribution.<br/><sub>You have signed the CLA already but the status is still pending? Let us [recheck](https://cla-assistant.io/check/yugabyte/yugabyte-db?pullRequest=37980) it.</sub>
-  >   <!-- Reviewable:start --> This change is [<img src="https://reviewable.io/review_button.svg" height="34" align="absmiddle" alt="Reviewable"/>](https://reviewable.io/reviews/yugabyte/yugabyte-db/37980) <!-- Reviewable:end --> 
+- **Issue #38448** (2026-11-18): **[#36671] YSQL: Fix org.yb.pgsql.TestPgListenNotify#testCancelledFirstListenLeavesOnePoller cancel lost on TSAN**
+  *Symptoms*: ## Summary  While the first `LISTEN` waits in `PreCommit_Notify` for its notifications poller to start, `ybStartNotifsPollerBgWorker` slept in a loop with `pg_usleep(10000L)`, which blocks in `select()`. The clang21 TSAN runtime does not intercept `select()`, so the `SIGINT` from `pg_cancel_backend` was not handled until the loop ended, the `LISTEN` succeeded and the test failed with `LISTEN should have been cancelled`. The loop now waits with `WaitLatch(MyLatch, WL_LATCH_SET | WL_TIMEOUT | WL_EXIT_ON_PM_DEATH, 10L, WAIT_EVENT_BGWORKER_STARTUP)` and then calls `ResetLatch`. TSAN intercepts that wait, and `StatementCancelHandler` sets `MyLatch`, so the next `CHECK_FOR_INTERRUPTS()` handles the cancel right away.  --- _Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._  ## Test plan  ./yb_build.sh tsan --clang21 --java-test 'org.yb.pgsql.TestPgListenNotify#testCancelledFirstListenLeavesOnePoller' -n 100 --stop-at-failure -- -p 6 Ran the above locally with no failures. Before the fix, this test reproduced locally (same test command and -p / env as above, without --stop-at-failure) -- with the CSI dashboard rate for reference: - clang21-tsan: 9/9 iterations failed locally; CSI 42/42 Machine: GCP n2-standard-16, AlmaLinux 8.10 (Cerulean Leopard) x86_64, 16 vCPU, 63 GiB RAM, Intel(R) Xeon(R) CPU @ 2.80GHz 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2297,206 +2291,689 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `624a0ee1` (2026-11-14)
-**Commit Message**: [#37541] Build: Add a script to remove old thirdparty directories (#37542)
+### Incident Patch 1: `bfaf8c7a` (2026-11-18)
+**Commit Message**: [PLAT-22930] YBA: Fix yba-ctl backup and restore against a password-protected external Postgres (#38291)
 
 ## Summary
 
-`/opt/yb-build/thirdparty` gains a new thirdparty version every time a checkout moves to a newer pin, and nothing removes the old ones, so the directory grows by several GB over a few months.
-New `build-support/clean_old_thirdparty.sh` is a manual tool to reclaim that space: no build runs it, and it only prints what it would remove unless `--apply` is given.
-It removes the versions that no build or test has used for `--days` days (default 30), i.e. those none of whose files has an access time within that time.
-On Linux, access times show the reads, with a day of slack since `relatime` updates them at most once a day, and the script refuses to run on a filesystem mounted with `noatime`.
-APFS, unless mounted with `strictatime`, updates an access time only when it is older than the modification time, so on macOS, `yb_build.sh` now touches a `.last_used` file in the version it uses, except on Jenkins.
-On macOS, a version used only outside `yb_build.sh`, e.g. from CLion, or only by branches without this change, is removed `--days` days after install, and downloaded again by the next build that needs 
+`yba-ctl` backup and restore didn't work against a password-protected
+external Postgres (`postgres.useExisting`). Three bugs combined:
 
-**File**: `build-support/clean_old_thirdparty.sh` (added, +190/-0)
+1. **Restore never got the password.** `yba-ctl restoreBackup` checked
+the misspelled key `postgress.useExisting.password`, so it never wrote
+the `.pgpass` file or passed `--pgpass_path`. Restore stopped at the
+first `psql` with `fe_sendauth: no password supplied`, after a silent
+wait in `createdb`.
+2. **The `.pgpass` entry only matched `yugaware`.**
+`yb_platform_backup.sh` exports `PGPASSFILE`, so libpq skips
+`~/.pgpass`. `createdb` (which connects to `postgres`), the PA `ts`
+database and the `db_exists` probe got no password. With only fix 1,
+restore waits forever in `createdb` for a password when there is no
+terminal. The entry now uses `*` for the database.
+3. **`db_exists` probed the wrong database.** Without `-d`, `psql`
+connects to a database named after the user. An external Postgres whose
+user has no database of that name (here `yba`) always failed the probe,
+so every backup skipped the Performance Advisor database as "not 
+
+**File**: `managed/devops/bin/yb_platform_backup.sh` (modified, +4/-2)
 ```diff
-@@ -0,0 +1,190 @@
-+#!/usr/bin/env bash
-+# Copyright (c) YugabyteDB, Inc.
-+#
-+# Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
-+# in compliance with the License.  You may obtain a copy of the License at
-+#
-+# http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software distributed under the License
-+# is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
-+# or implied.  See the License for the specific language governing permissions and limitations
-+# under the License.
-+#
-+# Removes the thirdparty directories, one per installed thirdparty version, that no build or test
-+# has used for --days days, from their parent directory.
-+# A version counts as used when the access time of any of its files falls within that time.
-+# On Linux, access times show the reads, so the script refuses to run on a noatime filesystem.
-+# APFS, unless mounted with strictatime, updates an access time only when it is older than the
-+# modification time. So on macOS, yb_build.sh touches the version's .last_used file instead, and a
-+# version used only outside yb_build.sh, e.g. from CLion, or only by branches without that, counts
-+# as used only for --days days after install.
-+#
-+# Every yugabyte-db-thirdparty-v* directory counts, including copies renamed by hand. Symbolic
-+# links, e.g. those of thirdparty installed from a PR artifact, and the <name>.tmp.* directories of
-+# downloads in progress are left alone.
-+#
-+# Usage:
-+#   build-support/clean_old_thirdparty.sh [--dir DIR] [--days N] [--apply]
-+#
-+# Options:
-+#   --dir DIR    Parent of the thirdparty directories. Default: /opt/yb-build/thirdparty
-+#   --days N     Remove the versions unused for N days (default: 30).
-+#   --apply      Delete; without it, only print what would be deleted.
-+#   -h, --help   Show this help.
-+
-+set -euo pipefail
-+
-+# shellcheck source=build-support/common-build-env.sh
-+. "${BASH_SOURCE[0]%/*}/common-build-env.sh"
-+
-+target_dir=$LOCAL_THIRDPARTY_DIR_PARENT
-+apply=false
-+days=30
-+
-+usage() {
-+  sed -n '/^# Usage:/,/^$/ p' "$0" | sed 's/^# \{0,1\}//'
-+}
-+
-+while [[ $# -gt 0 ]]; do
-+  if [[ ($1 == --dir || $1 == --days) && $# -lt 2 ]]; then
-+    echo "$1 needs a value" >&2
-+    usage >&2
-+    exit 2
-+  fi
-+  case "$1" in
-+    --dir)
-+      target_dir="$2"; shift 2 ;;
-+    --days)
-+      days="$2"; shift 2 ;;
-+    --apply)
-+      apply=true; shift ;;
-+    -h|--help)
-+      usage; exit 0 ;;
-+    *)
-+      echo "Unknown argument: $1" >&2
-+      usage >&2
-+      exit 2 ;;
-+  esac
-+done
-+
-+if [[ ! -d "$target_dir" ]]; then
-+  echo "Thirdparty directory parent not found: $target_dir" >&2
-+  exit 1
-+fi
-+
-+if ! [[ "$days" =~ ^[1-9][0-9]*$ ]]; then
-+  echo "--days must be a positive integer (got: $days)" >&2
-+  exit 2
-+fi
-+
-+# Use -amin rather than -atime, since BSD find rounds ages up to whole days, so -atime -N would
-+# match only files used within N-1 days.
-+minutes=$(( days * 24 * 60 ))
-+
-+if is_linux; then
-+  mount_options=$(findmnt -n -o OPTIONS -T "$target_dir")
-+  if [[ ,$mount_options, == *,noatime,* ]]; then
-+    echo "$target_dir is on a noatime filesystem, so the versions in use cannot be told apart" >&2
-+    exit 1
-+  fi
-+  # relatime, the default, lets access times lag reads by up to a day.
-+  minutes=$(( minutes + 24 * 60 ))
-+fi
-+
-+# Treat a find error as used, to be safe.
-+recently_used() {
-+  local found
-+  found=$(find "$1" -type f -amin "-$minutes" -print -quit) || return 0
-+  [[ -n $found ]]
-+}
-+
-+cd "$target_dir"
-+
-+shopt -s nullglob
-+keepers=()
-+victims=()
-+leftovers=()
-+for entry in yugabyte-db-thirdparty-v*; do
-+  if [[ -L $entry || ! -d $entry || $entry == *.tmp.* ]]; then
-+    continue
-+  elif [[ $entry == *.removing ]]; then
-+    leftovers+=("$entry")
-+  elif recently_used "$entry"; then
-+    keepers+=("$entry")
-+  else
-+    victims+=("$entry")
-+  fi
-+done
-+
-+print_list() {
-+  local title=$1
-+  shift
-+  if [[ $# -gt 0 ]]; then
-+    echo "$title"
-+    printf '  %s\n' "$@"
-+    echo
-+  fi
-+}
-+
-+echo "Scanning $target_dir for versions unused for $days days..."
-+echo
-+# ${a[@]+"${a[@]}"} expands an empty array under set -u in bash 3.2 too.
-+print_list "Will keep:" ${keepers[@]+"${keepers[@]}"}
-+print_list "Will remove leftovers of interrupted removals:" ${leftovers[@]+"${leftovers[@]}"}
-+print_list "Will remove:" ${victims[@]+"${victims[@]}"}
-+
-+if [[ ${#victims[@]} -eq 0 && ${#leftovers[@]} -eq 0 ]]; then
-+  echo "Nothing to remove."
-+  exit 0
-+fi
-+
-+if ! $apply; then
-+  echo "(dry run) Re-run with --apply to delete the entries listed above."
-+  exit 0
-+fi
-+
-+# Never let a bad name reach rm -rf.
-+check_name() {
-+  if [[ $1 != yugabyte-db-thirdparty-v* || $1 == */* || $1 == *..* ]]; then
-+    echo "Refusing to remove suspicious entry: $1" >&2
-+    exit 3
-+  fi
-+}
-+
-+echo "Removing $(( ${#leftovers[@]} + ${#victims[@]} )) entries..."
-+failed=0
-+for entry in ${leftovers[@]+"${leftovers[@]}"}; do
-+
+@@ -326,8 +326,10 @@ db_exists() {
+     probe="$(dirname "${pg_helper_path}")/psql"
+   fi
+ 
+-  local probe_cmd="${probe} -h ${db_host} -p ${db_port} -U ${db_username} -tAc \
+-\"SELECT 1 FROM pg_database WHERE datname='${db_name}'\""
++  # Without -d, psql connects to a database named after the user, which an external
++  # Postgres may not have. The platform DB always exists by the time this runs.
++  local probe_cmd="${probe} -h ${db_host} -p ${db_port} -U ${db_username} \
++-d ${PLATFORM_DB_NAME} -tAc \"SELECT 1 FROM pg_database WHERE datname='${db_name}'\""
+   local probe_out
+   probe_out=$(docker_aware_cmd "postgres" "${probe_cmd}" 2>/dev/null) || return 1
+   [[ "${probe_out}" = "1" ]]
 ```
 
-**File**: `yb_build.sh` (modified, +7/-0)
+**File**: `managed/yba-installer/cmd/backup.go` (modified, +2/-8)
 ```diff
-@@ -1010,6 +1010,13 @@ activate_virtualenv
- set_pythonpath
- verify_thirdparty_not_stale
- find_or_download_thirdparty
-+# Records the use of a downloaded thirdparty version for build-support/clean_old_thirdparty.sh on
-+# macOS, where APFS updates access times only on the first read after a change. CI does not run it.
-+if is_mac && ! is_jenkins && [[ $YB_THIRDPARTY_DIR == "$LOCAL_THIRDPARTY_DIR_PARENT"/* &&
-+      ! -L $YB_THIRDPARTY_DIR ]]; then
-+  # umask 0 lets other users update the file once it exists.
-+  ( umask 0; touch "$YB_THIRDPARTY_DIR/.last_used" ) 2>/dev/null || true
-+fi
- detect_toolchain
- find_make_or_ninja_and_update_cmake_opts
- find_compiler_by_type
+@@ -222,7 +222,7 @@ func RestoreBackupScriptHelper(inputPath string, destination string, skipRestart
+ 		if viper.GetString("postgres.useExisting.pg_restore_path") != "" {
+ 			args = append(args, "--pg_restore_path", viper.GetString(
+ 				"postgres.useExisting.pg_restore_path"))
+-			if viper.GetString("postgress.useExisting.password") != "" {
++			if viper.GetString("postgres.useExisting.password") != "" {
+ 				createPgPass()
+ 				args = append(args, "--pgpass_path", common.PgpassPath())
+ 			}
+@@ -292,13 +292,7 @@ func addYbdbArgs(args []string) []string {
+ }
+ 
+ func createPgPass() {
+-	data := []byte(fmt.Sprintf("%s:%s:yugaware:%s:%s",
+-		viper.GetString("postgres.useExisting.host"),
+-		viper.GetString("postgres.useExisting.port"),
+-		viper.GetString("postgres.useExisting.username"),
+-		viper.GetString("postgres.useExisting.password"),
+-	))
+-	err := os.WriteFile(common.PgpassPath(), data, 0600)
++	err := os.WriteFile(common.PgpassPath(), []byte(common.PgpassEntry()), 0600)
+ 	if err != nil {
+ 		log.Fatal("could not create pgpass file: " + err.Error())
+ 	}
+```
+
+**File**: `managed/yba-installer/pkg/common/pgpass.go` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++package common
++
++import (
++	"fmt"
++
++	"github.com/spf13/viper"
++)
++
++// PgpassEntry is the .pgpass line for postgres.useExisting. It matches every database:
++// yb_platform_backup.sh exports PGPASSFILE, so libpq skips ~/.pgpass, and the script also
++// connects to the PA "ts" database, the "postgres" maintenance database (createdb) and the
++// database named after the user (db_exists).
++func PgpassEntry() string {
++	return fmt.Sprintf("%s:%s:*:%s:%s",
++		viper.GetString("postgres.useExisting.host"),
++		viper.GetString("postgres.useExisting.port"),
++		viper.GetString("postgres.useExisting.username"),
++		viper.GetString("postgres.useExisting.password"),
++	)
++}
+```
+
+**File**: `managed/yba-installer/pkg/common/pgpass_test.go` (added, +20/-0)
+```diff
+@@ -0,0 +1,20 @@
++package common
++
++import (
++	"testing"
++
++	"github.com/spf13/viper"
++)
++
++func TestPgpassEntryMatchesAllDatabases(t *testing.T) {
++	viper.Set("postgres.useExisting.host", "db.example.com")
++	viper.Set("postgres.useExisting.port", "5432")
++	viper.Set("postgres.useExisting.username", "yba")
++	viper.Set("postgres.useExisting.password", "secret")
++	t.Cleanup(viper.Reset)
++
++	want := "db.example.com:5432:*:yba:secret"
++	if got := PgpassEntry(); got != want {
++		t.Errorf("PgpassEntry() = %q, want %q", got, want)
++	}
++}
+```
+
+---
+
+### Incident Patch 2: `2c4a9e0e` (2026-11-10)
+**Commit Message**: [PLAT-23429] YBA: Fix Kubernetes universe delete hanging on a StatefulSet left outside its Helm release
+
+Summary:
+A Kubernetes universe delete could hang forever in its PVC step. A StatefulSet that carries a release's labels but is no longer in the Helm release (for example one left behind by a failed full move) survives `helm delete`. Its pods keep running and keep its PVCs in use, so `kubectl delete pvc -l release=<release>` waits on the `kubernetes.io/pvc-protection` finalizer with no time limit. The task list shows the hang under "Removing Pod Disruption Budget Policy" because later steps of an already-seen type are grouped under the most recent row.
+
+- `KubernetesManager#deleteStorage` now takes the release names to clean up and deletes their StatefulSets before their PVCs, so pods holding the PVCs go first. This applies to the universe delete, the read replica delete, and an edit that removes or rolls back an AZ.
+- On the kubectl path both deletes are bounded by `yb.helm.timeout_secs`, the timeout helm install and upgrade use, and a non-zero exit fails the step (`processErrors`). A delete that matches nothing still succeeds, including in a namespace that is already gone. The 
+
+**File**: `managed/src/main/java/com/yugabyte/yw/commissioner/tasks/DestroyKubernetesUniverse.java` (modified, +67/-0)
+```diff
+@@ -38,6 +38,8 @@
+ import com.yugabyte.yw.models.helpers.TaskType;
+ import java.io.IOException;
+ import java.util.HashSet;
++import java.util.LinkedHashMap;
++import java.util.LinkedHashSet;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Map.Entry;
+@@ -47,6 +49,7 @@
+ import java.util.stream.Stream;
+ import javax.inject.Inject;
+ import lombok.extern.slf4j.Slf4j;
++import org.apache.commons.lang3.StringUtils;
+ 
+ @Slf4j
+ @Abortable
+@@ -172,6 +175,9 @@ public void run() {
+               KubernetesCommandExecutor.CommandType.VOLUME_DELETE.getSubTaskGroupName());
+       volumeDeletes.setSubTaskGroupType(UserTaskDetails.SubTaskGroupType.RemovingUnusedServers);
+ 
++      // Storage left in namespaces the provider sets, by releases no longer in the placement.
++      SubTaskGroup providerNamespaceVolumeDeletes = createProviderNamespaceVolumeDeletes(universe);
++
+       SubTaskGroup namespaceDeletes =
+           createSubTaskGroup(
+               KubernetesCommandExecutor.CommandType.NAMESPACE_DELETE.getSubTaskGroupName());
+@@ -270,6 +276,7 @@ public void run() {
+       getRunnableTask().addSubTaskGroup(namespacedServicesDelete);
+       getRunnableTask().addSubTaskGroup(helmDeletes);
+       getRunnableTask().addSubTaskGroup(volumeDeletes);
++      getRunnableTask().addSubTaskGroup(providerNamespaceVolumeDeletes);
+       getRunnableTask().addSubTaskGroup(namespaceDeletes);
+ 
+       // Create tasks to remove the universe entry from the Universe table.
+@@ -317,6 +324,65 @@ public void run() {
+     log.info("Finished {} task.", getName());
+   }
+ 
++  /**
++   * Creates one VOLUME_DELETE per namespace that the universe's providers set on zones outside the
++   * placement, covering the releases this universe could have had in those zones. Zones in the
++   * placement are deleted by the regular VOLUME_DELETE, and zones without a set namespace by the
++   * namespace delete.
++   */
++  private SubTaskGroup createProviderNamespaceVolumeDeletes(Universe universe) {
++    SubTaskGroup subTaskGroup =
++        createSubTaskGroup(
++            KubernetesCommandExecutor.CommandType.VOLUME_DELETE.getSubTaskGroupName(),
++            UserTaskDetails.SubTaskGroupType.RemovingUnusedServers);
++    UniverseDefinitionTaskParams universeDetails = universe.getUniverseDetails();
++    Map<List<String>, KubernetesCommandExecutor.Params> paramsByNamespace = new LinkedHashMap<>();
++    for (UniverseDefinitionTaskParams.Cluster cluster : universeDetails.clusters) {
++      Provider provider = Util.getSingleProvider(cluster);
++      boolean isMultiAz = PlacementInfoUtil.isMultiAZ(provider);
++      boolean isReadOnlyCluster = cluster.clusterType == ClusterType.ASYNC;
++      Set<UUID> placementAZs = KubernetesUtil.getConfigPerAZ(cluster.placementInfo).keySet();
++      for (Entry<UUID, Map<String, String>> entry :
++          KubernetesUtil.getConfigPerProviderZone(provider).entrySet()) {
++        Map<String, String> config = entry.getValue();
++        String namespace = config.get("KUBENAMESPACE");
++        if (placementAZs.contains(entry.getKey()) || StringUtils.isBlank(namespace)) {
++          continue;
++        }
++        String azName =
++            isMultiAz ? AvailabilityZone.getOrBadRequest(entry.getKey()).getCode() : null;
++        KubernetesCommandExecutor.Params params =
++            paramsByNamespace.computeIfAbsent(
++                List.of(config.get("KUBECONFIG"), namespace),
++                k -> {
++                  KubernetesCommandExecutor.Params p = new KubernetesCommandExecutor.Params();
++                  p.commandType = KubernetesCommandExecutor.CommandType.VOLUME_DELETE;
++                  p.providerUUID = provider.getUuid();
++                  p.universeName = universe.getName();
++                  p.config = config;
++                  p.namespace = namespace;
++                  p.helmReleaseNames = new LinkedHashSet<>();
++                  p.isForceDelete = params().isForceDelete;
++                  p.setUniverseUUID(universe.getUniverseUUID());
++                  return p;
++                });
++        params.helmReleaseNames.add(
++            KubernetesUtil.getHelmReleaseName(
++                universeDetails.nodePrefix,
++                universe.getName(),
++                azName,
++                isReadOnlyCluster,
++                universeDetails.useNewHelmNamingStyle));
++      }
++    }
++    for (KubernetesCommandExecutor.Params params : paramsByNamespace.values()) {
++      KubernetesCommandExecutor task = createTask(KubernetesCommandExecutor.class);
++      task.initialize(params);
++      subTaskGroup.addSubTask(task);
++    }
++    return subTaskGroup;
++  }
++
+   protected KubernetesCommandExecutor createDestroyKubernetesTask(
+       String nodePrefix,
+       String universeName,
+@@ -332,6 +398,7 @@ protected KubernetesCommandExecutor createDestroyKubernetesTask(
+     params.isReadOnlyCluster = isReadOnlyCluster;
+     params.universeName = universeName;
+     params.azCode = az;
++    params.isForceDelete = params().isFo
+```
+
+**File**: `managed/src/main/java/com/yugabyte/yw/commissioner/tasks/ReadOnlyKubernetesClusterDelete.java` (modified, +1/-0)
+```diff
+@@ -286,6 +286,7 @@ protected KubernetesCommandExecutor createDestroyKubernetesTask(
+     params.providerUUID = providerUUID;
+     params.isReadOnlyCluster = isReadOnlyCluster;
+     params.azCode = az;
++    params.isForceDelete = params().isForceDelete;
+     params.helmReleaseName =
+         KubernetesUtil.getHelmReleaseName(
+             nodePrefix, universeName, az, isReadOnlyCluster, newNamingStyle);
+```
+
+**File**: `managed/src/main/java/com/yugabyte/yw/commissioner/tasks/subtasks/KubernetesCommandExecutor.java` (modified, +27/-3)
+```diff
+@@ -86,9 +86,11 @@
+ import java.util.Optional;
+ import java.util.Set;
+ import java.util.UUID;
++import java.util.concurrent.CancellationException;
+ import java.util.regex.Pattern;
+ import javax.annotation.Nullable;
+ import lombok.extern.slf4j.Slf4j;
++import org.apache.commons.collections4.CollectionUtils;
+ import org.apache.commons.lang3.StringUtils;
+ import org.bouncycastle.asn1.x509.GeneralName;
+ import org.yaml.snakeyaml.Yaml;
+@@ -225,6 +227,10 @@ public static class Params extends UniverseTaskParams {
+     public Map<String, String> universeConfig;
+     public CommandType commandType;
+     public String helmReleaseName;
++    // VOLUME_DELETE only: the releases whose storage is deleted, in place of helmReleaseName.
++    public Set<String> helmReleaseNames;
++    // VOLUME_DELETE only: a failed delete is logged and skipped.
++    public boolean isForceDelete;
+     public String namespace;
+     public boolean isReadOnlyCluster;
+     public String ybSoftwareVersion = null;
+@@ -510,9 +516,27 @@ && taskParams().namespace == null) {
+                 confGetter.getConfForScope(universe, UniverseConfKeys.k8sMasterPvcGcReadyTimeout));
+         break;
+       case VOLUME_DELETE:
+-        kubernetesManagerFactory
+-            .getManager()
+-            .deleteStorage(config, taskParams().helmReleaseName, taskParams().namespace);
++        try {
++          kubernetesManagerFactory
++              .getManager()
++              .deleteStorage(
++                  taskParams().getUniverseUUID(),
++                  config,
++                  CollectionUtils.isNotEmpty(taskParams().helmReleaseNames)
++                      ? taskParams().helmReleaseNames
++                      : Collections.singleton(taskParams().helmReleaseName),
++                  taskParams().namespace);
++        } catch (CancellationException e) {
++          throw e;
++        } catch (RuntimeException e) {
++          if (!taskParams().isForceDelete) {
++            throw e;
++          }
++          log.warn(
++              "Ignoring error deleting storage in namespace {} due to isForceDelete being set.",
++              taskParams().namespace,
++              e);
++        }
+         break;
+       case NAMESPACE_DELETE:
+         kubernetesManagerFactory.getManager().deleteNamespace(config, taskParams().namespace);
+```
+
+**File**: `managed/src/main/java/com/yugabyte/yw/common/KubernetesManager.java` (modified, +6/-1)
+```diff
+@@ -41,6 +41,7 @@
+ import java.nio.file.Files;
+ import java.nio.file.Path;
+ import java.time.Duration;
++import java.util.Collection;
+ import java.util.HashMap;
+ import java.util.HashSet;
+ import java.util.List;
+@@ -1078,8 +1079,12 @@ public abstract void updateNumNodes(
+   public abstract void PauseAllPodsInRelease(
+       Map<String, String> config, String universePrefix, String namespace, boolean newNamingStyle);
+ 
++  // Deletes the StatefulSets, then the PVCs, labelled with any of the given helm release names.
+   public abstract void deleteStorage(
+-      Map<String, String> config, String universePrefix, String namespace);
++      UUID universeUUID,
++      Map<String, String> config,
++      Collection<String> helmReleaseNames,
++      String namespace);
+ 
+   public abstract void deleteNamespace(Map<String, String> config, String namespace);
+ 
+```
+
+**File**: `managed/src/main/java/com/yugabyte/yw/common/NativeKubernetesManager.java` (modified, +17/-3)
+```diff
+@@ -2,6 +2,7 @@
+ 
+ package com.yugabyte.yw.common;
+ 
++import com.google.common.annotations.VisibleForTesting;
+ import com.google.common.collect.ImmutableMap;
+ import com.yugabyte.yw.commissioner.tasks.UniverseTaskBase.ServerType;
+ import io.fabric8.kubernetes.api.model.DeletionPropagation;
+@@ -34,6 +35,7 @@
+ import java.nio.file.Paths;
+ import java.nio.file.StandardOpenOption;
+ import java.time.Duration;
++import java.util.Collection;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Objects;
+@@ -51,7 +53,8 @@
+ @Slf4j
+ public class NativeKubernetesManager extends KubernetesManager {
+ 
+-  private KubernetesClient getClient(Map<String, String> config) {
++  @VisibleForTesting
++  KubernetesClient getClient(Map<String, String> config) {
+     if (config.containsKey("KUBECONFIG") && !config.get("KUBECONFIG").isEmpty()) {
+       try {
+         String kubeConfigContents =
+@@ -271,12 +274,23 @@ public void updateNumNodes(
+   }
+ 
+   @Override
+-  public void deleteStorage(Map<String, String> config, String helmReleaseName, String namespace) {
++  public void deleteStorage(
++      UUID universeUUID,
++      Map<String, String> config,
++      Collection<String> helmReleaseNames,
++      String namespace) {
++    String[] releaseNames = helmReleaseNames.toArray(new String[0]);
+     try (KubernetesClient client = getClient(config)) {
++      client
++          .apps()
++          .statefulSets()
++          .inNamespace(namespace)
++          .withLabelIn("release", releaseNames)
++          .delete();
+       client
+           .persistentVolumeClaims()
+           .inNamespace(namespace)
+-          .withLabel("release", helmReleaseName)
++          .withLabelIn("release", releaseNames)
+           .delete();
+     }
+   }
+```
+
+**File**: `managed/src/main/java/com/yugabyte/yw/common/ShellKubernetesManager.java` (modified, +27/-5)
+```diff
+@@ -48,6 +48,7 @@
+ import java.time.Duration;
+ import java.util.ArrayList;
+ import java.util.Arrays;
++import java.util.Collection;
+ import java.util.HashMap;
+ import java.util.HashSet;
+ import java.util.LinkedList;
+@@ -351,19 +352,40 @@ public void updateNumNodes(
+   }
+ 
+   @Override
+-  public void deleteStorage(Map<String, String> config, String helmReleaseName, String namespace) {
++  public void deleteStorage(
++      UUID universeUUID,
++      Map<String, String> config,
++      Collection<String> helmReleaseNames,
++      String namespace) {
++    String releaseSelector = String.format("release in (%s)", String.join(",", helmReleaseNames));
++    // StatefulSets go first: a StatefulSet that is not in the helm release keeps its pods
++    // running, and a PVC in use by a pod is not deleted until the pod is gone.
++    List<String> stsCommandList =
++        ImmutableList.of(
++            "kubectl",
++            "delete",
++            "statefulset",
++            "--namespace",
++            namespace,
++            "-l",
++            releaseSelector,
++            "--ignore-not-found",
++            "--timeout",
++            getTimeout(universeUUID));
++    execCommand(config, stsCommandList).processErrors("Unable to delete StatefulSets");
+     // Delete Master and TServer Volumes
+-    List<String> commandList =
++    List<String> pvcCommandList =
+         ImmutableList.of(
+             "kubectl",
+             "delete",
+             "pvc",
+             "--namespace",
+             namespace,
+             "-l",
+-            "release=" + helmReleaseName);
+-    execCommand(config, commandList);
+-    // TODO: check the execCommand outputs.
++            releaseSelector,
++            "--timeout",
++            getTimeout(universeUUID));
++    execCommand(config, pvcCommandList).processErrors("Unable to delete PVCs");
+   }
+ 
+   @Override
+```
+
+**File**: `managed/src/test/java/com/yugabyte/yw/commissioner/tasks/DestroyKubernetesUniverseTest.java` (modified, +129/-12)
+```diff
+@@ -8,17 +8,20 @@
+ import static com.yugabyte.yw.common.ApiUtils.getTestUserIntent;
+ import static com.yugabyte.yw.common.AssertHelper.assertJsonEqual;
+ import static com.yugabyte.yw.common.ModelFactory.createUniverse;
++import static com.yugabyte.yw.models.TaskInfo.State.Failure;
+ import static com.yugabyte.yw.models.TaskInfo.State.Success;
+ import static org.hamcrest.CoreMatchers.containsString;
+ import static org.hamcrest.MatcherAssert.assertThat;
+ import static org.junit.Assert.assertEquals;
+ import static org.junit.Assert.assertFalse;
+ import static org.junit.Assert.assertNull;
+ import static org.junit.Assert.assertThrows;
++import static org.junit.Assert.assertTrue;
+ import static org.junit.Assert.fail;
+ import static org.mockito.ArgumentMatchers.any;
+ import static org.mockito.ArgumentMatchers.anyBoolean;
+ import static org.mockito.ArgumentMatchers.anyString;
++import static org.mockito.Mockito.doThrow;
+ import static org.mockito.Mockito.lenient;
+ import static org.mockito.Mockito.mock;
+ import static org.mockito.Mockito.times;
+@@ -28,8 +31,10 @@
+ import com.fasterxml.jackson.databind.JsonNode;
+ import com.google.common.collect.ImmutableList;
+ import com.google.common.collect.ImmutableMap;
++import com.google.common.collect.ImmutableSet;
+ import com.yugabyte.yw.commissioner.tasks.subtasks.KubernetesCommandExecutor.CommandType;
+ import com.yugabyte.yw.common.ApiUtils;
++import com.yugabyte.yw.common.KubernetesUtil;
+ import com.yugabyte.yw.common.ModelFactory;
+ import com.yugabyte.yw.common.PlatformServiceException;
+ import com.yugabyte.yw.common.TestHelper;
+@@ -241,7 +246,9 @@ public void testDestroyKubernetesUniverseSuccess() {
+     taskParams.setUniverseUUID(defaultUniverse.getUniverseUUID());
+     TaskInfo taskInfo = submitTask(taskParams);
+     verify(mockKubernetesManager, times(1)).helmDelete(config, NODE_PREFIX, NODE_PREFIX);
+-    verify(mockKubernetesManager, times(1)).deleteStorage(config, NODE_PREFIX, NODE_PREFIX);
++    verify(mockKubernetesManager, times(1))
++        .deleteStorage(
++            defaultUniverse.getUniverseUUID(), config, ImmutableSet.of(NODE_PREFIX), NODE_PREFIX);
+     verify(mockKubernetesManager, times(1)).deleteNamespace(config, NODE_PREFIX);
+     List<TaskInfo> subTasks = taskInfo.getSubTasks();
+     Map<Integer, List<TaskInfo>> subTasksByPosition =
+@@ -318,7 +325,9 @@ public void testDestroyKubernetesUniverseSuccessAndPromoteAutoFlagsOnOthers() {
+     taskParams.setUniverseUUID(defaultUniverse.getUniverseUUID());
+     TaskInfo taskInfo = submitTask(taskParams);
+     verify(mockKubernetesManager, times(1)).helmDelete(config, NODE_PREFIX, NODE_PREFIX);
+-    verify(mockKubernetesManager, times(1)).deleteStorage(config, NODE_PREFIX, NODE_PREFIX);
++    verify(mockKubernetesManager, times(1))
++        .deleteStorage(
++            defaultUniverse.getUniverseUUID(), config, ImmutableSet.of(NODE_PREFIX), NODE_PREFIX);
+     verify(mockKubernetesManager, times(1)).deleteNamespace(config, NODE_PREFIX);
+     List<TaskInfo> subTasks = taskInfo.getSubTasks();
+     assertEquals(
+@@ -360,7 +369,9 @@ public void testForceDestroyKubernetesUniverse() {
+     taskParams.setUniverseUUID(defaultUniverse.getUniverseUUID());
+     TaskInfo taskInfo = submitTask(taskParams);
+     verify(mockKubernetesManager, times(1)).helmDelete(config, NODE_PREFIX, NODE_PREFIX);
+-    verify(mockKubernetesManager, times(1)).deleteStorage(config, NODE_PREFIX, NODE_PREFIX);
++    verify(mockKubernetesManager, times(1))
++        .deleteStorage(
++            defaultUniverse.getUniverseUUID(), config, ImmutableSet.of(NODE_PREFIX), NODE_PREFIX);
+     verify(mockKubernetesManager, times(1)).deleteNamespace(config, NODE_PREFIX);
+     List<TaskInfo> subTasks = taskInfo.getSubTasks();
+     Map<Integer, List<TaskInfo>> subTasksByPosition =
+@@ -391,9 +402,15 @@ public void testDestroyKubernetesUniverseSuccessMultiAZ() {
+     verify(mockKubernetesManager, times(1)).helmDelete(config, nodePrefix1, nodePrefix1);
+     verify(mockKubernetesManager, times(1)).helmDelete(config, nodePrefix2, nodePrefix2);
+     verify(mockKubernetesManager, times(1)).helmDelete(config, nodePrefix3, nodePrefix3);
+-    verify(mockKubernetesManager, times(1)).deleteStorage(config, nodePrefix1, nodePrefix1);
+-    verify(mockKubernetesManager, times(1)).deleteStorage(config, nodePrefix2, nodePrefix2);
+-    verify(mockKubernetesManager, times(1)).deleteStorage(config, nodePrefix3, nodePrefix3);
++    verify(mockKubernetesManager, times(1))
++        .deleteStorage(
++            defaultUniverse.getUniverseUUID(), config, ImmutableSet.of(nodePrefix1), nodePrefix1);
++    verify(mockKubernetesManager, times(1))
++        .deleteStorage(
++            defaultUniverse.getUniverseUUID(), config, ImmutableSet.of(nodePrefix2), nodePrefix2);
++    verify(mockKubernetesManager, times(1))
++        .deleteStorage(
++            defaultUniverse.getUniverseUUID(), config, ImmutableSet.of(nodePrefix3), nodePrefix3);
+     verify(mockKubernetesManager, times(1)).deleteNamespace(confi
+```
+
+**File**: `managed/src/test/java/com/yugabyte/yw/commissioner/tasks/EditKubernetesUniverseTest.java` (modified, +86/-0)
+```diff
+@@ -86,6 +86,7 @@
+ import java.util.Collections;
+ import java.util.Comparator;
+ import java.util.HashMap;
++import java.util.HashSet;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Set;
+@@ -2239,4 +2240,89 @@ public void testRetryWithoutMasterAddressChangeLeavesReadReplica() throws Interr
+ 
+     assertTrue(readReplicaHelmUpgrades(taskInfo).isEmpty());
+   }
++
++  /** Positions and release names of the queued VOLUME_DELETE subtasks of an edit. */
++  private Map<Integer, String> volumeDeletes(TaskInfo taskInfo) {
++    return taskInfo.getSubTasks().stream()
++        .filter(t -> t.getTaskType() == TaskType.KubernetesCommandExecutor)
++        .filter(
++            t ->
++                KubernetesCommandExecutor.CommandType.VOLUME_DELETE
++                    .name()
++                    .equals(t.getTaskParams().path("commandType").asText()))
++        .collect(
++            Collectors.toMap(
++                TaskInfo::getPosition, t -> t.getTaskParams().path("helmReleaseName").asText()));
++  }
++
++  @Test
++  public void testRetryOfZoneRemovalQueuesVolumeDeleteAgain() throws InterruptedException {
++    setupUniverseMultiAZ(/* Create Masters */ true, 3);
++    factory.globalRuntimeConf().setValue("yb.checks.leaderless_tablets.enabled", "false");
++    Region region = Region.getByCode(kubernetesProvider, "region-1");
++    AvailabilityZone az3 = AvailabilityZone.getByCode(kubernetesProvider, "az-3");
++    AvailabilityZone az4 =
++        AvailabilityZone.createOrThrow(region, "az-4", "PlacementAZ 4", "subnet-4");
++    PlacementInfo pi = defaultUniverse.getUniverseDetails().getPrimaryCluster().placementInfo;
++    pi.cloudList.get(0).regionList.get(0).azList.removeIf(az -> az.uuid.equals(az3.getUuid()));
++    PlacementInfoUtil.addPlacementZone(az4.getUuid(), pi, 1, 1, true);
++
++    TaskInfo firstAttempt = queueAndAbortEdit(editParams(pi, false /* includeReadReplica */));
++    Map<Integer, String> firstVolumeDeletes = volumeDeletes(firstAttempt);
++    assertEquals(1, firstVolumeDeletes.size());
++    assertTrue(firstVolumeDeletes.values().iterator().next().contains("az-3"));
++    // The removed zone's storage is deleted before the new placement is saved, so a failure there
++    // leaves the old placement for the retry to compare against.
++    int primaryIntentPosition =
++        firstAttempt.getSubTasks().stream()
++            .filter(t -> t.getTaskType() == TaskType.UpdateUniverseIntent)
++            .map(TaskInfo::getPosition)
++            .findFirst()
++            .orElseThrow();
++    assertTrue(firstVolumeDeletes.keySet().iterator().next() < primaryIntentPosition);
++
++    UniverseDefinitionTaskParams retryParams =
++        Json.fromJson(firstAttempt.getTaskParams(), UniverseDefinitionTaskParams.class);
++    retryParams.setPreviousTaskUUID(firstAttempt.getUuid());
++    TaskInfo retry = queueAndAbortEdit(retryParams);
++
++    assertEquals(
++        new HashSet<>(firstVolumeDeletes.values()), new HashSet<>(volumeDeletes(retry).values()));
++  }
++
++  @Test
++  public void testFullMoveQueuesNoVolumeDelete() throws InterruptedException {
++    setupUniverseMultiAZ(/* Create Masters */ true, 3);
++    factory.globalRuntimeConf().setValue("yb.checks.leaderless_tablets.enabled", "false");
++    defaultUniverse =
++        Universe.saveDetails(
++            defaultUniverse.getUniverseUUID(),
++            u ->
++                u.getUniverseDetails().getPrimaryCluster().userIntent.ybSoftwareVersion =
++                    KubernetesUtil.MIN_VERSION_FULL_MOVE_SUPPORT_STABLE);
++    UniverseDefinitionTaskParams taskParams = new UniverseDefinitionTaskParams();
++    taskParams.setUniverseUUID(defaultUniverse.getUniverseUUID());
++    taskParams.expectedUniverseVersion = -1;
++    taskParams.nodePrefix = defaultUniverse.getUniverseDetails().nodePrefix;
++    taskParams.nodeDetailsSet = defaultUniverse.getUniverseDetails().nodeDetailsSet;
++    taskParams.clusters = defaultUniverse.getUniverseDetails().clusters;
++    Cluster primaryCluster = taskParams.getPrimaryCluster();
++    UniverseDefinitionTaskParams.UserIntent newUserIntent = primaryCluster.userIntent.clone();
++    DeviceInfo deviceInfo = newUserIntent.deviceInfo.clone();
++    deviceInfo.numVolumes = (deviceInfo.numVolumes == null ? 1 : deviceInfo.numVolumes) + 1;
++    newUserIntent.deviceInfo = deviceInfo;
++    taskParams.getPrimaryCluster().userIntent = newUserIntent;
++    // As the edit API does: configure, then bump the statefulset index of the moving zones.
++    PlacementInfoUtil.updateUniverseDefinition(
++        taskParams, defaultCustomer.getId(), primaryCluster.uuid, EDIT);
++    PlacementInfoUtil.applyK8sStsIndexIncrement(
++        taskParams.getPrimaryCluster(), taskParams.nodeDetailsSet);
++
++    TaskInfo edit = queueAndAbortEdit(taskParams);
++
++    assertTrue(
++        "the edit is not a full move",
++        edit.getSubTasks().stream().anyMatch(t -> t.getTaskParams().hasNonNull("fullMoveParams")));
++    assertEquals(Collections.emptyMap(), volumeDeletes(edit));
++  }
+
+```
+
+---
+
+### Incident Patch 3: `9d2dad72` (2026-11-18)
+**Commit Message**: [#38210] YSQL: Fix TestYsqlUpgrade catalog version mismatch after YSQL upgrade (#38258)
+
+## Summary
+
+### Problem
+
+`TestYsqlUpgrade#upgradeIsIdempotent` fails on 2026.1 fastdebug builds in about 3 of 4 runs when Connection Manager is enabled. The first DDL the test runs after the YSQL upgrade fails with:
+`The catalog snapshot used for this transaction has been invalidated. Received from PG: 110, expected to be >= breaking catalog version: 111`. Only the test is affected, the upgrade itself succeeds.
+
+### Cause
+
+Soon after `upgrade_ysql`, the test does not wait for the new catalog version to reach every tserver before it runs DDL:
+
+1. `upgrade_ysql` applies migrations through one tserver. That tserver records each new catalog version as the DDL commits. Other tservers learn the new catalog versions only from their next heartbeat to the master (every 500 ms in this test).
+2. The last migration on 2026.1, `V101.8__32935__pg_yb_password_history.sql`, runs a `REVOKE` command. `REVOKE` is a breaking catalog change, so the master rejects requests that carry an older catalog version. No earlier migration in this test makes a breaking change.
+3. Right after `upgrade_ysql` returns, the test o
+
+**File**: `java/yb-pgsql/src/test/java/org/yb/pgsql/TestYsqlUpgrade.java` (modified, +7/-0)
+```diff
+@@ -2420,6 +2420,13 @@ private void runMigrations(boolean useSingleConnection) throws Exception {
+     if (!joined.toLowerCase().contains("successfully upgraded")) {
+       throw new IllegalStateException("Unexpected migrations result: " + joined);
+     }
++
++    // upgrade_ysql applies migrations through a single tserver. Other tservers learn about new
++    // catalog versions from master only on their next heartbeat.
++    // Wait for the heartbeat to propagate to ensure that backends on other tservers don't have a
++    // stale catalog version. This is useful in tests where such backends issue DDLs soon after the
++    // migrations to test the upgrade.
++    waitForTServerHeartbeat();
+   }
+ 
+   private void setupGeoPartitioning() throws Exception {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #37989** (closed): YSQL: Range index scan on an int2vector column returns wrong rows for < and > (@dhruva4869)
-- **PR #37980** (closed): README: fix dead links (2 verified 404) (@Hisernberg)
-- **PR #37955** (closed): [#37931] DocDB: Wait for leader readiness in snapshot preflush test (@4arjun)
-- **PR #37933** (2026-11-14): [BACKPORT 2025.2][#37536] DocDB: Fix distinct scan skipping live rows after a deleted row (#37550) (@spolitov)
-- **PR #37923** (2026-11-14): [pg19][#37922] YSQL: Add the tracking issue to the yb.orig.base_type cstring TODO (@teyenc)
-- **PR #37913** (2026-11-14): [pg19][#37911] test: Expect postgres_fdw to be installed in yb.port.pgaudit (@ninilo97)
+- **PR #38448** (closed): [#36671] YSQL: Fix org.yb.pgsql.TestPgListenNotify#testCancelledFirstListenLeavesOnePoller cancel lost on TSAN (@csi-fix)
+- **PR #38437** (2026-11-19): [BACKPORT 2025.2][#38303] YSQL: Don't FATAL on subtransaction rollback RPC failure when shutdown is in progress (#38302) (@teyenc)
+- **PR #38436** (2026-11-18): [BACKPORT 2026.1][#38303] YSQL: Don't FATAL on subtransaction rollback RPC failure when shutdown is in progress (#38302) (@teyenc)
+- **PR #38435** (2026-11-18): [BACKPORT 2026.2][#38303] YSQL: Don't FATAL on subtransaction rollback RPC failure when shutdown is in progress (#38302) (@teyenc)
+- **PR #38428** (2026-11-18): [BACKPORT 2026.2][PLAT-18424] YBA: Keep the installed node-agent packages until a yba-ctl upgrade succeeds (#37914) (@shubin-yb)
+- **PR #38427** (2026-11-18): [BACKPORT 2026.2][PLAT-22930] YBA: Fix yba-ctl backup and restore against a password-protected external Postgres (#38291) (@shubin-yb)
 
 ---
 
@@ -2516,50 +2993,35 @@ On macOS, a version used only outside `yb_build.sh`, e.g. from CLion, or only by
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [#37541] Build: Add a script to remove old thirdparty directories
+## X. [PLAT-22930] YBA: Fix yba-ctl backup and restore against a password-protected ex
 
 **RULE**:
-When implementing operations in `build-support/clean_old_thirdparty.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `managed/devops/bin/yb_platform_backup.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `624a0ee1`: [#37541] Build: Add a script to remove old thirdparty directories. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bfaf8c7a`: [PLAT-22930] YBA: Fix yba-ctl backup and restore against a password-protected external Postgres. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `build-support/clean_old_thirdparty.sh`.
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `managed/devops/bin/yb_platform_backup.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c
 // Verified production-grade fix pattern:
-#!/usr/bin/env bash
-# Copyright (c) YugabyteDB, Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
-# in compliance with the License.  You may obtain a copy of the License at
-#
-# http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software distributed under the License
-# is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
-# or implied.  See the License for the specific language governing permissions and limitations
-# under the License.
-#
-# Removes the thirdparty directories, one per installed thirdparty version, that no build or test
-# has used for --days days, from their parent directory.
-# A version counts as used when the access time of any of its files falls within that time.
-# On Linux, access times show the reads, so the script refuses to run on a noatime filesystem.
-# APFS, unless mounted with strictatime, updates an access time only when it is older than the
-# modification time. So on macOS, yb_build.sh touches the version's .last_used file instead, and a
-# version used only outside yb_build.sh, e.g. from CLion, or only by 
+  # Without -d, psql connects to a database named after the user, which an external
+  # Postgres may not have. The platform DB always exists by the time this runs.
+  local probe_cmd="${probe} -h ${db_host} -p ${db_port} -U ${db_username} \
+-d ${PLATFORM_DB_NAME} -tAc \"SELECT 1 FROM pg_database WHERE datname='${db_name}'\""
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+  local probe_cmd="${probe} -h ${db_host} -p ${db_port} -U ${db_username} -tAc \
+\"SELECT 1 FROM pg_database WHERE datname='${db_name}'\""
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `624a0ee1` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bfaf8c7a` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

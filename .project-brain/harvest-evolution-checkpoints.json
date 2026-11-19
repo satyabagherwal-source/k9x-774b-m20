@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T01:06:12.745Z",
+  "last_updated": "2026-11-19T01:19:30.333Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T01:06:12.357Z",
@@ -823,7 +823,7 @@
       "staged_for_review": 1
     },
     "yugabyte-yugabyte-db-learnings.md": {
-      "processed_at": "2026-11-18T09:03:08.211Z",
+      "processed_at": "2026-11-19T01:19:29.179Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
     },
@@ -1088,7 +1088,7 @@
       "staged_for_review": 1
     },
     "u-root-u-root-learnings.md": {
-      "processed_at": "2026-11-17T13:29:56.053Z",
+      "processed_at": "2026-11-19T01:18:59.807Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2548,8 +2548,8 @@
       "staged_for_review": 0
     },
     "hf-openai-community-gpt2-learnings.md": {
-      "processed_at": "2026-11-14T10:31:22.260Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T01:19:00.632Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-qwen-qwen3-vl-8b-instruct-learnings.md": {
@@ -3478,7 +3478,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2133,
-  "total_canonical_promoted": 372,
-  "total_staged_for_review": 1602
+  "total_dossiers_evaluated": 2136,
+  "total_canonical_promoted": 373,
+  "total_staged_for_review": 1603
 }

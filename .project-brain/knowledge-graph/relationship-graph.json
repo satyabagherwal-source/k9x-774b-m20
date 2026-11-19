@@ -2,17 +2,17 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-19T00:50:27.523Z",
+  "updated_at": "2026-11-19T01:19:29.177Z",
   "statistics": {
-    "total_nodes": 370,
-    "total_edges": 173,
+    "total_nodes": 371,
+    "total_edges": 174,
     "domain_distribution": {
       "D": 250,
       "M": 1,
       "H": 53,
       "J": 14,
       "K": 21,
-      "L": 6,
+      "L": 7,
       "G": 1,
       "F": 17,
       "B": 2,
@@ -20,7 +20,7 @@
       "I": 4
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 172,
+      "CONSTRAINED_BY_ARCHITECTURE": 173,
       "VERIFIED_BY_TEST": 1
     }
   },
@@ -8274,6 +8274,29 @@
       ],
       "created_at": "2026-11-19T00:50:27.523Z",
       "updated_at": "2026-11-19T00:50:27.523Z"
+    },
+    "DOM-L-03EC8831": {
+      "id": "DOM-L-03EC8831",
+      "domain": "L",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "[PLAT-22930] YBA: Fix yba-ctl backup and restore against a password-protected ex",
+      "summary": "Prevents defects observed in production commit `bfaf8c7a`: [PLAT-22930] YBA: Fix yba-ctl backup and restore against a password-protected ext -> When implementing operations in `managed/devops/bin/yb_platform_backup.sh`, engineers MUST enforce rigorous boundary validation, safe state ",
+      "confidence": 0.9,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://yugabyte-yugabyte-db/yugabyte-yugabyte-db-learnings.md",
+        "source_version": "64f73406",
+        "observed_at": "2026-11-19T01:18:55.430Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (yugabyte-yugabyte-db)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "L",
+        "Deployment & Operations Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-19T01:19:29.176Z",
+      "updated_at": "2026-11-19T01:19:29.176Z"
     }
   },
   "edges": [
@@ -10006,6 +10029,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-9B951EAF [D] with Domain M",
       "created_at": "2026-11-19T00:50:27.523Z"
+    },
+    {
+      "id": "EDGE-C7D80120C8AB",
+      "sourceId": "DOM-L-03EC8831",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-L-03EC8831 [L] with Domain G",
+      "created_at": "2026-11-19T01:19:29.177Z"
     }
   ]
 }

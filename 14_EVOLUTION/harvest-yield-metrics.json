@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T01:06:02.811Z",
-  "total_cycles_completed": 10669,
-  "total_learnings_persisted": 10669,
-  "total_rules_promoted": 10082,
+  "last_updated": "2026-11-19T01:18:56.474Z",
+  "total_cycles_completed": 10672,
+  "total_learnings_persisted": 10672,
+  "total_rules_promoted": 10084,
   "history": [
-    {
-      "timestamp": "2026-11-18T11:45:09.501Z",
-      "repository": "NervJS/taro",
-      "learningId": "learn-github-nervjs-taro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T11:45:15.867Z",
-      "repository": "clockworklabs/SpacetimeDB",
-      "learningId": "learn-github-clockworklabs-spacetimedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T11:54:50.307Z",
-      "repository": "KORMo-VL/KORMo-Web-11B",
-      "learningId": "learn-huggingface-kormo-vl-kormo-web-11b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T11:54:52.822Z",
       "repository": "XingChen-AGI/TeleOCR",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-19T01:06:02.811Z",
       "repository": "nezhahq/nezha",
       "learningId": "learn-github-nezhahq-nezha",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T01:18:41.217Z",
+      "repository": "openai-community/gpt2",
+      "learningId": "learn-huggingface-openai-community-gpt2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T01:18:42.777Z",
+      "repository": "u-root/u-root",
+      "learningId": "learn-github-u-root-u-root",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T01:18:56.474Z",
+      "repository": "yugabyte/yugabyte-db",
+      "learningId": "learn-github-yugabyte-yugabyte-db",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

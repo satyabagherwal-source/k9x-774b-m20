@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T01:06:11.185Z",
-    "lastVerified": "2026-11-19T01:06:11.185Z",
+    "lastChecked": "2026-11-19T01:18:59.676Z",
+    "lastVerified": "2026-11-19T01:18:59.676Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -160,12 +160,12 @@
     "lastVerified": "2026-11-18T09:28:33.980Z"
   },
   "dathere-qsv": {
-    "name": "dathere/qsv",
+    "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T00:41:12.980Z",
-    "lastVerified": "2026-11-19T00:41:12.980Z",
+    "lastChecked": "2026-11-19T01:18:52.581Z",
+    "lastVerified": "2026-11-19T01:18:52.581Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -174,7 +174,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "5d6c8155"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -378,8 +379,8 @@
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-18T19:44:26.524Z",
-    "lastVerified": "2026-11-18T19:44:26.524Z",
+    "lastChecked": "2026-11-19T01:18:47.771Z",
+    "lastVerified": "2026-11-19T01:18:47.771Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -5374,5 +5375,70 @@
     "lastChecked": "2026-11-19T01:06:08.765Z",
     "revisionIdentifier": "8e91311a",
     "lastVerified": "2026-11-19T01:06:08.765Z"
+  },
+  "u-root-u-root": {
+    "name": "u-root/u-root",
+    "officialUrl": "https://github.com/u-root/u-root",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-19T01:18:41.770Z",
+    "lastVerified": "2026-11-19T01:18:41.770Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-u-root-u-root",
+    "contentHash": "9988f43cd0a1541d03eb4372ec94d94dbe1f3354924f84ba0af973e81f2ed15d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-openai-community-gpt2": {
+    "name": "openai-community/gpt2",
+    "officialUrl": "https://huggingface.co/openai-community/gpt2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T01:18:40.612Z",
+    "lastVerified": "2026-11-19T01:18:40.612Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-openai-community-gpt2",
+    "contentHash": "c24de977eb8d4c67db9c660691b73612f45c961b4f6486c8db8c0092567b91e1",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "gkd-kit-gkd": {
+    "name": "gkd",
+    "officialUrl": "https://github.com/gkd-kit/gkd",
+    "lastChecked": "2026-11-19T01:18:42.676Z",
+    "revisionIdentifier": "301e7e0a",
+    "lastVerified": "2026-11-19T01:18:42.676Z"
+  },
+  "architect-architect": {
+    "name": "architect",
+    "officialUrl": "https://github.com/architect/architect",
+    "lastChecked": "2026-11-19T01:18:45.211Z",
+    "revisionIdentifier": "9924cd0a",
+    "lastVerified": "2026-11-19T01:18:45.211Z"
+  },
+  "yugabyte-yugabyte-db": {
+    "name": "yugabyte/yugabyte-db",
+    "officialUrl": "https://github.com/yugabyte/yugabyte-db",
+    "sourceType": "github",
+    "technology": "C",
+    "lastChecked": "2026-11-19T01:18:55.424Z",
+    "lastVerified": "2026-11-19T01:18:55.424Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-yugabyte-yugabyte-db",
+    "contentHash": "96e0a339bd639f08bb88d1bcf399f6cd23fc8674df202194ff0e6f7c070072b5",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 7,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

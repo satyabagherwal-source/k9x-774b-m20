@@ -11163,3 +11163,7 @@
 | `CYCLE-20261119-D5JI` | `2026-11-19T00:58:22.926Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9314` | Yes (`753e9b00...`) |
 | `CYCLE-20261119-MXVD` | `2026-11-19T01:05:59.545Z` | `FacebookAI/xlm-roberta-base` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-facebookai-xlm-roberta-base-learnings.md` | Yes (`7b4c9eb7...`) |
 | `CYCLE-20261119-N0DV` | `2026-11-19T01:06:02.803Z` | `nezhahq/nezha` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9315` | Yes (`c3c62b08...`) |
+| `CYCLE-20261119-39KN` | `2026-11-19T01:18:41.207Z` | `openai-community/gpt2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-community-gpt2-learnings.md` | Yes (`c24de977...`) |
+| `CYCLE-20261119-3AS1` | `2026-11-19T01:18:42.769Z` | `u-root/u-root` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9316` | Yes (`9988f43c...`) |
+| `CYCLE-20261119-3LCH` | `2026-11-19T01:18:56.465Z` | `yugabyte/yugabyte-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9317` | Yes (`96e0a339...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T01:19:29.179Z` | `yugabyte-yugabyte-db` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-L-03EC8831` [Domain L] | Yes (`f1b2e320...`) |

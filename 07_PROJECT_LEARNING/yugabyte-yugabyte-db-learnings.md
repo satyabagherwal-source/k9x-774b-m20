@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source**: github ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
-> **Source Version**: `53cd4b34`  
+> **Source Version**: `64f73406`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T09:02:37.168Z  
+> **Timestamp**: 2026-11-19T01:18:55.430Z  
 > **Learning ID**: `learn-github-yugabyte-yugabyte-db`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/yugabyte-yugabyte-db-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/yugabyte/yugabyte-db](https://github.com/yugabyte/yugabyte-db))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T09:02:37.162Z  
+> **Harvest Timestamp**: 2026-11-19T01:18:55.424Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: YugabyteDB - the cloud native distributed SQL database for mission-critical applications.
 - **Primary Language / Ecosystem**: C
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 10667 stars
+- **Stars / Engagement**: 10669 stars
 
 ---
 
@@ -2245,11 +2245,11 @@ class _SshRemoteShell(object):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #38333** (2026-11-18): **[BACKPORT 2026.2][PLAT-23927] YBA: Run the support bundle Go tests with sbt test and fail on failure (#38174)**
-  *Symptoms*: ## Summary  The support bundle v2 Go helpers (`managed/devops/supportbundle/{cdcstate,logparse,serverconfredact}`) aren't Maven modules, so the `mvn test` that `sbt test` runs through `testDependentArtifacts` never reached them, and `devops/yb_release` only builds them. Their tests never ran in CI, including the Go half of the HBA redaction parity check (`TestRedactHbaConfMatchesJava`, whose Java counterpart `HbaConfRedactorTest.testOutputMatchesGoPort` does run).  Adding them to `testDependentArtifacts` wouldn't be enough: sbt ignores that task's exit status, and the YBA unit-test job fails only on a non-zero sbt exit. JUnit-only failures leave the build UNSTABLE, which still reports success.  - New `devops/supportbundle/run_go_tests.sh` runs `go test` in each module and writes JUnit XML to `<module>/target/test-reports/`, which the CI report glob collects. - `Test / test` runs it after the Java tests and throws if it fails, so a Go failure fails `sbt test` without skipping any Java test. A Java failure is still reported as before.  `sbt test` now needs `go` and some Go downloads, from the module proxy or the module cache: go-junit-report, logparse's `regexp2` dependency, and the Go 1.27.4 toolchain the modules ask for (node-agent asks for it too). The script downloads them before running any test, and exits 2 if `go` is missing or a download fails; `sbt test` then fails with "could not run ... a tooling failure, not a test failure" instead of skipping, so CI cannot pass wit
+- **Issue #38467** (2026-11-18): **Build 40789405 on master: 2 lane(s) failed in the PGO workload (no cause recognised in its log)**
+  *Symptoms*: _Filed automatically by [Grissom](https://github.com/yugabyte/agent-k/blob/main/bots/grissom/README.md) (internal docs), which watches YugabyteDB's scheduled builds on `master` and the supported release branches for builds where a lane breaks or many tests fail the same way. Everything below is measured from those builds; how it decides, and how to stop it, is at the end._  ## Summary  The scheduled build of `master` at 40789405 failed in the PGO profiling workload on 2 lane(s): no cause recognised in its log. That workload builds the profile the release lanes' binaries are optimized with, so its failure stops the build before any test runs on the lane. A commit can trigger it, so the range below is ranked (the Suspected RCA comment), but its fix usually lies in the workload: this issue is for whoever keeps the PGO workload working.  - Failing lanes: `alma8-clang21-release`, `arm-alma8-clang21-release` - Failing build types: release  ## Urgency  S2 lane broken / cluster (`priority/high`).  ## What is being tested  Every lane of the scheduled build (build types release, tsan, fastdebug, asan, debug).  ## What is the failure  - `alma8-clang21-release`: build step failed in the PGO profiling workload (no cause recognised in its log); no tests ran ([CSI launch 192665](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/192665), [build log](https://csi.dev.yugabyte.com/ui/#dbft/launches/all/192665/931559190/931559192/log), [Jenkins console](https://jenkins.dev.yugabyte.com/job/gith
 
-- **Issue #38332** (2026-11-18): **[BACKPORT 2026.2][PLAT-20207] YBA: Redact sensitive gflags and DB passwords in v2 universe responses (#37848)**
-  *Symptoms*: **2026.2:** Merge after #38330, the 2026.2 backport of #37686, which this relies on as described below. Applies cleanly.  ## Summary  v1 universe responses redact sensitive gflags and the YSQL and YCQL admin passwords in `PlatformResults.withData`. The v2 GET universe and list universes responses now redact the same gflags and leave out the admin passwords, which the v2 schema marks `writeOnly`. The new UI's Edit Universe, Add Read Replica and Add Geo-Partition pages load the universe through v2 GET.  - `UniverseApiControllerImp` overrides `getUniverseHttp` and `pageListUniversesHttp` to pass the response through `RedactingService.filterSecretFields(..., APIS)`. As in v1, the LDAP gflags are redacted while `yb.api.enable_gflags_sensitive_data_redaction` is on. The controller leaves `spec.ysql.password` and `spec.ycql.password` out itself, because v1's rules match only the v1 names, `ysqlPassword` and `ycqlPassword`. - v2 add-cluster: the new UI's Add Read Replica sends the primary's gflags from GET as the read replica's own, so add-cluster now restores `REDACTED` values from the primary's stored gflags with `GFlagsUtil.mergeSensitiveSpecificGFlags`, the merge gflags upgrades use. A `ysql_hba_conf_csv` that holds `REDACTED` but differs from the primary's in other fields gets a 400. - v2 create and add-cluster map an omitted `master` or `tserver` gflags map, at the cluster or AZ level, to an empty map instead of null. Null made `SpecificGFlags.construct` throw, returning a 500,
+- **Issue #38448** (2026-11-18): **[#36671] YSQL: Fix org.yb.pgsql.TestPgListenNotify#testCancelledFirstListenLeavesOnePoller cancel lost on TSAN**
+  *Symptoms*: ## Summary  While the first `LISTEN` waits in `PreCommit_Notify` for its notifications poller to start, `ybStartNotifsPollerBgWorker` slept in a loop with `pg_usleep(10000L)`, which blocks in `select()`. The clang21 TSAN runtime does not intercept `select()`, so the `SIGINT` from `pg_cancel_backend` was not handled until the loop ended, the `LISTEN` succeeded and the test failed with `LISTEN should have been cancelled`. The loop now waits with `WaitLatch(MyLatch, WL_LATCH_SET | WL_TIMEOUT | WL_EXIT_ON_PM_DEATH, 10L, WAIT_EVENT_BGWORKER_STARTUP)` and then calls `ResetLatch`. TSAN intercepts that wait, and `StatementCancelHandler` sets `MyLatch`, so the next `CHECK_FOR_INTERRUPTS()` handles the cancel right away.  --- _Produced fully automatically by csi-fix.py: Claude Opus (5.5) analyzed the failure logs, wrote the change, and verified it locally._  ## Test plan  ./yb_build.sh tsan --clang21 --java-test 'org.yb.pgsql.TestPgListenNotify#testCancelledFirstListenLeavesOnePoller' -n 100 --stop-at-failure -- -p 6 Ran the above locally with no failures. Before the fix, this test reproduced locally (same test command and -p / env as above, without --stop-at-failure) -- with the CSI dashboard rate for reference: - clang21-tsan: 9/9 iterations failed locally; CSI 42/42 Machine: GCP n2-standard-16, AlmaLinux 8.10 (Cerulean Leopard) x86_64, 16 vCPU, 63 GiB RAM, Intel(R) Xeon(R) CPU @ 2.80GHz 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2266,954 +2266,689 @@ class _SshRemoteShell(object):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `53cd4b34` (2026-11-18)
-**Commit Message**: [#37678] YSQL: Fix Connection Manager hang on a TLS client pipelining after a Sync (#37687)
+### Incident Patch 1: `bfaf8c7a` (2026-11-18)
+**Commit Message**: [PLAT-22930] YBA: Fix yba-ctl backup and restore against a password-protected external Postgres (#38291)
 
 ## Summary
 
-A TLS client that pipelines messages after a Sync can hang in Connection
-Manager. Example: Parse/Bind/Execute/Sync followed by a Query, sent in
-one write. The Sync's results arrive, but the next message never gets a
-reply, until the client sends more data.
+`yba-ctl` backup and restore didn't work against a password-protected
+external Postgres (`postgres.useExisting`). Three bugs combined:
 
-With TLS, `mm_tls_read()` reads only as much as fits in the readahead.
-The rest of the TLS record stays decrypted inside OpenSSL. Those bytes
-are no longer on the socket, so the poller never reports them. They get
-read only if the client's `on_read` condition is signalled.
-`mm_tls_read()` and `mm_read_start()` do that when OpenSSL has pending
-bytes.
+1. **Restore never got the password.** `yba-ctl restoreBackup` checked
+the misspelled key `postgress.useExisting.password`, so it never wrote
+the `.pgpass` file or passed `--pgpass_path`. Restore stopped at the
+first `psql` with `fe_sendauth: no password supplied`, after a silent
+wait in `createdb`.
+2. **The `.pgpass` entry only matched `yugaware`.**
+`yb_platform_backup.sh` exports `PGPASSFILE`, so libpq skips
+`~/.pgpass`. `createdb` (which connects to `postgres`), the PA `ts`
+database and the `db_exists` probe got no password. With only fix 1,
+restore waits forever in `createdb` for a password when there is no
+terminal. The entry now uses `*` for the database.
+3. **`db_exists` probed the wrong database.** Without `-d`, `psql`
+connects to a database named after the user. An external Postgres whose
+user has no database of that name (here `yba`) always failed the probe,
+so every backup skipped the Performance Advisor database as "not 
 
-The signal is lost when the readahead is full at the time of a read.
-Example with `ysql_conn_mgr_readahead_buffer_size=64`, where the client
-sends Parse/Bind/Execute/Sync + Query (about 250 bytes) in one write, so
-one TLS record:
-
-| Step | What happens | Readahead | OpenSSL |
-|---|---|---|---|
-| 1 | The first read takes 64 bytes | P/B/E/S + start of Q | rest of Q |
-| 2 | The pipeline forwards P/B/E/S, hits the Sync, returns
-`OD_WAIT_SYNC`, and the relay pauses (`yb_wait_for_rfq_o
-
-**File**: `java/yb-ysql-conn-mgr/src/test/java/org/yb/ysqlconnmgr/TestConnMgrNonSslConnection.java` (modified, +0/-24)
+**File**: `managed/devops/bin/yb_platform_backup.sh` (modified, +4/-2)
 ```diff
-@@ -107,30 +107,6 @@ public void testSslConnectionWorksThroughConnMgr() throws Exception {
-     }
-   }
+@@ -326,8 +326,10 @@ db_exists() {
+     probe="$(dirname "${pg_helper_path}")/psql"
+   fi
  
--  /**
--   * Verifies that SSL connections work through conn mgr with a small readahead buffer.
--   *
--   * mm_tls_read() used to signal io->on_read even when it was NULL, which crashed Odyssey when a
--   * TLS record did not fit in the readahead buffer.
--   */
--  @Test
--  public void testSslWithSmallReadahead() throws Exception {
--    Map<String, String> tserverFlags = new HashMap<>();
--    tserverFlags.put("ysql_conn_mgr_readahead_buffer_size", "64");
--    restartClusterWithAdditionalFlags(new HashMap<>(), tserverFlags);
--
--    for (int i = 0; i < 5; i++) {
--      try (Connection conn = getConnectionBuilder()
--               .withConnectionEndpoint(ConnectionEndpoint.YSQL_CONN_MGR)
--               .withSslMode("require")
--               .connect();
--          Statement stmt = conn.createStatement()) {
--        ResultSet rs = stmt.executeQuery("SELECT 1");
--        assertTrue(rs.next());
--      }
--    }
--  }
--
-   /**
-    * Verifies that when HBA only allows SSL connections (hostssl rule), a non-SSL connection via
-    * YSQL Connection Manager is rejected by PostgreSQL (with "no pg_hba.conf entry"), NOT by conn
+-  local probe_cmd="${probe} -h ${db_host} -p ${db_port} -U ${db_username} -tAc \
+-\"SELECT 1 FROM pg_database WHERE datname='${db_name}'\""
++  # Without -d, psql connects to a database named after the user, which an external
++  # Postgres may not have. The platform DB always exists by the time this runs.
++  local probe_cmd="${probe} -h ${db_host} -p ${db_port} -U ${db_username} \
++-d ${PLATFORM_DB_NAME} -tAc \"SELECT 1 FROM pg_database WHERE datname='${db_name}'\""
+   local probe_out
+   probe_out=$(docker_aware_cmd "postgres" "${probe_cmd}" 2>/dev/null) || return 1
+   [[ "${probe_out}" = "1" ]]
 ```
 
-**File**: `java/yb-ysql-conn-mgr/src/test/java/org/yb/ysqlconnmgr/TestConnMgrTlsReadahead.java` (added, +97/-0)
+**File**: `managed/yba-installer/cmd/backup.go` (modified, +2/-8)
 ```diff
-@@ -0,0 +1,97 @@
-+// Copyright (c) YugabyteDB, Inc.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
-+// in compliance with the License. You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software distributed under the License
-+// is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
-+// or implied. See the License for the specific language governing permissions and limitations
-+// under the License.
-+//
-+
-+package org.yb.ysqlconnmgr;
-+
-+import static org.yb.AssertionWrappers.assertTrue;
-+
-+import java.sql.Connection;
-+import java.sql.ResultSet;
-+import java.sql.Statement;
-+import java.util.Collections;
-+import java.util.Map;
-+import org.junit.Test;
-+import org.junit.runner.RunWith;
-+import org.yb.YBTestRunner;
-+import org.yb.minicluster.MiniYBClusterBuilder;
-+import org.yb.pgsql.ConnectionEndpoint;
-+import org.yb.util.RequiresLinux;
-+
-+/**
-+ * Tests YSQL Connection Manager reading from TLS clients when a TLS record does not fit in the
-+ * readahead buffer.
-+ *
-+ * With TLS, OpenSSL decrypts a whole record and keeps whatever does not fit in the readahead.
-+ * Those bytes are no longer on the socket, so they do not wake the poller; conn mgr has to notice
-+ * them itself. A 64-byte readahead makes almost every record overflow it.
-+ */
-+@RequiresLinux
-+@RunWith(value = YBTestRunner.class)
-+public class TestConnMgrTlsReadahead extends BaseYsqlConnMgr {
-+
-+  public TestConnMgrTlsReadahead() {
-+    // Certificates are issued for IP addresses, not hostnames.
-+    useIpWithCertificate = true;
-+  }
-+
-+  @Override
-+  protected void customizeMiniClusterBuilder(MiniYBClusterBuilder builder) {
-+    super.customizeMiniClusterBuilder(builder);
-+    builder.replicationFactor(1);
-+  }
-+
-+  @Override
-+  protected Map<String, String> getTServerFlags() {
-+    Map<String, String> flagMap = super.getTServerFlags();
-+    flagMap.put("use_client_to_server_encryption", "true");
-+    flagMap.put("certs_for_client_dir", certsDir());
-+    flagMap.put("ysql_conn_mgr_readahead_buffer_size", "64");
-+    return flagMap;
-+  }
-+
-+  /**
-+   * mm_tls_read() used to signal io->on_read even when it was NULL, which crashed Odyssey when a
-+   * TLS record did not fit in the readahead buffer.
-+   */
-+  @Test
-+  public void testSslWithSmallReadahead() throws Exception {
-+    for (int i = 0; i < 5; i++) {
-+      try (Connection conn = getConnectionBuilder()
-+               .withConnectionEndpoint(ConnectionEndpoint.YSQL_CONN_MGR)
-+               .withSslMode("require")
-+               .connect();
-+          Statement stmt = conn.createStatement()) {
-+        ResultSet rs = stmt.executeQuery("SELECT 1");
-+        assertTrue(rs.next());
-+      }
-+    }
-+  }
-+
-+  /**
-+   * A TLS client sends Parse/Bind/Execute/Sync and a Query in one write. Conn mgr pauses the
-+   * client after the Sync with the readahead full and the rest of the Query buffered by OpenSSL.
-+   * After the Sync's ReadyForQuery, conn mgr must still read the rest of the Query and reply to it.
-+   */
-+  @Test
-+  public void testSslPipelinedQueryAfterSyncWithSmallReadahead() throws Exception {
-+    String literal = String.join("", Collections.nCopies(200, "a"));
-+    try (WireConn conn = rawConnBuilder().ssl().connect()) {
-+      // The pipeline goes out in one write, so the client sends it in a single TLS record.
-+      conn.createPipeline()
-+          .parse("SELECT 1").bind().execute().row("1")
-+          .sync()
-+          .query("SELECT '" + literal + "'").row(literal)
-+          .run();
-+    }
-+  }
-+}
-```
-
-**File**: `java/yb-ysql-conn-mgr/src/test/java/org/yb/ysqlconnmgr/WireConn.java` (modified, +46/-0)
-```diff
-@@ -20,8 +20,13 @@
- import java.io.IOException;
- import java.net.InetSocketAddress;
- import java.net.Socket;
-+import java.security.cert.X509Certificate;
- import java.util.LinkedHashMap;
- import java.util.Map;
-+import javax.net.ssl.SSLContext;
-+import javax.net.ssl.SSLSocket;
-+import javax.net.ssl.TrustManager;
-+import javax.net.ssl.X509TrustManager;
- 
- import org.slf4j.Logger;
- import org.slf4j.LoggerFactory;
-@@ -35,6 +40,7 @@ public class WireConn implements AutoCloseable {
-   private static final int DEFAULT_SOCKET_TIMEOUT_MS = 30000;
-   private static final String USER = "yugabyte";
-   private static final String DATABASE = "yugabyte";
-+  private static final int SSL_REQUEST_CODE = 80877103;
- 
-   private final Socket socket;
-   private final DataOutputStream out;
-@@ -103,6 +109,7 @@ public static class Builder {
-     private final Map<String, String> startupParams = new LinkedHashMap<>();
-     private int socketTimeoutMs = DEFAULT_SOCKET_TIMEOUT_MS;
-     private ConnectionEndpoint endpoint = ConnectionEndpoint.YSQL_CONN_MGR;
-+    private boolean ssl;
- 
-     Builder(MiniYBCluster cluster) {
-       this.cluster = cluster;
-@@ -124,6 +131,13 @@ public Builder socketTimeoutMs(int socketTimeoutMs) {
-       return this;
-     }
- 
-+    // Sends an SSLRequest and runs the TLS handshake before the startup message.
-+    // The server certificate is not verified.
-+    public Builder ssl() {
-+      this.ssl = true;
-+      return this;
-+    }
-+
-     public WireConn connect() throws Exception {
-       WireConn conn = openAndSendStartup();
-       try {
-@@ -159,6 +173,9 @@ private WireConn openAndSendStartup() throws Exception {
-         socket.setTcpNoDelay(true);
-         socket.setSoTimeout(socketTimeoutMs);
-         socket.connect(target);
-+        if (ssl) {
-+          socket = startTls(socket, target);
-+        }
-         WireConn conn = new WireConn(socket);
-         conn.sendRaw(PgWireProtocol.buildStartupMessage(USER, DATABASE, startupParams));
-         return conn;
-@@ -171,5 +188,34 @@ private WireConn openAndSendStartup() throws Exception {
-         throw e;
-       }
-     }
-+
-+    private static SSLSocket startTls(Socket plain, InetSocketAddress target) throws Exception {
-+      DataOutputStream plainOut = new DataOutputStream(plain.getOutputStream());
-+      plainOut.writeInt(8);
-+      plainOut.writeInt(SSL_REQUEST_CODE);
-+      plainOut.flush();
-+      int reply = plain.getInputStream().read();
-+      if (reply != 'S') {
-+        throw new IOException("Server refused SSL, replied " + reply);
-+      }
-+
-+      SSLContext context = SSLContext.getInstance("TLS");
-+      context.init(null, new TrustManager[] {new X509TrustManager() {
-+        @Override
-+        public void checkClientTrusted(X509Certificate[] chain, String authType) {}
-+
-+        @Override
-+        public void checkServerTrusted(X509Certificate[] chain, String authType) {}
-+
-+        @Override
-+        public X509Certificate[] getAcceptedIssuers() {
-+          return new X509Certificate[0];
-+        }
-+      }}, null);
-+      SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket(
-+          plain, target.getHostString(), target.getPort(), true);
-+      socket.startHandshake();
-+      return socket;
-+    }
-   }
+@@ -222,7 +222,7 @@ func RestoreBackupScriptHelper(inputPath string, destination string, skipRestart
+ 		if viper.GetString("postgres.useExisting.pg_restore_path") != "" {
+ 			args = append(args, "--pg_restore_path", viper.GetString(
+ 				"postgres.useExisting.pg_restore_path"))
+-			if viper.GetString("postgress.useExisting.password") != "" {
++			if viper.GetString("postgres.useExisting.password") != "" {
+ 				createPgPass()
+ 				args = append(args, "--pgpass_path", common.PgpassPath())
+ 			}
+@@ -292,13 +292,7 @@ func addYbdbArgs(args []string) []string {
  }
-```
-
-**File**: `src/odyssey/sources/relay.h` (modified, +14/-0)
-```diff
-@@ -490,6 +490,20 @@ static inline od_frontend_status_t od_relay_step(od_relay_t *relay)
- 			machine_cond_signal(relay->dst->on_write);
- 		} else {
- 			od_readahead_reuse(&relay->src->readahead);
-+			/*
-+			 * YB: If the read above found the readahead full, it read
-+			 * nothing and the on_read signal is used up. Bytes buffered
-+			 * by TLS do not wake the poller, so signal on_read again, or
-+			 * they are never read. Signal only when the readahead has
-+			 * room, so the next od_relay_read() can read the pending
-+			 * bytes.
-+			 * Upstream fixed this in 535a27e by signalling from
-+			 * od_relay_read() whenever the readahead is full, which here
-+			 * would busy-loop while the relay is paused after a Sync.
-+			 */
-+			if (od_readahead_left(&relay->src->readahead) > 0 &&
-+			    yb_machine_tls_read_pending(relay->src->io))
-+				machine_cond_signal(relay->src->on_read);
- 		}
+ 
+ func createPgPass() {
+-	data := []byte(fmt.Sprintf("%s:%s:yugaware:%s:%s",
+-		viper.GetString("postgres.useExisting.host"),
+-		viper.GetString("postgres.useExisting.port"),
+-		viper.GetString("postgres.useExisting.username"),
+-		viper.GetString("postgres.useExisting.password"),
+-	))
+-	err := os.WriteFile(common.PgpassPath(), data, 0600)
++	err := os.WriteFile(common.PgpassPath(), []byte(common.PgpassEntry()), 0600)
+ 	if err != nil {
+ 		log.Fatal("could not create pgpass file: " + err.Error())
  	}
- 
 ```
 
-**File**: `src/odyssey/third_party/machinarium/sources/machinarium.h` (modified, +6/-0)
+**File**: `managed/yba-installer/pkg/common/pgpass.go` (added, +20/-0)
 ```diff
-@@ -283,6 +283,12 @@ MACHINE_API int machine_read_stop(machine_io_t *);
- 
- MACHINE_API ssize_t machine_read_raw(machine_io_t *, void *, size_t);
- 
-+/*
-+ * YB: Returns 1 if TLS has buffered bytes that are ready to be read. Unlike
-+ * unread socket bytes, these do not wake the poller.
-+ */
-+MACHINE_API int yb_machine_tls_read_pending(machine_io_t *);
+@@ -0,0 +1,20 @@
++package common
 +
- MACHINE_API machine_msg_t *machine_read(machine_io_t *, size_t,
- 					uint32_t time_ms);
- 
++import (
++	"fmt"
++
++	"github.com/spf13/viper"
++)
++
++// PgpassEntry is the .pgpass line for postgres.useExisting. It matches every database:
++// yb_platform_backup.sh exports PGPASSFILE, so libpq skips ~/.pgpass, and the script also
++// connects to the PA "ts" database, the "postgres" maintenance database (createdb) and the
++// database named after the user (db_exists).
++func PgpassEntry() string {
++	return fmt.Sprintf("%s:%s:*:%s:%s",
++		viper.GetString("postgres.useExisting.host"),
++		viper.GetString("postgres.useExisting.port"),
++		viper.GetString("postgres.useExisting.username"),
++		viper.GetString("postgres.useExisting.password"),
++	)
++}
 ```
 
-**File**: `src/odyssey/third_party/machinarium/sources/read.c` (modified, +15/-1)
+**File**: `managed/yba-installer/pkg/common/pgpass_test.go` (added, +20/-0)
 ```diff
-@@ -15,6 +15,15 @@ static void mm_read_cb(mm_fd_t *handle)
- 		mm_cond_signal((mm_cond_t *)io->on_read, &mm_self->scheduler);
- }
- 
-+/*
-+ * YB: Bytes already read off the socket and buffered by TLS, which generate
-+ * no poller event.
-+ */
-+static inline int yb_mm_tls_read_pending(mm_io_t *io)
-+{
-+	return mm_tls_is_active(io) && mm_tls_read_pending(io);
-+}
+@@ -0,0 +1,20 @@
++package common
 +
- static inline int mm_read_start(mm_io_t *io, machine_cond_t *on_read)
- {
- 	mm_machine_t *machine = mm_self;
-@@ -24,7 +33,7 @@ static inline int mm_read_start(mm_io_t *io, machine_cond_t *on_read)
- 	   will not generate any poller event we must
- 	   check it right away.
- 	*/
--	if (mm_tls_is_active(io) && mm_tls_read_pending(io))
-+	if (yb_mm_tls_read_pending(io))
- 		mm_cond_signal((mm_cond_t *)io->on_read, &mm_self->scheduler);
- 
- 	/* Also check for buffered compressed data, since this also won't
-@@ -82,6 +91,11 @@ MACHINE_API int machine_read_stop(machine_io_t *obj)
- 	return mm_read_stop(io);
- }
- 
-+MACHINE_API int yb_machine_tls_read_pending(machine_io_t *obj)
-+{
-+	return yb_mm_tls_read_pending(mm_cast(mm_io_t *, obj));
-+}
++import (
++	"testing"
 +
- MACHINE_API ssize_t machine_read_raw(machine_io_t *obj, void *buf, size_t size)
- {
- 	mm_io_t *io = mm_cast(mm_io_t *, obj);
++	"github.com/spf13/viper"
++)
++
++func TestPgpassEntryMatchesAllDatabases(t *testing.T) {
++	viper.Set("postgres.useExisting.host", "db.example.com")
++	viper.Set("postgres.useExisting.port", "5432")
++	viper.Set("postgres.useExisting.username", "yba")
++	viper.Set("postgres.useExisting.password", "secret")
++	t.Cleanup(viper.Reset)
++
++	want := "db.example.com:5432:*:yba:secret"
++	if got := PgpassEntry(); got != want {
++		t.Errorf("PgpassEntry() = %q, want %q", got, want)
++	}
++}
 ```
 
 ---
 
-### Incident Patch 2: `2e06e077` (2026-11-17)
-**Commit Message**: [#37241] DocDB: ThinClientService: consistent-prefix reads with a server-computed staleness (#37242)
+### Incident Patch 2: `2c4a9e0e` (2026-11-10)
+**Commit Message**: [PLAT-23429] YBA: Fix Kubernetes universe delete hanging on a StatefulSet left outside its Helm release
 
-Fixes #37241
+Summary:
+A Kubernetes universe delete could hang forever in its PVC step. A StatefulSet that carries a release's labels but is no longer in the Helm release (for example one left behind by a failed full move) survives `helm delete`. Its pods keep running and keep its PVCs in use, so `kubectl delete pvc -l release=<release>` waits on the `kubernetes.io/pvc-protection` finalizer with no time limit. The task list shows the hang under "Removing Pod Disruption Budget Policy" because later steps of an already-seen type are grouped under the most recent row.
 
-### Summary
+- `KubernetesManager#deleteStorage` now takes the release names to clean up and deletes their StatefulSets before their PVCs, so pods holding the PVCs go first. This applies to the universe delete, the read replica delete, and an edit that removes or rolls back an AZ.
+- On the kubectl path both deletes are bounded by `yb.helm.timeout_secs`, the timeout helm install and upgrade use, and a non-zero exit fails the step (`processErrors`). A delete that matches nothing still succeeds, including in a namespace that is already gone. The 
 
-Every read through `ThinClientService.Perform` is STRONG, so the tablet
-leader serves it; for a caller spread across zones (amp's pageserver
-reading page rows) that crosses an AZ two thirds of the time. This lets
-a batch ask for a consistent-prefix read instead, at a read time the
-**tserver** derives from its own clock minus a caller-supplied
-staleness, so only the cluster's `max_clock_skew_usec` matters, as for
-YSQL follower reads.
-
-- `thin_client.proto`: `ThinReadTimeOptionsPB` gains `bool
-read_from_followers = 2` and `optional uint32 follower_read_staleness_ms
-= 3`, additively.
-- `thin_client_service.cc`: with `read_from_followers`, every read op of
-the batch runs at `CONSISTENT_PREFIX`. With a staleness and no pinned
-`read_time` the session reads at `now - staleness`, through
-`SetFollowerReadTime`, which moves from `pg_client_session.cc` to
-`pg_client_session_util.{h,cc}` so both follower-read paths share it. A
-pinned `read_time` (a paging continuation) keeps its snapshot and only
-takes the consistency level. `InvalidArgument` for: a staleness on a
-wr
-
-**File**: `src/yb/thin_client/README.md` (modified, +12/-3)
+**File**: `managed/src/main/java/com/yugabyte/yw/commissioner/tasks/DestroyKubernetesUniverse.java` (modified, +67/-0)
 ```diff
-@@ -40,7 +40,9 @@ hot read/write paths without embedding a full client.
-   hash, then range, then value). Also the startup health check.
- - `ybthin_read_async` -- one page of each of N read ops, in one Perform; delivers
-   each op's decoded rows + opaque `paging_state`, and the batch's
--  `used_read_time_ht`.
-+  `used_read_time_ht`. `ybthin_read_options` pins the snapshot, or asks for a
-+  follower read at a read time the tserver computes from a caller-supplied
-+  staleness.
- - `ybthin_upsert_batch_async` -- N `PGSQL_UPSERT` rows as the ops of one Perform.
- - `ybthin_read_result_free` / `ybthin_string_free` -- free shim-owned buffers.
+@@ -38,6 +38,8 @@
+ import com.yugabyte.yw.models.helpers.TaskType;
+ import java.io.IOException;
+ import java.util.HashSet;
++import java.util.LinkedHashMap;
++import java.util.LinkedHashSet;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Map.Entry;
+@@ -47,6 +49,7 @@
+ import java.util.stream.Stream;
+ import javax.inject.Inject;
+ import lombok.extern.slf4j.Slf4j;
++import org.apache.commons.lang3.StringUtils;
  
-@@ -54,8 +56,15 @@ This library is **upgraded before the tserver**, so a given build must keep
- working against an **older** tserver than it was compiled against. Keep the wire
- usage backward-compatible: only send request fields / rely on RPCs and semantics
- the oldest supported tserver understands, and tolerate responses that lack fields
--a newer server would set. The C ABI is additive-only (new functions; new struct
--fields / enum values appended at the end; never renumber, reorder, or remove).
-+a newer server would set.
+ @Slf4j
+ @Abortable
+@@ -172,6 +175,9 @@ public void run() {
+               KubernetesCommandExecutor.CommandType.VOLUME_DELETE.getSubTaskGroupName());
+       volumeDeletes.setSubTaskGroupType(UserTaskDetails.SubTaskGroupType.RemovingUnusedServers);
+ 
++      // Storage left in namespaces the provider sets, by releases no longer in the placement.
++      SubTaskGroup providerNamespaceVolumeDeletes = createProviderNamespaceVolumeDeletes(universe);
 +
-+The C ABI carries no such promise while the library has a single caller, and may
-+change between shim releases, a signature included. The library and its header
-+are released together, and that caller pins a release and ships the library in
-+the same image as the binaries built against it. A second caller that cannot move
-+in lockstep would need this policy revisited. A caller that declares the functions by hand must update its
-+declarations with the header: a stale declaration of a changed signature still
-+links.
+       SubTaskGroup namespaceDeletes =
+           createSubTaskGroup(
+               KubernetesCommandExecutor.CommandType.NAMESPACE_DELETE.getSubTaskGroupName());
+@@ -270,6 +276,7 @@ public void run() {
+       getRunnableTask().addSubTaskGroup(namespacedServicesDelete);
+       getRunnableTask().addSubTaskGroup(helmDeletes);
+       getRunnableTask().addSubTaskGroup(volumeDeletes);
++      getRunnableTask().addSubTaskGroup(providerNamespaceVolumeDeletes);
+       getRunnableTask().addSubTaskGroup(namespaceDeletes);
  
- ## Build
+       // Create tasks to remove the universe entry from the Universe table.
+@@ -317,6 +324,65 @@ public void run() {
+     log.info("Finished {} task.", getName());
+   }
+ 
++  /**
++   * Creates one VOLUME_DELETE per namespace that the universe's providers set on zones outside the
++   * placement, covering the releases this universe could have had in those zones. Zones in the
++   * placement are deleted by the regular VOLUME_DELETE, and zones without a set namespace by the
++   * namespace delete.
++   */
++  private SubTaskGroup createProviderNamespaceVolumeDeletes(Universe universe) {
++    SubTaskGroup subTaskGroup =
++        createSubTaskGroup(
++            KubernetesCommandExecutor.CommandType.VOLUME_DELETE.getSubTaskGroupName(),
++            UserTaskDetails.SubTaskGroupType.RemovingUnusedServers);
++    UniverseDefinitionTaskParams universeDetails = universe.getUniverseDetails();
++    Map<List<String>, KubernetesCommandExecutor.Params> paramsByNamespace = new LinkedHashMap<>();
++    for (UniverseDefinitionTaskParams.Cluster cluster : universeDetails.clusters) {
++      Provider provider = Util.getSingleProvider(cluster);
++      boolean isMultiAz = PlacementInfoUtil.isMultiAZ(provider);
++      boolean isReadOnlyCluster = cluster.clusterType == ClusterType.ASYNC;
++      Set<UUID> placementAZs = KubernetesUtil.getConfigPerAZ(cluster.placementInfo).keySet();
++      for (Entry<UUID, Map<String, String>> entry :
++          KubernetesUtil.getConfigPerProviderZone(provider).entrySet()) {
++        Map<String, String> config = entry.getValue();
++        String namespace = config.get("KUBENAMESPACE");
++        if (placementAZs.contains(entry.getKey()) || StringUtils.isBlank(namespace)) {
++          continue;
++        }
++        String azName =
++            isMultiAz ? AvailabilityZone.getOrBadRequest(entry.getKey()).getCode() : null;
++        KubernetesCommandExecutor.Params params =
++            paramsByNamespace.computeIfAbsent(
++                List.of(config.get("KUBECONFIG"), namespace),
++                k -> {
++                  KubernetesCommandExecutor.Params p = new KubernetesCommandExecutor.Params();
++                  p.commandType = KubernetesCommandExecutor.CommandType.VOLUME_DELETE;
++                  p.providerUUID = provider.getUuid();
++                  p.universeName = universe.getName();
++                  p.config = config;
++                  p.namespace = namespace;
++                  p.helmReleaseNames = new LinkedHashSet<>();
++                  p.isForceDelete = params().isForceDelete;
++                  p.setUniverseUUID(universe.getUniverseUUID());
++                  return p;
++                });
++        params.helmReleaseNames.add(
++            KubernetesUtil.getHelmReleaseName(
++                universeDetails.nodePrefix,
++                universe.getName(),
++                azName,
++                isReadOnlyCluster,
++                universeDetails.useNewHelmNamingStyle));
++      }
++    }
++    for (KubernetesCommandExecutor.Params params : paramsByNamespace.values()) {
++      KubernetesCommandExecutor task = createTask(KubernetesCommandExecutor.class);
++      task.initialize(params);
++      subTaskGroup.addSubTask(task);
++    }
++    return subTaskGroup;
++  }
++
+   protected KubernetesCommandExecutor createDestroyKubernetesTask(
+       String nodePrefix,
+       String universeName,
+@@ -332,6 +398,7 @@ protected KubernetesCommandExecutor createDestroyKubernetesTask(
+     params.isReadOnlyCluster = isReadOnlyCluster;
+     params.universeName = universeName;
+     params.azCode = az;
++    params.isForceDelete = params().isFo
+```
+
+**File**: `managed/src/main/java/com/yugabyte/yw/commissioner/tasks/ReadOnlyKubernetesClusterDelete.java` (modified, +1/-0)
+```diff
+@@ -286,6 +286,7 @@ protected KubernetesCommandExecutor createDestroyKubernetesTask(
+     params.providerUUID = providerUUID;
+     params.isReadOnlyCluster = isReadOnlyCluster;
+     params.azCode = az;
++    params.isForceDelete = params().isForceDelete;
+     params.helmReleaseName =
+         KubernetesUtil.getHelmReleaseName(
+             nodePrefix, universeName, az, isReadOnlyCluster, newNamingStyle);
+```
+
+**File**: `managed/src/main/java/com/yugabyte/yw/commissioner/tasks/subtasks/KubernetesCommandExecutor.java` (modified, +27/-3)
+```diff
+@@ -86,9 +86,11 @@
+ import java.util.Optional;
+ import java.util.Set;
+ import java.util.UUID;
++import java.util.concurrent.CancellationException;
+ import java.util.regex.Pattern;
+ import javax.annotation.Nullable;
+ import lombok.extern.slf4j.Slf4j;
++import org.apache.commons.collections4.CollectionUtils;
+ import org.apache.commons.lang3.StringUtils;
+ import org.bouncycastle.asn1.x509.GeneralName;
+ import org.yaml.snakeyaml.Yaml;
+@@ -225,6 +227,10 @@ public static class Params extends UniverseTaskParams {
+     public Map<String, String> universeConfig;
+     public CommandType commandType;
+     public String helmReleaseName;
++    // VOLUME_DELETE only: the releases whose storage is deleted, in place of helmReleaseName.
++    public Set<String> helmReleaseNames;
++    // VOLUME_DELETE only: a failed delete is logged and skipped.
++    public boolean isForceDelete;
+     public String namespace;
+     public boolean isReadOnlyCluster;
+     public String ybSoftwareVersion = null;
+@@ -510,9 +516,27 @@ && taskParams().namespace == null) {
+                 confGetter.getConfForScope(universe, UniverseConfKeys.k8sMasterPvcGcReadyTimeout));
+         break;
+       case VOLUME_DELETE:
+-        kubernetesManagerFactory
+-            .getManager()
+-            .deleteStorage(config, taskParams().helmReleaseName, taskParams().namespace);
++        try {
++          kubernetesManagerFactory
++              .getManager()
++              .deleteStorage(
++                  taskParams().getUniverseUUID(),
++                  config,
++                  CollectionUtils.isNotEmpty(taskParams().helmReleaseNames)
++                      ? taskParams().helmReleaseNames
++                      : Collections.singleton(taskParams().helmReleaseName),
++                  taskParams().namespace);
++        } catch (CancellationException e) {
++          throw e;
++        } catch (RuntimeException e) {
++          if (!taskParams().isForceDelete) {
++            throw e;
++          }
++          log.warn(
++              "Ignoring error deleting storage in namespace {} due to isForceDelete being set.",
++              taskParams().namespace,
++              e);
++        }
+         break;
+       case NAMESPACE_DELETE:
+         kubernetesManagerFactory.getManager().deleteNamespace(config, taskParams().namespace);
+```
+
+**File**: `managed/src/main/java/com/yugabyte/yw/common/KubernetesManager.java` (modified, +6/-1)
+```diff
+@@ -41,6 +41,7 @@
+ import java.nio.file.Files;
+ import java.nio.file.Path;
+ import java.time.Duration;
++import java.util.Collection;
+ import java.util.HashMap;
+ import java.util.HashSet;
+ import java.util.List;
+@@ -1078,8 +1079,12 @@ public abstract void updateNumNodes(
+   public abstract void PauseAllPodsInRelease(
+       Map<String, String> config, String universePrefix, String namespace, boolean newNamingStyle);
+ 
++  // Deletes the StatefulSets, then the PVCs, labelled with any of the given helm release names.
+   public abstract void deleteStorage(
+-      Map<String, String> config, String universePrefix, String namespace);
++      UUID universeUUID,
++      Map<String, String> config,
++      Collection<String> helmReleaseNames,
++      String namespace);
+ 
+   public abstract void deleteNamespace(Map<String, String> config, String namespace);
  
 ```
 
-**File**: `src/yb/thin_client/yb_thin_client-itest.cc` (modified, +752/-47)
+**File**: `managed/src/main/java/com/yugabyte/yw/common/NativeKubernetesManager.java` (modified, +17/-3)
 ```diff
-@@ -37,14 +37,26 @@
+@@ -2,6 +2,7 @@
  
- #include "yb/thin_client/yb_thin_client.h"
+ package com.yugabyte.yw.common;
  
-+#include "yb/client/client.h"
-+
- #include "yb/consensus/raft_consensus.h"
- #include "yb/consensus/retryable_requests.h"
++import com.google.common.annotations.VisibleForTesting;
+ import com.google.common.collect.ImmutableMap;
+ import com.yugabyte.yw.commissioner.tasks.UniverseTaskBase.ServerType;
+ import io.fabric8.kubernetes.api.model.DeletionPropagation;
+@@ -34,6 +35,7 @@
+ import java.nio.file.Paths;
+ import java.nio.file.StandardOpenOption;
+ import java.time.Duration;
++import java.util.Collection;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Objects;
+@@ -51,7 +53,8 @@
+ @Slf4j
+ public class NativeKubernetesManager extends KubernetesManager {
  
- #include "yb/integration-tests/mini_cluster.h"
-+#include "yb/tablet/tablet.h"
-+#include "yb/tablet/tablet_metrics.h"
- #include "yb/tablet/tablet_peer.h"
- #include "yb/tserver/mini_tablet_server.h"
-+#include "yb/tserver/tablet_server.h"
-+#include "yb/tserver/thin_client.pb.h"
-+#include "yb/tserver/thin_client.proxy.h"
+-  private KubernetesClient getClient(Map<String, String> config) {
++  @VisibleForTesting
++  KubernetesClient getClient(Map<String, String> config) {
+     if (config.containsKey("KUBECONFIG") && !config.get("KUBECONFIG").isEmpty()) {
+       try {
+         String kubeConfigContents =
+@@ -271,12 +274,23 @@ public void updateNumNodes(
+   }
  
-+#include "yb/common/entity_ids.h"
- #include "yb/common/hybrid_time.h"
-+#include "yb/common/wire_protocol.h"
-+
-+#include "yb/rpc/proxy.h"
-+#include "yb/rpc/rpc_controller.h"
- 
- #include "yb/util/backoff_waiter.h"
- #include "yb/util/errno.h"
-@@ -57,18 +69,22 @@
- #include "yb/util/net/sockaddr.h"
- #include "yb/util/path_util.h"
- #include "yb/util/result.h"
-+#include "yb/util/scope_exit.h"
- #include "yb/util/slice.h"
- #include "yb/util/status_format.h"
- #include "yb/util/test_macros.h"
- #include "yb/util/test_util.h"
-+#include "yb/util/tsan_util.h"
- 
- #include "yb/yql/pgwrapper/libpq_utils.h"
- #include "yb/yql/pgwrapper/pg_mini_test_base.h"
- #include "yb/yql/pgwrapper/pg_wrapper_test_base.h"
- 
- DECLARE_bool(TEST_asyncrpc_finished_set_timedout);
-+DECLARE_bool(enable_load_balancing);
- DECLARE_uint64(TEST_thin_client_perform_delay_ms);
- DECLARE_bool(TEST_thin_client_omit_session_lost_code);
-+DECLARE_uint64(max_clock_skew_usec);
- DECLARE_uint64(pg_client_heartbeat_interval_ms);
- DECLARE_uint64(pg_client_session_expiration_ms);
- DECLARE_bool(use_libunwind_for_stack_trace_collection);
-@@ -80,6 +96,7 @@ DECLARE_string(certs_dir);
- DECLARE_string(TEST_public_hostname_suffix);
- DECLARE_int32(TEST_delay_before_added_to_leader_ms);
- 
-+METRIC_DECLARE_histogram(handler_latency_yb_tserver_TabletServerService_Read);
- METRIC_DECLARE_histogram(handler_latency_yb_tserver_ThinClientService_Perform);
- 
- namespace yb::pgwrapper {
-@@ -376,7 +393,7 @@ TEST_F(PgThinClientTest, OpenUpsertReadPaged) {
-     op.spec = spec;
-     op.paging_state_in = paging_state.empty() ? nullptr : paging_state.data();
-     op.paging_state_in_len = paging_state.size();
--    ybthin_read_async(client, &op, 1, /* read_time_ht= */ 0, &OnReadDone, &promise);
-+    ybthin_read_async(client, &op, 1, /* options= */ nullptr, &OnReadDone, &promise);
-     auto out = future.get();
-     ASSERT_EQ(out.code, YBTHIN_OK) << out.message;
-     // The shim decoded the sidecar into typed cells: 2 targets (v INT4, payload BYTEA).
-@@ -460,7 +477,7 @@ TEST_F(PgThinClientTest, OidColumnRoundTrip) {
-     ybthin_read_op op = {};
-     op.table = table;
-     op.spec = spec;
--    ybthin_read_async(client, &op, 1, /* read_time_ht= */ 0, &OnReadDone, &promise);
-+    ybthin_read_async(client, &op, 1, /* options= */ nullptr, &OnReadDone, &promise);
-     return future.get();
-   };
- 
-@@ -579,7 +596,7 @@ TEST_F(PgThinClientTest, PagedReadHoldsSnapshotAcrossPages) {
-     op.paging_state_in_len = paging_state.size();
-     // Continue the scan with just the paging_state (read_time_ht == 0): the scan must stay on its
-     // original snapshot on its own, not silently jump to a newer one on each page.
--    ybthin_read_async(client, &op, 1, /* read_time_ht= */ 0, &OnReadDone, &promise);
-+    ybthin_read_async(client, &op, 1, /* options= */ nullptr, &OnReadDone, &promise);
-     auto out = future.get();
-     ASSERT_EQ(out.code, YBTHIN_OK) << out.message;
-     for (size_t row_idx = 0; row_idx < out.n_rows; ++row_idx) {
-@@ -695,7 +712,7 @@ TEST_F(PgThinClientTest, RangeShardedTable) {
-     ybthin_read_op op = {};
-     op.table = table;
-     op.spec = spec;
--    ybthin_read_async(client, &op, 1, /* read_time_ht= */ 0, &OnReadDone, &promise);
-+    ybthin_read_async(client, &op, 1, /* options= */ nullptr, &OnReadDone, &promise);
-     auto out = future.get();
-     ASSERT_EQ(out.code, YBTHIN_OK) << out.message;
-     ASSERT_EQ(out.n_rows, 1u);
-@@ -723,7 +740,7 @@ TEST_F(PgThinClientTest, RangeShardedTable) {
-       op.spec = spec;
-       op.paging_state_in = paging_state.empty() ? nullptr : paging_state.data();
-       op.paging_state_in_len = paging_state.size();
--      ybthin_read_async(client, &op, 1, /* read_time_ht= */ 0, &OnReadDone, &promise);
-+      ybthin_read_async(client, &op, 1, /* options= */ nullptr, &OnReadDone, &promise);
-       auto out = future.get();
-       ASSERT_EQ(out.code, YBTHIN_OK) << out.message;
-       for (size_t row_idx = 0; row_idx < out.n_rows; ++row_idx) {
-@@ -766,7 +783,7 @@ TEST_F(PgThinClientTest, RangeShardedTable) {
-       op.spec = spec;
-       op.paging_state_in = paging_state.empty() ? nullptr : paging_state.data();
-       op.paging_state_in_len = paging_state.size();
--      ybthin_read_async(client, &op, 1, /* read_time_ht= */ 0, &OnReadDone, &promise);
-+      ybthin_read_async(client, &op, 1, /* options= */ nullptr, &OnReadDone, &promise);
-       auto out = future.get();
-       ASSERT_EQ(out.code, YBTHIN_OK) << out.message;
-       for (size_t row_idx = 0; row_idx 
-```
-
-**File**: `src/yb/thin_client/yb_thin_client.cc` (modified, +60/-12)
-```diff
-@@ -80,6 +80,7 @@
- #include "yb/util/slice.h"
- #include "yb/util/status.h"
- #include "yb/util/status_format.h"
-+#include "yb/util/strongly_typed_bool.h"
- #include "yb/util/tsan_util.h"
- 
- DECLARE_bool(use_libunwind_for_stack_trace_collection);
-@@ -492,19 +493,21 @@ ybthin_session& NextWriteSession(ybthin_client& client) {
- }
- 
- // The shim's own envelope around the server's paging state, handed back to the caller opaquely:
--//   [magic][version][u32 read-session index][u32 generation][u64 read_ht]
-+//   [magic][version][u32 read-session index][u32 generation][u64 read_ht][u8 flags]
- //   + the server's paging state.
- // A continuation routes back to the same session (generation-checked) and replays the read time its
- // scan was served at, so every page reads at one snapshot without the server tracking read points.
--// Nothing in YugabyteDB defines this format -- pggate keeps the equivalent state in process memory
--// and never serializes it. Version 3 replaced the read serial with the read time itself; bump the
--// version for any further layout change.
-+// The flags carry the scan's read_from_followers, so every page of a follower scan asks for a
-+// follower. Nothing in YugabyteDB defines this format -- pggate keeps the equivalent state in
-+// process memory and never serializes it. Version 3 replaced the read serial with the read time
-+// itself, version 4 added the flags; bump the version for any further layout change.
- constexpr uint8_t kPagingMagic = 0xB1;
--constexpr uint8_t kPagingVersion = 3;
-+constexpr uint8_t kPagingVersion = 4;
- constexpr size_t kPagingPrefixLen = 2;  // magic + version
-+constexpr uint8_t kPagingFlagReadFromFollowers = 0x01;
- // Derived from the layout above so the writer, the reader and the length cannot drift apart.
- constexpr size_t kPagingHeaderLen =
--    kPagingPrefixLen + 2 * sizeof(uint32_t) + sizeof(uint64_t);
-+    kPagingPrefixLen + 2 * sizeof(uint32_t) + sizeof(uint64_t) + sizeof(uint8_t);
- 
- void AppendU32LE(std::string* out, uint32_t value) {
-   char buf[sizeof(value)];
-@@ -530,16 +533,19 @@ uint64_t ReadU64LE(const uint8_t** cursor) {
-   return value;
- }
- 
-+YB_STRONGLY_TYPED_BOOL(ReadFromFollowers);
-+
- std::string WrapPagingState(
-     uint32_t session_index, uint32_t generation, uint64_t read_ht,
--    const std::string& server_paging_state) {
-+    ReadFromFollowers read_from_followers, const std::string& server_paging_state) {
-   std::string out;
-   out.reserve(kPagingHeaderLen + server_paging_state.size());
-   out.push_back(static_cast<char>(kPagingMagic));
-   out.push_back(static_cast<char>(kPagingVersion));
-   AppendU32LE(&out, session_index);
-   AppendU32LE(&out, generation);
-   AppendU64LE(&out, read_ht);
-+  out.push_back(static_cast<char>(read_from_followers ? kPagingFlagReadFromFollowers : 0));
-   out.append(server_paging_state);
-   return out;
- }
-@@ -549,6 +555,8 @@ struct PinInfo {
-   uint32_t generation;
-   // Replayed by a continuation so the server restores the scan's read point.
-   uint64_t read_ht;
-+  // Replayed alongside it, so the continuation is served by a follower like its first page.
-+  ReadFromFollowers read_from_followers = ReadFromFollowers::kFalse;
-   Slice server_paging_state;
- };
- 
-@@ -561,6 +569,7 @@ Result<PinInfo> UnwrapPagingState(const uint8_t* data, size_t len) {
-   pin.session_index = ReadU32LE(&cursor);
-   pin.generation = ReadU32LE(&cursor);
-   pin.read_ht = ReadU64LE(&cursor);
-+  pin.read_from_followers = ReadFromFollowers((*cursor++ & kPagingFlagReadFromFollowers) != 0);
-   pin.server_paging_state = Slice(cursor, data + len);
-   return pin;
- }
-@@ -665,6 +674,9 @@ struct ReadCall : SessionCall {
-   // The read time this batch was pinned to, either by the caller or, for a continuation, by the
-   // scan. 0 means the server picked one, which FinishRead reads out of the response paging state.
-   uint64_t read_ht;
-+  // Whether the batch asks for followers: the caller's choice for a fresh batch, the scan's own
-+  // for a continuation. Wrapped into the response paging state so the next page asks again.
-+  ReadFromFollowers read_from_followers = ReadFromFollowers::kFalse;
-   tserver::ThinPerformRequestPB req;
-   tserver::ThinPerformResponsePB resp;
-   rpc::RpcController controller;
-@@ -862,7 +874,7 @@ void FinishRead(ReadCall* read_call) {
-       std::string srv;
-       op.paging_state().SerializeToString(&srv);
-       std::string wrapped = WrapPagingState(
--          call->session_index, call->generation, scan_read_ht, srv);
-+          call->session_index, call->generation, scan_read_ht, call->read_from_followers, srv);
-       op_result.paging_state = DupBytes(wrapped.data(), wrapped.size());
-       op_result.paging_state_len = wrapped.size();
+   @Override
+-  public void deleteStorage(Map<String, String> config, String helmReleaseName, String namespace) {
++  public void deleteStorage(
++      UUID universeUUID,
++      Map<String, String> config,
++      Collection<String> helmReleaseNames,
++      String namespace) {
++    String[] releaseNames = helmReleaseNames.toArray(new String[0]);
+     try (KubernetesClient client = getClient(config)) {
++      client
++          .apps()
++          .statefulSets()
++          .inNamespace(namespace)
++          .withLabelIn("release", releaseNames)
++          .delete();
+       client
+           .persistentVolumeClaims()
+           .inNamespace(namespace)
+-          .withLabel("release", helmReleaseName)
++          .withLabelIn("release", releaseNames)
+           .delete();
      }
-@@ -1221,23 +1233,30 @@ void ybthin_columns_free(ybthin_column* columns, size_t /* n */) {
- }
- 
- void ybthin_read_async(
--    ybthin_client* client, const ybthin_read_op* ops, size_t n_ops, uint64_t read_time_ht,
--    ybthin_read_cb cb, void* ctx) {
-+    ybthin_client* client, const ybt
+   }
 ```
 
-**File**: `src/yb/thin_client/yb_thin_client.h` (modified, +46/-11)
+**File**: `managed/src/main/java/com/yugabyte/yw/common/ShellKubernetesManager.java` (modified, +27/-5)
 ```diff
-@@ -21,9 +21,15 @@
- // VERSIONING: this library is built OUTSIDE the YugabyteDB tree and upgraded BEFORE the tserver, so
- // a given build must keep working against an OLDER one. On the wire, only rely on request fields,
- // RPCs and semantics the OLDEST supported tserver understands, and tolerate responses missing
--// fields a newer server would set. The ABI below is likewise stable -- changes must be ADDITIVE
--// (new functions; fields appended to the END of structs; enum values appended at the END). Never
--// renumber an enum value, reorder or remove a struct field, or change a signature in place.
-+// fields a newer server would set.
-+//
-+// The ABI below carries no such promise while the library has a single caller: it may change
-+// between shim releases, a signature included. The library and its header are released together,
-+// and that caller pins a release and ships this library in the same image as the binaries built
-+// against it, so the two never differ at run time. A second caller that cannot move in lockstep
-+// would need this policy revisited. A caller that declares these functions by hand (an FFI
-+// binding) must update its declarations with the header: a stale declaration of a changed
-+// signature still links.
- //
- // Ownership: every out-pointer the library fills is owned by it and freed with the matching _free
- // or _destroy call below. Input arrays and strings are borrowed for the duration of the call only.
-@@ -193,7 +199,7 @@ typedef struct {
+@@ -48,6 +48,7 @@
+ import java.time.Duration;
+ import java.util.ArrayList;
+ import java.util.Arrays;
++import java.util.Collection;
+ import java.util.HashMap;
+ import java.util.HashSet;
+ import java.util.LinkedList;
+@@ -351,19 +352,40 @@ public void updateNumNodes(
+   }
  
- // One read op in a batch; a batch may mix tables. `paging_state_in`==NULL (len 0) starts this op's
- // scan, a prior page's paging_state continues it. The read snapshot is a batch property
--// (ybthin_read_async's read_time_ht), NOT part of the spec.
-+// (ybthin_read_options.read_time_ht), NOT part of the spec.
- typedef struct {
-   ybthin_table* table;
-   ybthin_read_spec spec;
-@@ -247,19 +253,48 @@ typedef void (*ybthin_read_cb)(void* ctx, ybthin_status status,
-                                ybthin_read_result* result);
- typedef void (*ybthin_write_cb)(void* ctx, ybthin_status status);
+   @Override
+-  public void deleteStorage(Map<String, String> config, String helmReleaseName, String namespace) {
++  public void deleteStorage(
++      UUID universeUUID,
++      Map<String, String> config,
++      Collection<String> helmReleaseNames,
++      String namespace) {
++    String releaseSelector = String.format("release in (%s)", String.join(",", helmReleaseNames));
++    // StatefulSets go first: a StatefulSet that is not in the helm release keeps its pods
++    // running, and a PVC in use by a pod is not deleted until the pod is gone.
++    List<String> stsCommandList =
++        ImmutableList.of(
++            "kubectl",
++            "delete",
++            "statefulset",
++            "--namespace",
++            namespace,
++            "-l",
++            releaseSelector,
++            "--ignore-not-found",
++            "--timeout",
++            getTimeout(universeUUID));
++    execCommand(config, stsCommandList).processErrors("Unable to delete StatefulSets");
+     // Delete Master and TServer Volumes
+-    List<String> commandList =
++    List<String> pvcCommandList =
+         ImmutableList.of(
+             "kubectl",
+             "delete",
+             "pvc",
+             "--namespace",
+             namespace,
+             "-l",
+-            "release=" + helmReleaseName);
+-    execCommand(config, commandList);
+-    // TODO: check the execCommand outputs.
++            releaseSelector,
++            "--timeout",
++            getTimeout(universeUUID));
++    execCommand(config, pvcCommandList).processErrors("Unable to delete PVCs");
+   }
  
-+// Batch-level options for ybthin_read_async. A zeroed struct (or NULL) is a leader read at a
-+// snapshot the server picks.
-+typedef struct {
-+  // Pins the batch snapshot; 0 => the server picks one. Pass a prior batch's `used_read_time_ht`
-+  // only to force a NEW batch onto an existing snapshot.
-+  uint64_t read_time_ht;
-+  // bool. Serve the batch's reads from the closest replica, a follower included, at a snapshot
-+  // the tserver computes as its own clock minus `follower_read_staleness_ms` (see below, unless
-+  // read_time_ht is set). When the replica the tserver picked is behind that
-+  // snapshot, the tserver retries the read on another replica of the tablet, on another tserver,
-+  // still as one Perform -- but not for free: the tserver's client marks the first replica
-+  // failed in its shared meta cache until its next refresh (--lookup_cache_refresh_secs, 60 s by
-+  // default), so every follower read of that tablet through that tserver goes to a remote
-+  // replica for up to that long. YSQL follower reads behave the same way. A scan keeps the
-+  // choice of its first page (it travels inside paging_state): the pages of a scan started this
-+  // way stay on followers at the first page's snapshot, and those of a scan started at the
-+  // leader stay at the leader. This field and the staleness are ignored for every op of a batch
-+  // that holds a continuation, fresh ops included: one Perform carries one read time and one
-+  // replica choice, so a fresh op runs at the continuation's snapshot and on its scan's replica
-+  // choice. With NULL options next to a follower scan's continuation, a fresh op is a follower
-+  // read at that scan's snapshot.
-+  int read_from_followers;
-+  // Only read with read_from_followers and read_time_ht == 0; ignored otherwise. It must then be
-+  // > 0 (0 is YBTHIN_INVALID) and at least 2 * the cluster's --max_clock_skew_usec (1000 ms by
-+  // default), as YSQL requires; the tserver refuses a smaller one as YBTHIN_INVALID. Needs a
-+  // tserver that understands it; an older one serves the batch at the leader, unpinned.
-+  uint32_t follower_read_staleness_ms;
-+} ybthin_read_options;
+   @Override
+```
+
+**File**: `managed/src/test/java/com/yugabyte/yw/commissioner/tasks/DestroyKubernetesUniverseTest.java` (modified, +129/-12)
+```diff
+@@ -8,17 +8,20 @@
+ import static com.yugabyte.yw.common.ApiUtils.getTestUserIntent;
+ import static com.yugabyte.yw.common.AssertHelper.assertJsonEqual;
+ import static com.yugabyte.yw.common.ModelFactory.createUniverse;
++import static com.yugabyte.yw.models.TaskInfo.State.Failure;
+ import static com.yugabyte.yw.models.TaskInfo.State.Success;
+ import static org.hamcrest.CoreMatchers.containsString;
+ import static org.hamcrest.MatcherAssert.assertThat;
+ import static org.junit.Assert.assertEquals;
+ import static org.junit.Assert.assertFalse;
+ import static org.junit.Assert.assertNull;
+ import static org.junit.Assert.assertThrows;
++import static org.junit.Assert.assertTrue;
+ import static org.junit.Assert.fail;
+ import static org.mockito.ArgumentMatchers.any;
+ import static org.mockito.ArgumentMatchers.anyBoolean;
+ import static org.mockito.ArgumentMatchers.anyString;
++import static org.mockito.Mockito.doThrow;
+ import static org.mockito.Mockito.lenient;
+ import static org.mockito.Mockito.mock;
+ import static org.mockito.Mockito.times;
+@@ -28,8 +31,10 @@
+ import com.fasterxml.jackson.databind.JsonNode;
+ import com.google.common.collect.ImmutableList;
+ import com.google.common.collect.ImmutableMap;
++import com.google.common.collect.ImmutableSet;
+ import com.yugabyte.yw.commissioner.tasks.subtasks.KubernetesCommandExecutor.CommandType;
+ import com.yugabyte.yw.common.ApiUtils;
++import com.yugabyte.yw.common.KubernetesUtil;
+ import com.yugabyte.yw.common.ModelFactory;
+ import com.yugabyte.yw.common.PlatformServiceException;
+ import com.yugabyte.yw.common.TestHelper;
+@@ -241,7 +246,9 @@ public void testDestroyKubernetesUniverseSuccess() {
+     taskParams.setUniverseUUID(defaultUniverse.getUniverseUUID());
+     TaskInfo taskInfo = submitTask(taskParams);
+     verify(mockKubernetesManager, times(1)).helmDelete(config, NODE_PREFIX, NODE_PREFIX);
+-    verify(mockKubernetesManager, times(1)).deleteStorage(config, NODE_PREFIX, NODE_PREFIX);
++    verify(mockKubernetesManager, times(1))
++        .deleteStorage(
++            defaultUniverse.getUniverseUUID(), config, ImmutableSet.of(NODE_PREFIX), NODE_PREFIX);
+     verify(mockKubernetesManager, times(1)).deleteNamespace(config, NODE_PREFIX);
+     List<TaskInfo> subTasks = taskInfo.getSubTasks();
+     Map<Integer, List<TaskInfo>> subTasksByPosition =
+@@ -318,7 +325,9 @@ public void testDestroyKubernetesUniverseSuccessAndPromoteAutoFlagsOnOthers() {
+     taskParams.setUniverseUUID(defaultUniverse.getUniverseUUID());
+     TaskInfo taskInfo = submitTask(taskParams);
+     verify(mockKubernetesManager, times(1)).helmDelete(config, NODE_PREFIX, NODE_PREFIX);
+-    verify(mockKubernetesManager, times(1)).deleteStorage(config, NODE_PREFIX, NODE_PREFIX);
++    verify(mockKubernetesManager, times(1))
++        .deleteStorage(
++            defaultUniverse.getUniverseUUID(), config, ImmutableSet.of(NODE_PREFIX), NODE_PREFIX);
+     verify(mockKubernetesManager, times(1)).deleteNamespace(config, NODE_PREFIX);
+     List<TaskInfo> subTasks = taskInfo.getSubTasks();
+     assertEquals(
+@@ -360,7 +369,9 @@ public void testForceDestroyKubernetesUniverse() {
+     taskParams.setUniverseUUID(defaultUniverse.getUniverseUUID());
+     TaskInfo taskInfo = submitTask(taskParams);
+     verify(mockKubernetesManager, times(1)).helmDelete(config, NODE_PREFIX, NODE_PREFIX);
+-    verify(mockKubernetesManager, times(1)).deleteStorage(config, NODE_PREFIX, NODE_PREFIX);
++    verify(mockKubernetesManager, times(1))
++        .deleteStorage(
++            defaultUniverse.getUniverseUUID(), config, ImmutableSet.of(NODE_PREFIX), NODE_PREFIX);
+     verify(mockKubernetesManager, times(1)).deleteNamespace(config, NODE_PREFIX);
+     List<TaskInfo> subTasks = taskInfo.getSubTasks();
+     Map<Integer, List<TaskInfo>> subTasksByPosition =
+@@ -391,9 +402,15 @@ public void testDestroyKubernetesUniverseSuccessMultiAZ() {
+     verify(mockKubernetesManager, times(1)).helmDelete(config, nodePrefix1, nodePrefix1);
+     verify(mockKubernetesManager, times(1)).helmDelete(config, nodePrefix2, nodePrefix2);
+     verify(mockKubernetesManager, times(1)).helmDelete(config, nodePrefix3, nodePrefix3);
+-    verify(mockKubernetesManager, times(1)).deleteStorage(config, nodePrefix1, nodePrefix1);
+-    verify(mockKubernetesManager, times(1)).deleteStorage(config, nodePrefix2, nodePrefix2);
+-    verify(mockKubernetesManager, times(1)).deleteStorage(config, nodePrefix3, nodePrefix3);
++    verify(mockKubernetesManager, times(1))
++        .deleteStorage(
++            defaultUniverse.getUniverseUUID(), config, ImmutableSet.of(nodePrefix1), nodePrefix1);
++    verify(mockKubernetesManager, times(1))
++        .deleteStorage(
++            defaultUniverse.getUniverseUUID(), config, ImmutableSet.of(nodePrefix2), nodePrefix2);
++    verify(mockKubernetesManager, times(1))
++        .deleteStorage(
++            defaultUniverse.getUniverseUUID(), config, ImmutableSet.of(nodePrefix3), nodePrefix3);
+     verify(mockKubernetesManager, times(1)).deleteNamespace(confi
+```
+
+**File**: `managed/src/test/java/com/yugabyte/yw/commissioner/tasks/EditKubernetesUniverseTest.java` (modified, +86/-0)
+```diff
+@@ -86,6 +86,7 @@
+ import java.util.Collections;
+ import java.util.Comparator;
+ import java.util.HashMap;
++import java.util.HashSet;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.Set;
+@@ -2239,4 +2240,89 @@ public void testRetryWithoutMasterAddressChangeLeavesReadReplica() throws Interr
+ 
+     assertTrue(readReplicaHelmUpgrades(taskInfo).isEmpty());
+   }
 +
- // Run a batch of read ops as the ops of ONE Perform: one RPC, one read session, one snapshot.
--// `read_time_ht` pins the batch snapshot (0 => the server picks one); pass a prior batch's
--// `used_read_time_ht` only to force a NEW batch onto an existing snapshot. An op with
--// `paging_state_in` set continues that op's scan and stays on the scan's original snapshot
--// automatically -- the time the first page was served at travels inside `paging_state`, so the
--// server keeps no read state -- and paging with `read_time_ht` left 0 throughout is still
--// consistent: no rows are dropped mid-scan.
-+// `options` is batch-level; NULL means all zero. An op with `paging_state_in` set continues that
-+// op's scan; the read time it wa
-```
-
-**File**: `src/yb/tserver/pg_client_session.cc` (modified, +0/-7)
-```diff
-@@ -230,13 +230,6 @@ YB_DEFINE_ENUM(PgClientSessionKind,
-     (kPlain)(kAutonomousDdl)(kLegacyCatalog)(kSequence)(kPgSession)(kHistoricalRead));
- YB_DEFINE_ENUM(GlobalObjectLocksReleaseMode, (kAsync)(kSync));
- 
--void SetFollowerReadTime(ConsistentReadPoint& read_point, uint32_t staleness_ms) {
--  read_point.SetReadTime(
--      ReadHybridTime::SingleTime(
--          read_point.Now().AddMilliseconds(-static_cast<int64_t>(staleness_ms))),
--      {});
--}
--
- constexpr const size_t kPgSequenceLastValueColIdx = 2;
- constexpr const size_t kPgSequenceIsCalledColIdx = 3;
- const std::string kTxnLogPrefixTagSource("Session ");
-```
-
-**File**: `src/yb/tserver/pg_client_session_util.cc` (modified, +7/-0)
-```diff
-@@ -239,6 +239,13 @@ Status CombineErrorsToStatus(const client::CollectedErrors& errors, const Status
-   return errors.empty() ? status : CombineNonEmptyErrorsToStatus(errors, status);
- }
- 
-+void SetFollowerReadTime(ConsistentReadPoint& read_point, uint32_t staleness_ms) {
-+  read_point.SetReadTime(
-+      ReadHybridTime::SingleTime(
-+          read_point.Now().AddMilliseconds(-static_cast<int64_t>(staleness_ms))),
-+      {});
-+}
++  /** Positions and release names of the queued VOLUME_DELETE subtasks of an edit. */
++  private Map<Integer, String> volumeDeletes(TaskInfo taskInfo) {
++    return taskInfo.getSubTasks().stream()
++        .filter(t -> t.getTaskType() == TaskType.KubernetesCommandExecutor)
++        .filter(
++            t ->
++                KubernetesCommandExecutor.CommandType.VOLUME_DELETE
++                    .name()
++                    .equals(t.getTaskParams().path("commandType").asText()))
++        .collect(
++            Collectors.toMap(
++                TaskInfo::getPosition, t -> t.getTaskParams().path("helmReleaseName").asText()));
++  }
 +
- Status HandleOperationResponse(uint64_t session_id,
-                                const client::YBPgsqlOp& op,
-                                PgPerformResponseMsg* resp,
-```
-
-**File**: `src/yb/tserver/pg_client_session_util.h` (modified, +4/-0)
-```diff
-@@ -190,6 +190,10 @@ class ReadPointHistory {
- 
- Status CombineErrorsToStatus(const client::CollectedErrors& errors, const Status& status);
- 
-+// A follower read's read time: `staleness_ms` behind the read point's own clock, as one time with
-+// no uncertainty window.
-+void SetFollowerReadTime(ConsistentReadPoint& read_point, uint32_t staleness_ms);
++  @Test
++  public void testRetryOfZoneRemovalQueuesVolumeDeleteAgain() throws InterruptedException {
++    setupUniverseMultiAZ(/* Create Masters */ true, 3);
++    factory.globalRuntimeConf().setValue("yb.checks.leaderless_tablets.enabled", "false");
++    Region region = Region.getByCode(kubernetesProvider, "region-1");
++    AvailabilityZone az3 = AvailabilityZone.getByCode(kubernetesProvider, "az-3");
++    AvailabilityZone az4 =
++        AvailabilityZone.createOrThrow(region, "az-4", "PlacementAZ 4", "subnet-4");
++    PlacementInfo pi = defaultUniverse.getUniverseDetails().getPrimaryCluster().placementInfo;
++    pi.cloudList.get(0).regionList.get(0).azList.removeIf(az -> az.uuid.equals(az3.getUuid()));
++    PlacementInfoUtil.addPlacementZone(az4.getUuid(), pi, 1, 1, true);
 +
- Status HandleOperationResponse(uint64_t session_id,
-                                const client::YBPgsqlOp& op,
-                                PgPerformResponseMsg* resp,
-```
++    TaskInfo firstAttempt = queueAndAbortEdit(editParams(pi, false /* includeReadReplica */));
++    Map<Integer, String> firstVolumeDeletes = volumeDeletes(firstAttempt);
++    assertEquals(1, firstVolumeDeletes.size());
++    assertTrue(firstVolumeDeletes.values().iterator().next().contains("az-3"));
++    // The removed zone's storage is deleted before the new placement is saved, so a failure there
++    // leaves the old placement for the retry to compare against.
++    int primaryIntentPosition =
++        firstAttempt.getSubTasks().stream()
++            .filter(t -> t.getTaskType() == TaskType.UpdateUniverseIntent)
++            .map(TaskInfo::getPosition)
++            .findFirst()
++            .orElseThrow();
++    assertTrue(firstVolumeDeletes.keySet().iterator().next() < primaryIntentPosition);
++
++    UniverseDefinitionTaskParams retryParams =
++        Json.fromJson(firstAttempt.getTaskParams(), UniverseDefinitionTaskParams.class);
++    retryParams.setPreviousTaskUUID(firstAttempt.getUuid());
++    TaskInfo retry = queueAndAbortEdit(retryParams);
++
++    assertEquals(
++        new HashSet<>(firstVolumeDeletes.values()), new HashSet<>(volumeDeletes(retry).values()));
++  }
++
++  @Test
++  public void testFullMoveQueuesNoVolumeDelete() throws InterruptedException {
++    setupUniverseMultiAZ(/* Create Masters */ true, 3);
++    factory.globalRuntimeConf().setValue("yb.checks.leaderless_tablets.enabled", "false");
++    defaultUniverse =
++        Universe.saveDetails(
++            defaultUniverse.getUniverseUUID(),
++            u ->
++                u.getUniverseDetails().getPrimaryCluster().userIntent.ybSoftwareVersion =
++                    KubernetesUtil.MIN_VERSION_FULL_MOVE_SUPPORT_STABLE);
++    UniverseDefinitionTaskParams taskParams = new UniverseDefinitionTaskParams();
++    taskParams.setUniverseUUID(defaultUniverse.getUniverseUUID());
++    taskParams.expectedUniverseVersion = -1;
++    taskParams.nodePrefix = defaultUniverse.getUniverseDetails().nodePrefix;
++    taskParams.nodeDetailsSet = defaultUniverse.getUniverseDetails().nodeDetailsSet;
++    taskParams.clusters = defaultUniverse.getUniverseDetails().clusters;
++    Cluster primaryCluster = taskParams.getPrimaryCluster();
++    UniverseDefinitionTaskParams.UserIntent newUserIntent = primaryCluster.userIntent.clone();
++    DeviceInfo deviceInfo = newUserIntent.deviceInfo.clone();
++    deviceInfo.numVolumes = (deviceInfo.numVolumes == null ? 1 : deviceInfo.numVolumes) + 1;
++    newUserIntent.deviceInfo = deviceInfo;
++    taskParams.getPrimaryCluster().userIntent = newUserIntent;
++    // As the edit API does: configure, then bump the statefulset index of the moving zones.
++    PlacementInfoUtil.updateUniverseDefinition(
++        taskParams, defaultCustomer.getId(), primaryCluster.uuid, EDIT);
++    PlacementInfoUtil.applyK8sStsIndexIncrement(
++        taskParams.getPrimaryCluster(), taskParams.nodeDetailsSet);
++
++    TaskInfo edit = queueAndAbortEdit(taskParams);
++
++    assertTrue(
++        "the edit is not a full move",
++        edit.getSubTasks().stream().anyMatch(t -> t.getTaskParams().hasNonNull("fullMoveParams")));
++    assertEquals(Collections.emptyMap(), volumeDeletes(edit));
++  }
 
-**File**: `src/yb/tserver/thin_client.proto` (modified, +12/-0)
-```diff
-@@ -73,6 +73,18 @@ message ThinReadTimeOptionsPB {
-   // page was served at on every continuation, so all pages observe one snapshot without the server
-   // keeping any per-session read state.
-   ReadHybridTimePB read_time = 1;
-+  // Serve the batch's reads at CONSISTENT_PREFIX, so the tserver that received the Perform sends
-+  // each read to the closest replica of its tablet, a follower included. When that replica cannot
-+  // serve the read time, the same tserver retries the read on another replica of the tablet, on
-+  // another tserver, within the same Perform. Applies to every page of a scan it starts, so a
-+  // continuation must send it again alongside the pinned read_time. Ignored on a write batch.
-+  bool read_from_followers = 2;
-+  // With read_from_followers and no read_time: the tserver reads at its own clock minus this
-+  // staleness, so only the cluster's own clock skew bound applies, as for YSQL follower reads.
-+  // Whenever set, it must be at least 2 * max_clock_skew_usec, as YSQL requires, even alongside
-+  // a read_time, which it is then ignored for (a continuation keeps the scan's snapshot).
-+  // Rejected on a write batch and without read_from_followers.
-+  optional uint32 follower_read_staleness_ms = 3;
- }
- 
- message ThinPerformRequestPB {
 ```
 
 ---
 
-### Incident Patch 3: `fcf9d5d1` (2026-11-17)
-**Commit Message**: [#30797] YSQL: Revert "Set index birth_time for indexes built nonconcurrently" (#38235)
+### Incident Patch 3: `9d2dad72` (2026-11-18)
+**Commit Message**: [#38210] YSQL: Fix TestYsqlUpgrade catalog version mismatch after YSQL upgrade (#38258)
 
 ## Summary
 
-Reverts 4e76682e276ae29c20eaee89ca8019811ecad5b7 (#37103).
+### Problem
 
-With that commit, an index created inside a DDL transaction stays
-`BIRTH_TIME_PENDING_DDL_COMMIT` until the transaction commits, and the
-tserver read guard answers reads of it with a retryable
-`LeaderNotReadyToServe` error. A statement that reads the index in the
-same transaction that created it is therefore retried until the RPC
-deadline (about 600s) and fails. This was a known limitation (#37091)
-for which only three `yb.orig.ddl_txn_*` regress reads were disabled,
-but extension scripts and tests do the same thing, so these fail on
-every attempt on master:
+`TestYsqlUpgrade#upgradeIsIdempotent` fails on 2026.1 fastdebug builds in about 3 of 4 runs when Connection Manager is enabled. The first DDL the test runs after the YSQL upgrade fails with:
+`The catalog snapshot used for this transaction has been invalidated. Received from PG: 110, expected to be >= breaking catalog version: 111`. Only the test is affected, the upgrade itself succeeds.
 
-- `DocumentDBTest.*` and `BasicDocumentDBTests#testBasicOperations`:
-`CREATE EXTENSION documentdb CASCADE` installs pg_cron, creates an index
-on `cron.job` and reads `cron.job` in the same transaction.
-- `PgPartmanTest.*/FlagOn`: `BEGIN; CREATE TABLE ... UNIQUE; ALTER TABLE
-... ADD FOREIGN KEY; INSERT`, where the foreign key check reads the new
-unique index.
+### Cause
 
-The revert is the exact inverse of the original commit. The change will
-be re-landed together with the fix for 
+Soon after `upgrade_ysql`, the test does not wait for the new catalog version to reach every tserver before it runs DDL:
 
-**File**: `src/postgres/src/test/regress/expected/yb.orig.ddl_txn_event_triggers.out` (modified, +6/-3)
+1. `upgrade_ysql` applies migrations through one tserver. That tserver records each new catalog version as the DDL commits. Other tservers learn the new catalog versions only from their next heartbeat to the master (every 500 ms in this test).
+2. The last migration on 2026.1, `V101.8__32935__pg_yb_password_history.sql`, runs a `REVOKE` command. `REVOKE` is a breaking catalog change, so the master rejects requests that carry an older catalog version. No earlier migration in this test makes a breaking change.
+3. Right after `upgrade_ysql` returns, the test o
+
+**File**: `java/yb-pgsql/src/test/java/org/yb/pgsql/TestYsqlUpgrade.java` (modified, +7/-0)
 ```diff
-@@ -99,9 +99,12 @@ BEFORE INSERT ON trigger_unique_test
- FOR EACH ROW EXECUTE FUNCTION normalize_code();
- -- Insert 'abc', trigger turns it into 'ABC'
- INSERT INTO trigger_unique_test VALUES (1, 'abc');
---- TODO(#37091): re-enable once a transaction can read an index it created; this
---- read currently hangs until the CREATE INDEX commits.
---- SELECT * FROM trigger_unique_test WHERE code = 'ABC';
-+SELECT * FROM trigger_unique_test WHERE code = 'ABC';
-+ id | code 
-+----+------
-+  1 | ABC
-+(1 row)
+@@ -2420,6 +2420,13 @@ private void runMigrations(boolean useSingleConnection) throws Exception {
+     if (!joined.toLowerCase().contains("successfully upgraded")) {
+       throw new IllegalStateException("Unexpected migrations result: " + joined);
+     }
 +
- -- This should fail because 'abc' was normalized to 'ABC'
- INSERT INTO trigger_unique_test VALUES (2, 'ABC');
- ERROR:  duplicate key value violates unique constraint "idx_code_unique"
-```
-
-**File**: `src/postgres/src/test/regress/expected/yb.orig.ddl_txn_indices.out` (modified, +6/-3)
-```diff
-@@ -39,9 +39,12 @@ INSERT INTO idx_vis_test VALUES (1, 10), (2, 20);
- -- Statement 2: Read via Index
- -- Must advance HT to see previous statement's index writes.
- SET enable_seqscan = off;
---- TODO(#37091): re-enable once a transaction can read an index it created; this
---- read currently hangs until the CREATE INDEX commits.
---- SELECT * FROM idx_vis_test WHERE val = 20;
-+SELECT * FROM idx_vis_test WHERE val = 20;
-+ id | val 
-+----+-----
-+  2 |  20
-+(1 row)
-+
- RESET enable_seqscan;
- COMMIT;
- -- -----------------------------------------------------------------------------
-```
-
-**File**: `src/postgres/src/test/regress/expected/yb.orig.ddl_txn_triggers.out` (modified, +6/-3)
-```diff
-@@ -98,9 +98,12 @@ BEFORE INSERT ON trigger_unique_test
- FOR EACH ROW EXECUTE FUNCTION normalize_code();
- -- Insert 'abc', trigger turns it into 'ABC'
- INSERT INTO trigger_unique_test VALUES (1, 'abc');
---- TODO(#37091): re-enable once a transaction can read an index it created; this
---- read currently hangs until the CREATE INDEX commits.
---- SELECT * FROM trigger_unique_test WHERE code = 'ABC';
-+SELECT * FROM trigger_unique_test WHERE code = 'ABC';
-+ id | code 
-+----+------
-+  1 | ABC
-+(1 row)
-+
- -- This should fail because 'abc' was normalized to 'ABC'
- INSERT INTO trigger_unique_test VALUES (2, 'ABC');
- ERROR:  duplicate key value violates unique constraint "idx_code_unique"
-```
-
-**File**: `src/postgres/src/test/regress/sql/yb.orig.ddl_txn_event_triggers.sql` (modified, +1/-3)
-```diff
-@@ -90,9 +90,7 @@ FOR EACH ROW EXECUTE FUNCTION normalize_code();
++    // upgrade_ysql applies migrations through a single tserver. Other tservers learn about new
++    // catalog versions from master only on their next heartbeat.
++    // Wait for the heartbeat to propagate to ensure that backends on other tservers don't have a
++    // stale catalog version. This is useful in tests where such backends issue DDLs soon after the
++    // migrations to test the upgrade.
++    waitForTServerHeartbeat();
+   }
  
- -- Insert 'abc', trigger turns it into 'ABC'
- INSERT INTO trigger_unique_test VALUES (1, 'abc');
---- TODO(#37091): re-enable once a transaction can read an index it created; this
---- read currently hangs until the CREATE INDEX commits.
---- SELECT * FROM trigger_unique_test WHERE code = 'ABC';
-+SELECT * FROM trigger_unique_test WHERE code = 'ABC';
- 
- -- This should fail because 'abc' was normalized to 'ABC'
- INSERT INTO trigger_unique_test VALUES (2, 'ABC');
-```
-
-**File**: `src/postgres/src/test/regress/sql/yb.orig.ddl_txn_indices.sql` (modified, +1/-3)
-```diff
-@@ -35,9 +35,7 @@ INSERT INTO idx_vis_test VALUES (1, 10), (2, 20);
- -- Statement 2: Read via Index
- -- Must advance HT to see previous statement's index writes.
- SET enable_seqscan = off;
---- TODO(#37091): re-enable once a transaction can read an index it created; this
---- read currently hangs until the CREATE INDEX commits.
---- SELECT * FROM idx_vis_test WHERE val = 20;
-+SELECT * FROM idx_vis_test WHERE val = 20;
- RESET enable_seqscan;
- 
- COMMIT;
-```
-
-**File**: `src/postgres/src/test/regress/sql/yb.orig.ddl_txn_triggers.sql` (modified, +1/-3)
-```diff
-@@ -90,9 +90,7 @@ FOR EACH ROW EXECUTE FUNCTION normalize_code();
- 
- -- Insert 'abc', trigger turns it into 'ABC'
- INSERT INTO trigger_unique_test VALUES (1, 'abc');
---- TODO(#37091): re-enable once a transaction can read an index it created; this
---- read currently hangs until the CREATE INDEX commits.
---- SELECT * FROM trigger_unique_test WHERE code = 'ABC';
-+SELECT * FROM trigger_unique_test WHERE code = 'ABC';
- 
- -- This should fail because 'abc' was normalized to 'ABC'
- INSERT INTO trigger_unique_test VALUES (2, 'ABC');
-```
-
-**File**: `src/yb/client/client-internal.cc` (modified, +1/-5)
-```diff
-@@ -3279,16 +3279,12 @@ Result<TableSizeInfo> YBClient::Data::GetTableDiskSize(
- }
- 
- Status YBClient::Data::ReportYsqlDdlTxnStatus(
--    const TransactionMetadata& txn, bool is_committed, HybridTime propagated_hybrid_time,
--    const CoarseTimePoint& deadline) {
-+    const TransactionMetadata& txn, bool is_committed, const CoarseTimePoint& deadline) {
-   master::ReportYsqlDdlTxnStatusRequestPB req;
-   master::ReportYsqlDdlTxnStatusResponsePB resp;
- 
-   req.set_transaction_id(txn.transaction_id.data(), txn.transaction_id.size());
-   req.set_is_committed(is_committed);
--  if (propagated_hybrid_time.is_valid()) {
--    req.set_propagated_hybrid_time(propagated_hybrid_time.ToUint64());
--  }
-   RETURN_NOT_OK(SyncLeaderMasterRpc(
-       deadline, req, &resp, "ReportYsqlDdlTxnStatus",
-       &master::MasterDdlProxy::ReportYsqlDdlTxnStatusAsync));
-```
-
-**File**: `src/yb/client/client-internal.h` (modified, +1/-2)
-```diff
-@@ -495,8 +495,7 @@ class YBClient::Data {
- 
-   // Provide the status of the transaction to YB-Master.
-   Status ReportYsqlDdlTxnStatus(
--      const TransactionMetadata& txn, bool is_committed, HybridTime propagated_hybrid_time,
--      const CoarseTimePoint& deadline);
-+      const TransactionMetadata& txn, bool is_committed, const CoarseTimePoint& deadline);
- 
-   Status IsYsqlDdlVerificationInProgress(
-     const TransactionMetadata& txn,
+   private void setupGeoPartitioning() throws Exception {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #38333** (2026-11-18): [BACKPORT 2026.2][PLAT-23927] YBA: Run the support bundle Go tests with sbt test and fail on failure (#38174) (@asc-073-yb)
-- **PR #38332** (2026-11-18): [BACKPORT 2026.2][PLAT-20207] YBA: Redact sensitive gflags and DB passwords in v2 universe responses (#37848) (@asc-073-yb)
-- **PR #38331** (2026-11-18): [BACKPORT 2026.2][PLAT-23843] YBA: Redact ldapbindpasswd in support bundle v2 as YBA does (#37853) (@asc-073-yb)
-- **PR #38330** (2026-11-18): [BACKPORT 2026.2][PLAT-23780] YBA: Reject REDACTED sensitive gflags that have no stored value to restore (#37686) (@asc-073-yb)
-- **PR #38297** (2026-11-18): [pg19][#38251] YSQL: Update the non-object-locking values of PgCatalogVersionTest.InvalMessageSampleDDLs (@kai-franz)
-- **PR #38277** (2026-11-18): [DEVOPS-4053] test-automation: Revert "Spark workers download the test archive from GCS" (@hkimura)
+- **PR #38448** (closed): [#36671] YSQL: Fix org.yb.pgsql.TestPgListenNotify#testCancelledFirstListenLeavesOnePoller cancel lost on TSAN (@csi-fix)
+- **PR #38437** (2026-11-19): [BACKPORT 2025.2][#38303] YSQL: Don't FATAL on subtransaction rollback RPC failure when shutdown is in progress (#38302) (@teyenc)
+- **PR #38436** (2026-11-18): [BACKPORT 2026.1][#38303] YSQL: Don't FATAL on subtransaction rollback RPC failure when shutdown is in progress (#38302) (@teyenc)
+- **PR #38435** (2026-11-18): [BACKPORT 2026.2][#38303] YSQL: Don't FATAL on subtransaction rollback RPC failure when shutdown is in progress (#38302) (@teyenc)
+- **PR #38428** (2026-11-18): [BACKPORT 2026.2][PLAT-18424] YBA: Keep the installed node-agent packages until a yba-ctl upgrade succeeds (#37914) (@shubin-yb)
+- **PR #38427** (2026-11-18): [BACKPORT 2026.2][PLAT-22930] YBA: Fix yba-ctl backup and restore against a password-protected external Postgres (#38291) (@shubin-yb)
 
 ---
 
@@ -3227,3 +2962,38 @@ be re-landed together with the fix for
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. [PLAT-22930] YBA: Fix yba-ctl backup and restore against a password-protected ex
+
+**RULE**:
+When implementing operations in `managed/devops/bin/yb_platform_backup.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in yugabyte/yugabyte-db. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `bfaf8c7a`: [PLAT-22930] YBA: Fix yba-ctl backup and restore against a password-protected external Postgres. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing C data structures, boundary deserialization, API parsing, or resource lifecycles matching `managed/devops/bin/yb_platform_backup.sh`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```c
+// Verified production-grade fix pattern:
+  # Without -d, psql connects to a database named after the user, which an external
+  # Postgres may not have. The platform DB always exists by the time this runs.
+  local probe_cmd="${probe} -h ${db_host} -p ${db_port} -U ${db_username} \
+-d ${PLATFORM_DB_NAME} -tAc \"SELECT 1 FROM pg_database WHERE datname='${db_name}'\""
+```
+
+**NEGATIVE CONSTRAINT**:
+```c
+// Induced defect failure mode:
+  local probe_cmd="${probe} -h ${db_host} -p ${db_port} -U ${db_username} -tAc \
+\"SELECT 1 FROM pg_database WHERE datname='${db_name}'\""
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `bfaf8c7a` are properly handled with clean fallback behavior.

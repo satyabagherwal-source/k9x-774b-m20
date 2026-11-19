@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-SPN2",
-    "timestamp": "2026-11-17T16:30:55.694Z",
-    "repository": "i18next/react-i18next",
-    "learningId": "learn-github-i18next-react-i18next",
-    "contentHash": "877f3bf2b025a07153ee38b6b32872e5dc42f4a9b5c6ef1eaeec89b1fbe69330",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-SX5T",
-    "timestamp": "2026-11-17T16:31:05.441Z",
-    "repository": "milvus-io/milvus",
-    "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "ac4a63a0790cea296481eab66498636c57b4eec4cc207f79de4e2680a7e21d66",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-2MLG",
-    "timestamp": "2026-11-17T16:38:38.308Z",
-    "repository": "XHToken/Spark-X2.6-4B",
-    "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
-    "contentHash": "f0583beaa60d15cd4df12f938342e9318824c72373f49a586cb6965111d89d67",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-2OKS",
     "timestamp": "2026-11-17T16:38:40.876Z",
     "repository": "restatedev/restate",
@@ -7490,6 +7445,51 @@
     "repository": "nezhahq/nezha",
     "learningId": "learn-github-nezhahq-nezha",
     "contentHash": "c3c62b0885ed92beab3d1adc404fb934156a76623ba412d4bb12dc65174b4a90",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-39KN",
+    "timestamp": "2026-11-19T01:18:41.207Z",
+    "repository": "openai-community/gpt2",
+    "learningId": "learn-huggingface-openai-community-gpt2",
+    "contentHash": "c24de977eb8d4c67db9c660691b73612f45c961b4f6486c8db8c0092567b91e1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-3AS1",
+    "timestamp": "2026-11-19T01:18:42.769Z",
+    "repository": "u-root/u-root",
+    "learningId": "learn-github-u-root-u-root",
+    "contentHash": "9988f43cd0a1541d03eb4372ec94d94dbe1f3354924f84ba0af973e81f2ed15d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-3LCH",
+    "timestamp": "2026-11-19T01:18:56.465Z",
+    "repository": "yugabyte/yugabyte-db",
+    "learningId": "learn-github-yugabyte-yugabyte-db",
+    "contentHash": "96e0a339bd639f08bb88d1bcf399f6cd23fc8674df202194ff0e6f7c070072b5",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
