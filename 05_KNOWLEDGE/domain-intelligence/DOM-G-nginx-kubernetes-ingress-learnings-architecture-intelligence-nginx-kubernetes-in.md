@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T10:08:57.566Z",
+  "timestamp": "2026-11-19T08:37:49.074Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nginx-kubernetes-ingress-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nginx-kubernetes-ingress-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T10:08:57.566Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T08:37:49.074Z`  
 > **Learning ID**: `LEARN-EVO-nginx-kubernetes-ingress-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nginx-kubernetes-ingress-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source**: github ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
-> **Source Version**: `10b9eec3`  
+> **Source Version**: `3077890f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T10:08:46.807Z  
+> **Timestamp**: 2026-11-19T08:37:43.404Z  
 > **Learning ID**: `learn-github-nginx-kubernetes-ingress`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nginx/kubernetes-ingress](https://github.com/nginx/kubernetes-ingress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T10:08:46.802Z  
+> **Harvest Timestamp**: 2026-11-19T08:27:41.799Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: NGINX and  NGINX Plus Ingress Controllers for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: pyproject.toml, go.mod, README.md
-- **Stars / Engagement**: 5098 stars
+- **Stars / Engagement**: 5101 stars
 
 ---
 
@@ -1432,11 +1432,16 @@ func main() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11346** (2026-11-11): **Merge nginx-agent.conf labels into `--labels` for NGINX Agent 3**
-  *Symptoms*: ### Proposed changes  With NGINX Agent 3, NIC always starts the agent with `--labels=<NIC metadata>`. The agent treats that flag as the complete set of labels, so any `labels:` block in `nginx-agent.conf` (for example `display-name`) is silently ignored and never reaches NGINX One Console.  NIC now reads `labels` from `/etc/nginx-agent/nginx-agent.conf` and adds them to `--labels` after the NIC metadata labels, sorted by key:  - NIC metadata labels (`product-*`, `cluster-id`, `installation-*`, `control-*`) cannot be overridden. - Labels the agent would reject are skipped and logged in a single warning. Keys and values are checked against the agent's own label pattern (`^[a-zA-Z0-9]([a-zA-Z0-9-_.]{0,254}[a-zA-Z0-9])?$`). This also stops a `,`, `=` or `"` in a label from breaking `--labels` and preventing the agent from starting. - Number and boolean values (for example `port: 8080`) are kept as their literal text instead of causing every label to be dropped. - A missing config file is not an error. A file that can't be parsed logs a warning, and the agent starts with the NIC metadata labels only.  Stacked: the Helm value `nginxAgent.labels`   ### Linked issue   Closes #11345   <!-- Link the issue here, not in the PR title. External contributors: the issue must be accepted first, see "Open a Pull Request" in CONTRIBUTING.md. -->  ### How I tested  - `make test`: new table-driven tests in `internal/nginx/manager_test.go`:   - `TestExtractAgentConfigLabels`
+- **Issue #11469** (2026-11-18): **sync: security hardening and minor bug fixes for release-5.8**
+  *Symptoms*: This commit applies general security hardening updates and minor stability improvements to the codebase.
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11469?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 72.13%. Comparing base ([`9fc7ef0`](https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/9fc7ef0851f3b38dd5dbd7bc07efa725ed7b8a44?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx)) to head ([`3beed16`](https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/3beed168c6bad2ff638514429e67ab54f7fe847c?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx)).  <details><summary>Additional details and impacted files</summary>    ```diff @@             Coverage Diff              @@ ##           release-5.8   #11469   +/-   ##
 
-- **Issue #11345** (2026-11-12): **[Bug]: Labels in nginx-agent.conf are ignored with NGINX Agent 3, and the Helm chart can't set them**
-  *Symptoms*: ### AI agents and bots  - [ ] I am an AI agent or bot opening this issue  ### Version  edge  ### What Kubernetes platforms are you running on?  GKE Google Cloud  ### Steps to reproduce  1. Install NIC with NGINX Agent v3 connected to NGINX One Console 2. Edit the `<release name>-agent-config` ConfigMap and add a top-level `labels` block to `nginx-agent.conf`: ```        labels:          display-name: my-nginx-instance ```  4. . Restart the NIC pod. 4. Check the instance in NGINX One Console and NIC logs  ### Expected behaviour  The instance in NGINX One Console has `display-name=my-nginx-instance` as well as the NIC metadata labels.  Helm users can set custom labels from `values.yaml` without editing the generated ConfigMap.  ### Actual behaviour  The custom label never appears in NGINX One Console, and no error is logged.  NIC starts the agent with `--labels=product-type=...,product-version=...,cluster-id=...,installation-*=...,control-*=...`. With Agent v3, the `--labels` flag takes priority over the `labels` key in `nginx-agent.conf`, so labels set in the config file are discarded.  The Helm chart has no value for labels, so a manual ConfigMap edit is the only option, and that doesn't work because of the problem above.  ### Possible solutions  1. NIC reads `labels` from `/etc/nginx-agent/nginx-agent.conf` and adds them to `--labels` after the NIC metadata labels. Metadata labels can't be overridden. Keys and values that don't match the agent's label pattern `^[a-zA-Z0-9]([
+- **Issue #11468** (2026-11-18): **sync: security hardening and minor bug fixes for main**
+  *Symptoms*: This commit applies general security hardening updates and minor stability improvements to the codebase.
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11468?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 72.14%. Comparing base ([`c7605b5`](https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/c7605b57dad390009f3e995ddcba14534b53f8b6?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx)) to head ([`d01a548`](https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/d01a548097efdfccb49a681c63860da163bfd00f?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=nginx)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main   #11468   +/-   ## =========
+  > ### Package Report  Registry `gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev` &middot; Tag `t-efde69f12dfdb97e7503e53e5b4afb72` &middot; 25 images &middot; 234 checks &middot; **all matched** &#9989;  <sub>Full reference is <code>gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev/&lt;image&gt;:t-efde69f12dfdb97e7503e53e5b4afb72&lt;variant&gt;</code>.</sub>  | Image | Variant | Base | Arch | NGINX | Agent | WAF | DoS |  | | --- | --- | --- | --- | --- | --- | --- | --- | :-: | | `nginx-ic/nginx-ingress` | &ndash; | debian | amd64, arm64 | 1.31.9-1~trixie | 3.12.4~trixie | &ndash; | &ndash; | &#9989; | | `nginx-ic/nginx-plus-ingress` | &ndash; | debian | amd64, arm64 | 37.3.0-1~trixie | 3.12.4~trixie | &ndash; | &ndash; | &#9989; | | `nginx-ic-nap/nginx-plus-ingress` | &ndash; | debian | amd64 | 37.3.0-1~trixie | 2.47.3~trixie | 37.3+5.777.3-1~trixie | &ndash; | &#9989; | | `nginx-ic-nap-v5/nginx-plus-ingress` | &ndash; | debian | amd64 | 37.3.0-1~trixie | 2.47.3~trixie | 37.3+5.777.3-1~trixie | &ndash; | &
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1453,534 +1458,393 @@ func main() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `10b9eec3` (2026-11-17)
-**Commit Message**: [ci] Phase 2 - Unifying workflow files (#11451)
+### Incident Patch 1: `4e153561` (2026-11-18)
+**Commit Message**: security hardening and minor bug fixes for main (#11468)
 
-* fix unification gate
-
-* fix gating, use new vault login action
-
-* fix gating, use new vault login action
-
-* fix gating, use new vault login action
-
-* fix gating, use new vault login action
-
-* fix gating, use new vault login action, use pkg secrets action
-
-* use ubuntu 26 as a fallback runner
-
-* 2.1 Unify build-test-image.yml: add repository gating
-
-* 2.8 Unify lint-format.yml: add repository gating, consolidate triggers
-
-* feedback: missing vault + pkg-secrets action calls
-
-* more feedback: rename setup-ci-vars to resolve-test-runner
-
-* use vars.RELEASE_RUNNER
-
----------
-
-Co-authored-by: Gabor Javorszky <[REDACTED_EMAIL]>
-
-**File**: `.github/actions/resolve-test-runner/action.yml` (renamed, +5/-5)
+**File**: `.github/scripts/tech-specs.json` (modified, +17/-4)
 ```diff
-@@ -1,4 +1,4 @@
--name: Setup CI vars
-+name: Resolve test runner
- description: Resolve the test-runner image and runner label in one step
- 
- # Checkout: the image tag hashes tests/requirements.txt and tests/Dockerfile from the workspace,
-@@ -16,12 +16,12 @@ description: Resolve the test-runner image and runner label in one step
- #     setup:
- #       runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}  # resolves its own runner
- #       outputs:
--#         runner: ${{ steps.ci-vars.outputs.runner }}
--#         test_runner_image: ${{ steps.ci-vars.outputs.test_runner_image }}
-+#         runner: ${{ steps.test-runner.outputs.runner }}
-+#         test_runner_image: ${{ steps.test-runner.outputs.test_runner_image }}
- #       steps:
- #         - uses: actions/checkout@...
--#         - id: ci-vars
--#           uses: ./.github/actions/setup-ci-vars
-+#         - id: test-runner
-+#           uses: ./.github/actions/resolve-test-runner
- #           with:
- #             runner: ${{ vars.RUNNER }}
- #             test-runner-registry: ${{ vars.TEST_RUNNER_REGISTRY }}
+@@ -2,9 +2,16 @@
+   "nic_k8s": {
+     "shortcode_row": {
+       "k8s_versions": "1.30 - 1.37",
+-      "nginx_version": "1.31.8 / R37.2.0.1"
++      "nginx_version": "1.31.9 / R37.3.0.1"
+     },
+     "rows": [
++      {
++        "nic_version": "5.7.1",
++        "k8s_versions": "1.30 - 1.37",
++        "helm_version": "2.8.1",
++        "operator_version": "3.8.1",
++        "nginx_version": "1.31.8 / R37.2.0.1"
++      },
+       {
+         "nic_version": "5.6.3",
+         "k8s_versions": "1.30 - 1.37",
+@@ -72,11 +79,17 @@
+   },
+   "nic_nap": {
+     "shortcode_row": {
+-      "nap_waf_prefix": "37.2",
+-      "compiler_version": "5.777.0",
+-      "waf_release_version": "5.16.1"
++      "nap_waf_prefix": "37.3",
++      "compiler_version": "5.777.3",
++      "waf_release_version": "5.16.2"
+     },
+     "rows": [
++      {
++        "nic_version": "5.7.1",
++        "nap_waf_version": "37.2+5.777.0",
++        "config_mgr_version": "5.16.1",
++        "enforcer_version": "5.16.1"
++      },
+       {
+         "nic_version": "5.6.3",
+         "nap_waf_version": "37.1+5.715.0",
 ```
 
-**File**: `.github/workflows/build-base-images.yml` (modified, +43/-91)
+**File**: `.github/workflows/regression.yml` (modified, +1/-1)
 ```diff
-@@ -20,8 +20,8 @@ permissions:
- jobs:
-   checks:
-     name: Checks and variables
--    if: github.repository == 'nginx/kubernetes-ingress'
--    runs-on: ubuntu-26.04
-+    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal') && (github.event_name != 'schedule' || github.repository == 'nginx/kubernetes-ingress')
-+    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
-     outputs:
-       docker_md5: ${{ steps.vars.outputs.docker_md5 }}
-       ic_version: ${{ steps.vars.outputs.ic_version }}
-@@ -45,8 +45,8 @@ jobs:
+@@ -348,7 +348,7 @@ jobs:
  
-   build-oss:
-     name: Build OSS base images
--    if: github.repository == 'nginx/kubernetes-ingress'
--    runs-on: ubuntu-26.04
-+    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
-+    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
-     needs: checks
-     permissions:
-       contents: read
-@@ -67,29 +67,21 @@ jobs:
-         with:
-           platforms: arm64
- 
--      - name: Setup secrets
--        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
-+      - name: Login to GCR
-+        uses: ./.github/actions/vault-gcr-login
-         with:
--          client-id: "${{ secrets.AZURE_VAULT_CLIENT_ID }}"
--          tenant-id: "${{ secrets.AZURE_VAULT_TENANT_ID }}"
-+          client-id: ${{ secrets.AZURE_VAULT_CLIENT_ID }}
-+          tenant-id: ${{ secrets.AZURE_VAULT_TENANT_ID }}
-           vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
--          secret-names: "gcr-workload-identity, kic-pipeline-gcr-sa"
--          env-names: "GCR_WORKLOAD_ID, GCR_SERVICE_ACCOUNT"
--
--      - name: Authenticate to Google Cloud
--        id: auth
--        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
--        with:
--          token_format: access_token
--          workload_identity_provider: ${{ env.GCR_WORKLOAD_ID }}
--          service_account: ${{ env.GCR_SERVICE_ACCOUNT }}
- 
--      - name: Login to GCR
--        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
-+      # Only staging (pkgs-test.nginx.com) needs the certificate for OSS packages.
-+      - name: Setup NGINX package secrets
-+        if: ${{ vars.OSS_REPO != 'packages.nginx.org' }}
-+        uses: ./.github/actions/nginx-pkg-secrets
-         with:
--          registry: gcr.io
--          username: oauth2accesstoken
--          password: ${{ steps.auth.outputs.access_token }}
-+          client-id: ${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}
-+          tenant-id: ${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}
-+          vault-name: ${{ secrets.COMMON_KEYVAULT_NAME }}
- 
-       - name: Docker meta
-         id: meta
-@@ -118,11 +110,19 @@ jobs:
-             BUILD_OS=${{ matrix.build_os }}
-             IC_VERSION=${{ needs.checks.outputs.ic_version }}
-             OSS_PACKAGE_REPO=${{ vars.OSS_REPO }}
-+          secret-files: |
-+            ${{ vars.OSS_REPO != 'packages.nginx.org' && 'nginx-repo.crt=nginx-repo.crt' || '' }}
-+            ${{ vars.OSS_REPO != 'packages.nginx.org' && 'nginx-repo.key=nginx-repo.key' || '' }}
-+
-+      - name: Clean up secrets
-+        run: |
-+          rm -f nginx-repo.crt nginx-repo.key
-+        if: always()
- 
-   build-plus:
-     name: Build Plus base images
--    if: github.repository == 'nginx/kubernetes-ingress'
--    runs-on: ubuntu-26.04
-+    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
-+    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
-     needs: checks
-     permissions:
-       contents: read
-@@ -135,28 +135,19 @@ jobs:
-       - name: Checkout Repository
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
- 
--      - name: Setup NIC secrets
--        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
-+      - name: Login to GCR
-+        uses: ./.github/actions/vault-gcr-login
-         with:
--          client-id: "${{ secrets.AZURE_VAULT_CLIENT_ID }}"
--          tenant-id: "${{ secrets.AZURE_VAULT_TENANT_ID }}"
-+          client-id: ${{ secrets.AZURE_VAULT_CLIENT_ID }}
-+          tenant-id: ${{ secrets.AZURE_VAULT_TENANT_ID }}
-           vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
--          secret-names: "gcr-workload-identity, kic-pipeline-gcr-sa"
--          env-names: "GCR_WORKLOAD_ID, GCR_SERVICE_ACCOUNT"
- 
--      - name: Setup Common secrets
--        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
-+      - name: Setup NGINX package secrets
-+        uses: ./.github/actions/nginx-pkg-secrets
-         with:
--          client-id: "${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}"
--          tenant-id: "${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}"
-+          client-id: ${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}
-+          tenant-id: ${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}
-           vault-name: ${{ secrets.COMMON_KEYVAU
-```
-
-**File**: `.github/workflows/build-single-image.yml` (modified, +10/-34)
-```diff
-@@ -62,8 +62,8 @@ jobs:
-     permissions:
-       contents: read # for docker/build-push-action to read repo content
-       id-token: write # for login to GCP
--    if: github.repository == 'nginx/kubernetes-ingress'
--    runs-on: ubuntu-26.04
-+    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
-+    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
-     steps:
-       - name: Checkout Repository
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -85,43 +85,19 @@ jobs:
-           echo "ic_version=${IC_VERSION}" >> $GITHUB_OUTPUT
-           cat $GITHUB_OUTPUT
- 
--      - name: Setup NIC secrets
--        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
-+      - name: Login to GCR
-+        uses: ./.github/actions/vault-gcr-login
-         with:
--          client-id: "${{ secrets.AZURE_VAULT_CLIENT_ID }}"
--          tenant-id: "${{ secrets.AZURE_VAULT_TENANT_ID }}"
-+          client-id: ${{ secrets.AZURE_VAULT_CLIENT_ID }}
-+          tenant-id: ${{ secrets.AZURE_VAULT_TENANT_ID }}
-           vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
--          secret-names: "gcr-workload-identity, kic-pipeline-gcr-sa"
--          env-names: "GCR_WORKLOAD_ID, GCR_SERVICE_ACCOUNT"
- 
--      - name: Setup Common secrets
--        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
-+      - name: Setup NGINX package secrets
-+        uses: ./.github/actions/nginx-pkg-secrets
-         with:
--          client-id: "${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}"
--          tenant-id: "${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}"
-+          client-id: ${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}
-+          tenant-id: ${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}
-           vault-name: ${{ secrets.COMMON_KEYVAULT_NAME }}
--          secret-names: "nginx-pkg-certificate, nginx-pkg-key"
--          env-names: "PLUS_CERT, PLUS_KEY"
--
--      - name: Write secrets
--        run: |
--          echo "$PLUS_CERT" > nginx-repo.crt
--          echo "$PLUS_KEY" > nginx-repo.key
--
--      - name: Authenticate to Google Cloud
--        id: auth
--        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
--        with:
--          token_format: access_token
--          workload_identity_provider: ${{ env.GCR_WORKLOAD_ID }}
--          service_account: ${{ env.GCR_SERVICE_ACCOUNT }}
--
--      - name: Login to GCR
--        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
--        with:
--          registry: gcr.io
--          username: oauth2accesstoken
--          password: ${{ steps.auth.outputs.access_token }}
- 
-       - name: Fetch Cached Binary Artifacts
-         id: binary-cache
-```
-
-**File**: `.github/workflows/build-test-image.yml` (modified, +11/-27)
-```diff
-@@ -24,8 +24,8 @@ permissions:
- jobs:
-   build:
-     name: Build test image
--    if: github.repository == 'nginx/kubernetes-ingress'
--    runs-on: ubuntu-26.04
-+    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
-+    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
-     permissions:
-       contents: read
-       id-token: write
-@@ -37,31 +37,17 @@ jobs:
-       - name: Docker Buildx
-         uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
- 
--      - name: Setup secrets
--        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
--        with:
--          client-id: "${{ secrets.AZURE_VAULT_CLIENT_ID }}"
--          tenant-id: "${{ secrets.AZURE_VAULT_TENANT_ID }}"
--          vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
--          secret-names: "gcr-workload-identity, kic-pipeline-gcr-sa"
--          env-names: "GCR_WORKLOAD_ID, GCR_SERVICE_ACCOUNT"
--
--      - name: Authenticate to Google Cloud
--        id: auth
--        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
--        with:
--          token_format: access_token
--          workload_identity_provider: ${{ env.GCR_WORKLOAD_ID }}
--          service_account: ${{ env.GCR_SERVICE_ACCOUNT }}
--
-+      # Internal pushes the test-runner image to GCR (vars.TEST_RUNNER_REGISTRY); public pushes to GHCR only.
-       - name: Login to GCR
--        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
-+        if: ${{ github.repository == 'nginx/kubernetes-ingress-internal' }}
-+        uses: ./.github/actions/vault-gcr-login
-         with:
--          registry: gcr.io
--          username: oauth2accesstoken
--          password: ${{ steps.auth.outputs.access_token }}
-+          client-id: ${{ secrets.AZURE_VAULT_CLIENT_ID }}
-+          tenant-id: ${{ secrets.AZURE_VAULT_TENANT_ID }}
-+          vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
- 
-       - name: Login to GHCR
-+        if: ${{ github.repository == 'nginx/kubernetes-ingress' }}
-         uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
-         with:
-           registry: ghcr.io
-@@ -75,9 +61,7 @@ jobs:
-           context: "."
-           cache-from: type=gha,scope=test-runner
-           tags: |
--            ghcr.io/nginx/kubernetes-ingress/test-runner:${{ hashFiles('./tests/requirements.txt', './tests/Dockerfile') }}
--            ghcr.io/nginx/kubernetes-ingress/test-runner:latest
--            gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev/test-runner:${{ hashFiles('./tests/requirements.txt', './tests/Dockerfile') }}
--            gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/dev/test-runner:latest
-+            ${{ vars.TEST_RUNNER_REGISTRY || 'ghcr.io/nginx/kubernetes-ingress' }}/test-runner:${{ hashFiles('./tests/requirements.txt', './tests/Dockerfile') || 'latest' }}
-+            ${{ vars.TEST_RUNNER_REGISTRY || 'ghcr.io/nginx/kubernetes-ingress' }}/test-runner:latest
-           pull: true
-           push: true
-```
-
-**File**: `.github/workflows/build-ubi-dependency.yml` (modified, +5/-9)
-```diff
-@@ -23,7 +23,7 @@ jobs:
-   build-binaries:
-     name: Build Binary Container Image
-     if: github.repository == 'nginx/kubernetes-ingress'
--    runs-on: ubuntu-26.04
-+    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
-     permissions:
-       packages: write
-       contents: read
-@@ -45,20 +45,16 @@ jobs:
-           secret-names: "rhel-creds"
-           env-names: "RHEL_CREDS"
- 
--      - name: Setup Common secrets
--        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
-+      - name: Setup NGINX package secrets
-+        uses: ./.github/actions/nginx-pkg-secrets
-         with:
--          client-id: "${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}"
--          tenant-id: "${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}"
-+          client-id: ${{ secrets.AZURE_COMMON_VAULT_CLIENT_ID }}
-+          tenant-id: ${{ secrets.AZURE_COMMON_VAULT_TENANT_ID }}
-           vault-name: ${{ secrets.COMMON_KEYVAULT_NAME }}
--          secret-names: "nginx-pkg-certificate, nginx-pkg-key"
--          env-names: "PLUS_CERT, PLUS_KEY"
- 
-       - name: Write secrets
+       - name: Generate WAF v5 tgz from JSON
          run: |
-           echo "$RHEL_CREDS" > rhel_license
--          echo "$PLUS_CERT" > nginx-repo.crt
--          echo "$PLUS_KEY" > nginx-repo.key
+-          docker run --rm --user root -v /var/run/docker.sock:/var/run/docker.sock -v ${{ github.workspace }}/tests/data/ap-waf-v5:/data gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/nap/waf-compiler:5.16.1 -p /data/wafv5.json -o /data/wafv5.tgz
++          docker run --rm --user root -v /var/run/docker.sock:/var/run/docker.sock -v ${{ github.workspace }}/tests/data/ap-waf-v5:/data gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/nap/waf-compiler:5.16.2 -p /data/wafv5.json -o /data/wafv5.tgz
+         if: ${{ contains(matrix.images.image, 'nap-v5')}}
  
-       - name: Setup QEMU
-         uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4.4.0
+       - name: Generate secrets for tests
 ```
 
-**File**: `.github/workflows/lint-format.yml` (modified, +16/-12)
+**File**: `.github/workflows/setup-smoke.yml` (modified, +1/-1)
 ```diff
-@@ -4,6 +4,10 @@ on:
-   pull_request:
-     branches:
-       - main
-+      - embargo/security-fixes*
-+      - embargo/security-fixes-work/**
-+    paths-ignore:
-+      - .github/permissions-tracking.md
-   merge_group:
+@@ -198,7 +198,7 @@ jobs:
  
- defaults:
-@@ -21,8 +25,8 @@ jobs:
- 
-   format:
-     name: Format
--    if: github.repository == 'nginx/kubernetes-ingress'
--    runs-on: ubuntu-26.04
-+    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
-+    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
-     steps:
-       - name: Checkout Repository
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -39,8 +43,8 @@ jobs:
- 
-   lint:
-     name: Lint
--    if: github.repository == 'nginx/kubernetes-ingress'
--    runs-on: ubuntu-26.04
-+    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
-+    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
-     permissions:
-       contents: read
-       pull-requests: read # for golangci-lint-action
-@@ -67,8 +71,8 @@ jobs:
- 
-   python-unit:
-     name: Python Test Utils Unit Tests
--    if: github.repository == 'nginx/kubernetes-ingress'
--    runs-on: ubuntu-26.04
-+    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
-+    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
-     steps:
-       - name: Checkout Repository
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -87,8 +91,8 @@ jobs:
- 
-   actionlint:
-     name: Actionlint
--    if: github.repository == 'nginx/kubernetes-ingress'
--    runs-on: ubuntu-26.04
-+    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
-+    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
-     steps:
-       - name: Checkout Repository
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -104,8 +108,8 @@ jobs:
- 
-   chart-lint:
-     name: Chart Lint
--    if: github.repository == 'nginx/kubernetes-ingress'
--    runs-on: ubuntu-26.04
-+    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
-+    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
-     steps:
-       - name: Checkout Repository
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-@@ -120,8 +124,8 @@ jobs:
- 
-   markdown-lint:
-     name: Markdown Lint
--    if: github.repository == 'nginx/kubernetes-ingress'
--    runs-on: ubuntu-26.04
-+    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
-+    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
-     steps:
-       - name: Checkout Repository
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-```
-
-**File**: `.github/workflows/pull-nap-images.yml` (modified, +6/-23)
-```diff
-@@ -30,35 +30,18 @@ jobs:
-     permissions:
-       contents: read
-       id-token: write
--    if: github.repository == 'nginx/kubernetes-ingress'
--    runs-on: ubuntu-24.04-amd64
-+    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
-+    runs-on: ${{ vars.RELEASE_RUNNER || 'ubuntu-24.04-amd64' }}
-     steps:
-       - name: Checkout Repository
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
- 
--      - name: Setup NIC secrets
--        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
--        with:
--          client-id: "${{ secrets.AZURE_VAULT_CLIENT_ID }}"
--          tenant-id: "${{ secrets.AZURE_VAULT_TENANT_ID }}"
--          vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
--          secret-names: "gcr-workload-identity, kic-pipeline-gcr-sa"
--          env-names: "GCR_WORKLOAD_ID, GCR_SERVICE_ACCOUNT"
--
--      - name: Authenticate to Google Cloud
--        id: gcr-auth
--        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
--        with:
--          token_format: access_token
--          workload_identity_provider: ${{ env.GCR_WORKLOAD_ID }}
--          service_account: ${{ env.GCR_SERVICE_ACCOUNT }}
--
-       - name: Login to GCR
--        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
-+        uses: ./.github/actions/vault-gcr-login
-         with:
--          registry: gcr.io
--          username: oauth2accesstoken
--          password: ${{ steps.gcr-auth.outputs.access_token }}
-+          client-id: ${{ secrets.AZURE_VAULT_CLIENT_ID }}
-+          tenant-id: ${{ secrets.AZURE_VAULT_TENANT_ID }}
-+          vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
- 
-       - name: Get Id Token
-         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
-```
-
-**File**: `.github/workflows/retag-images.yml` (modified, +6/-23)
-```diff
-@@ -34,38 +34,21 @@ permissions:
- jobs:
-   copy-to-gcr-dev-registry:
-     name: Re-tag images in GCR Dev Registry
--    if: github.repository == 'nginx/kubernetes-ingress'
--    runs-on: ubuntu-26.04
-+    if: (github.repository == 'nginx/kubernetes-ingress' || github.repository == 'nginx/kubernetes-ingress-internal')
-+    runs-on: ${{ vars.RUNNER || 'ubuntu-26.04' }}
-     permissions:
-       contents: read
-       id-token: write
-     steps:
-       - name: Checkout Repository
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
- 
--      - name: Setup secrets
--        uses: nginx/ci-self-hosted/.github/actions/get-from-vault@5c3e1f8b51f66a851fdba80f70e19cf966199730
--        with:
--          client-id: "${{ secrets.AZURE_VAULT_CLIENT_ID }}"
--          tenant-id: "${{ secrets.AZURE_VAULT_TENANT_ID }}"
--          vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
--          secret-names: "gcr-workload-identity, kic-pipeline-gcr-sa"
--          env-names: "GCR_WORKLOAD_ID, GCR_SERVICE_ACCOUNT"
--
--      - name: Authenticate to Google Cloud
--        id: gcr-auth
--        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
--        with:
--          token_format: access_token
--          workload_identity_provider: ${{ env.GCR_WORKLOAD_ID }}
--          service_account: ${{ env.GCR_SERVICE_ACCOUNT }}
--
-       - name: Login to GCR
--        uses: docker/login-action@8aa5831fb8d48d8f76594c7ddde61ae58019f550 # v4.8.0
-+        uses: ./.github/actions/vault-gcr-login
-         with:
--          registry: gcr.io
--          username: oauth2accesstoken
--          password: ${{ steps.gcr-auth.outputs.access_token }}
-+          client-id: ${{ secrets.AZURE_VAULT_CLIENT_ID }}
-+          tenant-id: ${{ secrets.AZURE_VAULT_TENANT_ID }}
-+          vault-name: ${{ secrets.NIC_KEYVAULT_NAME }}
- 
-       - name: Retag images
+       - name: Generate WAF v5 tgz from JSON
          run: |
+-          docker run --rm --user root -v /var/run/docker.sock:/var/run/docker.sock -v ${{ github.workspace }}/tests/data/ap-waf-v5:/data gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/nap/waf-compiler:5.16.1 -p /data/wafv5.json -o /data/wafv5.tgz
++          docker run --rm --user root -v /var/run/docker.sock:/var/run/docker.sock -v ${{ github.workspace }}/tests/data/ap-waf-v5:/data gcr.io/f5-gcs-7899-ptg-ingrss-ctlr/nap/waf-compiler:5.16.2 -p /data/wafv5.json -o /data/wafv5.tgz
+         if: ${{ contains(inputs.image, 'nap-v5')}}
+ 
+       - name: Run Smoke Tests
+```
+
+**File**: `Makefile` (modified, +4/-4)
+```diff
+@@ -11,12 +11,12 @@ WAF_REPO					  ?= "pkgs.nginx.com" ## The package repo to install nginx app prot
+ DOS_REPO					  ?= "pkgs.nginx.com" ## The package repo to install nginx app protect dos from
+ 
+ # renovate: datasource=docker depName=nginx/nginx
+-NGINX_OSS_VERSION             ?= 1.31.8
+-NGINX_PLUS_VERSION            ?= R37.2
++NGINX_OSS_VERSION             ?= 1.31.9
++NGINX_PLUS_VERSION            ?= R37.3
+ 
+-NAP_WAF_VERSION               ?= 37.2+5.777
++NAP_WAF_VERSION               ?= 37.3+5.777
+ NAP_WAF_COMMON_VERSION        ?= 11.869
+-NAP_WAF_PLUGIN_VERSION        ?= 6.32
++NAP_WAF_PLUGIN_VERSION        ?= 6.34
+ NAP_WAF_IPI_VERSION           ?= 1.71
+ 
+ AGENT_V2_VERSION              ?= 2
+```
+
+**File**: `build/Dockerfile` (modified, +4/-4)
+```diff
+@@ -2,11 +2,11 @@
+ ARG BUILD_OS=debian
+ 
+ # renovate: datasource=docker depName=nginx/nginx
+-ARG NGINX_OSS_VERSION=1.31.8
+-ARG NGINX_PLUS_VERSION=R37.2
+-ARG NAP_WAF_VERSION=37.2+5.777
++ARG NGINX_OSS_VERSION=1.31.9
++ARG NGINX_PLUS_VERSION=R37.3
++ARG NAP_WAF_VERSION=37.3+5.777
+ ARG NAP_WAF_COMMON_VERSION=11.869
+-ARG NAP_WAF_PLUGIN_VERSION=6.32
++ARG NAP_WAF_PLUGIN_VERSION=6.34
+ ARG NAP_WAF_IPI_VERSION=1.71
+ ARG AGENT_V3_VERSION=3
+ ARG AGENT_V2_VERSION=2
+```
+
+**File**: `charts/nginx-ingress/values.schema.json` (modified, +15/-15)
+```diff
+@@ -397,10 +397,10 @@
+                     },
+                     "tag": {
+                       "type": "string",
+-                      "default": "5.16.1",
++                      "default": "5.16.2",
+                       "title": "The tag of the  App Protect WAF v5 Enforcer image",
+                       "examples": [
+-                        "5.16.1"
++                        "5.16.2"
+                       ]
+                     },
+                     "digest": {
+@@ -436,7 +436,7 @@
+                   "examples": [
+                     {
+                       "repository": "private-registry.nginx.com/nap/waf-enforcer",
+-                      "tag": "5.16.1",
++                      "tag": "5.16.2",
+                       "pullPolicy": "IfNotPresent"
+                     }
+                   ]
+@@ -474,10 +474,10 @@
+                     },
+                     "tag": {
+                       "type": "string",
+-                      "default": "5.16.1",
++                      "default": "5.16.2",
+                       "title": "The tag of the  App Protect WAF v5 Config Manager image",
+                       "examples": [
+-                        "5.16.1"
++                        "5.16.2"
+                       ]
+                     },
+                     "digest": {
+@@ -513,7 +513,7 @@
+                   "examples": [
+                     {
+                       "repository": "private-registry.nginx.com/nap/waf-config-mgr",
+-                      "tag": "5.16.1",
++                      "tag": "5.16.2",
+                       "pullPolicy": "IfNotPresent"
+                     }
+                   ]
+@@ -570,10 +570,10 @@
+                     },
+                     "tag": {
+                       "type": "string",
+-                      "default": "5.16.1",
++                      "default": "5.16.2",
+                       "title": "The tag of the App Protect WAF v5 IP Intelligence image",
+                       "examples": [
+-                        "5.16.1"
++                        "5.16.2"
+                       ]
+                     },
+                     "digest": {
+@@ -609,7 +609,7 @@
+                   "examples": [
+                     {
+                       "repository": "private-registry.nginx.com/nap/waf-ip-intelligence",
+-                      "tag": "5.16.1",
++                      "tag": "5.16.2",
+                       "pullPolicy": "IfNotPresent"
+                     }
+                   ]
+@@ -2370,15 +2370,15 @@
+               "port": 50000,
+               "image": {
+                 "repository": "private-registry.nginx.com/nap/waf-enforcer",
+-                "tag": "5.16.1",
++                "tag": "5.16.2",
+                 "pullPolicy": "IfNotPresent"
+               },
+               "securityContext": {}
+             },
+             "configManager": {
+               "image": {
+                 "repository": "private-registry.nginx.com/nap/waf-config-mgr",
+-                "tag": "5.16.1",
++                "tag": "5.16.2",
+                 "pullPolicy": "IfNotPresent"
+               },
+               "securityContext": {
+@@ -2396,7 +2396,7 @@
+               "enable": false,
+               "image": {
+                 "repository": "private-registry.nginx.com/nap/waf-ip-intelligence",
+-                "tag": "5.16.1",
++                "tag": "5.16.2",
+                 "pullPolicy": "IfNotPresent"
+               },
+               "securityContext": {
+@@ -3017,15 +3017,15 @@
+             "port": 50000,
+             "image": {
+               "repository": "private-registry.nginx.com/nap/waf-enforcer",
+-              "tag": "5.16.1",
++              "tag": "5.16.2",
+               "pullPolicy": "IfNotPresent"
+             },
+             "securityContext": {}
+           },
+           "configManager": {
+             "image": {
+               "repository": "private-registry.nginx.com/nap/waf-config-mgr",
+-              "tag": "5.16.1",
++              "tag": "5.16.2",
+               "pullPolicy": "IfNotPresent"
+             },
+             "securityContext": {
+@@ -3043,7 +3043,7 @@
+             "enable": false,
+             "image": {
+               "repository": "private-registry.nginx.com/nap/waf-ip-intelligence",
+-              "tag": "5.16.1",
++              "tag": "5.16.2",
+               "pullPolicy": "IfNotPresent"
+             },
+             "securityContext": {
+```
+
+**File**: `charts/nginx-ingress/values.yaml` (modified, +3/-3)
+```diff
+@@ -95,7 +95,7 @@ controller:
+         repository: private-registry.nginx.com/nap/waf-enforcer
+ 
+         ## The tag of the App Protect WAF v5 Enforcer image.
+-        tag: "5.16.1"
++        tag: "5.16.2"
+         ## The digest of the App Protect WAF v5 Enforcer image.
+         ## If digest is specified it has precedence over tag and will be used instead
+         # digest: "sha256:CHANGEME"
+@@ -119,7 +119,7 @@ controller:
+         repository: private-registry.nginx.com/nap/waf-config-mgr
+ 
+         ## The tag of the App Protect WAF v5 Configuration Manager image.
+-        tag: "5.16.1"
++        tag: "5.16.2"
+         ## The digest of the App Protect WAF v5 Configuration Manager image.
+         ## If digest is specified it has precedence over tag and will be used instead
+         # digest: "sha256:CHANGEME"
+@@ -165,7 +165,7 @@ controller:
+         repository: private-registry.nginx.com/nap/waf-ip-intelligence
+ 
+         ## The tag of the App Protect WAF v5 IP Intelligence image.
+-        tag: "5.16.1"
++        tag: "5.16.2"
+         ## The digest of the App Protect WAF v5 IP Intelligence image.
+         ## If digest is specified it has precedence over tag and will be used instead
+         # digest: "sha256:CHANGEME"
+```
+
+**File**: `charts/tests/__snapshots__/helmunit_test.snap` (modified, +12/-12)
+```diff
+@@ -2360,7 +2360,7 @@ spec:
+           - -enable-telemetry-reporting=true
+           - -weight-changes-dynamic-reload=false
+       - name: waf-enforcer
+-        image: private-registry.nginx.com/nap/waf-enforcer:5.16.1
++        image: private-registry.nginx.com/nap/waf-enforcer:5.16.2
+         imagePullPolicy: "IfNotPresent"
+         env:
+           - name: ENFORCER_PORT
+@@ -2371,7 +2371,7 @@ spec:
+           - name: app-protect-bd-config
+             mountPath: /opt/app_protect/bd_config
+       - name: waf-config-mgr
+-        image: private-registry.nginx.com/nap/waf-config-mgr:5.16.1
++        image: private-registry.nginx.com/nap/waf-config-mgr:5.16.2
+         imagePullPolicy: "IfNotPresent"
+         securityContext:
+             allowPrivilegeEscalation: false
+@@ -3950,7 +3950,7 @@ spec:
+           - -enable-telemetry-reporting=true
+           - -weight-changes-dynamic-reload=false
+       - name: waf-enforcer
+-        image: my.private.reg/nap/waf-enforcer:5.16.1
++        image: my.private.reg/nap/waf-enforcer:5.16.2
+         imagePullPolicy: "IfNotPresent"
+         env:
+           - name: ENFORCER_PORT
+@@ -3963,7 +3963,7 @@ spec:
+           - name: app-protect-ipi-db
+             mountPath: /var/IpRep
+       - name: waf-config-mgr
+-        image: my.private.reg/nap/waf-config-mgr:5.16.1
++        image: my.private.reg/nap/waf-config-mgr:5.16.2
+         imagePullPolicy: "IfNotPresent"
+         securityContext:
+             allowPrivilegeEscalation: false
+@@ -3980,7 +3980,7 @@ spec:
+           - name: app-protect-bundles
+             mountPath: /etc/app_protect/bundles
+       - name: waf-ip-intelligence
+-        image: my.private.reg/nap/waf-ip-intelligence:5.16.1
++        image: my.private.reg/nap/waf-ip-intelligence:5.16.2
+         imagePullPolicy: "IfNotPresent"
+         securityContext:
+             allowPrivilegeEscalation: false
+@@ -4550,7 +4550,7 @@ spec:
+           - -agent=true
+           - -agent-instance-group=app-protect-wafv5-agentv2-nginx-ingress-controller
+       - name: waf-enforcer
+-        image: my.private.reg/nap/waf-enforcer:5.16.1
++        image: my.private.reg/nap/waf-enforcer:5.16.2
+         imagePullPolicy: "IfNotPresent"
+         env:
+           - name: ENFORCER_PORT
+@@ -4561,7 +4561,7 @@ spec:
+           - name: app-protect-bd-config
+             mountPath: /opt/app_protect/bd_config
+       - name: waf-config-mgr
+-        image: my.private.reg/nap/waf-config-mgr:5.16.1
++        image: my.private.reg/nap/waf-config-mgr:5.16.2
+         imagePullPolicy: "IfNotPresent"
+         securityContext:
+             allowPrivilegeEscalation: false
+@@ -5127,7 +5127,7 @@ spec:
+           - -weight-changes-dynamic-reload=false
+           - -agent=true
+       - name: waf-enforcer
+-        image: my.private.reg/nap/waf-enforcer:5.16.1
++        image: my.private.reg/nap/waf-enforcer:5.16.2
+         imagePullPolicy: "IfNotPresent"
+         env:
+           - name: ENFORCER_PORT
+@@ -5138,7 +5138,7 @@ spec:
+           - name: app-protect-bd-config
+             mountPath: /opt/app_protect/bd_config
+       - name: waf-config-mgr
+-        image: my.private.reg/nap/waf-config-mgr:5.16.1
++        image: my.private.reg/nap/waf-config-mgr:5.16.2
+         imagePullPolicy: "IfNotPresent"
+         securityContext:
+             allowPrivilegeEscalation: false
+@@ -5641,7 +5641,7 @@ spec:
+           - -enable-telemetry-reporting=true
+           - -weight-changes-dynamic-reload=false
+       - name: waf-enforcer
+-        image: my.private.reg/nap/waf-enforcer:5.16.1
++        image: my.private.reg/nap/waf-enforcer:5.16.2
+         imagePullPolicy: "IfNotPresent"
+         resources:
+             limits:
+@@ -5661,7 +5661,7 @@ spec:
+           - name: app-protect-ipi-db
+             mountPath: /var/IpRep
+       - name: waf-config-mgr
+-        image: my.private.reg/nap/waf-config-mgr:5.16.1
++        image: my.private.reg/nap/waf-config-mgr:5.16.2
+         imagePullPolicy: "IfNotPresent"
+         securityContext:
+             allowPrivilegeEscalation: false
+@@ -5685,7 +5685,7 @@ spec:
+           - name: app-protect-bundles
+             mountPath: /etc/app_protect/bundles
+       - name: waf-ip-intelligence
+-        image: my.private.reg/nap/waf-ip-intelligence:5.16.1
++        image: my.private.reg/nap/waf-ip-intelligence:5.16.2
+         imagePullPolicy: "IfNotPresent"
+         securityContext:
+             allowPrivilegeEscalation: false
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #11472** (2026-11-18): update main with 5.8.0 (@vepatel)
+- **PR #11469** (2026-11-18): sync: security hardening and minor bug fixes for release-5.8 (@nic-create-pr[bot])
+- **PR #11468** (2026-11-18): sync: security hardening and minor bug fixes for main (@nic-create-pr[bot])
+- **PR #11466** (closed): [ci] cherry-pick phase2 to release 5.8 (@sean-breen)
 - **PR #11451** (2026-11-17): [ci] Phase 2 - Unifying workflow files (@sean-breen)
 - **PR #11450** (2026-11-17): Update module github.com/aws/aws-sdk-go-v2/credentials to v1.21.1 (release-5.8) (@renovate[bot])
-- **PR #11449** (2026-11-17): Update balabit/syslog-ng Docker tag to v4.13.0 (main) (@renovate[bot])
-- **PR #11448** (2026-11-17): Update module github.com/aws/aws-sdk-go-v2/credentials to v1.21.1 (main) (@renovate[bot])
-- **PR #11447** (2026-11-16): renovate config for makefile ubi10 (@nic-create-pr[bot])
-- **PR #11446** (2026-11-16): renovate config for makefile ubi10 (@vepatel)
 
 ---
 
@@ -2000,39 +1864,50 @@ Co-authored-by: Gabor Javorszky <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [ci] Phase 2 - Unifying workflow files
+## X. security hardening and minor bug fixes for main
 
 **RULE**:
-When implementing operations in `.github/actions/resolve-test-runner/action.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/scripts/tech-specs.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nginx/kubernetes-ingress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `10b9eec3`: [ci] Phase 2 - Unifying workflow files. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4e153561`: security hardening and minor bug fixes for main. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/actions/resolve-test-runner/action.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/tech-specs.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-name: Resolve test runner
-#         runner: ${{ steps.test-runner.outputs.runner }}
-#         test_runner_image: ${{ steps.test-runner.outputs.test_runner_image }}
-#         - id: test-runner
-#           uses: ./.github/actions/resolve-test-runner
+      "nginx_version": "1.31.9 / R37.3.0.1"
+      {
+        "nic_version": "5.7.1",
+        "k8s_versions": "1.30 - 1.37",
+        "helm_version": "2.8.1",
+        "operator_version": "3.8.1",
+        "nginx_version": "1.31.8 / R37.2.0.1"
+      },
+      "nap_waf_prefix": "37.3",
+      "compiler_version": "5.777.3",
+      "waf_release_version": "5.16.2"
+      {
+        "nic_version": "5.7.1",
+        "nap_waf_version": "37.2+5.777.0",
+        "config_mgr_version": "5.16.1",
+        "enforcer_version": "5.16.1"
+      },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-name: Setup CI vars
-#         runner: ${{ steps.ci-vars.outputs.runner }}
-#         test_runner_image: ${{ steps.ci-vars.outputs.test_runner_image }}
-#         - id: ci-vars
-#           uses: ./.github/actions/setup-ci-vars
+      "nginx_version": "1.31.8 / R37.2.0.1"
+      "nap_waf_prefix": "37.2",
+      "compiler_version": "5.777.0",
+      "waf_release_version": "5.16.1"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `10b9eec3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4e153561` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

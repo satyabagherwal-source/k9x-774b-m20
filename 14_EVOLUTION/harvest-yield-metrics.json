@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T08:08:45.577Z",
-  "total_cycles_completed": 10733,
-  "total_learnings_persisted": 10733,
-  "total_rules_promoted": 10127,
+  "last_updated": "2026-11-19T08:37:44.624Z",
+  "total_cycles_completed": 10736,
+  "total_learnings_persisted": 10736,
+  "total_rules_promoted": 10129,
   "history": [
-    {
-      "timestamp": "2026-11-18T14:48:38.348Z",
-      "repository": "invertase/react-native-firebase",
-      "learningId": "learn-github-invertase-react-native-firebase",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T14:48:43.007Z",
-      "repository": "nolabs-ai/nono",
-      "learningId": "learn-github-nolabs-ai-nono",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T14:56:51.498Z",
-      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-      "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T14:57:03.938Z",
       "repository": "karmada-io/karmada",
@@ -1403,6 +1382,27 @@
       "repository": "volcengine/OpenViking",
       "learningId": "learn-github-volcengine-openviking",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T08:28:38.994Z",
+      "repository": "Cactus-Compute/whistle",
+      "learningId": "learn-huggingface-cactus-compute-whistle",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T08:29:01.273Z",
+      "repository": "apache/pinot",
+      "learningId": "learn-github-apache-pinot",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T08:37:44.624Z",
+      "repository": "nginx/kubernetes-ingress",
+      "learningId": "learn-github-nginx-kubernetes-ingress",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -195,8 +195,8 @@
     "sourceUrl": "https://huggingface.co/Cactus-Compute/whistle",
     "sourceVersion": "hf-cactus-compute-whistle",
     "license": "Open-Source",
-    "contentHash": "964cfe29d9e2b644ca6af4f1d76098cd62a18e251cb7deb586e5731210538a35",
-    "lastHarvestedAt": "2026-11-14T18:34:34.730Z",
+    "contentHash": "c626cf4b9dd854c39eb86bcd1dc789b07858b2ee1da0e65c136dfd2315e841fa",
+    "lastHarvestedAt": "2026-11-19T08:28:38.987Z",
     "learningId": "learn-huggingface-cactus-compute-whistle"
   },
   "hf-qwen-qwen3.8-27b": {
@@ -6663,10 +6663,10 @@
     "repository": "nginx/kubernetes-ingress",
     "platform": "github",
     "sourceUrl": "https://github.com/nginx/kubernetes-ingress",
-    "sourceVersion": "10b9eec3",
+    "sourceVersion": "3077890f",
     "license": "Apache-2.0",
-    "contentHash": "4d97eab80f8789d70b10b2d90f90a4336b4eeaff94a3d884b4e461ff8160cfec",
-    "lastHarvestedAt": "2026-11-18T10:08:47.766Z",
+    "contentHash": "409b5fda658f372590ba0093661fc651905e659c86372033e9d92d5a5790778b",
+    "lastHarvestedAt": "2026-11-19T08:37:44.618Z",
     "learningId": "learn-github-nginx-kubernetes-ingress"
   },
   "milvus-io-milvus": {
@@ -11963,10 +11963,10 @@
     "repository": "apache/pinot",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/pinot",
-    "sourceVersion": "05c81927",
+    "sourceVersion": "85417d1a",
     "license": "Apache-2.0",
-    "contentHash": "0d401d41d0dd82faba6bb2f4b901851f42181b96f75b91e7cfa56fc2e6842ea7",
-    "lastHarvestedAt": "2026-11-18T08:50:44.123Z",
+    "contentHash": "90e359603df9f37de764bd0f5183a4529ada3f5f128a1fc06baf8cf7876933ee",
+    "lastHarvestedAt": "2026-11-19T08:29:01.266Z",
     "learningId": "learn-github-apache-pinot"
   },
   "n1neman-sapper-v2": {

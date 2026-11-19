@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T08:53:21.516Z",
+  "timestamp": "2026-11-19T08:37:50.446Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-apache-pinot-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apache-pinot-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T08:53:21.516Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T08:37:50.446Z`  
 > **Learning ID**: `LEARN-EVO-apache-pinot-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), G (Architecture Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence), E (Creative Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), G (Architecture Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), E (Creative Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from apache-pinot-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source**: github ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
-> **Source Version**: `05c81927`  
+> **Source Version**: `85417d1a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T08:50:43.129Z  
+> **Timestamp**: 2026-11-19T08:29:00.061Z  
 > **Learning ID**: `learn-github-apache-pinot`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T08:50:37.597Z  
+> **Harvest Timestamp**: 2026-11-19T08:27:47.202Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Apache Pinot: a real-time analytics database for low-latency SQL and vector search, serving user-facing and agent-facing applications
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 6177 stars
+- **Stars / Engagement**: 6178 stars
 
 ---
 
@@ -2000,11 +2000,11 @@ const syncTableSchemaData = (data, showFieldType) => {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20281** (2026-11-17): **Fix Kafka startup script race in schema registry tests**
-  *Symptoms*: The schema-registry integration test can fail before Kafka starts with `Text file busy` and exit code 126. Testcontainers waits for `/tmp/testcontainers_start.sh` to exist, but Docker can still have the file open for writing when the container executes it. This caused [the integration failure on PR #20278](https://github.com/apache/pinot/actions/runs/43964887136/job/133641751411) and matches [Testcontainers issue #11682](https://github.com/testcontainers/testcontainers-java/issues/11682).  Make the fixture wait for a separate readiness marker. Publish the marker only after the superclass startup hook finishes uploading the script, then execute the completed script. This preserves the existing Confluent 7.2.0/ZooKeeper fixture.  Validation:  - A deterministic Linux/Docker probe held the script open for writing: the original command failed with exit 126; the new command waited for the marker and then exited successfully. Synchronization used a blocking handshake rather than timing-based assertions. - Started the actual compiled `SchemaRegistryStarter` with the cached Kafka and Schema Registry images; `GET /subjects` returned HTTP 200 with `[]`, then both containers were stopped. - `./mvnw -pl pinot-integration-tests -am -Ppinot-fastdev -DskipTests -Dmaven.compiler.showDeprecation=true -Dmaven.compiler.showWarnings=true test-compile` passed. - `./mvnw -pl pinot-integration-tests spotless:apply checkstyle:check license:format license:check` passed.  The full shared Kafka realtime
+- **Issue #20297** (2026-11-19): **Upgrade Lucene from 9.12.0 to 9.12.3**
+  *Symptoms*: Upgrade Lucene from 9.12.0 to 9.12.3 through the shared Maven property and update the Lucene artifacts listed in `LICENSE-binary`.  The [9.12.1–9.12.3 releases](https://lucene.apache.org/core/9_12_3/changes/Changes.html) include fixes for vector-index compatibility, HNSW behavior, and an infinite loop during memory-mapped resource cleanup. This dependency update is separate from the startup deadlock workaround in #20296; Lucene 9.12.3 still contains the class-initialization cycle.  Validation:  - 187 existing tests across 15 Lucene text-index, realtime-index, HNSW, rollback-recovery, and core text-query classes passed on JDK 25. - Verified that all seven Lucene artifacts on the test runtime classpaths resolve to 9.12.3. - Scoped reactor compilation with compiler warnings and deprecation reporting enabled. - Root Spotless, Checkstyle, license formatting/checks, and diff whitespace checks passed.  No new tests were added. The full cluster upgrade/rollback compatibility suites remain for CI. 
 
-- **Issue #20278** (2026-11-17): **Fix flaky latency assertions in QueryRoutingTest**
-  *Symptoms*: `QueryRoutingTest` can fail for a valid 0 ms response: the latency EWMA starts at 1 ms, so the first update produces 0.334 ms, violating the assertion that it must not exceed the response latency. Observed in [this CI job](https://github.com/apache/pinot/actions/runs/43862186385/job/133281534547?pr=20268).  Check the expected EWMA using the previous or initial average in all four latency tests, and disable automatic decay in the fixture so it cannot change the average between the snapshot and assertion. Server errors still use the timeout penalty; successful responses and client errors use measured latency.  Validation on JDK 25:  - All 32 `QueryRoutingTest` tests passed with `./mvnw -pl pinot-core -am -Dtest=QueryRoutingTest -Dsurefire.failIfNoSpecifiedTests=false -Ppinot-fastdev -Dmaven.compiler.showDeprecation=true -Dmaven.compiler.showWarnings=true test`. - `./mvnw -pl pinot-core spotless:apply checkstyle:check license:format license:check` passed. - A deterministic probe using the CI commit's compiled EWMA implementation confirmed that a zero-latency sample fails the original assertion. 
+- **Issue #20296** (2026-11-18): **Prevent Lucene class initialization deadlock during server startup**
+  *Symptoms*: Server startup can deadlock when Helix concurrently opens existing text indexes and creates realtime text indexes. Lucene 9.12.0 has a class initialization cycle between `IndexWriter`, `TestSecrets`, and `ConcurrentMergeScheduler` ([Lucene #12419](https://github.com/apache/lucene/issues/12419)). The [compatibility failure during rollback to Pinot 1.5.0](https://github.com/apache/pinot/actions/runs/44070961025/job/133996755187) captured this cycle in its thread dump: segment transitions remain blocked and server readiness times out.  Initialize `IndexWriter` synchronously before the server starts parallel segment loading. The compatibility verifier also uses a Java 11 bootstrap to perform the initialization inside each tested server JVM, including older releases during initial startup and rollback. Its generated launcher preserves the distribution's dependencies, JVM options, arguments, and PID handling. Readiness checks and timeouts remain unchanged.  Validation:  - Scoped server reactor build and `BaseServerStarterTest`: 3 tests passed. - `python3 compatibility-verifier/test_server_readiness.py`: 7 tests passed. - Fresh-JVM Lucene 9.12.0 reproducer: deadlock observed without preinitialization; 20/20 processes completed concurrent index reads and writes with preinitialization. - Scoped Spotless, Checkstyle, license formatting/checks, shell syntax, and diff whitespace checks passed.  The full compatibility suite has not been rerun locally; CI will validate the complete upgrade
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2021,1008 +2021,438 @@ const syncTableSchemaData = (data, showFieldType) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f5641918` (2026-11-17)
-**Commit Message**: Fix MSE literal folding regressions for INT values beyond the INT range, arrays and timestamp casts (#20277)
+### Incident Patch 1: `2a07f212` (2026-11-18)
+**Commit Message**: Prevent Lucene class initialization deadlock during server startup (#20296)
 
-**File**: `pinot-query-planner/src/main/java/org/apache/pinot/calcite/rel/rules/PinotEvaluateLiteralRule.java` (modified, +106/-6)
+**File**: `compatibility-verifier/CompatibilityServerStarter.java` (added, +46/-0)
 ```diff
-@@ -67,6 +67,8 @@
- /// The function gets each literal as the Java value that the runtime passes for it, so that the result is the same as
- /// the result of the call at runtime.
- public class PinotEvaluateLiteralRule {
-+  private static final BigDecimal MIN_INT = BigDecimal.valueOf(Integer.MIN_VALUE);
-+  private static final BigDecimal MAX_INT = BigDecimal.valueOf(Integer.MAX_VALUE);
- 
-   public static class Project extends RelOptRule {
-     public static final Project INSTANCE = new Project(PinotRuleUtils.PINOT_REL_FACTORY, null);
-@@ -190,9 +192,11 @@ private static RexNode evaluateLiteralOnlyFunction(RexCall rexCall, RexBuilder r
-         return rexCall;
-       }
-       argumentTypes[i] = RelToPlanNodeConverter.convertToColumnDataType(rexNode.getType());
--      if (TransformFunctionType.isJsonExtractScalar(canonicalName) && i == 3) {
--        argumentTypes[i] = RexExpressionUtils.fromJsonExtractScalarDefaultLiteral((RexLiteral) rexNode).getDataType();
--      }
-+    }
-+    widenIntArgumentTypes(operands, argumentTypes);
-+    if (TransformFunctionType.isJsonExtractScalar(canonicalName) && numArguments > 3) {
-+      argumentTypes[3] =
-+          RexExpressionUtils.fromJsonExtractScalarDefaultLiteral((RexLiteral) operands.get(3)).getDataType();
-     }
- 
-     if (isDatetimeIntervalArithmetic(rexCall)) {
-@@ -201,13 +205,13 @@ private static RexNode evaluateLiteralOnlyFunction(RexCall rexCall, RexBuilder r
-     if (isIntervalArithmetic(rexCall)) {
-       return evaluateIntervalArithmetic(rexCall, rexBuilder);
-     }
--    String castTargetType = null;
-+    ColumnDataType castTargetType = null;
-     if (rexCall.getKind() == SqlKind.CAST) {
-       // Handle separately because the CAST operator only has one operand (the value to be cast) and the type to be cast
-       // to is determined by the operator's return type. Pinot's CAST function implementation requires two arguments:
-       // the value to be cast and the target type.
-       argumentTypes = new ColumnDataType[]{argumentTypes[0], ColumnDataType.STRING};
--      castTargetType = RelToPlanNodeConverter.convertToColumnDataType(rexCall.getType()).name();
-+      castTargetType = RelToPlanNodeConverter.convertToColumnDataType(rexCall.getType());
-     }
-     FunctionInfo functionInfo = FunctionRegistry.lookupFunctionInfo(canonicalName, argumentTypes);
-     if (functionInfo == null || !functionInfo.isDeterministic()) {
-@@ -227,7 +231,11 @@ private static RexNode evaluateLiteralOnlyFunction(RexCall rexCall, RexBuilder r
-       }
-     }
-     if (castTargetType != null) {
--      arguments[1] = castTargetType;
-+      arguments[0] = getCastValue(arguments[0], castTargetType);
-+      arguments[1] = castTargetType.name();
-+    }
-+    if (rexCall.getKind() == SqlKind.ARRAY_VALUE_CONSTRUCTOR) {
-+      keepExactArrayElements(operands, arguments);
-     }
-     RelDataType rexNodeType = rexCall.getType();
-     if (rexNodeType.getSqlTypeName() == SqlTypeName.DECIMAL) {
-@@ -426,6 +434,71 @@ private static boolean isUnsignedIntegerType(SqlTypeName sqlTypeName) {
-     }
-   }
- 
-+  /// Makes the INT arguments of a call LONG if one of them is an integer literal beyond the INT range.
-+  ///
-+  /// This rule makes such a literal. Calcite gives INT arithmetic the type INTEGER, but Pinot evaluates it as LONG, so
-+  /// the literal for `3600000 * 100000` has the type INTEGER and the value 360000000000. A call on that literal (for
-+  /// example `NOW() - 3600000 * 100000`) must get the full value, not the value that wraps around as an INT. All the
-+  /// INT arguments change, so that the arguments of one type (for example the elements of an array) keep one Java
-+  /// class.
-+  private static void widenIntArgumentTypes(List<RexNode> operands, ColumnDataType[] argumentTypes) {
-+    int numArguments = argumentTypes.length;
-+    boolean beyondIntRange = false;
-+    for (int i = 0; i < numArguments; i++) {
-+      if (isIntegerLiteral((RexLiteral) operands.get(i), argumentTypes[i])) {
-+        BigDecimal value = (BigDecimal) ((RexLiteral) operands.get(i)).getValue();
-+        if (value.compareTo(MIN_INT) < 0 || value.compareTo(MAX_INT) > 0) {
-+          beyondIntRange = true;
-+          break;
-+        }
-+      }
-+    }
-+    if (!beyondIntRange) {
-+      return;
-+    }
-+    for (int i = 0; i < numArguments; i++) {
-+      if (isIntegerLiteral((RexLiteral) operands.get(i), argumentTypes[i])) {
-+        argumentTypes[i] = ColumnDataType.LONG;
-+      }
-+    }
+@@ -0,0 +1,46 @@
++/**
++ * Licensed to the Apache Software Foundation (ASF) under one
++ * or more contributor license agreements.  See the NOTICE file
++ * distributed with this work for additional information
++ * regarding copyright ownership.  The ASF licenses this file
++ * to you under the Apache License, Version 2.0 (the
++ * "License"); you may not use this file except in compliance
++ * with the License.  You may obtain a copy of the License at
++ *
++ *   http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing,
++ * software distributed under the License is distributed on an
++ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied.  See the License for the
++ * specific language governing permissions and limitations
++ * under the License.
++ */
++package org.apache.pinot.compat;
++
++import java.lang.reflect.InvocationTargetException;
++
++
++/**
++ * Initializes Lucene on the main thread before starting a compatibility server, including older releases that lack
++ * the startup fix. This stateless entry point must run before any concurrent Lucene use in the same JVM.
++ */
++public final class CompatibilityServerStarter {
++  private CompatibilityServerStarter() {
 +  }
 +
-+  /// Returns whether the literal is a number with an integer type (for example INTEGER or SMALLINT) that the planner
-+  /// maps to INT. A DECIMAL is not an integer type here, see [#canExceedArgumentType]. A NULL literal is not a number.
-+  /// A literal that is not a value (for example the Sarg of a SEARCH on INTEGER values) is not a number.
-+  private static boolean isIntegerLiteral(RexLiteral rexLiteral, ColumnDataType literalType) {
-+    return literalType == ColumnDataType.INT && rexLiteral.getValue() instanceof BigDecimal
-+      
-```
-
-**File**: `pinot-query-planner/src/test/resources/queries/LiteralEvaluationPlans.json` (modified, +92/-0)
-```diff
-@@ -310,6 +310,98 @@
-           "\n"
-         ]
-       },
-+      {
-+        "description": "INT arithmetic with a result beyond the INT range, which Pinot evaluates as LONG, keeps its value as the argument of BIGINT arithmetic",
-+        "sql": "EXPLAIN PLAN FOR SELECT CAST(1 AS BIGINT) + 1000 * 60 * 60 * 100000, 1000 * 60 * 60 * 100000 * 2 FROM a",
-+        "output": [
-+          "Execution Plan",
-+          "\nLogicalProject(EXPR$0=[360000000001:BIGINT], EXPR$1=[720000000000])",
-+          "\n  PinotLogicalTableScan(table=[[default, a]])",
-+          "\n"
-+        ]
-+      },
-+      {
-+        "description": "INT arithmetic with a result beyond the INT range keeps its value in a filter that is evaluated to TRUE",
-+        "sql": "EXPLAIN PLAN FOR SELECT col1 FROM a WHERE 1500000000000 - 1000 * 60 * 60 * 100000 < 1200000000000",
-+        "output": [
-+          "Execution Plan",
-+          "\nLogicalProject(col1=[$0])",
-+          "\n  PinotLogicalTableScan(table=[[default, a]])",
-+          "\n"
-+        ]
-+      },
-+      {
-+        "description": "INT arithmetic with a result beyond the INT range keeps its value as the argument of CAST and ABS, and as an array element with an INT literal",
-+        "sql": "EXPLAIN PLAN FOR SELECT CAST(1000 * 60 * 60 * 100000 AS VARCHAR), ABS(-1000 * 60 * 60 * 100000), ARRAY[1000 * 60 * 60 * 100000, 1] FROM a",
-+        "output": [
-+          "Execution Plan",
-+          "\nLogicalProject(EXPR$0=[_UTF-8'360000000000':VARCHAR CHARACTER SET \"UTF-8\"], EXPR$1=[360000000000], EXPR$2=[ARRAY(360000000000, 1)])",
-+          "\n  PinotLogicalTableScan(table=[[default, a]])",
-+          "\n"
-+        ]
-+      },
-+      {
-+        "description": "INT arithmetic at the limits of the INT range",
-+        "sql": "EXPLAIN PLAN FOR SELECT 2147483647 + 1 - 1, -2147483648 - 1 + 1, 2147483647 + 0 FROM a",
-+        "output": [
-+          "Execution Plan",
-+          "\nLogicalProject(EXPR$0=[2147483647], EXPR$1=[-2147483648], EXPR$2=[2147483647])",
-+          "\n  PinotLogicalTableScan(table=[[default, a]])",
-+          "\n"
-+        ]
-+      },
-+      {
-+        "description": "an evaluated INT literal with IN on INT literals, which becomes a SEARCH whose Sarg literal has the type INTEGER",
-+        "sql": "EXPLAIN PLAN FOR SELECT col1 FROM a WHERE LENGTH('abc') IN (1, 2, 3)",
-+        "output": [
-+          "Execution Plan",
-+          "\nLogicalProject(col1=[$0])",
-+          "\n  LogicalFilter(condition=[SEARCH(3, Sarg[1, 2, 3])])",
-+          "\n    PinotLogicalTableScan(table=[[default, a]])",
-+          "\n"
-+        ]
-+      },
-+      {
-+        "description": "array literal with a NULL element",
-+        "sql": "EXPLAIN PLAN FOR SELECT ARRAY[1, NULL], ARRAY[CAST(1 AS BIGINT), NULL], ARRAY[1.5, NULL], ARRAY[1000 * 60 * 60 * 100000, CAST(NULL AS INT)] FROM a",
-+        "output": [
-+          "Execution Plan",
-+          "\nLogicalProject(EXPR$0=[ARRAY(1, null:INTEGER)], EXPR$1=[ARRAY(1:BIGINT, null:BIGINT)], EXPR$2=[ARRAY(1.5:DECIMAL(2, 1), null:DECIMAL(2, 1))], EXPR$3=[ARRAY(360000000000, null:INTEGER)])",
-+          "\n  PinotLogicalTableScan(table=[[default, a]])",
-+          "\n"
-+        ]
-+      },
-+      {
-+        "description": "array literal of an evaluated integer and a DECIMAL literal that keeps its exact value, which share a DECIMAL type",
-+        "sql": "EXPLAIN PLAN FOR SELECT ARRAY[1 + 1, CAST(5 AS DECIMAL(10, 0))], ARRAY[99999999999999999999, 1 + 1] FROM a",
-+        "output": [
-+          "Execution Plan",
-+          "\nLogicalProject(EXPR$0=[ARRAY(2, 5:DECIMAL(10, 0))], EXPR$1=[ARRAY(99999999999999999999:DECIMAL(20, 0), 2:BIGINT)])",
-+          "\n  PinotLogicalTableScan(table=[[default, a]])",
-+          "\n"
-+        ]
-+      },
-+      {
-+        "description": "CAST between TIMESTAMP and INT or REAL of an evaluated literal",
-+        "sql": "EXPLAIN PLAN FOR SELECT CAST(86400 * 1000 AS TIMESTAMP), CAST(CAST(1.5 AS REAL) + 1 AS TIMESTAMP), CAST(fromDateTime('1970-01-02', 'yyyy-MM-dd') AS INT), CAST(fromDateTime('1970-01-02', 'yyyy-MM-dd') AS REAL) FROM a",
-+        "output": [
-+          "Execution Plan",
-+          "\nLogicalProject(EXPR$0=[1970-01-02 00:00:00:TIMESTAMP(3)], EXPR$1=[1970-01-01 00:00:00.002:TIMESTAMP(3)], EXPR$2=[86400000], EXPR$3=[8.64E7:REAL])",
-+          "\n  PinotLogicalTableScan(table=[[default, a]])",
-+          "\n"
-+        ]
-+      },
-+      {
-+        "description": "filter that compares a TIMESTAMP column with INT arithmetic, which is evaluated and cast to TIMESTAMP",
-+        "sql": "EXPLAIN PLAN FOR SELECT col1 FROM a WHERE ts_timestamp > 86400 * 1000",
-+        "output": [
-+          "Execution Plan",
-+          "\nLogicalProject(col1=[$0])",
-+          "\n  LogicalFilter(condition=[>($8, 1970-01-02 00:00:00)])",
-+          "\n    PinotLogicalTableScan(table=[[default, a]])",
-+          "\n"
-+        ]
-+      },
-       {
-         "description": "a DECIMAL literal with a scale is evaluated as a DOUBLE value, as at runtime, so json
-```
-
-**File**: `pinot-query-runtime/src/test/resources/queries/LiteralExpressions.json` (modified, +89/-1)
-```diff
-@@ -69,5 +69,93 @@
-         "h2Sql": "SELECT doubleCol, doubleCol = 1.5 FROM (SELECT doubleCol FROM {tbl} GROUP BY doubleCol) t"
-       }
-     ]
-+  },
-+  "literal_int_arithmetic_beyond_int_range": {
-+    "comments": "Calcite gives INT arithmetic the type INTEGER, but Pinot evaluates it as LONG. The planner must pass the full result to the call around it, not the value that wraps around as an INT.",
-+    "tables": {
-+      "tbl": {
-+        "schema": [
-+          {"name": "intCol", "type": "INT"}
-+        ],
-+        "inputs": [
-+          [1],
-+          [5]
-+        ]
-+      }
-+    },
-+    "queries": [
-+      {
-+        "description": "INT product beyond the INT range as the argument of BIGINT arithmetic",
-+        "sql": "SELECT CAST(1 AS BIGINT) + 1000 * 60 * 60 * 100000 FROM {tbl} LIMIT 1",
-+        "outputs": [[360000000001]]
-+      },
-+      {
-+        "description": "INT product beyond the INT range in a filter on literals",
-+        "sql": "SELECT intCol FROM {tbl} WHERE 1500000000000 - 1000 * 60 * 60 * 100000 < 1200000000000 ORDER BY intCol",
-+        "outputs": [[1], [5]]
-+      },
-+      {
-+        "description": "INT product beyond the INT range subtracted from NOW(), which must give a time in the past",
-+        "sql": "SELECT intCol FROM {tbl} WHERE NOW() - 1000 * 60 * 60 * 100000 < NOW() ORDER BY intCol",
-+        "outputs": [[1], [5]]
-+      },
-+      {
-+        "description": "evaluated INT literal with IN on INT literals, which becomes a SEARCH with only literal operands",
-+        "sql": "SELECT intCol FROM {tbl} WHERE LENGTH('abc') IN (1, 2, 3) ORDER BY intCol",
-+        "outputs": [[1], [5]]
-+      }
-+    ]
-+  },
-+  "literal_array_elements": {
-+    "comments": "The planner evaluates an array constructor on literals. It must accept a NULL element, and elements that the planner gives different Java classes.",
-+    "tables": {
-+      "tbl": {
-+        "schema": [
-+          {"name": "intCol", "type": "INT"}
-+        ],
-+        "inputs": [
-+          [1]
-+        ]
-+      }
-+    },
-+    "queries": [
-+      {
-+        "description": "array literal with a NULL element, which becomes the default value",
-+        "sql": "SELECT ARRAY[1, NULL], ARRAY[1 + 1, 3, CAST(NULL AS INT)] FROM {tbl}",
-+        "outputs": [[[1, 0], [2, 3, 0]]]
-+      },
-+      {
-+        "description": "array literal of an evaluated integer and a DECIMAL(10, 0) literal",
-+        "sql": "SELECT ARRAY[1 + 1, CAST(5 AS DECIMAL(10, 0))], ARRAY[CAST(5 AS DECIMAL(10, 0)), 1 + 1] FROM {tbl}",
-+        "outputs": [[[2, 5], [5, 2]]]
-+      }
-+    ]
-+  },
-+  "literal_cast_between_timestamp_and_int": {
-+    "comments": "The planner evaluates a CAST on a literal. It must also evaluate a CAST between TIMESTAMP and INT, as the leaf stage does.",
-+    "tables": {
-+      "tbl": {
-+        "schema": [
-+          {"name": "intCol", "type": "INT"},
-+          {"name": "tsCol", "type": "TIMESTAMP"}
-+        ],
-+        "inputs": [
-+          [1, "2020-01-01 00:00:00"],
-+          [5, "1970-01-01 00:00:00"]
-+        ]
-+      }
-+    },
-+    "queries": [
-+      {
-+        "description": "evaluated INT literal cast to TIMESTAMP, and evaluated TIMESTAMP literal cast to INT",
-+        "sql": "SELECT CAST(CAST(86400 * 1000 AS TIMESTAMP) AS BIGINT), CAST(fromDateTime('1970-01-02', 'yyyy-MM-dd') AS INT) FROM {tbl} LIMIT 1",
-+        "outputs": [[86400000, 86400000]]
-+      },
-+      {
-+        "description": "TIMESTAMP column compared with INT arithmetic, which is evaluated and cast to TIMESTAMP",
-+        "sql": "SELECT intCol FROM {tbl} WHERE tsCol > 86400 * 1000",
-+        "outputs": [[1]]
-+      }
-+    ]
-   }
--}
-\ No newline at end of file
++  public static void main(String[] args)
++      throws Throwable {
++    // Lucene 9.12.0 has a class initialization cycle between IndexWriter, TestSecrets, and ConcurrentMergeScheduler.
++    // Resolve it on one thread before Helix starts loading immutable indexes and creating realtime indexes in parallel.
++    // https://github.com/apache/lucene/issues/12419
++    Class.forName("org.apache.lucene.index.IndexWriter");
++    try {
++      // Use the distribution's administrator and dependencies, never the current checkout's Pinot implementation.
++      Class.forName("org.apache.pinot.tools.admin.PinotAdministrator").getMethod("main", String[].class)
++          .invoke(null, (Object) args);
++    } catch (InvocationTargetException e) {
++      throw e.getCause();
++    }
++  }
 +}
 ```
 
+**File**: `compatibility-verifier/README.md` (modified, +7/-0)
+```diff
+@@ -56,6 +56,13 @@ OPTIONAL:
+ 
+ ### Server readiness and failure diagnostics
+ 
++Before starting each server, the verifier initializes Lucene's `IndexWriter` on the main thread in that server JVM.
++This also covers older releases during initial startup and rollback, avoiding Lucene 9.12.0's class initialization
++deadlock when Helix loads text indexes and creates realtime text indexes concurrently. A small bootstrap is compiled
++with `javac --release 11`; each distribution retains its own libraries, plugins, and launcher settings.
++This workaround remains necessary while compatibility baselines include releases affected by
++[Lucene issue #12419](https://github.com/apache/lucene/issues/12419).
++
+ The verifier waits for each server's health endpoint to return success before running operations after startup,
+ upgrade, or rollback. HTTP errors do not count as ready. The wait fails if the process exits or does not become
+ ready within 600 seconds (configurable with `SERVER_READY_TIMEOUT_SECONDS`).
+```
+
+**File**: `compatibility-verifier/compCheck.sh` (modified, +7/-1)
+```diff
+@@ -45,6 +45,7 @@ logCount=1
+ cmdName=`basename $0`
+ source "$(dirname "${BASH_SOURCE[0]}")/utils.inc"
+ source "$(dirname "${BASH_SOURCE[0]}")/server-readiness.inc"
++source "$(dirname "${BASH_SOURCE[0]}")/server-startup.inc"
+ # Resolve this before changing directory to a distribution's bin directory.
+ COMPAT_SERVER_LOG4J_CONFIG="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/server-log4j2.xml"
+ 
+@@ -195,6 +196,7 @@ function startServerWithLogs() {
+     export LOG4J_CONFIGURATION_FILE="$COMPAT_SERVER_LOG4J_CONFIG"
+     export LOG_ROOT="$serverLogDir"
+     export PINOT_COMPONENT="$serviceName"
++    export CLASSPATH_PREFIX="${COMPAT_SERVER_STARTUP_CLASSES}${CLASSPATH_PREFIX:+:$CLASSPATH_PREFIX}"
+     if [ -f "$configFile" ]; then
+       exec "$launcher" StartServer -configFileName "$configFile"
+     else
+@@ -229,7 +231,10 @@ function startService() {
+     ./pinot-admin.sh StartBroker ${configFileArg} 1>${LOG_DIR}/broker.${logCount}.log 2>&1 &
+     echo $! >${PID_DIR}/broker.pid
+   elif [ "$serviceName" = "server" ] || [ "$serviceName" = "server2" ]; then
+-    startServerWithLogs "$serviceName" "$PWD/pinot-admin.sh" "$3"
++    local serverLauncher
++    serverLauncher=$(prepareCompatibilityServerLauncher "$PWD/pinot-admin.sh") \
++        || abortCompatibilityCheck "Cannot prepare compatibility launcher for $serviceName"
++    startServerWithLogs "$serviceName" "$serverLauncher" "$3"
+   elif [ "$serviceName" = "kafka" ]; then
+     startKafkaService
+   fi
+@@ -545,6 +550,7 @@ oldTargetDir="$workingDir"/oldTargetDir
+ newTargetDir="$workingDir"/newTargetDir
+ 
+ setupCompatTester
++setupCompatibilityServerStartup "$workingDir" || { echo "Cannot compile compatibility server bootstrap"; exit 1; }
+ 
+ # check that the default ports are open
+ if ! checkPortAvailable ${SERVER_ADMIN_PORT} || ! checkPortAvailable ${SERVER_NETTY_PORT} || ! checkPortAvailable ${SERVER_GRPC_PORT} ||
+```
+
+**File**: `compatibility-verifier/server-startup.inc` (added, +57/-0)
+```diff
+@@ -0,0 +1,57 @@
++#
++# Licensed to the Apache Software Foundation (ASF) under one
++# or more contributor license agreements.  See the NOTICE file
++# distributed with this work for additional information
++# regarding copyright ownership.  The ASF licenses this file
++# to you under the Apache License, Version 2.0 (the
++# "License"); you may not use this file except in compliance
++# with the License.  You may obtain a copy of the License at
++#
++#   http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing,
++# software distributed under the License is distributed on an
++# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++# KIND, either express or implied.  See the License for the
++# specific language governing permissions and limitations
++# under the License.
++#
++
++COMPAT_SERVER_STARTUP_SOURCE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/CompatibilityServerStarter.java"
++
++# Compile without Pinot dependencies so the bootstrap can run with each tested distribution's own classes and JDK.
++function setupCompatibilityServerStartup() {
++  local compiler=javac
++  if [ -n "${JAVA_HOME:-}" ]; then
++    compiler="$JAVA_HOME/bin/javac"
++  fi
++  mkdir -p "$1/server-startup" || return 1
++  COMPAT_SERVER_STARTUP_CLASSES="$(cd "$1/server-startup" && pwd)" || return 1
++  "$compiler" --release 11 -d "$COMPAT_SERVER_STARTUP_CLASSES" "$COMPAT_SERVER_STARTUP_SOURCE"
++}
++
++# Keep the generated script beside the original: appassembler resolves its libraries, plugins, and configuration
++# relative to the script. Change only the main class, preserving all launcher JVM options and argument handling.
++function prepareCompatibilityServerLauncher() {
++  local launcher=$1
++  local compatLauncher="${launcher%.sh}-compat.sh"
++  local temporaryLauncher
++  temporaryLauncher=$(mktemp "${compatLauncher}.XXXXXX") || return 1
++  if ! awk '
++    $1 == "org.apache.pinot.tools.admin.PinotAdministrator" {
++      sub(/org\.apache\.pinot\.tools\.admin\.PinotAdministrator/, "org.apache.pinot.compat.CompatibilityServerStarter")
++      replaced++
++    }
++    { print }
++    END { if (replaced != 1) exit 1 }
++  ' "$launcher" > "$temporaryLauncher"; then
++    echo "Cannot locate exactly one PinotAdministrator main class in $launcher" >&2
++    rm -f "$temporaryLauncher"
++    return 1
++  fi
++  if ! chmod +x "$temporaryLauncher" || ! mv "$temporaryLauncher" "$compatLauncher"; then
++    rm -f "$temporaryLauncher"
++    return 1
++  fi
++  echo "$compatLauncher"
++}
+```
+
+**File**: `compatibility-verifier/test_server_readiness.py` (modified, +1/-1)
+```diff
+@@ -205,7 +205,7 @@ def test_each_start_has_its_own_logs_and_preserves_the_working_directory(self):
+                                      'exec sleep 60')
+         script_dir = self.root / "scripts with spaces"
+         script_dir.mkdir()
+-        for source in (RUNNER, HELPER, RUNNER.with_name("utils.inc")):
++        for source in (RUNNER, HELPER, RUNNER.with_name("utils.inc"), RUNNER.with_name("server-startup.inc")):
+             shutil.copyfile(source, script_dir / source.name)
+         copied_config = script_dir / "server-log4j2.xml"
+         shutil.copyfile(HELPER.with_name(copied_config.name), copied_config)
+```
+
+**File**: `pinot-server/src/main/java/org/apache/pinot/server/starter/helix/BaseServerStarter.java` (modified, +6/-0)
+```diff
+@@ -57,6 +57,7 @@
+ import org.apache.helix.participant.statemachine.StateModelFactory;
+ import org.apache.helix.zookeeper.constant.ZkSystemPropertyKeys;
+ import org.apache.helix.zookeeper.datamodel.ZNRecord;
++import org.apache.lucene.index.IndexWriter;
+ import org.apache.pinot.common.Utils;
+ import org.apache.pinot.common.config.DefaultClusterConfigChangeHandler;
+ import org.apache.pinot.common.config.TlsConfig;
+@@ -663,6 +664,11 @@ public void start()
+     LOGGER.info("Server configs: {}", new PinotAppConfigs(getConfig()).toJSONString());
+     long startTimeMs = System.currentTimeMillis();
+ 
++    // Initialize Lucene on the startup thread before Helix can load existing indexes and create realtime indexes
++    // concurrently. Lucene 9.x has a class initialization cycle between IndexWriter, TestSecrets, and
++    // ConcurrentMergeScheduler: https://github.com/apache/lucene/issues/12419.
++    Class.forName(IndexWriter.class.getName());
++
+     // Load the index plugins before joining the cluster, so that an invalid plugin set (for example more than
+     // IndexService.MAX_INDEX_TYPES index types) fails server startup instead of every later segment load.
+     LOGGER.info("Loaded {} index types", IndexService.getInstance().getAllIndexes().size());
+```
+
 ---
 
-### Incident Patch 2: `5b256646` (2026-11-18)
-**Commit Message**: Fix offline upsert integration test readiness (#20282)
+### Incident Patch 2: `520655bd` (2026-11-18)
+**Commit Message**: Require patched OpenJDK in Pinot container builds (#20304)
 
-**File**: `pinot-integration-tests/src/test/java/org/apache/pinot/integration/tests/custom/OfflineUpsertTableTest.java` (modified, +22/-14)
+The published base images still carry Java builds affected by the November 2026 advisory.
+Refresh the bases on rebuild and reject older Java 21 and 25 versions before publishing.
+
+**File**: `.github/workflows/build-pinot-base-docker-image.yml` (modified, +2/-2)
 ```diff
-@@ -19,10 +19,12 @@
- package org.apache.pinot.integration.tests.custom;
+@@ -29,7 +29,7 @@ jobs:
+     strategy:
+       matrix:
+         openJdkDist: ["amazoncorretto", "ms-openjdk"]
+-        jdk_version: [21, 25]
++        jdk_version: [25]
+         arch: [amd64, arm64]
+         type: [build, runtime]
+         include:
+@@ -60,7 +60,7 @@ jobs:
+     strategy:
+       matrix:
+         openJdkDist: ["amazoncorretto", "ms-openjdk"]
+-        jdk_version: [21, 25]
++        jdk_version: [25]
+         type: [build, runtime]
+     steps:
+       - name: Login to DockerHub
+```
+
+**File**: `.github/workflows/scripts/docker/.pinot_base_docker_image_build_and_push.sh` (modified, +12/-6)
+```diff
+@@ -28,15 +28,21 @@ if [ -z "${BASE_IMAGE_TYPE}" ]; then
+   exit 1
+ fi
  
- import java.io.File;
-+import java.time.Duration;
- import java.util.ArrayList;
- import java.util.HashMap;
- import java.util.List;
- import java.util.Map;
-+import java.util.concurrent.atomic.AtomicInteger;
- import org.apache.pinot.client.ResultSet;
- import org.apache.pinot.common.utils.TarCompressionUtils;
- import org.apache.pinot.common.utils.config.TagNameUtils;
-@@ -143,13 +145,7 @@ protected void setUpTable()
-   @Override
-   protected void waitForAllDocsLoaded(long timeoutMs)
-       throws Exception {
--    TestUtils.waitForCondition(aVoid -> {
--      try {
--        return queryCountStarWithoutUpsert() == TOTAL_RAW_RECORDS;
--      } catch (Exception e) {
--        return null;
--      }
--    }, 100L, timeoutMs, "Failed to load all documents");
-+    waitForAllDocsLoaded(TOTAL_RAW_RECORDS, timeoutMs);
-     assertEquals(getCurrentCountStarResult(), getCountStarResult());
-   }
+-cd docker/images/pinot-base/pinot-base-${BASE_IMAGE_TYPE}
++BASE_IMAGE_DIR="docker/images/pinot-base/pinot-base-${BASE_IMAGE_TYPE}"
++JAVA_VERSION="${JDK_VERSION:-25}"
++IMAGE="apachepinot/pinot-base-${BASE_IMAGE_TYPE}:${TAG}-${ARCH}"
  
-@@ -199,13 +195,7 @@ public void testUpsertAfterAdditionalSegmentUpload()
-     buildSegment(tableConfig, schema, "segment_update_0", rows, newSegmentDir, newTarDir);
-     uploadSegments(TABLE_NAME, newTarDir);
+ docker build \
++  --pull \
+   --no-cache \
+   --platform=${BUILD_PLATFORM} \
+-  --file ${OPEN_JDK_DIST}.dockerfile \
+-  --tag apachepinot/pinot-base-${BASE_IMAGE_TYPE}:${TAG}-${ARCH} \
+-  --build-arg JAVA_VERSION=${JDK_VERSION:-21} \
++  --file "${BASE_IMAGE_DIR}/${OPEN_JDK_DIST}.dockerfile" \
++  --tag "${IMAGE}" \
++  --build-arg JAVA_VERSION="${JAVA_VERSION}" \
+   --build-arg ARCH=${ARCH} \
+-  .
++  "${BASE_IMAGE_DIR}"
  
--    TestUtils.waitForCondition(aVoid -> {
--      try {
--        return queryCountStarWithoutUpsert() == TOTAL_RAW_RECORDS + 1;
--      } catch (Exception e) {
--        return null;
--      }
--    }, 100L, 600_000L, "Failed to load updated segment");
-+    waitForAllDocsLoaded(TOTAL_RAW_RECORDS + 1, 600_000L);
- 
-     assertEquals(getCurrentCountStarResult(), UNIQUE_PRIMARY_KEYS);
- 
-@@ -215,6 +205,24 @@ public void testUpsertAfterAdditionalSegmentUpload()
-     assertEquals(rs.getFloat(0, 0), 9999.0f, 0.01f);
-   }
- 
-+  private void waitForAllDocsLoaded(int expectedRawRecords, long timeoutMs) {
-+    int numServers = getSharedServerStarters().size();
-+    AtomicInteger consecutiveSuccesses = new AtomicInteger();
-+    TestUtils.waitForCondition(() -> {
-+      try {
-+        if (queryCountStarWithoutUpsert() != expectedRawRecords) {
-+          consecutiveSuccesses.set(0);
-+          return false;
-+        }
-+        return consecutiveSuccesses.incrementAndGet() >= numServers;
-+      } catch (Exception e) {
-+        consecutiveSuccesses.set(0);
-+        throw e;
-+      }
-+    }, 100L, timeoutMs, "Failed to load " + expectedRawRecords + " documents on all servers",
-+        Duration.ofMillis(timeoutMs / 10));
-+  }
+-docker push apachepinot/pinot-base-${BASE_IMAGE_TYPE}:${TAG}-${ARCH}
++docker run --rm -i --platform "${BUILD_PLATFORM}" --entrypoint sh "${IMAGE}" -s \
++  < docker/images/pinot/check-java-version.sh
 +
-   private void buildAndUploadTestSegments(TableConfig tableConfig, Schema schema)
-       throws Exception {
-     List<GenericRow> segment1Rows = new ArrayList<>();
++docker push "${IMAGE}"
+```
+
+**File**: `.github/workflows/scripts/docker/.pinot_compile_and_push_build_image.sh` (modified, +1/-0)
+```diff
+@@ -55,6 +55,7 @@ COMPILE_BASE_IMAGE_TAG="${JDK_VERSION}-amazoncorretto"
+ 
+ echo "Building docker image for platform: amd64 with tag: pinot-build:${PINOT_BUILD_IMAGE_TAG}"
+ docker build \
++  --pull \
+   --no-cache \
+   --platform linux/amd64 \
+   --file Dockerfile.build \
+```
+
+**File**: `.github/workflows/scripts/docker/.pinot_docker_image_build_and_push.sh` (modified, +1/-0)
+```diff
+@@ -67,6 +67,7 @@ cd ${DOCKER_FILE_BASE_DIR}
+ 
+ echo "Building Pinot Docker image with JDK ${JDK_VERSION} and base image tag ${PINOT_BASE_IMAGE_TAG}"
+ docker buildx build \
++    --pull \
+     --no-cache \
+     --platform=${BUILD_PLATFORM} \
+     --file Dockerfile \
+```
+
+**File**: `.github/workflows/scripts/docker/.pinot_package_single_platform.sh` (modified, +1/-0)
+```diff
+@@ -71,6 +71,7 @@ for runtimeImage in "${runtimeImages[@]}"; do
+     fi
+   done
+ 
++  docker pull --platform "linux/${BUILD_ARCH}" "apachepinot/pinot-base-runtime:${runtimeImage}"
+   echo "Building docker image for platform: ${BUILD_ARCH} with tags: ${DOCKER_BUILD_TAGS}"
+   docker build \
+     --no-cache \
+```
+
+**File**: `docker/images/pinot-base/README.md` (modified, +13/-9)
+```diff
+@@ -25,30 +25,34 @@ This is the base docker image to build [Apache Pinot](https://github.com/apache/
+ 
+ ## Build and publish the docker image
+ 
+-Here is
+-the [Github Action task](https://github.com/apachepinot/pinot-fork/actions/workflows/build-pinot-docker-base-image.yml)
+-to build and publish pinot base docker images.
++Use the [Pinot Base Docker Image Build and Publish workflow](https://github.com/apache/pinot/actions/workflows/build-pinot-base-docker-image.yml)
++to build and publish base images for amd64 and arm64.
+ 
+-This task can be triggered manually to build the cross platform(amd64 and arm64v8) base image.
++To roll out a JDK security update, publish the build and runtime base images,
++then rebuild and publish the Pinot application images that use them. The Pinot
++image builds check the JDK in their base images before compiling or packaging. For the
++[November 2026 OpenJDK advisory](https://openjdk.org/groups/vulnerability/advisories/2026-11-17),
++the base image workflow verifies OpenJDK 25.0.5.1 or newer within the Java 25 release line.
+ 
+-The build shell is:
++Use the workflow for official base image publishing. The following commands are
++for manual builds:
+ 
+ For Amazon Corretto 25:
+ 
+ ```SHELL
+-docker buildx build --no-cache --platform=linux/arm64,linux/amd64 --file pinot-base-build/amazoncorretto.dockerfile --tag apachepinot/pinot-base-build:25-amazoncorretto --push .
++docker buildx build --pull --no-cache --build-arg JAVA_VERSION=25 --platform=linux/arm64,linux/amd64 --file pinot-base-build/amazoncorretto.dockerfile --tag apachepinot/pinot-base-build:25-amazoncorretto --push .
+ ```
+ 
+ ```SHELL
+-docker buildx build --no-cache --platform=linux/arm64,linux/amd64 --file pinot-base-runtime/amazoncorretto.dockerfile --tag apachepinot/pinot-base-runtime:25-amazoncorretto --push .
++docker buildx build --pull --no-cache --build-arg JAVA_VERSION=25 --platform=linux/arm64,linux/amd64 --file pinot-base-runtime/amazoncorretto.dockerfile --tag apachepinot/pinot-base-runtime:25-amazoncorretto --push .
+ ```
+ 
+ For MS OpenJDK, the build shell is:
+ 
+ ```SHELL
+-docker buildx build --no-cache --platform=linux/arm64,linux/amd64 --file pinot-base-build/ms-openjdk.dockerfile --tag apachepinot/pinot-base-build:25-ms-openjdk --push .
++docker buildx build --pull --no-cache --build-arg JAVA_VERSION=25 --platform=linux/arm64,linux/amd64 --file pinot-base-build/ms-openjdk.dockerfile --tag apachepinot/pinot-base-build:25-ms-openjdk --push .
+ ```
+ 
+ ```SHELL
+-docker buildx build --no-cache --platform=linux/arm64,linux/amd64 --file pinot-base-runtime/ms-openjdk.dockerfile --tag apachepinot/pinot-base-runtime:25-ms-openjdk --push .
++docker buildx build --pull --no-cache --build-arg JAVA_VERSION=25 --platform=linux/arm64,linux/amd64 --file pinot-base-runtime/ms-openjdk.dockerfile --tag apachepinot/pinot-base-runtime:25-ms-openjdk --push .
+ ```
+```
+
+**File**: `docker/images/pinot-base/pinot-base-build/amazoncorretto.dockerfile` (modified, +2/-2)
+```diff
+@@ -16,7 +16,7 @@
+ # specific language governing permissions and limitations
+ # under the License.
+ #
+-ARG JAVA_VERSION=21
++ARG JAVA_VERSION=25
+ FROM debian:bookworm-slim
+ 
+ LABEL MAINTAINER=dev@pinot.apache.org
+@@ -45,7 +45,7 @@ RUN set -eux \
+ # Install Amazon Corretto.
+ # /etc/apt/keyrings/ is the correct path for user-managed keys referenced via
+ # signed-by=; apt natively handles ASCII-armored .asc files at that path.
+-ARG JAVA_VERSION=21
++ARG JAVA_VERSION=25
+ RUN set -eux \
+   && mkdir -p /etc/apt/keyrings \
+   && wget -qO /etc/apt/keyrings/corretto.asc https://apt.corretto.aws/corretto.key \
+```
+
+**File**: `docker/images/pinot-base/pinot-base-build/ms-openjdk.dockerfile` (modified, +1/-1)
+```diff
+@@ -16,7 +16,7 @@
+ # specific language governing permissions and limitations
+ # under the License.
+ #
+-ARG JAVA_VERSION=21
++ARG JAVA_VERSION=25
+ ARG JDK_IMAGE=mcr.microsoft.com/openjdk/jdk
+ FROM ${JDK_IMAGE}:${JAVA_VERSION}-ubuntu AS pinot_build_env
+ 
 ```
 
 ---
 
-### Incident Patch 3: `ba2f01e0` (2026-11-17)
-**Commit Message**: Add dictionary-based TEXT index option (buildOnDictionary) (#18758)
+### Incident Patch 3: `3785795d` (2026-11-18)
+**Commit Message**: Bump org.webjars:swagger-ui from 5.34.1 to 5.35.0 (#20308)
 
-Add the opt-in buildOnDictionary setting for single-value STRING text indexes. It indexes each distinct value once and maps TEXT_MATCH results back to rows. Consuming segments continue to index each row.
-After upgrading all servers, set indexes.text.buildOnDictionary to true in the dictionary-encoded column's fieldConfigList entry and reload existing segments. Before downgrading, disable the setting and rebuild the text indexes.
-Validated with focused JDK 25 tests, including reordered Lucene documents and index reload, plus all 13 GitHub checks.
+Bumps [org.webjars:swagger-ui](https://github.com/swagger-api/swagger-ui) from 5.34.1 to 5.35.0.
+- [Release notes](https://github.com/swagger-api/swagger-ui/releases)
+- [Commits](https://github.com/swagger-api/swagger-ui/compare/v5.34.1...v5.35.0)
 
-**File**: `pinot-core/src/main/java/org/apache/pinot/core/operator/filter/predicate/PredicateEvaluatorProvider.java` (modified, +2/-1)
+---
+updated-dependencies:
+- dependency-name: org.webjars:swagger-ui
+  dependency-version: 5.35.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `pom.xml` (modified, +1/-1)
 ```diff
-@@ -144,7 +144,7 @@ private static PredicateEvaluator buildEvaluator(Predicate predicate, @Nullable
-   ///   dict-encoded forward index, so it cannot apply here.) Furthermore, the range index must be exact —
-   ///   non-exact (legacy) range readers fall back to `ScanBasedFilterOperator` for partial matches, which feeds
-   ///   raw forward-index values into the predicate evaluator and breaks if the evaluator is dict-based.
--  /// - `REGEXP_LIKE / NOT_EQ / IN / NOT_IN`: only the inverted-index path consumes the dictionary on a RAW
-+  /// - `REGEXP_LIKE / TEXT_MATCH / NOT_EQ / IN / NOT_IN`: only the inverted-index path consumes the dictionary on a RAW
-   ///   column. FST/IFST handle their own evaluators upstream of this method.
-   /// - `EQ`: inverted index, plus exact range index (see `RangeIndexBasedFilterOperator#canEvaluate`).
-   ///
-@@ -176,6 +176,7 @@ static Dictionary getDictionaryUsableForFiltering(DataSource dataSource, @Nullab
-       case EQ:
-         return (invertedAvailable || exactRangeAvailable) ? dictionary : null;
-       case REGEXP_LIKE:
-+      case TEXT_MATCH:
-       case NOT_EQ:
-       case IN:
-       case NOT_IN:
-```
-
-**File**: `pinot-core/src/main/java/org/apache/pinot/core/operator/filter/predicate/TextMatchDictIdPredicateEvaluatorFactory.java` (added, +121/-0)
-```diff
-@@ -0,0 +1,121 @@
-+/**
-+ * Licensed to the Apache Software Foundation (ASF) under one
-+ * or more contributor license agreements.  See the NOTICE file
-+ * distributed with this work for additional information
-+ * regarding copyright ownership.  The ASF licenses this file
-+ * to you under the Apache License, Version 2.0 (the
-+ * "License"); you may not use this file except in compliance
-+ * with the License.  You may obtain a copy of the License at
-+ *
-+ *   http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing,
-+ * software distributed under the License is distributed on an
-+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+ * KIND, either express or implied.  See the License for the
-+ * specific language governing permissions and limitations
-+ * under the License.
-+ */
-+package org.apache.pinot.core.operator.filter.predicate;
-+
-+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-+import java.util.Set;
-+import org.apache.pinot.common.request.context.predicate.TextMatchPredicate;
-+import org.apache.pinot.core.query.request.context.QueryContext;
-+import org.apache.pinot.segment.spi.datasource.DataSource;
-+import org.apache.pinot.segment.spi.index.reader.Dictionary;
-+import org.apache.pinot.segment.spi.index.reader.TextIndexReader;
-+import org.apache.pinot.spi.data.FieldSpec.DataType;
-+import org.roaringbitmap.buffer.ImmutableRoaringBitmap;
-+
-+
-+/// Factory for TEXT_MATCH predicate evaluators backed by a dictionary-based text index (see
-+/// [TextIndexReader#isBuildOnDictionary()]). The text index returns the matching dictionary ids, which the
-+/// standard dictionary-based filter operators (inverted index / scan) resolve to document ids. This mirrors
-+/// [FSTBasedRegexpPredicateEvaluatorFactory].
-+public class TextMatchDictIdPredicateEvaluatorFactory {
-+  private TextMatchDictIdPredicateEvaluatorFactory() {
-+  }
-+
-+  /// Creates a predicate evaluator that matches the TEXT_MATCH query using the dictionary-based text index.
-+  /// Uses raw string membership when no allowed index can resolve dictionary ids over a raw forward index.
-+  ///
-+  /// @param textMatchPredicate TEXT_MATCH predicate to evaluate
-+  /// @param textIndexReader dictionary-based text index reader
-+  /// @param dataSource data source for the column
-+  /// @param queryContext query context, including which indexes may be used
-+  /// @return predicate evaluator
-+  public static PredicateEvaluator newPredicateEvaluator(TextMatchPredicate textMatchPredicate,
-+      TextIndexReader textIndexReader, DataSource dataSource, QueryContext queryContext) {
-+    Dictionary dictionary = dataSource.getDictionary();
-+    PredicateEvaluator evaluator =
-+        new TextMatchDictIdPredicateEvaluator(textMatchPredicate, textIndexReader, dictionary, queryContext);
-+    if (!evaluator.isAlwaysTrue() && !evaluator.isAlwaysFalse()
-+        && PredicateEvaluatorProvider.getDictionaryUsableForFiltering(dataSource, queryContext, textMatchPredicate)
-+        == null) {
-+      return newRawValueBasedEvaluator(evaluator, dictionary);
-+    }
-+    return evaluator;
-+  }
-+
-+  /// Adapts dictionary matches to a scan over raw forward values when the column has a standalone dictionary.
-+  private static BaseRawValueBasedPredicateEvaluator newRawValueBasedEvaluator(PredicateEvaluator dictionaryEvaluator,
-+      Dictionary dictionary) {
-+    int[] matchingDictIds = dictionaryEvaluator.getMatchingDictIds();
-+    Set<String> matchingValues = new ObjectOpenHashSet<>(matchingDictIds.length);
-+    for (int dictId : matchingDictIds) {
-+      matchingValues.add(dictionary.getStringValue(dictId));
-+    }
-+    return new BaseRawValueBasedPredicateEvaluator(dictionaryEvaluator.getPredicate()) {
-+      @Override
-+      public DataType getDataType() {
-+        return DataType.STRING;
-+      }
-+
-+      @Override
-+      public boolean applySV(String value) {
-+        return matchingValues.contains(value);
-+      }
-+    };
-+  }
-+
-+  private static class TextMatchDictIdPredicateEvaluator extends BaseDictionaryBasedPredicateEvaluator {
-+    final ImmutableRoaringBitmap _matchingDictIdBitmap;
-+
-+    public TextMatchDictIdPredicateEvaluator(TextMatchPredicate textMatchPredicate, TextIndexReader textIndexReader,
-+        Dictionary dictionary, QueryContext queryContext) {
-+      super(textMatchPredicate, dictionary);
-+      _matchingDictIdBitmap =
-+          textIndexReader.getDictIds(textMatchPredicate.getValue(), textMatchPredicate.getOptions(), queryContext);
-+      int numMatchingDictIds = _matchingDictIdBitmap.getCardinality();
-+      if (numMatchingDictIds == 0) {
-+        _alwaysFalse = true;
-+      } else if (dictionary.length() == numMatchingDictIds) {
-+        _alwaysTrue = true;
-+      }
-+    }
-+
-+    @Override
-+    protected int[] calculateMatchingDictIds() {
-+      return _matchingDictIdBitmap.toArray();
-+    }
-+
-+    @Override
-+    public boolean applySV(int dictId) {
-+      return _matchingDictIdBitmap.contains(dic
-```
-
-**File**: `pinot-core/src/main/java/org/apache/pinot/core/operator/transform/function/TextMatchTransformFunction.java` (modified, +68/-13)
-```diff
-@@ -18,16 +18,24 @@
-  */
- package org.apache.pinot.core.operator.transform.function;
- 
-+import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-+import java.util.Arrays;
- import java.util.List;
- import java.util.Map;
-+import java.util.Set;
-+import javax.annotation.Nullable;
- import org.apache.pinot.core.operator.ColumnContext;
- import org.apache.pinot.core.operator.blocks.ValueBlock;
- import org.apache.pinot.core.operator.transform.TransformResultMetadata;
-+import org.apache.pinot.core.query.request.context.QueryContext;
- import org.apache.pinot.segment.spi.datasource.DataSource;
-+import org.apache.pinot.segment.spi.index.reader.Dictionary;
- import org.apache.pinot.segment.spi.index.reader.MultiColumnTextIndexReader;
-+import org.apache.pinot.segment.spi.index.reader.QueryScopedCache;
- import org.apache.pinot.segment.spi.index.reader.TextIndexReader;
--import org.apache.pinot.spi.data.FieldSpec;
--import org.roaringbitmap.buffer.MutableRoaringBitmap;
-+import org.apache.pinot.spi.data.FieldSpec.DataType;
-+import org.roaringbitmap.IntIterator;
-+import org.roaringbitmap.buffer.ImmutableRoaringBitmap;
- 
- 
- /*
-@@ -38,13 +46,27 @@ public class TextMatchTransformFunction extends BaseTransformFunction {
-   private String _predicate;
-   private String _options;
-   private TextIndexReader _textIndexReader;
-+  private TransformFunction _columnArg;
-+  private Dictionary _dictionary;
-+  private Set<String> _matchingRawValues;
-+  private ImmutableRoaringBitmap _matchingDictIds;
-+  private int _numMatchingValues;
-+  @Nullable
-+  private QueryScopedCache _queryScopedCache;
-   private String _column;
- 
-   @Override
-   public String getName() {
-     return FUNCTION_NAME;
-   }
- 
-+  @Override
-+  public void init(List<TransformFunction> arguments, Map<String, ColumnContext> columnContextMap,
-+      QueryContext queryContext) {
-+    super.init(arguments, columnContextMap, queryContext.isNullHandlingEnabled());
-+    _queryScopedCache = queryContext;
-+  }
-+
-   @Override
-   public void init(List<TransformFunction> arguments, Map<String, ColumnContext> columnContextMap) {
-     super.init(arguments, columnContextMap);
-@@ -76,7 +98,7 @@ public void init(List<TransformFunction> arguments, Map<String, ColumnContext> c
- 
-     // Verify that the second parameter is actually a string literal
-     LiteralTransformFunction literalPredicate = (LiteralTransformFunction) predicate;
--    if (literalPredicate.getResultMetadata().getDataType() != FieldSpec.DataType.STRING) {
-+    if (literalPredicate.getResultMetadata().getDataType() != DataType.STRING) {
-       throw new IllegalArgumentException(
-           "The second argument of TEXT_MATCH transform function must be a string literal, got: "
-               + literalPredicate.getResultMetadata().getDataType());
-@@ -94,7 +116,7 @@ public void init(List<TransformFunction> arguments, Map<String, ColumnContext> c
- 
-       // Verify that the third parameter is actually a string literal
-       LiteralTransformFunction literalOptions = (LiteralTransformFunction) options;
--      if (literalOptions.getResultMetadata().getDataType() != FieldSpec.DataType.STRING) {
-+      if (literalOptions.getResultMetadata().getDataType() != DataType.STRING) {
-         throw new IllegalArgumentException(
-             "The third argument of TEXT_MATCH transform function must be a string literal, got: "
-                 + literalOptions.getResultMetadata().getDataType());
-@@ -106,21 +128,54 @@ public void init(List<TransformFunction> arguments, Map<String, ColumnContext> c
-     }
- 
-     _textIndexReader = indexReader;
-+    _columnArg = columnArg;
-+    _dictionary = dataSource.getDictionary();
-+    _matchingRawValues = null;
-+    _matchingDictIds = null;
-+    _queryScopedCache = null;
-   }
- 
-   public int[] transformToIntValuesSV(ValueBlock valueBlock) {
-     int length = valueBlock.getNumDocs();
--    initZeroFillingIntValuesSV(length);
--
--    int[] docIds = valueBlock.getDocIds();
--    MutableRoaringBitmap indexDocIds = _textIndexReader.isMultiColumn()
--        ? ((MultiColumnTextIndexReader) _textIndexReader).getDocIds(_column, _predicate, _options)
--        : _textIndexReader.getDocIds(_predicate, _options);
-+    initIntValuesSV(length);
-+
-+    int[] ids;
-+    ImmutableRoaringBitmap matchingIds;
-+    if (_textIndexReader.isBuildOnDictionary()) {
-+      if (_matchingDictIds == null) {
-+        _matchingDictIds = _textIndexReader.getDictIds(_predicate, _options, _queryScopedCache);
-+        _numMatchingValues = _matchingDictIds.getCardinality();
-+      }
-+      if (_numMatchingValues == 0 || _numMatchingValues == _dictionary.length()) {
-+        Arrays.fill(_intValuesSV, 0, length, _numMatchingValues == 0 ? 0 : 1);
-+        return _intValuesSV;
-+      }
-+      matchingIds = _matchingDictIds;
-+      if (_columnArg.getDictionary() == null) {
-+        // A standalone dictionary can coexist with a raw forward index.
-+        if (_matchingRawValues == null) {
-+          _matchingRawValues = new ObjectOpenHashSet<>(_numMatchingValue
-```
-
-**File**: `pinot-core/src/main/java/org/apache/pinot/core/plan/FilterPlanNode.java` (modified, +12/-0)
-```diff
-@@ -56,6 +56,7 @@
- import org.apache.pinot.core.operator.filter.VectorSimilarityFilterOperator;
- import org.apache.pinot.core.operator.filter.predicate.PredicateEvaluator;
- import org.apache.pinot.core.operator.filter.predicate.PredicateEvaluatorProvider;
-+import org.apache.pinot.core.operator.filter.predicate.TextMatchDictIdPredicateEvaluatorFactory;
- import org.apache.pinot.core.operator.transform.function.ItemTransformFunction;
- import org.apache.pinot.core.query.request.context.QueryContext;
- import org.apache.pinot.segment.spi.IndexSegment;
-@@ -334,6 +335,17 @@ private BaseFilterOperator constructPhysicalOperator(FilterContext filter, int n
-               Preconditions.checkState(textIndexReader != null,
-                   "Cannot apply TEXT_MATCH on column: %s without text index", column);
- 
-+              if (textIndexReader.isBuildOnDictionary()) {
-+                // Dictionary-based text index: search returns matching dictIds, resolved to docIds by the standard
-+                // dictionary-based filter operators (inverted index / scan), exactly like FST/REGEXP_LIKE.
-+                TextMatchPredicate textMatchPredicate = (TextMatchPredicate) predicate;
-+                predicateEvaluator = TextMatchDictIdPredicateEvaluatorFactory.newPredicateEvaluator(
-+                    textMatchPredicate, textIndexReader, dataSource, _queryContext);
-+                _predicateEvaluators.add(Pair.of(predicate, predicateEvaluator));
-+                return FilterOperatorUtils.getLeafFilterOperator(_queryContext, predicateEvaluator, dataSource,
-+                    numDocs);
-+              }
-+
-               if (textIndexReader.isMultiColumn()) {
-                 return new TextMatchFilterOperator(column, textIndexReader, (TextMatchPredicate) predicate, numDocs,
-                     _queryContext);
-```
-
-**File**: `pinot-core/src/test/java/org/apache/pinot/queries/DictionaryBasedTextIndexQueriesTest.java` (added, +579/-0)
-```diff
-@@ -0,0 +1,579 @@
-+/**
-+ * Licensed to the Apache Software Foundation (ASF) under one
-+ * or more contributor license agreements.  See the NOTICE file
-+ * distributed with this work for additional information
-+ * regarding copyright ownership.  The ASF licenses this file
-+ * to you under the Apache License, Version 2.0 (the
-+ * "License"); you may not use this file except in compliance
-+ * with the License.  You may obtain a copy of the License at
-+ *
-+ *   http://www.apache.org/licenses/LICENSE-2.0
-+ *
-+ * Unless required by applicable law or agreed to in writing,
-+ * software distributed under the License is distributed on an
-+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-+ * KIND, either express or implied.  See the License for the
-+ * specific language governing permissions and limitations
-+ * under the License.
-+ */
-+package org.apache.pinot.queries;
-+
-+import com.fasterxml.jackson.databind.node.ObjectNode;
-+import java.io.File;
-+import java.nio.charset.StandardCharsets;
-+import java.util.ArrayList;
-+import java.util.List;
-+import java.util.Map;
-+import org.apache.commons.io.FileUtils;
-+import org.apache.commons.lang3.exception.ExceptionUtils;
-+import org.apache.pinot.common.response.broker.BrokerResponseNative;
-+import org.apache.pinot.core.common.Operator;
-+import org.apache.pinot.core.operator.blocks.results.AggregationResultsBlock;
-+import org.apache.pinot.core.operator.blocks.results.SelectionResultsBlock;
-+import org.apache.pinot.segment.local.indexsegment.immutable.ImmutableSegmentLoader;
-+import org.apache.pinot.segment.local.segment.creator.impl.SegmentIndexCreationDriverImpl;
-+import org.apache.pinot.segment.local.segment.index.loader.IndexLoadingConfig;
-+import org.apache.pinot.segment.local.segment.readers.GenericRowRecordReader;
-+import org.apache.pinot.segment.local.utils.TableConfigUtils;
-+import org.apache.pinot.segment.spi.ImmutableSegment;
-+import org.apache.pinot.segment.spi.IndexSegment;
-+import org.apache.pinot.segment.spi.creator.SegmentGeneratorConfig;
-+import org.apache.pinot.spi.config.table.FieldConfig;
-+import org.apache.pinot.spi.config.table.FieldConfig.EncodingType;
-+import org.apache.pinot.spi.config.table.FieldConfig.IndexType;
-+import org.apache.pinot.spi.config.table.TableConfig;
-+import org.apache.pinot.spi.config.table.TableType;
-+import org.apache.pinot.spi.data.FieldSpec;
-+import org.apache.pinot.spi.data.Schema;
-+import org.apache.pinot.spi.data.readers.GenericRow;
-+import org.apache.pinot.spi.data.readers.RecordReader;
-+import org.apache.pinot.spi.utils.JsonUtils;
-+import org.apache.pinot.spi.utils.builder.TableConfigBuilder;
-+import org.testng.annotations.AfterClass;
-+import org.testng.annotations.BeforeClass;
-+import org.testng.annotations.DataProvider;
-+import org.testng.annotations.Test;
-+
-+import static org.testng.Assert.assertEquals;
-+import static org.testng.Assert.assertFalse;
-+import static org.testng.Assert.assertNull;
-+import static org.testng.Assert.assertTrue;
-+import static org.testng.Assert.fail;
-+
-+
-+/// Verifies that a dictionary-based TEXT index (`buildOnDictionary = true`) returns the same `TEXT_MATCH`
-+/// results as the default per-row TEXT index for single-value STRING columns, while multi-value columns retain
-+/// the per-row index. The dictionary-based index returns matching dictIds resolved to docIds by dictionary-based
-+/// filter operators; this test confirms that resolution is correct end-to-end.
-+public class DictionaryBasedTextIndexQueriesTest extends BaseQueriesTest {
-+  private static final File INDEX_DIR =
-+      new File(FileUtils.getTempDirectory(), DictionaryBasedTextIndexQueriesTest.class.getSimpleName());
-+  private static final String TABLE_NAME = "testTable";
-+  private static final String SV_COL = "SV_TEXT";
-+  private static final String MV_COL = "MV_TEXT";
-+  private static final String INT_COL = "INT_COL";
-+  private static final int NUM_ROWS = 1000;
-+
-+  // SV value cycles over 5 distinct tokens; MV value pairs a constant token with a cycling token.
-+  private static final String[] SV_TOKENS = {"apple", "banana", "cherry", "date", "elderberry"};
-+  private static final String[] MV_TOKENS = {"red", "green", "blue"};
-+
-+  private static final Schema SCHEMA = new Schema.SchemaBuilder().setSchemaName(TABLE_NAME)
-+      .addSingleValueDimension(SV_COL, FieldSpec.DataType.STRING)
-+      .addMultiValueDimension(MV_COL, FieldSpec.DataType.STRING)
-+      .addMetric(INT_COL, FieldSpec.DataType.INT)
-+      .build();
-+
-+  private IndexSegment _indexSegment;
-+  private List<IndexSegment> _indexSegments;
-+
-+  @Override
-+  protected String getFilter() {
-+    return "";
-+  }
-+
-+  @Override
-+  protected IndexSegment getIndexSegment() {
-+    return _indexSegment;
-+  }
-+
-+  @Override
-+  protected List<IndexSegment> getIndexSegments() {
-+    return _indexSegments;
-+  }
-+
-+  @BeforeClass
-+  public void setUp() {
-+    FileUtils.deleteQuietly(INDEX_DIR);
-+  }
-+
-+  @AfterClass
-+  public void tearDown() {
-+    if (_indexSegment != 
-```
-
-**File**: `pinot-core/src/test/java/org/apache/pinot/queries/TextMatchTransformFunctionTest.java` (modified, +70/-0)
-```diff
-@@ -23,21 +23,41 @@
- import java.io.UncheckedIOException;
- import java.nio.file.Files;
- import java.util.List;
-+import java.util.Map;
- import org.apache.commons.io.FileUtils;
-+import org.apache.pinot.core.operator.ColumnContext;
-+import org.apache.pinot.core.operator.blocks.ValueBlock;
-+import org.apache.pinot.core.operator.transform.TransformResultMetadata;
-+import org.apache.pinot.core.operator.transform.function.IdentifierTransformFunction;
-+import org.apache.pinot.core.operator.transform.function.LiteralTransformFunction;
-+import org.apache.pinot.core.operator.transform.function.TextMatchTransformFunction;
-+import org.apache.pinot.core.operator.transform.function.TransformFunction;
-+import org.apache.pinot.core.query.request.context.QueryContext;
-+import org.apache.pinot.segment.spi.datasource.DataSource;
-+import org.apache.pinot.segment.spi.index.reader.Dictionary;
-+import org.apache.pinot.segment.spi.index.reader.TextIndexReader;
- import org.apache.pinot.spi.config.table.FieldConfig;
- import org.apache.pinot.spi.config.table.MultiColumnTextIndexConfig;
- import org.apache.pinot.spi.config.table.TableConfig;
- import org.apache.pinot.spi.config.table.TableType;
- import org.apache.pinot.spi.data.FieldSpec;
-+import org.apache.pinot.spi.data.FieldSpec.DataType;
- import org.apache.pinot.spi.data.Schema;
- import org.apache.pinot.spi.exception.BadQueryRequestException;
- import org.apache.pinot.spi.utils.builder.TableConfigBuilder;
-+import org.roaringbitmap.buffer.MutableRoaringBitmap;
- import org.testng.Assert;
- import org.testng.annotations.AfterClass;
- import org.testng.annotations.BeforeClass;
- import org.testng.annotations.DataProvider;
- import org.testng.annotations.Test;
- 
-+import static org.mockito.Mockito.mock;
-+import static org.mockito.Mockito.times;
-+import static org.mockito.Mockito.verify;
-+import static org.mockito.Mockito.when;
-+import static org.testng.Assert.assertEquals;
-+
- 
- public class TextMatchTransformFunctionTest {
- 
-@@ -80,6 +100,56 @@ void destroyBaseDir()
-     }
-   }
- 
-+  @Test
-+  public void testDictionaryMatchesAreCachedUntilInit() {
-+    for (boolean rawForward : new boolean[]{false, true}) {
-+      TextIndexReader reader = mock(TextIndexReader.class);
-+      when(reader.isBuildOnDictionary()).thenReturn(true);
-+      QueryContext queryContext = mock(QueryContext.class);
-+      when(reader.getDictIds("alpha", null, queryContext)).thenReturn(MutableRoaringBitmap.bitmapOf(0));
-+      when(reader.getDictIds("alpha", null, null)).thenReturn(MutableRoaringBitmap.bitmapOf(1),
-+          MutableRoaringBitmap.bitmapOf(0, 1), new MutableRoaringBitmap());
-+      Dictionary dictionary = mock(Dictionary.class);
-+      when(dictionary.length()).thenReturn(2);
-+      when(dictionary.getStringValue(0)).thenReturn("alpha");
-+      when(dictionary.getStringValue(1)).thenReturn("beta");
-+      DataSource dataSource = mock(DataSource.class);
-+      when(dataSource.getTextIndex()).thenReturn(reader);
-+      when(dataSource.getDictionary()).thenReturn(dictionary);
-+      ColumnContext columnContext = mock(ColumnContext.class);
-+      when(columnContext.getDataSource()).thenReturn(dataSource);
-+      IdentifierTransformFunction column = mock(IdentifierTransformFunction.class);
-+      when(column.getColumnName()).thenReturn("skills");
-+      when(column.getResultMetadata()).thenReturn(new TransformResultMetadata(DataType.STRING, true, true));
-+      when(column.getDictionary()).thenReturn(rawForward ? null : dictionary);
-+      LiteralTransformFunction predicate = mock(LiteralTransformFunction.class);
-+      when(predicate.getResultMetadata()).thenReturn(
-+          new TransformResultMetadata(DataType.STRING, true, false));
-+      when(predicate.getStringLiteral()).thenReturn("alpha");
-+      ValueBlock block = mock(ValueBlock.class);
-+      when(block.getNumDocs()).thenReturn(2);
-+      when(column.transformToDictIdsSV(block)).thenReturn(new int[]{0, 1});
-+      when(column.transformToStringValuesSV(block)).thenReturn(new String[]{"alpha", "beta"});
-+      List<TransformFunction> arguments = List.of(column, predicate);
-+      Map<String, ColumnContext> contexts = Map.of("skills", columnContext);
-+      TextMatchTransformFunction function = new TextMatchTransformFunction();
-+      function.init(arguments, contexts, queryContext);
-+      assertEquals(function.transformToIntValuesSV(block), new int[]{1, 0});
-+      assertEquals(function.transformToIntValuesSV(block), new int[]{1, 0});
-+      verify(reader).getDictIds("alpha", null, queryContext);
-+      function.init(arguments, contexts);
-+      assertEquals(function.transformToIntValuesSV(block), new int[]{0, 1});
-+      function.init(arguments, contexts);
-+      assertEquals(function.transformToIntValuesSV(block), new int[]{1, 1});
-+      function.init(arguments, contexts);
-+      assertEquals(function.transformToIntValuesSV(block), new int[]{0, 0});
-+      verify(reader, times(3)).getDictIds("alpha", null, null);
-+      // The all/none results do not 
-```
-
-**File**: `pinot-segment-local/src/main/java/org/apache/pinot/segment/local/indexsegment/mutable/MutableSegmentImpl.java` (modified, +5/-2)
-```diff
-@@ -89,6 +89,7 @@
- import org.apache.pinot.segment.spi.index.IndexService;
- import org.apache.pinot.segment.spi.index.IndexType;
- import org.apache.pinot.segment.spi.index.StandardIndexes;
-+import org.apache.pinot.segment.spi.index.TextIndexConfig;
- import org.apache.pinot.segment.spi.index.VectorIndexConfigProvider;
- import org.apache.pinot.segment.spi.index.creator.VectorIndexConfig;
- import org.apache.pinot.segment.spi.index.metadata.SegmentMetadataImpl;
-@@ -424,10 +425,12 @@ public MultiColumnTextMetadata getMultiColumnTextMetadata() {
-       // If the raw value is provided, use it for the forward/dictionary index of this column by wrapping the
-       // already created MutableIndex with a SameValue implementation. This optimization can only be done when
-       // the mutable index is being reused
--      boolean reuseMutableIndex = indexConfigs.getConfig(StandardIndexes.text()).isReuseMutableIndex();
-+      // Dictionary-based text indexes rebuild at sealing and require the original dictionary values.
-+      TextIndexConfig textIndexConfig = indexConfigs.getConfig(StandardIndexes.text());
-+      boolean reuseMutableIndex = textIndexConfig.isReuseMutableIndex() && !textIndexConfig.isBuildOnDictionary();
-       if (reuseMutableIndex) {
-         hasColumnWithReuseMutableTextIndex = true;
--        Object rawValueForTextIndex = indexConfigs.getConfig(StandardIndexes.text()).getRawValueForTextIndex();
-+        Object rawValueForTextIndex = textIndexConfig.getRawValueForTextIndex();
-         if (rawValueForTextIndex != null) {
-           if (dictionary == null) {
-             MutableIndex forwardIndex = mutableIndexes.get(StandardIndexes.forward());
-```
-
-**File**: `pinot-segment-local/src/main/java/org/apache/pinot/segment/local/segment/creator/impl/text/LuceneTextIndexCreator.java` (modified, +41/-4)
-```diff
-@@ -40,6 +40,7 @@
- import org.apache.lucene.store.Directory;
- import org.apache.lucene.store.FSDirectory;
- import org.apache.lucene.store.NRTCachingDirectory;
-+import org.apache.lucene.util.IOUtils;
- import org.apache.pinot.segment.local.realtime.impl.invertedindex.LuceneNRTCachingMergePolicy;
- import org.apache.pinot.segment.local.segment.index.text.AbstractTextIndexCreator;
- import org.apache.pinot.segment.local.segment.index.text.TextIndexConfigBuilder;
-@@ -64,7 +65,7 @@ public class LuceneTextIndexCreator extends AbstractTextIndexCreator {
-   public static final String PINOT_DOC_ID_STORED_FIELD_NAME = "DocID";
- 
-   /// Preferred numeric doc-values field holding the Pinot document ID in freshly built immutable indexes.
--  /// Used to build the Lucene-to-Pinot mapping; omitted when explicitly configured with Skip.
-+  /// Used to build the Lucene-to-Pinot mapping; omitted for per-row indexes explicitly configured with Skip.
-   public static final String PINOT_DOC_ID_DOC_VALUES_FIELD_NAME = "PinotDocID";
- 
-   private final String _textColumn;
-@@ -74,6 +75,9 @@ public class LuceneTextIndexCreator extends AbstractTextIndexCreator {
-   private final TextIndexConfig _config;
-   private final File _indexFile;
-   private final boolean _reuseMutableIndex;
-+  // When true, the index is built over the column dictionary (one document per distinct value, fed via add(String)),
-+  // so the per-row IndexCreator entry points (add(Object, int) / add(Object[], int[])) are no-ops.
-+  private final boolean _buildOnDictionary;
-   private Directory _indexDirectory;
-   private IndexWriter _indexWriter;
-   private int _nextDocId = 0;
-@@ -123,6 +127,10 @@ public LuceneTextIndexCreator(String column, File segmentIndexDir, boolean commi
-     _combineAndCleanupFiles = combineAndCleanupFiles;
-     _segmentDirectory = segmentIndexDir;
-     _config = config;
-+    // Dictionary-based indexing only applies to immutable segments (commit == true): offline creation and the
-+    // realtime-to-offline conversion. A consuming (mutable) segment has no immutable dictionary, so it always builds
-+    // the per-row index regardless of the flag.
-+    _buildOnDictionary = config.isBuildOnDictionary() && commit;
-     String luceneAnalyzerClass = config.getLuceneAnalyzerClass();
-     try {
-       // segment generation is always in V1 and later we convert (as part of post creation processing)
-@@ -153,7 +161,10 @@ public LuceneTextIndexCreator(String column, File segmentIndexDir, boolean commi
-       // 1. Not the realtime index, i.e. commit is set to true
-       // 2. Happens during realtime segment conversion
-       // 3. Mutable segment not compacted
--      _reuseMutableIndex = config.isReuseMutableIndex() && commit && realtimeConversion && !mutableSegmentCompacted;
-+      // 4. Not a dictionary-based index: the mutable index is per-row, so a dictionary-based immutable index must be
-+      //    rebuilt from the sealed dictionary rather than reusing the mutable index.
-+      _reuseMutableIndex = config.isReuseMutableIndex() && commit && realtimeConversion && !mutableSegmentCompacted
-+          && !_buildOnDictionary;
-       if (_reuseMutableIndex) {
-         LOGGER.info("Reusing the realtime lucene index for segment {} and column {}", segmentIndexDir, column);
-         indexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
-@@ -261,7 +272,7 @@ private void convertMutableSegment(File segmentIndexDir, File consumerDir, @Null
-   private void buildMappingFile(File segmentIndexDir, String column, Directory directory,
-       @Nullable int[] mutableToImmutableDocIdMap)
-       throws IOException {
--    if (_config.getDocIdTranslatorMode() == DocIdTranslatorMode.Skip) {
-+    if (!_buildOnDictionary && _config.getDocIdTranslatorMode() == DocIdTranslatorMode.Skip) {
-       return;
-     }
-     try (IndexReader indexReader = DirectoryReader.open(directory)) {
-@@ -289,6 +300,23 @@ private void buildMappingFile(File segmentIndexDir, String column, Directory dir
-     }
-   }
- 
-+  @Override
-+  public void add(Object value, int dictId) {
-+    // In dictionary mode the index is built once from the dictionary (via add(String)); ignore the per-row callbacks.
-+    if (_buildOnDictionary) {
-+      return;
-+    }
-+    super.add(value, dictId);
-+  }
-+
-+  @Override
-+  public void add(Object[] values, @Nullable int[] dictIds) {
-+    if (_buildOnDictionary) {
-+      return;
-+    }
-+    super.add(values, dictIds);
-+  }
-+
-   @Override
-   public void add(String document) {
-     if (_reuseMutableIndex) {
-@@ -336,7 +364,8 @@ private void addDocIdFields(Document document) {
-     if (!_commitOnClose) {
-       // Mutable indexes retain the stored field for existing readers and segment conversion.
-       document.add(new StoredField(PINOT_DOC_ID_STORED_FIELD_NAME, docId));
--    } else if (_config.getDocIdTranslatorMode() != DocIdTranslatorMode.Skip) {
-+    } else if (_buildOnDictionary || _config.getDocIdTranslatorMode() != DocIdTranslatorMode.Skip) {
-+      // Dicti
+@@ -198,7 +198,7 @@
+     <jersey.version>2.48</jersey.version>
+     <hk2.version>2.6.1</hk2.version>
+     <swagger.version>1.6.16</swagger.version>
+-    <swagger-ui.version>5.34.1</swagger-ui.version>
++    <swagger-ui.version>5.35.0</swagger-ui.version>
+     <hadoop.version>3.4.3</hadoop.version>
+     <jsonpath.version>2.10.0</jsonpath.version>
+     <jsonsmart.version>2.6.1</jsonsmart.version>
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20289** (2026-11-17): Bump org.codehaus.mojo:versions-maven-plugin from 2.25.1 to 2.25.2 (@dependabot[bot])
-- **PR #20288** (2026-11-17): Bump com.github.luben:zstd-jni from 1.5.7-26 to 1.5.7-28 (@dependabot[bot])
-- **PR #20287** (2026-11-17): Bump io.github.hakky54:ayza-bom from 10.1.0 to 10.1.1 (@dependabot[bot])
-- **PR #20286** (2026-11-17): Bump software.amazon.awssdk:bom from 2.59.0 to 2.59.1 (@dependabot[bot])
-- **PR #20282** (2026-11-18): Fix offline upsert integration test readiness (@Jackie-Jiang)
-- **PR #20281** (2026-11-17): Fix Kafka startup script race in schema registry tests (@Jackie-Jiang)
+- **PR #20309** (2026-11-19): Bump org.codehaus.plexus:plexus-utils from 4.1.0 to 4.2.0 (@dependabot[bot])
+- **PR #20308** (2026-11-18): Bump org.webjars:swagger-ui from 5.34.1 to 5.35.0 (@dependabot[bot])
+- **PR #20307** (2026-11-18): Bump org.codehaus.plexus:plexus-xml from 3.1.0 to 3.1.1 (@dependabot[bot])
+- **PR #20306** (2026-11-19): Bump org.roaringbitmap:RoaringBitmap from 1.6.29 to 1.6.30 (@dependabot[bot])
+- **PR #20305** (2026-11-19): Add scope-aware discovery of referenced table identifiers (@xiangfu0)
+- **PR #20304** (2026-11-18): Require patched OpenJDK in Pinot container builds (@xiangfu0)
 
 ---
 
@@ -3042,54 +2472,59 @@ Validated with focused JDK 25 tests, including reordered Lucene documents and in
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. MSE literal folding regressions for INT values beyond the INT range, arrays and 
+## X. Prevent Lucene class initialization deadlock during server startup
 
 **RULE**:
-When implementing operations in `pinot-query-planner/src/main/java/org/apache/pinot/calcite/rel/rules/PinotEvaluateLiteralRule.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `compatibility-verifier/CompatibilityServerStarter.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f5641918`: MSE literal folding regressions for INT values beyond the INT range, arrays and timestamp casts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2a07f212`: Prevent Lucene class initialization deadlock during server startup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-query-planner/src/main/java/org/apache/pinot/calcite/rel/rules/PinotEvaluateLiteralRule.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `compatibility-verifier/CompatibilityServerStarter.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-  private static final BigDecimal MIN_INT = BigDecimal.valueOf(Integer.MIN_VALUE);
-  private static final BigDecimal MAX_INT = BigDecimal.valueOf(Integer.MAX_VALUE);
-    }
-    widenIntArgumentTypes(operands, argumentTypes);
-    if (TransformFunctionType.isJsonExtractScalar(canonicalName) && numArguments > 3) {
-      argumentTypes[3] =
-          RexExpressionUtils.fromJsonExtractScalarDefaultLiteral((RexLiteral) operands.get(3)).getDataType();
-    ColumnDataType castTargetType = null;
-      castTargetType = RelToPlanNodeConverter.convertToColumnDataType(rexCall.getType());
-      arguments[0] = getCastValue(arguments[0], castTargetType);
-      arguments[1] = castTargetType.name();
-    }
-    if (rexCall.getKind() == SqlKind.ARRAY_VALUE_CONSTRUCTOR) {
-      keepExactArrayElements(operands, arguments);
-  /// Makes the INT arguments of a call LONG if one of them is an integer literal beyond the INT range.
-  ///
-  /// This rule makes such a literal. Calcite gives INT arithmetic the type INTEGER, but Pinot evaluates it as LONG, so
-  /// the literal for `3600000 * 100000` has the type INTEGER and the value 360000000000. A call on that literal (for
-  /// example `NOW() - 3600000 * 100000`) m
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+package org.apache.pinot.compat;
+
+import java.lang.reflect.InvocationTargetException;
+
+
+/**
+ * Initializes Lucene on the main thread before starting a compatibility server, including older releases that lack
+ * the startup fix. This stateless entry point must run before any concurrent Lucene use in the same JVM.
+ */
+public final class CompatibilityServerStarter {
+  private CompatibilitySe
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-      if (TransformFunctionType.isJsonExtractScalar(canonicalName) && i == 3) {
-        argumentTypes[i] = RexExpressionUtils.fromJsonExtractScalarDefaultLiteral((RexLiteral) rexNode).getDataType();
-      }
-    String castTargetType = null;
-      castTargetType = RelToPlanNodeConverter.convertToColumnDataType(rexCall.getType()).name();
-      arguments[1] = castTargetType;
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f5641918` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2a07f212` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

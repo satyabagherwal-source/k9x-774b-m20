@@ -11236,3 +11236,6 @@
 | `CYCLE-20261119-J82F` | `2026-11-19T08:03:00.375Z` | `LiquidAI/d1-3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-d1-3b-learnings.md` | Yes (`79ea85b7...`) |
 | `CYCLE-20261119-QMF4` | `2026-11-19T08:08:45.568Z` | `volcengine/OpenViking` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9356, Rule 9357, Rule 9358` | Yes (`3f413a38...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T08:09:20.017Z` | `volcengine-openviking` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-0D47575C` [Domain H] | Yes (`b5fb0df1...`) |
+| `CYCLE-20261119-G79J` | `2026-11-19T08:28:38.983Z` | `Cactus-Compute/whistle` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md` | Yes (`c626cf4b...`) |
+| `CYCLE-20261119-GOGE` | `2026-11-19T08:29:01.262Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9359` | Yes (`90e35960...`) |
+| `CYCLE-20261119-RW9X` | `2026-11-19T08:37:44.613Z` | `nginx/kubernetes-ingress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9360` | Yes (`409b5fda...`) |

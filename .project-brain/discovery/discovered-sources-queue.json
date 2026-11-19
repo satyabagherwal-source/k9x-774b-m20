@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T07:51:14.909Z",
+  "updated_at": "2026-11-19T08:37:50.329Z",
   "stats": {
-    "total_discovered": 5828,
-    "approved_pending_harvest": 5516,
+    "total_discovered": 5845,
+    "approved_pending_harvest": 5533,
     "harvested_count": 0,
     "rejected_count": 312,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5480,
+      "COMMUNITY_AND_EXPERT": 5497,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -126053,6 +126053,380 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
         "fileName": "tencent-tds-kuiklyui-learnings.md"
+      }
+    },
+    "SRC-C5A8462B1DF2": {
+      "id": "SRC-C5A8462B1DF2",
+      "url": "https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11469?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11469?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T08:37:48.705Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-5EBDB4C7724E": {
+      "id": "SRC-5EBDB4C7724E",
+      "url": "https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/9fc7ef0851f3b38dd5dbd7bc07efa725ed7b8a44?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/9fc7ef0851f3b38dd5dbd7bc07efa725ed7b8a44?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T08:37:48.758Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-96F35C00806C": {
+      "id": "SRC-96F35C00806C",
+      "url": "https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/3beed168c6bad2ff638514429e67ab54f7fe847c?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/3beed168c6bad2ff638514429e67ab54f7fe847c?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T08:37:48.806Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-DE479402899A": {
+      "id": "SRC-DE479402899A",
+      "url": "https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11468?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/nginx/kubernetes-ingress/pull/11468?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T08:37:48.853Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-6A4022FFE8D0": {
+      "id": "SRC-6A4022FFE8D0",
+      "url": "https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/c7605b57dad390009f3e995ddcba14534b53f8b6?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/c7605b57dad390009f3e995ddcba14534b53f8b6?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T08:37:48.904Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-7C259A41CE79": {
+      "id": "SRC-7C259A41CE79",
+      "url": "https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/d01a548097efdfccb49a681c63860da163bfd00f?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/nginx/kubernetes-ingress/commit/d01a548097efdfccb49a681c63860da163bfd00f?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T08:37:48.952Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
+        "fileName": "nginx-kubernetes-ingress-learnings.md"
+      }
+    },
+    "SRC-FCCBC07C595F": {
+      "id": "SRC-FCCBC07C595F",
+      "url": "https://lucene.apache.org/core/9_12_3/changes/Changes.html",
+      "title": "https://lucene.apache.org/core/9_12_3/changes/Changes.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T08:37:49.814Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-936D8A24E2C8": {
+      "id": "SRC-936D8A24E2C8",
+      "url": "https://github.com/apache/lucene/issues/12419",
+      "title": "https://github.com/apache/lucene/issues/12419",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T08:37:49.865Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-8151AB68730F": {
+      "id": "SRC-8151AB68730F",
+      "url": "https://github.com/apache/pinot/actions/runs/44070961025/job/133996755187",
+      "title": "https://github.com/apache/pinot/actions/runs/44070961025/job/133996755187",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T08:37:49.913Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-1612769B1F51": {
+      "id": "SRC-1612769B1F51",
+      "url": "https://github.com/apache",
+      "title": "https://github.com/apache",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T08:37:49.979Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-A2F7274C4877": {
+      "id": "SRC-A2F7274C4877",
+      "url": "https://github.com/apachepinot/pinot-fork/actions/workflows/build-pinot-docker-base-image.yml",
+      "title": "https://github.com/apachepinot/pinot-fork/actions/workflows/build-pinot-docker-base-image.yml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T08:37:50.032Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-5A67AC4DB60F": {
+      "id": "SRC-5A67AC4DB60F",
+      "url": "https://github.com/apache/pinot/actions/workflows/build-pinot-base-docker-image.yml",
+      "title": "https://github.com/apache/pinot/actions/workflows/build-pinot-base-docker-image.yml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T08:37:50.080Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-2F9DE736B434": {
+      "id": "SRC-2F9DE736B434",
+      "url": "https://openjdk.org/groups/vulnerability/advisories/2026-11-17",
+      "title": "https://openjdk.org/groups/vulnerability/advisories/2026-11-17",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T08:37:50.127Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-06583E168717": {
+      "id": "SRC-06583E168717",
+      "url": "https://apt.corretto.aws/corretto.key",
+      "title": "https://apt.corretto.aws/corretto.key",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T08:37:50.182Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-0AC894658FCA": {
+      "id": "SRC-0AC894658FCA",
+      "url": "https://github.com/swagger-api/swagger-ui",
+      "title": "https://github.com/swagger-api/swagger-ui",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T08:37:50.229Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-C3B9E32AEFB8": {
+      "id": "SRC-C3B9E32AEFB8",
+      "url": "https://github.com/swagger-api/swagger-ui/releases",
+      "title": "https://github.com/swagger-api/swagger-ui/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T08:37:50.281Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
+      }
+    },
+    "SRC-A288E9A87A2E": {
+      "id": "SRC-A288E9A87A2E",
+      "url": "https://github.com/swagger-api/swagger-ui/compare/v5.34.1...v5.35.0",
+      "title": "https://github.com/swagger-api/swagger-ui/compare/v5.34.1...v5.35.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T08:37:50.329Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-pinot-learnings.md",
+        "fileName": "apache-pinot-learnings.md"
       }
     }
   }

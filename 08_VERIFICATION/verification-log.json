@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-3WVB",
-    "timestamp": "2026-11-17T19:27:35.975Z",
-    "repository": "lancedb/lancedb",
-    "learningId": "learn-github-lancedb-lancedb",
-    "contentHash": "6b9858ea9bf1ee60afedb4282d47e000172c24fb71a029f9d40890cab529e639",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-G3M7",
-    "timestamp": "2026-11-17T19:37:04.591Z",
-    "repository": "ccore/Qwen3.5-4B-3D-Coder",
-    "learningId": "learn-huggingface-ccore-qwen3-5-4b-3d-coder",
-    "contentHash": "4d92418a6659616a684ea1bc01873f4960e3f0863382c7b28b81baaac2d36f5b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-Q5EP",
-    "timestamp": "2026-11-17T19:44:53.473Z",
-    "repository": "LiquidAI/LFM3-1.7B",
-    "learningId": "learn-huggingface-liquidai-lfm3-1-7b",
-    "contentHash": "105480e9bebdf0b51bddd58645ae63f965e71d7077fde7d0fcbd33fcb6682ff3",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-Q66T",
     "timestamp": "2026-11-17T19:44:54.485Z",
     "repository": "software-mansion/react-native-gesture-handler",
@@ -7492,6 +7447,51 @@
     "contentHash": "3f413a38770f4826b557634992221f2c531ce5339e140cdb5168e6a8790c80ee",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-G79J",
+    "timestamp": "2026-11-19T08:28:38.983Z",
+    "repository": "Cactus-Compute/whistle",
+    "learningId": "learn-huggingface-cactus-compute-whistle",
+    "contentHash": "c626cf4b9dd854c39eb86bcd1dc789b07858b2ee1da0e65c136dfd2315e841fa",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-GOGE",
+    "timestamp": "2026-11-19T08:29:01.262Z",
+    "repository": "apache/pinot",
+    "learningId": "learn-github-apache-pinot",
+    "contentHash": "90e359603df9f37de764bd0f5183a4529ada3f5f128a1fc06baf8cf7876933ee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-RW9X",
+    "timestamp": "2026-11-19T08:37:44.613Z",
+    "repository": "nginx/kubernetes-ingress",
+    "learningId": "learn-github-nginx-kubernetes-ingress",
+    "contentHash": "409b5fda658f372590ba0093661fc651905e659c86372033e9d92d5a5790778b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -11269,3 +11269,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-liquidai-d1-3b` | `https://huggingface.co/LiquidAI/d1-3B` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-19T08:03:00.379Z |
 | `learn-github-volcengine-openviking` | `https://github.com/volcengine/OpenViking` | `15845c2a` | Multi-dimensional audit evidence | 2026-11-19T08:08:45.572Z |
 | `learn-dom-h-0d47575c` | `project://volcengine-openviking` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/volcengine-openviking-learnings.md` | 2026-11-19T08:09:20.017Z |
+| `learn-huggingface-cactus-compute-whistle` | `https://huggingface.co/Cactus-Compute/whistle` | `hf-cactus-` | Multi-dimensional audit evidence | 2026-11-19T08:28:38.987Z |
+| `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `85417d1a` | Multi-dimensional audit evidence | 2026-11-19T08:29:01.266Z |
+| `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `3077890f` | Multi-dimensional audit evidence | 2026-11-19T08:37:44.618Z |

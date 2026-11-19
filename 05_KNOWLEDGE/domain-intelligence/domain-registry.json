@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T08:09:21.546Z",
+  "last_updated": "2026-11-19T08:37:50.752Z",
   "total_records": 1960,
   "domains": {
     "A": {
@@ -16755,8 +16755,8 @@
       "title": "Content & Information Intelligence: apache/pinot Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-content-information-intelligence-apache-pinot-core-invariants.md",
       "repository": "apache/pinot",
-      "content_hash": "996d5445fa82136b5d9130990f04959eabf0f205de0236e73e624f69d1d44e76",
-      "created_at": "2026-11-18T08:50:44.464Z"
+      "content_hash": "f68340c6b16bf0276f6f7f75b8f10d8072d774ba927f61e8640960a2de5873a4",
+      "created_at": "2026-11-19T08:29:01.704Z"
     },
     "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants",
@@ -17226,8 +17226,8 @@
       "title": "Research & Knowledge Intelligence: Cactus-Compute/whistle Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cactus-compute-whistle-research-knowledge-intelligence-cactus-compute-whistle.md",
       "repository": "Cactus-Compute/whistle",
-      "content_hash": "aeabb5ea82a0d46c87a0b5f5fb824c31d8dca35ad6d5d68c98e095a0112f971c",
-      "created_at": "2026-11-14T18:34:34.879Z"
+      "content_hash": "d7c2b2ecdb212bc7238886194a360aff7f328224a1414007ef12eea52ade752d",
+      "created_at": "2026-11-19T08:28:39.242Z"
     },
     "domain_intelligence-architecture-intelligence-hashicorp-terraform-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-hashicorp-terraform-core-invariants",
@@ -17286,8 +17286,8 @@
       "title": "Research & Knowledge Intelligence: hf-cactus-compute-whistle-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cactus-compute-whistle-learnings-research-knowledge-intelligence-hf-cactus-co.md",
       "repository": "hf-cactus-compute-whistle-learnings",
-      "content_hash": "835a3ae1511b265a344d01d047090d38f578b4aed9987dca3236623f448a712d",
-      "created_at": "2026-11-14T18:35:10.950Z"
+      "content_hash": "0d6cc096327601a95ec5f587f6e64da807c923b596682a0c8bccbf9f0b008f89",
+      "created_at": "2026-11-19T08:37:48.381Z"
     },
     "domain_intelligence-architecture-intelligence-hashicorp-terraform-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-hashicorp-terraform-learnings-core-invariants",
@@ -24209,8 +24209,8 @@
       "title": "Architecture Intelligence: nginx/kubernetes-ingress Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-architecture-intelligence-nginx-kubernetes-ingress-core.md",
       "repository": "nginx/kubernetes-ingress",
-      "content_hash": "458d467e9824f67c5ed1b3a3848116d2914d0656bc31f7801f4cd593fb16f564",
-      "created_at": "2026-11-18T10:08:48.091Z"
+      "content_hash": "d5d88606a0579e4ee898b48ba3a101aab8c121f2a0e219df7299f5d15f4848a8",
+      "created_at": "2026-11-19T08:37:45.045Z"
     },
     "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-core-invariants",
@@ -24227,8 +24227,8 @@
       "title": "Architecture Intelligence: nginx-kubernetes-ingress-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-learnings-architecture-intelligence-nginx-kubernetes-in.md",
       "repository": "nginx-kubernetes-ingress-learnings",
-      "content_hash": "14b1c481b04ac48f23c9d464a67175dca7925a9461c6c4f2c7745443350b71a0",
-      "created_at": "2026-11-18T10:08:57.819Z"
+      "content_hash": "e7ca160053ddb9652464e17547893e0c6e5ecbd42040f70eb6ffe49506b43572",
+      "created_at": "2026-11-19T08:37:49.386Z"
     },
     "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants",
@@ -26884,8 +26884,8 @@
       "title": "Content & Information Intelligence: apache-pinot-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-learnings-content-information-intelligence-apache-pinot-learnings-c.md",
       "repository": "apache-pinot-learnings",
-      "content_hash": "0585ffe1685b7ff8f70fe46720ed8d372718403013e39dc2395f4d9c42a993f0",
-      "created_at": "2026-11-18T08:53:21.809Z"
+      "content_hash": "60256914c0c374d4d912a894e55aee4d78f56c79543b56f3d345fe7bfba152c8",
+      "created_at": "2026-11-19T08:37:50.752Z"
     },
     "domain_intelligence-research-knowledge-intelligence-speridlabs-idol-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-speridlabs-idol-core-invariants",

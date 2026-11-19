@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T08:09:21.546Z",
+  "last_updated": "2026-11-19T08:37:50.933Z",
   "total_verified_learnings": 9015,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21705,
+  "total_items": 21709,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -217876,8 +217876,8 @@
       "slug": "nginx-kubernetes-ingress",
       "platform": "github",
       "source_url": "https://github.com/nginx/kubernetes-ingress",
-      "source_version": "10b9eec3",
-      "content_hash": "4d97eab80f8789d70b10b2d90f90a4336b4eeaff94a3d884b4e461ff8160cfec",
+      "source_version": "3077890f",
+      "content_hash": "409b5fda658f372590ba0093661fc651905e659c86372033e9d92d5a5790778b",
       "dossier_path": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nginx-kubernetes-ingress-learnings.md",
       "promoted_rules": [
@@ -217900,6 +217900,11 @@
           "number": 9190,
           "title": "[ci] Phase 2 - Unifying workflow files",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9360,
+          "title": "security hardening and minor bug fixes for main",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217907,7 +217912,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T10:08:47.581Z",
+      "verified_at": "2026-11-19T08:37:44.381Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217961,10 +217966,10 @@
       "relative_path": "08_VERIFICATION/nginx-kubernetes-ingress-verification-protocol-empirical-defect-shield-for-nginx.md",
       "title": "Verification Protocol: Empirical Defect Shield for nginx/kubernetes-ingress",
       "repository": "nginx/kubernetes-ingress",
-      "source_version": "10b9eec3",
-      "content_hash": "9660f9607d1c292a804cd378222be3d2a8d739dc9f449cb4018843de517f88e8",
+      "source_version": "3077890f",
+      "content_hash": "bbac9c27f3112f9884a518920e3bbd04f9c7a381dbf29bfa56367fbbf695f77a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T10:08:48.226Z"
+      "persisted_at": "2026-11-19T08:37:45.231Z"
     },
     "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-vercel-labs-agent-desktop-learnings-core-invaria",
@@ -218022,9 +218027,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nginx-kubernetes-ingress-learnings",
       "repository": "nginx-kubernetes-ingress-learnings",
       "source_version": "HEAD",
-      "content_hash": "851ecdbb951b8ae45fee26fb5ba0f67e879a8ece1ebdb0cbd73acb3d4afeafff",
+      "content_hash": "ae9181dc36d925801058ab0085b3115d386bbbe987b42703b6e556f4a0d0e57e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T10:08:57.974Z"
+      "persisted_at": "2026-11-19T08:37:49.565Z"
     },
     "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k": {
       "learning_id": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
@@ -233250,8 +233255,8 @@
       "slug": "apache-pinot",
       "platform": "github",
       "source_url": "https://github.com/apache/pinot",
-      "source_version": "05c81927",
-      "content_hash": "0d401d41d0dd82faba6bb2f4b901851f42181b96f75b91e7cfa56fc2e6842ea7",
+      "source_version": "85417d1a",
+      "content_hash": "90e359603df9f37de764bd0f5183a4529ada3f5f128a1fc06baf8cf7876933ee",
       "dossier_path": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "promoted_rules": [
@@ -233269,6 +233274,11 @@
           "number": 9177,
           "title": "MSE literal folding regressions for INT values beyond the INT range, arrays and",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9359,
+          "title": "Prevent Lucene class initialization deadlock during server startup",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233276,7 +233286,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T08:50:43.923Z",
+      "verified_at": "2026-11-19T08:29:01.033Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233318,10 +233328,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-content-information-intelligence-apache-pinot-core-invariants.md",
       "title": "Content & Information Intelligence: apache/pinot Core Invariants",
       "repository": "apache/pinot",
-      "source_version": "05c81927",
-      "content_hash": "996d5445fa82136b5d9130990f04959eabf0f205de0236e73e624f69d1d44e76",
+      "source_version": "85417d1a",
+      "content_hash": "f68340c6b16bf0276f6f7f75b8f10d8072d774ba927f61e8640960a2de5873a4",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T08:50:44.464Z"
+      "persisted_at": "2026-11-19T08:29:01.704Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot",
@@ -233330,10 +233340,10 @@
       "relative_path": "08_VERIFICATION/apache-pinot-verification-protocol-empirical-defect-shield-for-apache-pinot.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/pinot",
       "repository": "apache/pinot",
-      "source_version": "05c81927",
-      "content_hash": "40b38bafe548bf440da4c8e7af70807bd1ff0c80d0cc1bec1ee4260a0c91614c",
+      "source_version": "85417d1a",
+      "content_hash": "91fd092acf6cbb6219b48e062fdb86584c1c4fc8337f3b4651095642cf3475b3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T08:50:44.605Z"
+      "persisted_at": "2026-11-19T08:29:01.887Z"
     },
     "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants",
@@ -234716,7 +234726,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Cactus-Compute/whistle",
       "source_version": "hf-cactus-compute-whistle",
-      "content_hash": "964cfe29d9e2b644ca6af4f1d76098cd62a18e251cb7deb586e5731210538a35",
+      "content_hash": "c626cf4b9dd854c39eb86bcd1dc789b07858b2ee1da0e65c136dfd2315e841fa",
       "dossier_path": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cactus-compute-whistle-learnings.md",
       "promoted_rules": [],
@@ -234725,7 +234735,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T18:34:34.600Z",
+      "verified_at": "2026-11-19T08:28:38.730Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234742,9 +234752,9 @@
       "title": "Research & Knowledge Intelligence: Cactus-Compute/whistle Core Invariants",
       "repository": "Cactus-Compute/whistle",
       "source_version": "hf-cactus-compute-whistle",
-      "content_hash": "aeabb5ea82a0d46c87a0b5f5fb824c31d8dca35ad6d5d68c98e095a0112f971c",
+      "content_hash": "d7c2b2ecdb212bc7238886194a360aff7f328224a1414007ef12eea52ade752d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T18:34:34.879Z"
+      "persisted_at": "2026-11-19T08:28:39.242Z"
     },
     "learn-github-hashicorp-terraform": {
       "learning_id": "learn-github-hashicorp-terraform",
@@ -234857,9 +234867,9 @@
       "title": "Research & Knowledge Intelligence: hf-cactus-compute-whistle-learnings Core Invariants",
       "repository": "hf-cactus-compute-whistle-learnings",
       "source_version": "HEAD",
-      "content_hash": "835a3ae1511b265a344d01d047090d38f578b4aed9987dca3236623f448a712d",
+      "content_hash": "0d6cc096327601a95ec5f587f6e64da807c923b596682a0c8bccbf9f0b008f89",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T18:35:10.950Z"
+      "persisted_at": "2026-11-19T08:37:48.381Z"
     },
     "domain_intelligence-architecture-intelligence-hashicorp-terraform-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-hashicorp-terraform-learnings-core-invariants",
@@ -258068,10 +258078,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nginx-kubernetes-ingress-architecture-intelligence-nginx-kubernetes-ingress-core.md",
       "title": "Architecture Intelligence: nginx/kubernetes-ingress Core Invariants",
       "repository": "nginx/kubernetes-ingress",
-      "source_version": "10b9eec3",
-      "content_hash": "458d467e9824f67c5ed1b3a3848116d2914d0656bc31f7801f4cd593fb16f564",
+      "source_version": "3077890f",
+      "content_hash": "d5d88606a0579e4ee898b48ba3a101aab8c121f2a0e219df7299f5d15f4848a8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T10:08:48.091Z"
+      "persisted_at": "2026-11-19T08:37:45.045Z"
     },
     "learn-github-rustls-rustls": {
       "learning_id": "learn-github-rustls-rustls",
@@ -258207,9 +258217,9 @@
       "title": "Architecture Intelligence: nginx-kubernetes-ingress-learnings Core Invariants",
       "repository": "nginx-kubernetes-ingress-learnings",
       "source_version": "HEAD",
-      "content_hash": "14b1c481b04ac48f23c9d464a67175dca7925a9461c6c4f2c7745443350b71a0",
+      "content_hash": "e7ca160053ddb9652464e17547893e0c6e5ecbd42040f70eb6ffe49506b43572",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T10:08:57.819Z"
+      "persisted_at": "2026-11-19T08:37:49.386Z"
     },
     "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-rustls-rustls-learnings-core-invariants",
@@ -270620,9 +270630,9 @@
       "title": "Content & Information Intelligence: apache-pinot-learnings Core Invariants",
       "repository": "apache-pinot-learnings",
       "source_version": "HEAD",
-      "content_hash": "0585ffe1685b7ff8f70fe46720ed8d372718403013e39dc2395f4d9c42a993f0",
+      "content_hash": "60256914c0c374d4d912a894e55aee4d78f56c79543b56f3d345fe7bfba152c8",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T08:53:21.809Z"
+      "persisted_at": "2026-11-19T08:37:50.752Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot-learnings",
@@ -270632,9 +270642,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apache-pinot-learnings",
       "repository": "apache-pinot-learnings",
       "source_version": "HEAD",
-      "content_hash": "ff487c314fb3419d524dc85a870942b11c691b4fe3a6cedd867feb852c95c948",
+      "content_hash": "31eccdee6ae88740f391526cf136daa73f5ae0af89081aed2260d12e6f87341f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T08:53:21.964Z"
+      "persisted_at": "2026-11-19T08:37:50.933Z"
     },
     "learn-huggingface-speridlabs-idol": {
       "learning_id": "learn-huggingface-speridlabs-idol",
@@ -293332,6 +293342,58 @@
       "content_hash": "912b103262694d19b60551cdc47b480f660fffa3d49caf3219f034557d3a15b5",
       "domain_letter": "H",
       "persisted_at": "2026-11-19T08:09:20.907Z"
+    },
+    "rule-9359": {
+      "learning_id": "rule-9359",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9359,
+      "title": "Prevent Lucene class initialization deadlock during server startup",
+      "source_url": "https://github.com/apache/pinot",
+      "source_version": "85417d1a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T08:29:01.033Z"
+    },
+    "candidate_directive-prevent-lucene-class-initialization-deadlock-during-server-startup": {
+      "item_id": "candidate_directive-prevent-lucene-class-initialization-deadlock-during-server-startup",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S0V9-prevent-lucene-class-initialization-deadlock-during-server-startup.md",
+      "title": "Prevent Lucene class initialization deadlock during server startup",
+      "repository": "apache-pinot-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0e950174c55d96ceddd2380258ffd62c9fd523f0ff8b159df63b5eaeaef8e4ec",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-19T08:37:50.570Z"
+    },
+    "rule-9360": {
+      "learning_id": "rule-9360",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9360,
+      "title": "security hardening and minor bug fixes for main",
+      "source_url": "https://github.com/nginx/kubernetes-ingress",
+      "source_version": "3077890f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T08:37:44.381Z"
+    },
+    "candidate_directive-security-hardening-and-minor-bug-fixes-for-main": {
+      "item_id": "candidate_directive-security-hardening-and-minor-bug-fixes-for-main",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RZT7-security-hardening-and-minor-bug-fixes-for-main.md",
+      "title": "security hardening and minor bug fixes for main",
+      "repository": "nginx-kubernetes-ingress-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c53feaaf54d011814425845a80f2333e11cfedece8da5b5ae3e65f52c3877728",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T08:37:49.201Z"
     }
   },
   "ai-builder-brain": {
