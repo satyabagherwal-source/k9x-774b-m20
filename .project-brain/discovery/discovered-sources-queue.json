@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T06:34:03.823Z",
+  "updated_at": "2026-11-19T06:53:05.909Z",
   "stats": {
-    "total_discovered": 5804,
-    "approved_pending_harvest": 5493,
+    "total_discovered": 5805,
+    "approved_pending_harvest": 5494,
     "harvested_count": 0,
     "rejected_count": 311,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5459,
+      "COMMUNITY_AND_EXPERT": 5460,
       "OFFICIAL_DOCUMENTATION": 186,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -125532,6 +125532,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clickhouse-clickhouse-learnings.md",
         "fileName": "clickhouse-clickhouse-learnings.md"
+      }
+    },
+    "SRC-3E660F6A79FF": {
+      "id": "SRC-3E660F6A79FF",
+      "url": "https://huggingface.co/Reson8/Rumble-2-Flash",
+      "title": "https://huggingface.co/Reson8/Rumble-2-Flash",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T06:53:05.909Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-reson8-rumble-2-flash-learnings.md",
+        "fileName": "hf-reson8-rumble-2-flash-learnings.md"
       }
     }
   }

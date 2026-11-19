@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T06:34:04.322Z",
-  "total_verified_learnings": 9014,
+  "last_updated": "2026-11-19T06:53:07.482Z",
+  "total_verified_learnings": 9015,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21667,
+  "total_items": 21670,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-GCVT-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-1CKA-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "442342871495a83738e3e88d68fd7c9f1f28e1d2966d6117ff27350dea76e1e9",
+      "content_hash": "b236b095012d02b7b7aea45703d81d06b3158c0b3d47ce7dee5345d5ffa728df",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T04:44:49.349Z"
+      "persisted_at": "2026-11-19T06:53:07.172Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "34257c757f7fe0bf15e0718a4edb6bfa6850068cede8bac3de00dc9968370a92",
+      "content_hash": "eb4a1a7ba594ccb408e7dc9076f31b3689e364f4a705de72e1dd509043feb96b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T04:44:49.505Z"
+      "persisted_at": "2026-11-19T06:53:07.328Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "c9329dcca800bd3c2d61b4a4e86e619439bb0036413b67e8bbe9751331124b6c",
+      "content_hash": "074cec6e36b81251ddd1b6d63e1dba7f1da001138cad604989a5b1153e28d7a1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T04:44:49.660Z"
+      "persisted_at": "2026-11-19T06:53:07.482Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -232924,7 +232924,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GEV-26B-Decide",
       "source_version": "hf-autotrust-gev-26b-decide",
-      "content_hash": "cbb115a815af1a22c714344f3c010bbcfd86bdb0279479b3ee921181cce085dd",
+      "content_hash": "1f03d9851d119e3680b2a1893c9dcd0cbb1fbd814993a5f2e99e8655e62eb0b4",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md",
       "promoted_rules": [],
@@ -232933,7 +232933,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T17:03:22.991Z",
+      "verified_at": "2026-11-19T06:52:26.270Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232950,9 +232950,9 @@
       "title": "Research & Knowledge Intelligence: autotrust/GEV-26B-Decide Core Invariants",
       "repository": "autotrust/GEV-26B-Decide",
       "source_version": "hf-autotrust-gev-26b-decide",
-      "content_hash": "d3887ccdf661671fbe9279dbdcd160dc2488f972a73ca0eb3619bacf455cdb6a",
+      "content_hash": "abe61bf9cf9dea181aa1a7325682030b460638b82305bf86331b6db561e5eed7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T17:03:23.314Z"
+      "persisted_at": "2026-11-19T06:52:26.659Z"
     },
     "domain_intelligence-technical-construction-intelligence-oven-sh-bun-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-oven-sh-bun-learnings-core-invariants",
@@ -232986,9 +232986,9 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-gev-26b-decide-learnings Core Invariants",
       "repository": "hf-autotrust-gev-26b-decide-learnings",
       "source_version": "HEAD",
-      "content_hash": "1d84f3261ec78edf99176c5f45b05476b45e68368df47e5b4a1c063a924fc643",
+      "content_hash": "02d632fdaae4129052ca76ed5f7282fd0ba03d4e3295c4eec738ffed998d9a9e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T17:04:26.926Z"
+      "persisted_at": "2026-11-19T06:53:06.513Z"
     },
     "learn-huggingface-google-embeddinggemma-2": {
       "learning_id": "learn-huggingface-google-embeddinggemma-2",
@@ -292770,6 +292770,57 @@
       "content_hash": "67c8ec8bab187dc1320281b50621d7bfe24011cbe3f4acdfc8e7691e5d52424a",
       "domain_letter": "H",
       "persisted_at": "2026-11-19T06:34:03.331Z"
+    },
+    "learn-huggingface-reson8-rumble-2-flash": {
+      "learning_id": "learn-huggingface-reson8-rumble-2-flash",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Reson8/Rumble-2-Flash",
+      "repository": "Reson8/Rumble-2-Flash",
+      "slug": "hf-reson8-rumble-2-flash",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Reson8/Rumble-2-Flash",
+      "source_version": "hf-reson8-rumble-2-flash",
+      "content_hash": "1bda1950dbf9aa4623e16cb8be34bc542d0745db8826341c0d3e65bea3dbb4bc",
+      "dossier_path": "07_PROJECT_LEARNING/hf-reson8-rumble-2-flash-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-reson8-rumble-2-flash-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-19T06:52:23.980Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-reson8-rumble-2-flash-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-reson8-rumble-2-flash-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-reson8-rumble-2-flash-research-knowledge-intelligence-reson8-rumble-2-flash-c.md",
+      "title": "Research & Knowledge Intelligence: Reson8/Rumble-2-Flash Core Invariants",
+      "repository": "Reson8/Rumble-2-Flash",
+      "source_version": "hf-reson8-rumble-2-flash",
+      "content_hash": "2a10b77a8ceb3fec3d487fb0f8299c6f21408feff02204d8864674f3938e393c",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T06:52:24.366Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-reson8-rumble-2-flash-learnings-core-invarian": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-reson8-rumble-2-flash-learnings-core-invarian",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-reson8-rumble-2-flash-learnings-research-knowledge-intelligence-hf-reson8-rum.md",
+      "title": "Research & Knowledge Intelligence: hf-reson8-rumble-2-flash-learnings Core Invariants",
+      "repository": "hf-reson8-rumble-2-flash-learnings",
+      "source_version": "HEAD",
+      "content_hash": "14832458dab0d27d29f14a1a46c69acbb93809ba29d5843b2310379458977686",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T06:53:06.124Z"
     }
   },
   "ai-builder-brain": {

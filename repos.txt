@@ -5214,3 +5214,7 @@ https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap
 # --- Automatically Discovered by AI Scout Engine [2026-11-19T03:38:58.048Z] ---
 # [HUGGINGFACE-AI-MODELS] inworld/voice-isolator (830 score) - Verified Hugging Face Model: inworld/voice-isolator (83 likes, 0 downloads)
 https://huggingface.co/inworld/voice-isolator
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-19T06:52:17.467Z] ---
+# [HUGGINGFACE-AI-MODELS] Reson8/Rumble-2-Flash (1513 score) - Verified Hugging Face Model: Reson8/Rumble-2-Flash (106 likes, 453 downloads)
+https://huggingface.co/Reson8/Rumble-2-Flash

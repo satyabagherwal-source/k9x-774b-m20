@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T06:33:34.364Z",
-  "total_cycles_completed": 10717,
-  "total_learnings_persisted": 10717,
+  "last_updated": "2026-11-19T06:52:26.480Z",
+  "total_cycles_completed": 10719,
+  "total_learnings_persisted": 10719,
   "total_rules_promoted": 10114,
   "history": [
-    {
-      "timestamp": "2026-11-18T14:08:08.277Z",
-      "repository": "TaichuAI/ZDTaichu5.0-9B",
-      "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T14:15:43.847Z",
-      "repository": "Comfy-Org/Qwen-Image-2.1",
-      "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T14:15:47.664Z",
       "repository": "flox/flox",
@@ -1403,6 +1389,20 @@
       "repository": "prometheus/prometheus",
       "learningId": "learn-github-prometheus-prometheus",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T06:52:24.190Z",
+      "repository": "Reson8/Rumble-2-Flash",
+      "learningId": "learn-huggingface-reson8-rumble-2-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T06:52:26.480Z",
+      "repository": "autotrust/GEV-26B-Decide",
+      "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

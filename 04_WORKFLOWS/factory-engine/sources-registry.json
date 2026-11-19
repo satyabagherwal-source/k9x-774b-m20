@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T06:33:37.617Z",
-    "lastVerified": "2026-11-19T06:33:37.617Z",
+    "lastChecked": "2026-11-19T06:52:38.084Z",
+    "lastVerified": "2026-11-19T06:52:38.084Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -313,8 +313,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T05:24:32.285Z",
-    "lastVerified": "2026-11-19T05:24:32.285Z",
+    "lastChecked": "2026-11-19T06:52:38.077Z",
+    "lastVerified": "2026-11-19T06:52:38.077Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1758,12 +1758,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectdiscovery-nuclei": {
-    "name": "projectdiscovery/nuclei",
+    "name": "nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-18T23:26:13.955Z",
-    "lastVerified": "2026-11-18T23:26:13.955Z",
+    "lastChecked": "2026-11-19T06:52:33.213Z",
+    "lastVerified": "2026-11-19T06:52:33.213Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
@@ -1772,7 +1772,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "28b60e68"
   },
   "lancedb-lancedb": {
     "name": "lancedb/lancedb",
@@ -6468,5 +6469,60 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-reson8-rumble-2-flash": {
+    "name": "Reson8/Rumble-2-Flash",
+    "officialUrl": "https://huggingface.co/Reson8/Rumble-2-Flash",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T06:52:23.542Z",
+    "lastVerified": "2026-11-19T06:52:23.542Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-reson8-rumble-2-flash",
+    "contentHash": "1bda1950dbf9aa4623e16cb8be34bc542d0745db8826341c0d3e65bea3dbb4bc",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-autotrust-gev-26b-decide": {
+    "name": "autotrust/GEV-26B-Decide",
+    "officialUrl": "https://huggingface.co/autotrust/GEV-26B-Decide",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T06:52:26.027Z",
+    "lastVerified": "2026-11-19T06:52:26.027Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+    "contentHash": "1f03d9851d119e3680b2a1893c9dcd0cbb1fbd814993a5f2e99e8655e62eb0b4",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "vercel-swr": {
+    "name": "swr",
+    "officialUrl": "https://github.com/vercel/swr",
+    "lastChecked": "2026-11-19T06:52:28.216Z",
+    "revisionIdentifier": "8148ef01",
+    "lastVerified": "2026-11-19T06:52:28.216Z"
+  },
+  "fabio-rovai-open-ontologies": {
+    "name": "open-ontologies",
+    "officialUrl": "https://github.com/fabio-rovai/open-ontologies",
+    "lastChecked": "2026-11-19T06:52:30.574Z",
+    "revisionIdentifier": "1ed99ac1",
+    "lastVerified": "2026-11-19T06:52:30.574Z"
+  },
+  "libsql-libsql": {
+    "name": "libsql",
+    "officialUrl": "https://github.com/libsql/libsql",
+    "lastChecked": "2026-11-19T06:52:35.877Z",
+    "revisionIdentifier": "a1d031cb",
+    "lastVerified": "2026-11-19T06:52:35.877Z"
   }
 }

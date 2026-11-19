@@ -105,8 +105,8 @@
     "sourceUrl": "https://huggingface.co/autotrust/GEV-26B-Decide",
     "sourceVersion": "hf-autotrust-gev-26b-decide",
     "license": "Open-Source",
-    "contentHash": "cbb115a815af1a22c714344f3c010bbcfd86bdb0279479b3ee921181cce085dd",
-    "lastHarvestedAt": "2026-11-14T17:03:23.151Z",
+    "contentHash": "1f03d9851d119e3680b2a1893c9dcd0cbb1fbd814993a5f2e99e8655e62eb0b4",
+    "lastHarvestedAt": "2026-11-19T06:52:26.475Z",
     "learningId": "learn-huggingface-autotrust-gev-26b-decide"
   },
   "hf-convaiinnovations-laya": {
@@ -12938,5 +12938,15 @@
     "contentHash": "63fe08c80341da6fbb710bc4a0076474e30b6d196109c228f9989ae89f2370ba",
     "lastHarvestedAt": "2026-11-19T03:39:04.721Z",
     "learningId": "learn-huggingface-inworld-voice-isolator"
+  },
+  "hf-reson8-rumble-2-flash": {
+    "repository": "Reson8/Rumble-2-Flash",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/Reson8/Rumble-2-Flash",
+    "sourceVersion": "hf-reson8-rumble-2-flash",
+    "license": "Open-Source",
+    "contentHash": "1bda1950dbf9aa4623e16cb8be34bc542d0745db8826341c0d3e65bea3dbb4bc",
+    "lastHarvestedAt": "2026-11-19T06:52:24.184Z",
+    "learningId": "learn-huggingface-reson8-rumble-2-flash"
   }
 }

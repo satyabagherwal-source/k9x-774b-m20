@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-9190",
-    "timestamp": "2026-11-17T18:35:35.700Z",
-    "repository": "flux-iac/tofu-controller",
-    "learningId": "learn-github-flux-iac-tofu-controller",
-    "contentHash": "8acc18560681ec72135f7298af5ad10f46a0fe1800db6bb1830adf4591aeb6f2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-I62K",
-    "timestamp": "2026-11-17T18:42:41.852Z",
-    "repository": "lingyired/status-trio",
-    "learningId": "learn-github-lingyired-status-trio",
-    "contentHash": "c95d222c29e465dc07e9fe090e4e9bea8c61b186be448527deb2f07f27a576be",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-I73X",
     "timestamp": "2026-11-17T18:42:43.197Z",
     "repository": "emberstack/kubernetes-reflector",
@@ -7492,6 +7462,36 @@
     "contentHash": "a630cdd4c5129d110cfe32d139cb6a5a71f56f5a479ff69bd7675a1c2e0ce39c",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-0FEC",
+    "timestamp": "2026-11-19T06:52:24.180Z",
+    "repository": "Reson8/Rumble-2-Flash",
+    "learningId": "learn-huggingface-reson8-rumble-2-flash",
+    "contentHash": "1bda1950dbf9aa4623e16cb8be34bc542d0745db8826341c0d3e65bea3dbb4bc",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-0H5Z",
+    "timestamp": "2026-11-19T06:52:26.471Z",
+    "repository": "autotrust/GEV-26B-Decide",
+    "learningId": "learn-huggingface-autotrust-gev-26b-decide",
+    "contentHash": "1f03d9851d119e3680b2a1893c9dcd0cbb1fbd814993a5f2e99e8655e62eb0b4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

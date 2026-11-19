@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T06:34:04.435Z",
+  "last_updated": "2026-11-19T06:53:07.619Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T02:03:45.340Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-19T04:44:48.860Z",
+      "processed_at": "2026-11-19T06:53:06.710Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2668,8 +2668,8 @@
       "staged_for_review": 2
     },
     "hf-autotrust-gev-26b-decide-learnings.md": {
-      "processed_at": "2026-11-14T17:04:26.752Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T06:53:06.318Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-google-embeddinggemma-2-learnings.md": {
@@ -3496,9 +3496,14 @@
       "processed_at": "2026-11-19T04:44:48.419Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "hf-reson8-rumble-2-flash-learnings.md": {
+      "processed_at": "2026-11-19T06:53:05.887Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2187,
-  "total_canonical_promoted": 377,
-  "total_staged_for_review": 1638
+  "total_dossiers_evaluated": 2190,
+  "total_canonical_promoted": 378,
+  "total_staged_for_review": 1639
 }

@@ -11216,3 +11216,6 @@
 | `CYCLE-20261119-BHCY` | `2026-11-19T06:33:00.322Z` | `autotrust/AutoTrust-Decider-Pro-Vision-27B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1335, Rule 9341, Rule 9342` | Yes (`61c88941...`) |
 | `CYCLE-20261119-C7MD` | `2026-11-19T06:33:34.357Z` | `prometheus/prometheus` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9343, Rule 9344, Rule 9345` | Yes (`a630cdd4...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T06:34:02.712Z` | `prometheus-prometheus` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-6F26131A` [Domain F] | Yes (`c4b6004b...`) |
+| `CYCLE-20261119-0FEC` | `2026-11-19T06:52:24.180Z` | `Reson8/Rumble-2-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-reson8-rumble-2-flash-learnings.md` | Yes (`1bda1950...`) |
+| `CYCLE-20261119-0H5Z` | `2026-11-19T06:52:26.471Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`1f03d985...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T06:53:05.887Z` | `hf-reson8-rumble-2-flash` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-28CD838B` [Domain D] | Yes (`9569b036...`) |

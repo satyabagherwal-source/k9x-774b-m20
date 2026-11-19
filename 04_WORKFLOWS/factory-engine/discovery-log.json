@@ -21607,5 +21607,17 @@
     "downloads": 0,
     "qualityScore": 830,
     "discoveredAt": "2026-11-19T03:36:50.241Z"
+  },
+  {
+    "name": "Reson8/Rumble-2-Flash",
+    "fullName": "Reson8/Rumble-2-Flash",
+    "url": "https://huggingface.co/Reson8/Rumble-2-Flash",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: Reson8/Rumble-2-Flash (106 likes, 453 downloads)",
+    "likes": 106,
+    "downloads": 453,
+    "qualityScore": 1513,
+    "discoveredAt": "2026-11-19T06:50:09.176Z"
   }
 ]

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T06:34:04.067Z",
+  "last_updated": "2026-11-19T06:53:07.172Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-GCVT",
+      "id": "CD-1CKA",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-GCVT-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-1CKA-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-19",
@@ -32310,6 +32310,15 @@
       "source_repo": "clickhouse-clickhouse",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-27D68F-empirical-invariant-guard-in-llvm-projec.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-CA2547",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CA2547-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-19"
     }
   ]
