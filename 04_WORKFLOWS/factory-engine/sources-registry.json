@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T19:39:09.100Z",
-    "lastVerified": "2026-11-19T19:39:09.100Z",
+    "lastChecked": "2026-11-19T20:00:28.288Z",
+    "lastVerified": "2026-11-19T20:00:28.288Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -253,9 +253,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-19T19:12:05.075Z",
+    "lastChecked": "2026-11-19T20:00:28.277Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-19T19:12:05.075Z"
+    "lastVerified": "2026-11-19T20:00:28.277Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -977,9 +977,9 @@
   "mimblewimble-grin": {
     "name": "grin",
     "officialUrl": "https://github.com/mimblewimble/grin",
-    "lastChecked": "2026-11-19T13:21:51.966Z",
+    "lastChecked": "2026-11-19T20:00:23.317Z",
     "revisionIdentifier": "dbaff34f",
-    "lastVerified": "2026-11-19T13:21:51.966Z"
+    "lastVerified": "2026-11-19T20:00:23.317Z"
   },
   "chroma-core-chroma": {
     "name": "chroma",
@@ -2716,9 +2716,9 @@
   "pingcap-autoflow": {
     "name": "autoflow",
     "officialUrl": "https://github.com/pingcap/autoflow",
-    "lastChecked": "2026-11-18T15:14:23.013Z",
+    "lastChecked": "2026-11-19T20:00:25.791Z",
     "revisionIdentifier": "01cdf88f",
-    "lastVerified": "2026-11-18T15:14:23.013Z"
+    "lastVerified": "2026-11-19T20:00:25.791Z"
   },
   "orange-opensource-hurl": {
     "name": "hurl",
@@ -3039,9 +3039,9 @@
   "aliyuncontainerservice-pouch": {
     "name": "pouch",
     "officialUrl": "https://github.com/AliyunContainerService/pouch",
-    "lastChecked": "2026-11-18T16:14:18.304Z",
+    "lastChecked": "2026-11-19T20:00:20.933Z",
     "revisionIdentifier": "ba854f2d",
-    "lastVerified": "2026-11-18T16:14:18.304Z"
+    "lastVerified": "2026-11-19T20:00:20.933Z"
   },
   "vasu-devs-justhireme": {
     "name": "JustHireMe",
@@ -8410,5 +8410,36 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "folkbench-folkbench": {
+    "name": "Folkbench/folkbench",
+    "officialUrl": "https://github.com/Folkbench/folkbench",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-19T20:00:17.542Z",
+    "lastVerified": "2026-11-19T20:00:17.542Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-folkbench-folkbench",
+    "contentHash": "6b3d96acb44c7d55d05a6e2c63769502348ebc85d5b26b2c4974a26682e97301",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "istifano-seo-auditor": {
+    "name": "seo-auditor",
+    "officialUrl": "https://github.com/ISTIFANO/seo-auditor",
+    "lastChecked": "2026-11-19T20:00:15.822Z",
+    "revisionIdentifier": "87ba51e6",
+    "lastVerified": "2026-11-19T20:00:15.822Z"
+  },
+  "github-copilotforxcode": {
+    "name": "CopilotForXcode",
+    "officialUrl": "https://github.com/github/CopilotForXcode",
+    "lastChecked": "2026-11-19T20:00:18.314Z",
+    "revisionIdentifier": "258d4577",
+    "lastVerified": "2026-11-19T20:00:18.314Z"
   }
 }

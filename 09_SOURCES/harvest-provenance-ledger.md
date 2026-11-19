@@ -11403,3 +11403,4 @@ Every entry in this ledger must capture:
 | `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `5679c950` | Multi-dimensional audit evidence | 2026-11-19T19:39:02.075Z |
 | `learn-github-melnixdev-seo-crawl-audit` | `https://github.com/MelnixDev/seo-crawl-audit` | `3e173529` | Multi-dimensional audit evidence | 2026-11-19T19:39:02.341Z |
 | `learn-github-siteline-swiftui-introspect` | `https://github.com/siteline/swiftui-introspect` | `cd344bc3` | Multi-dimensional audit evidence | 2026-11-19T19:39:03.716Z |
+| `learn-github-folkbench-folkbench` | `https://github.com/Folkbench/folkbench` | `c39cf173` | Multi-dimensional audit evidence | 2026-11-19T20:00:18.822Z |

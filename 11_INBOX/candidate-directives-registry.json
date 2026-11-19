@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T19:39:12.131Z",
+  "last_updated": "2026-11-19T20:00:31.648Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-49Z0",
+      "id": "CD-5Y7C",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-49Z0-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-5Y7C-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-19",
@@ -34171,6 +34171,44 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-19",
       "domain_letter": "K"
+    },
+    {
+      "id": "CD-5XAA",
+      "directive_title": "README 新增 Sidrune AI 赞助位，Switch 预设线路加入 Sidrune AI 并升至 0.1.0-beta.10",
+      "source_repo": "folkbench-folkbench-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-5XAA-readme-sidrune-ai-switch-sidrune-ai-0-1-0-beta-10.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-C2260B",
+      "directive_title": "README 新增 Sidrune AI 赞助位，Switch 预设线路加入 Sidrune AI 并升至 0.1.0-beta.10",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "folkbench-folkbench",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C2260B-readme-sidrune-ai-switch-sidrune-ai-0-1-.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-4D6B7E",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4D6B7E-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-REV-5D6BEC",
+      "directive_title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-5D6BEC-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-19"
     }
   ]
 }

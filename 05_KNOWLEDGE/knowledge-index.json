@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T19:39:12.424Z",
+  "last_updated": "2026-11-19T20:00:32.047Z",
   "total_verified_learnings": 9018,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21950,
+  "total_items": 21952,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-49Z0-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-5Y7C-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "4b9b87c9fd61d211329b2a521ef4469e3dd70e23b782da99d419db21517bbbf5",
+      "content_hash": "2d789bfae5eb6d0a61c1e2567ecd32e4eddd88b4edca6db29d6372a9356e08ee",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T19:31:13.407Z"
+      "persisted_at": "2026-11-19T20:00:31.086Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "ccbcb6726a46d4f72fb8ba3c09d9bcf604f0781b24604e499fa26149ae70c436",
+      "content_hash": "d7b38a423503f5b6481acab937b7c0180af1ecf7de2ad72d495649cbb2bdb64c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T19:31:13.543Z"
+      "persisted_at": "2026-11-19T20:00:31.279Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e2a84bdd369da3d00dbc6ee59cbb32b3b5e81e20e4e8172111c232484227187b",
+      "content_hash": "891b2f6982785b7249cabd4f567e0324a1dd6497eda660ae029344f23d6de28b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T19:31:13.694Z"
+      "persisted_at": "2026-11-19T20:00:31.466Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -254256,8 +254256,8 @@
       "slug": "folkbench-folkbench",
       "platform": "github",
       "source_url": "https://github.com/Folkbench/folkbench",
-      "source_version": "1125e5dc",
-      "content_hash": "9ea7a3ed2db6eef3b4aacede643e6fe94bbaf15d8032c12532edc5bb446b4615",
+      "source_version": "c39cf173",
+      "content_hash": "6b3d96acb44c7d55d05a6e2c63769502348ebc85d5b26b2c4974a26682e97301",
       "dossier_path": "07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/folkbench-folkbench-learnings.md",
       "promoted_rules": [
@@ -254270,6 +254270,11 @@
           "number": 9026,
           "title": "Empirical Invariant Guard in README.en.md",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9435,
+          "title": "README 新增 Sidrune AI 赞助位，Switch 预设线路加入 Sidrune AI 并升至 0.1.0-beta.10",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -254277,7 +254282,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T18:18:31.035Z",
+      "verified_at": "2026-11-19T20:00:18.576Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -254319,10 +254324,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-technical-construction-intelligence-folkbench-folkbench-core.md",
       "title": "Technical Construction Intelligence: Folkbench/folkbench Core Invariants",
       "repository": "Folkbench/folkbench",
-      "source_version": "1125e5dc",
-      "content_hash": "46d91bc3e9bd875cbee44fccabb0f5ca473e1c9deea6871039a9f0d47b67b825",
+      "source_version": "c39cf173",
+      "content_hash": "eaa9fc5e38aca803eb2ea9e74e8a5ae0714713860d70cba64d1040e6f1f40a5c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T18:18:31.648Z"
+      "persisted_at": "2026-11-19T20:00:19.291Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench",
@@ -254331,10 +254336,10 @@
       "relative_path": "08_VERIFICATION/folkbench-folkbench-verification-protocol-empirical-defect-shield-for-folkbench-.md",
       "title": "Verification Protocol: Empirical Defect Shield for Folkbench/folkbench",
       "repository": "Folkbench/folkbench",
-      "source_version": "1125e5dc",
-      "content_hash": "e76e0ea72f9a438e262af980bb4467f7956e50ee138877849edf3db50a865176",
+      "source_version": "c39cf173",
+      "content_hash": "8f30873f182c4029166c9964244b172fd76eaeb21414c59a106d598e7b5c9952",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T18:18:31.821Z"
+      "persisted_at": "2026-11-19T20:00:19.482Z"
     },
     "rule-8712": {
       "learning_id": "rule-8712",
@@ -254453,9 +254458,9 @@
       "title": "Technical Construction Intelligence: folkbench-folkbench-learnings Core Invariants",
       "repository": "folkbench-folkbench-learnings",
       "source_version": "HEAD",
-      "content_hash": "93b7b0ff1a3991e468cea6adfe4a39590fc18f12a9321454cc038994305b702e",
+      "content_hash": "7331abb0aabb9f3776c701107f1ec7924a6678e8cf22f156c7253947429bf73a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T18:18:43.170Z"
+      "persisted_at": "2026-11-19T20:00:30.091Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-folkbench-folkbench-learnings",
@@ -254465,9 +254470,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for folkbench-folkbench-learnings",
       "repository": "folkbench-folkbench-learnings",
       "source_version": "HEAD",
-      "content_hash": "31ff0da0e3af4e1f8efaaa2c595a919c03c47885f502c02b7e2e3961effcd5e6",
+      "content_hash": "d7b1a11552b9d09e0389db89a1a0dd86c7b4eb56cc430193305e0d5c70018efd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T18:18:43.346Z"
+      "persisted_at": "2026-11-19T20:00:30.284Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants",
@@ -287419,9 +287424,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "62973375d8bb8b4ead8d3ee4421b7a254e0615b7327705104045e1e66fbb09cb",
+      "content_hash": "106f9835db09f827139aa310424891187168c6e5e3f52cd36c8597285ca495b3",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T19:31:14.084Z"
+      "persisted_at": "2026-11-19T20:00:32.047Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -296880,6 +296885,32 @@
       "content_hash": "299325bd0be4e6443a5f05ed7eb31d30d91b95fe970bfb08d5394554af633698",
       "domain_letter": "G",
       "persisted_at": "2026-11-19T19:39:12.279Z"
+    },
+    "rule-9435": {
+      "learning_id": "rule-9435",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9435,
+      "title": "README 新增 Sidrune AI 赞助位，Switch 预设线路加入 Sidrune AI 并升至 0.1.0-beta.10",
+      "source_url": "https://github.com/Folkbench/folkbench",
+      "source_version": "c39cf173",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T20:00:18.576Z"
+    },
+    "candidate_directive-readme-sidrune-ai-switch-sidrune-ai-0-1-0-beta-10": {
+      "item_id": "candidate_directive-readme-sidrune-ai-switch-sidrune-ai-0-1-0-beta-10",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5XAA-readme-sidrune-ai-switch-sidrune-ai-0-1-0-beta-10.md",
+      "title": "README 新增 Sidrune AI 赞助位，Switch 预设线路加入 Sidrune AI 并升至 0.1.0-beta.10",
+      "repository": "folkbench-folkbench-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4d4db575a87b767cf1ee34431d28c123820d31c0593f81f1e281312d50f04fe4",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-19T20:00:29.897Z"
     }
   },
   "ai-builder-brain": {

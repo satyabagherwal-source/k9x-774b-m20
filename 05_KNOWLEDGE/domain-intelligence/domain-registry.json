@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T19:39:12.279Z",
+  "last_updated": "2026-11-19T20:00:32.047Z",
   "total_records": 2017,
   "domains": {
     "A": {
@@ -8750,8 +8750,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "ccbcb6726a46d4f72fb8ba3c09d9bcf604f0781b24604e499fa26149ae70c436",
-      "created_at": "2026-11-19T19:31:13.543Z"
+      "content_hash": "d7b38a423503f5b6481acab937b7c0180af1ecf7de2ad72d495649cbb2bdb64c",
+      "created_at": "2026-11-19T20:00:31.279Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -23485,8 +23485,8 @@
       "title": "Technical Construction Intelligence: Folkbench/folkbench Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-technical-construction-intelligence-folkbench-folkbench-core.md",
       "repository": "Folkbench/folkbench",
-      "content_hash": "46d91bc3e9bd875cbee44fccabb0f5ca473e1c9deea6871039a9f0d47b67b825",
-      "created_at": "2026-11-17T18:18:31.648Z"
+      "content_hash": "eaa9fc5e38aca803eb2ea9e74e8a5ae0714713860d70cba64d1040e6f1f40a5c",
+      "created_at": "2026-11-19T20:00:19.291Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mariadb-server-core-invariants",
@@ -23503,8 +23503,8 @@
       "title": "Technical Construction Intelligence: folkbench-folkbench-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-folkbench-folkbench-learnings-technical-construction-intelligence-folkbench-folk.md",
       "repository": "folkbench-folkbench-learnings",
-      "content_hash": "93b7b0ff1a3991e468cea6adfe4a39590fc18f12a9321454cc038994305b702e",
-      "created_at": "2026-11-17T18:18:43.170Z"
+      "content_hash": "7331abb0aabb9f3776c701107f1ec7924a6678e8cf22f156c7253947429bf73a",
+      "created_at": "2026-11-19T20:00:30.091Z"
     },
     "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mariadb-server-learnings-core-invariants",
@@ -31113,8 +31113,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "62973375d8bb8b4ead8d3ee4421b7a254e0615b7327705104045e1e66fbb09cb",
-      "created_at": "2026-11-19T19:31:14.084Z"
+      "content_hash": "106f9835db09f827139aa310424891187168c6e5e3f52cd36c8597285ca495b3",
+      "created_at": "2026-11-19T20:00:32.047Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",

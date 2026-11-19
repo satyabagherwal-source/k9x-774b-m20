@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T19:39:12.550Z",
+  "last_updated": "2026-11-19T20:00:32.247Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-19T19:31:13.824Z",
+      "processed_at": "2026-11-19T20:00:31.654Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-19T19:31:13.019Z",
+      "processed_at": "2026-11-19T20:00:30.482Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3153,7 +3153,7 @@
       "staged_for_review": 0
     },
     "folkbench-folkbench-learnings.md": {
-      "processed_at": "2026-11-17T18:18:42.350Z",
+      "processed_at": "2026-11-19T20:00:28.459Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3518,7 +3518,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2316,
+  "total_dossiers_evaluated": 2319,
   "total_canonical_promoted": 392,
-  "total_staged_for_review": 1723
+  "total_staged_for_review": 1726
 }

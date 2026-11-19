@@ -12683,10 +12683,10 @@
     "repository": "Folkbench/folkbench",
     "platform": "github",
     "sourceUrl": "https://github.com/Folkbench/folkbench",
-    "sourceVersion": "1125e5dc",
+    "sourceVersion": "c39cf173",
     "license": "NOASSERTION",
-    "contentHash": "9ea7a3ed2db6eef3b4aacede643e6fe94bbaf15d8032c12532edc5bb446b4615",
-    "lastHarvestedAt": "2026-11-17T18:18:31.244Z",
+    "contentHash": "6b3d96acb44c7d55d05a6e2c63769502348ebc85d5b26b2c4974a26682e97301",
+    "lastHarvestedAt": "2026-11-19T20:00:18.822Z",
     "learningId": "learn-github-folkbench-folkbench"
   },
   "hf-ifm-pan2": {

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261118-6UX4",
-    "timestamp": "2026-11-18T04:49:45.736Z",
-    "repository": "metalbear-co/mirrord",
-    "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "06e8695af0236dc0a7bbbf46f0598b4121423d75d132afdd7c1469a859253734",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261118-GHJZ",
     "timestamp": "2026-11-18T04:57:14.975Z",
     "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
@@ -7492,6 +7477,21 @@
     "contentHash": "69bda98bc5054db79d2b30966a4232215e08801183cdac4c817348c53a7849ed",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-5OQP",
+    "timestamp": "2026-11-19T20:00:18.817Z",
+    "repository": "Folkbench/folkbench",
+    "learningId": "learn-github-folkbench-folkbench",
+    "contentHash": "6b3d96acb44c7d55d05a6e2c63769502348ebc85d5b26b2c4974a26682e97301",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
