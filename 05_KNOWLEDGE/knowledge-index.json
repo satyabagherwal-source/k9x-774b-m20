@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T18:49:07.561Z",
+  "last_updated": "2026-11-19T19:12:14.109Z",
   "total_verified_learnings": 9018,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21922,
+  "total_items": 21931,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -217828,8 +217828,8 @@
       "slug": "vercel-labs-agent-desktop",
       "platform": "github",
       "source_url": "https://github.com/vercel-labs/agent-desktop",
-      "source_version": "8ffecc1d",
-      "content_hash": "2d84356171ecc16f548f9240cb7799d6dbbcda149bf4f84467155e02fa8935d1",
+      "source_version": "e8934a5e",
+      "content_hash": "d94c6c7da69e72f9d7b61e81f01edcd9f9dc838c3b0b623f1082e1c7cda49adc",
       "dossier_path": "07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vercel-labs-agent-desktop-learnings.md",
       "promoted_rules": [
@@ -217852,6 +217852,11 @@
           "number": 8658,
           "title": "Dynamic TCC/Security Identity Attribution via Dynamic Symbol Loading",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9429,
+          "title": "ignore the chrono unmaintained advisory from uiautomation",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217859,7 +217864,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T21:44:16.645Z",
+      "verified_at": "2026-11-19T19:11:56.340Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217913,10 +217918,10 @@
       "relative_path": "08_VERIFICATION/vercel-labs-agent-desktop-verification-protocol-empirical-defect-shield-for-verc.md",
       "title": "Verification Protocol: Empirical Defect Shield for vercel-labs/agent-desktop",
       "repository": "vercel-labs/agent-desktop",
-      "source_version": "8ffecc1d",
-      "content_hash": "080625f174cd5455f47002812317a4fb7c17c9632d285fcef36c554c9409b0fb",
+      "source_version": "e8934a5e",
+      "content_hash": "7d2b66777e24cc9a962fb8bc71df4bd3a887dc6b6c2f0a7e0fc9df7c9028b4e7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T21:44:17.491Z"
+      "persisted_at": "2026-11-19T19:11:57.146Z"
     },
     "learn-github-nginx-kubernetes-ingress": {
       "learning_id": "learn-github-nginx-kubernetes-ingress",
@@ -218041,9 +218046,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for vercel-labs-agent-desktop-learnings",
       "repository": "vercel-labs-agent-desktop-learnings",
       "source_version": "HEAD",
-      "content_hash": "38440f4f1e9b5ca5a3941d5e98577eeee9783424af1da665448586e25e86d6c9",
+      "content_hash": "5a5b0fe049596ca10953eb5e3234e6dbedded1e90ca0b21c227b5138096808b0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T21:44:46.079Z"
+      "persisted_at": "2026-11-19T19:12:12.949Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-minimax-h3-learnings-core-invariant",
@@ -219053,11 +219058,16 @@
       "slug": "ontos-ai-knowhere",
       "platform": "github",
       "source_url": "https://github.com/Ontos-AI/knowhere",
-      "source_version": "87ea9514",
-      "content_hash": "fee643031259c875c5e2d89294c6a19bb2f4d5b005b47562e5d78efc7ca9e815",
+      "source_version": "3352f322",
+      "content_hash": "1e310de5cc99ac57f5a58c0875cfc5cabacb3f458477459ae0f7b0a3a156727a",
       "dossier_path": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md",
       "promoted_rules": [
+        {
+          "number": 7277,
+          "title": "Empirical Invariant Guard in README.md",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        },
         {
           "number": 8404,
           "title": "page memory services to enhance fine skills integration and improve title detect",
@@ -219084,7 +219094,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T14:40:44.944Z",
+      "verified_at": "2026-11-19T19:12:08.859Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219126,10 +219136,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ontos-ai-knowhere-architecture-intelligence-ontos-ai-knowhere-core-invariants.md",
       "title": "Architecture Intelligence: Ontos-AI/knowhere Core Invariants",
       "repository": "Ontos-AI/knowhere",
-      "source_version": "87ea9514",
-      "content_hash": "88a057f476250d0ffca4b843a6b9230cb1dcf50586a080ec6de0034b042637fa",
+      "source_version": "3352f322",
+      "content_hash": "c51be6aeb0476a4cc3a75ec1da2a55f24507e92265583cf8441186a09fcd04ed",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T14:40:45.592Z"
+      "persisted_at": "2026-11-19T19:12:09.384Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ontos-ai-knowhere": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ontos-ai-knowhere",
@@ -219138,10 +219148,10 @@
       "relative_path": "08_VERIFICATION/ontos-ai-knowhere-verification-protocol-empirical-defect-shield-for-ontos-ai-kno.md",
       "title": "Verification Protocol: Empirical Defect Shield for Ontos-AI/knowhere",
       "repository": "Ontos-AI/knowhere",
-      "source_version": "87ea9514",
-      "content_hash": "5549bd113d315af42d8d7b2b7428ae16878ebc59a178ea9be7e3028ee793b361",
+      "source_version": "3352f322",
+      "content_hash": "f70103c9e7b17561eda6c4e1863117f49322b30653c3a014203ac68915b07997",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T14:40:45.776Z"
+      "persisted_at": "2026-11-19T19:12:09.525Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-learnings-core-inv",
@@ -226996,8 +227006,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "a2fc3c1e",
-      "content_hash": "495028e18b48be5f87c5ece3bde7d3df281cd238d9d47dda38a1ad6c94e7b38d",
+      "source_version": "8c82c544",
+      "content_hash": "18f33b37e4d8da54c10af60e1e75a99c09a67b57a00d4f73e60589e37b0359f7",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -227015,6 +227025,11 @@
           "number": 9251,
           "title": "page BLE AP list and notify wifi connect result immediately",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9430,
+          "title": "clean up stale JuiceFS mounts",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -227022,7 +227037,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T15:35:12.817Z",
+      "verified_at": "2026-11-19T19:12:05.177Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -227050,10 +227065,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-technical-construction-intelligence-beclab-olares-core-invariants.md",
       "title": "Technical Construction Intelligence: beclab/Olares Core Invariants",
       "repository": "beclab/Olares",
-      "source_version": "139e4a83",
-      "content_hash": "9803fc07f8fbe9a4495e5e7c403780f93edd5e4353d4146def172e326523b9e0",
+      "source_version": "8c82c544",
+      "content_hash": "e3df38f2c67eca949b3695fa9b402f5d0b2df3d0d2da830a04d605367e6b9a1a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T00:07:55.230Z"
+      "persisted_at": "2026-11-19T19:12:05.766Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares",
@@ -227099,9 +227114,9 @@
       "title": "Technical Construction Intelligence: beclab-olares-learnings Core Invariants",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "80356cf05c250bf04c859a2406a640513c8922241e09414d493ea011c208cc46",
+      "content_hash": "ac54ab43ef95a30e6a85bab0772be4d0ac971327112aca506c7bf4bee036fa22",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T00:08:02.253Z"
+      "persisted_at": "2026-11-19T19:12:13.842Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares-learnings",
@@ -227111,9 +227126,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for beclab-olares-learnings",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "0d904eb6978398d4f548b013dee97c1a112c151f08becf35dc3609e854023d33",
+      "content_hash": "eaba4c40d43adbcf78b63f5d3717b3bc7cb0446232aa46e0fda8dce22a41dcb5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T15:35:20.629Z"
+      "persisted_at": "2026-11-19T19:12:14.109Z"
     },
     "learn-huggingface-sentence-transformers-all-mpnet-base-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
@@ -242946,26 +242961,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 7277,
       "title": "Empirical Invariant Guard in README.md",
-      "source_url": "https://github.com/meilisearch/meilisearch",
-      "source_version": "01794fd9",
+      "source_url": "https://github.com/Ontos-AI/knowhere",
+      "source_version": "3352f322",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-19T09:43:53.475Z"
+      "verified_at": "2026-11-19T19:12:08.859Z"
     },
     "candidate_directive-empirical-invariant-guard-in-readme-md": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-readme-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-4YYP-empirical-invariant-guard-in-readme-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-FR4P-empirical-invariant-guard-in-readme-md.md",
       "title": "Empirical Invariant Guard in README.md",
-      "repository": "meilisearch/meilisearch",
-      "source_version": "01794fd9",
-      "content_hash": "bc5d4389608071f710adee51f96e172d186befda8d7550a6f196b638f39847bd",
+      "repository": "Ontos-AI/knowhere",
+      "source_version": "3352f322",
+      "content_hash": "3f6609f9d36f6a9e38f3ed3ea888484892a8407140005588496916bb1381dc97",
       "domain_letter": "D",
-      "persisted_at": "2026-11-19T09:43:53.861Z"
+      "persisted_at": "2026-11-19T19:12:09.242Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-1017-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-v4-1-flash-1017-learning",
@@ -243192,7 +243207,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/datalab-to/indra-ocr",
       "source_version": "hf-datalab-to-indra-ocr",
-      "content_hash": "00bd35269790c91fcdc67f0f92d903d65ee2af857f4b3bb4c0c2b7f76d801717",
+      "content_hash": "bbd722879260e3f3c637c1e292f3d89507bb802c29dd1022fe19711b25eab4e1",
       "dossier_path": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md",
       "promoted_rules": [],
@@ -243201,7 +243216,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T06:36:42.892Z",
+      "verified_at": "2026-11-19T19:11:53.195Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243218,9 +243233,9 @@
       "title": "Research & Knowledge Intelligence: datalab-to/indra-ocr Core Invariants",
       "repository": "datalab-to/indra-ocr",
       "source_version": "hf-datalab-to-indra-ocr",
-      "content_hash": "07139343311ee831ee4944b7e6d9c2bc0f62a89467b124e2f9798f56f3404c36",
+      "content_hash": "cf3693028c963e9aa5a91a0b74b34561d2d71bac5c32d660b782d858d59cfe8e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T06:36:43.263Z"
+      "persisted_at": "2026-11-19T19:11:53.598Z"
     },
     "rule-8583": {
       "learning_id": "rule-8583",
@@ -243282,9 +243297,9 @@
       "title": "Research & Knowledge Intelligence: hf-datalab-to-indra-ocr-learnings Core Invariants",
       "repository": "hf-datalab-to-indra-ocr-learnings",
       "source_version": "HEAD",
-      "content_hash": "7756b2ed3eff9ff939b408651ad2446098ba9d0ad413a0a53ce3764d1e773f05",
+      "content_hash": "fc0e9ea7dd642c8b9b589169c4226f12f46e3730c3e3cb3d9f235369b11ab229",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T06:37:31.268Z"
+      "persisted_at": "2026-11-19T19:12:13.263Z"
     },
     "candidate_directive-updater-retry-the-update-cache-rename-on-transient-windows-locks": {
       "item_id": "candidate_directive-updater-retry-the-update-cache-rename-on-transient-windows-locks",
@@ -249864,10 +249879,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/vercel-labs-agent-desktop-agent-contract-vercel-labs-agent-desktop-autonomous-sp.md",
       "title": "Agent Contract: vercel-labs/agent-desktop Autonomous Specialist Persona",
       "repository": "vercel-labs/agent-desktop",
-      "source_version": "8ffecc1d",
-      "content_hash": "96a574d120549e44f5fe4ee6f61f703bc98f463d1299147f96236dd0961ab7b7",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-15T21:44:17.398Z"
+      "source_version": "e8934a5e",
+      "content_hash": "6758a9f9350fa698ba326fa15316a32f3e4e186a8da15e2265357dea66e35e4a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T19:11:57.013Z"
     },
     "domain_intelligence-technical-construction-intelligence-vercel-labs-agent-desktop-learnings-core-inv": {
       "item_id": "domain_intelligence-technical-construction-intelligence-vercel-labs-agent-desktop-learnings-core-inv",
@@ -249889,9 +249904,9 @@
       "title": "Agent Contract: vercel-labs-agent-desktop-learnings Autonomous Specialist Persona",
       "repository": "vercel-labs-agent-desktop-learnings",
       "source_version": "HEAD",
-      "content_hash": "48c7e73ac0ba85e186c92d547250deafb2f3a00b4dfe2cd79eab60c9c2474b24",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-15T21:44:45.967Z"
+      "content_hash": "10485dc7d8935fae860ece44b1650330a2aebf99cb3828df8c9606bc96de7839",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T19:12:12.825Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-mradermacher-gemma-4-31b-it-ara-heretic-gguf-",
@@ -260106,14 +260121,19 @@
       "slug": "defguard-defguard",
       "platform": "github",
       "source_url": "https://github.com/DefGuard/defguard",
-      "source_version": "a0570118",
-      "content_hash": "9bcf42066195262a6592e44fc2df83b94317d544f40c15a7737caa2820551afd",
+      "source_version": "9830b49b",
+      "content_hash": "9a9ac3f6811ad73bb29edd3791ee514d4c6fbeba82db30f019fae3dc7e816b68",
       "dossier_path": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/defguard-defguard-learnings.md",
       "promoted_rules": [
         {
           "number": 8788,
           "title": "update to README core capabilities",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9431,
+          "title": "improve PR job cancellation",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -260122,7 +260142,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T20:21:07.422Z",
+      "verified_at": "2026-11-19T19:12:06.163Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -260164,10 +260184,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-defguard-defguard-human-need-intelligence-defguard-defguard-core-invariants.md",
       "title": "Human & Need Intelligence: DefGuard/defguard Core Invariants",
       "repository": "DefGuard/defguard",
-      "source_version": "a0570118",
-      "content_hash": "e3db02ae7dd79961a5bc3313ad2d2602e5625348c84443f80b30ef26f245300d",
+      "source_version": "9830b49b",
+      "content_hash": "bb68f9284117f8830b77ea6d0a4d082f11af77408e2fce739793da55648cd96f",
       "domain_letter": "A",
-      "persisted_at": "2026-11-16T20:21:07.888Z"
+      "persisted_at": "2026-11-19T19:12:06.689Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-defguard-defguard": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-defguard-defguard",
@@ -260176,10 +260196,10 @@
       "relative_path": "08_VERIFICATION/defguard-defguard-verification-protocol-empirical-defect-shield-for-defguard-def.md",
       "title": "Verification Protocol: Empirical Defect Shield for DefGuard/defguard",
       "repository": "DefGuard/defguard",
-      "source_version": "a0570118",
-      "content_hash": "05b2db064f642a8c559dad5cb970d473727b2a2bd00e06e012adbe6decda67ee",
+      "source_version": "9830b49b",
+      "content_hash": "c4b1399f5232172f02a3abe96378f862dda1bb477996014ff89f07b60d718e2d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T20:21:08.014Z"
+      "persisted_at": "2026-11-19T19:12:06.831Z"
     },
     "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants": {
       "item_id": "domain_intelligence-design-intelligence-sharkdp-bat-learnings-core-invariants",
@@ -288869,10 +288889,10 @@
       "relative_path": "03_SKILLS/beclab-olares-skill-operational-integration-playbook-for-beclab-olares.md",
       "title": "Skill: Operational & Integration Playbook for beclab/Olares",
       "repository": "beclab/Olares",
-      "source_version": "a2fc3c1e",
-      "content_hash": "22fc12ba0e961e4795f7f9c8d08700604bc4fa33346f6decc66eeb3d95b9468d",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-18T15:35:13.464Z"
+      "source_version": "8c82c544",
+      "content_hash": "f260784dc26ed3fbfff27188b2a2442278319fb2e2f2382778f258366ab8bfff",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T19:12:05.919Z"
     },
     "domain_intelligence-technical-construction-intelligence-xerj-org-xerj-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-xerj-org-xerj-core-invariants",
@@ -288918,9 +288938,9 @@
       "title": "Skill: Operational & Integration Playbook for beclab-olares-learnings",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "558562e2bea9be748cc07899f979fee4d92116b1d4f4a0d420d4584c587a9335",
-      "domain_letter": "G",
-      "persisted_at": "2026-11-18T15:35:20.509Z"
+      "content_hash": "41be9e5b2cace24be4e54b25635289e3e8c7f1a2e20c7ffe9d2781641a9908d6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T19:12:13.985Z"
     },
     "rule-9252": {
       "learning_id": "rule-9252",
@@ -296496,6 +296516,120 @@
       "content_hash": "17ec8db92c60ca5c5e862778121124b61b93b46507e48c306cc5ec29e0b8675e",
       "domain_letter": "G",
       "persisted_at": "2026-11-19T18:49:07.374Z"
+    },
+    "rule-9429": {
+      "learning_id": "rule-9429",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9429,
+      "title": "ignore the chrono unmaintained advisory from uiautomation",
+      "source_url": "https://github.com/vercel-labs/agent-desktop",
+      "source_version": "e8934a5e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T19:11:56.340Z"
+    },
+    "candidate_directive-ignore-the-chrono-unmaintained-advisory-from-uiautomation": {
+      "item_id": "candidate_directive-ignore-the-chrono-unmaintained-advisory-from-uiautomation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FTNO-ignore-the-chrono-unmaintained-advisory-from-uiautomation.md",
+      "title": "ignore the chrono unmaintained advisory from uiautomation",
+      "repository": "vercel-labs-agent-desktop-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f105fe43776ac1d1259565b81a0d2172df50458ef4c877cf9c0ded33aed94ce6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T19:12:12.517Z"
+    },
+    "domain_intelligence-architecture-intelligence-vercel-labs-agent-desktop-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-vercel-labs-agent-desktop-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vercel-labs-agent-desktop-architecture-intelligence-vercel-labs-agent-desktop-co.md",
+      "title": "Architecture Intelligence: vercel-labs/agent-desktop Core Invariants",
+      "repository": "vercel-labs/agent-desktop",
+      "source_version": "e8934a5e",
+      "content_hash": "e05d9f33189dadaa91e7aab0b274d64f98d22dd30959ac24507de928b9a0c2d4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T19:11:56.870Z"
+    },
+    "rule-9430": {
+      "learning_id": "rule-9430",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9430,
+      "title": "clean up stale JuiceFS mounts",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "8c82c544",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T19:12:05.177Z"
+    },
+    "candidate_directive-clean-up-stale-juicefs-mounts": {
+      "item_id": "candidate_directive-clean-up-stale-juicefs-mounts",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FOBN-clean-up-stale-juicefs-mounts.md",
+      "title": "clean up stale JuiceFS mounts",
+      "repository": "beclab/Olares",
+      "source_version": "8c82c544",
+      "content_hash": "15b7269c2d33a472df7a217abf4be254f80f4ca7895aa9c043de787b3f993123",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T19:12:05.609Z"
+    },
+    "rule-9431": {
+      "learning_id": "rule-9431",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9431,
+      "title": "improve PR job cancellation",
+      "source_url": "https://github.com/DefGuard/defguard",
+      "source_version": "9830b49b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T19:12:06.163Z"
+    },
+    "candidate_directive-improve-pr-job-cancellation": {
+      "item_id": "candidate_directive-improve-pr-job-cancellation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FP1R-improve-pr-job-cancellation.md",
+      "title": "improve PR job cancellation",
+      "repository": "DefGuard/defguard",
+      "source_version": "9830b49b",
+      "content_hash": "8a1870f32f29b0412fd118a4b9dcbff2ebebd2e25ee75f557bfd985999187b82",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-19T19:12:06.547Z"
+    },
+    "domain_intelligence-architecture-intelligence-vercel-labs-agent-desktop-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-vercel-labs-agent-desktop-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-vercel-labs-agent-desktop-learnings-architecture-intelligence-vercel-labs-agent-.md",
+      "title": "Architecture Intelligence: vercel-labs-agent-desktop-learnings Core Invariants",
+      "repository": "vercel-labs-agent-desktop-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0a8962640ab417d8f8c8e7da146a9b909051da39b85832d55672db68b0060531",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T19:12:12.664Z"
+    },
+    "candidate_directive-cli-clean-up-stale-juicefs-mounts": {
+      "item_id": "candidate_directive-cli-clean-up-stale-juicefs-mounts",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FUKH-cli-clean-up-stale-juicefs-mounts.md",
+      "title": "cli): clean up stale JuiceFS mounts",
+      "repository": "beclab-olares-learnings",
+      "source_version": "HEAD",
+      "content_hash": "035004027e7714d15666654974329f798bb73ab7a3b196aae63fd576342991ec",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T19:12:13.700Z"
     }
   },
   "ai-builder-brain": {

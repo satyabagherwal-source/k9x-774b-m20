@@ -11392,3 +11392,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-deepseek-ai-deepseek-v4-1-flash-1017` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash-1017` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-19T18:48:51.953Z |
 | `learn-github-openkruise-kruise` | `https://github.com/openkruise/kruise` | `859efa1c` | Multi-dimensional audit evidence | 2026-11-19T18:48:57.543Z |
 | `learn-github-crate-crate` | `https://github.com/crate/crate` | `39117a4b` | Multi-dimensional audit evidence | 2026-11-19T18:49:01.784Z |
+| `learn-huggingface-datalab-to-indra-ocr` | `https://huggingface.co/datalab-to/indra-ocr` | `hf-datalab` | Multi-dimensional audit evidence | 2026-11-19T19:11:53.406Z |
+| `learn-github-vercel-labs-agent-desktop` | `https://github.com/vercel-labs/agent-desktop` | `e8934a5e` | Multi-dimensional audit evidence | 2026-11-19T19:11:56.531Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `8c82c544` | Multi-dimensional audit evidence | 2026-11-19T19:12:05.381Z |
+| `learn-github-defguard-defguard` | `https://github.com/DefGuard/defguard` | `9830b49b` | Multi-dimensional audit evidence | 2026-11-19T19:12:06.355Z |
+| `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `3352f322` | Multi-dimensional audit evidence | 2026-11-19T19:12:09.048Z |

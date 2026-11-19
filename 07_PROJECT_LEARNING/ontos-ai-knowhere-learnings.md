@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source**: github ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
-> **Source Version**: `87ea9514`  
+> **Source Version**: `3352f322`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T14:40:43.958Z  
+> **Timestamp**: 2026-11-19T19:12:08.387Z  
 > **Learning ID**: `learn-github-ontos-ai-knowhere`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ontos-ai-knowhere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Ontos-AI/knowhere](https://github.com/Ontos-AI/knowhere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T14:40:43.952Z  
+> **Harvest Timestamp**: 2026-11-19T19:12:08.382Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Knowhere extracts, parses, and outputs structured chunks ready for AI Agents and RAG.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4070 stars
+- **Stars / Engagement**: 4072 stars
 
 ---
 
@@ -1002,60 +1002,364 @@ class ApiTelemetryMiddleware:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d771e355` (2026-11-18)
-**Commit Message**: Install CJK fonts in the worker image so rendered PDFs show Chinese text
+### Incident Patch 1: `3352f322` (2026-11-19)
+**Commit Message**: Merge pull request #574 from Ontos-AI/feat/wuchengke/2026-11-19
 
-LibreOffice renders DOCX/PPTX to PDF for page previews, and the worker
-image had no CJK font, so every Chinese character in the rendered
-source.pdf became an empty box. Hipo shows that PDF during the baseline
-stage, so customers saw garbled Chinese.
+Remove text-track PDF leftovers and stale parser TODOs
 
-Install fonts-noto-cjk and alias Microsoft YaHei, SimHei, and SimSun to
-the Noto CJK SC faces; without the aliases fontconfig falls back to the
-Hong Kong glyph variant.
+**File**: `README.md` (modified, +3/-1)
+```diff
+@@ -49,6 +49,7 @@ Knowhere parses files along their native hierarchy (headings, if any) and uses f
+ 
+ ## 📢 News
+ 
++- **November 2026**: 📽️ **Better PowerPoint parsing.** Slide decks now get a section hierarchy built from their agenda and divider slides, and embedded audio and video are transcribed and searchable alongside their slides.
+ - **November 2026**: ⏩ **Progressive ingestion.** `ingestion_mode=progressive` publishes a readable baseline first, then enriches the rest in the background. MinerU is no longer required by default.
+ - **November 2026**: 🧰 **Agent retrieval tools exposed through the API.** Corpus navigation tools are exposed to built-in and external agents alike.
+ - **November 2026**: 🖼️ **More image formats.** `.gif`, `.webp`, `.bmp`, `.tif`/`.tiff`, and `.heic`/`.heif` are now supported.
+@@ -170,7 +171,7 @@ Agents using Knowhere outperform those working from raw documents, Markitdown, U
+ 
+ **✅ Supported**
+ 
+-- [x] `.pdf` `.pptx` — vision parsing
++- [x] `.pdf` `.pptx` — vision parsing (`.pptx` also transcribes embedded audio and video)
+ - [x] `.doc` `.docx` `.xls` `.xlsx` `.csv` `.tsv`
+ - [x] `.jpg` `.jpeg` `.png` `.gif` `.webp` `.bmp` `.tif` `.tiff` `.heic` `.heif`
+ - [x] `.md` `.txt` `.html` `.htm` `.json`
+@@ -211,6 +212,7 @@ cp apps/worker/.env.example apps/worker/.env
+ - S3-compatible storage credentials
+ - at least one LLM provider key: `DS_KEY`, `ALI_API_KEYS`, `GPT_API_KEY`, or `GLM_API_KEY`
+ - `VERCEL_KEY` for page-image and query embeddings
++- `ALI_API_KEYS` (DashScope Fun-ASR) if you want audio and video embedded in presentations transcribed
+ - a vision-capable model provider for PDF/PowerPoint parsing, page understanding, image summaries, OCR, atlas classification, or image-aware retrieval
+ - `MINERU_API_KEYS` only if you turn on the optional MinerU fine-stage page-text extractor
+ - any optional billing or webhook providers you want to enable
+```
+
+**File**: `apps/worker/app/services/document_agent/calibration/orchestrator.py` (modified, +6/-0)
+```diff
+@@ -34,6 +34,12 @@ def anchor_hierarchy(
+         page_count=page_count,
+     )
+     if phase1.status == "failed" and not phase1.regimes:
++        # TODO(uncalibrated-toc): With no offset, every page-numbered TOC node is
++        # pruned and the skeleton usually falls back to Root; a pending TOC that
++        # fails calibration is skipped (``_calibrate_one_pending_toc``). In both
++        # cases the TOC titles/levels are lost. Discuss keeping them as a
++        # degraded hierarchy hint (e.g. fine-stage level-resolver context)
++        # without moving section starts or fixing offsets.
+         return anchor_hierarchy_from_offset(
+             nodes=nodes,
+             offset_hint=None,
+```
+
+**File**: `apps/worker/app/services/document_agent/tools/vlm_toc_extractor.py` (modified, +0/-19)
+```diff
+@@ -314,25 +314,6 @@ def build_toc_tree(entries: list[dict[str, Any]]) -> dict[str, Any]:
+     return root
+ 
+ 
+-def build_toc_with_level_md(entries: list[dict[str, Any]]) -> str:
+-    """Build a compact Markdown table of TOC entries (heading + level only).
+-
+-    Accepts both raw VLM entries (key='title') and stored toc_with_level
+-    dicts (key='heading'). Call this dynamically at consumption time rather
+-    than persisting the MD string.
+-    """
+-    if not entries:
+-        return ""
+-    lines = ["| heading | level |", "|---------|-------|"]
+-    for entry in entries:
+-        heading = str(
+-            entry.get("heading") or entry.get("title") or ""
+-        ).strip().replace("|", "\\|")
+-        level = entry.get("level", 1)
+-        lines.append(f"| {heading} | {level} |")
+-    return "\n".join(lines)
+-
+-
+ def vlm_entries_to_toc_hierarchies(
+     entries: list[dict[str, Any]],
+     *,
+```
+
+**File**: `apps/worker/app/services/document_parser/formats/docx/block_stream.py` (modified, +5/-84)
+```diff
+@@ -154,14 +154,10 @@ def iter_block_items(doc_data):
+                     )
+                     ele_num += 1
+ 
+-                # TODO: Re-evaluate VML group extraction strategy. 
+-                # Complex VML composite images (<v:group>) are currently skipped because extracting 
+-                # <v:imagedata> piece-by-piece loses textual overlay and positioning. 
+-                # Future plan: Use LibreOffice headless conversion to render the entire document 
+-                # and map the perfectly rendered images back to the layout via text anchors.
+-                #
+-                # Temporary: detect VML-only paragraphs and inject a placeholder so the
+-                # paragraph isn't silently swallowed, leaving its parent section empty.
++                # Complex VML composite images (<v:group>) are skipped because extracting
++                # <v:imagedata> piece-by-piece loses textual overlay and positioning.
++                # VML-only paragraphs get a placeholder so the paragraph isn't silently
++                # swallowed, leaving its parent section empty.
+                 if not text and not seen_rids:
+                     # No text and no DrawingML images — check for VML content
+                     vml_groups = elem.xpath(".//v:group", namespaces=ns)
+@@ -174,44 +170,6 @@ def iter_block_items(doc_data):
+                             f"Injected VML placeholder for paragraph with "
+                             f"{len(vml_groups)} v:group, {len(vml_images_check)} v:imagedata"
+                         )
+-                """
+-                # images (VML: <v:imagedata>) — convert to PNG
+-                from PIL import Image as PILImage
+-
+-                vml_images = elem.xpath(".//v:imagedata", namespaces=ns)
+-                for v in vml_images:
+-                    rid = v.get(f"{r_ns}id")
+-                    if not rid or rid in seen_rids:
+-                        continue
+-                    target = rel_map.get(rid)
+-                    if not target or not target.startswith("media/"):
+-                        continue
+-                    seen_rids.add(rid)
+-                    raw_data = docx.read("word/" + target)
+-                    # Convert to PNG for uniform downstream handling
+-                    try:
+-                        pil_img = PILImage.open(io.BytesIO(raw_data))
+-                        png_buf = io.BytesIO()
+-                        pil_img.save(png_buf, format="PNG")
+-                        png_data = png_buf.getvalue()
+-                    except Exception as e:
+-                        logger.warning(f"Failed to convert VML image to PNG: {e}")
+-                        continue
+-                    orig_name = target.split("/")[-1]
+-                    png_name = os.path.splitext(orig_name)[0] + ".png"
+-                    yield (
+-                        ele_num,
+-                        None,
+-                        "IMAGE",
+-                        {
+-                            "image_name": png_name,
+-                            "from": "paragraph_vml",
+-                            "size": len(png_data),
+-                            "data": png_data,
+-                        },
+-                    )
+-                    ele_num += 1
+-                """
+                 map_index += 1
+ 
+                 if toc_info["is_field_end"]:
+@@ -250,44 +208,7 @@ def iter_block_items(doc_data):
+                                     "size": len(data),
+                                 }
+                             )
+-                        # TODO: VML in tables is temporarily skipped to avoid extracting 
+-                        # fragmented textless background images. (Same as paragraph VML logic)
+-                        """
+-                        # VML images in cell — convert to PNG
+-                        from PIL import Image as PILImage
+-
+-                        vml_in_cell = tc.xpath(".//v:imagedata", namespaces=ns)
+-                        for v in vml_in_cell:
+-                            rid = v.get(f"{r_ns}id")
+-                            if not rid or rid in cell_seen_rids:
+-                                continue
+-                            target = rel_map.get(rid)
+-                            if not target or not target.startswith("media/"):
+-                                continue
+-                            cell_seen_rids.add(rid)
+-                            raw_data = docx.read("word/" + target)
+-                            try:
+-                                pil_img = PILImage.open(io.BytesIO(raw_data))
+-                                png_buf = io.BytesIO()
+-                                pil_img.save(png_buf, format="PNG")
+-                                png_data = png_buf.getvalue()
+-                            except Exception as e:
+-                                logger.warning(
+-                                    f"Failed to convert VML cell image to PNG: {e}"
+-                                )
+-                           
+```
+
+**File**: `apps/worker/app/services/document_parser/formats/docx/parser.py` (modified, +1/-2)
+```diff
+@@ -604,7 +604,6 @@ def parse_docx(
+             current_heading = last_heading_before_block
+ 
+         elif label == "TABLE":
+-            # TODO: handle cross-page tables
+             headings_stack = asset_accumulator.append_table(
+                 block,
+                 headings_stack,
+@@ -613,7 +612,7 @@ def parse_docx(
+             )
+             current_heading = last_heading_before_block
+ 
+-        else:  # TODO: handle latex, etc.
++        else:  # TOC-AREA blocks are TOC entries, not body content.
+             pass
+ 
+     asset_accumulator.finalize()
+```
+
+**File**: `apps/worker/app/services/document_parser/formats/markdown/parser.py` (modified, +0/-9)
+```diff
+@@ -119,7 +119,6 @@ def eval_md_headings(
+     smart_parse=False,
+     model_name=None,
+     output_dir=None,
+-    layout_json_path=None,
+ ):
+     """Evaluate markdown headings with optional TOC hierarchies context"""
+     heading_preds = predict_heading_hierarchy(
+@@ -131,7 +130,6 @@ def eval_md_headings(
+             smart_parse=smart_parse,
+             model_name=model_name,
+             output_dir=output_dir,
+-            layout_json_path=layout_json_path,
+         )
+     )
+ 
+@@ -281,12 +279,6 @@ def parse_md(
+             json.dump(toc_hierarchies, f, ensure_ascii=False, indent=2)
+         logger.info(f"Saved TOC hierarchies to {toc_json_path}")
+ 
+-    # Find layout.json path
+-    layout_json_path = os.path.join(output_dir, "layout.json")
+-    if not os.path.exists(layout_json_path):
+-        layout_json_path = None
+-        logger.debug("layout.json not found, META features will not be added")
+-
+     # estimate hierarchies with toc_hierarchies context
+     with stage_timer(
+         "md.predict_headings",
+@@ -301,7 +293,6 @@ def parse_md(
+             smart_parse=base_llm_paras["smart_title_parse"],
+             model_name=hierarchy_model_name,
+             output_dir=output_dir,
+-            layout_json_path=layout_json_path,
+         )
+ 
+     # ── Phase B: MarkdownParseState traversal ──
+```
+
+**File**: `apps/worker/app/services/document_parser/formats/text/parser.py` (modified, +0/-1)
+```diff
+@@ -110,7 +110,6 @@ def postprocess_leaf_dics(
+     merge_df["path"] = merge_df["path_identifier"].apply(split_escaped_document_path)
+     merge_df = merge_df[["path", "content_lst", "path_identifier"]]
+ 
+-    # TODO rough dividing of contents (need more smart dividing)
+     df_with_divides = pd.DataFrame(columns=["path", "content_lst", "path_identifier"])
+     for i, row in merge_df.iterrows():
+         local_contents = row["content_lst"]
+```
+
+**File**: `apps/worker/app/services/document_parser/structure/heading_candidates.py` (modified, +5/-23)
+```diff
+@@ -158,19 +158,7 @@ def md_heading_match(line, as_is: bool = True):
+ _ZERO_NEG_CODE = remove_by_conditions("")
+ 
+ 
+-def filter_markdown_headings(
+-    md_lines: list[str],
+-    layout_json_path: str | None = None,
+-) -> pd.DataFrame:
+-    meta_ctx = None
+-    if layout_json_path:
+-        try:
+-            from app.services.document_parser.structure.metadata_extractor import MetadataContext
+-
+-            meta_ctx = MetadataContext(md_lines, layout_json_path)
+-        except Exception as exc:
+-            logger.warning(f"Failed to create MetadataContext: {exc}")
+-
++def filter_markdown_headings(md_lines: list[str]) -> pd.DataFrame:
+     raw_candidates = []
+     for line_index, line in enumerate(md_lines):
+         line = line.strip()
+@@ -180,11 +168,9 @@ def filter_markdown_headings(
+         if _is_non_heading_markdown_line(line):
+             est_level = -1
+             reason = f"POS {_ZERO_POS_CODE} NEG {_ZERO_NEG_CODE}"
+-            if meta_ctx:
+-                reason += " META [0, 0, 0]"
+             line = "Figure/Image"
+         else:
+-            est_level, reason, line = _estimate_markdown_heading_level(line, meta_ctx)
++            est_level, reason, line = _estimate_markdown_heading_level(line)
+ 
+         raw_candidates.append((line_index, line, est_level, reason))
+ 
+@@ -275,8 +261,8 @@ def _is_non_heading_markdown_line(line: str) -> bool:
+     )
+ 
+ 
+-def _estimate_markdown_heading_level(line: str, meta_ctx: Any | None):
+-    from app.services.document_parser.structure.metadata_extractor import detect_and_strip_md_bold
++def _estimate_markdown_heading_level(line: str):
++    from app.services.document_parser.structure.markdown_heading_text import detect_and_strip_md_bold
+ 
+     line_clean, hash_level = md_heading_match(line, as_is=False)
+     stripped_line, is_full_bold = detect_and_strip_md_bold(line_clean)
+@@ -293,11 +279,7 @@ def _estimate_markdown_heading_level(line: str, meta_ctx: Any | None):
+         code_level = -1
+         code_reason = f"POS {pos_code} NEG {neg_code}"
+ 
+-    if meta_ctx:
+-        size_rank, occurrence = meta_ctx.get_meta_for_line(line_clean)
+-        bold_value = 1 if is_full_bold else 0
+-        code_reason += meta_ctx.format_meta_suffix(size_rank, occurrence, bold_value)
+-    elif is_full_bold:
++    if is_full_bold:
+         code_reason += " META [0, 0, 1]"
+ 
+     if hash_level <= 0:
+```
+
+---
+
+### Incident Patch 2: `f4f4b954` (2026-11-19)
+**Commit Message**: Note PowerPoint structure and embedded media transcription in README
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `deploy/docker/Dockerfile.worker` (modified, +15/-0)
+**File**: `README.md` (modified, +3/-1)
 ```diff
-@@ -43,6 +43,7 @@ WORKDIR /app
- RUN apt-get update && apt-get install -y --no-install-recommends \
-     curl \
-     ffmpeg \
-+    fonts-noto-cjk \
-     libgl1 \
-     libglib2.0-0 \
-     libgomp1 \
-@@ -53,6 +54,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
-     openjdk-21-jre-headless \
-     && rm -rf /var/lib/apt/lists/*
+@@ -49,6 +49,7 @@ Knowhere parses files along their native hierarchy (headings, if any) and uses f
  
-+# LibreOffice renders DOCX/PPTX to PDF for page previews. Without a CJK font
-+# Chinese text renders as empty boxes, and without these aliases the
-+# fontconfig fallback picks the Hong Kong glyph variant, so common Simplified
-+# Chinese Office fonts are mapped to the Noto CJK SC faces.
-+RUN printf '%s\n' \
-+    '<?xml version="1.0"?>' \
-+    '<!DOCTYPE fontconfig SYSTEM "fonts.dtd">' \
-+    '<fontconfig>' \
-+    '  <alias binding="same"><family>Microsoft YaHei</family><prefer><family>Noto Sans CJK SC</family></prefer></alias>' \
-+    '  <alias binding="same"><family>SimHei</family><prefer><family>Noto Sans CJK SC</family></prefer></alias>' \
-+    '  <alias binding="same"><family>SimSun</family><prefer><family>Noto Serif CJK SC</family></prefer></alias>' \
-+    '</fontconfig>' \
-+    > /etc/fonts/conf.d/65-cjk-office-aliases.conf
-+
- # tabula-py shells out to Java for page-memory table HTML extraction.
- RUN java -version
+ ## 📢 News
  
++- **November 2026**: 📽️ **Better PowerPoint parsing.** Slide decks now get a section hierarchy built from their agenda and divider slides, and embedded audio and video are transcribed and searchable alongside their slides.
+ - **November 2026**: ⏩ **Progressive ingestion.** `ingestion_mode=progressive` publishes a readable baseline first, then enriches the rest in the background. MinerU is no longer required by default.
+ - **November 2026**: 🧰 **Agent retrieval tools exposed through the API.** Corpus navigation tools are exposed to built-in and external agents alike.
+ - **November 2026**: 🖼️ **More image formats.** `.gif`, `.webp`, `.bmp`, `.tif`/`.tiff`, and `.heic`/`.heif` are now supported.
+@@ -170,7 +171,7 @@ Agents using Knowhere outperform those working from raw documents, Markitdown, U
+ 
+ **✅ Supported**
+ 
+-- [x] `.pdf` `.pptx` — vision parsing
++- [x] `.pdf` `.pptx` — vision parsing (`.pptx` also transcribes embedded audio and video)
+ - [x] `.doc` `.docx` `.xls` `.xlsx` `.csv` `.tsv`
+ - [x] `.jpg` `.jpeg` `.png` `.gif` `.webp` `.bmp` `.tif` `.tiff` `.heic` `.heif`
+ - [x] `.md` `.txt` `.html` `.htm` `.json`
+@@ -211,6 +212,7 @@ cp apps/worker/.env.example apps/worker/.env
+ - S3-compatible storage credentials
+ - at least one LLM provider key: `DS_KEY`, `ALI_API_KEYS`, `GPT_API_KEY`, or `GLM_API_KEY`
+ - `VERCEL_KEY` for page-image and query embeddings
++- `ALI_API_KEYS` (DashScope Fun-ASR) if you want audio and video embedded in presentations transcribed
+ - a vision-capable model provider for PDF/PowerPoint parsing, page understanding, image summaries, OCR, atlas classification, or image-aware retrieval
+ - `MINERU_API_KEYS` only if you turn on the optional MinerU fine-stage page-text extractor
+ - any optional billing or webhook providers you want to enable
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #574** (2026-11-19): Remove text-track PDF leftovers and stale parser TODOs (@EricNGOntos)
+- **PR #573** (2026-11-19): chore: promote main to staging (PDF TOC nesting tree, unnumbered TOC pages, demo catalog categories) (@EricNGOntos)
+- **PR #572** (2026-11-19): PDF TOC: page screen, TOC nesting tree, and unnumbered TOC pages (@EricNGOntos)
+- **PR #571** (closed): chore: promote main to staging (Official Library from stored demo categories) (@suguanYang)
+- **PR #570** (2026-11-19): List demo documents in the Official Library by their stored category (@suguanYang)
 - **PR #569** (2026-11-18): chore: promote main to staging (worker CJK fonts, document-page limit) (@EricNGOntos)
-- **PR #568** (2026-11-18): Install CJK fonts in the worker image; count only document pages against the page limit (@EricNGOntos)
-- **PR #567** (2026-11-17): chore: promote main to staging (slide-deck route, page-limit admission, parse-path slimming) (@EricNGOntos)
-- **PR #566** (2026-11-17): Slide-deck structure route, page-limit admission, and parse-path slimming (@EricNGOntos)
-- **PR #564** (2026-11-17): chore: promote main to staging (PPTX embedded media, page-scoped retrieval) (@EricNGOntos)
-- **PR #563** (2026-11-17): feat: PPTX embedded media, and retrieval that returns a hit's own pages (@EricNGOntos)
 
 ---
 
@@ -1075,42 +1379,30 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Install CJK fonts in the worker image so rendered PDFs show Chinese text
+## X. Empirical Invariant Guard in README.md
 
 **RULE**:
-When implementing operations in `deploy/docker/Dockerfile.worker`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Ontos-AI/knowhere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d771e355`: Install CJK fonts in the worker image so rendered PDFs show Chinese text. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3352f322`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `deploy/docker/Dockerfile.worker`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-    fonts-noto-cjk \
-# LibreOffice renders DOCX/PPTX to PDF for page previews. Without a CJK font
-# Chinese text renders as empty boxes, and without these aliases the
-# fontconfig fallback picks the Hong Kong glyph variant, so common Simplified
-# Chinese Office fonts are mapped to the Noto CJK SC faces.
-RUN printf '%s\n' \
-    '<?xml version="1.0"?>' \
-    '<!DOCTYPE fontconfig SYSTEM "fonts.dtd">' \
-    '<fontconfig>' \
-    '  <alias binding="same"><family>Microsoft YaHei</family><prefer><family>Noto Sans CJK SC</family></prefer></alias>' \
-    '  <alias binding="same"><family>SimHei</family><prefer><family>Noto Sans CJK SC</family></prefer></alias>' \
-    '  <alias binding="same"><family>SimSun</family><prefer><family>Noto Serif CJK SC</family></prefer></alias>' \
-    '</fontconfig>' \
-    > /etc/fonts/conf.d/65-cjk-office-aliases.conf
-
+- **November 2026**: 📽️ **Better PowerPoint parsing.** Slide decks now get a section hierarchy built from their agenda and divider slides, and embedded audio and video are transcribed and searchable alongside their slides.
+- [x] `.pdf` `.pptx` — vision parsing (`.pptx` also transcribes embedded audio and video)
+- `ALI_API_KEYS` (DashScope Fun-ASR) if you want audio and video embedded in presentations transcribed
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- [x] `.pdf` `.pptx` — vision parsing
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d771e355` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3352f322` are properly handled with clean fallback behavior.

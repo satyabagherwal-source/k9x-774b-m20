@@ -1715,8 +1715,8 @@
     "sourceUrl": "https://huggingface.co/datalab-to/indra-ocr",
     "sourceVersion": "hf-datalab-to-indra-ocr",
     "license": "Open-Source",
-    "contentHash": "00bd35269790c91fcdc67f0f92d903d65ee2af857f4b3bb4c0c2b7f76d801717",
-    "lastHarvestedAt": "2026-11-15T06:36:43.079Z",
+    "contentHash": "bbd722879260e3f3c637c1e292f3d89507bb802c29dd1022fe19711b25eab4e1",
+    "lastHarvestedAt": "2026-11-19T19:11:53.406Z",
     "learningId": "learn-huggingface-datalab-to-indra-ocr"
   },
   "chrisryugj-kordoc": {
@@ -2293,10 +2293,10 @@
     "repository": "Ontos-AI/knowhere",
     "platform": "github",
     "sourceUrl": "https://github.com/Ontos-AI/knowhere",
-    "sourceVersion": "87ea9514",
+    "sourceVersion": "3352f322",
     "license": "Apache-2.0",
-    "contentHash": "fee643031259c875c5e2d89294c6a19bb2f4d5b005b47562e5d78efc7ca9e815",
-    "lastHarvestedAt": "2026-11-18T14:40:45.178Z",
+    "contentHash": "1e310de5cc99ac57f5a58c0875cfc5cabacb3f458477459ae0f7b0a3a156727a",
+    "lastHarvestedAt": "2026-11-19T19:12:09.048Z",
     "learningId": "learn-github-ontos-ai-knowhere"
   },
   "bitterbot-ai-bitterbot-desktop": {
@@ -2443,10 +2443,10 @@
     "repository": "DefGuard/defguard",
     "platform": "github",
     "sourceUrl": "https://github.com/DefGuard/defguard",
-    "sourceVersion": "a0570118",
+    "sourceVersion": "9830b49b",
     "license": "NOASSERTION",
-    "contentHash": "9bcf42066195262a6592e44fc2df83b94317d544f40c15a7737caa2820551afd",
-    "lastHarvestedAt": "2026-11-16T20:21:07.592Z",
+    "contentHash": "9a9ac3f6811ad73bb29edd3791ee514d4c6fbeba82db30f019fae3dc7e816b68",
+    "lastHarvestedAt": "2026-11-19T19:12:06.355Z",
     "learningId": "learn-github-defguard-defguard"
   },
   "tamagui-tamagui": {
@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "a2fc3c1e",
+    "sourceVersion": "8c82c544",
     "license": "AGPL-3.0",
-    "contentHash": "495028e18b48be5f87c5ece3bde7d3df281cd238d9d47dda38a1ad6c94e7b38d",
-    "lastHarvestedAt": "2026-11-18T15:35:13.004Z",
+    "contentHash": "18f33b37e4d8da54c10af60e1e75a99c09a67b57a00d4f73e60589e37b0359f7",
+    "lastHarvestedAt": "2026-11-19T19:12:05.381Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -11633,10 +11633,10 @@
     "repository": "vercel-labs/agent-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/vercel-labs/agent-desktop",
-    "sourceVersion": "8ffecc1d",
+    "sourceVersion": "e8934a5e",
     "license": "Apache-2.0",
-    "contentHash": "2d84356171ecc16f548f9240cb7799d6dbbcda149bf4f84467155e02fa8935d1",
-    "lastHarvestedAt": "2026-11-15T21:44:16.816Z",
+    "contentHash": "d94c6c7da69e72f9d7b61e81f01edcd9f9dc838c3b0b623f1082e1c7cda49adc",
+    "lastHarvestedAt": "2026-11-19T19:11:56.531Z",
     "learningId": "learn-github-vercel-labs-agent-desktop"
   },
   "hf-efficient-large-model-open-h3-regenerate-2k": {

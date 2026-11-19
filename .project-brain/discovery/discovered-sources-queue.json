@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T18:49:06.010Z",
+  "updated_at": "2026-11-19T19:12:13.513Z",
   "stats": {
-    "total_discovered": 5954,
-    "approved_pending_harvest": 5638,
+    "total_discovered": 5955,
+    "approved_pending_harvest": 5639,
     "harvested_count": 0,
     "rejected_count": 316,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5605,
+      "COMMUNITY_AND_EXPERT": 5606,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 112,
       "ENGINEERING_BLOGS": 4,
@@ -128797,6 +128797,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openkruise-kruise-learnings.md",
         "fileName": "openkruise-kruise-learnings.md"
+      }
+    },
+    "SRC-2FD05382084B": {
+      "id": "SRC-2FD05382084B",
+      "url": "https://router.laresprime.olares.com/",
+      "title": "https://router.laresprime.olares.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T19:12:13.513Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/beclab-olares-learnings.md",
+        "fileName": "beclab-olares-learnings.md"
       }
     }
   }

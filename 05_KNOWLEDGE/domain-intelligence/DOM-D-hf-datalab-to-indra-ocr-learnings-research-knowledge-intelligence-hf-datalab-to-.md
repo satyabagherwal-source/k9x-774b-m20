@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T06:37:31.179Z",
+  "timestamp": "2026-11-19T19:12:13.166Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-datalab-to-indra-ocr-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-datalab-to-indra-ocr-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T06:37:31.179Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T19:12:13.166Z`  
 > **Learning ID**: `LEARN-EVO-hf-datalab-to-indra-ocr-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-datalab-t`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T06:36:42.675Z  
+> **Timestamp**: 2026-11-19T19:11:52.957Z  
 > **Learning ID**: `learn-huggingface-datalab-to-indra-ocr`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/datalab-to/indra-ocr](https://huggingface.co/datalab-to/indra-ocr))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T06:36:42.539Z  
+> **Harvest Timestamp**: 2026-11-19T19:11:52.816Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 8605 downloads | 531 likes
+- **Stars / Engagement**: 6455 downloads | 538 likes
 
 ---
 

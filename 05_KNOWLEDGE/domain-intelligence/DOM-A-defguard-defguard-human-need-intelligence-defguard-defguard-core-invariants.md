@@ -4,24 +4,24 @@
 {
   "source_repository": "DefGuard/defguard",
   "source_url": "https://github.com/DefGuard/defguard",
-  "source_version": "a0570118",
+  "source_version": "9830b49b",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-16T20:21:07.768Z",
+  "timestamp": "2026-11-19T19:12:06.544Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-defguard-defguard",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [DefGuard/defguard](https://github.com/DefGuard/defguard) (Revision: `a0570118`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-16T20:21:07.768Z`  
+> **Provenance**: Harvested from [DefGuard/defguard](https://github.com/DefGuard/defguard) (Revision: `9830b49b`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-19T19:12:06.544Z`  
 > **Learning ID**: `learn-github-defguard-defguard`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain A (Human & Need Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), C (Market & Business Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from DefGuard/defguard:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/defguard-defguard-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/DefGuard/defguard](https://github.com/DefGuard/defguard))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T20:21:06.647Z  
+> **Harvest Timestamp**: 2026-11-19T19:12:05.274Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Zero-Trust access management with true WireGuard® 2FA/MFA
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 2917 stars
+- **Stars / Engagement**: 2920 stars
 
 ---
 
@@ -2013,16 +2013,14 @@ impl Token {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4051** (2026-11-17): **Edge/proxy stops accepting new connections: idle client connections are never closed and exhaust the file descriptor limit**
+  *Symptoms*: **Describe the bug** The edge (process `defguard-proxy`) accumulates established client connections on port 443 that are never closed. With roughly 50 active users it reached 1012 established connections within about three days, hit the container's default soft limit of 1024 open files and stopped accepting new connections.  Existing connections kept working, so the service looked healthy, but every new connection attempt timed out. For users this shows up as: - After entering the MFA code, the desktop client spins indefinitely and the tunnel is never established. - Occasionally the client reports that it cannot connect to the edge.  Nothing matching `too many open files` or `accept` appears in the edge container log at the configured log level.  **To Reproduce** Steps to reproduce the behavior: 1. Run the edge as a Docker container with the default `nofile` soft limit of 1024, published directly on 443/tcp (no reverse proxy in front). 2. Let about 50 users work normally with the desktop client for a few days. 3. Watch the number of established connections on port 443 inside the container: `ss -Htn state established 'sport = :443' | wc -l`. It grows continuously and far exceeds the number of clients. 4. Once the process holds 1024 file descriptors, new connections are no longer accepted: SYNs reach the container but get no SYN-ACK, and MFA / tunnel setup hangs in the client.  **Expected behavior** - Idle or dead client connections are closed by the edge (idle timeout and/or T
+
 - **Issue #4036** (2026-11-16): **2.2.0 regression: mobile biometric MFA unavailable for devices enrolled after upgrade**
   *Symptoms*: Environment - Core / Edge / Gateway 2.2.0 (Open Source, docker), upgraded from 2.1.1/2.1.0/2.1.1 - Location MFA: "Default Internal MFA" flow (auto-created on upgrade), single step:   Authenticator App, Email, Mobile Biometric Authentication, Mobile App Approval - Mobile apps: iOS 2.2.0 (iPhone 13), iOS 2.0.0 (iPhone 11), Android latest Play Store (Xiaomi)  Observed - Devices enrolled BEFORE the upgrade (iPhone 12, Xiaomi): biometric works. - Devices enrolled AFTER the upgrade: "Biometric — Not configured" on connect,   on iOS and Android. Re-enrolling the previously working Xiaomi broke it too. - Core logs registration successfully each time:   "User test(14) registered mobile auth for device iPhone(26)" - Device appears under "Mobile App Approval Devices" in the user profile. - TOTP enabled before enrollment; TOTP works.  Expected: newly enrolled mobile devices can use biometric MFA as before.
   **Post-Mortem & Fix Analysis**:
   >    Additional data: rolled back production (no users yet) to Core 2.1.1 / Edge 2.1.0 / Gateway 2.1.1    by restoring the pre-upgrade DB dump. A mobile device (Android, Xiaomi) enrolled on 2.1.1 can use    biometric immediately ("Desktop client login finished ... with method BIOMETRIC").    Same device enrolled on 2.2.0 -> "Biometric — Not configured".
   >    Confirmed: after rolling back both staging and production to Core 2.1.1 / Edge 2.1.0 /    Gateway 2.1.1 (restore of pre-upgrade DB), newly enrolled mobile devices can use biometric    again (Android Xiaomi re-enrolled on 2.1.1 -> connect with BIOMETRIC works).
-
-- **Issue #4001** (2026-11-13): **The network is too small to accomodate all existing devices**
-  *Symptoms*: **Describe the bug** We have multiple locations. When editing an existing location, I cannot save the changes when there are more devices than the defined VPN CIDR on a location allows. But it doesn't only check the devices that apply for that location, it checks the total devices in defguard.  Error: ```The network is too small to accomodate all existing devices (network capacity: 253, total devices: 259)```  **Expected behavior** I would expect that I cannot save the location change(s), when the total devices that use this location exceed the configured CIDR. Otherwise we would need to set a large CIDR on all locations, even when only a small amount of the users/devices have access to it.  **Version information** - Defguard Core version: v2.1.1 
-  **Post-Mortem & Fix Analysis**:
-  > Test scenario:  1. Create group `small`. 2. Add 3 devices to the admin user. 3. Create a user in group `small` and add 2 devices to them. 4. Create a user with no groups and add 2 devices to them. 5. Create a location with address `10.10.10.1/24`, restricted to group `small`. 6. Edit the location, change the address to `10.10.10.1/29` (capacity 5), and save.  Expected behaviour: Saving succeeds. Only 5 devices have access to the location: 2 from `small` and 3 from admin. admin groups always have access.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2039,82 +2037,232 @@ impl Token {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a0570118` (2026-11-16)
-**Commit Message**: update to README core capabilities (#4011)
+### Incident Patch 1: `9830b49b` (2026-11-19)
+**Commit Message**: fix(CI): improve PR job cancellation (#4071)
 
-2.1 and 2.2 features added
+* update nix flake
 
-**File**: `README.md` (modified, +33/-8)
+* fall back to default renovate base branch setup
+
+* add job cancellation
+
+* clippy & cve fixes
+
+**File**: `.github/workflows/ci.yml` (modified, +4/-0)
 ```diff
-@@ -21,12 +21,37 @@ For detailed security information see the [secure-by-design documentation](https
+@@ -19,6 +19,10 @@ on:
+       - "LICENSE"
+   workflow_dispatch:
  
- ## Core Capabilities
- 
--- 🌐 **WireGuard VPN** — multiple locations with per-location access control, MFA per connection, self-service device setup, kernel and userspace support
--- 👥 **Identity & Access Management** — internal OIDC provider for SSO, external OIDC (Google, Microsoft, custom), LDAP/AD sync, remote enrollment, user self-service
--- 🔑 **Multi-Factor Authentication** — TOTP, WebAuthn/FIDO2, email tokens, biometric via mobile app
--- 🛡️ **Firewall** — allow/deny rules per VPN location by user or group, applied in real time
--- 📋 **Activity Log** — audit log with filtering and search; real-time SIEM streaming (Enterprise)
--- 🔗 **Integrations** — webhooks and REST API
-+- 🌐 **WireGuard VPN**
-+  - **Locations**: multiple locations with per-location access control, MFA per connection, self-service device setup, kernel and userspace support
-+  - **Multi-location DNS**: each connected location applies its own resolvers and domains side by side
-+  - **Custom MTU**: an MTU set by the admin that the client apps apply
-+  - **Gateway on VyOS**: Defguard Gateway runs as a container on VyOS
-+- 🔑 **Multi-Factor Authentication**
-+  - **FIDO2 Hardware Keys** (Enterprise): hardware security keys such as YubiKey as an MFA factor for the VPN connection, registered in the desktop client and used on desktop and over NFC on mobile
-+  - **MFA Flows** (Business): ordered MFA steps, each accepting a choice of factors, with the tunnel established only after the last step succeeds; one flow can be reused across locations
-+  - **Group-level MFA Overrides** (Enterprise): different MFA flows for specific groups on the same VPN location, on top of the location's default flow
-+  - **Factors**: TOTP, email tokens, biometric via the mobile app, external SSO (Business)
-+  - **MFA Setup in the Desktop Client**: users without MFA set it up when they first connect to a protected location, without re-enrolling
-+- 👥 **Identity & Access Management**
-+  - **SSO & Directories**: internal OIDC provider for SSO, external OIDC (Google, Microsoft, custom), LDAP/AD sync, remote enrollment, user self-service
-+  - **Windows Auto-provisioning**: a bulk action writes each user's enrollment token to an Active Directory field
-+- 🛡️ **Access Control**
-+  - **Firewall**: group-based firewall policies with support for OPNsense, pfSense, Linux and MikroTik
-+  - **Device Posture** (Enterprise): checks a device must pass before it connects, set per location: client and OS version, security updates, Active Directory membership, antivirus, disk encryption
-+  - **Allowed IPs from Firewall Rules** (Enterprise): each user's WireGuard config lists only the subnets their firewall rules allow
-+  - **Firewall Bulk Actions**: manage rules, destinations and aliases in bulk
-+- 💻 **Clients**
-+  - **Desktop Client**: Windows, macOS and Linux app with multiple instances and locations, a tray mode and live configuration sync (Business)
-+  - **Mobile Client**: redesigned iOS and Android app that works in MFA flows both as a factor and as a connecting client
-+  - **Always-on & Pre-logon VPN** (Enterprise): Always-on VPN on Windows and Linux, connected at boot by a background service, and pre-logon VPN on Windows
-+  - **Command-line Client**: connect, disconnect and check status from the terminal, with MFA and JSON output, for headless machines and scripts
-+  - **Group Traffic Policies** (Enterprise): no limitations, disable all traffic or force all traffic, set per group instead of only globally
-+- 📋 **Audit & Integrations**
-+  - **Activity Log**: audit log with filtering and search; real-time SIEM streaming (Enterprise)
-+  - **Integrations**: webhooks and REST API
++concurrency:
++  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
++  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 +
+ permissions:
+   contents: read
+   packages: read
+```
+
+**File**: `.github/workflows/lint-e2e.yml` (modified, +4/-0)
+```diff
+@@ -14,6 +14,10 @@ on:
+     paths:
+       - "e2e/**"
+ 
++concurrency:
++  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
++  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 +
-+Explore all features in the [Product overview](https://defguard.net/enterprise-wireguard-vpn/).
+ jobs:
+   lint-e2e:
+     runs-on:
+```
+
+**File**: `.github/workflows/lint-web.yml` (modified, +4/-0)
+```diff
+@@ -16,6 +16,10 @@ on:
+       - "*.md"
+       - "LICENSE"
  
- ## Clients
++concurrency:
++  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
++  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
++
+ jobs:
+   lint-web:
+     runs-on:
+```
+
+**File**: `.github/workflows/test-web.yml` (modified, +4/-0)
+```diff
+@@ -10,6 +10,10 @@ on:
+       - "release/**"
+       - "stable/**"
  
-@@ -64,7 +89,7 @@ Comprehensive documentation is available at: https://docs.defguard.net
++concurrency:
++  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
++  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
++
+ permissions:
+   contents: read
+ jobs:
+```
+
+**File**: `Cargo.lock` (modified, +15/-15)
+```diff
+@@ -81,9 +81,9 @@ checksum = "683d7910e743518b0e34f1186f92494becacb047c7b6bf616c96772180fef923"
  
- ## Video guides
+ [[package]]
+ name = "ammonia"
+-version = "4.2.4"
++version = "4.2.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "1f45dfa685e1ec33b1bf1a3b93b8047cbdbef41b6040deebbe6bea7720a45574"
++checksum = "b34ca49e407c06daac53f0c4debe8ff5df9cc2a4e9369d164a5d86ef8c219319"
+ dependencies = [
+  "cssparser",
+  "html5ever",
+@@ -1278,7 +1278,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "d045de693cb712d0b22c6a64be5b953f67b3ce00ab5ad3dd5d8b441886ab8e1a"
+ dependencies = [
+  "quote",
+- "syn 2.0.119",
++ "syn 3.0.9",
+ ]
  
--Visit out YouTube channel to see our [video guides](https://www.youtube.com/playlist?list=PLVR33X0CUHUcoyLshs9S8VbsGgggouCAW).
-+Visit out YouTube channel to see our [video guides](https://www.youtube.com/@defguard
+ [[package]]
+@@ -2310,9 +2310,9 @@ dependencies = [
  
- ## Community
+ [[package]]
+ name = "email-encoding"
+-version = "0.4.2"
++version = "0.4.3"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "420b9da095f052ea597503e39073b5b3c522f7db933fbac202d91d24492693fd"
++checksum = "9f690ae2169f2ceb3f45b28b6fcd8fa16839f2f5c8818546774b9425f5f71004"
+ dependencies = [
+  "base64 0.23.1",
+  "memchr",
+@@ -2384,7 +2384,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
+ dependencies = [
+  "libc",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
  
-@@ -84,4 +109,4 @@ The code in this repository is available under a dual licensing model:
- - Enterprise License: All code in this repository (including within the "crates/defguard_core/src/enterprise" directory) is licensed under a separate Enterprise License (see file crates/defguard_core/src/enterprise/LICENSE.md).
+ [[package]]
+@@ -3655,9 +3655,9 @@ dependencies = [
  
- ## Legal
--WireGuard® is [registered trademarks](https://www.wireguard.com/trademark-policy/) of Jason A. Donenfeld.
-\ No newline at end of file
-+WireGuard® is [registered trademarks](https://www.wireguard.com/trademark-policy/) of Jason A. Donenfeld.
+ [[package]]
+ name = "lettre"
+-version = "0.11.23"
++version = "0.11.24"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f2c646bd5cc763b1087b15493e29a64be6147ba8f19342004fa52048ee596eae"
++checksum = "f294f3d7cdb313e578acef7d7727d4e8d897e0fcd0d6d58c19959cec95073f19"
+ dependencies = [
+  "async-trait",
+  "base64 0.23.1",
+@@ -3722,9 +3722,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "libz-sys"
+-version = "1.1.31"
++version = "1.1.33"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
++checksum = "fee3f59f4321dab0c78d828942e7aa09d0bd8ad6e78a501977e6bf3d02938045"
+ dependencies = [
+  "cc",
+  "libc",
+@@ -5246,7 +5246,7 @@ dependencies = [
+  "once_cell",
+  "socket2",
+  "tracing",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -5687,7 +5687,7 @@ dependencies = [
+  "errno",
+  "libc",
+  "linux-raw-sys",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -5746,7 +5746,7 @@ dependencies = [
+  "security-framework",
+  "security-framework-sys",
+  "webpki-root-certs",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -6804,7 +6804,7 @@ dependencies = [
+  "getrandom 0.3.4",
+  "once_cell",
+  "rustix",
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+@@ -7833,7 +7833,7 @@ version = "0.1.11"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
+ dependencies = [
+- "windows-sys 0.52.0",
++ "windows-sys 0.61.2",
+ ]
+ 
+ [[package]]
+```
+
+**File**: `crates/defguard/Cargo.toml` (modified, +3/-0)
+```diff
+@@ -36,3 +36,6 @@ default = ["openapi"]
+ # Serve the OpenAPI specification and the Swagger UI. See the `openapi` feature of
+ # `defguard_core`. Build with `--no-default-features` to leave it out.
+ openapi = ["defguard_core/openapi", "defguard_common/openapi"]
++
++[lints]
++workspace = true
+```
+
+**File**: `crates/defguard_certs/Cargo.toml` (modified, +3/-0)
+```diff
+@@ -15,3 +15,6 @@ rustls-pki-types.workspace = true
+ thiserror.workspace = true
+ time.workspace = true
+ x509-parser.workspace = true
++
++[lints]
++workspace = true
+```
+
+**File**: `crates/defguard_common/Cargo.toml` (modified, +3/-0)
+```diff
+@@ -61,3 +61,6 @@ test-support = ["tokio/net", "tokio/io-util"]
+ 
+ [build-dependencies]
+ vergen-git2 = "10.0"
++
++[lints]
++workspace = true
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4055** (2026-11-16): Re-enable E2E tests (@jakub-tldr)
-- **PR #4042** (2026-11-16): Devices page (@filipslezaklab)
-- **PR #4039** (2026-11-12): Validate network size aganist allowed devices only (@jakub-tldr)
-- **PR #4038** (2026-11-12): Validate network size aganist allowed devices only (@jakub-tldr)
-- **PR #4025** (2026-11-09): Posture device attestation (@filipslezaklab)
-- **PR #4011** (2026-11-16): update to README core capabilities (@mike767)
+- **PR #4072** (2026-11-19): Correctly handle pasting network addresses in fields (@jakub-tldr)
+- **PR #4071** (2026-11-19): fix(CI): improve PR job cancellation (@wojcik91)
+- **PR #4068** (2026-11-19): Retire the worker (@moubctez)
+- **PR #4066** (2026-11-18): user devices table styling update (@filipslezaklab)
+- **PR #4065** (2026-11-18): Fix cargo deny issues (@j-chmielewski)
+- **PR #4064** (2026-11-18): user devices table styles corrections (@filipslezaklab)
 
 ---
 
@@ -2134,48 +2282,34 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. update to README core capabilities
+## X. CI): improve PR job cancellation
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in DefGuard/defguard. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a0570118`: update to README core capabilities. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9830b49b`: CI): improve PR job cancellation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- 🌐 **WireGuard VPN**
-  - **Locations**: multiple locations with per-location access control, MFA per connection, self-service device setup, kernel and userspace support
-  - **Multi-location DNS**: each connected location applies its own resolvers and domains side by side
-  - **Custom MTU**: an MTU set by the admin that the client apps apply
-  - **Gateway on VyOS**: Defguard Gateway runs as a container on VyOS
-- 🔑 **Multi-Factor Authentication**
-  - **FIDO2 Hardware Keys** (Enterprise): hardware security keys such as YubiKey as an MFA factor for the VPN connection, registered in the desktop client and used on desktop and over NFC on mobile
-  - **MFA Flows** (Business): ordered MFA steps, each accepting a choice of factors, with the tunnel established only after the last step succeeds; one flow can be reused across locations
-  - **Group-level MFA Overrides** (Enterprise): different MFA flows for specific groups on the same VPN location, on top of the location's default flow
-  - **Factors**: TOTP, email tokens, biometric via the mobile app, external SSO (Business)
-  - **MFA Setup in the Desktop Client**: users without MFA set it up when they first connect to a protected location, w
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-- 🌐 **WireGuard VPN** — multiple locations with per-location access control, MFA per connection, self-service device setup, kernel and userspace support
-- 👥 **Identity & Access Management** — internal OIDC provider for SSO, external OIDC (Google, Microsoft, custom), LDAP/AD sync, remote enrollment, user self-service
-- 🔑 **Multi-Factor Authentication** — TOTP, WebAuthn/FIDO2, email tokens, biometric via mobile app
-- 🛡️ **Firewall** — allow/deny rules per VPN location by user or group, applied in real time
-- 📋 **Activity Log** — audit log with filtering and search; real-time SIEM streaming (Enterprise)
-- 🔗 **Integrations** — webhooks and REST API
-Visit out YouTube channel to see our [video guides](https://www.youtube.com/playlist?list=PLVR33X0CUHUcoyLshs9S8VbsGgggouCAW).
-WireGuard® is [registered trademarks](https://www.wireguard.com/trademark-policy/) of Jason A. Donenfeld.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a0570118` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9830b49b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

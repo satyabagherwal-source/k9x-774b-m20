@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T15:35:20.127Z",
+  "timestamp": "2026-11-19T19:12:13.588Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-beclab-olares-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [beclab-olares-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T15:35:20.127Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T19:12:13.588Z`  
 > **Learning ID**: `LEARN-EVO-beclab-olares-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source**: github ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
-> **Source Version**: `a2fc3c1e`  
+> **Source Version**: `8c82c544`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T15:35:12.061Z  
+> **Timestamp**: 2026-11-19T19:12:04.371Z  
 > **Learning ID**: `learn-github-beclab-olares`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T15:35:12.055Z  
+> **Harvest Timestamp**: 2026-11-19T19:12:04.366Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Open-Source Personal Cloud OS for Always-On Agents
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5365 stars
+- **Stars / Engagement**: 5369 stars
 
 ---
 
@@ -1162,767 +1162,823 @@ export const formatPathtoUrl = (path: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8293f92d` (2026-11-18)
-**Commit Message**: fix(daemon): page BLE AP list and notify wifi connect result immediately (#4461)
+### Incident Patch 1: `8c82c544` (2026-11-19)
+**Commit Message**: fix(cli): clean up stale JuiceFS mounts (#4474)
 
-* fix(daemon): page BLE AP list across five characteristics
+Clear disconnected JuiceFS mounts during change-ip and verify the rootfs is detached before removing it during uninstall.
 
-The BLE ListAP characteristic is limited to 512 bytes, so only the strongest few APs were advertised. Keep 0x1200 as page 1 and add 0x1202-0x1205 for pages 2-5, filled in priority order.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* ci: update GOPRIVATE and GIT_CONFIG for backups-sdk integration (#4462)
-
-fix: update GOPRIVATE and GIT_CONFIG for backups-sdk integration
-
-* feat(rag): update component images for 1.12.9 (#4460)
-
-* chore(rag): update component images for 1.12.9
-
-* ci: keep owner prefix in release-cli insteadOf rewrite
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: eball <[REDACTED_EMAIL]>
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* fix(daemon): notify BLE wifi connect result immediately
-
-The connect result was only pushed to the ConnectWifi characteristic on the periodic refresh, which backs off to 30s once the node is online. LarePass waits 15s, so it timed out while the state was already OK. Write the characteristic whenever the connect state changes. Also align ble_test.go with the OlaresServiceUUID re
-
-**File**: `daemon/docs/wifi-and-portal.md` (modified, +7/-3)
+**File**: `cli/pkg/storage/juicefs.go` (modified, +1/-1)
 ```diff
-@@ -55,9 +55,13 @@ capabilities; the strongest AP represents a group. HTTP additionally includes
- status entirely (neither `connected` nor `co`). Its AP list contains only
- `ss` (SSID), `st` (signal strength), and `se` (authentication types); `bs` and
- `if` are omitted. Equivalent SSID/authentication entries across radios are merged,
--keeping the strongest signal. Entries retain
--the internal connection/signal priority order; an entry that does not fit is
--skipped so a shorter later entry can use the remaining 512-byte capacity. Connection payloads exceeding 512 bytes are
-+keeping the strongest signal. The BLE AP list is split across up to five
-+characteristics, each a standalone JSON array of at most 512 bytes: page 1 is
-+`0x1200` (unchanged, so clients reading only it keep working) and pages 2-5 are
-+`0x1202`, `0x1203`, `0x1204`, and `0x1205`. Pages are filled in the internal
-+connection/signal priority order; when the next entry does not fit, it starts
-+the next page, so concatenating pages 1-5 preserves the order. Unused pages are
-+`[]`, and entries beyond the fifth page are dropped. Connection payloads exceeding 512 bytes are
- rejected by the BLE parser; no application-level fragmentation is implemented.
- Bluetooth stacks may themselves reject an oversized write before it reaches the
- server. Use HTTP for larger enterprise requests.
-```
-
-**File**: `daemon/internel/ble/ble_common.go` (modified, +38/-22)
-```diff
-@@ -73,15 +73,23 @@ func (s *service) SetUpdateApListCB(f func([]AccessPoint)) {
- 	s.updateApListCB = f
+@@ -240,7 +240,7 @@ type CleanupStaleJuiceFSMount struct {
  }
  
-+// setConnectState publishes the state to the ConnectWifi characteristic right
-+// away; the periodic refresh can lag up to bleScanIntervalIdle once online,
-+// which is longer than the client waits for a result.
-+func (s *service) setConnectState(state ConnectState) {
-+	s.wifiConnectState = state.String()
-+	if s.notifyConnectState != nil {
-+		s.notifyConnectState()
-+	}
-+}
+ func (t *CleanupStaleJuiceFSMount) Execute(runtime connector.Runtime) error {
+-	mounted, err := isJuiceFSMounted(runtime, OlaresJuiceFSRootDir)
++	mounted, err := isMounted(OlaresJuiceFSRootDir, juiceFSMountType)
+ 	if err != nil {
+ 		return errors.Wrap(err, "failed to read the mount table")
+ 	}
+```
+
+**File**: `cli/pkg/storage/migrate.go` (modified, +25/-25)
+```diff
+@@ -5,6 +5,7 @@ import (
+ 	"fmt"
+ 	"os"
+ 	"path"
++	"path/filepath"
+ 	"strconv"
+ 	"strings"
+ 	"time"
+@@ -177,22 +178,6 @@ func (t *CheckOlaresStopped) Execute(runtime connector.Runtime) error {
+ 	return nil
+ }
+ 
+-// isPathMounted returns whether the given absolute path is currently a mount
+-// point (of any filesystem type) by consulting /proc/self/mounts on the node.
+-func isPathMounted(runtime connector.Runtime, target string) (bool, error) {
+-	out, err := runtime.GetRunner().SudoCmd("cat /proc/self/mounts", false, false)
+-	if err != nil {
+-		return false, err
+-	}
+-	for _, line := range strings.Split(out, "\n") {
+-		fields := strings.Fields(line)
+-		if len(fields) >= 2 && fields[1] == target {
+-			return true, nil
+-		}
+-	}
+-	return false, nil
+-}
+-
+ // isDirEmpty reports whether dir contains no entries at all (including
+ // dotfiles). It is used as a defensive guard so we never run a destructive
+ // --delete sync from, or a swap of, an unexpectedly empty rootfs.
+@@ -305,7 +290,7 @@ type MountJuiceFSForMigration struct {
+ }
+ 
+ func (t *MountJuiceFSForMigration) Execute(runtime connector.Runtime) error {
+-	mounted, err := isPathMounted(runtime, MigrationTempMountPoint)
++	mounted, err := isMounted(MigrationTempMountPoint, "")
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -355,14 +340,14 @@ func (t *SyncRootFSData) Execute(runtime connector.Runtime) error {
+ 
+ 	// Safety: the source must be the real local rootfs, never a JuiceFS mount.
+ 	// Otherwise a --delete sync from an (empty) JuiceFS into JuiceFS could wipe data.
+-	srcMounted, err := isJuiceFSMounted(runtime, OlaresJuiceFSRootDir)
++	srcMounted, err := isMounted(OlaresJuiceFSRootDir, juiceFSMountType)
+ 	if err != nil {
+ 		return err
+ 	}
+ 	if srcMounted {
+ 		return fmt.Errorf("refusing to sync: source %s is already a JuiceFS mount", OlaresJuiceFSRootDir)
+ 	}
+-	dstMounted, err := isPathMounted(runtime, MigrationTempMountPoint)
++	dstMounted, err := isMounted(MigrationTempMountPoint, "")
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -421,7 +406,7 @@ type UnmountJuiceFSMigration struct {
+ }
+ 
+ func (t *UnmountJuiceFSMigration) Execute(runtime connector.Runtime) error {
+-	mounted, err := isPathMounted(runtime, MigrationTempMountPoint)
++	mounted, err := isMounted(MigrationTempMountPoint, "")
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -451,7 +436,7 @@ func (t *BackupAndSwapRootFS) Execute(runtime connector.Runtime) error {
+ 		logger.Info("JuiceFS is already enabled, skipping rootfs backup and swap")
+ 		return nil
+ 	}
+-	mounted, err := isJuiceFSMounted(runtime, OlaresJuiceFSRootDir)
++	mounted, err := isMounted(OlaresJuiceFSRootDir, juiceFSMountType)
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -488,14 +473,29 @@ func (t *BackupAndSwapRootFS) Execute(runtime connector.Runtime) error {
+ 	return nil
+ }
+ 
+-func isJuiceFSMounted(runtime connector.Runtime, target string) (bool, error) {
+-	out, err := runtime.GetRunner().SudoCmd("cat /proc/self/mounts", false, false)
++const juiceFSMountType = "fuse.juicefs"
 +
- func (s *service) connectWifi(value []byte) {
- 	cctx, err := s.parseConnectConext(value)
++// isMounted looks up an exact mount point in /proc/self/mounts. An empty
++// fsTypePrefix matches any filesystem type.
++func isMounted(target, fsTypePrefix string) (bool, error) {
++	target = filepath.Clean(target)
++	parent := filepath.Dir(target)
++	// /olares can point to /osdata/olares. Resolve the parent without
++	// accessing the mount itself, which may have become disconnected.
++	resolvedParent, err := filepath.EvalSymlinks(parent)
++	if os.IsNotExist(err) {
++		resolvedParent = parent
++	} else if err != nil {
++		return false, err
++	}
++	resolvedTarget := filepath.Join(resolvedParent, filepath.Base(target))
++	mounts, err := os.ReadFile("/proc/self/mounts")
  	if err != nil {
--		state := ConnectState{
-+		s.setConnectState(ConnectState{
- 			State:  ptr.To(Fail),
- 			ErrMsg: ptr.To(err.Error()),
--		}
+ 		return false, err
+ 	}
+-	for _, line := range strings.Split(out, "\n") {
++	for _, line := range strings.Split(string(mounts), "\n") {
+ 		fields := strings.Fields(line)
+-		if len(fields) >= 3 && fields[1] == target && strings.HasPrefix(fields[2], "fuse.juicefs") {
++		if len(fields) >= 3 && (fields[1] == target || fields[1] == resolvedTarget) && strings.HasPrefix(fields[2], fsTypePrefix) {
+ 			return true, nil
+ 		}
+ 	}
+```
+
+**File**: `cli/pkg/storage/module.go` (modified, +4/-4)
+```diff
+@@ -153,13 +153,13 @@ type RemoveJuiceFSModule struct {
+ func (m *RemoveJuiceFSModule) Init() {
+ 	m.Name = "RemoveJuiceFS"
+ 
+-	stopJuiceFS := &task.RemoteTask{
+-		Name:  "StopJuiceFS",
++	uninstallJuiceFS := &task.RemoteTask{
++		Name:  "UninstallJuiceFS",
+ 		Hosts: m.Runtime.GetHostsByRole(common.Master),
+ 		Prepare: &prepare.PrepareCollection{
+ 			new(common.OnlyFirstMaster),
+ 		},
+-		Action:   new(StopJuiceFS),
++		Action:   new(UninstallJuiceFS),
+ 		Parallel: false,
+ 		Retry:    0,
+ 	}
+@@ -186,7 +186,7 @@ func (m *RemoveJuiceFSModule) Init() {
+ 		Retry:    0,
+ 	}
+ 	m.Tasks = []task.Interface{
+-		stopJuiceFS,
++		uninstallJuiceFS,
+ 		stopRedis,
+ 		removeJuiceFSFiles,
+ 	}
+```
+
+**File**: `cli/pkg/storage/tasks.go` (modified, +27/-20)
+```diff
+@@ -222,20 +222,37 @@ func (t *UnMountCOS) Execute(runtime connector.Runtime) error {
+ 	return nil
+ }
+ 
+-type StopJuiceFS struct {
++type UninstallJuiceFS struct {
+ 	common.KubeAction
+ }
+ 
+-func (t *StopJuiceFS) Execute(runtime connector.Runtime) error {
+-	_, _ = runtime.GetRunner().SudoCmd("systemctl stop juicefs; systemctl disable juicefs", false, false)
 -
--		s.wifiConnectState = state.String()
-+		})
- 		return
+-	_, _ = runtime.GetRunner().SudoCmd(fmt.Sprintf("rm -rf /var/jfsCache %s", JuiceFsCacheDir), false, false)
++func (t *UninstallJuiceFS) Execute(runtime connector.Runtime) error {
++	runner := runtime.GetRunner()
++	installed, err := runner.FileExist(JuiceFsServiceFile)
++	if err != nil {
++		return errors.Wrap(err, "check JuiceFS service file")
++	}
++	if installed {
++		if _, err := runner.SudoCmd("systemctl stop juicefs && systemctl disable juicefs", false, false); err != nil {
++			return errors.Wrap(err, "stop and disable JuiceFS")
++		}
++	}
+ 
+-	_, _ = runtime.GetRunner().SudoCmd(fmt.Sprintf("umount %s", OlaresJuiceFSRootDir), false, false)
++	if err := new(CleanupStaleJuiceFSMount).Execute(runtime); err != nil {
++		return err
++	}
+ 
+-	_, _ = runtime.GetRunner().SudoCmd(fmt.Sprintf("rm -rf %s", OlaresJuiceFSRootDir), false, false)
++	// Only remove the rootfs directory after its mount has been detached.
++	mounted, err := isMounted(OlaresJuiceFSRootDir, "")
++	if err != nil {
++		return errors.Wrap(err, "verify the JuiceFS mount point is detached")
++	}
++	if mounted {
++		return errors.Errorf("refusing to remove %s while it is still mounted", OlaresJuiceFSRootDir)
++	}
+ 
+-	return nil
++	_, err = runner.SudoCmd(fmt.Sprintf("rm -rf -- /var/jfsCache %s %s", JuiceFsCacheDir, OlaresJuiceFSRootDir), false, false)
++	return errors.Wrap(err, "remove JuiceFS cache and mount point")
+ }
+ 
+ type StopMinio struct {
+@@ -371,18 +388,8 @@ func (t *DeleteTerminusUserData) Execute(runtime connector.Runtime) error {
+ 		logger.Errorf("remove %s failed %v", OlaresUserDataDir, err)
  	}
  
-@@ -90,20 +98,16 @@ func (s *service) connectWifi(value []byte) {
- 	cmd := connectwifi.New()
- 	_, err = cmd.Execute(s.ctx, &param)
- 	if err != nil {
--		state := ConnectState{
-+		s.setConnectState(ConnectState{
- 			State:  ptr.To(Fail),
- 			ErrMsg: ptr.To(err.Error()),
--		}
+-	userdataDirs := []string{JuiceFsCacheDir}
 -
--		s.wifiConnectState = state.String()
-+		})
- 		return
- 	}
- 
--	state := ConnectState{
-+	s.setConnectState(ConnectState{
- 		State: ptr.To(OK),
+-	if util.IsExist(RedisServiceFile) {
+-		userdataDirs = append(userdataDirs, OlaresJuiceFSRootDir)
 -	}
 -
--	s.wifiConnectState = state.String()
-+	})
- }
- 
- func (s *service) parseConnectConext(value []byte) (*ConnectContext, error) {
-@@ -214,26 +218,38 @@ func (s *service) publishAPList(list []AccessPoint) {
- 		positions[key] = len(compact)
- 		compact = append(compact, advertisedAP{SSID: ap.SSID, Strength: ap.Strength, SecurityTypes: security})
- 	}
--	// Measure serialized bytes, including JSON punctuation and escaping. Skip
--	// entries that cannot fit so shorter later entries can fill the capacity.
-+	s.apPages = paginateAPs(compact)
-+}
-+
-+// paginateAPs fills pages in order so concatenating them preserves priority.
-+// Each page is a standalone JSON array of at most bleAPPageSize bytes, measured
-+// including punctuation and escaping. Unused pages are "[]".
-+func paginateAPs(aps []advertisedAP) [bleAPPageCount]string {
-+	pages := emptyAPPages()
-+	page := 0
- 	data := []byte{'['}
--	for _, ap := range compact {
-+	for _, ap := range aps {
- 		item, err := json.Marshal(ap)
- 		if err != nil {
- 			klog.Error("Failed to marshal wifi access point")
- 			continue
- 		}
--		separator := 0
--		if len(data) > 1 {
--			separator = 1
+-	for _, d := range userdataDirs {
+-		if util.IsExist(d) {
+-			if err := util.RemoveDir(d); err != nil {
+-				logger.Errorf("remove %s failed %v", d, err)
+-			}
 -		}
--		if len(data)+separator+len(item)+1 > 512 {
-+		if len(item)+2 > bleAPPageSize {
- 			continue
- 		}
--		if separator != 0 {
-+		if len(data) > 1 && len(data)+1+len(item)+1 > bleAPPageSize {
-+			pages[page] = string(append(data, ']'))
-+			page++
-+			if page == bleAPPageCount {
-+				return pages
-+			}
-+			data = []byte{'['}
-+		}
-+		if len(data) > 1 {
- 			data = append(data, ',')
- 		}
- 		data = append(data, item...)
++	if err := util.RemoveDir(JuiceFsCacheDir); err != nil {
++		logger.Errorf("remove %s failed %v", JuiceFsCacheDir, err)
  	}
--	s.apList = string(append(data, ']'))
-+	pages[page] = string(append(data, ']'))
-+	return pages
- }
+ 
+ 	return nil
 ```
 
-**File**: `daemon/internel/ble/ble_linux.go` (modified, +72/-58)
+**File**: `cli/pkg/storage/tasks_test.go` (modified, +6/-2)
 ```diff
-@@ -40,84 +40,98 @@ func NewBleService(ctx context.Context) (*service, error) {
- 	adv := adapter.DefaultAdvertisement()
- 	adv.Configure(bluetooth.AdvertisementOptions{
- 		LocalName:    localName,
--		ServiceUUIDs: []bluetooth.UUID{OlaersServiceUUID},
-+		ServiceUUIDs: []bluetooth.UUID{OlaresServiceUUID},
- 	})
- 
- 	klog.Info("starting adapter")
- 	adv.Start()
- 
- 	// create a service
- 	c, cancel := context.WithCancel(ctx)
--	s := &service{ctx: c, cancel: cancel}
-+	s := &service{ctx: c, cancel: cancel, apPages: emptyAPPages()}
- 
- 	var connectWifi bluetooth.Characteristic
--	var listAp bluetooth.Characteristic
-+	var listAp [bleAPPageCount]bluetooth.Characteristic
- 	var terminusInfo bluetooth.Characteristic
- 
--	adapter.AddService(&bluetooth.Service{
--		UUID: OlaersServiceUUID,
--		Characteristics: []bluetooth.CharacteristicConfig{
--			{
--				Handle: &connectWifi,
--				UUID:   ConnectWifiUUID,
--				Value:  []byte(s.wifiConnectState),
--				Flags: bluetooth.CharacteristicReadPermission |
--					bluetooth.CharacteristicWritePermission |
--					bluetooth.CharacteristicWriteWithoutResponsePermission |
--					bluetooth.CharacteristicNotifyPermission,
--				WriteEvent: func(client bluetooth.Connection, offset int, value []byte) {
--					if offset != 0 || len(value) == 0 {
--						klog.Info("ignore invalid wifi write at offset ", offset)
--						return
--					}
--
--					var state ConnectState
--					if err := json.Unmarshal(value, &state); err == nil && state.State != nil {
--						// write state value
-+	characteristics := []bluetooth.CharacteristicConfig{
-+		{
-+			Handle: &connectWifi,
-+			UUID:   ConnectWifiUUID,
-+			Value:  []byte(s.wifiConnectState),
-+			Flags: bluetooth.CharacteristicReadPermission |
-+				bluetooth.CharacteristicWritePermission |
-+				bluetooth.CharacteristicWriteWithoutResponsePermission |
-+				bluetooth.CharacteristicNotifyPermission,
-+			WriteEvent: func(client bluetooth.Connection, offset int, value []byte) {
-+				if offset != 0 || len(value) == 0 {
-+					klog.Info("ignore invalid wifi write at offset ", offset)
-+					return
-+				}
-+
-+				var state ConnectState
-+				if err := json.Unmarshal(value, &state); err == nil && state.State != nil {
-+					// write state value
-+					return
-+				}
-+
-+				klog.Info("start to connect wifi")
-+
-+				// connect
-+				if err := json.Unmarshal([]byte(s.wifiConnectState), &state); err == nil {
-+					if *state.State == Connecting {
-+						// ignore redo connecting
- 						return
- 					}
-+				}
- 
--					klog.Info("start to connect wifi")
--
--					// connect
--					if err := json.Unmarshal([]byte(s.wifiConnectState), &state); err == nil {
--						if *state.State == Connecting {
--							// ignore redo connecting
--							return
--						}
--					}
-+				s.setConnectState(ConnectState{
-+					State:  ptr.To(Connecting),
-+					ErrMsg: ptr.To(fmt.Sprintf("start to connect wifi")),
-+				})
- 
--					state = ConnectState{
--						State:  ptr.To(Connecting),
--						ErrMsg: ptr.To(fmt.Sprintf("start to connect wifi")),
--					}
--
--					s.wifiConnectState = state.String()
--					connectWifi.Write([]byte(s.wifiConnectState))
--
--					// connect wifi
--					go s.connectWifi(value)
--				},
--			},
--			{
--				Handle: &listAp,
--				UUID:   ListAPUUID,
--				Value:  []byte(s.apList),
--				Flags: bluetooth.CharacteristicReadPermission |
--					bluetooth.CharacteristicNotifyPermission,
--			},
--			{
--				Handle: &terminusInfo,
--				UUID:   TerminusInfoUUID,
--				Value:  []byte(s.wifiConnectState),
--				Flags: bluetooth.CharacteristicReadPermission |
--					bluetooth.CharacteristicNotifyPermission,
-+				// connect wifi
-+				go s.connectWifi(value)
- 			},
- 		},
-+		{
-+			Handle: &listAp[0],
-+			UUID:   ListAPUUID,
-+			Value:  []byte(s.apPages[0]),
-+			Flags: bluetooth.CharacteristicReadPermission |
-+				bluetooth.CharacteristicNotifyPermission,
-+		},
-+		{
-+			Handle: &terminusInfo,
-+			UUID:   TerminusInfoUUID,
-+			Value:  []byte(s.wifiConnectState),
-+			Flags: bluetooth.CharacteristicReadPermission |
-+				bluetooth.CharacteristicNotifyPermission,
-+		},
-+	}
-+	for i := 1; i < bleAPPageCount; i++ {
-+		characteristics = append(characteristics, bluetooth.CharacteristicConfig{
-+			Handle: &listAp[i],
-+			UUID:   ListAPPageUUIDs[i],
-+			Value:  []byte(s.apPages[i]),
-+			Flags: bluetooth.CharacteristicReadPermission |
-+				bluetooth.CharacteristicNotifyPermission,
-+		})
-+	}
-+
-+	adapter.AddService(&bluetooth.Service{
-+		UUID:            OlaresServiceUUID,
-+		Characteristics: characteristics,
- 	})
- 
-+	s.notifyConnectState = func() {
-+		connectWifi.Write([]byte(s.wifiConnectState))
-+	}
-+
- 	s.update = func() {
--		listAp.Write([]byte(s.apList))
-+		for i := range listAp {
-+			listAp[i].Write([]byte(s.apPages[i]))
-+		}
- 		terminusInfo.Write([]byte(s.terminusInfo))
- 		connectWifi.Write([]byte(s.wifiConnectState))
- 	}
-```
-
-**File**: `daemon/internel/ble/ble_page_test.go` (added, +91/-0)
-```diff
-@@ -0,0 +1,91 @@
-+package ble
-+
-+import (
-+	"encoding/json"
-+	"fmt"
-+	"testing"
-+
-+	"github.com/beclab/Olares/daemon/internel/wifi"
-+)
-+
-+func makeAdvertisedAPs(n int) []advertisedAP {
-+	aps := make([]advertisedAP, n)
-+	for i := range aps {
-+		aps[i] = advertisedAP{
-+			SSID:          fmt.Sprintf("network-%03d", i),
-+			Strength:      byte(100 - i%100),
-+			SecurityTypes: []wifi.Security{},
-+		}
-+	}
-+	return aps
-+}
-+
-+func decodePages(t *testing.T, pages [bleAPPageCount]string) []advertisedAP {
-+	t.Helper()
-+	var all []advertisedAP
-+	for i, page := range pages {
-+		if len(page) > bleAPPageSize {
-+			t.Fatalf("page %d is %d bytes, exceeds %d", i+1, len(page), bleAPPageSize)
-+		}
-+		var decoded []advertisedAP
-+		if err := json.Unmarshal([]byte(page), &decoded); err != nil {
-+			t.Fatalf("page %d is not valid JSON: %v", i+1, err)
-+		}
-+		all = append(all, decoded...)
-+	}
-+	return all
-+}
-+
-+func TestPaginateAPsFewEntries(t *testing.T) {
-+	pages := paginateAPs(makeAdvertisedAPs(3))
-+	if got := decodePages(t, pages); len(got) != 3 {
-+		t.Fatalf("expected 3 entries, got %d", len(got))
-+	}
-+	for i := 1; i < bleAPPageCount; i++ {
-+		if pages[i] != "[]" {
-+			t.Fatalf("page %d should be empty, got %s", i+1, pages[i])
-+		}
-+	}
-+}
-+
-+func TestPaginateAPsEmpty(t *testing.T) {
-+	for i, page := range paginateAPs(nil) {
-+		if page != "[]" {
-+			t.Fatalf("page %d should be empty, got %s", i+1, page)
-+		}
-+	}
-+}
-+
-+func TestPaginateAPsPreservesOrderAcrossPages(t *testing.T) {
-+	aps := makeAdvertisedAPs(40)
-+	pages := paginateAPs(aps)
-+	if pages[1] == "[]" {
-+		t.Fatal("expected entries to spill into the second page")
-+	}
-+	got := decodePages(t, pages)
-+	if len(got) != len(aps) {
-+		t.Fatalf("expected %d entries, got %d", len(aps), len(got))
-+	}
-+	for i := range got {
-+		if got[i].SSID != aps[i].SSID {
-+			t.Fatalf("entry %d: expected %s, got %s", i, aps[i].SSID, got[i].SSID)
-+		}
-+	}
-+}
-+
-+func TestPaginateAPsDropsOverflow(t *testing.T) {
-+	aps := makeAdvertisedAPs(500)
-+	pages := paginateAPs(aps)
-+	got := decodePages(t, pages)
-+	if len(got) == 0 || len(got) >= len(aps) {
-+		t.Fatalf("expected overflow to be dropped, got %d of %d", len(got), len(aps))
-+	}
-+	for i := range got {
-+		if got[i].SSID != aps[i].SSID {
-+			t.Fatalf("entry %d: expected %s, got %s", i, aps[i].SSID, got[i].SSID)
-+		}
-+	}
-+	if pages[bleAPPageCount-1] == "[]" {
-+		t.Fatal("expected the last page to be used")
-+	}
-+}
-```
-
-**File**: `daemon/internel/ble/ble_test.go` (modified, +6/-4)
-```diff
-@@ -10,9 +10,11 @@ import (
+@@ -6,7 +6,7 @@ import (
+ 	"testing"
  )
  
- func TestUUID(t *testing.T) {
--	fmt.Printf("Service UUID: %s\n", OlaersServiceUUID.String())
-+	fmt.Printf("Service UUID: %s\n", OlaresServiceUUID.String())
- 	fmt.Printf("Connect Characteristic UUID: %s\n", ConnectWifiUUID.String())
--	fmt.Printf("ListAP Characteristic UUID: %s\n", ListAPUUID.String())
-+	for i, uuid := range ListAPPageUUIDs {
-+		fmt.Printf("ListAP Page %d Characteristic UUID: %s\n", i+1, uuid.String())
+-func TestDeleteTerminusUserDataPreservesMarketPreinstall(t *testing.T) {
++func TestDeleteTerminusUserDataPreservesRootFSAndMarketPreinstall(t *testing.T) {
+ 	root := t.TempDir()
+ 	oldUserDataDir := OlaresUserDataDir
+ 	oldJuiceFsCacheDir := JuiceFsCacheDir
+@@ -26,7 +26,8 @@ func TestDeleteTerminusUserDataPreservesMarketPreinstall(t *testing.T) {
+ 
+ 	preinstallFile := filepath.Join(OlaresUserDataDir, "Cache", "market-preinstall", "bundle.json")
+ 	removedFile := filepath.Join(OlaresUserDataDir, "Home", "user-data")
+-	for _, file := range []string{preinstallFile, removedFile, filepath.Join(JuiceFsCacheDir, "cache")} {
++	rootFSFile := filepath.Join(OlaresJuiceFSRootDir, "data")
++	for _, file := range []string{preinstallFile, removedFile, rootFSFile, RedisServiceFile, filepath.Join(JuiceFsCacheDir, "cache")} {
+ 		if err := os.MkdirAll(filepath.Dir(file), 0o755); err != nil {
+ 			t.Fatal(err)
+ 		}
+@@ -42,6 +43,9 @@ func TestDeleteTerminusUserDataPreservesMarketPreinstall(t *testing.T) {
+ 	if _, err := os.Stat(preinstallFile); err != nil {
+ 		t.Errorf("market preinstall file was not preserved: %v", err)
+ 	}
++	if _, err := os.Stat(rootFSFile); err != nil {
++		t.Errorf("JuiceFS rootfs file was not preserved: %v", err)
 +	}
- 	fmt.Printf("TerminusInfo Characteristic UUID: %s\n", TerminusInfoUUID.String())
- }
- 
-@@ -26,7 +28,7 @@ func TestScan(t *testing.T) {
- 	println("scanning....")
- 	var deviceUUID bluetooth.Address
- 	err := adapter.Scan(func(adapter *bluetooth.Adapter, device bluetooth.ScanResult) {
--		if device.HasServiceUUID(OlaersServiceUUID) {
-+		if device.HasServiceUUID(OlaresServiceUUID) {
- 			// if device.LocalName() == "olares2" {
- 			//if device.Address.String() == "46f0ed5c-8fd5-408d-b7c5-d4c2b43fec43" {
- 			println("found device:", device.Address.String(), device.RSSI, device.LocalName())
-@@ -44,7 +46,7 @@ func TestScan(t *testing.T) {
- 	println("connected to ", deviceUUID.String())
- 
- 	println("discovering services/characteristics")
--	//srvcs, err := device.DiscoverServices([]bluetooth.UUID{OlaersServiceUUID})
-+	//srvcs, err := device.DiscoverServices([]bluetooth.UUID{OlaresServiceUUID})
- 	srvcs, err := device.DiscoverServices(nil)
- 	must("discover services", err)
- 
+ 	if _, err := os.Stat(removedFile); !os.IsNotExist(err) {
+ 		t.Errorf("regular userdata still exists, stat error = %v", err)
+ 	}
 ```
 
-**File**: `daemon/internel/ble/ble_types.go` (modified, +30/-3)
+**File**: `cli/pkg/terminus/modules.go` (modified, +4/-0)
 ```diff
-@@ -14,18 +14,45 @@ type service struct {
- 	cancel context.CancelFunc
+@@ -538,6 +538,10 @@ func (m *ChangeIPModule) addStorageTasks() {
+ 			},
+ 			Retry: 3,
+ 		},
++		&task.LocalTask{
++			Name:   "CleanupStaleJuiceFSMount",
++			Action: new(storage.CleanupStaleJuiceFSMount),
++		},
  
- 	wifiConnectState string
--	apList           string
-+	apPages          [bleAPPageCount]string
- 	terminusInfo     string
- 
--	update func()
-+	update             func()
-+	notifyConnectState func()
- 
- 	updateApListCB func([]AccessPoint)
- }
- 
--var OlaersServiceUUID = bluetooth.New16BitUUID(0x2345)
-+var OlaresServiceUUID = bluetooth.New16BitUUID(0x2345)
- var ConnectWifiUUID = bluetooth.New16BitUUID(0x1201)
- var ListAPUUID = bluetooth.New16BitUUID(0x1200)
- var TerminusInfoUUID = bluetooth.New16BitUUID(0x1199)
-+var ListAPPage2UUID = bluetooth.New16BitUUID(0x1202)
-+var ListAPPage3UUID = bluetooth.New16BitUUID(0x1203)
-+var ListAPPage4UUID = bluetooth.New16BitUUID(0x1204)
-+var ListAPPage5UUID = bluetooth.New16BitUUID(0x1205)
-+
-+const (
-+	// bleAPPageCount is the number of ListAP characteristics; each carries one page.
-+	bleAPPageCount = 5
-+	// bleAPPageSize is the maximum serialized size of a single page.
-+	bleAPPageSize = 512
-+)
-+
-+// ListAPPageUUIDs maps page index to its characteristic. Page 1 is the
-+// original ListAPUUID for compatibility with existing clients; pages 2-5 use
-+// ListAPPage2UUID through ListAPPage5UUID.
-+var ListAPPageUUIDs = [bleAPPageCount]bluetooth.UUID{
-+	ListAPUUID, ListAPPage2UUID, ListAPPage3UUID, ListAPPage4UUID, ListAPPage5UUID,
-+}
-+
-+func emptyAPPages() [bleAPPageCount]string {
-+	var pages [bleAPPageCount]string
-+	for i := range pages {
-+		pages[i] = "[]"
-+	}
-+	return pages
-+}
- 
- type ExecState int
- 
-```
-
-**File**: `daemon/internel/ble/wifi_payload_test.go` (modified, +29/-12)
-```diff
-@@ -23,6 +23,20 @@ func TestWifiConnectionPayload(t *testing.T) {
- 		t.Fatal("legacy payload changed")
- 	}
- }
-+func TestWifiConnectResultNotifiesImmediately(t *testing.T) {
-+	var notified []string
-+	s := &service{}
-+	s.notifyConnectState = func() { notified = append(notified, s.wifiConnectState) }
-+	s.connectWifi([]byte(strings.Repeat(" ", 513)))
-+	if len(notified) != 1 {
-+		t.Fatalf("expected one immediate notification, got %d", len(notified))
-+	}
-+	var state ConnectState
-+	if err := json.Unmarshal([]byte(notified[0]), &state); err != nil || state.State == nil || *state.State != Fail {
-+		t.Fatalf("unexpected notified state: %s", notified[0])
-+	}
-+}
-+
- func TestWifiAPListKeepsHTTPComplete(t *testing.T) {
- 	list := []AccessPoint{}
- 	for i := 0; i < 20; i++ {
-@@ -36,18 +50,18 @@ func TestWifiAPListKeepsHTTPComplete(t *testing.T) {
- 	if len(httpList) != 20 {
- 		t.Fatal("HTTP scan list truncated")
- 	}
--	if len(s.apList) > 512 {
-+	if len(s.apPages[0]) > 512 {
- 		t.Fatal("BLE payload exceeds attribute limit")
- 	}
- 	var bleList []AccessPoint
--	if err := json.Unmarshal([]byte(s.apList), &bleList); err != nil {
-+	if err := json.Unmarshal([]byte(s.apPages[0]), &bleList); err != nil {
- 		t.Fatal(err)
- 	}
- 	if len(bleList) == 0 || len(bleList) >= 20 || bleList[0].SecurityTypes[0] != wifi.EAP {
- 		t.Fatal("incorrect BLE payload")
- 	}
- 	var wireList []map[string]any
--	if err := json.Unmarshal([]byte(s.apList), &wireList); err != nil {
-+	if err := json.Unmarshal([]byte(s.apPages[0]), &wireList); err != nil {
- 		t.Fatal(err)
- 	}
- 	for _, ap := range wireList {
-@@ -72,7 +86,7 @@ func TestWifiAPListKeepsHTTPComplete(t *testing.T) {
- 		t.Fatal("internal connection status was lost")
- 	}
- 	s.publishAPList([]AccessPoint{})
--	if s.apList != "[]" {
-+	if s.apPages != emptyAPPages() {
- 		t.Fatal("empty list encoding changed")
- 	}
- }
-@@ -86,18 +100,18 @@ func TestWifiAPListDeduplicatesAcrossDevices(t *testing.T) {
- 	s := &service{}
- 	s.publishAPList(list)
- 	var aps []advertisedAP
--	if err := json.Unmarshal([]byte(s.apList), &aps); err != nil {
-+	if err := json.Unmarshal([]byte(s.apPages[0]), &aps); err != nil {
- 		t.Fatal(err)
- 	}
- 	if len(aps) != 2 || aps[0].Strength != 90 || aps[1].SecurityTypes[0] != wifi.EAP {
--		t.Fatalf("incorrect network deduplication: %s", s.apList)
-+		t.Fatalf("incorrect network deduplication: %s", s.apPages[0])
- 	}
- 	if list[1].SecurityTypes[0] != wifi.SAE {
- 		t.Fatal("scan metadata was mutated")
- 	}
- }
- 
--func TestWifiAPListFitsEncodedBytesAndFillsRemainingSpace(t *testing.T) {
-+func TestWifiAPListFitsEncodedBytesAndSpillsToNextPage(t *testing.T) {
- 	list := []AccessPoint{}
- 	// Escaped SSIDs must be measured as JSON bytes, not characters.
- 	for i := 0; i < 3; i++ {
-@@ -106,15 +120,18 @@ func TestWifiAPListFitsEncodedBytesAndFillsRemainingSpace(t *testing.T) {
- 	list = append(list, AccessPoint{AccessPoint: wifi.AccessPoint{SSID: "short", SecurityTypes: []wifi.Security{wifi.Open}}})
- 	s := &service{}
- 	s.publishAPList(list)
--	var aps []advertisedAP
--	if err := json.Unmarshal([]byte(s.apList), &aps); err != nil {
-+	var page1, page2 []advertisedAP
-+	if err := json.Unmarshal([]byte(s.apPages[0]), &page1); err != nil {
-+		t.Fatal(err)
-+	}
-+	if err := json.Unmarshal([]byte(s.apPages[1]), &page2); err != nil {
- 		t.Fatal(err)
- 	}
--	if len(s.apList) > 512 || len(aps) != 3 || aps[2].SSID != "short" {
--		t.Fatalf("remaining capacity was not used correctly: %s", s.apList)
-+	if len(s.apPages[0]) > 512 || len(page1) != 2 || len(page2) != 2 || page2[0].SSID != list[2].SSID || page2[1].SSID != "short" {
-+		t.Fatalf("entries did not spill to the next page in order: %v", s.apPages)
- 	}
- 	s.publishAPList(nil)
--	if s.apList != "[]" {
-+	if s.apPages != emptyAPPages() {
- 		t.Fatal("nil input must produce an empty array")
- 	}
- }
+ 		&task.RemoteTask{
+ 			Name:   "GetRedisConfig",
 ```
 
 ---
 
-### Incident Patch 2: `3fbe84ad` (2026-11-18)
-**Commit Message**: docs: fix dead links to retired connect-ai-apps page in Olares One FAQ (#4465)
+### Incident Patch 2: `f814910b` (2026-11-19)
+**Commit Message**: fix(cli): retry incomplete IP changes (#4471)
 
-PR #4451 retired the connect-ai-apps guides but missed two references in
-the Olares One FAQ, breaking the VitePress build (2 dead links). Point
-them to the Router gateway use case, matching the redirects added in the
-same PR.
+Use the etcd backup endpoint to detect incomplete IP changes and refresh it after the change-ip tasks succeed.
 
-**File**: `docs/one/faq.md` (modified, +1/-1)
+**File**: `cli/pkg/terminus/modules.go` (modified, +13/-6)
 ```diff
-@@ -207,7 +207,7 @@ Quantization reduces the memory needed for model weights by storing them at lowe
+@@ -438,6 +438,7 @@ type ChangeIPModule struct {
  
- Yes. Install [OpenCode](../use-cases/opencode.md), [Claude Code](../use-cases/claude-code.md), or [Codex CLI](../use-cases/codex-cli.md) from Market and connect it to a local model through Router. The model generates responses and tool calls. The agent edits files and runs commands and tests in its development environment.
+ func (m *ChangeIPModule) Init() {
+ 	m.Name = "ChangeIP"
++	hasLocalETCD := util.IsExist("/etc/systemd/system/etcd.service")
  
--You can also run OpenCode CLI on your own computer and connect it to the model on Olares. In this setup, files and code execution stay on your computer, while model inference runs on Olares One. See [How AI apps connect to Olares models](../manual/best-practices/connect-ai-apps.md).
-+You can also run OpenCode CLI on your own computer and connect it to the model on Olares. In this setup, files and code execution stay on your computer, while model inference runs on Olares One. See [Use Olares Router as your AI gateway](../use-cases/olares-router.md).
+ 	prepared, _ := m.PipelineCache.GetMustBool(common.CachePreparedState)
+ 	if !prepared {
+@@ -472,7 +473,7 @@ func (m *ChangeIPModule) Init() {
+ 		} else {
+ 			stopKubeAction.UnitNames = []string{"kubelet"}
+ 		}
+-		if util.IsExist("/etc/systemd/system/etcd.service") {
++		if hasLocalETCD {
+ 			stopKubeAction.UnitNames = append(stopKubeAction.UnitNames, "etcd", "backup-etcd")
+ 		}
+ 		stopKubeTask.Action = stopKubeAction
+@@ -499,6 +500,16 @@ func (m *ChangeIPModule) Init() {
+ 			Name:   "RewriteFileAttributes",
+ 			Action: new(precheck.AddWSLChattr),
+ 		})
++
++	if installed && hasLocalETCD {
++		// The backup endpoint records the last IP whose entire change
++		// completed. Keep this write after all other change-ip tasks.
++		m.Tasks = append(m.Tasks, &task.RemoteTask{
++			Name:   "RefreshBackupETCDScript",
++			Action: new(etcd.BackupETCD),
++			Hosts:  m.Runtime.GetHostsByRole(common.ETCD),
++		})
++	}
+ }
  
- ### Which languages does Olares One support?
+ func (m *ChangeIPModule) addStorageTasks() {
+@@ -638,11 +649,7 @@ func (m *ChangeIPModule) addEtcdTasks() {
+ 			Hosts:  m.Runtime.GetHostsByRole(common.ETCD),
+ 			Retry:  20,
+ 		},
+-		&task.RemoteTask{
+-			Name:   "RefreshBackupETCDScript",
+-			Action: new(etcd.BackupETCD),
+-			Hosts:  m.Runtime.GetHostsByRole(common.ETCD),
+-		})
++	)
+ }
  
+ func (m *ChangeIPModule) addKubernetesTasks() {
 ```
 
-**File**: `docs/zh/one/faq.md` (modified, +1/-1)
+**File**: `daemon/pkg/utils/k8s.go` (modified, +44/-6)
 ```diff
-@@ -212,7 +212,7 @@ Olares One 配备 24 GB 显存（VRAM）和 96 GB 系统内存（RAM），两者
+@@ -6,6 +6,7 @@ import (
+ 	"context"
+ 	"errors"
+ 	"fmt"
++	"net"
+ 	"net/url"
+ 	"os"
+ 	"path/filepath"
+@@ -316,12 +317,6 @@ func IsIpChanged(ctx context.Context, installed bool) bool {
+ 		return false
+ 	}
  
- 可以。从 Market 安装 [OpenCode](../use-cases/opencode.md)、[Claude Code](../use-cases/claude-code.md) 或 [Codex CLI](../use-cases/codex-cli.md)，通过 Router 连接本地模型。模型生成回复和工具调用，Agent 在自己的开发环境中修改文件、运行命令和测试。
+-	masterIpFromETCD, err := MasterNodeIp(installed)
+-	if err != nil {
+-		klog.Error("get master node ip error, ", err)
+-		return false
+-	}
+-
+ 	// Compare the explicitly selected address, not cached hostname results.
+ 	hostIp, err := nets.GetHostIp()
+ 	if err != nil {
+@@ -333,6 +328,27 @@ func IsIpChanged(ctx context.Context, installed bool) bool {
+ 		if hostIp == ip.IP {
+ 			klog.V(8).Info("host ip is the same as internal ip of interface, ", hostIp, ", ", ip.IP)
  
--你也可以在自己的电脑上运行 OpenCode CLI，连接 Olares 上的模型。此时，文件和代码执行都留在自己的电脑上，模型推理由 Olares One 完成。请参阅 [AI 应用如何连接 Olares 模型](../manual/best-practices/connect-ai-apps.md)。
-+你也可以在自己的电脑上运行 OpenCode CLI，连接 Olares 上的模型。此时，文件和代码执行都留在自己的电脑上，模型推理由 Olares One 完成。请参阅 [使用 Olares Router 作为你的 AI 网关](../use-cases/olares-router.md)。
++			var backupIP string
++			if installed {
++				backupIP = etcdBackupEndpointIP()
++			}
++			masterIpFromETCD, err := MasterNodeIp(installed)
++			if backupIP != "" {
++				if backupIP != hostIp || (masterIpFromETCD != "" && masterIpFromETCD != hostIp) {
++					klog.Infof("IP change incomplete: backup endpoint %s, etcd IP %s, selected IP %s", backupIP, masterIpFromETCD, hostIp)
++					return true
++				}
++				if masterIpFromETCD != "" {
++					return false
++				}
++			}
++			if err != nil {
++				klog.Error("get master node ip error, ", err)
++				if backupIP == "" {
++					return false
++				}
++			}
++
+ 			if !installed {
+ 				// terminus not installed
+ 				if masterIpFromETCD == "" {
+@@ -387,6 +403,28 @@ func IsIpChanged(ctx context.Context, installed bool) bool {
+ 	return true
+ }
  
- ### Olares One 支持哪些语言？
- 
++func etcdBackupEndpointIP() string {
++	if _, err := os.Stat("/etc/systemd/system/etcd.service"); err != nil {
++		return ""
++	}
++	script, err := os.ReadFile("/usr/local/bin/kube-scripts/etcd-backup.sh")
++	if err != nil {
++		return ""
++	}
++	for line := range strings.SplitSeq(string(script), "\n") {
++		value, ok := strings.CutPrefix(line, "ENDPOINTS=")
++		if !ok {
++			continue
++		}
++		endpoint, err := url.Parse(strings.Trim(strings.TrimSpace(value), "'\""))
++		if err == nil && endpoint.Scheme == "https" && endpoint.Port() == "2379" && net.ParseIP(endpoint.Hostname()) != nil {
++			return endpoint.Hostname()
++		}
++		break
++	}
++	return ""
++}
++
+ func MasterNodeIp(installed bool) (addr string, err error) {
+ 	if installed {
+ 		// get master node ip from etcd
 ```
 
 ---
 
-### Incident Patch 3: `1ca9055a` (2026-11-18)
-**Commit Message**: docs: fix OpenClaw Router API key onboarding guidance (#4432)
+### Incident Patch 3: `252ae0a4` (2026-11-19)
+**Commit Message**: docs: simplify Router connection guidance across tutorials (#4464)
 
-* docs: fix OpenClaw Router API key onboarding guidance
+* docs: simplify Router connection guidance across tutorials
 
-* docs: clarify Router API key is a non-empty placeholder
+* docs: remove retired connection guide links from Router pages
 
-* docs: highlight OpenClaw API key requirement
+* docs: remove Chinese screenshot notes from placeholders
 
-* docs: clarify OpenClaw API key placeholder instructions
-
----------
-
-Co-authored-by: wangyajing <[REDACTED_EMAIL]>
-
-**File**: `docs/use-cases/openclaw.md` (modified, +12/-4)
+**File**: `docs/developer/develop/mw-view-grafana-data.md` (modified, +0/-2)
 ```diff
-@@ -8,9 +8,9 @@ head:
-   - - meta
-     - name: keywords
-       content: Olares, OpenClaw, self-hosted ai agent, personal ai agent, local ai agent, openclaw on olares
--app_version: "1.0.44"
--doc_version: "3.0"
--doc_updated: "2026-09-24"
-+app_version: "1.0.57"
-+doc_version: "3.1"
-+doc_updated: "2026-11-18"
- ---
+@@ -46,8 +46,6 @@ To connect Grafana to Prometheus, first get the Prometheus API endpoint URL, the
  
- # Run OpenClaw as your self-hosted personal AI agent
-@@ -86,6 +86,8 @@ OpenClaw requires a large "context window" (that is the AI's short-term memory)
+ ### Get the Prometheus API endpoint URL
  
- <!--@include: ../reusables/ai-service-connections.md#get-model-connection-details-->
+-<!--@include: ../../reusables/ai-service-connections.md#app-endpoint-overview-->
+-
+ For Prometheus:
  
-+For OpenClaw, use `olares` as the API key placeholder.
-+
- ### Step 2: Run onboarding wizard
- 
- Set up OpenClaw using the step-by-step interactive wizard.
-@@ -109,6 +111,12 @@ Set up OpenClaw using the step-by-step interactive wizard.
-     To get you started quickly, this tutorial skips several advanced settings in the wizard. You can configure or modify them later.
-     :::
- 
-+    :::info API key required by OpenClaw
-+    Enter `olares` in the API key field, even though the prompt says it can be left blank. OpenClaw 2026.11.3 requires a non-empty value for this connection. Apps in Olares do not need a Router API key.
-+
-+    If the live completion test reports `No API key found for provider "router"`, select **Fix model/auth setup**, enter `olares`, and retry.
-+    :::
-+
-     | Settings   | Option   |
-     |:-----------|:---------|
-     | Personal-by-default acknowledgment | Select **Yes**.  |
-@@ -117,7 +125,7 @@ Set up OpenClaw using the step-by-step interactive wizard.
-     | Model/auth provider | Select **Custom Provider**. |
-     | API Base URL | Paste the Router Base URL from Step 1, including `/v1`. |
-     | How do you want to provide this API key? | Select **Paste API key now** if this prompt appears. |
--    | API Key (leave blank if not required) | Leave blank for this app in Olares. |
-+    | API Key (leave blank if not required) | Enter a non-empty placeholder, such as `olares`. |
-     | Endpoint compatibility | Select **OpenAI-compatible**. |
-     | Model ID | Enter `default-chat`. The wizard may verify the endpoint before continuing. |
-     | Endpoint ID | Enter `router`. The model reference is `router/default-chat`. |
+ 1. Go to Olares **Settings** > **Applications** > **Prometheus** > **Entrances**.
 ```
 
-**File**: `docs/zh/use-cases/openclaw.md` (modified, +12/-4)
+**File**: `docs/reusables/README.md` (modified, +2/-1)
 ```diff
-@@ -8,9 +8,9 @@ head:
-   - - meta
+@@ -17,4 +17,5 @@ Use stable, descriptive region names so source line changes do not break referen
+ - **sync-files.md**: Sync files to local (intro, Create a library, Enable synchronization, Manage synchronization). Used by `manual/larepass/manage-files.md` and `manual/olares/files/sync-files.md`.
+ - **export-system-logs.md**: Steps to export system logs via Settings > Advanced > Logs. Used by `manual/help/request-technical-support.md`.
+ - **custom-domain.md**: Custom domain setup procedures (Create DID, Add domain with TXT/NS verification, Create organization, Add user, Join organization). Used by `manual/best-practices/set-custom-domain.md`, `manual/larepass/create-org-account.md`, `manual/space/host-domain.md`, and `manual/space/manage-domain.md`.
+-- **ai-service-connections.md**: Reusable explanations and steps for connecting AI clients to models or apps. Use `model-connection-overview` and `get-model-connection-details` when connecting a standalone model on Olares. Use `app-endpoint-overview` when connecting another Olares app through its endpoint.
++- **openwebui-embeddings.md**: Shared embedding setup for Open WebUI knowledge bases and web search. Use the `configure-embeddings` region.
++- **ai-service-connections.md**: Use `router-openai-base-url` for the OpenAI-compatible Base URL used by apps running in Olares, and `model-context-window` to check the configured context size. Keep model selection, model IDs, and API key fields in each tutorial. Claude Code uses a URL without `/v1`. External clients need instructions for their access method. Include the URL fragment immediately after an ordered-list marker. Its continuation lines use three-space indentation.
+```
+
+**File**: `docs/reusables/ai-service-connections.md` (modified, +6/-72)
+```diff
+@@ -1,78 +1,12 @@
+ # AI service connections
+ 
+-<!-- #region router-prerequisite -->
+-- An Olares device running Olares 1.12.7 or later, with sufficient disk space and memory.
+-- Access to Router for local model connections.
+-<!-- #endregion router-prerequisite -->
++<!-- #region router-openai-base-url -->
++Copy the Router address from your browser. Keep only the protocol and domain, then append `/v1`. Replace the domain in this example with your own:
+ 
+-<!-- #region model-connection-overview -->
+-:::details How model connections work
+-On Olares 1.12.7 and later, AI clients connect through Olares Router. Router provides the Base URL and routes `default-chat` to the model selected on its **Default models** page.
+-
+-This guide uses Qwen3.8-27B (llama.cpp) as the default chat model. For connection formats and API key requirements, see [Use Olares Router as your AI gateway](/use-cases/olares-router.md).
+-:::
+-<!-- #endregion model-connection-overview -->
+-
+-<!-- #region get-model-connection-details -->
+-1. Open Router from Launchpad. On **Default models**, set Qwen3.8-27B (llama.cpp) as the default chat model.
+-2. Go to **LLM**, find Qwen3.8-27B (llama.cpp), and click **View connection example** on its row.
+-
+-   <!-- ![View the Qwen3.8-27B connection example in Router](/images/manual/use-cases/router-view-connection-examp.png#bordered) -->
+-
+-3. In **How to call this model**, select **Apps in Olares** and copy the **Base URL**, including `/v1`.
+-
+-   <!-- ![Copy the Router Base URL for apps in Olares](/images/manual/use-cases/router-how-to-call-model.png#bordered) -->
+-
+-4. For the model name, use `default-chat`.
+-
+-   :::info Selecting a model in your app
+-   `default-chat` is a routing name and does not appear in model lists loaded from Router. If the app you are connecting to Router loads a model list, add `default-chat` manually. If the app only supports selecting a listed model, select the full model name shown in Router's **How to call this model** window.
+-   :::
+-
+-5. For the API key, leave the field empty. If the app you are connecting to Router requires a value, enter `olares`.
+-<!-- #endregion get-model-connection-details -->
+-
+-<!-- #region use-different-model -->
+-:::details Optional: Use a different model
+-Install another chat model from Market, or create a model instance with [Engine Base apps](llm-base-apps.md). Then select it as the default chat model on Router's **Default models** page. Clients configured with `default-chat` use the new default without changing their model settings.
+-
+-To keep a client on one specific model, use the full model name from Router's **How to call this model** window instead.
+-:::
+-<!-- #endregion use-different-model -->
+-
+-<!-- #region app-endpoint-overview -->
+-:::details How app endpoints work
+-When a client connects to another Olares app, it uses that app's endpoint as the network address. If the app exposes multiple endpoints, choose the one that matches the feature or protocol the client needs.
+-:::
+-<!-- #endregion app-endpoint-overview -->
+-
+-<!-- #region get-model-connection-details-anthropic -->
+-1. Open Router from Launchpad. On **Default models**, set Qwen3.8-27B (llama.cpp) as the default chat model.
+-2. Go to **LLM**, find Qwen3.8-27B (llama.cpp), and click **View connection example** on its row.
+-
+-   <!-- ![View the Qwen3.8-27B connection example in Router](/images/manual/use-cases/router-view-connection-examp.png#bordered) -->
+-
+-3. In **How to call this model**, select **Apps in Olares** and copy the **Base URL**, then remove the trailing `/v1` for the Anthropic-compatible client. For example, use `https://router.<your-olares-domain>`. The client appends `/v1/messages`.
+-
+-   <!-- ![Copy the Router Base URL for apps in Olares](/images/manual/use-cases/router-how-to-call-model.png#bordered) -->
+-
+-4. For the model name, use `default-chat`.
+-
+-   :::info Selecting a model in your app
+-   `default-chat` is a routing name and does not appear in model lists loaded from Router. If the app you are connecting to Router loads a model list, add `default-chat` manually. If the app only supports selecting a listed model, select the full model name shown in Router's **How to call this model** window.
+-   :::
+-
+-5. For the API key, leave the field empty. If the app you are connecting to Router requires a value, enter `olares`.
+-<!-- #endregion get-model-connection-details-anthropic -->
+-
+-<!-- #region get-embedding-model-connection-details-openai -->
+-1. Open Router from Launchpad and go to **Tools**. Find the installed embedding model and wait until it shows **Callable**.
+-2. On its model row, click **View connection example**.
+-3. In **How to call this model**, select **Apps in Olares** and copy the **Base URL**, including `/v1`.
+-4. Copy the full **Model name** from this window, including the `Olares/` prefix, and use it in the client's embedding settings. Apps in Olares do not need a Router API key. Use `olares` only if the client requires a value.
+-
+-Use th
+```
+
+**File**: `docs/reusables/openwebui-embeddings.md` (added, +25/-0)
+```diff
+@@ -0,0 +1,25 @@
++# Open WebUI embedding setup
++
++<!-- #region configure-embeddings -->
++Open WebUI uses an embedding model to turn document text into vectors for retrieval. `default-embedding` uses the default embedding model selected in Router.
++
++If you change Router's default embedding model later, reindex your existing documents before searching them.
++
++1. Open Router from Launchpad. On **Default models**, set EmbeddingGemma as the default embedding model. Wait until the `default-embedding` row on the same page shows **Callable**.
++2. <!--@include: ./ai-service-connections.md#router-openai-base-url-->
++
++3. In Open WebUI, select your profile icon, then go to **Admin Panel** > **Settings**.
++4. On the left sidebar, find **Tools** and select **Documents**.
++5. Under **Embedding**, enter the following settings:
++
++   | Field | Value |
++   | :--- | :--- |
++   | **Embedding Model Engine** | **OpenAI** |
++   | **API Base URL** | The Router Base URL from step 2, including `/v1` |
++   | **Embedding Model** | `default-embedding` |
++
++   If the API key field requires a value, enter `olares`.
++
++6. Scroll to the bottom of the page and click **Reindex** in the lower-right corner to apply the changes.
++7. Click **Save**.
++<!-- #endregion configure-embeddings -->
+```
+
+**File**: `docs/use-cases/anythingllm.md` (modified, +6/-15)
+```diff
+@@ -8,8 +8,8 @@ head:
      - name: keywords
-       content: Olares, OpenClaw, self-hosted ai agent, personal ai agent, local ai agent, openclaw on olares
--app_version: "1.0.44"
--doc_version: "3.0"
--doc_updated: "2026-09-24"
-+app_version: "1.0.57"
-+doc_version: "3.1"
+       content: Olares, AnythingLLM, self-hosted rag, private knowledge base, anythingllm ollama, local LLM, embedding, anythingllm on olares
+ app_version: "1.0.13"
+-doc_version: "2.0"
+-doc_updated: "2026-09-23"
++doc_version: "2.1"
 +doc_updated: "2026-11-18"
  ---
  
- :::warning
-@@ -90,6 +90,8 @@ OpenClaw 需要较大的"上下文窗口"（即 AI 的短期记忆）来处理
+ # Build a local knowledge base with AnythingLLM
+@@ -30,7 +30,6 @@ In this guide, you will learn how to:
  
- <!--@include: ../reusables/ai-service-connections.md#get-model-connection-details-->
+ Before you begin, you need:
  
-+配置 OpenClaw 时，请使用 `olares` 作为 API 密钥占位值。
-+
- ### 步骤 2：运行安装向导
+-<!--@include: ../reusables/ai-service-connections.md#router-prerequisite-->
+ - Admin privileges to install apps from Market.
+ - The following models:
  
- 使用交互式向导逐步配置 OpenClaw。
-@@ -113,6 +115,12 @@ OpenClaw 需要较大的"上下文窗口"（即 AI 的短期记忆）来处理
-     为便于快速上手，本教程会跳过向导中的部分高级设置。你可以稍后配置或修改它们。
-     :::
+@@ -39,8 +38,6 @@ Before you begin, you need:
+   | Chat | Qwen3.8-27B (llama.cpp) | Install from Market |
+   | Embedding | all-MiniLM-L6-v2 | The built-in embedder from AnythingLLM |
  
-+    :::info OpenClaw 要求填写 API 密钥字段
-+    在 API 密钥字段中填写 `olares`，即使向导提示可以留空。OpenClaw 2026.11.3 要求此连接填写非空值。Olares 内的应用无需 Router API 密钥。
-+
-+    如果实时对话测试提示 `No API key found for provider "router"`，选择 **Fix model/auth setup**，填写 `olares`，然后重新测试。
-+    :::
-+
-     | 配置   | 选项   |
-     |:-----------|:---------|
-     | Personal-by-default acknowledgment | 选择 **Yes**。  |
-@@ -121,7 +129,7 @@ OpenClaw 需要较大的"上下文窗口"（即 AI 的短期记忆）来处理
-     | Model/auth provider | 选择 **Custom Provider**。 |
-     | API Base URL | 粘贴步骤 1 中从 Router 复制的 Base URL，保留 `/v1`。 |
-     | How do you want to provide this API key? | 如果出现此提示，选择 **Paste API key now**。 |
--    | API Key (leave blank if not required) | Olares 内的这个应用无需 Router API 密钥，留空。 |
-+    | API Key (leave blank if not required) | 填写非空占位值，例如 `olares`。 |
-     | Endpoint compatibility | 选择 **OpenAI-compatible**。 |
-     | Model ID | 填写 `default-chat`。向导可能先验证端点，再进入下一项。 |
-     | Endpoint ID | 填写 `router`。模型引用为 `router/default-chat`。 |
+-<!--@include: ../reusables/ai-service-connections.md#use-different-model-->
+-
+ ## Install AnythingLLM
+ 
+ 1. Open Market and search for "AnythingLLM".
+@@ -51,10 +48,8 @@ Before you begin, you need:
+ 
+ ## Get model connection details
+ 
+-<!--@include: ../reusables/ai-service-connections.md#model-connection-overview-->
+-
+-For Qwen3.8-27B (llama.cpp):
+-<!--@include: ../reusables/ai-service-connections.md#get-model-connection-details-->
++1. Open Router from Launchpad. On **Default models**, set Qwen3.8-27B (llama.cpp) as the default chat model and wait until `default-chat` shows **Callable**.
++2. <!--@include: ../reusables/ai-service-connections.md#router-openai-base-url-->
+ 
+ ## Configure AnythingLLM
+ 
+@@ -65,14 +60,10 @@ Configure the chat model and embedding provider. These settings become the syste
+ 1. Open AnythingLLM from Launchpad.
+ 2. On the home page, click the **Open settings** icon in the bottom-left.
+ 3. In the left sidebar, select **AI Providers** > **LLM**, and then select **Generic OpenAI** as the LLM provider.
+-4. In **Base URL**, paste the Base URL from Router.
++4. In **Base URL**, enter the Router Base URL. If the API key field requires a value, enter `olares`.
+ 5. In **Selected Model**, enter `default-chat` manually.
+ 
+-   <!--
+-   TODO: 素材清单 01，待补 Router 截图：anythingllm-chat-model-router.png；替换下方旧图后再取消注释。
+-   ![Configure chat model](/images/manual/use-cases/anythingllm-configure-chat-model.png#bordered)
+-   -->
+-
++   <!-- ![Configure chat model](/images/manual/use-cases/anythingllm-configure-chat-model.png#bordered) -->
+ 
+ 6. Click **Save changes**. The "LLM preferences saved successfully" message is displayed.
+ 
+```
+
+**File**: `docs/use-cases/claude-code.md` (modified, +18/-34)
+```diff
+@@ -8,8 +8,8 @@ head:
+     - name: keywords
+       content: Olares, Claude Code, Anthropic, AI coding, Ollama, terminal, TUI, self-hosted
+ app_version: "0.1.13"
+-doc_version: "2.3"
+-doc_updated: "2026-11-11"
++doc_version: "2.4"
++doc_updated: "2026-11-18"
+ ---
+ 
+ # Write code using Claude Code
+@@ -26,20 +26,6 @@ In this guide, you will learn how to:
+ - Execute basic and advanced natural language coding workflows.
+ - Manage software dependencies securely.
+ 
+-## Prerequisites
+-
+-Before you begin, you need:
+-
+-<!--@include: ../reusables/ai-service-connections.md#router-prerequisite-->
+-- Additional requirements depend on how you connect:
+-
+-  | Connection method | Requirements |
+-  | :--- | :--- |
+-  | Anthropic subscription | An active Claude Pro or Max subscription |
+-  | Local model | Qwen3.8-27B (llama.cpp) installed from Market |
+-
+-<!--@include: ../reusables/ai-service-connections.md#use-different-model-->
+-
+ ## Install Claude Code
+ 
+ 1. Open Market, and search for "Claude Code".
+@@ -78,11 +64,7 @@ Use this method if you hold an active Claude Pro or Max subscription.
+ 
+ ### Connect using a local model
+ 
+-Use this method to run Claude Code locally. This example uses the model app Qwen3.8-27B (llama.cpp).
+-
+-<!--@include: ../reusables/ai-service-connections.md#model-connection-overview-->
+-
+-#### Configure the local model in Router
++This example uses Qwen3.8-27B (llama.cpp), installed from Market.
+ 
+ 1. Open Router from Launchpad. On **Default models**, set Qwen3.8-27B (llama.cpp) as the default chat model.
+ 2. Go to **LLM**, find Qwen3.8-27B (llama.cpp), and click **View model card**.
+@@ -93,25 +75,27 @@ Use this method to run Claude Code locally. This example uses the model app Qwen
+    Claude Code sends local model requests with `max_tokens` set to `32000`, so Router must allow at least `32000` output tokens. You can set a higher limit only when the model backend and its configured context window support it. This limit does not reserve memory or force every response to use that many tokens.
+    :::
+ 
+-5. On the same model row, click **View connection example**. In **How to call this model**, select **Apps in Olares** and copy the **Base URL**. Remove the trailing `/v1`. For example, use `https://router.<your-olares-domain>`.
++5. Copy the Router address from your browser. Keep only the protocol and domain. For example, replace the domain below with your own:
+ 
+-#### Configure Claude Code
++   ```text
++   https://router.laresprime.olares.com
++   ```
+ 
+-1. Open Olares Settings, and then go to **Applications** > **Claude Code** > **Manage environment variables**.
+-2. Specify the following environment variables:
++   Do not append `/v1` to this address. Claude Code adds `/v1/messages` when it sends a request.
+ 
+-   - **ANTHROPIC_AUTH_TOKEN**: Enter `olares`.
+-   - **ANTHROPIC_BASE_URL**: Enter the **Base URL** you copied from Router.
+-   - **ANTHROPIC_MODEL**: Enter `default-chat`.
++6. Open Olares Settings, then go to **Applications** > **Claude Code** > **Manage environment variables**.
++7. Set the following environment variables:
+ 
+-   <!--
+-   TODO: 素材清单 02，待补 Router 截图：claude-code-env-router.png；替换下方旧图后再取消注释。
+-   ![Claude Code environment variables settings](/images/manual/use-cases/claude-env-var1.png#bordered){width=70%}
+-   -->
++   | Variable | Value |
++   | :--- | :--- |
++   | **ANTHROPIC_AUTH_TOKEN** | `olares` |
++   | **ANTHROPIC_BASE_URL** | The Router address from step 5, without `/v1` |
++   | **ANTHROPIC_MODEL** | `default-chat` |
+ 
++8. Click **Apply** and wait for the app to restart.
++9. Open Claude Code CLI from Launchpad and enter `claude` to start your session.
+ 
+-3. Click **Apply**. Wait about 10 seconds for the container to restart.
+-4. Open the Claude Code CLI from the Launchpad, and then enter `claude` in the terminal to start your session.
++To use another local model, select it on Router's **Default models** page and check that its output token limit meets the requirement above. Claude Code follows this selection through `default-chat`, using the same Base URL.
+ 
+ ## Use Claude Code
+ 
+```
+
+**File**: `docs/use-cases/codex-cli.md` (modified, +7/-14)
+```diff
+@@ -8,8 +8,8 @@ head:
+     - name: keywords
+       content: Olares, Codex CLI, OpenAI, AI coding agent, browser terminal, ChatGPT, local LLM, Qwen3.8, self-hosted
+ app_version: "1.0.18"
+-doc_version: "1.0"
+-doc_updated: "2026-09-23"
++doc_version: "1.1"
++doc_updated: "2026-11-18"
+ ---
+ 
+ # Run Codex CLI on Olares
+@@ -34,16 +34,12 @@ In this guide, you will learn how to:
+ 
+ Before you begin, you need:
+ 
+-<!--@include: ../reusables/ai-service-connections.md#router-prerequisite-->
+-
+ Depending on how you connect, prepare one of the following:
+ 
+ - **ChatGPT**: A ChatGPT account with Codex access.
+ - **OpenAI Platform**: An OpenAI API key.
+ - **Local model**: Qwen3.8-27B (llama.cpp) installed from Market.
+ 
+-<!--@include: ../reusables/ai-service-connections.md#use-different-model-->
+-
+ ## Install Codex CLI
+ 
+ 1. Open Market and search for "Codex CLI".
+@@ -110,22 +106,19 @@ This example connects Codex CLI to Qwen3.8-27B (llama.cpp) through its OpenAI-co
+ 
+ #### Get the model connection details
+ 
+-<!--@include: ../reusables/ai-service-connections.md#get-model-connection-details-->
++1. Open Router from Launchpad. On **Default models**, set Qwen3.8-27B (llama.cpp) as the default chat model and wait until `default-chat` shows **Callable**.
++2. <!--@include: ../reusables/ai-service-connections.md#router-openai-base-url-->
+ 
+ #### Configure Codex CLI
+ 
+ 1. Navigate to **Settings** > **Applications** > **Codex CLI** > **Manage environment variables**.
+ 2. Configure the following variables:
+ 
+    - **OPENAI_BASE_URL**: Paste the Base URL copied from Router exactly as shown, including the trailing `/v1`.
+-   - **OPENAI_API_KEY**: Enter a non-empty placeholder value, such as `olares`. Router identifies requests from this Olares app through the platform.
++   - **OPENAI_API_KEY**: Enter `olares`.
+    - **CODEX_MODEL**: Enter `default-chat`.
+ 
+-   <!--
+-   TODO: 素材清单 03，待补 Router 截图：codex-cli-env-router.png；替换下方旧图后再取消注释。
+-   ![Codex CLI local model environment variables](/images/manual/use-cases/codex-cli-local-model-env.png#bordered)
+-   -->
+-
++   <!-- ![Codex CLI local model environment variables](/images/manual/use-cases/codex-cli-local-model-env.png#bordered) -->
+ 
+ 3. Click **Apply** and wait for Codex CLI to restart.
+ 4. Open Codex CLI from Launchpad and run:
+@@ -216,7 +209,7 @@ The callback service runs inside the Codex CLI container, so your computer's bro
+ 
+ ### Why does the local model return 404?
+ 
+-Copy the Base URL from **Apps in Olares** in Router's **How to call this model** window, including `/v1`. Check that the default chat model shows **Callable** on **LLM**.
++Check that the Router Base URL ends with `/v1` and that `default-chat` shows **Callable** on Router's **Default models** page.
+ 
+ ### Why does Codex report `model not found`?
+ 
+```
+
+**File**: `docs/use-cases/comfyui-for-krita.md` (modified, +2/-4)
+```diff
+@@ -6,8 +6,8 @@ head:
+     - name: keywords
+       content: Olares, ComfyUI, Krita, AI art, digital painting, Krita AI Diffusion, image generation
+ app_version: "1.0.21"
+-doc_version: "1.1"
+-doc_updated: "2026-07-28"
++doc_version: "1.2"
++doc_updated: "2026-11-18"
+ ---
+ 
+ # Create AI art with ComfyUI and Krita
+@@ -38,8 +38,6 @@ You can set the GPU mode to **Exclusive** and assign ComfyUI full GPU access in
+ 
+ ## Get ComfyUI connection details
+ 
+-<!--@include: ../reusables/ai-service-connections.md#app-endpoint-overview-->
+-
+ For ComfyUI:
+ 
+ 1. Go to Olares **Settings** > **Applications** > **ComfyUI** > **Entrances**.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4467** (2026-11-18): fix(appservice): apply custom entrance domains during upgrade (@hysyeah)
-- **PR #4465** (2026-11-18): docs: fix dead links to retired connect-ai-apps page in Olares One FAQ (@fnalways)
-- **PR #4463** (2026-11-18): docs: update iso image download address for 1.12.8 (@Power-One-2025)
-- **PR #4462** (2026-11-18): ci: update GOPRIVATE and GIT_CONFIG for backups-sdk integration (@eball)
-- **PR #4461** (2026-11-18): fix(daemon): page BLE AP list and notify wifi connect result immediately (@eball)
-- **PR #4460** (2026-11-18): feat(rag): update component images for 1.12.9 (@bleachzou3)
+- **PR #4474** (2026-11-19): fix(cli): clean up stale JuiceFS mounts (@dkeven)
+- **PR #4473** (2026-11-19): feat(rag): keep current-document retrieval on main (@bleachzou3)
+- **PR #4472** (2026-11-19): feat(rag): publish current-document retrieval for 1.12.9 (@bleachzou3)
+- **PR #4471** (2026-11-19): fix(cli): retry incomplete IP changes (@dkeven)
+- **PR #4470** (2026-11-19): docs: refine Olares One FAQs for mobile AI and purchasing (@fnalways)
+- **PR #4469** (2026-11-19): ci: bump version to 1.12.10 (@eball)
 
 ---
 
@@ -1942,39 +1998,31 @@ Co-authored-by: wangyajing <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. daemon): page BLE AP list and notify wifi connect result immediately
+## X. cli): clean up stale JuiceFS mounts
 
 **RULE**:
-When implementing operations in `daemon/docs/wifi-and-portal.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cli/pkg/storage/juicefs.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8293f92d`: daemon): page BLE AP list and notify wifi connect result immediately. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8c82c544`: cli): clean up stale JuiceFS mounts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `daemon/docs/wifi-and-portal.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/pkg/storage/juicefs.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-keeping the strongest signal. The BLE AP list is split across up to five
-characteristics, each a standalone JSON array of at most 512 bytes: page 1 is
-`0x1200` (unchanged, so clients reading only it keep working) and pages 2-5 are
-`0x1202`, `0x1203`, `0x1204`, and `0x1205`. Pages are filled in the internal
-connection/signal priority order; when the next entry does not fit, it starts
-the next page, so concatenating pages 1-5 preserves the order. Unused pages are
-`[]`, and entries beyond the fifth page are dropped. Connection payloads exceeding 512 bytes are
+	mounted, err := isMounted(OlaresJuiceFSRootDir, juiceFSMountType)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-keeping the strongest signal. Entries retain
-the internal connection/signal priority order; an entry that does not fit is
-skipped so a shorter later entry can use the remaining 512-byte capacity. Connection payloads exceeding 512 bytes are
+	mounted, err := isJuiceFSMounted(runtime, OlaresJuiceFSRootDir)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8293f92d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8c82c544` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

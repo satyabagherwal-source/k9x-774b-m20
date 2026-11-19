@@ -11359,3 +11359,8 @@
 | `CYCLE-20261119-LSZ0` | `2026-11-19T18:48:51.948Z` | `deepseek-ai/DeepSeek-V4.1-Flash-1017` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-1017-learnings.md` | Yes (`de6a12d6...`) |
 | `CYCLE-20261119-LXAB` | `2026-11-19T18:48:57.539Z` | `openkruise/kruise` | Commit diff / Patch analysis | `VERIFIED` | `Rule 1683` | Yes (`80b0e766...`) |
 | `CYCLE-20261119-M0K3` | `2026-11-19T18:49:01.779Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9428` | Yes (`ac56e819...`) |
+| `CYCLE-20261119-FEWQ` | `2026-11-19T19:11:53.402Z` | `datalab-to/indra-ocr` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-datalab-to-indra-ocr-learnings.md` | Yes (`bbd72287...`) |
+| `CYCLE-20261119-FHBJ` | `2026-11-19T19:11:56.527Z` | `vercel-labs/agent-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9429` | Yes (`d94c6c7d...`) |
+| `CYCLE-20261119-FO5D` | `2026-11-19T19:12:05.377Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9430` | Yes (`18f33b37...`) |
+| `CYCLE-20261119-FOWF` | `2026-11-19T19:12:06.351Z` | `DefGuard/defguard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9431` | Yes (`9a9ac3f6...`) |
+| `CYCLE-20261119-FQZ7` | `2026-11-19T19:12:09.043Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 7277` | Yes (`1e310de5...`) |
