@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T17:01:59.987Z",
+  "timestamp": "2026-11-19T21:43:50.987Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-peerdb-io-peerdb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [peerdb-io-peerdb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T17:01:59.987Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T21:43:50.987Z`  
 > **Learning ID**: `LEARN-EVO-peerdb-io-peerdb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `5f74e0ef`  
+> **Source Version**: `7715b315`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T17:01:46.302Z  
+> **Timestamp**: 2026-11-19T21:43:46.618Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T17:01:46.295Z  
+> **Harvest Timestamp**: 2026-11-19T21:43:46.402Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Fast, Simple and a cost effective tool to replicate data from Postgres to Data Warehouses, Queues and Storage
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3324 stars
+- **Stars / Engagement**: 3323 stars
 
 ---
 
@@ -1904,392 +1904,230 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5f74e0ef` (2026-11-18)
-**Commit Message**: Stop using QValueJSON as fallback for mismatched arrays (#5091)
+### Incident Patch 1: `8060a376` (2026-11-19)
+**Commit Message**: Default to lax nullable behavior (#5100)
 
-- If an array value is received when no array column is expected ->
-Provide an QValueArrayJSON instance representing the BSON array in JSON
-form -> Will go to malformed data.
-- If a not supported arrray value is received (like heterogenous arrays)
-when an array column is expected -> A String value is reported with the
-bson array in its JSON -> Will go to malformed data
+In cloud environments some customers were seeing errors on strict
+behavior, likely due to schema change races during setup, so lax was the
+default there. Align OSS default to be lax too.
 
-This addresses the bug reported in
-https://github.com/ClickHouse/support-escalation/issues/9155#issuecomment-6948308638
-which happened through the combination of two facts:
-
-- The sampler and schema inference based on it didn't grab any case
-where [] is inferred as array. All the samples led to JSON as inferred
-values.
-- When an array value is received but the destination type is not one of
-the supported array types, the fallback logic is to return a QValueJSON
-
-The fallback QVAlue fell right into the domain of the inferred type thus
-sneaking through the malformed data detection mechanism.
-
-**File**: `flow/connectors/mongo/document_projection.go` (modified, +7/-3)
+**File**: `flow/internal/dynamicconf.go` (modified, +1/-1)
 ```diff
-@@ -76,9 +76,13 @@ func DocumentQValueIterator(
- 			}
- 			value, err := converter.QValueFromBsonValue(element.Value(), maybeExpectedKind)
- 			if err != nil && maybeExpectedKind.IsArray() && element.Value().Type == bson.TypeArray {
--				// An array that does not fit its typed column is yielded as JSON: the projector then
--				// reports it as a type mismatch, its JSON form as the value, instead of the record failing.
--				value, err = converter.QValueJSONFromArray(element.Value().Array())
-+				// An array that does not fit its typed column, e.g. a string element in an Array(Int64)
-+				// or a scalar or nested array element in an Array(JSON), is yielded as its JSON text:
-+				// a String never matches an array column, so the projector reports it as a type mismatch,
-+				// its JSON form as the value, instead of the record failing.
-+				var asJSON types.QValueArrayJSON
-+				asJSON, err = converter.QValueArrayJSONFromArray(element.Value().Array())
-+				value = types.QValueString(asJSON)
- 			}
- 			if err != nil {
- 				walkErr = fmt.Errorf("failed to convert document field to QValue %s: %w", field, err)
+@@ -140,7 +140,7 @@ var DynamicSettings = [...]*protos.DynamicSetting{
+ 	{
+ 		Name:             "PEERDB_AVRO_NULLABLE_LAX",
+ 		Description:      "Make all columns nullable in initial load Avro schema (disables strict nullable checking)",
+-		DefaultValue:     "false",
++		DefaultValue:     "true",
+ 		ValueType:        protos.DynconfValueType_BOOL,
+ 		ApplyMode:        protos.DynconfApplyMode_APPLY_MODE_NEW_MIRROR,
+ 		TargetForSetting: protos.DynconfTarget_ALL,
 ```
 
-**File**: `flow/connectors/mongo/document_projection_test.go` (modified, +67/-4)
+---
+
+### Incident Patch 2: `3bf0bb01` (2026-11-19)
+**Commit Message**: flow.yml/flow-tilt.yml Add Telemetry tracing, introduce cached build step, use smaller runners (#5093)
+
+This commit adds telemetry tracing to the bulk of our CI steps to
+understand our actual usage and make choices around our runner sizing.
+
+---------
+
+Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/flow.yml` (modified, +92/-2)
 ```diff
-@@ -399,9 +399,9 @@ func TestDocumentQValueIterator(t *testing.T) {
- 	require.Equal(t, types.QValueBoolean{Val: true}, values["active"])
- 	// nulls carry no kind, the consumer gives them the kind of the column they land in
- 	require.Equal(t, types.QValueNull(""), values["nickname"])
--	// embedded documents and arrays are yielded whole, as JSON
-+	// embedded documents are yielded whole as JSON, arrays as an array of JSON
- 	require.Equal(t, types.QValueJSON{Val: `{"city":"London"}`}, values["address"])
--	require.Equal(t, types.QValueJSON{Val: `["math","cs"]`}, values["tags"])
-+	require.Equal(t, types.QValueArrayJSON{Val: `["math","cs"]`}, values["tags"])
- }
+@@ -50,6 +50,15 @@ jobs:
+         with:
+           ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.ref }}
+           allow-unsafe-pr-checkout: true
++      # Samples CPU/memory/disk/network on the runner for the whole job and
++      # writes a report to the job summary; the post step runs even on failure.
++      # Must come after checkout: the collector keeps its data file in the
++      # workspace, which checkout wipes.
++      - name: Runner telemetry
++        uses: tsviz/actions-runner-telemetry@c15eb88c652d9a26a572438a0d1b8c10af782e2e # v1.7.4
++        with:
++          upload-artifacts: true
++          artifact-name: runner-telemetry-unit
+       - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
+         with:
+           go-version: '1.27.3'
+@@ -123,10 +132,90 @@ jobs:
+       - run: ./generate-protos.sh
+       - run: bash .github/scripts/check-flow-test-selection.sh
  
- func TestDocumentQValueIteratorEmptyAndKeyOnly(t *testing.T) {
-@@ -541,15 +541,15 @@ func TestStructuredArrayColumns(t *testing.T) {
- 			{Key: "_id", Value: oid},
- 			{Key: "scores", Value: bson.A{int32(1), int64(2)}},
- 			{Key: "tags", Value: bson.A{"a", oid}},
--			{Key: "attachments", Value: bson.A{bson.D{{Key: "k", Value: int64(1)}}, bson.A{int64(2)}}},
-+			{Key: "attachments", Value: bson.A{bson.D{{Key: "k", Value: int64(1)}}, bson.D{}}},
- 		})
- 		require.NoError(t, err)
- 		record, err := StructuredQValuesFromBsonRaw(raw, shared.InternalVersion_Latest, converter, projector, "db.coll")
- 		require.NoError(t, err)
- 		values := byName(record)
- 		require.Equal(t, types.QValueArrayInt64{Val: []int64{1, 2}}, values["scores"])
- 		require.Equal(t, types.QValueArrayString{Val: []string{"a", "507f1f77bcf86cd799439011"}}, values["tags"])
--		require.Equal(t, types.QValueArrayJSON{Val: `[{"k":1},[2]]`}, values["attachments"])
-+		require.Equal(t, types.QValueArrayJSON{Val: `[{"k":1},{}]`}, values["attachments"])
- 		require.Equal(t, types.QValueNull(types.QValueKindJSON), values[structured.MalformedDataColumn])
- 	})
- 
-@@ -585,6 +585,22 @@ func TestStructuredArrayColumns(t *testing.T) {
- 		require.JSONEq(t, `{"attachments": {"type_mismatch": true, "value": "[\"text\",{\"k\":1}]"}}`, malformed.Val)
- 	})
- 
-+	t.Run("a nested array in an array of JSON is a reported type mismatch", func(t *testing.T) {
-+		raw, err := bson.Marshal(bson.D{
-+			{Key: "_id", Value: oid},
-+			{Key: "attachments", Value: bson.A{bson.D{{Key: "k", Value: int64(1)}}, bson.A{int64(2)}}},
-+		})
-+		require.NoError(t, err)
-+		record, err := StructuredQValuesFromBsonRaw(raw, shared.InternalVersion_Latest, converter, projector, "db.coll")
-+		require.NoError(t, err)
-+		values := byName(record)
-+		// ClickHouse would silently turn the nested array into a NULL element of the JSON array
-+		require.Equal(t, types.QValueNull(types.QValueKindArrayJSON), values["attachments"])
-+		malformed, ok := values[structured.MalformedDataColumn].(types.QValueJSON)
-+		require.True(t, ok)
-+		require.JSONEq(t, `{"attachments": {"type_mismatch": true, "value": "[{\"k\":1},[2]]"}}`, malformed.Val)
-+	})
++  # Compiles every flow test package once and publishes the resulting Go build
++  # cache entries as a run artifact, so the flow_test matrix jobs don't each
++  # recompile the same code. setup-go's own cache is keyed on go.sum only, so
++  # it holds the dependencies but never the current commit's packages.
++  #
++  # An artifact (not actions/cache) on purpose: it is scoped to this run, so
++  # code from a fork PR under pull_request_target cannot seed a cache that
++  # later runs on main would restore.
++  go_build_cache:
++    name: Go build cache
++    needs: [gate]
++    runs-on: ubuntu-latest-64-core
++    timeout-minutes: 20
++    steps:
++      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
++        with:
++          ref: ${{ github.event_name == 'pull_request_target' && github.event.pull_request.head.sha || github.ref }}
++          allow-unsafe-pr-checkout: true
++      # Must come after checkout: the collector keeps its data file in the
++      # workspace, which checkout wipes.
++      - name: Runner telemetry
++        uses: tsviz/actions-runner-telemetry@c15eb88c652d9a26a572438a0d1b8c10af782e2e # v1.7.4
++        with:
++          upload-artifacts: true
++          artifact-name: runner-telemetry-go-build-cache
++      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
++        with:
++          go-version: '1.27.3'
++          cache-dependency-path: |
++            flow/go.sum
++            flow/pkg/go.sum
++      - uses: bufbuild/buf-action@37ac33d8960807670a6e9719080e885197b09cc6 # v1
++        with:
++          setup_only: true
++          github_token: ${{ github.token }}
++      - run: sudo apt-get update && sudo apt-get install -y libgeos-dev
++      # Same generator Tilt's proto-gen resource runs in the matrix jobs; the
++      # generated sources must match for the cached packages to be reused.
++      - run: ./generate-protos.sh
++      # Record what setup-go restored, so only entries this job adds are
++      # shipped: the matrix jobs restore that same setup-go cache themselves.
++      - name: Snapshot restored Go build cache
++        run: |
++          set -euo pipefail
++          gocache="$(go env GOCACHE)"
++          mkdir -p "$gocache"
++          (cd "$gocache" && find . -type f | LC_ALL=C sort) > "$RUNNER_TEMP/gocache-before.txt"
++      # Run the matrix jobs' own selection script over every package: same
++      # commands and flags, so it produces exactly the cache entries their
++      # Select tests and Run tests steps look up. Listing tests needs no
++      # services.
++      - name: Compile all flow tests
++        env:
++          TEST_PACKAGES: ./...
++          PKG_TEST_PACKAGES: ./...
++        run: bash .github/scripts/select-flow-tests.sh
++      - name: Pack new Go build cache entries
++        run: |
++          set -euo pipefail
++          cd "$(go env GOCACHE)"
++          find . -type f | LC_ALL=C sort > "$RUNNER_TEMP/gocache-after.txt"
++          LC_ALL=C comm -13 "$RUNNER_TEMP/gocache-before.txt" "$RUNNER_TEMP/gocache-after.txt" \
++            > "$RUNNER_TEMP/gocache-new.txt"
++          echo "new cache entries: $(wc -l < "$RUNNER_TEMP/gocache-new.txt")"
++          tar -cf "$RUNNER_TEMP/go-build-cache.tar.zst" \
++            --use-compress-program 'zstd -T0 -3' \
++            --files-from "$RUNNER_TEMP/gocache-new.txt"
++          ls -lh "$RUNNER_TEMP/go-build-cache.tar.zst"
++      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
++        with:
++          name: go-build-cache
++          path: ${{ runner.temp }}/go-build-cache.tar.zst
++          if-no-files-found: error
++          # Already zstd-compressed.
++          compression-level: 0
++          # Only this run's matrix jobs read it.
++          retention-days: 1
++          # Lets a re-run of this job replace the earlier attempt's artifact.
++          overwrite: true
 +
- 	t.Run("an absent array column is a null of its array kind", func(t *testing.T) {
- 		raw, err := bson.Marshal(bson.D{{Key: "_id", Value: oid}})
- 		require.NoError(t, err)
-@@ -596,3 +612,50 @@ func TestStructuredArrayColumns(t *testing.T) {
- 		require.Equal(t, types.QValueNull(types.QValueKindArrayJSON), values["attachments"])
- 	})
- }
-+
-+// TestStructuredArrayIntoJSONColumn: a JSON column only takes objects in ClickHouse, so an array, empty or
-+// not, must be a reported type mismatch rather than a value that fails the whole insert.
-+func TestStructuredArrayIntoJSONColumn(t *testing.T) {
-+	projector, err := newStructuredSchemaProjector([]*protos.ColumnSetting{
-+		{SourceName: "slabs", DestinationType: "JSON", NullableEnabled: true},
-+	}, nil, true)
-+	require.NoError(t, err)
-+	converter := NewDirectBsonConverter()
-+
-+	for name, test := range map[string]struct {
-+		input     any
-+		projected types.QValue
-+		malformed string
-+	}{
-+		"empty array": {
-+			input:     bson.A{},
-+			projected: types.QValueNull(types.QValueKindJSON),
-+			malformed: `{"slabs": {"type_mismatch": true, "value": "[]"}}`,
-+		},
-+		"array of documents": {
-+			input:     bson.A{bson.D{{Key: "from", Value: int64(101)}}},
-+			projected: types.QValueNull(types.QValueKindJSON),
-+			malformed: `{"slabs": {"type_mismatch": true, "value": "[{\"from\":101}]"}}`,
-+		},
-+		"document": {
-+			input:     bson.D{{Key: "from", Value: int64(101)}},
-+			projected: types.QValueJSON{Val: `{"from":101}`},
-+		},
-+	} {
-+		t.Run(name, func(t *testing.T) {
-+			raw, err := bson.Marshal(bson.D{{Key: "_id", Value: "id"}, {Key: "slabs", Value: test.input}})
-+			require.NoError(t, err)
-+			record, err := StructuredQValuesFromBsonRaw(raw, shared.InternalVersion_Latest, converter, projector, "db.coll")
-+			require.NoError(t, err)
-+			require.Len(t, record, 3)
-+			require.Equal(t, test.projected, record[1])
-+			if test.malformed == "" {
-+				require.Equal(t, types.QValueNull(types.QValueKindJSON), record[2])
-+				return
-+			}
-+			malformed, ok := record[2].(types.QValueJSON)
-+			require.True(t, ok)
-+			require.JSONEq(t, test.malformed, malformed.Val)
-+		})
-+	}
-+}
+   flow_test:
+     name: ${{ matrix.target.label }}
+     # Validate the common code before allocating runners for every permutation.
+-    needs: [gate, unit_tests, test_selection_c
 ```
 
-**File**: `flow/connectors/mongo/qvalue_convert.go` (modified, +13/-10)
+**File**: `.github/workflows/tilt-flow.yml` (modified, +44/-1)
 ```diff
-@@ -28,8 +28,8 @@ type BsonToQValueConverter interface {
- 	QValueStringFromId(id bson.RawValue, version uint32) (types.QValueString, error)
- 	// QValueJSONFromDocument converts a raw BSON document (Object) to a QValueJSON.
- 	QValueJSONFromDocument(raw bson.Raw) (types.QValueJSON, error)
--	// QValueJSONFromArray converts a raw BSON array to a QValueJSON, for a JSON destination column.
--	QValueJSONFromArray(arr bson.RawArray) (types.QValueJSON, error)
-+	// QValueArrayJSONFromArray converts a raw BSON array to a QValueArrayJSON holding its JSON form.
-+	QValueArrayJSONFromArray(arr bson.RawArray) (types.QValueArrayJSON, error)
+@@ -47,6 +47,14 @@ on:
+         type: string
+         required: false
+         default: ''
++      go_build_cache_artifact:
++        description: >-
++          Name of an artifact in this run holding prebuilt Go build cache
++          entries (flow.yml's go_build_cache job). Leave empty to compile
++          from setup-go's dependency cache alone.
++        type: string
++        required: false
++        default: ''
+       # The <db>_image inputs pin the docker images of the ancillary DBs.
+       # When empty, default to last combination declared at flow.yml
+       # following scripts/generate-test-environment.sh's defaults.
+@@ -207,7 +215,7 @@ env:
  
- 	// QValueFromBsonValue converts any BSON value to the QValue.
- 	// `maybeExpectedKind` hints the elements types.
-@@ -64,12 +64,12 @@ func (c *DirectBsonConverter) QValueJSONFromDocument(raw bson.Raw) (types.QValue
- 	return types.QValueJSON{Val: string(c.stream.Buffer())}, nil
- }
+ jobs:
+   tilt:
+-    runs-on: ubuntu-latest-64-core
++    runs-on: ubuntu-latest-32-cores
+     timeout-minutes: 60
+     steps:
+       - uses: Kesin11/actions-timeline@460b1f8a750077029ad3589824d371b200e91dcf # v3.2.1
+@@ -221,6 +229,16 @@ jobs:
+           # checkout refuses fork code under pull_request_target unless opted in;
+           # flow.yml's external-contributor environment gate is the human review.
+           allow-unsafe-pr-checkout: true
++      # Samples CPU/memory/disk/network on the runner for the whole job and
++      # writes a report to the job summary; the post step runs even on failure.
++      # Must come after checkout: the collector keeps its data file in the
++      # workspace, which checkout wipes.
++      # Artifact name is keyed by run_label so flow.yml's matrix jobs don't collide.
++      - name: Runner telemetry
++        uses: tsviz/actions-runner-telemetry@c15eb88c652d9a26a572438a0d1b8c10af782e2e # v1.7.4
++        with:
++          upload-artifacts: true
++          artifact-name: runner-telemetry-${{ inputs.run_label || 'tilt' }}
  
--func (c *DirectBsonConverter) QValueJSONFromArray(arr bson.RawArray) (types.QValueJSON, error) {
-+func (c *DirectBsonConverter) QValueArrayJSONFromArray(arr bson.RawArray) (types.QValueArrayJSON, error) {
- 	c.stream.Reset(nil)
- 	if err := shared_mongo.RawArrayToJSON(bsoncore.Array(arr), c.stream); err != nil {
--		return types.QValueJSON{}, fmt.Errorf("failed to convert array: %w", err)
-+		return types.QValueArrayJSON{}, fmt.Errorf("failed to convert array: %w", err)
- 	}
--	return types.QValueJSON{Val: string(c.stream.Buffer())}, nil
-+	return types.QValueArrayJSON{Val: string(c.stream.Buffer())}, nil
- }
+       # Combination id for test-results ingestion steps
+       - name: Compute run identity
+@@ -240,6 +258,31 @@ jobs:
+             flow/go.sum
+             flow/pkg/go.sum
  
- func typedArrayFromBson[Q types.QValue, T any](
-@@ -144,13 +144,10 @@ func (c *DirectBsonConverter) QValueFromBsonValue(rv bson.RawValue, maybeExpecte
- 		return c.QValueStringFromString(v.StringValue()), nil
- 
- 	case bsoncore.TypeEmbeddedDocument:
--		// Nested documents are encoded as `QValueJSON` ...
-+		// Nested documents are encoded as `QValueJSON`.
- 		return c.QValueJSONFromDocument(bson.Raw(v.Document()))
- 
- 	case bsoncore.TypeArray:
--		// ... as well as Arrays, unless the destination column is of an array kind, with
--		// corresponding QValue s corresponding to typed arrays.
--
- 		// NOTE: Ideally, we would infer the array element type from the BSON array itself,
- 		// recursively applying `QValueFromBsonValue` on one or more of its elements.
- 		// In practice, it's better not to re-implement an inference step that already took place
-@@ -191,7 +188,13 @@ func (c *DirectBsonConverter) QValueFromBsonValue(rv bson.RawValue, maybeExpecte
- 			builder.WriteByte(']')
- 			return types.QValueArrayJSON{Val: builder.String()}, nil
- 		default:
--			return c.QValueJSONFromArray(arr)
-+			// In this case, the destination column is not compatible with the Array[T] kind,
-+			// so we can not use `T` to project the array elements types.
-+			// In this case the data is malformed and so will it be flagged if we return an Array of JSON
-+			// given that the destination column is not an array.
-+			// The returned QValue holds the array as JSON, preserving the original data for inspection in
-+			// malformed data column.
-+			return c.QValueArrayJSONFromArray(arr)
- 		}
- 
- 	case bsoncore.TypeBinary:
-```
-
-**File**: `flow/connectors/mongo/qvalue_convert_test.go` (modified, +31/-13)
-```diff
-@@ -802,7 +802,7 @@ func TestQValueFromBsonValue(t *testing.T) {
- 		{
- 			desc:     "Array",
- 			input:    bson.A{int32(1), "two", 3.0, nil, bson.D{{Key: "k", Value: true}}},
--			expected: types.QValueJSON{Val: `[1,"two",3.0,null,{"k":true}]`},
-+			expected: types.QValueArrayJSON{Val: `[1,"two",3.0,null,{"k":true}]`},
- 		},
- 		{
- 			desc:     "Object",
-@@ -837,10 +837,17 @@ func TestQValueFromBsonValue(t *testing.T) {
- 			require.Equal(t, test.expected, result)
- 
- 			// JSON-valued conversions must be byte-identical to how the value is rendered inside a document
--			if jsonResult, ok := result.(types.QValueJSON); ok {
-+			var jsonVal string
-+			switch jsonResult := result.(type) {
-+			case types.QValueJSON:
-+				jsonVal = jsonResult.Val
-+			case types.QValueArrayJSON:
-+				jsonVal = jsonResult.Val
-+			}
-+			if jsonVal != "" {
- 				doc, err := converter.QValueJSONFromDocument(raw)
- 				require.NoError(t, err)
--				require.Equal(t, `{"a":`+jsonResult.Val+`}`, doc.Val)
-+				require.Equal(t, `{"a":`+jsonVal+`}`, doc.Val)
- 			}
- 		})
- 	}
-@@ -1007,27 +1014,32 @@ func TestTypedArraysFromBson(t *testing.T) {
- 	t.Run("a nested array or document element fails", func(t *testing.T) {
- 		_, err := converter.QValueFromBsonValue(
- 			rawArrayValueOf(t, bson.A{bson.A{"nested"}}), types.QValueKindArrayString)
--		require.ErrorContains(t, err, "array element 0 maps to json, not string")
-+		require.ErrorContains(t, err, "array element 0 maps to array_json, not string")
- 		_, err = converter.QValueFromBsonValue(
- 			rawArrayValueOf(t, bson.A{bson.D{{Key: "k", Value: 1}}}), types.QValueKindArrayString)
- 		require.ErrorContains(t, err, "array element 0 maps to json, not string")
- 	})
- 
--	t.Run("JSON-mapped elements, documents and nested arrays included, land as an array of JSON", func(t *testing.T) {
-+	t.Run("arrays of documents land as an array of JSON", func(t *testing.T) {
- 		documents := rawArrayValueOf(t, bson.A{
- 			bson.D{{Key: "k", Value: int64(1)}},
--			bson.A{int64(1), "two"},
-+			nil,
- 			bson.D{},
- 		})
- 		// array_jsonb names the same conversion
- 		for _, kind := range []types.QValueKind{types.QValueKindArrayJSON, types.QValueKindArrayJSONB} {
- 			values, err := converter.QValueFromBsonValue(documents, kind)
- 			require.NoError(t, err)
--			require.Equal(t, types.QValueArrayJSON{Val: `[{"k":1},[1,"two"],{}]`}, values)
-+			require.Equal(t, types.QValueArrayJSON{Val: `[{"k":1},null,{}]`}, values)
- 		}
- 
--		// a scalar element maps to its own kind, not JSON
-+		// a nested array element is not a JSON object: ClickHouse would silently turn it into a NULL element
- 		_, err := converter.QValueFromBsonValue(
-+			rawArrayValueOf(t, bson.A{bson.D{}, bson.A{int64(1), "two"}}), types.QValueKindArrayJSON)
-+		require.ErrorContains(t, err, "array element 1 maps to array_json, not json")
++      # Layer the caller's prebuilt entries for this commit over setup-go's
++      # dependency cache. Best effort: without them the tests still compile,
++      # just from scratch.
++      - name: Download prebuilt Go build cache
++        if: inputs.go_build_cache_artifact != ''
++        continue-on-error: true
++        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
++        with:
++          name: ${{ inputs.go_build_cache_artifact }}
++          path: ${{ runner.temp }}/go-build-cache
++      - name: Unpack prebuilt Go build cache
++        if: inputs.go_build_cache_artifact != ''
++        continue-on-error: true
++        run: |
++          set -euo pipefail
++          archive="$RUNNER_TEMP/go-build-cache/go-build-cache.tar.zst"
++          if [ ! -f "$archive" ]; then
++            echo "::warning::Prebuilt Go build cache not found; tests will compile from scratch."
++            exit 0
++          fi
++          gocache="$(go env GOCACHE)"
++          mkdir -p "$gocache"
++          tar -xf "$archive" --use-compress-program 'zstd -d -T0' -C "$gocache"
++          rm -rf "$RUNNER_TEMP/go-build-cache"
 +
-+		// a scalar element maps to its own kind, not JSON
-+		_, err = converter.QValueFromBsonValue(
- 			rawArrayValueOf(t, bson.A{bson.D{}, "scalar"}), types.QValueKindArrayJSON)
- 		require.ErrorContains(t, err, "array element 1 maps to string, not json")
- 
-@@ -1037,11 +1049,17 @@ func TestTypedArraysFromBson(t *testing.T) {
- 		require.Equal(t, types.QValueArrayJSON{Val: "[]"}, empty)
- 	})
- 
--	t.Run("any other destination kind keeps the whole array as JSON", func(t *testing.T) {
--		for _, kind := range []types.QValueKind{types.QValueKindJSON, ""} {
--			asJSON, err := converter.QValueFromBsonValue(rawArrayValueOf(t, bson.A{int32(1), int64(2)}), kind)
--			require.NoError(t, err)
--			require.Equal(t, types.QValueJSON{Val: "[1,2]"}, asJSON)
-+	t.Run("any other destination kind keeps the whole array as an array of JSON", func(t *testing.T) {
-+		// never as a QValueJSON, even for a JSON column: ClickHouse JSON only takes objects
-+		for _, kind := range []types.QValueKind{types.QValueKindJSON, types.QValueKindString, ""} {
-+			for input, expected := range map[*bson.A]string{
-+				{int32(1), int64(2)}: "[1,2]",
-+				{}:                   "[]",
-+			} {
-+				asJSON, err := converter.QValueFromBsonValue(rawArrayValueOf(t, *input), kind)
-+				require.NoError(t, err)
-+				require.Equal(t, types.QValueArrayJSON{Val: expected}, asJSON)
-+			}
- 		}
- 	})
- 
-```
-
-**File**: `flow/e2e/mongo_clickhouse/mongo_test.go` (modified, +21/-4)
-```diff
-@@ -341,6 +341,8 @@ func (s MongoClickhouseSuite) Test_Structured_Ingestion_Nested_And_Arrays() {
- 		{SourceName: "notes", DestinationType: "Array(JSON)"},
- 		// arrays of dates, declared as discovery infers them
- 		{SourceName: "visits", DestinationType: "Array(DateTime64(9))"},
-+		// receives arrays, empty or of documents, which a JSON column does not take: only objects fit it
-+		{SourceName: "slabs", DestinationType: "Nullable(JSON)"},
- 	}
- 	connectionGen := e2e.FlowConnectionGenerationConfig{
- 		FlowJobName:   e2e.AddSuffix(s, srcTable),
-@@ -354,6 +356,10 @@ func (s MongoClickhouseSuite) Test_Structured_Ingestion_Nested_And_Arrays() {
- 	collection := adminClient.Database(srcDatabase).Collection(srcTable)
- 	insertNestedDocuments := func(prefix string) {
- 		for i := range 10 {
-+			slabs := bson.A{}
-+			if i%2 == 1 {
-+				slabs = bson.A{bson.D{{Key: "k", Value: int64(i)}}}
-+			}
- 			res, err := collection.InsertOne(t.Context(), bson.D{
- 				{Key: "name", Value: fmt.Sprintf("%s_%d", prefix, i)},
- 				{Key: "address", Value: bson.D{
-@@ -366,6 +372,7 @@ func (s MongoClickhouseSuite) Test_Structured_Ingestion_Nested_And_Arrays() {
- 				{Key: "attachments", Value: bson.A{bson.D{{Key: "k", Value: int64(i)}}, nil}},
- 				{Key: "notes", Value: bson.A{"text", bson.D{{Key: "k", Value: int64(i)}}}},
- 				{Key: "visits", Value: bson.A{time.Date(2024, 1, 2, 3, 4, 5, 123_000_000, time.UTC).Add(time.Duration(i) * time.Hour), nil}},
-+				{Key: "slabs", Value: slabs},
- 			}, options.InsertOne())
- 			require.NoError(t, err)
- 			require.True(t, res.Acknowledged)
-@@ -408,15 +415,17 @@ func (s MongoClickhouseSuite) Test_Structured_Ingestion_Nested_And_Arrays() {
- 
- 	// every row got its embedded document and its typed array, while the unfitting array left its
- 	// column empty and was reported instead
--	var nestedRows, arrayRows, emptyMixedRows, emptyNotesRows, reportedRows uint64
-+	var nestedRows, arrayRows, emptyMixedRows, emptyNotesRows, nullSlabsRows, reportedRows uint64
- 	require.NoError(t, ch.QueryRow(t.Context(), fmt.Sprintf(
- 		`SELECT countIf(address IS NOT NULL), countIf(length("items") = 2), countIf(empty(mixed)), countIf(empty(notes)),
--			countIf(_peerdb_malformed_data IS NOT NULL) FROM "%s"."%s" FINAL`,
--		peer.GetClickhouseConfig().Database, dstTable)).Scan(&nestedRows, &arrayRows, &emptyMixedRows, &emptyNotesRows, &reportedRows))
-+			countIf(slabs IS NULL), countIf(_peerdb_malformed_data IS NOT NULL) FROM "%s"."%s" FINAL`,
-+		peer.GetClickhouseConfig().Database, dstTable)).Scan(
-+		&nestedRows, &arrayRows, &emptyMixedRows, &emptyNotesRows, &nullSlabsRows, &reportedRows))
- 	require.Equal(t, uint64(20), nestedRows)
- 	require.Equal(t, uint64(20), arrayRows)
- 	require.Equal(t, uint64(20), emptyMixedRows)
- 	require.Equal(t, uint64(20), emptyNotesRows)
-+	require.Equal(t, uint64(20), nullSlabsRows)
- 	require.Equal(t, uint64(20), reportedRows)
- 	// per leg, the nested document survives whole, the typed array lands element by element, and the
- 	// unfitting array is reported verbatim in its JSON form
-@@ -429,9 +438,17 @@ func (s MongoClickhouseSuite) Test_Structured_Ingestion_Nested_And_Arrays() {
- 		require.Equal(t, fmt.Sprintf("['%s_item_3_a','%s_item_3_b']", prefix, prefix), items)
- 		require.JSONEq(t, `{
- 			"mixed": {"type_mismatch": true, "value": "[3,true]"},
--			"notes": {"type_mismatch": true, "value": "[\"text\",{\"k\":3}]"}
-+			"notes": {"type_mismatch": true, "value": "[\"text\",{\"k\":3}]"},
-+			"slabs": {"type_mismatch": true, "value": "[{\"k\":3}]"}
- 		}`, malformed)
- 
-+		// the empty array is reported as well
-+		var emptySlabs string
-+		require.NoError(t, ch.QueryRow(t.Context(), fmt.Sprintf(
-+			`SELECT toString(_peerdb_malformed_data.slabs.value) FROM "%s"."%s" FINAL WHERE name = '%s_2'`,
-+			peer.GetClickhouseConfig().Database, dstTable, prefix)).Scan(&emptySlabs))
-+		require.Equal(t, "[]", emptySlabs)
-+
- 		// the array of JSON keeps its elements, the null one as the empty object
- 		var attachmentsLength uint64
- 		var firstAttachment, secondAttachment string
+       # Tilt's `proto-gen` resource runs ./generate-protos.sh (buf generate +
+       # go generate) on `tilt up`. The flow docker images and the host-run tests
+       # both consume the resulting flow/generated code, so buf must be on PATH.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5100** (2026-11-19): Default to lax nullable behavior (@ilidemi)
+- **PR #5097** (closed): ci: build debug docker images for PRs via build-docker-image label (@masterashu)
+- **PR #5094** (2026-11-19): Optimize CI speed and reduce cost further (@ilidemi)
+- **PR #5093** (2026-11-19): flow.yml/flow-tilt.yml Add Telemetry tracing, introduce cached build step, use smaller runners (@Jeremyyang920)
 - **PR #5091** (2026-11-18): Stop using QValueJSON as fallback for mismatched arrays (@pfcoperez)
-- **PR #5087** (2026-11-17): Update github-actions dependencies (@renovate[bot])
-- **PR #5086** (2026-11-17): Update dockerfile dependencies (@renovate[bot])
-- **PR #5085** (closed): fix(postgres): quote destination tables when resetting sequences (@colton-clickhouse)
-- **PR #5084** (2026-11-17): docs: describe native ClickHouse JSON (PEERDB_CLICKHOUSE_ENABLE_JSON) (@gheorghepucea)
-- **PR #5082** (2026-11-13): Move DNS error tests to .invalid TLD (@colton-clickhouse)
+- **PR #5089** (2026-11-19): Classify GCP downscope UberMint invalid_grant as retryable (@dtunikov)
 
 ---
 
@@ -2309,39 +2147,31 @@ sneaking through the malformed data detection mechanism.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Stop using QValueJSON as fallback for mismatched arrays
+## X. Default to lax nullable behavior
 
 **RULE**:
-When implementing operations in `flow/connectors/mongo/document_projection.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow/internal/dynamicconf.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5f74e0ef`: Stop using QValueJSON as fallback for mismatched arrays. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8060a376`: Default to lax nullable behavior. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/mongo/document_projection.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/internal/dynamicconf.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-				// An array that does not fit its typed column, e.g. a string element in an Array(Int64)
-				// or a scalar or nested array element in an Array(JSON), is yielded as its JSON text:
-				// a String never matches an array column, so the projector reports it as a type mismatch,
-				// its JSON form as the value, instead of the record failing.
-				var asJSON types.QValueArrayJSON
-				asJSON, err = converter.QValueArrayJSONFromArray(element.Value().Array())
-				value = types.QValueString(asJSON)
+		DefaultValue:     "true",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-				// An array that does not fit its typed column is yielded as JSON: the projector then
-				// reports it as a type mismatch, its JSON form as the value, instead of the record failing.
-				value, err = converter.QValueJSONFromArray(element.Value().Array())
+		DefaultValue:     "false",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5f74e0ef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8060a376` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

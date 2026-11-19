@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T21:24:16.987Z",
+  "last_updated": "2026-11-19T21:43:52.967Z",
   "total_verified_learnings": 9020,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22003,
+  "total_items": 22005,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e134da42fb0a5ed012cbf9d53fdf2ab75fcff537ee216aef9138274bdcc25733",
+      "content_hash": "2fcbafbbefdf669a06cc786751e937b854f9a4ced413a43ce9450410e1e8cec5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T19:31:14.983Z"
+      "persisted_at": "2026-11-19T21:43:52.829Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "bce5625dfb2cb63acdb8418a9b231196290640d687acad116859c320a68310af",
+      "content_hash": "f41a4056523ea804c6377ff06427b224089dc69f1b6ac88b0ed818255dae1cc7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T19:31:15.092Z"
+      "persisted_at": "2026-11-19T21:43:52.967Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -229398,8 +229398,8 @@
       "slug": "peerdb-io-peerdb",
       "platform": "github",
       "source_url": "https://github.com/PeerDB-io/peerdb",
-      "source_version": "5f74e0ef",
-      "content_hash": "234286e4cec9e3feb13b81d1f13118eef1bc2741961f4c93d2657efe5dd9f653",
+      "source_version": "7715b315",
+      "content_hash": "111734d56a33aa5c8f85b70ad301437080ee5f308a800fe37057dbe11ec523f2",
       "dossier_path": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
       "promoted_rules": [
@@ -229417,6 +229417,11 @@
           "number": 9260,
           "title": "Stop using QValueJSON as fallback for mismatched arrays",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9449,
+          "title": "Default to lax nullable behavior",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229424,7 +229429,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T17:01:47.299Z",
+      "verified_at": "2026-11-19T21:43:47.408Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229478,10 +229483,10 @@
       "relative_path": "08_VERIFICATION/peerdb-io-peerdb-verification-protocol-empirical-defect-shield-for-peerdb-io-pee.md",
       "title": "Verification Protocol: Empirical Defect Shield for PeerDB-io/peerdb",
       "repository": "PeerDB-io/peerdb",
-      "source_version": "5f74e0ef",
-      "content_hash": "96e6e11318bd44b7afb4141199642b44fe29caac3225cff6af5a7f48de53b56c",
+      "source_version": "7715b315",
+      "content_hash": "6ad69174a775fbcfb2e9a6cd0b5892cedc90ad9f2bdfaa4daaf3406cf7188f75",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T17:01:48.219Z"
+      "persisted_at": "2026-11-19T21:43:48.080Z"
     },
     "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-learnings-core-invariants": {
       "item_id": "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-learnings-core-invariants",
@@ -281656,10 +281661,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-architecture-intelligence-peerdb-io-peerdb-core-invariants.md",
       "title": "Architecture Intelligence: PeerDB-io/peerdb Core Invariants",
       "repository": "PeerDB-io/peerdb",
-      "source_version": "5f74e0ef",
-      "content_hash": "3db712258e09c1317b629219b76974c4a775b864bc683fb0056482733fc1ddb1",
+      "source_version": "7715b315",
+      "content_hash": "a648383fa53571c64e8227bcfc6911e1754356d754ff48333eecc012ec79017b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T17:01:48.022Z"
+      "persisted_at": "2026-11-19T21:43:47.931Z"
     },
     "candidate_directive-postgres-keep-sql-null-elements-of-a-json-add-column-default-as-null-on-nulla": {
       "item_id": "candidate_directive-postgres-keep-sql-null-elements-of-a-json-add-column-default-as-null-on-nulla",
@@ -281681,9 +281686,9 @@
       "title": "Architecture Intelligence: peerdb-io-peerdb-learnings Core Invariants",
       "repository": "peerdb-io-peerdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "043c0946632fac1ca9e5be30e97d25fafff754412131e6b0473f28d1169525c6",
+      "content_hash": "85b422747205e4d18d873ec103b320f0e521da2edb3c4c86b43598814c89d7b4",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T17:02:00.313Z"
+      "persisted_at": "2026-11-19T21:43:51.252Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-peerdb-io-peerdb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-peerdb-io-peerdb-learnings",
@@ -281693,9 +281698,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for peerdb-io-peerdb-learnings",
       "repository": "peerdb-io-peerdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "9faad07aebd365f9d27e3eec09717d903ccfdd0cf9440cc32c700a9d29a8edeb",
+      "content_hash": "108c2cbda78c2ab9dbcf6d78d325abe8c5e894f44b024c61cb6267c32659c377",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T17:02:00.502Z"
+      "persisted_at": "2026-11-19T21:43:51.415Z"
     },
     "learn-huggingface-comfy-org-wan-2-2": {
       "learning_id": "learn-huggingface-comfy-org-wan-2-2",
@@ -287479,9 +287484,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "106f9835db09f827139aa310424891187168c6e5e3f52cd36c8597285ca495b3",
+      "content_hash": "022cc80449b745275cdb975765bed548318a3702e4cb508bdb67f46e8105551b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T20:00:32.047Z"
+      "persisted_at": "2026-11-19T21:43:51.837Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -294300,13 +294305,13 @@
       "item_id": "candidate_directive-build-download-onnx-runtime-archives-from-npmmirror",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-4AZI-build-download-onnx-runtime-archives-from-npmmirror.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-UV8Q-build-download-onnx-runtime-archives-from-npmmirror.md",
       "title": "build): download ONNX Runtime archives from npmmirror",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ba5296bda974d9ecedd223c4e76bed38e4b8509ca1d51f0204b1b7674e01f254",
+      "content_hash": "d6dc36335f78bd07c1d246d243656169c4334ec6a24598bacd9d04c43ba7dc5d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T19:31:14.719Z"
+      "persisted_at": "2026-11-19T21:43:52.490Z"
     },
     "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -294316,9 +294321,9 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "532070f255d0d2d73f640e724c910a4366a8a7de18f4de653806d31f6e9ddac9",
+      "content_hash": "2ac77ce68e3aae75b62dd9f89d247db7bd1dda4488187b12648ba1a75f624426",
       "domain_letter": "G",
-      "persisted_at": "2026-11-19T19:31:14.855Z"
+      "persisted_at": "2026-11-19T21:43:52.651Z"
     },
     "candidate_directive-platform-enforce-signed-policy-at-session-startup": {
       "item_id": "candidate_directive-platform-enforce-signed-policy-at-session-startup",
@@ -297646,6 +297651,32 @@
       "content_hash": "60beb697546a8f0eec80dc7f2e84f247281b22ef123b352e8c4039c0ef4618f7",
       "domain_letter": "G",
       "persisted_at": "2026-11-19T21:24:16.833Z"
+    },
+    "rule-9449": {
+      "learning_id": "rule-9449",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9449,
+      "title": "Default to lax nullable behavior",
+      "source_url": "https://github.com/PeerDB-io/peerdb",
+      "source_version": "7715b315",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T21:43:47.408Z"
+    },
+    "candidate_directive-default-to-lax-nullable-behavior": {
+      "item_id": "candidate_directive-default-to-lax-nullable-behavior",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UU64-default-to-lax-nullable-behavior.md",
+      "title": "Default to lax nullable behavior",
+      "repository": "peerdb-io-peerdb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "93798b9f02e52efdf401e171544d790b7bec8c03890375225d668c15beeb913f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T21:43:51.103Z"
     }
   },
   "ai-builder-brain": {

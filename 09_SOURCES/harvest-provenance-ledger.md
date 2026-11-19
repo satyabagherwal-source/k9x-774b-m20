@@ -11419,3 +11419,4 @@ Every entry in this ledger must capture:
 | `learn-github-lapce-lapce` | `https://github.com/lapce/lapce` | `9e8317c8` | Multi-dimensional audit evidence | 2026-11-19T21:23:58.467Z |
 | `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `d41be195` | Multi-dimensional audit evidence | 2026-11-19T21:24:05.641Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `a2c33d06` | Multi-dimensional audit evidence | 2026-11-19T21:24:11.257Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `7715b315` | Multi-dimensional audit evidence | 2026-11-19T21:43:47.600Z |

@@ -11386,3 +11386,4 @@
 | `CYCLE-20261119-59XB` | `2026-11-19T21:23:58.463Z` | `lapce/lapce` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9446` | Yes (`57f1919f...`) |
 | `CYCLE-20261119-5FGM` | `2026-11-19T21:24:05.638Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9447` | Yes (`edefedb1...`) |
 | `CYCLE-20261119-5JSL` | `2026-11-19T21:24:11.253Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9448` | Yes (`57c36e57...`) |
+| `CYCLE-20261119-URGS` | `2026-11-19T21:43:47.596Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9449` | Yes (`111734d5...`) |

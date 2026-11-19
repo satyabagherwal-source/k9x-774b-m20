@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T21:24:11.266Z",
+  "last_updated": "2026-11-19T21:43:47.608Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5481,14 +5481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "234286e4cec9e3feb13b81d1f13118eef1bc2741961f4c93d2657efe5dd9f653",
-      "verified_at": "2026-11-18T17:01:47.554Z",
+      "content_hash": "111734d56a33aa5c8f85b70ad301437080ee5f308a800fe37057dbe11ec523f2",
+      "verified_at": "2026-11-19T21:43:47.608Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T17:01:47.554Z"
+      "last_updated": "2026-11-19T21:43:47.608Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",

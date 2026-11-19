@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "5f74e0ef",
+    "sourceVersion": "7715b315",
     "license": "AGPL-3.0",
-    "contentHash": "234286e4cec9e3feb13b81d1f13118eef1bc2741961f4c93d2657efe5dd9f653",
-    "lastHarvestedAt": "2026-11-18T17:01:47.541Z",
+    "contentHash": "111734d56a33aa5c8f85b70ad301437080ee5f308a800fe37057dbe11ec523f2",
+    "lastHarvestedAt": "2026-11-19T21:43:47.600Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {

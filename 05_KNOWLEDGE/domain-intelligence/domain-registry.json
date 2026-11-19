@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T21:24:16.833Z",
+  "last_updated": "2026-11-19T21:43:52.651Z",
   "total_records": 2030,
   "domains": {
     "A": {
@@ -29568,8 +29568,8 @@
       "title": "Architecture Intelligence: PeerDB-io/peerdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-architecture-intelligence-peerdb-io-peerdb-core-invariants.md",
       "repository": "PeerDB-io/peerdb",
-      "content_hash": "3db712258e09c1317b629219b76974c4a775b864bc683fb0056482733fc1ddb1",
-      "created_at": "2026-11-18T17:01:48.022Z"
+      "content_hash": "a648383fa53571c64e8227bcfc6911e1754356d754ff48333eecc012ec79017b",
+      "created_at": "2026-11-19T21:43:47.931Z"
     },
     "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants",
@@ -29577,8 +29577,8 @@
       "title": "Architecture Intelligence: peerdb-io-peerdb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-learnings-architecture-intelligence-peerdb-io-peerdb-learnings-.md",
       "repository": "peerdb-io-peerdb-learnings",
-      "content_hash": "043c0946632fac1ca9e5be30e97d25fafff754412131e6b0473f28d1169525c6",
-      "created_at": "2026-11-18T17:02:00.313Z"
+      "content_hash": "85b422747205e4d18d873ec103b320f0e521da2edb3c4c86b43598814c89d7b4",
+      "created_at": "2026-11-19T21:43:51.252Z"
     },
     "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants",
@@ -31126,8 +31126,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "106f9835db09f827139aa310424891187168c6e5e3f52cd36c8597285ca495b3",
-      "created_at": "2026-11-19T20:00:32.047Z"
+      "content_hash": "022cc80449b745275cdb975765bed548318a3702e4cb508bdb67f46e8105551b",
+      "created_at": "2026-11-19T21:43:51.837Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
@@ -33160,8 +33160,8 @@
       "title": "Architecture Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zvec-ai-zvec-grep-learnings-architecture-intelligence-zvec-ai-zvec-grep-learning.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "532070f255d0d2d73f640e724c910a4366a8a7de18f4de653806d31f6e9ddac9",
-      "created_at": "2026-11-19T19:31:14.855Z"
+      "content_hash": "2ac77ce68e3aae75b62dd9f89d247db7bd1dda4488187b12648ba1a75f624426",
+      "created_at": "2026-11-19T21:43:52.651Z"
     },
     "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-milvus-io-milvus-core-invariants",

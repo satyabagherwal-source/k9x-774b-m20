@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T21:24:11.262Z",
-  "total_cycles_completed": 10870,
-  "total_learnings_persisted": 10870,
-  "total_rules_promoted": 10223,
+  "last_updated": "2026-11-19T21:43:47.605Z",
+  "total_cycles_completed": 10871,
+  "total_learnings_persisted": 10871,
+  "total_rules_promoted": 10224,
   "history": [
-    {
-      "timestamp": "2026-11-19T01:18:42.777Z",
-      "repository": "u-root/u-root",
-      "learningId": "learn-github-u-root-u-root",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T01:18:56.474Z",
       "repository": "yugabyte/yugabyte-db",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-19T21:24:11.262Z",
       "repository": "lioensky/VCPToolBox",
       "learningId": "learn-github-lioensky-vcptoolbox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T21:43:47.605Z",
+      "repository": "PeerDB-io/peerdb",
+      "learningId": "learn-github-peerdb-io-peerdb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
