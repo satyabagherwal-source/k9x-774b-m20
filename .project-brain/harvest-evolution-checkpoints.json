@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T05:06:24.207Z",
+  "last_updated": "2026-11-19T05:24:40.437Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T02:03:45.340Z",
@@ -213,7 +213,7 @@
       "staged_for_review": 1
     },
     "temporalio-temporal-learnings.md": {
-      "processed_at": "2026-11-17T16:14:21.531Z",
+      "processed_at": "2026-11-19T05:24:39.484Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -238,7 +238,7 @@
       "staged_for_review": 1
     },
     "onejs-one-learnings.md": {
-      "processed_at": "2026-11-18T04:57:31.049Z",
+      "processed_at": "2026-11-19T05:24:38.810Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2638,8 +2638,8 @@
       "staged_for_review": 0
     },
     "hf-zai-org-glm-5.3-learnings.md": {
-      "processed_at": "2026-11-14T15:50:17.296Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T05:24:38.468Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-mudler-locate-anything.cpp-gguf-learnings.md": {
@@ -3498,7 +3498,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2175,
+  "total_dossiers_evaluated": 2178,
   "total_canonical_promoted": 376,
-  "total_staged_for_review": 1627
+  "total_staged_for_review": 1629
 }

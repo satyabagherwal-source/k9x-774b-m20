@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T05:06:24.114Z",
+  "last_updated": "2026-11-19T05:24:40.314Z",
   "total_verified_learnings": 9014,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21629,
+  "total_items": 21638,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -215142,8 +215142,8 @@
       "slug": "temporalio-temporal",
       "platform": "github",
       "source_url": "https://github.com/temporalio/temporal",
-      "source_version": "a1e00523",
-      "content_hash": "5ec636e839dda6afa871872737502490bd155e86b2036e58fcc0ac547df3399e",
+      "source_version": "4841d727",
+      "content_hash": "582516a752c1de334ea698589ecb70c4edad1fc7a89be0c3f204481664799b94",
       "dossier_path": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
       "promoted_rules": [
@@ -215161,6 +215161,11 @@
           "number": 8997,
           "title": "refuse polls that arrive after ShutdownWorker of an unloaded task queue",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9335,
+          "title": "Bump Go and dependencies to fix reported CVEs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215168,7 +215173,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T16:14:10.163Z",
+      "verified_at": "2026-11-19T05:24:31.398Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215222,10 +215227,10 @@
       "relative_path": "08_VERIFICATION/temporalio-temporal-verification-protocol-empirical-defect-shield-for-temporalio.md",
       "title": "Verification Protocol: Empirical Defect Shield for temporalio/temporal",
       "repository": "temporalio/temporal",
-      "source_version": "a1e00523",
-      "content_hash": "25d7c3ad3fa997ceca8ad1502fa0d11400797a3bf8c8403da395896a53dd6fbf",
+      "source_version": "4841d727",
+      "content_hash": "40a7f55afcc14dc473e7a800def76bd2675470aa3de799cb6317bb887ebc4700",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:14:10.743Z"
+      "persisted_at": "2026-11-19T05:24:32.068Z"
     },
     "learn-github-alibaba-zvec": {
       "learning_id": "learn-github-alibaba-zvec",
@@ -215352,9 +215357,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for temporalio-temporal-learnings",
       "repository": "temporalio-temporal-learnings",
       "source_version": "HEAD",
-      "content_hash": "fdbe2b4a74b7b1130305f650a40805ebdad70e8706f5b5bec90552ac8bf706e1",
+      "content_hash": "040219a386f82017fa36b84176a8a79fb90491d8361872a541c997816f2e1c54",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:14:21.994Z"
+      "persisted_at": "2026-11-19T05:24:40.314Z"
     },
     "candidate_directive-turbo-constrain-record-int8-kernels-to-dispatched-isa": {
       "item_id": "candidate_directive-turbo-constrain-record-int8-kernels-to-dispatched-isa",
@@ -231612,7 +231617,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/zai-org/GLM-5.3",
       "source_version": "hf-zai-org-glm-5.3",
-      "content_hash": "b9bf42419290a6dd6597206a7cd78379d9824266d90b0c24c8025f8bb264cf52",
+      "content_hash": "f549d825b8af51fb809c5482f8af7d01b75435be10c8936e6a5226b3fa80a815",
       "dossier_path": "07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md",
       "promoted_rules": [],
@@ -231621,7 +231626,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T15:49:27.706Z",
+      "verified_at": "2026-11-19T05:24:20.450Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231638,9 +231643,9 @@
       "title": "Research & Knowledge Intelligence: zai-org/GLM-5.3 Core Invariants",
       "repository": "zai-org/GLM-5.3",
       "source_version": "hf-zai-org-glm-5.3",
-      "content_hash": "d377cbcbd63a6c0a70eb30152b09bb35b52a475c940d7d8e728e32afad0174b7",
+      "content_hash": "c003cdb41bd8fa256ed447f894009381e5604ff7ce99dde04e2657781efc8cc2",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T15:49:28.062Z"
+      "persisted_at": "2026-11-19T05:24:20.832Z"
     },
     "learn-github-oxc-project-oxc": {
       "learning_id": "learn-github-oxc-project-oxc",
@@ -232000,9 +232005,9 @@
       "title": "Research & Knowledge Intelligence: hf-zai-org-glm-5.3-learnings Core Invariants",
       "repository": "hf-zai-org-glm-5.3-learnings",
       "source_version": "HEAD",
-      "content_hash": "a699dfccf85c00c78d7562ed3c0dab52058734d279c47d1208b6edbef75dfbf3",
+      "content_hash": "a6b7991295feb4733f2054a4aa44de8b4d4bfb82d117a9daef6276aa366ba253",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T15:50:17.487Z"
+      "persisted_at": "2026-11-19T05:24:38.648Z"
     },
     "candidate_directive-python-finish-harness-cleanup-before-propagating-cancellation": {
       "item_id": "candidate_directive-python-finish-harness-cleanup-before-propagating-cancellation",
@@ -237457,8 +237462,8 @@
       "slug": "onejs-one",
       "platform": "github",
       "source_url": "https://github.com/onejs/one",
-      "source_version": "aaba81ee",
-      "content_hash": "c859c2c39fdc8cf4a0f471319aac0900b1ad03a7332030ec178d0743a5e42628",
+      "source_version": "78627c14",
+      "content_hash": "d5a25b83b790b4f4b1811ecacd5ec192ae62ec848d59512f7b781bee0f382be2",
       "dossier_path": "07_PROJECT_LEARNING/onejs-one-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/onejs-one-learnings.md",
       "promoted_rules": [
@@ -237471,6 +237476,11 @@
           "number": 9126,
           "title": "Empirical Invariant Guard in BunRuntime.cpp",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9334,
+          "title": "gate camera link group, prune destructured SDK reads, and write Expo link",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237478,7 +237488,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T04:57:22.913Z",
+      "verified_at": "2026-11-19T05:24:29.196Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237532,10 +237542,10 @@
       "relative_path": "08_VERIFICATION/onejs-one-verification-protocol-empirical-defect-shield-for-onejs-one.md",
       "title": "Verification Protocol: Empirical Defect Shield for onejs/one",
       "repository": "onejs/one",
-      "source_version": "aaba81ee",
-      "content_hash": "335c94dfa7d71f3b610f04b6f3fbed2f15e7ca4ea0e05dbbc97f6e191c4f993c",
+      "source_version": "78627c14",
+      "content_hash": "507cc653ad785a43de64774f447a4fd3f63aa7eee9d305813782d37b9af44d66",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T04:57:23.497Z"
+      "persisted_at": "2026-11-19T05:24:29.834Z"
     },
     "learn-github-duckdb-duckdb": {
       "learning_id": "learn-github-duckdb-duckdb",
@@ -237645,9 +237655,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for onejs-one-learnings",
       "repository": "onejs-one-learnings",
       "source_version": "HEAD",
-      "content_hash": "b52085b79d5e89a35d74736e063cc40ce395afd6595c9c6e96e0a8e2c2bceff5",
+      "content_hash": "ff7c779a3b06e00db6fb8b9f06adc85f6109e79887afc5920e8fa66cb7d3b06f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T04:57:31.479Z"
+      "persisted_at": "2026-11-19T05:24:39.349Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-learnings-core-invariants",
@@ -242539,10 +242549,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-temporalio-temporal-architecture-intelligence-temporalio-temporal-core-invariant.md",
       "title": "Architecture Intelligence: temporalio/temporal Core Invariants",
       "repository": "temporalio/temporal",
-      "source_version": "a1e00523",
-      "content_hash": "4f1e10aa2370c56773f0a33cf41659b740ce6739bd57e1aa31603abf8be10a80",
+      "source_version": "4841d727",
+      "content_hash": "06711348c928ce700cc3d4d254970d47950d8aa747b12c0c52c033d50851eadb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T16:14:10.616Z"
+      "persisted_at": "2026-11-19T05:24:31.924Z"
     },
     "rule-7277": {
       "learning_id": "rule-7277",
@@ -242590,9 +242600,9 @@
       "title": "Architecture Intelligence: temporalio-temporal-learnings Core Invariants",
       "repository": "temporalio-temporal-learnings",
       "source_version": "HEAD",
-      "content_hash": "11d64b7d59331178b85f86343892c9894c47a1c2e12ec74adeb78639ada9914a",
+      "content_hash": "4a7934cbf7f8000c74fa41786c44209c571d0f521581c6ab02289ab1413caa31",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T16:14:21.861Z"
+      "persisted_at": "2026-11-19T05:24:40.169Z"
     },
     "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-learnings-core-invariants",
@@ -254448,14 +254458,19 @@
       "slug": "redisearch-redisearch",
       "platform": "github",
       "source_url": "https://github.com/RediSearch/RediSearch",
-      "source_version": "fd2bfe48",
-      "content_hash": "9c2a15e614205b9a86d4338b55335630142b1a1412fea1d9c56a66b82f940087",
+      "source_version": "495f707d",
+      "content_hash": "3b14c6b4046320e52930e38272dd30b35ae69987e704ac610be76b8aefd49d61",
       "dossier_path": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/redisearch-redisearch-learnings.md",
       "promoted_rules": [
         {
           "number": 8976,
           "title": "Fix crash when an index with an alias is loaded more than once",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9336,
+          "title": "share SkipTo clearing and the timeout granularity",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -254464,7 +254479,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T14:33:32.881Z",
+      "verified_at": "2026-11-19T05:24:35.045Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -272340,10 +272355,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-redisearch-redisearch-architecture-intelligence-redisearch-redisearch-core-invar.md",
       "title": "Architecture Intelligence: RediSearch/RediSearch Core Invariants",
       "repository": "RediSearch/RediSearch",
-      "source_version": "fd2bfe48",
-      "content_hash": "089539ddaa3244805d810b2b4bed1c4d754501b8c85d0b2696a5d84827bd414c",
+      "source_version": "495f707d",
+      "content_hash": "1427c3cac5c2d8591a0fea3b412a9fb636762dadf960e925cc97b4425b597f2f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T14:33:33.481Z"
+      "persisted_at": "2026-11-19T05:24:35.564Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-redisearch-redisearch": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-redisearch-redisearch",
@@ -272352,10 +272367,10 @@
       "relative_path": "08_VERIFICATION/redisearch-redisearch-verification-protocol-empirical-defect-shield-for-redisear.md",
       "title": "Verification Protocol: Empirical Defect Shield for RediSearch/RediSearch",
       "repository": "RediSearch/RediSearch",
-      "source_version": "fd2bfe48",
-      "content_hash": "c5b6c6d2b4000860939f3ecfe3a8bf23a795e99e97cef1a49020b9c2496eb46f",
+      "source_version": "495f707d",
+      "content_hash": "d0192e4f6d7f93ea89104d70e3cb22843a9a2356ed35911e22af9dc45b1be8e3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T14:33:33.653Z"
+      "persisted_at": "2026-11-19T05:24:35.702Z"
     },
     "learn-huggingface-autogluon-chronos-2": {
       "learning_id": "learn-huggingface-autogluon-chronos-2",
@@ -292224,6 +292239,120 @@
       "content_hash": "6f8614e9ce014560d90e55c8f39914ad38cb5ccbd314e5af0b7f9b3c6fea9d35",
       "domain_letter": "K",
       "persisted_at": "2026-11-19T05:06:24.114Z"
+    },
+    "rule-9334": {
+      "learning_id": "rule-9334",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9334,
+      "title": "gate camera link group, prune destructured SDK reads, and write Expo link",
+      "source_url": "https://github.com/onejs/one",
+      "source_version": "78627c14",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T05:24:29.196Z"
+    },
+    "candidate_directive-gate-camera-link-group-prune-destructured-sdk-reads-and-write-expo-link": {
+      "item_id": "candidate_directive-gate-camera-link-group-prune-destructured-sdk-reads-and-write-expo-link",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VDH2-gate-camera-link-group-prune-destructured-sdk-reads-and-write-expo-link.md",
+      "title": "gate camera link group, prune destructured SDK reads, and write Expo link",
+      "repository": "onejs/one",
+      "source_version": "78627c14",
+      "content_hash": "5ff4d4c451026b4447bae9ca3a73feb792c9f8e314eb13bd74e3796215c827c3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T05:24:29.561Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-onejs-one-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-onejs-one-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-onejs-one-technical-construction-intelligence-onejs-one-core-invariants.md",
+      "title": "Technical Construction Intelligence: onejs/one Core Invariants",
+      "repository": "onejs/one",
+      "source_version": "78627c14",
+      "content_hash": "a8eb759756aa3f24a511a65846444fef88c99fcc46a4695c536eb1d4ef8f9a7b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T05:24:29.694Z"
+    },
+    "rule-9335": {
+      "learning_id": "rule-9335",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9335,
+      "title": "Bump Go and dependencies to fix reported CVEs",
+      "source_url": "https://github.com/temporalio/temporal",
+      "source_version": "4841d727",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T05:24:31.398Z"
+    },
+    "candidate_directive-bump-go-and-dependencies-to-fix-reported-cves": {
+      "item_id": "candidate_directive-bump-go-and-dependencies-to-fix-reported-cves",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VLJT-bump-go-and-dependencies-to-fix-reported-cves.md",
+      "title": "Bump Go and dependencies to fix reported CVEs",
+      "repository": "temporalio-temporal-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b0407aa48e3a4e72f8fcb86e630654dbbd0e4b91636bf9e17dc10d04c79d444e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T05:24:40.029Z"
+    },
+    "rule-9336": {
+      "learning_id": "rule-9336",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9336,
+      "title": "share SkipTo clearing and the timeout granularity",
+      "source_url": "https://github.com/RediSearch/RediSearch",
+      "source_version": "495f707d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T05:24:35.045Z"
+    },
+    "candidate_directive-share-skipto-clearing-and-the-timeout-granularity": {
+      "item_id": "candidate_directive-share-skipto-clearing-and-the-timeout-granularity",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VHZU-share-skipto-clearing-and-the-timeout-granularity.md",
+      "title": "share SkipTo clearing and the timeout granularity",
+      "repository": "RediSearch/RediSearch",
+      "source_version": "495f707d",
+      "content_hash": "f609c74b8c11d5e4823d32b4322fc859efda1e060f22750dbbc9ea579f0b9072",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T05:24:35.421Z"
+    },
+    "candidate_directive-ios-gate-camera-link-group-prune-destructured-sdk-reads-and-write-expo-link": {
+      "item_id": "candidate_directive-ios-gate-camera-link-group-prune-destructured-sdk-reads-and-write-expo-link",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VKT0-ios-gate-camera-link-group-prune-destructured-sdk-reads-and-write-expo-link.md",
+      "title": "ios): gate camera link group, prune destructured SDK reads, and write Expo link",
+      "repository": "onejs-one-learnings",
+      "source_version": "HEAD",
+      "content_hash": "99adc9e3edcb0f2253717987d66638bebaf52cd16ec46d424f425174bcdf45b3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T05:24:39.063Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-onejs-one-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-onejs-one-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-onejs-one-learnings-technical-construction-intelligence-onejs-one-learnings-core.md",
+      "title": "Technical Construction Intelligence: onejs-one-learnings Core Invariants",
+      "repository": "onejs-one-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e9436a05457d5e39c585d6fe4baf266ce5c226768ca3940c714f8ff8f21e8110",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T05:24:39.205Z"
     }
   },
   "ai-builder-brain": {

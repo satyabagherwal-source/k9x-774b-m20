@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T05:06:23.898Z",
+  "last_updated": "2026-11-19T05:24:40.029Z",
   "directives": [
     {
       "id": "CD-001",
@@ -32088,6 +32088,59 @@
       "source_repo": "genkit-ai-genkit",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-31294A-build-deps-dev-bump-the-root-dependencie.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-VDH2",
+      "directive_title": "gate camera link group, prune destructured SDK reads, and write Expo link",
+      "source_repo": "onejs/one",
+      "source_commit": "78627c14",
+      "staged_file": "11_INBOX/candidate-directives/CD-VDH2-gate-camera-link-group-prune-destructured-sdk-reads-and-write-expo-link.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-VLJT",
+      "directive_title": "Bump Go and dependencies to fix reported CVEs",
+      "source_repo": "temporalio-temporal-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-VLJT-bump-go-and-dependencies-to-fix-reported-cves.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-VHZU",
+      "directive_title": "share SkipTo clearing and the timeout granularity",
+      "source_repo": "RediSearch/RediSearch",
+      "source_commit": "495f707d",
+      "staged_file": "11_INBOX/candidate-directives/CD-VHZU-share-skipto-clearing-and-the-timeout-granularity.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-19",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-VKT0",
+      "directive_title": "ios): gate camera link group, prune destructured SDK reads, and write Expo link",
+      "source_repo": "onejs-one-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-VKT0-ios-gate-camera-link-group-prune-destructured-sdk-reads-and-write-expo-link.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-C63F8A",
+      "directive_title": "Bump Go and dependencies to fix reported CVEs",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "temporalio-temporal",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C63F8A-bump-go-and-dependencies-to-fix-reported.md",
       "staged_date": "2026-11-19"
     }
   ]

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T05:06:24.008Z",
-  "total_records": 1943,
+  "last_updated": "2026-11-19T05:24:40.169Z",
+  "total_records": 1945,
   "domains": {
     "A": {
       "total": 13,
@@ -1295,7 +1295,7 @@
       ]
     },
     "H": {
-      "total": 448,
+      "total": 450,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1744,7 +1744,9 @@
         "DOM-H-6F9CB66B",
         "domain_intelligence-technical-construction-intelligence-apache-zookeeper-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-octodns-octodns-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-genkit-ai-genkit-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-genkit-ai-genkit-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-onejs-one-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-onejs-one-learnings-core-invariants"
       ]
     },
     "I": {
@@ -16174,8 +16176,8 @@
       "title": "Research & Knowledge Intelligence: zai-org/GLM-5.3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-zai-org-glm-5-3-research-knowledge-intelligence-zai-org-glm-5-3-core-invarian.md",
       "repository": "zai-org/GLM-5.3",
-      "content_hash": "d377cbcbd63a6c0a70eb30152b09bb35b52a475c940d7d8e728e32afad0174b7",
-      "created_at": "2026-11-14T15:49:28.062Z"
+      "content_hash": "c003cdb41bd8fa256ed447f894009381e5604ff7ce99dde04e2657781efc8cc2",
+      "created_at": "2026-11-19T05:24:20.832Z"
     },
     "domain_intelligence-architecture-intelligence-oxc-project-oxc-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-oxc-project-oxc-core-invariants",
@@ -16261,8 +16263,8 @@
       "title": "Research & Knowledge Intelligence: hf-zai-org-glm-5.3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-zai-org-glm-5-3-learnings-research-knowledge-intelligence-hf-zai-org-glm-5-3-.md",
       "repository": "hf-zai-org-glm-5.3-learnings",
-      "content_hash": "a699dfccf85c00c78d7562ed3c0dab52058734d279c47d1208b6edbef75dfbf3",
-      "created_at": "2026-11-14T15:50:17.487Z"
+      "content_hash": "a6b7991295feb4733f2054a4aa44de8b4d4bfb82d117a9daef6276aa366ba253",
+      "created_at": "2026-11-19T05:24:38.648Z"
     },
     "domain_intelligence-technical-construction-intelligence-agent-field-agentfield-learnings-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-agent-field-agentfield-learnings-core-invari",
@@ -19772,8 +19774,8 @@
       "title": "Architecture Intelligence: temporalio/temporal Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-temporalio-temporal-architecture-intelligence-temporalio-temporal-core-invariant.md",
       "repository": "temporalio/temporal",
-      "content_hash": "4f1e10aa2370c56773f0a33cf41659b740ce6739bd57e1aa31603abf8be10a80",
-      "created_at": "2026-11-17T16:14:10.616Z"
+      "content_hash": "06711348c928ce700cc3d4d254970d47950d8aa747b12c0c52c033d50851eadb",
+      "created_at": "2026-11-19T05:24:31.924Z"
     },
     "DOM-D-3FA9CA89": {
       "record_id": "DOM-D-3FA9CA89",
@@ -19832,8 +19834,8 @@
       "title": "Architecture Intelligence: temporalio-temporal-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-temporalio-temporal-learnings-architecture-intelligence-temporalio-temporal-lear.md",
       "repository": "temporalio-temporal-learnings",
-      "content_hash": "11d64b7d59331178b85f86343892c9894c47a1c2e12ec74adeb78639ada9914a",
-      "created_at": "2026-11-17T16:14:21.861Z"
+      "content_hash": "4a7934cbf7f8000c74fa41786c44209c571d0f521581c6ab02289ab1413caa31",
+      "created_at": "2026-11-19T05:24:40.169Z"
     },
     "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-projectdiscovery-nuclei-learnings-core-invariants",
@@ -27494,8 +27496,8 @@
       "title": "Architecture Intelligence: RediSearch/RediSearch Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-redisearch-redisearch-architecture-intelligence-redisearch-redisearch-core-invar.md",
       "repository": "RediSearch/RediSearch",
-      "content_hash": "089539ddaa3244805d810b2b4bed1c4d754501b8c85d0b2696a5d84827bd414c",
-      "created_at": "2026-11-17T14:33:33.481Z"
+      "content_hash": "1427c3cac5c2d8591a0fea3b412a9fb636762dadf960e925cc97b4425b597f2f",
+      "created_at": "2026-11-19T05:24:35.564Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autogluon-chronos-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autogluon-chronos-2-core-invariants",
@@ -32625,6 +32627,24 @@
       "repository": "genkit-ai-genkit-learnings",
       "content_hash": "d89351e7f0c91917c9a764fc1a02c29d0b51cbd38516401451a5b4c2f531287d",
       "created_at": "2026-11-19T05:06:24.008Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-onejs-one-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-onejs-one-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: onejs/one Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-onejs-one-technical-construction-intelligence-onejs-one-core-invariants.md",
+      "repository": "onejs/one",
+      "content_hash": "a8eb759756aa3f24a511a65846444fef88c99fcc46a4695c536eb1d4ef8f9a7b",
+      "created_at": "2026-11-19T05:24:29.694Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-onejs-one-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-onejs-one-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: onejs-one-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-onejs-one-learnings-technical-construction-intelligence-onejs-one-learnings-core.md",
+      "repository": "onejs-one-learnings",
+      "content_hash": "e9436a05457d5e39c585d6fe4baf266ce5c226768ca3940c714f8ff8f21e8110",
+      "created_at": "2026-11-19T05:24:39.205Z"
     }
   }
 }

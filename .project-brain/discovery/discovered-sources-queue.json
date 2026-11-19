@@ -2,18 +2,18 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T04:44:48.451Z",
+  "updated_at": "2026-11-19T05:24:39.837Z",
   "stats": {
-    "total_discovered": 5786,
-    "approved_pending_harvest": 5476,
+    "total_discovered": 5793,
+    "approved_pending_harvest": 5482,
     "harvested_count": 0,
-    "rejected_count": 310,
+    "rejected_count": 311,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5451,
+      "COMMUNITY_AND_EXPERT": 5452,
       "OFFICIAL_DOCUMENTATION": 186,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
-      "SECURITY_ADVISORIES": 26,
+      "SECURITY_ADVISORIES": 32,
       "LEGAL_AND_REGULATORY": 2,
       "RESEARCH_AND_ACADEMIA": 6
     }
@@ -125143,6 +125143,153 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-lilylilith-qi_2.1_anyangle-learnings.md",
         "fileName": "hf-lilylilith-qi_2.1_anyangle-learnings.md"
+      }
+    },
+    "SRC-764475739BE3": {
+      "id": "SRC-764475739BE3",
+      "url": "http://localhost:8081/index.bundle?platform=ios",
+      "title": "http://localhost:8081/index.bundle?platform=ios",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-19T05:24:38.873Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/onejs-one-learnings.md",
+        "fileName": "onejs-one-learnings.md"
+      }
+    },
+    "SRC-643D4336E355": {
+      "id": "SRC-643D4336E355",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-63772",
+      "title": "Vulnerability Advisory CVE-2026-63772",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T05:24:39.599Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
+        "fileName": "temporalio-temporal-learnings.md"
+      }
+    },
+    "SRC-FF1E7F88E70B": {
+      "id": "SRC-FF1E7F88E70B",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-66055",
+      "title": "Vulnerability Advisory CVE-2026-66055",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T05:24:39.636Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
+        "fileName": "temporalio-temporal-learnings.md"
+      }
+    },
+    "SRC-48BF9634E5D2": {
+      "id": "SRC-48BF9634E5D2",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-83663",
+      "title": "Vulnerability Advisory CVE-2026-83663",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T05:24:39.674Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
+        "fileName": "temporalio-temporal-learnings.md"
+      }
+    },
+    "SRC-032CAD6C010E": {
+      "id": "SRC-032CAD6C010E",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-94637",
+      "title": "Vulnerability Advisory CVE-2026-94637",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T05:24:39.713Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
+        "fileName": "temporalio-temporal-learnings.md"
+      }
+    },
+    "SRC-813E46AA4727": {
+      "id": "SRC-813E46AA4727",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-81870",
+      "title": "Vulnerability Advisory CVE-2026-81870",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T05:24:39.798Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
+        "fileName": "temporalio-temporal-learnings.md"
+      }
+    },
+    "SRC-3F4D3BB590EB": {
+      "id": "SRC-3F4D3BB590EB",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2026-4738",
+      "title": "Vulnerability Advisory CVE-2026-4738",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T05:24:39.837Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/temporalio-temporal-learnings.md",
+        "fileName": "temporalio-temporal-learnings.md"
       }
     }
   }

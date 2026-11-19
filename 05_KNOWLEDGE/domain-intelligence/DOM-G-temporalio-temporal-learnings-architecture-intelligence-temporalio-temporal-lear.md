@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T16:14:21.639Z",
+  "timestamp": "2026-11-19T05:24:39.914Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-temporalio-temporal-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [temporalio-temporal-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T16:14:21.639Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T05:24:39.914Z`  
 > **Learning ID**: `LEARN-EVO-temporalio-temporal-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), H (Technical Construction Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from temporalio-temporal-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source**: github ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
-> **Source Version**: `a1e00523`  
+> **Source Version**: `4841d727`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T16:14:09.422Z  
+> **Timestamp**: 2026-11-19T05:24:30.623Z  
 > **Learning ID**: `learn-github-temporalio-temporal`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/temporalio-temporal-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/temporalio/temporal](https://github.com/temporalio/temporal))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T16:14:09.417Z  
+> **Harvest Timestamp**: 2026-11-19T05:24:30.618Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Temporal service
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 24455 stars
+- **Stars / Engagement**: 24490 stars
 
 ---
 
@@ -2149,186 +2149,845 @@ func (x *WorkflowMutableStateMutation) ProtoReflect() protoreflect.Message {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a1e00523` (2026-11-17)
-**Commit Message**: fix: refuse polls that arrive after ShutdownWorker of an unloaded task queue (#13116)
+### Incident Patch 1: `806d3508` (2026-11-17)
+**Commit Message**: Bump Go and dependencies to fix reported CVEs (#13131)
 
 ## What changed?
-This PR makes matching record a Worker as shut down before the poll
-cancellation fan-out, so that a poll that arrives later is refused at
-once.
+Bumped the Go toolchain and dependencies that have known
+vulnerabilities:
 
-Fixes #13114
+| Dependency | From | To | Advisory |
+|---|---|---|---|
+| Go | 1.27.3 | 1.27.4 | CVE-2026-97054 / GO-2026-6859 |
+| `github.com/klauspost/compress` | v1.18.7 | v1.20.2 | CVE-2026-116591
+/ GO-2026-6865 |
+| `github.com/apache/thrift` | v0.24.0 | v0.25.0 | CVE-2026-63772,
+CVE-2026-66055, CVE-2026-83663, CVE-2026-94637 |
+| `golang.org/x/net` | v0.60.0 | v0.62.0 | CVE-2026-78661 /
+GO-2026-6860, CVE-2026-97045 / GO-2026-6866 |
+| `golang.org/x/crypto` | v0.57.0 |
+v0.58.1-0.20261009181718-2f1f834330b2 | GO-2026-5932 |
+| `go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc` |
+v1.43.0 | v1.45.0 | CVE-2026-81870 |
+
+`x/sync`, `x/sys`, `x/term`, and `x/text` moved up a minor version as
+transitive requirements. The `common/testx` and `tests/mixedbrain`
+modules got the same Go and `x/net` bumps for consistency.
+
+Alpine zlib (CVE-2026-4738) needs no change here: the server and
+admin-tools Dockerfiles already run `apk upgrade --no-cache zlib`.
 
 ## Why?
-A Worker that shuts down right after its start can send `ShutdownWorker`
-while its first poll is still on its way. Matching skips the fan-out
-when the root partition isn't loaded, and it didn't record the Worker in
-`shutdownWorkers`. The late poll was then accepted and stayed open for
-50 to 60 seconds. An SDK that waits for the server to end its polls took
-that long to shut down.
+Trivy and govulncheck flagged these vulnerabilities in the server image.
 
-Related: temporalio/sdk-rust#1802 and temporalio/sdk-python#2133.
+## How did you 
+
+**File**: `common/testx/go.mod` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ module go.temporal.io/testx
+ 
+-go 1.27.3
++go 1.27.4
+ 
+ require github.com/stretchr/testify v1.11.1
+ 
+```
+
+**File**: `go.mod` (modified, +10/-10)
+```diff
+@@ -1,6 +1,6 @@
+ module go.temporal.io/server
+ 
+-go 1.27.3
++go 1.27.4
+ 
+ retract (
+ 	v1.30.0
+@@ -61,7 +61,7 @@ require (
+ 	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.68.0
+ 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0
+ 	go.opentelemetry.io/otel v1.45.0
+-	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.43.0
++	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.45.0
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0
+ 	go.opentelemetry.io/otel/exporters/prometheus v0.56.0
+@@ -83,8 +83,8 @@ require (
+ 	golang.org/x/exp v0.0.0-20260611194520-c48552f49976
+ 	golang.org/x/mod v0.41.0
+ 	golang.org/x/oauth2 v0.36.0
+-	golang.org/x/sync v0.23.0
+-	golang.org/x/text v0.42.0
++	golang.org/x/sync v0.24.0
++	golang.org/x/text v0.43.0
+ 	golang.org/x/time v0.15.0
+ 	google.golang.org/api v0.276.0
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d
+@@ -113,7 +113,7 @@ require (
+ 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.56.0 // indirect
+ 	github.com/Masterminds/goutils v1.1.1 // indirect
+ 	github.com/Masterminds/semver/v3 v3.4.0 // indirect
+-	github.com/apache/thrift v0.24.0 // indirect
++	github.com/apache/thrift v0.25.0 // indirect
+ 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.16 // indirect
+ 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.22 // indirect
+ 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.35 // indirect
+@@ -167,7 +167,7 @@ require (
+ 	github.com/jackc/puddle/v2 v2.2.2 // indirect
+ 	github.com/josharian/intern v1.0.0 // indirect
+ 	github.com/json-iterator/go v1.1.12 // indirect
+-	github.com/klauspost/compress v1.18.7 // indirect
++	github.com/klauspost/compress v1.20.2 // indirect
+ 	github.com/kylelemons/godebug v1.1.0 // indirect
+ 	github.com/mailru/easyjson v0.9.2 // indirect
+ 	github.com/mattn/go-colorable v0.1.14 // indirect
+@@ -204,10 +204,10 @@ require (
+ 	go.uber.org/atomic v1.11.0 // indirect
+ 	go.uber.org/dig v1.19.0 // indirect
+ 	go.yaml.in/yaml/v2 v2.4.4 // indirect
+-	golang.org/x/crypto v0.57.0 // indirect
+-	golang.org/x/net v0.60.0 // indirect
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/term v0.46.0 // indirect
++	golang.org/x/crypto v0.58.1-0.20261009181718-2f1f834330b2 // indirect
++	golang.org/x/net v0.62.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/term v0.47.0 // indirect
+ 	google.golang.org/genproto v0.0.0-20260420184626-e10c466a9529 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
+ 	gopkg.in/inf.v0 v0.9.1 // indirect
+```
+
+**File**: `go.sum` (modified, +20/-20)
+```diff
+@@ -48,8 +48,8 @@ github.com/Masterminds/sprig/v3 v3.3.0 h1:mQh0Yrg1XPo6vjYXgtf5OtijNAKJRNcTdOOGZe
+ github.com/Masterminds/sprig/v3 v3.3.0/go.mod h1:Zy1iXRYNqNLUolqCpL4uhk6SHUMAOSCzdgBfDb35Lz0=
+ github.com/ajstarks/svgo v0.0.0-20180226025133-644b8db467af/go.mod h1:K08gAheRH3/J6wwsYMMT4xOr94bZjxIelGM0+d/wbFw=
+ github.com/apache/thrift v0.16.0/go.mod h1:PHK3hniurgQaNMZYaCLEqXKsYK8upmhPbmdP2FXSqgU=
+-github.com/apache/thrift v0.24.0 h1:zy31L1a49QTNB2bG1BBfMXol3yJrTH975G3pPubQVLQ=
+-github.com/apache/thrift v0.24.0/go.mod h1:zPt6WxgvTOM6hF92y8C+MkEM5LMxZuk4JcQOiU4Esvs=
++github.com/apache/thrift v0.25.0 h1:6LLlvoPjy8Cc/0b5TYRcTR3RZa2W0at3WQRcOkDwVGs=
++github.com/apache/thrift v0.25.0/go.mod h1:4lwyToijD9T70w7GlevFk7FnpY60Wv8I8krMkF6FkAo=
+ github.com/aws/aws-sdk-go-v2 v1.43.4 h1:b9FTvbRwy+JCsfp2Wp6wV/KbOx3Aj7nkoFb2cRX0IhE=
+ github.com/aws/aws-sdk-go-v2 v1.43.4/go.mod h1:70vwSy16txshwG+g55WkpgPKDIByzHI8ccBsOteo3bQ=
+ github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.16 h1:aiuaKlDweRC5qExJondpWjOgyzMHpofpwspGXUtwn4c=
+@@ -278,8 +278,8 @@ github.com/jstemmer/go-junit-report/v2 v2.1.0/go.mod h1:mgHVr7VUo5Tn8OLVr1cKnLuE
+ github.com/jung-kurt/gofpdf v1.0.3-0.20190309125859-24315acbbda5/go.mod h1:7Id9E/uU8ce6rXgefFLlgrJj/GYY22cpxn+r32jIOes=
+ github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
+ github.com/kisielk/gotool v1.0.0/go.mod h1:XhKaO+MFFWcvkIS/tQcRk01m1F5IRFswLeQ+oQHNcck=
+-github.com/klauspost/compress v1.18.7 h1:aUyZsS4kH3QTKurYhAOwAHxllVPnOthb3vPfnF1Ehjw=
+-github.com/klauspost/compress v1.18.7/go.mod h1:cwPg85FWrGar70rWktvGQj8/hthj3wpl0PGDogxkrSQ=
++github.com/klauspost/compress v1.20.2 h1:v5tiZvm1KGLyg5d5oXdXe3lsSPrbEUiKoXGia//I7Qo=
++github.com/klauspost/compress v1.20.2/go.mod h1:LUdAzn7YLVvxLpc7y3V1m40wESHTgc1422pwwBSKYuI=
+ github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
+ github.com/konsorten/go-windows-terminal-sequences v1.0.2/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
+ github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
+@@ -451,8 +451,8 @@ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 h1:CqXxU8V
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0/go.mod h1:BuhAPThV8PBHBvg8ZzZ/Ok3idOdhWIodywz2xEcRbJo=
+ go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
+ go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
+-go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.43.0 h1:8UQVDcZxOJLtX6gxtDt3vY2WTgvZqMQRzjsqiIHQdkc=
+-go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.43.0/go.mod h1:2lmweYCiHYpEjQ/lSJBYhj9jP1zvCvQW4BqL9dnT7FQ=
++go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.45.0 h1:klTViGcsvLCd1xN3rZzfZ12NslC/OimbmR+k+A006RI=
++go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v1.45.0/go.mod h1:jRsK04CWmXuY8A0O+wMpSf+t90RHZ53o5Qmxn2PQPfk=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MCxGz8+2VtrN/WgqSpJFctVz24gpxj8CxkKmc8Ww=
+@@ -517,8 +517,8 @@ golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8U
+ golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
+ golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
+ golang.org/x/crypto v0.14.0/go.mod h1:MVFd36DqK4CsrnJYDkBA3VC4m2GkXAM0PvzMCn4JQf4=
+-golang.org/x/crypto v0.57.0 h1:3ZVCjf8Ggz7zneR/EHRVx68Ctf+2pmIMP2UFhh9cC6M=
+-golang.org/x/crypto v0.57.0/go.mod h1:Fdz0i5U6CoizGwLda9DttjSk6qlZo25zYNtR+ycvuZA=
++golang.org/x/crypto v0.58.1-0.20261009181718-2f1f834330b2 h1:zGDaB+/Mus2mScKvZ23k+W9NAUbP56sNM9SptgvWI5A=
++golang.org/x/crypto v0.58.1-0.20261009181718-2f1f834330b2/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
+ golang.org/x/exp v0.0.0-20180321215751-8460e604b9de/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20180807140117-3d87b88a115f/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/exp v0.0.0-20190125153040-c74c464bbbf2/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+@@ -552,8 +552,8 @@ golang.org/x/net v0.0.0-20220722155237-a158d28d115b/go.mod h1:XRhObCWvk6IyKnWLug
+ golang.org/x/net v0.6.0/go.mod h1:2Tu9+aMcznHK/AK1HMvgo6xiTLG5rD5rZLDS+rp2Bjs=
+ golang.org/x/net v0.10.0/go.mod h1:0qNGK6F8kojg2nk9dLZ2mShWaEBan6FAoqfSigmmuDg=
+ golang.org/x/net v0.17.0/go.mod h1:NxSsAGuq816PNPmqtQdLE42eU2Fs7NoRIZrHJAlaCOE=
+-golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+-golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
++golang.org/x/net v0.62.0 h1:18ELalf
+```
+
+**File**: `tests/mixedbrain/go.mod` (modified, +4/-4)
+```diff
+@@ -1,6 +1,6 @@
+ module go.temporal.io/server/tests/mixedbrain
+ 
+-go 1.27.3
++go 1.27.4
+ 
+ require (
+ 	github.com/blang/semver/v4 v4.0.0
+@@ -23,9 +23,9 @@ require (
+ 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+ 	go.uber.org/zap v1.27.1 // indirect
+-	golang.org/x/net v0.60.0 // indirect
+-	golang.org/x/sys v0.48.0 // indirect
+-	golang.org/x/text v0.42.0 // indirect
++	golang.org/x/net v0.62.0 // indirect
++	golang.org/x/sys v0.49.0 // indirect
++	golang.org/x/text v0.43.0 // indirect
+ 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
+ 	gopkg.in/yaml.v3 v3.0.1 // indirect
+```
+
+**File**: `tests/mixedbrain/go.sum` (modified, +6/-6)
+```diff
+@@ -63,12 +63,12 @@ go.uber.org/multierr v1.11.0 h1:blXXJkSxSSfBVBlC76pxqeO+LN3aDfLQo+309xJstO0=
+ go.uber.org/multierr v1.11.0/go.mod h1:20+QtiLqy0Nd6FdQB9TLXag12DsQkrbs3htMFfDN80Y=
+ go.uber.org/zap v1.27.1 h1:08RqriUEv8+ArZRYSTXy1LeBScaMpVSTBhCeaZYfMYc=
+ go.uber.org/zap v1.27.1/go.mod h1:GB2qFLM7cTU87MWRP2mPIjqfIDnGu+VIO4V/SdhGo2E=
+-golang.org/x/net v0.60.0 h1:79p50tfZlm0J9YfoDsSi639qSXNGVwEzOPLCxM2FsYU=
+-golang.org/x/net v0.60.0/go.mod h1:2DA/G1UfVbCpQPeWTmMPGY7Cs2PkBkwu743bVX5PIVg=
+-golang.org/x/sys v0.48.0 h1:bbX/i/6MgT9BVLM9RT1thmxL04yeTAhbEz4SyadbXoo=
+-golang.org/x/sys v0.48.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+-golang.org/x/text v0.42.0 h1:JbOZXgfeCPU9gacVtYliJqOhD+zhrEqK4LfdpmlUZqI=
+-golang.org/x/text v0.42.0/go.mod h1:ojzP1Z+2QtioaF8DTtO8K5q7JWVVYwZKenzujK0Zd0E=
++golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
++golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
++golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
++golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
++golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
+ gonum.org/v1/gonum v0.17.0 h1:VbpOemQlsSMrYmn7T2OUvQ4dqxQXU+ouZFQsZOx50z4=
+ gonum.org/v1/gonum v0.17.0/go.mod h1:El3tOrEuMpv2UdMrbNlKEh9vd86bmQ6vqIcDwxEOc1E=
+ google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d h1:FarXi840EJWSHYTN3ERkADbPWjl307+FGrA22KAVjjc=
+```
+
+---
+
+### Incident Patch 2: `d25f4923` (2026-11-17)
+**Commit Message**: Adding CapturePanicHook to avoid double-defer code (#13139)
+
+## What changed?
+Refactoring double-defer panic handling into a single handler that
+addresses both the panic capture and the hook that runs with the
+captured error.
+
+## Why?
+Double deferring and LIFO ordering lower the readability of the code,
+and there has already been a scenario where the defer was improperly
+structured (fixed in #13018). Creating CapturePanicWithHook simplifies
+the panic handling.
 
 ## How did you test it?
 - [x] built
 - [ ] run locally and tested manually
-- [ ] covered by existing tests
+- [x] covered by existing tests
 - [x] added new unit test(s)
-- [x] added new functional test(s)
+- [ ] added new functional test(s)
 
-Both new tests shut a Worker down for an unloaded task queue and then
-poll with the same key. In the functional test the poll took 59.9s
-without the fix, and 0.06s with it.
+From @Vaughan-Temporal 's comment in #13018.
 
-## Potential risks
-`shutdownWorkers` is local to each matching host. So a poll that lands
-on a partition of another host is still acc
-
-**File**: `service/matching/matching_engine.go` (modified, +10/-4)
+**File**: `common/log/panic.go` (modified, +22/-8)
 ```diff
-@@ -1510,6 +1510,16 @@ func (e *matchingEngineImpl) CancelOutstandingWorkerPolls(
- 	if err != nil {
- 		return nil, err
- 	}
-+	if request.WorkerInstanceKey != "" {
-+		// Mark the worker as shut down before the fan-out. Matching skips that fan-out
-+		// when the root partition isn't loaded, and this host still needs to refuse
-+		// late polls on their way. Shutdown state is local to each matching host.
-+		// Without the fan-out, other hosts don't learn about the shutdown and still
-+		// accept late polls on their partitions.
-+		// This also runs before active poll cancellation. Poll registration uses the
-+		// opposite order, so a concurrent poll can't miss both.
-+		e.shutdownWorkers.Put(request.WorkerInstanceKey, struct{}{})
+@@ -14,15 +14,29 @@ import (
+ // And we have to set the returned error otherwise our handler will return nil as error which is incorrect
+ func CapturePanic(logger Logger, retError *error) {
+ 	if panicObj := recover(); panicObj != nil {
+-		err, ok := panicObj.(error)
+-		if !ok {
+-			err = fmt.Errorf("panic: %v", panicObj)
+-		}
+-
+-		st := string(debug.Stack())
++		*retError = panicToError(logger, panicObj)
 +	}
- 	if e.config.EnableMatchingFanOutForPollCancellation(ns.String()) {
- 		// TODO: Remove the IsRoot/Sticky guard after EnableMatchingFanOutForPollCancellation is
- 		// fully rolled out. This check is only needed during the transition since the legacy
-@@ -1519,10 +1529,6 @@ func (e *matchingEngineImpl) CancelOutstandingWorkerPolls(
- 		}
- 	}
- 	// TODO: Delete this code path after EnableMatchingFanOutForPollCancellation is rolled out.
--	if request.WorkerInstanceKey != "" {
--		// Keep Put before CancelAll; poll registration uses the inverse order to avoid missed polls.
--		e.shutdownWorkers.Put(request.WorkerInstanceKey, struct{}{})
--	}
- 	cancelledCount := e.workerInstancePollers.CancelAll(request.WorkerInstanceKey)
- 	e.removePollerFromHistory(ctx, partition, request.GetWorkerIdentity())
- 	return &matchingservice.CancelOutstandingWorkerPollsResponse{CancelledCount: cancelledCount}, nil
-```
-
-**File**: `service/matching/matching_engine_test.go` (modified, +53/-0)
-```diff
-@@ -6473,6 +6473,59 @@ func TestCancelOutstandingWorkerPolls(t *testing.T) {
- 		require.NotNil(t, engine.shutdownWorkers.Get(workerKey), "worker should be in shutdown cache")
- 	})
++}
  
-+	t.Run("fan-out: refuses a poll that arrives after shutdown of an unloaded task queue", func(t *testing.T) {
-+		t.Parallel()
-+		ctrl := gomock.NewController(t)
-+		ns, mockNsRegistry := createMockNamespaceCache(ctrl, matchingTestNamespace)
+-		logger.Error("Panic is captured", tag.SysStackTrace(st), tag.Error(err))
++// CapturePanicWithHook is CapturePanic plus onPanic, which is called with the captured error after a panic.
++// Use it instead of a separate deferred closure that checks the error: it must still be deferred directly.
++func CapturePanicWithHook(logger Logger, retError *error, onPanic func(error)) {
++	//revive:disable-next-line:defer
++	if panicObj := recover(); panicObj != nil {
++		*retError = panicToError(logger, panicObj)
++		onPanic(*retError)
++	}
++}
+ 
+-		*retError = serviceerror.NewInternal(err.Error())
++func panicToError(logger Logger, panicObj any) error {
++	err, ok := panicObj.(error)
++	if !ok {
++		err = fmt.Errorf("panic: %v", panicObj)
+ 	}
 +
-+		config := defaultTestConfig()
-+		config.EnableMatchingFanOutForPollCancellation = dynamicconfig.GetBoolPropertyFnFilteredByNamespace(true)
++	st := string(debug.Stack())
 +
-+		engine := &matchingEngineImpl{
-+			config:                config,
-+			namespaceRegistry:     mockNsRegistry,
-+			logger:                log.NewNoopLogger(),
-+			timeSource:            clock.NewRealTimeSource(),
-+			workerInstancePollers: workerPollerTracker{pollers: make(map[string]map[string]context.CancelFunc)},
-+			shutdownWorkers:       cache.New(shutdownWorkersCacheMaxSize, &cache.Options{TTL: shutdownWorkersCacheTTL}),
-+			partitions:            make(map[tqid.PartitionKey]taskQueuePartitionManager),
-+		}
++	logger.Error("Panic is captured", tag.SysStackTrace(st), tag.Error(err))
 +
-+		workerKey := "test-worker"
-+		taskQueue := &taskqueuepb.TaskQueue{Name: "test-queue", Kind: enumspb.TASK_QUEUE_KIND_NORMAL}
-+
-+		_, err := engine.CancelOutstandingWorkerPolls(context.Background(),
-+			&matchingservice.CancelOutstandingWorkerPollsRequest{
-+				NamespaceId:       ns.ID().String(),
-+				TaskQueue:         taskQueue,
-+				TaskQueueType:     enumspb.TASK_QUEUE_TYPE_NEXUS,
-+				WorkerInstanceKey: workerKey,
-+			})
-+		require.NoError(t, err)
-+
-+		// The poll loads the partition that the shutdown found unloaded.
-+		partition := tqid.UnsafeTaskQueueFamily(ns.ID().String(), taskQueue.GetName()).TaskQueue(enumspb.TASK_QUEUE_TYPE_NEXUS).RootPartition()
-+		mockPM := NewMocktaskQueuePartitionManager(ctrl)
-+		mockPM.EXPECT().WaitUntilInitialized(gomock.Any()).Return(nil)
-+		mockPM.EXPECT().LongPollExpirationInterval().Return(time.Minute)
-+		mockPM.EXPECT().PollTask(gomock.Any(), gomock.Any()).Times(0)
-+		engine.partitions[partition.Key()] = mockPM
-+
-+		resp, err := engine.PollNexusTaskQueue(context.Background(),
-+			&matchingservice.PollNexusTaskQueueRequest{
-+				NamespaceId: ns.ID().String(),
-+				Request: &workflowservice.PollNexusTaskQueueRequest{
-+					Namespace:         ns.Name().String(),
-+					TaskQueue:         taskQueue,
-+					WorkerInstanceKey: workerKey,
-+				},
-+			},
-+			metrics.NoopMetricsHandler,
-+		)
-+		require.NoError(t, err)
-+		protorequire.ProtoEqual(t, &matchingservice.PollNexusTaskQueueResponse{}, resp)
-+	})
-+
- 	t.Run("partition API adds worker to shutdown cache", func(t *testing.T) {
- 		// CancelOutstandingWorkerPollsPartition should also populate the shutdown cache
- 		// so that child matching hosts reject new polls from shutting-down workers.
++	return serviceerror.NewInternal(err.Error())
+ }
 ```
 
-**File**: `tests/task_queue_test.go` (modified, +31/-0)
+**File**: `common/log/panic_test.go` (modified, +20/-0)
 ```diff
-@@ -1609,6 +1609,37 @@ func (s *TaskQueueSuite) TestShutdownWorkerIsIdempotent() {
- 	s.Less(time.Since(pollStart), 2*time.Minute, "poll should be rejected quickly by shutdown cache")
+@@ -5,6 +5,7 @@ import (
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
+ )
+ 
+ func TestCapturePanic(t *testing.T) {
+@@ -27,3 +28,22 @@ func testCapture(panicObj any) (retErr error) {
+ func testPanic(panicObj any) {
+ 	panic(panicObj)
+ }
++
++func TestCapturePanicWithHook(t *testing.T) {
++	var hookErr error
++	retErr := func() (retErr error) {
++		defer CapturePanicWithHook(NewNoopLogger(), &retErr, func(err error) { hookErr = err })
++		testPanic("foo")
++		return nil
++	}()
++	require.EqualError(t, retErr, "panic: foo")
++	require.Equal(t, retErr, hookErr)
++
++	hookCalled := false
++	retErr = func() (retErr error) {
++		defer CapturePanicWithHook(NewNoopLogger(), &retErr, func(error) { hookCalled = true })
++		return nil
++	}()
++	require.NoError(t, retErr)
++	require.False(t, hookCalled)
++}
+```
+
+**File**: `common/tasks/sequential_scheduler.go` (modified, +3/-8)
+```diff
+@@ -314,14 +314,9 @@ func (s *SequentialScheduler[T]) executeTask(queue SequentialTaskQueue[T]) {
+ 	task := queue.Remove()
+ 
+ 	operation := func() (retErr error) {
+-		var executePanic error
+-		defer func() {
+-			if executePanic != nil {
+-				retErr = executePanic
+-				shouldRetry = false // do not retry if panic
+-			}
+-		}()
+-		defer log.CapturePanic(s.logger, &executePanic)
++		defer log.CapturePanicWithHook(s.logger, &retErr, func(error) {
++			shouldRetry = false // do not retry if panic
++		})
+ 
+ 		if err := task.Execute(); err != nil {
+ 			return task.HandleErr(err)
+```
+
+**File**: `service/history/api/workflowresend/scheduler.go` (modified, +1/-6)
+```diff
+@@ -182,12 +182,7 @@ type boundedWorkflowSchedulerLimiter struct {
+ 
+ func (l boundedWorkflowSchedulerLimiter) Concurrency() (concurrency int) {
+ 	var panicErr error
+-	defer func() {
+-		if panicErr != nil {
+-			concurrency = 0
+-		}
+-	}()
+-	defer log.CapturePanic(l.logger, &panicErr)
++	defer log.CapturePanicWithHook(l.logger, &panicErr, func(error) { concurrency = 0 })
+ 	return l.maxConcurrency()
  }
  
-+func (s *TaskQueueSuite) TestShutdownWorkerRefusesLaterPollOfUnloadedTaskQueue() {
-+	env := s.newTestEnv(testcore.WithDynamicConfig(dynamicconfig.EnableCancelWorkerPollsOnShutdown, true))
-+
-+	tv := testvars.New(s.T())
-+	workerInstanceKey := uuid.NewString()
-+
-+	// No poll has loaded the task queue yet, so matching skips the fan-out of the cancellation.
-+	_, err := env.FrontendClient().ShutdownWorker(s.Context(), &workflowservice.ShutdownWorkerRequest{
-+		Namespace:         env.Namespace().String(),
-+		StickyTaskQueue:   tv.StickyTaskQueue().GetName(),
-+		Identity:          tv.WorkerIdentity(),
-+		Reason:            "shutdown before the first poll",
-+		WorkerInstanceKey: workerInstanceKey,
-+		TaskQueue:         tv.TaskQueue().GetName(),
-+		TaskQueueTypes:    []enumspb.TaskQueueType{enumspb.TASK_QUEUE_TYPE_NEXUS},
+```
+
+**File**: `service/history/replication/stream_receiver.go` (modified, +6/-12)
+```diff
+@@ -224,12 +224,9 @@ func (r *StreamReceiverImpl) Key() ClusterShardKeyPair {
+ 
+ func (r *StreamReceiverImpl) sendEventLoop() error {
+ 	var panicErr error
+-	defer func() {
+-		if panicErr != nil {
+-			metrics.ReplicationStreamPanic.With(r.MetricsHandler).Record(1)
+-		}
+-	}()
+-	defer log.CapturePanic(r.logger, &panicErr)
++	defer log.CapturePanicWithHook(r.logger, &panicErr, func(error) {
++		metrics.ReplicationStreamPanic.With(r.MetricsHandler).Record(1)
 +	})
-+	s.NoError(err)
-+
-+	pollStart := time.Now()
-+	resp, err := env.FrontendClient().PollNexusTaskQueue(s.Context(), &workflowservice.PollNexusTaskQueueRequest{
-+		Namespace:         env.Namespace().String(),
-+		TaskQueue:         tv.TaskQueue(),
-+		Identity:          tv.WorkerIdentity(),
-+		WorkerInstanceKey: workerInstanceKey,
+ 
+ 	timer := time.NewTicker(r.Config.ReplicationStreamSyncStatusDuration())
+ 	defer timer.Stop()
+@@ -255,12 +252,9 @@ func (r *StreamReceiverImpl) sendEventLoop() error {
+ 
+ func (r *StreamReceiverImpl) recvEventLoop() error {
+ 	var panicErr error
+-	defer func() {
+-		if panicErr != nil {
+-			metrics.ReplicationStreamPanic.With(r.MetricsHandler).Record(1)
+-		}
+-	}()
+-	defer log.CapturePanic(r.logger, &panicErr)
++	defer log.CapturePanicWithHook(r.logger, &panicErr, func(error) {
++		metrics.ReplicationStreamPanic.With(r.MetricsHandler).Record(1)
 +	})
-+	s.NoError(err)
-+	s.Empty(resp.GetTaskToken(), "poll from a shut down Worker should return an empty response")
-+	// An accepted poll stays open for at least 50s, the long poll interval minus its jitter.
-+	s.Less(time.Since(pollStart), 20*time.Second, "poll should be refused by the shutdown cache")
+ 
+ 	err := r.processMessages(r.stream)
+ 	if err == nil {
+```
+
+**File**: `service/history/replication/stream_receiver_monitor.go` (modified, +3/-6)
+```diff
+@@ -312,12 +312,9 @@ func (m *StreamReceiverMonitorImpl) statusMonitorLoop() {
+ 
+ func (m *StreamReceiverMonitorImpl) monitorStreamStatus() {
+ 	var panicErr error
+-	defer func() {
+-		if panicErr != nil {
+-			metrics.ReplicationStreamPanic.With(m.MetricsHandler).Record(1)
+-		}
+-	}()
+-	defer log.CapturePanic(m.Logger, &panicErr) // must be deferred directly for recover() to work
++	defer log.CapturePanicWithHook(m.Logger, &panicErr, func(error) {
++		metrics.ReplicationStreamPanic.With(m.MetricsHandler).Record(1)
++	})
+ 
+ 	if m.shutdownOnce.IsShutdown() {
+ 		return
+```
+
+**File**: `service/history/replication/stream_receiver_test.go` (modified, +13/-0)
+```diff
+@@ -16,6 +16,7 @@ import (
+ 	"go.temporal.io/server/common/dynamicconfig"
+ 	"go.temporal.io/server/common/log"
+ 	"go.temporal.io/server/common/metrics"
++	"go.temporal.io/server/common/metrics/metricstest"
+ 	"go.temporal.io/server/common/testing/await"
+ 	"go.temporal.io/server/service/history/tests"
+ 	"go.uber.org/mock/gomock"
+@@ -775,11 +776,23 @@ func (s *streamReceiverSuite) TestSendEventLoop_Panic_Captured() {
+ 		panic("panic")
+ 	})
+ 
++	metricsHandler := metricstest.NewCaptureHandler()
++	capture := metricsHandler.StartCapture()
++	defer metricsHandler.StopCapture(capture)
++	s.streamReceiver.MetricsHandler = metricsHandler
++
+ 	s.streamReceiver.sendEventLoop() // should not cause panic
++	s.Len(capture.Snapshot()[metrics.ReplicationStreamPanic.Name()], 1)
+ }
+ 
+ func (s *streamReceiverSuite) TestRecvEventLoop_Panic_Captured() {
++	metricsHandler := metricstest.NewCaptureHandler()
++	capture := metricsHandler.StartCapture()
++	defer metricsHandler.StopCapture(capture)
++	s.streamReceiver.MetricsHandler = metricsHandler
++
+ 	s.streamReceiver.recvEventLoop() // should not cause panic
++	s.Len(capture.Snapshot()[metrics.ReplicationStreamPanic.Name()], 1)
+ }
+ 
+ func (s *streamReceiverSuite) TestLivenessMonitor() {
+```
+
+**File**: `service/history/replication/stream_sender.go` (modified, +6/-18)
+```diff
+@@ -180,15 +180,9 @@ func (s *StreamSenderImpl) Key() ClusterShardKeyPair {
+ }
+ 
+ func (s *StreamSenderImpl) recvEventLoop() (retErr error) {
+-	var panicErr error
+-	defer func() {
+-		if panicErr != nil {
+-			retErr = panicErr
+-			metrics.ReplicationStreamPanic.With(s.metrics).Record(1)
+-		}
+-	}()
+-
+-	defer log.CapturePanic(s.logger, &panicErr)
++	defer log.CapturePanicWithHook(s.logger, &retErr, func(error) {
++		metrics.ReplicationStreamPanic.With(s.metrics).Record(1)
++	})
+ 
+ 	for !s.shutdownChan.IsShutdown() {
+ 		if s.isTieredStackEnabled != s.config.EnableReplicationTaskTieredProcessing() {
+@@ -227,15 +221,9 @@ func (s *StreamSenderImpl) recvEventLoop() (retErr error) {
+ }
+ 
+ func (s *StreamSenderImpl) sendEventLoop(priority enumsspb.TaskPriority) (retErr error) {
+-	var panicErr error
+-	defer func() {
+-		if panicErr != nil {
+-			retErr = panicErr
+-			metrics.ReplicationStreamPanic.With(s.metrics).Record(1)
+-		}
+-	}()
+-
+-	defer log.CapturePanic(s.logger, &panicErr)
++	defer log.CapturePanicWithHook(s.logger, &retErr, func(error) {
++		metrics.ReplicationStreamPanic.With(s.metrics).Record(1)
++	})
+ 
+ 	newTaskNotificationChan, subscriberID := s.historyEngine.SubscribeReplicationNotification(s.clientClusterName)
+ 	defer s.historyEngine.UnsubscribeReplicationNotification(subscriberID)
+```
+
+---
+
+### Incident Patch 3: `9f6f2a96` (2026-11-18)
+**Commit Message**: Expose direct assertions to generic suite helpers (#13118)
+
+## What changed?
+Add some testify assertions to parallelsuite `Scope`.
+
+## Why?
+
+Let helpers use the same direct assertion syntax as suites.
+
+**File**: `common/testx/await/t.go` (modified, +36/-0)
+```diff
+@@ -45,6 +45,42 @@ func (t *T) AssertionT() require.TestingT {
+ 	return t
+ }
+ 
++// NoError requires err to be nil for the current attempt.
++func (t *T) NoError(err error, msgAndArgs ...any) {
++	t.Helper()
++	require.NoError(t, err, msgAndArgs...)
 +}
 +
- func (s *TaskQueueSuite) TestAdminGetTaskQueueUserData_RootPartition() {
- 	env := s.newTestEnv()
- 	tv := testvars.New(s.T())
++// Equal requires expected and actual to be equal for the current attempt.
++func (t *T) Equal(expected, actual any, msgAndArgs ...any) {
++	t.Helper()
++	require.Equal(t, expected, actual, msgAndArgs...)
++}
++
++// Nil requires object to be nil for the current attempt.
++func (t *T) Nil(object any, msgAndArgs ...any) {
++	t.Helper()
++	require.Nil(t, object, msgAndArgs...)
++}
++
++// NotNil requires object to be non-nil for the current attempt.
++func (t *T) NotNil(object any, msgAndArgs ...any) {
++	t.Helper()
++	require.NotNil(t, object, msgAndArgs...)
++}
++
++// NotEmpty requires object to be nonempty for the current attempt.
++func (t *T) NotEmpty(object any, msgAndArgs ...any) {
++	t.Helper()
++	require.NotEmpty(t, object, msgAndArgs...)
++}
++
++// True requires value to be true for the current attempt.
++func (t *T) True(value bool, msgAndArgs ...any) {
++	t.Helper()
++	require.True(t, value, msgAndArgs...)
++}
++
+ // Fail marks the current attempt as failed without stopping it.
+ func (t *T) Fail() {
+ 	t.failed = true
+```
+
+**File**: `common/testx/parallelsuite/scope.go` (added, +40/-0)
+```diff
+@@ -0,0 +1,40 @@
++package parallelsuite
++
++import (
++	"context"
++	"testing"
++
++	"github.com/stretchr/testify/require"
++)
++
++// Scope provides the context and test handles for a test or await attempt.
++// It is useful for test helpers.
++// Its assertions stop the current test or await attempt on failure.
++type Scope interface {
++	Context() context.Context
++	TB() testing.TB
++	Require() *require.Assertions
++	AssertionT() require.TestingT
++
++	// Common assertions for test helpers.
++	NoError(err error, msgAndArgs ...any)
++	Equal(expected, actual any, msgAndArgs ...any)
++	Nil(object any, msgAndArgs ...any)
++	NotNil(object any, msgAndArgs ...any)
++	NotEmpty(object any, msgAndArgs ...any)
++	True(value bool, msgAndArgs ...any)
++}
++
++type contextScope struct {
++	Scope
++	ctx context.Context
++}
++
++// WithContext returns a scope that uses ctx and delegates assertions to scope.
++func WithContext(ctx context.Context, scope Scope) Scope {
++	return contextScope{Scope: scope, ctx: ctx}
++}
++
++func (s contextScope) Context() context.Context {
++	return s.ctx
++}
+```
+
+**File**: `common/testx/parallelsuite/scope_test.go` (added, +59/-0)
+```diff
+@@ -0,0 +1,59 @@
++package parallelsuite_test
++
++import (
++	"errors"
++	"testing"
++	"time"
++
++	"go.temporal.io/testx/await"
++	"go.temporal.io/testx/parallelsuite"
++)
++
++type scopeAssertionsSuite struct {
++	parallelsuite.Suite[*scopeAssertionsSuite]
++}
++
++func TestScopeAssertions(t *testing.T) {
++	parallelsuite.Run(t, &scopeAssertionsSuite{})
++}
++
++func checkScopeAssertions(s parallelsuite.Scope) {
++	s.NoError(nil)
++	s.Equal("ready", "ready")
++	s.Nil(nil)
++	s.NotNil(s.Context())
++	s.NotEmpty("ready")
++	s.True(true)
++}
++
++func (s *scopeAssertionsSuite) TestSuiteHelpers() {
++	checkScopeAssertions(parallelsuite.WithContext(s.Context(), s))
++}
++
++func (s *scopeAssertionsSuite) TestAwaitHelpersRetryFailedAssertions() {
++	checks := map[string]func(parallelsuite.Scope){
++		"NoError":  func(s parallelsuite.Scope) { s.NoError(errors.New("not ready")) },
++		"Equal":    func(s parallelsuite.Scope) { s.Equal("ready", "pending") },
++		"Nil":      func(s parallelsuite.Scope) { s.Nil("pending") },
++		"NotNil":   func(s parallelsuite.Scope) { s.NotNil(nil) },
++		"NotEmpty": func(s parallelsuite.Scope) { s.NotEmpty("") },
++		"True":     func(s parallelsuite.Scope) { s.True(false) },
++	}
++	for name, check := range checks {
++		s.Run(name, func(s *scopeAssertionsSuite) {
++			attempts := 0
++			completed := 0
++			await.Require(s.Context(), s.T(), func(t *await.T) {
++				attempts++
++				scope := parallelsuite.WithContext(t.Context(), t)
++				if attempts == 1 {
++					check(scope)
++				}
++				checkScopeAssertions(scope)
++				completed++
++			}, time.Second, time.Millisecond)
++			s.Equal(2, attempts)
++			s.Equal(1, completed)
++		})
++	}
++}
+```
+
+**File**: `common/testx/parallelsuite/suite.go` (modified, +0/-23)
+```diff
+@@ -31,29 +31,6 @@ type AssertionsInitializer interface {
+ 	InitAssertions()
+ }
+ 
+-// Scope provides the context and test handles for a test or await attempt.
+-// It is useful for test helpers.
+-type Scope interface {
+-	Context() context.Context
+-	TB() testing.TB
+-	Require() *require.Assertions
+-	AssertionT() require.TestingT
+-}
+-
+-type contextScope struct {
+-	Scope
+-	ctx context.Context
+-}
+-
+-// WithContext returns a scope that uses ctx and delegates assertions to scope.
+-func WithContext(ctx context.Context, scope Scope) Scope {
+-	return contextScope{Scope: scope, ctx: ctx}
+-}
+-
+-func (s contextScope) Context() context.Context {
+-	return s.ctx
+-}
+-
+ // Suite provides parallel test execution with require-style (fail-fast) assertions.
+ //
+ // It enforces a strict rule: a test method (or subtest) must either use assertions
+```
+
+**File**: `tests/versioning_test_env.go` (modified, +75/-75)
+```diff
+@@ -87,12 +87,12 @@ func (env *VersioningTestEnv) waitForTaskQueueVersioningInfo(
+ 			Namespace: env.Namespace().String(),
+ 			TaskQueue: tq,
+ 		})
+-		t.Require().NoError(err)
+-		t.Require().NotNil(resp)
++		t.NoError(err)
++		t.NotNil(resp)
+ 		protorequire.ProtoEqual(t.AssertionT(), worker_versioning.ExternalWorkerDeploymentVersionFromStringV31(expectedCurrentVersion), resp.GetVersioningInfo().GetCurrentDeploymentVersion())
+ 		protorequire.ProtoEqual(t.AssertionT(), worker_versioning.ExternalWorkerDeploymentVersionFromStringV31(expectedRampingVersion), resp.GetVersioningInfo().GetRampingDeploymentVersion())
+-		t.Require().Equal(expectedCurrentVersion, resp.GetVersioningInfo().GetCurrentVersion()) //nolint:staticcheck // SA1019: old worker versioning
+-		t.Require().Equal(expectedRampingVersion, resp.GetVersioningInfo().GetRampingVersion()) //nolint:staticcheck // SA1019: old worker versioning
++		t.Equal(expectedCurrentVersion, resp.GetVersioningInfo().GetCurrentVersion()) //nolint:staticcheck // SA1019: old worker versioning
++		t.Equal(expectedRampingVersion, resp.GetVersioningInfo().GetRampingVersion()) //nolint:staticcheck // SA1019: old worker versioning
+ 		t.Require().InDelta(rampingPercentage, resp.GetVersioningInfo().GetRampingVersionPercentage(), 0.001)
+ 	}, 10*time.Second, 200*time.Millisecond)
+ }
+@@ -122,7 +122,7 @@ func (env *VersioningTestEnv) pollAndQueryWorkflow(
+ 		})
+ 
+ 	_, err := env.queryWorkflow(s.Context(), tv)
+-	s.Require().NoError(err)
++	s.NoError(err)
+ 
+ 	await.Rcv(s.TB(), queryResultCh)
+ }
+@@ -138,7 +138,7 @@ func (env *VersioningTestEnv) drainWorkflowTaskAfterSetCurrentWithOverride(
+ 	wftCompleted := make(chan struct{})
+ 	env.pollWftAndHandle(s, tv, false, wftCompleted,
+ 		func(task *workflowservice.PollWorkflowTaskQueueResponse) (*workflowservice.RespondWorkflowTaskCompletedRequest, error) {
+-			s.Require().NotNil(task)
++			s.NotNil(task)
+ 			if override != nil {
+ 				env.verifyWorkflowVersioning(s, tv, vbUnspecified, nil, override, nil)
+ 			} else {
+@@ -167,7 +167,7 @@ func (env *VersioningTestEnv) drainWorkflowTaskAfterSetCurrent(
+ 	wftCompleted := make(chan struct{})
+ 	env.pollWftAndHandle(s, tv, false, wftCompleted,
+ 		func(task *workflowservice.PollWorkflowTaskQueueResponse) (*workflowservice.RespondWorkflowTaskCompletedRequest, error) {
+-			s.Require().NotNil(task)
++			s.NotNil(task)
+ 			env.verifyWorkflowVersioning(s, tv, vbUnspecified, nil, nil, tv.DeploymentVersionTransition())
+ 			return env.respondEmptyWft(tv, false, vbUnpinned), nil
+ 		})
+@@ -192,12 +192,12 @@ func (env *VersioningTestEnv) pollAndDispatchNexusTask(
+ 	nexusCompleted := make(chan any)
+ 	env.pollNexusTaskAndHandle(s, tv, false, nexusCompleted,
+ 		func(task *workflowservice.PollNexusTaskQueueResponse) (*workflowservice.RespondNexusTaskCompletedRequest, error) {
+-			s.Require().NotNil(task)
++			s.NotNil(task)
+ 			return &workflowservice.RespondNexusTaskCompletedRequest{}, nil // response object gets filled during processing
+ 		})
+ 
+ 	_, err := matchingClient.DispatchNexusTask(s.Context(), nexusRequest)
+-	s.Require().NoError(err)
++	s.NoError(err)
+ 	await.Rcv(s.TB(), nexusCompleted)
+ }
+ 
+@@ -212,7 +212,7 @@ func (env *VersioningTestEnv) describeVersioningInfo(
+ 			Execution: execution,
+ 		},
+ 	)
+-	s.Require().NoError(err)
++	s.NoError(err)
+ 	return resp.GetWorkflowExecutionInfo().GetVersioningInfo()
+ }
+ 
+@@ -223,7 +223,7 @@ func (env *VersioningTestEnv) requireOneTimeOverride(
+ ) {
+ 	versioningInfo := env.describeVersioningInfo(s, execution)
+ 	oneTime := versioningInfo.GetVersioningOverride().GetOneTime()
+-	s.Require().NotNil(oneTime)
++	s.NotNil(oneTime)
+ 	protorequire.ProtoEqual(s.AssertionT(), tv.ExternalDeploymentVersion(), oneTime.GetTargetDeploymentVersion())
+ }
+ 
+@@ -232,7 +232,7 @@ func (env *VersioningTestEnv) requireNoVersioningOverride(
+ 	execution *commonpb.WorkflowExecution,
+ ) {
+ 	versioningInfo := env.describeVersioningInfo(s, execution)
+-	s.Require().Nil(versioningInfo.GetVersioningOverride())
++	s.Nil(versioningInfo.GetVersioningOverride())
+ }
+ 
+ func (env *VersioningTestEnv) updateVersioningOverride(
+@@ -246,7 +246,7 @@ func (env *VersioningTestEnv) updateVersioningOverride(
+ 		WorkflowExecutionOptions: &workflowpb.WorkflowExecutionOptions{VersioningOverride: override},
+ 		UpdateMask:               &fieldmaskpb.FieldMask{Paths: []string{"versioning_override"}},
+ 	})
+-	s.Require().NoError(err)
++	s.NoError(err)
+ }
+ 
+ func (env *VersioningTestEnv) pollWorkflowTask(
+@@ -259,8 +259,8 @@ func (env *VersioningTestEnv) pollWorkflowTask(
+ 		TaskQueue:         tv.TaskQueue(),
+ 		DeploymentOptions: tv.WorkerDeploymentOptions(true),
+ 	})
+-	s.Require().NoError(err)
+-	s.Require().NotEmpty(task.GetTaskToken())
++	s.NoError(err)
++	s.NotEmpty(task.GetTaskToken())
+ 	return task
+ }
+ 
+@@ -274,7 +274,7 @@ func (env *VersioningTestEnv) completeWorkflowTask(
+ 	request.Identity = tv.WorkerIdentity()
+ 	request.TaskToken = task.GetTaskToken()
+ 	_, err := env.FrontendClient().RespondWorkflowTaskCompleted(s.Context(), request)
+```
+
+**File**: `tests/worker_deployment_version_test.go` (modified, +2/-3)
+```diff
+@@ -849,12 +849,11 @@ func requireWorkerDeploymentMetricTags(
+ ) {
+ 	for _, metricName := range metricNames {
+ 		await.Require(s.Context(), s.TB(), func(t *await.T) {
+-			r := t.Require()
+ 			recordings := capture.CollectMetric(metricName, func(recording *metricstest.CapturedRecording) bool {
+ 				taskQueue, hasTaskQueue := recording.Tags["taskqueue"]
+ 				return !hasTaskQueue || taskQueue == tv.TaskQueue().GetName()
+ 			})
+-			r.NotEmpty(recordings, "expected %s in namespace %s", metricName, tv.NamespaceName())
++			t.NotEmpty(recordings, "expected %s in namespace %s", metricName, tv.NamespaceName())
+ 			hasExpectedTags := false
+ 			for _, recording := range recordings {
+ 				if recording.Tags["worker_deployment_name"] == tv.DeploymentSeries() &&
+@@ -863,7 +862,7 @@ func requireWorkerDeploymentMetricTags(
+ 					break
+ 				}
+ 			}
+-			r.True(hasExpectedTags, "expected %s with deployment %q and build ID %q", metricName, tv.DeploymentSeries(), tv.BuildID())
++			t.True(hasExpectedTags, "expected %s with deployment %q and build ID %q", metricName, tv.DeploymentSeries(), tv.BuildID())
+ 		}, 5*time.Second, 50*time.Millisecond)
+ 	}
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13132** (2026-11-17): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #13126** (2026-11-16): [v1.31.x] Validate migrated schedule state (@chaptersix)
-- **PR #13125** (2026-11-16): Validate migrated schedule state (@chaptersix)
-- **PR #13124** (2026-11-16): 1.33.0: Prepare release branch (@temporal-cicd[bot])
-- **PR #13123** (2026-11-16): Enables standalone nexus operations by default (@S15)
-- **PR #13122** (2026-11-16): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #13158** (2026-11-18): Add Nexus serialization context usage metrics (@JoshuaFrenchwood)
+- **PR #13157** (2026-11-18): Revert "Add search attribute alias to field mapping to Namespace Deta… (@awln-temporal)
+- **PR #13150** (2026-11-18): 1.33.0: Prepare release branch (@temporal-cicd[bot])
+- **PR #13147** (2026-11-18): Backport #13144 to release/v1.32.x (@long-nt-tran)
+- **PR #13146** (2026-11-18): Backport #13144 to release/v1.31.x (@long-nt-tran)
+- **PR #13145** (2026-11-18): Backport #13144 to release/v1.30.x (@long-nt-tran)
 
 ---
 
@@ -2348,43 +3007,31 @@ on a partition of another host is still acc
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. refuse polls that arrive after ShutdownWorker of an unloaded task queue
+## X. Bump Go and dependencies to fix reported CVEs
 
 **RULE**:
-When implementing operations in `service/matching/matching_engine.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `common/testx/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in temporalio/temporal. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a1e00523`: refuse polls that arrive after ShutdownWorker of an unloaded task queue. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `806d3508`: Bump Go and dependencies to fix reported CVEs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `service/matching/matching_engine.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/testx/go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	if request.WorkerInstanceKey != "" {
-		// Mark the worker as shut down before the fan-out. Matching skips that fan-out
-		// when the root partition isn't loaded, and this host still needs to refuse
-		// late polls on their way. Shutdown state is local to each matching host.
-		// Without the fan-out, other hosts don't learn about the shutdown and still
-		// accept late polls on their partitions.
-		// This also runs before active poll cancellation. Poll registration uses the
-		// opposite order, so a concurrent poll can't miss both.
-		e.shutdownWorkers.Put(request.WorkerInstanceKey, struct{}{})
-	}
+go 1.27.4
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	if request.WorkerInstanceKey != "" {
-		// Keep Put before CancelAll; poll registration uses the inverse order to avoid missed polls.
-		e.shutdownWorkers.Put(request.WorkerInstanceKey, struct{}{})
-	}
+go 1.27.3
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a1e00523` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `806d3508` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

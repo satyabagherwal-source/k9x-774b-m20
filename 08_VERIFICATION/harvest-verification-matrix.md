@@ -11203,3 +11203,7 @@
 | `CYCLE-20261119-7OY9` | `2026-11-19T05:06:04.689Z` | `BAAI/bge-large-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-large-en-v1.5-learnings.md` | Yes (`b134ea78...`) |
 | `CYCLE-20261119-7WF5` | `2026-11-19T05:06:14.369Z` | `opentofu/opentofu` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9332` | Yes (`2b7d87e3...`) |
 | `CYCLE-20261119-80GN` | `2026-11-19T05:06:19.607Z` | `genkit-ai/genkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9333` | Yes (`10280fb4...`) |
+| `CYCLE-20261119-V6LL` | `2026-11-19T05:24:20.649Z` | `zai-org/GLM-5.3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.3-learnings.md` | Yes (`f549d825...`) |
+| `CYCLE-20261119-VDBY` | `2026-11-19T05:24:29.374Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9334` | Yes (`d5a25b83...`) |
+| `CYCLE-20261119-VF12` | `2026-11-19T05:24:31.574Z` | `temporalio/temporal` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9335` | Yes (`582516a7...`) |
+| `CYCLE-20261119-VHUF` | `2026-11-19T05:24:35.223Z` | `RediSearch/RediSearch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9336` | Yes (`3b14c6b4...`) |

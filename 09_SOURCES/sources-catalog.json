@@ -65,8 +65,8 @@
     "sourceUrl": "https://huggingface.co/zai-org/GLM-5.3",
     "sourceVersion": "hf-zai-org-glm-5.3",
     "license": "Open-Source",
-    "contentHash": "b9bf42419290a6dd6597206a7cd78379d9824266d90b0c24c8025f8bb264cf52",
-    "lastHarvestedAt": "2026-11-14T15:49:27.890Z",
+    "contentHash": "f549d825b8af51fb809c5482f8af7d01b75435be10c8936e6a5226b3fa80a815",
+    "lastHarvestedAt": "2026-11-19T05:24:20.653Z",
     "learningId": "learn-huggingface-zai-org-glm-5-3"
   },
   "hf-mudler-locate-anything.cpp-gguf": {
@@ -6023,10 +6023,10 @@
     "repository": "RediSearch/RediSearch",
     "platform": "github",
     "sourceUrl": "https://github.com/RediSearch/RediSearch",
-    "sourceVersion": "fd2bfe48",
+    "sourceVersion": "495f707d",
     "license": "NOASSERTION",
-    "contentHash": "9c2a15e614205b9a86d4338b55335630142b1a1412fea1d9c56a66b82f940087",
-    "lastHarvestedAt": "2026-11-17T14:33:33.089Z",
+    "contentHash": "3b14c6b4046320e52930e38272dd30b35ae69987e704ac610be76b8aefd49d61",
+    "lastHarvestedAt": "2026-11-19T05:24:35.227Z",
     "learningId": "learn-github-redisearch-redisearch"
   },
   "taiga-family-taiga-ui": {
@@ -6463,10 +6463,10 @@
     "repository": "temporalio/temporal",
     "platform": "github",
     "sourceUrl": "https://github.com/temporalio/temporal",
-    "sourceVersion": "a1e00523",
+    "sourceVersion": "4841d727",
     "license": "MIT",
-    "contentHash": "5ec636e839dda6afa871872737502490bd155e86b2036e58fcc0ac547df3399e",
-    "lastHarvestedAt": "2026-11-17T16:14:10.325Z",
+    "contentHash": "582516a752c1de334ea698589ecb70c4edad1fc7a89be0c3f204481664799b94",
+    "lastHarvestedAt": "2026-11-19T05:24:31.577Z",
     "learningId": "learn-github-temporalio-temporal"
   },
   "mintplex-labs-anything-llm": {
@@ -6923,10 +6923,10 @@
     "repository": "onejs/one",
     "platform": "github",
     "sourceUrl": "https://github.com/onejs/one",
-    "sourceVersion": "aaba81ee",
+    "sourceVersion": "78627c14",
     "license": "NOASSERTION",
-    "contentHash": "c859c2c39fdc8cf4a0f471319aac0900b1ad03a7332030ec178d0743a5e42628",
-    "lastHarvestedAt": "2026-11-18T04:57:23.077Z",
+    "contentHash": "d5a25b83b790b4f4b1811ecacd5ec192ae62ec848d59512f7b781bee0f382be2",
+    "lastHarvestedAt": "2026-11-19T05:24:29.378Z",
     "learningId": "learn-github-onejs-one"
   },
   "influxdata-influxdb": {

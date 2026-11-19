@@ -11236,3 +11236,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-baai-bge-large-en-v1-5` | `https://huggingface.co/BAAI/bge-large-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-19T05:06:04.692Z |
 | `learn-github-opentofu-opentofu` | `https://github.com/opentofu/opentofu` | `9699ab67` | Multi-dimensional audit evidence | 2026-11-19T05:06:14.371Z |
 | `learn-github-genkit-ai-genkit` | `https://github.com/genkit-ai/genkit` | `56db89eb` | Multi-dimensional audit evidence | 2026-11-19T05:06:19.610Z |
+| `learn-huggingface-zai-org-glm-5-3` | `https://huggingface.co/zai-org/GLM-5.3` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-11-19T05:24:20.653Z |
+| `learn-github-onejs-one` | `https://github.com/onejs/one` | `78627c14` | Multi-dimensional audit evidence | 2026-11-19T05:24:29.378Z |
+| `learn-github-temporalio-temporal` | `https://github.com/temporalio/temporal` | `4841d727` | Multi-dimensional audit evidence | 2026-11-19T05:24:31.577Z |
+| `learn-github-redisearch-redisearch` | `https://github.com/RediSearch/RediSearch` | `495f707d` | Multi-dimensional audit evidence | 2026-11-19T05:24:35.227Z |
