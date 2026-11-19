@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "6db1d6fb",
+    "sourceVersion": "0dfea2bd",
     "license": "Apache-2.0",
-    "contentHash": "10b8af0e53bfe340208d9df7b8346732d5c7293d0ca4352720885683546a05d1",
-    "lastHarvestedAt": "2026-11-18T10:55:10.696Z",
+    "contentHash": "4335bdce8f976cd56e267d360757158cb8e203ff0fd4428c0a897e2bf1b2b633",
+    "lastHarvestedAt": "2026-11-19T22:19:41.478Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
@@ -3693,10 +3693,10 @@
     "repository": "dosco/graphjin",
     "platform": "github",
     "sourceUrl": "https://github.com/dosco/graphjin",
-    "sourceVersion": "3fc0975a",
+    "sourceVersion": "ffd03671",
     "license": "Apache-2.0",
-    "contentHash": "a8f2e5192cef221c735fc79cfa514ae0b7a2131779085265958c90a6f48e115d",
-    "lastHarvestedAt": "2026-11-14T13:29:08.438Z",
+    "contentHash": "239e1951270f4c30bbf6c456f98a3ee5fd5f8b83ac3e60d48c390a516fd8e763",
+    "lastHarvestedAt": "2026-11-19T22:19:48.513Z",
     "learningId": "learn-github-dosco-graphjin"
   },
   "gravitl-netmaker": {

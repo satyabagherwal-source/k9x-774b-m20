@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T13:29:45.961Z",
+  "timestamp": "2026-11-19T22:19:52.920Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-dosco-graphjin-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [dosco-graphjin-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T13:29:45.961Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T22:19:52.920Z`  
 > **Learning ID**: `LEARN-EVO-dosco-graphjin-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dosco-graphjin-learnings.md`  
 > **Source**: github ([https://github.com/dosco/graphjin](https://github.com/dosco/graphjin))  
-> **Source Version**: `3fc0975a`  
+> **Source Version**: `ffd03671`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T13:29:07.407Z  
+> **Timestamp**: 2026-11-19T22:19:47.594Z  
 > **Learning ID**: `learn-github-dosco-graphjin`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,17 +42,17 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dosco-graphjin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dosco/graphjin](https://github.com/dosco/graphjin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T13:29:07.399Z  
+> **Harvest Timestamp**: 2026-11-19T22:19:47.588Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
 ## 1. Context & Architectural Overview
 - **Repository / Resource**: `dosco/graphjin`
-- **Description**: DeepORG (formerly GraphJin) — one governed AI agent for your whole organization: databases, APIs, files, and code over MCP
+- **Description**: DeepORG (formerly GraphJin) — one AI agent for your whole organization: databases, APIs, files, and code over MCP
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3236 stars
+- **Stars / Engagement**: 3237 stars
 
 ---
 
@@ -771,6 +771,191 @@ func manifestCompatibilityMismatches(have, want RunManifest) []string {
 	check(have.ReportSchemaVersion == want.ReportSchemaVersion, "report_schema_version")
 	check(have.RewardVersion == want.RewardVersion, "reward_version")
 	check(have.
+```
+
+### Core Architecture Module: `agent/stated_change.go`
+```
+package agent
+
+import (
+	"context"
+	"regexp"
+	"sort"
+	"strings"
+
+	ax "github.com/ax-llm/ax/packages/go"
+)
+
+// A turn nobody is watching proposes a change by stating it: its reply says
+// whether a change is called for (proposes_change) and what the change is
+// (change_request), and GraphJin sends that to the data agent, which holds it
+// for approval. Why the reply and not the turn's code is in
+// leadUnattendedChangeRules.
+//
+// The reply decides from what the turn found, so GraphJin makes the hand-off
+// to it (handDecision): the turn's own record of what its functions returned
+// (turnRecord), and nothing the code made of that. Ax has the reply stage
+// follow the task and evidence the code ends on, and the code ends on a
+// decision it made without reading. In all 45 look-up turns measured after
+// the code had been told not to decide, its hand-off still carried a decision,
+// reached by matching words: with both answers saying yes, code that tested
+// status === 'ok' ended on "No change is needed" and the reply wrote "its
+// account is at churn risk and it has 2 failed invoices, but no change was
+// proposed for this turn"; with both answers saying no, code that searched
+// them for "churn risk" and "failed invoice" passed proposes_change: true,
+// and the reply proposed the change. Handing the code's conclusion over as
+// notes, marked as written before the answers were read, did not stop the
+// second.
+
+const (
+	// replyAnswersKey is where a turn's data-agent answers go in the record
+	// handed to the reply stage.
+	replyAnswersKey = "data_agent_answers"
+	// replySkillsKey is where the skills the turn loaded go, and
+	// replyCheckBacksKey the check-backs it scheduled.
+	replySkillsKey     = "loaded_skills"
+	replyCheckBacksKey = "check_backs_scheduled"
+	// replyNothingAsked stands for the answers when the turn asked nothing: a
+	// reply handed only the instruction answered "no change is needed" about
+	// facts nobody had looked up.
+	replyNothingAsked = "none: the data agent was asked nothing this turn, so nothing beyond the attached rows was looked up"
+	// leadDecisionTask is the task the reply stage is given on such a turn.
+	leadDecisionTask = "Write the reply to the instruction from what this turn found: " + replyAnswersKey + " is what the data agent answered, and the rows attached to the turn are data too. Decide from them whether the instruction calls for a change."
+)
+
+// turnRecord is what the turn's functions returned, as the reply stage of a
+// deciding turn reads it: each question with how it ended and what came
+// back, the skills the turn loaded, and the check-backs it scheduled.
+func (r *leadRun) turnRecord() map[string]any {
+	record := map[string]any{replyAnswersKey: replyNothingAsked}
+	if results := r.results(); len(results) != 0 {
+		answers := make([]any, 0, len(results))
+		for _, d := range results {
+			answers = append(answers, d.modelView())
+		}
+		record[replyAnswersKey] = answers
+	}
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if len(r.loadedSkillText) != 0 {
+		record[replySkillsKey] = append([]any(nil), r.loadedSkillText...)
+	}
+	if len(r.followUps) != 0 {
+		notes := make([]string, 0, len(r.followUps))
+		for note := range r.followUps {
+			notes = append(notes, note)
+		}
+		sort.Strings(notes)
+		scheduled := make([]any, 0, len(notes))
+		for _, note := range notes {
+			scheduled = append(scheduled, map[string]any{"at": r.followUps[note].At, "note": note})
+		}
+		record[replyCheckBacksKey] = scheduled
+	}
+	return record
+}
+
+// handDecision makes the hand-off of a step that ends the stage with final()
+// or respond(): the reply stage is given the task of deciding and the turn's
+// record, in place of the task and evidence the code ended on.
+func handDecision(result ax.Value, record map[string]any) {
+	if step := stageEnd(result); step != nil {
+		step["args"] = []any{leadDecisionTask, record}
+	}
+}
+
+// stageEnd returns the completion of a step that ends its stage with final()
+// or respond(), or nil.
+func stageEnd(result ax.Value) map[string]any {
+	step := mapValue(result)
+	if step == nil {
+		return nil
+	}
+	if payload, ok := step["completion_payload"].(map[string]any); ok {
+		step = payload
+	}
+	switch strings.ToLower(stringValue(step["type"])) {
+	case "final", "respond":
+		return step
+	}
+	return nil
+}
+
+func endsStage(result ax.Value) bool { return stageEnd(result) != nil }
+
+var (
+	discoverSkillsCall = regexp.MustCompile(`(?s)\bdiscover\s*\(\s*\{[^}]*?\bskills\s*:\s*\[(.*?)\]`)
+	quotedSkillName    = regexp.MustCompile("\"([^\"\\\\]+)\"|'([^'\\\\]+)'|`([^`$\\\\]+)`")
+)
+
+// discoveredSkills returns the skill names a step's code passes to
+// discover({skills: [...]}) as plain string literals.
+func discoveredSkills(code string) []ax.Value {
+	var names []ax.Value
+	for _, call := range discoverSkillsCall.FindAllStringSubmatch(code, -1) {
+		for _, quoted := range quotedSkillName.FindAllStringSubmatch(call[1], -1) {
+			for _, name := range quoted[1:] {
+				if name = strings.TrimSpace(name); name != "" {
+					names = append(names, name)
+				}
+			}
+		}
+	}
+	return names
+}
+
+// proposeStated sends the change an unattended reply states to the data
+// agent and returns that delegation. It returns nil when the reply states no
+// change, or when a change this turn asked for is already held: a reply
+// carries one change.
+func (r *leadRun) proposeStated(ctx context.Context, out ax.Value) *leadDelegation {
+	fields := mapValue(normalizeValue(out))
+	if proposes, _ := fields["proposes_change"].(bool); !proposes {
+		return nil
+	}
+	request := strings.TrimSpace(stringValue(fields["change_request"]))
+	if request == "" || r.readOnly || r.delegatedApproval() != nil {
+		return nil
+	}
+	key := leadQuestionKey(request)
+	r.mu.Lock()
+	if prior, ok := r.answered[key]; ok {
+		// The turn's code asked for this in the same words and nothing was
+		// held: asking again would run the same request twice.
+		r.mu.Unlock()
+		return &prior
+	}
+	r.asked++
+	index := r.asked
+	r.mu.Unlock()
+
+	d := r.runOne(ctx, index, request, false)
+	r.mu.Lock()
+	r.delegations = append(r.delegations, d)
+	if d.err == nil {
+		r.answered[key] = d
+	}
+	r.mu.Unlock()
+	return &d
+}
+
+// notHeldSentence says, for a reply that proposed a change, that the data
+// agent did not hold it and what the data agent said instead.
+func (d leadDelegation) notHeldSentence() string {
+	said := strings.TrimSpace(d.resp.Answer)
+	switch {
+	case d.err != nil:
+		said = d.err.Error()
+	case said == "" && len(d.resp.Errors) != 0:
+		said = d.resp.Errors[0].Message
+	}
+	sentence := "GraphJin sent this change to the data agent and it is not held for approval."
+	if said != "" {
+		sentence += " The data agent replied: " + truncateString(said, 600)
+	}
+	return sentence
+}
+
 ```
 
 ### Core Architecture Module: `cmd/world_render.go`
@@ -2365,417 +2550,6 @@ func ShouldCacheQuery(opName, apqKey string) bool {
 
 ```
 
-### Core Architecture Module: `core/cache_response.go`
-```
-package core
-
-import (
-	"bytes"
-	"encoding/json"
-	"fmt"
-	"net/url"
-	"strconv"
-	"strings"
-
-	"github.com/dosco/graphjin/core/v3/internal/jsn"
-	"github.com/dosco/graphjin/core/v3/internal/qcode"
-)
-
-const (
-	CacheSourceDB      = "db"
-	CacheSourceCodeSQL = "codesql"
-	CacheSourceFS      = "fs"
-	CacheSourceRemote  = "remote"
-
-	CacheKindRow      = "row"
-	CacheKindTable    = "table"
-	CacheKindKey      = "key"
-	CacheKindPrefix   = "prefix"
-	CacheKindResolver = "resolver"
-)
-
-// RowRef represents a source-owned cache dependency. The legacy DB shape
-// ({Table, ID}) is still valid and normalizes to db/row or db/table refs.
-type RowRef struct {
-	Source string
-	Scope  string
-	Kind   string
-	Table  string
-	ID     string
-}
-
-// ResponseProcessor handles extraction and stripping of __gj_id fields for caching
-type ResponseProcessor struct {
-	qc *qcode.QCode
-}
-
-// NewResponseProcessor creates a new response processor
-func NewResponseProcessor(qc *qcode.QCode) *ResponseProcessor {
-	return &ResponseProcessor{qc: qc}
-}
-
-// DBRowRef builds a row-level database cache ref.
-func DBRowRef(database, table, id string) RowRef {
-	return RowRef{Source: CacheSourceDB, Scope: database, Kind: CacheKindRow, Table: table, ID: id}
-}
-
-// DBTableRef builds a table-level database cache ref.
-func DBTableRef(database, table string) RowRef {
-	return RowRef{Source: CacheSourceDB, Scope: database, Kind: CacheKindTable, Table: table}
-}
-
-// CodeSQLTableRefs builds table refs for CodeSQL-managed source changes.
-func CodeSQLTableRefs(database string, tables []string) []RowRef {
-	refs := make([]RowRef, 0, len(tables))
-	for _, table := range tables {
-		table = strings.TrimSpace(table)
-		if table == "" {
-			continue
-		}
-		refs = append(refs, RowRef{
-			Source: CacheSourceCodeSQL,
-			Scope:  database,
-			Kind:   CacheKindTable,
-			Table:  table,
-		})
-	}
-	return refs
-}
-
-// RemoteResolverRef builds a cache ref for an external resolver/API result.
-func RemoteResolverRef(scope, id string) RowRef {
-	return RowRef{Source: CacheSourceRemote, Scope: scope, Kind: CacheKindResolver, ID: id}
-}
-
-// RemoteResolverRefs builds resolver refs for one or more external IDs.
-func RemoteResolverRefs(scope string, ids ...string) []RowRef {
-	refs := make([]RowRef, 0, len(ids))
-	for _, id := range ids {
-		refs = append(refs, RemoteResolverRef(scope, id))
-	}
-	return refs
-}
-
-// FilesystemKeyRefs builds refs affected by a write/delete to key. Directory
-// prefixes are included so list fragments for common prefix queries are evicted.
-func FilesystemKeyRefs(name, key string) []RowRef {
-	key = normalizeFilesystemCacheID(key)
-	refs := []RowRef{{
-		Source: CacheSourceFS,
-		Scope:  name,
-		Kind:   CacheKindKey,
-		ID:     key,
-	}}
-
-	seen := map[string]struct{}{}
-	addPrefix := func(prefix string) {
-		prefix = normalizeFilesystemCacheID(prefix)
-		if _, ok := seen[prefix]; ok {
-			return
-		}
-		seen[prefix] = struct{}{}
-		refs = append(refs, RowRef{
-			Source: CacheSourceFS,
-			Scope:  name,
-			Kind:   CacheKindPrefix,
-			ID:     prefix,
-		})
-	}
-	addPrefixVariants := func(prefix string) {
-		addPrefix(prefix)
-		if strings.HasSuffix(prefix, "/") {
-			addPrefix(strings.TrimSuffix(prefix, "/"))
-		}
-	}
-
-	addPrefix("")
-	parts := strings.Split(key, "/")
-	if len(parts) > 1 {
-		var b strings.Builder
-		for i := 0; i < len(parts)-1; i++ {
-			if parts[i] == "" {
-				continue
-			}
-			b.WriteString(parts[i])
-			b.WriteByte('/')
-			addPrefixVariants(b.String())
-		}
-	}
-	return refs
-}
-
-// FilesystemPrefixRefs builds refs for a filesystem list prefix. The root
-// prefix is included so broad filesystem invalidations can evict all entries.
-func FilesystemPrefixRefs(name, prefix string) []RowRef {
-	prefix = normalizeFilesystemCacheID(prefix)
-	refs := []RowRef{filesystemPrefixRef(name, prefix)}
-	if strings.HasSuffix(prefix, "/") {
-		refs = append(refs, filesystemPrefixRef(name, strings.TrimSuffix(prefix, "/")))
-	} else if prefix != "" {
-		refs = append(refs, filesystemPrefixRef(name, prefix+"/"))
-	}
-	if prefix != "" {
-		refs = append(refs, filesystemPrefixRef(name, ""))
-	}
-	return refs
-}
-
-func filesystemKeyRef(name, key string) RowRef {
-	return RowRef{
-		Source: CacheSourceFS,
-		Scope:  name,
-		Kind:   CacheKindKey,
-		ID:     normalizeFilesystemCacheID(key),
-	}
-}
-
-func filesystemPrefixRef(name, prefix string) RowRef {
-	return RowRef{
-		Source: CacheSourceFS,
-		Scope:  name,
-		Kind:   CacheKindPrefix,
-		ID:     normalizeFilesystemCacheID(prefix),
-	}
-}
-
-// FilesystemPrefixRef builds a cache ref for a filesystem list prefix.
-func FilesystemPrefixRef(name, prefix string) RowRef {
-	return filesystemPrefixRef(name, prefix)
-}
-
-func normalizeFilesystemCacheID(id string) string {
-	id = strings.ReplaceAll(id, "\\", "/")
-	return strings.TrimLeft(id, "/")
-}
-
-// Normalize returns the canonical source/kind form for this ref.
-func (r RowRef) Normalize() RowRef {
-	if r.Source == "" {
-		r.Source = CacheSourceDB
-	}
-	if r.Kind == "" {
-		if r.ID == "" {
-			r.Kind = CacheKindTable
-		} else {
-			r.Kind = CacheKindRow
-		}
-	}
-	return r
-}
-
-// DependencyKey returns the exact index key for this dependency ref.
-func (r RowRef) DependencyKey() string {
-	r = r.Normalize()
-	return strings.Join([]string{
-		escapeCachePart(r.Source),
-		escapeCachePart(r.Scope),
-		escapeCachePart(r.Kind),
-		escapeCachePart(r.Table),
-		escapeCachePart(r.ID),
-	}, ":")
-}
-
-// TableDependency returns a table-level dependency matching this ref's source.
-func (r RowRef) TableDependency() (RowRef, bool) {
-	r = r.Normalize()
-	if r.Table == "" {
-		return RowRef{}, false
-	}
-	if r.Kind == CacheKindTable {
-		return r, true
-	}
-	switch r.Source {
-	case CacheSourceDB, CacheSourceCodeSQL:
-		return RowRef{Source: r.Source, Scope: r.Scope, Kind: CacheKindTable, Table: r.Table}, true
-	default:
-		return RowRef{}, false
-	}
-}
-
-func escapeCachePart(s string) string {
-	if s == "" {
-		return "-"
-	}
-	return url.QueryEscape(s)
-}
-
-// ProcessForCache extracts row references and strips __gj_id from response.
-// Returns the cleaned response and list of (table, row_id) pairs.
-func (rp *ResponseProcessor) ProcessForCache(data []byte) (cleaned []byte, refs []RowRef, err error) {
-	if len(data) == 0 {
-		return data, nil, nil
-	}
-	if rp.qc == nil {
-		return data, nil, nil
-	}
-
-	// Parse JSON response
-	var result map[string]interface{}
-	if err = json.Unmarshal(data, &result); err != nil {
-		return data, nil, err
-	}
-
-	dataMap, ok := responseDataMap(result)
-	if !ok {
-		return data, nil, nil
-	}
-
-	refs = make([]RowRef, 0, 100)
-
-	// Process each root selection
-	for i := range rp.qc.Selects {
-		sel := &rp.qc.Selects[i]
-		if sel.ParentID != -1 {
-			continue // Skip non-root selections
-		}
-
-		fieldName := sel.FieldName
-		if fieldName == "" {
-			fieldName = sel.Table
-		}
-
-		if fieldData, ok := dataMap[fieldName]; ok {
-			rp.processNode(sel.Table, fieldData, &refs, sel)
-		}
-	}
-
-	cleaned, err = stripCacheTrackingFields(data)
-	return
-}
-
-func stripCacheTrackingFields(data []byte) ([]byte, error) {
-	fields := jsn.Get(data, [][]byte{[]byte("__gj_id")})
-	if len(fields) == 0 {
-		return data, nil
-	}
-
-	to := make([]jsn.Field, len(fields))
-	var buf bytes.Buffer
-	buf.Grow(len(data))
-	if err := jsn.Replace(&buf, data, fields, to); err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-func (rp *ResponseProcessor) processNode(
-	tableName string,
-	data interface{},
-	refs *[]RowRef,
-	sel *qcode.Select,
-) {
-	switch v := data.(type) {
-	case map[string]interface{}:
-		rp.processObject(tableName, v, refs, sel)
-	case []interface{}:
-		for _, item := range v {
-			if obj, ok := item.(map[string]interface{}); ok {
-				rp.processObject(tableName, obj, refs, sel)
-			}
-		}
-	}
-}
-
-func (rp *ResponseProcessor) processObject(
-	tableName string,
-	obj map[string]interface{},
-	refs *[]RowRef,
-	sel *qcode.Select,
-) {
-	// Extract and remove __gj_id
-	if id, ok := obj["__gj_id"]; ok {
-		*refs = append(*refs, RowRef{
-			Table: tableName,
-			ID:    stringifyID(id),
-		})
-		delete(obj, "__gj_id")
-	} else if id, ok := primaryKeyValueFromObject(obj, sel); ok {
-		*refs = append(*refs, RowRef{
-			Table: tableName,
-			ID:    stringifyID(id),
-		})
-	}
-
-	// Process child selections
-	if sel != nil {
-		for _, childID := range sel.Children {
-			if childID < 0 || int(childID) >= len(rp.qc.Selects) {
-				continue
-			}
-			childSel := &rp.qc.Selects[childID]
-
-			fieldName := childSel.FieldName
-			if fieldName == "" {
-				fieldName = childSel.Table
-			}
-
-			if childData, ok := obj[fieldName]; ok {
-				rp.processNode(childSel.Table, childData, refs, childSel)
-			}
-		}
-	}
-}
-
-func responseDataMap(result map[string]interface{}) (map[string]interface{}, bool) {
-	if dataField, ok := result["data"]; ok {
-		dataMap, ok := dataField.(map[string]interface{})
-		return dataMap, ok
-	}
-
-	// Fragment caches store GraphJin's inner data object directly
-	// (e.g. {"users":[...]}), not the outer {"data": ...} envelope.
-	if _, hasErrors := result["errors"]; hasErrors {
-		return nil, false
-	}
-	return result, true
-}
-
-func primaryKeyValueFromObject(obj map[string]interface{}, sel *qcode.Select) (interface{}, bool) {
-	if sel == nil || sel.Ti.PrimaryCol.Name == "" {
-		return nil, false
-	}
-	pkName := sel.Ti.PrimaryCol.Name
-	for _, f := range sel.Fields {
-		if f.Type != qcode.FieldTypeCol || !strings.EqualFold(f.Col.Name, pkName) {
-			continue
-		}
-		fieldName := f.FieldName
-		if fieldName == "" {
-			fieldName = f.Col.Name
-		}
-		id, ok := obj[fieldName]
-		return id, ok
-	}
-	return nil, false
-}
-
-// stringifyID converts various ID types to string
-func stringifyID(id interface{}) string {
-	switch v := id.(type) {
-	case string:
-		return v
-	case float64:
-		// Check if it's a whole number
-		if v == float64(int64(v)) {
-			return strconv.FormatInt(int64(v), 10)
-		}
-		return strconv.FormatFloat(v, 'f', -1, 64)
-	case int:
-		return strconv.Itoa(v)
-	case int64:
-		return strconv.FormatInt(v, 10)
-	case json.Number:
-		return v.String()
-	default:
-		return fmt.Sprintf("%v", v)
-	}
-}
-
-// ExtractMutationRefs extracts affected row IDs from a mutation response.
-// Used for cache invalidation after INSERT/UPDATE/DELETE.
-func
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2803,384 +2577,774 @@ func
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `bc79e50b` (2026-11-13)
-**Commit Message**: fix(introspection): expose columns of Postgres functions returning table rows (#693)
+### Incident Patch 1: `ffd03671` (2026-11-19)
+**Commit Message**: fix(eval): benchmark test-version labels drop "governed" on the next publish
 
-Postgres functions that return rows of a table were not queryable through
-GraphJin. `RETURNS TABLE (LIKE users)` was discovered as a single output
-column named "like", so selecting any real column failed with
-"field 'id' is not a column or a function; available columns: like".
-`RETURNS SETOF users` and `RETURNS users` were discovered with no output
-columns at all and were not exposed.
+The benchmark pages describe each test version with a label, and the
+first ones read "governed read-only Q&A" and "governed retail Q&A (...,
+governance)". They are now "read-only Q&A" and "retail Q&A (...,
+refusals)", matching the site, which dropped the word.
 
-Function discovery read row columns from information_schema.attributes,
-which only lists standalone composite types, never the row types of
-tables, views or materialized views. Read them from pg_attribute through
-the return type's typrelid instead. This covers tables, views,
-materialized views, foreign and partitioned tables and composite types,
-skips dropped columns, and reports column types with format_type like
-table discovery does. The single OUT parameter that holds the whole row
-is no longer reported as a column, because Postgres expands it into the
-row's columns. Enum and domain outputs keep their existing behaviour.
+Publish writes these labels only when a benchmark's data has none, and
+the published data already lists test versions this build does not
+know. So the new wording alone would never reach the pages. Each
+publish now rewords the retired phrases in the stored labels and keeps
+everything else in them. The live pages change on the next publish of
+each benchmark.
 
-Function output columns now also carry the array flag and honour the
-configured blocklist, s
+A test runs a real publish over data holding the old wording and a test
+version the build does not know, and fails when the rewording is not
+called.
 
-**File**: `core/internal/introspection/sql/postgres_functions.sql` (modified, +30/-13)
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `cmd/cmd_eval_publish.go` (modified, +32/-7)
 ```diff
-@@ -1,3 +1,16 @@
-+WITH row_type_routines AS (
-+	-- Functions whose result is a row type: RETURNS [SETOF] tbl, RETURNS [SETOF]
-+	-- composite_type and RETURNS TABLE (LIKE tbl).
-+	SELECT r.specific_name,
-+		t.typrelid
-+	FROM information_schema.routines r
-+		JOIN pg_catalog.pg_namespace n ON n.nspname = r.type_udt_schema
-+		JOIN pg_catalog.pg_type t ON t.typnamespace = n.oid
-+		AND t.typname = r.type_udt_name
-+	WHERE r.routine_type = 'FUNCTION'
-+		AND r.data_type = 'USER-DEFINED'
-+		AND t.typrelid != 0
-+)
- SELECT r.specific_name as func_id,
- 	r.routine_schema as func_schema,
- 	r.routine_name as func_name,
-@@ -18,6 +31,15 @@ FROM information_schema.routines r
- 	)
- WHERE r.routine_type = 'FUNCTION'
- 	AND r.data_type != 'void'
-+	-- The single OUT parameter of a row type function holds the whole row.
-+	-- Postgres expands it into the row's columns, returned by the SELECT below.
-+	AND NOT (
-+		p.parameter_mode = 'OUT'
-+		AND r.specific_name IN (
-+			SELECT specific_name
-+			FROM row_type_routines
-+		)
-+	)
- 	AND r.specific_schema NOT IN (
- 		'_graphjin',
- 		'information_schema',
-@@ -31,25 +53,20 @@ SELECT r.specific_name as func_id,
- 	r.routine_schema as func_schema,
- 	r.routine_name as func_name,
- 	'record' as data_type,
--	a.ordinal_position as param_id,
--	COALESCE(
--		a.attribute_name,
--		CAST(a.ordinal_position as CHAR(3))
--	) as param_name,
--	a.data_type as param_type,
-+	f.attnum as param_id,
-+	f.attname as param_name,
-+	pg_catalog.format_type(f.atttypid, f.atttypmod) as param_type,
- 	'OUT' as param_kind
- FROM information_schema.routines r
--	RIGHT JOIN information_schema.attributes a ON (
--		r.data_type = 'USER-DEFINED'
--		AND a.udt_schema = r.type_udt_schema
--		AND a.udt_name = r.type_udt_name
--	)
--WHERE r.routine_type = 'FUNCTION'
-+	JOIN row_type_routines rt ON rt.specific_name = r.specific_name
-+	JOIN pg_catalog.pg_attribute f ON f.attrelid = rt.typrelid
-+WHERE f.attnum > 0
-+	AND f.attisdropped = false
- 	AND r.specific_schema NOT IN (
- 		'_graphjin',
- 		'information_schema',
- 		'performance_schema',
- 		'pg_catalog',
- 		'mysql',
- 		'sys'
--	);
-\ No newline at end of file
-+	);
-```
-
-**File**: `core/internal/qcode/schema.go` (modified, +4/-3)
-```diff
-@@ -147,9 +147,10 @@ func parseTFieldsFunction(fn *sdata.DBFunction, fields []graph.TField) (
- 			paramType += "(" + dir.TypeSuffix + ")"
- 		}
- 		p := sdata.DBFuncParam{
--			ID:   i,
--			Name: f.Name,
--			Type: paramType,
-+			ID:    i,
-+			Name:  f.Name,
-+			Type:  paramType,
-+			Array: f.List,
- 		}
- 		switch {
- 		case dir.Input:
-```
-
-**File**: `core/internal/sdata/schema_test.go` (modified, +31/-0)
-```diff
-@@ -88,3 +88,34 @@ func TestAddRemoteRelWithParentStillWorks(t *testing.T) {
- 		t.Fatalf("row-join remote (parented) should still build: %v", err)
+@@ -19,9 +19,9 @@ const (
+ 	benchmarkDataVersion  = "graphjin.benchmark.data/v3"
+ 	defaultBenchmarkSlug  = "deeporg"
+ 	defaultBenchmarkName  = "DeepORG — The Organizational Agent Benchmark"
+-	defaultBenchmarkScope = "2026.1/2026.2 — governed read-only Q&A · 2027.1 — adds writes, alerts, follow-ups, multi-source · 2028.1 — intent-phrased tasks with execution twins · 2028.2 — cross-source ruler fix (v11)"
++	defaultBenchmarkScope = "2026.1/2026.2 — read-only Q&A · 2027.1 — adds writes, alerts, follow-ups, multi-source · 2028.1 — intent-phrased tasks with execution twins · 2028.2 — cross-source ruler fix (v11)"
+ 
+-	deepcontosoBenchmarkScope = "2026.1 — governed retail Q&A (aggregations, time windows, schema discovery, governance)"
++	deepcontosoBenchmarkScope = "2026.1 — " + deepcontosoFirstScope
+ )
+ 
+ type benchmarkIdentity struct {
+@@ -378,10 +378,9 @@ func runEvalPublish(cmd *cobra.Command, evalOpts *evalCLIOptions, opts *evalPubl
+ 	if benchmark.Slug == defaultBenchmarkSlug && len(data.Suite.GenerationScopes) == 0 {
+ 		data.Suite.GenerationScopes = defaultBenchmarkGenerationScopes()
+ 	} else if benchmark.Slug == DeepContosoBenchmarkSlug && len(data.Suite.GenerationScopes) == 0 {
+-		data.Suite.GenerationScopes = map[string]string{
+-			"2026.1": "governed retail Q&A (aggregations, time windows, schema discovery, governance)",
+-		}
++		data.Suite.GenerationScopes = map[string]string{"2026.1": deepcontosoFirstScope}
+ 	}
++	rewordRetiredScopes(&data.Suite)
+ 	if existing >= 0 {
+ 		data.Runs[existing] = entry
+ 	} else {
+@@ -556,10 +555,36 @@ func benchmarkSuiteFromReport(report gjeval.Report) benchmarkSuite {
  	}
  }
+ 
++// deepcontosoFirstScope describes DeepContoso's first test version.
++const deepcontosoFirstScope = "retail Q&A (aggregations, time windows, schema discovery, refusals)"
 +
-+func TestNewDBInfoFunctionOutputColumns(t *testing.T) {
-+	fn := DBFunction{
-+		Schema: "public",
-+		Name:   "get_users",
-+		Type:   "record",
-+		Inputs: []DBFuncParam{{ID: 1, Name: "max_id", Type: "bigint"}},
-+		Outputs: []DBFuncParam{
-+			{ID: 1, Name: "id", Type: "bigint"},
-+			{ID: 2, Name: "password", Type: "text"},
-+			{ID: 3, Name: "tags", Type: "text[]", Array: true},
-+		},
-+	}
-+	di := NewDBInfo("postgres", 140000, "public", "db", nil, []DBFunction{fn}, []string{"password"})
++// retiredScopeWording is wording the published test-version labels used
++// before, and what each says now. The labels are written once, when a
++// benchmark's data has none, so a change of wording reaches the published
++// pages only by rewording the stored labels on the next publish.
++//
++// "Governed" was dropped from the site on 2026-11-19: few readers knew what
++// it meant.
++var retiredScopeWording = []struct{ old, new string }{
++	{"governed retail Q&A (aggregations, time windows, schema discovery, governance)", deepcontosoFirstScope},
++	{"governed read-only Q&A", "read-only Q&A"},
++}
 +
-+	if len(di.Tables) != 1 || di.Tables[0].Type != "function" {
-+		t.Fatalf("expected one function table, got %+v", di.Tables)
-+	}
-+	want := map[string]struct{ blocked, array bool }{
-+		"id":       {},
-+		"password": {blocked: true},
-+		"tags":     {array: true},
-+	}
-+	for _, col := range di.Tables[0].Columns {
-+		w := want[col.Name]
-+		if col.Blocked != w.blocked || col.Array != w.array {
-+			t.Errorf("column %s: blocked=%v array=%v, want blocked=%v array=%v",
-+				col.Name, col.Blocked, col.Array, w.blocked, w.array)
++// rewordRetiredScopes rewrites retired wording in a suite's test-version
++// labels, keeping everything else in them.
++func rewordRetiredScopes(suite *benchmarkSuite) {
++	for _, w := range retiredScopeWording {
++		suite.ScopeLabel = strings.ReplaceAll(suite.ScopeLabel, w.old, w.new)
++		for generation, scope := range suite.GenerationScopes {
++			suite.GenerationScopes[generation] = strings.ReplaceAll(scope, w.old, w.new)
 +		}
 +	}
 +}
-```
-
-**File**: `core/internal/sdata/tables.go` (modified, +5/-3)
-```diff
-@@ -125,9 +125,11 @@ func NewDBInfo(
- 		var cols []DBColumn
- 		for _, v := range f.Outputs {
- 			cols = append(cols, DBColumn{
--				ID:   int32(v.ID),
--				Name: v.Name,
--				Type: v.Type,
-+				ID:      int32(v.ID),
-+				Name:    v.Name,
-+				Type:    v.Type,
-+				Array:   v.Array,
-+				Blocked: isInList(v.Name, blockList),
- 			})
- 		}
- 		t := NewDBTable(f.Schema, f.Name, "function", cols)
-```
-
-**File**: `core/schema.go` (modified, +2/-2)
-```diff
-@@ -124,8 +124,8 @@ const schemaTemplate = `# dbinfo:{{if .Type}}{{ .Type }}{{else}}postgres{{end}},
- {{- if ne .Name "" }}{{ .Name }}{{ else }}_arg{{ .ID }}{{ end }}:
- {{- "\t"}}
- {{- $var := .Type|dbtype }}
--{{- (index $var 0)|pascal }}
--{{- if .Array}}[]{{end}}
-+{{- $type := (index $var 0)|pascal }}
-+{{- if .Array}}[{{ $type }}]{{else}}{{ $type }}{{end}}
- {{- "\t"}}
- {{- if ne (index $var 1) ""}} @type_args(args: {{ (index $var 1) | printf "%q" }}){{end}}
- {{- end -}}
-```
-
-**File**: `core/schema_test.go` (modified, +31/-0)
-```diff
-@@ -50,6 +50,37 @@ func TestCreateSchema(t *testing.T) {
- 
- }
- 
-+func TestCreateSchemaFunctionArrayParams(t *testing.T) {
-+	var buf bytes.Buffer
 +
-+	fn := sdata.DBFunction{
-+		Schema:  "public",
-+		Name:    "get_products",
-+		Type:    "record",
-+		Inputs:  []sdata.DBFuncParam{{ID: 1, Name: "ids", Type: "bigint[]", Array: true}},
-+		Outputs: []sdata.DBFuncParam{{ID: 1, Name: "tags", Type: "text[]", Array: true}},
+ func defaultBenchmarkGenerationScopes() map[string]string {
+ 	return map[string]string{
+-		"2026.1": "governed read-only Q&A",
+-		"2026.2": "governed read-only Q&A",
++		"2026.1": "read-only Q&A",
++		"2026.2": "read-only Q&A",
+ 		"2027.1": "adds writes, alerts, follow-ups, multi-source",
+ 		"2028.1": "intent-phrased tasks with execution twins, v10 ruler",
+ 		"2028.2": "cross-source ruler fix (v11): argument-free file reads count",
+```
+
+**File**: `cmd/cmd_eval_publish_test.go` (modified, +61/-0)
+```diff
+@@ -6,6 +6,7 @@ import (
+ 	"math"
+ 	"os"
+ 	"path/filepath"
++	"reflect"
+ 	"strings"
+ 	"testing"
+ 	"time"
+@@ -684,3 +685,63 @@ func publishTestBenchmark(t *testing.T) benchmarkIdentity {
+ func publishTestDataPath(site string) string {
+ 	return filepath.Join(site, "data", "benchmarks", "deeporg.yaml")
+ }
++
++// Stored test-version labels are written once, so a change of their wording
++// reaches the published pages when the next publish rewords them. Wording that
++// is not retired, and versions this build does not know, are kept.
++func TestEvalPublishRewordsRetiredScopeLabels(t *testing.T) {
++	project, site := t.TempDir(), t.TempDir()
++	first := publishTestReport("20260803T101112.000000000Z-first")
++	writePublishTestReport(t, project, first)
++	if err := publishTestRun(t, project, site, first.RunID, &evalPublishOptions{Site: site}); err != nil {
++		t.Fatal(err)
 +	}
-+	di := sdata.NewDBInfo("postgres", 140000, "public", "db", nil, []sdata.DBFunction{fn}, nil)
-+	if err := writeSchema(di, &buf); err != nil {
++	dataPath := publishTestDataPath(site)
++	data, err := loadBenchmarkData(dataPath, publishTestBenchmark(t))
++	if err != nil {
++		t.Fatal(err)
++	}
++	data.Suite.ScopeLabel = "2026.1/2026.2 — governed read-only Q&A · 2028.4 — tasks state what they grade"
++	data.Suite.GenerationScopes = map[string]string{
++		"2026.1": "governed read-only Q&A",
++		"2027.1": "adds writes, alerts, follow-ups, multi-source",
++		"2028.4": "tasks state what they grade",
++	}
++	raw, err := marshalBenchmarkData(data)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if err := os.WriteFile(dataPath, raw, 0o644); err != nil {
 +		t.Fatal(err)
 +	}
 +
-+	ds, err := qcode.ParseSchema(buf.Bytes())
++	second := publishTestReport("20260804T101112.000000000Z-second")
++	writePublishTestReport(t, project, second)
++	if err := publishTestRun(t, project, site, second.RunID, &evalPublishOptions{Site: site}); err != nil {
++		t.Fatal(err)
++	}
++	data, err = loadBenchmarkData(dataPath, publishTestBenchmark(t))
 +	if err != nil {
-+		t.Fatalf("parse exported schema: %v\n%s", err, buf.String())
++		t.Fatal(err)
 +	}
-+	if len(ds.Functions) != 1 {
-+		t.Fatalf("expected one function, got %+v", ds.Functions)
++	if want := "2026.1/2026.2 — read-only Q&A · 2028.4 — tasks state what they grade"; data.Suite.ScopeLabel != want {
++		t.Fatalf("scope label = %q, want %q", data.Suite.ScopeLabel, want)
 +	}
-+	got := ds.Functions[0]
-+	if len(got.Inputs) != 1 || got.Inputs[0].Type != "bigint" || !got.Inputs[0].Array {
-+		t.Errorf("input changed through schema export: %+v", got.Inputs)
++	want := map[string]string{"2026.1": "read-only Q&A", "2027.1": "adds writes, alerts, follow-ups, multi-source", "2028.4": "tasks state what they grade"}
++	if !reflect.DeepEqual(data.Suite.GenerationScopes, want) {
++		t.Fatalf("generation scopes = %v, want %v", data.Suite.GenerationScopes, want)
 +	}
-+	if len(got.Outputs) != 1 || got.Outputs[0].Type != "text" || !got.Outputs[0].Array {
-+		t.Errorf("output changed through schema export: %+v", got.Outputs)
++	for _, s := range append([]string{defaultBenchmarkScope, deepcontosoBenchmarkScope}, mapValues(defaultBenchmarkGenerationScopes())...) {
++		if strings.Contains(strings.ToLower(s), "governed") {
++			t.Fatalf("a label this build writes still says governed: %q", s)
++		}
 +	}
 +}
 +
- func TestWriteSchemaWithDatabase(t *testing.T) {
- 	var buf bytes.Buffer
- 
++func mapValues(m map[string]string) []string {
++	out := make([]string, 0, len(m))
++	for _, v := range m {
++		out = append(out, v)
++	}
++	return out
++}
 ```
 
-**File**: `tests/postgres.sql` (modified, +12/-0)
-```diff
-@@ -268,6 +268,18 @@ SELECT EXISTS (
-     where p.product_id = id
-   );
- $$ LANGUAGE SQL;
-+CREATE OR REPLACE FUNCTION get_users_up_to(max_id bigint) RETURNS TABLE (LIKE users) AS $$
-+SELECT u.*
-+FROM users u
-+WHERE u.id <= max_id $$ LANGUAGE SQL;
-+CREATE OR REPLACE FUNCTION get_products_up_to(max_id bigint) RETURNS SETOF products AS $$
-+SELECT p.*
-+FROM products p
-+WHERE p.id <= max_id $$ LANGUAGE SQL;
-+CREATE OR REPLACE FUNCTION get_user_row(user_id bigint) RETURNS users AS $$
-+SELECT u.*
-+FROM users u
-+WHERE u.id = user_id $$ LANGUAGE SQL;
- -- graph relationships
- CREATE TABLE graph_node (id TEXT PRIMARY KEY, label TEXT);
- CREATE TABLE graph_edge (
-```
+---
 
-**File**: `tests/query_pg_test.go` (modified, +118/-0)
+### Incident Patch 2: `1d5b14f7` (2026-11-19)
+**Commit Message**: feat(agent): the data agent can be built to read a result before going on
+
+Off, and nothing a person running GraphJin can set: it is an option for
+GraphJin's own tests and measurements (WithResultFeedback).
+
+Without it the data agent's model writes one program: look up the
+table, run the query, call final. The query is written before the
+look-up has returned, so from a guess at the columns and how values are
+spelled, and nothing a function returns is seen by a model again unless
+the program prints it. With it, Ax ends a block after a function whose
+result has to be read and gives the model a fresh call with that result
+in front of it. "lookups" does that for catalog and help look-ups and
+lets a query's rows be followed by dependent code; "all" does it for
+every function.
+
+How it has to be wired, each learned by experiment:
+
+- Ax decides whether a block can end early when the agent is built,
+  from the runtime it is built with. A {language, usageInstructions}
+  record there, with the runtime passed per call, leaves it off. The
+  runtime then also supplies the usage instructions.
+- Ax's own registration of each function is the one that has to run,
+  and each is also bound under its b
+
+**File**: `agent/agent.go` (modified, +28/-6)
 ```diff
-@@ -329,6 +329,124 @@ func Example_queryWithFunctionReturingUserDefinedTypes() {
- 	// Output: {"get_product":[{"id":1,"name":"Product 1"},{"id":2,"name":"Product 2"}]}
+@@ -407,6 +407,7 @@ type Agent struct {
+ 	rateLimiter   *ProviderRateLimiter
+ 	customClient  bool
+ 	newSelector   ProgramFactory
++	feedback      resultFeedback
  }
  
-+func Example_queryWithFunctionReturningTableLike() {
-+	// `RETURNS TABLE (LIKE users)` is Postgres syntax
-+	if dbType != "postgres" {
-+		fmt.Println(`{"get_users_up_to":[{"email":"user1@test.com","full_name":"User 1","id":1},{"email":"user2@test.com","full_name":"User 2","id":2}]}`)
-+		return
-+	}
-+
-+	gql := `query {
-+		get_users_up_to(order_by: { id: asc }, args: { max_id: 2 }) {
-+			id
-+			full_name
-+			email
+ func New(gj *core.GraphJin, config Config, options ...Option) (*Agent, error) {
+@@ -749,7 +750,13 @@ func (a *Agent) Run(ctx context.Context, req Request) (resp Response, err error)
+ 	runtime.WithCodeBlockBudget(cfg.TimeoutSeconds)
+ 	runtime.WithHandoffFallback(protocol.state.runtimeHandoffEvidence)
+ 	runtime.WithClarificationNudge(protocol.state.clarificationNudge)
++	feedback := a.feedback
++	// With result feedback on, Ax registers the functions itself, through the
++	// wrapper that reads a result back to the model (RegisterHostCallable).
+ 	for _, tool := range tools {
++		if feedback != feedbackOff {
++			break
 +		}
-+	}`
-+
-+	conf := newConfig(&core.Config{DBType: dbType, DisableAllowList: true})
-+	gj, err := core.NewGraphJin(conf, db)
-+	if err != nil {
-+		panic(err)
+ 		t := tool
+ 		registerAdvertisedCallable(runtime.RegisterCallable, t.Name, func(params ax.Value) (ax.Value, error) {
+ 			return t.Handler(asMap(params))
+@@ -765,8 +772,13 @@ func (a *Agent) Run(ctx context.Context, req Request) (resp Response, err error)
+ 		})
+ 	}
+ 
++	functions := toolArray(tools)
++	if feedback != feedbackOff {
++		functions = feedback.functions(tools)
 +	}
-+	defer gj.Close()
-+
-+	res, err := gj.GraphQL(context.Background(), gql, nil, nil)
-+	if err != nil {
-+		fmt.Println(err)
++	usage := runtimeInstructionText(a.catalogSearch) + "\n\n" + runtimeResultRecoveryInstructions
+ 	options := map[string]ax.Value{
+-		"functions":         toolArray(tools),
++		"functions":         functions,
+ 		"functionDiscovery": false,
+ 		// Every GraphJin answer requires model-driven discovery, either a
+ 		// runtime distillation or a catalog/help call. Ax's automatic respond()
+@@ -790,7 +802,7 @@ func (a *Agent) Run(ctx context.Context, req Request) (resp Response, err error)
+ 			// filtered domain guides and capability-denial guidance are rendered
+ 			// only for the executor, where Ax also renders the authoritative skill
+ 			// documents. The distiller intentionally has no skill documents.
+-			"usageInstructions": runtimeInstructionText(a.catalogSearch) + "\n\n" + runtimeResultRecoveryInstructions,
++			"usageInstructions": usage,
+ 		},
+ 		"max_actor_steps": maxSteps,
+ 	}
+@@ -811,8 +823,7 @@ func (a *Agent) Run(ctx context.Context, req Request) (resp Response, err error)
+ 			}
+ 			return values
+ 		})
+-		options["instructionAddenda"] = []ax.Value{executorHandoffInstructions, capabilityInstructions, preparedDiscoveryInstructions}
+-		runtimeOptions := options["runtime"].(map[string]ax.Value)
++		options["instructionAddenda"] = []ax.Value{executorHandoffInstructions, capabilityInstructions, feedback.rewrite(preparedDiscoveryInstructions)}
+ 		var selectedGuides strings.Builder
+ 		for _, guide := range skills {
+ 			if prepared.unselected {
+@@ -828,9 +839,20 @@ func (a *Agent) Run(ctx context.Context, req Request) (resp Response, err error)
+ 		// skills option loads guides into the executor only; put the selected
+ 		// guides in the shared runtime instructions so early execution follows
+ 		// the same computation, syntax, and governance contracts.
+-		runtimeOptions["usageInstructions"] = runtimeInstructionText(a.catalogSearch) + "\n\n" + runtimeResultRecoveryInstructions + "\n\n" + preparedDiscoveryInstructions + selectedGuides.String()
++		usage += "\n\n" + preparedDiscoveryInstructions + selectedGuides.String()
+ 	}
+-	program = a.newProgram(agentSignature, options)
++	signature := agentSignature
++	if feedback == feedbackOff {
++		options["runtime"].(map[string]ax.Value)["usageInstructions"] = usage
 +	} else {
-+		printJSON(res.Data)
++		// Ax decides whether a block can end after a function's result when
++		// the agent is built, from the runtime it is built with: a
++		// {language, usageInstructions} record there, with the runtime passed
++		// per call, leaves it off.
++		options["runtime"] = runtime.WithResultFeedback(feedback.rewrite(usage))
++		signature = feedback.rewrite(agentSignature)
 +	}
-+	// Output: {"get_users_up_to":[{"email":"user1@test.com","full_name":"User 1","id":1},{"email":"user2@test.com","full_name":"User 2","id":2}]}
++	program = a.newProgram(signature, options)
+ 	if prepared != nil {
+ 		installPreparedHandoff(ctx, program, prepared, a.runtime, req)
+ 	}
+```
+
+**File**: `agent/result_feedback.go` (added, +133/-0)
+```diff
+@@ -0,0 +1,133 @@
++package agent
++
++import (
++	"strings"
++
++	ax "github.com/ax-llm/ax/packages/go"
++)
++
++// resultFeedback is whether a run reads what a function returned before it
++// writes the code that depends on it.
++//
++// Without it the model writes one program: look up the table, run the query,
++// call final. The query is written before the look-up has returned, so it is
++// written from the model's guess at the columns and the spelling of values,
++// and nothing the functions return is seen by a model again unless the
++// program prints it. A note attached to a result went unread in every run
++// that was traced.
++//
++// With it, Ax ends the block after a function whose result has to be read and
++// gives the model a fresh turn with that result in front of it. A function
++// whose result is plain data may still be followed by dependent code in the
++// same block.
++type resultFeedback string
++
++const (
++	feedbackOff resultFeedback = ""
++	// feedbackLookups: catalog and help look-ups are read on a fresh turn;
++	// a query's rows are data, so the block that runs it may also finish.
++	feedbackLookups resultFeedback = "lookups"
++	// feedbackAll: every function's result is read on a fresh turn.
++	feedbackAll resultFeedback = "all"
++)
++
++// WithResultFeedback sets how a run reads its functions' results: "lookups",
++// "all", or "" for off.
++func WithResultFeedback(mode string) Option {
++	return func(a *Agent) {
++		switch resultFeedback(strings.TrimSpace(mode)) {
++		case feedbackLookups:
++			a.feedback = feedbackLookups
++		case feedbackAll:
++			a.feedback = feedbackAll
++		default:
++			a.feedback = feedbackOff
++		}
++	}
 +}
 +
-+func Example_queryWithFunctionReturningSetofTable() {
-+	// `RETURNS SETOF products` is Postgres syntax
-+	if dbType != "postgres" {
-+		fmt.Println(`{"get_products_up_to":[{"id":1,"name":"Product 1","tags":["Tag 1","Tag 2","Tag 3","Tag 4","Tag 5"]}]}`)
++// policy is Ax's result policy for one of the agent's functions.
++func (m resultFeedback) policy(function string) string {
++	if m == feedbackLookups && function == "execute_graphql" {
++		return "data"
++	}
++	return "inspect"
++}
++
++// functions hands Ax the agent's functions as plain records. Ax runs a typed
++// Tool through a path that ends the whole run when its handler returns an
++// error; a record's error is returned to the model's code, and the run goes
++// on. Every recovery this agent sends the model (the real column names after
++// an unknown column, the corrected query, the detail to inspect first) is a
++// returned error.
++func (m resultFeedback) functions(tools []ax.Tool) ax.Value {
++	records := make([]ax.Value, 0, len(tools))
++	for _, tool := range tools {
++		records = append(records, functionRecord(tool, tool.Handler, m.policy(tool.Name)))
++	}
++	return ax.Array(records...)
++}
++
++// functionRecord is one function as a plain record, with Ax's result policy
++// for it: "inspect" ends the block so the result is read on a fresh turn,
++// "data" lets the code that follows the call run.
++func functionRecord(tool ax.Tool, handler func(map[string]ax.Value) (ax.Value, error), policy string) ax.Value {
++	return map[string]ax.Value{
++		"name":         tool.Name,
++		"description":  tool.Description,
++		"parameters":   tool.Schema(),
++		"handler":      handler,
++		"resultPolicy": policy,
++	}
++}
++
++// feedbackRewrite is one sentence of the standing instructions that tells the
++// model to look up and act in a single program, with what replaces it when a
++// look-up ends the block.
++type feedbackRewrite struct {
++	in      string // where the sentence lives, for the test that keeps these in step
++	old     string
++	lookups string
++	all     string
++}
++
++var feedbackRewrites = []feedbackRewrite{
++	{
++		in:      "agentSignature",
++		old:     "Author the query and call query_catalog({id:...}) in the same code block as execution; these lookups reuse verified prefetched facts locally. Avoid a separate turn printing the hidden seed to find IDs or known columns.",
++		lookups: "Call query_catalog({id:...}) for the exact detail and end the block there: its result is shown to you on the next turn, and the query is written from what it shows. Do not spend a turn printing the hidden seed to find IDs or known columns.",
++	},
++	{
++		in:      "runtimeSeedUsageInstructions",
++		old:     `inspect the exact table or relationship detail with query_catalog({id:"..."}) (batch with {ids:[...]}), author the query with DB-side aggregate fields for any total, count, extreme, or ranking, run execute_graphql, and final from its result.`,
++		lookups: `inspect the exact table or relationship detail with query_catalog({id:"..."}) (batch with {ids:[...]}) and end the block; on the next turn its result is in front of you, so author the query from the columns and values it shows, with DB-side aggregate fields for any total, count, extreme, or ranking, run execute_graphql, and final from its result.`,
++		all:     `inspect the exact table or relationship detail with query_catalog({id:"..."}) (batch with {ids:[...]}) and end the block; on the next turn its result is in front of you, so author the query from the columns and values it shows, with DB-side aggregate fields for any total, count, extreme, or ranking, run execute_gra
+```
+
+**File**: `agent/result_feedback_test.go` (added, +186/-0)
+```diff
+@@ -0,0 +1,186 @@
++package agent
++
++import (
++	"context"
++	"errors"
++	"strings"
++	"testing"
++
++	ax "github.com/ax-llm/ax/packages/go"
++)
++
++// feedbackRuntime counts the look-ups and queries a run makes, and remembers
++// how many model calls had been made when each query ran.
++type feedbackRuntime struct {
++	fakeRuntime
++	client       *recordingClient
++	lookups      int
++	queries      int
++	queryAtCalls []int
++	queryErr     error
++}
++
++func (r *feedbackRuntime) QueryCatalog(ctx context.Context, args map[string]any) (any, error) {
++	if len(detailIDsFromArgs(args)) != 0 {
++		r.lookups++
++	}
++	return r.fakeRuntime.QueryCatalog(ctx, args)
++}
++
++func (r *feedbackRuntime) ExecuteGraphQL(_ context.Context, args map[string]any) (any, error) {
++	r.queries++
++	r.queryAtCalls = append(r.queryAtCalls, len(r.client.calls))
++	if r.queryErr != nil {
++		err := r.queryErr
++		r.queryErr = nil
++		return nil, err
++	}
++	return map[string]any{"data": map[string]any{"accounts": []any{map[string]any{"id": 1, "name": "Meridian Robotics"}}}}, nil
++}
++
++const (
++	// The program models write today: look up, query and finish in one go.
++	oneProgram     = `{"javascriptCode":"const d = await query_catalog({id:'table:app:main.accounts'}); const r = await execute_graphql({query:'query { accounts { id name } }'}); await final('Answer from the rows.', {rows: r.data});"}`
++	queryAndFinish = `{"javascriptCode":"const r = await execute_graphql({query:'query { accounts { id name } }'}); await final('Answer from the rows.', {rows: r.data});"}`
++	finishOnly     = `{"javascriptCode":"await final('Answer from the rows.', {rows: r.data});"}`
++	reply          = `{"status":"answered","answer":"Meridian Robotics"}`
++)
++
++func runWithFeedback(t *testing.T, mode string, rt *feedbackRuntime, responses ...string) *recordingClient {
++	t.Helper()
++	rec := &recordingClient{responses: responses}
++	rt.client = rec
++	runner := newAgent(
++		Config{Provider: "openai", APIKeyEnv: "GRAPHJIN_UNUSED", TimeoutSeconds: 50, MaxSteps: 6},
++		rt,
++		WithClientFactory(func(Config) (ax.AIClient, error) { return rec, nil }),
++		WithResultFeedback(mode),
++	)
++	if _, err := runner.Run(context.Background(), Request{Instruction: "Which accounts do we have?", Capabilities: profileWithRoleAndRoots("user")}); err != nil {
++		t.Fatalf("%q: %v", mode, err)
++	}
++	return rec
++}
++
++// Off, the whole program runs: the query is sent in the same model call that
++// asked for the table's detail, so it was written before that detail was read.
++// With result feedback the look-up ends the block: the query runs only after
++// a model call that was shown what the look-up returned.
++func TestResultFeedbackShowsALookupBeforeTheQueryRuns(t *testing.T) {
++	off := &feedbackRuntime{}
++	rec := runWithFeedback(t, "", off, oneProgram, reply)
++	if off.lookups != 1 || off.queries != 1 || off.queryAtCalls[0] != 1 {
++		t.Fatalf("off: lookups=%d queries=%d ran after %v model calls; want one program doing both", off.lookups, off.queries, off.queryAtCalls)
++	}
++	if len(rec.calls) != 2 {
++		t.Fatalf("off: %d model calls, want 2", len(rec.calls))
++	}
++
++	for mode, script := range map[string][]string{
++		"lookups": {oneProgram, queryAndFinish, reply},
++		"all":     {oneProgram, queryAndFinish, finishOnly, reply},
++	} {
++		rt := &feedbackRuntime{}
++		rec := runWithFeedback(t, mode, rt, script...)
++		if rt.lookups != 1 || rt.queries != 1 {
++			t.Fatalf("%s: lookups=%d queries=%d, want one of each", mode, rt.lookups, rt.queries)
++		}
++		if rt.queryAtCalls[0] != 2 {
++			t.Fatalf("%s: the query ran after %d model calls, want it held until the second", mode, rt.queryAtCalls[0])
++		}
++		if len(rec.calls) != len(script) {
++			t.Fatalf("%s: %d model calls, want %d", mode, len(rec.calls), len(script))
++		}
++		// The second model call is shown what the look-up returned, without
++		// the program having printed it.
++		second := dumpAXValue(rec.calls[1].values)
++		for _, want := range []string{"table:app:main.accounts", "Execution paused before"} {
++			if !strings.Contains(second, want) {
++				t.Errorf("%s: the model call after the look-up does not carry %q", mode, want)
++			}
++		}
++		if mode == "all" {
++			third := dumpAXValue(rec.calls[2].values)
++			if !strings.Contains(third, "Meridian Robotics") {
++				t.Errorf("all: the model call after the query was not shown its rows")
++			}
++		}
++	}
++}
++
++// A function's error is a message for the model. Run through Ax's own
++// registration it used to end the run; handed over as a plain record it is
++// returned to the model's code, shown on the next turn, and the run goes on,
++// whichever name the code called the function by.
++func TestResultFeedbackReturnsAFunctionErrorToTheModel(t *testing.T) {
++	const hint = "this call did NOT return data: field 'amount' is not a column; available columns: id, name, mrr_cents"
++	for _, name := range []string{"execute_graphql", axFlatFunctionNamespace + ".execute_graphql"} {
++		broken := `{"javascriptCode":"const r = await ` + name + `({query:'qu
+```
+
+**File**: `agent/runtime_handoff.go` (modified, +45/-1)
+```diff
+@@ -32,6 +32,26 @@ type graphJinCodeRuntime struct {
+ 	pendingContinuation    func() string
+ 	completionContinuation func() string
+ 	clarificationNudge     func() string
++	// feedback is set when the run reads its functions' results on a fresh
++	// turn; usage is then GraphJin's instruction text for the code stages,
++	// which Ax asks the runtime for when the runtime is what it is built with.
++	feedback bool
++	usage    string
++}
++
++// WithResultFeedback makes this the runtime Ax is constructed with, so Ax can
++// see that it supports ending a block after a function whose result has to be
++// read. usage is the instruction text for the stages that write code.
++func (r *graphJinCodeRuntime) WithResultFeedback(usage string) *graphJinCodeRuntime {
++	r.feedback = true
++	r.usage = usage
++	return r
++}
++
++// SupportsObservationBoundaries is how Ax asks a runtime whether a block can
++// be ended after a function result that has to be read.
++func (r *graphJinCodeRuntime) SupportsObservationBoundaries() bool {
++	return r.feedback
+ }
+ 
+ // WithHandoffFallback supplies runtime-only evidence gathered by GraphJin
+@@ -77,6 +97,9 @@ func (r *graphJinCodeRuntime) Language() string {
+ }
+ 
+ func (r *graphJinCodeRuntime) UsageInstructions() string {
++	if r.usage != "" {
++		return r.usage
++	}
+ 	return r.base.UsageInstructions()
+ }
+ 
+@@ -97,8 +120,29 @@ func (r *graphJinCodeRuntime) RegisterCallable(name string, handler axgoja.HostC
+ // instead, whenever the model had called the function the way the prompt
+ // shows it. Called by the bare name, the same error reached the model and the
+ // run went on.
++//
++// With result feedback on, Ax's registrations are the ones that run. Reading a
++// result on a fresh turn is done by Ax's own wrapper around each function: it
++// records what the function returned and holds back the next call. The agent
++// then hands Ax its functions as plain records (resultFeedback.functions),
++// whose errors that wrapper returns to the model's code. Each function is
++// also bound under its bare name, the spelling GraphJin's instructions use.
+ func (r *graphJinCodeRuntime) RegisterHostCallable(name string, handler func(ax.Value) (ax.Value, error)) {
+-	registerAxPrimitive(r.base, name, handler)
++	if !r.feedback {
++		registerAxPrimitive(r.base, name, handler)
 +		return
 +	}
-+
-+	gql := `query {
-+		get_products_up_to(where: { tags: { contains: ["Tag 1"] } }, order_by: { id: asc }, limit: 1, args: { max_id: 2 }) {
-+			id
-+			name
-+			tags
-+		}
-+	}`
-+
-+	conf := newConfig(&core.Config{DBType: dbType, DisableAllowList: true})
-+	gj, err := core.NewGraphJin(conf, db)
-+	if err != nil {
-+		panic(err)
-+	}
-+	defer gj.Close()
-+
-+	res, err := gj.GraphQL(context.Background(), gql, nil, nil)
-+	if err != nil {
-+		fmt.Println(err)
-+	} else {
-+		printJSON(res.Data)
-+	}
-+	// Output: {"get_products_up_to":[{"id":1,"name":"Product 1","tags":["Tag 1","Tag 2","Tag 3","Tag 4","Tag 5"]}]}
++	registerAxCallable(r.base, name, handler)
 +}
 +
-+func Example_queryWithFunctionReturningTableRow() {
-+	// `RETURNS users` is Postgres syntax
-+	if dbType != "postgres" {
-+		fmt.Println(`{"get_user_row":[{"full_name":"User 3","id":3}]}`)
-+		return
++// registerAxCallable keeps a registration Ax makes, and binds a function Ax
++// registers under its qualified name (utils.ask_graphjin) under its bare name
++// as well, the spelling GraphJin's instructions use.
++func registerAxCallable(base *axgoja.Runtime, name string, handler func(ax.Value) (ax.Value, error)) {
++	base.RegisterHostCallable(name, handler)
++	if bare, qualified := strings.CutPrefix(name, axFlatFunctionNamespace+"."); qualified && bare != "" {
++		base.RegisterHostCallable(bare, handler)
 +	}
+ }
+ 
+ func (r *graphJinCodeRuntime) CreateSession(globals map[string]ax.Value, options map[string]ax.Value) (ax.CodeSession, error) {
+```
+
+---
+
+### Incident Patch 3: `478f4d2d` (2026-11-19)
+**Commit Message**: docs(site): the README and website are DeepORG, built on GraphJin
+
+The public name changes from GraphJin to DeepORG: "one governed AI
+agent for your whole organization". The README opens with "DeepORG was
+formerly GraphJin", the site title, home page, header, page metadata
+and the default social image carry the new name, and the benchmark
+pages say "by DeepORG". GraphJin stays the name of the open-source
+engine underneath, and the README and home page say so.
+
+Nothing a user types changes. The CLI (graphjin), the Go module
+(github.com/dosco/graphjin/v3), the npm package and the Docker images
+keep the graphjin name for now, which the README states.
+
+The benchmark of the same name is now called "the DeepORG benchmark"
+where the two could be confused, and its own pages drop "by GraphJin".
+The site check's pinned copy moves with the copy, and it now requires
+the new social image.
+
+Also brings the tracked copy of the install script under
+website/public in line with install.sh, which stopped offering 32-bit
+builds in 31b138140.
+
+Checked on a clean copy of the committed tree with this change
+applied: npm run build and npm run check pass (197 HTML files).
+
+Co-Authored-By: Claude Fable 5.2 
+
+**File**: `README.md` (modified, +9/-7)
+```diff
+@@ -1,4 +1,4 @@
+-# GraphJin — One Governed Graph for Your AI Agents
++# DeepORG — One Governed AI Agent for Your Whole Organization
+ 
+ [![Apache 2.0](https://img.shields.io/github/license/dosco/graphjin.svg?style=for-the-badge)](https://github.com/dosco/graphjin/blob/master/LICENSE)
+ [![NPM Package](https://img.shields.io/npm/v/graphjin?style=for-the-badge)](https://www.npmjs.com/package/graphjin)
+@@ -7,20 +7,22 @@
+ [![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge&logo=go)](https://pkg.go.dev/github.com/dosco/graphjin/core/v3)
+ [![GoReport](https://goreportcard.com/badge/github.com/gojp/goreportcard?style=for-the-badge)](https://goreportcard.com/report/github.com/dosco/graphjin/core/v3)
+ 
+-GraphJin is a compiler and runtime that gives AI agents one governed graph over the systems a real company already has: databases, warehouses, files, source code, workflows, metadata, and security policy. Instead of handing an agent raw credentials and hoping it guesses correctly, GraphJin exposes that graph through GraphQL + MCP: the agent discovers before acting, validates queries, runs approved work, observes runtime status — and every answer is checked against an execution ledger before it leaves the server.
++> **DeepORG was formerly GraphJin.** The CLI (`graphjin`), the Go module (`github.com/dosco/graphjin/v3`), the npm package, and the Docker images keep the `graphjin` name for now.
+ 
+-It is not only for agents. GraphJin is still a high-performance GraphQL-to-database compiler, Go library, standalone API service, REST/OpenAPI gateway, and real-time subscription server. The agent use case is where everything comes together: the same compiler that serves your apps can also give AI a smart, auditable way to work across data, code, and operations.
++DeepORG is one governed AI agent for your whole organization. It answers questions and carries out operations across the systems a real company already has: databases, warehouses, files, source code, workflows, metadata, and security policy. Instead of handing an agent raw credentials and hoping it guesses correctly, DeepORG gives it one governed graph over GraphQL + MCP: the agent discovers before acting, validates queries, runs approved work, observes runtime status — and every answer is checked against an execution ledger before it leaves the server.
 +
-+	gql := `query {
-+		get_user_row(args: { user_id: 3 }) {
-+			id
-+			full_name
-+		}
-+	}`
-+
-+	conf := newConfig(&core.Config{DBType: dbType, DisableAllowList: true})
-+	gj, err := core.NewGraphJin(conf, db)
-+	if err != nil {
-+		panic(err)
-+	}
-+	defer gj.Close()
-+
-+	res, err := gj.GraphQL(context.Background(), gql, nil, nil)
-+	if err != nil {
-+		fmt.Println(err)
-+	} else {
-+		printJSON(res.Data)
-+	}
-+	// Output: {"get_user_row":[{"full_name":"User 3","id":3}]}
-+}
-+
-+func Example_queryWithFunctionReturningTableBlockedColumn() {
-+	// `RETURNS TABLE (LIKE users)` is Postgres syntax
-+	if dbType != "postgres" {
-+		fmt.Println(`column: 'public.get_users_up_to.email' blocked`)
-+		return
-+	}
-+
-+	gql := `query {
-+		get_users_up_to(args: { max_id: 2 }) {
-+			id
-+			email
-+		}
-+	}`
-+
-+	conf := newConfig(&core.Config{DBType: dbType, DisableAllowList: true, Blocklist: []string{"email"}})
-+	gj, err := core.NewGraphJin(conf, db)
-+	if err != nil {
-+		panic(err)
-+	}
-+	defer gj.Close()
-+
-+	_, err = gj.GraphQL(context.Background(), gql, nil, nil)
-+	fmt.Println(err)
-+	// Output: column: 'public.get_users_up_to.email' blocked
-+}
-+
- func Example_queryWithFunctionAndDirectives() {
- 	// Skip for MongoDB/Snowflake emulator: custom database functions not supported
- 	if dbType == "mongodb" || dbType == "snowflake" {
++Underneath is GraphJin, the open-source engine DeepORG is built on. It is still a high-performance GraphQL-to-database compiler, Go library, standalone API service, REST/OpenAPI gateway, and real-time subscription server. The same compiler that serves your apps gives the agent a smart, auditable way to work across data, code, and operations.
+ 
+ Works with PostgreSQL, MySQL, MongoDB, SQLite, Oracle, MSSQL, Snowflake, Redshift, BigQuery, Apache Cassandra / Amazon Keyspaces, S3/GCS/local files, CodeSQL source indexes - and models from Claude/GPT-4 to local 7B models.
+ 
+-## Why GraphJin For Agents
++## Why DeepORG
+ 
+-- **A built-in agent, one call away** - POST one instruction to `/api/v1/agent` (or call the `ask_graphjin_agent` MCP tool) and GraphJin runs the discovery loop itself - as the caller, under the caller's permissions - and returns a typed, evidence-backed answer. See [Server-Side Agent](#server-side-agent).
+-- **One governed surface for many systems** - Query operational databases, warehouses, MongoDB, object stores, local files, CodeSQL source indexes, workflows, and GraphJin system roots through GraphQL and MCP.
++- **A built-in agent, one call away** - POST one instruction to `/api/v1/agent` (or call the `ask_graphjin_agent` MCP tool) and DeepORG runs the discovery loop itself - as the caller, under the caller's permissions - and returns a typed, evidence-backed answer. See [Server-Side Agent](#server-side-agent).
++- **One governed surface for many systems** - Query operational databases, warehouses, MongoDB, object stores, local files, CodeSQL source indexes, workflows, and the built-in `gj_*` system roots through GraphQL and MCP.
+ - **Smart discovery before action** - Agents start with `query_catalog(search: "<user instruction>")`, `graphql_help`, relationship evidence, examples, config recipes, and safety notes before writing or running queries.
+ - **Guarded action, not raw access** - Source-mode access, query allow-lists, read-only boundaries, policy-aware MCP tools, local encrypted secrets, and `gj_config` preview/apply keep changes auditable.
+ - **Operational awareness** - `gj_security`, `gj_runtime`, and the built-in console expose policy and bounded runtime status so agents can check what is safe before they act.
+-- **Standing questions, not just answers** - Hand a cursor-paginated subscription to `gj_watch` and GraphJin keeps answering it under the owner's permissions, resumes from persisted cursors across restarts, treats absence as a first-class event, and files what it finds in a durable inbox (`gj_watch_event`), a webhook, or a workflow. Evaluation runs on database 
+```
+
+**File**: `website/content/_index.md` (modified, +22/-22)
+```diff
+@@ -1,19 +1,19 @@
+ ---
+-title: "GraphJin"
++title: "DeepORG"
+ description: "One governed AI agent across your databases, APIs, files, and code. It answers real questions, carries out real operations, and refuses what it shouldn't — proven on a public benchmark with zero unsafe effects."
+ ---
+ 
+-<section class="home-hero">{{< benchmark-hero benchmark="deeporg" >}}<div class="home-hero-demo"><div class="ai-window ai-window-hero" tabindex="0" aria-label="GraphJin agent example. Focus to pause rotation."><div class="window-chrome"><span></span><span></span><span></span><i aria-hidden="true">✣</i><strong>GraphJin Agent · localhost:8083/agent</strong></div><div class="ai-conversation"><div class="chat-user">Which account is most at risk of churn—and why?</div><div class="assistant-row"><div class="assistant-avatar" aria-hidden="true">✣</div><div class="chat-assistant hero-trace"><div class="tool-call"><div class="tool-call-header"><span class="tool-caret" aria-hidden="true">⌄</span><span>query_catalog</span></div><code>3 relevant sources discovered</code><div class="hero-source-list" aria-label="Sources discovered"><span><strong>Postgres</strong> accounts + invoices</span><span><strong>Snowflake</strong> product usage</span><span><strong>CRM API</strong> opportunities</span></div></div><div class="tool-call"><div class="tool-call-header"><span class="tool-caret" aria-hidden="true">⌄</span><span>validate_where_clause</span></div><code>relationships + churn filters valid</code></div><div class="tool-call"><div class="tool-call-header"><span class="tool-caret" aria-hidden="true">⌄</span><span>execute_graphql</span></div><code>3 optimized, policy-checked operations</code></div><p class="done-line"><span aria-hidden="true">✓</span><span class="done-text"> Evidence checked · 3 systems · 3 operations</span></p><p class="assistant-copy">Meridian Robotics — renewal in 9 days, usage down 38%, two failed payments, and an unresolved escalation.</p></div></div></div></div><script type="application/json" id="hero-rotate-data">[{"user":"Which account is most at risk of churn—and why?","sources":[{"name":"Postgres","detail":"accounts + invoices"},{"name":"Snowflake","detail":"product usage"},{"name":"CRM API","detail":"opportunities"}],"tools":[{"name":"query_catalog","line":"3 relevant sources discovered"},{"name":"validate_where_clause","line":"relationships + churn filters valid"},{"name":"execute_graphql","line":"3 optimized, policy-checked operations"}],"done":"Evidence checked · 3 systems · 3 operations","answer":"Meridian Robotics — renewal in 9 days, usage down 38%, two failed payments, and an unresolved escalation."},{"user":"Which support issues are about to breach SLA?","sources":[{"name":"Postgres","detail":"accounts + owners"},{"name":"Ticket API","detail":"open escalations"},{"name":"Filesystem","detail":"SLA policy"}],"tools":[{"name":"query_catalog","line":"3 relevant sources discovered"},{"name":"validate_where_clause","line":"priority + deadline filters valid"},{"name":"execute_graphql","line":"3 optimized, policy-checked operations"}],"done":"Evidence checked · 3 systems · 3 operations","answer":"Meridian Robotics has one urgent escalation past SLA and another due by 17:00 today."},{"user":"Where is revenue concentrated—and what is at risk?","sources":[{"name":"Postgres","detail":"subscriptions"},{"name":"MySQL","detail":"invoices + renewals"},{"name":"Snowflake","detail":"product usage"}],"tools":[{"name":"query_catalog","line":"3 relevant sources discovered"},{"name":"validate_where_clause","line":"revenue + renewal filters valid"},{"name":"execute_graphql","line":"3 optimized, policy-checked operations"}],"done":"Evidence checked · 3 systems · 3 operations","answer":"81% of MRR is enterprise, with $5,200 exposed across two past-due accounts whose usage is declining."}]</script></div></section>
++<section class="home-hero">{{< benchmark-hero benchmark="deeporg" >}}<div class="home-hero-demo"><div class="ai-window ai-window-hero" tabindex="0" aria-label="DeepORG agent example. Focus to pause rotation."><div class="window-chrome"><span></span><span></span><span></span><i aria-hidden="true">✣</i><strong>DeepORG Agent · localhost:8083/agent</strong></div><div class="ai-conversation"><div class="chat-user">Which account is most at risk of churn—and why?</div><div class="assistant-row"><div class="assistant-avatar" aria-hidden="true">✣</div><div class="chat-assistant hero-trace"><div class="tool-call"><div class="tool-call-header"><span class="tool-caret" aria-hidden="true">⌄</span><span>query_catalog</span></div><code>3 relevant sources discovered</code><div class="hero-source-list" aria-label="Sources discovered"><span><strong>Postgres</strong> accounts + invoices</span><span><strong>Snowflake</strong> product usage</span><span><strong>CRM API</strong> opportunities</span></div></div><div class="tool-call"><div class="tool-call-header"><span class="tool-caret" aria-hidden="true">⌄</span><span>validate_where_clause
+```
+
+**File**: `website/content/agentic/evaluation.md` (modified, +1/-1)
+```diff
+@@ -22,7 +22,7 @@ That is the purpose of GraphJin Eval: prove that a model, prompt, skill, or
+ GraphJin change still produces correct, governed answers on **your catalog and
+ your data**.
+ 
+-For the cross-vendor public benchmark and exact per-run reports, see [DeepORG](/benchmarks/deeporg/), built and published by GraphJin.
++For the cross-vendor public benchmark and exact per-run reports, see the [DeepORG benchmark](/benchmarks/deeporg/).
+ 
+ {{< callout type="note" title="Eval is a release check, not a model leaderboard." >}}
+ Start with the questions your users actually ask. GraphJin builds executable
+```
+
+**File**: `website/content/benchmarks/deepcontoso/_index.md` (modified, +3/-3)
+```diff
+@@ -3,7 +3,7 @@ title: "DeepContoso — The Retail & Supply Chain Benchmark"
+ description: "A public comparison of AI agents solving enterprise retail and supply chain analytics, with correctness, database pushdown, governance, cost, latency, and GraphJin build provenance."
+ ---
+ 
+-<div class="benchmark-wordmark"><strong>DeepContoso</strong><span>The Retail & Supply Chain Benchmark · by GraphJin</span></div>
++<div class="benchmark-wordmark"><strong>DeepContoso</strong><span>The Retail & Supply Chain Benchmark · by DeepORG</span></div>
+ 
+ # Can an AI agent handle enterprise retail data without breaking governance?
+ 
+@@ -56,7 +56,7 @@ sliding windows, and security refusals.
+ 
+ ## Run it yourself
+ 
+-The DeepContoso suite is frozen and committed. GraphJin resolves its hidden oracles
++The DeepContoso suite is frozen and committed. DeepORG resolves its hidden oracles
+ against the live reference environment before provider traffic, then performs
+ three independent attempts per task.
+ 
+@@ -73,7 +73,7 @@ published provider and model identity.
+ ## Run DeepContoso on your organization
+ 
+ The public board uses the bundled Contoso retail reference environment. The same
+-evaluation framework can grade your own GraphJin catalog and check live hidden
++evaluation framework can grade your own DeepORG catalog and check live hidden
+ oracles before a model sees its first prompt.
+ 
+ {{< code-card filename="terminal" language="bash" >}}
+```
+
+**File**: `website/content/benchmarks/deepcontoso/methodology.md` (modified, +1/-1)
+```diff
+@@ -6,7 +6,7 @@ nav_group: "benchmarks"
+ weight: 2
+ ---
+ 
+-DeepContoso, The Retail & Supply Chain Benchmark built and published by GraphJin,
++DeepContoso, The Retail & Supply Chain Benchmark built and published by DeepORG,
+ evaluates how AI models perform against a complex enterprise retail data warehouse
+ modeled on Microsoft's Contoso schema. It measures the final answer, database query
+ pushdown, safety governance, and operational efficiency across 100 distinct tasks
+```
+
+**File**: `website/content/benchmarks/deepcontoso/runs/_index.md` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ ---
+ title: "Published DeepContoso Runs"
+-description: "The public archive of shareable DeepContoso reports, built and published by GraphJin."
++description: "The public archive of shareable DeepContoso reports, built and published by DeepORG."
+ ---
+ 
+ Each page is generated from the same shareable projection as its local eval
+```
+
+**File**: `website/content/benchmarks/deeporg/_index.md` (modified, +3/-3)
+```diff
+@@ -5,7 +5,7 @@ aliases:
+   - /benchmarks/organizational-agent/
+ ---
+ 
+-<div class="benchmark-wordmark"><strong>DeepORG</strong><span>The Organizational Agent Benchmark · by GraphJin</span></div>
++<div class="benchmark-wordmark"><strong>DeepORG</strong><span>The Organizational Agent Benchmark</span></div>
+ 
+ # Can an AI agent handle the questions an organization actually asks?
+ 
+@@ -60,7 +60,7 @@ linked report.
+ 
+ ## Run it yourself
+ 
+-The public suite is frozen and committed. GraphJin resolves its hidden oracles
++The public suite is frozen and committed. DeepORG resolves its hidden oracles
+ against the live demo before provider traffic, then performs three independent
+ attempts per task. Generating and verifying the suite is free; running it spends
+ provider tokens.
+@@ -78,7 +78,7 @@ published provider and model identity.
+ ## Run DeepORG on your organization
+ 
+ The public board uses the bundled SaaS Ops reference environment. The same
+-generator can build a private evaluation from your own GraphJin catalog and
++generator can build a private evaluation from your own DeepORG catalog and
+ check live hidden oracles before a model sees its first prompt.
+ 
+ {{< code-card filename="terminal" language="bash" >}}
+```
+
+**File**: `website/content/benchmarks/deeporg/methodology.md` (modified, +1/-1)
+```diff
+@@ -9,7 +9,7 @@ aliases:
+   - /benchmarks/organizational-agent/methodology/
+ ---
+ 
+-DeepORG, The Organizational Agent Benchmark built and published by GraphJin, asks models to work
++DeepORG, The Organizational Agent Benchmark, asks models to work
+ against a real, governed organizational schema. It measures the final answer
+ and the path used to reach it instead of treating text-to-SQL as a single
+ exact-match problem.
 ```
 
 #### Recent Merged Pull Requests:
@@ -3209,72 +3373,56 @@ configured blocklist, s
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. introspection): expose columns of Postgres functions returning table rows
+## X. eval): benchmark test-version labels drop "governed" on the next publish
 
 **RULE**:
-When implementing operations in `core/internal/introspection/sql/postgres_functions.sql`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/graphjin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/cmd_eval_publish.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/graphjin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `bc79e50b`: introspection): expose columns of Postgres functions returning table rows. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ffd03671`: eval): benchmark test-version labels drop "governed" on the next publish. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/internal/introspection/sql/postgres_functions.sql`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/cmd_eval_publish.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-WITH row_type_routines AS (
-	-- Functions whose result is a row type: RETURNS [SETOF] tbl, RETURNS [SETOF]
-	-- composite_type and RETURNS TABLE (LIKE tbl).
-	SELECT r.specific_name,
-		t.typrelid
-	FROM information_schema.routines r
-		JOIN pg_catalog.pg_namespace n ON n.nspname = r.type_udt_schema
-		JOIN pg_catalog.pg_type t ON t.typnamespace = n.oid
-		AND t.typname = r.type_udt_name
-	WHERE r.routine_type = 'FUNCTION'
-		AND r.data_type = 'USER-DEFINED'
-		AND t.typrelid != 0
-)
-	-- The single OUT parameter of a row type function holds the whole row.
-	-- Postgres expands it into the row's columns, returned by the SELECT below.
-	AND NOT (
-		p.parameter_mode = 'OUT'
-		AND r.specific_name IN (
-			SELECT specific_name
-			FROM row_type_routines
-		)
-	)
-	f.attnum as param_id,
-	f.attname as param_name,
-	pg_catalog.format_type(f.atttypid, f.atttypmod) as param_type,
-	JOIN row_type_routines rt ON rt.specific_name = r.specific_name
-	JOIN pg_catalog.pg_attribute f ON f.attrelid = rt.typrelid
-WHERE f.attnum > 0
-	AND f.attisdropped = false
-	);
+	defaultBenchmarkScope = "2026.1/2026.2 — read-only Q&A · 2027.1 — adds writes, alerts, follow-ups, multi-source · 2028.1 — intent-phrased tasks with execution twins · 2028.2 — cross-source ruler fix (v11)"
+	deepcontosoBenchmarkScope = "2026.1 — " + deepcontosoFirstScope
+		data.Suite.GenerationScopes = map[string]string{"2026.1": deepcontosoFirstScope}
+	rewordRetiredScopes(&data.Suite)
+// deepcontosoFirstScope describes DeepContoso's first test version.
+const deepcontosoFirstScope = "retail Q&A (aggregations, time windows, schema discovery, refusals)"
+
+// retiredScopeWording is wording the published test-version labels used
+// before, and what each says now. The labels are written once, when a
+// benchmark's data has none, so a change of wording reaches the published
+// pages only by rewording the stored labels on the next publish.
+//
+// "Governed" was dropped from the site on 2026-11-19: few readers knew what
+// it meant.
+var retiredScopeWording = []struct{ old, new string }{
+	{"governed retail Q&A (aggregations, time windows, schema discovery, governance)", deepcontosoFirstScope},
+	{"governed read-only Q&A", "read-only Q&A"},
+}
+
+// rewordRetiredScopes rewrites retired wording in 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	a.ordinal_position as param_id,
-	COALESCE(
-		a.attribute_name,
-		CAST(a.ordinal_position as CHAR(3))
-	) as param_name,
-	a.data_type as param_type,
-	RIGHT JOIN information_schema.attributes a ON (
-		r.data_type = 'USER-DEFINED'
-		AND a.udt_schema = r.type_udt_schema
-		AND a.udt_name = r.type_udt_name
-	)
-WHERE r.routine_type = 'FUNCTION'
-	);
+	defaultBenchmarkScope = "2026.1/2026.2 — governed read-only Q&A · 2027.1 — adds writes, alerts, follow-ups, multi-source · 2028.1 — intent-phrased tasks with execution twins · 2028.2 — cross-source ruler fix (v11)"
+	deepcontosoBenchmarkScope = "2026.1 — governed retail Q&A (aggregations, time windows, schema discovery, governance)"
+		data.Suite.GenerationScopes = map[string]string{
+			"2026.1": "governed retail Q&A (aggregations, time windows, schema discovery, governance)",
+		}
+		"2026.1": "governed read-only Q&A",
+		"2026.2": "governed read-only Q&A",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `bc79e50b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ffd03671` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

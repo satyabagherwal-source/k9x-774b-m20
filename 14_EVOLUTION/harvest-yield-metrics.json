@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T22:07:06.567Z",
-  "total_cycles_completed": 10873,
-  "total_learnings_persisted": 10873,
-  "total_rules_promoted": 10230,
+  "last_updated": "2026-11-19T22:19:48.518Z",
+  "total_cycles_completed": 10875,
+  "total_learnings_persisted": 10875,
+  "total_rules_promoted": 10232,
   "history": [
-    {
-      "timestamp": "2026-11-19T01:32:37.435Z",
-      "repository": "kubearmor/KubeArmor",
-      "learningId": "learn-github-kubearmor-kubearmor",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-19T01:32:41.716Z",
-      "repository": "open-ani/animeko",
-      "learningId": "learn-github-open-ani-animeko",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-19T01:32:51.685Z",
       "repository": "GreptimeTeam/greptimedb",
@@ -1403,6 +1389,20 @@
       "repository": "koderover/zadig",
       "learningId": "learn-github-koderover-zadig",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T22:19:41.483Z",
+      "repository": "Automattic/harper",
+      "learningId": "learn-github-automattic-harper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T22:19:48.518Z",
+      "repository": "dosco/graphjin",
+      "learningId": "learn-github-dosco-graphjin",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

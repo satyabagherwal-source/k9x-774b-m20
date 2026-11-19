@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T22:07:51.749Z",
+  "last_updated": "2026-11-19T22:19:54.067Z",
   "total_verified_learnings": 9020,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 22019,
+  "total_items": 22025,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-5Y7C-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-56X4-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2d789bfae5eb6d0a61c1e2567ecd32e4eddd88b4edca6db29d6372a9356e08ee",
+      "content_hash": "c1fd3a050ac4d03b0f7960802e1e1db061fba980da28961a4875aaa1a2cad2cc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T20:00:31.086Z"
+      "persisted_at": "2026-11-19T22:19:53.803Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "d7b38a423503f5b6481acab937b7c0180af1ecf7de2ad72d495649cbb2bdb64c",
+      "content_hash": "96f8b06df28d8c970dce88df943366409224c49d07e8ea2dfbc769e46f60cb9d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-19T20:00:31.279Z"
+      "persisted_at": "2026-11-19T22:19:53.936Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "891b2f6982785b7249cabd4f567e0324a1dd6497eda660ae029344f23d6de28b",
+      "content_hash": "b63c8b94505ad6d68a3e0b1ac37a1d513fea73c21d67c740b6ad4ca550a02a68",
       "domain_letter": "K",
-      "persisted_at": "2026-11-19T20:00:31.466Z"
+      "persisted_at": "2026-11-19T22:19:54.067Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -230180,14 +230180,19 @@
       "slug": "dosco-graphjin",
       "platform": "github",
       "source_url": "https://github.com/dosco/graphjin",
-      "source_version": "3fc0975a",
-      "content_hash": "a8f2e5192cef221c735fc79cfa514ae0b7a2131779085265958c90a6f48e115d",
+      "source_version": "ffd03671",
+      "content_hash": "239e1951270f4c30bbf6c456f98a3ee5fd5f8b83ac3e60d48c390a516fd8e763",
       "dossier_path": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
       "promoted_rules": [
         {
           "number": 8489,
           "title": "expose columns of Postgres functions returning table rows",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9457,
+          "title": "benchmark test-version labels drop \"governed\" on the next publish",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -230196,7 +230201,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T13:29:08.263Z",
+      "verified_at": "2026-11-19T22:19:48.342Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230238,10 +230243,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-graphjin-core-invariants.md",
       "title": "Research & Knowledge Intelligence: dosco/graphjin Core Invariants",
       "repository": "dosco/graphjin",
-      "source_version": "3fc0975a",
-      "content_hash": "81b32dff5c36915f1cc476396622d7f87aa6c7d91c2c312b1fc31a4ac8311baf",
+      "source_version": "ffd03671",
+      "content_hash": "d5ccd157b1372ce8e74b023dd8a230c435b8e2bb330750ca94ba588bb88a357a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T13:29:08.782Z"
+      "persisted_at": "2026-11-19T22:19:48.838Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-graphjin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-graphjin",
@@ -230250,10 +230255,10 @@
       "relative_path": "08_VERIFICATION/dosco-graphjin-verification-protocol-empirical-defect-shield-for-dosco-graphjin.md",
       "title": "Verification Protocol: Empirical Defect Shield for dosco/graphjin",
       "repository": "dosco/graphjin",
-      "source_version": "3fc0975a",
-      "content_hash": "0bec73b20a07f5ba007f7a64063425794517f49192ef7234791a8589c5b66099",
+      "source_version": "ffd03671",
+      "content_hash": "589cd05ece8327d825057f7cc01981f861c7e9892c6bd4e1a6f8c2b040b94f9d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T13:29:08.904Z"
+      "persisted_at": "2026-11-19T22:19:48.965Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8b-learnings-core-invariants",
@@ -230287,9 +230292,9 @@
       "title": "Research & Knowledge Intelligence: dosco-graphjin-learnings Core Invariants",
       "repository": "dosco-graphjin-learnings",
       "source_version": "HEAD",
-      "content_hash": "7fa9e76fc35ed225c45a8e7fc271558caec13671e50e20ea7d12319d0baaf0bc",
+      "content_hash": "46a81ed94a9a80de63bc379a3728882d0bab2456336e0c95d1cf5bbce11223f0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T13:29:46.220Z"
+      "persisted_at": "2026-11-19T22:19:53.169Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-graphjin-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dosco-graphjin-learnings",
@@ -230299,9 +230304,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dosco-graphjin-learnings",
       "repository": "dosco-graphjin-learnings",
       "source_version": "HEAD",
-      "content_hash": "4e1cf352f2f8dd77bf9e8fddce0e16b292fbf84b4594e9573459f22bfae7dbeb",
+      "content_hash": "1a40748dbea7d689bcde900261b38f62cf6e53a35f4679de60967e82ab56faa4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T13:29:46.357Z"
+      "persisted_at": "2026-11-19T22:19:53.302Z"
     },
     "learn-github-react-metro": {
       "learning_id": "learn-github-react-metro",
@@ -236984,8 +236989,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "6db1d6fb",
-      "content_hash": "10b8af0e53bfe340208d9df7b8346732d5c7293d0ca4352720885683546a05d1",
+      "source_version": "0dfea2bd",
+      "content_hash": "4335bdce8f976cd56e267d360757158cb8e203ff0fd4428c0a897e2bf1b2b633",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -237003,6 +237008,11 @@
           "number": 9202,
           "title": "split long/complex Weir alternatives over multiple lines",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9456,
+          "title": "cut WebAssembly build time in PR checks",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -237010,7 +237020,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T10:55:10.522Z",
+      "verified_at": "2026-11-19T22:19:41.293Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -237052,10 +237062,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-automattic-harper-quality-verification-intelligence-automattic-harper-core-invar.md",
       "title": "Quality & Verification Intelligence: Automattic/harper Core Invariants",
       "repository": "Automattic/harper",
-      "source_version": "1d972352",
-      "content_hash": "979a28cd7119856e6e1350799c4430289e2a9d11b30a0cbe6bf59dca20163696",
+      "source_version": "0dfea2bd",
+      "content_hash": "01ebcdefbf724e021f7757b0744ddb46edf8793088e1ef10bbc5b6ace25a8a04",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T01:57:56.561Z"
+      "persisted_at": "2026-11-19T22:19:41.806Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-automattic-harper": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-automattic-harper",
@@ -237064,10 +237074,10 @@
       "relative_path": "08_VERIFICATION/automattic-harper-verification-protocol-empirical-defect-shield-for-automattic-h.md",
       "title": "Verification Protocol: Empirical Defect Shield for Automattic/harper",
       "repository": "Automattic/harper",
-      "source_version": "6db1d6fb",
-      "content_hash": "133663c67a30f7a39dbf4da3e29a865a1f3b1f500d093584b0e71b02cb4de7b2",
+      "source_version": "0dfea2bd",
+      "content_hash": "376796247461fb8f213395201feb2683bf10950a65aabcf609c1e912d50e9580",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T10:55:11.141Z"
+      "persisted_at": "2026-11-19T22:19:41.952Z"
     },
     "learn-github-kotest-kotest": {
       "learning_id": "learn-github-kotest-kotest",
@@ -237291,9 +237301,9 @@
       "title": "Quality & Verification Intelligence: automattic-harper-learnings Core Invariants",
       "repository": "automattic-harper-learnings",
       "source_version": "HEAD",
-      "content_hash": "d8e0d2052b944aefd1616a337ee6b5760e1304b6dc80a6b28a2e379c8301df16",
+      "content_hash": "0ead2e0f52d5130d1e2aa378255bfa2ed64bb4f2bd26874967372ed172a3a4bb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T01:58:08.168Z"
+      "persisted_at": "2026-11-19T22:19:52.227Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-automattic-harper-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-automattic-harper-learnings",
@@ -237303,9 +237313,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for automattic-harper-learnings",
       "repository": "automattic-harper-learnings",
       "source_version": "HEAD",
-      "content_hash": "d9b353be76eed74586f76e3d9fcc9f980a65e275e584c980a9e4660e525e4a4e",
+      "content_hash": "6e2e0667ecce2cd21f58b19be5753f7037c8c3465ced0f006c741111589407f6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T10:55:20.392Z"
+      "persisted_at": "2026-11-19T22:19:52.366Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-phocinae-phocinae-largha-150m-v1-learnings-co": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-phocinae-phocinae-largha-150m-v1-learnings-co",
@@ -297887,6 +297897,82 @@
       "content_hash": "f7bb81b609e2fa5d7b89dd3ae3726bb8bf78d3c7a470e23813da03126cd25832",
       "domain_letter": "A",
       "persisted_at": "2026-11-19T22:07:50.380Z"
+    },
+    "rule-9456": {
+      "learning_id": "rule-9456",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9456,
+      "title": "cut WebAssembly build time in PR checks",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "0dfea2bd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T22:19:41.293Z"
+    },
+    "candidate_directive-cut-webassembly-build-time-in-pr-checks": {
+      "item_id": "candidate_directive-cut-webassembly-build-time-in-pr-checks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4XJY-cut-webassembly-build-time-in-pr-checks.md",
+      "title": "cut WebAssembly build time in PR checks",
+      "repository": "Automattic/harper",
+      "source_version": "0dfea2bd",
+      "content_hash": "dff3692e5b6c6794d1ed14238671df310724dd9e82fb13da8f322f26496d4b38",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T22:19:41.665Z"
+    },
+    "rule-9457": {
+      "learning_id": "rule-9457",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9457,
+      "title": "benchmark test-version labels drop \"governed\" on the next publish",
+      "source_url": "https://github.com/dosco/graphjin",
+      "source_version": "ffd03671",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T22:19:48.342Z"
+    },
+    "candidate_directive-benchmark-test-version-labels-drop-governed-on-the-next-publish": {
+      "item_id": "candidate_directive-benchmark-test-version-labels-drop-governed-on-the-next-publish",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-52ZL-benchmark-test-version-labels-drop-governed-on-the-next-publish.md",
+      "title": "benchmark test-version labels drop \"governed\" on the next publish",
+      "repository": "dosco/graphjin",
+      "source_version": "ffd03671",
+      "content_hash": "ad48bc6bcb6db9a5a9734343f16e2f0178b1414bdfe5222f3cae6f2468a14b46",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T22:19:48.708Z"
+    },
+    "candidate_directive-ci-cut-webassembly-build-time-in-pr-checks": {
+      "item_id": "candidate_directive-ci-cut-webassembly-build-time-in-pr-checks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-55LJ-ci-cut-webassembly-build-time-in-pr-checks.md",
+      "title": "ci: cut WebAssembly build time in PR checks",
+      "repository": "automattic-harper-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ccd1351d12255e27e12fa779125c65d9a0a6ed9ea8f8452d8c30b0008d14e956",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T22:19:52.090Z"
+    },
+    "candidate_directive-eval-benchmark-test-version-labels-drop-governed-on-the-next-publish": {
+      "item_id": "candidate_directive-eval-benchmark-test-version-labels-drop-governed-on-the-next-publish",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-56BO-eval-benchmark-test-version-labels-drop-governed-on-the-next-publish.md",
+      "title": "eval): benchmark test-version labels drop \"governed\" on the next publish",
+      "repository": "dosco-graphjin-learnings",
+      "source_version": "HEAD",
+      "content_hash": "63d4db0adeceb9db7a7885403a5dba56f37615174a6ddf42b4511c5d24f476e8",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-19T22:19:53.031Z"
     }
   },
   "ai-builder-brain": {

@@ -11423,3 +11423,5 @@ Every entry in this ledger must capture:
 | `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `7fd8bb9f` | Multi-dimensional audit evidence | 2026-11-19T22:06:53.311Z |
 | `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `0b80d9e7` | Multi-dimensional audit evidence | 2026-11-19T22:07:06.560Z |
 | `learn-dom-l-453b4d1d` | `project://iii-hq-iii` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/iii-hq-iii-learnings.md` | 2026-11-19T22:07:47.864Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `0dfea2bd` | Multi-dimensional audit evidence | 2026-11-19T22:19:41.478Z |
+| `learn-github-dosco-graphjin` | `https://github.com/dosco/graphjin` | `ffd03671` | Multi-dimensional audit evidence | 2026-11-19T22:19:48.513Z |

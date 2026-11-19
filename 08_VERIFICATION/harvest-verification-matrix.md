@@ -11390,3 +11390,5 @@
 | `CYCLE-20261119-OGOQ` | `2026-11-19T22:06:53.306Z` | `iii-hq/iii` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9450, Rule 9451, Rule 9452` | Yes (`84979399...`) |
 | `CYCLE-20261119-OQWR` | `2026-11-19T22:07:06.555Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9453, Rule 9454, Rule 9455` | Yes (`c40275c7...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T22:07:47.864Z` | `iii-hq-iii` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-L-453B4D1D` [Domain L] | Yes (`170470f0...`) |
+| `CYCLE-20261119-4XEQ` | `2026-11-19T22:19:41.474Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9456` | Yes (`4335bdce...`) |
+| `CYCLE-20261119-52U6` | `2026-11-19T22:19:48.510Z` | `dosco/graphjin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9457` | Yes (`239e1951...`) |

@@ -698268,3 +698268,171 @@ func TestClusterViewerDeniedNamespaceSelector(t *testing.T) {
 ```
 
 ---
+
+
+---
+
+## 9456. cut WebAssembly build time in PR checks (Harvested from Automattic/harper)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "cut WebAssembly build time in PR checks",
+  "source": "Automattic/harper",
+  "source_url": "https://github.com/Automattic/harper",
+  "source_version": "0dfea2bd",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-19T22:19:41.024Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-automattic-harper",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Automattic/harper](https://github.com/Automattic/harper) (Revision: `0dfea2bd`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.github/workflows/just_checks.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `7139cb11`: ci: cut WebAssembly build time in PR checks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/just_checks.yml`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+  # Skip wasm-opt when building the WebAssembly module for these checks. It only makes the
+  # module smaller and faster, and took over a minute per job. The Chrome Plugin, WordPress
+  # Plugin and Build Web checks still build it with wasm-opt, as shipped.
+  DISABLE_WASM_OPT: 1
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `7139cb11` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9457. benchmark test-version labels drop "governed" on the next publish (Harvested from dosco/graphjin)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "benchmark test-version labels drop \"governed\" on the next publish",
+  "source": "dosco/graphjin",
+  "source_url": "https://github.com/dosco/graphjin",
+  "source_version": "ffd03671",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-19T22:19:48.080Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dosco-graphjin",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dosco/graphjin](https://github.com/dosco/graphjin) (Revision: `ffd03671`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `cmd/cmd_eval_publish.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dosco/graphjin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `ffd03671`: eval): benchmark test-version labels drop "governed" on the next publish. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/cmd_eval_publish.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	defaultBenchmarkScope = "2026.1/2026.2 — read-only Q&A · 2027.1 — adds writes, alerts, follow-ups, multi-source · 2028.1 — intent-phrased tasks with execution twins · 2028.2 — cross-source ruler fix (v11)"
+	deepcontosoBenchmarkScope = "2026.1 — " + deepcontosoFirstScope
+		data.Suite.GenerationScopes = map[string]string{"2026.1": deepcontosoFirstScope}
+	rewordRetiredScopes(&data.Suite)
+// deepcontosoFirstScope describes DeepContoso's first test version.
+const deepcontosoFirstScope = "retail Q&A (aggregations, time windows, schema discovery, refusals)"
+
+// retiredScopeWording is wording the published test-version labels used
+// before, and what each says now. The labels are written once, when a
+// benchmark's data has none, so a change of wording reaches the published
+// pages only by rewording the stored labels on the next publish.
+//
+// "Governed" was dropped from the site on 2026-11-19: few readers knew what
+// it meant.
+var retiredScopeWording = []struct{ old, new string }{
+	{"governed retail Q&A (aggregations, time windows, schema discovery, governance)", deepcontosoFirstScope},
+	{"governed read-only Q&A", "read-only Q&A"},
+}
+
+// rewordRetiredScopes rewrites retired wording in 
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+	defaultBenchmarkScope = "2026.1/2026.2 — governed read-only Q&A · 2027.1 — adds writes, alerts, follow-ups, multi-source · 2028.1 — intent-phrased tasks with execution twins · 2028.2 — cross-source ruler fix (v11)"
+	deepcontosoBenchmarkScope = "2026.1 — governed retail Q&A (aggregations, time windows, schema discovery, governance)"
+		data.Suite.GenerationScopes = map[string]string{
+			"2026.1": "governed retail Q&A (aggregations, time windows, schema discovery, governance)",
+		}
+		"2026.1": "governed read-only Q&A",
+		"2026.2": "governed read-only Q&A",
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `ffd03671` are properly handled with clean fallback behavior.

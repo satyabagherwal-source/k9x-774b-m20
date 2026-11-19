@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T21:24:15.774Z",
+  "updated_at": "2026-11-19T22:19:52.842Z",
   "stats": {
-    "total_discovered": 6029,
-    "approved_pending_harvest": 5697,
+    "total_discovered": 6041,
+    "approved_pending_harvest": 5709,
     "harvested_count": 0,
     "rejected_count": 332,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5680,
+      "COMMUNITY_AND_EXPERT": 5692,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 112,
       "ENGINEERING_BLOGS": 4,
@@ -130336,6 +130336,270 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
         "fileName": "dragonflyoss-dragonfly-learnings.md"
+      }
+    },
+    "SRC-54C3321BAE22": {
+      "id": "SRC-54C3321BAE22",
+      "url": "https://github.com/Automattic/harper/pull/4991",
+      "title": "https://github.com/Automattic/harper/pull/4991",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T22:19:51.761Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/automattic-harper-learnings.md",
+        "fileName": "automattic-harper-learnings.md"
+      }
+    },
+    "SRC-5A4FD7A3E46C": {
+      "id": "SRC-5A4FD7A3E46C",
+      "url": "https://github.com/Automattic/harper/pull/4991?email_source=notifications&email_token=BKDIKHULLO3FJ5CQUEYGGM35ZUYDFA5CNFSNUABFM5UWIORPF5TWS5BNNB2WEL2JONZXKZKDN5WW2ZLOOQXTMOJXGAYDONRVGE32M4TFMFZW63VGMF2XI2DPOKSWK5TFNZ2KYZTPN52GK4S7MNWGSY3L",
+      "title": "https://github.com/Automattic/harper/pull/4991?email_source=notifications&email_token=BKDIKHULLO3FJ5CQUEYGGM35ZUYDFA5CNFSNUABFM5UWIORPF5TWS5BNNB2WEL2JONZXKZKDN5WW2ZLOOQXTMOJXGAYDONRVGE32M4TFMFZW63VGMF2XI2DPOKSWK5TFNZ2KYZTPN52GK4S7MNWGSY3L",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T22:19:51.801Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/automattic-harper-learnings.md",
+        "fileName": "automattic-harper-learnings.md"
+      }
+    },
+    "SRC-A3ED96D7CBAE": {
+      "id": "SRC-A3ED96D7CBAE",
+      "url": "https://github.com/notifications/unsubscribe-auth/BKDIKHRBSGVHL4RMWCWAYAD5ZUYDFAVCNFSNUABFKJSXA33TNF2G64TZHM3TAOBSGY3DAMJRHNEXG43VMU5TMNBWGA2DSNBQHA4KC5QC",
+      "title": "https://github.com/notifications/unsubscribe-auth/BKDIKHRBSGVHL4RMWCWAYAD5ZUYDFAVCNFSNUABFKJSXA33TNF2G64TZHM3TAOBSGY3DAMJRHNEXG43VMU5TMNBWGA2DSNBQHA4KC5QC",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T22:19:51.840Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/automattic-harper-learnings.md",
+        "fileName": "automattic-harper-learnings.md"
+      }
+    },
+    "SRC-B4C3B449011C": {
+      "id": "SRC-B4C3B449011C",
+      "url": "https://github.com/wasm-bindgen/wasm-pack/releases/download/v$%7BWASM_PACK_VERSION",
+      "title": "https://github.com/wasm-bindgen/wasm-pack/releases/download/v$%7BWASM_PACK_VERSION",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T22:19:51.896Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/automattic-harper-learnings.md",
+        "fileName": "automattic-harper-learnings.md"
+      }
+    },
+    "SRC-BDAC1CB7B428": {
+      "id": "SRC-BDAC1CB7B428",
+      "url": "https://img.shields.io/github/license/dosco/graphjin.svg?style=for-the-badge",
+      "title": "https://img.shields.io/github/license/dosco/graphjin.svg?style=for-the-badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T22:19:52.552Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-EF788F7DFCD9": {
+      "id": "SRC-EF788F7DFCD9",
+      "url": "https://github.com/dosco/graphjin/blob/master/LICENSE",
+      "title": "https://github.com/dosco/graphjin/blob/master/LICENSE",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T22:19:52.594Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-69F77F743A97": {
+      "id": "SRC-69F77F743A97",
+      "url": "https://img.shields.io/npm/v/graphjin?style=for-the-badge",
+      "title": "https://img.shields.io/npm/v/graphjin?style=for-the-badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T22:19:52.632Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-B66075AE40AD": {
+      "id": "SRC-B66075AE40AD",
+      "url": "https://www.npmjs.com/package/graphjin",
+      "title": "https://www.npmjs.com/package/graphjin",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T22:19:52.686Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-A30F8865AF59": {
+      "id": "SRC-A30F8865AF59",
+      "url": "https://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge&logo=go",
+      "title": "https://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge&logo=go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T22:19:52.723Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-56206C51EC8B": {
+      "id": "SRC-56206C51EC8B",
+      "url": "https://pkg.go.dev/github.com/dosco/graphjin/core/v3",
+      "title": "https://pkg.go.dev/github.com/dosco/graphjin/core/v3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T22:19:52.762Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-2EEE67A59CC3": {
+      "id": "SRC-2EEE67A59CC3",
+      "url": "https://goreportcard.com/badge/github.com/gojp/goreportcard?style=for-the-badge",
+      "title": "https://goreportcard.com/badge/github.com/gojp/goreportcard?style=for-the-badge",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T22:19:52.803Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
+      }
+    },
+    "SRC-C45DB0E9647F": {
+      "id": "SRC-C45DB0E9647F",
+      "url": "https://goreportcard.com/report/github.com/dosco/graphjin/core/v3",
+      "title": "https://goreportcard.com/report/github.com/dosco/graphjin/core/v3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T22:19:52.842Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dosco-graphjin-learnings.md",
+        "fileName": "dosco-graphjin-learnings.md"
       }
     }
   }

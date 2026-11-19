@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T22:07:51.539Z",
+  "last_updated": "2026-11-19T22:19:53.936Z",
   "total_records": 2033,
   "domains": {
     "A": {
@@ -8766,8 +8766,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "d7b38a423503f5b6481acab937b7c0180af1ecf7de2ad72d495649cbb2bdb64c",
-      "created_at": "2026-11-19T20:00:31.279Z"
+      "content_hash": "96f8b06df28d8c970dce88df943366409224c49d07e8ea2dfbc769e46f60cb9d",
+      "created_at": "2026-11-19T22:19:53.936Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -15580,8 +15580,8 @@
       "title": "Research & Knowledge Intelligence: dosco/graphjin Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-research-knowledge-intelligence-dosco-graphjin-core-invariants.md",
       "repository": "dosco/graphjin",
-      "content_hash": "81b32dff5c36915f1cc476396622d7f87aa6c7d91c2c312b1fc31a4ac8311baf",
-      "created_at": "2026-11-14T13:29:08.782Z"
+      "content_hash": "d5ccd157b1372ce8e74b023dd8a230c435b8e2bb330750ca94ba588bb88a357a",
+      "created_at": "2026-11-19T22:19:48.838Z"
     },
     "DOM-D-33F233D7": {
       "record_id": "DOM-D-33F233D7",
@@ -15640,8 +15640,8 @@
       "title": "Research & Knowledge Intelligence: dosco-graphjin-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dosco-graphjin-learnings-research-knowledge-intelligence-dosco-graphjin-learning.md",
       "repository": "dosco-graphjin-learnings",
-      "content_hash": "7fa9e76fc35ed225c45a8e7fc271558caec13671e50e20ea7d12319d0baaf0bc",
-      "created_at": "2026-11-14T13:29:46.220Z"
+      "content_hash": "46a81ed94a9a80de63bc379a3728882d0bab2456336e0c95d1cf5bbce11223f0",
+      "created_at": "2026-11-19T22:19:53.169Z"
     },
     "domain_intelligence-technical-construction-intelligence-react-metro-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-react-metro-core-invariants",
@@ -17885,8 +17885,8 @@
       "title": "Quality & Verification Intelligence: Automattic/harper Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-automattic-harper-quality-verification-intelligence-automattic-harper-core-invar.md",
       "repository": "Automattic/harper",
-      "content_hash": "979a28cd7119856e6e1350799c4430289e2a9d11b30a0cbe6bf59dca20163696",
-      "created_at": "2026-11-18T01:57:56.561Z"
+      "content_hash": "01ebcdefbf724e021f7757b0744ddb46edf8793088e1ef10bbc5b6ace25a8a04",
+      "created_at": "2026-11-19T22:19:41.806Z"
     },
     "domain_intelligence-content-information-intelligence-kotest-kotest-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-kotest-kotest-core-invariants",
@@ -17912,8 +17912,8 @@
       "title": "Quality & Verification Intelligence: automattic-harper-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-automattic-harper-learnings-quality-verification-intelligence-automattic-harper-.md",
       "repository": "automattic-harper-learnings",
-      "content_hash": "d8e0d2052b944aefd1616a337ee6b5760e1304b6dc80a6b28a2e379c8301df16",
-      "created_at": "2026-11-18T01:58:08.168Z"
+      "content_hash": "0ead2e0f52d5130d1e2aa378255bfa2ed64bb4f2bd26874967372ed172a3a4bb",
+      "created_at": "2026-11-19T22:19:52.227Z"
     },
     "DOM-D-04705777": {
       "record_id": "DOM-D-04705777",
