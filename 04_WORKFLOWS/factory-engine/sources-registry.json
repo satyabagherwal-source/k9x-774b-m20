@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T05:47:16.551Z",
-    "lastVerified": "2026-11-19T05:47:16.551Z",
+    "lastChecked": "2026-11-19T05:55:01.259Z",
+    "lastVerified": "2026-11-19T05:55:01.259Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -164,8 +164,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-19T04:44:15.232Z",
-    "lastVerified": "2026-11-19T04:44:15.232Z",
+    "lastChecked": "2026-11-19T05:54:54.253Z",
+    "lastVerified": "2026-11-19T05:54:54.253Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1605,9 +1605,9 @@
   "sigstore-cosign": {
     "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
-    "lastChecked": "2026-11-18T23:10:24.519Z",
+    "lastChecked": "2026-11-19T05:54:49.230Z",
     "revisionIdentifier": "0743bfcf",
-    "lastVerified": "2026-11-18T23:10:24.519Z"
+    "lastVerified": "2026-11-19T05:54:49.230Z"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j/langchain4j",
@@ -6344,6 +6344,61 @@
     "contentHash": "0b600998c97f7519d42d4d1b82ff0c1bd0fa9db712f29036a2d278d2e6e36b16",
     "promotedRulesCount": 1,
     "recentFixesCount": 5,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "pauljuliusmartinez-jless": {
+    "name": "jless",
+    "officialUrl": "https://github.com/PaulJuliusMartinez/jless",
+    "lastChecked": "2026-11-19T05:54:39.214Z",
+    "revisionIdentifier": "e6cdef71",
+    "lastVerified": "2026-11-19T05:54:39.214Z"
+  },
+  "hf-jialinyyzz-humanizer": {
+    "name": "jialinyyzz/humanizer",
+    "officialUrl": "https://huggingface.co/jialinyyzz/humanizer",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T05:54:42.112Z",
+    "lastVerified": "2026-11-19T05:54:42.112Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-jialinyyzz-humanizer",
+    "contentHash": "b6aed37ca991a84b395ecb46a848b6f67e5e0bff92f0d9fd33dbabd4328cf211",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mikepenz-aboutlibraries": {
+    "name": "AboutLibraries",
+    "officialUrl": "https://github.com/mikepenz/AboutLibraries",
+    "lastChecked": "2026-11-19T05:54:44.310Z",
+    "revisionIdentifier": "07abb3e7",
+    "lastVerified": "2026-11-19T05:54:44.310Z"
+  },
+  "k3s-io-k3s": {
+    "name": "k3s",
+    "officialUrl": "https://github.com/k3s-io/k3s",
+    "lastChecked": "2026-11-19T05:54:46.769Z",
+    "revisionIdentifier": "c55a7df0",
+    "lastVerified": "2026-11-19T05:54:46.769Z"
+  },
+  "duckdb-duckdb": {
+    "name": "duckdb/duckdb",
+    "officialUrl": "https://github.com/duckdb/duckdb",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-11-19T05:54:57.241Z",
+    "lastVerified": "2026-11-19T05:54:57.241Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-duckdb-duckdb",
+    "contentHash": "a9273eea696a6f56b8fed80d445d16a342ffcb892fc783abd9d48ed70621fe4d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 7,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

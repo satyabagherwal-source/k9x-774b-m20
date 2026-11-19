@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T05:47:13.670Z",
-  "total_cycles_completed": 10712,
-  "total_learnings_persisted": 10712,
-  "total_rules_promoted": 10106,
+  "last_updated": "2026-11-19T05:54:58.174Z",
+  "total_cycles_completed": 10714,
+  "total_learnings_persisted": 10714,
+  "total_rules_promoted": 10107,
   "history": [
-    {
-      "timestamp": "2026-11-18T13:47:07.691Z",
-      "repository": "databendlabs/databend",
-      "learningId": "learn-github-databendlabs-databend",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T13:56:48.498Z",
-      "repository": "orcarouter/OrcaSAQ-2-27B",
-      "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T13:56:51.405Z",
       "repository": "fallow-rs/fallow",
@@ -1403,6 +1389,20 @@
       "repository": "mudler/locate-anything.cpp-gguf",
       "learningId": "learn-huggingface-mudler-locate-anything-cpp-gguf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T05:54:42.702Z",
+      "repository": "jialinyyzz/humanizer",
+      "learningId": "learn-huggingface-jialinyyzz-humanizer",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T05:54:58.174Z",
+      "repository": "duckdb/duckdb",
+      "learningId": "learn-github-duckdb-duckdb",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

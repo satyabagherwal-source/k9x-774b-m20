@@ -85,8 +85,8 @@
     "sourceUrl": "https://huggingface.co/jialinyyzz/humanizer",
     "sourceVersion": "hf-jialinyyzz-humanizer",
     "license": "Open-Source",
-    "contentHash": "ff6d2d4c983501a1630b888e32b6539ad51b6198e4cb2bd5dc612da48b1d2767",
-    "lastHarvestedAt": "2026-11-14T16:22:46.684Z",
+    "contentHash": "b6aed37ca991a84b395ecb46a848b6f67e5e0bff92f0d9fd33dbabd4328cf211",
+    "lastHarvestedAt": "2026-11-19T05:54:42.697Z",
     "learningId": "learn-huggingface-jialinyyzz-humanizer"
   },
   "hf-autotrust-jev-27b-vl": {
@@ -6173,10 +6173,10 @@
     "repository": "duckdb/duckdb",
     "platform": "github",
     "sourceUrl": "https://github.com/duckdb/duckdb",
-    "sourceVersion": "8a5afae5",
+    "sourceVersion": "aa87a115",
     "license": "MIT",
-    "contentHash": "e7fdabdffaff474e5f53e0d65ceedd62d63beb2176930273fe6fa76085bbc2ae",
-    "lastHarvestedAt": "2026-11-17T14:50:05.862Z",
+    "contentHash": "a9273eea696a6f56b8fed80d445d16a342ffcb892fc783abd9d48ed70621fe4d",
+    "lastHarvestedAt": "2026-11-19T05:54:58.169Z",
     "learningId": "learn-github-duckdb-duckdb"
   },
   "megh-bari-pattern-craft": {

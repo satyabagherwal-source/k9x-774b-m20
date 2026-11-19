@@ -11243,3 +11243,5 @@ Every entry in this ledger must capture:
 | `learn-github-envoyproxy-envoy` | `https://github.com/envoyproxy/envoy` | `6d870913` | Multi-dimensional audit evidence | 2026-11-19T05:42:23.067Z |
 | `learn-github-dragonflydb-dragonfly` | `https://github.com/dragonflydb/dragonfly` | `45a890be` | Multi-dimensional audit evidence | 2026-11-19T05:42:27.183Z |
 | `learn-huggingface-mudler-locate-anything-cpp-gguf` | `https://huggingface.co/mudler/locate-anything.cpp-gguf` | `hf-mudler-` | Multi-dimensional audit evidence | 2026-11-19T05:47:13.665Z |
+| `learn-huggingface-jialinyyzz-humanizer` | `https://huggingface.co/jialinyyzz/humanizer` | `hf-jialiny` | Multi-dimensional audit evidence | 2026-11-19T05:54:42.697Z |
+| `learn-github-duckdb-duckdb` | `https://github.com/duckdb/duckdb` | `aa87a115` | Multi-dimensional audit evidence | 2026-11-19T05:54:58.169Z |

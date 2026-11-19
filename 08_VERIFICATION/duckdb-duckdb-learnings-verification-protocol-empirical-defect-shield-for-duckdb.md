@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T14:50:10.203Z",
+  "timestamp": "2026-11-19T05:55:01.893Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-duckdb-duckdb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [duckdb-duckdb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T14:50:10.203Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T05:55:01.893Z`  
 > **Learning ID**: `LEARN-EVO-duckdb-duckdb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source**: github ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
-> **Source Version**: `8a5afae5`  
+> **Source Version**: `aa87a115`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T14:50:04.965Z  
+> **Timestamp**: 2026-11-19T05:54:57.246Z  
 > **Learning ID**: `learn-github-duckdb-duckdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/duckdb-duckdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/duckdb/duckdb](https://github.com/duckdb/duckdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T14:50:04.959Z  
+> **Harvest Timestamp**: 2026-11-19T05:54:57.241Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: DuckDB is a high-performance analytical database system
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 43126 stars
+- **Stars / Engagement**: 43168 stars
 
 ---
 
@@ -324,7 +324,7 @@ struct AverageSetOperation {
 };
 
 template <class T>
-static T GetAverageDivident(uint64_t count, optional_ptr<FunctionData> bind_data) {
+static T GetAverageDivident(uint64_t count, optional_ptr<const FunctionData> bind_data) {
 	T divident = T(count);
 	if (bind_data) {
 		auto &avg_bind_data = bind_data->Cast<AverageDecimalBindData>();
@@ -514,7 +514,7 @@ struct TimestampNSAverageOperation : public DiscreteAverageOperation {
 	static void RepeatedCombine(const STATE &source, STATE &target, AggregateInputData &input, idx_t count) {
 		if (source.count == INFINITE_COUNT) {
 			if (count > 0) {
-				AddInfinities(target, sou
+				AddInfinities(targe
 ```
 
 ### Core Architecture Module: `extension/core_functions/aggregate/algebraic/corr.cpp`
@@ -620,6 +620,7 @@ AggregateFunction StandardErrorOfTheMeanFun::GetFunction() {
 #include "duckdb/common/vector/struct_vector.hpp"
 #include "core_functions/aggregate/histogram_helpers.hpp"
 #include "core_functions/aggregate/holistic_functions.hpp"
+#include "duckdb/common/arena_containers/arena_vector.hpp"
 
 namespace duckdb {
 
@@ -636,21 +637,6 @@ struct ApproxTopKString {
 	string_t str;
 	hash_t hash;
 };
-
-struct ApproxTopKHash {
-	std::size_t operator()(const ApproxTopKString &k) const {
-		return k.hash;
-	}
-};
-
-struct ApproxTopKEquality {
-	bool operator()(const ApproxTopKString &a, const ApproxTopKString &b) const {
-		return Equals::Operation(a.str, b.str);
-	}
-};
-
-template <typename T>
-using approx_topk_map_t = unordered_map<ApproxTopKString, T, ApproxTopKHash, ApproxTopKEquality>;
 
 // approx top k algorithm based on "A parallel space saving algorithm for frequent items and the Hurwitz zeta
 // distribution" arxiv link -  https://arxiv.org/pdf/1401.0702
@@ -669,35 +655,109 @@ struct ApproxTopKValue {
 };
 
 struct InternalApproxTopKState {
+	explicit InternalApproxTopKState(ArenaAllocator &allocator) : values(allocator), filter(allocator) {
+	}
+
 	// the top-k data structure has two components
 	// a list of k values sorted on "count" (i.e. values[0] has the lowest count)
-	// a lookup map: string_t -> idx in "values" array
-	unsafe_unique_array<ApproxTopKValue> stored_values;
-	unsafe_vector<reference<ApproxTopKValue>> values;
-	approx_topk_map_t<reference<ApproxTopKValue>> lookup_map;
-	unsafe_vector<idx_t> filter;
+	// a lookup table: open addressing over the stored values, 0 = empty, otherwise the stored_values index + 1
+	ApproxTopKValue *stored_values = nullptr;
+	unsafe_arena_vector<reference<ApproxTopKValue>> values;
+	unsafe_arena_vector<idx_t> filter;
+	uint32_t *lookup = nullptr;
+	idx_t lookup_mask = 0;
+	idx_t lookup_count = 0;
 	idx_t k = 0;
 	idx_t capacity = 0;
-	idx_t filter_mask;
+	idx_t filter_mask = 0;
 
-	void Initialize(idx_t kval) {
+	void Initialize(ArenaAllocator &allocator, idx_t kval) {
 		static constexpr idx_t MONITORED_VALUES_RATIO = 3;
 		static constexpr idx_t FILTER_RATIO = 8;
 
 		D_ASSERT(values.empty());
-		D_ASSERT(lookup_map.empty());
 		k = kval;
 		if (k > MAX_APPROX_K) {
 			throw InvalidInputException("Requested 'k' (%d) is bigger than accepted max (%d)", kval, MAX_APPROX_K);
 		}
 		capacity = kval * MONITORED_VALUES_RATIO;
-		stored_values = make_unsafe_uniq_array_uninitialized<ApproxTopKValue>(capacity);
+		// the stored values are constructed when they are first used
+		stored_values = reinterpret_cast<ApproxTopKValue *>(
+		    allocator.AllocateAligned(MaxValue<idx_t>(capacity, 1) * sizeof(ApproxTopKValue)));
 		values.reserve(capacity);
+
+		// at most half of the lookup table is ever used, so probing always ends at an empty slot
+		const idx_t lookup_size = NextPowerOfTwo(capacity * 2);
+		lookup_mask = lookup_size - 1;
+		lookup = reinterpret_cast<uint32_t *>(allocator.AllocateAligned(lookup_size * sizeof(uint32_t)));
+		memset(lookup, 0, lookup_size * sizeof(uint32_t));
 
 		// we scale the filter based on the amount of values we are monitoring
 		idx_t filter_size = NextPowerOfTwo(capacity * FILTER_RATIO);
 		filter_mask = filter_size - 1;
 		filter.resize(filter_size);
+	}
+
+	uint32_t SlotId(const ApproxTopKValue &value) const {
+		D_ASSERT(&value >= stored_values && &value < stored_values + capacity);
+		return UnsafeNumericCast<uint32_t>(&value - stored_values);
+	}
+
+	ApproxTopKValue *Find(const ApproxTopKString &key) const {
+		for (idx_t pos = key.hash & lookup_mask; lookup[pos] != 0; pos = (pos + 1) & lookup_mask) {
+			auto &entry = stored_values[lookup[pos] - 1];
+			if (entry.str_val.hash == key.hash && Equals::Operation(entry.str_val.str, key.str)) {
+				return &entry;
+			}
+		}
+		return nullptr;
+	}
+
+	//! Insert a value whose key is known to be absent
+	void Insert(ApproxTopKValue &value) {
+		D_ASSERT(lookup_count < capacity);
+		idx_t pos = value.str_val.hash & lookup_mask;
+		while (lookup[pos] != 0) {
+			pos = (pos + 1) & lookup_mask;
+		}
+		lookup[pos] = SlotId(value) + 1;
+		lookup_count++;
+	}
+
+	//! Insert a value, returns false if its key is already present
+	bool TryInsert(ApproxTopKValue &value) {
+		idx_t pos = value.str_val.hash & lookup_mask;
+		for (; lookup[pos] != 0; pos = (pos + 1) & lookup_mask) {
+			auto &entry = stored_values[lookup[pos] - 1];
+			if (entry.str_val.hash == value.str_val.hash && Equals::Operation(entry.str_val.str, value.str_val.str)) {
+				return false;
+			}
+		}
+		lookup[pos] = SlotId(value) + 1;
+		lookup_count++;
+		return true;
+	}
+
+	//! Remove a value (by identity) from the lookup table, backward-shifting the entries after it
+	void Erase(const ApproxTopKValue &value) {
+		const auto id = SlotId(value) + 1;
+		idx_t pos = value.str_val.hash & lookup_mask;
+		while (lookup[pos] != id) {
+			if (lookup[pos] == 0) {
+				throw InternalException("approx_top_k: erased value is not in the lookup table");
+			}
+			pos = (pos + 1) & lookup_mask;
+		}
+		lookup[pos] = 0;
+		lookup_count--;
+		for (idx_t next = (pos + 1) & lookup_mask; lookup[next] != 0; next = (next + 1) & lookup_mask) {
+			const idx_t home = stored_values[lookup[next] - 1].str_val.hash & lookup_mask;
+			if (((next - home) & lookup_mask) >= ((next - pos) & lookup_mask)) {
+				lookup[pos] = lookup[next];
+				lookup[next] = 0;
+				pos = next;
+			}
+		}
 	}
 
 	static void CopyValue(ApproxTopKValue &value, const ApproxTopKString &input, ArenaAllocator &allocator) {
@@ -722,7 +782,7 @@ struct InternalApproxTopKState {
 		if (values.size() < capacity) {
 			D_ASSERT(increment > 0);
 			// we can always add this entry
-			auto &val = stored_values[values.size()];
+			auto &val = *new (stored_values + values.size()) ApproxTopKValue();
 			val.index = values.size();
 			values.push_back(val);
 		}
@@ -743,13 +803,13 @@ struct InternalApproxTopKState {
 				return;
 			}
 			// the filter exceeds the min value - start monitoring this value
-			// erase the existing entry from the map
+			// erase the existing entry from the lookup table (before CopyValue overwrites its hash and data)
 			// and set the filter for the minimum value back to the current minimum value
 			filter[value.str_val.hash & filter_mask] = value.count;
-			lookup_map.erase(value.str_val);
+			Erase(value);
 		}
 		CopyValue(value, input, aggr_input.allocator);
-		lookup_map.insert(make_pair(value.str_val, reference<ApproxTopKValue>(value)));
+		Insert(value);
 		IncrementCount(value, increment);
 	}
 
@@ -768,17 +828,13 @@ struct InternalApproxTopKState {
 
 	void Verify() const {
 #ifdef DEBUG
-		if (values.empty()) {
-			D_ASSERT(lookup_map.empty());
-			return;
-		}
+		D_ASSERT(lookup_count == values.size());
 		D_ASSERT(values.size() <= capacity);
 		for (idx_t k = 0; k < values.size(); k++) {
 			auto &val = values[k].get();
 			D_ASSERT(val.count > 0);
-			// verify map exists
-			auto entry = lookup_map.find(val.str_val);
-			D_ASSERT(entry != lookup_map.end());
+			// verify the lookup table finds exactly this value
+			D_ASSERT(Find(val.str_val) == &val);
 			// verify the index is correct
 			D_ASSERT(val.index == k);
 			if (k > 0) {
@@ -786,35 +842,20 @@ struct InternalApproxTopKState {
 				D_ASSERT(val.count <= values[k - 1].get().count);
 			}
 		}
-		D_ASSERT(lookup_map.size() == values.size());
 #endif
 	}
 };
 
 struct ApproxTopKState {
+	//! nullptr if no value has been added yet
 	InternalApproxTopKState *state;
-
-	InternalApproxTopKState &GetState() {
-		if (!state) {
-			state = new InternalApproxTopKState();
-		}
-		return *state;
-	}
-
-	const InternalApproxTopKState &GetState() const {
-		if (!state) {
-			throw InternalException("No state available");
-		}
-		return *state;
-	}
 };
 
 struct ApproxTopKOperation {
 	template <class TYPE, class STATE>
 	static void Operation(STATE &aggr_state, const TYPE &input, AggregateInputData &aggr_input,
 	                      const Vector &top_k_vector, idx_t offset, idx_t count) {
-		auto &state = aggr_state.GetState();
-		if (state.values.empty()) {
+		if (!aggr_state.state || aggr_state.state->values.empty()) {
 			static constexpr int64_t MAX_APPROX_K = 1000000;
 			// not initialized yet - initialize the K value and set all counters to 0
 			auto top_k_format = top_k_vector.Values<int64_t>();
@@ -829,77 +870,20 @@ struct ApproxTopKOperation {
 			if (kval >= MAX_APPROX_K) {
 				throw InvalidInputException("Invalid input for approx_top_k: k value must be < %d", MAX_APPROX_K);
 			}
-			state.Initialize(UnsafeNumericCast<idx_t>(kval));
+			// an existing empty state is only reused if its k matches
+			if (!aggr_state.state || aggr_state.state->k != UnsafeNumericCast<idx_t>(kval)) {
+				aggr_state.state = aggr_input.allocator.Make<InternalApproxTopKState>(aggr_input.allocator);
+				aggr_state.state->Initialize(aggr_input.allocator, UnsafeNumericCast<idx_t>(kval));
+			}
 		}
+		auto &state = *aggr_state.state;
 		ApproxTopKString topk_string(input, Hash(input));
-		auto entry = state.lookup_map.find(topk_string);
-		if (entry != state.lookup_map.end()) {
+		auto entry = state.Find(topk_string);
+		if (entry) {
 			// the input is monitored - increment the count
-			state.IncrementCount(entry->second.get());
+			state.IncrementCount(*entry);
 		} else {
-			// the input is not monitored - replace the first entry with the current entry and increment
-			state.InsertOrReplaceEntry(topk_string, aggr_input);
-		}
-	}
-
-	template <class STATE, class OP>
-	static void Combine(const STATE &aggr_source, STATE &aggr_target, AggregateInputData &aggr_input) {
-		if (!aggr_source.state) {
-			// source state is empty
-			return;
-		}
-		auto &source = aggr_source.GetState();
-		auto &target = aggr_target.GetState();
-		if (source.values.empty()) {
-			// source is empty
-			return;
-		}
-		source.Verify();
-		auto min_source = source.values.size() < source.capacity ? 0 : source.values.back().get().count;
-		idx_t min_target;
-		if (target.values.empty()) {
-			min_target = 0;
-			target.Initialize(source.k);
-		} else {
-			if (source.k != target.k) {
-				throw NotImplementedException("Approx Top K - cannot combine approx_top_K with different k values. "
-				                              "K values must be the same for all entries within the same group");
-			}
-			min_target = target.values.size() < target.capacity ? 0 : target.values.back().get().count;
-		}
-		// for all entries in target
-		// check if they are tracked in source
-		//     if they do - add the tracked count
-		//     if they do not - add the minimum count
-		for (idx_t target_idx = 0; target_idx < target.values.size(); target_idx++) {
-			auto &val = target.values[target_idx].get();
-			auto source_entry = source.lookup_map.find(val.str_val);
-			idx_t increment = min_source;
-			if (source_entry != source.lookup_map.end()) {
-				increment = source_entry->second.get().count;
-			}
-			if (increment == 0) {
-				continue;
-			}
-			target.IncrementCount(val, increment);
-		}
-		// now for each entry in source, if it is not tracked by the target, at the target minimum
-		for (auto &source_entry : source.values) {
-			auto &source_val = source_entry.get();
-			auto target_entry = target.lookup_map.find(source_val.str_val);
-			if (target_entry != target.lookup_map.end()) {
-				// already tracked - no need to add anything
-				continue;
-			}
-			auto new_count = source_val.count + min_target;
-			idx_t increment;
-			if (target.values.size() >= target.capacity) {
-				idx_t current_min = target.values.empty() ? 0 : target.values.back().get().count;
-				D_ASSERT(target.values.size() == target.capacity);
-				// target already has capacity values
-				// check if we should insert this entry
-				if (new_count <= current_min) {
-					// if we do not we can skip this en
+			// the input is not monitored - replace the first entry with the current entry and increm
 ```
 
 ### Core Architecture Module: `extension/core_functions/aggregate/holistic/approximate_quantile.cpp`
@@ -1047,7 +1031,7 @@ struct ApproximateQuantileBindData : public FunctionData {
 		return true;
 	}
 
-	static void Serialize(Serializer &serializer, const optional_ptr<FunctionData> bind_data_p,
+	static void Serialize(Serializer &serializer, const optional_ptr<const FunctionData> bind_data_p,
 	                      const BoundAggregateFunction &function) {
 		auto &bind_data = bind_data_p->Cast<ApproximateQuantileBindData>();
 		serializer.WriteProperty(100, "quantiles", bind_data.quantiles);
@@ -1176,7 +1160,7 @@ AggregateStateLayout ApproxQuantileGetStateType(AggregateLayoutInput &input) {
 
 //! The shape of the exported state: STRUCT(count, min, max, centroids LIST(STRUCT(mean, weight)))
 using APPROX_QUANTILE_EXPORT_TYPE =
-    Vecto
+   
 ```
 
 ### Core Architecture Module: `extension/core_functions/aggregate/holistic/lttb.cpp`
@@ -1721,6 +1705,7 @@ struct MedianAbsoluteDeviationOperation : QuantileOperation {
 #include "core_functions/aggregate/holistic_functions.hpp"
 #include "duckdb/catalog/catalog.hpp"
 #include "duckdb/catalog/catalog_entry/aggregate_function_catalog_entry.hpp"
+#include "duckdb/common/arena_containers/arena_sql_value_map.hpp"
 #include "duckdb/common/exception.hpp"
 #include "duckdb/common/operator/comparison_operators.hpp"
 #include "duckdb/common/owning_string_map.hpp"
@@ -1824,13 +1809,10 @@ struct ModeAttr {
 
 template <class T>
 struct ModeStandard {
-	using MAP_TYPE = sql_value_map_t<T, ModeAttr>;
+	using MAP_TYPE = arena_sql_value_map_t<T, ModeAttr>;
 
-	static MAP_TYPE *CreateEmpty(ArenaAllocator &) {
-		return new MAP_TYPE();
-	}
-	static MAP_TYPE *CreateEmpty(Allocator &) {
-		return new MAP_TYPE();
+	static MAP_TYPE *CreateEmpty(ArenaAllocator &allocator) {
+		return allocator.Make<MAP_TYPE>(typename MAP_TYPE::allocator_type(allocator));
 	}
 
 	static ModeAttr &GetOrCreate(MAP_TYPE &map, const T &key, ArenaAllocator &) {
@@ -1846,9 +1828,9 @@ struct ModeStandard {
 		return Equals::Operation(left, right);
 	}
 
-	static T *Update(T *mode, idx_t &, const T &key, AggregateInputData &) {
+	static T *Update(T *mode, idx_t &, const T &key, AggregateInputData &aggr_input_data) {
 		if (!mode) {
-			mode = new T(key);
+			mode = aggr_input_data.allocator.Make<T>(key);
 		}
 		*mode = key;
 
@@ -1857,13 +1839,10 @@ struct ModeStandard {
 };
 
 struct ModeString {
-	using MAP_TYPE = OwningStringMap<ModeAttr>;
+	using MAP_TYPE = ArenaOwningStringMap<ModeAttr>;
 
-	static MAP_TYPE *CreateEmpty(ArenaAllocator &) {
-		return new MAP_TYPE();
-	}
-	static MAP_TYPE *CreateEmpty(Allocator &allocator) {
-		return new MAP_TYPE(allocator);
+	static MAP_TYPE *CreateEmpty(ArenaAllocator &allocator) {
+		return allocator.Make<MAP_TYPE>(allocator);
 	}
 
 	static ModeAttr &GetOrCreate(MAP_TYPE &map, const string_t &key, ArenaAllocator &allocator) {
@@ -1883,7 +1862,7 @@ struct ModeString {
 	                        AggregateInputData &aggr_input_data) {
 		if (key.IsInlined()) {
 			if (!mode) {
-				mode = new string_t(nullptr, 0);
+				mode = aggr_input_data.allocator.Make<string_t>(nullptr, 0);
 			}
 			*mode = key;
 			alloc_size = 0;
@@ -1901,7 +1880,7 @@ struct ModeString {
 			alloc_size = NextPowerOfTwo(len);
 			ptr = char_ptr_cast(aggr_input_data.allocator.Allocate(alloc_size));
 			if (!mode) {
-				mode = new string_t(nullptr, 0);
+				mode = aggr_input_data.allocator.Make<string_t>(nullptr, 0);
 			}
 		}
 		memcpy(ptr, key.GetData(), len);
@@ -1929,25 +1908,17 @@ struct ModeState {
 	//! The collection being read
 	const ColumnDataCollection *inputs;
 	//! The state used for reading the collection on this thread
-	ColumnDataScanState *scan = nullptr;
+	unique_ptr<ColumnDataScanState> scan;
+	//! The arena of the frequency map in the window path, reset when the frames are recomputed
+	unique_ptr<ArenaAllocator> window_arena;
 	//! The data chunk paged into into
 	DataChunk page;
 	//! Cell access into the page, rebuilt per page load - scans can return constant and dictionary vectors
 	unique_ptr<VectorIterator<KEY_TYPE>> values;
 
-	~ModeState() {
-		if (frequency_map) {
-			delete frequency_map;
-		}
-		delete mode;
-		if (scan) {
-			delete scan;
-		}
-	}
-
 	void InitializePage(const WindowPartitionInput &partition) {
 		if (!scan) {
-			scan = new ColumnDataScanState();
+			scan = make_uniq<ColumnDataScanState>();
 		}
 		if (page.ColumnCount() == 0) {
 			D_ASSERT(partition.inputs);
@@ -1988,7 +1959,12 @@ struct ModeState {
 
 	void Reset() {
 		if (frequency_map) {
-			frequency_map->clear();
+			// rebuild the map instead of clearing it, the arena would retain the erased nodes
+			D_ASSERT(window_arena);
+			const auto previous_size = frequency_map->size();
+			window_arena->Reset();
+			frequency_map = TYPE_OP::CreateEmpty(*window_arena);
+			frequency_map->reserve(previous_size);
 		}
 		nonzero = 0;
 		count = 0;
@@ -1997,32 +1973,14 @@ struct ModeState {
 
 	void ModeAdd(idx_t row, AggregateInputData &aggr_input_data) {
 		const auto &key = GetCell(row);
-		auto &attr = (*frequency_map)[key];
+		auto &attr = TYPE_OP::GetOrCreate(*frequency_map, key, *window_arena);
 		auto new_count = (attr.count += 1);
 		nonzero += size_t(new_count == 1);
 		if (new_count > count) {
 			valid = true;
 			count = new_count;
 			Update(key, aggr_input_data);
-		} else if (new_count == count) {
-			// The key now ties the mode, so the tie must be broken by frame position
-			valid = false;
-		}
-	}
-
-	void ModeRm(idx_t frame) {
-		const auto &key = GetCell(frame);
-		auto &attr = (*frequency_map)[key];
-		auto old_count = attr.count;
-		nonzero -= size_t(old_count == 1);
-
-		attr.count -= 1;
-		if (count == old_count && TYPE_OP::IsEqual(key, *mode)) {
-			valid = false;
-		}
-	}
-
-	void Update(c
+	
 ```
 
 
@@ -2031,11 +1989,11 @@ struct ModeState {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #28960** (2026-11-17): **Fix: mark unshredded VARIANT stats as NOT_SHREDDED**
-  *Symptoms*: Statistics of unshredded VARIANT data were not marked as unshredded for row groups that could not be shredded (at checkpoint and after reloading the database) and for VARIANT constants. When merged with shredded statistics, these values were ignored, so the shredded min/max was wrong, leading to wrong filter results and crashes e.g. with the perfect hash aggregate.    Repro: Small last row group is not shredded (below `variant_minimum_shredding_size`):  ```sql CREATE TABLE t AS SELECT {'b': 100}::VARIANT AS v FROM range(122880); INSERT INTO t VALUES ({'b': 1}::VARIANT); CHECKPOINT; SELECT v.b::INTEGER AS b FROM t GROUP BY b ORDER BY b; ```  VARIANT constant merged with a shredded column: ```sql SET variant_minimum_shredding_size = 0; CREATE TABLE t AS SELECT i, {'b': 100}::VARIANT AS v FROM range(10) r(i); CHECKPOINT; SELECT (CASE WHEN i = 0 THEN {'b': 1}::VARIANT ELSE v END).b::INTEGER AS b FROM t GROUP BY b ORDER BY b; ``` Both fail with  ``` Data Corruption Error: Perfect hash aggregate: aggregate group 18446744073709551518 exceeded total groups 4. ```   
+- **Issue #29042** (2026-11-18): **Preserve LIKE predicates for scan-level pruning**
+  *Symptoms*: Preserve leading-wildcard LIKE/ILIKE expressions as partial scan filters so table scans can use them for conservative substring pruning while DuckDB retains the original residual filter for correctness.   Wildcard-free ILIKE is also exposed as case-insensitive equality, including non-ASCII patterns where ordered prefix bounds cannot be derived. The pushed expressions are rebound to their scan columns, with focused planner tests covering wildcard, ASCII, non-ASCII, and column-binding behavior.
 
-- **Issue #28952** (2026-11-17): **Resolve-types callback: allow setting argument types in the C API V2**
-  *Symptoms*: Adds `duckdb_v2_scalar_function_resolve_types_set_arg_type(info, arg_idx, arg_type, err)`, so a scalar function's resolve-types callback can ask the engine to cast an argument instead of registering extra overloads.  - Sets the argument type of the bound function; the existing `CastToFunctionArguments` step inserts the cast after the callback returns, so the bind callback sees the cast type. - Errors with `INPUT_INVALID` for an out-of-range index or an incomplete type (e.g. `ANY`). - Unstable API, scalar functions only (aggregates have no resolve-types callback yet). - Test: `V2 scalar: resolve types sets an argument type and the engine casts to it`.  Needed by json (legacy `path` argument cast to BIGINT) and spatial. Fixes duckdblabs/duckdb-internal#12045.  
+- **Issue #29040** (2026-11-18): **capi: const char ** is now const char * const * for readonly api calls**
+  *Symptoms*: This pr changes `const char **` into `const char *const *` for readonly api calls. This improves the output of bindgen for Rust bindings, going from `*mut *const i8` to `*const *const i8`.  Also updated `arrow_importer_create` to take `const struct ArrowSchema *` instead.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2052,229 +2010,887 @@ struct ModeState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `069eb90c` (2026-11-17)
-**Commit Message**: Fix INTERNAL error in batched COPY with ROW_GROUP_SIZE_BYTES but no ROW_GROUP_SIZE (#28904)
+### Incident Patch 1: `7b270526` (2026-11-18)
+**Commit Message**: Fix RTTI-sensitive tests and extension CI failures (#29013)
 
-A batched `COPY ... TO` given `ROW_GROUP_SIZE_BYTES` without
-`ROW_GROUP_SIZE` fails:
+### Run-Time Type Information is not stable
+
+Tests that assert DuckDB exception types can fail when exceptions cross
+a shared-library boundary.
+
+We can match stable error messages and classify serialized IO/HTTP
+errors through `ErrorData`, preserving HTTP retry behavior and
+async-write diagnostics. Regression tests cover serialized errors
+without relying on DuckDB exception RTTI.
+
+Also reduce memory-heavy fixtures for Win32 and carry the existing
+DuckLake, Quack, and Lance extension patches. The DuckLake timeout
+patches retain their existing unconditional skips; Quack and DuckLake
+platform guards retain their current scope. Lance reads the thread count
+through the settings API instead of the removed `maximum_threads` field.
+
+Important: RTTI is _already_
+[rejected](https://github.com/duckdb/duckdb/pull/24858) for production
+code in duckdb core. (Enabling `-fno-rtti` for all duckdb core code and
+tests is a follow-up
+[task](https://github.com/duckdblabs/duckdb-internal/issues/12087).)
+
+### Prepare for replacing "unittest binary" with a "test extension"
+
+#28403 allows running tests without re-compiling the unittest binary in
+
+
+**File**: `.github/patches/extensions/ducklake/0028-skip-failing-extension-ci-tests.patch` (added, +41/-0)
+```diff
+@@ -0,0 +1,41 @@
++diff --git a/test/sql/autoloading/autoload_sqlite_catalog.test b/test/sql/autoloading/autoload_sqlite_catalog.test
++index 0b979595..004c8392 100644
++--- a/test/sql/autoloading/autoload_sqlite_catalog.test
+++++ b/test/sql/autoloading/autoload_sqlite_catalog.test
++@@ -2,6 +2,8 @@
++ # description: A SQLite catalog can be attached when the sqlite extension is only loaded by the attach
++ # group: [autoloading]
++ 
+++mode skip SQLite catalog autoloading leaves the catalog unattached
+++
++ require ducklake
++ 
++ require parquet
++diff --git a/test/sql/initialize/new_ducklake_requires_data_path.test b/test/sql/initialize/new_ducklake_requires_data_path.test
++index 1c9cb402..5f0d2f9c 100644
++--- a/test/sql/initialize/new_ducklake_requires_data_path.test
+++++ b/test/sql/initialize/new_ducklake_requires_data_path.test
++@@ -2,6 +2,9 @@
++ # description: Creating a DuckLake in a catalog that is not a DuckDB database requires a DATA_PATH
++ # group: [initialize]
++ 
+++# SQLite catalog paths derived from BASE_TEST_NAME are invalid on Windows.
+++require notwindows
+++
++ require ducklake
++ 
++ require parquet
++diff --git a/test/sql/migration/inlined_column_rename_dev_conflict.test b/test/sql/migration/inlined_column_rename_dev_conflict.test
++index 25af2c96..7c663f82 100644
++--- a/test/sql/migration/inlined_column_rename_dev_conflict.test
+++++ b/test/sql/migration/inlined_column_rename_dev_conflict.test
++@@ -2,6 +2,9 @@
++ # description: dev migration must not partially rename the inlined table on a column conflict
++ # group: [migration]
++ 
+++# Automatic migration can hang while handling the column rename conflict on musl.
+++require notmusl
+++
++ require ducklake
++ 
++ require parquet
+```
+
+**File**: `.github/patches/extensions/ducklake/0029-skip-extension-ci-timeouts.patch` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++diff --git a/test/sql/alter/many_schema_versions_low_memory.test_slow b/test/sql/alter/many_schema_versions_low_memory.test_slow
++index a14ed19..79f2208 100644
++--- a/test/sql/alter/many_schema_versions_low_memory.test_slow
+++++ b/test/sql/alter/many_schema_versions_low_memory.test_slow
++@@ -2,6 +2,8 @@
++ # description: test that many DDL operations work under a low memory limit with schema cache eviction
++ # group: [alter]
++ 
+++mode skip Exceeds the 300-second extension CI timeout on Linux ARM64
+++
++ require ducklake
++ 
++ require notmusl
++diff --git a/test/sql/compaction/merge_adjacent_tiered.test_slow b/test/sql/compaction/merge_adjacent_tiered.test_slow
++index 762f0c6..9ec24c5 100644
++--- a/test/sql/compaction/merge_adjacent_tiered.test_slow
+++++ b/test/sql/compaction/merge_adjacent_tiered.test_slow
++@@ -2,6 +2,8 @@
++ # description: test tiered/lucene-like compaction using min_file_size, max_file_size and target_file_size
++ # group: [compaction]
++ 
+++mode skip Exceeds the 300-second extension CI timeout on Linux ARM64
+++
++ require ducklake
++ 
++ require parquet
++diff --git a/test/sql/insert/insert_wide_table_low_memory.test_slow b/test/sql/insert/insert_wide_table_low_memory.test_slow
++index 157cbd3..f484227 100644
++--- a/test/sql/insert/insert_wide_table_low_memory.test_slow
+++++ b/test/sql/insert/insert_wide_table_low_memory.test_slow
++@@ -2,6 +2,8 @@
++ # description: test that many small inserts into a wide table work under low memory limit
++ # group: [insert]
++ 
+++mode skip Exceeds the 300-second extension CI timeout on Linux ARM64
+++
++ require ducklake
++ 
++ require notmusl
+```
+
+**File**: `.github/patches/extensions/ducklake/0030-skip-arm64-extension-ci-timeouts.patch` (added, +598/-0)
+```diff
+@@ -0,0 +1,598 @@
++diff --git a/test/sql/alter/alter_drops_empty_inlined_tables.test b/test/sql/alter/alter_drops_empty_inlined_tables.test
++index aff0c8b..f7dacd6 100644
++--- a/test/sql/alter/alter_drops_empty_inlined_tables.test
+++++ b/test/sql/alter/alter_drops_empty_inlined_tables.test
++@@ -2,6 +2,8 @@
++ # description: An ALTER drops the empty inlined data tables of the table that its new inlined data table supersedes
++ # group: [alter]
++ 
+++mode skip Exceeds the 300-second extension CI timeout on Linux ARM64
+++
++ require ducklake
++ 
++ require parquet
++diff --git a/test/sql/alter/promote_type_all.test b/test/sql/alter/promote_type_all.test
++index 058b18d..2805fc2 100644
++--- a/test/sql/alter/promote_type_all.test
+++++ b/test/sql/alter/promote_type_all.test
++@@ -2,6 +2,8 @@
++ # description: test ducklake type promotion rules (widening casts)
++ # group: [alter]
++ 
+++mode skip Exceeds the 300-second extension CI timeout on Linux ARM64
+++
++ require ducklake
++ 
++ require parquet
++diff --git a/test/sql/alter/rename_column_with_case_insensitive_name.test b/test/sql/alter/rename_column_with_case_insensitive_name.test
++index e6381cd..0b643d3 100644
++--- a/test/sql/alter/rename_column_with_case_insensitive_name.test
+++++ b/test/sql/alter/rename_column_with_case_insensitive_name.test
++@@ -2,6 +2,8 @@
++ # description: test ducklake column rename with case insensitive name
++ # group: [alter]
++ 
+++mode skip Exceeds the 300-second extension CI timeout on Linux ARM64
+++
++ require ducklake
++ 
++ require parquet
++diff --git a/test/sql/alter/struct_evolution_reorder.test b/test/sql/alter/struct_evolution_reorder.test
++index 251d7b9..8a8b137 100644
++--- a/test/sql/alter/struct_evolution_reorder.test
+++++ b/test/sql/alter/struct_evolution_reorder.test
++@@ -2,6 +2,8 @@
++ # description: a type change that lists the fields of a struct in another order keeps the order of the catalog
++ # group: [alter]
++ 
+++mode skip Exceeds the 300-second extension CI timeout on Linux ARM64
+++
++ require ducklake
++ 
++ require parquet
++diff --git a/test/sql/alter/struct_evolution_reuse.test b/test/sql/alter/struct_evolution_reuse.test
++index b532797..e1af3a3 100644
++--- a/test/sql/alter/struct_evolution_reuse.test
+++++ b/test/sql/alter/struct_evolution_reuse.test
++@@ -2,6 +2,8 @@
++ # description: test ducklake struct field evolution re-use
++ # group: [alter]
++ 
+++mode skip Exceeds the 300-second extension CI timeout on Linux ARM64
+++
++ require ducklake
++ 
++ require parquet
++diff --git a/test/sql/benchmark/wide_table_insert_commits.test b/test/sql/benchmark/wide_table_insert_commits.test
++index ec28a12..956597d 100644
++--- a/test/sql/benchmark/wide_table_insert_commits.test
+++++ b/test/sql/benchmark/wide_table_insert_commits.test
++@@ -2,6 +2,8 @@
++ # description: Wide Parquet commit fixture preserves its schema, commit boundaries and reset invariants
++ # group: [benchmark]
++ 
+++mode skip Exceeds the 300-second extension CI timeout on Linux ARM64
+++
++ require ducklake
++ 
++ require parquet
++diff --git a/test/sql/catalog/nested_schema/nested_conflicts.test b/test/sql/catalog/nested_schema/nested_conflicts.test
++index 63d8729..efe850f 100644
++--- a/test/sql/catalog/nested_schema/nested_conflicts.test
+++++ b/test/sql/catalog/nested_schema/nested_conflicts.test
++@@ -2,6 +2,8 @@
++ # description: Transaction conflict detection with nested schemas
++ # group: [nested_schema]
++ 
+++mode skip Batch exceeds the 300-second extension CI timeout on Linux ARM64
+++
++ require ducklake
++ 
++ require parquet
++diff --git a/test/sql/catalog/nested_schema/nested_functions.test b/test/sql/catalog/nested_schema/nested_functions.test
++index eb3afbf..eccacdf 100644
++--- a/test/sql/catalog/nested_schema/nested_functions.test
+++++ b/test/sql/catalog/nested_schema/nested_functions.test
++@@ -2,6 +2,8 @@
++ # description: DuckLake table functions, built-in macros and options with nested schemas
++ # group: [nested_schema]
++ 
+++mode skip Batch exceeds the 300-second extension CI timeout on Linux ARM64
+++
++ require ducklake
++ 
++ require parquet
++diff --git a/test/sql/catalog/nested_schema/nested_orphan_entries.test b/test/sql/catalog/nested_schema/nested_orphan_entries.test
++index 9f0cc12..95197e1 100644
++--- a/test/sql/catalog/nested_schema/nested_orphan_entries.test
+++++ b/test/sql/catalog/nested_schema/nested_orphan_entries.test
++@@ -2,6 +2,8 @@
++ # description: Views, macros, partitions, sorts and child schemas of an orphaned schema are skipped when loading
++ # group: [nested_schema]
++ 
+++mode skip Batch exceeds the 300-second extension CI timeout on Linux ARM64
+++
++ require ducklake
++ 
++ require parquet
++diff --git a/test/sql/catalog/nested_schema/nested_orphan_subtree.test b/test/sql/catalog/nested_schema/nested_orphan_subtree.test
++index 459ce32..ef107c2 100644
++--- a/test/sql/catalog/nested_schema/nested_orphan_subtree.test
+++++ b/test/sql/catalog/nested_schema/nested_orphan_subtree.test
++@@ -2,6 +2,8 @@
++ # description: Orphaned or cyclic schema rows do not make the entire lake
+```
+
+**File**: `.github/patches/extensions/lance/0004-threads-setting-api.patch` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++diff --git a/src/lance_scan.cpp b/src/lance_scan.cpp
++index 26b983a..0b30ef3 100644
++--- a/src/lance_scan.cpp
+++++ b/src/lance_scan.cpp
++@@ -10,6 +10,7 @@
++ #include "duckdb/function/table_function.hpp"
++ #include "duckdb/main/config.hpp"
++ #include "duckdb/main/extension/extension_loader.hpp"
+++#include "duckdb/main/settings.hpp"
++ #include "duckdb/optimizer/optimizer.hpp"
++ #include "duckdb/optimizer/optimizer_extension.hpp"
++ #include "duckdb/parser/parsed_data/create_table_function_info.hpp"
++@@ -3280,7 +3281,7 @@ LanceExecLocalInit(ExecutionContext &context, TableFunctionInitInput &input,
++   result->global_state = &global;
++   LanceExecContext exec_ctx;
++   exec_ctx.threads = NumericCast<uint32_t>(
++-      DBConfig::GetConfig(context.client).options.maximum_threads);
+++      Settings::Get<ThreadsSetting>(context.client));
++   result->stream = lance_create_dataset_exec_stream_ir(
++       bind_data.dataset,
++       bind_data.exec_ir.empty()
+```
+
+**File**: `.github/patches/extensions/quack/0003-skip-unstable-platform-tests.patch` (added, +42/-0)
+```diff
+@@ -0,0 +1,42 @@
++diff --git a/test/sql/fetch_cancel_insert.test b/test/sql/fetch_cancel_insert.test
++index e0f319d..ed2358b 100644
++--- a/test/sql/fetch_cancel_insert.test
+++++ b/test/sql/fetch_cancel_insert.test
++@@ -2,6 +2,9 @@
++ # description: cancelling a scan whose producer is parked on the fetch buffer frees the connection for later INSERTs
++ # group: [sql]
++ 
+++# Cancelling a buffered scan can hang on musl.
+++require notmusl
+++
++ include test/template/quack_setup.test_template
++ 
++ # The client stops the scan. The producer then fills the small buffer and parks, and it holds the
++diff --git a/test/sql/result_ttl_releases_query.test b/test/sql/result_ttl_releases_query.test
++index 800135d..fe43e45 100644
++--- a/test/sql/result_ttl_releases_query.test
+++++ b/test/sql/result_ttl_releases_query.test
++@@ -2,6 +2,9 @@
++ # description: expiring a cache must release the abandoned server-side query too, not just the rows it retained
++ # group: [sql]
++ 
+++# Sort memory accounting is unstable on Windows ARM64.
+++require notwindows
+++
++ include test/template/quack_setup.test_template
++ 
++ statement ok quack_db:quack_server_con
++diff --git a/test/sql/serve_ssl.test b/test/sql/serve_ssl.test
++index 63165eb..f753a4d 100644
++--- a/test/sql/serve_ssl.test
+++++ b/test/sql/serve_ssl.test
++@@ -2,6 +2,9 @@
++ # description: quack_serve over HTTPS: generated self-signed keys, and clients pinning the server certificate
++ # group: [sql]
++ 
+++# SSL serving can crash on Windows ARM64.
+++require notwindows
+++
++ require quack
++ 
++ require httpfs
+```
+
+**File**: `src/common/serializer/async_write_queue.cpp` (modified, +10/-5)
+```diff
+@@ -359,11 +359,16 @@ void AsyncWriteQueue::WriteBuffer(data_ptr_t buffer, idx_t size, idx_t offset) {
+ 	}
+ 	try {
+ 		target.Write(buffer, size, offset);
+-	} catch (const IOException &ex) {
+-		throw IOException("Async write failed for range [offset=%llu, size=%llu]: %s", offset, size, ex.what());
+-	} catch (const HTTPException &ex) {
+-		throw HTTPException(Exception::ConstructMessage("Async write failed for range [offset=%llu, size=%llu]: %s",
+-		                                                offset, size, ex.what()));
++	} catch (const std::exception &ex) {
++		ErrorData error(ex);
++		if (error.Type() == ExceptionType::IO) {
++			throw IOException("Async write failed for range [offset=%llu, size=%llu]: %s", offset, size, ex.what());
++		}
++		if (error.Type() == ExceptionType::HTTP) {
++			throw HTTPException(Exception::ConstructMessage("Async write failed for range [offset=%llu, size=%llu]: %s",
++			                                                offset, size, ex.what()));
++		}
++		throw;
+ 	}
+ }
+ 
+```
+
+**File**: `src/main/http/http_util.cpp` (modified, +7/-6)
+```diff
+@@ -481,15 +481,16 @@ HTTPUtil::RunRequestWithRetry(const std::function<unique_ptr<HTTPResponse>(void)
+ 			    if (response) {
+ 				    response->url = request.url;
+ 			    }
+-		    } catch (IOException &e) {
+-			    exception_error = e.what();
+-			    caught_e = std::current_exception();
++		    } catch (const std::exception &e) {
+ 			    caught_error = ErrorData(e);
+-		    } catch (HTTPException &e) {
++			    if (caught_error.Type() != ExceptionType::IO && caught_error.Type() != ExceptionType::HTTP) {
++				    throw;
++			    }
+ 			    exception_error = e.what();
+ 			    caught_e = std::current_exception();
+-			    caught_error = ErrorData(e);
+-			    caught_response = ResponseFromError(caught_error);
++			    if (caught_error.Type() == ExceptionType::HTTP) {
++				    caught_response = ResponseFromError(caught_error);
++			    }
+ 		    }
+ 
+ 		    if (response) {
+```
+
+**File**: `test/api/test_block_allocator_tls.cpp` (modified, +8/-5)
+```diff
+@@ -1050,7 +1050,7 @@ TEST_CASE("BufferAllocator accounts for ordinary and huge backing operations", "
+ 
+ 	SECTION("Ordinary reallocation") {
+ 		control.fail_allocate = true;
+-		REQUIRE_THROWS_AS(allocator.Allocate(SIZE), OutOfMemoryException);
++		REQUIRE_THROWS_WITH(allocator.Allocate(SIZE), Catch::Matchers::Contains("Failed to allocate block"));
+ 		REQUIRE(manager.GetUsedMemory() == initial_memory);
+ 		control.fail_allocate = false;
+ 		auto owned = allocator.Allocate(SIZE);
+@@ -1060,7 +1060,8 @@ TEST_CASE("BufferAllocator accounts for ordinary and huge backing operations", "
+ 		pointer[SIZE - 1] = 84;
+ 		control.fail_reallocate = true;
+ 		for (auto new_size : {SIZE / 2, SIZE * 2}) {
+-			REQUIRE_THROWS_AS(owner.ReallocateData(pointer, SIZE, new_size), OutOfMemoryException);
++			REQUIRE_THROWS_WITH(owner.ReallocateData(pointer, SIZE, new_size),
++			                    Catch::Matchers::Contains("Failed to re-allocate block"));
+ 			REQUIRE(manager.GetUsedMemory() == initial_memory + SIZE);
+ 			REQUIRE(owned.get() == pointer);
+ 			REQUIRE(owned.GetAllocator().get() == &owner);
+@@ -1097,7 +1098,7 @@ TEST_CASE("BufferAllocator accounts for ordinary and huge backing operations", "
+ 	}
+ 	SECTION("Huge replacement") {
+ 		control.fail_allocate = true;
+-		REQUIRE_THROWS_AS(allocator.AllocateHuge(SIZE), OutOfMemoryException);
++		REQUIRE_THROWS_WITH(allocator.AllocateHuge(SIZE), Catch::Matchers::Contains("Failed to allocate block"));
+ 		REQUIRE(manager.GetUsedMemory() == initial_memory);
+ 		REQUIRE(live_bytes.load() == 0);
+ 		control.fail_allocate = false;
+@@ -1107,7 +1108,8 @@ TEST_CASE("BufferAllocator accounts for ordinary and huge backing operations", "
+ 		pointer[SIZE - 1] = 84;
+ 		control.fail_allocate = true;
+ 		for (auto new_size : {SIZE / 2, SIZE * 2}) {
+-			REQUIRE_THROWS_AS(owned = allocator.AllocateHuge(new_size), OutOfMemoryException);
++			REQUIRE_THROWS_WITH(owned = allocator.AllocateHuge(new_size),
++			                    Catch::Matchers::Contains("Failed to allocate block"));
+ 			REQUIRE(manager.GetUsedMemory() == initial_memory + SIZE);
+ 			REQUIRE(live_bytes.load() == SIZE);
+ 			REQUIRE(owned.GetSize() == SIZE);
+@@ -1117,7 +1119,8 @@ TEST_CASE("BufferAllocator accounts for ordinary and huge backing operations", "
+ 		}
+ 		control.fail_allocate = false;
+ 		REQUIRE_NO_FAIL(connection.Query("SET memory_limit='12MiB'"));
+-		REQUIRE_THROWS_AS(owned = allocator.AllocateHuge(2 * SIZE), OutOfMemoryException);
++		REQUIRE_THROWS_WITH(owned = allocator.AllocateHuge(2 * SIZE),
++		                    Catch::Matchers::Contains("failed to allocate data"));
+ 		REQUIRE(manager.GetUsedMemory() == initial_memory + SIZE);
+ 		REQUIRE(live_bytes.load() == SIZE);
+ 		REQUIRE(owned.get() == pointer);
+```
+
+---
+
+### Incident Patch 2: `6712265d` (2026-11-18)
+**Commit Message**: Pass a ClientContext to CreateOnColumns and fix verification failures
+
+CreateOnColumns now takes a ClientContext, so comparisons can later be resolved
+per type (e.g. overloading = for custom types). To make one available:
+- BoundBetweenExpression::Create and the legacy BETWEEN deserializer take it
+- the NLJ, IEJoin, PWMJ, TopN and Window operators take it after the
+  PhysicalPlan, as PhysicalHashAggregate does
+- CreateTailPredicate, the naive window aggregator and the partitioned COPY
+  sort input take it
+
+Fixes CI:
+- window_naive_aggregator.cpp used ClientContext without its header (Tidy)
+- PhysicalWindow ComputeMasks resized the order prefix with
+  SetChildCardinality, shrinking buffers shared with the scanned chunk that
+  backs curr's dictionary; the executor now verifies its input, so this broke
+  internal_vector_serialization. Slice the prefix instead.
+- PartitionKeyTracker::Reset left the bins without a key as valid,
+  uninitialized values; slicing the representatives exposed them to vector
+  verification, which crashed on garbage strings (Windows, or jemalloc
+  junk:true). Mark those bins NULL.
+
+**File**: `src/common/sort/hashed_sort.cpp` (modified, +1/-1)
+```diff
+@@ -663,7 +663,7 @@ HashedSort::HashedSort(ClientContext &client, const vector<unique_ptr<Expression
+ 		for (idx_t key_idx = 0; key_idx < partition_key_count; key_idx++) {
+ 			auto &type = partition_key_types[key_idx];
+ 			key_mismatches.push_back(BoundComparisonExpression::CreateOnColumns(
+-			    ExpressionType::COMPARE_DISTINCT_FROM, type, key_idx, type, partition_key_count + key_idx));
++			    client, ExpressionType::COMPARE_DISTINCT_FROM, type, key_idx, type, partition_key_count + key_idx));
+ 		}
+ 		partition_key_mismatch =
+ 		    BoundConjunctionExpression::Create(ExpressionType::CONJUNCTION_OR, std::move(key_mismatches));
+```
+
+**File**: `src/common/sort/partition_key_tracker.cpp` (modified, +6/-0)
+```diff
+@@ -40,6 +40,12 @@ void PartitionKeyTracker::Reset(idx_t radix_bits_p) {
+ 	hashes.resize(partition_count);
+ 	representatives.Reset();
+ 	representatives.SetChildCardinality(partition_count);
++	// the comparisons slice the representatives, so the bins without a key must hold valid (NULL) values
++	for (auto &representative : representatives.data) {
++		for (idx_t bin_idx = 0; bin_idx < partition_count; bin_idx++) {
++			FlatVector::SetNull(representative, bin_idx, true);
++		}
++	}
+ }
+ 
+ bool PartitionKeyTracker::CanBypass(idx_t hash_bin) const {
+```
+
+**File**: `src/execution/operator/aggregate/physical_window.cpp` (modified, +10/-5)
+```diff
+@@ -267,7 +267,7 @@ class WindowLocalSinkState : public LocalSinkState {
+ };
+ 
+ // this implements a sorted window functions variant
+-PhysicalWindow::PhysicalWindow(PhysicalPlan &physical_plan, vector<LogicalType> types,
++PhysicalWindow::PhysicalWindow(PhysicalPlan &physical_plan, ClientContext &context, vector<LogicalType> types,
+                                vector<unique_ptr<Expression>> select_list_p, idx_t estimated_cardinality,
+                                vector<column_t> partitions)
+     : PhysicalOperator(physical_plan, TYPE, std::move(types), estimated_cardinality),
+@@ -302,7 +302,8 @@ PhysicalWindow::PhysicalWindow(PhysicalPlan &physical_plan, vector<LogicalType>
+ 	}
+ 	auto create_distinct_from = [&](idx_t end, idx_t begin) {
+ 		auto type = WindowCollectionChunkScanner::PrefixStructType(key_types, end, begin);
+-		return BoundComparisonExpression::CreateOnColumns(ExpressionType::COMPARE_DISTINCT_FROM, type, 0, type, 1);
++		return BoundComparisonExpression::CreateOnColumns(context, ExpressionType::COMPARE_DISTINCT_FROM, type, 0, type,
++		                                                  1);
+ 	};
+ 	partition_distinct_from = create_distinct_from(order_begin, 0);
+ 	for (auto &expr : select_list) {
+@@ -313,9 +314,9 @@ PhysicalWindow::PhysicalWindow(PhysicalPlan &physical_plan, vector<LogicalType>
+ 	}
+ }
+ 
+-PhysicalWindow::PhysicalWindow(PhysicalPlan &physical_plan, vector<LogicalType> types,
++PhysicalWindow::PhysicalWindow(PhysicalPlan &physical_plan, ClientContext &context, vector<LogicalType> types,
+                                vector<unique_ptr<Expression>> select_list, idx_t estimated_cardinality)
+-    : PhysicalWindow(physical_plan, std::move(types), std::move(select_list), estimated_cardinality,
++    : PhysicalWindow(physical_plan, context, std::move(types), std::move(select_list), estimated_cardinality,
+                      vector<column_t>()) {
+ }
+ 
+@@ -710,7 +711,11 @@ void WindowHashGroup::ComputeMasks(const idx_t block_begin, const idx_t block_en
+ 			                   if (ndistinct) {
+ 				                   prefix.Slice(matching, nmatch);
+ 			                   } else {
+-				                   prefix.SetChildCardinality(nmatch);
++				                   // Slice instead of resizing: the vectors share their buffers with prev and curr
++				                   for (auto &vec : prefix.data) {
++					                   vec.Slice(Vector::Ref(vec), 0, nmatch);
++				                   }
++				                   prefix.CheckCardinality(nmatch);
+ 			                   }
+ 			                   const auto m = distinct_from[order_mask.first]->SelectExpression(
+ 			                       prefix, &distinct, nullptr, nullptr, nmatch);
+```
+
+**File**: `src/execution/operator/join/physical_iejoin.cpp` (modified, +10/-8)
+```diff
+@@ -21,9 +21,10 @@
+ 
+ namespace duckdb {
+ 
+-PhysicalIEJoin::PhysicalIEJoin(PhysicalPlan &physical_plan, LogicalComparisonJoin &op, PhysicalOperator &left,
+-                               PhysicalOperator &right, vector<JoinCondition> cond, JoinType join_type,
+-                               idx_t estimated_cardinality, unique_ptr<JoinFilterPushdownInfo> pushdown_info)
++PhysicalIEJoin::PhysicalIEJoin(PhysicalPlan &physical_plan, ClientContext &context, LogicalComparisonJoin &op,
++                               PhysicalOperator &left, PhysicalOperator &right, vector<JoinCondition> cond,
++                               JoinType join_type, idx_t estimated_cardinality,
++                               unique_ptr<JoinFilterPushdownInfo> pushdown_info)
+     : PhysicalRangeJoin(physical_plan, op, PhysicalOperatorType::IE_JOIN, left, right, std::move(cond), join_type,
+                         estimated_cardinality, std::move(pushdown_info)) {
+ 	// 1. let L1 (resp. L2) be the array of column X (resp. Y)
+@@ -63,13 +64,14 @@ PhysicalIEJoin::PhysicalIEJoin(PhysicalPlan &physical_plan, LogicalComparisonJoi
+ 		D_ASSERT(cond.GetLHS().GetReturnType() == cond.GetRHS().GetReturnType());
+ 		join_key_types.push_back(cond.GetLHS().GetReturnType());
+ 	}
+-	tail_predicate = CreateTailPredicate(conditions, 2);
++	tail_predicate = CreateTailPredicate(context, conditions, 2);
+ }
+ 
+-PhysicalIEJoin::PhysicalIEJoin(PhysicalPlan &physical_plan, LogicalComparisonJoin &op, PhysicalOperator &left,
+-                               PhysicalOperator &right, vector<JoinCondition> cond, JoinType join_type,
+-                               idx_t estimated_cardinality)
+-    : PhysicalIEJoin(physical_plan, op, left, right, std::move(cond), join_type, estimated_cardinality, nullptr) {
++PhysicalIEJoin::PhysicalIEJoin(PhysicalPlan &physical_plan, ClientContext &context, LogicalComparisonJoin &op,
++                               PhysicalOperator &left, PhysicalOperator &right, vector<JoinCondition> cond,
++                               JoinType join_type, idx_t estimated_cardinality)
++    : PhysicalIEJoin(physical_plan, context, op, left, right, std::move(cond), join_type, estimated_cardinality,
++                     nullptr) {
+ }
+ 
+ //===--------------------------------------------------------------------===//
+```
+
+**File**: `src/execution/operator/join/physical_nested_loop_join.cpp` (modified, +8/-8)
+```diff
+@@ -11,9 +11,9 @@
+ 
+ namespace duckdb {
+ 
+-PhysicalNestedLoopJoin::PhysicalNestedLoopJoin(PhysicalPlan &physical_plan, LogicalComparisonJoin &op,
+-                                               PhysicalOperator &left, PhysicalOperator &right,
+-                                               vector<JoinCondition> conds, JoinType join_type,
++PhysicalNestedLoopJoin::PhysicalNestedLoopJoin(PhysicalPlan &physical_plan, ClientContext &context,
++                                               LogicalComparisonJoin &op, PhysicalOperator &left,
++                                               PhysicalOperator &right, vector<JoinCondition> conds, JoinType join_type,
+                                                idx_t estimated_cardinality,
+                                                unique_ptr<JoinFilterPushdownInfo> pushdown_info_p)
+     : PhysicalComparisonJoin(physical_plan, op, PhysicalOperatorType::NESTED_LOOP_JOIN, std::move(conds), join_type,
+@@ -30,17 +30,17 @@ PhysicalNestedLoopJoin::PhysicalNestedLoopJoin(PhysicalPlan &physical_plan, Logi
+ 	}
+ 	if (predicate && conditions.size() == 1) {
+ 		auto &condition = conditions[0];
+-		condition_comparison = BoundComparisonExpression::CreateOnColumns(condition.GetComparisonType(),
++		condition_comparison = BoundComparisonExpression::CreateOnColumns(context, condition.GetComparisonType(),
+ 		                                                                  condition.GetLHS().GetReturnType(), 0,
+ 		                                                                  condition.GetRHS().GetReturnType(), 1);
+ 	}
+ }
+ 
+-PhysicalNestedLoopJoin::PhysicalNestedLoopJoin(PhysicalPlan &physical_plan, LogicalComparisonJoin &op,
+-                                               PhysicalOperator &left, PhysicalOperator &right,
+-                                               vector<JoinCondition> cond, JoinType join_type,
++PhysicalNestedLoopJoin::PhysicalNestedLoopJoin(PhysicalPlan &physical_plan, ClientContext &context,
++                                               LogicalComparisonJoin &op, PhysicalOperator &left,
++                                               PhysicalOperator &right, vector<JoinCondition> cond, JoinType join_type,
+                                                idx_t estimated_cardinality)
+-    : PhysicalNestedLoopJoin(physical_plan, op, left, right, std::move(cond), join_type, estimated_cardinality,
++    : PhysicalNestedLoopJoin(physical_plan, context, op, left, right, std::move(cond), join_type, estimated_cardinality,
+                              nullptr) {
+ }
+ 
+```
+
+**File**: `src/execution/operator/join/physical_piecewise_merge_join.cpp` (modified, +5/-5)
+```diff
+@@ -14,10 +14,10 @@
+ 
+ namespace duckdb {
+ 
+-PhysicalPiecewiseMergeJoin::PhysicalPiecewiseMergeJoin(PhysicalPlan &physical_plan, LogicalComparisonJoin &op,
+-                                                       PhysicalOperator &left, PhysicalOperator &right,
+-                                                       vector<JoinCondition> cond, JoinType join_type,
+-                                                       idx_t estimated_cardinality,
++PhysicalPiecewiseMergeJoin::PhysicalPiecewiseMergeJoin(PhysicalPlan &physical_plan, ClientContext &context,
++                                                       LogicalComparisonJoin &op, PhysicalOperator &left,
++                                                       PhysicalOperator &right, vector<JoinCondition> cond,
++                                                       JoinType join_type, idx_t estimated_cardinality,
+                                                        unique_ptr<JoinFilterPushdownInfo> pushdown_info_p)
+     : PhysicalRangeJoin(physical_plan, op, PhysicalOperatorType::PIECEWISE_MERGE_JOIN, left, right, std::move(cond),
+                         join_type, estimated_cardinality, std::move(pushdown_info_p)) {
+@@ -52,7 +52,7 @@ PhysicalPiecewiseMergeJoin::PhysicalPiecewiseMergeJoin(PhysicalPlan &physical_pl
+ 			throw NotImplementedException("Unimplemented join type for merge join");
+ 		}
+ 	}
+-	tail_predicate = CreateTailPredicate(conditions, 1);
++	tail_predicate = CreateTailPredicate(context, conditions, 1);
+ }
+ 
+ //===--------------------------------------------------------------------===//
+```
+
+**File**: `src/execution/operator/join/physical_range_join.cpp` (modified, +3/-2)
+```diff
+@@ -520,7 +520,8 @@ void PhysicalRangeJoin::SliceSortedPayload(DataChunk &chunk, GlobalSortedTable &
+ 	}
+ }
+ 
+-unique_ptr<Expression> PhysicalRangeJoin::CreateTailPredicate(const vector<JoinCondition> &conditions,
++unique_ptr<Expression> PhysicalRangeJoin::CreateTailPredicate(ClientContext &context,
++                                                              const vector<JoinCondition> &conditions,
+                                                               idx_t tail_begin) {
+ 	if (tail_begin >= conditions.size()) {
+ 		return nullptr;
+@@ -530,7 +531,7 @@ unique_ptr<Expression> PhysicalRangeJoin::CreateTailPredicate(const vector<JoinC
+ 	for (idx_t tail_idx = 0; tail_idx < tail_count; tail_idx++) {
+ 		auto &condition = conditions[tail_begin + tail_idx];
+ 		comparisons.push_back(BoundComparisonExpression::CreateOnColumns(
+-		    condition.GetComparisonType(), condition.GetLHS().GetReturnType(), tail_idx,
++		    context, condition.GetComparisonType(), condition.GetLHS().GetReturnType(), tail_idx,
+ 		    condition.GetRHS().GetReturnType(), tail_count + tail_idx));
+ 	}
+ 	return BoundConjunctionExpression::Create(ExpressionType::CONJUNCTION_AND, std::move(comparisons));
+```
+
+**File**: `src/execution/operator/order/physical_top_n.cpp` (modified, +4/-4)
+```diff
+@@ -13,16 +13,16 @@
+ 
+ namespace duckdb {
+ 
+-PhysicalTopN::PhysicalTopN(PhysicalPlan &physical_plan, vector<LogicalType> types, vector<BoundOrderByNode> orders,
+-                           idx_t limit, idx_t offset, shared_ptr<DynamicFilterData> dynamic_filter_p,
+-                           idx_t estimated_cardinality)
++PhysicalTopN::PhysicalTopN(PhysicalPlan &physical_plan, ClientContext &context, vector<LogicalType> types,
++                           vector<BoundOrderByNode> orders, idx_t limit, idx_t offset,
++                           shared_ptr<DynamicFilterData> dynamic_filter_p, idx_t estimated_cardinality)
+     : PhysicalOperator(physical_plan, PhysicalOperatorType::TOP_N, std::move(types), estimated_cardinality),
+       orders(std::move(orders)), limit(limit), offset(offset), dynamic_filter(std::move(dynamic_filter_p)) {
+ 	const auto order_count = this->orders.size();
+ 	for (idx_t order_idx = 0; order_idx < order_count; order_idx++) {
+ 		auto &type = this->orders[order_idx].expression->GetReturnType();
+ 		not_distinct_from.push_back(BoundComparisonExpression::CreateOnColumns(
+-		    ExpressionType::COMPARE_NOT_DISTINCT_FROM, type, order_idx, type, order_count + order_idx));
++		    context, ExpressionType::COMPARE_NOT_DISTINCT_FROM, type, order_idx, type, order_count + order_idx));
+ 	}
+ }
+ 
+```
+
+---
+
+### Incident Patch 3: `01b205ac` (2026-11-18)
+**Commit Message**: Reject statistics that count NULL values for a Parquet column that cannot hold NULL values (#28956)
+
+A Parquet column that cannot be NULL loses its values when the
+statistics of its column chunk count NULL values:
 
 ```sql
-SET threads=2;
-CREATE TABLE t AS FROM range(1000000);
-COPY t TO 'out.csv' (ROW_GROUP_SIZE_BYTES '256KB');
--- INTERNAL Error: Attempting to get the index of an optional_idx that is not set
+-- 6001 rows, x is a REQUIRED BIGINT column, all values are 1; the statistics of its chunk say null_count = 6001
+SELECT count(*), count(x), sum(x) FROM read_parquet('required_column_all_null_statistics.parquet');
+-- 6001, 0, NULL            (the values are 6001, 6001, 6001)
+SELECT count(*) FROM read_parquet('required_column_all_null_statistics.parquet') WHERE x = 1;
+-- 0
 ```
 
-`CorrectSizeForBatch` calls `batch_size.GetIndex()` without checking
-that a row target is set. It is
-reached for the leftover batch of a non-final repartition, so the error
-depends on timing: the
-query above failed on every run at 2 threads here (tested on Linux
-x86_64; Apple ARM64).
+A column with a maximum definition level of 0 has no definition levels,
+so its values cannot be NULL and a null count above 0 in its statistics
+is a contradiction in the footer. The reader trusted the null count in
+two places: a chunk with `null_count = num_values` is produced as
+constant NULLs without reading its pages, and the row group statistics
+mark the column as having no valid values, so a filter on it prunes the
+row group.
 
-With no row target, the byte target now decides, through
-`CopyFunctionBatchAnalyzer::IsAcceptable()`,
-as it does elsewhere. The new test
-(`test/sql/copy/csv/batched_write/batch_csv_row_group_size_bytes.test`)
-fails before the fix and
-passes after.
+Such a file is now reported as corrupt:
 
-## Demonstration
+```
+Data Corruption Error: Failed to read file "...": metadata is corrupt. Column "x" cannot hold NULL values but its stat
 
-OSX using a fresh install of v2.0:
-
-```bash
-(base) 13:01:00 (dtmcdonald@when):~$ md5 /Users/dtmcdonald/.duckdb/cli/latest/duckdb
-MD5 (/Users/dtmcdonald/.duckdb/cli/latest/duckdb) = b2fdfbcc753c7ad59e812516b4bb0c8a
-(base) 13:01:03 (dtmcdonald@when):~$ /Users/dtmcdonald
-
-**File**: `src/execution/operator/persistent/physical_batch_copy_to_file.cpp` (modified, +4/-0)
+**File**: `extension/parquet/column_reader.cpp` (modified, +1/-0)
 ```diff
-@@ -422,6 +422,10 @@ void PhysicalBatchCopyToFile::AddRawBatchData(ClientContext &context, GlobalSink
+@@ -447,6 +447,7 @@ void ColumnReader::InitializeRead(idx_t row_group_idx_p, idx_t row_group_num_row
+ 		chunk_read_offset = NumericCast<idx_t>(chunk->meta_data.dictionary_page_offset);
+ 	}
+ 	ValidateColumnMetadata(row_group_num_rows, *chunk);
++	Schema().ValidateNullCount(*chunk, Reader().GetFileName().c_str());
+ 	group_rows_available = NumericCast<idx_t>(chunk->meta_data.num_values);
+ }
  
- static bool CorrectSizeForBatch(const ColumnDataCollection &batch, const optional_idx &batch_size,
-                                 const optional_idx &batch_size_bytes) {
-+	if (!batch_size.IsValid()) {
-+		// no row target (only ROW_GROUP_SIZE_BYTES): the byte target alone decides
-+		return CopyFunctionBatchAnalyzer(batch, batch_size, batch_size_bytes).IsAcceptable();
+```
+
+**File**: `extension/parquet/include/parquet_column_schema.hpp` (modified, +2/-0)
+```diff
+@@ -127,6 +127,8 @@ struct ParquetColumnSchema {
+ 	                                 idx_t row_group_idx_p, const duckdb_parquet::ColumnChunkList &columns) const;
+ 	void ValidateColumnMetadata(const duckdb_parquet::ColumnChunk &column, int64_t row_group_num_rows,
+ 	                            bool validate_row_count, const char *file_name = nullptr) const;
++	//! Validates the null count of the statistics of the column chunk that this schema reads its values from
++	void ValidateNullCount(const duckdb_parquet::ColumnChunk &column, const char *file_name = nullptr) const;
+ 
+ public:
+ 	optional_idx GetChildIndexByName(const string &name) const;
+```
+
+**File**: `extension/parquet/parquet_column_schema.cpp` (modified, +19/-0)
+```diff
+@@ -71,6 +71,25 @@ void ParquetColumnSchema::ValidateColumnMetadata(const ColumnChunk &column, int6
+ 	}
+ }
+ 
++void ParquetColumnSchema::ValidateNullCount(const ColumnChunk &column, const char *file_name) const {
++	if (max_define != 0 || !column.__isset.meta_data || !column.meta_data.__isset.statistics) {
++		return;
 +	}
- 	if (batch_size.GetIndex() == 0) {
- 		// a batch size of 0 indicates we are happy with any batch size
- 		return true;
++	auto &statistics = column.meta_data.statistics;
++	if (!statistics.__isset.null_count || statistics.null_count <= 0) {
++		return;
++	}
++	// the column has no definition levels, so its values cannot be NULL
++	if (file_name) {
++		throw DataCorruptionException("Failed to read file \"%s\": metadata is corrupt. Column \"%s\" cannot hold "
++		                              "NULL values but its statistics count %lld NULL values",
++		                              file_name, name, statistics.null_count);
++	}
++	throw DataCorruptionException("Parquet metadata is corrupt. Column \"%s\" cannot hold NULL values but its "
++	                              "statistics count %lld NULL values",
++	                              name, statistics.null_count);
++}
++
+ //! Writer constructors
+ 
+ ParquetColumnSchema ParquetColumnSchema::FromLogicalType(const Identifier &name, const LogicalType &type,
 ```
 
-**File**: `test/sql/copy/csv/batched_write/batch_csv_row_group_size_bytes.test` (added, +29/-0)
+**File**: `extension/parquet/parquet_statistics.cpp` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,29 @@
-+# name: test/sql/copy/csv/batched_write/batch_csv_row_group_size_bytes.test
-+# description: Batched COPY with ROW_GROUP_SIZE_BYTES but no ROW_GROUP_SIZE has no row target to compare against
-+# group: [batched_write]
+@@ -770,6 +770,8 @@ ParquetStatisticsUtils::TransformColumnStatistics(const ParquetColumnSchema &sch
+ 		// no stats present for row group
+ 		return nullptr;
+ 	}
++	// every column whose chunk statistics become statistics of the scan gets here, whatever it is nested in
++	schema.ValidateNullCount(column_chunk);
+ 	auto &parquet_stats = column_chunk.meta_data.statistics;
+ 	row_group_stats = TransformParquetStatistics(type, schema, parquet_stats, parquet_options,
+ 	                                             parquet_options.can_have_nan, &column_chunk);
+```
+
+**File**: `test/parquet/corrupt/required_column_all_null_statistics.test` (added, +78/-0)
+```diff
+@@ -0,0 +1,78 @@
++# name: test/parquet/corrupt/required_column_all_null_statistics.test
++# description: Reject statistics that count NULL values for a column that cannot hold NULL values
++# group: [corrupt]
 +
-+# two threads keep a merged tail batch pending across repartitions, which is what consults the row target
-+statement ok
-+SET threads=2
++require parquet
 +
-+statement ok
-+CREATE TABLE integers AS FROM range(1000000) t(i)
++# The file is data/parquet-testing/required_dictionary_single_page.parquet (6001 rows of a REQUIRED BIGINT column,
++# all 1) with statistics added to the column chunk in the footer: null_count = 6001.
++# The column was read as 6001 NULL values, and a filter on it pruned the row group.
++statement error
++SELECT count(*), count(x), sum(x)
++FROM read_parquet('{DATA_DIR}/parquet-testing/corrupt/required_column_all_null_statistics.parquet');
++----
++Column "x" cannot hold NULL values but its statistics count 6001 NULL values
 +
-+statement ok
-+COPY integers TO '{TEST_DIR}/batched_bytes_only.csv' (ROW_GROUP_SIZE_BYTES '256KB')
++statement error
++SELECT count(*)
++FROM read_parquet('{DATA_DIR}/parquet-testing/corrupt/required_column_all_null_statistics.parquet')
++WHERE x = 1;
++----
++Column "x" cannot hold NULL values but its statistics count 6001 NULL values
 +
-+statement ok
-+CREATE TABLE integers_copied AS FROM '{TEST_DIR}/batched_bytes_only.csv'
++# The same for a REQUIRED column in a REQUIRED struct: the statistics of the struct are built from those of the
++# column, and a filter on it pruned the row group (6001 rows with s.x = 1).
++statement error
++SELECT count(*)
++FROM read_parquet('{DATA_DIR}/parquet-testing/corrupt/required_nested_column_all_null_statistics.parquet')
++WHERE s.x = 1;
++----
++Column "x" cannot hold NULL values but its statistics count 6001 NULL values
 +
++statement error
++SELECT count(s.x), sum(s.x)
++FROM read_parquet('{DATA_DIR}/parquet-testing/corrupt/required_nested_column_all_null_statistics.parquet');
++----
++Column "x" cannot hold NULL values but its statistics count 6001 NULL values
++
++# A REQUIRED GEOMETRY column (10 rows) with null_count = 10: the schema of the column wraps its BLOB column.
++statement error
++SELECT count(*)
++FROM read_parquet('{DATA_DIR}/parquet-testing/corrupt/required_geometry_column_all_null_statistics.parquet')
++WHERE g IS NOT NULL;
++----
++Column "g" cannot hold NULL values but its statistics count 10 NULL values
++
++statement error
++SELECT count(g)
++FROM read_parquet('{DATA_DIR}/parquet-testing/corrupt/required_geometry_column_all_null_statistics.parquet');
++----
++Column "g" cannot hold NULL values but its statistics count 10 NULL values
++
++# The REQUIRED 'metadata' column of a REQUIRED shredded VARIANT with null_count = 10.
++statement error
++SELECT count(var)
++FROM read_parquet('{DATA_DIR}/parquet-testing/corrupt/required_variant_metadata_null_count.parquet');
++----
++Column "metadata" cannot hold NULL values but its statistics count 10 NULL values
++
++# A REQUIRED column below an OPTIONAL group has definition levels: the null count of the 'metadata' column of this
++# OPTIONAL VARIANT (1 of 7) is left alone.
 +query II
-+SELECT COUNT(*), SUM(i) FROM integers_copied
++SELECT count(*), count(PAYLOAD) FROM read_parquet('{DATA_DIR}/parquet-testing/snowflake_variant.parquet');
 +----
-+1000000	499999500000
++7	6
 +
-+# the batched copy keeps insertion order
-+query I
-+SELECT * FROM integers_copied LIMIT 3 OFFSET 500000
++# So has a REQUIRED column below a REPEATED group: the keys of this MAP have a null count of 18.
++query III
++SELECT count(*), count(raw_header), sum(cardinality(raw_header))
++FROM read_parquet('{DATA_DIR}/parquet-testing/map.parquet');
 +----
-+500000
-+500001
-+500002
-```
-
----
-
-### Incident Patch 2: `18161521` (2026-11-17)
-**Commit Message**: Shrink partitioned_full_outer_hash_join test to avoid CI timeouts (#28944)
-
-`test/sql/copy/partitioned/partitioned_full_outer_hash_join.test` joins
-two 2M-row tables and regularly hits the 300s per-test timeout in `Linux
-Config (Execution)` (`force_external`), including on unrelated PRs. It
-needed a retry even in a passing run.
-
-Reduces the tables to 500k rows each (expected counts updated to
-750000/500000/500000). The early `partitioned_write_flush_threshold`
-that the test relies on is unchanged. I could not measure the new
-runtime or confirm the original deadlock still reproduces at this size
-locally, so CI on this PR is the check.
-
-**File**: `test/sql/copy/partitioned/partitioned_full_outer_hash_join.test` (modified, +3/-3)
-```diff
-@@ -12,10 +12,10 @@ statement ok
- SET partitioned_write_flush_threshold=4096;
- 
- statement ok
--CREATE TABLE a AS SELECT i AS k, i % 1000 AS v FROM range(2000000) t(i);
-+CREATE TABLE a AS SELECT i AS k, i % 1000 AS v FROM range(500000) t(i);
- 
- statement ok
--CREATE TABLE b AS SELECT i * 2 AS k, i % 7 AS w FROM range(2000000) t(i);
-+CREATE TABLE b AS SELECT i * 2 AS k, i % 7 AS w FROM range(500000) t(i);
- 
- statement ok
- COPY (
-@@ -27,4 +27,4 @@ query III
- SELECT count(*), count(ak), count(bk)
- FROM read_parquet('{TEST_DIR}/partitioned_full_outer_hash_join/**/*.parquet')
- ----
--3000000	2000000	2000000
-+750000	500000	500000
-```
-
----
-
-### Incident Patch 3: `8e057bab` (2026-11-17)
-**Commit Message**: Fix CI (#28914)
-
-Disclaimer: this PR is analyzed and completed by opus-5.5
-
-Follow-up to https://github.com/duckdb/duckdb/pull/28791, which added
-`test/optimizer/pushdown/join_filter_pushdown_right_anti.test`. The test
-fails in the **Vector Sizes** CI job, which builds with
-`STANDARD_VECTOR_SIZE=2`. That job is skipped in the merge queue, so the
-failure only showed up after merge. It now fails on `main` and on every
-open PR.
-
-The two `EXPLAIN ANALYZE` checks at the end of the test expect the scan
-of `big` to emit exactly 40 rows: the 40 rows with `k = 42`.
-The join filter on `big` is `optional: k IN PRF(k)`. Like the other
-optional runtime filters, it tracks its own selectivity over a window of
-6 vectors and pauses itself when at least 50% of the rows pass.
-- With 2048-row vectors the filter stays active and the scan emits
-exactly 40 rows.
-- With 2-row vectors the window is only 12 rows, so the filter pauses.
-The row next to each matching row (`k = 45`) gets through, and the scan
-emits 80 rows.
-
-The query results are correct either way. Only the exact row count in
-the plan changes.
-
-**File**: `.github/patches/extensions/quack/0004-exclude-geography-from-all-types-test.patch` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+diff --git a/test/sql/rpc.test b/test/sql/rpc.test
-+index 68433cc..da84c05 100644
-+--- a/test/sql/rpc.test
-++++ b/test/sql/rpc.test
-+@@ -83,7 +83,7 @@ select max(range) from quack_query({server}, 'from range(100000)')
-+ 99999
-+ 
-+ statement ok
-+-from quack_query({server}, 'from test_all_types()')
-++from quack_query({server}, 'select * exclude (geography) from test_all_types()')
-+ 
-+ 
-+ statement ok
-```
-
-**File**: `test/optimizer/pushdown/join_filter_pushdown_right_anti.test` (modified, +4/-3)
-```diff
-@@ -350,7 +350,8 @@ statement ok
- RESET disabled_optimizers;
- 
- # the probe side is an aggregate over a scan in a pipeline of its own: that scan waits for the filter of the
--# RIGHT ANTI join like it does for a RIGHT SEMI join, also if the build side turns out to be empty
-+# RIGHT ANTI join like it does for a RIGHT SEMI join, also if the build side turns out to be empty.
-+# 40 rows match, but the optional filter can pause itself on small vectors and let some non-matching rows through
- statement ok
- CREATE TABLE keys(k BIGINT);
- 
-@@ -365,12 +366,12 @@ SET threads={threads};
- query II
- EXPLAIN (ANALYZE, FORMAT JSON) SELECT b.k FROM keys b ANTI JOIN (SELECT k, sum(v) AS v FROM big GROUP BY k) p ON p.k = b.k;
- ----
--analyzed_plan	<REGEX>:(?s).*"Join Type": "RIGHT_ANTI".*"Table": "[^"]*[.]big"[^}]*},\s*"intermediate_rows": 40,.*
-+analyzed_plan	<REGEX>:(?s).*"Join Type": "RIGHT_ANTI".*"Table": "[^"]*[.]big"[^}]*},\s*"intermediate_rows": [0-9]{2,3},.*
- 
- query II
- EXPLAIN (ANALYZE, FORMAT JSON) SELECT b.k FROM keys b SEMI JOIN (SELECT k, sum(v) AS v FROM big GROUP BY k) p ON p.k = b.k;
- ----
--analyzed_plan	<REGEX>:(?s).*"Join Type": "RIGHT_SEMI".*"Table": "[^"]*[.]big"[^}]*},\s*"intermediate_rows": 40,.*
-+analyzed_plan	<REGEX>:(?s).*"Join Type": "RIGHT_SEMI".*"Table": "[^"]*[.]big"[^}]*},\s*"intermediate_rows": [0-9]{2,3},.*
- 
- query I
- SELECT b.k FROM keys b ANTI JOIN (SELECT k, sum(v) AS v FROM big GROUP BY k) p ON p.k = b.k ORDER BY ALL;
-```
-
-**File**: `test/sql/join/hash_join/perfect_hash_join_memory.test` (modified, +3/-1)
-```diff
-@@ -2,9 +2,11 @@
- # description: Cost direct lookup before spilling and reserve optional dictionary output separately
- # group: [hash_join]
- 
--# The fixed memory budgets below assume default-sized vectors.
-+# The fixed memory budgets below assume default-sized vectors and 64-bit memory usage.
- require vector_size 2048
- 
-+require 64bit
++1127	1109	14396
 +
- require skip_reload
- 
- load {TEST_DIR}/perfect_hash_join_memory.db
++# the unchanged file
++query III
++SELECT count(*), count(x), sum(x)
++FROM read_parquet('{DATA_DIR}/parquet-testing/required_dictionary_single_page.parquet');
++----
++6001	6001	6001
+```
+
+**File**: `test/sql/copy/parquet/test_parquet_scan.test` (modified, +1/-1)
+```diff
+@@ -245,4 +245,4 @@ SELECT FIRST(comments) OVER w, LAST(comments) OVER w FROM userdata1 WINDOW w AS
+ statement error
+ SELECT * FROM parquet_scan('{DATA_DIR}/parquet-testing/broken-arrow.parquet')
+ ----
+-<REGEX>:.*Invalid Error:.*
+\ No newline at end of file
++<REGEX>:.*Data Corruption Error:.*cannot hold NULL values.*
+\ No newline at end of file
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28960** (closed): Fix: mark unshredded VARIANT stats as NOT_SHREDDED (@gropaul)
-- **PR #28952** (closed): Resolve-types callback: allow setting argument types in the C API V2 (@Robinho-MR)
-- **PR #28948** (2026-11-17): Skip Windows extension builds on PRs that do not change extensions (@Robinho-MR)
-- **PR #28946** (2026-11-17): Ignore stalled ORDER_BY progress in test_transaction_local_parallelism (@Robinho-MR)
-- **PR #28945** (2026-11-17): Shrink hash_join_dict_surviving_computed_build test to avoid CI timeouts (@Robinho-MR)
-- **PR #28944** (2026-11-17): Shrink partitioned_full_outer_hash_join test to avoid CI timeouts (@Robinho-MR)
+- **PR #29042** (closed): Preserve LIKE predicates for scan-level pruning (@mcusack-floe)
+- **PR #29040** (2026-11-18): capi: const char ** is now const char * const * for readonly api calls (@okruitho)
+- **PR #29038** (closed): [v2.0-cyanoptera] Bump aws to 1963bfa (@autograaf)
+- **PR #29035** (2026-11-18): Improve ALP, ALPRD, DICT_FSST and Parquet scan decoding (@lnkuiper)
+- **PR #29028** (2026-11-18): [v2.0] Bump mysql to e04d8eef94c94e70c5d5663895610b1bb475d506 (@carlopi)
+- **PR #29026** (2026-11-18): [v2.0] Bump aws, remove patch, fix external resources naming (@carlopi)
 
 ---
 
@@ -2294,24 +2910,49 @@ the plan changes.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. INTERNAL error in batched COPY with ROW_GROUP_SIZE_BYTES but no ROW_GROUP_SIZE
+## X. RTTI-sensitive tests and extension CI failures
 
 **RULE**:
-When implementing operations in `src/execution/operator/persistent/physical_batch_copy_to_file.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/patches/extensions/ducklake/0028-skip-failing-extension-ci-tests.patch`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in duckdb/duckdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `069eb90c`: INTERNAL error in batched COPY with ROW_GROUP_SIZE_BYTES but no ROW_GROUP_SIZE. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7b270526`: RTTI-sensitive tests and extension CI failures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/execution/operator/persistent/physical_batch_copy_to_file.cpp`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/patches/extensions/ducklake/0028-skip-failing-extension-ci-tests.patch`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-	if (!batch_size.IsValid()) {
-		// no row target (only ROW_GROUP_SIZE_BYTES): the byte target alone decides
-		return CopyFunctionBatchAnalyzer(batch, batch_size, batch_size_bytes).IsAcceptable();
-	}
+diff --git a/test/sql/autoloading/autoload_sqlite_catalog.test b/test/sql/autoloading/autoload_sqlite_catalog.test
+index 0b979595..004c8392 100644
+--- a/test/sql/autoloading/autoload_sqlite_catalog.test
+@@ -2,6 +2,8 @@
+ # description: A SQLite catalog can be attached when the sqlite extension is only loaded by the attach
+ # group: [autoloading]
+ 
++mode skip SQLite catalog autoloading leaves the catalog unattached
++
+ require ducklake
+ 
+ require parquet
+diff --git a/test/sql/initialize/new_ducklake_requires_data_path.test b/test/sql/initialize/new_ducklake_requires_data_path.test
+index 1c9cb402..5f0d2f9c 100644
+--- a/test/sql/initialize/new_ducklake_requires_data_path.test
+@@ -2,6 +2,9 @@
+ # description: Creating a DuckLake in a catalog that is not a DuckDB database requires a DATA_PATH
+ # group: [initialize]
+ 
++# SQLite catalog paths derived from BASE_TEST_NAME are invalid on Windows.
++require notwindows
++
+ require ducklake
+ 
+ require parquet
+diff --git a/test/sql/migration/inlined_column_rename_dev_conflict.test b/test/sql/migration/inlined_column_rename_dev_conflict.test
+index 25af2c96..7c663f82 100644
+--- a/test/sql/migration/inlined_column_rename_dev_conflict.test
+@@ -2,6 +2,9 @
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2321,7 +2962,7 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `069eb90c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7b270526` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

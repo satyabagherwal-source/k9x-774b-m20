@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T05:47:18.726Z",
-  "total_records": 1945,
+  "last_updated": "2026-11-19T05:55:02.762Z",
+  "total_records": 1947,
   "domains": {
     "A": {
       "total": 13,
@@ -1883,7 +1883,7 @@
       ]
     },
     "K": {
-      "total": 98,
+      "total": 100,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1982,7 +1982,9 @@
         "domain_intelligence-quality-verification-intelligence-software-mansion-react-native-reanimated-learn",
         "domain_intelligence-quality-verification-intelligence-clastix-kamaji-core-invariants",
         "DOM-K-A46CD8EF",
-        "domain_intelligence-quality-verification-intelligence-clastix-kamaji-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-clastix-kamaji-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-duckdb-duckdb-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-duckdb-duckdb-learnings-core-invariants"
       ]
     },
     "L": {
@@ -16359,8 +16361,8 @@
       "title": "Research & Knowledge Intelligence: jialinyyzz/humanizer Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-jialinyyzz-humanizer-research-knowledge-intelligence-jialinyyzz-humanizer-cor.md",
       "repository": "jialinyyzz/humanizer",
-      "content_hash": "a2d3cd9d9a04743677c002d748b54010a9d15822d5af9d2e420ac36abf25ffd6",
-      "created_at": "2026-11-14T16:22:46.810Z"
+      "content_hash": "dd8dc4a0ba3ba5efc35481ac0ac89059d77778a053ddf925ae3b8644babeeee3",
+      "created_at": "2026-11-19T05:54:42.876Z"
     },
     "domain_intelligence-quality-verification-intelligence-astral-sh-ruff-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-astral-sh-ruff-core-invariants",
@@ -16437,8 +16439,8 @@
       "title": "Research & Knowledge Intelligence: hf-jialinyyzz-humanizer-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-jialinyyzz-humanizer-learnings-research-knowledge-intelligence-hf-jialinyyzz-.md",
       "repository": "hf-jialinyyzz-humanizer-learnings",
-      "content_hash": "c01b8d26b1f013707149c71e0e3e3688fbb64a6f5e4d68e013e1049eaf04f7ed",
-      "created_at": "2026-11-14T16:23:20.383Z"
+      "content_hash": "4eb307f6f634b7a189fbe0d3e5473223013fb1b49065023a815aeacc0512ddc1",
+      "created_at": "2026-11-19T05:55:01.569Z"
     },
     "DOM-H-305CEBA3": {
       "record_id": "DOM-H-305CEBA3",
@@ -23116,8 +23118,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "34ef319752b3200f3ac9d8764ffc43dec41c3f62333d42bae3392ef32e9fca7d",
-      "created_at": "2026-11-19T03:27:28.920Z"
+      "content_hash": "639a06d96c8c1e06b8b9c55ad2e6dbcd525d14a8e227d0c76a5f19e4aff6ffda",
+      "created_at": "2026-11-19T05:55:02.762Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -32645,6 +32647,24 @@
       "repository": "onejs-one-learnings",
       "content_hash": "e9436a05457d5e39c585d6fe4baf266ce5c226768ca3940c714f8ff8f21e8110",
       "created_at": "2026-11-19T05:24:39.205Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-duckdb-duckdb-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-duckdb-duckdb-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: duckdb/duckdb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-duckdb-duckdb-quality-verification-intelligence-duckdb-duckdb-core-invariants.md",
+      "repository": "duckdb/duckdb",
+      "content_hash": "b5cbf2db6d2a1c15a98feb9ebb2d445cd6db274a46b69496a3b24a6dfb874793",
+      "created_at": "2026-11-19T05:54:58.494Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-duckdb-duckdb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-duckdb-duckdb-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: duckdb-duckdb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-duckdb-duckdb-learnings-quality-verification-intelligence-duckdb-duckdb-learning.md",
+      "repository": "duckdb-duckdb-learnings",
+      "content_hash": "4c9b3f43fafc52f5ab1ead572e83cafd36a0e8999fd4521e9ff812b0d0fd35a9",
+      "created_at": "2026-11-19T05:55:02.137Z"
     }
   }
 }

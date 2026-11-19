@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T05:47:17.474Z",
+  "updated_at": "2026-11-19T05:55:01.817Z",
   "stats": {
-    "total_discovered": 5799,
-    "approved_pending_harvest": 5488,
+    "total_discovered": 5801,
+    "approved_pending_harvest": 5490,
     "harvested_count": 0,
     "rejected_count": 311,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5454,
+      "COMMUNITY_AND_EXPERT": 5456,
       "OFFICIAL_DOCUMENTATION": 186,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -125422,6 +125422,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/envoyproxy-envoy-learnings.md",
         "fileName": "envoyproxy-envoy-learnings.md"
+      }
+    },
+    "SRC-FAE62989CE1F": {
+      "id": "SRC-FAE62989CE1F",
+      "url": "https://github.com/duckdb/duckdb/pull/24858",
+      "title": "https://github.com/duckdb/duckdb/pull/24858",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T05:55:01.780Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
+        "fileName": "duckdb-duckdb-learnings.md"
+      }
+    },
+    "SRC-870C298FA507": {
+      "id": "SRC-870C298FA507",
+      "url": "https://github.com/duckdblabs/duckdb-internal/issues/12087",
+      "title": "https://github.com/duckdblabs/duckdb-internal/issues/12087",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T05:55:01.817Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/duckdb-duckdb-learnings.md",
+        "fileName": "duckdb-duckdb-learnings.md"
       }
     }
   }

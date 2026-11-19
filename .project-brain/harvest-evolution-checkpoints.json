@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T05:47:19.007Z",
+  "last_updated": "2026-11-19T05:55:03.135Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-19T02:03:45.340Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-19T03:27:28.403Z",
+      "processed_at": "2026-11-19T05:55:02.389Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2648,8 +2648,8 @@
       "staged_for_review": 0
     },
     "hf-jialinyyzz-humanizer-learnings.md": {
-      "processed_at": "2026-11-14T16:23:20.240Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T05:55:01.387Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "react-native-webrtc-react-native-webrtc-learnings.md": {
@@ -2773,7 +2773,7 @@
       "staged_for_review": 1
     },
     "duckdb-duckdb-learnings.md": {
-      "processed_at": "2026-11-17T14:50:10.092Z",
+      "processed_at": "2026-11-19T05:55:01.723Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3498,7 +3498,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2181,
+  "total_dossiers_evaluated": 2184,
   "total_canonical_promoted": 376,
-  "total_staged_for_review": 1632
+  "total_staged_for_review": 1634
 }
