@@ -1375,8 +1375,8 @@
     "sourceUrl": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
     "sourceVersion": "hf-openbmb-minicpm-v-4.7-1b",
     "license": "Open-Source",
-    "contentHash": "6c95e86afce790a3094f3fa1dd3c3f97179cd06a3aed29fc053cc2c013694994",
-    "lastHarvestedAt": "2026-11-15T00:50:34.356Z",
+    "contentHash": "55b542c51332c0612292c7ae0237e98d19a167669a0ed1dac5206e31598aed14",
+    "lastHarvestedAt": "2026-11-19T15:21:28.402Z",
     "learningId": "learn-huggingface-openbmb-minicpm-v-4-7-1b"
   },
   "ccfos-nightingale": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "5d542c80",
+    "sourceVersion": "b10159ea",
     "license": "Apache-2.0",
-    "contentHash": "f126212ddb31a9101e151198f2881412dca57303f4b3e9617b087a62c7bcad2e",
-    "lastHarvestedAt": "2026-11-18T12:16:12.914Z",
+    "contentHash": "9611920fcfd73b22a60ac0575fe627c1aa82f119d871b44916eca154381b0770",
+    "lastHarvestedAt": "2026-11-19T15:16:43.821Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {
@@ -7383,10 +7383,10 @@
     "repository": "siderolabs/talos",
     "platform": "github",
     "sourceUrl": "https://github.com/siderolabs/talos",
-    "sourceVersion": "95d1059a",
+    "sourceVersion": "31957c52",
     "license": "MPL-2.0",
-    "contentHash": "e2ff7c352b09c4809ea6facef13284961e9ebf99cd7bcb0fca8f73b455ef2d56",
-    "lastHarvestedAt": "2026-11-18T13:09:00.769Z",
+    "contentHash": "daddcc3ed76eea6c4e33cb61bdcf279d9d3f79c03744ba0a2c2f05f1f8269b12",
+    "lastHarvestedAt": "2026-11-19T15:16:38.938Z",
     "learningId": "learn-github-siderolabs-talos"
   },
   "zilliztech-claude-context": {
@@ -7753,10 +7753,10 @@
     "repository": "mrkai77/Loop",
     "platform": "github",
     "sourceUrl": "https://github.com/mrkai77/Loop",
-    "sourceVersion": "e8560f45",
+    "sourceVersion": "1bba20ec",
     "license": "GPL-3.0",
-    "contentHash": "feed40183186728bdb4d5b73878ac526921f8317e498d524e5abc437fbcbbf2f",
-    "lastHarvestedAt": "2026-11-15T07:41:53.695Z",
+    "contentHash": "2427e3a4acd630071aaea416fcafbabb68263eea593a1fa9a5ed9d32bbdd4ae3",
+    "lastHarvestedAt": "2026-11-19T15:16:35.179Z",
     "learningId": "learn-github-mrkai77-loop"
   },
   "tokio-rs-tokio": {

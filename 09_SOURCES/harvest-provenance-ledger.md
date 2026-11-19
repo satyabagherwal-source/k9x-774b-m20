@@ -11324,3 +11324,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-autotrust-jev-35b` | `https://huggingface.co/autotrust/JEV-35B` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-19T14:55:37.269Z |
 | `learn-huggingface-openbmb-minicpm-v-4-7-35b-a3b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-35B-A3B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-19T15:03:21.330Z |
 | `learn-github-loft-sh-vcluster` | `https://github.com/loft-sh/vcluster` | `e8a22cc7` | Multi-dimensional audit evidence | 2026-11-19T15:03:30.530Z |
+| `learn-github-mrkai77-loop` | `https://github.com/mrkai77/Loop` | `1bba20ec` | Multi-dimensional audit evidence | 2026-11-19T15:16:35.179Z |
+| `learn-github-siderolabs-talos` | `https://github.com/siderolabs/talos` | `31957c52` | Multi-dimensional audit evidence | 2026-11-19T15:16:38.938Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `b10159ea` | Multi-dimensional audit evidence | 2026-11-19T15:16:43.821Z |
+| `learn-huggingface-openbmb-minicpm-v-4-7-1b` | `https://huggingface.co/openbmb/MiniCPM-V-4.7-1B` | `hf-openbmb` | Multi-dimensional audit evidence | 2026-11-19T15:21:28.402Z |

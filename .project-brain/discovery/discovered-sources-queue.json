@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T15:03:34.090Z",
+  "updated_at": "2026-11-19T15:21:32.833Z",
   "stats": {
-    "total_discovered": 5894,
-    "approved_pending_harvest": 5581,
+    "total_discovered": 5899,
+    "approved_pending_harvest": 5586,
     "harvested_count": 0,
     "rejected_count": 313,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5546,
+      "COMMUNITY_AND_EXPERT": 5551,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -127498,6 +127498,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/loft-sh-vcluster-learnings.md",
         "fileName": "loft-sh-vcluster-learnings.md"
+      }
+    },
+    "SRC-CDC5C5426896": {
+      "id": "SRC-CDC5C5426896",
+      "url": "https://github.com/koekeishiya/yabai/blob/b2dc8b4c892d74738a6e865d73048ed2dc3c9ed1/src/window_manager.c",
+      "title": "https://github.com/koekeishiya/yabai/blob/b2dc8b4c892d74738a6e865d73048ed2dc3c9ed1/src/window_manager.c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:21:31.938Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mrkai77-loop-learnings.md",
+        "fileName": "mrkai77-loop-learnings.md"
+      }
+    },
+    "SRC-4333C223CD2F": {
+      "id": "SRC-4333C223CD2F",
+      "url": "https://github.com/user-attachments/assets/75848c71-6e55-4949-8b9c-8c681dac57f9",
+      "title": "https://github.com/user-attachments/assets/75848c71-6e55-4949-8b9c-8c681dac57f9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:21:31.980Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mrkai77-loop-learnings.md",
+        "fileName": "mrkai77-loop-learnings.md"
+      }
+    },
+    "SRC-7FEE611884CF": {
+      "id": "SRC-7FEE611884CF",
+      "url": "https://github.com/Hammerspoon/hammerspoon/issues/370",
+      "title": "https://github.com/Hammerspoon/hammerspoon/issues/370",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:21:32.024Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mrkai77-loop-learnings.md",
+        "fileName": "mrkai77-loop-learnings.md"
+      }
+    },
+    "SRC-0ABF100CF546": {
+      "id": "SRC-0ABF100CF546",
+      "url": "https://github.com/lwouis/alt-tab-macos/commit/ec30bb13084e68cb3cde32ec415fdba1fd92876e",
+      "title": "https://github.com/lwouis/alt-tab-macos/commit/ec30bb13084e68cb3cde32ec415fdba1fd92876e",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:21:32.065Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mrkai77-loop-learnings.md",
+        "fileName": "mrkai77-loop-learnings.md"
+      }
+    },
+    "SRC-650BA38631F5": {
+      "id": "SRC-650BA38631F5",
+      "url": "https://github.com/siderolabs/talos/pull/15008",
+      "title": "https://github.com/siderolabs/talos/pull/15008",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T15:21:32.833Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
+        "fileName": "siderolabs-talos-learnings.md"
       }
     }
   }

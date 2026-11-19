@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `5d542c80`  
+> **Source Version**: `b10159ea`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T12:16:12.090Z  
+> **Timestamp**: 2026-11-19T15:16:42.801Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T12:16:12.085Z  
+> **Harvest Timestamp**: 2026-11-19T15:16:42.796Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 30740 stars
+- **Stars / Engagement**: 30905 stars
 
 ---
 
@@ -1991,14 +1991,14 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #15158** (2026-11-18): **[Bug] docker部署后功能“粘贴为新行”提示：复制失败：Clipboard API is not available**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  ALL  ### 问题描述 / Problem description  1.链接任意数据库打开数据表，从任意地方复制一条数据，在程序里使用“粘贴为新行”，直接报错未找到剪切板API。 2.希望可以正常使用“粘贴为新行”功能，并且和navicat一样直接将数据粘贴到数据表，两种方式共存。 3.目前该功能只提示：Clipboard API is not available，未测试其他相关剪切板功能。  <img width="456" height="217" alt="image" src="https://github.com/user-attachments/assets/23f859a9-c487-4fd1-b49e-ca6d865e8894" />  <img width="401" height="105" alt="image" src="https://github.com/user-attachments/assets/a34e1bf8-6316-43f5-bca9-b22ef8920f26" />  ### 支持信息 / Support information  DBX 版本：v0.6.71-beta.20261115.1 运行环境：Web 端 操作系统：Win32 docker镜像版本：latest Digest: sha256:c3fd96054501690748f7a4742bce4288f01419ed4db593cdb44cf9e8f691e66e  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
-
-- **Issue #15152** (2026-11-17): **[Bug] PostgreSQL 原生驱动把 real 查询结果舍入到小数点后六位**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  PostgreSQL 17.11，DBX 原生 PostgreSQL 驱动  ### 问题描述 / Problem description  通过原生驱动执行以下查询，无需建表。  ```sql SELECT 0.0000001::real AS tiny, 1.2345678::real AS fractional; ```  | 结果 | tiny | fractional | | --- | ---: | ---: | | PostgreSQL（psql） | 1e-07 | 1.2345678 | | DBX `execute_query` | 0.0 | 1.234568 |  第一个非零数在查询结果中变成了零。希望驱动返回的 JSON 数字保留 PostgreSQL 存储的单精度值，能够往返回同一个 `f32`。  ### 支持信息 / Support information  DBX 上游 main，复现提交 df7a91c694051fa5aa80a980ff4428ec175ac695。macOS 26.6.2 / arm64，通过 dbx-driver-postgres 的 connect 和 execute_query 连接本地 PostgreSQL 17.11。  ### 优先级（是否紧急） / Priority (urgency)  🟡 P2 普通 · 按排期处理 / Normal · Schedule as appropriate  ### 补充信息 / Additional information  `pg_fallback_value_to_json` 将标量 `f32` 乘以 1,000,000 再取整。#3951 已修复 pgvector 元素的同类精度问题，本例是普通 `real` 列。
+- **Issue #15245** (2026-11-19): **[Bug] 最新的预览版DBX 0.6.72 Beta 20261118.1在win11 26h2上闪退**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  通用  ### 问题描述 / Problem description  # 软件打不开闪退，无论是否是自带webview2版本的都闪退  ### 支持信息 / Support information  [DBX 0.6.72 Beta 20261118.1](https://github.com/t8y2/dbx/releases/tag/v0.6.72-beta.20261118.1)  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
   **Post-Mortem & Fix Analysis**:
   > /claim
-  > ✅ @lyinglyingl 已认领 #15152，开始处理吧！
+  > ✅ @Ezreal-byte 已认领 #15245，开始处理吧！
+
+- **Issue #15217** (2026-11-18): **[Bug] Snowflake JDBC Internal Error: NoClassDefFoundError While Initializing Apache Arrow RootAllocator**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  Snowflake  ### 问题描述 / Problem description  ## Description  When executing a SQL query against a Snowflake database through DBX, the application encounters an internal Snowflake JDBC driver error during query result creation.  The JDBC driver fails to initialize Apache Arrow's `RootAllocator`, resulting in a `NoClassDefFoundError`. Consequently, DBX is unable to create the result set and retrieve the query results successfully.  The issue was observed with DBX JDBC plugin version `v0.1.53` and Snowflake runtime/agent version `v0.1.95`.  ## Error Message  ``` text Database returned an SQL error (stage: execute).  net.snowflake.client.jdbc.SnowflakeSQLException: JDBC driver internal error: exception creating result java.lang.NoClassDefFoundError: Could not initialize class net.snowflake.client.jdbc.internal.apache.arrow.memory.RootAllocator  at net.snowflake.client.jdbc.SnowflakeResultSetSerializableV1.<init>(     SnowflakeResultSetSerializableV1.java:367 ) ```  ### 支持信息 / Support information  DBX Version: v0.6.71 (0.6.71-beta.20261115.1) Runtime: Desktop Operating System: Windows 11 (10.0.26300.9974) Architecture: x86_64 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36 Edg/157.0.0.0 Database Types: snowflake, sqlserver Snowflake Runtime/Agent Version  v0.1.95 DBX JDBC Plugin Version v0.1.53  ### 优先级（是否紧急） / Priority (urgency)  🟡 P2 普通 · 按排期处理 / Normal · Schedule
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2015,29 +2015,275 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a86f46de` (2026-11-18)
-**Commit Message**: fix(sidebar): avoid unsupported array at lookup
+### Incident Patch 1: `ccd32947` (2026-11-19)
+**Commit Message**: fix(sql-library): distinguish folder and SQL file colors (#15167)
 
-**File**: `apps/desktop/src/lib/sidebar/sidebarTableVGroupDrag.ts` (modified, +1/-1)
+Co-authored-by: ThugKd <[REDACTED_EMAIL]>
+
+**File**: `apps/desktop/src/components/layout/SqlLibraryPanel.vue` (modified, +5/-3)
 ```diff
-@@ -49,7 +49,7 @@ export function databaseVGroupDropTarget(treeNodes: TreeNode[], source: TreeNode
-     return undefined;
-   };
-   // A folder's edges mean its parent level; only its middle means entering it.
--  const groupId = isGroup ? (position === "inside" ? target.vgroupId : parentGroupOf(layout.order)) : isDatabaseVGroupMember(target) ? (tableVGroupPathForTable(layout, target.database!, target.type).at(-1) ?? null) : null;
-+  const groupId = isGroup ? (position === "inside" ? target.vgroupId : parentGroupOf(layout.order)) : isDatabaseVGroupMember(target) ? (tableVGroupPathForTable(layout, target.database!, target.type).slice(-1)[0] ?? null) : null;
-   return { node: target, groupId: groupId ?? null, scope, position: isDatabaseVGroupContainer(target) ? "after" : position };
+@@ -164,7 +164,7 @@ function getConnectionLabel(connectionId: string) {
+   return conn?.name || t("sqlLibrary.deletedConnection");
  }
  
+-function connectionIconColor(connectionId: string) {
++function connectionColor(connectionId: string) {
+   return connectionStore.getConfig(connectionId)?.color || undefined;
+ }
+ 
+@@ -1827,7 +1827,7 @@ defineExpose({
+               >
+                 <div v-if="showDropBefore(row.folder.id)" class="absolute left-2 right-2 top-0 border-t-2 border-primary" />
+                 <div v-if="showDropAfter(row.folder.id)" class="absolute left-2 right-2 bottom-0 border-b-2 border-primary" />
+-                <component :is="isFolderExpanded(row.folder) ? FolderOpen : FolderClosed" class="h-4 w-4 text-amber-500 shrink-0" :style="{ color: connectionIconColor(row.folder.connectionId) }" />
++                <component :is="isFolderExpanded(row.folder) ? FolderOpen : FolderClosed" class="h-4 w-4 text-amber-500 shrink-0" />
+                 <template v-if="isRenamingFolder(row.folder.id)">
+                   <input
+                     :ref="setRenameInputRef"
+@@ -1847,6 +1847,7 @@ defineExpose({
+                   {{ row.folder.name }}
+                   <span class="ml-1 text-muted-foreground">({{ folderFileCount(row.folder.id) }})</span>
+                 </span>
++                <span v-if="connectionColor(row.folder.connectionId)" data-sql-library-connection-color class="size-1.5 shrink-0 rounded-full" :style="{ backgroundColor: connectionColor(row.folder.connectionId) }" aria-hidden="true" />
+                 <LightTooltip v-if="!isRenamingFolder(row.folder.id)" :text="t('savedSql.newSubfolder')" side="left" :delay="0" :close-delay="0" nowrap>
+                   <button
+                     type="button"
+@@ -1880,7 +1881,7 @@ defineExpose({
+                 >
+                   <div v-if="showDropBefore(row.file.id)" class="absolute left-2 right-2 top-0 border-t-2 border-primary" />
+                   <div v-if="showDropAfter(row.file.id)" class="absolute left-2 right-2 bottom-0 border-b-2 border-primary" />
+-                  <FileText class="h-3.5 w-3.5 text-blue-400 shrink-0" :style="{ color: connectionIconColor(row.file.connectionId) }" />
++                  <FileText class="h-3.5 w-3.5 text-blue-400 shrink-0" />
+                   <span v-if="isFileDirty(row.file)" aria-hidden="true" class="dirty-sql-library-marker">*</span>
+                   <template v-if="isRenamingFile(row.file.id)">
+                     <input
+@@ -1898,6 +1899,7 @@ defineExpose({
+                     />
+                   </template>
+                   <span v-else class="dbx-sql-library-drag-label min-w-0 flex-1 truncate" :title="fileTitleLabel(row.file)" :style="fileTitleStyle(row.file)">{{ row.file.name }}</span>
++                  <span v-if="connectionColor(row.file.connectionId)" data-sql-library-connection-color class="size-1.5 shrink-0 rounded-full" :style="{ backgroundColor: connectionColor(row.file.connectionId) }" aria-hidden="true" />
+                   <span class="min-w-0 max-w-[45%] shrink truncate text-[13px]" :class="fileMetaClass(row.file.id)" :title="getConnectionLabel(row.file.connectionId)">[{{ getConnectionLabel(row.file.connectionId) }}]</span>
+                 </div>
+                 <SqlLibrarySearchSnippet v-if="contentSearchActive" :file="row.file" :query="searchQuery" :depth="row.depth" @select-match="(match) => handleMatchClick(row.file, match)" />
+```
+
+---
+
+### Incident Patch 2: `17fb5362` (2026-11-19)
+**Commit Message**: fix(sqlite): restore verbatim UNC prefixes in network URIs
+
+**File**: `crates/dbx-drivers/src/db/sqlite.rs` (modified, +32/-0)
+```diff
+@@ -594,7 +594,24 @@ fn is_network_path(path: &str) -> bool {
+         || normalized.contains("wsl$")
+ }
+ 
++/// `\\?\UNC\server\share` (or the `/`-separated spelling, as produced by
++/// Windows `canonicalize()`) cannot be embedded in a `file:` URI as-is: the
++/// verbatim `?` would be parsed as the query separator and shred the share
++/// name. Restore the plain `\\server\share` form first; any other path is
++/// returned unchanged.
++fn restore_plain_unc_path(path: &str) -> String {
++    let is_verbatim_unc =
++        path.get(..8).is_some_and(|prefix| prefix.replace('/', "\\").eq_ignore_ascii_case("\\\\?\\UNC\\"));
++    if !is_verbatim_unc {
++        return path.to_string();
++    }
++    let share = path[8..].replace('/', "\\");
++    format!("\\\\{share}")
++}
++
+ fn sqlite_network_path_uri(path: &str) -> String {
++    let restored = restore_plain_unc_path(path);
++    let path = restored.as_str();
+     let (path_and_query, fragment) =
+         path.split_once('#').map_or((path, None), |(prefix, suffix)| (prefix, Some(suffix)));
+     let (file_path, query) = path_and_query.split_once('?').unwrap_or((path_and_query, ""));
+@@ -996,6 +1013,21 @@ mod tests {
+         assert!(is_network_path(r"//?/UNC/server/share/dbx.db"));
+     }
+ 
++    #[test]
++    fn sqlite_network_path_uri_restores_verbatim_unc_prefixes() {
++        assert_eq!(sqlite_network_path_uri(r"\\?\UNC\server\share\dbx.db"), r"file:\\server\share\dbx.db?nolock=1");
++        assert_eq!(sqlite_network_path_uri("//?/UNC/server/share/dbx.db"), r"file:\\server\share\dbx.db?nolock=1");
++        assert_eq!(sqlite_network_path_uri(r"\\?\unc\Server\Share\dbx.db"), r"file:\\Server\Share\dbx.db?nolock=1");
++    }
++
++    #[test]
++    fn sqlite_network_path_uri_keeps_query_after_verbatim_unc_restore() {
++        assert_eq!(
++            sqlite_network_path_uri(r"\\?\UNC\server\share\dbx.db?mode=ro"),
++            r"file:\\server\share\dbx.db?mode=ro&nolock=1"
++        );
++    }
++
+     #[cfg(target_os = "windows")]
+     #[tokio::test]
+     async fn verbatim_windows_paths_open_as_local_sqlite_files() {
+```
+
+---
+
+### Incident Patch 3: `96260588` (2026-11-19)
+**Commit Message**: fix(hana): use VIEW when editing view descriptions (#15201)
+
+* fix(hana): use VIEW when editing view descriptions
+
+* test(hana): verify generated view comments against live database
+
+**File**: `apps/desktop/src/components/structure/TableStructureEditor.primaryKey.spec.ts` (modified, +24/-2)
+```diff
+@@ -341,9 +341,9 @@ function draftWithColumns(count: number) {
+ }
+ 
+ async function mountEditor(
+-  databaseType: "mysql" | "sqlserver" | "postgres" | "sqlite" | "oracle" | "oceanbase-oracle" | "iris" | "dameng" | "duckdb" | "informix" | "clickhouse",
++  databaseType: "mysql" | "sqlserver" | "postgres" | "sqlite" | "oracle" | "oceanbase-oracle" | "iris" | "dameng" | "duckdb" | "informix" | "clickhouse" | "saphana",
+   isPrimaryKey = false,
+-  options: { database?: string; dynamicTypes?: string[]; identity?: { seed: number; increment: number }; tableName?: string; columnName?: string; foreignKeyRefTable?: string; draftOverride?: ReturnType<typeof draft>; onDraftUpdate?: (value: unknown) => void } = {},
++  options: { database?: string; dynamicTypes?: string[]; identity?: { seed: number; increment: number }; tableName?: string; tableType?: "table" | "view"; columnName?: string; foreignKeyRefTable?: string; draftOverride?: ReturnType<typeof draft>; onDraftUpdate?: (value: unknown) => void } = {},
+ ) {
+   mocks.connection.db_type = databaseType;
+   mocks.connection.name = databaseType;
+@@ -359,6 +359,7 @@ async function mountEditor(
+     database: options.database ?? "test",
+     schema: "SYSDBA",
+     tableName: options.tableName ?? "users",
++    tableType: options.tableType,
+     draft: options.draftOverride ?? draft(isPrimaryKey, options.identity, options.columnName, options.foreignKeyRefTable),
+     "onUpdate:draft": options.onDraftUpdate,
+   });
+@@ -449,6 +450,27 @@ afterEach(() => {
+ });
+ 
+ describe("TableStructureEditor primary key editing", () => {
++  it.each(["table", "view"] as const)("passes the HANA %s kind when generating comment SQL", async (tableType) => {
++    const root = await mountEditor("saphana", false, { database: "", tableName: "V_6200_YGMBBK", tableType });
++    const input = root.querySelector<HTMLInputElement>("[data-table-comment-input]")!;
++    expect(input.disabled).toBe(false);
++    input.value = "员工目标";
++    input.dispatchEvent(new Event("input", { bubbles: true }));
++
++    await vi.waitFor(() =>
++      expect(mocks.buildTableStructureChangeSql).toHaveBeenLastCalledWith(
++        expect.objectContaining({
++          databaseType: "saphana",
++          schema: "SYSDBA",
++          tableName: "V_6200_YGMBBK",
++          tableType,
++          tableComment: "员工目标",
++          originalTableComment: "",
++        }),
++      ),
++    );
++  });
++
+   it("allows enabling identity on an existing Dameng integer column", async () => {
+     const root = await mountEditor("dameng");
+     const identity = columnPropertyCheckbox(root, "structureEditor.identity");
+```
+
+**File**: `apps/desktop/src/components/structure/TableStructureEditor.vue` (modified, +1/-0)
+```diff
+@@ -3484,6 +3484,7 @@ function structureChangeOptions(): BuildTableStructureChangeSqlOptions {
+     }),
+     tableComment: tableComment.value,
+     originalTableComment: isCreateMode.value ? undefined : originalTableComment.value,
++    tableType: isCreateMode.value ? undefined : props.tableType,
+     mysqlAutoIncrementValue: isCreateMode.value && canEditMysqlAutoIncrement.value ? mysqlAutoIncrementValue.value || undefined : undefined,
+     mysqlEngine: mysqlTableEngineSqlOption({ value: mysqlTableEngine.value, originalValue: originalMysqlTableEngine.value }, isCreateMode.value, supportsMysqlEngine.value && !mysqlTableEngineLoading.value && !mysqlTableEngineLoadError.value),
+     transwarpCreate: isCreateMode.value && databaseType.value === "transwarp" ? buildInceptorCreateOptions(physicalOptions.value, columns.value) : undefined,
+```
+
+**File**: `apps/desktop/src/lib/table/tableStructureEditorSql.ts` (modified, +2/-0)
+```diff
+@@ -170,6 +170,8 @@ export interface BuildTableStructureChangeSqlOptions {
+   driverProfile?: string | null;
+   schema?: string;
+   tableName: string;
++  /** Object kind used by dialects with distinct table/view comment syntax. */
++  tableType?: "table" | "view" | "materialized_view";
+   columns: EditableStructureColumn[];
+   indexes: EditableStructureIndex[];
+   foreignKeys?: EditableStructureForeignKey[];
+```
+
+**File**: `crates/dbx-core/src/schema/table_structure_sql/sqlite_rebuild.rs` (modified, +1/-0)
+```diff
+@@ -1526,6 +1526,7 @@ mod tests {
+             transwarp_create: None,
+             partitioned: false,
+             foreign_table: false,
++            table_type: None,
+             is_gaussdb_m_mode: false,
+             table_collation: None,
+             primary_key_name: None,
+```
+
+**File**: `crates/dbx-core/tests/live_mysql_column_name_whitespace.rs` (modified, +1/-0)
+```diff
+@@ -56,6 +56,7 @@ fn change_options(table_name: &str, columns: Vec<EditableStructureColumn>) -> Ta
+         transwarp_create: None,
+         partitioned: false,
+         foreign_table: false,
++        table_type: None,
+         is_gaussdb_m_mode: false,
+         table_collation: None,
+         primary_key_name: None,
+```
+
+**File**: `crates/dbx-core/tests/live_mysql_generated_columns.rs` (modified, +1/-0)
+```diff
+@@ -52,6 +52,7 @@ fn change_options(table_name: &str, columns: Vec<EditableStructureColumn>) -> Ta
+         transwarp_create: None,
+         partitioned: false,
+         foreign_table: false,
++        table_type: None,
+         is_gaussdb_m_mode: false,
+         table_collation: None,
+         primary_key_name: None,
+```
+
+**File**: `crates/dbx-core/tests/live_postgres_concurrent_index.rs` (modified, +2/-0)
+```diff
+@@ -67,6 +67,7 @@ async fn live_postgres_concurrent_index_builds_valid_index() {
+         transwarp_create: None,
+         partitioned: false,
+         foreign_table: false,
++        table_type: None,
+         is_gaussdb_m_mode: false,
+         table_collation: None,
+         primary_key_name: None,
+@@ -207,6 +208,7 @@ async fn live_postgres_partitioned_parent_concurrent_request_rejected() {
+         transwarp_create: None,
+         partitioned: true,
+         foreign_table: false,
++        table_type: None,
+         is_gaussdb_m_mode: false,
+         table_collation: None,
+         primary_key_name: None,
+```
+
+**File**: `crates/dbx-core/tests/live_postgres_partitioning.rs` (modified, +1/-0)
+```diff
+@@ -318,6 +318,7 @@ async fn live_postgres_create_partitioned_table_executes() {
+         transwarp_create: None,
+         partitioned: false,
+         foreign_table: false,
++        table_type: None,
+         is_gaussdb_m_mode: false,
+         table_collation: None,
+         primary_key_name: None,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15154** (2026-11-17): fix(sidebar): 全局搜索过滤中保留局部表搜索框 (@dienaso)
-- **PR #15153** (2026-11-17): fix(postgres): preserve precision of scalar real query results (@lyinglyingl)
-- **PR #15151** (2026-11-18): feat(sidebar): add database virtual groups and drag ordering (@eryajf)
-- **PR #15146** (2026-11-17): feat(sidebar): Schema/库选择器支持 % 通配符搜索并一键选中匹配项 (@dienaso)
-- **PR #15145** (2026-11-17): fix(editor): preserve quoted values when pasting IN conditions (@Celestial-0)
-- **PR #15143** (2026-11-17): fix(mongodb): apply global format to mixed and nested BSON dates (@ThugKd)
+- **PR #15294** (2026-11-19): chore: remove tracked PR assets (@eryajf)
+- **PR #15278** (closed): feat(plugins): prefill saved connection credentials for review (@Misaka10091)
+- **PR #15262** (closed): fix(sqlite): 修复 Windows Beta 启动时打不开应用数据库 (@CSXFanMeng)
+- **PR #15259** (2026-11-19): fix(sqlite): 修复 Windows verbatim 路径被误判为 UNC 导致的启动闪退 (@Ezreal-byte)
+- **PR #15230** (2026-11-18): fix(snowflake): open java.nio for Arrow result sets (@0xvectr)
+- **PR #15226** (2026-11-19): feat(diagram): 支持增量添加表及折叠字段 (@CSXFanMeng)
 
 ---
 
@@ -2057,28 +2303,34 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sidebar): avoid unsupported array at lookup
+## X. sql-library): distinguish folder and SQL file colors
 
 **RULE**:
-When implementing operations in `apps/desktop/src/lib/sidebar/sidebarTableVGroupDrag.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src/components/layout/SqlLibraryPanel.vue`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a86f46de`: sidebar): avoid unsupported array at lookup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ccd32947`: sql-library): distinguish folder and SQL file colors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/lib/sidebar/sidebarTableVGroupDrag.ts`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/components/layout/SqlLibraryPanel.vue`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  const groupId = isGroup ? (position === "inside" ? target.vgroupId : parentGroupOf(layout.order)) : isDatabaseVGroupMember(target) ? (tableVGroupPathForTable(layout, target.database!, target.type).slice(-1)[0] ?? null) : null;
+function connectionColor(connectionId: string) {
+                <component :is="isFolderExpanded(row.folder) ? FolderOpen : FolderClosed" class="h-4 w-4 text-amber-500 shrink-0" />
+                <span v-if="connectionColor(row.folder.connectionId)" data-sql-library-connection-color class="size-1.5 shrink-0 rounded-full" :style="{ backgroundColor: connectionColor(row.folder.connectionId) }" aria-hidden="true" />
+                  <FileText class="h-3.5 w-3.5 text-blue-400 shrink-0" />
+                  <span v-if="connectionColor(row.file.connectionId)" data-sql-library-connection-color class="size-1.5 shrink-0 rounded-full" :style="{ backgroundColor: connectionColor(row.file.connectionId) }" aria-hidden="true" />
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  const groupId = isGroup ? (position === "inside" ? target.vgroupId : parentGroupOf(layout.order)) : isDatabaseVGroupMember(target) ? (tableVGroupPathForTable(layout, target.database!, target.type).at(-1) ?? null) : null;
+function connectionIconColor(connectionId: string) {
+                <component :is="isFolderExpanded(row.folder) ? FolderOpen : FolderClosed" class="h-4 w-4 text-amber-500 shrink-0" :style="{ color: connectionIconColor(row.folder.connectionId) }" />
+                  <FileText class="h-3.5 w-3.5 text-blue-400 shrink-0" :style="{ color: connectionIconColor(row.file.connectionId) }" />
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a86f46de` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ccd32947` are properly handled with clean fallback behavior.

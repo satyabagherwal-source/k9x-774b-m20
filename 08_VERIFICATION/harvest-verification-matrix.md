@@ -11291,3 +11291,7 @@
 | `CYCLE-20261119-9ULT` | `2026-11-19T14:55:37.265Z` | `autotrust/AutoTrust-Decider-Pro-35B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-jev-35b-learnings.md` | Yes (`ee075ea2...`) |
 | `CYCLE-20261119-JSOE` | `2026-11-19T15:03:21.327Z` | `openbmb/MiniCPM-V-4.7-35B-A3B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-35b-a3b-learnings.md` | Yes (`05545c19...`) |
 | `CYCLE-20261119-JZS0` | `2026-11-19T15:03:30.528Z` | `loft-sh/vcluster` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9389` | Yes (`8f8b9e09...`) |
+| `CYCLE-20261119-0T7R` | `2026-11-19T15:16:35.175Z` | `mrkai77/Loop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9390` | Yes (`2427e3a4...`) |
+| `CYCLE-20261119-0W46` | `2026-11-19T15:16:38.934Z` | `siderolabs/talos` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9391` | Yes (`daddcc3e...`) |
+| `CYCLE-20261119-0ZVT` | `2026-11-19T15:16:43.817Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9392` | Yes (`9611920f...`) |
+| `CYCLE-20261119-73GU` | `2026-11-19T15:21:28.398Z` | `openbmb/MiniCPM-V-4.7-1B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md` | Yes (`55b542c5...`) |

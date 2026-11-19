@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T15:03:35.117Z",
-  "total_records": 1981,
+  "last_updated": "2026-11-19T15:21:33.195Z",
+  "total_records": 1983,
   "domains": {
     "A": {
       "total": 15,
@@ -897,7 +897,7 @@
       ]
     },
     "F": {
-      "total": 61,
+      "total": 63,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -959,7 +959,9 @@
         "domain_intelligence-design-intelligence-argoproj-argo-workflows-core-invariants",
         "domain_intelligence-design-intelligence-argoproj-argo-workflows-learnings-core-invariants",
         "DOM-F-6F26131A",
-        "DOM-F-C4730BD5"
+        "DOM-F-C4730BD5",
+        "domain_intelligence-design-intelligence-mrkai77-loop-core-invariants",
+        "domain_intelligence-design-intelligence-mrkai77-loop-learnings-core-invariants"
       ]
     },
     "G": {
@@ -10022,8 +10024,8 @@
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "repository": "t8y2/dbx",
-      "content_hash": "aaa09012628b47c357f012d36bf4f79ec32c0a736cba74c303c56f1d6452a961",
-      "created_at": "2026-11-18T12:16:13.232Z"
+      "content_hash": "0e8451c21dc3a411d45dc2717a4c56f1d293f63fc12f1336b74fa0e44fb051f8",
+      "created_at": "2026-11-19T15:16:44.196Z"
     },
     "DOM-D-218A5260": {
       "record_id": "DOM-D-218A5260",
@@ -12686,8 +12688,8 @@
       "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
       "repository": "siderolabs/talos",
-      "content_hash": "0f8bf32bd4a347ff1b92138b5d9f0f809db1dcd2e35364c9df6ace5830412160",
-      "created_at": "2026-11-18T13:09:01.195Z"
+      "content_hash": "96d58b2bdd4d15fec78a02685203d090c4d15cdfdbd13c4232abe20af515555b",
+      "created_at": "2026-11-19T15:16:39.321Z"
     },
     "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-trufflesecurity-trufflehog-core-invariants",
@@ -12808,8 +12810,8 @@
       "title": "Technical Construction Intelligence: siderolabs-talos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-learnings-technical-construction-intelligence-siderolabs-talos-.md",
       "repository": "siderolabs-talos-learnings",
-      "content_hash": "5725f20f15e507180299687ea86e37e3ca7fabe27a3e2f1a09332bcc35dd232e",
-      "created_at": "2026-11-18T13:09:09.231Z"
+      "content_hash": "6f560b00bfbbcd004c3dc2cbd7149db24b16e7fc522c6fa19b033d57c3c59c0a",
+      "created_at": "2026-11-19T15:21:33.195Z"
     },
     "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-bigscience-bloom-core-invariants",
@@ -18622,8 +18624,8 @@
       "title": "Research & Knowledge Intelligence: openbmb/MiniCPM-V-4.7-1B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-1b-research-knowledge-intelligence-openbmb-minicpm-v-4-.md",
       "repository": "openbmb/MiniCPM-V-4.7-1B",
-      "content_hash": "6134141dff1ab2a23593bf8de8fcbcee6c28ca92f000a1e865af9a27c8eaaea7",
-      "created_at": "2026-11-15T00:50:34.539Z"
+      "content_hash": "ffa5149a65fb11ca0943fa076c1432ae24d2f5944c161d43469a9ce617565cd4",
+      "created_at": "2026-11-19T15:21:28.617Z"
     },
     "domain_intelligence-architecture-intelligence-cachix-devenv-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-cachix-devenv-core-invariants",
@@ -18700,8 +18702,8 @@
       "title": "Research & Knowledge Intelligence: hf-openbmb-minicpm-v-4.7-1b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openbmb-minicpm-v-4-7-1b-learnings-research-knowledge-intelligence-hf-openbmb.md",
       "repository": "hf-openbmb-minicpm-v-4.7-1b-learnings",
-      "content_hash": "4e615e8bd61418fe6d1e2c5c0e1191a021cacd971ffb2e956d84505de0867faa",
-      "created_at": "2026-11-15T00:51:33.964Z"
+      "content_hash": "70b217cc87c665b1e971a942473454396f3151453d79344e9770a61b2e724b18",
+      "created_at": "2026-11-19T15:21:31.681Z"
     },
     "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-learnings-core-inva": {
       "record_id": "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-learnings-core-inva",
@@ -33254,6 +33256,24 @@
       "repository": "clockworklabs-spacetimedb-learnings",
       "content_hash": "5161bfb3de4c8507041d73ed7770ca47e1d6071e3f3bc2b3a80de78063bcc796",
       "created_at": "2026-11-19T14:28:42.842Z"
+    },
+    "domain_intelligence-design-intelligence-mrkai77-loop-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-mrkai77-loop-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: mrkai77/Loop Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-mrkai77-loop-design-intelligence-mrkai77-loop-core-invariants.md",
+      "repository": "mrkai77/Loop",
+      "content_hash": "e4adca422e874283ca93946aedf0d3157d9200a1109ad7768d859cc0d742784a",
+      "created_at": "2026-11-19T15:16:35.537Z"
+    },
+    "domain_intelligence-design-intelligence-mrkai77-loop-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-mrkai77-loop-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: mrkai77-loop-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-mrkai77-loop-learnings-design-intelligence-mrkai77-loop-learnings-core-invariant.md",
+      "repository": "mrkai77-loop-learnings",
+      "content_hash": "3522c30caf81357ed73741c9c407cbe9f82b6d07a1528d4b308fea8a3f8c8bb6",
+      "created_at": "2026-11-19T15:21:32.430Z"
     }
   }
 }

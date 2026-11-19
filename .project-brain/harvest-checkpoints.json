@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T15:03:30.536Z",
+  "last_updated": "2026-11-19T15:21:28.411Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2141,14 +2141,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-openbmb-minicpm-v-4-7-1b",
-      "content_hash": "6c95e86afce790a3094f3fa1dd3c3f97179cd06a3aed29fc053cc2c013694994",
-      "verified_at": "2026-11-15T00:50:34.366Z",
+      "content_hash": "55b542c51332c0612292c7ae0237e98d19a167669a0ed1dac5206e31598aed14",
+      "verified_at": "2026-11-19T15:21:28.410Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T00:50:34.366Z"
+      "last_updated": "2026-11-19T15:21:28.410Z"
     },
     "ccfos/nightingale": {
       "repository": "ccfos/nightingale",
@@ -10791,14 +10791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-t8y2-dbx",
-      "content_hash": "f126212ddb31a9101e151198f2881412dca57303f4b3e9617b087a62c7bcad2e",
-      "verified_at": "2026-11-18T12:16:12.922Z",
+      "content_hash": "9611920fcfd73b22a60ac0575fe627c1aa82f119d871b44916eca154381b0770",
+      "verified_at": "2026-11-19T15:16:43.830Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T12:16:12.922Z"
+      "last_updated": "2026-11-19T15:16:43.830Z"
     },
     "ouch-org/ouch": {
       "repository": "ouch-org/ouch",
@@ -11121,14 +11121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-siderolabs-talos",
-      "content_hash": "e2ff7c352b09c4809ea6facef13284961e9ebf99cd7bcb0fca8f73b455ef2d56",
-      "verified_at": "2026-11-18T13:09:00.780Z",
+      "content_hash": "daddcc3ed76eea6c4e33cb61bdcf279d9d3f79c03744ba0a2c2f05f1f8269b12",
+      "verified_at": "2026-11-19T15:16:38.947Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T13:09:00.780Z"
+      "last_updated": "2026-11-19T15:16:38.947Z"
     },
     "zilliztech/claude-context": {
       "repository": "zilliztech/claude-context",
@@ -11676,14 +11676,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mrkai77-loop",
-      "content_hash": "feed40183186728bdb4d5b73878ac526921f8317e498d524e5abc437fbcbbf2f",
-      "verified_at": "2026-11-15T07:41:53.704Z",
+      "content_hash": "2427e3a4acd630071aaea416fcafbabb68263eea593a1fa9a5ed9d32bbdd4ae3",
+      "verified_at": "2026-11-19T15:16:35.187Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T07:41:53.704Z"
+      "last_updated": "2026-11-19T15:16:35.187Z"
     },
     "tokio-rs/tokio": {
       "repository": "tokio-rs/tokio",

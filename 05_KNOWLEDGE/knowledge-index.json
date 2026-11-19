@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T15:03:35.320Z",
+  "last_updated": "2026-11-19T15:21:33.368Z",
   "total_verified_learnings": 9018,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21808,
+  "total_items": 21816,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -214220,8 +214220,8 @@
       "slug": "t8y2-dbx",
       "platform": "github",
       "source_url": "https://github.com/t8y2/dbx",
-      "source_version": "5d542c80",
-      "content_hash": "f126212ddb31a9101e151198f2881412dca57303f4b3e9617b087a62c7bcad2e",
+      "source_version": "b10159ea",
+      "content_hash": "9611920fcfd73b22a60ac0575fe627c1aa82f119d871b44916eca154381b0770",
       "dossier_path": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
       "promoted_rules": [
@@ -214249,6 +214249,11 @@
           "number": 9215,
           "title": "avoid unsupported array at lookup",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9392,
+          "title": "distinguish folder and SQL file colors",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214256,7 +214261,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T12:16:12.731Z",
+      "verified_at": "2026-11-19T15:16:43.590Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -214298,10 +214303,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "repository": "t8y2/dbx",
-      "source_version": "5d542c80",
-      "content_hash": "aaa09012628b47c357f012d36bf4f79ec32c0a736cba74c303c56f1d6452a961",
+      "source_version": "b10159ea",
+      "content_hash": "0e8451c21dc3a411d45dc2717a4c56f1d293f63fc12f1336b74fa0e44fb051f8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T12:16:13.232Z"
+      "persisted_at": "2026-11-19T15:16:44.196Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-t8y2-dbx",
@@ -214310,10 +214315,10 @@
       "relative_path": "08_VERIFICATION/t8y2-dbx-verification-protocol-empirical-defect-shield-for-t8y2-dbx.md",
       "title": "Verification Protocol: Empirical Defect Shield for t8y2/dbx",
       "repository": "t8y2/dbx",
-      "source_version": "5d542c80",
-      "content_hash": "d4cabc6fd43b2aea070eb9813119a05117823e23baac2d6cd17d439eafc349ec",
+      "source_version": "b10159ea",
+      "content_hash": "0a3ccc5d1b4615572ebd21fdb6d331a5753f2b49fbcdd814059a3678c7b9677d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T12:16:13.373Z"
+      "persisted_at": "2026-11-19T15:16:44.346Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-qwen3-8-27b-gguf-learnings-core-invar",
@@ -222034,8 +222039,8 @@
       "slug": "siderolabs-talos",
       "platform": "github",
       "source_url": "https://github.com/siderolabs/talos",
-      "source_version": "95d1059a",
-      "content_hash": "e2ff7c352b09c4809ea6facef13284961e9ebf99cd7bcb0fca8f73b455ef2d56",
+      "source_version": "31957c52",
+      "content_hash": "daddcc3ed76eea6c4e33cb61bdcf279d9d3f79c03744ba0a2c2f05f1f8269b12",
       "dossier_path": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/siderolabs-talos-learnings.md",
       "promoted_rules": [
@@ -222058,6 +222063,11 @@
           "number": 9225,
           "title": "keep foreign bridge ports enslaved across settings changes",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9391,
+          "title": "skip DRBD and network block devices in LVM status scans",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222065,7 +222075,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T13:09:00.535Z",
+      "verified_at": "2026-11-19T15:16:38.745Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222107,10 +222117,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-siderolabs-talos-technical-construction-intelligence-siderolabs-talos-core-invar.md",
       "title": "Technical Construction Intelligence: siderolabs/talos Core Invariants",
       "repository": "siderolabs/talos",
-      "source_version": "95d1059a",
-      "content_hash": "0f8bf32bd4a347ff1b92138b5d9f0f809db1dcd2e35364c9df6ace5830412160",
+      "source_version": "31957c52",
+      "content_hash": "96d58b2bdd4d15fec78a02685203d090c4d15cdfdbd13c4232abe20af515555b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T13:09:01.195Z"
+      "persisted_at": "2026-11-19T15:16:39.321Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos",
@@ -222119,10 +222129,10 @@
       "relative_path": "08_VERIFICATION/siderolabs-talos-verification-protocol-empirical-defect-shield-for-siderolabs-ta.md",
       "title": "Verification Protocol: Empirical Defect Shield for siderolabs/talos",
       "repository": "siderolabs/talos",
-      "source_version": "95d1059a",
-      "content_hash": "dffae91475389dda00338005ca6aacf1d55f5f80bebf52f50874f42aa63f224c",
+      "source_version": "31957c52",
+      "content_hash": "f667b98b7602c7bfefa4534a4be18914afc21545f83fb8a53ada2b4f5e29113b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T13:09:01.407Z"
+      "persisted_at": "2026-11-19T15:16:39.485Z"
     },
     "learn-github-trufflesecurity-trufflehog": {
       "learning_id": "learn-github-trufflesecurity-trufflehog",
@@ -222545,9 +222555,9 @@
       "title": "Technical Construction Intelligence: siderolabs-talos-learnings Core Invariants",
       "repository": "siderolabs-talos-learnings",
       "source_version": "HEAD",
-      "content_hash": "5725f20f15e507180299687ea86e37e3ca7fabe27a3e2f1a09332bcc35dd232e",
+      "content_hash": "6f560b00bfbbcd004c3dc2cbd7149db24b16e7fc522c6fa19b033d57c3c59c0a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T13:09:09.231Z"
+      "persisted_at": "2026-11-19T15:21:33.195Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-siderolabs-talos-learnings",
@@ -222557,9 +222567,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for siderolabs-talos-learnings",
       "repository": "siderolabs-talos-learnings",
       "source_version": "HEAD",
-      "content_hash": "14c9cc99b649ca9214dbee96fcac2c186da064d7d2bf154c6beb89b13c944b89",
+      "content_hash": "52a4a46e5e8f897b9e7087f76977dc6e9e21f2f37bf8adc1eb90a6383f0784ce",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T13:09:09.413Z"
+      "persisted_at": "2026-11-19T15:21:33.368Z"
     },
     "learn-huggingface-bigscience-bloom": {
       "learning_id": "learn-huggingface-bigscience-bloom",
@@ -239127,7 +239137,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openbmb/MiniCPM-V-4.7-1B",
       "source_version": "hf-openbmb-minicpm-v-4.7-1b",
-      "content_hash": "6c95e86afce790a3094f3fa1dd3c3f97179cd06a3aed29fc053cc2c013694994",
+      "content_hash": "55b542c51332c0612292c7ae0237e98d19a167669a0ed1dac5206e31598aed14",
       "dossier_path": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openbmb-minicpm-v-4.7-1b-learnings.md",
       "promoted_rules": [],
@@ -239136,7 +239146,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T00:50:34.157Z",
+      "verified_at": "2026-11-19T15:21:28.138Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239153,9 +239163,9 @@
       "title": "Research & Knowledge Intelligence: openbmb/MiniCPM-V-4.7-1B Core Invariants",
       "repository": "openbmb/MiniCPM-V-4.7-1B",
       "source_version": "hf-openbmb-minicpm-v-4.7-1b",
-      "content_hash": "6134141dff1ab2a23593bf8de8fcbcee6c28ca92f000a1e865af9a27c8eaaea7",
+      "content_hash": "ffa5149a65fb11ca0943fa076c1432ae24d2f5944c161d43469a9ce617565cd4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T00:50:34.539Z"
+      "persisted_at": "2026-11-19T15:21:28.617Z"
     },
     "learn-github-cachix-devenv": {
       "learning_id": "learn-github-cachix-devenv",
@@ -239473,9 +239483,9 @@
       "title": "Research & Knowledge Intelligence: hf-openbmb-minicpm-v-4.7-1b-learnings Core Invariants",
       "repository": "hf-openbmb-minicpm-v-4.7-1b-learnings",
       "source_version": "HEAD",
-      "content_hash": "4e615e8bd61418fe6d1e2c5c0e1191a021cacd971ffb2e956d84505de0867faa",
+      "content_hash": "70b217cc87c665b1e971a942473454396f3151453d79344e9770a61b2e724b18",
       "domain_letter": "D",
-      "persisted_at": "2026-11-15T00:51:33.964Z"
+      "persisted_at": "2026-11-19T15:21:31.681Z"
     },
     "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-learnings-core-inva": {
       "item_id": "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-learnings-core-inva",
@@ -243466,14 +243476,19 @@
       "slug": "mrkai77-loop",
       "platform": "github",
       "source_url": "https://github.com/mrkai77/Loop",
-      "source_version": "e8560f45",
-      "content_hash": "feed40183186728bdb4d5b73878ac526921f8317e498d524e5abc437fbcbbf2f",
+      "source_version": "1bba20ec",
+      "content_hash": "2427e3a4acd630071aaea416fcafbabb68263eea593a1fa9a5ed9d32bbdd4ae3",
       "dossier_path": "07_PROJECT_LEARNING/mrkai77-loop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mrkai77-loop-learnings.md",
       "promoted_rules": [
         {
           "number": 8587,
           "title": "🐞 Fix crash when searching the action picker in non-English languages",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9390,
+          "title": "🐞 Fix window focus within frontmost app + gesture rebuild fixes",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -243482,7 +243497,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T07:41:53.531Z",
+      "verified_at": "2026-11-19T15:16:34.961Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243536,10 +243551,10 @@
       "relative_path": "08_VERIFICATION/mrkai77-loop-verification-protocol-empirical-defect-shield-for-mrkai77-loop.md",
       "title": "Verification Protocol: Empirical Defect Shield for mrkai77/Loop",
       "repository": "mrkai77/Loop",
-      "source_version": "e8560f45",
-      "content_hash": "4d9298c2112c64664778ad6468322cfd18e7d6535ebedf89986b0dfd01538172",
+      "source_version": "1bba20ec",
+      "content_hash": "b8c38138f3e907fe636a1975b59c0f16aa4b047e89ea07ab12ae091d6041f5da",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T07:41:54.109Z"
+      "persisted_at": "2026-11-19T15:16:35.733Z"
     },
     "learn-github-gravitl-netmaker": {
       "learning_id": "learn-github-gravitl-netmaker",
@@ -243671,9 +243686,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for mrkai77-loop-learnings",
       "repository": "mrkai77-loop-learnings",
       "source_version": "HEAD",
-      "content_hash": "939da0354c59a5fb08c19487f31be73a654987cdfbf54a2b6eedd04c00ad26fb",
+      "content_hash": "c6cff49f04e1d75899e429551caad241ae78d4a8ca3a99fa764c27a8d63bb596",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T07:42:33.050Z"
+      "persisted_at": "2026-11-19T15:21:32.614Z"
     },
     "candidate_directive-nm-356-enable-ce-user-acl-policies-with-all-users-and-per-user-sources": {
       "item_id": "candidate_directive-nm-356-enable-ce-user-acl-policies-with-all-users-and-per-user-sources",
@@ -294849,6 +294864,108 @@
       "content_hash": "605b0355668271952bddc00cf2b6ebf8e65152aec80bb3c1ab57b6be8b1b972e",
       "domain_letter": "L",
       "persisted_at": "2026-11-19T15:03:34.264Z"
+    },
+    "rule-9390": {
+      "learning_id": "rule-9390",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9390,
+      "title": "🐞 Fix window focus within frontmost app + gesture rebuild fixes",
+      "source_url": "https://github.com/mrkai77/Loop",
+      "source_version": "1bba20ec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T15:16:34.961Z"
+    },
+    "candidate_directive-fix-window-focus-within-frontmost-app-gesture-rebuild-fixes": {
+      "item_id": "candidate_directive-fix-window-focus-within-frontmost-app-gesture-rebuild-fixes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-76GB-fix-window-focus-within-frontmost-app-gesture-rebuild-fixes.md",
+      "title": "🐞 Fix window focus within frontmost app + gesture rebuild fixes",
+      "repository": "mrkai77-loop-learnings",
+      "source_version": "HEAD",
+      "content_hash": "17b1f49cc839a386f117752a0921198c26025b23f8c2e57d5be38d731bf11c36",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-19T15:21:32.272Z"
+    },
+    "domain_intelligence-design-intelligence-mrkai77-loop-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-mrkai77-loop-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-mrkai77-loop-design-intelligence-mrkai77-loop-core-invariants.md",
+      "title": "Design Intelligence: mrkai77/Loop Core Invariants",
+      "repository": "mrkai77/Loop",
+      "source_version": "1bba20ec",
+      "content_hash": "e4adca422e874283ca93946aedf0d3157d9200a1109ad7768d859cc0d742784a",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-19T15:16:35.537Z"
+    },
+    "rule-9391": {
+      "learning_id": "rule-9391",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9391,
+      "title": "skip DRBD and network block devices in LVM status scans",
+      "source_url": "https://github.com/siderolabs/talos",
+      "source_version": "31957c52",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T15:16:38.745Z"
+    },
+    "candidate_directive-skip-drbd-and-network-block-devices-in-lvm-status-scans": {
+      "item_id": "candidate_directive-skip-drbd-and-network-block-devices-in-lvm-status-scans",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-771N-skip-drbd-and-network-block-devices-in-lvm-status-scans.md",
+      "title": "skip DRBD and network block devices in LVM status scans",
+      "repository": "siderolabs-talos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bea77d5d3d55e9227f1c6533f33e5dc792ac5050165133ba13b4356fbe2915d7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T15:21:33.041Z"
+    },
+    "rule-9392": {
+      "learning_id": "rule-9392",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9392,
+      "title": "distinguish folder and SQL file colors",
+      "source_url": "https://github.com/t8y2/dbx",
+      "source_version": "b10159ea",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T15:16:43.590Z"
+    },
+    "candidate_directive-distinguish-folder-and-sql-file-colors": {
+      "item_id": "candidate_directive-distinguish-folder-and-sql-file-colors",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-101W-distinguish-folder-and-sql-file-colors.md",
+      "title": "distinguish folder and SQL file colors",
+      "repository": "t8y2/dbx",
+      "source_version": "b10159ea",
+      "content_hash": "e2813a614d89746621968ef15965ff40acc38a4f4619ad331e7b80f5fe127aa9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T15:16:44.041Z"
+    },
+    "domain_intelligence-design-intelligence-mrkai77-loop-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-mrkai77-loop-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-mrkai77-loop-learnings-design-intelligence-mrkai77-loop-learnings-core-invariant.md",
+      "title": "Design Intelligence: mrkai77-loop-learnings Core Invariants",
+      "repository": "mrkai77-loop-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3522c30caf81357ed73741c9c407cbe9f82b6d07a1528d4b308fea8a3f8c8bb6",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-19T15:21:32.430Z"
     }
   },
   "ai-builder-brain": {

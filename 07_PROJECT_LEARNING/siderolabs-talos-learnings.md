@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source**: github ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
-> **Source Version**: `95d1059a`  
+> **Source Version**: `31957c52`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T13:08:59.593Z  
+> **Timestamp**: 2026-11-19T15:16:37.950Z  
 > **Learning ID**: `learn-github-siderolabs-talos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/siderolabs-talos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/siderolabs/talos](https://github.com/siderolabs/talos))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T13:08:59.586Z  
+> **Harvest Timestamp**: 2026-11-19T15:16:37.945Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Talos Linux is a modern Linux distribution built for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 11561 stars
+- **Stars / Engagement**: 11567 stars
 
 ---
 
@@ -2111,11 +2111,11 @@ func a
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #14993** (2026-11-17): **feat: add trustGuestRxFilters to hypervisor VM interfaces**
-  *Symptoms*: Add an optional per-interface trustGuestRxFilters flag to the hypervisor virtual machine config. Without it, libvirt drops the receive filter updates a virtio NIC sends when the guest joins a multicast group, so IPv6 multicast (NDP, DHCPv6) never reaches the guest and IPv6 autoconfiguration never starts. With it, the updates propagate to the host-side macvtap device; since the guest can then also put the host filter in promiscuous or all-multicast mode, trust it only on a host link dedicated to the guest.  Defaults to disabled.  Forked from https://github.com/siderolabs/talos/pull/14879  Signed-off-by: Joakim Hindersson <joakim.hindersson@elastx.se> 
+- **Issue #15018** (2026-11-19): **fix: stop sharing the process handle with the reaper waiter**
+  *Symptoms*: ProcessWaitWrapper calls Release on the os.Process once the reaper reports the exit, and Release sets Process.Pid to -1. The process and sandboxd runners handed that same handle to the waiter and kept signalling it. If the reaper reaps the child before os.FindProcess, Go returns a PID-based handle, whose Signal reads Pid, so stopping the service raced the waiter. The race detector caught this in TestStopFailingAndRestarting. The sandboxd runner also read process.Pid after the waiter released it, so its exit log always said "pid -1".  Give the waiter its own handle and use the launched PID directly. Add a path option to the sandboxd runner so tests can launch a fake sandboxd.
 
-- **Issue #14992** (2026-11-17): **fix: allow two busy unmounts in TestUnmountBusy**
-  *Symptoms*: Point.Unmount retries EBUSY for up to 5s. "b-other" can wait behind two busy attempts on "a-busy": one in an iteration that ran before its teardown, one in the iteration that handles it. That is ~10s, the default assertion timeout, so the test flaked in CI.  Raise the "b-other" assertion timeout to 20s and keep the teardown order, so a controller that stalls on the busy mount still fails.
+- **Issue #15012** (2026-11-18): **test: share closed-port helper and fix more port races**
+  *Symptoms*: Follow-up to https://github.com/siderolabs/talos/pull/15008  Move the closed-port helper from the container probe tests into internal/pkg/testport and use it in the events sink and DNS proxy tests. Retry the TCP+UDP same-port bind in the DNS proxy tests and the port rebind in the VNC and JSON-lines tests. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2132,184 +2132,559 @@ func a
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d29d9863` (2026-11-13)
-**Commit Message**: fix: keep foreign bridge ports enslaved across settings changes
+### Incident Patch 1: `6738ba5c` (2026-11-17)
+**Commit Message**: fix: skip DRBD and network block devices in LVM status scans
 
-Changing a bridge's settings unslaves every port first, but only ports
-with a LinkSpec were ever put back, by their own master sync. A port
-Talos does not manage, such as a virtual machine tap, was left off the
-bridge for good.
+LVMScanController runs vgs/pvs/lvs on every block device event, and the
+host lvm.conf has no filter, so the scan opens every device on the node.
+On DRBD that open keeps the peer from being promoted ("Peer may not
+become primary while device is opened read-only"), and while DRBD has
+I/O suspended the read blocks in D state and holds the device open
+until the node reboots.
 
-Remember the ports removed and re-enslave them once the settings are
-applied.
+Pass a global_filter with --config on the report commands that rejects
+DRBD, NBD, Ceph RBD and ZFS zvol devices. Only vgs/pvs/lvs get the
+filter, so pvcreate, vgcreate and the other commands still use the
+host lvm.conf.
 
-Signed-off-by: Mateusz Urbanek <[REDACTED_EMAIL]>
+Also bound each scan with a one-minute timeout, so an lvm process that
+never answers doesn't stop LVM status refreshes on the node for good.
 
-**File**: `internal/app/machined/pkg/controllers/network/link_spec.go` (modified, +30/-10)
+Fixes #14995
+
+Signed-off-by: Dario Emerson <[REDACTED_EMAIL]>
+
+**File**: `internal/app/machined/pkg/controllers/storage/lvm_scan.go` (modified, +11/-3)
 ```diff
-@@ -274,6 +274,18 @@ func rawLinkData(link *rtnetlink.LinkMessage) []byte {
- 	return linkData.Data
+@@ -11,6 +11,7 @@ import (
+ 	"os/exec"
+ 	"strconv"
+ 	"strings"
++	"time"
+ 
+ 	"github.com/cosi-project/runtime/pkg/controller"
+ 	"github.com/cosi-project/runtime/pkg/safe"
+@@ -125,8 +126,15 @@ func (ctrl *LVMScanController) Run(ctx context.Context, r controller.Runtime, lo
+ 	}
  }
  
-+// setLinkMaster enslaves link under the master with the given index; zero unslaves it.
-+func setLinkMaster(conn *rtnetlink.Conn, link rtnetlink.LinkMessage, masterIndex uint32) error {
-+	return conn.Link.Set(&rtnetlink.LinkMessage{
-+		Family: link.Family,
-+		Type:   link.Type,
-+		Index:  link.Index,
-+		Attributes: &rtnetlink.LinkAttributes{
-+			Master: new(masterIndex),
-+		},
-+	})
-+}
++// lvmScanTimeout bounds a single vgs/pvs/lvs run, so a device that never
++// answers doesn't stop LVM status refreshes on the node for good.
++const lvmScanTimeout = time.Minute
 +
- func verifyVethPeers(links []rtnetlink.LinkMessage, name, peerName string) error {
- 	nameLink := findLink(links, name, false)
- 	if nameLink == nil {
-@@ -818,21 +830,18 @@ func (ctrl *LinkSpecController) syncLink(ctx context.Context, r controller.Runti
- 					return fmt.Errorf("error changing flags for %q: %w", link.TypedSpec().Name, err)
- 				}
+ func (ctrl *LVMScanController) scan(ctx context.Context, r controller.Runtime, logger *zap.Logger) error {
+-	vgs, err := ctrl.LVM.VGS(ctx)
++	scanCtx, cancel := context.WithTimeout(ctx, lvmScanTimeout)
++	defer cancel()
++
++	vgs, err := ctrl.LVM.VGS(scanCtx)
+ 	if err != nil {
+ 		if errors.Is(err, exec.ErrNotFound) {
+ 			logger.Debug("lvm binary not found; skipping LVM scan")
+@@ -137,12 +145,12 @@ func (ctrl *LVMScanController) scan(ctx context.Context, r controller.Runtime, l
+ 		return fmt.Errorf("vgs: %w", err)
+ 	}
  
--				// unslave all slaves
-+				// unslave all slaves, remembering them: ports this controller does not manage (e.g.
-+				// virtual machine taps) would otherwise never be put back
-+				var unslaved []int
-+
- 				for i, slave := range *links {
- 					if slave.Attributes.Master != nil && *slave.Attributes.Master == existing.Index {
--						if err = conn.Link.Set(&rtnetlink.LinkMessage{
--							Family: slave.Family,
--							Type:   slave.Type,
--							Index:  slave.Index,
--							Attributes: &rtnetlink.LinkAttributes{
--								Master: new(uint32(0)),
--							},
--						}); err != nil {
--							return fmt.Errorf("error unslaving link %q under %q: %w", slave.Attributes.Name, link.TypedSpec().BridgeSlave.MasterName, err)
-+						if err = setLinkMaster(conn, slave, 0); err != nil {
-+							return fmt.Errorf("error unslaving link %q under %q: %w", slave.Attributes.Name, link.TypedSpec().Name, err)
- 						}
+-	pvs, err := ctrl.LVM.PVS(ctx)
++	pvs, err := ctrl.LVM.PVS(scanCtx)
+ 	if err != nil {
+ 		return fmt.Errorf("pvs: %w", err)
+ 	}
  
- 						(*links)[i].Attributes.Master = nil
-+						unslaved = append(unslaved, i)
- 					}
- 				}
- 
-@@ -854,6 +863,17 @@ func (ctrl *LinkSpecController) syncLink(ctx context.Context, r controller.Runti
- 					return fmt.Errorf("error updating bridge settings for %q: %w", link.TypedSpec().Name, err)
- 				}
- 
-+				// re-enslave the ports removed above
-+				for _, i := range unslaved {
-+					slave := (*links)[i]
-+
-+					if err = setLinkMaster(conn, slave, existing.Index); err != nil {
-+						return fmt.Errorf("error re-enslaving link %q under %q: %w", slave.Attributes.Name, link.TypedSpec().Name, err)
-+					}
-+
-+					(*links)[i].Attributes.Master = new(existing.Index)
-+				}
-+
- 				logger.Info("updated bridge settings")
- 			}
- 		}
+-	lvs, err := ctrl.LVM.LVS(ctx)
++	lvs, err := ctrl.LVM.LVS(scanCtx)
+ 	if err != nil {
+ 		return fmt.Errorf("lvs: %w", err)
+ 	}
 ```
 
-**File**: `internal/app/machined/pkg/controllers/network/link_spec_test.go` (modified, +77/-0)
+**File**: `internal/pkg/lvm/lvm.go` (modified, +18/-0)
 ```diff
-@@ -1191,6 +1191,83 @@ func (suite *LinkSpecSuite) TestBridge() {
- 	ctest.AssertNoResource[*network.LinkStatus](suite, bridgeName)
+@@ -114,14 +114,32 @@ func (lvm *LVM) run(ctx context.Context, subcommand string, args ...string) (str
+ // come back as the literal string "unknown" regardless of the real state.
+ // The default shared (read) lock taken by lvs/pvs/vgs is cheap and lets
+ // LVM query DM, which is the only way to get accurate active/open state.
++//
++// The reports also pass scanFilterConfig with --config, so the scan never
++// opens replicated or network block devices (see scanFilterConfig).
+ var commonReportArgs = []string{
+ 	"-a",
+ 	"-o", "+all",
+ 	"--reportformat", "json",
+ 	"--units", "b",
+ 	"--nosuffix",
++	"--config", scanFilterConfig,
  }
  
-+// TestBridgeKeepsForeignPorts verifies that a bridge settings change does not leave a port the
-+// controller does not manage (e.g. a virtual machine tap) unslaved.
-+func (suite *LinkSpecSuite) TestBridgeKeepsForeignPorts() {
-+	bridgeName := uniqueDummyInterface()
-+	bridge := network.NewLinkSpec(network.NamespaceName, bridgeName)
-+	*bridge.TypedSpec() = network.LinkSpecSpec{
-+		Name:        bridgeName,
-+		Type:        nethelpers.LinkEther,
-+		Kind:        network.LinkKindBridge,
-+		Up:          true,
-+		Logical:     true,
-+		ConfigLayer: network.ConfigDefault,
++// scanFilterConfig keeps the status scans away from block devices where an
++// open has side effects or can block indefinitely.
++//
++// The scans run on every block device event, so without a filter they open
++// every device on the node. On DRBD an open, even read-only, prevents the
++// peer from being promoted ("Peer may not become primary while device is
++// opened read-only"), and while DRBD has I/O suspended the read blocks in
++// D state and keeps the device open until reboot. Network-backed devices
++// (NBD, Ceph RBD) and ZFS zvols are skipped for the same reason.
++//
++// The filter is passed per command, so it only applies to vgs/pvs/lvs and
++// leaves the host lvm.conf untouched for the other LVM commands.
++const scanFilterConfig = `devices { global_filter = [ "r|/dev/drbd|", "r|/dev/nbd|", "r|/dev/rbd|", "r|/dev/zd|" ] }`
++
+ // decodeReport unmarshals an LVM JSON report and returns the slice of
+ // records stored under `report[*].<section>[*]`.
+ //
+```
+
+**File**: `internal/pkg/lvm/lvm_test.go` (modified, +51/-0)
+```diff
+@@ -8,6 +8,8 @@ package lvm
+ import (
+ 	_ "embed"
+ 	"encoding/json"
++	"regexp"
++	"slices"
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/assert"
+@@ -289,3 +291,52 @@ func TestTagsUnmarshal(t *testing.T) {
+ 		assert.Equal(t, tt.want, []string(v), "input %q", tt.in)
+ 	}
+ }
++
++func TestScanFilterConfig(t *testing.T) {
++	t.Parallel()
++
++	idx := slices.Index(commonReportArgs, "--config")
++	require.NotEqual(t, -1, idx, "report args must pass --config")
++	require.Less(t, idx+1, len(commonReportArgs))
++	assert.Equal(t, scanFilterConfig, commonReportArgs[idx+1])
++
++	// Every entry is a reject pattern ("r|<regex>|"); LVM accepts any device
++	// that no pattern matches.
++	var rejects []*regexp.Regexp //nolint:prealloc // testing only, readability over perf
++
++	for _, m := range regexp.MustCompile(`"r\|([^|]+)\|"`).FindAllStringSubmatch(scanFilterConfig, -1) {
++		rejects = append(rejects, regexp.MustCompile(m[1]))
 +	}
 +
-+	suite.Create(bridge)
++	require.NotEmpty(t, rejects)
 +
-+	var bridgeIndex uint32
++	rejected := func(dev string) bool {
++		return slices.ContainsFunc(rejects, func(re *regexp.Regexp) bool { return re.MatchString(dev) })
++	}
 +
-+	ctest.AssertResource(suite, bridgeName, func(r *network.LinkStatus, asrt *assert.Assertions) {
-+		asrt.Equal(network.LinkKindBridge, r.TypedSpec().Kind)
++	for _, dev := range []string{
++		"/dev/drbd1000",
++		"/dev/drbd/by-res/pvc-0123/0",
++		"/dev/drbd/by-disk/vg/lv",
++		"/dev/nbd0",
++		"/dev/rbd0",
++		"/dev/rbd/pool/image",
++		"/dev/zd0",
++	} {
++		assert.True(t, rejected(dev), "%s should be filtered out", dev)
++	}
 +
-+		bridgeIndex = r.TypedSpec().Index
-+	})
-+
-+	conn, err := rtnetlink.Dial(nil)
-+	suite.Require().NoError(err)
-+
-+	defer conn.Close() //nolint:errcheck
-+
-+	foreignName := uniqueDummyInterface()
-+
-+	suite.Require().NoError(conn.Link.New(&rtnetlink.LinkMessage{
-+		Type: uint16(nethelpers.LinkEther),
-+		Attributes: &rtnetlink.LinkAttributes{
-+			Name:   foreignName,
-+			Master: new(bridgeIndex),
-+			Info: &rtnetlink.LinkInfo{
-+				Kind: "dummy",
-+				Data: &rtnetlink.LinkData{Name: "dummy"},
-+			},
-+		},
-+	}))
-+
-+	defer func() {
-+		if iface, ifaceErr := net.InterfaceByName(foreignName); ifaceErr == nil {
-+			conn.Link.Delete(uint32(iface.Index)) //nolint:errcheck
-+		}
-+	}()
-+
-+	ctest.AssertResource(suite, foreignName, func(r *network.LinkStatus, asrt *assert.Assertions) {
-+		asrt.Equal(bridgeIndex, r.TypedSpec().MasterIndex)
-+	})
-+
-+	ctest.UpdateWithConflicts(suite, bridge, func(r *network.LinkSpec) error {
-+		r.TypedSpec().BridgeMaster.STP.Enabled = true
-+
-+		return nil
-+	})
-+
-+	ctest.AssertResource(suite, bridgeName, func(r *network.LinkStatus, asrt *assert.Assertions) {
-+		asrt.True(r.TypedSpec().BridgeMaster.STP.Enabled)
-+	})
-+
-+	// read the kernel state directly: the foreign port's LinkStatus may not have caught up yet
-+	foreign, err := net.InterfaceByName(foreignName)
-+	suite.Require().NoError(err)
-+
-+	msg, err := conn.Link.Get(uint32(foreign.Index))
-+	suite.Require().NoError(err)
-+	suite.Require().NotNil(msg.Attributes.Master, "foreign port was left unslaved")
-+	suite.Assert().Equal(bridgeIndex, *msg.Attributes.Master)
-+
-+	suite.Require().NoError(suite.State().TeardownAndDestroy(suite.Ctx(), bridge.Metadata()))
-+
-+	ctest.AssertNoResource[*network.LinkStatus](suite, bridgeName)
++	for _, dev := range []string{
++		"/dev/sda",
++		"/dev/sda1",
++		"/dev/nvme0n1",
++		"/dev/nvme0n1p3",
++		"/dev/vda",
++		"/dev/mapper/vg-lv",
++		"/dev/dm-0",
++		"/dev/md0",
++		"/dev/loop0",
++	} {
++		assert.False(t, rejected(dev), "%s should still be scanned", dev)
++	}
++}
+```
+
+---
+
+### Incident Patch 2: `b404d3a7` (2026-11-19)
+**Commit Message**: fix: stop sharing the process handle with the reaper waiter
+
+ProcessWaitWrapper calls Release on the os.Process once the reaper
+reports the exit, and Release sets Process.Pid to -1. The process
+and sandboxd runners handed that same handle to the waiter and kept
+signaling it. If the reaper reaps the child before os.FindProcess,
+Go returns a PID-based handle, whose Signal reads Pid, so stopping
+the service raced the waiter. The race detector caught this in
+TestStopFailingAndRestarting. The sandboxd runner also read
+process.Pid after the waiter released it, so its exit log always
+said "pid -1".
+
+Give the waiter its own handle and use the launched PID directly.
+Add a path option to the sandboxd runner so tests can launch a fake
+sandboxd.
+
+Signed-off-by: Noel Georgi <[REDACTED_EMAIL]>
+
+**File**: `internal/app/machined/pkg/sandboxd/runner.go` (modified, +35/-9)
+```diff
+@@ -38,14 +38,32 @@ const ServiceID = "sandboxd"
+ // and the dependent services (whose processes the kernel also killed) re-launch
+ // into the new namespace via the per-launch launcher getter.
+ type sandboxRunner struct {
+-	rt runtime.Runtime
++	rt   runtime.Runtime
++	path string
 +}
 +
- //nolint:gocyclo
- func (suite *LinkSpecSuite) TestVRF() {
- 	vrfName := uniqueDummyInterface()
++// Option configures the sandboxd runner.
++type Option func(*sandboxRunner)
++
++// WithPath sets the sandboxd binary, /sbin/sandboxd by default.
++func WithPath(path string) Option {
++	return func(s *sandboxRunner) {
++		s.path = path
++	}
+ }
+ 
+ // NewRunner returns a runner.Runner managing the sandboxd lifecycle.
+-func NewRunner(rt runtime.Runtime) runner.Runner {
+-	return &sandboxRunner{
+-		rt: rt,
++func NewRunner(rt runtime.Runtime, opts ...Option) runner.Runner {
++	s := &sandboxRunner{
++		rt:   rt,
++		path: "/sbin/sandboxd",
++	}
++
++	for _, opt := range opts {
++		opt(s)
+ 	}
++
++	return s
+ }
+ 
+ // Open implements runner.Runner.
+@@ -147,7 +165,7 @@ func (s *sandboxRunner) Run(ctx context.Context, eventSink events.Recorder, onSt
+ 	// pending SELinux exec label on the fork thread (init_t -> sandboxd_t) without
+ 	// contaminating machined's other threads — the mechanism the process runner
+ 	// uses for dashboard/apid. fd 3 = ready pipe, fd 4 = control socket.
+-	launcher := cap.NewLauncher("/sbin/sandboxd", []string{"/sbin/sandboxd"}, os.Environ())
++	launcher := cap.NewLauncher(s.path, []string{s.path}, os.Environ())
+ 	launcher.Callback(beforeSandboxdExec)
+ 
+ 	notifyCh := make(chan reaper.ProcessInfo, 8)
+@@ -179,10 +197,18 @@ func (s *sandboxRunner) Run(ctx context.Context, eventSink events.Recorder, onSt
+ 		return status, fmt.Errorf("finding process for PID %d: %w", pid, err)
+ 	}
+ 
++	defer process.Release() //nolint:errcheck
++
++	// The waiter releases its handle, and Release writes Process.Pid, so it must not share the handle used for signals.
++	waitProcess, err := os.FindProcess(pid)
++	if err != nil {
++		return status, fmt.Errorf("finding process for PID %d: %w", pid, err)
++	}
++
+ 	waitCh := make(chan error, 1)
+ 
+ 	go func() {
+-		waitCh <- reaper.ProcessWaitWrapper(usingReaper, notifyCh, process)
++		waitCh <- reaper.ProcessWaitWrapper(usingReaper, notifyCh, waitProcess)
+ 	}()
+ 
+ 	// Wait for the init to signal readiness (or die before then).
+@@ -217,16 +243,16 @@ func (s *sandboxRunner) Run(ctx context.Context, eventSink events.Recorder, onSt
+ 	status.Started = true
+ 
+ 	if onStart != nil {
+-		onStart(int32(process.Pid)) //nolint:gosec
++		onStart(int32(pid)) //nolint:gosec
+ 	}
+ 
+-	eventSink(events.StateRunning, "sandboxd started with PID %d", process.Pid)
++	eventSink(events.StateRunning, "sandboxd started with PID %d", pid)
+ 
+ 	select {
+ 	case werr := <-waitCh:
+ 		// Unexpected exit: the kernel has torn down the sandbox namespace. Return
+ 		// an error so restart.Forever recreates it.
+-		fmt.Fprintf(logW, "machined: sandboxd (pid %d) exited, sandbox namespace torn down; restarting\n", process.Pid) //nolint:errcheck
++		fmt.Fprintf(logW, "machined: sandboxd (pid %d) exited, sandbox namespace torn down; restarting\n", pid) //nolint:errcheck
+ 
+ 		teardown()
+ 
+```
+
+**File**: `internal/app/machined/pkg/sandboxd/runner_test.go` (added, +106/-0)
+```diff
+@@ -0,0 +1,106 @@
++// This Source Code Form is subject to the terms of the Mozilla Public
++// License, v. 2.0. If a copy of the MPL was not distributed with this
++// file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++package sandboxd_test
++
++import (
++	"fmt"
++	"os"
++	"path/filepath"
++	"testing"
++	"time"
++
++	"github.com/siderolabs/go-cmd/pkg/cmd/proc/reaper"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++
++	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime"
++	"github.com/siderolabs/talos/internal/app/machined/pkg/runtime/logging"
++	"github.com/siderolabs/talos/internal/app/machined/pkg/sandboxd"
++	"github.com/siderolabs/talos/internal/app/machined/pkg/system/events"
++	"github.com/siderolabs/talos/internal/app/machined/pkg/system/runner"
++)
++
++// fakeSandboxdEnv makes the test binary act as a sandboxd which exits once ready.
++const fakeSandboxdEnv = "SANDBOXD_FAKE"
++
++func TestMain(m *testing.M) {
++	if os.Getenv(fakeSandboxdEnv) != "" {
++		os.NewFile(3, "ready").Write([]byte{1}) //nolint:errcheck
++
++		os.Exit(1)
++	}
++
++	os.Exit(m.Run())
++}
++
++type sandboxRuntime struct {
++	runtime.Runtime
++
++	logging runtime.LoggingManager
++}
++
++func (r *sandboxRuntime) Logging() runtime.LoggingManager { return r.logging }
++
++func (r *sandboxRuntime) SetSandbox(runtime.SandboxLauncher) {}
++
++// newRunner returns a runner launching path as sandboxd, and the directory it logs to.
++func newRunner(t *testing.T, path string) (runner.Runner, string) {
++	t.Helper()
++
++	if os.Geteuid() != 0 {
++		t.Skip("requires root to create the sandbox cgroup and namespaces")
++	}
++
++	// The runner waits for sandboxd through the reaper, as in machined.
++	reaper.Run()
++	t.Cleanup(reaper.Shutdown)
++
++	logDir := t.TempDir()
++
++	return sandboxd.NewRunner(&sandboxRuntime{logging: logging.NewFileLoggingManager(logDir)}, sandboxd.WithPath(path)), logDir
++}
++
++func eventSink(t *testing.T) events.Recorder {
++	return func(state events.ServiceState, message string, args ...any) {
++		t.Logf("state %s: %s", state, fmt.Sprintf(message, args...))
++	}
++}
++
++// TestRunnerExitBeforeReady runs a sandboxd which exits before it is ready. When the reaper reaps
++// it before the runner looks it up, the runner gets a PID-based process handle, which it kills while
++// the waiter releases it.
++//
++// The reaper wins only sometimes, so run it many times.
++func TestRunnerExitBeforeReady(t *testing.T) {
++	r, _ := newRunner(t, "/bin/true")
++
++	for range 200 {
++		_, err := r.Run(t.Context(), eventSink(t), nil)
++		require.ErrorContains(t, err, "sandboxd failed to start")
++	}
++}
++
++// TestRunnerExitAfterReady runs a sandboxd which exits once it is ready, and checks the runner
++// reports the PID it started in the exit log.
++func TestRunnerExitAfterReady(t *testing.T) {
++	self, err := os.Executable()
++	require.NoError(t, err)
++
++	r, logDir := newRunner(t, self)
++
++	t.Setenv(fakeSandboxdEnv, "1")
++
++	var pid int32
++
++	_, err = r.Run(t.Context(), eventSink(t), func(p int32) { pid = p })
++	require.ErrorContains(t, err, "sandboxd exited, namespace lost")
++	require.Positive(t, pid)
++
++	assert.EventuallyWithT(t, func(collect *assert.CollectT) {
++		log, err := os.ReadFile(filepath.Join(logDir, sandboxd.ServiceID+".log"))
++		require.NoError(collect, err)
++		assert.Contains(collect, string(log), fmt.Sprintf("sandboxd (pid %d) exited", pid))
++	}, 5*time.Second, 10*time.Millisecond)
++}
+```
+
+**File**: `internal/app/machined/pkg/system/runner/process/process.go` (modified, +9/-1)
+```diff
+@@ -458,10 +458,18 @@ func (p *processRunner) run(ctx context.Context, eventSink events.Recorder, onSt
+ 		return status, fmt.Errorf("could not find process: %w", err)
+ 	}
+ 
++	defer process.Release() //nolint:errcheck
++
++	// The waiter releases its handle, and Release writes Process.Pid, so it must not share the handle used for signals.
++	waitProcess, err := os.FindProcess(pid)
++	if err != nil {
++		return status, fmt.Errorf("could not find process: %w", err)
++	}
++
+ 	waitCh := make(chan error)
+ 
+ 	go func() {
+-		waitCh <- reaper.ProcessWaitWrapper(usingReaper, notifyCh, process)
++		waitCh <- reaper.ProcessWaitWrapper(usingReaper, notifyCh, waitProcess)
+ 	}()
+ 
+ 	select {
+```
+
+**File**: `internal/app/machined/pkg/system/runner/process/process_test.go` (modified, +36/-0)
+```diff
+@@ -6,6 +6,7 @@ package process_test
+ 
+ import (
+ 	"context"
++	"errors"
+ 	"fmt"
+ 	"io"
+ 	"os"
+@@ -237,6 +238,41 @@ func (suite *ProcessSuite) TestStopFailingAndRestarting() {
+ 	<-done
+ }
+ 
++// TestStopAfterReaped stops the runner after the reaper has already reaped the process: the runner
++// then gets a PID-based process handle, which it signals while the waiter releases it.
++//
++// The runner signals only when it sees the cancellation before the exit, which is not ordered, so
++// stop it several times.
++func (suite *ProcessSuite) TestStopAfterReaped() {
++	if !suite.runReaper {
++		suite.T().Skip("the process is reaped before the runner looks it up only by the reaper")
++	}
++
++	r := process.NewRunner(false, &runner.Args{
++		ID:          "reaped",
++		ProcessArgs: []string{"/bin/bash", "-c", "exit 0"},
++	}, runner.WithLoggingManager(suite.loggingManager))
++
++	suite.Require().NoError(r.Open())
++
++	defer func() { suite.Assert().NoError(r.Close()) }()
++
++	for range 5 {
++		ctx, cancel := context.WithCancel(context.Background())
++
++		_, err := r.Run(ctx, MockEventSink(suite.T()), func(pid int32) {
++			suite.Require().Eventually(func() bool {
++				return errors.Is(syscall.Kill(int(pid), 0), syscall.ESRCH)
++			}, 5*time.Second, time.Millisecond)
++
++			cancel()
++		})
++		suite.Assert().NoError(err)
++
++		cancel()
++	}
++}
++
+ func (suite *ProcessSuite) TestStopSigKill() {
+ 	r := process.NewRunner(
+ 		false, &runner.Args{
+```
+
+---
+
+### Incident Patch 3: `831b6a74` (2026-11-18)
+**Commit Message**: test: fix toctou in container probe tests
+
+Fixes TOCTOU causing flakes in container probe tests.
+
+Multiple probe tests are running in parallel, attempting to find a
+closed port, in order to test probe failures. To find a closed port, we
+would open a listener on localhost and close it immediately. This would
+work in a non-parallel test environment, but it created a fun contention
+scenario. Test A would find a closed port to fail a probe on, then test B would open a
+listener and test A would run the probe at the same time, resulting in
+test A's probe succeeding, which caused test A to fail (negative
+scenario, expecting failed probe).
+
+Fun!
+
+Signed-off-by: Maja Bojarska <[REDACTED_EMAIL]>
+
+**File**: `internal/app/machined/pkg/controllers/containers/probe_test.go` (modified, +15/-8)
+```diff
+@@ -60,14 +60,21 @@ func listenerPort(t *testing.T, address string) uint32 {
+ func closedPort(t *testing.T) uint32 {
+ 	t.Helper()
+ 
+-	listener, err := (&net.ListenConfig{}).Listen(t.Context(), "tcp", "127.0.0.1:0")
++	fd, err := unix.Socket(unix.AF_INET, unix.SOCK_STREAM|unix.SOCK_CLOEXEC, 0)
+ 	require.NoError(t, err)
+ 
+-	port := listenerPort(t, listener.Addr().String())
++	t.Cleanup(func() { unix.Close(fd) }) //nolint:errcheck
++
++	// Bind without SO_REUSEADDR, so that no other test can bind simultaneously.
++	require.NoError(t, unix.Bind(fd, &unix.SockaddrInet4{Addr: [4]byte{127, 0, 0, 1}}))
++
++	addr, err := unix.Getsockname(fd)
++	require.NoError(t, err)
+ 
+-	require.NoError(t, listener.Close())
++	inet4, ok := addr.(*unix.SockaddrInet4)
++	require.True(t, ok, "unexpected socket address %T", addr)
+ 
+-	return port
++	return listenerPort(t, net.JoinHostPort("127.0.0.1", strconv.Itoa(inet4.Port)))
+ }
+ 
+ func runProbe(t *testing.T, healthCheck containers.ContainerHealthCheckSpec) error {
+@@ -92,10 +99,10 @@ func TestProbeTCP(t *testing.T) {
+ 		Port: listenerPort(t, listener.Addr().String()),
+ 	}))
+ 
+-	assert.Error(t, runProbe(t, containers.ContainerHealthCheckSpec{
++	assert.ErrorIs(t, runProbe(t, containers.ContainerHealthCheckSpec{
+ 		Kind: string(config.ContainerHealthCheckKindTCP),
+ 		Port: closedPort(t),
+-	}))
++	}), syscall.ECONNREFUSED)
+ }
+ 
+ func TestProbeHTTP(t *testing.T) {
+@@ -138,11 +145,11 @@ func TestProbeHTTP(t *testing.T) {
+ 		}
+ 	}
+ 
+-	assert.Error(t, runProbe(t, containers.ContainerHealthCheckSpec{
++	assert.ErrorIs(t, runProbe(t, containers.ContainerHealthCheckSpec{
+ 		Kind: string(config.ContainerHealthCheckKindHTTP),
+ 		Port: closedPort(t),
+ 		Path: "/",
+-	}))
++	}), syscall.ECONNREFUSED)
+ }
+ 
+ func TestProbeGRPC(t *testing.T) {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #14993** (2026-11-17): feat: add trustGuestRxFilters to hypervisor VM interfaces (@shanduur)
-- **PR #14992** (2026-11-17): fix: allow two busy unmounts in TestUnmountBusy (@shanduur)
-- **PR #14989** (2026-11-17): fix: use multihop BFD for ebgpMultiHop neighbors (@frezbo)
-- **PR #14988** (2026-11-16): fix: ignore the default router in RAs on unnumbered BGP links (@frezbo)
-- **PR #14987** (2026-11-16): fix: do not install BGP routes over connected prefixes (@frezbo)
-- **PR #14984** (2026-11-16): fix: retry failed routes without restarting RouteSpecController (@frezbo)
+- **PR #15018** (2026-11-19): fix: stop sharing the process handle with the reaper waiter (@frezbo)
+- **PR #15012** (2026-11-18): test: share closed-port helper and fix more port races (@majabojarska)
+- **PR #15008** (2026-11-18): test: fix toctou in container probe port binding (@majabojarska)
+- **PR #15006** (2026-11-18): fix: return image cache certificate generation errors (@immanuwell)
+- **PR #15005** (2026-11-19): fix: don't reuse partial layers from the image layer cache (@locker95)
+- **PR #14998** (2026-11-19): fix: reject BGP hold times the OPEN message can not carry (@frezbo)
 
 ---
 
@@ -2329,66 +2704,40 @@ Signed-off-by: Mateusz Urbanek <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep foreign bridge ports enslaved across settings changes
+## X. skip DRBD and network block devices in LVM status scans
 
 **RULE**:
-When implementing operations in `internal/app/machined/pkg/controllers/network/link_spec.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `internal/app/machined/pkg/controllers/storage/lvm_scan.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in siderolabs/talos. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d29d9863`: keep foreign bridge ports enslaved across settings changes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6738ba5c`: skip DRBD and network block devices in LVM status scans. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/network/link_spec.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/app/machined/pkg/controllers/storage/lvm_scan.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// setLinkMaster enslaves link under the master with the given index; zero unslaves it.
-func setLinkMaster(conn *rtnetlink.Conn, link rtnetlink.LinkMessage, masterIndex uint32) error {
-	return conn.Link.Set(&rtnetlink.LinkMessage{
-		Family: link.Family,
-		Type:   link.Type,
-		Index:  link.Index,
-		Attributes: &rtnetlink.LinkAttributes{
-			Master: new(masterIndex),
-		},
-	})
-}
+	"time"
+// lvmScanTimeout bounds a single vgs/pvs/lvs run, so a device that never
+// answers doesn't stop LVM status refreshes on the node for good.
+const lvmScanTimeout = time.Minute
 
-				// unslave all slaves, remembering them: ports this controller does not manage (e.g.
-				// virtual machine taps) would otherwise never be put back
-				var unslaved []int
+	scanCtx, cancel := context.WithTimeout(ctx, lvmScanTimeout)
+	defer cancel()
 
-						if err = setLinkMaster(conn, slave, 0); err != nil {
-							return fmt.Errorf("error unslaving link %q under %q: %w", slave.Attributes.Name, link.TypedSpec().Name, err)
-						unslaved = append(unslaved, i)
-				// re-enslave the ports removed above
-				for _, i := range unslaved {
-					slave := (*links)[i]
-
-					if err = setLinkMaster(conn, slave, existing.Index); err != nil {
-						return fmt.Errorf("error re-enslaving link %q under %q: %w", slave.Attributes.Name, link.TypedSpec().Name, err)
-					}
-
-					(*links)[i].Attributes.Master = new(existing.Index)
-				}
-
+	vgs, err := ctrl.LVM.VGS(scanCtx)
+	pvs, err := ctrl.LVM.PVS(scanCtx)
+	lvs, err := ctrl.LVM.LVS(scanCtx)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-				// unslave all slaves
-						if err = conn.Link.Set(&rtnetlink.LinkMessage{
-							Family: slave.Family,
-							Type:   slave.Type,
-							Index:  slave.Index,
-							Attributes: &rtnetlink.LinkAttributes{
-								Master: new(uint32(0)),
-							},
-						}); err != nil {
-							return fmt.Errorf("error unslaving link %q under %q: %w", slave.Attributes.Name, link.TypedSpec().BridgeSlave.MasterName, err)
+	vgs, err := ctrl.LVM.VGS(ctx)
+	pvs, err := ctrl.LVM.PVS(ctx)
+	lvs, err := ctrl.LVM.LVS(ctx)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d29d9863` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6738ba5c` are properly handled with clean fallback behavior.
