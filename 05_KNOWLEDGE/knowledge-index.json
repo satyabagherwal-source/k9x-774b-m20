@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T06:53:07.482Z",
+  "last_updated": "2026-11-19T07:06:43.655Z",
   "total_verified_learnings": 9015,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21670,
+  "total_items": 21675,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112990,25 +112990,25 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
       "repository": "tursodatabase/turso",
-      "source_version": "ff78457b",
-      "content_hash": "baf5b53feedcbdba63948ea2d0ab45172d8ede0beb62648f9d9a41cf7861155c",
+      "source_version": "e139e251",
+      "content_hash": "9cbde88da17b311629d757ac2604291502cabd5a24cf775705e912900ffdf61d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T11:55:08.647Z"
+      "persisted_at": "2026-11-19T07:06:38.179Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-turso",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/tursodatabase-turso-verification-protocol-empirical-defect-shield-for-tursodatab.md",
+      "relative_path": "08_VERIFICATION/tursodatabase-limbo-verification-protocol-empirical-defect-shield-for-tursodatab.md",
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "source_version": "ff78457b",
-      "content_hash": "dda0d4066fa109367903430392a87a2217f6a2e86f0cab1b8eed322dadf0aa8a",
+      "source_version": "e139e251",
+      "content_hash": "caf7c33131c37169b002eb5710e6729d552c24800cc5302cc3e9138c7b9c8828",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T11:55:08.786Z"
+      "persisted_at": "2026-11-19T07:06:38.356Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-altworld-hemmingway-1-learnings-core-invarian",
@@ -213486,13 +213486,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "tursodatabase/turso",
       "repository": "tursodatabase/turso",
-      "slug": "tursodatabase-turso",
+      "slug": "tursodatabase-limbo",
       "platform": "github",
-      "source_url": "https://github.com/tursodatabase/turso",
-      "source_version": "ff78457b",
-      "content_hash": "4e4cbb0f77f326be72fe1cd20e5538b5499cebe93628892cc8dca2aeccd83904",
-      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-turso-learnings.md",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "e139e251",
+      "content_hash": "d516bb8b60c28af18a12dfe762b52f81921a0760d641ecc2cf6a005c6eab079d",
+      "dossier_path": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md",
       "promoted_rules": [
         {
           "number": 8367,
@@ -213523,6 +213523,11 @@
           "number": 9213,
           "title": "Merge 'parser: reject NULL as a pragma value' from sath000007",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9347,
+          "title": "Merge 'core/dialect: replace CatalogChange with typed requests and a dialect-bui",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213530,7 +213535,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T11:55:08.138Z",
+      "verified_at": "2026-11-19T07:06:37.523Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223461,8 +223466,8 @@
       "slug": "domcyrus-rustnet",
       "platform": "github",
       "source_url": "https://github.com/domcyrus/rustnet",
-      "source_version": "eac0a5e6",
-      "content_hash": "f1b51596a49bf1746097c92d3e6ca1e225b98b3c6fab8a7b64f6e87a21c5b6fc",
+      "source_version": "6a85f360",
+      "content_hash": "aec7ab902910fd2bfa99b97f8a501ca60067c6368af214f236f45e3de229c24a",
       "dossier_path": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md",
       "promoted_rules": [
@@ -223475,6 +223480,11 @@
           "number": 8996,
           "title": "bump maxminddb",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9346,
+          "title": "add WinGet installation instructions",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -223482,7 +223492,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T16:14:02.895Z",
+      "verified_at": "2026-11-19T07:06:22.537Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -223524,10 +223534,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-domcyrus-rustnet-product-intelligence-domcyrus-rustnet-core-invariants.md",
       "title": "Product Intelligence: domcyrus/rustnet Core Invariants",
       "repository": "domcyrus/rustnet",
-      "source_version": "eac0a5e6",
-      "content_hash": "f8b0ea5615d1d7b5c436bdf69cd05cfd0b971d678f2e7e75ce428df32996370d",
+      "source_version": "6a85f360",
+      "content_hash": "be8176a37ed728e96f3ad59ab1563b0d38b3a342fe7087b8ce895b0903fcaad8",
       "domain_letter": "B",
-      "persisted_at": "2026-11-17T16:14:03.362Z"
+      "persisted_at": "2026-11-19T07:06:23.202Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet",
@@ -223536,10 +223546,10 @@
       "relative_path": "08_VERIFICATION/domcyrus-rustnet-verification-protocol-empirical-defect-shield-for-domcyrus-rust.md",
       "title": "Verification Protocol: Empirical Defect Shield for domcyrus/rustnet",
       "repository": "domcyrus/rustnet",
-      "source_version": "eac0a5e6",
-      "content_hash": "14e50c4c44452f8e2c38d205e6610568363a8da8395e4ba60590d4ed613274fd",
+      "source_version": "6a85f360",
+      "content_hash": "3ce1f6c4958f66e6f896affe8cff96d0691f597a6225674aea1119fef43d7120",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:14:03.497Z"
+      "persisted_at": "2026-11-19T07:06:23.388Z"
     },
     "learn-github-aws-amplify-amplify-js": {
       "learning_id": "learn-github-aws-amplify-amplify-js",
@@ -223637,9 +223647,9 @@
       "title": "Product Intelligence: domcyrus-rustnet-learnings Core Invariants",
       "repository": "domcyrus-rustnet-learnings",
       "source_version": "HEAD",
-      "content_hash": "55639e2070a4409db081c2c7f20d12b2e355238f2cba1fa0dacefb519913bde6",
+      "content_hash": "dc5d98670831e5913b981cb353b80cfee8ec103412cb08af7653fba1e91715e3",
       "domain_letter": "B",
-      "persisted_at": "2026-11-17T16:14:20.974Z"
+      "persisted_at": "2026-11-19T07:06:42.120Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-domcyrus-rustnet-learnings",
@@ -223649,9 +223659,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for domcyrus-rustnet-learnings",
       "repository": "domcyrus-rustnet-learnings",
       "source_version": "HEAD",
-      "content_hash": "e130387200334423b368929c06053fdf90a8f7dbdd958e5ecc00ead65e687585",
+      "content_hash": "d372acc1b8fcaaa346375a1688bec5778c9d8439a5509d59045f9681c1121d3b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:14:21.104Z"
+      "persisted_at": "2026-11-19T07:06:42.319Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-mistralai-mixtral-8x7b-instruct-v0-1-learning",
@@ -232999,7 +233009,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/embeddinggemma-2",
       "source_version": "hf-google-embeddinggemma-2",
-      "content_hash": "857ae9e371ea27abd2f4371d198d8b20fd52abfce1a083ef03c0a90648093bb6",
+      "content_hash": "908315c113f96aa16bcc2e587d4fe19ef68b1d6f2a4b209b5426f64f38e54cfc",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md",
       "promoted_rules": [],
@@ -233008,7 +233018,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T17:24:44.361Z",
+      "verified_at": "2026-11-19T07:06:20.274Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233025,9 +233035,9 @@
       "title": "Research & Knowledge Intelligence: google/embeddinggemma-2 Core Invariants",
       "repository": "google/embeddinggemma-2",
       "source_version": "hf-google-embeddinggemma-2",
-      "content_hash": "d54eaa0c75ecdd49180e46ce9066e8ef0e7ed6df4c8838503758dd1b2f059dbf",
+      "content_hash": "e8dcfa6c0f0e1b74093f76bf797d393345d742eb2bba539d534fb76dd53d000e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T17:24:44.592Z"
+      "persisted_at": "2026-11-19T07:06:20.748Z"
     },
     "learn-github-astral-sh-uv": {
       "learning_id": "learn-github-astral-sh-uv",
@@ -233352,9 +233362,9 @@
       "title": "Research & Knowledge Intelligence: hf-google-embeddinggemma-2-learnings Core Invariants",
       "repository": "hf-google-embeddinggemma-2-learnings",
       "source_version": "HEAD",
-      "content_hash": "18cdba672ad6c28e13d759b63f965e9467bd7499abef14b1c089140cf79125db",
+      "content_hash": "f1d34d1a17b9aa0859e6b22fac16d7dcf9d8a9dcdd57e16e502647da719fb099",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T17:25:24.215Z"
+      "persisted_at": "2026-11-19T07:06:42.730Z"
     },
     "candidate_directive-ios-confirm-foldable-rotation-from-the-lit-panel-in-either-simulator-set": {
       "item_id": "candidate_directive-ios-confirm-foldable-rotation-from-the-lit-panel-in-either-simulator-set",
@@ -254940,9 +254950,9 @@
       "title": "Technical Construction Intelligence: tursodatabase-limbo-learnings Core Invariants",
       "repository": "tursodatabase-limbo-learnings",
       "source_version": "HEAD",
-      "content_hash": "9d3767dfe938bf2309408dd33ed640631d9766fba3de2432a448f4899b43cbba",
+      "content_hash": "91e7198ac1f2266b91b7218efc976efc73eccc819b448fc713ae24929b14f2d1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T06:59:44.415Z"
+      "persisted_at": "2026-11-19T07:06:43.468Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-limbo-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tursodatabase-limbo-learnings",
@@ -254952,9 +254962,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tursodatabase-limbo-learnings",
       "repository": "tursodatabase-limbo-learnings",
       "source_version": "HEAD",
-      "content_hash": "98c8a95428137cb8914494679dfb4879bc50eb4e9e0eaea6c66522d080409f9b",
+      "content_hash": "3923843f920c730ac96ead835791daed25c83173dcf8db61f70b51ffa2cb6fb1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T15:16:58.662Z"
+      "persisted_at": "2026-11-19T07:06:43.655Z"
     },
     "rule-8724": {
       "learning_id": "rule-8724",
@@ -292821,6 +292831,70 @@
       "content_hash": "14832458dab0d27d29f14a1a46c69acbb93809ba29d5843b2310379458977686",
       "domain_letter": "D",
       "persisted_at": "2026-11-19T06:53:06.124Z"
+    },
+    "rule-9346": {
+      "learning_id": "rule-9346",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9346,
+      "title": "add WinGet installation instructions",
+      "source_url": "https://github.com/domcyrus/rustnet",
+      "source_version": "6a85f360",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T07:06:22.537Z"
+    },
+    "candidate_directive-add-winget-installation-instructions": {
+      "item_id": "candidate_directive-add-winget-installation-instructions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IENF-add-winget-installation-instructions.md",
+      "title": "add WinGet installation instructions",
+      "repository": "domcyrus/rustnet",
+      "source_version": "6a85f360",
+      "content_hash": "66be5ece0d75b9c59815edbf7c7c0577526b1a37c94bf3bb212a5c2a93e272f5",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-19T07:06:23.025Z"
+    },
+    "rule-9347": {
+      "learning_id": "rule-9347",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9347,
+      "title": "Merge 'core/dialect: replace CatalogChange with typed requests and a dialect-bui",
+      "source_url": "https://github.com/tursodatabase/limbo",
+      "source_version": "e139e251",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T07:06:37.523Z"
+    },
+    "candidate_directive-merge-core-dialect-replace-catalogchange-with-typed-requests-and-a-dialect-bui": {
+      "item_id": "candidate_directive-merge-core-dialect-replace-catalogchange-with-typed-requests-and-a-dialect-bui",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IUAB-merge-core-dialect-replace-catalogchange-with-typed-requests-and-a-dialect-bui.md",
+      "title": "Merge 'core/dialect: replace CatalogChange with typed requests and a dialect-bui",
+      "repository": "tursodatabase-limbo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8ab96dee85d14d8287fe69551afc657f1eab367644eeb3ebf5e1c574f8f19644",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-19T07:06:43.289Z"
+    },
+    "candidate_directive-docs-add-winget-installation-instructions": {
+      "item_id": "candidate_directive-docs-add-winget-installation-instructions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-IT8Y-docs-add-winget-installation-instructions.md",
+      "title": "docs: add WinGet installation instructions",
+      "repository": "domcyrus-rustnet-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4af58f2570e531336106a63e21c3fc6661e4ac8ccd15e2b057bb8d27b9aab145",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-19T07:06:41.944Z"
     }
   },
   "ai-builder-brain": {

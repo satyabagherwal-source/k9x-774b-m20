@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T06:53:07.328Z",
+  "last_updated": "2026-11-19T07:06:43.468Z",
   "total_records": 1955,
   "domains": {
     "A": {
@@ -8164,10 +8164,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-tursodatabase-turso-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: tursodatabase/turso Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-turso-technical-construction-intelligence-tursodatabase-turso-core.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-technical-construction-intelligence-tursodatabase-turso-core.md",
       "repository": "tursodatabase/turso",
-      "content_hash": "baf5b53feedcbdba63948ea2d0ab45172d8ede0beb62648f9d9a41cf7861155c",
-      "created_at": "2026-11-18T11:55:08.647Z"
+      "content_hash": "9cbde88da17b311629d757ac2604291502cabd5a24cf775705e912900ffdf61d",
+      "created_at": "2026-11-19T07:06:38.179Z"
     },
     "DOM-D-991F9C3C": {
       "record_id": "DOM-D-991F9C3C",
@@ -13076,8 +13076,8 @@
       "title": "Product Intelligence: domcyrus/rustnet Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-domcyrus-rustnet-product-intelligence-domcyrus-rustnet-core-invariants.md",
       "repository": "domcyrus/rustnet",
-      "content_hash": "f8b0ea5615d1d7b5c436bdf69cd05cfd0b971d678f2e7e75ce428df32996370d",
-      "created_at": "2026-11-17T16:14:03.362Z"
+      "content_hash": "be8176a37ed728e96f3ad59ab1563b0d38b3a342fe7087b8ce895b0903fcaad8",
+      "created_at": "2026-11-19T07:06:23.202Z"
     },
     "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aws-amplify-amplify-js-core-invariants",
@@ -13094,8 +13094,8 @@
       "title": "Product Intelligence: domcyrus-rustnet-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-domcyrus-rustnet-learnings-product-intelligence-domcyrus-rustnet-learnings-core-.md",
       "repository": "domcyrus-rustnet-learnings",
-      "content_hash": "55639e2070a4409db081c2c7f20d12b2e355238f2cba1fa0dacefb519913bde6",
-      "created_at": "2026-11-17T16:14:20.974Z"
+      "content_hash": "dc5d98670831e5913b981cb353b80cfee8ec103412cb08af7653fba1e91715e3",
+      "created_at": "2026-11-19T07:06:42.120Z"
     },
     "DOM-D-2D29CC33": {
       "record_id": "DOM-D-2D29CC33",
@@ -16723,8 +16723,8 @@
       "title": "Research & Knowledge Intelligence: google/embeddinggemma-2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-embeddinggemma-2-research-knowledge-intelligence-google-embeddinggemma.md",
       "repository": "google/embeddinggemma-2",
-      "content_hash": "d54eaa0c75ecdd49180e46ce9066e8ef0e7ed6df4c8838503758dd1b2f059dbf",
-      "created_at": "2026-11-14T17:24:44.592Z"
+      "content_hash": "e8dcfa6c0f0e1b74093f76bf797d393345d742eb2bba539d534fb76dd53d000e",
+      "created_at": "2026-11-19T07:06:20.748Z"
     },
     "domain_intelligence-architecture-intelligence-astral-sh-uv-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-astral-sh-uv-core-invariants",
@@ -16810,8 +16810,8 @@
       "title": "Research & Knowledge Intelligence: hf-google-embeddinggemma-2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-embeddinggemma-2-learnings-research-knowledge-intelligence-hf-google-e.md",
       "repository": "hf-google-embeddinggemma-2-learnings",
-      "content_hash": "18cdba672ad6c28e13d759b63f965e9467bd7499abef14b1c089140cf79125db",
-      "created_at": "2026-11-14T17:25:24.215Z"
+      "content_hash": "f1d34d1a17b9aa0859e6b22fac16d7dcf9d8a9dcdd57e16e502647da719fb099",
+      "created_at": "2026-11-19T07:06:42.730Z"
     },
     "domain_intelligence-technical-construction-intelligence-callstack-agent-device-learnings-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-callstack-agent-device-learnings-core-invari",
@@ -23627,8 +23627,8 @@
       "title": "Technical Construction Intelligence: tursodatabase-limbo-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tursodatabase-limbo-learnings-technical-construction-intelligence-tursodatabase-.md",
       "repository": "tursodatabase-limbo-learnings",
-      "content_hash": "9d3767dfe938bf2309408dd33ed640631d9766fba3de2432a448f4899b43cbba",
-      "created_at": "2026-11-16T06:59:44.415Z"
+      "content_hash": "91e7198ac1f2266b91b7218efc976efc73eccc819b448fc713ae24929b14f2d1",
+      "created_at": "2026-11-19T07:06:43.468Z"
     },
     "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-oxc-project-oxc-core-invariants",

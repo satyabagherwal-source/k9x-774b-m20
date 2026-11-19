@@ -11219,3 +11219,6 @@
 | `CYCLE-20261119-0FEC` | `2026-11-19T06:52:24.180Z` | `Reson8/Rumble-2-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-reson8-rumble-2-flash-learnings.md` | Yes (`1bda1950...`) |
 | `CYCLE-20261119-0H5Z` | `2026-11-19T06:52:26.471Z` | `autotrust/GEV-26B-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-gev-26b-decide-learnings.md` | Yes (`1f03d985...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T06:53:05.887Z` | `hf-reson8-rumble-2-flash` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-28CD838B` [Domain D] | Yes (`9569b036...`) |
+| `CYCLE-20261119-ICPR` | `2026-11-19T07:06:20.511Z` | `google/embeddinggemma-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-embeddinggemma-2-learnings.md` | Yes (`908315c1...`) |
+| `CYCLE-20261119-IEG4` | `2026-11-19T07:06:22.756Z` | `domcyrus/rustnet` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9346` | Yes (`aec7ab90...`) |
+| `CYCLE-20261119-IQ0D` | `2026-11-19T07:06:37.741Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9347` | Yes (`d516bb8b...`) |

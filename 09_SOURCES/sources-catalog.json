@@ -665,8 +665,8 @@
     "sourceUrl": "https://huggingface.co/google/embeddinggemma-2",
     "sourceVersion": "hf-google-embeddinggemma-2",
     "license": "Open-Source",
-    "contentHash": "857ae9e371ea27abd2f4371d198d8b20fd52abfce1a083ef03c0a90648093bb6",
-    "lastHarvestedAt": "2026-11-14T17:24:44.468Z",
+    "contentHash": "908315c113f96aa16bcc2e587d4fe19ef68b1d6f2a4b209b5426f64f38e54cfc",
+    "lastHarvestedAt": "2026-11-19T07:06:20.516Z",
     "learningId": "learn-huggingface-google-embeddinggemma-2"
   },
   "hf-unsloth-embeddinggemma-2-gguf": {
@@ -6263,10 +6263,10 @@
     "repository": "tursodatabase/turso",
     "platform": "github",
     "sourceUrl": "https://github.com/tursodatabase/limbo",
-    "sourceVersion": "ae2cb738",
+    "sourceVersion": "e139e251",
     "license": "MIT",
-    "contentHash": "0eeb82952060bb286459e6c24d4ea6223c4caab4cb2ef8cf27009172809eafe0",
-    "lastHarvestedAt": "2026-11-17T15:16:42.504Z",
+    "contentHash": "d516bb8b60c28af18a12dfe762b52f81921a0760d641ecc2cf6a005c6eab079d",
+    "lastHarvestedAt": "2026-11-19T07:06:37.746Z",
     "learningId": "learn-github-tursodatabase-turso"
   },
   "carbon-design-system-carbon": {
@@ -6823,10 +6823,10 @@
     "repository": "domcyrus/rustnet",
     "platform": "github",
     "sourceUrl": "https://github.com/domcyrus/rustnet",
-    "sourceVersion": "eac0a5e6",
+    "sourceVersion": "6a85f360",
     "license": "Apache-2.0",
-    "contentHash": "f1b51596a49bf1746097c92d3e6ca1e225b98b3c6fab8a7b64f6e87a21c5b6fc",
-    "lastHarvestedAt": "2026-11-17T16:14:03.057Z",
+    "contentHash": "aec7ab902910fd2bfa99b97f8a501ca60067c6368af214f236f45e3de229c24a",
+    "lastHarvestedAt": "2026-11-19T07:06:22.761Z",
     "learningId": "learn-github-domcyrus-rustnet"
   },
   "futurice-pepperoni-app-kit": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T06:59:44.175Z",
+  "timestamp": "2026-11-19T07:06:43.166Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tursodatabase-limbo-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tursodatabase-limbo-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T06:59:44.175Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T07:06:43.166Z`  
 > **Learning ID**: `LEARN-EVO-tursodatabase-limbo-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), I (Content & Information Intelligence), G (Architecture Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 72%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 77%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tursodatabase-limbo-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
-> **Source Version**: `323ddd36`  
+> **Source Version**: `e139e251`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T06:59:39.957Z  
+> **Timestamp**: 2026-11-19T07:06:36.615Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T06:59:39.848Z  
+> **Harvest Timestamp**: 2026-11-19T07:06:36.608Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25267 stars
+- **Stars / Engagement**: 25295 stars
 
 ---
 
@@ -1460,11 +1460,13 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11866** (2026-11-16): **tests: move the WAL tests that need only the pager's WAL out of core**
-  *Symptoms*: 13 WAL tests in `core/storage/wal.rs` create tables and insert rows with SQL, so they need a dialect. Core is to stop having one (#11816). This moves them to `tests/integration/wal/test_checkpoint.rs`, which already has the same fixtures.  ## New public API  One method, in its own commit:  ```rust /// The write-ahead log of this pager, or `None` if there is no WAL. pub fn wal(&self) -> Option<&Arc<dyn Wal>> ```  `Connection::get_pager()` and the `Wal` trait are already public; only the pager's `wal` field was not. The tests call `Wal` methods such as `begin_read_tx`, `begin_write_tx`, `checkpoint` and `holds_read_lock` directly.  ## How the test bodies change  Only where they reached private state:  - `conn.pager.load()` becomes `conn.get_pager()`. - `pager.wal.as_ref()` becomes `pager.wal()`. - Six reads of `Database.shared_wal` (the last frame number and the number of backfilled frames) become `Pager::wal_max_frame()` and `Pager::wal_backfill_frame()`, which already exist. Before the move I asserted in core, at each of these six places, that the getter returns the same value as the private read; the tests passed with those assertions. The assertions are not part of this PR.  ## What stays in core  11 WAL tests that open a database stay, because they need more than this one method: the read-mark slots (5), the WAL header salts (1), the WAL file handle (1), a test-only frame counter (1), a private field of `WalFile` (1), and two tests compiled only with `cfg(host_shared_wal)`
+- **Issue #12089** (2026-11-18): **core/dialect: replace CatalogChange with typed requests and a dialect-built apply object**
+  *Symptoms*: ## Description  The `CatalogChange` enum crossed the `Dialect` trait twice. At prepare time, translation handed one to `translate_catalog_changes` so the dialect could emit writes to its catalog tables. At run time, `Insn::CatalogChange` handed a copy of the same enum to `apply_catalog_change`, where the dialect matched on it again and read the values that mattered from registers by position. This removes the enum and both crossings.  Five commits. New tests are in commits of their own (1 and 4); the code commits only adapt existing tests to the changed types.  1. **Test the errors of a dialect that stores no roles.** Records the exact error of each statement about roles, ownership, privileges and row-level security under the engine dialect, before the method that produces them is split. The SQLite parser has no syntax for these statements, so a `.sqltest` cannot reach the code; the test builds the statements a frontend with roles would build. 2. **Split the request into `RelationChange` and `AccessStatement`.** Four variants were notices about relations the engine had already created, dropped or renamed. Seven were statements that only the dialect stores. The trait now has one method for each kind, and both types borrow from the statement instead of cloning it. The one name they may own is the new name of a rename (`Cow<str>`): an automatic index is renamed with its table, and the statement has to build that name. The default of `translate_access_statement` refuses every sta
 
-- **Issue #11859** (2026-11-15): **postgres: give an integer primary key its default and reject NULL, with a flag on the INSERT statement**
-  *Symptoms*: A single-column `INTEGER PRIMARY KEY` is the rowid of its table. The PostgreSQL frontend translates `int`, `integer` and the serial types to `INTEGER`, so its keys are rowids too, and INSERT treated them the way SQLite does. The two systems differ in two cases:  | | Key not given | Key is NULL when the row is written | |---|---|---| | SQLite | the key becomes NULL | a new rowid is generated | | PostgreSQL | the key takes the column `DEFAULT`, NULL if there is none | the INSERT fails with 23502 |  In SQLite a key that is not given is one more way for the key to be NULL, and a NULL key always gets a new rowid: `VALUES (NULL)`, `SELECT NULL` and a NULL parameter all do. That is why the generated rowid is not an ordinary default, which applies only to a column that is not given. So in the PostgreSQL frontend a `serial` key never called its sequence, and a NULL key was accepted.  The column cannot say which row of the table applies, because SQLite ignores both `DEFAULT` and `NOT NULL` on an integer primary key:  ```sql CREATE TABLE t (id INTEGER PRIMARY KEY NOT NULL DEFAULT 7, v); INSERT INTO t (v) VALUES ('x');      -- id is 1 INSERT INTO t VALUES (NULL, 'y');    -- id is 2 ```  ## Who decides  The statement: `ast::Stmt::Insert` gets a field, `integer_primary_key_takes_default`. The SQLite parser sets it to false, so SQLite is unchanged, and the PostgreSQL translator sets it to true on every INSERT it builds.  The field has no SQL text, so code that builds an INSERT from another 
+- **Issue #12088** (2026-11-18): **core/dialect: move the catalog change types into their own module**
+  *Symptoms*: ## Description  Moves `CatalogChange`, `NewOwner` and `OwnerColumn` from `core/dialect/mod.rs` into a new `core/dialect/catalog.rs`.  Movement only. The types are re-exported from `core/dialect` and from the crate root as before, so no other file changes.  ## Motivation and context  A later change splits these types into smaller ones (changes to relations, and statements about roles, owners, privileges and policies). Giving them a module first means that split does not grow `core/dialect/mod.rs` and can be read without the rest of the `Dialect` trait around it.  ## Description of AI Usage  Written by Claude Code. A worker session made the move; an orchestrating session rebased it onto current `main` and ran fmt and clippy on it.  --- _Generated by [Claude Code](https://claude.ai/code/session_019cgs5YAWjWBmLYpihhDiFc)_
+  **Post-Mortem & Fix Analysis**:
+  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  A maintainer asked Autofixer to review this pull request. The review of `3a3d399c74be` is [here](https://github.com/tursodatabase/turso/pull/12088#pullrequestreview-5964481068).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge. Autofixer reviews every new commit pushed to this pull request, up to 3 reviews each time the `autofixer: review-requested` label is added. It then removes the label; adding the label again asks for more.</sub>  <!-- autofixer:contributor-review:3a3d399c74bee5f4ea441dc3badadaac89511341 --> <!-- autofixer:contributor-review-recommends:3a3d399c74bee5f4ea441dc3badadaac89511341 --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU2hhIjoiM2EzZDM5OWM3NGJlZTVmNGVhNDQxZGMzYmFkYWRhYWM4OTUxMTM0MSIsImF1ZGl0ZWRBdCI6IjIwMjYtMTEtMThUMjA6Mjc6MDkuNDQyWiIsInZlcmRpY3QiOiJhcHByb3ZlIiwicmVjb21tZW5kYXRpb24
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1481,1291 +1483,885 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7f0bfbef` (2026-11-15)
-**Commit Message**: Merge 'core/storage: build the pager directly in the b-tree unit tests' from Pekka Enberg
+### Incident Patch 1: `a00dd9ff` (2026-11-18)
+**Commit Message**: Merge 'core/dialect: replace CatalogChange with typed requests and a dialect-built apply object' from Pedro Muniz
 
-Most b-tree unit tests need only a pager. Their fixtures opened a whole
-database to get one. Opening a database needs a dialect, so these tests
-used `EngineDialect` although they never pass SQL to it. This is one
-step towards removing `EngineDialect` from core (#11816).
+The `CatalogChange` enum crossed the `Dialect` trait twice. At prepare
+time, translation handed one to `translate_catalog_changes` so the
+dialect could emit writes to its catalog tables. At run time,
+`Insn::CatalogChange` handed a copy of the same enum to
+`apply_catalog_change`, where the dialect matched on it again and read
+the values that mattered from registers by position. This removes the
+enum and both crossings.
 
-## What changes
+Five commits. New tests are in commits of their own (1 and 4); the code
+commits only adapt existing tests to the changed types.
 
-Only test code in `core/storage/btree.rs`:
+1. **Test the errors of a dialect that stores no roles.** Records the
+exact error of each statement about roles, ownership, privileges and
+row-level security under the engine dialect, before the method that
+produces them is split. The SQLite parser has no syntax for these
+statements, so a `.sqltest` cannot reach the code; the test builds the
+statements a frontend with roles would build.
+2. **Split the request into `RelationChange` and `AccessStatement`.**
+Four variants were notices about relations the engine had already
+created
 
-- New fixture `empty_pager()` builds a pager over an in-memory file,
-with no `Database` and no `Connection`. `setup_test_env()` already did
-this and now shares the code.
-- `empty_btree()` uses it and returns only the pager and the root page
-(39 callers).
-- `get_database()` is removed. Its 17 callers connected only to hand a
-connection to `add_record()`, which used nothing but the connection's
-pager; `add_record()` now takes the pager.
-- `btree_with_virtual_page_1` uses `empty_pager()` too.
-
-## What stays
-
-- Four fuzz tests commit through `Pager::commit_tx`, which takes a
-connection. They still open a database, through a fixture now named
-`empty_btree_in_database()`.
-- Tests in the file that execute SQL still open a database.
-
-## Differences in what the tests exercis
-
-**File**: `core/storage/btree.rs` (modified, +142/-212)
+**File**: `core/dialect/catalog.rs` (modified, +108/-42)
 ```diff
-@@ -10927,15 +10927,13 @@ mod tests {
-         },
-     };
+@@ -1,91 +1,157 @@
+-//! The changes a statement makes to the dialect's catalog.
++//! What translation tells the dialect about a statement that changes the
++//! dialect's catalog of the main database, and what the dialect's bytecode
++//! tells the in-memory schema once the change is written.
  
--    use tempfile::TempDir;
--
-     use crate::{
-         storage::{
-             btree::{compute_free_space, fill_cell_payload, payload_overflow_threshold_max},
-             sqlite3_ondisk::{BTreeCell, PageContent, PageType, TableLeafCell},
-         },
-         types::Value,
--        Database, Page, Pager, PlatformIO,
-+        Database, Page, Pager,
-     };
+-use crate::{namespace::NamespaceId, schema::RelationKind};
++use crate::{
++    namespace::NamespaceId,
++    schema::{RelationKind, Schema},
++    LimboError, Result, Value,
++};
++use std::borrow::Cow;
+ use turso_parser::ast::{self, Grantee, Privilege, RoleSpec};
  
-     use super::{btree_init_page, defragment_page, drop_cell, insert_into_cell};
-@@ -11016,25 +11014,6 @@ mod tests {
-         page
+-/// A change a statement makes to the dialect's catalog of the main
+-/// database: to a relation, or to the roles. Translation tells the dialect
+-/// about it through
+-/// [`Dialect::translate_catalog_changes`](super::Dialect::translate_catalog_changes), and the dialect's own bytecode
+-/// tells it back through [`Dialect::apply_catalog_change`](super::Dialect::apply_catalog_change) once the change
+-/// is written.
++/// A relation that a statement created, dropped or renamed. The engine makes
++/// the change itself; the dialect records it in its own catalog through
++/// [`Dialect::translate_relation_changes`](super::Dialect::translate_relation_changes).
+ #[derive(Debug, Clone)]
+-pub enum CatalogChange {
+-    Create {
++pub enum RelationChange<'a> {
++    Created {
+         namespace: NamespaceId,
+-        name: String,
++        name: &'a str,
+         kind: RelationKind,
+         /// For an index, the table it is on, in the same namespace. Its
+         /// owner owns the index.
+-        table: Option<String>,
++        table: Option<&'a str>,
+     },
+-    Drop {
++    Dropped {
+         namespace: NamespaceId,
+-        name: String,
++        name: &'a str,
+     },
+-    Rename {
++    Renamed {
+         namespace: NamespaceId,
+-        old_name: String,
+-        new_name: String,
++        old_name: &'a str,
++        /// Owned when the statement had to build the name, as for an
++        /// automatic index that is renamed with its table.
++        new_name: Cow<'a, str>,
+     },
+-    /// Whom the relation belongs to from now on.
+-    ChangeOwner {
++    /// `ALTER TABLE table RENAME COLUMN old_name TO new_name`.
++    ColumnRenamed {
+         namespace: NamespaceId,
+-        name: String,
+-        owner: NewOwner,
++        table: &'a str,
++        old_name: &'a str,
++        new_name: &'a str,
+     },
+-    /// `ALTER TABLE table RENAME COLUMN old_name TO new_name`.
+-    RenameColumn {
++}
++
++/// A statement about roles, ownership, privileges or row-level security.
++/// The engine stores none of these; the dialect does all of the work in
++/// [`Dialect::translate_access_statement`](super::Dialect::translate_access_statement).
++#[derive(Debug, Clone, Copy)]
++pub enum AccessStatement<'a> {
++    /// Whom the relation belongs to from now on.
++    ChangeOwner {
+         namespace: NamespaceId,
+-        table: String,
+-        old_name: String,
+-        new_name: String,
++        name: &'a str,
++        owner: &'a NewOwner,
+     },
+-    /// `GRANT privileges ON relation TO grantees`, or `REVOKE privileges ON
+-    /// relation FROM grantees` when `revoke` is set.
++    /// `GRANT privileges ON relations TO grantees`, or `REVOKE privileges ON
++    /// relations FROM grantees` when `revoke` is set.
+     Grant {
+         revoke: bool,
+-        namespace: NamespaceId,
+-        name: String,
+-        privileges: Vec<Privilege>,
+-        grantees: Vec<Grantee>,
++        relations: &'a [RelationName],
++        privileges: &'a [Privilege],
++        grantees: &'a [Grantee],
+     },
+     /// `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`, or `DISABLE` when
+     /// `enabled` is false.
+     SetRowSecurity {
+         namespace: NamespaceId,
+-        name: String,
++        name: &'a str,
+         enabled: bool,
+     },
+     /// `CREATE POLICY` on table `name`. Its expressions refer to the
+     /// table's columns by their unqualified names.
+     CreatePolicy {
+         namespace: NamespaceId,
+-        name: String,
+-        policy: Box<ast::CreatePolicy>,
++        name: &'a str,
++        policy: &'a ast::CreatePolicy,
+     },
+     /// `DROP POLICY policy_name ON name`.
+     DropPolicy {
+         namespace: NamespaceId,
+-        name: String,
+-        policy_name: String,
++        name: &'a str,
++        policy_name: &'a str,
+         if_exists: bool,
+     },
+     /// `CREATE ROLE name`: a role that is not a superuser and cannot log in.
+     CreateRole {
+-        name: String,
+-        options: ast::RoleOptions,
++        name: &'a str,
++        options: &'a ast::RoleOptions,
+     },
+     /// `GRANT roles TO grantees`, which makes each grantee a member of each
+     /// role, or `REVOKE roles FROM grantees` when `revoke` is set.
+     GrantRole {
+         revoke: bool,
+-        roles: Vec<String>,
+-        grantees: Vec<Grantee>,
++        roles: &'a [String],
++        grantees: &'a [Grantee],
+     },
+ }
+ 
+-/// Whom a relation belongs to after a [`CatalogChange::ChangeOwner`].
++impl AccessStatement<'_
+```
+
+**File**: `core/dialect/mod.rs` (modified, +24/-68)
+```diff
+@@ -24,7 +24,9 @@ mod engine;
+ pub use crate::functions::builtin::{
+     call_builtin_scalar, resolve_builtin_function, SQLITE_VERSION, SQLITE_VERSION_NUMBER,
+ };
+-pub use catalog::{CatalogChange, NewOwner, OwnerColumn};
++pub use catalog::{
++    AccessStatement, CatalogApply, NewOwner, OwnerColumn, RelationChange, RelationName,
++};
+ 
+ #[cfg(test)]
+ pub(crate) use engine::EngineDialect;
+@@ -329,83 +331,37 @@ pub trait Dialect: Send + Sync + 'static {
+         ))
      }
  
--    /// The returned `TempDir` deletes the database directory when it drops, so
--    /// callers must hold it for as long as they use the database.
--    #[allow(clippy::arc_with_non_send_sync)]
--    fn get_database() -> (Arc<Database>, TempDir) {
--        let temp_dir = TempDir::new().unwrap();
--        let path = temp_dir.path().join("test.db");
--        {
--            let connection = rusqlite::Connection::open(&path).unwrap();
--            connection
--                .pragma_update(None, "journal_mode", "wal")
--                .unwrap();
+-    /// Translates `changes`, which the statement being compiled makes, into
+-    /// the bytecode that records them in the dialect's own schema state, in
+-    /// the same transaction as the statement's `sqlite_schema` rows. A table
+-    /// comes with its automatic indexes in one call. Does nothing for a
+-    /// dialect without schema state of its own, except that such a dialect
+-    /// has no roles, ownership, privileges or row-level security and refuses
+-    /// `CREATE ROLE`, `GRANT role TO role`, `ALTER ... OWNER TO`, `ALTER SEQUENCE ... OWNED BY`,
+-    /// `GRANT`, `REVOKE`, `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`,
+-    /// `CREATE POLICY` and `DROP POLICY`.
+-    fn translate_catalog_changes(
++    /// Translates `changes`, which the statement being compiled makes to
++    /// relations, into the bytecode that records them in the dialect's own
++    /// schema state, in the same transaction as the statement's
++    /// `sqlite_schema` rows. A table comes with its automatic indexes in one
++    /// call. Does nothing for a dialect without schema state of its own.
++    fn translate_relation_changes(
+         &self,
+         program: &mut ProgramBuilder,
+         schema: &Schema,
+         connection: &Arc<Connection>,
+-        changes: &[CatalogChange],
++        changes: &[RelationChange<'_>],
+     ) -> Result<()> {
+-        let _ = (program, schema, connection);
+-        for change in changes {
+-            match change {
+-                CatalogChange::ChangeOwner {
+-                    owner: NewOwner::Role(_),
+-                    ..
+-                } => {
+-                    return Err(LimboError::ParseError(
+-                        "ALTER ... OWNER TO is not supported".to_string(),
+-                    ));
+-                }
+-                CatalogChange::ChangeOwner {
+-                    owner: NewOwner::Column(_),
+-                    ..
+-                } => {
+-                    return Err(LimboError::ParseError(
+-                        "ALTER SEQUENCE ... OWNED BY is not supported".to_string(),
+-                    ));
+-                }
+-                CatalogChange::Grant { revoke, .. } => {
+-                    let statement = if *revoke { "REVOKE" } else { "GRANT" };
+-                    return Err(LimboError::ParseError(format!(
+-                        "{statement} is not supported"
+-                    )));
+-                }
+-                CatalogChange::SetRowSecurity { .. }
+-                | CatalogChange::CreatePolicy { .. }
+-                | CatalogChange::DropPolicy { .. } => {
+-                    return Err(LimboError::ParseError(
+-                        "row-level security is not supported".to_string(),
+-                    ));
+-                }
+-                CatalogChange::CreateRole { .. } => {
+-                    return Err(LimboError::ParseError(
+-                        "CREATE ROLE is not supported".to_string(),
+-                    ));
+-                }
+-                CatalogChange::GrantRole { revoke, .. } => {
+-                    let statement = if *revoke { "REVOKE" } else { "GRANT" };
+-                    return Err(LimboError::ParseError(format!(
+-                        "{statement} of role membership is not supported"
+-                    )));
+-                }
+-                _ => {}
+-            }
 -        }
--        let io: Arc<dyn IO> = Arc::new(PlatformIO::new().unwrap());
--        let db = Database::open_file(io.clone(), path.to_str().unwrap(), Arc::new(EngineDialect))
--            .unwrap();
--
--        (db, temp_dir)
--    }
--
-     /// Deterministic coverage for the allocation-failure window created by routing
-     /// overflow-cell payloads through `TursoAllocator`: in
-     /// `OverwriteCellState::ClearOverflowPagesAndOverwrite`, `drop_cell` mutates the
-@@ -11453,7 +11432,7 @@ mod tests {
-         pos: usize,
-         page: PageRef,
-         record: ImmutableRecord,
--        conn: &Arc<Connection>,
-+        pager: &Arc<Pager>,
-     ) -> crate::alloc::Vec<u8> {
-         let mut payload: crate::alloc::Vec<u8> = crate::alloc::vec![];
-         let mut fill_cell_payload_state = FillCellPayloadState::Start;
-@@ -11466,11 +11445,11 @@ mod tests {
-                     pos,
-                     &record,
-                     4096,
--                    &conn.pager.load(),
-+                    pager,
-                     &mut fill_cell_payload_state,
-                 )
-             },
--            &conn.pager.load().clone(),
-+            pager,
-         )
-         .unwrap();
-         insert_into_cell(page.get_contents(), &payload, pos, 4096).unwrap();
-@@ -11510,16 +11489,13 @@ mod tests {
- 
-     #[test]
-     fn test_insert_cell() {
--        let (db, _temp_dir) = get_database();
--        let conn = db
--            .connect(ConnectOpts::new(SessionRole::Superuser))
--            .unwrap();
-+        let pager = pager_of_new_database();
-         let page = get_page(2);
- 
-         let header_size = 8;
-         let regs = &[Register::Value(Value::from_i64(1))];
-         let record = ImmutableRecord::from_registers(regs, regs.len()).unwrap();
--        let payload = add_record(1, 0, page.clone(), record, &conn);
-+        let payload = add_record(1, 0, page.clone(), record, &pager);
-         let page_contents = page.get_contents();
-         assert_eq!(page_contents.cell_count(), 1);
-         let free = compute_free_space(page_contents, 4096).unwrap();
-@@ -11549,10 +11525,7 @@ mod tests {
- 
-     #[test]
-     fn test_drop_1() {
--        let (db, _temp_dir) = get_database();
--        let conn = db
--            .connect(ConnectOpts::new(SessionRole::Superuser))
--            .unwrap();
-+        let pager = pager_of_new_database();
- 
-         let page = get_page(2);
- 
-@@ -11565,7 +11538,7 @@ mod tests {
-         for i in 0..3 {
-             let regs = &[Register::Value(Value::from_i64(i as i64))];
-             let record = ImmutableRecord::from_registers(regs, regs.len()).unwrap();
--            let payload = add_record(i, i, page.clone(), record, &conn);
-+            let payload = add_record(i, i, page.clone(), record, &pager);
-             assert_eq!(page_contents.cell_count(), i + 1);
-             let free = compute_free_space(page_contents, usable_space).unwrap();
-             total_size += payload.len() + 2;
-@@ -11759,7 +11732,53 @@ mod tests {
-         }
++        let _ = (program, schema, connection, changes);
+         Ok(())
      }
  
--    fn empty_btree() -> (Arc<Pager>, i64, Arc<Database>, Arc<Connection>) {
-+    fn empty_btree() -> (Arc<Pager>, i64) {
-+        let pager = pager_of_new_database();
-+        let page2 = run_until_done(|| pager.allocate_page(), &pager).unwrap();
-+        btree_init_page(&page2, PageType::TableLeaf, 0, pager.usable_space());
-+        (pager, page2.get().id() as i64)
-+    }
+-    /// Applies `change`, which the running statement wrote to the dialect's
+-    /// schema state, to the in-memory copy in `schema`. `values` are the
+-    /// registers the dialect named when it emitted the instruction, such as
+-    /// the id its state gave a created relation.
+-    fn apply_catalog_change(
++    /// Translates `statement` into the bytecode that changes the roles,
++    /// owners, privileges or policies the dialect stores. A dialect that
++    /// stores none refuses `CREATE ROLE`, `GRANT role TO role`,
++    /// `ALTER ... OWNER TO`, `ALTER SEQUENCE ... OWNED BY`, `GRANT`,
++    /// `REVOKE`, `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`,
++    /// `CREATE POLICY` and `DROP POLICY`.
++    fn translate_access_statement(
+         &self,
+-        schema: &mut Schema,
+-        change: &CatalogChange,
+-        values: &[Value],
++        program: &mut ProgramBuilder,
++        schema: &Schema,
++        connection: &Arc<Connection>,
++        statement: &AccessStatement<'_>,
+     ) -> Result<()> {
+-        let _ = (schema, change, values);
+-        Ok(())
++        let _ = (program,
+```
+
+**File**: `core/lib.rs` (modified, +3/-1)
+```diff
+@@ -147,7 +147,9 @@ pub(crate) use database::{DatabaseCatalog, InitState};
+ pub(crate) use database::{DatabaseKey, RegistryEntry, DATABASE_MANAGER};
+ #[cfg(test)]
+ pub(crate) use dialect::EngineDialect;
+-pub use dialect::{CatalogChange, Dialect, NewOwner, OwnerColumn};
++pub use dialect::{
++    AccessStatement, CatalogApply, Dialect, NewOwner, OwnerColumn, RelationChange, RelationName,
++};
+ pub use error::{
+     io_error, CompletionError, ConstraintKind, ConstraintViolation, DialectError, LimboError,
+     SQLITE_CONSTRAINT_UNIQUE, SQLITE_ERROR,
+```
+
+**File**: `core/security/mod.rs` (modified, +2/-2)
+```diff
+@@ -38,8 +38,8 @@
+ //! The defaults of these methods know only [`roles::RoleId::SUPERUSER`],
+ //! give every role every privilege and no table row-level security.
+ //! Statements that change access control, such as `CREATE ROLE`, `GRANT` and
+-//! `CREATE POLICY`, reach the dialect as a [`crate::CatalogChange`] through
+-//! [`crate::Dialect::translate_catalog_changes`], which the default refuses.
++//! `CREATE POLICY`, reach the dialect as a [`crate::AccessStatement`] through
++//! [`crate::Dialect::translate_access_statement`], which the default refuses.
+ //!
+ //! # Where checks happen
+ //!
+```
+
+**File**: `core/security/roles.rs` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@
+ //! and core asks it about them through [`crate::Dialect::role_by_name`],
+ //! [`crate::Dialect::role_is_superuser`] and
+ //! [`crate::Dialect::can_set_role`]. `CREATE ROLE` reaches the dialect as a
+-//! [`crate::CatalogChange::CreateRole`]. A dialect that keeps no roles, such
++//! [`crate::AccessStatement::CreateRole`]. A dialect that keeps no roles, such
+ //! as SQLite's, has only the built-in ids and refuses `CREATE ROLE`.
+ 
+ /// The role a new connection runs as. The program that opens the connection
+```
+
+**File**: `core/translate/alter.rs` (modified, +26/-26)
+```diff
+@@ -1,5 +1,5 @@
+ use crate::alloc::TursoIteratorExt;
+-use crate::dialect::{CatalogChange, NewOwner};
++use crate::dialect::{AccessStatement, NewOwner, RelationChange};
+ use crate::namespace::{NamespaceId, NamespaceRef};
+ use crate::schema::RelationKind;
+ use crate::sync::Arc;
+@@ -8,6 +8,7 @@ use crate::translate::row_security;
+ use crate::types::StrictType;
+ use crate::util::renamed_automatic_index_name;
+ use crate::{turso_assert_eq, turso_assert_ne, SymbolTable};
++use std::borrow::Cow;
+ use turso_parser::ast::{self, TableInternalId};
+ 
+ use super::{
+@@ -1779,26 +1780,24 @@ pub fn translate_alter_table(
+             if schema::dialect_relation_hooks_apply(connection, database_id)? {
+                 // Automatic indexes are renamed with the table, because
+                 // their names embed it.
+-                let mut changes = vec![CatalogChange::Rename {
++                let mut changes = vec![RelationChange::Renamed {
+                     namespace: namespace.id,
+-                    old_name: normalized_old_name,
+-                    new_name: normalized_new_name,
++                    old_name: &normalized_old_name,
++                    new_name: Cow::Borrowed(&normalized_new_name),
+                 }];
+-                for index in &table_indexes {
+-                    let Some(new_name) = renamed_automatic_index_name(
++                changes.extend(table_indexes.iter().filter_map(|index| {
++                    let new_name = renamed_automatic_index_name(
+                         &index.name,
+                         &mangled_table_name,
+                         &mangled_new_name,
+-                    ) else {
+-                        continue;
+-                    };
+-                    changes.push(CatalogChange::Rename {
++                    )?;
++                    Some(RelationChange::Renamed {
+                         namespace: namespace.id,
+-                        old_name: index.name.clone(),
+-                        new_name,
+-                    });
+-                }
+-                resolver.catalog.dialect.translate_catalog_changes(
++                        old_name: &index.name,
++                        new_name: Cow::Owned(new_name),
++                    })
++                }));
++                resolver.catalog.dialect.translate_relation_changes(
+                     program,
+                     resolver.schema(),
+                     connection,
+@@ -2539,15 +2538,15 @@ pub fn translate_alter_table(
+             if col_name != old_column_name
+                 && schema::dialect_relation_hooks_apply(connection, database_id)?
+             {
+-                resolver.catalog.dialect.translate_catalog_changes(
++                resolver.catalog.dialect.translate_relation_changes(
+                     program,
+                     resolver.schema(),
+                     connection,
+-                    &[CatalogChange::RenameColumn {
++                    &[RelationChange::ColumnRenamed {
+                         namespace: namespace.id,
+-                        table: normalize_ident(table_name),
+-                        old_name: old_column_name.to_string(),
+-                        new_name: col_name.to_string(),
++                        table: &normalize_ident(table_name),
++                        old_name: old_column_name,
++                        new_name: col_name,
+                     }],
+                 )?;
+             }
+@@ -2618,19 +2617,20 @@ fn translate_alter_owner(
+     }
+     // The dialect decides what goes with the relation, such as a table's
+     // indexes, and whose an index's owner is.
+-    let changes = [CatalogChange::ChangeOwner {
++    let owner = NewOwner::Role(role.clone());
++    let statement = AccessStatement::ChangeOwner {
+         namespace: namespace.id,
+-        name: normalized_name,
+-        owner: NewOwner::Role(role.clone()),
+-    }];
++        name: &normalized_name,
++        owner: &owner,
++    };
+ 
+     let schema_cookie = resolver.with_schema(crate::MAIN_DB_ID, |s| s.schema_version);
+     program.begin_write_on_database(crate::MAIN_DB_ID, schema_cookie)?;
+-    resolver.catalog.dialect.translate_catalog_changes(
++    resolver.catalog.dialect.translate_access_statement(
+         program,
+         resolver.schema(),
+         connection,
+-        &changes,
++        &statement,
+     )?;
+     schema::emit_schema_cookie(resolver, program);
+     Ok(())
+```
+
+**File**: `core/translate/index.rs` (modified, +8/-8)
+```diff
+@@ -1,5 +1,5 @@
+ use crate::alloc::{TryClone, TursoIteratorExt, TursoVecExt};
+-use crate::dialect::CatalogChange;
++use crate::dialect::RelationChange;
+ use crate::error::SQLITE_CONSTRAINT_UNIQUE;
+ use crate::function::Func;
+ use crate::index_method::IndexMethodConfiguration;
+@@ -359,15 +359,15 @@ pub fn translate_create_index(
+     )?;
+ 
+     if schema::dialect_relation_hooks_apply(connection, database_id)? {
+-        resolver.catalog.dialect.translate_catalog_changes(
++        resolver.catalog.dialect.translate_relation_changes(
+             program,
+             resolver.schema(),
+             connection,
+-            &[CatalogChange::Create {
++            &[RelationChange::Created {
+                 namespace: namespace.id,
+-                name: idx_name.clone(),
++                name: &idx_name,
+                 kind: crate::schema::RelationKind::Index,
+-                table: Some(tbl_name),
++                table: Some(&tbl_name),
+             }],
+         )?;
+     }
+@@ -1501,13 +1501,13 @@ pub fn translate_drop_index(
+     )?;
+ 
+     if schema::dialect_relation_hooks_apply(connection, database_id)? {
+-        resolver.catalog.dialect.translate_catalog_changes(
++        resolver.catalog.dialect.translate_relation_changes(
+             program,
+             resolver.schema(),
+             connection,
+-            &[CatalogChange::Drop {
++            &[RelationChange::Dropped {
+                 namespace: namespace.id,
+-                name: idx_name.clone(),
++                name: &idx_name,
+             }],
+         )?;
+     }
+```
+
+**File**: `core/translate/mod.rs` (modified, +128/-0)
+```diff
+@@ -803,6 +803,134 @@ mod tests {
+         );
+     }
+ 
++    /// The SQLite parser has no syntax for these statements, so the test
++    /// builds the statements a frontend with roles would build.
++    #[test]
++    fn dialect_without_roles_refuses_role_owner_privilege_and_row_security_statements() {
++        let io = Arc::new(MemoryIO::new());
++        let db = Database::open_file(io, ":memory:", Arc::new(EngineDialect)).unwrap();
++        let conn = db
++            .connect(ConnectOpts::new(SessionRole::Superuser))
++            .unwrap();
++        conn.execute("CREATE TABLE t(a)").unwrap();
++        conn.execute("CREATE SEQUENCE s").unwrap();
 +
-+    /// A pager whose database holds only page 1.
-+    fn pager_of_new_database() -> Arc<Pager> {
-+        let pager = empty_pager(4096, PageCache::default());
-+        run_until_done(|| pager.allocate_page1(), &pager).unwrap();
-+        pager
-+    }
++        let table = || ast::QualifiedName::single(ast::Name::exact("t".to_string()));
++        let role = || ast::RoleSpec::Name("r".to_string());
++        let alter_table = |body| {
++            ast::Stmt::AlterTable(ast::AlterTable {
++                name: table(),
++                body,
++            })
++        };
++        let grant = |revoke, objects| {
++            ast::Stmt::Grant(ast::Grant {
++                revoke,
++                objects,
++                grantees: vec![ast::Grantee::Role(role())],
++            })
++        };
++        let privileges_on_table = || ast::GrantObjects::Relations {
++            privileges: vec![ast::Privilege::Select],
++            on_sequences: false,
++            relations: vec![table()],
++        };
++        let member_roles = || ast::GrantObjects::Roles(vec!["admin".to_string()]);
 +
-+    /// A pager over an empty in-memory database file, opened without a `Database`.
-+    #[allow(clippy::arc_with_non_send_sync)]
-+    fn empty_pager(page_size: u32, page_cache: PageCache) -> Arc<Pager> {
-+        let io: Arc<dyn IO> = Arc::new(Mem
++        let statements = [
++            (
++                grant(false, privileges_on_table()),
++                "GRANT is not supported",
++            ),
++            (
++                grant(true, privileges_on_table()),
++                "REVOKE is not supported",
++            ),
++            (
++                ast::Stmt::CreateRole {
++                    role_name: "r".to_string(),
++                    options: ast::RoleOptions::default(),
++                },
++                "CREATE ROLE is not supported",
++            ),
++            (
++                grant(false, member_roles()),
++                "GRANT of role membership is not supported",
++            ),
++            (
++                grant(true, member_roles()),
++                "REVOKE of role membership is not supported",
++            ),
++            (
++                alter_table(ast::AlterTableBody::OwnerTo {
++                    kind: ast::RelationKind::Table,
++                    role: role(),
++                    if_exists: false,
++                }),
++                "ALTER ... OWNER TO is not supported",
++            ),
++            (
++                ast::Stmt::AlterSequenceOwnedBy {
++                    seq_name: ast::QualifiedName::single(ast::Name::exact("s".to_string())),
++                    owner: Some((table(), ast::Name::exact("a".to_string()))),
++                },
++                "ALTER SEQUENCE ... OWNED BY is not supported",
++            ),
++            (
++                alter_table(ast::AlterTableBody::EnableRowSecurity),
++                "row-level security is not supported",
++            ),
++            (
++                alter_table(ast::AlterTableBody::DisableRowSecurity),
++                "row-level security is not supported",
++            ),
++            (
++                ast::Stmt::CreatePolicy(Box::new(ast::CreatePolicy {
++                    policy_name: ast::Name::exact("p".to_string()),
++                    tbl_name: table(),
++                    permissive: true,
++                    command: ast::PolicyCommand::All,
++                    roles: vec![ast::Grantee::Public],
++                    using_expr: None,
++                    check_expr: None,
++                    using_sql: None,
++                    check_sql: None,
++                })),
++                "row-level security is not supported",
++            ),
++            (
++                ast::Stmt::DropPolicy {
++                    if_exists: false,
++                    policy_name: ast::Name::exact("p".to_string()),
++                    tbl_name: table(),
++                },
++                "row-level security is not supported",
++            ),
++        ];
++
++        for (stmt, expected) in statements {
++            let description = format!("{stmt:?}");
++            let schema = db.schema.lock().clone();
++            let result = translate(
++                &schema,
++                stmt,
++                conn.pager.load().clone(),
++                conn.clone(),
++                &SymbolTable::new(),
++                QueryMode::Normal,
++                "",
++                crate::statement::StatementOrigin::Root,
++            );
++            match result {
++                Err(crate::LimboError::ParseError(message)) => {
++                    assert_eq!(message, expected, "{description}")
++                }
++                Err(other) => panic!("{description}: expected a parse error, got {other:?}"),
++                Ok(_) => panic!("{description}: expected an error"),
++            }
++
 ```
 
 ---
 
-### Incident Patch 2: `0e448cb3` (2026-11-15)
-**Commit Message**: Merge 'tests: move the schema, translation and security tests that need only the public API out of core' from Pekka Enberg
+### Incident Patch 2: `08bec2c5` (2026-11-17)
+**Commit Message**: postgres: build every function in FROM from one descriptor
 
-Core will stop parsing SQL by itself, so a test that passes SQL text to
-core cannot stay in core. This moves the 16 tests of schema loading,
-statement translation, roles and row-level security that compile against
-core as it is on main to `tests/integration/`, the same way #11822,
-#11823 and #11824 did for other tests.
+translate_range_function had one branch per function, and each branch
+repeated the same steps: read the alias, name the columns, build the
+call. A check added to one branch was missing from the others. Describe
+unnest() and generate_series() in RewrittenFunction instead and translate
+them in one place. A function that is a call of an engine table function
+is now a row of data: its argument check, its columns with the name
+PostgreSQL gives each, and its WITH ORDINALITY column.
 
-Core itself does not change: no item becomes public, no `cfg` is
-widened. The core diff only deletes the moved tests and the helpers that
-only they used.
+An unnest() without an alias is now also known as unnest, like
+generate_series is known as generate_series.
 
-| From | To | Tests |
-|---|---|---|
-| `core/schema.rs` | `schema.rs` (new) | 8 |
-| `core/translate/mod.rs` | `query_processing/test_write_path.rs` (2),
-`query_processing/test_read_path.rs` (1), `trigger.rs` (1) | 4 |
-| `core/translate/row_security.rs` | `security.rs` (new) | 2 |
-| `core/translate/roles.rs` | `security.rs` (new) | 1 |
-| `core/dialect/mod.rs` | `connection.rs` | 1 |
+PostgreSQL turns on Dialect::table_function_arguments_read_only_earlier_tables,
+so `generate_series(start, stop)` after a table with those columns reads
+the table, not the function, and a table listed after the function is not
+visible to its arguments.
 
-The tests keep their names and assertions; only paths change (`crate::`
-to `turso_core::`, `EngineDialect` to `SqliteDialect`). The set of test
-names under `core` and `tests/integration` is the same before and afte
+Tests: make -C postgres/conformance run and run-postgres
 
-**File**: `core/dialect/mod.rs` (modified, +0/-12)
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `postgres/conformance/pg-sqltests/functions.sqltest` (modified, +87/-0)
 ```diff
-@@ -897,18 +897,6 @@ mod tests {
-         conn.close().unwrap();
-     }
+@@ -1388,6 +1388,93 @@ expect error {
+     a column definition list is required for functions returning "record"
+ }
  
--    #[test]
--    fn consume_stmt_reports_parse_error() {
--        let io: Arc<dyn IO> = Arc::new(MemoryIO::new());
--        let db = open_db(&io, "consume-stmt-parse-error.db", Arc::new(EngineDialect)).unwrap();
--        let conn = db
--            .connect(ConnectOpts::new(SessionRole::Superuser))
--            .unwrap();
--
--        assert!(conn.consume_stmt("SELECT * FROM").is_err());
--        conn.close().unwrap();
--    }
--
-     #[test]
-     fn dialect_catalog_available_on_every_schema_and_rebuild() {
-         let io: Arc<dyn IO> = Arc::new(MemoryIO::new());
++test generate-series-with-one-argument-errors {
++    SELECT * FROM generate_series(1);
++}
++@sqlstate 42883
++expect error {
++}
++
++test generate-series-with-four-arguments-errors {
++    SELECT * FROM generate_series(1, 2, 1, 1);
++}
++@sqlstate 42883
++expect error {
++}
++
++test generate-series-argument-cannot-name-the-column-of-the-function {
++    SELECT * FROM generate_series(1, generate_series);
++}
++@sqlstate 42703
++expect error {
++    generate_series
++}
++
++test unnest-argument-cannot-name-the-column-of-the-function {
++    SELECT * FROM unnest(unnest);
++}
++@sqlstate 42703
++expect error {
++    unnest
++}
++
++test generate-series-argument-cannot-name-the-function-itself {
++    SELECT * FROM generate_series(1, generate_series.generate_series);
++}
++@sqlstate 42P01
++expect error {
++}
++
++test generate-series-argument-cannot-name-a-column-the-function-does-not-have {
++    SELECT * FROM generate_series(1, generate_series.value);
++}
++@sqlstate 42P01
++expect error {
++}
++
++test unnest-argument-cannot-name-the-function-itself {
++    SELECT * FROM unnest(unnest.unnest);
++}
++@sqlstate 42P01
++expect error {
++}
++
++test generate-series-argument-cannot-name-a-table-listed-after-it {
++    CREATE TABLE series_later (n int);
++    SELECT * FROM generate_series(1, series_later.n), series_later;
++}
++@sqlstate 42P01
++expect error {
++}
++
++test generate-series-argument-cannot-name-a-column-of-a-table-listed-after-it {
++    CREATE TABLE series_later_column (n int);
++    SELECT * FROM generate_series(1, n), series_later_column;
++}
++@sqlstate 42703
++expect error {
++    n
++}
++
++test unnest-argument-cannot-name-a-table-listed-after-it {
++    CREATE TABLE unnest_later (a int[]);
++    SELECT * FROM unnest(unnest_later.a), unnest_later;
++}
++@sqlstate 42P01
++expect error {
++}
++
++test generate-series-argument-named-like-a-column-of-the-function {
++    CREATE TABLE series_args (start int, stop int, step int, value text);
++    INSERT INTO series_args VALUES (1, 7, 3, 'a');
++    SELECT series_args.value, generate_series.generate_series FROM series_args, generate_series(start, stop, step);
++}
++expect {
++    a|1
++    a|4
++    a|7
++}
++
+ test json-to-record-argument-named-like-json-each-column {
+     CREATE TABLE json_each_names (value text, key text, type text);
+     INSERT INTO json_each_names VALUES ('[{"v":"a"},{"v":"b"}]', '{"v":"k"}', '[{"v":"t"}]');
 ```
 
-**File**: `core/schema.rs` (modified, +0/-261)
+**File**: `postgres/parser/translator.rs` (modified, +112/-115)
 ```diff
-@@ -9156,16 +9156,6 @@ mod tests {
-         Arc::new(BTreeTable::from_sql(sql, root_page).unwrap())
-     }
- 
--    #[test]
--    fn a_new_schema_has_only_the_root_namespace_with_the_schema_table() {
--        let schema = Schema::new();
--        let ids: std::vec::Vec<NamespaceId> = schema.namespace_ids().collect();
--        assert_eq!(ids, vec![NamespaceId::ROOT]);
--        assert!(schema
--            .get_table(NamespaceId::ROOT, SCHEMA_TABLE_NAME)
--            .is_some());
--    }
--
-     #[test]
-     fn builtin_types_read_as_the_kind_their_decode_gives() {
-         use crate::{
-@@ -9601,81 +9591,6 @@ mod tests {
+@@ -2914,36 +2914,9 @@ impl PostgreSQLTranslator {
+             });
          }
-     }
  
--    #[test]
--    fn test_column_definition_matches_create_table() -> Result<()> {
--        for sql in [
--            "CREATE TABLE t(a)",
--            "CREATE TABLE t(a INTEGER PRIMARY KEY)",
--            "CREATE TABLE t(a INT PRIMARY KEY)",
--            "CREATE TABLE t(a InTeGeR PRIMARY KEY ASC)",
--            "CREATE TABLE t(a INTEGER PRIMARY KEY DESC)",
--            "CREATE TABLE t(a BIGINT PRIMARY KEY)",
--            "CREATE TABLE t(a TEXT PRIMARY KEY)",
--            "CREATE TABLE t(a INTEGER PRIMARY KEY NOT NULL UNIQUE)",
--            "CREATE TABLE t(a TEXT UNIQUE NOT NULL ON CONFLICT IGNORE DEFAULT hello COLLATE NOCASE)",
--            "CREATE TABLE t(a TEXT NOT NULL NULL)",
--            "CREATE TABLE t(a TEXT NULL NOT NULL ON CONFLICT REPLACE DEFAULT 'x')",
--            "CREATE TABLE t(a NUMERIC(10, 2) DEFAULT (1 + 2))",
--            "CREATE TABLE t(a VARCHAR(40) COLLATE RTRIM)",
--            "CREATE TABLE t(a ANY)",
--            "CREATE TABLE t(a aNy) STRICT",
--            "CREATE TABLE t(a INTEGER[]) STRICT",
--            "CREATE TABLE t(a INTEGER[][]) STRICT",
--            "CREATE TABLE t(a TEXT, b ANY AS (a))",
--            "CREATE TABLE t(a TEXT, b aNy AS (a)) STRICT",
--        ] {
--            let Some(Cmd::Stmt(Stmt::CreateTable { body, .. })) =
--                crate::dialect::engine::parse_statement(sql)?
--            else {
--                panic!("expected CREATE TABLE: {sql}");
--            };
--            let table = create_table("t", &body, 0, false)?;
--            let CreateTableBody::ColumnsAndConstraints { columns, .. } = body else {
--                panic!("expected column definitions: {sql}");
--            };
--            let flags = FromDefinitionFlags::empty()
--                .with(FromDefinitionFlags::InStrictTable, table.is_strict);
--            assert_eq!(columns.len(), table.columns().len(), "{sql}");
--            for (definition, expected) in columns.iter().zip(table.columns()) {
--                let actual = Column::from_definition(definition, flags)?;
--                assert_eq!(actual.name, expected.name, "{sql}");
--                assert_eq!(actual.ty_str, expected.ty_str, "{sql}");
--                assert_eq!(actual.ty_params, expected.ty_params, "{sql}");
--                assert_eq!(actual.default, expected.default, "{sql}");
--                assert_eq!(actual.ty(), expected.ty(), "{sql}");
--                assert_eq!(actual.affinity(), expected.affinity(), "{sql}");
--                assert_eq!(actual.text_collation(), expected.text_collation(), "{sql}");
--                assert_eq!(actual.primary_key(), expected.primary_key(), "{sql}");
--                assert_eq!(actual.is_rowid_alias(), expected.is_rowid_alias(), "{sql}");
--                assert_eq!(actual.notnull(), expected.notnull(), "{sql}");
--                assert_eq!(actual.explicit_notnull(), expected.explicit_notnull(), "{sql}");
--                assert_eq!(actual.unique(), expected.unique(), "{sql}");
--                assert_eq!(actual.hidden(), expected.hidden(), "{sql}");
--                assert_eq!(
--                    actual.notnull_conflict_clause,
--                    expected.notnull_conflict_clause,
--                    "{sql}"
--                );
--                assert_eq!(actual.array_dimensions(), expected.array_dimensions(), "{sql}");
--                match (actual.generated_type(), expected.generated_type()) {
--                    (
--                        GeneratedType::Virtual {
--                            original_sql: actual,
--                            ..
--                        },
--                        GeneratedType::Virtual {
--                            original_sql: expected,
--                            ..
--                        },
--                    ) => assert_eq!(actual, expected, "{sql}"),
--                    (GeneratedType::NotGenerated, GeneratedType::NotGenerated) => {}
--                    _ => panic!("generated column types differ: {sql}"),
--                }
+-        let name = exact_name(func_name);
+-        let qualified_name = if function_uses_main_schema(func_name) {
+-            ast::QualifiedName::fullname(exact_name("main"), name)
+-        } else {
+-            ast::QualifiedName::single(name)
+-        };
+-        if func_name == "unnest" {
+-            if args.len() != 1 {
+-                return Err(ParseError::ParseError(
+-                    "unnest currently requires exactly one array".into(),
+-                ));
 -            }
--        }
--        Ok(())
--    }
--
-     #[test]
-     pub fn test_has_rowid_true() -> Result<()> {
-         let sql = r#"CREATE TABLE t1 (a INTEGER PRIMARY KEY, b TEXT);"#;
-@@ -10511,133 +10426,6 @@ mod tests {
-         Ok(())
-     }
- 
--    #[test]
--    fn test_schema_loading_accepts_generated_columns() {
--        let mut schema = Schema::new();
--
--        schema
-```
-
-**File**: `core/translate/mod.rs` (modified, +0/-210)
-```diff
-@@ -711,7 +711,6 @@ mod tests {
-     use crate::namespace::NamespaceId;
-     use crate::schema::{BTreeTable, Table, SQLITE_SEQUENCE_TABLE_NAME};
-     use crate::security::roles::SessionRole;
--    use crate::vdbe::insn::{ClearBtreeCount, Insn};
-     use crate::ConnectOpts;
-     use crate::Database;
-     use crate::EngineDialect;
-@@ -797,184 +796,6 @@ mod tests {
-         );
-     }
- 
--    #[test]
--    fn nth_value_reads_from_saved_rows_without_an_accumulator() {
--        let io = Arc::new(MemoryIO::new());
--        let db = Database::open_file(io, ":memory:", Arc::new(EngineDialect)).unwrap();
--        let conn = db
--            .connect(ConnectOpts::new(SessionRole::Superuser))
--            .unwrap();
--        conn.execute("CREATE TABLE items(value)").unwrap();
--
--        let statement = conn
--            .prepare("SELECT nth_value(value, 2) OVER (ORDER BY value) FROM items")
--            .unwrap();
--        let instructions = &statement.get_program().insns;
--
--        let missing_row_target = instructions
--            .iter()
--            .find_map(|(instruction, _)| match instruction {
--                Insn::SeekRowid { target_pc, .. } => Some(target_pc.as_offset_int() as usize),
--                _ => None,
--            })
--            .expect("nth_value must read its answer from the saved window rows");
--        assert!(
--            matches!(
--                &instructions[missing_row_target].0,
--                Insn::Halt { on_error: None, .. }
--            ),
--            "a missing saved row must stop execution instead of returning NULL"
--        );
--        assert!(
--            instructions.iter().all(|(instruction, _)| !matches!(
--                instruction,
--                Insn::AggStep { .. } | Insn::AggValue { .. }
--            )),
--            "nth_value must not keep another copy of saved values in an accumulator"
--        );
--    }
--
--    #[test]
--    fn delete_without_where_clears_table_and_index_btrees() {
--        let io = Arc::new(MemoryIO::new());
--        let db = Database::open_file(io, ":memory:", Arc::new(EngineDialect)).unwrap();
--        let conn = db
--            .connect(ConnectOpts::new(SessionRole::Superuser))
--            .unwrap();
--        conn.execute("CREATE TABLE items(id INTEGER PRIMARY KEY, name TEXT, score INTEGER)")
--            .unwrap();
--        conn.execute("CREATE UNIQUE INDEX items_name ON items(name)")
--            .unwrap();
--        conn.execute("CREATE INDEX items_score ON items(score) WHERE score > 0")
--            .unwrap();
--        conn.execute("INSERT INTO items VALUES(1, 'one', -1), (2, 'two', 0), (3, 'three', 1)")
--            .unwrap();
--
--        let mut statement = conn.prepare("DELETE FROM items").unwrap();
--        let instructions = &statement.get_program().insns;
--        let clears = instructions
--            .iter()
--            .filter_map(|(instruction, _)| match instruction {
--                Insn::ClearBtree { count, .. } => Some(*count),
--                _ => None,
--            })
--            .collect::<Vec<_>>();
--
--        assert_eq!(
--            clears,
--            vec![
--                ClearBtreeCount::RowsWritten,
--                ClearBtreeCount::RowsWritten,
--                ClearBtreeCount::ChangesAndRowsWritten,
--            ],
--            "both indexes and then the table must be cleared, and only the table counts changes"
--        );
--        assert!(
--            instructions
--                .iter()
--                .all(|(instruction, _)| !matches!(instruction, Insn::Delete { .. })),
--            "a whole-table delete must not emit the row-at-a-time Delete opcode"
--        );
--
--        statement.run_ignore_rows().unwrap();
--        assert_eq!(statement.n_change(), 3);
--        assert_eq!(
--            statement.metrics().rows_written,
--            7,
--            "metrics must count table, full-index, and partial-index entries"
--        );
--
--        statement.reset().unwrap();
--        statement.reset_metrics();
--        statement.run_ignore_rows().unwrap();
--        assert_eq!(statement.n_change(), 0);
--        assert_eq!(statement.metrics().rows_written, 0);
--
--        statement.reset().unwrap();
--        statement.reset_metrics();
--        conn.execute("INSERT INTO items VALUES(4, 'four', -1), (5, 'five', 1)")
--            .unwrap();
--        statement.run_ignore_rows().unwrap();
--        assert_eq!(statement.n_change(), 2);
--        assert_eq!(
--            statement.metrics().rows_written,
--            5,
--            "reused statements must recount table and index entries"
--        );
--
--        statement.reset().unwrap();
--        statement.reset_metrics();
--        conn.execute(
--            "WITH RECURSIVE c(x) AS (VALUES(1) UNION ALL SELECT x + 1 FROM c WHERE x < 3000) \
--             INSERT INTO items SELECT x, printf('name-%0200d', x), x % 2 FROM c",
--        )
--        .unwrap();
--        statement.run_ignore_rows().unwrap();
--        assert_eq!(statement.n_change(), 3000);
--        assert_eq!(
--       
-```
-
-**File**: `core/translate/roles.rs` (modified, +0/-39)
-```diff
-@@ -599,42 +599,3 @@ pub fn translate_create_role(
-     };
-     translate_change(change, resolver, program, connection)
- }
--
--#[cfg(test)]
--mod tests {
--    use crate::security::roles::SessionRole;
--    use std::sync::Arc;
--
--    use turso_parser::ast;
--
--    use crate::{Connection, Database, EngineDialect, MemoryIO};
--
--    #[test]
--    fn create_role_fails_under_a_dialect_without_roles() {
--        let db = Database::open_file(
--            Arc::new(MemoryIO::new()),
--            ":memory:",
--            Arc::new(EngineDialect),
--        )
--        .unwrap();
--        let conn = db
--            .connect(crate::ConnectOpts::new(SessionRole::Superuser))
--            .unwrap();
--
--        let error = create_role(&conn, "alice").unwrap_err();
--
--        assert!(
--            error.to_string().contains("CREATE ROLE is not supported"),
--            "{error}"
--        );
--    }
--
--    fn create_role(conn: &Arc<Connection>, name: &str) -> crate::Result<()> {
--        let create_role = ast::Cmd::Stmt(ast::Stmt::CreateRole {
--            role_name: name.to_string(),
--            options: ast::RoleOptions::default(),
--        });
--        conn.prepare_translated_cmd(create_role, &format!("CREATE ROLE {name}"))?
--            .run_ignore_rows()
--    }
--}
-```
-
-**File**: `core/translate/row_security.rs` (modified, +1/-80)
-```diff
-@@ -920,7 +920,6 @@ fn single_value_of_mut(select: &mut ast::Select) -> Option<&mut ast::Expr> {
- 
- #[cfg(test)]
- mod tests {
--    use crate::security::roles::SessionRole;
-     use std::sync::Arc;
- 
-     use rustc_hash::FxHashMap;
-@@ -936,7 +935,7 @@ mod tests {
-     use crate::security::policy::RowPolicy;
-     use crate::security::roles::RoleId;
-     use crate::translate::emitter::{DoubleQuotedDml, Resolver};
--    use crate::{Database, DatabaseCatalog, MemoryIO, Qualifiers, RwLock, SymbolTable};
-+    use crate::{DatabaseCatalog, Qualifiers, RwLock, SymbolTable};
- 
-     /// The engine dialect, except that every table of a schema with dialect
-     /// schema state has row-level security, and table `documents` has a
-@@ -1177,82 +1176,4 @@ mod tests {
-         );
-         f(&mut resolver)
-     }
--
--    /// A materialized view stores the rows of its query when it is refreshed,
--    /// so policies on it could not limit them.
--    #[test]
--    fn row_security_statements_reject_a_materialized_view() {
--        let db = Database::open_file_with_flags(
--            Arc::new(MemoryIO::new()),
--            "row-security-materialized-view.db",
--            crate::OpenFlags::default(),
--            crate::DatabaseOpts::new().with_views(true),
--            None,
--            Arc::new(EngineDialect),
--        )
--        .unwrap();
--        let conn = db
--            .connect(crate::ConnectOpts::new(SessionRole::Superuser))
--            .unwrap();
--        conn.execute("CREATE TABLE t (x)").unwrap();
--        conn.execute("CREATE MATERIALIZED VIEW mv AS SELECT x FROM t")
--            .unwrap();
--        let mv = || ast::QualifiedName::single(ast::Name::exact("mv".to_string()));
--        let statements = [
--            ast::Stmt::AlterTable(ast::AlterTable {
--                name: mv(),
--                body: ast::AlterTableBody::EnableRowSecurity,
--            }),
--            ast::Stmt::CreatePolicy(Box::new(ast::CreatePolicy {
--                policy_name: ast::Name::exact("p".to_string()),
--                tbl_name: mv(),
--                permissive: true,
--                command: ast::PolicyCommand::All,
--                roles: vec![ast::Grantee::Public],
--                using_expr: None,
--                check_expr: None,
--            })),
--        ];
--
--        for statement in statements {
--            let sql = statement.to_string();
--            let error = conn
--                .prepare_translated_cmd(ast::Cmd::Stmt(statement), &sql)
--                .unwrap_err();
--
--            assert!(
--                error.to_string().contains("\"mv\" is not a table"),
--                "{error}"
--            );
--        }
--    }
--
--    #[test]
--    fn enabling_row_security_fails_under_a_dialect_without_it() {
--        let db = Database::open_file(
--            Arc::new(MemoryIO::new()),
--            ":memory:",
--            Arc::new(EngineDialect),
--        )
--        .unwrap();
--        let conn = db
--            .connect(crate::ConnectOpts::new(SessionRole::Superuser))
--            .unwrap();
--        conn.execute("CREATE TABLE t (x)").unwrap();
--        let enable = ast::Cmd::Stmt(ast::Stmt::AlterTable(ast::AlterTable {
--            name: ast::QualifiedName::single(ast::Name::exact("t".to_string())),
--            body: ast::AlterTableBody::EnableRowSecurity,
--        }));
--
--        let error = conn
--            .prepare_translated_cmd(enable, "ALTER TABLE t ENABLE ROW LEVEL SECURITY")
--            .unwrap_err();
--
--        assert!(
--            error
--                .to_string()
--                .contains("row-level security is not supported"),
--            "{error}"
--        );
--    }
- }
-```
-
-**File**: `tests/integration/connection.rs` (modified, +21/-0)
-```diff
-@@ -1,14 +1,17 @@
- use tempfile::TempDir;
- use turso_core::connection::*;
-+use turso_core::dialect::Dialect;
- use turso_core::io::MemoryIO;
- use turso_core::io::IO;
- use turso_core::security::roles::SessionRole;
-+use turso_core::storage::database::DatabaseFile;
- use turso_core::sync::Arc;
- use turso_core::ConnectOpts;
- use turso_core::Database;
- use turso_core::DatabaseOpts;
- use turso_core::LimboError;
- use turso_core::OpenFlags;
-+use turso_core::OpenOptions;
- use turso_core::Result;
- use turso_core::Value;
- use turso_core::MAIN_DB_ID;
-@@ -388,3 +391,21 @@ fn test_setval_uncalled_emits_stored_value_as_next() -> Result<()> {
-     );
-     Ok(())
- }
-+
-+#[test]
-+fn consume_stmt_reports_parse_error() {
-+    let io: Arc<dyn IO> = Arc::new(MemoryIO::new());
-+    let db = open_db(&io, "consume-stmt-parse-error.db", Arc::new(SqliteDialect)).unwrap();
-+    let conn = db
-+        .connect(ConnectOpts::new(SessionRole::Superuser))
-+        .unwrap();
-+
-+    assert!(conn.consume_stmt("SELECT * FROM").is_err());
-+    conn.close().unwrap();
-+}
-+
-+fn open_db(io: &Arc<dyn IO>, path: &str, dialect: Arc<dyn Dialect>) -> Result<Arc<Database>> {
-+    let file = io.open_file(path, OpenFlags::Create, true)?;
-+    let db_file = Arc::new(DatabaseFile::new(file));
-+    Database::open(io.clone(), path, OpenOptions::new(dialect).storage(db_file))
-+}
-```
-
-**File**: `tests/integration/mod.rs` (modified, +2/-0)
-```diff
-@@ -39,6 +39,8 @@ mod query_processing;
- mod query_timeout;
- mod queued_io;
- mod reindex;
-+mod schema;
-+mod security;
- mod statement;
- mod statement_lifecycle;
- mod statement_metadata;
-```
-
-**File**: `tests/integration/query_processing/test_read_path.rs` (modified, +38/-0)
-```diff
-@@ -4,6 +4,7 @@ use asserting::prelude::*;
- use rusqlite::Connection as SqliteConnection;
- use std::sync::Arc;
- use tempfile::TempDir;
-+use turso_core::vdbe::insn::Insn;
- use turso_core::{ConnectOpts, LimboError, SessionRole, StepResult, Value};
- use turso_core::{Database, DatabaseOpts, MemoryIO, OpenFlags, IO};
- use turso_sqlite::SqliteDialect;
-@@ -1556,3 +1557,40 @@ fn test_negate_blob_subscript_invalid_utf8_no_panic() {
-         "Negating a blob subscript with invalid UTF-8 text should not panic"
-     );
- }
-+
-+#[test]
-+fn nth_value_reads_from_saved_rows_without_an_accumulator() {
-+    let io = Arc::new(MemoryIO::new());
-+    let db = Database::open_file(io, ":memory:", Arc::new(SqliteDialect)).unwrap();
-+    let conn = db
-+        .connect(ConnectOpts::new(SessionRole::Superuser))
-+        .unwrap();
-+    conn.execute("CREATE TABLE items(value)").unwrap();
-+
-+    let statement = conn
-+        .prepare("SELECT nth_value(value, 2) OVER (ORDER BY value) FROM items")
-+        .unwrap();
-+    let instructions = &statement.get_program().insns;
-+
-+    let missing_row_target = instructions
-+        .iter()
-+        .find_map(|(instruction, _)| match instruction {
-+            Insn::SeekRowid { target_pc, .. } => Some(target_pc.as_offset_int() as usize),
-+            _ => None,
-+        })
-+        .expect("nth_value must read its answer from the saved window rows");
-+    assert!(
-+        matches!(
-+            &instructions[missing_row_target].0,
-+            Insn::Halt { on_error: None, .. }
-+        ),
-+        "a missing saved row must stop execution instead of returning NULL"
-+    );
-+    assert!(
-+        instructions.iter().all(|(instruction, _)| !matches!(
-+            instruction,
-+            Insn::AggStep { .. } | Insn::AggValue { .. }
-+        )),
-+        "nth_value must not keep another copy of saved values in an accumulator"
-+    );
-+}
-```
-
----
-
-### Incident Patch 3: `b0b56a5a` (2026-11-15)
-**Commit Message**: tests: move the schema, translation and security tests that need only the public API out of core
-
-Core will stop parsing SQL by itself, so a test that passes SQL text to
-core cannot stay in core. Move the 16 tests of schema loading, statement
-translation, roles and row-level security that compile against core as
-it is.
-
-Core itself does not change. No item becomes public and no cfg is
-widened. About 215 more tests in schema.rs, util.rs, dialect/mod.rs,
-translate/, stats.rs, pragma.rs, vtab.rs and incremental/cursor.rs
-parse SQL and also use private parts of core: the translate module, the
-optimizer types, Resolver, the table_from_sql test helper,
-MaterializedViewCursor and AnalyzeStats. They stay where they are for
-now.
-
-The tests go to the files for what they test: the schema tests to a new
-schema.rs, the role and row-level security tests to a new security.rs,
-and the rest to connection.rs, trigger.rs,
-query_processing/test_read_path.rs and
-query_processing/test_write_path.rs.
-
-The tests keep their names and assertions; only paths change. Helpers
-that only the moved tests used are deleted from core.
-
-Tests: cargo test -p turso_core --lib,
-cargo test -p core_tester --test integrati
-
-**File**: `core/dialect/mod.rs` (modified, +0/-12)
-```diff
-@@ -897,18 +897,6 @@ mod tests {
-         conn.close().unwrap();
-     }
- 
--    #[test]
--    fn consume_stmt_reports_parse_error() {
--        let io: Arc<dyn IO> = Arc::new(MemoryIO::new());
--        let db = open_db(&io, "consume-stmt-parse-error.db", Arc::new(EngineDialect)).unwrap();
--        let conn = db
--            .connect(ConnectOpts::new(SessionRole::Superuser))
--            .unwrap();
--
--        assert!(conn.consume_stmt("SELECT * FROM").is_err());
--        conn.close().unwrap();
--    }
--
-     #[test]
-     fn dialect_catalog_available_on_every_schema_and_rebuild() {
-         let io: Arc<dyn IO> = Arc::new(MemoryIO::new());
-```
-
-**File**: `core/schema.rs` (modified, +0/-261)
-```diff
-@@ -9156,16 +9156,6 @@ mod tests {
-         Arc::new(BTreeTable::from_sql(sql, root_page).unwrap())
-     }
- 
--    #[test]
--    fn a_new_schema_has_only_the_root_namespace_with_the_schema_table() {
--        let schema = Schema::new();
--        let ids: std::vec::Vec<NamespaceId> = schema.namespace_ids().collect();
--        assert_eq!(ids, vec![NamespaceId::ROOT]);
--        assert!(schema
--            .get_table(NamespaceId::ROOT, SCHEMA_TABLE_NAME)
--            .is_some());
--    }
--
-     #[test]
-     fn builtin_types_read_as_the_kind_their_decode_gives() {
-         use crate::{
-@@ -9601,81 +9591,6 @@ mod tests {
+-            let element_name = range_func
+-                .alias
+-                .as_ref()
+-                .map_or(func_name, |range_alias| range_alias.aliasname.as_str());
+-            let names = range_function_column_names(range_func, vec![element_name.to_string()])?;
+-            let column = |name: &str| ast::Expr::Id(exact_name(name));
+-            return Ok(ast::SelectTable::Select {
+-                select: function_select(
+-                    qualified_name,
+-                    args,
+-                    [column("unnest"), bigint(column("ordinality"))]
+-                        .into_iter()
+-                        .zip(names)
+-                        .collect(),
+-                ),
+-                alias,
+-                lateral: true,
+-            });
++        let qualified_name = function_qualified_name(func_name);
++        if let Some(function) = rewritten_function(func_name) {
++            return translate_rewritten_function(function, range_func, qualified_name, args, alias);
          }
-     }
- 
--    #[test]
--    fn test_column_definition_matches_create_table() -> Result<()> {
--        for sql in [
--            "CREATE TABLE t(a)",
--            "CREATE TABLE t(a INTEGER PRIMARY KEY)",
--            "CREATE TABLE t(a INT PRIMARY KEY)",
--            "CREATE TABLE t(a InTeGeR PRIMARY KEY ASC)",
--            "CREATE TABLE t(a INTEGER PRIMARY KEY DESC)",
--            "CREATE TABLE t(a BIGINT PRIMARY KEY)",
--            "CREATE TABLE t(a TEXT PRIMARY KEY)",
--            "CREATE TABLE t(a INTEGER PRIMARY KEY NOT NULL UNIQUE)",
--            "CREATE TABLE t(a TEXT UNIQUE NOT NULL ON CONFLICT IGNORE DEFAULT hello COLLATE NOCASE)",
--            "CREATE TABLE t(a TEXT NOT NULL NULL)",
--            "CREATE TABLE t(a TEXT NULL NOT NULL ON CONFLICT REPLACE DEFAULT 'x')",
--            "CREATE TABLE t(a NUMERIC(10, 2) DEFAULT (1 + 2))",
--            "CREATE TABLE t(a VARCHAR(40) COLLATE RTRIM)",
--            "CREATE TABLE t(a ANY)",
--            "CREATE TABLE t(a aNy) STRICT",
--            "CREATE TABLE t(a INTEGER[]) STRICT",
--            "CREATE TABLE t(a INTEGER[][]) STRICT",
--            "CREATE TABLE t(a TEXT, b ANY AS (a))",
--            "CREATE TABLE t(a TEXT, b aNy AS (a)) STRICT",
--        ] {
--            let Some(Cmd::Stmt(Stmt::CreateTable { body, .. })) =
--                crate::dialect::engine::parse_statement(sql)?
--            else {
--                panic!("expected CREATE TABLE: {sql}");
--            };
--            let table = create_table("t", &body, 0, false)?;
--            let CreateTableBody::ColumnsAndConstraints { columns, .. } = body else {
--                panic!("expected column definitions: {sql}");
--            };
--            let flags = FromDefinitionFlags::empty()
--                .with(FromDefinitionFlags::InStrictTable, table.is_strict);
--            assert_eq!(columns.len(), table.columns().len(), "{sql}");
--            for (definition, expected) in columns.iter().zip(table.columns()) {
--                let actual = Column::from_definition(definition, flags)?;
--                assert_eq!(actual.name, expected.name, "{sql}");
--                assert_eq!(actual.ty_str, expected.ty_str, "{sql}");
--                assert_eq!(actual.ty_params, expected.ty_params, "{sql}");
--                assert_eq!(actual.default, expected.default, "{sql}");
--                assert_eq!(actual.ty(), expected.ty(), "{sql}");
--                assert_eq!(actual.affinity(), expected.affinity(), "{sql}");
--                assert_eq!(actual.text_collation(), expected.text_collation(), "{sql}");
--                assert_eq!(actual.primary_key(), expected.primary_key(), "{sql}");
--                assert_eq!(actual.is_rowid_alias(), expected.is_rowid_alias(), "{sql}");
--                assert_eq!(actual.notnull(), expected.notnull(), "{sql}");
--                assert_eq!(actual.explicit_notnull(), expected.explicit_notnull(), "{sql}");
--                assert_eq!(actual.unique(), expected.unique(), "{sql}");
--                assert_eq!(actual.hidden(), expected.hidden(), "{sql}");
--                assert_eq!(
--                    actual.notnull_conflict_clause,
--                    expected.notnull_conflict_clause,
--                    "{sql}"
--                );
--                assert_eq!(actual.array_dimensions(), expected.array_dimensions(), "{sql}");
--                match (actual.generated_type(), expected.generated_type()) {
--                    (
--                        GeneratedType::Virtual {
--                            original_sql: actual,
--                            ..
--                        },
--                        GeneratedType::Virtual {
--                            original_sql: expected,
--                            ..
--                        },
--                    ) => assert_eq!(actual, expected, "{sql}"),
--                    (GeneratedType::NotGenerated, GeneratedType::NotGenerated) => {}
--                    _ => panic!("generated column types differ: {sql}"),
--                }
--            }
+         if returns_record {
+             return self.translate_json_to_record(
+@@ -2954,42 +2927,13 @@ impl PostgreSQLTranslator {
+                 alias,
+             );
+         }
+-        if func_name == "generate_series" {
+-            let value_name = range_func
+-                .alias
+-                .as_ref()
+-                .map_or(func_name, |range_alias| range_alias.aliasname.as_str());
+-            let names = range_function_column_names(range_func, vec![value_name.to_string()])?;
+-            let column = |name: &str| ast::Expr::Id(exact_name(name));
+-            let ordinality = bigint(function_call(
+-                "pg_generate_series_ordinality",
+-                vec![column("value"), column("start"), column("step")],
+-            ));
+-            let alias = alias.unwrap_or_else(|| ast::As::Elided(exact_name(func_name)));
+-            return Ok(ast::SelectTable::Select {
+-                select: function_select(
+-                    qualified_name,
+-                    args,
+-                    [column("value"), ordinality]
+-                        .into_iter()
+-                        .zip(names)
+-                        .collect(),
+-                ),
+-                alias: Some(alias),
+-                lateral: true,
+-            });
 -        }
--        Ok(())
--    }
--
-     #[test]
-     pub fn test_has_rowid_true() -> Result<()> {
-         let sql = r#"CREATE TABLE t1 (a INTEGER PRIMARY KEY, b TEXT);"#;
-@@ -10511,133 +10426,6 @@ mod tests {
-         Ok(())
-     }
+         if range_func.ordinality {
+             return Err(ParseError::not_supported(format!(
+                 "WITH ORDINALITY on {func_name}()"
+             )));
+         }
+         reject_column_aliases(&range_func.alias, "a function")?;
  
--    #[test]
--    fn test_schema_loading_accepts_generated_columns() {
--        let mut schema = Schema::new();
--
--        schema
-```
-
-**File**: `core/translate/mod.rs` (modified, +0/-210)
-```diff
-@@ -711,7 +711,6 @@ mod tests {
-     use crate::namespace::NamespaceId;
-     use crate::schema::{BTreeTable, Table, SQLITE_SEQUENCE_TABLE_NAME};
-     use crate::security::roles::SessionRole;
--    use crate::vdbe::insn::{ClearBtreeCount, Insn};
-     use crate::ConnectOpts;
-     use crate::Database;
-     use crate::EngineDialect;
-@@ -797,184 +796,6 @@ mod tests {
-         );
-     }
- 
--    #[test]
--    fn nth_value_reads_from_saved_rows_without_an_accumulator() {
--        let io = Arc::new(MemoryIO::new());
--        let db = Database::open_file(io, ":memory:", Arc::new(EngineDialect)).unwrap();
--        let conn = db
--            .connect(ConnectOpts::new(SessionRole::Superuser))
--            .unwrap();
--        conn.execute("CREATE TABLE items(value)").unwrap();
--
--        let statement = conn
--            .prepare("SELECT nth_value(value, 2) OVER (ORDER BY value) FROM items")
--            .unwrap();
--        let instructions = &statement.get_program().insns;
--
--        let missing_row_target = instructions
--            .iter()
--            .find_map(|(instruction, _)| match instruction {
--                Insn::SeekRowid { target_pc, .. } => Some(target_pc.as_offset_int() as usize),
--                _ => None,
--            })
--            .expect("nth_value must read its answer from the saved window rows");
--        assert!(
--            matches!(
--                &instructions[missing_row_target].0,
--                Insn::Halt { on_error: None, .. }
--            ),
--            "a missing saved row must stop execution instead of returning NULL"
--        );
--        assert!(
--            instructions.iter().all(|(instruction, _)| !matches!(
--                instruction,
--                Insn::AggStep { .. } | Insn::AggValue { .. }
--            )),
--            "nth_value must not keep another copy of saved values in an accumulator"
--        );
--    }
--
--    #[test]
--    fn delete_without_where_clears_table_and_index_btrees() {
--        let io = Arc::new(MemoryIO::new());
--        let db = Database::open_file(io, ":memory:", Arc::new(EngineDialect)).unwrap();
--        let conn = db
--            .connect(ConnectOpts::new(SessionRole::Superuser))
--            .unwrap();
--        conn.execute("CREATE TABLE items(id INTEGER PRIMARY KEY, name TEXT, score INTEGER)")
--            .unwrap();
--        conn.execute("CREATE UNIQUE INDEX items_name ON items(name)")
--            .unwrap();
--        conn.execute("CREATE INDEX items_score ON items(score) WHERE score > 0")
--            .unwrap();
--        conn.execute("INSERT INTO items VALUES(1, 'one', -1), (2, 'two', 0), (3, 'three', 1)")
--            .unwrap();
--
--        let mut statement = conn.prepare("DELETE FROM items").unwrap();
--        let instructions = &statement.get_program().insns;
--        let clears = instructions
--            .iter()
--            .filter_map(|(instruction, _)| match instruction {
--                Insn::ClearBtree { count, .. } => Some(*count),
--                _ => None,
--            })
--            .collect::<Vec<_>>();
--
--        assert_eq!(
--            clears,
--            vec![
--                ClearBtreeCount::RowsWritten,
--                ClearBtreeCount::RowsWritten,
--                ClearBtreeCount::ChangesAndRowsWritten,
--            ],
--            "both indexes and then the table must be cleared, and only the table counts changes"
--        );
--        assert!(
--            instructions
--                .iter()
--                .all(|(instruction, _)| !matches!(instruction, Insn::Delete { .. })),
--            "a whole-table delete must not emit the row-at-a-time Delete opcode"
--        );
--
--        statement.run_ignore_rows().unwrap();
--        assert_eq!(statement.n_change(), 3);
--        assert_eq!(
--            statement.metrics().rows_written,
--            7,
--            "metrics must count table, full-index, and partial-index entries"
--        );
--
--        statement.reset().unwrap();
--        statement.reset_metrics();
--        statement.run_ignore_rows().unwrap();
--        assert_eq!(statement.n_change(), 0);
--        assert_eq!(statement.metrics().rows_written, 0);
--
--        statement.reset().unwrap();
--        statement.reset_metrics();
--        conn.execute("INSERT INTO items VALUES(4, 'four', -1), (5, 'five', 1)")
--            .unwrap();
--        statement.run_ignore_rows().unwrap();
--        assert_eq!(statement.n_change(), 2);
--        assert_eq!(
--            statement.metrics().rows_written,
--            5,
--            "reused statements must recount table and index entries"
--        );
--
--        statement.reset().unwrap();
--        statement.reset_metrics();
--        conn.execute(
--            "WITH RECURSIVE c(x) AS (VALUES(1) UNION ALL SELECT x + 1 FROM c WHERE x < 3000) \
--             INSERT INTO items SELECT x, printf('name-%0200d', x), x % 2 FROM c",
--        )
--        .unwrap();
--        statement.run_ignore_rows().unwrap();
--        assert_eq!(statement.n_change(), 3000);
--        assert_eq!(
--       
-```
-
-**File**: `core/translate/roles.rs` (modified, +0/-39)
-```diff
-@@ -599,42 +599,3 @@ pub fn translate_create_role(
-     };
-     translate_change(change, resolver, program, connection)
- }
--
--#[cfg(test)]
--mod tests {
--    use crate::security::roles::SessionRole;
--    use std::sync::Arc;
--
--    use turso_parser::ast;
--
--    use crate::{Connection, Database, EngineDialect, MemoryIO};
--
--    #[test]
--    fn create_role_fails_under_a_dialect_without_roles() {
--        let db = Database::open_file(
--            Arc::new(MemoryIO::new()),
--            ":memory:",
--            Arc::new(EngineDialect),
--        )
--        .unwrap();
--        let conn = db
--            .connect(crate::ConnectOpts::new(SessionRole::Superuser))
--            .unwrap();
--
--        let error = create_role(&conn, "alice").unwrap_err();
--
--        assert!(
--            error.to_string().contains("CREATE ROLE is not supported"),
--            "{error}"
--        );
--    }
--
--    fn create_role(conn: &Arc<Connection>, name: &str) -> crate::Result<()> {
--        let create_role = ast::Cmd::Stmt(ast::Stmt::CreateRole {
--            role_name: name.to_string(),
--            options: ast::RoleOptions::default(),
--        });
--        conn.prepare_translated_cmd(create_role, &format!("CREATE ROLE {name}"))?
--            .run_ignore_rows()
--    }
--}
-```
-
-**File**: `core/translate/row_security.rs` (modified, +1/-80)
-```diff
-@@ -920,7 +920,6 @@ fn single_value_of_mut(select: &mut ast::Select) -> Option<&mut ast::Expr> {
- 
- #[cfg(test)]
- mod tests {
--    use crate::security::roles::SessionRole;
-     use std::sync::Arc;
- 
-     use rustc_hash::FxHashMap;
-@@ -936,7 +935,7 @@ mod tests {
-     use crate::security::policy::RowPolicy;
-     use crate::security::roles::RoleId;
-     use crate::translate::emitter::{DoubleQuotedDml, Resolver};
--    use crate::{Database, DatabaseCatalog, MemoryIO, Qualifiers, RwLock, SymbolTable};
-+    use crate::{DatabaseCatalog, Qualifiers, RwLock, SymbolTable};
- 
-     /// The engine dialect, except that every table of a schema with dialect
-     /// schema state has row-level security, and table `documents` has a
-@@ -1177,82 +1176,4 @@ mod tests {
-         );
-         f(&mut resolver)
-     }
--
--    /// A materialized view stores the rows of its query when it is refreshed,
--    /// so policies on it could not limit them.
--    #[test]
--    fn row_security_statements_reject_a_materialized_view() {
--        let db = Database::open_file_with_flags(
--            Arc::new(MemoryIO::new()),
--            "row-security-materialized-view.db",
--            crate::OpenFlags::default(),
--            crate::DatabaseOpts::new().with_views(true),
--            None,
--            Arc::new(EngineDialect),
--        )
--        .unwrap();
--        let conn = db
--            .connect(crate::ConnectOpts::new(SessionRole::Superuser))
--            .unwrap();
--        conn.execute("CREATE TABLE t (x)").unwrap();
--        conn.execute("CREATE MATERIALIZED VIEW mv AS SELECT x FROM t")
--            .unwrap();
--        let mv = || ast::QualifiedName::single(ast::Name::exact("mv".to_string()));
--        let statements = [
--            ast::Stmt::AlterTable(ast::AlterTable {
--                name: mv(),
--                body: ast::AlterTableBody::EnableRowSecurity,
--            }),
--            ast::Stmt::CreatePolicy(Box::new(ast::CreatePolicy {
--                policy_name: ast::Name::exact("p".to_string()),
--                tbl_name: mv(),
--                permissive: true,
--                command: ast::PolicyCommand::All,
--                roles: vec![ast::Grantee::Public],
--                using_expr: None,
--                check_expr: None,
--            })),
--        ];
--
--        for statement in statements {
--            let sql = statement.to_string();
--            let error = conn
--                .prepare_translated_cmd(ast::Cmd::Stmt(statement), &sql)
--                .unwrap_err();
--
--            assert!(
--                error.to_string().contains("\"mv\" is not a table"),
--                "{error}"
--            );
+-        fn function_uses_main_schema(name: &str) -> bool {
+-            is_catalog_table_name(name) || name == "generate_series"
 -        }
--    }
 -
--    #[test]
--    fn enabling_row_security_fails_under_a_dialect_without_it() {
--        let db = Database::open_file(
--            Arc::new(MemoryIO::new()),
--            ":memory:",
--            Arc::new(EngineDialect),
--        )
--        .unwrap();
--        let conn = db
--            .connect(crate::ConnectOpts::new(SessionRole::Superuser))
--            .unwrap();
--        conn.execute("CREATE TABLE t (x)").unwrap();
--        let enable = ast::Cmd::Stmt(ast::Stmt::AlterTable(ast::AlterTable {
--            name: ast::QualifiedName::single(ast::Name::exact("t".to_string())),
--            body: ast::AlterTableBody::EnableRowSecurity,
--        }));
--
--        let error = conn
--            .prepare_translated_cmd(enable, "ALTER TABLE t ENABLE ROW LEVEL SECURITY")
--            .unwrap_err();
--
--        assert!(
--            error
--                .to_string()
--                .contains("row-level security is not supported"),
--            "{error}"
--        );
--    }
+         Ok(ast::SelectTable::TableCall(qualified_name, args, alias))
+     }
+ 
+@@ -5656,42 +5600,123 @@ impl PostgreSQLTranslator {
+     }
  }
-```
-
-**File**: `tests/integration/connection.rs` (modified, +21/-0)
-```diff
-@@ -1,14 +1,17 @@
- use tempfile::TempDir;
- use turso_core::connection::*;
-+use turso_core::dialect::Dialect;
- use turso_core::io::MemoryIO;
- use turso_core::io::IO;
- use turso_core::security::roles::SessionRole;
-+use turso_core::storage::database::DatabaseFile;
- use turso_core::sync::Arc;
- use turso_core::ConnectOpts;
- use turso_core::Database;
- use turso_core::DatabaseOpts;
- use turso_core::LimboError;
- use turso_core::OpenFlags;
-+use turso_core::OpenOptions;
- use turso_core::Result;
- use turso_core::Value;
- use turso_core::MAIN_DB_ID;
-@@ -388,3 +391,21 @@ fn test_setval_uncalled_emits_stored_value_as_next() -> Result<()> {
-     );
-     Ok(())
- }
-+
-+#[test]
-+fn consume_stmt_reports_parse_error() {
-+    let io: Arc<dyn IO> = Arc::new(MemoryIO::new());
-+    let db = open_db(&io, "consume-stmt-parse-error.db", Arc::new(SqliteDialect)).unwrap();
-+    let conn = db
-+        .connect(ConnectOpts::new(SessionRole::Superuser))
-+        .unwrap();
-+
-+    assert!(conn.consume_stmt("SELECT * FROM").is_err());
-+    conn.close().unwrap();
+ 
++/// A table function that PostgreSQL has in FROM and that is a call of a table function of
++/// the engine here. The call is a SELECT over the engine's table function.
++struct RewrittenFunction {
++    name: &'static str,
++    in_main_schema: bool,
++    check_arg_count: fn(usize) -> Result<(), ParseError>,
++    /// The column of the engine's table function that holds each column of the result,
++    /// and the name PostgreSQL gives that column, for a call with this many arguments.
++    columns: fn(usize) -> Vec<(ast::Expr, String)>,
++    /// The column of the engine's table function that holds WITH ORDINALITY.
++    ordinality: fn(usize) -> ast::Expr,
 +}
 +
-+fn open_db(io: &Arc<dyn IO>, path: &str, dialect: Arc<dyn Dialect>) -> Result<Arc<Database>> {
-+    let file = io.open_file(path, OpenFlags::Create, true)?;
-+    let db_file = Arc::new(DatabaseFile::new(file));
-+    Database::open(io.clone(), path, OpenOptions::new(dialect).storage(db_file))
-+}
-```
-
-**File**: `tests/integration/mod.rs` (modified, +2/-0)
-```diff
-@@ -39,6 +39,8 @@ mod query_processing;
- mod query_timeout;
- mod queued_io;
- mod reindex;
-+mod schema;
-+mod security;
- mod statement;
- mod statement_lifecycle;
- mod statement_metadata;
-```
-
-**File**: `tests/integration/query_processing/test_read_path.rs` (modified, +38/-0)
-```diff
-@@ -4,6 +4,7 @@ use asserting::prelude::*;
- use rusqlite::Connection as SqliteConnection;
- use std::sync::Arc;
- use tempfile::TempDir;
-+use turso_core::vdbe::insn::Insn;
- use turso_core::{ConnectOpts, LimboError, SessionRole, StepResult, Value};
- use turso_core::{Database, DatabaseOpts, MemoryIO, OpenFlags, IO};
- use turso_sqlite::SqliteDialect;
-@@ -1556,3 +1557,40 @@ fn test_negate_blob_subscript_invalid_utf8_no_panic() {
-         "Negating a blob subscript with invalid UTF-8 text should not panic"
-     );
- }
-+
-+#[test]
-+fn nth_value_reads_from_saved_rows_without_an_accumulator() {
-+    let io = Arc::new(MemoryIO::new());
-+    let db = Database::open_file(io, ":memory:", Arc::new(SqliteDialect)).unwrap();
-+    let conn = db
-+        .connect(ConnectOpts::new(SessionRole::Superuser))
-+        .unwrap();
-+    conn.execute("CREATE TABLE items(value)").unwrap();
-+
-+    let statement = conn
-+        .prepare("SELECT nth_value(value, 2) OVER (ORDER BY value) FROM items")
-+        .unwrap();
-+    let instructions = &statement.get_program().insns;
-+
-+    let missing_row_target = instructions
++fn rewritten_function(name: &str) -> Option<&'static RewrittenFunction> {
++    REWRITTEN_FUNCTIONS
 +        .iter()
-+        .find_map(|(instruction, _)| match instruction {
-+            Insn::SeekRowid { target_pc, .. } => Some(target_pc.as_offset_int() as usize),
-+            _ => None,
-+        })
-+        .expect("nth_value must read its answer from the saved window rows");
-+    assert!(
-+        matches!(
-+            &instructions[missing_row_target].0,
-+            Insn::Halt { on_error: None, .. }
-+        ),
-+        "a missing saved row must stop execution instead of returning NULL"
-+    );
-+    assert!(
-+        instructions.iter().all(|(instruction, _)| !matches!(
-+            instruction,
-+            Insn::AggStep { .. } | Insn::AggValue { .. }
-+        )),
-+        "nth_value must not keep another copy of saved values in an accumulator"
-+    );
++        .find(|function| function.name == name)
 +}
++
++const REWRITTEN_FUNCTIONS: [RewrittenFunction; 2] = [
++    RewrittenFunction {
++        name: "unnest",
++        in_main_schema: true,
++        check_arg_count: |count| {
++            if count != 1 {
++                return Err(ParseError::ParseError(
++                    "unnest currently requires exactly one array".into(),
++                ));
++            }
++            Ok(())
++        },
++        columns: |_| vec![(ast::Expr::Id(exact_name("unnest")), "unnest".into())],
++        ordinality: |_| ast::Expr::Id(exact_name("ordinality")),
++    },
++    RewrittenFunction {
++        name: "generate_series",
++        in_main_schema: true,
++        check_arg_count: |count| {
++            if !(2..=3).contains(&count) {
++                return E
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11866** (2026-11-16): tests: move the WAL tests that need only the pager's WAL out of core (@penberg)
-- **PR #11859** (closed): postgres: give an integer primary key its default and reject NULL, with a flag on the INSERT statement (@glommer)
-- **PR #11858** (2026-11-15): core/storage: build the pager directly in the b-tree unit tests (@penberg)
-- **PR #11857** (2026-11-15): tests: move the schema and dialect tests that need only the public API out of core (@penberg)
-- **PR #11854** (2026-11-15): core/vdbe: build opcode unit test programs without parsing SQL (@penberg)
-- **PR #11844** (2026-11-14): core/mvcc: read-only accessors for tests, and move the tests that only read store state (@penberg)
+- **PR #12089** (2026-11-18): core/dialect: replace CatalogChange with typed requests and a dialect-built apply object (@pedrocarlo)
+- **PR #12088** (2026-11-18): core/dialect: move the catalog change types into their own module (@pedrocarlo)
+- **PR #12087** (2026-11-18): core/connection: move the schema reparse state machine to its own module (@pedrocarlo)
+- **PR #12086** (2026-11-18): core/translate: move the sqlite_schema deletes of DROP INDEX, DROP TABLE and DROP VIEW into the row writers (@pedrocarlo)
+- **PR #12077** (2026-11-18): core/translate: pass the database index to ParseSchema in CREATE VIRTUAL TABLE (@pedrocarlo)
+- **PR #12075** (2026-11-18): core/translate: gather the code that writes sqlite_schema rows (@pedrocarlo)
 
 ---
 
@@ -2785,86 +2381,92 @@ cargo test -p core_tester --test integrati
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge 'core/storage: build the pager directly in the b-tree unit tests' from Pek
+## X. Merge 'core/dialect: replace CatalogChange with typed requests and a dialect-bui
 
 **RULE**:
-When implementing operations in `core/storage/btree.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/dialect/catalog.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7f0bfbef`: Merge 'core/storage: build the pager directly in the b-tree unit tests' from Pekka Enberg. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a00dd9ff`: Merge 'core/dialect: replace CatalogChange with typed requests and a dialect-built apply object' from Pedro Muniz. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/storage/btree.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/dialect/catalog.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        Database, Page, Pager,
-        pager: &Arc<Pager>,
-                    pager,
-            pager,
-        let pager = pager_of_new_database();
-        let payload = add_record(1, 0, page.clone(), record, &pager);
-        let pager = pager_of_new_database();
-            let payload = add_record(i, i, page.clone(), record, &pager);
-    fn empty_btree() -> (Arc<Pager>, i64) {
-        let pager = pager_of_new_database();
-        let page2 = run_until_done(|| pager.allocate_page(), &pager).unwrap();
-        btree_init_page(&page2, PageType::TableLeaf, 0, pager.usable_space());
-        (pager, page2.get().id() as i64)
-    }
+//! What translation tells the dialect about a statement that changes the
+//! dialect's catalog of the main database, and what the dialect's bytecode
+//! tells the in-memory schema once the change is written.
+use crate::{
+    namespace::NamespaceId,
+    schema::{RelationKind, Schema},
+    LimboError, Result, Value,
+};
+use std::borrow::Cow;
+/// A relation that a statement created, dropped or renamed. The engine makes
+/// the change itself; the dialect records it in its own catalog through
+/// [`Dialect::translate_relation_changes`](super::Dialect::translate_relation_changes).
+pub enum RelationChange<'a> {
+    Created {
+        name: &'a str,
+        table: Option<&'a str>,
+    Dropped {
+        name: &'a str,
+    Renamed {
+        old_name: &'a str,
+        /// Owned when the statement had to build the name, as for an
+        /// automatic index that is renamed with its table.
+        new_name: Cow<'a, str>,
+    /// `ALTER TABLE table RENAME COLUMN old_name TO new_name`.
+    ColumnRenamed {
+        table: &'a str,
+        old_name: &'a str,
+        new_name: &'a str,
+}
 
-    /// A pager whose database holds only page 1.
-    fn pager_of_new_database() -> Arc<Pager> {
-        let pager = empty_pager(4096, PageCache::default());
-        run_until_done(|| pager.allocate_page1(), &pager).unwrap();
-        pager
-    }
-
-    /// A pager over an empty in-memory database file, opened without a `Database`.
-    #[allow(clippy::arc_with_non_send_sync)]
-    fn empty_pager(page_size: u32, page_cache: PageCache) -> Arc<Pager> {
-        let io: Arc<dyn IO> = Arc::new(Mem
+/// A statement about roles, ownership, privileges or row-level security.
+/// The engine stores none of these; the
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    use tempfile::TempDir;
-
-        Database, Page, Pager, PlatformIO,
-    /// The returned `TempDir` deletes the database directory when it drops, so
-    /// callers must hold it for as long as they use the database.
-    #[allow(clippy::arc_with_non_send_sync)]
-    fn get_database() -> (Arc<Database>, TempDir) {
-        let temp_dir = TempDir::new().unwrap();
-        let path = temp_dir.path().join("test.db");
-        {
-            let connection = rusqlite::Connection::open(&path).unwrap();
-            connection
-                .pragma_update(None, "journal_mode", "wal")
-                .unwrap();
-        }
-        let io: Arc<dyn IO> = Arc::new(PlatformIO::new().unwrap());
-        let db = Database::open_file(io.clone(), path.to_str().unwrap(), Arc::new(EngineDialect))
-            .unwrap();
-
-        (db, temp_dir)
-    }
-
-        conn: &Arc<Connection>,
-                    &conn.pager.load(),
-            &conn.pager.load().clone(),
-        let (db, _temp_dir) = get_database();
-        let conn = db
-            .connect(ConnectOpts::new(SessionRole::Superuser))
-            .unwrap();
-        let payload = add_record(1, 0, page.clone(), record, &conn);
-        let (db, _temp_dir)
+//! The changes a statement makes to the dialect's catalog.
+use crate::{namespace::NamespaceId, schema::RelationKind};
+/// A change a statement makes to the dialect's catalog of the main
+/// database: to a relation, or to the roles. Translation tells the dialect
+/// about it through
+/// [`Dialect::translate_catalog_changes`](super::Dialect::translate_catalog_changes), and the dialect's own bytecode
+/// tells it back through [`Dialect::apply_catalog_change`](super::Dialect::apply_catalog_change) once the change
+/// is written.
+pub enum CatalogChange {
+    Create {
+        name: String,
+        table: Option<String>,
+    Drop {
+        name: String,
+    Rename {
+        old_name: String,
+        new_name: String,
+    /// Whom the relation belongs to from now on.
+    ChangeOwner {
+        name: String,
+        owner: NewOwner,
+    /// `ALTER TABLE table RENAME COLUMN old_name TO new_name`.
+    RenameColumn {
+        table: String,
+        old_name: String,
+        new_name: String,
+    /// `GRANT privileges ON relation TO grantees`, or `REVOKE privileges ON
+    /// relation FROM grantees` when `revoke` is set.
+        namespace: NamespaceId,
+        name: String,
+        privileges: V
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7f0bfbef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a00dd9ff` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

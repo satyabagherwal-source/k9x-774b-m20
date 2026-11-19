@@ -11252,3 +11252,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-reson8-rumble-2-flash` | `https://huggingface.co/Reson8/Rumble-2-Flash` | `hf-reson8-` | Multi-dimensional audit evidence | 2026-11-19T06:52:24.184Z |
 | `learn-huggingface-autotrust-gev-26b-decide` | `https://huggingface.co/autotrust/GEV-26B-Decide` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-19T06:52:26.475Z |
 | `learn-dom-d-28cd838b` | `project://hf-reson8-rumble-2-flash` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-reson8-rumble-2-flash-learnings.md` | 2026-11-19T06:53:05.887Z |
+| `learn-huggingface-google-embeddinggemma-2` | `https://huggingface.co/google/embeddinggemma-2` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-19T07:06:20.516Z |
+| `learn-github-domcyrus-rustnet` | `https://github.com/domcyrus/rustnet` | `6a85f360` | Multi-dimensional audit evidence | 2026-11-19T07:06:22.761Z |
+| `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `e139e251` | Multi-dimensional audit evidence | 2026-11-19T07:06:37.746Z |

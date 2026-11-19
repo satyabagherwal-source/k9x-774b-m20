@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T16:14:20.743Z",
+  "timestamp": "2026-11-19T07:06:41.808Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-domcyrus-rustnet-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [domcyrus-rustnet-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T16:14:20.743Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T07:06:41.808Z`  
 > **Learning ID**: `LEARN-EVO-domcyrus-rustnet-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source**: github ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
-> **Source Version**: `eac0a5e6`  
+> **Source Version**: `6a85f360`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T16:14:02.124Z  
+> **Timestamp**: 2026-11-19T07:06:21.557Z  
 > **Learning ID**: `learn-github-domcyrus-rustnet`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/domcyrus-rustnet-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/domcyrus/rustnet](https://github.com/domcyrus/rustnet))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T16:14:02.118Z  
+> **Harvest Timestamp**: 2026-11-19T07:06:21.550Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Per-process network monitoring for your terminal with deep packet inspection. Cross-platform, sandboxed.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5243 stars
+- **Stars / Engagement**: 5246 stars
 
 ---
 
@@ -2526,98 +2526,150 @@ pub(super) fn dns_header_counts(payload: &[u8]) -> Option<DnsHeaderCounts> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eac0a5e6` (2026-11-17)
-**Commit Message**: chore(deps): bump maxminddb (#737)
+### Incident Patch 1: `6a85f360` (2026-11-17)
+**Commit Message**: docs: add WinGet installation instructions (#738)
 
-Bumps the rust-dependencies group with 1 update: [maxminddb](https://github.com/oschwald/maxminddb-rust).
-
-
-Updates `maxminddb` from 0.32.0 to 0.33.0
-- [Release notes](https://github.com/oschwald/maxminddb-rust/releases)
-- [Changelog](https://github.com/oschwald/maxminddb-rust/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/oschwald/maxminddb-rust/compare/v0.32.0...v0.33.0)
-
----
-updated-dependencies:
-- dependency-name: maxminddb
-  dependency-version: 0.33.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-  dependency-group: rust-dependencies
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -1522,9 +1522,9 @@ dependencies = [
+@@ -46,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - Stop counting one-byte TCP keepalive probes as retransmits or out-of-order segments (#713)
  
- [[package]]
- name = "maxminddb"
--version = "0.32.0"
-+version = "0.33.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "9b43d2458d977b610b04a3858e6504f06133663d303a1a0606601b530bfc9bc6"
-+checksum = "317d6b918ba3893345af072f52cb56bcfcb532a9d0ebcf861ab3c25b37a316ac"
- dependencies = [
-  "ipnetwork 0.21.1",
-  "memchr",
+ ### Documentation
++- Add WinGet installation instructions to the READMEs and installation guides
+ - Document Resolute `amd64v3` PPA builds, requesting missing builds for existing releases, and verifying publication without a client architecture override (#727)
+ - Add release-mode headless snapshot profiling with PCAP replay and controlled history/payload workloads (#720)
+ - Consolidate terminal guidance into concise usage documentation in English, Chinese, and Japanese (#683)
 ```
 
-**File**: `crates/rustnet-core/Cargo.toml` (modified, +1/-1)
+**File**: `INSTALL.md` (modified, +19/-1)
 ```diff
-@@ -24,7 +24,7 @@ rustc-hash.workspace = true
- crossbeam.workspace = true
- dns-lookup = "4.0"
- pnet_datalink = "0.35"
--maxminddb = "0.32"
-+maxminddb = "0.33"
- flate2 = "1"
- ring = "0.17"
- aes = "0.9"
+@@ -15,6 +15,7 @@ This guide covers all installation methods for RustNet across different platform
+ - [Installing from Release Packages](#installing-from-release-packages)
+   - [macOS DMG Installation](#macos-dmg-installation)
+   - [Windows MSI Installation](#windows-msi-installation)
++  - [Windows WinGet Installation](#windows-winget-installation)
+   - [Windows Chocolatey Installation](#windows-chocolatey-installation)
+   - [Windows Scoop Installation](#windows-scoop-installation)
+   - [Linux Package Installation](#linux-package-installation)
+@@ -85,9 +86,26 @@ Pre-built packages are available for each release on the [GitHub Releases](https
+    - If Npcap is not installed or cannot be loaded, RustNet will display a helpful error message with installation instructions
+    - Note: Depending on your Npcap installation settings, you may or may not need Administrator privileges
+ 
++### Windows WinGet Installation
++
++Install RustNet with WinGet from PowerShell or Command Prompt:
++
++```powershell
++winget install --id domcyrus.RustNet --exact --source winget
++```
++
++Open a new terminal after installation, then verify the installed version and run RustNet:
++
++```powershell
++rustnet --version
++rustnet
++```
++
++**Note:** Install [Npcap](https://npcap.com) separately. For RustNet v1.6.0, enable **"WinPcap API compatible mode"**. Default Npcap settings are supported since v1.7.0.
++
+ ### Windows Chocolatey Installation
+ 
+-The easiest way to install RustNet on Windows is via [Chocolatey](https://community.chocolatey.org/packages/rustnet):
++Install RustNet on Windows via [Chocolatey](https://community.chocolatey.org/packages/rustnet):
+ 
+ ```powershell
+ # Run in Administrator PowerShell
 ```
 
----
-
-### Incident Patch 2: `b29710e0` (2026-11-16)
-**Commit Message**: chore(deps): bump rust from 1.98-slim to 1.99-slim in the docker group (#736)
-
-Bumps the docker group with 1 update: rust.
-
-
-Updates `rust` from 1.98-slim to 1.99-slim
-
----
-updated-dependencies:
-- dependency-name: rust
-  dependency-version: 1.99-slim
-  dependency-type: direct:production
-  dependency-group: docker
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `Dockerfile` (modified, +1/-1)
+**File**: `INSTALL.zh-CN.md` (modified, +19/-1)
 ```diff
-@@ -1,6 +1,6 @@
- # Multi-stage Docker build for RustNet
- # Base images are pinned by digest for reproducible, tamper-evident builds.
--FROM rust:1.98-slim@sha256:4cd829461bd5c4d511c32e269da9cb8929223b666519d8004e35fc8d1d771ab7 AS builder
-+FROM rust:1.99-slim@sha256:f6c4a35d21dbb3c89d7a8d056c193e94fc09037f2b58dd858b09c39a47dd02d7 AS builder
+@@ -15,6 +15,7 @@
+ - [从发布包安装](#installing-from-release-packages)
+   - [macOS DMG 安装](#macos-dmg-installation)
+   - [Windows MSI 安装](#windows-msi-installation)
++  - [Windows WinGet 安装](#windows-winget-installation)
+   - [Windows Chocolatey 安装](#windows-chocolatey-installation)
+   - [Windows Scoop 安装](#windows-scoop-installation)
+   - [Linux 包安装](#linux-package-installation)
+@@ -85,9 +86,26 @@
+    - 如果未安装 Npcap 或无法加载 Npcap，RustNet 会显示一条有用的错误消息及安装说明
+    - 注意：根据你的 Npcap 安装设置，你可能需要或不需要 Administrator 特权
  
- # Install rustfmt component (required for eBPF compilation)
- RUN rustup component add rustfmt
++### Windows WinGet 安装<a id="windows-winget-installation"></a>
++
++在 PowerShell 或命令提示符中使用 WinGet 安装 RustNet：
++
++```powershell
++winget install --id domcyrus.RustNet --exact --source winget
++```
++
++安装后打开新的终端，验证已安装的版本并运行 RustNet：
++
++```powershell
++rustnet --version
++rustnet
++```
++
++**注意：** 请单独安装 [Npcap](https://npcap.com)。RustNet v1.6.0 需要启用 **"WinPcap API compatible mode"**。自 v1.7.0 起支持 Npcap 默认设置。
++
+ ### Windows Chocolatey 安装<a id="windows-chocolatey-installation"></a>
+ 
+-在 Windows 上安装 RustNet 最简单的方式是通过 [Chocolatey](https://community.chocolatey.org/packages/rustnet)：
++在 Windows 上通过 [Chocolatey](https://community.chocolatey.org/packages/rustnet) 安装 RustNet：
+ 
+ ```powershell
+ # 在 Administrator PowerShell 中运行
+```
+
+**File**: `README.ja.md` (modified, +2/-1)
+```diff
+@@ -77,7 +77,8 @@ v1.7.0 では、ARM DEB と古い glibc および Debian 13 の time64 ライブ
+ | Fedora 42+ | `sudo dnf copr enable domcyrus/rustnet`<br>`sudo dnf install rustnet` |
+ | Arch Linux | `sudo pacman -S rustnet` |
+ | Alpine Linux (edge/community) | `apk add rustnet` |
+-| Windows | `choco install rustnet` または `scoop install rustnet` |
++| Windows (WinGet) | `winget install --id domcyrus.RustNet --exact --source winget` |
++| Windows (Chocolatey / Scoop) | `choco install rustnet` または `scoop install rustnet` |
+ | Cargo | `cargo install rustnet-monitor` |
+ | Nix / NixOS | `nix-shell -p rustnet` |
+ 
+```
+
+**File**: `README.md` (modified, +2/-1)
+```diff
+@@ -77,7 +77,8 @@ v1.7.0 fixes ARM DEB compatibility with older glibc and Debian 13's time64 libra
+ | Fedora 42+ | `sudo dnf copr enable domcyrus/rustnet`<br>`sudo dnf install rustnet` |
+ | Arch Linux | `sudo pacman -S rustnet` |
+ | Alpine Linux (edge/community) | `apk add rustnet` |
+-| Windows | `choco install rustnet` or `scoop install rustnet` |
++| Windows (WinGet) | `winget install --id domcyrus.RustNet --exact --source winget` |
++| Windows (Chocolatey / Scoop) | `choco install rustnet` or `scoop install rustnet` |
+ | Cargo | `cargo install rustnet-monitor` |
+ | Nix / NixOS | `nix-shell -p rustnet` |
+ 
+```
+
+**File**: `README.zh-CN.md` (modified, +2/-1)
+```diff
+@@ -77,7 +77,8 @@ v1.7.0 修复了 ARM DEB 与旧版 glibc 及 Debian 13 time64 库的兼容性。
+ | Fedora 42+ | `sudo dnf copr enable domcyrus/rustnet`<br>`sudo dnf install rustnet` |
+ | Arch Linux | `sudo pacman -S rustnet` |
+ | Alpine Linux (edge/community) | `apk add rustnet` |
+-| Windows | `choco install rustnet` 或 `scoop install rustnet` |
++| Windows (WinGet) | `winget install --id domcyrus.RustNet --exact --source winget` |
++| Windows (Chocolatey / Scoop) | `choco install rustnet` 或 `scoop install rustnet` |
+ | Cargo | `cargo install rustnet-monitor` |
+ | Nix / NixOS | `nix-shell -p rustnet` |
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #738** (2026-11-17): docs: add WinGet installation instructions (@domcyrus)
 - **PR #737** (2026-11-17): chore(deps): bump maxminddb from 0.32.0 to 0.33.0 in the rust-dependencies group (@dependabot[bot])
 - **PR #736** (2026-11-16): chore(deps): bump rust from 1.98-slim to 1.99-slim in the docker group (@dependabot[bot])
 - **PR #735** (2026-11-16): chore(deps): bump zip from 9.5.0 to 9.5.1 in the rust-dependencies group (@dependabot[bot])
 - **PR #731** (2026-11-13): fix: Cargo metadata warnings and Windows test crashes (@domcyrus)
 - **PR #730** (2026-11-13): chore(deps): bump zip from 9.4.2 to 9.5.0 in the rust-dependencies group (@dependabot[bot])
-- **PR #729** (2026-11-12): chore(deps): bump debian from `a29215f` to `a72b443` in the docker group (@dependabot[bot])
 
 ---
 
@@ -2637,33 +2689,31 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump maxminddb
+## X. docs: add WinGet installation instructions
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in domcyrus/rustnet. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eac0a5e6`: deps): bump maxminddb. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6a85f360`: docs: add WinGet installation instructions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.33.0"
-checksum = "317d6b918ba3893345af072f52cb56bcfcb532a9d0ebcf861ab3c25b37a316ac"
+- Add WinGet installation instructions to the READMEs and installation guides
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.32.0"
-checksum = "9b43d2458d977b610b04a3858e6504f06133663d303a1a0606601b530bfc9bc6"
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eac0a5e6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6a85f360` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

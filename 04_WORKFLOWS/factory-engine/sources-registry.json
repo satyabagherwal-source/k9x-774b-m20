@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-19T05:42:24.964Z",
-    "lastVerified": "2026-11-19T05:42:24.964Z",
+    "lastChecked": "2026-11-19T07:06:32.157Z",
+    "lastVerified": "2026-11-19T07:06:32.157Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T06:52:38.084Z",
-    "lastVerified": "2026-11-19T06:52:38.084Z",
+    "lastChecked": "2026-11-19T07:06:41.062Z",
+    "lastVerified": "2026-11-19T07:06:41.062Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1851,12 +1851,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "trufflesecurity-trufflehog": {
-    "name": "trufflesecurity/trufflehog",
+    "name": "trufflehog",
     "officialUrl": "https://github.com/trufflesecurity/trufflehog",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-18T23:34:51.812Z",
-    "lastVerified": "2026-11-18T23:34:51.812Z",
+    "lastChecked": "2026-11-19T07:06:27.253Z",
+    "lastVerified": "2026-11-19T07:06:27.253Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-trufflesecurity-trufflehog",
@@ -1865,7 +1865,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9529cc61"
   },
   "oramasearch-orama": {
     "name": "orama",
@@ -6524,5 +6525,70 @@
     "lastChecked": "2026-11-19T06:52:35.877Z",
     "revisionIdentifier": "a1d031cb",
     "lastVerified": "2026-11-19T06:52:35.877Z"
+  },
+  "domcyrus-rustnet": {
+    "name": "domcyrus/rustnet",
+    "officialUrl": "https://github.com/domcyrus/rustnet",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-19T07:06:21.550Z",
+    "lastVerified": "2026-11-19T07:06:21.550Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-domcyrus-rustnet",
+    "contentHash": "aec7ab902910fd2bfa99b97f8a501ca60067c6368af214f236f45e3de229c24a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-google-embeddinggemma-2": {
+    "name": "google/embeddinggemma-2",
+    "officialUrl": "https://huggingface.co/google/embeddinggemma-2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T07:06:19.796Z",
+    "lastVerified": "2026-11-19T07:06:19.796Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-google-embeddinggemma-2",
+    "contentHash": "908315c113f96aa16bcc2e587d4fe19ef68b1d6f2a4b209b5426f64f38e54cfc",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hasaneyldrm-exercises-dataset": {
+    "name": "exercises-dataset",
+    "officialUrl": "https://github.com/hasaneyldrm/exercises-dataset",
+    "lastChecked": "2026-11-19T07:06:22.252Z",
+    "revisionIdentifier": "7455efae",
+    "lastVerified": "2026-11-19T07:06:22.252Z"
+  },
+  "aquasecurity-trivy-operator": {
+    "name": "trivy-operator",
+    "officialUrl": "https://github.com/aquasecurity/trivy-operator",
+    "lastChecked": "2026-11-19T07:06:24.788Z",
+    "revisionIdentifier": "689215dd",
+    "lastVerified": "2026-11-19T07:06:24.788Z"
+  },
+  "tursodatabase-limbo": {
+    "name": "tursodatabase/turso",
+    "officialUrl": "https://github.com/tursodatabase/limbo",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-19T07:06:36.608Z",
+    "lastVerified": "2026-11-19T07:06:36.608Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-tursodatabase-turso",
+    "contentHash": "d516bb8b60c28af18a12dfe762b52f81921a0760d641ecc2cf6a005c6eab079d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

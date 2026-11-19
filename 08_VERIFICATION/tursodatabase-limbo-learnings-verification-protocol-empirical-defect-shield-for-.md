@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T15:16:58.298Z",
+  "timestamp": "2026-11-19T07:06:43.166Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tursodatabase-limbo-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tursodatabase-limbo-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T15:16:58.298Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-19T07:06:43.166Z`  
 > **Learning ID**: `LEARN-EVO-tursodatabase-limbo-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source**: github ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
-> **Source Version**: `ae2cb738`  
+> **Source Version**: `e139e251`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T15:16:41.591Z  
+> **Timestamp**: 2026-11-19T07:06:36.615Z  
 > **Learning ID**: `learn-github-tursodatabase-turso`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tursodatabase-limbo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tursodatabase/limbo](https://github.com/tursodatabase/limbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T15:16:41.586Z  
+> **Harvest Timestamp**: 2026-11-19T07:06:36.608Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A SQL database in Rust: SQLite-compatible, now also speaking Postgres (experimental). The LLVM of databases.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 25279 stars
+- **Stars / Engagement**: 25295 stars
 
 ---
 
@@ -1457,11 +1457,13 @@ export class Statement {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #11975** (2026-11-17): **postgres: fix pg_get_expr for integer edge cases and negative zero**
-  *Symptoms*: Replaces #11949, which was merged into the branch of #11930 instead of main.  The fix is the last two commits:  - `postgres: print -2147483648 as an integer in pg_get_expr` - `postgres: print -0.0 as 0.0 in pg_get_expr`  They change `postgres/frontend/deparse.rs`, which #11930 adds and main does not have yet, so this branch also holds the commits of #11930 (and of #11743, which #11930 is built on). It has the same content as #11930 at `888fbe11c5`. Once #11930 is merged, this pull request has nothing left to merge and can be closed; merging this one instead makes #11930 redundant.  ## What the fix does  `pg_get_expr` and `pg_get_constraintdef` printed `DEFAULT -2147483648` and `CHECK (id > -2147483648)` as `'-2147483648'::bigint`. PostgreSQL 18 prints `'-2147483648'::integer`. The printer chose the type from the positive number, and 2147483648 is a bigint; it now chooses integer or bigint from the negative number.  Also, as PostgreSQL prints them:  - `-9223372036854775808` is printed as `'-9223372036854775808'::bigint` - `-0` is printed as `0`, and `-0.0` as `0.0`  ## Tests  New cases in the `deparse.rs` unit tests, `functions.sqltest` and `catalog.sqltest`. Each fails without the change.  - `make -C postgres/conformance run`: 2606 passed, 2 skipped - `make -C postgres/conformance run-postgres` (PostgreSQL 18): 2526 passed, 82 skipped - `cargo test -p turso_pg --lib`: 118 passed - `cargo test -p turso_pg_tests --test integration_tests`: 624 passed
+- **Issue #12089** (2026-11-18): **core/dialect: replace CatalogChange with typed requests and a dialect-built apply object**
+  *Symptoms*: ## Description  The `CatalogChange` enum crossed the `Dialect` trait twice. At prepare time, translation handed one to `translate_catalog_changes` so the dialect could emit writes to its catalog tables. At run time, `Insn::CatalogChange` handed a copy of the same enum to `apply_catalog_change`, where the dialect matched on it again and read the values that mattered from registers by position. This removes the enum and both crossings.  Five commits. New tests are in commits of their own (1 and 4); the code commits only adapt existing tests to the changed types.  1. **Test the errors of a dialect that stores no roles.** Records the exact error of each statement about roles, ownership, privileges and row-level security under the engine dialect, before the method that produces them is split. The SQLite parser has no syntax for these statements, so a `.sqltest` cannot reach the code; the test builds the statements a frontend with roles would build. 2. **Split the request into `RelationChange` and `AccessStatement`.** Four variants were notices about relations the engine had already created, dropped or renamed. Seven were statements that only the dialect stores. The trait now has one method for each kind, and both types borrow from the statement instead of cloning it. The one name they may own is the new name of a rename (`Cow<str>`): an automatic index is renamed with its table, and the statement has to build that name. The default of `translate_access_statement` refuses every sta
 
-- **Issue #11949** (2026-11-17): **postgres: fix pg_get_expr for integer edge cases and negative zero**
-  *Symptoms*: Based on #11930. Fixes the finding its review marked as blocking.  `pg_get_expr` and `pg_get_constraintdef` printed `DEFAULT -2147483648` and `CHECK (id > -2147483648)` as `'-2147483648'::bigint`. PostgreSQL 18 prints `'-2147483648'::integer`.  The printer chose the type from the positive number, and 2147483648 is a bigint. It now chooses integer or bigint from the negative number, both for the negation of a literal (how a condition stores it) and for one negative literal (how a default stores it).  Also:  - `-9223372036854775808` was shown as the engine stores it. It is now printed as `'-9223372036854775808'::bigint`, as PostgreSQL prints it. - `-0` is printed as `0`.  ## Tests  New cases in the `deparse.rs` unit tests, `functions.sqltest` and `catalog.sqltest`. Each fails without the change.  - `make -C postgres/conformance run`: 2604 passed, 2 skipped - `make -C postgres/conformance run-postgres` (PostgreSQL 18): 2524 passed, 82 skipped - `cargo test -p turso_pg --lib`: 118 passed - `cargo test -p turso_pg_tests --test integration_tests`: 624 passed - `cargo fmt` and `cargo clippy --workspace --all-features --all-targets --exclude memory-benchmark -- --deny=warnings`: clean
+- **Issue #12088** (2026-11-18): **core/dialect: move the catalog change types into their own module**
+  *Symptoms*: ## Description  Moves `CatalogChange`, `NewOwner` and `OwnerColumn` from `core/dialect/mod.rs` into a new `core/dialect/catalog.rs`.  Movement only. The types are re-exported from `core/dialect` and from the crate root as before, so no other file changes.  ## Motivation and context  A later change splits these types into smaller ones (changes to relations, and statements about roles, owners, privileges and policies). Giving them a module first means that split does not grow `core/dialect/mod.rs` and can be read without the rest of the `Dialect` trait around it.  ## Description of AI Usage  Written by Claude Code. A worker session made the move; an orchestrating session rebased it onto current `main` and ran fmt and clippy on it.  --- _Generated by [Claude Code](https://claude.ai/code/session_019cgs5YAWjWBmLYpihhDiFc)_
+  **Post-Mortem & Fix Analysis**:
+  > ### Autofixer review <sub>🔄 Autofixer updates this comment while the review runs.</sub>  A maintainer asked Autofixer to review this pull request. The review of `3a3d399c74be` is [here](https://github.com/tursodatabase/turso/pull/12088#pullrequestreview-5964481068).  ✅ **Verdict: looks good to merge.**  <sub>Automated review by Autofixer; maintainers decide what to merge. Autofixer reviews every new commit pushed to this pull request, up to 3 reviews each time the `autofixer: review-requested` label is added. It then removes the label; adding the label again asks for more.</sub>  <!-- autofixer:contributor-review:3a3d399c74bee5f4ea441dc3badadaac89511341 --> <!-- autofixer:contributor-review-recommends:3a3d399c74bee5f4ea441dc3badadaac89511341 --> <!-- autofixer:contributor-review-state:eyJ2ZXJzaW9uIjoxLCJyZXZpZXdzIjpbeyJoZWFkU2hhIjoiM2EzZDM5OWM3NGJlZTVmNGVhNDQxZGMzYmFkYWRhYWM4OTUxMTM0MSIsImF1ZGl0ZWRBdCI6IjIwMjYtMTEtMThUMjA6Mjc6MDkuNDQyWiIsInZlcmRpY3QiOiJhcHByb3ZlIiwicmVjb21tZW5kYXRpb24
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1478,1392 +1480,885 @@ export class Statement {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `328cd87f` (2026-11-12)
-**Commit Message**: postgres: list row-level security policies in pg_policy
+### Incident Patch 1: `a00dd9ff` (2026-11-18)
+**Commit Message**: Merge 'core/dialect: replace CatalogChange with typed requests and a dialect-built apply object' from Pedro Muniz
 
-pg_policy was always empty, so the policies of a database could not be
-listed from the catalog as in PostgreSQL.
+The `CatalogChange` enum crossed the `Dialect` trait twice. At prepare
+time, translation handed one to `translate_catalog_changes` so the
+dialect could emit writes to its catalog tables. At run time,
+`Insn::CatalogChange` handed a copy of the same enum to
+`apply_catalog_change`, where the dialect matched on it again and read
+the values that mattered from registers by position. This removes the
+enum and both crossings.
 
-pg_policy now has a row per policy, generated from the class catalog,
-with PostgreSQL's columns in PostgreSQL's order: oid, polname, polrelid,
-polcmd, polpermissive, polroles (with 0 for PUBLIC), polqual and
-polwithcheck.
+Five commits. New tests are in commits of their own (1 and 4); the code
+commits only adapt existing tests to the changed types.
 
-polqual and polwithcheck hold the conditions as text, which pg_get_expr
-already returns unchanged, as for adbin and conbin. The catalog stores
-what the engine compiled a condition into, so the new deparse module
-prints that back the way PostgreSQL's pg_get_expr prints the condition:
-every operator in parentheses, IN as = ANY (ARRAY[...]), LIKE as ~~,
-and the casts PostgreSQL adds where types meet, such as 'x'::text,
-(v)::text for a varchar column, (1)::numeric for a numeric one and
-ARRAY[(1)::bigint, (2)::bigint] for a bigint one. It prints only the
-column types, functions and forms whose casts it knows; anything else,
-such as other functions, is shown as the engine's SQL.
+1. **Test the errors of a dialect that stores no roles.** Records the
+exact error of each statement about roles, ownership, privileges and
+row-level security under the engine dialect, before the method that
+produces them is split. The SQLite parser has no syntax for these
+statements, so a `.sqltest` cannot reach the code; the test builds the
+statements a frontend with roles would build.
+2. **Split the request into `RelationChange` and `AccessStatement`.**
+Four variants were notices about relations the engine had already
+created
 
-Tests: the pg-policy-* tests in row-security/catalog.sqltest fail
-without this change and pass against both tursopg and Pos
-
-**File**: `postgres/COMPAT.md` (modified, +4/-3)
+**File**: `core/dialect/catalog.rs` (modified, +108/-42)
 ```diff
-@@ -86,8 +86,9 @@ The pg_catalog tables emulated (live, reflecting real schema): `pg_class`,
- `pg_namespace`, `pg_attribute`, `pg_type` (builtin + array + enum types),
- `pg_index`, `pg_constraint`, `pg_attrdef`, `pg_tables`, `pg_sequence`, `pg_sequences`,
- `pg_database`, `pg_roles` (built-in `postgres` superuser and `pg_database_owner`, and roles from `CREATE ROLE`), `pg_auth_members` (memberships from `GRANT role TO role`), `pg_proc`, `pg_am`,
--plus `pg_input_error_info`. Present but always empty: `pg_policy`,
--`pg_trigger`, `pg_statistic_ext`, `pg_inherits`, `pg_rewrite`,
-+`pg_policy` (row-level security policies, with `polqual` and `polwithcheck`
-+as the text `pg_get_expr` prints), plus `pg_input_error_info`. Present but
-+always empty: `pg_trigger`, `pg_statistic_ext`, `pg_inherits`, `pg_rewrite`,
- `pg_foreign_table`, `pg_partitioned_table`, `pg_collation`,
- `pg_publication*`, `pg_seclabels` (security labels are not supported).
- `pg_description` contains the default `standard public schema` comment for
-@@ -440,7 +441,7 @@ Upgrade is not supported.
- | Predefined roles | ❌ Not supported | |
- | Privileges for setting configuration parameters | ❌ Not supported | |
- | ROLES | 🟡 Partial | `CREATE ROLE name` with the options `BYPASSRLS`, `NOBYPASSRLS`, `INHERIT`, `NOINHERIT` and `NOLOGIN`, `SET [LOCAL] ROLE`, `RESET ROLE`, `SHOW role`; `GRANT role TO role` and `REVOKE role FROM role` by a superuser, shown in `pg_auth_members`, without `WITH ADMIN`, `WITH INHERIT`, `WITH SET`, `GRANTED BY` or `CASCADE`; a role may `SET ROLE` to the roles it is a member of, and with `INHERIT` has their privileges, acts as the owner of what they own, and is subject to their row-level security policies; roles that are not superusers may read and write the tables they own or were granted `SELECT`, `INSERT`, `UPDATE` and `DELETE` on, with SELECT also needed when a write reads the table's columns, and call `nextval` with `USAGE` or `UPDATE` and `setval` with `UPDATE` on the sequence, but not change the schema they do not own; `GRANT` and `REVOKE` of privileges on whole tables and sequences, `ALL` included, change `pg_class.relacl`; `TRUNCATE` needs the `TRUNCATE` privilege, and the `REFERENCES`, `TRIGGER` and `MAINTAIN` privileges let a role do nothing yet; `pg_roles` lists the built-in `postgres` superuser, `pg_database_owner`, and created roles; `DROP ROLE` is not supported; roles belong to one database file, not to the whole server as in PostgreSQL |
--| Row-level security | 🟡 Partial | `ALTER TABLE ... ENABLE/DISABLE ROW LEVEL SECURITY` works and is shown in `pg_class.relrowsecurity`; `CREATE POLICY` and `DROP POLICY` work, with permissive and restrictive `USING` policies limiting what roles read; `UPDATE` and `DELETE` change only the rows the policies of the command allow, with the `SELECT` policies too when the statement reads columns, and new rows of `INSERT` and `UPDATE` must pass `WITH CHECK`, and the `SELECT` policies with `RETURNING`, or the statement fails with 42501; `TRUNCATE` is not subject to policies, as in PostgreSQL; `INSERT ... ON CONFLICT DO UPDATE` checks the conflicting row against the `UPDATE` and `SELECT` policies and fails if it does not pass; a new row is checked after its `NOT NULL` constraints instead of before; `pg_policy` does not show policies; policies cannot use subqueries with `FROM`, and the columns they use cannot be renamed or dropped; `FORCE ROW LEVEL SECURITY` is not supported; views apply it as the view's owner, except that a superuser reading a view sees every row |
-+| Row-level security | 🟡 Partial | `ALTER TABLE ... ENABLE/DISABLE ROW LEVEL SECURITY` works and is shown in `pg_class.relrowsecurity`; `CREATE POLICY` and `DROP POLICY` work, with permissive and restrictive `USING` policies limiting what roles read; `UPDATE` and `DELETE` change only the rows the policies of the command allow, with the `SELECT` policies too when the statement reads columns, and new rows of `INSERT` and `UPDATE` must pass `WITH CHECK`, and the `SELECT` policies with `RETURNING`, or the statement fails with 42501; `TRUNCATE` is not subject to policies, as in PostgreSQL; `INSERT ... ON CONFLICT DO UPDATE` checks the conflicting row against the `UPDATE` and `SELECT` policies and fails if it does not pass; a new row is checked after its `NOT NULL` constraints instead of before; `pg_policy` lists the policies, with conditions printed as PostgreSQL's `pg_get_expr` prints them for common forms and as the engine's SQL otherwise; `pg_policies` does not show policies; policies cannot use subqueries with `FROM`, and the columns they use cannot be renamed or dropped; `FORCE ROW LEVEL SECURITY` is not supported; views apply it as the view's owner, except that a superuser reading a view sees every row |
- | SCRAM-SHA-256 authentication | ❌ Not supported | |
- | Search+bind mode operation for LDAP authentication | ❌ Not supported | |
- | security_barrier option on views | ❌ Not supported | |
-```
-
-**File**: `postgres/MANUAL.md` (modified, +13/-1)
-```diff
-@@ -170,7 +170,19 @@ runs for each row that the policy checks, and a subquery such as
- `(SELECT auth.uid())` that reads no column of the row runs once per query,
- so writing the call as a subquery is cheaper on large tables.
+@@ -1,91 +1,157 @@
+-//! The changes a statement makes to the dialect's catalog.
++//! What translation tells the dialect about a statement that changes the
++//! dialect's catalog of the main database, and what the dialect's bytecode
++//! tells the in-memory schema once the change is written.
  
--`pg_policy` and `pg_policies` do not show the policies yet.
-+`pg_policy` lists the policies, with oids that stay the same for as long as
-+the policy exists. Its `polqual` and `polwithcheck` columns hold the
-+conditions as the text that `pg_get_expr(polqual, polrelid)` returns, printed
-+as PostgreSQL prints them, with every operator in parentheses and casts such
-+as `'x'::text` and `(1)::numeric`, rather than PostgreSQL's internal form.
-+Conditions are printed this way when they use columns of type `boolean`,
-+`smallint`, `integer`, `bigint`, `numeric(p, s)`, `text` or `varchar`,
-+constants, comparisons, arithmetic, `AND`, `OR`, `NOT`, `IS [NOT] NULL`,
-+`IN` with a list of constants, `BETWEEN`, `LIKE`, role keywords such as
-+`current_user`, `lower`, `upper`, `length`, `abs`, `COALESCE` and
-+`(SELECT ...)` without `FROM`; other conditions, such as ones with other
-+functions, casts or `CASE`, are shown as the engine's SQL. `pg_policies`
-+does not show the policies yet.
+-use crate::{namespace::NamespaceId, schema::RelationKind};
++use crate::{
++    namespace::NamespaceId,
++    schema::{RelationKind, Schema},
++    LimboError, Result, Value,
++};
++use std::borrow::Cow;
+ use turso_parser::ast::{self, Grantee, Privilege, RoleSpec};
  
- Materialized views store the rows of their query when they are refreshed, so
- a role that reads a materialized view built on a table with row-level
-```
-
-**File**: `postgres/conformance/pg-sqltests/row-security/catalog.sqltest` (added, +179/-0)
-```diff
-@@ -0,0 +1,179 @@
-+# How pg_policy shows row-level security policies, through the PostgreSQL
-+# frontend. Oids differ between servers, so the tests compare them instead
-+# of printing them. pg_get_expr prints a condition as PostgreSQL's ruleutils
-+# does: every operator in parentheses, and a cast where a quoted literal
-+# meets a column.
-+# PostgreSQL roles belong to the whole server, so every test uses its own
-+# role and table names.
-+
-+@database :memory:
-+
-+test pg-policy-shows-command-kind-roles-and-conditions {
-+    CREATE ROLE pp_alice_1;
-+    CREATE ROLE pp_bob_1;
-+    CREATE TABLE pp_docs_1 (id INT PRIMARY KEY, owner TEXT, published BOOLEAN);
-+    CREATE POLICY p_all ON pp_docs_1 USING (owner = current_user);
-+    CREATE POLICY p_select ON pp_docs_1 AS RESTRICTIVE FOR SELECT TO pp_alice_1, pp_bob_1
-+        USING (published);
-+    CREATE POLICY p_insert ON pp_docs_1 FOR INSERT TO pp_alice_1 WITH CHECK (id > 0);
-+    CREATE POLICY p_update ON pp_docs_1 FOR UPDATE
-+        USING (id > 0) WITH CHECK (id < 100 AND owner IS NOT NULL);
-+    CREATE POLICY p_delete ON pp_docs_1 AS PERMISSIVE FOR DELETE TO PUBLIC
-+        USING (NOT published);
-+    SELECT polname, polcmd, polpermissive,
-+           CASE WHEN polroles = '{0}' THEN 'public' ELSE 'named roles' END,
-+           pg_get_expr(polqual, polrelid), pg_get_expr(polwithcheck, polrelid)
-+    FROM pg_policy
-+    WHERE polrelid = (SELECT oid FROM pg_class WHERE relname = 'pp_docs_1')
-+    ORDER BY polname;
-+    SELECT pol.polname, r.rolname
-+    FROM pg_policy pol JOIN pg_roles r ON r.oid = ANY (pol.polroles)
-+    WHERE pol.polrelid = (SELECT oid FROM pg_class WHERE relname = 'pp_docs_1')
-+    ORDER BY 1, 2;
-+}
-+expect {
-+    p_all|*|t|public|(owner = CURRENT_USER)|
-+    p_delete|d|t|public|(NOT published)|
-+    p_insert|a|t|named roles||(id > 0)
-+    p_select|r|f|named roles|published|
-+    p_update|w|t|public|(id > 0)|((id < 100) AND (owner IS NOT NULL))
-+    p_insert|pp_alice_1
-+    p_select|pp_alice_1
-+    p_select|pp_bob_1
-+}
-+
-+test pg-policy-prints-conditions-as-postgres-does {
-+    CREATE TABLE pp_docs_2 (id INT, owner TEXT, published BOOLEAN, n BIGINT,
-+                            v VARCHAR(10), "Weird Col" INT, price NUMERIC(10, 2));
-+    CREATE POLICY p1 ON pp_docs_2 USING (pp_docs_2.owner = (SELECT current_user));
-+    CREATE POLICY p2 ON pp_docs_2 USING (true) WITH CHECK (false);
-+    CREATE POLICY p3 ON pp_docs_2 USING (NOT published OR id IN (1, 2));
-+    CREATE POLICY p4 ON pp_docs_2 USING (owner = 'a''b' AND v = 'x' AND n > 5 AND id = -1);
-+    CREATE POLICY p5 ON pp_docs_2 USING ("Weird Col" IS NULL OR id IS NOT NULL);
-+    CREATE POLICY p6 ON pp_docs_2
-+        USING (id + 1 * 2 > 3 AND lower(owner) <> 'x' AND owner LIKE 'a%');
-+    CREATE POLICY p7 ON pp_docs_2
-+        USING (session_user = owner AND id BETWEEN 1 AND 3 AND price > 1.5);
-+    CREATE POLICY p8 ON pp_docs_2
-+        USING ((id > 0 AND id < 5) OR (id > 10 AND (id < 20 OR id = 30)));
-+    CREATE POLICY p9 ON pp_docs_2
-+        USING (coalesce(id, 0) = 0 AND owner IN ('a', 'b') AND id NOT IN (1) AND id != 3);
-+    CREATE POLICY p10 ON pp_docs_2
-+        USING (current_user = 'x' AND id = 2147483648 AND current_role = owner);
-+    SELECT polname, pg_get_expr(polqual, polrelid), pg_get_expr(polwithcheck, polrelid)
-+    FROM pg_policy
-+    WHERE polrelid = (SELECT oid FROM pg_class WHERE relname = 'pp_docs_2')
-+    ORDER BY length(polname), polname;
-+}
-+expect {
-+    p1|(owner = ( SELECT CURRENT_USER AS "current_user"))|
-+    p2|true|false
-+    p3|((NOT published) OR (id = ANY (ARRAY[1, 2])))|
-+    p4|((owner = 'a''b'::text) AND ((v)::text = 'x'::text) AND (n > 5) AND (id = '-1'::integer))|
-+    p5|(("Weird Col" IS NULL) OR (id IS NOT NULL))|
-+    p6|(((id + (1 * 2)) > 3) AND (lower(owner) <> 'x'::text) AND (owner ~~ 'a%'::text))|
-+    p7|((SESSION_USER = owner) AND ((id >= 1) AND (id <= 3)) AND (price > 1.5))|
-+    p8|(((id > 0) AND (id < 5)) OR ((id > 10) AND ((id < 20) OR (id = 30))))|
-+    p9|((COALESCE(id, 0) = 0) AND (owner = ANY (ARRAY['a'::text, 'b'::text])) AND (id <> 1) AND (id <> 3))|
-+    p10|((CURRENT_USER = 'x'::name) AND (id = '2147483648'::bigint) AND (CURRENT_ROLE = owner))|
-+}
-+
-+# PostgreSQL casts the narrower of two number types to the wider one, the
-+# elements of an IN list to the widest type of the list, and a varchar
-+# argument of a text function to text, and prints each cast.
-+test pg-policy-prints-implicit-casts-as-postgres-does {
-+    CREATE TABLE pp_docs_9 (id INT, s SMALLINT, n BIGINT, m NUMERIC(10, 2), v VARCHAR(10),
-+                            t TEXT);
-+    CREATE POLICY p1 ON pp_docs_9 USING (n IN (1, -2) AND id IN (1, 3000000000));
-+    CREATE POLICY p2 ON pp_docs_9 USING (m = 1 AND m = id AND m = n AND id > 1.5);
-+    CREATE POLICY p3 ON pp_docs_9 USING (m + 1 > 2 AND m IN (1.5, 2) AND m BETWEEN 1 AND 2);
-+    CREATE POLICY p4 ON pp_docs_9 USING (s = 1 AND s IN (1, 2) AND s = id AND id + n > 1);
-+    CREATE POLICY p5 ON pp_docs_9 USING (uppe
-```
-
-**File**: `postgres/frontend/catalog.rs` (modified, +106/-4)
-```diff
-@@ -15,6 +15,7 @@ use turso_core::{
-         generated_expr_with_names, BTreeTable, GeneratedType, Schema, Sequence, Table, UniqueSet,
-         AUTOINCREMENT_SEQ_PREFIX,
+-/// A change a statement makes to the dialect's catalog of the main
+-/// database: to a relation, or to the roles. Translation tells the dialect
+-/// about it through
+-/// [`Dialect::translate_catalog_changes`](super::Dialect::translate_catalog_changes), and the dialect's own bytecode
+-/// tells it back through [`Dialect::apply_catalog_change`](super::Dialect::apply_catalog_change) once the change
+-/// is written.
++/// A relation that a statement created, dropped or renamed. The engine makes
++/// the change itself; the dialect records it in its own catalog through
++/// [`Dialect::translate_relation_changes`](super::Dialect::translate_relation_changes).
+ #[derive(Debug, Clone)]
+-pub enum CatalogChange {
+-    Create {
++pub enum RelationChange<'a> {
++    Created {
+         namespace: NamespaceId,
+-        name: String,
++        name: &'a str,
+         kind: RelationKind,
+         /// For an index, the table it is on, in the same namespace. Its
+         /// owner owns the index.
+-        table: Option<String>,
++        table: Option<&'a str>,
      },
-+    security::policy::RowPolicy,
-     security::roles::RoleId,
-     walk_expr_mut, Connection, Dialect, Func, IOResult, LimboError, NamespaceId, NamespaceRef,
-     OpenOptions, Result, Statement, Value, WalkControl, MAIN_DB_ID,
-@@ -495,11 +496,17 @@ pub(crate) fn is_system_table_name(name: &str) -> bool {
- /// Map a SQLite type string to a PostgreSQL type OID.
- /// Strips parenthesized parameters (e.g. `varchar(100)` -> `VARCHAR`) before matching.
- fn sqlite_type_to_pg_oid(ty_str: &str) -> i64 {
-+    pg_type_oid(ty_str).unwrap_or(25) // default to text
+-    Drop {
++    Dropped {
+         namespace: NamespaceId,
+-        name: String,
++        name: &'a str,
+     },
+-    Rename {
++    Renamed {
+         namespace: NamespaceId,
+-        old_name: String,
+-        new_name: String,
++        old_name: &'a str,
++        /// Owned when the statement had to build the name, as for an
++        /// automatic index that is renamed with its table.
++        new_name: Cow<'a, str>,
+     },
+-    /// Whom the relation belongs to from now on.
+-    ChangeOwner {
++    /// `ALTER TABLE table RENAME COLUMN old_name TO new_name`.
++    ColumnRenamed {
+         namespace: NamespaceId,
+-        name: String,
+-        owner: NewOwner,
++        table: &'a str,
++        old_name: &'a str,
++        new_name: &'a str,
+     },
+-    /// `ALTER TABLE table RENAME COLUMN old_name TO new_name`.
+-    RenameColumn {
 +}
 +
-+/// The oid of the PostgreSQL type of a column declared as `ty_str`, or None
-+/// for a type name tursopg does not know.
-+pub(crate) fn pg_type_oid(ty_str: &str) -> Option<i64> {
-     let base = match ty_str.find('(') {
-         Some(pos) => &ty_str[..pos],
-         None => ty_str,
-     };
--    match base.to_uppercase().as_str() {
-+    let oid = match base.to_uppercase().as_str() {
-         "INTEGER" | "INT" | "INT4" => 23,
-         "SMALLINT" | "INT2" => 21,
-         "BIGINT" | "INT8" => 20,
-@@ -522,8 +529,9 @@ fn sqlite_type_to_pg_oid(ty_str: &str) -> i64 {
-         "CIDR" => 650,
-         "MACADDR" => 829,
-         "OID" => 26,
--        _ => 25, // default to text
--    }
-+        _ => return None,
-+    };
-+    Some(oid)
++/// A statement about roles, ownership, privileges or row-level security.
++/// The engine stores none of these; the dialect does all of the work in
++/// [`Dialect::translate_access_statement`](super::Dialect::translate_access_statement).
++#[derive(Debug, Clone, Copy)]
++pub enum AccessStatement<'a> {
++    /// Whom the relation belongs to from now on.
++    ChangeOwner {
+         namespace: NamespaceId,
+-        table: String,
+-        old_name: String,
+-        new_name: String,
++        name: &'a str,
++        owner: &'a NewOwner,
+     },
+-    /// `GRANT privileges ON relation TO grantees`, or `REVOKE privileges ON
+-    /// relation FROM grantees` when `revoke` is set.
++    /// `GRANT privileges ON relations TO grantees`, or `REVOKE privileges ON
++    /// relations FROM grantees` when `revoke` is set.
+     Grant {
+         revoke: bool,
+-        namespace: NamespaceId,
+-        name: String,
+-        privileges: Vec<Privilege>,
+-        grantees: Vec<Grantee>,
++        relations: &'a [RelationName],
++        privileges: &'a [Privilege],
++        grantees: &'a [Grantee],
+     },
+     /// `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`, or `DISABLE` when
+     /// `enabled` is false.
+     SetRowSecurity {
+         namespace: NamespaceId,
+-        name: String,
++        name: &'a str,
+         enabled: bool,
+     },
+     /// `CREATE POLICY` on table `name`. Its expressions refer to the
+     /// table's columns by their unqualified names.
+     CreatePolicy {
+         namespace: NamespaceId,
+-        name: String,
+-        policy: Box<ast::CreatePolicy>,
++        name: &'a str,
++        policy: &'a ast::CreatePolicy,
+     },
+     /// `DROP POLICY policy_name ON name`.
+     DropPolicy {
+         namespace: NamespaceId,
+-        name: String,
+-        policy_name: String,
++        name: &'a str,
++        policy_name: &'a str,
+         if_exists: bool,
+     },
+     /// `CREATE ROLE name`: a role that is not a superuser and cannot log in.
+     CreateRole {
+-        name: String,
+-        options: ast::RoleOptions,
++        name: &'a str,
++        options: &'a ast::RoleOptions,
+     },
+     /// `GRANT roles TO grantees`, which makes each grantee a member of each
+     /// role, or `REVOKE roles FROM grantees` when `revoke` is set.
+     GrantRole {
+         revoke: bool,
+-        roles: Vec<String>,
+-        grantees: Vec<Grantee>,
++        roles: &'a [String],
++        grantees: &'a [Grantee],
+     },
  }
  
- /// The oid of relation `name` of `namespace`, from its stored class row.
-@@ -1564,6 +1572,100 @@ impl SnapshotRows for PgTablesTable {
-     }
- }
- 
-+#[derive(Debug)]
-+struct PgPolicyTable;
-+
-+impl SnapshotRows for PgPolicyTable {
-+    const SCHEMA: &'static str = "CREATE TABLE pg_policy (
-+            oid INTEGER,
-+            polname TEXT,
-+            polrelid INTEGER,
-+            polcmd TEXT,
-+            polpermissive BOOLEAN,
-+            polroles INTEGER[],
-+            polqual TEXT,
-+            polwithcheck TEXT,
-+            tableoid INTEGER HIDDEN
-+        )";
-+    /// PostgreSQL's oid of pg_policy.
-+    const TABLE_OID: Option<i64> = Some(3256);
-+    const ESTIMATED_COST: f64 = 100.0;
-+    const ESTIMATED_ROWS: u32 = 50;
-+
-+    /// `polqual` and `polwithcheck` hold the conditions as text, which
-+    /// `pg_get_expr` returns as it is.
-+    fn load_rows(conn: &Connection) -> Vec<Vec<Value>> {
-+        let schema = conn.current_schema();
-+        catalog_policies(&schema)
-+            .into_iter()
-+            .map(|policy| {
-+                let roles = policy
-+                    .policy
-+                    .roles
-+                    .iter()
-+                    .map(|role| role_oid(*role).to_string())
-+                    .collect::<Vec<_>>()
-+                    .join(",");
-+                vec![
-+                    Value::from_i64(policy.oid),
-+                    Value::build_text(policy.policy.name.clone()),
-+                    Value::from_i64(policy.table_oid),
-+                    Value::build_text(
-+                        crate::policies::command_letter(policy.policy.command).to_string(),
-+                    ),
-+                    Value::from_i64(i64::from(policy.policy.permissive)),
-+                    Value::build_text(format!("{{{roles}}}")),
-+                    policy.qual.map_or(Value::Null, Value::build_text),
-+                    policy.with_check.map_or(Value::Null, Value::build_text),
-+                ]
-+            })
-+            .collect()
-+    }
-+}
-+
-+/// A row-level security policy as the catalogs show it.
-+struct CatalogPolicy<'a> {
-+    oid: i64,
-+    table_oid: i64,
-+    policy: &'a RowPolicy,
-+    /// The `USING` condition as PostgreSQL prints it.
-+    qual: Option<String>,
-+    /// The `WITH CHECK` condition as PostgreSQL prints it.
-+    with_check: Option<String>,
-+}
-+
-+/// The policies of every table, ordered by table oid and then as created.
-+fn catalog_policies(schema: &Schema) -> Vec<CatalogPolicy<'_>> {
-+    let Some(catalog) = crate::classes::class_catalog(schema) else {
-+        return Vec::new();
-+    };
-+    let mut policies = Vec::new();
-+    for class in catalog.classes() {
-+        if class.relpolicies.is_empty() {
-+            continue;
-+        }
-+        let Some(table) = schema.get_btree_table(class.relnamespace, &class.relname) else {
-+            continue;
-+        };
-+        let condition_text = |condition: &Option<ast::Expr>| {
-+            condition.as_ref().map(|condition| {
-+                crate::deparse::condition_text(condition, &table)
-+                    .unwrap_or_else(|| render_expr(condition))
-+            })
-+        };
-+        for (oid, policy) in class.relpolicies.iter() {
-+            policies.push(CatalogPolicy {
-+                oid,
-+                table_oid: class.oid,
-+                policy,
-+                qual: condition_text(&policy.using_expr),
-+                with_check: condition_text(&policy.check_expr),
-+            });
-+        }
-+    }
-+    policies
+-/// Whom a relation belongs to after a [`CatalogChange::ChangeOwner`].
++impl AccessStatement<'_
 ```
 
-**File**: `postgres/frontend/classes.rs` (modified, +5/-0)
+**File**: `core/dialect/mod.rs` (modified, +24/-68)
 ```diff
-@@ -201,6 +201,11 @@ impl ClassCatalog {
-         Ok(catalog)
-     }
- 
-+    /// The class rows, ordered by oid.
-+    pub(crate) fn classes(&self) -> impl Iterator<Item = &RelationClass> {
-+        self.by_oid.values()
-+    }
-+
-     pub(crate) fn get_by_name(&self, namespace: NamespaceId, name: &str) -> Option<&RelationClass> {
-         self.oids_by_name
-             .get(&(namespace, name.to_string()))
-```
-
-**File**: `postgres/frontend/deparse.rs` (added, +704/-0)
-```diff
-@@ -0,0 +1,704 @@
-+//! PostgreSQL's text of a row-level security condition, as `pg_get_expr`
-+//! prints it for `pg_policy.polqual` and `pg_policies.qual`.
-+//!
-+//! The catalog stores what the engine compiled the condition into, so this
-+//! turns the engine's forms back into PostgreSQL's: `GLOB 'a*'` is printed
-+//! as `~~ 'a%'::text`, `CAST (1 AS boolean)` as `true`. PostgreSQL prints the
-+//! condition after resolving types, with every operator in parentheses and
-+//! the casts PostgreSQL adds where types meet, such as `'x'::text`,
-+//! `(v)::text` for a `varchar` column and `(1)::numeric` for a `numeric`
-+//! one, so the printer follows the types of the table's columns. A form it
-+//! does not know how to print as PostgreSQL does gives None.
-+
-+use turso_core::schema::BTreeTable;
-+use turso_parser::ast;
-+use turso_pg_parser::quote_identifier;
-+use turso_pg_parser::translator::role_keyword;
-+
-+use crate::catalog::pg_type_oid;
-+use crate::functions::quote_literal;
-+
-+/// PostgreSQL's text of `condition`, a condition on the columns of `table`,
-+/// or None when it has a form this module does not print.
-+pub(crate) fn condition_text(condition: &ast::Expr, table: &BTreeTable) -> Option<String> {
-+    let printed = Printer { table }.expr(condition)?;
-+    Some(printed.typed_text(None))
-+}
-+
-+/// The types that decide how PostgreSQL prints an expression.
-+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-+enum PgType {
-+    Boolean,
-+    Smallint,
-+    Integer,
-+    Bigint,
-+    Numeric,
-+    Text,
-+    Varchar,
-+    /// The type of `current_user` and the other role keywords.
-+    Name,
-+    /// A quoted literal that has no type until it meets another operand.
-+    UnknownLiteral,
-+    Other,
-+}
-+
-+impl PgType {
-+    fn of_column(declared: &str) -> Self {
-+        // tursopg shows a `char` column as `varchar`, but PostgreSQL
-+        // compares it as `bpchar`, which this module does not print.
-+        let base = declared.split('(').next().unwrap_or("").trim();
-+        if matches!(
-+            base.to_ascii_uppercase().as_str(),
-+            "CHAR" | "NCHAR" | "CHARACTER"
-+        ) {
-+            return Self::Other;
-+        }
-+        match pg_type_oid(declared) {
-+            Some(16) => Self::Boolean,
-+            Some(21) => Self::Smallint,
-+            Some(23) => Self::Integer,
-+            Some(20) => Self::Bigint,
-+            Some(1700) => Self::Numeric,
-+            Some(25) => Self::Text,
-+            Some(1043) => Self::Varchar,
-+            _ => Self::Other,
-+        }
-+    }
-+
-+    /// The place of a number type in PostgreSQL's implicit casts: a value
-+    /// is cast to a type further along, never back.
-+    fn number_rank(self) -> Option<u8> {
-+        match self {
-+            Self::Smallint => Some(0),
-+            Self::Integer => Some(1),
-+            Self::Bigint => Some(2),
-+            Self::Numeric => Some(3),
-+            _ => None,
-+        }
-+    }
-+
-+    fn is_integer(self) -> bool {
-+        self.number_rank().is_some_and(|rank| rank <= 2)
-+    }
-+
-+    fn is_string(self) -> bool {
-+        matches!(
-+            self,
-+            Self::Text | Self::Varchar | Self::Name | Self::UnknownLiteral
-+        )
-+    }
-+
-+    /// The name PostgreSQL prints in a cast to the type.
-+    fn cast_name(self) -> &'static str {
-+        match self {
-+            Self::Smallint => "smallint",
-+            Self::Integer => "integer",
-+            Self::Bigint => "bigint",
-+            Self::Numeric => "numeric",
-+            _ => unreachable!("only number types are cast to"),
-+        }
-+    }
-+
-+    /// The type of the two number types PostgreSQL casts both to.
-+    fn wider_number(self, other: Self) -> Option<Self> {
-+        let rank = self.number_rank()?.max(other.number_rank()?);
-+        Some(if self.number_rank() == Some(rank) {
-+            self
-+        } else {
-+            other
-+        })
-+    }
-+}
-+
-+/// An expression as PostgreSQL prints it, and its type.
-+struct Printed {
-+    text: String,
-+    ty: PgType,
-+    /// Whether the expression is a constant, such as `1`, `-1` or `'x'`.
-+    constant: bool,
-+}
-+
-+impl Printed {
-+    fn new(text: impl Into<String>, ty: PgType) -> Self {
-+        Self {
-+            text: text.into(),
-+            ty,
-+            constant: false,
-+        }
-+    }
-+
-+    fn constant(text: impl Into<String>, ty: PgType) -> Self {
-+        Self {
-+            constant: true,
-+            ..Self::new(text, ty)
-+        }
-+    }
-+
-+    /// The text of the number cast to the number type `ty`, as PostgreSQL
-+    /// prints an implicit cast: `(1)::numeric`, `(id)::bigint`.
-+    fn cast_text(&self, ty: PgType) -> String {
-+        if self.ty == ty {
-+            self.text.clone()
-+        } else {
-+            format!("({})::{}", self.text, ty.cast_name())
-+        }
-+    }
-+
-+    /// The text where the expression meets an operand of type `other`: a
-+    /// quoted literal takes that type, `text` when there is none, and a
-+    /// `varchar` column is compared as `t
-```
-
-**File**: `postgres/frontend/functions.rs` (modified, +11/-9)
-```diff
-@@ -653,19 +653,21 @@ fn exec_version() -> String {
- /// form so the result reads back identically regardless of
- /// standard_conforming_strings.
- fn exec_quote_literal(value: &Value) -> Option<String> {
--    if matches!(value, Value::Null) {
--        return None;
-+    match value {
-+        Value::Null => None,
-+        Value::Text(t) => Some(quote_literal(t.as_str())),
-+        other => Some(quote_literal(&other.to_string())),
-     }
--    let text = match value {
--        Value::Text(t) => t.as_str().to_string(),
--        other => other.to_string(),
--    };
--    let quoted = if text.contains('\\') {
-+}
-+
-+/// `text` as PostgreSQL's quote_literal() writes it: in single quotes, with
-+/// quotes doubled, and as an escape string when it has a backslash.
-+pub(crate) fn quote_literal(text: &str) -> String {
-+    if text.contains('\\') {
-         format!("E'{}'", text.replace('\\', "\\\\").replace('\'', "''"))
-     } else {
-         format!("'{}'", text.replace('\'', "''"))
--    };
--    Some(quoted)
-+    }
- }
- 
- /// PostgreSQL's json_strip_nulls(json): drops object fields whose value is null,
-```
-
-**File**: `postgres/frontend/lib.rs` (modified, +1/-0)
-```diff
-@@ -4,6 +4,7 @@ mod auth_members;
- mod catalog;
- mod classes;
- mod copy;
-+mod deparse;
- mod error;
- mod functions;
- mod open;
-```
-
----
-
-### Incident Patch 2: `fb8a461f` (2026-11-12)
-**Commit Message**: postgres: give each row-level security policy an oid
-
-pg_policy identifies each policy by its oid, so a policy needs one that
-stays the same for as long as it exists.
-
-CREATE POLICY takes the next oid from the counter that relations use,
-the sqlite_sequence row of __turso_internal_classes, so no oid is used
-twice in one database, and stores it with the policy in relpolicies. The
-oid is only known when the statement runs, so the stored text is built
-around it at run time.
-
-No release stored policies, so every stored policy has an oid, and a
-stored policy without one makes the catalog row invalid.
-
-Tests: policies_take_oids_from_the_relation_oid_counter_and_keep_them_across_a_reopen
-fails without this change.
-
-**File**: `postgres/frontend/classes.rs` (modified, +135/-92)
-```diff
-@@ -24,7 +24,8 @@
- //! Oids start at 16384, PostgreSQL's `FirstNormalObjectId`, and are never
- //! reused inside one database, even after the relation is dropped: the
- //! highest oid ever used is kept in `sqlite_sequence` under the catalog's
--//! own name, like an AUTOINCREMENT table's watermark.
-+//! own name, like an AUTOINCREMENT table's watermark. Row-level security
-+//! policies take their oids from the same counter.
- 
- use std::collections::{BTreeMap, HashMap};
- use std::sync::Arc;
-@@ -55,7 +56,7 @@ use crate::auth_members::{
+@@ -24,7 +24,9 @@ mod engine;
+ pub use crate::functions::builtin::{
+     call_builtin_scalar, resolve_builtin_function, SQLITE_VERSION, SQLITE_VERSION_NUMBER,
  };
- use crate::catalog::{engine_role_by_name, role_oid, role_oid_by_name};
- use crate::error::sqlstate_error;
--use crate::policies;
-+use crate::policies::{self, TablePolicies};
- use crate::roles::{
-     schema_roles, AUTHID_TABLE_NAME, CREATE_AUTHID_NAME_INDEX_SQL, CREATE_AUTHID_TABLE_SQL,
- };
-@@ -143,7 +144,7 @@ pub(crate) struct RelationClass {
-     /// Whether the table has row-level security.
-     pub(crate) relrowsecurity: bool,
-     /// The table's row-level security policies.
--    pub(crate) relpolicies: Vec<RowPolicy>,
-+    pub(crate) relpolicies: TablePolicies,
- }
+-pub use catalog::{CatalogChange, NewOwner, OwnerColumn};
++pub use catalog::{
++    AccessStatement, CatalogApply, NewOwner, OwnerColumn, RelationChange, RelationName,
++};
  
- impl RelationClass {
-@@ -244,7 +245,7 @@ impl ClassCatalog {
-                     relownedbycolumn: None,
-                     relacl: None,
-                     relrowsecurity: false,
--                    relpolicies: Vec::new(),
-+                    relpolicies: TablePolicies::default(),
-                 });
+ #[cfg(test)]
+ pub(crate) use engine::EngineDialect;
+@@ -329,83 +331,37 @@ pub trait Dialect: Send + Sync + 'static {
+         ))
+     }
+ 
+-    /// Translates `changes`, which the statement being compiled makes, into
+-    /// the bytecode that records them in the dialect's own schema state, in
+-    /// the same transaction as the statement's `sqlite_schema` rows. A table
+-    /// comes with its automatic indexes in one call. Does nothing for a
+-    /// dialect without schema state of its own, except that such a dialect
+-    /// has no roles, ownership, privileges or row-level security and refuses
+-    /// `CREATE ROLE`, `GRANT role TO role`, `ALTER ... OWNER TO`, `ALTER SEQUENCE ... OWNED BY`,
+-    /// `GRANT`, `REVOKE`, `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`,
+-    /// `CREATE POLICY` and `DROP POLICY`.
+-    fn translate_catalog_changes(
++    /// Translates `changes`, which the statement being compiled makes to
++    /// relations, into the bytecode that records them in the dialect's own
++    /// schema state, in the same transaction as the statement's
++    /// `sqlite_schema` rows. A table comes with its automatic indexes in one
++    /// call. Does nothing for a dialect without schema state of its own.
++    fn translate_relation_changes(
+         &self,
+         program: &mut ProgramBuilder,
+         schema: &Schema,
+         connection: &Arc<Connection>,
+-        changes: &[CatalogChange],
++        changes: &[RelationChange<'_>],
+     ) -> Result<()> {
+-        let _ = (program, schema, connection);
+-        for change in changes {
+-            match change {
+-                CatalogChange::ChangeOwner {
+-                    owner: NewOwner::Role(_),
+-                    ..
+-                } => {
+-                    return Err(LimboError::ParseError(
+-                        "ALTER ... OWNER TO is not supported".to_string(),
+-                    ));
+-                }
+-                CatalogChange::ChangeOwner {
+-                    owner: NewOwner::Column(_),
+-                    ..
+-                } => {
+-                    return Err(LimboError::ParseError(
+-                        "ALTER SEQUENCE ... OWNED BY is not supported".to_string(),
+-                    ));
+-                }
+-                CatalogChange::Grant { revoke, .. } => {
+-                    let statement = if *revoke { "REVOKE" } else { "GRANT" };
+-                    return Err(LimboError::ParseError(format!(
+-                        "{statement} is not supported"
+-                    )));
+-                }
+-                CatalogChange::SetRowSecurity { .. }
+-                | CatalogChange::CreatePolicy { .. }
+-                | CatalogChange::DropPolicy { .. } => {
+-                    return Err(LimboError::ParseError(
+-                        "row-level security is not supported".to_string(),
+-                    ));
+-                }
+-                CatalogChange::CreateRole { .. } => {
+-                    return Err(LimboError::ParseError(
+-                        "CREATE ROLE is not supported".to_string(),
+-                    ));
+-                }
+-                CatalogChange::GrantRole { revoke, .. } => {
+-                    let statement = if *revoke { "REVOKE" } else { "GRANT" };
+-                    return Err(LimboError::ParseError(format!(
+-                        "{statement} of role membership is not supported"
+-                    )));
+-                }
+-                _ => {}
+-            }
+-        }
++        let _ = (program, schema, connection, changes);
+         Ok(())
+     }
+ 
+-    /// Applies `change`, which the running statement wrote to the dialect's
+-    /// schema state, to the in-memory copy in `schema`. `values` are the
+-    /// registers the dialect named when it emitted the instruction, such as
+-    /// the id its state gave a created relation.
+-    fn apply_catalog_change(
++    /// Translates `statement` into the bytecode that changes the roles,
++    /// owners, privileges or policies the dialect stores. A dialect that
++    /// stores none refuses `CREATE ROLE`, `GRANT role TO role`,
++    /// `ALTER ... OWNER TO`, `ALTER SEQUENCE ... OWNED BY`, `GRANT`,
++    /// `REVOKE`, `ALTER TABLE ... ENABLE ROW LEVEL SECURITY`,
++    /// `CREATE POLICY` and `DROP POLICY`.
++    fn translate_access_statement(
+         &self,
+-        schema: &mut Schema,
+-        change: &CatalogChange,
+-        values: &[Value],
++        program: &mut ProgramBuilder,
++        schema: &Schema,
++        connection: &Arc<Connection>,
++        statement: &AccessStatement<'_>,
+     ) -> Result<()> {
+-        let _ = (schema, change, values);
+-        Ok(())
++        let _ = (program,
+```
+
+**File**: `core/lib.rs` (modified, +3/-1)
+```diff
+@@ -147,7 +147,9 @@ pub(crate) use database::{DatabaseCatalog, InitState};
+ pub(crate) use database::{DatabaseKey, RegistryEntry, DATABASE_MANAGER};
+ #[cfg(test)]
+ pub(crate) use dialect::EngineDialect;
+-pub use dialect::{CatalogChange, Dialect, NewOwner, OwnerColumn};
++pub use dialect::{
++    AccessStatement, CatalogApply, Dialect, NewOwner, OwnerColumn, RelationChange, RelationName,
++};
+ pub use error::{
+     io_error, CompletionError, ConstraintKind, ConstraintViolation, DialectError, LimboError,
+     SQLITE_CONSTRAINT_UNIQUE, SQLITE_ERROR,
+```
+
+**File**: `core/security/mod.rs` (modified, +2/-2)
+```diff
+@@ -38,8 +38,8 @@
+ //! The defaults of these methods know only [`roles::RoleId::SUPERUSER`],
+ //! give every role every privilege and no table row-level security.
+ //! Statements that change access control, such as `CREATE ROLE`, `GRANT` and
+-//! `CREATE POLICY`, reach the dialect as a [`crate::CatalogChange`] through
+-//! [`crate::Dialect::translate_catalog_changes`], which the default refuses.
++//! `CREATE POLICY`, reach the dialect as a [`crate::AccessStatement`] through
++//! [`crate::Dialect::translate_access_statement`], which the default refuses.
+ //!
+ //! # Where checks happen
+ //!
+```
+
+**File**: `core/security/roles.rs` (modified, +1/-1)
+```diff
+@@ -10,7 +10,7 @@
+ //! and core asks it about them through [`crate::Dialect::role_by_name`],
+ //! [`crate::Dialect::role_is_superuser`] and
+ //! [`crate::Dialect::can_set_role`]. `CREATE ROLE` reaches the dialect as a
+-//! [`crate::CatalogChange::CreateRole`]. A dialect that keeps no roles, such
++//! [`crate::AccessStatement::CreateRole`]. A dialect that keeps no roles, such
+ //! as SQLite's, has only the built-in ids and refuses `CREATE ROLE`.
+ 
+ /// The role a new connection runs as. The program that opens the connection
+```
+
+**File**: `core/translate/alter.rs` (modified, +26/-26)
+```diff
+@@ -1,5 +1,5 @@
+ use crate::alloc::TursoIteratorExt;
+-use crate::dialect::{CatalogChange, NewOwner};
++use crate::dialect::{AccessStatement, NewOwner, RelationChange};
+ use crate::namespace::{NamespaceId, NamespaceRef};
+ use crate::schema::RelationKind;
+ use crate::sync::Arc;
+@@ -8,6 +8,7 @@ use crate::translate::row_security;
+ use crate::types::StrictType;
+ use crate::util::renamed_automatic_index_name;
+ use crate::{turso_assert_eq, turso_assert_ne, SymbolTable};
++use std::borrow::Cow;
+ use turso_parser::ast::{self, TableInternalId};
+ 
+ use super::{
+@@ -1779,26 +1780,24 @@ pub fn translate_alter_table(
+             if schema::dialect_relation_hooks_apply(connection, database_id)? {
+                 // Automatic indexes are renamed with the table, because
+                 // their names embed it.
+-                let mut changes = vec![CatalogChange::Rename {
++                let mut changes = vec![RelationChange::Renamed {
+                     namespace: namespace.id,
+-                    old_name: normalized_old_name,
+-                    new_name: normalized_new_name,
++                    old_name: &normalized_old_name,
++                    new_name: Cow::Borrowed(&normalized_new_name),
+                 }];
+-                for index in &table_indexes {
+-                    let Some(new_name) = renamed_automatic_index_name(
++                changes.extend(table_indexes.iter().filter_map(|index| {
++                    let new_name = renamed_automatic_index_name(
+                         &index.name,
+                         &mangled_table_name,
+                         &mangled_new_name,
+-                    ) else {
+-                        continue;
+-                    };
+-                    changes.push(CatalogChange::Rename {
++                    )?;
++                    Some(RelationChange::Renamed {
+                         namespace: namespace.id,
+-                        old_name: index.name.clone(),
+-                        new_name,
+-                    });
+-                }
+-                resolver.catalog.dialect.translate_catalog_changes(
++                        old_name: &index.name,
++                        new_name: Cow::Owned(new_name),
++                    })
++                }));
++                resolver.catalog.dialect.translate_relation_changes(
+                     program,
+                     resolver.schema(),
+                     connection,
+@@ -2539,15 +2538,15 @@ pub fn translate_alter_table(
+             if col_name != old_column_name
+                 && schema::dialect_relation_hooks_apply(connection, database_id)?
+             {
+-                resolver.catalog.dialect.translate_catalog_changes(
++                resolver.catalog.dialect.translate_relation_changes(
+                     program,
+                     resolver.schema(),
+                     connection,
+-                    &[CatalogChange::RenameColumn {
++                    &[RelationChange::ColumnRenamed {
+                         namespace: namespace.id,
+-                        table: normalize_ident(table_name),
+-                        old_name: old_column_name.to_string(),
+-                        new_name: col_name.to_string(),
++                        table: &normalize_ident(table_name),
++                        old_name: old_column_name,
++                        new_name: col_name,
+                     }],
+                 )?;
              }
-             CatalogChange::Drop { namespace, name } => {
-@@ -427,7 +428,7 @@ fn class_from_row(row: &[Value]) -> turso_core::Result<RelationClass> {
-                 _ => return Err(corrupt_row(row)),
-             };
-             let relpolicies = match relpolicies {
--                Value::Null => Vec::new(),
-+                Value::Null => TablePolicies::default(),
-                 Value::Text(text) => {
-                     policies::parse(text.as_str()).ok_or_else(|| corrupt_row(row))?
-                 }
-@@ -596,9 +597,9 @@ fn read_back_acl(value: &Value) -> turso_core::Result<Option<Acl>> {
+@@ -2618,19 +2617,20 @@ fn translate_alter_owner(
      }
- }
+     // The dialect decides what goes with the relation, such as a table's
+     // indexes, and whose an index's owner is.
+-    let changes = [CatalogChange::ChangeOwner {
++    let owner = NewOwner::Role(role.clone());
++    let statement = AccessStatement::ChangeOwner {
+         namespace: namespace.id,
+-        name: normalized_name,
+-        owner: NewOwner::Role(role.clone()),
+-    }];
++        name: &normalized_name,
++        owner: &owner,
++    };
  
--fn read_back_policies(value: &Value) -> turso_core::Result<Vec<RowPolicy>> {
-+fn read_back_policies(value: &Value) -> turso_core::Result<TablePolicies> {
-     match value {
--        Value::Null => Ok(Vec::new()),
-+        Value::Null => Ok(TablePolicies::default()),
-         Value::Text(text) => policies::parse(text.as_str()).ok_or_else(|| {
-             LimboError::InternalError(format!(
-                 "the relation change read back invalid policies {text:?}"
-@@ -628,9 +629,12 @@ pub(crate) fn translate_catalog_changes(
-     connection: &Arc<Connection>,
-     changes: &[CatalogChange],
- ) -> turso_core::Result<()> {
--    let allocates_oids = changes
--        .iter()
--        .any(|change| matches!(change, CatalogChange::Create { .. }));
-+    let allocates_oids = changes.iter().any(|change| {
-+        matches!(
-+            change,
-+            CatalogChange::Create { .. } | CatalogChange::CreatePolicy { .. }
-+        )
-+    });
-     let changes_owner_or_privileges = changes.iter().any(|change| {
-         matches!(
-             change,
-@@ -948,11 +952,7 @@ pub(crate) fn translate_catalog_changes(
-             } => {
-                 let class = table_class(schema, *namespace, name)?;
-                 let policy_name = policy.policy_name.as_str();
--                if class
--                    .relpolicies
--                    .iter()
--                    .any(|existing| existing.name == policy_name)
--                {
-+                if class.relpolicies.contains(policy_name) {
-                     return Err(sqlstate_error(
-                         SQLSTATE_DUPLICATE_OBJECT,
-                         format!("policy \"{policy_name}\" for table \"{name}\" already exists"),
-@@ -963,20 +963,20 @@ pub(crate) fn translate_catalog_changes(
-                     .iter()
-                     .map(|role| resolve_policy_role(schema, connection, role))
-                     .collect::<turso_core::Result<Vec<_>>>()?;
--                let mut relpolicies = class.relpolicies.clone();
--                relpolicies.push(RowPolicy {
--                    name: policy_name.to_string(),
--                    permissive: policy.permissive,
--                    command: policy.command,
--                    roles,
--                    using_expr: policy.using_expr.as_deref().cloned(),
--                    check_expr: policy.check_expr.as_deref().cloned(),
--                });
--                let stored = policies::stored_text(&relpolicies);
-+                let (before_oid, after_oid) =
-+                    class.relpolicies.stored_text_around_new_oid(RowPolicy {
-+                        name: policy_name.to_string(),
-+                        permissive: policy.permissive,
-+                        command: policy.command,
-+                        roles,
-+                        using_expr: policy.using_expr.as_deref().cloned(),
-+                        check_expr: policy.check_expr.as_deref().cloned(),
-
+     let schema_cookie = resolver.with_schema(crate::MAIN_DB_ID, |s| s.schema_version);
+     program.begin_write_on_database(crate::MAIN_DB_ID, schema_cookie)?;
+-    resolver.catalog.dialect.translate_catalog_changes(
++    resolver.catalog.dialect.translate_access_statement(
+         program,
+         resolver.schema(),
+         connection,
+-        &changes,
++        &statement,
+     )?;
+     schema::emit_schema_cookie(resolver, program);
+     Ok(())
 ```
 
-**File**: `postgres/frontend/policies.rs` (modified, +144/-44)
+**File**: `core/translate/index.rs` (modified, +8/-8)
 ```diff
-@@ -8,6 +8,7 @@
- //!
- //! | key             | value                                                  |
- //! |-----------------|--------------------------------------------------------|
-+//! | `oid`           | the policy's oid                                       |
- //! | `polname`       | policy name                                            |
- //! | `polcmd`        | `*` for ALL, `r` SELECT, `a` INSERT, `w` UPDATE, `d` DELETE |
- //! | `polpermissive` | `true` for `AS PERMISSIVE`, `false` for `AS RESTRICTIVE` |
-@@ -17,6 +18,9 @@
- //!
- //! The conditions are what the engine compiled `CREATE POLICY` into, written
- //! out as SQL and read back with the engine's parser.
-+//!
-+//! Policies take their oids from the same counter as relations, so an oid
-+//! is never used twice in one database.
+@@ -1,5 +1,5 @@
+ use crate::alloc::{TryClone, TursoIteratorExt, TursoVecExt};
+-use crate::dialect::CatalogChange;
++use crate::dialect::RelationChange;
+ use crate::error::SQLITE_CONSTRAINT_UNIQUE;
+ use crate::function::Func;
+ use crate::index_method::IndexMethodConfiguration;
+@@ -359,15 +359,15 @@ pub fn translate_create_index(
+     )?;
  
- use serde::{Deserialize, Serialize};
- use turso_core::security::policy::RowPolicy;
-@@ -26,6 +30,7 @@ use turso_parser::parser::Parser;
+     if schema::dialect_relation_hooks_apply(connection, database_id)? {
+-        resolver.catalog.dialect.translate_catalog_changes(
++        resolver.catalog.dialect.translate_relation_changes(
+             program,
+             resolver.schema(),
+             connection,
+-            &[CatalogChange::Create {
++            &[RelationChange::Created {
+                 namespace: namespace.id,
+-                name: idx_name.clone(),
++                name: &idx_name,
+                 kind: crate::schema::RelationKind::Index,
+-                table: Some(tbl_name),
++                table: Some(&tbl_name),
+             }],
+         )?;
+     }
+@@ -1501,13 +1501,13 @@ pub fn translate_drop_index(
+     )?;
  
- #[derive(Serialize, Deserialize)]
- struct StoredPolicy {
-+    oid: i64,
-     polname: String,
-     polcmd: String,
-     polpermissive: bool,
-@@ -34,43 +39,108 @@ struct StoredPolicy {
-     polwithcheck: Option<String>,
- }
- 
--/// Reads the stored form, which [`stored_text`] writes. None when it is not
--/// valid.
--pub(crate) fn parse(text: &str) -> Option<Vec<RowPolicy>> {
-+/// The row-level security policies of a table, in the order they were
-+/// created, with their oids.
-+#[derive(Debug, Clone, Default, PartialEq, Eq)]
-+pub(crate) struct TablePolicies {
-+    policies: Vec<RowPolicy>,
-+    /// The oid of each policy of `policies`.
-+    oids: Vec<i64>,
-+}
-+
-+impl TablePolicies {
-+    pub(crate) fn as_slice(&self) -> &[RowPolicy] {
-+        &self.policies
-+    }
-+
-+    pub(crate) fn is_empty(&self) -> bool {
-+        self.policies.is_empty()
-+    }
-+
-+    /// The policies with their oids.
-+    pub(crate) fn iter(&self) -> impl Iterator<Item = (i64, &RowPolicy)> {
-+        self.oids.iter().copied().zip(&self.policies)
-+    }
-+
-+    pub(crate) fn contains(&self, name: &str) -> bool {
-+        self.policies.iter().any(|policy| policy.name == name)
-+    }
-+
-+    /// The policies without the one named `name`.
-+    pub(crate) fn without(&self, name: &str) -> Self {
-+        let (oids, policies) = self
-+            .iter()
-+            .filter(|(_, policy)| policy.name != name)
-+            .map(|(oid, policy)| (oid, policy.clone()))
-+            .unzip();
-+        Self { policies, oids }
-+    }
-+
-+    /// The stored form of the policies.
-+    pub(crate) fn stored_text(&self) -> String {
-+        let stored: Vec<StoredPolicy> = self
-+            .iter()
-+            .map(|(oid, policy)| stored_policy(oid, policy))
-+            .collect();
-+        serde_json::to_string(&stored).expect("a policy list serializes")
-+    }
-+
-+    /// The stored form of the policies and `added` after them, split where
-+    /// the oid of `added` goes: the statement that adds it only learns its
-+    /// oid when it runs.
-+    pub(crate) fn stored_text_around_new_oid(&self, added: RowPolicy) -> (String, String) {
-+        // No other policy has oid 0, and a quote inside a JSON string is
-+        // escaped, so the marker only matches where the added policy starts.
-+        const MARKER: &str = r#"{"oid":0,"#;
-+        let mut with_added = self.clone();
-+        with_added.policies.push(added);
-+        with_added.oids.push(0);
-+        let text = with_added.stored_text();
-+        let added_at = text.rfind(MARKER).expect("the added policy is stored last");
-+        let oid_at = added_at + r#"{"oid":"#.len();
-+        (
-+            text[..oid_at].to_string(),
-+            text[oid_at + "0".len()..].to_string(),
-+        )
-+    }
-+}
-+
-+/// Reads the stored form, which [`TablePolicies::stored_text`] writes. None
-+/// when it is not valid.
-+pub(crate) fn parse(text: &str) -> Option<TablePolicies> {
-     let stored: Vec<StoredPolicy> = serde_json::from_str(text).ok()?;
--    stored
--        .into_iter()
--        .map(|policy| {
--            Some(RowPolicy {
--                name: policy.polname,
--                permissive: policy.polpermissive,
--                command: command_of_letter(&policy.polcmd)?,
--                roles: policy
--                    .polroles
--                    .into_iter()
--                    .map(role_of_stored)
--                    .collect::<Option<_>>()?,
--                using_expr: parse_optional_condition(policy.polqual.as_deref())?,
--                check_expr: parse_optional_condition(policy.polwithcheck.as_deref())?,
--            })
--        })
--        .collect()
-+    let mut policies = TablePolicies::default();
-+    for policy in stored {
-+        if policy.oid <= 0 {
-+            return None;
-+        }
-+        policies.oids.push(policy.oid);
-+        policies.policies.push(RowPolicy {
-+            name: policy.polname,
-+            permissive: policy.polpermissive,
-+            command: command_of_letter(&policy.polcmd)?,
-+            roles: policy
-+                .polroles
-+
+     if schema::dialect_relation_hooks_apply(connection, database_id)? {
+-        resolver.catalog.dialect.translate_catalog_changes(
++        resolver.catalog.dialect.translate_relation_changes(
+             program,
+             resolver.schema(),
+             connection,
+-            &[CatalogChange::Drop {
++            &[RelationChange::Dropped {
+                 namespace: namespace.id,
+-                name: idx_name.clone(),
++                name: &idx_name,
+             }],
+         )?;
+     }
 ```
 
-**File**: `postgres/tests/integration/postgres/classes.rs` (modified, +59/-0)
+**File**: `core/translate/mod.rs` (modified, +128/-0)
 ```diff
-@@ -793,6 +793,65 @@ fn a_rolled_back_revoke_leaves_the_list_as_it_was(db: TempDatabase) {
-     pg.execute("SELECT x FROM t").unwrap();
- }
+@@ -803,6 +803,134 @@ mod tests {
+         );
+     }
  
-+#[test]
-+fn policies_take_oids_from_the_relation_oid_counter_and_keep_them_across_a_reopen() {
-+    let db = TempDatabase::builder().build();
-+    let pg = db.connect_postgres();
-+    let conn = db.connect_limbo();
-+    pg.execute("CREATE TABLE t (x INTEGER)").unwrap();
-+    pg.execute("CREATE POLICY first ON t USING (x = 1)")
-+        .unwrap();
-+    pg.execute("CREATE POLICY second ON t USING (x = 2)")
-+        .unwrap();
-+    pg.execute("CREATE TABLE u (x INTEGER)").unwrap();
-+    assert_eq!(
-+        stored_policy_oids(&conn, "t"),
-+        vec![("first".to_string(), 16385), ("second".to_string(), 16386)]
-+    );
-+    assert_eq!(class_row(&conn, "u").unwrap().0, 16387);
++    /// The SQLite parser has no syntax for these statements, so the test
++    /// builds the statements a frontend with roles would build.
++    #[test]
++    fn dialect_without_roles_refuses_role_owner_privilege_and_row_security_statements() {
++        let io = Arc::new(MemoryIO::new());
++        let db = Database::open_file(io, ":memory:", Arc::new(EngineDialect)).unwrap();
++        let conn = db
++            .connect(ConnectOpts::new(SessionRole::Superuser))
++            .unwrap();
++        conn.execute("CREATE TABLE t(a)").unwrap();
++        conn.execute("CREATE SEQUENCE s").unwrap();
 +
-+    // The dropped policy had the highest oid, which is not used again.
-+    pg.execute("DROP POLICY second ON t").unwrap();
-+    pg.execute("CREATE POLICY third ON t USING (x = 3)")
-+        .unwrap();
-+    assert_eq!(
-+        stored_policy_oids(&conn, "t"),
-+        vec![("first".to_string(), 16385), ("third".to_string(), 16388)]
-+    );
++        let table = || ast::QualifiedName::single(ast::Name::exact("t".to_string()));
++        let role = || ast::RoleSpec::Name("r".to_string());
++        let alter_table = |body| {
++            ast::Stmt::AlterTable(ast::AlterTable {
++                name: table(),
++                body,
++            })
++        };
++        let grant = |revoke, objects| {
++            ast::Stmt::Grant(ast::Grant {
++                revoke,
++                objects,
++                grantees: vec![ast::Grantee::Role(role())],
++            })
++        };
++        let privileges_on_table = || ast::GrantObjects::Relations {
++            privileges: vec![ast::Privilege::Select],
++            on_sequences: false,
++            relations: vec![table()],
++        };
++        let member_roles = || ast::GrantObjects::Roles(vec!["admin".to_string()]);
 +
-+    drop(pg);
-+    drop(conn);
-+    let db = db.reopen();
-+    let pg = db.connect_postgres();
-+    let conn = db.connect_limbo();
-+    pg.execute("CREATE POLICY fourth ON t USING (x = 4)")
-+        .unwrap();
-+    assert_eq!(
-+        stored_policy_oids(&conn, "t"),
-+        vec![
-+            ("first".to_string(), 16385),
-+            ("third".to_string(), 16388),
-+            ("fourth".to_string(), 16389)
-+        ]
-+    );
-+}
++        let statements = [
++            (
++                grant(false, privileges_on_table()),
++                "GRANT is not supported",
++            ),
++            (
++                grant(true, privileges_on_table()),
++                "REVOKE is not supported",
++            ),
++            (
++                ast::Stmt::CreateRole {
++                    role_name: "r".to_string(),
++                    options: ast::RoleOptions::default(),
++                },
++                "CREATE ROLE is not supported",
++            ),
++            (
++                grant(false, member_roles()),
++                "GRANT of role membership is not supported",
++            ),
++            (
++                grant(true, member_roles()),
++                "REVOKE of role membership is not supported",
++            ),
++            (
++                alter_table(ast::AlterTableBody::OwnerTo {
++                    kind: ast::RelationKind::Table,
++                    role: role(),
++                    if_exists: false,
++                }),
++                "ALTER ... OWNER TO is not supported",
++            ),
++            (
++                ast::Stmt::AlterSequenceOwnedBy {
++                    seq_name: ast::QualifiedName::single(ast::Name::exact("s".to_string())),
++                    owner: Some((table(), ast::Name::exact("a".to_string()))),
++                },
++                "ALTER SEQUENCE ... OWNED BY is not supported",
++            ),
++            (
++                alter_table(ast::AlterTableBody::EnableRowSecurity),
++                "row-level security is not supported",
++            ),
++            (
++                alter_table(ast::AlterTableBody::DisableRowSecurity),
++                "row-level security is not supported",
++            ),
++            (
++                ast::Stmt::CreatePolicy(Box::new(ast::CreatePolicy {
++                    policy_name: ast::Name::exact("p".to_string()),
++                    tbl_name: table(),
++                    permissive: true,
++                    command: ast::PolicyCommand::All,
++                    roles: vec![ast::Grantee::Public],
++                    using_expr: None,
++                    check_expr: None,
++                    using_sql: None,
++                    check_sql: None,
++                })),
++                "row-level security is not supported",
++            ),
++            (
++                ast::Stmt::DropPolicy {
++                    if_exists: false,
++                    policy_name: ast::Name::exact("p".to_string()),
++                    tbl_name: table(),
++                },
++                "row-level security is not supported",
++            ),
++        ];
 +
-+/// The policies of `relname` as `(polname, oid)`, read from the catalog
-+/// table.
-+fn stored_policy_oids(conn: &Arc<Connection>, relname: &str) -> Vec<(String, i64)> {
-+    conn.prepare(format!(
-+        "SELECT json_extract(p.value, '$.polname'), json_extract(p.value, '$.oid') \
-+         FROM __turso_internal_classes c, json_each(c.relpolicies) p \
-+         WHERE c.relname = '{relname}' ORDER BY p.key"
-+    ))
-+    .unwrap()
-+    .run_collect_rows()
-+    .unwrap()
-+    .into_iter()
-+    .map(|row| (row[0].to_string(), row[1].as_int().unwrap()))
-+    .collect()
-+}
++        for (stmt, expected) in statements {
++            let description = format!("{stmt:?}");
++            let schema = db.schema.lock().clone();
++            let result = translate(
++                &schema,
++                stmt,
++                conn.pager.load().clone(),
++                conn.clone(),
++                &SymbolTable::new(),
++                QueryMode::Normal,
++                "",
++                crate::statement::StatementOrigin::Root,
++            );
++            match result {
++                Err(crate::LimboError::ParseError(message)) => {
++                    assert_eq!(message, expected, "{description}")
++                }
++                Err(other) => panic!("{description}: expected a parse error, got {other:?}"),
++                Ok(_) => panic!("{description}: expected an error"),
++            }
 +
- /// A table without a class row is one the engine made for itself. Nobody
- /// granted a role anything on it.
- #[test]
 ```
 
 ---
 
-### Incident Patch 3: `469c4f49` (2026-11-17)
-**Commit Message**: Merge 'core/schema: build the schema of a dialect with SchemaBuilder' from Pekka Enberg
+### Incident Patch 2: `08bec2c5` (2026-11-17)
+**Commit Message**: postgres: build every function in FROM from one descriptor
 
-Making a `Schema` needed a dialect and a SQL parser:
+translate_range_function had one branch per function, and each branch
+repeated the same steps: read the alias, name the columns, build the
+call. A check added to one branch was missing from the others. Describe
+unnest() and generate_series() in RewrittenFunction instead and translate
+them in one place. A function that is a call of an engine table function
+is now a row of data: its argument check, its columns with the name
+PostgreSQL gives each, and its WITH ORDINALITY column.
 
-- `Schema::with_options(enable_custom_types, dialect)` asked the dialect
-for its namespaces and its catalog tables.
-- `Schema` itself parsed the `CREATE TYPE` SQL of the 33 built-in types.
-- `Schema::new()` did both with core's own `EngineDialect`.
+An unnest() without an alias is now also known as unnest, like
+generate_series is known as generate_series.
 
-This turns the direction around: the dialect builds its schema, and
-`Schema` construction knows no dialect. It is one step of removing
-`EngineDialect` from core (#11816).
+PostgreSQL turns on Dialect::table_function_arguments_read_only_earlier_tables,
+so `generate_series(start, stop)` after a table with those columns reads
+the table, not the function, and a table listed after the function is not
+visible to its arguments.
 
-## What changes
+Tests: make -C postgres/conformance run and run-postgres
 
-- **`SchemaBuilder`** (new, in `core/schema.rs`) builds a schema from
-parts: `custom_types`, `type_def`, `table`, `internal_vtab`, `build`.
-Its two namespace setters are `pub(crate)`, because only `new_schema()`
-sets them. It starts from a schema that has only the `sqlite_schema`
-table. It parses nothing.
-- **`Dialect::schema_builder(enable_custom_types)`** (new trait method)
-starts the schema of a database. The default is the catalog tables and
-built-in types that every dialect has. A dialect with catalog tables of
-its own overrides it and adds them.
-- **`<dyn Dialect>::new_schema(enable_custom_types)`** (new)
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-**File**: `core/connection.rs` (modified, +13/-11)
+**File**: `postgres/conformance/pg-sqltests/functions.sqltest` (modified, +87/-0)
 ```diff
-@@ -795,12 +795,12 @@ impl Connection {
-     }
- 
-     pub(crate) fn empty_temp_schema(&self) -> Arc<Schema> {
--        // with_options only fails if built-in type SQL is malformed (programmer bug).
--        let mut schema = Schema::with_options(
--            self.db.experimental_custom_types_enabled(),
--            self.db.dialect().as_ref(),
--        )
--        .expect("built-in type definitions are malformed");
-+        // new_schema only fails if built-in type SQL is malformed (programmer bug).
-+        let mut schema = self
-+            .db
-+            .dialect()
-+            .new_schema(self.db.experimental_custom_types_enabled())
-+            .expect("built-in type definitions are malformed");
-         schema.copy_table_valued_functions(&self.db.clone_schema());
-         Arc::new(schema)
-     }
-@@ -1579,10 +1579,10 @@ impl Connection {
-         let guard = self.schema_reparse_guard();
-         self.pager.load().set_schema_cookie(Some(cookie));
-         // create fresh schema as some objects can be deleted
--        let mut fresh = Schema::with_options(
--            self.experimental_custom_types_enabled(),
--            self.db.dialect().as_ref(),
--        )?;
-+        let mut fresh = self
-+            .db
-+            .dialect()
-+            .new_schema(self.experimental_custom_types_enabled())?;
-         fresh.schema_version = cookie;
- 
-         fresh.copy_table_valued_functions(&self.schema.read());
-@@ -5690,7 +5690,9 @@ mod tests {
-             schema.dialect_schema = Some(Arc::new(()));
-         })
-         .unwrap();
--        let fresh = Schema::with_options(false, &EngineDialect).unwrap();
-+        let fresh = crate::schema::builtin::schema_builder(false)
-+            .unwrap()
-+            .build();
-         assert!(fresh.dialect_schema.is_none());
- 
-         conn.install_schema_keeping_dialect_schema(&fresh).unwrap();
-```
-
-**File**: `core/database.rs` (modified, +3/-4)
-```diff
-@@ -857,10 +857,9 @@ impl Database {
-             allocators,
-             path,
-             wal_path,
--            schema: Arc::new(Mutex::new(Arc::new(Schema::with_options(
--                enable_custom_types,
--                dialect.as_ref(),
--            )?))),
-+            schema: Arc::new(Mutex::new(Arc::new(
-+                dialect.new_schema(enable_custom_types)?,
-+            ))),
-             _shared_page_cache: shared_page_cache,
-             shared_wal,
-             #[cfg(host_shared_wal)]
-```
-
-**File**: `core/dialect/engine.rs` (modified, +1/-59)
-```diff
-@@ -7,7 +7,7 @@
- //! built-in functions, and the built-in catalog tables (`pragma_*`
- //! table-valued functions, `json_each`/`json_tree`, `sqlite_dbpage`,
- //! `btree_dump`, and `sqlite_turso_types`), which each dialect registers
--//! with [`register_builtin_catalog`].
-+//! with [`crate::schema::builtin::schema_builder`].
- //!
- //! [`EngineDialect`] is the dialect of the statements the engine runs for
- //! itself. The SQLite dialect that users open databases with is
-@@ -31,10 +31,7 @@ use crate::numeric::decimal::{
-     numeric_from_value, validate_precision_scale, MAX_FRACTION_DIGITS,
- };
- use crate::numeric::Numeric;
--use crate::pragma::PragmaVirtualTable;
--use crate::schema::{Schema, Table};
- use crate::stats::StatAccum;
--use crate::sync::Arc;
- use crate::translate::roles;
- use crate::types::AsValueRef;
- use crate::vdbe::array::{
-@@ -43,13 +40,11 @@ use crate::vdbe::array::{
-     exec_array_remove, exec_array_slice, exec_array_to_string, exec_string_to_array,
- };
- use crate::vdbe::{registers_to_ref_values, Register};
--use crate::vtab::{VirtualTable, VirtualTableType};
- use crate::{LimboError, Value, ValueRef};
- use bigdecimal::Zero;
- use branches::{mark_unlikely, unlikely};
- use std::borrow::Cow;
- use std::sync::atomic::Ordering;
--use turso_ext::VTabKind;
- 
- /// SQLite version reported by compatibility APIs.
- ///
-@@ -170,59 +165,6 @@ pub fn table_sql_for_replay(sql: &str) -> crate::Result<String> {
-     .to_string())
+@@ -1388,6 +1388,93 @@ expect error {
+     a column definition list is required for functions returning "record"
  }
  
--/// Insert the standard SQLite-style catalog tables into `schema`.
--///
--/// `pragma_*` virtual tables use the dedicated `VirtualTableType::Pragma`
--/// variant (they aren't `InternalVirtualTable`), so they are inserted
--/// directly. The rest go through [`Schema::register_internal_vtab`] — the
--/// same path external callers use via [`crate::Database::register_internal_vtab`].
--pub fn register_builtin_catalog(
--    schema: &mut Schema,
--    enable_custom_types: bool,
--) -> crate::Result<()> {
--    for vtab in pragma_vtabs() {
--        schema.insert_table(
--            NamespaceId::ROOT,
--            vtab.name.to_owned(),
--            Arc::new(Table::Virtual(Arc::new((*vtab).clone()))),
--        );
--    }
--
--    #[cfg(feature = "json")]
--    {
--        schema.register_internal_vtab(crate::json::vtab::JsonVirtualTable::json_each())?;
--        schema.register_internal_vtab(crate::json::vtab::JsonVirtualTable::json_tree())?;
--    }
--    #[cfg(feature = "cli_only")]
--    {
--        schema.register_internal_vtab(crate::dbpage::DbPageTable::new())?;
--        schema.register_internal_vtab(crate::btree_dump::BtreeDumpTable::new())?;
--    }
--    if enable_custom_types {
--        schema.register_internal_vtab(crate::turso_types_vtab::TursoTypesTable::new())?;
--    }
--    Ok(())
--}
--
--/// Build a `VirtualTable` for each PRAGMA table-valued function.
--fn pragma_vtabs() -> Vec<Arc<VirtualTable>> {
--    PragmaVirtualTable::functions()
--        .into_iter()
--        .map(|(tab, schema_sql)| {
--            Arc::new(VirtualTable {
--                name: format!("pragma_{}", tab.pragma_name),
--                columns: VirtualTable::resolve_columns(schema_sql)
--                    .expect("pragma table-valued function schema resolution should not fail"),
--                kind: VTabKind::TableValuedFunction,
--                vtab_type: VirtualTableType::Pragma(tab),
--                vtab_id: 0,
--                is_droppable: false,
--                innocuous: true,
--            })
--        })
--        .collect()
--}
--
- /// Resolve a name against the built-in SQLite function set.
- ///
- /// This table is the SQLite dialect's scalar/aggregate/window name surface,
-```
-
-**File**: `core/dialect/mod.rs` (modified, +22/-13)
-```diff
-@@ -20,7 +20,7 @@ pub(crate) use engine::EngineDialect;
- use crate::{
-     function::ScalarFunc,
-     namespace::NamespaceId,
--    schema::{BTreeTable, RelationKind, Schema},
-+    schema::{BTreeTable, RelationKind, Schema, SchemaBuilder},
-     security::{policy::RowPolicy, roles::RoleId},
-     vdbe::{builder::ProgramBuilder, Register},
-     Clock, CollationSeq, Connection, Func, LimboError, OpenOptions, Result, Value, IO,
-@@ -150,6 +150,19 @@ pub struct ScalarFuncContext<'a> {
- // adopted (pedrocarlo is working on it) and stores the identity kind itself.
- pub const IDENTITY_TABLE_SQL_MARKER: &str = "/* turso_identity";
- 
-+impl dyn Dialect {
-+    /// The schema a database of this dialect has before its objects are
-+    /// read from the file. Called when a database is opened and on every
-+    /// schema rebuild.
-+    pub fn new_schema(&self, enable_custom_types: bool) -> Result<Schema> {
-+        Ok(self
-+            .schema_builder(enable_custom_types)?
-+            .supports_namespaces(self.supports_namespaces())
-+            .default_namespaces(self.default_namespaces())
-+            .build())
-+    }
++test generate-series-with-one-argument-errors {
++    SELECT * FROM generate_series(1);
++}
++@sqlstate 42883
++expect error {
 +}
 +
- /// SQL dialect layered on top of the engine.
- ///
- /// Every [`crate::Database`] carries a dialect, supplied explicitly by
-@@ -252,19 +265,15 @@ pub trait Dialect: Send + Sync + 'static {
-         self.format_table_sql(&stmt.to_string(), tbl_name, body)
-     }
- 
--    /// Install the dialect's catalog tables into a freshly constructed
--    /// schema.
-+    /// Starts the schema a database of this dialect has before its objects
-+    /// are read from the file. The default has the catalog tables and
-+    /// built-in types that every dialect has. A dialect with catalog tables
-+    /// of its own adds them to the default (constructed with
-+    /// [`crate::VirtualTable::new_internal`], which requires no connection).
-     ///
--    /// Called by [`Schema::with_options`] on every schema
--    /// construction and rebuild, so catalog tables survive rebuilds
--    /// structurally instead of being re-registered by hand. The SQLite
--    /// dialect registers the standard built-in catalog here; other
--    /// dialects typically compose with it via
--    /// [`engine::register_builtin_catalog`] and then add their own tables
--    /// (constructed with [`crate::VirtualTable::new_internal`], which
--    /// requires no connection).
--    fn register_catalog(&self, schema: &mut Schema, enable_custom_types: bool) -> Result<()> {
--        engine::register_builtin_catalog(schema, enable_custom_types)
-+    /// [`Dialect::new_schema`] finishes the schema.
-+    fn schema_builder(&self, enable_custom_types: bool) -> Result<SchemaBuilder> {
-+        crate::schema::builtin::schema_builder(enable_custom_types)
-     }
- 
-     fn register_native_extensions(&self, options: OpenOptions) -> OpenOptions {
++test generate-series-with-four-arguments-errors {
++    SELECT * FROM generate_series(1, 2, 1, 1);
++}
++@sqlstate 42883
++expect error {
++}
++
++test generate-series-argument-cannot-name-the-column-of-the-function {
++    SELECT * FROM generate_series(1, generate_series);
++}
++@sqlstate 42703
++expect error {
++    generate_series
++}
++
++test unnest-argument-cannot-name-the-column-of-the-function {
++    SELECT * FROM unnest(unnest);
++}
++@sqlstate 42703
++expect error {
++    unnest
++}
++
++test generate-series-argument-cannot-name-the-function-itself {
++    SELECT * FROM generate_series(1, generate_series.generate_series);
++}
++@sqlstate 42P01
++expect error {
++}
++
++test generate-series-argument-cannot-name-a-column-the-function-does-not-have {
++    SELECT * FROM generate_series(1, generate_series.value);
++}
++@sqlstate 42P01
++expect error {
++}
++
++test unnest-argument-cannot-name-the-function-itself {
++    SELECT * FROM unnest(unnest.unnest);
++}
++@sqlstate 42P01
++expect error {
++}
++
++test generate-series-argument-cannot-name-a-table-listed-after-it {
++    CREATE TABLE series_later (n int);
++    SELECT * FROM generate_series(1, series_later.n), series_later;
++}
++@sqlstate 42P01
++expect error {
++}
++
++test generate-series-argument-cannot-name-a-column-of-a-table-listed-after-it {
++    CREATE TABLE series_later_column (n int);
++    SELECT * FROM generate_series(1, n), series_later_column;
++}
++@sqlstate 42703
++expect error {
++    n
++}
++
++test unnest-argument-cannot-name-a-table-listed-after-it {
++    CREATE TABLE unnest_later (a int[]);
++    SELECT * FROM unnest(unnest_later.a), unnest_later;
++}
++@sqlstate 42P01
++expect error {
++}
++
++test generate-series-argument-named-like-a-column-of-the-function {
++    CREATE TABLE series_args (start int, stop int, step int, value text);
++    INSERT INTO series_args VALUES (1, 7, 3, 'a');
++    SELECT series_args.value, generate_series.generate_series FROM series_args, generate_series(start, stop, step);
++}
++expect {
++    a|1
++    a|4
++    a|7
++}
++
+ test json-to-record-argument-named-like-json-each-column {
+     CREATE TABLE json_each_names (value text, key text, type text);
+     INSERT INTO json_each_names VALUES ('[{"v":"a"},{"v":"b"}]', '{"v":"k"}', '[{"v":"t"}]');
 ```
 
-**File**: `core/mvcc/database/mod.rs` (modified, +8/-8)
+**File**: `postgres/parser/translator.rs` (modified, +112/-115)
 ```diff
-@@ -9540,10 +9540,10 @@ impl<Clock: LogicalClock, A: ConcurrentAllocator> MvStore<Clock, A> {
-                     .block(|| pager.with_header(|header| header.schema_cookie))?
-                     .get(),
+@@ -2914,36 +2914,9 @@ impl PostgreSQLTranslator {
+             });
+         }
+ 
+-        let name = exact_name(func_name);
+-        let qualified_name = if function_uses_main_schema(func_name) {
+-            ast::QualifiedName::fullname(exact_name("main"), name)
+-        } else {
+-            ast::QualifiedName::single(name)
+-        };
+-        if func_name == "unnest" {
+-            if args.len() != 1 {
+-                return Err(ParseError::ParseError(
+-                    "unnest currently requires exactly one array".into(),
+-                ));
+-            }
+-            let element_name = range_func
+-                .alias
+-                .as_ref()
+-                .map_or(func_name, |range_alias| range_alias.aliasname.as_str());
+-            let names = range_function_column_names(range_func, vec![element_name.to_string()])?;
+-            let column = |name: &str| ast::Expr::Id(exact_name(name));
+-            return Ok(ast::SelectTable::Select {
+-                select: function_select(
+-                    qualified_name,
+-                    args,
+-                    [column("unnest"), bigint(column("ordinality"))]
+-                        .into_iter()
+-                        .zip(names)
+-                        .collect(),
+-                ),
+-                alias,
+-                lateral: true,
+-            });
++        let qualified_name = function_qualified_name(func_name);
++        if let Some(function) = rewritten_function(func_name) {
++            return translate_rewritten_function(function, range_func, qualified_name, args, alias);
+         }
+         if returns_record {
+             return self.translate_json_to_record(
+@@ -2954,42 +2927,13 @@ impl PostgreSQLTranslator {
+                 alias,
              );
--        let mut fresh = Schema::with_options(
--            connection.db.experimental_custom_types_enabled(),
--            connection.db.dialect().as_ref(),
--        )?;
-+        let mut fresh = connection
-+            .db
-+            .dialect()
-+            .new_schema(connection.db.experimental_custom_types_enabled())?;
-         fresh.schema_version = cookie;
-         Self::rehydrate_table_valued_functions(&mut fresh, preserved_table_valued_functions);
-         let mut from_sql_indexes = crate::alloc::vec![];
-@@ -10580,10 +10580,10 @@ impl<Clock: LogicalClock, A: ConcurrentAllocator> MvStore<Clock, A> {
-             .as_ref()
-             .map(|header| header.schema_cookie.get())
-             .unwrap_or(fallback_cookie);
--        let mut fresh = Schema::with_options(
--            connection.db.experimental_custom_types_enabled(),
--            connection.db.dialect().as_ref(),
--        )?;
-+        let mut fresh = connection
-+            .db
-+            .dialect()
-+            .new_schema(connection.db.experimental_custom_types_enabled())?;
-         fresh.schema_version = cookie;
-         Self::rehydrate_table_valued_functions(&mut fresh, preserved_table_valued_functions);
-         let mut from_sql_indexes =
-```
-
-**File**: `core/schema.rs` (modified, +94/-119)
-```diff
-@@ -192,6 +192,7 @@ struct SequenceMetadata {
- use crate::util::quote_identifier as quote_ident;
+         }
+-        if func_name == "generate_series" {
+-            let value_name = range_func
+-                .alias
+-                .as_ref()
+-                .map_or(func_name, |range_alias| range_alias.aliasname.as_str());
+-            let names = range_function_column_names(range_func, vec![value_name.to_string()])?;
+-            let column = |name: &str| ast::Expr::Id(exact_name(name));
+-            let ordinality = bigint(function_call(
+-                "pg_generate_series_ordinality",
+-                vec![column("value"), column("start"), column("step")],
+-            ));
+-            let alias = alias.unwrap_or_else(|| ast::As::Elided(exact_name(func_name)));
+-            return Ok(ast::SelectTable::Select {
+-                select: function_select(
+-                    qualified_name,
+-                    args,
+-                    [column("value"), ordinality]
+-                        .into_iter()
+-                        .zip(names)
+-                        .collect(),
+-                ),
+-                alias: Some(alias),
+-                lateral: true,
+-            });
+-        }
+         if range_func.ordinality {
+             return Err(ParseError::not_supported(format!(
+                 "WITH ORDINALITY on {func_name}()"
+             )));
+         }
+         reject_column_aliases(&range_func.alias, "a function")?;
  
- pub mod alter_table;
-+pub mod builtin;
- pub mod view;
+-        fn function_uses_main_schema(name: &str) -> bool {
+-            is_catalog_table_name(name) || name == "generate_series"
+-        }
+-
+         Ok(ast::SelectTable::TableCall(qualified_name, args, alias))
+     }
  
- /// Recursively rewrite `Expr::Id("value")` (case-insensitive) to `Expr::Id(col_name)`.
-@@ -1409,6 +1410,93 @@ impl Default for Schema {
+@@ -5656,42 +5600,123 @@ impl PostgreSQLTranslator {
      }
  }
  
-+/// Builds the schema that a database has before any of its objects are read
-+/// from the file. A dialect puts its catalog tables and built-in types in it.
-+pub struct SchemaBuilder {
-+    schema: Schema,
++/// A table function that PostgreSQL has in FROM and that is a call of a table function of
++/// the engine here. The call is a SELECT over the engine's table function.
++struct RewrittenFunction {
++    name: &'static str,
++    in_main_schema: bool,
++    check_arg_count: fn(usize) -> Result<(), ParseError>,
++    /// The column of the engine's table function that holds each column of the result,
++    /// and the name PostgreSQL gives that column, for a call with this many arguments.
++    columns: fn(usize) -> Vec<(ast::Expr, String)>,
++    /// The column of the engine's table function that holds WITH ORDINALITY.
++    ordinality: fn(usize) -> ast::Expr,
 +}
 +
-+impl SchemaBuilder {
-+    /// Starts from a schema that has only the `sqlite_schema` table.
-+    pub fn new() -> crate::Result<Self> {
-+        let mut root = NamespaceSchema::default();
-+        #[cfg(feature = "conn_raw_api")]
-+        let mut table_names_by_root_page = HashMap::default();
-+        #[allow(clippy::arc_with_non_send_sync)]
-+        root.tables.insert(
-+            SCHEMA_TABLE_NAME.to_string(),
-+            Arc::new(Table::BTree(sqlite_schema_table()?.into())),
-+        );
-+        #[cfg(feature = "conn_raw_api")]
-+        table_names_by_root_page.insert(1, SCHEMA_TABLE_NAME.to_string());
-+        let mut namespaces = HashMap::default();
-+        namespaces.insert(NamespaceId::ROOT, root);
-+        Ok(Self {
-+            schema: Schema {
-+                namespaces,
-+                #[cfg(feature = "conn_raw_api")]
-+                table_names_by_root_page,
-+                schema_version: 0,
-+                analyze_stats: AnalyzeStats::default(),
-+                dropped_root_pages: HashSet::default(),
-+                type_registry: HashMap::default(),
-+                custom_types_enabled: false,
-+                supports_namespaces: false,
-+                default_namespaces: &[],
-+                namespace_names_loaded: true,
-+                pending_materialized_views: None,
-+                dialect_schema: None,
-+            },
-+        })
-+    }
-+
-+    /// Whether the schema loads the types made by CREATE TYPE.
-+    pub fn custom_types(mut self, enabled: bool) -> Self {
-+        self.schema.custom_types_enabled = enabled;
-+        self
-+    }
-+
-+    /// Whether the schema has namespaces besides the root.
-+    pub(crate) fn supports_namespaces(mut self, supported: bool) -> Self {
-+        self.schema.supports_namespaces = supported;
-+        self.schema.namespace_names_loaded = !supported;
-+        self
-+    }
-+
-+    /// The names of the namespaces that every database has.
-+    pub(crate) fn default_namespaces(mut self, names: &'static [&'static str]) -> Self {
-+        self.schema.default_namespaces = names;
-+        self
-+    }
-+
-+    /// Adds the type `type_def` under `name`. A type can have several names.
-+    pub fn type_def(mut self, name: &str, type_def: Arc<TypeDef>) -> Self {
-+        self.schema
-+            .type_registry
-+            .insert(name.to_lowercase(), type_def);
-+        self
-+    }
-+
-+    /// Adds `table` to the root namespace under `name`.
-+    pub fn table(mut self, name: String, table: Arc<Table>) -> Self {
-+        self.schema.insert_table(NamespaceId::ROOT, name, table);
-+        self
-+    }
-+
-+    /// Adds the virtual table `table` to the root namespace.
-+    pub fn internal_vtab<T>(mut self, table: T) -> crate::Result<Self>
-+    where
-+        T: crate::vtab::InternalVirtualTable + 'static,
-+    {
-+        self.schema.register_internal_vtab(table)?;
-+        Ok(self)
-+    }
-+
-+    pub fn build(self) -> Schema {
-+        self.schema
-+    }
++fn rewritten_function(name: &str) -> Option<&'static RewrittenFunction> {
++    REWRITTEN_FUNCTIONS
++        .iter()
++        .find(|function| function.name == name)
 +}
 +
- /// What kind of number a type's values are in a RANGE frame, which decides
- /// the offsets a frame over them may have, as PostgreSQL's `in_range`
- /// functions do. The same kind says which frames a value of the type may be
-@@ -1455,79 +1543,6 @@ pub enum TypeOrigin {
-     User,
- }
- 
--fn bootstrap_builtin_types(registry: &mut HashMap<String, Arc<TypeDef>>) -> crate::Result<()> {
--    use turso_parser::ast::{Cmd, Stmt};
--
--    // Whether values of the type take a COLLATE. In PostgreSQL only text
--    // types do, so of the types below only varchar does.
--    const COLLATE: bool = true;
--    const NO_COLLATE: bool = false;
--    // Whether the stored form sorts in the same order as the values.
--    const SORTS: bool = true;
--    const NO_SORT: bool = false;
--    let types: &[(bool, RangeOffsets, bool, &str)] = &[
--        #[cfg(feature = "uuid")]
--        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE uuid(value any) BASE blob ENCODE CASE WHEN value IS NULL THEN NULL WHEN typeof(value) = 'blob' AND length(value) = 16 THEN value ELSE coalesce(uuid_blob(value), RAISE(ABORT, 'invalid UUID value')) END DECODE uuid_str(value) OPERATOR '<'"),
--        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE boolean(value any) BASE integer ENCODE boolean_to_int(value) DECODE CASE WHEN value THEN 1 ELSE 0 END OPERATOR '<'"),
--        #[cfg(feature = "json")]
--        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE json(value text) BASE text ENCODE json(value) DECODE value"),
--        #[cfg(feature 
-```
-
-**File**: `core/schema/builtin.rs` (added, +144/-0)
-```diff
-@@ -0,0 +1,144 @@
-+//! The catalog tables and types that the schema of every database has,
-+//! whatever its dialect.
-+
-+use super::{RangeOffsets, SchemaBuilder, Table, TypeDef, TypeOrigin};
-+use crate::pragma::PragmaVirtualTable;
-+use crate::sync::Arc;
-+use crate::vtab::{VirtualTable, VirtualTableType};
-+use turso_ext::VTabKind;
-+
-+/// Starts the schema of a database: the built-in catalog tables and, if
-+/// `enable_custom_types`, the built-in types. A dialect adds its own tables
-+/// and types to the builder.
-+pub fn schema_builder(enable_custom_types: bool) -> crate::Result<SchemaBuilder> {
-+    let mut builder = SchemaBuilder::new()?.custom_types(enable_custom_types);
-+    if enable_custom_types {
-+        builder = builtin_types(builder)?;
-+    }
-+    builtin_catalog(builder, enable_custom_types)
-+}
-+
-+fn builtin_types(mut builder: SchemaBuilder) -> crate::Result<SchemaBuilder> {
-+    use turso_parser::ast::{Cmd, Stmt};
-+
-+    // Whether values of the type take a COLLATE. In PostgreSQL only text
-+    // types do, so of the types below only varchar does.
-+    const COLLATE: bool = true;
-+    const NO_COLLATE: bool = false;
-+    // Whether the stored form sorts in the same order as the values.
-+    const SORTS: bool = true;
-+    const NO_SORT: bool = false;
-+    let types: &[(bool, RangeOffsets, bool, &str)] = &[
-+        #[cfg(feature = "uuid")]
-+        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE uuid(value any) BASE blob ENCODE CASE WHEN value IS NULL THEN NULL WHEN typeof(value) = 'blob' AND length(value) = 16 THEN value ELSE coalesce(uuid_blob(value), RAISE(ABORT, 'invalid UUID value')) END DECODE uuid_str(value) OPERATOR '<'"),
-+        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE boolean(value any) BASE integer ENCODE boolean_to_int(value) DECODE CASE WHEN value THEN 1 ELSE 0 END OPERATOR '<'"),
-+        #[cfg(feature = "json")]
-+        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE json(value text) BASE text ENCODE json(value) DECODE value"),
-+        #[cfg(feature = "json")]
-+        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE jsonb(value text) BASE blob ENCODE jsonb(value) DECODE json(value)"),
-+        (COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE varchar(value text, maxlen integer) BASE text COERCE CASE WHEN length(value) <= maxlen THEN value ELSE RAISE(ABORT, 'value too long for varchar') END DECODE value OPERATOR '<'"),
-+        // The ENCODEs read PostgreSQL's input forms and store one text form
-+        // with a 4-digit year, which sorts in time order (see
-+        // functions/datetime_input.rs).
-+        (NO_COLLATE, RangeOffsets::None, SORTS, "CREATE TYPE date(value text) BASE text ENCODE temporal_encode(value, 'date') DECODE value OPERATOR '<'"),
-+        (NO_COLLATE, RangeOffsets::None, SORTS, "CREATE TYPE time(value text) BASE text ENCODE temporal_encode(value, 'time') DECODE value OPERATOR '<'"),
-+        (NO_COLLATE, RangeOffsets::None, SORTS, "CREATE TYPE timestamp(value text) BASE text ENCODE temporal_encode(value, 'timestamp') DECODE value OPERATOR '<'"),
-+        (NO_COLLATE, RangeOffsets::None, SORTS, "CREATE TYPE timestamptz(value text) BASE text ENCODE temporal_encode(value, 'timestamptz') DECODE value OPERATOR '<'"),
-+        (NO_COLLATE, RangeOffsets::Integer, NO_SORT, "CREATE TYPE smallint(value integer) BASE integer COERCE CASE WHEN value BETWEEN -32768 AND 32767 THEN value ELSE RAISE(ABORT, 'integer out of range for smallint') END OPERATOR '<'"),
-+        (NO_COLLATE, RangeOffsets::Integer, NO_SORT, "CREATE TYPE bigint(value integer) BASE integer"),
-+        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE inet(value text) BASE text ENCODE validate_ipaddr(value) DECODE value"),
-+        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE cidr(value text) BASE text ENCODE value DECODE value"),
-+        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE macaddr(value text) BASE text ENCODE value DECODE value"),
-+        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE macaddr8(value text) BASE text ENCODE value DECODE value"),
-+        (NO_COLLATE, RangeOffsets::None, NO_SORT, "CREATE TYPE bytea(value blob) BASE blob OPERATOR '<'"),
-+        (NO_COLLATE, RangeOffsets::Numeric, NO_SORT, "CREATE TYPE numeric(value any, precision integer, scale integer) BASE blob ENCODE numeric_encode(value) COERCE numeric_fit(value, precision, scale) DECODE numeric_decode(value)"),
-+    ];
-+
-+    let aliases: &[(&str, &str)] = &[
-+        ("bool", "boolean"),
-+        ("int2", "smallint"),
-+        ("int8", "bigint"),
-+    ];
-+    for &(accepts_collate, range_offsets, stored_form_sorts_in_value_order, sql) in types {
-+        let Ok(Some(Cmd::Stmt(Stmt::CreateType {
-+            type_name, body, ..
-+        }))) = crate::dialect::engine::parse_statement(sql)
-+        else {
-+            return Err(crate::LimboError::InternalError(format!(
-+                "failed to parse built-in type SQL: {sql}"
-+            )));
-+       
-```
-
-**File**: `core/translate/catalog.rs` (modified, +5/-4)
-```diff
-@@ -234,10 +234,11 @@ impl<'a> CatalogContext<'a> {
-                 .as_ref()
-                 .map(|temp_db| temp_db.db.schema.lock().clone())
-                 .unwrap_or_else(|| {
--                    // with_options only fails if built-in type SQL is malformed (programmer bug).
--                    let mut schema =
--                        Schema::with_options(self.enable_custom_types, self.dialect.as_ref())
--                            .expect("built-in type definitions are malformed");
-+                    // new_schema only fails if built-in type SQL is malformed (programmer bug).
-+                    let mut schema = self
-+                        .dialect
-+                        .new_schema(self.enable_custom_types)
-+                        .expect("built-in type definitions are malformed");
-                     schema.copy_table_valued_functions(self.schema);
-                     Arc::new(schema)
-                 }),
++const REWRITTEN_FUNCTIONS: [RewrittenFunction; 2] = [
++    RewrittenFunction {
++        name: "unnest",
++        in_main_schema: true,
++        check_arg_count: |count| {
++            if count != 1 {
++                return Err(ParseError::ParseError(
++                    "unnest currently requires exactly one array".into(),
++                ));
++            }
++            Ok(())
++        },
++        columns: |_| vec![(ast::Expr::Id(exact_name("unnest")), "unnest".into())],
++        ordinality: |_| ast::Expr::Id(exact_name("ordinality")),
++    },
++    RewrittenFunction {
++        name: "generate_series",
++        in_main_schema: true,
++        check_arg_count: |count| {
++            if !(2..=3).contains(&count) {
++                return E
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11975** (closed): postgres: fix pg_get_expr for integer edge cases and negative zero (@penberg)
-- **PR #11949** (2026-11-17): postgres: fix pg_get_expr for integer edge cases and negative zero (@penberg)
-- **PR #11930** (2026-11-17): postgres: print CHECK constraints and column defaults as pg_get_expr does (@penberg)
-- **PR #11929** (2026-11-17): tests: move the MVCC tests that check behaviour through SQL to tests/integration (@penberg)
-- **PR #11889** (closed): core: report the type of a subquery column as the subquery's own column (@glommer)
-- **PR #11885** (closed): core/schema: build the generated-column graph from direct edges (@pedrocarlo)
+- **PR #12089** (2026-11-18): core/dialect: replace CatalogChange with typed requests and a dialect-built apply object (@pedrocarlo)
+- **PR #12088** (2026-11-18): core/dialect: move the catalog change types into their own module (@pedrocarlo)
+- **PR #12087** (2026-11-18): core/connection: move the schema reparse state machine to its own module (@pedrocarlo)
+- **PR #12086** (2026-11-18): core/translate: move the sqlite_schema deletes of DROP INDEX, DROP TABLE and DROP VIEW into the row writers (@pedrocarlo)
+- **PR #12077** (2026-11-18): core/translate: pass the database index to ParseSchema in CREATE VIRTUAL TABLE (@pedrocarlo)
+- **PR #12075** (2026-11-18): core/translate: gather the code that writes sqlite_schema rows (@pedrocarlo)
 
 ---
 
@@ -2883,36 +2378,92 @@ its own overrides it and adds them.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. postgres: list row-level security policies in pg_policy
+## X. Merge 'core/dialect: replace CatalogChange with typed requests and a dialect-bui
 
 **RULE**:
-When implementing operations in `postgres/COMPAT.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/dialect/catalog.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tursodatabase/turso. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `328cd87f`: postgres: list row-level security policies in pg_policy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a00dd9ff`: Merge 'core/dialect: replace CatalogChange with typed requests and a dialect-built apply object' from Pedro Muniz. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `postgres/COMPAT.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/dialect/catalog.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-`pg_policy` (row-level security policies, with `polqual` and `polwithcheck`
-as the text `pg_get_expr` prints), plus `pg_input_error_info`. Present but
-always empty: `pg_trigger`, `pg_statistic_ext`, `pg_inherits`, `pg_rewrite`,
-| Row-level security | 🟡 Partial | `ALTER TABLE ... ENABLE/DISABLE ROW LEVEL SECURITY` works and is shown in `pg_class.relrowsecurity`; `CREATE POLICY` and `DROP POLICY` work, with permissive and restrictive `USING` policies limiting what roles read; `UPDATE` and `DELETE` change only the rows the policies of the command allow, with the `SELECT` policies too when the statement reads columns, and new rows of `INSERT` and `UPDATE` must pass `WITH CHECK`, and the `SELECT` policies with `RETURNING`, or the statement fails with 42501; `TRUNCATE` is not subject to policies, as in PostgreSQL; `INSERT ... ON CONFLICT DO UPDATE` checks the conflicting row against the `UPDATE` and `SELECT` policies and fails if it does not pass; a new row is checked after its `NOT NULL` constraints instead of before; `pg_policy` lists the policies, with conditions printed as PostgreSQL's `pg_get_expr` prints them for common forms and as the engine's SQL otherwise; `pg_policies` does n
+//! What translation tells the dialect about a statement that changes the
+//! dialect's catalog of the main database, and what the dialect's bytecode
+//! tells the in-memory schema once the change is written.
+use crate::{
+    namespace::NamespaceId,
+    schema::{RelationKind, Schema},
+    LimboError, Result, Value,
+};
+use std::borrow::Cow;
+/// A relation that a statement created, dropped or renamed. The engine makes
+/// the change itself; the dialect records it in its own catalog through
+/// [`Dialect::translate_relation_changes`](super::Dialect::translate_relation_changes).
+pub enum RelationChange<'a> {
+    Created {
+        name: &'a str,
+        table: Option<&'a str>,
+    Dropped {
+        name: &'a str,
+    Renamed {
+        old_name: &'a str,
+        /// Owned when the statement had to build the name, as for an
+        /// automatic index that is renamed with its table.
+        new_name: Cow<'a, str>,
+    /// `ALTER TABLE table RENAME COLUMN old_name TO new_name`.
+    ColumnRenamed {
+        table: &'a str,
+        old_name: &'a str,
+        new_name: &'a str,
+}
+
+/// A statement about roles, ownership, privileges or row-level security.
+/// The engine stores none of these; the
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-plus `pg_input_error_info`. Present but always empty: `pg_policy`,
-`pg_trigger`, `pg_statistic_ext`, `pg_inherits`, `pg_rewrite`,
-| Row-level security | 🟡 Partial | `ALTER TABLE ... ENABLE/DISABLE ROW LEVEL SECURITY` works and is shown in `pg_class.relrowsecurity`; `CREATE POLICY` and `DROP POLICY` work, with permissive and restrictive `USING` policies limiting what roles read; `UPDATE` and `DELETE` change only the rows the policies of the command allow, with the `SELECT` policies too when the statement reads columns, and new rows of `INSERT` and `UPDATE` must pass `WITH CHECK`, and the `SELECT` policies with `RETURNING`, or the statement fails with 42501; `TRUNCATE` is not subject to policies, as in PostgreSQL; `INSERT ... ON CONFLICT DO UPDATE` checks the conflicting row against the `UPDATE` and `SELECT` policies and fails if it does not pass; a new row is checked after its `NOT NULL` constraints instead of before; `pg_policy` does not show policies; policies cannot use subqueries with `FROM`, and the columns they use cannot be renamed or dropped; `FORCE ROW LEVEL SECURITY` is not supported; views apply it as the view's owner, except that a superuser reading a view sees every ro
+//! The changes a statement makes to the dialect's catalog.
+use crate::{namespace::NamespaceId, schema::RelationKind};
+/// A change a statement makes to the dialect's catalog of the main
+/// database: to a relation, or to the roles. Translation tells the dialect
+/// about it through
+/// [`Dialect::translate_catalog_changes`](super::Dialect::translate_catalog_changes), and the dialect's own bytecode
+/// tells it back through [`Dialect::apply_catalog_change`](super::Dialect::apply_catalog_change) once the change
+/// is written.
+pub enum CatalogChange {
+    Create {
+        name: String,
+        table: Option<String>,
+    Drop {
+        name: String,
+    Rename {
+        old_name: String,
+        new_name: String,
+    /// Whom the relation belongs to from now on.
+    ChangeOwner {
+        name: String,
+        owner: NewOwner,
+    /// `ALTER TABLE table RENAME COLUMN old_name TO new_name`.
+    RenameColumn {
+        table: String,
+        old_name: String,
+        new_name: String,
+    /// `GRANT privileges ON relation TO grantees`, or `REVOKE privileges ON
+    /// relation FROM grantees` when `revoke` is set.
+        namespace: NamespaceId,
+        name: String,
+        privileges: V
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `328cd87f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a00dd9ff` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

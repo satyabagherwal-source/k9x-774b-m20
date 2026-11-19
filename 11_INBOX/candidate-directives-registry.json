@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T06:53:07.172Z",
+  "last_updated": "2026-11-19T07:06:43.289Z",
   "directives": [
     {
       "id": "CD-001",
@@ -32319,6 +32319,48 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-CA2547-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-19"
+    },
+    {
+      "id": "CD-IENF",
+      "directive_title": "add WinGet installation instructions",
+      "source_repo": "domcyrus/rustnet",
+      "source_commit": "6a85f360",
+      "staged_file": "11_INBOX/candidate-directives/CD-IENF-add-winget-installation-instructions.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-19",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-IUAB",
+      "directive_title": "Merge 'core/dialect: replace CatalogChange with typed requests and a dialect-bui",
+      "source_repo": "tursodatabase-limbo-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-IUAB-merge-core-dialect-replace-catalogchange-with-typed-requests-and-a-dialect-bui.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-IT8Y",
+      "directive_title": "docs: add WinGet installation instructions",
+      "source_repo": "domcyrus-rustnet-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-IT8Y-docs-add-winget-installation-instructions.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-19",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-REV-4592DC",
+      "directive_title": "Merge 'core/dialect: replace CatalogChange with typed requests and a dialect-bui",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tursodatabase-limbo",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-4592DC-merge-core-dialect-replace-catalogchange.md",
       "staged_date": "2026-11-19"
     }
   ]
