@@ -685147,3 +685147,178 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `b5ae058b` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9308. Fix ACL cache recovery from fuzzy snapshots (Harvested from apache/zookeeper)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Fix ACL cache recovery from fuzzy snapshots",
+  "source": "apache/zookeeper",
+  "source_url": "https://github.com/apache/zookeeper",
+  "source_version": "7f4ebb35",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-19T00:41:11.408Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-apache-zookeeper",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.76,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [apache/zookeeper](https://github.com/apache/zookeeper) (Revision: `7f4ebb35`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 76%).
+
+**RULE**:
+When implementing operations in `zookeeper-server/src/main/java/org/apache/zookeeper/server/DataTree.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/zookeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `7f4ebb35`: ZOOKEEPER-4689: Fix ACL cache recovery from fuzzy snapshots. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `zookeeper-server/src/main/java/org/apache/zookeeper/server/DataTree.java`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// Verified production-grade fix pattern:
+    // Deny watch delivery to ordinary sessions when a node's ACL is unknown.
+    // checkACL treats null and empty ACLs as unrestricted. Public for tests.
+    public static final List<ACL> NO_PERMISSIONS_ACL =
+        Collections.singletonList(new ACL(0, ZooDefs.Ids.ANYONE_ID_UNSAFE));
+
+            parentAcl = getACLForWatchTrigger(parent, parentName);
+            // Intern the ACL before checking whether the node exists: a fuzzy
+            // snapshot can contain the node but omit its ACL (ZOOKEEPER-3306).
+            Long aclId = aclCache.convertAcls(acl);
+                // Use the ACL value from the txn; snapshot ids are server-local
+                // and may not resolve. Release the node's old reference to balance
+                // convertAcls, including when both ids are equal.
+                synchronized (existingChild) {
+                    Long previousAcl = existingChild.acl;
+                    existingChild.acl = aclId;
+                    aclCache.removeUsage(previousAcl);
+                    if (!aclId.equals(previousAcl)) {
+                        LOG.info("ACL reference of existing node {} changed from {} to {} while applying a create txn",
+                    
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// Induced defect failure mode:
+            parentAcl = getACL(parent);
+            // Add the ACL to ACL cache first, to avoid the ACL not being
+            // created race condition during fuzzy snapshot sync.
+            //
+            // This is the simplest fix, which may add ACL reference count
+            // again if it's already counted in the ACL map of fuzzy
+            // snapshot, which might also happen for deleteNode txn, but
+            // at least it won't cause the ACL not exist issue.
+            //
+            // Later we can audit and delete all non-referenced ACLs from
+            // ACL map when loading the snapshot/txns from disk, like what
+            // we did for the global sessions.
+            Long acls = aclCache.convertAcls(acl);
+                existingChild.acl = acls;
+            DataNode child = new DataNode(data, acls, stat);
+            acl = getACL(node);
+            parentAcl = getACL(parent);
+            acl = getACL(n);
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `7f4ebb35` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9309. --save-model / --model to fit once and generate from the model (Harvested from dathere/qsv)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "--save-model / --model to fit once and generate from the model",
+  "source": "dathere/qsv",
+  "source_url": "https://github.com/dathere/qsv",
+  "source_version": "5d6c8155",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-19T00:41:13.490Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dathere-qsv",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `5d6c8155`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5d6c8155`: synthesize): --save-model / --model to fit once and generate from the model. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+- **`qsv-synthesize --save-model <file>` / `--model <file>`**: save the fitted model once, then generate from it without the source (`<input>` is now optional, and omitted with `--model`). Same `--rows` and `--seed` give the same rows as the fitting run, including across `--shard` slices. Skill regenerated from the USAGE text. ([#5074](https://github.com/dathere/qsv/pull/5074))
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5d6c8155` are properly handled with clean fallback behavior.

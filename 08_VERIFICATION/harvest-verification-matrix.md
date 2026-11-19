@@ -11147,3 +11147,8 @@
 | `CYCLE-20261119-EEPS` | `2026-11-19T00:31:21.856Z` | `openai/clip-vit-base-patch32` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-clip-vit-base-patch32-learnings.md` | Yes (`bb4f2572...`) |
 | `CYCLE-20261119-ENW4` | `2026-11-19T00:31:33.748Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`f7d2811c...`) |
 | `CYCLE-20261119-EQC3` | `2026-11-19T00:31:36.915Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 2047` | Yes (`794e7980...`) |
+| `CYCLE-20261119-QRRO` | `2026-11-19T00:40:58.644Z` | `ntex-rs/ntex` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md` | Yes (`91296967...`) |
+| `CYCLE-20261119-QXN1` | `2026-11-19T00:41:06.253Z` | `sentence-transformers/all-mpnet-base-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-all-mpnet-base-v2-learnings.md` | Yes (`633c97af...`) |
+| `CYCLE-20261119-R1Z6` | `2026-11-19T00:41:11.874Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9308` | Yes (`1a63ac3c...`) |
+| `CYCLE-20261119-R3KT` | `2026-11-19T00:41:13.949Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9309` | Yes (`05841c51...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T00:41:46.092Z` | `ntex-rs-ntex` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-6F9CB66B` [Domain H] | Yes (`72bb5269...`) |

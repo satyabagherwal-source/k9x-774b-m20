@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T00:31:36.928Z",
+  "last_updated": "2026-11-19T00:41:13.961Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1460,14 +1460,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
-      "content_hash": "66574738b74ad9ecc10243822004d51f94036a46ea8f0e496208e8dd827c26a1",
-      "verified_at": "2026-11-14T08:05:23.258Z",
+      "content_hash": "633c97af718a002042872e62c511eded1c198283ca1274f58585f62c5ab0fae0",
+      "verified_at": "2026-11-19T00:41:06.264Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T08:05:23.258Z"
+      "last_updated": "2026-11-19T00:41:06.264Z"
     },
     "BAAI/bge-reranker-v2-m3": {
       "repository": "BAAI/bge-reranker-v2-m3",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "88afe4781ecee10a0e02efe36511d45385c684ca64bcfee93e842f5dff9084cd",
-      "verified_at": "2026-11-18T22:58:04.636Z",
+      "content_hash": "05841c51130e0e74ca8cd085e6fdac450fc8382e97d5684a58dfa52c183e15c8",
+      "verified_at": "2026-11-19T00:41:13.961Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T22:58:04.636Z"
+      "last_updated": "2026-11-19T00:41:13.961Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -7806,14 +7806,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-zookeeper",
-      "content_hash": "246e519da959ede035fbeb271b08918714ce6f0ba3e7c6ef1245984ba38851e8",
-      "verified_at": "2026-11-18T07:56:33.524Z",
+      "content_hash": "1a63ac3c0daaef2223b0d3041fd098ee79ec984ff9016e230c490ff50e0488e3",
+      "verified_at": "2026-11-19T00:41:11.885Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T07:56:33.524Z"
+      "last_updated": "2026-11-19T00:41:11.885Z"
     },
     "primer/react": {
       "repository": "primer/react",
@@ -8811,14 +8811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ntex-rs-ntex",
-      "content_hash": "09723e7f2d7d7bd8abb45f1f703882a453b6e03d57ae8070b550dedf48909f26",
-      "verified_at": "2026-11-17T11:09:41.423Z",
+      "content_hash": "91296967c2da2fabfcdf6f2b9fc953683d8b803391cd5396e808140343715005",
+      "verified_at": "2026-11-19T00:40:58.680Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T11:09:41.423Z"
+      "last_updated": "2026-11-19T00:40:58.680Z"
     },
     "learnapollo/learnapollo": {
       "repository": "learnapollo/learnapollo",

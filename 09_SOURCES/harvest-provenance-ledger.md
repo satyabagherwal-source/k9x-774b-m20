@@ -11180,3 +11180,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-clip-vit-base-patch32` | `https://huggingface.co/openai/clip-vit-base-patch32` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-19T00:31:21.861Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `f5adbe87` | Multi-dimensional audit evidence | 2026-11-19T00:31:33.752Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `47745104` | Multi-dimensional audit evidence | 2026-11-19T00:31:36.920Z |
+| `learn-github-ntex-rs-ntex` | `https://github.com/ntex-rs/ntex` | `abcff08d` | Multi-dimensional audit evidence | 2026-11-19T00:40:58.648Z |
+| `learn-huggingface-sentence-transformers-all-mpnet-base-v2` | `https://huggingface.co/sentence-transformers/all-mpnet-base-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-19T00:41:06.257Z |
+| `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `7f4ebb35` | Multi-dimensional audit evidence | 2026-11-19T00:41:11.878Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `5d6c8155` | Multi-dimensional audit evidence | 2026-11-19T00:41:13.953Z |
+| `learn-dom-h-6f9cb66b` | `project://ntex-rs-ntex` | `abcff08d` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md` | 2026-11-19T00:41:46.092Z |

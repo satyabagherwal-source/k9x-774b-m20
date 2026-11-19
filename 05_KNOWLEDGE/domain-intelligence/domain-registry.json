@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T00:31:41.952Z",
-  "total_records": 1921,
+  "last_updated": "2026-11-19T00:41:47.881Z",
+  "total_records": 1923,
   "domains": {
     "A": {
       "total": 13,
@@ -1280,7 +1280,7 @@
       ]
     },
     "H": {
-      "total": 444,
+      "total": 446,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1725,7 +1725,9 @@
         "domain_intelligence-technical-construction-intelligence-tailscale-tailscale-core-invariants",
         "domain_intelligence-technical-construction-intelligence-tailscale-tailscale-learnings-core-invariant",
         "DOM-H-26FD692A",
-        "DOM-H-DAFF8DAE"
+        "DOM-H-DAFF8DAE",
+        "DOM-H-6F9CB66B",
+        "domain_intelligence-technical-construction-intelligence-apache-zookeeper-learnings-core-invariants"
       ]
     },
     "I": {
@@ -10892,8 +10894,8 @@
       "title": "Architecture Intelligence: ntex-rs/ntex Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ntex-rs-ntex-architecture-intelligence-ntex-rs-ntex-core-invariants.md",
       "repository": "ntex-rs/ntex",
-      "content_hash": "7ac781d6aca118e8ef11fbd2f92ef8ed222c529577d1cc1a6f30f7d9b8ce8e8d",
-      "created_at": "2026-11-17T11:09:41.686Z"
+      "content_hash": "db2ca83efff5401256517199fe5f8bd19e57896c66028cd21265bacd2544547b",
+      "created_at": "2026-11-19T00:40:59.013Z"
     },
     "domain_intelligence-design-intelligence-callstack-react-native-paper-core-invariants": {
       "record_id": "domain_intelligence-design-intelligence-callstack-react-native-paper-core-invariants",
@@ -10928,8 +10930,8 @@
       "title": "Architecture Intelligence: ntex-rs-ntex-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ntex-rs-ntex-learnings-architecture-intelligence-ntex-rs-ntex-learnings-core-inv.md",
       "repository": "ntex-rs-ntex-learnings",
-      "content_hash": "38c09f59b4b83f4362192bb65ca4e888bc6fd0b555085f43663bdbccb0be1fc4",
-      "created_at": "2026-11-17T11:10:01.332Z"
+      "content_hash": "6e4ee6f5b2cedac79c9e18fb85d9048d7e7434f3d66a1b4de6c9e165ddf3a5ee",
+      "created_at": "2026-11-19T00:41:46.579Z"
     },
     "DOM-D-B528111D": {
       "record_id": "DOM-D-B528111D",
@@ -11978,8 +11980,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "1c4508a755accdd4dfca57c3244e34808dbe8644d05acdf9c450a896e8734b95",
-      "created_at": "2026-11-18T22:58:04.906Z"
+      "content_hash": "c1e31fe72385679d11c780cc2c44db6bbf133870b4e013a94bbb1ad8e4dc1786",
+      "created_at": "2026-11-19T00:41:14.295Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -14374,8 +14376,8 @@
       "title": "Research & Knowledge Intelligence: sentence-transformers/all-mpnet-base-v2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-all-mpnet-base-v2-research-knowledge-intelligence-sente.md",
       "repository": "sentence-transformers/all-mpnet-base-v2",
-      "content_hash": "95a78a6075f587a4ac0fa62df7960f1b85e99260713122249a0aca73d42d634e",
-      "created_at": "2026-11-14T08:05:23.381Z"
+      "content_hash": "5afd5b0a44f9f5e126e271d71f7212f85fbd8663d3c6bf12f9464ed80999c9ed",
+      "created_at": "2026-11-19T00:41:06.433Z"
     },
     "domain_intelligence-technical-construction-intelligence-typedb-typedb-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-typedb-typedb-core-invariants",
@@ -14434,8 +14436,8 @@
       "title": "Research & Knowledge Intelligence: hf-sentence-transformers-all-mpnet-base-v2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-all-mpnet-base-v2-learnings-research-knowledge-intellig.md",
       "repository": "hf-sentence-transformers-all-mpnet-base-v2-learnings",
-      "content_hash": "4e3843bf8bc722745db6bc41341102fba49b461ba0f5fad1bf46dc1b863a29f1",
-      "created_at": "2026-11-14T08:11:05.253Z"
+      "content_hash": "70d5f3d1948e9a88510af9f53da47d5617ae12fc6b8bda4056e5c492f63237c2",
+      "created_at": "2026-11-19T00:41:47.100Z"
     },
     "domain_intelligence-technical-construction-intelligence-typedb-typedb-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-typedb-typedb-learnings-core-invariants",
@@ -26733,8 +26735,8 @@
       "title": "Technical Construction Intelligence: apache/zookeeper Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-zookeeper-technical-construction-intelligence-apache-zookeeper-core-invar.md",
       "repository": "apache/zookeeper",
-      "content_hash": "f6ac593ff4ba692b2ef3bfb2825d51f5b37e98324159b7aad43d4634e85524d6",
-      "created_at": "2026-11-18T07:56:33.806Z"
+      "content_hash": "104129239e70bccd9ea5539ff8716be356e6faa2380145429598aae13d34666d",
+      "created_at": "2026-11-19T00:41:12.211Z"
     },
     "DOM-D-C917D98C": {
       "record_id": "DOM-D-C917D98C",
@@ -32201,6 +32203,57 @@
       "repository": "hf-naiveai-naive-n0.5-flash-learnings",
       "content_hash": "bc8d668206d5d55421a1e6bc15e288451505a8e0cb1fdb5e9c795b89aaee1061",
       "created_at": "2026-11-19T00:23:35.807Z"
+    },
+    "DOM-H-6F9CB66B": {
+      "record_id": "DOM-H-6F9CB66B",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "use-after-free when a native runtime's notifier drops the runtime during local t",
+      "content": "When implementing operations in `ntex-rt/CHANGES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "72bb526921c22736e5f9c1e1930a800cbd6cf9b2fddcc426e4605aee97f5e161",
+      "summary": "Prevents defects observed in production commit `249af468`: use-after-free when a native runtime's notifier drops the runtime during local ta -> When implementing operations in `ntex-rt/CHANGES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memor",
+      "provenance": {
+        "source_uri": "project://ntex-rs-ntex/ntex-rs-ntex-learnings.md",
+        "source_version": "abcff08d",
+        "observed_at": "2026-11-19T00:40:58.198Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (ntex-rs-ntex)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of ntex-rs-ntex"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.86,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T00:41:46.068Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-apache-zookeeper-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-apache-zookeeper-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: apache-zookeeper-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-zookeeper-learnings-technical-construction-intelligence-apache-zookeeper-.md",
+      "repository": "apache-zookeeper-learnings",
+      "content_hash": "e2388fb88d20bf61ac86c1336bae55f35de1f429b30e3d5d9c95065f10b64721",
+      "created_at": "2026-11-19T00:41:47.881Z"
     }
   }
 }

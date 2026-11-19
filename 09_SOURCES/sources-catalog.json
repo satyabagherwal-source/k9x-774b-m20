@@ -1105,8 +1105,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/all-mpnet-base-v2",
     "sourceVersion": "hf-sentence-transformers-all-mpnet-base-v2",
     "license": "Open-Source",
-    "contentHash": "66574738b74ad9ecc10243822004d51f94036a46ea8f0e496208e8dd827c26a1",
-    "lastHarvestedAt": "2026-11-14T08:05:23.251Z",
+    "contentHash": "633c97af718a002042872e62c511eded1c198283ca1274f58585f62c5ab0fae0",
+    "lastHarvestedAt": "2026-11-19T00:41:06.257Z",
     "learningId": "learn-huggingface-sentence-transformers-all-mpnet-base-v2"
   },
   "hf-baai-bge-reranker-v2-m3": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "2a905004",
+    "sourceVersion": "5d6c8155",
     "license": "NOASSERTION",
-    "contentHash": "88afe4781ecee10a0e02efe36511d45385c684ca64bcfee93e842f5dff9084cd",
-    "lastHarvestedAt": "2026-11-18T22:58:04.629Z",
+    "contentHash": "05841c51130e0e74ca8cd085e6fdac450fc8382e97d5684a58dfa52c183e15c8",
+    "lastHarvestedAt": "2026-11-19T00:41:13.953Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -5123,10 +5123,10 @@
     "repository": "apache/zookeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/zookeeper",
-    "sourceVersion": "5cc6962c",
+    "sourceVersion": "7f4ebb35",
     "license": "Apache-2.0",
-    "contentHash": "246e519da959ede035fbeb271b08918714ce6f0ba3e7c6ef1245984ba38851e8",
-    "lastHarvestedAt": "2026-11-18T07:56:33.518Z",
+    "contentHash": "1a63ac3c0daaef2223b0d3041fd098ee79ec984ff9016e230c490ff50e0488e3",
+    "lastHarvestedAt": "2026-11-19T00:41:11.878Z",
     "learningId": "learn-github-apache-zookeeper"
   },
   "primer-react": {
@@ -5793,10 +5793,10 @@
     "repository": "ntex-rs/ntex",
     "platform": "github",
     "sourceUrl": "https://github.com/ntex-rs/ntex",
-    "sourceVersion": "46b3069d",
+    "sourceVersion": "abcff08d",
     "license": "Apache-2.0",
-    "contentHash": "09723e7f2d7d7bd8abb45f1f703882a453b6e03d57ae8070b550dedf48909f26",
-    "lastHarvestedAt": "2026-11-17T11:09:41.403Z",
+    "contentHash": "91296967c2da2fabfcdf6f2b9fc953683d8b803391cd5396e808140343715005",
+    "lastHarvestedAt": "2026-11-19T00:40:58.648Z",
     "learningId": "learn-github-ntex-rs-ntex"
   },
   "learnapollo-learnapollo": {

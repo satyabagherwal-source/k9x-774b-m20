@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T00:31:42.212Z",
+  "last_updated": "2026-11-19T00:41:48.174Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T22:22:52.966Z",
@@ -768,7 +768,7 @@
       "staged_for_review": 1
     },
     "apache-zookeeper-learnings.md": {
-      "processed_at": "2026-11-12T03:49:14.433Z",
+      "processed_at": "2026-11-19T00:41:47.294Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1028,9 +1028,9 @@
       "staged_for_review": 1
     },
     "ntex-rs-ntex-learnings.md": {
-      "processed_at": "2026-11-17T11:10:00.985Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-19T00:41:46.092Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "encoredev-encore-learnings.md": {
       "processed_at": "2026-11-13T15:19:17.090Z",
@@ -2493,8 +2493,8 @@
       "staged_for_review": 0
     },
     "hf-sentence-transformers-all-mpnet-base-v2-learnings.md": {
-      "processed_at": "2026-11-14T08:11:05.089Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-19T00:41:46.890Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-davidau-qwen3.5-9b-the-defiant-fable-uncensored-heretic-neo-imatrix-max-mtp-gguf-learnings.md": {
@@ -3473,7 +3473,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2121,
-  "total_canonical_promoted": 370,
-  "total_staged_for_review": 1594
+  "total_dossiers_evaluated": 2124,
+  "total_canonical_promoted": 371,
+  "total_staged_for_review": 1595
 }

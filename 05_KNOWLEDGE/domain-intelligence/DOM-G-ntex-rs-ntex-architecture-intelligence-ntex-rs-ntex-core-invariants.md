@@ -4,23 +4,23 @@
 {
   "source_repository": "ntex-rs/ntex",
   "source_url": "https://github.com/ntex-rs/ntex",
-  "source_version": "46b3069d",
+  "source_version": "abcff08d",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T11:09:41.581Z",
+  "timestamp": "2026-11-19T00:40:58.869Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-ntex-rs-ntex",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ntex-rs/ntex](https://github.com/ntex-rs/ntex) (Revision: `46b3069d`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T11:09:41.581Z`  
+> **Provenance**: Harvested from [ntex-rs/ntex](https://github.com/ntex-rs/ntex) (Revision: `abcff08d`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-19T00:40:58.869Z`  
 > **Learning ID**: `learn-github-ntex-rs-ntex`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
 - **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ntex-rs-ntex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ntex-rs/ntex](https://github.com/ntex-rs/ntex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T11:09:40.836Z  
+> **Harvest Timestamp**: 2026-11-19T00:40:58.092Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -387,9 +387,11 @@ use std::{fmt, future::poll_fn, hash, io, ptr};
 #[cfg(feature = "tracker")]
 use ntex_bytes::BytesTracker;
 use ntex_bytes::{BytePageSize, BytesMut};
+use ntex_service::cfg::Cfg;
 
 #[cfg(feature = "tracker")]
-use crate::cfg::{BufTracker, IoConfig};
+use crate::cfg::BufTracker;
+use crate::cfg::IoConfig;
 use crate::filter::Filter;
 use crate::metrics::IoMetrics;
 use crate::ops::Id;
@@ -403,8 +405,18 @@ impl IoState {
         self.id.get()
     }
 
+    /// Returns the connection's I/O configuration.
+    ///
+    /// The reference must not be used after [`Io::set_config`](crate::Io::set_config).
+    #[inline]
+    pub(crate) fn cfg(&self) -> &Cfg<IoConfig> {
+        // SAFETY: replaced only by `Io::set_config()`, which requires that no
+        // reference into the previous configuration is live
+        unsafe { &*self.cfg.get() }
+    }
+
     pub(crate) fn tag(&self) -> &'static str {
-        self.cfg.tag()
+        self.cfg().tag()
     }
 
     /// Checks whether the `Io` that owned the filter chain has been dropped.
@@ -419,7 +431,7 @@ impl IoState {
     pub(crate) fn notify_timeout(&self) {
         if self.flags.check_dispatcher_timeout_unset() {
             self.wake_dispatch_task();
-            log::trace!("{}: Timer, notify dispatcher", self.cfg.tag());
+            log::trace!("{}: Timer, notify dispatcher", self.cfg().tag());
         }
     }
 
@@ -493,7 +505,7 @@ impl IoState {
     fn begin_terminate(&self, err: Option<io::Error>, force: bool) {
         self.set_error(err);
         if self.flags.begin_terminate(force) {
-            log::trace!("{}: Terminate io", self.cfg.tag());
+            log::trace!("{}: Terminate io", self.cfg().tag());
             // buffers held by the transport are gone with it
             self.wr_inflight.set(0);
             self.wake_read_task();
@@ -510,7 +522,7 @@ impl IoState {
 
     pub(crate) fn stop_connection(&self, err: Option<io::Error>) {
         if !self.flags.is_closed() {
-            log::trace!("{}: Stop io with error {:?}", self.cfg.tag(), err);
+            log::trace!("{}: Stop io with error {:?}", self.cfg().tag(), err);
             self.set_error(err);
             self.flags.set_stopped();
             // nothing can deliver buffered output anymore, buffers held by
@@ -544,7 +556,11 @@ impl IoState {
     /// Gracefully shuts down the read and write I/O tasks.
     pub(crate) fn start_shutdown(&self) {
         if self.flags.is_active() {
-            log::trace!("{}: Initiate io shutdown {:?}", self.cfg.tag(), self.flags);
+            log::trace!(
+                "{}: Initiate io shutdown {:?}",
+                self.cfg().tag(),
+                self.flags
+            );
             self.flags.enter_filters_stopping();
             self.wake_read_task();
             self.wake_write_task();
@@ -568,7 +584,7 @@ impl IoState {
     /// [`Io::set_config`](crate::Io::set_config).
     #[cfg(feature = "tracker")]
     pub(crate) fn buf_tracker(&self) -> Option<&BytesTracker> {
-        match self.cfg.buf_tracker() {
+        match self.cfg().buf_tracker() {
             BufTracker::Disabled => None,
             BufTracker::Shared(t) => Some(t),
             BufTracker::PerConnection => {
@@ -601,7 +617,7 @@ impl IoState {
                 self.buffer.set_buf_tracker(t);
             }
             BufTracker::PerConnection => {
-                if !matches!(self.cfg.buf_tracker(), BufTracker::PerConnection) {
+                if !matches!(self.cfg().buf_tracker(), BufTracker::PerConnection) {
                     let t = slot.insert(BytesTracker::new());
                     self.buffer.set_buf_tracker(t);
                 }
@@ -617,7 +633,7 @@ impl IoState {
 
     /// Resets the read page size to the configured min.
     pub(super) fn reset_read_size(&self) {
-        self.rd_size.set(self.cfg.read_size_min());
+        self.rd_size.set(self.cfg().read_size_min());
         self.rd_batch.set(0);
         self.rd_small.set(0);
     }
@@ -645,18 +661,7 @@ impl IoState {
         let batch = batch as usize;
         if batch == 0 {
             // nothing was read since the previous batch ended
-        } else if batch > size.capacity() {
-            self.grow_read_size(batch);
-        } else if size != self.cfg.read_size_min() && batch < size.prev().capacity() / 2 {
-            let small = self.rd_small.get() + 1;
-            if small < RD_SHRINK_BATCHES {
-                self.rd_small.set(small);
-            } else {
-                let min = self.cfg.read_size_min();
-                let prev = size.prev();
-                self.rd_size.set(if prev.capacity() < min.capacity() {
-                    min
-  
+     
 ```
 
 ### Core Architecture Module: `ntex-io/src/utils.rs`
@@ -2215,510 +2220,213 @@ pub(crate) mod testing {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fb7c9be3` (2026-11-16)
-**Commit Message**: Add ntex-bytes to security review
+### Incident Patch 1: `249af468` (2026-11-17)
+**Commit Message**: Fix use-after-free when a native runtime's notifier drops the runtime during local task scheduling or cancellation
 
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-Copilot-Session: 68a469b3-4c5e-4b78-be29-8485888fa4f5
-
-**File**: `SECURITY-REVIEW.md` (modified, +74/-5)
+**File**: `ntex-rt/CHANGES.md` (modified, +5/-0)
 ```diff
-@@ -1,6 +1,7 @@
--# Security review: ntex-service and ntex-rt
-+# Security review: ntex-service, ntex-rt and ntex-bytes
- 
--Scope: use-after-free and undefined behavior in `ntex-service` and `ntex-rt`.
-+Scope: use-after-free and undefined behavior in `ntex-service`, `ntex-rt` and
-+`ntex-bytes`. The `ntex-bytes` review is in its own section below.
- 
- Method: manual review of all `unsafe` code, plus Miri
- (`cargo +nightly miri test`) on the `ntex-service` lib tests (170) and the
-@@ -48,12 +49,16 @@ drops the previous waker while `slot` borrows the `UnsafeCell` slab mutably. A
- waker whose `Drop` or `Clone` re-enters `bind()` could reallocate the slab under
- the live reference.
- 
--Not reproduced: the registered `ReadyObserver` holds its own clone of the
--waker, and dropping a pending future clears the slot first, so the slot never
--holds the last reference in the paths tested.
-+Not reproduced with in-tree wakers: the registered `ReadyObserver` holds its
-+own clone of the waker, and dropping a pending future clears the slot first, so
-+the slot never holds the last reference in the paths tested.
- 
- Suggested fix: `mem::replace` the old waker and drop it after the borrow ends.
- 
-+Status: fixed in `057fd32fb`. A waker whose `Clone` re-enters the waiter list
-+reproduces the use-after-free under Miri. The fix clones and drops wakers
-+outside the slab borrow.
-+
- ## ntex-rt
- 
- No use-after-free or undefined behavior was found. Miri reported memory leaks
-@@ -67,3 +72,67 @@ only, and they are intentional:
- 
- Known separately and not re-reviewed here: RT-1 (stall detector unwinds inside
- a signal handler).
-+
-+## ntex-bytes
-+
-+Method: manual review of all `unsafe` code, plus Miri on the full `ntex-bytes`
-+test suite:
-+
-+| Configuration | Result |
-+|---|---|
-+| Stacked Borrows | 189/189 pass |
-+| Stacked Borrows, `tracker` feature | 212/212 pass |
-+| Tree Borrows, `tracker` feature | 212/212 pass |
-+| `i686-unknown-linux-gnu`, `tracker` feature | 209/209 pass |
-+| `-Zmiri-many-seeds=0..32` on the 10 multi-threaded tests | No UB or data race |
-+| `-Zmiri-strict-provenance` | 208/212 pass, see note below |
-+
-+The finding was confirmed natively and with a Miri reproduction.
-+
-+| # | Severity | File | Lines | Vulnerability | Confidence |
-+|---|----------|------|-------|---------------|------------|
-+| 1 | 🟠 HIGH | ntex-bytes/src/pages.rs | 341-344 | `BytePages::move_to` truncates a current page that is still shared | 10/10 |
-+
-+### 1. `BytePages::move_to` truncates a current page that is still shared
-+
-+When the current page is small enough to copy, `move_to` copies it into the
-+destination and then calls `truncate(0)` on it. `BytePages::clone` and
-+`copy_to` share the current page through `shallow_freeze`. `StorageVec::truncate`
-+reclaims the page only when it is unique; otherwise it only sets the length to 0
-+and leaves the offset unchanged. The next write into `self` then overwrites the
-+bytes that the cloned `BytePages` or `Bytes` still exposes as immutable data.
-+
-+```rust
-+let mut a = BytePages::default();
-+a.put_slice(&[1; 100]);
-+let b = a.clone();
-+let mut c = BytePages::default();
-+c.put_slice(&[0; 10]);
-+a.move_to(&mut c);
-+a.put_slice(&[2; 100]); // `b` now reads [2; 100]
-+```
-+
-+Conditions: the shared current page holds more than `INLINE_CAP` bytes (23 on
-+64-bit targets) and less than 4 KiB, the destination has more spare capacity
-+than that, and the page is not a `Size4` page.
-+
-+Impact: safe code mutates memory behind a live `&[u8]`, which is undefined
-+behavior. If the clone is sent to another thread, it is also a data race.
-+Natively, a slice borrowed from `b` changes from `1` to `2`. Miri reports a
-+Stacked Borrows violation on the borrowed slice.
-+
-+Reach: introduced in `347f9aac6`. No caller in the workspace clones a
-+`BytePages` before calling `move_to` (ntex-io, ntex-tls and ntex-net use it on
-+unshared buffers), but `clone`, `copy_to` and `move_to` are public safe APIs.
-+
-+Suggested fix: copy only when the current page is unique (add
-+`st.is_unique()` to the `copy` predicate). Alternatively, advance the start
-+with `set_start(len)` instead of calling `truncate(0)` when the page is shared.
-+
-+### Note: exposed provenance for external storage
-+
-+Under `-Zmiri-strict-provenance`, 4 tests fail at `storage.rs:754`:
-+`st_vtable()` rebuilds the external-storage vtable pointer with
-+`ptr::with_exposed_provenance`. This is by design, because the pointer is stored
-+in the `offset` field, and it is sound under the default permissive provenance
-+model. It is not a finding.
-```
-
----
-
-### Incident Patch 2: `97a5f056` (2026-11-16)
-**Commit Message**: Add security review of ntex-service and ntex-rt
-
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-Copilot-Session: 68a469b3-4c5e-4b78-be29-8485888fa4f5
-
-**File**: `SECURITY-REVIEW.md` (added, +69/-0)
-```diff
-@@ -0,0 +1,69 @@
-+# Security review: ntex-service and ntex-rt
-+
-+Scope: use-after-free and undefined behavior in `ntex-service` and `ntex-rt`.
-+
-+Method: manual review of all `unsafe` code, plus Miri
-+(`cargo +nightly miri test`) on the `ntex-service` lib tests (170) and the
-+`ntex-rt` runtime, waker, remote, pool and task tests (164). Findings 1 and 2
-+were confirmed with dedicated Miri reproductions.
-+
-+## Findings
-+
-+| # | Severity | File | Lines | Vulnerability | Confidence |
-+|---|----------|------|-------|---------------|------------|
-+| 1 | 🟠 HIGH | ntex-service/src/cfg.rs | 128-193 | `CfgContext` can outlive the thread-local default config | 10/10 |
-+| 2 | 🟠 HIGH | ntex-service/src/cfg.rs | 264-277 | `Cfg::drop` releases storage through user-provided `ctx()` | 9/10 |
-+| 3 | 🟡 MEDIUM | ntex-service/src/ctx.rs | 188, 208 | Waker replaced while a slab `&mut` is live | 5/10 |
-+
-+### 1. `CfgContext` can outlive the thread-local default config
-+
-+`CfgContext` wraps a raw `*const Storage`, is marked `Send` and `Sync`, and
-+holds no reference count. `CfgContext::default()` points at the thread-local
-+`DEFAULT_CFG`. A context, or a configuration built from it (for example
-+`IoConfig::new()`), can be moved to another thread. Once the original thread
-+exits, `DEFAULT_CFG` is destroyed and the context dangles.
-+
-+Miri: "constructing invalid value: encountered a dangling reference
-+(use-after-free)" when building `&Storage`.
-+
-+Suggested fix: make `CfgContext` hold a strong `Arc<Storage>`, or keep it
-+`!Send` and never hand out contexts that point at the thread-local default.
-+
-+### 2. `Cfg::drop` releases storage through user-provided `ctx()`
-+
-+`Cfg::drop` calls `Arc::decrement_strong_count(T::ctx().0)`. `ctx()` and
-+`set_ctx()` come from the safe `Configuration` trait, so a `set_ctx` that
-+ignores its argument makes `ctx()` return the default context. Every drop then
-+decrements `DEFAULT_CFG`, which is eventually freed while still in use.
-+
-+Miri: "dangling reference (use-after-free)" on `ArcInner<Storage>`.
-+
-+Suggested fix: store the storage pointer that `Cfg<T>` acquired inside `Cfg<T>`
-+and release that pointer, independent of user code.
-+
-+### 3. Waker replaced while a slab `&mut` is live (latent)
-+
-+In `WaitersRef::run_call` and `WaitersRef::run`, `*slot = Some(cx.waker().clone())`
-+drops the previous waker while `slot` borrows the `UnsafeCell` slab mutably. A
-+waker whose `Drop` or `Clone` re-enters `bind()` could reallocate the slab under
-+the live reference.
-+
-+Not reproduced: the registered `ReadyObserver` holds its own clone of the
-+waker, and dropping a pending future clears the slot first, so the slot never
-+holds the last reference in the paths tested.
-+
-+Suggested fix: `mem::replace` the old waker and drop it after the borrow ends.
-+
-+## ntex-rt
-+
-+No use-after-free or undefined behavior was found. Miri reported memory leaks
-+only, and they are intentional:
-+
-+- A task dropped on a thread that does not own it, or after its runtime has
-+  shut down, is leaked instead of freed (`rt/task.rs` `leaked()`, `rt/wake.rs`
-+  `Owner::Closed`). Its future, output and awaiter may be `!Send`, so freeing it
-+  on a foreign thread would be unsound.
-+- Some test runtimes stop with tasks still pending.
-+
-+Known separately and not re-reviewed here: RT-1 (stall detector unwinds inside
-+a signal handler).
-```
-
----
-
-### Incident Patch 3: `775bd772` (2026-11-16)
-**Commit Message**: Fix use-after-free in Cfg
-
-* Fix use-after-free when a configuration value created by `Default` on a
-  thread that has exited reads its context. The default shared configuration
-  is now process-wide, so `SharedCfg::default()` has the same id on every
-  thread
-
-* Fix use-after-free when a `Configuration::set_ctx` implementation ignores
-  its argument: `Cfg` now holds its own reference to the shared configuration
-  instead of releasing the one returned by `Configuration::ctx()`
-
-**File**: `Cargo.toml` (modified, +2/-2)
-```diff
-@@ -62,11 +62,11 @@ ntex-h2 = "4.5.0"
- ntex-http = "2.2.0"
- ntex-io = "4.7.3"
- ntex-macros = "4.7.0"
--ntex-net = "4.12.2"
-+ntex-net = "4.12.3"
- ntex-router = "2.3.0"
- ntex-rt = "4.9.2"
- ntex-server = "4.6.1"
--ntex-service = "5.7.4"
-+ntex-service = "5.7.5"
- ntex-tls = "4.8.0"
- ntex-util = "4.10.0"
- urly = "1.4.1"
-```
-
-**File**: `ntex-service/CHANGES.md` (modified, +11/-0)
-```diff
-@@ -1,5 +1,16 @@
+@@ -1,5 +1,10 @@
  # Changes
  
-+## [5.7.5] - 2026-11-17
++## [Unreleased]
 +
-+* Fix use-after-free when a configuration value created by `Default` on a
-+  thread that has exited reads its context. The default shared configuration
-+  is now process-wide, so `SharedCfg::default()` has the same id on every
-+  thread
++* Fix use-after-free when a native runtime's notifier drops the runtime during
++  local task scheduling or cancellation
 +
-+* Fix use-after-free when a `Configuration::set_ctx` implementation ignores
-+  its argument: `Cfg` now holds its own reference to the shared configuration
-+  instead of releasing the one returned by `Configuration::ctx()`
-+
- ## [5.7.4] - 2026-11-17
+ ## [4.10.0] - 2026-11-17
  
- * Fix use-after-free when cloning or dropping a waker re-enters the readiness
+ * Each arbiter has its own blocking thread pool, `spawn_blocking()` on an
 ```
 
-**File**: `ntex-service/Cargo.toml` (modified, +1/-1)
+**File**: `ntex-rt/src/rt/task.rs` (modified, +18/-4)
 ```diff
-@@ -1,6 +1,6 @@
- [package]
- name = "ntex-service"
--version = "5.7.4"
-+version = "5.7.5"
- authors = ["ntex contributors <team@ntex.rs>"]
- description = "ntex service"
- keywords = ["network", "framework", "async", "futures"]
-```
-
-**File**: `ntex-service/src/cfg.rs` (modified, +50/-69)
-```diff
-@@ -61,26 +61,27 @@
- #![allow(clippy::should_implement_trait, clippy::new_ret_no_self)]
- use std::any::{Any, TypeId};
- use std::cell::{RefCell, UnsafeCell};
--use std::sync::{Arc, atomic::AtomicUsize, atomic::Ordering};
-+use std::sync::{Arc, LazyLock, atomic::AtomicUsize, atomic::Ordering};
- use std::{fmt, hash::Hash, hash::Hasher, marker::PhantomData, mem, ops, ptr, rc};
- 
- type Key = (usize, TypeId);
- type HashMap<K, V> = std::collections::HashMap<K, V, foldhash::fast::RandomState>;
- 
-+// Process-wide and never dropped: a default `CfgContext` holds a raw pointer to
-+// it and can be sent to, and outlive, any thread.
-+static DEFAULT_CFG: LazyLock<Arc<Storage>> = LazyLock::new(|| {
-+    let mut st = Arc::new(Storage::new("--", "", false, CfgContext(ptr::null())));
-+    let p = Arc::as_ptr(&st);
-+    Arc::get_mut(&mut st).unwrap().ctx.update(p);
-+    st
-+});
-+
- thread_local! {
--    static DEFAULT_CFG: Arc<Storage> = {
--        let mut st = Arc::new(Storage::new("--", "", false, CfgContext(ptr::null())));
--        let p = Arc::as_ptr(&st);
--        Arc::get_mut(&mut st).unwrap().ctx.update(p);
--        st
--    };
-     static MAPPING: RefCell<HashMap<Key, Arc<dyn Any + Send + Sync>>> = {
-         RefCell::new(HashMap::default())
-     };
- }
- static IDX: AtomicUsize = AtomicUsize::new(0);
--const KIND_ARC: usize = 1;
--const KIND_UNMASK: usize = !KIND_ARC;
- 
- /// A value that can be stored in [`SharedCfg`].
- ///
-@@ -106,7 +107,7 @@ struct Storage {
-     service: &'static str,
-     ctx: CfgContext,
-     building: bool,
--    data: HashMap<TypeId, Box<dyn Any + Send + Sync>>,
-+    data: HashMap<TypeId, Arc<dyn Any + Send + Sync>>,
+@@ -352,6 +352,20 @@ fn owner_queue<'a>(h: NonNull<Header>) -> &'a RunnableQueue {
+     unsafe { header(h).queue.as_ref() }
  }
  
- impl Storage {
-@@ -180,48 +181,57 @@ impl CfgContext {
-     }
- 
-     fn get_ref(&self) -> &Storage {
--        // SAFETY: `self.0` points to the `Storage` kept alive by the `Cfg` or
--        // thread-local default that owns this context.
-+        // SAFETY: `self.0` points to the never-dropped default storage, or to a
-+        // built storage kept alive by the `Cfg` that exposes this context.
-         unsafe { self.0.as_ref().unwrap() }
-     }
- }
- 
- impl Default for CfgContext {
-     #[inline]
-     fn default() -> Self {
--        CfgContext(DEFAULT_CFG.with(Arc::as_ptr))
-+        CfgContext(Arc::as_ptr(&DEFAULT_CFG))
-     }
- }
- 
-+/// The handles owned by a [`Cfg`].
-+///
-+/// The storage handle is the one `get` cloned, so releasing it never depends
-+/// on the user's [`Configuration::ctx`].
-+struct CfgRef<T> {
-+    val: Arc<T>,
-+    storage: Arc<Storage>,
++/// Schedules an unfinished task on its owner, retaining the queue across callbacks.
++#[inline]
++fn schedule_local(h: NonNull<Header>) {
++    let queue = owner_queue(h);
++    if queue.idle.get() && queue.current.load(Ordering::Relaxed).is_null() {
++        // The notifier may drop the runtime and remove its registered endpoint.
++        let queue = wake::retain_owner_queue(core(h).routing.runtime)
++            .expect("unfinished task has no runtime queue");
++        queue.schedule_local(Runnable(h));
++    } else {
++        queue.schedule_local(Runnable(h));
++    }
 +}
 +
- #[derive(Debug)]
- /// A typed handle to a value in a [`SharedCfg`].
--pub struct Cfg<T: Configuration>(UnsafeCell<*const T>, PhantomData<rc::Rc<T>>);
-+pub struct Cfg<T: Configuration>(UnsafeCell<CfgRef<T>>, PhantomData<rc::Rc<T>>);
- 
- impl<T: Configuration> Cfg<T> {
--    fn new(ptr: *const T) -> Self {
--        Self(UnsafeCell::new(ptr), PhantomData)
-+    fn new(val: Arc<T>, storage: Arc<Storage>) -> Self {
-+        Self(UnsafeCell::new(CfgRef { val, storage }), PhantomData)
-     }
- 
-     #[inline]
-     /// Returns the unique identifier of the shared configuration.
-     pub fn id(&self) -> usize {
--        self.get_ref().ctx().id()
-+        self.inner().storage.id
-     }
- 
-     #[inline]
-     /// Returns the configuration tag.
-     pub fn tag(&self) -> &'static str {
--        self.get_ref().ctx().tag()
-+        self.inner().storage.tag
-     }
- 
-     /// Returns the configured service name.
-     pub fn service(&self) -> &'static str {
--        self.get_ref().ctx().service()
-+        self.inner().storage.service
-     }
- 
-     /// Returns a handle to the complete shared configuration.
-     pub fn shared(&self) -> SharedCfg {
--        self.get_ref().ctx().shared()
-+        SharedCfg(self.inner().storage.clone())
-     }
- 
-     /// Returns another typed value from the same shared configuration.
-@@ -232,18 +242,13 @@ impl<T: Configuration> Cfg<T> {
-     where
-         U: Configuration,
-     {
--        self.get_ref().ctx().get::<U>()
-+        get(&self.inner().storage)
-     }
- 
--    fn get_ref(&self) -> &T {
--        // SAFETY: The untagged pointer refers to a `T` owned by the storage or by
--        // an `Arc<T>`, both kept alive by the strong counts this `Cfg` holds.
--        unsafe {
--            (*self.0.get())
--                .map_addr(|addr| addr & KIND_UNMASK)
--                .as_ref()
--                .unwrap()
--        }
-+    fn inner(&self) -> &CfgRef<T> {
-+        // SAFETY: Only `replace` writes the cell, and its caller guarantees that
-+        // no references into it exist.
-+        unsafe { &*self.0.get() }
-     }
- 
-     #[allow(clippy::needless_pass_by_value)]
-@@ -261,25 +266,11 @@ impl<T: Configuration> Cfg<T> {
-     }
+ /// Borrows a live owner endpoint for callback-free inspection or publication.
+ fn live_owner_queue<'a>(h: NonNull<Header>) -> Option<&'a RunnableQueue> {
+     // SAFETY: The caller retains a live task reference while checking its immutable routing.
+@@ -400,7 +414,7 @@ pub(super) fn wake_local<const UNSHARED: bool>(h: NonNull<Header>, owned: bool)
+         if !owned {
+             inc_local(h);
+         }
+-        owner_queue(h).schedule_local(Runnable(h));
++        schedule_local(h);
+     } else if owned {
+         if UNSHARED {
+             release_unshared(h);
+@@ -498,7 +512,7 @@ fn last_ref(h: NonNull<Header>) {
+     // nothing can wake the task, the runner drops the future
+     local.refs.set(1);
+     local.state.set(state | SCHEDULED | CLOSE);
+-    owner_queue(h).schedule_local(Runnable(h));
++    schedule_local(h);
  }
  
--impl<T: Configuration> Drop for Cfg<T> {
--    fn drop(&mut self) {
--        // SAFETY: `get` took one storage strong count for this `Cfg`, plus one
--        // `Arc<T>` count when tagged `KIND_ARC`; both are released exactly once.
--        unsafe {
--            let addr = (*self.0.get()).map_addr(|
+ /// Drops the future on the owner thread, completes the task and releases
+@@ -785,7 +799,7 @@ impl Runnable {
+ 
+         if state & SCHEDULED != 0 {
+             // the run reference passes to the queue
+-            owner_queue(h).schedule_local(Runnable(h));
++            schedule_local(h);
+             true
+         } else {
+             release_local(h);
+@@ -1121,7 +1135,7 @@ impl<T> Drop for Task<T> {
+         if cancel && state & (SCHEDULED | RUNNING) == 0 {
+             local.state.set(state | SCHEDULED);
+             // the handle reference passes to the queue
+-            owner_queue(h).schedule_local(Runnable(h));
++            schedule_local(h);
+         } else {
+             local.state.set(state);
+             release_unshared(h);
 ```
 
-**File**: `ntex-service/tests/ui/cfg_from_borrowed.stderr` (modified, +1/-1)
+**File**: `ntex-rt/tests/rt/task_core_tests.rs` (modified, +117/-0)
 ```diff
-@@ -36,5 +36,5 @@ help: the trait `Configuration` is implemented for `TestCfg`
- note: required by a bound in `Cfg`
-   --> src/cfg.rs
-    |
--   | pub struct Cfg<T: Configuration>(UnsafeCell<*const T>, PhantomData<rc::Rc<T>>);
-+   | pub struct Cfg<T: Configuration>(UnsafeCell<CfgRef<T>>, PhantomData<rc::Rc<T>>);
-    |                   ^^^^^^^^^^^^^ required by this bound in `Cfg`
-```
-
-**File**: `ntex-service/tests/unit/cfg.rs` (modified, +71/-0)
-```diff
-@@ -305,3 +305,74 @@ fn owned_and_registered_cfg_keep_values() {
-     assert_eq!(again.val, 7);
-     assert_eq!(again.tag(), "REGISTERED");
+@@ -492,6 +492,123 @@ fn raw_queue_release_retains_driver_during_callback() {
+     OWNED_RUNTIME.with(|slot| assert!(slot.borrow().is_none()));
  }
-+
-+/// STATEMENT: A default context stays valid after the thread that created it exits, and every
-+/// thread shares the same default configuration.
+ 
++/// STATEMENT: Local scheduling retains the queue and notifier across runtime destruction and notification retries.
 +///
 +/// HOW:
-+/// - Create `TestCfg::default()` on a spawned thread, return it, and join the thread.
-+/// - Read `tag()` and `id()` through the returned context and check they match
-+///   `SharedCfg::default()` on this thread.
-+/// - Look up a `Cfg` and a `SharedCfg` through the context and check they belong to the default
-+///   configuration. Miri reports a use-after-free if the default storage died with its thread.
++/// - Save a pending task's local waker, leave its runtime idle, and move the runtime into TLS.
++/// - Wake by reference or value, drop the last waker, or cancel the join with a shutdown notifier armed.
++/// - Drop the runtime inside notification and verify another queue owner survives, with and without an interrupted retry.
++/// - Check the notifier and future are dropped exactly once and all task storage is reclaimed.
 +#[test]
-+fn default_ctx_outlives_its_thread() {
-+    #[derive(Debug, Default)]
-+    struct TestCfg {
-+        config: CfgContext,
++fn raw_queue_scheduling_retains_driver_during_callback() {
++    use std::sync::atomic::AtomicBool;
++
++    thread_local! {
++        static OWNED_RUNTIME: RefCell<Option<Runtime>> = const { RefCell::new(None) };
++        static FALLBACK_QUEUE: RefCell<Option<Arc<RunnableQueue>>> = const { RefCell::new(None) };
 +    }
-+    impl Configuration for TestCfg {
-+        const NAME: &str = "TEST";
-+        fn ctx(&self) -> &CfgContext {
-+            &self.config
++
++    #[derive(Debug)]
++    struct ShutdownNotify {
++        armed: Arc<AtomicBool>,
++        retained: Arc<AtomicBool>,
++        calls: Arc<AtomicUsize>,
++        drops: Arc<AtomicUsize>,
++        interrupted: bool,
++    }
++
++    impl Notify for ShutdownNotify {
++        fn notify(&self) -> io::Result<()> {
++            self.calls.fetch_add(1, Ordering::Relaxed);
++            if self.armed.swap(false, Ordering::Relaxed) {
++                let rt = OWNED_RUNTIME.with(|slot| slot.borrow_mut().take().unwrap());
++                let queue = rt.queue.clone();
++                drop(rt);
++                let retained = Arc::strong_count(&queue) > 1;
++                self.retained.store(retained, Ordering::Relaxed);
++                if !retained {
++                    // Keep a failing regression memory-safe until scheduling returns.
++                    FALLBACK_QUEUE.with(|slot| *slot.borrow_mut() = Some(queue));
++                }
++                if self.interrupted {
++                    return Err(io::ErrorKind::Interrupted.into());
++                }
++            }
++            Ok(())
 +        }
-+        fn set_ctx(&mut self, ctx: CfgContext) {
-+            self.config = ctx;
++    }
++
++    impl Drop for ShutdownNotify {
++        fn drop(&mut self) {
++            self.drops.fetch_add(1, Ordering::Relaxed);
 +        }
 +    }
 +
-+    let val = std::thread::spawn(TestCfg::default).join().unwrap();
-+    assert_eq!(val.ctx().tag(), "--");
-+    assert_eq!(val.ctx().id(), SharedCfg::default().id());
-+
-+    let cfg = val.ctx().get::<TestCfg>();
-+    assert_eq!(cfg.tag(), "--");
-+    drop(cfg);
-+    assert_eq!(val.ctx().shared(), SharedCfg::default());
-+}
-+
-+/// STATEMENT: A `Cfg` releases the configuration it was taken from, even when the value's
-+/// `set_ctx` ignores the context it is given.
-+///
-+/// HOW:
-+/// - Define `IgnoringCfg`, whose `set_ctx` keeps its default context instead of the one passed
-+///   in, and add it to the `OWNER` configuration.
-+/// - Repeatedly get, clone, and drop `Cfg` handles, checking each reports the `OWNER` tag.
-+/// - Check `OWNER` is left with only its own handle and the default configuration is still
-+///   usable. Miri reports a dangling reference if the drops released the default storage.
-+#[test]
-+fn cfg_drop_ignores_user_ctx() {
-+    #[derive(Debug, Default)]
-+    struct IgnoringCfg {
-+        config: CfgContext,
-+    }
-+    impl Configuration for IgnoringCfg {
-+        const NAME: &str = "IGNORING";
-+        fn ctx(&self) -> &CfgContext {
-+            &self.config
-+        }
-+        fn set_ctx(&mut self, _: CfgContext) {}
-+    }
-+
-+    let shared = SharedCfg::new("OWNER").add(IgnoringCfg::default()).build();
-+    for _ in 0..4 {
-+        let cfg = shared.get::<IgnoringCfg>();
-+        let cloned = cfg.clone();
-+        assert_eq!(cfg.tag(), "OWNER");
-+        assert_eq!(cloned.tag(), "OWNER");
-+        assert!(ptr::eq(ptr::from_ref(&*cfg), ptr::from_ref(&*cloned)));
-+    }
-+    assert_eq!(Arc::strong_count(&shared.0), 1);
-+    assert_eq!(SharedCfg::default().tag(), "--");
-+    assert_eq!(Cfg::<IgnoringCfg>::default().tag(), "--");
-+}
++    for action in ["wake_by_ref", "wake", "drop", "cancel"] {
++        for interrupted in [false, true] {
++            let armed = Arc::new(AtomicBool::new(false));
++            let retained = Arc::new(AtomicBool::new(false));
++            let calls = Arc::new(AtomicUsize::new(0));
++            let drops = Arc::new(AtomicUsize::new(0));
++            let rt = Runtime::new(Box::new(ShutdownNotify {
++                armed: armed.clone(),
++                retained: retained.clone(),
++                calls: calls.clone(),
++                drops: drops.clone(),
++                interrupted,
++            }));
++            let future_drops = Rc::new(Cell::new(0));
++            let guard = DropCheck {
++                owner: thread::current().id(),
++                drops: future_drops.clone(),
++                panics: false,
++            };
++            let saved = Rc::new(RefCell::new(None));
++            let slot = saved.clone();
++            let join = rt.spawn(async move {
++                let _guard = guard;
++                poll_fn(|cx| {
++                    *slot.borrow_mut() = Some(crate::LocalWaker::from_waker(cx.waker()));
++                    Poll::<()>::Pending
++                })
++                .await;
++            });
++            assert_eq!(rt.poll(), PollResult::Pending(None));
++            let local = saved.borrow_mut().take().unwrap();
++            let allocations = rt.queue.task_allocations.clone();
++            OWNED_RUNTIME.with(|slot| *slot.borrow_mut() = Some(rt));
++            calls.store(0, Ordering::Relaxed);
++            armed.store(true, Ordering::Relaxed);
++            if action == "cancel" {
++                drop(local);
++                join.cancel();
++            } else {
++                drop(join);
++                match action {
++                    "wake_by_ref" => {
++                        local.wake_by_ref();
++                        drop(local);
++                    }
++                    "wake" => local.wake(),
++                    "drop" => drop(local),
++                    _ => unreachable!(),
++                }
++            }
++            let fallback = FALLBACK_QUEUE.with(|slot| slot.borrow_mut().take());
++            drop(fallback);
++            assert!(
++                retained.load(Ordering::Relaxed),
++                "{action:?}, interrupted={interrupted}: scheduling released its queue during notification"
++            );
++            assert_eq!(calls.load(Ordering::Relaxed), 1 + usize::from(interrupted));
++            assert_eq!(drops.load(Ordering::Relaxed), 1);
++            assert_eq!(future_drops.get(), 1);
++            assert_eq!(Arc::strong_count(&allocations), 1);
++            OWNED_RUNTIME.with(|slot|
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1231** (2026-11-17): Redesign ntex-service configuration api (@fafhrd91)
+- **PR #1230** (2026-11-17): Hardening (@fafhrd91)
 - **PR #1229** (2026-11-17): Implement per worker thread pool (@fafhrd91)
 - **PR #1228** (2026-11-16): Handle large amount of small chunks (@fafhrd91)
 - **PR #1227** (2026-11-16): Various uaf error fixes (@fafhrd91)
 - **PR #1226** (2026-11-16): Fix uaf bugs and improve unsafe api (@fafhrd91)
-- **PR #1225** (2026-11-16): Set blocking thread pool limit (@fafhrd91)
-- **PR #1224** (2026-11-16): Add extractors guide links (@fafhrd91)
 
 ---
 
@@ -2738,62 +2446,35 @@ Copilot-Session: 68a469b3-4c5e-4b78-be29-8485888fa4f5
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add ntex-bytes to security review
+## X. use-after-free when a native runtime's notifier drops the runtime during local t
 
 **RULE**:
-When implementing operations in `SECURITY-REVIEW.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ntex-rt/CHANGES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ntex-rs/ntex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fb7c9be3`: Add ntex-bytes to security review. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `249af468`: use-after-free when a native runtime's notifier drops the runtime during local task scheduling or cancellation. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY-REVIEW.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ntex-rt/CHANGES.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Security review: ntex-service, ntex-rt and ntex-bytes
-Scope: use-after-free and undefined behavior in `ntex-service`, `ntex-rt` and
-`ntex-bytes`. The `ntex-bytes` review is in its own section below.
-Not reproduced with in-tree wakers: the registered `ReadyObserver` holds its
-own clone of the waker, and dropping a pending future clears the slot first, so
-the slot never holds the last reference in the paths tested.
-Status: fixed in `057fd32fb`. A waker whose `Clone` re-enters the waiter list
-reproduces the use-after-free under Miri. The fix clones and drops wakers
-outside the slab borrow.
+## [Unreleased]
 
+* Fix use-after-free when a native runtime's notifier drops the runtime during
+  local task scheduling or cancellation
 
-## ntex-bytes
-
-Method: manual review of all `unsafe` code, plus Miri on the full `ntex-bytes`
-test suite:
-
-| Configuration | Result |
-|---|---|
-| Stacked Borrows | 189/189 pass |
-| Stacked Borrows, `tracker` feature | 212/212 pass |
-| Tree Borrows, `tracker` feature | 212/212 pass |
-| `i686-unknown-linux-gnu`, `tracker` feature | 209/209 pass |
-| `-Zmiri-many-seeds=0..32` on the 10 multi-threaded tests | No UB or data race |
-| `-Zmiri-strict-provenance` | 208/212 pass, see note below |
-
-The finding was confirmed natively and with a Miri reproduction.
-
-| # | Severity | File | Lines | Vulnerabilit
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-# Security review: ntex-service and ntex-rt
-Scope: use-after-free and undefined behavior in `ntex-service` and `ntex-rt`.
-Not reproduced: the registered `ReadyObserver` holds its own clone of the
-waker, and dropping a pending future clears the slot first, so the slot never
-holds the last reference in the paths tested.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fb7c9be3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `249af468` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
