@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T07:43:17.993Z",
+  "updated_at": "2026-11-19T07:51:14.909Z",
   "stats": {
-    "total_discovered": 5826,
-    "approved_pending_harvest": 5514,
+    "total_discovered": 5828,
+    "approved_pending_harvest": 5516,
     "harvested_count": 0,
     "rejected_count": 312,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5478,
+      "COMMUNITY_AND_EXPERT": 5480,
       "OFFICIAL_DOCUMENTATION": 189,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -126009,6 +126009,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
         "fileName": "tickernelz-opencode-mem-learnings.md"
+      }
+    },
+    "SRC-8FBA9893A18B": {
+      "id": "SRC-8FBA9893A18B",
+      "url": "https://mirrors.tencent.com/nexus/repository/gradle-plugins",
+      "title": "https://mirrors.tencent.com/nexus/repository/gradle-plugins",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T07:51:14.871Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
+        "fileName": "tencent-tds-kuiklyui-learnings.md"
+      }
+    },
+    "SRC-F8BA1A74494C": {
+      "id": "SRC-F8BA1A74494C",
+      "url": "https://mirrors.tencent.com/nexus/repository/maven-public",
+      "title": "https://mirrors.tencent.com/nexus/repository/maven-public",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T07:51:14.909Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
+        "fileName": "tencent-tds-kuiklyui-learnings.md"
       }
     }
   }

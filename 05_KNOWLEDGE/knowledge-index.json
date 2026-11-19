@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-19T07:43:18.490Z",
+  "last_updated": "2026-11-19T07:51:15.369Z",
   "total_verified_learnings": 9015,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21692,
+  "total_items": 21697,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -224463,8 +224463,8 @@
       "slug": "restatedev-restate",
       "platform": "github",
       "source_url": "https://github.com/restatedev/restate",
-      "source_version": "d2695f8c",
-      "content_hash": "7743f64be02d58c8f3253b1f0e353ca9a68068b1eefaf2d70c764fc9d5d2c819",
+      "source_version": "7e9a3b23",
+      "content_hash": "96568a1a87569317985432b70f4fa7dbd126962560fb957cf773834b9f479519",
       "dossier_path": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/restatedev-restate-learnings.md",
       "promoted_rules": [
@@ -224492,6 +224492,11 @@
           "number": 9003,
           "title": "[Dependencies] Update libz-sys for zlib security fix",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9354,
+          "title": "[QueryEngineV2] Keep test fixture storage out of reach of late query cleanup",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224499,7 +224504,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T16:38:40.701Z",
+      "verified_at": "2026-11-19T07:51:04.801Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224593,10 +224598,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-architecture-intelligence-restatedev-restate-core-invariants.md",
       "title": "Architecture Intelligence: restatedev/restate Core Invariants",
       "repository": "restatedev/restate",
-      "source_version": "d2695f8c",
-      "content_hash": "dce2057354140146c7d34a533c07226b8344c9e86b7652b38551751d35a1e295",
+      "source_version": "7e9a3b23",
+      "content_hash": "0d34b574b28db5da011b633b4534f91d477f27219b958d91aaf00cc837e6c4ef",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T16:38:41.235Z"
+      "persisted_at": "2026-11-19T07:51:05.340Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate",
@@ -224617,10 +224622,10 @@
       "relative_path": "08_VERIFICATION/restatedev-restate-verification-protocol-empirical-defect-shield-for-restatedev-.md",
       "title": "Verification Protocol: Empirical Defect Shield for restatedev/restate",
       "repository": "restatedev/restate",
-      "source_version": "d2695f8c",
-      "content_hash": "6b63febc8fdb64c0695c824c7be784acf448ef5bcfc9fdccf291edb1131d2b96",
+      "source_version": "7e9a3b23",
+      "content_hash": "a77d4c5be0be69f59029c636dc0a077a88b783d26954171496890f3ef72a3669",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:38:41.379Z"
+      "persisted_at": "2026-11-19T07:51:05.482Z"
     },
     "domain_intelligence-architecture-intelligence-restatedev-restate-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-restatedev-restate-learnings-core-invariants",
@@ -224630,9 +224635,9 @@
       "title": "Architecture Intelligence: restatedev-restate-learnings Core Invariants",
       "repository": "restatedev-restate-learnings",
       "source_version": "HEAD",
-      "content_hash": "fd2af14f11e69b2107fc074710f6595fd5f08ae0747e5a755ee7c5b000b05f09",
+      "content_hash": "507253162a1f8452e9db9ff915813d9f37f9d700fdda3b93bd5b3da81412f52c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T16:38:57.506Z"
+      "persisted_at": "2026-11-19T07:51:14.165Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-restatedev-restate-learnings",
@@ -224654,9 +224659,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for restatedev-restate-learnings",
       "repository": "restatedev-restate-learnings",
       "source_version": "HEAD",
-      "content_hash": "2abaa09d2b4ed4e7b484251f2ab7e5ba9129057b45923ff9e06a82e4d61b319e",
+      "content_hash": "7274815c60e2ad33269a5809f2215a45295e9b2e03b28e2ae9fde35262114cd1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:38:57.654Z"
+      "persisted_at": "2026-11-19T07:51:14.327Z"
     },
     "candidate_directive-dual-ar-state-decoupling-invariant": {
       "item_id": "candidate_directive-dual-ar-state-decoupling-invariant",
@@ -234039,7 +234044,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark",
       "source_version": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
-      "content_hash": "ebcc8605052b2424f1a9dcf363f28aaa0ed624a26e722515fe413bdbbfd6e0ba",
+      "content_hash": "1aa3303a869dce15937709ea24d0fc3ed6c31a565f11e92519e039c3f3724352",
       "dossier_path": "07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md",
       "promoted_rules": [],
@@ -234048,7 +234053,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T18:14:36.276Z",
+      "verified_at": "2026-11-19T07:51:01.813Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234065,9 +234070,9 @@
       "title": "Research & Knowledge Intelligence: autotrust/GLM5.3-Flash-E224-DGX-Spark Core Invariants",
       "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
       "source_version": "hf-autotrust-glm5.3-flash-e224-dgx-spark",
-      "content_hash": "c8c986dee6dcf4bc24f9d65f6d0c96405ea51a9096a0e7b3c3776107def74905",
+      "content_hash": "7e3c566ef1f7bbd618dd07b1aceda996e4d1f33915160baee5a85b9d840e955d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T18:14:36.611Z"
+      "persisted_at": "2026-11-19T07:51:02.225Z"
     },
     "learn-github-meta-folly": {
       "learning_id": "learn-github-meta-folly",
@@ -234365,9 +234370,9 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings Core Invariants",
       "repository": "hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings",
       "source_version": "HEAD",
-      "content_hash": "56ad5f53bd95bc82427415694aeae44c79fbc6dc934188af6ea39a86aba4ddeb",
+      "content_hash": "e0720655c7d0b5345fe9bdd62aecc768c823215d862fd6ebae0d06f150af491e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T18:15:25.362Z"
+      "persisted_at": "2026-11-19T07:51:14.642Z"
     },
     "domain_intelligence-architecture-intelligence-gkd-kit-gkd-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-gkd-kit-gkd-learnings-core-invariants",
@@ -239752,14 +239757,19 @@
       "slug": "tencent-tds-kuiklyui",
       "platform": "github",
       "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
-      "source_version": "0828d8ef",
-      "content_hash": "2541646c38047d421af0e11ca652d5f8430867af18c4ca17c75210c7b29d6057",
+      "source_version": "2ac8003f",
+      "content_hash": "a6e8791994d1daafdfe9d16b8e75c858774f51abd71e0f440e56072e6f4c05b2",
       "dossier_path": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "promoted_rules": [
         {
           "number": 9139,
           "title": "resolve custom font handler before font name lookup",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9355,
+          "title": "stop clearPlaceholder from adding a placeholder prop to images without on",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -239768,7 +239778,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T06:32:36.904Z",
+      "verified_at": "2026-11-19T07:51:10.191Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239808,10 +239818,10 @@
       "relative_path": "08_VERIFICATION/tencent-tds-kuiklyui-verification-protocol-empirical-defect-shield-for-tencent-t.md",
       "title": "Verification Protocol: Empirical Defect Shield for Tencent-TDS/KuiklyUI",
       "repository": "Tencent-TDS/KuiklyUI",
-      "source_version": "0828d8ef",
-      "content_hash": "2c15060db79efbb33f3d1913de1c6c6a78f7c52320886a375f30c4b697c3cdde",
+      "source_version": "2ac8003f",
+      "content_hash": "46d7b6ba98fefd2a09f3bff63b0da6cade4daae5dda5898f1dc978ab6602f71c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:32:37.746Z"
+      "persisted_at": "2026-11-19T07:51:10.861Z"
     },
     "candidate_directive-docker-build-the-valkey-images-on-ubuntu-26-04-lts": {
       "item_id": "candidate_directive-docker-build-the-valkey-images-on-ubuntu-26-04-lts",
@@ -239893,9 +239903,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tencent-tds-kuiklyui-learnings",
       "repository": "tencent-tds-kuiklyui-learnings",
       "source_version": "HEAD",
-      "content_hash": "01739139e731ce53a675730761ce70dd43ff1e158ee2a7e70dfa3592ab24c34d",
+      "content_hash": "201c28fac915b530082dfba3b432abbfee89b4cb39871805f4549d2e9e013b4b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:32:45.944Z"
+      "persisted_at": "2026-11-19T07:51:15.369Z"
     },
     "learn-huggingface-fishaudio-drama-3": {
       "learning_id": "learn-huggingface-fishaudio-drama-3",
@@ -283300,10 +283310,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tencent-tds-kuiklyui-architecture-intelligence-tencent-tds-kuiklyui-core-invaria.md",
       "title": "Architecture Intelligence: Tencent-TDS/KuiklyUI Core Invariants",
       "repository": "Tencent-TDS/KuiklyUI",
-      "source_version": "0828d8ef",
-      "content_hash": "794873951b63b1fe772d775ff297b1974168fd607842a1b6b043217e3c06854c",
+      "source_version": "2ac8003f",
+      "content_hash": "e31bec04ac7fae4d1c4d0625c4fc851f09a70cf7b84c60940ab83becd7f5d2be",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T06:32:37.558Z"
+      "persisted_at": "2026-11-19T07:51:10.712Z"
     },
     "rule-9140": {
       "learning_id": "rule-9140",
@@ -283363,9 +283373,9 @@
       "title": "Architecture Intelligence: tencent-tds-kuiklyui-learnings Core Invariants",
       "repository": "tencent-tds-kuiklyui-learnings",
       "source_version": "HEAD",
-      "content_hash": "8b7f1efef50e4760e0a5d7184be3e8b06cc9dd54fd71629908d904bd20897644",
+      "content_hash": "767f47ff450400bbd9d510d1b1b054b3bb8433a8bc4bad10b6c504e0947c9a50",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T06:32:45.746Z"
+      "persisted_at": "2026-11-19T07:51:15.229Z"
     },
     "rule-9141": {
       "learning_id": "rule-9141",
@@ -293141,6 +293151,70 @@
       "content_hash": "c0c5f257e9e60d69740a430c5aebc7a73a877ce9fceb36a32e41315d96f23fdb",
       "domain_letter": "I",
       "persisted_at": "2026-11-19T07:43:18.352Z"
+    },
+    "rule-9354": {
+      "learning_id": "rule-9354",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9354,
+      "title": "[QueryEngineV2] Keep test fixture storage out of reach of late query cleanup",
+      "source_url": "https://github.com/restatedev/restate",
+      "source_version": "7e9a3b23",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T07:51:04.801Z"
+    },
+    "candidate_directive-queryenginev2-keep-test-fixture-storage-out-of-reach-of-late-query-cleanup": {
+      "item_id": "candidate_directive-queryenginev2-keep-test-fixture-storage-out-of-reach-of-late-query-cleanup",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-431H-queryenginev2-keep-test-fixture-storage-out-of-reach-of-late-query-cleanup.md",
+      "title": "[QueryEngineV2] Keep test fixture storage out of reach of late query cleanup",
+      "repository": "restatedev-restate-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d39819c81212c8e8a9bed22409fdab7a7525f2cd504c6c019cfaa7fa7eab202e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-19T07:51:14.025Z"
+    },
+    "rule-9355": {
+      "learning_id": "rule-9355",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9355,
+      "title": "stop clearPlaceholder from adding a placeholder prop to images without on",
+      "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
+      "source_version": "2ac8003f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-19T07:51:10.191Z"
+    },
+    "candidate_directive-stop-clearplaceholder-from-adding-a-placeholder-prop-to-images-without-on": {
+      "item_id": "candidate_directive-stop-clearplaceholder-from-adding-a-placeholder-prop-to-images-without-on",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-40DC-stop-clearplaceholder-from-adding-a-placeholder-prop-to-images-without-on.md",
+      "title": "stop clearPlaceholder from adding a placeholder prop to images without on",
+      "repository": "Tencent-TDS/KuiklyUI",
+      "source_version": "2ac8003f",
+      "content_hash": "da0c0eda34f8f97ecc18a2308e61f92a0513369553304a6fd9c51d76a2ff2311",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T07:51:10.561Z"
+    },
+    "candidate_directive-core-stop-clearplaceholder-from-adding-a-placeholder-prop-to-images-without-on": {
+      "item_id": "candidate_directive-core-stop-clearplaceholder-from-adding-a-placeholder-prop-to-images-without-on",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-43V3-core-stop-clearplaceholder-from-adding-a-placeholder-prop-to-images-without-on.md",
+      "title": "core): stop clearPlaceholder from adding a placeholder prop to images without on",
+      "repository": "tencent-tds-kuiklyui-learnings",
+      "source_version": "HEAD",
+      "content_hash": "06bcb49902dbd5a6e085eaef9e5e171260d2cdce0651e838f026b4cd21918039",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-19T07:51:15.088Z"
     }
   },
   "ai-builder-brain": {

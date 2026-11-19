@@ -11263,3 +11263,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-unsloth-embeddinggemma-2-gguf` | `https://huggingface.co/unsloth/embeddinggemma-2-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-19T07:42:20.028Z |
 | `learn-dom-h-50b52106` | `project://medialab-xan` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/medialab-xan-learnings.md` | 2026-11-19T07:42:48.163Z |
 | `learn-dom-k-f1a58a5d` | `project://medialab-xan` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/medialab-xan-learnings.md` | 2026-11-19T07:43:16.188Z |
+| `learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark` | `https://huggingface.co/autotrust/GLM5.3-Flash-E224-DGX-Spark` | `hf-autotru` | Multi-dimensional audit evidence | 2026-11-19T07:51:02.038Z |
+| `learn-github-restatedev-restate` | `https://github.com/restatedev/restate` | `7e9a3b23` | Multi-dimensional audit evidence | 2026-11-19T07:51:04.996Z |
+| `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `2ac8003f` | Multi-dimensional audit evidence | 2026-11-19T07:51:10.373Z |

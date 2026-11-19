@@ -11230,3 +11230,6 @@
 | `CYCLE-20261119-SN08` | `2026-11-19T07:42:20.024Z` | `unsloth/embeddinggemma-2-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-embeddinggemma-2-gguf-learnings.md` | Yes (`d232a01e...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T07:42:48.163Z` | `medialab-xan` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-50B52106` [Domain H] | Yes (`dfee5cd9...`) |
 | `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T07:43:16.188Z` | `medialab-xan` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-F1A58A5D` [Domain K] | Yes (`c1513961...`) |
+| `CYCLE-20261119-3TSI` | `2026-11-19T07:51:02.034Z` | `autotrust/GLM5.3-Flash-E224-DGX-Spark` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings.md` | Yes (`1aa3303a...`) |
+| `CYCLE-20261119-3W2N` | `2026-11-19T07:51:04.991Z` | `restatedev/restate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9354` | Yes (`96568a1a...`) |
+| `CYCLE-20261119-4082` | `2026-11-19T07:51:10.370Z` | `Tencent-TDS/KuiklyUI` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9355` | Yes (`a6e87919...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T07:43:18.352Z",
+  "last_updated": "2026-11-19T07:51:15.229Z",
   "total_records": 1959,
   "domains": {
     "A": {
@@ -13417,8 +13417,8 @@
       "title": "Architecture Intelligence: restatedev/restate Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-architecture-intelligence-restatedev-restate-core-invariants.md",
       "repository": "restatedev/restate",
-      "content_hash": "dce2057354140146c7d34a533c07226b8344c9e86b7652b38551751d35a1e295",
-      "created_at": "2026-11-17T16:38:41.235Z"
+      "content_hash": "0d34b574b28db5da011b633b4534f91d477f27219b958d91aaf00cc837e6c4ef",
+      "created_at": "2026-11-19T07:51:05.340Z"
     },
     "DOM-H-948029CF": {
       "record_id": "DOM-H-948029CF",
@@ -13494,8 +13494,8 @@
       "title": "Architecture Intelligence: restatedev-restate-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-restatedev-restate-learnings-architecture-intelligence-restatedev-restate-learni.md",
       "repository": "restatedev-restate-learnings",
-      "content_hash": "fd2af14f11e69b2107fc074710f6595fd5f08ae0747e5a755ee7c5b000b05f09",
-      "created_at": "2026-11-17T16:38:57.506Z"
+      "content_hash": "507253162a1f8452e9db9ff915813d9f37f9d700fdda3b93bd5b3da81412f52c",
+      "created_at": "2026-11-19T07:51:14.165Z"
     },
     "DOM-H-C33FF226": {
       "record_id": "DOM-H-C33FF226",
@@ -17024,8 +17024,8 @@
       "title": "Research & Knowledge Intelligence: autotrust/GLM5.3-Flash-E224-DGX-Spark Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-glm5-3-flash-e224-dgx-spark-research-knowledge-intelligence-autotru.md",
       "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
-      "content_hash": "c8c986dee6dcf4bc24f9d65f6d0c96405ea51a9096a0e7b3c3776107def74905",
-      "created_at": "2026-11-14T18:14:36.611Z"
+      "content_hash": "7e3c566ef1f7bbd618dd07b1aceda996e4d1f33915160baee5a85b9d840e955d",
+      "created_at": "2026-11-19T07:51:02.225Z"
     },
     "domain_intelligence-architecture-intelligence-meta-folly-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-meta-folly-core-invariants",
@@ -17111,8 +17111,8 @@
       "title": "Research & Knowledge Intelligence: hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-autotrust-glm5-3-flash-e224-dgx-spark-learnings-research-knowledge-intelligen.md",
       "repository": "hf-autotrust-glm5.3-flash-e224-dgx-spark-learnings",
-      "content_hash": "56ad5f53bd95bc82427415694aeae44c79fbc6dc934188af6ea39a86aba4ddeb",
-      "created_at": "2026-11-14T18:15:25.362Z"
+      "content_hash": "e0720655c7d0b5345fe9bdd62aecc768c823215d862fd6ebae0d06f150af491e",
+      "created_at": "2026-11-19T07:51:14.642Z"
     },
     "domain_intelligence-architecture-intelligence-gkd-kit-gkd-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-gkd-kit-gkd-learnings-core-invariants",
@@ -29846,8 +29846,8 @@
       "title": "Architecture Intelligence: Tencent-TDS/KuiklyUI Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tencent-tds-kuiklyui-architecture-intelligence-tencent-tds-kuiklyui-core-invaria.md",
       "repository": "Tencent-TDS/KuiklyUI",
-      "content_hash": "794873951b63b1fe772d775ff297b1974168fd607842a1b6b043217e3c06854c",
-      "created_at": "2026-11-18T06:32:37.558Z"
+      "content_hash": "e31bec04ac7fae4d1c4d0625c4fc851f09a70cf7b84c60940ab83becd7f5d2be",
+      "created_at": "2026-11-19T07:51:10.712Z"
     },
     "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-learnings-core-invariants",
@@ -29855,8 +29855,8 @@
       "title": "Architecture Intelligence: tencent-tds-kuiklyui-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tencent-tds-kuiklyui-learnings-architecture-intelligence-tencent-tds-kuiklyui-le.md",
       "repository": "tencent-tds-kuiklyui-learnings",
-      "content_hash": "8b7f1efef50e4760e0a5d7184be3e8b06cc9dd54fd71629908d904bd20897644",
-      "created_at": "2026-11-18T06:32:45.746Z"
+      "content_hash": "767f47ff450400bbd9d510d1b1b054b3bb8433a8bc4bad10b6c504e0947c9a50",
+      "created_at": "2026-11-19T07:51:15.229Z"
     },
     "domain_intelligence-architecture-intelligence-1jehuang-jcode-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-1jehuang-jcode-core-invariants",

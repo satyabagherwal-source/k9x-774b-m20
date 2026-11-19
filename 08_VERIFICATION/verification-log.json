@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-TKB6",
-    "timestamp": "2026-11-17T19:19:33.138Z",
-    "repository": "FastVideo/FastH3-Omni-Comfy",
-    "learningId": "learn-huggingface-fastvideo-fasth3-omni-comfy",
-    "contentHash": "a4b51ce810d6495c86a12ca00a0cb2406ab2ddce1a5471b7a7c05a6793c89d41",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-TXV6",
-    "timestamp": "2026-11-17T19:19:50.706Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "1b81cfe40a3f916f663566894d90b000e8b81aa815317320a599c9006564fb58",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-3LDN",
-    "timestamp": "2026-11-17T19:27:21.083Z",
-    "repository": "baidu/Unlimited-OCR-2",
-    "learningId": "learn-huggingface-baidu-unlimited-ocr-2",
-    "contentHash": "d5f5961c767fa865a66fa13fdbf04dec03dbb4b8e05bf77c5ab2fab31561b7ad",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-3N2I",
     "timestamp": "2026-11-17T19:27:23.274Z",
     "repository": "yyjeqhc/webcodex",
@@ -7492,6 +7447,51 @@
     "contentHash": "d232a01eaf74d991ec746010cdeb188d2aae9daa34e611bb8f9b8a078c013f2e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-3TSI",
+    "timestamp": "2026-11-19T07:51:02.034Z",
+    "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+    "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+    "contentHash": "1aa3303a869dce15937709ea24d0fc3ed6c31a565f11e92519e039c3f3724352",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-3W2N",
+    "timestamp": "2026-11-19T07:51:04.991Z",
+    "repository": "restatedev/restate",
+    "learningId": "learn-github-restatedev-restate",
+    "contentHash": "96568a1a87569317985432b70f4fa7dbd126962560fb957cf773834b9f479519",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-4082",
+    "timestamp": "2026-11-19T07:51:10.370Z",
+    "repository": "Tencent-TDS/KuiklyUI",
+    "learningId": "learn-github-tencent-tds-kuiklyui",
+    "contentHash": "a6e8791994d1daafdfe9d16b8e75c858774f51abd71e0f440e56072e6f4c05b2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-19T07:42:20.033Z",
-  "total_cycles_completed": 10728,
-  "total_learnings_persisted": 10728,
-  "total_rules_promoted": 10122,
+  "last_updated": "2026-11-19T07:51:10.378Z",
+  "total_cycles_completed": 10731,
+  "total_learnings_persisted": 10731,
+  "total_rules_promoted": 10124,
   "history": [
-    {
-      "timestamp": "2026-11-18T14:40:28.751Z",
-      "repository": "inclusionAI/Ming-Image-0.1-Design",
-      "learningId": "learn-huggingface-inclusionai-ming-image-0-1-design",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T14:40:33.839Z",
-      "repository": "zeronsh/zeron",
-      "learningId": "learn-github-zeronsh-zeron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T14:40:42.484Z",
-      "repository": "smallstep/cli",
-      "learningId": "learn-github-smallstep-cli",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T14:40:45.184Z",
       "repository": "Ontos-AI/knowhere",
@@ -1403,6 +1382,27 @@
       "repository": "unsloth/embeddinggemma-2-GGUF",
       "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T07:51:02.044Z",
+      "repository": "autotrust/GLM5.3-Flash-E224-DGX-Spark",
+      "learningId": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T07:51:05.000Z",
+      "repository": "restatedev/restate",
+      "learningId": "learn-github-restatedev-restate",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-19T07:51:10.378Z",
+      "repository": "Tencent-TDS/KuiklyUI",
+      "learningId": "learn-github-tencent-tds-kuiklyui",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

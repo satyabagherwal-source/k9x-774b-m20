@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-19T07:42:20.036Z",
+  "last_updated": "2026-11-19T07:51:10.382Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -155,14 +155,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-autotrust-glm5-3-flash-e224-dgx-spark",
-      "content_hash": "ebcc8605052b2424f1a9dcf363f28aaa0ed624a26e722515fe413bdbbfd6e0ba",
-      "verified_at": "2026-11-14T18:14:36.445Z",
+      "content_hash": "1aa3303a869dce15937709ea24d0fc3ed6c31a565f11e92519e039c3f3724352",
+      "verified_at": "2026-11-19T07:51:02.046Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T18:14:36.445Z"
+      "last_updated": "2026-11-19T07:51:02.046Z"
     },
     "LiquidAI/d1-3B": {
       "repository": "LiquidAI/d1-3B",
@@ -10536,14 +10536,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-restatedev-restate",
-      "content_hash": "7743f64be02d58c8f3253b1f0e353ca9a68068b1eefaf2d70c764fc9d5d2c819",
-      "verified_at": "2026-11-17T16:38:40.888Z",
+      "content_hash": "96568a1a87569317985432b70f4fa7dbd126962560fb957cf773834b9f479519",
+      "verified_at": "2026-11-19T07:51:05.003Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T16:38:40.888Z"
+      "last_updated": "2026-11-19T07:51:05.003Z"
     },
     "Kong/kubernetes-ingress-controller": {
       "repository": "Kong/kubernetes-ingress-controller",
@@ -10896,14 +10896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tencent-tds-kuiklyui",
-      "content_hash": "2541646c38047d421af0e11ca652d5f8430867af18c4ca17c75210c7b29d6057",
-      "verified_at": "2026-11-18T06:32:37.139Z",
+      "content_hash": "a6e8791994d1daafdfe9d16b8e75c858774f51abd71e0f440e56072e6f4c05b2",
+      "verified_at": "2026-11-19T07:51:10.381Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T06:32:37.139Z"
+      "last_updated": "2026-11-19T07:51:10.381Z"
     },
     "SeaQL/sea-orm": {
       "repository": "SeaQL/sea-orm",

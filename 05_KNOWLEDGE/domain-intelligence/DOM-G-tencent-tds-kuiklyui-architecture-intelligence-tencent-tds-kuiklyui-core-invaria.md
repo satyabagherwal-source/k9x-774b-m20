@@ -4,24 +4,24 @@
 {
   "source_repository": "Tencent-TDS/KuiklyUI",
   "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
-  "source_version": "0828d8ef",
+  "source_version": "2ac8003f",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-18T06:32:37.371Z",
+  "timestamp": "2026-11-19T07:51:10.560Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-tencent-tds-kuiklyui",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Tencent-TDS/KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI) (Revision: `0828d8ef`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-18T06:32:37.371Z`  
+> **Provenance**: Harvested from [Tencent-TDS/KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI) (Revision: `2ac8003f`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-19T07:51:10.560Z`  
 > **Learning ID**: `learn-github-tencent-tds-kuiklyui`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), C (Market & Business Intelligence)
-- **Confidence Rating**: 50%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 56%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from Tencent-TDS/KuiklyUI:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Tencent-TDS/KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T06:32:35.923Z  
+> **Harvest Timestamp**: 2026-11-19T07:51:09.417Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A Kotlin Multiplatform UI framework from Tencent TDS — high-performance, one codebase for six platforms, with dynamic delivery.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3638 stars
+- **Stars / Engagement**: 3640 stars
 
 ---
 
@@ -770,11 +770,11 @@ class Animatable<T, V : AnimationVector>(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1907** (2026-11-18): **fix(ios): resolve custom font handler before font name lookup**
-  *Symptoms*: - moved componentExpandHandler hr_fontWithFontFamily callbacks ahead of the fontWithName:size: static and dynamic lookup in KRConvertUtil +UIFont, so business weight-to-font mapping (e.g. Avenir Book/Bold/Heavy) is no longer bypassed when the family name also resolves to a built-in font  - UIFontWeight and isItalic are passed into the callback before any fixed-weight font is returned; callbacks still degrade from the fullest signature to the simplest and return nil falls through to the original lookup and system-font fallback chain
+- **Issue #1912** (2026-11-19): **fix(core): stop clearPlaceholder from adding a placeholder prop to images without one**
+  *Symptoms*: - Compose-side network images never call placeholderSrc, yet the ImageEvent.loadSuccess wrapper unconditionally invokes clearPlaceholder, appending a placeholder="" attr to the node once loading finishes  - the attr set of an image node therefore depends on its loading state: a TurboDisplay cache snapshot saved after loading (10 props) no longer matches the real tree at takeover while still loading (9 props), failing canReuseNode and forcing remove+create — observed as background image flicker on the task center page  - track placeholderPropSet on ImageView so only images that actually set a placeholderSrc emit the clear prop; images without a placeholder keep a stable attr set, and the legacy DSL behavior (placeholder value cleared after load) is unchanged
 
-- **Issue #1906** (2026-11-17): **Revert: fix(ohos): commit avoid draw-time typography relayout corruption (#1835)**
-  *Symptoms*: This reverts commit 39a760fb43884c118c61c58b1f445ade1dbc9252.
+- **Issue #1911** (2026-11-18): **fix(gradle): skip dependencyResolutionManagement on Gradle older than 6.8**
+  *Symptoms*: The 1.3.10 publish job runs Gradle 5.4.1, which has no such Settings property and fails while loading the Maven mirror init script.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -791,171 +791,448 @@ class Animatable<T, V : AnimationVector>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0828d8ef` (2026-11-18)
-**Commit Message**: fix(ios): resolve custom font handler before font name lookup (#1907)
+### Incident Patch 1: `2ac8003f` (2026-11-19)
+**Commit Message**: fix(core): stop clearPlaceholder from adding a placeholder prop to images without one (#1912)
 
-* fix(ios): resolve custom font handler before font name lookup
+* fix(core): stop clearPlaceholder from adding a placeholder prop to images without one
 
-- moved componentExpandHandler hr_fontWithFontFamily callbacks ahead of the fontWithName:size: static and dynamic lookup in KRConvertUtil +UIFont, so business weight-to-font mapping (e.g. Avenir Book/Bold/Heavy) is no longer bypassed when the family name also resolves to a built-in font
+- Compose-side network images never call placeholderSrc, yet the ImageEvent.loadSuccess wrapper unconditionally invokes clearPlaceholder, appending a placeholder="" attr once loading finishes
 
-- UIFontWeight and isItalic are passed into the callback before any fixed-weight font is returned; callbacks still degrade from the fullest signature to the simplest and return nil falls through to the original lookup and system-font fallback chain
+- the attr set of an image node therefore depends on its loading state: a TurboDisplay cache snapshot saved after loading (10 props) no longer matches the real tree at takeover while still loading (9 props), failing canReuseNode and forcing remove+create — observed as background image flicker on the task center page
 
-* docs(ios): update custom font handler priority in iOS guide
+- guard clearPlaceholder with a getProp check so only images that actually emitted a placeholder prop get cleared; images without a placeholder keep a stable attr set and the legacy DSL behavior (placeholder value cleared after load) is unchanged
 
-- address PR #1907 review: step 3 of the usage steps still said hr_fontWithFontFamily is only tried when no font is registered or lookup fails, which no longer matches the new order where the handler runs before the fontWithName lookup
+- setClearPlaceholderHandler registers an empty loadSuccess handler: the ImageEvent.loadSuccess wrapper already invokes clearPlaceholder, so the handler body no longer repeats it
 
-- document the behavior change for existing integrations: a non-nil handler result now wins over statically or dynamically registered fonts of the same name; alias-only integrations should return nil for unmatched families
+* fix(core): update attr with getViewAttr()
 
-**File**: `core-render-ios/Extension/Category/KRConvertUtil.m` (modified, +16/-14)
+Signed-off-by: valoxbwang <[RED
+
+**File**: `core/src/commonMain/kotlin/com/tencent/kuikly/core/views/ImageView.kt` (modified, +5/-3)
 ```diff
-@@ -87,20 +87,9 @@ + (UIFont *)UIFont:(id)json {
+@@ -298,14 +298,16 @@ class ImageView : DeclarativeBaseView<ImageAttr, ImageEvent>() {
      }
  
-     if (fontFamily.length) {
--        // 情形 2: 静态注册（info.plist）
--        UIFont *font = [UIFont fontWithName:fontFamily size:fontSize];
--        if (font) {
--            return font;
--        }
--        // 情形 3: 动态注册字体后再按 fontFamily 获取
--        if (contextParam && [KRFontModule hr_loadCustomFont:fontFamily contextParams:contextParam]) {
--            font = [UIFont fontWithName:fontFamily size:fontSize];
--            if (font) {
--                return font;
+     internal fun clearPlaceholder() {
++        // 仅当节点下发过占位图属性时才清空：Compose 链路的网络图不调用 placeholderSrc，
++        // 属性表中无 placeholder，无条件清空会在加载成功后凭空新增该属性，使节点属性集合
++        // 随加载状态漂移，TurboDisplay 接管 Diff 因属性数量不一致判定节点不可复用。
++        if (getViewAttr().getProp(ImageConst.PLACEHOLDER) == null) return
+         didSetProp(ImageConst.PLACEHOLDER, "")
+     }
+ 
+     internal fun setClearPlaceholderHandler() {
+         if (getViewEvent().handlerWithEventName(ImageEvent.LOAD_SUCCESS) == null) {
+-            getViewEvent().loadSuccess {
+-                clearPlaceholder()
 -            }
--        }
++            getViewEvent().loadSuccess {}
+         }
+     }
+ }
+```
+
+---
+
+### Incident Patch 2: `b3587156` (2026-11-18)
+**Commit Message**: fix(compose): pin-aware sticky header native position cache (#1909)
+
+#481 cached the first HoverView document y forever. Refresh cache on every
+placement while the header is in document flow; lock the anchor only when
+measure reports it as pinned (stickingItemKeys).
+
+- LazyListMeasure: export stickingItemKeys; sync stickyPinnedItemKeys after measure
+- StickyHeaderCacheManager: flow refresh vs pinned lock; clear() on scroll view reset
+- KNode: pass isPinnedSticky into cache lookup for HoverView frames
+- Add BugReproStickyHeaderCachePage and StickyHeaderCacheManagerTest
+
+Avoid measure-time cache invalidation (race with stickyPinnedItemKeys updates).
+
+Co-authored-by: zenipchen <[REDACTED_EMAIL]>
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+**File**: `compose/src/commonMain/kotlin/com/tencent/kuikly/compose/foundation/lazy/LazyList.kt` (modified, +2/-1)
+```diff
+@@ -413,7 +413,8 @@ private fun rememberLazyListMeasurePolicy(
+ 
+         // Update sticky item key to kuiklyInfo
+         state.kuiklyInfo.stickyItemKey = measureResult.stickyItem?.key
 -        
--        // 情形 4: componentExpandHandler 自定义字体创建（weight/italic 作为参数传出，返回值原样使用）
-+        // 情形 2: componentExpandHandler 自定义字体创建（weight/italic 作为参数传出，返回值原样使用）
-+        // 须先于按字体名查找，否则系统内置字体名（如 avenir）会被提前取回固定字重，业务按 weight 映射的多字重失效
-+        UIFont *font = nil;
-         if ([[KuiklyRenderBridge componentExpandHandler] respondsToSelector:@selector(hr_fontWithFontFamily:fontSize:fontWeight:isItalic:)]) {
-             font = [[KuiklyRenderBridge componentExpandHandler] hr_fontWithFontFamily:fontFamily fontSize:fontSize fontWeight:fontWeight isItalic:isItalic];
++        state.kuiklyInfo.stickyPinnedItemKeys = measureResult.stickingItemKeys
++
+         state.applyMeasureResult(measureResult, isLookingAhead)
+         measureResult
+     }
+```
+
+**File**: `compose/src/commonMain/kotlin/com/tencent/kuikly/compose/foundation/lazy/LazyListMeasure.kt` (modified, +2/-0)
+```diff
+@@ -397,13 +397,15 @@ internal fun measureLazyList(
+             measuredItemProvider.getAndMeasure(it)
          }
-@@ -113,6 +102,19 @@ + (UIFont *)UIFont:(id)json {
-         if (font) {
-             return font;
+         val headerItem = stickingItems.lastOrNull()
++        val stickingItemKeys = stickingItems.mapTo(hashSetOf()) { it.key }
+ 
+         return LazyListMeasureResult(
+             firstVisibleItem = firstItem,
+             firstVisibleItemScrollOffset = currentFirstItemScrollOffset,
+             canScrollForward = index < itemsCount || currentMainAxisOffset > maxOffset,
+             consumedScroll = consumedScroll,
+             stickyItem = headerItem,
++            stickingItemKeys = stickingItemKeys,
+             measureResult = layout(layoutWidth, layoutHeight) {
+                 positionedItems.fastForEach {
+                     if (it.key != headerItem?.key) {
+```
+
+**File**: `compose/src/commonMain/kotlin/com/tencent/kuikly/compose/foundation/lazy/LazyListMeasureResult.kt` (modified, +2/-0)
+```diff
+@@ -50,6 +50,8 @@ internal class LazyListMeasureResult(
+     /** Constraints used to measure children. */
+     val childConstraints: Constraints,
+     val stickyItem: LazyListItemInfo? = null,
++    /** Keys of all sticky items in pinned placement for this measure pass. */
++    val stickingItemKeys: Set<Any> = emptySet(),
+     // properties representing the info needed for LazyListLayoutInfo:
+     /** see [LazyListLayoutInfo.visibleItemsInfo] */
+     val positionedItems: List<LazyListMeasuredItem>,
+```
+
+**File**: `compose/src/commonMain/kotlin/com/tencent/kuikly/compose/gestures/KuiklyScrollInfo.kt` (modified, +7/-0)
+```diff
+@@ -134,6 +134,11 @@ class KuiklyScrollInfo {
+      */
+     var stickyItemKey: Any? = null
+ 
++    /**
++     * Keys of sticky headers currently placed in pinned (sticking) state after the last measure.
++     */
++    var stickyPinnedItemKeys: Set<Any> = emptySet()
++
+     /**
+      * Flag indicating whether the current list uses PullToRefresh
+      * When PullToRefresh is used, the isAtTop judgment logic needs to be adjusted
+@@ -215,6 +220,8 @@ class KuiklyScrollInfo {
+         // Clear list items and pagination caches
+         itemMainSpaceCache.clear()
+         stickyItemKey = null
++        stickyPinnedItemKeys = emptySet()
++        stickyHeaderCacheManager.clear()
+         cachedTotalItems = 0
+         pullToRefreshTopInsetPx = 0
+     }
+```
+
+**File**: `compose/src/commonMain/kotlin/com/tencent/kuikly/compose/ui/node/KNode.kt` (modified, +7/-5)
+```diff
+@@ -87,10 +87,12 @@ internal class KNode<T : DeclarativeBaseView<*, *>>(
+     private fun getCachedStickyPosition(currentPos: Offset): Offset {
+         val currentItemKey = (foldedParent as? KNode<*>)?.lazyItemKey ?: return currentPos
+ 
+-        // Get bound cache manager
+-        val cacheManager = getCacheManager()
+-
+-        return cacheManager?.getCachedStickyPosition(currentItemKey, currentPos) ?: currentPos
++        val cacheManager = getCacheManager() ?: return currentPos
++        val scrollNode = parent as? KNode<*>
++        val kuiklyInfo = (scrollNode?.view?.renderProperties as? RenderProperties)?.kuiklyScrollInfo
++            ?: return currentPos
++        val isPinnedSticky = currentItemKey in kuiklyInfo.stickyPinnedItemKeys
++        return cacheManager.getCachedStickyPosition(currentItemKey, currentPos, isPinnedSticky)
+     }
+ 
+     /**
+@@ -104,7 +106,6 @@ internal class KNode<T : DeclarativeBaseView<*, *>>(
+         return kuiklyInfo?.stickyHeaderCacheManager
+     }
+ 
+-
+     /**
+      * The key of the Lazy item that this KNode represents
+      * This is used to identify which item this node corresponds to
+@@ -728,4 +729,5 @@ internal class KNode<T : DeclarativeBaseView<*, *>>(
+             )
          }
-+        
-+        // 情形 3: 静态注册（info.plist）
-+        font = [UIFont fontWithName:fontFamily size:fontSize];
-+        if (font) {
-+            return font;
+     }
++
+ }
+\ No newline at end of file
+```
+
+**File**: `compose/src/commonMain/kotlin/com/tencent/kuikly/compose/ui/node/StickyHeaderCacheManager.kt` (modified, +12/-6)
+```diff
+@@ -36,16 +36,22 @@ class StickyHeaderCacheManager {
+      */
+     private val stickyHeaderCacheMap = mutableMapOf<Any, StickyHeaderCache>()
+ 
++    fun clear() {
++        stickyHeaderCacheMap.clear()
++    }
++
+     /**
+-     * Get cached position for sticky header
+-     * Cache position when sticky header first appears, reuse cached position subsequently
+-     * Supports multiple sticky headers, distinguished by lazyItemKey
++     * Get cached position for sticky header.
++     * When not pinned, [currentPos] is always written so layout drift above the header is absorbed.
++     * When pinned, reuse the first cached document-flow anchor (#481).
+      */
+-    fun getCachedStickyPosition(itemKey: Any, currentPos: Offset): Offset {
++    fun getCachedStickyPosition(itemKey: Any, currentPos: Offset, isPinnedSticky: Boolean): Offset {
++        if (!isPinnedSticky) {
++            stickyHeaderCacheMap[itemKey] = StickyHeaderCache(currentPos)
++            return currentPos
 +        }
-+        // 情形 4: 动态注册字体后再按 fontFamily 获取
-+        if (contextParam && [KRFontModule hr_loadCustomFont:fontFamily contextParams:contextParam]) {
-+            font = [UIFont fontWithName:fontFamily size:fontSize];
-+            if (font) {
-+                return font;
+         val cachedData = stickyHeaderCacheMap[itemKey]
+-
+         return if (cachedData == null) {
+-            // Cache current position when first appears and is in sticky state
+             stickyHeaderCacheMap[itemKey] = StickyHeaderCache(currentPos)
+             currentPos
+         } else {
+```
+
+**File**: `compose/src/commonTest/kotlin/com/tencent/kuikly/compose/ui/node/StickyHeaderCacheManagerTest.kt` (added, +63/-0)
+```diff
+@@ -0,0 +1,63 @@
++/*
++ * Tencent is pleased to support the open source community by making KuiklyUI
++ * available.
++ * Copyright (C) 2026 Tencent. All rights reserved.
++ * Licensed under the License of KuiklyUI;
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ * https://github.com/Tencent-TDS/KuiklyUI/blob/main/LICENSE
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package com.tencent.kuikly.compose.ui.node
++
++import com.tencent.kuikly.compose.ui.geometry.Offset
++import kotlin.test.Test
++import kotlin.test.assertEquals
++
++class StickyHeaderCacheManagerTest {
++
++    @Test
++    fun flowRefreshesWithCurrentPosition() {
++        val manager = StickyHeaderCacheManager()
++        val key = "header"
++        assertEquals(
++            Offset(0f, 100f),
++            manager.getCachedStickyPosition(key, Offset(0f, 100f), isPinnedSticky = false),
++        )
++        assertEquals(
++            Offset(0f, 200f),
++            manager.getCachedStickyPosition(key, Offset(0f, 200f), isPinnedSticky = false),
++        )
++    }
++
++    @Test
++    fun pinnedLocksFirstDocumentPosition() {
++        val manager = StickyHeaderCacheManager()
++        val key = "header"
++        assertEquals(
++            Offset(0f, 500f),
++            manager.getCachedStickyPosition(key, Offset(0f, 500f), isPinnedSticky = true),
++        )
++        assertEquals(
++            Offset(0f, 500f),
++            manager.getCachedStickyPosition(key, Offset(0f, 120f), isPinnedSticky = true),
++        )
++    }
++
++    @Test
++    fun clearDropsAllEntries() {
++        val manager = StickyHeaderCacheManager()
++        val key = "header"
++        manager.getCachedStickyPosition(key, Offset(0f, 10f), isPinnedSticky = true)
++        manager.clear()
++        assertEquals(
++            Offset(0f, 20f),
++            manager.getCachedStickyPosition(key, Offset(0f, 20f), isPinnedSticky = true),
++        )
++    }
++}
+\ No newline at end of file
+```
+
+**File**: `demo/src/commonMain/kotlin/com/tencent/kuikly/demo/pages/debug/BugReproStickyHeaderCachePage.kt` (added, +193/-0)
+```diff
+@@ -0,0 +1,193 @@
++/*
++ * Tencent is pleased to support the open source community by making KuiklyUI
++ * available.
++ * Copyright (C) 2026 Tencent. All rights reserved.
++ * Licensed under the License of KuiklyUI;
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ * https://github.com/Tencent-TDS/KuiklyUI/blob/main/LICENSE
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++@file:OptIn(
++    com.tencent.kuikly.compose.foundation.ExperimentalFoundationApi::class,
++)
++
++package com.tencent.kuikly.demo.pages.debug
++
++import androidx.compose.runtime.Composable
++import androidx.compose.runtime.LaunchedEffect
++import androidx.compose.runtime.getValue
++import androidx.compose.runtime.mutableStateOf
++import androidx.compose.runtime.remember
++import androidx.compose.runtime.setValue
++import com.tencent.kuikly.compose.ComposeContainer
++import com.tencent.kuikly.compose.foundation.background
++import com.tencent.kuikly.compose.foundation.clickable
++import com.tencent.kuikly.compose.foundation.layout.Box
++import com.tencent.kuikly.compose.foundation.layout.Column
++import com.tencent.kuikly.compose.foundation.layout.Row
++import com.tencent.kuikly.compose.foundation.layout.fillMaxSize
++import com.tencent.kuikly.compose.foundation.layout.fillMaxWidth
++import com.tencent.kuikly.compose.foundation.layout.height
++import com.tencent.kuikly.compose.foundation.layout.padding
++import com.tencent.kuikly.compose.foundation.lazy.LazyColumn
++import com.tencent.kuikly.compose.foundation.lazy.items
++import com.tencent.kuikly.compose.foundation.lazy.rememberLazyListState
++import com.tencent.kuikly.compose.material3.Text
++import com.tencent.kuikly.compose.setContent
++import com.tencent.kuikly.compose.ui.Alignment
++import com.tencent.kuikly.compose.ui.Modifier
++import com.tencent.kuikly.compose.ui.graphics.Color
++import com.tencent.kuikly.compose.ui.unit.dp
++import com.tencent.kuikly.compose.ui.unit.sp
++import com.tencent.kuikly.core.annotations.Page
++import kotlinx.coroutines.delay
++
++private enum class ReproCase(val label: String) {
++    InsertAfterIdle("A: 首帧缓存后再插顶栏"),
++    InsertAfterSticky("B: 先滚到吸顶再插顶栏"),
++}
++
++/**
++ * StickyHeader cache 失效策略验证页。
++ */
++@Page("BugReproStickyHeaderCachePage")
++internal class BugReproStickyHeaderCachePage : ComposeContainer() {
++
++    override fun willInit() {
++        super.willInit()
++        setContent {
++            BugReproStickyHeaderCacheContent()
++        }
++    }
++}
++
++private const val TOP_INSERT_HEIGHT_DP = 120
++
++@Composable
++private fun BugReproStickyHeaderCacheContent() {
++    var reproCase by remember { mutableStateOf(ReproCase.InsertAfterIdle) }
++    var topBlockInserted by remember { mutableStateOf(false) }
++    val listState = rememberLazyListState()
++
++    LaunchedEffect(reproCase) {
++        topBlockInserted = false
++        listState.scrollToItem(0)
++        when (reproCase) {
++            ReproCase.InsertAfterIdle -> {
++                delay(800)
++                topBlockInserted = true
++            }
++            ReproCase.InsertAfterSticky -> {
++                delay(800)
++                listState.scrollToItem(10)
++                delay(800)
++                topBlockInserted = true
 +            }
 +        }
-     }
- 
-     // 情形 5.1: 带 weight/style 的系统字体
-```
-
-**File**: `docs/QuickStart/iOS.md` (modified, +1/-1)
-```diff
-@@ -839,7 +839,7 @@ class TestPage : Pager(){
- 
- 1. 静态注册（info.plist 的 `UIAppFonts`）或系统字体：Kotlin 侧直接使用字体真实名称，无需实现任何方法。
- 2. 字体文件需要运行时动态下发/加载：实现 `hr_loadCustomFont:contextParams:`，按 `fontFamily` 注册对应的字体文件。
--3. 未注册或查找失败时，框架依次尝试 `componentExpandHandler` 的 `hr_fontWithFontFamily:...` 系列方法（`fontWeight`/`italic` 作为参数传出，返回的 UIFont 原样使用），最终回落系统字体并保留 `fontWeight`/`fontStyle`。
-+3. 业务自定义"字体名 → 字体"映射（如同一字体名按 `fontWeight` 映射多个字面）：实现 `hr_fontWithFontFamily:...`。该回调**优先于**静态/动态注册的字体名查找执行（`fontWeight`/`italic` 作为参数传出，返回的 UIFont 原样使用）；返回 `nil` 则继续按字体名查找，最终回落系统字体并保留 `fontWeight`/`fontStyle`。回调返回非 nil 即生效，同名的注册字体不再参与；仅做别名替换的接入，对未匹配的 `fontFamily` 返回 `nil` 即可回落注册字体。
- 
- ::: tip generic family 说明
- Compose `FontFamily` 的 4 个类别名由框架内置处理，无需业务介入：
++    }
++
++    Column(modifier = Modifier.fillMaxSize().background(Color(0xFFF2F2F2))) {
++        Column(
++            modifier = Modifier
++                .fillMaxWidth()
++                .background(Color(0xFFFFF3E0))
++                .padding(12.dp),
++        ) {
++            Text("StickyHeader cache 验证", fontSize = 14.sp)
++            Text(
++                text = "用例 ${reproCase.label}",
++                fontSize = 12.sp,
++                modifier = Modifier.padding(top = 4.dp),
++            )
++            Text(
++                text = if (topBlockInserted) {
++                    "顶栏 ${TOP_INSERT_HEIGHT_DP}dp 已插入"
++                } else {
++                    "等待自动流程…"
++                },
++                fontSize = 12.sp,
++                modifier = Modifier.padding(top = 4.dp),
++            )
++            Row(modifier = Modifier.padding(top = 8.dp)) {
++                ReproCase.entries.forEach { case ->
++                    Box(
++                        modifier = Modifier
++                            .padding(end = 8.dp)
++                            .clickable { reproCase = case }
++                            .background(
++                                if (case == reproCase) Color(0xFF1976D2) else Color(0xFFBDBDBD),
++                            )
++                            .padding(horizontal = 8.dp, vertical = 4.dp),
++                        contentAlignment = Alignment.Center,
++                    ) {
++                    
 ```
 
 ---
 
-### Incident Patch 2: `f379d18c` (2026-11-17)
-**Commit Message**: fix(iOS): 为 p_configureAppearance: 补充 iOS 13 可用性注解消除 -Wunguarded-availability-new 警告 (#1894)
+### Incident Patch 3: `0e6e3d68` (2026-11-18)
+**Commit Message**: fix(gradle): skip dependencyResolutionManagement on Gradle older than 6.8 (#1911)
 
-Co-authored-by: elixxli <[REDACTED_EMAIL]>
+The 1.3.10 publish job runs Gradle 5.4.1, which has no such Settings property and fails while loading the Maven mirror init script.
 
-**File**: `core-render-ios/Extension/AdvancedComps/UINavigationBar/KRUINavigationBar.m` (modified, +1/-1)
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+**File**: `gradle/maven-mirror.init.gradle` (modified, +6/-1)
 ```diff
-@@ -525,7 +525,7 @@ - (void)p_configureAppearance:(UINavigationBarAppearance *)appearance
-           largeTitleAttributes:(NSDictionary *)largeTitleAttributes
-             subtitleAttributes:(NSDictionary *)subtitleAttributes
-         largeSubtitleAttributes:(NSDictionary *)largeSubtitleAttributes
--                        offset:(UIOffset)offset {
-+                        offset:(UIOffset)offset API_AVAILABLE(ios(13.0)) {
-     if ([style isEqualToString:@"default"]) {
-         [appearance configureWithDefaultBackground];
-     } else if ([style isEqualToString:@"opaque"]) {
-```
-
----
-
-### Incident Patch 3: `0f3c5e9f` (2026-11-17)
-**Commit Message**: Revert "fix(ohos): avoid draw-time typography relayout corruption (#1835)" (#1906)
-
-This reverts commit 39a760fb43884c118c61c58b1f445ade1dbc9252.
-
-**File**: `core-render-ohos/src/main/cpp/libohos_render/expand/components/richtext/KRRichTextView.cpp` (modified, +18/-3)
-```diff
-@@ -148,6 +148,7 @@ void KRRichTextView::DidRemoveFromParentView() {
-     IKRRenderViewExport::DidRemoveFromParentView();
-     shadow_ = nullptr;
-     paragraph_ = nullptr;
-+    last_draw_frame_width_ = -1.0;
+@@ -1,3 +1,5 @@
++import org.gradle.util.GradleVersion
++
+ def GRADLE_PLUGINS = "https://mirrors.tencent.com/nexus/repository/gradle-plugins/"
+ def MAVEN_PUBLIC = "https://mirrors.tencent.com/nexus/repository/maven-public/"
+ 
+@@ -16,7 +18,10 @@ def rewrite = { repo ->
+ 
+ settingsEvaluated { settings ->
+     settings.pluginManagement.repositories.each { rewrite(it) }
+-    settings.dependencyResolutionManagement.repositories.each { rewrite(it) }
++    // Added in Gradle 6.8. Gradle 5.4.1 used by the 1.3.10 publish job does not have it.
++    if (GradleVersion.current() >= GradleVersion.version("6.8")) {
++        settings.dependencyResolutionManagement.repositories.each { rewrite(it) }
++    }
  }
  
- void KRRichTextView::OnForegroundDraw(ArkUI_NodeCustomEvent *event) {
-@@ -185,13 +186,27 @@ void KRRichTextView::OnForegroundDraw(ArkUI_NodeCustomEvent *event) {
-         return;
-     }
-     double drawOffsetY = richTextShadow->DrawOffsetY();
-+    OH_Drawing_TextAlign textAlign = richTextShadow->TextAlign();
-+    auto textTypoSize = richTextShadow->MainMeasureSize();
-     // 在容器前景上绘制额外图形，实现图形显示在子组件之上。
-     auto *drawContext = OH_ArkUI_NodeCustomEvent_GetDrawContextInDraw(event);
-     auto *drawingHandle = reinterpret_cast<OH_Drawing_Canvas *>(OH_ArkUI_DrawContext_GetCanvas(drawContext));
-     auto frameWidth = GetFrame().width;
--    // Do not lay out an already formatted Typography again while drawing.
--    // TypographyLayout is not idempotent on HarmonyOS 6 and may corrupt
--    // multiline Chinese glyphs.
-+    bool needReLayout = false;
-+    if (last_draw_frame_width_ > 0 && fabs(last_draw_frame_width_ - frameWidth) > 0.01) {
-+        needReLayout = true;
-+    }
-+    if (fabs(textTypoSize.width - frameWidth) > 1 || textAlign != TEXT_ALIGN_LEFT) {
-+        needReLayout = true;
-+    }
-+    if (needReLayout) {
-+        auto dpi = KRConfig::GetDpi();
-+        OH_Drawing_TypographyLayout(textTypo, frameWidth * dpi);
-+        last_draw_frame_width_ = frameWidth;
-+        if (textAlign != TEXT_ALIGN_LEFT) {
-+            richTextShadow->ResetTextAlign();
-+        }
-+    }
- 
-     if (!selection_rects_.selection_rects.empty()) {
-         double density = KRConfig::GetDpi();
-```
-
-**File**: `core-render-ohos/src/main/cpp/libohos_render/expand/components/richtext/KRRichTextView.h` (modified, +1/-0)
-```diff
-@@ -192,6 +192,7 @@ class KRRichTextView : public IKRRenderViewExport {
-  private:
-     std::shared_ptr<KRParagraph> paragraph_;
-     std::shared_ptr<IKRRenderShadowExport> shadow_;
-+    float last_draw_frame_width_ = -1.0;
-     float line_break_margin_ = 0;
-     KRParagraphSelectionInfo selection_rects_;
-     void OnForegroundDraw(ArkUI_NodeCustomEvent *event);
+ gradle.beforeProject { project ->
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1912** (2026-11-19): fix(core): stop clearPlaceholder from adding a placeholder prop to images without one (@RoeKun)
+- **PR #1911** (2026-11-18): fix(gradle): skip dependencyResolutionManagement on Gradle older than 6.8 (@ruifanyuan)
+- **PR #1910** (2026-11-18): fix(gradle): resolve Maven Central and the plugin portal from Tencent mirrors (@ruifanyuan)
+- **PR #1909** (2026-11-18): fix(compose): smart sticky header position cache with auto-invalidation (@zenipchen)
 - **PR #1907** (2026-11-18): fix(ios): resolve custom font handler before font name lookup (@RoeKun)
 - **PR #1906** (2026-11-17): Revert: fix(ohos): commit avoid draw-time typography relayout corruption (#1835) (@ruifanyuan)
-- **PR #1905** (2026-11-17): Chore: update buildsrc repositories (@elixxli)
-- **PR #1904** (2026-11-17): fix(ios): avoid resetting scroll view origin when wrapper is not attached (@RoeKun)
-- **PR #1903** (2026-11-17): fix(ohos): count direct children when inserting a subview (@ruifanyuan)
-- **PR #1901** (2026-11-16): fix(miniApp): protect for minApp for no Event error (@etkmao)
 
 ---
 
@@ -975,59 +1252,37 @@ This reverts commit 39a760fb43884c118c61c58b1f445ade1dbc9252.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ios): resolve custom font handler before font name lookup
+## X. core): stop clearPlaceholder from adding a placeholder prop to images without on
 
 **RULE**:
-When implementing operations in `core-render-ios/Extension/Category/KRConvertUtil.m`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Tencent-TDS/KuiklyUI. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/src/commonMain/kotlin/com/tencent/kuikly/core/views/ImageView.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Tencent-TDS/KuiklyUI. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0828d8ef`: ios): resolve custom font handler before font name lookup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2ac8003f`: core): stop clearPlaceholder from adding a placeholder prop to images without one. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core-render-ios/Extension/Category/KRConvertUtil.m`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/src/commonMain/kotlin/com/tencent/kuikly/core/views/ImageView.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-        // 情形 2: componentExpandHandler 自定义字体创建（weight/italic 作为参数传出，返回值原样使用）
-        // 须先于按字体名查找，否则系统内置字体名（如 avenir）会被提前取回固定字重，业务按 weight 映射的多字重失效
-        UIFont *font = nil;
-        
-        // 情形 3: 静态注册（info.plist）
-        font = [UIFont fontWithName:fontFamily size:fontSize];
-        if (font) {
-            return font;
-        }
-        // 情形 4: 动态注册字体后再按 fontFamily 获取
-        if (contextParam && [KRFontModule hr_loadCustomFont:fontFamily contextParams:contextParam]) {
-            font = [UIFont fontWithName:fontFamily size:fontSize];
-            if (font) {
-                return font;
-            }
-        }
+        // 仅当节点下发过占位图属性时才清空：Compose 链路的网络图不调用 placeholderSrc，
+        // 属性表中无 placeholder，无条件清空会在加载成功后凭空新增该属性，使节点属性集合
+        // 随加载状态漂移，TurboDisplay 接管 Diff 因属性数量不一致判定节点不可复用。
+        if (getViewAttr().getProp(ImageConst.PLACEHOLDER) == null) return
+            getViewEvent().loadSuccess {}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-        // 情形 2: 静态注册（info.plist）
-        UIFont *font = [UIFont fontWithName:fontFamily size:fontSize];
-        if (font) {
-            return font;
-        }
-        // 情形 3: 动态注册字体后再按 fontFamily 获取
-        if (contextParam && [KRFontModule hr_loadCustomFont:fontFamily contextParams:contextParam]) {
-            font = [UIFont fontWithName:fontFamily size:fontSize];
-            if (font) {
-                return font;
+            getViewEvent().loadSuccess {
+                clearPlaceholder()
             }
-        }
-        
-        // 情形 4: componentExpandHandler 自定义字体创建（weight/italic 作为参数传出，返回值原样使用）
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0828d8ef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2ac8003f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
