@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-19T01:32:55.701Z",
+  "updated_at": "2026-11-19T01:55:42.529Z",
   "stats": {
-    "total_discovered": 5758,
-    "approved_pending_harvest": 5449,
+    "total_discovered": 5759,
+    "approved_pending_harvest": 5450,
     "harvested_count": 0,
     "rejected_count": 309,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5424,
+      "COMMUNITY_AND_EXPERT": 5425,
       "OFFICIAL_DOCUMENTATION": 185,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -124534,6 +124534,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kubearmor-kubearmor-learnings.md",
         "fileName": "kubearmor-kubearmor-learnings.md"
+      }
+    },
+    "SRC-4B5F7D1C4625": {
+      "id": "SRC-4B5F7D1C4625",
+      "url": "https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap",
+      "title": "https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-19T01:55:42.529Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-akhaliq-minimax-h3-image-character-swap-learnings.md",
+        "fileName": "hf-akhaliq-minimax-h3-image-character-swap-learnings.md"
       }
     }
   }

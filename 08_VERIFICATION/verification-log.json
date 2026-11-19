@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-D220",
-    "timestamp": "2026-11-17T16:46:44.904Z",
-    "repository": "sigstore/cosign",
-    "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "c03a65280d7f4db365ed6c9016aca058e899d567ee5531b89f486b3ad43460b8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-D4IM",
-    "timestamp": "2026-11-17T16:46:48.094Z",
-    "repository": "VectifyAI/PageIndex",
-    "learningId": "learn-github-vectifyai-pageindex",
-    "contentHash": "81a98ea5e0834e5b9e92a8c1a1e901a05cdf54b61cc03376f81bb9c447043e1a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-D849",
     "timestamp": "2026-11-17T16:46:52.762Z",
     "repository": "stakater/Reloader",
@@ -7490,6 +7460,36 @@
     "repository": "nomic-ai/nomic-embed-text-v1.5",
     "learningId": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
     "contentHash": "26cf7265980afd940d0b8a8271e539feec5bee2bcc7e74530c9221068431ae88",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-DWXM",
+    "timestamp": "2026-11-19T01:54:57.658Z",
+    "repository": "akhaliq/MiniMax-H3-Image-Character-Swap",
+    "learningId": "learn-huggingface-akhaliq-minimax-h3-image-character-swap",
+    "contentHash": "c667fb203fe67cc101560c4a8e8e7069b7c70d74e1fa388d8d72711b49d948c0",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261119-DYUQ",
+    "timestamp": "2026-11-19T01:55:00.146Z",
+    "repository": "google/gemma-4-26B-A4B-it",
+    "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
+    "contentHash": "210ef14df814cbd863ce5451a9908c01b2a54ad916ca177c89d6a543c9054281",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

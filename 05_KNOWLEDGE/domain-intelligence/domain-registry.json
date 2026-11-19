@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-19T01:47:32.605Z",
-  "total_records": 1932,
+  "last_updated": "2026-11-19T01:55:43.986Z",
+  "total_records": 1935,
   "domains": {
     "A": {
       "total": 13,
@@ -53,7 +53,7 @@
       ]
     },
     "D": {
-      "total": 813,
+      "total": 816,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -867,7 +867,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-naiveai-naive-n0-5-flash-learnings-core-invar",
         "domain_intelligence-research-knowledge-intelligence-baai-bge-reranker-v2-m3-core-invariants",
         "DOM-D-9B951EAF",
-        "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-reranker-v2-m3-learnings-core-invari"
+        "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-reranker-v2-m3-learnings-core-invari",
+        "domain_intelligence-research-knowledge-intelligence-akhaliq-minimax-h3-image-character-swap-core-inv",
+        "DOM-D-C41D220B",
+        "domain_intelligence-research-knowledge-intelligence-hf-akhaliq-minimax-h3-image-character-swap-learn"
       ]
     },
     "E": {
@@ -15149,8 +15152,8 @@
       "title": "Research & Knowledge Intelligence: google/gemma-4-26B-A4B-it Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-gemma-4-26b-a4b-it-research-knowledge-intelligence-google-gemma-4-26b-.md",
       "repository": "google/gemma-4-26B-A4B-it",
-      "content_hash": "51036255f4e8c602ed32450af7787d5fb2bfa9d3e66f11f4a0c7c2d7593cf95e",
-      "created_at": "2026-11-14T12:04:05.279Z"
+      "content_hash": "f33e9043e0fda05ca355847e03c660ca7f54b7af05017be772e1035dfcd3e086",
+      "created_at": "2026-11-19T01:55:00.352Z"
     },
     "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-core-invariants": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-core-invariants",
@@ -15236,8 +15239,8 @@
       "title": "Research & Knowledge Intelligence: hf-google-gemma-4-26b-a4b-it-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-gemma-4-26b-a4b-it-learnings-research-knowledge-intelligence-hf-google.md",
       "repository": "hf-google-gemma-4-26b-a4b-it-learnings",
-      "content_hash": "952a22e6b609fb14c942beae3a7039ffe33db1f2c8cd1ad80018ecbad9e01e24",
-      "created_at": "2026-11-14T12:04:53.216Z"
+      "content_hash": "ef653f6487fdfd67143cef0ad440d1b3ba16dc3c79aabef29679ee89d2606997",
+      "created_at": "2026-11-19T01:55:43.275Z"
     },
     "domain_intelligence-technical-construction-intelligence-czy0729-bangumi-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-czy0729-bangumi-learnings-core-invariants",
@@ -23103,8 +23106,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "9659ad05ca5c414da7cf192360038565757fe348f162a786bc47409143f9be37",
-      "created_at": "2026-11-18T22:30:41.312Z"
+      "content_hash": "1c4cefcc867e86bbb6317fc6c4689336068b1f2e572bab33ea512f70f2d82a7a",
+      "created_at": "2026-11-19T01:55:43.986Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -32410,6 +32413,66 @@
       "repository": "kubearmor-kubearmor-learnings",
       "content_hash": "ad58c42774b3763e2b384c58e921d0bb9c300e64d15622986d6380e825613d51",
       "created_at": "2026-11-19T01:32:56.159Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-akhaliq-minimax-h3-image-character-swap-core-inv": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-akhaliq-minimax-h3-image-character-swap-core-inv",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: akhaliq/MiniMax-H3-Image-Character-Swap Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akhaliq-minimax-h3-image-character-swap-research-knowledge-intelligence-akhal.md",
+      "repository": "akhaliq/MiniMax-H3-Image-Character-Swap",
+      "content_hash": "910c949be58f61f2543dd2ed7717a8591de3b734f87e8da89742cb740cc4a50d",
+      "created_at": "2026-11-19T01:54:57.858Z"
+    },
+    "DOM-D-C41D220B": {
+      "record_id": "DOM-D-C41D220B",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): akhaliq/MiniMax-H3-Image-Character-Swap",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-akhaliq-minimax-h3-image-character-swap-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap](https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap))  \n> **Source Version**: `hf-",
+      "content_hash": "f80ac5897cd46c7e0cd66de02e1fd2947e54f2fc36d6ca661a7d37593f809147",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-akhaliq-minimax-h3-image-character-swap-learnings.md`  \n> **Source**: huggingface -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-akhaliq-minimax-h3-image-character-swap-learnings.md`  \n> **Source**: huggingface",
+      "provenance": {
+        "source_uri": "project://hf-akhaliq-minimax-h3-image-character-swap/hf-akhaliq-minimax-h3-image-character-swap-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T01:55:11.827Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-akhaliq-minimax-h3-image-character-swap)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-akhaliq-minimax-h3-image-character-swap"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-19T01:55:42.469Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-akhaliq-minimax-h3-image-character-swap-learn": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-akhaliq-minimax-h3-image-character-swap-learn",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-akhaliq-minimax-h3-image-character-swap-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akhaliq-minimax-h3-image-character-swap-learnings-research-knowledge-intellig.md",
+      "repository": "hf-akhaliq-minimax-h3-image-character-swap-learnings",
+      "content_hash": "b218c41936dae20d101496da15b760bec5fbd437f16926af9aecf917fbaec33a",
+      "created_at": "2026-11-19T01:55:42.784Z"
     }
   }
 }

@@ -21583,5 +21583,17 @@
     "qualityScore": 1854,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-18T18:35:28.391Z"
+  },
+  {
+    "name": "akhaliq/MiniMax-H3-Image-Character-Swap",
+    "fullName": "akhaliq/MiniMax-H3-Image-Character-Swap",
+    "url": "https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: akhaliq/MiniMax-H3-Image-Character-Swap (90 likes, 289 downloads)",
+    "likes": 90,
+    "downloads": 289,
+    "qualityScore": 1189,
+    "discoveredAt": "2026-11-19T01:52:43.130Z"
   }
 ]

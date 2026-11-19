@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-19T01:06:11.179Z",
-    "lastVerified": "2026-11-19T01:06:11.179Z",
+    "lastChecked": "2026-11-19T01:55:11.698Z",
+    "lastVerified": "2026-11-19T01:55:11.698Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-19T01:47:31.107Z",
-    "lastVerified": "2026-11-19T01:47:31.107Z",
+    "lastChecked": "2026-11-19T01:55:11.708Z",
+    "lastVerified": "2026-11-19T01:55:11.708Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -635,9 +635,9 @@
   "defguard-defguard": {
     "name": "defguard",
     "officialUrl": "https://github.com/DefGuard/defguard",
-    "lastChecked": "2026-11-18T20:37:41.431Z",
+    "lastChecked": "2026-11-19T01:55:06.818Z",
     "revisionIdentifier": "a0570118",
-    "lastVerified": "2026-11-18T20:37:41.431Z"
+    "lastVerified": "2026-11-19T01:55:06.818Z"
   },
   "topoteretes-cognee": {
     "name": "cognee",
@@ -5580,5 +5580,60 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-akhaliq-minimax-h3-image-character-swap": {
+    "name": "akhaliq/MiniMax-H3-Image-Character-Swap",
+    "officialUrl": "https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T01:54:56.974Z",
+    "lastVerified": "2026-11-19T01:54:56.974Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-akhaliq-minimax-h3-image-character-swap",
+    "contentHash": "c667fb203fe67cc101560c4a8e8e7069b7c70d74e1fa388d8d72711b49d948c0",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-google-gemma-4-26b-a4b-it": {
+    "name": "google/gemma-4-26B-A4B-it",
+    "officialUrl": "https://huggingface.co/google/gemma-4-26B-A4B-it",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-19T01:54:59.655Z",
+    "lastVerified": "2026-11-19T01:54:59.655Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it",
+    "contentHash": "210ef14df814cbd863ce5451a9908c01b2a54ad916ca177c89d6a543c9054281",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "brianegan-flutter_architecture_samples": {
+    "name": "flutter_architecture_samples",
+    "officialUrl": "https://github.com/brianegan/flutter_architecture_samples",
+    "lastChecked": "2026-11-19T01:55:01.788Z",
+    "revisionIdentifier": "d898d132",
+    "lastVerified": "2026-11-19T01:55:01.788Z"
+  },
+  "cycloidio-terracognita": {
+    "name": "terracognita",
+    "officialUrl": "https://github.com/cycloidio/terracognita",
+    "lastChecked": "2026-11-19T01:55:04.196Z",
+    "revisionIdentifier": "802bd4b5",
+    "lastVerified": "2026-11-19T01:55:04.196Z"
+  },
+  "netflix-dynomite": {
+    "name": "dynomite",
+    "officialUrl": "https://github.com/Netflix/dynomite",
+    "lastChecked": "2026-11-19T01:55:09.176Z",
+    "revisionIdentifier": "2046b05e",
+    "lastVerified": "2026-11-19T01:55:09.176Z"
   }
 }

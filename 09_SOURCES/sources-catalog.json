@@ -1185,8 +1185,8 @@
     "sourceUrl": "https://huggingface.co/google/gemma-4-26B-A4B-it",
     "sourceVersion": "hf-google-gemma-4-26b-a4b-it",
     "license": "Open-Source",
-    "contentHash": "8d2ebb4fe40d8be8db8c6ec333c989bf7de48e116ac26c3c8ee5c0b040bf7165",
-    "lastHarvestedAt": "2026-11-14T12:04:05.078Z",
+    "contentHash": "210ef14df814cbd863ce5451a9908c01b2a54ad916ca177c89d6a543c9054281",
+    "lastHarvestedAt": "2026-11-19T01:55:00.150Z",
     "learningId": "learn-huggingface-google-gemma-4-26b-a4b-it"
   },
   "infisical-infisical": {
@@ -12918,5 +12918,15 @@
     "contentHash": "03384e9e6475471326bd664a2df9cdfcf52e38f0ec1f6767fa3680f51901a84e",
     "lastHarvestedAt": "2026-11-18T18:38:08.551Z",
     "learningId": "learn-github-erkamyaman-rust-anything"
+  },
+  "hf-akhaliq-minimax-h3-image-character-swap": {
+    "repository": "akhaliq/MiniMax-H3-Image-Character-Swap",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/akhaliq/MiniMax-H3-Image-Character-Swap",
+    "sourceVersion": "hf-akhaliq-minimax-h3-image-character-swap",
+    "license": "Open-Source",
+    "contentHash": "c667fb203fe67cc101560c4a8e8e7069b7c70d74e1fa388d8d72711b49d948c0",
+    "lastHarvestedAt": "2026-11-19T01:54:57.662Z",
+    "learningId": "learn-huggingface-akhaliq-minimax-h3-image-character-swap"
   }
 }

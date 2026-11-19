@@ -11174,3 +11174,6 @@
 | `CYCLE-20261119-3UZA` | `2026-11-19T01:47:08.566Z` | `Dicklesworthstone/destructive_command_guard` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9321` | Yes (`8afe8e4c...`) |
 | `CYCLE-20261119-44HZ` | `2026-11-19T01:47:20.903Z` | `ydb-platform/ydb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9322` | Yes (`b8e6b7f5...`) |
 | `CYCLE-20261119-4A63` | `2026-11-19T01:47:28.251Z` | `nomic-ai/nomic-embed-text-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nomic-ai-nomic-embed-text-v1.5-learnings.md` | Yes (`26cf7265...`) |
+| `CYCLE-20261119-DWXM` | `2026-11-19T01:54:57.658Z` | `akhaliq/MiniMax-H3-Image-Character-Swap` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akhaliq-minimax-h3-image-character-swap-learnings.md` | Yes (`c667fb20...`) |
+| `CYCLE-20261119-DYUQ` | `2026-11-19T01:55:00.146Z` | `google/gemma-4-26B-A4B-it` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-gemma-4-26b-a4b-it-learnings.md` | Yes (`210ef14d...`) |
+| `CYCLE-2026-11-19-PROJ-EVOLVE` | `2026-11-19T01:55:42.494Z` | `hf-akhaliq-minimax-h3-image-character-swap` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C41D220B` [Domain D] | Yes (`f80ac589...`) |

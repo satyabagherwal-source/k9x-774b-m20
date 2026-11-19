@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-19T01:19:29.177Z",
+  "updated_at": "2026-11-19T01:55:42.491Z",
   "statistics": {
-    "total_nodes": 371,
+    "total_nodes": 372,
     "total_edges": 174,
     "domain_distribution": {
-      "D": 250,
+      "D": 251,
       "M": 1,
       "H": 53,
       "J": 14,
@@ -8297,6 +8297,28 @@
       ],
       "created_at": "2026-11-19T01:19:29.176Z",
       "updated_at": "2026-11-19T01:19:29.176Z"
+    },
+    "DOM-D-C41D220B": {
+      "id": "DOM-D-C41D220B",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): akhaliq/MiniMax-H3-Image-Character-Swap",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-akhaliq-minimax-h3-image-character-swap-learnings.md`  \n> **Source**: huggingface -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-akhaliq-minimax-h3-image-character-swap-learnings.md`  \n> **Source**: huggingface",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-akhaliq-minimax-h3-image-character-swap/hf-akhaliq-minimax-h3-image-character-swap-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-19T01:55:11.827Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-akhaliq-minimax-h3-image-character-swap)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-19T01:55:42.491Z",
+      "updated_at": "2026-11-19T01:55:42.491Z"
     }
   },
   "edges": [
